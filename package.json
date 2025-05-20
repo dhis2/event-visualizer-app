@@ -20,4 +20,5 @@
   "dependencies": {
     "@dhis2/app-runtime": "^3.14.1"
   }
+  "packageManager": "yarn@4.9.1"
 }
