@@ -13,12 +13,16 @@
   "devDependencies": {
     "@dhis2/cli-app-scripts": "^12.6.0",
     "@types/jest": "^29.5.14",
-    "@types/react": "^19.1.4",
-    "@types/react-dom": "^19.1.5",
+    "@types/prop-types": "^15",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
     "typescript": "^5"
   },
   "dependencies": {
-    "@dhis2/app-runtime": "^3.14.1"
-  }
+    "@dhis2/app-runtime": "^3.14.1",
+    "prop-types": "^15.8.1",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
   "packageManager": "yarn@4.9.1"
 }
