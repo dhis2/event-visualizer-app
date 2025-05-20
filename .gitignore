@@ -3,5 +3,3 @@ node_modules
 .d2
 src/locales
 build
-.yarn/*
-.pnp.*
