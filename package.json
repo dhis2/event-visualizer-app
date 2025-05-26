@@ -1,17 +1,19 @@
 {
   "name": "event-visualizer-app",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "Event visualizer app and plugin",
   "license": "BSD-3-Clause",
   "private": true,
   "scripts": {
     "build": "d2-app-scripts build",
     "start": "d2-app-scripts start",
     "test": "d2-app-scripts test",
-    "deploy": "d2-app-scripts deploy"
+    "deploy": "d2-app-scripts deploy",
+    "postinstall": "yarn d2-style install"
   },
   "devDependencies": {
     "@dhis2/cli-app-scripts": "^12.6.0",
+    "@dhis2/cli-style": "^10.7.7",
     "@types/jest": "^29.5.14",
     "@types/prop-types": "^15",
     "@types/react": "^18.0.0",
