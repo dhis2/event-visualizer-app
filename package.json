@@ -9,9 +9,10 @@
         "start": "d2-app-scripts start",
         "test": "d2-app-scripts test",
         "deploy": "d2-app-scripts deploy",
-        "postinstall": "yarn d2-style install",
         "lint": "d2-style check",
-        "format": "d2-style apply"
+        "format": "d2-style apply",
+        "generate-types": "chmod +x ./scripts/generate-types.sh && ./scripts/generate-types.sh",
+        "postinstall": "if [ ! -f .hooks/_/husky.sh ]; then yarn d2-style install; fi && if [ ! -f types/dhis2-openapi-schemas/index.ts ]; then yarn generate-types; fi"
     },
     "devDependencies": {
         "@dhis2/cli-app-scripts": "^12.6.0",
@@ -20,6 +21,7 @@
         "@types/prop-types": "^15",
         "@types/react": "^18.0.0",
         "@types/react-dom": "^18.0.0",
+        "openapi-typescript-codegen": "^0.29.0",
         "typescript": "^5"
     },
     "dependencies": {
