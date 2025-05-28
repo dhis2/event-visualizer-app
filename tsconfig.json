@@ -7,7 +7,8 @@
         "esModuleInterop": true,
         "target": "ESNext",
         "module": "esnext",
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "types": ["vitest/globals", "@testing-library/jest-dom"]
     },
-    "include": ["src", "types", "*.cjs", ".*.cjs"]
+    "include": ["src", "types", "*.cjs", ".*.cjs", "vitest.*.ts"]
 }

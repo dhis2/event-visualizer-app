@@ -7,7 +7,7 @@
     "scripts": {
         "build": "d2-app-scripts build",
         "start": "d2-app-scripts start",
-        "test": "d2-app-scripts test",
+        "test": "vitest",
         "deploy": "d2-app-scripts deploy",
         "lint": "d2-style check",
         "format": "d2-style apply",
@@ -17,12 +17,18 @@
     "devDependencies": {
         "@dhis2/cli-app-scripts": "^12.6.0",
         "@dhis2/cli-style": "^10.7.8",
+        "@testing-library/dom": "^10.4.0",
+        "@testing-library/jest-dom": "^6.6.3",
+        "@testing-library/react": "^16.3.0",
         "@types/jest": "^29.5.14",
         "@types/prop-types": "^15",
-        "@types/react": "^18.0.0",
-        "@types/react-dom": "^18.0.0",
+        "@types/react": "^18.3.23",
+        "@types/react-dom": "^18.3.7",
+        "@vitejs/plugin-react": "^4.5.0",
+        "jsdom": "^26.1.0",
         "openapi-typescript-codegen": "^0.29.0",
-        "typescript": "^5"
+        "typescript": "^5",
+        "vitest": "^3.1.4"
     },
     "dependencies": {
         "@dhis2/app-runtime": "^3.14.1",
