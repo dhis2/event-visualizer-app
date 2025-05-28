@@ -1,21 +1,31 @@
 import { CustomDataProvider } from '@dhis2/app-runtime'
+import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
-import { createRoot } from 'react-dom/client'
+import { describe, it, expect } from 'vitest'
 import App from './App'
 
-it('renders without crashing', () => {
-    const container = document.createElement('div')
+const customData = {
+    me: {
+        name: 'John Doe',
+        username: 'john_doe',
+        settings: {
+            keyUiLocale: 'en',
+        },
+        authorities: ['ALL'],
+    },
+}
 
-    const data = {
-        resource: 'test',
-    }
+describe('App', () => {
+    it('renders correctly', async () => {
+        render(
+            <CustomDataProvider data={customData}>
+                <App />
+            </CustomDataProvider>
+        )
 
-    const root = createRoot(container)
-    root.render(
-        <CustomDataProvider data={data}>
-            <App />
-        </CustomDataProvider>
-    )
-
-    root.unmount()
+        waitFor(() => {
+            const element = screen.getByText('Hello John Doe')
+            expect(element).toBeInTheDocument()
+        })
+    })
 })

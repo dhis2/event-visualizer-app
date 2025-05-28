@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-05-20T12:21:31.402Z\n"
-"PO-Revision-Date: 2025-05-20T12:21:31.402Z\n"
+"POT-Creation-Date: 2025-05-28T15:11:09.550Z\n"
+"PO-Revision-Date: 2025-05-28T15:11:09.551Z\n"
 
 msgid "ERROR"
 msgstr "ERROR"
@@ -14,11 +14,11 @@ msgstr "ERROR"
 msgid "Loading..."
 msgstr "Loading..."
 
-msgid "Hello {{name}}"
-msgstr "Hello {{name}}"
-
 msgid "Welcome to DHIS2 with TypeScript!"
 msgstr "Welcome to DHIS2 with TypeScript!"
+
+msgid "Hello {{name}}"
+msgstr "Hello {{name}}"
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"
@@ -26,4 +26,4 @@ msgstr "event-visualizer-app"
 
 msgctxt "Application description"
 msgid "__MANIFEST_APP_DESCRIPTION"
-msgstr ""
+msgstr "Event visualizer app and plugin"
