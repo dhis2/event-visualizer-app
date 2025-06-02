@@ -4,3 +4,4 @@ node_modules
 src/locales
 build
 /types/dhis2-openapi-schemas
+cypress.env.json

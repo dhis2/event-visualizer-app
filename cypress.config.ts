@@ -1,14 +1,15 @@
 import fs from 'node:fs'
-import { chromeAllowXSiteCookies } from '@dhis2/cypress-plugins'
 import { defineConfig } from 'cypress'
-import { excludeByVersionTags } from 'cypress/plugins/excludeByVersionTags.ts'
+import { excludeByVersionTags } from './cypress/plugins/exclude-by-version-tags.ts'
 
-async function setupNodeEvents(on, config) {
-    chromeAllowXSiteCookies(on, config)
+async function setupNodeEvents(
+    on: Cypress.PluginEvents,
+    config: Cypress.PluginConfigOptions
+) {
     excludeByVersionTags(on, config)
 
     // Delete videos for passing tests
-    on('after:spec', (spec, results) => {
+    on('after:spec', (_, results) => {
         try {
             if (results && results.video) {
                 // Do we have failures for any retry attempts?
@@ -43,13 +44,9 @@ module.exports = defineConfig({
     e2e: {
         setupNodeEvents,
         baseUrl: 'http://localhost:3000',
-        specPattern: 'cypress/integration/**/*.cy.js',
+        specPattern: 'cypress/e2e/**/*.cy.ts',
         viewportWidth: 1280,
         viewportHeight: 800,
-        defaultCommandTimeout: 15000,
-        /* Globally disable test isolation because the test suite
-         * contains many tests with sequential steps */
-        testIsolation: false,
         // Record video
         video: true,
         // Enabled to reduce the risk of out-of-memory issues
@@ -65,7 +62,6 @@ module.exports = defineConfig({
         },
     },
     env: {
-        dhis2DatatestPrefix: 'dhis2-datavisualizer',
-        networkMode: 'live',
+        dhis2DatatestPrefix: 'dhis2-eventvisualizer',
     },
 })
