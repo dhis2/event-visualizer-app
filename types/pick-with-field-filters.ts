@@ -1,7 +1,13 @@
 // Copied from:
 // https://github.com/dhis2/maintenance-app-beta/blob/fix/pick-with-field-filter-support-transformers/src/types/generated/pickWithFieldFilters.ts
 import type { BaseIdentifiableObject } from './dhis2-openapi-schemas'
-import type { Prettify } from './utility'
+
+/* This is used to resolve types, so it's easier to see what
+properties the types actually consist of for complex objects/types
+https://www.totaltypescript.com/concepts/the-prettify-helper  */
+export type Prettify<T> = {
+    [K in keyof T]: T[K]
+} & unknown
 
 type RemoveSpaces<S extends string> = S extends `${infer T} ${infer U}`
     ? RemoveSpaces<`${T}${U}`>
