@@ -1,8 +1,8 @@
 import { useDataQuery } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import React, { FC } from 'react'
-import classes from './App.module.css'
-import Hello from './Hello'
+import classes from './app.module.css'
+import Hello from './hello'
 
 interface QueryResults {
     me: {

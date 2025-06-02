@@ -2,7 +2,7 @@ import { CustomDataProvider } from '@dhis2/app-runtime'
 import { render, screen, waitFor } from '@testing-library/react'
 import React from 'react'
 import { describe, it, expect } from 'vitest'
-import App from './App'
+import App from './app'
 
 const customData = {
     me: {
