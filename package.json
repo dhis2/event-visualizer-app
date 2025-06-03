@@ -12,8 +12,9 @@
         "lint": "d2-style check",
         "format": "d2-style apply",
         "generate-types": "chmod +x ./scripts/generate-types.sh && ./scripts/generate-types.sh",
-        "postinstall": "if [ ! -f .hooks/_/husky.sh ]; then yarn d2-style install; fi && if [ ! -f types/dhis2-openapi-schemas/index.ts ]; then yarn generate-types; fi",
-        "cy:open": "cypress open"
+        "cy:open": "start-server-and-test 'yarn start' http://localhost:3000 'yarn cypress open --e2e'",
+        "cy:run": "start-server-and-test 'yarn start' http://localhost:3000 'yarn cypress run --browser chrome headless'",
+        "postinstall": "chmod +x ./scripts/postinstall.sh && ./scripts/postinstall.sh"
     },
     "devDependencies": {
         "@dhis2/cli-app-scripts": "^12.6.0",
@@ -31,6 +32,7 @@
         "cypress-tags": "^1.2.2",
         "jsdom": "^26.1.0",
         "openapi-typescript-codegen": "^0.29.0",
+        "start-server-and-test": "^2.0.12",
         "typescript": "^5",
         "vitest": "^3.1.4"
     },
