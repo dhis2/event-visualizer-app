@@ -13,12 +13,14 @@ Add _N/A_ to items that are not applicable.
 - [ ] Dashboard tested
 - [ ] Cypress and/or Jest tests added/updated
 - [ ] Docs added
-- [ ] d2-ci dependency replaced (requires https://github.com/dhis2/analytics/pull/XXX)
+- [ ] d2-ci dependency replaced (requires <https://github.com/dhis2/analytics/pull/XXX>)
 - [ ] Tester approved (name)
 
 ---
 
 ### ToDos
+
+<!--Checkmate-->
 
 - [ ] _todo_
 
