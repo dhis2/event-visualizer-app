@@ -42,7 +42,7 @@ jobs:
               run: yarn d2-style check
 
             - name: Test
-              run: vitest --run
+              run: npx vitest run
 
             - name: Build
               run: yarn d2-app-scripts build
