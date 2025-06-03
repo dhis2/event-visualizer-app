@@ -1,0 +1,108 @@
+name: 'verify pr'
+
+on:
+    pull_request:
+        types: ['opened', 'labeled', 'reopened', 'synchronize']
+
+env:
+    GIT_AUTHOR_NAME: '@dhis2-bot'
+    GIT_AUTHOR_EMAIL: 'apps@dhis2.org'
+    GIT_COMMITTER_NAME: '@dhis2-bot'
+    GIT_COMMITTER_EMAIL: 'apps@dhis2.org'
+    GH_TOKEN: ${{secrets.DHIS2_BOT_GITHUB_TOKEN}}
+    CI: true
+    DEV_URL: 'https://test.e2e.dhis2.org/anly-e2e-dev'
+    API_VERSION: '43'
+    SHOULD_RECORD: ${{ contains(github.event.pull_request.labels.*.name, 'e2e record') }}
+
+concurrency:
+    group: ${{ github.workflow}}-${{ github.ref }}
+    cancel-in-progress: true
+
+defaults:
+    run:
+        shell: bash
+
+jobs:
+    verify-and-build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+
+            - name: Install
+              run: yarn install --frozen-lockfile
+
+            - name: Generate translations
+              run: yarn d2-app-scripts i18n generate
+
+            - name: Lint
+              run: yarn d2-style check
+
+            - name: Test
+              run: vitest --run
+
+            - name: Build
+              run: yarn d2-app-scripts build
+
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: app-build
+                  path: |
+                      **/build
+                      !**/node_modules
+                  retention-days: 1
+
+    setup-matrix:
+        # if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e') }}
+        runs-on: ubuntu-latest
+        outputs:
+            matrix: ${{ steps.set-matrix.outputs.specs }}
+        steps:
+            - uses: actions/checkout@v4
+            - name: Generate Test matrix
+              id: set-matrix
+              run: echo "::set-output name=specs::$(node cypress/support/generate-test-matrix.cjs)"
+
+    e2e:
+        needs: setup-matrix
+        # if: ${{ contains(github.event.pull_request.labels.*.name, 'e2e') }}
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                spec-group: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+            - name: Install
+              run: yarn install --frozen-lockfile
+
+            - name: Generate translations
+              run: yarn d2-app-scripts i18n generate
+
+            - name: Run e2e tests
+              uses: cypress-io/github-action@v5
+              with:
+                  start: yarn d2-app-scripts start
+                  wait-on: 'http://localhost:3000'
+                  wait-on-timeout: 300
+                  record: ${{ env.SHOULD_RECORD  == 'true' }}
+                  parallel: ${{ env.SHOULD_RECORD == 'true' }}
+                  browser: chrome
+                  spec: ${{ join(matrix.spec-group.tests, ',') }}
+                  group: ${{ env.SHOULD_RECORD == 'true' && format('e2e-chrome-parallel-{0}', matrix.spec-group.id) || '' }}
+                  ci-build-id: ${{ env.SHOULD_RECORD == 'true' && github.run_id || '' }}
+              env:
+                  CI: true
+                  BROWSER: none
+                  CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+                  CYPRESS_dhis2BaseUrl: ${{ env.DEV_URL }}
+                  CYPRESS_dhis2InstanceVersion: ${{ env.API_VERSION }}
+                  CYPRESS_dhis2Username: ${{ secrets.CYPRESS_DHIS2_USERNAME }}
+                  CYPRESS_dhis2Password: ${{ secrets.CYPRESS_DHIS2_PASSWORD }}
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
