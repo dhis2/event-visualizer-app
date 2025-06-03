@@ -1,14 +1,17 @@
-name: GitHub Task List Checker
+name: PR Task List Checker
 on:
     pull_request:
         types: [opened, edited, synchronize, reopened]
 
+# cancel old edit events being processed
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
 jobs:
-    task-list-checker:
-        if: ${{ github.actor != 'dependabot[bot]' }}
+    validate-checklists:
         runs-on: ubuntu-latest
         steps:
-            - name: Check for incomplete task list items
-              uses: Shopify/task-list-checker@main
-              with:
-                  github-token: ${{ secrets.GITHUB_TOKEN }}
+            - uses: actions/checkout@v3
+            - name: Validate Checklists
+              uses: roryq/checkmate@master
