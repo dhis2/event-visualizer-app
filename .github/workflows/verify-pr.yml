@@ -64,7 +64,7 @@ jobs:
             - uses: actions/checkout@v4
             - name: Generate Test matrix
               id: set-matrix
-              run: echo "::set-output name=specs::$(node cypress/support/generate-test-matrix.cjs)"
+              run: echo "::set-output name=specs::$(node scripts/generate-test-matrix.cjs)"
 
     e2e:
         needs: setup-matrix
