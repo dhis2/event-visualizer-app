@@ -86,7 +86,7 @@ jobs:
               run: yarn d2-app-scripts i18n generate
 
             - name: Run e2e tests
-              uses: cypress-io/github-action@v5
+              uses: cypress-io/github-action@v6
               with:
                   start: yarn d2-app-scripts start
                   wait-on: 'http://localhost:3000'
