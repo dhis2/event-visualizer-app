@@ -25,7 +25,12 @@ const createGroups = (files, numberOfGroups = 5) => {
         groups[index % numberOfGroups].push(file)
     })
 
-    return groups.map((group, index) => ({ id: index + 1, tests: group }))
+    /* If a group is empty the runner will actually run the tests
+     * for ALL FILES. So we need to ensure we only create populated
+     * test groups */
+    return groups
+        .filter((group) => group.length > 0)
+        .map((group, index) => ({ id: index + 1, tests: group }))
 }
 
 const cypressSpecsPath = './cypress/e2e'
