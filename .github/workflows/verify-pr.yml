@@ -34,7 +34,7 @@ jobs:
                   channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
                   payload: |
                       {
-                          "text": ":small_red_triangle_down: :data-visualizer-app: Data Visualizer failed to deploy to d2-ci",
+                          "text": ":small_red_triangle_down: :data-visualizer-app: Data Visualizer failed to deploy to d2-ci"
                       }
               env:
                   SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
