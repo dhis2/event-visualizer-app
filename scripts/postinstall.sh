@@ -10,5 +10,6 @@ if [ ! -f types/dhis2-openapi-schemas/index.ts ]; then
 fi
 
 if [ ! -f cypress.env.json ]; then
+    echo "📋 Copying cypress.env.template.json to cypress.env.json..."
     cp cypress.env.template.json cypress.env.json
 fi
