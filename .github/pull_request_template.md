@@ -8,13 +8,15 @@ _text_
 
 ### Quality checklist
 
-Add _N/A_ to items that are not applicable.
+Add _N/A_ to items that are not applicable and check them.
 
-- [ ] Dashboard tested
-- [ ] Cypress and/or Jest tests added/updated
-- [ ] Docs added
-- [ ] d2-ci dependency replaced (requires <https://github.com/dhis2/analytics/pull/XXX>)
-- [ ] Tester approved (name)
+<!--Checkmate-->
+
+-   [ ] Dashboard tested
+-   [ ] Cypress and/or Jest tests added/updated
+-   [ ] Docs added
+-   [ ] d2-ci dependency replaced (requires <https://github.com/dhis2/analytics/pull/XXX>)
+-   [ ] Tester approved (name)
 
 ---
 
@@ -22,13 +24,13 @@ Add _N/A_ to items that are not applicable.
 
 <!--Checkmate-->
 
-- [ ] _todo_
+-   [ ] _todo_
 
 ---
 
 ### Known issues
 
-- [ ] _issue_
+-   _issue_
 
 ---
 
