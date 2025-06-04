@@ -7,7 +7,7 @@ const getAllFiles = (dirPath, arrayOfFiles = []) => {
     files.forEach((file) => {
         if (fs.statSync(path.join(dirPath, file)).isDirectory()) {
             arrayOfFiles = getAllFiles(path.join(dirPath, file), arrayOfFiles)
-        } else if (path.extname(file) === '.js') {
+        } else if (path.basename(file).endsWith('.cy.ts')) {
             arrayOfFiles.push(path.join(dirPath, file))
         }
     })
