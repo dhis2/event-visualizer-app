@@ -40,7 +40,7 @@ async function setupNodeEvents(
 }
 
 module.exports = defineConfig({
-    projectId: 'NEEDED',
+    projectId: 'prcq4z',
     e2e: {
         setupNodeEvents,
         baseUrl: 'http://localhost:3000',
