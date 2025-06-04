@@ -54,14 +54,10 @@ jobs:
         needs: publish-to-d2-ci
         if: ${{ failure() && !cancelled() }}
         steps:
-            - name: Send failure message to analytics-internal-bot slack channel
-              id: slack_publish_failure
-              uses: slackapi/slack-github-action@v1.27.0
-              with:
-                  channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-                  payload: |
-                      {
-                          "text": ":small_red_triangle_down: :data-visualizer-app: Data Visualizer failed to deploy to d2-ci",
-                      }
+            - name: Send failure message to analytics-internal-bot Slack channel
+              uses: rtCamp/action-slack-notify@v2
               env:
-                  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+                  SLACK_WEBHOOK: ${{ secrets.SLACK_BACKEND_WEBHOOK }}
+                  SLACK_CHANNEL: 'analytics-internal-bot'
+                  SLACK_MESSAGE: 'Event Visualizer App failed to deploy to d2-ci'
+                  SLACK_COLOR: '#ff0000'
