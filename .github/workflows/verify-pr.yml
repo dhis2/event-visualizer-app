@@ -24,20 +24,15 @@ defaults:
         shell: bash
 
 jobs:
-    test-slack-message:
+    send-slack-message:
         runs-on: ubuntu-latest
         steps:
-            - name: Send test message to analytics-internal-bot slack channel
-              id: slack_test_message
-              uses: slackapi/slack-github-action@v1.27.0
-              with:
-                  channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
-                  payload: |
-                      {
-                          "text": ":small_red_triangle_down: :data-visualizer-app: Data Visualizer failed to deploy to d2-ci"
-                      }
+            - uses: rtCamp/action-slack-notify@v2
               env:
-                  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+                  SLACK_WEBHOOK: ${{ secrets.SLACK_BACKEND_WEBHOOK }}
+                  SLACK_CHANNEL: 'analytics-internal-bot'
+                  SLACK_MESSAGE: 'Hello world ::wave:.'
+                  SLACK_COLOR: '#00ff00'
 
     verify-and-build:
         runs-on: ubuntu-latest
