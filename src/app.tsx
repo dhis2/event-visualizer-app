@@ -1,13 +1,12 @@
 import { useDataQuery } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import React, { FC } from 'react'
+import type { MeDto } from '../types/dhis2-openapi-schemas'
 import classes from './app.module.css'
 import Hello from './hello'
 
 interface QueryResults {
-    me: {
-        name: string
-    }
+    me: MeDto
 }
 
 const query = {
@@ -29,7 +28,7 @@ const MyApp: FC = () => {
 
     return (
         <div className={classes.container}>
-            <Hello name={data?.me?.name} />
+            <Hello name={data.me.name} />
             <h3>{i18n.t('Welcome to DHIS2 with TypeScript!')}</h3>
         </div>
     )
