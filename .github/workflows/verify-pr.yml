@@ -106,3 +106,12 @@ jobs:
                   CYPRESS_dhis2Username: ${{ secrets.CYPRESS_DHIS2_USERNAME }}
                   CYPRESS_dhis2Password: ${{ secrets.CYPRESS_DHIS2_PASSWORD }}
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    e2e-success:
+        needs: e2e
+        if: ${{ success() || failure() }}
+        runs-on: ubuntu-latest
+        steps:
+            - run: if [ $result != 'success' ]; then exit 1; fi;
+              env:
+                  result: ${{ needs.e2e.result }}
