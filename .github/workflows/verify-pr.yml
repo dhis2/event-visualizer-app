@@ -24,16 +24,6 @@ defaults:
         shell: bash
 
 jobs:
-    send-slack-message:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: rtCamp/action-slack-notify@v2
-              env:
-                  SLACK_WEBHOOK: ${{ secrets.SLACK_BACKEND_WEBHOOK }}
-                  SLACK_CHANNEL: 'analytics-internal-bot'
-                  SLACK_MESSAGE: 'Hello world ::wave:.'
-                  SLACK_COLOR: '#00ff00'
-
     verify-and-build:
         runs-on: ubuntu-latest
         steps:
