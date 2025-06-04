@@ -33,6 +33,8 @@ jobs:
                   node-version: 22
 
             - name: Install
+              # Note that we do NOT add `--ignore-scripts` here because the TS types
+              # need to be present in order for the linting to pass
               run: yarn install --frozen-lockfile
 
             - name: Generate translations
@@ -80,7 +82,7 @@ jobs:
               with:
                   node-version: 22
             - name: Install
-              run: yarn install --frozen-lockfile
+              run: yarn install --frozen-lockfile --ignore-scripts
 
             - name: Generate translations
               run: yarn d2-app-scripts i18n generate

@@ -14,7 +14,7 @@ jobs:
                   node-version: 18.x
 
             - name: Install dependencies
-              run: yarn install --frozen-lockfile
+              run: yarn install --frozen-lockfile --ignore-scripts
 
             - id: commitlint
               run: echo ::set-output name=config_path::$(node -e "process.stdout.write(require('@dhis2/cli-style').config.commitlint)")
@@ -33,7 +33,7 @@ jobs:
                   node-version: 18.x
 
             - name: Install dependencies
-              run: yarn install --frozen-lockfile
+              run: yarn install --frozen-lockfile --ignore-scripts
 
             - id: commitlint
               # This will return a config file with a .js extensions for @dhis2/cli-style v10
