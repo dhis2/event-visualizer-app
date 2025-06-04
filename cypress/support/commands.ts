@@ -63,7 +63,7 @@ declare global {
             getByDataTestLike(value: string): Chainable<JQuery<HTMLElement>>
 
             /**
-             * Custom command to filter matching descendent DOM elements by data-test attribute..
+             * Custom command to filter matching descendent DOM elements by data-test attribute.
              * @example cy.findByDataTest('menu-list-item')
              */
             findByDataTest(value: string): Chainable<JQuery<HTMLElement>>
@@ -75,8 +75,8 @@ declare global {
             findByDataTestLike(value: string): Chainable<JQuery<HTMLElement>>
 
             /**
-             * Custom command to select DOM which contains the exact text (case sensitive).
-             * @example cy.getByDataTest('Hello there John')
+             * Custom command to select DOM element which contains the exact text (case sensitive).
+             * @example cy.containsExact('Hello there John')
              */
             containsExact(value: string): Chainable<JQuery<HTMLElement>>
 
