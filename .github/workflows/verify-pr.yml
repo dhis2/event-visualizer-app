@@ -24,6 +24,21 @@ defaults:
         shell: bash
 
 jobs:
+    test-slack-message:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Send test message to analytics-internal-bot slack channel
+              id: slack_test_message
+              uses: slackapi/slack-github-action@v1.27.0
+              with:
+                  channel-id: ${{ secrets.SLACK_CHANNEL_ID }}
+                  payload: |
+                      {
+                          "text": ":small_red_triangle_down: :data-visualizer-app: Data Visualizer failed to deploy to d2-ci",
+                      }
+              env:
+                  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
     verify-and-build:
         runs-on: ubuntu-latest
         steps:
