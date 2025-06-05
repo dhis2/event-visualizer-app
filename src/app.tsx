@@ -1,9 +1,9 @@
 import { useDataQuery } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import React, { FC } from 'react'
-import type { MeDto } from '../types/dhis2-openapi-schemas'
 import classes from './app.module.css'
 import Hello from './hello'
+import type { MeDto } from './types/dhis2-openapi-schemas'
 
 interface QueryResults {
     me: MeDto

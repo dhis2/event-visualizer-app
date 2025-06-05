@@ -1,3 +1,5 @@
+// eslint-disable-next-line
+//@ts-nocheck
 // Copied from:
 // https://github.com/dhis2/maintenance-app-beta/blob/fix/pick-with-field-filter-support-transformers/src/types/generated/pickWithFieldFilters.ts
 import type { BaseIdentifiableObject } from './dhis2-openapi-schemas'

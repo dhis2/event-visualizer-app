@@ -5,7 +5,7 @@ if [ ! -f .hooks/_/husky.sh ]; then
     yarn d2-style install
 fi
 
-if [ ! -f types/dhis2-openapi-schemas/index.ts ]; then
+if [ ! -f src/types/dhis2-openapi-schemas/index.ts ]; then
     yarn generate-types
 fi
 

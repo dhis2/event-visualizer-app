@@ -3,7 +3,7 @@ set -e
 
 # Configuration
 API_URL="https://play.im.dhis2.org/dev/api/openapi.yaml"
-OUTPUT_DIR="./types/dhis2-openapi-schemas"
+OUTPUT_DIR="./src/types/dhis2-openapi-schemas"
 TEMP_DIR="./temp-openapi"
 AUTH_HEADER="Authorization: Basic $(echo -n "admin:district" | base64)"
 

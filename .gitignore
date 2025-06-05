@@ -3,6 +3,6 @@ node_modules
 .d2
 src/locales
 build
-/types/dhis2-openapi-schemas
+src/types/dhis2-openapi-schemas
 cypress.env.json
 cypress/videos

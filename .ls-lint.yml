@@ -12,4 +12,4 @@ ls:
         .json: kebab-case
 
 ignore:
-    - types/dhis2-openapi-schemas
+    - src/types/dhis2-openapi-schemas
