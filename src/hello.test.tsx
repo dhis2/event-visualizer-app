@@ -14,7 +14,6 @@ describe('Hello', () => {
     it('displays the fallback name', () => {
         render(<Hello />)
 
-        screen.debug() // Logs the DOM structure
         const element = screen.getByText('Hello Unknown Visitor')
         expect(element).toBeInTheDocument()
     })
