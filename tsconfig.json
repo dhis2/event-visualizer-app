@@ -11,5 +11,5 @@
         "moduleResolution": "node",
         "types": ["vitest/globals", "@testing-library/jest-dom"]
     },
-    "include": ["src", "types", "*.cjs", ".*.cjs", "vitest.*.ts"]
+    "include": ["src", "*.d.ts", "*.cjs", ".*.cjs", "vitest.*.ts"]
 }
