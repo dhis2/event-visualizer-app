@@ -23,7 +23,7 @@ describe('App', () => {
             </CustomDataProvider>
         )
 
-        waitFor(() => {
+        await waitFor(() => {
             const element = screen.getByText('Hello John Doe')
             expect(element).toBeInTheDocument()
         })
