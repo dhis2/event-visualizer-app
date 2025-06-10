@@ -1,5 +1,5 @@
 import type { ContextType } from '@dhis2/app-service-data'
-import type { Middleware } from '@reduxjs/toolkit'
+import type { Middleware } from '@reduxjs/toolkit/react'
 import type { Dispatch, UnknownAction } from 'redux'
 
 type DataEngine = ContextType['engine']
