@@ -66,8 +66,8 @@ describe('customBaseQuery', () => {
         const result = await customBaseQuery(queryArgs, api, undefined)
         expect(result).toEqual({
             error: {
-                status: 'CUSTOM_ERROR',
-                data: errorMsg,
+                type: 'runtime',
+                message: errorMsg,
             },
         })
     })
@@ -79,8 +79,8 @@ describe('customBaseQuery', () => {
         const result = await customBaseQuery(mutationArgs, api, undefined)
         expect(result).toEqual({
             error: {
-                status: 'CUSTOM_ERROR',
-                data: 'Unknown error',
+                type: 'runtime',
+                message: 'An unexpected runtime error occurred',
             },
         })
     })
