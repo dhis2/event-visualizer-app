@@ -7,9 +7,15 @@ export const store = configureStore({
         [api.reducerPath]: api.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware()
-            .concat(api.middleware)
-            .concat(dynamicMiddleware.middleware),
+        getDefaultMiddleware({
+            serializableCheck: {
+                // Ignore meta.engine, we know it's non-serializable
+                ignoredActionPaths: ['meta.baseQueryMeta.extra.engine'],
+            },
+        })
+            .concat(dynamicMiddleware.middleware)
+            .concat(api.middleware),
+    devTools: true,
 })
 
 export type AppDispatch = typeof store.dispatch

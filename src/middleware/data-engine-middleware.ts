@@ -10,6 +10,12 @@ interface RTKQueryMeta {
         type?: 'query' | 'mutation'
         [key: string]: unknown
     }
+    baseQueryMeta?: {
+        extra?: {
+            [key: string]: unknown
+            engine?: DataEngine
+        }
+    }
     [key: string]: unknown
 }
 
@@ -43,10 +49,21 @@ export const createDataEngineMiddleware = (
             if (isRTKQueryAction(action)) {
                 const engine = getEngine()
 
-                action.meta = {
-                    ...action.meta,
-                    engine,
+                console.log('ACTION', action)
+                if (!action.meta) {
+                    action.meta = {}
                 }
+                if (!action.meta.baseQueryMeta) {
+                    action.meta.baseQueryMeta = {}
+                }
+                if (!action.meta.baseQueryMeta.extra) {
+                    action.meta.baseQueryMeta.extra = {}
+                }
+                // eslint-disable-next-line
+                //@ts-ignore
+                action.meta.arg.extra = { engine }
+                action.meta.baseQueryMeta.extra.engine = engine
+                console.log('Added the engine to action:', action)
             }
 
             return next(action)

@@ -4,13 +4,15 @@ import type {
     FetchBaseQueryError,
     BaseQueryApi,
 } from '@reduxjs/toolkit/query'
-import type { DataEngine } from '../types/data-engine'
+import type {
+    DataEngine,
+    MutationResult,
+    QueryResult,
+} from '../types/data-engine'
 
 // Either a query or a mutation object
 type EngineArgs = Query | Mutation
-type EngineResult =
-    | Awaited<ReturnType<DataEngine['query']>>
-    | Awaited<ReturnType<DataEngine['mutate']>>
+type EngineResult = QueryResult | MutationResult
 
 interface MetaWithEngine {
     engine: DataEngine
@@ -32,11 +34,23 @@ export const customBaseQuery: BaseQueryFn<
     MetaWithEngine // meta from middleware
 > = async (
     args: EngineArgs,
-    // This is the `api` arg, currently unused
-    _: BaseQueryApi,
-    extraOptions: { meta: MetaWithEngine }
+    api: BaseQueryApi, // This is the `api` arg, currently unused
+    extraOptions
 ) => {
-    const { engine } = extraOptions.meta
+    console.log(
+        'CBQ:\nargs: ',
+        args,
+        '\napi: ',
+        api,
+        '\nextraOptions: ',
+        extraOptions
+    )
+
+    // Try to get engine from extraOptions.meta.baseQueryMeta.extra.engine
+    // eslint-disable-next-line
+    //@ts-ignore
+    const engine = extraOptions?.meta?.baseQueryMeta?.extra?.engine
+    console.log('engine', engine)
 
     if (!engine) {
         return {
