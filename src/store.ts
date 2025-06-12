@@ -1,22 +1,21 @@
-import { configureStore } from '@reduxjs/toolkit/react'
-import { dynamicMiddleware } from './middleware/dynamic'
-import { api } from './services/api'
+import { configureStore } from '@reduxjs/toolkit'
+import { api } from './api'
+import type { DataEngine } from './types'
 
-export const store = configureStore({
-    reducer: {
-        [api.reducerPath]: api.reducer,
-    },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: {
-                // Ignore meta.engine, we know it's non-serializable
-                ignoredActionPaths: ['meta.baseQueryMeta.extra.engine'],
-            },
-        })
-            .concat(dynamicMiddleware.middleware)
-            .concat(api.middleware),
-    devTools: true,
-})
+export const createStore = (engine: DataEngine) => {
+    return configureStore({
+        reducer: {
+            [api.reducerPath]: api.reducer,
+        },
+        middleware: (getDefaultMiddleware) =>
+            getDefaultMiddleware({
+                thunk: {
+                    extraArgument: { engine },
+                },
+            }).concat(api.middleware),
+    })
+}
 
-export type AppDispatch = typeof store.dispatch
-export type RootState = ReturnType<typeof store.getState>
+export type AppStore = ReturnType<typeof createStore>
+export type AppDispatch = AppStore['dispatch']
+export type RootState = ReturnType<AppStore['getState']>
