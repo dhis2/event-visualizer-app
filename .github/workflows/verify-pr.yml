@@ -78,11 +78,18 @@ jobs:
                 spec-group: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
         steps:
             - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: lts/*
+            - name: Install
+              run: yarn install --frozen-lockfile --ignore-scripts
+
+            - name: Generate translations
+              run: yarn d2-app-scripts i18n generate
 
             - name: Run e2e tests
               uses: cypress-io/github-action@v6
               with:
-                  install-command: yarn --frozen-lockfile --silent && yarn d2-app-scripts i18n generate
                   cache-key: cypress-cache
                   start: yarn d2-app-scripts start
                   wait-on: 'http://localhost:3000'
