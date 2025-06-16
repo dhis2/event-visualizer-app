@@ -12,6 +12,6 @@ jobs:
     create-bom:
         uses: dhis2/workflows-platform/.github/workflows/generate-and-upload-bom.yml@v1
         with:
-            node_version: 20
+            node-version: lts/*
             project_id: '7a585a7b-1604-4d50-b6f4-9429e290362a'
         secrets: inherit
