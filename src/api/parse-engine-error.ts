@@ -27,7 +27,7 @@ export type EngineError =
 export const parseEngineError = (error: unknown): EngineError => {
     if (error instanceof FetchError) {
         const { type, message, details } = error
-
+        // FetchError instances are flattened. No properties under details.
         const base = {
             message: typeof message === 'string' ? message : 'Unknown error',
             httpStatusCode:
