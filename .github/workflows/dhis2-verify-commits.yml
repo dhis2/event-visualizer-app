@@ -13,7 +13,7 @@ jobs:
               with:
                   node-version: lts/*
                   cache: yarn
-            - run: yarn install --frozen-lockfile
+            - run: yarn install --frozen-lockfile --ignore-scripts
             - id: commitlint
               run: |
                   echo "CONFIG_PATH=$(node -e 'process.stdout.write(require("@dhis2/cli-style").config.commitlint)')" >> "$GITHUB_OUTPUT"
