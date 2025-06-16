@@ -77,6 +77,8 @@ jobs:
             matrix:
                 spec-group: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
         steps:
+            - uses: actions/checkout@v4
+
             - name: Run e2e tests
               uses: cypress-io/github-action@v6
               with:
