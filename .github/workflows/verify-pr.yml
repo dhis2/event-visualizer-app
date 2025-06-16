@@ -82,7 +82,7 @@ jobs:
             - name: Run e2e tests
               uses: cypress-io/github-action@v6
               with:
-                  install-command: yarn install --frozen-lockfile && yarn d2-app-scripts i18n generate
+                  install-command: yarn --frozen-lockfile --silent && yarn d2-app-scripts i18n generate
                   cache-key: cypress-cache
                   start: yarn d2-app-scripts start
                   wait-on: 'http://localhost:3000'
