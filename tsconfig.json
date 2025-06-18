@@ -9,7 +9,13 @@
         "target": "ESNext",
         "module": "esnext",
         "moduleResolution": "node",
-        "types": ["vitest/globals", "@testing-library/jest-dom"]
+        "types": ["vitest/globals", "@testing-library/jest-dom"],
+        "paths": {
+            "@dhis2/analytics": ["src/types/analytics/index.d.ts"],
+            // Use this as the defnitive source for type imports, mainly to prevent
+            // a suggestion overload from all the generated types
+            "@types": ["src/types/index"]
+        }
     },
     "include": ["src", "*.d.ts", "*.cjs", ".*.cjs", "vitest.*.ts"]
 }
