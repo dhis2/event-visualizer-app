@@ -224,12 +224,16 @@ export function useMetadataItems(
     return result
 }
 
-export function useAddMetadata() {
+export function useAddMetadata(): MetadataStore['addMetadata'] {
     const metadataStore = useContext(MetadataContext)!
     return metadataStore.addMetadata.bind(metadataStore)
 }
 
-export function useMetadataStore() {
+export type UseMetadataStoreReturnValue = Pick<
+    MetadataStore,
+    'getMetadataItem' | 'getMetadataItems' | 'addMetadata'
+>
+export function useMetadataStore(): UseMetadataStoreReturnValue {
     const metadataStore = useContext(MetadataContext)!
     return {
         getMetadataItem: metadataStore.getMetadataItem.bind(metadataStore),

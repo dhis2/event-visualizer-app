@@ -1,6 +1,6 @@
 import type { Query, Mutation } from '@dhis2/app-service-data'
+import type { DataEngine } from '@types'
 import { vi } from 'vitest'
-import type { DataEngine } from '../types'
 import { customBaseQuery } from './custom-base-query'
 import type { BaseQueryApiWithExtraArg } from './custom-base-query'
 

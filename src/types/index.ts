@@ -1,4 +1,11 @@
 import type { ContextType } from '@dhis2/app-service-data'
+export type {
+    MeDto,
+    OrganisationUnit,
+    OrganisationUnitLevel,
+} from './dhis2-openapi-schemas'
+// Generated type is lacking "key" prefixes on the property names
+export type { SystemSettings } from './system-settings'
 
 /* The SingleQuery type is a simpler, but for our use-case functionally
  * equivalent, representation of the ResourceQuery internal to
@@ -22,4 +29,6 @@ export type SingleQuery = {
 export type DataEngine = ContextType['engine']
 export type QueryResult = Awaited<ReturnType<DataEngine['query']>>
 export type MutationResult = Awaited<ReturnType<DataEngine['mutate']>>
-export type { AppStore, AppDispatch, RootState } from '../store.ts'
+export type { AppStore, AppDispatch, RootState } from '../store'
+export type { UseMetadataStoreReturnValue as MetadataStore } from '../app-wrapper/metadata-provider'
+export type { TransformedAppCachedData as AppCachedData } from '../app-wrapper/app-cached-data-query-provider'

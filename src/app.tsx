@@ -1,11 +1,12 @@
 import { useDataQuery } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
+import type { MeDto } from '@types'
 import React, { FC } from 'react'
-import { useRtkQuery } from './api'
-import { AppWrapper } from './app-wrapper/app-wrapper'
+import { AppWrapper } from './app-wrapper'
+import { useSystemSettings } from './app-wrapper/app-cached-data-query-provider'
 import classes from './app.module.css'
 import Hello from './hello'
-import type { MeDto } from './types/dhis2-openapi-schemas'
+import { useRtkQuery } from './hooks'
 
 interface QueryResults {
     me: MeDto
@@ -21,7 +22,9 @@ const EventVisualizer: FC = () => {
     const dhis2Query = useDataQuery<QueryResults>(query)
     const rtkqQuery = useRtkQuery(query)
     const rtkqQuerySimple = useRtkQuery(query.me)
-    console.log(rtkqQuery)
+    const systemSettings = useSystemSettings()
+
+    console.log(rtkqQuery, systemSettings)
 
     if (dhis2Query.error) {
         return <span>{i18n.t('ERROR')}</span>

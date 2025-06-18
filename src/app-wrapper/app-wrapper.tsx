@@ -1,10 +1,12 @@
-import { useDataEngine } from '@dhis2/app-service-data'
-import React, { FC, ReactNode, useState } from 'react'
-import { Provider } from 'react-redux'
-import { createStore } from '../store'
+import React, { FC, ReactNode } from 'react'
+import { AppCachedDataQueryProvider } from './app-cached-data-query-provider'
+import { MetadataProvider } from './metadata-provider'
+import { StoreProvider } from './store-provider'
 
-export const AppWrapper: FC<{ children: ReactNode }> = ({ children }) => {
-    const engine = useDataEngine()
-    const [store] = useState(() => createStore(engine))
-    return <Provider store={store}>{children}</Provider>
-}
+export const AppWrapper: FC<{ children: ReactNode }> = ({ children }) => (
+    <AppCachedDataQueryProvider>
+        <MetadataProvider>
+            <StoreProvider>{children}</StoreProvider>
+        </MetadataProvider>
+    </AppCachedDataQueryProvider>
+)

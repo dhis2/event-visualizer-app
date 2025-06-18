@@ -7,6 +7,7 @@ expect.extend(matchers)
 configure({
     testIdAttribute: 'data-test',
 })
+global.CSS.supports = () => true
 afterEach(() => {
     cleanup()
 })

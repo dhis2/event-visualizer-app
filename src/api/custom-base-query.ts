@@ -1,11 +1,13 @@
 import type { Query, Mutation } from '@dhis2/app-service-data'
 import type { BaseQueryFn, BaseQueryApi } from '@reduxjs/toolkit/query'
 import type {
+    AppCachedData,
     DataEngine,
+    MetadataStore,
     MutationResult,
     QueryResult,
     SingleQuery,
-} from '../types'
+} from '@types'
 import { EngineError, parseEngineError } from './parse-engine-error'
 
 // cater for both queries and mutations
@@ -13,6 +15,8 @@ type EngineArgs = Query | Mutation | SingleQuery
 type EngineResult = QueryResult | MutationResult
 type ThunkExtraArg = {
     engine: DataEngine
+    metadataStore: MetadataStore
+    cachedAppData: AppCachedData
 }
 // Inform TS that an instance of the DataEngine is available on api.extra.engine
 export type BaseQueryApiWithExtraArg = BaseQueryApi & { extra: ThunkExtraArg }

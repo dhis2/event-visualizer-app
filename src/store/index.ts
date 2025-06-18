@@ -1,8 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { api } from './api'
-import type { DataEngine } from './types'
+import type { AppCachedData, DataEngine, MetadataStore } from '@types'
+import { api } from '../api'
 
-export const createStore = (engine: DataEngine) => {
+export const createStore = (
+    engine: DataEngine,
+    metadataStore: MetadataStore,
+    appChachedData: AppCachedData
+) => {
     return configureStore({
         reducer: {
             [api.reducerPath]: api.reducer,
@@ -10,7 +14,7 @@ export const createStore = (engine: DataEngine) => {
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({
                 thunk: {
-                    extraArgument: { engine },
+                    extraArgument: { engine, metadataStore, appChachedData },
                 },
             }).concat(api.middleware),
     })

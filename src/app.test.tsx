@@ -4,6 +4,17 @@ import React from 'react'
 import { describe, it, expect } from 'vitest'
 import App from './app'
 
+vi.mock('./hooks', async (importOriginal) => {
+    return {
+        ...(await importOriginal<typeof import('./hooks')>()),
+        useRtkQuery: vi.fn(() => ({})),
+        useSystemSettings: vi.fn(() => ({})),
+    }
+})
+vi.mock('./app-wrapper', () => ({
+    AppWrapper: ({ children }) => children,
+}))
+
 const customData = {
     me: {
         name: 'John Doe',
