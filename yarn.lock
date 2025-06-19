@@ -58,7 +58,7 @@
   resolved "https://registry.yarnpkg.com/@babel/compat-data/-/compat-data-7.27.3.tgz#cc49c2ac222d69b889bf34c795f537c0c6311111"
   integrity sha512-V42wFfx1ymFte+ecf6iXghnnP8kWTO+ZLXIyZq+1LAXHHvTZdVxicn4yiVYdYMGaCO3tmqub11AorKkv+iodqw==
 
-"@babel/core@^7.1.0", "@babel/core@^7.1.6", "@babel/core@^7.12.3", "@babel/core@^7.16.0", "@babel/core@^7.24.4", "@babel/core@^7.26.10", "@babel/core@^7.6.2", "@babel/core@^7.7.2", "@babel/core@^7.8.0":
+"@babel/core@^7.1.0", "@babel/core@^7.1.6", "@babel/core@^7.12.3", "@babel/core@^7.16.0", "@babel/core@^7.24.4", "@babel/core@^7.26.0", "@babel/core@^7.26.10", "@babel/core@^7.7.2", "@babel/core@^7.8.0":
   version "7.27.4"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.27.4.tgz#cc1fc55d0ce140a1828d1dd2a2eba285adbfb3ce"
   integrity sha512-bXYxrXFubeYdvB0NhD/NBB3Qi6aZeV20GOWVI47t2dkecCEoneR4NPVcb7abpXDEvejgrUfFtG6vG/zxAKmg+g==
@@ -1048,7 +1048,7 @@
     "@babel/plugin-transform-react-jsx-development" "^7.27.1"
     "@babel/plugin-transform-react-pure-annotations" "^7.27.1"
 
-"@babel/preset-typescript@^7.1.0", "@babel/preset-typescript@^7.6.0":
+"@babel/preset-typescript@^7.1.0", "@babel/preset-typescript@^7.27.1":
   version "7.27.1"
   resolved "https://registry.npmjs.org/@babel/preset-typescript/-/preset-typescript-7.27.1.tgz"
   integrity sha512-l7WfQfX0WK4M0v2RudjuQK4u99BS6yLHYEmdtVPP7lKV013zr9DygFuWNlnbvQ9LR+LS0Egz/XAvGx5U9MX0fQ==
@@ -1931,15 +1931,15 @@
     classnames "^2.3.1"
     prop-types "^15.7.2"
 
-"@dhis2/app-adapter@12.6.0":
-  version "12.6.0"
-  resolved "https://registry.npmjs.org/@dhis2/app-adapter/-/app-adapter-12.6.0.tgz"
-  integrity sha512-00/Ak2rKng9+RYvaVQFdgo0bl3n2/exLGEBFygZgSE6UKN7OP+hP4miJCOWlVOHgtM3M1ZQriZgs08Nvh6izIQ==
+"@dhis2/app-adapter@12.6.3":
+  version "12.6.3"
+  resolved "https://registry.yarnpkg.com/@dhis2/app-adapter/-/app-adapter-12.6.3.tgz#3c9079dd3565816869a53b896eb4f0298d8aca51"
+  integrity sha512-dK94LCgOeGHTDT/Qo3h33m0oVOm9EmHIG+OE+ydATa7dwUlIAxUQXXOV5ywCvoTLZtrTVRz0pooGOiJ5M3Ycow==
   dependencies:
-    "@dhis2/pwa" "12.6.0"
+    "@dhis2/pwa" "12.6.3"
     moment "^2.24.0"
 
-"@dhis2/app-runtime@^3.12.0", "@dhis2/app-runtime@^3.14.1":
+"@dhis2/app-runtime@^3.14.1":
   version "3.14.1"
   resolved "https://registry.npmjs.org/@dhis2/app-runtime/-/app-runtime-3.14.1.tgz"
   integrity sha512-gE95IbRXW9UwngJ8jHlidJKjng7ZUdMFeCwupaHHh2Ax+inl8mZEN7fMPBXMQf5coIx5gEnLs4Ov36rUnzFtnQ==
@@ -1950,20 +1950,48 @@
     "@dhis2/app-service-offline" "3.14.1"
     "@dhis2/app-service-plugin" "3.14.1"
 
+"@dhis2/app-runtime@^3.14.3":
+  version "3.14.4"
+  resolved "https://registry.yarnpkg.com/@dhis2/app-runtime/-/app-runtime-3.14.4.tgz#ae8de08ccf4f1e580dd04644d352c4b252d14217"
+  integrity sha512-s127XS/aRL2UmW5BLi2vQ4l98GF/oQz+hNLqKWmi5lai/JoFlQjQI8uukauafP9CNrN7u69W9OIBLVfueaBptw==
+  dependencies:
+    "@dhis2/app-service-alerts" "3.14.4"
+    "@dhis2/app-service-config" "3.14.4"
+    "@dhis2/app-service-data" "3.14.4"
+    "@dhis2/app-service-offline" "3.14.4"
+    "@dhis2/app-service-plugin" "3.14.4"
+
 "@dhis2/app-service-alerts@3.14.1":
   version "3.14.1"
   resolved "https://registry.npmjs.org/@dhis2/app-service-alerts/-/app-service-alerts-3.14.1.tgz"
   integrity sha512-1vPs5e1UOB8t5vFvR3AWKoOdyRayUmAkt7ySSooJRY8BNKyJz27TtfdTgcHF6uGruNh9J3peJmCJoPQd0c2FaQ==
+
+"@dhis2/app-service-alerts@3.14.4":
+  version "3.14.4"
+  resolved "https://registry.yarnpkg.com/@dhis2/app-service-alerts/-/app-service-alerts-3.14.4.tgz#08352be174b59909664f991e0f91ffdb8e77850b"
+  integrity sha512-VWm794Kz9ntjIVFFKvvG0yt7ntXZw/qN0K2wmg+jaAMBeNGdxRCsnxDTMcAVN3POmAzD71X3X1jd7OfRumxGjQ==
 
 "@dhis2/app-service-config@3.14.1":
   version "3.14.1"
   resolved "https://registry.npmjs.org/@dhis2/app-service-config/-/app-service-config-3.14.1.tgz"
   integrity sha512-qFimzxHVvVoBf2+lh9gdh9DLujO7Ll4QWyFMQ7CFxBPgap5apVO8vXMo1agcccJuVkEaKkxaHgS7pvqBX1lmbg==
 
+"@dhis2/app-service-config@3.14.4":
+  version "3.14.4"
+  resolved "https://registry.yarnpkg.com/@dhis2/app-service-config/-/app-service-config-3.14.4.tgz#44a52b64c91f1252e4709c56f84d0347be45af8b"
+  integrity sha512-pX8GQJOZwztoiPZ1Fp1Uq5Z0bFSTpmp8IPZqWMWAoQtHuFMlqtBRGKODd8XsbazNSteg29jS+/oz+vT8Dfj+oA==
+
 "@dhis2/app-service-data@3.14.1":
   version "3.14.1"
   resolved "https://registry.npmjs.org/@dhis2/app-service-data/-/app-service-data-3.14.1.tgz"
   integrity sha512-jU3lU4JJLwyLH+otqFvtCsJTrVIoKD0W7BIpdq4NZnn4PRTuSHGktb4GgATAM8okiM7+Gb0GRBkAVX4IHEEjsg==
+  dependencies:
+    "@tanstack/react-query" "^4.36.1"
+
+"@dhis2/app-service-data@3.14.4":
+  version "3.14.4"
+  resolved "https://registry.yarnpkg.com/@dhis2/app-service-data/-/app-service-data-3.14.4.tgz#84e48f357f19bd8fc9a194a4381d1e1a58a41841"
+  integrity sha512-iyWMKkvWms+Lp8V/+V0PZhjynis9LtXzPoSfHwusB+cFPeBVDvxld8hW/BttGIX8ujPpYluljHSE4b1kfEzy2A==
   dependencies:
     "@tanstack/react-query" "^4.36.1"
 
@@ -1974,6 +2002,13 @@
   dependencies:
     lodash "^4.17.21"
 
+"@dhis2/app-service-offline@3.14.4":
+  version "3.14.4"
+  resolved "https://registry.yarnpkg.com/@dhis2/app-service-offline/-/app-service-offline-3.14.4.tgz#b0dd39fb20fc747a27dff39a9f929a8c68bd63f4"
+  integrity sha512-8NkzyDO0pn6/nCFnRBmtcxJSdOaLcFjM7OzkWkwEAlIaa7jgQZl09FLXt8bygU9ELtLkzHO2tuDCHR2ggDIhFA==
+  dependencies:
+    lodash "^4.17.21"
+
 "@dhis2/app-service-plugin@3.14.1":
   version "3.14.1"
   resolved "https://registry.npmjs.org/@dhis2/app-service-plugin/-/app-service-plugin-3.14.1.tgz"
@@ -1981,15 +2016,22 @@
   dependencies:
     post-robot "^10.0.46"
 
-"@dhis2/app-shell@12.6.0":
-  version "12.6.0"
-  resolved "https://registry.npmjs.org/@dhis2/app-shell/-/app-shell-12.6.0.tgz"
-  integrity sha512-s3oDHccGALZEb0sQFwyKntxD/B3viICv5jz8OmKsCPkPezhkz7afn1pq9EbK69dRuG+KrhWg0Hkx8vA6rRbPsA==
+"@dhis2/app-service-plugin@3.14.4":
+  version "3.14.4"
+  resolved "https://registry.yarnpkg.com/@dhis2/app-service-plugin/-/app-service-plugin-3.14.4.tgz#0742be93265d785dacea364556f5edd02c95c00f"
+  integrity sha512-XUWzNEC3MTyj/RPX+JLhkKNItkqwnLRkaqY2roMQNBHQFHB5m6KhHr07+tV+2TKMDBNul8LqDq0brFu7OUow/g==
   dependencies:
-    "@dhis2/app-adapter" "12.6.0"
-    "@dhis2/app-runtime" "^3.12.0"
+    post-robot "^10.0.46"
+
+"@dhis2/app-shell@12.6.3":
+  version "12.6.3"
+  resolved "https://registry.yarnpkg.com/@dhis2/app-shell/-/app-shell-12.6.3.tgz#3941b59d70b53efd9931830bc4ff2bb559e9e65c"
+  integrity sha512-VV9CKBG6eh/eHAO6Q5YjMRp94LN8+EeHLZfkcbRAoyc+6zOdMdx6WnROL25KcpA/69XphAWIjgWSwsA3WVQr5g==
+  dependencies:
+    "@dhis2/app-adapter" "12.6.3"
+    "@dhis2/app-runtime" "^3.14.3"
     "@dhis2/d2-i18n" "^1.1.1"
-    "@dhis2/pwa" "12.6.0"
+    "@dhis2/pwa" "12.6.3"
     "@dhis2/ui" "^10.1.7"
     classnames "^2.2.6"
     moment "^2.29.1"
@@ -2002,12 +2044,12 @@
     typeface-roboto "^0.0.75"
     typescript "^5.6.3"
 
-"@dhis2/cli-app-scripts@^12.6.0":
-  version "12.6.0"
-  resolved "https://registry.npmjs.org/@dhis2/cli-app-scripts/-/cli-app-scripts-12.6.0.tgz"
-  integrity sha512-xmDbnTpMSdB4GIr1YkK4cSWwUOkPQI2CMn/eA2ctrSBW5lZn9nbMr8TBK9z6DsVG9XLTUHUX7UhkxKJDTfTjcg==
+"@dhis2/cli-app-scripts@^12.6.3":
+  version "12.6.3"
+  resolved "https://registry.yarnpkg.com/@dhis2/cli-app-scripts/-/cli-app-scripts-12.6.3.tgz#25b9d54c63bc71a68af0a9597f67bdfb46d4fd4f"
+  integrity sha512-afO75S7IWJ39yFT1NXmenaPgllJNfSjyXE/ShLy7C/ZQ5oVcvy/toN/tw7FXve8Up5IHjSigRsd17XnsCjFScA==
   dependencies:
-    "@babel/core" "^7.6.2"
+    "@babel/core" "^7.26.0"
     "@babel/plugin-proposal-class-properties" "^7.8.3"
     "@babel/plugin-proposal-nullish-coalescing-operator" "^7.8.3"
     "@babel/plugin-proposal-optional-chaining" "^7.8.3"
@@ -2015,8 +2057,8 @@
     "@babel/plugin-syntax-flow" "^7.24.7"
     "@babel/preset-env" "^7.14.7"
     "@babel/preset-react" "^7.0.0"
-    "@babel/preset-typescript" "^7.6.0"
-    "@dhis2/app-shell" "12.6.0"
+    "@babel/preset-typescript" "^7.27.1"
+    "@dhis2/app-shell" "12.6.3"
     "@dhis2/cli-helpers-engine" "^3.2.2"
     "@jest/core" "^27.0.6"
     "@pmmmwh/react-refresh-webpack-plugin" "^0.5.4"
@@ -2138,10 +2180,10 @@
   resolved "https://registry.npmjs.org/@dhis2/prop-types/-/prop-types-3.1.2.tgz"
   integrity sha512-eM0jjLOWvtXWqSFp5YC4DHFpkP8Y1D2eUwGV7MBWjni+o27oesVan+oT7WHeOeLdlAd4acRJrnaaAyB4Ck1wGQ==
 
-"@dhis2/pwa@12.6.0":
-  version "12.6.0"
-  resolved "https://registry.npmjs.org/@dhis2/pwa/-/pwa-12.6.0.tgz"
-  integrity sha512-6KPDAfAlIz59wD9+KJt+AtCl/pHZie4PyGI4NIDflXoNd+WmjiKrJRZbecEDL9/Nloc5NOVBsSD1NwrclQiQWw==
+"@dhis2/pwa@12.6.3":
+  version "12.6.3"
+  resolved "https://registry.yarnpkg.com/@dhis2/pwa/-/pwa-12.6.3.tgz#affd094a73fcd87d01c207868c1797e6fe2f0e9c"
+  integrity sha512-S5AIP3SM/9EaRugb/w/YR4r5eHThk2ubghiYsrGmfcdD9N9Uo2rOLdF/cd3ILb9iQfVKXJLAfyVDQZjWPh96IQ==
   dependencies:
     idb "^6.0.0"
     workbox-precaching "^7.1.0"
