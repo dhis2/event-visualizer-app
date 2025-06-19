@@ -35,7 +35,8 @@
         "openapi-typescript-codegen": "^0.29.0",
         "start-server-and-test": "^2.0.12",
         "typescript": "^5",
-        "vitest": "^3.1.4"
+        "vitest": "^3.1.4",
+        "vitest-canvas-mock": "^0.3.3"
     },
     "dependencies": {
         "@dhis2/analytics": "^28.0.3",
