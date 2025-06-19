@@ -11,7 +11,7 @@ untagged and be run against all supported versions of DHIS2.
 
 DHIS2 officially supports the latest 3 released versions of DHIS2. For example: 2.40,
 2.41 and 2.42. Dev would then have version 2.41-SNAPSHOT. Therefore, the getExcludedTags
-alculates the range of tags based on minimum supported version + 3 (2.40, 2.1, 2.42, 2.43-SNAPSHOT)
+calculates the range of tags based on minimum supported version + 3 (2.40, 2.41, 2.42, 2.43-SNAPSHOT)
 With the minimum supported version of 2.40, the tags will always contain "40", "41" and "42",
 but the comparison symbols will depend on the current instance version.
 Allowed tag comparisons are ">", ">=", "<", "<="
