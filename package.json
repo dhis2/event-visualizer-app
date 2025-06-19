@@ -1,0 +1,47 @@
+{
+    "name": "event-visualizer-app",
+    "version": "0.0.1",
+    "description": "Event visualizer app and plugin",
+    "license": "BSD-3-Clause",
+    "private": true,
+    "scripts": {
+        "build": "d2-app-scripts build",
+        "start": "d2-app-scripts start",
+        "test": "vitest run",
+        "test:watch": "vitest",
+        "deploy": "d2-app-scripts deploy",
+        "lint": "d2-style check",
+        "format": "d2-style apply",
+        "generate-types": "chmod +x ./scripts/generate-types.sh && ./scripts/generate-types.sh",
+        "cy:open": "start-server-and-test 'yarn start' http://localhost:3000 'yarn cypress open --e2e'",
+        "cy:run": "start-server-and-test 'yarn start' http://localhost:3000 'yarn cypress run --browser chrome headless'",
+        "postinstall": "chmod +x ./scripts/postinstall.sh && ./scripts/postinstall.sh"
+    },
+    "devDependencies": {
+        "@dhis2/cli-app-scripts": "^12.6.0",
+        "@dhis2/cli-style": "^10.7.8",
+        "@dhis2/cypress-commands": "^10.1.0",
+        "@testing-library/dom": "^10.4.0",
+        "@testing-library/jest-dom": "^6.6.3",
+        "@testing-library/react": "^16.3.0",
+        "@types/jest": "^29.5.14",
+        "@types/prop-types": "^15",
+        "@types/react": "^18.3.23",
+        "@types/react-dom": "^18.3.7",
+        "@vitejs/plugin-react": "^4.5.0",
+        "cypress": "^14.4.0",
+        "cypress-tags": "^1.2.2",
+        "jsdom": "^26.1.0",
+        "openapi-typescript-codegen": "^0.29.0",
+        "start-server-and-test": "^2.0.12",
+        "typescript": "^5",
+        "vitest": "^3.1.4"
+    },
+    "dependencies": {
+        "@dhis2/app-runtime": "^3.14.1",
+        "prop-types": "^15.8.1",
+        "react": "^18.0.0",
+        "react-dom": "^18.0.0"
+    },
+    "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}

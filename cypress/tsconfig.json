@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "target": "es5",
+        "lib": ["es5", "dom"],
+        "sourceMap": true,
+        "allowJs": true,
+        "esModuleInterop": true,
+        "types": ["cypress", "node"],
+        "noEmit": true
+    },
+    "include": ["**/*.ts", "types"]
+}

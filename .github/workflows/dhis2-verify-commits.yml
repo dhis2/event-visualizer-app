@@ -1,0 +1,41 @@
+name: 'dhis2: verify (commits)'
+
+on:
+    pull_request:
+        types: ['opened', 'edited', 'reopened', 'synchronize']
+
+jobs:
+    lint-pr-title:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: lts/*
+                  cache: yarn
+            - run: yarn install --frozen-lockfile --ignore-scripts
+            - id: commitlint
+              run: |
+                  echo "CONFIG_PATH=$(node -e 'process.stdout.write(require("@dhis2/cli-style").config.commitlint)')" >> "$GITHUB_OUTPUT"
+            - run: echo "${{ github.event.pull_request.title }}" | npx commitlint --config ${{ steps.commitlint.outputs.CONFIG_PATH }}
+
+    lint-commits:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: lts/*
+
+            - name: Install dependencies
+              run: yarn install --frozen-lockfile --ignore-scripts
+
+            - id: commitlint
+              # This will return a config file with a .js extensions for @dhis2/cli-style v10
+              run: echo ::set-output name=config_path::$(node -e "process.stdout.write(require('@dhis2/cli-style').config.commitlint)")
+              # commitlint-github-action@v6+ requires a .mjs extension for the config file, so the highest version we can use is 5
+            - uses: wagoid/commitlint-github-action@v5
+              with:
+                  configFile: ${{ steps.commitlint.outputs.config_path }}

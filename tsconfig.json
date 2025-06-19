@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "noEmit": true,
+        "skipLibCheck": true,
+        "allowJs": true,
+        "jsx": "react",
+        "esModuleInterop": true,
+        "target": "ESNext",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "types": ["vitest/globals", "@testing-library/jest-dom"]
+    },
+    "include": ["src", "*.d.ts", "*.cjs", ".*.cjs", "vitest.*.ts"]
+}

@@ -1,0 +1,63 @@
+name: 'publish build to d2-ci'
+
+on:
+    push:
+        branches:
+            - master
+        tags:
+            - '*'
+
+env:
+    GIT_AUTHOR_NAME: '@dhis2-bot'
+    GIT_AUTHOR_EMAIL: 'apps@dhis2.org'
+    GIT_COMMITTER_NAME: '@dhis2-bot'
+    GIT_COMMITTER_EMAIL: 'apps@dhis2.org'
+    GH_TOKEN: ${{secrets.DHIS2_BOT_GITHUB_TOKEN}}
+    CI: true
+
+jobs:
+    publish-to-d2-ci:
+        if: |
+            ${{ !github.event.push.repository.fork }} &&
+            ${{ github.actor == 'dhis2-bot' && (github.ref == 'refs/heads/master' ||  startsWith(github.ref, 'refs/tags/')) }}
+
+        runs-on: ubuntu-latest
+        steps:
+            - name: Print GitHub event context
+              run: echo "$GITHUB_EVENT" | jq '.'
+              env:
+                  GITHUB_EVENT: ${{ toJson(github.event) }}
+
+            - name: Print GitHub ref
+              run: echo "GITHUB_REF is $GITHUB_REF"
+
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: lts/*
+
+            - name: Install
+              run: yarn install --frozen-lockfile --ignore-scripts
+
+            - name: Build
+              run: yarn d2-app-scripts build
+
+            - name: Copy build to d2-ci
+              uses: dhis2/deploy-build@master
+              with:
+                  build-dir: build/app
+                  github-token: ${{ secrets.DHIS2_BOT_GITHUB_TOKEN }}
+
+    report-deploy-failure:
+        runs-on: ubuntu-latest
+        needs: publish-to-d2-ci
+        if: ${{ failure() && !cancelled() }}
+        steps:
+            - name: Send failure message to analytics-internal-bot Slack channel
+              uses: rtCamp/action-slack-notify@v2
+              env:
+                  SLACK_WEBHOOK: ${{ secrets.SLACK_BACKEND_WEBHOOK }}
+                  SLACK_CHANNEL: 'analytics-internal-bot'
+                  SLACK_MESSAGE: 'Event Visualizer App failed to deploy to d2-ci'
+                  SLACK_COLOR: '#ff0000'

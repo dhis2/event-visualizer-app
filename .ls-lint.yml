@@ -1,0 +1,15 @@
+ls:
+    '{cypress,scripts,src,types}':
+        .dir: kebab-case
+        .ts: kebab-case
+        .test.ts: kebab-case
+        .tsx: kebab-case
+        .test.tsx: kebab-case
+        .d.ts: kebab-case
+        .cy.ts: kebab-case
+        .module.css: kebab-case
+        .sh: kebab-case
+        .json: kebab-case
+
+ignore:
+    - src/types/dhis2-openapi-schemas
