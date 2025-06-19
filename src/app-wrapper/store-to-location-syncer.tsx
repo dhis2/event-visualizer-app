@@ -1,12 +1,13 @@
-import { useEffect, useRef } from 'react'
-import queryString from 'query-string'
-import { useAppDispatch, useAppSelector } from '../hooks'
-import { setNavigationState } from '../store'
-import { history } from '../modules'
 import { Location } from 'history'
+import queryString from 'query-string'
+import { useEffect, useRef } from 'react'
+import { useAppDispatch, useAppSelector, useAppStore } from '../hooks'
+import { history } from '../modules'
+import { setNavigationState } from '../store'
 
 export const StoreToLocationSyncer = () => {
     const lastLocationRef = useRef<Location | null>(null)
+    const store = useAppStore()
     const dispatch = useAppDispatch()
     const { visualizationId, interpretationId } = useAppSelector(
         (state) => state.navigation
@@ -36,17 +37,26 @@ export const StoreToLocationSyncer = () => {
             dispatchEvent(popStateEvent)
 
             // APP RELATED CODE:
-            const visualizationId = location.pathname.slice(1) // remove leading "/"
+            const pathVisualizationId = location.pathname.slice(1) // remove leading "/"
+            const newVisualizationId = pathVisualizationId || 'new'
             const queryParams = queryString.parse(location.search)
+            const newInterpretationId =
+                // Ignore interpretationId in query param when on new path
+                newVisualizationId === 'new' ||
+                typeof queryParams.interpretationId !== 'string'
+                    ? null
+                    : queryParams.interpretationId
 
-            if (visualizationId) {
+            const { navigation } = store.getState()
+            const hasChanges =
+                newVisualizationId !== navigation.visualizationId ||
+                newInterpretationId !== navigation.interpretationId
+
+            if (hasChanges) {
                 dispatch(
                     setNavigationState({
-                        visualizationId: visualizationId,
-                        interpretationId:
-                            typeof queryParams.interpretation === 'string'
-                                ? queryParams.interpretation
-                                : null,
+                        visualizationId: newVisualizationId,
+                        interpretationId: newInterpretationId,
                     })
                 )
             }
@@ -61,11 +71,15 @@ export const StoreToLocationSyncer = () => {
         })
 
         return unlisten
-    }, [dispatch])
+    }, [dispatch, store])
 
     // Sync Redux → URL
     useEffect(() => {
-        if (!visualizationId) {
+        if (
+            !visualizationId ||
+            // Treat `/` and `/new` the same
+            (visualizationId === 'new' && history.location.pathname === '/')
+        ) {
             return
         }
         const currentPath = history.location.pathname + history.location.search

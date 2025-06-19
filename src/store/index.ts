@@ -25,4 +25,5 @@ export const createStore = (
 export type AppStore = ReturnType<typeof createStore>
 export type AppDispatch = AppStore['dispatch']
 export type RootState = ReturnType<AppStore['getState']>
+
 export * from './navigation-slice'
