@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import type { AppCachedData, DataEngine, MetadataStore } from '@types'
 import { api } from '../api'
+import { navigationReducer } from './navigation-slice'
 
 export const createStore = (
     engine: DataEngine,
@@ -10,6 +11,7 @@ export const createStore = (
     return configureStore({
         reducer: {
             [api.reducerPath]: api.reducer,
+            navigation: navigationReducer,
         },
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({
@@ -23,3 +25,4 @@ export const createStore = (
 export type AppStore = ReturnType<typeof createStore>
 export type AppDispatch = AppStore['dispatch']
 export type RootState = ReturnType<AppStore['getState']>
+export * from './navigation-slice'
