@@ -6,23 +6,40 @@ import React, {
     useSyncExternalStore,
     useMemo,
 } from 'react'
-
-type Primitive = string | number | boolean | null | undefined
-export type Metadata = { id: string } & Record<string, Primitive>
-
-type MetadataInput = Metadata | Metadata[] | Record<string, Metadata>
-
-type Subscriber = () => void
+import type {
+    MetadataInput,
+    MetadataStoreItem,
+    AnyMetadataItemInput,
+    Subscriber,
+} from './metadata-helpers'
+import {
+    isObject,
+    isSingleMetadataItemInput,
+    normalizeMetadataInputItem,
+    smartMergeWithChangeDetection,
+} from './metadata-helpers'
+import { getInitialMetadata } from './metadata-helpers/initial-metadata'
 
 class MetadataStore {
-    private map = new Map<string, Metadata>()
+    private map = new Map<string, MetadataStoreItem>()
     private subscribers = new Map<string, Set<Subscriber>>()
+    private initialMetadataKeys = new Set<string>()
 
-    getMetadataItem(key: string): Metadata | undefined {
+    constructor(initialMetadataItems?: Record<string, AnyMetadataItemInput>) {
+        if (initialMetadataItems) {
+            // Add initial metadata items to the store first
+            Object.entries(initialMetadataItems).forEach(([key, item]) => {
+                this.map.set(key, normalizeMetadataInputItem(item))
+                this.initialMetadataKeys.add(key)
+            })
+        }
+    }
+
+    getMetadataItem(key: string): MetadataStoreItem | undefined {
         return this.map.get(key)
     }
 
-    getMetadataItems(keys: string[]): (Metadata | undefined)[] {
+    getMetadataItems(keys: string[]): MetadataStoreItem[] | [] {
         return keys.map((key) => this.map.get(key))
     }
 
@@ -48,84 +65,33 @@ class MetadataStore {
         // Track ids of items that were actually updated
         const updatedMetadataIds = new Set<string>()
 
-        /**
-         * Validates and processes a single metadata item:
-         * - Ensures it is an object with a string id
-         * - Ensures all properties (except id) are primitives
-         * - Checks for any property changes or removals compared to previous item
-         * - Updates the map and updatedMetadataIds set if changed
-         */
-        const processMetadataItem = (metadataItem: unknown) => {
-            // Validate structure and id
-            if (
-                !metadataItem ||
-                typeof metadataItem !== 'object' ||
-                !('id' in metadataItem) ||
-                typeof (metadataItem as { id: unknown }).id !== 'string'
-            ) {
-                throw new Error(
-                    'Invalid metadata item: must be an object with a string id'
-                )
-            }
-            const metadataId = (metadataItem as { id: string }).id
-            const previousMetadataItem = this.map.get(metadataId)
-            let hasChanged = false
+        const processMetadataItem = (metadataInputItem: unknown) => {
+            const newMetadataStoreItem = normalizeMetadataInputItem(
+                metadataInputItem as AnyMetadataItemInput
+            )
+            const itemId = (newMetadataStoreItem as { id: string }).id
 
-            // Validate properties and check for changes
-            for (const [propertyName, propertyValue] of Object.entries(
-                metadataItem
-            )) {
-                // All properties except id must be primitives
-                if (
-                    propertyName !== 'id' &&
-                    typeof propertyValue !== 'string' &&
-                    typeof propertyValue !== 'number' &&
-                    typeof propertyValue !== 'boolean' &&
-                    propertyValue !== null &&
-                    propertyValue !== undefined
-                ) {
-                    throw new Error(
-                        `Metadata property '${propertyName}' must be a primitive value`
-                    )
-                }
-                // If any property value differs from previous, mark as changed
-                if (
-                    !previousMetadataItem ||
-                    previousMetadataItem[propertyName as keyof Metadata] !==
-                        propertyValue
-                ) {
-                    hasChanged = true
-                }
+            // Skip processing if this is an initial metadata item
+            if (this.initialMetadataKeys.has(itemId)) {
+                return
             }
 
-            // Check for removed properties: if any propertyName in previousMetadataItem is missing in new item, mark as changed
-            if (previousMetadataItem) {
-                for (const propertyName of Object.keys(previousMetadataItem)) {
-                    if (!(propertyName in metadataItem)) {
-                        hasChanged = true
-                        break
-                    }
-                }
-            }
-
-            // If changed, update the map and track the id
-            if (hasChanged) {
-                this.map.set(metadataId, metadataItem as Metadata)
-                updatedMetadataIds.add(metadataId)
+            const existingMetadataStoreItem = this.map.get(itemId)
+            const { hasChanges, mergedItem } = smartMergeWithChangeDetection(
+                existingMetadataStoreItem,
+                newMetadataStoreItem
+            )
+            if (hasChanges) {
+                this.map.set(itemId, mergedItem)
+                updatedMetadataIds.add(itemId)
             }
         }
 
         // Handle all input types: array, single object, or record
         if (Array.isArray(metadataInput)) {
             metadataInput.forEach(processMetadataItem)
-        } else if (
-            typeof metadataInput === 'object' &&
-            metadataInput !== null
-        ) {
-            if (
-                'id' in metadataInput &&
-                typeof (metadataInput as { id: unknown }).id === 'string'
-            ) {
+        } else if (isObject(metadataInput)) {
+            if (isSingleMetadataItemInput(metadataInput)) {
                 processMetadataItem(metadataInput)
             } else {
                 Object.values(metadataInput).forEach(processMetadataItem)
@@ -148,7 +114,9 @@ const MetadataContext = createContext<MetadataStore | null>(null)
 export const MetadataProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
-    const [metadataStore] = useState(() => new MetadataStore())
+    const [metadataStore] = useState(
+        () => new MetadataStore(getInitialMetadata())
+    )
     return (
         <MetadataContext.Provider value={metadataStore}>
             {children}
@@ -156,7 +124,9 @@ export const MetadataProvider: React.FC<{ children: React.ReactNode }> = ({
     )
 }
 
-export function useMetadataItem(metadataId: string): Metadata | undefined {
+export function useMetadataItem(
+    metadataId: string
+): MetadataStoreItem | undefined {
     const metadataStore = useContext(MetadataContext)!
     const result = useSyncExternalStore(
         useCallback(
@@ -170,7 +140,7 @@ export function useMetadataItem(metadataId: string): Metadata | undefined {
 
 export function useMetadataItems(
     metadataIds: string[]
-): (Metadata | undefined)[] {
+): MetadataStoreItem[] | [] {
     const metadataStore = useContext(MetadataContext)!
     // Sort keys for stable dependency array
     const sortedMetadataIds = useMemo(
@@ -181,7 +151,7 @@ export function useMetadataItems(
     // Cache the last snapshot to ensure stable reference
     const lastSnapshotRef = React.useRef<{
         ids: string[]
-        values: (Metadata | undefined)[]
+        values: MetadataStoreItem[] | undefined
     }>({
         ids: [],
         values: [],

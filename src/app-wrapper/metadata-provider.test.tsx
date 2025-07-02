@@ -28,7 +28,7 @@ function AddComponent() {
     return (
         <button
             data-test="add"
-            onClick={() => addMetadata({ id: 'a', displayName: 'Static Name' })}
+            onClick={() => addMetadata({ uid: 'a', name: 'Static Name' })}
         >
             add
         </button>
@@ -42,7 +42,7 @@ function StoreComponent() {
     return (
         <button
             data-test="store"
-            onClick={() => addMetadata({ id: 'b', value: 1 })}
+            onClick={() => addMetadata({ uid: 'b', name: 'Store Name' })}
         >
             {JSON.stringify([
                 getMetadataItem('a'),
@@ -82,7 +82,7 @@ describe('MetadataProvider rerender behavior (with renderHook)', () => {
             wrapper: ProviderWithComponents,
         })
         act(() => {
-            result.current({ id: 'a', displayName: 'First Name' })
+            result.current({ uid: 'a', name: 'First Name' })
         })
         expect(renders.item).toBe(2)
         expect(renders.items).toBe(2)
@@ -95,11 +95,11 @@ describe('MetadataProvider rerender behavior (with renderHook)', () => {
             wrapper: ProviderWithComponents,
         })
         act(() => {
-            result.current({ id: 'a', displayName: 'Same Name' })
+            result.current({ uid: 'a', name: 'Same Name' })
         })
         const prevRenders = { ...renders }
         act(() => {
-            result.current({ id: 'a', displayName: 'Same Name' })
+            result.current({ uid: 'a', name: 'Same Name' })
         })
         expect(renders.item).toBe(prevRenders.item)
         expect(renders.items).toBe(prevRenders.items)
@@ -112,7 +112,7 @@ describe('MetadataProvider rerender behavior (with renderHook)', () => {
             wrapper: ProviderWithComponents,
         })
         act(() => {
-            result.current({ id: 'b', displayName: 'Other Name' })
+            result.current({ uid: 'b', name: 'Other Name' })
         })
         expect(renders.item).toBe(1)
         expect(renders.items).toBe(2)
@@ -125,10 +125,10 @@ describe('MetadataProvider rerender behavior (with renderHook)', () => {
             wrapper: ProviderWithComponents,
         })
         act(() => {
-            result.current({ id: 'a', displayName: 'Name1' })
+            result.current({ uid: 'a', name: 'Name1' })
         })
         act(() => {
-            result.current({ id: 'b', displayName: 'Name2' })
+            result.current({ uid: 'b', name: 'Name2' })
         })
         expect(renders.add).toBe(1)
         expect(renders.store).toBe(1)
@@ -139,15 +139,15 @@ describe('MetadataProvider rerender behavior (with renderHook)', () => {
             wrapper: ProviderWithComponents,
         })
         act(() => {
-            result.current({ id: 'b', displayName: 'NameB' })
+            result.current({ uid: 'b', name: 'NameB' })
         })
         expect(renders.items).toBe(2)
         act(() => {
-            result.current({ id: 'a', displayName: 'NameA' })
+            result.current({ uid: 'a', name: 'NameA' })
         })
         expect(renders.items).toBe(3)
         act(() => {
-            result.current({ id: 'b', displayName: 'NameB' })
+            result.current({ uid: 'b', name: 'NameB' })
         })
         expect(renders.items).toBe(3)
     })
@@ -158,33 +158,75 @@ describe('MetadataProvider rerender behavior (with renderHook)', () => {
         })
         // Single object
         act(() => {
-            result.current.addMetadata({ id: 'x', displayName: 'X' })
+            result.current.addMetadata({ uid: 'x', name: 'X' })
         })
         expect(result.current.getMetadataItem('x')).toEqual({
             id: 'x',
-            displayName: 'X',
+            name: 'X',
+            aggregationType: undefined,
+            dimensionItemType: undefined,
+            dimensionType: undefined,
+            options: [],
+            totalAggregationType: undefined,
+            valueType: undefined,
         })
         // Array
         act(() => {
             result.current.addMetadata([
-                { id: 'y', displayName: 'Y' },
-                { id: 'z', displayName: 'Z' },
+                { uid: 'y', name: 'Y' },
+                { uid: 'z', name: 'Z' },
             ])
         })
         expect(result.current.getMetadataItems(['y', 'z'])).toEqual([
-            { id: 'y', displayName: 'Y' },
-            { id: 'z', displayName: 'Z' },
+            {
+                id: 'y',
+                name: 'Y',
+                aggregationType: undefined,
+                dimensionItemType: undefined,
+                dimensionType: undefined,
+                options: [],
+                totalAggregationType: undefined,
+                valueType: undefined,
+            },
+            {
+                id: 'z',
+                name: 'Z',
+                aggregationType: undefined,
+                dimensionItemType: undefined,
+                dimensionType: undefined,
+                options: [],
+                totalAggregationType: undefined,
+                valueType: undefined,
+            },
         ])
         // Record
         act(() => {
             result.current.addMetadata({
-                a: { id: 'a', displayName: 'A' },
-                b: { id: 'b', displayName: 'B' },
+                a: { uid: 'a', name: 'A' },
+                b: { uid: 'b', name: 'B' },
             })
         })
         expect(result.current.getMetadataItems(['a', 'b'])).toEqual([
-            { id: 'a', displayName: 'A' },
-            { id: 'b', displayName: 'B' },
+            {
+                id: 'a',
+                name: 'A',
+                aggregationType: undefined,
+                dimensionItemType: undefined,
+                dimensionType: undefined,
+                options: [],
+                totalAggregationType: undefined,
+                valueType: undefined,
+            },
+            {
+                id: 'b',
+                name: 'B',
+                aggregationType: undefined,
+                dimensionItemType: undefined,
+                dimensionType: undefined,
+                options: [],
+                totalAggregationType: undefined,
+                valueType: undefined,
+            },
         ])
     })
 })

@@ -3,6 +3,9 @@ export type {
     MeDto,
     OrganisationUnit,
     OrganisationUnitLevel,
+    ProgramType,
+    MetadataItem,
+    OptionSet,
 } from './dhis2-openapi-schemas'
 // Generated type is lacking "key" prefixes on the property names
 export type { SystemSettings } from './system-settings'
