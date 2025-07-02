@@ -249,16 +249,6 @@ describe('normalization', () => {
                     const input = {
                         uid: 'test-uid',
                         name: 'Test Item',
-                        code: undefined,
-                        description: undefined,
-                        style: undefined,
-                        options: undefined,
-                        aggregationType: undefined,
-                        dimensionItemType: undefined,
-                        dimensionType: undefined,
-                        totalAggregationType: undefined,
-                        valueType: undefined,
-                        indicatorType: undefined,
                     }
                     const result = normalizeMetadataInputItem(input as any)
 
@@ -293,7 +283,7 @@ describe('normalization', () => {
                         id: 'test-uid',
                         name: 'Test Item',
                         options: [], // Should default to empty array
-                        style: {},   // Should default to empty object
+                        style: {}, // Should default to empty object
                     })
                 })
 
@@ -397,11 +387,6 @@ describe('normalization', () => {
                         id: 'optset1',
                         name: 'Test Option Set',
                         options: [{ id: 'opt1', name: 'Option 1' }],
-                        code: undefined,
-                        description: undefined,
-                        created: undefined,
-                        lastUpdated: undefined,
-                        valueType: undefined,
                     }
                     const result = normalizeMetadataInputItem(input as any)
 
