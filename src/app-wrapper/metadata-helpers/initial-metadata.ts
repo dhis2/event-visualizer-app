@@ -53,11 +53,8 @@ export function getInitialMetadata(): Record<string, AnyMetadataItemInput> {
     return Object.entries({
         ...getRelativePeriods(),
         ...getOrganisationUnits(),
-    }).reduce(
-        (obj, [key, value]) => ({
-            ...obj,
-            [key]: { [key]: value }, // SimpleMetadataItem: single key-value pair
-        }),
-        {}
-    )
+    }).reduce((obj, [key, value]) => {
+        obj[key] = { [key]: value } // SimpleMetadataItem: single key-value pair
+        return obj
+    }, {})
 }
