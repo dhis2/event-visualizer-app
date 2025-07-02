@@ -19,6 +19,7 @@ describe('normalization', () => {
                     code: 'TEST',
                     description: 'Test description',
                     options: [],
+                    style: {},
                 })
             })
 
@@ -237,6 +238,7 @@ describe('normalization', () => {
                         name: 'Test Item',
                         code: 'TEST',
                         options: [],
+                        style: {},
                     })
                     expect((result as any).unknownProperty).toBeUndefined()
                     expect((result as any).anotherUnknown).toBeUndefined()
@@ -250,17 +252,68 @@ describe('normalization', () => {
                         code: undefined,
                         description: undefined,
                         style: undefined,
+                        options: undefined,
+                        aggregationType: undefined,
+                        dimensionItemType: undefined,
+                        dimensionType: undefined,
+                        totalAggregationType: undefined,
+                        valueType: undefined,
+                        indicatorType: undefined,
                     }
                     const result = normalizeMetadataInputItem(input as any)
 
                     expect(result).toEqual({
                         id: 'test-uid',
                         name: 'Test Item',
+                        // Complex fields should be defaulted to empty structures
                         options: [],
+                        style: {},
                     })
+                    // Primitive fields should be omitted when undefined
                     expect((result as any).code).toBeUndefined()
                     expect((result as any).description).toBeUndefined()
-                    expect((result as any).style).toBeUndefined()
+                    expect((result as any).aggregationType).toBeUndefined()
+                    expect((result as any).dimensionItemType).toBeUndefined()
+                    expect((result as any).dimensionType).toBeUndefined()
+                    expect((result as any).totalAggregationType).toBeUndefined()
+                    expect((result as any).valueType).toBeUndefined()
+                    // Complex objects with required properties should be omitted when undefined
+                    expect((result as any).indicatorType).toBeUndefined()
+                })
+
+                it('should default complex array and object fields to empty structures', () => {
+                    const input = {
+                        uid: 'test-uid',
+                        name: 'Test Item',
+                        // Not providing options and style at all
+                    }
+                    const result = normalizeMetadataInputItem(input as any)
+
+                    expect(result).toEqual({
+                        id: 'test-uid',
+                        name: 'Test Item',
+                        options: [], // Should default to empty array
+                        style: {},   // Should default to empty object
+                    })
+                })
+
+                it('should preserve provided complex fields', () => {
+                    const input = {
+                        uid: 'test-uid',
+                        name: 'Test Item',
+                        options: [{ key: 'value' }],
+                        style: { color: 'red', icon: 'star' },
+                        indicatorType: { factor: 1, name: 'Type1' },
+                    }
+                    const result = normalizeMetadataInputItem(input as any)
+
+                    expect(result).toEqual({
+                        id: 'test-uid',
+                        name: 'Test Item',
+                        options: [{ key: 'value' }],
+                        style: { color: 'red', icon: 'star' },
+                        indicatorType: { factor: 1, name: 'Type1' },
+                    })
                 })
             })
 
@@ -579,6 +632,7 @@ describe('normalization', () => {
                         id: 'test-uid',
                         name: 'Test Item',
                         options: [],
+                        style: {},
                     })
                     expect((result as any).someFlag).toBeUndefined()
                     expect((result as any).anotherFlag).toBeUndefined()
@@ -597,6 +651,7 @@ describe('normalization', () => {
                         id: 'test-uid',
                         name: 'Test Item',
                         options: [],
+                        style: {},
                     })
                     expect((result as any).numericProperty).toBeUndefined()
                     expect((result as any).floatProperty).toBeUndefined()
@@ -630,6 +685,7 @@ describe('normalization', () => {
                         name: longString,
                         description: longString,
                         options: [],
+                        style: {},
                     })
                 })
 

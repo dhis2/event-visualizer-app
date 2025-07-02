@@ -20,14 +20,24 @@ export function normalizeMetadataItem(
 ): Omit<MetadataItem, 'uid'> & { id: string } {
     const result: Partial<Omit<MetadataItem, 'uid'> & { id: string }> = {
         id: input.uid || '', // Convert uid to id
-        aggregationType: input.aggregationType,
-        dimensionItemType: input.dimensionItemType,
-        dimensionType: input.dimensionType,
-        totalAggregationType: input.totalAggregationType,
-        valueType: input.valueType,
     }
 
     // Copy over optional primitive properties that exist in the input
+    if (input.aggregationType !== undefined) {
+        result.aggregationType = input.aggregationType
+    }
+    if (input.dimensionItemType !== undefined) {
+        result.dimensionItemType = input.dimensionItemType
+    }
+    if (input.dimensionType !== undefined) {
+        result.dimensionType = input.dimensionType
+    }
+    if (input.totalAggregationType !== undefined) {
+        result.totalAggregationType = input.totalAggregationType
+    }
+    if (input.valueType !== undefined) {
+        result.valueType = input.valueType
+    }
     if (input.code !== undefined) {
         result.code = input.code
     }
@@ -50,14 +60,14 @@ export function normalizeMetadataItem(
         result.legendSet = input.legendSet
     }
 
-    // Copy over optional complex properties, defaulting to empty if not present
+    // Copy over optional complex object properties that exist in the input
     if (input.indicatorType !== undefined) {
         result.indicatorType = input.indicatorType
     }
-    if (input.style !== undefined) {
-        result.style = input.style
-    }
-    result.options = input.options || []
+
+    // Handle complex properties, defaulting to empty array/object if not present
+    result.options = input.options !== undefined ? input.options : []
+    result.style = input.style !== undefined ? input.style : {}
 
     return result as Omit<MetadataItem, 'uid'> & { id: string }
 }

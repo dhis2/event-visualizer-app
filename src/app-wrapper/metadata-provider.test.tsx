@@ -163,12 +163,8 @@ describe('MetadataProvider rerender behavior (with renderHook)', () => {
         expect(result.current.getMetadataItem('x')).toEqual({
             id: 'x',
             name: 'X',
-            aggregationType: undefined,
-            dimensionItemType: undefined,
-            dimensionType: undefined,
             options: [],
-            totalAggregationType: undefined,
-            valueType: undefined,
+            style: {},
         })
         // Array
         act(() => {
@@ -181,22 +177,14 @@ describe('MetadataProvider rerender behavior (with renderHook)', () => {
             {
                 id: 'y',
                 name: 'Y',
-                aggregationType: undefined,
-                dimensionItemType: undefined,
-                dimensionType: undefined,
                 options: [],
-                totalAggregationType: undefined,
-                valueType: undefined,
+                style: {},
             },
             {
                 id: 'z',
                 name: 'Z',
-                aggregationType: undefined,
-                dimensionItemType: undefined,
-                dimensionType: undefined,
                 options: [],
-                totalAggregationType: undefined,
-                valueType: undefined,
+                style: {},
             },
         ])
         // Record
@@ -210,22 +198,14 @@ describe('MetadataProvider rerender behavior (with renderHook)', () => {
             {
                 id: 'a',
                 name: 'A',
-                aggregationType: undefined,
-                dimensionItemType: undefined,
-                dimensionType: undefined,
                 options: [],
-                totalAggregationType: undefined,
-                valueType: undefined,
+                style: {},
             },
             {
                 id: 'b',
                 name: 'B',
-                aggregationType: undefined,
-                dimensionItemType: undefined,
-                dimensionType: undefined,
                 options: [],
-                totalAggregationType: undefined,
-                valueType: undefined,
+                style: {},
             },
         ])
     })
