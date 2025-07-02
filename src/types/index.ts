@@ -1,4 +1,11 @@
+/* ONLY PLACE GENERAL TYPES HERE WHICH ARE USED THROUGHOUT THE APP
+ * Types exported from here can be imported as follows:
+ * `import type { MyType } from '@types'` */
 import type { ContextType } from '@dhis2/app-service-data'
+/* We have an ESLint rule in place to prevent imports from
+ * `src/types/dhis2-openapi-schemas` anywhere else in the codebase.
+ * The reason for this is so that we can apply manual overrides
+ * for generated types here, as we have done for `SystemSettings` */
 export type {
     MeDto,
     OrganisationUnit,
@@ -14,7 +21,7 @@ export type { SystemSettings } from './system-settings'
  * equivalent, representation of the ResourceQuery internal to
  * @dhis2/app-service-data. The Query and Mutation types in that lib have
  * support for dynamic variables (functions), which we do not need because
- * RTK Query allows query object to be produced during runtime. The also
+ * RTK Query allows query object to be produced during runtime. They also
  * support some hypothetical variable types that currently are unsupported.
  * As such we could actually opt for manually creating a Query and Mutation
  * type here as well, which would produce more readable type hints */
