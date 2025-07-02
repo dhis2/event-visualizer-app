@@ -17,7 +17,6 @@ module.exports = {
                         group: [
                             '**/types/dhis2-openapi-schemas',
                             '**/types/dhis2-openapi-schemas/*',
-                            '!./src/types/index.ts', // Allow the index to import them
                         ],
                         message:
                             "Please import types from '@types' instead of directly from generated files.",
@@ -26,4 +25,12 @@ module.exports = {
             },
         ],
     },
+    overrides: [
+        {
+            files: ['src/types/index.ts'],
+            rules: {
+                'no-restricted-imports': 'off',
+            },
+        },
+    ],
 }
