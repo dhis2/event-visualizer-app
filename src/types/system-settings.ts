@@ -1,8 +1,4 @@
-/* This file exists because the generated file has all the right properties
- * but they are all missing the "key" prefix. */
-/* istanbul ignore file */
-/* tslint:disable */
-/* eslint-disable */
+// Generated type is lacking "key" prefixes on the property names
 import type {
     AnalyticsCacheTtlMode,
     AnalyticsFinancialYearStartKey,

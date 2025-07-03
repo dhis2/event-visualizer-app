@@ -1,16 +1,4 @@
-import type {
-    MetadataItem as OpenApiMetadataItem,
-    ProgramType,
-    OptionSet,
-} from '@types'
-
-// MetadataItem from OpenApiSpecs has a lot of required properties that are
-// optional in the analytics API, so we make them optional with the Partial helper.
-// But we do require uid and name
-export type MetadataItem = Partial<OpenApiMetadataItem> & {
-    uid: string
-    name: string
-}
+import type { MetadataItem, ProgramType, OptionSet } from '@types'
 
 // OptionSet type from the OpenApiSpecs is very permissive, but we require name and id
 export type OptionSetMetadataItem = OptionSet & {
@@ -41,10 +29,12 @@ export type AnyMetadataItemInput =
     | ProgramMetadataItem
     | OptionSetMetadataItem
 
+export type NormalizedMetadataItem = Omit<MetadataItem, 'uid'> & { id: string }
+
 // Before inserting into the store we normalise the data so that we always have an id and name field and never a uid field
 export type MetadataStoreItem =
-    | (Omit<MetadataItem, 'uid'> & { id: string })
-    | OpenApiMetadataItem
+    | NormalizedMetadataItem
+    | OptionSetMetadataItem
     | ProgramMetadataItem
 
 export type MetadataInput =

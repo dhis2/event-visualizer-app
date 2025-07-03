@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-restricted-imports
 import { useDataEngine } from '@dhis2/app-service-data'
 import React, { FC, ReactNode, useState } from 'react'
 import { Provider } from 'react-redux'

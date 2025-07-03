@@ -1,4 +1,4 @@
-import type { MetadataItem as OpenApiMetadataItem } from '@types'
+import type { MetadataItem } from '@types'
 import {
     isMetadataItem,
     isSimpleMetadataItem,
@@ -7,19 +7,20 @@ import {
 } from './type-guards'
 import type {
     AnyMetadataItemInput,
-    MetadataItem,
     SimpleMetadataItem,
     ProgramMetadataItem,
     OptionSetMetadataItem,
     MetadataStoreItem,
+    NormalizedMetadataItem,
 } from './types'
 
 // Normalization helper functions for each input type
 export function normalizeMetadataItem(
     input: MetadataItem
-): Omit<MetadataItem, 'uid'> & { id: string } {
-    const result: Partial<Omit<MetadataItem, 'uid'> & { id: string }> = {
-        id: input.uid || '', // Convert uid to id
+): NormalizedMetadataItem {
+    const result: NormalizedMetadataItem = {
+        id: input.uid, // Convert uid to id
+        name: input.name,
     }
 
     // Copy over optional primitive properties that exist in the input
@@ -74,15 +75,15 @@ export function normalizeMetadataItem(
 
 export function normalizeSimpleMetadataItem(
     input: SimpleMetadataItem
-): OpenApiMetadataItem {
+): NormalizedMetadataItem {
     // Get the single key-value pair from the simple metadata item
     const [key, value] = Object.entries(input)[0]
 
-    // Create minimal OpenApiMetadataItem using the key as id and value as name
+    // Create minimal NormalizedMetadataItem using the key as id and value as name
     return {
         id: key,
         name: value,
-    } as unknown as OpenApiMetadataItem
+    } as unknown as NormalizedMetadataItem
 }
 
 export function normalizeProgramMetadataItem(
@@ -111,8 +112,8 @@ export function normalizeProgramMetadataItem(
 
 export function normalizeOptionSetMetadataItem(
     input: OptionSetMetadataItem
-): OpenApiMetadataItem {
-    // Create OpenApiMetadataItem from OptionSet using type assertion for complex mapping
+): NormalizedMetadataItem {
+    // Create NormalizedMetadataItem from OptionSet using type assertion for complex mapping
     const result = {
         id: input.id,
         name: input.name || '',
@@ -128,7 +129,7 @@ export function normalizeOptionSetMetadataItem(
         translations: input.translations || [],
     }
 
-    return result as unknown as OpenApiMetadataItem
+    return result as unknown as NormalizedMetadataItem
 }
 
 export function normalizeMetadataInputItem(

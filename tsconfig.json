@@ -17,5 +17,12 @@
             "@types": ["src/types/index"]
         }
     },
-    "include": ["src", "*.d.ts", "*.cjs", ".*.cjs", "vitest.*.ts"]
+    "include": [
+        "src",
+        "*.d.ts",
+        "*.cjs",
+        ".*.cjs",
+        "vitest.*.ts",
+        ".eslintrc.js"
+    ]
 }

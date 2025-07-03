@@ -1,6 +1,6 @@
+import type { MetadataItem } from '@types'
 import type {
     AnyMetadataItemInput,
-    MetadataItem,
     SimpleMetadataItem,
     ProgramMetadataItem,
     OptionSetMetadataItem,

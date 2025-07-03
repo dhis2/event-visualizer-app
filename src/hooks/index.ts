@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-restricted-imports
 import { useDispatch, useSelector, useStore } from 'react-redux'
 import { api } from '../api'
 import type { RootState, AppDispatch, AppStore } from '../store'

@@ -6,16 +6,12 @@ import type { ContextType } from '@dhis2/app-service-data'
  * `src/types/dhis2-openapi-schemas` anywhere else in the codebase.
  * The reason for this is so that we can apply manual overrides
  * for generated types here, as we have done for `SystemSettings` */
-export type {
-    MeDto,
-    OrganisationUnit,
-    OrganisationUnitLevel,
-    ProgramType,
-    MetadataItem,
-    OptionSet,
-} from './dhis2-openapi-schemas'
-// Generated type is lacking "key" prefixes on the property names
+/* eslint-disable import/export */
+export type * from './dhis2-openapi-schemas'
 export type { SystemSettings } from './system-settings'
+export type { MetadataItem } from './metadata-item'
+/* eslint-enable import/export */
+export type { PickWithFieldFilters } from './pick-with-field-filters'
 
 /* The SingleQuery type is a simpler, but for our use-case functionally
  * equivalent, representation of the ResourceQuery internal to
