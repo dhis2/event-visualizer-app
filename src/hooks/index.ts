@@ -25,3 +25,7 @@ export const {
     useLazyQueryQuery: useRtkLazyQuery,
     useMutateMutation: useRtkMutation,
 } = api
+
+export type UseRtkQueryResult = ReturnType<typeof useRtkQuery>
+export type UseRtkLazyQueryResult = ReturnType<typeof useRtkLazyQuery>
+export type UseRtkMutationResult = ReturnType<typeof useRtkMutation>
