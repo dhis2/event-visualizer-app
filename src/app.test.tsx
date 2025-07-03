@@ -1,13 +1,14 @@
-import { CustomDataProvider } from '@dhis2/app-runtime'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { describe, it, expect } from 'vitest'
 import App from './app'
+import { useRtkQuery } from './hooks'
+import { createUseRtkQueryMockReturnValue } from './test-utils'
 
 vi.mock('./hooks', async (importOriginal) => {
     return {
         ...(await importOriginal<typeof import('./hooks')>()),
-        useRtkQuery: vi.fn(() => ({})),
+        useRtkQuery: vi.fn(),
         useSystemSettings: vi.fn(() => ({})),
     }
 })
@@ -15,28 +16,16 @@ vi.mock('./app-wrapper', () => ({
     AppWrapper: ({ children }) => children,
 }))
 
-const customData = {
-    me: {
-        name: 'John Doe',
-        username: 'john_doe',
-        settings: {
-            keyUiLocale: 'en',
-        },
-        authorities: ['ALL'],
-    },
-}
-
 describe('App', () => {
     it('renders correctly', async () => {
-        render(
-            <CustomDataProvider data={customData}>
-                <App />
-            </CustomDataProvider>
+        vi.mocked(useRtkQuery).mockReturnValue(
+            createUseRtkQueryMockReturnValue({
+                data: { name: 'John Doe' },
+            })
         )
+        render(<App />)
 
-        await waitFor(() => {
-            const element = screen.getByText('Hello John Doe')
-            expect(element).toBeInTheDocument()
-        })
+        const element = screen.getByText('Hello John Doe')
+        expect(element).toBeInTheDocument()
     })
 })

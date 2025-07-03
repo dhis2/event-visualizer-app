@@ -18,8 +18,6 @@ const EventVisualizer: FC = () => {
     const rtkqQuerySimple = useRtkQuery(query.me)
     const systemSettings = useSystemSettings()
 
-    console.log(rtkqQuery, systemSettings)
-
     if (rtkqQuery.error) {
         return <span>{i18n.t('ERROR')}</span>
     }
@@ -32,6 +30,7 @@ const EventVisualizer: FC = () => {
 
     console.log('RTKQ Data (nested):', rtkqQuery.data)
     console.log('RTKQ Data (simple):', rtkqQuerySimple.data)
+    console.log('systemSettings', systemSettings)
 
     return (
         <div className={classes.container}>
