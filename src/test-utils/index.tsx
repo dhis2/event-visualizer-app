@@ -3,6 +3,8 @@ import { render } from '@testing-library/react'
 import type { RootState } from '@types'
 import React, { PropsWithChildren } from 'react'
 import { Provider } from 'react-redux'
+import { vi } from 'vitest'
+import { UseRtkQueryResult } from '../hooks'
 
 export function setupStore(
     reducer: Partial<ReducersMapObject<RootState>>,
@@ -28,4 +30,17 @@ export function renderWithReduxStoreProvider(
     )
 
     return render(ui, { wrapper: Wrapper })
+}
+
+export function createUseRtkQueryMockReturnValue(
+    payload: Partial<UseRtkQueryResult>
+): UseRtkQueryResult {
+    return {
+        data: {},
+        refetch: vi.fn(),
+        isLoading: false,
+        isError: false,
+        error: undefined,
+        ...payload,
+    } as UseRtkQueryResult
 }
