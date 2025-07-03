@@ -48,6 +48,10 @@ echo "💅 Formatting output..."
 # so just send it to the bit bucket
 npx prettier --write "$OUTPUT_DIR" >/dev/null
 
+# Remove eslint-disable comments from generated files
+echo "🧹 Removing eslint-disable comments..."
+find "$OUTPUT_DIR" -name '*.ts' -type f -exec sed -i '' '/^\/\* eslint-disable \*\/$/d' {} \;
+
 # Cleanup
 echo "🧹 Cleaning up..."
 rm -rf "$TEMP_DIR"

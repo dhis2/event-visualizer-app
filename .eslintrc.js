@@ -12,6 +12,7 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
         'plugin:import/typescript',
     ],
+    reportUnusedDisableDirectives: false,
     rules: {
         'import/extensions': 'off',
         'no-restricted-imports': [
@@ -47,6 +48,20 @@ module.exports = {
         ],
     },
     overrides: [
+        {
+            files: ['src/locales/index.js'],
+            rules: {
+                'import/order': 'off',
+            },
+        },
+        {
+            files: ['src/types/dhis2-openapi-schemas/**/*'],
+            rules: {
+                // Disable TypeScript rules that are violated in generated code
+                '@typescript-eslint/no-explicit-any': 'off',
+                '@typescript-eslint/no-namespace': 'off',
+            },
+        },
         {
             files: ['src/types/index.ts'],
             rules: {
