@@ -18,7 +18,7 @@
         "postinstall": "chmod +x ./scripts/postinstall.sh && ./scripts/postinstall.sh"
     },
     "devDependencies": {
-        "@dhis2/cli-app-scripts": "^12.6.0",
+        "@dhis2/cli-app-scripts": "^12.6.4",
         "@dhis2/cli-style": "^10.7.8",
         "@dhis2/cypress-commands": "^10.1.0",
         "@testing-library/dom": "^10.4.0",
