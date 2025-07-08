@@ -11,7 +11,7 @@ import type {
 import { EngineError, parseEngineError } from './parse-engine-error'
 
 // cater for both queries and mutations
-type EngineArgs = Query | Mutation | SingleQuery
+export type EngineArgs = Query | Mutation | SingleQuery
 type EngineResult = QueryResult | MutationResult
 type ThunkExtraArg = {
     engine: DataEngine
@@ -20,6 +20,13 @@ type ThunkExtraArg = {
 }
 // Inform TS that an instance of the DataEngine is available on api.extra.engine
 export type BaseQueryApiWithExtraArg = BaseQueryApi & { extra: ThunkExtraArg }
+export type CustomBaseQueryFn = BaseQueryFn<
+    EngineArgs,
+    EngineResult,
+    EngineError,
+    object, // base query options
+    BaseQueryApiWithExtraArg
+>
 
 const isMutation = (args: EngineArgs): args is Mutation =>
     typeof (args as Mutation).type === 'string'
@@ -27,13 +34,10 @@ const isMutation = (args: EngineArgs): args is Mutation =>
 const isSingleQuery = (args: EngineArgs): args is SingleQuery =>
     !isMutation(args) && typeof (args as SingleQuery).resource === 'string'
 
-export const customBaseQuery: BaseQueryFn<
-    EngineArgs,
-    EngineResult,
-    EngineError,
-    object, // base query options
-    BaseQueryApiWithExtraArg
-> = async (args: EngineArgs, api: BaseQueryApiWithExtraArg) => {
+export const customBaseQuery: CustomBaseQueryFn = async (
+    args: EngineArgs,
+    api: BaseQueryApiWithExtraArg
+) => {
     const { engine } = api.extra
 
     try {
