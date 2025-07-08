@@ -119,6 +119,110 @@ In most cases, using the generic hooks is probably the best solution, but there 
 -   Requests to resources outside of the DHIS2 Web API scope (not on `${baseUrl}/api/${version}`)
 -   Common requests, this is not required, but it makes sense to also generate a dedicated api-endpoint for requests that occur across multiple places in the codebase. By having a custom endpoint with a predefined type for the returned data, the consuming component does not have to declare a type, so this avoids repetition.
 
+#### Examples
+
+**1. Using `useRtkQuery` for simple data fetching:**
+
+```typescript
+import React from 'react'
+import { useRtkQuery } from '../hooks'
+import type { MeDto, PickWithFieldFilters } from '@types'
+
+const fieldsFilter = ['id', 'name', 'email', 'settings'] as const
+
+type CurrentUserData = PickWithFieldFilters<MeDto, typeof fieldsFilter>
+
+const UserProfileComponent = () => {
+    const { data, isLoading, error } = useRtkQuery({
+        resource: 'me',
+        params: {
+            fields: [...fieldsFilter],
+        },
+    })
+
+    if (isLoading) {
+        return <div>Loading user profile...</div>
+    }
+    if (error) {
+        return <div>Error loading profile: {error.message}</div>
+    }
+
+    // Type assertion to ensure proper typing based on our field filter
+    const typedData = data as CurrentUserData
+
+    return <div>Welcome, {typedData?.name}!</div>
+}
+```
+
+**2. Using `injectEndpoints` for analytics requests:**
+
+```typescript
+// In /src/api/api.ts
+import { Analytics } from '@dhis2/analytics'
+
+export const analyticsApi = api.injectEndpoints({
+    endpoints: (builder) => ({
+        fetchAnalytics: builder.query<
+            AnalyticsResponse,
+            { visualization: Visualization; options?: any }
+        >({
+            queryFn: async ({ visualization, options = {} }, { extra }) => {
+                try {
+                    const analyticsEngine = Analytics.getAnalytics(extra.engine)
+                    const req = new analyticsEngine.request()
+                        .fromVisualization(visualization)
+                        .withParameters(options)
+                        .withIncludeNumDen(visualization.type === 'PIVOT_TABLE')
+
+                    const rawResponse = await analyticsEngine.aggregate.get(req)
+                    return { data: new analyticsEngine.response(rawResponse) }
+                } catch (error) {
+                    return { error: { message: error.message } }
+                }
+            },
+        }),
+    }),
+})
+
+export const { useFetchAnalyticsQuery } = analyticsApi
+```
+
+**3. Using `useRtkMutation` for creating data:**
+
+```typescript
+import React from 'react'
+import { useRtkMutation } from '../hooks'
+
+const CreateIndicatorButton = ({ onSuccess }) => {
+    const [createIndicator, { isLoading }] = useRtkMutation({
+        resource: 'indicators',
+        type: 'create',
+        data: ({ name }) => ({
+            name,
+            shortName: name,
+            indicatorType: { id: 'bWuNrMHEoZ0' },
+            numerator: '#{fbfJHSPpUQD}',
+            denominator: '#{h0xKKjijTdI}',
+        }),
+    })
+
+    const handleClick = async () => {
+        try {
+            await createIndicator({ name: 'New Event Indicator' }).unwrap()
+            onSuccess?.()
+        } catch (error) {
+            console.error('Failed to create indicator:', error)
+        }
+    }
+
+    return (
+        <button onClick={handleClick} disabled={isLoading}>
+            {isLoading ? 'Creating...' : 'Create Indicator'}
+        </button>
+    )
+}
+```
+
 ### Testing Guidelines
 
 When writing tests, please follow these guidelines:
