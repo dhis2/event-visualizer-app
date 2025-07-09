@@ -100,6 +100,9 @@ export function useRtkQuery<TData = unknown>(
     } else if (queryResult.isSuccess) {
         return queryResult as IsSuccessRtkQueryResult<TData>
     } else {
+        /* If you encounter this error, it simply means there is
+         * yet another valid combination of state fields that needs to
+         * be taken into account in a new `else if` block  */
         throw new Error(
             'useRtkQuery encountered an unexpected query result state'
         )
