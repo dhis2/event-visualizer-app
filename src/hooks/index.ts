@@ -14,14 +14,14 @@ export {
     useRootOrgUnits,
     useOrgUnitLevels,
 } from '../app-wrapper/app-cached-data-query-provider'
+/* Note that useRtkQuery and useRtkLazyQuery accept both a complex query object
+ * (as useDataQuery from @dhis2/app-runtime) which can be used to query multiple
+ * resource at once, as well as a simple query object which can be used to query
+ * one resource at a time. The advantage of adding this is that you avoid having
+ * to work with nested objects in the query definition or the data. */
 export { useRtkQuery } from './use-rtk-query'
 export { useRtkLazyQuery } from './use-rtk-lazy-query'
 
-/* Note that useRtkQuery accepts both a complex query object (as useDataQuery
- * from @dhis2/app-runtime) which can be used to query multiple resource at once,
- * as well as a simple query object which can be used to query one resource at a
- * time. The advantage of adding this is that you avoid having to work with nested
- * objects in the query definition or the data. */
 export const { useMutateMutation: useRtkMutation } = api
 
 export type UseRtkMutationResult = ReturnType<typeof useRtkMutation>
