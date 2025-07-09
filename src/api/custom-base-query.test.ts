@@ -26,7 +26,7 @@ describe('customBaseQuery', () => {
 
     it('returns data for a successful query', async () => {
         const api = { extra: { engine } } as unknown as BaseQueryApiWithExtraArg
-        const result = await customBaseQuery(queryArgs, api, undefined)
+        const result = await customBaseQuery(queryArgs, api, {})
         expect(engine.query).toHaveBeenCalledWith(queryArgs)
         expect(result).toEqual({ data: mockQueryResult })
     })
@@ -38,14 +38,14 @@ describe('customBaseQuery', () => {
         const queryMock = engine.query as ReturnType<typeof vi.fn>
         queryMock.mockResolvedValueOnce(singleQueryResult)
         const api = { extra: { engine } } as unknown as BaseQueryApiWithExtraArg
-        const result = await customBaseQuery(singleQueryArgs, api, undefined)
+        const result = await customBaseQuery(singleQueryArgs, api, {})
         expect(engine.query).toHaveBeenCalledWith({ data: singleQueryArgs })
         expect(result).toEqual({ data: singleQueryResult.data })
     })
 
     it('returns data for a successful mutation', async () => {
         const api = { extra: { engine } } as unknown as BaseQueryApiWithExtraArg
-        const result = await customBaseQuery(mutationArgs, api, undefined)
+        const result = await customBaseQuery(mutationArgs, api, {})
         expect(engine.mutate).toHaveBeenCalledWith(mutationArgs)
         expect(result).toEqual({ data: mockMutationResult })
     })
@@ -54,7 +54,7 @@ describe('customBaseQuery', () => {
         const queryMock = engine.query as ReturnType<typeof vi.fn>
         queryMock.mockResolvedValueOnce(undefined)
         const api = { extra: { engine } } as unknown as BaseQueryApiWithExtraArg
-        const result = await customBaseQuery(queryArgs, api, undefined)
+        const result = await customBaseQuery(queryArgs, api, {})
         expect(result).toEqual({ data: {} })
     })
 
@@ -63,7 +63,7 @@ describe('customBaseQuery', () => {
         const queryMock = engine.query as ReturnType<typeof vi.fn>
         queryMock.mockRejectedValueOnce(new Error(errorMsg))
         const api = { extra: { engine } } as unknown as BaseQueryApiWithExtraArg
-        const result = await customBaseQuery(queryArgs, api, undefined)
+        const result = await customBaseQuery(queryArgs, api, {})
         expect(result).toEqual({
             error: {
                 type: 'runtime',
@@ -76,7 +76,7 @@ describe('customBaseQuery', () => {
         const mutateMock = engine.mutate as ReturnType<typeof vi.fn>
         mutateMock.mockRejectedValueOnce('fail')
         const api = { extra: { engine } } as unknown as BaseQueryApiWithExtraArg
-        const result = await customBaseQuery(mutationArgs, api, undefined)
+        const result = await customBaseQuery(mutationArgs, api, {})
         expect(result).toEqual({
             error: {
                 type: 'runtime',

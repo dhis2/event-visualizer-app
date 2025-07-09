@@ -50,8 +50,8 @@ describe('StoreToLocationSyncer', () => {
         renderWithReduxStoreProvider(<StoreToLocationSyncer />, store)
 
         const state = store.getState().navigation
-        expect(state.visualizationId).toBe('test-visualization')
-        expect(state.interpretationId).toBe('test-interpretation')
+        expect(state?.visualizationId).toBe('test-visualization')
+        expect(state?.interpretationId).toBe('test-interpretation')
     })
 
     it('should update the state when the URL changes', () => {
@@ -70,8 +70,8 @@ describe('StoreToLocationSyncer', () => {
         })
 
         const state = store.getState().navigation
-        expect(state.visualizationId).toBe('new-visualization')
-        expect(state.interpretationId).toBe('new-interpretation')
+        expect(state?.visualizationId).toBe('new-visualization')
+        expect(state?.interpretationId).toBe('new-interpretation')
     })
 
     it('ignore the interpretationId query param when on "/new" or "/"', () => {
@@ -87,16 +87,16 @@ describe('StoreToLocationSyncer', () => {
             history.push('/?interpretationId=test-interpretation')
         })
         const state1 = store.getState().navigation
-        expect(state1.visualizationId).toBe('new')
-        expect(state1.interpretationId).toBe(null)
+        expect(state1?.visualizationId).toBe('new')
+        expect(state1?.interpretationId).toBe(null)
 
         act(() => {
             history.push('/new?interpretationId=test-interpretation')
         })
 
         const state2 = store.getState().navigation
-        expect(state2.visualizationId).toBe('new')
-        expect(state2.interpretationId).toBe(null)
+        expect(state2?.visualizationId).toBe('new')
+        expect(state2?.interpretationId).toBe(null)
     })
 
     it('should update the URL when Redux state changes', () => {
@@ -147,7 +147,7 @@ describe('StoreToLocationSyncer', () => {
         history.push('/test-visualization?interpretationId=test-interpretation')
 
         const state = store.getState().navigation
-        expect(state.visualizationId).toBe('test-visualization')
-        expect(state.interpretationId).toBe('test-interpretation')
+        expect(state?.visualizationId).toBe('test-visualization')
+        expect(state?.interpretationId).toBe('test-interpretation')
     })
 })

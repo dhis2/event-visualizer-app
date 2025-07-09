@@ -21,16 +21,14 @@ export type { PickWithFieldFilters } from './pick-with-field-filters'
  * support some hypothetical variable types that currently are unsupported.
  * As such we could actually opt for manually creating a Query and Mutation
  * type here as well, which would produce more readable type hints */
-
-type QueryParameters = {
-    pageSize?: number
-    [key: string]: number | string | boolean | Array<number | string | boolean>
-}
 export type SingleQuery = {
     resource: string
     id?: string
     data?: object | string
-    params?: QueryParameters
+    params?: Record<
+        string,
+        number | string | boolean | Array<number | string | boolean>
+    >
 }
 export type DataEngine = ContextType['engine']
 export type QueryResult = Awaited<ReturnType<DataEngine['query']>>

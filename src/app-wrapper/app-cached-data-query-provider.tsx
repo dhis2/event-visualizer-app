@@ -99,8 +99,8 @@ const providerDataTransformation = ({
         currentUser: {
             ...currentUser,
             settings: {
-                dbLocale: currentUser.settings.keyDbLocale,
-                uiLocale: currentUser.settings.keyUiLocale,
+                dbLocale: currentUser.settings?.keyDbLocale ?? 'en',
+                uiLocale: currentUser.settings?.keyUiLocale ?? 'en',
                 displayProperty:
                     currentUser.settings?.keyAnalysisDisplayProperty,
                 displayNameProperty:
