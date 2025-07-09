@@ -7,7 +7,7 @@ export const api = createApi({
     reducerPath: 'api',
     baseQuery: customBaseQuery,
     endpoints: (builder) => ({
-        query: builder.query<QueryResult, Query | SingleQuery>({
+        query: builder.query<QueryResult | unknown, Query | SingleQuery>({
             query: (q) => q,
         }),
         mutate: builder.mutation<MutationResult, Mutation>({

@@ -19,21 +19,23 @@ type CurrentUserData = PickWithFieldFilters<
 >
 
 export const UserProfileExample = () => {
-    const { data, isLoading, error } = useRtkQuery({
+    const result = useRtkQuery<CurrentUserData>({
         resource: 'me',
         params: {
             fields: [...fieldsFilter],
         },
     })
 
-    if (isLoading) {
+    console.log(result.data.name.length)
+
+    if (result.isLoading) {
+        console.log(result.data, result.error)
         return <div>Loading user profile...</div>
     }
-    if (error) {
-        return <div>Error loading profile: {error.message}</div>
+    if (result.error) {
+        console.log(result.data, result.error)
+        return <div>Error loading profile: {result.error.message}</div>
     }
 
-    const resolvedData = data as CurrentUserData
-
-    return <div>Welcome, {resolvedData.name}!</div>
+    return <div>Welcome, {result.data.name}!</div>
 }

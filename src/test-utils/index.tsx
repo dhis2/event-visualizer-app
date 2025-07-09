@@ -4,7 +4,7 @@ import type { RootState } from '@types'
 import React, { PropsWithChildren } from 'react'
 import { Provider } from 'react-redux'
 import { vi } from 'vitest'
-import { UseRtkQueryResult } from '../hooks'
+import { UseRtkQueryResult } from '../hooks/use-rtk-query'
 
 export function setupStore(
     reducer: Partial<ReducersMapObject<RootState>>,
