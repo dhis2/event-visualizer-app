@@ -4,19 +4,7 @@ import { useRtkQuery } from '../../hooks'
 
 const fieldsFilter = ['id', 'name', 'email', 'settings'] as const
 
-type MeWithRequiredNameAndId = Omit<MeDto, 'id' | 'name' | 'settings'> & {
-    id: string
-    name: string
-    settings: {
-        a: string
-        b: string
-    }
-}
-
-type CurrentUserData = PickWithFieldFilters<
-    MeWithRequiredNameAndId,
-    typeof fieldsFilter
->
+type CurrentUserData = PickWithFieldFilters<MeDto, typeof fieldsFilter>
 
 export const UserProfileExample = () => {
     const { data, isLoading, isError, error } = useRtkQuery<CurrentUserData>({
