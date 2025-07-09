@@ -117,11 +117,13 @@ In most cases, using the generic hooks is probably the best solution, but there 
 -   Analytics requests, because for these we want to create an analytics request instance in the function body.
 -   Chained requests, where response data from request X is needed to initiate request Y
 -   Requests to resources outside of the DHIS2 Web API scope (not on `${baseUrl}/api/${version}`)
--   Common requests, this is not required, but it makes sense to also generate a dedicated api-endpoint for requests that occur across multiple places in the codebase. By having a custom endpoint with a predefined type for the returned data, the consuming component does not have to declare a type, so this avoids repetition.
+-   Common requests, this is not required, but it makes sense to also generate a dedicated api-endpoint for requests that occur across multiple places in the codebase. By having a custom endpoint with a predefined type for the returned data, the consuming component does not have to declare a type, so this avoids repetition and prevents the same request from being triggered multiple times.
+-   Paginated requests AKA [infinite queries](https://redux-toolkit.js.org/rtk-query/usage/infinite-queries) in Redux Toolkit lingo. Since pagination is handled in quite a standardized way across the web-api, it's wuite possible that we will end up adding a generic `paginatedQuery` endpoint for this.
+-   Requests to the [Gist API](https://docs.dhis2.org/en/develop/using-the-api/dhis-core-version-master/metadata-gist.html), but as with paginated requests, it is quite possible that we end up creating a generic `gistQuery` endpoint for this.
 
 #### Examples
 
-**1. Using `useRtkQuery` for simple data fetching:**
+**1. Using `useRtkQuery`:**
 
 ```typescript
 import type { MeDto, PickWithFieldFilters } from '@types'
@@ -144,12 +146,12 @@ export const UserProfileExample = () => {
     // console.log(data.name)
 
     if (isLoading) {
-        // Both `error` and `data` will be undefined here
+        // Both `error` and `data` are undefined here
         console.log(data, error)
         return <div>Loading user profile...</div>
     }
     if (isError) {
-        // `error` will be of type EngineError and `data` will is possibly undefined
+        // `error` is of type EngineError and `data` is possibly undefined
         console.log(data, error)
         return <div>Error loading profile: {error.message}</div>
     }
@@ -158,6 +160,23 @@ export const UserProfileExample = () => {
     // because isError and isLoading are false
     return <div>Welcome, {data.name}!</div>
 }
+```
+
+The example above uses a "simple query definition": the query is a simple object with a `resource` field. If you would like to request multiple resources in parallel it is also possible to provide a nested object, in the same shape as you would pass to `useDataQuery` from `@dhis2/app-service-data`, for example:
+
+```typescript
+// Declare a nested data type
+type QueryData = {
+    me: MeDto
+    systemSettings: SystemSettings
+}
+// Pass it to the hook
+const { data, isLoading, isError, error } = useRtkQuery<QueryData>({
+    me: { resource: 'me' },
+    systemSettings: { resource: 'systemSettings' },
+})
+// In the end you would be able to do
+console.log(data.me.name, data.systemSettings.keyAccountExpiresInDays)
 ```
 
 **2. Using `injectEndpoints` for analytics requests:**
