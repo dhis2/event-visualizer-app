@@ -19,23 +19,28 @@ type CurrentUserData = PickWithFieldFilters<
 >
 
 export const UserProfileExample = () => {
-    const result = useRtkQuery<CurrentUserData>({
+    const { data, isLoading, isError, error } = useRtkQuery<CurrentUserData>({
         resource: 'me',
         params: {
             fields: [...fieldsFilter],
         },
     })
 
-    console.log(result.data.name.length)
+    // The TS compiler would flag this up because data is possibly undefined here
+    // console.log(data.name)
 
-    if (result.isLoading) {
-        console.log(result.data, result.error)
+    if (isLoading) {
+        // Both `error` and `data` will be undefined here
+        console.log(data, error)
         return <div>Loading user profile...</div>
     }
-    if (result.error) {
-        console.log(result.data, result.error)
-        return <div>Error loading profile: {result.error.message}</div>
+    if (isError) {
+        // `error` will be of type EngineError and `data` will is possibly undefined
+        console.log(data, error)
+        return <div>Error loading profile: {error.message}</div>
     }
 
-    return <div>Welcome, {result.data.name}!</div>
+    // No need to access data?.name the TS compiler knows that data is defined
+    // because isError and isLoading are false
+    return <div>Welcome, {data.name}!</div>
 }
