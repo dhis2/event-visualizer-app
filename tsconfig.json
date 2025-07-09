@@ -9,6 +9,7 @@
         "target": "ESNext",
         "module": "esnext",
         "moduleResolution": "node",
+        "strictNullChecks": true,
         "types": ["vitest/globals", "@testing-library/jest-dom"],
         "paths": {
             "@dhis2/analytics": ["src/types/analytics/index.d.ts"],
