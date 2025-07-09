@@ -91,20 +91,5 @@ export type UseRtkQueryResult<T = unknown> =
 export function useRtkQuery<TData = unknown>(
     query: Query | SingleQuery
 ): UseRtkQueryResult<TData> {
-    const queryResult = api.useQueryQuery(query)
-
-    if (queryResult.isLoading) {
-        return queryResult as IsLoadingRtkQueryResult
-    } else if (queryResult.isError) {
-        return queryResult as IsErrorRtkQueryResult<TData>
-    } else if (queryResult.isSuccess) {
-        return queryResult as IsSuccessRtkQueryResult<TData>
-    } else {
-        /* If you encounter this error, it simply means there is
-         * yet another valid combination of state fields that needs to
-         * be taken into account in a new `else if` block  */
-        throw new Error(
-            'useRtkQuery encountered an unexpected query result state'
-        )
-    }
+    return api.useQueryQuery(query) as UseRtkQueryResult<TData>
 }
