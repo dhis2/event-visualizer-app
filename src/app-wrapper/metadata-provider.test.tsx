@@ -173,20 +173,20 @@ describe('MetadataProvider rerender behavior', () => {
                 { uid: 'z', name: 'Z' },
             ])
         })
-        expect(result.current.getMetadataItems(['y', 'z'])).toEqual([
-            {
+        expect(result.current.getMetadataItems(['y', 'z'])).toEqual({
+            y: {
                 id: 'y',
                 name: 'Y',
                 options: [],
                 style: {},
             },
-            {
+            z: {
                 id: 'z',
                 name: 'Z',
                 options: [],
                 style: {},
             },
-        ])
+        })
         // Record
         act(() => {
             result.current.addMetadata({
@@ -194,20 +194,20 @@ describe('MetadataProvider rerender behavior', () => {
                 b: { uid: 'b', name: 'B' },
             })
         })
-        expect(result.current.getMetadataItems(['a', 'b'])).toEqual([
-            {
+        expect(result.current.getMetadataItems(['a', 'b'])).toEqual({
+            a: {
                 id: 'a',
                 name: 'A',
                 options: [],
                 style: {},
             },
-            {
+            b: {
                 id: 'b',
                 name: 'B',
                 options: [],
                 style: {},
             },
-        ])
+        })
     })
 })
 

@@ -39,8 +39,14 @@ class MetadataStore {
         return this.map.get(key)
     }
 
-    getMetadataItems(keys: string[]): MetadataStoreItem[] | [] {
-        return keys.map((key) => this.map.get(key))
+    getMetadataItems(keys: string[]): Record<string, MetadataStoreItem> {
+        return keys.reduce((metadataStoreItems, key) => {
+            const item = this.map.get(key)
+            if (item) {
+                metadataStoreItems[key] = item
+            }
+            return metadataStoreItems
+        }, {})
     }
 
     subscribe(key: string, cb: Subscriber) {
@@ -151,14 +157,15 @@ export function useMetadataItems(
     // Cache the last snapshot to ensure stable reference
     const lastSnapshotRef = React.useRef<{
         ids: string[]
-        values: MetadataStoreItem[] | undefined
+        values: MetadataStoreItem[]
     }>({
         ids: [],
         values: [],
     })
 
     const getSnapshot = useCallback(() => {
-        const values = metadataStore.getMetadataItems(sortedMetadataIds)
+        const metadataItems = metadataStore.getMetadataItems(sortedMetadataIds)
+        const values = Object.values(metadataItems)
         const last = lastSnapshotRef.current
         if (
             last.ids.length === sortedMetadataIds.length &&
