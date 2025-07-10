@@ -13,6 +13,5 @@ export const StoreProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [store] = useState(() =>
         createStore(engine, metadataStore, appChachedData)
     )
-    console.log(engine, metadataStore, appChachedData)
     return <Provider store={store}>{children}</Provider>
 }
