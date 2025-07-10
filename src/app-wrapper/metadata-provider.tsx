@@ -146,7 +146,7 @@ export function useMetadataItem(
 
 export function useMetadataItems(
     metadataIds: string[]
-): MetadataStoreItem[] | [] {
+): Record<string, MetadataStoreItem> {
     const metadataStore = useContext(MetadataContext)!
     // Sort keys for stable dependency array
     const sortedMetadataIds = useMemo(
@@ -157,26 +157,28 @@ export function useMetadataItems(
     // Cache the last snapshot to ensure stable reference
     const lastSnapshotRef = React.useRef<{
         ids: string[]
-        values: MetadataStoreItem[]
+        values: Record<string, MetadataStoreItem>
     }>({
         ids: [],
-        values: [],
+        values: {},
     })
 
     const getSnapshot = useCallback(() => {
         const metadataItems = metadataStore.getMetadataItems(sortedMetadataIds)
-        const values = Object.values(metadataItems)
         const last = lastSnapshotRef.current
+        const keys = Object.keys(metadataItems)
+        const lastKeys = Object.keys(last.values)
         if (
             last.ids.length === sortedMetadataIds.length &&
             last.ids.every((id, i) => id === sortedMetadataIds[i]) &&
-            last.values.length === values.length &&
-            last.values.every((v, i) => v === values[i])
+            lastKeys.length === keys.length &&
+            lastKeys.every((k, i) => k === keys[i]) &&
+            keys.every((k) => last.values[k] === metadataItems[k])
         ) {
             return last.values
         }
-        lastSnapshotRef.current = { ids: sortedMetadataIds, values }
-        return values
+        lastSnapshotRef.current = { ids: sortedMetadataIds, values: metadataItems }
+        return metadataItems
         // sortedMetadataIds is intentionally spread for stable deps
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [metadataStore, ...sortedMetadataIds])

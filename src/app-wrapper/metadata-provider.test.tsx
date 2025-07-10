@@ -441,3 +441,101 @@ describe('MetadataProvider initial metadata behavior', () => {
         })
     })
 })
+
+describe('MetadataProvider API and return value types', () => {
+    it('useMetadataItem returns the correct value', () => {
+        const { result } = renderHook(
+            ({ id }) => {
+                const metadataItem = useMetadataItem(id)
+                const addMetadata = useAddMetadata()
+                return { metadataItem, addMetadata }
+            },
+            {
+                initialProps: { id: 'a' },
+                wrapper: ProviderWithComponents,
+            }
+        )
+
+        expect(result.current.metadataItem).toBeUndefined() // Initially empty
+
+        act(() => {
+            result.current.addMetadata({ uid: 'a', name: 'A' })
+        })
+        expect(result.current.metadataItem).toMatchInlineSnapshot(`
+          {
+            "id": "a",
+            "name": "A",
+            "options": [],
+            "style": {},
+          }
+        `)
+    })
+    it('useMetadataItems returns a record with correct keys and values', () => {
+        const { result } = renderHook(
+            ({ ids }) => {
+                const metadataItems = useMetadataItems(ids)
+                const addMetadata = useAddMetadata()
+                return { metadataItems, addMetadata }
+            },
+            {
+                initialProps: { ids: ['a', 'b'] },
+                wrapper: ProviderWithComponents,
+            }
+        )
+
+        expect(result.current.metadataItems).toEqual({}) // Initially empty
+
+        act(() => {
+            result.current.addMetadata({ uid: 'a', name: 'A' })
+            result.current.addMetadata({ uid: 'b', name: 'B' })
+        })
+        expect(result.current.metadataItems).toHaveProperty('a')
+        expect(result.current.metadataItems).toHaveProperty('b')
+        expect(result.current.metadataItems).toMatchInlineSnapshot(`
+          {
+            "a": {
+              "id": "a",
+              "name": "A",
+              "options": [],
+              "style": {},
+            },
+            "b": {
+              "id": "b",
+              "name": "B",
+              "options": [],
+              "style": {},
+            },
+          }
+        `)
+    })
+
+    it('useMetadataItem returns undefined for non-existent key', () => {
+        const { result } = renderHook(() => useMetadataItem('nonexistent'), {
+            wrapper: ProviderWithComponents,
+        })
+        expect(result.current).toBeUndefined()
+    })
+
+    it('useMetadataItems returns empty object for non-existent keys', () => {
+        const { result } = renderHook(() => useMetadataItems(['nonexistent']), {
+            wrapper: ProviderWithComponents,
+        })
+        expect(result.current).toEqual({})
+    })
+
+    it('useAddMetadata is a function', () => {
+        const { result } = renderHook(() => useAddMetadata(), {
+            wrapper: ProviderWithComponents,
+        })
+        expect(typeof result.current).toBe('function')
+    })
+
+    it('useMetadataStore returns correct API shape', () => {
+        const { result } = renderHook(() => useMetadataStore(), {
+            wrapper: ProviderWithComponents,
+        })
+        expect(typeof result.current.getMetadataItem).toBe('function')
+        expect(typeof result.current.getMetadataItems).toBe('function')
+        expect(typeof result.current.addMetadata).toBe('function')
+    })
+})
