@@ -74,4 +74,96 @@ describe('parseEngineError', () => {
             message: 'An unexpected runtime error occurred',
         })
     })
+
+    it('should extract uid and errorReports from details', () => {
+        const err = new FetchError({
+            type: 'access',
+            message: 'Access denied',
+            details: {
+                httpStatusCode: 403,
+                httpStatus: 'FORBIDDEN',
+                response: {
+                    uid: 'abc123',
+                    errorReports: [
+                        {
+                            errorCode: 'E123',
+                            errorKlass: 'klass',
+                            errorProperty: 'prop',
+                            errorProperties: ['prop'],
+                            mainKlass: 'main',
+                            message: 'Some error',
+                            args: [],
+                        },
+                    ],
+                },
+            },
+        })
+        const result = parseEngineError(err)
+        expect(result.uid).toBe('abc123')
+        expect(result.errorReports).toHaveLength(1)
+        expect(result.errorReports?.[0].errorCode).toBe('E123')
+    })
+
+    it('should set errorCode from a single errorReport if errorCode is missing', () => {
+        const err = new FetchError({
+            type: 'access',
+            message: 'Access denied',
+            details: {
+                httpStatusCode: 403,
+                httpStatus: 'FORBIDDEN',
+                response: {
+                    errorReports: [
+                        {
+                            errorCode: 'E456',
+                            errorKlass: 'klass',
+                            errorProperty: 'prop',
+                            errorProperties: ['prop'],
+                            mainKlass: 'main',
+                            message: 'Another error',
+                            args: [],
+                        },
+                    ],
+                },
+            },
+        })
+        const result = parseEngineError(err)
+        expect(result.errorCode).toBe('E456')
+        expect(result.errorCodes).toBeUndefined()
+    })
+
+    it('should set errorCodes from multiple errorReports if errorCode is missing', () => {
+        const err = new FetchError({
+            type: 'access',
+            message: 'Access denied',
+            details: {
+                httpStatusCode: 403,
+                httpStatus: 'FORBIDDEN',
+                response: {
+                    errorReports: [
+                        {
+                            errorCode: 'E789',
+                            errorKlass: 'klass',
+                            errorProperty: 'prop',
+                            errorProperties: ['prop'],
+                            mainKlass: 'main',
+                            message: 'Error 1',
+                            args: [],
+                        },
+                        {
+                            errorCode: 'E101',
+                            errorKlass: 'klass',
+                            errorProperty: 'prop',
+                            errorProperties: ['prop'],
+                            mainKlass: 'main',
+                            message: 'Error 2',
+                            args: [],
+                        },
+                    ],
+                },
+            },
+        })
+        const result = parseEngineError(err)
+        expect(result.errorCode).toBeUndefined()
+        expect(result.errorCodes).toEqual(['E789', 'E101'])
+    })
 })
