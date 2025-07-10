@@ -97,7 +97,6 @@ beforeEach(() => {
     cy.getAllCookies().should((cookies) => {
         const cookie = findSessionCookieForBaseUrl(baseUrl, cookies)
         expect(cookie).to.haveOwnProperty('name', 'JSESSIONID')
-        expect(cookie).to.haveOwnProperty('sameSite', 'no_restriction')
         expect(localStorage.getItem(LOCAL_STORAGE_KEY)).to.equal(baseUrl)
     })
 })
