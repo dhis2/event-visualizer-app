@@ -49,7 +49,6 @@ export const DashboardExample = () => {
 
     return (
         <div>
-            <h2>Dashboard Example (Create / Edit / Delete)</h2>
             <input
                 name="name"
                 placeholder="Dashboard Name"
@@ -79,7 +78,9 @@ export const DashboardExample = () => {
             )}
             <div>
                 {isLoading && <p>Loading...</p>}
-                {isSuccess && <pre>{JSON.stringify(data, null, 2)}</pre>}
+                {isSuccess && dashboardId && (
+                    <pre>{JSON.stringify(data, null, 2)}</pre>
+                )}
                 {isError && (
                     <p style={{ color: 'red' }}>{error?.message || 'Error'}</p>
                 )}

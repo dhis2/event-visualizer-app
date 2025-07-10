@@ -121,14 +121,12 @@ In most cases, using the generic hooks is probably the best solution, but there 
 -   Paginated requests AKA [infinite queries](https://redux-toolkit.js.org/rtk-query/usage/infinite-queries) in Redux Toolkit lingo. Since pagination is handled in quite a standardized way across the web-api, it's wuite possible that we will end up adding a generic `paginatedQuery` endpoint for this.
 -   Requests to the [Gist API](https://docs.dhis2.org/en/develop/using-the-api/dhis-core-version-master/metadata-gist.html), but as with paginated requests, it is quite possible that we end up creating a generic `gistQuery` endpoint for this.
 
-#### Examples
-
-**1. Using `useRtkQuery`:**
+#### Using `useRtkQuery`
 
 ```typescript
 import type { MeDto, PickWithFieldFilters } from '@types'
 import React from 'react'
-import { useRtkQuery } from './hooks'
+import { useRtkQuery } from '../../hooks'
 
 const fieldsFilter = ['id', 'name', 'email', 'settings'] as const
 
@@ -142,16 +140,16 @@ export const UserProfileExample = () => {
         },
     })
 
-    // The TS compiler would flag this up because `data` is possibly undefined here
+    // The TS compiler would flag this up because data is possibly undefined here
     // console.log(data.name)
 
     if (isLoading) {
-        // Both `error` and `data` are undefined here
+        // Both `error` and `data` will be undefined here
         console.log(data, error)
         return <div>Loading user profile...</div>
     }
     if (isError) {
-        // `error` is of type EngineError and `data` is possibly undefined
+        // `error` will be of type EngineError and `data` will is possibly undefined
         console.log(data, error)
         return <div>Error loading profile: {error.message}</div>
     }
@@ -179,72 +177,185 @@ const { data, isLoading, isError, error } = useRtkQuery<QueryData>({
 console.log(data.me.name, data.systemSettings.keyAccountExpiresInDays)
 ```
 
-**2. Using `injectEndpoints` for analytics requests:**
+#### Using `useRtkLazyQuery`
+
+This hook offers the same functionality as `useDataQuery` from `@dhis2/app-service-data`, but it works quite differently. Instead of passing the query arguments to the hook, you pass them to the `trigger` function returned from the hook.
 
 ```typescript
-// In /src/api/api.ts
-import { Analytics } from '@dhis2/analytics'
+import type { MeDto, PickWithFieldFilters } from '@types'
+import React from 'react'
+import { useRtkLazyQuery } from '../../hooks'
 
-export const analyticsApi = api.injectEndpoints({
+const fieldsFilter = ['id', 'name', 'email', 'settings'] as const
+
+type CurrentUserData = PickWithFieldFilters<MeDto, typeof fieldsFilter>
+
+export const LazyUserProfileExample = () => {
+    const [trigger, { data, error, isError, isLoading, isUninitialized }] =
+        useRtkLazyQuery<CurrentUserData>()
+
+    if (isUninitialized) {
+        return (
+            <button
+                onClick={() =>
+                    trigger({
+                        resource: 'me',
+                        params: { fields: [...fieldsFilter] },
+                    })
+                }
+                disabled={isLoading}
+            >
+                Load User Profile
+            </button>
+        )
+    }
+
+    if (isLoading) {
+        return <div>Loading user profile...</div>
+    }
+
+    if (isError) {
+        return <div>Error loading profile: {error.message}</div>
+    }
+
+    return <div>Welcome, {data.name}!</div>
+}
+```
+
+#### Using `useRtkMutation`
+
+```typescript
+import React, { useState, useCallback } from 'react'
+import { useRtkMutation } from '../../hooks'
+
+export const DashboardExample = () => {
+    const [dashboardName, setDashboardName] = useState('')
+    const [dashboardId, setDashboardId] = useState('')
+    const [trigger, { data, error, isLoading, isSuccess, isError }] =
+        useRtkMutation()
+
+    // Handle input change
+    const handleNameChange = useCallback((e) => {
+        setDashboardName(e.target.value)
+    }, [])
+
+    // Create dashboard
+    const handleCreate = useCallback(() => {
+        trigger({
+            resource: 'dashboards',
+            type: 'create',
+            data: { name: dashboardName },
+        }).then((response) => {
+            if (response.data?.response.uid) {
+                setDashboardId(String(response.data.response.uid))
+            }
+        })
+    }, [dashboardName, trigger])
+
+    // Edit dashboard
+    const handleEdit = useCallback(() => {
+        trigger({
+            resource: 'dashboards',
+            type: 'update',
+            id: dashboardId,
+            data: { name: dashboardName },
+        })
+    }, [dashboardId, dashboardName, trigger])
+
+    // Delete dashboard
+    const handleDelete = useCallback(() => {
+        trigger({
+            resource: 'dashboards',
+            type: 'delete',
+            id: dashboardId,
+        }).then(() => {
+            setDashboardId('')
+            setDashboardName('')
+        })
+    }, [dashboardId, trigger])
+
+    return (
+        <div>
+            <input
+                name="name"
+                placeholder="Dashboard Name"
+                value={dashboardName}
+                onChange={handleNameChange}
+                disabled={isLoading}
+            />
+            {!dashboardId ? (
+                <button
+                    onClick={handleCreate}
+                    disabled={isLoading || !dashboardName}
+                >
+                    Create
+                </button>
+            ) : (
+                <>
+                    <button
+                        onClick={handleEdit}
+                        disabled={isLoading || !dashboardName}
+                    >
+                        Edit
+                    </button>
+                    <button onClick={handleDelete} disabled={isLoading}>
+                        Delete
+                    </button>
+                </>
+            )}
+            <div>
+                {isLoading && <p>Loading...</p>}
+                {isSuccess && dashboardId && (
+                    <pre>{JSON.stringify(data, null, 2)}</pre>
+                )}
+                {isError && (
+                    <p style={{ color: 'red' }}>{error?.message || 'Error'}</p>
+                )}
+            </div>
+        </div>
+    )
+}
+```
+
+#### Using `injectEndpoints` for an analytics requests
+
+```typescript
+import type { MeDto } from '@types'
+import React from 'react'
+import { api } from '../../api/api'
+import type { BaseQueryApiWithExtraArg } from '../../api/custom-base-query'
+import { parseEngineError } from '../../api/parse-engine-error'
+
+export const meApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        fetchAnalytics: builder.query<
-            AnalyticsResponse,
-            { visualization: Visualization; options?: any }
-        >({
-            queryFn: async ({ visualization, options = {} }, { extra }) => {
+        getMe: builder.query<MeDto, void>({
+            async queryFn(_args, apiArg: BaseQueryApiWithExtraArg) {
+                const engine = apiArg.extra.engine
                 try {
-                    const analyticsEngine = Analytics.getAnalytics(extra.engine)
-                    const req = new analyticsEngine.request()
-                        .fromVisualization(visualization)
-                        .withParameters(options)
-                        .withIncludeNumDen(visualization.type === 'PIVOT_TABLE')
-
-                    const rawResponse = await analyticsEngine.aggregate.get(req)
-                    return { data: new analyticsEngine.response(rawResponse) }
+                    const data = await engine.query({ me: { resource: 'me' } })
+                    const me = data.me as MeDto
+                    return { data: me }
                 } catch (error) {
-                    return { error: { message: error.message } }
+                    return { error: parseEngineError(error) }
                 }
             },
         }),
     }),
 })
 
-export const { useFetchAnalyticsQuery } = analyticsApi
-```
+export const EndpointUserProfileExample: React.FC = () => {
+    const { data, error, isLoading } = meApi.useGetMeQuery()
 
-**3. Using `useRtkMutation` for creating data:**
-
-```typescript
-import React from 'react'
-import { useRtkMutation } from '../hooks'
-
-const CreateIndicatorButton = ({ onSuccess }) => {
-    const [createIndicator, { isLoading }] = useRtkMutation({
-        resource: 'indicators',
-        type: 'create',
-        data: ({ name }) => ({
-            name,
-            shortName: name,
-            indicatorType: { id: 'bWuNrMHEoZ0' },
-            numerator: '#{fbfJHSPpUQD}',
-            denominator: '#{h0xKKjijTdI}',
-        }),
-    })
-
-    const handleClick = async () => {
-        try {
-            await createIndicator({ name: 'New Event Indicator' }).unwrap()
-            onSuccess?.()
-        } catch (error) {
-            console.error('Failed to create indicator:', error)
-        }
+    if (isLoading) {
+        return <div>loading</div>
     }
-
-    return (
-        <button onClick={handleClick} disabled={isLoading}>
-            {isLoading ? 'Creating...' : 'Create Indicator'}
-        </button>
-    )
+    if (error) {
+        return <div>error</div>
+    }
+    if (data) {
+        return <div>Welcome, {data.name}!</div>
+    }
+    return null
 }
 ```
 

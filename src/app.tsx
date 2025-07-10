@@ -4,9 +4,7 @@ import React, { FC, useState } from 'react'
 import { AppWrapper } from './app-wrapper'
 import { useSystemSettings } from './app-wrapper/app-cached-data-query-provider'
 import classes from './app.module.css'
-import { DashboardExample } from './components/examples/dashboard-example'
-import { LazyUserProfileExample } from './components/examples/lazy-user-profile-example'
-import { UserProfileExample } from './components/examples/user-profile-example'
+import { Examples } from './components/examples'
 import Hello from './hello'
 import { useRtkQuery } from './hooks'
 
@@ -36,18 +34,7 @@ const EventVisualizer: FC = () => {
             <button onClick={() => setShowExamples((v) => !v)}>
                 {showExamples ? 'Hide' : 'Show'} Examples
             </button>
-            {showExamples && (
-                <div>
-                    <h4>User Profile Example:</h4>
-                    <UserProfileExample />
-                    <hr />
-                    <h4>Lazy User Profile Example:</h4>
-                    <LazyUserProfileExample />
-                    <hr />
-                    <h4>Dashboard Example:</h4>
-                    <DashboardExample />
-                </div>
-            )}
+            {showExamples && <Examples />}
         </div>
     )
 }
