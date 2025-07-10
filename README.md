@@ -95,33 +95,40 @@ When accessing the store and dispatching actions, you would normally use the `us
 
 ### Interaction with the DHIS2 Core Web API
 
-Redux Toolkit comes with a tool for data queries and mutations called RTK Query. We have integrated this tool with the DHIS2 Data Engine from `@dhis2/app-service-data` as follows:
+Redux Toolkit comes with a powerful data fetching and caching tool called RTK Query. In this app, RTK Query is integrated with the DHIS2 Data Engine from `@dhis2/app-service-data` as follows:
 
--   The `engine` (Data Engine) is added to `thunk.extraArgument` when creating the store
--   A [custom base query](https://redux-toolkit.js.org/rtk-query/usage/customizing-queries#customizing-queries-with-basequery) has been implemented that calls `engine.query` or `engine.mutate`.
--   Two generic endpoints have been added to the api that represent a generic api query or mutation.
+-   The `engine` (Data Engine) is injected into `thunk.extraArgument` when creating the Redux store.
+-   A [custom base query](https://redux-toolkit.js.org/rtk-query/usage/customizing-queries#customizing-queries-with-basequery) is implemented to call `engine.query` or `engine.mutate`.
+-   Two generic endpoints are added to the API for generic queries and mutations.
 
-You can interact with these generic endpoints using the `useRtkQuery` and `useRtkMutation` (and `useRtkLazyQuery`) hooks, exported from `/src/hooks`. In the app you should typically use these hooks to interact with the DHIS2 Core Web API, and you should NEVER use `useDataQuery` or `useDataMutation` (we have ESLint rules in place to prevent these imports). The `useRtkQuery` and `useRtkMutation` hooks are very similar to the hooks from `@dhis/app-service-data`, there are only a few minor differences:
+You should interact with the DHIS2 Core Web API using the `useRtkQuery`, `useRtkMutation`, and `useRtkLazyQuery` hooks exported from `/src/hooks`. **Do not use** `useDataQuery` or `useDataMutation` from `@dhis2/app-service-data` directly—this is enforced by ESLint rules.
 
--   The hooks from `@dhis/app-service-data` accept a second positional `options` (object) argument, while the hooks from RTK Query do not. However for [each options-field](https://developers.dhis2.org/docs/app-runtime/hooks/usedataquery/) a probably more ergonomical alternative exists:
-    -   Because `useRtkQuery` and `useRtkMutation` accept dynamically constructed query/mutation objects the `variables` field is redundant (as well as the callback form of the `id` and `params` field of [the query](https://developers.dhis2.org/docs/app-runtime/types/Query))
-    -   Instead of providing a `lazy` option, you can use the `useRtkLazyQuery` hook
-    -   Instead of using the non-idiomatic `onSuccess` and/or `onError` callbacks, you can use the `useEffect` hooks to monitor the state transitions, or use the `trigger().unwrap()` function [returned from `useRtkLazyQuery`](https://redux-toolkit.js.org/rtk-query/api/created-api/hooks#uselazyquery-signature) and just deal with a regular promise and a try/catch block.
--   The `useDataQuery` hook from `@dhis/app-service-data` only accepts a "nested query definition" like this `{ me: { resource: 'me' } }`, but `useRtkQuery` also accepts a simple query object like this `{ resource: 'me' }`. This is an additional convenience for simple queries that also lets you access the response data in a more straightforward way, i.e. `data.name` instead of `data.me.name`.
--   The data returned from the hook is also slightly different, details can be read in the [Redux Toolkit Hooks docs](https://redux-toolkit.js.org/rtk-query/api/created-api/hooks).
+The `useRtkQuery` and `useRtkMutation` hooks are similar to those from `@dhis2/app-service-data`, with a few key differences:
 
-Apart from using these generic `useRtkQuery`, `useRtkMutation` and `useRtkLazyQuery` hooks, you can also easily create custom endpoints that come with auto-generated hooks. You can do this by adding more endpoints in `/src/api/api.ts` or by using the `injectEndpoints` or `enhanceEndpoints` functions as [documented here](https://redux-toolkit.js.org/rtk-query/api/created-api/code-splitting). Each endpoint declares [its own `queryFn`](https://redux-toolkit.js.org/rtk-query/api/createApi#queryfn) where it can access the `engine`, metadata store, and app cached data via the `api.extra` argument. A custom endpoint can also specify its own data type, so consuming components do not have to declare it themselves.
+-   The hooks from `@dhis2/app-service-data` accept a second positional `options` object, while the RTK Query hooks do not. However, for each options field, there is usually a more ergonomic alternative in RTK Query:
+    -   Since `useRtkQuery` and `useRtkMutation` accept dynamically constructed query/mutation objects, the `variables` field is redundant (as are the callback forms of the `id` and `params` fields).
+    -   To perform a lazy query, use the `useRtkLazyQuery` hook.
+    -   Instead of `onSuccess`/`onError` callbacks, use `useEffect` to monitor state transitions, or use the `trigger().unwrap()` function returned from `useRtkLazyQuery` for promise-based handling.
+-   The `useDataQuery` hook only accepts a nested query definition (e.g., `{ me: { resource: 'me' } }`), but `useRtkQuery` also accepts a simple query object (e.g., `{ resource: 'me' }`). This makes accessing response data more straightforward (e.g., `data.name` instead of `data.me.name`).
+-   The data returned from the hook is slightly different; see the [Redux Toolkit Hooks docs](https://redux-toolkit.js.org/rtk-query/api/created-api/hooks) for details.
 
-In most cases, using the generic hooks is probably the best solution, but there are some cases that require or justify the creation of a new endpoint:
+#### Custom Endpoints
 
--   Analytics requests, because for these we want to create an analytics request instance in the function body.
--   Chained requests, where response data from request X is needed to initiate request Y
--   Requests to resources outside of the DHIS2 Web API scope (not on `${baseUrl}/api/${version}`)
--   Common requests, this is not required, but it makes sense to also generate a dedicated api-endpoint for requests that occur across multiple places in the codebase. By having a custom endpoint with a predefined type for the returned data, the consuming component does not have to declare a type, so this avoids repetition and prevents the same request from being triggered multiple times.
--   Paginated requests AKA [infinite queries](https://redux-toolkit.js.org/rtk-query/usage/infinite-queries) in Redux Toolkit lingo. Since pagination is handled in quite a standardized way across the web-api, it's wuite possible that we will end up adding a generic `paginatedQuery` endpoint for this.
--   Requests to the [Gist API](https://docs.dhis2.org/en/develop/using-the-api/dhis-core-version-master/metadata-gist.html), but as with paginated requests, it is quite possible that we end up creating a generic `gistQuery` endpoint for this.
+While the generic hooks are suitable for most use cases, you can also create custom endpoints with auto-generated hooks by adding endpoints in `/src/api/api.ts` or using the `injectEndpoints` or `enhanceEndpoints` functions as [documented here](https://redux-toolkit.js.org/rtk-query/api/created-api/code-splitting). Each custom endpoint can declare its own `queryFn`, where it can access the `engine`, metadata store, and app cached data via the `api.extra` argument. Custom endpoints can also specify their own data types, so consuming components do not have to declare them.
+
+**When to create a custom endpoint:**
+
+-   Analytics requests, where you want to create an analytics request instance in the function body.
+-   Chained requests, where the response from one request is needed to initiate another.
+-   Requests to resources outside the DHIS2 Web API scope (not on `${baseUrl}/api/${version}`).
+-   Common requests that occur in multiple places in the codebase, to avoid repetition and prevent duplicate requests.
+-   Paginated requests (infinite queries), which may benefit from a dedicated endpoint.
+-   Requests to the [Gist API](https://docs.dhis2.org/en/develop/using-the-api/dhis-core-version-master/metadata-gist.html).
 
 #### Using `useRtkQuery`
+
+<details>
+<summary>Show code</summary>
 
 ```typescript
 import type { MeDto, PickWithFieldFilters } from '@types'
@@ -160,7 +167,12 @@ export const UserProfileExample = () => {
 }
 ```
 
+</details>
+
 The example above uses a "simple query definition": the query is a simple object with a `resource` field. If you would like to request multiple resources in parallel it is also possible to provide a nested object, in the same shape as you would pass to `useDataQuery` from `@dhis2/app-service-data`, for example:
+
+<details>
+<summary>Show code</summary>
 
 ```typescript
 // Declare a nested data type
@@ -177,9 +189,14 @@ const { data, isLoading, isError, error } = useRtkQuery<QueryData>({
 console.log(data.me.name, data.systemSettings.keyAccountExpiresInDays)
 ```
 
+</details>
+
 #### Using `useRtkLazyQuery`
 
 This hook offers the same functionality as `useDataQuery` from `@dhis2/app-service-data`, but it works quite differently. Instead of passing the query arguments to the hook, you pass them to the `trigger` function returned from the hook.
+
+<details>
+<summary>Show code</summary>
 
 ```typescript
 import type { MeDto, PickWithFieldFilters } from '@types'
@@ -222,7 +239,14 @@ export const LazyUserProfileExample = () => {
 }
 ```
 
+</details>
+
 #### Using `useRtkMutation`
+
+The `useRtkMutation` is a bit more flexible than the `useDataMutation` hook from `@dhis2/app-service-data`. Because you simply pass the arguments to the returned `trigger` (AKA as `mutate`), you can in theory reuse the same hook instance for various mutations.
+
+<details>
+<summary>Show code</summary>
 
 ```typescript
 import React, { useState, useCallback } from 'react'
@@ -317,7 +341,12 @@ export const DashboardExample = () => {
 }
 ```
 
+</details>
+
 #### Using `injectEndpoints` for an analytics requests
+
+<details>
+<summary>Show code</summary>
 
 ```typescript
 import type { MeDto } from '@types'
@@ -358,6 +387,8 @@ export const EndpointUserProfileExample: React.FC = () => {
     return null
 }
 ```
+
+</details>
 
 ### Testing Guidelines
 
