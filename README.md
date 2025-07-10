@@ -390,24 +390,24 @@ export const EndpointUserProfileExample: React.FC = () => {
 
 </details>
 
-### Working with Metadadata
+### Working with Metadata
 
-In some of the other Analytics apps we store the metadata in the Redux Store and this is sometimes problematic: the data is updated frequently and this is often causing unnessararry rerenders. That's why in this app we decided to keep the Metadata separate, in a custom store of its own. This store is implemented using a React Context Provider and the `useSyncExternalStore` hook. The store and the hooks that accompany it have been heavily optimised to only register relevant changes. Before actually updating an item in the store we first apply a deep-equality check, and the hooks are designed so that they will only cause a rerender if a metadata item they are subscribed to changes.
+In some other Analytics apps, you might store metadata in the Redux store, but this can be problematic: frequent updates to metadata often cause unnecessary re-renders. In this app, you keep metadata separate in a custom store implemented using a React Context Provider and the `useSyncExternalStore` hook. The store and its hooks are heavily optimized to only register relevant changes. Before updating an item, a deep-equality check is performed, and the hooks are designed to trigger a re-render only if a subscribed metadata item actually changes.
 
-The app is wrapped in the `MetadataProvider`, which manages an instance of the Metadata Store and there are several hooks available to interact with it:
+Your app is wrapped in the `MetadataProvider`, which manages an instance of the metadata store. You have several hooks available to interact with it:
 
--   `useMetadataItem`: Gives access to a single metadata item and will trigger a rerender if that item is updated
--   `useMetadataItems`: Gives access to multiple metadata items and will trigger a rerender if one of these items is updated.
--   `useAddMetadata`: This returns a function which can be used to add metadata to the store. This function is a stable reference so it will never cause a rerender.
--   `useMetadataStore`: This also returns a stable reference, so will never cause rerenders. This hook provides access to `getMetadataItem`, `getMetadataItems` and `addMetadata`. It can be beneficial to use `getMetadataItem` when you need to read metadata items during an iteration, but note that these items will not update automatically. If you are rendering a list with metadata that could change while the list is being "statically" displayed (no other state changes will cause it to rerender either), then you should NOT use this hook. Instead you should extract each list item into a component and each component should implement `useMetadataItem`.
+-   `useMetadataItem`: Access a single metadata item; triggers a re-render if that item is updated.
+-   `useMetadataItems`: Access multiple metadata items; triggers a re-render if any of these items are updated.
+-   `useAddMetadata`: Returns a stable function to add metadata to the store (will never cause a re-render).
+-   `useMetadataStore`: Returns a stable reference to the store, providing access to `getMetadataItem`, `getMetadataItems`, and `addMetadata`. Use `getMetadataItem` for reading metadata during iteration, but note that these items will not update automatically. If you are rendering a list with metadata that could change while the list is "statically" displayed, do not use this hook. Instead, extract each list item into a component and use `useMetadataItem` in each component.
 
-Information about function signatures and return types can be found in `src/app-wrapper/metadata-provider.tsx`, or will become apparent when you actually start using the hooks.
+You can find function signatures and return types in `src/app-wrapper/metadata-provider.tsx`, or discover them as you use the hooks.
 
-Apart from being available via hooks, the metadata store can also be accessed in RTK Query endpoint query functions, via `api.extra.metadataStore`. This object is populated by the return type of `useMetadataStore`.
+In addition to being available via hooks, you can also access the metadata store in RTK Query endpoint query functions via `api.extra.metadataStore`. This object is populated by the return value of `useMetadataStore`.
 
 ### App Cached Data
 
-As the very outer component of the `AppWrapper` we have the `AppCachedDataQueryProvider`. This fetches some data which we consider as static during the lifecycle of the app. This data is guarranteed to be directly available (the app will not load without it) and can be accessed via the `useAppCachedDataQuery` hook. It is also possible to directly target individual cached data properties using the following hooks:
+The outermost component of the `AppWrapper` is the `AppCachedDataQueryProvider`. This fetches data considered static for the app's lifecycle. This data is guaranteed to be available before the app loads and can be accessed via the `useAppCachedDataQuery` hook. You can also directly access individual cached data properties using these hooks:
 
 -   `useCurrentUser`
 -   `useSystemSettings`
@@ -416,41 +416,12 @@ As the very outer component of the `AppWrapper` we have the `AppCachedDataQueryP
 
 ### Browser Navigation
 
-The `AppWrapper` contains a `StoreToLocationSyncer` component which ensures that the `navigation` statel-slice in the redux store remains in-sync with the browser URL. This synchronisation is bidirectional:
+Your `AppWrapper` contains a `StoreToLocationSyncer` component that keeps the `navigation` slice in the Redux store in sync with the browser URL. This synchronization is bidirectional:
 
--   When the user navigates using the browser back/forward buttons or the address bar, the `navigation` state will be updated
--   When the `navigation` state is updated, the URL in the browser address bar is updated and an entry is pushed to the browser history stack
+-   When you navigate using the browser's back/forward buttons or address bar, the `navigation` state is updated.
+-   When the `navigation` state is updated, the browser's address bar and history stack are updated accordingly.
 
-A few conventions have been implemented, that you should be aware of:
+A few conventions to note:
 
--   `visualizationId` will always be populated in the store, and the value `new` is used to signify that no save AO is selected at present.
--   A blank URL `/` and `/new` are treated equally, so when the user accesses the app at `#/` no redirection to `#/new` will take place
-
-### Testing Guidelines
-
-When writing tests, please follow these guidelines:
-
--   **Place unit tests** next to the files they test (e.g., `component.test.tsx` next to `component.tsx`)
--   **Place E2E tests** in the `cypress/e2e/` directory
--   **Maintain test coverage** for new features - aim for meaningful tests rather than 100% coverage
--   **Mock external dependencies** appropriately in unit tests
--   **Use descriptive test names** that explain what behavior is being tested
-
-### Code Quality
-
-When writing code, please adhere to these standards:
-
--   **Follow existing patterns** in the codebase
--   **Use TypeScript strictly** - avoid `any` types
--   **Write meaningful commit messages** following conventional commit format
--   **Keep functions small and focused** - follow single responsibility principle
--   **Use semantic naming** for variables, functions, and components
--   **Document complex logic** with comments where necessary
-
-## Learn More
-
-You can learn more about the platform in the [DHIS2 Application Platform Documentation](https://platform.dhis2.nu/).
-
-You can learn more about the runtime in the [DHIS2 Application Runtime Documentation](https://runtime.dhis2.nu/).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+-   `visualizationId` will always be populated in the store; the value `new` signifies that no saved AO is selected.
+-   A blank URL `/` and `/new` are treated equally, so accessing the app at `#/` will not redirect to `#/new`.
