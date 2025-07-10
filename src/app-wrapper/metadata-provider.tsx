@@ -211,10 +211,11 @@ export type UseMetadataStoreReturnValue = Pick<
     'getMetadataItem' | 'getMetadataItems' | 'addMetadata'
 >
 export function useMetadataStore(): UseMetadataStoreReturnValue {
-    const metadataStore = useContext(MetadataContext)!
-    return {
+    const metadataStore = useContext(MetadataContext) as MetadataStore
+    const [api] = useState(() => ({
         getMetadataItem: metadataStore.getMetadataItem.bind(metadataStore),
         getMetadataItems: metadataStore.getMetadataItems.bind(metadataStore),
         addMetadata: metadataStore.addMetadata.bind(metadataStore),
-    }
+    }))
+    return api
 }
