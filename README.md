@@ -392,16 +392,16 @@ export const EndpointUserProfileExample: React.FC = () => {
 
 ### Working with Metadata
 
-In some other Analytics apps, you might store metadata in the Redux store, but this can be problematic: frequent updates to metadata often cause unnecessary re-renders. In this app, you keep metadata separate in a custom store implemented using a React Context Provider and the `useSyncExternalStore` hook. The store and its hooks are heavily optimized to only register relevant changes. Before updating an item, a deep-equality check is performed, and the hooks are designed to trigger a re-render only if a subscribed metadata item actually changes.
+In some other Analytics apps, metadata is stored in the Redux store, but this can be problematic: frequent updates to metadata often cause unnecessary re-renders. In this app, metadata is kept separate in a custom store implemented using a React Context Provider and the `useSyncExternalStore` hook. The store and its hooks are heavily optimized to only register relevant changes. Before updating an item, a deep-equality check is performed, and the hooks are designed to trigger a re-render only if a subscribed metadata item actually changes.
 
-Your app is wrapped in the `MetadataProvider`, which manages an instance of the metadata store. You have several hooks available to interact with it:
+The app is wrapped in the `MetadataProvider`, which manages an instance of the metadata store. You have several hooks available to interact with it:
 
 -   `useMetadataItem`: Access a single metadata item; triggers a re-render if that item is updated.
 -   `useMetadataItems`: Access multiple metadata items; triggers a re-render if any of these items are updated.
 -   `useAddMetadata`: Returns a stable function to add metadata to the store (will never cause a re-render).
 -   `useMetadataStore`: Returns a stable reference to the store, providing access to `getMetadataItem`, `getMetadataItems`, and `addMetadata`. Use `getMetadataItem` for reading metadata during iteration, but note that these items will not update automatically. If you are rendering a list with metadata that could change while the list is "statically" displayed, do not use this hook. Instead, extract each list item into a component and use `useMetadataItem` in each component.
 
-You can find function signatures and return types in `src/app-wrapper/metadata-provider.tsx`, or discover them as you use the hooks.
+Function signatures and return types can be found in `src/app-wrapper/metadata-provider.tsx`, or will become apparent when you use the hooks.
 
 In addition to being available via hooks, you can also access the metadata store in RTK Query endpoint query functions via `api.extra.metadataStore`. This object is populated by the return value of `useMetadataStore`.
 
@@ -416,9 +416,9 @@ The outermost component of the `AppWrapper` is the `AppCachedDataQueryProvider`.
 
 ### Browser Navigation
 
-Your `AppWrapper` contains a `StoreToLocationSyncer` component that keeps the `navigation` slice in the Redux store in sync with the browser URL. This synchronization is bidirectional:
+The `AppWrapper` contains a `StoreToLocationSyncer` component that keeps the `navigation` slice in the Redux store in sync with the browser URL. This synchronization is bidirectional:
 
--   When you navigate using the browser's back/forward buttons or address bar, the `navigation` state is updated.
+-   When a user navigates using the browser's back/forward buttons or address bar, the `navigation` state is updated.
 -   When the `navigation` state is updated, the browser's address bar and history stack are updated accordingly.
 
 A few conventions to note:
