@@ -29,6 +29,20 @@ msgstr "Last 3 days"
 msgid "Last 7 days"
 msgstr "Last 7 days"
 
+msgid ""
+"Track or compare changes over time. Recommend period as category. (adjust "
+"for EVER)"
+msgstr ""
+"Track or compare changes over time. Recommend period as category. (adjust "
+"for EVER)"
+
+msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
+msgstr "View data and indicators in a manipulatable table. (adjust for EVER)"
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "Event Visualizer"
+
 msgid "Last 14 days"
 msgstr "Last 14 days"
 
