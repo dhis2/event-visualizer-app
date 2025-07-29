@@ -115,23 +115,3 @@ msgstr "This year"
 
 msgid "Last year"
 msgstr "Last year"
-
-msgid "ERROR"
-msgstr "ERROR"
-
-msgid "Loading..."
-msgstr "Loading..."
-
-msgid "Welcome to DHIS2 with TypeScript!"
-msgstr "Welcome to DHIS2 with TypeScript!"
-
-msgid "Hello {{name}}"
-msgstr "Hello {{name}}"
-
-msgctxt "Application title"
-msgid "__MANIFEST_APP_TITLE"
-msgstr "Event Visualizer"
-
-msgctxt "Application description"
-msgid "__MANIFEST_APP_DESCRIPTION"
-msgstr "Event visualizer app and plugin"
