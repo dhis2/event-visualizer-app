@@ -128,6 +128,51 @@ msgstr "This year"
 msgid "Last year"
 msgstr "Last year"
 
+msgid "ERROR"
+msgstr "ERROR"
+
+msgid "Loading..."
+msgstr "Loading..."
+
+msgid "Welcome to DHIS2 with TypeScript!"
+msgstr "Welcome to DHIS2 with TypeScript!"
+
+msgid "HTML"
+msgstr "HTML"
+
+msgid "HTML+CSS (.html+css)"
+msgstr "HTML+CSS (.html+css)"
+
+msgid "Plain data source"
+msgstr "Plain data source"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "XML"
+msgstr "XML"
+
+msgid "Microsoft Excel"
+msgstr "Microsoft Excel"
+
+msgid "CSV"
+msgstr "CSV"
+
+msgid "Metadata ID scheme"
+msgstr "Metadata ID scheme"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Code"
+msgstr "Code"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Download"
+msgstr "Download"
+
 msgid "\"{{- deletedObject}}\" successfully deleted."
 msgstr "\"{{- deletedObject}}\" successfully deleted."
 
@@ -143,6 +188,33 @@ msgstr ""
 
 msgid "Rename failed"
 msgstr "Rename failed"
+
+msgid "Show layout"
+msgstr "Show layout"
+
+msgid "Hide layout"
+msgstr "Hide layout"
+
+msgid "Show dimensions sidebar"
+msgstr "Show dimensions sidebar"
+
+msgid "Hide dimensions sidebar"
+msgstr "Hide dimensions sidebar"
+
+msgid "Hide interpretations and details"
+msgstr "Hide interpretations and details"
+
+msgid "Show interpretations and details"
+msgstr "Show interpretations and details"
+
+msgid "View"
+msgstr "View"
+
+msgid "Reset sidebar width"
+msgstr "Reset sidebar width"
+
+msgid "Hello {{name}}"
+msgstr "Hello {{name}}"
 
 msgid "There is a problem with this visualization."
 msgstr "There is a problem with this visualization."
