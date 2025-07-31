@@ -11,5 +11,13 @@ export default defineConfig({
         setupFiles: './vitest.setup.ts',
         environment: 'jsdom',
         exclude: [...configDefaults.exclude, '**/.d2/**'],
+        resolveSnapshotPath: (testPath, snapExtension) => {
+            const testPathParts = testPath.split('/')
+            const file = testPathParts.pop()
+
+            return `${testPathParts.join(
+                '/'
+            )}/test-snapshots/${file}${snapExtension}`
+        },
     },
 })
