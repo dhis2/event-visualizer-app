@@ -38,6 +38,7 @@ import {
 //import { sGetVisualization } from '../../reducers/visualization.js'
 //import { ToolbarDownloadDropdown } from '../DownloadMenu/index.js'
 //import VisualizationOptionsManager from '../VisualizationOptions/VisualizationOptionsManager.jsx'
+import ViewMenu from './view-menu'
 
 //const visualizationSaveAsMutation = {
 //    type: 'create',
@@ -302,6 +303,7 @@ const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
                 onDelete={onDelete}
                 onError={onError}
             />
+            <ViewMenu />
         </HoverMenuBar>
     )
 }
