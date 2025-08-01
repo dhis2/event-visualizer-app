@@ -189,6 +189,9 @@ msgstr ""
 msgid "Rename failed"
 msgstr "Rename failed"
 
+msgid "Options"
+msgstr "Options"
+
 msgid "Show layout"
 msgstr "Show layout"
 
