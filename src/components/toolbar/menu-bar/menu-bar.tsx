@@ -19,8 +19,8 @@ import React, { FC } from 'react'
 //    apiFetchVisualizationNameDesc,
 //    apiFetchVisualizationSubscribers,
 //} from '../../api/visualization.js'
-import { getAlertTypeByStatusCode } from '../../modules/error'
-import { history } from '../../modules/history'
+import { getAlertTypeByStatusCode } from '../../../modules/error'
+import { history } from '../../../modules/history'
 //import {
 //    isLayoutValidForSave,
 //    isLayoutValidForSaveAs,
@@ -33,12 +33,12 @@ import {
     //    STATE_UNSAVED,
     //    getSaveableVisualization,
     //    getVisualizationState,
-} from '../../modules/visualization'
+} from '../../../modules/visualization'
 //import { sGetCurrent } from '../../reducers/current.js'
 //import { sGetVisualization } from '../../reducers/visualization.js'
 //import { ToolbarDownloadDropdown } from '../DownloadMenu/index.js'
 //import VisualizationOptionsManager from '../VisualizationOptions/VisualizationOptionsManager.jsx'
-import ToolbarDownloadMenu from '../download-menu/toolbar-download-menu'
+import DownloadMenu from './download-menu'
 import ViewMenu from './view-menu'
 
 //const visualizationSaveAsMutation = {
@@ -305,7 +305,7 @@ const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
                 onError={onError}
             />
             <ViewMenu />
-            <ToolbarDownloadMenu />
+            <DownloadMenu />
         </HoverMenuBar>
     )
 }
