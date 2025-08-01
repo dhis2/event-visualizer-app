@@ -39,6 +39,7 @@ import {
 //import { ToolbarDownloadDropdown } from '../DownloadMenu/index.js'
 //import VisualizationOptionsManager from '../VisualizationOptions/VisualizationOptionsManager.jsx'
 import DownloadMenu from './download-menu'
+import OptionsMenu from './options-menu'
 import ViewMenu from './view-menu'
 
 //const visualizationSaveAsMutation = {
@@ -305,6 +306,7 @@ const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
                 onError={onError}
             />
             <ViewMenu />
+            <OptionsMenu />
             <DownloadMenu />
         </HoverMenuBar>
     )
