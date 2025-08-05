@@ -1,17 +1,11 @@
 import React, { FC } from 'react'
 
-type ArrowDownProps = {
-    style?: { width: number; height: number }
-}
-
-const ArrowDown: FC<ArrowDownProps> = ({
-    style = { width: 16, height: 16 },
-}) => (
+const ArrowDown: FC = () => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 16 16"
         version="1.1"
-        style={style}
+        style={{ width: 16, height: 16 }}
     >
         <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
             <path
