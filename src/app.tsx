@@ -2,11 +2,10 @@ import i18n from '@dhis2/d2-i18n'
 import type { MeDto } from '@types'
 import React, { FC, useState } from 'react'
 import { AppWrapper } from './app-wrapper'
-import { useSystemSettings } from './app-wrapper/app-cached-data-query-provider'
 import classes from './app.module.css'
 import { Examples } from './components/examples'
 import Hello from './hello'
-import { useRtkQuery } from './hooks'
+import { useRtkQuery, useSystemSettings } from './hooks'
 
 const EventVisualizer: FC = () => {
     const [showExamples, setShowExamples] = useState(false)
