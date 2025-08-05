@@ -6,7 +6,7 @@ import {
     isSimpleMetadataItem,
     isProgramMetadataItem,
     isOptionSetMetadataItem,
-} from './type-guards'
+} from '../type-guards'
 
 describe('type-guards', () => {
     describe('isObject', () => {

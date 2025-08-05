@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { smartMergeWithChangeDetection } from './merge-utils'
+import { smartMergeWithChangeDetection } from '../merge-utils'
 
 describe('smartMergeWithChangeDetection', () => {
     it('should return new item when no existing item', () => {

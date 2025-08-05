@@ -2,13 +2,13 @@ import { act } from '@testing-library/react'
 import type { RootState } from '@types'
 import React from 'react'
 import { describe, it, beforeEach, afterEach } from 'vitest'
-import { history } from '../modules'
+import { history } from '../../modules'
 import {
     navigationReducer,
     setNavigationState,
-} from '../store/navigation-slice'
-import { setupStore, renderWithReduxStoreProvider } from '../test-utils'
-import { StoreToLocationSyncer } from './store-to-location-syncer'
+} from '../../store/navigation-slice'
+import { setupStore, renderWithReduxStoreProvider } from '../../test-utils'
+import { StoreToLocationSyncer } from '../store-to-location-syncer'
 
 describe('StoreToLocationSyncer', () => {
     let store: ReturnType<typeof setupStore> & {

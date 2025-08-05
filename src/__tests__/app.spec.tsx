@@ -1,18 +1,18 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
 import { describe, it, expect } from 'vitest'
-import App from './app'
-import { useRtkQuery } from './hooks'
-import { createUseRtkQueryMockReturnValue } from './test-utils'
+import App from '../app'
+import { useRtkQuery } from '../hooks'
+import { createUseRtkQueryMockReturnValue } from '../test-utils'
 
-vi.mock('./hooks', async (importOriginal) => {
+vi.mock('../hooks', async (importOriginal) => {
     return {
-        ...(await importOriginal<typeof import('./hooks')>()),
+        ...(await importOriginal<typeof import('../hooks')>()),
         useRtkQuery: vi.fn(),
         useSystemSettings: vi.fn(() => ({})),
     }
 })
-vi.mock('./app-wrapper', () => ({
+vi.mock('../app-wrapper', () => ({
     AppWrapper: ({ children }) => children,
 }))
 

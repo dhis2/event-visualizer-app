@@ -6,7 +6,7 @@ import {
     useMetadataItems,
     useAddMetadata,
     useMetadataStore,
-} from './metadata-provider'
+} from '../metadata-provider'
 
 let renders = { item: 0, items: 0, add: 0, store: 0 }
 

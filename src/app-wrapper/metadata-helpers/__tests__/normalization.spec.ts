@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { normalizeMetadataInputItem } from './normalization'
+import { normalizeMetadataInputItem } from '../normalization'
 
 describe('normalization', () => {
     describe('normalizeMetadataInputItem', () => {

@@ -1,4 +1,4 @@
-import { getInitialMetadata } from './initial-metadata'
+import { getInitialMetadata } from '../initial-metadata'
 
 describe('getInitialMetadata', () => {
     it('should return relative periods and organization units', () => {

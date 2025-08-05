@@ -1,6 +1,6 @@
 import { FetchError } from '@dhis2/app-runtime'
 import { describe, it, expect } from 'vitest'
-import { parseEngineError } from './parse-engine-error'
+import { parseEngineError } from '../parse-engine-error'
 
 describe('parseEngineError', () => {
     it('parses network FetchError', () => {
