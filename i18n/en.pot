@@ -5,8 +5,17 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-07-02T07:09:16.366Z\n"
-"PO-Revision-Date: 2025-07-02T07:09:16.367Z\n"
+"POT-Creation-Date: 2025-08-05T14:51:31.817Z\n"
+"PO-Revision-Date: 2025-08-05T14:51:31.818Z\n"
+
+msgid "User organisation unit"
+msgstr "User organisation unit"
+
+msgid "User sub-units"
+msgstr "User sub-units"
+
+msgid "User sub-x2-units"
+msgstr "User sub-x2-units"
 
 msgid "Today"
 msgstr "Today"
@@ -106,18 +115,6 @@ msgstr "This year"
 
 msgid "Last year"
 msgstr "Last year"
-
-msgid "Last 5 years"
-msgstr "Last 5 years"
-
-msgid "User organisation unit"
-msgstr "User organisation unit"
-
-msgid "User sub-units"
-msgstr "User sub-units"
-
-msgid "User sub-x2-units"
-msgstr "User sub-x2-units"
 
 msgid "ERROR"
 msgstr "ERROR"
