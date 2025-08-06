@@ -2,7 +2,6 @@ import type {
     CachedDataQueryProvider,
     useCachedDataQuery,
 } from './cached-data-query-provider'
-
 import type { Toolbar } from './toolbar'
 import type { ToolbarSidebar } from './toolbar-sidebar'
 
