@@ -4,7 +4,7 @@ import i18n from '@dhis2/d2-i18n'
 
 export const visTypes = [VIS_TYPE_LINE_LIST, VIS_TYPE_PIVOT_TABLE]
 
-export const getVisTypeDescriptions = () => ({
+export const getVisTypeDescriptions = (): Record<string, string> => ({
     [VIS_TYPE_LINE_LIST]: i18n.t(
         'Track or compare changes over time. Recommend period as category. (adjust for EVER)'
     ),
@@ -13,7 +13,9 @@ export const getVisTypeDescriptions = () => ({
     ),
 })
 
-export const useVisTypesFilterByVersion = () => {
+export const useVisTypesFilterByVersion = (): ((
+    visType: string
+) => boolean) => {
     const { serverVersion } = useConfig()
 
     const filterVisTypesByVersion = (visType: string) =>
