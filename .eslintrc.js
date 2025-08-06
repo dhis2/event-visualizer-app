@@ -53,6 +53,7 @@ module.exports = {
             files: ['src/locales/index.js'],
             rules: {
                 'import/order': 'off',
+                'import/no-default-export': 'off',
             },
         },
         {
