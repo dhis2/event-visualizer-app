@@ -2,7 +2,7 @@
 node_modules
 .d2
 src/locales/*
-!src/locales/.eslintrc
+!src/locales/.eslintrc.json
 build
 src/types/dhis2-openapi-schemas
 cypress.env.json
