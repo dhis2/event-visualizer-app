@@ -5,11 +5,11 @@ import {
     HoverMenuListItem,
 } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import React /*, { useState }*/ from 'react'
+import React, { FC /*, useState*/ } from 'react'
 //import { getOptionsByType } from '../../modules/options/config.js'
 //import UpdateVisualizationContainer from '../UpdateButton/UpdateVisualizationContainer.js'
 
-const OptionsMenu = () => {
+const OptionsMenu: FC = () => {
     return (
         <HoverMenuDropdown label={i18n.t('Options')}>
             <HoverMenuList dataTest="options-menu-list">
