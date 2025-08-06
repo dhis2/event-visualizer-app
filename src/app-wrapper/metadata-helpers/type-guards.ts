@@ -7,18 +7,18 @@ import type {
 } from './types'
 
 // Helper function to check if input is a plain object
-export function isObject(input: unknown): input is Record<string, unknown> {
+export const isObject = (input: unknown): input is Record<string, unknown> => {
     return typeof input === 'object' && input !== null && !Array.isArray(input)
 }
 
 // Helper function to check if input is a non-empty string
-export function isPopulatedString(input: unknown): input is string {
+export const isPopulatedString = (input: unknown): input is string => {
     return typeof input === 'string' && input.length > 0
 }
 
-export function isSingleMetadataItemInput(
+export const isSingleMetadataItemInput = (
     input: unknown
-): input is AnyMetadataItemInput {
+): input is AnyMetadataItemInput => {
     if (!isObject(input)) {
         return false
     }
@@ -35,9 +35,9 @@ export function isSingleMetadataItemInput(
 }
 
 // Type guards to narrow down AnyMetadataItemInput to specific types
-export function isMetadataItem(
+export const isMetadataItem = (
     input: AnyMetadataItemInput
-): input is MetadataItem {
+): input is MetadataItem => {
     return (
         'uid' in input &&
         'name' in input &&
@@ -46,9 +46,9 @@ export function isMetadataItem(
     )
 }
 
-export function isSimpleMetadataItem(
+export const isSimpleMetadataItem = (
     input: AnyMetadataItemInput
-): input is SimpleMetadataItem {
+): input is SimpleMetadataItem => {
     if (!isObject(input)) {
         return false
     }
@@ -61,9 +61,9 @@ export function isSimpleMetadataItem(
     )
 }
 
-export function isProgramMetadataItem(
+export const isProgramMetadataItem = (
     input: AnyMetadataItemInput
-): input is ProgramMetadataItem {
+): input is ProgramMetadataItem => {
     return (
         isObject(input) &&
         'id' in input &&

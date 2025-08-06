@@ -130,9 +130,9 @@ export const MetadataProvider: React.FC<{ children: React.ReactNode }> = ({
     )
 }
 
-export function useMetadataItem(
+export const useMetadataItem = (
     metadataId: string
-): MetadataStoreItem | undefined {
+): MetadataStoreItem | undefined => {
     const metadataStore = useContext(MetadataContext)!
     const result = useSyncExternalStore(
         useCallback(
@@ -144,9 +144,9 @@ export function useMetadataItem(
     return result
 }
 
-export function useMetadataItems(
+export const useMetadataItems = (
     metadataIds: string[]
-): Record<string, MetadataStoreItem> {
+): Record<string, MetadataStoreItem> => {
     const metadataStore = useContext(MetadataContext)!
     // Sort keys for stable dependency array
     const sortedMetadataIds = useMemo(
@@ -203,7 +203,7 @@ export function useMetadataItems(
     return result
 }
 
-export function useAddMetadata(): MetadataStore['addMetadata'] {
+export const useAddMetadata = (): MetadataStore['addMetadata'] => {
     const metadataStore = useContext(MetadataContext)!
     return metadataStore.addMetadata.bind(metadataStore)
 }
@@ -212,7 +212,7 @@ export type UseMetadataStoreReturnValue = Pick<
     MetadataStore,
     'getMetadataItem' | 'getMetadataItems' | 'addMetadata'
 >
-export function useMetadataStore(): UseMetadataStoreReturnValue {
+export const useMetadataStore = (): UseMetadataStoreReturnValue => {
     const metadataStore = useContext(MetadataContext) as MetadataStore
     const [api] = useState(() => ({
         getMetadataItem: metadataStore.getMetadataItem.bind(metadataStore),

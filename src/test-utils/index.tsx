@@ -6,7 +6,7 @@ import { Provider } from 'react-redux'
 import { vi } from 'vitest'
 import { UseRtkQueryResult } from '../hooks/use-rtk-query'
 
-export function setupStore(
+export const setupStore = (
     reducer: Partial<ReducersMapObject<RootState>>,
     preloadedState: Partial<RootState>
 ): {
@@ -14,17 +14,17 @@ export function setupStore(
     dispatch: ReturnType<typeof configureStore>['dispatch']
     subscribe: ReturnType<typeof configureStore>['subscribe']
     replaceReducer: ReturnType<typeof configureStore>['replaceReducer']
-} {
+} => {
     return configureStore({
         reducer: reducer as ReducersMapObject<RootState>,
         preloadedState,
     })
 }
 
-export function renderWithReduxStoreProvider(
+export const renderWithReduxStoreProvider = (
     ui: React.ReactElement,
     store: ReturnType<typeof setupStore>
-) {
+) => {
     const Wrapper = ({ children }: PropsWithChildren) => (
         <Provider store={store as Store}>{children}</Provider>
     )
@@ -32,9 +32,9 @@ export function renderWithReduxStoreProvider(
     return render(ui, { wrapper: Wrapper })
 }
 
-export function createUseRtkQueryMockReturnValue(
+export const createUseRtkQueryMockReturnValue = (
     payload: Partial<UseRtkQueryResult>
-): UseRtkQueryResult {
+): UseRtkQueryResult => {
     return {
         data: {},
         refetch: vi.fn(),

@@ -10,19 +10,19 @@ import {
 
 let renders = { item: 0, items: 0, add: 0, store: 0 }
 
-function ItemComponent({ id }: { id: string }) {
+const ItemComponent = ({ id }: { id: string }) => {
     renders.item++
     const value = useMetadataItem(id)
     return <div data-test="item">{JSON.stringify(value)}</div>
 }
 
-function ItemsComponent({ ids }: { ids: string[] }) {
+const ItemsComponent = ({ ids }: { ids: string[] }) => {
     renders.items++
     const values = useMetadataItems(ids)
     return <div data-test="items">{JSON.stringify(values)}</div>
 }
 
-function AddComponent() {
+const AddComponent = () => {
     renders.add++
     const addMetadata = useAddMetadata()
     return (
@@ -35,7 +35,7 @@ function AddComponent() {
     )
 }
 
-function StoreComponent() {
+const StoreComponent = () => {
     renders.store++
     const { getMetadataItem, getMetadataItems, addMetadata } =
         useMetadataStore()
@@ -52,7 +52,7 @@ function StoreComponent() {
     )
 }
 
-function ProviderWithComponents({ children }: { children?: React.ReactNode }) {
+const ProviderWithComponents = ({ children }: { children?: React.ReactNode }) => {
     return (
         <MetadataProvider>
             <ItemComponent id="a" />
@@ -369,7 +369,7 @@ describe('MetadataProvider initial metadata behavior', () => {
     it('should not trigger re-renders when attempting to overwrite initial metadata', () => {
         let renderCount = 0
 
-        function TestComponent() {
+        const TestComponent = () => {
             renderCount++
             const todayItem = useMetadataItem('TODAY')
             const addMetadata = useAddMetadata()

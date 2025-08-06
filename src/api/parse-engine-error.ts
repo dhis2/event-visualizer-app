@@ -35,7 +35,7 @@ export type EngineError = {
     errorReports?: Array<ErrorReport>
 }
 
-function cleanErrorReport(errorReport: ResponseErrorReport): ErrorReport {
+const cleanErrorReport = (errorReport: ResponseErrorReport): ErrorReport => {
     return {
         errorCode: errorReport.errorCode,
         errorProperties: errorReport.errorProperties,

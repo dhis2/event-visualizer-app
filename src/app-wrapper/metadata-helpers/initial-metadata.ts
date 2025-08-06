@@ -65,7 +65,7 @@ const getRelativePeriods = (): Record<SupportedRelativePeriods, string> => ({
     LAST_YEAR: i18n.t('Last year'),
 })
 
-export function getInitialMetadata(): Record<string, AnyMetadataItemInput> {
+export const getInitialMetadata = (): Record<string, AnyMetadataItemInput> => {
     return Object.entries({
         ...getRelativePeriods(),
         ...getOrganisationUnits(),
