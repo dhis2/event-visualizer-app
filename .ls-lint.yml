@@ -13,4 +13,3 @@ ls:
 
 ignore:
     - src/types/dhis2-openapi-schemas
-    - src/locales
