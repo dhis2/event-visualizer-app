@@ -3,19 +3,11 @@ import { useConfig } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import { FlyoutMenu, MenuItem, MenuSectionHeader } from '@dhis2/ui'
 import React, { FC } from 'react'
-import {
-    DOWNLOAD_TYPE_TABLE,
-    FILE_FORMAT_HTML_CSS,
-    FILE_FORMAT_CSV,
-    FILE_FORMAT_XLS,
-    FILE_FORMAT_XLSX,
-    FILE_FORMAT_JSON,
-    FILE_FORMAT_XML,
-} from './constants'
 import PlainDataSourceSubMenu from './plain-data-source-sub-menu'
+import type { DownloadFn } from './types'
 
 type DownloadMenuProps = {
-    download: (type: string, format: string, idScheme?: string) => void
+    download: DownloadFn
     hoverable?: boolean
 }
 
@@ -33,9 +25,7 @@ const DownloadMenu: FC<DownloadMenuProps> = ({ download, hoverable }) => {
             />
             <MenuItemComponent
                 label={i18n.t('HTML+CSS (.html+css)')}
-                onClick={() =>
-                    download(DOWNLOAD_TYPE_TABLE, FILE_FORMAT_HTML_CSS)
-                }
+                onClick={() => download('table', 'html+css')}
                 className="push-analytics-download-as-html-css-menu-item"
             />
             <MenuSectionHeader
@@ -46,13 +36,13 @@ const DownloadMenu: FC<DownloadMenuProps> = ({ download, hoverable }) => {
                 hoverable={hoverable}
                 download={download}
                 label={i18n.t('JSON')}
-                format={FILE_FORMAT_JSON}
+                format={'json'}
             />
             <PlainDataSourceSubMenu
                 hoverable={hoverable}
                 download={download}
                 label={i18n.t('XML')}
-                format={FILE_FORMAT_XML}
+                format={'xml'}
             />
             <PlainDataSourceSubMenu
                 hoverable={hoverable}
@@ -60,16 +50,14 @@ const DownloadMenu: FC<DownloadMenuProps> = ({ download, hoverable }) => {
                 label={i18n.t('Microsoft Excel')}
                 format={
                     // VERSION-TOGGLE: remove when 42 is lowest supported version
-                    config.serverVersion.minor >= 42
-                        ? FILE_FORMAT_XLSX
-                        : FILE_FORMAT_XLS
+                    config.serverVersion.minor >= 42 ? 'xlsx' : 'xls'
                 }
             />
             <PlainDataSourceSubMenu
                 hoverable={hoverable}
                 download={download}
                 label={i18n.t('CSV')}
-                format={FILE_FORMAT_CSV}
+                format={'csv'}
             />
         </MenuComponent>
     )
