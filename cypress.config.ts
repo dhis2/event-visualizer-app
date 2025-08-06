@@ -2,10 +2,10 @@ import fs from 'node:fs'
 import { defineConfig } from 'cypress'
 import { excludeByVersionTags } from './cypress/plugins/exclude-by-version-tags.ts'
 
-async function setupNodeEvents(
+const setupNodeEvents = async (
     on: Cypress.PluginEvents,
     config: Cypress.PluginConfigOptions
-) {
+) => {
     excludeByVersionTags(on, config)
 
     // Delete videos for passing tests

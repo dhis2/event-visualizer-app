@@ -1,7 +1,7 @@
 # DHIS2 Platform
 node_modules
 .d2
-src/locales
+src/locales/*
 build
 src/types/dhis2-openapi-schemas
 cypress.env.json

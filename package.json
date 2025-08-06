@@ -35,13 +35,23 @@
         "openapi-typescript-codegen": "^0.29.0",
         "start-server-and-test": "^2.0.12",
         "typescript": "^5",
-        "vitest": "^3.1.4"
+        "vitest": "^3.1.4",
+        "vitest-canvas-mock": "^0.3.3"
     },
     "dependencies": {
-        "@dhis2/app-runtime": "^3.14.1",
+        "@dhis2/analytics": "^28.0.3",
+        "@dhis2/app-runtime": "^3.14.4",
+        "@reduxjs/toolkit": "^2.8.2",
+        "deep-equal": "^2.2.3",
+        "history": "^5.3.0",
         "prop-types": "^15.8.1",
+        "query-string": "^9.2.1",
         "react": "^18.0.0",
-        "react-dom": "^18.0.0"
+        "react-dom": "^18.0.0",
+        "react-redux": "^9.2.0"
+    },
+    "resolutions": {
+        "@dhis2/app-runtime": "^3.14.4"
     },
     "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

@@ -1,10 +1,10 @@
 ls:
     '{cypress,scripts,src,types}':
-        .dir: kebab-case
+        .dir: kebab-case | regex:__tests__ | regex:__snapshots__ | regex:__fixtures__
         .ts: kebab-case
-        .test.ts: kebab-case
+        .spec.ts: kebab-case
         .tsx: kebab-case
-        .test.tsx: kebab-case
+        .spec.tsx: kebab-case
         .d.ts: kebab-case
         .cy.ts: kebab-case
         .module.css: kebab-case
