@@ -3,8 +3,6 @@ import React, { FC } from 'react'
 
 type HelloProps = { name?: string }
 
-const Hello: FC<HelloProps> = ({ name = 'Unknown Visitor' }) => (
+export const Hello: FC<HelloProps> = ({ name = 'Unknown Visitor' }) => (
     <h1>{i18n.t('Hello {{name}}', { name })}</h1>
 )
-
-export default Hello

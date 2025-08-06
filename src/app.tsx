@@ -4,7 +4,7 @@ import React, { FC, useState } from 'react'
 import { AppWrapper } from './app-wrapper'
 import classes from './app.module.css'
 import { Examples } from './components/examples'
-import Hello from './hello'
+import { Hello } from './hello'
 import { useRtkQuery, useSystemSettings } from './hooks'
 
 const EventVisualizer: FC = () => {
@@ -44,4 +44,5 @@ const App: FC = () => (
     </AppWrapper>
 )
 
+// eslint-disable-next-line import/no-default-export
 export default App
