@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 
-const ArrowDown: FC = () => (
+export const ArrowDown: FC = () => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 16 16"
@@ -15,5 +15,3 @@ const ArrowDown: FC = () => (
         </g>
     </svg>
 )
-
-export default ArrowDown

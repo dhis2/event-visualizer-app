@@ -4,7 +4,7 @@ type PivotTableIcon = {
     style?: { width: number; height: number }
 }
 
-const PivotTableIcon: FC<PivotTableIcon> = ({ style }) => (
+export const PivotTableIcon: FC<PivotTableIcon> = ({ style }) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0,0,48,48" style={style}>
         <g fill="none" fillRule="evenodd">
             <polygon points="0 0 48 0 48 48 0 48" />
@@ -23,5 +23,3 @@ const PivotTableIcon: FC<PivotTableIcon> = ({ style }) => (
         </g>
     </svg>
 )
-
-export default PivotTableIcon

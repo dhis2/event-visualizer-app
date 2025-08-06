@@ -1,6 +1,6 @@
 import cx from 'classnames'
 import React, { FC } from 'react'
-import ListItemIcon from './list-item-icon'
+import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
 
 type VisualizationTypeListItemProps = {
@@ -11,7 +11,7 @@ type VisualizationTypeListItemProps = {
     onClick: () => void
 }
 
-const VisualizationTypeListItem: FC<VisualizationTypeListItemProps> = ({
+export const VisualizationTypeListItem: FC<VisualizationTypeListItemProps> = ({
     iconType,
     label,
     description,
@@ -40,5 +40,3 @@ const VisualizationTypeListItem: FC<VisualizationTypeListItemProps> = ({
         </div>
     )
 }
-
-export default VisualizationTypeListItem

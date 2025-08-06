@@ -10,7 +10,7 @@ type ListItemIconProps = {
     style?: { width: number; height: number }
 }
 
-const ListItemIcon: FC<ListItemIconProps> = ({ iconType, style }) => {
+export const ListItemIcon: FC<ListItemIconProps> = ({ iconType, style }) => {
     if (iconType === VIS_TYPE_LINE_LIST) {
         return (
             <div style={style}>
@@ -26,5 +26,3 @@ const ListItemIcon: FC<ListItemIconProps> = ({ iconType, style }) => {
         )
     }
 }
-
-export default ListItemIcon

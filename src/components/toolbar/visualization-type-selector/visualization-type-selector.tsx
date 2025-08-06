@@ -6,17 +6,17 @@ import {
 import { Popper, Layer } from '@dhis2/ui'
 import cx from 'classnames'
 import React, { FC, useState, useRef } from 'react'
-import ArrowDown from '../../../assets/arrow-down'
+import { ArrowDown } from '../../../assets/arrow-down'
 import {
     visTypes,
     getVisTypeDescriptions,
     useVisTypesFilterByVersion,
 } from '../../../modules/visualization'
-import ListItemIcon from './list-item-icon'
+import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
-import VisualizationTypeListItem from './visualization-type-list-item'
+import { VisualizationTypeListItem } from './visualization-type-list-item'
 
-const VisualizationTypeSelector: FC = () => {
+export const VisualizationTypeSelector: FC = () => {
     // TODO read this from the store
     const [visualizationType, setVisType] = useState(VIS_TYPE_PIVOT_TABLE)
     const [listIsOpen, setListIsOpen] = useState(false)
@@ -110,5 +110,3 @@ const VisualizationTypeSelector: FC = () => {
         </>
     )
 }
-
-export default VisualizationTypeSelector

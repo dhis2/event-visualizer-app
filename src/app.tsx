@@ -6,7 +6,7 @@ import React, { FC, useState } from 'react'
 import { AppWrapper } from './app-wrapper'
 import classes from './app.module.css'
 import { Examples } from './components/examples'
-import Toolbar from './components/toolbar/toolbar'
+import { Toolbar } from './components/toolbar/toolbar'
 import { Hello } from './hello'
 import { useRtkQuery, useSystemSettings } from './hooks'
 
