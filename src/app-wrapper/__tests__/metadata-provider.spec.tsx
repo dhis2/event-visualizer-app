@@ -52,7 +52,11 @@ const StoreComponent = () => {
     )
 }
 
-const ProviderWithComponents = ({ children }: { children?: React.ReactNode }) => {
+const ProviderWithComponents = ({
+    children,
+}: {
+    children?: React.ReactNode
+}) => {
     return (
         <MetadataProvider>
             <ItemComponent id="a" />
