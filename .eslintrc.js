@@ -15,6 +15,7 @@ module.exports = {
     reportUnusedDisableDirectives: false,
     rules: {
         'import/extensions': 'off',
+        'import/no-default-export': 'error',
         'no-restricted-imports': [
             'error',
             {
