@@ -56,7 +56,10 @@ const query: Query = {
         },
     },
 }
-type CurrentUserData = PickWithFieldFilters<MeDto, typeof currentUserFields>
+type CurrentUserData = Omit<
+    PickWithFieldFilters<MeDto, typeof currentUserFields>,
+    'settings'
+> & { settings?: Record<string, string | undefined> }
 type RootOrgUnitsData = Array<
     PickWithFieldFilters<OrganisationUnit, typeof rootOrgUnitsFields>
 >
@@ -72,11 +75,12 @@ type AppCachedData = {
     }
     orgUnitLevels: { organisationUnitLevels: OrgUnitLevelsData }
 }
+type DisplayNameProperty = 'displayName' | 'displayShortName'
 type TransformedCurrentUserSettings = {
     dbLocale: string
     uiLocale: string
-    displayProperty: string
-    displayNameProperty: 'displayName' | 'displayShortName'
+    displayProperty: string | undefined
+    displayNameProperty: DisplayNameProperty
 }
 export type TransformedAppCachedData = {
     currentUser: CurrentUserData & { settings: TransformedCurrentUserSettings }
@@ -93,30 +97,36 @@ const providerDataTransformation = ({
     systemSettings,
     rootOrgUnits,
     orgUnitLevels,
-}: AppCachedData): TransformedAppCachedData =>
-    // This is read only data, so we freeze it
-    freeze({
-        currentUser: {
-            ...currentUser,
-            settings: {
-                dbLocale: currentUser.settings?.keyDbLocale ?? 'en',
-                uiLocale: currentUser.settings?.keyUiLocale ?? 'en',
-                displayProperty:
-                    currentUser.settings?.keyAnalysisDisplayProperty,
-                displayNameProperty:
-                    currentUser.settings?.keyAnalysisDisplayProperty === 'name'
-                        ? 'displayName'
-                        : 'displayShortName',
-            },
+}: AppCachedData): TransformedAppCachedData => {
+    const displayNameProperty =
+        currentUser.settings?.keyAnalysisDisplayProperty === 'name'
+            ? 'displayName'
+            : ('displayShortName' as 'displayName' | 'displayShortName')
+    const transformedCurrentUser = {
+        ...currentUser,
+        settings: {
+            dbLocale: currentUser.settings?.keyDbLocale ?? 'en',
+            uiLocale: currentUser.settings?.keyUiLocale ?? 'en',
+            displayProperty: currentUser.settings?.keyAnalysisDisplayProperty,
+            displayNameProperty,
         },
-        // filter only the relevant settings to avoid storing all in Redux
-        systemSettings: systemSettingsKeys.reduce((obj, key) => {
-            obj[key] = systemSettings[key]
-            return obj
-        }, {}) as TransformedAppCachedData['systemSettings'],
-        rootOrgUnits: rootOrgUnits.organisationUnits,
-        orgUnitLevels: orgUnitLevels.organisationUnitLevels,
+    }
+    // filter only the relevant settings to avoid storing all in Redux
+    const transformedSystemSettings = systemSettingsKeys.reduce((obj, key) => {
+        obj[key] = systemSettings[key]
+        return obj
+    }, {}) as TransformedAppCachedData['systemSettings']
+    const transformedRootOrgUnits = rootOrgUnits.organisationUnits
+    const transformedOrgUnitLevels = orgUnitLevels.organisationUnitLevels
+
+    // This is read only data, so we freeze it
+    return freeze({
+        currentUser: transformedCurrentUser,
+        systemSettings: transformedSystemSettings,
+        rootOrgUnits: transformedRootOrgUnits,
+        orgUnitLevels: transformedOrgUnitLevels,
     })
+}
 
 export const AppCachedDataQueryProvider: FC<{ children: ReactNode }> = ({
     children,
