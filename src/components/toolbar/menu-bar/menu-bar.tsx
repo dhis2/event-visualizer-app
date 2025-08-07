@@ -1,5 +1,5 @@
 import {
-    VIS_TYPE_GROUP_ALL,
+    //VIS_TYPE_GROUP_ALL,
     //useCachedDataQuery,
     FileMenu,
     //    preparePayloadForSaveAs,
@@ -77,7 +77,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
     const filterVisTypesByVersion = useVisTypesFilterByVersion()
 
     const filterVisTypes = [
-        { type: VIS_TYPE_GROUP_ALL },
+        { type: 'ALL' },
         ...visTypes.filter(filterVisTypesByVersion).map((visType) => ({
             type: visType,
         })),
@@ -280,7 +280,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
                 //                   ...current,
                 //               }}
                 filterVisTypes={filterVisTypes}
-                defaultFilterVisType={VIS_TYPE_GROUP_ALL}
+                defaultFilterVisType={'ALL'}
                 onOpen={onOpen}
                 onNew={onNew}
                 onRename={onRename}
