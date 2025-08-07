@@ -1,7 +1,7 @@
 import { UpdateButton as UiUpdateButton } from '@dhis2/analytics'
-import React from 'react'
+import React, { FC } from 'react'
 
-const UpdateButton = () => {
+export const UpdateButton: FC = () => {
     const onClick = () => {
         console.log('TBD')
     }
@@ -10,5 +10,3 @@ const UpdateButton = () => {
      * disable this button and/or set a loading state */
     return <UiUpdateButton onClick={onClick} />
 }
-
-export default UpdateButton

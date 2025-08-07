@@ -3,7 +3,7 @@ import { useConfig } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import { FlyoutMenu, MenuItem, MenuSectionHeader } from '@dhis2/ui'
 import React, { FC } from 'react'
-import PlainDataSourceSubMenu from './plain-data-source-sub-menu'
+import { PlainDataSourceSubMenu } from './plain-data-source-sub-menu'
 import type { DownloadFn } from './types'
 
 type DownloadMenuProps = {
@@ -11,7 +11,10 @@ type DownloadMenuProps = {
     hoverable?: boolean
 }
 
-const DownloadMenu: FC<DownloadMenuProps> = ({ download, hoverable }) => {
+export const DownloadMenu: FC<DownloadMenuProps> = ({
+    download,
+    hoverable,
+}) => {
     const config = useConfig()
     const MenuComponent = hoverable ? HoverMenuList : FlyoutMenu
     const MenuItemComponent = hoverable ? HoverMenuListItem : MenuItem
@@ -62,5 +65,3 @@ const DownloadMenu: FC<DownloadMenuProps> = ({ download, hoverable }) => {
         </MenuComponent>
     )
 }
-
-export default DownloadMenu

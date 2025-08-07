@@ -38,9 +38,9 @@ import {
 //import { sGetVisualization } from '../../reducers/visualization.js'
 //import { ToolbarDownloadDropdown } from '../DownloadMenu/index.js'
 //import VisualizationOptionsManager from '../VisualizationOptions/VisualizationOptionsManager.jsx'
-import DownloadMenu from './download-menu'
-import OptionsMenu from './options-menu'
-import ViewMenu from './view-menu'
+import { DownloadMenu } from './download-menu'
+import { OptionsMenu } from './options-menu'
+import { ViewMenu } from './view-menu'
 
 //const visualizationSaveAsMutation = {
 //    type: 'create',
@@ -67,7 +67,7 @@ type MenuBarProps = {
     onFileMenuAction: () => void
 }
 
-const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
+export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
     //    const dispatch = useDispatch()
     //    const engine = useDataEngine()
     //    const { currentUser } = useCachedDataQuery()
@@ -311,5 +311,3 @@ const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
         </HoverMenuBar>
     )
 }
-
-export default MenuBar

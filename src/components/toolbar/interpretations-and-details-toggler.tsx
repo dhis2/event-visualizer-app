@@ -1,7 +1,7 @@
 import { InterpretationsAndDetailsToggler as AnalyticsInterpretationsAndDetailsToggler } from '@dhis2/analytics'
-import React from 'react'
+import React, { FC } from 'react'
 
-const InterpretationsAndDetailsToggler = () => {
+export const InterpretationsAndDetailsToggler: FC = () => {
     const showDetailsPanel = false
     const id = undefined
     const onClick = () => console.log('TBD')
@@ -14,5 +14,3 @@ const InterpretationsAndDetailsToggler = () => {
         />
     )
 }
-
-export default InterpretationsAndDetailsToggler
