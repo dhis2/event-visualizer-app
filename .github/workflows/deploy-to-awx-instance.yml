@@ -3,6 +3,12 @@ name: 'deploy to AWX EVER instance'
 on:
     schedule:
         - cron: '0 5 * * *' # Runs every day at 5:00 AM UTC
+    push:
+        branches:
+            - master
+        tags:
+            - '*'
+    workflow_dispatch: # Allows manual triggering of the workflow
 
 env:
     GIT_AUTHOR_NAME: '@dhis2-bot'
@@ -13,7 +19,7 @@ env:
     CI: true
 
 jobs:
-    deploy-to-awx--ever-instance:
+    deploy-to-awx-ever-instance:
         if: |
             ${{ !github.event.push.repository.fork }} &&
             ${{ github.actor == 'dhis2-bot' && (github.ref == 'refs/heads/master' ||  startsWith(github.ref, 'refs/tags/')) }}
