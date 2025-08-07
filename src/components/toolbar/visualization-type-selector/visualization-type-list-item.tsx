@@ -1,11 +1,12 @@
 import cx from 'classnames'
 import React, { FC } from 'react'
+import { SupportedVisType } from '../../../constants'
 import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
 
 type VisualizationTypeListItemProps = {
     description: string
-    iconType: string
+    iconType: SupportedVisType
     isSelected: boolean
     label: string
     onClick: () => void

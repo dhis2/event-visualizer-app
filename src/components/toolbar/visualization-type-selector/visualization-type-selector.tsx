@@ -1,14 +1,11 @@
-import {
-    visTypeDisplayNames,
-    ToolbarSidebar,
-    VIS_TYPE_PIVOT_TABLE,
-} from '@dhis2/analytics'
+import { visTypeDisplayNames, ToolbarSidebar } from '@dhis2/analytics'
 import { Popper, Layer } from '@dhis2/ui'
 import cx from 'classnames'
 import React, { FC, useState, useRef } from 'react'
 import { ArrowDown } from '../../../assets/arrow-down'
+import { SUPPORTED_VIS_TYPES } from '../../../constants'
+import type { SupportedVisType } from '../../../constants'
 import {
-    visTypes,
     getVisTypeDescriptions,
     useVisTypesFilterByVersion,
 } from '../../../modules/visualization'
@@ -18,7 +15,8 @@ import { VisualizationTypeListItem } from './visualization-type-list-item'
 
 export const VisualizationTypeSelector: FC = () => {
     // TODO read this from the store
-    const [visualizationType, setVisType] = useState(VIS_TYPE_PIVOT_TABLE)
+    const [visualizationType, setVisType] =
+        useState<SupportedVisType>('PIVOT_TABLE')
     const [listIsOpen, setListIsOpen] = useState(false)
 
     const filterVisTypesByVersion = useVisTypesFilterByVersion()
@@ -29,7 +27,7 @@ export const VisualizationTypeSelector: FC = () => {
         console.log('vis type selected')
     }
 
-    const handleListItemClick = (visType: string) => () => {
+    const handleListItemClick = (visType: SupportedVisType) => () => {
         // TODO set this in the store
         setVisType(visType)
         onItemClick()
@@ -75,31 +73,29 @@ export const VisualizationTypeSelector: FC = () => {
                             <div data-test="visualization-type-selector-card">
                                 <div className={classes.listContainer}>
                                     <div className={classes.listSection}>
-                                        {visTypes
-                                            .filter(filterVisTypesByVersion)
-                                            .map((visType) => (
-                                                <VisualizationTypeListItem
-                                                    key={visType}
-                                                    iconType={visType}
-                                                    label={
-                                                        visTypeDisplayNames[
-                                                            visType
-                                                        ]
-                                                    }
-                                                    description={
-                                                        getVisTypeDescriptions()[
-                                                            visType
-                                                        ]
-                                                    }
-                                                    isSelected={
-                                                        visType ===
-                                                        visualizationType
-                                                    }
-                                                    onClick={handleListItemClick(
+                                        {SUPPORTED_VIS_TYPES.filter(
+                                            filterVisTypesByVersion
+                                        ).map((visType) => (
+                                            <VisualizationTypeListItem
+                                                key={visType}
+                                                iconType={visType}
+                                                label={
+                                                    visTypeDisplayNames[visType]
+                                                }
+                                                description={
+                                                    getVisTypeDescriptions()[
                                                         visType
-                                                    )}
-                                                />
-                                            ))}
+                                                    ]
+                                                }
+                                                isSelected={
+                                                    visType ===
+                                                    visualizationType
+                                                }
+                                                onClick={handleListItemClick(
+                                                    visType
+                                                )}
+                                            />
+                                        ))}
                                     </div>
                                 </div>
                             </div>
