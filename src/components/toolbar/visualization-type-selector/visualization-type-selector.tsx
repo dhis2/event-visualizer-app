@@ -5,18 +5,23 @@ import React, { FC, useState, useRef } from 'react'
 import { ArrowDown } from '../../../assets/arrow-down'
 import { SUPPORTED_VIS_TYPES } from '../../../constants'
 import type { SupportedVisType } from '../../../constants'
+import { useAppDispatch, useAppSelector } from '../../../hooks'
 import {
     getVisTypeDescriptions,
     useVisTypesFilterByVersion,
 } from '../../../modules/visualization'
+import { setUiState } from '../../../store'
 import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
 import { VisualizationTypeListItem } from './visualization-type-list-item'
 
 export const VisualizationTypeSelector: FC = () => {
-    // TODO read this from the store
-    const [visualizationType, setVisType] =
-        useState<SupportedVisType>('PIVOT_TABLE')
+    const dispatch = useAppDispatch()
+
+    const visualizationType = useAppSelector(
+        (state) => state.ui.visualizationType
+    )
+
     const [listIsOpen, setListIsOpen] = useState(false)
 
     const filterVisTypesByVersion = useVisTypesFilterByVersion()
@@ -24,17 +29,16 @@ export const VisualizationTypeSelector: FC = () => {
     const toggleList = () => setListIsOpen(!listIsOpen)
 
     const onItemClick = () => {
-        console.log('vis type selected')
+        console.log('TBD run clearing on the store if needed')
     }
 
-    const handleListItemClick = (visType: SupportedVisType) => () => {
-        // TODO set this in the store
-        setVisType(visType)
+    const handleListItemClick = (visualizationType: SupportedVisType) => () => {
+        dispatch(setUiState({ visualizationType }))
         onItemClick()
         toggleList()
     }
 
-    const buttonRef = useRef()
+    const buttonRef = useRef<HTMLDivElement>(null)
 
     return (
         <>
