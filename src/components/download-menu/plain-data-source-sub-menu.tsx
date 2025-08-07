@@ -11,7 +11,7 @@ type PlainDataSourceSubMenuProps = {
     hoverable?: boolean
 }
 
-const PlainDataSourceSubMenu: FC<PlainDataSourceSubMenuProps> = ({
+export const PlainDataSourceSubMenu: FC<PlainDataSourceSubMenuProps> = ({
     download,
     hoverable,
     format,
@@ -42,5 +42,3 @@ const PlainDataSourceSubMenu: FC<PlainDataSourceSubMenuProps> = ({
         </MenuItemComponent>
     )
 }
-
-export default PlainDataSourceSubMenu

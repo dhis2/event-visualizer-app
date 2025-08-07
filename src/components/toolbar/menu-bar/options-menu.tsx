@@ -9,7 +9,7 @@ import React, { FC /*, useState*/ } from 'react'
 //import { getOptionsByType } from '../../modules/options/config.js'
 //import UpdateVisualizationContainer from '../UpdateButton/UpdateVisualizationContainer.js'
 
-const OptionsMenu: FC = () => {
+export const OptionsMenu: FC = () => {
     return (
         <HoverMenuDropdown label={i18n.t('Options')}>
             <HoverMenuList dataTest="options-menu-list">
@@ -56,5 +56,3 @@ const OptionsMenu: FC = () => {
     //        </>
     //    )
 }
-
-export default OptionsMenu

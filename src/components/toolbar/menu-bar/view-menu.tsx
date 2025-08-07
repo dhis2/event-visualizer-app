@@ -4,7 +4,7 @@ import {
     HoverMenuListItem,
 } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import React /*useCallback*/ from 'react'
+import React, { FC /*useCallback*/ } from 'react'
 //import { useDispatch, useSelector } from 'react-redux'
 //import {
 //    acToggleUiSidebarHidden,
@@ -22,7 +22,7 @@ import React /*useCallback*/ from 'react'
 //    sGetUiAccessoryPanelWidth,
 //} from '../../reducers/ui.js'
 
-const ViewMenu = () => {
+export const ViewMenu: FC = () => {
     //    const dispatch = useDispatch()
     const isSidebarHidden = false //useSelector(sGetUiSidebarHidden)
     const isLayoutPanelHidden = false // useSelector(sGetUiLayoutPanelHidden)
@@ -90,5 +90,3 @@ const ViewMenu = () => {
         </HoverMenuDropdown>
     )
 }
-
-export default ViewMenu
