@@ -4,7 +4,6 @@ on:
     push:
         branches:
             - master
-            - chore/temp-gh-workflow-deploy-to-awx
         tags:
             - '*'
 
@@ -24,14 +23,6 @@ jobs:
 
         runs-on: ubuntu-latest
         steps:
-            - name: Print GitHub event context
-              run: echo "$GITHUB_EVENT" | jq '.'
-              env:
-                  GITHUB_EVENT: ${{ toJson(github.event) }}
-
-            - name: Print GitHub ref
-              run: echo "GITHUB_REF is $GITHUB_REF"
-
             - uses: actions/checkout@v4
 
             - uses: actions/setup-node@v4
@@ -49,9 +40,6 @@ jobs:
               with:
                   build-dir: build/app
                   github-token: ${{ secrets.DHIS2_BOT_GITHUB_TOKEN }}
-
-            - name: Copy build to AWX instance
-              run: yarn d2-app-scripts deploy https://test.e2e.dhis2.org/anly-42 --username=admin --password=district
 
     report-deploy-failure:
         runs-on: ubuntu-latest
