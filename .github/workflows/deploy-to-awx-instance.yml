@@ -33,4 +33,4 @@ jobs:
               run: yarn d2-app-scripts build
 
             - name: Deploy build to AWX EVER instance
-              run: yarn d2-app-scripts deploy https://test.e2e.dhis2.org/anly-42 --username=admin --password=district
+              run: yarn d2-app-scripts deploy https://test.e2e.dhis2.org/anly-ever --username=admin --password=district
