@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 
 type PivotTableIcon = {
-    style?: { width: number; height: number }
+    style: { width: number; height: number }
 }
 
 export const PivotTableIcon: FC<PivotTableIcon> = ({ style }) => (
