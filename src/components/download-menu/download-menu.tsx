@@ -53,7 +53,7 @@ export const DownloadMenu: FC<DownloadMenuProps> = ({
                 label={i18n.t('Microsoft Excel')}
                 format={
                     // VERSION-TOGGLE: remove when 42 is lowest supported version
-                    config.serverVersion.minor >= 42 ? 'xlsx' : 'xls'
+                    (config.serverVersion?.minor ?? 0) >= 42 ? 'xlsx' : 'xls'
                 }
             />
             <PlainDataSourceSubMenu
