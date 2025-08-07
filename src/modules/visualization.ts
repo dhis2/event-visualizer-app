@@ -16,11 +16,13 @@ export const useVisTypesFilterByVersion = (): ((
     visType: SupportedVisType
 ) => boolean) => {
     const { serverVersion } = useConfig()
+    if (typeof serverVersion?.minor !== 'number') {
+        throw new Error('serverVersion is not a number')
+    }
 
     const filterVisTypesByVersion = (visType: SupportedVisType) =>
         // only PT and LL enabled in the first version
-        (serverVersion?.minor ?? 0) < 44 &&
-        SUPPORTED_VIS_TYPES.includes(visType)
+        serverVersion.minor < 44 && SUPPORTED_VIS_TYPES.includes(visType)
             ? true
             : false
 
