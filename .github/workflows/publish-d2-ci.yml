@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - master
+            - chore/temp-gh-workflow-deploy-to-awx
         tags:
             - '*'
 
@@ -48,6 +49,9 @@ jobs:
               with:
                   build-dir: build/app
                   github-token: ${{ secrets.DHIS2_BOT_GITHUB_TOKEN }}
+
+            - name: Copy build to AWX instance
+              run: yarn d2-app-scripts deploy https://test.e2e.dhis2.org/anly-42 --username=admin --password=district
 
     report-deploy-failure:
         runs-on: ubuntu-latest
