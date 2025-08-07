@@ -7,11 +7,9 @@ import { ResponseErrorReport } from '../api/parse-engine-error'
  * `src/types/dhis2-openapi-schemas` anywhere else in the codebase.
  * The reason for this is so that we can apply manual overrides
  * for generated types here, as we have done for `SystemSettings` */
-/* eslint-disable import/export */
 export type * from './dhis2-openapi-schemas'
 export type { SystemSettings } from './system-settings'
 export type { MetadataItem } from './metadata-item'
-/* eslint-enable import/export */
 export type { PickWithFieldFilters } from './pick-with-field-filters'
 
 /* The SingleQuery type is a simpler, but for our use-case functionally

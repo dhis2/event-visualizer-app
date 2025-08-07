@@ -1,35 +1,14 @@
 import i18n from '@dhis2/d2-i18n'
-import type { RelativePeriodEnum } from '@types'
+import type { UserOrgUnit, SupportedRelativePeriod } from '../../constants'
 import type { AnyMetadataItemInput } from './types'
 
-type UserOrgUnits =
-    | 'USER_ORGUNIT'
-    | 'USER_ORGUNIT_CHILDREN'
-    | 'USER_ORGUNIT_GRANDCHILDREN'
-
-const getOrganisationUnits = (): Record<UserOrgUnits, string> => ({
+const getOrganisationUnits = (): Record<UserOrgUnit, string> => ({
     USER_ORGUNIT: i18n.t('User organisation unit'),
     USER_ORGUNIT_CHILDREN: i18n.t('User sub-units'),
     USER_ORGUNIT_GRANDCHILDREN: i18n.t('User sub-x2-units'),
 })
 
-type SupportedRelativePeriods = Exclude<
-    (typeof RelativePeriodEnum)[keyof typeof RelativePeriodEnum],
-    | 'LAST_5_YEARS'
-    | 'LAST_30_DAYS'
-    | 'LAST_60_DAYS'
-    | 'LAST_90_DAYS'
-    | 'LAST_180_DAYS'
-    | 'MONTHS_LAST_YEAR'
-    | 'QUARTERS_LAST_YEAR'
-    | 'LAST_10_YEARS'
-    | 'LAST_10_FINANCIAL_YEARS'
-    | 'THIS_BIWEEK'
-    | 'LAST_BIWEEK'
-    | 'LAST_4_BIWEEKS'
->
-
-const getRelativePeriods = (): Record<SupportedRelativePeriods, string> => ({
+const getRelativePeriods = (): Record<SupportedRelativePeriod, string> => ({
     TODAY: i18n.t('Today'),
     YESTERDAY: i18n.t('Yesterday'),
     LAST_3_DAYS: i18n.t('Last 3 days'),
