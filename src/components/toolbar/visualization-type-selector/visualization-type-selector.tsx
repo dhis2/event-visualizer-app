@@ -6,10 +6,7 @@ import { ArrowDown } from '../../../assets/arrow-down'
 import { SUPPORTED_VIS_TYPES } from '../../../constants'
 import type { SupportedVisType } from '../../../constants'
 import { useAppDispatch, useAppSelector } from '../../../hooks'
-import {
-    getVisTypeDescriptions,
-    useVisTypesFilterByVersion,
-} from '../../../modules/visualization'
+import { getVisTypeDescriptions } from '../../../modules/visualization'
 import { setUiState } from '../../../store'
 import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
@@ -23,8 +20,6 @@ export const VisualizationTypeSelector: FC = () => {
     )
 
     const [listIsOpen, setListIsOpen] = useState(false)
-
-    const filterVisTypesByVersion = useVisTypesFilterByVersion()
 
     const toggleList = () => setListIsOpen(!listIsOpen)
 
@@ -77,9 +72,7 @@ export const VisualizationTypeSelector: FC = () => {
                             <div data-test="visualization-type-selector-card">
                                 <div className={classes.listContainer}>
                                     <div className={classes.listSection}>
-                                        {SUPPORTED_VIS_TYPES.filter(
-                                            filterVisTypesByVersion
-                                        ).map((visType) => (
+                                        {SUPPORTED_VIS_TYPES.map((visType) => (
                                             <VisualizationTypeListItem
                                                 key={visType}
                                                 iconType={visType}
