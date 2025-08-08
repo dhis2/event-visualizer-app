@@ -18,7 +18,7 @@
         "postinstall": "chmod +x ./scripts/postinstall.sh && ./scripts/postinstall.sh"
     },
     "devDependencies": {
-        "@dhis2/cli-app-scripts": "^12.6.0",
+        "@dhis2/cli-app-scripts": "^12.7.0",
         "@dhis2/cli-style": "^10.7.8",
         "@dhis2/cypress-commands": "^10.1.0",
         "@testing-library/dom": "^10.4.0",
@@ -36,12 +36,13 @@
         "openapi-typescript": "^7.8.0",
         "start-server-and-test": "^2.0.12",
         "typescript": "^5",
+        "vite-tsconfig-paths": "^5.1.4",
         "vitest": "^3.1.4",
         "vitest-canvas-mock": "^0.3.3"
     },
     "dependencies": {
         "@dhis2/analytics": "^28.0.4",
-        "@dhis2/app-runtime": "^3.14.4",
+        "@dhis2/app-runtime": "^3.14.5",
         "@dhis2/ui": "^10.8.2",
         "@reduxjs/toolkit": "^2.8.2",
         "deep-equal": "^2.2.3",

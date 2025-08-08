@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-08-08T12:00:07.133Z\n"
-"PO-Revision-Date: 2025-08-08T12:00:07.133Z\n"
+"POT-Creation-Date: 2025-08-08T12:23:45.715Z\n"
+"PO-Revision-Date: 2025-08-08T12:23:45.716Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -137,11 +137,3 @@ msgstr ""
 
 msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
 msgstr "View data and indicators in a manipulatable table. (adjust for EVER)"
-
-msgctxt "Application title"
-msgid "__MANIFEST_APP_TITLE"
-msgstr "Event Visualizer"
-
-msgctxt "Application description"
-msgid "__MANIFEST_APP_DESCRIPTION"
-msgstr "Event visualizer app and plugin"
