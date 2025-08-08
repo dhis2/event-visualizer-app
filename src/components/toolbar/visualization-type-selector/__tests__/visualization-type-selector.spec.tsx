@@ -1,6 +1,5 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import type { RootState } from '@types'
 import React from 'react'
 import { describe, it, beforeEach } from 'vitest'
 import { uiReducer, setUiState } from '../../../../store/ui-slice'
@@ -10,6 +9,7 @@ import {
     renderWithReduxStoreProvider,
 } from '../../../../test-utils'
 import { VisualizationTypeSelector } from '../visualization-type-selector'
+import type { RootState } from '@types'
 
 vi.mock('@dhis2/app-runtime', () => ({
     useConfig: jest.fn(() => ({ serverVersion: { minor: 43 } })),

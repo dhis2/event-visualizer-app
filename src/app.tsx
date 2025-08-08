@@ -1,12 +1,12 @@
 import i18n from '@dhis2/d2-i18n'
 import { CssVariables } from '@dhis2/ui'
-import type { MeDto } from '@types'
 import cx from 'classnames'
 import React, { FC } from 'react'
 import { AppWrapper } from './app-wrapper'
 import classes from './app.module.css'
-import { Toolbar } from './components/toolbar/toolbar'
 import { useRtkQuery, useSystemSettings } from './hooks'
+import { Toolbar } from '@components/toolbar/toolbar'
+import type { MeDto } from '@types'
 
 const EventVisualizer: FC = () => {
     const rtkqQuery = useRtkQuery({

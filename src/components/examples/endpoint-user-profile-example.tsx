@@ -1,8 +1,8 @@
-import type { MeDto } from '@types'
 import React from 'react'
 import { api } from '../../api/api'
 import type { BaseQueryApiWithExtraArg } from '../../api/custom-base-query'
 import { parseEngineError } from '../../api/parse-engine-error'
+import type { MeDto } from '@types'
 
 export const meApi = api.injectEndpoints({
     endpoints: (builder) => ({

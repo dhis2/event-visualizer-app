@@ -1,5 +1,4 @@
 import react from '@vitejs/plugin-react'
-// eslint-disable-next-line import/no-unresolved
 import { defineConfig, configDefaults } from 'vitest/config'
 
 // https://vitejs.dev/config/
