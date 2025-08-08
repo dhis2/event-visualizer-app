@@ -15,7 +15,15 @@
             "@dhis2/analytics": ["src/types/analytics/index.d.ts"],
             // Use this as the definitive source for type imports, mainly to prevent
             // a suggestion overload from all the generated types
-            "@types": ["src/types/index"]
+            "@types": ["src/types/index"],
+            // For top level dirs with an index file we should treat that index file as apublic API
+            "@api": ["src/api/index"],
+            "@hooks": ["src/hooks/index"],
+            "@modules": ["src/modules/index"],
+            "@store": ["src/store/index"],
+            // In top level dirs without an index file we can access nested folders
+            "@assets/*": ["src/assets/*"],
+            "@components/*": ["src/components/*"]
         }
     },
     "include": [
