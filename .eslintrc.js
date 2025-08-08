@@ -7,6 +7,13 @@ const baseAppRuntimeHooksRestriction = {
 }
 
 module.exports = {
+    settings: {
+        'import/resolver': {
+            typescript: {
+                project: './tsconfig.json',
+            },
+        },
+    },
     extends: [
         config.eslintReact,
         'plugin:@typescript-eslint/recommended',
