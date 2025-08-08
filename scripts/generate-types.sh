@@ -18,7 +18,7 @@ curl -H "Accept: application/x-yaml" -H "$AUTH_HEADER" "$API_URL" -o "$TEMP_DIR/
 
 # Generate types with openapi-typescript
 echo "⌛ Generating TypeScript types..."
-npx openapi-typescript "$TEMP_DIR/openapi.yaml" --output "$TYPES_DIR/generated.d.ts"
+npx openapi-typescript "$TEMP_DIR/openapi.yaml" --output "$TYPES_DIR/generated.ts"
 
 # Generate named type aliases
 echo "🔗 Generating named type aliases..."
@@ -40,11 +40,11 @@ in_schemas && /^[ ]{8}[A-Za-z0-9_]+(\??):/ {
 }
 in_schemas && /^[ ]{6}\}/ { in_schemas=0 }
 in_components && /^}/ { in_components=0 }
-' "$TYPES_DIR/generated.d.ts" > "$TYPES_DIR/index.d.ts"
+' "$TYPES_DIR/generated.ts" > "$TYPES_DIR/index.ts"
 
 # # Generate named type aliases using Node.js script
 # echo "🔗 Generating named type aliases..."
-# node ./scripts/generate-type-aliases.cjs "$TYPES_DIR/generated.d.ts" "$TYPES_DIR/index.d.ts"
+# node ./scripts/generate-type-aliases.cjs "$TYPES_DIR/generated.ts" "$TYPES_DIR/index.ts"
 
 # Format the output
 echo "💅 Formatting output..."
