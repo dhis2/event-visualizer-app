@@ -11,7 +11,7 @@ env:
     GIT_COMMITTER_EMAIL: 'apps@dhis2.org'
     GH_TOKEN: ${{secrets.DHIS2_BOT_GITHUB_TOKEN}}
     CI: true
-    DEV_URL: 'https://test.e2e.dhis2.org/anly-ever'
+    DEV_URL: 'https://test.e2e.dhis2.org/anly-e2e-dev'
     API_VERSION: '43'
     SHOULD_RECORD: ${{ contains(github.event.pull_request.labels.*.name, 'e2e record') }}
 
