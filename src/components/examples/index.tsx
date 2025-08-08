@@ -4,6 +4,7 @@ import { EndpointUserProfileExample } from './endpoint-user-profile-example'
 import { LazyUserProfileExample } from './lazy-user-profile-example'
 import { UserProfileExample } from './user-profile-example'
 
+// This entire dir can be removed at some point
 export const Examples: FC = () => (
     <div>
         <h4>User Profile Example (useRtkQuery):</h4>
