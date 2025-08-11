@@ -3,7 +3,7 @@ import { render } from '@testing-library/react'
 import React, { PropsWithChildren } from 'react'
 import { Provider } from 'react-redux'
 import { vi } from 'vitest'
-import { UseRtkQueryResult } from '../hooks/use-rtk-query'
+import { UseRtkQueryResult } from '@hooks'
 import type { RootState } from '@types'
 
 export const setupStore = (

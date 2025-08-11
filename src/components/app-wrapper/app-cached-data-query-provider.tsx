@@ -1,12 +1,12 @@
 import { Query } from '@dhis2/app-service-data'
 import { freeze } from '@reduxjs/toolkit'
 import React, { FC, ReactNode } from 'react'
-import { PickWithFieldFilters } from '../types/pick-with-field-filters'
 import { CachedDataQueryProvider, useCachedDataQuery } from '@dhis2/analytics'
 import type {
     MeDto,
     OrganisationUnit,
     OrganisationUnitLevel,
+    PickWithFieldFilters,
     SystemSettings,
 } from '@types'
 

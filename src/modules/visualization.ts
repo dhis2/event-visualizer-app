@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import type { SupportedVisType } from '../constants'
+import type { SupportedVisType } from '@constants'
 
 // TODO adjust the descriptions
 // See: https://dhis2.atlassian.net/browse/DHIS2-19961

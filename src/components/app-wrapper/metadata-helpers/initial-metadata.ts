@@ -1,6 +1,6 @@
 import i18n from '@dhis2/d2-i18n'
-import type { UserOrgUnit, SupportedRelativePeriod } from '../../constants'
 import type { AnyMetadataItemInput } from './types'
+import type { UserOrgUnit, SupportedRelativePeriod } from '@constants'
 
 const getOrganisationUnits = (): Record<UserOrgUnit, string> => ({
     USER_ORGUNIT: i18n.t('User organisation unit'),

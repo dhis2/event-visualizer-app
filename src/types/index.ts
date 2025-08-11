@@ -45,5 +45,5 @@ export type MutationResult = {
     }
 }
 export type { AppStore, AppDispatch, RootState } from '@store'
-export type { UseMetadataStoreReturnValue as MetadataStore } from '../app-wrapper/metadata-provider'
-export type { TransformedAppCachedData as AppCachedData } from '../app-wrapper/app-cached-data-query-provider'
+export type { UseMetadataStoreReturnValue as MetadataStore } from '../components/app-wrapper/metadata-provider'
+export type { TransformedAppCachedData as AppCachedData } from '../components/app-wrapper/app-cached-data-query-provider'

@@ -13,7 +13,7 @@ export {
     useSystemSettings,
     useRootOrgUnits,
     useOrgUnitLevels,
-} from '../app-wrapper/app-cached-data-query-provider'
+} from '@components/app-wrapper/app-cached-data-query-provider'
 /* Note that useRtkQuery and useRtkLazyQuery accept both a complex query object
  * (as useDataQuery from @dhis2/app-runtime) which can be used to query multiple
  * resource at once, as well as a simple query object which can be used to query
