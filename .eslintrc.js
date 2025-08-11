@@ -35,6 +35,12 @@ module.exports = {
                         message:
                             "Import DHIS2 Core schema-types from '@types' instead of directly from generated files.",
                     },
+                    // Restrict all relative parent imports (../ and ../../ etc)
+                    {
+                        group: ['../*'],
+                        message:
+                            "Relative parent imports are not allowed. Use path aliases (e.g. '@hooks', '@components') instead.",
+                    },
                 ],
                 paths: [
                     {
@@ -61,6 +67,24 @@ module.exports = {
             rules: {
                 'import/order': 'off',
                 'import/no-default-export': 'off',
+            },
+        },
+        // Allow one level up relative import in __tests__ dirs, but not higher
+        {
+            files: ['**/__tests__/**/*.{js,jsx,ts,tsx}'],
+            rules: {
+                'no-restricted-imports': [
+                    'error',
+                    {
+                        patterns: [
+                            {
+                                group: ['../../*'],
+                                message:
+                                    'In __tests__ directories, you may only import from one parent level (../filename). Deeper parent imports are not allowed.',
+                            },
+                        ],
+                    },
+                ],
             },
         },
         {
