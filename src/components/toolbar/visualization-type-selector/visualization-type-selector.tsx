@@ -1,16 +1,16 @@
 import { Popper, Layer } from '@dhis2/ui'
 import cx from 'classnames'
 import React, { FC, useState, useRef } from 'react'
-import { ArrowDown } from '../../../assets/arrow-down'
-import { SUPPORTED_VIS_TYPES } from '../../../constants'
-import type { SupportedVisType } from '../../../constants'
-import { useAppDispatch, useAppSelector } from '../../../hooks'
-import { getVisTypeDescriptions } from '../../../modules/visualization'
-import { setUiState } from '../../../store'
 import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
 import { VisualizationTypeListItem } from './visualization-type-list-item'
+import { ArrowDown } from '@assets/arrow-down'
+import type { SupportedVisType } from '@constants'
+import { SUPPORTED_VIS_TYPES } from '@constants'
 import { visTypeDisplayNames, ToolbarSidebar } from '@dhis2/analytics'
+import { useAppDispatch, useAppSelector } from '@hooks'
+import { getVisTypeDescriptions } from '@modules'
+import { setUiState } from '@store'
 
 export const VisualizationTypeSelector: FC = () => {
     const dispatch = useAppDispatch()

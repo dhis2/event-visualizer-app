@@ -3,9 +3,8 @@ import type {
     QueryActionCreatorResult,
     QueryDefinition,
 } from '@reduxjs/toolkit/query'
-import { api } from '../api'
-import type { CustomBaseQueryFn, EngineArgs } from '../api/custom-base-query'
-import type { EngineError } from '../api/parse-engine-error'
+import { api } from '@api'
+import type { CustomBaseQueryFn, EngineArgs, EngineError } from '@api'
 import type { SingleQuery } from '@types'
 
 // https://redux-toolkit.js.org/rtk-query/api/created-api/hooks#usequery-signature

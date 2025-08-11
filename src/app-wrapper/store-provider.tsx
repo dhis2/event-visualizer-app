@@ -2,9 +2,9 @@
 import { useDataEngine } from '@dhis2/app-service-data'
 import React, { FC, ReactNode, useState } from 'react'
 import { Provider } from 'react-redux'
-import { createStore } from '../store'
 import { useAppCachedDataQuery } from './app-cached-data-query-provider'
 import { useMetadataStore } from './metadata-provider'
+import { createStore } from '@store'
 
 export const StoreProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const engine = useDataEngine()

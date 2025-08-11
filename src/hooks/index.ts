@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-restricted-imports
 import { useDispatch, useSelector, useStore } from 'react-redux'
-import { api } from '../api'
-import type { RootState, AppDispatch, AppStore } from '../store'
+import { api } from '@api'
+import type { RootState, AppDispatch, AppStore } from '@store'
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
@@ -19,8 +19,8 @@ export {
  * resource at once, as well as a simple query object which can be used to query
  * one resource at a time. The advantage of adding this is that you avoid having
  * to work with nested objects in the query definition or the data. */
-export { useRtkQuery } from './use-rtk-query'
-export { useRtkLazyQuery } from './use-rtk-lazy-query'
+export * from './use-rtk-query'
+export * from './use-rtk-lazy-query'
 
 export const { useMutateMutation: useRtkMutation } = api
 

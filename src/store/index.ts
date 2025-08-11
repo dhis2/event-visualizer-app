@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { api } from '../api'
 import { navigationReducer } from './navigation-slice'
 import { uiReducer } from './ui-slice'
+import { api } from '@api'
 import type { AppCachedData, DataEngine, MetadataStore } from '@types'
 
 export const createStore = (

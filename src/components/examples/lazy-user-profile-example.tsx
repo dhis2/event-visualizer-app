@@ -1,5 +1,5 @@
 import React from 'react'
-import { useRtkLazyQuery } from '../../hooks'
+import { useRtkLazyQuery } from '@hooks'
 import type { MeDto, PickWithFieldFilters } from '@types'
 
 const fieldsFilter = ['id', 'name', 'email', 'settings'] as const
