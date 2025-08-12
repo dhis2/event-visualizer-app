@@ -21,6 +21,7 @@ module.exports = {
     ],
     reportUnusedDisableDirectives: false,
     rules: {
+        'react/react-in-jsx-scope': 'off',
         'import/extensions': 'off',
         'import/no-default-export': 'error',
         'no-restricted-imports': [
