@@ -7,6 +7,7 @@ ls:
         .spec.tsx: kebab-case
         .d.ts: kebab-case
         .cy.ts: kebab-case
+        .cy.tsx: kebab-case
         .module.css: kebab-case
         .sh: kebab-case
         .json: kebab-case

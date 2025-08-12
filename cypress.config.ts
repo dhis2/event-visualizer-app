@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import { defineConfig } from 'cypress'
 import { excludeByVersionTags } from './cypress/plugins/exclude-by-version-tags.ts'
+import viteConfig from './vite-cypress.config'
 
 const setupNodeEvents = async (
     on: Cypress.PluginEvents,
@@ -63,5 +64,12 @@ module.exports = defineConfig({
     },
     env: {
         dhis2DatatestPrefix: 'dhis2-eventvisualizer',
+    },
+    component: {
+        devServer: {
+            framework: 'react',
+            bundler: 'vite',
+            viteConfig,
+        },
     },
 })

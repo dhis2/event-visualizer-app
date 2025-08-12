@@ -15,9 +15,13 @@
         "generate-types": "chmod +x ./scripts/generate-types.sh && ./scripts/generate-types.sh",
         "cy:open": "start-server-and-test 'yarn start' http://localhost:3000 'yarn cypress open --e2e'",
         "cy:run": "start-server-and-test 'yarn start' http://localhost:3000 'yarn cypress run --browser chrome headless'",
+        "cy:comp:open": "cypress open --component",
+        "cy:comp:run": "cypress run --component --browser chrome headless",
         "postinstall": "chmod +x ./scripts/postinstall.sh && ./scripts/postinstall.sh"
     },
     "devDependencies": {
+        "@cypress/react": "^9.0.1",
+        "@cypress/vite-dev-server": "^7.0.0",
         "@dhis2/cli-app-scripts": "^12.7.2",
         "@dhis2/cli-style": "^10.7.8",
         "@dhis2/cypress-commands": "^10.1.0",
