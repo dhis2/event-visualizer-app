@@ -1,7 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import { CssVariables } from '@dhis2/ui'
 import cx from 'classnames'
-import React, { FC } from 'react'
+import type { FC } from 'react'
 import classes from './app.module.css'
 import { AppWrapper } from './components/app-wrapper'
 import { useRtkQuery, useSystemSettings } from './hooks'

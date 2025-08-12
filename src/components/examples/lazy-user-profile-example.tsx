@@ -1,4 +1,3 @@
-import React from 'react'
 import { useRtkLazyQuery } from '@hooks'
 import type { MeDto, PickWithFieldFilters } from '@types'
 

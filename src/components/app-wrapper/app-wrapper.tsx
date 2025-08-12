@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import { AppCachedDataQueryProvider } from './app-cached-data-query-provider'
 import { MetadataProvider } from './metadata-provider'
 import { StoreProvider } from './store-provider'

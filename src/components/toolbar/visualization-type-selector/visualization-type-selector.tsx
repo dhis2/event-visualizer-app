@@ -1,6 +1,7 @@
 import { Popper, Layer } from '@dhis2/ui'
 import cx from 'classnames'
-import React, { FC, useState, useRef } from 'react'
+import { useState, useRef } from 'react'
+import type { FC } from 'react'
 import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
 import { VisualizationTypeListItem } from './visualization-type-list-item'

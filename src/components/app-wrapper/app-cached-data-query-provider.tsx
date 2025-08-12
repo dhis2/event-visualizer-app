@@ -1,6 +1,6 @@
 import { Query } from '@dhis2/app-service-data'
 import { freeze } from '@reduxjs/toolkit'
-import React, { FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import { CachedDataQueryProvider, useCachedDataQuery } from '@dhis2/analytics'
 import type {
     MeDto,

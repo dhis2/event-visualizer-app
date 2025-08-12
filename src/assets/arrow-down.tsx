@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import type { FC } from 'react'
 
 // TODO check if this should be removed in favour of IconChevronDown from the ui library.
 // See: https://dhis2.atlassian.net/browse/DHIS2-19961

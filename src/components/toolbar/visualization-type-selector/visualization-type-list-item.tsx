@@ -1,5 +1,5 @@
 import cx from 'classnames'
-import React, { FC } from 'react'
+import type { FC } from 'react'
 import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
 import { SupportedVisType } from '@constants'

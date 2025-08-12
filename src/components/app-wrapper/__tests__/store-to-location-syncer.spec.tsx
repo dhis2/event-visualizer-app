@@ -1,5 +1,4 @@
 import { act } from '@testing-library/react'
-import React from 'react'
 import { describe, it, beforeEach, afterEach } from 'vitest'
 import { StoreToLocationSyncer } from '../store-to-location-syncer'
 import { history } from '@modules'

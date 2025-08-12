@@ -1,4 +1,4 @@
-import React, {
+import {
     createContext,
     useContext,
     useState,
@@ -7,6 +7,7 @@ import React, {
     useMemo,
     useRef,
 } from 'react'
+import type { FC, ReactNode } from 'react'
 import type {
     MetadataInput,
     MetadataStoreItem,
@@ -118,9 +119,7 @@ class MetadataStore {
 
 const MetadataContext = createContext<MetadataStore | null>(null)
 
-export const MetadataProvider: React.FC<{ children: React.ReactNode }> = ({
-    children,
-}) => {
+export const MetadataProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [metadataStore] = useState(
         () => new MetadataStore(getInitialMetadata())
     )

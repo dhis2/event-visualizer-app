@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-restricted-imports
 import { useDataEngine } from '@dhis2/app-service-data'
-import React, { FC, ReactNode, useState } from 'react'
+import { useState } from 'react'
+import type { FC, ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { useAppCachedDataQuery } from './app-cached-data-query-provider'
 import { useMetadataStore } from './metadata-provider'

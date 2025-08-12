@@ -1,4 +1,4 @@
-import React from 'react'
+import type { FC } from 'react'
 import { api, parseEngineError } from '@api'
 import type { BaseQueryApiWithExtraArg } from '@api'
 import type { MeDto } from '@types'
@@ -20,7 +20,7 @@ export const meApi = api.injectEndpoints({
     }),
 })
 
-export const EndpointUserProfileExample: React.FC = () => {
+export const EndpointUserProfileExample: FC = () => {
     const { data, error, isLoading } = meApi.useGetMeQuery()
 
     if (isLoading) {
