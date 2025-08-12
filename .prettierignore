@@ -2,6 +2,10 @@
 # expected by GitHub is with a single space after a hyphen and Prettier
 # produces 3, which breaks the task checked action
 .github/**/*.md
-# after adding this ignore file prettier started checking the generated types
-# so we need to explicitely ignore it
+# after adding this ignore file prettier started checking the gitignored files
+# so we need to add them here too
+node_modules
+.d2
+src/locales/*
+build
 src/types/dhis2-openapi-schemas
