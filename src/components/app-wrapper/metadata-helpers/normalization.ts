@@ -1,4 +1,3 @@
-import type { MetadataItem } from '@types'
 import {
     isMetadataItem,
     isSimpleMetadataItem,
@@ -13,6 +12,7 @@ import type {
     MetadataStoreItem,
     NormalizedMetadataItem,
 } from './types'
+import type { MetadataItem } from '@types'
 
 // Normalization helper functions for each input type
 export function normalizeMetadataItem(

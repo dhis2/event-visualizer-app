@@ -1,5 +1,6 @@
 import type { Query, Mutation } from '@dhis2/app-service-data'
 import type { BaseQueryFn, BaseQueryApi } from '@reduxjs/toolkit/query'
+import { EngineError, parseEngineError } from './parse-engine-error'
 import type {
     AppCachedData,
     DataEngine,
@@ -8,7 +9,6 @@ import type {
     QueryResult,
     SingleQuery,
 } from '@types'
-import { EngineError, parseEngineError } from './parse-engine-error'
 
 // cater for both queries and mutations
 export type EngineArgs = Query | Mutation | SingleQuery

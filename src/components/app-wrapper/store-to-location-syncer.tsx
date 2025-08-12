@@ -1,9 +1,9 @@
 import { Location } from 'history'
 import queryString from 'query-string'
 import { useEffect, useRef } from 'react'
-import { useAppDispatch, useAppSelector, useAppStore } from '../hooks'
-import { history } from '../modules'
-import { setNavigationState } from '../store'
+import { useAppDispatch, useAppSelector, useAppStore } from '@hooks'
+import { history } from '@modules'
+import { setNavigationState } from '@store'
 
 export const StoreToLocationSyncer = () => {
     const lastLocationRef = useRef<Location | null>(null)

@@ -1,10 +1,10 @@
-import type { EventVisualizationType, VisualizationType } from '@types'
 import type {
     CachedDataQueryProvider,
     useCachedDataQuery,
 } from './cached-data-query-provider'
 import type { Toolbar } from './toolbar'
 import type { ToolbarSidebar } from './toolbar-sidebar'
+import type { EventVisualizationType, VisualizationType } from '@types'
 
 declare module '@dhis2/analytics' {
     export const CachedDataQueryProvider: CachedDataQueryProvider

@@ -1,4 +1,5 @@
 import { tagify } from 'cypress-tags'
+// eslint-disable-next-line no-restricted-imports
 import d2config from '../../d2.config.js'
 
 /*

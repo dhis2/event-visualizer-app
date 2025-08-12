@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react'
-import { useRtkMutation } from '../../hooks'
+import { useState, useCallback } from 'react'
+import { useRtkMutation } from '@hooks'
 
 export const DashboardExample = () => {
     const [dashboardName, setDashboardName] = useState('')

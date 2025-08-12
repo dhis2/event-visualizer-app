@@ -1,17 +1,14 @@
 import i18n from '@dhis2/d2-i18n'
 import { CssVariables } from '@dhis2/ui'
-import type { MeDto } from '@types'
 import cx from 'classnames'
-import React, { FC, useState } from 'react'
-import { AppWrapper } from './app-wrapper'
+import type { FC } from 'react'
 import classes from './app.module.css'
-import { Examples } from './components/examples'
-import { Toolbar } from './components/toolbar/toolbar'
-import { Hello } from './hello'
+import { AppWrapper } from './components/app-wrapper'
 import { useRtkQuery, useSystemSettings } from './hooks'
+import { Toolbar } from '@components/toolbar/toolbar'
+import type { MeDto } from '@types'
 
 const EventVisualizer: FC = () => {
-    const [showExamples, setShowExamples] = useState(false)
     const rtkqQuery = useRtkQuery({
         resource: 'me',
     })
@@ -42,12 +39,8 @@ const EventVisualizer: FC = () => {
                     classes.flexCt
                 )}
             >
-                <Hello name={me.name} />
+                <h1>{i18n.t('Hello {{name}}', { name: me.name })}</h1>
                 <h3>{i18n.t('Welcome to DHIS2 with TypeScript!')}</h3>
-                <button onClick={() => setShowExamples((v) => !v)}>
-                    {showExamples ? 'Hide' : 'Show'} Examples
-                </button>
-                {showExamples && <Examples />}
             </div>
             <CssVariables colors spacers theme />
         </div>

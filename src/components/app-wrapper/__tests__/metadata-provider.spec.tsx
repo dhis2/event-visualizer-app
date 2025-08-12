@@ -1,5 +1,5 @@
 import { render, act, renderHook } from '@testing-library/react'
-import React from 'react'
+import type { ReactNode } from 'react'
 import {
     MetadataProvider,
     useMetadataItem,
@@ -52,11 +52,7 @@ const StoreComponent = () => {
     )
 }
 
-const ProviderWithComponents = ({
-    children,
-}: {
-    children?: React.ReactNode
-}) => {
+const ProviderWithComponents = ({ children }: { children?: ReactNode }) => {
     return (
         <MetadataProvider>
             <ItemComponent id="a" />

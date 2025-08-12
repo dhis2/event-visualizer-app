@@ -1,10 +1,11 @@
 import { configureStore, ReducersMapObject, Store } from '@reduxjs/toolkit'
 import { render } from '@testing-library/react'
-import type { RootState } from '@types'
-import React, { PropsWithChildren } from 'react'
+import { PropsWithChildren } from 'react'
+import type { ReactElement } from 'react'
 import { Provider } from 'react-redux'
 import { vi } from 'vitest'
-import { UseRtkQueryResult } from '../hooks/use-rtk-query'
+import { UseRtkQueryResult } from '@hooks'
+import type { RootState } from '@types'
 
 export const setupStore = (
     reducer: Partial<ReducersMapObject<RootState>>,
@@ -22,7 +23,7 @@ export const setupStore = (
 }
 
 export const renderWithReduxStoreProvider = (
-    ui: React.ReactElement,
+    ui: ReactElement,
     store: ReturnType<typeof setupStore>
 ) => {
     const Wrapper = ({ children }: PropsWithChildren) => (

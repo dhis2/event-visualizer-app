@@ -5,8 +5,20 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-08-06T13:22:02.535Z\n"
-"PO-Revision-Date: 2025-08-06T13:22:02.535Z\n"
+"POT-Creation-Date: 2025-08-11T13:30:16.690Z\n"
+"PO-Revision-Date: 2025-08-11T13:30:16.691Z\n"
+
+msgid "ERROR"
+msgstr "ERROR"
+
+msgid "Loading..."
+msgstr "Loading..."
+
+msgid "Hello {{name}}"
+msgstr "Hello {{name}}"
+
+msgid "Welcome to DHIS2 with TypeScript!"
+msgstr "Welcome to DHIS2 with TypeScript!"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -116,18 +128,6 @@ msgstr "This year"
 msgid "Last year"
 msgstr "Last year"
 
-msgid "ERROR"
-msgstr "ERROR"
-
-msgid "Loading..."
-msgstr "Loading..."
-
-msgid "Welcome to DHIS2 with TypeScript!"
-msgstr "Welcome to DHIS2 with TypeScript!"
-
-msgid "Hello {{name}}"
-msgstr "Hello {{name}}"
-
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
 "for EVER)"
@@ -137,11 +137,3 @@ msgstr ""
 
 msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
 msgstr "View data and indicators in a manipulatable table. (adjust for EVER)"
-
-msgctxt "Application title"
-msgid "__MANIFEST_APP_TITLE"
-msgstr "Event Visualizer"
-
-msgctxt "Application description"
-msgid "__MANIFEST_APP_DESCRIPTION"
-msgstr "Event visualizer app and plugin"

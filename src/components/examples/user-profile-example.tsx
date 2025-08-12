@@ -1,6 +1,5 @@
+import { useRtkQuery } from '@hooks'
 import type { MeDto, PickWithFieldFilters } from '@types'
-import React from 'react'
-import { useRtkQuery } from '../../hooks'
 
 const fieldsFilter = ['id', 'name', 'email', 'settings'] as const
 
