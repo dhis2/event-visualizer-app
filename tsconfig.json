@@ -34,6 +34,8 @@
         "*.cjs",
         ".*.cjs",
         "vitest.*.ts",
-        ".eslintrc.js"
+        ".eslintrc.js",
+        ".stylelintrc.js",
+        ".prettierrc.js"
     ]
 }

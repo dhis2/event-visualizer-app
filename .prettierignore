@@ -1,0 +1,7 @@
+# Do not touch these markdown files because the bullet point formatting
+# expected by GitHub is with a single space after a hyphen and Prettier
+# produces 3, which breaks the task checked action
+.github/**/*.md
+# after adding this ignore file prettier started checking the generated types
+# so we need to explicitely ignore it
+src/types/dhis2-openapi-schemas
