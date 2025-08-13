@@ -1,4 +1,4 @@
-import React, { type FC, type ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import classes from './skeleton-canvas.module.css'
 
 export const SkeletonCanvas: FC<{ children?: ReactNode }> = ({ children }) => (

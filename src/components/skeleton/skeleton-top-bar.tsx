@@ -1,4 +1,4 @@
-import React, { type FC, type ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import classes from './skeleton-top-bar.module.css'
 
 export const SkeletonTopBar: FC<{ children?: ReactNode }> = ({ children }) => (

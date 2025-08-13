@@ -1,4 +1,4 @@
-import React, { type FC, type ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import classes from './skeleton-center-column-top.module.css'
 
 export const SkeletonCenterColumnTop: FC<{ children?: ReactNode }> = ({

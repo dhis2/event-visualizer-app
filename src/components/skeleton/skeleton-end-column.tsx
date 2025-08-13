@@ -1,4 +1,4 @@
-import React, { type FC, type ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import classes from './skeleton-end-column.module.css'
 
 export const SkeletonEndColumn: FC<{ children?: ReactNode }> = ({

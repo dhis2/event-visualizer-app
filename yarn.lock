@@ -1331,10 +1331,10 @@
     through2 "^2.0.0"
     watchify "^4.0.0"
 
-"@cypress/react@^9.0.1":
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/@cypress/react/-/react-9.0.1.tgz#9402ee74dc659e522e2eb620e6b4eaf188307587"
-  integrity sha512-qu6ziP2smdlfy3Yvrhm6PadxEtkc/cl6YhZu3h6KCtz+0s54joqxp6uGYOglpwyMBp3qjtSil1JVlFX0hUi5LQ==
+"@cypress/react18@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@cypress/react18/-/react18-2.0.1.tgz#7bc6d9b557fd6a516a690996946092b12abbd3f9"
+  integrity sha512-T/bhFEvVDIu0lDOKXbEQqVEmmANKWc/pyFDyDoJw3OndRYv9QVEJSsE/VNXIaOQLDjWvQkKBOwd0lLe1hWF/Zg==
 
 "@cypress/request@^3.0.9":
   version "3.0.9"

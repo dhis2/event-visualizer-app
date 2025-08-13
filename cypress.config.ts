@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import { defineConfig } from 'cypress'
-import { excludeByVersionTags } from './cypress/plugins/exclude-by-version-tags.ts'
+import { excludeByVersionTags } from './cypress/plugins/exclude-by-version-tags'
 import viteConfig from './vite-cypress.config'
 
 const setupNodeEvents = async (
