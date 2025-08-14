@@ -1,1 +1,7 @@
 !src/types/dhis2-openapi-schemas
+.d2/
+node_modules/
+.git/
+.vite/
+dist/
+build/
