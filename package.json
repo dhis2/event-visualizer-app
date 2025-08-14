@@ -11,6 +11,7 @@
         "test:watch": "vitest",
         "deploy": "d2-app-scripts deploy",
         "lint": "d2-style check",
+        "lint:ts": "for config in tsconfig*.json; do echo \"Checking $config...\"; tsc --project \"$config\" --noEmit --skipLibCheck; done",
         "format": "d2-style apply",
         "generate-types": "chmod +x ./scripts/generate-types.sh && ./scripts/generate-types.sh",
         "cy:open": "start-server-and-test 'yarn start' http://localhost:3000 'yarn cypress open --e2e'",
