@@ -18,7 +18,16 @@ import './commands'
 
 import { mount } from 'cypress/react'
 
-// @ts-expect-error: Custom command is typed in component.d.ts
+/* eslint-disable @typescript-eslint/no-namespace */
+declare global {
+    namespace Cypress {
+        interface Chainable {
+            mount: typeof mount
+        }
+    }
+}
+/* eslint-enable @typescript-eslint/no-namespace */
+
 Cypress.Commands.add('mount', mount)
 
 // Example use:
