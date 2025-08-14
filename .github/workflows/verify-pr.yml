@@ -41,7 +41,7 @@ jobs:
               run: yarn d2-app-scripts i18n generate
 
             - name: Lint
-              run: yarn d2-style check
+              run: yarn lint
 
             - name: Unit tests
               run: npx vitest run

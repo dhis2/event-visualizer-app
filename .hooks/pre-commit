@@ -1,6 +1,88 @@
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
 
 yarn d2-app-scripts i18n extract
 git add i18n
-yarn d2-style check --staged
+
+# Track overall failure state
+OVERALL_FAILED=false
+
+# Check TypeScript compilation - run full check but only fail for staged files
+STAGED_TS_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx)$')
+if [ -n "$STAGED_TS_FILES" ]; then
+    echo "🔍 Checking TypeScript for staged files..."
+
+    # Run TypeScript check on all configs and collect errors
+    TS_ERRORS=""
+    TS_FAILED=false
+
+    set +e  # Don't exit on error
+    for config in tsconfig*.json; do
+        TS_OUTPUT=$(npx tsc --project "$config" --noEmit --skipLibCheck 2>&1)
+        if [ $? -ne 0 ]; then
+            TS_FAILED=true
+            # Filter out "Checking..." messages and add to accumulated errors
+            FILTERED_OUTPUT=$(echo "$TS_OUTPUT" | grep -v "^Checking ")
+            TS_ERRORS="$TS_ERRORS$FILTERED_OUTPUT"$'\n'
+        fi
+    done
+    set -e  # Re-enable exit on error
+
+    if [ "$TS_FAILED" = true ]; then
+        # Filter errors to only show those in staged files and remove duplicates
+        STAGED_ERRORS=""
+        STAGED_ERRORS_FOUND=false
+
+        for file in $STAGED_TS_FILES; do
+            # Extract errors for this specific file
+            FILE_ERRORS=$(echo "$TS_ERRORS" | grep "$file" || true)
+            if [ -n "$FILE_ERRORS" ]; then
+                STAGED_ERRORS_FOUND=true
+                STAGED_ERRORS="$STAGED_ERRORS$FILE_ERRORS"$'\n'
+            fi
+        done
+
+        if [ "$STAGED_ERRORS_FOUND" = true ]; then
+            # Remove duplicates using sort -u
+            UNIQUE_ERRORS=$(echo "$STAGED_ERRORS" | sort -u | grep -v '^$')
+            echo ""
+            echo "========================================"
+            echo "❌ TypeScript errors found in staged files:"
+            echo "========================================"
+            echo "$UNIQUE_ERRORS"
+            echo "========================================"
+            OVERALL_FAILED=true
+        else
+            echo "✅ No TypeScript errors in staged files"
+        fi
+    else
+        echo "✅ All TypeScript checks passed!"
+    fi
+fi
+
+# Run individual linting tools on staged files
+echo ""
+echo "🔍 Running lint-staged..."
+set +e  # Don't exit on error
+npx lint-staged
+LINT_STAGED_EXIT_CODE=$?
+set -e  # Re-enable exit on error
+
+if [ $LINT_STAGED_EXIT_CODE -ne 0 ]; then
+    echo "❌ lint-staged failed"
+    OVERALL_FAILED=true
+else
+    echo "✅ lint-staged passed"
+fi
+
+# Exit with error if any step failed
+if [ "$OVERALL_FAILED" = true ]; then
+    echo ""
+    echo "========================================"
+    echo "❌ Commit blocked due to linting errors."
+    echo "Please fix the errors above and try again."
+    echo "========================================"
+    exit 1
+else
+    echo ""
+    echo "🎉 All pre-commit checks passed!"
+fi
