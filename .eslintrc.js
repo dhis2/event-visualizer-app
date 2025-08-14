@@ -10,7 +10,12 @@ module.exports = {
     settings: {
         'import/resolver': {
             typescript: {
-                project: './tsconfig.json',
+                project: [
+                    './tsconfig.json',
+                    './tsconfig.cypress-e2e.json',
+                    './tsconfig.cypress-component.json',
+                ],
+                noWarnOnMultipleProjects: true,
             },
         },
     },
@@ -100,6 +105,13 @@ module.exports = {
             files: ['src/types/index.ts'],
             rules: {
                 'no-restricted-imports': 'off',
+            },
+        },
+        {
+            // ESLint seems to think these are not TS files
+            files: ['src/**/*.cy.tsx'],
+            rules: {
+                'react/prop-types': 'off',
             },
         },
     ],

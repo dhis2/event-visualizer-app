@@ -9,5 +9,5 @@
         "types": ["cypress", "node"],
         "noEmit": true
     },
-    "include": ["**/*.ts", "types"]
+    "include": ["cypress/**/*.ts", "types"]
 }

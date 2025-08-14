@@ -37,5 +37,6 @@
         ".eslintrc.js",
         ".stylelintrc.js",
         ".prettierrc.js"
-    ]
+    ],
+    "exclude": ["cypress", "src/**/*.cy.ts", "src/**/*.cy.tsx"]
 }
