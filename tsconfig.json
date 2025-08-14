@@ -4,7 +4,7 @@
         "noEmit": true,
         "skipLibCheck": true,
         "allowJs": true,
-        "jsx": "react",
+        "jsx": "react-jsx",
         "esModuleInterop": true,
         "target": "ESNext",
         "module": "esnext",
@@ -15,7 +15,17 @@
             "@dhis2/analytics": ["src/types/analytics/index.d.ts"],
             // Use this as the definitive source for type imports, mainly to prevent
             // a suggestion overload from all the generated types
-            "@types": ["src/types/index"]
+            "@types": ["src/types/index"],
+            // For top level dirs with an index file we should treat that index file as apublic API
+            "@api": ["src/api/index"],
+            "@constants": ["src/constants/index"],
+            "@hooks": ["src/hooks/index"],
+            "@modules": ["src/modules/index"],
+            "@store": ["src/store/index"],
+            "@test-utils": ["src/test-utils/index"],
+            // In top level dirs without an index file we can access nested folders
+            "@assets/*": ["src/assets/*"],
+            "@components/*": ["src/components/*"]
         }
     },
     "include": [
@@ -24,6 +34,8 @@
         "*.cjs",
         ".*.cjs",
         "vitest.*.ts",
-        ".eslintrc.js"
+        ".eslintrc.js",
+        ".stylelintrc.js",
+        ".prettierrc.js"
     ]
 }

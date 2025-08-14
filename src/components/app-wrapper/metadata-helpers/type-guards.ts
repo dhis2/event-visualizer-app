@@ -1,10 +1,10 @@
-import type { MetadataItem } from '@types'
 import type {
     AnyMetadataItemInput,
     SimpleMetadataItem,
     ProgramMetadataItem,
     OptionSetMetadataItem,
 } from './types'
+import type { MetadataItem } from '@types'
 
 // Helper function to check if input is a plain object
 export const isObject = (input: unknown): input is Record<string, unknown> => {

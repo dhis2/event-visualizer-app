@@ -1,5 +1,5 @@
-import type { EventVisualizationType, RelativePeriodEnum } from '@types'
 import { asStringLiteralSubsetArray } from './helpers'
+import type { EventVisualizationType, RelativePeriodEnum } from '@types'
 
 export const SUPPORTED_VIS_TYPES =
     asStringLiteralSubsetArray<EventVisualizationType>()([

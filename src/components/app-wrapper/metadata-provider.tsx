@@ -1,11 +1,13 @@
-import React, {
+import {
     createContext,
     useContext,
     useState,
     useCallback,
     useSyncExternalStore,
     useMemo,
+    useRef,
 } from 'react'
+import type { FC, ReactNode } from 'react'
 import type {
     MetadataInput,
     MetadataStoreItem,
@@ -117,9 +119,7 @@ class MetadataStore {
 
 const MetadataContext = createContext<MetadataStore | null>(null)
 
-export const MetadataProvider: React.FC<{ children: React.ReactNode }> = ({
-    children,
-}) => {
+export const MetadataProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [metadataStore] = useState(
         () => new MetadataStore(getInitialMetadata())
     )
@@ -155,7 +155,7 @@ export const useMetadataItems = (
     )
 
     // Cache the last snapshot to ensure stable reference
-    const lastSnapshotRef = React.useRef<{
+    const lastSnapshotRef = useRef<{
         ids: string[]
         values: Record<string, MetadataStoreItem>
     }>({
@@ -177,7 +177,10 @@ export const useMetadataItems = (
         ) {
             return last.values
         }
-        lastSnapshotRef.current = { ids: sortedMetadataIds, values: metadataItems }
+        lastSnapshotRef.current = {
+            ids: sortedMetadataIds,
+            values: metadataItems,
+        }
         return metadataItems
         // sortedMetadataIds is intentionally spread for stable deps
         // eslint-disable-next-line react-hooks/exhaustive-deps

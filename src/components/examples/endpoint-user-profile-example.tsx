@@ -1,8 +1,7 @@
+import type { FC } from 'react'
+import { api, parseEngineError } from '@api'
+import type { BaseQueryApiWithExtraArg } from '@api'
 import type { MeDto } from '@types'
-import React from 'react'
-import { api } from '../../api/api'
-import type { BaseQueryApiWithExtraArg } from '../../api/custom-base-query'
-import { parseEngineError } from '../../api/parse-engine-error'
 
 export const meApi = api.injectEndpoints({
     endpoints: (builder) => ({
@@ -21,7 +20,7 @@ export const meApi = api.injectEndpoints({
     }),
 })
 
-export const EndpointUserProfileExample: React.FC = () => {
+export const EndpointUserProfileExample: FC = () => {
     const { data, error, isLoading } = meApi.useGetMeQuery()
 
     if (isLoading) {
