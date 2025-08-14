@@ -16,8 +16,12 @@
 // Import commands.js using ES2015 syntax:
 import './commands'
 
-import { mount } from 'cypress/react'
+import { mount } from '@cypress/react18'
 
+Cypress.Commands.add('mount', mount)
+
+// Example use:
+// cy.mount(<MyComponent />)
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
     namespace Cypress {
@@ -27,8 +31,3 @@ declare global {
     }
 }
 /* eslint-enable @typescript-eslint/no-namespace */
-
-Cypress.Commands.add('mount', mount)
-
-// Example use:
-// cy.mount(<MyComponent />)
