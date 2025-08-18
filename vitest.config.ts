@@ -8,10 +8,10 @@ export const importAliases = {
     '@constants': path.resolve(__dirname, 'src/constants/index.ts'),
     '@hooks': path.resolve(__dirname, 'src/hooks/index.ts'),
     '@modules': path.resolve(__dirname, 'src/modules/index.ts'),
-    '@store': path.resolve(__dirname, 'src/store/index.ts'),
     '@test-utils': path.resolve(__dirname, 'src/test-utils/index.tsx'),
     '@assets': path.resolve(__dirname, 'src/assets'),
     '@components': path.resolve(__dirname, 'src/components'),
+    '@store': path.resolve(__dirname, 'src/store'),
 }
 
 // https://vitejs.dev/config/

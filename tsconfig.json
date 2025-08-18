@@ -21,11 +21,11 @@
             "@constants": ["src/constants/index"],
             "@hooks": ["src/hooks/index"],
             "@modules": ["src/modules/index"],
-            "@store": ["src/store/index"],
             "@test-utils": ["src/test-utils/index"],
             // In top level dirs without an index file we can access nested folders
             "@assets/*": ["src/assets/*"],
-            "@components/*": ["src/components/*"]
+            "@components/*": ["src/components/*"],
+            "@store/*": ["src/store/*"]
         }
     },
     "include": [
