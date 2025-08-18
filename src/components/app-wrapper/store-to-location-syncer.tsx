@@ -3,7 +3,7 @@ import queryString from 'query-string'
 import { useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector, useAppStore } from '@hooks'
 import { history } from '@modules'
-import { setNavigationState } from '@store'
+import { setNavigationState } from '@store/navigation-slice'
 
 export const StoreToLocationSyncer = () => {
     const lastLocationRef = useRef<Location | null>(null)

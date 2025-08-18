@@ -11,7 +11,7 @@ import { SUPPORTED_VIS_TYPES } from '@constants'
 import { visTypeDisplayNames, ToolbarSidebar } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getVisTypeDescriptions } from '@modules'
-import { setUiState } from '@store'
+import { setUiState } from '@store/ui-slice'
 
 export const VisualizationTypeSelector: FC = () => {
     const dispatch = useAppDispatch()
