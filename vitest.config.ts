@@ -7,10 +7,10 @@ export const importAliases = {
     '@api': path.resolve(__dirname, 'src/api/index.ts'),
     '@constants': path.resolve(__dirname, 'src/constants/index.ts'),
     '@hooks': path.resolve(__dirname, 'src/hooks/index.ts'),
-    '@modules': path.resolve(__dirname, 'src/modules/index.ts'),
     '@test-utils': path.resolve(__dirname, 'src/test-utils/index.tsx'),
     '@assets': path.resolve(__dirname, 'src/assets'),
     '@components': path.resolve(__dirname, 'src/components'),
+    '@modules': path.resolve(__dirname, 'src/modules'),
     '@store': path.resolve(__dirname, 'src/store'),
 }
 
