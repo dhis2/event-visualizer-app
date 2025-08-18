@@ -1,4 +1,4 @@
-import { SkeletonContainer } from '../skeleton-container'
+import { AppLayoutContainer } from '../app-layout-container'
 
 const SizedBox: React.FC<{
     dataTest?: string
@@ -62,13 +62,13 @@ const OuterContainer: React.FC<{
     </SizedBox>
 )
 
-describe('<SkeletonContainer />', () => {
+describe('<AppLayoutContainer />', () => {
     it('renders', () => {
         // see: https://on.cypress.io/mounting-react
 
         cy.mount(
             <OuterContainer>
-                <SkeletonContainer />
+                <AppLayoutContainer />
             </OuterContainer>
         )
     })
