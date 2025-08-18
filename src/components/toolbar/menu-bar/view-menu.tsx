@@ -1,10 +1,10 @@
+import i18n from '@dhis2/d2-i18n'
+import type { FC } from 'react'
 import {
     HoverMenuDropdown,
     HoverMenuList,
     HoverMenuListItem,
 } from '@dhis2/analytics'
-import i18n from '@dhis2/d2-i18n'
-import React, { FC /*useCallback*/ } from 'react'
 //import { useDispatch, useSelector } from 'react-redux'
 //import {
 //    acToggleUiSidebarHidden,

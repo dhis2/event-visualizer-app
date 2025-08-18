@@ -1,5 +1,5 @@
+import type { FC } from 'react'
 import { InterpretationsAndDetailsToggler as AnalyticsInterpretationsAndDetailsToggler } from '@dhis2/analytics'
-import React, { FC } from 'react'
 
 export const InterpretationsAndDetailsToggler: FC = () => {
     const showDetailsPanel = false

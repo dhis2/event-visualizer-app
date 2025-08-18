@@ -1,16 +1,8 @@
 import {
-    //VIS_TYPE_GROUP_ALL,
-    //useCachedDataQuery,
-    FileMenu,
-    //    preparePayloadForSaveAs,
-    //    preparePayloadForSave,
-    HoverMenuBar,
-} from '@dhis2/analytics'
-import {
     useAlert /*, useDataMutation, useDataEngine*/,
 } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
-import React, { FC } from 'react'
+import type { FC } from 'react'
 //import { useSelector, useDispatch } from 'react-redux'
 //import { tSetCurrent } from '../../actions/current.js'
 //import { acSetVisualization } from '../../actions/visualization.js'
@@ -19,21 +11,6 @@ import React, { FC } from 'react'
 //    apiFetchVisualizationNameDesc,
 //    apiFetchVisualizationSubscribers,
 //} from '../../api/visualization.js'
-import { getAlertTypeByStatusCode } from '../../../modules/error'
-import { history } from '../../../modules/history'
-//import {
-//    isLayoutValidForSave,
-//    isLayoutValidForSaveAs,
-//} from '../../modules/layoutValidation.js'
-//import { DERIVED_USER_SETTINGS_DISPLAY_NAME_PROPERTY } from '../../modules/userSettings.js'
-import {
-    visTypes,
-    useVisTypesFilterByVersion,
-    //    STATE_DIRTY,
-    //    STATE_UNSAVED,
-    //    getSaveableVisualization,
-    //    getVisualizationState,
-} from '../../../modules/visualization'
 //import { sGetCurrent } from '../../reducers/current.js'
 //import { sGetVisualization } from '../../reducers/visualization.js'
 //import { ToolbarDownloadDropdown } from '../DownloadMenu/index.js'
@@ -41,6 +18,27 @@ import {
 import { DownloadMenu } from './download-menu'
 import { OptionsMenu } from './options-menu'
 import { ViewMenu } from './view-menu'
+import {
+    //VIS_TYPE_GROUP_ALL,
+    //useCachedDataQuery,
+    FileMenu,
+    //    preparePayloadForSaveAs,
+    //    preparePayloadForSave,
+    HoverMenuBar,
+} from '@dhis2/analytics'
+import {
+    getAlertTypeByStatusCode,
+    history,
+    //    isLayoutValidForSave,
+    //    isLayoutValidForSaveAs,
+    //DERIVED_USER_SETTINGS_DISPLAY_NAME_PROPERTY,
+    visTypes,
+    useVisTypesFilterByVersion,
+    //    STATE_DIRTY,
+    //    STATE_UNSAVED,
+    //    getSaveableVisualization,
+    //    getVisualizationState,
+} from '@modules'
 
 //const visualizationSaveAsMutation = {
 //    type: 'create',

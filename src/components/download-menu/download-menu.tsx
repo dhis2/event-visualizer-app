@@ -1,10 +1,10 @@
-import { HoverMenuList, HoverMenuListItem } from '@dhis2/analytics'
 import { useConfig } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import { FlyoutMenu, MenuItem, MenuSectionHeader } from '@dhis2/ui'
-import React, { FC } from 'react'
+import type { FC } from 'react'
 import { PlainDataSourceSubMenu } from './plain-data-source-sub-menu'
 import type { DownloadFn } from './types'
+import { HoverMenuList, HoverMenuListItem } from '@dhis2/analytics'
 
 type DownloadMenuProps = {
     download: DownloadFn

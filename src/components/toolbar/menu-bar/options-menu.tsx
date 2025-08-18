@@ -1,11 +1,11 @@
+import i18n from '@dhis2/d2-i18n'
+import type { FC } from 'react'
 import {
     //    VisualizationOptions,
     HoverMenuDropdown,
     HoverMenuList,
     HoverMenuListItem,
 } from '@dhis2/analytics'
-import i18n from '@dhis2/d2-i18n'
-import React, { FC /*, useState*/ } from 'react'
 //import { getOptionsByType } from '../../modules/options/config.js'
 //import UpdateVisualizationContainer from '../UpdateButton/UpdateVisualizationContainer.js'
 

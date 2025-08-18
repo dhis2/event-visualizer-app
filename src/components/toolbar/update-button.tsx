@@ -1,5 +1,5 @@
+import type { FC } from 'react'
 import { UpdateButton as UiUpdateButton } from '@dhis2/analytics'
-import React, { FC } from 'react'
 
 export const UpdateButton: FC = () => {
     const onClick = () => {

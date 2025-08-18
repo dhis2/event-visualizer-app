@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { DataError, EmptyBox, GenericError } from '../assets/error-icons'
+import { DataError, EmptyBox, GenericError } from '@assets/error-icons'
 
 const visualizationError = (icon, title, description) => ({
     icon,

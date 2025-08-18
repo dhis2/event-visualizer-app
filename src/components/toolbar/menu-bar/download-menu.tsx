@@ -1,8 +1,8 @@
-import { HoverMenuDropdown } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import React, { FC } from 'react'
-import { DownloadMenu as BaseDownloadMenu } from '../../download-menu/download-menu'
-import { useDownload } from '../../download-menu/use-download'
+import type { FC } from 'react'
+import { DownloadMenu as BaseDownloadMenu } from '@components/download-menu/download-menu'
+import { useDownload } from '@components/download-menu/use-download'
+import { HoverMenuDropdown } from '@dhis2/analytics'
 
 export const DownloadMenu: FC = () => {
     const { isDownloadDisabled, download } = useDownload()
