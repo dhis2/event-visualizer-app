@@ -1,5 +1,8 @@
 /// <reference types="cypress" />
 import '@dhis2/cypress-commands'
+import { mount } from 'cypress/react'
+
+Cypress.Commands.add('mount', (component, options) => mount(component, options))
 
 Cypress.Commands.add('getByDataTest', (selector, ...args) =>
     cy.get(`[data-test=${selector}]`, ...args)
@@ -50,6 +53,11 @@ type LoginOptions = {
 declare global {
     namespace Cypress {
         interface Chainable {
+            /**
+             * Cypress component test command to mount a React component
+             * @example cy.mount(<MyComponent />, options)
+             */
+            mount: typeof mount
             /**
              * Custom command to select DOM element by data-test attribute.
              * @example cy.getByDataTest('menu-list-item')
