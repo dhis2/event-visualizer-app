@@ -1,57 +1,73 @@
 import i18n from '@dhis2/d2-i18n'
 import type { FC } from 'react'
+import { useCallback } from 'react'
 import {
     HoverMenuDropdown,
     HoverMenuList,
     HoverMenuListItem,
 } from '@dhis2/analytics'
-//import { useDispatch, useSelector } from 'react-redux'
 //import {
 //    acToggleUiSidebarHidden,
 //    acToggleUiLayoutPanelHidden,
 //    acSetUiDetailsPanelOpen,
 //    acSetUiAccessoryPanelWidth,
 //} from '../../actions/ui.js'
+import { useAppDispatch, useAppSelector } from '@hooks'
 //import { ACCESSORY_PANEL_DEFAULT_WIDTH } from '../../modules/accessoryPanelConstants.js'
 //import { setUserSidebarWidthToLocalStorage } from '../../modules/localStorage.js'
-//import { sGetCurrentId } from '../../reducers/current.js'
 //import {
-//    sGetUiLayoutPanelHidden,
-//    sGetUiSidebarHidden,
 //    sGetUiShowDetailsPanel,
-//    sGetUiAccessoryPanelWidth,
 //} from '../../reducers/ui.js'
+import {
+    currentSlice,
+    uiSlice,
+    toggleUiLayoutPanelHidden,
+    toggleUiSidebarHidden,
+    setUiAccessoryPanelWidth,
+    setUiDetailsPanelOpen,
+} from '@store'
 
 export const ViewMenu: FC = () => {
-    //    const dispatch = useDispatch()
-    const isSidebarHidden = false //useSelector(sGetUiSidebarHidden)
-    const isLayoutPanelHidden = false // useSelector(sGetUiLayoutPanelHidden)
-    const isDetailsPanelOpen = false // useSelector(sGetUiShowDetailsPanel)
-    //    const userSettingWidth = useSelector(sGetUiAccessoryPanelWidth)
-    //    const id = useSelector(sGetCurrentId)
+    const ACCESSORY_PANEL_DEFAULT_WIDTH = 260 // TODO read from some constants
 
-    const TBD = () => console.log('TBD')
+    const dispatch = useAppDispatch()
+    const {
+        getUiAccessoryPanelWidth,
+        getUiDetailsPanelOpen,
+        getUiSidebarHidden,
+        getUiLayoutPanelHidden,
+    } = uiSlice.selectors
+    const { getCurrentId } = currentSlice.selectors
 
-    const toggleLayoutPanelHidden = TBD
-    //useCallback(() => {
-    //        dispatch(acToggleUiLayoutPanelHidden())
-    //}, [dispatch])
+    const isSidebarHidden = useAppSelector((state) => getUiSidebarHidden(state))
+    const isLayoutPanelHidden = useAppSelector((state) =>
+        getUiLayoutPanelHidden(state)
+    )
+    const isDetailsPanelOpen = useAppSelector((state) =>
+        getUiDetailsPanelOpen(state)
+    )
+    const userSettingWidth = useAppSelector((state) =>
+        getUiAccessoryPanelWidth(state)
+    )
+    const id = useAppSelector((state) => getCurrentId(state))
 
-    const toggleSidebarHidden = TBD
-    //useCallback(() => {
-    //        dispatch(acToggleUiSidebarHidden())
-    //}, [dispatch])
+    const toggleLayoutPanelHidden = useCallback(() => {
+        dispatch(toggleUiLayoutPanelHidden())
+    }, [dispatch])
 
-    const resetAccessorySidebarWidth = TBD
-    //useCallback(() => {
-    //        setUserSidebarWidthToLocalStorage(ACCESSORY_PANEL_DEFAULT_WIDTH)
-    //        dispatch(acSetUiAccessoryPanelWidth(ACCESSORY_PANEL_DEFAULT_WIDTH))
-    //}, [dispatch])
+    const toggleSidebarHidden = useCallback(() => {
+        dispatch(toggleUiSidebarHidden())
+    }, [dispatch])
 
-    const toggleDetailsPanelOpen = TBD
-    //useCallback(() => {
-    //        dispatch(acSetUiDetailsPanelOpen(!isDetailsPanelOpen))
-    //}, [dispatch, isDetailsPanelOpen])
+    const resetAccessorySidebarWidth = useCallback(() => {
+        // TODO
+        //        setUserSidebarWidthToLocalStorage(ACCESSORY_PANEL_DEFAULT_WIDTH)
+        dispatch(setUiAccessoryPanelWidth(ACCESSORY_PANEL_DEFAULT_WIDTH))
+    }, [dispatch])
+
+    const toggleDetailsPanelOpen = useCallback(() => {
+        dispatch(setUiDetailsPanelOpen(!isDetailsPanelOpen))
+    }, [dispatch, isDetailsPanelOpen])
 
     const toggleLayoutPanelText = isLayoutPanelHidden
         ? i18n.t('Show layout')
@@ -77,14 +93,14 @@ export const ViewMenu: FC = () => {
                 <HoverMenuListItem
                     label={i18n.t('Reset sidebar width')}
                     onClick={resetAccessorySidebarWidth}
-                    //                    disabled={
-                    //                        userSettingWidth === ACCESSORY_PANEL_DEFAULT_WIDTH
-                    //                    }
+                    disabled={
+                        userSettingWidth === ACCESSORY_PANEL_DEFAULT_WIDTH
+                    }
                 />
                 <HoverMenuListItem
                     label={toggleDetailsPanelText}
                     onClick={toggleDetailsPanelOpen}
-                    //                    disabled={!id}
+                    disabled={!id}
                 />
             </HoverMenuList>
         </HoverMenuDropdown>

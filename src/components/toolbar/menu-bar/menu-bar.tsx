@@ -18,6 +18,7 @@ import type { FC } from 'react'
 import { DownloadMenu } from './download-menu'
 import { OptionsMenu } from './options-menu'
 import { ViewMenu } from './view-menu'
+import { SUPPORTED_VIS_TYPES } from '@constants'
 import {
     //VIS_TYPE_GROUP_ALL,
     //useCachedDataQuery,
@@ -26,19 +27,33 @@ import {
     //    preparePayloadForSave,
     HoverMenuBar,
 } from '@dhis2/analytics'
+import { useCurrentUser } from '@hooks'
 import {
     getAlertTypeByStatusCode,
     history,
     //    isLayoutValidForSave,
     //    isLayoutValidForSaveAs,
     //DERIVED_USER_SETTINGS_DISPLAY_NAME_PROPERTY,
-    visTypes,
-    useVisTypesFilterByVersion,
     //    STATE_DIRTY,
     //    STATE_UNSAVED,
     //    getSaveableVisualization,
     //    getVisualizationState,
 } from '@modules'
+//import {
+//    isLayoutValidForSave,
+//    isLayoutValidForSaveAs,
+//} from '../../modules/layoutValidation.js'
+//import { DERIVED_USER_SETTINGS_DISPLAY_NAME_PROPERTY } from '../../modules/userSettings.js'
+//import {
+//        STATE_DIRTY,
+//        STATE_UNSAVED,
+//        getSaveableVisualization,
+//        getVisualizationState,
+//} from '../../../modules/visualization'
+//import { sGetCurrent } from '../../reducers/current.js'
+//import { sGetVisualization } from '../../reducers/visualization.js'
+//import { ToolbarDownloadDropdown } from '../DownloadMenu/index.js'
+//import VisualizationOptionsManager from '../VisualizationOptions/VisualizationOptionsManager.jsx'
 
 //const visualizationSaveAsMutation = {
 //    type: 'create',
@@ -69,14 +84,13 @@ export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
     //    const dispatch = useDispatch()
     //    const engine = useDataEngine()
     //    const { currentUser } = useCachedDataQuery()
-    const currentUser = { id: 'test-id', name: 'placeholder user' }
+    const currentUser = useCurrentUser()
     //    const current = useSelector(sGetCurrent)
     //    const visualization = useSelector(sGetVisualization)
-    const filterVisTypesByVersion = useVisTypesFilterByVersion()
 
     const filterVisTypes = [
         { type: 'ALL' },
-        ...visTypes.filter(filterVisTypesByVersion).map((visType) => ({
+        ...SUPPORTED_VIS_TYPES.map((visType) => ({
             type: visType,
         })),
     ]
@@ -179,42 +193,43 @@ export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
         onFileMenuAction()
     }
 
-    //    const onSave = async (details = {}, copy = false) => {
-    //        const { name, description } = details
-    //
-    //        if (copy) {
-    //            // remove property subscribers before saving as new
-    //            // eslint-disable-next-line no-unused-vars
-    //            const { subscribers, ...currentWithoutSubscribers } = current
-    //
-    //            postVisualization({
-    //                visualization: preparePayloadForSaveAs({
-    //                    visualization: getSaveableVisualization(
-    //                        currentWithoutSubscribers
-    //                    ),
-    //                    name,
-    //                    description,
-    //                }),
-    //            })
-    //        } else {
-    //            const { subscribers } = await apiFetchVisualizationSubscribers({
-    //                engine,
-    //                id: visualization.id,
-    //            })
-    //
-    //            putVisualization({
-    //                visualization: await preparePayloadForSave({
-    //                    visualization: {
-    //                        ...getSaveableVisualization(current),
-    //                        subscribers,
-    //                    },
-    //                    name,
-    //                    description,
-    //                    engine,
-    //                }),
-    //            })
-    //        }
-    //    }
+    const onSave = async (details = {}, copy = false) => {
+        console.log(`onSave TBD (details: ${details} copy: ${copy})`)
+        //        const { name, description } = details
+        //
+        //        if (copy) {
+        //            // remove property subscribers before saving as new
+        //            // eslint-disable-next-line no-unused-vars
+        //            const { subscribers, ...currentWithoutSubscribers } = current
+        //
+        //            postVisualization({
+        //                visualization: preparePayloadForSaveAs({
+        //                    visualization: getSaveableVisualization(
+        //                        currentWithoutSubscribers
+        //                    ),
+        //                    name,
+        //                    description,
+        //                }),
+        //            })
+        //        } else {
+        //            const { subscribers } = await apiFetchVisualizationSubscribers({
+        //                engine,
+        //                id: visualization.id,
+        //            })
+        //
+        //            putVisualization({
+        //                visualization: await preparePayloadForSave({
+        //                    visualization: {
+        //                        ...getSaveableVisualization(current),
+        //                        subscribers,
+        //                    },
+        //                    name,
+        //                    description,
+        //                    engine,
+        //                }),
+        //            })
+        //        }
+    }
 
     //    const onSaveComplete = (res, copy = false) => {
     //        if (res.response.uid) {
@@ -282,6 +297,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
                 onOpen={onOpen}
                 onNew={onNew}
                 onRename={onRename}
+                onSave={onSave} // TODO disable based on dirty state
                 //                onSave={
                 //                    [STATE_UNSAVED, STATE_DIRTY].includes(
                 //                        getVisualizationState(visualization, current)
@@ -293,6 +309,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
                 //                        ? onSave
                 //                        : undefined
                 //                }
+                onSaveAs={(details) => onSave(details, true)}
                 //                onSaveAs={
                 //                    isLayoutValidForSaveAs(current)
                 //                        ? (details) => onSave(details, true)
