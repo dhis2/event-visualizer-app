@@ -10,7 +10,12 @@
         "module": "esnext",
         "moduleResolution": "node",
         "strictNullChecks": true,
-        "types": ["vitest/globals", "@testing-library/jest-dom"],
+        "types": [
+            "vitest/globals",
+            "@testing-library/jest-dom",
+            "cypress",
+            "cypress/react"
+        ],
         "paths": {
             "@dhis2/analytics": ["src/types/analytics/index.d.ts"],
             // Use this as the definitive source for type imports, mainly to prevent
@@ -38,5 +43,6 @@
         ".stylelintrc.js",
         ".prettierrc.js"
     ],
-    "exclude": ["cypress", "src/**/*.cy.ts", "src/**/*.cy.tsx"]
+    "exclude": ["cypress"],
+    "files": ["cypress/support/component.ts"]
 }
