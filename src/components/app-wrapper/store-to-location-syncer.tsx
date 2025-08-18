@@ -2,7 +2,7 @@ import { Location } from 'history'
 import queryString from 'query-string'
 import { useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector, useAppStore } from '@hooks'
-import { history } from '@modules'
+import { history } from '@modules/history'
 import { setNavigationState } from '@store/navigation-slice'
 
 export const StoreToLocationSyncer = () => {

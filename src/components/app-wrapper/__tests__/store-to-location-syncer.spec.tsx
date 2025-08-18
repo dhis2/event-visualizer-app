@@ -1,7 +1,7 @@
 import { act } from '@testing-library/react'
 import { describe, it, beforeEach, afterEach } from 'vitest'
 import { StoreToLocationSyncer } from '../store-to-location-syncer'
-import { history } from '@modules'
+import { history } from '@modules/history'
 import { navigationSlice, setNavigationState } from '@store/navigation-slice'
 import type { NavigationState } from '@store/navigation-slice'
 import { setupStore, renderWithReduxStoreProvider } from '@test-utils'
