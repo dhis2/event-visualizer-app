@@ -20,7 +20,6 @@
         "postinstall": "chmod +x ./scripts/postinstall.sh && ./scripts/postinstall.sh"
     },
     "devDependencies": {
-        "@cypress/react18": "^2.0.1",
         "@cypress/vite-dev-server": "^7.0.0",
         "@dhis2/cli-app-scripts": "^12.7.2",
         "@dhis2/cli-style": "^10.7.8",
