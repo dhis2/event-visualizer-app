@@ -1,35 +1,24 @@
 import i18n from '@dhis2/d2-i18n'
 import type { FC } from 'react'
 import { useCallback } from 'react'
+import { ACCESSORY_PANEL_DEFAULT_WIDTH } from '@constants/panels'
 import {
     HoverMenuDropdown,
     HoverMenuList,
     HoverMenuListItem,
 } from '@dhis2/analytics'
-//import {
-//    acToggleUiSidebarHidden,
-//    acToggleUiLayoutPanelHidden,
-//    acSetUiDetailsPanelOpen,
-//    acSetUiAccessoryPanelWidth,
-//} from '../../actions/ui.js'
 import { useAppDispatch, useAppSelector } from '@hooks'
-//import { ACCESSORY_PANEL_DEFAULT_WIDTH } from '../../modules/accessoryPanelConstants.js'
-//import { setUserSidebarWidthToLocalStorage } from '../../modules/localStorage.js'
-//import {
-//    sGetUiShowDetailsPanel,
-//} from '../../reducers/ui.js'
+import { setUserSidebarWidthToLocalStorage } from '@modules/local-storage'
+import { currentSlice } from '@store/current-slice'
 import {
-    currentSlice,
     uiSlice,
     toggleUiLayoutPanelHidden,
     toggleUiSidebarHidden,
     setUiAccessoryPanelWidth,
     setUiDetailsPanelOpen,
-} from '@store'
+} from '@store/ui-slice'
 
 export const ViewMenu: FC = () => {
-    const ACCESSORY_PANEL_DEFAULT_WIDTH = 260 // TODO read from some constants
-
     const dispatch = useAppDispatch()
     const {
         getUiAccessoryPanelWidth,
@@ -60,8 +49,7 @@ export const ViewMenu: FC = () => {
     }, [dispatch])
 
     const resetAccessorySidebarWidth = useCallback(() => {
-        // TODO
-        //        setUserSidebarWidthToLocalStorage(ACCESSORY_PANEL_DEFAULT_WIDTH)
+        setUserSidebarWidthToLocalStorage(ACCESSORY_PANEL_DEFAULT_WIDTH)
         dispatch(setUiAccessoryPanelWidth(ACCESSORY_PANEL_DEFAULT_WIDTH))
     }, [dispatch])
 
