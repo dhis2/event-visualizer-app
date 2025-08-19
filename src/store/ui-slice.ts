@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { SupportedVisType } from '@constants/visualization-types'
+import { getUserSidebarWidthFromLocalStorage } from '@modules/local-storage'
 
 export interface UiState {
     visualizationType: SupportedVisType
@@ -16,7 +17,7 @@ export const initialState: UiState = {
 
     hideLayoutPanel: false,
     hideMainSidebar: false,
-    accessoryPanelWidth: 100, // TODO should come from user preferences
+    accessoryPanelWidth: getUserSidebarWidthFromLocalStorage(),
     showAccessoryPanel: true,
     showDetailsPanel: false,
     showExpandedLayoutPanel: false,
