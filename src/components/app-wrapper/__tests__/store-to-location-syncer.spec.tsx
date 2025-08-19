@@ -4,7 +4,8 @@ import { StoreToLocationSyncer } from '../store-to-location-syncer'
 import { history } from '@modules/history'
 import { navigationSlice, setNavigationState } from '@store/navigation-slice'
 import type { NavigationState } from '@store/navigation-slice'
-import { setupStore, renderWithReduxStoreProvider } from '@test-utils'
+import { renderWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
+import { setupStore } from '@test-utils/setup-store'
 import type { RootState } from '@types'
 
 describe('StoreToLocationSyncer', () => {

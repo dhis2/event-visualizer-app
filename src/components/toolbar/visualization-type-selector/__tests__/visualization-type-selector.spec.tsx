@@ -3,7 +3,8 @@ import userEvent from '@testing-library/user-event'
 import { describe, it, beforeEach } from 'vitest'
 import { VisualizationTypeSelector } from '../visualization-type-selector'
 import { uiSlice, initialState, setUiState } from '@store/ui-slice'
-import { setupStore, renderWithReduxStoreProvider } from '@test-utils'
+import { renderWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
+import { setupStore } from '@test-utils/setup-store'
 import type { RootState } from '@types'
 
 vi.mock('@dhis2/app-runtime', () => ({

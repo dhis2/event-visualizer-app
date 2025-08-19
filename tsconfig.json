@@ -18,14 +18,14 @@
             "@types": ["src/types/index"],
             // For top level dirs with an index file we should treat that index file as a public API
             "@hooks": ["src/hooks/index"],
-            "@test-utils": ["src/test-utils/index"],
             // In top level dirs without an index file we can access nested folders
             "@api/*": ["src/api/*"],
             "@assets/*": ["src/assets/*"],
             "@components/*": ["src/components/*"],
             "@constants/*": ["src/constants/*"],
             "@modules/*": ["src/modules/*"],
-            "@store/*": ["src/store/*"]
+            "@store/*": ["src/store/*"],
+            "@test-utils/*": ["src/test-utils/*"]
         }
     },
     "include": [
