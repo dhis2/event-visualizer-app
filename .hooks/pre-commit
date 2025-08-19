@@ -11,23 +11,20 @@ STAGED_TS_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(
 if [ -n "$STAGED_TS_FILES" ]; then
     echo "🔍 Checking TypeScript for staged files..."
 
-    # Run TypeScript check on all configs and collect errors
-    TS_ERRORS=""
-    TS_FAILED=false
+    # Use a temporary file to capture TypeScript errors
+    TS_ERRORS_FILE=$(mktemp)
+    export TYPESCRIPT_ERRORS_OUTPUT="$TS_ERRORS_FILE"
 
+    # Run the shared TypeScript check script
     set +e  # Don't exit on error
-    for config in tsconfig*.json; do
-        TS_OUTPUT=$(npx tsc --project "$config" --noEmit --skipLibCheck 2>&1)
-        if [ $? -ne 0 ]; then
-            TS_FAILED=true
-            # Filter out "Checking..." messages and add to accumulated errors
-            FILTERED_OUTPUT=$(echo "$TS_OUTPUT" | grep -v "^Checking ")
-            TS_ERRORS="$TS_ERRORS$FILTERED_OUTPUT"$'\n'
-        fi
-    done
+    bash ./scripts/check-typescript.sh
+    TS_CHECK_EXIT_CODE=$?
     set -e  # Re-enable exit on error
 
-    if [ "$TS_FAILED" = true ]; then
+    if [ $TS_CHECK_EXIT_CODE -ne 0 ]; then
+        # Read the errors from the temporary file
+        TS_ERRORS=$(cat "$TS_ERRORS_FILE")
+
         # Filter errors to only show those in staged files and remove duplicates
         STAGED_ERRORS=""
         STAGED_ERRORS_FOUND=false
@@ -57,6 +54,10 @@ if [ -n "$STAGED_TS_FILES" ]; then
     else
         echo "✅ All TypeScript checks passed!"
     fi
+
+    # Clean up temporary file
+    rm -f "$TS_ERRORS_FILE"
+    unset TYPESCRIPT_ERRORS_OUTPUT
 fi
 
 # Run individual linting tools on staged files

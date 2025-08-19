@@ -8,19 +8,8 @@ echo "============================"
 EXIT_CODE=0
 
 # TypeScript check
-echo "🔍 Checking TypeScript..."
-TS_FAILED=false
-for config in tsconfig*.json; do
-    if ! npx tsc --project "$config" --noEmit --skipLibCheck; then
-        TS_FAILED=true
-    fi
-done
-
-if [ "$TS_FAILED" = true ]; then
-    echo "❌ TypeScript check failed"
+if ! bash ./scripts/check-typescript.sh; then
     EXIT_CODE=1
-else
-    echo "✅ TypeScript check passed"
 fi
 echo ""
 
