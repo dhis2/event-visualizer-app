@@ -88,3 +88,4 @@ declare global {
         }
     }
 }
+/* eslint-enable @typescript-eslint/no-namespace */

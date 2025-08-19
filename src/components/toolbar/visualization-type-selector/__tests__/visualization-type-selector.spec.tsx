@@ -1,6 +1,6 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it, beforeEach } from 'vitest'
+import { vi, describe, it, beforeEach, expect } from 'vitest'
 import { VisualizationTypeSelector } from '../visualization-type-selector'
 import { uiSlice, initialState, setUiState } from '@store/ui-slice'
 import { renderWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'

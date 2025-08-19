@@ -20,7 +20,6 @@ export default defineConfig({
     plugins: [react()],
     resolve: { alias: importAliases },
     test: {
-        globals: true,
         setupFiles: './vitest.setup.ts',
         environment: 'jsdom',
         exclude: [...configDefaults.exclude, '**/.d2/**'],

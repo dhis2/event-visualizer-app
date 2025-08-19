@@ -25,7 +25,7 @@ const extractMinorVersion = (v: string): number =>
     v.indexOf('2.') === 0 ? parseInt(v.slice(2, 4)) : parseInt(v.slice(0, 2))
 
 const MIN_DHIS2_VERSION = extractMinorVersion(
-    getString(d2config.minDHIS2Version)
+    getString(d2config.minDHIS2Version ?? '')
 )
 
 const getInstanceMinorVersion = (dhis2InstanceVersion: string): number => {
@@ -45,7 +45,7 @@ export const getExcludedTags = (v: string | number) => {
         )
     }
 
-    let excludeTags = []
+    let excludeTags: string[] = []
     if (currentInstanceVersion === MIN_DHIS2_VERSION) {
         // For example instance = 2.38, MIN = 2.38
         excludeTags = [

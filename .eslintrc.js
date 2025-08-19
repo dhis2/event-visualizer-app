@@ -10,7 +10,12 @@ module.exports = {
     settings: {
         'import/resolver': {
             typescript: {
-                project: './tsconfig.json',
+                project: [
+                    './tsconfig.json',
+                    './tsconfig.cypress-e2e.json',
+                    './tsconfig.cypress-component.json',
+                ],
+                noWarnOnMultipleProjects: true,
             },
         },
     },
@@ -100,6 +105,61 @@ module.exports = {
             files: ['src/types/index.ts'],
             rules: {
                 'no-restricted-imports': 'off',
+            },
+        },
+        {
+            files: ['src/**/*.spec.{ts,tsx}'],
+            rules: {
+                'no-restricted-globals': [
+                    'error',
+                    {
+                        name: 'describe',
+                        message:
+                            "Import describe from 'vitest' instead of using the global.",
+                    },
+                    {
+                        name: 'it',
+                        message:
+                            "Import it from 'vitest' instead of using the global.",
+                    },
+                    {
+                        name: 'test',
+                        message:
+                            "Import test from 'vitest' instead of using the global.",
+                    },
+                    {
+                        name: 'expect',
+                        message:
+                            "Import expect from 'vitest' instead of using the global.",
+                    },
+                    {
+                        name: 'beforeEach',
+                        message:
+                            "Import beforeEach from 'vitest' instead of using the global.",
+                    },
+                    {
+                        name: 'afterEach',
+                        message:
+                            "Import afterEach from 'vitest' instead of using the global.",
+                    },
+                    {
+                        name: 'beforeAll',
+                        message:
+                            "Import beforeAll from 'vitest' instead of using the global.",
+                    },
+                    {
+                        name: 'afterAll',
+                        message:
+                            "Import afterAll from 'vitest' instead of using the global.",
+                    },
+                ],
+            },
+        },
+        {
+            // ESLint seems to think these are not TS files
+            files: ['src/**/*.cy.tsx'],
+            rules: {
+                'react/prop-types': 'off',
             },
         },
     ],

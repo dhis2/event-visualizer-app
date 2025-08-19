@@ -41,10 +41,20 @@ jobs:
               run: yarn d2-app-scripts i18n generate
 
             - name: Lint
-              run: yarn d2-style check
+              run: yarn lint
 
-            - name: Test
+            - name: Unit tests
               run: npx vitest run
+
+            - name: Cypress component tests
+              uses: cypress-io/github-action@v6
+              with:
+                  component: true
+                  record: ${{ env.SHOULD_RECORD == 'true' }}
+                  browser: chrome
+              env:
+                  CI: true
+                  CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
 
             - name: Build
               run: yarn d2-app-scripts build

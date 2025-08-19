@@ -132,7 +132,6 @@ While the generic hooks are suitable for most use cases, you can also create cus
 
 ```typescript
 import type { MeDto, PickWithFieldFilters } from '@types'
-import React from 'react'
 import { useRtkQuery } from '../../hooks'
 
 const fieldsFilter = ['id', 'name', 'email', 'settings'] as const
@@ -200,7 +199,6 @@ This hook offers the same functionality as `useDataQuery` from `@dhis2/app-servi
 
 ```typescript
 import type { MeDto, PickWithFieldFilters } from '@types'
-import React from 'react'
 import { useRtkLazyQuery } from '../../hooks'
 
 const fieldsFilter = ['id', 'name', 'email', 'settings'] as const
@@ -249,7 +247,7 @@ The `useRtkMutation` is a bit more flexible than the `useDataMutation` hook from
 <summary>Show code</summary>
 
 ```typescript
-import React, { useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { useRtkMutation } from '../../hooks'
 
 export const DashboardExample = () => {
@@ -350,7 +348,6 @@ export const DashboardExample = () => {
 
 ```typescript
 import type { MeDto } from '@types'
-import React from 'react'
 import { api } from '../../api/api'
 import type { BaseQueryApiWithExtraArg } from '../../api/custom-base-query'
 import { parseEngineError } from '../../api/parse-engine-error'

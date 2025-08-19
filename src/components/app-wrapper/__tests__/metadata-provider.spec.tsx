@@ -1,5 +1,6 @@
 import { render, act, renderHook } from '@testing-library/react'
 import type { ReactNode } from 'react'
+import { expect, describe, it, beforeEach } from 'vitest'
 import {
     MetadataProvider,
     useMetadataItem,
