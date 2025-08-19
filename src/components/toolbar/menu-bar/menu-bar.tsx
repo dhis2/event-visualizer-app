@@ -18,7 +18,7 @@ import type { FC } from 'react'
 import { DownloadMenu } from './download-menu'
 import { OptionsMenu } from './options-menu'
 import { ViewMenu } from './view-menu'
-import { SUPPORTED_VIS_TYPES } from '@constants'
+import { SUPPORTED_VIS_TYPES } from '@constants/visualization-types'
 import {
     //VIS_TYPE_GROUP_ALL,
     //useCachedDataQuery,
@@ -28,17 +28,16 @@ import {
     HoverMenuBar,
 } from '@dhis2/analytics'
 import { useCurrentUser } from '@hooks'
-import {
-    getAlertTypeByStatusCode,
-    history,
-    //    isLayoutValidForSave,
-    //    isLayoutValidForSaveAs,
-    //DERIVED_USER_SETTINGS_DISPLAY_NAME_PROPERTY,
-    //    STATE_DIRTY,
-    //    STATE_UNSAVED,
-    //    getSaveableVisualization,
-    //    getVisualizationState,
-} from '@modules'
+import { getAlertTypeByStatusCode } from '@modules/error'
+import { history } from '@modules/history'
+//    isLayoutValidForSave,
+//    isLayoutValidForSaveAs,
+//DERIVED_USER_SETTINGS_DISPLAY_NAME_PROPERTY,
+//    STATE_DIRTY,
+//    STATE_UNSAVED,
+//    getSaveableVisualization,
+//    getVisualizationState,
+//} from '@modules'
 //import {
 //    isLayoutValidForSave,
 //    isLayoutValidForSaveAs,
