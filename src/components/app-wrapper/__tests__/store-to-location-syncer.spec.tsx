@@ -1,5 +1,5 @@
 import { act } from '@testing-library/react'
-import { describe, it, beforeEach, afterEach } from 'vitest'
+import { expect, describe, it, beforeEach, afterEach } from 'vitest'
 import { StoreToLocationSyncer } from '../store-to-location-syncer'
 import { history } from '@modules'
 import { navigationReducer, setNavigationState } from '@store'

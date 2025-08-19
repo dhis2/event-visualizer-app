@@ -1,3 +1,4 @@
+import { expect, describe, it } from 'vitest'
 import { getInitialMetadata } from '../initial-metadata'
 
 describe('getInitialMetadata', () => {

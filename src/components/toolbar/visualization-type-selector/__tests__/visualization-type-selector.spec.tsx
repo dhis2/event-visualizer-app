@@ -1,6 +1,6 @@
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, it, beforeEach } from 'vitest'
+import { vi, describe, it, beforeEach, expect } from 'vitest'
 import { VisualizationTypeSelector } from '../visualization-type-selector'
 import { uiReducer, setUiState } from '@store'
 import type { UiState } from '@store'

@@ -10,12 +10,7 @@
         "module": "esnext",
         "moduleResolution": "node",
         "strictNullChecks": true,
-        "types": [
-            "vitest/globals",
-            "@testing-library/jest-dom",
-            "cypress",
-            "cypress/react"
-        ],
+        "types": ["@testing-library/jest-dom", "cypress", "cypress/react"],
         "paths": {
             "@dhis2/analytics": ["src/types/analytics/index.d.ts"],
             // Use this as the definitive source for type imports, mainly to prevent
