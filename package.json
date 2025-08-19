@@ -10,14 +10,14 @@
         "test": "vitest run",
         "test:watch": "vitest",
         "deploy": "d2-app-scripts deploy",
-        "lint": "chmod +x ./scripts/lint.sh && ./scripts/lint.sh",
-        "format": "chmod +x ./scripts/format.sh && ./scripts/format.sh",
-        "generate-types": "chmod +x ./scripts/generate-types.sh && ./scripts/generate-types.sh",
+        "lint": "./scripts/lint.sh",
+        "format": "./scripts/format.sh",
+        "generate-types": "./scripts/generate-types.sh",
         "cy:open": "start-server-and-test 'yarn start' http://localhost:3000 'yarn cypress open --e2e'",
         "cy:run": "start-server-and-test 'yarn start' http://localhost:3000 'yarn cypress run --browser chrome headless'",
         "cy:comp:open": "cypress open --component",
         "cy:comp:run": "cypress run --component --browser chrome headless",
-        "postinstall": "chmod +x ./scripts/postinstall.sh && ./scripts/postinstall.sh"
+        "postinstall": "./scripts/postinstall.sh"
     },
     "devDependencies": {
         "@cypress/vite-dev-server": "^7.0.0",
