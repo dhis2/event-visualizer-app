@@ -2,7 +2,7 @@ import cx from 'classnames'
 import type { FC } from 'react'
 import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
-import { SupportedVisType } from '@constants'
+import type { SupportedVisType } from '@constants/visualization-types'
 
 type VisualizationTypeListItemProps = {
     description: string

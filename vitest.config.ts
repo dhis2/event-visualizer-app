@@ -4,12 +4,12 @@ import { defineConfig, configDefaults } from 'vitest/config'
 
 export const importAliases = {
     '@types': path.resolve(__dirname, 'src/types/index.ts'),
-    '@constants': path.resolve(__dirname, 'src/constants/index.ts'),
     '@hooks': path.resolve(__dirname, 'src/hooks/index.ts'),
     '@test-utils': path.resolve(__dirname, 'src/test-utils/index.tsx'),
     '@api': path.resolve(__dirname, 'src/api'),
     '@assets': path.resolve(__dirname, 'src/assets'),
     '@components': path.resolve(__dirname, 'src/components'),
+    '@constants': path.resolve(__dirname, 'src/constants'),
     '@modules': path.resolve(__dirname, 'src/modules'),
     '@store': path.resolve(__dirname, 'src/store'),
 }

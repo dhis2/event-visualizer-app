@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { SupportedVisType } from '@constants'
+import type { SupportedVisType } from '@constants/visualization-types'
 
 export interface UiState {
     visualizationType: SupportedVisType
