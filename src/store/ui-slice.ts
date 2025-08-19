@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { SupportedVisType } from '@constants'
+import type { SupportedVisType } from '@constants/visualization-types'
 
 export interface UiState {
     visualizationType: SupportedVisType
 }
 
-const initialState: UiState = {
+export const initialState: UiState = {
     visualizationType: 'LINE_LIST',
 }
 
@@ -25,4 +25,3 @@ export const uiSlice = createSlice({
 })
 
 export const { setUiState } = uiSlice.actions
-export const uiReducer = uiSlice.reducer

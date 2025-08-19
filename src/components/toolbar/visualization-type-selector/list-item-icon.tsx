@@ -3,7 +3,7 @@ import {
     IconVisualizationPivotTable24,
 } from '@dhis2/ui'
 import type { FC } from 'react'
-import type { SupportedVisType } from '@constants'
+import type { SupportedVisType } from '@constants/visualization-types'
 
 type ListItemIconProps = {
     iconType: SupportedVisType

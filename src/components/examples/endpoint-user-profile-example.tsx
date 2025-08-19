@@ -1,6 +1,7 @@
 import type { FC } from 'react'
-import { api, parseEngineError } from '@api'
-import type { BaseQueryApiWithExtraArg } from '@api'
+import { api } from '@api/api'
+import type { BaseQueryApiWithExtraArg } from '@api/custom-base-query'
+import { parseEngineError } from '@api/parse-engine-error'
 import type { MeDto } from '@types'
 
 export const meApi = api.injectEndpoints({

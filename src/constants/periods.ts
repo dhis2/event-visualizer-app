@@ -1,12 +1,5 @@
-import { asStringLiteralSubsetArray } from './helpers'
-import type { EventVisualizationType, RelativePeriodEnum } from '@types'
-
-export const SUPPORTED_VIS_TYPES =
-    asStringLiteralSubsetArray<EventVisualizationType>()([
-        'LINE_LIST',
-        'PIVOT_TABLE',
-    ] as const)
-export type SupportedVisType = (typeof SUPPORTED_VIS_TYPES)[number]
+import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
+import type { RelativePeriodEnum } from '@types'
 
 export const SUPPORTED_RELATIVE_PERIODS =
     asStringLiteralSubsetArray<RelativePeriodEnum>()([
@@ -44,12 +37,6 @@ export const SUPPORTED_RELATIVE_PERIODS =
         'THIS_YEAR',
         'LAST_YEAR',
     ] as const)
+
 export type SupportedRelativePeriod =
     (typeof SUPPORTED_RELATIVE_PERIODS)[number]
-
-export const USER_ORG_UNITS = [
-    'USER_ORGUNIT',
-    'USER_ORGUNIT_CHILDREN',
-    'USER_ORGUNIT_GRANDCHILDREN',
-] as const
-export type UserOrgUnit = (typeof USER_ORG_UNITS)[number]
