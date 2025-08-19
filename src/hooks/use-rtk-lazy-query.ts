@@ -4,8 +4,8 @@ import type {
     QueryResultSelectorResult,
     QueryDefinition,
 } from '@reduxjs/toolkit/query'
-import { api } from '@api'
-import type { EngineError } from '@api'
+import { api } from '@api/api'
+import type { EngineError } from '@api/parse-engine-error'
 import type { SingleQuery } from '@types'
 
 type TriggerArg = Query | SingleQuery

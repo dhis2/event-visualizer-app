@@ -2,7 +2,8 @@ import type {
     QueryActionCreatorResult,
     QueryDefinition,
 } from '@reduxjs/toolkit/query'
-import type { CustomBaseQueryFn, EngineArgs, EngineError } from '@api'
+import type { CustomBaseQueryFn, EngineArgs } from '@api/custom-base-query'
+import type { EngineError } from '@api/parse-engine-error'
 
 // Probably we don't want this manual type
 export type UseRtkQueryResult<T> = {

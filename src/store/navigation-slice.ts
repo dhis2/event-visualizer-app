@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-interface NavigationState {
+export interface NavigationState {
     visualizationId: string | 'new'
     interpretationId: string | null
 }
 
-const initialState: NavigationState = {
+export const initialState: NavigationState = {
     visualizationId: 'new',
     interpretationId: null,
 }
@@ -28,4 +28,3 @@ export const navigationSlice = createSlice({
 })
 
 export const { setNavigationState } = navigationSlice.actions
-export const navigationReducer = navigationSlice.reducer

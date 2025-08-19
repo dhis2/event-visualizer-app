@@ -6,12 +6,12 @@ import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
 import { VisualizationTypeListItem } from './visualization-type-list-item'
 import { ArrowDown } from '@assets/arrow-down'
-import type { SupportedVisType } from '@constants'
-import { SUPPORTED_VIS_TYPES } from '@constants'
+import type { SupportedVisType } from '@constants/visualization-types'
+import { SUPPORTED_VIS_TYPES } from '@constants/visualization-types'
 import { visTypeDisplayNames, ToolbarSidebar } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
-import { getVisTypeDescriptions } from '@modules'
-import { setUiState } from '@store'
+import { getVisTypeDescriptions } from '@modules/visualization'
+import { setUiState } from '@store/ui-slice'
 
 export const VisualizationTypeSelector: FC = () => {
     const dispatch = useAppDispatch()

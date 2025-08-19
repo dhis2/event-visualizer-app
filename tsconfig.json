@@ -16,16 +16,16 @@
             // Use this as the definitive source for type imports, mainly to prevent
             // a suggestion overload from all the generated types
             "@types": ["src/types/index"],
-            // For top level dirs with an index file we should treat that index file as apublic API
-            "@api": ["src/api/index"],
-            "@constants": ["src/constants/index"],
+            // For top level dirs with an index file we should treat that index file as a public API
             "@hooks": ["src/hooks/index"],
-            "@modules": ["src/modules/index"],
-            "@store": ["src/store/index"],
-            "@test-utils": ["src/test-utils/index"],
             // In top level dirs without an index file we can access nested folders
+            "@api/*": ["src/api/*"],
             "@assets/*": ["src/assets/*"],
-            "@components/*": ["src/components/*"]
+            "@components/*": ["src/components/*"],
+            "@constants/*": ["src/constants/*"],
+            "@modules/*": ["src/modules/*"],
+            "@store/*": ["src/store/*"],
+            "@test-utils/*": ["src/test-utils/*"]
         }
     },
     "include": [

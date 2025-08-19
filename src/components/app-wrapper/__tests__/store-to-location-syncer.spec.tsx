@@ -1,9 +1,11 @@
 import { act } from '@testing-library/react'
 import { expect, describe, it, beforeEach, afterEach } from 'vitest'
 import { StoreToLocationSyncer } from '../store-to-location-syncer'
-import { history } from '@modules'
-import { navigationReducer, setNavigationState } from '@store'
-import { setupStore, renderWithReduxStoreProvider } from '@test-utils'
+import { history } from '@modules/history'
+import { navigationSlice, setNavigationState } from '@store/navigation-slice'
+import type { NavigationState } from '@store/navigation-slice'
+import { renderWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
+import { setupStore } from '@test-utils/setup-store'
 import type { RootState } from '@types'
 
 describe('StoreToLocationSyncer', () => {
@@ -11,7 +13,7 @@ describe('StoreToLocationSyncer', () => {
         getState: () => Partial<RootState>
     }
 
-    const initialNavigationState = {
+    const navigationInitialState: NavigationState = {
         visualizationId: 'test-visualization',
         interpretationId: 'test-interpretation',
     }
@@ -19,11 +21,11 @@ describe('StoreToLocationSyncer', () => {
     beforeEach(() => {
         if (!store) {
             store = setupStore(
-                { navigation: navigationReducer },
-                { navigation: initialNavigationState }
+                { navigation: navigationSlice.reducer },
+                { navigation: navigationInitialState }
             )
         } else {
-            store.dispatch(setNavigationState(initialNavigationState))
+            store.dispatch(setNavigationState(navigationInitialState))
         }
         act(() => {
             history.push('/')
@@ -116,7 +118,7 @@ describe('StoreToLocationSyncer', () => {
 
     it('should not update the URL if the visualizationId equals "new" and on path `/`', () => {
         store = setupStore(
-            { navigation: navigationReducer },
+            { navigation: navigationSlice.reducer },
             {
                 navigation: {
                     visualizationId: 'new',
