@@ -17,11 +17,11 @@
             // a suggestion overload from all the generated types
             "@types": ["src/types/index"],
             // For top level dirs with an index file we should treat that index file as apublic API
-            "@api": ["src/api/index"],
             "@constants": ["src/constants/index"],
             "@hooks": ["src/hooks/index"],
             "@test-utils": ["src/test-utils/index"],
             // In top level dirs without an index file we can access nested folders
+            "@api/*": ["src/api/*"],
             "@assets/*": ["src/assets/*"],
             "@components/*": ["src/components/*"],
             "@modules/*": ["src/modules/*"],

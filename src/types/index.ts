@@ -2,7 +2,7 @@
  * Types exported from here can be imported as follows:
  * `import type { MyType } from '@types'` */
 import type { ContextType } from '@dhis2/app-service-data'
-import { ResponseErrorReport } from '@api'
+import type { ResponseErrorReport } from '@api/parse-engine-error'
 /* We have an ESLint rule in place to prevent imports from
  * `src/types/dhis2-openapi-schemas` anywhere else in the codebase.
  * The reason for this is so that we can apply manual overrides
