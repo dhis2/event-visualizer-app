@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-08-14T10:43:51.838Z\n"
-"PO-Revision-Date: 2025-08-14T10:43:51.840Z\n"
+"POT-Creation-Date: 2025-08-22T12:51:32.435Z\n"
+"PO-Revision-Date: 2025-08-22T12:51:32.436Z\n"
 
 msgid "ERROR"
 msgstr "ERROR"
@@ -128,15 +128,6 @@ msgstr "This year"
 msgid "Last year"
 msgstr "Last year"
 
-msgid "ERROR"
-msgstr "ERROR"
-
-msgid "Loading..."
-msgstr "Loading..."
-
-msgid "Welcome to DHIS2 with TypeScript!"
-msgstr "Welcome to DHIS2 with TypeScript!"
-
 msgid "HTML"
 msgstr "HTML"
 
@@ -186,9 +177,6 @@ msgstr ""
 "This visualization can't be deleted because it is used on one or more "
 "dashboards"
 
-msgid "Rename failed"
-msgstr "Rename failed"
-
 msgid "Options"
 msgstr "Options"
 
@@ -215,9 +203,6 @@ msgstr "View"
 
 msgid "Reset sidebar width"
 msgstr "Reset sidebar width"
-
-msgid "Hello {{name}}"
-msgstr "Hello {{name}}"
 
 msgid "There is a problem with this visualization."
 msgstr "There is a problem with this visualization."

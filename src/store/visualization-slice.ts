@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { EventVisualization } from '@types'
 
-type VisualizationState = Partial<EventVisualization> | null
+type VisualizationState = EventVisualization | null
 
 const initialState: VisualizationState = null
 
