@@ -1,20 +1,26 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { EventVisualization } from '@types'
 
-export interface CurrentState {
-    id: string
-}
+type CurrentState = Partial<EventVisualization> | null
 
-const initialState: CurrentState | null = null
+const initialState: CurrentState = null
 
 export const currentSlice = createSlice({
     name: 'current',
     initialState,
-    reducers: {},
+    reducers: {
+        setCurrent: (
+            state: CurrentState,
+            action: PayloadAction<CurrentState>
+        ) => {
+            state = action.payload
+        },
+    },
     selectors: {
-        getCurrentId: (state: CurrentState | null) => state?.id ?? null,
+        getCurrent: (state: CurrentState) => state ?? null,
+        getCurrentId: (state: CurrentState) => state?.id ?? null,
     },
 })
 
 //export const {
 //} = currentSlice.actions
-export const currentReducer = currentSlice.reducer

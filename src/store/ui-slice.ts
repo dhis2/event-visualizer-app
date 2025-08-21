@@ -82,4 +82,3 @@ export const {
     toggleUiLayoutPanelHidden,
     toggleUiSidebarHidden,
 } = uiSlice.actions
-export const uiReducer = uiSlice.reducer
