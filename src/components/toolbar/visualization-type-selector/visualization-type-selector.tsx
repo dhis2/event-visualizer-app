@@ -1,7 +1,7 @@
 import { Popper, Layer } from '@dhis2/ui'
 import cx from 'classnames'
-import { useState, useRef } from 'react'
 import type { FC } from 'react'
+import { useState, useRef } from 'react'
 import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
 import { VisualizationTypeListItem } from './visualization-type-list-item'
@@ -11,13 +11,15 @@ import { SUPPORTED_VIS_TYPES } from '@constants/visualization-types'
 import { visTypeDisplayNames, ToolbarSidebar } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getVisTypeDescriptions } from '@modules/visualization'
-import { setUiState } from '@store/ui-slice'
+import { setUiVisualizationType, uiSlice } from '@store/ui-slice'
 
 export const VisualizationTypeSelector: FC = () => {
     const dispatch = useAppDispatch()
 
-    const visualizationType = useAppSelector(
-        (state) => state.ui.visualizationType
+    const { getUiVisualizationType } = uiSlice.selectors
+
+    const visualizationType = useAppSelector((state) =>
+        getUiVisualizationType(state)
     )
 
     const [listIsOpen, setListIsOpen] = useState(false)
@@ -29,7 +31,7 @@ export const VisualizationTypeSelector: FC = () => {
     }
 
     const handleListItemClick = (visualizationType: SupportedVisType) => () => {
-        dispatch(setUiState({ visualizationType }))
+        dispatch(setUiVisualizationType(visualizationType))
         onItemClick()
         toggleList()
     }
