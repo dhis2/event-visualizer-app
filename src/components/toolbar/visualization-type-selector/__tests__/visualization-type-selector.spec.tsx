@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { vi, describe, it, beforeEach, expect } from 'vitest'
 import { VisualizationTypeSelector } from '../visualization-type-selector'
-import { uiSlice, initialState, setUiState } from '@store/ui-slice'
+import { uiSlice, initialState, setUiVisualizationType } from '@store/ui-slice'
 import { renderWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
 import { setupStore } from '@test-utils/setup-store'
 import type { RootState } from '@types'
@@ -20,7 +20,7 @@ describe('VisualizationTypeSelector', () => {
         if (!store) {
             store = setupStore({ ui: uiSlice.reducer }, { ui: initialState })
         } else {
-            store.dispatch(setUiState(initialState))
+            store.dispatch(setUiVisualizationType('LINE_LIST'))
         }
     })
 

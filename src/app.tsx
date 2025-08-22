@@ -30,7 +30,7 @@ const EventVisualizer: FC = () => {
         <div
             className={cx(classes.everApp, classes.flexCt, classes.flexDirCol)}
         >
-            <Toolbar />
+            <Toolbar onFileMenuAction={() => console.log('TBD')} />
 
             <div
                 className={cx(
