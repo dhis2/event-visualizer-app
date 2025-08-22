@@ -7,7 +7,9 @@
         'start-column center-column-top end-column'
         'start-column center-column-bottom end-column';
     height: 100%;
+    background-color: var(--colors-white);
 }
+
 .topRow,
 .startColumn,
 .centerColumnTop,
@@ -16,18 +18,27 @@
     overflow: hidden;
 }
 
+.centerColumnTop,
+.centerColumnBottom {
+    background-color: var(--colors-grey300);
+}
+
 .topRow {
     grid-area: top-row;
 }
+
 .startColumn {
     grid-area: start-column;
 }
+
 .centerColumnTop {
     grid-area: center-column-top;
 }
+
 .centerColumnBottom {
     grid-area: center-column-bottom;
 }
+
 .endColumn {
     grid-area: end-column;
 }
