@@ -25,7 +25,7 @@ const sanitizeWidth = (width: number): number => {
     return width
 }
 
-export const getUserSidebarWidthFromLocalStorage = () => {
+export const getUserSidebarWidthFromLocalStorage = (): number => {
     const widthFromLocalStorage = window.localStorage.getItem(STORAGE_KEY)
 
     return sanitizeWidth(
@@ -35,5 +35,5 @@ export const getUserSidebarWidthFromLocalStorage = () => {
     )
 }
 
-export const setUserSidebarWidthToLocalStorage = (width: number) =>
+export const setUserSidebarWidthToLocalStorage = (width: number): void =>
     window.localStorage.setItem(STORAGE_KEY, sanitizeWidth(width).toString())
