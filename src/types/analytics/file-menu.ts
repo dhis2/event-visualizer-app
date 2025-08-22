@@ -1,6 +1,10 @@
 import { FC } from 'react'
 import type { CurrentUserData } from '@components/app-wrapper/app-cached-data-query-provider'
-import type { EventVisualizationType, VisualizationType } from '@types'
+import type {
+    EventVisualization,
+    EventVisualizationType,
+    VisualizationType,
+} from '@types'
 
 type FileMenuRenamePayload = {
     name: string
@@ -11,7 +15,7 @@ type FileMenuRenamePayload = {
 type FileMenuProps = {
     currentUser?: CurrentUserData // TODO check this one
     defaultFilterVisType?: string
-    fileObject?: Record<string, string>
+    fileObject?: EventVisualization
     fileType?: string // TODO replace with file types (not vis types)
     filterVisTypes?: Array<{
         type: EventVisualizationType | VisualizationType | string

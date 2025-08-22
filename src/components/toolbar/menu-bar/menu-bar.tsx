@@ -1,91 +1,60 @@
-import {
-    useAlert /*, useDataMutation, useDataEngine*/,
-} from '@dhis2/app-runtime'
+import { useAlert } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import type { FC } from 'react'
-//import { useSelector, useDispatch } from 'react-redux'
-//import { tSetCurrent } from '../../actions/current.js'
-//import { acSetVisualization } from '../../actions/visualization.js'
-//import {
-//    apiFetchVisualization,
-//    apiFetchVisualizationNameDesc,
-//    apiFetchVisualizationSubscribers,
-//} from '../../api/visualization.js'
-//import { sGetCurrent } from '../../reducers/current.js'
-//import { sGetVisualization } from '../../reducers/visualization.js'
-//import { ToolbarDownloadDropdown } from '../DownloadMenu/index.js'
-//import VisualizationOptionsManager from '../VisualizationOptions/VisualizationOptionsManager.jsx'
 import { DownloadMenu } from './download-menu'
 import { OptionsMenu } from './options-menu'
 import { ViewMenu } from './view-menu'
 import { SUPPORTED_VIS_TYPES } from '@constants/visualization-types'
 import {
-    //VIS_TYPE_GROUP_ALL,
-    //useCachedDataQuery,
     FileMenu,
     //    preparePayloadForSaveAs,
     //    preparePayloadForSave,
     HoverMenuBar,
 } from '@dhis2/analytics'
-import { useCurrentUser } from '@hooks'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useCurrentUser,
+    useRtkMutation,
+    //    useRtkLazyQuery,
+} from '@hooks'
 import { getAlertTypeByStatusCode } from '@modules/error'
-import { history } from '@modules/history'
-//    isLayoutValidForSave,
-//    isLayoutValidForSaveAs,
+import {
+    currentSlice,
+    //setCurrent
+} from '@store/current-slice'
+import { setNavigationState } from '@store/navigation-slice'
+import {
+    visualizationSlice,
+    //    setVisualization,
+} from '@store/visualization-slice'
+//import { EventVisualization, PickWithFieldFilters } from '@types'
+// import {
 //DERIVED_USER_SETTINGS_DISPLAY_NAME_PROPERTY,
 //    STATE_DIRTY,
 //    STATE_UNSAVED,
 //    getSaveableVisualization,
 //    getVisualizationState,
-//} from '@modules'
+//} from '@modules/visualization'
 //import {
 //    isLayoutValidForSave,
 //    isLayoutValidForSaveAs,
-//} from '../../modules/layoutValidation.js'
-//import { DERIVED_USER_SETTINGS_DISPLAY_NAME_PROPERTY } from '../../modules/userSettings.js'
-//import {
-//        STATE_DIRTY,
-//        STATE_UNSAVED,
-//        getSaveableVisualization,
-//        getVisualizationState,
-//} from '../../../modules/visualization'
-//import { sGetCurrent } from '../../reducers/current.js'
-//import { sGetVisualization } from '../../reducers/visualization.js'
-//import { ToolbarDownloadDropdown } from '../DownloadMenu/index.js'
-//import VisualizationOptionsManager from '../VisualizationOptions/VisualizationOptionsManager.jsx'
-
-//const visualizationSaveAsMutation = {
-//    type: 'create',
-//    resource: 'eventVisualizations',
-//    data: ({ visualization }) => visualization,
-//    params: {
-//        skipTranslations: true,
-//        skipSharing: true,
-//    },
-//}
-//
-//const visualizationSaveMutation = {
-//    type: 'update',
-//    resource: 'eventVisualizations',
-//    id: ({ visualization }) => visualization.id,
-//    data: ({ visualization }) => visualization,
-//    params: {
-//        skipTranslations: true,
-//        skipSharing: true,
-//    },
-//}
+//} from '@modules/layoutValidation.js'
+//import { DERIVED_USER_SETTINGS_DISPLAY_NAME_PROPERTY } from '@modules/userSettings.js'
 
 type MenuBarProps = {
     onFileMenuAction: () => void
 }
 
 export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
-    //    const dispatch = useDispatch()
-    //    const engine = useDataEngine()
-    //    const { currentUser } = useCachedDataQuery()
+    const dispatch = useAppDispatch()
+
+    const { getVisualization } = visualizationSlice.selectors
+    const { getCurrent } = currentSlice.selectors
+
     const currentUser = useCurrentUser()
-    //    const current = useSelector(sGetCurrent)
-    //    const visualization = useSelector(sGetVisualization)
+    const current = useAppSelector((state) => getCurrent(state))
+    const visualization = useAppSelector((state) => getVisualization(state))
 
     const filterVisTypes = [
         { type: 'ALL' },
@@ -99,51 +68,47 @@ export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
         ({ options }) => options
     )
 
-    //    const setCurrent = useCallback(
-    //        (visualization) => {
-    //            dispatch(tSetCurrent(visualization))
-    //        },
-    //        [dispatch]
-    //    )
-    //
-    //    const setVisualization = useCallback(
-    //        (visualization) => {
-    //            dispatch(acSetVisualization(visualization))
-    //        },
-    //        [dispatch]
-    //    )
+    //    const fieldsFilter = ['subscribers'] as const
+    //    type SubscribersData = PickWithFieldFilters<
+    //        EventVisualization,
+    //        typeof fieldsFilter
+    //    >
 
-    const onOpen = (id) => {
-        const path = `/${id}`
-        if (history.location.pathname === path) {
-            history.replace({ pathname: path }, { isOpening: true })
-        } else {
-            history.push(path)
+    //    const [subscribersQueryTrigger] = useRtkLazyQuery<SubscribersData>()
+
+    const [mutationTrigger] = useRtkMutation()
+
+    const onOpen = (id: string) =>
+        dispatch(setNavigationState({ visualizationId: id }))
+
+    const onNew = () => dispatch(setNavigationState({ visualizationId: 'new' }))
+
+    const onDelete = async () => {
+        try {
+            if (visualization?.id === undefined) {
+                throw new Error('Cannot delete without visualization id')
+            }
+
+            await mutationTrigger({
+                resource: 'eventVisualization',
+                id: visualization.id,
+                type: 'delete',
+            })
+
+            showAlert({
+                message: i18n.t('"{{- deletedObject}}" successfully deleted.', {
+                    deletedObject: visualization.name,
+                }),
+                options: {
+                    success: true,
+                    duration: 2000,
+                },
+            })
+
+            dispatch(setNavigationState({ visualizationId: 'new' }))
+        } catch (err) {
+            onError(err)
         }
-    }
-
-    const onNew = () => {
-        if (history.location.pathname === '/') {
-            history.replace({ pathname: '/' }, { isResetting: true })
-        } else {
-            history.push('/')
-        }
-    }
-
-    const onDelete = () => {
-        const deletedVisualization = 'TBD' //visualization?.name
-
-        history.push('/')
-
-        showAlert({
-            message: i18n.t('"{{- deletedObject}}" successfully deleted.', {
-                deletedObject: deletedVisualization,
-            }),
-            options: {
-                success: true,
-                duration: 2000,
-            },
-        })
     }
 
     const onRename = async ({ name, description }) => {
@@ -172,12 +137,12 @@ export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
         const updatedVisualization = { ...visualization, ...eventVisNameDesc }
         const updatedCurrent = { ...current, ...eventVisNameDesc }
 
-        setVisualization(updatedVisualization)
+        dispatch(setVisualization(updatedVisualization))
 
         if (visualization === current) {
-            setCurrent(updatedVisualization)
+            dispatch(setCurrent(updatedVisualization))
         } else {
-            setCurrent(updatedCurrent)
+            dispatch(setCurrent(updatedCurrent))
         }
         */
 
@@ -192,16 +157,71 @@ export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
         onFileMenuAction()
     }
 
-    const onSave = async (details = {}, copy = false) => {
-        console.log(`onSave TBD (details: ${details} copy: ${copy})`)
+    const onSave = async (
+        details: { name?: string; description?: string } = {}
+    ) => {
+        console.log(`onSave TBD (details: ${details})`)
         //        const { name, description } = details
         //
-        //        if (copy) {
-        //            // remove property subscribers before saving as new
-        //            // eslint-disable-next-line no-unused-vars
-        //            const { subscribers, ...currentWithoutSubscribers } = current
+        //        //            const { subscribers } = await apiFetchVisualizationSubscribers({
+        //        //                engine,
+        //        //                id: visualization.id,
+        //        //            })
         //
-        //            postVisualization({
+        //        try {
+        //            if (visualization?.id === undefined) {
+        //                throw new Error('Cannot save without a visualization id')
+        //            }
+        //
+        //            const subscribersData = await subscribersQueryTrigger({
+        //                resource: 'eventVisualizations',
+        //                id: visualization.id,
+        //                params: {
+        //                    fields: fieldsFilter.toString(),
+        //                },
+        //            })
+        //
+        //            const mutationResponse = await mutationTrigger({
+        //                resource: 'eventVisualizations',
+        //                type: 'update',
+        //                id: visualization.id,
+        //                data: {
+        //                    // TODO
+        //                    visualization: preparePayloadForSave({
+        //                        visualization: {
+        //                            ...getSaveableVisualization(current),
+        //                            subscribersData,
+        //                        },
+        //                        name,
+        //                        description,
+        //                        engine,
+        //                    }),
+        //                    params: {
+        //                        skipTranslations: true,
+        //                        skipSharing: true,
+        //                    },
+        //                },
+        //            }).unwrap()
+        //
+        //            onSaveComplete(mutationResponse)
+        //        } catch (err) {
+        //            onError(err)
+        //        }
+    }
+
+    const onSaveAs = (
+        details: { name?: string; description?: string } = {}
+    ) => {
+        console.log(`onSaveAs TBD (details: ${details})`)
+        //        const { name, description } = details
+        //        // remove property subscribers before saving as new
+        //        // eslint-disable-next-line no-unused-vars
+        //        const { subscribers, ...currentWithoutSubscribers } = current
+        //
+        //        mutationTrigger({
+        //            resource: 'eventVisualizations',
+        //            type: 'create',
+        //            data: {
         //                visualization: preparePayloadForSaveAs({
         //                    visualization: getSaveableVisualization(
         //                        currentWithoutSubscribers
@@ -209,45 +229,17 @@ export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
         //                    name,
         //                    description,
         //                }),
-        //            })
-        //        } else {
-        //            const { subscribers } = await apiFetchVisualizationSubscribers({
-        //                engine,
-        //                id: visualization.id,
-        //            })
-        //
-        //            putVisualization({
-        //                visualization: await preparePayloadForSave({
-        //                    visualization: {
-        //                        ...getSaveableVisualization(current),
-        //                        subscribers,
-        //                    },
-        //                    name,
-        //                    description,
-        //                    engine,
-        //                }),
-        //            })
-        //        }
+        //            },
+        //            params: {
+        //                skipTranslations: true,
+        //                skipSharing: true,
+        //            },
+        //        })
     }
 
-    //    const onSaveComplete = (res, copy = false) => {
+    //    const onSaveComplete = (res) => {
     //        if (res.response.uid) {
-    //            const locationObject = {
-    //                pathname: `/${res.response.uid}`,
-    //            }
-    //
-    //            const locationState = {
-    //                isSaving: true,
-    //            }
-    //
-    //            // Save As
-    //            if (copy) {
-    //                history.push(locationObject, locationState)
-    //            }
-    //            // Save
-    //            else {
-    //                history.replace(locationObject, locationState)
-    //            }
+    //            dispatch(setNavigationState({ visualizationId: res.response.uid }))
     //        }
     //    }
 
@@ -269,28 +261,15 @@ export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
         })
     }
 
-    //    const [postVisualization] = useDataMutation(visualizationSaveAsMutation, {
-    //        onComplete: onSaveComplete,
-    //        onError,
-    //    })
-    //    const [putVisualization] = useDataMutation(visualizationSaveMutation, {
-    //        onComplete: (res) => onSaveComplete(res, true),
-    //        onError,
-    //    })
-    //
-    //    const [renameVisualization] = useDataMutation(visualizationSaveMutation, {
-    //        onError: () => onError({ message: i18n.t('Rename failed') }),
-    //    })
-
     return (
         <HoverMenuBar>
             <FileMenu
                 currentUser={currentUser}
                 fileType={'eventVisualization'}
-                //               fileObject={{
-                //                   ...visualization,
-                //                   ...current,
-                //               }}
+                fileObject={{
+                    ...visualization,
+                    ...current,
+                }}
                 filterVisTypes={filterVisTypes}
                 defaultFilterVisType={'ALL'}
                 onOpen={onOpen}
@@ -308,7 +287,7 @@ export const MenuBar: FC<MenuBarProps> = ({ onFileMenuAction }) => {
                 //                        ? onSave
                 //                        : undefined
                 //                }
-                onSaveAs={(details) => onSave(details, true)}
+                onSaveAs={onSaveAs}
                 //                onSaveAs={
                 //                    isLayoutValidForSaveAs(current)
                 //                        ? (details) => onSave(details, true)
