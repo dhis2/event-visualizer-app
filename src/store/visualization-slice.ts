@@ -21,5 +21,4 @@ export const visualizationSlice = createSlice({
     },
 })
 
-//export const {
-//} = visualizationSlice.actions
+export const { setVisualization } = visualizationSlice.actions
