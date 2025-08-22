@@ -86,7 +86,7 @@ const Grid: React.FC<GridProps> = ({
             <SizedBox
                 dataTest="center-column-bottom-content"
                 {...centerColumnBottomContentSize}
-                color="blue"
+                color="lightblue"
             />
         </GridCenterColumnBottom>
         <GridEndColumn>
@@ -140,9 +140,15 @@ const OuterContainer: React.FC<{
     </div>
 )
 
-const assertSize = (dataTest: string, width: number, height: number) => {
+const assertWidth = (dataTest: string, width: number) => {
     cy.getByDataTest(dataTest).invoke('outerWidth').should('eq', width)
+}
+const assertHeight = (dataTest: string, height: number) => {
     cy.getByDataTest(dataTest).invoke('outerHeight').should('eq', height)
+}
+const assertSize = (dataTest: string, width: number, height: number) => {
+    assertWidth(dataTest, width)
+    assertHeight(dataTest, height)
 }
 
 describe('Layout Grid', () => {
@@ -150,7 +156,7 @@ describe('Layout Grid', () => {
         cy.viewport(FULL_WIDTH, FULL_HEIGHT)
     })
 
-    it('lays out the children correctly', () => {
+    it('lays out the children correctly in an empty page', () => {
         cy.mount(
             <OuterContainer>
                 <Grid />
@@ -210,95 +216,111 @@ describe('Layout Grid', () => {
             FULL_HEIGHT - topRowHeight
         )
     })
+
+    it('it works correctly when the headerbar is present', () => {
+        cy.mount(
+            <OuterContainer showHeaderbar={true}>
+                <Grid />
+            </OuterContainer>
+        )
+
+        assertSize(
+            'grid-container',
+            FULL_WIDTH,
+            FULL_HEIGHT - HEADER_BAR_HEIGHT
+        )
+    })
+
+    it('does not scroll vertically when the top-row becomes excessively high', () => {
+        const excessiveHeight = 5000
+        cy.mount(
+            <OuterContainer>
+                <Grid
+                    topRowContentSize={{
+                        width: '100%',
+                        height: excessiveHeight,
+                    }}
+                />
+            </OuterContainer>
+        )
+
+        // Layout height remains constant
+        assertHeight('grid-container', FULL_HEIGHT)
+        // Top row grows to max
+        assertHeight(
+            'grid-top-row',
+            FULL_HEIGHT - defaultCenterColumnTopContentSize.height - 20
+        )
+        // Top row content grows to specified size with overflow hidden
+        assertHeight('top-row-content', excessiveHeight)
+        // Center column top remains the specified height
+        assertHeight(
+            'grid-center-column-top',
+            defaultCenterColumnTopContentSize.height
+        )
+        // Center column bottom shirnks to the value of grid-template-rows bottom row minmax value
+        assertHeight('center-column-bottom-content', 20)
+    })
+    it('does not scroll vertically when the center column top becomes excessively high', () => {
+        const excessiveHeight = 5000
+        cy.mount(
+            <OuterContainer>
+                <Grid
+                    centerColumnTopContentSize={{
+                        width: '100%',
+                        height: excessiveHeight,
+                    }}
+                />
+            </OuterContainer>
+        )
+
+        // Layout height remains constant
+        assertHeight('grid-container', FULL_HEIGHT)
+        // Top row remains the specified height
+        assertHeight('grid-top-row', defaultTopRowContentSize.height)
+        // Center column top grows to max
+        assertHeight(
+            'grid-center-column-top',
+            FULL_HEIGHT - defaultTopRowContentSize.height - 20
+        )
+        // Center column top content grows to specified size with overflow hidden
+        assertHeight('center-column-top-content', excessiveHeight)
+        // Center column bottom shirnks to the value of grid-template-rows bottom row minmax value
+        assertHeight('center-column-bottom-content', 20)
+    })
+    it('does not scroll vertically when the center column bottom becomes excessively high', () => {
+        const excessiveHeight = 5000
+        cy.mount(
+            <OuterContainer>
+                <Grid
+                    centerColumnBottomContentSize={{
+                        width: '100%',
+                        height: excessiveHeight,
+                    }}
+                />
+            </OuterContainer>
+        )
+
+        // Layout height remains constant
+        assertHeight('grid-container', FULL_HEIGHT)
+        // Top row remains the specified height
+        assertHeight('grid-top-row', defaultTopRowContentSize.height)
+        // Center column top remains the specified height
+        assertHeight(
+            'grid-center-column-top',
+            defaultCenterColumnTopContentSize.height
+        )
+        // Center column bottom grows to max
+        assertHeight(
+            'grid-center-column-bottom',
+            FULL_HEIGHT -
+                defaultTopRowContentSize.height -
+                defaultCenterColumnTopContentSize.height
+        )
+        // Center column bottom content grows to specified size with overflow hidden
+        assertHeight('center-column-bottom-content', excessiveHeight)
+    })
 })
-
-// describe('App Grid Container', () => {
-//     beforeEach(() => {
-//         cy.viewport(FULL_WIDTH, FULL_HEIGHT)
-//     })
-
-//     it('occupies the full space with headerbar', () => {
-//         cy.mount(
-//             <OuterContainer showHeaderbar={true}>
-//                 <Grid />
-//             </OuterContainer>
-//         )
-
-//         cy.getByDataTest('grid-container')
-//             .invoke('outerHeight')
-//             .should('eq', FULL_HEIGHT - HEADER_BAR_HEIGHT)
-//     })
-
-//     it('occupies the full space without headerbar', () => {
-//         cy.mount(
-//             <OuterContainer showHeaderbar={false}>
-//                 <Grid />
-//             </OuterContainer>
-//         )
-
-//         cy.getByDataTest('grid-container')
-//             .invoke('outerHeight')
-//             .should('eq', FULL_HEIGHT)
-//     })
-
-//     it('distributes its children as rows', () => {
-//         const height = 100
-//         cy.mount(
-//             <OuterContainer>
-//                 <Grid
-//                     topRowContentSize={{ height }}
-//                     startColumnContentSize={{ height }}
-//                     centerColumnTopContentSize={{ height }}
-//                     centerColumnBottomContentSize={{ height }}
-//                     endColumnContentSize={{ height }}
-//                 />
-//             </OuterContainer>
-//         )
-
-//         cy.getByDataTest('top-row-content')
-//             .invoke('outerHeight')
-//             .should('eq', height)
-//         cy.getByDataTest('start-column-content')
-//             .invoke('outerHeight')
-//             .should('eq', height)
-//         cy.getByDataTest('center-column-top-content')
-//             .invoke('outerHeight')
-//             .should('eq', height)
-//         cy.getByDataTest('centercolumnbottom-content')
-//             .invoke('outerHeight')
-//             .should('eq', height)
-//         cy.getByDataTest('end-column-content')
-//             .invoke('outerHeight')
-//             .should('eq', height)
-//     })
-// })
-
-// describe('App Grid TopRow and Main', () => {
-//     beforeEach(() => {
-//         cy.viewport(FULL_WIDTH, FULL_HEIGHT)
-//     })
-
-//     it('Main occupies the remaining space not taken by TopRow', () => {
-//         const height = 100
-//         cy.mount(
-//             <OuterContainer>
-//                 <Grid topRowContentSize={{ height }} />
-//             </OuterContainer>
-//         )
-
-//         cy.getByDataTest('top-row-content')
-//             .invoke('outerHeight')
-//             .should('eq', height)
-//         cy.getByDataTest('centercolumnbottom-content')
-//             .invoke('outerHeight')
-//             .should('eq', FULL_HEIGHT - height)
-//         cy.getByDataTest('top-row-content')
-//             .invoke('outerWidth')
-//             .should('eq', FULL_WIDTH)
-//         cy.getByDataTest('centercolumnbottom-content')
-//             .invoke('outerWidth')
-//             .should('eq', FULL_WIDTH)
-//     })
 
 //     it('Main constricts its content width and height', () => {
 //         const height = 3000
