@@ -1,7 +1,0 @@
-.container {
-    display: flex;
-    flex-direction: row;
-    flex: 1 1 0%;
-    inline-size: 100%;
-    block-size: 100%;
-}
