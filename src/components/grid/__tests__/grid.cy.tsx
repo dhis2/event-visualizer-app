@@ -217,7 +217,7 @@ describe('Layout Grid', () => {
         )
     })
 
-    it('it works correctly when the headerbar is present', () => {
+    it('works correctly when the headerbar is present', () => {
         cy.mount(
             <OuterContainer showHeaderbar={true}>
                 <Grid />
@@ -320,34 +320,119 @@ describe('Layout Grid', () => {
         // Center column bottom content grows to specified size with overflow hidden
         assertHeight('center-column-bottom-content', excessiveHeight)
     })
+    it('does not scroll horizontally when the top-row-content becomes excessively wide', () => {
+        const excessiveWidth = 5000
+        cy.mount(
+            <OuterContainer>
+                <Grid
+                    topRowContentSize={{ width: excessiveWidth, height: 50 }}
+                />
+            </OuterContainer>
+        )
+        assertWidth('grid-container', FULL_WIDTH)
+        assertWidth('grid-top-row', FULL_WIDTH)
+        assertWidth('top-row-content', excessiveWidth)
+    })
+
+    it('does not scroll horizontally when the start and end columns become excessively wide', () => {
+        const excessiveWidth = 5000
+        const expectedStartEndWidth = (FULL_WIDTH - 20) / 2
+        cy.mount(
+            <OuterContainer>
+                <Grid
+                    startColumnContentSize={{
+                        width: excessiveWidth,
+                        height: '100%',
+                    }}
+                    endColumnContentSize={{
+                        width: excessiveWidth,
+                        height: '100%',
+                    }}
+                />
+            </OuterContainer>
+        )
+        assertWidth('grid-container', FULL_WIDTH)
+        assertWidth('grid-start-column', expectedStartEndWidth)
+        assertWidth('start-column-content', excessiveWidth)
+        assertWidth('grid-end-column', expectedStartEndWidth)
+        assertWidth('end-column-content', excessiveWidth)
+    })
+
+    it('does not scroll horizontally when the center-column-bottom-content width is excessive', () => {
+        const excessiveWidth = 5000
+        const expectedCenterColumnWidth =
+            FULL_WIDTH -
+            defaultStartColumnContentSize.width -
+            defaultEndColumnContentSize.width
+        cy.mount(
+            <OuterContainer>
+                <Grid
+                    centerColumnBottomContentSize={{
+                        width: excessiveWidth,
+                        height: '100%',
+                    }}
+                />
+            </OuterContainer>
+        )
+        assertWidth('grid-container', FULL_WIDTH)
+        assertWidth('grid-center-column-top', expectedCenterColumnWidth)
+        assertWidth('grid-center-column-bottom', expectedCenterColumnWidth)
+        assertWidth('center-column-bottom-content', excessiveWidth)
+    })
+    it('can visually hide the start column by reducing its content width to zero', () => {
+        cy.mount(
+            <OuterContainer>
+                <Grid
+                    startColumnContentSize={{
+                        width: 0,
+                        height: '100%',
+                    }}
+                />
+            </OuterContainer>
+        )
+        assertWidth('grid-container', FULL_WIDTH)
+        assertWidth('grid-start-column', 0)
+        assertWidth(
+            'grid-center-column-bottom',
+            FULL_WIDTH - defaultEndColumnContentSize.width
+        )
+        assertWidth('grid-end-column', defaultEndColumnContentSize.width)
+    })
+    it('can visually hide the end column by reducing its content width to zero', () => {
+        cy.mount(
+            <OuterContainer>
+                <Grid
+                    endColumnContentSize={{
+                        width: 0,
+                        height: '100%',
+                    }}
+                />
+            </OuterContainer>
+        )
+        assertWidth('grid-container', FULL_WIDTH)
+        assertWidth('grid-start-column', defaultStartColumnContentSize.width)
+        assertWidth(
+            'grid-center-column-bottom',
+            FULL_WIDTH - defaultStartColumnContentSize.width
+        )
+        assertWidth('grid-end-column', 0)
+    })
+    it('can visually hide the center column top by reducing its content height to zero', () => {
+        cy.mount(
+            <OuterContainer>
+                <Grid
+                    centerColumnTopContentSize={{
+                        width: '100%',
+                        height: 0,
+                    }}
+                />
+            </OuterContainer>
+        )
+        assertHeight('grid-container', FULL_HEIGHT)
+        assertHeight('grid-center-column-top', 0)
+        assertHeight(
+            'grid-center-column-bottom',
+            FULL_HEIGHT - defaultTopRowContentSize.height
+        )
+    })
 })
-
-//     it('Main constricts its content width and height', () => {
-//         const height = 3000
-//         const width = 4000
-//         cy.mount(
-//             <OuterContainer>
-//                 <Grid centerColumnBottomContentSize={{ height, width }} />
-//             </OuterContainer>
-//         )
-
-//         cy.getByDataTest('centercolumnbottom-content')
-//             .invoke('outerHeight')
-//             .should('eq', FULL_HEIGHT)
-
-//         cy.getByDataTest('gridmain')
-//             .invoke('outerHeight')
-//             .should('eq', FULL_HEIGHT)
-
-//         cy.getByDataTest('centercolumnbottom-content')
-//             .invoke('outerWidth')
-//             .should('eq', FULL_WIDTH)
-
-//         cy.getByDataTest('gridmain')
-//             .invoke('outerWidth')
-//             .should('eq', FULL_WIDTH)
-//     })
-
-//     // it('Main does not grow when its content is too high', () => {
-//     // })
-// })
