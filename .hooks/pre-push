@@ -1,5 +1,9 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+echo "Running Vitest tests"
 yarn test
-npx cypress run --component --browser chrome headless
+
+echo "Running Cypress Component Tests"
+unset ELECTRON_RUN_AS_NODE
+yarn cy:comp:run
