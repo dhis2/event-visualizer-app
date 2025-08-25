@@ -11,12 +11,10 @@ import { SUPPORTED_VIS_TYPES } from '@constants/visualization-types'
 import { visTypeDisplayNames, ToolbarSidebar } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getVisTypeDescriptions } from '@modules/visualization'
-import { setUiVisualizationType, uiSlice } from '@store/ui-slice'
+import { setUiVisualizationType, getUiVisualizationType } from '@store/ui-slice'
 
 export const VisualizationTypeSelector: FC = () => {
     const dispatch = useAppDispatch()
-
-    const { getUiVisualizationType } = uiSlice.selectors
 
     const visualizationType = useAppSelector(getUiVisualizationType)
 
