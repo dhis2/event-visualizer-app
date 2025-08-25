@@ -77,5 +77,11 @@ export const {
     toggleUiLayoutPanelHidden,
     toggleUiSidebarHidden,
 } = uiSlice.actions
-export const { getUiVisualizationType, getUiDetailsPanelOpen } =
-    uiSlice.selectors
+export const {
+    getUiVisualizationType,
+    getUiAccessoryPanelWidth,
+    getUiAccessoryPanelOpen,
+    getUiDetailsPanelOpen,
+    getUiLayoutPanelHidden,
+    getUiSidebarHidden,
+} = uiSlice.selectors

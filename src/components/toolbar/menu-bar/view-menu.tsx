@@ -11,7 +11,10 @@ import { useAppDispatch, useAppSelector } from '@hooks'
 import { setUserSidebarWidthToLocalStorage } from '@modules/local-storage'
 import { getCurrentId } from '@store/current-slice'
 import {
-    uiSlice,
+    getUiAccessoryPanelWidth,
+    getUiDetailsPanelOpen,
+    getUiLayoutPanelHidden,
+    getUiSidebarHidden,
     toggleUiLayoutPanelHidden,
     toggleUiSidebarHidden,
     setUiAccessoryPanelWidth,
@@ -20,12 +23,6 @@ import {
 
 export const ViewMenu: FC = () => {
     const dispatch = useAppDispatch()
-    const {
-        getUiAccessoryPanelWidth,
-        getUiDetailsPanelOpen,
-        getUiSidebarHidden,
-        getUiLayoutPanelHidden,
-    } = uiSlice.selectors
 
     const isSidebarHidden = useAppSelector(getUiSidebarHidden)
     const isLayoutPanelHidden = useAppSelector(getUiLayoutPanelHidden)
