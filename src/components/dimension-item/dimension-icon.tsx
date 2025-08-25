@@ -6,16 +6,12 @@ import {
     IconDimensionCategoryOptionGroupset16,
     IconDimensionOrgUnitGroupset16,
     IconDimensionOrgUnit16,
-    // IconCheckmarkCircle16,
-    // IconUser16,
+    IconCheckmarkCircle16,
+    IconUser16,
     IconCalendar16,
 } from '@dhis2/ui'
 import React, { type ReactNode } from 'react'
 import type { SupportedDimensionType } from '@constants/dimension-types'
-// import { SUPPORTED_DIMENSION_TYPES } from '@constants/dimension-types'
-
-// export const DIMENSION_TYPE_STATUS = 'STATUS'
-// export const DIMENSION_TYPE_USER = 'USER'
 
 type DimensionIconMap = Record<SupportedDimensionType, ReactNode>
 
@@ -28,8 +24,8 @@ const dimensionIconMap: DimensionIconMap = {
     ORGANISATION_UNIT: <IconDimensionOrgUnit16 />,
     CATEGORY: <IconFilter16 />,
     PERIOD: <IconCalendar16 />,
-    // STATUS: <IconCheckmarkCircle16 />,
-    // USER: <IconUser16 />,
+    STATUS: <IconCheckmarkCircle16 />,
+    USER: <IconUser16 />,
 }
 
 interface DimensionIconProps {
