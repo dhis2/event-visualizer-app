@@ -8,7 +8,7 @@ import { setupStore } from '@test-utils/setup-store'
 import type { RootState } from '@types'
 
 vi.mock('@dhis2/app-runtime', () => ({
-    useConfig: jest.fn(() => ({ serverVersion: { minor: 43 } })),
+    useConfig: vi.fn(() => ({ serverVersion: { minor: 43 } })),
 }))
 
 describe('VisualizationTypeSelector', () => {
@@ -44,6 +44,4 @@ describe('VisualizationTypeSelector', () => {
         expect(within(modal).getByText('Line list')).toBeInTheDocument()
         expect(within(modal).getByText('Pivot table')).toBeInTheDocument()
     })
-
-    it('')
 })
