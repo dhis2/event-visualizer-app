@@ -9,6 +9,7 @@ import type { ResponseErrorReport } from '@api/parse-engine-error'
  * for generated types here, as we have done for `SystemSettings` */
 /* eslint-disable import/export */
 export type * from './dhis2-openapi-schemas'
+export type { EventVisualization } from './event-visualization'
 export type { SystemSettings } from './system-settings'
 export type { MetadataItem } from './metadata-item'
 /* eslint-enable import/export */
