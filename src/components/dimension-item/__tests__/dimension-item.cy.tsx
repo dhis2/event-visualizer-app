@@ -64,7 +64,7 @@ describe('<DimensionItem />', () => {
             .and('not.be.visible')
         cy.getByDataTest('subtract-button-test-dimension').should('not.exist')
 
-        // now hover using cypress realHover
+        // Hover over the dimension item
         cy.getByDataTest('dimension-item-Test-Dimension').realHover()
 
         // Verify the add button is now visible
@@ -85,7 +85,7 @@ describe('<DimensionItem />', () => {
             .should('exist')
             .and('not.be.visible')
 
-        // now hover using cypress realHover
+        // Hover over the dimension item
         cy.getByDataTest('dimension-item-Test-Dimension').realHover()
 
         // Verify the subtract button is now visible

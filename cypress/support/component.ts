@@ -17,19 +17,10 @@
 import 'cypress-real-events'
 import './commands'
 
-// Import fonts for component tests
+// Import fonts
 import 'typeface-roboto/index.css'
 
 import { mount } from 'cypress/react'
-
-// Apply Roboto font globally for component tests
-const style = document.createElement('style')
-style.innerHTML = `
-  body, * {
-    font-family: 'Roboto', sans-serif !important;
-  }
-`
-document.head.appendChild(style)
 
 Cypress.Commands.add('mount', mount)
 
