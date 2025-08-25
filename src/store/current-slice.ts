@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { EventVisualization } from '@types'
 
-type CurrentState = Partial<EventVisualization> | null
+type CurrentState = EventVisualization | null
 
 const initialState: CurrentState = null
 
@@ -23,3 +23,4 @@ export const currentSlice = createSlice({
 })
 
 export const { setCurrent } = currentSlice.actions
+export const { getCurrent, getCurrentId } = currentSlice.selectors

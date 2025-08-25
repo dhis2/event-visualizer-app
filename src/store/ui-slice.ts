@@ -39,3 +39,5 @@ export const uiSlice = createSlice({
 })
 
 export const { setUiVisualizationType, setUiDetailsPanelOpen } = uiSlice.actions
+export const { getUiVisualizationType, getUiDetailsPanelOpen } =
+    uiSlice.selectors
