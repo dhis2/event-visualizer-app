@@ -18,9 +18,7 @@ export const VisualizationTypeSelector: FC = () => {
 
     const { getUiVisualizationType } = uiSlice.selectors
 
-    const visualizationType = useAppSelector((state) =>
-        getUiVisualizationType(state)
-    )
+    const visualizationType = useAppSelector(getUiVisualizationType)
 
     const [listIsOpen, setListIsOpen] = useState(false)
 

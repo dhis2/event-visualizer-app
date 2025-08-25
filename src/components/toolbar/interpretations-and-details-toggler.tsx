@@ -11,11 +11,8 @@ export const InterpretationsAndDetailsToggler: FC = () => {
     const { getCurrentId } = currentSlice.selectors
     const { getUiDetailsPanelOpen } = uiSlice.selectors
 
-    const id = useAppSelector((state) => getCurrentId(state))
-
-    const isDetailsPanelOpen = useAppSelector((state) =>
-        getUiDetailsPanelOpen(state)
-    )
+    const id = useAppSelector(getCurrentId)
+    const isDetailsPanelOpen = useAppSelector(getUiDetailsPanelOpen)
 
     const onClick = useCallback(() => {
         dispatch(setUiDetailsPanelOpen(!isDetailsPanelOpen))

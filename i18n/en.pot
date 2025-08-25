@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-08-22T12:51:32.435Z\n"
-"PO-Revision-Date: 2025-08-22T12:51:32.436Z\n"
+"POT-Creation-Date: 2025-08-25T08:24:47.876Z\n"
+"PO-Revision-Date: 2025-08-25T08:24:47.877Z\n"
 
 msgid "ERROR"
 msgstr "ERROR"
@@ -128,58 +128,6 @@ msgstr "This year"
 msgid "Last year"
 msgstr "Last year"
 
-msgid "HTML"
-msgstr "HTML"
-
-msgid "HTML+CSS (.html+css)"
-msgstr "HTML+CSS (.html+css)"
-
-msgid "Plain data source"
-msgstr "Plain data source"
-
-msgid "JSON"
-msgstr "JSON"
-
-msgid "XML"
-msgstr "XML"
-
-msgid "Microsoft Excel"
-msgstr "Microsoft Excel"
-
-msgid "CSV"
-msgstr "CSV"
-
-msgid "Metadata ID scheme"
-msgstr "Metadata ID scheme"
-
-msgid "ID"
-msgstr "ID"
-
-msgid "Code"
-msgstr "Code"
-
-msgid "Name"
-msgstr "Name"
-
-msgid "Download"
-msgstr "Download"
-
-msgid "\"{{- deletedObject}}\" successfully deleted."
-msgstr "\"{{- deletedObject}}\" successfully deleted."
-
-msgid "Rename successful"
-msgstr "Rename successful"
-
-msgid ""
-"This visualization can't be deleted because it is used on one or more "
-"dashboards"
-msgstr ""
-"This visualization can't be deleted because it is used on one or more "
-"dashboards"
-
-msgid "Options"
-msgstr "Options"
-
 msgid "Show layout"
 msgstr "Show layout"
 
@@ -203,92 +151,6 @@ msgstr "View"
 
 msgid "Reset sidebar width"
 msgstr "Reset sidebar width"
-
-msgid "There is a problem with this visualization."
-msgstr "There is a problem with this visualization."
-
-msgid "There was a problem getting the data from the server."
-msgstr "There was a problem getting the data from the server."
-
-msgid "No data available"
-msgstr "No data available"
-
-msgid ""
-"The selected dimensions didn’t return any data. There may be no data, or "
-"you may not have access to it."
-msgstr ""
-"The selected dimensions didn’t return any data. There may be no data, or "
-"you may not have access to it."
-
-msgid "Visualization not found"
-msgstr "Visualization not found"
-
-msgid ""
-"The visualization you are trying to view could not be found, the ID could "
-"be incorrect or it could have been deleted."
-msgstr ""
-"The visualization you are trying to view could not be found, the ID could "
-"be incorrect or it could have been deleted."
-
-msgid "No tracked entity type selected"
-msgstr "No tracked entity type selected"
-
-msgid "Choose a type from the Input sidebar."
-msgstr "Choose a type from the Input sidebar."
-
-msgid "No program selected"
-msgstr "No program selected"
-
-msgid "Choose a program from the Input sidebar."
-msgstr "Choose a program from the Input sidebar."
-
-msgid "Columns is empty"
-msgstr "Columns is empty"
-
-msgid "Add at least one item to Columns."
-msgstr "Add at least one item to Columns."
-
-msgid "No organisation unit selected"
-msgstr "No organisation unit selected"
-
-msgid ""
-"Make sure to add the organisation unit dimension with at least one "
-"selection to the layout."
-msgstr ""
-"Make sure to add the organisation unit dimension with at least one "
-"selection to the layout."
-
-msgid "There's a problem with at least one selected indicator"
-msgstr "There's a problem with at least one selected indicator"
-
-msgid "Restricted access"
-msgstr "Restricted access"
-
-msgid ""
-"You don’t have access to the data in this visualization. Contact a system "
-"administrator."
-msgstr ""
-"You don’t have access to the data in this visualization. Contact a system "
-"administrator."
-
-msgid "You don’t have access to one or more of the chosen organisation units."
-msgstr "You don’t have access to one or more of the chosen organisation units."
-
-msgid "You don’t have access to event analytics. Contact a system administrator."
-msgstr "You don’t have access to event analytics. Contact a system administrator."
-
-msgid "Something went wrong"
-msgstr "Something went wrong"
-
-msgid ""
-"There's a problem with the generated analytics. Contact a system "
-"administrator."
-msgstr ""
-"There's a problem with the generated analytics. Contact a system "
-"administrator."
-
-msgid "There's a syntax problem with the analytics request."
-msgstr "There's a syntax problem with the analytics request."
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
