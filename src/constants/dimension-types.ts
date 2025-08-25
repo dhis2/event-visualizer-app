@@ -1,7 +1,7 @@
 import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 import type { DimensionType } from '@types'
 
-// Extend DimensionType to include DATA_ELEMENT
+// Extend DimensionType to include DATA_ELEMENT, STATUS, and USER
 type ExtendedDimensionType = DimensionType | 'DATA_ELEMENT' | 'STATUS' | 'USER'
 
 export const SUPPORTED_DIMENSION_TYPES =
