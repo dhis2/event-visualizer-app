@@ -8,7 +8,7 @@ type HoverMenuListItemProps = {
     disabled?: boolean
     icon?: ReactNode
     label?: ReactNode
-    onClick?: () => void // TODO use proper type
+    onClick?: () => void
 }
 
 export type HoverMenuListItem = FC<HoverMenuListItemProps>
