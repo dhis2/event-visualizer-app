@@ -1,4 +1,4 @@
-.dimensionItemBase {
+.dimensionItem {
     background-color: var(--colors-white);
     color: var(--colors-grey900);
     fill: var(--colors-grey800);
@@ -14,7 +14,7 @@
     border: 1px solid transparent;
 }
 
-.dimensionItemBase:not(.disabled):not(.dragging):hover {
+.dimensionItem:not(.disabled):not(.dragging):hover {
     background-color: var(--colors-grey100);
     border-color: var(--colors-grey400);
 }
@@ -24,32 +24,32 @@
     visibility: hidden;
 }
 
-.dimensionItemBase:not(.disabled):hover .menuButton {
+.dimensionItem:not(.disabled):hover .menuButton {
     visibility: visible;
 }
 
-.dimensionItemBase:not(.disabled):active {
+.dimensionItem:not(.disabled):active {
     background-color: #d8e1e9;
 }
 
-.dimensionItemBase.selected {
+.selected {
     background-color: var(--colors-teal100);
     border: 1px solid var(--colors-teal200);
     fill: var(--colors-teal800);
     font-weight: 400;
 }
 
-.dimensionItemBase.selected:not(.disabled):hover {
+.selected:not(.disabled):hover {
     background: #cdeae8;
     border-color: #93c4bf;
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
-.dimensionItemBase.selected:not(.disabled):active {
+.selected:not(.disabled):active {
     background-color: #bbe2e0;
 }
 
-.dimensionItemBase.disabled {
+.disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
@@ -73,12 +73,12 @@
     overflow-wrap: anywhere;
 }
 
-.iconAndLabelWrapper {
+.labelAndIconContainer {
     display: flex;
     align-items: center;
 }
 
-.iconAndLabelWrapper:not(:only-child) {
+.labelAndIconContainer:not(:only-child) {
     margin-inline-end: var(--spacers-dp4);
 }
 
@@ -89,6 +89,6 @@
     overflow-wrap: anywhere;
 }
 
-.dimensionItemBase.selected .label .secondary {
+.selected .label .secondary {
     color: var(--colors-teal600);
 }

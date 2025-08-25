@@ -1,24 +1,11 @@
+import { CssVariables } from '@dhis2/ui'
 import { DndContext } from '@dnd-kit/core'
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable'
-import { configureStore } from '@reduxjs/toolkit'
 import React from 'react'
-import { Provider } from 'react-redux'
-import { DimensionItem } from '../dimension-item'
+import { DraggableDimensionItem as DimensionItem } from '../draggable-dimension-item'
 
-// Mock Redux store for testing
-const mockStore = configureStore({
-    reducer: {
-        ui: (state = { layout: { dimensions: {} } }) => state,
-    },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: false,
-        }),
-})
-
-// Wrapper component to provide DnD context and Redux store
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <Provider store={mockStore}>
+    <>
         <DndContext>
             <SortableContext
                 items={['test-item']}
@@ -27,7 +14,8 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
                 {children}
             </SortableContext>
         </DndContext>
-    </Provider>
+        <CssVariables colors spacers theme />
+    </>
 )
 
 describe('<DimensionItem />', () => {
@@ -48,9 +36,7 @@ describe('<DimensionItem />', () => {
             </TestWrapper>
         )
 
-        cy.get('[data-test="dimension-item-base-Test-Dimension"]').should(
-            'be.visible'
-        )
+        cy.getByDataTest('dimension-item-Test-Dimension').should('be.visible')
         cy.contains('Test Dimension').should('be.visible')
     })
 
@@ -65,7 +51,7 @@ describe('<DimensionItem />', () => {
         cy.contains('Stage 1').should('be.visible')
     })
 
-    it('has an add button when not selected and not disabled', () => {
+    it('displays an add button while hovering when not selected and not disabled', () => {
         cy.mount(
             <TestWrapper>
                 <DimensionItem {...defaultProps} />
@@ -73,20 +59,20 @@ describe('<DimensionItem />', () => {
         )
 
         // Verify the button exists but is not visible initially
-        cy.get('[data-test="item-menu-button-Test-Dimension"]').should('exist')
-        cy.get('[data-test="item-menu-button-Test-Dimension"]').should(
-            'not.be.visible'
-        )
-        cy.get('[data-test="item-menu-button-Test-Dimension"] button').should(
-            'exist'
-        )
-        cy.get('[data-test="add-button-test-dimension"').should('exist')
-        cy.get('[data-test="subtract-button-test-dimension"').should(
-            'not.exist'
-        )
+        cy.getByDataTest('add-button-test-dimension')
+            .should('exist')
+            .and('not.be.visible')
+        cy.getByDataTest('subtract-button-test-dimension').should('not.exist')
+
+        // now hover using cypress realHover
+        cy.getByDataTest('dimension-item-Test-Dimension').realHover()
+
+        // Verify the add button is now visible
+        cy.getByDataTest('add-button-test-dimension').should('be.visible')
+        cy.getByDataTest('subtract-button-test-dimension').should('not.exist')
     })
 
-    it('has a subtract button when selected and not disabled', () => {
+    it('displays a subtract button while hovering when selected and not disabled', () => {
         cy.mount(
             <TestWrapper>
                 <DimensionItem {...defaultProps} selected={true} />
@@ -94,24 +80,17 @@ describe('<DimensionItem />', () => {
         )
 
         // Verify the button exists but is not visible initially
-        cy.get('[data-test="item-menu-button-Test-Dimension"]').should('exist')
-        cy.get('[data-test="item-menu-button-Test-Dimension"]').should(
-            'not.be.visible'
-        )
-        cy.get('[data-test="item-menu-button-Test-Dimension"] button').should(
-            'exist'
-        )
-        cy.get('[data-test="add-button-test-dimension"').should('not.exist')
-        cy.get('[data-test="subtract-button-test-dimension"').should('exist')
+        cy.getByDataTest('add-button-test-dimension').should('not.exist')
+        cy.getByDataTest('subtract-button-test-dimension')
+            .should('exist')
+            .and('not.be.visible')
 
         // now hover using cypress realHover
-        // cy.get('[data-test="item-menu-button-Test-Dimension"]').realHover()
-        // cy.get('[data-test="item-menu-button-Test-Dimension"]').should(
-        //     'be.visible'
-        // )
-        // cy.get('[data-test="item-menu-button-Test-Dimension"] button').should(
-        //     'be.visible'
-        // )
+        cy.getByDataTest('dimension-item-Test-Dimension').realHover()
+
+        // Verify the subtract button is now visible
+        cy.getByDataTest('add-button-test-dimension').should('not.exist')
+        cy.getByDataTest('subtract-button-test-dimension').should('be.visible')
     })
 
     it('does not have a menu button when disabled', () => {
@@ -121,33 +100,20 @@ describe('<DimensionItem />', () => {
             </TestWrapper>
         )
 
-        cy.get('[data-test="item-button-Test-Dimension"]').should('not.exist')
+        cy.getByDataTest('item-button-Test-Dimension').should('not.exist')
     })
 
-    it('renders with custom draggableId', () => {
-        cy.mount(
-            <TestWrapper>
-                <DimensionItem {...defaultProps} draggableId="custom-drag-id" />
-            </TestWrapper>
-        )
-
-        cy.get('[data-test="dimension-item-base-Test-Dimension"]').should(
-            'be.visible'
-        )
-    })
-
-    it.skip('has teal-100 background color when selected', () => {
+    it('has teal-100 background color when selected', () => {
         cy.mount(
             <TestWrapper>
                 <DimensionItem {...defaultProps} selected={true} />
             </TestWrapper>
         )
 
-        // Has a teal-100 background color when selected
-        cy.get('[data-test="dimension-item-base-Test-Dimension"]').should(
+        cy.getByDataTest('dimension-item-Test-Dimension').should(
             'have.css',
             'background-color',
-            'rgb(224, 242, 241)'
+            'rgb(224, 242, 241)' // teal-100
         )
     })
 
@@ -159,7 +125,7 @@ describe('<DimensionItem />', () => {
         )
 
         // Check that the disabled styling is applied
-        cy.get('[data-test="dimension-item-base-Test-Dimension"]').should(
+        cy.getByDataTest('dimension-item-Test-Dimension').should(
             'have.css',
             'cursor',
             'not-allowed'
