@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-08-26T09:20:22.809Z\n"
-"PO-Revision-Date: 2025-08-26T09:20:22.810Z\n"
+"POT-Creation-Date: 2025-08-26T10:08:00.516Z\n"
+"PO-Revision-Date: 2025-08-26T10:08:00.517Z\n"
 
 msgid "ERROR"
 msgstr "ERROR"
@@ -127,6 +127,42 @@ msgstr "This year"
 
 msgid "Last year"
 msgstr "Last year"
+
+msgid "HTML"
+msgstr "HTML"
+
+msgid "HTML+CSS (.html+css)"
+msgstr "HTML+CSS (.html+css)"
+
+msgid "Plain data source"
+msgstr "Plain data source"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "XML"
+msgstr "XML"
+
+msgid "Microsoft Excel"
+msgstr "Microsoft Excel"
+
+msgid "CSV"
+msgstr "CSV"
+
+msgid "Metadata ID scheme"
+msgstr "Metadata ID scheme"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Code"
+msgstr "Code"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Download"
+msgstr "Download"
 
 msgid "Show layout"
 msgstr "Show layout"
