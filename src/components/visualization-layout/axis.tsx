@@ -33,22 +33,13 @@ export const Axis: React.FC<AxisProps> = ({ axisId, side }) => (
             [classes.rightAxis]: side === 'right',
         })}
     >
-        {/* <div ref={setNodeRef} className={styles.lastDropzone}> */}
         <div id={axisId} className={cx(classes.axisContainer)}>
             <div className={classes.label}>{getAxisName(axisId)}</div>
-            {/* <SortableContext id={axisId} items={dimensionIds}> */}
             <div className={classes.content}>
-                {/* <DropZone
-                        axisId={axisId}
-                        firstElementId={dimensionIds[0]}
-                        overLastDropZone={overLastDropZone}
-                    /> */}
                 {dimensions.map((dimension, i) => (
                     <div key={`key-${i}`}>{dimension.name}</div>
                 ))}
             </div>
-            {/* </SortableContext> */}
         </div>
-        {/* </div> */}
     </div>
 )
