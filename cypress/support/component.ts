@@ -14,7 +14,11 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
+import 'cypress-real-events'
 import './commands'
+
+// Import fonts
+import 'typeface-roboto/index.css'
 
 import { mount } from 'cypress/react'
 
