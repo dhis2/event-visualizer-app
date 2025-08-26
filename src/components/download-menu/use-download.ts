@@ -6,7 +6,7 @@ type UseDownloadResult = {
 }
 
 const useDownload = (): UseDownloadResult => ({
-    isDownloadDisabled: false,
+    isDownloadDisabled: true, // TODO replace this with a layout validation result
     download: (type, format, idScheme) => {
         console.log(
             `TBD (type: ${type}, format: ${format}, idScheme: ${idScheme})`
