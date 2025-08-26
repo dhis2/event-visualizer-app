@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-08-25T08:24:47.876Z\n"
-"PO-Revision-Date: 2025-08-25T08:24:47.877Z\n"
+"POT-Creation-Date: 2025-08-25T14:01:06.663Z\n"
+"PO-Revision-Date: 2025-08-25T14:01:06.664Z\n"
 
 msgid "ERROR"
 msgstr "ERROR"
@@ -127,30 +127,6 @@ msgstr "This year"
 
 msgid "Last year"
 msgstr "Last year"
-
-msgid "Show layout"
-msgstr "Show layout"
-
-msgid "Hide layout"
-msgstr "Hide layout"
-
-msgid "Show dimensions sidebar"
-msgstr "Show dimensions sidebar"
-
-msgid "Hide dimensions sidebar"
-msgstr "Hide dimensions sidebar"
-
-msgid "Hide interpretations and details"
-msgstr "Hide interpretations and details"
-
-msgid "Show interpretations and details"
-msgstr "Show interpretations and details"
-
-msgid "View"
-msgstr "View"
-
-msgid "Reset sidebar width"
-msgstr "Reset sidebar width"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
