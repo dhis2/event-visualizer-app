@@ -64,7 +64,7 @@ export const ScrollBox: FC<{ children?: ReactNode }> = ({ children }) => {
 }
 
 // Hooks for consuming dimensions
-export const useScrollboxWidth = (): number => {
+export const useScrollBoxWidth = (): number => {
     const width = useContext(ScrollBoxContext)
     if (width === null) {
         throw new Error('useScrollboxWidth must be used within a ScrollBox')

@@ -1,5 +1,5 @@
 import React, { useState, useRef, memo } from 'react'
-import { ScrollBox, useScrollboxWidth } from '../scroll-box'
+import { ScrollBox, useScrollBoxWidth } from '../scroll-box'
 import {
     GridCenterColumnBottom,
     GridCenterColumnTop,
@@ -138,7 +138,7 @@ const TestLayout: React.FC<{
 const WidthReporter: React.FC = memo(() => {
     const renderCount = useRef(0)
     renderCount.current++
-    const width = useScrollboxWidth()
+    const width = useScrollBoxWidth()
     return (
         <dl>
             <dt>width</dt>
