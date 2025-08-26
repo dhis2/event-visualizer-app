@@ -14,6 +14,7 @@ export {
     useRootOrgUnits,
     useOrgUnitLevels,
 } from '@components/app-wrapper/app-cached-data-query-provider'
+export { useScrollBoxWidth } from '@components/scroll-box/scroll-box'
 /* Note that useRtkQuery and useRtkLazyQuery accept both a complex query object
  * (as useDataQuery from @dhis2/app-runtime) which can be used to query multiple
  * resource at once, as well as a simple query object which can be used to query
@@ -21,7 +22,6 @@ export {
  * to work with nested objects in the query definition or the data. */
 export * from './use-rtk-query'
 export * from './use-rtk-lazy-query'
-
 export const { useMutateMutation: useRtkMutation } = api
 
 export type UseRtkMutationResult = ReturnType<typeof useRtkMutation>
