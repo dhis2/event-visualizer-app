@@ -6,7 +6,7 @@
         'top-row top-row top-row'
         'start-column center-column-top end-column'
         'start-column center-column-bottom end-column';
-    height: 100%;
+    block-size: 100%;
     background-color: var(--colors-white);
 }
 
