@@ -10,7 +10,12 @@
         "module": "esnext",
         "moduleResolution": "node",
         "strictNullChecks": true,
-        "types": ["@testing-library/jest-dom", "cypress", "cypress/react"],
+        "types": [
+            "@testing-library/jest-dom",
+            "cypress",
+            "cypress/react",
+            "cypress-real-events"
+        ],
         "paths": {
             "@dhis2/analytics": ["src/types/analytics/index.d.ts"],
             // Use this as the definitive source for type imports, mainly to prevent
@@ -26,7 +31,12 @@
             "@modules/*": ["src/modules/*"],
             "@store/*": ["src/store/*"],
             "@test-utils/*": ["src/test-utils/*"]
-        }
+        },
+        "plugins": [
+            {
+                "name": "typescript-plugin-css-modules"
+            }
+        ]
     },
     "include": [
         "src",
