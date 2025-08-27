@@ -1,16 +1,12 @@
 import cx from 'classnames'
 import React from 'react'
+import type { LayoutDimension } from './chip'
 import classes from './styles/chip-base.module.css'
 import { DimensionIcon } from '@components/dimension-item/dimension-icon'
-import type { SupportedDimensionType } from '@constants/dimension-types'
 
 // Presentational component used by dnd - do not add redux or dnd functionality
 
-interface Dimension {
-    name: string
-    dimensionType: SupportedDimensionType
-    optionSet?: string
-    valueType?: string
+interface Dimension extends LayoutDimension {
     suffix?: string
 }
 

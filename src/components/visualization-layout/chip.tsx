@@ -3,7 +3,7 @@ import { ChipBase } from './chip-base'
 import classes from './styles/chip.module.css'
 import type { SupportedDimensionType } from '@constants/dimension-types'
 
-interface ChipDimension {
+export interface LayoutDimension {
     id: string
     name: string
     dimensionType?: SupportedDimensionType
@@ -12,7 +12,7 @@ interface ChipDimension {
 }
 
 interface ChipProps {
-    dimension: ChipDimension
+    dimension: LayoutDimension
 }
 
 export const Chip: React.FC<ChipProps> = ({ dimension }) => {
