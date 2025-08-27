@@ -6,7 +6,7 @@ import type { SupportedDimensionType } from '@constants/dimension-types'
 export interface LayoutDimension {
     id: string
     name: string
-    dimensionType?: SupportedDimensionType
+    dimensionType: SupportedDimensionType
     optionSet?: string
     valueType?: string
 }

@@ -12,9 +12,13 @@ const [columns, filter] = SUPPORTED_AXIS_IDS
 const [PERIOD, ORGANISATION_UNIT, PROGRAM_ATTRIBUTE] = SUPPORTED_DIMENSION_TYPES
 
 const dimensions = [
-    { name: 'Incident date', dimensionType: PERIOD },
-    { name: 'Sierra Leone', dimensionType: ORGANISATION_UNIT },
-    { name: 'Age', dimensionType: PROGRAM_ATTRIBUTE },
+    { id: 'incident-date', name: 'Incident date', dimensionType: PERIOD },
+    {
+        id: 'sierra-leone',
+        name: 'Sierra Leone',
+        dimensionType: ORGANISATION_UNIT,
+    },
+    { id: 'age', name: 'Age', dimensionType: PROGRAM_ATTRIBUTE },
 ]
 
 const getAxisNames = () => ({
