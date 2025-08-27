@@ -22,6 +22,7 @@ export { useScrollBoxWidth } from '@components/scroll-box/scroll-box'
  * to work with nested objects in the query definition or the data. */
 export * from './use-rtk-query'
 export * from './use-rtk-lazy-query'
+
 export const { useMutateMutation: useRtkMutation } = api
 
 export type UseRtkMutationResult = ReturnType<typeof useRtkMutation>
