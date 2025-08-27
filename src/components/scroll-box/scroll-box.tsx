@@ -5,6 +5,8 @@ import classes from './styles/scroll-box.module.css'
 
 const ScrollBoxContext = createContext<number | null>(null)
 
+/* The entries array only contains the entries which have resized, so this
+ * could be the container, the content, or both. */
 const readClientWidthFromEntries = (entries: ResizeObserverEntry[]): number => {
     let contentNode: Element | null = null
     for (const entry of entries) {
