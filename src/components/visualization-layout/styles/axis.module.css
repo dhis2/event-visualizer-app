@@ -15,8 +15,8 @@
 }
 
 .label {
-    min-width: 55px;
-    max-width: 55px;
+    min-inline-size: 55px;
+    max-inline-size: 55px;
     padding: 2px 0 0 0;
     font-size: 11px;
     color: var(--colors-grey700);
@@ -26,10 +26,10 @@
 
 .content {
     position: relative;
-    width: 100%;
+    inline-size: 100%;
     display: flex;
     align-items: flex-start;
     align-content: flex-start;
     flex-wrap: wrap;
-    min-height: 32px;
+    min-block-size: 32px;
 }
