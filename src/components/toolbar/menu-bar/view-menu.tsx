@@ -9,7 +9,7 @@ import {
 } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { setUserSidebarWidthToLocalStorage } from '@modules/local-storage'
-import { getCurrentId } from '@store/current-slice'
+import { getCurrentVisId } from '@store/current-vis-slice'
 import {
     getUiAccessoryPanelWidth,
     getUiDetailsPanelOpen,
@@ -28,7 +28,7 @@ export const ViewMenu: FC = () => {
     const isLayoutPanelHidden = useAppSelector(getUiLayoutPanelHidden)
     const isDetailsPanelOpen = useAppSelector(getUiDetailsPanelOpen)
     const userSettingWidth = useAppSelector(getUiAccessoryPanelWidth)
-    const id = useAppSelector(getCurrentId)
+    const id = useAppSelector(getCurrentVisId)
 
     const toggleLayoutPanelHidden = useCallback(() => {
         dispatch(toggleUiLayoutPanelHidden())

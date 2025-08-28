@@ -75,8 +75,9 @@ type DataElementDimensionArray = Array<{
     dataElement: IdNameRecord
 }>
 
-type SavedVisualization = Omit<
+export type SavedVisualization = Omit<
     EventVisualizationGenerated,
+    | 'id'
     | 'columns'
     | 'rows'
     | 'filters'
@@ -118,6 +119,7 @@ type SavedVisualization = Omit<
     | 'organisationUnits'
     | 'user'
 > & {
+    id: string
     dataElementDimensions: DataElementDimensionArray
     attributeDimensions: MetadataRecordArray<'attribute'>
     programIndicatorDimensions: MetadataRecordArray<'programIndicator'>
@@ -140,6 +142,9 @@ type SavedVisualization = Omit<
     trackedEntityType: IdNameRecord
 }
 
-type CurrentVisualization = Partial<SavedVisualization>
-
-export type EventVisualization = CurrentVisualization | SavedVisualization
+export type EmptyVisualization = Record<string, never>
+export type NewVisualization = Partial<Omit<SavedVisualization, 'id'>>
+export type CurrentVisualization =
+    | EmptyVisualization
+    | NewVisualization
+    | SavedVisualization

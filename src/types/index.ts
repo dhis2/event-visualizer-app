@@ -9,7 +9,6 @@ import type { ResponseErrorReport } from '@api/parse-engine-error'
  * for generated types here, as we have done for `SystemSettings` */
 /* eslint-disable import/export */
 export type * from './dhis2-openapi-schemas'
-export type { EventVisualization } from './event-visualization'
 export type { SystemSettings } from './system-settings'
 export type { MetadataItem } from './metadata-item'
 /* eslint-enable import/export */
@@ -48,3 +47,10 @@ export type MutationResult = {
 export type { AppStore, AppDispatch, RootState } from '@store/store'
 export type { UseMetadataStoreReturnValue as MetadataStore } from '../components/app-wrapper/metadata-provider'
 export type { TransformedAppCachedData as AppCachedData } from '../components/app-wrapper/app-cached-data-query-provider'
+
+export type {
+    CurrentVisualization,
+    EmptyVisualization,
+    NewVisualization,
+    SavedVisualization,
+} from './visualization'
