@@ -18,6 +18,21 @@ export const getVisTypeDescriptions = (): Record<SupportedVisType, string> => ({
     ),
 })
 
+export const dimensionMetadataPropMap: Record<string, string> = {
+    dataElementDimensions: 'dataElement',
+    attributeDimensions: 'attribute',
+    programIndicatorDimensions: 'programIndicator',
+    categoryDimensions: 'category',
+    categoryOptionGroupSetDimensions: 'categoryOptionGroupSet',
+    organisationUnitGroupSetDimensions: 'organisationUnitGroupSet',
+    dataElementGroupSetDimensions: 'dataElementGroupSet',
+}
+
+export const getDimensionMetadataFields = (): Array<string> =>
+    Object.entries(dimensionMetadataPropMap).map(
+        ([listName, objectName]) => `${listName}[${objectName}[id,name]]`
+    )
+
 // Type guards for CurrentVisualization union
 export const isEmptyVisualization = (
     visualization: CurrentVisualization
