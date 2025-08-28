@@ -69,7 +69,7 @@
             "prettier --check"
         ],
         "*.{css,scss,tsx}": [
-            "stylelint"
+            "stylelint --max-warnings=0"
         ],
         "*.{css,scss,json,md,MD,yml,YML,yaml,YAML}": [
             "prettier --check"
