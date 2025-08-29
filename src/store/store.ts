@@ -10,7 +10,7 @@ import type { AppCachedData, DataEngine, MetadataStore } from '@types'
 export const createStore = (
     engine: DataEngine,
     metadataStore: MetadataStore,
-    appChachedData: AppCachedData
+    appCachedData: AppCachedData
 ) => {
     return configureStore({
         reducer: {
@@ -23,7 +23,7 @@ export const createStore = (
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({
                 thunk: {
-                    extraArgument: { engine, metadataStore, appChachedData },
+                    extraArgument: { engine, metadataStore, appCachedData },
                 },
             })
                 .prepend(listenerMiddleware.middleware)
