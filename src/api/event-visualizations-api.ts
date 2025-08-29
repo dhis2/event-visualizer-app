@@ -4,16 +4,17 @@ import { parseEngineError } from '@api/parse-engine-error'
 import { getDimensionMetadataFields } from '@modules/visualization'
 import type { SavedVisualization } from '@types'
 
-const dimensionFields =
+const dimensionFields: string =
     'dimension,dimensionType,filter,program[id],programStage[id],optionSet[id],valueType,legendSet[id],repetition,items[dimensionItem~rename(id)]'
-const getQueryFields = (nameProp) => [
+
+const getQueryFields = (displayNameProp: string) => [
     '*',
     `columns[${dimensionFields}]`,
     `rows[${dimensionFields}]`,
     `filters[${dimensionFields}]`,
-    `program[id,programType,${nameProp}~rename(name),displayEnrollmentDateLabel,displayIncidentDateLabel,displayIncidentDate,programStages[id,displayName~rename(name),repeatable]]`,
+    `program[id,programType,${displayNameProp}~rename(name),displayEnrollmentDateLabel,displayIncidentDateLabel,displayIncidentDate,programStages[id,displayName~rename(name),repeatable]]`,
     'programStage[id,displayName~rename(name),displayExecutionDateLabel,displayDueDateLabel,hideDueDate,repeatable]',
-    `programDimensions[id,${nameProp}~rename(name),enrollmentDateLabel,incidentDateLabel,programType,displayIncidentDate,displayEnrollmentDateLabel,displayIncidentDateLabel,programStages[id,${nameProp}~rename(name),repeatable,hideDueDate,displayExecutionDateLabel,displayDueDateLabel]]`,
+    `programDimensions[id,${displayNameProp}~rename(name),enrollmentDateLabel,incidentDateLabel,programType,displayIncidentDate,displayEnrollmentDateLabel,displayIncidentDateLabel,programStages[id,${displayNameProp}~rename(name),repeatable,hideDueDate,displayExecutionDateLabel,displayDueDateLabel]]`,
     'access',
     'href',
     ...getDimensionMetadataFields(),
@@ -50,22 +51,42 @@ export const eventVisualizationsApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getVisualization: builder.query<SavedVisualization, string>({
             async queryFn(id, apiArg: BaseQueryApiWithExtraArg) {
-                const engine = apiArg.extra.engine
-                const nameProp =
-                    apiArg.extra.cachedAppData.currentUser.settings
-                        .displayNameProperty
+                const { appCachedData, engine, metadataStore } = apiArg.extra
 
                 try {
                     const data = await engine.query({
                         eventVisualization: {
-                            resource: 'eventVisualization',
+                            resource: 'eventVisualizations',
                             id,
                             params: {
-                                fields: getQueryFields(nameProp),
+                                fields: getQueryFields(
+                                    appCachedData.currentUser.settings
+                                        .displayNameProperty
+                                ),
                             },
                         },
                     })
-                    const visualization = data as SavedVisualization
+
+                    const visualization =
+                        data.eventVisualization as SavedVisualization
+
+                    metadataStore.addMetadata(
+                        Object.entries(visualization.metaData)
+                            .filter(
+                                ([id]) =>
+                                    ![
+                                        'USER_ORG_UNIT',
+                                        'USER_ORG_UNIT_CHILDREN',
+                                        'USER_ORG_UNIT_GRANDCHILDREN',
+                                        'ou',
+                                    ].includes(id)
+                            )
+                            .reduce((obj, [id, item]) => {
+                                obj[id] = item
+                                return obj
+                            }, {})
+                    )
+
                     return { data: visualization }
                 } catch (error) {
                     return { error: parseEngineError(error) }
