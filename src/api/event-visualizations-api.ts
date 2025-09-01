@@ -70,22 +70,7 @@ export const eventVisualizationsApi = api.injectEndpoints({
                     const visualization =
                         data.eventVisualization as SavedVisualization
 
-                    metadataStore.addMetadata(
-                        Object.entries(visualization.metaData)
-                            .filter(
-                                ([id]) =>
-                                    ![
-                                        'USER_ORG_UNIT',
-                                        'USER_ORG_UNIT_CHILDREN',
-                                        'USER_ORG_UNIT_GRANDCHILDREN',
-                                        'ou',
-                                    ].includes(id)
-                            )
-                            .reduce((obj, [id, item]) => {
-                                obj[id] = item
-                                return obj
-                            }, {})
-                    )
+                    metadataStore.addMetadata(visualization.metaData)
 
                     return { data: visualization }
                 } catch (error) {

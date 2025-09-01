@@ -8,14 +8,12 @@ import type {
     LegendDisplayStrategy,
     LegendDisplayStyle,
 } from './dhis2-openapi-schemas'
-import type { MetadataItem } from './metadata-item'
+import type { MetadataInput } from '@components/app-wrapper/metadata-helpers/types'
 
 type IdRecord = { id: string }
 type IdNameRecord = IdRecord & { name: string }
 
 type MetadataRecordArray<T extends string> = Array<Record<T, IdNameRecord>>
-
-type MetadataRecord = Record<string, MetadataItem>
 
 type DimensionArray = Array<{
     dimension: string
@@ -144,7 +142,7 @@ export type SavedVisualization = Omit<
         showKey: boolean
     }
     trackedEntityType: IdNameRecord
-    metaData: MetadataRecord
+    metaData: MetadataInput
 }
 
 export type EmptyVisualization = Record<string, never>
