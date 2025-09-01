@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { CurrentUserData } from '@components/app-wrapper/app-cached-data-query-provider'
+import { CurrentUser } from '@types'
 import type {
     CurrentVisualization,
     EventVisualizationType,
@@ -15,7 +15,7 @@ type FileMenuRenamePayload = {
 
 // TODO check if any of these should be required
 type FileMenuProps = {
-    currentUser?: CurrentUserData
+    currentUser?: CurrentUser
     defaultFilterVisType?: string
     fileObject?: CurrentVisualization
     fileType?: FileType

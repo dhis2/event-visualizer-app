@@ -56,7 +56,7 @@ const query: Query = {
         },
     },
 }
-export type CurrentUserData = Omit<
+type CurrentUserData = Omit<
     PickWithFieldFilters<MeDto, typeof currentUserFields>,
     'settings'
 > & { settings?: Record<string, string | undefined> }
