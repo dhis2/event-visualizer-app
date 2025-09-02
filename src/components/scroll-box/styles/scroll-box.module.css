@@ -1,12 +1,12 @@
 .container {
-    width: 100%;
-    height: 100%;
+    inline-size: 100%;
+    block-size: 100%;
     overflow: auto;
     box-sizing: border-box;
 }
 
 .content {
     /* Content will be sized by its children */
-    min-width: min-content;
-    min-height: min-content;
+    min-inline-size: min-content;
+    min-block-size: min-content;
 }
