@@ -47,7 +47,7 @@
         "vitest-canvas-mock": "^0.3.3"
     },
     "dependencies": {
-        "@dhis2/analytics": "^28.0.4",
+        "@dhis2/analytics": "^28.0.5",
         "@dhis2/app-runtime": "^3.14.5",
         "@dhis2/ui": "^10.9.0",
         "@reduxjs/toolkit": "^2.8.2",
