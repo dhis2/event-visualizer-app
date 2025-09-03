@@ -10,6 +10,10 @@ export interface UiState {
     showAccessoryPanel: boolean
     showDetailsPanel: boolean
     showExpandedLayoutPanel: boolean
+    layout: {
+        columns: []
+        filters: []
+    }
 }
 
 export const initialState: UiState = {
@@ -20,6 +24,15 @@ export const initialState: UiState = {
     showAccessoryPanel: true,
     showDetailsPanel: false,
     showExpandedLayoutPanel: false,
+    layout: {
+        columns: [
+            'enrollmentDate',
+            'fdc6uOvgoji',
+            'ZzYYXq4fJie.X8zyunlgUfM',
+            'A03MvHHogjR.X8zyunlgUfM',
+        ],
+        filters: ['cejWyOfXge6'],
+    },
 }
 
 export const uiSlice = createSlice({
@@ -52,6 +65,9 @@ export const uiSlice = createSlice({
                 ? false
                 : state.showAccessoryPanel
         },
+        setUiLayout: (state, action: PayloadAction<UiState['layout']>) => {
+            state.layout = action.payload
+        },
         toggleUiSidebarHidden: (state) => {
             state.hideMainSidebar = !state.hideMainSidebar
         },
@@ -66,6 +82,7 @@ export const uiSlice = createSlice({
         getUiDetailsPanelOpen: (state) => state.showDetailsPanel,
         getUiSidebarHidden: (state) => state.hideMainSidebar,
         getUiLayoutPanelHidden: (state) => state.hideLayoutPanel,
+        getUILayout: (state) => state.layout,
     },
 })
 
@@ -74,6 +91,7 @@ export const {
     setUiAccessoryPanelWidth,
     setUiAccessoryPanelOpen,
     setUiDetailsPanelOpen,
+    setUiLayout,
     toggleUiLayoutPanelHidden,
     toggleUiSidebarHidden,
 } = uiSlice.actions
@@ -83,5 +101,6 @@ export const {
     getUiAccessoryPanelOpen,
     getUiDetailsPanelOpen,
     getUiLayoutPanelHidden,
+    getUILayout,
     getUiSidebarHidden,
 } = uiSlice.selectors

@@ -6,15 +6,15 @@ type ExtendedDimensionType = DimensionType | 'DATA_ELEMENT' | 'STATUS' | 'USER'
 
 export const SUPPORTED_DIMENSION_TYPES =
     asStringLiteralSubsetArray<ExtendedDimensionType>()([
+        'ORGANISATION_UNIT',
+        'PERIOD',
+        'DATA_ELEMENT',
+        'STATUS',
         'PROGRAM_ATTRIBUTE',
         'PROGRAM_INDICATOR',
-        'PERIOD',
-        'ORGANISATION_UNIT',
         'CATEGORY_OPTION_GROUP_SET',
         'ORGANISATION_UNIT_GROUP_SET',
         'CATEGORY',
-        'DATA_ELEMENT',
-        'STATUS',
         'USER',
     ] as const)
 

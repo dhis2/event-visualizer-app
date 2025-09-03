@@ -5,21 +5,9 @@ import { Chip } from './chip'
 import classes from './styles/axis.module.css'
 import type { SupportedAxisIds } from '@constants/axis-types'
 import { SUPPORTED_AXIS_IDS } from '@constants/axis-types'
-import { SUPPORTED_DIMENSION_TYPES } from '@constants/dimension-types'
+import { getLayoutDimensions } from '@modules/get-layout-dimensions'
 
 const [columns, filter] = SUPPORTED_AXIS_IDS
-
-const [PERIOD, ORGANISATION_UNIT, PROGRAM_ATTRIBUTE] = SUPPORTED_DIMENSION_TYPES
-
-const dimensions = [
-    { id: 'incident-date', name: 'Incident date', dimensionType: PERIOD },
-    {
-        id: 'sierra-leone',
-        name: 'Sierra Leone',
-        dimensionType: ORGANISATION_UNIT,
-    },
-    { id: 'age', name: 'Age', dimensionType: PROGRAM_ATTRIBUTE },
-]
 
 const getAxisNames = () => ({
     [columns]: i18n.t('Columns'),
@@ -31,11 +19,17 @@ type Side = 'left' | 'right'
 interface AxisProps {
     axisId: SupportedAxisIds
     side: Side
+    dimensionIds?: string[]
 }
 
 export const getAxisName = (axisId) => getAxisNames()[axisId]
 
-export const Axis: React.FC<AxisProps> = ({ axisId, side }) => {
+export const Axis: React.FC<AxisProps> = ({ axisId, side, dimensionIds }) => {
+    const dimensions = getLayoutDimensions({
+        dimensionIds,
+        inputType: 'INPUT_TYPE_ENROLLMENT',
+    }) // Temporary metadata and inputType
+
     return (
         <div
             className={cx({

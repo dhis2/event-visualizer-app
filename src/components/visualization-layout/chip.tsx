@@ -4,10 +4,15 @@ import classes from './styles/chip.module.css'
 import type { SupportedDimensionType } from '@constants/dimension-types'
 
 export interface LayoutDimension {
+    code?: string
+    dimensionId: string
+    dimensionType: SupportedDimensionType
+    displayName?: string
     id: string
     name: string
-    dimensionType: SupportedDimensionType
     optionSet?: string
+    programId?: string
+    programStageId?: string
     valueType?: string
 }
 
@@ -19,11 +24,7 @@ export const Chip: React.FC<ChipProps> = ({ dimension }) => {
     return (
         <div className={classes.chip} data-test="layout-dimension-chip">
             <div className={classes.content}>
-                {
-                    <div>
-                        <ChipBase dimension={dimension} />
-                    </div>
-                }
+                <ChipBase dimension={dimension} />
             </div>
         </div>
     )

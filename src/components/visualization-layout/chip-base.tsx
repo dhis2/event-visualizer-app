@@ -25,13 +25,10 @@ export const ChipBase: React.FC<ChipBaseProps> = ({ dimension }) => {
                 <DimensionIcon dimensionType={dimensionType} />
             </div>
             <span className={classes.label}>
-                <span className={classes.primary}>{name}</span>
-                {suffix && (
-                    <>
-                        <span>,</span>
-                        <span className={classes.secondary}>{suffix}</span>
-                    </>
-                )}
+                <span className={classes.primary}>
+                    {suffix ? `${name},` : `${name}`}
+                </span>
+                {suffix && <span className={classes.secondary}>{suffix}</span>}
             </span>
         </div>
     )
