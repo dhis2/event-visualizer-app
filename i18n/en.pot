@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-08-26T12:39:55.948Z\n"
-"PO-Revision-Date: 2025-08-26T12:39:55.948Z\n"
+"POT-Creation-Date: 2025-09-03T13:21:47.988Z\n"
+"PO-Revision-Date: 2025-09-03T13:21:47.989Z\n"
 
 msgid "ERROR"
 msgstr "ERROR"
@@ -151,6 +151,9 @@ msgstr "Columns"
 
 msgid "Filter"
 msgstr "Filter"
+
+msgid "all"
+msgstr "all"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
