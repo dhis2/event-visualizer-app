@@ -1,4 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
+import { startAppListening } from './middleware-listener'
+import { clearSavedVis, setSavedVis } from './saved-vis-slice'
+import { eventVisualizationsApi } from '@api/event-visualizations-api'
+import { SavedVisualization } from '@types'
 
 export interface NavigationState {
     visualizationId: string | 'new'
@@ -28,3 +33,57 @@ export const navigationSlice = createSlice({
 })
 
 export const { setNavigationState } = navigationSlice.actions
+
+// listen to changes in navigation.visualizationId
+// "new" (FileMenu -> New): clean the store
+// "id" (FileMenu -> Open): fetch the visualization only if the id changes
+startAppListening({
+    predicate: (_, currentState, previousState) =>
+        currentState.navigation.visualizationId !==
+        previousState.navigation.visualizationId,
+    effect: async (_, listenerApi) => {
+        const dispatch = listenerApi.dispatch
+
+        const visualizationId =
+            listenerApi.getState().navigation.visualizationId
+
+        if (visualizationId === 'new') {
+            dispatch(clearSavedVis())
+            dispatch(clearCurrentVis())
+        } else {
+            try {
+                const eventVisualizationResult = await dispatch(
+                    eventVisualizationsApi.endpoints.getVisualization.initiate(
+                        visualizationId
+                    )
+                )
+
+                dispatch(
+                    setSavedVis(
+                        eventVisualizationResult.data as SavedVisualization
+                    )
+                )
+
+                dispatch(
+                    setCurrentVis(
+                        eventVisualizationResult.data as SavedVisualization
+                    )
+                )
+            } catch (err) {
+                console.log('getEventVisualization error', err)
+            }
+        }
+    },
+})
+
+// listen to changes in navigation.interpretationId
+startAppListening({
+    predicate: (_, currentState, previousState) =>
+        currentState.navigation.interpretationId !==
+        previousState.navigation.interpretationId,
+    effect: () => {
+        console.log(
+            'interpretationId changed - add the logic in place of this message'
+        )
+    },
+})

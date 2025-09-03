@@ -8,6 +8,7 @@ import type {
     LegendDisplayStrategy,
     LegendDisplayStyle,
 } from './dhis2-openapi-schemas'
+import type { MetadataInput } from '@components/app-wrapper/metadata-helpers/types'
 
 type IdRecord = { id: string }
 type IdNameRecord = IdRecord & { name: string }
@@ -75,8 +76,9 @@ type DataElementDimensionArray = Array<{
     dataElement: IdNameRecord
 }>
 
-type SavedVisualization = Omit<
+export type SavedVisualization = Omit<
     EventVisualizationGenerated,
+    | 'id'
     | 'columns'
     | 'rows'
     | 'filters'
@@ -117,7 +119,9 @@ type SavedVisualization = Omit<
     | 'organisationUnitLevels'
     | 'organisationUnits'
     | 'user'
+    | 'metaData'
 > & {
+    id: string
     dataElementDimensions: DataElementDimensionArray
     attributeDimensions: MetadataRecordArray<'attribute'>
     programIndicatorDimensions: MetadataRecordArray<'programIndicator'>
@@ -138,8 +142,12 @@ type SavedVisualization = Omit<
         showKey: boolean
     }
     trackedEntityType: IdNameRecord
+    metaData: MetadataInput
 }
 
-type CurrentVisualization = Partial<SavedVisualization>
-
-export type EventVisualization = CurrentVisualization | SavedVisualization
+export type EmptyVisualization = Record<string, never>
+export type NewVisualization = Partial<Omit<SavedVisualization, 'id'>>
+export type CurrentVisualization =
+    | EmptyVisualization
+    | NewVisualization
+    | SavedVisualization

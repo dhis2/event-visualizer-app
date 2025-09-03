@@ -10,9 +10,9 @@ import { createStore } from '@store/store'
 export const StoreProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const engine = useDataEngine()
     const metadataStore = useMetadataStore()
-    const appChachedData = useAppCachedDataQuery()
+    const appCachedData = useAppCachedDataQuery()
     const [store] = useState(() =>
-        createStore(engine, metadataStore, appChachedData)
+        createStore(engine, metadataStore, appCachedData)
     )
     return <Provider store={store}>{children}</Provider>
 }
