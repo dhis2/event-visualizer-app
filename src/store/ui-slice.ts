@@ -26,6 +26,7 @@ export const uiSlice = createSlice({
     name: 'ui',
     initialState,
     reducers: {
+        clearUi: () => initialState,
         setUiVisualizationType: (
             state,
             action: PayloadAction<SupportedVisType>
@@ -70,6 +71,7 @@ export const uiSlice = createSlice({
 })
 
 export const {
+    clearUi,
     setUiVisualizationType,
     setUiAccessoryPanelWidth,
     setUiAccessoryPanelOpen,
