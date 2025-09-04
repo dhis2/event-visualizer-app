@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import type { InputType } from '@constants/input-types'
+import { INPUT_TYPE_ENROLLMENT } from '@constants/input-types'
 import type { SupportedVisType } from '@constants/visualization-types'
 import { getUserSidebarWidthFromLocalStorage } from '@modules/local-storage'
 
@@ -10,10 +12,10 @@ export interface UiState {
     showAccessoryPanel: boolean
     showDetailsPanel: boolean
     showExpandedLayoutPanel: boolean
-    inputType: 'INPUT_TYPE_EVENT'
+    inputType: InputType
     layout: {
-        columns: []
-        filters: []
+        columns: string[]
+        filters: string[]
     }
     itemsByDimension: Record<string, unknown>
     conditionsByDimension: Record<string, unknown>
@@ -27,7 +29,7 @@ export const initialState: UiState = {
     showAccessoryPanel: true,
     showDetailsPanel: false,
     showExpandedLayoutPanel: false,
-    inputType: 'INPUT_TYPE_ENROLLMENT',
+    inputType: INPUT_TYPE_ENROLLMENT,
     layout: {
         columns: [
             'enrollmentDate',
@@ -80,7 +82,7 @@ export const uiSlice = createSlice({
         setUiLayout: (state, action: PayloadAction<UiState['layout']>) => {
             state.layout = action.payload
         },
-        setUiInputType: (state, action: PayloadAction<string>) => {
+        setUiInputType: (state, action: PayloadAction<InputType>) => {
             state.inputType = action.payload
         },
         setUiItemsByDimension: (

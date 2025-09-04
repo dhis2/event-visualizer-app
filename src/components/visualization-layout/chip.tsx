@@ -3,6 +3,7 @@ import React from 'react'
 import { ChipBase } from './chip-base'
 import classes from './styles/chip.module.css'
 import { IconButton } from '@components/dimension-item/icon-button'
+import type { SupportedAxisId } from '@constants/axis-types'
 import type { SupportedDimensionType } from '@constants/dimension-types'
 import type { SupportedValueType } from '@constants/value-types'
 import { useAppSelector } from '@hooks'
@@ -27,7 +28,7 @@ export interface LayoutDimension {
 
 interface ChipProps {
     dimension: LayoutDimension
-    axisId: string
+    axisId: SupportedAxisId
 }
 
 export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
@@ -43,8 +44,10 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
             <div className={classes.content}>
                 <ChipBase
                     dimension={dimension}
-                    conditionsLength={conditions?.length} // TODO - length of conditions texts
-                    itemsLength={items?.length}
+                    conditionsLength={
+                        Array.isArray(conditions) ? conditions.length : 0
+                    }
+                    itemsLength={Array.isArray(items) ? items.length : 0}
                     inputType={inputType}
                     axisId={axisId}
                 />

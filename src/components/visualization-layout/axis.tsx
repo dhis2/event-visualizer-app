@@ -3,7 +3,7 @@ import cx from 'classnames'
 import React from 'react'
 import { Chip } from './chip'
 import classes from './styles/axis.module.css'
-import type { SupportedAxisIds } from '@constants/axis-types'
+import type { SupportedAxisId } from '@constants/axis-types'
 import { useAppSelector } from '@hooks'
 import { getLayoutDimensions } from '@modules/get-layout-dimensions'
 import { getUiInputType } from '@store/ui-slice'
@@ -19,9 +19,9 @@ const getAxisNames = () => ({
 export type Side = 'left' | 'right'
 
 interface AxisProps {
-    axisId: SupportedAxisIds
+    axisId: SupportedAxisId
     side: Side
-    dimensionIds?: string[]
+    dimensionIds?: string[] | undefined
 }
 
 export const getAxisName = (axisId) => getAxisNames()[axisId]
@@ -29,7 +29,7 @@ export const getAxisName = (axisId) => getAxisNames()[axisId]
 export const Axis: React.FC<AxisProps> = ({ axisId, side, dimensionIds }) => {
     const inputType = useAppSelector(getUiInputType)
     const dimensions = getLayoutDimensions({
-        dimensionIds,
+        dimensionIds: dimensionIds || [],
         inputType,
     })
 

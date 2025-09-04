@@ -3,6 +3,8 @@ import React from 'react'
 import type { LayoutDimension } from './chip'
 import classes from './styles/chip-base.module.css'
 import { DimensionIcon } from '@components/dimension-item/dimension-icon'
+import type { SupportedAxisId } from '@constants/axis-types'
+import type { InputType } from '@constants/input-types'
 import { getChipItems } from '@modules/get-chip-items'
 
 // Presentational component used by dnd - do not add redux or dnd functionality
@@ -15,8 +17,8 @@ interface ChipBaseProps {
     dimension: Dimension
     conditionsLength: number | undefined
     itemsLength: number | undefined
-    inputType: string
-    axisId: string
+    inputType: InputType
+    axisId: SupportedAxisId
 }
 
 export const ChipBase: React.FC<ChipBaseProps> = ({

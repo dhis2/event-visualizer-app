@@ -18,9 +18,9 @@ export const DIMENSION_TYPE_USER = 'USER'
 // Extend DimensionType to include DATA_ELEMENT, STATUS, and USER
 type ExtendedDimensionType =
     | DimensionType
-    | DIMENSION_TYPE_DATA_ELEMENT
-    | DIMENSION_TYPE_STATUS
-    | DIMENSION_TYPE_USER
+    | typeof DIMENSION_TYPE_DATA_ELEMENT
+    | typeof DIMENSION_TYPE_STATUS
+    | typeof DIMENSION_TYPE_USER
 
 export const SUPPORTED_DIMENSION_TYPES =
     asStringLiteralSubsetArray<ExtendedDimensionType>()([
