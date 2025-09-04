@@ -6,7 +6,7 @@ import classes from './styles/axis.module.css'
 import type { SupportedAxisId } from '@constants/axis-types'
 import { useAppSelector } from '@hooks'
 import { getLayoutDimensions } from '@modules/get-layout-dimensions'
-import { getUiInputType } from '@store/ui-slice'
+import { getVisConfigInputType } from '@store/vis-config-slice'
 
 const getAxisNames = () => ({
     AXIS_ID_COLUMNS: i18n.t('Columns'),
@@ -27,7 +27,7 @@ interface AxisProps {
 export const getAxisName = (axisId) => getAxisNames()[axisId]
 
 export const Axis: React.FC<AxisProps> = ({ axisId, side, dimensionIds }) => {
-    const inputType = useAppSelector(getUiInputType)
+    const inputType = useAppSelector(getVisConfigInputType)
     const dimensions = getLayoutDimensions({
         dimensionIds: dimensionIds || [],
         inputType,

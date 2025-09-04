@@ -8,10 +8,10 @@ import type { SupportedDimensionType } from '@constants/dimension-types'
 import type { SupportedValueType } from '@constants/value-types'
 import { useAppSelector } from '@hooks'
 import {
-    getUiInputType,
-    getUiItemsByDimension,
-    getUiConditionsByDimension,
-} from '@store/ui-slice'
+    getVisConfigInputType,
+    getVisConfigItemsByDimension,
+    getVisConfigConditionsByDimension,
+} from '@store/vis-config-slice'
 
 export interface LayoutDimension {
     code?: string
@@ -32,12 +32,12 @@ interface ChipProps {
 }
 
 export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
-    const inputType = useAppSelector(getUiInputType)
+    const inputType = useAppSelector(getVisConfigInputType)
     const conditions = useAppSelector((state) =>
-        getUiConditionsByDimension(state, dimension.id)
+        getVisConfigConditionsByDimension(state, dimension.id)
     )
     const items = useAppSelector((state) =>
-        getUiItemsByDimension(state, dimension.id)
+        getVisConfigItemsByDimension(state, dimension.id)
     )
     return (
         <div className={classes.chip} data-test="layout-dimension-chip">

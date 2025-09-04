@@ -2,13 +2,14 @@ import { configureStore } from '@reduxjs/toolkit'
 import { currentSlice } from './current-slice'
 import { navigationSlice } from './navigation-slice'
 import { uiSlice } from './ui-slice'
+import { visConfigSlice } from './vis-config-slice'
 import { api } from '@api/api'
 import type { AppCachedData, DataEngine, MetadataStore } from '@types'
 
 export const createStore = (
     engine: DataEngine,
     metadataStore: MetadataStore,
-    appChachedData: AppCachedData
+    appCachedData: AppCachedData
 ) => {
     return configureStore({
         reducer: {
@@ -16,11 +17,12 @@ export const createStore = (
             current: currentSlice.reducer,
             navigation: navigationSlice.reducer,
             ui: uiSlice.reducer,
+            visConfig: visConfigSlice.reducer,
         },
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({
                 thunk: {
-                    extraArgument: { engine, metadataStore, appChachedData },
+                    extraArgument: { engine, metadataStore, appCachedData },
                 },
             }).concat(api.middleware),
     })
