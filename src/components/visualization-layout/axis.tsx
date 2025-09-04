@@ -3,6 +3,7 @@ import cx from 'classnames'
 import React from 'react'
 import { Chip } from './chip'
 import classes from './styles/axis.module.css'
+import { useMetadataStore } from '@components/app-wrapper/metadata-provider'
 import type { SupportedAxisId } from '@constants/axis-types'
 import { useAppSelector } from '@hooks'
 import { getLayoutDimensions } from '@modules/get-layout-dimensions'
@@ -27,10 +28,12 @@ interface AxisProps {
 export const getAxisName = (axisId) => getAxisNames()[axisId]
 
 export const Axis: React.FC<AxisProps> = ({ axisId, side, dimensionIds }) => {
+    const { getMetadataItem } = useMetadataStore()
     const inputType = useAppSelector(getVisConfigInputType)
     const dimensions = getLayoutDimensions({
         dimensionIds: dimensionIds || [],
         inputType,
+        getMetadataItem,
     })
 
     return (

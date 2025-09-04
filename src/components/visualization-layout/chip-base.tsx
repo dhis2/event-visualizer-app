@@ -9,12 +9,8 @@ import { getChipItems } from '@modules/get-chip-items'
 
 // Presentational component used by dnd - do not add redux or dnd functionality
 
-interface Dimension extends LayoutDimension {
-    suffix?: string
-}
-
 interface ChipBaseProps {
-    dimension: Dimension
+    dimension: LayoutDimension
     conditionsLength: number | undefined
     itemsLength: number | undefined
     inputType: InputType

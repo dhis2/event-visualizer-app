@@ -14,15 +14,17 @@ import {
 } from '@store/vis-config-slice'
 
 export interface LayoutDimension {
-    code?: string
+    id: string
     dimensionId: string
     dimensionType: SupportedDimensionType
-    displayName?: string
-    id: string
     name: string
+    displayName?: string
+    dimensionItemType?: string // TODO when is there a dimensionItemType and not dimensionType
     optionSet?: string
     programId?: string
     programStageId?: string
+    code?: string
+    suffix?: string
     valueType?: SupportedValueType
 }
 
