@@ -2,6 +2,7 @@ import type {
     CachedDataQueryProvider,
     useCachedDataQuery,
 } from './cached-data-query-provider'
+import type { FileMenu } from './file-menu'
 import type { HoverMenuBar } from './hover-menu-bar'
 import type { HoverMenuDropdown } from './hover-menu-dropdown'
 import type { HoverMenuList } from './hover-menu-list'
@@ -15,6 +16,7 @@ import type { EventVisualizationType, VisualizationType } from '@types'
 declare module '@dhis2/analytics' {
     export const CachedDataQueryProvider: CachedDataQueryProvider
     export const useCachedDataQuery: useCachedDataQuery
+    export const FileMenu: FileMenu
     export const HoverMenuBar: HoverMenuBar
     export const HoverMenuDropdown: HoverMenuDropdown
     export const HoverMenuListItem: HoverMenuListItem

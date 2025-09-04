@@ -22,6 +22,13 @@ import {
 } from './metadata-helpers'
 import { getInitialMetadata } from './metadata-helpers/initial-metadata'
 
+declare global {
+    interface Window {
+        getMetadaStore: () => Record<string, MetadataStoreItem>
+        getMetadaStoreItem: (key: string) => MetadataStoreItem | undefined
+    }
+}
+
 class MetadataStore {
     private map = new Map<string, MetadataStoreItem>()
     private subscribers = new Map<string, Set<Subscriber>>()
@@ -34,6 +41,11 @@ class MetadataStore {
                 this.map.set(key, normalizeMetadataInputItem(item))
                 this.initialMetadataKeys.add(key)
             })
+        }
+        if (process.env.NODE_ENV === 'development') {
+            window.getMetadaStore = () => Object.fromEntries(this.map)
+            window.getMetadaStoreItem = (key: string) =>
+                this.getMetadataItem(key)
         }
     }
 

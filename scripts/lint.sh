@@ -25,7 +25,7 @@ echo ""
 
 # Stylelint check
 echo "🔍 Checking Stylelint..."
-if ! npx stylelint "**/*.{css,scss,tsx}"; then
+if ! npx stylelint "**/*.{css,scss,tsx}" --max-warnings=0; then
     echo "❌ Stylelint check failed"
     EXIT_CODE=1
 else

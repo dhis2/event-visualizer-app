@@ -1960,10 +1960,10 @@
     classnames "^2.3.1"
     prop-types "^15.7.2"
 
-"@dhis2/analytics@^28.0.4":
-  version "28.0.4"
-  resolved "https://registry.yarnpkg.com/@dhis2/analytics/-/analytics-28.0.4.tgz#ae77033b5db5faf839af3139fab16066f3ee1877"
-  integrity sha512-gqYAE+ZbyIB33k3hsjG5EVOxPD6Dv599p/FBIJ4JQa7dDg/Y4PXAbVfSlBZ/95PgFmHroPHmadf7U0aIdDUWww==
+"@dhis2/analytics@^28.0.5":
+  version "28.0.5"
+  resolved "https://registry.yarnpkg.com/@dhis2/analytics/-/analytics-28.0.5.tgz#eb1e7c640c634035b503d68c9abeee316a3d8807"
+  integrity sha512-S0WW18VArSLXXem7lJQMxK+vMHB0UXW+62R/hNGKpyZZ/6P8Tdo+DEQxYJIYnqC2u7MGwOwSz53C1mw0PLVmmw==
   dependencies:
     "@dhis2/multi-calendar-dates" "^1.2.2"
     "@dnd-kit/core" "^6.0.7"
@@ -14294,6 +14294,13 @@ use@^3.1.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.1.tgz#d50c8cac79a19fbc20f2911f56eb973f4e10070f"
   integrity sha512-cwESVXlO3url9YWlFW/TA9cshCEhtu7IKJ/p5soJ/gGpj7vbvFrAY/eIioQ6Dw23KjZhYgiIo8HOs1nQ2vr/oQ==
+
+usehooks-ts@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/usehooks-ts/-/usehooks-ts-3.1.1.tgz#0bb7f38f36f8219ee4509cc5e944ae610fb97656"
+  integrity sha512-I4diPp9Cq6ieSUH2wu+fDAVQO43xwtulo+fKEidHUwZPnYImbtkTjzIJYcDcJqxgmX31GVqNFURodvcgHcW0pA==
+  dependencies:
+    lodash.debounce "^4.0.8"
 
 util-deprecate@^1.0.1, util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   version "1.0.2"

@@ -16,7 +16,7 @@ type EngineResult = QueryResult | MutationResult | unknown
 type ThunkExtraArg = {
     engine: DataEngine
     metadataStore: MetadataStore
-    cachedAppData: AppCachedData
+    appCachedData: AppCachedData
 }
 // Inform TS that an instance of the DataEngine is available on api.extra.engine
 export type BaseQueryApiWithExtraArg = BaseQueryApi & { extra: ThunkExtraArg }

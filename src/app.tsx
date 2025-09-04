@@ -1,10 +1,17 @@
 import i18n from '@dhis2/d2-i18n'
 import { CssVariables } from '@dhis2/ui'
-import cx from 'classnames'
 import type { FC } from 'react'
-import classes from './app.module.css'
+import './app.module.css'
 import { AppWrapper } from './components/app-wrapper'
 import { useRtkQuery, useSystemSettings } from './hooks'
+import {
+    GridCenterColumnBottom,
+    GridCenterColumnTop,
+    GridContainer,
+    GridEndColumn,
+    GridStartColumn,
+    GridTopRow,
+} from '@components/grid'
 import { Toolbar } from '@components/toolbar/toolbar'
 import type { MeDto } from '@types'
 
@@ -27,23 +34,48 @@ const EventVisualizer: FC = () => {
     console.log('systemSettings', systemSettings)
 
     return (
-        <div
-            className={cx(classes.everApp, classes.flexCt, classes.flexDirCol)}
-        >
-            <Toolbar />
-
-            <div
-                className={cx(
-                    classes.sectionMain,
-                    classes.flexGrow1,
-                    classes.flexCt
-                )}
-            >
-                <h1>{i18n.t('Hello {{name}}', { name: me.name })}</h1>
-                <h3>{i18n.t('Welcome to DHIS2 with TypeScript!')}</h3>
-            </div>
+        <GridContainer>
+            <GridTopRow>
+                <Toolbar />
+            </GridTopRow>
+            <GridStartColumn>
+                <div
+                    style={{
+                        width: 260,
+                        height: '100%',
+                        padding: 8,
+                        boxSizing: 'border-box',
+                        borderRight: '1px solid #d5dde5',
+                    }}
+                >
+                    Main sidebar
+                </div>
+            </GridStartColumn>
+            <GridCenterColumnTop>
+                <div style={{ padding: 8 }}>Titlebar</div>
+            </GridCenterColumnTop>
+            <GridCenterColumnBottom>
+                <div style={{ padding: 8 }}>
+                    <h1>Visualization Canvas</h1>
+                    <h2>{i18n.t('Hello {{name}}', { name: me.name })}</h2>
+                    <h3>{i18n.t('Welcome to DHIS2 with TypeScript!')}</h3>
+                </div>
+            </GridCenterColumnBottom>
+            <GridEndColumn>
+                <div
+                    style={{
+                        width: 260,
+                        height: '100%',
+                        padding: 8,
+                        boxSizing: 'border-box',
+                        borderLeft: '1px solid #d5dde5',
+                    }}
+                >
+                    Interpretations panel
+                </div>
+            </GridEndColumn>
             <CssVariables colors spacers theme />
-        </div>
+        </GridContainer>
     )
 }
 

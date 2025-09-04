@@ -47,7 +47,7 @@
         "vitest-canvas-mock": "^0.3.3"
     },
     "dependencies": {
-        "@dhis2/analytics": "^28.0.4",
+        "@dhis2/analytics": "^28.0.5",
         "@dhis2/app-runtime": "^3.14.5",
         "@dhis2/ui": "^10.9.0",
         "@reduxjs/toolkit": "^2.8.2",
@@ -57,7 +57,8 @@
         "query-string": "^9.2.1",
         "react": "^18.0.0",
         "react-dom": "^18.0.0",
-        "react-redux": "^9.2.0"
+        "react-redux": "^9.2.0",
+        "usehooks-ts": "^3.1.1"
     },
     "resolutions": {
         "@dhis2/app-runtime": "^3.14.4"
@@ -68,7 +69,7 @@
             "prettier --check"
         ],
         "*.{css,scss,tsx}": [
-            "stylelint"
+            "stylelint --max-warnings=0"
         ],
         "*.{css,scss,json,md,MD,yml,YML,yaml,YAML}": [
             "prettier --check"
