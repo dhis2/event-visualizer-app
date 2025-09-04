@@ -55,7 +55,7 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
                 />
                 <IconButton
                     onClick={() => console.log('TODO - open menu')}
-                    dataTest={`chip-menu-button-${dimension.id}`}
+                    dataTest={'chip-menu-button'}
                     menuId={`chip-menu-${dimension.id}`}
                 >
                     <IconMore16 />
