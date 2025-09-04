@@ -4,11 +4,12 @@ import { ChipBase } from './chip-base'
 import classes from './styles/chip.module.css'
 import { IconButton } from '@components/dimension-item/icon-button'
 import type { SupportedDimensionType } from '@constants/dimension-types'
+import type { SupportedValueType } from '@constants/value-types'
 import { useAppSelector } from '@hooks'
 import {
     getUiInputType,
-    getUiItemsForDimension,
-    getUiConditionsForDimension,
+    getUiItemsByDimension,
+    getUiConditionsByDimension,
 } from '@store/ui-slice'
 
 export interface LayoutDimension {
@@ -21,7 +22,7 @@ export interface LayoutDimension {
     optionSet?: string
     programId?: string
     programStageId?: string
-    valueType?: string
+    valueType?: SupportedValueType
 }
 
 interface ChipProps {
@@ -32,10 +33,10 @@ interface ChipProps {
 export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
     const inputType = useAppSelector(getUiInputType)
     const conditions = useAppSelector((state) =>
-        getUiConditionsForDimension(state, dimension.id)
+        getUiConditionsByDimension(state, dimension.id)
     )
     const items = useAppSelector((state) =>
-        getUiItemsForDimension(state, dimension.id)
+        getUiItemsByDimension(state, dimension.id)
     )
     return (
         <div className={classes.chip} data-test="layout-dimension-chip">

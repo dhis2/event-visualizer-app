@@ -1,13 +1,13 @@
 import i18n from '@dhis2/d2-i18n'
-import { INPUT_TYPE_TRACKED_ENTITY } from './get-layout-dimensions'
+import { AXIS_ID_FILTERS } from '@constants/axis-types'
+import { DIMENSION_TYPE_PERIOD } from '@constants/dimension-types'
+import { INPUT_TYPE_TRACKED_ENTITY } from '@constants/input-types'
+import { VALUE_TYPE_TRUE_ONLY, VALUE_TYPE_BOOLEAN } from '@constants/value-types'
 
 const DIMENSION_ID_ORGUNIT = 'ou'
-const DIMENSION_TYPE_PERIOD = 'PERIOD'
-const VALUE_TYPE_TRUE_ONLY = 'TRUE_ONLY'
+
 const VALUE_TYPE_TRUE_ONLY_NUM_OPTIONS = 1
-const VALUE_TYPE_BOOLEAN = 'BOOLEAN'
 const VALUE_TYPE_BOOLEAN_NUM_OPTIONS = 2
-const AXIS_ID_FILTERS = 'filters'
 
 export const getChipItems = ({
     dimension,

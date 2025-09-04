@@ -131,9 +131,9 @@ export const uiSlice = createSlice({
         getUiLayoutPanelHidden: (state) => state.hideLayoutPanel,
         getUILayout: (state) => state.layout,
         getUiInputType: (state) => state.inputType,
-        getUiItemsForDimension: (state, dimensionId: string) =>
+        getUiItemsByDimension: (state, dimensionId: string) =>
             state.itemsByDimension[dimensionId],
-        getUiConditionsForDimension: (state, dimensionId: string) =>
+        getUiConditionsByDimension: (state, dimensionId: string) =>
             state.conditionsByDimension[dimensionId],
     },
 })
@@ -162,7 +162,7 @@ export const {
     getUiLayoutPanelHidden,
     getUILayout,
     getUiInputType,
-    getUiItemsForDimension,
-    getUiConditionsForDimension,
+    getUiItemsByDimension,
+    getUiConditionsByDimension,
     getUiSidebarHidden,
 } = uiSlice.selectors

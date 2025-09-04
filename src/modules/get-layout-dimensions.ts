@@ -1,11 +1,15 @@
-export const INPUT_TYPE_EVENT = 'INPUT_TYPE_EVENT'
-export const INPUT_TYPE_ENROLLMENT = 'INPUT_TYPE_ENROLLMENT'
-export const INPUT_TYPE_TRACKED_ENTITY = 'INPUT_TYPE_TRACKED_ENTITY'
-
-const DATA_ELEMENT = 'DATA_ELEMENT'
-const PERIOD = 'PERIOD'
-const ORGANISATION_UNIT = 'ORGANISATION_UNIT'
-const STATUS = 'STATUS'
+import type { LayoutDimension } from '@components/visualization-layout/chip'
+import {
+    DIMENSION_TYPE_DATA_ELEMENT,
+    DIMENSION_TYPE_PERIOD,
+    DIMENSION_TYPE_ORGANISATION_UNIT,
+    DIMENSION_TYPE_STATUS,
+} from '@constants/dimension-types'
+import type { InputType } from '@constants/input-types'
+import {
+    INPUT_TYPE_ENROLLMENT,
+    INPUT_TYPE_TRACKED_ENTITY,
+} from '@constants/input-types'
 
 const metadata = {
     lastUpdated: {
@@ -224,7 +228,7 @@ const metadata = {
     },
 }
 
-const extractDimensionIdParts = (id, inputType) => {
+const extractDimensionIdParts = (id: string, inputType: InputType) => {
     let rawStageId
     const [dimensionId, part2, part3] = (id || '').split('.').reverse()
     let programId = part3
@@ -245,7 +249,17 @@ const extractDimensionIdParts = (id, inputType) => {
     }
 }
 
-export const getLayoutDimensions = ({ dimensionIds, inputType }) => {
+interface DimensionWithSuffix extends LayoutDimension {
+    suffix?: string
+    dimensionItemType?: string
+}
+
+interface GetLayoutDimensionsParams {
+    dimensionIds: string[]
+    inputType: InputType
+}
+
+export const getLayoutDimensions = ({ dimensionIds, inputType }: GetLayoutDimensionsParams): DimensionWithSuffix[] => {
     const dimensions = dimensionIds.map((id) => {
         const { dimensionId, programStageId, programId } =
             extractDimensionIdParts(id, inputType)
@@ -271,7 +285,7 @@ export const getLayoutDimensions = ({ dimensionIds, inputType }) => {
 
     return dimensions.map((dimension) => {
         if (
-            [DATA_ELEMENT, PERIOD].includes(
+            [DIMENSION_TYPE_DATA_ELEMENT, DIMENSION_TYPE_PERIOD].includes(
                 dimension.dimensionType || dimension.dimensionItemType
             )
         ) {
@@ -306,7 +320,7 @@ export const getLayoutDimensions = ({ dimensionIds, inputType }) => {
         } else if (
             // always suffix ou and statuses for TE
             inputType === INPUT_TYPE_TRACKED_ENTITY &&
-            [ORGANISATION_UNIT, STATUS].includes(
+            [DIMENSION_TYPE_ORGANISATION_UNIT, DIMENSION_TYPE_STATUS].includes(
                 dimension.dimensionType || dimension.dimensionItemType
             ) &&
             dimension.programId

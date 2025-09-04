@@ -1,7 +1,8 @@
-export const SUPPORTED_INPUT_TYPES = [
-    'INPUT_TYPE_EVENT',
-    'INPUT_TYPE_ENROLLMENT',
-    'INPUT_TYPE_TRACKED_ENTITY',
-] as const
+export const INPUT_TYPE_EVENT = 'INPUT_TYPE_EVENT'
+export const INPUT_TYPE_ENROLLMENT = 'INPUT_TYPE_ENROLLMENT'
+export const INPUT_TYPE_TRACKED_ENTITY = 'INPUT_TYPE_TRACKED_ENTITY'
 
-export type InputType = (typeof SUPPORTED_INPUT_TYPES)[number]
+export type InputType = 
+    | typeof INPUT_TYPE_EVENT
+    | typeof INPUT_TYPE_ENROLLMENT
+    | typeof INPUT_TYPE_TRACKED_ENTITY

@@ -4,19 +4,19 @@ import React from 'react'
 import { Chip } from './chip'
 import classes from './styles/axis.module.css'
 import type { SupportedAxisIds } from '@constants/axis-types'
-import { SUPPORTED_AXIS_IDS } from '@constants/axis-types'
 import { useAppSelector } from '@hooks'
 import { getLayoutDimensions } from '@modules/get-layout-dimensions'
 import { getUiInputType } from '@store/ui-slice'
 
-const [columns, filter] = SUPPORTED_AXIS_IDS
-
 const getAxisNames = () => ({
-    [columns]: i18n.t('Columns'),
-    [filter]: i18n.t('Filter'),
+    AXIS_ID_COLUMNS: i18n.t('Columns'),
+    AXIS_ID_FILTERS: i18n.t('Filter'),
+    AXIS_ID_ROWS: i18n.t('Rows'),
+    AXIS_ID_YOY_SERIES: i18n.t('YoY Series'),
+    AXIS_ID_YOY_CATEGORY: i18n.t('YoY Category'),
 })
 
-type Side = 'left' | 'right'
+export type Side = 'left' | 'right'
 
 interface AxisProps {
     axisId: SupportedAxisIds
