@@ -118,16 +118,16 @@ describe('getLayoutDimensions for data elements', () => {
             valueType: VALUE_TYPE_TEXT,
         },
     }
-
     it('returns correct result for: non-TE, no duplicates -> no suffix', () => {
         const id1 = 'p1s1.d1',
             id2 = 'p1s1.d2',
             id3 = 'p1s2.d3'
         const dimensionIds = [id1, id2, id3]
+        const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            metadata,
             inputType: INPUT_TYPE_ENROLLMENT,
+            getMetadataItem,
         })
 
         expect(output[0].id).toEqual(id1)
@@ -156,10 +156,11 @@ describe('getLayoutDimensions for data elements', () => {
         const id1 = 'p1s1.d1',
             id2 = 'p1s2.d1'
         const dimensionIds = [id1, id2]
+        const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            metadata,
             inputType: INPUT_TYPE_ENROLLMENT,
+            getMetadataItem,
         })
 
         expect(output[0].id).toEqual(id1)
@@ -182,10 +183,11 @@ describe('getLayoutDimensions for data elements', () => {
             id2 = 'p1.p1s2.d2',
             id3 = 'p2.p2s1.d3'
         const dimensionIds = [id1, id2, id3]
+        const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            metadata,
             inputType: INPUT_TYPE_TRACKED_ENTITY,
+            getMetadataItem,
         })
 
         expect(output[0].id).toEqual(id1)
@@ -215,10 +217,11 @@ describe('getLayoutDimensions for data elements', () => {
             id2 = 'p1.p1s2.d1',
             id3 = 'p1.p1s2.d2' // no duplicate, just reference
         const dimensionIds = [id1, id2, id3]
+        const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            metadata,
             inputType: INPUT_TYPE_ENROLLMENT,
+            getMetadataItem,
         })
 
         expect(output[0].id).toEqual(id1)
@@ -248,10 +251,11 @@ describe('getLayoutDimensions for data elements', () => {
             id2 = 'p2.p2s1.d1',
             id3 = 'p1.p1s2.d2' // no duplicate, just reference
         const dimensionIds = [id1, id2, id3]
+        const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            metadata,
             inputType: INPUT_TYPE_ENROLLMENT,
+            getMetadataItem,
         })
 
         expect(output[0].id).toEqual(id1)
@@ -282,10 +286,11 @@ describe('getLayoutDimensions for data elements', () => {
             id3 = 'p2.p2s1.d1', // program duplicate of id1 and id3
             id4 = 'p1.p1s2.d2' // no duplicate, just reference
         const dimensionIds = [id1, id2, id3, id4]
+        const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            metadata,
             inputType: INPUT_TYPE_ENROLLMENT,
+            getMetadataItem,
         })
 
         expect(output[0].id).toEqual(id1)
@@ -402,10 +407,11 @@ describe('getLayoutDimensions for time dimensions', () => {
             id4 = 'scheduledDate',
             id5 = 'lastUpdated'
         const dimensionIds = [id1, id2, id3, id4, id5]
+        const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            metadata,
             inputType: INPUT_TYPE_ENROLLMENT,
+            getMetadataItem,
         })
 
         expect(output[0].id).toEqual(id1)
@@ -441,10 +447,11 @@ describe('getLayoutDimensions for time dimensions', () => {
             id4 = 'p1.scheduledDate',
             id5 = 'lastUpdated'
         const dimensionIds = [id1, id2, id3, id4, id5]
+        const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            metadata,
             inputType: INPUT_TYPE_TRACKED_ENTITY,
+            getMetadataItem,
         })
 
         expect(output[0].id).toEqual(id1)
@@ -484,10 +491,11 @@ describe('getLayoutDimensions for time dimensions', () => {
             id8 = 'p2.scheduledDate',
             id9 = 'lastUpdated'
         const dimensionIds = [id1, id2, id3, id4, id5, id6, id7, id8, id9]
+        const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            metadata,
             inputType: INPUT_TYPE_TRACKED_ENTITY,
+            getMetadataItem,
         })
 
         expect(output[0].id).toEqual(id1)
@@ -624,10 +632,11 @@ describe('getLayoutDimensions for program dimensions', () => {
             id3 = 'programStatus',
             id4 = 'p1.p1s1.XYZ123'
         const dimensionIds = [id1, id2, id3, id4]
+        const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            metadata,
             inputType: INPUT_TYPE_ENROLLMENT,
+            getMetadataItem,
         })
 
         expect(output[0].id).toEqual(id1)
@@ -663,10 +672,12 @@ describe('getLayoutDimensions for program dimensions', () => {
 
         metadata.ou.name = 'Registration org. unit'
 
+        const getMetadataItem = (id: string) => metadata[id]
+
         const output = getLayoutDimensions({
             dimensionIds,
-            metadata,
             inputType: INPUT_TYPE_TRACKED_ENTITY,
+            getMetadataItem,
         })
 
         expect(output[0].id).toEqual(id1)
@@ -713,10 +724,12 @@ describe('getLayoutDimensions for program dimensions', () => {
 
         metadata.ou.name = 'Registration org. unit'
 
+        const getMetadataItem = (id: string) => metadata[id]
+
         const output = getLayoutDimensions({
             dimensionIds,
-            metadata,
             inputType: INPUT_TYPE_TRACKED_ENTITY,
+            getMetadataItem,
         })
 
         expect(output[0].id).toEqual(id1)

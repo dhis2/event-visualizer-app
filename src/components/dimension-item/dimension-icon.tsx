@@ -29,12 +29,15 @@ const dimensionIconMap: DimensionIconMap = {
 }
 
 interface DimensionIconProps {
-    dimensionType: SupportedDimensionType
+    dimensionType?: SupportedDimensionType
 }
 
 // Presentational component used by dnd - do not add redux or dnd functionality
 
 const DimensionIcon: React.FC<DimensionIconProps> = ({ dimensionType }) => {
+    if (!dimensionType) {
+        return null
+    }
     return dimensionIconMap[dimensionType]
 }
 

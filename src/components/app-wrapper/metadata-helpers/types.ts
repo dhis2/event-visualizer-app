@@ -1,3 +1,5 @@
+import type { SupportedDimensionType } from '@constants/dimension-types'
+import type { SupportedValueType } from '@constants/value-types'
 import type { MetadataItem, ProgramType, OptionSet } from '@types'
 
 // OptionSet type from the OpenApiSpecs is very permissive, but we require name and id
@@ -8,6 +10,15 @@ export type OptionSetMetadataItem = OptionSet & {
 
 // User org units, relative periods, etc - object with one string key and string value
 export type SimpleMetadataItem = { [key: string]: string }
+
+export type DimensionMetadataItem = {
+    id: string
+    name: string
+    dimensionType: SupportedDimensionType
+    valueType?: SupportedValueType
+    optionSet?: string | null
+    // Other properties we might need later can be added here
+}
 
 export type ProgramMetadataItem = {
     id: string
@@ -36,6 +47,7 @@ export type MetadataStoreItem =
     | NormalizedMetadataItem
     | OptionSetMetadataItem
     | ProgramMetadataItem
+    | DimensionMetadataItem
 
 export type MetadataInput =
     | AnyMetadataItemInput

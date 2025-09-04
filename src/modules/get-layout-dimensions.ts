@@ -5,6 +5,7 @@ import {
     DIMENSION_TYPE_PERIOD,
     DIMENSION_TYPE_ORGANISATION_UNIT,
     DIMENSION_TYPE_STATUS,
+    type SupportedDimensionType,
 } from '@constants/dimension-types'
 import type { InputType } from '@constants/input-types'
 import {
@@ -49,19 +50,53 @@ export const getLayoutDimensions = ({
             extractDimensionIdParts(id, inputType)
 
         const metadataItem = getMetadataItem(id)
-        
-        // Ensure we always have the required LayoutDimension properties
+
+        // Type guards to safely access properties
+        const hasDimensionType = (
+            item: MetadataStoreItem | undefined
+        ): item is MetadataStoreItem & { dimensionType: unknown } =>
+            item !== undefined && 'dimensionType' in item
+        const hasOptionSet = (
+            item: MetadataStoreItem | undefined
+        ): item is MetadataStoreItem & { optionSet: unknown } =>
+            item !== undefined && 'optionSet' in item
+        const hasValueType = (
+            item: MetadataStoreItem | undefined
+        ): item is MetadataStoreItem & { valueType: unknown } =>
+            item !== undefined && 'valueType' in item
+        const hasDimensionItemType = (
+            item: MetadataStoreItem | undefined
+        ): item is MetadataStoreItem & { dimensionItemType: unknown } =>
+            item !== undefined && 'dimensionItemType' in item
+
+        // Build the dimension object step by step
         const dimension: LayoutDimension = {
             id: metadataItem?.id || id,
             name: metadataItem?.name || id,
             dimensionId,
-            dimensionType: metadataItem?.dimensionType,
-            // Spread any additional properties from metadata
-            ...metadataItem,
-            // Override with our computed values
-            dimensionId,
+            dimensionType: hasDimensionType(metadataItem)
+                ? (metadataItem.dimensionType as SupportedDimensionType)
+                : undefined,
             programStageId,
             programId,
+        }
+
+        // Add optional properties if they exist
+        if (hasOptionSet(metadataItem) && metadataItem.optionSet) {
+            dimension.optionSet = metadataItem.optionSet as string
+        }
+
+        if (hasValueType(metadataItem) && metadataItem.valueType) {
+            dimension.valueType =
+                metadataItem.valueType as LayoutDimension['valueType']
+        }
+
+        if (
+            hasDimensionItemType(metadataItem) &&
+            metadataItem.dimensionItemType
+        ) {
+            dimension.dimensionItemType =
+                metadataItem.dimensionItemType as string
         }
 
         return dimension
@@ -74,9 +109,12 @@ export const getLayoutDimensions = ({
     }
 
     return dimensions.map((dimension) => {
+        const dimensionTypeOrItemType =
+            dimension.dimensionType || dimension.dimensionItemType
         if (
+            dimensionTypeOrItemType &&
             [DIMENSION_TYPE_DATA_ELEMENT, DIMENSION_TYPE_PERIOD].includes(
-                dimension.dimensionType || dimension.dimensionItemType
+                dimensionTypeOrItemType as SupportedDimensionType
             )
         ) {
             const duplicates = dimensions.filter(
@@ -102,9 +140,9 @@ export const getLayoutDimensions = ({
                     )
 
                 if (sameProgramId || thirdPartyDuplicates) {
-                    dimension.suffix = getMetadataItem(
-                        dimension.programStageId
-                    )?.name
+                    dimension.suffix = dimension.programStageId
+                        ? getMetadataItem(dimension.programStageId)?.name
+                        : undefined
                 } else if (dimension.programId) {
                     dimension.suffix = getMetadataItem(
                         dimension.programId
@@ -114,8 +152,9 @@ export const getLayoutDimensions = ({
         } else if (
             // always suffix ou and statuses for TE
             inputType === INPUT_TYPE_TRACKED_ENTITY &&
+            dimensionTypeOrItemType &&
             [DIMENSION_TYPE_ORGANISATION_UNIT, DIMENSION_TYPE_STATUS].includes(
-                dimension.dimensionType || dimension.dimensionItemType
+                dimensionTypeOrItemType as SupportedDimensionType
             ) &&
             dimension.programId
         ) {

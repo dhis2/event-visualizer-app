@@ -16,10 +16,10 @@ import {
 export interface LayoutDimension {
     id: string
     dimensionId: string
-    dimensionType: SupportedDimensionType
     name: string
-    displayName?: string
+    dimensionType?: SupportedDimensionType
     dimensionItemType?: string // TODO when is there a dimensionItemType and not dimensionType
+    displayName?: string
     optionSet?: string
     programId?: string
     programStageId?: string
