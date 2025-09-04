@@ -10,10 +10,13 @@ export interface UiState {
     showAccessoryPanel: boolean
     showDetailsPanel: boolean
     showExpandedLayoutPanel: boolean
+    inputType: 'INPUT_TYPE_EVENT'
     layout: {
         columns: []
         filters: []
     }
+    itemsByDimension: Record<string, unknown>
+    conditionsByDimension: Record<string, unknown>
 }
 
 export const initialState: UiState = {
@@ -24,14 +27,23 @@ export const initialState: UiState = {
     showAccessoryPanel: true,
     showDetailsPanel: false,
     showExpandedLayoutPanel: false,
+    inputType: 'INPUT_TYPE_ENROLLMENT',
     layout: {
         columns: [
             'enrollmentDate',
-            'fdc6uOvgoji',
+            'ou',
             'ZzYYXq4fJie.X8zyunlgUfM',
             'A03MvHHogjR.X8zyunlgUfM',
+            'GxdhnY5wmHq',
         ],
         filters: ['cejWyOfXge6'],
+    },
+    itemsByDimension: {
+        ou: ['fdc6uOvgoji'],
+        enrollmentDate: ['LAST_6_MONTHS'],
+    },
+    conditionsByDimension: {
+        GxdhnY5wmHq: 'GT:2500:LT:3000:NE:NV',
     },
 }
 
@@ -68,6 +80,41 @@ export const uiSlice = createSlice({
         setUiLayout: (state, action: PayloadAction<UiState['layout']>) => {
             state.layout = action.payload
         },
+        setUiInputType: (state, action: PayloadAction<string>) => {
+            state.inputType = action.payload
+        },
+        setUiItemsByDimension: (
+            state,
+            action: PayloadAction<Record<string, unknown>>
+        ) => {
+            state.itemsByDimension = action.payload
+        },
+        setUiConditionsByDimension: (
+            state,
+            action: PayloadAction<Record<string, unknown>>
+        ) => {
+            state.conditionsByDimension = action.payload
+        },
+        updateUiItemsByDimension: (
+            state,
+            action: PayloadAction<{ dimensionId: string; items: unknown }>
+        ) => {
+            state.itemsByDimension[action.payload.dimensionId] =
+                action.payload.items
+        },
+        updateUiConditionsByDimension: (
+            state,
+            action: PayloadAction<{ dimensionId: string; conditions: unknown }>
+        ) => {
+            state.conditionsByDimension[action.payload.dimensionId] =
+                action.payload.conditions
+        },
+        clearUiItemsByDimension: (state) => {
+            state.itemsByDimension = {}
+        },
+        clearUiConditionsByDimension: (state) => {
+            state.conditionsByDimension = {}
+        },
         toggleUiSidebarHidden: (state) => {
             state.hideMainSidebar = !state.hideMainSidebar
         },
@@ -83,6 +130,11 @@ export const uiSlice = createSlice({
         getUiSidebarHidden: (state) => state.hideMainSidebar,
         getUiLayoutPanelHidden: (state) => state.hideLayoutPanel,
         getUILayout: (state) => state.layout,
+        getUiInputType: (state) => state.inputType,
+        getUiItemsForDimension: (state, dimensionId: string) =>
+            state.itemsByDimension[dimensionId],
+        getUiConditionsForDimension: (state, dimensionId: string) =>
+            state.conditionsByDimension[dimensionId],
     },
 })
 
@@ -92,6 +144,13 @@ export const {
     setUiAccessoryPanelOpen,
     setUiDetailsPanelOpen,
     setUiLayout,
+    setUiInputType,
+    setUiItemsByDimension,
+    setUiConditionsByDimension,
+    updateUiItemsByDimension,
+    updateUiConditionsByDimension,
+    clearUiItemsByDimension,
+    clearUiConditionsByDimension,
     toggleUiLayoutPanelHidden,
     toggleUiSidebarHidden,
 } = uiSlice.actions
@@ -102,5 +161,8 @@ export const {
     getUiDetailsPanelOpen,
     getUiLayoutPanelHidden,
     getUILayout,
+    getUiInputType,
+    getUiItemsForDimension,
+    getUiConditionsForDimension,
     getUiSidebarHidden,
 } = uiSlice.selectors

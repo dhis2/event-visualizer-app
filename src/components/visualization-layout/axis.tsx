@@ -5,7 +5,9 @@ import { Chip } from './chip'
 import classes from './styles/axis.module.css'
 import type { SupportedAxisIds } from '@constants/axis-types'
 import { SUPPORTED_AXIS_IDS } from '@constants/axis-types'
+import { useAppSelector } from '@hooks'
 import { getLayoutDimensions } from '@modules/get-layout-dimensions'
+import { getUiInputType } from '@store/ui-slice'
 
 const [columns, filter] = SUPPORTED_AXIS_IDS
 
@@ -25,10 +27,11 @@ interface AxisProps {
 export const getAxisName = (axisId) => getAxisNames()[axisId]
 
 export const Axis: React.FC<AxisProps> = ({ axisId, side, dimensionIds }) => {
+    const inputType = useAppSelector(getUiInputType)
     const dimensions = getLayoutDimensions({
         dimensionIds,
-        inputType: 'INPUT_TYPE_ENROLLMENT',
-    }) // Temporary metadata and inputType
+        inputType,
+    })
 
     return (
         <div
@@ -42,7 +45,11 @@ export const Axis: React.FC<AxisProps> = ({ axisId, side, dimensionIds }) => {
                 <div className={classes.label}>{getAxisName(axisId)}</div>
                 <div className={classes.content}>
                     {dimensions.map((dimension, i) => (
-                        <Chip key={`key-${i}`} dimension={dimension} />
+                        <Chip
+                            key={`key-${i}`}
+                            dimension={dimension}
+                            axisId={axisId}
+                        />
                     ))}
                 </div>
             </div>

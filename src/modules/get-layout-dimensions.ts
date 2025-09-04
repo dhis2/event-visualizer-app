@@ -217,6 +217,11 @@ const metadata = {
         dimensionType: 'ORGANISATION_UNIT_GROUP',
         code: 'Mission',
     },
+    GxdhnY5wmHq: {
+        id: 'GxdhnY5wmHq',
+        name: 'Average weight (g)',
+        dimensionType: 'PROGRAM_INDICATOR',
+    },
 }
 
 const extractDimensionIdParts = (id, inputType) => {

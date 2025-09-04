@@ -3,6 +3,7 @@ import React from 'react'
 import type { LayoutDimension } from './chip'
 import classes from './styles/chip-base.module.css'
 import { DimensionIcon } from '@components/dimension-item/dimension-icon'
+import { getChipItems } from '@modules/get-chip-items'
 
 // Presentational component used by dnd - do not add redux or dnd functionality
 
@@ -12,12 +13,30 @@ interface Dimension extends LayoutDimension {
 
 interface ChipBaseProps {
     dimension: Dimension
+    conditionsLength: number | undefined
+    itemsLength: number | undefined
+    inputType: string
+    axisId: string
 }
 
-export const ChipBase: React.FC<ChipBaseProps> = ({ dimension }) => {
+export const ChipBase: React.FC<ChipBaseProps> = ({
+    dimension,
+    conditionsLength,
+    itemsLength,
+    inputType,
+    axisId,
+}) => {
     const name = dimension.name
     const dimensionType = dimension.dimensionType
     const suffix = dimension.suffix
+
+    const chipItems = getChipItems({
+        dimension,
+        conditionsLength,
+        itemsLength,
+        inputType,
+        axisId,
+    })
 
     return (
         <div className={cx(classes.chipBase)}>
@@ -30,6 +49,11 @@ export const ChipBase: React.FC<ChipBaseProps> = ({ dimension }) => {
                 </span>
                 {suffix && <span className={classes.secondary}>{suffix}</span>}
             </span>
+            {chipItems && (
+                <span className={classes.items} data-test="chip-items">
+                    {chipItems}
+                </span>
+            )}
         </div>
     )
 }
