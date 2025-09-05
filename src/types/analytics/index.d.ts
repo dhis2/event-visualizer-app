@@ -2,12 +2,14 @@ import type {
     CachedDataQueryProvider,
     useCachedDataQuery,
 } from './cached-data-query-provider'
+import type { DashboardPluginWrapper } from './dashboard-plugin-wrapper'
 import type { FileMenu } from './file-menu'
 import type { HoverMenuBar } from './hover-menu-bar'
 import type { HoverMenuDropdown } from './hover-menu-dropdown'
 import type { HoverMenuList } from './hover-menu-list'
 import type { HoverMenuListItem } from './hover-menu-list-item'
 import type { InterpretationsAndDetailsToggler } from './interpretations-and-details-toggler'
+import type { PivotTable } from './pivot-table'
 import type { Toolbar } from './toolbar'
 import type { ToolbarSidebar } from './toolbar-sidebar'
 import type { UpdateButton } from './update-button'
@@ -16,12 +18,14 @@ import type { EventVisualizationType, VisualizationType } from '@types'
 declare module '@dhis2/analytics' {
     export const CachedDataQueryProvider: CachedDataQueryProvider
     export const useCachedDataQuery: useCachedDataQuery
+    export const DashboardPluginWrapper: DashboardPluginWrapper
     export const FileMenu: FileMenu
     export const HoverMenuBar: HoverMenuBar
     export const HoverMenuDropdown: HoverMenuDropdown
     export const HoverMenuListItem: HoverMenuListItem
     export const HoverMenuList: HoverMenuList
     export const InterpretationsAndDetailsToggler: InterpretationsAndDetailsToggler
+    export const PivotTable: PivotTable
     export const Toolbar: Toolbar
     export const ToolbarSidebar: ToolbarSidebar
     export const UpdateButton: UpdateButton

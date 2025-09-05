@@ -3,7 +3,7 @@ import { CssVariables } from '@dhis2/ui'
 import type { FC } from 'react'
 import './app.module.css'
 import { AppWrapper } from './components/app-wrapper'
-import { useRtkQuery, useSystemSettings } from './hooks'
+import { useAppSelector } from './hooks'
 import {
     GridCenterColumnBottom,
     GridCenterColumnTop,
@@ -12,26 +12,12 @@ import {
     GridStartColumn,
     GridTopRow,
 } from '@components/grid'
+import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { Toolbar } from '@components/toolbar/toolbar'
-import type { MeDto } from '@types'
+import { getCurrentVis } from '@store/current-vis-slice'
 
 const EventVisualizer: FC = () => {
-    const rtkqQuery = useRtkQuery({
-        resource: 'me',
-    })
-    const systemSettings = useSystemSettings()
-
-    if (rtkqQuery.error) {
-        return <span>{i18n.t('ERROR')}</span>
-    }
-
-    if (rtkqQuery.isLoading) {
-        return <span>{i18n.t('Loading...')}</span>
-    }
-
-    const me = rtkqQuery.data as MeDto
-
-    console.log('systemSettings', systemSettings)
+    const currentVis = useAppSelector(getCurrentVis)
 
     return (
         <GridContainer>
@@ -57,8 +43,8 @@ const EventVisualizer: FC = () => {
             <GridCenterColumnBottom>
                 <div style={{ padding: 8 }}>
                     <h1>Visualization Canvas</h1>
-                    <h2>{i18n.t('Hello {{name}}', { name: me.name })}</h2>
                     <h3>{i18n.t('Welcome to DHIS2 with TypeScript!')}</h3>
+                    {currentVis && <PluginWrapper visualization={currentVis} />}
                 </div>
             </GridCenterColumnBottom>
             <GridEndColumn>
