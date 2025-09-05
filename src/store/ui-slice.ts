@@ -4,22 +4,22 @@ import { getUserSidebarWidthFromLocalStorage } from '@modules/local-storage'
 
 export interface UiState {
     visualizationType: SupportedVisType
-    hideLayoutPanel: boolean
-    hideMainSidebar: boolean
     accessoryPanelWidth: number
-    showAccessoryPanel: boolean
-    showDetailsPanel: boolean
-    showExpandedLayoutPanel: boolean
+    isAccessoryPanelVisible: boolean
+    isDetailsPanelVisible: boolean
+    isExpandedLayoutPanelVisible: boolean
+    isLayoutPanelVisible: boolean
+    isMainSidebarVisible: boolean
 }
 
 export const initialState: UiState = {
     visualizationType: 'LINE_LIST',
-    hideLayoutPanel: false,
-    hideMainSidebar: false,
     accessoryPanelWidth: getUserSidebarWidthFromLocalStorage(),
-    showAccessoryPanel: true,
-    showDetailsPanel: false,
-    showExpandedLayoutPanel: false,
+    isAccessoryPanelVisible: true,
+    isDetailsPanelVisible: false,
+    isExpandedLayoutPanelVisible: false,
+    isLayoutPanelVisible: true,
+    isMainSidebarVisible: true,
 }
 
 export const uiSlice = createSlice({
@@ -37,36 +37,36 @@ export const uiSlice = createSlice({
             state.accessoryPanelWidth = action.payload
         },
 
-        setUiAccessoryPanelOpen: (state, action: PayloadAction<boolean>) => {
-            state.showAccessoryPanel = action.payload
+        setUiAccessoryPanelVisible: (state, action: PayloadAction<boolean>) => {
+            state.isAccessoryPanelVisible = action.payload
             // Always close right sidebar when opening the left sidebar
             // Leave right sidebar unaffected when closing the left sidebar
-            state.showDetailsPanel = action.payload
+            state.isDetailsPanelVisible = action.payload
                 ? false
-                : state.showDetailsPanel
+                : state.isDetailsPanelVisible
         },
-        setUiDetailsPanelOpen: (state, action: PayloadAction<boolean>) => {
-            state.showDetailsPanel = action.payload
+        setUiDetailsPanelVisible: (state, action: PayloadAction<boolean>) => {
+            state.isDetailsPanelVisible = action.payload
             // Always close left sidebar when opening the right sidebar
             // Leave left sidebar unaffected when closing the right sidebar
-            state.showAccessoryPanel = action.payload
+            state.isAccessoryPanelVisible = action.payload
                 ? false
-                : state.showAccessoryPanel
+                : state.isAccessoryPanelVisible
         },
-        toggleUiSidebarHidden: (state) => {
-            state.hideMainSidebar = !state.hideMainSidebar
+        toggleUiMainSidebarVisible: (state) => {
+            state.isMainSidebarVisible = !state.isMainSidebarVisible
         },
-        toggleUiLayoutPanelHidden: (state) => {
-            state.hideLayoutPanel = !state.hideLayoutPanel
+        toggleUiLayoutPanelVisible: (state) => {
+            state.isLayoutPanelVisible = !state.isLayoutPanelVisible
         },
     },
     selectors: {
         getUiVisualizationType: (state) => state.visualizationType,
         getUiAccessoryPanelWidth: (state) => state.accessoryPanelWidth,
-        getUiAccessoryPanelOpen: (state) => state.showAccessoryPanel,
-        getUiDetailsPanelOpen: (state) => state.showDetailsPanel,
-        getUiSidebarHidden: (state) => state.hideMainSidebar,
-        getUiLayoutPanelHidden: (state) => state.hideLayoutPanel,
+        getUiAccessoryPanelVisible: (state) => state.isAccessoryPanelVisible,
+        getUiDetailsPanelVisible: (state) => state.isDetailsPanelVisible,
+        getUiMainSidebarVisible: (state) => state.isMainSidebarVisible,
+        getUiLayoutPanelVisible: (state) => state.isLayoutPanelVisible,
     },
 })
 
@@ -74,16 +74,16 @@ export const {
     clearUi,
     setUiVisualizationType,
     setUiAccessoryPanelWidth,
-    setUiAccessoryPanelOpen,
-    setUiDetailsPanelOpen,
-    toggleUiLayoutPanelHidden,
-    toggleUiSidebarHidden,
+    setUiAccessoryPanelVisible,
+    setUiDetailsPanelVisible,
+    toggleUiLayoutPanelVisible,
+    toggleUiMainSidebarVisible,
 } = uiSlice.actions
 export const {
     getUiVisualizationType,
     getUiAccessoryPanelWidth,
-    getUiAccessoryPanelOpen,
-    getUiDetailsPanelOpen,
-    getUiLayoutPanelHidden,
-    getUiSidebarHidden,
+    getUiAccessoryPanelVisible,
+    getUiDetailsPanelVisible,
+    getUiLayoutPanelVisible,
+    getUiMainSidebarVisible,
 } = uiSlice.selectors

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-09-04T12:57:09.897Z\n"
-"PO-Revision-Date: 2025-09-04T12:57:09.898Z\n"
+"POT-Creation-Date: 2025-09-05T14:14:46.013Z\n"
+"PO-Revision-Date: 2025-09-05T14:14:46.015Z\n"
 
 msgid "Hello {{name}}"
 msgstr "Hello {{name}}"
@@ -158,17 +158,17 @@ msgstr "Name"
 msgid "Download"
 msgstr "Download"
 
-msgid "Show layout"
-msgstr "Show layout"
-
 msgid "Hide layout"
 msgstr "Hide layout"
 
-msgid "Show dimensions sidebar"
-msgstr "Show dimensions sidebar"
+msgid "Show layout"
+msgstr "Show layout"
 
 msgid "Hide dimensions sidebar"
 msgstr "Hide dimensions sidebar"
+
+msgid "Show dimensions sidebar"
+msgstr "Show dimensions sidebar"
 
 msgid "Hide interpretations and details"
 msgstr "Hide interpretations and details"

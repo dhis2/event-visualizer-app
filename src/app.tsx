@@ -14,14 +14,17 @@ import {
     GridTopRow,
 } from '@components/grid'
 import { Toolbar } from '@components/toolbar/toolbar'
-import { getUiDetailsPanelOpen, getUiSidebarHidden } from '@store/ui-slice'
+import {
+    getUiDetailsPanelVisible,
+    getUiMainSidebarVisible,
+} from '@store/ui-slice'
 
 const EventVisualizer: FC = () => {
     const currentUser = useCurrentUser()
     const systemSettings = useSystemSettings()
 
-    const hideMainSidebar = useAppSelector(getUiSidebarHidden)
-    const showDetailsPanel = useAppSelector(getUiDetailsPanelOpen)
+    const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
+    const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
 
     console.log('systemSettings', systemSettings)
 
@@ -33,7 +36,7 @@ const EventVisualizer: FC = () => {
             <GridStartColumn>
                 <div
                     className={cx(classes.mainSidebar, {
-                        [classes.hidden]: hideMainSidebar,
+                        [classes.hidden]: !isMainSidebarVisible,
                     })}
                 >
                     Main sidebar
@@ -54,7 +57,7 @@ const EventVisualizer: FC = () => {
             <GridEndColumn>
                 <div
                     className={cx(classes.rightSidebar, {
-                        [classes.hidden]: !showDetailsPanel,
+                        [classes.hidden]: !isDetailsPanelVisible,
                     })}
                 >
                     Interpretations panel
