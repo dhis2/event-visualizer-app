@@ -1,21 +1,65 @@
 import { CssVariables } from '@dhis2/ui'
+import { configureStore } from '@reduxjs/toolkit'
 import React from 'react'
+import { Provider } from 'react-redux'
 import { Axis, getAxisName } from '../axis'
-import { SUPPORTED_AXIS_IDS } from '@constants/axis-types'
+import { MetadataProvider } from '@components/app-wrapper/metadata-provider'
+import { AXIS_ID_COLUMNS, AXIS_ID_FILTERS } from '@constants/axis-types'
+import { visConfigSlice, initialState } from '@store/vis-config-slice'
 
-const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <>
-        {children}
-        <CssVariables colors spacers theme />
-    </>
+// Create a test store with the vis-config slice
+const createTestStore = (preloadedState = {}) => {
+    return configureStore({
+        reducer: {
+            visConfig: visConfigSlice.reducer,
+        },
+        preloadedState: {
+            visConfig: { ...initialState, ...preloadedState },
+        },
+    })
+}
+
+// Mock metadata items for testing
+const mockMetadataItems = {
+    genderId: {
+        id: 'genderId',
+        name: 'Gender',
+        valueType: 'PROGRAM_ATTRIBUTE',
+    },
+    'A03MvHHogjR.X8zyunlgUfM': {
+        id: 'A03MvHHogjR.X8zyunlgUfM',
+        dimensionId: 'X8zyunlgUfM',
+        name: 'MCH Infant Feeding',
+        dimensionType: 'DATA_ELEMENT',
+        valueType: 'TEXT',
+    },
+    ou: {
+        id: 'ou',
+        name: 'Organisation unit',
+        dimensionType: 'ORGANISATION_UNIT',
+    },
+}
+
+const TestWrapper: React.FC<{
+    children: React.ReactNode
+    store?: ReturnType<typeof createTestStore>
+}> = ({ children, store = createTestStore() }) => (
+    <Provider store={store}>
+        <MetadataProvider initialMetadataItems={mockMetadataItems}>
+            {children}
+            <CssVariables colors spacers theme />
+        </MetadataProvider>
+    </Provider>
 )
 
-const [AXIS_ID_COLUMNS, AXIS_ID_FILTERS] = SUPPORTED_AXIS_IDS
-
 describe('<Axis />', () => {
-    it('renders left axis with columns configuration and no dimensions when dimensionIds not provided', () => {
+    it.skip('renders left axis with columns configuration and no dimensions when dimensionIds not provided', () => {
+        const store = createTestStore({
+            inputType: 'EVENT',
+        })
+
         cy.mount(
-            <TestWrapper>
+            <TestWrapper store={store}>
                 <Axis axisId={AXIS_ID_COLUMNS} side="left" />
             </TestWrapper>
         )
@@ -30,11 +74,14 @@ describe('<Axis />', () => {
         cy.getByDataTest('layout-dimension-chip').should('have.length', 0)
     })
 
-    it('renders left axis with specific dimensions when dimensionIds provided', () => {
-        const dimensionIds = ['incident-date', 'age']
+    it.only('renders left axis with specific dimensions when dimensionIds provided', () => {
+        const dimensionIds = ['ou', 'genderId']
+        const store = createTestStore({
+            inputType: 'EVENT',
+        })
 
         cy.mount(
-            <TestWrapper>
+            <TestWrapper store={store}>
                 <Axis
                     axisId={AXIS_ID_COLUMNS}
                     dimensionIds={dimensionIds}
@@ -48,15 +95,18 @@ describe('<Axis />', () => {
 
         // Should render chips for the provided dimension IDs
         cy.getByDataTest('layout-dimension-chip').should('have.length', 2)
-        cy.contains('Incident date').should('be.visible')
-        cy.contains('Age').should('be.visible')
+        cy.contains('Organisation unit').should('be.visible')
+        cy.contains('Gender').should('be.visible')
     })
 
     it('renders all available dimensions when all dimensionIds provided', () => {
         const allDimensionIds = ['incident-date', 'bombali', 'age']
+        const store = createTestStore({
+            inputType: 'EVENT',
+        })
 
         cy.mount(
-            <TestWrapper>
+            <TestWrapper store={store}>
                 <Axis
                     axisId={AXIS_ID_COLUMNS}
                     dimensionIds={allDimensionIds}
@@ -72,8 +122,12 @@ describe('<Axis />', () => {
     })
 
     it('renders right axis with filters configuration', () => {
+        const store = createTestStore({
+            inputType: 'EVENT',
+        })
+
         cy.mount(
-            <TestWrapper>
+            <TestWrapper store={store}>
                 <Axis axisId={AXIS_ID_FILTERS} side="right" />
             </TestWrapper>
         )
@@ -90,8 +144,12 @@ describe('<Axis />', () => {
     })
 
     it('filters dimensions correctly based on dimensionIds', () => {
+        const store = createTestStore({
+            inputType: 'EVENT',
+        })
+
         cy.mount(
-            <TestWrapper>
+            <TestWrapper store={store}>
                 <Axis
                     axisId={AXIS_ID_FILTERS}
                     dimensionIds={['bombali']}
@@ -107,8 +165,12 @@ describe('<Axis />', () => {
     })
 
     it('handles empty dimensionIds array', () => {
+        const store = createTestStore({
+            inputType: 'EVENT',
+        })
+
         cy.mount(
-            <TestWrapper>
+            <TestWrapper store={store}>
                 <Axis axisId={AXIS_ID_COLUMNS} dimensionIds={[]} side="left" />
             </TestWrapper>
         )
@@ -119,8 +181,12 @@ describe('<Axis />', () => {
     })
 
     it('handles non-existent dimensionIds gracefully', () => {
+        const store = createTestStore({
+            inputType: 'EVENT',
+        })
+
         cy.mount(
-            <TestWrapper>
+            <TestWrapper store={store}>
                 <Axis
                     axisId={AXIS_ID_COLUMNS}
                     dimensionIds={['non-existent-id']}

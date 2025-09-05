@@ -36,6 +36,8 @@ export const Axis: React.FC<AxisProps> = ({ axisId, side, dimensionIds }) => {
         getMetadataItem,
     })
 
+    console.log('Axis dimensions:', dimensions)
+
     return (
         <div
             className={cx({
