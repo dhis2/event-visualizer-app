@@ -8,6 +8,7 @@ import type { HoverMenuDropdown } from './hover-menu-dropdown'
 import type { HoverMenuList } from './hover-menu-list'
 import type { HoverMenuListItem } from './hover-menu-list-item'
 import type { InterpretationsAndDetailsToggler } from './interpretations-and-details-toggler'
+import type { PivotTable } from './pivot-table'
 import type { Toolbar } from './toolbar'
 import type { ToolbarSidebar } from './toolbar-sidebar'
 import type { UpdateButton } from './update-button'
@@ -22,6 +23,7 @@ declare module '@dhis2/analytics' {
     export const HoverMenuListItem: HoverMenuListItem
     export const HoverMenuList: HoverMenuList
     export const InterpretationsAndDetailsToggler: InterpretationsAndDetailsToggler
+    export const PivotTable: PivotTable
     export const Toolbar: Toolbar
     export const ToolbarSidebar: ToolbarSidebar
     export const UpdateButton: UpdateButton
