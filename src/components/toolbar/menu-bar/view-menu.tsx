@@ -12,30 +12,30 @@ import { setUserSidebarWidthToLocalStorage } from '@modules/local-storage'
 import { getCurrentVisId } from '@store/current-vis-slice'
 import {
     getUiAccessoryPanelWidth,
-    getUiDetailsPanelOpen,
-    getUiLayoutPanelHidden,
-    getUiSidebarHidden,
-    toggleUiLayoutPanelHidden,
-    toggleUiSidebarHidden,
     setUiAccessoryPanelWidth,
-    setUiDetailsPanelOpen,
+    getUiLayoutPanelVisible,
+    getUiMainSidebarVisible,
+    getUiDetailsPanelVisible,
+    toggleUiLayoutPanelVisible,
+    toggleUiMainSidebarVisible,
+    setUiDetailsPanelVisible,
 } from '@store/ui-slice'
 
 export const ViewMenu: FC = () => {
     const dispatch = useAppDispatch()
 
-    const isSidebarHidden = useAppSelector(getUiSidebarHidden)
-    const isLayoutPanelHidden = useAppSelector(getUiLayoutPanelHidden)
-    const isDetailsPanelOpen = useAppSelector(getUiDetailsPanelOpen)
+    const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
+    const isLayoutPanelVisible = useAppSelector(getUiLayoutPanelVisible)
+    const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
     const userSettingWidth = useAppSelector(getUiAccessoryPanelWidth)
     const id = useAppSelector(getCurrentVisId)
 
-    const toggleLayoutPanelHidden = useCallback(() => {
-        dispatch(toggleUiLayoutPanelHidden())
+    const toggleLayoutPanelVisible = useCallback(() => {
+        dispatch(toggleUiLayoutPanelVisible())
     }, [dispatch])
 
-    const toggleSidebarHidden = useCallback(() => {
-        dispatch(toggleUiSidebarHidden())
+    const toggleMainSidebarVisible = useCallback(() => {
+        dispatch(toggleUiMainSidebarVisible())
     }, [dispatch])
 
     const resetAccessorySidebarWidth = useCallback(() => {
@@ -43,17 +43,17 @@ export const ViewMenu: FC = () => {
         dispatch(setUiAccessoryPanelWidth(ACCESSORY_PANEL_DEFAULT_WIDTH))
     }, [dispatch])
 
-    const toggleDetailsPanelOpen = useCallback(() => {
-        dispatch(setUiDetailsPanelOpen(!isDetailsPanelOpen))
-    }, [dispatch, isDetailsPanelOpen])
+    const toggleDetailsPanelVisible = useCallback(() => {
+        dispatch(setUiDetailsPanelVisible(!isDetailsPanelVisible))
+    }, [dispatch, isDetailsPanelVisible])
 
-    const toggleLayoutPanelText = isLayoutPanelHidden
-        ? i18n.t('Show layout')
-        : i18n.t('Hide layout')
-    const toggleSidebarText = isSidebarHidden
-        ? i18n.t('Show dimensions sidebar')
-        : i18n.t('Hide dimensions sidebar')
-    const toggleDetailsPanelText = isDetailsPanelOpen
+    const toggleLayoutPanelText = isLayoutPanelVisible
+        ? i18n.t('Hide layout')
+        : i18n.t('Show layout')
+    const toggleSidebarText = isMainSidebarVisible
+        ? i18n.t('Hide dimensions sidebar')
+        : i18n.t('Show dimensions sidebar')
+    const toggleDetailsPanelText = isDetailsPanelVisible
         ? i18n.t('Hide interpretations and details')
         : i18n.t('Show interpretations and details')
 
@@ -62,11 +62,11 @@ export const ViewMenu: FC = () => {
             <HoverMenuList>
                 <HoverMenuListItem
                     label={toggleLayoutPanelText}
-                    onClick={toggleLayoutPanelHidden}
+                    onClick={toggleLayoutPanelVisible}
                 />
                 <HoverMenuListItem
                     label={toggleSidebarText}
-                    onClick={toggleSidebarHidden}
+                    onClick={toggleMainSidebarVisible}
                 />
                 <HoverMenuListItem
                     label={i18n.t('Reset sidebar width')}
@@ -77,7 +77,7 @@ export const ViewMenu: FC = () => {
                 />
                 <HoverMenuListItem
                     label={toggleDetailsPanelText}
-                    onClick={toggleDetailsPanelOpen}
+                    onClick={toggleDetailsPanelVisible}
                     disabled={!id}
                 />
             </HoverMenuList>
