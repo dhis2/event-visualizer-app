@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import { CurrentUser } from '@types'
 import type {
+    CurrentUser,
     CurrentVisualization,
     EventVisualizationType,
     VisualizationType,
