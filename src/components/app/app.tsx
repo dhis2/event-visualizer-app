@@ -3,8 +3,8 @@ import { CssVariables } from '@dhis2/ui'
 import cx from 'classnames'
 import type { FC } from 'react'
 import classes from './app.module.css'
-import { AppWrapper } from './components/app-wrapper'
-import { useAppSelector, useCurrentUser, useSystemSettings } from './hooks'
+import { AppWrapper } from '@components/app-wrapper'
+import { useMetadataItem } from '@components/app-wrapper/metadata-provider'
 import {
     GridCenterColumnBottom,
     GridCenterColumnTop,
@@ -14,6 +14,7 @@ import {
     GridTopRow,
 } from '@components/grid'
 import { Toolbar } from '@components/toolbar/toolbar'
+import { useAppSelector, useCurrentUser, useSystemSettings } from '@hooks'
 import {
     getUiDetailsPanelVisible,
     getUiMainSidebarVisible,
@@ -22,11 +23,12 @@ import {
 const EventVisualizer: FC = () => {
     const currentUser = useCurrentUser()
     const systemSettings = useSystemSettings()
+    const today = useMetadataItem('TODAY')
 
     const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
 
-    console.log('systemSettings', systemSettings)
+    console.log('systemSettings', today, systemSettings)
 
     return (
         <GridContainer>
@@ -68,11 +70,8 @@ const EventVisualizer: FC = () => {
     )
 }
 
-const App: FC = () => (
+export const App: FC = () => (
     <AppWrapper>
         <EventVisualizer />
     </AppWrapper>
 )
-
-// eslint-disable-next-line import/no-default-export
-export default App
