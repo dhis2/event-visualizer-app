@@ -1,14 +1,16 @@
-// import {
-//     AXIS_ID_COLUMNS,
-//     AXIS_ID_FILTERS,
-//     AXIS_ID_ROWS,
-// } from '@constants/axis-types'
-import { INPUT_TYPE_TRACKED_ENTITY } from '@constants/input-types'
-import { VIS_TYPE_LINE_LIST } from '@constants/visualization-types'
+import type { InputType } from '@constants/input-types'
+import type { SupportedVisType } from '@constants/visualization-types'
 import {
     layoutGetAxisIdDimensionIdsObject,
     layoutGetDimensionIdItemIdsObject,
 } from '@dhis2/analytics'
+
+interface GetFullDimensionIdParams {
+    dimensionId: string
+    programId?: string
+    programStageId?: string
+    inputType: InputType
+}
 
 // LL code formatDimensionId
 const getFullDimensionId = ({
@@ -16,9 +18,9 @@ const getFullDimensionId = ({
     programId,
     programStageId,
     inputType,
-}) => {
+}: GetFullDimensionIdParams): string => {
     return [
-        inputType === INPUT_TYPE_TRACKED_ENTITY ? programId : undefined,
+        inputType === 'TRACKED_ENTITY' ? programId : undefined,
         programStageId,
         dimensionId,
     ]
@@ -45,8 +47,8 @@ const getConditionsFromVisualization = (vis) =>
             {}
         )
 
-const getVisualizationLayout = (layout, type) => {
-    if (type === VIS_TYPE_LINE_LIST) {
+const getVisualizationLayout = (layout, type: SupportedVisType) => {
+    if (type === 'LINE_LIST') {
         return {
             columns: [...layout.columns, ...(layout.rows || [])],
             rows: [],

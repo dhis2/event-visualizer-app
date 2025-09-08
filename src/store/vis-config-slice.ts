@@ -1,10 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { InputType } from '@constants/input-types'
-import { INPUT_TYPE_EVENT } from '@constants/input-types'
-import {
-    VIS_TYPE_LINE_LIST,
-    type SupportedVisType,
-} from '@constants/visualization-types'
+import type { SupportedVisType } from '@constants/visualization-types'
 
 export interface VisConfigState {
     visualizationType: SupportedVisType
@@ -19,8 +15,8 @@ export interface VisConfigState {
 }
 
 export const initialState: VisConfigState = {
-    visualizationType: VIS_TYPE_LINE_LIST,
-    inputType: INPUT_TYPE_EVENT,
+    visualizationType: 'LINE_LIST',
+    inputType: 'EVENT',
     layout: {
         columns: [],
         filters: [],

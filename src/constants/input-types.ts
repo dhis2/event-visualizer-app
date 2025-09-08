@@ -1,8 +1,3 @@
-export const INPUT_TYPE_EVENT = 'INPUT_TYPE_EVENT'
-export const INPUT_TYPE_ENROLLMENT = 'INPUT_TYPE_ENROLLMENT'
-export const INPUT_TYPE_TRACKED_ENTITY = 'INPUT_TYPE_TRACKED_ENTITY'
+export const INPUT_TYPES = ['EVENT', 'ENROLLMENT', 'TRACKED_ENTITY'] as const
 
-export type InputType =
-    | typeof INPUT_TYPE_EVENT
-    | typeof INPUT_TYPE_ENROLLMENT
-    | typeof INPUT_TYPE_TRACKED_ENTITY
+export type InputType = (typeof INPUT_TYPES)[number]
