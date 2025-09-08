@@ -1,9 +1,10 @@
 import i18n from '@dhis2/d2-i18n'
 import { CssVariables } from '@dhis2/ui'
+import cx from 'classnames'
 import type { FC } from 'react'
-import './app.module.css'
-import { AppWrapper } from './components/app-wrapper'
-import { useRtkQuery, useSystemSettings } from './hooks'
+import classes from './app.module.css'
+import { AppWrapper } from '@components/app-wrapper'
+import { useMetadataItem } from '@components/app-wrapper/metadata-provider'
 import {
     GridCenterColumnBottom,
     GridCenterColumnTop,
@@ -14,25 +15,21 @@ import {
 } from '@components/grid'
 import { Toolbar } from '@components/toolbar/toolbar'
 import { LineListingLayout } from '@components/visualization-layout/line-listing-layout'
-import type { MeDto } from '@types'
+import { useAppSelector, useCurrentUser, useSystemSettings } from '@hooks'
+import {
+    getUiDetailsPanelVisible,
+    getUiMainSidebarVisible,
+} from '@store/ui-slice'
 
 const EventVisualizer: FC = () => {
-    const rtkqQuery = useRtkQuery({
-        resource: 'me',
-    })
+    const currentUser = useCurrentUser()
     const systemSettings = useSystemSettings()
+    const today = useMetadataItem('TODAY')
 
-    if (rtkqQuery.error) {
-        return <span>{i18n.t('ERROR')}</span>
-    }
+    const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
+    const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
 
-    if (rtkqQuery.isLoading) {
-        return <span>{i18n.t('Loading...')}</span>
-    }
-
-    const me = rtkqQuery.data as MeDto
-
-    console.log('systemSettings', systemSettings)
+    console.log('systemSettings', today, systemSettings)
 
     return (
         <GridContainer>
@@ -41,13 +38,9 @@ const EventVisualizer: FC = () => {
             </GridTopRow>
             <GridStartColumn>
                 <div
-                    style={{
-                        width: 260,
-                        height: '100%',
-                        padding: 8,
-                        boxSizing: 'border-box',
-                        borderRight: '1px solid #d5dde5',
-                    }}
+                    className={cx(classes.mainSidebar, {
+                        [classes.hidden]: !isMainSidebarVisible,
+                    })}
                 >
                     Main sidebar
                 </div>
@@ -59,19 +52,17 @@ const EventVisualizer: FC = () => {
                 <div style={{ padding: 8 }}>
                     <LineListingLayout />
                     <h1>Visualization Canvas</h1>
-                    <h2>{i18n.t('Hello {{name}}', { name: me.name })}</h2>
+                    <h2>
+                        {i18n.t('Hello {{name}}', { name: currentUser.name })}
+                    </h2>
                     <h3>{i18n.t('Welcome to DHIS2 with TypeScript!')}</h3>
                 </div>
             </GridCenterColumnBottom>
             <GridEndColumn>
                 <div
-                    style={{
-                        width: 260,
-                        height: '100%',
-                        padding: 8,
-                        boxSizing: 'border-box',
-                        borderLeft: '1px solid #d5dde5',
-                    }}
+                    className={cx(classes.rightSidebar, {
+                        [classes.hidden]: !isDetailsPanelVisible,
+                    })}
                 >
                     Interpretations panel
                 </div>
@@ -81,11 +72,8 @@ const EventVisualizer: FC = () => {
     )
 }
 
-const App: FC = () => (
+export const App: FC = () => (
     <AppWrapper>
         <EventVisualizer />
     </AppWrapper>
 )
-
-// eslint-disable-next-line import/no-default-export
-export default App

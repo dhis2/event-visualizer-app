@@ -1,0 +1,32 @@
+::-webkit-scrollbar {
+    inline-size: 8px;
+    block-size: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #fafafa;
+}
+::-webkit-scrollbar-thumb {
+    background: #d1d1d1;
+    border-radius: 3px;
+}
+
+.mainSidebar,
+.rightSidebar {
+    inline-size: 260px;
+    block-size: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+}
+
+.mainSidebar {
+    border-inline-end: 1px solid #d5dde5;
+}
+
+.rightSidebar {
+    border-inline-start: 1px solid #d5dde5;
+}
+
+.mainSidebar.hidden,
+.rightSidebar.hidden {
+    display: none;
+}

@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
 import { startAppListening } from './middleware-listener'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
+import { clearUi } from './ui-slice'
 import { setVisConfig } from './vis-config-slice'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { getVisualizationConfig } from '@modules/get-vis-config'
@@ -50,6 +51,7 @@ startAppListening({
             listenerApi.getState().navigation.visualizationId
 
         if (visualizationId === 'new') {
+            dispatch(clearUi())
             dispatch(clearSavedVis())
             dispatch(clearCurrentVis())
         } else {
