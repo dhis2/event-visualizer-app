@@ -13,7 +13,6 @@ import {
     GridTopRow,
 } from '@components/grid'
 import { Toolbar } from '@components/toolbar/toolbar'
-import { Axis } from '@components/visualization-layout/axis'
 import { LineListingLayout } from '@components/visualization-layout/line-listing-layout'
 import type { MeDto } from '@types'
 
@@ -33,8 +32,7 @@ const EventVisualizer: FC = () => {
 
     const me = rtkqQuery.data as MeDto
 
-    // console.log('systemSettings', systemSettings)
-    console.log('jj rendering EventVisualizer, me:', me)
+    console.log('systemSettings', systemSettings)
 
     return (
         <GridContainer>

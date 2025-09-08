@@ -35,7 +35,6 @@ class MetadataStore {
     private initialMetadataKeys = new Set<string>()
 
     constructor(initialMetadataItems?: Record<string, AnyMetadataItemInput>) {
-        console.log('jj MetadataStore constructor called')
         if (initialMetadataItems) {
             // Add initial metadata items to the store first
             Object.entries(initialMetadataItems).forEach(([key, item]) => {
@@ -51,12 +50,10 @@ class MetadataStore {
     }
 
     getMetadataItem(key: string): MetadataStoreItem | undefined {
-        console.log('jj Getting metadata item for key:', key)
         return this.map.get(key)
     }
 
     getMetadataItems(keys: string[]): Record<string, MetadataStoreItem> {
-        console.log('jj Getting metadata items for keys:', keys)
         return keys.reduce((metadataStoreItems, key) => {
             const item = this.map.get(key)
             if (item) {
@@ -85,7 +82,6 @@ class MetadataStore {
      * Notifies subscribers only if the item actually changed.
      */
     addMetadata(metadataInput: MetadataInput) {
-        console.log('jj Adding metadata:', metadataInput)
         // Track ids of items that were actually updated
         const updatedMetadataIds = new Set<string>()
 
@@ -136,17 +132,10 @@ class MetadataStore {
 const MetadataContext = createContext<MetadataStore | null>(null)
 
 export const MetadataProvider: FC<{ children: ReactNode }> = ({ children }) => {
-    const providerId = Math.random().toString(36).substr(2, 9)
-    console.log(`jj MetadataProvider rendering (${providerId})`)
     const [metadataStore] = useState(() => {
         const store = new MetadataStore(getInitialMetadata())
-        console.log(`jj MetadataStore created (${providerId}):`, store)
         return store
     })
-    console.log(
-        `jj MetadataProvider providing store (${providerId}):`,
-        metadataStore
-    )
     return (
         <MetadataContext.Provider value={metadataStore}>
             {children}
@@ -240,13 +229,8 @@ export type UseMetadataStoreReturnValue = Pick<
     'getMetadataItem' | 'getMetadataItems' | 'addMetadata'
 >
 export const useMetadataStore = (): UseMetadataStoreReturnValue => {
-    console.log('jj useMetadataStore called')
-    console.trace('jj useMetadataStore call stack')
-    console.log('jj MetadataContext:', MetadataContext)
     const metadataStore = useContext(MetadataContext)
-    console.log('jj useContext returned:', metadataStore)
     if (!metadataStore) {
-        console.error('jj missing metadataStore')
         throw new Error(
             'useMetadataStore must be used within a MetadataProvider'
         )
@@ -256,6 +240,5 @@ export const useMetadataStore = (): UseMetadataStoreReturnValue => {
         getMetadataItems: metadataStore.getMetadataItems.bind(metadataStore),
         addMetadata: metadataStore.addMetadata.bind(metadataStore),
     }))
-    console.log('jj executing function useMetadataStore returns api:', api)
     return api
 }
