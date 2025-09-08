@@ -5,7 +5,8 @@ type LineListPluginProps = {
     visualization: CurrentVisualization
     filters?: Record<string, string>
     isInModal?: boolean
-    responses: Record<string, string>[] // TODO figure out the type for the response
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    responses: any[] // TODO figure out the type for the response
 }
 
 export const LineListPlugin: FC<LineListPluginProps> = ({
@@ -15,6 +16,8 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     responses,
 }) => {
     console.log('LL plugin props', visualization, filters, isInModal, responses)
+
+    // TODO implement onDataSorted and any other function/callback that cannot rely on the Redux store
 
     return (
         <div style={{ border: '1px solid green' }}>

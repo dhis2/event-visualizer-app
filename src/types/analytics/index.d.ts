@@ -16,6 +16,8 @@ import type { UpdateButton } from './update-button'
 import type { EventVisualizationType, VisualizationType } from '@types'
 
 declare module '@dhis2/analytics' {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    export const Analytics: any
     export const CachedDataQueryProvider: CachedDataQueryProvider
     export const useCachedDataQuery: useCachedDataQuery
     export const DashboardPluginWrapper: DashboardPluginWrapper
@@ -29,6 +31,8 @@ declare module '@dhis2/analytics' {
     export const Toolbar: Toolbar
     export const ToolbarSidebar: ToolbarSidebar
     export const UpdateButton: UpdateButton
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    export const transformEventAggregateResponse: (any) => any
     export const visTypeDisplayNames: Array<
         Record<EventVisualizationType | VisualizationType, string>
     >
