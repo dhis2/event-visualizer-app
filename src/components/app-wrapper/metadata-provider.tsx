@@ -228,7 +228,7 @@ export type UseMetadataStoreReturnValue = Pick<
     'getMetadataItem' | 'getMetadataItems' | 'addMetadata'
 >
 export const useMetadataStore = (): UseMetadataStoreReturnValue => {
-    const metadataStore = useContext(MetadataContext)
+    const metadataStore = useContext(MetadataContext) as MetadataStore
     const [api] = useState(() => ({
         getMetadataItem: metadataStore.getMetadataItem.bind(metadataStore),
         getMetadataItems: metadataStore.getMetadataItems.bind(metadataStore),
