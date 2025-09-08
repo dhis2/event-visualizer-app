@@ -13,6 +13,8 @@ import {
     GridTopRow,
 } from '@components/grid'
 import { Toolbar } from '@components/toolbar/toolbar'
+import { Axis } from '@components/visualization-layout/axis'
+import { LineListingLayout } from '@components/visualization-layout/line-listing-layout'
 import type { MeDto } from '@types'
 
 const EventVisualizer: FC = () => {
@@ -31,7 +33,8 @@ const EventVisualizer: FC = () => {
 
     const me = rtkqQuery.data as MeDto
 
-    console.log('systemSettings', systemSettings)
+    // console.log('systemSettings', systemSettings)
+    console.log('jj rendering EventVisualizer, me:', me)
 
     return (
         <GridContainer>
@@ -56,6 +59,7 @@ const EventVisualizer: FC = () => {
             </GridCenterColumnTop>
             <GridCenterColumnBottom>
                 <div style={{ padding: 8 }}>
+                    <LineListingLayout />
                     <h1>Visualization Canvas</h1>
                     <h2>{i18n.t('Hello {{name}}', { name: me.name })}</h2>
                     <h3>{i18n.t('Welcome to DHIS2 with TypeScript!')}</h3>

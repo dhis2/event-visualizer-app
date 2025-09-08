@@ -1,7 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { InputType } from '@constants/input-types'
-import { INPUT_TYPE_ENROLLMENT } from '@constants/input-types'
-import type { SupportedVisType } from '@constants/visualization-types'
+import { INPUT_TYPE_EVENT } from '@constants/input-types'
+import {
+    VIS_TYPE_LINE_LIST,
+    type SupportedVisType,
+} from '@constants/visualization-types'
 
 export interface VisConfigState {
     visualizationType: SupportedVisType
@@ -9,37 +12,34 @@ export interface VisConfigState {
     layout: {
         columns: string[]
         filters: string[]
+        rows: string[]
     }
     itemsByDimension: Record<string, unknown>
     conditionsByDimension: Record<string, unknown>
 }
 
 export const initialState: VisConfigState = {
-    visualizationType: 'LINE_LIST',
-    inputType: INPUT_TYPE_ENROLLMENT,
+    visualizationType: VIS_TYPE_LINE_LIST,
+    inputType: INPUT_TYPE_EVENT,
     layout: {
-        columns: [
-            'enrollmentDate',
-            'ou',
-            'ZzYYXq4fJie.X8zyunlgUfM',
-            'A03MvHHogjR.X8zyunlgUfM',
-            'GxdhnY5wmHq',
-        ],
-        filters: ['cejWyOfXge6'],
+        columns: [],
+        filters: [],
+        rows: [],
     },
-    itemsByDimension: {
-        ou: ['fdc6uOvgoji'],
-        enrollmentDate: ['LAST_6_MONTHS'],
-    },
-    conditionsByDimension: {
-        GxdhnY5wmHq: 'GT:2500:LT:3000:NE:NV',
-    },
+    itemsByDimension: {},
+    conditionsByDimension: {},
 }
 
 export const visConfigSlice = createSlice({
     name: 'visConfig',
     initialState,
     reducers: {
+        setVisConfig: (
+            state,
+            action: PayloadAction<Partial<VisConfigState>>
+        ) => {
+            return { ...state, ...action.payload }
+        },
         setVisConfigVisualizationType: (
             state,
             action: PayloadAction<SupportedVisType>
@@ -80,6 +80,7 @@ export const visConfigSlice = createSlice({
 })
 
 export const {
+    setVisConfig,
     setVisConfigVisualizationType,
     setVisConfigLayout,
     setVisConfigInputType,

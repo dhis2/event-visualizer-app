@@ -2,7 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
 import { startAppListening } from './middleware-listener'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
+import { setVisConfig } from './vis-config-slice'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
+import { getVisualizationConfig } from '@modules/get-vis-config'
 import { SavedVisualization } from '@types'
 
 export interface NavigationState {
@@ -61,6 +63,14 @@ startAppListening({
                 dispatch(
                     setSavedVis(
                         eventVisualizationResult.data as SavedVisualization
+                    )
+                )
+
+                dispatch(
+                    setVisConfig(
+                        getVisualizationConfig(
+                            eventVisualizationResult.data as SavedVisualization
+                        )
                     )
                 )
 

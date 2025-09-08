@@ -13,16 +13,8 @@ export const LineListingLayout = () => {
 
     return (
         <div className={classes.layoutContainer}>
-            <Axis
-                axisId="AXIS_ID_COLUMNS"
-                side={LEFT_SIDE}
-                dimensionIds={columns}
-            />
-            <Axis
-                axisId="AXIS_ID_FILTERS"
-                side={RIGHT_SIDE}
-                dimensionIds={filters}
-            />
+            <Axis axisId="columns" side={LEFT_SIDE} dimensionIds={columns} />
+            <Axis axisId="filters" side={RIGHT_SIDE} dimensionIds={filters} />
         </div>
     )
 }

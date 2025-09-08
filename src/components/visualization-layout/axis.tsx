@@ -28,8 +28,11 @@ interface AxisProps {
 export const getAxisName = (axisId) => getAxisNames()[axisId]
 
 export const Axis: React.FC<AxisProps> = ({ axisId, side, dimensionIds }) => {
+    console.log('jj Axis start', axisId)
     const { getMetadataItem } = useMetadataStore()
+    console.log('jj Axis getMetadataItem:', getMetadataItem)
     const inputType = useAppSelector(getVisConfigInputType)
+
     const dimensions = getLayoutDimensions({
         dimensionIds: dimensionIds || [],
         inputType,
