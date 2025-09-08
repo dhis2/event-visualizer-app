@@ -1,9 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { SupportedVisType } from '@constants/visualization-types'
 import { getUserSidebarWidthFromLocalStorage } from '@modules/local-storage'
 
 export interface UiState {
-    visualizationType: SupportedVisType
     accessoryPanelWidth: number
     isAccessoryPanelVisible: boolean
     isDetailsPanelVisible: boolean
@@ -13,7 +11,6 @@ export interface UiState {
 }
 
 export const initialState: UiState = {
-    visualizationType: 'LINE_LIST',
     accessoryPanelWidth: getUserSidebarWidthFromLocalStorage(),
     isAccessoryPanelVisible: true,
     isDetailsPanelVisible: false,
@@ -27,12 +24,6 @@ export const uiSlice = createSlice({
     initialState,
     reducers: {
         clearUi: () => initialState,
-        setUiVisualizationType: (
-            state,
-            action: PayloadAction<SupportedVisType>
-        ) => {
-            state.visualizationType = action.payload
-        },
         setUiAccessoryPanelWidth: (state, action: PayloadAction<number>) => {
             state.accessoryPanelWidth = action.payload
         },
@@ -61,7 +52,6 @@ export const uiSlice = createSlice({
         },
     },
     selectors: {
-        getUiVisualizationType: (state) => state.visualizationType,
         getUiAccessoryPanelWidth: (state) => state.accessoryPanelWidth,
         getUiAccessoryPanelVisible: (state) => state.isAccessoryPanelVisible,
         getUiDetailsPanelVisible: (state) => state.isDetailsPanelVisible,
@@ -72,7 +62,6 @@ export const uiSlice = createSlice({
 
 export const {
     clearUi,
-    setUiVisualizationType,
     setUiAccessoryPanelWidth,
     setUiAccessoryPanelVisible,
     setUiDetailsPanelVisible,
@@ -80,7 +69,6 @@ export const {
     toggleUiMainSidebarVisible,
 } = uiSlice.actions
 export const {
-    getUiVisualizationType,
     getUiAccessoryPanelWidth,
     getUiAccessoryPanelVisible,
     getUiDetailsPanelVisible,
