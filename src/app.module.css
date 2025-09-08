@@ -9,3 +9,17 @@
     background: #d1d1d1;
     border-radius: 3px;
 }
+
+.mainSidebar,
+.rightSidebar {
+    inline-size: 260px;
+    block-size: 100%;
+    padding: 8px;
+    boxsizing: border-box;
+    borderleft: 1px solid #d5dde5;
+}
+
+.mainSidebar.hidden,
+.rightSidebar.hidden {
+    display: none;
+}
