@@ -27,7 +27,7 @@ const getFullDimensionId = ({
         .join('.')
 }
 
-const getConditionsFromVisualization = (vis) =>
+const getConditionsFromVisualization = (vis, inputType) =>
     [...vis.columns, ...vis.rows, ...vis.filters]
         .filter((item) => item.filter || item.legendSet)
         .reduce(
@@ -37,7 +37,7 @@ const getConditionsFromVisualization = (vis) =>
                     dimensionId: key.dimension,
                     programId: key.program?.id,
                     programStageId: key.programStage?.id,
-                    inputType: vis.inputType,
+                    inputType,
                 })]: {
                     condition: key.filter,
                     legendSet: key.legendSet?.id,
@@ -58,13 +58,16 @@ const getVisualizationLayout = (layout, type: SupportedVisType) => {
     return layout
 }
 
-export const getVisualizationConfig = (vis) => ({
-    visualizationType: vis.type,
-    inputType: vis.outputType, // The single location where outputType is renamed to inputType
-    layout: getVisualizationLayout(
-        layoutGetAxisIdDimensionIdsObject(vis),
-        vis.type
-    ),
-    itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
-    conditionsByDimension: getConditionsFromVisualization(vis),
-})
+export const getVisualizationConfig = (vis) => {
+    const inputType = vis.outputType
+    return {
+        visualizationType: vis.type,
+        inputType, // The single location where outputType is renamed to inputType
+        layout: getVisualizationLayout(
+            layoutGetAxisIdDimensionIdsObject(vis),
+            vis.type
+        ),
+        itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
+        conditionsByDimension: getConditionsFromVisualization(vis, inputType),
+    }
+}
