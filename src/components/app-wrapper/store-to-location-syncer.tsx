@@ -1,4 +1,4 @@
-import { Location } from 'history'
+import type { Location } from 'history'
 import queryString from 'query-string'
 import { useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector, useAppStore } from '@hooks'

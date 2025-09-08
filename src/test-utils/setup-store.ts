@@ -1,4 +1,5 @@
-import { configureStore, ReducersMapObject } from '@reduxjs/toolkit'
+import type { ReducersMapObject } from '@reduxjs/toolkit'
+import { configureStore } from '@reduxjs/toolkit'
 import type { RootState } from '@types'
 
 export const setupStore = (

@@ -2,7 +2,7 @@
  * Types exported from here can be imported as follows:
  * `import type { MyType } from '@types'` */
 import type { ContextType } from '@dhis2/app-service-data'
-import { TransformedAppCachedData } from '../components/app-wrapper/app-cached-data-query-provider'
+import type { TransformedAppCachedData } from '../components/app-wrapper/app-cached-data-query-provider'
 import type { ResponseErrorReport } from '@api/parse-engine-error'
 /* We have an ESLint rule in place to prevent imports from
  * `src/types/dhis2-openapi-schemas` anywhere else in the codebase.

@@ -1,5 +1,5 @@
 import { vi } from 'vitest'
-import { UseRtkQueryResult } from '@hooks'
+import type { UseRtkQueryResult } from '@hooks'
 
 export const createUseRtkQueryMockReturnValue = (
     payload: Partial<UseRtkQueryResult>
