@@ -24,8 +24,8 @@ import { getInitialMetadata } from './metadata-helpers/initial-metadata'
 
 declare global {
     interface Window {
-        getMetadaStore: () => Record<string, MetadataStoreItem>
-        getMetadaStoreItem: (key: string) => MetadataStoreItem | undefined
+        getMetadataStore: () => Record<string, MetadataStoreItem>
+        getMetadataStoreItem: (key: string) => MetadataStoreItem | undefined
     }
 }
 
@@ -43,8 +43,8 @@ class MetadataStore {
             })
         }
         if (process.env.NODE_ENV === 'development') {
-            window.getMetadaStore = () => Object.fromEntries(this.map)
-            window.getMetadaStoreItem = (key: string) =>
+            window.getMetadataStore = () => Object.fromEntries(this.map)
+            window.getMetadataStoreItem = (key: string) =>
                 this.getMetadataItem(key)
         }
     }
