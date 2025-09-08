@@ -11,12 +11,15 @@ import { SUPPORTED_VIS_TYPES } from '@constants/visualization-types'
 import { visTypeDisplayNames, ToolbarSidebar } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getVisTypeDescriptions } from '@modules/visualization'
-import { setUiVisualizationType, getUiVisualizationType } from '@store/ui-slice'
+import {
+    setVisConfigVisualizationType,
+    getVisConfigVisualizationType,
+} from '@store/vis-config-slice'
 
 export const VisualizationTypeSelector: FC = () => {
     const dispatch = useAppDispatch()
 
-    const visualizationType = useAppSelector(getUiVisualizationType)
+    const visualizationType = useAppSelector(getVisConfigVisualizationType)
 
     const [listIsOpen, setListIsOpen] = useState(false)
 
@@ -27,7 +30,7 @@ export const VisualizationTypeSelector: FC = () => {
     }
 
     const handleListItemClick = (visualizationType: SupportedVisType) => () => {
-        dispatch(setUiVisualizationType(visualizationType))
+        dispatch(setVisConfigVisualizationType(visualizationType))
         onItemClick()
         toggleList()
     }

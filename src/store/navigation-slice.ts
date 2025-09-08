@@ -5,7 +5,7 @@ import { clearSavedVis, setSavedVis } from './saved-vis-slice'
 import { clearUi } from './ui-slice'
 import { setVisConfig } from './vis-config-slice'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
-import { getVisualizationConfig } from '@modules/get-vis-config'
+import { getVisualizationConfig } from '@modules/get-visualization-config'
 import { SavedVisualization } from '@types'
 
 export interface NavigationState {
