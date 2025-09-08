@@ -15,8 +15,15 @@
     inline-size: 260px;
     block-size: 100%;
     padding: 8px;
-    boxsizing: border-box;
-    borderleft: 1px solid #d5dde5;
+    box-sizing: border-box;
+}
+
+.mainSidebar {
+    border-inline-end: 1px solid #d5dde5;
+}
+
+.rightSidebar {
+    border-inline-start: 1px solid #d5dde5;
 }
 
 .mainSidebar.hidden,
