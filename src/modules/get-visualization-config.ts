@@ -1,4 +1,4 @@
-import type { InputType } from '@constants/input-types'
+import type { SupportedInputType } from '@constants/input-types'
 import type { SupportedVisType } from '@constants/visualization-types'
 import {
     layoutGetAxisIdDimensionIdsObject,
@@ -9,10 +9,9 @@ interface GetFullDimensionIdParams {
     dimensionId: string
     programId?: string
     programStageId?: string
-    inputType: InputType
+    inputType: SupportedInputType
 }
 
-// LL code formatDimensionId
 const getFullDimensionId = ({
     dimensionId,
     programId,
@@ -59,21 +58,13 @@ const getVisualizationLayout = (layout, type: SupportedVisType) => {
     return layout
 }
 
-export const getVisualizationConfig = (vis) => {
-    console.log('getVisualizationConfig vis:', vis)
-    const axisDimensionIdsObj = layoutGetAxisIdDimensionIdsObject(vis)
-    console.log(
-        'getVisualizationConfig axisDimensionIdsObj:',
-        axisDimensionIdsObj
-    )
-    const cfg = {
-        visualizationType: vis.type,
-        inputType: vis.outputType, // The single location where outputType is renamed to inputType
-        layout: getVisualizationLayout(axisDimensionIdsObj, vis.type),
-        itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
-        conditionsByDimension: getConditionsFromVisualization(vis),
-    }
-    console.log('getVisualizationConfig cfg:', cfg)
-
-    return cfg
-}
+export const getVisualizationConfig = (vis) => ({
+    visualizationType: vis.type,
+    inputType: vis.outputType, // The single location where outputType is renamed to inputType
+    layout: getVisualizationLayout(
+        layoutGetAxisIdDimensionIdsObject(vis),
+        vis.type
+    ),
+    itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
+    conditionsByDimension: getConditionsFromVisualization(vis),
+})

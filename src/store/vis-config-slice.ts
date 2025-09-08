@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { InputType } from '@constants/input-types'
+import type { SupportedInputType } from '@constants/input-types'
 import type { SupportedVisType } from '@constants/visualization-types'
 
 export interface VisConfigState {
     visualizationType: SupportedVisType
-    inputType: InputType
+    inputType: SupportedInputType
     layout: {
         columns: string[]
         filters: string[]
@@ -48,7 +48,10 @@ export const visConfigSlice = createSlice({
         ) => {
             state.layout = action.payload
         },
-        setVisConfigInputType: (state, action: PayloadAction<InputType>) => {
+        setVisConfigInputType: (
+            state,
+            action: PayloadAction<SupportedInputType>
+        ) => {
             state.inputType = action.payload
         },
         setVisConfigItemsByDimension: (
