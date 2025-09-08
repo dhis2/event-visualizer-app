@@ -130,16 +130,14 @@ const providerDataTransformation = ({
 
 export const AppCachedDataQueryProvider: FC<{ children: ReactNode }> = ({
     children,
-}) => {
-    return (
-        <CachedDataQueryProvider
-            query={query}
-            dataTransformation={providerDataTransformation}
-        >
-            {children}
-        </CachedDataQueryProvider>
-    )
-}
+}) => (
+    <CachedDataQueryProvider
+        query={query}
+        dataTransformation={providerDataTransformation}
+    >
+        {children}
+    </CachedDataQueryProvider>
+)
 
 export const useAppCachedDataQuery = (): TransformedAppCachedData =>
     useCachedDataQuery<TransformedAppCachedData>()

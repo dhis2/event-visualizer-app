@@ -132,10 +132,9 @@ class MetadataStore {
 const MetadataContext = createContext<MetadataStore | null>(null)
 
 export const MetadataProvider: FC<{ children: ReactNode }> = ({ children }) => {
-    const [metadataStore] = useState(() => {
-        const store = new MetadataStore(getInitialMetadata())
-        return store
-    })
+    const [metadataStore] = useState(
+        () => new MetadataStore(getInitialMetadata())
+    )
     return (
         <MetadataContext.Provider value={metadataStore}>
             {children}
@@ -230,11 +229,6 @@ export type UseMetadataStoreReturnValue = Pick<
 >
 export const useMetadataStore = (): UseMetadataStoreReturnValue => {
     const metadataStore = useContext(MetadataContext)
-    if (!metadataStore) {
-        throw new Error(
-            'useMetadataStore must be used within a MetadataProvider'
-        )
-    }
     const [api] = useState(() => ({
         getMetadataItem: metadataStore.getMetadataItem.bind(metadataStore),
         getMetadataItems: metadataStore.getMetadataItems.bind(metadataStore),
