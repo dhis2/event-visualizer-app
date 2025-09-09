@@ -1,5 +1,5 @@
-import { Query } from '@dhis2/app-service-data'
-import { FC, ReactNode } from 'react'
+import type { Query } from '@dhis2/app-service-data'
+import type { FC, ReactNode } from 'react'
 
 type CachedDataQueryProviderProps = {
     children: ReactNode

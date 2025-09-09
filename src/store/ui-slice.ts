@@ -1,4 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
+import type { SupportedVisType } from '@constants/visualization-types'
 import { getUserSidebarWidthFromLocalStorage } from '@modules/local-storage'
 
 export interface UiState {
