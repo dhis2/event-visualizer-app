@@ -32,16 +32,17 @@ const getConditionsFromVisualization = (vis, inputType) =>
         .filter((item) => item.filter || item.legendSet)
         .reduce(
             (acc, key) => ({
-                ...acc,
-                [getFullDimensionId({
+                const dimensionId = getFullDimensionId({
                     dimensionId: key.dimension,
                     programId: key.program?.id,
                     programStageId: key.programStage?.id,
                     inputType,
-                })]: {
+                })
+                acc[dimensionId] = {
                     condition: key.filter,
                     legendSet: key.legendSet?.id,
-                },
+                }
+                return acc
             }),
             {}
         )
