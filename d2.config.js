@@ -12,7 +12,7 @@ const config = {
     },
 
     entryPoints: {
-        app: './src/app.tsx',
+        app: './src/app.ts',
     },
 
     viteConfigExtensions: 'vite-extensions.config.mts',
