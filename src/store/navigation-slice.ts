@@ -3,9 +3,9 @@ import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
 import { startAppListening } from './middleware-listener'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
 import { clearUi } from './ui-slice'
-import { setVisConfig } from './vis-config-slice'
+import { setVisUiConfig } from './vis-ui-config-slice'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
-import { getVisualizationConfig } from '@modules/get-visualization-config'
+import { getVisualizationUiConfig } from '@modules/get-visualization-ui-config'
 import { SavedVisualization } from '@types'
 
 export interface NavigationState {
@@ -69,8 +69,8 @@ startAppListening({
                 )
 
                 dispatch(
-                    setVisConfig(
-                        getVisualizationConfig(
+                    setVisUiConfig(
+                        getVisualizationUiConfig(
                             eventVisualizationResult.data as SavedVisualization
                         )
                     )

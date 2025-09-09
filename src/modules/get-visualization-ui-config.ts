@@ -19,7 +19,7 @@ const getFullDimensionId = ({
     inputType,
 }: GetFullDimensionIdParams): string => {
     return [
-        inputType === 'TRACKED_ENTITY' ? programId : undefined,
+        inputType === 'TRACKED_ENTITY_INSTANCE' ? programId : undefined,
         programStageId,
         dimensionId,
     ]
@@ -58,7 +58,7 @@ const getVisualizationLayout = (layout, type: SupportedVisType) => {
     return layout
 }
 
-export const getVisualizationConfig = (vis) => {
+export const getVisualizationUiConfig = (vis) => {
     const inputType = vis.outputType
     return {
         visualizationType: vis.type,

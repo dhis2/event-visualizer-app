@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { SupportedInputType } from '@constants/input-types'
 import type { SupportedVisType } from '@constants/visualization-types'
 
-export interface VisConfigState {
+export interface VisUiConfigState {
     visualizationType: SupportedVisType
     inputType: SupportedInputType
     layout: {
@@ -14,7 +14,7 @@ export interface VisConfigState {
     conditionsByDimension: Record<string, unknown>
 }
 
-export const initialState: VisConfigState = {
+export const initialState: VisUiConfigState = {
     visualizationType: 'LINE_LIST',
     inputType: 'EVENT',
     layout: {
@@ -26,41 +26,41 @@ export const initialState: VisConfigState = {
     conditionsByDimension: {},
 }
 
-export const visConfigSlice = createSlice({
-    name: 'visConfig',
+export const visUiConfigSlice = createSlice({
+    name: 'visUiConfig',
     initialState,
     reducers: {
-        setVisConfig: (
+        setVisUiConfig: (
             state,
-            action: PayloadAction<Partial<VisConfigState>>
+            action: PayloadAction<Partial<VisUiConfigState>>
         ) => {
             return { ...state, ...action.payload }
         },
-        setVisConfigVisualizationType: (
+        setVisUiConfigVisualizationType: (
             state,
             action: PayloadAction<SupportedVisType>
         ) => {
             state.visualizationType = action.payload
         },
-        setVisConfigLayout: (
+        setVisUiConfigLayout: (
             state,
-            action: PayloadAction<VisConfigState['layout']>
+            action: PayloadAction<VisUiConfigState['layout']>
         ) => {
             state.layout = action.payload
         },
-        setVisConfigInputType: (
+        setVisUiConfigInputType: (
             state,
             action: PayloadAction<SupportedInputType>
         ) => {
             state.inputType = action.payload
         },
-        setVisConfigItemsByDimension: (
+        setVisUiConfigItemsByDimension: (
             state,
             action: PayloadAction<Record<string, unknown>>
         ) => {
             state.itemsByDimension = action.payload
         },
-        setVisConfigConditionsByDimension: (
+        setVisUiConfigConditionsByDimension: (
             state,
             action: PayloadAction<Record<string, unknown>>
         ) => {
@@ -68,29 +68,29 @@ export const visConfigSlice = createSlice({
         },
     },
     selectors: {
-        getVisConfigVisualizationType: (state) => state.visualizationType,
-        getVisConfigLayout: (state) => state.layout,
-        getVisConfigInputType: (state) => state.inputType,
-        getVisConfigItemsByDimension: (state, dimensionId: string) =>
+        getVisUiConfigVisualizationType: (state) => state.visualizationType,
+        getVisUiConfigLayout: (state) => state.layout,
+        getVisUiConfigInputType: (state) => state.inputType,
+        getVisUiConfigItemsByDimension: (state, dimensionId: string) =>
             state.itemsByDimension[dimensionId],
-        getVisConfigConditionsByDimension: (state, dimensionId: string) =>
+        getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
             state.conditionsByDimension[dimensionId],
     },
 })
 
 export const {
-    setVisConfig,
-    setVisConfigVisualizationType,
-    setVisConfigLayout,
-    setVisConfigInputType,
-    setVisConfigItemsByDimension,
-    setVisConfigConditionsByDimension,
-} = visConfigSlice.actions
+    setVisUiConfig,
+    setVisUiConfigVisualizationType,
+    setVisUiConfigLayout,
+    setVisUiConfigInputType,
+    setVisUiConfigItemsByDimension,
+    setVisUiConfigConditionsByDimension,
+} = visUiConfigSlice.actions
 
 export const {
-    getVisConfigVisualizationType,
-    getVisConfigLayout,
-    getVisConfigInputType,
-    getVisConfigItemsByDimension,
-    getVisConfigConditionsByDimension,
-} = visConfigSlice.selectors
+    getVisUiConfigVisualizationType,
+    getVisUiConfigLayout,
+    getVisUiConfigInputType,
+    getVisUiConfigItemsByDimension,
+    getVisUiConfigConditionsByDimension,
+} = visUiConfigSlice.selectors

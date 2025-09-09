@@ -3,10 +3,10 @@ import userEvent from '@testing-library/user-event'
 import { vi, describe, it, beforeEach, expect } from 'vitest'
 import { VisualizationTypeSelector } from '../visualization-type-selector'
 import {
-    visConfigSlice,
+    visUiConfigSlice,
     initialState,
-    setVisConfigVisualizationType,
-} from '@store/vis-config-slice'
+    setVisUiConfigVisualizationType,
+} from '@store/vis-ui-config-slice'
 import { renderWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
 import { setupStore } from '@test-utils/setup-store'
 import type { RootState } from '@types'
@@ -23,11 +23,11 @@ describe('VisualizationTypeSelector', () => {
     beforeEach(() => {
         if (!store) {
             store = setupStore(
-                { visConfig: visConfigSlice.reducer },
-                { visConfig: initialState }
+                { visUiConfig: visUiConfigSlice.reducer },
+                { visUiConfig: initialState }
             )
         } else {
-            store.dispatch(setVisConfigVisualizationType('LINE_LIST'))
+            store.dispatch(setVisUiConfigVisualizationType('LINE_LIST'))
         }
     })
 
