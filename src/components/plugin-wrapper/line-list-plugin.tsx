@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import { CurrentVisualization } from '@types'
+import type { CurrentVisualization } from '@types'
 
 type LineListPluginProps = {
     visualization: CurrentVisualization

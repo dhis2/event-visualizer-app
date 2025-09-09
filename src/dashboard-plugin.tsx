@@ -4,7 +4,7 @@ import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
 import { useRtkQuery } from '@hooks'
 import './locales/index.js'
-import { CurrentUser, SavedVisualization } from '@types'
+import type { CurrentUser, SavedVisualization } from '@types'
 
 type DashboardPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']

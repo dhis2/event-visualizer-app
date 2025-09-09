@@ -1,6 +1,6 @@
 import type { FC } from 'react'
 import { PivotTable } from '@dhis2/analytics'
-import { CurrentVisualization } from '@types'
+import type { CurrentVisualization } from '@types'
 
 type PivotTablePluginProps = {
     visualization: CurrentVisualization
