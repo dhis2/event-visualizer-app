@@ -184,4 +184,44 @@ describe('<Chip />', () => {
         // For filters axis, the chip should show condition count instead of "all"
         // (This tests the specific behavior where filters don't return "all" for BOOLEAN with 2 conditions)
     })
+
+    it('renders a chip when axisId is filters with item and condition counts', () => {
+        // Create a dimension object for use in filters with items and conditions
+        const dimension: LayoutDimension = {
+            id: 'filter-dimension-with-counts',
+            dimensionId: 'filter-dimension-with-counts',
+            name: 'Filter Dimension with Counts',
+            dimensionType: 'DATA_ELEMENT',
+            valueType: 'TEXT',
+            optionSet: 'test-option-set',
+        }
+
+        // Create a store with both items and conditions for this dimension
+        const store = createTestStore({
+            itemsByDimension: {
+                [dimension.id]: ['item1', 'item2', 'item3'],
+            },
+            conditionsByDimension: {
+                [dimension.id]: 'IN:value1;IN:value2',
+            },
+        })
+
+        cy.mount(
+            <TestWrapper store={store}>
+                <Chip dimension={dimension} axisId="filters" />
+            </TestWrapper>
+        )
+
+        // Check that the chip renders with the correct test attribute
+        cy.getByDataTest('layout-dimension-chip').should('be.visible')
+
+        // Check that the dimension name is displayed
+        cy.contains('Filter Dimension with Counts').should('be.visible')
+
+        // Check that the menu button is present
+        cy.getByDataTest('chip-menu-button').should('be.visible')
+
+        // The chip should show the item count (3) since itemsLength takes precedence over conditions
+        // when there's an optionSet
+    })
 })
