@@ -7,7 +7,6 @@ import { clearUi } from './ui-slice'
 import { setVisUiConfig } from './vis-ui-config-slice'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { getVisualizationUiConfig } from '@modules/get-visualization-ui-config'
-import type { SavedVisualization } from '@types'
 
 export interface NavigationState {
     visualizationId: string | 'new'
@@ -56,34 +55,18 @@ startAppListening({
             dispatch(clearSavedVis())
             dispatch(clearCurrentVis())
         } else {
-            try {
-                const eventVisualizationResult = await dispatch(
-                    eventVisualizationsApi.endpoints.getVisualization.initiate(
-                        visualizationId
-                    )
+            const { data, error } = await dispatch(
+                eventVisualizationsApi.endpoints.getVisualization.initiate(
+                    visualizationId
                 )
+            )
 
-                dispatch(
-                    setSavedVis(
-                        eventVisualizationResult.data as SavedVisualization
-                    )
-                )
-
-                dispatch(
-                    setVisUiConfig(
-                        getVisualizationUiConfig(
-                            eventVisualizationResult.data as SavedVisualization
-                        )
-                    )
-                )
-
-                dispatch(
-                    setCurrentVis(
-                        eventVisualizationResult.data as SavedVisualization
-                    )
-                )
-            } catch (err) {
-                console.log('getEventVisualization error', err)
+            if (data) {
+                dispatch(setSavedVis(data))
+                dispatch(setVisUiConfig(getVisualizationUiConfig(data)))
+                dispatch(setCurrentVis(data))
+            } else if (error) {
+                console.error(error)
             }
         }
     },
