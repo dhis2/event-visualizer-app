@@ -34,25 +34,28 @@ const getFullDimensionId = ({
 const getConditionsFromVisualization = (
     vis: SavedVisualization,
     inputType: SupportedInputType
-) =>
-    [...vis.columns, ...vis.rows, ...vis.filters]
-        .filter((item) => item.filter || item.legendSet)
-        .reduce(
-            (acc, key) => ({
-                const dimensionId = getFullDimensionId({
-                    dimensionId: key.dimension,
-                    programId: key.program?.id,
-                    programStageId: key.programStage?.id,
-                    inputType,
-                })
-                acc[dimensionId] = {
-                    condition: key.filter,
-                    legendSet: key.legendSet?.id,
-                }
-                return acc
-            }),
-            {}
-        )
+): Record<string, { condition?: string; legendSet?: string }> => {
+    const result: Record<string, { condition?: string; legendSet?: string }> =
+        {}
+    const items = [...vis.columns, ...vis.rows, ...vis.filters].filter(
+        (item) => item.filter || item.legendSet
+    )
+
+    for (const item of items) {
+        const dimensionId = getFullDimensionId({
+            dimensionId: item.dimension,
+            programId: item.program?.id,
+            programStageId: item.programStage?.id,
+            inputType,
+        })
+        result[dimensionId] = {
+            condition: item.filter,
+            legendSet: item.legendSet?.id,
+        }
+    }
+
+    return result
+}
 
 const getVisualizationLayout = (layout, type: SupportedVisType) => {
     if (type === 'LINE_LIST') {
