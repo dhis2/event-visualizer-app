@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { getVisualizationUiConfig } from '@modules/get-visualization-ui-config'
+import type { SavedVisualization } from '@types'
 
 const testCases = {
     lineListEnrollment: {
@@ -303,7 +304,9 @@ describe('getVisualizationUiConfig', () => {
     it.each(Object.entries(testCases))(
         'should return correct config for %s visualization',
         (name, { input, expected }) => {
-            const result = getVisualizationUiConfig(input)
+            const result = getVisualizationUiConfig(
+                input as unknown as SavedVisualization
+            )
             expect(result).toEqual(expected)
         }
     )

@@ -1,9 +1,13 @@
 import type { SupportedInputType } from '@constants/input-types'
-import type { SupportedVisType } from '@constants/visualization-types'
+import {
+    convertToSupportedVisType,
+    type SupportedVisType,
+} from '@constants/visualization-types'
 import {
     layoutGetAxisIdDimensionIdsObject,
     layoutGetDimensionIdItemIdsObject,
 } from '@dhis2/analytics'
+import { SavedVisualization } from '@types'
 
 interface GetFullDimensionIdParams {
     dimensionId: string
@@ -27,7 +31,10 @@ const getFullDimensionId = ({
         .join('.')
 }
 
-const getConditionsFromVisualization = (vis, inputType) =>
+const getConditionsFromVisualization = (
+    vis: SavedVisualization,
+    inputType: SupportedInputType
+) =>
     [...vis.columns, ...vis.rows, ...vis.filters]
         .filter((item) => item.filter || item.legendSet)
         .reduce(
@@ -58,14 +65,15 @@ const getVisualizationLayout = (layout, type: SupportedVisType) => {
     return layout
 }
 
-export const getVisualizationUiConfig = (vis) => {
+export const getVisualizationUiConfig = (vis: SavedVisualization) => {
     const inputType = vis.outputType // The single location where outputType is renamed to inputType
+    const supportedVisType = convertToSupportedVisType(vis.type)
     return {
-        visualizationType: vis.type,
+        visualizationType: supportedVisType,
         inputType,
         layout: getVisualizationLayout(
             layoutGetAxisIdDimensionIdsObject(vis),
-            vis.type
+            supportedVisType
         ),
         itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
         conditionsByDimension: getConditionsFromVisualization(vis, inputType),
