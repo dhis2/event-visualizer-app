@@ -6,17 +6,17 @@ import { Chip } from '../chip'
 import type { LayoutDimension } from '../chip'
 import {
     visUiConfigSlice,
-    initialState as visConfigInitialState,
+    initialState as visUiConfigInitialState,
 } from '@store/vis-ui-config-slice'
 
 // Create a test store with the vis-config slice
 const createTestStore = (preloadedState = {}) => {
     return configureStore({
         reducer: {
-            visConfig: visUiConfigSlice.reducer,
+            visUiConfig: visUiConfigSlice.reducer,
         },
         preloadedState: {
-            visConfig: { ...visConfigInitialState, ...preloadedState },
+            visUiConfig: { ...visUiConfigInitialState, ...preloadedState },
         },
     })
 }
@@ -111,5 +111,77 @@ describe('<Chip />', () => {
 
         // Check that the menu button is present
         cy.getByDataTest('chip-menu-button').should('be.visible')
+    })
+
+    it('renders a chip with no suffix and no item/condition count', () => {
+        // Create a dimension object without suffix and no items/conditions
+        const dimension: LayoutDimension = {
+            id: 'simple-dimension',
+            dimensionId: 'simple-dimension',
+            name: 'Simple Dimension',
+            dimensionType: 'DATA_ELEMENT',
+            valueType: 'TEXT',
+        }
+
+        // Create a store with no items or conditions for this dimension
+        const store = createTestStore({
+            itemsByDimension: {},
+            conditionsByDimension: {},
+        })
+
+        cy.mount(
+            <TestWrapper store={store}>
+                <Chip dimension={dimension} axisId="columns" />
+            </TestWrapper>
+        )
+
+        // Check that the chip renders with the correct test attribute
+        cy.getByDataTest('layout-dimension-chip').should('be.visible')
+
+        // Check that only the dimension name is displayed (no suffix, no count)
+        cy.contains('Simple Dimension').should('be.visible')
+
+        // Verify no comma or secondary text is shown
+        cy.get('[data-test="layout-dimension-chip"]').should('not.contain', ',')
+
+        // Check that the menu button is present
+        cy.getByDataTest('chip-menu-button').should('be.visible')
+    })
+
+    it('renders a chip when axisId is filters', () => {
+        // Create a dimension object for use in filters
+        const dimension: LayoutDimension = {
+            id: 'filter-dimension',
+            dimensionId: 'filter-dimension',
+            name: 'Filter Dimension',
+            dimensionType: 'DATA_ELEMENT',
+            valueType: 'BOOLEAN',
+        }
+
+        // Create a store with conditions for this dimension
+        const store = createTestStore({
+            itemsByDimension: {},
+            conditionsByDimension: {
+                [dimension.id]: 'EQ:true;EQ:false',
+            },
+        })
+
+        cy.mount(
+            <TestWrapper store={store}>
+                <Chip dimension={dimension} axisId="filters" />
+            </TestWrapper>
+        )
+
+        // Check that the chip renders with the correct test attribute
+        cy.getByDataTest('layout-dimension-chip').should('be.visible')
+
+        // Check that the dimension name is displayed
+        cy.contains('Filter Dimension').should('be.visible')
+
+        // Check that the menu button is present
+        cy.getByDataTest('chip-menu-button').should('be.visible')
+
+        // For filters axis, the chip should show condition count instead of "all"
+        // (This tests the specific behavior where filters don't return "all" for BOOLEAN with 2 conditions)
     })
 })

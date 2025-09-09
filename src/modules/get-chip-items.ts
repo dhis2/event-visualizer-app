@@ -2,10 +2,6 @@ import i18n from '@dhis2/d2-i18n'
 import type { SupportedAxis } from '@constants/axis-types'
 import type { SupportedDimensionType } from '@constants/dimension-types'
 import type { SupportedInputType } from '@constants/input-types'
-import {
-    VALUE_TYPE_TRUE_ONLY,
-    VALUE_TYPE_BOOLEAN,
-} from '@constants/value-types'
 import type { SupportedValueType } from '@constants/value-types'
 
 const DIMENSION_ID_ORGUNIT = 'ou'
@@ -48,8 +44,8 @@ export const getChipItems = ({
     }
 
     if (
-        ((valueType === VALUE_TYPE_TRUE_ONLY && conditionsLength === 1) ||
-            (valueType === VALUE_TYPE_BOOLEAN && conditionsLength === 2)) &&
+        ((valueType === 'TRUE_ONLY' && conditionsLength === 1) ||
+            (valueType === 'BOOLEAN' && conditionsLength === 2)) &&
         axisId !== 'filters'
     ) {
         return i18n.t('all')
