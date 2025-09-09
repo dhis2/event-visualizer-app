@@ -1,9 +1,8 @@
-import { Store } from '@reduxjs/toolkit'
+import type { Store } from '@reduxjs/toolkit'
 import { render } from '@testing-library/react'
-import { PropsWithChildren } from 'react'
-import type { ReactElement } from 'react'
+import type { PropsWithChildren, ReactElement } from 'react'
 import { Provider } from 'react-redux'
-import { setupStore } from './setup-store'
+import type { setupStore } from './setup-store'
 
 export const renderWithReduxStoreProvider = (
     ui: ReactElement,

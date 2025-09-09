@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import type { SavedVisualization, EmptyVisualization } from '@types'
 
 const initialState: SavedVisualization | EmptyVisualization = {}

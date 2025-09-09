@@ -1,7 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import { MenuItem, MenuSectionHeader } from '@dhis2/ui'
 import type { FC } from 'react'
-import { DownloadFn, FileFormat } from './types'
+import type { DownloadFn, FileFormat } from './types'
 import { HoverMenuListItem } from '@dhis2/analytics'
 
 type PlainDataSourceSubMenuProps = {
