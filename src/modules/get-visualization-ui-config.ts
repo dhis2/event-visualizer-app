@@ -59,10 +59,10 @@ const getVisualizationLayout = (layout, type: SupportedVisType) => {
 }
 
 export const getVisualizationUiConfig = (vis) => {
-    const inputType = vis.outputType
+    const inputType = vis.outputType // The single location where outputType is renamed to inputType
     return {
         visualizationType: vis.type,
-        inputType, // The single location where outputType is renamed to inputType
+        inputType,
         layout: getVisualizationLayout(
             layoutGetAxisIdDimensionIdsObject(vis),
             vis.type
