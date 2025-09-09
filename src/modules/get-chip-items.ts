@@ -1,0 +1,68 @@
+import i18n from '@dhis2/d2-i18n'
+import type { SupportedAxis } from '@constants/axis-types'
+import type { SupportedDimensionType } from '@constants/dimension-types'
+import type { SupportedInputType } from '@constants/input-types'
+import {
+    VALUE_TYPE_TRUE_ONLY,
+    VALUE_TYPE_BOOLEAN,
+} from '@constants/value-types'
+import type { SupportedValueType } from '@constants/value-types'
+
+const DIMENSION_ID_ORGUNIT = 'ou'
+
+interface ChipDimension {
+    id: string
+    dimensionType?: SupportedDimensionType
+    optionSet?: string
+    valueType?: SupportedValueType
+}
+
+interface GetChipItemsParams {
+    dimension: ChipDimension
+    conditionsLength: number | undefined
+    itemsLength: number | undefined
+    inputType: SupportedInputType
+    axisId: SupportedAxis
+}
+
+export const getChipItems = ({
+    dimension,
+    conditionsLength,
+    itemsLength,
+    inputType,
+    axisId,
+}: GetChipItemsParams): string | number | null => {
+    const { id, dimensionType, optionSet, valueType } = dimension
+
+    if (
+        ((inputType !== 'TRACKED_ENTITY_INSTANCE' &&
+            id === DIMENSION_ID_ORGUNIT) ||
+            dimensionType === 'PERIOD') &&
+        !itemsLength
+    ) {
+        return null
+    }
+
+    if (!conditionsLength && !itemsLength && axisId !== 'filters') {
+        return i18n.t('all')
+    }
+
+    if (
+        ((valueType === VALUE_TYPE_TRUE_ONLY && conditionsLength === 1) ||
+            (valueType === VALUE_TYPE_BOOLEAN && conditionsLength === 2)) &&
+        axisId !== 'filters'
+    ) {
+        return i18n.t('all')
+    }
+
+    if (optionSet || itemsLength) {
+        // TODO - there is a bug here if optionSet and no itemsLength
+        // you end up with '0' shown on the chip, without styling
+        // Dimension "Gender" falls into this category
+        return itemsLength || conditionsLength || 0
+    } else if (conditionsLength) {
+        return conditionsLength
+    }
+
+    return null
+}

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-09-05T14:14:46.013Z\n"
-"PO-Revision-Date: 2025-09-05T14:14:46.015Z\n"
+"POT-Creation-Date: 2025-09-09T11:10:04.018Z\n"
+"PO-Revision-Date: 2025-09-09T11:10:04.019Z\n"
 
 msgid "Hello {{name}}"
 msgstr "Hello {{name}}"
@@ -181,6 +181,9 @@ msgstr "View"
 
 msgid "Reset sidebar width"
 msgstr "Reset sidebar width"
+
+msgid "all"
+msgstr "all"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
