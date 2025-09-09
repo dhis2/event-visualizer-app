@@ -7,7 +7,7 @@ import {
     layoutGetAxisIdDimensionIdsObject,
     layoutGetDimensionIdItemIdsObject,
 } from '@dhis2/analytics'
-import { SavedVisualization } from '@types'
+import type { SavedVisualization } from '@types'
 
 interface GetFullDimensionIdParams {
     dimensionId: string
