@@ -7,8 +7,8 @@ import './locales/index.js'
 import { CurrentUser, SavedVisualization } from '@types'
 
 type DashboardPluginProps = {
+    displayProperty: CurrentUser['settings']['displayProperty']
     visualization: SavedVisualization
-    displayProperty: CurrentUser['settings']['displayNameProperty']
     filters?: Record<string, string>
 }
 
@@ -21,7 +21,13 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
             resource: 'eventVisualizations',
             id: props.visualization.id, // TODO this should be just passed as visualizationId
             params: {
-                fields: getVisualizationQueryFields(props.displayProperty),
+                fields: getVisualizationQueryFields(
+                    // derive displayNameProperty from displayProperty
+                    // this depends on user settings and we only receive displayProperty in props
+                    props.displayProperty === 'name'
+                        ? 'displayName'
+                        : 'displayShortName'
+                ),
             },
         }
     )
@@ -37,13 +43,14 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
         return <div>Error loading event visualization: {error.message}</div>
     }
 
-    // TODO implement onDataSorted and any other function/callback that cannot rely on the Redux store
-    // these need to be passed to PluginWrapper below
-
     return (
         <DashboardPluginWrapper {...props}>
             {(props) => (
-                <PluginWrapper visualization={data} filters={props.filters} />
+                <PluginWrapper
+                    displayProperty={props.displayProperty}
+                    filters={props.filters}
+                    visualization={data}
+                />
             )}
         </DashboardPluginWrapper>
     )

@@ -5,30 +5,37 @@ import { useEffect, useState } from 'react'
 import { LineListPlugin } from './line-list-plugin'
 import { PivotTablePlugin } from './pivot-table-plugin'
 import { Analytics, transformEventAggregateResponse } from '@dhis2/analytics'
-import { CurrentVisualization } from '@types'
+import type { CurrentUser, CurrentVisualization } from '@types'
 
 type PluginWrapperProps = {
+    displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     filters?: Record<string, string> // XXX verify this type
+    onResponsesReceived?: (responses: unknown[]) => void
 }
 
 export const PluginWrapper: FC<PluginWrapperProps> = ({
+    displayProperty,
     visualization,
     filters,
+    onResponsesReceived,
     ...props
 }) => {
-    console.log('plugin wrapper received visualization', visualization)
-    console.log('plugin wrapper received props', props)
+    console.log(
+        'plugin wrapper received',
+        visualization,
+        filters,
+        displayProperty
+    )
+    console.log('plugin wrapper received other props', props)
 
     // TODO handle dashboard filters here depending on vis type?!
 
-    // TODO filters.relativePeriodDate is also passed when viewing an interpretation via the InterpretationModal from analytics
+    // filters.relativePeriodDate is passed when viewing an interpretation via the InterpretationModal from analytics
     // this needs to be used when requesting analytics data
     // props.isInModal is also passed in this case
 
-    // TODO fetch analytics here and pass the responses to the plugin
-    // (for PT the transformation needs to be applied to the responses)
     const dataEngine = useDataEngine()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
 
@@ -40,7 +47,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                 let req = new analyticsEngine.request()
                     .fromVisualization(visualization)
                     .withProgram(visualization.program?.id)
-                    //.withDisplayProperty(displayProperty.toUpperCase())
+                    .withDisplayProperty(displayProperty?.toUpperCase())
                     .withIncludeMetadataDetails()
 
                 if (filters?.relativePeriodDate) {
@@ -99,18 +106,21 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                 //        }
                 //    }
                 //
-                //    const analyticsApiEndpoint = getAnalyticsEndpoint(visualization.outputType)
-                //
-                //    const rawResponse = await analyticsEngine[analyticsApiEndpoint].getQuery(
-                //        req
-                //    )
+                //                const analyticsApiEndpoint = getAnalyticsEndpoint(
+                //                    visualization.outputType
+                //                )
 
+                const rawResponse = await analyticsEngine[
+                    'events' //analyticsApiEndpoint
+                ].getQuery(req)
+
+                onResponsesReceived?.(rawResponse)
                 setResponses([rawResponse])
             } else if (visualization.type === 'PIVOT_TABLE') {
                 let req = new analyticsEngine.request()
                     .fromVisualization(visualization)
                     .withProgram(visualization.program?.id)
-                    //.withDisplayProperty(displayProperty.toUpperCase())
+                    .withDisplayProperty(displayProperty?.toUpperCase())
                     .withIncludeMetadataDetails()
 
                 if (filters?.relativePeriodDate) {
@@ -123,16 +133,25 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
 
                 console.log('PT rawResponse', rawResponse)
 
+                // response for PT needs to be transformed
+                const transformedResponse =
+                    transformEventAggregateResponse(rawResponse)
+
+                onResponsesReceived?.(rawResponse)
                 setResponses([
-                    new analyticsEngine.response(
-                        transformEventAggregateResponse(rawResponse)
-                    ),
+                    new analyticsEngine.response(transformedResponse),
                 ])
             }
         }
 
         fetchData()
-    }, [visualization, filters, analyticsEngine])
+    }, [
+        displayProperty,
+        filters,
+        visualization,
+        analyticsEngine,
+        onResponsesReceived,
+    ])
 
     if (visualization.type === 'LINE_LIST') {
         return (

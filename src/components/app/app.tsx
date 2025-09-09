@@ -14,7 +14,7 @@ import {
 } from '@components/grid'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { Toolbar } from '@components/toolbar/toolbar'
-import { useAppSelector } from '@hooks'
+import { useAppSelector, useCurrentUser } from '@hooks'
 import { getCurrentVis } from '@store/current-vis-slice'
 import {
     getUiDetailsPanelVisible,
@@ -22,6 +22,7 @@ import {
 } from '@store/ui-slice'
 
 const EventVisualizer: FC = () => {
+    const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)
     const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
@@ -47,7 +48,14 @@ const EventVisualizer: FC = () => {
                 <div style={{ padding: 8 }}>
                     <h1>Visualization Canvas</h1>
                     <h3>{i18n.t('Welcome to DHIS2 with TypeScript!')}</h3>
-                    {currentVis && <PluginWrapper visualization={currentVis} />}
+                    {currentVis && (
+                        <PluginWrapper
+                            visualization={currentVis}
+                            displayProperty={
+                                currentUser.settings.displayProperty
+                            }
+                        />
+                    )}
                 </div>
             </GridCenterColumnBottom>
             <GridEndColumn>

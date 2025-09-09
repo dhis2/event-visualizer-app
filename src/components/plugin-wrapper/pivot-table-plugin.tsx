@@ -5,7 +5,7 @@ import { CurrentVisualization } from '@types'
 type PivotTablePluginProps = {
     visualization: CurrentVisualization
     //    filters?: Record<string, string>
-    //    isInModal?: boolean
+    isInModal?: boolean
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     responses: any[] // TODO figure out the type for the response
     legendSets: Record<string, string>[]
@@ -19,9 +19,17 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
     visualization,
     responses,
     legendSets,
+    isInModal,
     style = STYLE_PROP_DEFAULT,
 }) => {
-    console.log('PT plugin props', visualization, responses, legendSets, style)
+    console.log(
+        'PT plugin props',
+        visualization,
+        responses,
+        legendSets,
+        isInModal,
+        style
+    )
 
     // TODO implement onDataSorted and any other function/callback that cannot rely on the Redux store
 
