@@ -28,4 +28,16 @@ declare module '@dhis2/analytics' {
     export const visTypeDisplayNames: Array<
         Record<EventVisualizationType | VisualizationType, string>
     >
+    export const layoutGetAxisIdDimensionIdsObject: (
+        layout: VisUiConfigState['layout']
+    ) => {
+        columns?: string[]
+        rows?: string[]
+        filters?: string[]
+    }
+    export const layoutGetDimensionIdItemIdsObject: (
+        layout: VisUiConfigState['layout']
+    ) => {
+        [dimensionId: string]: string[]
+    }
 }
