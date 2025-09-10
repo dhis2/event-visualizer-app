@@ -66,8 +66,6 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
         return false
     }
 
-    console.log('jj ', { axisId, dimension, items, conditions })
-
     return (
         <div
             className={cx(classes.chip, {

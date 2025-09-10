@@ -70,6 +70,17 @@ describe('getChipItems', () => {
                 })
             ).toBe(3)
 
+            // Test case 6: Dimension with option set and no items in filters returns null
+            expect(
+                getChipItems({
+                    dimension: { id: 'de3', optionSet: 'optionSet1' },
+                    conditionsLength: undefined,
+                    itemsLength: 0,
+                    inputType: 'EVENT',
+                    axisId: 'filters',
+                })
+            ).toBe(null)
+
             // Test case 7: Dimension with items but no option set returns items length
             expect(
                 getChipItems({
