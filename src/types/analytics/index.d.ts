@@ -13,7 +13,6 @@ import type { PivotTable } from './pivot-table'
 import type { Toolbar } from './toolbar'
 import type { ToolbarSidebar } from './toolbar-sidebar'
 import type { UpdateButton } from './update-button'
-import type { VisUiConfigState } from '@store/vis-ui-config-slice'
 import type {
     CurrentVisualization,
     DimensionArray,
@@ -46,14 +45,14 @@ declare module '@dhis2/analytics' {
         vis: CurrentVisualization
     ) => DimensionArray
     export const layoutGetAxisIdDimensionIdsObject: (
-        layout: VisUiConfigState['layout']
+        vis: CurrentVisualization
     ) => {
         columns?: string[]
         rows?: string[]
         filters?: string[]
     }
     export const layoutGetDimensionIdItemIdsObject: (
-        layout: VisUiConfigState['layout']
+        vis: CurrentVisualization
     ) => {
         [dimensionId: string]: string[]
     }
