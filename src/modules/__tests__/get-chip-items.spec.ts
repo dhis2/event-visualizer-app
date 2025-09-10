@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { getChipItemsText } from '../get-chip-items-text'
 
-describe('getChipItems', () => {
+describe('getChipItemsText', () => {
     describe('when axisId is "columns"', () => {
         it('returns empty string for organization unit dimension with no items (non-tracked entity)', () => {
             expect(
