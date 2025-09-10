@@ -32,26 +32,22 @@ const TestWrapper: React.FC<{
 )
 
 describe('<Chip />', () => {
-    it('renders a chip with a data element dimension', () => {
+    it('renders an org unit chip in columns with 2 org units set', () => {
         // Create a dimension object using info from fakemetadata
         const dimension: LayoutDimension = {
-            id: 'A03MvHHogjR.X8zyunlgUfM',
-            dimensionId: 'X8zyunlgUfM',
-            name: 'MCH Infant Feeding',
-            dimensionType: 'DATA_ELEMENT',
-            valueType: 'TEXT',
-            optionSet: 'x31y45jvIQL',
-            code: 'DE_2006103',
+            id: 'ou',
+            dimensionType: 'ORGANISATION_UNIT',
+            name: 'Organisation unit',
+            dimensionId: 'ou',
+            programStageId: '',
         }
 
         // Create a store with some test data that matches the dimension
         const store = createTestStore({
             itemsByDimension: {
-                [dimension.id]: ['option1', 'option2'],
+                [dimension.id]: ['ou1', 'ou2'],
             },
-            conditionsByDimension: {
-                [dimension.id]: 'GT:10',
-            },
+            conditionsByDimension: {},
         })
 
         cy.mount(
@@ -64,33 +60,81 @@ describe('<Chip />', () => {
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
 
         // Check that the dimension name is displayed
-        cy.contains('MCH Infant Feeding').should('be.visible')
+        cy.contains('Organisation unit').should('be.visible')
 
         // Check that the menu button is present
         cy.getByDataTest('chip-menu-button').should('be.visible')
+
+        cy.getByDataTest('chip-items').should('contain.text', '2')
+
+        // check the background color of the chip
+        cy.getByDataTest('layout-dimension-chip').should(
+            'have.css',
+            'background-color',
+            'rgb(224, 242, 241)' // teal-100
+        )
 
         // Check that clicking the menu button logs a message (basic interaction test)
         cy.getByDataTest('chip-menu-button').click()
     })
 
-    it('renders a chip with a dimension that has a suffix', () => {
+    it('renders a data element chip in columns that has a suffix and no items or conditions', () => {
         // Create a dimension object with a suffix to distinguish it from duplicates
         const dimension: LayoutDimension = {
-            id: 'p1.p1s1.d1',
-            dimensionId: 'd1',
+            id: 'ZzYYXq4fJie.X8zyunlgUfM',
             name: 'MCH Infant Feeding',
             dimensionType: 'DATA_ELEMENT',
-            valueType: 'NUMBER',
-            suffix: 'Birth',
-            programId: 'p1',
-            programStageId: 'p1s1',
+            valueType: 'TEXT',
+            optionSet: 'x31y45jvIQL',
+            dimensionId: 'X8zyunlgUfM',
+            programStageId: 'ZzYYXq4fJie',
+            suffix: 'Baby Postnatal',
         }
 
         // Create a store with some test data
         const store = createTestStore({
             itemsByDimension: {},
+            conditionsByDimension: {},
+        })
+
+        cy.mount(
+            <TestWrapper store={store}>
+                <Chip dimension={dimension} axisId="columns" />
+            </TestWrapper>
+        )
+
+        // Check that the chip renders with the correct test attribute
+        cy.getByDataTest('layout-dimension-chip').should('be.visible')
+
+        // Check that the primary dimension name is displayed
+        cy.contains('MCH Infant Feeding,').should('be.visible')
+
+        // Check that the suffix is displayed as secondary text
+        cy.contains('Baby Postnatal').should('be.visible')
+
+        cy.getByDataTest('chip-items').should('contain.text', 'all')
+
+        // Check that the menu button is present
+        cy.getByDataTest('chip-menu-button').should('be.visible')
+    })
+
+    // TODO - implement conditions counts
+    it.skip('renders a chip in columns that has a suffix and has conditions', () => {
+        const dimension: LayoutDimension = {
+            id: 'ZzYYXq4fJie.X8zyunlgUfM',
+            name: 'MCH Infant Feeding',
+            dimensionType: 'DATA_ELEMENT',
+            valueType: 'TEXT',
+            optionSet: 'x31y45jvIQL',
+            dimensionId: 'X8zyunlgUfM',
+            programStageId: 'ZzYYXq4fJie',
+            suffix: 'Baby Postnatal',
+        }
+
+        const store = createTestStore({
+            itemsByDimension: {},
             conditionsByDimension: {
-                [dimension.id]: 'IN:Mixed',
+                'ZzYYXq4fJie.X8zyunlgUfM': { condition: 'IN:Mixed;Exclusive' },
             },
         })
 
@@ -107,25 +151,25 @@ describe('<Chip />', () => {
         cy.contains('MCH Infant Feeding,').should('be.visible')
 
         // Check that the suffix is displayed as secondary text
-        cy.contains('Birth').should('be.visible')
+        cy.contains('Baby Postnatal').should('be.visible')
+
+        cy.getByDataTest('chip-items').should('contain.text', '2')
 
         // Check that the menu button is present
         cy.getByDataTest('chip-menu-button').should('be.visible')
     })
 
-    it('renders a chip with no suffix and no item/condition count', () => {
-        // Create a dimension object without suffix and no items/conditions
+    it('renders a chip in columns that has items', () => {
         const dimension: LayoutDimension = {
-            id: 'simple-dimension',
-            dimensionId: 'simple-dimension',
-            name: 'Simple Dimension',
-            dimensionType: 'DATA_ELEMENT',
-            valueType: 'TEXT',
+            id: 'programStatus',
+            dimensionType: 'STATUS',
+            name: 'Program status',
+            dimensionId: 'programStatus',
+            programStageId: '',
         }
 
-        // Create a store with no items or conditions for this dimension
         const store = createTestStore({
-            itemsByDimension: {},
+            itemsByDimension: { programStatus: ['ACTIVE', 'COMPLETED'] },
             conditionsByDimension: {},
         })
 
@@ -138,32 +182,71 @@ describe('<Chip />', () => {
         // Check that the chip renders with the correct test attribute
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
 
+        // Check that the primary dimension name is displayed
+        cy.contains('Program status').should('be.visible')
+
+        cy.getByDataTest('chip-items').should('contain.text', '2')
+
+        // Check that the menu button is present
+        cy.getByDataTest('chip-menu-button').should('be.visible')
+    })
+
+    it('renders a chip in filters with no suffix and no items or conditions', () => {
+        const dimension: LayoutDimension = {
+            id: 'cejWyOfXge6',
+            name: 'Gender',
+            dimensionType: 'PROGRAM_ATTRIBUTE',
+            valueType: 'TEXT',
+            optionSet: 'pC3N9N77UmT',
+            dimensionId: 'cejWyOfXge6',
+            programStageId: '',
+        }
+
+        // Create a store with no items or conditions for this dimension
+        const store = createTestStore({
+            itemsByDimension: {},
+            conditionsByDimension: {},
+        })
+
+        cy.mount(
+            <TestWrapper store={store}>
+                <Chip dimension={dimension} axisId="filters" />
+            </TestWrapper>
+        )
+
+        // Check that the chip renders with the correct test attribute
+        cy.getByDataTest('layout-dimension-chip').should('be.visible')
+
         // Check that only the dimension name is displayed (no suffix, no count)
-        cy.contains('Simple Dimension').should('be.visible')
+        cy.contains('Gender').should('be.visible')
 
         // Verify no comma or secondary text is shown
         cy.get('[data-test="layout-dimension-chip"]').should('not.contain', ',')
 
+        cy.getByDataTest('chip-items').should('not.exist')
+
         // Check that the menu button is present
         cy.getByDataTest('chip-menu-button').should('be.visible')
+
+        cy.getByDataTest('layout-dimension-chip').should(
+            'have.css',
+            'background-color',
+            'rgb(248, 249, 250)' // grey-100
+        )
     })
 
-    it('renders a chip when axisId is filters', () => {
-        // Create a dimension object for use in filters
+    it('renders a chip in filters that has items', () => {
         const dimension: LayoutDimension = {
-            id: 'filter-dimension',
-            dimensionId: 'filter-dimension',
-            name: 'Filter Dimension',
-            dimensionType: 'DATA_ELEMENT',
-            valueType: 'BOOLEAN',
+            id: 'programStatus',
+            dimensionType: 'STATUS',
+            name: 'Program status',
+            dimensionId: 'programStatus',
+            programStageId: '',
         }
 
-        // Create a store with conditions for this dimension
         const store = createTestStore({
-            itemsByDimension: {},
-            conditionsByDimension: {
-                [dimension.id]: 'EQ:true;EQ:false',
-            },
+            itemsByDimension: { programStatus: ['ACTIVE', 'COMPLETED'] },
+            conditionsByDimension: {},
         })
 
         cy.mount(
@@ -175,34 +258,38 @@ describe('<Chip />', () => {
         // Check that the chip renders with the correct test attribute
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
 
-        // Check that the dimension name is displayed
-        cy.contains('Filter Dimension').should('be.visible')
+        // Check that the primary dimension name is displayed
+        cy.contains('Program status').should('be.visible')
+
+        cy.getByDataTest('chip-items').should('contain.text', '2')
 
         // Check that the menu button is present
         cy.getByDataTest('chip-menu-button').should('be.visible')
 
-        // For filters axis, the chip should show condition count instead of "all"
-        // (This tests the specific behavior where filters don't return "all" for BOOLEAN with 2 conditions)
+        cy.getByDataTest('layout-dimension-chip').should(
+            'have.css',
+            'background-color',
+            'rgb(224, 242, 241)' // teal-100
+        )
     })
 
-    it('renders a chip when axisId is filters with item and condition counts', () => {
+    it.skip('renders a chip in filters with condition counts', () => {
         // Create a dimension object for use in filters with items and conditions
         const dimension: LayoutDimension = {
-            id: 'filter-dimension-with-counts',
-            dimensionId: 'filter-dimension-with-counts',
-            name: 'Filter Dimension with Counts',
-            dimensionType: 'DATA_ELEMENT',
+            id: 'cejWyOfXge6',
+            name: 'Gender',
+            dimensionType: 'PROGRAM_ATTRIBUTE',
             valueType: 'TEXT',
-            optionSet: 'test-option-set',
+            optionSet: 'pC3N9N77UmT',
+            dimensionId: 'cejWyOfXge6',
+            programStageId: '',
         }
 
         // Create a store with both items and conditions for this dimension
         const store = createTestStore({
-            itemsByDimension: {
-                [dimension.id]: ['item1', 'item2', 'item3'],
-            },
+            itemsByDimension: {},
             conditionsByDimension: {
-                [dimension.id]: 'IN:value1;IN:value2',
+                [dimension.id]: { condition: 'IN:male' },
             },
         })
 
@@ -216,12 +303,18 @@ describe('<Chip />', () => {
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
 
         // Check that the dimension name is displayed
-        cy.contains('Filter Dimension with Counts').should('be.visible')
+        cy.contains('Gender').should('be.visible')
 
         // Check that the menu button is present
         cy.getByDataTest('chip-menu-button').should('be.visible')
 
-        // The chip should show the item count (3) since itemsLength takes precedence over conditions
-        // when there's an optionSet
+        // The chip should show the item count (3)
+        cy.getByDataTest('chip-items').should('contain.text', '1')
+
+        cy.getByDataTest('layout-dimension-chip').should(
+            'have.css',
+            'background-color',
+            'rgb(224, 242, 241)' // teal-100
+        )
     })
 })

@@ -55,7 +55,7 @@ export const getChipItems = ({
         // TODO - there is a bug here if optionSet and no itemsLength
         // you end up with '0' shown on the chip, without styling
         // Dimension "Gender" falls into this category
-        return itemsLength || conditionsLength || 0
+        return itemsLength || conditionsLength || null
     } else if (conditionsLength) {
         return conditionsLength
     }

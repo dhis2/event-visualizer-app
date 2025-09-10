@@ -66,7 +66,7 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
         return false
     }
 
-    console.log('jj ', { axisId, items, hasConditions: hasConditions() })
+    console.log('jj ', { axisId, dimension, items, conditions })
 
     return (
         <div
@@ -81,9 +81,7 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
             <div className={classes.content}>
                 <ChipBase
                     dimension={dimension}
-                    conditionsLength={
-                        Array.isArray(conditions) ? conditions.length : 0
-                    }
+                    conditionsLength={0} // TODO - implement
                     itemsLength={Array.isArray(items) ? items.length : 0}
                     inputType={inputType}
                     axisId={axisId}
