@@ -3,8 +3,7 @@ import { getChipItems } from '../get-chip-items'
 
 describe('getChipItems', () => {
     describe('when axisId is "columns"', () => {
-        it('returns correct values for different dimension scenarios', () => {
-            // Test case 1: Organization unit dimension with no items (non-tracked entity) returns null
+        it('returns empty string for organization unit dimension with no items (non-tracked entity)', () => {
             expect(
                 getChipItems({
                     dimension: { id: 'ou', dimensionType: 'ORGANISATION_UNIT' },
@@ -14,8 +13,9 @@ describe('getChipItems', () => {
                     axisId: 'columns',
                 })
             ).toBe('')
+        })
 
-            // Test case 2: Period dimension with no items returns null
+        it('returns empty string for period dimension with no items', () => {
             expect(
                 getChipItems({
                     dimension: { id: 'pe', dimensionType: 'PERIOD' },
@@ -25,8 +25,9 @@ describe('getChipItems', () => {
                     axisId: 'columns',
                 })
             ).toBe('')
+        })
 
-            // Test case 3: No conditions/items and not in filters returns 'all'
+        it('returns "all" when no conditions or items', () => {
             expect(
                 getChipItems({
                     dimension: { id: 'dx', dimensionType: 'DATA_ELEMENT' },
@@ -36,8 +37,9 @@ describe('getChipItems', () => {
                     axisId: 'columns',
                 })
             ).toBe('all')
+        })
 
-            // Test case 4: TRUE_ONLY value type with 1 condition returns 'all'
+        it('returns "all" for TRUE_ONLY value type with 1 condition', () => {
             expect(
                 getChipItems({
                     dimension: { id: 'de1', valueType: 'TRUE_ONLY' },
@@ -47,8 +49,9 @@ describe('getChipItems', () => {
                     axisId: 'columns',
                 })
             ).toBe('all')
+        })
 
-            // Test case 5: BOOLEAN value type with 2 conditions returns 'all'
+        it('returns "all" for BOOLEAN value type with 2 conditions', () => {
             expect(
                 getChipItems({
                     dimension: { id: 'de2', valueType: 'BOOLEAN' },
@@ -58,8 +61,9 @@ describe('getChipItems', () => {
                     axisId: 'columns',
                 })
             ).toBe('all')
+        })
 
-            // Test case 6: Dimension with option set returns items length
+        it('returns items length for dimension with option set', () => {
             expect(
                 getChipItems({
                     dimension: { id: 'de3', optionSet: 'optionSet1' },
@@ -69,19 +73,9 @@ describe('getChipItems', () => {
                     axisId: 'columns',
                 })
             ).toBe('3')
+        })
 
-            // Test case 6: Dimension with option set and no items in filters returns null
-            expect(
-                getChipItems({
-                    dimension: { id: 'de3', optionSet: 'optionSet1' },
-                    conditionsLength: undefined,
-                    itemsLength: 0,
-                    inputType: 'EVENT',
-                    axisId: 'filters',
-                })
-            ).toBe('')
-
-            // Test case 7: Dimension with items but no option set returns items length
+        it('returns items length for dimension with items but no option set', () => {
             expect(
                 getChipItems({
                     dimension: { id: 'de4' },
@@ -91,8 +85,9 @@ describe('getChipItems', () => {
                     axisId: 'columns',
                 })
             ).toBe('5')
+        })
 
-            // Test case 8: Dimension with only conditions returns conditions length
+        it('returns conditions length for dimension with only conditions', () => {
             expect(
                 getChipItems({
                     dimension: { id: 'de5' },
@@ -102,8 +97,9 @@ describe('getChipItems', () => {
                     axisId: 'columns',
                 })
             ).toBe('2')
+        })
 
-            // Test case 9: Organization unit for TRACKED_ENTITY_INSTANCE with items returns items length
+        it('returns items length for organization unit with TRACKED_ENTITY_INSTANCE', () => {
             expect(
                 getChipItems({
                     dimension: { id: 'ou', dimensionType: 'ORGANISATION_UNIT' },
@@ -114,25 +110,10 @@ describe('getChipItems', () => {
                 })
             ).toBe('4')
         })
-
-        it('should handle optionSet without items when axisID is "filters"', () => {
-            // Bug: When a dimension has an optionSet but no itemsLength,
-            // the function returns 0 which shows on the chip without proper styling
-            // Example: "Gender" dimension falls into this category
-            const result = getChipItems({
-                dimension: { id: 'gender', optionSet: 'genderOptionSet' },
-                conditionsLength: undefined,
-                itemsLength: 0,
-                inputType: 'EVENT',
-                axisId: 'filters',
-            })
-
-            expect(result).toBe('')
-        })
     })
 
     describe('when axisId is "filters"', () => {
-        it('returns null when no conditions or items', () => {
+        it('returns empty string when no conditions or items', () => {
             const result = getChipItems({
                 dimension: { id: 'testDimension' },
                 conditionsLength: undefined,
@@ -180,6 +161,18 @@ describe('getChipItems', () => {
             expect(result).toBe('3')
         })
 
+        it('returns empty string for dimension with option set and no items', () => {
+            const result = getChipItems({
+                dimension: { id: 'de3', optionSet: 'optionSet1' },
+                conditionsLength: undefined,
+                itemsLength: 0,
+                inputType: 'EVENT',
+                axisId: 'filters',
+            })
+
+            expect(result).toBe('')
+        })
+
         it('returns conditionsLength when no optionSet or itemsLength', () => {
             const result = getChipItems({
                 dimension: { id: 'testDimension' },
@@ -192,7 +185,7 @@ describe('getChipItems', () => {
             expect(result).toBe('5')
         })
 
-        it('returns null for organization units with no itemsLength (same as other axes)', () => {
+        it('returns empty string for organization units with no itemsLength (same as other axes)', () => {
             const result = getChipItems({
                 dimension: { id: 'ou' },
                 conditionsLength: undefined,
@@ -204,7 +197,7 @@ describe('getChipItems', () => {
             expect(result).toBe('')
         })
 
-        it('returns null for period dimensions with no itemsLength (same as other axes)', () => {
+        it('returns empty string for period dimensions with no itemsLength (same as other axes)', () => {
             const result = getChipItems({
                 dimension: { id: 'testDimension', dimensionType: 'PERIOD' },
                 conditionsLength: undefined,
