@@ -197,7 +197,7 @@ describe('<Chip />', () => {
 
         cy.get('[data-test="layout-dimension-chip"]').should('not.contain', ',')
 
-        cy.getByDataTest('chip-items').should('not.exist')
+        cy.getByDataTest('chip-items').should('not.be.visible')
 
         cy.getByDataTest('chip-menu-button').should('be.visible')
 

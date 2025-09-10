@@ -10,7 +10,7 @@ type ChipDimension = Pick<
     'id' | 'dimensionType' | 'optionSet' | 'valueType'
 >
 
-interface GetChipItemsParams {
+interface GetChipItemsTextParams {
     dimension: ChipDimension
     conditionsLength: number | undefined
     itemsLength: number | undefined
@@ -18,13 +18,13 @@ interface GetChipItemsParams {
     axisId: SupportedAxis
 }
 
-export const getChipItems = ({
+export const getChipItemsText = ({
     dimension,
     conditionsLength,
     itemsLength,
     inputType,
     axisId,
-}: GetChipItemsParams): string => {
+}: GetChipItemsTextParams): string => {
     const { id, dimensionType, optionSet, valueType } = dimension
 
     if (
