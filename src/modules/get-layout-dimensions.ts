@@ -86,7 +86,7 @@ export const getLayoutDimensions = ({
             metadataItem.dimensionItemType
         ) {
             dimension.dimensionItemType =
-                metadataItem.dimensionItemType as string
+                metadataItem.dimensionItemType as LayoutDimension['dimensionItemType']
         }
 
         return dimension
