@@ -48,6 +48,10 @@
     padding: 2px 2px 1px 2px;
 }
 
+.items:empty {
+    display: none;
+}
+
 .leftIcon {
     margin-inline-end: 4px;
     line-height: 0;
