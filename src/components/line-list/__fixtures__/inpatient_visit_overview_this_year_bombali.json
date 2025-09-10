@@ -1,0 +1,1662 @@
+{
+    "visualization": {
+        "name": "Inpatient: Visit overview this year Bombali",
+        "created": "2015-10-20T13:35:24.144",
+        "lastUpdated": "2018-05-18T13:20:36.214",
+        "translations": [],
+        "createdBy": {
+            "id": "GOLswS44mh8",
+            "code": null,
+            "name": "Tom Wakiki",
+            "displayName": "Tom Wakiki",
+            "username": "system"
+        },
+        "lastUpdatedBy": {
+            "id": "GOLswS44mh8",
+            "code": null,
+            "name": "Tom Wakiki",
+            "displayName": "Tom Wakiki",
+            "username": "system"
+        },
+        "sharing": {
+            "owner": "GOLswS44mh8",
+            "external": false,
+            "users": {},
+            "userGroups": {},
+            "public": "rw------"
+        },
+        "displayDensity": "NORMAL",
+        "fontSize": "NORMAL",
+        "sortOrder": 0,
+        "topLimit": 0,
+        "hideEmptyRows": false,
+        "showHierarchy": false,
+        "skipRounding": false,
+        "dataDimensionItems": [],
+        "dataElementGroupSetDimensions": [],
+        "organisationUnitGroupSetDimensions": [],
+        "categoryDimensions": [],
+        "categoryOptionGroupSetDimensions": [],
+        "attributeDimensions": [],
+        "dataElementDimensions": [
+            {
+                "dataElement": {
+                    "name": "Gender",
+                    "id": "oZg33kd9taw"
+                }
+            },
+            {
+                "dataElement": {
+                    "name": "Height in cm",
+                    "id": "GieVkTxp4HH"
+                },
+                "legendSet": {
+                    "name": "Height in cm",
+                    "id": "TBxGTceyzwy"
+                }
+            },
+            {
+                "dataElement": {
+                    "name": "Weight in kg",
+                    "id": "vV9UWAZohSf"
+                },
+                "legendSet": {
+                    "name": "Weight in kg",
+                    "id": "OrkEzxZEH4X"
+                }
+            }
+        ],
+        "programIndicatorDimensions": [
+            {
+                "programIndicator": {
+                    "name": "Average age of deaths",
+                    "id": "tUdBD1JDxpn"
+                }
+            },
+            {
+                "programIndicator": {
+                    "name": "Average height of girls at 5 years old",
+                    "id": "gWxh7DiRmG7"
+                }
+            },
+            {
+                "programIndicator": {
+                    "name": "BMI",
+                    "id": "x7PaHGvgWY2"
+                }
+            },
+            {
+                "programIndicator": {
+                    "name": "BMI female under 5 y",
+                    "id": "hlPt8H4bUOQ"
+                }
+            },
+            {
+                "programIndicator": {
+                    "name": "BMI male under 5 y",
+                    "id": "Y7hKDSuqEtH"
+                }
+            },
+            {
+                "programIndicator": {
+                    "name": "Inpatient bed days average",
+                    "id": "HS8QXAJtuKV"
+                }
+            }
+        ],
+        "subscribers": [],
+        "digitGroupSeparator": "SPACE",
+        "hideLegend": false,
+        "noSpaceBetweenColumns": false,
+        "cumulativeValues": false,
+        "percentStackedValues": false,
+        "showData": false,
+        "colTotals": true,
+        "rowTotals": false,
+        "rowSubTotals": false,
+        "colSubTotals": true,
+        "hideTitle": false,
+        "hideSubtitle": false,
+        "showDimensionLabels": true,
+        "type": "LINE_LIST",
+        "program": {
+            "programType": "WITHOUT_REGISTRATION",
+            "displayIncidentDate": false,
+            "displayIncidentDateLabel": "Date of Discharge",
+            "id": "eBAyeGv0exc",
+            "programStages": [
+                {
+                    "id": "Zj7UnCAulEk",
+                    "repeatable": false,
+                    "name": "Inpatient morbidity and mortality"
+                }
+            ],
+            "name": "Inpatient morbidity and mortality"
+        },
+        "programStage": {
+            "hideDueDate": false,
+            "displayExecutionDateLabel": "Report date",
+            "id": "Zj7UnCAulEk",
+            "repeatable": false,
+            "name": "Inpatient morbidity and mortality"
+        },
+        "programDimensions": [],
+        "outputType": "EVENT",
+        "collapseDataDimensions": false,
+        "hideNaData": false,
+        "legacy": true,
+        "dataType": "EVENTS",
+        "filters": [],
+        "parentGraphMap": {
+            "fdc6uOvgoji": "ImspTQPwCqd"
+        },
+        "columns": [
+            {
+                "dimensionType": "PERIOD",
+                "items": [
+                    {
+                        "id": "THIS_YEAR"
+                    }
+                ],
+                "dimension": "eventDate"
+            },
+            {
+                "dimensionType": "ORGANISATION_UNIT",
+                "items": [
+                    {
+                        "id": "fdc6uOvgoji"
+                    }
+                ],
+                "dimension": "ou"
+            },
+            {
+                "dimensionType": "PROGRAM_INDICATOR",
+                "items": [],
+                "dimension": "tUdBD1JDxpn"
+            },
+            {
+                "dimensionType": "PROGRAM_INDICATOR",
+                "items": [],
+                "dimension": "gWxh7DiRmG7"
+            },
+            {
+                "dimensionType": "PROGRAM_INDICATOR",
+                "items": [],
+                "dimension": "x7PaHGvgWY2"
+            },
+            {
+                "dimensionType": "PROGRAM_INDICATOR",
+                "items": [],
+                "dimension": "hlPt8H4bUOQ"
+            },
+            {
+                "dimensionType": "PROGRAM_INDICATOR",
+                "items": [],
+                "dimension": "Y7hKDSuqEtH"
+            },
+            {
+                "dimensionType": "DATA_ELEMENT",
+                "items": [],
+                "valueType": "TEXT",
+                "optionSet": {
+                    "id": "pC3N9N77UmT"
+                },
+                "dimension": "oZg33kd9taw"
+            },
+            {
+                "dimensionType": "DATA_ELEMENT",
+                "items": [],
+                "legendSet": {
+                    "id": "TBxGTceyzwy"
+                },
+                "valueType": "NUMBER",
+                "dimension": "GieVkTxp4HH"
+            },
+            {
+                "dimensionType": "PROGRAM_INDICATOR",
+                "items": [],
+                "dimension": "HS8QXAJtuKV"
+            },
+            {
+                "dimensionType": "DATA_ELEMENT",
+                "items": [],
+                "legendSet": {
+                    "id": "OrkEzxZEH4X"
+                },
+                "valueType": "INTEGER_POSITIVE",
+                "dimension": "vV9UWAZohSf"
+            }
+        ],
+        "rows": [],
+        "favorite": false,
+        "displayName": "Inpatient: Visit overview this year Bombali",
+        "access": {
+            "manage": true,
+            "externalize": true,
+            "write": true,
+            "read": true,
+            "update": true,
+            "delete": true
+        },
+        "href": "https://test.e2e.dhis2.org/anly-41/api/41/eventVisualizations/kb9Uml5FEEz",
+        "subscribed": false,
+        "displayFormName": "Inpatient: Visit overview this year Bombali",
+        "id": "kb9Uml5FEEz",
+        "attributeValues": [],
+        "sorting": []
+    },
+    "responses": {
+        "headers": [
+            {
+                "name": "eventdate",
+                "column": "Report date",
+                "valueType": "DATETIME",
+                "type": "java.time.LocalDateTime",
+                "hidden": false,
+                "meta": true,
+                "index": 0
+            },
+            {
+                "name": "ouname",
+                "column": "Organisation unit",
+                "valueType": "TEXT",
+                "type": "java.lang.String",
+                "hidden": false,
+                "meta": true,
+                "index": 1
+            },
+            {
+                "name": "tUdBD1JDxpn",
+                "column": "Average age of deaths",
+                "valueType": "NUMBER",
+                "type": "java.lang.Double",
+                "hidden": false,
+                "meta": true,
+                "index": 2
+            },
+            {
+                "name": "gWxh7DiRmG7",
+                "column": "Average height of girls at 5 years old",
+                "valueType": "NUMBER",
+                "type": "java.lang.Double",
+                "hidden": false,
+                "meta": true,
+                "index": 3
+            },
+            {
+                "name": "x7PaHGvgWY2",
+                "column": "BMI",
+                "valueType": "NUMBER",
+                "type": "java.lang.Double",
+                "hidden": false,
+                "meta": true,
+                "index": 4
+            },
+            {
+                "name": "hlPt8H4bUOQ",
+                "column": "BMI female under 5 y",
+                "valueType": "NUMBER",
+                "type": "java.lang.Double",
+                "hidden": false,
+                "meta": true,
+                "index": 5
+            },
+            {
+                "name": "Y7hKDSuqEtH",
+                "column": "BMI male under 5 y",
+                "valueType": "NUMBER",
+                "type": "java.lang.Double",
+                "hidden": false,
+                "meta": true,
+                "index": 6
+            },
+            {
+                "name": "oZg33kd9taw",
+                "column": "Gender",
+                "valueType": "TEXT",
+                "type": "java.lang.String",
+                "hidden": false,
+                "meta": true,
+                "optionSet": "pC3N9N77UmT",
+                "index": 7
+            },
+            {
+                "name": "GieVkTxp4HH",
+                "column": "Height in cm",
+                "valueType": "TEXT",
+                "type": "java.lang.String",
+                "hidden": false,
+                "meta": true,
+                "legendSet": "TBxGTceyzwy",
+                "index": 8
+            },
+            {
+                "name": "HS8QXAJtuKV",
+                "column": "Inpatient bed days average",
+                "valueType": "NUMBER",
+                "type": "java.lang.Double",
+                "hidden": false,
+                "meta": true,
+                "index": 9
+            },
+            {
+                "name": "vV9UWAZohSf",
+                "column": "Weight in kg",
+                "valueType": "TEXT",
+                "type": "java.lang.String",
+                "hidden": false,
+                "meta": true,
+                "legendSet": "OrkEzxZEH4X",
+                "index": 10
+            }
+        ],
+        "rows": [
+            [
+                "2025-10-03 00:00:00.0",
+                "Rokonta CHC",
+                "",
+                "",
+                "35.71",
+                "35.71",
+                "",
+                "Female",
+                "120 - 140",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-11-21 00:00:00.0",
+                "Karina MCHP",
+                "",
+                "",
+                "44.44",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-08-28 00:00:00.0",
+                "Gbonkobana CHP",
+                "",
+                "",
+                "22.97",
+                "",
+                "",
+                "Male",
+                "140 - 160",
+                "14",
+                "50 - 60"
+            ],
+            [
+                "2025-11-28 00:00:00.0",
+                "Kamabaio MCHP",
+                "",
+                "",
+                "38.46",
+                "",
+                "",
+                "Female",
+                "120 - 140",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-10-20 00:00:00.0",
+                "Maharibo MCHP",
+                "",
+                "",
+                "49.28",
+                "",
+                "",
+                "Female",
+                "120 - 140",
+                "14",
+                "80 - 90"
+            ],
+            [
+                "2025-10-24 00:00:00.0",
+                "Kamalo CHC",
+                "",
+                "",
+                "46.36",
+                "",
+                "",
+                "Female",
+                "120 - 140",
+                "14",
+                "80 - 90"
+            ],
+            [
+                "2025-10-06 00:00:00.0",
+                "Kolisokor MCHP",
+                "36",
+                "",
+                "27.02",
+                "",
+                "",
+                "Female",
+                "160 - 180",
+                "14",
+                "70 - 80"
+            ],
+            [
+                "2025-04-21 00:00:00.0",
+                "Maharibo MCHP",
+                "",
+                "",
+                "15.06",
+                "",
+                "",
+                "Female",
+                "160 - 180",
+                "14",
+                "40 - 50"
+            ],
+            [
+                "2025-06-15 00:00:00.0",
+                "Samaya CHP",
+                "",
+                "",
+                "19.94",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "0 - 20"
+            ],
+            [
+                "2025-05-10 00:00:00.0",
+                "Kunsho CHP",
+                "54",
+                "",
+                "23.11",
+                "",
+                "",
+                "Female",
+                "160 - 180",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-07-30 00:00:00.0",
+                "Kanikay MCHP",
+                "",
+                "",
+                "45.69",
+                "",
+                "",
+                "Female",
+                "120 - 140",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-02-16 00:00:00.0",
+                "Fullah Town (B.Sebora) MCHP",
+                "",
+                "",
+                "10.98",
+                "",
+                "",
+                "Female",
+                "160 - 180",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-10-10 00:00:00.0",
+                "Magbaikoli MCHP",
+                "21",
+                "",
+                "69.08",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-11-24 00:00:00.0",
+                "Maharibo MCHP",
+                "69",
+                "",
+                "70.27",
+                "",
+                "",
+                "Male",
+                "100 - 120",
+                "14",
+                "70 - 80"
+            ],
+            [
+                "2025-03-19 00:00:00.0",
+                "Magbaingba MCHP",
+                "",
+                "",
+                "55.45",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "40 - 50"
+            ],
+            [
+                "2025-03-18 00:00:00.0",
+                "Rothatha MCHP",
+                "",
+                "",
+                "17.04",
+                "",
+                "",
+                "Female",
+                "100 - 120",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-07-31 00:00:00.0",
+                "Kathanta Bana MCHP",
+                "",
+                "",
+                "14.67",
+                "",
+                "",
+                "Male",
+                "140 - 160",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-03-09 00:00:00.0",
+                "Maharibo MCHP",
+                "",
+                "",
+                "14.3",
+                "",
+                "",
+                "Female",
+                "180 - 200",
+                "15",
+                "50 - 60"
+            ],
+            [
+                "2025-10-03 00:00:00.0",
+                "Royeama CHP",
+                "",
+                "",
+                "15.15",
+                "",
+                "",
+                "Female",
+                "140 - 160",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-02-27 00:00:00.0",
+                "Binkolo CHC",
+                "49",
+                "",
+                "30.03",
+                "",
+                "",
+                "Male",
+                "100 - 120",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-08-15 00:00:00.0",
+                "Kamabai CHC",
+                "",
+                "",
+                "163.89",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-08-05 00:00:00.0",
+                "Masory MCHP",
+                "3",
+                "",
+                "251.48",
+                "251.48",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-08-28 00:00:00.0",
+                "Govt. Hosp. Makeni",
+                "10",
+                "",
+                "39.11",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-05-18 00:00:00.0",
+                "Makarie MCHP",
+                "",
+                "",
+                "125",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-08-08 00:00:00.0",
+                "Kolisokor MCHP",
+                "",
+                "",
+                "23.89",
+                "",
+                "",
+                "Female",
+                "180 - 200",
+                "14",
+                "80 - 90"
+            ],
+            [
+                "2025-06-21 00:00:00.0",
+                "Robat MCHP",
+                "",
+                "",
+                "215",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "80 - 90"
+            ],
+            [
+                "2025-09-11 00:00:00.0",
+                "Mapaki CHC",
+                "66",
+                "",
+                "46.47",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-06-18 00:00:00.0",
+                "Kagbaneh CHP",
+                "",
+                "",
+                "15.32",
+                "",
+                "",
+                "Male",
+                "160 - 180",
+                "14",
+                "40 - 50"
+            ],
+            [
+                "2025-11-14 00:00:00.0",
+                "Sanya CHP",
+                "",
+                "",
+                "25.83",
+                "",
+                "",
+                "Female",
+                "160 - 180",
+                "14",
+                "80 - 90"
+            ],
+            [
+                "2025-06-19 00:00:00.0",
+                "Kabba Ferry MCHP",
+                "54",
+                "",
+                "31.37",
+                "",
+                "",
+                "Female",
+                "100 - 120",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-01-09 00:00:00.0",
+                "Batkanu CHC",
+                "",
+                "",
+                "18.92",
+                "",
+                "",
+                "Male",
+                "180 - 200",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-12-03 00:00:00.0",
+                "Masuba MCHP",
+                "12",
+                "",
+                "76.52",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "70 - 80"
+            ],
+            [
+                "2025-01-22 00:00:00.0",
+                "Maforay (B. Sebora) MCHP",
+                "75",
+                "",
+                "72.22",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-03-02 00:00:00.0",
+                "Pate Bana CHP",
+                "",
+                "",
+                "216.84",
+                "",
+                "216.84",
+                "Male",
+                "0 - 100",
+                "15",
+                "60 - 70"
+            ],
+            [
+                "2025-08-16 00:00:00.0",
+                "Kambia CHP",
+                "",
+                "",
+                "39.06",
+                "",
+                "",
+                "Male",
+                "120 - 140",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-06-23 00:00:00.0",
+                "Robat MCHP",
+                "",
+                "",
+                "91.33",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "50 - 60"
+            ],
+            [
+                "2025-09-20 00:00:00.0",
+                "Masuba MCHP",
+                "",
+                "",
+                "71.3",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-11-27 00:00:00.0",
+                "Teko Barracks Clinic",
+                "85",
+                "",
+                "12.31",
+                "",
+                "",
+                "Male",
+                "160 - 180",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-04-30 00:00:00.0",
+                "Mambiama CHP",
+                "",
+                "",
+                "6.87",
+                "",
+                "",
+                "Male",
+                "180 - 200",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-09-20 00:00:00.0",
+                "Bumban MCHP",
+                "10",
+                "",
+                "25.95",
+                "",
+                "",
+                "Male",
+                "100 - 120",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-02-07 00:00:00.0",
+                "Kabonka MCHP",
+                "83",
+                "",
+                "14.58",
+                "",
+                "",
+                "Male",
+                "120 - 140",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-12-01 00:00:00.0",
+                "Yankasa MCHP",
+                "3",
+                "",
+                "58.14",
+                "",
+                "58.14",
+                "Male",
+                "0 - 100",
+                "14",
+                "40 - 50"
+            ],
+            [
+                "2025-04-27 00:00:00.0",
+                "Rothatha MCHP",
+                "",
+                "",
+                "36.89",
+                "",
+                "",
+                "Female",
+                "140 - 160",
+                "14",
+                "80 - 90"
+            ],
+            [
+                "2025-08-10 00:00:00.0",
+                "Pate Bana CHP",
+                "",
+                "",
+                "4.81",
+                "",
+                "",
+                "Male",
+                "180 - 200",
+                "14",
+                "0 - 20"
+            ],
+            [
+                "2025-06-01 00:00:00.0",
+                "Punthun MCHP",
+                "19",
+                "",
+                "60.89",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-11-09 00:00:00.0",
+                "Kaponkie MCHP",
+                "",
+                "",
+                "157.14",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "70 - 80"
+            ],
+            [
+                "2025-05-15 00:00:00.0",
+                "Makama MCHP",
+                "",
+                "",
+                "23.81",
+                "",
+                "",
+                "Male",
+                "140 - 160",
+                "14",
+                "50 - 60"
+            ],
+            [
+                "2025-10-27 00:00:00.0",
+                "Rothatha MCHP",
+                "",
+                "",
+                "41.98",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-03-30 00:00:00.0",
+                "Leprosy & TB Hospital",
+                "",
+                "",
+                "132.33",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-11-05 00:00:00.0",
+                "Kagbere CHC",
+                "",
+                "",
+                "202.47",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "40 - 50"
+            ],
+            [
+                "2025-09-30 00:00:00.0",
+                "Fintonia CHC",
+                "",
+                "",
+                "89.36",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "70 - 80"
+            ],
+            [
+                "2025-03-26 00:00:00.0",
+                "Samaya CHP",
+                "",
+                "",
+                "106.29",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-11-14 00:00:00.0",
+                "Gbanti CHC",
+                "",
+                "",
+                "25.69",
+                "",
+                "",
+                "Female",
+                "120 - 140",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-09-16 00:00:00.0",
+                "Panlap MCHP",
+                "51",
+                "",
+                "7.27",
+                "",
+                "",
+                "Male",
+                "160 - 180",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-11-29 00:00:00.0",
+                "Mabenteh Community Hospital",
+                "48",
+                "",
+                "79.78",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-09-14 00:00:00.0",
+                "Manack MCHP",
+                "",
+                "",
+                "102.04",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-11-05 00:00:00.0",
+                "Rokulan CHC",
+                "78",
+                "",
+                "198.82",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "80 - 90"
+            ],
+            [
+                "2025-06-10 00:00:00.0",
+                "Kagbo MCHP",
+                "",
+                "",
+                "67.3",
+                "",
+                "67.3",
+                "Male",
+                "0 - 100",
+                "14",
+                "40 - 50"
+            ],
+            [
+                "2025-11-26 00:00:00.0",
+                "Madina Loko CHP",
+                "",
+                "",
+                "15.81",
+                "",
+                "",
+                "Female",
+                "140 - 160",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-12-21 00:00:00.0",
+                "Kamalo CHC",
+                "",
+                "",
+                "24.22",
+                "",
+                "",
+                "Female",
+                "180 - 200",
+                "14",
+                "80 - 90"
+            ],
+            [
+                "2025-08-03 00:00:00.0",
+                "Magbaingba MCHP",
+                "",
+                "",
+                "4.29",
+                "",
+                "",
+                "Female",
+                "180 - 200",
+                "14",
+                "0 - 20"
+            ],
+            [
+                "2025-01-06 00:00:00.0",
+                "Makaiba MCHP",
+                "",
+                "",
+                "68.36",
+                "",
+                "68.36",
+                "Male",
+                "0 - 100",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-03-08 00:00:00.0",
+                "Kortohun CHP",
+                "",
+                "",
+                "27.76",
+                "",
+                "",
+                "Female",
+                "120 - 140",
+                "15",
+                "40 - 50"
+            ],
+            [
+                "2025-05-24 00:00:00.0",
+                "Kortohun CHP",
+                "71",
+                "",
+                "20.96",
+                "",
+                "",
+                "Female",
+                "160 - 180",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-01-15 00:00:00.0",
+                "Masory MCHP",
+                "",
+                "",
+                "7.96",
+                "7.96",
+                "",
+                "Female",
+                "160 - 180",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-04-16 00:00:00.0",
+                "Kamakwie MCHP",
+                "",
+                "",
+                "25.43",
+                "",
+                "",
+                "Female",
+                "140 - 160",
+                "14",
+                "50 - 60"
+            ],
+            [
+                "2025-07-18 00:00:00.0",
+                "Gbainkfay MCHP",
+                "",
+                "",
+                "60.91",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-07-19 00:00:00.0",
+                "Pate Bana CHP",
+                "53",
+                "",
+                "83.23",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-03-28 00:00:00.0",
+                "Kamawornie CHP",
+                "",
+                "",
+                "106.05",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "80 - 90"
+            ],
+            [
+                "2025-05-03 00:00:00.0",
+                "Kagbo MCHP",
+                "",
+                "",
+                "26.39",
+                "",
+                "",
+                "Male",
+                "100 - 120",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-11-15 00:00:00.0",
+                "Mangay Loko MCHP",
+                "",
+                "",
+                "14.19",
+                "",
+                "",
+                "Female",
+                "160 - 180",
+                "14",
+                "40 - 50"
+            ],
+            [
+                "2025-10-29 00:00:00.0",
+                "Gbonkobana CHP",
+                "64",
+                "",
+                "18.7",
+                "",
+                "",
+                "Female",
+                "180 - 200",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-05-20 00:00:00.0",
+                "Loreto Clinic",
+                "",
+                "",
+                "21.56",
+                "",
+                "",
+                "Male",
+                "120 - 140",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-05-11 00:00:00.0",
+                "Kunsho CHP",
+                "",
+                "",
+                "49.13",
+                "",
+                "",
+                "Male",
+                "120 - 140",
+                "14",
+                "70 - 80"
+            ],
+            [
+                "2025-04-17 00:00:00.0",
+                "Tonkomba MCHP",
+                "",
+                "",
+                "28.21",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-06-16 00:00:00.0",
+                "Kapethe MCHP",
+                "",
+                "",
+                "17.85",
+                "",
+                "",
+                "Male",
+                "120 - 140",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-07-26 00:00:00.0",
+                "Rokonta CHC",
+                "86",
+                "",
+                "178.36",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-03-03 00:00:00.0",
+                "Kamakwie MCHP",
+                "52",
+                "",
+                "190.97",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "15",
+                "40 - 50"
+            ],
+            [
+                "2025-02-17 00:00:00.0",
+                "Kagbaneh CHP",
+                "60",
+                "",
+                "17.87",
+                "",
+                "",
+                "Male",
+                "160 - 180",
+                "14",
+                "50 - 60"
+            ],
+            [
+                "2025-05-23 00:00:00.0",
+                "Mateboi CHC",
+                "49",
+                "",
+                "20.24",
+                "",
+                "",
+                "Female",
+                "160 - 180",
+                "14",
+                "60 - 70"
+            ],
+            [
+                "2025-12-22 00:00:00.0",
+                "Matoto MCHP",
+                "",
+                "",
+                "80",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "40 - 50"
+            ],
+            [
+                "2025-09-04 00:00:00.0",
+                "Magbaingba MCHP",
+                "",
+                "",
+                "4.83",
+                "",
+                "",
+                "Male",
+                "180 - 200",
+                "14",
+                "0 - 20"
+            ],
+            [
+                "2025-04-05 00:00:00.0",
+                "Pate Bana CHP",
+                "",
+                "",
+                "27.11",
+                "",
+                "",
+                "Male",
+                "140 - 160",
+                "14",
+                "50 - 60"
+            ],
+            [
+                "2025-10-31 00:00:00.0",
+                "Fintonia CHC",
+                "",
+                "",
+                "86.09",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "80 - 90"
+            ],
+            [
+                "2025-11-09 00:00:00.0",
+                "Tonkomba MCHP",
+                "61",
+                "",
+                "124.36",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-01-16 00:00:00.0",
+                "Kolisokor MCHP",
+                "11",
+                "",
+                "98.26",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-02-13 00:00:00.0",
+                "Kayongoro MCHP",
+                "",
+                "",
+                "49.86",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "40 - 50"
+            ],
+            [
+                "2025-01-01 00:00:00.0",
+                "Manjoro MCHP",
+                "23",
+                "",
+                "9.3",
+                "",
+                "",
+                "Female",
+                "160 - 180",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-09-26 00:00:00.0",
+                "Madina Fullah CHP",
+                "",
+                "",
+                "88",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-05-10 00:00:00.0",
+                "Makump Bana MCHP",
+                "",
+                "",
+                "67.64",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-10-07 00:00:00.0",
+                "Laiya CHP",
+                "42",
+                "",
+                "109.99",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-04-18 00:00:00.0",
+                "Masory MCHP",
+                "",
+                "",
+                "73.18",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-04-26 00:00:00.0",
+                "Masabong Pil MCHP",
+                "2",
+                "",
+                "57.14",
+                "57.14",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-09-07 00:00:00.0",
+                "Kamasikie MCHP",
+                "",
+                "",
+                "29.8",
+                "",
+                "",
+                "Male",
+                "100 - 120",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-03-07 00:00:00.0",
+                "Rokulan CHC",
+                "83",
+                "",
+                "13.22",
+                "",
+                "",
+                "Female",
+                "100 - 120",
+                "15",
+                "0 - 20"
+            ],
+            [
+                "2025-11-29 00:00:00.0",
+                "Maharie MCHP",
+                "",
+                "",
+                "27.39",
+                "",
+                "",
+                "Male",
+                "0 - 100",
+                "14",
+                "0 - 20"
+            ],
+            [
+                "2025-12-25 00:00:00.0",
+                "Maharie MCHP",
+                "",
+                "",
+                "19.88",
+                "",
+                "",
+                "Male",
+                "140 - 160",
+                "14",
+                "40 - 50"
+            ],
+            [
+                "2025-03-16 00:00:00.0",
+                "Magbaingba MCHP",
+                "",
+                "",
+                "17.22",
+                "",
+                "",
+                "Male",
+                "120 - 140",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-11-18 00:00:00.0",
+                "Fullah Town (B.Sebora) MCHP",
+                "",
+                "",
+                "46.91",
+                "",
+                "",
+                "Female",
+                "0 - 100",
+                "14",
+                "20 - 40"
+            ],
+            [
+                "2025-08-16 00:00:00.0",
+                "Kanikay MCHP",
+                "",
+                "",
+                "58.61",
+                "",
+                "",
+                "Male",
+                "100 - 120",
+                "14",
+                "80 - 90"
+            ]
+        ],
+        "pager": {
+            "page": 1,
+            "pageSize": 100,
+            "isLastPage": false
+        },
+        "rowContext": {}
+    }
+}

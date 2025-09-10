@@ -1,0 +1,31 @@
+.grid {
+    display: grid;
+    block-size: 100%;
+    inline-size: 100%;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+        'startColumnTop endColumn'
+        'startColumnBottom endColumn';
+}
+
+.startColumnTop {
+    grid-area: startColumnTop;
+}
+.startColumnBottom {
+    grid-area: startColumnBottom;
+    block-size: 100%;
+    min-block-size: 0;
+    position: relative;
+}
+.endColumn {
+    grid-area: endColumn;
+    block-size: 100%;
+    min-inline-size: 0;
+    inline-size: fit-content;
+}
+
+.startColumnTop:empty,
+.endColumn:empty {
+    display: none;
+}
