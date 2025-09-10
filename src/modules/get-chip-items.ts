@@ -47,10 +47,8 @@ export const getChipItems = ({
     }
 
     if (optionSet || itemsLength) {
-        return !itemsLength ? '' : itemsLength.toString()
-    } else if (conditionsLength) {
-        return conditionsLength.toString()
+        return itemsLength ? itemsLength.toString() : ''
     }
 
-    return ''
+    return conditionsLength ? conditionsLength.toString() : ''
 }
