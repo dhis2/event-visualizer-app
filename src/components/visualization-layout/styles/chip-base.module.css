@@ -1,0 +1,58 @@
+.chipBase {
+    font-weight: 400;
+    display: flex;
+    max-inline-size: 360px;
+    align-items: center;
+    font-size: 13px;
+    line-height: 15px;
+    color: var(--colors-teal900);
+    margin-inline-end: 2px;
+    padding: 1px 2px 1px 4px;
+}
+
+.label {
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.primary {
+    flex: 2 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.secondary {
+    font-size: 13px;
+    line-height: 15px;
+    flex: 1 2.3 auto;
+    color: var(--colors-teal600);
+    padding-inline-start: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.items {
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-family: monospace;
+    font-size: 11px;
+    background: #c5e4e3;
+    border-radius: 2px;
+    margin-inline-start: 4px;
+    min-inline-size: 12px;
+    text-align: center;
+    padding: 2px 2px 1px 2px;
+}
+
+.items:empty {
+    display: none;
+}
+
+.leftIcon {
+    margin-inline-end: 4px;
+    line-height: 0;
+}
