@@ -1,6 +1,9 @@
 import i18n from '@dhis2/d2-i18n'
 import type { SupportedVisType } from '@constants/visualization-types'
+import { layoutGetAllDimensions } from '@dhis2/analytics'
+import { isTimeDimensionId } from '@modules/dimension'
 import type {
+    DimensionId,
     CurrentVisualization,
     EmptyVisualization,
     NewVisualization,
@@ -18,6 +21,32 @@ export const getVisTypeDescriptions = (): Record<SupportedVisType, string> => ({
     ),
 })
 
+export const headersMap: Record<DimensionId, string> = {
+    ou: 'ouname',
+    programStatus: 'programstatus',
+    eventStatus: 'eventstatus',
+    created: 'created',
+    createdBy: 'createdbydisplayname',
+    lastUpdatedBy: 'lastupdatedbydisplayname',
+    eventDate: 'eventdate',
+    enrollmentDate: 'enrollmentdate',
+    incidentDate: 'incidentdate',
+    scheduledDate: 'scheduleddate',
+    lastUpdated: 'lastupdated',
+}
+
+export const getHeadersMap = ({
+    showHierarchy,
+}: CurrentVisualization): Record<DimensionId, string> => {
+    const map = Object.assign({}, headersMap)
+
+    if (showHierarchy) {
+        map['ou'] = 'ounamehierarchy'
+    }
+
+    return map
+}
+
 export const dimensionMetadataPropMap: Record<string, string> = {
     dataElementDimensions: 'dataElement',
     attributeDimensions: 'attribute',
@@ -31,6 +60,14 @@ export const dimensionMetadataPropMap: Record<string, string> = {
 export const getDimensionMetadataFields = (): Array<string> =>
     Object.entries(dimensionMetadataPropMap).map(
         ([listName, objectName]) => `${listName}[${objectName}[id,name]]`
+    )
+
+export const isVisualizationWithTimeDimension = (vis: CurrentVisualization) =>
+    layoutGetAllDimensions(vis).some(
+        ({ dimensionType, dimension, items }) =>
+            (dimensionType === 'PERIOD' || isTimeDimensionId(dimension)) &&
+            Array.isArray(items) &&
+            items.length > 0
     )
 
 // Type guards for CurrentVisualization union

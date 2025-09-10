@@ -11,8 +11,11 @@ const config = {
         enabled: true,
     },
 
+    pluginType: 'DASHBOARD',
+
     entryPoints: {
         app: './src/app.ts',
+        plugin: './src/dashboard-plugin.tsx',
     },
 
     viteConfigExtensions: 'vite-extensions.config.mts',
