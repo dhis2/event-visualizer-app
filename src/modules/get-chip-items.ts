@@ -1,20 +1,12 @@
 import i18n from '@dhis2/d2-i18n'
+import type { LayoutDimension } from '@components/visualization-layout/chip'
 import type { SupportedAxis } from '@constants/axis-types'
-import type { SupportedDimensionType } from '@constants/dimension-types'
 import type { SupportedInputType } from '@constants/input-types'
-import type { SupportedValueType } from '@constants/value-types'
 
 const DIMENSION_ID_ORGUNIT = 'ou'
 
-interface ChipDimension {
-    id: string
-    dimensionType?: SupportedDimensionType
-    optionSet?: string
-    valueType?: SupportedValueType
-}
-
 interface GetChipItemsParams {
-    dimension: ChipDimension
+    dimension: LayoutDimension
     conditionsLength: number | undefined
     itemsLength: number | undefined
     inputType: SupportedInputType
