@@ -9,7 +9,7 @@ import {
     initialState as visUiConfigInitialState,
 } from '@store/vis-ui-config-slice'
 
-// Create a test store with the vis-config slice
+// Create a test store with the vis-ui-config slice
 const createTestStore = (preloadedState = {}) => {
     return configureStore({
         reducer: {
@@ -33,7 +33,6 @@ const TestWrapper: React.FC<{
 
 describe('<Chip />', () => {
     it('renders an org unit chip in columns with 2 org units set', () => {
-        // Create a dimension object using info from fakemetadata
         const dimension: LayoutDimension = {
             id: 'ou',
             dimensionType: 'ORGANISATION_UNIT',
@@ -42,7 +41,6 @@ describe('<Chip />', () => {
             programStageId: '',
         }
 
-        // Create a store with some test data that matches the dimension
         const store = createTestStore({
             itemsByDimension: {
                 [dimension.id]: ['ou1', 'ou2'],
@@ -56,30 +54,22 @@ describe('<Chip />', () => {
             </TestWrapper>
         )
 
-        // Check that the chip renders with the correct test attribute
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
 
-        // Check that the dimension name is displayed
         cy.contains('Organisation unit').should('be.visible')
 
-        // Check that the menu button is present
         cy.getByDataTest('chip-menu-button').should('be.visible')
 
         cy.getByDataTest('chip-items').should('contain.text', '2')
 
-        // check the background color of the chip
         cy.getByDataTest('layout-dimension-chip').should(
             'have.css',
             'background-color',
             'rgb(224, 242, 241)' // teal-100
         )
-
-        // Check that clicking the menu button logs a message (basic interaction test)
-        cy.getByDataTest('chip-menu-button').click()
     })
 
     it('renders a data element chip in columns that has a suffix and no items or conditions', () => {
-        // Create a dimension object with a suffix to distinguish it from duplicates
         const dimension: LayoutDimension = {
             id: 'ZzYYXq4fJie.X8zyunlgUfM',
             name: 'MCH Infant Feeding',
@@ -91,7 +81,6 @@ describe('<Chip />', () => {
             suffix: 'Baby Postnatal',
         }
 
-        // Create a store with some test data
         const store = createTestStore({
             itemsByDimension: {},
             conditionsByDimension: {},
@@ -103,18 +92,14 @@ describe('<Chip />', () => {
             </TestWrapper>
         )
 
-        // Check that the chip renders with the correct test attribute
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
 
-        // Check that the primary dimension name is displayed
         cy.contains('MCH Infant Feeding,').should('be.visible')
 
-        // Check that the suffix is displayed as secondary text
         cy.contains('Baby Postnatal').should('be.visible')
 
         cy.getByDataTest('chip-items').should('contain.text', 'all')
 
-        // Check that the menu button is present
         cy.getByDataTest('chip-menu-button').should('be.visible')
     })
 
@@ -144,18 +129,14 @@ describe('<Chip />', () => {
             </TestWrapper>
         )
 
-        // Check that the chip renders with the correct test attribute
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
 
-        // Check that the primary dimension name is displayed
         cy.contains('MCH Infant Feeding,').should('be.visible')
 
-        // Check that the suffix is displayed as secondary text
         cy.contains('Baby Postnatal').should('be.visible')
 
         cy.getByDataTest('chip-items').should('contain.text', '2')
 
-        // Check that the menu button is present
         cy.getByDataTest('chip-menu-button').should('be.visible')
     })
 
@@ -179,15 +160,12 @@ describe('<Chip />', () => {
             </TestWrapper>
         )
 
-        // Check that the chip renders with the correct test attribute
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
 
-        // Check that the primary dimension name is displayed
         cy.contains('Program status').should('be.visible')
 
         cy.getByDataTest('chip-items').should('contain.text', '2')
 
-        // Check that the menu button is present
         cy.getByDataTest('chip-menu-button').should('be.visible')
     })
 
@@ -202,7 +180,6 @@ describe('<Chip />', () => {
             programStageId: '',
         }
 
-        // Create a store with no items or conditions for this dimension
         const store = createTestStore({
             itemsByDimension: {},
             conditionsByDimension: {},
@@ -214,18 +191,14 @@ describe('<Chip />', () => {
             </TestWrapper>
         )
 
-        // Check that the chip renders with the correct test attribute
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
 
-        // Check that only the dimension name is displayed (no suffix, no count)
         cy.contains('Gender').should('be.visible')
 
-        // Verify no comma or secondary text is shown
         cy.get('[data-test="layout-dimension-chip"]').should('not.contain', ',')
 
         cy.getByDataTest('chip-items').should('not.exist')
 
-        // Check that the menu button is present
         cy.getByDataTest('chip-menu-button').should('be.visible')
 
         cy.getByDataTest('layout-dimension-chip').should(
@@ -255,15 +228,12 @@ describe('<Chip />', () => {
             </TestWrapper>
         )
 
-        // Check that the chip renders with the correct test attribute
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
 
-        // Check that the primary dimension name is displayed
         cy.contains('Program status').should('be.visible')
 
         cy.getByDataTest('chip-items').should('contain.text', '2')
 
-        // Check that the menu button is present
         cy.getByDataTest('chip-menu-button').should('be.visible')
 
         cy.getByDataTest('layout-dimension-chip').should(
@@ -274,7 +244,6 @@ describe('<Chip />', () => {
     })
 
     it.skip('renders a chip in filters with condition counts', () => {
-        // Create a dimension object for use in filters with items and conditions
         const dimension: LayoutDimension = {
             id: 'cejWyOfXge6',
             name: 'Gender',
@@ -285,7 +254,6 @@ describe('<Chip />', () => {
             programStageId: '',
         }
 
-        // Create a store with both items and conditions for this dimension
         const store = createTestStore({
             itemsByDimension: {},
             conditionsByDimension: {
@@ -299,16 +267,12 @@ describe('<Chip />', () => {
             </TestWrapper>
         )
 
-        // Check that the chip renders with the correct test attribute
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
 
-        // Check that the dimension name is displayed
         cy.contains('Gender').should('be.visible')
 
-        // Check that the menu button is present
         cy.getByDataTest('chip-menu-button').should('be.visible')
 
-        // The chip should show the item count (3)
         cy.getByDataTest('chip-items').should('contain.text', '1')
 
         cy.getByDataTest('layout-dimension-chip').should(
