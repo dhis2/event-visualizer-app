@@ -1,28 +1,8 @@
+import { getDimensionIdParts } from './dimension-id'
 import type { MetadataStoreItem } from '@components/app-wrapper/metadata-helpers/types'
 import type { LayoutDimension } from '@components/visualization-layout/chip'
 import type { SupportedDimensionType } from '@constants/dimension-types'
 import type { SupportedInputType } from '@constants/input-types'
-
-const extractDimensionIdParts = (id: string, inputType: SupportedInputType) => {
-    let rawStageId
-    const [dimensionId, part2, part3] = (id || '').split('.').reverse()
-    let programId = part3
-    if (part3 || inputType !== 'TRACKED_ENTITY_INSTANCE') {
-        rawStageId = part2
-    }
-    if (inputType === 'TRACKED_ENTITY_INSTANCE' && !part3) {
-        programId = part2
-    }
-    const [programStageId, repetitionIndex] = (rawStageId || '').split('[')
-    return {
-        dimensionId,
-        programStageId,
-        ...(programId ? { programId } : {}),
-        repetitionIndex:
-            repetitionIndex?.length &&
-            repetitionIndex.substring(0, repetitionIndex.indexOf(']')),
-    }
-}
 
 interface GetLayoutDimensionsParams {
     dimensionIds: string[]
@@ -36,8 +16,10 @@ export const getLayoutDimensions = ({
     getMetadataItem,
 }: GetLayoutDimensionsParams): LayoutDimension[] => {
     const dimensions: LayoutDimension[] = dimensionIds.map((id) => {
-        const { dimensionId, programStageId, programId } =
-            extractDimensionIdParts(id, inputType)
+        const { dimensionId, programStageId, programId } = getDimensionIdParts({
+            id,
+            inputType,
+        })
 
         const metadataItem = getMetadataItem(id)
 
@@ -46,14 +28,17 @@ export const getLayoutDimensions = ({
             item: MetadataStoreItem | undefined
         ): item is MetadataStoreItem & { dimensionType: unknown } =>
             item !== undefined && 'dimensionType' in item
+
         const hasOptionSet = (
             item: MetadataStoreItem | undefined
         ): item is MetadataStoreItem & { optionSet: unknown } =>
             item !== undefined && 'optionSet' in item
+
         const hasValueType = (
             item: MetadataStoreItem | undefined
         ): item is MetadataStoreItem & { valueType: unknown } =>
             item !== undefined && 'valueType' in item
+
         const hasDimensionItemType = (
             item: MetadataStoreItem | undefined
         ): item is MetadataStoreItem & { dimensionItemType: unknown } =>
