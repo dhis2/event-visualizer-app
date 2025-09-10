@@ -1,8 +1,5 @@
 import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
-import type { DimensionType } from '@types'
-
-// Extend DimensionType to include DATA_ELEMENT, STATUS, and USER
-type ExtendedDimensionType = DimensionType | 'DATA_ELEMENT' | 'STATUS' | 'USER'
+import type { ExtendedDimensionType } from '@types'
 
 export const SUPPORTED_DIMENSION_TYPES =
     asStringLiteralSubsetArray<ExtendedDimensionType>()([
@@ -18,4 +15,38 @@ export const SUPPORTED_DIMENSION_TYPES =
         'USER',
     ] as const)
 
-export type SupportedDimensionType = (typeof SUPPORTED_DIMENSION_TYPES)[number]
+export const PROGRAM_DIMENSION_TYPES =
+    asStringLiteralSubsetArray<ExtendedDimensionType>()([
+        'DATA_ELEMENT',
+        'CATEGORY',
+        'CATEGORY_OPTION_GROUP_SET',
+        'PROGRAM_ATTRIBUTE',
+        'PROGRAM_INDICATOR',
+    ] as const)
+
+export const YOUR_DIMENSION_TYPES =
+    asStringLiteralSubsetArray<ExtendedDimensionType>()([
+        'ORGANISATION_UNIT_GROUP_SET',
+    ] as const)
+
+export const DIMENSION_IDS = [
+    'created',
+    'createdBy',
+    'enrollmentDate',
+    'eventDate',
+    'eventStatus',
+    'incidentDate',
+    'lastUpdated',
+    'lastUpdatedBy',
+    'ou',
+    'programStatus',
+    'scheduledDate',
+] as const
+
+export const TIME_DIMENSION_IDS = [
+    'enrollmentDate',
+    'eventDate',
+    'incidentDate',
+    'lastUpdated',
+    'scheduledDate',
+] as const

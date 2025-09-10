@@ -50,9 +50,6 @@ export type { UseMetadataStoreReturnValue as MetadataStore } from '../components
 export type AppCachedData = TransformedAppCachedData
 export type CurrentUser = TransformedAppCachedData['currentUser']
 
-export type {
-    CurrentVisualization,
-    EmptyVisualization,
-    NewVisualization,
-    SavedVisualization,
-} from './visualization'
+export type * from './dimension'
+export type * from './value-type'
+export type * from './visualization'

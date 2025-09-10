@@ -13,7 +13,12 @@ import type { PivotTable } from './pivot-table'
 import type { Toolbar } from './toolbar'
 import type { ToolbarSidebar } from './toolbar-sidebar'
 import type { UpdateButton } from './update-button'
-import type { EventVisualizationType, VisualizationType } from '@types'
+import type {
+    CurrentVisualization,
+    DimensionArray,
+    EventVisualizationType,
+    VisualizationType,
+} from '@types'
 
 declare module '@dhis2/analytics' {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,15 +41,18 @@ declare module '@dhis2/analytics' {
     export const visTypeDisplayNames: Array<
         Record<EventVisualizationType | VisualizationType, string>
     >
+    export const layoutGetAllDimensions: (
+        vis: CurrentVisualization
+    ) => DimensionArray
     export const layoutGetAxisIdDimensionIdsObject: (
-        layout: VisUiConfigState['layout']
+        vis: CurrentVisualization
     ) => {
         columns?: string[]
         rows?: string[]
         filters?: string[]
     }
     export const layoutGetDimensionIdItemIdsObject: (
-        layout: VisUiConfigState['layout']
+        vis: CurrentVisualization
     ) => {
         [dimensionId: string]: string[]
     }
