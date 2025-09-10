@@ -19,7 +19,7 @@ export interface LayoutDimension {
     dimensionId: string
     name: string
     dimensionType?: SupportedDimensionType
-    dimensionItemType?: string // TODO when is there a dimensionItemType and not dimensionType
+    dimensionItemType?: SupportedDimensionType
     displayName?: string
     optionSet?: string
     programId?: string
@@ -38,32 +38,16 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
     const inputType = useAppSelector(getVisUiConfigInputType)
     const conditions = useAppSelector((state) =>
         getVisUiConfigConditionsByDimension(state, dimension.id)
-    ) as { condition?: unknown[]; legendSet?: unknown } | unknown[] | undefined
+    )
     const items = useAppSelector((state) =>
         getVisUiConfigItemsByDimension(state, dimension.id)
-    ) as unknown[] | undefined
+    )
 
-    // Type guards for conditions
-    const isConditionsObject = (
-        val: unknown
-    ): val is { condition?: unknown[]; legendSet?: unknown } => {
-        return typeof val === 'object' && val !== null && !Array.isArray(val)
-    }
+    const hasConditions = () =>
+        Boolean(conditions.condition?.length) || Boolean(conditions.legendSet)
 
-    const hasConditions = () => {
-        if (!conditions) {
-            return false
-        }
-        if (Array.isArray(conditions)) {
-            return conditions.length > 0
-        }
-        if (isConditionsObject(conditions)) {
-            return (
-                (conditions.condition && conditions.condition?.length > 0) ||
-                Boolean(conditions.legendSet)
-            )
-        }
-        return false
+    const openChipMenu = () => {
+        console.log('TODO Open chip menu for:', dimension.id)
     }
 
     return (
@@ -71,7 +55,7 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
             className={cx(classes.chip, {
                 [classes.chipEmpty]:
                     axisId === 'filters' &&
-                    !(items && Array.isArray(items) && items.length > 0) &&
+                    items.length === 0 &&
                     !hasConditions(),
             })}
             data-test="layout-dimension-chip"
@@ -79,13 +63,13 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
             <div className={classes.content}>
                 <ChipBase
                     dimension={dimension}
-                    conditionsLength={0} // TODO - implement
-                    itemsLength={Array.isArray(items) ? items.length : 0}
+                    conditionsLength={0} // TODO https://dhis2.atlassian.net/browse/DHIS2-20105
+                    itemsLength={items.length}
                     inputType={inputType}
                     axisId={axisId}
                 />
                 <IconButton
-                    onClick={() => console.log('TODO - open menu')}
+                    onClick={openChipMenu}
                     dataTest={'chip-menu-button'}
                     menuId={`chip-menu-${dimension.id}`}
                 >

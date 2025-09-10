@@ -3,6 +3,9 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import type { SupportedInputType } from '@constants/input-types'
 import type { SupportedVisType } from '@constants/visualization-types'
 
+const EMPTY_STRING_ARRAY: string[] = []
+const EMPTY_CONDITIONS_OBJECT = { condition: undefined, legendSet: undefined }
+
 export interface VisUiConfigState {
     visualizationType: SupportedVisType
     inputType: SupportedInputType
@@ -11,8 +14,11 @@ export interface VisUiConfigState {
         filters: string[]
         rows: string[]
     }
-    itemsByDimension: Record<string, unknown>
-    conditionsByDimension: Record<string, unknown>
+    itemsByDimension: Record<string, string[]>
+    conditionsByDimension: Record<
+        string,
+        { condition?: string; legendSet?: string }
+    >
 }
 
 export const initialState: VisUiConfigState = {
@@ -57,13 +63,15 @@ export const visUiConfigSlice = createSlice({
         },
         setVisUiConfigItemsByDimension: (
             state,
-            action: PayloadAction<Record<string, unknown>>
+            action: PayloadAction<Record<string, string[]>>
         ) => {
             state.itemsByDimension = action.payload
         },
         setVisUiConfigConditionsByDimension: (
             state,
-            action: PayloadAction<Record<string, unknown>>
+            action: PayloadAction<
+                Record<string, { condition?: string; legendSet?: string }>
+            >
         ) => {
             state.conditionsByDimension = action.payload
         },
@@ -73,9 +81,9 @@ export const visUiConfigSlice = createSlice({
         getVisUiConfigLayout: (state) => state.layout,
         getVisUiConfigInputType: (state) => state.inputType,
         getVisUiConfigItemsByDimension: (state, dimensionId: string) =>
-            state.itemsByDimension[dimensionId],
+            state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
         getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
-            state.conditionsByDimension[dimensionId],
+            state.conditionsByDimension[dimensionId] || EMPTY_CONDITIONS_OBJECT,
     },
 })
 

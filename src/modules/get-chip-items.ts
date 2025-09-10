@@ -5,8 +5,13 @@ import type { SupportedInputType } from '@constants/input-types'
 
 const DIMENSION_ID_ORGUNIT = 'ou'
 
+type ChipDimension = Pick<
+    LayoutDimension,
+    'id' | 'dimensionType' | 'optionSet' | 'valueType'
+>
+
 interface GetChipItemsParams {
-    dimension: LayoutDimension
+    dimension: ChipDimension
     conditionsLength: number | undefined
     itemsLength: number | undefined
     inputType: SupportedInputType
@@ -19,35 +24,33 @@ export const getChipItems = ({
     itemsLength,
     inputType,
     axisId,
-}: GetChipItemsParams): string | number | null => {
+}: GetChipItemsParams): string => {
     const { id, dimensionType, optionSet, valueType } = dimension
 
     if (
-        ((inputType !== 'TRACKED_ENTITY_INSTANCE' &&
+        ((['EVENT', 'ENROLLMENT'].includes(inputType) &&
             id === DIMENSION_ID_ORGUNIT) ||
             dimensionType === 'PERIOD') &&
         !itemsLength
     ) {
-        return null
+        return ''
     }
 
-    if (!conditionsLength && !itemsLength && axisId !== 'filters') {
-        return i18n.t('all')
-    }
-
-    if (
-        ((valueType === 'TRUE_ONLY' && conditionsLength === 1) ||
-            (valueType === 'BOOLEAN' && conditionsLength === 2)) &&
-        axisId !== 'filters'
-    ) {
-        return i18n.t('all')
+    if (['columns', 'rows'].includes(axisId)) {
+        if (
+            (!conditionsLength && !itemsLength) ||
+            (valueType === 'TRUE_ONLY' && conditionsLength === 1) ||
+            (valueType === 'BOOLEAN' && conditionsLength === 2)
+        ) {
+            return i18n.t('all')
+        }
     }
 
     if (optionSet || itemsLength) {
-        return itemsLength || conditionsLength || null
+        return !itemsLength ? '' : itemsLength.toString()
     } else if (conditionsLength) {
-        return conditionsLength
+        return conditionsLength.toString()
     }
 
-    return null
+    return ''
 }

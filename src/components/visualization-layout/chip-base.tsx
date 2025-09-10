@@ -2,7 +2,7 @@ import cx from 'classnames'
 import React from 'react'
 import type { LayoutDimension } from './chip'
 import classes from './styles/chip-base.module.css'
-import { DimensionIcon } from '@components/dimension-item/dimension-icon'
+import { DimensionTypeIcon } from '@components/dimension-item/dimension-type-icon'
 import type { SupportedAxis } from '@constants/axis-types'
 import type { SupportedInputType } from '@constants/input-types'
 import { getChipItems } from '@modules/get-chip-items'
@@ -38,9 +38,11 @@ export const ChipBase: React.FC<ChipBaseProps> = ({
 
     return (
         <div className={cx(classes.chipBase)}>
-            <div className={classes.leftIcon}>
-                <DimensionIcon dimensionType={dimensionType} />
-            </div>
+            {dimensionType && (
+                <div className={classes.leftIcon}>
+                    <DimensionTypeIcon dimensionType={dimensionType} />
+                </div>
+            )}
             <span className={classes.label}>
                 <span className={classes.primary}>
                     {suffix ? `${name},` : `${name}`}

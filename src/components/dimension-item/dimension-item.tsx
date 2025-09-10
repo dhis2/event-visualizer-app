@@ -1,6 +1,6 @@
 import cx from 'classnames'
 import React from 'react'
-import { DimensionIcon } from './dimension-icon'
+import { DimensionTypeIcon } from './dimension-type-icon'
 import styles from './styles/dimension-item.module.css'
 import type { SupportedDimensionType } from '@constants/dimension-types'
 
@@ -38,7 +38,7 @@ const DimensionItem: React.FC<DimensionItemProps> = ({
     >
         <div className={styles.labelAndIconContainer}>
             <div className={styles.icon}>
-                <DimensionIcon dimensionType={dimensionType} />
+                <DimensionTypeIcon dimensionType={dimensionType} />
             </div>
             <div className={styles.label}>
                 <span className={styles.primary}>{name}</span>

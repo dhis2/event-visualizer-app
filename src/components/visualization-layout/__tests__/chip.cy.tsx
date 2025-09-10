@@ -103,7 +103,7 @@ describe('<Chip />', () => {
         cy.getByDataTest('chip-menu-button').should('be.visible')
     })
 
-    // TODO - implement conditions counts
+    // TODO enable when https://dhis2.atlassian.net/browse/DHIS2-20105 is implemented
     it.skip('renders a chip in columns that has a suffix and has conditions', () => {
         const dimension: LayoutDimension = {
             id: 'ZzYYXq4fJie.X8zyunlgUfM',
@@ -243,6 +243,7 @@ describe('<Chip />', () => {
         )
     })
 
+    // TODO enable when https://dhis2.atlassian.net/browse/DHIS2-20105 is implemented
     it.skip('renders a chip in filters with condition counts', () => {
         const dimension: LayoutDimension = {
             id: 'cejWyOfXge6',
