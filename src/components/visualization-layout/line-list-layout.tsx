@@ -4,7 +4,7 @@ import classes from './styles/line-list-layout.module.css'
 import { useAppSelector } from '@hooks'
 import { getVisUiConfigLayout } from '@store/vis-ui-config-slice'
 
-export const LineListingLayout = () => {
+export const LineListLayout = () => {
     const { columns, filters } = useAppSelector(getVisUiConfigLayout)
 
     return (

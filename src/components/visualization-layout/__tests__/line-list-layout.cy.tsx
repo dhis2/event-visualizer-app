@@ -2,7 +2,7 @@ import { CssVariables } from '@dhis2/ui'
 import { configureStore } from '@reduxjs/toolkit'
 import React, { useEffect, useState } from 'react'
 import { Provider } from 'react-redux'
-import { LineListingLayout } from '../line-list-layout'
+import { LineListLayout } from '../line-list-layout'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import {
     MetadataProvider,
@@ -74,7 +74,7 @@ const TestWrapper: React.FC<{
     </Provider>
 )
 
-describe('<LineListingLayout />', () => {
+describe('<LineListLayout />', () => {
     it('renders with LINE_LIST visualization type, EVENT input type, 2 column chips and 1 filter chip', () => {
         const store = createTestStore({
             visualizationType: 'LINE_LIST',
@@ -96,7 +96,7 @@ describe('<LineListingLayout />', () => {
 
         cy.mount(
             <TestWrapper store={store}>
-                <LineListingLayout />
+                <LineListLayout />
             </TestWrapper>
         )
 

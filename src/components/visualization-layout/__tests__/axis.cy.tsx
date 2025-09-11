@@ -1,5 +1,5 @@
 import { CssVariables } from '@dhis2/ui'
-import { configureStore } from '@reduxjs/toolkit'
+import type { Store } from '@reduxjs/toolkit'
 import React, { useEffect, useState } from 'react'
 import { Provider } from 'react-redux'
 import { Axis } from '../axis'
@@ -9,17 +9,8 @@ import {
     useAddMetadata,
 } from '@components/app-wrapper/metadata-provider'
 import { visUiConfigSlice, initialState } from '@store/vis-ui-config-slice'
-
-const createTestStore = (preloadedState = {}) => {
-    return configureStore({
-        reducer: {
-            visUiConfig: visUiConfigSlice.reducer,
-        },
-        preloadedState: {
-            visUiConfig: { ...initialState, ...preloadedState },
-        },
-    })
-}
+import { setupStore } from '@test-utils/setup-store'
+import type { RootState } from '@types'
 
 // Mock metadata items for testing
 const mockMetadataItems: MetadataInput = [
@@ -63,9 +54,11 @@ const MetadataSetup: React.FC<{ children: React.ReactNode }> = ({
 
 const TestWrapper: React.FC<{
     children: React.ReactNode
-    store?: ReturnType<typeof createTestStore>
-}> = ({ children, store = createTestStore() }) => (
-    <Provider store={store}>
+    store: ReturnType<typeof setupStore> & {
+        getState: () => Partial<RootState>
+    }
+}> = ({ children, store }) => (
+    <Provider store={store as Store}>
         <MetadataProvider>
             <MetadataSetup>{children}</MetadataSetup>
             <CssVariables colors spacers theme />
@@ -73,17 +66,27 @@ const TestWrapper: React.FC<{
     </Provider>
 )
 
-const reduxVisUiConfigObject = {
-    inputType: 'EVENT',
-    itemsByDimension: {
-        ou: ['someOrgUnitId'],
-    },
-}
-
 describe('<Axis />', () => {
-    it('renders left axis with columns configuration and no dimensions', () => {
-        const store = createTestStore(reduxVisUiConfigObject)
+    let store: ReturnType<typeof setupStore> & {
+        getState: () => Partial<RootState>
+    }
 
+    beforeEach(() => {
+        if (!store) {
+            store = setupStore(
+                { visUiConfig: visUiConfigSlice.reducer },
+                {
+                    visUiConfig: {
+                        ...initialState,
+                        itemsByDimension: {
+                            ou: ['someOrgUnitId'],
+                        },
+                    },
+                }
+            )
+        }
+    })
+    it('renders left axis with columns configuration and no dimensions', () => {
         cy.mount(
             <TestWrapper store={store}>
                 <Axis axisId="columns" side="left" />
@@ -101,8 +104,6 @@ describe('<Axis />', () => {
     })
 
     it('renders left axis with columns with dimensions', () => {
-        const store = createTestStore(reduxVisUiConfigObject)
-
         cy.mount(
             <TestWrapper store={store}>
                 <Axis
@@ -128,8 +129,6 @@ describe('<Axis />', () => {
     })
 
     it('renders right axis with filters with no dimensions', () => {
-        const store = createTestStore(reduxVisUiConfigObject)
-
         cy.mount(
             <TestWrapper store={store}>
                 <Axis axisId="filters" side="right" />
@@ -147,8 +146,6 @@ describe('<Axis />', () => {
     })
 
     it('renders right axis with filters with dimensions', () => {
-        const store = createTestStore(reduxVisUiConfigObject)
-
         cy.mount(
             <TestWrapper store={store}>
                 <Axis
@@ -170,8 +167,6 @@ describe('<Axis />', () => {
     })
 
     it('handles empty dimenssionIds array', () => {
-        const store = createTestStore(reduxVisUiConfigObject)
-
         cy.mount(
             <TestWrapper store={store}>
                 <Axis axisId="columns" dimensionIds={[]} side="left" />
