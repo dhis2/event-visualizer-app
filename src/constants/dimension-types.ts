@@ -1,7 +1,7 @@
 import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 import type { ExtendedDimensionType } from '@types'
 
-export const SUPPORTED_DIMENSION_TYPES =
+export const DIMENSION_TYPES =
     asStringLiteralSubsetArray<ExtendedDimensionType>()([
         'PROGRAM_ATTRIBUTE',
         'PROGRAM_INDICATOR',
