@@ -1,9 +1,5 @@
-import type { Visualization, GridHeader } from '@types'
+import type { GridHeader } from '@types'
 
-export type LineListTransformedVisualization = Pick<
-    Visualization,
-    'legend' | 'displayDensity' | 'fontSize'
->
 type CellData = string | number | boolean
 type Row = Array<CellData>
 export type LineListAnalyticsData = {

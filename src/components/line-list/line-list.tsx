@@ -3,17 +3,15 @@ import { FetchOverlay } from './fetch-overlay'
 import { LegendKey } from './legend-key'
 import { NoTimeDimensionWarning } from './no-time-dimension-warning'
 import classes from './styles/line-list.module.css'
-import type {
-    LineListAnalyticsData,
-    LineListTransformedVisualization,
-} from './types'
+import type { LineListAnalyticsData } from './types'
 import { ScrollBox } from '@components/scroll-box/scroll-box'
+import type { CurrentVisualization } from '@types'
 
 type LineListProps = {
     analyticsData: LineListAnalyticsData
     onDataSort: (direction: 'asc' | 'desc' | 'default') => void
     onPaginate: (page: number) => void
-    visualization: LineListTransformedVisualization
+    visualization: CurrentVisualization
     isFetching?: boolean
     isInModal?: boolean
     isInDashboard?: boolean
@@ -61,7 +59,10 @@ export const LineList: FC<LineListProps> = ({
                 className={classes.startColumnBottom}
                 data-test="start-column-top"
             >
-                <ScrollBox>{isFetching && <FetchOverlay />}Table</ScrollBox>
+                <ScrollBox>
+                    {isFetching && <FetchOverlay />}
+                    <div data-test="data-table">Table</div>
+                </ScrollBox>
             </div>
             <div className={classes.endColumn} data-test="end-column">
                 <LegendKey />

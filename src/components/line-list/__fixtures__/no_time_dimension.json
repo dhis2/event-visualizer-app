@@ -1,0 +1,209 @@
+{
+    "visualization": {
+        "name": "No time dimension",
+        "created": "2025-09-11T10:48:22.018",
+        "lastUpdated": "2025-09-11T10:48:22.018",
+        "translations": [],
+        "createdBy": {
+            "id": "xE7jOejl9FI",
+            "code": null,
+            "name": "John Traore",
+            "displayName": "John Traore",
+            "username": "admin"
+        },
+        "favorites": [],
+        "lastUpdatedBy": {
+            "id": "xE7jOejl9FI",
+            "code": null,
+            "name": "John Traore",
+            "displayName": "John Traore",
+            "username": "admin"
+        },
+        "sharing": {
+            "owner": "xE7jOejl9FI",
+            "external": false,
+            "users": {},
+            "userGroups": {},
+            "public": "--------"
+        },
+        "regressionType": "NONE",
+        "displayDensity": "NORMAL",
+        "fontSize": "NORMAL",
+        "sortOrder": 0,
+        "topLimit": 0,
+        "hideEmptyRows": false,
+        "showHierarchy": false,
+        "skipRounding": false,
+        "dataDimensionItems": [],
+        "dataElementGroupSetDimensions": [],
+        "organisationUnitGroupSetDimensions": [],
+        "categoryDimensions": [],
+        "categoryOptionGroupSetDimensions": [],
+        "attributeDimensions": [],
+        "dataElementDimensions": [
+            {
+                "dataElement": {
+                    "name": "WHOMCH Smoking",
+                    "id": "sWoqcoByYmD"
+                }
+            }
+        ],
+        "programIndicatorDimensions": [],
+        "subscribers": [],
+        "digitGroupSeparator": "SPACE",
+        "hideEmptyRowItems": "NONE",
+        "hideLegend": false,
+        "noSpaceBetweenColumns": false,
+        "cumulativeValues": false,
+        "percentStackedValues": false,
+        "showData": false,
+        "colTotals": false,
+        "rowTotals": false,
+        "rowSubTotals": false,
+        "colSubTotals": false,
+        "hideTitle": false,
+        "hideSubtitle": false,
+        "showDimensionLabels": false,
+        "type": "LINE_LIST",
+        "program": {
+            "programType": "WITHOUT_REGISTRATION",
+            "displayIncidentDate": false,
+            "displayEnrollmentDateLabel": "Enrollment Date",
+            "displayIncidentDateLabel": "Incident Date",
+            "id": "lxAQ7Zs9VYR",
+            "programStages": [
+                {
+                    "id": "dBwrot7S420",
+                    "repeatable": false,
+                    "name": "Antenatal care visit"
+                }
+            ],
+            "name": "Antenatal care visit"
+        },
+        "programStage": {
+            "hideDueDate": false,
+            "displayExecutionDateLabel": "Visit date",
+            "id": "dBwrot7S420",
+            "repeatable": false,
+            "name": "Antenatal care visit"
+        },
+        "programDimensions": [
+            {
+                "enrollmentDateLabel": "Enrollment Date",
+                "incidentDateLabel": "Incident Date",
+                "programType": "WITHOUT_REGISTRATION",
+                "displayIncidentDate": false,
+                "displayEnrollmentDateLabel": "Enrollment Date",
+                "displayIncidentDateLabel": "Incident Date",
+                "id": "lxAQ7Zs9VYR",
+                "programStages": [
+                    {
+                        "hideDueDate": false,
+                        "displayExecutionDateLabel": "Visit date",
+                        "id": "dBwrot7S420",
+                        "repeatable": false,
+                        "name": "Antenatal care visit"
+                    }
+                ],
+                "name": "Antenatal care visit"
+            }
+        ],
+        "simpleDimensions": [
+            {
+                "parent": "COLUMN",
+                "dimension": "ou",
+                "values": ["USER_ORGUNIT"]
+            }
+        ],
+        "outputType": "EVENT",
+        "collapseDataDimensions": false,
+        "hideNaData": false,
+        "legacy": false,
+        "filters": [],
+        "parentGraphMap": {},
+        "columns": [
+            {
+                "dimensionType": "ORGANISATION_UNIT",
+                "items": [
+                    {
+                        "id": "USER_ORGUNIT"
+                    }
+                ],
+                "dimension": "ou"
+            },
+            {
+                "dimensionType": "DATA_ELEMENT",
+                "items": [],
+                "programStage": {
+                    "id": "dBwrot7S420"
+                },
+                "program": {
+                    "id": "lxAQ7Zs9VYR"
+                },
+                "dimension": "sWoqcoByYmD",
+                "valueType": "BOOLEAN"
+            }
+        ],
+        "rows": [],
+        "displayName": "No time dimension",
+        "access": {
+            "manage": true,
+            "externalize": true,
+            "write": true,
+            "read": true,
+            "update": true,
+            "delete": true
+        },
+        "favorite": false,
+        "href": "https://test.e2e.dhis2.org/anly-42/api/42/eventVisualizations/asXsjGqmVr8",
+        "subscribed": false,
+        "metaData": {
+            "sWoqcoByYmD": {
+                "uid": "sWoqcoByYmD",
+                "code": "STA_SMO",
+                "name": "WHOMCH Smoking"
+            }
+        },
+        "displayFormName": "No time dimension",
+        "id": "asXsjGqmVr8",
+        "attributeValues": [],
+        "legend": {
+            "showKey": false
+        },
+        "sorting": [],
+        "repetitions": []
+    },
+    "responses": {
+        "headers": [
+            {
+                "name": "ouname",
+                "column": "Organisation unit",
+                "valueType": "TEXT",
+                "type": "java.lang.String",
+                "hidden": false,
+                "meta": true,
+                "index": 0
+            },
+            {
+                "name": "dBwrot7S420.sWoqcoByYmD",
+                "column": "WHOMCH Smoking",
+                "valueType": "BOOLEAN",
+                "type": "java.lang.Boolean",
+                "hidden": false,
+                "meta": true,
+                "index": 1
+            }
+        ],
+        "rows": [
+            ["Ngelehun CHC", "Yes"],
+            ["Ngelehun CHC", "No"],
+            ["Ngelehun CHC", "No"]
+        ],
+        "pager": {
+            "page": 1,
+            "pageSize": 100,
+            "isLastPage": true
+        },
+        "rowContext": {}
+    }
+}
