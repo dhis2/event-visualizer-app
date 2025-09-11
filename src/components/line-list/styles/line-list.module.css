@@ -11,13 +11,18 @@
 
 .startColumnTop {
     grid-area: startColumnTop;
+    justify-self: center;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
 }
+
 .startColumnBottom {
     grid-area: startColumnBottom;
     block-size: 100%;
     min-block-size: 0;
     position: relative;
 }
+
 .endColumn {
     grid-area: endColumn;
     block-size: 100%;
@@ -28,4 +33,7 @@
 .startColumnTop:empty,
 .endColumn:empty {
     display: none;
+}
+
+.dataTable {
 }

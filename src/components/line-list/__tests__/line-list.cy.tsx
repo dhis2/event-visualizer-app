@@ -1,8 +1,17 @@
+import { CssVariables } from '@dhis2/ui'
+import type { FC, ReactNode } from 'react'
 import simleLineList from '../__fixtures__/e2e_enrollment.json'
 import noTimeDimension from '../__fixtures__/no_time_dimension.json'
 import { LineList } from '../line-list'
 import type { LineListAnalyticsData } from '../types'
 import type { CurrentVisualization } from '@types'
+
+const TestContainer: FC<{ children: ReactNode }> = ({ children }) => (
+    <div style={{ width: '100vw', height: '100vh' }}>
+        {children}
+        <CssVariables colors spacers theme />
+    </div>
+)
 
 describe(
     'Line List',
@@ -14,7 +23,7 @@ describe(
         it.only('renders correctly', () => {
             // TODO: Implement as Vitest with snapshot
             cy.mount(
-                <div style={{ width: '100vw', height: '100vh' }}>
+                <TestContainer>
                     <LineList
                         analyticsData={
                             simleLineList.responses as LineListAnalyticsData
@@ -24,13 +33,15 @@ describe(
                         visualization={
                             simleLineList.visualization as unknown as CurrentVisualization
                         }
+                        page={1}
+                        pageSize={50}
                     />
-                </div>
+                </TestContainer>
             )
         })
         it('shows an overlay that covers the table area while fetching', () => {
             cy.mount(
-                <div style={{ width: '100vw', height: '100vh' }}>
+                <TestContainer>
                     <LineList
                         isFetching
                         analyticsData={
@@ -41,8 +52,10 @@ describe(
                         visualization={
                             simleLineList.visualization as unknown as CurrentVisualization
                         }
+                        page={1}
+                        pageSize={50}
                     />
-                </div>
+                </TestContainer>
             )
 
             cy.getByDataTest('dhis2-uicore-componentcover').should('be.visible')
@@ -54,10 +67,10 @@ describe(
                 expect(Cypress.dom.isFocusable($el)).to.be.equal(false)
             })
         })
-        it('shows a "No time dimensions" warning when showing a LL without a time dimensions in a modal', () => {
+        it.only('shows a "No time dimensions" warning when showing a LL without a time dimensions in a modal', () => {
             // TODO: implement as Vitest
             cy.mount(
-                <div style={{ width: '100vw', height: '100vh' }}>
+                <TestContainer>
                     <LineList
                         analyticsData={
                             noTimeDimension.responses as LineListAnalyticsData
@@ -68,8 +81,10 @@ describe(
                             noTimeDimension.visualization as unknown as CurrentVisualization
                         }
                         isInModal
+                        page={1}
+                        pageSize={50}
                     />
-                </div>
+                </TestContainer>
             )
         })
     }
