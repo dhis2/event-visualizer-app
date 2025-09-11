@@ -1,4 +1,3 @@
-import i18n from '@dhis2/d2-i18n'
 import cx from 'classnames'
 import React from 'react'
 import { Chip } from './chip'
@@ -7,15 +6,10 @@ import { useMetadataStore } from '@components/app-wrapper/metadata-provider'
 import type { SupportedAxis } from '@constants/axis-types'
 import { useAppSelector } from '@hooks'
 import { getLayoutDimensions } from '@modules/get-layout-dimensions'
+import { getAxisNames } from '@modules/layout'
 import { getVisUiConfigInputType } from '@store/vis-ui-config-slice'
 
-const getAxisNames = () => ({
-    columns: i18n.t('Columns'),
-    filters: i18n.t('Filter'),
-    rows: i18n.t('Rows'),
-})
-
-export type Side = 'left' | 'right'
+export type Side = 'start' | 'end'
 
 interface AxisProps {
     axisId: SupportedAxis
@@ -38,8 +32,8 @@ export const Axis: React.FC<AxisProps> = ({ axisId, side, dimensionIds }) => {
     return (
         <div
             className={cx({
-                [classes.leftAxis]: side === 'left',
-                [classes.rightAxis]: side === 'right',
+                [classes.startAxis]: side === 'start',
+                [classes.endAxis]: side === 'end',
             })}
             data-test={`axis-${axisId}-${side}`}
         >
