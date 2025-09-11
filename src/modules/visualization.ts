@@ -71,22 +71,22 @@ export const isVisualizationWithTimeDimension = (vis: CurrentVisualization) =>
     )
 
 // Type guards for CurrentVisualization union
-export const isEmptyVisualization = (
+export const isVisualizationEmpty = (
     visualization: CurrentVisualization
 ): visualization is EmptyVisualization =>
     Object.keys(visualization).length === 0
 
-export const isSavedVisualization = (
+export const isVisualizationSaved = (
     visualization: CurrentVisualization
 ): visualization is SavedVisualization => {
     return 'id' in visualization && typeof visualization.id === 'string'
 }
 
-export const isNewVisualization = (
+export const isVisualizationNew = (
     visualization: CurrentVisualization
 ): visualization is NewVisualization => {
     return (
-        !isEmptyVisualization(visualization) &&
-        !isSavedVisualization(visualization)
+        !isVisualizationEmpty(visualization) &&
+        !isVisualizationSaved(visualization)
     )
 }
