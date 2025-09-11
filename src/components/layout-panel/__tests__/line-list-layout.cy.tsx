@@ -104,24 +104,24 @@ describe('<LineListLayout />', () => {
         cy.get('[class*="layoutContainer"]').should('be.visible')
 
         // Check that both axes are rendered
-        cy.getByDataTest('axis-columns-left').should('be.visible')
-        cy.getByDataTest('axis-filters-right').should('be.visible')
+        cy.getByDataTest('axis-columns-start').should('be.visible')
+        cy.getByDataTest('axis-filters-end').should('be.visible')
 
         // Check axis labels
-        cy.getByDataTest('axis-columns-left')
+        cy.getByDataTest('axis-columns-start')
             .contains('Columns')
             .should('be.visible')
-        cy.getByDataTest('axis-filters-right')
+        cy.getByDataTest('axis-filters-end')
             .contains('Filter')
             .should('be.visible')
 
         // Verify columns axis has 2 chips
-        cy.getByDataTest('axis-columns-left')
+        cy.getByDataTest('axis-columns-start')
             .find('[data-test="layout-dimension-chip"]')
             .should('have.length', 2)
 
         // Verify filters axis has 1 chip
-        cy.getByDataTest('axis-filters-right')
+        cy.getByDataTest('axis-filters-end')
             .find('[data-test="layout-dimension-chip"]')
             .should('have.length', 1)
 
@@ -131,12 +131,12 @@ describe('<LineListLayout />', () => {
         cy.contains('Organisation unit').should('be.visible')
 
         // Verify the chips are in the correct axes
-        cy.getByDataTest('axis-columns-left').within(() => {
+        cy.getByDataTest('axis-columns-start').within(() => {
             cy.contains('Organisation unit').should('be.visible')
             cy.contains('MCH Infant Feeding').should('be.visible')
         })
 
-        cy.getByDataTest('axis-filters-right').within(() => {
+        cy.getByDataTest('axis-filters-end').within(() => {
             cy.contains('Gender').should('be.visible')
         })
     })

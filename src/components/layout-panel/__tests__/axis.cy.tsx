@@ -86,14 +86,14 @@ describe('<Axis />', () => {
             )
         }
     })
-    it('renders left axis with columns configuration and no dimensions', () => {
+    it('renders start axis with columns configuration and no dimensions', () => {
         cy.mount(
             <TestWrapper store={store}>
-                <Axis axisId="columns" side="left" />
+                <Axis axisId="columns" side="start" />
             </TestWrapper>
         )
 
-        cy.getByDataTest('axis-columns-left')
+        cy.getByDataTest('axis-columns-start')
             .should('be.visible')
             .and('have.css', 'flex-basis', '65%')
 
@@ -103,23 +103,23 @@ describe('<Axis />', () => {
         cy.getByDataTest('layout-dimension-chip').should('have.length', 0)
     })
 
-    it('renders left axis with columns with dimensions', () => {
+    it('renders start axis with columns with dimensions', () => {
         cy.mount(
             <TestWrapper store={store}>
                 <Axis
                     axisId="columns"
                     dimensionIds={['ou', 'genderId']}
-                    side="left"
+                    side="start"
                 />
             </TestWrapper>
         )
 
-        // left side is 65% width
-        cy.getByDataTest('axis-columns-left')
+        // start side is 65% width
+        cy.getByDataTest('axis-columns-start')
             .should('be.visible')
             .and('have.css', 'flex-basis', '65%')
 
-        cy.getByDataTest('axis-columns-left').should('be.visible')
+        cy.getByDataTest('axis-columns-start').should('be.visible')
         cy.contains('Columns').should('be.visible')
 
         cy.getByDataTest('layout-dimension-chip').should('have.length', 2)
@@ -128,15 +128,15 @@ describe('<Axis />', () => {
         cy.contains('MCH Infant Feeding').should('not.exist')
     })
 
-    it('renders right axis with filters with no dimensions', () => {
+    it('renders end axis with filters with no dimensions', () => {
         cy.mount(
             <TestWrapper store={store}>
-                <Axis axisId="filters" side="right" />
+                <Axis axisId="filters" side="end" />
             </TestWrapper>
         )
 
-        // right side is 35% width
-        cy.getByDataTest('axis-filters-right')
+        // end side is 35% width
+        cy.getByDataTest('axis-filters-end')
             .should('be.visible')
             .and('have.css', 'flex-basis', '35%')
 
@@ -145,18 +145,18 @@ describe('<Axis />', () => {
         cy.getByDataTest('layout-dimension-chip').should('have.length', 0)
     })
 
-    it('renders right axis with filters with dimensions', () => {
+    it('renders end axis with filters with dimensions', () => {
         cy.mount(
             <TestWrapper store={store}>
                 <Axis
                     axisId="filters"
                     dimensionIds={['ou', 'mchInfantFeeding']}
-                    side="right"
+                    side="end"
                 />
             </TestWrapper>
         )
 
-        cy.getByDataTest('axis-filters-right')
+        cy.getByDataTest('axis-filters-end')
             .should('be.visible')
             .and('have.css', 'flex-basis', '35%')
 
@@ -169,11 +169,11 @@ describe('<Axis />', () => {
     it('handles empty dimenssionIds array', () => {
         cy.mount(
             <TestWrapper store={store}>
-                <Axis axisId="columns" dimensionIds={[]} side="left" />
+                <Axis axisId="columns" dimensionIds={[]} side="start" />
             </TestWrapper>
         )
 
-        cy.getByDataTest('axis-columns-left').should('be.visible')
+        cy.getByDataTest('axis-columns-start').should('be.visible')
         cy.contains('Columns').should('be.visible')
         cy.getByDataTest('layout-dimension-chip').should('have.length', 0)
     })
