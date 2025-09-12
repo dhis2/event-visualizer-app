@@ -11,7 +11,7 @@ import {
     IconCalendar16,
 } from '@dhis2/ui'
 import React, { type ReactNode } from 'react'
-import type { SupportedDimensionType } from '@constants/dimension-types'
+import type { SupportedDimensionType } from '@types'
 
 type DimensionIconMap = Record<SupportedDimensionType, ReactNode>
 

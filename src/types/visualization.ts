@@ -9,7 +9,7 @@ import type {
     DimensionalItemObject,
 } from './dhis2-openapi-schemas'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers/types'
-import type { DimensionId, SupportedDimensionType } from '@types'
+import type { ExtendedDimensionType } from '@types'
 
 type IdRecord = { id: string }
 type IdNameRecord = IdRecord & { name: string }
@@ -17,15 +17,15 @@ type IdNameRecord = IdRecord & { name: string }
 type MetadataRecordArray<T extends string> = Array<Record<T, IdNameRecord>>
 
 export type DimensionRecord = {
-    dimension: DimensionId
-    dimensionType: SupportedDimensionType
-    filter: string
-    program: IdRecord
-    programStage: IdRecord
-    optionSet: IdRecord
-    valueType: ValueType
-    legendSet: IdRecord
-    repetition: EventRepetition
+    dimension: string
+    dimensionType?: ExtendedDimensionType
+    filter?: string
+    program?: IdRecord
+    programStage?: IdRecord
+    optionSet?: IdRecord
+    valueType?: ValueType
+    legendSet?: IdRecord
+    repetition?: EventRepetition
     items: Array<DimensionalItemObject>
 }
 

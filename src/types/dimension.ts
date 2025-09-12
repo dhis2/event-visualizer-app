@@ -4,8 +4,8 @@ import type {
     YOUR_DIMENSION_TYPES,
     DIMENSION_IDS,
     TIME_DIMENSION_IDS,
-} from '@constants/dimension-types'
-import type { DimensionType } from '@types'
+} from '@constants/dimensions'
+import type { DimensionRecord, DimensionType } from '@types'
 
 // Extend DimensionType to include DATA_ELEMENT, STATUS, and USER
 export type ExtendedDimensionType =
@@ -23,3 +23,12 @@ export type YourDimensionType = (typeof YOUR_DIMENSION_TYPES)[number]
 export type DimensionId = (typeof DIMENSION_IDS)[number]
 
 export type TimeDimensionId = (typeof TIME_DIMENSION_IDS)[number]
+
+// XXX check about this one
+export type InternalDimensionRecord = Omit<
+    DimensionRecord,
+    'dimension' | 'items'
+> & {
+    id: string
+    name: string
+}
