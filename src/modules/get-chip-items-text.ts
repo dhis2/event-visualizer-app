@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import type { LayoutDimension } from '@components/visualization-layout/chip'
+import type { LayoutDimension } from '@components/layout-panel/chip'
 import type { SupportedAxis } from '@constants/axis-types'
 import type { SupportedInputType } from '@constants/input-types'
 

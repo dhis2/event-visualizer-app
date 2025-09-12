@@ -1,3 +1,4 @@
+import { getFullDimensionId } from './dimension-id'
 import type { SupportedInputType } from '@constants/input-types'
 import {
     convertToSupportedVisType,
@@ -8,28 +9,6 @@ import {
     layoutGetDimensionIdItemIdsObject,
 } from '@dhis2/analytics'
 import type { SavedVisualization } from '@types'
-
-interface GetFullDimensionIdParams {
-    dimensionId: string
-    programId?: string
-    programStageId?: string
-    inputType: SupportedInputType
-}
-
-const getFullDimensionId = ({
-    dimensionId,
-    programId,
-    programStageId,
-    inputType,
-}: GetFullDimensionIdParams): string => {
-    return [
-        inputType === 'TRACKED_ENTITY_INSTANCE' ? programId : undefined,
-        programStageId,
-        dimensionId,
-    ]
-        .filter((p) => p)
-        .join('.')
-}
 
 const getConditionsFromVisualization = (
     vis: SavedVisualization,
