@@ -9,8 +9,8 @@ export const LineListLayout = () => {
 
     return (
         <div className={classes.layoutContainer}>
-            <Axis axisId="columns" side="start" dimensionIds={columns} />
-            <Axis axisId="filters" side="end" dimensionIds={filters} />
+            <Axis axisId="columns" position="start" dimensionIds={columns} />
+            <Axis axisId="filters" position="end" dimensionIds={filters} />
         </div>
     )
 }

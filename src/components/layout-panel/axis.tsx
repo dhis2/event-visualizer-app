@@ -9,17 +9,19 @@ import { getLayoutDimensions } from '@modules/get-layout-dimensions'
 import { getAxisNames } from '@modules/layout'
 import { getVisUiConfigInputType } from '@store/vis-ui-config-slice'
 
-export type Side = 'start' | 'end'
-
 interface AxisProps {
     axisId: SupportedAxis
-    side: Side
+    position: 'start' | 'end'
     dimensionIds?: string[] | undefined
 }
 
 export const getAxisName = (axisId) => getAxisNames()[axisId]
 
-export const Axis: React.FC<AxisProps> = ({ axisId, side, dimensionIds }) => {
+export const Axis: React.FC<AxisProps> = ({
+    axisId,
+    position,
+    dimensionIds,
+}) => {
     const { getMetadataItem } = useMetadataStore()
     const inputType = useAppSelector(getVisUiConfigInputType)
 
@@ -32,10 +34,10 @@ export const Axis: React.FC<AxisProps> = ({ axisId, side, dimensionIds }) => {
     return (
         <div
             className={cx({
-                [classes.startAxis]: side === 'start',
-                [classes.endAxis]: side === 'end',
+                [classes.startAxis]: position === 'start',
+                [classes.endAxis]: position === 'end',
             })}
-            data-test={`axis-${axisId}-${side}`}
+            data-test={`axis-${axisId}-${position}`}
         >
             <div className={cx(classes.axisContainer)}>
                 <div className={classes.label}>{getAxisName(axisId)}</div>

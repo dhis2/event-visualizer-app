@@ -89,7 +89,7 @@ describe('<Axis />', () => {
     it('renders start axis with columns configuration and no dimensions', () => {
         cy.mount(
             <TestWrapper store={store}>
-                <Axis axisId="columns" side="start" />
+                <Axis axisId="columns" position="start" />
             </TestWrapper>
         )
 
@@ -109,12 +109,12 @@ describe('<Axis />', () => {
                 <Axis
                     axisId="columns"
                     dimensionIds={['ou', 'genderId']}
-                    side="start"
+                    position="start"
                 />
             </TestWrapper>
         )
 
-        // start side is 65% width
+        // start position is 65% width
         cy.getByDataTest('axis-columns-start')
             .should('be.visible')
             .and('have.css', 'flex-basis', '65%')
@@ -131,11 +131,11 @@ describe('<Axis />', () => {
     it('renders end axis with filters with no dimensions', () => {
         cy.mount(
             <TestWrapper store={store}>
-                <Axis axisId="filters" side="end" />
+                <Axis axisId="filters" position="end" />
             </TestWrapper>
         )
 
-        // end side is 35% width
+        // end position is 35% width
         cy.getByDataTest('axis-filters-end')
             .should('be.visible')
             .and('have.css', 'flex-basis', '35%')
@@ -151,7 +151,7 @@ describe('<Axis />', () => {
                 <Axis
                     axisId="filters"
                     dimensionIds={['ou', 'mchInfantFeeding']}
-                    side="end"
+                    position="end"
                 />
             </TestWrapper>
         )
@@ -169,7 +169,7 @@ describe('<Axis />', () => {
     it('handles empty dimenssionIds array', () => {
         cy.mount(
             <TestWrapper store={store}>
-                <Axis axisId="columns" dimensionIds={[]} side="start" />
+                <Axis axisId="columns" dimensionIds={[]} position="start" />
             </TestWrapper>
         )
 
