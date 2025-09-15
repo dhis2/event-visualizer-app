@@ -46,6 +46,9 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
     return (
         <DashboardPluginWrapper {...props}>
             {(props) => (
+                // TODO use the metadata provider here?
+                // in that way the plugin components can use the lookup functions and not have to care in which context they are used (app/dashboard-plugin)
+                // the onResponsesReceived can also simply be implemented in both cases for adding metadata from analytics to the metadata store
                 <PluginWrapper
                     displayProperty={props.displayProperty}
                     filters={props.filters}
