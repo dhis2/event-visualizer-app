@@ -5,11 +5,11 @@ import type { CurrentUser, CurrentVisualization } from '@types'
 type PluginWrapperProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
-    filters?: Record<string, unknown> // XXX verify this type
+    filters?: Record<'relativePeriodDate', string> // TODO check what dashboard passes here
     isInDashboard?: boolean
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     isVisualizationLoading?: boolean
-    onResponsesReceived?: (responses: unknown[]) => void // TODO fix this type
+    onResponsesReceived?: (responses: unknown[]) => void // TODO use LineListAnalyticsData type
 }
 
 export const PluginWrapper: FC<PluginWrapperProps> = ({
@@ -20,10 +20,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     isInModal = false,
     isVisualizationLoading = false,
     onResponsesReceived,
-    ...props
 }) => {
-    console.log('plugin wrapper received other props', props)
-
     if (visualization.type === 'LINE_LIST') {
         return (
             <LineListPlugin
@@ -34,7 +31,6 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                 isInModal={isInModal}
                 isVisualizationLoading={isVisualizationLoading}
                 onResponsesReceived={onResponsesReceived}
-                {...props}
             />
         )
     } else if (visualization.type === 'PIVOT_TABLE') {
