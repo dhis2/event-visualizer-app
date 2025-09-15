@@ -96,6 +96,7 @@ export const getDimensionsWithSuffix = ({
         return dimension
     })
 }
+
 type GetDimensionIdPartsParams = {
     id: string
     inputType: SupportedInputType
@@ -148,7 +149,7 @@ export const getFullDimensionId = ({
         programStageId,
         dimensionId,
     ]
-        .filter((p) => p)
+        .filter(Boolean)
         .join('.')
 }
 
