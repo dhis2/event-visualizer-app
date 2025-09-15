@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import {
     getAdaptedVisualization,
     getAnalyticsEndpoint,
-} from './analytics-query-tools.js'
+} from './query-tools-line-list.js'
 import type { SupportedInputType } from '@constants/input-types.js'
 import { Analytics } from '@dhis2/analytics'
 import { getBooleanValues } from '@modules/conditions'

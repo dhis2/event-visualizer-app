@@ -1,30 +1,10 @@
+import type { ParameterRecord } from './query-tools-common'
+import { getRequestOptions } from './query-tools-common'
 import type { SupportedAxisId } from '@constants/axis-types'
 import type { SupportedInputType } from '@constants/input-types'
 import { getFullDimensionId, isTimeDimensionId } from '@modules/dimension'
-import { getOptionsForRequest } from '@modules/options'
 import { getHeadersMap } from '@modules/visualization'
-import type { CurrentVisualization, DimensionArray, DimensionId } from '@types'
-
-type ParameterRecord = Record<DimensionId, unknown>
-
-export const getRequestOptions = (visualization: CurrentVisualization) => {
-    const options = getOptionsForRequest().reduce(
-        (map, [option, props]): ParameterRecord => {
-            // only add parameter if value !== default
-            if (
-                visualization[option] !== undefined &&
-                visualization[option] !== props.defaultValue
-            ) {
-                map[option] = visualization[option]
-            }
-
-            return map
-        },
-        {} as ParameterRecord
-    )
-
-    return options
-}
+import type { CurrentVisualization, DimensionArray } from '@types'
 
 const adaptDimensions = (
     dimensions: DimensionArray,
