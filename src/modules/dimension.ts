@@ -153,9 +153,11 @@ export const getFullDimensionId = ({
         .join('.')
 }
 
-export const getCreatedDimension = (): Partial<
+type DimensionRecordObject = Partial<
     Record<DimensionId, InternalDimensionRecord>
-> => ({
+>
+
+export const getCreatedDimension = (): DimensionRecordObject => ({
     created: {
         id: 'created',
         dimensionType: 'PERIOD',
@@ -165,7 +167,7 @@ export const getCreatedDimension = (): Partial<
 
 export const getMainDimensions = (
     inputType: SupportedInputType
-): Partial<Record<DimensionId, InternalDimensionRecord>> => ({
+): DimensionRecordObject => ({
     ...(inputType === 'TRACKED_ENTITY_INSTANCE'
         ? {
               ...getDefaultOrgUnitMetadata(inputType),
@@ -194,7 +196,7 @@ const prefixDimensionId = (prefix: string, dimensionId: string): string =>
 
 export const getProgramDimensions = (
     programId: string
-): Partial<Record<string, InternalDimensionRecord>> => ({
+): DimensionRecordObject => ({
     [prefixDimensionId(programId, 'ou')]: {
         id: prefixDimensionId(programId, 'ou'),
         dimensionType: 'ORGANISATION_UNIT',
