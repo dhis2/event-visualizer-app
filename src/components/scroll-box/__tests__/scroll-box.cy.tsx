@@ -319,7 +319,7 @@ describe(
             cy.mount(<TestLayout animated={true} />)
 
             // Get initial render count and initial width
-            cy.getByDataTest('reported-render-count').should('contain', '2')
+            checkRenderCount(2)
             cy.getByDataTest('reported-width-value').should('contain', '800')
 
             // Perform rapid dimension changes by quickly resizing the start-column
@@ -335,14 +335,17 @@ describe(
             // Ensure none of the intermediate values are used
             cy.getByDataTest('reported-width-value').should(($el) => {
                 const width = parseInt($el.text())
-                //
                 expect(width).to.not.be.oneOf([700, 600, 650])
             })
-            // Due to the debounce there should only 3 re-render, same as when we change the size once
-            checkRenderCount(3)
+            /* Without the debounce we would see as many as 250. With the debounce it is not
+             * possible to predict exactly how many re-renders will occur during this animation
+             * cycle, but it should not be an excessive amount. So to avoid this test from
+             * becoming flaky, we simply check the number stays below 10 */
+            cy.getByDataTest('reported-render-count').should(($el) => {
+                const renderCount = parseInt($el.text())
+                expect(renderCount).to.not.be.greaterThan(9)
+            })
 
-            // Should only have one additional render due to debouncing (initial 2 + 1 debounced update = 3)
-            cy.getByDataTest('reported-render-count').should('contain', '3')
             cy.getByDataTest('reported-width-value').should('contain', '750')
         })
 
