@@ -3,7 +3,7 @@ import { getRequestOptions } from './query-tools-common'
 import { getFullDimensionId, isTimeDimensionId } from '@modules/dimension'
 import { getHeadersMap } from '@modules/visualization'
 import type {
-    AxisType,
+    Axis,
     CurrentVisualization,
     DimensionArray,
     InputType,
@@ -53,7 +53,7 @@ const adaptDimensions = (
 export const getAdaptedVisualization = (
     visualization: CurrentVisualization
 ): {
-    adaptedVisualization: Record<AxisType, object[]> & {
+    adaptedVisualization: Record<Axis, object[]> & {
         inputType: InputType
     }
     headers: (string | string[])[]

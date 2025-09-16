@@ -7,10 +7,10 @@ import { useAppSelector } from '@hooks'
 import { getLayoutDimensions } from '@modules/get-layout-dimensions'
 import { getAxisNames } from '@modules/layout'
 import { getVisUiConfigInputType } from '@store/vis-ui-config-slice'
-import type { AxisType } from '@types'
+import type { Axis as AxisTD } from '@types'
 
 interface AxisProps {
-    axisId: AxisType
+    axisId: AxisTD
     position: 'start' | 'end'
     dimensionIds?: string[] | undefined
 }

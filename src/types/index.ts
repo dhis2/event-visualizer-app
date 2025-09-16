@@ -10,7 +10,7 @@ import type { ResponseErrorReport } from '@api/parse-engine-error'
  * for generated types here, as we have done for `SystemSettings` */
 /* eslint-disable import/export */
 export type * from './dhis2-openapi-schemas'
-export type { AxisType } from './axis-type'
+export type { Axis } from './axis'
 export type { DimensionType } from './dimension'
 export type { MetadataItem } from './metadata-item'
 export type { SystemSettings } from './system-settings'

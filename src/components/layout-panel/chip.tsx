@@ -10,7 +10,7 @@ import {
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
 } from '@store/vis-ui-config-slice'
-import type { AxisType, DimensionType, ValueType } from '@types'
+import type { Axis, DimensionType, ValueType } from '@types'
 
 export interface LayoutDimension {
     id: string
@@ -29,7 +29,7 @@ export interface LayoutDimension {
 
 interface ChipProps {
     dimension: LayoutDimension
-    axisId: AxisType
+    axisId: Axis
 }
 
 export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
