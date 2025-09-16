@@ -63,6 +63,7 @@ export type {
     InternalDimensionRecord,
 } from './dimension'
 export type * from './input-type'
+export type * from './org-unit'
 export type * from './period'
 export type * from './value-type'
 export type * from './visualization'
