@@ -1,9 +1,13 @@
-import type { GridHeader, SortDirection } from '@types'
+import type { GridHeader, LegendSet, SortDirection } from '@types'
 
-type CellData = string | number | boolean
+// TODO: check if this is correct
+export type CellData = string | number | boolean
 type Row = Array<CellData>
+export type Header = GridHeader & {
+    legendSet: Pick<LegendSet, 'id' | 'name' | 'legends'>
+}
 export type LineListAnalyticsData = {
-    headers: Array<GridHeader>
+    headers: Array<Header>
     rows: Array<Row>
     rowContext: {
         [key: string]: {
@@ -28,3 +32,4 @@ export type PaginatePayload = {
 }
 export type DataSortFn = (payload?: DataSortPayload) => void
 export type PaginateFn = (payload: PaginatePayload) => void
+export type ColumnHeaderClickFn = (cleanedHeaderName: string) => void

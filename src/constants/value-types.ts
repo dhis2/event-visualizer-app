@@ -1,4 +1,6 @@
-export const NUMERIC_VALUE_TYPES = [
+import type { ValueType } from '@types'
+
+export const NUMERIC_VALUE_TYPES: ValueType[] = [
     'NUMBER',
     'UNIT_INTERVAL',
     'PERCENTAGE',
@@ -8,27 +10,33 @@ export const NUMERIC_VALUE_TYPES = [
     'INTEGER_ZERO_OR_POSITIVE',
 ] as const
 
-export const VALUE_TYPES = [
-    'TEXT',
-    'LONG_TEXT',
-    'MULTI_TEXT',
-    'LETTER',
-    'PHONE_NUMBER',
-    'EMAIL',
+export const VALUE_TYPES: ValueType[] = [
+    'AGE',
     'BOOLEAN',
-    'TRUE_ONLY',
+    'COORDINATE',
     'DATE',
     'DATETIME',
+    'EMAIL',
+    'FILE_RESOURCE',
+    'GEOJSON',
+    'IMAGE',
+    'INTEGER_NEGATIVE',
+    'INTEGER_POSITIVE',
+    'INTEGER_ZERO_OR_POSITIVE',
+    'INTEGER',
+    'LETTER',
+    'LONG_TEXT',
+    'MULTI_TEXT',
+    'NUMBER',
+    'ORGANISATION_UNIT',
+    'PERCENTAGE',
+    'PHONE_NUMBER',
+    'REFERENCE',
+    'TEXT',
     'TIME',
     'TRACKER_ASSOCIATE',
-    'USERNAME',
-    'COORDINATE',
-    'ORGANISATION_UNIT',
-    'REFERENCE',
-    'AGE',
+    'TRUE_ONLY',
+    'UNIT_INTERVAL',
     'URL',
-    'FILE_RESOURCE',
-    'IMAGE',
-    'GEOJSON',
-    ...NUMERIC_VALUE_TYPES,
+    'USERNAME',
 ] as const

@@ -17,6 +17,7 @@ import type {
     CurrentVisualization,
     DimensionArray,
     EventVisualizationType,
+    LegendSet,
     VisualizationType,
 } from '@types'
 
@@ -56,4 +57,8 @@ declare module '@dhis2/analytics' {
     ) => {
         [dimensionId: string]: string[]
     }
+    export const getColorByValueFromLegendSet: (
+        legendSet?: LegendSet,
+        value?: string | number | boolean
+    ) => string
 }
