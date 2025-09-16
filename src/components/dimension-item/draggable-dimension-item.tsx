@@ -4,14 +4,14 @@ import { CSS } from '@dnd-kit/utilities'
 import React from 'react'
 import { DimensionItem } from './dimension-item'
 import { IconButton } from './icon-button'
-import type { SupportedDimensionType } from '@types'
+import type { SupportedDimensionType, ValueType } from '@types'
 
 interface DraggableDimensionItemProps {
     id: string
     draggableId?: string
     name: string
     dimensionType: SupportedDimensionType
-    valueType?: string
+    valueType?: ValueType
     optionSet?: string | null
     stageName?: string
     disabled?: boolean

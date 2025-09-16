@@ -1,0 +1,49 @@
+.chip {
+    position: relative;
+    display: flex;
+    margin: 2px;
+    background-color: var(--colors-teal100);
+    border: 1px solid var(--colors-teal200);
+    border-radius: 2px;
+    inline-size: fit-content;
+    cursor: pointer;
+}
+
+.content {
+    display: inline-flex;
+    cursor: pointer;
+    min-block-size: 20px;
+    user-select: none;
+    inline-size: fit-content;
+    align-items: center;
+}
+
+.chip:hover {
+    background: #cdeae8;
+    border: 1px solid #93c4bf;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.chipEmpty {
+    background-color: var(--colors-grey100);
+    border-color: var(--colors-grey400);
+    color: var(--colors-grey900);
+}
+
+.chipEmpty:hover {
+    background-color: var(--colors-grey200);
+    border-color: var(--colors-grey400);
+}
+
+.chipEmpty .chipBase {
+    color: var(--colors-grey900);
+}
+
+.chipEmpty .secondary {
+    color: var(--colors-grey600);
+}
+
+.chipEmpty .suffix {
+    background: #eff1f3;
+    color: var(--colors-grey900);
+}
