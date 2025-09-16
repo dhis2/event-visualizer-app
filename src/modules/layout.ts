@@ -1,7 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
-import type { SupportedAxis } from '@constants/axis-types'
+import type { AxisType } from '@types'
 
-export const getAxisNames = (): Record<SupportedAxis, string> => ({
+export const getAxisNames = (): Record<AxisType, string> => ({
     columns: i18n.t('Columns'),
     filters: i18n.t('Filter'),
     rows: i18n.t('Rows'),

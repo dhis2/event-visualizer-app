@@ -4,14 +4,13 @@ import React from 'react'
 import { ChipBase } from './chip-base'
 import classes from './styles/chip.module.css'
 import { IconButton } from '@components/dimension-item/icon-button'
-import type { SupportedAxis } from '@constants/axis-types'
 import { useAppSelector } from '@hooks'
 import {
     getVisUiConfigInputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
 } from '@store/vis-ui-config-slice'
-import type { DimensionType, ValueType } from '@types'
+import type { AxisType, DimensionType, ValueType } from '@types'
 
 export interface LayoutDimension {
     id: string
@@ -30,7 +29,7 @@ export interface LayoutDimension {
 
 interface ChipProps {
     dimension: LayoutDimension
-    axisId: SupportedAxis
+    axisId: AxisType
 }
 
 export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
