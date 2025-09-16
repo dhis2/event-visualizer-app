@@ -1,14 +1,16 @@
 import type { FC } from 'react'
-import { PivotTable } from '@dhis2/analytics'
-import type { CurrentVisualization } from '@types'
+//import { usePivotTableAnalyticsData } from './hooks/use-pivot-table-analytics-data'
+//import { PivotTable } from '@dhis2/analytics'
+import type { CurrentUser, CurrentVisualization } from '@types'
 
 type PivotTablePluginProps = {
+    displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
-    //    filters?: Record<string, string>
-    isInModal?: boolean
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    responses: any[] // TODO figure out the type for the response
-    legendSets: Record<string, string>[]
+    filters?: Record<string, unknown> // XXX verify this type
+    isInDashboard: boolean
+    isInModal: boolean
+    isVisualizationLoading: boolean
+    //    onResponsesReceived?: (responses: unknown[]) => void // TODO fix this type
     //    id?: number
     style?: Record<string, string>
 }
@@ -16,31 +18,51 @@ type PivotTablePluginProps = {
 const STYLE_PROP_DEFAULT = {}
 
 export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
+    displayProperty,
     visualization,
-    responses,
-    legendSets,
+    filters,
+    isInDashboard,
     isInModal,
+    isVisualizationLoading,
+    //    onResponsesReceived,
     style = STYLE_PROP_DEFAULT,
 }) => {
     console.log(
         'PT plugin props',
+        displayProperty,
         visualization,
-        responses,
-        legendSets,
+        filters,
+        isInDashboard,
         isInModal,
+        isVisualizationLoading,
         style
     )
 
     // TODO implement onDataSorted and any other function/callback that cannot rely on the Redux store
 
+    // TODO fetch analytics for PT
+    //    const { data } = usePivotTableAnalyticsData({
+    //        visualization,
+    //        filters,
+    //        isVisualizationLoading,
+    //        displayProperty,
+    //        onResponsesReceived,
+    //    })
+
+    //console.log('PT analytics data', data)
+
     return (
         <div style={style}>
+            {/*
             <PivotTable
                 visualization={visualization}
-                data={responses[0].response}
+                data={data}
                 legendSets={legendSets}
                 //renderCounter={id}
             />
+            */}
+            <p>This is the PT plugin</p>
+            <p>Showing {visualization.name}</p>
         </div>
     )
 }

@@ -9,7 +9,7 @@ const dimensionFields: string =
 
 export const getVisualizationQueryFields = (
     displayNameProp: CurrentUser['settings']['displayNameProperty']
-) => [
+): string[] => [
     '*',
     `columns[${dimensionFields}]`,
     `rows[${dimensionFields}]`,

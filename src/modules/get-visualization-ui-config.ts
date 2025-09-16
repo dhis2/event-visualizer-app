@@ -7,29 +7,8 @@ import {
     layoutGetAxisIdDimensionIdsObject,
     layoutGetDimensionIdItemIdsObject,
 } from '@dhis2/analytics'
+import { getFullDimensionId } from '@modules/dimension'
 import type { CurrentVisualization } from '@types'
-
-interface GetFullDimensionIdParams {
-    dimensionId: string
-    programId?: string
-    programStageId?: string
-    inputType: SupportedInputType
-}
-
-export const getFullDimensionId = ({
-    dimensionId,
-    programId,
-    programStageId,
-    inputType,
-}: GetFullDimensionIdParams): string => {
-    return [
-        inputType === 'TRACKED_ENTITY_INSTANCE' ? programId : undefined,
-        programStageId,
-        dimensionId,
-    ]
-        .filter((p) => p)
-        .join('.')
-}
 
 const getConditionsFromVisualization = (
     vis: CurrentVisualization,
