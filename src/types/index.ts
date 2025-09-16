@@ -13,6 +13,7 @@ export type * from './dhis2-openapi-schemas'
 export type { DimensionType } from './dimension'
 export type { MetadataItem } from './metadata-item'
 export type { SystemSettings } from './system-settings'
+export type { VisualizationType } from './visualization-type'
 /* eslint-enable import/export */
 export type { PickWithFieldFilters } from './pick-with-field-filters'
 

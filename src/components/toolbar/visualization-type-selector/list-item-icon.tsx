@@ -3,10 +3,10 @@ import {
     IconVisualizationPivotTable24,
 } from '@dhis2/ui'
 import type { FC } from 'react'
-import type { SupportedVisType } from '@constants/visualization-types'
+import type { VisualizationType } from '@types'
 
 type ListItemIconProps = {
-    iconType: SupportedVisType
+    iconType: VisualizationType
     style?: { width: number; height: number }
 }
 
