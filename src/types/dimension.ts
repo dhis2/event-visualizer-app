@@ -1,3 +1,4 @@
+import type { DimensionType as OpenApiDimensionType } from './dhis2-openapi-schemas'
 import type {
     DIMENSION_TYPES,
     PROGRAM_DIMENSION_TYPES,
@@ -5,16 +6,16 @@ import type {
     DIMENSION_IDS,
     TIME_DIMENSION_IDS,
 } from '@constants/dimensions'
-import type { DimensionRecord, DimensionType } from '@types'
+import type { DimensionRecord } from '@types'
 
 // Extend DimensionType to include DATA_ELEMENT, STATUS, and USER
 export type ExtendedDimensionType =
-    | DimensionType
+    | OpenApiDimensionType
     | 'DATA_ELEMENT'
     | 'STATUS'
     | 'USER'
 
-export type SupportedDimensionType = (typeof DIMENSION_TYPES)[number]
+export type DimensionType = (typeof DIMENSION_TYPES)[number]
 
 export type ProgramDimensionType = (typeof PROGRAM_DIMENSION_TYPES)[number]
 

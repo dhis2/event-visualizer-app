@@ -10,8 +10,9 @@ import type { ResponseErrorReport } from '@api/parse-engine-error'
  * for generated types here, as we have done for `SystemSettings` */
 /* eslint-disable import/export */
 export type * from './dhis2-openapi-schemas'
-export type { SystemSettings } from './system-settings'
+export type { DimensionType } from './dimension'
 export type { MetadataItem } from './metadata-item'
+export type { SystemSettings } from './system-settings'
 /* eslint-enable import/export */
 export type { PickWithFieldFilters } from './pick-with-field-filters'
 
@@ -50,7 +51,15 @@ export type { UseMetadataStoreReturnValue as MetadataStore } from '../components
 export type AppCachedData = TransformedAppCachedData
 export type CurrentUser = TransformedAppCachedData['currentUser']
 
-export type * from './dimension'
+export type {
+    // DimensionType is exported above because it overrides the generated type
+    ExtendedDimensionType,
+    ProgramDimensionType,
+    YourDimensionType,
+    DimensionId,
+    TimeDimensionId,
+    InternalDimensionRecord,
+} from './dimension'
 export type * from './input-type'
 export type * from './value-type'
 export type * from './visualization'

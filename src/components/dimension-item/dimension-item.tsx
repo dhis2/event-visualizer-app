@@ -2,12 +2,12 @@ import cx from 'classnames'
 import React from 'react'
 import { DimensionTypeIcon } from './dimension-type-icon'
 import styles from './styles/dimension-item.module.css'
-import type { SupportedDimensionType } from '@types'
+import type { DimensionType } from '@types'
 
 interface DimensionItemProps {
     name: string
     stageName?: string
-    dimensionType: SupportedDimensionType
+    dimensionType: DimensionType
     selected?: boolean
     disabled?: boolean
     dragging?: boolean

@@ -1,7 +1,7 @@
 import { getDimensionIdParts } from './dimension-id'
 import type { MetadataStoreItem } from '@components/app-wrapper/metadata-helpers/types'
 import type { LayoutDimension } from '@components/layout-panel/chip'
-import type { InputType, SupportedDimensionType } from '@types'
+import type { DimensionType, InputType } from '@types'
 
 interface GetLayoutDimensionsParams {
     dimensionIds: string[]
@@ -49,7 +49,7 @@ export const getLayoutDimensions = ({
             name: metadataItem?.name || id,
             dimensionId,
             dimensionType: hasDimensionType(metadataItem)
-                ? (metadataItem.dimensionType as SupportedDimensionType)
+                ? (metadataItem.dimensionType as DimensionType)
                 : undefined,
             programStageId,
             programId,
@@ -86,7 +86,7 @@ export const getLayoutDimensions = ({
         if (
             dimensionTypeOrItemType &&
             ['DATA_ELEMENT', 'PERIOD'].includes(
-                dimensionTypeOrItemType as SupportedDimensionType
+                dimensionTypeOrItemType as DimensionType
             )
         ) {
             const duplicates = dimensions.filter(
@@ -126,7 +126,7 @@ export const getLayoutDimensions = ({
             inputType === 'TRACKED_ENTITY_INSTANCE' &&
             dimensionTypeOrItemType &&
             ['ORGANISATION_UNIT', 'STATUS'].includes(
-                dimensionTypeOrItemType as SupportedDimensionType
+                dimensionTypeOrItemType as DimensionType
             ) &&
             dimension.programId
         ) {

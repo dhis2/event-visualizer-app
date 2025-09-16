@@ -11,14 +11,14 @@ import {
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
 } from '@store/vis-ui-config-slice'
-import type { SupportedDimensionType, ValueType } from '@types'
+import type { DimensionType, ValueType } from '@types'
 
 export interface LayoutDimension {
     id: string
     dimensionId: string
     name: string
-    dimensionType?: SupportedDimensionType
-    dimensionItemType?: SupportedDimensionType
+    dimensionType?: DimensionType
+    dimensionItemType?: DimensionType
     displayName?: string
     optionSet?: string
     programId?: string
