@@ -1,8 +1,8 @@
-import type { SupportedInputType } from '@constants/input-types'
+import type { InputType } from '@types'
 
 interface GetDimensionIdPartsParams {
     id: string
-    inputType: SupportedInputType
+    inputType: InputType
 }
 export const getDimensionIdParts = ({
     id,
@@ -30,7 +30,7 @@ export const getDimensionIdParts = ({
 
 interface GetFullDimensionIdParams {
     dimensionId: string
-    inputType: SupportedInputType
+    inputType: InputType
     programId?: string
     programStageId?: string
 }

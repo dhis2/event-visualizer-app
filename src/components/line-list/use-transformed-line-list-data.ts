@@ -6,7 +6,6 @@ import type {
     LineListAnalyticsData,
     LineListAnalyticsDataHeader,
 } from '@components/line-list/types'
-import type { SupportedInputType } from '@constants/input-types'
 import { getColorByValueFromLegendSet, formatValue } from '@dhis2/analytics'
 import {
     getFullDimensionId,
@@ -15,7 +14,7 @@ import {
     getProgramDimensions,
 } from '@modules/dimension'
 import { headersMap } from '@modules/visualization'
-import type { CurrentVisualization, ValueType } from '@types'
+import type { CurrentVisualization, InputType, ValueType } from '@types'
 
 const isStageOffsetInteger = (stageOffset: unknown): stageOffset is number =>
     Number.isInteger(stageOffset)
@@ -52,7 +51,7 @@ const getHeaderDisplayText = (header: LineListAnalyticsDataHeader) => {
 
 const getHeaderDimensionId = (
     header: LineListAnalyticsDataHeader,
-    inputType: SupportedInputType,
+    inputType: InputType,
     defaultMetadata: ReturnType<typeof getMainDimensions>
 ) => {
     const { dimensionId, programStageId, programId } = getDimensionIdParts({

@@ -1,4 +1,3 @@
-import type { SupportedInputType } from '@constants/input-types'
 import { convertToSupportedVisType } from '@constants/visualization-types'
 import type { SupportedVisType } from '@constants/visualization-types'
 import {
@@ -6,11 +5,11 @@ import {
     layoutGetDimensionIdItemIdsObject,
 } from '@dhis2/analytics'
 import { getFullDimensionId } from '@modules/dimension'
-import type { CurrentVisualization } from '@types'
+import type { CurrentVisualization, InputType } from '@types'
 
 const getConditionsFromVisualization = (
     vis: CurrentVisualization,
-    inputType: SupportedInputType
+    inputType: InputType
 ): Record<string, { condition?: string; legendSet?: string }> => {
     const result: Record<string, { condition?: string; legendSet?: string }> =
         {}

@@ -1,12 +1,11 @@
 import { getDimensionIdParts } from './dimension-id'
 import type { MetadataStoreItem } from '@components/app-wrapper/metadata-helpers/types'
 import type { LayoutDimension } from '@components/layout-panel/chip'
-import type { SupportedInputType } from '@constants/input-types'
-import type { SupportedDimensionType } from '@types'
+import type { InputType, SupportedDimensionType } from '@types'
 
 interface GetLayoutDimensionsParams {
     dimensionIds: string[]
-    inputType: SupportedInputType
+    inputType: InputType
     getMetadataItem: (id: string) => MetadataStoreItem | undefined
 }
 

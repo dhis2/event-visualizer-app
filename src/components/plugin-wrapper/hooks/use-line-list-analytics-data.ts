@@ -5,7 +5,6 @@ import {
     getAdaptedVisualization,
     getAnalyticsEndpoint,
 } from './query-tools-line-list.js'
-import type { SupportedInputType } from '@constants/input-types.js'
 import { Analytics } from '@dhis2/analytics'
 import { getBooleanValues } from '@modules/conditions'
 import {
@@ -20,6 +19,7 @@ import {
     headersMap,
     isVisualizationWithTimeDimension,
 } from '@modules/visualization'
+import type { InputType } from '@types'
 
 const lookupOptionSetOptionMetadata = (optionSetId, code, metaDataItems) => {
     const optionSetMetaData = metaDataItems?.[optionSetId]
@@ -163,7 +163,7 @@ const fetchLegendSets = async ({ legendSetIds, dataEngine }) => {
     return legendSets
 }
 
-const extractHeaders = (analyticsResponse, inputType: SupportedInputType) => {
+const extractHeaders = (analyticsResponse, inputType: InputType) => {
     const defaultMetadata = getMainDimensions(inputType)
 
     const dimensionIds = analyticsResponse.headers.map((header) => {

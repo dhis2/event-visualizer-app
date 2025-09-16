@@ -1,15 +1,14 @@
 import type { ParameterRecord } from './query-tools-common'
 import { getRequestOptions } from './query-tools-common'
 import type { SupportedAxis } from '@constants/axis-types'
-import type { SupportedInputType } from '@constants/input-types'
 import { getFullDimensionId, isTimeDimensionId } from '@modules/dimension'
 import { getHeadersMap } from '@modules/visualization'
-import type { CurrentVisualization, DimensionArray } from '@types'
+import type { CurrentVisualization, DimensionArray, InputType } from '@types'
 
 const adaptDimensions = (
     dimensions: DimensionArray,
     parameters: ParameterRecord,
-    inputType: SupportedInputType
+    inputType: InputType
 ) => {
     const adaptedDimensions: DimensionArray = []
 
@@ -51,7 +50,7 @@ export const getAdaptedVisualization = (
     visualization: CurrentVisualization
 ): {
     adaptedVisualization: Record<SupportedAxis, object[]> & {
-        inputType: SupportedInputType
+        inputType: InputType
     }
     headers: (string | string[])[]
     parameters: object
@@ -107,11 +106,11 @@ export const getAdaptedVisualization = (
     }
 }
 
-const analyticsApiEndpointMap: Record<SupportedInputType, string> = {
+const analyticsApiEndpointMap: Record<InputType, string> = {
     ENROLLMENT: 'enrollments',
     EVENT: 'events',
     TRACKED_ENTITY_INSTANCE: 'trackedEntities',
 }
 
-export const getAnalyticsEndpoint = (inputType: SupportedInputType): string =>
+export const getAnalyticsEndpoint = (inputType: InputType): string =>
     analyticsApiEndpointMap[inputType]

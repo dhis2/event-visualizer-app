@@ -1,7 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import type { LayoutDimension } from '@components/layout-panel/chip'
 import type { SupportedAxis } from '@constants/axis-types'
-import type { SupportedInputType } from '@constants/input-types'
+import type { InputType } from '@types'
 
 const DIMENSION_ID_ORGUNIT = 'ou'
 
@@ -14,7 +14,7 @@ interface GetChipItemsTextParams {
     dimension: ChipDimension
     conditionsLength: number | undefined
     itemsLength: number | undefined
-    inputType: SupportedInputType
+    inputType: InputType
     axisId: SupportedAxis
 }
 

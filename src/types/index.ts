@@ -51,5 +51,6 @@ export type AppCachedData = TransformedAppCachedData
 export type CurrentUser = TransformedAppCachedData['currentUser']
 
 export type * from './dimension'
+export type * from './input-type'
 export type * from './value-type'
 export type * from './visualization'
