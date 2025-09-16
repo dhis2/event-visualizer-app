@@ -1,8 +1,8 @@
 import { getDimensionIdParts } from './dimension-id'
 import type { MetadataStoreItem } from '@components/app-wrapper/metadata-helpers/types'
 import type { LayoutDimension } from '@components/layout-panel/chip'
-import type { SupportedDimensionType } from '@constants/dimension-types'
 import type { SupportedInputType } from '@constants/input-types'
+import type { SupportedDimensionType } from '@types'
 
 interface GetLayoutDimensionsParams {
     dimensionIds: string[]

@@ -2,12 +2,14 @@ import { api } from '@api/api'
 import type { BaseQueryApiWithExtraArg } from '@api/custom-base-query'
 import { parseEngineError } from '@api/parse-engine-error'
 import { getDimensionMetadataFields } from '@modules/visualization'
-import type { SavedVisualization } from '@types'
+import type { CurrentUser, SavedVisualization } from '@types'
 
 const dimensionFields: string =
     'dimension,dimensionType,filter,program[id],programStage[id],optionSet[id],valueType,legendSet[id],repetition,items[dimensionItem~rename(id)]'
 
-const getQueryFields = (displayNameProp: string) => [
+export const getVisualizationQueryFields = (
+    displayNameProp: CurrentUser['settings']['displayNameProperty']
+): string[] => [
     '*',
     `columns[${dimensionFields}]`,
     `rows[${dimensionFields}]`,
@@ -59,7 +61,7 @@ export const eventVisualizationsApi = api.injectEndpoints({
                             resource: 'eventVisualizations',
                             id,
                             params: {
-                                fields: getQueryFields(
+                                fields: getVisualizationQueryFields(
                                     appCachedData.currentUser.settings
                                         .displayNameProperty
                                 ),

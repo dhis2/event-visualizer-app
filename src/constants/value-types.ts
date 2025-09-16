@@ -1,28 +1,36 @@
-import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 import type { ValueType } from '@types'
 
-export const SUPPORTED_VALUE_TYPES = asStringLiteralSubsetArray<ValueType>()([
-    'AGE',
+export const NUMERIC_VALUE_TYPES: ValueType[] = [
+    'NUMBER',
+    'UNIT_INTERVAL',
+    'PERCENTAGE',
+    'INTEGER',
+    'INTEGER_POSITIVE',
+    'INTEGER_NEGATIVE',
+    'INTEGER_ZERO_OR_POSITIVE',
+] as const
+
+export const VALUE_TYPES: ValueType[] = [
+    'TEXT',
+    'LONG_TEXT',
+    'MULTI_TEXT',
+    'LETTER',
+    'PHONE_NUMBER',
+    'EMAIL',
     'BOOLEAN',
+    'TRUE_ONLY',
     'DATE',
     'DATETIME',
-    'EMAIL',
-    'INTEGER',
-    'INTEGER_NEGATIVE',
-    'INTEGER_POSITIVE',
-    'INTEGER_ZERO_OR_POSITIVE',
-    'LETTER',
-    'LONG_TEXT',
-    'NUMBER',
-    'ORGANISATION_UNIT',
-    'PERCENTAGE',
-    'PHONE_NUMBER',
-    'TEXT',
     'TIME',
-    'TRUE_ONLY',
-    'UNIT_INTERVAL',
-    'URL',
+    'TRACKER_ASSOCIATE',
     'USERNAME',
-] as const)
-
-export type SupportedValueType = (typeof SUPPORTED_VALUE_TYPES)[number]
+    'COORDINATE',
+    'ORGANISATION_UNIT',
+    'REFERENCE',
+    'AGE',
+    'URL',
+    'FILE_RESOURCE',
+    'IMAGE',
+    'GEOJSON',
+    ...NUMERIC_VALUE_TYPES,
+] as const

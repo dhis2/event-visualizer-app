@@ -2,7 +2,7 @@ import cx from 'classnames'
 import React from 'react'
 import { DimensionTypeIcon } from './dimension-type-icon'
 import styles from './styles/dimension-item.module.css'
-import type { SupportedDimensionType } from '@constants/dimension-types'
+import type { SupportedDimensionType } from '@types'
 
 interface DimensionItemProps {
     name: string

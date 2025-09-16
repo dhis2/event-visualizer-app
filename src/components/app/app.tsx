@@ -4,7 +4,6 @@ import cx from 'classnames'
 import type { FC } from 'react'
 import classes from './app.module.css'
 import { AppWrapper } from '@components/app-wrapper'
-import { useMetadataItem } from '@components/app-wrapper/metadata-provider'
 import {
     GridCenterColumnBottom,
     GridCenterColumnTop,
@@ -13,8 +12,10 @@ import {
     GridStartColumn,
     GridTopRow,
 } from '@components/grid'
+import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { Toolbar } from '@components/toolbar/toolbar'
-import { useAppSelector, useCurrentUser, useSystemSettings } from '@hooks'
+import { useAppSelector, useCurrentUser } from '@hooks'
+import { getCurrentVis } from '@store/current-vis-slice'
 import {
     getUiDetailsPanelVisible,
     getUiMainSidebarVisible,
@@ -22,13 +23,9 @@ import {
 
 const EventVisualizer: FC = () => {
     const currentUser = useCurrentUser()
-    const systemSettings = useSystemSettings()
-    const today = useMetadataItem('TODAY')
-
+    const currentVis = useAppSelector(getCurrentVis)
     const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
-
-    console.log('systemSettings', today, systemSettings)
 
     return (
         <GridContainer>
@@ -50,10 +47,16 @@ const EventVisualizer: FC = () => {
             <GridCenterColumnBottom>
                 <div style={{ padding: 8 }}>
                     <h1>Visualization Canvas</h1>
-                    <h2>
-                        {i18n.t('Hello {{name}}', { name: currentUser.name })}
-                    </h2>
                     <h3>{i18n.t('Welcome to DHIS2 with TypeScript!')}</h3>
+                    {/* TODO use a type guard and implement the landing screen DHIS2-20123 */}
+                    {currentVis && (
+                        <PluginWrapper
+                            visualization={currentVis}
+                            displayProperty={
+                                currentUser.settings.displayProperty
+                            }
+                        />
+                    )}
                 </div>
             </GridCenterColumnBottom>
             <GridEndColumn>

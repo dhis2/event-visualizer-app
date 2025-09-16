@@ -5,11 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-09-11T14:37:43.197Z\n"
-"PO-Revision-Date: 2025-09-11T14:37:43.198Z\n"
-
-msgid "Hello {{name}}"
-msgstr "Hello {{name}}"
+"POT-Creation-Date: 2025-09-16T09:09:19.640Z\n"
+"PO-Revision-Date: 2025-09-16T09:09:19.641Z\n"
 
 msgid "Welcome to DHIS2 with TypeScript!"
 msgstr "Welcome to DHIS2 with TypeScript!"
@@ -182,6 +179,33 @@ msgstr "View"
 msgid "Reset sidebar width"
 msgstr "Reset sidebar width"
 
+msgid "Yes"
+msgstr "Yes"
+
+msgid "No"
+msgstr "No"
+
+msgid "Not answered"
+msgstr "Not answered"
+
+msgid "Registration date"
+msgstr "Registration date"
+
+msgid "Last updated on"
+msgstr "Last updated on"
+
+msgid "Created by"
+msgstr "Created by"
+
+msgid "Last updated by"
+msgstr "Last updated by"
+
+msgid "Event status"
+msgstr "Event status"
+
+msgid "Program status"
+msgstr "Program status"
+
 msgid "all"
 msgstr "all"
 
@@ -193,6 +217,12 @@ msgstr "Filter"
 
 msgid "Rows"
 msgstr "Rows"
+
+msgid "Registration org. unit"
+msgstr "Registration org. unit"
+
+msgid "Organisation unit"
+msgstr "Organisation unit"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

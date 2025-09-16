@@ -5,14 +5,13 @@ import { ChipBase } from './chip-base'
 import classes from './styles/chip.module.css'
 import { IconButton } from '@components/dimension-item/icon-button'
 import type { SupportedAxis } from '@constants/axis-types'
-import type { SupportedDimensionType } from '@constants/dimension-types'
-import type { SupportedValueType } from '@constants/value-types'
 import { useAppSelector } from '@hooks'
 import {
     getVisUiConfigInputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
 } from '@store/vis-ui-config-slice'
+import type { SupportedDimensionType, ValueType } from '@types'
 
 export interface LayoutDimension {
     id: string
@@ -26,7 +25,7 @@ export interface LayoutDimension {
     programStageId?: string
     code?: string
     suffix?: string
-    valueType?: SupportedValueType
+    valueType?: ValueType
 }
 
 interface ChipProps {
