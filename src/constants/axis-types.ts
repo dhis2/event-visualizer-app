@@ -1,1 +1,1 @@
-export type SupportedAxisId = 'columns' | 'filters' | 'rows'
+export type SupportedAxis = 'columns' | 'filters' | 'rows'

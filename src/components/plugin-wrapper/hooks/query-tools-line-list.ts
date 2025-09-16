@@ -1,6 +1,6 @@
 import type { ParameterRecord } from './query-tools-common'
 import { getRequestOptions } from './query-tools-common'
-import type { SupportedAxisId } from '@constants/axis-types'
+import type { SupportedAxis } from '@constants/axis-types'
 import type { SupportedInputType } from '@constants/input-types'
 import { getFullDimensionId, isTimeDimensionId } from '@modules/dimension'
 import { getHeadersMap } from '@modules/visualization'
@@ -50,7 +50,7 @@ const adaptDimensions = (
 export const getAdaptedVisualization = (
     visualization: CurrentVisualization
 ): {
-    adaptedVisualization: Record<SupportedAxisId, object[]> & {
+    adaptedVisualization: Record<SupportedAxis, object[]> & {
         inputType: SupportedInputType
     }
     headers: (string | string[])[]

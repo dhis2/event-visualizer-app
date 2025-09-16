@@ -23,7 +23,7 @@ describe('<DimensionItem />', () => {
         id: 'test-dimension',
         name: 'Test Dimension',
         dimensionType: 'DATA_ELEMENT' as const,
-        valueType: 'TEXT',
+        valueType: 'TEXT' as const,
         optionSet: null,
         disabled: false,
         selected: false,

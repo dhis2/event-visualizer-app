@@ -1,8 +1,6 @@
 import type { SupportedInputType } from '@constants/input-types'
-import {
-    convertToSupportedVisType,
-    type SupportedVisType,
-} from '@constants/visualization-types'
+import { convertToSupportedVisType } from '@constants/visualization-types'
+import type { SupportedVisType } from '@constants/visualization-types'
 import {
     layoutGetAxisIdDimensionIdsObject,
     layoutGetDimensionIdItemIdsObject,

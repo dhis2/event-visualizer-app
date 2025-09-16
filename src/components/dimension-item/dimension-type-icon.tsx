@@ -13,9 +13,9 @@ import {
 import React, { type ReactNode } from 'react'
 import type { SupportedDimensionType } from '@types'
 
-type DimensionIconMap = Record<SupportedDimensionType, ReactNode>
+type DimensionTypeIconMap = Record<SupportedDimensionType, ReactNode>
 
-const dimensionIconMap: DimensionIconMap = {
+const dimensionTypeIconMap: DimensionTypeIconMap = {
     DATA_ELEMENT: <IconDimensionData16 />,
     PROGRAM_INDICATOR: <IconDimensionProgramIndicator16 />,
     PROGRAM_ATTRIBUTE: <IconDimensionProgramAttribute16 />,
@@ -28,14 +28,14 @@ const dimensionIconMap: DimensionIconMap = {
     USER: <IconUser16 />,
 }
 
-interface DimensionIconProps {
+interface DimensionTypeIconProps {
     dimensionType: SupportedDimensionType
 }
 
 // Presentational component used by dnd - do not add redux or dnd functionality
 
-const DimensionIcon: React.FC<DimensionIconProps> = ({ dimensionType }) => {
-    return dimensionIconMap[dimensionType]
-}
+const DimensionTypeIcon: React.FC<DimensionTypeIconProps> = ({
+    dimensionType,
+}) => dimensionTypeIconMap[dimensionType]
 
-export { DimensionIcon }
+export { DimensionTypeIcon }
