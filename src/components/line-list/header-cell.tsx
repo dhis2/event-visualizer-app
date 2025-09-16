@@ -90,9 +90,9 @@ export const HeaderCell: FC<HeaderCellProps> = ({
     const headerName = useMemo(
         () =>
             isStageOffsetInteger(header.stageOffset)
-                ? headerText.replace(/\[-?\d+\]/, '')
-                : headerText,
-        [header.stageOffset, headerText]
+                ? (header.name ?? '').replace(/\[-?\d+\]/, '')
+                : header.name ?? '',
+        [header.stageOffset, header.name]
     )
 
     return (
