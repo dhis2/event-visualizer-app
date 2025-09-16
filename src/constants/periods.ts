@@ -1,7 +1,7 @@
 import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 import type { RelativePeriodEnum } from '@types'
 
-export const SUPPORTED_RELATIVE_PERIODS =
+export const RELATIVE_PERIODS =
     asStringLiteralSubsetArray<RelativePeriodEnum>()([
         'TODAY',
         'YESTERDAY',
@@ -37,6 +37,3 @@ export const SUPPORTED_RELATIVE_PERIODS =
         'THIS_YEAR',
         'LAST_YEAR',
     ] as const)
-
-export type SupportedRelativePeriod =
-    (typeof SUPPORTED_RELATIVE_PERIODS)[number]
