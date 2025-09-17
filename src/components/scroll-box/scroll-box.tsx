@@ -26,7 +26,7 @@ const readClientWidthFromEntries = (entries: ResizeObserverEntry[]): number => {
 
 export const ScrollBox: FC<{ children?: ReactNode }> = ({ children }) => {
     const [width, setWidth] = useState(0)
-    const debouncedSetWidth = useDebounceCallback(setWidth, 150)
+    const debouncedSetWidth = useDebounceCallback(setWidth, 80)
     const [resizeObserver] = useState(
         () =>
             new ResizeObserver((entries) => {

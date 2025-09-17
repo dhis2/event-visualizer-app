@@ -6,6 +6,7 @@
         "allowJs": true,
         "jsx": "react-jsx",
         "esModuleInterop": true,
+        "resolveJsonModule": true,
         "target": "ESNext",
         "module": "esnext",
         "moduleResolution": "node",

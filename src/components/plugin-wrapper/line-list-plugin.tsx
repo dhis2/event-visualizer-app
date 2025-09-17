@@ -1,8 +1,10 @@
 import type { FC } from 'react'
 import { useCallback, useReducer, useState } from 'react'
 import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
+import { LineList } from '@components/line-list'
+import type { LineListAnalyticsData } from '@components/line-list'
 import { transformVisualization } from '@modules/visualization'
-import type { CurrentUser, CurrentVisualization } from '@types'
+import type { CurrentUser, CurrentVisualization, SortDirection } from '@types'
 
 type LineListPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
@@ -80,7 +82,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     )
 
     const {
-        data: analyticsData,
+        data,
         fetching: isFetching,
         //loading,
         error,
@@ -97,12 +99,29 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         sortDirection,
     })
 
-    console.log('LL analytics data', analyticsData, isFetching, error)
+    console.log('LL analytics data', data, isFetching, error)
+    console.log('LL in modal?', isInModal)
+
+    if (!data || !visualization) {
+        return <div>Not ready to show LL yet</div>
+    }
 
     return (
-        <div style={{ border: '1px solid green' }}>
-            <p>This is the LL plugin</p>
-            <p>Showing {visualization.name}</p>
-        </div>
+        <LineList
+            analyticsData={data as LineListAnalyticsData}
+            onDataSort={onDataSort}
+            onPaginate={onPaginate}
+            visualization={visualization}
+            isFetching={isFetching}
+            isInDashboard={isInDashboard}
+            isInModal={isInModal}
+            onColumnHeaderClick={(dimensionId) => {
+                console.log(
+                    `Show options modal for dimension ID ${dimensionId}`
+                )
+            }}
+            sortDirection={sortDirection as SortDirection}
+            sortField={sortField ?? undefined}
+        />
     )
 }

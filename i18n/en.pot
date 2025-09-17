@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-09-16T09:09:19.640Z\n"
-"PO-Revision-Date: 2025-09-16T09:09:19.641Z\n"
+"POT-Creation-Date: 2025-09-17T07:41:56.513Z\n"
+"PO-Revision-Date: 2025-09-17T07:41:56.514Z\n"
 
 msgid "Welcome to DHIS2 with TypeScript!"
 msgstr "Welcome to DHIS2 with TypeScript!"
@@ -151,6 +151,43 @@ msgstr "Code"
 
 msgid "Name"
 msgstr "Name"
+
+msgid "No event"
+msgstr "No event"
+
+msgid "Sort by \"{{column}}\" and update"
+msgstr "Sort by \"{{column}}\" and update"
+
+msgid ""
+"This line list may show data that was not available when the interpretation "
+"was written."
+msgstr ""
+"This line list may show data that was not available when the interpretation "
+"was written."
+
+msgid "most recent"
+msgstr "most recent"
+
+msgid "oldest"
+msgstr "oldest"
+
+msgid "oldest {{repeatEventIndex}}"
+msgstr "oldest {{repeatEventIndex}}"
+
+msgid "most recent {{repeatEventIndex}}"
+msgstr "most recent {{repeatEventIndex}}"
+
+msgid "Active"
+msgstr "Active"
+
+msgid "Cancelled"
+msgstr "Cancelled"
+
+msgid "Completed"
+msgstr "Completed"
+
+msgid "Scheduled"
+msgstr "Scheduled"
 
 msgid "Download"
 msgstr "Download"
