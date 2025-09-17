@@ -1,6 +1,7 @@
 import { CssVariables } from '@dhis2/ui'
 import type { FC, ReactNode } from 'react'
 import simleLineList from '../__fixtures__/e2e-enrollment.json'
+import largeLineListWithLegend from '../__fixtures__/inpatient-cases-under-5-years-female-this-year-additional-columns-and-legends.json'
 import noTimeDimension from '../__fixtures__/no-time-dimension.json'
 import { LineList } from '../line-list'
 import type { LineListAnalyticsData } from '../types'
@@ -20,18 +21,18 @@ describe(
         viewportHeight: 768,
     },
     () => {
-        it('renders correctly', () => {
+        it.only('renders correctly', () => {
             // TODO: Implement as Vitest with snapshot
             cy.mount(
                 <TestContainer>
                     <LineList
                         analyticsData={
-                            simleLineList.responses as unknown as LineListAnalyticsData
+                            largeLineListWithLegend.responses as unknown as LineListAnalyticsData
                         }
                         onDataSort={cy.stub().as('onDataSort')}
                         onPaginate={cy.stub().as('onPaginate')}
                         visualization={
-                            simleLineList.visualization as unknown as CurrentVisualization
+                            largeLineListWithLegend.visualization as unknown as CurrentVisualization
                         }
                     />
                 </TestContainer>
