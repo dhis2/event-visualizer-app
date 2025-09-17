@@ -5,11 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-09-17T07:41:56.513Z\n"
-"PO-Revision-Date: 2025-09-17T07:41:56.514Z\n"
-
-msgid "Welcome to DHIS2 with TypeScript!"
-msgstr "Welcome to DHIS2 with TypeScript!"
+"POT-Creation-Date: 2025-09-17T13:39:38.314Z\n"
+"PO-Revision-Date: 2025-09-17T13:39:38.315Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
