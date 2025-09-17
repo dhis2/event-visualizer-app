@@ -1,8 +1,8 @@
 import type { FC } from 'react'
 import { useCallback, useReducer, useState } from 'react'
 import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
-import { LineList } from '@components/line-list/line-list'
-import type { LineListAnalyticsData } from '@components/line-list/types'
+import { LineList } from '@components/line-list'
+import type { LineListAnalyticsData } from '@components/line-list'
 import { transformVisualization } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, SortDirection } from '@types'
 
