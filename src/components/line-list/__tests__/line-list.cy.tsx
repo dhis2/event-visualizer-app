@@ -20,21 +20,19 @@ describe(
         viewportHeight: 768,
     },
     () => {
-        it.only('renders correctly', () => {
+        it('renders correctly', () => {
             // TODO: Implement as Vitest with snapshot
             cy.mount(
                 <TestContainer>
                     <LineList
                         analyticsData={
-                            simleLineList.responses as LineListAnalyticsData
+                            simleLineList.responses as unknown as LineListAnalyticsData
                         }
                         onDataSort={cy.stub().as('onDataSort')}
                         onPaginate={cy.stub().as('onPaginate')}
                         visualization={
                             simleLineList.visualization as unknown as CurrentVisualization
                         }
-                        page={1}
-                        pageSize={50}
                     />
                 </TestContainer>
             )
@@ -45,15 +43,13 @@ describe(
                     <LineList
                         isFetching
                         analyticsData={
-                            simleLineList.responses as LineListAnalyticsData
+                            simleLineList.responses as unknown as LineListAnalyticsData
                         }
                         onDataSort={cy.stub().as('onDataSort')}
                         onPaginate={cy.stub().as('onPaginate')}
                         visualization={
                             simleLineList.visualization as unknown as CurrentVisualization
                         }
-                        page={1}
-                        pageSize={50}
                     />
                 </TestContainer>
             )
@@ -67,13 +63,13 @@ describe(
                 expect(Cypress.dom.isFocusable($el)).to.be.equal(false)
             })
         })
-        it.only('shows a "No time dimensions" warning when showing a LL without a time dimensions in a modal', () => {
+        it('shows a "No time dimensions" warning when showing a LL without a time dimensions in a modal', () => {
             // TODO: implement as Vitest
             cy.mount(
                 <TestContainer>
                     <LineList
                         analyticsData={
-                            noTimeDimension.responses as LineListAnalyticsData
+                            noTimeDimension.responses as unknown as LineListAnalyticsData
                         }
                         onDataSort={cy.stub().as('onDataSort')}
                         onPaginate={cy.stub().as('onPaginate')}
@@ -81,8 +77,6 @@ describe(
                             noTimeDimension.visualization as unknown as CurrentVisualization
                         }
                         isInModal
-                        page={1}
-                        pageSize={50}
                     />
                 </TestContainer>
             )
