@@ -7,15 +7,22 @@ import type { ResponseErrorReport } from '@api/parse-engine-error'
 /* We have an ESLint rule in place to prevent imports from
  * `src/types/dhis2-openapi-schemas` anywhere else in the codebase.
  * The reason for this is so that we can apply manual overrides
- * for generated types here, as we have done for `SystemSettings` */
-/* eslint-disable import/export */
-export type * from './dhis2-openapi-schemas'
-export type { Axis } from './axis'
-export type { DimensionType } from './dimension'
-export type { MetadataItem } from './metadata-item'
-export type { SystemSettings } from './system-settings'
-export type { VisualizationType } from './visualization-type'
-/* eslint-enable import/export */
+ * for generated types here, as we have done for `SystemSettings`.
+ * Anything that is needed from the generated types should be explicitly exported here;
+ * this list should not contain the types we override. */
+export type {
+    EventVisualizationType,
+    GridHeader,
+    LegendSet,
+    MeDto,
+    OptionSet,
+    OrganisationUnit,
+    OrganisationUnitLevel,
+    ProgramType,
+    RelativePeriodEnum,
+    SortDirection,
+    ValueType,
+} from './dhis2-openapi-schemas'
 export type { PickWithFieldFilters } from './pick-with-field-filters'
 
 /* The SingleQuery type is a simpler, but for our use-case functionally
@@ -53,17 +60,13 @@ export type { UseMetadataStoreReturnValue as MetadataStore } from '../components
 export type AppCachedData = TransformedAppCachedData
 export type CurrentUser = TransformedAppCachedData['currentUser']
 
-export type {
-    // DimensionType is exported above because it overrides the generated type
-    ExtendedDimensionType,
-    ProgramDimensionType,
-    YourDimensionType,
-    DimensionId,
-    TimeDimensionId,
-    InternalDimensionRecord,
-} from './dimension'
+export type * from './axis'
+export type * from './dimension'
 export type * from './input-type'
+export type * from './metadata-item'
 export type * from './org-unit'
 export type * from './period'
+export type * from './system-settings'
 export type * from './value-type'
 export type * from './visualization'
+export type * from './visualization-type'
