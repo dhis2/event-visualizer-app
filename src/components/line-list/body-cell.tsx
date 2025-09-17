@@ -1,6 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import { DataTableCell, Tooltip } from '@dhis2/ui'
 import cx from 'classnames'
+import type { FC } from 'react'
 import classes from './styles/body-cell.module.css'
 import type { LineListCellData } from './types'
 
@@ -9,7 +10,7 @@ type BodyCellProps = LineListCellData & {
     sizeClass: string
 }
 
-const BodyCell = ({
+const BodyCell: FC<BodyCellProps & { tooltipProps?: object }> = ({
     fontSizeClass,
     formattedValue,
     sizeClass,
@@ -20,7 +21,7 @@ const BodyCell = ({
     shouldNotWrap,
     textColor,
     tooltipProps,
-}: BodyCellProps & { tooltipProps?: object }) => (
+}) => (
     <DataTableCell
         {...tooltipProps}
         className={cx(
@@ -49,7 +50,7 @@ const BodyCell = ({
     </DataTableCell>
 )
 
-const BodyCellWithConditionalTooltip = (props: BodyCellProps) => {
+const BodyCellWithConditionalTooltip: FC<BodyCellProps> = (props) => {
     if (!props.isUndefined) {
         return <BodyCell {...props} />
     }
