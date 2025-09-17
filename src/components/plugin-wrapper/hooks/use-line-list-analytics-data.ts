@@ -15,7 +15,7 @@ import {
     getMainDimensions,
     getProgramDimensions,
 } from '@modules/dimension'
-import { isValueTypeNumeric } from '@modules/value-type.js'
+import { isValueTypeNumeric } from '@modules/value-type'
 import {
     headersMap,
     isVisualizationWithTimeDimension,
