@@ -6,7 +6,7 @@ import {
     DataTableRow,
 } from '@dhis2/ui'
 import cx from 'classnames'
-import { createContext, useContext, useMemo, type FC } from 'react'
+import { useMemo, type FC } from 'react'
 import { BodyCell } from './body-cell'
 import { FetchOverlay } from './fetch-overlay'
 import { HeaderCell } from './header-cell'
@@ -34,17 +34,6 @@ type LineListProps = {
     onColumnHeaderClick?: ColumnHeaderClickFn
     sortDirection?: SortDirection
     sortField?: string
-}
-
-const LineListPropsContext = createContext<LineListProps | null>(null)
-export const useLineListProps = (): LineListProps => {
-    const props = useContext(LineListPropsContext)
-    if (props === null) {
-        throw new Error(
-            'useLineListProps was used outside of the LineListPropsContext.Provider'
-        )
-    }
-    return props
 }
 
 export const LineList: FC<LineListProps> = ({
