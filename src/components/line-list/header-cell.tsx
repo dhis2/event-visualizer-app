@@ -59,8 +59,6 @@ export const HeaderCell: FC<HeaderCellProps> = ({
 
     return (
         <DataTableColumnHeader
-            fixed
-            top={true}
             className={cx(
                 classes.headerCell,
                 fontSizeClass,
