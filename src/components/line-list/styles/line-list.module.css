@@ -21,6 +21,8 @@
     block-size: 100%;
     min-block-size: 0;
     position: relative;
+    max-inline-size: 100%;
+    overflow: hidden;
 }
 
 .endColumn {
