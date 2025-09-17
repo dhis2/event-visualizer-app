@@ -25,7 +25,7 @@ export type DimensionId = (typeof DIMENSION_IDS)[number]
 
 export type TimeDimensionId = (typeof TIME_DIMENSION_IDS)[number]
 
-// XXX check about this one
+// TODO: check about this one
 export type InternalDimensionRecord = Omit<
     DimensionRecord,
     'dimension' | 'items'

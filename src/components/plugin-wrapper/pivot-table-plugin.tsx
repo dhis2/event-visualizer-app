@@ -6,7 +6,7 @@ import type { CurrentUser, CurrentVisualization } from '@types'
 type PivotTablePluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
-    filters?: Record<string, unknown> // XXX verify this type
+    filters?: Record<string, unknown> // TODO: verify this type
     isInDashboard: boolean
     isInModal: boolean
     isVisualizationLoading: boolean

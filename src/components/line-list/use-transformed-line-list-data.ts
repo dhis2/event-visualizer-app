@@ -61,7 +61,7 @@ const getHeaderDimensionId = (
     const idMatch =
         Object.keys(headersMap).find(
             (key) => headersMap[key] === dimensionId
-        ) ?? '' // XXX find a better solution
+        ) ?? '' // TODO: find a better solution
 
     const formattedDimensionId = getFullDimensionId({
         dimensionId: [
@@ -88,7 +88,7 @@ const getHeaderDimensionId = (
         // program status + event status in all cases
     ) {
         defaultMetadata[formattedDimensionId] = getProgramDimensions(
-            programId ?? '' // XXX find a better solution
+            programId ?? '' // TODO: find a better solution
         )[formattedDimensionId]
     }
 

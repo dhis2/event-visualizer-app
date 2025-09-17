@@ -174,7 +174,7 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
         const idMatch =
             Object.keys(headersMap).find(
                 (key) => headersMap[key] === dimensionId
-            ) ?? '' // XXX find a better solution
+            ) ?? '' // TODO: find a better solution
 
         const formattedDimensionId = getFullDimensionId({
             dimensionId: [
@@ -201,7 +201,7 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
             // program status + event status in all cases
         ) {
             defaultMetadata[formattedDimensionId] = getProgramDimensions(
-                programId ?? '' // XXX find a better solution
+                programId ?? '' // TODO: find a better solution
             )[formattedDimensionId]
         }
 
@@ -231,7 +231,7 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
         const idMatch =
             Object.keys(headersMap).find(
                 (key) => headersMap[key] === dimensionId
-            ) ?? '' // XXX find a better solution
+            ) ?? '' // TODO: find a better solution
 
         result.column =
             labels.find(
@@ -345,7 +345,7 @@ const useLineListAnalyticsData = ({
             const pager = analyticsResponse.metaData.pager
             console.log('analyticsResponse', analyticsResponse)
 
-            const legendSetIds: string[] = [] // XXX check this type
+            const legendSetIds: string[] = [] // TODO: check this type
             const headerLegendSetMap: Record<string, string> = headers.reduce(
                 (acc, header) => {
                     const metadataItem =

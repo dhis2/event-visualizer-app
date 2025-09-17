@@ -239,7 +239,7 @@ export const transformDimensions = (
                 }
             } else if (
                 dimensionObj.dimension === 'pe' &&
-                type === 'LINE_LIST' // XXX this should be always the case as this function is only used for LL visualizations
+                type === 'LINE_LIST' // TODO: this should be always the case as this function is only used for LL visualizations
             ) {
                 return {
                     ...dimensionObj,
