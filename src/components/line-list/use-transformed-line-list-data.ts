@@ -6,7 +6,6 @@ import type {
     LineListAnalyticsData,
     LineListAnalyticsDataHeader,
 } from '@components/line-list/types'
-import type { SupportedInputType } from '@constants/input-types'
 import { getColorByValueFromLegendSet, formatValue } from '@dhis2/analytics'
 import {
     getFullDimensionId,
@@ -15,7 +14,7 @@ import {
     getProgramDimensions,
 } from '@modules/dimension'
 import { headersMap } from '@modules/visualization'
-import type { CurrentVisualization, ValueType } from '@types'
+import type { CurrentVisualization, InputType, ValueType } from '@types'
 
 const isStageOffsetInteger = (stageOffset: unknown): stageOffset is number =>
     Number.isInteger(stageOffset)
@@ -52,7 +51,7 @@ const getHeaderDisplayText = (header: LineListAnalyticsDataHeader) => {
 
 const getHeaderDimensionId = (
     header: LineListAnalyticsDataHeader,
-    inputType: SupportedInputType,
+    inputType: InputType,
     defaultMetadata: ReturnType<typeof getMainDimensions>
 ) => {
     const { dimensionId, programStageId, programId } = getDimensionIdParts({
@@ -62,7 +61,7 @@ const getHeaderDimensionId = (
     const idMatch =
         Object.keys(headersMap).find(
             (key) => headersMap[key] === dimensionId
-        ) ?? '' // XXX find a better solution
+        ) ?? '' // TODO: find a better solution
 
     const formattedDimensionId = getFullDimensionId({
         dimensionId: [
@@ -89,7 +88,7 @@ const getHeaderDimensionId = (
         // program status + event status in all cases
     ) {
         defaultMetadata[formattedDimensionId] = getProgramDimensions(
-            programId ?? '' // XXX find a better solution
+            programId ?? '' // TODO: find a better solution
         )[formattedDimensionId]
     }
 

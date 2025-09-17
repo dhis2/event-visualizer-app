@@ -4,7 +4,6 @@ import {
     TIME_DIMENSION_IDS,
     YOUR_DIMENSION_TYPES,
 } from '@constants/dimensions'
-import type { SupportedInputType } from '@constants/input-types'
 import {
     getDefaultOrgUnitLabel,
     getDefaultOrgUnitMetadata,
@@ -15,6 +14,7 @@ import type {
     DimensionId,
     DimensionRecord,
     ExtendedDimensionType,
+    InputType,
     InternalDimensionRecord,
     ProgramDimensionType,
     TimeDimensionId,
@@ -99,7 +99,7 @@ export const getDimensionsWithSuffix = ({
 
 type GetDimensionIdPartsParams = {
     id: string
-    inputType: SupportedInputType
+    inputType: InputType
 }
 
 export const getDimensionIdParts = ({
@@ -135,7 +135,7 @@ type GetFullDimensionIdParams = {
     dimensionId: string
     programId?: string
     programStageId?: string
-    inputType: SupportedInputType
+    inputType: InputType
 }
 
 export const getFullDimensionId = ({
@@ -166,7 +166,7 @@ export const getCreatedDimension = (): DimensionRecordObject => ({
 })
 
 export const getMainDimensions = (
-    inputType: SupportedInputType
+    inputType: InputType
 ): DimensionRecordObject => ({
     ...(inputType === 'TRACKED_ENTITY_INSTANCE'
         ? {
@@ -220,7 +220,7 @@ export const transformDimensions = (
 ): DimensionArray => {
     const { outputType: inputType, type } = visualization
 
-    const inputTypeTimeDimensionMap: Record<SupportedInputType, DimensionId> = {
+    const inputTypeTimeDimensionMap: Record<InputType, DimensionId> = {
         EVENT: 'eventDate',
         ENROLLMENT: 'enrollmentDate',
         TRACKED_ENTITY_INSTANCE: 'created',
@@ -239,7 +239,7 @@ export const transformDimensions = (
                 }
             } else if (
                 dimensionObj.dimension === 'pe' &&
-                type === 'LINE_LIST' // XXX this should be always the case as this function is only used for LL visualizations
+                type === 'LINE_LIST' // TODO: this should be always the case as this function is only used for LL visualizations
             ) {
                 return {
                     ...dimensionObj,

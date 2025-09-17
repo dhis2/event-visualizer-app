@@ -11,9 +11,9 @@ import {
     IconCalendar16,
 } from '@dhis2/ui'
 import React, { type ReactNode } from 'react'
-import type { SupportedDimensionType } from '@types'
+import type { DimensionType } from '@types'
 
-type DimensionTypeIconMap = Record<SupportedDimensionType, ReactNode>
+type DimensionTypeIconMap = Record<DimensionType, ReactNode>
 
 const dimensionTypeIconMap: DimensionTypeIconMap = {
     DATA_ELEMENT: <IconDimensionData16 />,
@@ -29,7 +29,7 @@ const dimensionTypeIconMap: DimensionTypeIconMap = {
 }
 
 interface DimensionTypeIconProps {
-    dimensionType: SupportedDimensionType
+    dimensionType: DimensionType
 }
 
 // Presentational component used by dnd - do not add redux or dnd functionality

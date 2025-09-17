@@ -1,7 +1,6 @@
 import i18n from '@dhis2/d2-i18n'
 import type { AnyMetadataItemInput } from './types'
-import type { UserOrgUnit } from '@constants/org-units'
-import type { SupportedRelativePeriod } from '@constants/periods'
+import type { UserOrgUnit, RelativePeriod } from '@types'
 
 const getOrganisationUnits = (): Record<UserOrgUnit, string> => ({
     USER_ORGUNIT: i18n.t('User organisation unit'),
@@ -9,7 +8,7 @@ const getOrganisationUnits = (): Record<UserOrgUnit, string> => ({
     USER_ORGUNIT_GRANDCHILDREN: i18n.t('User sub-x2-units'),
 })
 
-const getRelativePeriods = (): Record<SupportedRelativePeriod, string> => ({
+const getRelativePeriods = (): Record<RelativePeriod, string> => ({
     TODAY: i18n.t('Today'),
     YESTERDAY: i18n.t('Yesterday'),
     LAST_3_DAYS: i18n.t('Last 3 days'),

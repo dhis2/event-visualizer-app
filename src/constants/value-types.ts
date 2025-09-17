@@ -1,6 +1,7 @@
+import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 import type { ValueType } from '@types'
 
-export const NUMERIC_VALUE_TYPES: ValueType[] = [
+export const NUMERIC_VALUE_TYPES = asStringLiteralSubsetArray<ValueType>()([
     'NUMBER',
     'UNIT_INTERVAL',
     'PERCENTAGE',
@@ -8,7 +9,7 @@ export const NUMERIC_VALUE_TYPES: ValueType[] = [
     'INTEGER_POSITIVE',
     'INTEGER_NEGATIVE',
     'INTEGER_ZERO_OR_POSITIVE',
-] as const
+] as const)
 
 export const VALUE_TYPES: ValueType[] = [
     'TEXT',

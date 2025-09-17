@@ -1,14 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import type { SupportedInputType } from '@constants/input-types'
-import type { SupportedVisType } from '@constants/visualization-types'
+import type { InputType, VisualizationType } from '@types'
 
 const EMPTY_STRING_ARRAY: string[] = []
 const EMPTY_CONDITIONS_OBJECT = { condition: undefined, legendSet: undefined }
 
 export interface VisUiConfigState {
-    visualizationType: SupportedVisType
-    inputType: SupportedInputType
+    visualizationType: VisualizationType
+    inputType: InputType
     layout: {
         columns: string[]
         filters: string[]
@@ -45,7 +44,7 @@ export const visUiConfigSlice = createSlice({
         },
         setVisUiConfigVisualizationType: (
             state,
-            action: PayloadAction<SupportedVisType>
+            action: PayloadAction<VisualizationType>
         ) => {
             state.visualizationType = action.payload
         },
@@ -55,10 +54,7 @@ export const visUiConfigSlice = createSlice({
         ) => {
             state.layout = action.payload
         },
-        setVisUiConfigInputType: (
-            state,
-            action: PayloadAction<SupportedInputType>
-        ) => {
+        setVisUiConfigInputType: (state, action: PayloadAction<InputType>) => {
             state.inputType = action.payload
         },
         setVisUiConfigItemsByDimension: (

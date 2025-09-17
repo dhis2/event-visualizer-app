@@ -1,5 +1,4 @@
 import i18n from '@dhis2/d2-i18n'
-import type { SupportedVisType } from '@constants/visualization-types'
 import { layoutGetAllDimensions } from '@dhis2/analytics'
 import { isTimeDimensionId, transformDimensions } from '@modules/dimension'
 import type {
@@ -8,11 +7,15 @@ import type {
     EmptyVisualization,
     NewVisualization,
     SavedVisualization,
+    VisualizationType,
 } from '@types'
 
 // TODO adjust the descriptions
 // See: https://dhis2.atlassian.net/browse/DHIS2-19961
-export const getVisTypeDescriptions = (): Record<SupportedVisType, string> => ({
+export const getVisTypeDescriptions = (): Record<
+    VisualizationType,
+    string
+> => ({
     LINE_LIST: i18n.t(
         'Track or compare changes over time. Recommend period as category. (adjust for EVER)'
     ),

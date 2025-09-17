@@ -1,16 +1,13 @@
-import type { SupportedInputType } from '@constants/input-types'
-import { convertToSupportedVisType } from '@constants/visualization-types'
-import type { SupportedVisType } from '@constants/visualization-types'
 import {
     layoutGetAxisIdDimensionIdsObject,
     layoutGetDimensionIdItemIdsObject,
 } from '@dhis2/analytics'
 import { getFullDimensionId } from '@modules/dimension'
-import type { CurrentVisualization } from '@types'
+import type { CurrentVisualization, InputType, VisualizationType } from '@types'
 
 const getConditionsFromVisualization = (
     vis: CurrentVisualization,
-    inputType: SupportedInputType
+    inputType: InputType
 ): Record<string, { condition?: string; legendSet?: string }> => {
     const result: Record<string, { condition?: string; legendSet?: string }> =
         {}
@@ -39,7 +36,7 @@ const getConditionsFromVisualization = (
     return result
 }
 
-const getVisualizationLayout = (layout, type: SupportedVisType) => {
+const getVisualizationLayout = (layout, type: VisualizationType) => {
     if (type === 'LINE_LIST') {
         return {
             columns: [...layout.columns, ...(layout.rows || [])],
@@ -53,14 +50,13 @@ const getVisualizationLayout = (layout, type: SupportedVisType) => {
 
 export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
     const inputType = vis.outputType // The single location where outputType is renamed to inputType
-    const supportedVisType = convertToSupportedVisType(vis.type) // TODO remove this and override type in Visualization type definition
 
     return {
-        visualizationType: supportedVisType,
+        visualizationType: vis.type,
         inputType,
         layout: getVisualizationLayout(
             layoutGetAxisIdDimensionIdsObject(vis),
-            supportedVisType
+            vis.type
         ),
         itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
         conditionsByDimension: getConditionsFromVisualization(vis, inputType),

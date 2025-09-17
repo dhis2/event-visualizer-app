@@ -3,14 +3,14 @@ import React from 'react'
 import { Chip } from './chip'
 import classes from './styles/axis.module.css'
 import { useMetadataStore } from '@components/app-wrapper/metadata-provider'
-import type { SupportedAxis } from '@constants/axis-types'
 import { useAppSelector } from '@hooks'
 import { getLayoutDimensions } from '@modules/get-layout-dimensions'
 import { getAxisNames } from '@modules/layout'
 import { getVisUiConfigInputType } from '@store/vis-ui-config-slice'
+import type { Axis as AxisTD } from '@types'
 
 interface AxisProps {
-    axisId: SupportedAxis
+    axisId: AxisTD
     position: 'start' | 'end'
     dimensionIds?: string[] | undefined
 }
