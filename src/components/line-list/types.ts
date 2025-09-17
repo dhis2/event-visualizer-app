@@ -1,13 +1,38 @@
 import type { GridHeader, LegendSet, SortDirection } from '@types'
 
-// TODO: check if this is correct
-export type CellData = string | number | boolean
+export type LineListHeader = {
+    name: string
+    displayText: string
+    dimensionId: string
+}
+export type LineListCellData = {
+    formattedValue: string
+    value: string
+    backgroundColor?: string
+    isUndefined?: boolean
+    isUrl?: boolean
+    shouldNotWrap?: boolean
+    textColor?: string
+}
+export type LineListRow = Array<LineListCellData>
+export type LineListPager = {
+    page: number
+    pageSize: number
+    isLastPage: boolean
+}
+export type LineListData = {
+    headers: Array<LineListHeader>
+    rows: Array<LineListRow>
+    pager: LineListPager
+}
+
+export type CellData = string
 type Row = Array<CellData>
-export type Header = GridHeader & {
+export type LineListAnalyticsDataHeader = GridHeader & {
     legendSet: Pick<LegendSet, 'id' | 'name' | 'legends'>
 }
 export type LineListAnalyticsData = {
-    headers: Array<Header>
+    headers: Array<LineListAnalyticsDataHeader>
     rows: Array<Row>
     rowContext: {
         [key: string]: {

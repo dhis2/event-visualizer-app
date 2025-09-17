@@ -2,66 +2,25 @@ import i18n from '@dhis2/d2-i18n'
 import { DataTableCell, Tooltip } from '@dhis2/ui'
 import cx from 'classnames'
 import classes from './styles/body-cell.module.css'
-import type { LineListAnalyticsData, Header, CellData } from './types'
-import { getColorByValueFromLegendSet } from '@dhis2/analytics'
-import type { ValueType, LegendDisplayStyle } from '@types'
+import type { LineListCellData } from './types'
 
-const NOT_DEFINED_VALUE = 'ND'
-const NON_WRAPPING_VALUE_TYPES_LOOKUP = new Set<ValueType>([
-    'NUMBER',
-    'INTEGER',
-    'INTEGER_POSITIVE',
-    'INTEGER_NEGATIVE',
-    'INTEGER_ZERO_OR_POSITIVE',
-    'PERCENTAGE',
-    'UNIT_INTERVAL',
-    'TIME',
-    'DATE',
-    'DATETIME',
-    'PHONE_NUMBER',
-])
-
-const cellValueShouldNotWrap = (header: Header) =>
-    NON_WRAPPING_VALUE_TYPES_LOOKUP.has(header.valueType) && !header.optionSet
-
-const formatCellValue = (value: CellData, header: Header) => {
-    if (header?.valueType === 'URL') {
-        return (
-            <a href={String(value)} target="_blank" rel="noreferrer">
-                {value}
-            </a>
-        )
-    } else {
-        // return getFormattedCellValue({ value, header, visualization })
-        return value
-    }
-}
-
-const cellIsUndefined = (
-    rowContext: LineListAnalyticsData['rowContext'] = {},
-    rowIndex: number,
-    columnIndex: number
-) => rowContext[rowIndex]?.[columnIndex]?.valueStatus === NOT_DEFINED_VALUE
-
-type TableCellProps = {
+type BodyCellProps = LineListCellData & {
     fontSizeClass: string
-    header: Header
     sizeClass: string
-    value: CellData
-    isUndefined?: boolean
-    legendStyle?: LegendDisplayStyle
-    tooltipProps?: object
 }
 
-const TableCell = ({
+const BodyCell = ({
     fontSizeClass,
-    header,
+    formattedValue,
     sizeClass,
     value,
+    backgroundColor,
     isUndefined,
-    legendStyle,
+    isUrl,
+    shouldNotWrap,
+    textColor,
     tooltipProps,
-}: TableCellProps) => (
+}: BodyCellProps & { tooltipProps?: object }) => (
     <DataTableCell
         {...tooltipProps}
         className={cx(
@@ -70,60 +29,38 @@ const TableCell = ({
             sizeClass,
             {
                 [classes.emptyCell]: !value,
-                [classes.nowrap]: cellValueShouldNotWrap(header),
+                [classes.nowrap]: shouldNotWrap,
                 [classes.undefinedCell]: isUndefined,
             },
             'bordered'
         )}
-        backgroundColor={
-            legendStyle === 'FILL'
-                ? getColorByValueFromLegendSet(header.legendSet, value)
-                : undefined
-        }
+        backgroundColor={backgroundColor}
         dataTest="table-cell"
     >
-        <div
-            style={
-                legendStyle === 'TEXT'
-                    ? {
-                          color: getColorByValueFromLegendSet(
-                              header.legendSet,
-                              value
-                          ),
-                      }
-                    : {}
-            }
-        >
-            {formatCellValue(value, header)}
+        <div style={textColor ? { color: textColor } : undefined}>
+            {isUrl ? (
+                <a href={value} target="_blank" rel="noreferrer">
+                    {value}
+                </a>
+            ) : (
+                formattedValue
+            )}
         </div>
     </DataTableCell>
 )
 
-type BodyCellProps = TableCellProps & {
-    columnIndex: number
-    rowContext: LineListAnalyticsData['rowContext']
-    rowIndex: number
-}
-
-export const BodyCell = ({
-    rowContext,
-    rowIndex,
-    columnIndex,
-    ...tabelCellProps
-}: BodyCellProps) => {
-    if (!cellIsUndefined(rowContext, rowIndex, columnIndex)) {
-        return <TableCell {...tabelCellProps} />
+const BodyCellWithConditionalTooltip = (props: BodyCellProps) => {
+    if (!props.isUndefined) {
+        return <BodyCell {...props} />
     }
 
     return (
         <Tooltip content={i18n.t('No event')}>
             {(tooltipProps) => (
-                <TableCell
-                    {...tabelCellProps}
-                    isUndefined={true}
-                    tooltipProps={tooltipProps}
-                />
+                <BodyCell {...props} tooltipProps={tooltipProps} />
             )}
         </Tooltip>
     )
 }
+
+export { BodyCellWithConditionalTooltip as BodyCell }

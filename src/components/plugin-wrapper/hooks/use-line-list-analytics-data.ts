@@ -15,7 +15,7 @@ import {
     getMainDimensions,
     getProgramDimensions,
 } from '@modules/dimension'
-//import { isValueTypeNumeric } from '@modules/value-type'
+import { isValueTypeNumeric } from '@modules/value-type.js'
 import {
     headersMap,
     isVisualizationWithTimeDimension,
@@ -77,8 +77,6 @@ const fetchAnalyticsDataForLL = async ({
     const { adaptedVisualization, headers, parameters } =
         getAdaptedVisualization(visualization)
 
-    console.log('adapted', visualization, headers, parameters)
-
     let req = new analyticsEngine.request()
         .fromVisualization(adaptedVisualization)
         .withParameters({
@@ -133,7 +131,6 @@ const fetchAnalyticsDataForLL = async ({
     return rawResponse
 }
 
-/* TODO skipped for now
 const legendSetsQuery = {
     resource: 'legendSets',
     params: ({ ids }) => ({
@@ -165,7 +162,6 @@ const fetchLegendSets = async ({ legendSetIds, dataEngine }) => {
 
     return legendSets
 }
-*/
 
 const extractHeaders = (analyticsResponse, inputType: SupportedInputType) => {
     const defaultMetadata = getMainDimensions(inputType)
@@ -347,17 +343,18 @@ const useLineListAnalyticsData = ({
             const rows = extractRows(analyticsResponse, headers)
             const rowContext = extractRowContext(analyticsResponse)
             const pager = analyticsResponse.metaData.pager
+            console.log('analyticsResponse', analyticsResponse)
 
-            /*
-            // TODO skipped for now
             const legendSetIds: string[] = [] // XXX check this type
-            const headerLegendSetMap = headers.reduce(
-                (acc, header) => ({
-                    ...acc,
-                    [header.name]:
+            const headerLegendSetMap: Record<string, string> = headers.reduce(
+                (acc, header) => {
+                    const metadataItem =
                         analyticsResponse.metaData.items[header.name]
-                            ?.legendSet,
-                }),
+                    if (typeof metadataItem?.legendSet === 'string') {
+                        acc[header.name] = metadataItem.legendSet
+                    }
+                    return acc
+                },
                 {}
             )
             if (
@@ -394,7 +391,6 @@ const useLineListAnalyticsData = ({
                         }
                     })
             }
-            */
 
             if (mounted.current) {
                 setError(undefined)
@@ -414,7 +410,7 @@ const useLineListAnalyticsData = ({
         }
     }, [
         analyticsEngine,
-        // dataEngine,
+        dataEngine,
         displayProperty,
         relativePeriodDate,
         visualization,

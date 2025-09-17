@@ -3,12 +3,11 @@ import { DataTableColumnHeader } from '@dhis2/ui'
 import cx from 'classnames'
 import { useCallback, useMemo, type FC } from 'react'
 import classes from './styles/header-cell.module.css'
-import type { ColumnHeaderClickFn, DataSortFn } from './types'
-import type { GridHeader, SortDirection } from '@types'
+import type { ColumnHeaderClickFn, DataSortFn, LineListHeader } from './types'
+import type { SortDirection } from '@types'
 
-type HeaderCellProps = {
+type HeaderCellProps = LineListHeader & {
     fontSizeClass: string
-    header: GridHeader
     isDisconnected: boolean
     onDataSort: DataSortFn
     sizeClass: string
@@ -23,12 +22,11 @@ type HandleSortIconClickPayload = {
     direction: UiSortDirection
 }
 
-const isStageOffsetInteger = (stageOffset: unknown): stageOffset is number =>
-    Number.isInteger(stageOffset)
-
 export const HeaderCell: FC<HeaderCellProps> = ({
+    name,
+    dimensionId,
+    displayText,
     fontSizeClass,
-    header,
     isDisconnected,
     onDataSort,
     sizeClass,
@@ -40,14 +38,14 @@ export const HeaderCell: FC<HeaderCellProps> = ({
         if (isDisconnected) {
             return undefined
         } else if (
-            header.name === sortField &&
+            name === sortField &&
             (sortDirection === 'ASC' || sortDirection === 'DESC')
         ) {
             return sortDirection.toLowerCase() as UiSortDirection
         } else {
             return 'default'
         }
-    }, [header, isDisconnected, sortDirection, sortField])
+    }, [name, isDisconnected, sortDirection, sortField])
     const handleSortIconClick = useCallback(
         ({ name, direction: uiSortDirection }: HandleSortIconClickPayload) => {
             const direction =
@@ -57,42 +55,6 @@ export const HeaderCell: FC<HeaderCellProps> = ({
             onDataSort({ dimension: name, direction })
         },
         [onDataSort]
-    )
-    const headerText = useMemo(() => {
-        const { column, stageOffset } = header
-
-        if (!column) {
-            return ''
-        }
-
-        if (isStageOffsetInteger(stageOffset)) {
-            let repetitionSuffix
-
-            if (stageOffset === 0) {
-                repetitionSuffix = i18n.t('most recent')
-            } else if (stageOffset === 1) {
-                repetitionSuffix = i18n.t('oldest')
-            } else if (stageOffset > 1) {
-                repetitionSuffix = i18n.t('oldest {{repeatEventIndex}}', {
-                    repeatEventIndex: `+${stageOffset - 1}`,
-                })
-            } else if (stageOffset < 0) {
-                repetitionSuffix = i18n.t('most recent {{repeatEventIndex}}', {
-                    repeatEventIndex: stageOffset,
-                })
-            }
-
-            return `${column} (${repetitionSuffix})`
-        }
-
-        return column
-    }, [header])
-    const headerName = useMemo(
-        () =>
-            isStageOffsetInteger(header.stageOffset)
-                ? (header.name ?? '').replace(/\[-?\d+\]/, '')
-                : header.name ?? '',
-        [header.stageOffset, header.name]
     )
 
     return (
@@ -105,12 +67,12 @@ export const HeaderCell: FC<HeaderCellProps> = ({
                 sizeClass,
                 'bordered'
             )}
-            key={header.name}
-            name={header.name}
+            key={name}
+            name={name}
             onSortIconClick={handleSortIconClick}
             sortDirection={headerSortDirection}
             sortIconTitle={i18n.t('Sort by "{{column}}" and update', {
-                column: headerText,
+                column: displayText,
             })}
             dataTest="data-table-header"
         >
@@ -122,12 +84,12 @@ export const HeaderCell: FC<HeaderCellProps> = ({
                 onClick={
                     onColumnHeaderClick
                         ? () => {
-                              onColumnHeaderClick(headerName)
+                              onColumnHeaderClick(dimensionId)
                           }
                         : undefined
                 }
             >
-                {headerText}
+                {displayText}
             </span>
         </DataTableColumnHeader>
     )

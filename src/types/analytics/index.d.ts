@@ -18,6 +18,8 @@ import type {
     DimensionArray,
     EventVisualizationType,
     LegendSet,
+    SavedVisualization,
+    ValueType,
     VisualizationType,
 } from '@types'
 
@@ -60,5 +62,10 @@ declare module '@dhis2/analytics' {
     export const getColorByValueFromLegendSet: (
         legendSet?: LegendSet,
         value?: string | number | boolean
+    ) => string
+    export const formatValue: (
+        value: string,
+        valueType: ValueType,
+        visualization: Partial<SavedVisualization>
     ) => string
 }

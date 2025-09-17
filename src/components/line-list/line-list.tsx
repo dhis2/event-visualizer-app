@@ -19,6 +19,7 @@ import type {
     LineListAnalyticsData,
     PaginateFn,
 } from './types'
+import { useTransformedLineListData } from './use-transformed-line-list-data'
 import { ScrollBox } from '@components/scroll-box/scroll-box'
 import type { CurrentVisualization, SortDirection } from '@types'
 
@@ -26,8 +27,6 @@ type LineListProps = {
     analyticsData: LineListAnalyticsData
     onDataSort: DataSortFn
     onPaginate: PaginateFn
-    page: number
-    pageSize: number
     visualization: CurrentVisualization
     isFetching?: boolean
     isInDashboard?: boolean
@@ -52,8 +51,6 @@ export const LineList: FC<LineListProps> = ({
     analyticsData,
     onDataSort,
     onPaginate,
-    page,
-    pageSize,
     visualization,
     isFetching = false,
     isInDashboard = false,
@@ -63,6 +60,10 @@ export const LineList: FC<LineListProps> = ({
     sortField,
 }) => {
     const { isDisconnected } = useDhis2ConnectionStatus()
+    const { headers, rows, pager } = useTransformedLineListData(
+        analyticsData,
+        visualization
+    )
     const sizeClass = useMemo(() => {
         switch (visualization.displayDensity) {
             case 'COMFORTABLE':
@@ -105,8 +106,8 @@ export const LineList: FC<LineListProps> = ({
         isInModal,
         '\nisInDashboard: ',
         isInDashboard,
-        page,
-        pageSize,
+        '\npager: ',
+        pager,
         '\n======'
     )
     return (
@@ -136,11 +137,11 @@ export const LineList: FC<LineListProps> = ({
                     >
                         <DataTableHead dataTest="line-list-data-table-head">
                             <DataTableRow dataTest="line-list-data-table-head-row">
-                                {analyticsData.headers.map((header) => (
+                                {headers.map((header) => (
                                     <HeaderCell
                                         key={header.name}
+                                        {...header}
                                         fontSizeClass={fontSizeClass}
-                                        header={header}
                                         isDisconnected={isDisconnected}
                                         onDataSort={onDataSort}
                                         sizeClass={sizeClass}
@@ -154,30 +155,17 @@ export const LineList: FC<LineListProps> = ({
                             </DataTableRow>
                         </DataTableHead>
                         <DataTableBody dataTest="line-list-data-table-body">
-                            {analyticsData.rows.map((row, rowIndex) => (
+                            {rows.map((row, rowIndex) => (
                                 <DataTableRow
                                     key={rowIndex}
                                     dataTest="table-row"
                                 >
-                                    {row.map((value, columnIndex) => (
+                                    {row.map((row, columnIndex) => (
                                         <BodyCell
                                             key={`${rowIndex}-${columnIndex}`}
-                                            rowContext={
-                                                analyticsData.rowContext
-                                            }
-                                            rowIndex={rowIndex}
-                                            columnIndex={columnIndex}
-                                            header={
-                                                analyticsData.headers[
-                                                    columnIndex
-                                                ]
-                                            }
-                                            value={value}
+                                            {...row}
                                             sizeClass={sizeClass}
                                             fontSizeClass={fontSizeClass}
-                                            legendStyle={
-                                                visualization.legend?.style
-                                            }
                                         />
                                     ))}
                                 </DataTableRow>
