@@ -124,7 +124,10 @@ export const LineList: FC<LineListProps> = ({
                         )}
                         dataTest="line-list-data-table"
                     >
-                        <DataTableHead dataTest="line-list-data-table-head">
+                        <DataTableHead
+                            dataTest="line-list-data-table-head"
+                            className={classes.fixedHead}
+                        >
                             <DataTableRow dataTest="line-list-data-table-head-row">
                                 {headers.map((header) => (
                                     <HeaderCell
