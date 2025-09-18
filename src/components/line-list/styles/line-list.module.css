@@ -37,12 +37,18 @@
     display: none;
 }
 
-.dataTable {
+.grid .dataTable {
+    border: none;
 }
 .fixedHead {
     position: sticky;
     inset-block-start: 0;
-    z-index: 2;
+    z-index: 1;
+}
+.fixedFoot {
+    position: sticky;
+    inset-block-end: 0;
+    z-index: 1;
 }
 .sizeComfortable {
 }

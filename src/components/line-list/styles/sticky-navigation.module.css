@@ -1,0 +1,7 @@
+.footerCell {
+    padding: 0 !important;
+}
+.stickyContainer {
+    position: sticky;
+    inset-inline-start: 0;
+}

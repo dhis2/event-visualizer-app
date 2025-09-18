@@ -2,6 +2,7 @@ import { useDhis2ConnectionStatus } from '@dhis2/app-runtime'
 import {
     DataTable,
     DataTableBody,
+    DataTableFoot,
     DataTableHead,
     DataTableRow,
 } from '@dhis2/ui'
@@ -12,6 +13,8 @@ import { FetchOverlay } from './fetch-overlay'
 import { HeaderCell } from './header-cell'
 import { LegendKey } from './legend-key'
 import { NoTimeDimensionWarning } from './no-time-dimension-warning'
+import { ScrollBox } from './scroll-box'
+import { StickyPagination } from './sticky-pagination'
 import classes from './styles/line-list.module.css'
 import type {
     ColumnHeaderClickFn,
@@ -20,7 +23,6 @@ import type {
     PaginateFn,
 } from './types'
 import { useTransformedLineListData } from './use-transformed-line-list-data'
-import { ScrollBox } from './scroll-box'
 import type { CurrentVisualization, SortDirection } from '@types'
 
 type LineListProps = {
@@ -74,10 +76,10 @@ export const LineList: FC<LineListProps> = ({
                 return classes.fontSizeNormal
         }
     }, [visualization.fontSize])
-    // const colSpan = useMemo(
-    //     () => String(Math.max(analyticsData.headers.length, 1)),
-    //     [analyticsData.headers.length]
-    // )
+    const colSpan = useMemo(
+        () => String(Math.max(analyticsData.headers.length, 1)),
+        [analyticsData.headers.length]
+    )
 
     console.log(
         'ALL PROPS',
@@ -163,6 +165,18 @@ export const LineList: FC<LineListProps> = ({
                                 </DataTableRow>
                             ))}
                         </DataTableBody>
+                        <DataTableFoot className={classes.fixedFoot}>
+                            <DataTableRow>
+                                <StickyPagination
+                                    {...pager}
+                                    isDisconnected={isDisconnected}
+                                    isFetching={isFetching}
+                                    colSpan={colSpan}
+                                    onPaginate={onPaginate}
+                                    pageLength={rows.length}
+                                />
+                            </DataTableRow>
+                        </DataTableFoot>
                     </DataTable>
                 </ScrollBox>
             </div>
