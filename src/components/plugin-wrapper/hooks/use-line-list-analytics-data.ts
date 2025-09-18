@@ -174,7 +174,9 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
         const idMatch =
             Object.keys(headersMap).find(
                 (key) => headersMap[key] === dimensionId
-            ) ?? '' // TODO: find a better solution
+                // TODO: find a better solution
+                // https://dhis2.atlassian.net/browse/DHIS2-20136
+            ) ?? ''
 
         const formattedDimensionId = getFullDimensionId({
             dimensionId: [
@@ -201,7 +203,8 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
             // program status + event status in all cases
         ) {
             defaultMetadata[formattedDimensionId] = getProgramDimensions(
-                programId ?? '' // TODO: find a better solution
+                // TODO: remove initialisation to '' and fix args order in function
+                programId ?? ''
             )[formattedDimensionId]
         }
 
@@ -231,7 +234,9 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
         const idMatch =
             Object.keys(headersMap).find(
                 (key) => headersMap[key] === dimensionId
-            ) ?? '' // TODO: find a better solution
+                // TODO: find a better solution
+                // https://dhis2.atlassian.net/browse/DHIS2-20136
+            ) ?? ''
 
         result.column =
             labels.find(
@@ -309,7 +314,7 @@ const useLineListAnalyticsData = ({
     filters,
     isVisualizationLoading: isGlobalLoading,
     displayProperty,
-    onResponsesReceived,
+    onResponseReceived,
     pageSize,
     page,
     sortField,
@@ -397,7 +402,8 @@ const useLineListAnalyticsData = ({
                 setData({ headers, rows, pager, rowContext })
             }
 
-            onResponsesReceived(analyticsResponse)
+            // TODO: check what metadata needs to be passed from the analytics response
+            onResponseReceived(analyticsResponse.metaData.items)
         } catch (error) {
             if (mounted.current) {
                 setError(error)
@@ -418,7 +424,7 @@ const useLineListAnalyticsData = ({
         pageSize,
         sortDirection,
         sortField,
-        onResponsesReceived,
+        onResponseReceived,
     ])
 
     useEffect(() => {
@@ -446,7 +452,7 @@ const useLineListAnalyticsData = ({
         sortDirection,
         relativePeriodDate,
         doFetch,
-        onResponsesReceived,
+        onResponseReceived,
     ])
 
     useEffect(() => {

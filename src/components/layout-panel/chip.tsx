@@ -61,7 +61,7 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
             <div className={classes.content}>
                 <ChipBase
                     dimension={dimension}
-                    conditionsLength={0} // TODO https://dhis2.atlassian.net/browse/DHIS2-20105
+                    conditionsLength={0} // TODO: https://dhis2.atlassian.net/browse/DHIS2-20105
                     itemsLength={items.length}
                     inputType={inputType}
                     axisId={axisId}

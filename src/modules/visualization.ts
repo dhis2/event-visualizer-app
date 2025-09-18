@@ -10,7 +10,7 @@ import type {
     VisualizationType,
 } from '@types'
 
-// TODO adjust the descriptions
+// TODO: adjust the descriptions
 // See: https://dhis2.atlassian.net/browse/DHIS2-19961
 export const getVisTypeDescriptions = (): Record<
     VisualizationType,

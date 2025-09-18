@@ -133,9 +133,9 @@ export const getDimensionIdParts = ({
 
 type GetFullDimensionIdParams = {
     dimensionId: string
+    inputType: InputType
     programId?: string
     programStageId?: string
-    inputType: InputType
 }
 
 export const getFullDimensionId = ({
@@ -239,7 +239,9 @@ export const transformDimensions = (
                 }
             } else if (
                 dimensionObj.dimension === 'pe' &&
-                type === 'LINE_LIST' // TODO: this should be always the case as this function is only used for LL visualizations
+                // TODO: this should be always the case as this function is only used for LL visualizations
+                // https://dhis2.atlassian.net/browse/DHIS2-20135
+                type === 'LINE_LIST'
             ) {
                 return {
                     ...dimensionObj,
