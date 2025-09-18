@@ -23,7 +23,6 @@ import type {
     PaginateFn,
 } from './types'
 import { useTransformedLineListData } from './use-transformed-line-list-data'
-import { ScrollBox } from './scroll-box'
 import type { CurrentVisualization, SortDirection } from '@types'
 
 type LineListProps = {
@@ -80,6 +79,27 @@ export const LineList: FC<LineListProps> = ({
     const colSpan = useMemo(
         () => String(Math.max(analyticsData.headers.length, 1)),
         [analyticsData.headers.length]
+    )
+
+    console.log(
+        'ALL PROPS',
+        '\nanalyticsData: ',
+        analyticsData,
+        '\nonDataSort: ',
+        onDataSort,
+        '\nonPaginate: ',
+        onPaginate,
+        '\nvisualization: ',
+        visualization,
+        '\nisFetching: ',
+        isFetching,
+        '\nisInModal: ',
+        isInModal,
+        '\nisInDashboard: ',
+        isInDashboard,
+        '\npager: ',
+        pager,
+        '\n======'
     )
 
     console.log('\nisInDashboard: ', isInDashboard)

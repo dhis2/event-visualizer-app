@@ -81,15 +81,13 @@ const StickyPaginationWithConditionalTooltip = ({
 }: StickyPaginationProps) => {
     const disabled = isFetching || isDisconnected
 
-    if (isDisconnected) {
-        return (
-            <Tooltip content={i18n.t('Not available offline')}>
-                <StickyPagination disabled={disabled} {...props} />
-            </Tooltip>
-        )
-    }
-
-    return <StickyPagination disabled={disabled} {...props} />
+    return isDisconnected ? (
+        <Tooltip content={i18n.t('Not available offline')}>
+            <StickyPagination disabled={disabled} {...props} />
+        </Tooltip>
+    ) : (
+        <StickyPagination disabled={disabled} {...props} />
+    )
 }
 
 export { StickyPaginationWithConditionalTooltip as StickyPagination }
