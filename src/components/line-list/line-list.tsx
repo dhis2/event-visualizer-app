@@ -58,22 +58,22 @@ export const LineList: FC<LineListProps> = ({
     const sizeClass = useMemo(() => {
         switch (visualization.displayDensity) {
             case 'COMFORTABLE':
-                return classes.sizeComfortable
+                return 'size-comfortable'
             case 'COMPACT':
-                return classes.sizeCompact
+                return 'size-compact'
             default:
-                return classes.sizeNormal
+                return 'size-normal'
         }
     }, [visualization.displayDensity])
     const fontSizeClass = useMemo(() => {
         switch (visualization.fontSize) {
             case 'LARGE':
-                return classes.fontSizeLarge
+                return 'font-size-large'
             case 'SMALL':
-                return classes.fontSizeSmall
+                return 'font-size-small'
             case 'NORMAL':
             default:
-                return classes.fontSizeNormal
+                return 'font-size-normal'
         }
     }, [visualization.fontSize])
     const colSpan = useMemo(
@@ -81,26 +81,7 @@ export const LineList: FC<LineListProps> = ({
         [analyticsData.headers.length]
     )
 
-    console.log(
-        'ALL PROPS',
-        '\nanalyticsData: ',
-        analyticsData,
-        '\nonDataSort: ',
-        onDataSort,
-        '\nonPaginate: ',
-        onPaginate,
-        '\nvisualization: ',
-        visualization,
-        '\nisFetching: ',
-        isFetching,
-        '\nisInModal: ',
-        isInModal,
-        '\nisInDashboard: ',
-        isInDashboard,
-        '\npager: ',
-        pager,
-        '\n======'
-    )
+    console.log('\nisInDashboard: ', isInDashboard)
     return (
         <div className={classes.grid}>
             <div
@@ -122,6 +103,8 @@ export const LineList: FC<LineListProps> = ({
                         width="auto"
                         className={cx(
                             classes.dataTable,
+                            fontSizeClass,
+                            sizeClass,
                             'push-analytics-linelist-table'
                         )}
                         dataTest="line-list-data-table"
@@ -135,10 +118,8 @@ export const LineList: FC<LineListProps> = ({
                                     <HeaderCell
                                         key={header.name}
                                         {...header}
-                                        fontSizeClass={fontSizeClass}
                                         isDisconnected={isDisconnected}
                                         onDataSort={onDataSort}
-                                        sizeClass={sizeClass}
                                         onColumnHeaderClick={
                                             onColumnHeaderClick
                                         }
@@ -158,8 +139,6 @@ export const LineList: FC<LineListProps> = ({
                                         <BodyCell
                                             key={`${rowIndex}-${columnIndex}`}
                                             {...row}
-                                            sizeClass={sizeClass}
-                                            fontSizeClass={fontSizeClass}
                                         />
                                     ))}
                                 </DataTableRow>

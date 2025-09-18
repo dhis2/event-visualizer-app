@@ -5,15 +5,10 @@ import type { FC } from 'react'
 import classes from './styles/body-cell.module.css'
 import type { LineListCellData } from './types'
 
-type BodyCellProps = LineListCellData & {
-    fontSizeClass: string
-    sizeClass: string
-}
+type BodyCellProps = LineListCellData
 
 const BodyCell: FC<BodyCellProps & { tooltipProps?: object }> = ({
-    fontSizeClass,
     formattedValue,
-    sizeClass,
     value,
     backgroundColor,
     isUndefined,
@@ -26,8 +21,6 @@ const BodyCell: FC<BodyCellProps & { tooltipProps?: object }> = ({
         {...tooltipProps}
         className={cx(
             classes.cell,
-            fontSizeClass,
-            sizeClass,
             {
                 [classes.emptyCell]: !value,
                 [classes.nowrap]: shouldNotWrap,
