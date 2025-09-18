@@ -81,27 +81,6 @@ export const LineList: FC<LineListProps> = ({
         [analyticsData.headers.length]
     )
 
-    console.log(
-        'ALL PROPS',
-        '\nanalyticsData: ',
-        analyticsData,
-        '\nonDataSort: ',
-        onDataSort,
-        '\nonPaginate: ',
-        onPaginate,
-        '\nvisualization: ',
-        visualization,
-        '\nisFetching: ',
-        isFetching,
-        '\nisInModal: ',
-        isInModal,
-        '\nisInDashboard: ',
-        isInDashboard,
-        '\npager: ',
-        pager,
-        '\n======'
-    )
-
     console.log('\nisInDashboard: ', isInDashboard)
     return (
         <div className={classes.grid}>

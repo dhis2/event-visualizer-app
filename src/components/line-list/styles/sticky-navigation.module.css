@@ -1,7 +1,19 @@
-.footerCell {
-    padding: 0 !important;
+:global(table tfoot) .footerCell {
+    padding: 0;
 }
 .stickyContainer {
     position: sticky;
     inset-inline-start: 0;
+    box-sizing: border-box;
+}
+
+:global(table.size-comfortable) .stickyContainer {
+    padding: 14px 12px;
+}
+.stickyContainer,
+:global(table.size-normal) .stickyContainer {
+    padding: 10px 12px;
+}
+:global(table.size-compact) .stickyContainer {
+    padding: 6px 12px;
 }
