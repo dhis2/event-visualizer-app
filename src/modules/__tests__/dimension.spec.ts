@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { getFullDimensionId, getDimensionIdParts } from '../dimension-id'
+import { getFullDimensionId, getDimensionIdParts } from '../dimension'
 
 const inputType = 'EVENT'
 describe('getFullDimensionId', () => {

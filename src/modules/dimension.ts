@@ -133,9 +133,9 @@ export const getDimensionIdParts = ({
 
 type GetFullDimensionIdParams = {
     dimensionId: string
+    inputType: InputType
     programId?: string
     programStageId?: string
-    inputType: InputType
 }
 
 export const getFullDimensionId = ({
