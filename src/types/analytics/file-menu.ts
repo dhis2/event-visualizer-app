@@ -13,7 +13,7 @@ type FileMenuRenamePayload = {
     description: string
 }
 
-// TODO check if any of these should be required
+// TODO: check if any of these should be required
 type FileMenuProps = {
     currentUser?: CurrentUser
     defaultFilterVisType?: string

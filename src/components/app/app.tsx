@@ -48,7 +48,7 @@ const EventVisualizer: FC = () => {
                 <div style={{ padding: 8 }}>
                     <h1>Visualization Canvas</h1>
                     <h3>{i18n.t('Welcome to DHIS2 with TypeScript!')}</h3>
-                    {/* TODO use a type guard and implement the landing screen DHIS2-20123 */}
+                    {/* TODO: use a type guard and implement the landing screen DHIS2-20123 */}
                     {currentVis && (
                         <PluginWrapper
                             visualization={currentVis}

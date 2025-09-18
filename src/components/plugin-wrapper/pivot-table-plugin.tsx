@@ -1,6 +1,7 @@
 import type { FC } from 'react'
 //import { usePivotTableAnalyticsData } from './hooks/use-pivot-table-analytics-data'
 //import { PivotTable } from '@dhis2/analytics'
+//import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import type { CurrentUser, CurrentVisualization } from '@types'
 
 type PivotTablePluginProps = {
@@ -10,7 +11,7 @@ type PivotTablePluginProps = {
     isInDashboard: boolean
     isInModal: boolean
     isVisualizationLoading: boolean
-    //    onResponsesReceived?: (responses: unknown[]) => void // TODO fix this type
+    //    onResponseReceived?: (metadata: MetadataInput) => void
     //    id?: number
     style?: Record<string, string>
 }
@@ -24,7 +25,7 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
     isInDashboard,
     isInModal,
     isVisualizationLoading,
-    //    onResponsesReceived,
+    //    onResponseReceived,
     style = STYLE_PROP_DEFAULT,
 }) => {
     console.log(
@@ -38,15 +39,15 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
         style
     )
 
-    // TODO implement onDataSorted and any other function/callback that cannot rely on the Redux store
+    // TODO: implement onDataSorted and any other function/callback that cannot rely on the Redux store
 
-    // TODO fetch analytics for PT
+    // TODO: fetch analytics for PT
     //    const { data } = usePivotTableAnalyticsData({
     //        visualization,
     //        filters,
     //        isVisualizationLoading,
     //        displayProperty,
-    //        onResponsesReceived,
+    //        onResponseReceived,
     //    })
 
     //console.log('PT analytics data', data)

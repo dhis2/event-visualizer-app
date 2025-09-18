@@ -1,15 +1,16 @@
 import type { FC } from 'react'
 import { LineListPlugin } from './line-list-plugin'
+import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import type { CurrentUser, CurrentVisualization } from '@types'
 
 type PluginWrapperProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
-    filters?: Record<'relativePeriodDate', string> // TODO check what dashboard passes here
+    filters?: Record<'relativePeriodDate', string>
     isInDashboard?: boolean
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     isVisualizationLoading?: boolean
-    onResponsesReceived?: (responses: unknown[]) => void // TODO use LineListAnalyticsData type
+    onResponseReceived?: (metadata: MetadataInput) => void
 }
 
 export const PluginWrapper: FC<PluginWrapperProps> = ({
@@ -19,7 +20,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     isInDashboard = false,
     isInModal = false,
     isVisualizationLoading = false,
-    onResponsesReceived,
+    onResponseReceived,
 }) => {
     if (visualization.type === 'LINE_LIST') {
         return (
@@ -30,7 +31,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                 isInDashboard={isInDashboard}
                 isInModal={isInModal}
                 isVisualizationLoading={isVisualizationLoading}
-                onResponsesReceived={onResponsesReceived}
+                onResponseReceived={onResponseReceived}
             />
         )
     } else if (visualization.type === 'PIVOT_TABLE') {

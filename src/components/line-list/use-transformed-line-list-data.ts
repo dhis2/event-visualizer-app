@@ -61,7 +61,9 @@ const getHeaderDimensionId = (
     const idMatch =
         Object.keys(headersMap).find(
             (key) => headersMap[key] === dimensionId
-        ) ?? '' // TODO: find a better solution
+            // TODO: find a better solution
+            // https://dhis2.atlassian.net/browse/DHIS2-20136
+        ) ?? ''
 
     const formattedDimensionId = getFullDimensionId({
         dimensionId: [
@@ -88,7 +90,8 @@ const getHeaderDimensionId = (
         // program status + event status in all cases
     ) {
         defaultMetadata[formattedDimensionId] = getProgramDimensions(
-            programId ?? '' // TODO: find a better solution
+            // TODO: remove initialisation to '' and fix args order in function
+            programId ?? ''
         )[formattedDimensionId]
     }
 
