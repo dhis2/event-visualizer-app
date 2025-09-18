@@ -51,17 +51,17 @@ const BodyCell: FC<BodyCellProps & { tooltipProps?: object }> = ({
 )
 
 const BodyCellWithConditionalTooltip: FC<BodyCellProps> = (props) => {
-    if (!props.isUndefined) {
-        return <BodyCell {...props} />
+    if (props.isUndefined) {
+        return (
+            <Tooltip content={i18n.t('No event')}>
+                {(tooltipProps) => (
+                    <BodyCell {...props} tooltipProps={tooltipProps} />
+                )}
+            </Tooltip>
+        )
     }
 
-    return (
-        <Tooltip content={i18n.t('No event')}>
-            {(tooltipProps) => (
-                <BodyCell {...props} tooltipProps={tooltipProps} />
-            )}
-        </Tooltip>
-    )
+    return <BodyCell {...props} />
 }
 
 export { BodyCellWithConditionalTooltip as BodyCell }
