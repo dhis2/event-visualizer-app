@@ -210,11 +210,11 @@ describe(
                 expect(container.scrollHeight).to.equal(container.clientHeight)
             })
 
-            // Verify reported width matches container width (no horizontal scrollbar)
-            cy.getByDataTest('reported-width-value').should('contain', '800')
+            // Verify reported width matches content width (no horizontal scrollbar)
+            cy.getByDataTest('reported-width-value').should('contain', '300')
         })
 
-        it('shows vertical scrollbar and adjusts width when content height exceeds container', () => {
+        it('shows vertical scrollbar and keeps width constant when height exceeds container but width is smaller than container', () => {
             cy.mount(<TestLayout />)
 
             // Make content taller than the container (~920px available height)
@@ -227,6 +227,31 @@ describe(
                     container.clientHeight
                 )
                 expect(container.scrollWidth).to.equal(container.clientWidth)
+            })
+
+            // Width should be reduced by scrollbar width due to vertical scrollbar
+            cy.getByDataTest('reported-width-value').should(($width) => {
+                const width = parseInt($width.text())
+                expect(width).to.equal(300)
+            })
+        })
+
+        it('shows vertical scrollbar and adjusts width when height exceeds container and width is constrained too', () => {
+            cy.mount(<TestLayout />)
+
+            // Make content taller than the container (~920px available height)
+            updateInputValue('content-height', 1200)
+            updateInputValue('content-width', 1200)
+
+            // Should have vertical scrollbar and horizontal scrollbar
+            cy.getByDataTest('scroll-box-container').should(($container) => {
+                const container = $container[0]
+                expect(container.scrollHeight).to.be.greaterThan(
+                    container.clientHeight
+                )
+                expect(container.scrollWidth).to.greaterThan(
+                    container.clientWidth
+                )
             })
 
             // Width should be reduced by scrollbar width due to vertical scrollbar
@@ -283,6 +308,9 @@ describe(
         it('responds to window resizes', () => {
             cy.mount(<TestLayout />)
 
+            // Scale the content to fit the window exactly
+            updateInputValue('content-width', 800)
+            updateInputValue('content-height', 1000)
             // Initial width with defaults (start-column: 200px):
             // Width: 1000 - 200 = 800px
             cy.getByDataTest('reported-width-value').should('contain', '800')
@@ -290,9 +318,11 @@ describe(
             // Reduce window width
             cy.viewport(600, 1000)
 
-            // New width with same sibling:
-            // Width: 600 - 200 = 400px
-            cy.getByDataTest('reported-width-value').should('contain', '400')
+            // New width with same sibling, and scrollbar
+            cy.getByDataTest('reported-width-value').should(($width) => {
+                const width = parseInt($width.text())
+                expect(width).to.equal(400 - scrollbarWidth)
+            })
         })
 
         it('re-renders hook-consumer when width changes', () => {
@@ -302,7 +332,7 @@ describe(
             checkRenderCount(2)
 
             // Change width of start-column (should affect ScrollBox width)
-            updateInputValue('start-column-width', 300)
+            updateInputValue('start-column-width', 900)
 
             // Should re-render: 1 (initial) + 1 (ResizeObserver initial) + 1 (ResizeObserver change) = 3
             checkRenderCount(3)
@@ -320,22 +350,22 @@ describe(
 
             // Get initial render count and initial width
             checkRenderCount(2)
-            cy.getByDataTest('reported-width-value').should('contain', '800')
+            cy.getByDataTest('reported-width-value').should('contain', '300')
 
             // Perform rapid dimension changes by quickly resizing the start-column
             // This will cause the ScrollBox container to change size rapidly
-            updateInputValue('start-column-width', 300) // Whould result in width: 700
+            updateInputValue('start-column-width', 800) // Whould result in width: 200
             cy.wait(300)
-            updateInputValue('start-column-width', 400) // Whould result in width: 600
+            updateInputValue('start-column-width', 900) // Whould result in width: 100
             cy.wait(300)
-            updateInputValue('start-column-width', 350) // Whould result in width: 650
+            updateInputValue('start-column-width', 750) // Whould result in width: 250
             cy.wait(300)
-            updateInputValue('start-column-width', 250) // Final value: 750
+            updateInputValue('start-column-width', 850) // Final value: 150
 
             // Ensure none of the intermediate values are used
             cy.getByDataTest('reported-width-value').should(($el) => {
                 const width = parseInt($el.text())
-                expect(width).to.not.be.oneOf([700, 600, 650])
+                expect(width).to.not.be.oneOf([200, 100, 250])
             })
             /* Without the debounce we would see as many as 250. With the debounce it is not
              * possible to predict exactly how many re-renders will occur during this animation
@@ -346,7 +376,7 @@ describe(
                 expect(renderCount).to.not.be.greaterThan(9)
             })
 
-            cy.getByDataTest('reported-width-value').should('contain', '750')
+            cy.getByDataTest('reported-width-value').should('contain', '150')
         })
 
         it('handles multiple scroll-boxes independently', () => {
@@ -359,8 +389,13 @@ describe(
                     >
                         <ScrollBox>
                             <div data-test="content-1">
-                                Container 1:
-                                <span data-test="width-reporter-1">
+                                <span
+                                    style={{
+                                        display: 'inline-block',
+                                        width: 190,
+                                    }}
+                                    data-test="width-reporter-1"
+                                >
                                     <WidthReporter />
                                 </span>
                             </div>
@@ -374,8 +409,13 @@ describe(
                     >
                         <ScrollBox>
                             <div data-test="content-2">
-                                Container 2:
-                                <span data-test="width-reporter-2">
+                                <span
+                                    style={{
+                                        display: 'inline-block',
+                                        width: 290,
+                                    }}
+                                    data-test="width-reporter-2"
+                                >
                                     <WidthReporter />
                                 </span>
                             </div>
@@ -387,11 +427,11 @@ describe(
             // Each ScrollBox should report its container's width
             cy.getByDataTest('width-reporter-1')
                 .find('[data-test="reported-width-value"]')
-                .should('contain', '300')
+                .should('contain', '190')
 
             cy.getByDataTest('width-reporter-2')
                 .find('[data-test="reported-width-value"]')
-                .should('contain', '500')
+                .should('contain', '290')
         })
     }
 )

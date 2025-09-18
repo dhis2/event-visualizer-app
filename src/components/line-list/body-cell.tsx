@@ -5,15 +5,10 @@ import type { FC } from 'react'
 import classes from './styles/body-cell.module.css'
 import type { LineListCellData } from './types'
 
-type BodyCellProps = LineListCellData & {
-    fontSizeClass: string
-    sizeClass: string
-}
+type BodyCellProps = LineListCellData
 
 const BodyCell: FC<BodyCellProps & { tooltipProps?: object }> = ({
-    fontSizeClass,
     formattedValue,
-    sizeClass,
     value,
     backgroundColor,
     isUndefined,
@@ -26,8 +21,6 @@ const BodyCell: FC<BodyCellProps & { tooltipProps?: object }> = ({
         {...tooltipProps}
         className={cx(
             classes.cell,
-            fontSizeClass,
-            sizeClass,
             {
                 [classes.emptyCell]: !value,
                 [classes.nowrap]: shouldNotWrap,
@@ -51,17 +44,17 @@ const BodyCell: FC<BodyCellProps & { tooltipProps?: object }> = ({
 )
 
 const BodyCellWithConditionalTooltip: FC<BodyCellProps> = (props) => {
-    if (!props.isUndefined) {
-        return <BodyCell {...props} />
+    if (props.isUndefined) {
+        return (
+            <Tooltip content={i18n.t('No event')}>
+                {(tooltipProps) => (
+                    <BodyCell {...props} tooltipProps={tooltipProps} />
+                )}
+            </Tooltip>
+        )
     }
 
-    return (
-        <Tooltip content={i18n.t('No event')}>
-            {(tooltipProps) => (
-                <BodyCell {...props} tooltipProps={tooltipProps} />
-            )}
-        </Tooltip>
-    )
+    return <BodyCell {...props} />
 }
 
 export { BodyCellWithConditionalTooltip as BodyCell }

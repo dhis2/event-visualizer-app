@@ -1,8 +1,43 @@
-.cell {
+:global(table.font-size-large) .cell {
+    font-size: 14px;
+    line-height: 15px;
 }
-.emptyCell {
+.cell,
+:global(table.font-size-normal) .cell {
+    font-size: 12px;
+    line-height: 13px;
 }
+:global(table.font-size-small) .cell {
+    font-size: 11px;
+    line-height: 12px;
+}
+
+:global(table.size-comfortable) .cell {
+    padding: 10px 8px 8px;
+}
+.cell,
+:global(table.size-normal) .cell {
+    padding: 7px 6px 5px;
+}
+:global(table.size-compact) .cell {
+    padding: 6px 6px 4px;
+}
+
+.emptyCell::after {
+    content: '\00a0';
+}
+
 .nowrap {
+    white-space: nowrap;
 }
+
 .undefinedCell {
+    background-image: repeating-linear-gradient(
+        45deg,
+        var(--colors-grey300) 0,
+        var(--colors-grey300) 0.8px,
+        transparent 0,
+        transparent 50%
+    );
+    background-size: 8px 8px;
 }

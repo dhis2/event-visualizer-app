@@ -7,10 +7,8 @@ import type { ColumnHeaderClickFn, DataSortFn, LineListHeader } from './types'
 import type { SortDirection } from '@types'
 
 type HeaderCellProps = LineListHeader & {
-    fontSizeClass: string
     isDisconnected: boolean
     onDataSort: DataSortFn
-    sizeClass: string
     onColumnHeaderClick?: ColumnHeaderClickFn
     sortDirection?: SortDirection
     sortField?: string
@@ -26,10 +24,8 @@ export const HeaderCell: FC<HeaderCellProps> = ({
     name,
     dimensionId,
     displayText,
-    fontSizeClass,
     isDisconnected,
     onDataSort,
-    sizeClass,
     onColumnHeaderClick,
     sortDirection,
     sortField,
@@ -59,12 +55,7 @@ export const HeaderCell: FC<HeaderCellProps> = ({
 
     return (
         <DataTableColumnHeader
-            className={cx(
-                classes.headerCell,
-                fontSizeClass,
-                sizeClass,
-                'bordered'
-            )}
+            className={cx(classes.headerCell, 'bordered')}
             key={name}
             name={name}
             onSortIconClick={handleSortIconClick}
