@@ -20,7 +20,7 @@ import type {
     PaginateFn,
 } from './types'
 import { useTransformedLineListData } from './use-transformed-line-list-data'
-import { ScrollBox } from '@components/scroll-box/scroll-box'
+import { ScrollBox } from './scroll-box'
 import type { CurrentVisualization, SortDirection } from '@types'
 
 type LineListProps = {

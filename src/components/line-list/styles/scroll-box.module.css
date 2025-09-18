@@ -5,6 +5,7 @@
     max-block-size: 100%;
     overflow: auto;
     box-sizing: border-box;
+    border: 1px solid var(--colors-grey300);
 }
 
 .content {
