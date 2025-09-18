@@ -1,6 +1,7 @@
 import type { FC } from 'react'
 import { useCallback, useReducer, useState } from 'react'
 import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
+import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import { LineList } from '@components/line-list'
 import type { LineListAnalyticsData } from '@components/line-list'
 import { transformVisualization } from '@modules/visualization'
@@ -9,11 +10,11 @@ import type { CurrentUser, CurrentVisualization, SortDirection } from '@types'
 type LineListPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
-    filters?: Record<string, unknown> // TODO: verify this type
+    filters?: Record<string, unknown>
     isInDashboard: boolean
     isInModal: boolean
     isVisualizationLoading: boolean
-    onResponsesReceived?: (responses: unknown[]) => void // TODO fix this type
+    onResponseReceived?: (metadata: MetadataInput) => void
 }
 
 const FIRST_PAGE: number = 1
@@ -26,7 +27,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     isInDashboard,
     isInModal,
     isVisualizationLoading,
-    onResponsesReceived,
+    onResponseReceived,
 }) => {
     console.log(
         'LL plugin props',
@@ -38,7 +39,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         isVisualizationLoading
     )
 
-    // TODO add setter used in onDataSort
+    // TODO: add setter used in onDataSort
     const [visualization] = useState<CurrentVisualization>(
         transformVisualization(originalVisualization)
     )
@@ -54,11 +55,11 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         }
     )
 
-    // TODO get this from visualization.sorting
+    // TODO: get this from visualization.sorting
     const sortField = null
     const sortDirection = 'default'
 
-    // TODO remove this comment once LineList component is used here
+    // TODO: remove this comment once LineList component is used here
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onPaginate = useCallback(
         ({ page, pageSize }) =>
@@ -66,7 +67,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         []
     )
 
-    // TODO remove this comment once LineList component is used here
+    // TODO: remove this comment once LineList component is used here
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const onDataSort = useCallback(
         (sorting) => {
@@ -92,7 +93,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         filters,
         isVisualizationLoading,
         displayProperty,
-        onResponsesReceived,
+        onResponseReceived,
         pageSize,
         page,
         sortField,

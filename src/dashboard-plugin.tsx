@@ -19,7 +19,7 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
     const { data, isLoading, isError, error } = useRtkQuery<SavedVisualization>(
         {
             resource: 'eventVisualizations',
-            id: props.visualization.id, // TODO this should be just passed as visualizationId
+            id: props.visualization.id, // TODO: this should be just passed as visualizationId
             params: {
                 fields: getVisualizationQueryFields(
                     // derive displayNameProperty from displayProperty
@@ -46,9 +46,9 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
     return (
         <DashboardPluginWrapper {...props}>
             {(props) => (
-                // TODO use the metadata provider here?
+                // TODO: use the metadata provider here?
                 // in that way the plugin components can use the lookup functions and not have to care in which context they are used (app/dashboard-plugin)
-                // the onResponsesReceived can also simply be implemented in both cases for adding metadata from analytics to the metadata store
+                // the onResponseReceived can also simply be implemented in both cases for adding metadata from analytics to the metadata store
                 <PluginWrapper
                     displayProperty={props.displayProperty}
                     filters={props.filters}
