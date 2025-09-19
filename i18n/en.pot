@@ -5,11 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-09-17T07:41:56.513Z\n"
-"PO-Revision-Date: 2025-09-17T07:41:56.514Z\n"
-
-msgid "Welcome to DHIS2 with TypeScript!"
-msgstr "Welcome to DHIS2 with TypeScript!"
+"POT-Creation-Date: 2025-09-19T12:59:51.497Z\n"
+"PO-Revision-Date: 2025-09-19T12:59:51.498Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -188,6 +185,25 @@ msgstr "Completed"
 
 msgid "Scheduled"
 msgstr "Scheduled"
+
+msgid "Getting started"
+msgstr "Getting started"
+
+msgid ""
+"All dimensions that you can use to build visualizations are shown in the "
+"sections in the left sidebar."
+msgstr ""
+"All dimensions that you can use to build visualizations are shown in the "
+"sections in the left sidebar."
+
+msgid "Add dimensions to the layout above."
+msgstr "Add dimensions to the layout above."
+
+msgid "Click a dimension to add or remove conditions."
+msgstr "Click a dimension to add or remove conditions."
+
+msgid "Your most viewed event visualizations"
+msgstr "Your most viewed event visualizations"
 
 msgid "Download"
 msgstr "Download"

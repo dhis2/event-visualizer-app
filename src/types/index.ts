@@ -12,6 +12,7 @@ import type { ResponseErrorReport } from '@api/parse-engine-error'
  * this list should not contain the types we override. */
 export type {
     EventVisualizationType,
+    FavoriteStatistics,
     GridHeader,
     LegendSet,
     MeDto,
