@@ -74,6 +74,17 @@ export const eventVisualizationsApi = api.injectEndpoints({
 
                     metadataStore.addMetadata(visualization.metaData)
 
+                    // update most viewed statistics
+                    await engine.mutate({
+                        resource: 'dataStatistics',
+                        type: 'create',
+                        params: {
+                            eventType: 'EVENT_VISUALIZATION_VIEW',
+                            favorite: id,
+                        },
+                        data: {},
+                    })
+
                     return { data: visualization }
                 } catch (error) {
                     return { error: parseEngineError(error) }
