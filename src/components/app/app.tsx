@@ -1,4 +1,3 @@
-import i18n from '@dhis2/d2-i18n'
 import { CssVariables } from '@dhis2/ui'
 import cx from 'classnames'
 import type { FC } from 'react'
@@ -13,8 +12,10 @@ import {
     GridTopRow,
 } from '@components/grid'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
+import { StartScreen } from '@components/start-screen/start-screen'
 import { Toolbar } from '@components/toolbar/toolbar'
 import { useAppSelector, useCurrentUser } from '@hooks'
+import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import {
     getUiDetailsPanelVisible,
@@ -46,10 +47,9 @@ const EventVisualizer: FC = () => {
             </GridCenterColumnTop>
             <GridCenterColumnBottom>
                 <div style={{ padding: 8 }}>
-                    <h1>Visualization Canvas</h1>
-                    <h3>{i18n.t('Welcome to DHIS2 with TypeScript!')}</h3>
-                    {/* TODO: use a type guard and implement the landing screen DHIS2-20123 */}
-                    {currentVis && (
+                    {isVisualizationEmpty(currentVis) ? (
+                        <StartScreen />
+                    ) : (
                         <PluginWrapper
                             visualization={currentVis}
                             displayProperty={

@@ -13,6 +13,7 @@ import type { PivotTable } from './pivot-table'
 import type { Toolbar } from './toolbar'
 import type { ToolbarSidebar } from './toolbar-sidebar'
 import type { UpdateButton } from './update-button'
+import type { VisTypeIcon } from './vis-type-icon'
 import type {
     CurrentVisualization,
     DimensionArray,
@@ -39,6 +40,7 @@ declare module '@dhis2/analytics' {
     export const Toolbar: Toolbar
     export const ToolbarSidebar: ToolbarSidebar
     export const UpdateButton: UpdateButton
+    export const VisTypeIcon: VisTypeIcon
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const transformEventAggregateResponse: (any) => any
     export const visTypeDisplayNames: Array<
