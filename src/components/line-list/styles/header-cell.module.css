@@ -1,4 +1,28 @@
-.headerCell {
+:global(table.font-size-large) .headerCell {
+    font-size: 14px;
+    line-height: 15px;
 }
+.headerCell,
+:global(table.font-size-normal) .headerCell {
+    font-size: 12px;
+    line-height: 13px;
+}
+:global(table.font-size-small) .headerCell {
+    font-size: 11px;
+    line-height: 12px;
+}
+
+:global(table.size-comfortable) .headerCell {
+    padding: 8px 4px 6px 8px;
+}
+.headerCell,
+:global(table.size-normal) .headerCell {
+    padding: 4px 4px 2px 6px;
+}
+:global(table.size-compact) .headerCell {
+    padding: 3px 2px 1px 6px;
+}
+
 .dimensionModalHandler {
+    cursor: pointer;
 }

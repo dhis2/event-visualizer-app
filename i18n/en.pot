@@ -5,11 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-09-17T07:41:56.513Z\n"
-"PO-Revision-Date: 2025-09-17T07:41:56.514Z\n"
-
-msgid "Welcome to DHIS2 with TypeScript!"
-msgstr "Welcome to DHIS2 with TypeScript!"
+"POT-Creation-Date: 2025-09-18T12:41:33.712Z\n"
+"PO-Revision-Date: 2025-09-18T12:41:33.713Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -164,6 +161,15 @@ msgid ""
 msgstr ""
 "This line list may show data that was not available when the interpretation "
 "was written."
+
+msgid "Rows per page"
+msgstr "Rows per page"
+
+msgid "Page {{page}}, row {{firstItem}}-{{lastItem}}"
+msgstr "Page {{page}}, row {{firstItem}}-{{lastItem}}"
+
+msgid "Not available offline"
+msgstr "Not available offline"
 
 msgid "most recent"
 msgstr "most recent"

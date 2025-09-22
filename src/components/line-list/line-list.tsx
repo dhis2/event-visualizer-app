@@ -2,6 +2,7 @@ import { useDhis2ConnectionStatus } from '@dhis2/app-runtime'
 import {
     DataTable,
     DataTableBody,
+    DataTableFoot,
     DataTableHead,
     DataTableRow,
 } from '@dhis2/ui'
@@ -12,6 +13,8 @@ import { FetchOverlay } from './fetch-overlay'
 import { HeaderCell } from './header-cell'
 import { LegendKey } from './legend-key'
 import { NoTimeDimensionWarning } from './no-time-dimension-warning'
+import { ScrollBox } from './scroll-box'
+import { StickyPagination } from './sticky-pagination'
 import classes from './styles/line-list.module.css'
 import type {
     ColumnHeaderClickFn,
@@ -20,7 +23,6 @@ import type {
     PaginateFn,
 } from './types'
 import { useTransformedLineListData } from './use-transformed-line-list-data'
-import { ScrollBox } from '@components/scroll-box/scroll-box'
 import type { CurrentVisualization, SortDirection } from '@types'
 
 type LineListProps = {
@@ -56,49 +58,30 @@ export const LineList: FC<LineListProps> = ({
     const sizeClass = useMemo(() => {
         switch (visualization.displayDensity) {
             case 'COMFORTABLE':
-                return classes.sizeComfortable
+                return 'size-comfortable'
             case 'COMPACT':
-                return classes.sizeCompact
+                return 'size-compact'
             default:
-                return classes.sizeNormal
+                return 'size-normal'
         }
     }, [visualization.displayDensity])
     const fontSizeClass = useMemo(() => {
         switch (visualization.fontSize) {
             case 'LARGE':
-                return classes.fontSizeLarge
+                return 'font-size-large'
             case 'SMALL':
-                return classes.fontSizeSmall
+                return 'font-size-small'
             case 'NORMAL':
             default:
-                return classes.fontSizeNormal
+                return 'font-size-normal'
         }
     }, [visualization.fontSize])
-    // const colSpan = useMemo(
-    //     () => String(Math.max(analyticsData.headers.length, 1)),
-    //     [analyticsData.headers.length]
-    // )
-
-    console.log(
-        'ALL PROPS',
-        '\nanalyticsData: ',
-        analyticsData,
-        '\nonDataSort: ',
-        onDataSort,
-        '\nonPaginate: ',
-        onPaginate,
-        '\nvisualization: ',
-        visualization,
-        '\nisFetching: ',
-        isFetching,
-        '\nisInModal: ',
-        isInModal,
-        '\nisInDashboard: ',
-        isInDashboard,
-        '\npager: ',
-        pager,
-        '\n======'
+    const colSpan = useMemo(
+        () => String(Math.max(analyticsData.headers.length, 1)),
+        [analyticsData.headers.length]
     )
+
+    console.log('\nisInDashboard: ', isInDashboard)
     return (
         <div className={classes.grid}>
             <div
@@ -120,20 +103,23 @@ export const LineList: FC<LineListProps> = ({
                         width="auto"
                         className={cx(
                             classes.dataTable,
+                            fontSizeClass,
+                            sizeClass,
                             'push-analytics-linelist-table'
                         )}
                         dataTest="line-list-data-table"
                     >
-                        <DataTableHead dataTest="line-list-data-table-head">
+                        <DataTableHead
+                            dataTest="line-list-data-table-head"
+                            className={classes.fixedHead}
+                        >
                             <DataTableRow dataTest="line-list-data-table-head-row">
                                 {headers.map((header) => (
                                     <HeaderCell
                                         key={header.name}
                                         {...header}
-                                        fontSizeClass={fontSizeClass}
                                         isDisconnected={isDisconnected}
                                         onDataSort={onDataSort}
-                                        sizeClass={sizeClass}
                                         onColumnHeaderClick={
                                             onColumnHeaderClick
                                         }
@@ -153,13 +139,23 @@ export const LineList: FC<LineListProps> = ({
                                         <BodyCell
                                             key={`${rowIndex}-${columnIndex}`}
                                             {...row}
-                                            sizeClass={sizeClass}
-                                            fontSizeClass={fontSizeClass}
                                         />
                                     ))}
                                 </DataTableRow>
                             ))}
                         </DataTableBody>
+                        <DataTableFoot className={classes.fixedFoot}>
+                            <DataTableRow>
+                                <StickyPagination
+                                    {...pager}
+                                    isDisconnected={isDisconnected}
+                                    isFetching={isFetching}
+                                    colSpan={colSpan}
+                                    onPaginate={onPaginate}
+                                    pageLength={rows.length}
+                                />
+                            </DataTableRow>
+                        </DataTableFoot>
                     </DataTable>
                 </ScrollBox>
             </div>
