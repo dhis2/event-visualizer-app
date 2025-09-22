@@ -162,6 +162,15 @@ msgstr ""
 "This line list may show data that was not available when the interpretation "
 "was written."
 
+msgid "Rows per page"
+msgstr "Rows per page"
+
+msgid "Page {{page}}, row {{firstItem}}-{{lastItem}}"
+msgstr "Page {{page}}, row {{firstItem}}-{{lastItem}}"
+
+msgid "Not available offline"
+msgstr "Not available offline"
+
 msgid "most recent"
 msgstr "most recent"
 

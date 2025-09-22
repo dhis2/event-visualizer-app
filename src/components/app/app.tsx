@@ -46,18 +46,14 @@ const EventVisualizer: FC = () => {
                 <div style={{ padding: 8 }}>Titlebar</div>
             </GridCenterColumnTop>
             <GridCenterColumnBottom>
-                <div style={{ padding: 8 }}>
-                    {isVisualizationEmpty(currentVis) ? (
-                        <StartScreen />
-                    ) : (
-                        <PluginWrapper
-                            visualization={currentVis}
-                            displayProperty={
-                                currentUser.settings.displayProperty
-                            }
-                        />
-                    )}
-                </div>
+                {isVisualizationEmpty(currentVis) ? (
+                    <StartScreen />
+                ) : (
+                    <PluginWrapper
+                        visualization={currentVis}
+                        displayProperty={currentUser.settings.displayProperty}
+                    />
+                )}
             </GridCenterColumnBottom>
             <GridEndColumn>
                 <div

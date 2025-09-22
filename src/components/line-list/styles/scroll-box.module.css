@@ -1,0 +1,14 @@
+.container {
+    inline-size: fit-content;
+    max-inline-size: 100%;
+    block-size: fit-content;
+    max-block-size: 100%;
+    overflow: auto;
+    box-sizing: border-box;
+    border: 1px solid var(--colors-grey300);
+}
+
+.content {
+    min-inline-size: min-content;
+    min-block-size: min-content;
+}

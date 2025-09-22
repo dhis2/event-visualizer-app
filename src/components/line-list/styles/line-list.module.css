@@ -21,6 +21,8 @@
     block-size: 100%;
     min-block-size: 0;
     position: relative;
+    max-inline-size: 100%;
+    overflow: hidden;
 }
 
 .endColumn {
@@ -35,17 +37,16 @@
     display: none;
 }
 
-.dataTable {
+.grid .dataTable {
+    border: none;
 }
-.sizeComfortable {
+.fixedHead {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
 }
-.sizeCompact {
-}
-.sizeNormal {
-}
-.fontSizeLarge {
-}
-.fontSizeSmall {
-}
-.fontSizeNormal {
+.fixedFoot {
+    position: sticky;
+    inset-block-end: 0;
+    z-index: 1;
 }
