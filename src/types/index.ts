@@ -21,6 +21,7 @@ export type {
     ProgramType,
     RelativePeriodEnum,
     SortDirection,
+    Sorting,
     ValueType,
 } from './dhis2-openapi-schemas'
 export type { PickWithFieldFilters } from './pick-with-field-filters'

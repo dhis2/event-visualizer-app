@@ -55,6 +55,6 @@ export type PaginatePayload = {
     page?: number
     pageSize?: number
 }
-export type DataSortFn = (payload?: DataSortPayload) => void
+export type DataSortFn = (payload: DataSortPayload) => void
 export type PaginateFn = (payload: PaginatePayload) => void
 export type ColumnHeaderClickFn = (cleanedHeaderName: string) => void

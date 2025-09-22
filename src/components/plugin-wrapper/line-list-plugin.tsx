@@ -4,8 +4,14 @@ import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import { LineList } from '@components/line-list'
 import type { LineListAnalyticsData } from '@components/line-list'
+import type { DataSortFn } from '@components/line-list/types'
 import { transformVisualization } from '@modules/visualization'
-import type { CurrentUser, CurrentVisualization, SortDirection } from '@types'
+import type {
+    CurrentUser,
+    CurrentVisualization,
+    SortDirection,
+    Sorting,
+} from '@types'
 
 type LineListPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
@@ -39,8 +45,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         isVisualizationLoading
     )
 
-    // TODO: add setter used in onDataSort
-    const [visualization] = useState<CurrentVisualization>(
+    const [visualization, setVisualization] = useState<CurrentVisualization>(
         transformVisualization(originalVisualization)
     )
 
@@ -55,31 +60,30 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         }
     )
 
-    // TODO: get this from visualization.sorting
-    const sortField = null
-    const sortDirection = 'default'
+    const { dimension: sortField, direction: sortDirection } = visualization
+        .sorting?.length
+        ? visualization.sorting[0]
+        : { dimension: undefined, direction: undefined }
 
-    // TODO: remove this comment once LineList component is used here
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const onPaginate = useCallback(
-        ({ page, pageSize }) =>
-            setPagination({ page: pageSize ? FIRST_PAGE : page, pageSize }),
-        []
-    )
+    const onPaginate = useCallback(({ page, pageSize }) => {
+        if (pageSize) {
+            setPagination({ page: pageSize ? FIRST_PAGE : page, pageSize })
+        } else if (page) {
+            setPagination({ page })
+        }
+    }, [])
 
-    // TODO: remove this comment once LineList component is used here
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const onDataSort = useCallback(
-        (sorting) => {
-            console.log('onDataSort TBD', sorting)
-            //setVisualization({
-            //    ...originalVisualization,
-            //    sorting,
-            //})
+    const onDataSort: DataSortFn = useCallback(
+        (newSorting) => {
+            setVisualization({
+                ...originalVisualization,
+                sorting:
+                    newSorting.direction === undefined
+                        ? undefined
+                        : ([newSorting] as Sorting[]),
+            } as CurrentVisualization)
         },
-        [
-            /*originalVisualization*/
-        ]
+        [originalVisualization]
     )
 
     const {
@@ -122,7 +126,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
                 )
             }}
             sortDirection={sortDirection as SortDirection}
-            sortField={sortField ?? undefined}
+            sortField={sortField}
         />
     )
 }
