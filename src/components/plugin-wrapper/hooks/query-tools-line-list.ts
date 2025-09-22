@@ -54,7 +54,7 @@ export const getAdaptedVisualization = (
     visualization: CurrentVisualization
 ): {
     adaptedVisualization: Record<Axis, object[]> & {
-        inputType: InputType
+        outputType: InputType
     }
     headers: (string | string[])[]
     parameters: object
@@ -103,7 +103,7 @@ export const getAdaptedVisualization = (
             columns: adaptedColumns,
             rows: adaptedRows,
             filters: adaptedFilters,
-            inputType,
+            outputType: inputType,
         },
         headers,
         parameters,
