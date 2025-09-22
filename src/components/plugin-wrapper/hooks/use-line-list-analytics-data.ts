@@ -113,10 +113,10 @@ const fetchAnalyticsDataForLL = async ({
 
     if (sortField) {
         switch (sortDirection) {
-            case 'asc':
+            case 'ASC':
                 req = req.withAsc(sortField)
                 break
-            case 'desc':
+            case 'DESC':
                 req = req.withDesc(sortField)
                 break
         }
