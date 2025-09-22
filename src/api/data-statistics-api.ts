@@ -41,7 +41,9 @@ export const dataStatisticsApi = api.injectEndpoints({
                         favoritesResponse.favorites as FavoriteRecord[]
 
                     if (favorites.length > 0) {
-                        const { eventVisualizations } = await engine.query({
+                        const {
+                            eventVisualizations: { eventVisualizations },
+                        } = (await engine.query({
                             eventVisualizations: {
                                 resource: 'eventVisualizations',
                                 params: {
@@ -51,16 +53,14 @@ export const dataStatisticsApi = api.injectEndpoints({
                                     )}]`,
                                 },
                             },
-                        })
-
-                        const visualizations = (
-                            eventVisualizations as {
+                        })) as {
+                            eventVisualizations: {
                                 eventVisualizations: EventVisualizationRecord[]
                             }
-                        ).eventVisualizations as EventVisualizationRecord[]
+                        }
 
                         for (const favorite of favorites) {
-                            const type = visualizations.find(
+                            const type = eventVisualizations.find(
                                 (vis) => vis.id === favorite.id
                             )?.type
 
