@@ -14,7 +14,12 @@ import {
     getProgramDimensions,
 } from '@modules/dimension'
 import { headersMap } from '@modules/visualization'
-import type { CurrentVisualization, InputType, ValueType } from '@types'
+import type {
+    CurrentVisualization,
+    InputType,
+    LegendSet,
+    ValueType,
+} from '@types'
 
 const isStageOffsetInteger = (stageOffset: unknown): stageOffset is number =>
     Number.isInteger(stageOffset)
@@ -190,6 +195,21 @@ const getFormattedCellValue = ({
     }
 }
 
+/* TODO: Figure out what the reasoning is behind this and refactor,
+ * or clarify with comments */
+const extractLegendSets = (
+    headers: LineListAnalyticsDataHeader[]
+): LegendSet[] => {
+    const allLegendSets = headers
+        .filter((header) => header.legendSet)
+        .map((header) => header.legendSet)
+    return allLegendSets.filter(
+        (e, index) =>
+            allLegendSets.findIndex((a) => a.id === e.id) === index &&
+            e.legends?.length
+    )
+}
+
 export const transformLineListData = (
     data: LineListAnalyticsData,
     visualization: CurrentVisualization
@@ -204,6 +224,7 @@ export const transformLineListData = (
             defaultMetadata
         ),
     }))
+    const { pager } = data
     const rows = data.rows.map((row, rowIndex) =>
         row.map((value, columnIndex) => ({
             formattedValue: getFormattedCellValue({
@@ -236,11 +257,9 @@ export const transformLineListData = (
                     : undefined,
         }))
     )
-    return {
-        headers,
-        rows,
-        pager: data.pager,
-    }
+    const legendSets = extractLegendSets(data.headers)
+
+    return { headers, rows, pager, legendSets }
 }
 
 export const useTransformedLineListData = (

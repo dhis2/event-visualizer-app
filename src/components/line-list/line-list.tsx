@@ -51,7 +51,7 @@ export const LineList: FC<LineListProps> = ({
     sortField,
 }) => {
     const { isDisconnected } = useDhis2ConnectionStatus()
-    const { headers, rows, pager } = useTransformedLineListData(
+    const { headers, rows, pager, legendSets } = useTransformedLineListData(
         analyticsData,
         visualization
     )
@@ -160,7 +160,11 @@ export const LineList: FC<LineListProps> = ({
                 </ScrollBox>
             </div>
             <div className={classes.endColumn} data-test="end-column">
-                <LegendKey />
+                <LegendKey
+                    isInDashboard={isInDashboard}
+                    legendSets={legendSets}
+                    showKey={visualization.legend?.showKey ?? false}
+                />
             </div>
         </div>
     )
