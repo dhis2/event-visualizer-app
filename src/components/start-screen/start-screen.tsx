@@ -10,7 +10,10 @@ import { setNavigationState } from '@store/navigation-slice.js'
 export const StartScreen: FC = () => {
     const dispatch = useAppDispatch()
 
-    const { data } = dataStatisticsApi.useGetMostViewedQuery()
+    const { data } = dataStatisticsApi.useGetMostViewedQuery(undefined, {
+        // Force fetch at every render in order to have an updated list whenever File -> New is clicked
+        refetchOnMountOrArgChange: true,
+    })
 
     return (
         <div className={classes.outer}>
@@ -36,14 +39,14 @@ export const StartScreen: FC = () => {
                             </li>
                         </ul>
                     </div>
-                    {data && (
+                    {Boolean(data?.length) && (
                         <div className={classes.section}>
                             <h3 className={classes.title}>
                                 {i18n.t(
                                     'Your most viewed event visualizations'
                                 )}
                             </h3>
-                            {data.map((vis) => (
+                            {data?.map((vis) => (
                                 <p
                                     key={vis.id}
                                     className={classes.visualization}
