@@ -35,7 +35,6 @@ const renderLineList = (
 
 describe('LineList - Vitest Tests', () => {
     beforeEach(() => {
-        // Reset connection status mock to default before each test
         mockUseDhis2ConnectionStatus.mockClear()
         mockUseDhis2ConnectionStatus.mockReturnValue({ isDisconnected: false })
     })
@@ -58,7 +57,7 @@ describe('LineList - Vitest Tests', () => {
             onColumnHeaderClick.mockClear()
         })
 
-        it('calls onDataSort when sort icon is clicked - ascending', async () => {
+        it('calls onDataSort when sort icon is clicked', async () => {
             const user = userEvent.setup()
 
             renderLineList(
@@ -92,46 +91,7 @@ describe('LineList - Vitest Tests', () => {
             const headerText = screen.getByText('Organisation unit')
             await user.click(headerText)
 
-            // The onColumnHeaderClick should be called with the dimension ID
-            expect(onColumnHeaderClick).toHaveBeenCalled()
-        })
-
-        it('shows correct sort direction visual indicators', () => {
-            renderLineList(
-                simpleLineList.responses as unknown as LineListAnalyticsData,
-                simpleLineList.visualization as unknown as CurrentVisualization,
-                {
-                    sortField: 'ouname',
-                    sortDirection: 'ASC' as const,
-                    onDataSort,
-                    onColumnHeaderClick,
-                }
-            )
-
-            // Check that the sort button has the ascending state
-            const sortButton = screen.getByRole('button', {
-                name: /sort by.*organisation unit/i,
-            })
-            expect(sortButton).toBeInTheDocument()
-            // The UI library should handle the visual indication internally
-        })
-
-        it('shows descending sort direction', () => {
-            renderLineList(
-                simpleLineList.responses as unknown as LineListAnalyticsData,
-                simpleLineList.visualization as unknown as CurrentVisualization,
-                {
-                    sortField: 'ouname',
-                    sortDirection: 'DESC' as const,
-                    onDataSort,
-                    onColumnHeaderClick,
-                }
-            )
-
-            const sortButton = screen.getByRole('button', {
-                name: /sort by.*organisation unit/i,
-            })
-            expect(sortButton).toBeInTheDocument()
+            expect(onColumnHeaderClick).toHaveBeenCalledWith('ou')
         })
 
         it('shows default sort state when no sort is applied', () => {
@@ -179,8 +139,7 @@ describe('LineList - Vitest Tests', () => {
                 { onPaginate }
             )
 
-            // Find and click next page button
-            const nextButton = screen.getByRole('button', { name: /next/i })
+            const nextButton = screen.getByRole('button', { name: 'Next' })
             await user.click(nextButton)
 
             expect(onPaginate).toHaveBeenCalledWith({ page: 2 })
@@ -193,19 +152,17 @@ describe('LineList - Vitest Tests', () => {
                 { onPaginate }
             )
 
-            // Find the page size display (it shows as text, not a clickable element in this implementation)
-            const pageSizeText = screen.getByText(/rows per page/i)
-            expect(pageSizeText).toBeInTheDocument()
+            // Verify the correct page size is displayed (default 100 from fixture)
+            expect(screen.getByText('100')).toBeInTheDocument()
+            expect(screen.getByText(/rows per page/i)).toBeInTheDocument()
 
-            // Check if pagination controls exist
-            const prevButton = screen.queryByText('Previous')
-            const nextButton = screen.queryByText('Next')
-            expect(prevButton).toBeInTheDocument()
-            expect(nextButton).toBeInTheDocument()
+            const prevButton = screen.getByRole('button', { name: 'Previous' })
+            const nextButton = screen.getByRole('button', { name: 'Next' })
 
-            // Verify the page information is displayed
-            const pageInfo = screen.getByText(/page 1, row 1-100/i)
-            expect(pageInfo).toBeInTheDocument()
+            expect(prevButton).toBeDisabled()
+            expect(nextButton).not.toBeDisabled()
+
+            expect(screen.getByText(/page 1, row 1-100/i)).toBeInTheDocument()
         })
 
         it('shows correct pagination state for first page', () => {
@@ -224,16 +181,14 @@ describe('LineList - Vitest Tests', () => {
                 { onPaginate }
             )
 
-            // Should show page 1 info
             expect(screen.getByText(/page 1/i)).toBeInTheDocument()
+            expect(screen.getByText('100')).toBeInTheDocument()
 
-            // Previous button should be disabled (if present)
-            const prevButton = screen.queryByRole('button', {
-                name: /previous/i,
-            })
-            if (prevButton) {
-                expect(prevButton).toBeDisabled()
-            }
+            const prevButton = screen.getByRole('button', { name: 'Previous' })
+            const nextButton = screen.getByRole('button', { name: 'Next' })
+
+            expect(prevButton).toBeDisabled()
+            expect(nextButton).not.toBeDisabled()
         })
 
         it('shows correct pagination state for middle page', () => {
@@ -253,19 +208,14 @@ describe('LineList - Vitest Tests', () => {
             )
 
             expect(screen.getByText(/page 2/i)).toBeInTheDocument()
+            expect(screen.getByText('100')).toBeInTheDocument()
+            expect(screen.getByText(/row 101-200/i)).toBeInTheDocument()
 
-            // Both previous and next should be enabled
-            const prevButton = screen.queryByRole('button', {
-                name: /previous/i,
-            })
-            const nextButton = screen.queryByRole('button', { name: /next/i })
+            const prevButton = screen.getByRole('button', { name: 'Previous' })
+            const nextButton = screen.getByRole('button', { name: 'Next' })
 
-            if (prevButton) {
-                expect(prevButton).not.toBeDisabled()
-            }
-            if (nextButton) {
-                expect(nextButton).not.toBeDisabled()
-            }
+            expect(prevButton).not.toBeDisabled()
+            expect(nextButton).not.toBeDisabled()
         })
 
         it('shows correct pagination state for last page', () => {
@@ -285,12 +235,14 @@ describe('LineList - Vitest Tests', () => {
             )
 
             expect(screen.getByText(/page 3/i)).toBeInTheDocument()
+            expect(screen.getByText('100')).toBeInTheDocument()
+            expect(screen.getByText(/row 201-300/i)).toBeInTheDocument()
 
-            // Next button should be disabled
-            const nextButton = screen.queryByRole('button', { name: /next/i })
-            if (nextButton) {
-                expect(nextButton).toBeDisabled()
-            }
+            const prevButton = screen.getByRole('button', { name: 'Previous' })
+            const nextButton = screen.getByRole('button', { name: 'Next' })
+
+            expect(prevButton).not.toBeDisabled()
+            expect(nextButton).toBeDisabled()
         })
 
         it('shows correct pagination state for single page', () => {
@@ -310,120 +262,203 @@ describe('LineList - Vitest Tests', () => {
             )
 
             expect(screen.getByText(/page 1/i)).toBeInTheDocument()
+            expect(screen.getByText('100')).toBeInTheDocument()
 
-            // Both navigation buttons should be disabled or not present
-            const prevButton = screen.queryByRole('button', {
-                name: /previous/i,
-            })
-            const nextButton = screen.queryByRole('button', { name: /next/i })
+            const prevButton = screen.getByRole('button', { name: 'Previous' })
+            const nextButton = screen.getByRole('button', { name: 'Next' })
 
-            if (prevButton) {
-                expect(prevButton).toBeDisabled()
-            }
-            if (nextButton) {
-                expect(nextButton).toBeDisabled()
-            }
+            expect(prevButton).toBeDisabled()
+            expect(nextButton).toBeDisabled()
         })
     })
 
     describe('Legend visibility', () => {
-        it('does not show legend when no legend sets are present', () => {
-            const noLegendData = {
-                ...simpleLineList.responses,
-                headers: simpleLineList.responses.headers.map((header) => ({
-                    ...header,
-                    legendSet: undefined,
-                })),
-            }
+        describe('Base case', () => {
+            it('does not show legend when no legend sets are present', () => {
+                const noLegendData = {
+                    ...simpleLineList.responses,
+                    headers: simpleLineList.responses.headers.map((header) => ({
+                        ...header,
+                        legendSet: undefined,
+                    })),
+                }
 
-            renderLineList(
-                noLegendData as unknown as LineListAnalyticsData,
-                simpleLineList.visualization as unknown as CurrentVisualization
-            )
+                renderLineList(
+                    noLegendData as unknown as LineListAnalyticsData,
+                    simpleLineList.visualization as unknown as CurrentVisualization
+                )
 
-            expect(
-                screen.queryByTestId('visualization-legend-key')
-            ).not.toBeInTheDocument()
+                expect(
+                    screen.queryByTestId('visualization-legend-key')
+                ).not.toBeInTheDocument()
+            })
         })
 
-        it('does not show legend when legend sets present but showKey is false', () => {
-            const visualization = {
-                ...largeLineListWithLegend.visualization,
-                legend: {
-                    ...largeLineListWithLegend.visualization.legend,
-                    showKey: false,
-                },
-            }
+        describe('Not in dashboard', () => {
+            it('does not show legend key when showKey is false', () => {
+                const visualization = {
+                    ...largeLineListWithLegend.visualization,
+                    legend: {
+                        ...largeLineListWithLegend.visualization.legend,
+                        showKey: false,
+                    },
+                }
 
-            renderLineList(
-                largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                visualization as unknown as CurrentVisualization
-            )
+                renderLineList(
+                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                    visualization as unknown as CurrentVisualization,
+                    { isInDashboard: false }
+                )
 
-            expect(
-                screen.queryByTestId('visualization-legend-key')
-            ).not.toBeInTheDocument()
+                expect(
+                    screen.queryByTestId('visualization-legend-key')
+                ).not.toBeInTheDocument()
+
+                // Should not show legend toggle button when not in dashboard
+                const legendToggle = screen.queryByTestId('legend-key-toggler')
+                expect(legendToggle).not.toBeInTheDocument()
+            })
+
+            it('shows legend key when showKey is true', () => {
+                const visualization = {
+                    ...largeLineListWithLegend.visualization,
+                    legend: {
+                        ...largeLineListWithLegend.visualization.legend,
+                        showKey: true,
+                    },
+                }
+
+                renderLineList(
+                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                    visualization as unknown as CurrentVisualization,
+                    { isInDashboard: false }
+                )
+
+                expect(
+                    screen.getByTestId('visualization-legend-key')
+                ).toBeInTheDocument()
+
+                // Should not show legend toggle button when not in dashboard
+                const legendToggle = screen.queryByTestId('legend-key-toggler')
+                expect(legendToggle).not.toBeInTheDocument()
+            })
         })
 
-        it('shows legend when legend sets present and showKey is true', () => {
-            renderLineList(
-                largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                largeLineListWithLegend.visualization as unknown as CurrentVisualization
-            )
+        describe('In dashboard', () => {
+            it('always shows component with toggle for showKey false', () => {
+                const visualization = {
+                    ...largeLineListWithLegend.visualization,
+                    legend: {
+                        ...largeLineListWithLegend.visualization.legend,
+                        showKey: false,
+                    },
+                }
 
-            expect(
-                screen.getByTestId('visualization-legend-key')
-            ).toBeInTheDocument()
-        })
+                renderLineList(
+                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                    visualization as unknown as CurrentVisualization,
+                    { isInDashboard: true }
+                )
 
-        it('shows legend with toggle when isInDashboard is true', () => {
-            renderLineList(
-                largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                largeLineListWithLegend.visualization as unknown as CurrentVisualization,
-                { isInDashboard: true }
-            )
+                // Should always show the legend toggle button in dashboard mode
+                const legendToggle = screen.getByTestId('legend-key-toggler')
+                expect(legendToggle).toBeInTheDocument()
 
-            // Should show the legend toggle button
-            const allButtons = screen.getAllByRole('button')
-            const legendToggle = allButtons.find((button) =>
-                button.querySelector('svg')
-            )
-            expect(legendToggle).toBeInTheDocument()
+                // Legend should be initially hidden when showKey is false
+                expect(
+                    screen.queryByTestId('visualization-legend-key')
+                ).not.toBeInTheDocument()
+            })
 
-            // Legend should be visible initially (because showKey is true in fixture)
-            expect(
-                screen.getByTestId('visualization-legend-key')
-            ).toBeInTheDocument()
-        })
+            it('always shows component with toggle for showKey true', () => {
+                const visualization = {
+                    ...largeLineListWithLegend.visualization,
+                    legend: {
+                        ...largeLineListWithLegend.visualization.legend,
+                        showKey: true,
+                    },
+                }
 
-        it('legend toggle works when isInDashboard is true', async () => {
-            const user = userEvent.setup()
+                renderLineList(
+                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                    visualization as unknown as CurrentVisualization,
+                    { isInDashboard: true }
+                )
 
-            renderLineList(
-                largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                largeLineListWithLegend.visualization as unknown as CurrentVisualization,
-                { isInDashboard: true }
-            )
+                // Should always show the legend toggle button in dashboard mode
+                const legendToggle = screen.getByTestId('legend-key-toggler')
+                expect(legendToggle).toBeInTheDocument()
 
-            // Initially legend should be visible
-            expect(
-                screen.getByTestId('visualization-legend-key')
-            ).toBeInTheDocument()
+                // Legend should be initially visible when showKey is true
+                expect(
+                    screen.getByTestId('visualization-legend-key')
+                ).toBeInTheDocument()
+            })
 
-            // Click the toggle button to hide legend - look for button with legend icon
-            const allButtons = screen.getAllByRole('button')
-            const legendToggle = allButtons.find((button) =>
-                button.querySelector('svg')
-            )
-            expect(legendToggle).toBeDefined()
-            await user.click(legendToggle!)
+            it('for showKey false: legend key is initially hidden but can be shown by clicking', async () => {
+                const user = userEvent.setup()
 
-            // In dashboard mode, the legend might not actually be hidden, just toggled
-            // Let's verify the button was clicked by checking if the legend is still there
-            // but potentially in a different state
-            const legend = screen.queryByTestId('visualization-legend-key')
-            // The legend might still be visible in dashboard mode
-            expect(legend).toBeInTheDocument()
+                const visualization = {
+                    ...largeLineListWithLegend.visualization,
+                    legend: {
+                        ...largeLineListWithLegend.visualization.legend,
+                        showKey: false,
+                    },
+                }
+
+                renderLineList(
+                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                    visualization as unknown as CurrentVisualization,
+                    { isInDashboard: true }
+                )
+
+                // Legend should be initially hidden
+                expect(
+                    screen.queryByTestId('visualization-legend-key')
+                ).not.toBeInTheDocument()
+
+                // Click the toggle button to show legend
+                const legendToggle = screen.getByTestId('legend-key-toggler')
+                await user.click(legendToggle)
+
+                // Legend should now be visible
+                expect(
+                    screen.getByTestId('visualization-legend-key')
+                ).toBeInTheDocument()
+            })
+
+            it('for showKey true: legend key is initially showing but can be hidden by clicking', async () => {
+                const user = userEvent.setup()
+
+                const visualization = {
+                    ...largeLineListWithLegend.visualization,
+                    legend: {
+                        ...largeLineListWithLegend.visualization.legend,
+                        showKey: true,
+                    },
+                }
+
+                renderLineList(
+                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                    visualization as unknown as CurrentVisualization,
+                    { isInDashboard: true }
+                )
+
+                // Legend should be initially visible
+                expect(
+                    screen.getByTestId('visualization-legend-key')
+                ).toBeInTheDocument()
+
+                // Click the toggle button to hide legend
+                const legendToggle = screen.getByTestId('legend-key-toggler')
+                await user.click(legendToggle)
+
+                // Legend should now be hidden
+                // In dashboard mode, clicking the toggle conditionally renders/removes the legend from DOM
+                expect(
+                    screen.queryByTestId('visualization-legend-key')
+                ).not.toBeInTheDocument()
+            })
         })
     })
 
@@ -434,13 +469,20 @@ describe('LineList - Vitest Tests', () => {
                 largeLineListWithLegend.visualization as unknown as CurrentVisualization
             )
 
-            // Find cells in the "Weight in kg" column (second column)
-            // The actual cells should have background colors applied
-            const tableCells = screen.getAllByTestId('table-cell')
-            expect(tableCells.length).toBeGreaterThan(0)
+            // Get the first row's second cell (Weight in kg column) - use specific tbody selector
+            const secondCell = screen
+                .getByTestId('line-list-data-table-body')
+                .querySelector('tr:first-child td:nth-child(2)')
+            const innerDiv = secondCell?.querySelector('div')
 
-            // Check that some cells have background color styles
-            // (The exact verification depends on the test data and transformed output)
+            expect(secondCell).toBeInTheDocument()
+            expect(innerDiv).toBeInTheDocument()
+
+            // For FILL style, expect background color on cell and default text color on inner div
+            const cellStyle = window.getComputedStyle(secondCell!)
+            const divStyle = window.getComputedStyle(innerDiv!)
+            expect(cellStyle.backgroundColor).toBe('rgb(33, 113, 181)')
+            expect(divStyle.color).toBe('rgb(33, 41, 52)')
         })
 
         it('applies text color when legend style is TEXT', () => {
@@ -457,12 +499,20 @@ describe('LineList - Vitest Tests', () => {
                 visualization as unknown as CurrentVisualization
             )
 
-            // Find cells in the "Weight in kg" column (second column)
-            const tableCells = screen.getAllByTestId('table-cell')
-            expect(tableCells.length).toBeGreaterThan(0)
+            // Get the first row's second cell (Weight in kg column) - use specific tbody selector
+            const secondCell = screen
+                .getByTestId('line-list-data-table-body')
+                .querySelector('tr:first-child td:nth-child(2)')
+            const innerDiv = secondCell?.querySelector('div')
 
-            // Check that some cells have text color styles instead of background
-            // (The exact verification depends on the test data and transformed output)
+            expect(secondCell).toBeInTheDocument()
+            expect(innerDiv).toBeInTheDocument()
+
+            // For TEXT style, expect background color on cell and text color on inner div
+            const cellStyle = window.getComputedStyle(secondCell!)
+            const divStyle = window.getComputedStyle(innerDiv!)
+            expect(cellStyle.backgroundColor).toBe('rgb(255, 255, 255)')
+            expect(divStyle.color).toBe('rgb(33, 113, 181)')
         })
     })
 
@@ -527,7 +577,6 @@ describe('LineList - Vitest Tests', () => {
                 }
             )
 
-            // Sort buttons should not be rendered when disconnected
             const sortButtons = screen.queryAllByRole('button', {
                 name: /sort by/i,
             })
@@ -570,9 +619,8 @@ describe('LineList - Vitest Tests', () => {
                 }
             )
 
-            // Pagination buttons should be disabled
-            const prevButton = screen.getByRole('button', { name: /previous/i })
-            const nextButton = screen.getByRole('button', { name: /next/i })
+            const prevButton = screen.getByRole('button', { name: 'Previous' })
+            const nextButton = screen.getByRole('button', { name: 'Next' })
             const pageSizeSelect = screen.getByTestId(
                 'dhis2-uicore-select-input'
             )
@@ -584,6 +632,51 @@ describe('LineList - Vitest Tests', () => {
             // Page size should show current value but be non-interactive
             expect(screen.getByText('100')).toBeInTheDocument()
             expect(screen.getByText('Rows per page')).toBeInTheDocument()
+        })
+
+        it('shows tooltip on hover when pagination is disabled due to disconnection', async () => {
+            const user = userEvent.setup()
+
+            // Set disconnected state
+            mockUseDhis2ConnectionStatus.mockReturnValue({
+                isConnected: false,
+                isDisconnected: true,
+            })
+
+            // Create modified analytics data with more items to test pagination
+            const paginatedData = {
+                ...simpleLineList.responses,
+                paging: {
+                    page: 1,
+                    pageSize: 100,
+                    total: 300, // More than one page to enable pagination controls
+                },
+            }
+
+            renderLineList(
+                paginatedData as unknown as LineListAnalyticsData,
+                simpleLineList.visualization as unknown as CurrentVisualization,
+                {
+                    onPaginate: vi.fn(),
+                }
+            )
+
+            // Find the sticky pagination container (which now has the tooltip props applied)
+            const paginationContainer = screen.getByTestId(
+                'sticky-pagination-container'
+            )
+            expect(paginationContainer).toBeInTheDocument()
+
+            // Hover over the pagination container
+            await user.hover(paginationContainer)
+
+            // Wait for tooltip to appear and check if tooltip content appears
+            await expect(
+                screen.findByText('Not available offline')
+            ).resolves.toBeInTheDocument()
+
+            // Unhover to clean up
+            await user.unhover(paginationContainer)
         })
 
         it('shows normal behavior when connection is restored', async () => {
@@ -607,7 +700,6 @@ describe('LineList - Vitest Tests', () => {
                 }
             )
 
-            // Sort buttons should not exist when disconnected
             expect(
                 screen.queryAllByRole('button', { name: /sort by/i })
             ).toHaveLength(0)
@@ -620,21 +712,20 @@ describe('LineList - Vitest Tests', () => {
 
             rerender(
                 <LineList
-                    {...{
-                        analyticsData:
-                            simpleLineList.responses as unknown as LineListAnalyticsData,
-                        visualization:
-                            simpleLineList.visualization as unknown as CurrentVisualization,
-                        onDataSort,
-                        onPaginate,
-                        isFetching: false,
-                        isInDashboard: false,
-                        isInModal: false,
-                    }}
+                    analyticsData={
+                        simpleLineList.responses as unknown as LineListAnalyticsData
+                    }
+                    visualization={
+                        simpleLineList.visualization as unknown as CurrentVisualization
+                    }
+                    onDataSort={onDataSort}
+                    onPaginate={onPaginate}
+                    isFetching={false}
+                    isInDashboard={false}
+                    isInModal={false}
                 />
             )
 
-            // Sort buttons should now be available
             const sortButton = screen.getByRole('button', {
                 name: /sort by.*organisation unit/i,
             })

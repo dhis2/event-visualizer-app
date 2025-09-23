@@ -14835,12 +14835,12 @@ exports[`LineList - Vitest Tests > Snapshot test > renders large table with lege
                 data-test="dhis2-uicore-datatablerow"
               >
                 <td
-                  class="jsx-533878895 jsx-454276094 _footerCell_015c2d staticStyle"
+                  class="_footerCell_015c2d"
                   colspan="17"
-                  data-test="dhis2-uicore-datatablecell"
                 >
                   <div
                     class="_stickyContainer_015c2d"
+                    data-test="sticky-pagination-container"
                     style="max-width: 0;"
                   >
                     <div

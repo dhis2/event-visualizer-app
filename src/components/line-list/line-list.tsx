@@ -77,7 +77,7 @@ export const LineList: FC<LineListProps> = ({
         }
     }, [visualization.fontSize])
     const colSpan = useMemo(
-        () => String(Math.max(analyticsData.headers.length, 1)),
+        () => Math.max(analyticsData.headers.length, 1),
         [analyticsData.headers.length]
     )
 

@@ -23,6 +23,7 @@ const LegendKeyWithVisibilityToggle: FC<
         <div className={classes.legendKeyContainer}>
             <div className={classes.legendKeyToggle}>
                 <Button
+                    dataTest="legend-key-toggler"
                     small
                     secondary
                     onClick={toggleLegendKey}

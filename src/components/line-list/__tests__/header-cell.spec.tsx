@@ -37,7 +37,6 @@ describe('HeaderCell - Sort Direction Mapping', () => {
         })
         expect(sortButton).toBeInTheDocument()
 
-        // Check for ascending sort SVG class
         expect(sortButton.querySelector('svg.asc')).toBeInTheDocument()
     })
 
@@ -58,7 +57,6 @@ describe('HeaderCell - Sort Direction Mapping', () => {
         })
         expect(sortButton).toBeInTheDocument()
 
-        // Check for descending sort SVG class
         expect(sortButton.querySelector('svg.desc')).toBeInTheDocument()
     })
 
@@ -79,7 +77,6 @@ describe('HeaderCell - Sort Direction Mapping', () => {
         })
         expect(sortButton).toBeInTheDocument()
 
-        // Check for default sort SVG class
         expect(sortButton.querySelector('svg.default')).toBeInTheDocument()
     })
 
@@ -116,7 +113,6 @@ describe('HeaderCell - Sort Direction Mapping', () => {
             </TableWrapper>
         )
 
-        // Sort button should not be rendered when disconnected
         const sortButton = screen.queryByRole('button', {
             name: /sort by.*organisation unit/i,
         })
@@ -249,7 +245,6 @@ describe('HeaderCell - Sort Direction Mapping', () => {
 
         const headerText = screen.getByText('Organisation unit')
 
-        // Should not throw an error when clicked without callback
         expect(() => headerText.click()).not.toThrow()
     })
 })
