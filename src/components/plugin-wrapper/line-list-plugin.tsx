@@ -4,14 +4,9 @@ import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import { LineList } from '@components/line-list'
 import type { LineListAnalyticsData } from '@components/line-list'
-import type { DataSortFn } from '@components/line-list/types'
+import type { DataSortFn, DataSortPayload } from '@components/line-list/types'
 import { transformVisualization } from '@modules/visualization'
-import type {
-    CurrentUser,
-    CurrentVisualization,
-    SortDirection,
-    Sorting,
-} from '@types'
+import type { CurrentUser, CurrentVisualization, SortDirection } from '@types'
 
 type LineListPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
@@ -20,6 +15,7 @@ type LineListPluginProps = {
     isInDashboard: boolean
     isInModal: boolean
     isVisualizationLoading: boolean
+    onDataSorted?: (sorting: DataSortPayload | undefined) => void
     onResponseReceived?: (metadata: MetadataInput) => void
 }
 
@@ -33,6 +29,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     isInDashboard,
     isInModal,
     isVisualizationLoading,
+    onDataSorted,
     onResponseReceived,
 }) => {
     console.log(
@@ -74,16 +71,18 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     }, [])
 
     const onDataSort: DataSortFn = useCallback(
-        (newSorting) => {
+        (sorting) => {
+            const newSorting =
+                sorting.direction === undefined ? undefined : sorting
+
             setVisualization({
                 ...originalVisualization,
-                sorting:
-                    newSorting.direction === undefined
-                        ? undefined
-                        : ([newSorting] as Sorting[]),
+                sorting: newSorting ? [newSorting] : undefined,
             } as CurrentVisualization)
+
+            onDataSorted?.(newSorting)
         },
-        [originalVisualization]
+        [originalVisualization, onDataSorted]
     )
 
     const {

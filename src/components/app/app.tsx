@@ -1,6 +1,6 @@
 import { CssVariables } from '@dhis2/ui'
 import cx from 'classnames'
-import type { FC } from 'react'
+import { useCallback, type FC } from 'react'
 import classes from './app.module.css'
 import { AppWrapper } from '@components/app-wrapper'
 import {
@@ -14,19 +14,33 @@ import {
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
 import { Toolbar } from '@components/toolbar/toolbar'
-import { useAppSelector, useCurrentUser } from '@hooks'
+import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
 import { isVisualizationEmpty } from '@modules/visualization'
-import { getCurrentVis } from '@store/current-vis-slice'
+import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
 import {
     getUiDetailsPanelVisible,
     getUiMainSidebarVisible,
 } from '@store/ui-slice'
+import type { CurrentVisualization, Sorting } from '@types'
 
 const EventVisualizer: FC = () => {
+    const dispatch = useAppDispatch()
     const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)
     const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
+
+    const onDataSorted = useCallback(
+        (sorting: Sorting) => {
+            dispatch(
+                setCurrentVis({
+                    ...currentVis,
+                    sorting: sorting ? [sorting] : undefined,
+                } as CurrentVisualization)
+            )
+        },
+        [currentVis, dispatch]
+    )
 
     return (
         <GridContainer>
@@ -52,6 +66,7 @@ const EventVisualizer: FC = () => {
                     <PluginWrapper
                         visualization={currentVis}
                         displayProperty={currentUser.settings.displayProperty}
+                        onDataSorted={onDataSorted}
                     />
                 )}
             </GridCenterColumnBottom>

@@ -1,6 +1,7 @@
 import type { FC } from 'react'
 import { LineListPlugin } from './line-list-plugin'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
+import type { DataSortPayload } from '@components/line-list/types'
 import type { CurrentUser, CurrentVisualization } from '@types'
 
 type PluginWrapperProps = {
@@ -10,6 +11,7 @@ type PluginWrapperProps = {
     isInDashboard?: boolean
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     isVisualizationLoading?: boolean
+    onDataSorted?: (sorting: DataSortPayload | undefined) => void
     onResponseReceived?: (metadata: MetadataInput) => void
 }
 
@@ -20,6 +22,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     isInDashboard = false,
     isInModal = false,
     isVisualizationLoading = false,
+    onDataSorted,
     onResponseReceived,
 }) => {
     if (visualization.type === 'LINE_LIST') {
@@ -31,6 +34,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                 isInDashboard={isInDashboard}
                 isInModal={isInModal}
                 isVisualizationLoading={isVisualizationLoading}
+                onDataSorted={onDataSorted}
                 onResponseReceived={onResponseReceived}
             />
         )
