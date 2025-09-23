@@ -81,7 +81,6 @@ export const LineList: FC<LineListProps> = ({
         [analyticsData.headers.length]
     )
 
-    console.log('\nisInDashboard: ', isInDashboard)
     return (
         <div className={classes.grid}>
             <div
