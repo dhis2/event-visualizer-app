@@ -1,3 +1,4 @@
+import i18n from '@dhis2/d2-i18n'
 import { IconLegend24, Button } from '@dhis2/ui'
 import { useCallback, useState, type FC } from 'react'
 import classes from './styles/legend-key.module.css'
@@ -27,6 +28,11 @@ const LegendKeyWithVisibilityToggle: FC<
                     onClick={toggleLegendKey}
                     icon={<IconLegend24 />}
                     toggled={showLegendKey}
+                    title={
+                        showLegendKey
+                            ? i18n.t('Hide legend key')
+                            : i18n.t('Show legend key')
+                    }
                 />
             </div>
             {showLegendKey && (
