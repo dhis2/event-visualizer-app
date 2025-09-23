@@ -33,7 +33,7 @@ const renderLineList = (
     return render(<LineList {...defaultProps} {...additionalProps} />)
 }
 
-describe('LineList - Vitest Tests', () => {
+describe('LineList', () => {
     beforeEach(() => {
         mockUseDhis2ConnectionStatus.mockClear()
         mockUseDhis2ConnectionStatus.mockReturnValue({ isDisconnected: false })
