@@ -80,13 +80,13 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
                 sorting.direction === undefined ? undefined : sorting
 
             setVisualization({
-                ...originalVisualization,
+                ...visualization,
                 sorting: newSorting ? [newSorting] : undefined,
             } as CurrentVisualization)
 
             onDataSorted?.(newSorting)
         },
-        [originalVisualization, onDataSorted]
+        [visualization, onDataSorted]
     )
 
     const {
