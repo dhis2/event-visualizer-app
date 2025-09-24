@@ -255,24 +255,7 @@ describe(
         })
 
         describe('Fetching overlay', () => {
-            it('when isFetching is true, the table gets an overlay but the legend key does not', () => {
-                cy.mount(
-                    <TestContainer>
-                        <LineList
-                            isFetching
-                            analyticsData={
-                                largeLineListWithLegend.responses as unknown as LineListAnalyticsData
-                            }
-                            onDataSort={cy.stub()}
-                            onPaginate={cy.stub()}
-                            visualization={
-                                largeLineListWithLegend.visualization as unknown as CurrentVisualization
-                            }
-                            isInDashboard={false} // Make sure legend is visible
-                        />
-                    </TestContainer>
-                )
-
+            const expectOverlayToCoverScrollBox = () => {
                 // Overlay and spinner are visible
                 cy.getByDataTest('dhis2-uicore-componentcover').should(
                     'be.visible'
@@ -301,20 +284,68 @@ describe(
                         )
                         const scrollBoxRect = scrollBox!.getBoundingClientRect()
 
-                        expect(overlayRect.left).to.equal(scrollBoxRect.left)
-                        expect(overlayRect.top).to.equal(scrollBoxRect.top)
-                        expect(overlayRect.right).to.equal(scrollBoxRect.right)
+                        expect(overlayRect.left).to.equal(
+                            scrollBoxRect.left + 1
+                        )
+                        expect(overlayRect.top).to.equal(scrollBoxRect.top + 1)
+                        expect(overlayRect.right).to.equal(
+                            scrollBoxRect.left +
+                                (scrollBox?.clientWidth ?? 0) +
+                                1
+                        )
                         expect(overlayRect.bottom).to.equal(
-                            scrollBoxRect.bottom
+                            scrollBoxRect.top +
+                                (scrollBox?.clientHeight ?? 0) +
+                                1
                         )
                     }
                 )
+            }
+
+            it('when isFetching is true, the table gets an overlay but the legend key does not', () => {
+                cy.mount(
+                    <TestContainer>
+                        <LineList
+                            isFetching
+                            analyticsData={
+                                largeLineListWithLegend.responses as unknown as LineListAnalyticsData
+                            }
+                            onDataSort={cy.stub()}
+                            onPaginate={cy.stub()}
+                            visualization={
+                                largeLineListWithLegend.visualization as unknown as CurrentVisualization
+                            }
+                        />
+                    </TestContainer>
+                )
+
+                expectOverlayToCoverScrollBox()
 
                 // Check that legend key remains accessible (not covered by overlay)
                 // Note that the click would cause Cypress to throw an error if the element was covered
                 cy.getByDataTest('visualization-legend-key').click({
                     force: false,
                 })
+            })
+
+            it('when isFetching is true on a small table, the overlay covers only the scroll container', () => {
+                cy.mount(
+                    <TestContainer>
+                        <LineList
+                            isFetching
+                            analyticsData={
+                                simpleLineList.responses as unknown as LineListAnalyticsData
+                            }
+                            onDataSort={cy.stub()}
+                            onPaginate={cy.stub()}
+                            visualization={
+                                simpleLineList.visualization as unknown as CurrentVisualization
+                            }
+                        />
+                    </TestContainer>
+                )
+
+                expectOverlayToCoverScrollBox()
             })
         })
     }
