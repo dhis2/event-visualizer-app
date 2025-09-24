@@ -67,6 +67,10 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
             setPagination({ page: pageSize ? FIRST_PAGE : page, pageSize })
         } else if (page) {
             setPagination({ page })
+        } else {
+            throw new Error(
+                'onPaginate was called with neither a page nor pageSize. At least one is expected'
+            )
         }
     }, [])
 
