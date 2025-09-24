@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import simpleLineList from '../__fixtures__/e2e-enrollment.json'
@@ -94,23 +94,8 @@ describe('LineList', () => {
             expect(onColumnHeaderClick).toHaveBeenCalledWith('ou')
         })
 
-        it('shows default sort state when no sort is applied', () => {
-            renderLineList(
-                simpleLineList.responses as unknown as LineListAnalyticsData,
-                simpleLineList.visualization as unknown as CurrentVisualization,
-                {
-                    sortField: undefined,
-                    sortDirection: undefined,
-                    onDataSort,
-                    onColumnHeaderClick,
-                }
-            )
-
-            const sortButton = screen.getByRole('button', {
-                name: /sort by.*organisation unit/i,
-            })
-            expect(sortButton).toBeInTheDocument()
-        })
+        /* More in-depth tests reg. sort directions etc are found in
+         * `header-cell.spec.tsx` */
     })
 
     describe('Pagination', () => {
@@ -143,6 +128,42 @@ describe('LineList', () => {
             await user.click(nextButton)
 
             expect(onPaginate).toHaveBeenCalledWith({ page: 2 })
+        })
+
+        it('calls onPaginate when page size is changed', async () => {
+            const user = userEvent.setup()
+
+            // Create data with multiple pages to ensure pagination is active
+            const multiPageData = {
+                ...largeLineListWithLegend.responses,
+                pager: {
+                    page: 1,
+                    pageSize: 100,
+                    isLastPage: false,
+                },
+            }
+
+            renderLineList(
+                multiPageData as unknown as LineListAnalyticsData,
+                largeLineListWithLegend.visualization as unknown as CurrentVisualization,
+                { onPaginate }
+            )
+
+            // Find the page size select dropdown
+            const pageSizeSelect = screen.getByTestId(
+                'dhis2-uicore-select-input'
+            )
+
+            // Click to open the dropdown
+            await user.click(pageSizeSelect)
+
+            // Find and click on the "50" option within the options container
+            const option50 = within(
+                screen.getByTestId('dhis2-uicore-select-menu-menuwrapper')
+            ).getByText('50')
+            await user.click(option50)
+
+            expect(onPaginate).toHaveBeenCalledWith({ pageSize: 50 })
         })
 
         it('displays pagination information correctly', async () => {
