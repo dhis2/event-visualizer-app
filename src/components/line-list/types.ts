@@ -24,6 +24,7 @@ export type LineListData = {
     headers: Array<LineListHeader>
     rows: Array<LineListRow>
     pager: LineListPager
+    legendSets: LegendSet[]
 }
 
 export type CellData = string

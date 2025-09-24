@@ -1,16 +1,24 @@
 import i18n from '@dhis2/d2-i18n'
-import { DataTableCell, Tooltip, Pagination } from '@dhis2/ui'
+import { Tooltip, Pagination } from '@dhis2/ui'
 import { useCallback } from 'react'
 import { useScrollBoxWidth } from './scroll-box'
 import classes from './styles/sticky-navigation.module.css'
 import type { LineListPager, PaginateFn } from './types'
 
-type StickyPaginationProps = LineListPager & {
-    colSpan: string
+type StickyPaginationWithConditionalTooltipProps = LineListPager & {
+    colSpan: number
     isDisconnected: boolean
     isFetching: boolean
     onPaginate: PaginateFn
     pageLength: number
+}
+
+type StickyPaginationProps = Omit<
+    StickyPaginationWithConditionalTooltipProps,
+    'isFetching' | 'isDisconnected'
+> & {
+    disabled: boolean
+    tooltipProps?: object
 }
 
 const StickyPagination = ({
@@ -21,9 +29,8 @@ const StickyPagination = ({
     page,
     pageLength,
     pageSize,
-}: Omit<StickyPaginationProps, 'isFetching' | 'isDisconnected'> & {
-    disabled: boolean
-}) => {
+    tooltipProps,
+}: StickyPaginationProps) => {
     const scrollboxWidth = useScrollBoxWidth()
     const onPageChange = useCallback(
         (page: number) => {
@@ -38,16 +45,14 @@ const StickyPagination = ({
         [onPaginate]
     )
     return (
-        <DataTableCell
-            colSpan={colSpan}
-            staticStyle
-            className={classes.footerCell}
-        >
+        <td colSpan={colSpan} className={classes.footerCell}>
             <div
                 className={classes.stickyContainer}
                 style={{
                     maxWidth: scrollboxWidth,
                 }}
+                data-test="sticky-pagination-container"
+                {...tooltipProps}
             >
                 <Pagination
                     disabled={disabled}
@@ -70,7 +75,7 @@ const StickyPagination = ({
                     }
                 />
             </div>
-        </DataTableCell>
+        </td>
     )
 }
 
@@ -78,13 +83,19 @@ const StickyPaginationWithConditionalTooltip = ({
     isFetching,
     isDisconnected,
     ...props
-}: StickyPaginationProps) => {
+}: StickyPaginationWithConditionalTooltipProps) => {
     const disabled = isFetching || isDisconnected
 
     if (isDisconnected) {
         return (
             <Tooltip content={i18n.t('Not available offline')}>
-                <StickyPagination disabled={disabled} {...props} />
+                {(tooltipProps) => (
+                    <StickyPagination
+                        disabled={disabled}
+                        {...props}
+                        tooltipProps={tooltipProps}
+                    />
+                )}
             </Tooltip>
         )
     }

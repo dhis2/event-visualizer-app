@@ -1,5 +1,10 @@
-:global(table tfoot) .footerCell {
+.footerCell {
     padding: 0;
+    inset-inline-start: auto;
+    text-align: start;
+    inline-size: auto;
+    background-color: var(--colors-white);
+    border-block-start: 1px solid var(--colors-grey300);
 }
 .stickyContainer {
     position: sticky;

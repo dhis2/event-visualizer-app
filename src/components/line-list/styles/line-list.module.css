@@ -28,8 +28,10 @@
 .endColumn {
     grid-area: endColumn;
     block-size: 100%;
+    min-block-size: 0;
     min-inline-size: 0;
     inline-size: fit-content;
+    overflow: hidden;
 }
 
 .startColumnTop:empty,

@@ -70,4 +70,5 @@ declare module '@dhis2/analytics' {
         valueType: ValueType,
         visualization: Partial<SavedVisualization>
     ) => string
+    export const LegendKey: FC<{ legendSets: LegendSet[] }>
 }
