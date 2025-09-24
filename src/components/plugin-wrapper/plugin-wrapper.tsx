@@ -1,3 +1,4 @@
+import { Center, CircularLoader } from '@dhis2/ui'
 import type { FC } from 'react'
 import { LineListPlugin } from './line-list-plugin'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
@@ -25,25 +26,31 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     onDataSorted,
     onResponseReceived,
 }) => {
-    if (visualization.type === 'LINE_LIST') {
-        return (
-            <LineListPlugin
-                displayProperty={displayProperty}
-                visualization={visualization}
-                filters={filters}
-                isInDashboard={isInDashboard}
-                isInModal={isInModal}
-                isVisualizationLoading={isVisualizationLoading}
-                onDataSorted={onDataSorted}
-                onResponseReceived={onResponseReceived}
-            />
-        )
-    } else if (visualization.type === 'PIVOT_TABLE') {
-        return (
-            <div>
-                <p>This is the PT plugin placeholder</p>
-                <p>Showing {visualization.name}</p>
-            </div>
-        )
-    }
+    return (
+        <>
+            {isVisualizationLoading && (
+                <Center>
+                    <CircularLoader />
+                </Center>
+            )}
+            {visualization.type === 'LINE_LIST' && (
+                <LineListPlugin
+                    displayProperty={displayProperty}
+                    visualization={visualization}
+                    filters={filters}
+                    isInDashboard={isInDashboard}
+                    isInModal={isInModal}
+                    isVisualizationLoading={isVisualizationLoading}
+                    onDataSorted={onDataSorted}
+                    onResponseReceived={onResponseReceived}
+                />
+            )}
+            {visualization.type === 'PIVOT_TABLE' && (
+                <div>
+                    <p>This is the PT plugin placeholder</p>
+                    <p>Showing {visualization.name}</p>
+                </div>
+            )}
+        </>
+    )
 }

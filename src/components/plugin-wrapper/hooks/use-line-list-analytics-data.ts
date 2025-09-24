@@ -328,8 +328,9 @@ const useLineListAnalyticsData = ({
     const [error, setError] = useState<string | undefined>(undefined)
     const [data, setData] = useState<object | null>(null)
     const relativePeriodDate = filters?.relativePeriodDate
-
+    console.log('in hook')
     const doFetch = useCallback(async () => {
+        console.log('DO FETCH CALLED!')
         try {
             const analyticsResponse = await fetchAnalyticsDataForLL({
                 analyticsEngine,
@@ -402,6 +403,7 @@ const useLineListAnalyticsData = ({
                 setData({ headers, rows, pager, rowContext })
             }
 
+            console.log('call onResponseReceived')
             // TODO: check what metadata needs to be passed from the analytics response
             onResponseReceived(analyticsResponse.metaData.items)
         } catch (error) {

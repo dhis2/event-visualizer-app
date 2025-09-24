@@ -1,3 +1,4 @@
+//import { Center, CircularLoader } from '@dhis2/ui'
 import type { FC } from 'react'
 import { useCallback, useReducer, useState } from 'react'
 import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
@@ -92,9 +93,9 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     const {
         data,
         fetching: isFetching,
-        //loading,
+        //loading: isLoading,
         error,
-        //isGlobalLoading,
+        isGlobalLoading,
     } = useLineListAnalyticsData({
         visualization,
         filters,
@@ -107,11 +108,15 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         sortDirection,
     })
 
-    console.log('LL analytics data', data, isFetching, error)
+    console.log('LL analytics data', data, isFetching, isGlobalLoading, error)
     console.log('LL in modal?', isInModal)
 
-    if (!data || !visualization) {
-        return <div>Not ready to show LL yet</div>
+    if (!data || isGlobalLoading) {
+        return null /*(
+            <Center>
+                <CircularLoader />
+            </Center>
+        )*/
     }
 
     return (

@@ -1,4 +1,4 @@
-import type { FC } from 'react'
+import { useCallback, useState, type FC } from 'react'
 import { getVisualizationQueryFields } from '@api/event-visualizations-api'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
@@ -15,32 +15,36 @@ type DashboardPluginProps = {
 const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
     console.log('DashboardPlugin props', props)
 
-    // fetch the visualization
-    const { data, isLoading, isError, error } = useRtkQuery<SavedVisualization>(
-        {
-            resource: 'eventVisualizations',
-            id: props.visualization.id, // TODO: this should be just passed as visualizationId
-            params: {
-                fields: getVisualizationQueryFields(
-                    // derive displayNameProperty from displayProperty
-                    // this depends on user settings and we only receive displayProperty in props
-                    props.displayProperty === 'name'
-                        ? 'displayName'
-                        : 'displayShortName'
-                ),
-            },
-        }
-    )
+    const [isVisualizationLoading, setIsVisualizationLoading] = useState(true)
 
-    if (isLoading) {
-        // Both `error` and `data` will be undefined here
-        console.log(data, error)
-        return <div>Loading event visualization...</div>
-    }
+    // fetch the visualization
+    const { data, isError, error } = useRtkQuery<SavedVisualization>({
+        resource: 'eventVisualizations',
+        id: props.visualization.id, // TODO: this should be just passed as visualizationId
+        params: {
+            fields: getVisualizationQueryFields(
+                // derive displayNameProperty from displayProperty
+                // this depends on user settings and we only receive displayProperty in props
+                props.displayProperty === 'name'
+                    ? 'displayName'
+                    : 'displayShortName'
+            ),
+        },
+    })
+
+    const onResponseReceived = useCallback(() => {
+        setIsVisualizationLoading(false)
+    }, [])
+
     if (isError) {
         // `error` will be of type EngineError and `data` will is possibly undefined
         console.log(data, error)
         return <div>Error loading event visualization: {error.message}</div>
+    }
+
+    if (!data) {
+        console.log('no visualization fetched (yet)')
+        return <div>Visualization not yet fetched</div>
     }
 
     return (
@@ -53,6 +57,8 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
                     displayProperty={props.displayProperty}
                     filters={props.filters}
                     visualization={data}
+                    isVisualizationLoading={isVisualizationLoading}
+                    onResponseReceived={onResponseReceived}
                 />
             )}
         </DashboardPluginWrapper>

@@ -1,6 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
+import { setIsVisualizationLoading } from './loader-slice'
 import { startAppListening } from './middleware-listener'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
 import { clearUi } from './ui-slice'
@@ -55,9 +56,12 @@ startAppListening({
             dispatch(clearSavedVis())
             dispatch(clearCurrentVis())
         } else {
+            dispatch(setIsVisualizationLoading(true))
+
             const { data, error } = await dispatch(
                 eventVisualizationsApi.endpoints.getVisualization.initiate(
-                    visualizationId
+                    visualizationId,
+                    { forceRefetch: true }
                 )
             )
 
