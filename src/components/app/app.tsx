@@ -19,6 +19,10 @@ import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
 import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
 import {
+    getIsVisualizationLoading,
+    setIsVisualizationLoading,
+} from '@store/loader-slice'
+import {
     getUiDetailsPanelVisible,
     getUiMainSidebarVisible,
 } from '@store/ui-slice'
@@ -31,6 +35,7 @@ const EventVisualizer: FC = () => {
     const currentVis = useAppSelector(getCurrentVis)
     const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
+    const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
 
     const onDataSorted = useCallback(
         (sorting: Sorting) => {
@@ -42,6 +47,16 @@ const EventVisualizer: FC = () => {
             )
         },
         [currentVis, dispatch]
+    )
+
+    const onResponseReceived = useCallback(
+        (analyticsMetadata) => {
+            // TODO: add the payload to the metadata store
+            console.log('onResponseReceived', analyticsMetadata)
+
+            dispatch(setIsVisualizationLoading(false))
+        },
+        [dispatch]
     )
 
     return (
@@ -62,13 +77,15 @@ const EventVisualizer: FC = () => {
                 <div style={{ padding: 8 }}>Titlebar</div>
             </GridCenterColumnTop>
             <GridCenterColumnBottom>
-                {isVisualizationEmpty(currentVis) ? (
+                {isVisualizationEmpty(currentVis) && !isVisualizationLoading ? (
                     <StartScreen />
                 ) : (
                     <PluginWrapper
+                        isVisualizationLoading={isVisualizationLoading}
                         visualization={currentVis}
                         displayProperty={currentUser.settings.displayProperty}
                         onDataSorted={onDataSorted}
+                        onResponseReceived={onResponseReceived}
                     />
                 )}
             </GridCenterColumnBottom>

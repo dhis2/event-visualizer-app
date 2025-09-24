@@ -1,6 +1,6 @@
 // eslint-disable-next-line  no-restricted-imports
 import { useDataQuery } from '@dhis2/app-runtime'
-import type { FC } from 'react'
+import { useCallback, useState, type FC } from 'react'
 import { getVisualizationQueryFields } from '@api/event-visualizations-api'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
@@ -16,8 +16,10 @@ type DashboardPluginProps = {
 const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
     console.log('DashboardPlugin props', props)
 
+    const [isVisualizationLoading, setIsVisualizationLoading] = useState(true)
+
     // fetch the visualization
-    const { data, loading, error } = useDataQuery({
+    const { data, error } = useDataQuery({
         eventVisualization: {
             resource: 'eventVisualizations',
             id: props.visualization.id, // TODO: this should be just passed as visualizationId
@@ -33,11 +35,11 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
         },
     })
 
-    if (loading) {
-        // Both `error` and `data` will be undefined here
-        console.log(data, error)
-        return <div>Loading event visualization...</div>
-    }
+    const onResponseReceived = useCallback(() => {
+        setIsVisualizationLoading(false)
+    }, [])
+
+    // TODO: handle errors
     if (error) {
         // `error` will be of type EngineError and `data` will is possibly undefined
         console.log(data, error)
@@ -56,6 +58,8 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
                     displayProperty={props.displayProperty}
                     filters={props.filters}
                     visualization={eventVisualization}
+                    isVisualizationLoading={isVisualizationLoading}
+                    onResponseReceived={onResponseReceived}
                 />
             )}
         </DashboardPluginWrapper>
