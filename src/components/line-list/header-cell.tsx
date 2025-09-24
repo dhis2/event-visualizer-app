@@ -58,11 +58,15 @@ export const HeaderCell: FC<HeaderCellProps> = ({
             className={cx(classes.headerCell, 'bordered')}
             key={name}
             name={name}
-            onSortIconClick={handleSortIconClick}
+            onSortIconClick={isDisconnected ? undefined : handleSortIconClick}
             sortDirection={headerSortDirection}
-            sortIconTitle={i18n.t('Sort by "{{column}}" and update', {
-                column: displayText,
-            })}
+            sortIconTitle={
+                isDisconnected
+                    ? undefined
+                    : i18n.t('Sort by "{{column}}" and update', {
+                          column: displayText,
+                      })
+            }
             dataTest="data-table-header"
         >
             <span
