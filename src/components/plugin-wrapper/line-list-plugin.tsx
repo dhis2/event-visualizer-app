@@ -4,7 +4,11 @@ import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import { LineList } from '@components/line-list'
 import type { LineListAnalyticsData } from '@components/line-list'
-import type { DataSortFn, DataSortPayload } from '@components/line-list/types'
+import type {
+    DataSortFn,
+    DataSortPayload,
+    PaginateFn,
+} from '@components/line-list/types'
 import { transformVisualization } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, SortDirection } from '@types'
 
@@ -18,9 +22,6 @@ type LineListPluginProps = {
     onDataSorted?: (sorting: DataSortPayload | undefined) => void
     onResponseReceived?: (metadata: MetadataInput) => void
 }
-
-const FIRST_PAGE: number = 1
-const PAGE_SIZE: number = 100
 
 export const LineListPlugin: FC<LineListPluginProps> = ({
     displayProperty,
@@ -52,8 +53,8 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
             ...newPagination,
         }),
         {
-            page: FIRST_PAGE,
-            pageSize: PAGE_SIZE,
+            page: 1,
+            pageSize: 100,
         }
     )
 
@@ -62,15 +63,11 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         ? visualization.sorting[0]
         : { dimension: undefined, direction: undefined }
 
-    const onPaginate = useCallback(({ page, pageSize }) => {
+    const onPaginate = useCallback<PaginateFn>(({ page, pageSize }) => {
         if (pageSize) {
-            setPagination({ page: pageSize ? FIRST_PAGE : page, pageSize })
-        } else if (page) {
-            setPagination({ page })
+            setPagination({ page, pageSize })
         } else {
-            throw new Error(
-                'onPaginate was called with neither a page nor pageSize. At least one is expected'
-            )
+            setPagination({ page })
         }
     }, [])
 

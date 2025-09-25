@@ -40,7 +40,7 @@ const StickyPagination = ({
     )
     const onPageSizeChange = useCallback(
         (pageSize: number) => {
-            onPaginate({ pageSize })
+            onPaginate({ page: 1, pageSize })
         },
         [onPaginate]
     )
