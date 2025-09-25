@@ -23,9 +23,6 @@ type LineListPluginProps = {
     onResponseReceived?: (metadata: MetadataInput) => void
 }
 
-const FIRST_PAGE: number = 1
-const PAGE_SIZE: number = 100
-
 export const LineListPlugin: FC<LineListPluginProps> = ({
     displayProperty,
     visualization: originalVisualization,
@@ -56,8 +53,8 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
             ...newPagination,
         }),
         {
-            page: FIRST_PAGE,
-            pageSize: PAGE_SIZE,
+            page: 1,
+            pageSize: 100,
         }
     )
 
@@ -66,7 +63,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         ? visualization.sorting[0]
         : { dimension: undefined, direction: undefined }
 
-    const onPaginate: PaginateFn = useCallback(({ page, pageSize }) => {
+    const onPaginate = useCallback<PaginateFn>(({ page, pageSize }) => {
         if (pageSize) {
             setPagination({ page, pageSize })
         } else {
