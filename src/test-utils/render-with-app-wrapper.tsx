@@ -183,10 +183,7 @@ export const MockAppWrapper = ({
     )
 }
 
-export const renderWithAppWrapper = (
-    ui: ReactElement,
-    mockOptions: MockOptions
-) => {
+const createMockWrapper = (mockOptions: MockOptions) => {
     let partialOrDefaultStore: PartialOrDefaultStore | null = null
 
     const Wrapper = ({ children }: PropsWithChildren) => (
@@ -198,29 +195,25 @@ export const renderWithAppWrapper = (
         </MockAppWrapperCore>
     )
 
-    const renderResult = render(ui, { wrapper: Wrapper })
-    return { ...renderResult, store: partialOrDefaultStore }
+    const getStore = () => partialOrDefaultStore
+
+    return { Wrapper, getStore }
 }
 
-/**
- * Renders a hook with the mocked app wrapper context.
- * Similar to `renderWithAppWrapper` but specifically for testing hooks.
- */
+export const renderWithAppWrapper = (
+    ui: ReactElement,
+    mockOptions: MockOptions = {}
+) => {
+    const { Wrapper, getStore } = createMockWrapper(mockOptions)
+    const renderResult = render(ui, { wrapper: Wrapper })
+    return { ...renderResult, store: getStore() }
+}
+
 export const renderHookWithAppWrapper = <TResult, TProps>(
     hook: (props: TProps) => TResult,
     mockOptions: MockOptions = {}
 ) => {
-    let partialOrDefaultStore: PartialOrDefaultStore | null = null
-
-    const Wrapper = ({ children }: PropsWithChildren) => (
-        <MockAppWrapperCore {...mockOptions}>
-            {(store) => {
-                partialOrDefaultStore = store
-                return children
-            }}
-        </MockAppWrapperCore>
-    )
-
+    const { Wrapper, getStore } = createMockWrapper(mockOptions)
     const hookResult = renderHook(hook, { wrapper: Wrapper })
-    return { ...hookResult, store: partialOrDefaultStore }
+    return { ...hookResult, store: getStore() }
 }
