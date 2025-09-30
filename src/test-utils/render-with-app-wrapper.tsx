@@ -2,7 +2,7 @@
 import { CustomDataProvider, useDataEngine } from '@dhis2/app-runtime'
 import type { ReducersMapObject, Store } from '@reduxjs/toolkit'
 import { configureStore } from '@reduxjs/toolkit'
-import { render, renderHook } from '@testing-library/react'
+import { render, renderHook, waitFor } from '@testing-library/react'
 import {
     useMemo,
     type FC,
@@ -200,20 +200,32 @@ const createMockWrapper = (mockOptions: MockOptions) => {
     return { Wrapper, getStore }
 }
 
-export const renderWithAppWrapper = (
+const waitForStore = async (getStore: () => PartialOrDefaultStore | null) => {
+    return await waitFor(() => {
+        const store = getStore()
+        if (!store) {
+            throw new Error('Store not yet available')
+        }
+        return store
+    })
+}
+
+export const renderWithAppWrapper = async (
     ui: ReactElement,
     mockOptions: MockOptions = {}
 ) => {
     const { Wrapper, getStore } = createMockWrapper(mockOptions)
     const renderResult = render(ui, { wrapper: Wrapper })
-    return { ...renderResult, store: getStore() }
+    const store = await waitForStore(getStore)
+    return { ...renderResult, store }
 }
 
-export const renderHookWithAppWrapper = <TResult, TProps>(
+export const renderHookWithAppWrapper = async <TResult, TProps>(
     hook: (props: TProps) => TResult,
     mockOptions: MockOptions = {}
 ) => {
     const { Wrapper, getStore } = createMockWrapper(mockOptions)
     const hookResult = renderHook(hook, { wrapper: Wrapper })
-    return { ...hookResult, store: getStore() }
+    const store = await waitForStore(getStore)
+    return { ...hookResult, store }
 }
