@@ -1,7 +1,8 @@
 // eslint-disable-next-line no-restricted-imports
 import { CustomDataProvider, useDataEngine } from '@dhis2/app-runtime'
 import type { ReducersMapObject, Store } from '@reduxjs/toolkit'
-import { render } from '@testing-library/react'
+import { configureStore } from '@reduxjs/toolkit'
+import { render, renderHook } from '@testing-library/react'
 import {
     useMemo,
     type FC,
@@ -10,7 +11,11 @@ import {
     type ReactNode,
 } from 'react'
 import { Provider } from 'react-redux'
-import { setupStore } from './setup-store'
+import meData from './__fixtures__/me.json'
+import organisationUnitLevelsData from './__fixtures__/organisation-unit-levels.json'
+import organisationUnitsData from './__fixtures__/organisation-units.json'
+import systemSettingsData from './__fixtures__/system-settings.json'
+import { api } from '@api/api'
 import {
     AppCachedDataQueryProvider,
     useAppCachedDataQuery,
@@ -20,70 +25,139 @@ import {
     MockMetadataProvider,
     useMetadataStore,
 } from '@components/app-wrapper/metadata-provider'
+import { listenerMiddleware } from '@store/middleware-listener'
 import { createStore as createDefaultSore } from '@store/store'
-import type { RootState } from '@types'
+import type {
+    RootState,
+    AppCachedData,
+    DataEngine,
+    MetadataStore,
+    AppStore,
+} from '@types'
 
-type CustomDataProviderProps = React.ComponentProps<typeof CustomDataProvider>
-type QueryData = CustomDataProviderProps['data']
-
-const appCachedData = {
-    someResource: {},
-}
-
-/* `MockAppWrapper` can be used in Cypress component tests.
- * `renderWithAppWrapper` can be used in Vitest unit tests.
- * Both alow wrapping a component/hook in a mocked version
- * of the app.
- * API responses can be mocked using `queryData`. The provided
- * object will be merged with a default, so that `AppCachedDataQueryProvider`
- * and its hooks works as expected. This also means that
- * app-cached-data can be customised this way.
- * Metadata will be extracted from the queryData, and merged
- * with the initialMetadata and the provided `metadata`
- * A `store` with `reducer` and `preloadedState` may be provided
- * in order to work with a partial store with preloaded state
- * in tests. If this is not provided the full production store
- * is used
+/**
+ * Configuration options for mocking the app wrapper in tests.
+ *
+ * Used by both `MockAppWrapper` (Cypress component tests) and
+ * `renderWithAppWrapper` (Vitest unit tests) to wrap components
+ * in a mocked version of the application context.
  */
 type MockOptions = {
+    /**
+     * Mock API response data that will be merged with default app-cached data.
+     * This allows customization of data returned by `AppCachedDataQueryProvider`
+     * and its associated hooks.
+     */
     queryData?: QueryData
+    /**
+     * Mock metadata entries that will be merged with the initial metadata store.
+     * Typically not required as middleware/hooks that fetch visualization or
+     * analytics data will automatically populate the metadata store.
+     */
     metadata?: Record<string, AnyMetadataItemInput>
-    store?: {
+    /**
+     * Partial Redux store configuration for testing with custom state.
+     * When provided, creates a store with the specified reducer and preloaded state.
+     * The API reducer is automatically included. If not provided, the full
+     * production store is used instead.
+     */
+    partialStore?: {
+        /** Partial reducer map to merge with the API reducer */
         reducer: Partial<ReducersMapObject<RootState>>
+        /** Initial state to preload into the store */
         preloadedState: Partial<RootState>
     }
 }
+
+type CustomDataProviderProps = React.ComponentProps<typeof CustomDataProvider>
+type QueryData = CustomDataProviderProps['data']
+type CreatePartialOrDefaultStoreParams = {
+    partialStore: MockOptions['partialStore']
+    engine: DataEngine
+    metadataStore: MetadataStore
+    appCachedData: AppCachedData
+}
+type PartialOrDefaultStore =
+    | AppStore
+    | {
+          getState: () => Partial<RootState>
+          dispatch: ReturnType<typeof configureStore>['dispatch']
+          subscribe: ReturnType<typeof configureStore>['subscribe']
+          replaceReducer: ReturnType<typeof configureStore>['replaceReducer']
+      }
+
+const defaultAppCachedData = {
+    me: meData,
+    organisationUnitLevels: organisationUnitLevelsData,
+    organisationUnits: organisationUnitsData,
+    systemSettings: systemSettingsData,
+}
+
+const createPartialOrDefaultStore = ({
+    partialStore,
+    engine,
+    metadataStore,
+    appCachedData,
+}: CreatePartialOrDefaultStoreParams): PartialOrDefaultStore =>
+    partialStore
+        ? configureStore({
+              reducer: {
+                  [api.reducerPath]: api.reducer,
+                  ...partialStore.reducer,
+              } as ReducersMapObject<RootState>,
+              preloadedState: partialStore.preloadedState,
+              middleware: (getDefaultMiddleware) =>
+                  getDefaultMiddleware({
+                      thunk: {
+                          extraArgument: {
+                              engine,
+                              metadataStore,
+                              appCachedData,
+                          },
+                      },
+                  })
+                      .prepend(listenerMiddleware.middleware)
+                      .concat(api.middleware),
+          })
+        : createDefaultSore(engine, metadataStore, appCachedData)
+
 const MockStoreProvider: FC<{
-    children: ReactNode
-    store?: MockOptions['store']
-}> = ({ children, store }) => {
+    children: ReactNode | ((store: PartialOrDefaultStore) => ReactNode)
+    partialStore: MockOptions['partialStore']
+}> = ({ children, partialStore }) => {
     const engine = useDataEngine()
     const metadataStore = useMetadataStore()
     const appCachedData = useAppCachedDataQuery()
     const resolvedStore = useMemo(
         () =>
-            store
-                ? setupStore(store.reducer, store.preloadedState)
-                : createDefaultSore(engine, metadataStore, appCachedData),
-        [store, engine, metadataStore, appCachedData]
+            createPartialOrDefaultStore({
+                partialStore,
+                engine,
+                metadataStore,
+                appCachedData,
+            }),
+        [partialStore, engine, metadataStore, appCachedData]
     ) as Store
-    return <Provider store={resolvedStore}>{children}</Provider>
+    return (
+        <Provider store={resolvedStore}>
+            {typeof children === 'function'
+                ? children(resolvedStore)
+                : children}
+        </Provider>
+    )
 }
 
-export const MockAppWrapper = ({
-    children,
-    queryData,
-    metadata,
-    store,
-}: MockOptions & { children: ReactNode }) => {
-    // Feature: [X] Fall back to default store
-    // Feature: [ ] Extract metadata from queryData
-    // Feature: [ ] Ensure `appCachedData` is populated with the correct fixtures to populate `AppCachedDataQueryProvider`
+const MockAppWrapperCore: FC<{
+    children: ReactNode | ((store: PartialOrDefaultStore) => ReactNode)
+    queryData?: QueryData
+    metadata?: Record<string, AnyMetadataItemInput>
+    partialStore?: MockOptions['partialStore']
+}> = ({ children, queryData, metadata, partialStore }) => {
     return (
-        <CustomDataProvider data={{ ...appCachedData, ...queryData }}>
+        <CustomDataProvider data={{ ...defaultAppCachedData, ...queryData }}>
             <AppCachedDataQueryProvider>
                 <MockMetadataProvider mockMetadata={metadata}>
-                    <MockStoreProvider store={store}>
+                    <MockStoreProvider partialStore={partialStore}>
                         {children}
                     </MockStoreProvider>
                 </MockMetadataProvider>
@@ -92,13 +166,61 @@ export const MockAppWrapper = ({
     )
 }
 
+export const MockAppWrapper = ({
+    children,
+    queryData,
+    metadata,
+    partialStore,
+}: MockOptions & { children: ReactNode }) => {
+    return (
+        <MockAppWrapperCore
+            queryData={queryData}
+            metadata={metadata}
+            partialStore={partialStore}
+        >
+            {children}
+        </MockAppWrapperCore>
+    )
+}
+
 export const renderWithAppWrapper = (
     ui: ReactElement,
     mockOptions: MockOptions
 ) => {
+    let partialOrDefaultStore: PartialOrDefaultStore | null = null
+
     const Wrapper = ({ children }: PropsWithChildren) => (
-        <MockAppWrapper {...mockOptions}>{children}</MockAppWrapper>
+        <MockAppWrapperCore {...mockOptions}>
+            {(store) => {
+                partialOrDefaultStore = store
+                return children
+            }}
+        </MockAppWrapperCore>
     )
 
-    return render(ui, { wrapper: Wrapper })
+    const renderResult = render(ui, { wrapper: Wrapper })
+    return { ...renderResult, store: partialOrDefaultStore }
+}
+
+/**
+ * Renders a hook with the mocked app wrapper context.
+ * Similar to `renderWithAppWrapper` but specifically for testing hooks.
+ */
+export const renderHookWithAppWrapper = <TResult, TProps>(
+    hook: (props: TProps) => TResult,
+    mockOptions: MockOptions = {}
+) => {
+    let partialOrDefaultStore: PartialOrDefaultStore | null = null
+
+    const Wrapper = ({ children }: PropsWithChildren) => (
+        <MockAppWrapperCore {...mockOptions}>
+            {(store) => {
+                partialOrDefaultStore = store
+                return children
+            }}
+        </MockAppWrapperCore>
+    )
+
+    const hookResult = renderHook(hook, { wrapper: Wrapper })
+    return { ...hookResult, store: partialOrDefaultStore }
 }
