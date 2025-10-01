@@ -38,9 +38,9 @@ import type {
 /**
  * Configuration options for mocking the app wrapper in tests.
  *
- * Used by both `MockAppWrapper` (Cypress component tests) and
- * `renderWithAppWrapper` (Vitest unit tests) to wrap components
- * in a mocked version of the application context.
+ * Used by both `MockAppWrapper` (Cypress component tests), `renderWithAppWrapper`,
+ * and `renderHookWithAppWrapper` (Vitest unit tests) to wrap components in a
+ * mocked version of the application context.
  */
 type MockOptions = {
     /**
