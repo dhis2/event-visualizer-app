@@ -7,16 +7,14 @@ import { clearUi } from './ui-slice'
 import { setVisUiConfig } from './vis-ui-config-slice'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { getVisualizationUiConfig } from '@modules/get-visualization-ui-config'
+import { getNavigationStateFromLocation } from '@modules/history'
 
 export interface NavigationState {
     visualizationId: string | 'new'
     interpretationId: string | null
 }
 
-export const initialState: NavigationState = {
-    visualizationId: 'new',
-    interpretationId: null,
-}
+export const initialState: NavigationState = getNavigationStateFromLocation()
 
 export const navigationSlice = createSlice({
     name: 'navigation',
