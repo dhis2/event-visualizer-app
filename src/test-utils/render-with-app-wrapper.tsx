@@ -179,23 +179,6 @@ const MockAppWrapperCore: FC<{
     )
 }
 
-export const MockAppWrapper = ({
-    children,
-    queryData,
-    metadata,
-    partialStore,
-}: MockOptions & { children: ReactNode }) => {
-    return (
-        <MockAppWrapperCore
-            queryData={queryData}
-            metadata={metadata}
-            partialStore={partialStore}
-        >
-            {children}
-        </MockAppWrapperCore>
-    )
-}
-
 const createMockWrapper = (mockOptions: MockOptions) => {
     let partialOrDefaultStore: PartialOrDefaultStore | null = null
 
@@ -223,6 +206,25 @@ const waitForStore = async (getStore: () => PartialOrDefaultStore | null) => {
     })
 }
 
+// For usage in Cypress Component tests
+export const MockAppWrapper = ({
+    children,
+    queryData,
+    metadata,
+    partialStore,
+}: MockOptions & { children: ReactNode }) => {
+    return (
+        <MockAppWrapperCore
+            queryData={queryData}
+            metadata={metadata}
+            partialStore={partialStore}
+        >
+            {children}
+        </MockAppWrapperCore>
+    )
+}
+
+// For usage in Vitests component tests
 export const renderWithAppWrapper = async (
     ui: ReactElement,
     mockOptions: MockOptions = {}
@@ -233,12 +235,13 @@ export const renderWithAppWrapper = async (
     return { ...renderResult, store }
 }
 
+// For usage in Vitests hook tests
 export const renderHookWithAppWrapper = async <TResult, TProps>(
     hook: (props: TProps) => TResult,
     mockOptions: MockOptions = {}
 ) => {
     const { Wrapper, getStore } = createMockWrapper(mockOptions)
-    const hookResult = renderHook(hook, { wrapper: Wrapper })
+    const renderHookResult = renderHook(hook, { wrapper: Wrapper })
     const store = await waitForStore(getStore)
-    return { ...hookResult, store }
+    return { ...renderHookResult, store }
 }
