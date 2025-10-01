@@ -1,4 +1,4 @@
-import { MockAppWrapper } from '../render-with-app-wrapper'
+import { MockAppWrapper } from '../app-wrapper'
 import { useMetadataItem } from '@components/app-wrapper/metadata-provider'
 import { useCurrentUser } from '@hooks'
 

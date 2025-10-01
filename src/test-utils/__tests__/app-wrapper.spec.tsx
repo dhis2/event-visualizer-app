@@ -1,9 +1,6 @@
 import { screen, waitFor } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
-import {
-    renderWithAppWrapper,
-    renderHookWithAppWrapper,
-} from '../render-with-app-wrapper'
+import { renderWithAppWrapper, renderHookWithAppWrapper } from '../app-wrapper'
 import {
     useMetadataItem,
     useMetadataItems,
