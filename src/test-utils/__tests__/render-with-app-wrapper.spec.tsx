@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest'
 import {
     renderWithAppWrapper,
     renderHookWithAppWrapper,
-} from './render-with-app-wrapper'
+} from '../render-with-app-wrapper'
 import {
     useMetadataItem,
     useMetadataItems,
