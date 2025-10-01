@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-restricted-imports
 import { CustomDataProvider, useDataEngine } from '@dhis2/app-runtime'
+import { CssVariables } from '@dhis2/ui'
 import type { ReducersMapObject } from '@reduxjs/toolkit'
 import { configureStore } from '@reduxjs/toolkit'
 import { render, renderHook, waitFor } from '@testing-library/react'
@@ -166,6 +167,7 @@ const MockAppWrapperCore: FC<{
 }> = ({ children, queryData, metadata, partialStore }) => {
     return (
         <CustomDataProvider data={{ ...defaultAppCachedData, ...queryData }}>
+            <CssVariables colors spacers theme />
             <AppCachedDataQueryProvider>
                 <MockMetadataProvider mockMetadata={metadata}>
                     <MockStoreProvider partialStore={partialStore}>
