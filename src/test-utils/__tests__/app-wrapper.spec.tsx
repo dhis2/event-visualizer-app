@@ -2,10 +2,12 @@ import { screen, waitFor } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import { renderWithAppWrapper, renderHookWithAppWrapper } from '../app-wrapper'
 import {
+    useCurrentUser,
+    useAppSelector,
+    useRtkQuery,
     useMetadataItem,
     useMetadataItems,
-} from '@components/app-wrapper/metadata-provider'
-import { useCurrentUser, useAppSelector, useRtkQuery } from '@hooks'
+} from '@hooks'
 import { navigationSlice, setNavigationState } from '@store/navigation-slice'
 import type { RootState } from '@store/store'
 
