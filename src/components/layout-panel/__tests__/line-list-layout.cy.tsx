@@ -34,7 +34,7 @@ const createMockOptions = (preloadedState = {}): MockOptions => ({
 
 describe('<LineListLayout />', () => {
     it('renders with LINE_LIST visualization type, EVENT input type, 2 column chips and 1 filter chip', () => {
-        /* TODO: We don't need a function here we can just work witha static `mockOptions`
+        /* TODO: We don't need a function here we can just work with a static `mockOptions`
          * const but it is currently impossible to do so, due to the issue below */
         const mockOptions = createMockOptions({
             visualizationType: 'LINE_LIST',
@@ -50,8 +50,8 @@ describe('<LineListLayout />', () => {
             conditionsByDimension: {
                 condition: {
                     /* TODO: genderId does not match the type signature. We need to investigate if
-                     * the type is wrong, or this partial state is wrong. Using this partial state directly
-                     * the `preloadedState` you get the following type error:
+                     * the type is wrong, or this partial state is wrong. When using this partial
+                     * state directly in `partialStore.preloadedState` above you get the following type error:
                      * Type '{ condition: { genderId: string; }; }' is not assignable to type
                      * 'Record<string, { * condition?: string | undefined; legendSet?: string | undefined; }>' */
                     genderId: 'IN:male',
