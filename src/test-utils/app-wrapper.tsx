@@ -21,10 +21,8 @@ import {
     useAppCachedDataQuery,
 } from '@components/app-wrapper/app-cached-data-query-provider'
 import type { AnyMetadataItemInput } from '@components/app-wrapper/metadata-helpers'
-import {
-    MockMetadataProvider,
-    useMetadataStore,
-} from '@components/app-wrapper/metadata-provider'
+import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider'
+import { useMetadataStore } from '@hooks'
 import { listenerMiddleware } from '@store/middleware-listener'
 import { createStore as createDefaultStore } from '@store/store'
 import type {
