@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-restricted-imports
 import { CustomDataProvider, useDataEngine } from '@dhis2/app-runtime'
-import type { ReducersMapObject, Store } from '@reduxjs/toolkit'
+import type { ReducersMapObject } from '@reduxjs/toolkit'
 import { configureStore } from '@reduxjs/toolkit'
 import { render, renderHook, waitFor } from '@testing-library/react'
 import {
@@ -33,7 +33,6 @@ import type {
     DataEngine,
     MetadataStore,
     AppStore,
-    AppDispatch, // Add this import
 } from '@types'
 
 /**
@@ -72,26 +71,46 @@ type MockOptions = {
 
 type CustomDataProviderProps = React.ComponentProps<typeof CustomDataProvider>
 type QueryData = CustomDataProviderProps['data']
-type CreatePartialOrDefaultStoreParams = {
-    partialStore: MockOptions['partialStore']
+type BaseCreateStoreParams = {
     engine: DataEngine
     metadataStore: MetadataStore
     appCachedData: AppCachedData
 }
-type PartialOrDefaultStore =
-    | AppStore
-    | (Store<Partial<RootState>> & {
-          // Override getState to return Partial<RootState> for better typing
-          getState: () => Partial<RootState>
-          dispatch: AppDispatch // Now dispatch is properly typed!
-      })
-
-const defaultAppCachedData = {
-    me: meData,
-    organisationUnitLevels: organisationUnitLevelsData,
-    organisationUnits: organisationUnitsData,
-    systemSettings: systemSettingsData,
+type CreatePartialStoreParams = BaseCreateStoreParams & {
+    partialStore: NonNullable<MockOptions['partialStore']>
 }
+type CreatePartialOrDefaultStoreParams = BaseCreateStoreParams & {
+    partialStore?: MockOptions['partialStore']
+}
+
+const createPartialStore = ({
+    partialStore,
+    engine,
+    metadataStore,
+    appCachedData,
+}: CreatePartialStoreParams) => {
+    return configureStore({
+        reducer: {
+            [api.reducerPath]: api.reducer,
+            ...partialStore.reducer,
+        } as ReducersMapObject<RootState>,
+        preloadedState: partialStore.preloadedState,
+        middleware: (getDefaultMiddleware) =>
+            getDefaultMiddleware({
+                thunk: {
+                    extraArgument: { engine, metadataStore, appCachedData },
+                },
+            })
+                .prepend(listenerMiddleware.middleware)
+                .concat(api.middleware),
+    })
+}
+
+export type PartialAppStore = ReturnType<typeof createPartialStore>
+export type PartialAppDispatch = PartialAppStore['dispatch']
+export type PartialRootState = ReturnType<PartialAppStore['getState']>
+
+type PartialOrDefaultStore = AppStore | PartialAppStore
 
 const createPartialOrDefaultStore = ({
     partialStore,
@@ -100,24 +119,11 @@ const createPartialOrDefaultStore = ({
     appCachedData,
 }: CreatePartialOrDefaultStoreParams): PartialOrDefaultStore =>
     partialStore
-        ? configureStore({
-              reducer: {
-                  [api.reducerPath]: api.reducer,
-                  ...partialStore.reducer,
-              } as ReducersMapObject<RootState>,
-              preloadedState: partialStore.preloadedState,
-              middleware: (getDefaultMiddleware) =>
-                  getDefaultMiddleware({
-                      thunk: {
-                          extraArgument: {
-                              engine,
-                              metadataStore,
-                              appCachedData,
-                          },
-                      },
-                  })
-                      .prepend(listenerMiddleware.middleware)
-                      .concat(api.middleware),
+        ? createPartialStore({
+              partialStore,
+              engine,
+              metadataStore,
+              appCachedData,
           })
         : createDefaultSore(engine, metadataStore, appCachedData)
 
@@ -145,6 +151,13 @@ const MockStoreProvider: FC<{
                 : children}
         </Provider>
     )
+}
+
+const defaultAppCachedData = {
+    me: meData,
+    organisationUnitLevels: organisationUnitLevelsData,
+    organisationUnits: organisationUnitsData,
+    systemSettings: systemSettingsData,
 }
 
 const MockAppWrapperCore: FC<{
