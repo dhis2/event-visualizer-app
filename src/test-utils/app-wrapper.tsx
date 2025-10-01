@@ -41,7 +41,7 @@ import type {
  * and `renderHookWithAppWrapper` (Vitest unit tests) to wrap components in a
  * mocked version of the application context.
  */
-type MockOptions = {
+export type MockOptions = {
     /**
      * Mock API response data that will be merged with default app-cached data.
      * This allows customization of data returned by `AppCachedDataQueryProvider`
