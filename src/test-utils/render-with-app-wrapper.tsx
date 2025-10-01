@@ -26,7 +26,7 @@ import {
     useMetadataStore,
 } from '@components/app-wrapper/metadata-provider'
 import { listenerMiddleware } from '@store/middleware-listener'
-import { createStore as createDefaultSore } from '@store/store'
+import { createStore as createDefaultStore } from '@store/store'
 import type {
     RootState,
     AppCachedData,
@@ -71,15 +71,15 @@ type MockOptions = {
 
 type CustomDataProviderProps = React.ComponentProps<typeof CustomDataProvider>
 type QueryData = CustomDataProviderProps['data']
-type BaseCreateStoreParams = {
+type CreateStoreBaseParams = {
     engine: DataEngine
     metadataStore: MetadataStore
     appCachedData: AppCachedData
 }
-type CreatePartialStoreParams = BaseCreateStoreParams & {
+type CreatePartialStoreParams = CreateStoreBaseParams & {
     partialStore: NonNullable<MockOptions['partialStore']>
 }
-type CreatePartialOrDefaultStoreParams = BaseCreateStoreParams & {
+type CreatePartialOrDefaultStoreParams = CreateStoreBaseParams & {
     partialStore?: MockOptions['partialStore']
 }
 
@@ -125,7 +125,7 @@ const createPartialOrDefaultStore = ({
               metadataStore,
               appCachedData,
           })
-        : createDefaultSore(engine, metadataStore, appCachedData)
+        : createDefaultStore(engine, metadataStore, appCachedData)
 
 const MockStoreProvider: FC<{
     children: ReactNode | ((store: PartialOrDefaultStore) => ReactNode)
