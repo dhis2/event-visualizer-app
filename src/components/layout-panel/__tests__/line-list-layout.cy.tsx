@@ -1,82 +1,42 @@
-import { CssVariables } from '@dhis2/ui'
-import { configureStore } from '@reduxjs/toolkit'
-import React, { useEffect, useState } from 'react'
-import { Provider } from 'react-redux'
 import { LineListLayout } from '../line-list-layout'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
-import {
-    MetadataProvider,
-    useAddMetadata,
-} from '@components/app-wrapper/metadata-provider'
 import { visUiConfigSlice, initialState } from '@store/vis-ui-config-slice'
+import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 
-// Create a test store with the vis-ui-config slice
-const createTestStore = (preloadedState = {}) => {
-    return configureStore({
+const createMockOptions = (preloadedState = {}): MockOptions => ({
+    metadata: {
+        genderId: {
+            uid: 'genderId',
+            name: 'Gender',
+            dimensionType: 'PROGRAM_ATTRIBUTE',
+            valueType: 'TEXT',
+        },
+        mchInfantFeeding: {
+            uid: 'mchInfantFeeding',
+            name: 'MCH Infant Feeding',
+            dimensionType: 'DATA_ELEMENT',
+            valueType: 'TEXT',
+        },
+        ou: {
+            uid: 'ou',
+            name: 'Organisation unit',
+            dimensionType: 'ORGANISATION_UNIT',
+        },
+    },
+    partialStore: {
         reducer: {
             visUiConfig: visUiConfigSlice.reducer,
         },
         preloadedState: {
             visUiConfig: { ...initialState, ...preloadedState },
         },
-    })
-}
-
-// Mock metadata items for testing
-const mockMetadataItems: MetadataInput = [
-    {
-        uid: 'genderId',
-        name: 'Gender',
-        dimensionType: 'PROGRAM_ATTRIBUTE',
-        valueType: 'TEXT',
     },
-    {
-        uid: 'mchInfantFeeding',
-        name: 'MCH Infant Feeding',
-        dimensionType: 'DATA_ELEMENT',
-        valueType: 'TEXT',
-    },
-    {
-        uid: 'ou',
-        name: 'Organisation unit',
-        dimensionType: 'ORGANISATION_UNIT',
-    },
-]
-
-// Component to populate metadata during test setup
-const MetadataSetup: React.FC<{ children: React.ReactNode }> = ({
-    children,
-}) => {
-    const addMetadata = useAddMetadata()
-    const [isLoaded, setIsLoaded] = useState(false)
-
-    useEffect(() => {
-        addMetadata(mockMetadataItems)
-        setIsLoaded(true)
-    }, [addMetadata])
-
-    if (!isLoaded) {
-        return null // Don't render children until metadata is loaded
-    }
-
-    return <>{children}</>
-}
-
-const TestWrapper: React.FC<{
-    children: React.ReactNode
-    store?: ReturnType<typeof createTestStore>
-}> = ({ children, store = createTestStore() }) => (
-    <Provider store={store}>
-        <MetadataProvider>
-            <MetadataSetup>{children}</MetadataSetup>
-            <CssVariables colors spacers theme />
-        </MetadataProvider>
-    </Provider>
-)
+})
 
 describe('<LineListLayout />', () => {
     it('renders with LINE_LIST visualization type, EVENT input type, 2 column chips and 1 filter chip', () => {
-        const store = createTestStore({
+        /* TODO: We don't need a function here we can just work witha static `mockOptions`
+         * const but it is currently impossible to do so, due to the issue below */
+        const mockOptions = createMockOptions({
             visualizationType: 'LINE_LIST',
             inputType: 'EVENT',
             layout: {
@@ -89,15 +49,20 @@ describe('<LineListLayout />', () => {
             },
             conditionsByDimension: {
                 condition: {
+                    /* TODO: genderId does not match the type signature. We need to investigate if
+                     * the type is wrong, or this partial state is wrong. Using this partial state directly
+                     * the `preloadedState` you get the following type error:
+                     * Type '{ condition: { genderId: string; }; }' is not assignable to type
+                     * 'Record<string, { * condition?: string | undefined; legendSet?: string | undefined; }>' */
                     genderId: 'IN:male',
                 },
             },
         })
 
         cy.mount(
-            <TestWrapper store={store}>
+            <MockAppWrapper {...mockOptions}>
                 <LineListLayout />
-            </TestWrapper>
+            </MockAppWrapper>
         )
 
         // Check that the layout container is rendered

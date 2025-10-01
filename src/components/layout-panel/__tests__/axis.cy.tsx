@@ -1,70 +1,41 @@
-import { CssVariables } from '@dhis2/ui'
-import type { Store } from '@reduxjs/toolkit'
-import React, { useEffect, useState } from 'react'
-import { Provider } from 'react-redux'
 import { Axis } from '../axis'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
-import {
-    MetadataProvider,
-    useAddMetadata,
-} from '@components/app-wrapper/metadata-provider'
 import { visUiConfigSlice, initialState } from '@store/vis-ui-config-slice'
+import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 import { setupStore } from '@test-utils/setup-store'
 import type { RootState } from '@types'
 
-// Mock metadata items for testing
-const mockMetadataItems: MetadataInput = [
-    {
-        uid: 'genderId',
-        name: 'Gender',
-        dimensionType: 'PROGRAM_ATTRIBUTE',
-        valueType: 'TEXT',
+const mockOptions: MockOptions = {
+    metadata: {
+        genderId: {
+            uid: 'genderId',
+            name: 'Gender',
+            dimensionType: 'PROGRAM_ATTRIBUTE',
+            valueType: 'TEXT',
+        },
+        mchInfantFeeding: {
+            uid: 'mchInfantFeeding',
+            name: 'MCH Infant Feeding',
+            dimensionType: 'DATA_ELEMENT',
+            valueType: 'TEXT',
+        },
+        ou: {
+            uid: 'ou',
+            name: 'Organisation unit',
+            dimensionType: 'ORGANISATION_UNIT',
+        },
     },
-    {
-        uid: 'mchInfantFeeding',
-        name: 'MCH Infant Feeding',
-        dimensionType: 'DATA_ELEMENT',
-        valueType: 'TEXT',
+    partialStore: {
+        reducer: { visUiConfig: visUiConfigSlice.reducer },
+        preloadedState: {
+            visUiConfig: {
+                ...initialState,
+                itemsByDimension: {
+                    ou: ['someOrgUnitId'],
+                },
+            },
+        },
     },
-    {
-        uid: 'ou',
-        name: 'Organisation unit',
-        dimensionType: 'ORGANISATION_UNIT',
-    },
-]
-
-// Component to populate metadata during test setup
-const MetadataSetup: React.FC<{ children: React.ReactNode }> = ({
-    children,
-}) => {
-    const addMetadata = useAddMetadata()
-    const [isLoaded, setIsLoaded] = useState(false)
-
-    useEffect(() => {
-        addMetadata(mockMetadataItems)
-        setIsLoaded(true)
-    }, [addMetadata])
-
-    if (!isLoaded) {
-        return null // Don't render children until metadata is loaded
-    }
-
-    return <>{children}</>
 }
-
-const TestWrapper: React.FC<{
-    children: React.ReactNode
-    store: ReturnType<typeof setupStore> & {
-        getState: () => Partial<RootState>
-    }
-}> = ({ children, store }) => (
-    <Provider store={store as Store}>
-        <MetadataProvider>
-            <MetadataSetup>{children}</MetadataSetup>
-            <CssVariables colors spacers theme />
-        </MetadataProvider>
-    </Provider>
-)
 
 describe('<Axis />', () => {
     let store: ReturnType<typeof setupStore> & {
@@ -88,9 +59,9 @@ describe('<Axis />', () => {
     })
     it('renders start axis with columns configuration and no dimensions', () => {
         cy.mount(
-            <TestWrapper store={store}>
+            <MockAppWrapper {...mockOptions}>
                 <Axis axisId="columns" position="start" />
-            </TestWrapper>
+            </MockAppWrapper>
         )
 
         cy.getByDataTest('axis-columns-start')
@@ -105,13 +76,13 @@ describe('<Axis />', () => {
 
     it('renders start axis with columns with dimensions', () => {
         cy.mount(
-            <TestWrapper store={store}>
+            <MockAppWrapper {...mockOptions}>
                 <Axis
                     axisId="columns"
                     dimensionIds={['ou', 'genderId']}
                     position="start"
                 />
-            </TestWrapper>
+            </MockAppWrapper>
         )
 
         // start position is 65% width
@@ -130,9 +101,9 @@ describe('<Axis />', () => {
 
     it('renders end axis with filters with no dimensions', () => {
         cy.mount(
-            <TestWrapper store={store}>
+            <MockAppWrapper {...mockOptions}>
                 <Axis axisId="filters" position="end" />
-            </TestWrapper>
+            </MockAppWrapper>
         )
 
         // end position is 35% width
@@ -147,13 +118,13 @@ describe('<Axis />', () => {
 
     it('renders end axis with filters with dimensions', () => {
         cy.mount(
-            <TestWrapper store={store}>
+            <MockAppWrapper {...mockOptions}>
                 <Axis
                     axisId="filters"
                     dimensionIds={['ou', 'mchInfantFeeding']}
                     position="end"
                 />
-            </TestWrapper>
+            </MockAppWrapper>
         )
 
         cy.getByDataTest('axis-filters-end')
@@ -168,9 +139,9 @@ describe('<Axis />', () => {
 
     it('handles empty dimenssionIds array', () => {
         cy.mount(
-            <TestWrapper store={store}>
+            <MockAppWrapper {...mockOptions}>
                 <Axis axisId="columns" dimensionIds={[]} position="start" />
-            </TestWrapper>
+            </MockAppWrapper>
         )
 
         cy.getByDataTest('axis-columns-start').should('be.visible')
