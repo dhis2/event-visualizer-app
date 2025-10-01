@@ -31,4 +31,26 @@ describe('MockAppWrapper', () => {
             'User organisation unit'
         )
     })
+
+    it('should inject DHIS2 CSS variables into the DOM', () => {
+        cy.mount(
+            <MockAppWrapper>
+                <div data-test="css-test">CSS Variables Test</div>
+            </MockAppWrapper>
+        )
+
+        cy.get('body').should(($body) => {
+            const getCssVariableValue = (cssVariableName: string) =>
+                window
+                    .getComputedStyle($body[0])
+                    .getPropertyValue(cssVariableName)
+
+            expect(getCssVariableValue('--colors-blue900')).to.equal('#093371')
+            expect(getCssVariableValue('--theme-fonts')).to.equal(
+                'Roboto, sans-serif'
+            )
+            expect(getCssVariableValue('--theme-focus')).to.equal('#147cd7')
+            expect(getCssVariableValue('--spacers-dp4')).to.equal('4px')
+        })
+    })
 })
