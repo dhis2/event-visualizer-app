@@ -163,7 +163,7 @@ describe('LineList', () => {
             ).getByText('50')
             await user.click(option50)
 
-            expect(onPaginate).toHaveBeenCalledWith({ pageSize: 50 })
+            expect(onPaginate).toHaveBeenCalledWith({ page: 1, pageSize: 50 })
         })
 
         it('displays pagination information correctly', async () => {
