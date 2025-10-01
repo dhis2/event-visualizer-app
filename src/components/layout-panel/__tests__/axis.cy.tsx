@@ -1,8 +1,6 @@
 import { Axis } from '../axis'
 import { visUiConfigSlice, initialState } from '@store/vis-ui-config-slice'
 import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
-import { setupStore } from '@test-utils/setup-store'
-import type { RootState } from '@types'
 
 const mockOptions: MockOptions = {
     metadata: {
@@ -38,25 +36,6 @@ const mockOptions: MockOptions = {
 }
 
 describe('<Axis />', () => {
-    let store: ReturnType<typeof setupStore> & {
-        getState: () => Partial<RootState>
-    }
-
-    beforeEach(() => {
-        if (!store) {
-            store = setupStore(
-                { visUiConfig: visUiConfigSlice.reducer },
-                {
-                    visUiConfig: {
-                        ...initialState,
-                        itemsByDimension: {
-                            ou: ['someOrgUnitId'],
-                        },
-                    },
-                }
-            )
-        }
-    })
     it('renders start axis with columns configuration and no dimensions', () => {
         cy.mount(
             <MockAppWrapper {...mockOptions}>
