@@ -33,6 +33,7 @@ import type {
     DataEngine,
     MetadataStore,
     AppStore,
+    AppDispatch, // Add this import
 } from '@types'
 
 /**
@@ -79,12 +80,11 @@ type CreatePartialOrDefaultStoreParams = {
 }
 type PartialOrDefaultStore =
     | AppStore
-    | {
+    | (Store<Partial<RootState>> & {
+          // Override getState to return Partial<RootState> for better typing
           getState: () => Partial<RootState>
-          dispatch: ReturnType<typeof configureStore>['dispatch']
-          subscribe: ReturnType<typeof configureStore>['subscribe']
-          replaceReducer: ReturnType<typeof configureStore>['replaceReducer']
-      }
+          dispatch: AppDispatch // Now dispatch is properly typed!
+      })
 
 const defaultAppCachedData = {
     me: meData,
@@ -137,7 +137,7 @@ const MockStoreProvider: FC<{
                 appCachedData,
             }),
         [partialStore, engine, metadataStore, appCachedData]
-    ) as Store
+    )
     return (
         <Provider store={resolvedStore}>
             {typeof children === 'function'
