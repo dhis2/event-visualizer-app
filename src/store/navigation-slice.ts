@@ -30,35 +30,24 @@ export const navigationSlice = createSlice({
 
 export const { setNavigationState } = navigationSlice.actions
 
-// listen to changes in navigation.visualizationId
-// "new" (FileMenu -> New): clean the store
-// "id" (FileMenu -> Open): fetch the visualization only if the id changes
 startAppListening({
-    predicate: (_, currentState, previousState) =>
-        currentState.navigation.visualizationId !==
-        previousState.navigation.visualizationId,
-    effect: async (_, listenerApi) => {
+    actionCreator: setNavigationState,
+    effect: async (action, listenerApi) => {
         const dispatch = listenerApi.dispatch
+        const currentState = listenerApi.getState().navigation
 
-        const visualizationId =
-            listenerApi.getState().navigation.visualizationId
+        const currentVisualizationId = currentState.visualizationId
+        const newVisualizationId = action.payload.visualizationId
 
-        if (visualizationId === 'new') {
-            dispatch(tClearVisualization())
-        } else {
-            dispatch(tLoadSavedVisualization(visualizationId))
+        /* Since the InterpretationsModal loads its own visualization
+         * we are only interested in visualizationId changes in this
+         * listener middleware */
+        if (currentVisualizationId !== newVisualizationId) {
+            if (newVisualizationId === 'new') {
+                dispatch(tClearVisualization())
+            } else {
+                dispatch(tLoadSavedVisualization(newVisualizationId))
+            }
         }
-    },
-})
-
-// listen to changes in navigation.interpretationId
-startAppListening({
-    predicate: (_, currentState, previousState) =>
-        currentState.navigation.interpretationId !==
-        previousState.navigation.interpretationId,
-    effect: () => {
-        console.log(
-            'interpretationId changed - add the logic in place of this message'
-        )
     },
 })
