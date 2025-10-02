@@ -3,7 +3,7 @@ set -e
 
 
 # Configuration
-API_URL="https://test.e2e.dhis2.org/anly-dev/api/openapi.yaml"
+API_URL="https://test.e2e.dhis2.org/anly-dev/api/openapi.yaml?expandedRefs=true"
 TYPES_DIR="./src/types/dhis2-openapi-schemas"
 TEMP_DIR="./temp-openapi"
 AUTH_HEADER="Authorization: Basic $(echo -n "admin:district" | base64)"
