@@ -2,6 +2,7 @@ import { CssVariables } from '@dhis2/ui'
 import cx from 'classnames'
 import { useCallback, type FC } from 'react'
 import classes from './app.module.css'
+import { useLoadVisualizationOnMount } from './use-load-visualization-on-mount'
 import { AppWrapper } from '@components/app-wrapper'
 import {
     GridCenterColumnBottom,
@@ -24,6 +25,7 @@ import {
 import type { CurrentVisualization, Sorting } from '@types'
 
 const EventVisualizer: FC = () => {
+    useLoadVisualizationOnMount()
     const dispatch = useAppDispatch()
     const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)

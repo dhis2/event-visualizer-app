@@ -2,7 +2,7 @@ import type { Location } from 'history'
 import queryString from 'query-string'
 import { useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector, useAppStore } from '@hooks'
-import { history } from '@modules/history'
+import { getNavigationStateFromLocation, history } from '@modules/history'
 import { setNavigationState } from '@store/navigation-slice'
 
 export const StoreToLocationSyncer = () => {
@@ -36,27 +36,17 @@ export const StoreToLocationSyncer = () => {
             })
             dispatchEvent(popStateEvent)
 
-            // APP RELATED CODE:
-            const pathVisualizationId = location.pathname.slice(1) // remove leading "/"
-            const newVisualizationId = pathVisualizationId || 'new'
-            const queryParams = queryString.parse(location.search)
-            const newInterpretationId =
-                // Ignore interpretationId in query param when on new path
-                newVisualizationId === 'new' ||
-                typeof queryParams.interpretationId !== 'string'
-                    ? null
-                    : queryParams.interpretationId
-
-            const { navigation } = store.getState()
+            const locationState = getNavigationStateFromLocation()
+            const { navigation: storeState } = store.getState()
             const hasChanges =
-                newVisualizationId !== navigation.visualizationId ||
-                newInterpretationId !== navigation.interpretationId
+                locationState.visualizationId !== storeState.visualizationId ||
+                locationState.interpretationId !== storeState.interpretationId
 
             if (hasChanges) {
                 dispatch(
                     setNavigationState({
-                        visualizationId: newVisualizationId,
-                        interpretationId: newInterpretationId,
+                        visualizationId: locationState.visualizationId,
+                        interpretationId: locationState.interpretationId,
                     })
                 )
             }
