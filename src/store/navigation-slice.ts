@@ -1,12 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
-import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
 import { startAppListening } from './middleware-listener'
-import { clearSavedVis, setSavedVis } from './saved-vis-slice'
-import { clearUi } from './ui-slice'
-import { setVisUiConfig } from './vis-ui-config-slice'
-import { eventVisualizationsApi } from '@api/event-visualizations-api'
-import { getVisualizationUiConfig } from '@modules/get-visualization-ui-config'
+import { tClearVisualization, tLoadSavedVisualization } from './thunks'
 import { getNavigationStateFromLocation } from '@modules/history'
 
 export interface NavigationState {
@@ -49,23 +44,9 @@ startAppListening({
             listenerApi.getState().navigation.visualizationId
 
         if (visualizationId === 'new') {
-            dispatch(clearUi())
-            dispatch(clearSavedVis())
-            dispatch(clearCurrentVis())
+            dispatch(tClearVisualization())
         } else {
-            const { data, error } = await dispatch(
-                eventVisualizationsApi.endpoints.getVisualization.initiate(
-                    visualizationId
-                )
-            )
-
-            if (data) {
-                dispatch(setSavedVis(data))
-                dispatch(setVisUiConfig(getVisualizationUiConfig(data)))
-                dispatch(setCurrentVis(data))
-            } else if (error) {
-                console.error(error)
-            }
+            dispatch(tLoadSavedVisualization(visualizationId))
         }
     },
 })
