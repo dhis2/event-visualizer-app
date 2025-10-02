@@ -32,17 +32,15 @@ export const { setNavigationState } = navigationSlice.actions
 
 startAppListening({
     actionCreator: setNavigationState,
-    effect: async (action, listenerApi) => {
-        const dispatch = listenerApi.dispatch
-        const currentState = listenerApi.getState().navigation
-
-        const currentVisualizationId = currentState.visualizationId
+    effect: async (action, { dispatch, getOriginalState }) => {
+        const originalState = getOriginalState()
+        const originalVisualizationId = originalState.navigation.visualizationId
         const newVisualizationId = action.payload.visualizationId
 
         /* Since the InterpretationsModal loads its own visualization
          * we are only interested in visualizationId changes in this
          * listener middleware */
-        if (currentVisualizationId !== newVisualizationId) {
+        if (originalVisualizationId !== newVisualizationId) {
             if (newVisualizationId === 'new') {
                 dispatch(tClearVisualization())
             } else {
