@@ -1,8 +1,9 @@
+// eslint-disable-next-line  no-restricted-imports
+import { useDataQuery } from '@dhis2/app-runtime'
 import type { FC } from 'react'
 import { getVisualizationQueryFields } from '@api/event-visualizations-api'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
-import { useRtkQuery } from '@hooks'
 import './locales/index.js'
 import type { CurrentUser, SavedVisualization } from '@types'
 
@@ -16,8 +17,8 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
     console.log('DashboardPlugin props', props)
 
     // fetch the visualization
-    const { data, isLoading, isError, error } = useRtkQuery<SavedVisualization>(
-        {
+    const { data, loading, error } = useDataQuery({
+        eventVisualization: {
             resource: 'eventVisualizations',
             id: props.visualization.id, // TODO: this should be just passed as visualizationId
             params: {
@@ -29,19 +30,21 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
                         : 'displayShortName'
                 ),
             },
-        }
-    )
+        },
+    })
 
-    if (isLoading) {
+    if (loading) {
         // Both `error` and `data` will be undefined here
         console.log(data, error)
         return <div>Loading event visualization...</div>
     }
-    if (isError) {
+    if (error) {
         // `error` will be of type EngineError and `data` will is possibly undefined
         console.log(data, error)
         return <div>Error loading event visualization: {error.message}</div>
     }
+
+    const eventVisualization = data?.eventVisualization as SavedVisualization
 
     return (
         <DashboardPluginWrapper {...props}>
@@ -52,7 +55,7 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
                 <PluginWrapper
                     displayProperty={props.displayProperty}
                     filters={props.filters}
-                    visualization={data}
+                    visualization={eventVisualization}
                 />
             )}
         </DashboardPluginWrapper>
