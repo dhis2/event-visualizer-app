@@ -1,0 +1,54 @@
+.grid {
+    display: grid;
+    block-size: 100%;
+    inline-size: 100%;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+        'startColumnTop endColumn'
+        'startColumnBottom endColumn';
+}
+
+.startColumnTop {
+    grid-area: startColumnTop;
+    justify-self: center;
+    max-inline-size: 100%;
+    overflow-wrap: anywhere;
+}
+
+.startColumnBottom {
+    grid-area: startColumnBottom;
+    block-size: 100%;
+    min-block-size: 0;
+    position: relative;
+    max-inline-size: 100%;
+    overflow: hidden;
+}
+
+.endColumn {
+    grid-area: endColumn;
+    block-size: 100%;
+    min-block-size: 0;
+    min-inline-size: 0;
+    inline-size: fit-content;
+    overflow: hidden;
+}
+
+.startColumnTop:empty,
+.endColumn:empty {
+    display: none;
+}
+
+.grid .dataTable {
+    border: none;
+}
+.fixedHead {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
+}
+.fixedFoot {
+    position: sticky;
+    inset-block-end: 0;
+    z-index: 1;
+}

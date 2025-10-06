@@ -5,14 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-09-12T13:54:28.234Z\n"
-"PO-Revision-Date: 2025-09-12T13:54:28.235Z\n"
-
-msgid "Hello {{name}}"
-msgstr "Hello {{name}}"
-
-msgid "Welcome to DHIS2 with TypeScript!"
-msgstr "Welcome to DHIS2 with TypeScript!"
+"POT-Creation-Date: 2025-09-23T09:40:46.301Z\n"
+"PO-Revision-Date: 2025-09-23T09:40:46.302Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -169,6 +163,76 @@ msgstr "None selected"
 
 msgid "Showing all values for this dimension"
 msgstr "Showing all values for this dimension"
+msgid "No event"
+msgstr "No event"
+
+msgid "Sort by \"{{column}}\" and update"
+msgstr "Sort by \"{{column}}\" and update"
+
+msgid "Hide legend key"
+msgstr "Hide legend key"
+
+msgid "Show legend key"
+msgstr "Show legend key"
+
+msgid ""
+"This line list may show data that was not available when the interpretation "
+"was written."
+msgstr ""
+"This line list may show data that was not available when the interpretation "
+"was written."
+
+msgid "Rows per page"
+msgstr "Rows per page"
+
+msgid "Page {{page}}, row {{firstItem}}-{{lastItem}}"
+msgstr "Page {{page}}, row {{firstItem}}-{{lastItem}}"
+
+msgid "Not available offline"
+msgstr "Not available offline"
+
+msgid "most recent"
+msgstr "most recent"
+
+msgid "oldest"
+msgstr "oldest"
+
+msgid "oldest {{repeatEventIndex}}"
+msgstr "oldest {{repeatEventIndex}}"
+
+msgid "most recent {{repeatEventIndex}}"
+msgstr "most recent {{repeatEventIndex}}"
+
+msgid "Active"
+msgstr "Active"
+
+msgid "Cancelled"
+msgstr "Cancelled"
+
+msgid "Completed"
+msgstr "Completed"
+
+msgid "Scheduled"
+msgstr "Scheduled"
+
+msgid "Getting started"
+msgstr "Getting started"
+
+msgid ""
+"All dimensions that you can use to build visualizations are shown in the "
+"sections in the left sidebar."
+msgstr ""
+"All dimensions that you can use to build visualizations are shown in the "
+"sections in the left sidebar."
+
+msgid "Add dimensions to the layout above."
+msgstr "Add dimensions to the layout above."
+
+msgid "Click a dimension to add or remove conditions."
+msgstr "Click a dimension to add or remove conditions."
+
+msgid "Your most viewed event visualizations"
+msgstr "Your most viewed event visualizations"
 
 msgid "Download"
 msgstr "Download"
@@ -196,6 +260,33 @@ msgstr "View"
 
 msgid "Reset sidebar width"
 msgstr "Reset sidebar width"
+
+msgid "Yes"
+msgstr "Yes"
+
+msgid "No"
+msgstr "No"
+
+msgid "Not answered"
+msgstr "Not answered"
+
+msgid "Registration date"
+msgstr "Registration date"
+
+msgid "Last updated on"
+msgstr "Last updated on"
+
+msgid "Created by"
+msgstr "Created by"
+
+msgid "Last updated by"
+msgstr "Last updated by"
+
+msgid "Event status"
+msgstr "Event status"
+
+msgid "Program status"
+msgstr "Program status"
 
 msgid "all"
 msgstr "all"
@@ -265,6 +356,12 @@ msgstr "Filter"
 
 msgid "Rows"
 msgstr "Rows"
+
+msgid "Registration org. unit"
+msgstr "Registration org. unit"
+
+msgid "Organisation unit"
+msgstr "Organisation unit"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

@@ -3,14 +3,14 @@ import {
     IconVisualizationPivotTable24,
 } from '@dhis2/ui'
 import type { FC } from 'react'
-import type { SupportedVisType } from '@constants/visualization-types'
+import type { VisualizationType } from '@types'
 
 type ListItemIconProps = {
-    iconType: SupportedVisType
+    iconType: VisualizationType
     style?: { width: number; height: number }
 }
 
-// TODO use the large versions of the icons
+// TODO: use the large versions of the icons
 // See: https://dhis2.atlassian.net/browse/DHIS2-19961
 export const ListItemIcon: FC<ListItemIconProps> = ({ iconType, style }) => {
     if (iconType === 'LINE_LIST') {

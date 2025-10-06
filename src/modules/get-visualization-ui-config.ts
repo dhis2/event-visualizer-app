@@ -1,22 +1,22 @@
-import { getFullDimensionId } from './dimension-id'
-import type { SupportedInputType } from '@constants/input-types'
-import {
-    convertToSupportedVisType,
-    type SupportedVisType,
-} from '@constants/visualization-types'
 import {
     layoutGetAxisIdDimensionIdsObject,
     layoutGetDimensionIdItemIdsObject,
 } from '@dhis2/analytics'
-import type { SavedVisualization } from '@types'
+import { getFullDimensionId } from '@modules/dimension'
+import type { CurrentVisualization, InputType, VisualizationType } from '@types'
 
 const getConditionsFromVisualization = (
-    vis: SavedVisualization,
-    inputType: SupportedInputType
+    vis: CurrentVisualization,
+    inputType: InputType
 ): Record<string, { condition?: string; legendSet?: string }> => {
     const result: Record<string, { condition?: string; legendSet?: string }> =
         {}
-    const items = [...vis.columns, ...vis.rows, ...vis.filters].filter(
+
+    const columns = vis.columns ?? []
+    const rows = vis.rows ?? []
+    const filters = vis.filters ?? []
+
+    const items = [...columns, ...rows, ...filters].filter(
         (item) => item.filter || item.legendSet
     )
 
@@ -36,7 +36,7 @@ const getConditionsFromVisualization = (
     return result
 }
 
-const getVisualizationLayout = (layout, type: SupportedVisType) => {
+const getVisualizationLayout = (layout, type: VisualizationType) => {
     if (type === 'LINE_LIST') {
         return {
             columns: [...layout.columns, ...(layout.rows || [])],
@@ -48,15 +48,15 @@ const getVisualizationLayout = (layout, type: SupportedVisType) => {
     return layout
 }
 
-export const getVisualizationUiConfig = (vis: SavedVisualization) => {
+export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
     const inputType = vis.outputType // The single location where outputType is renamed to inputType
-    const supportedVisType = convertToSupportedVisType(vis.type)
+
     return {
-        visualizationType: supportedVisType,
+        visualizationType: vis.type,
         inputType,
         layout: getVisualizationLayout(
             layoutGetAxisIdDimensionIdsObject(vis),
-            supportedVisType
+            vis.type
         ),
         itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
         conditionsByDimension: getConditionsFromVisualization(vis, inputType),

@@ -2,7 +2,7 @@ import type { FC } from 'react'
 import { useCallback } from 'react'
 import { DownloadMenu } from './download-menu'
 import { ViewMenu } from './view-menu'
-import { SUPPORTED_VIS_TYPES } from '@constants/visualization-types'
+import { VISUALIZATION_TYPES } from '@constants/visualization-types'
 import { FileMenu, HoverMenuBar } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
 import { getCurrentVis } from '@store/current-vis-slice'
@@ -18,7 +18,7 @@ export const MenuBar: FC = () => {
 
     const filterVisTypes = [
         { type: 'ALL', insertDivider: true },
-        ...SUPPORTED_VIS_TYPES.map((visType) => ({
+        ...VISUALIZATION_TYPES.map((visType) => ({
             type: visType,
         })),
     ]

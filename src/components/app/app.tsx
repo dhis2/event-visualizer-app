@@ -1,10 +1,8 @@
-import i18n from '@dhis2/d2-i18n'
 import { CssVariables } from '@dhis2/ui'
 import cx from 'classnames'
-import type { FC } from 'react'
+import { useCallback, type FC } from 'react'
 import classes from './app.module.css'
 import { AppWrapper } from '@components/app-wrapper'
-import { useMetadataItem } from '@components/app-wrapper/metadata-provider'
 import {
     GridCenterColumnBottom,
     GridCenterColumnTop,
@@ -13,22 +11,36 @@ import {
     GridStartColumn,
     GridTopRow,
 } from '@components/grid'
+import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
+import { StartScreen } from '@components/start-screen/start-screen'
 import { Toolbar } from '@components/toolbar/toolbar'
-import { useAppSelector, useCurrentUser, useSystemSettings } from '@hooks'
+import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
+import { isVisualizationEmpty } from '@modules/visualization'
+import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
 import {
     getUiDetailsPanelVisible,
     getUiMainSidebarVisible,
 } from '@store/ui-slice'
+import type { CurrentVisualization, Sorting } from '@types'
 
 const EventVisualizer: FC = () => {
+    const dispatch = useAppDispatch()
     const currentUser = useCurrentUser()
-    const systemSettings = useSystemSettings()
-    const today = useMetadataItem('TODAY')
-
+    const currentVis = useAppSelector(getCurrentVis)
     const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
 
-    console.log('systemSettings', today, systemSettings)
+    const onDataSorted = useCallback(
+        (sorting: Sorting) => {
+            dispatch(
+                setCurrentVis({
+                    ...currentVis,
+                    sorting: sorting ? [sorting] : undefined,
+                } as CurrentVisualization)
+            )
+        },
+        [currentVis, dispatch]
+    )
 
     return (
         <GridContainer>
@@ -48,13 +60,15 @@ const EventVisualizer: FC = () => {
                 <div style={{ padding: 8 }}>Titlebar</div>
             </GridCenterColumnTop>
             <GridCenterColumnBottom>
-                <div style={{ padding: 8 }}>
-                    <h1>Visualization Canvas</h1>
-                    <h2>
-                        {i18n.t('Hello {{name}}', { name: currentUser.name })}
-                    </h2>
-                    <h3>{i18n.t('Welcome to DHIS2 with TypeScript!')}</h3>
-                </div>
+                {isVisualizationEmpty(currentVis) ? (
+                    <StartScreen />
+                ) : (
+                    <PluginWrapper
+                        visualization={currentVis}
+                        displayProperty={currentUser.settings.displayProperty}
+                        onDataSorted={onDataSorted}
+                    />
+                )}
             </GridCenterColumnBottom>
             <GridEndColumn>
                 <div

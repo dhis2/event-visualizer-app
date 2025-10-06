@@ -6,8 +6,7 @@ import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
 import { VisualizationTypeListItem } from './visualization-type-list-item'
 import { ArrowDown } from '@assets/arrow-down'
-import type { SupportedVisType } from '@constants/visualization-types'
-import { SUPPORTED_VIS_TYPES } from '@constants/visualization-types'
+import { VISUALIZATION_TYPES } from '@constants/visualization-types'
 import { visTypeDisplayNames, ToolbarSidebar } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getVisTypeDescriptions } from '@modules/visualization'
@@ -15,6 +14,7 @@ import {
     setVisUiConfigVisualizationType,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
+import type { VisualizationType } from '@types'
 
 export const VisualizationTypeSelector: FC = () => {
     const dispatch = useAppDispatch()
@@ -29,11 +29,12 @@ export const VisualizationTypeSelector: FC = () => {
         console.log('TBD run clearing on the store if needed')
     }
 
-    const handleListItemClick = (visualizationType: SupportedVisType) => () => {
-        dispatch(setVisUiConfigVisualizationType(visualizationType))
-        onItemClick()
-        toggleList()
-    }
+    const handleListItemClick =
+        (visualizationType: VisualizationType) => () => {
+            dispatch(setVisUiConfigVisualizationType(visualizationType))
+            onItemClick()
+            toggleList()
+        }
 
     const buttonRef = useRef<HTMLDivElement>(null)
 
@@ -74,7 +75,7 @@ export const VisualizationTypeSelector: FC = () => {
                             <div data-test="visualization-type-selector-card">
                                 <div className={classes.listContainer}>
                                     <div className={classes.listSection}>
-                                        {SUPPORTED_VIS_TYPES.map((visType) => (
+                                        {VISUALIZATION_TYPES.map((visType) => (
                                             <VisualizationTypeListItem
                                                 key={visType}
                                                 iconType={visType}

@@ -1,32 +1,35 @@
 import type {
     EventVisualization as EventVisualizationGenerated,
-    DimensionType,
     EventRepetition,
     Program,
     ProgramStage,
     ValueType,
     LegendDisplayStrategy,
     LegendDisplayStyle,
+    DimensionalItemObject,
 } from './dhis2-openapi-schemas'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers/types'
+import type { ExtendedDimensionType, VisualizationType } from '@types'
 
 type IdRecord = { id: string }
 type IdNameRecord = IdRecord & { name: string }
 
 type MetadataRecordArray<T extends string> = Array<Record<T, IdNameRecord>>
 
-type DimensionArray = Array<{
+export type DimensionRecord = {
     dimension: string
-    dimensionType: DimensionType
-    filter: string
-    program: IdRecord
-    programStage: IdRecord
-    optionSet: IdRecord
-    valueType: ValueType
-    legendSet: IdRecord
-    repetition: EventRepetition
-    items: Array<IdRecord>
-}>
+    dimensionType?: ExtendedDimensionType
+    filter?: string
+    program?: IdRecord
+    programStage?: IdRecord
+    optionSet?: IdRecord
+    valueType?: ValueType
+    legendSet?: IdRecord
+    repetition?: EventRepetition
+    items: Array<DimensionalItemObject>
+}
+
+export type DimensionArray = Array<DimensionRecord>
 
 type ProgramStageRecord = Pick<
     ProgramStage,
@@ -76,25 +79,41 @@ type DataElementDimensionArray = Array<{
     dataElement: IdNameRecord
 }>
 
+type SavedVisualizationFieldOverrides = {
+    id: string
+    // API transforms with ~rename or custom structures
+    columns: DimensionArray
+    rows: DimensionArray
+    filters: DimensionArray
+    program: ProgramRecord
+    programStage: ProgramStageRecord
+    programDimensions: ProgramDimensionArray
+    trackedEntityType: IdNameRecord
+
+    // Custom dimension metadata arrays (from getDimensionMetadataFields)
+    dataElementDimensions: DataElementDimensionArray
+    attributeDimensions: MetadataRecordArray<'attribute'>
+    programIndicatorDimensions: MetadataRecordArray<'programIndicator'>
+    categoryDimensions: MetadataRecordArray<'category'>
+    categoryOptionGroupSetDimensions: MetadataRecordArray<'categoryOptionGroupSet'>
+    organisationUnitGroupSetDimensions: MetadataRecordArray<'organisationUnitGroupSet'>
+    dataElementGroupSetDimensions: MetadataRecordArray<'dataElementGroupSet'>
+
+    // Manual overrides for better typing
+    legend: {
+        set: { id: string; displayName: string }
+        strategy: LegendDisplayStrategy
+        style: LegendDisplayStyle
+        showKey: boolean
+    }
+    metaData: MetadataInput
+    type: VisualizationType
+}
+
 export type SavedVisualization = Omit<
     EventVisualizationGenerated,
-    | 'id'
-    | 'columns'
-    | 'rows'
-    | 'filters'
-    | 'program'
-    | 'programStage'
-    | 'programDimensions'
-    | 'dataElementDimensions'
-    | 'legend'
-    | 'trackedEntityType'
-    | 'attributeDimensions'
-    | 'programIndicatorDimensions'
-    | 'categoryDimensions'
-    | 'categoryOptionGroupSetDimensions'
-    | 'organisationUnitGroupSetDimensions'
-    | 'dataElementGroupSetDimensions'
-    | 'dataElementDimensions'
+    // Omit overridden fields so optional fields from the generated type can be set to required
+    | keyof SavedVisualizationFieldOverrides
     | 'interpretations'
     | 'userGroupAccesses'
     | 'publicAccess'
@@ -119,34 +138,12 @@ export type SavedVisualization = Omit<
     | 'organisationUnitLevels'
     | 'organisationUnits'
     | 'user'
-    | 'metaData'
-> & {
-    id: string
-    dataElementDimensions: DataElementDimensionArray
-    attributeDimensions: MetadataRecordArray<'attribute'>
-    programIndicatorDimensions: MetadataRecordArray<'programIndicator'>
-    categoryDimensions: MetadataRecordArray<'category'>
-    categoryOptionGroupSetDimensions: MetadataRecordArray<'categoryOptionGroupSet'>
-    organisationUnitGroupSetDimensions: MetadataRecordArray<'organisationUnitGroupSet'>
-    dataElementGroupSetDimensions: MetadataRecordArray<'dataElementGroupSet'>
-    columns: DimensionArray
-    rows: DimensionArray
-    filters: DimensionArray
-    program: ProgramRecord
-    programStage: ProgramStageRecord
-    programDimensions: ProgramDimensionArray
-    legend: {
-        set: { id: string; displayName: string }
-        strategy: LegendDisplayStrategy
-        style: LegendDisplayStyle
-        showKey: boolean
-    }
-    trackedEntityType: IdNameRecord
-    metaData: MetadataInput
-}
+> &
+    SavedVisualizationFieldOverrides
 
 export type EmptyVisualization = Record<string, never>
-export type NewVisualization = Partial<Omit<SavedVisualization, 'id'>>
+export type NewVisualization = Partial<Omit<SavedVisualization, 'id'>> &
+    Required<Pick<SavedVisualization, 'outputType' | 'type'>>
 export type CurrentVisualization =
     | EmptyVisualization
     | NewVisualization

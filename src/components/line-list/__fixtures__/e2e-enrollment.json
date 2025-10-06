@@ -1,0 +1,188 @@
+{
+    "visualization": {
+        "name": "E2E: Enrollment",
+        "created": "2023-01-04T13:17:29.139",
+        "lastUpdated": "2023-04-03T10:24:58.456",
+        "translations": [],
+        "createdBy": {
+            "id": "GOLswS44mh8",
+            "code": null,
+            "name": "Tom Wakiki",
+            "displayName": "Tom Wakiki",
+            "username": "system"
+        },
+        "favorites": [],
+        "lastUpdatedBy": {
+            "id": "GOLswS44mh8",
+            "code": null,
+            "name": "Tom Wakiki",
+            "displayName": "Tom Wakiki",
+            "username": "system"
+        },
+        "sharing": {
+            "owner": "GOLswS44mh8",
+            "external": false,
+            "users": {
+                "Z7mGnIfGgqL": {
+                    "displayName": "Thor Odinsson",
+                    "access": "r-------",
+                    "id": "Z7mGnIfGgqL"
+                },
+                "tiJZaFA1tXp": {
+                    "displayName": "Freya Njordsdottir",
+                    "access": "r-------",
+                    "id": "tiJZaFA1tXp"
+                },
+                "xE7jOejl9FI": {
+                    "displayName": "John Traore",
+                    "access": "rw------",
+                    "id": "xE7jOejl9FI"
+                }
+            },
+            "userGroups": {},
+            "public": "--------"
+        },
+        "regressionType": "NONE",
+        "displayDensity": "NORMAL",
+        "fontSize": "NORMAL",
+        "sortOrder": 0,
+        "topLimit": 0,
+        "hideEmptyRows": false,
+        "showHierarchy": false,
+        "skipRounding": false,
+        "dataDimensionItems": [],
+        "dataElementGroupSetDimensions": [],
+        "organisationUnitGroupSetDimensions": [],
+        "categoryDimensions": [],
+        "categoryOptionGroupSetDimensions": [],
+        "attributeDimensions": [],
+        "dataElementDimensions": [],
+        "programIndicatorDimensions": [],
+        "subscribers": [],
+        "digitGroupSeparator": "SPACE",
+        "hideEmptyRowItems": "NONE",
+        "hideLegend": false,
+        "noSpaceBetweenColumns": false,
+        "cumulativeValues": false,
+        "percentStackedValues": false,
+        "showData": false,
+        "colTotals": false,
+        "rowTotals": false,
+        "rowSubTotals": false,
+        "colSubTotals": false,
+        "hideTitle": false,
+        "hideSubtitle": false,
+        "showDimensionLabels": false,
+        "type": "LINE_LIST",
+        "program": {
+            "programType": "WITH_REGISTRATION",
+            "displayIncidentDate": true,
+            "displayEnrollmentDateLabel": "Enrollment date (e2e)",
+            "displayIncidentDateLabel": "Incident date (e2e)",
+            "id": "J1QQtmzqhJz",
+            "programStages": [
+                {
+                    "id": "jfuXZB3A1ko",
+                    "repeatable": true,
+                    "name": "Stage 1 - Repeatable"
+                }
+            ],
+            "name": "E2E program"
+        },
+        "programStage": {
+            "hideDueDate": false,
+            "displayExecutionDateLabel": "Event date (e2e)",
+            "displayDueDateLabel": "Scheduled date (e2e)",
+            "id": "jfuXZB3A1ko",
+            "repeatable": true,
+            "name": "Stage 1 - Repeatable"
+        },
+        "programDimensions": [],
+        "simpleDimensions": [
+            {
+                "parent": "COLUMN",
+                "dimension": "enrollmentDate",
+                "values": ["THIS_YEAR", "LAST_5_YEARS"]
+            }
+        ],
+        "outputType": "ENROLLMENT",
+        "collapseDataDimensions": false,
+        "hideNaData": false,
+        "legacy": false,
+        "filters": [],
+        "parentGraphMap": {},
+        "columns": [
+            {
+                "dimensionType": "ORGANISATION_UNIT",
+                "items": [
+                    {
+                        "id": "USER_ORGUNIT"
+                    }
+                ],
+                "dimension": "ou"
+            },
+            {
+                "dimensionType": "PERIOD",
+                "items": [
+                    {
+                        "id": "THIS_YEAR"
+                    },
+                    {
+                        "id": "LAST_5_YEARS"
+                    }
+                ],
+                "dimension": "enrollmentDate"
+            }
+        ],
+        "rows": [],
+        "favorite": false,
+        "displayName": "E2E: Enrollment",
+        "access": {
+            "manage": true,
+            "externalize": true,
+            "write": true,
+            "read": true,
+            "update": true,
+            "delete": true
+        },
+        "href": "https://test.e2e.dhis2.org/anly-41/api/41/eventVisualizations/AFjkDs7acBh",
+        "subscribed": false,
+        "displayFormName": "E2E: Enrollment",
+        "id": "AFjkDs7acBh",
+        "attributeValues": [],
+        "sorting": [],
+        "repetitions": []
+    },
+    "responses": {
+        "headers": [
+            {
+                "name": "ouname",
+                "column": "Organisation unit",
+                "valueType": "TEXT",
+                "type": "java.lang.String",
+                "hidden": false,
+                "meta": true,
+                "index": 0
+            },
+            {
+                "name": "enrollmentdate",
+                "column": "Enrollment date (e2e)",
+                "valueType": "DATETIME",
+                "type": "java.time.LocalDateTime",
+                "hidden": false,
+                "meta": true,
+                "index": 1
+            }
+        ],
+        "rows": [
+            ["Ngelehun CHC", "2025-01-18 00:00:00.0"],
+            ["Njandama MCHP", "2024-12-10 00:00:00.0"]
+        ],
+        "pager": {
+            "page": 1,
+            "pageSize": 100,
+            "isLastPage": true
+        },
+        "rowContext": {}
+    }
+}

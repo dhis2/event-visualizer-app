@@ -5,7 +5,7 @@ import React from 'react'
 import { DraggableDimensionItem as DimensionItem } from '../draggable-dimension-item'
 
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-    <>
+    <div style={{ height: '100vh' }}>
         <DndContext>
             <SortableContext
                 items={['test-item']}
@@ -15,7 +15,7 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
             </SortableContext>
         </DndContext>
         <CssVariables colors spacers theme />
-    </>
+    </div>
 )
 
 describe('<DimensionItem />', () => {
@@ -65,11 +65,17 @@ describe('<DimensionItem />', () => {
         cy.getByDataTest('subtract-button-test-dimension').should('not.exist')
 
         // Hover over the dimension item
-        cy.getByDataTest('dimension-item-Test-Dimension').realHover()
+        cy.getByDataTest('dimension-item-Test-Dimension')
+            .should('be.visible')
+            .realHover()
 
         // Verify the add button is now visible
         cy.getByDataTest('add-button-test-dimension').should('be.visible')
         cy.getByDataTest('subtract-button-test-dimension').should('not.exist')
+
+        // Move the cursor away to prevent odd things in the next tests
+        cy.get('body').realHover({ position: 'bottomLeft' })
+        cy.getByDataTest('add-button-test-dimension').should('not.be.visible')
     })
 
     it('displays a subtract button while hovering when selected and not disabled', () => {
@@ -86,11 +92,19 @@ describe('<DimensionItem />', () => {
             .and('not.be.visible')
 
         // Hover over the dimension item
-        cy.getByDataTest('dimension-item-Test-Dimension').realHover()
+        cy.getByDataTest('dimension-item-Test-Dimension')
+            .should('be.visible')
+            .realHover()
 
         // Verify the subtract button is now visible
         cy.getByDataTest('add-button-test-dimension').should('not.exist')
         cy.getByDataTest('subtract-button-test-dimension').should('be.visible')
+
+        // Move the cursor away to prevent odd things in the next tests
+        cy.get('body').realHover({ position: 'bottomLeft' })
+        cy.getByDataTest('subtract-button-test-dimension').should(
+            'not.be.visible'
+        )
     })
 
     it('does not have a menu button when disabled', () => {

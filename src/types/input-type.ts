@@ -1,0 +1,1 @@
+export type InputType = 'EVENT' | 'ENROLLMENT' | 'TRACKED_ENTITY_INSTANCE'

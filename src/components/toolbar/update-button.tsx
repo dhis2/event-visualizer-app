@@ -6,7 +6,5 @@ export const UpdateButton: FC = () => {
         console.log('TBD update button callback')
     }
 
-    /* TODO: under certain conditions we probably want to
-     * disable this button and/or set a loading state */
     return <UiUpdateButton onClick={onClick} />
 }

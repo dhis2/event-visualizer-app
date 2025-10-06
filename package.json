@@ -40,6 +40,7 @@
         "jsdom": "^26.1.0",
         "lint-staged": "^16.1.5",
         "openapi-typescript": "^7.8.0",
+        "resize-observer-polyfill": "^1.5.1",
         "start-server-and-test": "^2.0.12",
         "typescript": "^5",
         "typescript-plugin-css-modules": "^5.2.0",
@@ -47,9 +48,9 @@
         "vitest-canvas-mock": "^0.3.3"
     },
     "dependencies": {
-        "@dhis2/analytics": "^28.0.5",
+        "@dhis2/analytics": "^28.1.0",
         "@dhis2/app-runtime": "^3.14.5",
-        "@dhis2/ui": "^10.9.0",
+        "@dhis2/ui": "^10.9.1",
         "@reduxjs/toolkit": "^2.8.2",
         "deep-equal": "^2.2.3",
         "history": "^5.3.0",

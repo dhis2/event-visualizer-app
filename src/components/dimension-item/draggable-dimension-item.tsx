@@ -4,15 +4,14 @@ import { CSS } from '@dnd-kit/utilities'
 import React from 'react'
 import { DimensionItem } from './dimension-item'
 import { IconButton } from './icon-button'
-import type { SupportedDimensionType } from '@constants/dimension-types'
-import type { SupportedValueType } from '@constants/value-types'
+import type { DimensionType, ValueType } from '@types'
 
 interface DraggableDimensionItemProps {
     id: string
     draggableId?: string
     name: string
-    dimensionType: SupportedDimensionType
-    valueType?: SupportedValueType
+    dimensionType: DimensionType
+    valueType?: ValueType
     optionSet?: string | null
     stageName?: string
     disabled?: boolean
@@ -33,7 +32,7 @@ export const DraggableDimensionItem: React.FC<DraggableDimensionItemProps> = ({
     interface DimensionMetadata {
         id: string
         name: string
-        dimensionType: SupportedDimensionType
+        dimensionType: DimensionType
         valueType?: string
         optionSet?: string | null
     }

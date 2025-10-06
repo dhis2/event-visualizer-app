@@ -6,9 +6,6 @@ import classes from './styles/chip.module.css'
 import { TooltipContent } from './tooltip-content'
 import { useMetadataStore } from '@components/app-wrapper/metadata-provider'
 import { IconButton } from '@components/dimension-item/icon-button'
-import type { SupportedAxis } from '@constants/axis-types'
-import type { SupportedDimensionType } from '@constants/dimension-types'
-import type { SupportedValueType } from '@constants/value-types'
 import { useAppSelector } from '@hooks'
 import { getConditionsTexts } from '@modules/get-conditions-texts'
 import {
@@ -16,25 +13,26 @@ import {
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
 } from '@store/vis-ui-config-slice'
+import type { Axis, DimensionType, ValueType } from '@types'
 
 export type LayoutDimension = {
     id: string
     dimensionId: string
     name: string
-    dimensionType?: SupportedDimensionType
-    dimensionItemType?: SupportedDimensionType
+    dimensionType?: DimensionType
+    dimensionItemType?: DimensionType
     displayName?: string
     optionSet?: string
     programId?: string
     programStageId?: string
     code?: string
     suffix?: string
-    valueType?: SupportedValueType
+    valueType?: ValueType
 }
 
 interface ChipProps {
     dimension: LayoutDimension
-    axisId: SupportedAxis
+    axisId: Axis
 }
 
 export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
@@ -104,7 +102,7 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
             <div className={classes.content}>
                 <ChipBase
                     dimension={dimension}
-                    conditionsLength={0} // TODO https://dhis2.atlassian.net/browse/DHIS2-20105
+                    conditionsLength={0} // TODO: https://dhis2.atlassian.net/browse/DHIS2-20105
                     itemsLength={items.length}
                     inputType={inputType}
                     axisId={axisId}

@@ -1,15 +1,21 @@
 import i18n from '@dhis2/d2-i18n'
-import type { SupportedVisType } from '@constants/visualization-types'
+import { layoutGetAllDimensions } from '@dhis2/analytics'
+import { isTimeDimensionId, transformDimensions } from '@modules/dimension'
 import type {
+    DimensionId,
     CurrentVisualization,
     EmptyVisualization,
     NewVisualization,
     SavedVisualization,
+    VisualizationType,
 } from '@types'
 
-// TODO adjust the descriptions
+// TODO: adjust the descriptions
 // See: https://dhis2.atlassian.net/browse/DHIS2-19961
-export const getVisTypeDescriptions = (): Record<SupportedVisType, string> => ({
+export const getVisTypeDescriptions = (): Record<
+    VisualizationType,
+    string
+> => ({
     LINE_LIST: i18n.t(
         'Track or compare changes over time. Recommend period as category. (adjust for EVER)'
     ),
@@ -17,6 +23,67 @@ export const getVisTypeDescriptions = (): Record<SupportedVisType, string> => ({
         'View data and indicators in a manipulatable table. (adjust for EVER)'
     ),
 })
+
+export const headersMap: Record<DimensionId, string> = {
+    ou: 'ouname',
+    programStatus: 'programstatus',
+    eventStatus: 'eventstatus',
+    created: 'created',
+    createdBy: 'createdbydisplayname',
+    lastUpdatedBy: 'lastupdatedbydisplayname',
+    eventDate: 'eventdate',
+    enrollmentDate: 'enrollmentdate',
+    incidentDate: 'incidentdate',
+    scheduledDate: 'scheduleddate',
+    lastUpdated: 'lastupdated',
+}
+
+export const getHeadersMap = ({
+    showHierarchy,
+}: CurrentVisualization): Record<DimensionId, string> => {
+    const map = Object.assign({}, headersMap)
+
+    if (showHierarchy) {
+        map['ou'] = 'ounamehierarchy'
+    }
+
+    return map
+}
+
+export const transformVisualization = (
+    visualization: CurrentVisualization
+): CurrentVisualization => {
+    const transformedColumns = transformDimensions(
+        visualization.columns ?? [],
+        visualization
+    )
+    const transformedRows = transformDimensions(
+        visualization.rows ?? [],
+        visualization
+    )
+    const transformedFilters = transformDimensions(
+        visualization.filters ?? [],
+        visualization
+    )
+
+    // convert completedOnly option to eventStatus = COMPLETED filter
+    // destructuring here to avoid mutating the original value with delete
+    const { completedOnly, ...transformedVisualization } = visualization
+
+    if (completedOnly && visualization.outputType === 'EVENT') {
+        transformedFilters.push({
+            dimension: 'eventStatus',
+            items: [{ id: 'COMPLETED' }],
+        })
+    }
+
+    return {
+        ...transformedVisualization,
+        columns: transformedColumns,
+        rows: transformedRows,
+        filters: transformedFilters,
+    } as CurrentVisualization
+}
 
 export const dimensionMetadataPropMap: Record<string, string> = {
     dataElementDimensions: 'dataElement',
@@ -33,23 +100,31 @@ export const getDimensionMetadataFields = (): Array<string> =>
         ([listName, objectName]) => `${listName}[${objectName}[id,name]]`
     )
 
+export const isVisualizationWithTimeDimension = (vis: CurrentVisualization) =>
+    layoutGetAllDimensions(vis).some(
+        ({ dimensionType, dimension, items }) =>
+            (dimensionType === 'PERIOD' || isTimeDimensionId(dimension)) &&
+            Array.isArray(items) &&
+            items.length > 0
+    )
+
 // Type guards for CurrentVisualization union
-export const isEmptyVisualization = (
+export const isVisualizationEmpty = (
     visualization: CurrentVisualization
 ): visualization is EmptyVisualization =>
     Object.keys(visualization).length === 0
 
-export const isSavedVisualization = (
+export const isVisualizationSaved = (
     visualization: CurrentVisualization
 ): visualization is SavedVisualization => {
     return 'id' in visualization && typeof visualization.id === 'string'
 }
 
-export const isNewVisualization = (
+export const isVisualizationNew = (
     visualization: CurrentVisualization
 ): visualization is NewVisualization => {
     return (
-        !isEmptyVisualization(visualization) &&
-        !isSavedVisualization(visualization)
+        !isVisualizationEmpty(visualization) &&
+        !isVisualizationSaved(visualization)
     )
 }
