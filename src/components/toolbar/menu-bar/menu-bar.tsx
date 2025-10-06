@@ -5,9 +5,11 @@ import { ViewMenu } from './view-menu'
 import { VISUALIZATION_TYPES } from '@constants/visualization-types'
 import { FileMenu, HoverMenuBar } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
+import { isVisualizationSaved } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
+import { tLoadSavedVisualization } from '@store/thunks'
 
 export const MenuBar: FC = () => {
     const dispatch = useAppDispatch()
@@ -30,9 +32,13 @@ export const MenuBar: FC = () => {
 
     const onOpen = useCallback(
         (id: string) => {
-            dispatch(setNavigationState({ visualizationId: id }))
+            if (isVisualizationSaved(currentVis) && currentVis.id === id) {
+                dispatch(tLoadSavedVisualization(id))
+            } else {
+                dispatch(setNavigationState({ visualizationId: id }))
+            }
         },
-        [dispatch]
+        [dispatch, currentVis]
     )
 
     return (
