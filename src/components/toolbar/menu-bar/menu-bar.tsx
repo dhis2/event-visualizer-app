@@ -9,7 +9,7 @@ import { isVisualizationSaved } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
-import { tLoadSavedVisualization } from '@store/thunks'
+import { tResetCurrentVisualizationFromSaved } from '@store/thunks'
 
 export const MenuBar: FC = () => {
     const dispatch = useAppDispatch()
@@ -33,7 +33,7 @@ export const MenuBar: FC = () => {
     const onOpen = useCallback(
         (id: string) => {
             if (isVisualizationSaved(currentVis) && currentVis.id === id) {
-                dispatch(tLoadSavedVisualization(id))
+                dispatch(tResetCurrentVisualizationFromSaved())
             } else {
                 dispatch(setNavigationState({ visualizationId: id }))
             }

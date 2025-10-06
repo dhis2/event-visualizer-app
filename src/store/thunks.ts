@@ -25,6 +25,13 @@ export const tClearVisualization = () => (dispatch: AppDispatch) => {
     dispatch(clearCurrentVis())
 }
 
+export const tResetCurrentVisualizationFromSaved =
+    () => (dispatch: AppDispatch, getState: () => RootState) => {
+        const { savedVis } = getState()
+        dispatch(setVisUiConfig(getVisualizationUiConfig(savedVis)))
+        dispatch(setCurrentVis(savedVis))
+    }
+
 export const tLoadSavedVisualization = createAsyncThunk<
     void,
     string,
