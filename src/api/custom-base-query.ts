@@ -14,7 +14,7 @@ import type {
 // cater for both queries and mutations
 export type EngineArgs = Query | Mutation | SingleQuery
 type EngineResult = QueryResult | MutationResult | unknown
-type ThunkExtraArg = {
+export type ThunkExtraArg = {
     engine: DataEngine
     metadataStore: MetadataStore
     appCachedData: AppCachedData
