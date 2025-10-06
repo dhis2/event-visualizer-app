@@ -25,22 +25,16 @@ export const tClearVisualization = () => (dispatch: AppDispatch) => {
     dispatch(clearCurrentVis())
 }
 
-export const tResetCurrentVisualizationFromSaved =
-    () => (dispatch: AppDispatch, getState: () => RootState) => {
-        const { savedVis } = getState()
-        dispatch(setVisUiConfig(getVisualizationUiConfig(savedVis)))
-        dispatch(setCurrentVis(savedVis))
-    }
-
 export const tLoadSavedVisualization = createAsyncThunk<
     void,
     string,
     AppAsyncThunkConfig
->('visualization/load', async (visualizationId: string, { dispatch }) => {
+>('visualization/load', async (id: string, { dispatch }) => {
     const { data, error } = await dispatch(
-        eventVisualizationsApi.endpoints.getVisualization.initiate(
-            visualizationId
-        )
+        eventVisualizationsApi.endpoints.getVisualization.initiate(id, {
+            // This is consistent with other analytics apps
+            forceRefetch: true,
+        })
     )
     if (data) {
         dispatch(setSavedVis(data))
