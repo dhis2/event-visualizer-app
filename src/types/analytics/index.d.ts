@@ -9,6 +9,7 @@ import type { HoverMenuDropdown } from './hover-menu-dropdown'
 import type { HoverMenuList } from './hover-menu-list'
 import type { HoverMenuListItem } from './hover-menu-list-item'
 import type { InterpretationsAndDetailsToggler } from './interpretations-and-details-toggler'
+import type { OuIdHelper } from './ou-id-helper'
 import type { PivotTable } from './pivot-table'
 import type { Toolbar } from './toolbar'
 import type { ToolbarSidebar } from './toolbar-sidebar'
@@ -71,4 +72,5 @@ declare module '@dhis2/analytics' {
         visualization: Partial<SavedVisualization>
     ) => string
     export const LegendKey: FC<{ legendSets: LegendSet[] }>
+    export const ouIdHelper: OuIdHelper
 }

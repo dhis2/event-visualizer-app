@@ -1,82 +1,160 @@
-import { formatValue, ouIdHelper } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import { formatDimensionId } from './dimensionId.js'
-import type { LayoutDimension } from '@components/visualization-layout/chip'
-import type { SupportedValueType } from '@constants/value-types'
+import {
+    isLegendSetMetadataItem,
+    isOptionSetMetadataItem,
+} from '@components/app-wrapper/metadata-helpers/type-guards'
+import type { LayoutDimension } from '@components/layout-panel/chip'
+import { formatValue, ouIdHelper } from '@dhis2/analytics'
+import type { MetadataStore, SavedVisualization, ValueType } from '@types'
 
 // parse e.g. 'LT:25:GT:15' to ['LT:25', 'GT:15']
-export const parseConditionsStringToArray = (conditionsString) =>
-    conditionsString?.match(/[^:]+:[^:]+/g) || conditionsString || []
+export const parseConditionsStringToArray = (
+    conditionsStringOrArray: string | Array<string>
+): Array<string> =>
+    Array.isArray(conditionsStringOrArray)
+        ? conditionsStringOrArray
+        : conditionsStringOrArray.match(/[^:]+:[^:]+/g) ?? []
 
 // parse e.g. ['LT:25', 'GT:15'] to 'LT:25:GT:15'
-export const parseConditionsArrayToString = (conditionsArray) =>
-    conditionsArray.join(':')
+export const parseConditionsArrayToString = (
+    conditionsArray: Array<string>
+): string => conditionsArray.join(':')
 
-export const parseCondition = (conditionItem) =>
-    conditionItem.split(':').pop().split(';')
+export const parseCondition = (conditionItem: string) =>
+    conditionItem.split(':').pop()?.split(';')
 
-export const NULL_VALUE = 'NV'
-export const TRUE_VALUE = '1'
-export const FALSE_VALUE = '0'
+type GetMetadataItemFn = MetadataStore['getMetadataItem']
 
-export const OPERATOR_EQUAL = 'EQ'
-export const OPERATOR_GREATER = 'GT'
-export const OPERATOR_GREATER_OR_EQUAL = 'GE'
-export const OPERATOR_LESS = 'LT'
-export const OPERATOR_LESS_OR_EQUAL = 'LE'
-export const OPERATOR_NOT_EQUAL = '!EQ'
-export const OPERATOR_EMPTY = `EQ:${NULL_VALUE}`
-export const OPERATOR_NOT_EMPTY = `NE:${NULL_VALUE}`
-export const OPERATOR_IN = 'IN'
-export const OPERATOR_CONTAINS = 'LIKE'
-export const OPERATOR_NOT_CONTAINS = '!LIKE'
+/**
+ * Boolean value representations
+ */
+type BooleanValue =
+    /** No value */
+    | 'NV'
+    /** True */
+    | '1'
+    /** False */
+    | '0'
 
-export const PREFIX_CASE_INSENSITIVE = 'I'
-export const PREFIX_NOT = '!'
+/**
+ * Query operators for filtering conditions
+ */
+type QueryOperator =
+    /** Equal */
+    | 'EQ'
+    /** Equal (case insensitive) */
+    | 'IEQ'
+    /** Greater than */
+    | 'GT'
+    /** Greater than or equal */
+    | 'GE'
+    /** Less than */
+    | 'LT'
+    /** Less than or equal */
+    | 'LE'
+    /** Not equal */
+    | '!EQ'
+    /** Empty/null value */
+    | 'EQ:NV'
+    /** Not empty/not null */
+    | 'NE:NV'
+    /** In (contains any of) */
+    | 'IN'
+    /** Contains (like) */
+    | 'LIKE'
+    /** Contains (like case insensitive) */
+    | 'ILIKE'
+    /** Does not contain */
+    | '!LIKE'
 
-export const getNumericOperators = () => ({
-    [OPERATOR_EQUAL]: i18n.t('equal to (=)'),
-    [OPERATOR_GREATER]: i18n.t('greater than (>)'),
-    [OPERATOR_GREATER_OR_EQUAL]: i18n.t('greater than or equal to (≥)'),
-    [OPERATOR_LESS]: i18n.t('less than (<)'),
-    [OPERATOR_LESS_OR_EQUAL]: i18n.t('less than or equal to (≤)'),
-    [OPERATOR_NOT_EQUAL]: i18n.t('not equal to (≠)'),
-    [OPERATOR_EMPTY]: i18n.t('is empty / null'),
-    [OPERATOR_NOT_EMPTY]: i18n.t('is not empty / not null'),
+/**
+ * Query prefixes for modifying operators
+ */
+type QueryPrefix =
+    /** Case insensitive */
+    | 'I'
+    /** Negation */
+    | '!'
+
+/**
+ * Numeric query operators for filtering conditions
+ */
+type NumericQueryOperator = Extract<
+    QueryOperator,
+    'EQ' | 'GT' | 'GE' | 'LT' | 'LE' | '!EQ' | 'EQ:NV' | 'NE:NV'
+>
+export const getNumericOperators = (): Record<
+    NumericQueryOperator,
+    string
+> => ({
+    EQ: i18n.t('equal to (=)'),
+    GT: i18n.t('greater than (>)'),
+    GE: i18n.t('greater than or equal to (≥)'),
+    LT: i18n.t('less than (<)'),
+    LE: i18n.t('less than or equal to (≤)'),
+    '!EQ': i18n.t('not equal to (≠)'),
+    'EQ:NV': i18n.t('is empty / null'),
+    'NE:NV': i18n.t('is not empty / not null'),
 })
 
-export const getAlphaNumericOperators = () => ({
-    [OPERATOR_EQUAL]: i18n.t('exactly'),
-    [OPERATOR_NOT_EQUAL]: i18n.t('is not'),
-    [OPERATOR_CONTAINS]: i18n.t('contains'),
-    [OPERATOR_NOT_CONTAINS]: i18n.t('does not contain'),
-    [OPERATOR_EMPTY]: i18n.t('is empty / null'),
-    [OPERATOR_NOT_EMPTY]: i18n.t('is not empty / not null'),
+/**
+ * Alphanumeric query operators for filtering conditions
+ */
+type AlphaNumericQueryOperator = Extract<
+    QueryOperator,
+    'EQ' | '!EQ' | 'LIKE' | '!LIKE' | 'EQ:NV' | 'NE:NV'
+>
+export const getAlphaNumericOperators = (): Record<
+    AlphaNumericQueryOperator,
+    string
+> => ({
+    EQ: i18n.t('exactly'),
+    '!EQ': i18n.t('is not'),
+    LIKE: i18n.t('contains'),
+    '!LIKE': i18n.t('does not contain'),
+    'EQ:NV': i18n.t('is empty / null'),
+    'NE:NV': i18n.t('is not empty / not null'),
 })
 
-export const getDateOperators = () => ({
-    [OPERATOR_EQUAL]: i18n.t('exactly'),
-    [OPERATOR_NOT_EQUAL]: i18n.t('is not'),
-    [OPERATOR_GREATER]: i18n.t('after'),
-    [OPERATOR_GREATER_OR_EQUAL]: i18n.t('after or including'),
-    [OPERATOR_LESS]: i18n.t('before'),
-    [OPERATOR_LESS_OR_EQUAL]: i18n.t('before or including'),
-    [OPERATOR_EMPTY]: i18n.t('is empty / null'),
-    [OPERATOR_NOT_EMPTY]: i18n.t('is not empty / not null'),
+/**
+ * Date query operators for filtering conditions
+ */
+type DateQueryOperator = Extract<
+    QueryOperator,
+    'EQ' | '!EQ' | 'GT' | 'GE' | 'LT' | 'LE' | 'EQ:NV' | 'NE:NV'
+>
+
+export const getDateOperators = (): Record<DateQueryOperator, string> => ({
+    EQ: i18n.t('exactly'),
+    '!EQ': i18n.t('is not'),
+    GT: i18n.t('after'),
+    GE: i18n.t('after or including'),
+    LT: i18n.t('before'),
+    LE: i18n.t('before or including'),
+    'EQ:NV': i18n.t('is empty / null'),
+    'NE:NV': i18n.t('is not empty / not null'),
 })
 
-export const getBooleanValues = () => ({
-    [TRUE_VALUE]: i18n.t('Yes'),
-    [FALSE_VALUE]: i18n.t('No'),
-    [NULL_VALUE]: i18n.t('Not answered'),
+export const getBooleanValues = (): Record<BooleanValue, string> => ({
+    '1': i18n.t('Yes'),
+    '0': i18n.t('No'),
+    NV: i18n.t('Not answered'),
 })
 
 export const API_TIME_DIVIDER = '.'
 export const UI_TIME_DIVIDER = ':'
 export const API_DATETIME_DIVIDER = 'T'
 export const UI_DATETIME_DIVIDER = ' '
+export const PREFIX_CASE_INSENSITIVE: QueryPrefix = 'I'
+export const PREFIX_NOT: QueryPrefix = '!'
+export const OPERATOR_IN: QueryOperator = 'IN'
+export const OPERATOR_EQUAL: QueryOperator = 'EQ'
+export const NULL_VALUE: BooleanValue = 'NV'
 
-export const addCaseSensitivePrefix = (operator, isCaseSensitive: boolean) => {
+export const addCaseSensitivePrefix = (
+    operator: QueryOperator,
+    isCaseSensitive: boolean
+): QueryOperator => {
     if (isCaseSensitive) {
         // e.g. LIKE -> LIKE
         return operator
@@ -85,15 +163,17 @@ export const addCaseSensitivePrefix = (operator, isCaseSensitive: boolean) => {
             // e.g. !LIKE -> !ILIKE
             return `${PREFIX_NOT}${PREFIX_CASE_INSENSITIVE}${operator.substring(
                 1
-            )}`
+            )}` as QueryOperator
         } else {
             // e.g. LIKE -> ILIKE
-            return `${PREFIX_CASE_INSENSITIVE}${operator}`
+            return `${PREFIX_CASE_INSENSITIVE}${operator}` as QueryOperator
         }
     }
 }
 
-export const removeCaseSensitivePrefix = (operator) => {
+export const removeCaseSensitivePrefix = (
+    operator: QueryOperator
+): QueryOperator => {
     const isCaseSensitive = checkIsCaseSensitive(operator)
     if (isCaseSensitive) {
         // e.g. LIKE -> LIKE, !LIKE -> !LIKE
@@ -101,10 +181,10 @@ export const removeCaseSensitivePrefix = (operator) => {
     } else {
         if (operator[0] === PREFIX_NOT) {
             // e.g. !ILIKE -> !LIKE
-            return `${PREFIX_NOT}${operator.substring(2)}`
+            return `${PREFIX_NOT}${operator.substring(2)}` as QueryOperator
         } else {
             // e.g. ILIKE -> LIKE
-            return `${operator.substring(1)}`
+            return `${operator.substring(1)}` as QueryOperator
         }
     }
 }
@@ -113,7 +193,7 @@ export const removeCaseSensitivePrefix = (operator) => {
 // but if it were the result would be wrong. The function
 // should probably control for the allowed operators and throw if the
 // operator isn't one of the allowed ones.
-export const checkIsCaseSensitive = (operator) => {
+export const checkIsCaseSensitive = (operator: QueryOperator): boolean => {
     if (operator[0] === PREFIX_NOT) {
         // !LIKE, !ILIKE, !EQ, !IEQ
         return operator[1] !== PREFIX_CASE_INSENSITIVE
@@ -123,7 +203,7 @@ export const checkIsCaseSensitive = (operator) => {
     }
 }
 
-const getOperatorsByValueType = (valueType: SupportedValueType) => {
+const getOperatorsByValueType = (valueType: ValueType) => {
     switch (valueType) {
         case 'LETTER':
         case 'TEXT':
@@ -152,71 +232,108 @@ const getOperatorsByValueType = (valueType: SupportedValueType) => {
     }
 }
 
-const lookupOptionSetOptionMetadata = (optionSetId, code, getMetadataItem) => {
+const lookupOptionSetOptionMetadata = (
+    optionSetId: string,
+    code: string,
+    getMetadataItem: GetMetadataItemFn
+) => {
     const optionSetMetaData = getMetadataItem(optionSetId)
 
-    return optionSetMetaData
-        ? optionSetMetaData.options?.find((option) => option.code === code)
-        : undefined
+    if (!optionSetMetaData) {
+        return undefined
+    }
+
+    if (!isOptionSetMetadataItem(optionSetMetaData)) {
+        throw new Error('Not a valid option set metadata item')
+    }
+
+    return optionSetMetaData.options?.find((option) => option.code === code)
 }
 
 interface GetConditionsTextsParams {
-    conditions?: {
+    conditions: {
         condition?: string | string[]
         legendSet?: string
     }
-    dimension?: LayoutDimension
-    formatValueOptions?: {
+    dimension: LayoutDimension
+    formatValueOptions: {
         locale?: string
-        digitGroupSeparator?: string
+        digitGroupSeparator?: SavedVisualization['digitGroupSeparator']
         baseUrl?: string
     }
-    getMetadataItem: (id: string) => MetadataStoreItem | undefined
+    getMetadataItem: GetMetadataItemFn
 }
 
 export const getConditionsTexts = ({
-    conditions = {},
-    dimension = {},
-    formatValueOptions = {},
+    conditions,
+    dimension,
+    formatValueOptions,
     getMetadataItem,
-}) => {
-    const conditionsList = parseConditionsStringToArray(conditions.condition)
+}: GetConditionsTextsParams): Array<string> => {
+    const conditionsList = parseConditionsStringToArray(
+        conditions?.condition ?? ''
+    )
 
-    if (conditions.legendSet) {
-        if (!conditionsList?.length) {
-            return [metadata[conditions.legendSet]?.name]
+    if (conditions?.legendSet) {
+        if (conditionsList.length === 0) {
+            const legendSetName = getMetadataItem(conditions.legendSet)?.name
+            if (!legendSetName) {
+                throw new Error('Could not read legend set name')
+            }
+            return [legendSetName]
         } else {
-            const legends = parseCondition(conditionsList[0])
-            const allLegends = metadata[conditions.legendSet]?.legends || []
+            const legendIds = parseCondition(conditionsList[0])
+            const metadataLegendSet = getMetadataItem(conditions.legendSet)
 
-            const legendNames = legends.map(
-                (legend) => allLegends.find((l) => l.id === legend)?.name
-            )
-            return legendNames
+            if (!legendIds || !metadataLegendSet) {
+                return []
+            }
+
+            if (!isLegendSetMetadataItem(metadataLegendSet)) {
+                throw new Error('Metadata item is not of type legend set')
+            }
+
+            return legendIds
+                .map(
+                    (legendId) =>
+                        metadataLegendSet.legends.find((l) => l.id === legendId)
+                            ?.name
+                )
+                .filter((maybeName) => typeof maybeName === 'string')
         }
     }
 
-    if (dimension.optionSet && conditionsList[0]?.startsWith(OPERATOR_IN)) {
+    if (
+        typeof dimension.optionSet === 'string' &&
+        conditionsList[0]?.startsWith(OPERATOR_IN)
+    ) {
+        const optionSet = dimension.optionSet
         const items = parseCondition(conditionsList[0])
 
-        const itemNames = items.map(
-            (code) =>
-                lookupOptionSetOptionMetadata(
-                    dimension.optionSet,
-                    code,
-                    getMetadataItem
-                )?.name
-        )
-        return itemNames
+        if (!items) {
+            return []
+        }
+
+        return items
+            .map(
+                (code) =>
+                    lookupOptionSetOptionMetadata(
+                        optionSet,
+                        code,
+                        getMetadataItem
+                    )?.name
+            )
+            .filter((maybeName) => typeof maybeName === 'string')
     }
 
     if (
-        ['BOOLEAN', 'TRUE_ONLY'].includes(dimension.valueType) &&
+        ['BOOLEAN', 'TRUE_ONLY'].includes(dimension.valueType ?? '') &&
         conditionsList[0]?.startsWith(OPERATOR_IN)
     ) {
         const values = parseCondition(conditionsList[0])
-        const valueNames = values.map((value) => getBooleanValues()[value])
-        return valueNames
+        return Array.isArray(values)
+            ? values.map((value) => getBooleanValues()[value])
+            : []
     }
 
     if (
@@ -225,20 +342,26 @@ export const getConditionsTexts = ({
             conditionsList[0]?.startsWith(OPERATOR_IN))
     ) {
         const ouIds = parseCondition(conditionsList[0])
-        const ouNames = ouIds.map(
-            (ouId) =>
-                getMetadataItem(ouId)?.name ??
-                getMetadataItem(ouIdHelper.removePrefix(ouId))?.name ??
-                // Default to showing the ID, but this should never happen
-                ouId
-        )
-        return ouNames
+        return Array.isArray(ouIds)
+            ? ouIds.map(
+                  (ouId) =>
+                      getMetadataItem(ouId)?.name ??
+                      getMetadataItem(ouIdHelper.removePrefix(ouId))?.name ??
+                      // Default to showing the ID, but this should never happen
+                      ouId
+              )
+            : []
+    }
+
+    if (typeof dimension.valueType === 'undefined') {
+        return []
     }
 
     const operators = getOperatorsByValueType(dimension.valueType)
 
-    const parsedConditions = conditionsList.map((condition) => {
-        let operator, value
+    return conditionsList.map((condition) => {
+        let operator: string = ''
+        let value: string = ''
 
         if (condition.includes(NULL_VALUE)) {
             operator = condition
@@ -248,11 +371,11 @@ export const getConditionsTexts = ({
                 dimension.dimensionType === 'PROGRAM_INDICATOR'
                     ? 'NUMBER'
                     : dimension.valueType
-            operator = removeCaseSensitivePrefix(parts[0])
-            value = formatValue(parts[1], valueType, formatValueOptions)
+            operator = removeCaseSensitivePrefix(parts[0] as QueryOperator)
+            value = formatValue(parts[1], valueType!, formatValueOptions)
         }
 
-        if (value && ['TIME', 'DATETIME'].includes(dimension.valueType)) {
+        if (value && ['TIME', 'DATETIME'].includes(dimension.valueType ?? '')) {
             value = value.replaceAll(API_TIME_DIVIDER, UI_TIME_DIVIDER)
         }
         if (value && dimension.valueType === 'DATETIME') {
@@ -266,6 +389,4 @@ export const getConditionsTexts = ({
             ? `${capitalCaseOperatorName}: ${value}`
             : capitalCaseOperatorName
     })
-
-    return parsedConditions
 }
