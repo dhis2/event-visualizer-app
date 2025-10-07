@@ -1,195 +1,221 @@
-// import {
-//     ouIdHelper,
-// } from '@dhis2/analytics'
-// import i18n from '@dhis2/d2-i18n'
-import React from 'react'
-// import {
-//     isStartEndDate,
-//     useLocalizedStartEndDateFormatter,
-// } from '../../modules/dates.js'
-// import { 'STATUS' } from '../../modules/dimensionConstants.js'
-// import { extractDimensionIdParts } from '../../modules/dimensionId.js'
-// import { sGetMetadata } from '../../reducers/metadata.js'
-// import { sGetUiInputType, sGetUiItemsByDimension } from '../../reducers/ui.js'
-// import styles from './styles/Tooltip.module.css'
+import i18n from '@dhis2/d2-i18n'
+import { useCallback, useMemo, type FC } from 'react'
+import type { LayoutDimension } from './chip'
+import styles from './styles/tooltip.module.css'
+import { isProgramMetadataItem } from '@components/app-wrapper/metadata-helpers/type-guards'
+import {
+    useMetadataItem,
+    useMetadataStore,
+} from '@components/app-wrapper/metadata-provider'
+import { ouIdHelper } from '@dhis2/analytics'
+import { useAppSelector } from '@hooks'
+import {
+    isStartEndDate,
+    useLocalizedStartEndDateFormatter,
+} from '@modules/dates'
+import { getDimensionIdParts } from '@modules/dimension'
+import {
+    getVisUiConfigItemsByDimension,
+    getVisUiConfigInputType,
+} from '@store/vis-ui-config-slice'
 
-// const renderLimit = 5
+const MAX_LIST_LENGTH = 5
 
-export const TooltipContent = () => {
-    return <div>Tooltip content</div>
+type TooltipContentProps = {
+    dimension: LayoutDimension
+    conditionsTexts: string[]
+    axisId: string
 }
 
-// export const TooltipContent = ({ dimension, conditionsTexts, axisId }) => {
-//     const metadata = useSelector(sGetMetadata)
-//     const inputType = useSelector(sGetUiInputType)
-//     const itemIds = useSelector((state) =>
-//         sGetUiItemsByDimension(state, dimension.id)
-//     )
-//     const formatStartEndDate = useLocalizedStartEndDateFormatter()
+export const TooltipContent: FC<TooltipContentProps> = ({
+    dimension,
+    conditionsTexts,
+    axisId,
+}) => {
+    const { getMetadataItem } = useMetadataStore()
+    const inputType = useAppSelector(getVisUiConfigInputType)
+    const itemIds = useAppSelector((state) =>
+        getVisUiConfigItemsByDimension(state, dimension.id)
+    )
+    const formatStartEndDate = useLocalizedStartEndDateFormatter()
+    const { programStageId, programId } = useMemo(
+        () =>
+            getDimensionIdParts({
+                id: dimension.id,
+                inputType,
+            }),
+        [dimension.id, inputType]
+    )
+    const programMetadata = useMetadataItem(programId ?? '')
+    const { programName, stageName } = useMemo(
+        () =>
+            !programMetadata || !isProgramMetadataItem(programMetadata)
+                ? { programName: '', stageName: '' }
+                : {
+                      programName: programMetadata.name,
+                      stageName:
+                          programMetadata.programStages?.find(
+                              (stage) => stage.id === programStageId
+                          )?.name ?? '',
+                  },
+        [programMetadata, programStageId]
+    )
 
-//     const { programStageId, programId } = extractDimensionIdParts(
-//         dimension.id,
-//         inputType
-//     )
+    const getNameList = useCallback(
+        (idList: Array<string>, label: string) =>
+            idList.reduce((levelString, levelId, index) => {
+                if (index > 0) {
+                    levelString += ', '
+                }
+                const levelName = getMetadataItem(levelId)?.name
+                levelString += levelName ?? levelId
 
-//     const stageName = dimension.stageName || metadata[programStageId]?.name
-//     const programName = metadata[programId]?.name
+                return levelString
+            }, `${label}: `),
+        [getMetadataItem]
+    )
+    const itemDisplayNames = useMemo<Array<string>>(() => {
+        const levelIds: Array<string> = []
+        const groupIds: Array<string> = []
+        const itemDisplayNames: Array<string> = []
 
-//     const getNameList = (idList, label, metadata) =>
-//         idList.reduce(
-//             (levelString, levelId, index) =>
-//                 `${levelString}${index > 0 ? `, ` : ``}${
-//                     metadata[levelId] ? metadata[levelId].name : levelId
-//                 }`,
-//             `${label}: `
-//         )
+        itemIds.forEach((id) => {
+            if (ouIdHelper.hasLevelPrefix(id)) {
+                levelIds.push(ouIdHelper.removePrefix(id))
+            } else if (ouIdHelper.hasGroupPrefix(id)) {
+                groupIds.push(ouIdHelper.removePrefix(id))
+            } else {
+                const { dimensionId } = getDimensionIdParts({ id, inputType })
+                itemDisplayNames.push(
+                    isStartEndDate(dimensionId)
+                        ? formatStartEndDate(dimensionId)
+                        : getMetadataItem(dimensionId)?.name ?? id
+                )
+            }
+        })
 
-//     const getItemDisplayNames = () => {
-//         const levelIds = []
-//         const groupIds = []
-//         const itemDisplayNames = []
+        if (levelIds.length > 0) {
+            itemDisplayNames.push(getNameList(levelIds, i18n.t('Levels')))
+        }
 
-//         itemIds.forEach((id) => {
-//             if (ouIdHelper.hasLevelPrefix(id)) {
-//                 levelIds.push(ouIdHelper.removePrefix(id))
-//             } else if (ouIdHelper.hasGroupPrefix(id)) {
-//                 groupIds.push(ouIdHelper.removePrefix(id))
-//             } else {
-//                 const { dimensionId } = extractDimensionIdParts(id, inputType)
-//                 itemDisplayNames.push(
-//                     isStartEndDate(dimensionId)
-//                         ? formatStartEndDate(dimensionId)
-//                         : metadata[dimensionId]?.name ?? id
-//                 )
-//             }
-//         })
+        if (groupIds.length > 0) {
+            itemDisplayNames.push(getNameList(groupIds, i18n.t('Groups')))
+        }
 
-//         levelIds.length &&
-//             itemDisplayNames.push(
-//                 getNameList(levelIds, i18n.t('Levels'), metadata)
-//             )
+        return itemDisplayNames
+    }, [itemIds, getNameList, inputType, formatStartEndDate, getMetadataItem])
 
-//         groupIds.length &&
-//             itemDisplayNames.push(
-//                 getNameList(groupIds, i18n.t('Groups'), metadata)
-//             )
+    const renderItems = (itemDisplayNames: Array<string>) => {
+        if (itemDisplayNames.some((name) => !name)) {
+            return null
+        }
+        const itemsToRender = itemDisplayNames
+            .slice(0, MAX_LIST_LENGTH)
+            .map((name) => (
+                <li key={`${dimension.id}-${name}`} className={styles.item}>
+                    {name}
+                </li>
+            ))
 
-//         return itemDisplayNames
-//     }
+        const numberOverRenderLimit = itemDisplayNames.length - MAX_LIST_LENGTH
+        if (numberOverRenderLimit > 0) {
+            itemsToRender.push(
+                <li
+                    key={`${dimension.id}-render-limit`}
+                    className={styles.item}
+                >
+                    {i18n.t('And {{count}} other...', {
+                        count: numberOverRenderLimit,
+                        defaultValue: 'And {{count}} other...',
+                        defaultValue_plural: 'And {{count}} others...',
+                    })}
+                </li>
+            )
+        }
 
-//     const renderItems = (itemDisplayNames = []) => {
-//         if (itemDisplayNames.some((name) => !name)) {
-//             return null
-//         }
-//         const itemsToRender = itemDisplayNames
-//             .slice(0, renderLimit)
-//             .map((name) => (
-//                 <li key={`${dimension.id}-${name}`} className={styles.item}>
-//                     {name}
-//                 </li>
-//             ))
+        return itemsToRender
+    }
 
-//         const numberOverRenderLimit = itemDisplayNames.length - renderLimit
-//         if (numberOverRenderLimit > 0) {
-//             itemsToRender.push(
-//                 <li
-//                     key={`${dimension.id}-render-limit`}
-//                     className={styles.item}
-//                 >
-//                     {i18n.t('And {{count}} other...', {
-//                         count: numberOverRenderLimit,
-//                         defaultValue: 'And {{count}} other...',
-//                         defaultValue_plural: 'And {{count}} others...',
-//                     })}
-//                 </li>
-//             )
-//         }
+    const renderNoItemsLabel = () => (
+        <li key={`${dimension.id}-none-selected`} className={styles.item}>
+            {i18n.t('None selected')}
+        </li>
+    )
 
-//         return itemsToRender
-//     }
+    const renderStageName = () =>
+        stageName && (
+            <li className={styles.item}>
+                {i18n.t('Program stage: {{- stageName}}', {
+                    stageName,
+                    nsSeparator: '^^',
+                })}
+            </li>
+        )
 
-//     const renderNoItemsLabel = () => (
-//         <li key={`${dimension.id}-none-selected`} className={styles.item}>
-//             {i18n.t('None selected')}
-//         </li>
-//     )
+    const renderProgramName = () =>
+        programName && (
+            <li className={styles.item}>
+                {i18n.t('Program: {{- programName}}', {
+                    programName,
+                    nsSeparator: '^^',
+                })}
+            </li>
+        )
 
-//     const renderStageName = () =>
-//         stageName && (
-//             <li className={styles.item}>
-//                 {i18n.t('Program stage: {{- stageName}}', {
-//                     stageName,
-//                     nsSeparator: '^^',
-//                 })}
-//             </li>
-//         )
+    const renderItemsSection = (itemsList) => {
+        if (itemsList.length) {
+            return renderItems(itemsList)
+        } else if (axisId === 'filters') {
+            return renderNoItemsLabel()
+        } else {
+            return (
+                <li
+                    key={`${dimension.id}-all-selected`}
+                    className={styles.item}
+                >
+                    {i18n.t('Showing all values for this dimension')}
+                </li>
+            )
+        }
+    }
 
-//     const renderProgramName = () =>
-//         programName && (
-//             <li className={styles.item}>
-//                 {i18n.t('Program: {{- programName}}', {
-//                     programName,
-//                     nsSeparator: '^^',
-//                 })}
-//             </li>
-//         )
-
-//     const renderItemsSection = (itemsList) => {
-//         if (itemsList.length) {
-//             return renderItems(itemsList)
-//         } else if (axisId === 'filters') {
-//             return renderNoItemsLabel()
-//         } else {
-//             return (
-//                 <li
-//                     key={`${dimension.id}-all-selected`}
-//                     className={styles.item}
-//                 >
-//                     {i18n.t('Showing all values for this dimension')}
-//                 </li>
-//             )
-//         }
-//     }
-
-//     const itemDisplayNames = Boolean(itemIds.length) && getItemDisplayNames()
-
-//     switch (dimension.dimensionType) {
-//         case 'CATEGORY':
-//         case 'CATEGORY_OPTION_GROUP_SET':
-//         case 'ORGANISATION_UNIT_GROUP_SET':
-//         case 'STATUS':
-//             return (
-//                 <ul className={styles.list} data-test="tooltip-content">
-//                     {renderProgramName()}
-//                     {renderItemsSection(itemDisplayNames)}
-//                 </ul>
-//             )
-//         case 'PERIOD':
-//         case 'ORGANISATION_UNIT':
-//             return (
-//                 <ul className={styles.list} data-test="tooltip-content">
-//                     {renderProgramName()}
-//                     {itemDisplayNames
-//                         ? renderItems(itemDisplayNames)
-//                         : renderNoItemsLabel()}
-//                 </ul>
-//             )
-//         case 'DATA_ELEMENT': {
-//             return (
-//                 <ul className={styles.list} data-test="tooltip-content">
-//                     {renderProgramName()}
-//                     {renderStageName()}
-//                     {renderItemsSection(conditionsTexts)}
-//                 </ul>
-//             )
-//         }
-//         default: {
-//             return (
-//                 <ul className={styles.list} data-test="tooltip-content">
-//                     {renderProgramName()}
-//                     {renderItemsSection(conditionsTexts)}
-//                 </ul>
-//             )
-//         }
-//     }
-// }
+    switch (dimension.dimensionType) {
+        case 'CATEGORY':
+        case 'CATEGORY_OPTION_GROUP_SET':
+        case 'ORGANISATION_UNIT_GROUP_SET':
+        case 'STATUS':
+            return (
+                <ul className={styles.list} data-test="tooltip-content">
+                    {renderProgramName()}
+                    {renderItemsSection(itemDisplayNames)}
+                </ul>
+            )
+        case 'PERIOD':
+        case 'ORGANISATION_UNIT':
+            return (
+                <ul className={styles.list} data-test="tooltip-content">
+                    {renderProgramName()}
+                    {itemDisplayNames
+                        ? renderItems(itemDisplayNames)
+                        : renderNoItemsLabel()}
+                </ul>
+            )
+        case 'DATA_ELEMENT': {
+            return (
+                <ul className={styles.list} data-test="tooltip-content">
+                    {renderProgramName()}
+                    {renderStageName()}
+                    {renderItemsSection(conditionsTexts)}
+                </ul>
+            )
+        }
+        default: {
+            return (
+                <ul className={styles.list} data-test="tooltip-content">
+                    {renderProgramName()}
+                    {renderItemsSection(conditionsTexts)}
+                </ul>
+            )
+        }
+    }
+}
