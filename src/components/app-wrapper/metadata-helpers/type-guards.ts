@@ -3,6 +3,8 @@ import type {
     SimpleMetadataItem,
     ProgramMetadataItem,
     OptionSetMetadataItem,
+    LegendSetMetadataItem,
+    MetadataStoreItem,
 } from './types'
 import type { MetadataItem } from '@types'
 
@@ -30,7 +32,8 @@ export const isSingleMetadataItemInput = (
         isMetadataItem(item) ||
         isSimpleMetadataItem(item) ||
         isProgramMetadataItem(item) ||
-        isOptionSetMetadataItem(item)
+        isOptionSetMetadataItem(item) ||
+        isLegendSetMetadataItem(item)
     )
 }
 
@@ -62,7 +65,7 @@ export const isSimpleMetadataItem = (
 }
 
 export const isProgramMetadataItem = (
-    input: AnyMetadataItemInput
+    input: AnyMetadataItemInput | MetadataStoreItem
 ): input is ProgramMetadataItem => {
     return (
         isObject(input) &&
@@ -76,7 +79,7 @@ export const isProgramMetadataItem = (
 }
 
 export function isOptionSetMetadataItem(
-    input: AnyMetadataItemInput
+    input: AnyMetadataItemInput | MetadataStoreItem
 ): input is OptionSetMetadataItem {
     return (
         isObject(input) &&
@@ -85,5 +88,19 @@ export function isOptionSetMetadataItem(
         'name' in input &&
         isPopulatedString(input.id) &&
         isPopulatedString(input.name)
+    )
+}
+
+export function isLegendSetMetadataItem(
+    input: AnyMetadataItemInput | MetadataStoreItem
+): input is LegendSetMetadataItem {
+    return (
+        isObject(input) &&
+        'id' in input &&
+        'name' in input &&
+        'legends' in input &&
+        isPopulatedString(input.id) &&
+        isPopulatedString(input.name) &&
+        Array.isArray(input.legends)
     )
 }

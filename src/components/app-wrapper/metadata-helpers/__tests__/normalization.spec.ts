@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, describe, it } from 'vitest'
-import { normalizeMetadataInputItem } from '../normalization'
+import {
+    normalizeMetadataInputItem,
+    normalizeLegendSetMetadataItem,
+} from '../normalization'
 
 describe('normalization', () => {
     describe('normalizeMetadataInputItem', () => {
@@ -702,6 +705,93 @@ describe('normalization', () => {
                     })
                     expect((result as any).options).toHaveLength(1000)
                 })
+            })
+        })
+
+        describe('LegendSetMetadataItem', () => {
+            it('should normalize LegendSetMetadataItem by returning it as-is', () => {
+                const input = {
+                    id: 'legend1',
+                    name: 'Test Legend Set',
+                    legends: [
+                        {
+                            id: 'l1',
+                            name: 'Legend 1',
+                            startValue: 0,
+                            endValue: 10,
+                        },
+                    ],
+                }
+                const result = normalizeMetadataInputItem(input as any)
+
+                expect(result).toEqual({
+                    id: 'legend1',
+                    name: 'Test Legend Set',
+                    legends: [
+                        {
+                            id: 'l1',
+                            name: 'Legend 1',
+                            startValue: 0,
+                            endValue: 10,
+                        },
+                    ],
+                })
+            })
+
+            it('should handle LegendSetMetadataItem with empty legends array', () => {
+                const input = {
+                    id: 'legend2',
+                    name: 'Empty Legend Set',
+                    legends: [],
+                }
+                const result = normalizeMetadataInputItem(input as any)
+
+                expect(result).toEqual({
+                    id: 'legend2',
+                    name: 'Empty Legend Set',
+                    legends: [],
+                })
+            })
+        })
+    })
+
+    describe('normalizeLegendSetMetadataItem', () => {
+        it('should extract required properties from LegendSet', () => {
+            const input = {
+                id: 'legend1',
+                name: 'Test Legend Set',
+                legends: [
+                    { id: 'l1', name: 'Legend 1', startValue: 0, endValue: 10 },
+                ],
+                code: 'TEST_CODE',
+                displayName: 'Display Name',
+                someOtherProperty: 'should be omitted',
+            }
+
+            const result = normalizeLegendSetMetadataItem(input as any)
+
+            expect(result).toEqual({
+                id: 'legend1',
+                name: 'Test Legend Set',
+                legends: [
+                    { id: 'l1', name: 'Legend 1', startValue: 0, endValue: 10 },
+                ],
+            })
+        })
+
+        it('should handle empty legends array', () => {
+            const input = {
+                id: 'legend2',
+                name: 'Empty Legend Set',
+                legends: [],
+            }
+
+            const result = normalizeLegendSetMetadataItem(input as any)
+
+            expect(result).toEqual({
+                id: 'legend2',
+                name: 'Empty Legend Set',
+                legends: [],
             })
         })
     })
