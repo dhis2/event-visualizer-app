@@ -142,6 +142,20 @@ export const MetadataProvider: FC<{ children: ReactNode }> = ({ children }) => {
     )
 }
 
+export const MockMetadataProvider: FC<{
+    children: ReactNode
+    mockMetadata?: Record<string, AnyMetadataItemInput>
+}> = ({ children, mockMetadata }) => {
+    const [metadataStore] = useState(
+        () => new MetadataStore({ ...getInitialMetadata(), ...mockMetadata })
+    )
+    return (
+        <MetadataContext.Provider value={metadataStore}>
+            {children}
+        </MetadataContext.Provider>
+    )
+}
+
 export const useMetadataItem = (
     metadataId: string
 ): MetadataStoreItem | undefined => {

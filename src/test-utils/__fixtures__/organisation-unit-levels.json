@@ -1,0 +1,28 @@
+{
+    "organisationUnitLevels": [
+        {
+            "name": "Chiefdom",
+            "level": 3,
+            "displayName": "Chiefdom",
+            "id": "tTUf91fCytl"
+        },
+        {
+            "name": "District",
+            "level": 2,
+            "displayName": "District",
+            "id": "wjP19dkFeIk"
+        },
+        {
+            "name": "Facility",
+            "level": 4,
+            "displayName": "Facility",
+            "id": "m9lBJogzE95"
+        },
+        {
+            "name": "National",
+            "level": 1,
+            "displayName": "National",
+            "id": "H1KlN4QIauv"
+        }
+    ]
+}

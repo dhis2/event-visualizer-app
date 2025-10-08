@@ -1,35 +1,22 @@
-import { CssVariables } from '@dhis2/ui'
-import { configureStore } from '@reduxjs/toolkit'
 import React from 'react'
-import { Provider } from 'react-redux'
 import { Chip } from '../chip'
 import type { LayoutDimension } from '../chip'
 import {
     visUiConfigSlice,
     initialState as visUiConfigInitialState,
 } from '@store/vis-ui-config-slice'
+import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 
-// Create a test store with the vis-ui-config slice
-const createTestStore = (preloadedState = {}) => {
-    return configureStore({
+const createPartialStore = (preloadedState = {}): MockOptions => ({
+    partialStore: {
         reducer: {
             visUiConfig: visUiConfigSlice.reducer,
         },
         preloadedState: {
             visUiConfig: { ...visUiConfigInitialState, ...preloadedState },
         },
-    })
-}
-
-const TestWrapper: React.FC<{
-    children: React.ReactNode
-    store?: ReturnType<typeof createTestStore>
-}> = ({ children, store = createTestStore() }) => (
-    <Provider store={store}>
-        {children}
-        <CssVariables colors spacers theme />
-    </Provider>
-)
+    },
+})
 
 describe('<Chip />', () => {
     it('renders an org unit chip in columns with 2 org units set', () => {
@@ -41,7 +28,7 @@ describe('<Chip />', () => {
             programStageId: '',
         }
 
-        const store = createTestStore({
+        const appWrapperProps = createPartialStore({
             itemsByDimension: {
                 [dimension.id]: ['ou1', 'ou2'],
             },
@@ -49,9 +36,9 @@ describe('<Chip />', () => {
         })
 
         cy.mount(
-            <TestWrapper store={store}>
+            <MockAppWrapper {...appWrapperProps}>
                 <Chip dimension={dimension} axisId="columns" />
-            </TestWrapper>
+            </MockAppWrapper>
         )
 
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
@@ -81,15 +68,15 @@ describe('<Chip />', () => {
             suffix: 'Baby Postnatal',
         }
 
-        const store = createTestStore({
+        const appWrapperProps = createPartialStore({
             itemsByDimension: {},
             conditionsByDimension: {},
         })
 
         cy.mount(
-            <TestWrapper store={store}>
+            <MockAppWrapper {...appWrapperProps}>
                 <Chip dimension={dimension} axisId="columns" />
-            </TestWrapper>
+            </MockAppWrapper>
         )
 
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
@@ -116,7 +103,7 @@ describe('<Chip />', () => {
             suffix: 'Baby Postnatal',
         }
 
-        const store = createTestStore({
+        const appWrapperProps = createPartialStore({
             itemsByDimension: {},
             conditionsByDimension: {
                 'ZzYYXq4fJie.X8zyunlgUfM': { condition: 'IN:Mixed;Exclusive' },
@@ -124,9 +111,9 @@ describe('<Chip />', () => {
         })
 
         cy.mount(
-            <TestWrapper store={store}>
+            <MockAppWrapper {...appWrapperProps}>
                 <Chip dimension={dimension} axisId="columns" />
-            </TestWrapper>
+            </MockAppWrapper>
         )
 
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
@@ -149,15 +136,15 @@ describe('<Chip />', () => {
             programStageId: '',
         }
 
-        const store = createTestStore({
+        const appWrapperProps = createPartialStore({
             itemsByDimension: { programStatus: ['ACTIVE', 'COMPLETED'] },
             conditionsByDimension: {},
         })
 
         cy.mount(
-            <TestWrapper store={store}>
+            <MockAppWrapper {...appWrapperProps}>
                 <Chip dimension={dimension} axisId="columns" />
-            </TestWrapper>
+            </MockAppWrapper>
         )
 
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
@@ -180,15 +167,15 @@ describe('<Chip />', () => {
             programStageId: '',
         }
 
-        const store = createTestStore({
+        const appWrapperProps = createPartialStore({
             itemsByDimension: {},
             conditionsByDimension: {},
         })
 
         cy.mount(
-            <TestWrapper store={store}>
+            <MockAppWrapper {...appWrapperProps}>
                 <Chip dimension={dimension} axisId="filters" />
-            </TestWrapper>
+            </MockAppWrapper>
         )
 
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
@@ -217,15 +204,15 @@ describe('<Chip />', () => {
             programStageId: '',
         }
 
-        const store = createTestStore({
+        const appWrapperProps = createPartialStore({
             itemsByDimension: { programStatus: ['ACTIVE', 'COMPLETED'] },
             conditionsByDimension: {},
         })
 
         cy.mount(
-            <TestWrapper store={store}>
+            <MockAppWrapper {...appWrapperProps}>
                 <Chip dimension={dimension} axisId="filters" />
-            </TestWrapper>
+            </MockAppWrapper>
         )
 
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
@@ -255,7 +242,7 @@ describe('<Chip />', () => {
             programStageId: '',
         }
 
-        const store = createTestStore({
+        const appWrapperProps = createPartialStore({
             itemsByDimension: {},
             conditionsByDimension: {
                 [dimension.id]: { condition: 'IN:male' },
@@ -263,9 +250,9 @@ describe('<Chip />', () => {
         })
 
         cy.mount(
-            <TestWrapper store={store}>
+            <MockAppWrapper {...appWrapperProps}>
                 <Chip dimension={dimension} axisId="filters" />
-            </TestWrapper>
+            </MockAppWrapper>
         )
 
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
