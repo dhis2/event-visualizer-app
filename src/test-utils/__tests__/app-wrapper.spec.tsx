@@ -11,7 +11,7 @@ import {
 } from '@hooks'
 import { navigationSlice, setNavigationState } from '@store/navigation-slice'
 import type { RootState } from '@store/store'
-import { suppressConsoleError } from '@test-utils/supress-console-error'
+import { suppressConsoleError } from '@test-utils/suppress-console-error'
 
 /* renderWithAppWrapper and renderHookWithAppWrapper are virtually identical and
  * renderHookWithAppWrapper is much more convenient to test. So the bulk of the

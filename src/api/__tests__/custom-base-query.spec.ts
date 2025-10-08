@@ -2,7 +2,7 @@ import type { Query, Mutation } from '@dhis2/app-service-data'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { customBaseQuery } from '../custom-base-query'
 import type { BaseQueryApiWithExtraArg } from '../custom-base-query'
-import { suppressConsoleError } from '@test-utils/supress-console-error'
+import { suppressConsoleError } from '@test-utils/suppress-console-error'
 import type { DataEngine } from '@types'
 
 describe('customBaseQuery', () => {
