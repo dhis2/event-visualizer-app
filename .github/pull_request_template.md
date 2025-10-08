@@ -16,7 +16,6 @@ Add _N/A_ to items that are not applicable and check them.
 - [ ] Cypress and/or Jest tests added/updated
 - [ ] Docs added
 - [ ] d2-ci dependency replaced (requires <https://github.com/dhis2/analytics/pull/XXX>)
-- [ ] Tester approved (name)
 
 ---
 
