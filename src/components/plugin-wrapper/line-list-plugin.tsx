@@ -1,6 +1,7 @@
 //import { Center, CircularLoader } from '@dhis2/ui'
 import type { FC } from 'react'
-import { useCallback, useReducer, useState } from 'react'
+import { useCallback, useEffect, useReducer, useState } from 'react'
+import { shallowEqual } from 'react-redux'
 import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import { LineList } from '@components/line-list'
@@ -19,7 +20,7 @@ type LineListPluginProps = {
     filters?: Record<string, unknown>
     isInDashboard: boolean
     isInModal: boolean
-    isVisualizationLoading: boolean
+    //    isVisualizationLoading: boolean
     onDataSorted?: (sorting: DataSortPayload | undefined) => void
     onResponseReceived?: (metadata: MetadataInput) => void
 }
@@ -30,9 +31,9 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     filters,
     isInDashboard,
     isInModal,
-    isVisualizationLoading,
     onDataSorted,
     onResponseReceived,
+    //    isVisualizationLoading,
 }) => {
     console.log(
         'LL plugin props',
@@ -40,12 +41,11 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         originalVisualization,
         filters,
         isInDashboard,
-        isInModal,
-        isVisualizationLoading
+        isInModal
     )
 
     const [visualization, setVisualization] = useState<CurrentVisualization>(
-        transformVisualization(originalVisualization)
+        () => transformVisualization(originalVisualization)
     )
 
     const [{ pageSize, page }, setPagination] = useReducer(
@@ -87,33 +87,49 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         [visualization, onDataSorted]
     )
 
+    useEffect(() => {
+        console.log('effect set visualization')
+
+        setVisualization((prev) => {
+            const next = transformVisualization(originalVisualization)
+            if (shallowEqual(prev, next)) {
+                return prev
+            }
+
+            return next
+        })
+    }, [originalVisualization])
+
+    console.log('calling hook', /*isVisualizationLoading,*/ visualization)
     const {
         data,
         fetching: isFetching,
         //loading: isLoading,
         error,
-        isGlobalLoading,
+        //        isGlobalLoading,
     } = useLineListAnalyticsData({
         visualization,
         filters,
-        isVisualizationLoading,
         displayProperty,
         onResponseReceived,
         pageSize,
         page,
         sortField,
         sortDirection,
+        //        isVisualizationLoading,
     })
 
-    console.log('LL analytics data', data, isFetching, isGlobalLoading, error)
+    console.log(
+        'LL analytics data',
+        data,
+        isFetching,
+        /*isGlobalLoading,*/ error
+    )
     console.log('LL in modal?', isInModal)
 
-    if (!data || isGlobalLoading) {
-        return null /*(
-            <Center>
-                <CircularLoader />
-            </Center>
-        )*/
+    if (!data) {
+        console.log('LL p return null')
+        return null
     }
 
     return (
