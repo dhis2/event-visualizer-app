@@ -312,7 +312,7 @@ const extractRowContext = (analyticsResponse) => analyticsResponse.rowContext
 const useLineListAnalyticsData = ({
     visualization,
     filters,
-    isVisualizationLoading: isGlobalLoading,
+    //    isVisualizationLoading: isGlobalLoading,
     displayProperty,
     onResponseReceived,
     pageSize,
@@ -328,7 +328,7 @@ const useLineListAnalyticsData = ({
     const [error, setError] = useState<string | undefined>(undefined)
     const [data, setData] = useState<object | null>(null)
     const relativePeriodDate = filters?.relativePeriodDate
-    console.log('in hook')
+    console.log('in hook', /*isGlobalLoading,*/ visualization)
     const doFetch = useCallback(async () => {
         console.log('DO FETCH CALLED!')
         try {
@@ -457,7 +457,7 @@ const useLineListAnalyticsData = ({
         onResponseReceived,
     ])
 
-    useEffect(() => {
+    /*    useEffect(() => {
         // Do a full reset when loading a new visualization
         if (isGlobalLoading) {
             setFetching(false)
@@ -466,13 +466,13 @@ const useLineListAnalyticsData = ({
             setData(null)
         }
     }, [isGlobalLoading])
-
+*/
     return {
         loading,
         fetching,
         error,
         data,
-        isGlobalLoading,
+        //       isGlobalLoading,
     }
 }
 
