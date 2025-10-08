@@ -1,5 +1,6 @@
 import { Center, CircularLoader } from '@dhis2/ui'
 import type { FC } from 'react'
+//import { useCallback /*, useState*/ } from 'react'
 import { LineListPlugin } from './line-list-plugin'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import type { DataSortPayload } from '@components/line-list/types'
@@ -26,6 +27,27 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     onDataSorted,
     onResponseReceived,
 }) => {
+    //    const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
+
+    console.log(
+        'vis',
+        visualization,
+        'loading',
+        isVisualizationLoading,
+        'hasAnalyticsData'
+        //hasAnalyticsData
+    )
+    /*
+    const onResponseReceived = useCallback(
+        (args) => {
+            console.log('pw response received', args)
+            setHasAnalyticsData(true)
+
+            onResponseReceivedCb?.(args)
+        },
+        [onResponseReceivedCb]
+    )
+*/
     return (
         <>
             {isVisualizationLoading && (
@@ -40,7 +62,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     filters={filters}
                     isInDashboard={isInDashboard}
                     isInModal={isInModal}
-                    isVisualizationLoading={isVisualizationLoading}
+                    //isVisualizationLoading={isVisualizationLoading}
                     onDataSorted={onDataSorted}
                     onResponseReceived={onResponseReceived}
                 />
