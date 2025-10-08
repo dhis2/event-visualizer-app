@@ -73,21 +73,13 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
         return false
     }
 
-    const digitGroupSeparator = ',' // TODO get from redux store options
+    const digitGroupSeparator = 'COMMA' // TODO get from redux store options
     const conditionsTexts = getConditionsTexts({
         conditions,
         dimension,
-        formatValueOptions: { digitGroupSeparator, skipRounding: false },
+        formatValueOptions: { digitGroupSeparator },
         getMetadataItem,
     })
-
-    const renderTooltipContent = () => (
-        <TooltipContent
-            dimension={dimension}
-            conditionsTexts={conditionsTexts}
-            axisId={axisId}
-        />
-    )
 
     return (
         <div
@@ -102,13 +94,19 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
             <div className={classes.content}>
                 <ChipBase
                     dimension={dimension}
-                    conditionsLength={0} // TODO: https://dhis2.atlassian.net/browse/DHIS2-20105
+                    conditionsLength={conditionsTexts.length}
                     itemsLength={items.length}
                     inputType={inputType}
                     axisId={axisId}
                 />
                 <Tooltip
-                    content={renderTooltipContent()}
+                    content={
+                        <TooltipContent
+                            dimension={dimension}
+                            conditionsTexts={conditionsTexts}
+                            axisId={axisId}
+                        />
+                    }
                     placement="bottom"
                     dataTest="layout-chip-tooltip"
                     closeDelay={0}
@@ -133,7 +131,7 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
                     )}
                 </Tooltip>
             </div>
-            <div className={classes.menuButton}>
+            <div>
                 <IconButton
                     onClick={openChipMenu}
                     dataTest={'chip-menu-button'}
