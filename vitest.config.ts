@@ -25,7 +25,12 @@ export default defineConfig({
         exclude: [...configDefaults.exclude, '**/.d2/**'],
         onConsoleLog(log, type) {
             // Suppress Highcharts warnings
-            if (type === 'stderr' && log.includes('Highcharts warning')) {
+            if (
+                type === 'stderr' &&
+                log.includes(
+                    'Highcharts warning #26: www.highcharts.com/errors/26/'
+                )
+            ) {
                 return false
             }
         },
