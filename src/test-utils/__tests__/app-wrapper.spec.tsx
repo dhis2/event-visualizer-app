@@ -11,6 +11,7 @@ import {
 } from '@hooks'
 import { navigationSlice, setNavigationState } from '@store/navigation-slice'
 import type { RootState } from '@store/store'
+import { suppressConsoleError } from '@test-utils/supress-console-error'
 
 /* renderWithAppWrapper and renderHookWithAppWrapper are virtually identical and
  * renderHookWithAppWrapper is much more convenient to test. So the bulk of the
@@ -150,30 +151,33 @@ describe('renderHookWithAppWrapper', () => {
         })
     })
 
-    it('allows simulating network errors by throwing a FetchError in a queryData callback property', async () => {
-        const dataCallback = () => {
-            // If needed, you can also specify `details` here, see:
-            // https://github.com/dhis2/app-runtime/blob/master/services/data/src/engine/types/FetchError.ts
-            throw new FetchError({ message: 'Oopsie', type: 'network' })
-        }
-        const { result } = await renderHookWithAppWrapper(
-            () => useRtkQuery({ resource: 'testResource' }),
-            {
-                queryData: {
-                    testResource: dataCallback,
-                },
+    it(
+        'allows simulating network errors by throwing a FetchError in a queryData callback property',
+        suppressConsoleError('Oopsie', async () => {
+            const dataCallback = () => {
+                // If needed, you can also specify `details` here, see:
+                // https://github.com/dhis2/app-runtime/blob/master/services/data/src/engine/types/FetchError.ts
+                throw new FetchError({ message: 'Oopsie', type: 'network' })
             }
-        )
-        expect(result.current.isLoading).toBe(true)
-        expect(result.current.data).toBeUndefined()
-
-        await waitFor(() => {
-            expect(result.current.isLoading).toBe(false)
+            const { result } = await renderHookWithAppWrapper(
+                () => useRtkQuery({ resource: 'testResource' }),
+                {
+                    queryData: {
+                        testResource: dataCallback,
+                    },
+                }
+            )
+            expect(result.current.isLoading).toBe(true)
             expect(result.current.data).toBeUndefined()
-            expect(result.current.error?.type).toBe('network')
-            expect(result.current.error?.message).toBe('Oopsie')
+
+            await waitFor(() => {
+                expect(result.current.isLoading).toBe(false)
+                expect(result.current.data).toBeUndefined()
+                expect(result.current.error?.type).toBe('network')
+                expect(result.current.error?.message).toBe('Oopsie')
+            })
         })
-    })
+    )
 
     it('should allow store manipulation and trigger re-renders', async () => {
         const customReducer = {
@@ -192,6 +196,12 @@ describe('renderHookWithAppWrapper', () => {
                 partialStore: {
                     reducer: customReducer,
                     preloadedState,
+                },
+                // This test will trigger the action listener middleware to fire some requests
+                // By adding some response data here, we prevent errors to clutter the console
+                queryData: {
+                    eventVisualizations: {},
+                    dataStatistics: {},
                 },
             }
         )

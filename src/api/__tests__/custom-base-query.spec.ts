@@ -2,6 +2,7 @@ import type { Query, Mutation } from '@dhis2/app-service-data'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { customBaseQuery } from '../custom-base-query'
 import type { BaseQueryApiWithExtraArg } from '../custom-base-query'
+import { suppressConsoleError } from '@test-utils/supress-console-error'
 import type { DataEngine } from '@types'
 
 describe('customBaseQuery', () => {
@@ -58,30 +59,40 @@ describe('customBaseQuery', () => {
         expect(result).toEqual({ data: {} })
     })
 
-    it('returns error if query throws', async () => {
-        const errorMsg = 'Query failed'
-        const queryMock = engine.query as ReturnType<typeof vi.fn>
-        queryMock.mockRejectedValueOnce(new Error(errorMsg))
-        const api = { extra: { engine } } as unknown as BaseQueryApiWithExtraArg
-        const result = await customBaseQuery(queryArgs, api, {})
-        expect(result).toEqual({
-            error: {
-                type: 'runtime',
-                message: errorMsg,
-            },
+    it(
+        'returns error if query throws',
+        suppressConsoleError('Query failed', async () => {
+            const errorMsg = 'Query failed'
+            const queryMock = engine.query as ReturnType<typeof vi.fn>
+            queryMock.mockRejectedValueOnce(new Error(errorMsg))
+            const api = {
+                extra: { engine },
+            } as unknown as BaseQueryApiWithExtraArg
+            const result = await customBaseQuery(queryArgs, api, {})
+            expect(result).toEqual({
+                error: {
+                    type: 'runtime',
+                    message: errorMsg,
+                },
+            })
         })
-    })
+    )
 
-    it('returns error if mutation throws non-Error', async () => {
-        const mutateMock = engine.mutate as ReturnType<typeof vi.fn>
-        mutateMock.mockRejectedValueOnce('fail')
-        const api = { extra: { engine } } as unknown as BaseQueryApiWithExtraArg
-        const result = await customBaseQuery(mutationArgs, api, {})
-        expect(result).toEqual({
-            error: {
-                type: 'runtime',
-                message: 'An unexpected runtime error occurred',
-            },
+    it(
+        'returns error if mutation throws non-Error',
+        suppressConsoleError('fail', async () => {
+            const mutateMock = engine.mutate as ReturnType<typeof vi.fn>
+            mutateMock.mockRejectedValueOnce('fail')
+            const api = {
+                extra: { engine },
+            } as unknown as BaseQueryApiWithExtraArg
+            const result = await customBaseQuery(mutationArgs, api, {})
+            expect(result).toEqual({
+                error: {
+                    type: 'runtime',
+                    message: 'An unexpected runtime error occurred',
+                },
+            })
         })
-    })
+    )
 })
