@@ -1,19 +1,15 @@
 import i18n from '@dhis2/d2-i18n'
+import { getConditionsFromVisualization } from './conditions'
+import { isTimeDimensionId, transformDimensions } from './dimension'
 import {
     layoutGetAxisIdDimensionIdsObject,
     layoutGetDimensionIdItemIdsObject,
     layoutGetAllDimensions,
 } from '@dhis2/analytics'
-import {
-    getFullDimensionId,
-    isTimeDimensionId,
-    transformDimensions,
-} from '@modules/dimension'
 import type {
     CurrentVisualization,
     DimensionId,
     EmptyVisualization,
-    InputType,
     NewVisualization,
     SavedVisualization,
     VisualizationType,
@@ -136,37 +132,6 @@ export const isVisualizationNew = (
         !isVisualizationEmpty(visualization) &&
         !isVisualizationSaved(visualization)
     )
-}
-
-const getConditionsFromVisualization = (
-    vis: CurrentVisualization,
-    inputType: InputType
-): Record<string, { condition?: string; legendSet?: string }> => {
-    const result: Record<string, { condition?: string; legendSet?: string }> =
-        {}
-
-    const columns = vis.columns ?? []
-    const rows = vis.rows ?? []
-    const filters = vis.filters ?? []
-
-    const items = [...columns, ...rows, ...filters].filter(
-        (item) => item.filter || item.legendSet
-    )
-
-    for (const item of items) {
-        const dimensionId = getFullDimensionId({
-            dimensionId: item.dimension,
-            programId: item.program?.id,
-            programStageId: item.programStage?.id,
-            inputType,
-        })
-        result[dimensionId] = {
-            condition: item.filter,
-            legendSet: item.legendSet?.id,
-        }
-    }
-
-    return result
 }
 
 const getVisualizationLayout = (layout, type: VisualizationType) => {

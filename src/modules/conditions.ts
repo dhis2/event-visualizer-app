@@ -1,11 +1,18 @@
 import i18n from '@dhis2/d2-i18n'
+import { getFullDimensionId } from './dimension'
 import {
     isLegendSetMetadataItem,
     isOptionSetMetadataItem,
 } from '@components/app-wrapper/metadata-helpers/type-guards'
 import type { LayoutDimension } from '@components/layout-panel/chip'
 import { formatValue, ouIdHelper } from '@dhis2/analytics'
-import type { MetadataStore, SavedVisualization, ValueType } from '@types'
+import type {
+    CurrentVisualization,
+    InputType,
+    MetadataStore,
+    SavedVisualization,
+    ValueType,
+} from '@types'
 
 // parse e.g. 'LT:25:GT:15' to ['LT:25', 'GT:15']
 export const parseConditionsStringToArray = (
@@ -39,7 +46,7 @@ type BooleanValue =
 /**
  * Query operators for filtering conditions
  */
-type QueryOperator =
+export type QueryOperator =
     /** Equal */
     | 'EQ'
     /** Equal (case insensitive) */
@@ -353,11 +360,18 @@ export const getConditionsTexts = ({
             : []
     }
 
-    if (typeof dimension.valueType === 'undefined') {
+    if (
+        typeof dimension.valueType === 'undefined' &&
+        dimension.dimensionType !== 'PROGRAM_INDICATOR'
+    ) {
         return []
     }
 
-    const operators = getOperatorsByValueType(dimension.valueType)
+    const valueTypeForOperators =
+        dimension.dimensionType === 'PROGRAM_INDICATOR' && !dimension.valueType
+            ? 'NUMBER'
+            : dimension.valueType!
+    const operators = getOperatorsByValueType(valueTypeForOperators)
 
     return conditionsList.map((condition) => {
         let operator: string = ''
@@ -389,4 +403,35 @@ export const getConditionsTexts = ({
             ? `${capitalCaseOperatorName}: ${value}`
             : capitalCaseOperatorName
     })
+}
+
+export const getConditionsFromVisualization = (
+    vis: CurrentVisualization,
+    inputType: InputType
+): Record<string, { condition?: string; legendSet?: string }> => {
+    const result: Record<string, { condition?: string; legendSet?: string }> =
+        {}
+
+    const columns = vis.columns ?? []
+    const rows = vis.rows ?? []
+    const filters = vis.filters ?? []
+
+    const items = [...columns, ...rows, ...filters].filter(
+        (item) => item.filter || item.legendSet
+    )
+
+    for (const item of items) {
+        const dimensionId = getFullDimensionId({
+            dimensionId: item.dimension,
+            programId: item.program?.id,
+            programStageId: item.programStage?.id,
+            inputType,
+        })
+        result[dimensionId] = {
+            condition: item.filter,
+            legendSet: item.legendSet?.id,
+        }
+    }
+
+    return result
 }
