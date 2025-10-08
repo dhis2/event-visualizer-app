@@ -7,4 +7,5 @@ src/types/dhis2-openapi-schemas
 cypress.env.json
 cypress/videos
 cypress/screenshots
+cypress/downloads
 .aider*
