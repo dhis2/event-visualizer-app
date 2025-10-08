@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { getVisualizationUiConfig } from '@modules/get-visualization-ui-config'
+import { getVisualizationUiConfig } from '../visualization'
 import type { SavedVisualization } from '@types'
 
 const testCases = {

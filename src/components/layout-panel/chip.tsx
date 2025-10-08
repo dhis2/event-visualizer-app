@@ -7,7 +7,7 @@ import { TooltipContent } from './tooltip-content'
 import { useMetadataStore } from '@components/app-wrapper/metadata-provider'
 import { IconButton } from '@components/dimension-item/icon-button'
 import { useAppSelector } from '@hooks'
-import { getConditionsTexts } from '@modules/get-conditions-texts'
+import { getConditionsTexts } from '@modules/conditions'
 import {
     getVisUiConfigInputType,
     getVisUiConfigItemsByDimension,
