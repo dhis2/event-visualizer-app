@@ -23,5 +23,16 @@ export default defineConfig({
         setupFiles: './vitest.setup.ts',
         environment: 'jsdom',
         exclude: [...configDefaults.exclude, '**/.d2/**'],
+        onConsoleLog(log, type) {
+            // Suppress Highcharts warnings
+            if (
+                type === 'stderr' &&
+                log.includes(
+                    'Highcharts warning #26: www.highcharts.com/errors/26/'
+                )
+            ) {
+                return false
+            }
+        },
     },
 })
