@@ -1,3 +1,4 @@
+import { FetchError } from '@dhis2/app-runtime'
 import { screen, waitFor } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import { renderWithAppWrapper, renderHookWithAppWrapper } from '../app-wrapper'
@@ -146,6 +147,31 @@ describe('renderHookWithAppWrapper', () => {
         await waitFor(() => {
             expect(result.current.isLoading).toBe(false)
             expect(result.current.data).toEqual(testData)
+        })
+    })
+
+    it('allows simulating network errors by throwing a FetchError in a queryData callback property', async () => {
+        const dataCallback = () => {
+            // If needed, you can also specify `details` here, see:
+            // https://github.com/dhis2/app-runtime/blob/master/services/data/src/engine/types/FetchError.ts
+            throw new FetchError({ message: 'Oopsie', type: 'network' })
+        }
+        const { result } = await renderHookWithAppWrapper(
+            () => useRtkQuery({ resource: 'testResource' }),
+            {
+                queryData: {
+                    testResource: dataCallback,
+                },
+            }
+        )
+        expect(result.current.isLoading).toBe(true)
+        expect(result.current.data).toBeUndefined()
+
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false)
+            expect(result.current.data).toBeUndefined()
+            expect(result.current.error?.type).toBe('network')
+            expect(result.current.error?.message).toBe('Oopsie')
         })
     })
 
