@@ -18,10 +18,7 @@ import { Toolbar } from '@components/toolbar/toolbar'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
 import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
-import {
-    getIsVisualizationLoading,
-    setIsVisualizationLoading,
-} from '@store/loader-slice'
+import { getIsVisualizationLoading } from '@store/loader-slice'
 import {
     getUiDetailsPanelVisible,
     getUiMainSidebarVisible,
@@ -49,15 +46,10 @@ const EventVisualizer: FC = () => {
         [currentVis, dispatch]
     )
 
-    const onResponseReceived = useCallback(
-        (analyticsMetadata) => {
-            // TODO: add the payload to the metadata store
-            console.log('onResponseReceived', analyticsMetadata)
-
-            dispatch(setIsVisualizationLoading(false))
-        },
-        [dispatch]
-    )
+    const onResponseReceived = useCallback((analyticsMetadata) => {
+        // TODO: add the payload to the metadata store
+        console.log('onResponseReceived', analyticsMetadata)
+    }, [])
 
     return (
         <GridContainer>

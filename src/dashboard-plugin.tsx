@@ -1,6 +1,6 @@
 // eslint-disable-next-line  no-restricted-imports
 import { useDataQuery } from '@dhis2/app-runtime'
-import { useCallback, useState, type FC } from 'react'
+import { useState, type FC } from 'react'
 import { getVisualizationQueryFields } from '@api/event-visualizations-api'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
@@ -19,25 +19,26 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
     const [isVisualizationLoading, setIsVisualizationLoading] = useState(true)
 
     // fetch the visualization
-    const { data, error } = useDataQuery({
-        eventVisualization: {
-            resource: 'eventVisualizations',
-            id: props.visualization.id, // TODO: this should be just passed as visualizationId
-            params: {
-                fields: getVisualizationQueryFields(
-                    // derive displayNameProperty from displayProperty
-                    // this depends on user settings and we only receive displayProperty in props
-                    props.displayProperty === 'name'
-                        ? 'displayName'
-                        : 'displayShortName'
-                ),
+    const { data, error } = useDataQuery(
+        {
+            eventVisualization: {
+                resource: 'eventVisualizations',
+                id: props.visualization.id, // TODO: this should be just passed as visualizationId
+                params: {
+                    fields: getVisualizationQueryFields(
+                        // derive displayNameProperty from displayProperty
+                        // this depends on user settings and we only receive displayProperty in props
+                        props.displayProperty === 'name'
+                            ? 'displayName'
+                            : 'displayShortName'
+                    ),
+                },
             },
         },
-    })
-
-    const onResponseReceived = useCallback(() => {
-        setIsVisualizationLoading(false)
-    }, [])
+        {
+            onComplete: () => setIsVisualizationLoading(false),
+        }
+    )
 
     // TODO: handle errors
     if (error) {
@@ -59,7 +60,7 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
                     filters={props.filters}
                     visualization={eventVisualization}
                     isVisualizationLoading={isVisualizationLoading}
-                    onResponseReceived={onResponseReceived}
+                    //onResponseReceived={onResponseReceived}
                 />
             )}
         </DashboardPluginWrapper>
