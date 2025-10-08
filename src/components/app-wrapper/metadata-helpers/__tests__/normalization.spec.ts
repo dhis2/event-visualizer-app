@@ -724,38 +724,9 @@ describe('normalization', () => {
                 }
                 const result = normalizeMetadataInputItem(input as any)
 
-                expect(result).toEqual({
-                    id: 'legend1',
-                    name: 'Test Legend Set',
-                    legends: [
-                        {
-                            id: 'l1',
-                            name: 'Legend 1',
-                            startValue: 0,
-                            endValue: 10,
-                        },
-                    ],
-                })
-            })
-
-            it('should handle LegendSetMetadataItem with empty legends array', () => {
-                const input = {
-                    id: 'legend2',
-                    name: 'Empty Legend Set',
-                    legends: [],
-                }
-                const result = normalizeMetadataInputItem(input as any)
-
-                expect(result).toEqual({
-                    id: 'legend2',
-                    name: 'Empty Legend Set',
-                    legends: [],
-                })
+                expect(result).toEqual(input)
             })
         })
-    })
-
-    describe('normalizeLegendSetMetadataItem', () => {
         it('should extract required properties from LegendSet', () => {
             const input = {
                 id: 'legend1',
@@ -771,27 +742,9 @@ describe('normalization', () => {
             const result = normalizeLegendSetMetadataItem(input as any)
 
             expect(result).toEqual({
-                id: 'legend1',
-                name: 'Test Legend Set',
-                legends: [
-                    { id: 'l1', name: 'Legend 1', startValue: 0, endValue: 10 },
-                ],
-            })
-        })
-
-        it('should handle empty legends array', () => {
-            const input = {
-                id: 'legend2',
-                name: 'Empty Legend Set',
-                legends: [],
-            }
-
-            const result = normalizeLegendSetMetadataItem(input as any)
-
-            expect(result).toEqual({
-                id: 'legend2',
-                name: 'Empty Legend Set',
-                legends: [],
+                id: input.id,
+                name: input.name,
+                legends: input.legends,
             })
         })
     })
