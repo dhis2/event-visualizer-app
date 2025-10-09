@@ -375,19 +375,14 @@ describe('<Chip />', () => {
         )
 
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
-
         cy.contains('Gender').should('be.visible')
-
         cy.getByDataTest('chip-menu-button').should('be.visible')
-
         cy.getByDataTest('chip-items').should('contain.text', '1')
-
         cy.getByDataTest('layout-dimension-chip').should(
             'have.css',
             'background-color',
             CHIP_NORMAL_COLOR
         )
-
         assertTooltipContent([maleName])
     })
 })
