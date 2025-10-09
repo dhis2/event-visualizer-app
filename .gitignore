@@ -9,3 +9,4 @@ cypress/videos
 cypress/screenshots
 cypress/downloads
 .aider*
+.github/copilot-instructions.md
