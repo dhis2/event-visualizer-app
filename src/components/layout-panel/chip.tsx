@@ -92,13 +92,6 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
             data-test="layout-dimension-chip"
         >
             <div className={classes.content}>
-                <ChipBase
-                    dimension={dimension}
-                    conditionsLength={conditionsTexts.length}
-                    itemsLength={items.length}
-                    inputType={inputType}
-                    axisId={axisId}
-                />
                 <Tooltip
                     content={
                         <TooltipContent
