@@ -46,8 +46,11 @@ export const getChipItemsText = ({
     }
 
     if (optionSet || itemsLength) {
-        return itemsLength ? itemsLength.toString() : ''
+        const count = itemsLength || conditionsLength
+        return typeof count === 'number' && count > 0 ? count.toString() : ''
     }
 
-    return conditionsLength ? conditionsLength.toString() : ''
+    return typeof conditionsLength === 'number' && conditionsLength > 0
+        ? conditionsLength.toString()
+        : ''
 }
