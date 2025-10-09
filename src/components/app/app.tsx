@@ -61,6 +61,7 @@ const EventVisualizer: FC = () => {
             </GridStartColumn>
             <GridCenterColumnTop>
                 <LayoutPanel />
+                {/* TODO: implement actual titlebar */}
                 {currentVis.name && (
                     <div
                         style={{
