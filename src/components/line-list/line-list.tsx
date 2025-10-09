@@ -34,8 +34,6 @@ type LineListProps = {
     isInDashboard?: boolean
     isInModal?: boolean
     onColumnHeaderClick?: ColumnHeaderClickFn
-    sortDirection?: SortDirection
-    sortField?: string
 }
 
 export const LineList: FC<LineListProps> = ({
@@ -47,8 +45,6 @@ export const LineList: FC<LineListProps> = ({
     isInDashboard = false,
     isInModal = false,
     onColumnHeaderClick,
-    sortDirection,
-    sortField,
 }) => {
     const { isDisconnected } = useDhis2ConnectionStatus()
     const { headers, rows, pager, legendSets } = useTransformedLineListData(
@@ -80,6 +76,13 @@ export const LineList: FC<LineListProps> = ({
         () => Math.max(analyticsData.headers.length, 1),
         [analyticsData.headers.length]
     )
+    const {
+        dimension: sortField,
+        direction: sortDirection,
+    }: { dimension?: string; direction?: SortDirection } = visualization.sorting
+        ?.length
+        ? visualization.sorting[0]
+        : { dimension: undefined, direction: undefined }
 
     return (
         <div className={classes.grid}>

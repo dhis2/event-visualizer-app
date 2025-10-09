@@ -1,9 +1,10 @@
 import { Center, CircularLoader } from '@dhis2/ui'
 import type { FC } from 'react'
-//import { useCallback /*, useState*/ } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { LineListPlugin } from './line-list-plugin'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import type { DataSortPayload } from '@components/line-list/types'
+import { isVisualizationSaved } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization } from '@types'
 
 type PluginWrapperProps = {
@@ -25,19 +26,19 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     isInModal = false,
     isVisualizationLoading = false,
     onDataSorted,
-    onResponseReceived,
+    onResponseReceived: onResponseReceivedCb,
 }) => {
-    //    const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
+    const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
     console.log(
         'vis',
         visualization,
         'loading',
         isVisualizationLoading,
-        'hasAnalyticsData'
-        //hasAnalyticsData
+        'hasAnalyticsData',
+        hasAnalyticsData
     )
-    /*
+
     const onResponseReceived = useCallback(
         (args) => {
             console.log('pw response received', args)
@@ -47,22 +48,34 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
         },
         [onResponseReceivedCb]
     )
-*/
+
+    useEffect(() => setHasAnalyticsData(false), [visualization])
+
+    console.log(
+        'v loading',
+        isVisualizationLoading,
+        'analytics data',
+        hasAnalyticsData
+    )
     return (
         <>
-            {isVisualizationLoading && (
+            {isVisualizationLoading && !hasAnalyticsData && (
                 <Center>
                     <CircularLoader />
                 </Center>
             )}
             {visualization.type === 'LINE_LIST' && (
                 <LineListPlugin
+                    key={
+                        isVisualizationSaved(visualization)
+                            ? visualization.id
+                            : 'new'
+                    }
                     displayProperty={displayProperty}
                     visualization={visualization}
                     filters={filters}
                     isInDashboard={isInDashboard}
                     isInModal={isInModal}
-                    //isVisualizationLoading={isVisualizationLoading}
                     onDataSorted={onDataSorted}
                     onResponseReceived={onResponseReceived}
                 />
