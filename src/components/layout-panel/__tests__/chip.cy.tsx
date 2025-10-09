@@ -7,7 +7,10 @@ import {
 } from '@store/vis-ui-config-slice'
 import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 
-const createPartialStore = (preloadedState = {}): MockOptions => ({
+const createMockOptions = (
+    preloadedState = {},
+    metadata = {}
+): MockOptions => ({
     partialStore: {
         reducer: {
             visUiConfig: visUiConfigSlice.reducer,
@@ -16,6 +19,7 @@ const createPartialStore = (preloadedState = {}): MockOptions => ({
             visUiConfig: { ...visUiConfigInitialState, ...preloadedState },
         },
     },
+    metadata,
 })
 
 describe('<Chip />', () => {
@@ -28,7 +32,7 @@ describe('<Chip />', () => {
             programStageId: '',
         }
 
-        const appWrapperProps = createPartialStore({
+        const appWrapperProps = createMockOptions({
             itemsByDimension: {
                 [dimension.id]: ['ou1', 'ou2'],
             },
@@ -68,7 +72,7 @@ describe('<Chip />', () => {
             suffix: 'Baby Postnatal',
         }
 
-        const appWrapperProps = createPartialStore({
+        const appWrapperProps = createMockOptions({
             itemsByDimension: {},
             conditionsByDimension: {},
         })
@@ -90,8 +94,7 @@ describe('<Chip />', () => {
         cy.getByDataTest('chip-menu-button').should('be.visible')
     })
 
-    // TODO: enable when https://dhis2.atlassian.net/browse/DHIS2-20105 is implemented
-    it.skip('renders a chip in columns that has a suffix and has conditions', () => {
+    it('renders a chip in columns that has a suffix and has conditions', () => {
         const dimension: LayoutDimension = {
             id: 'ZzYYXq4fJie.X8zyunlgUfM',
             name: 'MCH Infant Feeding',
@@ -103,12 +106,34 @@ describe('<Chip />', () => {
             suffix: 'Baby Postnatal',
         }
 
-        const appWrapperProps = createPartialStore({
-            itemsByDimension: {},
-            conditionsByDimension: {
-                'ZzYYXq4fJie.X8zyunlgUfM': { condition: 'IN:Mixed;Exclusive' },
+        const mockMetadata = {
+            x31y45jvIQL: {
+                id: 'x31y45jvIQL',
+                name: 'Feeding type',
+                valueType: 'TEXT' as const,
+                version: 1,
+                options: [
+                    { id: 'mixed-id', code: 'Mixed', name: 'Mixed feeding' },
+                    {
+                        id: 'exclusive-id',
+                        code: 'Exclusive',
+                        name: 'Exclusive breastfeeding',
+                    },
+                ],
             },
-        })
+        }
+
+        const appWrapperProps = createMockOptions(
+            {
+                itemsByDimension: {},
+                conditionsByDimension: {
+                    'ZzYYXq4fJie.X8zyunlgUfM': {
+                        condition: 'IN:Mixed;Exclusive',
+                    },
+                },
+            },
+            mockMetadata
+        )
 
         cy.mount(
             <MockAppWrapper {...appWrapperProps}>
@@ -136,7 +161,7 @@ describe('<Chip />', () => {
             programStageId: '',
         }
 
-        const appWrapperProps = createPartialStore({
+        const appWrapperProps = createMockOptions({
             itemsByDimension: { programStatus: ['ACTIVE', 'COMPLETED'] },
             conditionsByDimension: {},
         })
@@ -167,7 +192,7 @@ describe('<Chip />', () => {
             programStageId: '',
         }
 
-        const appWrapperProps = createPartialStore({
+        const appWrapperProps = createMockOptions({
             itemsByDimension: {},
             conditionsByDimension: {},
         })
@@ -204,7 +229,7 @@ describe('<Chip />', () => {
             programStageId: '',
         }
 
-        const appWrapperProps = createPartialStore({
+        const appWrapperProps = createMockOptions({
             itemsByDimension: { programStatus: ['ACTIVE', 'COMPLETED'] },
             conditionsByDimension: {},
         })
@@ -230,8 +255,7 @@ describe('<Chip />', () => {
         )
     })
 
-    // TODO: enable when https://dhis2.atlassian.net/browse/DHIS2-20105 is implemented
-    it.skip('renders a chip in filters with condition counts', () => {
+    it('renders a chip in filters with condition counts', () => {
         const dimension: LayoutDimension = {
             id: 'cejWyOfXge6',
             name: 'Gender',
@@ -242,12 +266,28 @@ describe('<Chip />', () => {
             programStageId: '',
         }
 
-        const appWrapperProps = createPartialStore({
-            itemsByDimension: {},
-            conditionsByDimension: {
-                [dimension.id]: { condition: 'IN:male' },
+        const genderMetadata = {
+            pC3N9N77UmT: {
+                id: 'pC3N9N77UmT',
+                name: 'Gender',
+                valueType: 'TEXT' as const,
+                version: 1,
+                options: [
+                    { id: 'male-id', code: 'male', name: 'Male' },
+                    { id: 'female-id', code: 'female', name: 'Female' },
+                ],
             },
-        })
+        }
+
+        const appWrapperProps = createMockOptions(
+            {
+                itemsByDimension: {},
+                conditionsByDimension: {
+                    [dimension.id]: { condition: 'IN:male' },
+                },
+            },
+            genderMetadata
+        )
 
         cy.mount(
             <MockAppWrapper {...appWrapperProps}>
