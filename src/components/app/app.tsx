@@ -12,6 +12,7 @@ import {
     GridStartColumn,
     GridTopRow,
 } from '@components/grid'
+import { LayoutPanel } from '@components/layout-panel/layout-panel'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
 import { Toolbar } from '@components/toolbar/toolbar'
@@ -59,7 +60,28 @@ const EventVisualizer: FC = () => {
                 </div>
             </GridStartColumn>
             <GridCenterColumnTop>
-                <div style={{ padding: 8 }}>Titlebar</div>
+                <LayoutPanel />
+                {currentVis.name && (
+                    <div
+                        style={{
+                            display: 'flex',
+                            textAlign: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <span
+                            style={{
+                                display: 'inline-flex',
+                                padding: '4px 12px',
+                                backgroundColor: 'white',
+                                borderRadius: 4,
+                                margin: '6px 0',
+                            }}
+                        >
+                            {currentVis.name}
+                        </span>
+                    </div>
+                )}
             </GridCenterColumnTop>
             <GridCenterColumnBottom>
                 {isVisualizationEmpty(currentVis) ? (
