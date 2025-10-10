@@ -131,7 +131,12 @@ export const LineList: FC<LineListProps> = ({
                                 ))}
                             </DataTableRow>
                         </DataTableHead>
-                        <DataTableBody dataTest="line-list-data-table-body">
+                        <DataTableBody
+                            dataTest="line-list-data-table-body"
+                            className={cx({
+                                [classes.fetching]: isFetching,
+                            })}
+                        >
                             {rows.map((row, rowIndex) => (
                                 <DataTableRow
                                     key={rowIndex}
