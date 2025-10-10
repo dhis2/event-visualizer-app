@@ -15,6 +15,7 @@ type DashboardPluginProps = {
 
 const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
     console.log('DashboardPlugin props', props)
+    console.log('vis id', props.visualization.id)
 
     // fetch the visualization
     const { data, error, loading } = useDataQuery({
@@ -36,11 +37,16 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
     // TODO: handle errors
     if (error) {
         // `error` will be of type EngineError and `data` will is possibly undefined
-        console.log(data, error)
+        console.log('ERROR!', data, error)
         return <div>Error loading event visualization: {error.message}</div>
     }
 
-    const eventVisualization = data?.eventVisualization as SavedVisualization
+    // TODO: check this type. The PluginWrapper expects a CurrentVisualization type, which includes empty but not null.
+    // Before the visualization is fetched, the prop is undefined/null and that fails in the check for visualization.type
+    const eventVisualization =
+        (data?.eventVisualization as SavedVisualization) ?? {}
+
+    console.log('dp eventVisualization', eventVisualization, 'loading', loading)
 
     return (
         <DashboardPluginWrapper {...props}>
