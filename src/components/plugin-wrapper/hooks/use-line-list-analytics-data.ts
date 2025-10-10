@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import {
     getAdaptedVisualization,
     getAnalyticsEndpoint,
@@ -319,13 +319,11 @@ type FetchAnalyticsDataParams = {
     page?: number
     onResponseReceived: (metadata: MetadataInput) => void
 }
-type FetchAnalyticsDataFn = (
-    params: FetchAnalyticsDataParams
-) => Promise<LineListAnalyticsData | undefined>
+type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
 type AnalyticsDataState = {
     isLoading: boolean
     isFetching: boolean
-    error: FetchError | undefined
+    error?: FetchError
     data: LineListAnalyticsData | null
 }
 type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
@@ -335,12 +333,18 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
     const mounted = useRef(false)
 
-    const [state, setState] = useState<AnalyticsDataState>({
-        isFetching: false,
-        isLoading: false,
-        error: undefined,
-        data: null,
-    })
+    const [state, setState] = useReducer(
+        (
+            state: AnalyticsDataState,
+            newState: Partial<AnalyticsDataState>
+        ): AnalyticsDataState => ({ ...state, ...newState }),
+        {
+            isFetching: false,
+            isLoading: false,
+            error: undefined,
+            data: null,
+        }
+    )
 
     console.log('in hook')
 
@@ -355,12 +359,11 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
         }) => {
             console.log('FETCH CALLED!')
 
-            setState((s) => ({
-                ...s,
+            setState({
                 isLoading: true,
                 isFetching: true,
                 error: undefined,
-            }))
+            })
 
             const relativePeriodDate = filters?.relativePeriodDate
 
@@ -441,29 +444,25 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 const analyticsData = { headers, rows, pager, rowContext }
 
                 if (mounted.current) {
-                    setState((s) => ({
-                        ...s,
+                    setState({
                         error: undefined,
                         data: analyticsData,
-                    }))
+                    })
                 }
 
                 console.log('call onResponseReceived')
                 // TODO: check what metadata needs to be passed from the analytics response
                 onResponseReceived(analyticsResponse.metaData.items)
-
-                return analyticsData
             } catch (error) {
                 if (mounted.current) {
-                    setState((s) => ({ ...s, error }))
+                    setState({ error })
                 }
             } finally {
                 if (mounted.current) {
-                    setState((s) => ({
-                        ...s,
+                    setState({
                         isLoading: false,
                         isFetching: false,
-                    }))
+                    })
                 }
             }
         },
