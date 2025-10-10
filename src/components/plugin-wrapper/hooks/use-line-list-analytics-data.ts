@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
+import { useCallback, useReducer, useState } from 'react'
 import {
     getAdaptedVisualization,
     getAnalyticsEndpoint,
@@ -331,7 +331,6 @@ type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
 const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const dataEngine = useDataEngine()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
-    const mounted = useRef(false)
 
     const [state, setState] = useReducer(
         (
@@ -443,43 +442,25 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
 
                 const analyticsData = { headers, rows, pager, rowContext }
 
-                if (mounted.current) {
-                    setState({
-                        error: undefined,
-                        data: analyticsData,
-                    })
-                }
+                setState({
+                    error: undefined,
+                    data: analyticsData,
+                })
 
                 console.log('call onResponseReceived')
                 // TODO: check what metadata needs to be passed from the analytics response
                 onResponseReceived(analyticsResponse.metaData.items)
             } catch (error) {
-                if (mounted.current) {
-                    setState({ error })
-                }
+                setState({ error })
             } finally {
-                if (mounted.current) {
-                    setState({
-                        isLoading: false,
-                        isFetching: false,
-                    })
-                }
+                setState({
+                    isLoading: false,
+                    isFetching: false,
+                })
             }
         },
         [analyticsEngine, dataEngine]
     )
-
-    useEffect(() => {
-        /*
-         * Hack to prevent state updates on unmounted components
-         * needed because the analytics engine cannot cancel requests
-         */
-        mounted.current = true
-
-        return () => {
-            mounted.current = false
-        }
-    }, [])
 
     return [fetchAnalyticsData, state]
 }
