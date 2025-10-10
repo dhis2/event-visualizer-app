@@ -41,7 +41,6 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
 
     const onResponseReceived = useCallback(
         (args) => {
-            console.log('pw response received', args)
             setHasAnalyticsData(true)
 
             onResponseReceivedCb?.(args)
@@ -49,7 +48,14 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
         [onResponseReceivedCb]
     )
 
-    useEffect(() => setHasAnalyticsData(false), [visualization])
+    useEffect(() => {
+        if (isVisualizationLoading === true) {
+            // Reset hasAnalyticsData when a new visualization is fetched as we know it will need to re-fetch analytics.
+            // This allows the spinner to show until the analytics response is available and the onResponseReceived above
+            // changes hasAnalyticsData to true.
+            setHasAnalyticsData(false)
+        }
+    }, [isVisualizationLoading])
 
     console.log(
         'v loading',
@@ -59,7 +65,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     )
     return (
         <>
-            {isVisualizationLoading && !hasAnalyticsData && (
+            {(isVisualizationLoading || !hasAnalyticsData) && (
                 <Center>
                     <CircularLoader />
                 </Center>
