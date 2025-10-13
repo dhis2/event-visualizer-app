@@ -401,7 +401,7 @@ export const getConditionsTexts = ({
 
         const operatorName = operators[operator]
 
-        if (typeof operatorName !== 'string' && operatorName.length > 0) {
+        if (typeof operatorName === 'string' && operatorName.length > 0) {
             const capitalCaseOperatorName =
                 operatorName[0].toUpperCase() + operatorName.substring(1)
 
