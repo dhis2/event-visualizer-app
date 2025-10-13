@@ -439,7 +439,6 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     data: analyticsData,
                 })
 
-                // TODO: check what metadata needs to be passed from the analytics response
                 onResponseReceived(analyticsResponse.metaData.items)
             } catch (error) {
                 setState({ error })
