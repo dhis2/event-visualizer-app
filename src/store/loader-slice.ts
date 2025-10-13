@@ -1,13 +1,17 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
+import { type EngineError, parseEngineError } from '@api/parse-engine-error'
 
 export interface LoaderState {
-    loadError: string
+    loadError: EngineError
     isVisualizationLoading: boolean
 }
 
 export const initialState: LoaderState = {
-    loadError: '',
+    loadError: {
+        type: 'unknown',
+        message: '',
+    },
     isVisualizationLoading: false,
 }
 
@@ -19,7 +23,7 @@ export const loaderSlice = createSlice({
             state.isVisualizationLoading = action.payload
         },
         setLoadError: (state, action: PayloadAction<string>) => {
-            state.loadError = action.payload
+            state.loadError = parseEngineError(action.payload)
         },
     },
     selectors: {
