@@ -312,6 +312,7 @@ export const getConditionsTexts = ({
 
     if (
         typeof dimension.optionSet === 'string' &&
+        conditionsList.length > 0 &&
         conditionsList[0]?.startsWith(OPERATOR_IN)
     ) {
         const optionSet = dimension.optionSet
@@ -335,6 +336,7 @@ export const getConditionsTexts = ({
 
     if (
         ['BOOLEAN', 'TRUE_ONLY'].includes(dimension.valueType ?? '') &&
+        conditionsList.length > 0 &&
         conditionsList[0]?.startsWith(OPERATOR_IN)
     ) {
         const values = parseCondition(conditionsList[0])
@@ -345,6 +347,7 @@ export const getConditionsTexts = ({
 
     if (
         dimension.valueType === 'ORGANISATION_UNIT' &&
+        conditionsList.length > 0 &&
         (conditionsList[0]?.startsWith(OPERATOR_EQUAL) ||
             conditionsList[0]?.startsWith(OPERATOR_IN))
     ) {
@@ -397,11 +400,17 @@ export const getConditionsTexts = ({
         }
 
         const operatorName = operators[operator]
-        const capitalCaseOperatorName =
-            operatorName[0].toUpperCase() + operatorName.substring(1)
-        return value
-            ? `${capitalCaseOperatorName}: ${value}`
-            : capitalCaseOperatorName
+
+        if (typeof operatorName !== 'string' && operatorName.length > 0) {
+            const capitalCaseOperatorName =
+                operatorName[0].toUpperCase() + operatorName.substring(1)
+
+            return value
+                ? `${capitalCaseOperatorName}: ${value}`
+                : capitalCaseOperatorName
+        } else {
+            throw new Error('Could not read operatorName')
+        }
     })
 }
 
