@@ -3,15 +3,12 @@ import { createSlice } from '@reduxjs/toolkit'
 import { type EngineError, parseEngineError } from '@api/parse-engine-error'
 
 export interface LoaderState {
-    loadError: EngineError
+    loadError: EngineError | null
     isVisualizationLoading: boolean
 }
 
 export const initialState: LoaderState = {
-    loadError: {
-        type: 'unknown',
-        message: '',
-    },
+    loadError: null,
     isVisualizationLoading: false,
 }
 
@@ -25,6 +22,9 @@ export const loaderSlice = createSlice({
         setLoadError: (state, action: PayloadAction<string>) => {
             state.loadError = parseEngineError(action.payload)
         },
+        clearLoadError: (state) => {
+            state.loadError = initialState.loadError
+        },
     },
     selectors: {
         getIsVisualizationLoading: (state) => state.isVisualizationLoading,
@@ -32,5 +32,6 @@ export const loaderSlice = createSlice({
     },
 })
 
-export const { setIsVisualizationLoading, setLoadError } = loaderSlice.actions
+export const { setIsVisualizationLoading, setLoadError, clearLoadError } =
+    loaderSlice.actions
 export const { getIsVisualizationLoading, getLoadError } = loaderSlice.selectors
