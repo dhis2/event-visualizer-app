@@ -3,12 +3,14 @@ import {
     isSimpleMetadataItem,
     isProgramMetadataItem,
     isOptionSetMetadataItem,
+    isLegendSetMetadataItem,
 } from './type-guards'
 import type {
     AnyMetadataItemInput,
     SimpleMetadataItem,
     ProgramMetadataItem,
     OptionSetMetadataItem,
+    LegendSetMetadataItem,
     MetadataStoreItem,
     NormalizedMetadataItem,
 } from './types'
@@ -132,6 +134,17 @@ export function normalizeOptionSetMetadataItem(
     return result as unknown as NormalizedMetadataItem
 }
 
+export function normalizeLegendSetMetadataItem(
+    input: LegendSetMetadataItem
+): LegendSetMetadataItem {
+    // Extract only the required properties to ensure no additional properties are present
+    return {
+        id: input.id,
+        name: input.name,
+        legends: input.legends,
+    }
+}
+
 export function normalizeMetadataInputItem(
     input: AnyMetadataItemInput
 ): MetadataStoreItem {
@@ -141,6 +154,8 @@ export function normalizeMetadataInputItem(
         return normalizeProgramMetadataItem(input)
     } else if (isOptionSetMetadataItem(input)) {
         return normalizeOptionSetMetadataItem(input)
+    } else if (isLegendSetMetadataItem(input)) {
+        return normalizeLegendSetMetadataItem(input)
     } else if (isSimpleMetadataItem(input)) {
         return normalizeSimpleMetadataItem(input)
     } else {

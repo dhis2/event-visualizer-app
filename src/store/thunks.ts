@@ -6,7 +6,7 @@ import { clearUi } from './ui-slice'
 import { setVisUiConfig } from './vis-ui-config-slice'
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
-import { getVisualizationUiConfig } from '@modules/get-visualization-ui-config'
+import { getVisualizationUiConfig } from '@modules/visualization'
 import type { AppDispatch } from '@types'
 
 type AppAsyncThunkConfig = {

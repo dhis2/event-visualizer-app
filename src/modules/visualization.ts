@@ -1,9 +1,14 @@
 import i18n from '@dhis2/d2-i18n'
-import { layoutGetAllDimensions } from '@dhis2/analytics'
-import { isTimeDimensionId, transformDimensions } from '@modules/dimension'
+import { getConditionsFromVisualization } from './conditions'
+import { isTimeDimensionId, transformDimensions } from './dimension'
+import {
+    layoutGetAxisIdDimensionIdsObject,
+    layoutGetDimensionIdItemIdsObject,
+    layoutGetAllDimensions,
+} from '@dhis2/analytics'
 import type {
-    DimensionId,
     CurrentVisualization,
+    DimensionId,
     EmptyVisualization,
     NewVisualization,
     SavedVisualization,
@@ -127,4 +132,31 @@ export const isVisualizationNew = (
         !isVisualizationEmpty(visualization) &&
         !isVisualizationSaved(visualization)
     )
+}
+
+const getVisualizationLayout = (layout, type: VisualizationType) => {
+    if (type === 'LINE_LIST') {
+        return {
+            columns: [...layout.columns, ...(layout.rows || [])],
+            rows: [],
+            filters: [...layout.filters],
+        }
+    }
+
+    return layout
+}
+
+export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
+    const inputType = vis.outputType // The single location where outputType is renamed to inputType
+
+    return {
+        visualizationType: vis.type,
+        inputType,
+        layout: getVisualizationLayout(
+            layoutGetAxisIdDimensionIdsObject(vis),
+            vis.type
+        ),
+        itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
+        conditionsByDimension: getConditionsFromVisualization(vis, inputType),
+    }
 }

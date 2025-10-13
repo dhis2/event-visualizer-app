@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-09-23T09:40:46.301Z\n"
-"PO-Revision-Date: 2025-09-23T09:40:46.302Z\n"
+"POT-Creation-Date: 2025-10-08T13:49:11.286Z\n"
+"PO-Revision-Date: 2025-10-08T13:49:11.286Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -149,6 +149,27 @@ msgstr "Code"
 msgid "Name"
 msgstr "Name"
 
+msgid "all"
+msgstr "all"
+
+msgid "Levels"
+msgstr "Levels"
+
+msgid "Groups"
+msgstr "Groups"
+
+msgid "None selected"
+msgstr "None selected"
+
+msgid "Program stage: {{- stageName}}"
+msgstr "Program stage: {{- stageName}}"
+
+msgid "Program: {{- programName}}"
+msgstr "Program: {{- programName}}"
+
+msgid "Showing all values for this dimension"
+msgstr "Showing all values for this dimension"
+
 msgid "No event"
 msgstr "No event"
 
@@ -247,6 +268,54 @@ msgstr "View"
 msgid "Reset sidebar width"
 msgstr "Reset sidebar width"
 
+msgid "equal to (=)"
+msgstr "equal to (=)"
+
+msgid "greater than (>)"
+msgstr "greater than (>)"
+
+msgid "greater than or equal to (≥)"
+msgstr "greater than or equal to (≥)"
+
+msgid "less than (<)"
+msgstr "less than (<)"
+
+msgid "less than or equal to (≤)"
+msgstr "less than or equal to (≤)"
+
+msgid "not equal to (≠)"
+msgstr "not equal to (≠)"
+
+msgid "is empty / null"
+msgstr "is empty / null"
+
+msgid "is not empty / not null"
+msgstr "is not empty / not null"
+
+msgid "exactly"
+msgstr "exactly"
+
+msgid "is not"
+msgstr "is not"
+
+msgid "contains"
+msgstr "contains"
+
+msgid "does not contain"
+msgstr "does not contain"
+
+msgid "after"
+msgstr "after"
+
+msgid "after or including"
+msgstr "after or including"
+
+msgid "before"
+msgstr "before"
+
+msgid "before or including"
+msgstr "before or including"
+
 msgid "Yes"
 msgstr "Yes"
 
@@ -273,9 +342,6 @@ msgstr "Event status"
 
 msgid "Program status"
 msgstr "Program status"
-
-msgid "all"
-msgstr "all"
 
 msgid "Columns"
 msgstr "Columns"

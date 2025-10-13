@@ -1,10 +1,14 @@
-import type { MetadataItem, ProgramType, OptionSet } from '@types'
+import type { MetadataItem, ProgramType, OptionSet, LegendSet } from '@types'
 
 // OptionSet type from the OpenApiSpecs is very permissive, but we require name and id
 export type OptionSetMetadataItem = OptionSet & {
     id: string
     name: string
 }
+
+export type LegendSetMetadataItem = Required<
+    Pick<LegendSet, 'id' | 'name' | 'legends'>
+>
 
 // User org units, relative periods, etc - object with one string key and string value
 export type SimpleMetadataItem = { [key: string]: string }
@@ -28,6 +32,7 @@ export type AnyMetadataItemInput =
     | SimpleMetadataItem
     | ProgramMetadataItem
     | OptionSetMetadataItem
+    | LegendSetMetadataItem
 
 export type NormalizedMetadataItem = Omit<MetadataItem, 'uid'> & { id: string }
 
@@ -35,6 +40,7 @@ export type NormalizedMetadataItem = Omit<MetadataItem, 'uid'> & { id: string }
 export type MetadataStoreItem =
     | NormalizedMetadataItem
     | OptionSetMetadataItem
+    | LegendSetMetadataItem
     | ProgramMetadataItem
 
 export type MetadataInput =

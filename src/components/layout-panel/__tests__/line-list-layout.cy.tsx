@@ -2,7 +2,7 @@ import { LineListLayout } from '../line-list-layout'
 import { visUiConfigSlice, initialState } from '@store/vis-ui-config-slice'
 import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 
-const createMockOptions = (preloadedState = {}): MockOptions => ({
+const mockOptions: MockOptions = {
     metadata: {
         genderId: {
             uid: 'genderId',
@@ -27,38 +27,30 @@ const createMockOptions = (preloadedState = {}): MockOptions => ({
             visUiConfig: visUiConfigSlice.reducer,
         },
         preloadedState: {
-            visUiConfig: { ...initialState, ...preloadedState },
+            visUiConfig: {
+                ...initialState,
+                visualizationType: 'LINE_LIST',
+                inputType: 'EVENT',
+                layout: {
+                    columns: ['ou', 'mchInfantFeeding'], // 2 dimensions for columns
+                    filters: ['genderId'], // 1 dimension for filters
+                    rows: [],
+                },
+                itemsByDimension: {
+                    ou: ['orgUnit1'],
+                },
+                conditionsByDimension: {
+                    genderId: {
+                        condition: 'EQ:male',
+                    },
+                },
+            },
         },
     },
-})
+}
 
 describe('<LineListLayout />', () => {
     it('renders with LINE_LIST visualization type, EVENT input type, 2 column chips and 1 filter chip', () => {
-        /* TODO: We don't need a function here we can just work with a static `mockOptions`
-         * const but it is currently impossible to do so, due to the issue below */
-        const mockOptions = createMockOptions({
-            visualizationType: 'LINE_LIST',
-            inputType: 'EVENT',
-            layout: {
-                columns: ['ou', 'mchInfantFeeding'], // 2 dimensions for columns
-                filters: ['genderId'], // 1 dimension for filters
-                rows: [],
-            },
-            itemsByDimension: {
-                ou: ['orgUnit1'],
-            },
-            conditionsByDimension: {
-                condition: {
-                    /* TODO: genderId does not match the type signature. We need to investigate if
-                     * the type is wrong, or this partial state is wrong. When using this partial
-                     * state directly in `partialStore.preloadedState` above you get the following type error:
-                     * Type '{ condition: { genderId: string; }; }' is not assignable to type
-                     * 'Record<string, { * condition?: string | undefined; legendSet?: string | undefined; }>' */
-                    genderId: 'IN:male',
-                },
-            },
-        })
-
         cy.mount(
             <MockAppWrapper {...mockOptions}>
                 <LineListLayout />

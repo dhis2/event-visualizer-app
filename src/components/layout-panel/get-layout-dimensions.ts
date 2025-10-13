@@ -1,6 +1,6 @@
-import { getDimensionIdParts } from './dimension'
 import type { MetadataStoreItem } from '@components/app-wrapper/metadata-helpers/types'
 import type { LayoutDimension } from '@components/layout-panel/chip'
+import { getDimensionIdParts } from '@modules/dimension'
 import type { DimensionType, InputType } from '@types'
 
 interface GetLayoutDimensionsParams {

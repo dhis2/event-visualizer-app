@@ -7,7 +7,14 @@ export type {
 } from './types'
 
 // Export utility functions used by metadata-provider
-export { isObject, isSingleMetadataItemInput } from './type-guards'
-export { normalizeMetadataInputItem } from './normalization'
+export {
+    isObject,
+    isSingleMetadataItemInput,
+    isLegendSetMetadataItem,
+} from './type-guards'
+export {
+    normalizeMetadataInputItem,
+    normalizeLegendSetMetadataItem,
+} from './normalization'
 export { smartMergeWithChangeDetection } from './merge-utils'
 export { getInitialMetadata } from './initial-metadata'
