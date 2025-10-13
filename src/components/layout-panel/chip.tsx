@@ -50,28 +50,8 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
 
     const { getMetadataItem } = useMetadataStore()
 
-    // Type guards for conditions
-    const isConditionsObject = (
-        val: unknown
-    ): val is { condition?: unknown[]; legendSet?: unknown } => {
-        return typeof val === 'object' && val !== null && !Array.isArray(val)
-    }
-
-    const hasConditions = () => {
-        if (!conditions) {
-            return false
-        }
-        if (Array.isArray(conditions)) {
-            return conditions.length > 0
-        }
-        if (isConditionsObject(conditions)) {
-            return (
-                (conditions.condition && conditions.condition.length > 0) ||
-                Boolean(conditions.legendSet)
-            )
-        }
-        return false
-    }
+    const hasConditions =
+        Boolean(conditions?.condition?.length) || Boolean(conditions?.legendSet)
 
     const digitGroupSeparator = 'COMMA' // TODO get from redux store options
     const conditionsTexts = getConditionsTexts({
@@ -87,7 +67,7 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
                 [classes.chipEmpty]:
                     axisId === 'filters' &&
                     items.length === 0 &&
-                    !hasConditions(),
+                    !hasConditions,
             })}
             data-test="layout-dimension-chip"
         >
