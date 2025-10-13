@@ -321,7 +321,6 @@ type FetchAnalyticsDataParams = {
 }
 type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
 type AnalyticsDataState = {
-    isLoading: boolean
     isFetching: boolean
     error?: FetchError
     data: LineListAnalyticsData | null
@@ -339,7 +338,6 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
         ): AnalyticsDataState => ({ ...state, ...newState }),
         {
             isFetching: false,
-            isLoading: false,
             error: undefined,
             data: null,
         }
@@ -355,7 +353,6 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             onResponseReceived,
         }) => {
             setState({
-                isLoading: true,
                 isFetching: true,
                 error: undefined,
             })
@@ -448,7 +445,6 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 setState({ error })
             } finally {
                 setState({
-                    isLoading: false,
                     isFetching: false,
                 })
             }
