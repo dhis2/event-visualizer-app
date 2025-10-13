@@ -345,8 +345,6 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
         }
     )
 
-    console.log('in hook')
-
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
             visualization,
@@ -356,8 +354,6 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             page = 1,
             onResponseReceived,
         }) => {
-            console.log('FETCH CALLED!')
-
             setState({
                 isLoading: true,
                 isFetching: true,
@@ -391,7 +387,6 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 const rows = extractRows(analyticsResponse, headers)
                 const rowContext = extractRowContext(analyticsResponse)
                 const pager = analyticsResponse.metaData.pager
-                console.log('analyticsResponse', analyticsResponse)
 
                 const legendSetIds: string[] = [] // TODO: check this type
                 const headerLegendSetMap: Record<string, string> =
@@ -447,7 +442,6 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     data: analyticsData,
                 })
 
-                console.log('call onResponseReceived')
                 // TODO: check what metadata needs to be passed from the analytics response
                 onResponseReceived(analyticsResponse.metaData.items)
             } catch (error) {

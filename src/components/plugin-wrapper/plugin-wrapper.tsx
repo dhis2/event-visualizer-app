@@ -30,15 +30,6 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
 }) => {
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
-    console.log(
-        'vis',
-        visualization,
-        'loading',
-        isVisualizationLoading,
-        'hasAnalyticsData',
-        hasAnalyticsData
-    )
-
     const onResponseReceived = useCallback(
         (args) => {
             setHasAnalyticsData(true)
@@ -57,12 +48,6 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
         }
     }, [isVisualizationLoading])
 
-    console.log(
-        'v loading',
-        isVisualizationLoading,
-        'analytics data',
-        hasAnalyticsData
-    )
     return (
         <>
             {(isVisualizationLoading || !hasAnalyticsData) && (

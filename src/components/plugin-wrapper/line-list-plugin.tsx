@@ -32,16 +32,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     onDataSorted,
     onResponseReceived,
 }) => {
-    console.log(
-        'LL plugin props',
-        displayProperty,
-        visualization,
-        filters,
-        isInDashboard,
-        isInModal
-    )
-
-    const [fetchAnalyticsData, { data, error, isLoading, isFetching }] =
+    const [fetchAnalyticsData, { data, isFetching }] =
         useLineListAnalyticsData()
 
     const onPaginate = useCallback<PaginateFn>(
@@ -91,11 +82,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         fetchAnalyticsData,
     ])
 
-    console.log('LL analytics data', data, isLoading, isFetching, error)
-    console.log('LL in modal?', isInModal)
-
     if (!data) {
-        console.log('LL p return null')
         return null
     }
 
