@@ -19,11 +19,12 @@ import classes from './styles/line-list.module.css'
 import type {
     ColumnHeaderClickFn,
     DataSortFn,
+    DataSortPayload,
     LineListAnalyticsData,
     PaginateFn,
 } from './types'
 import { useTransformedLineListData } from './use-transformed-line-list-data'
-import type { CurrentVisualization, SortDirection } from '@types'
+import type { CurrentVisualization } from '@types'
 
 type LineListProps = {
     analyticsData: LineListAnalyticsData
@@ -76,13 +77,14 @@ export const LineList: FC<LineListProps> = ({
         () => Math.max(analyticsData.headers.length, 1),
         [analyticsData.headers.length]
     )
-    const {
-        dimension: sortField,
-        direction: sortDirection,
-    }: { dimension?: string; direction?: SortDirection } = visualization.sorting
-        ?.length
-        ? visualization.sorting[0]
-        : { dimension: undefined, direction: undefined }
+
+    const sorting: DataSortPayload = useMemo(
+        () =>
+            visualization.sorting?.length
+                ? visualization.sorting[0]
+                : { dimension: '' },
+        [visualization]
+    )
 
     return (
         <div className={classes.grid}>
@@ -125,8 +127,8 @@ export const LineList: FC<LineListProps> = ({
                                         onColumnHeaderClick={
                                             onColumnHeaderClick
                                         }
-                                        sortField={sortField}
-                                        sortDirection={sortDirection}
+                                        sortField={sorting.dimension}
+                                        sortDirection={sorting?.direction}
                                     />
                                 ))}
                             </DataTableRow>
