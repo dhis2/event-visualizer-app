@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
-import { useCallback, useReducer, useState } from 'react'
+import { useCallback, useState } from 'react'
 import {
     getAdaptedVisualization,
     getAnalyticsEndpoint,
@@ -331,17 +331,11 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const dataEngine = useDataEngine()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
 
-    const [state, setState] = useReducer(
-        (
-            state: AnalyticsDataState,
-            newState: Partial<AnalyticsDataState>
-        ): AnalyticsDataState => ({ ...state, ...newState }),
-        {
-            isFetching: false,
-            error: undefined,
-            data: null,
-        }
-    )
+    const [state, setState] = useState<AnalyticsDataState>({
+        isFetching: false,
+        error: undefined,
+        data: null,
+    })
 
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
@@ -352,10 +346,11 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             page = 1,
             onResponseReceived,
         }) => {
-            setState({
+            setState((prevState) => ({
+                ...prevState,
                 isFetching: true,
                 error: undefined,
-            })
+            }))
 
             const relativePeriodDate = filters?.relativePeriodDate
 
@@ -435,15 +430,16 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 const analyticsData = { headers, rows, pager, rowContext }
 
                 setState({
-                    error: undefined,
                     data: analyticsData,
+                    error: undefined,
+                    isFetching: false,
                 })
 
                 onResponseReceived(analyticsResponse.metaData.items)
             } catch (error) {
-                setState({ error })
-            } finally {
                 setState({
+                    data: null,
+                    error,
                     isFetching: false,
                 })
             }
