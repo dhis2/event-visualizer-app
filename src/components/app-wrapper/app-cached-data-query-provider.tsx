@@ -61,10 +61,13 @@ type CurrentUserData = Omit<
     'settings'
 > & { settings?: Record<string, string | undefined> }
 type RootOrgUnitsData = Array<
-    PickWithFieldFilters<OrganisationUnit, typeof rootOrgUnitsFields>
+    PickWithFieldFilters<Required<OrganisationUnit>, typeof rootOrgUnitsFields>
 >
 type OrgUnitLevelsData = Array<
-    PickWithFieldFilters<OrganisationUnitLevel, typeof orgUnitLevelsFields>
+    PickWithFieldFilters<
+        Required<OrganisationUnitLevel>,
+        typeof orgUnitLevelsFields
+    >
 >
 
 type AppCachedData = {
