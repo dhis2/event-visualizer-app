@@ -3,6 +3,7 @@ import {
     isSimpleMetadataItem,
     isProgramMetadataItem,
     isOptionSetMetadataItem,
+    isOrganisationUnitMetadataItem,
 } from './type-guards'
 import type {
     AnyMetadataItemInput,
@@ -11,13 +12,14 @@ import type {
     OptionSetMetadataItem,
     MetadataStoreItem,
     NormalizedMetadataItem,
+    OrganisationUnitMetadataItem,
 } from './types'
 import type { MetadataItem } from '@types'
 
 // Normalization helper functions for each input type
-export function normalizeMetadataItem(
+export const normalizeMetadataItem = (
     input: MetadataItem
-): NormalizedMetadataItem {
+): NormalizedMetadataItem => {
     const result: NormalizedMetadataItem = {
         id: input.uid, // Convert uid to id
         name: input.name,
@@ -73,9 +75,9 @@ export function normalizeMetadataItem(
     return result as Omit<MetadataItem, 'uid'> & { id: string }
 }
 
-export function normalizeSimpleMetadataItem(
+export const normalizeSimpleMetadataItem = (
     input: SimpleMetadataItem
-): NormalizedMetadataItem {
+): NormalizedMetadataItem => {
     // Get the single key-value pair from the simple metadata item
     const [key, value] = Object.entries(input)[0]
 
@@ -86,9 +88,9 @@ export function normalizeSimpleMetadataItem(
     } as unknown as NormalizedMetadataItem
 }
 
-export function normalizeProgramMetadataItem(
+export const normalizeProgramMetadataItem = (
     input: ProgramMetadataItem
-): ProgramMetadataItem {
+): ProgramMetadataItem => {
     // ProgramMetadataItem is already in the correct format for MetadataStoreItem
     const result: ProgramMetadataItem = {
         id: input.id,
@@ -110,9 +112,9 @@ export function normalizeProgramMetadataItem(
     return result
 }
 
-export function normalizeOptionSetMetadataItem(
+export const normalizeOptionSetMetadataItem = (
     input: OptionSetMetadataItem
-): NormalizedMetadataItem {
+): NormalizedMetadataItem => {
     // Create NormalizedMetadataItem from OptionSet using type assertion for complex mapping
     const result = {
         id: input.id,
@@ -132,9 +134,16 @@ export function normalizeOptionSetMetadataItem(
     return result as unknown as NormalizedMetadataItem
 }
 
-export function normalizeMetadataInputItem(
+export const normalizeOrganisationUnitMetadataItem = (
+    input: OrganisationUnitMetadataItem
+): OrganisationUnitMetadataItem => {
+    // For org units, normalization is identity
+    return input
+}
+
+export const normalizeMetadataInputItem = (
     input: AnyMetadataItemInput
-): MetadataStoreItem {
+): MetadataStoreItem => {
     if (isMetadataItem(input)) {
         return normalizeMetadataItem(input)
     } else if (isProgramMetadataItem(input)) {
@@ -143,6 +152,8 @@ export function normalizeMetadataInputItem(
         return normalizeOptionSetMetadataItem(input)
     } else if (isSimpleMetadataItem(input)) {
         return normalizeSimpleMetadataItem(input)
+    } else if (isOrganisationUnitMetadataItem(input)) {
+        return normalizeOrganisationUnitMetadataItem(input)
     } else {
         throw new Error('Unknown metadata input type')
     }

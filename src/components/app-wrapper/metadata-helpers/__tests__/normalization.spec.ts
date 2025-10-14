@@ -1,8 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, describe, it } from 'vitest'
-import { normalizeMetadataInputItem } from '../normalization'
+import {
+    normalizeMetadataInputItem,
+    normalizeOrganisationUnitMetadataItem,
+} from '../normalization'
 
 describe('normalization', () => {
+    describe('normalizeOrganisationUnitMetadataItem', () => {
+        it('returns input as-is', () => {
+            const orgUnit = {
+                id: 'ou123',
+                path: '/A/B/C',
+                name: 'Test Org Unit',
+            }
+            expect(normalizeOrganisationUnitMetadataItem(orgUnit)).toBe(orgUnit)
+        })
+    })
     describe('normalizeMetadataInputItem', () => {
         describe('MetadataItem (with uid)', () => {
             it('should normalize MetadataItem with uid to id', () => {

@@ -7,9 +7,54 @@ import {
     isSimpleMetadataItem,
     isProgramMetadataItem,
     isOptionSetMetadataItem,
+    isOrganisationUnitMetadataItem,
 } from '../type-guards'
 
 describe('type-guards', () => {
+    describe('isOrganisationUnitMetadataItem', () => {
+        it('returns true for valid org unit', () => {
+            const orgUnit = {
+                name: 'Sierra Leone',
+                path: '/ImspTQPwCqd',
+                displayName: 'Sierra Leone',
+                id: 'ImspTQPwCqd',
+            }
+
+            expect(isOrganisationUnitMetadataItem(orgUnit)).toBe(true)
+        })
+        it('returns false for missing id', () => {
+            expect(
+                isOrganisationUnitMetadataItem({
+                    path: '/A/B/C',
+                    name: 'Test Org Unit',
+                })
+            ).toBe(false)
+        })
+        it('returns false for missing path', () => {
+            expect(
+                isOrganisationUnitMetadataItem({
+                    id: 'ou123',
+                    name: 'Test Org Unit',
+                })
+            ).toBe(false)
+        })
+        it('returns false for empty id or path', () => {
+            expect(
+                isOrganisationUnitMetadataItem({
+                    id: '',
+                    path: '/A/B/C',
+                    name: 'Test Org Unit',
+                })
+            ).toBe(false)
+            expect(
+                isOrganisationUnitMetadataItem({
+                    id: 'ou123',
+                    path: '',
+                    name: 'Test Org Unit',
+                })
+            ).toBe(false)
+        })
+    })
     describe('isObject', () => {
         it('should return true for plain objects', () => {
             expect(isObject({})).toBe(true)

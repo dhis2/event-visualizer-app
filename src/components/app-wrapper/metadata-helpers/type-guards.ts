@@ -3,6 +3,7 @@ import type {
     SimpleMetadataItem,
     ProgramMetadataItem,
     OptionSetMetadataItem,
+    OrganisationUnitMetadataItem,
 } from './types'
 import type { MetadataItem } from '@types'
 
@@ -30,7 +31,8 @@ export const isSingleMetadataItemInput = (
         isMetadataItem(item) ||
         isSimpleMetadataItem(item) ||
         isProgramMetadataItem(item) ||
-        isOptionSetMetadataItem(item)
+        isOptionSetMetadataItem(item) ||
+        isOrganisationUnitMetadataItem(item)
     )
 }
 
@@ -75,9 +77,9 @@ export const isProgramMetadataItem = (
     )
 }
 
-export function isOptionSetMetadataItem(
+export const isOptionSetMetadataItem = (
     input: AnyMetadataItemInput
-): input is OptionSetMetadataItem {
+): input is OptionSetMetadataItem => {
     return (
         isObject(input) &&
         'options' in input &&
@@ -85,5 +87,17 @@ export function isOptionSetMetadataItem(
         'name' in input &&
         isPopulatedString(input.id) &&
         isPopulatedString(input.name)
+    )
+}
+
+export const isOrganisationUnitMetadataItem = (
+    input: unknown
+): input is OrganisationUnitMetadataItem => {
+    return (
+        isObject(input) &&
+        'id' in input &&
+        'path' in input &&
+        isPopulatedString(input.id) &&
+        isPopulatedString(input.path)
     )
 }

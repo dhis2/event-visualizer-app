@@ -33,6 +33,7 @@ export type AnyMetadataItemInput =
     | SimpleMetadataItem
     | ProgramMetadataItem
     | OptionSetMetadataItem
+    | OrganisationUnitMetadataItem
 
 export type NormalizedMetadataItem = Omit<MetadataItem, 'uid'> & { id: string }
 
