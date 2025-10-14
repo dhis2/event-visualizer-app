@@ -6,6 +6,11 @@ export type OptionSetMetadataItem = OptionSet & {
     name: string
 }
 
+export type OrganisationUnitMetadataItem = Omit<MetadataItem, 'uid'> & {
+    id: string
+    path: string
+}
+
 // User org units, relative periods, etc - object with one string key and string value
 export type SimpleMetadataItem = { [key: string]: string }
 

@@ -21,6 +21,8 @@ import {
     smartMergeWithChangeDetection,
 } from './metadata-helpers'
 import { getInitialMetadata } from './metadata-helpers/initial-metadata'
+import { useRootOrgUnits } from '@hooks'
+import type { AppCachedData, SavedVisualization } from '@types'
 
 declare global {
     interface Window {
@@ -29,33 +31,48 @@ declare global {
     }
 }
 
+type InitialMetadataItems = Record<string, AnyMetadataItemInput>
+
 class MetadataStore {
-    private map = new Map<string, MetadataStoreItem>()
+    private metadata = new Map<string, MetadataStoreItem>()
     private subscribers = new Map<string, Set<Subscriber>>()
     private initialMetadataKeys = new Set<string>()
+    private initialMetadataItems: InitialMetadataItems
+    private rootOrgUnits?: AppCachedData['rootOrgUnits']
 
-    constructor(initialMetadataItems?: Record<string, AnyMetadataItemInput>) {
-        if (initialMetadataItems) {
-            // Add initial metadata items to the store first
-            Object.entries(initialMetadataItems).forEach(([key, item]) => {
-                this.map.set(key, normalizeMetadataInputItem(item))
-                this.initialMetadataKeys.add(key)
-            })
-        }
+    constructor(
+        initialMetadataItems: Record<string, AnyMetadataItemInput>,
+        /** When rendered by the app the rootOrgUnits is provided
+         *  but when rendered by the plugin it is not */
+        rootOrgUnits?: AppCachedData['rootOrgUnits']
+    ) {
+        this.initialMetadataItems = initialMetadataItems
+        this.rootOrgUnits = rootOrgUnits
+
+        this.addInitialMetadataItems()
+
         if (process.env.NODE_ENV === 'development') {
-            window.getMetadataStore = () => Object.fromEntries(this.map)
+            window.getMetadataStore = () => Object.fromEntries(this.metadata)
             window.getMetadataStoreItem = (key: string) =>
                 this.getMetadataItem(key)
         }
     }
 
+    setVisualizationMetadata(visualization: SavedVisualization) {
+        const oldMetadataKeys = new Set(this.metadata.keys())
+        this.metadata.clear()
+        this.addInitialMetadataItems()
+        console.log(oldMetadataKeys, visualization)
+        // Notify subscribers
+    }
+
     getMetadataItem(key: string): MetadataStoreItem | undefined {
-        return this.map.get(key)
+        return this.metadata.get(key)
     }
 
     getMetadataItems(keys: string[]): Record<string, MetadataStoreItem> {
         return keys.reduce((metadataStoreItems, key) => {
-            const item = this.map.get(key)
+            const item = this.metadata.get(key)
             if (item) {
                 metadataStoreItems[key] = item
             }
@@ -96,13 +113,13 @@ class MetadataStore {
                 return
             }
 
-            const existingMetadataStoreItem = this.map.get(itemId)
+            const existingMetadataStoreItem = this.metadata.get(itemId)
             const { hasChanges, mergedItem } = smartMergeWithChangeDetection(
                 existingMetadataStoreItem,
                 newMetadataStoreItem
             )
             if (hasChanges) {
-                this.map.set(itemId, mergedItem)
+                this.metadata.set(itemId, mergedItem)
                 updatedMetadataIds.add(itemId)
             }
         }
@@ -127,13 +144,36 @@ class MetadataStore {
             }
         })
     }
+
+    private addInitialMetadataItems() {
+        Object.entries(this.initialMetadataItems).forEach(([key, item]) => {
+            this.metadata.set(key, normalizeMetadataInputItem(item))
+            this.initialMetadataKeys.add(key)
+        })
+
+        if (!this.rootOrgUnits) {
+            return
+        }
+        for (const rootOrgUnit of this.rootOrgUnits) {
+            if (rootOrgUnit.id) {
+                this.metadata.set(
+                    rootOrgUnit.id,
+                    normalizeMetadataInputItem({
+                        ...rootOrgUnit,
+                        path: `/${rootOrgUnit.id}`,
+                    })
+                )
+            }
+        }
+    }
 }
 
 const MetadataContext = createContext<MetadataStore | null>(null)
 
 export const MetadataProvider: FC<{ children: ReactNode }> = ({ children }) => {
+    const rootOrgUnits = useRootOrgUnits()
     const [metadataStore] = useState(
-        () => new MetadataStore(getInitialMetadata())
+        () => new MetadataStore(getInitialMetadata(), rootOrgUnits)
     )
     return (
         <MetadataContext.Provider value={metadataStore}>
@@ -146,8 +186,13 @@ export const MockMetadataProvider: FC<{
     children: ReactNode
     mockMetadata?: Record<string, AnyMetadataItemInput>
 }> = ({ children, mockMetadata }) => {
+    const rootOrgUnits = useRootOrgUnits()
     const [metadataStore] = useState(
-        () => new MetadataStore({ ...getInitialMetadata(), ...mockMetadata })
+        () =>
+            new MetadataStore(
+                { ...getInitialMetadata(), ...mockMetadata },
+                rootOrgUnits
+            )
     )
     return (
         <MetadataContext.Provider value={metadataStore}>
