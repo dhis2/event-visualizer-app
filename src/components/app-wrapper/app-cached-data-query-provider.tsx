@@ -28,7 +28,7 @@ const systemSettingsKeys = [
     'keyHideBiMonthlyPeriods',
     'keyIgnoreAnalyticsApprovalYearThreshold',
 ] as const
-const rootOrgUnitsFields = ['id', 'displayName', 'name'] as const
+const rootOrgUnitsFields = ['id', 'displayName', 'name', 'path'] as const
 const orgUnitLevelsFields = ['id', 'level', 'displayName', 'name'] as const
 const query: Query = {
     currentUser: {
