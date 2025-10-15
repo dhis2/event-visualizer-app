@@ -1,6 +1,8 @@
 import i18n from '@dhis2/d2-i18n'
 import { layoutGetAllDimensions } from '@dhis2/analytics'
 import { isTimeDimensionId, transformDimensions } from '@modules/dimension'
+import { initialState as currentVisDefaultValue } from '@store/current-vis-slice'
+import { initialState as savedVisDefaultValue } from '@store/saved-vis-slice'
 import type {
     DimensionId,
     CurrentVisualization,
@@ -8,6 +10,7 @@ import type {
     NewVisualization,
     SavedVisualization,
     VisualizationType,
+    VisualizationState,
 } from '@types'
 
 // TODO: adjust the descriptions
@@ -107,6 +110,20 @@ export const isVisualizationWithTimeDimension = (vis: CurrentVisualization) =>
             Array.isArray(items) &&
             items.length > 0
     )
+
+export const getVisualizationState = (
+    savedVis: SavedVisualization | EmptyVisualization,
+    currentVis: CurrentVisualization
+): VisualizationState => {
+    console.log('savedVis', savedVis, 'currentVis', currentVis)
+    if (savedVis === savedVisDefaultValue) {
+        return currentVis === currentVisDefaultValue ? 'EMPTY' : 'UNSAVED'
+    } else if (currentVis === savedVis) {
+        return 'SAVED'
+    } else {
+        return 'DIRTY'
+    }
+}
 
 // Type guards for CurrentVisualization union
 export const isVisualizationEmpty = (
