@@ -1,5 +1,5 @@
 //import { FetchError } from '@dhis2/app-runtime'
-import { screen, waitFor } from '@testing-library/react'
+import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect } from 'vitest'
 import analyticsResponse1 from '../__fixtures__/analytics-response-1.json'
@@ -37,14 +37,15 @@ describe('PluginWrapper', () => {
         )
     }
 
-    it('should render the loading spinner while loading and switching visualizations', async () => {
+    it.only('should render the loading spinner while loading and switching visualizations', async () => {
         const eventVisualization1Id = 'TIuOzZ0ID0V'
         const eventVisualization2Id = 'waPjzoJyIQ9'
 
         const { store } = await renderWithAppWrapper(<TestComponent />, {
             queryData: {
-                analytics: (_, query) => {
+                analytics: async (_, query) => {
                     console.log('analytics query', query)
+                    await new Promise((resolve) => setTimeout(resolve, 100)) // Small delay to mimic async
                     if (
                         query.params.dimension.includes(
                             'qrur9Dvnyt5:GE:5:LE:10'
@@ -57,8 +58,9 @@ describe('PluginWrapper', () => {
                 },
                 // mock the POST to dataStatistics done in the eventVisualization endpoint
                 dataStatistics: {},
-                eventVisualizations: (_, query) => {
+                eventVisualizations: async (_, query) => {
                     console.log('eventVisualization query', query.id)
+                    await new Promise((resolve) => setTimeout(resolve, 10)) // Shorter delay
                     if (query.id === eventVisualization1Id) {
                         return eventVisualization1
                     } else if (query.id === eventVisualization2Id) {
@@ -69,67 +71,68 @@ describe('PluginWrapper', () => {
         } as MockOptions)
 
         // navigate to the 1st visualization
-        store.dispatch(
-            setNavigationState({
-                visualizationId: eventVisualization1Id,
-            })
-        )
-
-        //expect(store.getState().loader.isVisualizationLoading).toBe(true)
-
-        // XXX: this I would think should be in a waitFor, but instead it seems to work even without...
-        // renders the loading spinner
-        expect(
-            screen.getByTestId('dhis2-uicore-circularloader')
-        ).toBeInTheDocument()
-
-        // Wait for the visualization fetch to complete
-        await waitFor(() => {
-            //expect(store.getState().currentVis.id).toBe(eventVisualization1Id)
-
-            //expect(store.getState().loader.isVisualizationLoading).toBe(false)
-
-            console.log(
-                'currentVis',
-                store.getState().currentVis.id,
-                'isVisualizationLoading',
-                store.getState().loader.isVisualizationLoading
+        act(() => {
+            store.dispatch(
+                setNavigationState({
+                    visualizationId: eventVisualization1Id,
+                })
             )
+        })
 
-            // loading spinner should be removed
+        expect(store.getState().loader.isVisualizationLoading).toBe(true)
+        await screen.findByTestId('dhis2-uicore-circularloader')
+        expect(
+            screen.queryByTestId('line-list-data-table')
+        ).not.toBeInTheDocument()
+
+        await waitFor(() => {
+            expect(store.getState().currentVis.id).toBe(eventVisualization1Id)
+            expect(store.getState().loader.isVisualizationLoading).toBe(false)
+            expect(
+                screen.queryByTestId('line-list-data-table')
+            ).not.toBeInTheDocument()
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
-            ).not.toBeInTheDocument()
-
-            // and replaced with the LL table
-            expect(
-                screen.getByTestId('line-list-data-table')
             ).toBeInTheDocument()
         })
 
-        // navigate to the 2nd visualization
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId('line-list-data-table')
+            ).toBeInTheDocument()
+            expect(
+                screen.queryByTestId('dhis2-uicore-circularloader')
+            ).not.toBeInTheDocument()
+        })
+
+        // Switch to second visualization
         store.dispatch(
             setNavigationState({ visualizationId: eventVisualization2Id })
         )
 
-        //expect(store.getState().loader.isVisualizationLoading).toBe(true)
-
-        console.log('after switch')
+        expect(store.getState().loader.isVisualizationLoading).toBe(true)
+        await screen.findByTestId('dhis2-uicore-circularloader')
+        expect(
+            screen.queryByTestId('line-list-data-table')
+        ).not.toBeInTheDocument()
 
         await waitFor(() => {
-            console.log(
-                'currentVis',
-                store.getState().currentVis.id,
-                'isVisualizationLoading',
-                store.getState().loader.isVisualizationLoading
-            )
-
-            expect(
-                screen.getByTestId('dhis2-uicore-circularloader')
-            ).toBeInTheDocument()
-
+            expect(store.getState().currentVis.id).toBe(eventVisualization2Id)
+            expect(store.getState().loader.isVisualizationLoading).toBe(false)
             expect(
                 screen.queryByTestId('line-list-data-table')
+            ).not.toBeInTheDocument()
+            expect(
+                screen.queryByTestId('dhis2-uicore-circularloader')
+            ).toBeInTheDocument()
+        })
+
+        await waitFor(() => {
+            expect(
+                screen.queryByTestId('line-list-data-table')
+            ).toBeInTheDocument()
+            expect(
+                screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
         })
     })
