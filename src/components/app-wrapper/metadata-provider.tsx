@@ -21,6 +21,7 @@ import {
     smartMergeWithChangeDetection,
 } from './metadata-helpers'
 import { getInitialMetadata } from './metadata-helpers/initial-metadata'
+import { extractMetadataFromVisualization } from './metadata-helpers/visualization'
 import { useRootOrgUnits } from '@hooks'
 import type { AppCachedData, SavedVisualization } from '@types'
 
@@ -59,11 +60,20 @@ class MetadataStore {
     }
 
     setVisualizationMetadata(visualization: SavedVisualization) {
-        const oldMetadataKeys = new Set(this.metadata.keys())
         this.metadata.clear()
+        /* This will not trigger a rerender, which is OK because the initial items
+         * are always identical */
         this.addInitialMetadataItems()
-        console.log(oldMetadataKeys, visualization)
-        // Notify subscribers
+        const visualizationMetadata =
+            extractMetadataFromVisualization(visualization)
+        /* TODO: There are some shortcoming to this approach, but I think these are
+         * purely theoretical, because this actually happens while the visualization is
+         * still loading. I'll note some possible issues anyway:
+         * - It will cause a rerender to all NEW metadata items, eben if they are the
+         *   same as before
+         * - If anything is rendered and subscribed to a deleted metadata item, the
+         *   component will not be rerendered */
+        this.addMetadata(visualizationMetadata)
     }
 
     getMetadataItem(key: string): MetadataStoreItem | undefined {
@@ -284,7 +294,10 @@ export const useAddMetadata = (): MetadataStore['addMetadata'] => {
 
 export type UseMetadataStoreReturnValue = Pick<
     MetadataStore,
-    'getMetadataItem' | 'getMetadataItems' | 'addMetadata'
+    | 'getMetadataItem'
+    | 'getMetadataItems'
+    | 'addMetadata'
+    | 'setVisualizationMetadata'
 >
 export const useMetadataStore = (): UseMetadataStoreReturnValue => {
     const metadataStore = useContext(MetadataContext) as MetadataStore
@@ -292,6 +305,8 @@ export const useMetadataStore = (): UseMetadataStoreReturnValue => {
         getMetadataItem: metadataStore.getMetadataItem.bind(metadataStore),
         getMetadataItems: metadataStore.getMetadataItems.bind(metadataStore),
         addMetadata: metadataStore.addMetadata.bind(metadataStore),
+        setVisualizationMetadata:
+            metadataStore.setVisualizationMetadata.bind(metadataStore),
     }))
     return api
 }
