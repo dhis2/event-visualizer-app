@@ -8,6 +8,7 @@ import {
     isProgramMetadataItem,
     isOptionSetMetadataItem,
     isOrganisationUnitMetadataItem,
+    isLegendSetMetadataItem,
 } from '../type-guards'
 
 describe('type-guards', () => {
@@ -664,6 +665,68 @@ describe('type-guards', () => {
                     uid: 'should not interfere',
                 } as any)
             ).toBe(true) // additional properties should not interfere
+        })
+    })
+
+    describe('isLegendSetMetadataItem', () => {
+        it('should return true for valid LegendSetMetadataItem', () => {
+            const item = {
+                id: 'legend1',
+                name: 'Test Legend Set',
+                legends: [
+                    { id: 'l1', name: 'Legend 1', startValue: 0, endValue: 10 },
+                ],
+            }
+            expect(isLegendSetMetadataItem(item)).toBe(true)
+        })
+
+        it('should return false for item missing required properties', () => {
+            expect(
+                isLegendSetMetadataItem({ id: 'legend1', name: 'Test' } as any)
+            ).toBe(false)
+            expect(
+                isLegendSetMetadataItem({ id: 'legend1', legends: [] } as any)
+            ).toBe(false)
+            expect(
+                isLegendSetMetadataItem({ name: 'Test', legends: [] } as any)
+            ).toBe(false)
+        })
+
+        it('should return false for item with wrong property types', () => {
+            expect(
+                isLegendSetMetadataItem({
+                    id: 123,
+                    name: 'Test',
+                    legends: [],
+                } as any)
+            ).toBe(false)
+
+            expect(
+                isLegendSetMetadataItem({
+                    id: 'legend1',
+                    name: 'Test',
+                    legends: 'not-array',
+                } as any)
+            ).toBe(false)
+        })
+
+        it('should return false for null or non-object input', () => {
+            expect(isLegendSetMetadataItem(null as any)).toBe(false)
+            expect(isLegendSetMetadataItem('string' as any)).toBe(false)
+            expect(isLegendSetMetadataItem(123 as any)).toBe(false)
+        })
+
+        it('should return true for LegendSetMetadataItem with additional properties', () => {
+            expect(
+                isLegendSetMetadataItem({
+                    id: 'legend1',
+                    name: 'Test Legend Set',
+                    legends: [],
+                    code: 'TEST_CODE',
+                    displayName: 'Display Name',
+                    someOtherProperty: 'should not interfere',
+                })
+            ).toBe(true)
         })
     })
 })

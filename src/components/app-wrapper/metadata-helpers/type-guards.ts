@@ -4,6 +4,8 @@ import type {
     ProgramMetadataItem,
     OptionSetMetadataItem,
     OrganisationUnitMetadataItem,
+    MetadataStoreItem,
+    LegendSetMetadataItem,
 } from './types'
 import type { MetadataItem } from '@types'
 
@@ -32,6 +34,7 @@ export const isSingleMetadataItemInput = (
         isSimpleMetadataItem(item) ||
         isProgramMetadataItem(item) ||
         isOptionSetMetadataItem(item) ||
+        isLegendSetMetadataItem(item) ||
         isOrganisationUnitMetadataItem(item)
     )
 }
@@ -64,7 +67,7 @@ export const isSimpleMetadataItem = (
 }
 
 export const isProgramMetadataItem = (
-    input: AnyMetadataItemInput
+    input: AnyMetadataItemInput | MetadataStoreItem
 ): input is ProgramMetadataItem => {
     return (
         isObject(input) &&
@@ -78,7 +81,7 @@ export const isProgramMetadataItem = (
 }
 
 export const isOptionSetMetadataItem = (
-    input: AnyMetadataItemInput
+    input: AnyMetadataItemInput | MetadataStoreItem
 ): input is OptionSetMetadataItem => {
     return (
         isObject(input) &&
@@ -90,8 +93,22 @@ export const isOptionSetMetadataItem = (
     )
 }
 
+export function isLegendSetMetadataItem(
+    input: AnyMetadataItemInput | MetadataStoreItem
+): input is LegendSetMetadataItem {
+    return (
+        isObject(input) &&
+        'id' in input &&
+        'name' in input &&
+        'legends' in input &&
+        isPopulatedString(input.id) &&
+        isPopulatedString(input.name) &&
+        Array.isArray(input.legends)
+    )
+}
+
 export const isOrganisationUnitMetadataItem = (
-    input: unknown
+    input: AnyMetadataItemInput | MetadataStoreItem
 ): input is OrganisationUnitMetadataItem => {
     return (
         isObject(input) &&

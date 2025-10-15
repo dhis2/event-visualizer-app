@@ -4,6 +4,7 @@ import {
     isProgramMetadataItem,
     isOptionSetMetadataItem,
     isOrganisationUnitMetadataItem,
+    isLegendSetMetadataItem,
 } from './type-guards'
 import type {
     AnyMetadataItemInput,
@@ -13,6 +14,7 @@ import type {
     MetadataStoreItem,
     NormalizedMetadataItem,
     OrganisationUnitMetadataItem,
+    LegendSetMetadataItem,
 } from './types'
 import type { MetadataItem } from '@types'
 
@@ -134,6 +136,17 @@ export const normalizeOptionSetMetadataItem = (
     return result as unknown as NormalizedMetadataItem
 }
 
+export const normalizeLegendSetMetadataItem = (
+    input: LegendSetMetadataItem
+): LegendSetMetadataItem => {
+    // Extract only the required properties to ensure no additional properties are present
+    return {
+        id: input.id,
+        name: input.name,
+        legends: input.legends,
+    }
+}
+
 export const normalizeOrganisationUnitMetadataItem = (
     input: OrganisationUnitMetadataItem
 ): OrganisationUnitMetadataItem => {
@@ -152,6 +165,8 @@ export const normalizeMetadataInputItem = (
         return normalizeOptionSetMetadataItem(input)
     } else if (isSimpleMetadataItem(input)) {
         return normalizeSimpleMetadataItem(input)
+    } else if (isLegendSetMetadataItem(input)) {
+        return normalizeLegendSetMetadataItem(input)
     } else if (isOrganisationUnitMetadataItem(input)) {
         return normalizeOrganisationUnitMetadataItem(input)
     } else {
