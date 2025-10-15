@@ -1,0 +1,44 @@
+.titleBar {
+    display: flex;
+    justify-content: flex-start;
+    /* Same amount of whitespace as fullscreen button */
+    padding-inline-end: 28px;
+}
+
+.titleBar > .buttonContainer {
+    display: flex;
+    flex-grow: 0;
+    padding: 0 4px;
+}
+
+.titleBar > .titleContainer {
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.cell {
+    display: flex;
+    align-items: center;
+    background-color: var(--colors-white);
+    padding: 6px;
+    border-radius: 5px;
+    margin: 4px;
+}
+
+.title {
+    font-size: 14px;
+}
+
+.suffix {
+    padding-inline-start: 4px;
+}
+
+.titleUnsaved {
+    color: var(--colors-grey500);
+    font-style: italic;
+}
+
+.titleDirty {
+    color: var(--colors-grey700);
+}
