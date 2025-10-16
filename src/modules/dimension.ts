@@ -17,7 +17,9 @@ import type {
     InputType,
     InternalDimensionRecord,
     ProgramDimensionType,
+    SavedVisualization,
     TimeDimensionId,
+    ValueType,
     YourDimensionType,
 } from '@types'
 
@@ -270,3 +272,87 @@ export const isTimeDimensionId = (
     dimensionId: DimensionRecord['dimension']
 ): dimensionId is TimeDimensionId =>
     (TIME_DIMENSION_IDS as readonly string[]).includes(dimensionId)
+
+type FormatDimensionIdParams = {
+    dimensionId: DimensionId
+    programStageId?: string
+    programId?: string
+    outputType?: SavedVisualization['outputType']
+}
+export const formatDimensionId = ({
+    dimensionId,
+    programStageId,
+    programId,
+    outputType,
+}: FormatDimensionIdParams) => {
+    return [
+        outputType === 'TRACKED_ENTITY_INSTANCE' ? programId : undefined,
+        programStageId,
+        dimensionId,
+    ]
+        .filter((p) => p)
+        .join('.')
+}
+
+type NameParentProperty = 'program' | 'stage'
+type TimeDimension = {
+    id: TimeDimensionId
+    dimensionType: ExtendedDimensionType
+    formatType: ValueType
+    defaultName: string
+    nameParentProperty: NameParentProperty
+    nameProperty: string
+}
+export const getTimeDimensions = (): Record<
+    Exclude<TimeDimensionId, 'lastUpdated'>,
+    TimeDimension
+> => ({
+    eventDate: {
+        id: 'eventDate',
+        dimensionType: 'PERIOD',
+        defaultName: i18n.t('Event date'),
+        nameParentProperty: 'stage',
+        nameProperty: 'displayExecutionDateLabel',
+        formatType: 'DATE',
+    },
+    enrollmentDate: {
+        id: 'enrollmentDate',
+        dimensionType: 'PERIOD',
+        defaultName: i18n.t('Enrollment date'),
+        nameParentProperty: 'program',
+        nameProperty: 'displayEnrollmentDateLabel',
+        formatType: 'DATE',
+    },
+    incidentDate: {
+        id: 'incidentDate',
+        dimensionType: 'PERIOD',
+        defaultName: i18n.t('Incident date'),
+        nameParentProperty: 'program',
+        nameProperty: 'displayIncidentDateLabel',
+        formatType: 'DATE',
+    },
+    scheduledDate: {
+        id: 'scheduledDate',
+        dimensionType: 'PERIOD',
+        defaultName: i18n.t('Scheduled date'),
+        nameParentProperty: 'stage',
+        nameProperty: 'displayDueDateLabel',
+        formatType: 'DATE',
+    },
+})
+
+export const getTimeDimensionName = (
+    dimension: TimeDimension,
+    program?: SavedVisualization['program'],
+    stage?: SavedVisualization['programStage']
+): string => {
+    if (!dimension.nameParentProperty || !program) {
+        return dimension.defaultName
+    }
+    const name =
+        dimension.nameParentProperty === 'program'
+            ? program[dimension.nameProperty]
+            : stage?.[dimension.nameProperty]
+
+    return name || dimension.defaultName
+}

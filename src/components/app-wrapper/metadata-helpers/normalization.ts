@@ -2,22 +2,28 @@ import {
     isMetadataItem,
     isSimpleMetadataItem,
     isProgramMetadataItem,
+    isProgramStageMetadataItem,
     isOptionSetMetadataItem,
+    isOrganisationUnitMetadataItem,
+    isLegendSetMetadataItem,
 } from './type-guards'
 import type {
     AnyMetadataItemInput,
     SimpleMetadataItem,
     ProgramMetadataItem,
+    ProgramStageMetadataItem,
     OptionSetMetadataItem,
     MetadataStoreItem,
     NormalizedMetadataItem,
+    OrganisationUnitMetadataItem,
+    LegendSetMetadataItem,
 } from './types'
 import type { MetadataItem } from '@types'
 
 // Normalization helper functions for each input type
-export function normalizeMetadataItem(
+export const normalizeMetadataItem = (
     input: MetadataItem
-): NormalizedMetadataItem {
+): NormalizedMetadataItem => {
     const result: NormalizedMetadataItem = {
         id: input.uid, // Convert uid to id
         name: input.name,
@@ -73,9 +79,9 @@ export function normalizeMetadataItem(
     return result as Omit<MetadataItem, 'uid'> & { id: string }
 }
 
-export function normalizeSimpleMetadataItem(
+export const normalizeSimpleMetadataItem = (
     input: SimpleMetadataItem
-): NormalizedMetadataItem {
+): NormalizedMetadataItem => {
     // Get the single key-value pair from the simple metadata item
     const [key, value] = Object.entries(input)[0]
 
@@ -86,9 +92,9 @@ export function normalizeSimpleMetadataItem(
     } as unknown as NormalizedMetadataItem
 }
 
-export function normalizeProgramMetadataItem(
+export const normalizeProgramMetadataItem = (
     input: ProgramMetadataItem
-): ProgramMetadataItem {
+): ProgramMetadataItem => {
     // ProgramMetadataItem is already in the correct format for MetadataStoreItem
     const result: ProgramMetadataItem = {
         id: input.id,
@@ -110,9 +116,26 @@ export function normalizeProgramMetadataItem(
     return result
 }
 
-export function normalizeOptionSetMetadataItem(
+export const normalizeProgramStageMetadataItem = (
+    input: ProgramStageMetadataItem
+): ProgramStageMetadataItem => {
+    const result: ProgramStageMetadataItem = {
+        id: input.id,
+        name: input.name,
+        repeatable: input.repeatable,
+        hideDueDate: input.hideDueDate,
+    }
+
+    if (input.displayExecutionDateLabel !== undefined) {
+        result.displayExecutionDateLabel = input.displayExecutionDateLabel
+    }
+
+    return result
+}
+
+export const normalizeOptionSetMetadataItem = (
     input: OptionSetMetadataItem
-): NormalizedMetadataItem {
+): NormalizedMetadataItem => {
     // Create NormalizedMetadataItem from OptionSet using type assertion for complex mapping
     const result = {
         id: input.id,
@@ -132,17 +155,41 @@ export function normalizeOptionSetMetadataItem(
     return result as unknown as NormalizedMetadataItem
 }
 
-export function normalizeMetadataInputItem(
+export const normalizeLegendSetMetadataItem = (
+    input: LegendSetMetadataItem
+): LegendSetMetadataItem => {
+    // Extract only the required properties to ensure no additional properties are present
+    return {
+        id: input.id,
+        name: input.name,
+        legends: input.legends,
+    }
+}
+
+export const normalizeOrganisationUnitMetadataItem = (
+    input: OrganisationUnitMetadataItem
+): OrganisationUnitMetadataItem => {
+    // For org units, normalization is identity
+    return input
+}
+
+export const normalizeMetadataInputItem = (
     input: AnyMetadataItemInput
-): MetadataStoreItem {
+): MetadataStoreItem => {
     if (isMetadataItem(input)) {
         return normalizeMetadataItem(input)
     } else if (isProgramMetadataItem(input)) {
         return normalizeProgramMetadataItem(input)
+    } else if (isProgramStageMetadataItem(input)) {
+        return normalizeProgramStageMetadataItem(input)
     } else if (isOptionSetMetadataItem(input)) {
         return normalizeOptionSetMetadataItem(input)
     } else if (isSimpleMetadataItem(input)) {
         return normalizeSimpleMetadataItem(input)
+    } else if (isLegendSetMetadataItem(input)) {
+        return normalizeLegendSetMetadataItem(input)
+    } else if (isOrganisationUnitMetadataItem(input)) {
+        return normalizeOrganisationUnitMetadataItem(input)
     } else {
         throw new Error('Unknown metadata input type')
     }

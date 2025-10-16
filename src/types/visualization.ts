@@ -33,23 +33,23 @@ export type DimensionArray = Array<DimensionRecord>
 
 type ProgramStageRecord = Pick<
     ProgramStage,
-    | 'id'
     | 'displayExecutionDateLabel'
     | 'displayDueDateLabel'
     | 'hideDueDate'
     | 'repeatable'
 > & {
+    id: string
     name: string
 }
 
 type ProgramRecord = Pick<
     Program,
-    | 'id'
     | 'programType'
     | 'displayEnrollmentDateLabel'
     | 'displayIncidentDateLabel'
     | 'displayIncidentDate'
 > & {
+    id: string
     name: string
     programStages: Array<
         Pick<ProgramStage, 'id' | 'repeatable'> & {
@@ -61,7 +61,6 @@ type ProgramRecord = Pick<
 type ProgramDimensionArray = Array<
     Pick<
         Program,
-        | 'id'
         | 'enrollmentDateLabel'
         | 'incidentDateLabel'
         | 'programType'
@@ -69,6 +68,7 @@ type ProgramDimensionArray = Array<
         | 'displayEnrollmentDateLabel'
         | 'displayIncidentDateLabel'
     > & {
+        id: string
         name: string
         programStages: Array<ProgramStageRecord>
     }

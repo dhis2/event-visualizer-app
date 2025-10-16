@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-09-23T09:40:46.301Z\n"
-"PO-Revision-Date: 2025-09-23T09:40:46.302Z\n"
+"POT-Creation-Date: 2025-10-15T13:11:22.144Z\n"
+"PO-Revision-Date: 2025-10-15T13:11:22.145Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -115,6 +115,12 @@ msgstr "This year"
 
 msgid "Last year"
 msgstr "Last year"
+
+msgid "Registration org. unit"
+msgstr "Registration org. unit"
+
+msgid "Organisation unit"
+msgstr "Organisation unit"
 
 msgid "HTML"
 msgstr "HTML"
@@ -274,6 +280,18 @@ msgstr "Event status"
 msgid "Program status"
 msgstr "Program status"
 
+msgid "Event date"
+msgstr "Event date"
+
+msgid "Enrollment date"
+msgstr "Enrollment date"
+
+msgid "Incident date"
+msgstr "Incident date"
+
+msgid "Scheduled date"
+msgstr "Scheduled date"
+
 msgid "all"
 msgstr "all"
 
@@ -285,12 +303,6 @@ msgstr "Filter"
 
 msgid "Rows"
 msgstr "Rows"
-
-msgid "Registration org. unit"
-msgstr "Registration org. unit"
-
-msgid "Organisation unit"
-msgstr "Organisation unit"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
