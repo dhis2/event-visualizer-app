@@ -13,6 +13,7 @@ import {
     GridStartColumn,
     GridTopRow,
 } from '@components/grid'
+import { LineListLayout } from '@components/layout-panel/line-list-layout'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
 import { TitleBar } from '@components/title-bar/title-bar'
@@ -76,6 +77,7 @@ const EventVisualizer: FC = () => {
                 </div>
             </GridStartColumn>
             <GridCenterColumnTop>
+                <LineListLayout />
                 <TitleBar />
             </GridCenterColumnTop>
             <GridCenterColumnBottom>
