@@ -1,4 +1,3 @@
-//import { FetchError } from '@dhis2/app-runtime'
 import type { Store } from '@reduxjs/toolkit'
 import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
