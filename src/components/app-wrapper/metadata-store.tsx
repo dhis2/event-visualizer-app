@@ -40,6 +40,10 @@ export class MetadataStore {
         }
     }
 
+    protected get metadataMap(): Map<string, MetadataStoreItem> {
+        return this.metadata
+    }
+
     setVisualizationMetadata(visualization: SavedVisualization) {
         const visualizationMetadata =
             extractMetadataFromVisualization(visualization)
@@ -47,13 +51,13 @@ export class MetadataStore {
          * The initial metadata does not need to be updated because it remains unchanged.
          * The metadata items for the new visualization are updated as needed by calling `addMetadata`
          * The removed metadata items could have subscriptions remaining, so these are notified */
-        const newMetadataKeys = new Set(
+        const newMetadataKeys = new Set([
             ...Object.keys(visualizationMetadata),
-            ...Array.from(this.initialMetadataKeys)
+            ...Array.from(this.initialMetadataKeys),
+        ])
+        const metadataKeysToRemove = Array.from(this.metadata.keys()).filter(
+            (key) => !newMetadataKeys.has(key)
         )
-        const metadataKeysToRemove = this.metadata
-            .keys()
-            .filter((key) => !newMetadataKeys.has(key))
 
         for (const key of metadataKeysToRemove) {
             this.metadata.delete(key)
