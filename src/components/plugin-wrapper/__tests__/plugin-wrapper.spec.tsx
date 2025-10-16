@@ -8,8 +8,9 @@ import analyticsResponse2 from '../__fixtures__/analytics-response-2.json'
 import eventVisualization1 from '../__fixtures__/inpatient-cases-5-to-15-years-this-year.json'
 import eventVisualization2 from '../__fixtures__/inpatient-visit-overview-this-year-bonthe.json'
 import { PluginWrapper } from '../plugin-wrapper'
-import { useCurrentUser, useAppSelector } from '@hooks'
-import { setCurrentVis } from '@store/current-vis-slice'
+import { useCurrentUser, useAppSelector, useAppDispatch } from '@hooks'
+import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
+import { getIsVisualizationLoading } from '@store/loader-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import type { RootState } from '@store/store'
 import { renderWithAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
@@ -42,13 +43,18 @@ describe('PluginWrapper', () => {
         } as unknown,
     } as MockOptions
     const TestComponent = () => {
+        const dispatch = useAppDispatch()
         const currentUser = useCurrentUser()
-        const isVisualizationLoading = useAppSelector(
-            (state: RootState) => state.loader.isVisualizationLoading
-        )
-        const currentVis = useAppSelector(
-            (state: RootState) => state.currentVis
-        )
+        const currentVis = useAppSelector(getCurrentVis)
+        const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
+        mockOnDataSorted.mockImplementation((sorting: Sorting) => {
+            dispatch(
+                setCurrentVis({
+                    ...currentVis,
+                    sorting: sorting ? [sorting] : undefined,
+                } as CurrentVisualization)
+            )
+        })
 
         return (
             <PluginWrapper
@@ -226,14 +232,6 @@ describe('PluginWrapper', () => {
         await loadFirstVisualization(store)
 
         const currentVisSnapshot = store.getState().currentVis
-        mockOnDataSorted.mockImplementation((sorting: Sorting) => {
-            store.dispatch(
-                setCurrentVis({
-                    ...currentVisSnapshot,
-                    sorting: sorting ? [sorting] : undefined,
-                } as CurrentVisualization)
-            )
-        })
 
         // Sorting
         await user.click(
