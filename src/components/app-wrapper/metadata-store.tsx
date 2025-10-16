@@ -24,19 +24,14 @@ export class MetadataStore {
     private metadata = new Map<string, MetadataStoreItem>()
     private subscribers = new Map<string, Set<Subscriber>>()
     private initialMetadataKeys = new Set<string>()
-    private initialMetadataItems: InitialMetadataItems
-    private rootOrgUnits?: AppCachedData['rootOrgUnits']
 
     constructor(
-        initialMetadataItems: Record<string, AnyMetadataItemInput>,
+        initialMetadataItems: InitialMetadataItems,
         /** When rendered by the app the rootOrgUnits is provided
          *  but when rendered by the plugin it is not */
         rootOrgUnits?: AppCachedData['rootOrgUnits']
     ) {
-        this.initialMetadataItems = initialMetadataItems
-        this.rootOrgUnits = rootOrgUnits
-
-        this.addInitialMetadataItems()
+        this.addInitialMetadataItems(initialMetadataItems, rootOrgUnits)
 
         if (process.env.NODE_ENV === 'development') {
             window.getMetadataStore = () => Object.fromEntries(this.metadata)
@@ -46,19 +41,24 @@ export class MetadataStore {
     }
 
     setVisualizationMetadata(visualization: SavedVisualization) {
-        this.metadata.clear()
-        /* This will not trigger a rerender, which is OK because the initial items
-         * are always identical */
-        this.addInitialMetadataItems()
         const visualizationMetadata =
             extractMetadataFromVisualization(visualization)
-        /* TODO: There are some shortcoming to this approach, but I think these are
-         * purely theoretical, because this actually happens while the visualization is
-         * still loading. I'll note some possible issues anyway:
-         * - It will cause a rerender to all NEW metadata items, eben if they are the
-         *   same as before
-         * - If anything is rendered and subscribed to a deleted metadata item, the
-         *   component will not be rerendered */
+        /* The code below is designed to keep metadata hook rerenders to a minimum:
+         * The initial metadata does not need to be updated because it remains unchanged.
+         * The metadata items for the new visualization are updated as needed by calling `addMetadata`
+         * The removed metadata items could have subscriptions remaining, so these are notified */
+        const newMetadataKeys = new Set(
+            ...Object.keys(visualizationMetadata),
+            ...Array.from(this.initialMetadataKeys)
+        )
+        const metadataKeysToRemove = this.metadata
+            .keys()
+            .filter((key) => !newMetadataKeys.has(key))
+
+        for (const key of metadataKeysToRemove) {
+            this.metadata.delete(key)
+            this.notifySubscriber(key)
+        }
         this.addMetadata(visualizationMetadata)
     }
 
@@ -131,34 +131,42 @@ export class MetadataStore {
             }
         }
 
-        // Notify subscribers for all updated ids
-        updatedMetadataIds.forEach((metadataId) => {
-            if (this.subscribers.has(metadataId)) {
-                this.subscribers
-                    .get(metadataId)!
-                    .forEach((callback) => callback())
-            }
-        })
+        this.notifySubscribers(updatedMetadataIds)
     }
 
-    private addInitialMetadataItems() {
-        Object.entries(this.initialMetadataItems).forEach(([key, item]) => {
+    private notifySubscribers(keys: Set<string>) {
+        for (const key of keys) {
+            this.notifySubscriber(key)
+        }
+    }
+
+    private notifySubscriber(key: string) {
+        if (this.subscribers.has(key)) {
+            this.subscribers.get(key)!.forEach((callback) => callback())
+        }
+    }
+
+    private addInitialMetadataItems(
+        initialMetadataItems: InitialMetadataItems,
+        rootOrgUnits?: AppCachedData['rootOrgUnits']
+    ) {
+        Object.entries(initialMetadataItems).forEach(([key, item]) => {
             this.metadata.set(key, normalizeMetadataInputItem(item))
             this.initialMetadataKeys.add(key)
         })
 
-        if (!this.rootOrgUnits) {
-            return
-        }
-        for (const rootOrgUnit of this.rootOrgUnits) {
-            if (rootOrgUnit.id) {
-                this.metadata.set(
-                    rootOrgUnit.id,
-                    normalizeMetadataInputItem({
-                        ...rootOrgUnit,
-                        path: `/${rootOrgUnit.id}`,
-                    })
-                )
+        if (rootOrgUnits) {
+            for (const rootOrgUnit of rootOrgUnits) {
+                if (rootOrgUnit.id) {
+                    this.metadata.set(
+                        rootOrgUnit.id,
+                        normalizeMetadataInputItem({
+                            ...rootOrgUnit,
+                            path: `/${rootOrgUnit.id}`,
+                        })
+                    )
+                    this.initialMetadataKeys.add(rootOrgUnit.id)
+                }
             }
         }
     }
