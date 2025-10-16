@@ -24,7 +24,7 @@ describe('PluginWrapper', () => {
     const mockOptions = {
         queryData: {
             analytics: async (_, query) => {
-                await new Promise((resolve) => setTimeout(resolve, 100)) // For this follow-up request
+                await new Promise((resolve) => setTimeout(resolve, 200)) // For this follow-up request
                 if (query.params.dimension.includes('qrur9Dvnyt5:GE:5:LE:10')) {
                     return analyticsResponse1
                 } else {
