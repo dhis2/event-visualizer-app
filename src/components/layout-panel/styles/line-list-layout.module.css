@@ -3,3 +3,7 @@
     flex: 1;
     background-color: var(--colors-white);
 }
+
+.layoutContainer.hidden {
+    display: none;
+}
