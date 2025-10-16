@@ -1,6 +1,10 @@
 import i18n from '@dhis2/d2-i18n'
 import deepmerge from 'deepmerge'
-import type { AnyMetadataItemInput, MetadataInput } from './types'
+import type {
+    AnyMetadataItemInput,
+    MetadataInput,
+    OrganisationUnitMetadataItem,
+} from './types'
 import { DIMENSION_ID_ORGUNIT } from '@constants/dimensions'
 import {
     formatDimensionId,
@@ -186,6 +190,23 @@ const extractProgramMetadata = (
     return programAndStagesMetadata
 }
 
+const addPathToOrganisationUnitMetadataItems = (
+    metadataInput: MetadataInput,
+    parentGraphMap?: SavedVisualization['parentGraphMap']
+) => {
+    if (parentGraphMap) {
+        for (const [key, path] of Object.entries(parentGraphMap)) {
+            const organisationUnitMetadaInputItem = metadataInput[
+                key
+            ] as OrganisationUnitMetadataItem
+
+            if (organisationUnitMetadaInputItem) {
+                organisationUnitMetadaInputItem.path = path
+            }
+        }
+    }
+}
+
 export const extractMetadataFromVisualization = (
     visualization: SavedVisualization
 ): MetadataInput => {
@@ -199,5 +220,15 @@ export const extractMetadataFromVisualization = (
         extractDimensionMetadata(visualization),
         extractProgramMetadata(visualization),
     ]
-    return sources.reduce((acc, obj) => deepmerge(acc, obj), {})
+    const metadataInput: MetadataInput = sources.reduce(
+        (acc, obj) => deepmerge(acc, obj),
+        {}
+    )
+
+    addPathToOrganisationUnitMetadataItems(
+        metadataInput,
+        visualization.parentGraphMap
+    )
+
+    return metadataInput
 }
