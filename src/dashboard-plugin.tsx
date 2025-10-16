@@ -1,6 +1,6 @@
 // eslint-disable-next-line  no-restricted-imports
 import { useDataQuery } from '@dhis2/app-runtime'
-import type { FC } from 'react'
+import { type FC } from 'react'
 import { getVisualizationQueryFields } from '@api/event-visualizations-api'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
@@ -15,9 +15,10 @@ type DashboardPluginProps = {
 
 const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
     console.log('DashboardPlugin props', props)
+    console.log('vis id', props.visualization.id)
 
     // fetch the visualization
-    const { data, loading, error } = useDataQuery({
+    const { data, error, loading } = useDataQuery({
         eventVisualization: {
             resource: 'eventVisualizations',
             id: props.visualization.id, // TODO: this should be just passed as visualizationId
@@ -33,18 +34,19 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
         },
     })
 
-    if (loading) {
-        // Both `error` and `data` will be undefined here
-        console.log(data, error)
-        return <div>Loading event visualization...</div>
-    }
+    // TODO: handle errors
     if (error) {
         // `error` will be of type EngineError and `data` will is possibly undefined
-        console.log(data, error)
+        console.log('ERROR!', data, error)
         return <div>Error loading event visualization: {error.message}</div>
     }
 
-    const eventVisualization = data?.eventVisualization as SavedVisualization
+    // TODO: check this type. The PluginWrapper expects a CurrentVisualization type, which includes empty but not null.
+    // Before the visualization is fetched, the prop is undefined/null and that fails in the check for visualization.type
+    const eventVisualization =
+        (data?.eventVisualization as SavedVisualization) ?? {}
+
+    console.log('dp eventVisualization', eventVisualization, 'loading', loading)
 
     return (
         <DashboardPluginWrapper {...props}>
@@ -56,6 +58,8 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
                     displayProperty={props.displayProperty}
                     filters={props.filters}
                     visualization={eventVisualization}
+                    isVisualizationLoading={loading}
+                    //onResponseReceived={onResponseReceived}
                 />
             )}
         </DashboardPluginWrapper>

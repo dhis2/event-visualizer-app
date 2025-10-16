@@ -52,3 +52,7 @@
     inset-block-end: 0;
     z-index: 1;
 }
+
+.fetching {
+    filter: blur(2px);
+}
