@@ -60,7 +60,7 @@ describe('PluginWrapper', () => {
                 dataStatistics: {},
                 eventVisualizations: async (_, query) => {
                     console.log('eventVisualization query', query.id)
-                    await new Promise((resolve) => setTimeout(resolve, 10)) // Shorter delay
+                    await new Promise((resolve) => setTimeout(resolve, 100)) // Shorter delay
                     if (query.id === eventVisualization1Id) {
                         return eventVisualization1
                     } else if (query.id === eventVisualization2Id) {
@@ -79,8 +79,8 @@ describe('PluginWrapper', () => {
             )
         })
 
-        expect(store.getState().loader.isVisualizationLoading).toBe(true)
         await screen.findByTestId('dhis2-uicore-circularloader')
+        expect(store.getState().loader.isVisualizationLoading).toBe(true)
         expect(
             screen.queryByTestId('line-list-data-table')
         ).not.toBeInTheDocument()
@@ -106,9 +106,11 @@ describe('PluginWrapper', () => {
         })
 
         // Switch to second visualization
-        store.dispatch(
-            setNavigationState({ visualizationId: eventVisualization2Id })
-        )
+        act(() => {
+            store.dispatch(
+                setNavigationState({ visualizationId: eventVisualization2Id })
+            )
+        })
 
         expect(store.getState().loader.isVisualizationLoading).toBe(true)
         await screen.findByTestId('dhis2-uicore-circularloader')
