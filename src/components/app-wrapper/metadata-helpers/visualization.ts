@@ -19,7 +19,20 @@ import type {
     SavedVisualization,
 } from '@types'
 
+type ObjectWithId = { id: string }
 type ExtractedMetadatInput = Record<string, AnyMetadataItemInput>
+
+const idsToUids = (
+    extractedMetadatInput: Record<string, ObjectWithId>
+): ExtractedMetadatInput =>
+    Object.entries(extractedMetadatInput).reduce((acc, [key, value]) => {
+        acc[key] = {
+            ...value,
+            uid: value.id,
+        }
+        delete acc[key].id
+        return acc
+    }, {})
 
 const FIXED_DIMENSION_LOOKUP = new Set<DimensionId>([
     'ou',
@@ -37,7 +50,7 @@ const DIMENSION_METADATA_PROP_MAP = {
 }
 const getDefaultOuMetadata = (type: SavedVisualization['outputType']) => ({
     [DIMENSION_ID_ORGUNIT]: {
-        id: DIMENSION_ID_ORGUNIT,
+        uid: DIMENSION_ID_ORGUNIT,
         dimensionType: 'ORGANISATION_UNIT' as DimensionType,
         name: getDefaultOrgUnitLabel(type),
     },
@@ -59,14 +72,14 @@ const getDynamicTimeDimensionsMetadata = (
     outputType?: SavedVisualization['outputType']
 ): ExtractedMetadatInput =>
     Object.values(getTimeDimensions()).reduce((acc, dimension) => {
-        const id = formatDimensionId({
+        const uid = formatDimensionId({
             dimensionId: dimension.id,
             programId: program?.id,
             outputType,
         })
 
-        acc[id] = {
-            id,
+        acc[uid] = {
+            uid,
             dimensionType: dimension.dimensionType,
             name: getTimeDimensionName(dimension, program, stage),
         }
@@ -75,10 +88,15 @@ const getDynamicTimeDimensionsMetadata = (
 
 const extractTrackedEntityTypeMetadata = (
     visualization: SavedVisualization
-): ExtractedMetadatInput => {
-    const { id, name } = visualization.trackedEntityType ?? {}
-    return { [id]: { id, name } }
-}
+): ExtractedMetadatInput =>
+    visualization.trackedEntityType
+        ? {
+              [visualization.trackedEntityType.id]: {
+                  uid: visualization.trackedEntityType.id,
+                  name: visualization.trackedEntityType.name,
+              },
+          }
+        : {}
 
 const extractFixedDimensionsMetadata = (
     visualization: SavedVisualization
@@ -118,8 +136,7 @@ const extractFixedDimensionsMetadata = (
             visualization.outputType
         )[DIMENSION_ID_ORGUNIT]
     }
-
-    return fixedDimensionsMetadata
+    return idsToUids(fixedDimensionsMetadata)
 }
 
 const extractProgramDimensionsMetadata = (
@@ -143,7 +160,7 @@ const extractProgramDimensionsMetadata = (
             })
             programDimensionsMetadata[formattedId] = {
                 ...timeDimensions[timeDimensionId],
-                id: formattedId,
+                uid: formattedId,
             }
         })
 
@@ -159,21 +176,22 @@ const extractProgramDimensionsMetadata = (
 
 const extractDimensionMetadata = (
     visualization: SavedVisualization
-): ExtractedMetadatInput =>
-    Object.entries(DIMENSION_METADATA_PROP_MAP).reduce(
-        (metaData, [listName, dimensionName]) => {
-            const dimensionList = visualization[listName] || []
+): ExtractedMetadatInput => {
+    const dimensionMetadata = Object.entries(
+        DIMENSION_METADATA_PROP_MAP
+    ).reduce((metaData, [listName, dimensionName]) => {
+        const dimensionList = visualization[listName] || []
 
-            dimensionList.forEach((dimensionWrapper: object) => {
-                const dimension: InternalDimensionRecord =
-                    dimensionWrapper[dimensionName]
-                metaData[dimension.id] = dimension
-            })
+        dimensionList.forEach((dimensionWrapper: object) => {
+            const dimension: InternalDimensionRecord =
+                dimensionWrapper[dimensionName]
+            metaData[dimension.id] = dimension
+        })
 
-            return metaData
-        },
-        {}
-    )
+        return metaData
+    }, {})
+    return idsToUids(dimensionMetadata)
+}
 
 const extractProgramMetadata = (
     visualization: SavedVisualization
