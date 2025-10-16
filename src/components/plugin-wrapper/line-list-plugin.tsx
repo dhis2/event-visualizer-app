@@ -1,5 +1,6 @@
+//import { Center, CircularLoader } from '@dhis2/ui'
 import type { FC } from 'react'
-import { useCallback, useReducer, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import { LineList } from '@components/line-list'
@@ -10,7 +11,7 @@ import type {
     PaginateFn,
 } from '@components/line-list/types'
 import { transformVisualization } from '@modules/visualization'
-import type { CurrentUser, CurrentVisualization, SortDirection } from '@types'
+import type { CurrentUser, CurrentVisualization } from '@types'
 
 type LineListPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
@@ -18,97 +19,71 @@ type LineListPluginProps = {
     filters?: Record<string, unknown>
     isInDashboard: boolean
     isInModal: boolean
-    isVisualizationLoading: boolean
     onDataSorted?: (sorting: DataSortPayload | undefined) => void
-    onResponseReceived?: (metadata: MetadataInput) => void
+    onResponseReceived: (metadata: MetadataInput) => void
 }
 
 export const LineListPlugin: FC<LineListPluginProps> = ({
     displayProperty,
-    visualization: originalVisualization,
+    visualization,
     filters,
     isInDashboard,
     isInModal,
-    isVisualizationLoading,
     onDataSorted,
     onResponseReceived,
 }) => {
-    console.log(
-        'LL plugin props',
-        displayProperty,
-        originalVisualization,
-        filters,
-        isInDashboard,
-        isInModal,
-        isVisualizationLoading
+    const [fetchAnalyticsData, { data, isFetching }] =
+        useLineListAnalyticsData()
+
+    const onPaginate = useCallback<PaginateFn>(
+        ({ page, pageSize }) => {
+            fetchAnalyticsData({
+                visualization: transformVisualization(visualization),
+                filters,
+                displayProperty,
+                onResponseReceived,
+                page,
+                pageSize,
+            })
+        },
+        [
+            displayProperty,
+            filters,
+            visualization,
+            onResponseReceived,
+            fetchAnalyticsData,
+        ]
     )
-
-    const [visualization, setVisualization] = useState<CurrentVisualization>(
-        transformVisualization(originalVisualization)
-    )
-
-    const [{ pageSize, page }, setPagination] = useReducer(
-        (pagination: { pageSize: number; page: number }, newPagination) => ({
-            ...pagination,
-            ...newPagination,
-        }),
-        {
-            page: 1,
-            pageSize: 100,
-        }
-    )
-
-    const { dimension: sortField, direction: sortDirection } = visualization
-        .sorting?.length
-        ? visualization.sorting[0]
-        : { dimension: undefined, direction: undefined }
-
-    const onPaginate = useCallback<PaginateFn>(({ page, pageSize }) => {
-        if (pageSize) {
-            setPagination({ page, pageSize })
-        } else {
-            setPagination({ page })
-        }
-    }, [])
 
     const onDataSort: DataSortFn = useCallback(
         (sorting) => {
             const newSorting =
                 sorting.direction === undefined ? undefined : sorting
 
-            setVisualization({
-                ...visualization,
-                sorting: newSorting ? [newSorting] : undefined,
-            } as CurrentVisualization)
-
+            // NOTE: this ultimately updates visualization which then triggers the useEffect below so we don't need to call fetchAnalyticsData directly here.
+            // By doing so we cause a double fetch.
             onDataSorted?.(newSorting)
         },
-        [visualization, onDataSorted]
+        [onDataSorted]
     )
 
-    const {
-        data,
-        fetching: isFetching,
-        //loading,
-        error,
-        //isGlobalLoading,
-    } = useLineListAnalyticsData({
-        visualization,
-        filters,
-        isVisualizationLoading,
+    useEffect(() => {
+        fetchAnalyticsData({
+            visualization: transformVisualization(visualization),
+            filters,
+            displayProperty,
+            onResponseReceived,
+        })
+    }, [
         displayProperty,
+        filters,
+        visualization,
         onResponseReceived,
-        pageSize,
-        page,
-        sortField,
-        sortDirection,
-    })
+        fetchAnalyticsData,
+    ])
 
-    console.log('LL analytics data', data, isFetching, error)
-    console.log('LL in modal?', isInModal)
-
-    if (!data || !visualization) {
-        return <div>Not ready to show LL yet</div>
+    if (!data) {
+        return null
     }
 
     return (
@@ -125,8 +100,6 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
                     `Show options modal for dimension ID ${dimensionId}`
                 )
             }}
-            sortDirection={sortDirection as SortDirection}
-            sortField={sortField}
         />
     )
 }

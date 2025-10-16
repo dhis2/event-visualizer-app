@@ -19,11 +19,12 @@ import classes from './styles/line-list.module.css'
 import type {
     ColumnHeaderClickFn,
     DataSortFn,
+    DataSortPayload,
     LineListAnalyticsData,
     PaginateFn,
 } from './types'
 import { useTransformedLineListData } from './use-transformed-line-list-data'
-import type { CurrentVisualization, SortDirection } from '@types'
+import type { CurrentVisualization } from '@types'
 
 type LineListProps = {
     analyticsData: LineListAnalyticsData
@@ -34,8 +35,6 @@ type LineListProps = {
     isInDashboard?: boolean
     isInModal?: boolean
     onColumnHeaderClick?: ColumnHeaderClickFn
-    sortDirection?: SortDirection
-    sortField?: string
 }
 
 export const LineList: FC<LineListProps> = ({
@@ -47,8 +46,6 @@ export const LineList: FC<LineListProps> = ({
     isInDashboard = false,
     isInModal = false,
     onColumnHeaderClick,
-    sortDirection,
-    sortField,
 }) => {
     const { isDisconnected } = useDhis2ConnectionStatus()
     const { headers, rows, pager, legendSets } = useTransformedLineListData(
@@ -79,6 +76,14 @@ export const LineList: FC<LineListProps> = ({
     const colSpan = useMemo(
         () => Math.max(analyticsData.headers.length, 1),
         [analyticsData.headers.length]
+    )
+
+    const sorting: DataSortPayload = useMemo(
+        () =>
+            visualization.sorting?.length
+                ? visualization.sorting[0]
+                : { dimension: '' },
+        [visualization]
     )
 
     return (
@@ -122,13 +127,18 @@ export const LineList: FC<LineListProps> = ({
                                         onColumnHeaderClick={
                                             onColumnHeaderClick
                                         }
-                                        sortField={sortField}
-                                        sortDirection={sortDirection}
+                                        sortField={sorting.dimension}
+                                        sortDirection={sorting?.direction}
                                     />
                                 ))}
                             </DataTableRow>
                         </DataTableHead>
-                        <DataTableBody dataTest="line-list-data-table-body">
+                        <DataTableBody
+                            dataTest="line-list-data-table-body"
+                            className={cx({
+                                [classes.fetching]: isFetching,
+                            })}
+                        >
                             {rows.map((row, rowIndex) => (
                                 <DataTableRow
                                     key={rowIndex}

@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { currentVisSlice } from './current-vis-slice'
+import { loaderSlice } from './loader-slice'
 import { listenerMiddleware } from './middleware-listener'
 import { navigationSlice } from './navigation-slice'
 import { savedVisSlice } from './saved-vis-slice'
@@ -17,6 +18,7 @@ export const createStore = (
         reducer: {
             [api.reducerPath]: api.reducer,
             currentVis: currentVisSlice.reducer,
+            loader: loaderSlice.reducer,
             navigation: navigationSlice.reducer,
             ui: uiSlice.reducer,
             visUiConfig: visUiConfigSlice.reducer,

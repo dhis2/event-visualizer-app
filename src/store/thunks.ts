@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
+import { setIsVisualizationLoading } from './loader-slice'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
 import type { RootState } from './store'
 import { clearUi } from './ui-slice'
@@ -30,6 +31,8 @@ export const tLoadSavedVisualization = createAsyncThunk<
     string,
     AppAsyncThunkConfig
 >('visualization/load', async (id: string, { dispatch }) => {
+    dispatch(setIsVisualizationLoading(true))
+
     const { data, error } = await dispatch(
         eventVisualizationsApi.endpoints.getVisualization.initiate(id, {
             // This is consistent with other analytics apps
@@ -40,6 +43,7 @@ export const tLoadSavedVisualization = createAsyncThunk<
         dispatch(setSavedVis(data))
         dispatch(setVisUiConfig(getVisualizationUiConfig(data)))
         dispatch(setCurrentVis(data))
+        dispatch(setIsVisualizationLoading(false))
     } else if (error) {
         console.error(error)
     }
