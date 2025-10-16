@@ -2,6 +2,7 @@ import type {
     AnyMetadataItemInput,
     SimpleMetadataItem,
     ProgramMetadataItem,
+    ProgramStageMetadataItem,
     OptionSetMetadataItem,
     OrganisationUnitMetadataItem,
     MetadataStoreItem,
@@ -33,6 +34,7 @@ export const isSingleMetadataItemInput = (
         isMetadataItem(item) ||
         isSimpleMetadataItem(item) ||
         isProgramMetadataItem(item) ||
+        isProgramStageMetadataItem(item) ||
         isOptionSetMetadataItem(item) ||
         isLegendSetMetadataItem(item) ||
         isOrganisationUnitMetadataItem(item)
@@ -77,6 +79,22 @@ export const isProgramMetadataItem = (
         isPopulatedString(input.id) &&
         isPopulatedString(input.name) &&
         isPopulatedString(input.programType)
+    )
+}
+
+export const isProgramStageMetadataItem = (
+    input: AnyMetadataItemInput | MetadataStoreItem
+): input is ProgramStageMetadataItem => {
+    return (
+        isObject(input) &&
+        'id' in input &&
+        'name' in input &&
+        'repeatable' in input &&
+        'hideDueDate' in input &&
+        isPopulatedString(input.id) &&
+        isPopulatedString(input.name) &&
+        typeof input.repeatable === 'boolean' &&
+        typeof input.hideDueDate === 'boolean'
     )
 }
 

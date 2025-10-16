@@ -31,11 +31,20 @@ export type ProgramMetadataItem = {
     code?: string
 }
 
+export type ProgramStageMetadataItem = {
+    id: string
+    name: string
+    repeatable: boolean
+    hideDueDate: boolean
+    displayExecutionDateLabel?: string
+}
+
 // Note that we accept a lot of different input formats: id/uid/id=is-key, name/name-is-value
 export type AnyMetadataItemInput =
     | MetadataItem
     | SimpleMetadataItem
     | ProgramMetadataItem
+    | ProgramStageMetadataItem
     | OptionSetMetadataItem
     | LegendSetMetadataItem
     | OrganisationUnitMetadataItem
@@ -47,6 +56,7 @@ export type MetadataStoreItem =
     | NormalizedMetadataItem
     | OptionSetMetadataItem
     | ProgramMetadataItem
+    | ProgramStageMetadataItem
 
 export type MetadataInput =
     | AnyMetadataItemInput

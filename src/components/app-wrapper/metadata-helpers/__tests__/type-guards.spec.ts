@@ -6,6 +6,7 @@ import {
     isMetadataItem,
     isSimpleMetadataItem,
     isProgramMetadataItem,
+    isProgramStageMetadataItem,
     isOptionSetMetadataItem,
     isOrganisationUnitMetadataItem,
     isLegendSetMetadataItem,
@@ -509,6 +510,158 @@ describe('type-guards', () => {
                     name: 'Test',
                 } as any)
             ).toBe(true) // we only check type, not enum values
+        })
+    })
+
+    describe('isProgramStageMetadataItem', () => {
+        const validProgramStage = {
+            id: 'stage123',
+            name: 'Test Program Stage',
+            repeatable: false,
+            hideDueDate: true,
+        }
+
+        it('should return true for valid program stage metadata items', () => {
+            expect(isProgramStageMetadataItem(validProgramStage)).toBe(true)
+            expect(
+                isProgramStageMetadataItem({
+                    id: 'stage456',
+                    name: 'Another Stage',
+                    repeatable: true,
+                    hideDueDate: false,
+                })
+            ).toBe(true)
+        })
+
+        it('should return true for program stages with optional properties', () => {
+            expect(
+                isProgramStageMetadataItem({
+                    ...validProgramStage,
+                    displayExecutionDateLabel: 'Execution Date',
+                })
+            ).toBe(true)
+
+            expect(
+                isProgramStageMetadataItem({
+                    ...validProgramStage,
+                    displayExecutionDateLabel: '',
+                    extraProperty: 'should still work',
+                } as any)
+            ).toBe(true)
+        })
+
+        it('should return false for objects missing required properties', () => {
+            expect(
+                isProgramStageMetadataItem({
+                    name: 'Test',
+                    repeatable: false,
+                    hideDueDate: true,
+                } as any)
+            ).toBe(false) // missing id
+            expect(
+                isProgramStageMetadataItem({
+                    id: 'stage123',
+                    repeatable: false,
+                    hideDueDate: true,
+                } as any)
+            ).toBe(false) // missing name
+            expect(
+                isProgramStageMetadataItem({
+                    id: 'stage123',
+                    name: 'Test',
+                    hideDueDate: true,
+                } as any)
+            ).toBe(false) // missing repeatable
+            expect(
+                isProgramStageMetadataItem({
+                    id: 'stage123',
+                    name: 'Test',
+                    repeatable: false,
+                } as any)
+            ).toBe(false) // missing hideDueDate
+        })
+
+        it('should return false for objects with invalid property types', () => {
+            expect(
+                isProgramStageMetadataItem({
+                    id: 123, // should be string
+                    name: 'Test',
+                    repeatable: false,
+                    hideDueDate: true,
+                } as any)
+            ).toBe(false)
+
+            expect(
+                isProgramStageMetadataItem({
+                    id: 'stage123',
+                    name: 123, // should be string
+                    repeatable: false,
+                    hideDueDate: true,
+                } as any)
+            ).toBe(false)
+
+            expect(
+                isProgramStageMetadataItem({
+                    id: 'stage123',
+                    name: 'Test',
+                    repeatable: 'false', // should be boolean
+                    hideDueDate: true,
+                } as any)
+            ).toBe(false)
+
+            expect(
+                isProgramStageMetadataItem({
+                    id: 'stage123',
+                    name: 'Test',
+                    repeatable: false,
+                    hideDueDate: 'true', // should be boolean
+                } as any)
+            ).toBe(false)
+
+            expect(
+                isProgramStageMetadataItem({
+                    id: null,
+                    name: 'Test',
+                    repeatable: false,
+                    hideDueDate: true,
+                } as any)
+            ).toBe(false)
+
+            expect(
+                isProgramStageMetadataItem({
+                    id: 'stage123',
+                    name: null,
+                    repeatable: false,
+                    hideDueDate: true,
+                } as any)
+            ).toBe(false)
+        })
+
+        it('should return false for non-objects', () => {
+            expect(isProgramStageMetadataItem(null as any)).toBe(false)
+            expect(isProgramStageMetadataItem(undefined as any)).toBe(false)
+            expect(isProgramStageMetadataItem('string' as any)).toBe(false)
+            expect(isProgramStageMetadataItem(123 as any)).toBe(false)
+            expect(isProgramStageMetadataItem([] as any)).toBe(false)
+        })
+
+        it('should return false for empty strings', () => {
+            expect(
+                isProgramStageMetadataItem({
+                    id: '',
+                    name: 'Test',
+                    repeatable: false,
+                    hideDueDate: true,
+                })
+            ).toBe(false)
+            expect(
+                isProgramStageMetadataItem({
+                    id: 'stage123',
+                    name: '',
+                    repeatable: false,
+                    hideDueDate: true,
+                })
+            ).toBe(false)
         })
     })
 

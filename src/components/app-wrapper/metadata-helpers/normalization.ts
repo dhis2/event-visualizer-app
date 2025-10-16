@@ -2,6 +2,7 @@ import {
     isMetadataItem,
     isSimpleMetadataItem,
     isProgramMetadataItem,
+    isProgramStageMetadataItem,
     isOptionSetMetadataItem,
     isOrganisationUnitMetadataItem,
     isLegendSetMetadataItem,
@@ -10,6 +11,7 @@ import type {
     AnyMetadataItemInput,
     SimpleMetadataItem,
     ProgramMetadataItem,
+    ProgramStageMetadataItem,
     OptionSetMetadataItem,
     MetadataStoreItem,
     NormalizedMetadataItem,
@@ -114,6 +116,23 @@ export const normalizeProgramMetadataItem = (
     return result
 }
 
+export const normalizeProgramStageMetadataItem = (
+    input: ProgramStageMetadataItem
+): ProgramStageMetadataItem => {
+    const result: ProgramStageMetadataItem = {
+        id: input.id,
+        name: input.name,
+        repeatable: input.repeatable,
+        hideDueDate: input.hideDueDate,
+    }
+
+    if (input.displayExecutionDateLabel !== undefined) {
+        result.displayExecutionDateLabel = input.displayExecutionDateLabel
+    }
+
+    return result
+}
+
 export const normalizeOptionSetMetadataItem = (
     input: OptionSetMetadataItem
 ): NormalizedMetadataItem => {
@@ -161,6 +180,8 @@ export const normalizeMetadataInputItem = (
         return normalizeMetadataItem(input)
     } else if (isProgramMetadataItem(input)) {
         return normalizeProgramMetadataItem(input)
+    } else if (isProgramStageMetadataItem(input)) {
+        return normalizeProgramStageMetadataItem(input)
     } else if (isOptionSetMetadataItem(input)) {
         return normalizeOptionSetMetadataItem(input)
     } else if (isSimpleMetadataItem(input)) {
