@@ -226,7 +226,7 @@ describe('PluginWrapper', () => {
         await loadFirstVisualization(store)
 
         const currentVisSnapshot = store.getState().currentVis
-        mockOnDataSorted.mockImplementationOnce((sorting: Sorting) => {
+        mockOnDataSorted.mockImplementation((sorting: Sorting) => {
             store.dispatch(
                 setCurrentVis({
                     ...currentVisSnapshot,
