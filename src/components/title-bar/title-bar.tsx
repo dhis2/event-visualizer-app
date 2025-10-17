@@ -46,7 +46,6 @@ export const TitleBar: FC = () => {
     const savedVis = useAppSelector(getSavedVis)
 
     const titleState = getVisualizationState(savedVis, currentVis)
-    console.log('titleState', titleState)
     const titleText = getTitleText(titleState, currentVis)
 
     const titleClasses = `${defaultTitleClasses} ${getCustomTitleClasses(
@@ -54,7 +53,7 @@ export const TitleBar: FC = () => {
     )}`
 
     return titleText ? (
-        <div data-test="titlebar" className={classes.titleBar}>
+        <div data-test="title-bar" className={classes.titleBar}>
             <div className={classes.buttonContainer}>
                 <ExpandedVisualizationCanvasToggle />
             </div>
