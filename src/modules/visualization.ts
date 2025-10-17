@@ -1,4 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
+import deepEqual from 'deep-equal'
 import { layoutGetAllDimensions } from '@dhis2/analytics'
 import { isTimeDimensionId, transformDimensions } from '@modules/dimension'
 import { initialState as currentVisDefaultValue } from '@store/current-vis-slice'
@@ -115,10 +116,9 @@ export const getVisualizationState = (
     savedVis: SavedVisualization | EmptyVisualization,
     currentVis: CurrentVisualization
 ): VisualizationState => {
-    console.log('savedVis', savedVis, 'currentVis', currentVis)
     if (savedVis === savedVisDefaultValue) {
         return currentVis === currentVisDefaultValue ? 'EMPTY' : 'UNSAVED'
-    } else if (currentVis === savedVis) {
+    } else if (deepEqual(savedVis, currentVis)) {
         return 'SAVED'
     } else {
         return 'DIRTY'
