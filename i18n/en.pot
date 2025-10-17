@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-09-23T09:40:46.301Z\n"
-"PO-Revision-Date: 2025-09-23T09:40:46.302Z\n"
+"POT-Creation-Date: 2025-10-15T13:59:02.917Z\n"
+"PO-Revision-Date: 2025-10-15T13:59:02.918Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -219,6 +219,18 @@ msgstr "Click a dimension to add or remove conditions."
 
 msgid "Your most viewed event visualizations"
 msgstr "Your most viewed event visualizations"
+
+msgid "Show panels"
+msgstr "Show panels"
+
+msgid "Expand visualization and hide panels"
+msgstr "Expand visualization and hide panels"
+
+msgid "Unsaved visualization"
+msgstr "Unsaved visualization"
+
+msgid "Edited"
+msgstr "Edited"
 
 msgid "Download"
 msgstr "Download"

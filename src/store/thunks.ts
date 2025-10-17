@@ -4,7 +4,7 @@ import { setIsVisualizationLoading } from './loader-slice'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
 import type { RootState } from './store'
 import { clearUi } from './ui-slice'
-import { setVisUiConfig } from './vis-ui-config-slice'
+import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { getVisualizationUiConfig } from '@modules/get-visualization-ui-config'
@@ -24,6 +24,7 @@ export const tClearVisualization = () => (dispatch: AppDispatch) => {
     dispatch(clearUi())
     dispatch(clearSavedVis())
     dispatch(clearCurrentVis())
+    dispatch(clearVisUiConfig())
 }
 
 export const tLoadSavedVisualization = createAsyncThunk<

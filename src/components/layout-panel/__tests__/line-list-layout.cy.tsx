@@ -1,8 +1,12 @@
 import { LineListLayout } from '../line-list-layout'
-import { visUiConfigSlice, initialState } from '@store/vis-ui-config-slice'
+import { uiSlice, initialState as uiSliceInitialState } from '@store/ui-slice'
+import {
+    visUiConfigSlice,
+    initialState as visUiConfigInitialState,
+} from '@store/vis-ui-config-slice'
 import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 
-const createMockOptions = (preloadedState = {}): MockOptions => ({
+const createMockOptions = (visUiConfigTestState = {}): MockOptions => ({
     metadata: {
         genderId: {
             uid: 'genderId',
@@ -24,10 +28,15 @@ const createMockOptions = (preloadedState = {}): MockOptions => ({
     },
     partialStore: {
         reducer: {
+            ui: uiSlice.reducer,
             visUiConfig: visUiConfigSlice.reducer,
         },
         preloadedState: {
-            visUiConfig: { ...initialState, ...preloadedState },
+            ui: uiSliceInitialState,
+            visUiConfig: {
+                ...visUiConfigInitialState,
+                ...visUiConfigTestState,
+            },
         },
     },
 })
@@ -82,12 +91,12 @@ describe('<LineListLayout />', () => {
 
         // Verify columns axis has 2 chips
         cy.getByDataTest('axis-columns-start')
-            .find('[data-test="layout-dimension-chip"]')
+            .findByDataTest('layout-dimension-chip')
             .should('have.length', 2)
 
         // Verify filters axis has 1 chip
         cy.getByDataTest('axis-filters-end')
-            .find('[data-test="layout-dimension-chip"]')
+            .findByDataTest('layout-dimension-chip')
             .should('have.length', 1)
 
         // Check that the correct dimension names are displayed
