@@ -113,7 +113,7 @@ describe('getLayoutDimensions for data elements', () => {
         const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            inputType: 'ENROLLMENT',
+            outputType: 'ENROLLMENT',
             getMetadataItem,
         })
 
@@ -146,7 +146,7 @@ describe('getLayoutDimensions for data elements', () => {
         const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            inputType: 'ENROLLMENT',
+            outputType: 'ENROLLMENT',
             getMetadataItem,
         })
 
@@ -173,7 +173,7 @@ describe('getLayoutDimensions for data elements', () => {
         const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            inputType: 'TRACKED_ENTITY_INSTANCE',
+            outputType: 'TRACKED_ENTITY_INSTANCE',
             getMetadataItem,
         })
 
@@ -207,7 +207,7 @@ describe('getLayoutDimensions for data elements', () => {
         const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            inputType: 'ENROLLMENT',
+            outputType: 'ENROLLMENT',
             getMetadataItem,
         })
 
@@ -241,7 +241,7 @@ describe('getLayoutDimensions for data elements', () => {
         const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            inputType: 'ENROLLMENT',
+            outputType: 'ENROLLMENT',
             getMetadataItem,
         })
 
@@ -276,7 +276,7 @@ describe('getLayoutDimensions for data elements', () => {
         const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            inputType: 'ENROLLMENT',
+            outputType: 'ENROLLMENT',
             getMetadataItem,
         })
 
@@ -397,7 +397,7 @@ describe('getLayoutDimensions for time dimensions', () => {
         const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            inputType: 'ENROLLMENT',
+            outputType: 'ENROLLMENT',
             getMetadataItem,
         })
 
@@ -437,7 +437,7 @@ describe('getLayoutDimensions for time dimensions', () => {
         const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            inputType: 'TRACKED_ENTITY_INSTANCE',
+            outputType: 'TRACKED_ENTITY_INSTANCE',
             getMetadataItem,
         })
 
@@ -481,7 +481,7 @@ describe('getLayoutDimensions for time dimensions', () => {
         const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            inputType: 'TRACKED_ENTITY_INSTANCE',
+            outputType: 'TRACKED_ENTITY_INSTANCE',
             getMetadataItem,
         })
 
@@ -622,7 +622,7 @@ describe('getLayoutDimensions for program dimensions', () => {
         const getMetadataItem = (id: string) => metadata[id]
         const output = getLayoutDimensions({
             dimensionIds,
-            inputType: 'ENROLLMENT',
+            outputType: 'ENROLLMENT',
             getMetadataItem,
         })
 
@@ -661,7 +661,7 @@ describe('getLayoutDimensions for program dimensions', () => {
 
         const output = getLayoutDimensions({
             dimensionIds,
-            inputType: 'TRACKED_ENTITY_INSTANCE',
+            outputType: 'TRACKED_ENTITY_INSTANCE',
             getMetadataItem,
         })
 
@@ -709,7 +709,7 @@ describe('getLayoutDimensions for program dimensions', () => {
 
         const output = getLayoutDimensions({
             dimensionIds,
-            inputType: 'TRACKED_ENTITY_INSTANCE',
+            outputType: 'TRACKED_ENTITY_INSTANCE',
             getMetadataItem,
         })
 
