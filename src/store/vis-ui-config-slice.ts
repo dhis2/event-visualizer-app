@@ -36,6 +36,7 @@ export const visUiConfigSlice = createSlice({
     name: 'visUiConfig',
     initialState,
     reducers: {
+        clearVisUiConfig: () => initialState,
         setVisUiConfig: (
             state,
             action: PayloadAction<Partial<VisUiConfigState>>
@@ -87,6 +88,7 @@ export const visUiConfigSlice = createSlice({
 })
 
 export const {
+    clearVisUiConfig,
     setVisUiConfig,
     setVisUiConfigVisualizationType,
     setVisUiConfigLayout,
