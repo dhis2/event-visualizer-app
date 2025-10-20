@@ -1,7 +1,7 @@
 .titleBar {
     display: flex;
     justify-content: flex-start;
-    /* Same amount of whitespace as fullscreen button */
+    /* Same amount of whitespace as the expanded canvas button */
     padding-inline-end: 28px;
 }
 
