@@ -1,0 +1,220 @@
+{
+    "name": "Inpatient: Cases 5 to 15 years this year (case)",
+    "created": "2014-04-22T17:15:24.147",
+    "lastUpdated": "2014-04-22T17:15:24.147",
+    "translations": [],
+    "createdBy": {
+        "id": "xE7jOejl9FI",
+        "code": null,
+        "name": "John Traore",
+        "displayName": "John Traore",
+        "username": "admin"
+    },
+    "sharing": {
+        "owner": "xE7jOejl9FI",
+        "external": false,
+        "users": {},
+        "userGroups": {},
+        "public": "rw------"
+    },
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": ["THIS_YEAR"],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [],
+    "dataElementDimensions": [
+        {
+            "dataElement": {
+                "name": "Admission Date",
+                "id": "eMyVanycQSC"
+            }
+        },
+        {
+            "dataElement": {
+                "name": "Age in years",
+                "id": "qrur9Dvnyt5"
+            }
+        },
+        {
+            "dataElement": {
+                "name": "Gender",
+                "id": "oZg33kd9taw"
+            }
+        },
+        {
+            "dataElement": {
+                "name": "Mode of Discharge",
+                "id": "fWIAEtYVEGk"
+            }
+        },
+        {
+            "dataElement": {
+                "name": "Discharge Date",
+                "id": "msodh3rEMJa"
+            }
+        }
+    ],
+    "programIndicatorDimensions": [],
+    "subscribers": [],
+    "digitGroupSeparator": "SPACE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": false,
+    "type": "LINE_LIST",
+    "program": {
+        "programType": "WITHOUT_REGISTRATION",
+        "displayIncidentDate": false,
+        "displayIncidentDateLabel": "Date of Discharge",
+        "id": "eBAyeGv0exc",
+        "programStages": [
+            {
+                "id": "Zj7UnCAulEk",
+                "repeatable": false,
+                "name": "Inpatient morbidity and mortality"
+            }
+        ],
+        "name": "Inpatient morbidity and mortality"
+    },
+    "programStage": {
+        "hideDueDate": false,
+        "displayExecutionDateLabel": "Report date",
+        "id": "Zj7UnCAulEk",
+        "repeatable": false,
+        "name": "Inpatient morbidity and mortality"
+    },
+    "programDimensions": [],
+    "outputType": "EVENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "legacy": true,
+    "dataType": "EVENTS",
+    "filters": [],
+    "parentGraphMap": {
+        "ImspTQPwCqd": ""
+    },
+    "columns": [
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "THIS_YEAR"
+                }
+            ],
+            "dimension": "pe"
+        },
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "ImspTQPwCqd"
+                }
+            ],
+            "dimension": "ou"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "dimension": "eMyVanycQSC",
+            "valueType": "DATE"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "filter": "GE:5:LE:10",
+            "dimension": "qrur9Dvnyt5",
+            "valueType": "INTEGER"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "dimension": "oZg33kd9taw",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "pC3N9N77UmT"
+            }
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "dimension": "fWIAEtYVEGk",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "iDFPKpFTiVw"
+            }
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "dimension": "msodh3rEMJa",
+            "valueType": "DATE"
+        }
+    ],
+    "rows": [],
+    "displayName": "Inpatient: Cases 5 to 15 years this year (case)",
+    "access": {
+        "manage": true,
+        "externalize": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "href": "https://test.e2e.dhis2.org/anly-dev/api/eventVisualizations/TIuOzZ0ID0V",
+    "subscribed": false,
+    "metaData": {
+        "ImspTQPwCqd": {
+            "uid": "ImspTQPwCqd",
+            "code": "OU_525",
+            "name": "Sierra Leone"
+        },
+        "eMyVanycQSC": {
+            "uid": "eMyVanycQSC",
+            "code": "DE_3000005",
+            "name": "Admission Date"
+        },
+        "oZg33kd9taw": {
+            "uid": "oZg33kd9taw",
+            "code": "DE_3000004",
+            "name": "Gender"
+        },
+        "fWIAEtYVEGk": {
+            "uid": "fWIAEtYVEGk",
+            "code": "DE_3000009",
+            "name": "Mode of Discharge"
+        },
+        "qrur9Dvnyt5": {
+            "uid": "qrur9Dvnyt5",
+            "code": "DE_3000003",
+            "name": "Age in years"
+        },
+        "msodh3rEMJa": {
+            "uid": "msodh3rEMJa",
+            "code": "DE_3000006",
+            "name": "Discharge Date"
+        }
+    },
+    "displayFormName": "Inpatient: Cases 5 to 15 years this year (case)",
+    "favorite": false,
+    "id": "TIuOzZ0ID0V",
+    "attributeValues": [],
+    "sorting": []
+}
