@@ -53,16 +53,17 @@ const getVisualizationLayout = (layout, type: VisualizationType) => {
 }
 
 export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
-    const outputType = vis.outputType // The single location where outputType is renamed to outputType
-
     return {
         visualizationType: vis.type,
-        outputType,
+        outputType: vis.outputType,
         layout: getVisualizationLayout(
             layoutGetAxisIdDimensionIdsObject(vis),
             vis.type
         ),
         itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
-        conditionsByDimension: getConditionsFromVisualization(vis, outputType),
+        conditionsByDimension: getConditionsFromVisualization(
+            vis,
+            vis.outputType
+        ),
     }
 }
