@@ -51,13 +51,23 @@ export const uiSlice = createSlice({
         toggleUiLayoutPanelVisible: (state) => {
             state.isLayoutPanelVisible = !state.isLayoutPanelVisible
         },
+        toggleUiShowExpandedVisualizationCanvas: (state) => {
+            const nextValue = !(
+                state.isMainSidebarVisible && state.isLayoutPanelVisible
+            )
+
+            state.isMainSidebarVisible = nextValue
+            state.isLayoutPanelVisible = nextValue
+        },
     },
     selectors: {
         getUiAccessoryPanelWidth: (state) => state.accessoryPanelWidth,
         getUiAccessoryPanelVisible: (state) => state.isAccessoryPanelVisible,
         getUiDetailsPanelVisible: (state) => state.isDetailsPanelVisible,
-        getUiMainSidebarVisible: (state) => state.isMainSidebarVisible,
         getUiLayoutPanelVisible: (state) => state.isLayoutPanelVisible,
+        getUiMainSidebarVisible: (state) => state.isMainSidebarVisible,
+        getUiShowExpandedVisualizationCanvas: (state) =>
+            !state.isMainSidebarVisible && !state.isLayoutPanelVisible,
     },
 })
 
@@ -68,6 +78,7 @@ export const {
     setUiDetailsPanelVisible,
     toggleUiLayoutPanelVisible,
     toggleUiMainSidebarVisible,
+    toggleUiShowExpandedVisualizationCanvas,
 } = uiSlice.actions
 export const {
     getUiAccessoryPanelWidth,
@@ -75,4 +86,5 @@ export const {
     getUiDetailsPanelVisible,
     getUiLayoutPanelVisible,
     getUiMainSidebarVisible,
+    getUiShowExpandedVisualizationCanvas,
 } = uiSlice.selectors
