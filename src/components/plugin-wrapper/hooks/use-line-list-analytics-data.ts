@@ -21,7 +21,7 @@ import {
     headersMap,
     isVisualizationWithTimeDimension,
 } from '@modules/visualization'
-import type { CurrentUser, CurrentVisualization, InputType } from '@types'
+import type { CurrentUser, CurrentVisualization, OutputType } from '@types'
 
 const lookupOptionSetOptionMetadata = (optionSetId, code, metaDataItems) => {
     const optionSetMetaData = metaDataItems?.[optionSetId]
@@ -165,13 +165,13 @@ const fetchLegendSets = async ({ legendSetIds, dataEngine }) => {
     return legendSets
 }
 
-const extractHeaders = (analyticsResponse, inputType: InputType) => {
-    const defaultMetadata = getMainDimensions(inputType)
+const extractHeaders = (analyticsResponse, outputType: OutputType) => {
+    const defaultMetadata = getMainDimensions(outputType)
 
     const dimensionIds = analyticsResponse.headers.map((header) => {
         const { dimensionId, programStageId, programId } = getDimensionIdParts({
             id: header.name,
-            inputType,
+            outputType,
         })
         const idMatch =
             Object.keys(headersMap).find(
@@ -194,12 +194,12 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
                 : dimensionId,
             programStageId,
             programId,
-            inputType,
+            outputType,
         })
 
         if (
             (idMatch === 'ou' &&
-                (programId || inputType !== 'TRACKED_ENTITY_INSTANCE')) ||
+                (programId || outputType !== 'TRACKED_ENTITY_INSTANCE')) ||
             ['programStatus', 'eventStatus'].includes(idMatch)
             // org unit only if there's a programId or not tracked entity: this prevents pid.ou from being mixed up with just ou in TE
             // program status + event status in all cases
@@ -218,7 +218,7 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
     const dimensionsWithSuffix = getDimensionsWithSuffix({
         dimensionIds,
         metadata,
-        inputType,
+        outputType,
     })
 
     const labels = dimensionsWithSuffix.map(({ name, suffix, id }) => ({
@@ -230,7 +230,7 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
         const result = { ...header, index }
         const { dimensionId, programId, programStageId } = getDimensionIdParts({
             id: header.name,
-            inputType,
+            outputType,
         })
 
         const idMatch =
@@ -258,7 +258,7 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
                             : dimensionId,
                         programId,
                         programStageId,
-                        inputType,
+                        outputType,
                     })
             )?.label || result.column
 

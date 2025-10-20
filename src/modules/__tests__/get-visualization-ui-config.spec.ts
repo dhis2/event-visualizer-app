@@ -109,7 +109,7 @@ const testCases = {
                 rows: [],
                 filters: [],
             },
-            inputType: 'ENROLLMENT',
+            outputType: 'ENROLLMENT',
         },
     },
     lineListEvent: {
@@ -184,7 +184,7 @@ const testCases = {
                 rows: [],
                 filters: [],
             },
-            inputType: 'EVENT',
+            outputType: 'EVENT',
         },
     },
     lineListTrackedEntity: {
@@ -295,7 +295,7 @@ const testCases = {
                 rows: [],
                 filters: [],
             },
-            inputType: 'TRACKED_ENTITY_INSTANCE',
+            outputType: 'TRACKED_ENTITY_INSTANCE',
         },
     },
 }

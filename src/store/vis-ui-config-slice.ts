@@ -1,13 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import type { InputType, VisualizationType } from '@types'
+import type { OutputType, VisualizationType } from '@types'
 
 const EMPTY_STRING_ARRAY: string[] = []
 const EMPTY_CONDITIONS_OBJECT = { condition: undefined, legendSet: undefined }
 
 export interface VisUiConfigState {
     visualizationType: VisualizationType
-    inputType: InputType
+    outputType: OutputType
     layout: {
         columns: string[]
         filters: string[]
@@ -22,7 +22,7 @@ export interface VisUiConfigState {
 
 export const initialState: VisUiConfigState = {
     visualizationType: 'LINE_LIST',
-    inputType: 'EVENT',
+    outputType: 'EVENT',
     layout: {
         columns: [],
         filters: [],
@@ -54,8 +54,11 @@ export const visUiConfigSlice = createSlice({
         ) => {
             state.layout = action.payload
         },
-        setVisUiConfigInputType: (state, action: PayloadAction<InputType>) => {
-            state.inputType = action.payload
+        setVisUiConfigOutputType: (
+            state,
+            action: PayloadAction<OutputType>
+        ) => {
+            state.outputType = action.payload
         },
         setVisUiConfigItemsByDimension: (
             state,
@@ -75,7 +78,7 @@ export const visUiConfigSlice = createSlice({
     selectors: {
         getVisUiConfigVisualizationType: (state) => state.visualizationType,
         getVisUiConfigLayout: (state) => state.layout,
-        getVisUiConfigInputType: (state) => state.inputType,
+        getVisUiConfigOutputType: (state) => state.outputType,
         getVisUiConfigItemsByDimension: (state, dimensionId: string) =>
             state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
         getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
@@ -87,7 +90,7 @@ export const {
     setVisUiConfig,
     setVisUiConfigVisualizationType,
     setVisUiConfigLayout,
-    setVisUiConfigInputType,
+    setVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
 } = visUiConfigSlice.actions
@@ -95,7 +98,7 @@ export const {
 export const {
     getVisUiConfigVisualizationType,
     getVisUiConfigLayout,
-    getVisUiConfigInputType,
+    getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
 } = visUiConfigSlice.selectors

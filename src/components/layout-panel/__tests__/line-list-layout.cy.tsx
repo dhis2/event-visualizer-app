@@ -38,7 +38,7 @@ describe('<LineListLayout />', () => {
          * const but it is currently impossible to do so, due to the issue below */
         const mockOptions = createMockOptions({
             visualizationType: 'LINE_LIST',
-            inputType: 'EVENT',
+            outputType: 'EVENT',
             layout: {
                 columns: ['ou', 'mchInfantFeeding'], // 2 dimensions for columns
                 filters: ['genderId'], // 1 dimension for filters
