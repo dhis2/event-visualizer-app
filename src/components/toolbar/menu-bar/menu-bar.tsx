@@ -1,3 +1,5 @@
+import { useAlert } from '@dhis2/app-runtime'
+import i18n from '@dhis2/d2-i18n'
 import type { FC } from 'react'
 import { useCallback } from 'react'
 import { DownloadMenu } from './download-menu'
@@ -41,6 +43,27 @@ export const MenuBar: FC = () => {
         [dispatch, currentVis]
     )
 
+    const { show: showAlert } = useAlert(
+        ({ message }) => message,
+        ({ options }) => options
+    )
+
+    const onDelete = () => {
+        const deletedVisualization = savedVis.name
+
+        dispatch(setNavigationState({ visualizationId: 'new' }))
+
+        showAlert({
+            message: i18n.t('"{{- deletedObject}}" successfully deleted.', {
+                deletedObject: deletedVisualization,
+            }),
+            options: {
+                success: true,
+                duration: 2000,
+            },
+        })
+    }
+
     return (
         <HoverMenuBar>
             <FileMenu
@@ -51,6 +74,27 @@ export const MenuBar: FC = () => {
                 defaultFilterVisType="ALL"
                 onNew={onNew}
                 onOpen={onOpen}
+                // onRename={onRename}
+                // onSave={
+                //     [STATE_UNSAVED, STATE_DIRTY].includes(
+                //         getVisualizationState(visualization, current)
+                //     ) &&
+                //     isLayoutValidForSave({
+                //         ...current,
+                //         legacy: visualization?.legacy,
+                //     })
+                //         ? onSave
+                //         : undefined
+                // }
+                // onSaveAs={
+                //     isLayoutValidForSaveAs(current)
+                //         ? (details) => onSave(details, true)
+                //         : undefined
+                // }
+                // onShare={onFileMenuAction}
+                // onTranslate={onFileMenuAction}
+                onDelete={onDelete}
+                // onError={onError}
             />
             <ViewMenu />
             <DownloadMenu />
