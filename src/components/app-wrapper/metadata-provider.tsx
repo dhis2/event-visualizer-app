@@ -234,7 +234,12 @@ export const useMetadataItems = (
 
 export const useAddMetadata = (): MetadataStore['addMetadata'] => {
     const metadataStore = useContext(MetadataContext)!
-    return metadataStore.addMetadata.bind(metadataStore)
+
+    const [addMetadata] = useState(() =>
+        metadataStore.addMetadata.bind(metadataStore)
+    )
+
+    return addMetadata
 }
 
 export type UseMetadataStoreReturnValue = Pick<
