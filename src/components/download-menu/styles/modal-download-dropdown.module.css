@@ -1,0 +1,4 @@
+.container {
+    margin-block: var(--spacers-dp12);
+    margin-block-end: var(--spacers-dp16);
+}
