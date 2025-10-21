@@ -15,7 +15,7 @@ type PluginWrapperProps = {
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     isVisualizationLoading?: boolean
     onDataSorted?: (sorting: DataSortPayload | undefined) => void
-    onResponseReceived?: (metadata: MetadataInput) => void
+    onResponsesReceived?: (metadata: MetadataInput) => void
 }
 
 export const PluginWrapper: FC<PluginWrapperProps> = ({
@@ -26,7 +26,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     isInModal = false,
     isVisualizationLoading = false,
     onDataSorted,
-    onResponseReceived: onResponseReceivedCb,
+    onResponsesReceived: onResponsesReceivedCb,
 }) => {
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
@@ -34,9 +34,9 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
         (args) => {
             setHasAnalyticsData(true)
 
-            onResponseReceivedCb?.(args)
+            onResponsesReceivedCb?.(args)
         },
-        [onResponseReceivedCb]
+        [onResponsesReceivedCb]
     )
 
     useEffect(() => {
