@@ -26,9 +26,13 @@ export const navigationSlice = createSlice({
             state.interpretationId = action.payload.interpretationId ?? null
         },
     },
+    selectors: {
+        getNavigationInterpretationId: (state) => state.interpretationId,
+    },
 })
 
 export const { setNavigationState } = navigationSlice.actions
+export const { getNavigationInterpretationId } = navigationSlice.selectors
 
 startAppListening({
     actionCreator: setNavigationState,
@@ -37,7 +41,7 @@ startAppListening({
         const originalVisualizationId = originalState.navigation.visualizationId
         const newVisualizationId = action.payload.visualizationId
 
-        /* Since the InterpretationsModal loads its own visualization
+        /* Since the InterpretationsModal loads its own interpretation
          * we are only interested in visualizationId changes in this
          * listener middleware */
         if (originalVisualizationId !== newVisualizationId) {
