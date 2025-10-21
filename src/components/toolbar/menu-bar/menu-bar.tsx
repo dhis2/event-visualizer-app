@@ -8,19 +8,27 @@ import { VISUALIZATION_TYPES } from '@constants/visualization-types'
 import {
     FileMenu,
     HoverMenuBar,
-    // preparePayloadForSave,
+    preparePayloadForSave,
     preparePayloadForSaveAs,
 } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
-import { isLayoutValidForSaveAs } from '@modules/layout-validation'
+import {
+    isLayoutValidForSave,
+    isLayoutValidForSaveAs,
+} from '@modules/layout-validation'
 import {
     getSaveableVisualization,
     isVisualizationSaved,
+    getVisualizationState,
 } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
-import { tLoadSavedVisualization, tCreateVisualization } from '@store/thunks'
+import {
+    tLoadSavedVisualization,
+    tCreateVisualization,
+    tUpdateVisualization,
+} from '@store/thunks'
 
 export const MenuBar: FC = () => {
     const dispatch = useAppDispatch()
@@ -57,12 +65,13 @@ export const MenuBar: FC = () => {
         [dispatch, currentVis]
     )
 
-    const onSave = async (
-        nameAndDescription: { name?: string; description?: string } = {},
-        copy: boolean = false
-    ) => {
+    const onSaveAs = async (nameAndDescription: {
+        name: string
+        description: string
+    }) => {
         const { name, description } = nameAndDescription
-        const vis = preparePayloadForSaveAs({
+
+        const vis = await preparePayloadForSaveAs({
             visualization: {
                 ...getSaveableVisualization(currentVis),
                 subscribers: undefined,
@@ -70,27 +79,14 @@ export const MenuBar: FC = () => {
             name,
             description,
         })
+        dispatch(tCreateVisualization(vis))
+    }
 
-        if (copy) {
-            dispatch(tCreateVisualization(vis))
-        }
-        // else {
-        //     const { subscribers } = await apiFetchVisualizationSubscribers({
-        //         engine,
-        //         id: visualization.id,
-        //     })
-
-        //     putVisualization({
-        //         visualization: await preparePayloadForSave({
-        //             visualization: {
-        //                 ...getSaveableVisualization(currentVis),
-        //                 subscribers,
-        //             },
-        //             name,
-        //             description,
-        //         }),
-        //     })
-        // }
+    const onSave = async () => {
+        const vis = preparePayloadForSave({
+            visualization: getSaveableVisualization(currentVis),
+        })
+        dispatch(tUpdateVisualization(vis))
     }
 
     const onDelete = useCallback(() => {
@@ -120,21 +116,20 @@ export const MenuBar: FC = () => {
                 onNew={onNew}
                 onOpen={onOpen}
                 // onRename={onRename}
-                // onSave={
-                //     [STATE_UNSAVED, STATE_DIRTY].includes(
-                //         getVisualizationState(visualization, current)
-                //     ) &&
-                //     isLayoutValidForSave({
-                //         ...current,
-                //         legacy: visualization?.legacy,
-                //     })
-                //         ? onSave
-                //         : undefined
-                // }
+                onSave={
+                    ['UNSAVED', 'DIRTY'].includes(
+                        getVisualizationState(savedVis, currentVis)
+                    ) &&
+                    isLayoutValidForSave({
+                        ...currentVis,
+                        legacy: savedVis?.legacy,
+                    })
+                        ? onSave
+                        : undefined
+                }
                 onSaveAs={
                     isLayoutValidForSaveAs(currentVis)
-                        ? (nameAndDescription) =>
-                              onSave(nameAndDescription, true)
+                        ? (nameAndDescription) => onSaveAs(nameAndDescription)
                         : undefined
                 }
                 // onShare={onFileMenuAction}
