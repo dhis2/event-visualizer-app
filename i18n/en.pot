@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-10-15T13:59:02.917Z\n"
-"PO-Revision-Date: 2025-10-15T13:59:02.918Z\n"
+"POT-Creation-Date: 2025-10-21T14:07:48.702Z\n"
+"PO-Revision-Date: 2025-10-21T14:07:48.702Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -136,6 +136,9 @@ msgstr "Microsoft Excel"
 
 msgid "CSV"
 msgstr "CSV"
+
+msgid "Download data from this date"
+msgstr "Download data from this date"
 
 msgid "Metadata ID scheme"
 msgstr "Metadata ID scheme"
