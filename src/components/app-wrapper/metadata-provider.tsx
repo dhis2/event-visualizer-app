@@ -234,7 +234,10 @@ export const useMetadataItems = (
 
 export const useAddMetadata = (): MetadataStore['addMetadata'] => {
     const metadataStore = useContext(MetadataContext)!
-    return metadataStore.addMetadata.bind(metadataStore)
+    return useMemo(
+        () => metadataStore.addMetadata.bind(metadataStore),
+        [metadataStore]
+    )
 }
 
 export type UseMetadataStoreReturnValue = Pick<
@@ -243,10 +246,18 @@ export type UseMetadataStoreReturnValue = Pick<
 >
 export const useMetadataStore = (): UseMetadataStoreReturnValue => {
     const metadataStore = useContext(MetadataContext) as MetadataStore
-    const [api] = useState(() => ({
-        getMetadataItem: metadataStore.getMetadataItem.bind(metadataStore),
-        getMetadataItems: metadataStore.getMetadataItems.bind(metadataStore),
-        addMetadata: metadataStore.addMetadata.bind(metadataStore),
-    }))
-    return api
+    return {
+        getMetadataItem: useMemo(
+            () => metadataStore.getMetadataItem.bind(metadataStore),
+            [metadataStore]
+        ),
+        getMetadataItems: useMemo(
+            () => metadataStore.getMetadataItems.bind(metadataStore),
+            [metadataStore]
+        ),
+        addMetadata: useMemo(
+            () => metadataStore.addMetadata.bind(metadataStore),
+            [metadataStore]
+        ),
+    }
 }
