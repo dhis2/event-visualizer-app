@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
 import { setIsVisualizationLoading } from './loader-slice'
+import { setNavigationState } from './navigation-slice'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
 import type { RootState } from './store'
 import { clearUi } from './ui-slice'
@@ -8,7 +9,7 @@ import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { getVisualizationUiConfig } from '@modules/get-visualization-ui-config'
-import type { AppDispatch } from '@types'
+import type { AppDispatch, CurrentVisualization } from '@types'
 
 type AppAsyncThunkConfig = {
     state: RootState
@@ -49,3 +50,23 @@ export const tLoadSavedVisualization = createAsyncThunk<
         console.error(error)
     }
 })
+
+export const tCreateVisualization = createAsyncThunk<
+    void,
+    Partial<CurrentVisualization>,
+    AppAsyncThunkConfig
+>(
+    'visualization/create',
+    async (visualization: Partial<CurrentVisualization>, { dispatch }) => {
+        const { data, error } = await dispatch(
+            eventVisualizationsApi.endpoints.createVisualization.initiate(
+                visualization
+            )
+        )
+        if (data) {
+            dispatch(setNavigationState({ visualizationId: data }))
+        } else if (error) {
+            console.error(error)
+        }
+    }
+)

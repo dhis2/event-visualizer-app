@@ -1,7 +1,9 @@
 import i18n from '@dhis2/d2-i18n'
 import deepEqual from 'deep-equal'
+import { getRequestOptions } from '@components/plugin-wrapper/hooks/query-tools-common'
 import { layoutGetAllDimensions } from '@dhis2/analytics'
 import { isTimeDimensionId, transformDimensions } from '@modules/dimension'
+import { options } from '@modules/options'
 import { initialState as currentVisDefaultValue } from '@store/current-vis-slice'
 import { initialState as savedVisDefaultValue } from '@store/saved-vis-slice'
 import type {
@@ -44,7 +46,9 @@ export const headersMap: Record<DimensionId, string> = {
 
 export const getHeadersMap = ({
     showHierarchy,
-}: CurrentVisualization): Record<DimensionId, string> => {
+}: {
+    showHierarchy?: boolean
+}): Record<DimensionId, string> => {
     const map = Object.assign({}, headersMap)
 
     if (showHierarchy) {
@@ -123,6 +127,64 @@ export const getVisualizationState = (
     } else {
         return 'DIRTY'
     }
+}
+
+const removeDimensionPropsBeforeSaving = (axis) =>
+    axis?.map((dim) => {
+        const dimension = Object.assign({}, dim)
+        const props = ['dimensionType', 'valueType']
+
+        props.forEach((prop) => {
+            delete dimension[prop]
+        })
+
+        return dimension
+    })
+export const getDimensionIdFromHeaderName = (headerName, visualization) => {
+    const headersMap = getHeadersMap(
+        getRequestOptions(visualization) as unknown as CurrentVisualization
+    )
+
+    return Object.keys(headersMap).find((key) => headersMap[key] === headerName)
+}
+
+export const getSaveableVisualization = (vis) => {
+    const visualization = Object.assign({}, vis)
+    const nonSaveableOptions = Object.keys(options).filter(
+        (option) => !options[option].saveable
+    )
+
+    nonSaveableOptions.forEach((option) => delete visualization[option])
+
+    visualization.columns = removeDimensionPropsBeforeSaving(
+        visualization.columns
+    )
+    visualization.filters = removeDimensionPropsBeforeSaving(
+        visualization.filters
+    )
+
+    if (!visualization.programStage?.id) {
+        delete visualization.programStage
+    }
+
+    // Remove legacy prop when saving a copy of an vis created with the Event Reports app
+    delete visualization.legacy
+
+    // format sorting
+    visualization.sorting = vis.sorting?.length
+        ? [
+              {
+                  dimension:
+                      getDimensionIdFromHeaderName(
+                          vis.sorting[0].dimension,
+                          vis
+                      ) || vis.sorting[0].dimension,
+                  direction: vis.sorting[0].direction.toUpperCase(),
+              },
+          ]
+        : undefined
+
+    return visualization
 }
 
 // Type guards for CurrentVisualization union

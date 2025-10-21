@@ -2,7 +2,11 @@ import { api } from '@api/api'
 import type { BaseQueryApiWithExtraArg } from '@api/custom-base-query'
 import { parseEngineError } from '@api/parse-engine-error'
 import { getDimensionMetadataFields } from '@modules/visualization'
-import type { CurrentUser, SavedVisualization } from '@types'
+import type {
+    CurrentUser,
+    SavedVisualization,
+    CurrentVisualization,
+} from '@types'
 
 const dimensionFields: string =
     'dimension,dimensionType,filter,program[id],programStage[id],optionSet[id],valueType,legendSet[id],repetition,items[dimensionItem~rename(id)]'
@@ -51,6 +55,42 @@ export const getVisualizationQueryFields = (
 
 export const eventVisualizationsApi = api.injectEndpoints({
     endpoints: (builder) => ({
+        createVisualization: builder.mutation<
+            string,
+            Partial<CurrentVisualization>
+        >({
+            async queryFn(visualization, apiArg: BaseQueryApiWithExtraArg) {
+                const { engine } = apiArg.extra
+
+                try {
+                    const data = await engine.mutate({
+                        resource: 'eventVisualizations',
+                        type: 'create',
+                        data: visualization,
+                        params: {
+                            skipTranslations: true,
+                            skipSharing: true,
+                        },
+                    })
+
+                    const uid = (
+                        data as unknown as { response?: { uid?: unknown } }
+                    )?.response?.uid
+
+                    if (typeof uid === 'string') {
+                        return { data: uid }
+                    }
+
+                    return {
+                        error: parseEngineError(
+                            new Error('Missing uid in create response')
+                        ),
+                    }
+                } catch (error) {
+                    return { error: parseEngineError(error) }
+                }
+            },
+        }),
         getVisualization: builder.query<SavedVisualization, string>({
             async queryFn(id, apiArg: BaseQueryApiWithExtraArg) {
                 const { appCachedData, engine, metadataStore } = apiArg.extra

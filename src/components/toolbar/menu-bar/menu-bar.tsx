@@ -1,17 +1,26 @@
 import { useAlert } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
-import type { FC } from 'react'
 import { useCallback } from 'react'
+import type { FC } from 'react'
 import { DownloadMenu } from './download-menu'
 import { ViewMenu } from './view-menu'
 import { VISUALIZATION_TYPES } from '@constants/visualization-types'
-import { FileMenu, HoverMenuBar } from '@dhis2/analytics'
+import {
+    FileMenu,
+    HoverMenuBar,
+    // preparePayloadForSave,
+    preparePayloadForSaveAs,
+} from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
-import { isVisualizationSaved } from '@modules/visualization'
+import { isLayoutValidForSaveAs } from '@modules/layout-validation'
+import {
+    getSaveableVisualization,
+    isVisualizationSaved,
+} from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
-import { tLoadSavedVisualization } from '@store/thunks'
+import { tLoadSavedVisualization, tCreateVisualization } from '@store/thunks'
 
 export const MenuBar: FC = () => {
     const dispatch = useAppDispatch()
@@ -19,6 +28,11 @@ export const MenuBar: FC = () => {
     const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)
     const savedVis = useAppSelector(getSavedVis)
+
+    const { show: showAlert } = useAlert(
+        ({ message }) => message,
+        ({ options }) => options
+    )
 
     const filterVisTypes = [
         { type: 'ALL', insertDivider: true },
@@ -43,12 +57,43 @@ export const MenuBar: FC = () => {
         [dispatch, currentVis]
     )
 
-    const { show: showAlert } = useAlert(
-        ({ message }) => message,
-        ({ options }) => options
-    )
+    const onSave = async (
+        nameAndDescription: { name?: string; description?: string } = {},
+        copy: boolean = false
+    ) => {
+        const { name, description } = nameAndDescription
+        const vis = preparePayloadForSaveAs({
+            visualization: {
+                ...getSaveableVisualization(currentVis),
+                subscribers: undefined,
+            },
+            name,
+            description,
+        })
 
-    const onDelete = () => {
+        if (copy) {
+            dispatch(tCreateVisualization(vis))
+        }
+        // else {
+        //     const { subscribers } = await apiFetchVisualizationSubscribers({
+        //         engine,
+        //         id: visualization.id,
+        //     })
+
+        //     putVisualization({
+        //         visualization: await preparePayloadForSave({
+        //             visualization: {
+        //                 ...getSaveableVisualization(currentVis),
+        //                 subscribers,
+        //             },
+        //             name,
+        //             description,
+        //         }),
+        //     })
+        // }
+    }
+
+    const onDelete = useCallback(() => {
         const deletedVisualization = savedVis.name
 
         dispatch(setNavigationState({ visualizationId: 'new' }))
@@ -62,7 +107,7 @@ export const MenuBar: FC = () => {
                 duration: 2000,
             },
         })
-    }
+    }, [dispatch, savedVis.name, showAlert])
 
     return (
         <HoverMenuBar>
@@ -86,11 +131,12 @@ export const MenuBar: FC = () => {
                 //         ? onSave
                 //         : undefined
                 // }
-                // onSaveAs={
-                //     isLayoutValidForSaveAs(current)
-                //         ? (details) => onSave(details, true)
-                //         : undefined
-                // }
+                onSaveAs={
+                    isLayoutValidForSaveAs(currentVis)
+                        ? (nameAndDescription) =>
+                              onSave(nameAndDescription, true)
+                        : undefined
+                }
                 // onShare={onFileMenuAction}
                 // onTranslate={onFileMenuAction}
                 onDelete={onDelete}
