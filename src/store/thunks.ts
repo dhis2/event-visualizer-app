@@ -8,7 +8,9 @@ import { clearUi } from './ui-slice'
 import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
+import { preparePayloadForSave } from '@dhis2/analytics'
 import { getVisualizationUiConfig } from '@modules/get-visualization-ui-config'
+import { getSaveableVisualization } from '@modules/visualization'
 import type {
     AppDispatch,
     CurrentVisualization,
@@ -106,6 +108,73 @@ export const tUpdateVisualization = createAsyncThunk<
             dispatch(tLoadSavedVisualization(visId))
         } else if (error) {
             console.error(error)
+        }
+    }
+)
+
+export const tRenameVisualization = createAsyncThunk<
+    void,
+    { id: string; name: string; description: string },
+    AppAsyncThunkConfig
+>(
+    'visualization/rename',
+    async (
+        {
+            id,
+            name,
+            description,
+        }: { id: string; name: string; description: string },
+        { dispatch }
+    ) => {
+        const { data: visualization, error: fetchError } = await dispatch(
+            eventVisualizationsApi.endpoints.getVisualization.initiate(id, {
+                // This is consistent with other analytics apps
+                forceRefetch: true,
+            })
+        )
+        if (visualization) {
+            // prepare the visualization payload with the new name/description
+            const visToSave = preparePayloadForSave({
+                visualization: getSaveableVisualization(visualization),
+                name,
+                description,
+            })
+
+            // save the new name and description
+            await dispatch(
+                eventVisualizationsApi.endpoints.updateVisualization.initiate(
+                    visToSave
+                )
+            )
+
+            // fetch the visualization name,displayName,description,displayDescription
+            const { data: visNameDesc } = await dispatch(
+                eventVisualizationsApi.endpoints.getVisualizationNameDesc.initiate(
+                    id,
+                    {
+                        // This is consistent with other analytics apps
+                        forceRefetch: true,
+                    }
+                )
+            )
+
+            if (visNameDesc) {
+                const v = visNameDesc as Partial<Record<string, unknown>>
+                const fields = {
+                    name: v.name,
+                    displayName: v.displayName,
+                    description: v.description,
+                    displayDescription: v.displayDescription,
+                } as Partial<SavedVisualization>
+
+                // update saved and current visualizations with only the changed fields
+                dispatch(setSavedVis(fields as unknown as SavedVisualization))
+                dispatch(
+                    setCurrentVis(fields as unknown as CurrentVisualization)
+                )
+            }
+        } else if (fetchError) {
+            console.error(fetchError)
         }
     }
 )

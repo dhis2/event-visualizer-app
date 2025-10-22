@@ -14,6 +14,13 @@ type EventVisualizationSubscribers = {
     subscribers: string[]
 }
 
+type EventVisualizationNameDesc = {
+    name: string[]
+    displayName: string[]
+    description: string[]
+    displayDescription: string[]
+}
+
 const dimensionFields: string =
     'dimension,dimensionType,filter,program[id],programStage[id],optionSet[id],valueType,legendSet[id],repetition,items[dimensionItem~rename(id)]'
 
@@ -198,6 +205,30 @@ export const eventVisualizationsApi = api.injectEndpoints({
                     })) as { eventVisualization: EventVisualizationSubscribers }
 
                     return { data: eventVisualization.subscribers }
+                } catch (error) {
+                    return { error: parseEngineError(error) }
+                }
+            },
+        }),
+        getVisualizationNameDesc: builder.query<
+            EventVisualizationNameDesc,
+            string
+        >({
+            async queryFn(id, apiArg: BaseQueryApiWithExtraArg) {
+                const { engine } = apiArg.extra
+
+                try {
+                    const { eventVisualization } = (await engine.query({
+                        eventVisualization: {
+                            resource: 'eventVisualizations',
+                            id,
+                            params: {
+                                fields: 'name,displayName,description,displayDescription',
+                            },
+                        },
+                    })) as { eventVisualization: EventVisualizationNameDesc }
+
+                    return { data: eventVisualization }
                 } catch (error) {
                     return { error: parseEngineError(error) }
                 }

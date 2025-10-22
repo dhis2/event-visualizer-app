@@ -28,6 +28,7 @@ import {
     tLoadSavedVisualization,
     tCreateVisualization,
     tUpdateVisualization,
+    tRenameVisualization,
 } from '@store/thunks'
 
 export const MenuBar: FC = () => {
@@ -71,7 +72,7 @@ export const MenuBar: FC = () => {
     }) => {
         const { name, description } = nameAndDescription
 
-        const vis = await preparePayloadForSaveAs({
+        const vis = preparePayloadForSaveAs({
             visualization: {
                 ...getSaveableVisualization(currentVis),
                 subscribers: undefined,
@@ -87,6 +88,27 @@ export const MenuBar: FC = () => {
             visualization: getSaveableVisualization(currentVis),
         })
         dispatch(tUpdateVisualization(vis))
+    }
+
+    const onRename = async ({ name, description }) => {
+        await dispatch(
+            tRenameVisualization({
+                id: savedVis.id!,
+                name,
+                description,
+            })
+        )
+
+        showAlert({
+            message: i18n.t('Rename successful'),
+            options: {
+                success: true,
+                duration: 2000,
+            },
+        })
+
+        // TODO trigger the callback that will update the title and Interpretations panel
+        // onFileMenuAction()
     }
 
     const onDelete = useCallback(() => {
@@ -115,7 +137,7 @@ export const MenuBar: FC = () => {
                 defaultFilterVisType="ALL"
                 onNew={onNew}
                 onOpen={onOpen}
-                // onRename={onRename}
+                onRename={onRename}
                 onSave={
                     ['UNSAVED', 'DIRTY'].includes(
                         getVisualizationState(savedVis, currentVis)
