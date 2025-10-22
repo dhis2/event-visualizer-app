@@ -34,6 +34,7 @@ import {
     getNavigationInterpretationId,
     setNavigationState,
 } from '@store/navigation-slice'
+import { getSavedVis } from '@store/saved-vis-slice'
 import {
     getUiDetailsPanelVisible,
     getUiMainSidebarVisible,
@@ -46,6 +47,7 @@ const EventVisualizer: FC = () => {
     const dispatch = useAppDispatch()
     const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)
+    const savedVis = useAppSelector(getSavedVis)
     const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
@@ -105,14 +107,14 @@ const EventVisualizer: FC = () => {
                         {interpretationId && (
                             <InterpretationModal
                                 interpretationId={interpretationId}
-                                visualization={currentVis}
+                                visualization={savedVis}
                                 isVisualizationLoading={isVisualizationLoading}
                                 pluginComponent={PluginWrapper}
                                 downloadMenuComponent={ModalDownloadDropdown}
                                 onClose={() => {
                                     dispatch(
                                         setNavigationState({
-                                            visualizationId: currentVis.id,
+                                            visualizationId: savedVis.id,
                                             interpretationId: undefined,
                                         })
                                     )
