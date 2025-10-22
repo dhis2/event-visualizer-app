@@ -10,18 +10,17 @@ type Layout = {
     [k: string]: unknown
 }
 
-export const layoutHasProgramId = (layout: Layout | undefined) =>
-    Boolean(layout?.program?.id)
+const layoutHasProgramId = (layout: Layout) => Boolean(layout.program?.id)
 
-export const layoutHasTrackedEntityTypeId = (layout: Layout | undefined) =>
-    Boolean(layout?.trackedEntityType?.id)
+const layoutHasTrackedEntityTypeId = (layout: Layout) =>
+    Boolean(layout.trackedEntityType?.id)
 
-export const isLayoutValidForSave = (layout: Layout | undefined) =>
-    layout?.outputType === 'TRACKED_ENTITY_INSTANCE'
+export const isLayoutValidForSave = (layout: Layout) =>
+    layout.outputType === 'TRACKED_ENTITY_INSTANCE'
         ? layoutHasTrackedEntityTypeId(layout)
-        : layoutHasProgramId(layout) && !layout?.legacy
+        : layoutHasProgramId(layout) && !layout.legacy
 
-export const isLayoutValidForSaveAs = (layout: Layout | undefined) =>
-    layout?.outputType === 'TRACKED_ENTITY_INSTANCE'
+export const isLayoutValidForSaveAs = (layout: Layout) =>
+    layout.outputType === 'TRACKED_ENTITY_INSTANCE'
         ? layoutHasTrackedEntityTypeId(layout)
         : layoutHasProgramId(layout)

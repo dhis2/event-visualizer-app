@@ -106,9 +106,6 @@ export const MenuBar: FC = () => {
                 duration: 2000,
             },
         })
-
-        // TODO trigger the callback that will update the title and Interpretations panel
-        // onFileMenuAction()
     }
 
     const onDelete = useCallback(() => {
@@ -126,6 +123,28 @@ export const MenuBar: FC = () => {
             },
         })
     }, [dispatch, savedVis.name, showAlert])
+
+    const onError = (error) => {
+        console.error('Error:', error)
+
+        const message =
+            error.errorCode === 'E4030'
+                ? i18n.t(
+                      "This visualization can't be deleted because it is used on one or more dashboards"
+                  )
+                : error.message
+
+        const alertLevel = /50\d/.test(String(error.httpStatusCode))
+            ? 'error'
+            : 'warning'
+
+        showAlert({
+            message,
+            options: {
+                [alertLevel]: true,
+            },
+        })
+    }
 
     return (
         <HoverMenuBar>
@@ -154,10 +173,8 @@ export const MenuBar: FC = () => {
                         ? (nameAndDescription) => onSaveAs(nameAndDescription)
                         : undefined
                 }
-                // onShare={onFileMenuAction}
-                // onTranslate={onFileMenuAction}
                 onDelete={onDelete}
-                // onError={onError}
+                onError={onError}
             />
             <ViewMenu />
             <DownloadMenu />
