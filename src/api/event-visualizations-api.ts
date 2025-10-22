@@ -8,17 +8,15 @@ import type {
     CurrentVisualization,
 } from '@types'
 
-// When fetching only subscribers for an eventVisualization the shape is:
-// { subscribers: string[] }
 type EventVisualizationSubscribers = {
     subscribers: string[]
 }
 
 type EventVisualizationNameDesc = {
-    name: string[]
-    displayName: string[]
-    description: string[]
-    displayDescription: string[]
+    name: string
+    displayName: string
+    description: string
+    displayDescription: string
 }
 
 const dimensionFields: string =

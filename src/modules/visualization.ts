@@ -8,6 +8,7 @@ import { initialState as currentVisDefaultValue } from '@store/current-vis-slice
 import { initialState as savedVisDefaultValue } from '@store/saved-vis-slice'
 import type {
     DimensionId,
+    DimensionArray,
     CurrentVisualization,
     EmptyVisualization,
     NewVisualization,
@@ -129,28 +130,32 @@ export const getVisualizationState = (
     }
 }
 
-const removeDimensionPropsBeforeSaving = (axis) =>
-    axis?.map((dim) => {
+const removeDimensionPropsBeforeSaving = (axis: DimensionArray | undefined) => {
+    return axis?.map((dim) => {
         const dimension = Object.assign({}, dim)
-        const props = ['dimensionType', 'valueType']
+        const propsToRemove = ['dimensionType', 'valueType']
 
-        props.forEach((prop) => {
+        propsToRemove.forEach((prop) => {
             delete dimension[prop]
         })
 
         return dimension
     })
-export const getDimensionIdFromHeaderName = (headerName, visualization) => {
+}
+
+const getDimensionIdFromHeaderName = (
+    headerName: string,
+    visualization: CurrentVisualization
+) => {
     const headersMap = getHeadersMap(
         getRequestOptions(visualization) as unknown as CurrentVisualization
     )
-
     return Object.keys(headersMap).find((key) => headersMap[key] === headerName)
 }
 
-export const getSaveableVisualization = (vis) => {
+export const getSaveableVisualization = (vis: CurrentVisualization) => {
     const visualization = Object.assign({}, vis)
-    const nonSaveableOptions = Object.keys(options).filter(
+    const nonSaveableOptions = options.filter(
         (option) => !options[option].saveable
     )
 
