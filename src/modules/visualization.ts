@@ -15,6 +15,7 @@ import type {
     SavedVisualization,
     VisualizationType,
     VisualizationState,
+    SortDirection,
 } from '@types'
 
 // TODO: adjust the descriptions
@@ -155,11 +156,11 @@ const getDimensionIdFromHeaderName = (
 
 export const getSaveableVisualization = (vis: CurrentVisualization) => {
     const visualization = Object.assign({}, vis)
-    const nonSaveableOptions = options.filter(
-        (option) => !options[option].saveable
+    const nonPersistedOptions = Object.keys(options).filter(
+        (option) => !options[option].persisted
     )
 
-    nonSaveableOptions.forEach((option) => delete visualization[option])
+    nonPersistedOptions.forEach((option) => delete visualization[option])
 
     visualization.columns = removeDimensionPropsBeforeSaving(
         visualization.columns
@@ -172,10 +173,10 @@ export const getSaveableVisualization = (vis: CurrentVisualization) => {
         delete visualization.programStage
     }
 
-    // Remove legacy prop when saving a copy of an vis created with the Event Reports app
+    // Remove legacy property when saving
     delete visualization.legacy
 
-    // format sorting
+    // Use the first sorting item only and format for saving
     visualization.sorting = vis.sorting?.length
         ? [
               {
@@ -184,7 +185,9 @@ export const getSaveableVisualization = (vis: CurrentVisualization) => {
                           vis.sorting[0].dimension,
                           vis
                       ) || vis.sorting[0].dimension,
-                  direction: vis.sorting[0].direction.toUpperCase(),
+                  direction: vis.sorting[0].direction
+                      ? (vis.sorting[0].direction.toUpperCase() as SortDirection)
+                      : 'ASC',
               },
           ]
         : undefined

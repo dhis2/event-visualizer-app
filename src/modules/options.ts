@@ -1,13 +1,16 @@
 export const options: {
     [key: string]: {
         defaultValue: unknown
+        persisted: boolean
     }
 } = {
     completedOnly: {
         defaultValue: false,
+        persisted: true,
     },
     skipRounding: {
         defaultValue: false,
+        persisted: true,
     },
 }
 

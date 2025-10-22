@@ -5,8 +5,8 @@ describe('getOptionsForRequest', () => {
     it('getOptionsForRequest returns the correct options', () => {
         const options = getOptionsForRequest()
         expect(options).toEqual([
-            ['completedOnly', { defaultValue: false }],
-            ['skipRounding', { defaultValue: false }],
+            ['completedOnly', { defaultValue: false, persisted: true }],
+            ['skipRounding', { defaultValue: false, persisted: true }],
         ])
     })
 })
