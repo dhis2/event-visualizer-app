@@ -1,11 +1,11 @@
 // eslint-disable-next-line  no-restricted-imports
 import { useDataQuery } from '@dhis2/app-runtime'
-import { type FC } from 'react'
+import { type FC, useCallback, useMemo, useState } from 'react'
 import { getVisualizationQueryFields } from '@api/event-visualizations-api'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
 import './locales/index.js'
-import type { CurrentUser, SavedVisualization } from '@types'
+import type { CurrentUser, SavedVisualization, Sorting } from '@types'
 
 type DashboardPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
@@ -34,17 +34,41 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
         },
     })
 
+    // null indicates no custom sorting has been applied
+    // cannot use undefined because that is a valid value to indicate "remove sorting"
+    const [sorting, setSorting] = useState<Sorting | undefined | null>(null)
+
+    // TODO: check this type. The PluginWrapper expects a CurrentVisualization type, which includes empty but not null.
+    // Before the visualization is fetched, the prop is undefined/null and that fails in the check for visualization.type
+    const eventVisualization = useMemo(() => {
+        if (data?.eventVisualization) {
+            const eventVisualization =
+                data.eventVisualization as SavedVisualization
+
+            let newSorting = eventVisualization.sorting
+
+            if (sorting !== null) {
+                newSorting = sorting ? [sorting] : undefined
+            }
+
+            return {
+                ...(eventVisualization as SavedVisualization),
+                sorting: newSorting,
+            } as SavedVisualization
+        }
+        return {}
+    }, [data, sorting])
+
+    const onDataSorted = useCallback((newSorting: Sorting) => {
+        setSorting(newSorting)
+    }, [])
+
     // TODO: handle errors
     if (error) {
         // `error` will be of type EngineError and `data` will is possibly undefined
         console.log('ERROR!', data, error)
         return <div>Error loading event visualization: {error.message}</div>
     }
-
-    // TODO: check this type. The PluginWrapper expects a CurrentVisualization type, which includes empty but not null.
-    // Before the visualization is fetched, the prop is undefined/null and that fails in the check for visualization.type
-    const eventVisualization =
-        (data?.eventVisualization as SavedVisualization) ?? {}
 
     console.log('dp eventVisualization', eventVisualization, 'loading', loading)
 
@@ -59,6 +83,7 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
                     filters={props.filters}
                     visualization={eventVisualization}
                     isVisualizationLoading={loading}
+                    onDataSorted={onDataSorted}
                     //onResponseReceived={onResponseReceived}
                 />
             )}
