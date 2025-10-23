@@ -3,9 +3,8 @@ import type { FC } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 import { LineListPlugin } from './line-list-plugin'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
-import type { DataSortPayload } from '@components/line-list/types'
 import { isVisualizationSaved } from '@modules/visualization'
-import type { CurrentUser, CurrentVisualization } from '@types'
+import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
 
 type PluginWrapperProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
@@ -14,7 +13,7 @@ type PluginWrapperProps = {
     isInDashboard?: boolean
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     isVisualizationLoading?: boolean
-    onDataSorted?: (sorting: DataSortPayload | undefined) => void
+    onDataSorted?: (sorting: Sorting | undefined) => void
     onResponsesReceived?: (metadata: MetadataInput) => void
 }
 
