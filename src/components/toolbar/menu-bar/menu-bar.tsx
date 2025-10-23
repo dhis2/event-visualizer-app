@@ -91,21 +91,31 @@ export const MenuBar: FC = () => {
     }
 
     const onRename = async ({ name, description }) => {
-        await dispatch(
-            tRenameVisualization({
-                id: savedVis.id!,
-                name,
-                description,
-            })
-        )
+        try {
+            await dispatch(
+                tRenameVisualization({
+                    id: savedVis.id!,
+                    name,
+                    description,
+                })
+            ).unwrap()
 
-        showAlert({
-            message: i18n.t('Rename successful'),
-            options: {
-                success: true,
-                duration: 2000,
-            },
-        })
+            showAlert({
+                message: i18n.t('Rename successful'),
+                options: {
+                    success: true,
+                    duration: 2000,
+                },
+            })
+        } catch (error) {
+            console.error(error)
+            showAlert({
+                message: i18n.t('Rename failed'),
+                options: {
+                    critical: true,
+                },
+            })
+        }
     }
 
     const onDelete = useCallback(() => {
