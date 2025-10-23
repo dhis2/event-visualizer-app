@@ -12,17 +12,18 @@
 
 .mainSidebar,
 .rightSidebar {
-    inline-size: 260px;
     block-size: 100%;
     padding: 8px;
     box-sizing: border-box;
 }
 
 .mainSidebar {
+    inline-size: 260px;
     border-inline-end: 1px solid #d5dde5;
 }
 
 .rightSidebar {
+    inline-size: 380px;
     border-inline-start: 1px solid #d5dde5;
 }
 
