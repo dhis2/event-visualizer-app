@@ -1,5 +1,4 @@
 import { clearInput, typeInput, clearTextarea, typeTextarea } from './common'
-import { expectStartScreenToBeVisible } from './start-screen'
 import { expectVisTitleToEqual, expectTableToBeVisible } from './table'
 
 export const ITEM_NEW = 'file-menu-new'
@@ -49,10 +48,6 @@ export const deleteVisualization = () => {
     cy.getByDataTest(ITEM_DELETE).click()
 
     cy.getByDataTest('file-menu-delete-modal-delete').click()
-
-    cy.getByDataTest('titlebar').should('not.exist')
-
-    expectStartScreenToBeVisible()
 }
 
 export const renameVisualization = (name, description = undefined) => {

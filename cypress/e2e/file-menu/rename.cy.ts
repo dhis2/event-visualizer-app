@@ -7,7 +7,8 @@ import {
     // table
     expectVisTitleToEqual,
     expectTableToBeVisible,
-} from '../helpers/index'
+    expectStartScreenToBeVisible,
+} from '../../helpers/index'
 
 const TEST_VIS_TITLE = `rename-test-${new Date()
     .toISOString()
@@ -16,8 +17,19 @@ const TEST_VIS_TITLE = `rename-test-${new Date()
 const createTestVisualization = (title) => {
     openVisByName('Inpatient: Cases last quarter (case)')
 
-    // save as a new visualization for the renaming test
+    // capture the current visualization id from the hash route BEFORE saving
+    cy.url().then((url) => {
+        const match = url.match(/#\/([A-Za-z0-9]+)$/)
+        cy.wrap(match[1]).as('initialVisId')
+    })
+
+    // save as a new visualization for the test
     saveVisualizationAs(title)
+    // after saving as a new visualization the id should have changed
+    cy.get('@initialVisId').then((initialVisId) => {
+        cy.url().should('not.match', new RegExp(`${initialVisId}$`))
+    })
+
     expectVisTitleToEqual(title)
     expectTableToBeVisible()
 }
@@ -70,6 +82,9 @@ describe('rename', () => {
         // expectDescriptionToEqual(description)
 
         deleteVisualization()
+        cy.getByDataTest('title-bar').should('not.exist')
+
+        expectStartScreenToBeVisible()
     })
 
     it('add and change and delete name and description', () => {
@@ -114,6 +129,8 @@ describe('rename', () => {
         // expectDescriptionToEqual('No description')
 
         deleteVisualization()
+        cy.getByDataTest('title-bar').should('not.exist')
+        expectStartScreenToBeVisible()
     })
 
     it('handles failure when renaming', () => {
@@ -145,5 +162,8 @@ describe('rename', () => {
         expectVisTitleToEqual(TEST_VIS_TITLE)
 
         deleteVisualization()
+        cy.getByDataTest('title-bar').should('not.exist')
+
+        expectStartScreenToBeVisible()
     })
 })

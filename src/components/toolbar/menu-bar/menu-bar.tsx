@@ -118,14 +118,23 @@ export const MenuBar: FC = () => {
     }, [dispatch, savedVis.name, showAlert])
 
     const onError = (error) => {
-        console.error('Error:', error)
-
-        const message =
-            error.errorCode === 'E4030'
-                ? i18n.t(
-                      "This visualization can't be deleted because it is used on one or more dashboards"
-                  )
-                : error.message
+        // TODO - unable to simulate error E4030
+        let message =
+            error.details?.message || i18n.t('An unknown error occurred.')
+        switch (error.details?.errorCode) {
+            case 'E4030':
+                message = i18n.t(
+                    "This visualization can't be deleted because it is used on one or more dashboards"
+                )
+                break
+            case 'E1006':
+                message = i18n.t(
+                    "You don't have the proper permissions to delete this visualization."
+                )
+                break
+            default:
+                break
+        }
 
         const alertLevel = /50\d/.test(String(error.httpStatusCode))
             ? 'error'

@@ -8,8 +8,9 @@ import {
     expectVisTitleToEqual,
     expectTableToBeVisible,
     getTableHeaderCells,
-} from '../helpers/index'
-import { getApiBaseUrl } from '../support/utils'
+    expectStartScreenToBeVisible,
+} from '../../helpers/index'
+import { getApiBaseUrl } from '../../support/utils'
 
 const TEST_VIS_TITLE = `save-test-${new Date()
     .toISOString()
@@ -24,7 +25,7 @@ const createTestVisualization = (title) => {
         cy.wrap(match[1]).as('initialVisId')
     })
 
-    // save as a new visualization for the renaming test
+    // save as a new visualization for the test
     saveVisualizationAs(title)
     // after saving as a new visualization the id should have changed
     cy.get('@initialVisId').then((initialVisId) => {
@@ -35,8 +36,8 @@ const createTestVisualization = (title) => {
     expectTableToBeVisible()
 }
 
-describe('save', () => {
-    it('save works correctly', () => {
+describe('save and save as', () => {
+    it('save and save as', () => {
         cy.visit('/')
         createTestVisualization(TEST_VIS_TITLE)
 
@@ -143,12 +144,16 @@ describe('save', () => {
 
             // Delete the test visualizations
             deleteVisualization()
+            cy.getByDataTest('title-bar').should('not.exist')
+            expectStartScreenToBeVisible()
 
             cy.request({
                 method: 'DELETE',
                 url: `${getApiBaseUrl()}/eventVisualizations/${originalVisId}`,
                 failOnStatusCode: false, // carry on even if the delete fails
             })
+
+            expectStartScreenToBeVisible()
         })
     })
 })
