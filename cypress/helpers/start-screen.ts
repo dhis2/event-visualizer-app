@@ -1,8 +1,6 @@
-export const goToStartPage = (skipEval) => {
+export const goToStartPage = () => {
     cy.visit('/').log(Cypress.env('dhis2BaseUrl'))
-    if (!skipEval) {
-        expectStartScreenToBeVisible()
-    }
+    expectStartScreenToBeVisible()
 }
 
 export const expectStartScreenToBeVisible = () =>

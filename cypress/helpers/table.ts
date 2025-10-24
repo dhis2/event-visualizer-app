@@ -25,7 +25,7 @@ export const expectTableToBeVisible = () =>
     getLineListTable().find('tbody').should('be.visible')
 
 export const expectTableToBeUpdated = () =>
-    cy.getByDataTest('line-list-table-fetching').should('not.exist')
+    cy.getByDataTest('fetch-overlay', { timeout: 30000 }).should('not.exist')
 
 export const expectTableToMatchRows = (expectedRows) => {
     getTableRows().should('have.length', expectedRows.length)

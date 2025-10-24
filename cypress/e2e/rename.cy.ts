@@ -1,10 +1,13 @@
 import {
+    // file-menu
     deleteVisualization,
     renameVisualization,
     saveVisualizationAs,
     openVisByName,
-} from '../helpers/file-menu'
-import { expectVisTitleToEqual, expectTableToBeVisible } from '../helpers/table'
+    // table
+    expectVisTitleToEqual,
+    expectTableToBeVisible,
+} from '../helpers/index'
 
 const TEST_VIS_TITLE = `rename-test-${new Date()
     .toISOString()
@@ -19,6 +22,7 @@ const createTestVisualization = (title) => {
     expectTableToBeVisible()
 }
 
+// TODO - enable this check once Interpretations and Details panel implemented
 // const expectDescriptionToEqual = (value) => {
 //     clickMenubarInterpretationsButton()
 //     cy.getByDataTest('details-panel').should('be.visible')
@@ -63,7 +67,7 @@ describe('rename', () => {
         expectTableToBeVisible()
         expectVisTitleToEqual(renamedVisTitle)
 
-        // expectDescriptionToEqual(description) // TODO
+        // expectDescriptionToEqual(description)
 
         deleteVisualization()
     })
@@ -80,7 +84,7 @@ describe('rename', () => {
 
         cy.wait('@put-rename')
 
-        // expectDescriptionToEqual(description) // TODO
+        // expectDescriptionToEqual(description)
 
         expectTableToBeVisible()
 
@@ -92,7 +96,7 @@ describe('rename', () => {
         renameVisualization(secondRenamedVisTitle, secondRenamedVisDesc)
         cy.wait('@put-rename2')
 
-        // expectDescriptionToEqual(secondRenamedVisDesc) // TODO
+        // expectDescriptionToEqual(secondRenamedVisDesc)
 
         expectTableToBeVisible()
 
@@ -101,13 +105,13 @@ describe('rename', () => {
         renameVisualization('', '')
         cy.wait('@put-rename3')
 
-        // expectDescriptionToEqual('No description') // TODO
+        // expectDescriptionToEqual('No description')
 
         cy.reload(true)
 
         // title is not deleted
         expectVisTitleToEqual(secondRenamedVisTitle)
-        // expectDescriptionToEqual('No description') // TODO
+        // expectDescriptionToEqual('No description')
 
         deleteVisualization()
     })
