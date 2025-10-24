@@ -1,14 +1,24 @@
-import { describe, it, expect, vi } from 'vitest'
-// Mock the options module before importing the code under test so imports
-// that read `options` get the mocked value.
-vi.mock('@modules/options', () => ({
-    options: {
-        keepOption: { persisted: true },
-        tempOption: { persisted: false },
-    },
-}))
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { getSaveableVisualization } from '../visualization'
+import * as optionsModule from '@modules/options'
 import type { CurrentVisualization } from '@types'
+
+type OptionsReturn = Record<string, { persisted: boolean }>
+const mockOptions: OptionsReturn = {
+    keepOption: { persisted: true },
+    tempOption: { persisted: false },
+}
+
+beforeEach(() => {
+    const mod = optionsModule as unknown as {
+        getAllOptions: () => OptionsReturn
+    }
+    vi.spyOn(mod, 'getAllOptions').mockReturnValue(mockOptions)
+})
+
+afterEach(() => {
+    vi.restoreAllMocks()
+})
 
 describe('getSaveableVisualization', () => {
     it('removes non-persisted options from the saved visualization', () => {

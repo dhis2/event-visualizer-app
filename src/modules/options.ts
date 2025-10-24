@@ -1,9 +1,9 @@
-export const options: {
-    [key: string]: {
-        defaultValue: unknown
-        persisted: boolean
-    }
-} = {
+type OptionDef = {
+    defaultValue: unknown
+    persisted: boolean
+}
+
+export const options: Record<string, OptionDef> = {
     completedOnly: {
         defaultValue: false,
         persisted: true,
@@ -14,6 +14,8 @@ export const options: {
     },
 }
 
+export const getAllOptions = (): Record<string, OptionDef> => options
+
 // This for now has only the 2 options that can be passed to the analytics request
-export const getOptionsForRequest = (): [string, { defaultValue: unknown }][] =>
-    Object.entries(options)
+export const getOptionsForRequest = (): [string, OptionDef][] =>
+    Object.entries(getAllOptions())

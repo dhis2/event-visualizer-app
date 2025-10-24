@@ -3,7 +3,7 @@ import deepEqual from 'deep-equal'
 import { getRequestOptions } from '@components/plugin-wrapper/hooks/query-tools-common'
 import { layoutGetAllDimensions } from '@dhis2/analytics'
 import { isTimeDimensionId, transformDimensions } from '@modules/dimension'
-import { options } from '@modules/options'
+import { getAllOptions } from '@modules/options'
 import { initialState as currentVisDefaultValue } from '@store/current-vis-slice'
 import { initialState as savedVisDefaultValue } from '@store/saved-vis-slice'
 import type {
@@ -158,6 +158,7 @@ export const getSaveableVisualization = (
     vis: CurrentVisualization
 ): CurrentVisualization => {
     const visualization = Object.assign({}, vis)
+    const options = getAllOptions()
     const nonPersistedOptions = Object.keys(options).filter(
         (option) => !options[option].persisted
     )
