@@ -27,7 +27,7 @@ export const expectTableToBeVisible = () => {
 }
 
 export const expectTableOverlayNotToExist = () =>
-    cy.getByDataTest('fetch-overlay', { timeout: 30000 }).should('not.exist')
+    cy.getByDataTest('fetch-overlay').should('not.exist')
 
 export const expectTableToMatchRows = (expectedRows) => {
     getTableRows().should('have.length', expectedRows.length)
