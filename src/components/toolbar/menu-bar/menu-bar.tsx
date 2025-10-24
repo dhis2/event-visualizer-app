@@ -75,7 +75,7 @@ export const MenuBar: FC = () => {
         const vis = preparePayloadForSaveAs({
             visualization: {
                 ...getSaveableVisualization(currentVis),
-                subscribers: undefined,
+                subscribers: [],
             },
             name,
             description,

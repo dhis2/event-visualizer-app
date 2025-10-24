@@ -21,10 +21,12 @@ export const getTableRows = () => getLineListTable().find('tbody').find('tr')
 export const getTableDataCells = () =>
     getLineListTable().find('tbody').find('td')
 
-export const expectTableToBeVisible = () =>
+export const expectTableToBeVisible = () => {
+    expectTableOverlayNotToExist()
     getLineListTable().find('tbody').should('be.visible')
+}
 
-export const expectTableToBeUpdated = () =>
+export const expectTableOverlayNotToExist = () =>
     cy.getByDataTest('fetch-overlay', { timeout: 30000 }).should('not.exist')
 
 export const expectTableToMatchRows = (expectedRows) => {

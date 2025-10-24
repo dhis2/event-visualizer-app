@@ -8,8 +8,8 @@ import {
     expectVisTitleToEqual,
     expectTableToBeVisible,
     getTableHeaderCells,
-    expectTableToBeUpdated,
 } from '../helpers/index'
+import { getApiBaseUrl } from '../support/utils'
 
 const TEST_VIS_TITLE = `save-test-${new Date()
     .toISOString()
@@ -38,23 +38,26 @@ const createTestVisualization = (title) => {
 describe('save', () => {
     it('save works correctly', () => {
         cy.visit('/')
-        createTestVisualization(TEST_VIS_TITLE) // saveAs called here
+        createTestVisualization(TEST_VIS_TITLE)
 
         // change the sorting set the visualization as "dirty"
         getTableHeaderCells().find(`button[title*="Age in years"]`).click()
 
-        expectTableToBeUpdated()
+        expectTableToBeVisible()
 
         // extract the id of the saved visualization
         cy.url().then((url) => {
             const match = url.match(/#\/([A-Za-z0-9]+)$/)
-            cy.wrap(match[1]).as('visId')
+            cy.wrap(match[1]).as('originalVisId')
         })
 
         // intercept and mock fetching subscribers
         cy.intercept(
-            'GET',
-            /\/api\/\d+\/eventVisualizations\/\w+\?fields=subscribers/,
+            {
+                method: 'GET',
+                url: /\/api\/\d+\/eventVisualizations\/\w+\?fields=subscribers/,
+                times: 1,
+            },
             {
                 statusCode: 200,
                 body: {
@@ -63,16 +66,26 @@ describe('save', () => {
             }
         ).as('get-subscribers')
 
-        cy.intercept('PUT', /\/api\/\d+\/eventVisualizations\/\w+/, (req) => {
-            // verify that the subscribers are included in the save request
-            expect(req.body).to.have.property('subscribers')
-            expect(req.body.subscribers).to.deep.equal(['xE7jOejl9FI'])
-        }).as('put-save')
+        cy.intercept(
+            {
+                method: 'PUT',
+                url: /\/api\/\d+\/eventVisualizations\/\w+/,
+                times: 1,
+            },
+            (req) => {
+                // verify that the subscribers are included in the save request
+                expect(req.body).to.have.property('subscribers')
+                expect(req.body.subscribers).to.deep.equal(['xE7jOejl9FI'])
+            }
+        ).as('put-save')
 
         // check that subscribers are included in the response
         cy.intercept(
-            'GET',
-            /\/api\/\d+\/eventVisualizations\/\w+\?fields=.*id.*/,
+            {
+                method: 'GET',
+                url: /\/api\/\d+\/eventVisualizations\/\w+\?fields=.*id.*/,
+                times: 1,
+            },
             (req) => {
                 req.continue((res) => {
                     expect(res.body).to.have.property('subscribers')
@@ -88,10 +101,54 @@ describe('save', () => {
         cy.wait('@get-after-save')
 
         // verify the url hasn't changed
-        cy.get('@visId').then((visId) => {
-            cy.url().should('match', new RegExp(`${visId}$`))
+        cy.get('@originalVisId').then((originalVisId) => {
+            cy.url().should('match', new RegExp(`${originalVisId}$`))
         })
 
-        deleteVisualization()
+        expectTableToBeVisible()
+
+        // SAVE AS
+
+        cy.get('@originalVisId').then((originalVisId) => {
+            // match exactly 11 alphanumeric characters for the id and allow
+            // optional query params; exclude the original visId so we target
+            // the newly created visualization
+            const urlRegex = new RegExp(
+                '/api/\\d+/eventVisualizations/(?!' +
+                    originalVisId +
+                    '\\b)[A-Za-z0-9]{11}(?:\\?.*)?$'
+            )
+
+            cy.intercept({ method: 'GET', url: urlRegex, times: 1 }).as(
+                'get-eventVis-with-empty-subscribers'
+            )
+
+            const newTitle = `${TEST_VIS_TITLE}-v2`
+            saveVisualizationAs(newTitle)
+
+            expectTableToBeVisible()
+
+            cy.wait('@get-eventVis-with-empty-subscribers').then(
+                ({ response, request }) => {
+                    expect(response.body).to.have.property('subscribers')
+                    expect(response.body.subscribers).to.deep.equal([])
+                    expect(request.url).not.to.match(
+                        new RegExp(`${originalVisId}$`)
+                    )
+                }
+            )
+
+            expectVisTitleToEqual(newTitle)
+            expectTableToBeVisible()
+
+            // Delete the test visualizations
+            deleteVisualization()
+
+            cy.request({
+                method: 'DELETE',
+                url: `${getApiBaseUrl()}/eventVisualizations/${originalVisId}`,
+                failOnStatusCode: false, // carry on even if the delete fails
+            })
+        })
     })
 })
