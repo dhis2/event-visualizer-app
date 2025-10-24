@@ -156,4 +156,45 @@ describe('save and save as', () => {
             expectStartScreenToBeVisible()
         })
     })
+
+    it('save fails', () => {
+        cy.visit('/')
+        createTestVisualization(TEST_VIS_TITLE)
+
+        // make the visualization "dirty"
+        getTableHeaderCells().find(`button[title*="Age in years"]`).click()
+
+        expectTableToBeVisible()
+
+        // intercept and mock a failed save
+        cy.intercept(
+            {
+                method: 'PUT',
+                url: /\/api\/\d+\/eventVisualizations\/\w+/,
+            },
+            {
+                statusCode: 403,
+                body: {
+                    httpStatus: 'Forbidden',
+                    httpStatusCode: 403,
+                    status: 'ERROR',
+                    errorCode: 'E1006',
+                },
+            }
+        ).as('put-event-vis-failed')
+
+        resaveVisualization()
+
+        cy.wait('@put-event-vis-failed')
+
+        // verify that an error alert is shown
+        cy.getByDataTest('dhis2-uicore-alertbar')
+            .contains("You don't have sufficient permissions.")
+            .should('be.visible')
+
+        expectTableToBeVisible()
+
+        deleteVisualization()
+        expectStartScreenToBeVisible()
+    })
 })

@@ -61,9 +61,7 @@ describe('delete', () => {
             expect(response?.statusCode).to.equal(403)
 
             cy.getByDataTest('dhis2-uicore-alertbar')
-                .contains(
-                    "You don't have the proper permissions to delete this visualization."
-                )
+                .contains("You don't have sufficient permissions.")
                 .should('be.visible')
             expectTableToBeVisible()
             expectVisTitleToEqual(TEST_VIS_TITLE)

@@ -62,6 +62,7 @@ export const tCreateVisualization = createAsyncThunk<
         visualization: CurrentVisualization
         name: string
         description: string
+        onError: (error: unknown) => void
     },
     AppAsyncThunkConfig
 >(
@@ -71,10 +72,12 @@ export const tCreateVisualization = createAsyncThunk<
             visualization,
             name,
             description,
+            onError,
         }: {
             visualization: CurrentVisualization
             name: string
             description: string
+            onError: (error: unknown) => void
         },
         { dispatch }
     ) => {
@@ -93,18 +96,30 @@ export const tCreateVisualization = createAsyncThunk<
         if (data) {
             dispatch(setNavigationState({ visualizationId: data }))
         } else if (error) {
-            console.error(error)
+            onError(error)
         }
     }
 )
 
 export const tUpdateVisualization = createAsyncThunk<
     void,
-    Partial<SavedVisualization>,
-    AppAsyncThunkConfig
+    {
+        visualization: Partial<SavedVisualization>
+        onError: (error: unknown) => void
+    },
+    AppAsyncThunkConfig & { rejectValue: { error: boolean } }
 >(
     'visualization/save',
-    async (visualization: Partial<SavedVisualization>, { dispatch }) => {
+    async (
+        {
+            visualization,
+            onError,
+        }: {
+            visualization: Partial<SavedVisualization>
+            onError: (error: unknown) => void
+        },
+        { dispatch }
+    ) => {
         const vis = preparePayloadForSave({
             visualization: getSaveableVisualization(
                 visualization as CurrentVisualization
@@ -113,11 +128,13 @@ export const tUpdateVisualization = createAsyncThunk<
 
         const visId = vis.id
         if (!visId) {
-            console.error('No current visualization ID found for saving.')
+            const err = new Error(
+                'No current visualization ID found for saving.'
+            )
+            onError(err)
             return
         }
 
-        // TODO handle error from subscribers query
         const { data: subscribers } = await dispatch(
             eventVisualizationsApi.endpoints.getVisualizationSubscribers.initiate(
                 visId,
@@ -137,7 +154,7 @@ export const tUpdateVisualization = createAsyncThunk<
             // Reload the saved visualization after saving
             dispatch(tLoadSavedVisualization(visId))
         } else if (error) {
-            console.error(error)
+            onError(error)
         }
     }
 )

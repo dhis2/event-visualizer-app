@@ -82,16 +82,21 @@ export const eventVisualizationsApi = api.injectEndpoints({
                 }
 
                 try {
-                    const data = await engine.mutate({
-                        resource: 'eventVisualizations',
-                        type: 'update',
-                        id: visualization.id,
-                        data: visualization,
-                        params: {
-                            skipTranslations: true,
-                            skipSharing: true,
+                    const data = await engine.mutate(
+                        {
+                            resource: 'eventVisualizations',
+                            type: 'update',
+                            id: visualization.id,
+                            data: visualization,
+                            params: {
+                                skipTranslations: true,
+                                skipSharing: true,
+                            },
                         },
-                    })
+                        {
+                            onError: (e) => ({ error: parseEngineError(e) }),
+                        }
+                    )
 
                     const uid = (
                         data as unknown as { response?: { uid?: unknown } }

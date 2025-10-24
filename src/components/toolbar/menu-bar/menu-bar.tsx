@@ -4,6 +4,7 @@ import { useCallback } from 'react'
 import type { FC } from 'react'
 import { DownloadMenu } from './download-menu'
 import { ViewMenu } from './view-menu'
+import { parseEngineError } from '@api/parse-engine-error'
 import { VISUALIZATION_TYPES } from '@constants/visualization-types'
 import { FileMenu, HoverMenuBar } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
@@ -68,10 +69,12 @@ export const MenuBar: FC = () => {
             tCreateVisualization({
                 visualization: currentVis,
                 ...nameAndDescription,
+                onError,
             })
         )
 
-    const onSave = async () => dispatch(tUpdateVisualization(currentVis))
+    const onSave = async () =>
+        dispatch(tUpdateVisualization({ visualization: currentVis, onError }))
 
     const onRename = async ({ name, description }) => {
         try {
@@ -117,20 +120,20 @@ export const MenuBar: FC = () => {
         })
     }, [dispatch, savedVis.name, showAlert])
 
+    const onDeleteError = (error) => onError(parseEngineError(error))
+
     const onError = (error) => {
-        // TODO - unable to simulate error E4030
-        let message =
-            error.details?.message || i18n.t('An unknown error occurred.')
-        switch (error.details?.errorCode) {
+        console.error(error)
+        let message = error.message || i18n.t('An unknown error occurred.')
+
+        switch (error.errorCode) {
             case 'E4030':
                 message = i18n.t(
-                    "This visualization can't be deleted because it is used on one or more dashboards"
-                )
+                    "This visualization can't be deleted because it is used on one or more dashboards."
+                ) // TODO - unable to simulate error E4030
                 break
             case 'E1006':
-                message = i18n.t(
-                    "You don't have the proper permissions to delete this visualization."
-                )
+                message = i18n.t("You don't have sufficient permissions.")
                 break
             default:
                 break
@@ -176,7 +179,7 @@ export const MenuBar: FC = () => {
                         : undefined
                 }
                 onDelete={onDelete}
-                onError={onError}
+                onError={onDeleteError}
             />
             <ViewMenu />
             <DownloadMenu />
