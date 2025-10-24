@@ -104,7 +104,7 @@ export const MenuBar: FC = () => {
         }
     }
 
-    const onDelete = useCallback(() => {
+    const onDelete = () => {
         const deletedVisualization = savedVis.name
 
         dispatch(setNavigationState({ visualizationId: 'new' }))
@@ -118,7 +118,7 @@ export const MenuBar: FC = () => {
                 duration: 2000,
             },
         })
-    }, [dispatch, savedVis.name, showAlert])
+    }
 
     const onDeleteError = (error) => onError(parseEngineError(error))
 
