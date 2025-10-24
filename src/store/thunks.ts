@@ -8,7 +8,10 @@ import { clearUi } from './ui-slice'
 import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
-import { preparePayloadForSave } from '@dhis2/analytics'
+import {
+    preparePayloadForSave,
+    preparePayloadForSaveAs,
+} from '@dhis2/analytics'
 import { getVisualizationUiConfig } from '@modules/get-visualization-ui-config'
 import { getSaveableVisualization } from '@modules/visualization'
 import type {
@@ -55,15 +58,37 @@ export const tLoadSavedVisualization = createAsyncThunk<
 
 export const tCreateVisualization = createAsyncThunk<
     void,
-    Partial<CurrentVisualization>,
+    {
+        visualization: CurrentVisualization
+        name: string
+        description: string
+    },
     AppAsyncThunkConfig
 >(
     'visualization/create',
-    async (visualization: Partial<CurrentVisualization>, { dispatch }) => {
+    async (
+        {
+            visualization,
+            name,
+            description,
+        }: {
+            visualization: CurrentVisualization
+            name: string
+            description: string
+        },
+        { dispatch }
+    ) => {
+        const vis = preparePayloadForSaveAs({
+            visualization: {
+                ...getSaveableVisualization(visualization),
+                subscribers: [],
+            },
+            name,
+            description,
+        })
+
         const { data, error } = await dispatch(
-            eventVisualizationsApi.endpoints.createVisualization.initiate(
-                visualization
-            )
+            eventVisualizationsApi.endpoints.createVisualization.initiate(vis)
         )
         if (data) {
             dispatch(setNavigationState({ visualizationId: data }))
@@ -80,7 +105,13 @@ export const tUpdateVisualization = createAsyncThunk<
 >(
     'visualization/save',
     async (visualization: Partial<SavedVisualization>, { dispatch }) => {
-        const visId = visualization.id
+        const vis = preparePayloadForSave({
+            visualization: getSaveableVisualization(
+                visualization as CurrentVisualization
+            ),
+        })
+
+        const visId = vis.id
         if (!visId) {
             console.error('No current visualization ID found for saving.')
             return

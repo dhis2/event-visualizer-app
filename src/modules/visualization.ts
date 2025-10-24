@@ -154,7 +154,9 @@ const getDimensionIdFromHeaderName = (
     return Object.keys(headersMap).find((key) => headersMap[key] === headerName)
 }
 
-export const getSaveableVisualization = (vis: CurrentVisualization) => {
+export const getSaveableVisualization = (
+    vis: CurrentVisualization
+): CurrentVisualization => {
     const visualization = Object.assign({}, vis)
     const nonPersistedOptions = Object.keys(options).filter(
         (option) => !options[option].persisted

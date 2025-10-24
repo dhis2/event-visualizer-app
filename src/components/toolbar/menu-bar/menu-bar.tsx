@@ -5,19 +5,13 @@ import type { FC } from 'react'
 import { DownloadMenu } from './download-menu'
 import { ViewMenu } from './view-menu'
 import { VISUALIZATION_TYPES } from '@constants/visualization-types'
-import {
-    FileMenu,
-    HoverMenuBar,
-    preparePayloadForSave,
-    preparePayloadForSaveAs,
-} from '@dhis2/analytics'
+import { FileMenu, HoverMenuBar } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
 import {
     isLayoutValidForSave,
     isLayoutValidForSaveAs,
 } from '@modules/layout-validation'
 import {
-    getSaveableVisualization,
     isVisualizationSaved,
     getVisualizationState,
 } from '@modules/visualization'
@@ -69,26 +63,15 @@ export const MenuBar: FC = () => {
     const onSaveAs = async (nameAndDescription: {
         name: string
         description: string
-    }) => {
-        const { name, description } = nameAndDescription
+    }) =>
+        dispatch(
+            tCreateVisualization({
+                visualization: currentVis,
+                ...nameAndDescription,
+            })
+        )
 
-        const vis = preparePayloadForSaveAs({
-            visualization: {
-                ...getSaveableVisualization(currentVis),
-                subscribers: [],
-            },
-            name,
-            description,
-        })
-        dispatch(tCreateVisualization(vis))
-    }
-
-    const onSave = async () => {
-        const vis = preparePayloadForSave({
-            visualization: getSaveableVisualization(currentVis),
-        })
-        dispatch(tUpdateVisualization(vis))
-    }
+    const onSave = async () => dispatch(tUpdateVisualization(currentVis))
 
     const onRename = async ({ name, description }) => {
         try {

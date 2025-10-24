@@ -51,7 +51,7 @@ describe('save', () => {
             cy.wrap(match[1]).as('originalVisId')
         })
 
-        // intercept and mock fetching subscribers
+        // intercept and mock subscribers
         cy.intercept(
             {
                 method: 'GET',
@@ -77,7 +77,7 @@ describe('save', () => {
                 expect(req.body).to.have.property('subscribers')
                 expect(req.body.subscribers).to.deep.equal(['xE7jOejl9FI'])
             }
-        ).as('put-save')
+        ).as('put-event-vis')
 
         // check that subscribers are included in the response
         cy.intercept(
@@ -92,13 +92,13 @@ describe('save', () => {
                     expect(res.body.subscribers).to.deep.equal(['xE7jOejl9FI'])
                 })
             }
-        ).as('get-after-save')
+        ).as('get-eventVis-after-save')
 
         resaveVisualization()
 
         cy.wait('@get-subscribers')
-        cy.wait('@put-save')
-        cy.wait('@get-after-save')
+        cy.wait('@put-event-vis')
+        cy.wait('@get-eventVis-after-save')
 
         // verify the url hasn't changed
         cy.get('@originalVisId').then((originalVisId) => {
@@ -120,7 +120,7 @@ describe('save', () => {
             )
 
             cy.intercept({ method: 'GET', url: urlRegex, times: 1 }).as(
-                'get-eventVis-with-empty-subscribers'
+                'get-eventVis-after-save-as'
             )
 
             const newTitle = `${TEST_VIS_TITLE}-v2`
@@ -128,7 +128,7 @@ describe('save', () => {
 
             expectTableToBeVisible()
 
-            cy.wait('@get-eventVis-with-empty-subscribers').then(
+            cy.wait('@get-eventVis-after-save-as').then(
                 ({ response, request }) => {
                     expect(response.body).to.have.property('subscribers')
                     expect(response.body.subscribers).to.deep.equal([])
