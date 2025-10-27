@@ -747,7 +747,6 @@ describe('normalization', () => {
                 { id: 'l1', name: 'Legend 1', startValue: 0, endValue: 10 },
             ],
             code: 'TEST_CODE',
-            displayName: 'Display Name',
             someOtherProperty: 'should be omitted',
         }
 
