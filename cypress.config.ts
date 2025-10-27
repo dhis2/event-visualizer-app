@@ -61,6 +61,7 @@ module.exports = defineConfig({
             runMode: 1,
             openMode: 0,
         },
+        defaultCommandTimeout: 30000,
     },
     env: {
         dhis2DatatestPrefix: 'dhis2-eventvisualizer',

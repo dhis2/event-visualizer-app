@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-10-15T13:59:02.917Z\n"
-"PO-Revision-Date: 2025-10-15T13:59:02.918Z\n"
+"POT-Creation-Date: 2025-10-24T14:28:33.047Z\n"
+"PO-Revision-Date: 2025-10-24T14:28:33.048Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -234,6 +234,28 @@ msgstr "Edited"
 
 msgid "Download"
 msgstr "Download"
+
+msgid "Rename successful"
+msgstr "Rename successful"
+
+msgid "Rename failed"
+msgstr "Rename failed"
+
+msgid "\"{{- deletedObject}}\" successfully deleted."
+msgstr "\"{{- deletedObject}}\" successfully deleted."
+
+msgid "An unknown error occurred."
+msgstr "An unknown error occurred."
+
+msgid ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+msgstr ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+
+msgid "You don't have sufficient permissions."
+msgstr "You don't have sufficient permissions."
 
 msgid "Hide layout"
 msgstr "Hide layout"

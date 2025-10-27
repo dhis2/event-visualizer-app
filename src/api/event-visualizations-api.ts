@@ -2,7 +2,22 @@ import { api } from '@api/api'
 import type { BaseQueryApiWithExtraArg } from '@api/custom-base-query'
 import { parseEngineError } from '@api/parse-engine-error'
 import { getDimensionMetadataFields } from '@modules/visualization'
-import type { CurrentUser, SavedVisualization } from '@types'
+import type {
+    CurrentUser,
+    SavedVisualization,
+    CurrentVisualization,
+} from '@types'
+
+type EventVisualizationSubscribers = {
+    subscribers: string[]
+}
+
+type EventVisualizationNameDesc = {
+    name: string
+    displayName: string
+    description: string
+    displayDescription: string
+}
 
 const dimensionFields: string =
     'dimension,dimensionType,filter,program[id],programStage[id],optionSet[id],valueType,legendSet[id],repetition,items[dimensionItem~rename(id)]'
@@ -51,6 +66,92 @@ export const getVisualizationQueryFields = (
 
 export const eventVisualizationsApi = api.injectEndpoints({
     endpoints: (builder) => ({
+        updateVisualization: builder.mutation<
+            string,
+            Partial<SavedVisualization>
+        >({
+            async queryFn(visualization, apiArg: BaseQueryApiWithExtraArg) {
+                const { engine } = apiArg.extra
+
+                if (!visualization.id) {
+                    return {
+                        error: parseEngineError(
+                            new Error('Missing id in updateVisualization')
+                        ),
+                    }
+                }
+
+                try {
+                    const data = await engine.mutate(
+                        {
+                            resource: 'eventVisualizations',
+                            type: 'update',
+                            id: visualization.id,
+                            data: visualization,
+                            params: {
+                                skipTranslations: true,
+                                skipSharing: true,
+                            },
+                        },
+                        {
+                            onError: (e) => ({ error: parseEngineError(e) }),
+                        }
+                    )
+
+                    const uid = (
+                        data as unknown as { response?: { uid?: unknown } }
+                    )?.response?.uid
+
+                    if (typeof uid === 'string') {
+                        return { data: uid }
+                    }
+
+                    return {
+                        error: parseEngineError(
+                            new Error('Missing uid in update response')
+                        ),
+                    }
+                } catch (error) {
+                    return { error: parseEngineError(error) }
+                }
+            },
+        }),
+        createVisualization: builder.mutation<
+            string,
+            Partial<CurrentVisualization>
+        >({
+            async queryFn(visualization, apiArg: BaseQueryApiWithExtraArg) {
+                const { engine } = apiArg.extra
+
+                try {
+                    const data = await engine.mutate({
+                        resource: 'eventVisualizations',
+                        type: 'create',
+                        data: visualization,
+                        params: {
+                            skipTranslations: true,
+                            skipSharing: true,
+                        },
+                    })
+
+                    const uid = (
+                        data as unknown as { response?: { uid?: unknown } }
+                    )?.response?.uid
+
+                    if (typeof uid === 'string') {
+                        return { data: uid }
+                    }
+
+                    return {
+                        error: parseEngineError(
+                            new Error('Missing uid in create response')
+                        ),
+                    }
+                } catch (error) {
+                    return { error: parseEngineError(error) }
+                }
+            },
+        }),
         getVisualization: builder.query<SavedVisualization, string>({
             async queryFn(id, apiArg: BaseQueryApiWithExtraArg) {
                 const { appCachedData, engine, metadataStore } = apiArg.extra
@@ -86,6 +187,51 @@ export const eventVisualizationsApi = api.injectEndpoints({
                     })
 
                     return { data: visualization }
+                } catch (error) {
+                    return { error: parseEngineError(error) }
+                }
+            },
+        }),
+        getVisualizationSubscribers: builder.query<string[], string>({
+            async queryFn(id, apiArg: BaseQueryApiWithExtraArg) {
+                const { engine } = apiArg.extra
+
+                try {
+                    const { eventVisualization } = (await engine.query({
+                        eventVisualization: {
+                            resource: 'eventVisualizations',
+                            id,
+                            params: {
+                                fields: 'subscribers',
+                            },
+                        },
+                    })) as { eventVisualization: EventVisualizationSubscribers }
+
+                    return { data: eventVisualization.subscribers }
+                } catch (error) {
+                    return { error: parseEngineError(error) }
+                }
+            },
+        }),
+        getVisualizationNameDesc: builder.query<
+            EventVisualizationNameDesc,
+            string
+        >({
+            async queryFn(id, apiArg: BaseQueryApiWithExtraArg) {
+                const { engine } = apiArg.extra
+
+                try {
+                    const { eventVisualization } = (await engine.query({
+                        eventVisualization: {
+                            resource: 'eventVisualizations',
+                            id,
+                            params: {
+                                fields: 'name,displayName,description,displayDescription',
+                            },
+                        },
+                    })) as { eventVisualization: EventVisualizationNameDesc }
+
+                    return { data: eventVisualization }
                 } catch (error) {
                     return { error: parseEngineError(error) }
                 }
