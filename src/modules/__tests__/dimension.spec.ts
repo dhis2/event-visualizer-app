@@ -10,7 +10,6 @@ import {
     isProgramDimensionType,
     isYourDimensionType,
     isTimeDimensionId,
-    formatDimensionId,
     getTimeDimensions,
     getTimeDimensionName,
 } from '../dimension'
@@ -332,7 +331,7 @@ describe('getCreatedDimension', () => {
 })
 
 describe('getMainDimensions', () => {
-    it('returns main dimensions for EVENT inputType', () => {
+    it('returns main dimensions for EVENT outputType', () => {
         const result = getMainDimensions('EVENT')
         expect(result).toHaveProperty('lastUpdated')
         expect(result.lastUpdated?.dimensionType).toBe('PERIOD')
@@ -340,7 +339,7 @@ describe('getMainDimensions', () => {
         expect(result).toHaveProperty('lastUpdatedBy')
     })
 
-    it('returns main dimensions for TRACKED_ENTITY_INSTANCE inputType', () => {
+    it('returns main dimensions for TRACKED_ENTITY_INSTANCE outputType', () => {
         const result = getMainDimensions('TRACKED_ENTITY_INSTANCE')
         expect(result).toHaveProperty('ou')
         expect(result).toHaveProperty('created')
@@ -459,12 +458,12 @@ describe('getDimensionsWithSuffix', () => {
         },
     }
 
-    it('returns dimensions without suffix for EVENT inputType', () => {
+    it('returns dimensions without suffix for EVENT outputType', () => {
         const dimensionIds = ['did', 'sid.did']
         const result = getDimensionsWithSuffix({
             dimensionIds,
             metadata: mockMetadata,
-            inputType: 'EVENT',
+            outputType: 'EVENT',
         })
         expect(result[0].suffix).toBeUndefined()
         expect(result[1].suffix).toBeUndefined()
@@ -482,7 +481,7 @@ describe('getDimensionsWithSuffix', () => {
                 },
                 sid2: { name: 'Stage2 Name' },
             },
-            inputType: 'TRACKED_ENTITY_INSTANCE',
+            outputType: 'TRACKED_ENTITY_INSTANCE',
         })
         expect(result.some((d) => d.suffix)).toBeTruthy()
     })
@@ -492,7 +491,7 @@ describe('getDimensionsWithSuffix', () => {
         const result = getDimensionsWithSuffix({
             dimensionIds,
             metadata: mockMetadata,
-            inputType: 'TRACKED_ENTITY_INSTANCE',
+            outputType: 'TRACKED_ENTITY_INSTANCE',
         })
         expect(result[0].suffix).toBe('Program Name')
     })
@@ -540,49 +539,6 @@ describe('isTimeDimensionId', () => {
         expect(isTimeDimensionId('ou')).toBe(false)
         expect(isTimeDimensionId('created')).toBe(false)
         expect(isTimeDimensionId('eventStatus')).toBe(false)
-    })
-})
-
-describe('formatDimensionId', () => {
-    it('returns correct result for TRACKED_ENTITY_INSTANCE outputType', () => {
-        expect(
-            formatDimensionId({
-                dimensionId: 'ou',
-                programId: 'pid',
-                programStageId: 'sid',
-                outputType: 'TRACKED_ENTITY_INSTANCE',
-            })
-        ).toBe('pid.sid.ou')
-    })
-
-    it('returns correct result for EVENT outputType', () => {
-        expect(
-            formatDimensionId({
-                dimensionId: 'ou',
-                programId: 'pid',
-                programStageId: 'sid',
-                outputType: 'EVENT',
-            })
-        ).toBe('sid.ou')
-    })
-
-    it('returns correct result without programId', () => {
-        expect(
-            formatDimensionId({
-                dimensionId: 'ou',
-                programStageId: 'sid',
-                outputType: 'EVENT',
-            })
-        ).toBe('sid.ou')
-    })
-
-    it('returns correct result with only dimensionId', () => {
-        expect(
-            formatDimensionId({
-                dimensionId: 'ou',
-                outputType: 'EVENT',
-            })
-        ).toBe('ou')
     })
 })
 
