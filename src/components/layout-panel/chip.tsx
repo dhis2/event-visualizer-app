@@ -6,7 +6,7 @@ import classes from './styles/chip.module.css'
 import { IconButton } from '@components/dimension-item/icon-button'
 import { useAppSelector } from '@hooks'
 import {
-    getVisUiConfigInputType,
+    getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
 } from '@store/vis-ui-config-slice'
@@ -33,7 +33,7 @@ interface ChipProps {
 }
 
 export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
-    const inputType = useAppSelector(getVisUiConfigInputType)
+    const outputType = useAppSelector(getVisUiConfigOutputType)
     const conditions = useAppSelector((state) =>
         getVisUiConfigConditionsByDimension(state, dimension.id)
     )
@@ -63,7 +63,7 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
                     dimension={dimension}
                     conditionsLength={0} // TODO: https://dhis2.atlassian.net/browse/DHIS2-20105
                     itemsLength={items.length}
-                    inputType={inputType}
+                    outputType={outputType}
                     axisId={axisId}
                 />
                 <IconButton

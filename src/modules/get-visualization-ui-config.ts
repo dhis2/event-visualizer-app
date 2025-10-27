@@ -3,11 +3,10 @@ import {
     layoutGetDimensionIdItemIdsObject,
 } from '@dhis2/analytics'
 import { getFullDimensionId } from '@modules/dimension'
-import type { CurrentVisualization, InputType, VisualizationType } from '@types'
+import type { CurrentVisualization, VisualizationType } from '@types'
 
 const getConditionsFromVisualization = (
-    vis: CurrentVisualization,
-    inputType: InputType
+    vis: CurrentVisualization
 ): Record<string, { condition?: string; legendSet?: string }> => {
     const result: Record<string, { condition?: string; legendSet?: string }> =
         {}
@@ -25,7 +24,7 @@ const getConditionsFromVisualization = (
             dimensionId: item.dimension,
             programId: item.program?.id,
             programStageId: item.programStage?.id,
-            inputType,
+            outputType: vis.outputType,
         })
         result[dimensionId] = {
             condition: item.filter,
@@ -49,16 +48,14 @@ const getVisualizationLayout = (layout, type: VisualizationType) => {
 }
 
 export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
-    const inputType = vis.outputType // The single location where outputType is renamed to inputType
-
     return {
         visualizationType: vis.type,
-        inputType,
+        outputType: vis.outputType,
         layout: getVisualizationLayout(
             layoutGetAxisIdDimensionIdsObject(vis),
             vis.type
         ),
         itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
-        conditionsByDimension: getConditionsFromVisualization(vis, inputType),
+        conditionsByDimension: getConditionsFromVisualization(vis),
     }
 }

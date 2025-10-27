@@ -16,7 +16,7 @@ import {
 import { headersMap } from '@modules/visualization'
 import type {
     CurrentVisualization,
-    InputType,
+    OutputType,
     LegendSet,
     ValueType,
 } from '@types'
@@ -56,12 +56,12 @@ const getHeaderDisplayText = (header: LineListAnalyticsDataHeader) => {
 
 const getHeaderDimensionId = (
     header: LineListAnalyticsDataHeader,
-    inputType: InputType,
+    outputType: OutputType,
     defaultMetadata: ReturnType<typeof getMainDimensions>
 ) => {
     const { dimensionId, programStageId, programId } = getDimensionIdParts({
         id: header.name ?? '',
-        inputType,
+        outputType,
     })
     const idMatch =
         Object.keys(headersMap).find(
@@ -84,12 +84,12 @@ const getHeaderDimensionId = (
             : dimensionId,
         programStageId,
         programId,
-        inputType,
+        outputType,
     })
 
     if (
         (idMatch === 'ou' &&
-            (programId || inputType !== 'TRACKED_ENTITY_INSTANCE')) ||
+            (programId || outputType !== 'TRACKED_ENTITY_INSTANCE')) ||
         ['programStatus', 'eventStatus'].includes(idMatch)
         // org unit only if there's a programId or not tracked entity: this prevents pid.ou from being mixed up with just ou in TE
         // program status + event status in all cases

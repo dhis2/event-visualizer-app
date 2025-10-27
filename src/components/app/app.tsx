@@ -13,8 +13,10 @@ import {
     GridStartColumn,
     GridTopRow,
 } from '@components/grid'
+import { LineListLayout } from '@components/layout-panel/line-list-layout'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
+import { TitleBar } from '@components/title-bar/title-bar'
 import { Toolbar } from '@components/toolbar/toolbar'
 import {
     useAddMetadata,
@@ -75,7 +77,8 @@ const EventVisualizer: FC = () => {
                 </div>
             </GridStartColumn>
             <GridCenterColumnTop>
-                <div style={{ padding: 8 }}>Titlebar</div>
+                <LineListLayout />
+                <TitleBar />
             </GridCenterColumnTop>
             <GridCenterColumnBottom>
                 {isVisualizationEmpty(currentVis) && !isVisualizationLoading ? (

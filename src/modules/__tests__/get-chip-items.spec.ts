@@ -9,7 +9,7 @@ describe('getChipItemsText', () => {
                     dimension: { id: 'ou', dimensionType: 'ORGANISATION_UNIT' },
                     conditionsLength: undefined,
                     itemsLength: undefined,
-                    inputType: 'EVENT',
+                    outputType: 'EVENT',
                     axisId: 'columns',
                 })
             ).toBe('')
@@ -21,7 +21,7 @@ describe('getChipItemsText', () => {
                     dimension: { id: 'pe', dimensionType: 'PERIOD' },
                     conditionsLength: undefined,
                     itemsLength: undefined,
-                    inputType: 'EVENT',
+                    outputType: 'EVENT',
                     axisId: 'columns',
                 })
             ).toBe('')
@@ -33,7 +33,7 @@ describe('getChipItemsText', () => {
                     dimension: { id: 'dx', dimensionType: 'DATA_ELEMENT' },
                     conditionsLength: undefined,
                     itemsLength: undefined,
-                    inputType: 'EVENT',
+                    outputType: 'EVENT',
                     axisId: 'columns',
                 })
             ).toBe('all')
@@ -45,7 +45,7 @@ describe('getChipItemsText', () => {
                     dimension: { id: 'de1', valueType: 'TRUE_ONLY' },
                     conditionsLength: 1,
                     itemsLength: undefined,
-                    inputType: 'EVENT',
+                    outputType: 'EVENT',
                     axisId: 'columns',
                 })
             ).toBe('all')
@@ -57,7 +57,7 @@ describe('getChipItemsText', () => {
                     dimension: { id: 'de2', valueType: 'BOOLEAN' },
                     conditionsLength: 2,
                     itemsLength: undefined,
-                    inputType: 'EVENT',
+                    outputType: 'EVENT',
                     axisId: 'columns',
                 })
             ).toBe('all')
@@ -69,7 +69,7 @@ describe('getChipItemsText', () => {
                     dimension: { id: 'de3', optionSet: 'optionSet1' },
                     conditionsLength: undefined,
                     itemsLength: 3,
-                    inputType: 'EVENT',
+                    outputType: 'EVENT',
                     axisId: 'columns',
                 })
             ).toBe('3')
@@ -81,7 +81,7 @@ describe('getChipItemsText', () => {
                     dimension: { id: 'de4' },
                     conditionsLength: undefined,
                     itemsLength: 5,
-                    inputType: 'EVENT',
+                    outputType: 'EVENT',
                     axisId: 'columns',
                 })
             ).toBe('5')
@@ -93,7 +93,7 @@ describe('getChipItemsText', () => {
                     dimension: { id: 'de5' },
                     conditionsLength: 2,
                     itemsLength: undefined,
-                    inputType: 'EVENT',
+                    outputType: 'EVENT',
                     axisId: 'columns',
                 })
             ).toBe('2')
@@ -105,7 +105,7 @@ describe('getChipItemsText', () => {
                     dimension: { id: 'ou', dimensionType: 'ORGANISATION_UNIT' },
                     conditionsLength: undefined,
                     itemsLength: 4,
-                    inputType: 'TRACKED_ENTITY_INSTANCE',
+                    outputType: 'TRACKED_ENTITY_INSTANCE',
                     axisId: 'columns',
                 })
             ).toBe('4')
@@ -118,7 +118,7 @@ describe('getChipItemsText', () => {
                 dimension: { id: 'testDimension' },
                 conditionsLength: undefined,
                 itemsLength: undefined,
-                inputType: 'EVENT',
+                outputType: 'EVENT',
                 axisId: 'filters',
             })
 
@@ -130,7 +130,7 @@ describe('getChipItemsText', () => {
                 dimension: { id: 'testDimension', valueType: 'TRUE_ONLY' },
                 conditionsLength: 1,
                 itemsLength: undefined,
-                inputType: 'EVENT',
+                outputType: 'EVENT',
                 axisId: 'filters',
             })
 
@@ -142,7 +142,7 @@ describe('getChipItemsText', () => {
                 dimension: { id: 'testDimension', valueType: 'BOOLEAN' },
                 conditionsLength: 2,
                 itemsLength: undefined,
-                inputType: 'EVENT',
+                outputType: 'EVENT',
                 axisId: 'filters',
             })
 
@@ -154,7 +154,7 @@ describe('getChipItemsText', () => {
                 dimension: { id: 'testDimension', optionSet: 'testOptionSet' },
                 conditionsLength: undefined,
                 itemsLength: 3,
-                inputType: 'EVENT',
+                outputType: 'EVENT',
                 axisId: 'filters',
             })
 
@@ -166,7 +166,7 @@ describe('getChipItemsText', () => {
                 dimension: { id: 'de3', optionSet: 'optionSet1' },
                 conditionsLength: undefined,
                 itemsLength: 0,
-                inputType: 'EVENT',
+                outputType: 'EVENT',
                 axisId: 'filters',
             })
 
@@ -178,7 +178,7 @@ describe('getChipItemsText', () => {
                 dimension: { id: 'testDimension' },
                 conditionsLength: 5,
                 itemsLength: undefined,
-                inputType: 'EVENT',
+                outputType: 'EVENT',
                 axisId: 'filters',
             })
 
@@ -190,7 +190,7 @@ describe('getChipItemsText', () => {
                 dimension: { id: 'ou' },
                 conditionsLength: undefined,
                 itemsLength: undefined,
-                inputType: 'EVENT',
+                outputType: 'EVENT',
                 axisId: 'filters',
             })
 
@@ -202,7 +202,7 @@ describe('getChipItemsText', () => {
                 dimension: { id: 'testDimension', dimensionType: 'PERIOD' },
                 conditionsLength: undefined,
                 itemsLength: undefined,
-                inputType: 'EVENT',
+                outputType: 'EVENT',
                 axisId: 'filters',
             })
 
