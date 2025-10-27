@@ -59,9 +59,9 @@ const getDefaultOuMetadata = (
 })
 
 const getDefaultOrgUnitLabel = (
-    inputType: SavedVisualization['outputType']
+    outputType: SavedVisualization['outputType']
 ) => {
-    if (inputType === 'TRACKED_ENTITY_INSTANCE') {
+    if (outputType === 'TRACKED_ENTITY_INSTANCE') {
         return i18n.t('Registration org. unit')
     } else {
         return i18n.t('Organisation unit')
@@ -77,7 +77,7 @@ const getDynamicTimeDimensionsMetadata = (
         const uid = getFullDimensionId({
             dimensionId: dimension.id,
             programId: program?.id,
-            inputType: outputType,
+            outputType: outputType,
         })
 
         acc[uid] = {
@@ -118,7 +118,7 @@ const extractFixedDimensionsMetadata = (
         const dimensionId = getFullDimensionId({
             dimensionId: dimension.dimension as DimensionId,
             programId: dimension.program?.id,
-            inputType: visualization.outputType,
+            outputType: visualization.outputType,
         })
         if (dimension.program?.id) {
             const metadata = getProgramDimensions(dimension.program?.id)[
@@ -158,7 +158,7 @@ const extractProgramDimensionsMetadata = (
             const formattedId = getFullDimensionId({
                 dimensionId: timeDimensionId as DimensionId,
                 programId: program.id,
-                inputType: visualization.outputType,
+                outputType: visualization.outputType,
             })
             programDimensionsMetadata[formattedId] = {
                 ...timeDimensions[timeDimensionId],
