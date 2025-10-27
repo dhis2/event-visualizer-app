@@ -7,7 +7,7 @@ import type {
 } from './types'
 import { DIMENSION_ID_ORGUNIT } from '@constants/dimensions'
 import {
-    formatDimensionId,
+    getFullDimensionId,
     getProgramDimensions,
     getTimeDimensionName,
     getTimeDimensions,
@@ -48,11 +48,13 @@ const DIMENSION_METADATA_PROP_MAP = {
     organisationUnitGroupSetDimensions: 'organisationUnitGroupSet',
     dataElementGroupSetDimensions: 'dataElementGroupSet',
 }
-const getDefaultOuMetadata = (type: SavedVisualization['outputType']) => ({
+const getDefaultOuMetadata = (
+    outputType: SavedVisualization['outputType']
+) => ({
     [DIMENSION_ID_ORGUNIT]: {
         uid: DIMENSION_ID_ORGUNIT,
         dimensionType: 'ORGANISATION_UNIT' as DimensionType,
-        name: getDefaultOrgUnitLabel(type),
+        name: getDefaultOrgUnitLabel(outputType),
     },
 })
 
@@ -72,10 +74,10 @@ const getDynamicTimeDimensionsMetadata = (
     outputType?: SavedVisualization['outputType']
 ): ExtractedMetadatInput =>
     Object.values(getTimeDimensions()).reduce((acc, dimension) => {
-        const uid = formatDimensionId({
+        const uid = getFullDimensionId({
             dimensionId: dimension.id,
             programId: program?.id,
-            outputType,
+            inputType: outputType,
         })
 
         acc[uid] = {
@@ -113,10 +115,10 @@ const extractFixedDimensionsMetadata = (
             FIXED_DIMENSION_LOOKUP.has(d.dimension as DimensionId) &&
             d.program?.id
     )) {
-        const dimensionId = formatDimensionId({
+        const dimensionId = getFullDimensionId({
             dimensionId: dimension.dimension as DimensionId,
             programId: dimension.program?.id,
-            outputType: visualization.outputType,
+            inputType: visualization.outputType,
         })
         if (dimension.program?.id) {
             const metadata = getProgramDimensions(dimension.program?.id)[
@@ -153,10 +155,10 @@ const extractProgramDimensionsMetadata = (
 
         const timeDimensions = getDynamicTimeDimensionsMetadata(program)
         Object.keys(timeDimensions).forEach((timeDimensionId) => {
-            const formattedId = formatDimensionId({
+            const formattedId = getFullDimensionId({
                 dimensionId: timeDimensionId as DimensionId,
                 programId: program.id,
-                outputType: visualization.outputType,
+                inputType: visualization.outputType,
             })
             programDimensionsMetadata[formattedId] = {
                 ...timeDimensions[timeDimensionId],

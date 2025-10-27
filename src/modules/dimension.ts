@@ -135,7 +135,7 @@ export const getDimensionIdParts = ({
 
 type GetFullDimensionIdParams = {
     dimensionId: string
-    outputType: OutputType
+    outputType?: OutputType
     programId?: string
     programStageId?: string
 }
@@ -272,27 +272,6 @@ export const isTimeDimensionId = (
     dimensionId: DimensionRecord['dimension']
 ): dimensionId is TimeDimensionId =>
     (TIME_DIMENSION_IDS as readonly string[]).includes(dimensionId)
-
-type FormatDimensionIdParams = {
-    dimensionId: DimensionId
-    programStageId?: string
-    programId?: string
-    outputType?: SavedVisualization['outputType']
-}
-export const formatDimensionId = ({
-    dimensionId,
-    programStageId,
-    programId,
-    outputType,
-}: FormatDimensionIdParams) => {
-    return [
-        outputType === 'TRACKED_ENTITY_INSTANCE' ? programId : undefined,
-        programStageId,
-        dimensionId,
-    ]
-        .filter((p) => p)
-        .join('.')
-}
 
 type NameParentProperty = 'program' | 'stage'
 type TimeDimension = {
