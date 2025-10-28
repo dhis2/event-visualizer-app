@@ -116,6 +116,12 @@ msgstr "This year"
 msgid "Last year"
 msgstr "Last year"
 
+msgid "Registration org. unit"
+msgstr "Registration org. unit"
+
+msgid "Organisation unit"
+msgstr "Organisation unit"
+
 msgid "HTML"
 msgstr "HTML"
 
@@ -286,6 +292,18 @@ msgstr "Event status"
 msgid "Program status"
 msgstr "Program status"
 
+msgid "Event date"
+msgstr "Event date"
+
+msgid "Enrollment date"
+msgstr "Enrollment date"
+
+msgid "Incident date"
+msgstr "Incident date"
+
+msgid "Scheduled date"
+msgstr "Scheduled date"
+
 msgid "all"
 msgstr "all"
 
@@ -297,12 +315,6 @@ msgstr "Filter"
 
 msgid "Rows"
 msgstr "Rows"
-
-msgid "Registration org. unit"
-msgstr "Registration org. unit"
-
-msgid "Organisation unit"
-msgstr "Organisation unit"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

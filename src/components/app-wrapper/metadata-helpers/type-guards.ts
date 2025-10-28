@@ -2,7 +2,11 @@ import type {
     AnyMetadataItemInput,
     SimpleMetadataItem,
     ProgramMetadataItem,
+    ProgramStageMetadataItem,
     OptionSetMetadataItem,
+    OrganisationUnitMetadataItem,
+    MetadataStoreItem,
+    LegendSetMetadataItem,
 } from './types'
 import type { MetadataItem } from '@types'
 
@@ -30,7 +34,10 @@ export const isSingleMetadataItemInput = (
         isMetadataItem(item) ||
         isSimpleMetadataItem(item) ||
         isProgramMetadataItem(item) ||
-        isOptionSetMetadataItem(item)
+        isProgramStageMetadataItem(item) ||
+        isOptionSetMetadataItem(item) ||
+        isLegendSetMetadataItem(item) ||
+        isOrganisationUnitMetadataItem(item)
     )
 }
 
@@ -62,7 +69,7 @@ export const isSimpleMetadataItem = (
 }
 
 export const isProgramMetadataItem = (
-    input: AnyMetadataItemInput
+    input: AnyMetadataItemInput | MetadataStoreItem
 ): input is ProgramMetadataItem => {
     return (
         isObject(input) &&
@@ -75,9 +82,25 @@ export const isProgramMetadataItem = (
     )
 }
 
-export function isOptionSetMetadataItem(
-    input: AnyMetadataItemInput
-): input is OptionSetMetadataItem {
+export const isProgramStageMetadataItem = (
+    input: AnyMetadataItemInput | MetadataStoreItem
+): input is ProgramStageMetadataItem => {
+    return (
+        isObject(input) &&
+        'id' in input &&
+        'name' in input &&
+        'repeatable' in input &&
+        'hideDueDate' in input &&
+        isPopulatedString(input.id) &&
+        isPopulatedString(input.name) &&
+        typeof input.repeatable === 'boolean' &&
+        typeof input.hideDueDate === 'boolean'
+    )
+}
+
+export const isOptionSetMetadataItem = (
+    input: AnyMetadataItemInput | MetadataStoreItem
+): input is OptionSetMetadataItem => {
     return (
         isObject(input) &&
         'options' in input &&
@@ -85,5 +108,31 @@ export function isOptionSetMetadataItem(
         'name' in input &&
         isPopulatedString(input.id) &&
         isPopulatedString(input.name)
+    )
+}
+
+export function isLegendSetMetadataItem(
+    input: AnyMetadataItemInput | MetadataStoreItem
+): input is LegendSetMetadataItem {
+    return (
+        isObject(input) &&
+        'id' in input &&
+        'name' in input &&
+        'legends' in input &&
+        isPopulatedString(input.id) &&
+        isPopulatedString(input.name) &&
+        Array.isArray(input.legends)
+    )
+}
+
+export const isOrganisationUnitMetadataItem = (
+    input: AnyMetadataItemInput | MetadataStoreItem
+): input is OrganisationUnitMetadataItem => {
+    return (
+        isObject(input) &&
+        'id' in input &&
+        'path' in input &&
+        isPopulatedString(input.id) &&
+        isPopulatedString(input.path)
     )
 }
