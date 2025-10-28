@@ -1,8 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, describe, it } from 'vitest'
-import { normalizeMetadataInputItem } from '../normalization'
+import {
+    normalizeLegendSetMetadataItem,
+    normalizeMetadataInputItem,
+    normalizeOrganisationUnitMetadataItem,
+} from '../normalization'
 
 describe('normalization', () => {
+    describe('normalizeOrganisationUnitMetadataItem', () => {
+        it('returns input as-is', () => {
+            const orgUnit = {
+                id: 'ou123',
+                path: '/A/B/C',
+                name: 'Test Org Unit',
+            }
+            expect(normalizeOrganisationUnitMetadataItem(orgUnit)).toBe(orgUnit)
+        })
+    })
     describe('normalizeMetadataInputItem', () => {
         describe('MetadataItem (with uid)', () => {
             it('should normalize MetadataItem with uid to id', () => {
@@ -703,6 +717,45 @@ describe('normalization', () => {
                     expect((result as any).options).toHaveLength(1000)
                 })
             })
+        })
+    })
+
+    describe('LegendSetMetadataItem', () => {
+        it('should normalize LegendSetMetadataItem by returning it as-is', () => {
+            const input = {
+                id: 'legend1',
+                name: 'Test Legend Set',
+                legends: [
+                    {
+                        id: 'l1',
+                        name: 'Legend 1',
+                        startValue: 0,
+                        endValue: 10,
+                    },
+                ],
+            }
+            const result = normalizeMetadataInputItem(input as any)
+
+            expect(result).toEqual(input)
+        })
+    })
+    it('should extract required properties from LegendSet', () => {
+        const input = {
+            id: 'legend1',
+            name: 'Test Legend Set',
+            legends: [
+                { id: 'l1', name: 'Legend 1', startValue: 0, endValue: 10 },
+            ],
+            code: 'TEST_CODE',
+            someOtherProperty: 'should be omitted',
+        }
+
+        const result = normalizeLegendSetMetadataItem(input as any)
+
+        expect(result).toEqual({
+            id: input.id,
+            name: input.name,
+            legends: input.legends,
         })
     })
 })

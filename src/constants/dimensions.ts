@@ -1,5 +1,5 @@
 import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
-import type { ExtendedDimensionType } from '@types'
+import type { DimensionId, ExtendedDimensionType } from '@types'
 
 export const DIMENSION_TYPES =
     asStringLiteralSubsetArray<ExtendedDimensionType>()([
@@ -42,6 +42,8 @@ export const DIMENSION_IDS = [
     'programStatus',
     'scheduledDate',
 ] as const
+
+export const DIMENSION_ID_ORGUNIT: DimensionId = 'ou'
 
 export const TIME_DIMENSION_IDS = [
     'enrollmentDate',

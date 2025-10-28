@@ -1,8 +1,9 @@
 import { api } from '@api/api'
 import type { BaseQueryApiWithExtraArg } from '@api/custom-base-query'
 import { parseEngineError } from '@api/parse-engine-error'
+import { parseCondition } from '@modules/conditions'
 import { getDimensionMetadataFields } from '@modules/visualization'
-import type { CurrentUser, SavedVisualization } from '@types'
+import type { CurrentUser, Option, SavedVisualization } from '@types'
 
 const dimensionFields: string =
     'dimension,dimensionType,filter,program[id],programStage[id],optionSet[id],valueType,legendSet[id],repetition,items[dimensionItem~rename(id)]'
@@ -72,7 +73,59 @@ export const eventVisualizationsApi = api.injectEndpoints({
                     const visualization =
                         data.eventVisualization as SavedVisualization
 
-                    metadataStore.addMetadata(visualization.metaData)
+                    metadataStore.setVisualizationMetadata(visualization)
+
+                    const optionSetsMetadata = {}
+
+                    const dimensions = [
+                        ...(visualization.columns || []),
+                        ...(visualization.rows || []),
+                        ...(visualization.filters || []),
+                    ]
+
+                    for (const dimension of dimensions) {
+                        if (
+                            dimension?.optionSet?.id &&
+                            dimension.filter?.startsWith('IN')
+                        ) {
+                            const optionSetId = dimension.optionSet.id
+                            const conditions = parseCondition(dimension.filter)
+
+                            if (!conditions) {
+                                throw new Error(
+                                    `Could not parse dimension filter "${dimension.filter}"`
+                                )
+                            }
+
+                            const optionsData = await engine.query({
+                                options: {
+                                    resource: 'options',
+                                    params: {
+                                        fields: 'id,code,displayName~rename(name)',
+                                        filter: [
+                                            `optionSet.id:eq:${optionSetId}`,
+                                            `code:in:[${conditions.join(',')}]`,
+                                        ],
+                                        paging: false,
+                                    },
+                                },
+                            })
+
+                            if (optionsData?.options) {
+                                // update options in the optionSet metadata used for the lookup of the correct
+                                // name from code (options for different option sets have the same code)
+                                optionSetsMetadata[optionSetId] = {
+                                    ...metadataStore.getMetadataItem(
+                                        optionSetId
+                                    ),
+                                    options: optionsData.options as Option[],
+                                }
+                            }
+                        }
+                    }
+                    if (Object.keys(optionSetsMetadata).length) {
+                        metadataStore.addMetadata(optionSetsMetadata)
+                    }
 
                     // update most viewed statistics
                     await engine.mutate({
