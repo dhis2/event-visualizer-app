@@ -4,7 +4,7 @@ import type { LayoutDimension } from './chip'
 import { getChipItemsText } from './get-chip-items-text'
 import classes from './styles/chip-base.module.css'
 import { DimensionTypeIcon } from '@components/dimension-item/dimension-type-icon'
-import type { Axis, InputType } from '@types'
+import type { Axis, OutputType } from '@types'
 
 // Presentational component used by dnd - do not add redux or dnd functionality
 
@@ -12,7 +12,7 @@ interface ChipBaseProps {
     dimension: LayoutDimension
     conditionsLength: number | undefined
     itemsLength: number | undefined
-    inputType: InputType
+    outputType: OutputType
     axisId: Axis
 }
 
@@ -20,7 +20,7 @@ export const ChipBase: React.FC<ChipBaseProps> = ({
     dimension,
     conditionsLength,
     itemsLength,
-    inputType,
+    outputType,
     axisId,
 }) => (
     <div className={cx(classes.chipBase)}>
@@ -42,7 +42,7 @@ export const ChipBase: React.FC<ChipBaseProps> = ({
                 dimension,
                 conditionsLength,
                 itemsLength,
-                inputType,
+                outputType,
                 axisId,
             })}
         </span>

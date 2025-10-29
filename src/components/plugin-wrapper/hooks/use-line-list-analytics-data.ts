@@ -1,10 +1,12 @@
 // eslint-disable-next-line no-restricted-imports
-import { useDataEngine } from '@dhis2/app-runtime'
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
+import { useCallback, useState } from 'react'
 import {
     getAdaptedVisualization,
     getAnalyticsEndpoint,
 } from './query-tools-line-list.js'
+import type { MetadataInput } from '@components/app-wrapper/metadata-helpers/types.js'
+import type { LineListAnalyticsData } from '@components/line-list/types.js'
 import { Analytics } from '@dhis2/analytics'
 import { getBooleanValues } from '@modules/conditions'
 import {
@@ -19,7 +21,7 @@ import {
     headersMap,
     isVisualizationWithTimeDimension,
 } from '@modules/visualization'
-import type { InputType } from '@types'
+import type { CurrentUser, CurrentVisualization, OutputType } from '@types'
 
 const lookupOptionSetOptionMetadata = (optionSetId, code, metaDataItems) => {
     const optionSetMetaData = metaDataItems?.[optionSetId]
@@ -163,13 +165,13 @@ const fetchLegendSets = async ({ legendSetIds, dataEngine }) => {
     return legendSets
 }
 
-const extractHeaders = (analyticsResponse, inputType: InputType) => {
-    const defaultMetadata = getMainDimensions(inputType)
+const extractHeaders = (analyticsResponse, outputType: OutputType) => {
+    const defaultMetadata = getMainDimensions(outputType)
 
     const dimensionIds = analyticsResponse.headers.map((header) => {
         const { dimensionId, programStageId, programId } = getDimensionIdParts({
             id: header.name,
-            inputType,
+            outputType,
         })
         const idMatch =
             Object.keys(headersMap).find(
@@ -192,12 +194,12 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
                 : dimensionId,
             programStageId,
             programId,
-            inputType,
+            outputType,
         })
 
         if (
             (idMatch === 'ou' &&
-                (programId || inputType !== 'TRACKED_ENTITY_INSTANCE')) ||
+                (programId || outputType !== 'TRACKED_ENTITY_INSTANCE')) ||
             ['programStatus', 'eventStatus'].includes(idMatch)
             // org unit only if there's a programId or not tracked entity: this prevents pid.ou from being mixed up with just ou in TE
             // program status + event status in all cases
@@ -216,7 +218,7 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
     const dimensionsWithSuffix = getDimensionsWithSuffix({
         dimensionIds,
         metadata,
-        inputType,
+        outputType,
     })
 
     const labels = dimensionsWithSuffix.map(({ name, suffix, id }) => ({
@@ -228,7 +230,7 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
         const result = { ...header, index }
         const { dimensionId, programId, programStageId } = getDimensionIdParts({
             id: header.name,
-            inputType,
+            outputType,
         })
 
         const idMatch =
@@ -256,7 +258,7 @@ const extractHeaders = (analyticsResponse, inputType: InputType) => {
                             : dimensionId,
                         programId,
                         programStageId,
-                        inputType,
+                        outputType,
                     })
             )?.label || result.column
 
@@ -309,169 +311,143 @@ const extractRows = (analyticsResponse, headers) => {
 
 const extractRowContext = (analyticsResponse) => analyticsResponse.rowContext
 
-const useLineListAnalyticsData = ({
-    visualization,
-    filters,
-    isVisualizationLoading: isGlobalLoading,
-    displayProperty,
-    onResponseReceived,
-    pageSize,
-    page,
-    sortField,
-    sortDirection,
-}) => {
+type FetchAnalyticsDataParams = {
+    visualization: CurrentVisualization
+    filters?: Record<string, unknown>
+    displayProperty: CurrentUser['settings']['displayProperty']
+    pageSize?: number
+    page?: number
+    onResponseReceived: (metadata: MetadataInput) => void
+}
+type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
+type AnalyticsDataState = {
+    isFetching: boolean
+    error?: FetchError
+    data: LineListAnalyticsData | null
+}
+type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
+
+const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const dataEngine = useDataEngine()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
-    const mounted = useRef(false)
-    const [loading, setLoading] = useState<boolean>(true)
-    const [fetching, setFetching] = useState<boolean>(true)
-    const [error, setError] = useState<string | undefined>(undefined)
-    const [data, setData] = useState<object | null>(null)
-    const relativePeriodDate = filters?.relativePeriodDate
 
-    const doFetch = useCallback(async () => {
-        try {
-            const analyticsResponse = await fetchAnalyticsDataForLL({
-                analyticsEngine,
-                page,
-                pageSize,
-                relativePeriodDate,
-                sortDirection,
-                sortField,
-                visualization,
-                displayProperty,
-            })
-            const headers = extractHeaders(
-                analyticsResponse,
-                visualization.outputType
-            )
-            const rows = extractRows(analyticsResponse, headers)
-            const rowContext = extractRowContext(analyticsResponse)
-            const pager = analyticsResponse.metaData.pager
-            console.log('analyticsResponse', analyticsResponse)
+    const [state, setState] = useState<AnalyticsDataState>({
+        isFetching: false,
+        error: undefined,
+        data: null,
+    })
 
-            const legendSetIds: string[] = [] // TODO: check this type
-            const headerLegendSetMap: Record<string, string> = headers.reduce(
-                (acc, header) => {
-                    const metadataItem =
-                        analyticsResponse.metaData.items[header.name]
-                    if (typeof metadataItem?.legendSet === 'string') {
-                        acc[header.name] = metadataItem.legendSet
-                    }
-                    return acc
-                },
-                {}
-            )
-            if (
-                visualization.legend?.strategy === 'FIXED' &&
-                visualization.legend.set?.id
-            ) {
-                legendSetIds.push(visualization.legend.set.id)
-            } else if (visualization.legend?.strategy === 'BY_DATA_ITEM') {
-                Object.values(headerLegendSetMap)
-                    .filter((legendSet) => legendSet)
-                    .forEach((legendSet) => legendSetIds.push(legendSet))
-            }
-            const legendSets = await fetchLegendSets({
-                legendSetIds,
-                dataEngine,
-            })
+    const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
+        async ({
+            visualization,
+            filters,
+            displayProperty,
+            pageSize = 100,
+            page = 1,
+            onResponseReceived,
+        }) => {
+            setState((prevState) => ({
+                ...prevState,
+                isFetching: true,
+                error: undefined,
+            }))
 
-            if (legendSets.length) {
-                headers
-                    .filter((header) => isValueTypeNumeric(header.valueType))
-                    .forEach((header) => {
-                        switch (visualization.legend.strategy) {
-                            case 'FIXED':
-                                header.legendSet = legendSets[0]
-                                break
-                            case 'BY_DATA_ITEM': {
-                                header.legendSet = legendSets.find(
-                                    (legendSet) =>
-                                        legendSet.id ===
-                                        headerLegendSetMap[header.name]
-                                )
-                                break
-                            }
+            const relativePeriodDate = filters?.relativePeriodDate
+
+            const { dimension: sortField, direction: sortDirection } =
+                visualization.sorting?.length
+                    ? visualization.sorting[0]
+                    : { dimension: undefined, direction: undefined }
+
+            try {
+                const analyticsResponse = await fetchAnalyticsDataForLL({
+                    analyticsEngine,
+                    page,
+                    pageSize,
+                    relativePeriodDate,
+                    sortDirection,
+                    sortField,
+                    visualization,
+                    displayProperty,
+                })
+
+                const headers = extractHeaders(
+                    analyticsResponse,
+                    visualization.outputType
+                )
+
+                const rows = extractRows(analyticsResponse, headers)
+                const rowContext = extractRowContext(analyticsResponse)
+                const pager = analyticsResponse.metaData.pager
+
+                const legendSetIds: string[] = [] // TODO: check this type
+                const headerLegendSetMap: Record<string, string> =
+                    headers.reduce((acc, header) => {
+                        const metadataItem =
+                            analyticsResponse.metaData.items[header.name]
+                        if (typeof metadataItem?.legendSet === 'string') {
+                            acc[header.name] = metadataItem.legendSet
                         }
-                    })
+                        return acc
+                    }, {})
+                if (
+                    visualization.legend?.strategy === 'FIXED' &&
+                    visualization.legend.set?.id
+                ) {
+                    legendSetIds.push(visualization.legend.set.id)
+                } else if (visualization.legend?.strategy === 'BY_DATA_ITEM') {
+                    Object.values(headerLegendSetMap)
+                        .filter((legendSet) => legendSet)
+                        .forEach((legendSet) => legendSetIds.push(legendSet))
+                }
+                const legendSets = await fetchLegendSets({
+                    legendSetIds,
+                    dataEngine,
+                })
+
+                if (legendSets.length) {
+                    headers
+                        .filter((header) =>
+                            isValueTypeNumeric(header.valueType)
+                        )
+                        .forEach((header) => {
+                            switch (visualization.legend?.strategy) {
+                                case 'FIXED':
+                                    header.legendSet = legendSets[0]
+                                    break
+                                case 'BY_DATA_ITEM': {
+                                    header.legendSet = legendSets.find(
+                                        (legendSet) =>
+                                            legendSet.id ===
+                                            headerLegendSetMap[header.name]
+                                    )
+                                    break
+                                }
+                            }
+                        })
+                }
+
+                const analyticsData = { headers, rows, pager, rowContext }
+
+                setState({
+                    data: analyticsData,
+                    error: undefined,
+                    isFetching: false,
+                })
+
+                onResponseReceived(analyticsResponse.metaData.items)
+            } catch (error) {
+                setState({
+                    data: null,
+                    error,
+                    isFetching: false,
+                })
             }
+        },
+        [analyticsEngine, dataEngine]
+    )
 
-            if (mounted.current) {
-                setError(undefined)
-                setData({ headers, rows, pager, rowContext })
-            }
-
-            // TODO: check what metadata needs to be passed from the analytics response
-            onResponseReceived(analyticsResponse.metaData.items)
-        } catch (error) {
-            if (mounted.current) {
-                setError(error)
-            }
-        } finally {
-            if (mounted.current) {
-                setLoading(false)
-                setFetching(false)
-            }
-        }
-    }, [
-        analyticsEngine,
-        dataEngine,
-        displayProperty,
-        relativePeriodDate,
-        visualization,
-        page,
-        pageSize,
-        sortDirection,
-        sortField,
-        onResponseReceived,
-    ])
-
-    useEffect(() => {
-        /*
-         * Hack to prevent state updates on unmounted components
-         * needed because the analytics engine cannot cancel requests
-         */
-        mounted.current = true
-
-        return () => {
-            mounted.current = false
-        }
-    }, [])
-
-    useEffect(() => {
-        setFetching(true)
-        doFetch()
-    }, [
-        dataEngine,
-        displayProperty,
-        visualization,
-        page,
-        pageSize,
-        sortField,
-        sortDirection,
-        relativePeriodDate,
-        doFetch,
-        onResponseReceived,
-    ])
-
-    useEffect(() => {
-        // Do a full reset when loading a new visualization
-        if (isGlobalLoading) {
-            setFetching(false)
-            setLoading(false)
-            setError(undefined)
-            setData(null)
-        }
-    }, [isGlobalLoading])
-
-    return {
-        loading,
-        fetching,
-        error,
-        data,
-        isGlobalLoading,
-    }
+    return [fetchAnalyticsData, state]
 }
 
 export { useLineListAnalyticsData }

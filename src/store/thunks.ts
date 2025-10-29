@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
+import { setIsVisualizationLoading } from './loader-slice'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
 import type { RootState } from './store'
 import { clearUi } from './ui-slice'
-import { setVisUiConfig } from './vis-ui-config-slice'
+import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { getVisualizationUiConfig } from '@modules/visualization'
@@ -23,6 +24,7 @@ export const tClearVisualization = () => (dispatch: AppDispatch) => {
     dispatch(clearUi())
     dispatch(clearSavedVis())
     dispatch(clearCurrentVis())
+    dispatch(clearVisUiConfig())
 }
 
 export const tLoadSavedVisualization = createAsyncThunk<
@@ -30,6 +32,8 @@ export const tLoadSavedVisualization = createAsyncThunk<
     string,
     AppAsyncThunkConfig
 >('visualization/load', async (id: string, { dispatch }) => {
+    dispatch(setIsVisualizationLoading(true))
+
     const { data, error } = await dispatch(
         eventVisualizationsApi.endpoints.getVisualization.initiate(id, {
             // This is consistent with other analytics apps
@@ -40,6 +44,7 @@ export const tLoadSavedVisualization = createAsyncThunk<
         dispatch(setSavedVis(data))
         dispatch(setVisUiConfig(getVisualizationUiConfig(data)))
         dispatch(setCurrentVis(data))
+        dispatch(setIsVisualizationLoading(false))
     } else if (error) {
         console.error(error)
     }

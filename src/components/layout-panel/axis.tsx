@@ -5,7 +5,7 @@ import { getLayoutDimensions } from './get-layout-dimensions'
 import classes from './styles/axis.module.css'
 import { useAppSelector, useMetadataStore } from '@hooks'
 import { getAxisNames } from '@modules/layout'
-import { getVisUiConfigInputType } from '@store/vis-ui-config-slice'
+import { getVisUiConfigOutputType } from '@store/vis-ui-config-slice'
 import type { Axis as AxisTD } from '@types'
 
 interface AxisProps {
@@ -22,11 +22,11 @@ export const Axis: React.FC<AxisProps> = ({
     dimensionIds,
 }) => {
     const { getMetadataItem } = useMetadataStore()
-    const inputType = useAppSelector(getVisUiConfigInputType)
+    const outputType = useAppSelector(getVisUiConfigOutputType)
 
     const dimensions = getLayoutDimensions({
         dimensionIds: dimensionIds || [],
-        inputType,
+        outputType,
         getMetadataItem,
     })
 

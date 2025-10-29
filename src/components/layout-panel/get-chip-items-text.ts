@@ -1,6 +1,6 @@
 import i18n from '@dhis2/d2-i18n'
 import type { LayoutDimension } from '@components/layout-panel/chip'
-import type { Axis, InputType } from '@types'
+import type { Axis, OutputType } from '@types'
 
 const DIMENSION_ID_ORGUNIT = 'ou'
 
@@ -13,7 +13,7 @@ interface GetChipItemsTextParams {
     dimension: ChipDimension
     conditionsLength: number | undefined
     itemsLength: number | undefined
-    inputType: InputType
+    outputType: OutputType
     axisId: Axis
 }
 
@@ -21,13 +21,13 @@ export const getChipItemsText = ({
     dimension,
     conditionsLength,
     itemsLength,
-    inputType,
+    outputType,
     axisId,
 }: GetChipItemsTextParams): string => {
     const { id, dimensionType, optionSet, valueType } = dimension
 
     if (
-        ((['EVENT', 'ENROLLMENT'].includes(inputType) &&
+        ((['EVENT', 'ENROLLMENT'].includes(outputType) &&
             id === DIMENSION_ID_ORGUNIT) ||
             dimensionType === 'PERIOD') &&
         !itemsLength

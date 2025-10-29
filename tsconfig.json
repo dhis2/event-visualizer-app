@@ -9,7 +9,7 @@
         "resolveJsonModule": true,
         "target": "ESNext",
         "module": "esnext",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "strictNullChecks": true,
         "types": [
             "@testing-library/jest-dom",

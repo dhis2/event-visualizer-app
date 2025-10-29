@@ -1,4 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
+import deepEqual from 'deep-equal'
 import { getConditionsFromVisualization } from './conditions'
 import { isTimeDimensionId, transformDimensions } from './dimension'
 import {
@@ -6,6 +7,8 @@ import {
     layoutGetDimensionIdItemIdsObject,
     layoutGetAllDimensions,
 } from '@dhis2/analytics'
+import { initialState as currentVisDefaultValue } from '@store/current-vis-slice'
+import { initialState as savedVisDefaultValue } from '@store/saved-vis-slice'
 import type {
     CurrentVisualization,
     DimensionId,
@@ -13,6 +16,7 @@ import type {
     NewVisualization,
     SavedVisualization,
     VisualizationType,
+    VisualizationState,
 } from '@types'
 
 // TODO: adjust the descriptions
@@ -113,6 +117,19 @@ export const isVisualizationWithTimeDimension = (vis: CurrentVisualization) =>
             items.length > 0
     )
 
+export const getVisualizationState = (
+    savedVis: SavedVisualization | EmptyVisualization,
+    currentVis: CurrentVisualization
+): VisualizationState => {
+    if (savedVis === savedVisDefaultValue) {
+        return currentVis === currentVisDefaultValue ? 'EMPTY' : 'UNSAVED'
+    } else if (deepEqual(savedVis, currentVis)) {
+        return 'SAVED'
+    } else {
+        return 'DIRTY'
+    }
+}
+
 // Type guards for CurrentVisualization union
 export const isVisualizationEmpty = (
     visualization: CurrentVisualization
@@ -147,16 +164,16 @@ const getVisualizationLayout = (layout, type: VisualizationType) => {
 }
 
 export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
-    const inputType = vis.outputType // The single location where outputType is renamed to inputType
+    const outputType = vis.outputType // The single location where outputType is renamed to outputType
 
     return {
         visualizationType: vis.type,
-        inputType,
+        outputType,
         layout: getVisualizationLayout(
             layoutGetAxisIdDimensionIdsObject(vis),
             vis.type
         ),
         itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
-        conditionsByDimension: getConditionsFromVisualization(vis, inputType),
+        conditionsByDimension: getConditionsFromVisualization(vis, outputType),
     }
 }

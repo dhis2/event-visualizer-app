@@ -16,7 +16,7 @@ import {
 import { getDimensionIdParts } from '@modules/dimension'
 import {
     getVisUiConfigItemsByDimension,
-    getVisUiConfigInputType,
+    getVisUiConfigOutputType,
 } from '@store/vis-ui-config-slice'
 
 const MAX_LIST_LENGTH = 5
@@ -33,7 +33,7 @@ export const TooltipContent: FC<TooltipContentProps> = ({
     axisId,
 }) => {
     const { getMetadataItem } = useMetadataStore()
-    const inputType = useAppSelector(getVisUiConfigInputType)
+    const outputType = useAppSelector(getVisUiConfigOutputType)
     const itemIds = useAppSelector((state) =>
         getVisUiConfigItemsByDimension(state, dimension.id)
     )
@@ -42,9 +42,9 @@ export const TooltipContent: FC<TooltipContentProps> = ({
         () =>
             getDimensionIdParts({
                 id: dimension.id,
-                inputType,
+                outputType,
             }),
-        [dimension.id, inputType]
+        [dimension.id, outputType]
     )
     const programMetadata = useMetadataItem(programId ?? '')
     const { programName, stageName } = useMemo(
@@ -85,7 +85,10 @@ export const TooltipContent: FC<TooltipContentProps> = ({
             } else if (ouIdHelper.hasGroupPrefix(id)) {
                 groupIds.push(ouIdHelper.removePrefix(id))
             } else {
-                const { dimensionId } = getDimensionIdParts({ id, inputType })
+                const { dimensionId } = getDimensionIdParts({
+                    id,
+                    outputType,
+                })
                 itemDisplayNames.push(
                     isStartEndDate(dimensionId)
                         ? formatStartEndDate(dimensionId)
@@ -103,7 +106,7 @@ export const TooltipContent: FC<TooltipContentProps> = ({
         }
 
         return itemDisplayNames
-    }, [itemIds, getNameList, inputType, formatStartEndDate, getMetadataItem])
+    }, [itemIds, getNameList, outputType, formatStartEndDate, getMetadataItem])
 
     const renderItems = (itemDisplayNames: Array<string>) => {
         if (itemDisplayNames.some((name) => !name)) {

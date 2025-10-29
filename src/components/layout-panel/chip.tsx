@@ -9,7 +9,7 @@ import { IconButton } from '@components/dimension-item/icon-button'
 import { useAppSelector } from '@hooks'
 import { getConditionsTexts } from '@modules/conditions'
 import {
-    getVisUiConfigInputType,
+    getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
 } from '@store/vis-ui-config-slice'
@@ -36,7 +36,7 @@ interface ChipProps {
 }
 
 export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
-    const inputType = useAppSelector(getVisUiConfigInputType)
+    const outputType = useAppSelector(getVisUiConfigOutputType)
     const conditions = useAppSelector((state) =>
         getVisUiConfigConditionsByDimension(state, dimension.id)
     )
@@ -97,7 +97,7 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
                                 itemsLength={
                                     Array.isArray(items) ? items.length : 0
                                 }
-                                inputType={inputType}
+                                outputType={outputType}
                                 axisId={axisId}
                             />
                         </span>

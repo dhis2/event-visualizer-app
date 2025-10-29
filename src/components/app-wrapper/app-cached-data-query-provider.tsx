@@ -28,7 +28,7 @@ const systemSettingsKeys = [
     'keyHideBiMonthlyPeriods',
     'keyIgnoreAnalyticsApprovalYearThreshold',
 ] as const
-const rootOrgUnitsFields = ['id', 'displayName', 'name'] as const
+const rootOrgUnitsFields = ['id', 'displayName', 'name', 'path'] as const
 const orgUnitLevelsFields = ['id', 'level', 'displayName', 'name'] as const
 const query: Query = {
     currentUser: {
@@ -61,10 +61,13 @@ type CurrentUserData = Omit<
     'settings'
 > & { settings?: Record<string, string | undefined> }
 type RootOrgUnitsData = Array<
-    PickWithFieldFilters<OrganisationUnit, typeof rootOrgUnitsFields>
+    PickWithFieldFilters<Required<OrganisationUnit>, typeof rootOrgUnitsFields>
 >
 type OrgUnitLevelsData = Array<
-    PickWithFieldFilters<OrganisationUnitLevel, typeof orgUnitLevelsFields>
+    PickWithFieldFilters<
+        Required<OrganisationUnitLevel>,
+        typeof orgUnitLevelsFields
+    >
 >
 
 type AppCachedData = {

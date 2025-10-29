@@ -9,131 +9,19 @@ import {
 } from 'react'
 import type { FC, ReactNode } from 'react'
 import type {
-    MetadataInput,
     MetadataStoreItem,
     AnyMetadataItemInput,
-    Subscriber,
-} from './metadata-helpers'
-import {
-    isObject,
-    isSingleMetadataItemInput,
-    normalizeMetadataInputItem,
-    smartMergeWithChangeDetection,
 } from './metadata-helpers'
 import { getInitialMetadata } from './metadata-helpers/initial-metadata'
-
-declare global {
-    interface Window {
-        getMetadataStore: () => Record<string, MetadataStoreItem>
-        getMetadataStoreItem: (key: string) => MetadataStoreItem | undefined
-    }
-}
-
-class MetadataStore {
-    private map = new Map<string, MetadataStoreItem>()
-    private subscribers = new Map<string, Set<Subscriber>>()
-    private initialMetadataKeys = new Set<string>()
-
-    constructor(initialMetadataItems?: Record<string, AnyMetadataItemInput>) {
-        if (initialMetadataItems) {
-            // Add initial metadata items to the store first
-            Object.entries(initialMetadataItems).forEach(([key, item]) => {
-                this.map.set(key, normalizeMetadataInputItem(item))
-                this.initialMetadataKeys.add(key)
-            })
-        }
-        if (process.env.NODE_ENV === 'development') {
-            window.getMetadataStore = () => Object.fromEntries(this.map)
-            window.getMetadataStoreItem = (key: string) =>
-                this.getMetadataItem(key)
-        }
-    }
-
-    getMetadataItem(key: string): MetadataStoreItem | undefined {
-        return this.map.get(key)
-    }
-
-    getMetadataItems(keys: string[]): Record<string, MetadataStoreItem> {
-        return keys.reduce((metadataStoreItems, key) => {
-            const item = this.map.get(key)
-            if (item) {
-                metadataStoreItems[key] = item
-            }
-            return metadataStoreItems
-        }, {})
-    }
-
-    subscribe(key: string, cb: Subscriber) {
-        if (!this.subscribers.has(key)) {
-            this.subscribers.set(key, new Set())
-        }
-        this.subscribers.get(key)!.add(cb)
-        return () => {
-            this.subscribers.get(key)!.delete(cb)
-            if (this.subscribers.get(key)!.size === 0) {
-                this.subscribers.delete(key)
-            }
-        }
-    }
-
-    /**
-     * Adds or updates metadata items in the store.
-     * Handles validation, shallow equality, and property removal detection in a single pass.
-     * Notifies subscribers only if the item actually changed.
-     */
-    addMetadata(metadataInput: MetadataInput) {
-        // Track ids of items that were actually updated
-        const updatedMetadataIds = new Set<string>()
-
-        const processMetadataItem = (metadataInputItem: unknown) => {
-            const newMetadataStoreItem = normalizeMetadataInputItem(
-                metadataInputItem as AnyMetadataItemInput
-            )
-            const itemId = (newMetadataStoreItem as { id: string }).id
-
-            // Skip processing if this is an initial metadata item
-            if (this.initialMetadataKeys.has(itemId)) {
-                return
-            }
-
-            const existingMetadataStoreItem = this.map.get(itemId)
-            const { hasChanges, mergedItem } = smartMergeWithChangeDetection(
-                existingMetadataStoreItem,
-                newMetadataStoreItem
-            )
-            if (hasChanges) {
-                this.map.set(itemId, mergedItem)
-                updatedMetadataIds.add(itemId)
-            }
-        }
-
-        // Handle all input types: array, single object, or record
-        if (Array.isArray(metadataInput)) {
-            metadataInput.forEach(processMetadataItem)
-        } else if (isObject(metadataInput)) {
-            if (isSingleMetadataItemInput(metadataInput)) {
-                processMetadataItem(metadataInput)
-            } else {
-                Object.values(metadataInput).forEach(processMetadataItem)
-            }
-        }
-
-        // Notify subscribers for all updated ids
-        updatedMetadataIds.forEach((metadataId) => {
-            if (this.subscribers.has(metadataId)) {
-                this.subscribers
-                    .get(metadataId)!
-                    .forEach((callback) => callback())
-            }
-        })
-    }
-}
+import { MetadataStore } from './metadata-store'
+import { useRootOrgUnits } from '@hooks'
 
 const MetadataContext = createContext<MetadataStore | null>(null)
 
 export const MetadataProvider: FC<{ children: ReactNode }> = ({ children }) => {
+    const rootOrgUnits = useRootOrgUnits()
     const [metadataStore] = useState(
-        () => new MetadataStore(getInitialMetadata())
+        () => new MetadataStore(getInitialMetadata(), rootOrgUnits)
     )
     return (
         <MetadataContext.Provider value={metadataStore}>
@@ -146,8 +34,13 @@ export const MockMetadataProvider: FC<{
     children: ReactNode
     mockMetadata?: Record<string, AnyMetadataItemInput>
 }> = ({ children, mockMetadata }) => {
+    const rootOrgUnits = useRootOrgUnits()
     const [metadataStore] = useState(
-        () => new MetadataStore({ ...getInitialMetadata(), ...mockMetadata })
+        () =>
+            new MetadataStore(
+                { ...getInitialMetadata(), ...mockMetadata },
+                rootOrgUnits
+            )
     )
     return (
         <MetadataContext.Provider value={metadataStore}>
@@ -234,12 +127,20 @@ export const useMetadataItems = (
 
 export const useAddMetadata = (): MetadataStore['addMetadata'] => {
     const metadataStore = useContext(MetadataContext)!
-    return metadataStore.addMetadata.bind(metadataStore)
+
+    const [addMetadata] = useState(() =>
+        metadataStore.addMetadata.bind(metadataStore)
+    )
+
+    return addMetadata
 }
 
 export type UseMetadataStoreReturnValue = Pick<
     MetadataStore,
-    'getMetadataItem' | 'getMetadataItems' | 'addMetadata'
+    | 'getMetadataItem'
+    | 'getMetadataItems'
+    | 'addMetadata'
+    | 'setVisualizationMetadata'
 >
 export const useMetadataStore = (): UseMetadataStoreReturnValue => {
     const metadataStore = useContext(MetadataContext) as MetadataStore
@@ -247,6 +148,8 @@ export const useMetadataStore = (): UseMetadataStoreReturnValue => {
         getMetadataItem: metadataStore.getMetadataItem.bind(metadataStore),
         getMetadataItems: metadataStore.getMetadataItems.bind(metadataStore),
         addMetadata: metadataStore.addMetadata.bind(metadataStore),
+        setVisualizationMetadata:
+            metadataStore.setVisualizationMetadata.bind(metadataStore),
     }))
     return api
 }

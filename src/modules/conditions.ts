@@ -8,7 +8,7 @@ import type { LayoutDimension } from '@components/layout-panel/chip'
 import { formatValue, ouIdHelper } from '@dhis2/analytics'
 import type {
     CurrentVisualization,
-    InputType,
+    OutputType,
     MetadataStore,
     SavedVisualization,
     ValueType,
@@ -416,7 +416,7 @@ export const getConditionsTexts = ({
 
 export const getConditionsFromVisualization = (
     vis: CurrentVisualization,
-    inputType: InputType
+    outputType: OutputType
 ): Record<string, { condition?: string; legendSet?: string }> => {
     const result: Record<string, { condition?: string; legendSet?: string }> =
         {}
@@ -434,7 +434,7 @@ export const getConditionsFromVisualization = (
             dimensionId: item.dimension,
             programId: item.program?.id,
             programStageId: item.programStage?.id,
-            inputType,
+            outputType,
         })
         result[dimensionId] = {
             condition: item.filter,

@@ -2,9 +2,11 @@ import type {
     AnyMetadataItemInput,
     SimpleMetadataItem,
     ProgramMetadataItem,
+    ProgramStageMetadataItem,
     OptionSetMetadataItem,
-    LegendSetMetadataItem,
+    OrganisationUnitMetadataItem,
     MetadataStoreItem,
+    LegendSetMetadataItem,
 } from './types'
 import type { MetadataItem } from '@types'
 
@@ -32,8 +34,10 @@ export const isSingleMetadataItemInput = (
         isMetadataItem(item) ||
         isSimpleMetadataItem(item) ||
         isProgramMetadataItem(item) ||
+        isProgramStageMetadataItem(item) ||
         isOptionSetMetadataItem(item) ||
-        isLegendSetMetadataItem(item)
+        isLegendSetMetadataItem(item) ||
+        isOrganisationUnitMetadataItem(item)
     )
 }
 
@@ -78,9 +82,25 @@ export const isProgramMetadataItem = (
     )
 }
 
-export function isOptionSetMetadataItem(
+export const isProgramStageMetadataItem = (
     input: AnyMetadataItemInput | MetadataStoreItem
-): input is OptionSetMetadataItem {
+): input is ProgramStageMetadataItem => {
+    return (
+        isObject(input) &&
+        'id' in input &&
+        'name' in input &&
+        'repeatable' in input &&
+        'hideDueDate' in input &&
+        isPopulatedString(input.id) &&
+        isPopulatedString(input.name) &&
+        typeof input.repeatable === 'boolean' &&
+        typeof input.hideDueDate === 'boolean'
+    )
+}
+
+export const isOptionSetMetadataItem = (
+    input: AnyMetadataItemInput | MetadataStoreItem
+): input is OptionSetMetadataItem => {
     return (
         isObject(input) &&
         'options' in input &&
@@ -102,5 +122,17 @@ export function isLegendSetMetadataItem(
         isPopulatedString(input.id) &&
         isPopulatedString(input.name) &&
         Array.isArray(input.legends)
+    )
+}
+
+export const isOrganisationUnitMetadataItem = (
+    input: AnyMetadataItemInput | MetadataStoreItem
+): input is OrganisationUnitMetadataItem => {
+    return (
+        isObject(input) &&
+        'id' in input &&
+        'path' in input &&
+        isPopulatedString(input.id) &&
+        isPopulatedString(input.path)
     )
 }

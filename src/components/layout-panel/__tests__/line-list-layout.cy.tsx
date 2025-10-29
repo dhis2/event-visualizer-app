@@ -1,5 +1,9 @@
 import { LineListLayout } from '../line-list-layout'
-import { visUiConfigSlice, initialState } from '@store/vis-ui-config-slice'
+import { uiSlice, initialState as uiSliceInitialState } from '@store/ui-slice'
+import {
+    visUiConfigSlice,
+    initialState as visUiConfigInitialState,
+} from '@store/vis-ui-config-slice'
 import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 
 const mockOptions: MockOptions = {
@@ -24,13 +28,15 @@ const mockOptions: MockOptions = {
     },
     partialStore: {
         reducer: {
+            ui: uiSlice.reducer,
             visUiConfig: visUiConfigSlice.reducer,
         },
         preloadedState: {
+            ui: uiSliceInitialState,
             visUiConfig: {
-                ...initialState,
+                ...visUiConfigInitialState,
                 visualizationType: 'LINE_LIST',
-                inputType: 'EVENT',
+                outputType: 'EVENT',
                 layout: {
                     columns: ['ou', 'mchInfantFeeding'], // 2 dimensions for columns
                     filters: ['genderId'], // 1 dimension for filters
@@ -74,12 +80,12 @@ describe('<LineListLayout />', () => {
 
         // Verify columns axis has 2 chips
         cy.getByDataTest('axis-columns-start')
-            .find('[data-test="layout-dimension-chip"]')
+            .findByDataTest('layout-dimension-chip')
             .should('have.length', 2)
 
         // Verify filters axis has 1 chip
         cy.getByDataTest('axis-filters-end')
-            .find('[data-test="layout-dimension-chip"]')
+            .findByDataTest('layout-dimension-chip')
             .should('have.length', 1)
 
         // Check that the correct dimension names are displayed

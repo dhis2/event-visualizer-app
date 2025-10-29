@@ -1,23 +1,23 @@
 import type { MetadataStoreItem } from '@components/app-wrapper/metadata-helpers/types'
 import type { LayoutDimension } from '@components/layout-panel/chip'
 import { getDimensionIdParts } from '@modules/dimension'
-import type { DimensionType, InputType } from '@types'
+import type { DimensionType, OutputType } from '@types'
 
 interface GetLayoutDimensionsParams {
     dimensionIds: string[]
-    inputType: InputType
+    outputType: OutputType
     getMetadataItem: (id: string) => MetadataStoreItem | undefined
 }
 
 export const getLayoutDimensions = ({
     dimensionIds,
-    inputType,
+    outputType,
     getMetadataItem,
 }: GetLayoutDimensionsParams): LayoutDimension[] => {
     const dimensions: LayoutDimension[] = dimensionIds.map((id) => {
         const { dimensionId, programStageId, programId } = getDimensionIdParts({
             id,
-            inputType,
+            outputType,
         })
 
         const metadataItem = getMetadataItem(id)
@@ -76,7 +76,7 @@ export const getLayoutDimensions = ({
         return dimension
     })
 
-    if (!['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(inputType)) {
+    if (!['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(outputType)) {
         return dimensions
     }
 
@@ -123,7 +123,7 @@ export const getLayoutDimensions = ({
             }
         } else if (
             // always suffix ou and statuses for TE
-            inputType === 'TRACKED_ENTITY_INSTANCE' &&
+            outputType === 'TRACKED_ENTITY_INSTANCE' &&
             dimensionTypeOrItemType &&
             ['ORGANISATION_UNIT', 'STATUS'].includes(
                 dimensionTypeOrItemType as DimensionType

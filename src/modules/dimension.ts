@@ -14,22 +14,24 @@ import type {
     DimensionId,
     DimensionRecord,
     ExtendedDimensionType,
-    InputType,
+    OutputType,
     InternalDimensionRecord,
     ProgramDimensionType,
+    SavedVisualization,
     TimeDimensionId,
+    ValueType,
     YourDimensionType,
 } from '@types'
 
 export const getDimensionsWithSuffix = ({
     dimensionIds,
     metadata,
-    inputType,
+    outputType,
 }) => {
     const dimensions = dimensionIds.map((id) => {
         const { dimensionId, programStageId, programId } = getDimensionIdParts({
             id,
-            inputType,
+            outputType,
         })
         const dimension = {
             ...metadata[id],
@@ -44,7 +46,7 @@ export const getDimensionsWithSuffix = ({
         return dimension as InternalDimensionRecord
     })
 
-    if (!['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(inputType)) {
+    if (!['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(outputType)) {
         return dimensions
     }
 
@@ -84,7 +86,7 @@ export const getDimensionsWithSuffix = ({
             }
         } else if (
             // always suffix ou and statuses for TE
-            inputType === 'TRACKED_ENTITY_INSTANCE' &&
+            outputType === 'TRACKED_ENTITY_INSTANCE' &&
             ['ORGANISATION_UNIT', 'STATUS'].includes(
                 dimension.dimensionType || dimension.dimensionItemType
             ) &&
@@ -99,12 +101,12 @@ export const getDimensionsWithSuffix = ({
 
 type GetDimensionIdPartsParams = {
     id: string
-    inputType: InputType
+    outputType: OutputType
 }
 
 export const getDimensionIdParts = ({
     id,
-    inputType,
+    outputType,
 }: GetDimensionIdPartsParams): {
     dimensionId: string
     programStageId: string
@@ -114,10 +116,10 @@ export const getDimensionIdParts = ({
     let rawStageId
     const [dimensionId, part2, part3] = (id || '').split('.').reverse()
     let programId = part3
-    if (part3 || inputType !== 'TRACKED_ENTITY_INSTANCE') {
+    if (part3 || outputType !== 'TRACKED_ENTITY_INSTANCE') {
         rawStageId = part2
     }
-    if (inputType === 'TRACKED_ENTITY_INSTANCE' && !part3) {
+    if (outputType === 'TRACKED_ENTITY_INSTANCE' && !part3) {
         programId = part2
     }
     const [programStageId, repetitionIndex] = (rawStageId || '').split('[')
@@ -133,7 +135,7 @@ export const getDimensionIdParts = ({
 
 type GetFullDimensionIdParams = {
     dimensionId: string
-    inputType: InputType
+    outputType?: OutputType
     programId?: string
     programStageId?: string
 }
@@ -142,10 +144,10 @@ export const getFullDimensionId = ({
     dimensionId,
     programId,
     programStageId,
-    inputType,
+    outputType,
 }: GetFullDimensionIdParams): string => {
     return [
-        inputType === 'TRACKED_ENTITY_INSTANCE' ? programId : undefined,
+        outputType === 'TRACKED_ENTITY_INSTANCE' ? programId : undefined,
         programStageId,
         dimensionId,
     ]
@@ -166,11 +168,11 @@ export const getCreatedDimension = (): DimensionRecordObject => ({
 })
 
 export const getMainDimensions = (
-    inputType: InputType
+    outputType: OutputType
 ): DimensionRecordObject => ({
-    ...(inputType === 'TRACKED_ENTITY_INSTANCE'
+    ...(outputType === 'TRACKED_ENTITY_INSTANCE'
         ? {
-              ...getDefaultOrgUnitMetadata(inputType),
+              ...getDefaultOrgUnitMetadata(outputType),
               ...getCreatedDimension(),
           }
         : {}),
@@ -218,9 +220,9 @@ export const transformDimensions = (
     dimensions: DimensionArray,
     visualization: CurrentVisualization
 ): DimensionArray => {
-    const { outputType: inputType, type } = visualization
+    const { outputType: outputType, type } = visualization
 
-    const inputTypeTimeDimensionMap: Record<InputType, DimensionId> = {
+    const outputTypeTypeTimeDimensionMap: Record<OutputType, DimensionId> = {
         EVENT: 'eventDate',
         ENROLLMENT: 'enrollmentDate',
         TRACKED_ENTITY_INSTANCE: 'created',
@@ -246,7 +248,7 @@ export const transformDimensions = (
                 return {
                     ...dimensionObj,
                     // TEI and pe (legacy visualization) should not normally happen
-                    dimension: inputTypeTimeDimensionMap[inputType],
+                    dimension: outputTypeTypeTimeDimensionMap[outputType],
                     dimensionType: 'PERIOD',
                 }
             } else {
@@ -270,3 +272,66 @@ export const isTimeDimensionId = (
     dimensionId: DimensionRecord['dimension']
 ): dimensionId is TimeDimensionId =>
     (TIME_DIMENSION_IDS as readonly string[]).includes(dimensionId)
+
+type NameParentProperty = 'program' | 'stage'
+type TimeDimension = {
+    id: TimeDimensionId
+    dimensionType: ExtendedDimensionType
+    formatType: ValueType
+    defaultName: string
+    nameParentProperty: NameParentProperty
+    nameProperty: string
+}
+export const getTimeDimensions = (): Record<
+    Exclude<TimeDimensionId, 'lastUpdated'>,
+    TimeDimension
+> => ({
+    eventDate: {
+        id: 'eventDate',
+        dimensionType: 'PERIOD',
+        defaultName: i18n.t('Event date'),
+        nameParentProperty: 'stage',
+        nameProperty: 'displayExecutionDateLabel',
+        formatType: 'DATE',
+    },
+    enrollmentDate: {
+        id: 'enrollmentDate',
+        dimensionType: 'PERIOD',
+        defaultName: i18n.t('Enrollment date'),
+        nameParentProperty: 'program',
+        nameProperty: 'displayEnrollmentDateLabel',
+        formatType: 'DATE',
+    },
+    incidentDate: {
+        id: 'incidentDate',
+        dimensionType: 'PERIOD',
+        defaultName: i18n.t('Incident date'),
+        nameParentProperty: 'program',
+        nameProperty: 'displayIncidentDateLabel',
+        formatType: 'DATE',
+    },
+    scheduledDate: {
+        id: 'scheduledDate',
+        dimensionType: 'PERIOD',
+        defaultName: i18n.t('Scheduled date'),
+        nameParentProperty: 'stage',
+        nameProperty: 'displayDueDateLabel',
+        formatType: 'DATE',
+    },
+})
+
+export const getTimeDimensionName = (
+    dimension: TimeDimension,
+    program?: SavedVisualization['program'],
+    stage?: SavedVisualization['programStage']
+): string => {
+    if (!dimension.nameParentProperty || !program) {
+        return dimension.defaultName
+    }
+    const name =
+        dimension.nameParentProperty === 'program'
+            ? program[dimension.nameProperty]
+            : stage?.[dimension.nameProperty]
+
+    return name || dimension.defaultName
+}

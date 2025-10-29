@@ -6,13 +6,13 @@ import type {
     Axis,
     CurrentVisualization,
     DimensionArray,
-    InputType,
+    OutputType,
 } from '@types'
 
 const adaptDimensions = (
     dimensions: DimensionArray,
     parameters: ParameterRecord,
-    inputType: InputType
+    outputType: OutputType
 ) => {
     const adaptedDimensions: DimensionArray = []
 
@@ -24,7 +24,7 @@ const adaptDimensions = (
             dimensionId === 'eventStatus' ||
             dimensionId === 'programStatus' ||
             dimensionId === 'created' ||
-            (dimensionId === 'ou' && inputType === 'TRACKED_ENTITY_INSTANCE')
+            (dimensionId === 'ou' && outputType === 'TRACKED_ENTITY_INSTANCE')
         ) {
             if (dimensionObj.items?.length) {
                 const items = dimensionObj.items?.map((item) => item.id)
@@ -54,12 +54,12 @@ export const getAdaptedVisualization = (
     visualization: CurrentVisualization
 ): {
     adaptedVisualization: Record<Axis, object[]> & {
-        outputType: InputType
+        outputType: OutputType
     }
     headers: (string | string[])[]
     parameters: object
 } => {
-    const inputType = visualization.outputType
+    const outputType = visualization.outputType
 
     const parameters = getRequestOptions(visualization)
 
@@ -67,9 +67,9 @@ export const getAdaptedVisualization = (
     const rows = visualization.rows ?? []
     const filters = visualization.filters ?? []
 
-    const adaptedColumns = adaptDimensions(columns, parameters, inputType)
-    const adaptedRows = adaptDimensions(rows, parameters, inputType)
-    const adaptedFilters = adaptDimensions(filters, parameters, inputType)
+    const adaptedColumns = adaptDimensions(columns, parameters, outputType)
+    const adaptedRows = adaptDimensions(rows, parameters, outputType)
+    const adaptedFilters = adaptDimensions(filters, parameters, outputType)
 
     const dimensionHeadersMap = getHeadersMap(visualization)
 
@@ -84,7 +84,7 @@ export const getAdaptedVisualization = (
                         programStageId: `${programStageId}[${index}]`,
                         dimensionId:
                             dimensionHeadersMap[dimension] || dimension,
-                        inputType,
+                        outputType,
                     })
                 )
             } else {
@@ -92,7 +92,7 @@ export const getAdaptedVisualization = (
                     programId: program?.id,
                     programStageId,
                     dimensionId: dimensionHeadersMap[dimension] || dimension,
-                    inputType,
+                    outputType,
                 })
             }
         }
@@ -103,18 +103,18 @@ export const getAdaptedVisualization = (
             columns: adaptedColumns,
             rows: adaptedRows,
             filters: adaptedFilters,
-            outputType: inputType,
+            outputType: outputType,
         },
         headers,
         parameters,
     }
 }
 
-const analyticsApiEndpointMap: Record<InputType, string> = {
+const analyticsApiEndpointMap: Record<OutputType, string> = {
     ENROLLMENT: 'enrollments',
     EVENT: 'events',
     TRACKED_ENTITY_INSTANCE: 'trackedEntities',
 }
 
-export const getAnalyticsEndpoint = (inputType: InputType): string =>
-    analyticsApiEndpointMap[inputType]
+export const getAnalyticsEndpoint = (outputType: OutputType): string =>
+    analyticsApiEndpointMap[outputType]
