@@ -55,6 +55,7 @@ export type NormalizedMetadataItem = Omit<MetadataItem, 'uid'> & { id: string }
 export type MetadataStoreItem =
     | NormalizedMetadataItem
     | OptionSetMetadataItem
+    | LegendSetMetadataItem
     | ProgramMetadataItem
     | ProgramStageMetadataItem
 

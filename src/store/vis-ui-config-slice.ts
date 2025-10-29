@@ -2,8 +2,13 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type { OutputType, VisualizationType } from '@types'
 
+type ConditionsObject = { condition?: string | string[]; legendSet?: string }
+
 const EMPTY_STRING_ARRAY: string[] = []
-const EMPTY_CONDITIONS_OBJECT = { condition: undefined, legendSet: undefined }
+const EMPTY_CONDITIONS_OBJECT: ConditionsObject = {
+    condition: undefined,
+    legendSet: undefined,
+}
 
 export interface VisUiConfigState {
     visualizationType: VisualizationType
@@ -14,10 +19,7 @@ export interface VisUiConfigState {
         rows: string[]
     }
     itemsByDimension: Record<string, string[]>
-    conditionsByDimension: Record<
-        string,
-        { condition?: string; legendSet?: string }
-    >
+    conditionsByDimension: Record<string, ConditionsObject>
 }
 
 export const initialState: VisUiConfigState = {

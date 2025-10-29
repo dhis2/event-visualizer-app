@@ -1,10 +1,13 @@
-import { IconMore16 } from '@dhis2/ui'
+import { Tooltip, IconMore16 } from '@dhis2/ui'
 import cx from 'classnames'
 import React from 'react'
 import { ChipBase } from './chip-base'
 import classes from './styles/chip.module.css'
+import { TooltipContent } from './tooltip-content'
+import { useMetadataStore } from '@components/app-wrapper/metadata-provider'
 import { IconButton } from '@components/dimension-item/icon-button'
 import { useAppSelector } from '@hooks'
+import { getConditionsTexts } from '@modules/conditions'
 import {
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
@@ -12,7 +15,7 @@ import {
 } from '@store/vis-ui-config-slice'
 import type { Axis, DimensionType, ValueType } from '@types'
 
-export interface LayoutDimension {
+export type LayoutDimension = {
     id: string
     dimensionId: string
     name: string
@@ -41,12 +44,22 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
         getVisUiConfigItemsByDimension(state, dimension.id)
     )
 
-    const hasConditions = () =>
-        Boolean(conditions.condition?.length) || Boolean(conditions.legendSet)
-
     const openChipMenu = () => {
         console.log('TODO Open chip menu for:', dimension.id)
     }
+
+    const { getMetadataItem } = useMetadataStore()
+
+    const hasConditions =
+        Boolean(conditions?.condition?.length) || Boolean(conditions?.legendSet)
+
+    const digitGroupSeparator = 'COMMA' // TODO get from redux store options
+    const conditionsTexts = getConditionsTexts({
+        conditions,
+        dimension,
+        formatValueOptions: { digitGroupSeparator },
+        getMetadataItem,
+    })
 
     return (
         <div
@@ -54,18 +67,44 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
                 [classes.chipEmpty]:
                     axisId === 'filters' &&
                     items.length === 0 &&
-                    !hasConditions(),
+                    !hasConditions,
             })}
             data-test="layout-dimension-chip"
         >
             <div className={classes.content}>
-                <ChipBase
-                    dimension={dimension}
-                    conditionsLength={0} // TODO: https://dhis2.atlassian.net/browse/DHIS2-20105
-                    itemsLength={items.length}
-                    outputType={outputType}
-                    axisId={axisId}
-                />
+                <Tooltip
+                    content={
+                        <TooltipContent
+                            dimension={dimension}
+                            conditionsTexts={conditionsTexts}
+                            axisId={axisId}
+                        />
+                    }
+                    placement="bottom"
+                    dataTest="layout-chip-tooltip"
+                    closeDelay={0}
+                >
+                    {({ ref, onMouseOver, onMouseOut }) => (
+                        <span
+                            id={Math.random().toString(36)}
+                            ref={ref}
+                            onMouseOver={onMouseOver}
+                            onMouseOut={onMouseOut}
+                        >
+                            <ChipBase
+                                dimension={dimension}
+                                conditionsLength={conditionsTexts.length}
+                                itemsLength={
+                                    Array.isArray(items) ? items.length : 0
+                                }
+                                outputType={outputType}
+                                axisId={axisId}
+                            />
+                        </span>
+                    )}
+                </Tooltip>
+            </div>
+            <div>
                 <IconButton
                     onClick={openChipMenu}
                     dataTest={'chip-menu-button'}

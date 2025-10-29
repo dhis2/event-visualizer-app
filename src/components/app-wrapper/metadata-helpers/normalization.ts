@@ -13,10 +13,10 @@ import type {
     ProgramMetadataItem,
     ProgramStageMetadataItem,
     OptionSetMetadataItem,
+    LegendSetMetadataItem,
     MetadataStoreItem,
     NormalizedMetadataItem,
     OrganisationUnitMetadataItem,
-    LegendSetMetadataItem,
 } from './types'
 import type { MetadataItem } from '@types'
 
@@ -155,9 +155,9 @@ export const normalizeOptionSetMetadataItem = (
     return result as unknown as NormalizedMetadataItem
 }
 
-export const normalizeLegendSetMetadataItem = (
+export function normalizeLegendSetMetadataItem(
     input: LegendSetMetadataItem
-): LegendSetMetadataItem => {
+): LegendSetMetadataItem {
     // Extract only the required properties to ensure no additional properties are present
     return {
         id: input.id,
@@ -184,10 +184,10 @@ export const normalizeMetadataInputItem = (
         return normalizeProgramStageMetadataItem(input)
     } else if (isOptionSetMetadataItem(input)) {
         return normalizeOptionSetMetadataItem(input)
-    } else if (isSimpleMetadataItem(input)) {
-        return normalizeSimpleMetadataItem(input)
     } else if (isLegendSetMetadataItem(input)) {
         return normalizeLegendSetMetadataItem(input)
+    } else if (isSimpleMetadataItem(input)) {
+        return normalizeSimpleMetadataItem(input)
     } else if (isOrganisationUnitMetadataItem(input)) {
         return normalizeOrganisationUnitMetadataItem(input)
     } else {
