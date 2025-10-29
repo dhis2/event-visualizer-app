@@ -41,7 +41,7 @@ startAppListening({
         const originalVisualizationId = originalState.navigation.visualizationId
         const newVisualizationId = action.payload.visualizationId
 
-        /* Since the InterpretationsModal loads its own interpretation
+        /* Since the InterpretationsModal loads its own visualization plugin
          * we are only interested in visualizationId changes in this
          * listener middleware */
         if (originalVisualizationId !== newVisualizationId) {
