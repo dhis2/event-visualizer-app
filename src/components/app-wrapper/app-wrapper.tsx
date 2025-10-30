@@ -10,7 +10,7 @@ export const AppWrapper: FC<{ children: ReactNode }> = ({ children }) => (
         <MetadataProvider>
             <StoreProvider>
                 <StoreToLocationSyncer />
-                {<InterpretationsProvider>{children}</InterpretationsProvider>}
+                <InterpretationsProvider>{children}</InterpretationsProvider>
             </StoreProvider>
         </MetadataProvider>
     </AppCachedDataQueryProvider>

@@ -1,25 +1,14 @@
-import { useCallback, type FC } from 'react'
+import { type FC } from 'react'
+import { useInterpretationModalTogglers } from '@components/app-wrapper/interpretations-provider'
 import { AboutAOUnit, InterpretationsUnit } from '@dhis2/analytics'
-import { useAppDispatch, useAppSelector } from '@hooks'
+import { useAppSelector } from '@hooks'
 import { getCurrentVisId } from '@store/current-vis-slice'
-import { setNavigationState } from '@store/navigation-slice'
 
 export const DetailsPanel: FC<{ disabled?: boolean }> = ({
     disabled = false,
 }) => {
-    const dispatch = useAppDispatch()
+    const { openInterpretationModal } = useInterpretationModalTogglers()
     const currentVisId = useAppSelector(getCurrentVisId)
-
-    const navigateToOpenModal = useCallback(
-        (visualizationId, interpretationId) =>
-            dispatch(
-                setNavigationState({
-                    visualizationId,
-                    interpretationId,
-                })
-            ),
-        [dispatch]
-    )
 
     return currentVisId ? (
         <>
@@ -29,10 +18,10 @@ export const DetailsPanel: FC<{ disabled?: boolean }> = ({
                 id={currentVisId}
                 disabled={disabled}
                 onInterpretationClick={(interpretationId) =>
-                    navigateToOpenModal(currentVisId, interpretationId)
+                    openInterpretationModal(interpretationId, false)
                 }
                 onReplyIconClick={(interpretationId) =>
-                    navigateToOpenModal(currentVisId, interpretationId)
+                    openInterpretationModal(interpretationId, true)
                 }
             />
         </>

@@ -25,13 +25,20 @@ export const navigationSlice = createSlice({
             state.visualizationId = action.payload.visualizationId
             state.interpretationId = action.payload.interpretationId ?? null
         },
+        setNavigationInterpretationId: (
+            state,
+            action: PayloadAction<string | null>
+        ) => {
+            state.interpretationId = action.payload
+        },
     },
     selectors: {
         getNavigationInterpretationId: (state) => state.interpretationId,
     },
 })
 
-export const { setNavigationState } = navigationSlice.actions
+export const { setNavigationState, setNavigationInterpretationId } =
+    navigationSlice.actions
 export const { getNavigationInterpretationId } = navigationSlice.selectors
 
 startAppListening({
