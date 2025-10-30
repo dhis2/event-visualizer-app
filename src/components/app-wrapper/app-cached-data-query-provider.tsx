@@ -84,7 +84,6 @@ type TransformedCurrentUserSettings = {
     uiLocale: string
     displayProperty: string | undefined
     displayNameProperty: DisplayNameProperty
-    keyAnalysisDisplayProperty: string | undefined
 }
 export type TransformedAppCachedData = {
     currentUser: CurrentUserData & { settings: TransformedCurrentUserSettings }
@@ -113,9 +112,6 @@ const providerDataTransformation = ({
             uiLocale: currentUser.settings?.keyUiLocale ?? 'en',
             displayProperty: currentUser.settings?.keyAnalysisDisplayProperty,
             displayNameProperty,
-            // preserve this original key used in the InterpretationModal component in analytics
-            keyAnalysisDisplayProperty:
-                currentUser.settings?.keyAnalysisDisplayProperty,
         },
     }
     // filter only the relevant settings to avoid storing all in Redux
