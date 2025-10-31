@@ -1,9 +1,11 @@
-.layoutContainer {
-    display: flex;
-    flex: 1;
-    background-color: var(--colors-white);
+.groupLeft {
+    flex-basis: 65%;
 }
 
-.layoutContainer.hidden {
-    display: none;
+.groupRight {
+    flex-basis: 35%;
+    border-color: var(--colors-grey300);
+    border-style: solid;
+    border-width: 0;
+    border-inline-start-width: 1px;
 }
