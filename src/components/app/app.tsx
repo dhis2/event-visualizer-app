@@ -14,7 +14,7 @@ import {
     GridStartColumn,
     GridTopRow,
 } from '@components/grid'
-import { InterpretationModal } from '@components/intepretation-modal/interpretation-modal'
+import { InterpretationModal } from '@components/interpretation-modal/interpretation-modal'
 import { LineListLayout } from '@components/layout-panel/line-list-layout'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'

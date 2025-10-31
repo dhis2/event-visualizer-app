@@ -14,7 +14,7 @@ import {
     setNavigationInterpretationId,
 } from '@store/navigation-slice'
 
-const IntepretationsModalProvider = createContext({
+const InterpretationModalProvider = createContext({
     current: false,
 })
 
@@ -25,17 +25,17 @@ export const InterpretationsProvider: FC<{ children: ReactNode }> = ({
     const initalFocusRef = useRef<boolean>(false)
 
     return (
-        <IntepretationsModalProvider.Provider value={initalFocusRef}>
+        <InterpretationModalProvider.Provider value={initalFocusRef}>
             <AnalyticsInterpretationsProvider currentUser={currentUser}>
                 {children}
             </AnalyticsInterpretationsProvider>
-        </IntepretationsModalProvider.Provider>
+        </InterpretationModalProvider.Provider>
     )
 }
 
 export const useInterpretationModalTogglers = () => {
     const dispatch = useAppDispatch()
-    const initialFocusRef = useContext(IntepretationsModalProvider)
+    const initialFocusRef = useContext(InterpretationModalProvider)
     const openInterpretationModal = useCallback(
         (interpretationId: string, initalFocus?: boolean) => {
             initialFocusRef.current = !!initalFocus
@@ -55,7 +55,7 @@ export const useInterpretationModalTogglers = () => {
 }
 
 export const useInterpretationModalState = () => {
-    const initialFocusRef = useContext(IntepretationsModalProvider)
+    const initialFocusRef = useContext(InterpretationModalProvider)
     const interpretationId = useAppSelector(getNavigationInterpretationId)
     return {
         interpretationId,
