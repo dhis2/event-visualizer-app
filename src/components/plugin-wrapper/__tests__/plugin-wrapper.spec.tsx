@@ -19,7 +19,7 @@ describe('PluginWrapper', () => {
     const eventVisualization1Id = 'TIuOzZ0ID0V'
     const eventVisualization2Id = 'waPjzoJyIQ9'
     const mockOnDataSorted = vi.fn()
-    const mockOnResponseReceived = vi.fn()
+    const mockOnResponsesReceived = vi.fn()
     const mockOptions = {
         queryData: {
             analytics: async (_, query) => {
@@ -61,7 +61,7 @@ describe('PluginWrapper', () => {
                 visualization={currentVis}
                 displayProperty={currentUser.settings.displayProperty}
                 onDataSorted={mockOnDataSorted}
-                onResponseReceived={mockOnResponseReceived}
+                onResponsesReceived={mockOnResponsesReceived}
             />
         )
     }
@@ -115,7 +115,7 @@ describe('PluginWrapper', () => {
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
-            expect(mockOnResponseReceived).toBeCalledTimes(1)
+            expect(mockOnResponsesReceived).toBeCalledTimes(1)
         })
     }
 
@@ -177,7 +177,7 @@ describe('PluginWrapper', () => {
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
-            expect(mockOnResponseReceived).toBeCalledTimes(2)
+            expect(mockOnResponsesReceived).toBeCalledTimes(2)
         })
     })
 
@@ -217,7 +217,7 @@ describe('PluginWrapper', () => {
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
-            expect(mockOnResponseReceived).toBeCalledTimes(2)
+            expect(mockOnResponsesReceived).toBeCalledTimes(2)
         })
     })
 
@@ -265,7 +265,7 @@ describe('PluginWrapper', () => {
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
-            expect(mockOnResponseReceived).toBeCalledTimes(2)
+            expect(mockOnResponsesReceived).toBeCalledTimes(2)
             expect(mockOnDataSorted).toBeCalledTimes(1)
         })
     })
