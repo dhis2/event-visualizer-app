@@ -39,13 +39,11 @@ describe('<Axis />', () => {
     it('renders start axis with columns configuration and no dimensions', () => {
         cy.mount(
             <MockAppWrapper {...mockOptions}>
-                <Axis axisId="columns" position="start" />
+                <Axis axisId="columns" />
             </MockAppWrapper>
         )
 
-        cy.getByDataTest('axis-columns-start')
-            .should('be.visible')
-            .and('have.css', 'flex-basis', '65%')
+        cy.getByDataTest('axis-columns').should('be.visible')
 
         cy.contains('Columns').should('be.visible')
 
@@ -56,20 +54,12 @@ describe('<Axis />', () => {
     it('renders start axis with columns with dimensions', () => {
         cy.mount(
             <MockAppWrapper {...mockOptions}>
-                <Axis
-                    axisId="columns"
-                    dimensionIds={['ou', 'genderId']}
-                    position="start"
-                />
+                <Axis axisId="columns" dimensionIds={['ou', 'genderId']} />
             </MockAppWrapper>
         )
 
-        // start position is 65% width
-        cy.getByDataTest('axis-columns-start')
-            .should('be.visible')
-            .and('have.css', 'flex-basis', '65%')
+        cy.getByDataTest('axis-columns').should('be.visible')
 
-        cy.getByDataTest('axis-columns-start').should('be.visible')
         cy.contains('Columns').should('be.visible')
 
         cy.getByDataTest('layout-dimension-chip').should('have.length', 2)
@@ -81,14 +71,11 @@ describe('<Axis />', () => {
     it('renders end axis with filters with no dimensions', () => {
         cy.mount(
             <MockAppWrapper {...mockOptions}>
-                <Axis axisId="filters" position="end" />
+                <Axis axisId="filters" />
             </MockAppWrapper>
         )
 
-        // end position is 35% width
-        cy.getByDataTest('axis-filters-end')
-            .should('be.visible')
-            .and('have.css', 'flex-basis', '35%')
+        cy.getByDataTest('axis-filters').should('be.visible')
 
         cy.contains('Filter').should('be.visible')
 
@@ -101,14 +88,11 @@ describe('<Axis />', () => {
                 <Axis
                     axisId="filters"
                     dimensionIds={['ou', 'mchInfantFeeding']}
-                    position="end"
                 />
             </MockAppWrapper>
         )
 
-        cy.getByDataTest('axis-filters-end')
-            .should('be.visible')
-            .and('have.css', 'flex-basis', '35%')
+        cy.getByDataTest('axis-filters').should('be.visible')
 
         cy.getByDataTest('layout-dimension-chip').should('have.length', 2)
         cy.contains('Organisation unit').should('be.visible')
@@ -119,11 +103,11 @@ describe('<Axis />', () => {
     it('handles empty dimenssionIds array', () => {
         cy.mount(
             <MockAppWrapper {...mockOptions}>
-                <Axis axisId="columns" dimensionIds={[]} position="start" />
+                <Axis axisId="columns" dimensionIds={[]} />
             </MockAppWrapper>
         )
 
-        cy.getByDataTest('axis-columns-start').should('be.visible')
+        cy.getByDataTest('axis-columns').should('be.visible')
         cy.contains('Columns').should('be.visible')
         cy.getByDataTest('layout-dimension-chip').should('have.length', 0)
     })

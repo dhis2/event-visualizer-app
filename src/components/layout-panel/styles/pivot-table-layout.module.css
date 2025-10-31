@@ -2,6 +2,10 @@
     flex-basis: 65%;
 }
 
+.groupLeft > div:not(:last-child) {
+    border-block-end: 1px solid var(--colors-grey300);
+}
+
 .groupRight {
     flex-basis: 35%;
     border-color: var(--colors-grey300);
