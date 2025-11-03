@@ -17,16 +17,17 @@ const createTestVisualization = (title) => {
     openVisByName('Inpatient: Cases last quarter (case)')
 
     // capture the current visualization id from the hash route BEFORE saving
-    cy.url().then((url) => {
-        const match = url.match(/#\/([A-Za-z0-9]+)$/)
-        cy.wrap(match[1]).as('initialVisId')
+    cy.location('hash').then((hash) => {
+        const visId = hash.replace('#/', '')
+        cy.wrap(visId).as('initialVisId')
     })
 
     // save as a new visualization for the test
     saveVisualizationAs(title)
+
     // after saving as a new visualization the id should have changed
     cy.get('@initialVisId').then((initialVisId) => {
-        cy.url().should('not.match', new RegExp(`${initialVisId}$`))
+        cy.location('hash').should('not.contain', initialVisId)
     })
 
     expectVisTitleToEqual(title)
@@ -53,21 +54,18 @@ describe('delete', () => {
                     errorCode: 'E1006',
                 },
             }
-        ).as('delete-fail')
+        )
 
         deleteVisualization()
 
-        cy.wait('@delete-fail').then(({ response }) => {
-            expect(response?.statusCode).to.equal(403)
+        cy.getByDataTest('dhis2-uicore-alertbar')
+            .contains("You don't have sufficient permissions.")
+            .should('be.visible')
+        cy.getByDataTest('dhis2-uicore-alertbar-dismiss').click()
+        expectTableToBeVisible()
+        expectVisTitleToEqual(TEST_VIS_TITLE)
 
-            cy.getByDataTest('dhis2-uicore-alertbar')
-                .contains("You don't have sufficient permissions.")
-                .should('be.visible')
-            expectTableToBeVisible()
-            expectVisTitleToEqual(TEST_VIS_TITLE)
-
-            deleteVisualization() // clean up by deleting the test visualization
-            expectStartScreenToBeVisible()
-        })
+        deleteVisualization() // clean up by deleting the test visualization
+        expectStartScreenToBeVisible()
     })
 })
