@@ -539,4 +539,43 @@ describe('MetadataProvider API and return value types', () => {
         expect(typeof result.current.getMetadataItems).toBe('function')
         expect(typeof result.current.addMetadata).toBe('function')
     })
+
+    it('hooks return stable functions', () => {
+        const { result, rerender } = renderHook(
+            () => ({
+                useAddMetadataResult: useAddMetadata(),
+                useMetadataStoreResult: useMetadataStore(),
+            }),
+            {
+                wrapper: ProviderWithComponents,
+            }
+        )
+
+        const initialFunctions = {
+            useAddMetadata: result.current.useAddMetadataResult,
+            useMetadataStoreAddMetadata:
+                result.current.useMetadataStoreResult.addMetadata,
+            useMetadataStoreGetMetadataItem:
+                result.current.useMetadataStoreResult.getMetadataItem,
+            useMetadataStoreGetMetadataItems:
+                result.current.useMetadataStoreResult.getMetadataItems,
+        }
+
+        act(() => {
+            rerender()
+        })
+
+        expect(result.current.useAddMetadataResult).toEqual(
+            initialFunctions.useAddMetadata
+        )
+        expect(result.current.useMetadataStoreResult.addMetadata).toEqual(
+            initialFunctions.useMetadataStoreAddMetadata
+        )
+        expect(result.current.useMetadataStoreResult.getMetadataItem).toEqual(
+            initialFunctions.useMetadataStoreGetMetadataItem
+        )
+        expect(result.current.useMetadataStoreResult.getMetadataItems).toEqual(
+            initialFunctions.useMetadataStoreGetMetadataItems
+        )
+    })
 })
