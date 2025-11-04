@@ -99,7 +99,7 @@ export const LineList: FC<LineListProps> = ({
             </div>
             <div
                 className={classes.startColumnBottom}
-                data-test="start-column-top"
+                data-test="start-column-bottom"
             >
                 <ScrollBox>
                     {isFetching && <FetchOverlay />}
