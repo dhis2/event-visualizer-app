@@ -1,25 +1,21 @@
 import { api } from '@api/api'
 import type { BaseQueryApiWithExtraArg } from '@api/custom-base-query'
 import { parseEngineError } from '@api/parse-engine-error'
+import { preparePayloadForSave } from '@dhis2/analytics'
 import { parseCondition } from '@modules/conditions'
-import { getDimensionMetadataFields } from '@modules/visualization'
+import {
+    getDimensionMetadataFields,
+    getSaveableVisualization,
+} from '@modules/visualization'
 import type {
     CurrentUser,
     Option,
     SavedVisualization,
+    MutationResult,
+    RootState,
+    VisualizationNameDescription,
     CurrentVisualization,
 } from '@types'
-
-type EventVisualizationSubscribers = {
-    subscribers: string[]
-}
-
-type EventVisualizationNameDesc = {
-    name: string
-    displayName: string
-    description: string
-    displayDescription: string
-}
 
 const dimensionFields: string =
     'dimension,dimensionType,filter,program[id],programStage[id],optionSet[id],valueType,legendSet[id],repetition,items[dimensionItem~rename(id)]'
@@ -66,111 +62,30 @@ export const getVisualizationQueryFields = (
     '!user',
 ]
 
+const getVisualizationQueryDefinition = (id, displayNameProperty) => ({
+    eventVisualization: {
+        resource: 'eventVisualizations',
+        id,
+        params: {
+            fields: getVisualizationQueryFields(displayNameProperty),
+        },
+    },
+})
+
 export const eventVisualizationsApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        updateVisualization: builder.mutation<
-            string,
-            Partial<SavedVisualization>
-        >({
-            async queryFn(visualization, apiArg: BaseQueryApiWithExtraArg) {
-                const { engine } = apiArg.extra
-
-                if (!visualization.id) {
-                    return {
-                        error: parseEngineError(
-                            new Error('Missing id in updateVisualization')
-                        ),
-                    }
-                }
-
-                try {
-                    const data = await engine.mutate(
-                        {
-                            resource: 'eventVisualizations',
-                            type: 'update',
-                            id: visualization.id,
-                            data: visualization,
-                            params: {
-                                skipTranslations: true,
-                                skipSharing: true,
-                            },
-                        },
-                        {
-                            onError: (e) => ({ error: parseEngineError(e) }),
-                        }
-                    )
-
-                    const uid = (
-                        data as unknown as { response?: { uid?: unknown } }
-                    )?.response?.uid
-
-                    if (typeof uid === 'string') {
-                        return { data: uid }
-                    }
-
-                    return {
-                        error: parseEngineError(
-                            new Error('Missing uid in update response')
-                        ),
-                    }
-                } catch (error) {
-                    return { error: parseEngineError(error) }
-                }
-            },
-        }),
-        createVisualization: builder.mutation<
-            string,
-            Partial<CurrentVisualization>
-        >({
-            async queryFn(visualization, apiArg: BaseQueryApiWithExtraArg) {
-                const { engine } = apiArg.extra
-
-                try {
-                    const data = await engine.mutate({
-                        resource: 'eventVisualizations',
-                        type: 'create',
-                        data: visualization,
-                        params: {
-                            skipTranslations: true,
-                            skipSharing: true,
-                        },
-                    })
-
-                    const uid = (
-                        data as unknown as { response?: { uid?: unknown } }
-                    )?.response?.uid
-
-                    if (typeof uid === 'string') {
-                        return { data: uid }
-                    }
-
-                    return {
-                        error: parseEngineError(
-                            new Error('Missing uid in create response')
-                        ),
-                    }
-                } catch (error) {
-                    return { error: parseEngineError(error) }
-                }
-            },
-        }),
         getVisualization: builder.query<SavedVisualization, string>({
             async queryFn(id, apiArg: BaseQueryApiWithExtraArg) {
                 const { appCachedData, engine, metadataStore } = apiArg.extra
 
                 try {
-                    const data = await engine.query({
-                        eventVisualization: {
-                            resource: 'eventVisualizations',
+                    const data = await engine.query(
+                        getVisualizationQueryDefinition(
                             id,
-                            params: {
-                                fields: getVisualizationQueryFields(
-                                    appCachedData.currentUser.settings
-                                        .displayNameProperty
-                                ),
-                            },
-                        },
-                    })
+                            appCachedData.currentUser.settings
+                                .displayNameProperty
+                        )
+                    )
 
                     const visualization =
                         data.eventVisualization as SavedVisualization
@@ -229,63 +144,150 @@ export const eventVisualizationsApi = api.injectEndpoints({
                         metadataStore.addMetadata(optionSetsMetadata)
                     }
 
-                    // update most viewed statistics
-                    await engine.mutate({
-                        resource: 'dataStatistics',
-                        type: 'create',
-                        params: {
-                            eventType: 'EVENT_VISUALIZATION_VIEW',
-                            favorite: id,
-                        },
-                        data: {},
-                    })
-
                     return { data: visualization }
                 } catch (error) {
                     return { error: parseEngineError(error) }
                 }
             },
         }),
-        getVisualizationSubscribers: builder.query<string[], string>({
-            async queryFn(id, apiArg: BaseQueryApiWithExtraArg) {
+
+        createVisualization: builder.mutation<string, CurrentVisualization>({
+            async queryFn(currentVis, apiArg: BaseQueryApiWithExtraArg) {
                 const { engine } = apiArg.extra
 
                 try {
-                    const { eventVisualization } = (await engine.query({
-                        eventVisualization: {
-                            resource: 'eventVisualizations',
-                            id,
-                            params: {
-                                fields: 'subscribers',
-                            },
+                    const createVisualizationResult = (await engine.mutate({
+                        resource: 'eventVisualizations',
+                        type: 'create',
+                        data: currentVis,
+                        params: {
+                            skipTranslations: true,
+                            skipSharing: true,
                         },
-                    })) as { eventVisualization: EventVisualizationSubscribers }
+                    })) as MutationResult
 
-                    return { data: eventVisualization.subscribers }
+                    const uid = createVisualizationResult?.response?.uid
+
+                    if (typeof uid !== 'string') {
+                        throw new Error('Missing uid in create response')
+                    }
+
+                    return { data: uid }
                 } catch (error) {
                     return { error: parseEngineError(error) }
                 }
             },
         }),
-        getVisualizationNameDesc: builder.query<
-            EventVisualizationNameDesc,
-            string
+
+        renameVisualization: builder.mutation<
+            VisualizationNameDescription,
+            VisualizationNameDescription
         >({
-            async queryFn(id, apiArg: BaseQueryApiWithExtraArg) {
-                const { engine } = apiArg.extra
+            async queryFn(args, apiArg: BaseQueryApiWithExtraArg) {
+                const { appCachedData, engine } = apiArg.extra
+                const state = apiArg.getState() as RootState
 
                 try {
-                    const { eventVisualization } = (await engine.query({
+                    // Get a fresh copy of the visualization, so nothing but name/description is changed
+                    // This is needed because a partial update (PATCH) is not supported on the api
+                    const fetchVisualizationResult = await engine.query(
+                        getVisualizationQueryDefinition(
+                            state.savedVis.id,
+                            appCachedData.currentUser.settings
+                                .displayNameProperty
+                        )
+                    )
+
+                    const visualization =
+                        fetchVisualizationResult.eventVisualization as SavedVisualization
+
+                    const updateVisualizationResult = (await engine.mutate({
+                        resource: 'eventVisualizations',
+                        type: 'update',
+                        id: visualization.id,
+                        data: {
+                            // prepare the visualization payload with the new name/description
+                            ...preparePayloadForSave({
+                                visualization: getSaveableVisualization(
+                                    visualization
+                                ) as SavedVisualization,
+                                name: args.name,
+                                description: args.description,
+                            }),
+                        },
+                        params: {
+                            skipTranslations: true,
+                            skipSharing: true,
+                        },
+                    })) as MutationResult
+
+                    // TODO: read mutationData.httpStatusCode instead and throw if not 200?!
+                    const uid = updateVisualizationResult?.response?.uid
+
+                    if (typeof uid !== 'string') {
+                        throw new Error('Missing uid in update response')
+                    }
+
+                    // fetch the visualization name,displayName,description,displayDescription
+                    const fetchNameDescriptionResult = await engine.query({
                         eventVisualization: {
                             resource: 'eventVisualizations',
-                            id,
+                            id: visualization.id,
                             params: {
                                 fields: 'name,displayName,description,displayDescription',
                             },
                         },
-                    })) as { eventVisualization: EventVisualizationNameDesc }
+                    })
 
-                    return { data: eventVisualization }
+                    return {
+                        data: fetchNameDescriptionResult.eventVisualization as VisualizationNameDescription,
+                    }
+                } catch (error) {
+                    return { error: parseEngineError(error) }
+                }
+            },
+        }),
+
+        updateVisualization: builder.mutation<string, SavedVisualization>({
+            async queryFn(visualization, apiArg: BaseQueryApiWithExtraArg) {
+                const { engine } = apiArg.extra
+
+                try {
+                    if (!visualization.id) {
+                        throw new Error('Missing id in updateVisualization')
+                    }
+
+                    const fetchSubscribersResult = await engine.query({
+                        eventVisualization: {
+                            resource: 'eventVisualizations',
+                            id: visualization.id,
+                            params: {
+                                fields: 'subscribers',
+                            },
+                        },
+                    })
+
+                    const updateVisualizationResult = (await engine.mutate({
+                        resource: 'eventVisualizations',
+                        type: 'update',
+                        id: visualization.id,
+                        data: {
+                            ...visualization,
+                            subscribers: fetchSubscribersResult.subscribers,
+                        },
+                        params: {
+                            skipTranslations: true,
+                            skipSharing: true,
+                        },
+                    })) as MutationResult
+
+                    const uid = updateVisualizationResult?.response?.uid
+
+                    if (typeof uid !== 'string') {
+                        throw new Error('Missing uid in update response')
+                    }
+
+                    return { data: uid }
                 } catch (error) {
                     return { error: parseEngineError(error) }
                 }

@@ -4,9 +4,15 @@ import { useCallback } from 'react'
 import type { FC } from 'react'
 import { DownloadMenu } from './download-menu'
 import { ViewMenu } from './view-menu'
+import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { parseEngineError } from '@api/parse-engine-error'
 import { VISUALIZATION_TYPES } from '@constants/visualization-types'
-import { FileMenu, HoverMenuBar } from '@dhis2/analytics'
+import {
+    FileMenu,
+    HoverMenuBar,
+    preparePayloadForSave,
+    preparePayloadForSaveAs,
+} from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
 import {
     isLayoutValidForSave,
@@ -15,16 +21,16 @@ import {
 import {
     isVisualizationSaved,
     getVisualizationState,
+    getSaveableVisualization,
 } from '@modules/visualization'
-import { getCurrentVis } from '@store/current-vis-slice'
-import { setNavigationState } from '@store/navigation-slice'
-import { getSavedVis } from '@store/saved-vis-slice'
 import {
-    tLoadSavedVisualization,
-    tCreateVisualization,
-    tUpdateVisualization,
-    tRenameVisualization,
-} from '@store/thunks'
+    getCurrentVis,
+    setCurrentVisNameDescription,
+} from '@store/current-vis-slice'
+import { setNavigationState } from '@store/navigation-slice'
+import { getSavedVis, setSavedVisNameDescription } from '@store/saved-vis-slice'
+import { tLoadSavedVisualization } from '@store/thunks'
+import type { NewVisualization, SavedVisualization } from '@types'
 
 export const MenuBar: FC = () => {
     const dispatch = useAppDispatch()
@@ -53,7 +59,9 @@ export const MenuBar: FC = () => {
     const onOpen = useCallback(
         (id: string) => {
             if (isVisualizationSaved(currentVis) && currentVis.id === id) {
-                dispatch(tLoadSavedVisualization(id))
+                dispatch(
+                    tLoadSavedVisualization({ id, updateStatistics: true })
+                )
             } else {
                 dispatch(setNavigationState({ visualizationId: id }))
             }
@@ -61,30 +69,71 @@ export const MenuBar: FC = () => {
         [dispatch, currentVis]
     )
 
+    // New visualization
+    // it can be a copy of an existing one, but a new id is returned
     const onSaveAs = async (nameAndDescription: {
         name: string
         description: string
-    }) =>
-        dispatch(
-            tCreateVisualization({
-                visualization: currentVis,
-                ...nameAndDescription,
-                onError,
+    }) => {
+        const { data, error } = await dispatch(
+            eventVisualizationsApi.endpoints.createVisualization.initiate(
+                preparePayloadForSaveAs({
+                    visualization: getSaveableVisualization(
+                        currentVis as unknown as NewVisualization
+                    ),
+                    ...nameAndDescription,
+                })
+            )
+        )
+
+        if (data) {
+            // Navigate to the new visualization
+            dispatch(setNavigationState({ visualizationId: data }))
+        } else if (error) {
+            console.log('error onSaveAs', error)
+        }
+    }
+
+    // Existing visualization
+    const onSave = useCallback(async () => {
+        const { data, error } = await dispatch(
+            eventVisualizationsApi.endpoints.updateVisualization.initiate(
+                preparePayloadForSave({
+                    visualization: getSaveableVisualization(
+                        currentVis as unknown as SavedVisualization
+                    ) as SavedVisualization,
+                })
+            )
+        )
+
+        if (data) {
+            // Reload the saved visualization after saving
+            // here we should *not* update statistics
+            dispatch(
+                tLoadSavedVisualization({
+                    id: currentVis.id,
+                    updateStatistics: false,
+                })
+            )
+        } else if (error) {
+            console.log('error onSave', error)
+        }
+    }, [dispatch, currentVis])
+
+    // Existing visualization
+    // but the only changes are name and/or description
+    const onRename = async ({ name, description }) => {
+        const { data, error } = await dispatch(
+            eventVisualizationsApi.endpoints.renameVisualization.initiate({
+                name,
+                description,
             })
         )
 
-    const onSave = async () =>
-        dispatch(tUpdateVisualization({ visualization: currentVis, onError }))
-
-    const onRename = async ({ name, description }) => {
-        try {
-            await dispatch(
-                tRenameVisualization({
-                    id: savedVis.id!,
-                    name,
-                    description,
-                })
-            ).unwrap()
+        if (data) {
+            // Update current and visualization with edited name/description
+            dispatch(setCurrentVisNameDescription(data))
+            dispatch(setSavedVisNameDescription(data))
 
             showAlert({
                 message: i18n.t('Rename successful'),
@@ -93,7 +142,7 @@ export const MenuBar: FC = () => {
                     duration: 2000,
                 },
             })
-        } catch (error) {
+        } else if (error) {
             console.error(error)
             showAlert({
                 message: i18n.t('Rename failed'),
