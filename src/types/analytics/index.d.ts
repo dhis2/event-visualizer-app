@@ -19,6 +19,7 @@ import type {
     DimensionArray,
     EventVisualizationType,
     LegendSet,
+    NewVisualization,
     SavedVisualization,
     ValueType,
     VisualizationType,
@@ -77,20 +78,20 @@ declare module '@dhis2/analytics' {
         name,
         description,
     }: {
-        visualization: Partial<SavedVisualization>
+        visualization: NewVisualization | SavedVisualization
         name?: string
         description?: string
-    }) => Partial<SavedVisualization>
+    }) => NewVisualization | SavedVisualization
 
     export const preparePayloadForSave: ({
         visualization,
         name,
         description,
     }: {
-        visualization: Partial<SavedVisualization>
+        visualization: SavedVisualization
         name?: string
         description?: string
-    }) => Partial<SavedVisualization>
+    }) => SavedVisualization
 
     export const getColorByValueFromLegendSet: (
         legendSet?: LegendSet,

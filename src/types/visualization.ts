@@ -148,3 +148,10 @@ export type CurrentVisualization =
     | EmptyVisualization
     | NewVisualization
     | SavedVisualization
+
+export type VisualizationNameDescription = {
+    name: string
+    description: string
+    displayName?: string
+    displayDescription?: string
+}
