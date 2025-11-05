@@ -60,7 +60,7 @@ export const MenuBar: FC = () => {
         (id: string) => {
             if (isVisualizationSaved(currentVis) && currentVis.id === id) {
                 dispatch(
-                    tLoadSavedVisualization({ id, updateStatistics: true })
+                    tLoadSavedVisualization({ id, updateStatistics: false })
                 )
             } else {
                 dispatch(setNavigationState({ visualizationId: id }))
