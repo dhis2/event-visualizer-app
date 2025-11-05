@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { getSaveableVisualization } from '../visualization'
 import * as optionsModule from '@modules/options'
-import type { CurrentVisualization } from '@types'
+import type { NewVisualization } from '@types'
 
 type OptionsReturn = Record<string, { persisted: boolean }>
 const mockOptions: OptionsReturn = {
@@ -27,14 +27,14 @@ describe('getSaveableVisualization', () => {
             tempOption: 'remove-me',
             columns: [],
             filters: [],
-        } as unknown as CurrentVisualization
+        } as unknown as NewVisualization
 
         const saved = getSaveableVisualization(vis)
 
         // persisted option should still be present
-        expect((saved as Record<string, unknown>)['keepOption']).toBe('keep-me')
+        expect(saved['keepOption']).toBe('keep-me')
         // non-persisted option should have been removed
-        expect('tempOption' in (saved as Record<string, unknown>)).toBe(false)
+        expect('tempOption' in saved).toBe(false)
     })
 
     it('strips dimensionType and valueType from columns and filters', () => {
@@ -53,7 +53,7 @@ describe('getSaveableVisualization', () => {
                     valueType: 'NUMBER',
                 },
             ],
-        } as unknown as CurrentVisualization
+        } as unknown as NewVisualization
 
         const saved = getSaveableVisualization(vis)
 
@@ -75,7 +75,7 @@ describe('getSaveableVisualization', () => {
             programStage: {},
             columns: [],
             filters: [],
-        } as unknown as CurrentVisualization
+        } as unknown as NewVisualization
 
         const saved = getSaveableVisualization(vis)
         expect(saved.programStage).toBeUndefined()
@@ -86,7 +86,7 @@ describe('getSaveableVisualization', () => {
             programStage: { id: 'stage-1', name: 'Stage 1' },
             columns: [],
             filters: [],
-        } as unknown as CurrentVisualization
+        } as unknown as NewVisualization
 
         const saved = getSaveableVisualization(vis)
         expect(saved.programStage).toEqual({ id: 'stage-1', name: 'Stage 1' })
@@ -97,7 +97,7 @@ describe('getSaveableVisualization', () => {
             legacy: true,
             columns: [],
             filters: [],
-        } as unknown as CurrentVisualization
+        } as unknown as NewVisualization
 
         const saved = getSaveableVisualization(vis)
         expect('legacy' in (saved as Record<string, unknown>)).toBe(false)
@@ -111,7 +111,7 @@ describe('getSaveableVisualization', () => {
             ],
             columns: [],
             filters: [],
-        } as unknown as CurrentVisualization
+        } as unknown as NewVisualization
 
         const saved = getSaveableVisualization(vis)
         expect(saved.sorting).toBeDefined()
@@ -125,12 +125,12 @@ describe('getSaveableVisualization', () => {
         const vis1 = {
             columns: [],
             filters: [],
-        } as unknown as CurrentVisualization
+        } as unknown as NewVisualization
         const vis2 = {
             sorting: [],
             columns: [],
             filters: [],
-        } as unknown as CurrentVisualization
+        } as unknown as NewVisualization
 
         const saved1 = getSaveableVisualization(vis1)
         const saved2 = getSaveableVisualization(vis2)
