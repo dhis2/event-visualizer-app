@@ -19,10 +19,15 @@ declare global {
     interface Window {
         getMetadataStore: () => Record<string, MetadataStoreItem>
         getMetadataStoreItem: (key: string) => MetadataStoreItem | undefined
+        findMetadataStoreItem: (token: string) => MetadataStoreItem | undefined
+        filterMetadataStoreItems: (token: string) => MetadataStoreItem[]
     }
 }
 
 export type InitialMetadataItems = Record<string, AnyMetadataItemInput>
+
+const isItemMatch = (item: MetadataStoreItem, token: string) =>
+    item.id.includes(token) || item.name?.toLowerCase().includes(token)
 
 export class MetadataStore {
     private metadata = new Map<string, MetadataStoreItem>()
@@ -41,6 +46,14 @@ export class MetadataStore {
             window.getMetadataStore = () => Object.fromEntries(this.metadata)
             window.getMetadataStoreItem = (key: string) =>
                 this.getMetadataItem(key)
+            window.findMetadataStoreItem = (token: string) =>
+                Array.from(this.metadata.values()).find((item) =>
+                    isItemMatch(item, token)
+                )
+            window.filterMetadataStoreItems = (token: string) =>
+                Array.from(this.metadata.values()).filter((item) =>
+                    isItemMatch(item, token)
+                )
         }
     }
 
