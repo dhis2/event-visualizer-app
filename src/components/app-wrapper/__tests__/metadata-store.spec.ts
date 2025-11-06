@@ -1,4 +1,4 @@
-import { expect, describe, it } from 'vitest'
+import { expect, describe, it, beforeEach } from 'vitest'
 import inpatientCasesVisualization from '../__fixtures__/-visualization-inpatient-cases-last-quarter-case.json'
 import inpatientVisitVisualization from '../__fixtures__/visualization-inpatient-visit-overview-this-year-bo.json'
 import { getInitialMetadata, type MetadataStoreItem } from '../metadata-helpers'
@@ -416,5 +416,108 @@ describe('MetadataStore', () => {
             updatedName
         )
         expect(metadataStore.getMetadataItem(id)).toHaveProperty('path', path)
+    })
+
+    describe('addAnalyticsResponseMetadata', () => {
+        let metadataStore: TestMetadataStore
+
+        beforeEach(() => {
+            metadataStore = new TestMetadataStore(
+                getInitialMetadata(),
+                rootOrgUnits
+            )
+            metadataStore.setVisualizationMetadata(
+                inpatientVisitVisualization as unknown as SavedVisualization
+            )
+        })
+
+        it('adds metadata items with nested IDs correctly', () => {
+            const analyticsItems = {
+                'dataElement.programStage1': {
+                    uid: 'originalUid',
+                    name: 'Nested Data Element',
+                    valueType: 'TEXT',
+                },
+            }
+            const dimensions = {}
+
+            metadataStore.addAnalyticsResponseMetadata(
+                analyticsItems,
+                dimensions
+            )
+
+            const snapshot = metadataStore.getMetadataSnapshot()
+            expect(snapshot['dataElement.programStage1']).toEqual({
+                id: 'dataElement.programStage1',
+                name: 'Nested Data Element',
+                valueType: 'TEXT',
+            })
+        })
+
+        it('adds regular metadata items correctly', () => {
+            const analyticsItems = {
+                regularItem: {
+                    uid: 'regularItem',
+                    name: 'Regular Item',
+                    valueType: 'NUMBER',
+                },
+            }
+            const dimensions = {}
+
+            metadataStore.addAnalyticsResponseMetadata(
+                analyticsItems,
+                dimensions
+            )
+
+            const snapshot = metadataStore.getMetadataSnapshot()
+            expect(snapshot.regularItem).toEqual({
+                id: 'regularItem',
+                name: 'Regular Item',
+                valueType: 'NUMBER',
+            })
+        })
+
+        it('adds legend set metadata when data element has legendSet', () => {
+            const legendSetId = 'legendSet123'
+            const analyticsItems = {
+                dataElement1: {
+                    uid: 'dataElement1',
+                    name: 'Data Element with Legend',
+                    valueType: 'NUMBER',
+                    legendSet: legendSetId,
+                },
+                legend1: {
+                    uid: 'legend1',
+                    name: 'Legend 1',
+                },
+                legend2: {
+                    uid: 'legend2',
+                    name: 'Legend 2',
+                },
+            }
+            const dimensions = {
+                dataElement1: ['legend1', 'legend2'],
+            }
+
+            metadataStore.addAnalyticsResponseMetadata(
+                analyticsItems,
+                dimensions
+            )
+
+            const snapshot = metadataStore.getMetadataSnapshot()
+            expect(snapshot.dataElement1).toEqual({
+                id: 'dataElement1',
+                name: 'Data Element with Legend',
+                valueType: 'NUMBER',
+                legendSet: legendSetId,
+            })
+            expect(snapshot[legendSetId]).toEqual({
+                id: legendSetId,
+                legends: [
+                    { id: 'legend1', name: 'Legend 1' },
+                    { id: 'legend2', name: 'Legend 2' },
+                ],
+            })
+        })
     })
 })

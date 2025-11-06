@@ -22,7 +22,7 @@ import type {
     SavedVisualization,
 } from '@types'
 
-type ObjectWithId = { id: string }
+type ObjectWithId = { id: string } | { uid: string }
 type ExtractedMetadatInput = Record<string, AnyMetadataItemInput>
 
 const idsToUids = (
@@ -31,9 +31,11 @@ const idsToUids = (
     Object.entries(extractedMetadatInput).reduce((acc, [key, value]) => {
         acc[key] = {
             ...value,
-            uid: value.id,
+            uid: 'uid' in value ? value.uid : value.id,
         }
-        delete acc[key].id
+        if ('id' in value) {
+            delete acc[key].id
+        }
         return acc
     }, {})
 
@@ -99,7 +101,7 @@ const extractAllDimensions = (
     ...(visualization.filters || []),
 ]
 
-const extractTrackedEntityTypeMetadata = (
+export const extractTrackedEntityTypeMetadata = (
     visualization: SavedVisualization
 ): ExtractedMetadatInput =>
     visualization.trackedEntityType
@@ -111,7 +113,7 @@ const extractTrackedEntityTypeMetadata = (
           }
         : {}
 
-const extractFixedDimensionsMetadata = (
+export const extractFixedDimensionsMetadata = (
     visualization: SavedVisualization
 ): ExtractedMetadatInput => {
     const fixedDimensionsMetadata = {}
@@ -148,7 +150,7 @@ const extractFixedDimensionsMetadata = (
     return idsToUids(fixedDimensionsMetadata)
 }
 
-const extractProgramDimensionsMetadata = (
+export const extractProgramDimensionsMetadata = (
     visualization: SavedVisualization
 ): ExtractedMetadatInput => {
     const programDimensionsMetadata = {}
@@ -183,7 +185,7 @@ const extractProgramDimensionsMetadata = (
     return programDimensionsMetadata
 }
 
-const extractDimensionMetadata = (
+export const extractDimensionMetadata = (
     visualization: SavedVisualization
 ): ExtractedMetadatInput => {
     const dimensionMetadata = Object.entries(
@@ -202,7 +204,7 @@ const extractDimensionMetadata = (
     return idsToUids(dimensionMetadata)
 }
 
-const extractProgramMetadata = (
+export const extractProgramMetadata = (
     visualization: SavedVisualization
 ): ExtractedMetadatInput => {
     const programAndStagesMetadata = {}
@@ -234,51 +236,56 @@ const addPathToOrganisationUnitMetadataItems = (
     }
 }
 
-const supplementDimensionMetadata = (
+export const supplementDimensionMetadata = (
     metadataInput: ExtractedMetadatInput,
     visualization: SavedVisualization
 ) => {
     const { outputType } = visualization
     const dimensions = extractAllDimensions(visualization)
 
-    return dimensions.reduce((metadata, dimension) => {
-        const collectedItem = metadataInput[dimension.dimension]
+    const additionalDimensionMetadata = dimensions.reduce(
+        (metadata, dimension) => {
+            const collectedItem = metadataInput[dimension.dimension]
 
-        if (
-            isUserOrgUnitMetadataInputItem(collectedItem) ||
-            typeof collectedItem?.name !== 'string'
-        ) {
+            if (
+                isUserOrgUnitMetadataInputItem(collectedItem) ||
+                typeof collectedItem?.name !== 'string'
+            ) {
+                return metadata
+            }
+
+            const prefixedId = getFullDimensionId({
+                dimensionId: dimension.dimension,
+                programStageId: dimension.programStage?.id,
+                programId: dimension.program?.id,
+                outputType,
+            })
+
+            const item: MetadataInput = {
+                uid: prefixedId,
+                name: collectedItem.name,
+                dimensionType: getUiDimensionType(
+                    prefixedId,
+                    dimension.dimensionType!
+                ),
+            }
+
+            if (dimension.optionSet?.id) {
+                item.optionSet = dimension.optionSet?.id
+            }
+
+            if (dimension.valueType) {
+                item.valueType = dimension.valueType
+            }
+
+            metadata[prefixedId] = item
+
             return metadata
-        }
+        },
+        {}
+    )
 
-        const prefixedId = getFullDimensionId({
-            dimensionId: dimension.dimension,
-            programStageId: dimension.programStage?.id,
-            programId: dimension.program?.id,
-            outputType,
-        })
-
-        const item: MetadataInput = {
-            uid: prefixedId,
-            name: collectedItem.name,
-            dimensionType: getUiDimensionType(
-                prefixedId,
-                dimension.dimensionType!
-            ),
-        }
-
-        if (dimension.optionSet?.id) {
-            item.optionSet = dimension.optionSet?.id
-        }
-
-        if (dimension.valueType) {
-            item.valueType = dimension.valueType
-        }
-
-        metadata[prefixedId] = item
-
-        return metadata
-    }, {})
+    return deepmerge(metadataInput, additionalDimensionMetadata)
 }
 
 export const extractMetadataFromVisualization = (
@@ -299,9 +306,9 @@ export const extractMetadataFromVisualization = (
         {}
     )
 
-    const supplementedMetadataInput = deepmerge(
+    const supplementedMetadataInput = supplementDimensionMetadata(
         baseMetadataInput,
-        supplementDimensionMetadata(baseMetadataInput, visualization)
+        visualization
     )
 
     addPathToOrganisationUnitMetadataItems(
