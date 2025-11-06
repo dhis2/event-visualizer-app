@@ -51,6 +51,38 @@ export const MenuBar: FC = () => {
         })),
     ]
 
+    const onError = useCallback(
+        (error) => {
+            console.error(error)
+            let message = error.message || i18n.t('An unknown error occurred.')
+
+            switch (error.errorCode) {
+                case 'E4030':
+                    message = i18n.t(
+                        "This visualization can't be deleted because it is used on one or more dashboards."
+                    ) // TODO: - unable to simulate error E4030
+                    break
+                case 'E1006':
+                    message = i18n.t("You don't have sufficient permissions.")
+                    break
+                default:
+                    break
+            }
+
+            const alertLevel = /50\d/.test(String(error.httpStatusCode))
+                ? 'error'
+                : 'warning'
+
+            showAlert({
+                message,
+                options: {
+                    [alertLevel]: true,
+                },
+            })
+        },
+        [showAlert]
+    )
+
     const onNew = useCallback(
         () => dispatch(setNavigationState({ visualizationId: 'new' })),
         [dispatch]
@@ -71,32 +103,32 @@ export const MenuBar: FC = () => {
 
     // New visualization
     // it can be a copy of an existing one, but a new id is returned
-    const onSaveAs = async (nameAndDescription: {
-        name: string
-        description: string
-    }) => {
-        const { data, error } = await dispatch(
-            eventVisualizationsApi.endpoints.createVisualization.initiate(
-                preparePayloadForSaveAs({
-                    visualization: {
-                        ...getSaveableVisualization(
-                            currentVis as unknown as NewVisualization
-                        ),
-                        // XXX: this ideally should be done in preparePayloadForSaveAs
-                        subscribers: [],
-                    },
-                    ...nameAndDescription,
-                })
+    const onSaveAs = useCallback(
+        async (nameAndDescription: { name: string; description: string }) => {
+            const { data, error } = await dispatch(
+                eventVisualizationsApi.endpoints.createVisualization.initiate(
+                    preparePayloadForSaveAs({
+                        visualization: {
+                            ...getSaveableVisualization(
+                                currentVis as unknown as NewVisualization
+                            ),
+                            // XXX: this ideally should be done in preparePayloadForSaveAs
+                            subscribers: [],
+                        },
+                        ...nameAndDescription,
+                    })
+                )
             )
-        )
 
-        if (data) {
-            // Navigate to the new visualization
-            dispatch(setNavigationState({ visualizationId: data }))
-        } else if (error) {
-            console.log('error onSaveAs', error)
-        }
-    }
+            if (data) {
+                // Navigate to the new visualization
+                dispatch(setNavigationState({ visualizationId: data }))
+            } else if (error) {
+                onError(error)
+            }
+        },
+        [dispatch, currentVis, onError]
+    )
 
     // Existing visualization
     const onSave = useCallback(async () => {
@@ -120,44 +152,46 @@ export const MenuBar: FC = () => {
                 })
             )
         } else if (error) {
-            console.log('error onSave', error)
+            onError(error)
         }
-    }, [dispatch, currentVis])
+    }, [dispatch, currentVis, onError])
 
     // Existing visualization
     // but the only changes are name and/or description
-    const onRename = async ({ name, description }) => {
-        const { data, error } = await dispatch(
-            eventVisualizationsApi.endpoints.renameVisualization.initiate({
-                name,
-                description,
-            })
-        )
+    const onRename = useCallback(
+        async ({ name, description }) => {
+            const { data, error } = await dispatch(
+                eventVisualizationsApi.endpoints.renameVisualization.initiate({
+                    name,
+                    description,
+                })
+            )
 
-        if (data) {
-            // Update current and visualization with edited name/description
-            dispatch(setCurrentVisNameDescription(data))
-            dispatch(setSavedVisNameDescription(data))
+            if (data) {
+                // Update current and visualization with edited name/description
+                dispatch(setCurrentVisNameDescription(data))
+                dispatch(setSavedVisNameDescription(data))
 
-            showAlert({
-                message: i18n.t('Rename successful'),
-                options: {
-                    success: true,
-                    duration: 2000,
-                },
-            })
-        } else if (error) {
-            console.error(error)
-            showAlert({
-                message: i18n.t('Rename failed'),
-                options: {
-                    critical: true,
-                },
-            })
-        }
-    }
+                showAlert({
+                    message: i18n.t('Rename successful'),
+                    options: {
+                        success: true,
+                        duration: 2000,
+                    },
+                })
+            } else if (error) {
+                showAlert({
+                    message: i18n.t('Rename failed'),
+                    options: {
+                        critical: true,
+                    },
+                })
+            }
+        },
+        [dispatch, showAlert]
+    )
 
-    const onDelete = () => {
+    const onDelete = useCallback(() => {
         const deletedVisualization = savedVis.name
 
         dispatch(setNavigationState({ visualizationId: 'new' }))
@@ -171,38 +205,9 @@ export const MenuBar: FC = () => {
                 duration: 2000,
             },
         })
-    }
+    }, [dispatch, savedVis.name, showAlert])
 
     const onDeleteError = (error) => onError(parseEngineError(error))
-
-    const onError = (error) => {
-        console.error(error)
-        let message = error.message || i18n.t('An unknown error occurred.')
-
-        switch (error.errorCode) {
-            case 'E4030':
-                message = i18n.t(
-                    "This visualization can't be deleted because it is used on one or more dashboards."
-                ) // TODO - unable to simulate error E4030
-                break
-            case 'E1006':
-                message = i18n.t("You don't have sufficient permissions.")
-                break
-            default:
-                break
-        }
-
-        const alertLevel = /50\d/.test(String(error.httpStatusCode))
-            ? 'error'
-            : 'warning'
-
-        showAlert({
-            message,
-            options: {
-                [alertLevel]: true,
-            },
-        })
-    }
 
     return (
         <HoverMenuBar>
