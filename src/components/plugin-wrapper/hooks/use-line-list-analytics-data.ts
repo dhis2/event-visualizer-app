@@ -5,7 +5,10 @@ import {
     getAdaptedVisualization,
     getAnalyticsEndpoint,
 } from './query-tools-line-list.js'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers/types.js'
+import type {
+    AnyMetadataItemInput,
+    UserOrgUnitMetadataItem,
+} from '@components/app-wrapper/metadata-helpers/types.js'
 import type { LineListAnalyticsData } from '@components/line-list/types.js'
 import { Analytics } from '@dhis2/analytics'
 import { getBooleanValues } from '@modules/conditions'
@@ -311,13 +314,26 @@ const extractRows = (analyticsResponse, headers) => {
 
 const extractRowContext = (analyticsResponse) => analyticsResponse.rowContext
 
+export type AnalyticsResponseMetadataItems = Record<
+    string,
+    AnyMetadataItemInput
+> & {
+    USER_ORG_UNIT?: UserOrgUnitMetadataItem
+}
+
+export type AnalyticsResponseMetadataDimensions = Record<string, string[]>
+export type OnAnalyticsResponseReceivedCb = (
+    items: AnalyticsResponseMetadataItems,
+    dimensions: AnalyticsResponseMetadataDimensions
+) => void
+
 type FetchAnalyticsDataParams = {
     visualization: CurrentVisualization
     filters?: Record<string, unknown>
     displayProperty: CurrentUser['settings']['displayProperty']
     pageSize?: number
     page?: number
-    onResponseReceived: (metadata: MetadataInput) => void
+    onResponseReceived: OnAnalyticsResponseReceivedCb
 }
 type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
 type AnalyticsDataState = {
@@ -435,7 +451,10 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     isFetching: false,
                 })
 
-                onResponseReceived(analyticsResponse.metaData.items)
+                onResponseReceived(
+                    analyticsResponse.metaData.items,
+                    analyticsResponse.metaData.dimensions
+                )
             } catch (error) {
                 setState({
                     data: null,

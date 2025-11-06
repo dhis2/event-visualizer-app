@@ -3,12 +3,16 @@ import {
     type Subscriber,
     type AnyMetadataItemInput,
     type MetadataInput,
+    type AnalyticsMetadataInput,
     normalizeMetadataInputItem,
     smartMergeWithChangeDetection,
     isObject,
     isSingleMetadataItemInput,
 } from './metadata-helpers'
+import { extractMetadataFromAnalyticsResponse } from './metadata-helpers/analytics-data'
+import { isUserOrgUnitMetadataItem } from './metadata-helpers/type-guards'
 import { extractMetadataFromVisualization } from './metadata-helpers/visualization'
+import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import type { AppCachedData, SavedVisualization } from '@types'
 
 declare global {
@@ -66,6 +70,15 @@ export class MetadataStore {
         this.addMetadata(visualizationMetadata)
     }
 
+    addAnalyticsResponseMetadata(
+        items: AnalyticsMetadataInput,
+        dimensions: AnalyticsResponseMetadataDimensions
+    ) {
+        this.addMetadata(
+            extractMetadataFromAnalyticsResponse(items, dimensions)
+        )
+    }
+
     getMetadataItem(key: string): MetadataStoreItem | undefined {
         return this.metadata.get(key)
     }
@@ -102,14 +115,16 @@ export class MetadataStore {
         // Track ids of items that were actually updated
         const updatedMetadataIds = new Set<string>()
 
-        const processMetadataItem = (metadataInputItem: unknown) => {
+        const processMetadataItem = (
+            metadataInputItem: AnyMetadataItemInput
+        ) => {
             const newMetadataStoreItem = normalizeMetadataInputItem(
-                metadataInputItem as AnyMetadataItemInput
+                metadataInputItem,
+                this.metadata
             )
-            const itemId = (newMetadataStoreItem as { id: string }).id
+            const itemId = newMetadataStoreItem.id
 
-            // Skip processing if this is an initial metadata item
-            if (this.initialMetadataKeys.has(itemId)) {
+            if (this.isReadOnlyMetadata(newMetadataStoreItem)) {
                 return
             }
 
@@ -138,6 +153,16 @@ export class MetadataStore {
         this.notifySubscribers(updatedMetadataIds)
     }
 
+    private isReadOnlyMetadata(item: MetadataStoreItem) {
+        return (
+            /* Initial metadata is read only, except for USER_ORGUNIT
+             * which receives am `organisationUnits` array from the
+             * analytics data */
+            this.initialMetadataKeys.has(item.id) &&
+            !isUserOrgUnitMetadataItem(item)
+        )
+    }
+
     private notifySubscribers(keys: Set<string>) {
         for (const key of keys) {
             this.notifySubscriber(key)
@@ -155,20 +180,25 @@ export class MetadataStore {
         rootOrgUnits?: AppCachedData['rootOrgUnits']
     ) {
         Object.entries(initialMetadataItems).forEach(([key, item]) => {
-            this.metadata.set(key, normalizeMetadataInputItem(item))
+            const normalizedItem = normalizeMetadataInputItem(
+                item,
+                this.metadata
+            )
+            this.metadata.set(key, normalizedItem)
             this.initialMetadataKeys.add(key)
         })
 
         if (rootOrgUnits) {
             for (const rootOrgUnit of rootOrgUnits) {
                 if (rootOrgUnit.id) {
-                    this.metadata.set(
-                        rootOrgUnit.id,
-                        normalizeMetadataInputItem({
+                    const normalizedItem = normalizeMetadataInputItem(
+                        {
                             ...rootOrgUnit,
                             path: `/${rootOrgUnit.id}`,
-                        })
+                        },
+                        this.metadata
                     )
+                    this.metadata.set(rootOrgUnit.id, normalizedItem)
                     this.initialMetadataKeys.add(rootOrgUnit.id)
                 }
             }

@@ -4,7 +4,6 @@ import { useCallback, type FC } from 'react'
 import classes from './app.module.css'
 import { useLoadVisualizationOnMount } from './use-load-visualization-on-mount'
 import { AppWrapper } from '@components/app-wrapper'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import {
     GridCenterColumnBottom,
     GridCenterColumnTop,
@@ -14,12 +13,16 @@ import {
     GridTopRow,
 } from '@components/grid'
 import { LayoutPanel } from '@components/layout-panel/layout-panel'
+import type {
+    AnalyticsResponseMetadataDimensions,
+    AnalyticsResponseMetadataItems,
+} from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
 import { TitleBar } from '@components/title-bar/title-bar'
 import { Toolbar } from '@components/toolbar/toolbar'
 import {
-    useAddMetadata,
+    useAddAnalyticsResponseMetadata,
     useAppDispatch,
     useAppSelector,
     useCurrentUser,
@@ -35,7 +38,7 @@ import type { CurrentVisualization, Sorting } from '@types'
 
 const EventVisualizer: FC = () => {
     useLoadVisualizationOnMount()
-    const addMetadata = useAddMetadata()
+    const addAnalyticsResponseMetadata = useAddAnalyticsResponseMetadata()
     const dispatch = useAppDispatch()
     const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)
@@ -56,10 +59,13 @@ const EventVisualizer: FC = () => {
     )
 
     const onResponseReceived = useCallback(
-        (analyticsMetadata: MetadataInput) => {
-            addMetadata(analyticsMetadata)
+        (
+            analyticsMetadata: AnalyticsResponseMetadataItems,
+            dimensions: AnalyticsResponseMetadataDimensions
+        ) => {
+            addAnalyticsResponseMetadata(analyticsMetadata, dimensions)
         },
-        [addMetadata]
+        [addAnalyticsResponseMetadata]
     )
 
     return (

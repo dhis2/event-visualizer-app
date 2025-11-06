@@ -335,3 +335,21 @@ export const getTimeDimensionName = (
 
     return name || dimension.defaultName
 }
+
+export const getUiDimensionType = (
+    dimensionId: DimensionId | string,
+    dimensionType: ExtendedDimensionType
+): ExtendedDimensionType => {
+    switch (dimensionId) {
+        case 'programStatus':
+        case 'eventStatus':
+            return 'STATUS'
+
+        case 'createdBy':
+        case 'lastUpdatedBy':
+            return 'USER'
+
+        default:
+            return dimensionType
+    }
+}

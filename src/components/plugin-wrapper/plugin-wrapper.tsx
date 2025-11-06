@@ -1,8 +1,8 @@
 import { Center, CircularLoader } from '@dhis2/ui'
 import type { FC } from 'react'
 import { useCallback, useEffect, useState } from 'react'
+import type { OnAnalyticsResponseReceivedCb } from './hooks/use-line-list-analytics-data'
 import { LineListPlugin } from './line-list-plugin'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import type { DataSortPayload } from '@components/line-list/types'
 import { isVisualizationSaved } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization } from '@types'
@@ -15,7 +15,7 @@ type PluginWrapperProps = {
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     isVisualizationLoading?: boolean
     onDataSorted?: (sorting: DataSortPayload | undefined) => void
-    onResponseReceived?: (metadata: MetadataInput) => void
+    onResponseReceived?: OnAnalyticsResponseReceivedCb
 }
 
 export const PluginWrapper: FC<PluginWrapperProps> = ({
@@ -30,11 +30,11 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
 }) => {
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
-    const onResponseReceived = useCallback(
-        (args) => {
+    const onResponseReceived = useCallback<OnAnalyticsResponseReceivedCb>(
+        (items, dimensions) => {
             setHasAnalyticsData(true)
 
-            onResponseReceivedCb?.(args)
+            onResponseReceivedCb?.(items, dimensions)
         },
         [onResponseReceivedCb]
     )
