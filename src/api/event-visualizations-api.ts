@@ -267,13 +267,18 @@ export const eventVisualizationsApi = api.injectEndpoints({
                         },
                     })
 
+                    const { subscribers } =
+                        fetchSubscribersResult.eventVisualization as {
+                            subscribers: SavedVisualization['subscribers']
+                        }
+
                     const updateVisualizationResult = (await engine.mutate({
                         resource: 'eventVisualizations',
                         type: 'update',
                         id: visualization.id,
                         data: {
                             ...visualization,
-                            subscribers: fetchSubscribersResult.subscribers,
+                            subscribers,
                         },
                         params: {
                             skipTranslations: true,

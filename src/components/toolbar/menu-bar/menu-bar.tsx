@@ -78,9 +78,13 @@ export const MenuBar: FC = () => {
         const { data, error } = await dispatch(
             eventVisualizationsApi.endpoints.createVisualization.initiate(
                 preparePayloadForSaveAs({
-                    visualization: getSaveableVisualization(
-                        currentVis as unknown as NewVisualization
-                    ),
+                    visualization: {
+                        ...getSaveableVisualization(
+                            currentVis as unknown as NewVisualization
+                        ),
+                        // XXX: this ideally should be done in preparePayloadForSaveAs
+                        subscribers: [],
+                    },
                     ...nameAndDescription,
                 })
             )
