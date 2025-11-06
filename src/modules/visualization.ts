@@ -155,8 +155,8 @@ const getDimensionIdFromHeaderName = (
 }
 
 export const getSaveableVisualization = (
-    vis: CurrentVisualization
-): CurrentVisualization => {
+    vis: NewVisualization | SavedVisualization
+): NewVisualization | SavedVisualization => {
     const visualization = Object.assign({}, vis)
     const options = getAllOptions()
     const nonPersistedOptions = Object.keys(options).filter(
