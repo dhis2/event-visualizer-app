@@ -11,17 +11,13 @@ import { useAppSelector } from '@hooks'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 
-type InterpretationModalProps = {
-    onResponsesReceived: (metadata: MetadataInput) => void
-}
-
-export const InterpretationModal: FC<InterpretationModalProps> = ({
-    onResponsesReceived,
-}) => {
+export const InterpretationModal: FC = () => {
     const savedVis = useAppSelector(getSavedVis)
     const { interpretationId, initialFocus } = useInterpretationModalState()
     const { onCloseInterpretationModal } = useInterpretationModalTogglers()
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
+
+    const noop: (metadata: MetadataInput) => void = () => {}
 
     return interpretationId ? (
         <AnalyticsInterpretationModal
@@ -32,7 +28,7 @@ export const InterpretationModal: FC<InterpretationModalProps> = ({
             downloadMenuComponent={ModalDownloadDropdown}
             initialFocus={initialFocus}
             onClose={onCloseInterpretationModal}
-            onResponsesReceived={onResponsesReceived}
+            onResponsesReceived={noop}
         />
     ) : null
 }

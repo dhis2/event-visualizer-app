@@ -96,9 +96,7 @@ const EventVisualizer: FC = () => {
                             onDataSorted={onDataSorted}
                             onResponsesReceived={onResponsesReceived}
                         />
-                        <InterpretationModal
-                            onResponsesReceived={onResponsesReceived}
-                        />
+                        <InterpretationModal />
                     </>
                 )}
             </GridCenterColumnBottom>
