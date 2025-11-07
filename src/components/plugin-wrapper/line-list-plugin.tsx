@@ -83,7 +83,6 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
 
             // NOTE: this ultimately updates visualization which then triggers the useEffect below so we don't need to call fetchAnalyticsData directly here.
             // By doing so we cause a double fetch.
-            //onDataSorted?.(newSorting)
             if (onDataSorted) {
                 onDataSorted(newSorting)
             } else {

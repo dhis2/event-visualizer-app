@@ -17,6 +17,8 @@ export const InterpretationModal: FC = () => {
     const { onCloseInterpretationModal } = useInterpretationModalTogglers()
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
 
+    // No need to store metadata from the interpretaion modal analytics response
+    // The metadata is not accessed by the plugin anyway
     const noop: (metadata: MetadataInput) => void = () => {}
 
     return interpretationId ? (
