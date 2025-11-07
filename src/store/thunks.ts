@@ -10,7 +10,7 @@ import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { getVisualizationUiConfig } from '@modules/get-visualization-ui-config'
 import type { AppDispatch } from '@types'
 
-export type AppAsyncThunkConfig = {
+type AppAsyncThunkConfig = {
     state: RootState
     dispatch: AppDispatch
     extra: ThunkExtraArg

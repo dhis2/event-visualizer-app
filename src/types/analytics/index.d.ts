@@ -53,7 +53,7 @@ declare module '@dhis2/analytics' {
 
     export const layoutGetDimension: (
         vis: CurrentVisualization,
-        dimensionId: string // TODO replace with DimensionId type? e.g. 'ou', 'pe', 'dx'
+        dimensionId: string // TODO: replace with DimensionId type? e.g. 'ou', 'pe', 'dx'
     ) => DimensionArray[number] | undefined
 
     export const layoutGetAxisIdDimensionIdsObject: (
