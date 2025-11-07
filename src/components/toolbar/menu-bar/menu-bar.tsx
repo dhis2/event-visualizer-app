@@ -15,13 +15,11 @@ import {
 } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
 import {
-    isLayoutValidForSave,
-    isLayoutValidForSaveAs,
-} from '@modules/layout-validation'
-import {
-    isVisualizationSaved,
     getVisualizationState,
     getSaveableVisualization,
+    isVisualizationSaved,
+    isVisualizationValidForSave,
+    isVisualizationValidForSaveAs,
 } from '@modules/visualization'
 import {
     getCurrentVis,
@@ -224,7 +222,7 @@ export const MenuBar: FC = () => {
                     ['UNSAVED', 'DIRTY'].includes(
                         getVisualizationState(savedVis, currentVis)
                     ) &&
-                    isLayoutValidForSave({
+                    isVisualizationValidForSave({
                         ...currentVis,
                         legacy: savedVis?.legacy,
                     })
@@ -232,7 +230,7 @@ export const MenuBar: FC = () => {
                         : undefined
                 }
                 onSaveAs={
-                    isLayoutValidForSaveAs(currentVis)
+                    isVisualizationValidForSaveAs(currentVis)
                         ? (nameAndDescription) => onSaveAs(nameAndDescription)
                         : undefined
                 }
