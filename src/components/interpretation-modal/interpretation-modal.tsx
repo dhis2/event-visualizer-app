@@ -11,15 +11,17 @@ import { useAppSelector } from '@hooks'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 
+// The onResponsesReceived prop is required in the analytics component but there is
+// no need to store metadata from the interpretation modal analytics response when viewing an interpretation.
+// The metadata is not accessed by the plugin anyway.
+// This is a noop.
+const onResponsesReceivedNoop: (metadata: MetadataInput) => void = () => {}
+
 export const InterpretationModal: FC = () => {
     const savedVis = useAppSelector(getSavedVis)
     const { interpretationId, initialFocus } = useInterpretationModalState()
     const { onCloseInterpretationModal } = useInterpretationModalTogglers()
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
-
-    // No need to store metadata from the interpretaion modal analytics response
-    // The metadata is not accessed by the plugin anyway
-    const noop: (metadata: MetadataInput) => void = () => {}
 
     return interpretationId ? (
         <AnalyticsInterpretationModal
@@ -30,7 +32,7 @@ export const InterpretationModal: FC = () => {
             downloadMenuComponent={ModalDownloadDropdown}
             initialFocus={initialFocus}
             onClose={onCloseInterpretationModal}
-            onResponsesReceived={noop}
+            onResponsesReceived={onResponsesReceivedNoop}
         />
     ) : null
 }
