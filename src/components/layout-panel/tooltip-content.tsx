@@ -50,6 +50,9 @@ export const TooltipContent: FC<TooltipContentProps> = ({
             typeof programStageId === 'string'
                 ? getMetadataItem(programStageId)
                 : null
+        /* TODO: Decide if the code below can be removed. I would say YES
+         * we need to make sure the stage is in the metadata instead looking
+         * it up in the program metadata */
         const programStageFromProgram =
             programMetadata &&
             isProgramMetadataItem(programMetadata) &&
