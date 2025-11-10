@@ -36,7 +36,7 @@ describe('MetadataStore', () => {
               "name": "Bimonths this year",
             },
             "GieVkTxp4HH": {
-              "dimensionType": "PROGRAM_DATA_ELEMENT",
+              "dimensionType": "DATA_ELEMENT",
               "id": "GieVkTxp4HH",
               "name": "Height in cm",
               "valueType": "NUMBER",
@@ -53,7 +53,7 @@ describe('MetadataStore', () => {
               "path": "/ImspTQPwCqd",
             },
             "K6uUAvq500H": {
-              "dimensionType": "PROGRAM_DATA_ELEMENT",
+              "dimensionType": "DATA_ELEMENT",
               "id": "K6uUAvq500H",
               "name": "Diagnosis (ICD-10)",
               "optionSet": "eUZ79clX7y1",
@@ -153,7 +153,7 @@ describe('MetadataStore', () => {
               "name": "Quarters this year",
             },
             "SWfdB5lX0fk": {
-              "dimensionType": "PROGRAM_DATA_ELEMENT",
+              "dimensionType": "DATA_ELEMENT",
               "id": "SWfdB5lX0fk",
               "name": "Pregnant",
               "valueType": "BOOLEAN",
@@ -247,13 +247,13 @@ describe('MetadataStore', () => {
               "programType": "WITHOUT_REGISTRATION",
             },
             "eMyVanycQSC": {
-              "dimensionType": "PROGRAM_DATA_ELEMENT",
+              "dimensionType": "DATA_ELEMENT",
               "id": "eMyVanycQSC",
               "name": "Admission Date",
               "valueType": "DATE",
             },
             "fWIAEtYVEGk": {
-              "dimensionType": "PROGRAM_DATA_ELEMENT",
+              "dimensionType": "DATA_ELEMENT",
               "id": "fWIAEtYVEGk",
               "name": "Mode of Discharge",
               "optionSet": "iDFPKpFTiVw",
@@ -270,20 +270,20 @@ describe('MetadataStore', () => {
               "name": "BMI female under 5 y",
             },
             "msodh3rEMJa": {
-              "dimensionType": "PROGRAM_DATA_ELEMENT",
+              "dimensionType": "DATA_ELEMENT",
               "id": "msodh3rEMJa",
               "name": "Discharge Date",
               "valueType": "DATE",
             },
             "oZg33kd9taw": {
-              "dimensionType": "PROGRAM_DATA_ELEMENT",
+              "dimensionType": "DATA_ELEMENT",
               "id": "oZg33kd9taw",
               "name": "Gender",
               "optionSet": "pC3N9N77UmT",
               "valueType": "TEXT",
             },
             "qrur9Dvnyt5": {
-              "dimensionType": "PROGRAM_DATA_ELEMENT",
+              "dimensionType": "DATA_ELEMENT",
               "id": "qrur9Dvnyt5",
               "name": "Age in years",
               "valueType": "INTEGER",
@@ -299,7 +299,7 @@ describe('MetadataStore', () => {
               "name": "Average age of deaths",
             },
             "vV9UWAZohSf": {
-              "dimensionType": "PROGRAM_DATA_ELEMENT",
+              "dimensionType": "DATA_ELEMENT",
               "id": "vV9UWAZohSf",
               "name": "Weight in kg",
               "valueType": "INTEGER_POSITIVE",

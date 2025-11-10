@@ -14,6 +14,7 @@ import {
     getTimeDimensions,
     getUiDimensionType,
 } from '@modules/dimension'
+import { transformVisualization } from '@modules/visualization'
 import type {
     DimensionArray,
     DimensionId,
@@ -291,15 +292,19 @@ export const supplementDimensionMetadata = (
 export const extractMetadataFromVisualization = (
     visualization: SavedVisualization
 ): MetadataInput => {
+    const transformedVisualization = transformVisualization(
+        visualization
+    ) as SavedVisualization
+
     /* Some of the collected metadata could contains duplicated IDs
      * (e.g. `programStage`) and these object may contain different fields.
      * So these objects should be merged rather than overwritten. */
     const sources: ExtractedMetadatInput[] = [
-        extractTrackedEntityTypeMetadata(visualization),
-        extractFixedDimensionsMetadata(visualization),
-        extractProgramDimensionsMetadata(visualization),
-        extractDimensionMetadata(visualization),
-        extractProgramMetadata(visualization),
+        extractTrackedEntityTypeMetadata(transformedVisualization),
+        extractFixedDimensionsMetadata(transformedVisualization),
+        extractProgramDimensionsMetadata(transformedVisualization),
+        extractDimensionMetadata(transformedVisualization),
+        extractProgramMetadata(transformedVisualization),
     ]
     const baseMetadataInput: MetadataInput = sources.reduce(
         (acc, obj) => deepmerge(acc, obj),
@@ -308,12 +313,12 @@ export const extractMetadataFromVisualization = (
 
     const supplementedMetadataInput = supplementDimensionMetadata(
         baseMetadataInput,
-        visualization
+        transformedVisualization
     )
 
     addPathToOrganisationUnitMetadataItems(
         supplementedMetadataInput,
-        visualization.parentGraphMap
+        transformedVisualization.parentGraphMap
     )
     return supplementedMetadataInput
 }
