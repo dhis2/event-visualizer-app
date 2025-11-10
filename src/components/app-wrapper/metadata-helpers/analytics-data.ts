@@ -7,6 +7,19 @@ export const extractMetadataFromAnalyticsResponse = (
     dimensions: AnalyticsResponseMetadataDimensions
 ) =>
     Object.entries(items).reduce((acc, [key, value]) => {
+        /* Do not add optionSets from analytics response data, because the options
+         * array could be incomplete, and the items are lacking a name field.
+         * A correct version of optionSet will be present in the metadata store already
+         * because they are requested after the visualization response is received. */
+        if (
+            !isUserOrgUnitMetadataInputItem(value) &&
+            isMetadataItem(value) &&
+            'options' in value &&
+            Array.isArray(value.options)
+        ) {
+            return acc
+        }
+
         // Ensure the "nested ID" is used consistently
         if (key.includes('.')) {
             acc[key] = {
