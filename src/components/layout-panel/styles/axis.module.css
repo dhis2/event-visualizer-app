@@ -2,6 +2,19 @@
     display: flex;
     padding-block: 2px 4px;
     padding-inline: 6px 4px;
+    background-color: white;
+}
+
+.axisContainer.columns {
+    grid-area: columns;
+}
+
+.axisContainer.rows {
+    grid-area: rows;
+}
+
+.axisContainer.filters {
+    grid-area: filters;
 }
 
 .label {

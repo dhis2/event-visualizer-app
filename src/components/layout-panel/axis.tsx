@@ -1,3 +1,4 @@
+import cx from 'classnames'
 import type { FC } from 'react'
 import { Chip } from './chip'
 import classes from './styles/axis.module.css'
@@ -23,7 +24,14 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds }) => {
     })
 
     return (
-        <div className={classes.axisContainer} data-test={`axis-${axisId}`}>
+        <div
+            className={cx(classes.axisContainer, {
+                [classes.columns]: axisId === 'columns',
+                [classes.rows]: axisId === 'rows',
+                [classes.filters]: axisId === 'filters',
+            })}
+            data-test={`axis-${axisId}`}
+        >
             <div className={classes.label}>{getAxisName(axisId)}</div>
             <div className={classes.content}>
                 {dimensions.map((dimension, i) => (
