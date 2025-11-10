@@ -1,4 +1,4 @@
-import { LineListLayout } from '../line-list-layout'
+import { LayoutPanel } from '../layout-panel'
 import { uiSlice, initialState as uiSliceInitialState } from '@store/ui-slice'
 import {
     visUiConfigSlice,
@@ -41,7 +41,7 @@ const createMockOptions = (visUiConfigTestState = {}): MockOptions => ({
     },
 })
 
-describe('<LineListLayout />', () => {
+describe('<LayoutPanel />', () => {
     it('renders with LINE_LIST visualization type, EVENT input type, 2 column chips and 1 filter chip', () => {
         /* TODO: We don't need a function here we can just work with a static `mockOptions`
          * const but it is currently impossible to do so, due to the issue below */
@@ -70,13 +70,13 @@ describe('<LineListLayout />', () => {
 
         cy.mount(
             <MockAppWrapper {...mockOptions}>
-                <LineListLayout />
+                <LayoutPanel />
             </MockAppWrapper>
         )
 
         // Check that 2 groups are rendered
-        cy.get('[class*="groupLeft"]').should('be.visible')
-        cy.get('[class*="groupRight"]').should('be.visible')
+        cy.get('[class*="columns"]').should('be.visible')
+        cy.get('[class*="filters"]').should('be.visible')
 
         // Check that both axes are rendered
         cy.getByDataTest('axis-columns').should('be.visible')
