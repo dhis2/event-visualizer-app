@@ -3,10 +3,7 @@ import { useCallback, useMemo, type FC } from 'react'
 import type { LayoutDimension } from './chip'
 import styles from './styles/tooltip.module.css'
 import { isProgramMetadataItem } from '@components/app-wrapper/metadata-helpers/type-guards'
-import {
-    useMetadataItem,
-    useMetadataStore,
-} from '@components/app-wrapper/metadata-provider'
+import { useMetadataStore } from '@components/app-wrapper/metadata-provider'
 import { ouIdHelper } from '@dhis2/analytics'
 import { useAppSelector } from '@hooks'
 import {
@@ -46,20 +43,27 @@ export const TooltipContent: FC<TooltipContentProps> = ({
             }),
         [dimension.id, outputType]
     )
-    const programMetadata = useMetadataItem(programId ?? '')
-    const { programName, stageName } = useMemo(
-        () =>
-            !programMetadata || !isProgramMetadataItem(programMetadata)
-                ? { programName: '', stageName: '' }
-                : {
-                      programName: programMetadata.name,
-                      stageName:
-                          programMetadata.programStages?.find(
-                              (stage) => stage.id === programStageId
-                          )?.name ?? '',
-                  },
-        [programMetadata, programStageId]
-    )
+    const { programName, stageName } = useMemo(() => {
+        const programMetadata =
+            typeof programId === 'string' ? getMetadataItem(programId) : null
+        const programStageMetadata =
+            typeof programStageId === 'string'
+                ? getMetadataItem(programStageId)
+                : null
+        const programStageFromProgram =
+            programMetadata &&
+            isProgramMetadataItem(programMetadata) &&
+            typeof programStageId === 'string'
+                ? programMetadata.programStages?.find(
+                      (stage) => stage.id === programStageId
+                  )
+                : null
+        const programStage = programStageMetadata ?? programStageFromProgram
+        return {
+            programName: programMetadata?.name ?? '',
+            stageName: programStage?.name ?? '',
+        }
+    }, [programId, programStageId, getMetadataItem])
 
     const getNameList = useCallback(
         (idList: Array<string>, label: string) =>
@@ -181,6 +185,8 @@ export const TooltipContent: FC<TooltipContentProps> = ({
             )
         }
     }
+
+    console.log(dimension.dimensionType)
 
     switch (dimension.dimensionType) {
         case 'CATEGORY':
