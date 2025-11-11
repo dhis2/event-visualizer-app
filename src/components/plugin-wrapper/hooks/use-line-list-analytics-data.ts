@@ -5,8 +5,14 @@ import {
     getAdaptedVisualization,
     getAnalyticsEndpoint,
 } from './query-tools-line-list.js'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers/types.js'
-import type { LineListAnalyticsData } from '@components/line-list/types.js'
+import type {
+    AnyMetadataItemInput,
+    UserOrgUnitMetadataItem,
+} from '@components/app-wrapper/metadata-helpers/types.js'
+import type {
+    LineListAnalyticsData,
+    LineListAnalyticsDataHeader,
+} from '@components/line-list/types.js'
 import { Analytics } from '@dhis2/analytics'
 import { getBooleanValues } from '@modules/conditions'
 import {
@@ -165,7 +171,10 @@ const fetchLegendSets = async ({ legendSetIds, dataEngine }) => {
     return legendSets
 }
 
-const extractHeaders = (analyticsResponse, outputType: OutputType) => {
+const extractHeaders = (
+    analyticsResponse,
+    outputType: OutputType
+): Array<LineListAnalyticsDataHeader> => {
     const defaultMetadata = getMainDimensions(outputType)
 
     const dimensionIds = analyticsResponse.headers.map((header) => {
@@ -311,13 +320,27 @@ const extractRows = (analyticsResponse, headers) => {
 
 const extractRowContext = (analyticsResponse) => analyticsResponse.rowContext
 
+export type AnalyticsResponseMetadataItems = Record<
+    string,
+    AnyMetadataItemInput
+> & {
+    USER_ORG_UNIT?: UserOrgUnitMetadataItem
+}
+
+export type AnalyticsResponseMetadataDimensions = Record<string, string[]>
+export type OnAnalyticsResponseReceivedCb = (
+    items: AnalyticsResponseMetadataItems,
+    dimensions: AnalyticsResponseMetadataDimensions,
+    headers: Array<LineListAnalyticsDataHeader>
+) => void
+
 type FetchAnalyticsDataParams = {
     visualization: CurrentVisualization
     filters?: Record<string, unknown>
     displayProperty: CurrentUser['settings']['displayProperty']
     pageSize?: number
     page?: number
-    onResponseReceived: (metadata: MetadataInput) => void
+    onResponseReceived: OnAnalyticsResponseReceivedCb
 }
 type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
 type AnalyticsDataState = {
@@ -384,9 +407,9 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 const headerLegendSetMap: Record<string, string> =
                     headers.reduce((acc, header) => {
                         const metadataItem =
-                            analyticsResponse.metaData.items[header.name]
+                            analyticsResponse.metaData.items[header.name!]
                         if (typeof metadataItem?.legendSet === 'string') {
-                            acc[header.name] = metadataItem.legendSet
+                            acc[header.name!] = metadataItem.legendSet
                         }
                         return acc
                     }, {})
@@ -419,7 +442,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                                     header.legendSet = legendSets.find(
                                         (legendSet) =>
                                             legendSet.id ===
-                                            headerLegendSetMap[header.name]
+                                            headerLegendSetMap[header.name!]
                                     )
                                     break
                                 }
@@ -435,7 +458,11 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     isFetching: false,
                 })
 
-                onResponseReceived(analyticsResponse.metaData.items)
+                onResponseReceived(
+                    analyticsResponse.metaData.items,
+                    analyticsResponse.metaData.dimensions,
+                    headers
+                )
             } catch (error) {
                 setState({
                     data: null,

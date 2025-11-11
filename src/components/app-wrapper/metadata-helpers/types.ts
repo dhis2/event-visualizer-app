@@ -1,14 +1,34 @@
 import type { MetadataItem, ProgramType, OptionSet, LegendSet } from '@types'
 
-// OptionSet type from the OpenApiSpecs is very permissive, but we require name and id
-export type OptionSetMetadataItem = OptionSet & {
+type OptionSetOption = Omit<OptionSet['options'], 'id' | 'code' | 'name'> & {
+    id: string
+    code: string
+    name: string
+}
+
+type LegendSetLegend = Omit<LegendSet['legends'], 'id' | 'name'> & {
     id: string
     name: string
 }
 
-export type LegendSetMetadataItem = Required<
-    Pick<LegendSet, 'id' | 'name' | 'legends'>
->
+export type OptionSetMetadataItem = Omit<
+    OptionSet,
+    'id' | 'options' | 'valueType' | 'version'
+> & {
+    // `id` and `options` are required fields
+    id: string
+    options: Array<OptionSetOption>
+    /* `valueType` and `version` need to be made optional, because when loading a saved
+     * visualization, the option set metadata object is nothing more than a list of options */
+    valueType?: OptionSet['valueType']
+    version?: OptionSet['version']
+}
+
+export type LegendSetMetadataItem = Omit<LegendSet, 'id' | 'legends'> & {
+    id: string
+    legends: Array<LegendSetLegend>
+    name?: string
+}
 
 export type OrganisationUnitMetadataItem = Omit<MetadataItem, 'uid'> & {
     id: string
@@ -48,6 +68,7 @@ export type AnyMetadataItemInput =
     | OptionSetMetadataItem
     | LegendSetMetadataItem
     | OrganisationUnitMetadataItem
+    | UserOrgUnitMetadataInputItem
 
 export type NormalizedMetadataItem = Omit<MetadataItem, 'uid'> & { id: string }
 
@@ -55,8 +76,10 @@ export type NormalizedMetadataItem = Omit<MetadataItem, 'uid'> & { id: string }
 export type MetadataStoreItem =
     | NormalizedMetadataItem
     | OptionSetMetadataItem
+    | LegendSetMetadataItem
     | ProgramMetadataItem
     | ProgramStageMetadataItem
+    | UserOrgUnitMetadataItem
 
 export type MetadataInput =
     | AnyMetadataItemInput
@@ -64,3 +87,16 @@ export type MetadataInput =
     | Record<string, AnyMetadataItemInput>
 
 export type Subscriber = () => void
+
+export type UserOrgUnitMetadataInputItem = {
+    organisationUnits: string[]
+}
+
+export type UserOrgUnitMetadataItem = UserOrgUnitMetadataInputItem & {
+    name: string
+    id: string
+}
+
+export type AnalyticsMetadataInput = Record<string, AnyMetadataItemInput> & {
+    USER_ORG_UNIT?: { organisationUnits: string[] }
+}

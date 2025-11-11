@@ -1,8 +1,9 @@
-import { expect, describe, it } from 'vitest'
+import { expect, describe, it, beforeEach } from 'vitest'
 import inpatientCasesVisualization from '../__fixtures__/-visualization-inpatient-cases-last-quarter-case.json'
 import inpatientVisitVisualization from '../__fixtures__/visualization-inpatient-visit-overview-this-year-bo.json'
 import { getInitialMetadata, type MetadataStoreItem } from '../metadata-helpers'
 import { MetadataStore } from '../metadata-store'
+import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import type { AppCachedData, SavedVisualization } from '@types'
 
 class TestMetadataStore extends MetadataStore {
@@ -36,16 +37,15 @@ describe('MetadataStore', () => {
               "name": "Bimonths this year",
             },
             "GieVkTxp4HH": {
+              "dimensionType": "DATA_ELEMENT",
               "id": "GieVkTxp4HH",
               "name": "Height in cm",
-              "options": [],
-              "style": {},
+              "valueType": "NUMBER",
             },
             "HS8QXAJtuKV": {
+              "dimensionType": "PROGRAM_INDICATOR",
               "id": "HS8QXAJtuKV",
               "name": "Inpatient bed days average",
-              "options": [],
-              "style": {},
             },
             "ImspTQPwCqd": {
               "displayName": "Sierra Leone",
@@ -54,16 +54,16 @@ describe('MetadataStore', () => {
               "path": "/ImspTQPwCqd",
             },
             "K6uUAvq500H": {
+              "dimensionType": "DATA_ELEMENT",
               "id": "K6uUAvq500H",
               "name": "Diagnosis (ICD-10)",
-              "options": [],
-              "style": {},
+              "optionSet": "eUZ79clX7y1",
+              "valueType": "TEXT",
             },
             "Kswd1r4qWLh": {
+              "dimensionType": "PROGRAM_INDICATOR",
               "id": "Kswd1r4qWLh",
               "name": "Average height of boys at 10 years old",
-              "options": [],
-              "style": {},
             },
             "LAST_12_MONTHS": {
               "id": "LAST_12_MONTHS",
@@ -154,10 +154,10 @@ describe('MetadataStore', () => {
               "name": "Quarters this year",
             },
             "SWfdB5lX0fk": {
+              "dimensionType": "DATA_ELEMENT",
               "id": "SWfdB5lX0fk",
               "name": "Pregnant",
-              "options": [],
-              "style": {},
+              "valueType": "BOOLEAN",
             },
             "THIS_BIMONTH": {
               "id": "THIS_BIMONTH",
@@ -192,10 +192,9 @@ describe('MetadataStore', () => {
               "name": "Today",
             },
             "Thkx2BnO5Kq": {
+              "dimensionType": "PROGRAM_INDICATOR",
               "id": "Thkx2BnO5Kq",
               "name": "BMI male",
-              "options": [],
-              "style": {},
             },
             "USER_ORGUNIT": {
               "id": "USER_ORGUNIT",
@@ -214,16 +213,14 @@ describe('MetadataStore', () => {
               "name": "Weeks this year",
             },
             "XCMi7Wvnplm": {
+              "dimensionType": "PROGRAM_INDICATOR",
               "id": "XCMi7Wvnplm",
               "name": "BMI female",
-              "options": [],
-              "style": {},
             },
             "Y7hKDSuqEtH": {
+              "dimensionType": "PROGRAM_INDICATOR",
               "id": "Y7hKDSuqEtH",
               "name": "BMI male under 5 y",
-              "options": [],
-              "style": {},
             },
             "YESTERDAY": {
               "id": "YESTERDAY",
@@ -238,6 +235,7 @@ describe('MetadataStore', () => {
             },
             "eBAyeGv0exc": {
               "displayIncidentDate": false,
+              "displayIncidentDateLabel": "Date of Discharge",
               "id": "eBAyeGv0exc",
               "name": "Inpatient morbidity and mortality",
               "programStages": [
@@ -250,70 +248,67 @@ describe('MetadataStore', () => {
               "programType": "WITHOUT_REGISTRATION",
             },
             "eMyVanycQSC": {
+              "dimensionType": "DATA_ELEMENT",
               "id": "eMyVanycQSC",
               "name": "Admission Date",
-              "options": [],
-              "style": {},
+              "valueType": "DATE",
             },
             "fWIAEtYVEGk": {
+              "dimensionType": "DATA_ELEMENT",
               "id": "fWIAEtYVEGk",
               "name": "Mode of Discharge",
-              "options": [],
-              "style": {},
+              "optionSet": "iDFPKpFTiVw",
+              "valueType": "TEXT",
             },
             "gWxh7DiRmG7": {
+              "dimensionType": "PROGRAM_INDICATOR",
               "id": "gWxh7DiRmG7",
               "name": "Average height of girls at 5 years old",
-              "options": [],
-              "style": {},
             },
             "hlPt8H4bUOQ": {
+              "dimensionType": "PROGRAM_INDICATOR",
               "id": "hlPt8H4bUOQ",
               "name": "BMI female under 5 y",
-              "options": [],
-              "style": {},
             },
             "msodh3rEMJa": {
+              "dimensionType": "DATA_ELEMENT",
               "id": "msodh3rEMJa",
               "name": "Discharge Date",
-              "options": [],
-              "style": {},
+              "valueType": "DATE",
             },
             "oZg33kd9taw": {
+              "dimensionType": "DATA_ELEMENT",
               "id": "oZg33kd9taw",
               "name": "Gender",
-              "options": [],
-              "style": {},
+              "optionSet": "pC3N9N77UmT",
+              "valueType": "TEXT",
             },
             "qrur9Dvnyt5": {
+              "dimensionType": "DATA_ELEMENT",
               "id": "qrur9Dvnyt5",
               "name": "Age in years",
-              "options": [],
-              "style": {},
+              "valueType": "INTEGER",
             },
             "sGna2pquXOO": {
+              "dimensionType": "PROGRAM_INDICATOR",
               "id": "sGna2pquXOO",
               "name": "Average age of female discharges",
-              "options": [],
-              "style": {},
             },
             "tUdBD1JDxpn": {
+              "dimensionType": "PROGRAM_INDICATOR",
               "id": "tUdBD1JDxpn",
               "name": "Average age of deaths",
-              "options": [],
-              "style": {},
             },
             "vV9UWAZohSf": {
+              "dimensionType": "DATA_ELEMENT",
               "id": "vV9UWAZohSf",
               "name": "Weight in kg",
-              "options": [],
-              "style": {},
+              "valueType": "INTEGER_POSITIVE",
             },
             "x7PaHGvgWY2": {
+              "dimensionType": "PROGRAM_INDICATOR",
               "id": "x7PaHGvgWY2",
               "name": "BMI",
-              "options": [],
-              "style": {},
             },
           }
         `)
@@ -422,5 +417,177 @@ describe('MetadataStore', () => {
             updatedName
         )
         expect(metadataStore.getMetadataItem(id)).toHaveProperty('path', path)
+    })
+
+    describe('addAnalyticsResponseMetadata', () => {
+        let metadataStore: TestMetadataStore
+
+        beforeEach(() => {
+            metadataStore = new TestMetadataStore(
+                getInitialMetadata(),
+                rootOrgUnits
+            )
+            metadataStore.setVisualizationMetadata(
+                inpatientVisitVisualization as unknown as SavedVisualization
+            )
+        })
+
+        it('adds metadata items with nested IDs correctly', () => {
+            const analyticsItems = {
+                'dataElement.programStage1': {
+                    uid: 'originalUid',
+                    name: 'Nested Data Element',
+                    valueType: 'TEXT',
+                },
+            }
+            const dimensions = {}
+            const headers: Array<LineListAnalyticsDataHeader> = []
+
+            metadataStore.addAnalyticsResponseMetadata(
+                analyticsItems,
+                dimensions,
+                headers
+            )
+
+            const snapshot = metadataStore.getMetadataSnapshot()
+            expect(snapshot['dataElement.programStage1']).toEqual({
+                id: 'dataElement.programStage1',
+                name: 'Nested Data Element',
+                valueType: 'TEXT',
+            })
+        })
+
+        it('adds regular metadata items correctly', () => {
+            const analyticsItems = {
+                regularItem: {
+                    uid: 'regularItem',
+                    name: 'Regular Item',
+                    valueType: 'NUMBER',
+                },
+            }
+            const dimensions = {}
+            const headers: Array<LineListAnalyticsDataHeader> = []
+
+            metadataStore.addAnalyticsResponseMetadata(
+                analyticsItems,
+                dimensions,
+                headers
+            )
+
+            const snapshot = metadataStore.getMetadataSnapshot()
+            expect(snapshot.regularItem).toEqual({
+                id: 'regularItem',
+                name: 'Regular Item',
+                valueType: 'NUMBER',
+            })
+        })
+
+        it('adds legend set metadata when data element has legendSet', () => {
+            const legendSetId = 'legendSet123'
+            const analyticsItems = {
+                dataElement1: {
+                    uid: 'dataElement1',
+                    name: 'Data Element with Legend',
+                    valueType: 'NUMBER',
+                    legendSet: legendSetId,
+                },
+                legend1: {
+                    uid: 'legend1',
+                    name: 'Legend 1',
+                },
+                legend2: {
+                    uid: 'legend2',
+                    name: 'Legend 2',
+                },
+            }
+            const dimensions = {
+                dataElement1: ['legend1', 'legend2'],
+            }
+            const headers: Array<LineListAnalyticsDataHeader> = []
+
+            metadataStore.addAnalyticsResponseMetadata(
+                analyticsItems,
+                dimensions,
+                headers
+            )
+
+            const snapshot = metadataStore.getMetadataSnapshot()
+            expect(snapshot.dataElement1).toEqual({
+                id: 'dataElement1',
+                name: 'Data Element with Legend',
+                valueType: 'NUMBER',
+                legendSet: legendSetId,
+            })
+            expect(snapshot[legendSetId]).toEqual({
+                id: legendSetId,
+                legends: [
+                    { id: 'legend1', name: 'Legend 1' },
+                    { id: 'legend2', name: 'Legend 2' },
+                ],
+            })
+        })
+
+        it('updates metadata names from headers', () => {
+            const analyticsItems = {
+                ou: {
+                    uid: 'ou',
+                    name: 'Organisation Unit',
+                    valueType: 'TEXT',
+                },
+            }
+            const dimensions = {}
+            const headers = [
+                {
+                    name: 'ouname',
+                    column: 'Organisation Unit UPDATED',
+                    valueType: 'TEXT',
+                    type: 'java.lang.String',
+                    hidden: false,
+                    meta: true,
+                    legendSet: { id: '', name: '', legends: [] },
+                } as unknown as LineListAnalyticsDataHeader,
+            ]
+
+            metadataStore.addAnalyticsResponseMetadata(
+                analyticsItems,
+                dimensions,
+                headers
+            )
+
+            const snapshot = metadataStore.getMetadataSnapshot()
+            expect(snapshot.ou).toEqual({
+                id: 'ou',
+                name: 'Organisation Unit UPDATED',
+                valueType: 'TEXT',
+            })
+        })
+
+        it('creates new metadata items from headers when not present', () => {
+            const analyticsItems = {}
+            const dimensions = {}
+            const headers: Array<LineListAnalyticsDataHeader> = [
+                {
+                    name: 'eventdate',
+                    column: 'Report date',
+                    valueType: 'DATETIME',
+                    type: 'java.time.LocalDateTime',
+                    hidden: false,
+                    meta: true,
+                    legendSet: { id: '', name: '', legends: [] },
+                } as unknown as LineListAnalyticsDataHeader,
+            ]
+
+            metadataStore.addAnalyticsResponseMetadata(
+                analyticsItems,
+                dimensions,
+                headers
+            )
+
+            const snapshot = metadataStore.getMetadataSnapshot()
+            expect(snapshot.eventDate).toEqual({
+                id: 'eventDate',
+                name: 'Report date',
+            })
+        })
     })
 })

@@ -1,8 +1,10 @@
 //import { Center, CircularLoader } from '@dhis2/ui'
 import type { FC } from 'react'
 import { useCallback, useEffect } from 'react'
-import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
+import {
+    useLineListAnalyticsData,
+    type OnAnalyticsResponseReceivedCb,
+} from './hooks/use-line-list-analytics-data'
 import { LineList } from '@components/line-list'
 import type { LineListAnalyticsData } from '@components/line-list'
 import type {
@@ -20,7 +22,7 @@ type LineListPluginProps = {
     isInDashboard: boolean
     isInModal: boolean
     onDataSorted?: (sorting: DataSortPayload | undefined) => void
-    onResponseReceived: (metadata: MetadataInput) => void
+    onResponseReceived: OnAnalyticsResponseReceivedCb
 }
 
 export const LineListPlugin: FC<LineListPluginProps> = ({

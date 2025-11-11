@@ -134,6 +134,16 @@ export const useAddMetadata = (): MetadataStore['addMetadata'] => {
 
     return addMetadata
 }
+export const useAddAnalyticsResponseMetadata =
+    (): MetadataStore['addAnalyticsResponseMetadata'] => {
+        const metadataStore = useContext(MetadataContext)!
+
+        const [addAnalyticsResponseMetadata] = useState(() =>
+            metadataStore.addAnalyticsResponseMetadata.bind(metadataStore)
+        )
+
+        return addAnalyticsResponseMetadata
+    }
 
 export type UseMetadataStoreReturnValue = Pick<
     MetadataStore,

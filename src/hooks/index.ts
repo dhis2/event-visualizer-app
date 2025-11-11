@@ -18,6 +18,7 @@ export {
     useMetadataItem,
     useMetadataItems,
     useAddMetadata,
+    useAddAnalyticsResponseMetadata,
     useMetadataStore,
 } from '@components/app-wrapper/metadata-provider'
 

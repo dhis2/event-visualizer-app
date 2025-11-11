@@ -7,6 +7,8 @@ import type {
     OrganisationUnitMetadataItem,
     MetadataStoreItem,
     LegendSetMetadataItem,
+    UserOrgUnitMetadataItem,
+    UserOrgUnitMetadataInputItem,
 } from './types'
 import type { MetadataItem } from '@types'
 
@@ -37,7 +39,8 @@ export const isSingleMetadataItemInput = (
         isProgramStageMetadataItem(item) ||
         isOptionSetMetadataItem(item) ||
         isLegendSetMetadataItem(item) ||
-        isOrganisationUnitMetadataItem(item)
+        isOrganisationUnitMetadataItem(item) ||
+        isUserOrgUnitMetadataInputItem(item)
     )
 }
 
@@ -105,9 +108,8 @@ export const isOptionSetMetadataItem = (
         isObject(input) &&
         'options' in input &&
         'id' in input &&
-        'name' in input &&
         isPopulatedString(input.id) &&
-        isPopulatedString(input.name)
+        Array.isArray(input.options)
     )
 }
 
@@ -117,10 +119,8 @@ export function isLegendSetMetadataItem(
     return (
         isObject(input) &&
         'id' in input &&
-        'name' in input &&
         'legends' in input &&
         isPopulatedString(input.id) &&
-        isPopulatedString(input.name) &&
         Array.isArray(input.legends)
     )
 }
@@ -134,5 +134,30 @@ export const isOrganisationUnitMetadataItem = (
         'path' in input &&
         isPopulatedString(input.id) &&
         isPopulatedString(input.path)
+    )
+}
+
+export const isUserOrgUnitMetadataItem = (
+    input: unknown
+): input is UserOrgUnitMetadataItem => {
+    return (
+        isObject(input) &&
+        'organisationUnits' in input &&
+        'id' in input &&
+        'name' in input &&
+        Array.isArray(input.organisationUnits) &&
+        isPopulatedString(input.id) &&
+        isPopulatedString(input.name)
+    )
+}
+
+export const isUserOrgUnitMetadataInputItem = (
+    input: unknown
+): input is UserOrgUnitMetadataInputItem => {
+    return (
+        isObject(input) &&
+        'organisationUnits' in input &&
+        Array.isArray(input.organisationUnits) &&
+        Object.keys(input).length === 1
     )
 }

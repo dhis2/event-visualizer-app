@@ -1,5 +1,6 @@
 import i18n from '@dhis2/d2-i18n'
 import deepmerge from 'deepmerge'
+import { isUserOrgUnitMetadataInputItem } from './type-guards'
 import type {
     AnyMetadataItemInput,
     MetadataInput,
@@ -11,15 +12,18 @@ import {
     getProgramDimensions,
     getTimeDimensionName,
     getTimeDimensions,
+    getUiDimensionType,
 } from '@modules/dimension'
+import { transformVisualization } from '@modules/visualization'
 import type {
+    DimensionArray,
     DimensionId,
     DimensionType,
     InternalDimensionRecord,
     SavedVisualization,
 } from '@types'
 
-type ObjectWithId = { id: string }
+type ObjectWithId = { id: string } | { uid: string }
 type ExtractedMetadatInput = Record<string, AnyMetadataItemInput>
 
 const idsToUids = (
@@ -28,9 +32,11 @@ const idsToUids = (
     Object.entries(extractedMetadatInput).reduce((acc, [key, value]) => {
         acc[key] = {
             ...value,
-            uid: value.id,
+            uid: 'uid' in value ? value.uid : value.id,
         }
-        delete acc[key].id
+        if ('id' in value) {
+            delete acc[key].id
+        }
         return acc
     }, {})
 
@@ -88,7 +94,15 @@ const getDynamicTimeDimensionsMetadata = (
         return acc
     }, {})
 
-const extractTrackedEntityTypeMetadata = (
+const extractAllDimensions = (
+    visualization: SavedVisualization
+): DimensionArray => [
+    ...(visualization.columns || []),
+    ...(visualization.rows || []),
+    ...(visualization.filters || []),
+]
+
+export const extractTrackedEntityTypeMetadata = (
     visualization: SavedVisualization
 ): ExtractedMetadatInput =>
     visualization.trackedEntityType
@@ -100,15 +114,11 @@ const extractTrackedEntityTypeMetadata = (
           }
         : {}
 
-const extractFixedDimensionsMetadata = (
+export const extractFixedDimensionsMetadata = (
     visualization: SavedVisualization
 ): ExtractedMetadatInput => {
     const fixedDimensionsMetadata = {}
-    const dimensions = [
-        ...visualization.columns,
-        ...visualization.rows,
-        ...visualization.filters,
-    ]
+    const dimensions = extractAllDimensions(visualization)
 
     for (const dimension of dimensions.filter(
         (d) =>
@@ -141,7 +151,7 @@ const extractFixedDimensionsMetadata = (
     return idsToUids(fixedDimensionsMetadata)
 }
 
-const extractProgramDimensionsMetadata = (
+export const extractProgramDimensionsMetadata = (
     visualization: SavedVisualization
 ): ExtractedMetadatInput => {
     const programDimensionsMetadata = {}
@@ -176,7 +186,7 @@ const extractProgramDimensionsMetadata = (
     return programDimensionsMetadata
 }
 
-const extractDimensionMetadata = (
+export const extractDimensionMetadata = (
     visualization: SavedVisualization
 ): ExtractedMetadatInput => {
     const dimensionMetadata = Object.entries(
@@ -195,7 +205,7 @@ const extractDimensionMetadata = (
     return idsToUids(dimensionMetadata)
 }
 
-const extractProgramMetadata = (
+export const extractProgramMetadata = (
     visualization: SavedVisualization
 ): ExtractedMetadatInput => {
     const programAndStagesMetadata = {}
@@ -227,28 +237,88 @@ const addPathToOrganisationUnitMetadataItems = (
     }
 }
 
+export const supplementDimensionMetadata = (
+    metadataInput: ExtractedMetadatInput,
+    visualization: SavedVisualization
+) => {
+    const { outputType } = visualization
+    const dimensions = extractAllDimensions(visualization)
+
+    const additionalDimensionMetadata = dimensions.reduce(
+        (metadata, dimension) => {
+            const collectedItem = metadataInput[dimension.dimension]
+
+            if (
+                isUserOrgUnitMetadataInputItem(collectedItem) ||
+                typeof collectedItem?.name !== 'string'
+            ) {
+                return metadata
+            }
+
+            const prefixedId = getFullDimensionId({
+                dimensionId: dimension.dimension,
+                programStageId: dimension.programStage?.id,
+                programId: dimension.program?.id,
+                outputType,
+            })
+
+            const item: MetadataInput = {
+                uid: prefixedId,
+                name: collectedItem.name,
+                dimensionType: getUiDimensionType(
+                    prefixedId,
+                    dimension.dimensionType!
+                ),
+            }
+
+            if (dimension.optionSet?.id) {
+                item.optionSet = dimension.optionSet?.id
+            }
+
+            if (dimension.valueType) {
+                item.valueType = dimension.valueType
+            }
+
+            metadata[prefixedId] = item
+
+            return metadata
+        },
+        {}
+    )
+
+    return deepmerge(metadataInput, additionalDimensionMetadata)
+}
+
 export const extractMetadataFromVisualization = (
     visualization: SavedVisualization
 ): MetadataInput => {
+    const transformedVisualization = transformVisualization(
+        visualization
+    ) as SavedVisualization
+
     /* Some of the collected metadata could contains duplicated IDs
      * (e.g. `programStage`) and these object may contain different fields.
      * So these objects should be merged rather than overwritten. */
     const sources: ExtractedMetadatInput[] = [
-        extractTrackedEntityTypeMetadata(visualization),
-        extractFixedDimensionsMetadata(visualization),
-        extractProgramDimensionsMetadata(visualization),
-        extractDimensionMetadata(visualization),
-        extractProgramMetadata(visualization),
+        extractTrackedEntityTypeMetadata(transformedVisualization),
+        extractFixedDimensionsMetadata(transformedVisualization),
+        extractProgramDimensionsMetadata(transformedVisualization),
+        extractDimensionMetadata(transformedVisualization),
+        extractProgramMetadata(transformedVisualization),
     ]
-    const metadataInput: MetadataInput = sources.reduce(
+    const baseMetadataInput: MetadataInput = sources.reduce(
         (acc, obj) => deepmerge(acc, obj),
         {}
     )
 
-    addPathToOrganisationUnitMetadataItems(
-        metadataInput,
-        visualization.parentGraphMap
+    const supplementedMetadataInput = supplementDimensionMetadata(
+        baseMetadataInput,
+        transformedVisualization
     )
 
-    return metadataInput
+    addPathToOrganisationUnitMetadataItems(
+        supplementedMetadataInput,
+        transformedVisualization.parentGraphMap
+    )
+    return supplementedMetadataInput
 }

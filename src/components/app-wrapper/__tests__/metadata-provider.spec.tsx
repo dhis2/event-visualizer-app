@@ -164,8 +164,6 @@ describe('MetadataProvider rerender behavior', () => {
         expect(result.current.getMetadataItem('x')).toEqual({
             id: 'x',
             name: 'X',
-            options: [],
-            style: {},
         })
         // Array
         act(() => {
@@ -178,14 +176,10 @@ describe('MetadataProvider rerender behavior', () => {
             y: {
                 id: 'y',
                 name: 'Y',
-                options: [],
-                style: {},
             },
             z: {
                 id: 'z',
                 name: 'Z',
-                options: [],
-                style: {},
             },
         })
         // Record
@@ -199,14 +193,10 @@ describe('MetadataProvider rerender behavior', () => {
             a: {
                 id: 'a',
                 name: 'A',
-                options: [],
-                style: {},
             },
             b: {
                 id: 'b',
                 name: 'B',
-                options: [],
-                style: {},
             },
         })
     })
@@ -358,8 +348,6 @@ describe('MetadataProvider initial metadata behavior', () => {
             id: 'CUSTOM_ITEM',
             name: 'Custom Item',
             code: 'CUSTOM',
-            options: [],
-            style: {},
         })
 
         // Verify initial metadata is still intact
@@ -431,14 +419,10 @@ describe('MetadataProvider initial metadata behavior', () => {
         expect(result.current.getMetadataItem('NEW_ITEM_1')).toEqual({
             id: 'NEW_ITEM_1',
             name: 'New Item 1',
-            options: [],
-            style: {},
         })
         expect(result.current.getMetadataItem('NEW_ITEM_2')).toEqual({
             id: 'NEW_ITEM_2',
             name: 'New Item 2',
-            options: [],
-            style: {},
         })
     })
 })
@@ -466,8 +450,6 @@ describe('MetadataProvider API and return value types', () => {
           {
             "id": "a",
             "name": "A",
-            "options": [],
-            "style": {},
           }
         `)
     })
@@ -497,14 +479,10 @@ describe('MetadataProvider API and return value types', () => {
             "a": {
               "id": "a",
               "name": "A",
-              "options": [],
-              "style": {},
             },
             "b": {
               "id": "b",
               "name": "B",
-              "options": [],
-              "style": {},
             },
           }
         `)
