@@ -11,6 +11,27 @@ export const ITEM_SHARING = 'file-menu-sharing'
 export const ITEM_GETLINK = 'file-menu-getlink'
 export const ITEM_DELETE = 'file-menu-delete'
 
+export const createTestVisualization = (title) => {
+    openVisByName('Inpatient: Cases last quarter (case)')
+
+    // capture the current visualization id from the hash route BEFORE saving
+    cy.location('hash').then((hash) => {
+        const visId = hash.replace('#/', '')
+        cy.wrap(visId).as('initialVisId')
+    })
+
+    // save as a new visualization for the test
+    saveVisualizationAs(title)
+
+    // after saving as a new visualization the id should have changed
+    cy.get('@initialVisId').then((initialVisId) => {
+        cy.location('hash').should('not.contain', initialVisId)
+    })
+
+    expectVisTitleToEqual(title)
+    expectTableToBeVisible()
+}
+
 export const resaveVisualization = () => {
     cy.getByDataTest('dhis2-analytics-hovermenubar').contains('File').click()
 
