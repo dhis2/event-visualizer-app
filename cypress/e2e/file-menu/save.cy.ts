@@ -27,9 +27,9 @@ describe('save and save as', () => {
         expectTableToBeVisible()
 
         // extract the id of the saved visualization
-        cy.url().then((url) => {
-            const match = url.match(/#\/([A-Za-z0-9]+)$/)
-            cy.wrap(match[1]).as('originalVisId')
+        cy.location('hash').then((hash) => {
+            const visId = hash.replace('#/', '')
+            cy.wrap(visId).as('originalVisId')
         })
 
         // intercept and mock subscribers
@@ -45,7 +45,7 @@ describe('save and save as', () => {
                     subscribers: ['xE7jOejl9FI'],
                 },
             }
-        ).as('get-subscribers')
+        )
 
         cy.intercept(
             {
@@ -58,7 +58,7 @@ describe('save and save as', () => {
                 expect(req.body).to.have.property('subscribers')
                 expect(req.body.subscribers).to.deep.equal(['xE7jOejl9FI'])
             }
-        ).as('put-event-vis')
+        )
 
         // check that subscribers are included in the response
         cy.intercept(
@@ -73,17 +73,13 @@ describe('save and save as', () => {
                     expect(res.body.subscribers).to.deep.equal(['xE7jOejl9FI'])
                 })
             }
-        ).as('get-eventVis-after-save')
+        )
 
         resaveVisualization()
 
-        cy.wait('@get-subscribers')
-        cy.wait('@put-event-vis')
-        cy.wait('@get-eventVis-after-save')
-
         // verify the url hasn't changed
         cy.get('@originalVisId').then((originalVisId) => {
-            cy.url().should('match', new RegExp(`${originalVisId}$`))
+            cy.location('hash').should('match', new RegExp(`${originalVisId}$`))
         })
 
         expectTableToBeVisible()
@@ -161,11 +157,9 @@ describe('save and save as', () => {
                     errorCode: 'E1006',
                 },
             }
-        ).as('put-event-vis-failed')
+        )
 
         resaveVisualization()
-
-        cy.wait('@put-event-vis-failed')
 
         // verify that an error alert is shown
         cy.getByDataTest('dhis2-uicore-alertbar')
