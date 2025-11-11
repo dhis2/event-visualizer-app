@@ -3,6 +3,7 @@ import inpatientCasesVisualization from '../__fixtures__/-visualization-inpatien
 import inpatientVisitVisualization from '../__fixtures__/visualization-inpatient-visit-overview-this-year-bo.json'
 import { getInitialMetadata, type MetadataStoreItem } from '../metadata-helpers'
 import { MetadataStore } from '../metadata-store'
+import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import type { AppCachedData, SavedVisualization } from '@types'
 
 class TestMetadataStore extends MetadataStore {
@@ -440,10 +441,12 @@ describe('MetadataStore', () => {
                 },
             }
             const dimensions = {}
+            const headers: Array<LineListAnalyticsDataHeader> = []
 
             metadataStore.addAnalyticsResponseMetadata(
                 analyticsItems,
-                dimensions
+                dimensions,
+                headers
             )
 
             const snapshot = metadataStore.getMetadataSnapshot()
@@ -463,10 +466,12 @@ describe('MetadataStore', () => {
                 },
             }
             const dimensions = {}
+            const headers: Array<LineListAnalyticsDataHeader> = []
 
             metadataStore.addAnalyticsResponseMetadata(
                 analyticsItems,
-                dimensions
+                dimensions,
+                headers
             )
 
             const snapshot = metadataStore.getMetadataSnapshot()
@@ -498,10 +503,12 @@ describe('MetadataStore', () => {
             const dimensions = {
                 dataElement1: ['legend1', 'legend2'],
             }
+            const headers: Array<LineListAnalyticsDataHeader> = []
 
             metadataStore.addAnalyticsResponseMetadata(
                 analyticsItems,
-                dimensions
+                dimensions,
+                headers
             )
 
             const snapshot = metadataStore.getMetadataSnapshot()
@@ -517,6 +524,69 @@ describe('MetadataStore', () => {
                     { id: 'legend1', name: 'Legend 1' },
                     { id: 'legend2', name: 'Legend 2' },
                 ],
+            })
+        })
+
+        it('updates metadata names from headers', () => {
+            const analyticsItems = {
+                ou: {
+                    uid: 'ou',
+                    name: 'Organisation Unit',
+                    valueType: 'TEXT',
+                },
+            }
+            const dimensions = {}
+            const headers = [
+                {
+                    name: 'ouname',
+                    column: 'Organisation Unit UPDATED',
+                    valueType: 'TEXT',
+                    type: 'java.lang.String',
+                    hidden: false,
+                    meta: true,
+                    legendSet: { id: '', name: '', legends: [] },
+                } as unknown as LineListAnalyticsDataHeader,
+            ]
+
+            metadataStore.addAnalyticsResponseMetadata(
+                analyticsItems,
+                dimensions,
+                headers
+            )
+
+            const snapshot = metadataStore.getMetadataSnapshot()
+            expect(snapshot.ou).toEqual({
+                id: 'ou',
+                name: 'Organisation Unit UPDATED',
+                valueType: 'TEXT',
+            })
+        })
+
+        it('creates new metadata items from headers when not present', () => {
+            const analyticsItems = {}
+            const dimensions = {}
+            const headers: Array<LineListAnalyticsDataHeader> = [
+                {
+                    name: 'eventdate',
+                    column: 'Report date',
+                    valueType: 'DATETIME',
+                    type: 'java.time.LocalDateTime',
+                    hidden: false,
+                    meta: true,
+                    legendSet: { id: '', name: '', legends: [] },
+                } as unknown as LineListAnalyticsDataHeader,
+            ]
+
+            metadataStore.addAnalyticsResponseMetadata(
+                analyticsItems,
+                dimensions,
+                headers
+            )
+
+            const snapshot = metadataStore.getMetadataSnapshot()
+            expect(snapshot.eventDate).toEqual({
+                id: 'eventDate',
+                name: 'Report date',
             })
         })
     })
