@@ -12,6 +12,7 @@ import {
 import { extractMetadataFromAnalyticsResponse } from './metadata-helpers/analytics-data'
 import { isUserOrgUnitMetadataItem } from './metadata-helpers/type-guards'
 import { extractMetadataFromVisualization } from './metadata-helpers/visualization'
+import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import type { AppCachedData, SavedVisualization } from '@types'
 
@@ -85,10 +86,11 @@ export class MetadataStore {
 
     addAnalyticsResponseMetadata(
         items: AnalyticsMetadataInput,
-        dimensions: AnalyticsResponseMetadataDimensions
+        dimensions: AnalyticsResponseMetadataDimensions,
+        headers: Array<LineListAnalyticsDataHeader>
     ) {
         this.addMetadata(
-            extractMetadataFromAnalyticsResponse(items, dimensions)
+            extractMetadataFromAnalyticsResponse(items, dimensions, headers)
         )
     }
 

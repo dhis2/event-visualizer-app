@@ -13,6 +13,7 @@ import {
     GridTopRow,
 } from '@components/grid'
 import { LayoutPanel } from '@components/layout-panel/layout-panel'
+import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import type {
     AnalyticsResponseMetadataDimensions,
     AnalyticsResponseMetadataItems,
@@ -61,9 +62,10 @@ const EventVisualizer: FC = () => {
     const onResponseReceived = useCallback(
         (
             analyticsMetadata: AnalyticsResponseMetadataItems,
-            dimensions: AnalyticsResponseMetadataDimensions
+            dimensions: AnalyticsResponseMetadataDimensions,
+            headers: Array<LineListAnalyticsDataHeader>
         ) => {
-            addAnalyticsResponseMetadata(analyticsMetadata, dimensions)
+            addAnalyticsResponseMetadata(analyticsMetadata, dimensions, headers)
         },
         [addAnalyticsResponseMetadata]
     )
