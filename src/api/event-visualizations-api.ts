@@ -15,6 +15,7 @@ import type {
     RootState,
     VisualizationNameDescription,
     CurrentVisualization,
+    DataEngine,
 } from '@types'
 
 const dimensionFields: string =
@@ -62,15 +63,23 @@ export const getVisualizationQueryFields = (
     '!user',
 ]
 
-const getVisualizationQueryDefinition = (id, displayNameProperty) => ({
-    eventVisualization: {
-        resource: 'eventVisualizations',
-        id,
-        params: {
-            fields: getVisualizationQueryFields(displayNameProperty),
+const fetchEventVisualization = async (
+    engine: DataEngine,
+    id: string,
+    displayNameProperty: CurrentUser['settings']['displayNameProperty']
+): Promise<SavedVisualization> => {
+    const data = await engine.query({
+        eventVisualization: {
+            resource: 'eventVisualizations',
+            id,
+            params: {
+                fields: getVisualizationQueryFields(displayNameProperty),
+            },
         },
-    },
-})
+    })
+
+    return data.eventVisualization as SavedVisualization
+}
 
 export const eventVisualizationsApi = api.injectEndpoints({
     endpoints: (builder) => ({
@@ -79,16 +88,11 @@ export const eventVisualizationsApi = api.injectEndpoints({
                 const { appCachedData, engine, metadataStore } = apiArg.extra
 
                 try {
-                    const data = await engine.query(
-                        getVisualizationQueryDefinition(
-                            id,
-                            appCachedData.currentUser.settings
-                                .displayNameProperty
-                        )
+                    const visualization = await fetchEventVisualization(
+                        engine,
+                        id,
+                        appCachedData.currentUser.settings.displayNameProperty
                     )
-
-                    const visualization =
-                        data.eventVisualization as SavedVisualization
 
                     metadataStore.setVisualizationMetadata(visualization)
 
@@ -190,16 +194,11 @@ export const eventVisualizationsApi = api.injectEndpoints({
                 try {
                     // Get a fresh copy of the visualization, so nothing but name/description is changed
                     // This is needed because a partial update (PATCH) is not supported on the api
-                    const fetchVisualizationResult = await engine.query(
-                        getVisualizationQueryDefinition(
-                            state.savedVis.id,
-                            appCachedData.currentUser.settings
-                                .displayNameProperty
-                        )
+                    const visualization = await fetchEventVisualization(
+                        engine,
+                        state.savedVis.id,
+                        appCachedData.currentUser.settings.displayNameProperty
                     )
-
-                    const visualization =
-                        fetchVisualizationResult.eventVisualization as SavedVisualization
 
                     const updateVisualizationResult = (await engine.mutate({
                         resource: 'eventVisualizations',
