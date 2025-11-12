@@ -1,15 +1,11 @@
 import { clearInput, typeInput, clearTextarea, typeTextarea } from './common'
 import { expectVisTitleToEqual, expectTableToBeVisible } from './table'
 
-export const ITEM_NEW = 'file-menu-new'
-export const ITEM_OPEN = 'file-menu-open'
-export const ITEM_SAVE = 'file-menu-save'
-export const ITEM_SAVEAS = 'file-menu-saveas'
-export const ITEM_RENAME = 'file-menu-rename'
-export const ITEM_TRANSLATE = 'file-menu-translate'
-export const ITEM_SHARING = 'file-menu-sharing'
-export const ITEM_GETLINK = 'file-menu-getlink'
-export const ITEM_DELETE = 'file-menu-delete'
+const ITEM_OPEN = 'file-menu-open'
+const ITEM_SAVE = 'file-menu-save'
+const ITEM_SAVEAS = 'file-menu-saveas'
+const ITEM_RENAME = 'file-menu-rename'
+const ITEM_DELETE = 'file-menu-delete'
 
 export const createTestVisualization = (title: string) => {
     openVisByName('Inpatient: Cases last quarter (case)')
