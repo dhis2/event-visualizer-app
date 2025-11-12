@@ -1,11 +1,11 @@
-export const expectVisTitleToContain = (value) =>
+export const expectVisTitleToContain = (value: string) =>
     cy
         .getByDataTest('title-bar')
         .should('have.length', 1)
         .and('be.visible')
         .and('contain', value)
 
-export const expectVisTitleToEqual = (value) =>
+export const expectVisTitleToEqual = (value: string) =>
     cy
         .getByDataTest('title-bar')
         .containsExact(value)
@@ -23,13 +23,13 @@ export const getTableDataCells = () =>
 
 export const expectTableToBeVisible = () => {
     expectTableOverlayNotToExist()
-    getLineListTable().find('tbody').should('be.visible')
+    return getLineListTable().find('tbody').should('be.visible')
 }
 
 export const expectTableOverlayNotToExist = () =>
     cy.getByDataTest('fetch-overlay').should('not.exist')
 
-export const expectTableToMatchRows = (expectedRows) => {
+export const expectTableToMatchRows = (expectedRows: string[]) => {
     getTableRows().should('have.length', expectedRows.length)
 
     expectedRows.forEach((value) => {
@@ -37,15 +37,15 @@ export const expectTableToMatchRows = (expectedRows) => {
     })
 }
 
-export const expectTableToContainHeader = (header) => {
+export const expectTableToContainHeader = (header: string) => {
     getTableHeaderCells().contains(header)
 }
 
-export const expectTableToContainValue = (value) => {
+export const expectTableToContainValue = (value: string) => {
     getTableDataCells().contains(value)
 }
 
-export const expectTableToNotContainValue = (value) => {
+export const expectTableToNotContainValue = (value: string) => {
     getTableDataCells().contains(value).should('not.exist')
 }
 
@@ -55,7 +55,7 @@ export const expectLegendKeyToBeHidden = () =>
 export const expectLegendKeyToBeVisible = () =>
     cy.getByDataTest('visualization-legend-key').should('be.visible')
 
-export const expectLegendKeyToMatchLegendSets = (legendSets) => {
+export const expectLegendKeyToMatchLegendSets = (legendSets: string[]) => {
     cy.getByDataTest('legend-key-container')
         .findByDataTestLike('legend-key-item')
         .should('have.length', legendSets.length)

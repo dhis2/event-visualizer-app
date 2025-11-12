@@ -11,7 +11,7 @@ export const ITEM_SHARING = 'file-menu-sharing'
 export const ITEM_GETLINK = 'file-menu-getlink'
 export const ITEM_DELETE = 'file-menu-delete'
 
-export const createTestVisualization = (title) => {
+export const createTestVisualization = (title: string) => {
     openVisByName('Inpatient: Cases last quarter (case)')
 
     // capture the current visualization id from the hash route BEFORE saving
@@ -38,7 +38,7 @@ export const resaveVisualization = () => {
     cy.getByDataTest(ITEM_SAVE).click()
 }
 
-export const saveVisualization = (name) => {
+export const saveVisualization = (name?: string) => {
     cy.getByDataTest('dhis2-analytics-hovermenubar').contains('File').click()
 
     cy.getByDataTest(ITEM_SAVE).click()
@@ -50,7 +50,7 @@ export const saveVisualization = (name) => {
     cy.getByDataTest('file-menu-saveas-modal-save').click()
 }
 
-export const saveVisualizationAs = (name) => {
+export const saveVisualizationAs = (name?: string) => {
     cy.getByDataTest('dhis2-analytics-hovermenubar').contains('File').click()
 
     cy.getByDataTest(ITEM_SAVEAS).click()
@@ -71,7 +71,7 @@ export const deleteVisualization = () => {
     cy.getByDataTest('file-menu-delete-modal-delete').click()
 }
 
-export const renameVisualization = (name, description = undefined) => {
+export const renameVisualization = (name?: string, description?: string) => {
     cy.getByDataTest('dhis2-analytics-hovermenubar').contains('File').click()
 
     cy.getByDataTest(ITEM_RENAME).click()
@@ -96,7 +96,7 @@ export const renameVisualization = (name, description = undefined) => {
     cy.getByDataTest('file-menu-rename-modal-rename').click()
 }
 
-export const openVisByName = (name) => {
+export const openVisByName = (name: string) => {
     cy.getByDataTest('dhis2-analytics-hovermenubar').contains('File').click()
 
     cy.getByDataTest(ITEM_OPEN).click()
