@@ -1,3 +1,4 @@
+import type { FetchError } from '@dhis2/app-runtime'
 import type { FC } from 'react'
 import type {
     CurrentUser,
@@ -23,7 +24,7 @@ type FileMenuProps = {
         type: EventVisualizationType | VisualizationType | string
     }>
     onDelete?: () => void
-    onError?: (error: string) => void
+    onError?: (error: FetchError) => void
     onNew?: () => void
     onOpen?: (id: string) => void
     onRename?: ({ name, description }: FileMenuRenamePayload) => void
