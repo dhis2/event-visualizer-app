@@ -14,6 +14,10 @@ type AppAsyncThunkConfig = {
     state: RootState
     dispatch: AppDispatch
     extra: ThunkExtraArg
+    rejectValue?: unknown
+    serializedErrorType?: unknown
+    fulfillMeta?: unknown
+    rejectMeta?: unknown
 }
 
 export const tClearVisualization = () => (dispatch: AppDispatch) => {
@@ -52,17 +56,20 @@ export const tLoadSavedVisualization = createAsyncThunk<
 
             if (updateStatistics) {
                 // update most viewed statistics
-                extra.engine.mutate({
-                    resource: 'dataStatistics',
-                    type: 'create',
-                    params: {
-                        eventType: 'EVENT_VISUALIZATION_VIEW',
-                        favorite: id,
-                    },
-                    data: {},
-                })
+                extra.engine
+                    .mutate({
+                        resource: 'dataStatistics',
+                        type: 'create',
+                        params: {
+                            eventType: 'EVENT_VISUALIZATION_VIEW',
+                            favorite: id,
+                        },
+                        data: {},
+                    })
+                    .catch((error) => console.error(error))
             }
         } else if (error) {
+            // TODO: dispatch error for custom error screens
             console.error(error)
         }
     }
