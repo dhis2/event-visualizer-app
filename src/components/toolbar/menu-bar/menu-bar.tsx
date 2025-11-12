@@ -58,7 +58,7 @@ export const MenuBar: FC = () => {
                 case 'E4030':
                     message = i18n.t(
                         "This visualization can't be deleted because it is used on one or more dashboards."
-                    ) // TODO: - unable to simulate error E4030
+                    )
                     break
                 case 'E1006':
                     message = i18n.t("You don't have sufficient permissions.")
