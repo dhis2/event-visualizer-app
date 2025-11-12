@@ -18,6 +18,7 @@ export const LayoutPanel: FC = () => {
         <div
             className={cx(classes.container, {
                 [classes.hidden]: !isLayoutPanelVisible,
+                [classes.lineList]: visualizationType === 'LINE_LIST',
             })}
         >
             <Axis axisId="columns" dimensionIds={columns} />

@@ -9,6 +9,10 @@
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.03);
 }
 
+.container.lineList {
+    grid-template-areas: 'columns filters';
+}
+
 .container.hidden {
     display: none;
 }
