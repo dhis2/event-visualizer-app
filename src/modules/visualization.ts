@@ -131,7 +131,9 @@ export const getVisualizationState = (
     }
 }
 
-const removeDimensionPropsBeforeSaving = (axis: DimensionArray | undefined) => {
+const removeDimensionPropertiesBeforeSaving = (
+    axis: DimensionArray | undefined
+) => {
     return axis?.map((dim) => {
         const dimension = Object.assign({}, dim)
         const propsToRemove = ['dimensionType', 'valueType']
@@ -165,11 +167,14 @@ export const getSaveableVisualization = (
 
     nonPersistedOptions.forEach((option) => delete visualization[option])
 
-    visualization.columns = removeDimensionPropsBeforeSaving(
+    visualization.columns = removeDimensionPropertiesBeforeSaving(
         visualization.columns
     )
-    visualization.filters = removeDimensionPropsBeforeSaving(
+    visualization.filters = removeDimensionPropertiesBeforeSaving(
         visualization.filters
+    )
+    visualization.rows = removeDimensionPropertiesBeforeSaving(
+        visualization.rows
     )
 
     if (!visualization.programStage?.id) {
