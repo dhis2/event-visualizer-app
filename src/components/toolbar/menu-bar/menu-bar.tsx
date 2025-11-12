@@ -155,7 +155,7 @@ export const MenuBar: FC = () => {
     }, [dispatch, currentVis, onError])
 
     // Existing visualization
-    // but the only changes are name and/or description
+    // the visualization is updated with only name and/or description from the rename dialog
     const onRename = useCallback(
         async ({ name, description }) => {
             const { data, error } = await dispatch(
@@ -217,6 +217,8 @@ export const MenuBar: FC = () => {
                 defaultFilterVisType="ALL"
                 onNew={onNew}
                 onOpen={onOpen}
+                // TODO: perhaps disable with a dirty visualization as the changes are lost and it's not transparent
+                // needs a change in the analytics component
                 onRename={onRename}
                 onSave={
                     ['UNSAVED', 'DIRTY'].includes(
