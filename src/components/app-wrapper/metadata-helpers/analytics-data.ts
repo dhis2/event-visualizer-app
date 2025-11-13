@@ -117,6 +117,5 @@ export const extractMetadataFromAnalyticsResponse = (
     headers: Array<LineListAnalyticsDataHeader>
 ): MetadataInput => {
     const metdataFromItems = extractItemsMetadata(items, dimensions)
-    console.log(metdataFromItems)
     return updateNamesFromHeaders(headers, metdataFromItems)
 }
