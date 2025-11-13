@@ -83,7 +83,7 @@ const updateNamesFromHeaders = (
             return acc
         }
 
-        const dimensionId = reversedHeadersMap[header.name]
+        const dimensionId = reversedHeadersMap[header.name] ?? header.name
         const dimensionDisplayName = header.column
 
         if (acc[dimensionId]) {
@@ -109,6 +109,7 @@ export const extractMetadataFromAnalyticsResponse = (
     dimensions: AnalyticsResponseMetadataDimensions,
     headers: Array<LineListAnalyticsDataHeader>
 ): MetadataInput => {
+    console.log(items, dimensions, headers)
     const metdataFromItems = extractItemsMetadata(items, dimensions)
     return updateNamesFromHeaders(headers, metdataFromItems)
 }
