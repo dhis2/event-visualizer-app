@@ -256,7 +256,7 @@ describe('<Chip />', () => {
         cy.contains('Program status').should('be.visible')
         cy.getByDataTest('chip-items').should('contain.text', '2')
         cy.getByDataTest('chip-menu-button').should('be.visible')
-        assertTooltipContent([activeStatus, completedStatus])
+        assertTooltipContent(['Active', 'Completed'])
     })
 
     it('renders a chip in filters with no suffix and no items or conditions', () => {
@@ -328,7 +328,7 @@ describe('<Chip />', () => {
             'background-color',
             CHIP_NORMAL_COLOR
         )
-        assertTooltipContent([activeStatus, completedStatus])
+        assertTooltipContent(['Active', 'Completed'])
     })
 
     it('renders a chip in filters with condition counts', () => {
