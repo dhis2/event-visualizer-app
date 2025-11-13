@@ -10,7 +10,6 @@ import {
     isSingleMetadataItemInput,
 } from './metadata-helpers'
 import { extractMetadataFromAnalyticsResponse } from './metadata-helpers/analytics-data'
-import { isUserOrgUnitMetadataItem } from './metadata-helpers/type-guards'
 import { extractMetadataFromVisualization } from './metadata-helpers/visualization'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
@@ -143,11 +142,6 @@ export class MetadataStore {
                 this.metadata
             )
             const itemId = newMetadataStoreItem.id
-
-            if (this.isReadOnlyMetadata(newMetadataStoreItem)) {
-                return
-            }
-
             const existingMetadataStoreItem = this.metadata.get(itemId)
             const { hasChanges, mergedItem } = smartMergeWithChangeDetection(
                 existingMetadataStoreItem,
@@ -171,16 +165,6 @@ export class MetadataStore {
         }
 
         this.notifySubscribers(updatedMetadataIds)
-    }
-
-    private isReadOnlyMetadata(item: MetadataStoreItem) {
-        return (
-            /* Initial metadata is read only, except for USER_ORGUNIT
-             * which receives am `organisationUnits` array from the
-             * analytics data */
-            this.initialMetadataKeys.has(item.id) &&
-            !isUserOrgUnitMetadataItem(item)
-        )
     }
 
     private notifySubscribers(keys: Set<string>) {
