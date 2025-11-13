@@ -109,7 +109,6 @@ export const extractMetadataFromAnalyticsResponse = (
     dimensions: AnalyticsResponseMetadataDimensions,
     headers: Array<LineListAnalyticsDataHeader>
 ): MetadataInput => {
-    console.log(items, dimensions, headers)
     const metdataFromItems = extractItemsMetadata(items, dimensions)
     return updateNamesFromHeaders(headers, metdataFromItems)
 }
