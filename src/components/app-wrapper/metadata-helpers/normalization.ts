@@ -63,10 +63,10 @@ export const normalizeMetadataInputItem = (
     input: AnyMetadataItemInput,
     metadata: Map<string, MetadataStoreItem>
 ): MetadataStoreItem => {
-    if (isMetadataItem(input)) {
-        return normalizeMetadataItem(input)
-    } else if (isSimpleMetadataItem(input)) {
+    if (isSimpleMetadataItem(input)) {
         return normalizeSimpleMetadataItem(input)
+    } else if (isMetadataItem(input)) {
+        return normalizeMetadataItem(input)
     } else if (isUserOrgUnitMetadataInputItem(input)) {
         return normalizeUserOrgUnitMetadata(input, metadata)
     } else if (
