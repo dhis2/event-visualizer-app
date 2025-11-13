@@ -19,6 +19,7 @@ import type {
     DimensionArray,
     EventVisualizationType,
     LegendSet,
+    NewVisualization,
     SavedVisualization,
     ValueType,
     VisualizationType,
@@ -49,6 +50,12 @@ declare module '@dhis2/analytics' {
     export const layoutGetAllDimensions: (
         vis: CurrentVisualization
     ) => DimensionArray
+
+    export const layoutGetDimension: (
+        vis: CurrentVisualization,
+        dimensionId: string // TODO: replace with DimensionId type? e.g. 'ou', 'pe', 'dx'
+    ) => DimensionArray[number] | undefined
+
     export const layoutGetAxisIdDimensionIdsObject: (
         vis: CurrentVisualization
     ) => {
@@ -61,6 +68,31 @@ declare module '@dhis2/analytics' {
     ) => {
         [dimensionId: string]: string[]
     }
+    export const dimensionIsValid: (
+        dimension: unknown,
+        options?: { requireItems?: boolean }
+    ) => boolean
+
+    export const preparePayloadForSaveAs: ({
+        visualization,
+        name,
+        description,
+    }: {
+        visualization: NewVisualization | SavedVisualization
+        name?: string
+        description?: string
+    }) => NewVisualization | SavedVisualization
+
+    export const preparePayloadForSave: ({
+        visualization,
+        name,
+        description,
+    }: {
+        visualization: SavedVisualization
+        name?: string
+        description?: string
+    }) => SavedVisualization
+
     export const getColorByValueFromLegendSet: (
         legendSet?: LegendSet,
         value?: string | number | boolean

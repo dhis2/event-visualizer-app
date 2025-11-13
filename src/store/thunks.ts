@@ -27,25 +27,50 @@ export const tClearVisualization = () => (dispatch: AppDispatch) => {
     dispatch(clearVisUiConfig())
 }
 
+type LoadSavedVisualizationPayload = {
+    id: string
+    updateStatistics?: boolean
+}
+
 export const tLoadSavedVisualization = createAsyncThunk<
     void,
-    string,
+    LoadSavedVisualizationPayload,
     AppAsyncThunkConfig
->('visualization/load', async (id: string, { dispatch }) => {
-    dispatch(setIsVisualizationLoading(true))
+>(
+    'visualization/load',
+    async ({ id, updateStatistics = false }, { dispatch, extra }) => {
+        dispatch(setIsVisualizationLoading(true))
 
-    const { data, error } = await dispatch(
-        eventVisualizationsApi.endpoints.getVisualization.initiate(id, {
-            // This is consistent with other analytics apps
-            forceRefetch: true,
-        })
-    )
-    if (data) {
-        dispatch(setSavedVis(data))
-        dispatch(setVisUiConfig(getVisualizationUiConfig(data)))
-        dispatch(setCurrentVis(data))
-        dispatch(setIsVisualizationLoading(false))
-    } else if (error) {
-        console.error(error)
+        const { data, error } = await dispatch(
+            eventVisualizationsApi.endpoints.getVisualization.initiate(id, {
+                // This is consistent with other analytics apps
+                forceRefetch: true,
+            })
+        )
+
+        if (data) {
+            dispatch(setSavedVis(data))
+            dispatch(setVisUiConfig(getVisualizationUiConfig(data)))
+            dispatch(setCurrentVis(data))
+            dispatch(setIsVisualizationLoading(false))
+
+            if (updateStatistics) {
+                // update most viewed statistics
+                extra.engine
+                    .mutate({
+                        resource: 'dataStatistics',
+                        type: 'create',
+                        params: {
+                            eventType: 'EVENT_VISUALIZATION_VIEW',
+                            favorite: id,
+                        },
+                        data: {},
+                    })
+                    .catch((error) => console.error(error))
+            }
+        } else if (error) {
+            // TODO: dispatch error for custom error screens
+            console.error(error)
+        }
     }
-})
+)
