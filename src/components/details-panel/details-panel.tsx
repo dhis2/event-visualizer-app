@@ -11,7 +11,7 @@ export const DetailsPanel: FC<{ disabled?: boolean }> = ({
     const currentVisId = useAppSelector(getCurrentVisId)
 
     return currentVisId ? (
-        <>
+        <div data-test="details-panel">
             <AboutAOUnit type="eventVisualization" id={currentVisId} />
             <InterpretationsUnit
                 type="eventVisualization"
@@ -24,6 +24,6 @@ export const DetailsPanel: FC<{ disabled?: boolean }> = ({
                     openInterpretationModal(interpretationId, true)
                 }
             />
-        </>
+        </div>
     ) : null
 }

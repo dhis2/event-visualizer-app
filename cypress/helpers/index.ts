@@ -1,4 +1,6 @@
 export * from './common'
 export * from './file-menu'
-export * from './table'
+export * from './interpretations'
+export * from './menu-bar'
 export * from './start-screen'
+export * from './table'
