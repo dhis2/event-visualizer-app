@@ -5,20 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-11-11T16:30:43.653Z\n"
-"PO-Revision-Date: 2025-11-11T16:30:43.654Z\n"
-
-msgid "Active"
-msgstr "Active"
-
-msgid "Cancelled"
-msgstr "Cancelled"
-
-msgid "Completed"
-msgstr "Completed"
-
-msgid "Scheduled"
-msgstr "Scheduled"
+"POT-Creation-Date: 2025-11-13T15:23:50.427Z\n"
+"PO-Revision-Date: 2025-11-13T15:23:50.428Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -127,6 +115,18 @@ msgstr "This year"
 
 msgid "Last year"
 msgstr "Last year"
+
+msgid "Active"
+msgstr "Active"
+
+msgid "Cancelled"
+msgstr "Cancelled"
+
+msgid "Completed"
+msgstr "Completed"
+
+msgid "Scheduled"
+msgstr "Scheduled"
 
 msgid "Registration org. unit"
 msgstr "Registration org. unit"

@@ -20,6 +20,9 @@ declare global {
     interface Window {
         getMetadataStore: () => Record<string, MetadataStoreItem>
         getMetadataStoreItem: (key: string) => MetadataStoreItem | undefined
+        getMetadataStoreItems: (
+            keys: string[]
+        ) => ReturnType<MetadataStore['getMetadataItems']>
         findMetadataStoreItem: (token: string) => MetadataStoreItem | undefined
         filterMetadataStoreItems: (token: string) => MetadataStoreItem[]
     }
@@ -47,6 +50,8 @@ export class MetadataStore {
             window.getMetadataStore = () => Object.fromEntries(this.metadata)
             window.getMetadataStoreItem = (key: string) =>
                 this.getMetadataItem(key)
+            window.getMetadataStoreItems = (keys: string[]) =>
+                this.getMetadataItems(keys)
             window.findMetadataStoreItem = (token: string) =>
                 Array.from(this.metadata.values()).find((item) =>
                     isItemMatch(item, token)
