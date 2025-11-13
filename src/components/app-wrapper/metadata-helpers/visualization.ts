@@ -1,5 +1,6 @@
 import i18n from '@dhis2/d2-i18n'
 import deepmerge from 'deepmerge'
+import { getDefaultMetadata } from './default-metadata'
 import { isUserOrgUnitMetadataInputItem } from './type-guards'
 import type {
     AnyMetadataItemInput,
@@ -26,7 +27,7 @@ import type {
 type ObjectWithId = { id: string } | { uid: string }
 type ExtractedMetadatInput = Record<string, AnyMetadataItemInput>
 
-const idsToUids = (
+export const idsToUids = (
     extractedMetadatInput: Record<string, ObjectWithId>
 ): ExtractedMetadatInput =>
     Object.entries(extractedMetadatInput).reduce((acc, [key, value]) => {
@@ -295,7 +296,7 @@ export const extractMetadataFromVisualization = (
     const transformedVisualization = transformVisualization(
         visualization
     ) as SavedVisualization
-
+    const defaultMetadata = getDefaultMetadata(visualization)
     /* Some of the collected metadata could contains duplicated IDs
      * (e.g. `programStage`) and these object may contain different fields.
      * So these objects should be merged rather than overwritten. */
@@ -320,5 +321,5 @@ export const extractMetadataFromVisualization = (
         supplementedMetadataInput,
         transformedVisualization.parentGraphMap
     )
-    return supplementedMetadataInput
+    return deepmerge(defaultMetadata, supplementedMetadataInput)
 }
