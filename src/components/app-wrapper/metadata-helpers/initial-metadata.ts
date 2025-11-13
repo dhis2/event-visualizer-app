@@ -1,6 +1,8 @@
 import i18n from '@dhis2/d2-i18n'
 import type { AnyMetadataItemInput } from './types'
-import type { UserOrgUnit, RelativePeriod } from '@types'
+import { idsToUids } from './visualization'
+import { getCreatedDimension, getTimeDimensions } from '@modules/dimension'
+import type { UserOrgUnit, RelativePeriod, Status } from '@types'
 
 const getOrganisationUnits = (): Record<UserOrgUnit, string> => ({
     USER_ORGUNIT: i18n.t('User organisation unit'),
@@ -44,12 +46,39 @@ const getRelativePeriods = (): Record<RelativePeriod, string> => ({
     LAST_YEAR: i18n.t('Last year'),
 })
 
+const getStatusNames = (): Record<Status, string> => ({
+    ACTIVE: i18n.t('Active'),
+    CANCELLED: i18n.t('Cancelled'),
+    COMPLETED: i18n.t('Completed'),
+    SCHEDULE: i18n.t('Scheduled'),
+})
+
+export const getTimeDimensionsMetadata = () =>
+    Object.values(getTimeDimensions()).reduce(
+        (acc, { id, dimensionType, defaultName }) => {
+            acc[id] = {
+                uid: id,
+                name: defaultName,
+                dimensionType,
+            }
+            return acc
+        },
+        {}
+    )
+
 export const getInitialMetadata = (): Record<string, AnyMetadataItemInput> => {
     return Object.entries({
+        ...getStatusNames(),
+        ...idsToUids(getCreatedDimension()),
+        ...getTimeDimensionsMetadata(),
         ...getRelativePeriods(),
         ...getOrganisationUnits(),
     }).reduce((obj, [key, value]) => {
-        obj[key] = { [key]: value } // SimpleMetadataItem: single key-value pair
+        if (typeof value === 'string') {
+            obj[key] = { [key]: value } // key-value string-pair
+        } else {
+            obj[key] = value // objects (created dimension)
+        }
         return obj
     }, {})
 }

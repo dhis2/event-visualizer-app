@@ -1,6 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
 import deepmerge from 'deepmerge'
-import { getDefaultMetadata } from './default-metadata'
 import { isUserOrgUnitMetadataInputItem } from './type-guards'
 import type {
     AnyMetadataItemInput,
@@ -10,6 +9,7 @@ import type {
 import { DIMENSION_ID_ORGUNIT } from '@constants/dimensions'
 import {
     getFullDimensionId,
+    getMainDimensions,
     getProgramDimensions,
     getTimeDimensionName,
     getTimeDimensions,
@@ -55,11 +55,11 @@ const DIMENSION_METADATA_PROP_MAP = {
     organisationUnitGroupSetDimensions: 'organisationUnitGroupSet',
     dataElementGroupSetDimensions: 'dataElementGroupSet',
 }
-const getDefaultOuMetadata = (
+const getDefaultOrgUnitMetadata = (
     outputType: SavedVisualization['outputType']
 ) => ({
-    [DIMENSION_ID_ORGUNIT]: {
-        uid: DIMENSION_ID_ORGUNIT,
+    ou: {
+        uid: 'ou',
         dimensionType: 'ORGANISATION_UNIT' as DimensionType,
         name: getDefaultOrgUnitLabel(outputType),
     },
@@ -75,7 +75,7 @@ const getDefaultOrgUnitLabel = (
     }
 }
 
-const getDynamicTimeDimensionsMetadata = (
+const getDefaultDynamicTimeDimensionsMetadata = (
     program?: SavedVisualization['program'],
     stage?: SavedVisualization['programStage'],
     outputType?: SavedVisualization['outputType']
@@ -145,9 +145,10 @@ export const extractFixedDimensionsMetadata = (
         visualization.outputType === 'TRACKED_ENTITY_INSTANCE' &&
         dimensions.some((d) => (d.dimension as DimensionId) === 'ou')
     ) {
-        fixedDimensionsMetadata[DIMENSION_ID_ORGUNIT] = getDefaultOuMetadata(
-            visualization.outputType
-        )[DIMENSION_ID_ORGUNIT]
+        fixedDimensionsMetadata[DIMENSION_ID_ORGUNIT] =
+            getDefaultOrgUnitMetadata(visualization.outputType)[
+                DIMENSION_ID_ORGUNIT
+            ]
     }
     return idsToUids(fixedDimensionsMetadata)
 }
@@ -163,8 +164,7 @@ export const extractProgramDimensionsMetadata = (
 
     visualization.programDimensions.forEach((program) => {
         programDimensionsMetadata[program.id] = program
-
-        const timeDimensions = getDynamicTimeDimensionsMetadata(program)
+        const timeDimensions = getDefaultDynamicTimeDimensionsMetadata(program)
         Object.keys(timeDimensions).forEach((timeDimensionId) => {
             const formattedId = getFullDimensionId({
                 dimensionId: timeDimensionId as DimensionId,
@@ -296,11 +296,18 @@ export const extractMetadataFromVisualization = (
     const transformedVisualization = transformVisualization(
         visualization
     ) as SavedVisualization
-    const defaultMetadata = getDefaultMetadata(visualization)
     /* Some of the collected metadata could contains duplicated IDs
      * (e.g. `programStage`) and these object may contain different fields.
      * So these objects should be merged rather than overwritten. */
     const sources: ExtractedMetadatInput[] = [
+        getDefaultOrgUnitMetadata(visualization.outputType),
+        getDefaultDynamicTimeDimensionsMetadata(
+            visualization.program,
+            visualization.programStage,
+            visualization.outputType
+        ),
+        idsToUids(getMainDimensions(visualization.outputType)),
+        idsToUids(getProgramDimensions(visualization.program.id)),
         extractTrackedEntityTypeMetadata(transformedVisualization),
         extractFixedDimensionsMetadata(transformedVisualization),
         extractProgramDimensionsMetadata(transformedVisualization),
@@ -321,5 +328,5 @@ export const extractMetadataFromVisualization = (
         supplementedMetadataInput,
         transformedVisualization.parentGraphMap
     )
-    return deepmerge(defaultMetadata, supplementedMetadataInput)
+    return supplementedMetadataInput
 }
