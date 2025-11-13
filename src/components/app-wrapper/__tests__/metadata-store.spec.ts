@@ -32,9 +32,21 @@ describe('MetadataStore', () => {
         )
         expect(metadataStore.getMetadataSnapshot()).toMatchInlineSnapshot(`
           {
+            "ACTIVE": {
+              "id": "ACTIVE",
+              "name": "Active",
+            },
             "BIMONTHS_THIS_YEAR": {
               "id": "BIMONTHS_THIS_YEAR",
               "name": "Bimonths this year",
+            },
+            "CANCELLED": {
+              "id": "CANCELLED",
+              "name": "Cancelled",
+            },
+            "COMPLETED": {
+              "id": "COMPLETED",
+              "name": "Completed",
             },
             "GieVkTxp4HH": {
               "dimensionType": "DATA_ELEMENT",
@@ -153,6 +165,10 @@ describe('MetadataStore', () => {
               "id": "QUARTERS_THIS_YEAR",
               "name": "Quarters this year",
             },
+            "SCHEDULE": {
+              "id": "SCHEDULE",
+              "name": "Scheduled",
+            },
             "SWfdB5lX0fk": {
               "dimensionType": "DATA_ELEMENT",
               "id": "SWfdB5lX0fk",
@@ -233,6 +249,16 @@ describe('MetadataStore', () => {
               "name": "Inpatient morbidity and mortality",
               "repeatable": false,
             },
+            "created": {
+              "dimensionType": "PERIOD",
+              "id": "created",
+              "name": "Registration date",
+            },
+            "createdBy": {
+              "dimensionType": "USER",
+              "id": "createdBy",
+              "name": "Created by",
+            },
             "eBAyeGv0exc": {
               "displayIncidentDate": false,
               "displayIncidentDateLabel": "Date of Discharge",
@@ -247,11 +273,36 @@ describe('MetadataStore', () => {
               ],
               "programType": "WITHOUT_REGISTRATION",
             },
+            "eBAyeGv0exc.eventStatus": {
+              "dimensionType": "STATUS",
+              "id": "eBAyeGv0exc.eventStatus",
+              "name": "Event status",
+            },
+            "eBAyeGv0exc.ou": {
+              "dimensionType": "ORGANISATION_UNIT",
+              "id": "eBAyeGv0exc.ou",
+              "name": "Organisation unit",
+            },
+            "eBAyeGv0exc.programStatus": {
+              "dimensionType": "STATUS",
+              "id": "eBAyeGv0exc.programStatus",
+              "name": "Program status",
+            },
             "eMyVanycQSC": {
               "dimensionType": "DATA_ELEMENT",
               "id": "eMyVanycQSC",
               "name": "Admission Date",
               "valueType": "DATE",
+            },
+            "enrollmentDate": {
+              "dimensionType": "PERIOD",
+              "id": "enrollmentDate",
+              "name": "Enrollment date",
+            },
+            "eventDate": {
+              "dimensionType": "PERIOD",
+              "id": "eventDate",
+              "name": "Event date",
             },
             "fWIAEtYVEGk": {
               "dimensionType": "DATA_ELEMENT",
@@ -269,6 +320,21 @@ describe('MetadataStore', () => {
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "hlPt8H4bUOQ",
               "name": "BMI female under 5 y",
+            },
+            "incidentDate": {
+              "dimensionType": "PERIOD",
+              "id": "incidentDate",
+              "name": "Incident date",
+            },
+            "lastUpdated": {
+              "dimensionType": "PERIOD",
+              "id": "lastUpdated",
+              "name": "Last updated on",
+            },
+            "lastUpdatedBy": {
+              "dimensionType": "USER",
+              "id": "lastUpdatedBy",
+              "name": "Last updated by",
             },
             "msodh3rEMJa": {
               "dimensionType": "DATA_ELEMENT",
@@ -293,6 +359,11 @@ describe('MetadataStore', () => {
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "sGna2pquXOO",
               "name": "Average age of female discharges",
+            },
+            "scheduledDate": {
+              "dimensionType": "PERIOD",
+              "id": "scheduledDate",
+              "name": "Scheduled date",
             },
             "tUdBD1JDxpn": {
               "dimensionType": "PROGRAM_INDICATOR",
@@ -333,8 +404,8 @@ describe('MetadataStore', () => {
 
         // Length grows and decreases
         expect(snapshot0Keys.size).toBe(37)
-        expect(snapshot1Keys.size).toBe(58)
-        expect(snapshot2Keys.size).toBe(45)
+        expect(snapshot1Keys.size).toBe(73)
+        expect(snapshot2Keys.size).toBe(60)
 
         // Initial metadata is always included
         expect(snapshot0Keys.isSubsetOf(snapshot1Keys)).toBe(true)
@@ -379,6 +450,21 @@ describe('MetadataStore', () => {
             )
         ).toMatchInlineSnapshot(`
           [
+            "lastUpdated",
+            "createdBy",
+            "lastUpdatedBy",
+            "created",
+            "eBAyeGv0exc.ou",
+            "eBAyeGv0exc.eventStatus",
+            "eBAyeGv0exc.programStatus",
+            "eventDate",
+            "enrollmentDate",
+            "incidentDate",
+            "scheduledDate",
+            "ACTIVE",
+            "CANCELLED",
+            "COMPLETED",
+            "SCHEDULE",
             "eMyVanycQSC",
             "qrur9Dvnyt5",
             "K6uUAvq500H",
@@ -587,6 +673,7 @@ describe('MetadataStore', () => {
             expect(snapshot.eventDate).toEqual({
                 id: 'eventDate',
                 name: 'Report date',
+                dimensionType: 'PERIOD',
             })
         })
     })
