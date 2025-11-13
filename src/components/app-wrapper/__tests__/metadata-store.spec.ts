@@ -302,7 +302,7 @@ describe('MetadataStore', () => {
             "eventDate": {
               "dimensionType": "PERIOD",
               "id": "eventDate",
-              "name": "Event date",
+              "name": "Report date",
             },
             "fWIAEtYVEGk": {
               "dimensionType": "DATA_ELEMENT",
@@ -324,7 +324,7 @@ describe('MetadataStore', () => {
             "incidentDate": {
               "dimensionType": "PERIOD",
               "id": "incidentDate",
-              "name": "Incident date",
+              "name": "Date of Discharge",
             },
             "lastUpdated": {
               "dimensionType": "PERIOD",
@@ -348,6 +348,11 @@ describe('MetadataStore', () => {
               "name": "Gender",
               "optionSet": "pC3N9N77UmT",
               "valueType": "TEXT",
+            },
+            "ou": {
+              "dimensionType": "ORGANISATION_UNIT",
+              "id": "ou",
+              "name": "Organisation unit",
             },
             "qrur9Dvnyt5": {
               "dimensionType": "DATA_ELEMENT",
@@ -403,9 +408,9 @@ describe('MetadataStore', () => {
         const snapshot2Keys = new Set(Object.keys(snapshot2))
 
         // Length grows and decreases
-        expect(snapshot0Keys.size).toBe(37)
-        expect(snapshot1Keys.size).toBe(73)
-        expect(snapshot2Keys.size).toBe(60)
+        expect(snapshot0Keys.size).toBe(46)
+        expect(snapshot1Keys.size).toBe(74)
+        expect(snapshot2Keys.size).toBe(61)
 
         // Initial metadata is always included
         expect(snapshot0Keys.isSubsetOf(snapshot1Keys)).toBe(true)
@@ -450,21 +455,13 @@ describe('MetadataStore', () => {
             )
         ).toMatchInlineSnapshot(`
           [
+            "ou",
             "lastUpdated",
             "createdBy",
             "lastUpdatedBy",
-            "created",
             "eBAyeGv0exc.ou",
             "eBAyeGv0exc.eventStatus",
             "eBAyeGv0exc.programStatus",
-            "eventDate",
-            "enrollmentDate",
-            "incidentDate",
-            "scheduledDate",
-            "ACTIVE",
-            "CANCELLED",
-            "COMPLETED",
-            "SCHEDULE",
             "eMyVanycQSC",
             "qrur9Dvnyt5",
             "K6uUAvq500H",
@@ -645,6 +642,7 @@ describe('MetadataStore', () => {
                 id: 'ou',
                 name: 'Organisation Unit UPDATED',
                 valueType: 'TEXT',
+                dimensionType: 'ORGANISATION_UNIT',
             })
         })
 
