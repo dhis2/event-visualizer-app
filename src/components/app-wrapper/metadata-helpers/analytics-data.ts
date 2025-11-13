@@ -29,6 +29,13 @@ const extractItemsMetadata = (
                 uid: key,
                 id: key,
             }
+        } else if (Object.keys(value).length === 1 && 'name' in value) {
+            /* Some `metaData.items` only have a `name` field, like relative periods
+             * to process these correctly we need to use the key as uid */
+            acc[key] = {
+                name: value.name,
+                uid: key,
+            }
         } else {
             acc[key] = value
         }
@@ -110,5 +117,6 @@ export const extractMetadataFromAnalyticsResponse = (
     headers: Array<LineListAnalyticsDataHeader>
 ): MetadataInput => {
     const metdataFromItems = extractItemsMetadata(items, dimensions)
+    console.log(metdataFromItems)
     return updateNamesFromHeaders(headers, metdataFromItems)
 }
