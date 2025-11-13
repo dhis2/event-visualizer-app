@@ -1,4 +1,4 @@
-import { LineListLayout } from '../line-list-layout'
+import { LayoutPanel } from '../layout-panel'
 import { uiSlice, initialState as uiSliceInitialState } from '@store/ui-slice'
 import {
     visUiConfigSlice,
@@ -41,7 +41,7 @@ const createMockOptions = (visUiConfigTestState = {}): MockOptions => ({
     },
 })
 
-describe('<LineListLayout />', () => {
+describe('<LayoutPanel />', () => {
     it('renders with LINE_LIST visualization type, EVENT input type, 2 column chips and 1 filter chip', () => {
         /* TODO: We don't need a function here we can just work with a static `mockOptions`
          * const but it is currently impossible to do so, due to the issue below */
@@ -70,32 +70,31 @@ describe('<LineListLayout />', () => {
 
         cy.mount(
             <MockAppWrapper {...mockOptions}>
-                <LineListLayout />
+                <LayoutPanel />
             </MockAppWrapper>
         )
 
-        // Check that the layout container is rendered
-        cy.get('[class*="layoutContainer"]').should('be.visible')
+        // Check that 2 groups are rendered
+        cy.get('[class*="columns"]').should('be.visible')
+        cy.get('[class*="filters"]').should('be.visible')
 
         // Check that both axes are rendered
-        cy.getByDataTest('axis-columns-start').should('be.visible')
-        cy.getByDataTest('axis-filters-end').should('be.visible')
+        cy.getByDataTest('axis-columns').should('be.visible')
+        cy.getByDataTest('axis-filters').should('be.visible')
 
         // Check axis labels
-        cy.getByDataTest('axis-columns-start')
+        cy.getByDataTest('axis-columns')
             .contains('Columns')
             .should('be.visible')
-        cy.getByDataTest('axis-filters-end')
-            .contains('Filter')
-            .should('be.visible')
+        cy.getByDataTest('axis-filters').contains('Filter').should('be.visible')
 
         // Verify columns axis has 2 chips
-        cy.getByDataTest('axis-columns-start')
+        cy.getByDataTest('axis-columns')
             .findByDataTest('layout-dimension-chip')
             .should('have.length', 2)
 
         // Verify filters axis has 1 chip
-        cy.getByDataTest('axis-filters-end')
+        cy.getByDataTest('axis-filters')
             .findByDataTest('layout-dimension-chip')
             .should('have.length', 1)
 
@@ -105,12 +104,12 @@ describe('<LineListLayout />', () => {
         cy.contains('Organisation unit').should('be.visible')
 
         // Verify the chips are in the correct axes
-        cy.getByDataTest('axis-columns-start').within(() => {
+        cy.getByDataTest('axis-columns').within(() => {
             cy.contains('Organisation unit').should('be.visible')
             cy.contains('MCH Infant Feeding').should('be.visible')
         })
 
-        cy.getByDataTest('axis-filters-end').within(() => {
+        cy.getByDataTest('axis-filters').within(() => {
             cy.contains('Gender').should('be.visible')
         })
     })

@@ -55,7 +55,12 @@ startAppListening({
             if (newVisualizationId === 'new') {
                 dispatch(tClearVisualization())
             } else {
-                dispatch(tLoadSavedVisualization(newVisualizationId))
+                dispatch(
+                    tLoadSavedVisualization({
+                        id: newVisualizationId,
+                        updateStatistics: true,
+                    })
+                )
             }
         }
     },

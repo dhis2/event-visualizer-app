@@ -1,9 +1,22 @@
 import { api } from '@api/api'
 import type { BaseQueryApiWithExtraArg } from '@api/custom-base-query'
 import { parseEngineError } from '@api/parse-engine-error'
+import { preparePayloadForSave } from '@dhis2/analytics'
 import { parseCondition } from '@modules/conditions'
-import { getDimensionMetadataFields } from '@modules/visualization'
-import type { CurrentUser, Option, SavedVisualization } from '@types'
+import {
+    getDimensionMetadataFields,
+    getSaveableVisualization,
+} from '@modules/visualization'
+import type {
+    CurrentUser,
+    Option,
+    SavedVisualization,
+    MutationResult,
+    RootState,
+    VisualizationNameDescription,
+    CurrentVisualization,
+    DataEngine,
+} from '@types'
 
 const dimensionFields: string =
     'dimension,dimensionType,filter,program[id],programStage[id],optionSet[id],valueType,legendSet[id],repetition,items[dimensionItem~rename(id)]'
@@ -50,6 +63,24 @@ export const getVisualizationQueryFields = (
     '!user',
 ]
 
+const fetchEventVisualization = async (
+    engine: DataEngine,
+    id: string,
+    displayNameProperty: CurrentUser['settings']['displayNameProperty']
+): Promise<SavedVisualization> => {
+    const data = await engine.query({
+        eventVisualization: {
+            resource: 'eventVisualizations',
+            id,
+            params: {
+                fields: getVisualizationQueryFields(displayNameProperty),
+            },
+        },
+    })
+
+    return data.eventVisualization as SavedVisualization
+}
+
 export const eventVisualizationsApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getVisualization: builder.query<SavedVisualization, string>({
@@ -57,21 +88,11 @@ export const eventVisualizationsApi = api.injectEndpoints({
                 const { appCachedData, engine, metadataStore } = apiArg.extra
 
                 try {
-                    const data = await engine.query({
-                        eventVisualization: {
-                            resource: 'eventVisualizations',
-                            id,
-                            params: {
-                                fields: getVisualizationQueryFields(
-                                    appCachedData.currentUser.settings
-                                        .displayNameProperty
-                                ),
-                            },
-                        },
-                    })
-
-                    const visualization =
-                        data.eventVisualization as SavedVisualization
+                    const visualization = await fetchEventVisualization(
+                        engine,
+                        id,
+                        appCachedData.currentUser.settings.displayNameProperty
+                    )
 
                     metadataStore.setVisualizationMetadata(visualization)
 
@@ -127,18 +148,150 @@ export const eventVisualizationsApi = api.injectEndpoints({
                         metadataStore.addMetadata(optionSetsMetadata)
                     }
 
-                    // update most viewed statistics
-                    await engine.mutate({
-                        resource: 'dataStatistics',
+                    return { data: visualization }
+                } catch (error) {
+                    return { error: parseEngineError(error) }
+                }
+            },
+        }),
+
+        createVisualization: builder.mutation<string, CurrentVisualization>({
+            async queryFn(currentVis, apiArg: BaseQueryApiWithExtraArg) {
+                const { engine } = apiArg.extra
+
+                try {
+                    const createVisualizationResult = (await engine.mutate({
+                        resource: 'eventVisualizations',
                         type: 'create',
+                        data: currentVis,
                         params: {
-                            eventType: 'EVENT_VISUALIZATION_VIEW',
-                            favorite: id,
+                            skipTranslations: true,
+                            skipSharing: true,
                         },
-                        data: {},
+                    })) as MutationResult
+
+                    const uid = createVisualizationResult?.response?.uid
+
+                    if (typeof uid !== 'string') {
+                        throw new Error('Missing uid in create response')
+                    }
+
+                    return { data: uid }
+                } catch (error) {
+                    return { error: parseEngineError(error) }
+                }
+            },
+        }),
+
+        renameVisualization: builder.mutation<
+            VisualizationNameDescription,
+            VisualizationNameDescription
+        >({
+            async queryFn(args, apiArg: BaseQueryApiWithExtraArg) {
+                const { appCachedData, engine } = apiArg.extra
+                const state = apiArg.getState() as RootState
+
+                try {
+                    // Get a fresh copy of the visualization, so nothing but name/description is changed
+                    // This is needed because a partial update (PATCH) is not supported on the api
+                    const visualization = await fetchEventVisualization(
+                        engine,
+                        state.savedVis.id,
+                        appCachedData.currentUser.settings.displayNameProperty
+                    )
+
+                    const updateVisualizationResult = (await engine.mutate({
+                        resource: 'eventVisualizations',
+                        type: 'update',
+                        id: visualization.id,
+                        data: {
+                            // prepare the visualization payload with the new name/description
+                            ...preparePayloadForSave({
+                                visualization: getSaveableVisualization(
+                                    visualization
+                                ) as SavedVisualization,
+                                name: args.name,
+                                description: args.description,
+                            }),
+                        },
+                        params: {
+                            skipTranslations: true,
+                            skipSharing: true,
+                        },
+                    })) as MutationResult
+
+                    // TODO: read mutationData.httpStatusCode instead and throw if not 200?!
+                    const uid = updateVisualizationResult?.response?.uid
+
+                    if (typeof uid !== 'string') {
+                        throw new Error('Missing uid in update response')
+                    }
+
+                    // fetch the visualization name,displayName,description,displayDescription
+                    const fetchNameDescriptionResult = await engine.query({
+                        eventVisualization: {
+                            resource: 'eventVisualizations',
+                            id: visualization.id,
+                            params: {
+                                fields: 'name,displayName,description,displayDescription',
+                            },
+                        },
                     })
 
-                    return { data: visualization }
+                    return {
+                        data: fetchNameDescriptionResult.eventVisualization as VisualizationNameDescription,
+                    }
+                } catch (error) {
+                    return { error: parseEngineError(error) }
+                }
+            },
+        }),
+
+        updateVisualization: builder.mutation<string, SavedVisualization>({
+            async queryFn(visualization, apiArg: BaseQueryApiWithExtraArg) {
+                const { engine } = apiArg.extra
+
+                try {
+                    if (!visualization.id) {
+                        throw new Error('Missing id in updateVisualization')
+                    }
+
+                    const fetchSubscribersResult = await engine.query({
+                        eventVisualization: {
+                            resource: 'eventVisualizations',
+                            id: visualization.id,
+                            params: {
+                                fields: 'subscribers',
+                            },
+                        },
+                    })
+
+                    const { subscribers } =
+                        fetchSubscribersResult.eventVisualization as {
+                            subscribers: SavedVisualization['subscribers']
+                        }
+
+                    const updateVisualizationResult = (await engine.mutate({
+                        resource: 'eventVisualizations',
+                        type: 'update',
+                        id: visualization.id,
+                        data: {
+                            ...visualization,
+                            subscribers,
+                        },
+                        params: {
+                            skipTranslations: true,
+                            skipSharing: true,
+                        },
+                    })) as MutationResult
+
+                    const uid = updateVisualizationResult?.response?.uid
+
+                    if (typeof uid !== 'string') {
+                        throw new Error('Missing uid in update response')
+                    }
+
+                    return { data: uid }
                 } catch (error) {
                     return { error: parseEngineError(error) }
                 }
