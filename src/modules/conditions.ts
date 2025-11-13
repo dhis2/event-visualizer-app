@@ -284,10 +284,8 @@ export const getConditionsTexts = ({
     if (conditions?.legendSet) {
         if (conditionsList.length === 0) {
             const legendSetName = getMetadataItem(conditions.legendSet)?.name
-            if (!legendSetName) {
-                throw new Error('Could not read legend set name')
-            }
-            return [legendSetName]
+            /* Possibly the legendSet name is not yet available, it comes from the analytics data */
+            return legendSetName ? [legendSetName] : []
         } else {
             const legendIds = parseCondition(conditionsList[0])
             const metadataLegendSet = getMetadataItem(conditions.legendSet)
