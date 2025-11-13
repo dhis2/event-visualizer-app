@@ -11,7 +11,7 @@ exports[`LineList > Snapshot test > renders large table with legend set correctl
     />
     <div
       class="_startColumnBottom_6e7f1b"
-      data-test="start-column-top"
+      data-test="start-column-bottom"
     >
       <div
         class="_container_666f4d"

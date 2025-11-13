@@ -143,6 +143,9 @@ msgstr "Microsoft Excel"
 msgid "CSV"
 msgstr "CSV"
 
+msgid "Download data from this date"
+msgstr "Download data from this date"
+
 msgid "Metadata ID scheme"
 msgstr "Metadata ID scheme"
 

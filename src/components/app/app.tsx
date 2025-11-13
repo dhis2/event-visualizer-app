@@ -5,6 +5,7 @@ import classes from './app.module.css'
 import { useLoadVisualizationOnMount } from './use-load-visualization-on-mount'
 import { AppWrapper } from '@components/app-wrapper'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
+import { DetailsPanel } from '@components/details-panel/details-panel'
 import {
     GridCenterColumnBottom,
     GridCenterColumnTop,
@@ -13,6 +14,7 @@ import {
     GridStartColumn,
     GridTopRow,
 } from '@components/grid'
+import { InterpretationModal } from '@components/interpretation-modal/interpretation-modal'
 import { LayoutPanel } from '@components/layout-panel/layout-panel'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
@@ -55,7 +57,7 @@ const EventVisualizer: FC = () => {
         [currentVis, dispatch]
     )
 
-    const onResponseReceived = useCallback(
+    const onResponsesReceived = useCallback(
         (analyticsMetadata: MetadataInput) => {
             addMetadata(analyticsMetadata)
         },
@@ -84,13 +86,18 @@ const EventVisualizer: FC = () => {
                 {isVisualizationEmpty(currentVis) && !isVisualizationLoading ? (
                     <StartScreen />
                 ) : (
-                    <PluginWrapper
-                        isVisualizationLoading={isVisualizationLoading}
-                        visualization={currentVis}
-                        displayProperty={currentUser.settings.displayProperty}
-                        onDataSorted={onDataSorted}
-                        onResponseReceived={onResponseReceived}
-                    />
+                    <>
+                        <PluginWrapper
+                            isVisualizationLoading={isVisualizationLoading}
+                            visualization={currentVis}
+                            displayProperty={
+                                currentUser.settings.displayProperty
+                            }
+                            onDataSorted={onDataSorted}
+                            onResponsesReceived={onResponsesReceived}
+                        />
+                        <InterpretationModal />
+                    </>
                 )}
             </GridCenterColumnBottom>
             <GridEndColumn>
@@ -99,7 +106,7 @@ const EventVisualizer: FC = () => {
                         [classes.hidden]: !isDetailsPanelVisible,
                     })}
                 >
-                    Interpretations panel
+                    {isDetailsPanelVisible && <DetailsPanel />}
                 </div>
             </GridEndColumn>
             <CssVariables colors spacers theme />
