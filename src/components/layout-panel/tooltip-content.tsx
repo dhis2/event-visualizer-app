@@ -189,8 +189,6 @@ export const TooltipContent: FC<TooltipContentProps> = ({
         }
     }
 
-    console.log(dimension.dimensionType)
-
     switch (dimension.dimensionType) {
         case 'CATEGORY':
         case 'CATEGORY_OPTION_GROUP_SET':
