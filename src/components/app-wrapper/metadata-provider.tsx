@@ -62,15 +62,20 @@ export const useMetadataItem = (
     )
     return result
 }
-
+const sentinel = '|'
 export const useMetadataItems = (
     metadataIds: string[]
 ): Record<string, MetadataStoreItem> => {
     const metadataStore = useContext(MetadataContext)!
-    // Sort keys for stable dependency array
-    const sortedMetadataIds = useMemo(
-        () => [...metadataIds].sort(),
+    // Derive a stable key based on contents while preserving order invariance
+    const metadataIdsKey = useMemo<string>(
+        () => [...metadataIds].sort().join(sentinel),
         [metadataIds]
+    )
+
+    const sortedMetadataIds = useMemo<string[]>(
+        () => (metadataIdsKey ? metadataIdsKey.split(sentinel) : []),
+        [metadataIdsKey]
     )
 
     // Cache the last snapshot to ensure stable reference
@@ -101,9 +106,7 @@ export const useMetadataItems = (
             values: metadataItems,
         }
         return metadataItems
-        // sortedMetadataIds is intentionally spread for stable deps
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [metadataStore, ...sortedMetadataIds])
+    }, [metadataStore, sortedMetadataIds])
 
     const result = useSyncExternalStore(
         useCallback(
@@ -116,9 +119,7 @@ export const useMetadataItems = (
                     unsubscribeFunctions.forEach((unsubscribe) => unsubscribe())
                 }
             },
-            // sortedMetadataIds is intentionally spread for stable deps
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-            [metadataStore, ...sortedMetadataIds]
+            [metadataStore, sortedMetadataIds]
         ),
         getSnapshot
     )
