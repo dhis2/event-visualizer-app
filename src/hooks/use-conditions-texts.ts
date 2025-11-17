@@ -66,7 +66,6 @@ export const useConditionsTexts = ({
     const names = useMemo(() => {
         if (shouldUseLegendSetConditions(conditions)) {
             // Prefer name, fallback to ID
-            console.log('LEGENDES', metadataIds, metadataItems)
             return metadataIds.map((id) => metadataItems[id]?.name ?? id)
         }
         if (shouldUseOrgUnitConditions(conditions, dimension, conditionsList)) {
