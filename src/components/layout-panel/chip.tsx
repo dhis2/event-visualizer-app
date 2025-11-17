@@ -4,10 +4,8 @@ import React from 'react'
 import { ChipBase } from './chip-base'
 import classes from './styles/chip.module.css'
 import { TooltipContent } from './tooltip-content'
-import { useMetadataStore } from '@components/app-wrapper/metadata-provider'
 import { IconButton } from '@components/dimension-item/icon-button'
-import { useAppSelector } from '@hooks'
-import { getConditionsTexts } from '@modules/conditions'
+import { useAppSelector, useConditionsTexts } from '@hooks'
 import {
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
@@ -48,17 +46,14 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
         console.log('TODO Open chip menu for:', dimension.id)
     }
 
-    const { getMetadataItem } = useMetadataStore()
-
     const hasConditions =
         Boolean(conditions?.condition?.length) || Boolean(conditions?.legendSet)
 
     const digitGroupSeparator = 'COMMA' // TODO get from redux store options
-    const conditionsTexts = getConditionsTexts({
+    const conditionsTexts = useConditionsTexts({
         conditions,
         dimension,
         formatValueOptions: { digitGroupSeparator },
-        getMetadataItem,
     })
 
     return (

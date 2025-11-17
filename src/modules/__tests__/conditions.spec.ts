@@ -1,9 +1,9 @@
-import { vi, expect, it, test, describe, beforeEach } from 'vitest'
+import { expect, it, test, describe } from 'vitest'
 import {
-    getLegendSetConditionTexts,
-    getOptionSetConditionTexts,
+    getLegendSetConditionMetadataIds,
+    getOptionSetIdAndSelectedOptionCodes,
     getBooleanConditionTexts,
-    getOrgUnitConditionTexts,
+    getOrgUnitConditionMetadataIds,
     getOperatorConditionTexts,
     checkIsCaseSensitive,
     addCaseSensitivePrefix,
@@ -19,35 +19,21 @@ import type { QueryOperator } from '../conditions.js'
 import type { LayoutDimension } from '@components/layout-panel/chip.js'
 import type { CurrentVisualization } from '@types'
 
-describe('getLegendSetConditionTexts', () => {
-    const mockGetMetadataItem = vi.fn()
-
-    beforeEach(() => {
-        mockGetMetadataItem.mockReset()
-    })
-
-    test('Legend set chosen with no legends selected', () => {
+describe('getLegendSetConditionMetadataIds', () => {
+    test('Legend set chosen without legends selected', () => {
         const conditions = {
-            condition: '',
             legendSet: 'legendSetId1',
         }
-        const conditionsList = parseConditionsStringToArray(
-            conditions.condition ?? ''
-        )
+        const conditionsList: string[] = []
 
         expect(shouldUseLegendSetConditions(conditions)).toBe(true)
 
-        mockGetMetadataItem.mockReturnValueOnce({
-            id: 'legendSetId1',
-            name: 'Legend Set Name',
-        })
-        const actual = getLegendSetConditionTexts(
+        const actual = getLegendSetConditionMetadataIds(
             conditions,
-            conditionsList,
-            mockGetMetadataItem
+            conditionsList
         )
 
-        expect(actual).toEqual(['Legend Set Name'])
+        expect(actual).toEqual(['legendSetId1'])
     })
 
     test('Legend set chosen with legends selected', () => {
@@ -61,32 +47,16 @@ describe('getLegendSetConditionTexts', () => {
 
         expect(shouldUseLegendSetConditions(conditions)).toBe(true)
 
-        mockGetMetadataItem.mockReturnValueOnce({
-            id: 'legendSetId1',
-            name: 'Legend Set Name',
-            legends: [
-                { id: 'Legend1Id', name: 'Legend 1' },
-                { id: 'Legend2Id', name: 'Legend 2' },
-            ],
-        })
-
-        const actual = getLegendSetConditionTexts(
+        const actual = getLegendSetConditionMetadataIds(
             conditions,
-            conditionsList,
-            mockGetMetadataItem
+            conditionsList
         )
 
-        expect(actual).toEqual(['Legend 1', 'Legend 2'])
+        expect(actual).toEqual(['Legend1Id', 'Legend2Id'])
     })
 })
 
-describe('getOptionSetConditionTexts', () => {
-    const mockGetMetadataItem = vi.fn()
-
-    beforeEach(() => {
-        mockGetMetadataItem.mockReset()
-    })
-
+describe('getOptionSetConditionMetadataIds', () => {
     test('Dimension with optionSet', () => {
         const conditions = {
             condition: 'IN:5code;6code',
@@ -107,34 +77,16 @@ describe('getOptionSetConditionTexts', () => {
             shouldUseOptionSetConditions(conditions, dimension, conditionsList)
         ).toBe(true)
 
-        mockGetMetadataItem.mockReturnValue({
-            id: 'optionsetId',
-            name: 'Option Set Name',
-            valueType: 'TEXT' as const,
-            version: 1,
-            options: [
-                { code: '5code', name: '5' },
-                { code: '6code', name: '6' },
-            ],
-        })
-
-        const actual = getOptionSetConditionTexts(
+        const actual = getOptionSetIdAndSelectedOptionCodes(
             dimension,
-            conditionsList,
-            mockGetMetadataItem
+            conditionsList
         )
 
-        expect(actual).toEqual(['5', '6'])
+        expect(actual.optionSetId).toEqual('optionsetId')
     })
 })
 
-describe('getOrgUnitConditionTexts', () => {
-    const mockGetMetadataItem = vi.fn()
-
-    beforeEach(() => {
-        mockGetMetadataItem.mockReset()
-    })
-
+describe('getOrgUnitConditionMetadataIds', () => {
     test('Organisation unit dimension with EQ condition', () => {
         const conditions = {
             condition: 'EQ:OrgUnitId1',
@@ -154,17 +106,9 @@ describe('getOrgUnitConditionTexts', () => {
             shouldUseOrgUnitConditions(conditions, dimension, conditionsList)
         ).toBe(true)
 
-        mockGetMetadataItem.mockReturnValueOnce({
-            id: 'OrgUnitId1',
-            name: 'Org unit name',
-        })
+        const actual = getOrgUnitConditionMetadataIds(conditionsList)
 
-        const actual = getOrgUnitConditionTexts(
-            conditionsList,
-            mockGetMetadataItem
-        )
-
-        expect(actual).toEqual(['Org unit name'])
+        expect(actual).toEqual(['OrgUnitId1'])
     })
 })
 
