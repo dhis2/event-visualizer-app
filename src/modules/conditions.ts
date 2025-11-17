@@ -239,6 +239,17 @@ const getOperatorsByValueType = (valueType: ValueType) => {
     }
 }
 
+const getOperatorsForDimension = (dimension: LayoutDimension) => {
+    const valueType =
+        dimension.dimensionType === 'PROGRAM_INDICATOR' && !dimension.valueType
+            ? 'NUMBER'
+            : dimension.valueType
+    if (typeof valueType === 'undefined') {
+        throw new Error('Could get operators, valueType undefined')
+    }
+    return getOperatorsByValueType(valueType)
+}
+
 const lookupOptionSetOptionMetadata = (
     optionSetId: string,
     code: string,
@@ -257,122 +268,161 @@ const lookupOptionSetOptionMetadata = (
     return optionSetMetaData.options?.find((option) => option.code === code)
 }
 
+type Conditions = {
+    condition?: string | string[]
+    legendSet?: string
+}
+type FormatValueOptions = {
+    locale?: string
+    digitGroupSeparator?: SavedVisualization['digitGroupSeparator']
+    baseUrl?: string
+}
 interface GetConditionsTextsParams {
-    conditions: {
-        condition?: string | string[]
-        legendSet?: string
-    }
+    conditions: Conditions
     dimension: LayoutDimension
-    formatValueOptions: {
-        locale?: string
-        digitGroupSeparator?: SavedVisualization['digitGroupSeparator']
-        baseUrl?: string
-    }
+    formatValueOptions: FormatValueOptions
     getMetadataItem: GetMetadataItemFn
 }
 
-export const getConditionsTexts = ({
-    conditions,
-    dimension,
-    formatValueOptions,
-    getMetadataItem,
-}: GetConditionsTextsParams): Array<string> => {
-    const conditionsList = parseConditionsStringToArray(
-        conditions?.condition ?? ''
-    )
+const hasValidLegendSet = (
+    conditions: Conditions
+): conditions is Conditions & { legendSet: string } =>
+    typeof conditions.legendSet === 'string' && conditions.legendSet.length > 0
 
-    if (conditions?.legendSet) {
-        if (conditionsList.length === 0) {
-            const legendSetName = getMetadataItem(conditions.legendSet)?.name
-            /* Possibly the legendSet name is not yet available, it comes from the analytics data */
-            return legendSetName ? [legendSetName] : []
-        } else {
-            const legendIds = parseCondition(conditionsList[0])
-            const metadataLegendSet = getMetadataItem(conditions.legendSet)
+const hasValidOptionSet = (
+    dimension: LayoutDimension
+): dimension is LayoutDimension & { optionSet: string } =>
+    typeof dimension.optionSet === 'string' && dimension.optionSet.length > 0
 
-            if (!legendIds || !metadataLegendSet) {
-                return []
-            }
+export const shouldUseLegendSetConditions = (conditions: Conditions) =>
+    hasValidLegendSet(conditions)
 
-            if (!isLegendSetMetadataItem(metadataLegendSet)) {
-                throw new Error('Metadata item is not of type legend set')
-            }
+export const shouldUseOptionSetConditions = (
+    conditions: Conditions,
+    dimension: LayoutDimension,
+    conditionsList: string[]
+) =>
+    !shouldUseLegendSetConditions(conditions) &&
+    hasValidOptionSet(dimension) &&
+    conditionsList.length > 0 &&
+    conditionsList[0]?.startsWith(OPERATOR_IN)
 
-            return legendIds
-                .map(
-                    (legendId) =>
-                        metadataLegendSet.legends.find((l) => l.id === legendId)
-                            ?.name
-                )
-                .filter((maybeName) => typeof maybeName === 'string')
-        }
+export const shouldUseBooleanConditions = (
+    conditions: Conditions,
+    dimension: LayoutDimension,
+    conditionsList: string[]
+) =>
+    !shouldUseLegendSetConditions(conditions) &&
+    !shouldUseOptionSetConditions(conditions, dimension, conditionsList) &&
+    ['BOOLEAN', 'TRUE_ONLY'].includes(dimension.valueType ?? '') &&
+    conditionsList.length > 0 &&
+    conditionsList[0]?.startsWith(OPERATOR_IN)
+
+export const shouldUseOrgUnitConditions = (
+    conditions: Conditions,
+    dimension: LayoutDimension,
+    conditionsList: string[]
+) =>
+    !shouldUseLegendSetConditions(conditions) &&
+    !shouldUseOptionSetConditions(conditions, dimension, conditionsList) &&
+    !shouldUseBooleanConditions(conditions, dimension, conditionsList) &&
+    dimension.valueType === 'ORGANISATION_UNIT' &&
+    conditionsList.length > 0 &&
+    (conditionsList[0]?.startsWith(OPERATOR_EQUAL) ||
+        conditionsList[0]?.startsWith(OPERATOR_IN))
+
+export const getLegendSetConditionTexts = (
+    conditions: Conditions,
+    conditionsList: string[],
+    getMetadataItem: GetMetadataItemFn
+): string[] => {
+    if (!hasValidLegendSet(conditions)) {
+        throw new Error(
+            'Invalid conditions: legendSet must be a non-empty string'
+        )
     }
 
-    if (
-        typeof dimension.optionSet === 'string' &&
-        conditionsList.length > 0 &&
-        conditionsList[0]?.startsWith(OPERATOR_IN)
-    ) {
-        const optionSet = dimension.optionSet
-        const items = parseCondition(conditionsList[0])
+    if (conditionsList.length === 0) {
+        const legendSetName = getMetadataItem(conditions.legendSet)?.name
+        /* Possibly the legendSet name is not yet available, it comes from the analytics data */
+        return legendSetName ? [legendSetName] : []
+    } else {
+        const legendIds = parseCondition(conditionsList[0])
+        const metadataLegendSet = getMetadataItem(conditions.legendSet)
 
-        if (!items) {
+        if (!legendIds) {
             return []
         }
+        if (!metadataLegendSet) {
+            return legendIds
+        }
 
-        return items
+        if (!isLegendSetMetadataItem(metadataLegendSet)) {
+            throw new Error('Metadata item is not of type legend set')
+        }
+
+        return legendIds
             .map(
-                (code) =>
-                    lookupOptionSetOptionMetadata(
-                        optionSet,
-                        code,
-                        getMetadataItem
-                    )?.name
+                (legendId) =>
+                    metadataLegendSet.legends.find((l) => l.id === legendId)
+                        ?.name
             )
             .filter((maybeName) => typeof maybeName === 'string')
     }
+}
 
-    if (
-        ['BOOLEAN', 'TRUE_ONLY'].includes(dimension.valueType ?? '') &&
-        conditionsList.length > 0 &&
-        conditionsList[0]?.startsWith(OPERATOR_IN)
-    ) {
-        const values = parseCondition(conditionsList[0])
-        return Array.isArray(values)
-            ? values.map((value) => getBooleanValues()[value])
-            : []
+export const getOptionSetConditionTexts = (
+    dimension: LayoutDimension,
+    conditionsList: string[],
+    getMetadataItem: GetMetadataItemFn
+): string[] => {
+    if (!hasValidOptionSet(dimension)) {
+        throw new Error(
+            'Invalid dimension: optionSet must be a non-empty string'
+        )
     }
 
-    if (
-        dimension.valueType === 'ORGANISATION_UNIT' &&
-        conditionsList.length > 0 &&
-        (conditionsList[0]?.startsWith(OPERATOR_EQUAL) ||
-            conditionsList[0]?.startsWith(OPERATOR_IN))
-    ) {
-        const ouIds = parseCondition(conditionsList[0])
-        return Array.isArray(ouIds)
-            ? ouIds.map(
-                  (ouId) =>
-                      getMetadataItem(ouId)?.name ??
-                      getMetadataItem(ouIdHelper.removePrefix(ouId))?.name ??
-                      // Default to showing the ID, but this should never happen
-                      ouId
-              )
-            : []
-    }
+    const items = parseCondition(conditionsList[0]) ?? []
 
-    if (
-        typeof dimension.valueType === 'undefined' &&
-        dimension.dimensionType !== 'PROGRAM_INDICATOR'
-    ) {
-        return []
-    }
+    return items
+        .map(
+            (code) =>
+                lookupOptionSetOptionMetadata(
+                    dimension.optionSet,
+                    code,
+                    getMetadataItem
+                )?.name
+        )
+        .filter((maybeName) => typeof maybeName === 'string')
+}
 
-    const valueTypeForOperators =
-        dimension.dimensionType === 'PROGRAM_INDICATOR' && !dimension.valueType
-            ? 'NUMBER'
-            : dimension.valueType!
-    const operators = getOperatorsByValueType(valueTypeForOperators)
+export const getBooleanConditionTexts = (
+    conditionsList: string[]
+): string[] => {
+    const values = parseCondition(conditionsList[0]) ?? []
+    return values.map((value) => getBooleanValues()[value])
+}
+
+export const getOrgUnitConditionTexts = (
+    conditionsList: string[],
+    getMetadataItem: GetMetadataItemFn
+): string[] => {
+    const ouIds = parseCondition(conditionsList[0]) ?? []
+    return ouIds.map(
+        (ouId) =>
+            getMetadataItem(ouId)?.name ??
+            getMetadataItem(ouIdHelper.removePrefix(ouId))?.name ??
+            // Default to showing the ID, but this should never happen
+            ouId
+    )
+}
+
+export const getOperatorConditionTexts = (
+    dimension: LayoutDimension,
+    conditionsList: string[],
+    formatValueOptions: FormatValueOptions
+): string[] => {
+    const operators = getOperatorsForDimension(dimension)
 
     return conditionsList.map((condition) => {
         let operator: string = ''
@@ -410,6 +460,43 @@ export const getConditionsTexts = ({
             throw new Error('Could not read operatorName')
         }
     })
+}
+
+export const getConditionsTexts = ({
+    conditions,
+    dimension,
+    formatValueOptions,
+    getMetadataItem,
+}: GetConditionsTextsParams): Array<string> => {
+    const conditionsList = parseConditionsStringToArray(
+        conditions?.condition ?? ''
+    )
+
+    if (shouldUseLegendSetConditions(conditions)) {
+        return getLegendSetConditionTexts(
+            conditions,
+            conditionsList,
+            getMetadataItem
+        )
+    }
+    if (shouldUseOptionSetConditions(conditions, dimension, conditionsList)) {
+        return getOptionSetConditionTexts(
+            dimension,
+            conditionsList,
+            getMetadataItem
+        )
+    }
+    if (shouldUseBooleanConditions(conditions, dimension, conditionsList)) {
+        return getBooleanConditionTexts(conditionsList)
+    }
+    if (shouldUseOrgUnitConditions(conditions, dimension, conditionsList)) {
+        return getOrgUnitConditionTexts(conditionsList, getMetadataItem)
+    }
+    return getOperatorConditionTexts(
+        dimension,
+        conditionsList,
+        formatValueOptions
+    )
 }
 
 export const getConditionsFromVisualization = (
