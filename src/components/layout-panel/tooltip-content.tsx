@@ -226,7 +226,7 @@ export const TooltipContent: FC<TooltipContentProps> = ({
             return (
                 <TooltipList>
                     <ProgramName programName={programName} />
-                    {itemDisplayNames ? (
+                    {itemDisplayNames.length > 0 ? (
                         <ItemsList
                             itemDisplayNames={itemDisplayNames}
                             dimensionId={dimension.id}
