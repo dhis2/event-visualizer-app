@@ -1,8 +1,8 @@
 import i18n from '@dhis2/d2-i18n'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import type { LayoutDimension } from './chip'
 import { isProgramMetadataItem } from '@components/app-wrapper/metadata-helpers/type-guards'
-import { useMetadataStore } from '@components/app-wrapper/metadata-provider'
+import { useMetadataItems } from '@components/app-wrapper/metadata-provider'
 import { ouIdHelper } from '@dhis2/analytics'
 import { useAppSelector } from '@hooks'
 import {
@@ -15,8 +15,23 @@ import {
     getVisUiConfigOutputType,
 } from '@store/vis-ui-config-slice'
 
+// Helper function to format a list of metadata IDs into a labeled string
+const getNameList = (
+    idList: Array<string>,
+    label: string,
+    metadataItems: ReturnType<typeof useMetadataItems>
+) =>
+    idList.reduce((levelString, levelId, index) => {
+        if (index > 0) {
+            levelString += ', '
+        }
+        const levelName = metadataItems[levelId]?.name
+        levelString += levelName ?? levelId
+
+        return levelString
+    }, `${label}: `)
+
 export const useTooltipContentData = (dimension: LayoutDimension) => {
-    const { getMetadataItem } = useMetadataStore()
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const itemIds = useAppSelector((state) =>
         getVisUiConfigItemsByDimension(state, dimension.id)
@@ -30,12 +45,48 @@ export const useTooltipContentData = (dimension: LayoutDimension) => {
             }),
         [dimension.id, outputType]
     )
-    const { programName, stageName } = useMemo(() => {
+
+    // Collect all metadata IDs that will be needed
+    const metadataIds = useMemo(() => {
+        const ids = new Set<string>()
+
+        // Add program and stage IDs if they exist
+        if (typeof programId === 'string') {
+            ids.add(programId)
+        }
+        if (typeof programStageId === 'string') {
+            ids.add(programStageId)
+        }
+
+        // Add IDs from itemIds processing
+        itemIds.forEach((id) => {
+            if (ouIdHelper.hasLevelPrefix(id)) {
+                ids.add(ouIdHelper.removePrefix(id))
+            } else if (ouIdHelper.hasGroupPrefix(id)) {
+                ids.add(ouIdHelper.removePrefix(id))
+            } else {
+                const { dimensionId } = getDimensionIdParts({
+                    id,
+                    outputType,
+                })
+                ids.add(dimensionId)
+            }
+        })
+
+        return Array.from(ids)
+    }, [programId, programStageId, itemIds, outputType])
+
+    // Get reactive metadata
+    const metadataItems = useMetadataItems(metadataIds)
+
+    // Compute the final data using reactive metadata
+    const { programName, stageName, itemDisplayNames } = useMemo(() => {
+        // Program and stage names
         const programMetadata =
-            typeof programId === 'string' ? getMetadataItem(programId) : null
+            typeof programId === 'string' ? metadataItems[programId] : null
         const programStageMetadata =
             typeof programStageId === 'string'
-                ? getMetadataItem(programStageId)
+                ? metadataItems[programStageId]
                 : null
         /* TODO: Decide if the code below can be removed. I would say YES
          * we need to make sure the stage is in the metadata instead looking
@@ -49,26 +100,10 @@ export const useTooltipContentData = (dimension: LayoutDimension) => {
                   )
                 : null
         const programStage = programStageMetadata ?? programStageFromProgram
-        return {
-            programName: programMetadata?.name ?? '',
-            stageName: programStage?.name ?? '',
-        }
-    }, [programId, programStageId, getMetadataItem])
+        const programName = programMetadata?.name ?? ''
+        const stageName = programStage?.name ?? ''
 
-    const getNameList = useCallback(
-        (idList: Array<string>, label: string) =>
-            idList.reduce((levelString, levelId, index) => {
-                if (index > 0) {
-                    levelString += ', '
-                }
-                const levelName = getMetadataItem(levelId)?.name
-                levelString += levelName ?? levelId
-
-                return levelString
-            }, `${label}: `),
-        [getMetadataItem]
-    )
-    const itemDisplayNames = useMemo<Array<string>>(() => {
+        // Item display names
         const levelIds: Array<string> = []
         const groupIds: Array<string> = []
         const itemDisplayNames: Array<string> = []
@@ -86,21 +121,37 @@ export const useTooltipContentData = (dimension: LayoutDimension) => {
                 itemDisplayNames.push(
                     isStartEndDate(dimensionId)
                         ? formatStartEndDate(dimensionId)
-                        : getMetadataItem(dimensionId)?.name ?? id
+                        : metadataItems[dimensionId]?.name ?? id
                 )
             }
         })
 
+        // Add level and group names
         if (levelIds.length > 0) {
-            itemDisplayNames.push(getNameList(levelIds, i18n.t('Levels')))
+            itemDisplayNames.push(
+                getNameList(levelIds, i18n.t('Levels'), metadataItems)
+            )
         }
 
         if (groupIds.length > 0) {
-            itemDisplayNames.push(getNameList(groupIds, i18n.t('Groups')))
+            itemDisplayNames.push(
+                getNameList(groupIds, i18n.t('Groups'), metadataItems)
+            )
         }
 
-        return itemDisplayNames
-    }, [itemIds, getNameList, outputType, formatStartEndDate, getMetadataItem])
+        return {
+            programName,
+            stageName,
+            itemDisplayNames,
+        }
+    }, [
+        programId,
+        programStageId,
+        itemIds,
+        outputType,
+        formatStartEndDate,
+        metadataItems,
+    ])
 
     return {
         programName,
