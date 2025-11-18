@@ -117,7 +117,6 @@ export type SavedVisualization = Omit<
     | 'interpretations'
     | 'userGroupAccesses'
     | 'publicAccess'
-    | 'displayDescription'
     | 'rewindRelativePeriods'
     | 'userOrganisationUnit'
     | 'userOrganisationUnitChildren'
@@ -148,3 +147,8 @@ export type CurrentVisualization =
     | EmptyVisualization
     | NewVisualization
     | SavedVisualization
+
+export type VisualizationNameDescription = Pick<
+    SavedVisualization,
+    'name' | 'displayName' | 'description' | 'displayDescription'
+>

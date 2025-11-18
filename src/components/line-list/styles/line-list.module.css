@@ -1,3 +1,11 @@
+.modalHeightConstrainer {
+    display: flex;
+    justify-content: flex-start;
+    flex-grow: 1;
+    min-inline-size: 0;
+    inline-size: 100%;
+}
+
 .grid {
     display: grid;
     block-size: 100%;

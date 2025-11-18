@@ -163,5 +163,11 @@ module.exports = {
                 'react/prop-types': 'off',
             },
         },
+        {
+            files: ['**/*.cy.ts', '**/*.cy.tsx'],
+            rules: {
+                'no-restricted-imports': 'off',
+            },
+        },
     ],
 }

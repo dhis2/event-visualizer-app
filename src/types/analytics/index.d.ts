@@ -1,3 +1,4 @@
+import type { AboutAOUnit } from './about-ao-unit'
 import type {
     CachedDataQueryProvider,
     useCachedDataQuery,
@@ -8,7 +9,10 @@ import type { HoverMenuBar } from './hover-menu-bar'
 import type { HoverMenuDropdown } from './hover-menu-dropdown'
 import type { HoverMenuList } from './hover-menu-list'
 import type { HoverMenuListItem } from './hover-menu-list-item'
+import type { InterpretationModal } from './interpretation-modal'
 import type { InterpretationsAndDetailsToggler } from './interpretations-and-details-toggler'
+import type { InterpretationsProvider } from './interpretations-provider'
+import type { InterpretationsUnit } from './interpretations-unit'
 import type { OuIdHelper } from './ou-id-helper'
 import type { PivotTable } from './pivot-table'
 import type { Toolbar } from './toolbar'
@@ -20,12 +24,14 @@ import type {
     DimensionArray,
     EventVisualizationType,
     LegendSet,
+    NewVisualization,
     SavedVisualization,
     ValueType,
     VisualizationType,
 } from '@types'
 
 declare module '@dhis2/analytics' {
+    export const AboutAOUnit: AboutAOUnit
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const Analytics: any
     export const CachedDataQueryProvider: CachedDataQueryProvider
@@ -36,7 +42,10 @@ declare module '@dhis2/analytics' {
     export const HoverMenuDropdown: HoverMenuDropdown
     export const HoverMenuListItem: HoverMenuListItem
     export const HoverMenuList: HoverMenuList
+    export const InterpretationModal: InterpretationModal
     export const InterpretationsAndDetailsToggler: InterpretationsAndDetailsToggler
+    export const InterpretationsProvider: InterpretationsProvider
+    export const InterpretationsUnit: InterpretationsUnit
     export const PivotTable: PivotTable
     export const Toolbar: Toolbar
     export const ToolbarSidebar: ToolbarSidebar
@@ -50,6 +59,12 @@ declare module '@dhis2/analytics' {
     export const layoutGetAllDimensions: (
         vis: CurrentVisualization
     ) => DimensionArray
+
+    export const layoutGetDimension: (
+        vis: CurrentVisualization,
+        dimensionId: string // TODO: replace with DimensionId type? e.g. 'ou', 'pe', 'dx'
+    ) => DimensionArray[number] | undefined
+
     export const layoutGetAxisIdDimensionIdsObject: (
         vis: CurrentVisualization
     ) => {
@@ -62,6 +77,31 @@ declare module '@dhis2/analytics' {
     ) => {
         [dimensionId: string]: string[]
     }
+    export const dimensionIsValid: (
+        dimension: unknown,
+        options?: { requireItems?: boolean }
+    ) => boolean
+
+    export const preparePayloadForSaveAs: ({
+        visualization,
+        name,
+        description,
+    }: {
+        visualization: NewVisualization | SavedVisualization
+        name?: string
+        description?: string
+    }) => NewVisualization | SavedVisualization
+
+    export const preparePayloadForSave: ({
+        visualization,
+        name,
+        description,
+    }: {
+        visualization: SavedVisualization
+        name?: string
+        description?: string
+    }) => SavedVisualization
+
     export const getColorByValueFromLegendSet: (
         legendSet?: LegendSet,
         value?: string | number | boolean
