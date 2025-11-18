@@ -24,6 +24,97 @@ type TooltipContentProps = {
     axisId: string
 }
 
+type ItemsListProps = {
+    itemDisplayNames: string[]
+    dimensionId: string
+}
+
+const ItemsList: FC<ItemsListProps> = ({ itemDisplayNames, dimensionId }) => {
+    if (itemDisplayNames.some((name) => !name)) {
+        return null
+    }
+    const itemsToRender = itemDisplayNames
+        .slice(0, MAX_LIST_LENGTH)
+        .map((name) => (
+            <li key={`${dimensionId}-${name}`} className={styles.item}>
+                {name}
+            </li>
+        ))
+
+    const numberOverRenderLimit = itemDisplayNames.length - MAX_LIST_LENGTH
+    if (numberOverRenderLimit > 0) {
+        itemsToRender.push(
+            <li key={`${dimensionId}-render-limit`} className={styles.item}>
+                {i18n.t('And {{count}} other...', {
+                    count: numberOverRenderLimit,
+                    defaultValue: 'And {{count}} other...',
+                    defaultValue_plural: 'And {{count}} others...',
+                })}
+            </li>
+        )
+    }
+
+    return <>{itemsToRender}</>
+}
+
+const NoItemsLabel: FC<{ dimensionId: string }> = ({ dimensionId }) => (
+    <li key={`${dimensionId}-none-selected`} className={styles.item}>
+        {i18n.t('None selected')}
+    </li>
+)
+
+const StageName: FC<{ stageName: string }> = ({ stageName }) =>
+    stageName ? (
+        <li className={styles.item}>
+            {i18n.t('Program stage: {{- stageName}}', {
+                stageName,
+                nsSeparator: '^^',
+            })}
+        </li>
+    ) : null
+
+const ProgramName: FC<{ programName: string }> = ({ programName }) =>
+    programName ? (
+        <li className={styles.item}>
+            {i18n.t('Program: {{- programName}}', {
+                programName,
+                nsSeparator: '^^',
+            })}
+        </li>
+    ) : null
+
+type ItemsSectionProps = {
+    itemsList: string[]
+    axisId: string
+    dimensionId: string
+}
+
+const TooltipList: FC<{ children: React.ReactNode }> = ({ children }) => (
+    <ul className={styles.list} data-test="tooltip-content">
+        {children}
+    </ul>
+)
+
+const ItemsSection: FC<ItemsSectionProps> = ({
+    itemsList,
+    axisId,
+    dimensionId,
+}) => {
+    if (itemsList.length) {
+        return (
+            <ItemsList itemDisplayNames={itemsList} dimensionId={dimensionId} />
+        )
+    } else if (axisId === 'filters') {
+        return <NoItemsLabel dimensionId={dimensionId} />
+    } else {
+        return (
+            <li key={`${dimensionId}-all-selected`} className={styles.item}>
+                {i18n.t('Showing all values for this dimension')}
+            </li>
+        )
+    }
+}
+
 export const TooltipContent: FC<TooltipContentProps> = ({
     dimension,
     conditionsTexts,
@@ -115,116 +206,59 @@ export const TooltipContent: FC<TooltipContentProps> = ({
         return itemDisplayNames
     }, [itemIds, getNameList, outputType, formatStartEndDate, getMetadataItem])
 
-    const renderItems = (itemDisplayNames: Array<string>) => {
-        if (itemDisplayNames.some((name) => !name)) {
-            return null
-        }
-        const itemsToRender = itemDisplayNames
-            .slice(0, MAX_LIST_LENGTH)
-            .map((name) => (
-                <li key={`${dimension.id}-${name}`} className={styles.item}>
-                    {name}
-                </li>
-            ))
-
-        const numberOverRenderLimit = itemDisplayNames.length - MAX_LIST_LENGTH
-        if (numberOverRenderLimit > 0) {
-            itemsToRender.push(
-                <li
-                    key={`${dimension.id}-render-limit`}
-                    className={styles.item}
-                >
-                    {i18n.t('And {{count}} other...', {
-                        count: numberOverRenderLimit,
-                        defaultValue: 'And {{count}} other...',
-                        defaultValue_plural: 'And {{count}} others...',
-                    })}
-                </li>
-            )
-        }
-
-        return itemsToRender
-    }
-
-    const renderNoItemsLabel = () => (
-        <li key={`${dimension.id}-none-selected`} className={styles.item}>
-            {i18n.t('None selected')}
-        </li>
-    )
-
-    const renderStageName = () =>
-        stageName && (
-            <li className={styles.item}>
-                {i18n.t('Program stage: {{- stageName}}', {
-                    stageName,
-                    nsSeparator: '^^',
-                })}
-            </li>
-        )
-
-    const renderProgramName = () =>
-        programName && (
-            <li className={styles.item}>
-                {i18n.t('Program: {{- programName}}', {
-                    programName,
-                    nsSeparator: '^^',
-                })}
-            </li>
-        )
-
-    const renderItemsSection = (itemsList) => {
-        if (itemsList.length) {
-            return renderItems(itemsList)
-        } else if (axisId === 'filters') {
-            return renderNoItemsLabel()
-        } else {
-            return (
-                <li
-                    key={`${dimension.id}-all-selected`}
-                    className={styles.item}
-                >
-                    {i18n.t('Showing all values for this dimension')}
-                </li>
-            )
-        }
-    }
-
     switch (dimension.dimensionType) {
         case 'CATEGORY':
         case 'CATEGORY_OPTION_GROUP_SET':
         case 'ORGANISATION_UNIT_GROUP_SET':
         case 'STATUS':
             return (
-                <ul className={styles.list} data-test="tooltip-content">
-                    {renderProgramName()}
-                    {renderItemsSection(itemDisplayNames)}
-                </ul>
+                <TooltipList>
+                    <ProgramName programName={programName} />
+                    <ItemsSection
+                        itemsList={itemDisplayNames}
+                        axisId={axisId}
+                        dimensionId={dimension.id}
+                    />
+                </TooltipList>
             )
         case 'PERIOD':
         case 'ORGANISATION_UNIT':
             return (
-                <ul className={styles.list} data-test="tooltip-content">
-                    {renderProgramName()}
-                    {itemDisplayNames
-                        ? renderItems(itemDisplayNames)
-                        : renderNoItemsLabel()}
-                </ul>
+                <TooltipList>
+                    <ProgramName programName={programName} />
+                    {itemDisplayNames ? (
+                        <ItemsList
+                            itemDisplayNames={itemDisplayNames}
+                            dimensionId={dimension.id}
+                        />
+                    ) : (
+                        <NoItemsLabel dimensionId={dimension.id} />
+                    )}
+                </TooltipList>
             )
         case 'DATA_ELEMENT': {
             return (
-                <ul className={styles.list} data-test="tooltip-content">
-                    {renderProgramName()}
-                    {renderStageName()}
-                    {renderItemsSection(conditionsTexts)}
-                </ul>
+                <TooltipList>
+                    <ProgramName programName={programName} />
+                    <StageName stageName={stageName} />
+                    <ItemsSection
+                        itemsList={conditionsTexts}
+                        axisId={axisId}
+                        dimensionId={dimension.id}
+                    />
+                </TooltipList>
             )
         }
         default: {
             return (
-                <ul className={styles.list} data-test="tooltip-content">
-                    {renderProgramName()}
-                    {renderItemsSection(conditionsTexts)}
-                </ul>
+                <TooltipList>
+                    <ProgramName programName={programName} />
+                    <ItemsSection
+                        itemsList={conditionsTexts}
+                        axisId={axisId}
+                        dimensionId={dimension.id}
+                    />
+                </TooltipList>
             )
         }
     }
