@@ -115,10 +115,10 @@ describe('useTooltipContentData', () => {
             ])
         })
 
-        it.skip('returns program and stage names when available', async () => {
+        it('returns program and stage names when available', async () => {
             const programDimension: LayoutDimension = {
-                id: 'programUid.stageUid',
-                dimensionId: 'programUid',
+                id: 'programUid.stageUid.dimensionUid',
+                dimensionId: 'dimensionUid',
                 name: 'Program',
             }
 
@@ -247,7 +247,7 @@ describe('useTooltipContentData', () => {
             ])
         })
 
-        it.skip('handles date ranges', async () => {
+        it('handles date ranges', async () => {
             const { result } = await renderHookWithAppWrapper(
                 () => useTooltipContentData(baseDimension),
                 {
@@ -258,7 +258,7 @@ describe('useTooltipContentData', () => {
                         preloadedState: {
                             visUiConfig: createVisUiConfigState({
                                 itemsByDimension: {
-                                    dx: ['20230101_20231231'],
+                                    dx: ['2023-01-01_2023-12-31'],
                                 },
                             }),
                         },
