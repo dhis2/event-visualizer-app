@@ -206,7 +206,6 @@ export const TooltipContent: FC<TooltipContentProps> = ({
         return itemDisplayNames
     }, [itemIds, getNameList, outputType, formatStartEndDate, getMetadataItem])
 
-    console.log(conditionsTexts, itemDisplayNames)
     switch (dimension.dimensionType) {
         case 'CATEGORY':
         case 'CATEGORY_OPTION_GROUP_SET':
