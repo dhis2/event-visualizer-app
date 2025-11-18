@@ -83,17 +83,17 @@ const ProgramName: FC<{ programName: string }> = ({ programName }) =>
         </li>
     ) : null
 
-type ItemsSectionProps = {
-    itemsList: string[]
-    axisId: string
-    dimensionId: string
-}
-
 const TooltipList: FC<{ children: React.ReactNode }> = ({ children }) => (
     <ul className={styles.list} data-test="tooltip-content">
         {children}
     </ul>
 )
+
+type ItemsSectionProps = {
+    itemsList: string[]
+    axisId: string
+    dimensionId: string
+}
 
 const ItemsSection: FC<ItemsSectionProps> = ({
     itemsList,
@@ -206,6 +206,7 @@ export const TooltipContent: FC<TooltipContentProps> = ({
         return itemDisplayNames
     }, [itemIds, getNameList, outputType, formatStartEndDate, getMetadataItem])
 
+    console.log(conditionsTexts, itemDisplayNames)
     switch (dimension.dimensionType) {
         case 'CATEGORY':
         case 'CATEGORY_OPTION_GROUP_SET':
