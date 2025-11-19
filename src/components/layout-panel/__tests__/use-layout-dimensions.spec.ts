@@ -1,121 +1,130 @@
 import { describe, it, expect } from 'vitest'
-import { getLayoutDimensions } from '../get-layout-dimensions'
+import { useLayoutDimensions } from '../use-layout-dimensions'
+import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 
-describe('getLayoutDimensions for data elements', () => {
+describe('useLayoutDimensions for data elements', () => {
     const metadata = {
         p1: {
-            id: 'p1',
+            uid: 'p1',
             name: 'Program1',
         },
         p2: {
-            id: 'p2',
+            uid: 'p2',
             name: 'Program2',
         },
         p1s1: {
-            id: 'p1s1',
+            uid: 'p1s1',
             name: 'P1 Stage1',
         },
         p1s2: {
-            id: 'p1s2',
+            uid: 'p1s2',
             name: 'P1 Stage2',
         },
         p2s1: {
-            id: 'p2s1',
+            uid: 'p2s1',
             name: 'P2 Stage1',
         },
         p2s2: {
-            id: 'p2s2',
+            uid: 'p2s2',
             name: 'P2 Stage2',
         },
         'p1s1.d1': {
-            id: 'p1s1.d1',
+            uid: 'p1s1.d1',
             name: 'Dimension1',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p1s1.d2': {
-            id: 'p1s1.d2',
+            uid: 'p1s1.d2',
             name: 'Dimension2',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet2',
             valueType: 'TEXT',
         },
         'p1s2.d1': {
-            id: 'p1s2.d1',
+            uid: 'p1s2.d1',
             name: 'Dimension1',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p1s2.d2': {
-            id: 'p1s2.d2',
+            uid: 'p1s2.d2',
             name: 'Dimension2',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet2',
             valueType: 'TEXT',
         },
         'p1s2.d3': {
-            id: 'p1s2.d3',
+            uid: 'p1s2.d3',
             name: 'Dimension3',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet3',
             valueType: 'TEXT',
         },
         'p1.p1s1.d1': {
-            id: 'p1.p1s1.d1',
+            uid: 'p1.p1s1.d1',
             name: 'Dimension1',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p1.p1s2.d1': {
-            id: 'p1.p1s2.d1',
+            uid: 'p1.p1s2.d1',
             name: 'Dimension1',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p1.p1s2.d2': {
-            id: 'p1.p1s2.d2',
+            uid: 'p1.p1s2.d2',
             name: 'Dimension2',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet2',
             valueType: 'TEXT',
         },
         'p2.p2s1.d1': {
-            id: 'p2.p2s1.d1',
+            uid: 'p2.p2s1.d1',
             name: 'Dimension1',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p2.p2s1.d3': {
-            id: 'p2.p2s1.d3',
+            uid: 'p2.p2s1.d3',
             name: 'Dimension3',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet3',
             valueType: 'TEXT',
         },
         'p2.p2s2.d1': {
-            id: 'p2.p2s2.d1',
+            uid: 'p2.p2s2.d1',
             name: 'Dimension1',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
     }
-    it('returns correct result for: non-TE, no duplicates -> no suffix', () => {
-        const id1 = 'p1s1.d1',
-            id2 = 'p1s1.d2',
-            id3 = 'p1s2.d3'
+    // TODO: either fix the test or hook implementation once the metadata store refactor is completed
+    it('returns correct result for: non-TE, no duplicates -> no suffix', async () => {
+        const id1 = 'ou',
+            id2 = 'eventStatus',
+            id3 = 'programStatus'
         const dimensionIds = [id1, id2, id3]
-        const getMetadataItem = (id: string) => metadata[id]
-        const output = getLayoutDimensions({
-            dimensionIds,
-            outputType: 'ENROLLMENT',
-            getMetadataItem,
-        })
+
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useLayoutDimensions({
+                    dimensionIds,
+                    outputType: 'ENROLLMENT',
+                }),
+            {
+                metadata,
+            }
+        )
+
+        const output = result.current
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Dimension1')
@@ -139,16 +148,23 @@ describe('getLayoutDimensions for data elements', () => {
         expect(output[2].suffix).toBeUndefined()
     })
 
-    it('returns correct result for: non-TE, with duplicates per stage -> stage suffix', () => {
+    it('returns correct result for: non-TE, with duplicates per stage -> stage suffix', async () => {
         const id1 = 'p1s1.d1',
             id2 = 'p1s2.d1'
         const dimensionIds = [id1, id2]
-        const getMetadataItem = (id: string) => metadata[id]
-        const output = getLayoutDimensions({
-            dimensionIds,
-            outputType: 'ENROLLMENT',
-            getMetadataItem,
-        })
+
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useLayoutDimensions({
+                    dimensionIds,
+                    outputType: 'ENROLLMENT',
+                }),
+            {
+                metadata,
+            }
+        )
+
+        const output = result.current
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Dimension1')
@@ -165,17 +181,24 @@ describe('getLayoutDimensions for data elements', () => {
         expect(output[1].suffix).toEqual('P1 Stage2')
     })
 
-    it('returns correct result for: TE, no duplicates -> no suffix', () => {
+    it('returns correct result for: TE, no duplicates -> no suffix', async () => {
         const id1 = 'p1.p1s1.d1',
             id2 = 'p1.p1s2.d2',
             id3 = 'p2.p2s1.d3'
         const dimensionIds = [id1, id2, id3]
-        const getMetadataItem = (id: string) => metadata[id]
-        const output = getLayoutDimensions({
-            dimensionIds,
-            outputType: 'TRACKED_ENTITY_INSTANCE',
-            getMetadataItem,
-        })
+
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useLayoutDimensions({
+                    dimensionIds,
+                    outputType: 'TRACKED_ENTITY_INSTANCE',
+                }),
+            {
+                metadata,
+            }
+        )
+
+        const output = result.current
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Dimension1')
@@ -199,17 +222,17 @@ describe('getLayoutDimensions for data elements', () => {
         expect(output[2].suffix).toBeUndefined()
     })
 
-    it('returns correct result for: TE, with duplicates per stage -> stage suffix', () => {
+    it('returns correct result for: TE, with duplicates per stage -> stage suffix', async () => {
         const id1 = 'p1.p1s1.d1',
             id2 = 'p1.p1s2.d1',
             id3 = 'p1.p1s2.d2' // no duplicate, just reference
         const dimensionIds = [id1, id2, id3]
-        const getMetadataItem = (id: string) => metadata[id]
-        const output = getLayoutDimensions({
-            dimensionIds,
-            outputType: 'ENROLLMENT',
-            getMetadataItem,
-        })
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useLayoutDimensions({ dimensionIds, outputType: 'ENROLLMENT' }),
+            { metadata }
+        )
+        const output = result.current
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Dimension1')
@@ -233,17 +256,24 @@ describe('getLayoutDimensions for data elements', () => {
         expect(output[2].suffix).toBeUndefined()
     })
 
-    it('returns correct result for: TE, with duplicates per program -> program suffix', () => {
+    it('returns correct result for: TE, with duplicates per program -> program suffix', async () => {
         const id1 = 'p1.p1s1.d1',
             id2 = 'p2.p2s1.d1',
             id3 = 'p1.p1s2.d2' // no duplicate, just reference
         const dimensionIds = [id1, id2, id3]
-        const getMetadataItem = (id: string) => metadata[id]
-        const output = getLayoutDimensions({
-            dimensionIds,
-            outputType: 'ENROLLMENT',
-            getMetadataItem,
-        })
+
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useLayoutDimensions({
+                    dimensionIds,
+                    outputType: 'ENROLLMENT',
+                }),
+            {
+                metadata,
+            }
+        )
+
+        const output = result.current
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Dimension1')
@@ -267,18 +297,18 @@ describe('getLayoutDimensions for data elements', () => {
         expect(output[2].suffix).toBeUndefined()
     })
 
-    it('returns correct result for: TE, with duplicates per program and stage -> stage suffix', () => {
+    it('returns correct result for: TE, with duplicates per program and stage -> stage suffix', async () => {
         const id1 = 'p1.p1s1.d1', // stage duplicate of id3
             id2 = 'p1.p1s2.d1', // stage duplicate of id1
             id3 = 'p2.p2s1.d1', // program duplicate of id1 and id3
             id4 = 'p1.p1s2.d2' // no duplicate, just reference
         const dimensionIds = [id1, id2, id3, id4]
-        const getMetadataItem = (id: string) => metadata[id]
-        const output = getLayoutDimensions({
-            dimensionIds,
-            outputType: 'ENROLLMENT',
-            getMetadataItem,
-        })
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useLayoutDimensions({ dimensionIds, outputType: 'ENROLLMENT' }),
+            { metadata }
+        )
+        const output = result.current
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Dimension1')
@@ -310,96 +340,96 @@ describe('getLayoutDimensions for data elements', () => {
     })
 })
 
-describe('getLayoutDimensions for time dimensions', () => {
+describe('useLayoutDimensions for time dimensions', () => {
     const metadata = {
         p1: {
-            id: 'p1',
+            uid: 'p1',
             name: 'Program1',
         },
         p2: {
-            id: 'p2',
+            uid: 'p2',
             name: 'Program2',
         },
         enrollmentDate: {
-            id: 'enrollmentDate',
+            uid: 'enrollmentDate',
             name: 'Date of enrollment',
             dimensionType: 'PERIOD',
         },
         eventDate: {
-            id: 'eventDate',
+            uid: 'eventDate',
             name: 'Event date',
             dimensionType: 'PERIOD',
         },
         incidentDate: {
-            id: 'incidentDate',
+            uid: 'incidentDate',
             name: 'Incident date',
             dimensionType: 'PERIOD',
         },
         scheduledDate: {
-            id: 'scheduledDate',
+            uid: 'scheduledDate',
             name: 'Scheduled date',
             dimensionType: 'PERIOD',
         },
         'p1.enrollmentDate': {
-            id: 'p1.enrollmentDate',
+            uid: 'p1.enrollmentDate',
             name: 'Date of enrollment',
             dimensionType: 'PERIOD',
         },
         'p1.eventDate': {
-            id: 'p1.eventDate',
+            uid: 'p1.eventDate',
             name: 'Event date',
             dimensionType: 'PERIOD',
         },
         'p1.incidentDate': {
-            id: 'p1.incidentDate',
+            uid: 'p1.incidentDate',
             name: 'Incident date',
             dimensionType: 'PERIOD',
         },
         'p1.scheduledDate': {
-            id: 'p1.scheduledDate',
+            uid: 'p1.scheduledDate',
             name: 'Scheduled date',
             dimensionType: 'PERIOD',
         },
         'p2.enrollmentDate': {
-            id: 'p2.enrollmentDate',
+            uid: 'p2.enrollmentDate',
             name: 'Date of enrollment',
             dimensionType: 'PERIOD',
         },
         'p2.eventDate': {
-            id: 'p2.eventDate',
+            uid: 'p2.eventDate',
             name: 'Event date',
             dimensionType: 'PERIOD',
         },
         'p2.incidentDate': {
-            id: 'p2.incidentDate',
+            uid: 'p2.incidentDate',
             name: 'Incident date',
             dimensionType: 'PERIOD',
         },
         'p2.scheduledDate': {
-            id: 'p2.scheduledDate',
+            uid: 'p2.scheduledDate',
             name: 'Scheduled date',
             dimensionType: 'PERIOD',
         },
         lastUpdated: {
-            id: 'lastUpdated',
+            uid: 'lastUpdated',
             name: 'Last updated on',
             dimensionType: 'PERIOD',
         },
     }
 
-    it('returns correct result for: non-TE, no duplicates -> no suffix', () => {
+    it('returns correct result for: non-TE, no duplicates -> no suffix', async () => {
         const id1 = 'eventDate',
             id2 = 'enrollmentDate',
             id3 = 'incidentDate',
             id4 = 'scheduledDate',
             id5 = 'lastUpdated'
         const dimensionIds = [id1, id2, id3, id4, id5]
-        const getMetadataItem = (id: string) => metadata[id]
-        const output = getLayoutDimensions({
-            dimensionIds,
-            outputType: 'ENROLLMENT',
-            getMetadataItem,
-        })
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useLayoutDimensions({ dimensionIds, outputType: 'ENROLLMENT' }),
+            { metadata }
+        )
+        const output = result.current
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Event date')
@@ -427,19 +457,22 @@ describe('getLayoutDimensions for time dimensions', () => {
         expect(output[4].suffix).toBeUndefined()
     })
 
-    it('returns correct result for: TE, no duplicates -> no suffix', () => {
+    it('returns correct result for: TE, no duplicates -> no suffix', async () => {
         const id1 = 'p1.eventDate',
             id2 = 'p1.enrollmentDate',
             id3 = 'p1.incidentDate',
             id4 = 'p1.scheduledDate',
             id5 = 'lastUpdated'
         const dimensionIds = [id1, id2, id3, id4, id5]
-        const getMetadataItem = (id: string) => metadata[id]
-        const output = getLayoutDimensions({
-            dimensionIds,
-            outputType: 'TRACKED_ENTITY_INSTANCE',
-            getMetadataItem,
-        })
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useLayoutDimensions({
+                    dimensionIds,
+                    outputType: 'TRACKED_ENTITY_INSTANCE',
+                }),
+            { metadata }
+        )
+        const output = result.current
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Event date')
@@ -467,7 +500,7 @@ describe('getLayoutDimensions for time dimensions', () => {
         expect(output[4].suffix).toBeUndefined()
     })
 
-    it('returns correct result for: TE, duplicates -> program suffix', () => {
+    it('returns correct result for: TE, duplicates -> program suffix', async () => {
         const id1 = 'p1.eventDate',
             id2 = 'p1.enrollmentDate',
             id3 = 'p1.incidentDate',
@@ -478,12 +511,15 @@ describe('getLayoutDimensions for time dimensions', () => {
             id8 = 'p2.scheduledDate',
             id9 = 'lastUpdated'
         const dimensionIds = [id1, id2, id3, id4, id5, id6, id7, id8, id9]
-        const getMetadataItem = (id: string) => metadata[id]
-        const output = getLayoutDimensions({
-            dimensionIds,
-            outputType: 'TRACKED_ENTITY_INSTANCE',
-            getMetadataItem,
-        })
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useLayoutDimensions({
+                    dimensionIds,
+                    outputType: 'TRACKED_ENTITY_INSTANCE',
+                }),
+            { metadata }
+        )
+        const output = result.current
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Event date')
@@ -532,58 +568,58 @@ describe('getLayoutDimensions for time dimensions', () => {
     })
 })
 
-describe('getLayoutDimensions for program dimensions', () => {
+describe('useLayoutDimensions for program dimensions', () => {
     const metadata = {
         p1: {
-            id: 'p1',
+            uid: 'p1',
             name: 'Program1',
         },
         p2: {
-            id: 'p2',
+            uid: 'p2',
             name: 'Program2',
         },
         ou: {
-            id: 'ou',
+            uid: 'ou',
             name: 'Organisation unit',
             dimensionType: 'ORGANISATION_UNIT',
         },
         'p1.ou': {
-            id: 'p1.ou',
+            uid: 'p1.ou',
             name: 'Organisation unit',
             dimensionType: 'ORGANISATION_UNIT',
         },
         'p2.ou': {
-            id: 'p2.ou',
+            uid: 'p2.ou',
             name: 'Organisation unit',
             dimensionType: 'ORGANISATION_UNIT',
         },
         eventStatus: {
-            id: 'eventStatus',
+            uid: 'eventStatus',
             dimensionType: 'STATUS',
             name: 'Event status',
         },
         programStatus: {
-            id: 'programStatus',
+            uid: 'programStatus',
             dimensionType: 'STATUS',
             name: 'Program status',
         },
         'p1.eventStatus': {
-            id: 'p1.eventStatus',
+            uid: 'p1.eventStatus',
             dimensionType: 'STATUS',
             name: 'Event status',
         },
         'p1.programStatus': {
-            id: 'p1.programStatus',
+            uid: 'p1.programStatus',
             dimensionType: 'STATUS',
             name: 'Program status',
         },
         'p2.eventStatus': {
-            id: 'p2.eventStatus',
+            uid: 'p2.eventStatus',
             dimensionType: 'STATUS',
             name: 'Event status',
         },
         'p2.programStatus': {
-            id: 'p2.programStatus',
+            uid: 'p2.programStatus',
             dimensionType: 'STATUS',
             name: 'Program status',
         },
@@ -613,18 +649,19 @@ describe('getLayoutDimensions for program dimensions', () => {
         },
     }
 
-    it('returns correct result for: non-TE, no duplicates -> no suffix', () => {
+    // TODO: either fix the test or hook implementation once the metadata store refactor is completed
+    it('returns correct result for: non-TE, no duplicates -> no suffix', async () => {
         const id1 = 'ou',
             id2 = 'eventStatus',
             id3 = 'programStatus',
             id4 = 'p1.p1s1.XYZ123'
         const dimensionIds = [id1, id2, id3, id4]
-        const getMetadataItem = (id: string) => metadata[id]
-        const output = getLayoutDimensions({
-            dimensionIds,
-            outputType: 'ENROLLMENT',
-            getMetadataItem,
-        })
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useLayoutDimensions({ dimensionIds, outputType: 'ENROLLMENT' }),
+            { metadata }
+        )
+        const output = result.current
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Organisation unit')
@@ -647,7 +684,8 @@ describe('getLayoutDimensions for program dimensions', () => {
         expect(output[3].suffix).toBeUndefined()
     })
 
-    it('returns correct result for: TE, no duplicates -> program suffix for ou and statuses', () => {
+    // TODO: either fix the test or hook implementation once the metadata store refactor is completed
+    it('returns correct result for: TE, no duplicates -> program suffix for ou and statuses', async () => {
         const id1 = 'ou',
             id2 = 'p1.ou',
             id3 = 'p1.eventStatus',
@@ -657,13 +695,15 @@ describe('getLayoutDimensions for program dimensions', () => {
 
         metadata.ou.name = 'Registration org. unit'
 
-        const getMetadataItem = (id: string) => metadata[id]
-
-        const output = getLayoutDimensions({
-            dimensionIds,
-            outputType: 'TRACKED_ENTITY_INSTANCE',
-            getMetadataItem,
-        })
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useLayoutDimensions({
+                    dimensionIds,
+                    outputType: 'TRACKED_ENTITY_INSTANCE',
+                }),
+            { metadata }
+        )
+        const output = result.current
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Registration org. unit')
@@ -691,7 +731,8 @@ describe('getLayoutDimensions for program dimensions', () => {
         expect(output[4].suffix).toBeUndefined()
     })
 
-    it('returns correct result for: TE, duplicates -> program suffix', () => {
+    // TODO: either fix the test or hook implementation once the metadata store refactor is completed
+    it('returns correct result for: TE, duplicates -> program suffix', async () => {
         const id1 = 'ou',
             id2 = 'p1.ou',
             id3 = 'p2.ou',
@@ -705,13 +746,15 @@ describe('getLayoutDimensions for program dimensions', () => {
 
         metadata.ou.name = 'Registration org. unit'
 
-        const getMetadataItem = (id: string) => metadata[id]
-
-        const output = getLayoutDimensions({
-            dimensionIds,
-            outputType: 'TRACKED_ENTITY_INSTANCE',
-            getMetadataItem,
-        })
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useLayoutDimensions({
+                    dimensionIds,
+                    outputType: 'TRACKED_ENTITY_INSTANCE',
+                }),
+            { metadata }
+        )
+        const output = result.current
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Registration org. unit')
