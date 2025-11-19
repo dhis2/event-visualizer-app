@@ -81,7 +81,6 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
                 >
                     {({ ref, onMouseOver, onMouseOut }) => (
                         <span
-                            id={Math.random().toString(36)}
                             ref={ref}
                             onMouseOver={onMouseOver}
                             onMouseOut={onMouseOut}
