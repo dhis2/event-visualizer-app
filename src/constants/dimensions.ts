@@ -30,14 +30,17 @@ export const YOUR_DIMENSION_TYPES =
     ] as const)
 
 export const DIMENSION_IDS = [
+    'completedDate',
     'created',
     'createdBy',
+    'createdDate',
     'enrollmentDate',
     'eventDate',
     'eventStatus',
     'incidentDate',
     'lastUpdated',
     'lastUpdatedBy',
+    'lastUpdatedOn',
     'ou',
     'programStatus',
     'scheduledDate',
@@ -46,9 +49,13 @@ export const DIMENSION_IDS = [
 export const DIMENSION_ID_ORGUNIT: DimensionId = 'ou'
 
 export const TIME_DIMENSION_IDS = [
+    'completedDate',
+    'created',
+    'createdDate',
     'enrollmentDate',
     'eventDate',
     'incidentDate',
     'lastUpdated',
+    'lastUpdatedOn',
     'scheduledDate',
 ] as const
