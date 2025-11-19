@@ -547,6 +547,22 @@ describe('getTimeDimensions', () => {
         const result = getTimeDimensions()
         expect(result).toMatchInlineSnapshot(`
           {
+            "completedDate": {
+              "defaultName": "Completed date",
+              "dimensionType": "PERIOD",
+              "formatType": "DATE",
+              "id": "completedDate",
+              "nameParentProperty": "stage",
+              "nameProperty": "displayCompletedDateLabel",
+            },
+            "createdDate": {
+              "defaultName": "Created date",
+              "dimensionType": "PERIOD",
+              "formatType": "DATE",
+              "id": "createdDate",
+              "nameParentProperty": "stage",
+              "nameProperty": "displayCreatedDateLabel",
+            },
             "enrollmentDate": {
               "defaultName": "Enrollment date",
               "dimensionType": "PERIOD",
@@ -570,6 +586,14 @@ describe('getTimeDimensions', () => {
               "id": "incidentDate",
               "nameParentProperty": "program",
               "nameProperty": "displayIncidentDateLabel",
+            },
+            "lastUpdatedOn": {
+              "defaultName": "Last updated on",
+              "dimensionType": "PERIOD",
+              "formatType": "DATE",
+              "id": "lastUpdatedOn",
+              "nameParentProperty": "stage",
+              "nameProperty": "displayLastUpdatedOnLabel",
             },
             "scheduledDate": {
               "defaultName": "Scheduled date",

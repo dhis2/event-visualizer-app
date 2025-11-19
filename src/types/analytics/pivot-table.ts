@@ -1,11 +1,12 @@
 import type { FC } from 'react'
-import type { CurrentVisualization } from '@types'
+import type { PivotTableAnalyticsData } from '@components/plugin-wrapper/hooks/use-pivot-table-analytics-data'
+import type { CurrentVisualization, LegendSet } from '@types'
 
 type PivotTableProps = {
-    data: Record<string, string> // TODO: figure out the type for the response
+    data: PivotTableAnalyticsData
     visualization: CurrentVisualization
+    legendSets?: LegendSet[]
     renderCounter?: number
-    legendSets?: Record<string, string>[] // TODO: check type
     onToggleContextualMenu?: () => void
 }
 
