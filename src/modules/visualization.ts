@@ -242,28 +242,18 @@ export const isVisualizationNew = (
     )
 }
 
-const getVisualizationLayout = (layout, type: VisualizationType) => {
-    if (type === 'LINE_LIST') {
-        return {
-            columns: [...layout.columns, ...(layout.rows || [])],
-            rows: [],
-            filters: [...layout.filters],
-        }
-    }
-
-    return layout
-}
-
 export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
     const outputType = vis.outputType // The single location where outputType is renamed to outputType
+    const layout = layoutGetAxisIdDimensionIdsObject(vis)
 
     return {
         visualizationType: vis.type,
         outputType,
-        layout: getVisualizationLayout(
-            layoutGetAxisIdDimensionIdsObject(vis),
-            vis.type
-        ),
+        layout: {
+            columns: layout.columns ?? [],
+            filters: layout.filters ?? [],
+            rows: layout.rows ?? [],
+        },
         itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
         conditionsByDimension: getConditionsFromVisualization(vis, outputType),
     }
