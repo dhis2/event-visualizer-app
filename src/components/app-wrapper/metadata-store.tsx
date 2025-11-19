@@ -3,22 +3,34 @@ import {
     type Subscriber,
     type AnyMetadataItemInput,
     type MetadataInput,
+    type AnalyticsMetadataInput,
     normalizeMetadataInputItem,
     smartMergeWithChangeDetection,
     isObject,
     isSingleMetadataItemInput,
 } from './metadata-helpers'
+import { extractMetadataFromAnalyticsResponse } from './metadata-helpers/analytics-data'
 import { extractMetadataFromVisualization } from './metadata-helpers/visualization'
+import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
+import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import type { AppCachedData, SavedVisualization } from '@types'
 
 declare global {
     interface Window {
         getMetadataStore: () => Record<string, MetadataStoreItem>
         getMetadataStoreItem: (key: string) => MetadataStoreItem | undefined
+        getMetadataStoreItems: (
+            keys: string[]
+        ) => ReturnType<MetadataStore['getMetadataItems']>
+        findMetadataStoreItem: (token: string) => MetadataStoreItem | undefined
+        filterMetadataStoreItems: (token: string) => MetadataStoreItem[]
     }
 }
 
 export type InitialMetadataItems = Record<string, AnyMetadataItemInput>
+
+const isItemMatch = (item: MetadataStoreItem, token: string) =>
+    item.id.includes(token) || item.name?.toLowerCase().includes(token)
 
 export class MetadataStore {
     private metadata = new Map<string, MetadataStoreItem>()
@@ -37,6 +49,16 @@ export class MetadataStore {
             window.getMetadataStore = () => Object.fromEntries(this.metadata)
             window.getMetadataStoreItem = (key: string) =>
                 this.getMetadataItem(key)
+            window.getMetadataStoreItems = (keys: string[]) =>
+                this.getMetadataItems(keys)
+            window.findMetadataStoreItem = (token: string) =>
+                Array.from(this.metadata.values()).find((item) =>
+                    isItemMatch(item, token)
+                )
+            window.filterMetadataStoreItems = (token: string) =>
+                Array.from(this.metadata.values()).filter((item) =>
+                    isItemMatch(item, token)
+                )
         }
     }
 
@@ -64,6 +86,16 @@ export class MetadataStore {
             this.notifySubscriber(key)
         }
         this.addMetadata(visualizationMetadata)
+    }
+
+    addAnalyticsResponseMetadata(
+        items: AnalyticsMetadataInput,
+        dimensions: AnalyticsResponseMetadataDimensions,
+        headers: Array<LineListAnalyticsDataHeader>
+    ) {
+        this.addMetadata(
+            extractMetadataFromAnalyticsResponse(items, dimensions, headers)
+        )
     }
 
     getMetadataItem(key: string): MetadataStoreItem | undefined {
@@ -102,17 +134,14 @@ export class MetadataStore {
         // Track ids of items that were actually updated
         const updatedMetadataIds = new Set<string>()
 
-        const processMetadataItem = (metadataInputItem: unknown) => {
+        const processMetadataItem = (
+            metadataInputItem: AnyMetadataItemInput
+        ) => {
             const newMetadataStoreItem = normalizeMetadataInputItem(
-                metadataInputItem as AnyMetadataItemInput
+                metadataInputItem,
+                this.metadata
             )
-            const itemId = (newMetadataStoreItem as { id: string }).id
-
-            // Skip processing if this is an initial metadata item
-            if (this.initialMetadataKeys.has(itemId)) {
-                return
-            }
-
+            const itemId = newMetadataStoreItem.id
             const existingMetadataStoreItem = this.metadata.get(itemId)
             const { hasChanges, mergedItem } = smartMergeWithChangeDetection(
                 existingMetadataStoreItem,
@@ -155,20 +184,25 @@ export class MetadataStore {
         rootOrgUnits?: AppCachedData['rootOrgUnits']
     ) {
         Object.entries(initialMetadataItems).forEach(([key, item]) => {
-            this.metadata.set(key, normalizeMetadataInputItem(item))
+            const normalizedItem = normalizeMetadataInputItem(
+                item,
+                this.metadata
+            )
+            this.metadata.set(key, normalizedItem)
             this.initialMetadataKeys.add(key)
         })
 
         if (rootOrgUnits) {
             for (const rootOrgUnit of rootOrgUnits) {
                 if (rootOrgUnit.id) {
-                    this.metadata.set(
-                        rootOrgUnit.id,
-                        normalizeMetadataInputItem({
+                    const normalizedItem = normalizeMetadataInputItem(
+                        {
                             ...rootOrgUnit,
                             path: `/${rootOrgUnit.id}`,
-                        })
+                        },
+                        this.metadata
                     )
+                    this.metadata.set(rootOrgUnit.id, normalizedItem)
                     this.initialMetadataKeys.add(rootOrgUnit.id)
                 }
             }

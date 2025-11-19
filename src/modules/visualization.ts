@@ -1,15 +1,20 @@
 import i18n from '@dhis2/d2-i18n'
 import deepEqual from 'deep-equal'
+import { getConditionsFromVisualization } from './conditions'
+import { isTimeDimensionId, transformDimensions } from './dimension'
 import { getRequestOptions } from '@components/plugin-wrapper/hooks/query-tools-common'
-import { layoutGetAllDimensions } from '@dhis2/analytics'
-import { isTimeDimensionId, transformDimensions } from '@modules/dimension'
+import {
+    layoutGetAxisIdDimensionIdsObject,
+    layoutGetDimensionIdItemIdsObject,
+    layoutGetAllDimensions,
+} from '@dhis2/analytics'
 import { getAllOptions } from '@modules/options'
 import { initialState as currentVisDefaultValue } from '@store/current-vis-slice'
 import { initialState as savedVisDefaultValue } from '@store/saved-vis-slice'
 import type {
-    DimensionId,
     DimensionArray,
     CurrentVisualization,
+    DimensionId,
     EmptyVisualization,
     NewVisualization,
     SavedVisualization,
@@ -235,4 +240,21 @@ export const isVisualizationNew = (
         !isVisualizationEmpty(visualization) &&
         !isVisualizationSaved(visualization)
     )
+}
+
+export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
+    const outputType = vis.outputType // The single location where outputType is renamed to outputType
+    const layout = layoutGetAxisIdDimensionIdsObject(vis)
+
+    return {
+        visualizationType: vis.type,
+        outputType,
+        layout: {
+            columns: layout.columns ?? [],
+            filters: layout.filters ?? [],
+            rows: layout.rows ?? [],
+        },
+        itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
+        conditionsByDimension: getConditionsFromVisualization(vis, outputType),
+    }
 }

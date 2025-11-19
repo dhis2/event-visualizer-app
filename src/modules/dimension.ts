@@ -222,7 +222,7 @@ export const transformDimensions = (
 ): DimensionArray => {
     const { outputType: outputType, type } = visualization
 
-    const outputTypeTypeTimeDimensionMap: Record<OutputType, DimensionId> = {
+    const outputTypeTimeDimensionMap: Record<OutputType, DimensionId> = {
         EVENT: 'eventDate',
         ENROLLMENT: 'enrollmentDate',
         TRACKED_ENTITY_INSTANCE: 'created',
@@ -248,7 +248,7 @@ export const transformDimensions = (
                 return {
                     ...dimensionObj,
                     // TEI and pe (legacy visualization) should not normally happen
-                    dimension: outputTypeTypeTimeDimensionMap[outputType],
+                    dimension: outputTypeTimeDimensionMap[outputType],
                     dimensionType: 'PERIOD',
                 }
             } else {
@@ -335,3 +335,29 @@ export const getTimeDimensionName = (
 
     return name || dimension.defaultName
 }
+
+export const getUiDimensionType = (
+    dimensionId: DimensionId | string,
+    dimensionType: ExtendedDimensionType
+): ExtendedDimensionType => {
+    switch (dimensionId) {
+        case 'programStatus':
+        case 'eventStatus':
+            return 'STATUS'
+
+        case 'createdBy':
+        case 'lastUpdatedBy':
+            return 'USER'
+
+        default:
+            return dimensionType
+    }
+}
+
+export const combineAllDimensionsFromVisualization = (
+    visualization: CurrentVisualization
+): DimensionArray => [
+    ...(visualization.columns || []),
+    ...(visualization.rows || []),
+    ...(visualization.filters || []),
+]

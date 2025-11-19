@@ -4,7 +4,6 @@ import { useCallback, type FC } from 'react'
 import classes from './app.module.css'
 import { useLoadVisualizationOnMount } from './use-load-visualization-on-mount'
 import { AppWrapper } from '@components/app-wrapper'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
 import { DetailsPanel } from '@components/details-panel/details-panel'
 import {
     GridCenterColumnBottom,
@@ -16,12 +15,17 @@ import {
 } from '@components/grid'
 import { InterpretationModal } from '@components/interpretation-modal/interpretation-modal'
 import { LayoutPanel } from '@components/layout-panel/layout-panel'
+import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
+import type {
+    AnalyticsResponseMetadataDimensions,
+    AnalyticsResponseMetadataItems,
+} from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
 import { TitleBar } from '@components/title-bar/title-bar'
 import { Toolbar } from '@components/toolbar/toolbar'
 import {
-    useAddMetadata,
+    useAddAnalyticsResponseMetadata,
     useAppDispatch,
     useAppSelector,
     useCurrentUser,
@@ -37,7 +41,7 @@ import type { CurrentVisualization, Sorting } from '@types'
 
 const EventVisualizer: FC = () => {
     useLoadVisualizationOnMount()
-    const addMetadata = useAddMetadata()
+    const addAnalyticsResponseMetadata = useAddAnalyticsResponseMetadata()
     const dispatch = useAppDispatch()
     const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)
@@ -58,10 +62,14 @@ const EventVisualizer: FC = () => {
     )
 
     const onResponsesReceived = useCallback(
-        (analyticsMetadata: MetadataInput) => {
-            addMetadata(analyticsMetadata)
+        (
+            analyticsMetadata: AnalyticsResponseMetadataItems,
+            dimensions: AnalyticsResponseMetadataDimensions,
+            headers: Array<LineListAnalyticsDataHeader>
+        ) => {
+            addAnalyticsResponseMetadata(analyticsMetadata, dimensions, headers)
         },
-        [addMetadata]
+        [addAnalyticsResponseMetadata]
     )
 
     return (

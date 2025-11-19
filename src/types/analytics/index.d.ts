@@ -13,6 +13,7 @@ import type { InterpretationModal } from './interpretation-modal'
 import type { InterpretationsAndDetailsToggler } from './interpretations-and-details-toggler'
 import type { InterpretationsProvider } from './interpretations-provider'
 import type { InterpretationsUnit } from './interpretations-unit'
+import type { OuIdHelper } from './ou-id-helper'
 import type { PivotTable } from './pivot-table'
 import type { Toolbar } from './toolbar'
 import type { ToolbarSidebar } from './toolbar-sidebar'
@@ -111,4 +112,5 @@ declare module '@dhis2/analytics' {
         visualization: Partial<SavedVisualization>
     ) => string
     export const LegendKey: FC<{ legendSets: LegendSet[] }>
+    export const ouIdHelper: OuIdHelper
 }

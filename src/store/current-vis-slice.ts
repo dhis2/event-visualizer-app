@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { isVisualizationSaved } from '@modules/visualization'
 import type { CurrentVisualization, VisualizationNameDescription } from '@types'
 
-export const initialState: CurrentVisualization = {}
+export const initialState = {} as CurrentVisualization
 
 export const currentVisSlice = createSlice({
     name: 'currentVis',

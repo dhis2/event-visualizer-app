@@ -118,7 +118,7 @@ export const eventVisualizationsApi = api.injectEndpoints({
                                 )
                             }
 
-                            const optionsData = await engine.query({
+                            const optionsData = (await engine.query({
                                 options: {
                                     resource: 'options',
                                     params: {
@@ -130,16 +130,16 @@ export const eventVisualizationsApi = api.injectEndpoints({
                                         paging: false,
                                     },
                                 },
-                            })
+                            })) as { options?: { options: Option[] } }
+
+                            const options = optionsData?.options?.options
 
                             if (optionsData?.options) {
                                 // update options in the optionSet metadata used for the lookup of the correct
                                 // name from code (options for different option sets have the same code)
                                 optionSetsMetadata[optionSetId] = {
-                                    ...metadataStore.getMetadataItem(
-                                        optionSetId
-                                    ),
-                                    options: optionsData.options as Option[],
+                                    id: optionSetId,
+                                    options,
                                 }
                             }
                         }
