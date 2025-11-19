@@ -41,7 +41,10 @@ const adaptDimensions = (
                 }
             }
         } else if (
-            !['created', 'createdBy', 'lastUpdatedBy'].includes(dimensionId)
+            // "dy" dimension can be present in PT visualizations
+            !['created', 'createdBy', 'lastUpdatedBy', 'dy'].includes(
+                dimensionId
+            )
         ) {
             adaptedDimensions.push(dimensionObj)
         }
