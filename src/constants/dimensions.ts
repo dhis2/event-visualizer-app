@@ -50,7 +50,6 @@ export const DIMENSION_ID_ORGUNIT: DimensionId = 'ou'
 
 export const TIME_DIMENSION_IDS = [
     'completedDate',
-    'created',
     'createdDate',
     'enrollmentDate',
     'eventDate',
