@@ -184,7 +184,7 @@ export const addCaseSensitivePrefix = (
 export const removeCaseSensitivePrefix = (
     operator: QueryOperator
 ): QueryOperator => {
-    const isCaseSensitive = checkIsCaseSensitive(operator)
+    const isCaseSensitive = isIsCaseSensitive(operator)
     if (isCaseSensitive) {
         // e.g. LIKE -> LIKE, !LIKE -> !LIKE
         return operator
@@ -203,7 +203,7 @@ export const removeCaseSensitivePrefix = (
 // but if it were the result would be wrong. The function
 // should probably control for the allowed operators and throw if the
 // operator isn't one of the allowed ones.
-export const checkIsCaseSensitive = (operator: QueryOperator): boolean => {
+export const isIsCaseSensitive = (operator: QueryOperator): boolean => {
     if (operator[0] === PREFIX_NOT) {
         // !LIKE, !ILIKE, !EQ, !IEQ
         return operator[1] !== PREFIX_CASE_INSENSITIVE

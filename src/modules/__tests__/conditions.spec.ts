@@ -5,7 +5,7 @@ import {
     getBooleanConditionTexts,
     getOrgUnitConditionMetadataIds,
     getOperatorConditionTexts,
-    checkIsCaseSensitive,
+    isIsCaseSensitive,
     addCaseSensitivePrefix,
     removeCaseSensitivePrefix,
     getConditionsFromVisualization,
@@ -424,7 +424,7 @@ describe('checkIsCaseSensitive', () => {
     tests.forEach((t) => {
         const testname = `${t.operator}: expected: ${t.expected}`
         test(testname, () => {
-            expect(checkIsCaseSensitive(t.operator as QueryOperator)).toEqual(
+            expect(isIsCaseSensitive(t.operator as QueryOperator)).toEqual(
                 t.expected
             )
         })
