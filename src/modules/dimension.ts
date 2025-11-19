@@ -353,3 +353,11 @@ export const getUiDimensionType = (
             return dimensionType
     }
 }
+
+export const combineAllDimensionsFromVisualization = (
+    visualization: CurrentVisualization
+): DimensionArray => [
+    ...(visualization.columns || []),
+    ...(visualization.rows || []),
+    ...(visualization.filters || []),
+]

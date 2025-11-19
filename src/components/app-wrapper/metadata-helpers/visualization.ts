@@ -8,6 +8,7 @@ import type {
 } from './types'
 import { DIMENSION_ID_ORGUNIT } from '@constants/dimensions'
 import {
+    combineAllDimensionsFromVisualization,
     getFullDimensionId,
     getMainDimensions,
     getProgramDimensions,
@@ -17,7 +18,6 @@ import {
 } from '@modules/dimension'
 import { transformVisualization } from '@modules/visualization'
 import type {
-    DimensionArray,
     DimensionId,
     DimensionType,
     InternalDimensionRecord,
@@ -95,14 +95,6 @@ const getDefaultDynamicTimeDimensionsMetadata = (
         return acc
     }, {})
 
-const extractAllDimensions = (
-    visualization: SavedVisualization
-): DimensionArray => [
-    ...(visualization.columns || []),
-    ...(visualization.rows || []),
-    ...(visualization.filters || []),
-]
-
 export const extractTrackedEntityTypeMetadata = (
     visualization: SavedVisualization
 ): ExtractedMetadatInput =>
@@ -119,7 +111,7 @@ export const extractFixedDimensionsMetadata = (
     visualization: SavedVisualization
 ): ExtractedMetadatInput => {
     const fixedDimensionsMetadata = {}
-    const dimensions = extractAllDimensions(visualization)
+    const dimensions = combineAllDimensionsFromVisualization(visualization)
 
     for (const dimension of dimensions.filter(
         (d) =>
@@ -243,7 +235,7 @@ export const supplementDimensionMetadata = (
     visualization: SavedVisualization
 ) => {
     const { outputType } = visualization
-    const dimensions = extractAllDimensions(visualization)
+    const dimensions = combineAllDimensionsFromVisualization(visualization)
 
     const additionalDimensionMetadata = dimensions.reduce(
         (metadata, dimension) => {

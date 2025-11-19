@@ -1,5 +1,8 @@
 import i18n from '@dhis2/d2-i18n'
-import { getFullDimensionId } from './dimension'
+import {
+    combineAllDimensionsFromVisualization,
+    getFullDimensionId,
+} from './dimension'
 import type { LayoutDimension } from '@components/layout-panel/chip'
 import { formatValue, ouIdHelper } from '@dhis2/analytics'
 import type {
@@ -415,11 +418,7 @@ export const getConditionsFromVisualization = (
     const result: Record<string, { condition?: string; legendSet?: string }> =
         {}
 
-    const columns = vis.columns ?? []
-    const rows = vis.rows ?? []
-    const filters = vis.filters ?? []
-
-    const items = [...columns, ...rows, ...filters].filter(
+    const items = combineAllDimensionsFromVisualization(vis).filter(
         (item) => item.filter || item.legendSet
     )
 
