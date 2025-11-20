@@ -22,6 +22,8 @@ import type { VisTypeIcon } from './vis-type-icon'
 import type {
     CurrentVisualization,
     DimensionArray,
+    DimensionId,
+    DimensionRecord,
     EventVisualizationType,
     LegendSet,
     NewVisualization,
@@ -31,11 +33,12 @@ import type {
 } from '@types'
 
 declare module '@dhis2/analytics' {
-    export const AboutAOUnit: AboutAOUnit
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     export const Analytics: any
+
+    // Components
+    export const AboutAOUnit: AboutAOUnit
     export const CachedDataQueryProvider: CachedDataQueryProvider
-    export const useCachedDataQuery: useCachedDataQuery
     export const DashboardPluginWrapper: DashboardPluginWrapper
     export const FileMenu: FileMenu
     export const HoverMenuBar: HoverMenuBar
@@ -43,6 +46,7 @@ declare module '@dhis2/analytics' {
     export const HoverMenuListItem: HoverMenuListItem
     export const HoverMenuList: HoverMenuList
     export const InterpretationModal: InterpretationModal
+    export const LegendKey: FC<{ legendSets: LegendSet[] }>
     export const InterpretationsAndDetailsToggler: InterpretationsAndDetailsToggler
     export const InterpretationsProvider: InterpretationsProvider
     export const InterpretationsUnit: InterpretationsUnit
@@ -51,19 +55,42 @@ declare module '@dhis2/analytics' {
     export const ToolbarSidebar: ToolbarSidebar
     export const UpdateButton: UpdateButton
     export const VisTypeIcon: VisTypeIcon
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    export const transformEventAggregateResponse: (any) => any
+
+    // Hooks
+    export const useCachedDataQuery: useCachedDataQuery
+
+    // Primitives
+    export const ouIdHelper: OuIdHelper
+
     export const visTypeDisplayNames: Array<
         Record<EventVisualizationType | VisualizationType, string>
     >
+
+    export const AXIS: {
+        defaultValue: undefined[]
+        isValid: (axis: DimensionArray) => boolean
+    }
+
+    // Functions
+    export const dimensionIsValid: (
+        dimension: DimensionRecord,
+        flags: { requireItems?: boolean }
+    ) => boolean
+
+    export const formatValue: (
+        value: string,
+        valueType: ValueType,
+        visualization: Partial<SavedVisualization>
+    ) => string
+
+    export const getColorByValueFromLegendSet: (
+        legendSet?: LegendSet,
+        value?: string | number | boolean
+    ) => string
+
     export const layoutGetAllDimensions: (
         vis: CurrentVisualization
     ) => DimensionArray
-
-    export const layoutGetDimension: (
-        vis: CurrentVisualization,
-        dimensionId: string // TODO: replace with DimensionId type? e.g. 'ou', 'pe', 'dx'
-    ) => DimensionArray[number] | undefined
 
     export const layoutGetAxisIdDimensionIdsObject: (
         vis: CurrentVisualization
@@ -72,15 +99,17 @@ declare module '@dhis2/analytics' {
         rows?: string[]
         filters?: string[]
     }
+
+    export const layoutGetDimension: (
+        vis: CurrentVisualization,
+        dimensionId: DimensionId
+    ) => DimensionRecord | undefined
+
     export const layoutGetDimensionIdItemIdsObject: (
         vis: CurrentVisualization
     ) => {
         [dimensionId: string]: string[]
     }
-    export const dimensionIsValid: (
-        dimension: unknown,
-        options?: { requireItems?: boolean }
-    ) => boolean
 
     export const preparePayloadForSaveAs: ({
         visualization,
@@ -102,15 +131,6 @@ declare module '@dhis2/analytics' {
         description?: string
     }) => SavedVisualization
 
-    export const getColorByValueFromLegendSet: (
-        legendSet?: LegendSet,
-        value?: string | number | boolean
-    ) => string
-    export const formatValue: (
-        value: string,
-        valueType: ValueType,
-        visualization: Partial<SavedVisualization>
-    ) => string
-    export const LegendKey: FC<{ legendSets: LegendSet[] }>
-    export const ouIdHelper: OuIdHelper
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    export const transformEventAggregateResponse: (any) => any
 }
