@@ -51,21 +51,44 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 .withFormat(format)
                 .withDisplayProperty(currentUser.settings.displayProperty)
 
-            switch (visualization.outputType) {
-                case 'TRACKED_ENTITY_INSTANCE':
-                    req = req.withTrackedEntityType(
-                        visualization.trackedEntityType?.id
-                    )
-                    break
-                default:
-                    req = req
-                        .withProgram(visualization.program?.id)
-                        .withOutputType(visualization.outputType)
-                    break
+            // TEI can use multiple programs
+            if (visualization.outputType !== 'TRACKED_ENTITY_INSTANCE') {
+                req = req
+                    .withProgram(visualization.program?.id)
+                    .withOutputType(visualization.outputType)
             }
 
             if (visualization.outputType === 'EVENT') {
                 req = req.withStage(visualization.programStage?.id)
+            }
+
+            if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {
+                // can use multiple programs, so we cannot pass program here
+                req = req.withTrackedEntityType(
+                    visualization.trackedEntityType?.id
+                )
+            }
+
+            if (
+                relativePeriodDate &&
+                isVisualizationWithTimeDimension(visualization)
+            ) {
+                req = req.withRelativePeriodDate(relativePeriodDate)
+            }
+
+            const sorting = visualization.sorting?.[0]
+
+            if (sorting) {
+                switch (sorting.direction) {
+                    case 'ASC': {
+                        req = req.withAsc(sorting.dimension)
+                        break
+                    }
+                    case 'DESC': {
+                        req = req.withDesc(sorting.dimension)
+                        break
+                    }
+                }
             }
 
             switch (type) {
@@ -75,32 +98,16 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         .withTableLayout()
                         .withColumns(
                             visualization.columns
-                                ?.filter((column) => column.dimension !== 'dy')
-                                .map((column) => column.dimension)
+                                ?.map((column) => column.dimension)
                                 .join(';')
                         )
-                        // XXX: not the case for LL
-                        //.withRows(
-                        //    visualization.rows
-                        //        ?.filter((row) => row.dimension !== 'dy')
-                        //        .map((row) => row.dimension)
-                        //        .join(';')
-                        //)
                         .withParameters({
                             ...parameters,
                             headers,
                             dataIdScheme: 'NAME',
                             paging: false,
-                        }) // only for LL
+                        })
 
-                    //TODO:
-                    //displayPropertyName
-                    //completedOnly (from options)
-                    //hideEmptyColumns (from options)
-                    //hideEmptyRows (from options)
-                    //showHierarchy (from options)
-                    //startDate
-                    //endDate
                     target = format === 'html+css' ? '_blank' : '_top'
 
                     break
@@ -123,52 +130,10 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         req = req.withOutputIdScheme(idScheme)
                     }
 
-                    // TODO: options
-                    // startDate
-                    // endDate
-                    // completedOnly
-                    // hierarchyMeta (from options)
-                    // outputType
-                    // programStatus
-                    // eventStatus
-                    // limit
-                    // sortOrder
-                    // value
-                    // aggregationType
-                    // timeField
-                    // orgUnitField
-                    // collapsedDataDimensions
-                    // useOrgUnit (URL)
-                    // relativePeriodDate
                     target = ['csv', 'xsl', 'xslx'].includes(format)
                         ? '_top'
                         : '_blank'
                     break
-            }
-
-            // TODO: add common parameters
-            // if there are for both event/enrollment and PT/LL
-
-            if (
-                relativePeriodDate &&
-                isVisualizationWithTimeDimension(visualization)
-            ) {
-                req = req.withRelativePeriodDate(relativePeriodDate)
-            }
-
-            const sorting = visualization.sorting?.[0]
-
-            if (sorting) {
-                switch (sorting.direction) {
-                    case 'ASC': {
-                        req = req.withAsc(sorting.dimension)
-                        break
-                    }
-                    case 'DESC': {
-                        req = req.withDesc(sorting.dimension)
-                        break
-                    }
-                }
             }
 
             const url = new URL(
