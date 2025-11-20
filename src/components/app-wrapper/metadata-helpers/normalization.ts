@@ -2,6 +2,7 @@ import {
     isOptionSetMetadataItem,
     isLegendSetMetadataItem,
     isPopulatedString,
+    isMetadataInputItem,
 } from './type-guards'
 import type {
     MetadataItem,
@@ -53,6 +54,14 @@ export const normalizeMetadataInputItem = (
         return {
             id: resolvedId,
             ...rest,
+        }
+    } else if (!isMetadataInputItem(item)) {
+        if ('id' in item && 'uid' in item) {
+            throw new Error(
+                'Invalid metadata input: item has both an id and uid'
+            )
+        } else {
+            throw new Error('Invalid metadata input: name field not a string')
         }
     } else {
         throw new Error('Invalid metadata input: expected name field not found')

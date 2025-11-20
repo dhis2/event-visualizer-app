@@ -27,11 +27,18 @@ export const isMetadataInputItem = (
         return false
     }
 
-    const hasId = 'id' in input && isPopulatedString(input.id)
-    const hasUid = 'uid' in input && isPopulatedString(input.uid)
+    const hasIdKey = 'id' in input
+    const hasUidKey = 'uid' in input
+    const hasValidId = hasIdKey && isPopulatedString(input.id)
+    const hasValidUid = hasUidKey && isPopulatedString(input.uid)
 
-    // Must have exactly one of id or uid
-    if ((hasId && hasUid) || (!hasId && !hasUid)) {
+    // Must have exactly one of id or uid keys present
+    if ((hasIdKey && hasUidKey) || (!hasIdKey && !hasUidKey)) {
+        return false
+    }
+
+    // The present key must have a valid value
+    if ((hasIdKey && !hasValidId) || (hasUidKey && !hasValidUid)) {
         return false
     }
 
