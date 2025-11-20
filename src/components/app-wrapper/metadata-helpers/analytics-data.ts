@@ -1,11 +1,11 @@
-import { isMetadataItem, isUserOrgUnitMetadataInputItem } from './type-guards'
-import type { AnalyticsMetadataInput, MetadataInput } from './types'
+import { isMetadataInputItem } from './type-guards'
+import type { AnalyticsResponseMetadataItems, MetadataInput } from './types'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { headersMap } from '@modules/visualization'
 
 const extractItemsMetadata = (
-    items: AnalyticsMetadataInput,
+    items: AnalyticsResponseMetadataItems,
     dimensions: AnalyticsResponseMetadataDimensions
 ): MetadataInput =>
     Object.entries(items).reduce((acc, [key, value]) => {
@@ -14,37 +14,18 @@ const extractItemsMetadata = (
          * A correct version of optionSet will be present in the metadata store already
          * because they are requested after the visualization response is received. */
         if (
-            !isUserOrgUnitMetadataInputItem(value) &&
-            isMetadataItem(value) &&
+            isMetadataInputItem(value) &&
             'options' in value &&
             Array.isArray(value.options)
         ) {
             return acc
         }
 
-        // Ensure the "nested ID" is used consistently
-        if (key.includes('.')) {
-            acc[key] = {
-                ...value,
-                uid: key,
-                id: key,
-            }
-        } else if (Object.keys(value).length === 1 && 'name' in value) {
-            /* Some `metaData.items` only have a `name` field, like relative periods
-             * to process these correctly we need to use the key as uid */
-            acc[key] = {
-                name: value.name,
-                uid: key,
-            }
-        } else {
-            acc[key] = value
-        }
+        acc[key] = value
 
         /* Add legendSet metadata items so that legend items can be
          * related to dataElements */
         if (
-            !isUserOrgUnitMetadataInputItem(value) &&
-            isMetadataItem(value) &&
             typeof value.legendSet === 'string' &&
             value.legendSet.length > 0 &&
             Array.isArray(dimensions[key])
@@ -53,7 +34,7 @@ const extractItemsMetadata = (
                 id: value.legendSet,
                 legends: dimensions[key].map((legendItemKey) => {
                     const legendItem = items[legendItemKey]
-                    if (!isMetadataItem(legendItem)) {
+                    if (!isMetadataInputItem(legendItem)) {
                         throw new Error(
                             'Legend item not found in analytics response data'
                         )
@@ -112,7 +93,7 @@ const updateNamesFromHeaders = (
     }, metdataFromItems)
 
 export const extractMetadataFromAnalyticsResponse = (
-    items: AnalyticsMetadataInput,
+    items: AnalyticsResponseMetadataItems,
     dimensions: AnalyticsResponseMetadataDimensions,
     headers: Array<LineListAnalyticsDataHeader>
 ): MetadataInput => {

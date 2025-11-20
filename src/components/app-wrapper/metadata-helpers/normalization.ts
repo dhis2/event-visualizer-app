@@ -1,84 +1,60 @@
 import {
-    isMetadataItem,
-    isSimpleMetadataItem,
-    isProgramMetadataItem,
-    isProgramStageMetadataItem,
     isOptionSetMetadataItem,
-    isOrganisationUnitMetadataItem,
     isLegendSetMetadataItem,
-    isUserOrgUnitMetadataInputItem,
-    isUserOrgUnitMetadataItem,
+    isPopulatedString,
 } from './type-guards'
 import type {
-    AnyMetadataItemInput,
-    SimpleMetadataItem,
-    MetadataStoreItem,
-    NormalizedMetadataItem,
-    UserOrgUnitMetadataInputItem,
-    UserOrgUnitMetadataItem,
+    MetadataItem,
+    MetadataInputItem,
+    NormalizedMetadataInputItem,
 } from './types'
-import type { MetadataItem } from '@types'
-
-// Normalization helper functions for each input type
-export const normalizeMetadataItem = (
-    input: MetadataItem
-): NormalizedMetadataItem => {
-    const { uid, ...rest } = input
-    const result: NormalizedMetadataItem = {
-        id: uid, // Convert uid to id
-        ...rest,
-    }
-    return result
-}
-
-export const normalizeSimpleMetadataItem = (
-    input: SimpleMetadataItem
-): NormalizedMetadataItem => {
-    // Get the single key-value pair from the simple metadata item
-    const [key, value] = Object.entries(input)[0]
-    const result: NormalizedMetadataItem = {
-        id: key,
-        name: value,
-    }
-    return result
-}
-
-const normalizeUserOrgUnitMetadata = (
-    input: UserOrgUnitMetadataInputItem,
-    metadata: Map<string, MetadataStoreItem>
-): UserOrgUnitMetadataItem => {
-    const userOrgUnitMetadata = metadata.get(
-        'USER_ORGUNIT'
-    ) as UserOrgUnitMetadataItem
-    if (!userOrgUnitMetadata) {
-        throw new Error('USER_ORGUNIT not found in metadata map')
-    }
-    return {
-        ...userOrgUnitMetadata,
-        organisationUnits: input.organisationUnits,
-    }
-}
 
 export const normalizeMetadataInputItem = (
-    input: AnyMetadataItemInput,
-    metadata: Map<string, MetadataStoreItem>
-): MetadataStoreItem => {
-    if (isSimpleMetadataItem(input)) {
-        return normalizeSimpleMetadataItem(input)
-    } else if (isMetadataItem(input)) {
-        return normalizeMetadataItem(input)
-    } else if (isUserOrgUnitMetadataInputItem(input)) {
-        return normalizeUserOrgUnitMetadata(input, metadata)
+    item: MetadataInputItem | string,
+    existingMetadataMap: Map<string, MetadataItem>,
+    key?: string
+): NormalizedMetadataInputItem => {
+    if (isPopulatedString(item)) {
+        if (isPopulatedString(key)) {
+            return {
+                id: key,
+                name: item,
+            }
+        } else {
+            throw new Error(
+                'Invalid metadata input: string value without a key'
+            )
+        }
+    }
+
+    const { id, uid, name, displayName, ...rest } = item
+
+    // Prefer key because this has the nested version of the ID with the dot
+    const resolvedId = key ?? uid ?? id
+
+    if (!isPopulatedString(resolvedId)) {
+        throw new Error('Invalid metadata input: no ID field present')
+    }
+
+    const resolvedName = name ?? displayName
+
+    if (isPopulatedString(resolvedName)) {
+        return { id: resolvedId, name: resolvedName, ...rest }
     } else if (
-        isProgramMetadataItem(input) ||
-        isProgramStageMetadataItem(input) ||
-        isOptionSetMetadataItem(input) ||
-        isLegendSetMetadataItem(input) ||
-        isOrganisationUnitMetadataItem(input) ||
-        isUserOrgUnitMetadataItem(input)
+        existingMetadataMap.has(resolvedId) ||
+        isOptionSetMetadataItem(item) ||
+        isLegendSetMetadataItem(item)
     ) {
-        return input as MetadataStoreItem
+        /* Items that already exist in the store must have a name field
+         * so for these we can send partial updates (objects with a name).
+         * optionSets and legendSets are also valid without a name field
+         * because they are mainly used as option/legend lookups for
+         * DE and TEIs */
+        return {
+            id: resolvedId,
+            ...rest,
+        }
     } else {
-        throw new Error('Unknown metadata input type')
+        throw new Error('Invalid metadata input: expected name field not found')
     }
 }
