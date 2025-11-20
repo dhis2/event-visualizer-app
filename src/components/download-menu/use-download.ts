@@ -18,7 +18,7 @@ import type { CurrentVisualization } from '@types'
 
 type UseDownloadResult = {
     isDownloadDisabled: boolean
-    download: DownloadFn | undefined
+    download: DownloadFn
 }
 
 const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
@@ -163,7 +163,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
 
     return {
         isDownloadDisabled: !isDownloadEnabled,
-        download: isDownloadEnabled ? downloadForLL : undefined,
+        download: downloadForLL,
     }
 }
 
