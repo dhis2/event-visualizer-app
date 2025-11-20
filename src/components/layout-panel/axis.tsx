@@ -1,9 +1,9 @@
 import cx from 'classnames'
 import type { FC } from 'react'
 import { Chip } from './chip'
-import { getLayoutDimensions } from './get-layout-dimensions'
 import classes from './styles/axis.module.css'
-import { useAppSelector, useMetadataStore } from '@hooks'
+import { useLayoutDimensions } from './use-layout-dimensions'
+import { useAppSelector } from '@hooks'
 import { getAxisName } from '@modules/layout'
 import { getVisUiConfigOutputType } from '@store/vis-ui-config-slice'
 import type { Axis as AxisTD } from '@types'
@@ -14,13 +14,11 @@ type AxisProps = {
 }
 
 export const Axis: FC<AxisProps> = ({ axisId, dimensionIds }) => {
-    const { getMetadataItem } = useMetadataStore()
     const outputType = useAppSelector(getVisUiConfigOutputType)
 
-    const dimensions = getLayoutDimensions({
+    const dimensions = useLayoutDimensions({
         dimensionIds: dimensionIds || [],
         outputType,
-        getMetadataItem,
     })
 
     return (
