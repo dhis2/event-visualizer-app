@@ -84,7 +84,7 @@ const updateNamesFromHeaders = (
              * may not be available in the metadata store already, and the
              * smart merge in the metadata store will handle this correctly*/
             acc[dimensionId] = {
-                uid: dimensionId,
+                id: dimensionId,
                 name: dimensionDisplayName,
             }
         }

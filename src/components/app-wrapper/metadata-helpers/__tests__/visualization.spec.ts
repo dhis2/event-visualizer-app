@@ -156,7 +156,7 @@ describe('supplementDimensionMetadata', () => {
     it('should skip metadata items without name', () => {
         const metadataInput = {
             dimension1: {
-                uid: 'dimension1',
+                id: 'dimension1',
                 // No name property
             },
         }
@@ -177,7 +177,7 @@ describe('supplementDimensionMetadata', () => {
 
         expect(result).toEqual({
             dimension1: {
-                uid: 'dimension1',
+                id: 'dimension1',
             },
         })
     })
