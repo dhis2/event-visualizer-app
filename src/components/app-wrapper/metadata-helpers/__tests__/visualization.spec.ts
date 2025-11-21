@@ -13,11 +13,11 @@ describe('supplementDimensionMetadata', () => {
     it('should add prefixed dimension metadata for dimensions with matching metadata items', () => {
         const metadataInput = {
             dimension1: {
-                uid: 'dimension1',
+                id: 'dimension1',
                 name: 'Dimension One',
             },
             dimension2: {
-                uid: 'dimension2',
+                id: 'dimension2',
                 name: 'Dimension Two',
             },
         }
@@ -40,14 +40,14 @@ describe('supplementDimensionMetadata', () => {
 
         expect(result).toEqual({
             dimension1: {
-                uid: 'dimension1',
+                id: 'dimension1',
                 name: 'Dimension One',
                 dimensionType: 'DATA_ELEMENT',
                 optionSet: 'optionSet1',
                 valueType: 'TEXT',
             },
             dimension2: {
-                uid: 'dimension2',
+                id: 'dimension2',
                 name: 'Dimension Two',
             },
         })
@@ -56,7 +56,7 @@ describe('supplementDimensionMetadata', () => {
     it('should handle dimensions with program and programStage', () => {
         const metadataInput = {
             dimension1: {
-                uid: 'dimension1',
+                id: 'dimension1',
                 name: 'Dimension One',
             },
         }
@@ -79,11 +79,11 @@ describe('supplementDimensionMetadata', () => {
 
         expect(result).toEqual({
             dimension1: {
-                uid: 'dimension1',
+                id: 'dimension1',
                 name: 'Dimension One',
             },
             'stage1.dimension1': {
-                uid: 'stage1.dimension1',
+                id: 'stage1.dimension1',
                 name: 'Dimension One',
                 dimensionType: 'DATA_ELEMENT',
             },
@@ -93,7 +93,7 @@ describe('supplementDimensionMetadata', () => {
     it('should skip dimensions without matching metadata items', () => {
         const metadataInput = {
             dimension1: {
-                uid: 'dimension1',
+                id: 'dimension1',
                 name: 'Dimension One',
             },
         }
@@ -118,7 +118,7 @@ describe('supplementDimensionMetadata', () => {
 
         expect(result).toEqual({
             dimension1: {
-                uid: 'dimension1',
+                id: 'dimension1',
                 name: 'Dimension One',
                 dimensionType: 'DATA_ELEMENT',
             },
@@ -156,7 +156,7 @@ describe('supplementDimensionMetadata', () => {
     it('should skip metadata items without name', () => {
         const metadataInput = {
             dimension1: {
-                uid: 'dimension1',
+                id: 'dimension1',
                 // No name property
             },
         }
@@ -177,7 +177,7 @@ describe('supplementDimensionMetadata', () => {
 
         expect(result).toEqual({
             dimension1: {
-                uid: 'dimension1',
+                id: 'dimension1',
             },
         })
     })
@@ -185,7 +185,7 @@ describe('supplementDimensionMetadata', () => {
     it('should include valueType and optionSet when available', () => {
         const metadataInput = {
             dimension1: {
-                uid: 'dimension1',
+                id: 'dimension1',
                 name: 'Dimension One',
             },
         }
@@ -208,7 +208,7 @@ describe('supplementDimensionMetadata', () => {
 
         expect(result).toEqual({
             dimension1: {
-                uid: 'dimension1',
+                id: 'dimension1',
                 name: 'Dimension One',
                 dimensionType: 'DATA_ELEMENT',
                 valueType: 'NUMBER',
@@ -219,9 +219,9 @@ describe('supplementDimensionMetadata', () => {
 
     it('should handle multiple dimensions from columns, rows, and filters', () => {
         const metadataInput = {
-            dim1: { uid: 'dim1', name: 'Dimension 1' },
-            dim2: { uid: 'dim2', name: 'Dimension 2' },
-            dim3: { uid: 'dim3', name: 'Dimension 3' },
+            dim1: { id: 'dim1', name: 'Dimension 1' },
+            dim2: { id: 'dim2', name: 'Dimension 2' },
+            dim3: { id: 'dim3', name: 'Dimension 3' },
         }
 
         const visualization = {
@@ -250,17 +250,17 @@ describe('supplementDimensionMetadata', () => {
 
         expect(result).toEqual({
             dim1: {
-                uid: 'dim1',
+                id: 'dim1',
                 name: 'Dimension 1',
                 dimensionType: 'DATA_ELEMENT',
             },
             dim2: {
-                uid: 'dim2',
+                id: 'dim2',
                 name: 'Dimension 2',
                 dimensionType: 'DATA_ELEMENT',
             },
             dim3: {
-                uid: 'dim3',
+                id: 'dim3',
                 name: 'Dimension 3',
                 dimensionType: 'DATA_ELEMENT',
             },
@@ -281,7 +281,7 @@ describe('extractTrackedEntityTypeMetadata', () => {
 
         expect(result).toEqual({
             trackedEntity1: {
-                uid: 'trackedEntity1',
+                id: 'trackedEntity1',
                 name: 'Person',
             },
         })
@@ -313,7 +313,7 @@ describe('extractFixedDimensionsMetadata', () => {
         const result = extractFixedDimensionsMetadata(visualization)
 
         expect(result).toHaveProperty('ou')
-        expect(result.ou).toHaveProperty('uid', 'ou')
+        expect(result.ou).toHaveProperty('id', 'ou')
         expect(result.ou).toHaveProperty('dimensionType', 'ORGANISATION_UNIT')
     })
 
@@ -393,7 +393,7 @@ describe('extractDimensionMetadata', () => {
         const result = extractDimensionMetadata(visualization)
 
         expect(result).toHaveProperty('dataElement1')
-        expect(result.dataElement1).toHaveProperty('uid', 'dataElement1')
+        expect(result.dataElement1).toHaveProperty('id', 'dataElement1')
         expect(result.dataElement1).toHaveProperty('name', 'Data Element 1')
     })
 

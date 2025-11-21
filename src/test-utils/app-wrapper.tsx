@@ -21,7 +21,7 @@ import {
     AppCachedDataQueryProvider,
     useAppCachedDataQuery,
 } from '@components/app-wrapper/app-cached-data-query-provider'
-import type { AnyMetadataItemInput } from '@components/app-wrapper/metadata-helpers'
+import type { InitialMetadataItems } from '@components/app-wrapper/metadata-helpers/types'
 import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider'
 import { useMetadataStore } from '@hooks'
 import { listenerMiddleware } from '@store/middleware-listener'
@@ -53,7 +53,7 @@ export type MockOptions = {
      * Typically not required as middleware/hooks that fetch visualization or
      * analytics data will automatically populate the metadata store.
      */
-    metadata?: Record<string, AnyMetadataItemInput>
+    metadata?: InitialMetadataItems
     /**
      * Partial Redux store configuration for testing with custom state.
      * When provided, creates a store with the specified reducer and preloaded state.
@@ -162,7 +162,7 @@ const defaultAppCachedData = {
 const MockAppWrapperCore: FC<{
     children: ReactNode | ((store: PartialOrDefaultStore) => ReactNode)
     queryData?: QueryData
-    metadata?: Record<string, AnyMetadataItemInput>
+    metadata?: InitialMetadataItems
     partialStore?: MockOptions['partialStore']
 }> = ({ children, queryData, metadata, partialStore }) => {
     return (

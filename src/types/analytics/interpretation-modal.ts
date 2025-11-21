@@ -1,5 +1,5 @@
 import type { FC } from 'react'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
+import type { MetadataInput } from '@components/app-wrapper/metadata-helpers/types'
 import type { CurrentVisualization } from '@types'
 
 type InterpretationModalProps = {

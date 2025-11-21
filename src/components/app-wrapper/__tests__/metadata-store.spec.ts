@@ -1,14 +1,17 @@
 import { expect, describe, it, beforeEach } from 'vitest'
 import inpatientCasesVisualization from '../__fixtures__/-visualization-inpatient-cases-last-quarter-case.json'
 import inpatientVisitVisualization from '../__fixtures__/visualization-inpatient-visit-overview-this-year-bo.json'
-import { getInitialMetadata, type MetadataStoreItem } from '../metadata-helpers'
+import { getInitialMetadata } from '../metadata-helpers/initial-metadata'
 import { MetadataStore } from '../metadata-store'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import type { AppCachedData, SavedVisualization } from '@types'
+import type { AppCachedData, MetadataItem, SavedVisualization } from '@types'
 
 class TestMetadataStore extends MetadataStore {
-    getMetadataSnapshot(): Record<string, MetadataStoreItem> {
-        return Object.fromEntries(this.metadataMap)
+    getMetadataSnapshot(): Record<string, MetadataItem> {
+        return Object.fromEntries(this.metadataMap) as Record<
+            string,
+            MetadataItem
+        >
     }
 }
 
@@ -60,7 +63,6 @@ describe('MetadataStore', () => {
               "name": "Inpatient bed days average",
             },
             "ImspTQPwCqd": {
-              "displayName": "Sierra Leone",
               "id": "ImspTQPwCqd",
               "name": "Sierra Leone",
               "path": "/ImspTQPwCqd",

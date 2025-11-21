@@ -7,13 +7,11 @@ describe('getInitialMetadata', () => {
 
         // Should contain relative periods as SimpleMetadataItem (single key-value pairs)
         expect(initialMetadata.TODAY).toBeDefined()
-        expect(initialMetadata.TODAY).toEqual({ TODAY: expect.any(String) })
+        expect(initialMetadata.TODAY).toBe('Today')
 
         // Should contain organization units as SimpleMetadataItem (single key-value pairs)
         expect(initialMetadata.USER_ORGUNIT).toBeDefined()
-        expect(initialMetadata.USER_ORGUNIT).toEqual({
-            USER_ORGUNIT: expect.any(String),
-        })
+        expect(initialMetadata.USER_ORGUNIT).toBe('User organisation unit')
 
         // Should return an object with string keys
         expect(typeof initialMetadata).toBe('object')

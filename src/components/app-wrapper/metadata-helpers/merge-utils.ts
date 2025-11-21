@@ -1,5 +1,6 @@
 import deepEqual from 'deep-equal'
-import type { MetadataStoreItem } from './types'
+import { isMetadataItem } from './type-guards'
+import type { MetadataItem, NormalizedMetadataInputItem } from './types'
 
 // Helper to check if a value is considered "empty" for merge logic
 function isEmpty(value: unknown): boolean {
@@ -20,16 +21,20 @@ function isComplexFieldValue(value: unknown): boolean {
 }
 
 export function smartMergeWithChangeDetection(
-    existing: MetadataStoreItem | undefined,
-    newItem: MetadataStoreItem
-): { hasChanges: boolean; mergedItem: MetadataStoreItem } {
+    existing: MetadataItem | undefined,
+    newItem: NormalizedMetadataInputItem
+): { hasChanges: boolean; mergedItem: MetadataItem } {
     // If no existing item, just return the new item
     if (!existing) {
-        return { hasChanges: true, mergedItem: newItem }
+        if (isMetadataItem(newItem)) {
+            return { hasChanges: true, mergedItem: newItem }
+        } else {
+            throw new Error('New item is not a valid metadata item')
+        }
     }
 
     let hasChanges = false
-    const mergedItem = { ...existing }
+    const mergedItem: MetadataItem = { ...existing }
 
     // Check each property in the new item
     for (const [key, newValue] of Object.entries(newItem)) {

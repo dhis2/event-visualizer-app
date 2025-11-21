@@ -6,9 +6,9 @@ import {
     getAnalyticsEndpoint,
 } from './query-tools-line-list.js'
 import type {
-    AnyMetadataItemInput,
+    MetadataInputItem,
     UserOrgUnitMetadataItem,
-} from '@components/app-wrapper/metadata-helpers/types.js'
+} from '@components/app-wrapper/metadata-helpers/types'
 import type {
     LineListAnalyticsData,
     LineListAnalyticsDataHeader,
@@ -322,7 +322,7 @@ const extractRowContext = (analyticsResponse) => analyticsResponse.rowContext
 
 export type AnalyticsResponseMetadataItems = Record<
     string,
-    AnyMetadataItemInput
+    MetadataInputItem
 > & {
     USER_ORG_UNIT?: UserOrgUnitMetadataItem
 }

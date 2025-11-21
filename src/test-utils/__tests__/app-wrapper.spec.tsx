@@ -92,10 +92,8 @@ describe('renderHookWithAppWrapper', () => {
             () => useMetadataItems(['USER_ORGUNIT', 'CUSTOM_METADATA']),
             {
                 metadata: {
-                    USER_ORGUNIT: { USER_ORGUNIT: 'Custom User Org Unit' },
-                    CUSTOM_METADATA: {
-                        CUSTOM_METADATA: 'Custom Test Metadata',
-                    },
+                    USER_ORGUNIT: 'Custom User Org Unit',
+                    CUSTOM_METADATA: 'Custom Test Metadata',
                 },
             }
         )

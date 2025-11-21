@@ -1,6 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import type { AnyMetadataItemInput } from './types'
-import { idsToUids } from './visualization'
+import type { InitialMetadataItems, MetadataInputMap } from './types'
 import { getCreatedDimension, getTimeDimensions } from '@modules/dimension'
 import type { UserOrgUnit, RelativePeriod, Status } from '@types'
 
@@ -53,11 +52,11 @@ const getStatusNames = (): Record<Status, string> => ({
     SCHEDULE: i18n.t('Scheduled'),
 })
 
-export const getTimeDimensionsMetadata = () =>
+export const getTimeDimensionsMetadata = (): MetadataInputMap =>
     Object.values(getTimeDimensions()).reduce(
         (acc, { id, dimensionType, defaultName }) => {
             acc[id] = {
-                uid: id,
+                id,
                 name: defaultName,
                 dimensionType,
             }
@@ -66,19 +65,10 @@ export const getTimeDimensionsMetadata = () =>
         {}
     )
 
-export const getInitialMetadata = (): Record<string, AnyMetadataItemInput> => {
-    return Object.entries({
-        ...getStatusNames(),
-        ...idsToUids(getCreatedDimension()),
-        ...getTimeDimensionsMetadata(),
-        ...getRelativePeriods(),
-        ...getOrganisationUnits(),
-    }).reduce((obj, [key, value]) => {
-        if (typeof value === 'string') {
-            obj[key] = { [key]: value } // key-value string-pair
-        } else {
-            obj[key] = value // objects (created dimension)
-        }
-        return obj
-    }, {})
-}
+export const getInitialMetadata = (): InitialMetadataItems => ({
+    ...getStatusNames(),
+    ...getCreatedDimension(),
+    ...getTimeDimensionsMetadata(),
+    ...getRelativePeriods(),
+    ...getOrganisationUnits(),
+})

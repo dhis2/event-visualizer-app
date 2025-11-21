@@ -165,7 +165,6 @@ describe('useConditionsTexts metadata updates', () => {
 
         act(() => {
             result.current.addMetadata({
-                uid: optionSetId,
                 id: optionSetId,
                 name: 'Status',
                 options: [{ code: 'A', name: 'Alpha' }],
@@ -176,7 +175,6 @@ describe('useConditionsTexts metadata updates', () => {
 
         act(() => {
             result.current.addMetadata({
-                uid: optionSetId,
                 id: optionSetId,
                 name: 'Status',
                 options: [
@@ -316,7 +314,6 @@ describe('useConditionsTexts metadata updates', () => {
 
         act(() => {
             result.current.addMetadata({
-                uid: optionSetId,
                 id: optionSetId,
                 name: 'Status',
                 options: [
