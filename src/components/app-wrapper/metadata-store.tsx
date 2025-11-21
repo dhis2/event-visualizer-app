@@ -1,12 +1,7 @@
 import { extractMetadataFromAnalyticsResponse } from './metadata-helpers/analytics-data'
 import { smartMergeWithChangeDetection } from './metadata-helpers/merge-utils'
 import { normalizeMetadataInputItem } from './metadata-helpers/normalization'
-import {
-    isObject,
-    isMetadataInputItem,
-    isMetadataItemWithName,
-    isOrganisationUnitMetadataItem,
-} from './metadata-helpers/type-guards'
+import { isObject, isMetadataInputItem } from './metadata-helpers/type-guards'
 import type {
     MetadataInputItem,
     MetadataItem,
@@ -192,40 +187,20 @@ export class MetadataStore {
         initialMetadataItems: InitialMetadataItems,
         rootOrgUnits?: AppCachedData['rootOrgUnits']
     ) {
-        Object.entries(initialMetadataItems).forEach(([key, item]) => {
-            const normalizedItem = normalizeMetadataInputItem(
-                item,
-                this.metadata,
-                key
-            )
-            if (!isMetadataItemWithName(normalizedItem)) {
-                throw new Error(
-                    'Encountered initial metadata without id or name'
-                )
-            }
-            this.metadata.set(key, normalizedItem)
+        const initialMetadataWithRootOrgUnits = rootOrgUnits
+            ? rootOrgUnits.reduce((acc, rootOrgUnit) => {
+                  acc[rootOrgUnit.id] = {
+                      ...rootOrgUnit,
+                      path: `/${rootOrgUnit.id}`,
+                  }
+                  return acc
+              }, initialMetadataItems)
+            : initialMetadataItems
+
+        Object.keys(initialMetadataWithRootOrgUnits).forEach((key) => {
             this.initialMetadataKeys.add(key)
         })
 
-        if (rootOrgUnits) {
-            for (const rootOrgUnit of rootOrgUnits) {
-                if (rootOrgUnit.id) {
-                    const normalizedItem = normalizeMetadataInputItem(
-                        {
-                            ...rootOrgUnit,
-                            path: `/${rootOrgUnit.id}`,
-                        },
-                        this.metadata
-                    )
-                    if (!isOrganisationUnitMetadataItem(normalizedItem)) {
-                        throw new Error(
-                            'Invalid rootOrgUnit in initial metadata'
-                        )
-                    }
-                    this.metadata.set(rootOrgUnit.id, normalizedItem)
-                    this.initialMetadataKeys.add(rootOrgUnit.id)
-                }
-            }
-        }
+        this.addMetadata(initialMetadataWithRootOrgUnits as MetadataInput)
     }
 }
