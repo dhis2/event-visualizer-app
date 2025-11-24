@@ -5,112 +5,111 @@ import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 describe('useLayoutDimensions for data elements', () => {
     const metadata = {
         p1: {
-            uid: 'p1',
+            id: 'p1',
             name: 'Program1',
         },
         p2: {
-            uid: 'p2',
+            id: 'p2',
             name: 'Program2',
         },
         p1s1: {
-            uid: 'p1s1',
+            id: 'p1s1',
             name: 'P1 Stage1',
         },
         p1s2: {
-            uid: 'p1s2',
+            id: 'p1s2',
             name: 'P1 Stage2',
         },
         p2s1: {
-            uid: 'p2s1',
+            id: 'p2s1',
             name: 'P2 Stage1',
         },
         p2s2: {
-            uid: 'p2s2',
+            id: 'p2s2',
             name: 'P2 Stage2',
         },
         'p1s1.d1': {
-            uid: 'p1s1.d1',
+            id: 'p1s1.d1',
             name: 'Dimension1',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p1s1.d2': {
-            uid: 'p1s1.d2',
+            id: 'p1s1.d2',
             name: 'Dimension2',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet2',
             valueType: 'TEXT',
         },
         'p1s2.d1': {
-            uid: 'p1s2.d1',
+            id: 'p1s2.d1',
             name: 'Dimension1',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p1s2.d2': {
-            uid: 'p1s2.d2',
+            id: 'p1s2.d2',
             name: 'Dimension2',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet2',
             valueType: 'TEXT',
         },
         'p1s2.d3': {
-            uid: 'p1s2.d3',
+            id: 'p1s2.d3',
             name: 'Dimension3',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet3',
             valueType: 'TEXT',
         },
         'p1.p1s1.d1': {
-            uid: 'p1.p1s1.d1',
+            id: 'p1.p1s1.d1',
             name: 'Dimension1',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p1.p1s2.d1': {
-            uid: 'p1.p1s2.d1',
+            id: 'p1.p1s2.d1',
             name: 'Dimension1',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p1.p1s2.d2': {
-            uid: 'p1.p1s2.d2',
+            id: 'p1.p1s2.d2',
             name: 'Dimension2',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet2',
             valueType: 'TEXT',
         },
         'p2.p2s1.d1': {
-            uid: 'p2.p2s1.d1',
+            id: 'p2.p2s1.d1',
             name: 'Dimension1',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p2.p2s1.d3': {
-            uid: 'p2.p2s1.d3',
+            id: 'p2.p2s1.d3',
             name: 'Dimension3',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet3',
             valueType: 'TEXT',
         },
         'p2.p2s2.d1': {
-            uid: 'p2.p2s2.d1',
+            id: 'p2.p2s2.d1',
             name: 'Dimension1',
             dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
     }
-    // TODO: either fix the test or hook implementation once the metadata store refactor is completed
     it('returns correct result for: non-TE, no duplicates -> no suffix', async () => {
-        const id1 = 'ou',
-            id2 = 'eventStatus',
-            id3 = 'programStatus'
+        const id1 = 'p1s1.d1',
+            id2 = 'p1s1.d2',
+            id3 = 'p1s2.d3'
         const dimensionIds = [id1, id2, id3]
 
         const { result } = await renderHookWithAppWrapper(
@@ -343,75 +342,75 @@ describe('useLayoutDimensions for data elements', () => {
 describe('useLayoutDimensions for time dimensions', () => {
     const metadata = {
         p1: {
-            uid: 'p1',
+            id: 'p1',
             name: 'Program1',
         },
         p2: {
-            uid: 'p2',
+            id: 'p2',
             name: 'Program2',
         },
         enrollmentDate: {
-            uid: 'enrollmentDate',
+            id: 'enrollmentDate',
             name: 'Date of enrollment',
             dimensionType: 'PERIOD',
         },
         eventDate: {
-            uid: 'eventDate',
+            id: 'eventDate',
             name: 'Event date',
             dimensionType: 'PERIOD',
         },
         incidentDate: {
-            uid: 'incidentDate',
+            id: 'incidentDate',
             name: 'Incident date',
             dimensionType: 'PERIOD',
         },
         scheduledDate: {
-            uid: 'scheduledDate',
+            id: 'scheduledDate',
             name: 'Scheduled date',
             dimensionType: 'PERIOD',
         },
         'p1.enrollmentDate': {
-            uid: 'p1.enrollmentDate',
+            id: 'p1.enrollmentDate',
             name: 'Date of enrollment',
             dimensionType: 'PERIOD',
         },
         'p1.eventDate': {
-            uid: 'p1.eventDate',
+            id: 'p1.eventDate',
             name: 'Event date',
             dimensionType: 'PERIOD',
         },
         'p1.incidentDate': {
-            uid: 'p1.incidentDate',
+            id: 'p1.incidentDate',
             name: 'Incident date',
             dimensionType: 'PERIOD',
         },
         'p1.scheduledDate': {
-            uid: 'p1.scheduledDate',
+            id: 'p1.scheduledDate',
             name: 'Scheduled date',
             dimensionType: 'PERIOD',
         },
         'p2.enrollmentDate': {
-            uid: 'p2.enrollmentDate',
+            id: 'p2.enrollmentDate',
             name: 'Date of enrollment',
             dimensionType: 'PERIOD',
         },
         'p2.eventDate': {
-            uid: 'p2.eventDate',
+            id: 'p2.eventDate',
             name: 'Event date',
             dimensionType: 'PERIOD',
         },
         'p2.incidentDate': {
-            uid: 'p2.incidentDate',
+            id: 'p2.incidentDate',
             name: 'Incident date',
             dimensionType: 'PERIOD',
         },
         'p2.scheduledDate': {
-            uid: 'p2.scheduledDate',
+            id: 'p2.scheduledDate',
             name: 'Scheduled date',
             dimensionType: 'PERIOD',
         },
         lastUpdated: {
-            uid: 'lastUpdated',
+            id: 'lastUpdated',
             name: 'Last updated on',
             dimensionType: 'PERIOD',
         },
@@ -571,55 +570,55 @@ describe('useLayoutDimensions for time dimensions', () => {
 describe('useLayoutDimensions for program dimensions', () => {
     const metadata = {
         p1: {
-            uid: 'p1',
+            id: 'p1',
             name: 'Program1',
         },
         p2: {
-            uid: 'p2',
+            id: 'p2',
             name: 'Program2',
         },
         ou: {
-            uid: 'ou',
+            id: 'ou',
             name: 'Organisation unit',
             dimensionType: 'ORGANISATION_UNIT',
         },
         'p1.ou': {
-            uid: 'p1.ou',
+            id: 'p1.ou',
             name: 'Organisation unit',
             dimensionType: 'ORGANISATION_UNIT',
         },
         'p2.ou': {
-            uid: 'p2.ou',
+            id: 'p2.ou',
             name: 'Organisation unit',
             dimensionType: 'ORGANISATION_UNIT',
         },
         eventStatus: {
-            uid: 'eventStatus',
+            id: 'eventStatus',
             dimensionType: 'STATUS',
             name: 'Event status',
         },
         programStatus: {
-            uid: 'programStatus',
+            id: 'programStatus',
             dimensionType: 'STATUS',
             name: 'Program status',
         },
         'p1.eventStatus': {
-            uid: 'p1.eventStatus',
+            id: 'p1.eventStatus',
             dimensionType: 'STATUS',
             name: 'Event status',
         },
         'p1.programStatus': {
-            uid: 'p1.programStatus',
+            id: 'p1.programStatus',
             dimensionType: 'STATUS',
             name: 'Program status',
         },
         'p2.eventStatus': {
-            uid: 'p2.eventStatus',
+            id: 'p2.eventStatus',
             dimensionType: 'STATUS',
             name: 'Event status',
         },
         'p2.programStatus': {
-            uid: 'p2.programStatus',
+            id: 'p2.programStatus',
             dimensionType: 'STATUS',
             name: 'Program status',
         },
@@ -628,7 +627,7 @@ describe('useLayoutDimensions for program dimensions', () => {
             dimensionItemType: 'DATA_ELEMENT',
             name: 'Some data element',
             totalAggregationType: 'SUM',
-            uid: 'XYZ123',
+            id: 'XYZ123',
             valueType: 'TEXT',
         },
         'p1.p1s1.XYZ123': {
@@ -636,7 +635,7 @@ describe('useLayoutDimensions for program dimensions', () => {
             dimensionItemType: 'DATA_ELEMENT',
             name: 'Some data element 1',
             totalAggregationType: 'SUM',
-            uid: 'XYZ123',
+            id: 'XYZ123',
             valueType: 'TEXT',
         },
         'p2.p2s1.XYZ123': {
@@ -644,7 +643,7 @@ describe('useLayoutDimensions for program dimensions', () => {
             dimensionItemType: 'DATA_ELEMENT',
             name: 'Some data element 2',
             totalAggregationType: 'SUM',
-            uid: 'XYZ123',
+            id: 'XYZ123',
             valueType: 'TEXT',
         },
     }
