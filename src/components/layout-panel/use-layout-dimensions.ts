@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import type { MetadataStoreItem } from '@components/app-wrapper/metadata-helpers/types'
+import type { MetadataItem } from '@components/app-wrapper/metadata-helpers/types'
 import { useMetadataItems } from '@components/app-wrapper/metadata-provider'
 import type { LayoutDimension } from '@components/layout-panel/chip'
 import { getDimensionIdParts } from '@modules/dimension'
@@ -53,23 +53,23 @@ export const useLayoutDimensions = ({
 
             // Type guards to safely access properties
             const hasDimensionType = (
-                item: MetadataStoreItem | undefined
-            ): item is MetadataStoreItem & { dimensionType: unknown } =>
+                item: MetadataItem | undefined
+            ): item is MetadataItem & { dimensionType: unknown } =>
                 item !== undefined && 'dimensionType' in item
 
             const hasOptionSet = (
-                item: MetadataStoreItem | undefined
-            ): item is MetadataStoreItem & { optionSet: unknown } =>
+                item: MetadataItem | undefined
+            ): item is MetadataItem & { optionSet: unknown } =>
                 item !== undefined && 'optionSet' in item
 
             const hasValueType = (
-                item: MetadataStoreItem | undefined
-            ): item is MetadataStoreItem & { valueType: unknown } =>
+                item: MetadataItem | undefined
+            ): item is MetadataItem & { valueType: unknown } =>
                 item !== undefined && 'valueType' in item
 
             const hasDimensionItemType = (
-                item: MetadataStoreItem | undefined
-            ): item is MetadataStoreItem & { dimensionItemType: unknown } =>
+                item: MetadataItem | undefined
+            ): item is MetadataItem & { dimensionItemType: unknown } =>
                 item !== undefined && 'dimensionItemType' in item
 
             // Build the dimension object step by step
