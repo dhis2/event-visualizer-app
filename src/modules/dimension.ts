@@ -220,7 +220,7 @@ export const transformDimensions = (
     dimensions: DimensionArray,
     visualization: CurrentVisualization
 ): DimensionArray => {
-    const { outputType: outputType, type } = visualization
+    const { outputType, timeField } = visualization
 
     const outputTypeTimeDimensionMap: Record<OutputType, DimensionId> = {
         EVENT: 'eventDate',
@@ -228,10 +228,24 @@ export const transformDimensions = (
         TRACKED_ENTITY_INSTANCE: 'created',
     }
 
+    const timeFieldTimeDimensionMap: Record<
+        string, // XXX: SavedVisualization['timeField'] is optional
+        DimensionId
+    > = {
+        COMPLETED_DATE: 'completedDate',
+        CREATED: 'created',
+        ENROLLMENT_DATE: 'enrollmentDate',
+        INCIDENT_DATE: 'incidentDate',
+        LAST_UPDATED: 'lastUpdated',
+        SCHEDULED_DATE: 'scheduledDate',
+    }
+
     return dimensions
         .filter(
             (dimensionObj) =>
-                !['longitude', 'latitude'].includes(dimensionObj.dimension)
+                !['dy', 'latitude', 'longitude'].includes(
+                    dimensionObj.dimension
+                )
         )
         .map((dimensionObj) => {
             if (dimensionObj.dimensionType === 'PROGRAM_DATA_ELEMENT') {
@@ -239,16 +253,13 @@ export const transformDimensions = (
                     ...dimensionObj,
                     dimensionType: 'DATA_ELEMENT',
                 }
-            } else if (
-                dimensionObj.dimension === 'pe' &&
-                // TODO: this should be always the case as this function is only used for LL visualizations
-                // https://dhis2.atlassian.net/browse/DHIS2-20135
-                type === 'LINE_LIST'
-            ) {
+            } else if (dimensionObj.dimension === 'pe') {
                 return {
                     ...dimensionObj,
                     // TEI and pe (legacy visualization) should not normally happen
-                    dimension: outputTypeTimeDimensionMap[outputType],
+                    dimension: timeField
+                        ? timeFieldTimeDimensionMap[timeField]
+                        : outputTypeTimeDimensionMap[outputType],
                     dimensionType: 'PERIOD',
                 }
             } else {
@@ -283,9 +294,25 @@ type TimeDimension = {
     nameProperty: string
 }
 export const getTimeDimensions = (): Record<
-    Exclude<TimeDimensionId, 'lastUpdated'>,
+    Exclude<TimeDimensionId, 'created' | 'lastUpdated'>,
     TimeDimension
 > => ({
+    completedDate: {
+        id: 'completedDate',
+        dimensionType: 'PERIOD',
+        defaultName: i18n.t('Completed date'),
+        nameParentProperty: 'stage',
+        nameProperty: 'displayCompletedDateLabel',
+        formatType: 'DATE',
+    },
+    createdDate: {
+        id: 'createdDate',
+        dimensionType: 'PERIOD',
+        defaultName: i18n.t('Created date'),
+        nameParentProperty: 'stage',
+        nameProperty: 'displayCreatedDateLabel',
+        formatType: 'DATE',
+    },
     eventDate: {
         id: 'eventDate',
         dimensionType: 'PERIOD',
@@ -308,6 +335,14 @@ export const getTimeDimensions = (): Record<
         defaultName: i18n.t('Incident date'),
         nameParentProperty: 'program',
         nameProperty: 'displayIncidentDateLabel',
+        formatType: 'DATE',
+    },
+    lastUpdatedOn: {
+        id: 'lastUpdatedOn',
+        dimensionType: 'PERIOD',
+        defaultName: i18n.t('Last updated on'),
+        nameParentProperty: 'stage',
+        nameProperty: 'displayLastUpdatedOnLabel',
         formatType: 'DATE',
     },
     scheduledDate: {

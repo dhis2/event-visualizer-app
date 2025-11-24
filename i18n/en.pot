@@ -386,6 +386,12 @@ msgstr "Event status"
 msgid "Program status"
 msgstr "Program status"
 
+msgid "Completed date"
+msgstr "Completed date"
+
+msgid "Created date"
+msgstr "Created date"
+
 msgid "Event date"
 msgstr "Event date"
 
