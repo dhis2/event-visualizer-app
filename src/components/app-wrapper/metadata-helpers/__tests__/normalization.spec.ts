@@ -85,16 +85,16 @@ describe('normalizeMetadataInputItem', () => {
     })
 
     describe('name resolution', () => {
-        it('uses name over displayName', () => {
+        it('uses displayName over name', () => {
             const input: MetadataInputItem = {
                 id: 'test-id',
-                name: 'Primary Name',
+                name: 'Name',
                 displayName: 'Display Name',
             }
 
             const result = normalizeMetadataInputItem(input, mockMetadataMap)
 
-            expect(result.name).toBe('Primary Name')
+            expect(result.name).toBe('Display Name')
         })
 
         it('uses displayName when name not provided', () => {
