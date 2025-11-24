@@ -37,7 +37,7 @@ export const normalizeMetadataInputItem = (
         throw new Error('Invalid metadata input: no ID field present')
     }
 
-    const resolvedName = name ?? displayName
+    const resolvedName = displayName ?? name
 
     if (isPopulatedString(resolvedName)) {
         return { id: resolvedId, name: resolvedName, ...rest }
