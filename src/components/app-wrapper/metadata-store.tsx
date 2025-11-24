@@ -43,7 +43,10 @@ export class MetadataStore {
     ) {
         this.addInitialMetadataItems(initialMetadataItems, rootOrgUnits)
 
-        if (process.env.NODE_ENV === 'development') {
+        if (
+            process.env.NODE_ENV === 'development' ||
+            process.env.NODE_ENV === 'test'
+        ) {
             window.getMetadataStore = () => Object.fromEntries(this.metadata)
             window.getMetadataStoreItem = (key: string) =>
                 this.getMetadataItem(key)
