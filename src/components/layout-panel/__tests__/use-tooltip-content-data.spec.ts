@@ -9,16 +9,6 @@ import {
 } from '@store/vis-ui-config-slice'
 import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 
-vi.mock(import('@hooks'), async (importOriginal) => {
-    const actual = await importOriginal()
-    return {
-        ...actual,
-        useMetadataItems: vi.fn(),
-        useMetadataStore: vi.fn(),
-        useRootOrgUnits: vi.fn(() => []),
-    }
-})
-
 const baseDimension: LayoutDimension = {
     id: 'dx',
     dimensionId: 'dx',
