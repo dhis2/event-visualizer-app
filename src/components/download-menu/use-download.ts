@@ -34,7 +34,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
     const downloadForLL: DownloadFn = useCallback(
         (type, format, idScheme) => {
             if (!currentVis) {
-                return false
+                return
             }
 
             let target = '_top'
