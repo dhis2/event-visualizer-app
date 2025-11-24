@@ -1,0 +1,18 @@
+.container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-areas:
+        'columns filters'
+        'rows filters';
+    gap: 1px;
+    border-color: var(--colors-grey300);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+}
+
+.container.lineList {
+    grid-template-areas: 'columns filters';
+}
+
+.container.hidden {
+    display: none;
+}

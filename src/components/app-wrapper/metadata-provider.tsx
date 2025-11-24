@@ -8,11 +8,11 @@ import {
     useRef,
 } from 'react'
 import type { FC, ReactNode } from 'react'
-import type {
-    MetadataStoreItem,
-    AnyMetadataItemInput,
-} from './metadata-helpers'
 import { getInitialMetadata } from './metadata-helpers/initial-metadata'
+import type {
+    InitialMetadataItems,
+    MetadataItem,
+} from './metadata-helpers/types'
 import { MetadataStore } from './metadata-store'
 import { useRootOrgUnits } from '@hooks'
 
@@ -32,7 +32,7 @@ export const MetadataProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 export const MockMetadataProvider: FC<{
     children: ReactNode
-    mockMetadata?: Record<string, AnyMetadataItemInput>
+    mockMetadata?: InitialMetadataItems
 }> = ({ children, mockMetadata }) => {
     const rootOrgUnits = useRootOrgUnits()
     const [metadataStore] = useState(
@@ -51,7 +51,7 @@ export const MockMetadataProvider: FC<{
 
 export const useMetadataItem = (
     metadataId: string
-): MetadataStoreItem | undefined => {
+): MetadataItem | undefined => {
     const metadataStore = useContext(MetadataContext)!
     const result = useSyncExternalStore(
         useCallback(
@@ -62,21 +62,26 @@ export const useMetadataItem = (
     )
     return result
 }
-
+const sentinel = '|'
 export const useMetadataItems = (
     metadataIds: string[]
-): Record<string, MetadataStoreItem> => {
+): Record<string, MetadataItem> => {
     const metadataStore = useContext(MetadataContext)!
-    // Sort keys for stable dependency array
-    const sortedMetadataIds = useMemo(
-        () => [...metadataIds].sort(),
+    // Derive a stable key based on contents while preserving order invariance
+    const metadataIdsKey = useMemo<string>(
+        () => [...metadataIds].sort().join(sentinel),
         [metadataIds]
+    )
+
+    const sortedMetadataIds = useMemo<string[]>(
+        () => (metadataIdsKey ? metadataIdsKey.split(sentinel) : []),
+        [metadataIdsKey]
     )
 
     // Cache the last snapshot to ensure stable reference
     const lastSnapshotRef = useRef<{
         ids: string[]
-        values: Record<string, MetadataStoreItem>
+        values: Record<string, MetadataItem>
     }>({
         ids: [],
         values: {},
@@ -101,9 +106,7 @@ export const useMetadataItems = (
             values: metadataItems,
         }
         return metadataItems
-        // sortedMetadataIds is intentionally spread for stable deps
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [metadataStore, ...sortedMetadataIds])
+    }, [metadataStore, sortedMetadataIds])
 
     const result = useSyncExternalStore(
         useCallback(
@@ -116,9 +119,7 @@ export const useMetadataItems = (
                     unsubscribeFunctions.forEach((unsubscribe) => unsubscribe())
                 }
             },
-            // sortedMetadataIds is intentionally spread for stable deps
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-            [metadataStore, ...sortedMetadataIds]
+            [metadataStore, sortedMetadataIds]
         ),
         getSnapshot
     )
@@ -134,6 +135,16 @@ export const useAddMetadata = (): MetadataStore['addMetadata'] => {
 
     return addMetadata
 }
+export const useAddAnalyticsResponseMetadata =
+    (): MetadataStore['addAnalyticsResponseMetadata'] => {
+        const metadataStore = useContext(MetadataContext)!
+
+        const [addAnalyticsResponseMetadata] = useState(() =>
+            metadataStore.addAnalyticsResponseMetadata.bind(metadataStore)
+        )
+
+        return addAnalyticsResponseMetadata
+    }
 
 export type UseMetadataStoreReturnValue = Pick<
     MetadataStore,

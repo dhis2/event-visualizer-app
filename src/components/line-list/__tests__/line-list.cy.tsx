@@ -257,49 +257,37 @@ describe(
         describe('Fetching overlay', () => {
             const expectOverlayToCoverScrollBox = () => {
                 // Overlay and spinner are visible
-                cy.getByDataTest('dhis2-uicore-componentcover').should(
-                    'be.visible'
-                )
+                cy.getByDataTest('fetch-overlay').should('be.visible')
                 cy.getByDataTest('dhis2-uicore-circularloader').should(
                     'be.visible'
                 )
 
                 // Overlay has z-index of 2000
-                cy.getByDataTest('dhis2-uicore-componentcover').should(
+                cy.getByDataTest('fetch-overlay').should(
                     'have.css',
                     'z-index',
                     '2000'
                 )
 
                 // Check that overlay covers the scroll-box-container
-                cy.getByDataTest('dhis2-uicore-componentcover').should(
-                    ($overlay) => {
-                        const overlayRect = $overlay[0].getBoundingClientRect()
-                        const scrollBox = document.querySelector(
-                            '[data-test="scroll-box-container"]'
-                        )
+                cy.getByDataTest('fetch-overlay').should(($overlay) => {
+                    const overlayRect = $overlay[0].getBoundingClientRect()
+                    const scrollBox = document.querySelector(
+                        '[data-test="scroll-box-container"]'
+                    )
 
-                        expect(scrollBox).to.have.property(
-                            'getBoundingClientRect'
-                        )
-                        const scrollBoxRect = scrollBox!.getBoundingClientRect()
+                    expect(scrollBox).to.have.property('getBoundingClientRect')
+                    const scrollBoxRect = scrollBox!.getBoundingClientRect()
 
-                        expect(overlayRect.left).to.equal(
-                            scrollBoxRect.left + 1
-                        )
-                        expect(overlayRect.top).to.equal(scrollBoxRect.top + 1)
-                        expect(overlayRect.right).to.equal(
-                            scrollBoxRect.left +
-                                (scrollBox?.clientWidth ?? 0) +
-                                1
-                        )
-                        expect(overlayRect.bottom).to.equal(
-                            scrollBoxRect.top +
-                                (scrollBox?.clientHeight ?? 0) +
-                                1
-                        )
-                    }
-                )
+                    expect(overlayRect.left).to.equal(scrollBoxRect.left + 1)
+                    expect(overlayRect.top).to.equal(scrollBoxRect.top + 1)
+                    expect(overlayRect.right).to.equal(
+                        scrollBoxRect.left + (scrollBox?.clientWidth ?? 0) + 1
+                    )
+                    expect(overlayRect.bottom).to.equal(
+                        scrollBoxRect.top + (scrollBox?.clientHeight ?? 0) + 1
+                    )
+                })
             }
 
             it('when isFetching is true, the table gets an overlay but the legend key does not', () => {

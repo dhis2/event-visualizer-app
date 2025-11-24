@@ -13,13 +13,13 @@ import { getIsVisualizationLoading } from '@store/loader-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import type { RootState } from '@store/store'
 import { renderWithAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
-import type { CurrentVisualization, Sorting } from '@types'
+import type { CurrentVisualization, SavedVisualization, Sorting } from '@types'
 
 describe('PluginWrapper', () => {
     const eventVisualization1Id = 'TIuOzZ0ID0V'
     const eventVisualization2Id = 'waPjzoJyIQ9'
     const mockOnDataSorted = vi.fn()
-    const mockOnResponseReceived = vi.fn()
+    const mockOnResponsesReceived = vi.fn()
     const mockOptions = {
         queryData: {
             analytics: async (_, query) => {
@@ -61,7 +61,7 @@ describe('PluginWrapper', () => {
                 visualization={currentVis}
                 displayProperty={currentUser.settings.displayProperty}
                 onDataSorted={mockOnDataSorted}
-                onResponseReceived={mockOnResponseReceived}
+                onResponsesReceived={mockOnResponsesReceived}
             />
         )
     }
@@ -93,7 +93,8 @@ describe('PluginWrapper', () => {
 
         // First vis is in the state and loading state is false
         await waitFor(() => {
-            expect(store.getState().currentVis.id).toBe(eventVisualization1Id)
+            const currentVis = store.getState().currentVis as SavedVisualization
+            expect(currentVis.id).toBe(eventVisualization1Id)
             expect(store.getState().loader.isVisualizationLoading).toBe(false)
         })
 
@@ -115,7 +116,7 @@ describe('PluginWrapper', () => {
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
-            expect(mockOnResponseReceived).toBeCalledTimes(1)
+            expect(mockOnResponsesReceived).toBeCalledTimes(1)
         })
     }
 
@@ -155,7 +156,8 @@ describe('PluginWrapper', () => {
 
         // Second vis is in the state and loading state is false
         await waitFor(() => {
-            expect(store.getState().currentVis.id).toBe(eventVisualization2Id)
+            const currentVis = store.getState().currentVis as SavedVisualization
+            expect(currentVis.id).toBe(eventVisualization2Id)
             expect(store.getState().loader.isVisualizationLoading).toBe(false)
         })
 
@@ -177,7 +179,7 @@ describe('PluginWrapper', () => {
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
-            expect(mockOnResponseReceived).toBeCalledTimes(2)
+            expect(mockOnResponsesReceived).toBeCalledTimes(2)
         })
     })
 
@@ -195,8 +197,9 @@ describe('PluginWrapper', () => {
 
         // Visualisation loading state remains false and current vis remains the same
         await waitFor(() => {
+            const currentVis = store.getState().currentVis as SavedVisualization
             expect(store.getState().loader.isVisualizationLoading).toBe(false)
-            expect(store.getState().currentVis.id).toBe(eventVisualization1Id)
+            expect(currentVis.id).toBe(eventVisualization1Id)
         })
 
         // Table kept in the DOM and the spinner is showing
@@ -217,7 +220,7 @@ describe('PluginWrapper', () => {
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
-            expect(mockOnResponseReceived).toBeCalledTimes(2)
+            expect(mockOnResponsesReceived).toBeCalledTimes(2)
         })
     })
 
@@ -265,7 +268,7 @@ describe('PluginWrapper', () => {
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
-            expect(mockOnResponseReceived).toBeCalledTimes(2)
+            expect(mockOnResponsesReceived).toBeCalledTimes(2)
             expect(mockOnDataSorted).toBeCalledTimes(1)
         })
     })
