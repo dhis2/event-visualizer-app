@@ -251,6 +251,11 @@ describe('MetadataStore', () => {
               "name": "Inpatient morbidity and mortality",
               "repeatable": false,
             },
+            "completedDate": {
+              "dimensionType": "PERIOD",
+              "id": "completedDate",
+              "name": "Completed date",
+            },
             "created": {
               "dimensionType": "PERIOD",
               "id": "created",
@@ -260,6 +265,11 @@ describe('MetadataStore', () => {
               "dimensionType": "USER",
               "id": "createdBy",
               "name": "Created by",
+            },
+            "createdDate": {
+              "dimensionType": "PERIOD",
+              "id": "createdDate",
+              "name": "Created date",
             },
             "eBAyeGv0exc": {
               "displayIncidentDate": false,
@@ -338,6 +348,11 @@ describe('MetadataStore', () => {
               "id": "lastUpdatedBy",
               "name": "Last updated by",
             },
+            "lastUpdatedOn": {
+              "dimensionType": "PERIOD",
+              "id": "lastUpdatedOn",
+              "name": "Last updated on",
+            },
             "msodh3rEMJa": {
               "dimensionType": "DATA_ELEMENT",
               "id": "msodh3rEMJa",
@@ -410,9 +425,9 @@ describe('MetadataStore', () => {
         const snapshot2Keys = new Set(Object.keys(snapshot2))
 
         // Length grows and decreases
-        expect(snapshot0Keys.size).toBe(46)
-        expect(snapshot1Keys.size).toBe(74)
-        expect(snapshot2Keys.size).toBe(61)
+        expect(snapshot0Keys.size).toBe(49)
+        expect(snapshot1Keys.size).toBe(77)
+        expect(snapshot2Keys.size).toBe(64)
 
         // Initial metadata is always included
         expect(snapshot0Keys.isSubsetOf(snapshot1Keys)).toBe(true)

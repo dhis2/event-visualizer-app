@@ -41,9 +41,12 @@ export const headersMap: Record<DimensionId, string> = {
     ou: 'ouname',
     programStatus: 'programstatus',
     eventStatus: 'eventstatus',
+    completedDate: 'completeddate',
     created: 'created',
     createdBy: 'createdbydisplayname',
+    createdDate: 'createddate',
     lastUpdatedBy: 'lastupdatedbydisplayname',
+    lastUpdatedOn: 'lastupdatedon', // XXX: needed here? is this used also in LL?
     eventDate: 'eventdate',
     enrollmentDate: 'enrollmentdate',
     incidentDate: 'incidentdate',
@@ -81,15 +84,31 @@ export const transformVisualization = (
         visualization
     )
 
-    // convert completedOnly option to eventStatus = COMPLETED filter
     // destructuring here to avoid mutating the original value with delete
-    const { completedOnly, ...transformedVisualization } = visualization
+    const { completedOnly, orgUnitField, ...transformedVisualization } =
+        visualization
 
+    // convert completedOnly option to eventStatus = COMPLETED filter
     if (completedOnly && visualization.outputType === 'EVENT') {
         transformedFilters.push({
             dimension: 'eventStatus',
             items: [{ id: 'COMPLETED' }],
         })
+    }
+
+    // orgUnitField comes from legacy ER
+    if (orgUnitField) {
+        transformedFilters.push({
+            dimension: 'ou',
+            items: [{ id: orgUnitField }], // XXX: check this
+        })
+    }
+
+    // timeField comes from legacy ER
+    // Keep timeField for DE time dimensions, so it can be passed along in the analytics request
+    // If instead it's a (normal) time dimension, remove the property as it is converted into a period dimension
+    if (visualization.timeField && isTimeDimensionId(visualization.timeField)) {
+        delete transformedVisualization.timeField
     }
 
     return {
