@@ -1,7 +1,9 @@
 import type { FC } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
+import {
+    useLineListAnalyticsData,
+    type OnAnalyticsResponseReceivedCb,
+} from './hooks/use-line-list-analytics-data'
 import { LineList } from '@components/line-list'
 import type { LineListAnalyticsData } from '@components/line-list'
 import type { DataSortFn, PaginateFn } from '@components/line-list/types'
@@ -17,7 +19,7 @@ type LineListPluginProps = {
     isInDashboard: boolean
     isInModal: boolean
     onDataSorted?: (sorting: InternalSorting) => void
-    onResponseReceived: (metadata: MetadataInput) => void
+    onResponseReceived: OnAnalyticsResponseReceivedCb
 }
 
 export const LineListPlugin: FC<LineListPluginProps> = ({

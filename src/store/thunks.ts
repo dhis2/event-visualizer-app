@@ -7,7 +7,10 @@ import { clearUi } from './ui-slice'
 import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
-import { getVisualizationUiConfig } from '@modules/get-visualization-ui-config'
+import {
+    getVisualizationUiConfig,
+    transformVisualization,
+} from '@modules/visualization'
 import type { AppDispatch } from '@types'
 
 type AppAsyncThunkConfig = {
@@ -47,10 +50,15 @@ export const tLoadSavedVisualization = createAsyncThunk<
                 forceRefetch: true,
             })
         )
-
         if (data) {
+            const transformedVisualization = transformVisualization(data)
+
             dispatch(setSavedVis(data))
-            dispatch(setVisUiConfig(getVisualizationUiConfig(data)))
+            dispatch(
+                setVisUiConfig(
+                    getVisualizationUiConfig(transformedVisualization)
+                )
+            )
             dispatch(setCurrentVis(data))
             dispatch(setIsVisualizationLoading(false))
 
@@ -69,7 +77,6 @@ export const tLoadSavedVisualization = createAsyncThunk<
                     .catch((error) => console.error(error))
             }
         } else if (error) {
-            // TODO: dispatch error for custom error screens
             console.error(error)
         }
     }

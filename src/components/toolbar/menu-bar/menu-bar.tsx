@@ -140,7 +140,7 @@ export const MenuBar: FC = () => {
             )
         )
 
-        if (data) {
+        if (data && isVisualizationSaved(currentVis)) {
             // Reload the saved visualization after saving
             // here we should *not* update statistics
             dispatch(

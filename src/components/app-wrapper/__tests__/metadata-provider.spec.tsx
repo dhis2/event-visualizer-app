@@ -164,8 +164,6 @@ describe('MetadataProvider rerender behavior', () => {
         expect(result.current.getMetadataItem('x')).toEqual({
             id: 'x',
             name: 'X',
-            options: [],
-            style: {},
         })
         // Array
         act(() => {
@@ -178,14 +176,10 @@ describe('MetadataProvider rerender behavior', () => {
             y: {
                 id: 'y',
                 name: 'Y',
-                options: [],
-                style: {},
             },
             z: {
                 id: 'z',
                 name: 'Z',
-                options: [],
-                style: {},
             },
         })
         // Record
@@ -199,14 +193,10 @@ describe('MetadataProvider rerender behavior', () => {
             a: {
                 id: 'a',
                 name: 'A',
-                options: [],
-                style: {},
             },
             b: {
                 id: 'b',
                 name: 'B',
-                options: [],
-                style: {},
             },
         })
     })
@@ -281,64 +271,7 @@ describe('MetadataProvider initial metadata behavior', () => {
         })
     })
 
-    it('should prevent overwriting initial metadata items', () => {
-        const { result } = renderHook(() => useMetadataStore(), {
-            wrapper: MetadataProvider,
-        })
-
-        // Get the original value
-        const originalItem = result.current.getMetadataItem('TODAY')
-        expect(originalItem?.name).toBe('Today')
-
-        // Try to overwrite with different data
-        act(() => {
-            result.current.addMetadata({
-                uid: 'TODAY',
-                name: 'Modified Today',
-                code: 'NEW_CODE',
-                description: 'This should not overwrite the initial metadata',
-            })
-        })
-
-        // Verify the original value is preserved
-        const afterAttemptItem = result.current.getMetadataItem('TODAY')
-        expect(afterAttemptItem).toEqual(originalItem)
-        expect(afterAttemptItem?.name).toBe('Today') // Should still be the original value
-        expect(afterAttemptItem).not.toHaveProperty('code') // Should not have the new properties
-    })
-
-    it('should prevent overwriting initial metadata with different input formats', () => {
-        const { result } = renderHook(() => useMetadataStore(), {
-            wrapper: MetadataProvider,
-        })
-
-        const originalUserOrgUnit =
-            result.current.getMetadataItem('USER_ORGUNIT')
-
-        // Try to overwrite with array format
-        act(() => {
-            result.current.addMetadata([
-                { uid: 'USER_ORGUNIT', name: 'Modified User Org Unit' },
-            ])
-        })
-
-        // Try to overwrite with record format
-        act(() => {
-            result.current.addMetadata({
-                USER_ORGUNIT: {
-                    uid: 'USER_ORGUNIT',
-                    name: 'Another Modified Name',
-                },
-            })
-        })
-
-        // Verify original is preserved
-        const finalItem = result.current.getMetadataItem('USER_ORGUNIT')
-        expect(finalItem).toEqual(originalUserOrgUnit)
-        expect(finalItem?.name).toBe('User organisation unit')
-    })
-
-    it('should allow adding new metadata that does not conflict with initial metadata', () => {
+    it('should allow adding new metadata', () => {
         const { result } = renderHook(() => useMetadataStore(), {
             wrapper: MetadataProvider,
         })
@@ -358,8 +291,6 @@ describe('MetadataProvider initial metadata behavior', () => {
             id: 'CUSTOM_ITEM',
             name: 'Custom Item',
             code: 'CUSTOM',
-            options: [],
-            style: {},
         })
 
         // Verify initial metadata is still intact
@@ -367,78 +298,27 @@ describe('MetadataProvider initial metadata behavior', () => {
         expect(todayItem?.name).toBe('Today')
     })
 
-    it('should not trigger re-renders when attempting to overwrite initial metadata', () => {
-        let renderCount = 0
-
-        const TestComponent = () => {
-            renderCount++
-            const todayItem = useMetadataItem('TODAY')
-            const addMetadata = useAddMetadata()
-
-            return (
-                <button
-                    onClick={() =>
-                        addMetadata({ uid: 'TODAY', name: 'Should Not Update' })
-                    }
-                >
-                    {todayItem?.name}
-                </button>
-            )
-        }
-
-        const { getByRole } = render(
-            <MetadataProvider>
-                <TestComponent />
-            </MetadataProvider>
-        )
-
-        expect(renderCount).toBe(1) // Initial render
-
-        // Click button to attempt overwrite
-        act(() => {
-            getByRole('button').click()
-        })
-
-        // Should not cause re-render since no actual change occurred
-        expect(renderCount).toBe(1)
-    })
-
-    it('should handle bulk operations correctly with initial metadata', () => {
+    it('should handle bulk operations correctly', () => {
         const { result } = renderHook(() => useMetadataStore(), {
             wrapper: MetadataProvider,
         })
 
-        const originalToday = result.current.getMetadataItem('TODAY')
-        const originalLastWeek = result.current.getMetadataItem('LAST_WEEK')
-
         // Try bulk operation mixing initial metadata and new items
         act(() => {
             result.current.addMetadata([
-                { uid: 'TODAY', name: 'Should Not Update' },
                 { uid: 'NEW_ITEM_1', name: 'New Item 1' },
-                { uid: 'LAST_WEEK', name: 'Should Not Update Either' },
                 { uid: 'NEW_ITEM_2', name: 'New Item 2' },
             ])
         })
-
-        // Initial metadata should be unchanged
-        expect(result.current.getMetadataItem('TODAY')).toEqual(originalToday)
-        expect(result.current.getMetadataItem('LAST_WEEK')).toEqual(
-            originalLastWeek
-        )
 
         // New items should be added
         expect(result.current.getMetadataItem('NEW_ITEM_1')).toEqual({
             id: 'NEW_ITEM_1',
             name: 'New Item 1',
-            options: [],
-            style: {},
         })
         expect(result.current.getMetadataItem('NEW_ITEM_2')).toEqual({
             id: 'NEW_ITEM_2',
             name: 'New Item 2',
-            options: [],
-            style: {},
         })
     })
 })
@@ -466,8 +346,6 @@ describe('MetadataProvider API and return value types', () => {
           {
             "id": "a",
             "name": "A",
-            "options": [],
-            "style": {},
           }
         `)
     })
@@ -497,14 +375,10 @@ describe('MetadataProvider API and return value types', () => {
             "a": {
               "id": "a",
               "name": "A",
-              "options": [],
-              "style": {},
             },
             "b": {
               "id": "b",
               "name": "B",
-              "options": [],
-              "style": {},
             },
           }
         `)

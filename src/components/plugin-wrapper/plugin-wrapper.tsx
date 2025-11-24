@@ -1,20 +1,21 @@
 import { Center, CircularLoader } from '@dhis2/ui'
 import type { FC } from 'react'
 import { useCallback, useEffect, useState } from 'react'
+import type { OnAnalyticsResponseReceivedCb } from './hooks/use-line-list-analytics-data'
 import { LineListPlugin } from './line-list-plugin'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
+import { PivotTablePlugin } from './pivot-table-plugin'
 import { isVisualizationSaved } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
 
 type PluginWrapperProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
-    filters?: Record<'relativePeriodDate', string>
+    filters?: Record<'relativePeriodDate', string> // TODO: check what dashboard passes here
     isInDashboard?: boolean
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     isVisualizationLoading?: boolean
     onDataSorted?: (sorting: Sorting | undefined) => void
-    onResponsesReceived?: (metadata: MetadataInput) => void
+    onResponsesReceived?: OnAnalyticsResponseReceivedCb
 }
 
 export const PluginWrapper: FC<PluginWrapperProps> = ({
@@ -29,11 +30,11 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
 }) => {
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
-    const onResponseReceived = useCallback(
-        (args) => {
+    const onResponseReceived = useCallback<OnAnalyticsResponseReceivedCb>(
+        (items, dimensions, headers) => {
             setHasAnalyticsData(true)
 
-            onResponsesReceivedCb?.(args)
+            onResponsesReceivedCb?.(items, dimensions, headers)
         },
         [onResponsesReceivedCb]
     )
@@ -71,10 +72,19 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                 />
             )}
             {visualization.type === 'PIVOT_TABLE' && (
-                <div>
-                    <p>This is the PT plugin placeholder</p>
-                    <p>Showing {visualization.name}</p>
-                </div>
+                <PivotTablePlugin
+                    key={
+                        isVisualizationSaved(visualization)
+                            ? visualization.id
+                            : 'new'
+                    }
+                    displayProperty={displayProperty}
+                    visualization={visualization}
+                    filters={filters}
+                    isInDashboard={isInDashboard}
+                    isInModal={isInModal}
+                    onResponseReceived={onResponseReceived}
+                />
             )}
         </>
     )
