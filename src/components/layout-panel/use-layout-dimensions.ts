@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import type { MetadataItem } from '@components/app-wrapper/metadata-helpers/types'
 import { useMetadataItems } from '@components/app-wrapper/metadata-provider'
 import type { LayoutDimension } from '@components/layout-panel/chip'
 import { getDimensionIdParts } from '@modules/dimension'
@@ -50,56 +49,37 @@ export const useLayoutDimensions = ({
                 })
 
             const metadataItem = metadataItems[id]
-
-            // Type guards to safely access properties
-            const hasDimensionType = (
-                item: MetadataItem | undefined
-            ): item is MetadataItem & { dimensionType: unknown } =>
-                item !== undefined && 'dimensionType' in item
-
-            const hasOptionSet = (
-                item: MetadataItem | undefined
-            ): item is MetadataItem & { optionSet: unknown } =>
-                item !== undefined && 'optionSet' in item
-
-            const hasValueType = (
-                item: MetadataItem | undefined
-            ): item is MetadataItem & { valueType: unknown } =>
-                item !== undefined && 'valueType' in item
-
-            const hasDimensionItemType = (
-                item: MetadataItem | undefined
-            ): item is MetadataItem & { dimensionItemType: unknown } =>
-                item !== undefined && 'dimensionItemType' in item
-
-            // Build the dimension object step by step
             const dimension: LayoutDimension = {
-                id: metadataItem?.id || id,
+                id,
                 name: metadataItem?.name || id,
                 dimensionId,
-                dimensionType: hasDimensionType(metadataItem)
-                    ? (metadataItem.dimensionType as DimensionType)
-                    : undefined,
                 programStageId,
                 programId,
             }
 
-            // Add optional properties if they exist
-            if (hasOptionSet(metadataItem) && metadataItem.optionSet) {
-                dimension.optionSet = metadataItem.optionSet as string
-            }
+            // Build the dimension object with metadata
+            if (metadataItem) {
+                if (
+                    'dimensionType' in metadataItem &&
+                    metadataItem.dimensionType
+                ) {
+                    dimension.dimensionType = metadataItem.dimensionType
+                }
 
-            if (hasValueType(metadataItem) && metadataItem.valueType) {
-                dimension.valueType =
-                    metadataItem.valueType as LayoutDimension['valueType']
-            }
+                if ('optionSet' in metadataItem && metadataItem.optionSet) {
+                    dimension.optionSet = metadataItem.optionSet
+                }
 
-            if (
-                hasDimensionItemType(metadataItem) &&
-                metadataItem.dimensionItemType
-            ) {
-                dimension.dimensionItemType =
-                    metadataItem.dimensionItemType as LayoutDimension['dimensionItemType']
+                if ('valueType' in metadataItem && metadataItem.valueType) {
+                    dimension.valueType = metadataItem.valueType
+                }
+
+                if (
+                    'dimensionItemType' in metadataItem &&
+                    metadataItem.dimensionItemType
+                ) {
+                    dimension.dimensionItemType = metadataItem.dimensionItemType
+                }
             }
 
             return dimension
