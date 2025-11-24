@@ -7,7 +7,13 @@ import {
     DataTableRow,
 } from '@dhis2/ui'
 import cx from 'classnames'
-import { useMemo, type FC } from 'react'
+import {
+    useCallback,
+    useMemo,
+    useState,
+    type FC,
+    type PropsWithChildren,
+} from 'react'
 import { BodyCell } from './body-cell'
 import { FetchOverlay } from './fetch-overlay'
 import { HeaderCell } from './header-cell'
@@ -26,6 +32,26 @@ import type {
 import { useTransformedLineListData } from './use-transformed-line-list-data'
 import type { CurrentVisualization } from '@types'
 
+const ModalHeightConstrainer: FC<PropsWithChildren> = ({ children }) => {
+    const [blockSize, setBlockSize] = useState<number | string>('100%')
+
+    const onElementMount = useCallback((node: HTMLDivElement | null) => {
+        if (node) {
+            setBlockSize(node.clientHeight)
+        }
+    }, [])
+
+    return (
+        <div
+            ref={onElementMount}
+            className={classes.modalHeightConstrainer}
+            style={{ blockSize }}
+        >
+            {blockSize === '100%' ? null : children}
+        </div>
+    )
+}
+
 type LineListProps = {
     analyticsData: LineListAnalyticsData
     onDataSort: DataSortFn
@@ -37,7 +63,16 @@ type LineListProps = {
     onColumnHeaderClick?: ColumnHeaderClickFn
 }
 
-export const LineList: FC<LineListProps> = ({
+export const LineList: FC<LineListProps> = (props) =>
+    props.isInModal ? (
+        <ModalHeightConstrainer>
+            <LineListInternal {...props} />
+        </ModalHeightConstrainer>
+    ) : (
+        <LineListInternal {...props} />
+    )
+
+const LineListInternal: FC<LineListProps> = ({
     analyticsData,
     onDataSort,
     onPaginate,
@@ -99,7 +134,7 @@ export const LineList: FC<LineListProps> = ({
             </div>
             <div
                 className={classes.startColumnBottom}
-                data-test="start-column-top"
+                data-test="start-column-bottom"
             >
                 <ScrollBox>
                     {isFetching && <FetchOverlay />}

@@ -1,17 +1,16 @@
-//import { Center, CircularLoader } from '@dhis2/ui'
 import type { FC } from 'react'
-import { useCallback, useEffect } from 'react'
-import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+    useLineListAnalyticsData,
+    type OnAnalyticsResponseReceivedCb,
+} from './hooks/use-line-list-analytics-data'
 import { LineList } from '@components/line-list'
 import type { LineListAnalyticsData } from '@components/line-list'
-import type {
-    DataSortFn,
-    DataSortPayload,
-    PaginateFn,
-} from '@components/line-list/types'
+import type { DataSortFn, PaginateFn } from '@components/line-list/types'
 import { transformVisualization } from '@modules/visualization'
-import type { CurrentUser, CurrentVisualization } from '@types'
+import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
+
+type InternalSorting = Sorting | undefined
 
 type LineListPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
@@ -19,8 +18,8 @@ type LineListPluginProps = {
     filters?: Record<string, unknown>
     isInDashboard: boolean
     isInModal: boolean
-    onDataSorted?: (sorting: DataSortPayload | undefined) => void
-    onResponseReceived: (metadata: MetadataInput) => void
+    onDataSorted?: (sorting: InternalSorting) => void
+    onResponseReceived: OnAnalyticsResponseReceivedCb
 }
 
 export const LineListPlugin: FC<LineListPluginProps> = ({
@@ -35,10 +34,31 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     const [fetchAnalyticsData, { data, isFetching }] =
         useLineListAnalyticsData()
 
+    // null indicates no custom sorting has been applied
+    // undefined cannot be used because that is a valid value to indicate "remove sorting"
+    const [sorting, setSorting] = useState<InternalSorting | null>(null)
+
+    // Recompute eventVisualization whenever either visualization or the internal sorting change
+    // App context: when sorting, the visualization change (currentVis changes in the store)
+    // Interpretation modal context: when sorting, the internal sorting changes
+    // Dashboard plugin context: when sorting, the internal sorting changes
+    const eventVisualization = useMemo(() => {
+        let newSorting = visualization.sorting
+
+        if (sorting !== null) {
+            newSorting = sorting ? [sorting as Sorting] : undefined
+        }
+
+        return {
+            ...visualization,
+            sorting: newSorting,
+        } as CurrentVisualization
+    }, [visualization, sorting])
+
     const onPaginate = useCallback<PaginateFn>(
         ({ page, pageSize }) => {
             fetchAnalyticsData({
-                visualization: transformVisualization(visualization),
+                visualization: transformVisualization(eventVisualization),
                 filters,
                 displayProperty,
                 onResponseReceived,
@@ -49,27 +69,34 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         [
             displayProperty,
             filters,
-            visualization,
+            eventVisualization,
             onResponseReceived,
             fetchAnalyticsData,
         ]
     )
 
     const onDataSort: DataSortFn = useCallback(
-        (sorting) => {
-            const newSorting =
-                sorting.direction === undefined ? undefined : sorting
+        (sortingFromTable) => {
+            const newSorting = (
+                sortingFromTable.direction === undefined
+                    ? undefined
+                    : sortingFromTable
+            ) as InternalSorting
 
             // NOTE: this ultimately updates visualization which then triggers the useEffect below so we don't need to call fetchAnalyticsData directly here.
             // By doing so we cause a double fetch.
-            onDataSorted?.(newSorting)
+            if (onDataSorted) {
+                onDataSorted(newSorting)
+            } else {
+                setSorting(newSorting)
+            }
         },
         [onDataSorted]
     )
 
     useEffect(() => {
         fetchAnalyticsData({
-            visualization: transformVisualization(visualization),
+            visualization: transformVisualization(eventVisualization),
             filters,
             displayProperty,
             onResponseReceived,
@@ -77,7 +104,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     }, [
         displayProperty,
         filters,
-        visualization,
+        eventVisualization,
         onResponseReceived,
         fetchAnalyticsData,
     ])
@@ -91,7 +118,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
             analyticsData={data as LineListAnalyticsData}
             onDataSort={onDataSort}
             onPaginate={onPaginate}
-            visualization={visualization}
+            visualization={eventVisualization}
             isFetching={isFetching}
             isInDashboard={isInDashboard}
             isInModal={isInModal}

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-10-29T14:52:39.110Z\n"
-"PO-Revision-Date: 2025-10-29T14:52:39.110Z\n"
+"POT-Creation-Date: 2025-11-24T11:01:38.691Z\n"
+"PO-Revision-Date: 2025-11-24T11:01:38.692Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -116,6 +116,18 @@ msgstr "This year"
 msgid "Last year"
 msgstr "Last year"
 
+msgid "Active"
+msgstr "Active"
+
+msgid "Cancelled"
+msgstr "Cancelled"
+
+msgid "Completed"
+msgstr "Completed"
+
+msgid "Scheduled"
+msgstr "Scheduled"
+
 msgid "Registration org. unit"
 msgstr "Registration org. unit"
 
@@ -143,6 +155,9 @@ msgstr "Microsoft Excel"
 msgid "CSV"
 msgstr "CSV"
 
+msgid "Download data from this date"
+msgstr "Download data from this date"
+
 msgid "Metadata ID scheme"
 msgstr "Metadata ID scheme"
 
@@ -154,6 +169,27 @@ msgstr "Code"
 
 msgid "Name"
 msgstr "Name"
+
+msgid "all"
+msgstr "all"
+
+msgid "None selected"
+msgstr "None selected"
+
+msgid "Program stage: {{- stageName}}"
+msgstr "Program stage: {{- stageName}}"
+
+msgid "Program: {{- programName}}"
+msgstr "Program: {{- programName}}"
+
+msgid "Showing all values for this dimension"
+msgstr "Showing all values for this dimension"
+
+msgid "Levels"
+msgstr "Levels"
+
+msgid "Groups"
+msgstr "Groups"
 
 msgid "No event"
 msgstr "No event"
@@ -195,18 +231,6 @@ msgstr "oldest {{repeatEventIndex}}"
 msgid "most recent {{repeatEventIndex}}"
 msgstr "most recent {{repeatEventIndex}}"
 
-msgid "Active"
-msgstr "Active"
-
-msgid "Cancelled"
-msgstr "Cancelled"
-
-msgid "Completed"
-msgstr "Completed"
-
-msgid "Scheduled"
-msgstr "Scheduled"
-
 msgid "Getting started"
 msgstr "Getting started"
 
@@ -241,6 +265,28 @@ msgstr "Edited"
 msgid "Download"
 msgstr "Download"
 
+msgid "An unknown error occurred."
+msgstr "An unknown error occurred."
+
+msgid ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+msgstr ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+
+msgid "You don't have sufficient permissions."
+msgstr "You don't have sufficient permissions."
+
+msgid "Rename successful"
+msgstr "Rename successful"
+
+msgid "Rename failed"
+msgstr "Rename failed"
+
+msgid "\"{{- deletedObject}}\" successfully deleted."
+msgstr "\"{{- deletedObject}}\" successfully deleted."
+
 msgid "Hide layout"
 msgstr "Hide layout"
 
@@ -264,6 +310,54 @@ msgstr "View"
 
 msgid "Reset sidebar width"
 msgstr "Reset sidebar width"
+
+msgid "equal to (=)"
+msgstr "equal to (=)"
+
+msgid "greater than (>)"
+msgstr "greater than (>)"
+
+msgid "greater than or equal to (≥)"
+msgstr "greater than or equal to (≥)"
+
+msgid "less than (<)"
+msgstr "less than (<)"
+
+msgid "less than or equal to (≤)"
+msgstr "less than or equal to (≤)"
+
+msgid "not equal to (≠)"
+msgstr "not equal to (≠)"
+
+msgid "is empty / null"
+msgstr "is empty / null"
+
+msgid "is not empty / not null"
+msgstr "is not empty / not null"
+
+msgid "exactly"
+msgstr "exactly"
+
+msgid "is not"
+msgstr "is not"
+
+msgid "contains"
+msgstr "contains"
+
+msgid "does not contain"
+msgstr "does not contain"
+
+msgid "after"
+msgstr "after"
+
+msgid "after or including"
+msgstr "after or including"
+
+msgid "before"
+msgstr "before"
+
+msgid "before or including"
+msgstr "before or including"
 
 msgid "Yes"
 msgstr "Yes"
@@ -292,6 +386,12 @@ msgstr "Event status"
 msgid "Program status"
 msgstr "Program status"
 
+msgid "Completed date"
+msgstr "Completed date"
+
+msgid "Created date"
+msgstr "Created date"
+
 msgid "Event date"
 msgstr "Event date"
 
@@ -303,9 +403,6 @@ msgstr "Incident date"
 
 msgid "Scheduled date"
 msgstr "Scheduled date"
-
-msgid "all"
-msgstr "all"
 
 msgid "Columns"
 msgstr "Columns"

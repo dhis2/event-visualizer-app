@@ -1952,10 +1952,10 @@
     classnames "^2.3.1"
     prop-types "^15.7.2"
 
-"@dhis2/analytics@^28.1.0":
-  version "28.1.0"
-  resolved "https://registry.yarnpkg.com/@dhis2/analytics/-/analytics-28.1.0.tgz#24ca93a4f5656aa75d74c300a995e567c6becca8"
-  integrity sha512-QfWodJwIkMWWs7HEhN4//yCjH7xZyC9XyoPHjtgBbusllOG2qCdtntqBcdrjFaLqubomAeMqrz832z5vDrlCmg==
+"@dhis2/analytics@^29.0.3":
+  version "29.0.3"
+  resolved "https://registry.yarnpkg.com/@dhis2/analytics/-/analytics-29.0.3.tgz#03fbd240716bbb41c9b395bba004c0613a55a23c"
+  integrity sha512-w3z2acQdtiw1Awr2YDbbMDSVOvswD9rFCIn/SS0yvor51gA0YPoaFrVxd0w7lbEaFWgxVReUY7kADrKaounDMQ==
   dependencies:
     "@dhis2/multi-calendar-dates" "^1.2.2"
     "@dnd-kit/core" "^6.0.7"
@@ -3534,6 +3534,11 @@
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/@types/deep-eql/-/deep-eql-4.0.2.tgz#334311971d3a07121e7eb91b684a605e7eea9cbd"
   integrity sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==
+
+"@types/deep-equal@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@types/deep-equal/-/deep-equal-1.0.4.tgz#c0a854be62d6b9fae665137a6639aab53389a147"
+  integrity sha512-tqdiS4otQP4KmY0PR3u6KbZ5EWvhNdUoS/jc93UuK23C220lOZ/9TvjfxdPcKvqwwDVtmtSCrnr0p/2dirAxkA==
 
 "@types/eslint-scope@^3.7.7":
   version "3.7.7"

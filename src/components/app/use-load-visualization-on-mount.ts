@@ -10,7 +10,12 @@ export const useLoadVisualizationOnMount = () => {
         const { navigation } = store.getState()
 
         if (navigation.visualizationId !== 'new') {
-            dispatch(tLoadSavedVisualization(navigation.visualizationId))
+            dispatch(
+                tLoadSavedVisualization({
+                    id: navigation.visualizationId,
+                    updateStatistics: true,
+                })
+            )
         }
     }, [dispatch, store])
 }

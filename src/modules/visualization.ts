@@ -1,17 +1,26 @@
 import i18n from '@dhis2/d2-i18n'
 import deepEqual from 'deep-equal'
-import { layoutGetAllDimensions } from '@dhis2/analytics'
-import { isTimeDimensionId, transformDimensions } from '@modules/dimension'
+import { getConditionsFromVisualization } from './conditions'
+import { isTimeDimensionId, transformDimensions } from './dimension'
+import { getRequestOptions } from '@components/plugin-wrapper/hooks/query-tools-common'
+import {
+    layoutGetAxisIdDimensionIdsObject,
+    layoutGetDimensionIdItemIdsObject,
+    layoutGetAllDimensions,
+} from '@dhis2/analytics'
+import { getAllOptions } from '@modules/options'
 import { initialState as currentVisDefaultValue } from '@store/current-vis-slice'
 import { initialState as savedVisDefaultValue } from '@store/saved-vis-slice'
 import type {
-    DimensionId,
+    DimensionArray,
     CurrentVisualization,
+    DimensionId,
     EmptyVisualization,
     NewVisualization,
     SavedVisualization,
     VisualizationType,
     VisualizationState,
+    SortDirection,
 } from '@types'
 
 // TODO: adjust the descriptions
@@ -32,9 +41,12 @@ export const headersMap: Record<DimensionId, string> = {
     ou: 'ouname',
     programStatus: 'programstatus',
     eventStatus: 'eventstatus',
+    completedDate: 'completeddate',
     created: 'created',
     createdBy: 'createdbydisplayname',
+    createdDate: 'createddate',
     lastUpdatedBy: 'lastupdatedbydisplayname',
+    lastUpdatedOn: 'lastupdatedon', // XXX: needed here? is this used also in LL?
     eventDate: 'eventdate',
     enrollmentDate: 'enrollmentdate',
     incidentDate: 'incidentdate',
@@ -44,7 +56,9 @@ export const headersMap: Record<DimensionId, string> = {
 
 export const getHeadersMap = ({
     showHierarchy,
-}: CurrentVisualization): Record<DimensionId, string> => {
+}: {
+    showHierarchy?: boolean
+}): Record<DimensionId, string> => {
     const map = Object.assign({}, headersMap)
 
     if (showHierarchy) {
@@ -70,15 +84,31 @@ export const transformVisualization = (
         visualization
     )
 
-    // convert completedOnly option to eventStatus = COMPLETED filter
     // destructuring here to avoid mutating the original value with delete
-    const { completedOnly, ...transformedVisualization } = visualization
+    const { completedOnly, orgUnitField, ...transformedVisualization } =
+        visualization
 
+    // convert completedOnly option to eventStatus = COMPLETED filter
     if (completedOnly && visualization.outputType === 'EVENT') {
         transformedFilters.push({
             dimension: 'eventStatus',
             items: [{ id: 'COMPLETED' }],
         })
+    }
+
+    // orgUnitField comes from legacy ER
+    if (orgUnitField) {
+        transformedFilters.push({
+            dimension: 'ou',
+            items: [{ id: orgUnitField }], // XXX: check this
+        })
+    }
+
+    // timeField comes from legacy ER
+    // Keep timeField for DE time dimensions, so it can be passed along in the analytics request
+    // If instead it's a (normal) time dimension, remove the property as it is converted into a period dimension
+    if (visualization.timeField && isTimeDimensionId(visualization.timeField)) {
+        delete transformedVisualization.timeField
     }
 
     return {
@@ -125,6 +155,91 @@ export const getVisualizationState = (
     }
 }
 
+const removeDimensionPropertiesBeforeSaving = (
+    axis: DimensionArray | undefined
+) => {
+    return axis?.map((dim) => {
+        const dimension = Object.assign({}, dim)
+        const propsToRemove = ['dimensionType', 'valueType']
+
+        propsToRemove.forEach((prop) => {
+            delete dimension[prop]
+        })
+
+        return dimension
+    })
+}
+
+const getDimensionIdFromHeaderName = (
+    headerName: string,
+    visualization: CurrentVisualization
+) => {
+    const headersMap = getHeadersMap(
+        getRequestOptions(visualization) as unknown as CurrentVisualization
+    )
+    return Object.keys(headersMap).find((key) => headersMap[key] === headerName)
+}
+
+export const getSaveableVisualization = (
+    vis: NewVisualization | SavedVisualization
+): NewVisualization | SavedVisualization => {
+    const visualization = Object.assign({}, vis)
+    const options = getAllOptions()
+    const nonPersistedOptions = Object.keys(options).filter(
+        (option) => !options[option].persisted
+    )
+
+    nonPersistedOptions.forEach((option) => delete visualization[option])
+
+    visualization.columns = removeDimensionPropertiesBeforeSaving(
+        visualization.columns
+    )
+    visualization.filters = removeDimensionPropertiesBeforeSaving(
+        visualization.filters
+    )
+    visualization.rows = removeDimensionPropertiesBeforeSaving(
+        visualization.rows
+    )
+
+    if (!visualization.programStage?.id) {
+        delete visualization.programStage
+    }
+
+    // Remove legacy property when saving
+    delete visualization.legacy
+
+    // Use the first sorting item only and format for saving
+    visualization.sorting = vis.sorting?.length
+        ? [
+              {
+                  dimension:
+                      getDimensionIdFromHeaderName(
+                          vis.sorting[0].dimension,
+                          vis
+                      ) || vis.sorting[0].dimension,
+                  direction: vis.sorting[0].direction
+                      ? (vis.sorting[0].direction.toUpperCase() as SortDirection)
+                      : 'ASC',
+              },
+          ]
+        : undefined
+
+    return visualization
+}
+
+// validation functions for FileMenu actions
+export const isVisualizationValidForSaveAs = (
+    visualization: CurrentVisualization
+): boolean =>
+    visualization.outputType === 'TRACKED_ENTITY_INSTANCE'
+        ? Boolean(visualization.trackedEntityType?.id)
+        : Boolean(visualization.program?.id)
+
+export const isVisualizationValidForSave = (
+    visualization: CurrentVisualization
+): boolean =>
+    !visualization.legacy && isVisualizationValidForSaveAs(visualization)
+
 // Type guards for CurrentVisualization union
 export const isVisualizationEmpty = (
     visualization: CurrentVisualization
@@ -144,4 +259,21 @@ export const isVisualizationNew = (
         !isVisualizationEmpty(visualization) &&
         !isVisualizationSaved(visualization)
     )
+}
+
+export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
+    const outputType = vis.outputType // The single location where outputType is renamed to outputType
+    const layout = layoutGetAxisIdDimensionIdsObject(vis)
+
+    return {
+        visualizationType: vis.type,
+        outputType,
+        layout: {
+            columns: layout.columns ?? [],
+            filters: layout.filters ?? [],
+            rows: layout.rows ?? [],
+        },
+        itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
+        conditionsByDimension: getConditionsFromVisualization(vis, outputType),
+    }
 }
