@@ -8,11 +8,11 @@ import {
     useRef,
 } from 'react'
 import type { FC, ReactNode } from 'react'
-import type {
-    MetadataStoreItem,
-    AnyMetadataItemInput,
-} from './metadata-helpers'
 import { getInitialMetadata } from './metadata-helpers/initial-metadata'
+import type {
+    InitialMetadataItems,
+    MetadataItem,
+} from './metadata-helpers/types'
 import { MetadataStore } from './metadata-store'
 import { useRootOrgUnits } from '@hooks'
 
@@ -32,7 +32,7 @@ export const MetadataProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
 export const MockMetadataProvider: FC<{
     children: ReactNode
-    mockMetadata?: Record<string, AnyMetadataItemInput>
+    mockMetadata?: InitialMetadataItems
 }> = ({ children, mockMetadata }) => {
     const rootOrgUnits = useRootOrgUnits()
     const [metadataStore] = useState(
@@ -51,7 +51,7 @@ export const MockMetadataProvider: FC<{
 
 export const useMetadataItem = (
     metadataId: string
-): MetadataStoreItem | undefined => {
+): MetadataItem | undefined => {
     const metadataStore = useContext(MetadataContext)!
     const result = useSyncExternalStore(
         useCallback(
@@ -65,7 +65,7 @@ export const useMetadataItem = (
 const sentinel = '|'
 export const useMetadataItems = (
     metadataIds: string[]
-): Record<string, MetadataStoreItem> => {
+): Record<string, MetadataItem> => {
     const metadataStore = useContext(MetadataContext)!
     // Derive a stable key based on contents while preserving order invariance
     const metadataIdsKey = useMemo<string>(
@@ -81,7 +81,7 @@ export const useMetadataItems = (
     // Cache the last snapshot to ensure stable reference
     const lastSnapshotRef = useRef<{
         ids: string[]
-        values: Record<string, MetadataStoreItem>
+        values: Record<string, MetadataItem>
     }>({
         ids: [],
         values: {},

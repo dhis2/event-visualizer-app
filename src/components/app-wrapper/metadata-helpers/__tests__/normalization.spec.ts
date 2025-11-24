@@ -1,165 +1,190 @@
 import { describe, it, expect } from 'vitest'
 import { normalizeMetadataInputItem } from '../normalization'
-import type {
-    AnyMetadataItemInput,
-    MetadataStoreItem,
-    UserOrgUnitMetadataInputItem,
-    UserOrgUnitMetadataItem,
-} from '../types'
-import type { MetadataItem } from '@types'
+import type { MetadataItem, MetadataInputItem } from '../types'
 
 describe('normalizeMetadataInputItem', () => {
-    const mockMetadataMap = new Map<string, MetadataStoreItem>([
+    const mockMetadataMap = new Map<string, MetadataItem>([
         [
-            'USER_ORGUNIT',
+            'existing-item',
             {
-                id: 'USER_ORGUNIT',
-                name: 'User Organisation Units',
-                organisationUnits: [],
-            } as UserOrgUnitMetadataItem,
+                id: 'existing-item',
+                name: 'Existing Item',
+            },
         ],
     ])
 
-    describe('normalizes MetadataItem', () => {
-        it('converts uid to id and preserves other properties', () => {
-            const input: MetadataItem = {
-                uid: 'abc123',
-                name: 'Test Item',
-            }
-
-            const result = normalizeMetadataInputItem(input, mockMetadataMap)
-
-            expect(result).toEqual({
-                id: 'abc123',
-                name: 'Test Item',
-            })
-        })
-    })
-
-    describe('normalizes SimpleMetadataItem', () => {
-        it('sets id to the key and name to the value', () => {
-            const input = { category: 'Health' } as AnyMetadataItemInput
-
-            const result = normalizeMetadataInputItem(input, mockMetadataMap)
+    describe('string input with key', () => {
+        it('creates normalized item with id=key and name=value', () => {
+            const result = normalizeMetadataInputItem(
+                'Test Name',
+                mockMetadataMap,
+                'test-key'
+            )
 
             expect(result).toEqual({
-                id: 'category',
-                name: 'Health',
+                id: 'test-key',
+                name: 'Test Name',
             })
         })
-    })
 
-    describe('normalizes UserOrgUnitMetadataInputItem', () => {
-        it('merges with existing USER_ORGUNIT metadata', () => {
-            const input: UserOrgUnitMetadataInputItem = {
-                organisationUnits: ['ou1', 'ou2'],
-            }
-
-            const result = normalizeMetadataInputItem(input, mockMetadataMap)
-
-            expect(result).toEqual({
-                id: 'USER_ORGUNIT',
-                name: 'User Organisation Units',
-                organisationUnits: ['ou1', 'ou2'],
-            })
+        it('throws error for string without key', () => {
+            expect(() => {
+                normalizeMetadataInputItem('Test Name', mockMetadataMap)
+            }).toThrow('Invalid metadata input: string value without a key')
         })
     })
 
-    describe('returns ProgramMetadataItem as-is', () => {
-        it('returns the input unchanged', () => {
-            const input: AnyMetadataItemInput = {
-                id: 'prog1',
-                name: 'Program 1',
-                programType: 'WITH_REGISTRATION',
-            }
-
-            const result = normalizeMetadataInputItem(input, mockMetadataMap)
-
-            expect(result).toBe(input)
-        })
-    })
-
-    describe('returns ProgramStageMetadataItem as-is', () => {
-        it('returns the input unchanged', () => {
-            const input: AnyMetadataItemInput = {
-                id: 'stage1',
-                name: 'Stage 1',
-                repeatable: false,
-                hideDueDate: true,
-            }
-
-            const result = normalizeMetadataInputItem(input, mockMetadataMap)
-
-            expect(result).toBe(input)
-        })
-    })
-
-    describe('returns OptionSetMetadataItem as-is', () => {
-        it('returns the input unchanged', () => {
-            const input: AnyMetadataItemInput = {
-                id: 'optset1',
-                name: 'Option Set 1',
-                options: [],
-            }
-
-            const result = normalizeMetadataInputItem(input, mockMetadataMap)
-
-            expect(result).toBe(input)
-        })
-    })
-
-    describe('returns LegendSetMetadataItem as-is', () => {
-        it('returns the input unchanged', () => {
-            const input: AnyMetadataItemInput = {
-                id: 'legend1',
-                name: 'Legend Set 1',
-                legends: [],
-            }
-
-            const result = normalizeMetadataInputItem(input, mockMetadataMap)
-
-            expect(result).toBe(input)
-        })
-    })
-
-    describe('returns OrganisationUnitMetadataItem as-is', () => {
-        it('returns the input unchanged', () => {
-            const input: AnyMetadataItemInput = {
-                id: 'ou1',
-                name: 'Org Unit 1',
-                path: '/root/ou1',
-            }
-
-            const result = normalizeMetadataInputItem(input, mockMetadataMap)
-
-            expect(result).toBe(input)
-        })
-    })
-
-    describe('returns UserOrgUnitMetadataItem as-is', () => {
-        it('returns the input unchanged', () => {
-            const input: AnyMetadataItemInput = {
-                id: 'USER_ORGUNIT',
-                name: 'User Org Units',
-                organisationUnits: [],
-            }
-
-            const result = normalizeMetadataInputItem(input, mockMetadataMap)
-
-            expect(result).toBe(input)
-        })
-    })
-
-    describe('throws error for unknown input type', () => {
-        it('throws an error when input does not match any type', () => {
+    describe('object input with id resolution', () => {
+        it('uses provided key over uid over id', () => {
             const input = {
-                unknownKey1: 'value 1',
-                unknownKey2: 'value 2',
-            } as AnyMetadataItemInput
+                id: 'id-value',
+                uid: 'uid-value',
+                name: 'Test Name',
+            } as unknown as MetadataInputItem // Cast for testing purposes
+
+            const result = normalizeMetadataInputItem(
+                input,
+                mockMetadataMap,
+                'key-value'
+            )
+
+            expect(result.id).toBe('key-value')
+        })
+
+        it('uses uid when no key provided', () => {
+            const input: MetadataInputItem = {
+                uid: 'uid-value',
+                name: 'Test Name',
+            }
+
+            const result = normalizeMetadataInputItem(input, mockMetadataMap)
+
+            expect(result.id).toBe('uid-value')
+        })
+
+        it('uses id when no key or uid provided', () => {
+            const input: MetadataInputItem = {
+                id: 'id-value',
+                name: 'Test Name',
+            }
+
+            const result = normalizeMetadataInputItem(input, mockMetadataMap)
+
+            expect(result.id).toBe('id-value')
+        })
+
+        it('throws error when no valid id found', () => {
+            const input = {
+                name: 'Test Name',
+            } as unknown as MetadataInputItem // Cast for testing invalid input
 
             expect(() => {
                 normalizeMetadataInputItem(input, mockMetadataMap)
-            }).toThrow('Unknown metadata input type')
+            }).toThrow('Invalid metadata input: no ID field present')
+        })
+    })
+
+    describe('name resolution', () => {
+        it('uses displayName over name', () => {
+            const input: MetadataInputItem = {
+                id: 'test-id',
+                name: 'Name',
+                displayName: 'Display Name',
+            }
+
+            const result = normalizeMetadataInputItem(input, mockMetadataMap)
+
+            expect(result.name).toBe('Display Name')
+        })
+
+        it('uses displayName when name not provided', () => {
+            const input: MetadataInputItem = {
+                id: 'test-id',
+                displayName: 'Display Name',
+            }
+
+            const result = normalizeMetadataInputItem(input, mockMetadataMap)
+
+            expect(result.name).toBe('Display Name')
+        })
+    })
+
+    describe('with valid name', () => {
+        it('includes name and preserves extra properties', () => {
+            const input: MetadataInputItem = {
+                id: 'test-id',
+                name: 'Test Name',
+                extraProp: 'extra value',
+                anotherProp: 123,
+            }
+
+            const result = normalizeMetadataInputItem(input, mockMetadataMap)
+
+            expect(result).toEqual({
+                id: 'test-id',
+                name: 'Test Name',
+                extraProp: 'extra value',
+                anotherProp: 123,
+            })
+        })
+    })
+
+    describe('without valid name', () => {
+        it('allows items that exist in metadata map', () => {
+            const input: MetadataInputItem = {
+                uid: 'existing-item',
+                extraProp: 'updated value',
+            }
+
+            const result = normalizeMetadataInputItem(input, mockMetadataMap)
+
+            expect(result).toEqual({
+                id: 'existing-item',
+                extraProp: 'updated value',
+            })
+        })
+
+        it('allows optionSet items without name', () => {
+            const input: MetadataInputItem = {
+                id: 'option-set-id',
+                options: [{ id: 'opt1', name: 'Option 1' }],
+                extraProp: 'value',
+            }
+
+            const result = normalizeMetadataInputItem(input, mockMetadataMap)
+
+            expect(result).toEqual({
+                id: 'option-set-id',
+                options: [{ id: 'opt1', name: 'Option 1' }],
+                extraProp: 'value',
+            })
+        })
+
+        it('allows legendSet items without name', () => {
+            const input: MetadataInputItem = {
+                id: 'legend-set-id',
+                legends: [{ id: 'leg1', name: 'Legend 1' }],
+                extraProp: 'value',
+            }
+
+            const result = normalizeMetadataInputItem(input, mockMetadataMap)
+
+            expect(result).toEqual({
+                id: 'legend-set-id',
+                legends: [{ id: 'leg1', name: 'Legend 1' }],
+                extraProp: 'value',
+            })
+        })
+
+        it('throws error for new items without name', () => {
+            const input: MetadataInputItem = {
+                id: 'new-item-id',
+                extraProp: 'value',
+            }
+
+            expect(() => {
+                normalizeMetadataInputItem(input, mockMetadataMap)
+            }).toThrow('Invalid metadata input: expected name field not found')
         })
     })
 })

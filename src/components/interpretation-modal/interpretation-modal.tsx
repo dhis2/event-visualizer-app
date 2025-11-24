@@ -3,7 +3,7 @@ import {
     useInterpretationModalState,
     useInterpretationModalTogglers,
 } from '@components/app-wrapper/interpretations-provider'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers'
+import type { MetadataInput } from '@components/app-wrapper/metadata-helpers/types'
 import { ModalDownloadDropdown } from '@components/download-menu/modal-download-dropdown'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { InterpretationModal as AnalyticsInterpretationModal } from '@dhis2/analytics'
