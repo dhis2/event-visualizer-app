@@ -1,16 +1,14 @@
 import type {
-    AnyMetadataItemInput,
-    SimpleMetadataItem,
     ProgramMetadataItem,
     ProgramStageMetadataItem,
     OptionSetMetadataItem,
     OrganisationUnitMetadataItem,
-    MetadataStoreItem,
+    MetadataItem,
     LegendSetMetadataItem,
     UserOrgUnitMetadataItem,
-    UserOrgUnitMetadataInputItem,
+    MetadataInputItem,
+    MetadataItemWithName,
 } from './types'
-import type { MetadataItem } from '@types'
 
 // Helper function to check if input is a plain object
 export const isObject = (input: unknown): input is Record<string, unknown> => {
@@ -22,57 +20,61 @@ export const isPopulatedString = (input: unknown): input is string => {
     return typeof input === 'string' && input.length > 0
 }
 
-export const isSingleMetadataItemInput = (
+export const isMetadataInputItem = (
     input: unknown
-): input is AnyMetadataItemInput => {
+): input is MetadataInputItem => {
     if (!isObject(input)) {
         return false
     }
 
-    // Cast to AnyMetadataItemInput since we know it's an object
-    const item = input as AnyMetadataItemInput
+    const hasIdKey = 'id' in input
+    const hasUidKey = 'uid' in input
+    const hasValidId = hasIdKey && isPopulatedString(input.id)
+    const hasValidUid = hasUidKey && isPopulatedString(input.uid)
 
-    return (
-        isMetadataItem(item) ||
-        isSimpleMetadataItem(item) ||
-        isProgramMetadataItem(item) ||
-        isProgramStageMetadataItem(item) ||
-        isOptionSetMetadataItem(item) ||
-        isLegendSetMetadataItem(item) ||
-        isOrganisationUnitMetadataItem(item) ||
-        isUserOrgUnitMetadataInputItem(item)
-    )
+    // Must have exactly one of id or uid keys present
+    if ((hasIdKey && hasUidKey) || (!hasIdKey && !hasUidKey)) {
+        return false
+    }
+
+    // The present key must have a valid value
+    if ((hasIdKey && !hasValidId) || (hasUidKey && !hasValidUid)) {
+        return false
+    }
+
+    // Optional name fields must be strings if present
+    if (
+        'name' in input &&
+        input.name !== undefined &&
+        !isPopulatedString(input.name)
+    ) {
+        return false
+    }
+    if (
+        'displayName' in input &&
+        input.displayName !== undefined &&
+        !isPopulatedString(input.displayName)
+    ) {
+        return false
+    }
+
+    return true
 }
 
-// Type guards to narrow down AnyMetadataItemInput to specific types
-export const isMetadataItem = (
-    input: AnyMetadataItemInput
-): input is MetadataItem => {
+export const isMetadataItemWithName = (
+    input: unknown
+): input is MetadataItemWithName => {
     return (
-        'uid' in input &&
+        isObject(input) &&
+        'id' in input &&
         'name' in input &&
-        isPopulatedString(input.uid) &&
+        isPopulatedString(input.id) &&
         isPopulatedString(input.name)
     )
 }
 
-export const isSimpleMetadataItem = (
-    input: AnyMetadataItemInput
-): input is SimpleMetadataItem => {
-    if (!isObject(input)) {
-        return false
-    }
-
-    const entries = Object.entries(input)
-    return (
-        entries.length === 1 &&
-        isPopulatedString(entries[0][0]) &&
-        isPopulatedString(entries[0][1])
-    )
-}
-
 export const isProgramMetadataItem = (
-    input: AnyMetadataItemInput | MetadataStoreItem
+    input: unknown
 ): input is ProgramMetadataItem => {
     return (
         isObject(input) &&
@@ -86,7 +88,7 @@ export const isProgramMetadataItem = (
 }
 
 export const isProgramStageMetadataItem = (
-    input: AnyMetadataItemInput | MetadataStoreItem
+    input: unknown
 ): input is ProgramStageMetadataItem => {
     return (
         isObject(input) &&
@@ -102,7 +104,7 @@ export const isProgramStageMetadataItem = (
 }
 
 export const isOptionSetMetadataItem = (
-    input: AnyMetadataItemInput | MetadataStoreItem
+    input: unknown
 ): input is OptionSetMetadataItem => {
     return (
         isObject(input) &&
@@ -114,7 +116,7 @@ export const isOptionSetMetadataItem = (
 }
 
 export function isLegendSetMetadataItem(
-    input: AnyMetadataItemInput | MetadataStoreItem
+    input: unknown
 ): input is LegendSetMetadataItem {
     return (
         isObject(input) &&
@@ -126,7 +128,7 @@ export function isLegendSetMetadataItem(
 }
 
 export const isOrganisationUnitMetadataItem = (
-    input: AnyMetadataItemInput | MetadataStoreItem
+    input: unknown
 ): input is OrganisationUnitMetadataItem => {
     return (
         isObject(input) &&
@@ -151,13 +153,10 @@ export const isUserOrgUnitMetadataItem = (
     )
 }
 
-export const isUserOrgUnitMetadataInputItem = (
-    input: unknown
-): input is UserOrgUnitMetadataInputItem => {
+export const isMetadataItem = (input: unknown): input is MetadataItem => {
     return (
-        isObject(input) &&
-        'organisationUnits' in input &&
-        Array.isArray(input.organisationUnits) &&
-        Object.keys(input).length === 1
+        isMetadataItemWithName(input) ||
+        isLegendSetMetadataItem(input) ||
+        isOptionSetMetadataItem(input)
     )
 }
