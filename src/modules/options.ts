@@ -42,8 +42,8 @@ const toOptionsSectionsArray = (
 ) => {
     const displayNameLookup = getOptionsSectionsDisplayNames()
     return optionKeys.map((key) => ({
-        id: key,
-        displayName: displayNameLookup[key],
+        key: key,
+        label: displayNameLookup[key],
     }))
 }
 

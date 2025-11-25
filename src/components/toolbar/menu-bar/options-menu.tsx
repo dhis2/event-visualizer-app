@@ -13,7 +13,7 @@ import type { OptionsSectionKey } from 'src/types/options'
 
 export const OptionsMenu: FC = () => {
     const visType = useAppSelector(getVisUiConfigVisualizationType)
-    const [selectedSectionKey, setSelectedSectionKey] =
+    const [activeSectionKey, setActiveSectionKey] =
         useState<OptionsSectionKey | null>(null)
     const optionsSections = useMemo(
         () => getOptionsSectionsForVisType(visType),
@@ -24,21 +24,21 @@ export const OptionsMenu: FC = () => {
         <>
             <HoverMenuDropdown label={i18n.t('Options')}>
                 <HoverMenuList dataTest="options-menu-list">
-                    {optionsSections.map(({ id, displayName }) => (
+                    {optionsSections.map(({ key, label }) => (
                         <HoverMenuListItem
-                            key={id}
-                            label={displayName}
+                            key={key}
+                            label={label}
                             onClick={() => {
-                                setSelectedSectionKey(id)
+                                setActiveSectionKey(key)
                             }}
                         />
                     ))}
                 </HoverMenuList>
             </HoverMenuDropdown>
-            {selectedSectionKey && (
+            {activeSectionKey && (
                 <OptionsModal
-                    activeSection={selectedSectionKey}
-                    setActiveSection={setSelectedSectionKey}
+                    activeSectionKey={activeSectionKey}
+                    setActiveSectionKey={setActiveSectionKey}
                     sections={optionsSections}
                     visType={visType}
                 />

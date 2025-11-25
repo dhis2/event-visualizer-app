@@ -11,6 +11,6 @@ export type OptionsSectionKey =
     | OptionsSectionKeyLineList
     | OptionsSectionKeyPivotTable
 export type OptionsSection = {
-    id: OptionsSectionKey
-    displayName: string
+    key: OptionsSectionKey
+    label: string
 }

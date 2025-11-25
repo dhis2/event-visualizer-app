@@ -15,21 +15,21 @@ import type { VisualizationType } from '@types'
 import type { OptionsSection, OptionsSectionKey } from 'src/types/options'
 
 type OptionsModalProps = {
-    activeSection: OptionsSectionKey
-    setActiveSection: (key: OptionsSectionKey | null) => void
+    activeSectionKey: OptionsSectionKey
+    setActiveSectionKey: (key: OptionsSectionKey | null) => void
     sections: OptionsSection[]
     visType: VisualizationType
 }
 
 export const OptionsModal: FC<OptionsModalProps> = ({
-    activeSection,
-    setActiveSection,
+    activeSectionKey,
+    setActiveSectionKey,
     sections,
     visType,
 }) => {
     const closeModal = useCallback(() => {
-        setActiveSection(null)
-    }, [setActiveSection])
+        setActiveSectionKey(null)
+    }, [setActiveSectionKey])
     const updateVisualizationAndClose = useCallback(() => {
         // TODO: dispatch an action here to to "reload the visualization from UI"
         closeModal()
@@ -44,18 +44,18 @@ export const OptionsModal: FC<OptionsModalProps> = ({
             <ModalTitle>{i18n.t('Options')}</ModalTitle>
             <ModalContent dataTest={'options-modal-content'}>
                 <TabBar dataTest={'options-modal-tab-bar'}>
-                    {sections.map(({ id, displayName }) => (
+                    {sections.map(({ key, label }) => (
                         <Tab
-                            key={id}
-                            onClick={() => setActiveSection(id)}
-                            selected={id === activeSection}
+                            key={key}
+                            onClick={() => setActiveSectionKey(key)}
+                            selected={key === activeSectionKey}
                         >
-                            {displayName}
+                            {label}
                         </Tab>
                     ))}
                 </TabBar>
                 <OptionsSectionContent
-                    sectionKey={activeSection}
+                    sectionKey={activeSectionKey}
                     visType={visType}
                 />
             </ModalContent>
