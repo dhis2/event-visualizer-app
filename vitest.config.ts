@@ -1,6 +1,7 @@
 import path from 'node:path'
 import react from '@vitejs/plugin-react'
-import { defineConfig, configDefaults } from 'vitest/config'
+import { defineConfig } from 'vite'
+import { configDefaults } from 'vitest/config'
 
 export const importAliases = {
     '@types': path.resolve(__dirname, 'src/types/index.ts'),
