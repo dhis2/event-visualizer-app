@@ -159,7 +159,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
     )
 
     // XXX: should the transformed visualization be passed here?
-    const isDownloadEnabled = isVisualizationValid(currentVis, { dryRun: true })
+    const isDownloadEnabled = isVisualizationValid(currentVis)
 
     return {
         isDownloadDisabled: !isDownloadEnabled,

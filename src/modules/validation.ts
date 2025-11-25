@@ -1,3 +1,4 @@
+import { isVisualizationEmpty } from './visualization'
 import { DIMENSION_ID_ORGUNIT } from '@constants/dimensions'
 import { AXIS, dimensionIsValid, layoutGetDimension } from '@dhis2/analytics'
 import type { CurrentVisualization } from '@types'
@@ -20,23 +21,16 @@ const visualizationHasTrackedEntityTypeId = (
 ): boolean => Boolean(visualization?.trackedEntityType?.id)
 
 // Validation functions for Update and Download
-const isVisualizationValidLineList = (
-    visualization: CurrentVisualization,
-    { dryRun = false }: { dryRun?: boolean } = {}
-): boolean => {
-    if (!visualization) {
-        return false
-    }
-
+const validateLineListVisualization = (
+    visualization: CurrentVisualization
+): void => {
     // entity type (input type TE only)
     if (
         visualization.outputType === 'TRACKED_ENTITY_INSTANCE' &&
         !visualizationHasTrackedEntityTypeId(visualization)
     ) {
-        if (dryRun) {
-            return false
-        }
-        //throw noEntityTypeError()
+        // TODO: noEntityTypeError()
+        throw new Error('No tracked entity type selected')
     }
 
     // program
@@ -44,18 +38,14 @@ const isVisualizationValidLineList = (
         visualization.outputType !== 'TRACKED_ENTITY_INSTANCE' &&
         !visualizationHasProgramId(visualization)
     ) {
-        if (dryRun) {
-            return false
-        }
-        //throw noProgramError()
+        // noProgramError()
+        throw new Error('No program selected')
     }
 
     // columns
     if (!isAxisValid(visualization.columns)) {
-        if (dryRun) {
-            return false
-        }
-        //throw noColumnsError()
+        // TODO: noColumnsError()
+        throw new Error('Columns is empty')
     }
 
     // organisation unit
@@ -64,24 +54,40 @@ const isVisualizationValidLineList = (
         visualization.outputType !== 'TRACKED_ENTITY_INSTANCE' &&
         !(ouDimension && dimensionIsValid(ouDimension, { requireItems: true }))
     ) {
-        if (dryRun) {
-            return false
-        }
-        //throw noOrgUnitError()
+        // TODO: noOrgUnitError()
+        throw new Error('No organisation unit selected')
     }
+}
 
-    return true
+export const validateVisualization = (
+    visualization: CurrentVisualization
+): void => {
+    if (isVisualizationEmpty(visualization)) {
+        throw new Error('Empty visualization')
+    } else {
+        switch (visualization.type) {
+            case 'LINE_LIST': {
+                validateLineListVisualization(visualization)
+
+                break
+            }
+            default: {
+                throw new Error(`Not implemented for ${visualization.type}`)
+            }
+        }
+    }
 }
 
 export const isVisualizationValid = (
-    visualization: CurrentVisualization,
-    args?: { dryRun: boolean }
+    visualization: CurrentVisualization
 ): boolean => {
-    switch (visualization.type) {
-        case 'LINE_LIST':
-            return isVisualizationValidLineList(visualization, args)
-        default:
-            return false
+    try {
+        validateVisualization(visualization)
+
+        return true
+    } catch (error) {
+        console.error('Validate visualization failed! ', error)
+        return false
     }
 }
 
