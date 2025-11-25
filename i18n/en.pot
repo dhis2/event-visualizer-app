@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-11-24T16:55:31.441Z\n"
-"PO-Revision-Date: 2025-11-24T16:55:31.442Z\n"
+"POT-Creation-Date: 2025-11-25T14:34:25.675Z\n"
+"PO-Revision-Date: 2025-11-25T14:34:25.676Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -231,6 +231,15 @@ msgstr "oldest {{repeatEventIndex}}"
 msgid "most recent {{repeatEventIndex}}"
 msgstr "most recent {{repeatEventIndex}}"
 
+msgid "Options"
+msgstr "Options"
+
+msgid "Hide"
+msgstr "Hide"
+
+msgid "Update"
+msgstr "Update"
+
 msgid "Getting started"
 msgstr "Getting started"
 
@@ -412,6 +421,15 @@ msgstr "Filter"
 
 msgid "Rows"
 msgstr "Rows"
+
+msgid "Data"
+msgstr "Data"
+
+msgid "Style"
+msgstr "Style"
+
+msgid "Legend"
+msgstr "Legend"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
