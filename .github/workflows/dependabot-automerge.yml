@@ -1,35 +1,22 @@
-name: 'Dependabot Auto-Merge on Approval'
+name: 'Enable auto-merge for Dependabot PRs'
 
 on:
-    pull_request_review:
-        types:
-            - submitted
     pull_request:
-        types: [synchronize]
+        types: [opened, reopened, synchronize]
 
 permissions:
     pull-requests: write
     contents: write
 
 jobs:
-    automerge:
+    enable-automerge:
         runs-on: ubuntu-latest
 
-        # Run only when the PR’s author is Dependabot
+        # Only run on Dependabot PRs
         if: github.event.pull_request.user.login == 'dependabot[bot]'
 
         steps:
-            - name: Check if the review is an approval
-              id: approval
-              run: |
-                  if [ "${{ github.event.review.state }}" = "approved" ]; then
-                    echo "approved=true" >> $GITHUB_OUTPUT
-                  else
-                    echo "approved=false" >> $GITHUB_OUTPUT
-                  fi
-
             - name: Enable auto-merge (squash)
-              if: steps.approval.outputs.approved == 'true'
               uses: peter-evans/enable-pull-request-automerge@v3
               with:
                   pull-request-number: ${{ github.event.pull_request.number }}
