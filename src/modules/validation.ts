@@ -85,8 +85,7 @@ export const isVisualizationValid = (
         validateVisualization(visualization)
 
         return true
-    } catch (error) {
-        console.error('Validate visualization failed! ', error)
+    } catch {
         return false
     }
 }
