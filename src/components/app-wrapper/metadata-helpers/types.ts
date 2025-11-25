@@ -3,6 +3,8 @@ import type {
     ProgramType,
     OptionSet,
     LegendSet,
+    ValueType,
+    DimensionType,
 } from '@types'
 
 /** PHASES
@@ -51,8 +53,25 @@ export type NormalizedMetadataInputItem = Record<string, unknown> & {
  ****************************************************/
 
 export type ResponsePayloadMetadataItem = Partial<
-    Omit<GeneratedMetadaItem, 'uid' | 'name'>
-> & { id: string; name: string }
+    Omit<
+        GeneratedMetadaItem,
+        | 'uid'
+        | 'name'
+        | 'dimensionType'
+        | 'dimensionItemType'
+        | 'valueType'
+        | 'legendSet'
+        | 'options'
+    >
+> & {
+    id: string
+    name: string
+    dimensionType?: DimensionType
+    dimensionItemType?: DimensionType
+    valueType?: ValueType
+    legendSet?: string
+    optionSet?: string
+}
 
 // Note that `optionSet` and `legendSet` have an optional name
 type OptionSetOption = Omit<OptionSet['options'], 'id' | 'code' | 'name'> & {

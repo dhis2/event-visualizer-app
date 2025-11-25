@@ -21,7 +21,7 @@
     },
     "devDependencies": {
         "@cypress/vite-dev-server": "^7.0.0",
-        "@dhis2/cli-app-scripts": "^12.8.0",
+        "@dhis2/cli-app-scripts": "^12.9.0",
         "@dhis2/cli-style": "^10.7.8",
         "@dhis2/cypress-commands": "^10.1.0",
         "@testing-library/dom": "^10.4.0",
@@ -33,7 +33,7 @@
         "@types/react": "^18.3.23",
         "@types/react-dom": "^18.3.7",
         "@vitejs/plugin-react": "^5.1.0",
-        "cypress": "^14.4.0",
+        "cypress": "^15.5.0",
         "cypress-real-events": "^1.15.0",
         "cypress-tags": "^1.2.2",
         "eslint-import-resolver-typescript": "^4.4.4",
@@ -44,12 +44,12 @@
         "start-server-and-test": "^2.1.2",
         "typescript": "^5",
         "typescript-plugin-css-modules": "^5.2.0",
-        "vitest": "^3.1.4",
+        "vitest": "^4.0.13",
         "vitest-canvas-mock": "^0.3.3"
     },
     "dependencies": {
-        "@dhis2/analytics": "^29.0.2",
-        "@dhis2/app-runtime": "^3.14.5",
+        "@dhis2/analytics": "^29.0.3",
+        "@dhis2/app-runtime": "^3.14.6",
         "@dhis2/ui": "^10.9.1",
         "@reduxjs/toolkit": "^2.9.2",
         "@types/deep-equal": "^1.0.4",
@@ -64,7 +64,7 @@
         "usehooks-ts": "^3.1.1"
     },
     "resolutions": {
-        "@dhis2/app-runtime": "^3.14.4"
+        "vite": "^6.0.0"
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts}": [

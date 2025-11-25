@@ -3,13 +3,14 @@ import type { FC } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 import type { OnAnalyticsResponseReceivedCb } from './hooks/use-line-list-analytics-data'
 import { LineListPlugin } from './line-list-plugin'
+import { PivotTablePlugin } from './pivot-table-plugin'
 import { isVisualizationSaved } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
 
 type PluginWrapperProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
-    filters?: Record<'relativePeriodDate', string>
+    filters?: Record<'relativePeriodDate', string> // TODO: check what dashboard passes here
     isInDashboard?: boolean
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     isVisualizationLoading?: boolean
@@ -71,10 +72,19 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                 />
             )}
             {visualization.type === 'PIVOT_TABLE' && (
-                <div>
-                    <p>This is the PT plugin placeholder</p>
-                    <p>Showing {visualization.name}</p>
-                </div>
+                <PivotTablePlugin
+                    key={
+                        isVisualizationSaved(visualization)
+                            ? visualization.id
+                            : 'new'
+                    }
+                    displayProperty={displayProperty}
+                    visualization={visualization}
+                    filters={filters}
+                    isInDashboard={isInDashboard}
+                    isInModal={isInModal}
+                    onResponseReceived={onResponseReceived}
+                />
             )}
         </>
     )
