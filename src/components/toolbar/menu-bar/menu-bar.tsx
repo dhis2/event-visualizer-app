@@ -15,11 +15,13 @@ import {
 } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
 import {
+    isVisualizationValidForSave,
+    isVisualizationValidForSaveAs,
+} from '@modules/validation'
+import {
     getVisualizationState,
     getSaveableVisualization,
     isVisualizationSaved,
-    isVisualizationValidForSave,
-    isVisualizationValidForSaveAs,
 } from '@modules/visualization'
 import {
     getCurrentVis,

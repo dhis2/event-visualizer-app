@@ -227,19 +227,6 @@ export const getSaveableVisualization = (
     return visualization
 }
 
-// validation functions for FileMenu actions
-export const isVisualizationValidForSaveAs = (
-    visualization: CurrentVisualization
-): boolean =>
-    visualization.outputType === 'TRACKED_ENTITY_INSTANCE'
-        ? Boolean(visualization.trackedEntityType?.id)
-        : Boolean(visualization.program?.id)
-
-export const isVisualizationValidForSave = (
-    visualization: CurrentVisualization
-): boolean =>
-    !visualization.legacy && isVisualizationValidForSaveAs(visualization)
-
 // Type guards for CurrentVisualization union
 export const isVisualizationEmpty = (
     visualization: CurrentVisualization
