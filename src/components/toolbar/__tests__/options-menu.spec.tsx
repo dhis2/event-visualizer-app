@@ -4,28 +4,18 @@ import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { OptionsMenu } from '../menu-bar/options-menu'
 import { HoverMenuBar } from '@dhis2/analytics'
 import { useAppSelector } from '@hooks'
-import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 
 // Mock the hooks
 vi.mock('@hooks', () => ({
     useAppSelector: vi.fn(),
 }))
 
-vi.mock('@store/vis-ui-config-slice', () => ({
-    getVisUiConfigVisualizationType: vi.fn(),
-}))
-
 const mockUseAppSelector = vi.mocked(useAppSelector)
-const mockGetVisUiConfigVisualizationType = vi.mocked(
-    getVisUiConfigVisualizationType
-)
 
 describe('OptionsMenu', () => {
     beforeEach(() => {
         vi.clearAllMocks()
-        mockGetVisUiConfigVisualizationType.mockReturnValue('LINE_LIST')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        mockUseAppSelector.mockImplementation((selector) => selector({} as any))
+        mockUseAppSelector.mockReturnValue('LINE_LIST')
     })
 
     it('renders the options menu trigger', () => {
@@ -189,7 +179,7 @@ describe('OptionsMenu', () => {
         const user = userEvent.setup()
 
         // Test with PIVOT_TABLE
-        mockGetVisUiConfigVisualizationType.mockReturnValue('PIVOT_TABLE')
+        mockUseAppSelector.mockReturnValue('PIVOT_TABLE')
 
         render(
             <HoverMenuBar>
