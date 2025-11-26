@@ -75,6 +75,93 @@ describe('OptionsMenu', () => {
         expect(dataTab).toBeInTheDocument()
     })
 
+    it('opens the modal with the correct active tab and section content when clicking Data menu item', async () => {
+        const user = userEvent.setup()
+        render(
+            <HoverMenuBar>
+                <OptionsMenu />
+            </HoverMenuBar>
+        )
+
+        // Open the menu
+        await user.click(screen.getByText('Options'))
+
+        // Click the Data option
+        await user.click(screen.getByText('Data'))
+
+        expect(screen.getByTestId('options-modal')).toBeInTheDocument()
+        // Check that the Data tab is selected (should have aria-selected="true")
+        const dataTab = screen.getByRole('tab', { name: 'Data' })
+        expect(dataTab).toHaveAttribute('aria-selected', 'true')
+        // Check that the correct section content is rendered
+        expect(screen.getByTestId('line-list-data-section')).toBeInTheDocument()
+    })
+
+    it('opens the modal with the correct active tab and section content when clicking Style menu item', async () => {
+        const user = userEvent.setup()
+        render(
+            <HoverMenuBar>
+                <OptionsMenu />
+            </HoverMenuBar>
+        )
+
+        // Open the menu
+        await user.click(screen.getByText('Options'))
+
+        // Click the Style option
+        await user.click(screen.getByText('Style'))
+
+        expect(screen.getByTestId('options-modal')).toBeInTheDocument()
+        // Check that the Style tab is selected
+        const styleTab = screen.getByRole('tab', { name: 'Style' })
+        expect(styleTab).toHaveAttribute('aria-selected', 'true')
+        // Check that the correct section content is rendered
+        expect(
+            screen.getByTestId('line-list-style-section')
+        ).toBeInTheDocument()
+    })
+
+    it('allows switching tabs within the modal', async () => {
+        const user = userEvent.setup()
+        render(
+            <HoverMenuBar>
+                <OptionsMenu />
+            </HoverMenuBar>
+        )
+
+        // Open menu and click Data
+        await user.click(screen.getByText('Options'))
+        await user.click(screen.getByText('Data'))
+        expect(screen.getByTestId('options-modal')).toBeInTheDocument()
+
+        // Initially Data tab should be selected
+        expect(screen.getByRole('tab', { name: 'Data' })).toHaveAttribute(
+            'aria-selected',
+            'true'
+        )
+        expect(screen.getByTestId('line-list-data-section')).toBeInTheDocument()
+
+        // Switch to Style tab
+        await user.click(screen.getByRole('tab', { name: 'Style' }))
+        expect(screen.getByRole('tab', { name: 'Style' })).toHaveAttribute(
+            'aria-selected',
+            'true'
+        )
+        expect(
+            screen.getByTestId('line-list-style-section')
+        ).toBeInTheDocument()
+
+        // Switch to Legend tab
+        await user.click(screen.getByRole('tab', { name: 'Legend' }))
+        expect(screen.getByRole('tab', { name: 'Legend' })).toHaveAttribute(
+            'aria-selected',
+            'true'
+        )
+        expect(
+            screen.getByTestId('line-list-legend-section')
+        ).toBeInTheDocument()
+    })
+
     it('closes the modal when cancel button is clicked', async () => {
         const user = userEvent.setup()
         render(
@@ -98,24 +185,6 @@ describe('OptionsMenu', () => {
         })
     })
 
-    it('allows switching between different options', async () => {
-        const user = userEvent.setup()
-        render(
-            <HoverMenuBar>
-                <OptionsMenu />
-            </HoverMenuBar>
-        )
-
-        // Open menu and click Data
-        await user.click(screen.getByText('Options'))
-        await user.click(screen.getByText('Data'))
-        expect(screen.getByTestId('options-modal')).toBeInTheDocument()
-
-        // Switch to Style tab
-        await user.click(screen.getByText('Style'))
-        expect(screen.getByTestId('options-modal')).toBeInTheDocument()
-    })
-
     it('works with different visualization types', async () => {
         const user = userEvent.setup()
 
@@ -136,8 +205,37 @@ describe('OptionsMenu', () => {
         expect(screen.getByText('Style')).toBeInTheDocument()
         expect(screen.getByText('Legend')).toBeInTheDocument()
 
-        // Open modal
+        // Open modal by clicking Data
         await user.click(screen.getByText('Data'))
         expect(screen.getByTestId('options-modal')).toBeInTheDocument()
+
+        // Data tab should be selected and show pivot table data section
+        expect(screen.getByRole('tab', { name: 'Data' })).toHaveAttribute(
+            'aria-selected',
+            'true'
+        )
+        expect(
+            screen.getByTestId('pivot-table-data-section')
+        ).toBeInTheDocument()
+
+        // Switch to Style tab
+        await user.click(screen.getByRole('tab', { name: 'Style' }))
+        expect(screen.getByRole('tab', { name: 'Style' })).toHaveAttribute(
+            'aria-selected',
+            'true'
+        )
+        expect(
+            screen.getByTestId('pivot-table-style-section')
+        ).toBeInTheDocument()
+
+        // Switch to Legend tab
+        await user.click(screen.getByRole('tab', { name: 'Legend' }))
+        expect(screen.getByRole('tab', { name: 'Legend' })).toHaveAttribute(
+            'aria-selected',
+            'true'
+        )
+        expect(
+            screen.getByTestId('pivot-table-legend-section')
+        ).toBeInTheDocument()
     })
 })
