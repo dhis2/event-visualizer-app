@@ -3,6 +3,7 @@ import i18n from '@dhis2/d2-i18n'
 import { useCallback } from 'react'
 import type { FC } from 'react'
 import { DownloadMenu } from './download-menu'
+import { OptionsMenu } from './options-menu'
 import { ViewMenu } from './view-menu'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { parseEngineError } from '@api/parse-engine-error'
@@ -243,6 +244,7 @@ export const MenuBar: FC = () => {
             />
             <ViewMenu />
             <DownloadMenu />
+            <OptionsMenu />
         </HoverMenuBar>
     )
 }
