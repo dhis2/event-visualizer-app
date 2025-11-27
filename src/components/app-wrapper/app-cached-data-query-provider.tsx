@@ -3,6 +3,7 @@ import { freeze } from '@reduxjs/toolkit'
 import type { FC, ReactNode } from 'react'
 import { CachedDataQueryProvider, useCachedDataQuery } from '@dhis2/analytics'
 import type {
+    CurrentVisualization,
     MeDto,
     OrganisationUnit,
     OrganisationUnitLevel,
@@ -84,6 +85,7 @@ type TransformedCurrentUserSettings = {
     uiLocale: string
     displayProperty: string | undefined
     displayNameProperty: DisplayNameProperty
+    digitGroupSeparator: CurrentVisualization['digitGroupSeparator']
 }
 export type TransformedAppCachedData = {
     currentUser: CurrentUserData & { settings: TransformedCurrentUserSettings }
@@ -112,6 +114,8 @@ const providerDataTransformation = ({
             uiLocale: currentUser.settings?.keyUiLocale ?? 'en',
             displayProperty: currentUser.settings?.keyAnalysisDisplayProperty,
             displayNameProperty,
+            digitGroupSeparator: currentUser.settings
+                ?.keyAnalysisDigitGroupSeparator as CurrentVisualization['digitGroupSeparator'],
         },
     }
     // filter only the relevant settings to avoid storing all in Redux

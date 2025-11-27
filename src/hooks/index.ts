@@ -30,6 +30,7 @@ export {
 export * from './use-rtk-query'
 export * from './use-rtk-lazy-query'
 export * from './use-conditions-texts'
+export * from './use-options-field'
 
 export const { useMutateMutation: useRtkMutation } = api
 

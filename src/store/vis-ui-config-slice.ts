@@ -1,6 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import type { OutputType, VisualizationType } from '@types'
+import { DEFAULT_OPTIONS } from '@constants/options'
+import type {
+    EventVisualizationOptions,
+    OutputType,
+    VisualizationType,
+} from '@types'
 
 type ConditionsObject = { condition?: string | string[]; legendSet?: string }
 
@@ -20,6 +25,7 @@ export interface VisUiConfigState {
     }
     itemsByDimension: Record<string, string[]>
     conditionsByDimension: Record<string, ConditionsObject>
+    options: EventVisualizationOptions
 }
 
 export const initialState: VisUiConfigState = {
@@ -32,6 +38,14 @@ export const initialState: VisUiConfigState = {
     },
     itemsByDimension: {},
     conditionsByDimension: {},
+    /* Options will be overridden by a computed preloaded state that takes
+     * the `digitGroupSeparator` user setting into account */
+    options: DEFAULT_OPTIONS,
+}
+
+type SetOptionPayload = {
+    key: keyof EventVisualizationOptions
+    value: EventVisualizationOptions[keyof EventVisualizationOptions]
 }
 
 export const visUiConfigSlice = createSlice({
@@ -77,6 +91,15 @@ export const visUiConfigSlice = createSlice({
         ) => {
             state.conditionsByDimension = action.payload
         },
+        setVisUiConfigOption: (
+            state,
+            action: PayloadAction<SetOptionPayload>
+        ) => {
+            state.options = {
+                ...state.options,
+                [action.payload.key]: action.payload.value,
+            }
+        },
     },
     selectors: {
         getVisUiConfigVisualizationType: (state) => state.visualizationType,
@@ -86,6 +109,10 @@ export const visUiConfigSlice = createSlice({
             state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
         getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
             state.conditionsByDimension[dimensionId] || EMPTY_CONDITIONS_OBJECT,
+        getVisUiConfigOptionByKey: (
+            state,
+            key: keyof EventVisualizationOptions
+        ) => state.options[key],
     },
 })
 
@@ -97,6 +124,7 @@ export const {
     setVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
+    setVisUiConfigOption,
 } = visUiConfigSlice.actions
 
 export const {
@@ -105,4 +133,5 @@ export const {
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
+    getVisUiConfigOptionByKey,
 } = visUiConfigSlice.selectors
