@@ -1,10 +1,15 @@
 import i18n from '@dhis2/d2-i18n'
 import {
+    DEFAULT_OPTIONS,
     OPTIONS_SECTION_KEYS_LINE_LIST,
     OPTIONS_SECTION_KEYS_PIVOT_TABLE,
 } from '@constants/options'
-import type { VisualizationType } from '@types'
-import type { OptionsSection, OptionsSectionKey } from 'src/types/options'
+import type { CurrentUser, VisualizationType } from '@types'
+import type {
+    EventVisualizationOptions,
+    OptionsSection,
+    OptionsSectionKey,
+} from 'src/types/options'
 
 type OptionDef = {
     defaultValue: unknown
@@ -59,3 +64,7 @@ export const getOptionsSectionsForVisType = (
             throw new Error('Unknown visType provided')
     }
 }
+
+export const getDefaultOptions = (
+    digitGroupSeparator: CurrentUser['settings']['digitGroupSeparator']
+): EventVisualizationOptions => ({ ...DEFAULT_OPTIONS, digitGroupSeparator })

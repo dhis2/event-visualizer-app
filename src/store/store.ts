@@ -7,14 +7,15 @@ import { savedVisSlice } from './saved-vis-slice'
 import { uiSlice } from './ui-slice'
 import { visUiConfigSlice } from './vis-ui-config-slice'
 import { api } from '@api/api'
+import { getDefaultOptions } from '@modules/options'
 import type { AppCachedData, DataEngine, MetadataStore } from '@types'
 
 export const createStore = (
     engine: DataEngine,
     metadataStore: MetadataStore,
     appCachedData: AppCachedData
-) => {
-    return configureStore({
+) =>
+    configureStore({
         reducer: {
             [api.reducerPath]: api.reducer,
             currentVis: currentVisSlice.reducer,
@@ -32,8 +33,15 @@ export const createStore = (
             })
                 .prepend(listenerMiddleware.middleware)
                 .concat(api.middleware),
+        preloadedState: {
+            visUiConfig: {
+                ...visUiConfigSlice.getInitialState(),
+                options: getDefaultOptions(
+                    appCachedData.currentUser.settings.digitGroupSeparator
+                ),
+            },
+        },
     })
-}
 
 export type AppStore = ReturnType<typeof createStore>
 export type AppDispatch = AppStore['dispatch']
