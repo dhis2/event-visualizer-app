@@ -1,7 +1,6 @@
-import type { FC } from 'react'
+import { type FC } from 'react'
+import { Legend } from '@components/options/fields/legend'
 
-export const LineListLegendSection: FC = () => (
-    <h2 data-test="line-list-legend-section">
-        Options for visType LINE_LIST, section legend
-    </h2>
-)
+export const LineListLegendSection: FC = () => {
+    return <Legend />
+}
