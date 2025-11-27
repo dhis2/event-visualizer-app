@@ -109,10 +109,8 @@ export const visUiConfigSlice = createSlice({
             state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
         getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
             state.conditionsByDimension[dimensionId] || EMPTY_CONDITIONS_OBJECT,
-        getVisUiConfigOptionByKey: (
-            state,
-            key: keyof EventVisualizationOptions
-        ) => state.options[key],
+        getVisUiConfigOption: (state, key: keyof EventVisualizationOptions) =>
+            state.options[key],
     },
 })
 
@@ -133,5 +131,5 @@ export const {
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
-    getVisUiConfigOptionByKey,
+    getVisUiConfigOption,
 } = visUiConfigSlice.selectors

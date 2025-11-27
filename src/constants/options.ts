@@ -11,7 +11,7 @@ export const OPTIONS_SECTION_KEYS_PIVOT_TABLE = [
     'legend',
 ] as const
 
-export const DEFAULT_LEGEND_OPTIONS: EventVisualizationOptions['legend'] = {
+export const DEFAULT_LEGEND_OPTION: EventVisualizationOptions['legend'] = {
     showKey: false,
     strategy: 'BY_DATA_ITEM',
     style: 'FILL',
@@ -24,7 +24,7 @@ export const DEFAULT_OPTIONS: EventVisualizationOptions = {
     colTotals: false,
     completedOnly: false,
     cumulativeValues: false,
-    // Needs to be populated from user settings
+    // Populated from user settings in the preloadedState
     digitGroupSeparator: undefined,
     displayDensity: 'NORMAL',
     fontSize: 'NORMAL',

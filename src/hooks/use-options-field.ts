@@ -1,14 +1,17 @@
 import { useCallback, useMemo } from 'react'
 import { useAppDispatch, useAppSelector } from '@hooks'
-import { setVisUiConfigOption } from '@store/vis-ui-config-slice'
+import {
+    getVisUiConfigOption,
+    setVisUiConfigOption,
+} from '@store/vis-ui-config-slice'
 import type { EventVisualizationOptions } from '@types'
 
 export function useOptionsField<K extends keyof EventVisualizationOptions>(
     key: K
 ) {
     const dispatch = useAppDispatch()
-    const value = useAppSelector(
-        (state) => state.visUiConfig.options[key]
+    const value = useAppSelector((state) =>
+        getVisUiConfigOption(state, key)
     ) as EventVisualizationOptions[K]
     const setValue = useCallback(
         (value: EventVisualizationOptions[K]) => {
