@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-11-27T15:20:07.143Z\n"
-"PO-Revision-Date: 2025-11-27T15:20:07.144Z\n"
+"POT-Creation-Date: 2025-11-27T16:43:06.386Z\n"
+"PO-Revision-Date: 2025-11-27T16:43:06.387Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -231,38 +231,8 @@ msgstr "oldest {{repeatEventIndex}}"
 msgid "most recent {{repeatEventIndex}}"
 msgstr "most recent {{repeatEventIndex}}"
 
-msgid "Digit group separator"
-msgstr "Digit group separator"
-
-msgid "None"
-msgstr "None"
-
-msgid "Space"
-msgstr "Space"
-
-msgid "Comma"
-msgstr "Comma"
-
-msgid "Display density"
-msgstr "Display density"
-
-msgid "Comfortable"
-msgstr "Comfortable"
-
-msgid "Normal"
-msgstr "Normal"
-
-msgid "Compact"
-msgstr "Compact"
-
-msgid "Font size"
-msgstr "Font size"
-
-msgid "Large"
-msgstr "Large"
-
-msgid "Small"
-msgstr "Small"
+msgid "Use a legend for table cell colors"
+msgstr "Use a legend for table cell colors"
 
 msgid "Use pre-defined legend per data item"
 msgstr "Use pre-defined legend per data item"
@@ -285,15 +255,6 @@ msgstr "Select from legends"
 msgid "Loading legends"
 msgstr "Loading legends"
 
-msgid "Use a legend for table cell colors"
-msgstr "Use a legend for table cell colors"
-
-msgid "Display organisation unit hierarchy"
-msgstr "Display organisation unit hierarchy"
-
-msgid "Skip rounding"
-msgstr "Skip rounding"
-
 msgid "Options"
 msgstr "Options"
 
@@ -302,9 +263,6 @@ msgstr "Hide"
 
 msgid "Update"
 msgstr "Update"
-
-msgid "Display"
-msgstr "Display"
 
 msgid "Getting started"
 msgstr "Getting started"

@@ -98,3 +98,7 @@ export type EventVisualizationOptions = Partial<
         }
     }
 >
+
+export type PopulatedLegendOption = NonNullable<
+    EventVisualizationOptions['legend']
+>

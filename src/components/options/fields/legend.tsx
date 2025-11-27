@@ -8,13 +8,12 @@ import {
 import { useCallback, useState, type FC } from 'react'
 import { DEFAULT_LEGEND_OPTION } from '@constants/options'
 import { useOptionsField, useRtkLazyQuery } from '@hooks'
+import { isPopulatedLegendOption } from '@modules/options'
 import type {
-    EventVisualizationOptions,
     LegendSet,
     PickWithFieldFilters,
+    PopulatedLegendOption,
 } from '@types'
-
-type PopulatedLegendOption = NonNullable<EventVisualizationOptions['legend']>
 
 export const Legend: FC = () => {
     const [value, setValue] = useOptionsField('legend')
@@ -25,17 +24,23 @@ export const Legend: FC = () => {
     )
 
     const onLegendSetChange = useCallback(
-        (set) => setValue({ ...value, set } as PopulatedLegendOption),
+        (set: PopulatedLegendOption['set']) =>
+            setValue({
+                ...(value as PopulatedLegendOption),
+                set,
+            }),
         [value, setValue]
     )
 
     const onStrategyChange = useCallback(
-        (strategy) => setValue({ ...value, strategy } as PopulatedLegendOption),
+        (strategy: PopulatedLegendOption['strategy']) =>
+            setValue({ ...(value as PopulatedLegendOption), strategy }),
         [value, setValue]
     )
 
     const onStyleChange = useCallback(
-        (style) => setValue({ ...value, style } as PopulatedLegendOption),
+        (style: PopulatedLegendOption['style']) =>
+            setValue({ ...(value as PopulatedLegendOption), style }),
         [value, setValue]
     )
 
@@ -48,7 +53,7 @@ export const Legend: FC = () => {
                 onChange={onChange}
                 dense
             />
-            {Boolean(value) && (
+            {isPopulatedLegendOption(value) && (
                 <>
                     <LegendDisplayStyle
                         style={value?.style}
@@ -66,8 +71,8 @@ export const Legend: FC = () => {
 }
 
 const LegendDisplayStrategy: FC<{
-    strategy: string
-    onChange: (strategy: string) => void
+    strategy: PopulatedLegendOption['strategy']
+    onChange: (strategy: PopulatedLegendOption['strategy']) => void
 }> = ({ strategy, onChange }) => {
     const strategyOptions = [
         {
@@ -89,7 +94,9 @@ const LegendDisplayStrategy: FC<{
             label={label}
             value={id}
             checked={strategy === id}
-            onChange={({ value }) => onChange(value)}
+            onChange={({ value }) =>
+                onChange(value as PopulatedLegendOption['strategy'])
+            }
             dense
             dataTest={`legend-strategy-option-${id}`}
         />
@@ -97,8 +104,8 @@ const LegendDisplayStrategy: FC<{
 }
 
 const LegendDisplayStyle: FC<{
-    style: string
-    onChange: (style: string) => void
+    style: PopulatedLegendOption['style']
+    onChange: (style: PopulatedLegendOption['style']) => void
 }> = ({ style, onChange }) => {
     const styleOptions = [
         {
@@ -118,7 +125,9 @@ const LegendDisplayStyle: FC<{
             label={label}
             value={id}
             checked={style === id}
-            onChange={({ value }) => onChange(value)}
+            onChange={({ value }) =>
+                onChange(value as PopulatedLegendOption['style'])
+            }
             dense
             dataTest={`legend-style-option-${id}`}
         />
@@ -134,8 +143,8 @@ const fieldsFilter = [
 type LegendSetsData = PickWithFieldFilters<LegendSet, typeof fieldsFilter>
 
 const LegendSet: FC<{
-    set?: { id: string; displayName: string }
-    onChange: (set: { id: string; displayName: string }) => void
+    set?: PopulatedLegendOption['set']
+    onChange: (set: PopulatedLegendOption['set']) => void
 }> = ({ set, onChange }) => {
     const [trigger, { data, isLoading }] = useRtkLazyQuery<LegendSetsData>()
 
@@ -175,21 +184,24 @@ const LegendSet: FC<{
             onChange={({ selected }) =>
                 onChange({
                     id: selected,
-                    displayName: legendSetOptions.find(
-                        (option) => option.value === selected
-                    )?.label,
+                    displayName:
+                        legendSetOptions.find(
+                            (option) => option.value === selected
+                        )?.label ?? '',
                 })
             }
             dataTest={'legend-set-select'}
         >
-            {data?.legendSets.map(({ id, name }) => (
-                <SingleSelectOption
-                    key={id}
-                    value={id}
-                    label={name}
-                    dataTest={'legend-set-option'}
-                />
-            ))}
+            {Array.isArray(data?.legends)
+                ? data.legends.map(({ id, name }) => (
+                      <SingleSelectOption
+                          key={id}
+                          value={id}
+                          label={name}
+                          dataTest={'legend-set-option'}
+                      />
+                  ))
+                : null}
         </SingleSelectField>
     )
 }
