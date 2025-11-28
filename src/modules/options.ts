@@ -11,7 +11,7 @@ import type {
     EventVisualizationOptions,
     OptionsSection,
     OptionsSectionKey,
-    PopulatedLegendOption,
+    LegendOption,
 } from '@types'
 
 type OptionDef = {
@@ -74,7 +74,7 @@ export const getDefaultOptions = (
 
 export const isPopulatedLegendOption = (
     value: EventVisualizationOptions['legend']
-): value is PopulatedLegendOption =>
+): value is LegendOption =>
     typeof value === 'object' &&
     'style' in value &&
     'strategy' in value &&

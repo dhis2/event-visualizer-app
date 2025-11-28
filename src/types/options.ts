@@ -15,6 +15,15 @@ export type OptionsSection = {
     key: OptionsSectionKey
     label: string
 }
+export type LegendOption = Pick<
+    NonNullable<EventVisualization['legend']>,
+    'showKey' | 'strategy' | 'style'
+> & {
+    set?: {
+        id: string
+        displayName: string
+    }
+}
 export type EventVisualizationOptions = Partial<
     Pick<
         EventVisualization,
@@ -87,18 +96,6 @@ export type EventVisualizationOptions = Partial<
     > & {
         /* Use a custom legend field, which is a subset of the
          * fields of the generated type (and a simplified set) */
-        legend: Pick<
-            NonNullable<EventVisualization['legend']>,
-            'showKey' | 'strategy' | 'style'
-        > & {
-            set?: {
-                id: string
-                displayName: string
-            }
-        }
+        legend: LegendOption
     }
->
-
-export type PopulatedLegendOption = NonNullable<
-    EventVisualizationOptions['legend']
 >

@@ -1,4 +1,4 @@
-import type { EventVisualizationOptions, PopulatedLegendOption } from '@types'
+import type { EventVisualizationOptions, LegendOption } from '@types'
 
 export const OPTIONS_SECTION_KEYS_LINE_LIST = [
     'data',
@@ -11,7 +11,7 @@ export const OPTIONS_SECTION_KEYS_PIVOT_TABLE = [
     'legend',
 ] as const
 
-export const DEFAULT_LEGEND_OPTION: PopulatedLegendOption = {
+export const DEFAULT_LEGEND_OPTION: LegendOption = {
     showKey: false,
     strategy: 'BY_DATA_ITEM',
     style: 'FILL',

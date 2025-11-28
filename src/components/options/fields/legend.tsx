@@ -9,11 +9,7 @@ import { useCallback, useState, type FC } from 'react'
 import { DEFAULT_LEGEND_OPTION } from '@constants/options'
 import { useOptionsField, useRtkLazyQuery } from '@hooks'
 import { isPopulatedLegendOption } from '@modules/options'
-import type {
-    LegendSet,
-    PickWithFieldFilters,
-    PopulatedLegendOption,
-} from '@types'
+import type { LegendSet, PickWithFieldFilters, LegendOption } from '@types'
 
 export const Legend: FC = () => {
     const [value, setValue] = useOptionsField('legend')
@@ -24,23 +20,23 @@ export const Legend: FC = () => {
     )
 
     const onLegendSetChange = useCallback(
-        (set: PopulatedLegendOption['set']) =>
+        (set: LegendOption['set']) =>
             setValue({
-                ...(value as PopulatedLegendOption),
+                ...(value as LegendOption),
                 set,
             }),
         [value, setValue]
     )
 
     const onStrategyChange = useCallback(
-        (strategy: PopulatedLegendOption['strategy']) =>
-            setValue({ ...(value as PopulatedLegendOption), strategy }),
+        (strategy: LegendOption['strategy']) =>
+            setValue({ ...(value as LegendOption), strategy }),
         [value, setValue]
     )
 
     const onStyleChange = useCallback(
-        (style: PopulatedLegendOption['style']) =>
-            setValue({ ...(value as PopulatedLegendOption), style }),
+        (style: LegendOption['style']) =>
+            setValue({ ...(value as LegendOption), style }),
         [value, setValue]
     )
 
@@ -56,14 +52,14 @@ export const Legend: FC = () => {
             {isPopulatedLegendOption(value) && (
                 <>
                     <LegendDisplayStyle
-                        style={value?.style}
+                        style={value.style}
                         onChange={onStyleChange}
                     />
                     <LegendDisplayStrategy
-                        strategy={value?.strategy}
+                        strategy={value.strategy}
                         onChange={onStrategyChange}
                     />
-                    <LegendSet set={value?.set} onChange={onLegendSetChange} />
+                    <LegendSet set={value.set} onChange={onLegendSetChange} />
                 </>
             )}
         </>
@@ -71,8 +67,8 @@ export const Legend: FC = () => {
 }
 
 const LegendDisplayStrategy: FC<{
-    strategy: PopulatedLegendOption['strategy']
-    onChange: (strategy: PopulatedLegendOption['strategy']) => void
+    strategy: LegendOption['strategy']
+    onChange: (strategy: LegendOption['strategy']) => void
 }> = ({ strategy, onChange }) => {
     const strategyOptions = [
         {
@@ -95,7 +91,7 @@ const LegendDisplayStrategy: FC<{
             value={id}
             checked={strategy === id}
             onChange={({ value }) =>
-                onChange(value as PopulatedLegendOption['strategy'])
+                onChange(value as LegendOption['strategy'])
             }
             dense
             dataTest={`legend-strategy-option-${id}`}
@@ -104,8 +100,8 @@ const LegendDisplayStrategy: FC<{
 }
 
 const LegendDisplayStyle: FC<{
-    style: PopulatedLegendOption['style']
-    onChange: (style: PopulatedLegendOption['style']) => void
+    style: LegendOption['style']
+    onChange: (style: LegendOption['style']) => void
 }> = ({ style, onChange }) => {
     const styleOptions = [
         {
@@ -125,9 +121,7 @@ const LegendDisplayStyle: FC<{
             label={label}
             value={id}
             checked={style === id}
-            onChange={({ value }) =>
-                onChange(value as PopulatedLegendOption['style'])
-            }
+            onChange={({ value }) => onChange(value as LegendOption['style'])}
             dense
             dataTest={`legend-style-option-${id}`}
         />
@@ -143,8 +137,8 @@ const fieldsFilter = [
 type LegendSetsData = PickWithFieldFilters<LegendSet, typeof fieldsFilter>
 
 const LegendSet: FC<{
-    set?: PopulatedLegendOption['set']
-    onChange: (set: PopulatedLegendOption['set']) => void
+    set?: LegendOption['set']
+    onChange: (set: LegendOption['set']) => void
 }> = ({ set, onChange }) => {
     const [trigger, { data, isLoading }] = useRtkLazyQuery<LegendSetsData>()
 
