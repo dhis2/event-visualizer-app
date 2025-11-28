@@ -20,23 +20,18 @@ export const Legend: FC = () => {
     )
 
     const onLegendSetChange = useCallback(
-        (set: LegendOption['set']) =>
-            setValue({
-                ...(value as LegendOption),
-                set,
-            }),
+        (set: LegendOption['set']) => setValue({ ...value!, set }),
         [value, setValue]
     )
 
     const onStrategyChange = useCallback(
         (strategy: LegendOption['strategy']) =>
-            setValue({ ...(value as LegendOption), strategy }),
+            setValue({ ...value!, strategy }),
         [value, setValue]
     )
 
     const onStyleChange = useCallback(
-        (style: LegendOption['style']) =>
-            setValue({ ...(value as LegendOption), style }),
+        (style: LegendOption['style']) => setValue({ ...value!, style }),
         [value, setValue]
     )
 
