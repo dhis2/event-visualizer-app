@@ -6,6 +6,7 @@ import {
     SingleSelectOption,
 } from '@dhis2/ui'
 import { useCallback, useState, type FC } from 'react'
+import classes from './styles/option.module.css'
 import { DEFAULT_LEGEND_OPTION } from '@constants/options'
 import { useOptionsField, useRtkLazyQuery } from '@hooks'
 import { isPopulatedLegendOption } from '@modules/options'
@@ -19,7 +20,12 @@ export const Legend: FC = () => {
         [setValue]
     )
 
-    const onLegendSetChange = useCallback(
+    const onShowKeyChange = useCallback(
+        (showKey: LegendOption['showKey']) => setValue({ ...value!, showKey }),
+        [value, setValue]
+    )
+
+    const onSetChange = useCallback(
         (set: LegendOption['set']) => setValue({ ...value!, set }),
         [value, setValue]
     )
@@ -36,7 +42,7 @@ export const Legend: FC = () => {
     )
 
     return (
-        <>
+        <div>
             <Checkbox
                 checked={Boolean(value)}
                 label={i18n.t('Use a legend for table cell colors')}
@@ -45,26 +51,30 @@ export const Legend: FC = () => {
                 dense
             />
             {isPopulatedLegendOption(value) && (
-                <>
-                    <LegendDisplayStyle
-                        style={value.style}
-                        onChange={onStyleChange}
-                    />
-                    <LegendDisplayStrategy
+                <div className={classes.optionToggleable}>
+                    <LegendStyle style={value.style} onChange={onStyleChange} />
+                    <LegendStrategy
                         strategy={value.strategy}
+                        set={value.set}
                         onChange={onStrategyChange}
+                        onSetChange={onSetChange}
                     />
-                    <LegendSet set={value.set} onChange={onLegendSetChange} />
-                </>
+                    <LegendShowKey
+                        showKey={value.showKey}
+                        onChange={onShowKeyChange}
+                    />
+                </div>
             )}
-        </>
+        </div>
     )
 }
 
-const LegendDisplayStrategy: FC<{
+const LegendStrategy: FC<{
     strategy: LegendOption['strategy']
+    set: LegendOption['set']
     onChange: (strategy: LegendOption['strategy']) => void
-}> = ({ strategy, onChange }) => {
+    onSetChange: (set: LegendOption['set']) => void
+}> = ({ set, strategy, onChange, onSetChange }) => {
     const strategyOptions = [
         {
             id: 'BY_DATA_ITEM',
@@ -78,23 +88,31 @@ const LegendDisplayStrategy: FC<{
         },
     ]
 
-    return strategyOptions.map(({ id, label }) => (
-        <Radio
-            name="strategy"
-            key={id}
-            label={label}
-            value={id}
-            checked={strategy === id}
-            onChange={({ value }) =>
-                onChange(value as LegendOption['strategy'])
-            }
-            dense
-            dataTest={`legend-strategy-option-${id}`}
-        />
-    ))
+    return (
+        <div>
+            <span className={classes.optionTitle}>{i18n.t('Legend type')}</span>
+            {strategyOptions.map(({ id, label }) => (
+                <Radio
+                    name="strategy"
+                    key={id}
+                    label={label}
+                    value={id}
+                    checked={strategy === id}
+                    onChange={({ value }) =>
+                        onChange(value as LegendOption['strategy'])
+                    }
+                    dense
+                    dataTest={`legend-strategy-option-${id}`}
+                />
+            ))}
+            {strategy === 'FIXED' && (
+                <LegendSet set={set} onChange={onSetChange} />
+            )}
+        </div>
+    )
 }
 
-const LegendDisplayStyle: FC<{
+const LegendStyle: FC<{
     style: LegendOption['style']
     onChange: (style: LegendOption['style']) => void
 }> = ({ style, onChange }) => {
@@ -109,18 +127,27 @@ const LegendDisplayStyle: FC<{
         },
     ]
 
-    return styleOptions.map(({ id, label }) => (
-        <Radio
-            name="style"
-            key={id}
-            label={label}
-            value={id}
-            checked={style === id}
-            onChange={({ value }) => onChange(value as LegendOption['style'])}
-            dense
-            dataTest={`legend-style-option-${id}`}
-        />
-    ))
+    return (
+        <div>
+            <span className={classes.optionTitle}>
+                {i18n.t('Legend style')}
+            </span>
+            {styleOptions.map(({ id, label }) => (
+                <Radio
+                    name="style"
+                    key={id}
+                    label={label}
+                    value={id}
+                    checked={style === id}
+                    onChange={({ value }) =>
+                        onChange(value as LegendOption['style'])
+                    }
+                    dense
+                    dataTest={`legend-style-option-${id}`}
+                />
+            ))}
+        </div>
+    )
 }
 
 const fieldsFilter = [
@@ -129,7 +156,11 @@ const fieldsFilter = [
     'legends[id,displayName~rename(name),startValue,endValue,color]',
 ] as const
 
-type LegendSetsData = PickWithFieldFilters<LegendSet, typeof fieldsFilter>
+type LegendSetItem = PickWithFieldFilters<LegendSet, typeof fieldsFilter> & {
+    id: string
+    name: string
+}
+type LegendSetsData = { legendSets: LegendSetItem[] }
 
 const LegendSet: FC<{
     set?: LegendOption['set']
@@ -161,36 +192,53 @@ const LegendSet: FC<{
 
     console.log('data', data)
     return (
-        <SingleSelectField
-            label={i18n.t('Legend')}
-            selected={set?.id}
-            inputWidth="280px"
-            placeholder={i18n.t('Select from legends')}
-            loadingText={i18n.t('Loading legends')}
-            loading={isLoading}
-            dense
-            onFocus={onFocus}
-            onChange={({ selected }) =>
-                onChange({
-                    id: selected,
-                    displayName:
-                        legendSetOptions.find(
-                            (option) => option.value === selected
-                        )?.label ?? '',
-                })
-            }
-            dataTest={'legend-set-select'}
-        >
-            {Array.isArray(data?.legends)
-                ? data.legends.map(({ id, name }) => (
-                      <SingleSelectOption
-                          key={id}
-                          value={id}
-                          label={name}
-                          dataTest={'legend-set-option'}
-                      />
-                  ))
-                : null}
-        </SingleSelectField>
+        <div className={classes.optionToggleable}>
+            <SingleSelectField
+                label={i18n.t('Legend')}
+                selected={set?.id}
+                inputWidth="280px"
+                placeholder={i18n.t('Select from legends')}
+                loadingText={i18n.t('Loading legends')}
+                loading={isLoading}
+                dense
+                onFocus={onFocus}
+                onChange={({ selected }) =>
+                    onChange({
+                        id: selected,
+                        displayName:
+                            legendSetOptions.find(
+                                (option) => option.value === selected
+                            )?.label ?? '',
+                    })
+                }
+                dataTest={'legend-set-select'}
+            >
+                {Array.isArray(data?.legendSets)
+                    ? data.legendSets.map(({ id, name }) => (
+                          <SingleSelectOption
+                              key={id}
+                              value={id}
+                              label={name}
+                              dataTest={'legend-set-option'}
+                          />
+                      ))
+                    : null}
+            </SingleSelectField>
+        </div>
     )
 }
+
+const LegendShowKey: FC<{
+    showKey: LegendOption['showKey']
+    onChange: (showKey: LegendOption['showKey']) => void
+}> = ({ showKey, onChange }) => (
+    <div>
+        <Checkbox
+            checked={Boolean(showKey)}
+            label={i18n.t('Show legend key')}
+            name="showKey"
+            onChange={({ checked }) => onChange(checked)}
+            dense
+        />
+    </div>
+)
