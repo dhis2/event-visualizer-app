@@ -8,6 +8,7 @@ import { useAppSelector } from '@hooks'
 // Mock the hooks
 vi.mock('@hooks', () => ({
     useAppSelector: vi.fn(),
+    useOptionsField: vi.fn(() => ['value', vi.fn()]),
 }))
 
 const mockUseAppSelector = vi.mocked(useAppSelector)
