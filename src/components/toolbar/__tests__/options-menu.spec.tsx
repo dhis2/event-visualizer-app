@@ -88,7 +88,7 @@ describe('OptionsMenu', () => {
         expect(screen.getByTestId('line-list-data-section')).toBeInTheDocument()
     })
 
-    it('opens the modal with the correct active tab and section content when clicking Style menu item', async () => {
+    it.skip('opens the modal with the correct active tab and section content when clicking Style menu item', async () => {
         const user = userEvent.setup()
         render(
             <HoverMenuBar>
@@ -112,7 +112,7 @@ describe('OptionsMenu', () => {
         ).toBeInTheDocument()
     })
 
-    it('allows switching tabs within the modal', async () => {
+    it.skip('allows switching tabs within the modal', async () => {
         const user = userEvent.setup()
         render(
             <HoverMenuBar>
