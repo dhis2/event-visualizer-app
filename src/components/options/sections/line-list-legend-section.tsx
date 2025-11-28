@@ -1,7 +1,9 @@
-import type { FC } from 'react'
+import { type FC } from 'react'
+import classes from './styles/sections.module.css'
+import { Legend } from '@components/options/fields/legend'
 
 export const LineListLegendSection: FC = () => (
-    <h2 data-test="line-list-legend-section">
-        Options for visType LINE_LIST, section legend
-    </h2>
+    <div className={classes.section} data-test="line-list-legend-section">
+        <Legend />
+    </div>
 )

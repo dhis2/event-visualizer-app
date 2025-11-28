@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-11-25T14:34:25.675Z\n"
-"PO-Revision-Date: 2025-11-25T14:34:25.676Z\n"
+"POT-Creation-Date: 2025-11-28T15:58:27.178Z\n"
+"PO-Revision-Date: 2025-11-28T15:58:27.179Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -231,6 +231,75 @@ msgstr "oldest {{repeatEventIndex}}"
 msgid "most recent {{repeatEventIndex}}"
 msgstr "most recent {{repeatEventIndex}}"
 
+msgid "Digit group separator"
+msgstr "Digit group separator"
+
+msgid "None"
+msgstr "None"
+
+msgid "Space"
+msgstr "Space"
+
+msgid "Comma"
+msgstr "Comma"
+
+msgid "Display density"
+msgstr "Display density"
+
+msgid "Comfortable"
+msgstr "Comfortable"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Compact"
+msgstr "Compact"
+
+msgid "Font size"
+msgstr "Font size"
+
+msgid "Large"
+msgstr "Large"
+
+msgid "Small"
+msgstr "Small"
+
+msgid "Use a legend for table cell colors"
+msgstr "Use a legend for table cell colors"
+
+msgid "Use pre-defined legend per data item"
+msgstr "Use pre-defined legend per data item"
+
+msgid "Choose a single legend for the entire visualization"
+msgstr "Choose a single legend for the entire visualization"
+
+msgid "Legend type"
+msgstr "Legend type"
+
+msgid "Legend changes background color"
+msgstr "Legend changes background color"
+
+msgid "Legend changes text color"
+msgstr "Legend changes text color"
+
+msgid "Legend style"
+msgstr "Legend style"
+
+msgid "Legend"
+msgstr "Legend"
+
+msgid "Select from legends"
+msgstr "Select from legends"
+
+msgid "Loading legends"
+msgstr "Loading legends"
+
+msgid "Display organisation unit hierarchy"
+msgstr "Display organisation unit hierarchy"
+
+msgid "Skip rounding"
+msgstr "Skip rounding"
+
 msgid "Options"
 msgstr "Options"
 
@@ -239,6 +308,9 @@ msgstr "Hide"
 
 msgid "Update"
 msgstr "Update"
+
+msgid "Display"
+msgstr "Display"
 
 msgid "Getting started"
 msgstr "Getting started"
@@ -427,9 +499,6 @@ msgstr "Data"
 
 msgid "Style"
 msgstr "Style"
-
-msgid "Legend"
-msgstr "Legend"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

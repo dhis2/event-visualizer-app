@@ -114,8 +114,8 @@ const providerDataTransformation = ({
             uiLocale: currentUser.settings?.keyUiLocale ?? 'en',
             displayProperty: currentUser.settings?.keyAnalysisDisplayProperty,
             displayNameProperty,
-            digitGroupSeparator: currentUser.settings
-                ?.keyAnalysisDigitGroupSeparator as CurrentVisualization['digitGroupSeparator'],
+            digitGroupSeparator:
+                systemSettings?.keyAnalysisDigitGroupSeparator as CurrentVisualization['digitGroupSeparator'],
         },
     }
     // filter only the relevant settings to avoid storing all in Redux
