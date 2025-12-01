@@ -5,11 +5,7 @@ export const OPTIONS_SECTION_KEYS_LINE_LIST = [
     'style',
     'legend',
 ] as const
-export const OPTIONS_SECTION_KEYS_PIVOT_TABLE = [
-    'data',
-    'style',
-    'legend',
-] as const
+export const OPTIONS_SECTION_KEYS_PIVOT_TABLE = ['data', 'style'] as const
 
 export const DEFAULT_LEGEND_OPTION: LegendOption = {
     showKey: false,
@@ -28,6 +24,8 @@ export const DEFAULT_OPTIONS: EventVisualizationOptions = {
     digitGroupSeparator: undefined,
     displayDensity: 'NORMAL',
     fontSize: 'NORMAL',
+    //    hideEmptyColumns: false,
+    hideNaData: false,
     hideEmptyRowItems: 'NONE',
     hideEmptyRows: false,
     hideSubtitle: false,

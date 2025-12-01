@@ -3,7 +3,6 @@ import { LineListDataSection } from './sections/line-list-data-section'
 import { LineListLegendSection } from './sections/line-list-legend-section'
 import { LineListStyleSection } from './sections/line-list-style-section'
 import { PivotTableDataSection } from './sections/pivot-table-data-section'
-import { PivotTableLegendSection } from './sections/pivot-table-legend-section'
 import { PivotTableStyleSection } from './sections/pivot-table-style-section'
 import type { VisualizationType } from '@types'
 import type {
@@ -33,8 +32,6 @@ export const OptionsSectionContent: FC<OptionsSectionContentProps> = ({
         switch (sectionKey as OptionsSectionKeyPivotTable) {
             case 'data':
                 return <PivotTableDataSection />
-            case 'legend':
-                return <PivotTableLegendSection />
             case 'style':
                 return <PivotTableStyleSection />
         }
