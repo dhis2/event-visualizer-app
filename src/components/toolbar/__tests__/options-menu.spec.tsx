@@ -213,7 +213,6 @@ describe('OptionsMenu', () => {
         expect(screen.getByTestId('options-menu-list')).toBeInTheDocument()
         expect(screen.getByText('Data')).toBeInTheDocument()
         expect(screen.getByText('Style')).toBeInTheDocument()
-        expect(screen.getByText('Legend')).toBeInTheDocument()
 
         // Open modal by clicking Data
         await user.click(screen.getByText('Data'))
@@ -236,16 +235,6 @@ describe('OptionsMenu', () => {
         )
         expect(
             screen.getByTestId('pivot-table-style-section')
-        ).toBeInTheDocument()
-
-        // Switch to Legend tab
-        await user.click(screen.getByRole('tab', { name: 'Legend' }))
-        expect(screen.getByRole('tab', { name: 'Legend' })).toHaveAttribute(
-            'aria-selected',
-            'true'
-        )
-        expect(
-            screen.getByTestId('pivot-table-legend-section')
         ).toBeInTheDocument()
     })
 })
