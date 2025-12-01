@@ -58,22 +58,10 @@ type OrgUnitLevelsData = Array<
         typeof orgUnitLevelsFields
     >
 >
-type FetchedSystemSettings = Pick<
-    SystemSettings,
-    | 'keyDateFormat'
-    | 'keyAnalysisRelativePeriod'
-    | 'keyAnalysisDigitGroupSeparator'
-    | 'keyHideDailyPeriods'
-    | 'keyHideWeeklyPeriods'
-    | 'keyHideBiWeeklyPeriods'
-    | 'keyHideMonthlyPeriods'
-    | 'keyHideBiMonthlyPeriods'
-    | 'keyIgnoreAnalyticsApprovalYearThreshold'
->
 
 type AppCachedData = {
     currentUser: CurrentUserData
-    systemSettings: FetchedSystemSettings
+    systemSettings: SystemSettings
     rootOrgUnits: {
         organisationUnits: RootOrgUnitsData
     }
@@ -87,15 +75,15 @@ type TransformedCurrentUserSettings = {
     displayNameProperty: DisplayNameProperty
 }
 type TransformedSystemSettings = {
-    dateFormat: FetchedSystemSettings['keyDateFormat']
-    relativePeriod: FetchedSystemSettings['keyAnalysisRelativePeriod']
-    digitGroupSeparator: FetchedSystemSettings['keyAnalysisDigitGroupSeparator']
-    hideDailyPeriods: FetchedSystemSettings['keyHideDailyPeriods']
-    hideWeeklyPeriods: FetchedSystemSettings['keyHideWeeklyPeriods']
-    hideBiWeeklyPeriods: FetchedSystemSettings['keyHideBiWeeklyPeriods']
-    hideMonthlyPeriods: FetchedSystemSettings['keyHideMonthlyPeriods']
-    hideBiMonthlyPeriods: FetchedSystemSettings['keyHideBiMonthlyPeriods']
-    ignoreApprovalYearThreshold: FetchedSystemSettings['keyIgnoreAnalyticsApprovalYearThreshold']
+    dateFormat: SystemSettings['keyDateFormat']
+    relativePeriod: SystemSettings['keyAnalysisRelativePeriod']
+    digitGroupSeparator: SystemSettings['keyAnalysisDigitGroupSeparator']
+    hideDailyPeriods: SystemSettings['keyHideDailyPeriods']
+    hideWeeklyPeriods: SystemSettings['keyHideWeeklyPeriods']
+    hideBiWeeklyPeriods: SystemSettings['keyHideBiWeeklyPeriods']
+    hideMonthlyPeriods: SystemSettings['keyHideMonthlyPeriods']
+    hideBiMonthlyPeriods: SystemSettings['keyHideBiMonthlyPeriods']
+    ignoreApprovalYearThreshold: SystemSettings['keyIgnoreAnalyticsApprovalYearThreshold']
 }
 export type TransformedAppCachedData = {
     currentUser: CurrentUserData & { settings: TransformedCurrentUserSettings }
