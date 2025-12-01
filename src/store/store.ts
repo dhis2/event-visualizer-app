@@ -10,6 +10,15 @@ import { api } from '@api/api'
 import { getDefaultOptions } from '@modules/options'
 import type { AppCachedData, DataEngine, MetadataStore } from '@types'
 
+export const getPreloadedState = (appCachedData: AppCachedData) => ({
+    visUiConfig: {
+        ...visUiConfigSlice.getInitialState(),
+        options: getDefaultOptions(
+            appCachedData.currentUser.settings.digitGroupSeparator
+        ),
+    },
+})
+
 export const createStore = (
     engine: DataEngine,
     metadataStore: MetadataStore,
@@ -33,14 +42,7 @@ export const createStore = (
             })
                 .prepend(listenerMiddleware.middleware)
                 .concat(api.middleware),
-        preloadedState: {
-            visUiConfig: {
-                ...visUiConfigSlice.getInitialState(),
-                options: getDefaultOptions(
-                    appCachedData.currentUser.settings.digitGroupSeparator
-                ),
-            },
-        },
+        preloadedState: getPreloadedState(appCachedData),
     })
 
 export type AppStore = ReturnType<typeof createStore>
