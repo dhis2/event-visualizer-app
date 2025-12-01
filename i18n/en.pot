@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-11-28T15:58:27.178Z\n"
-"PO-Revision-Date: 2025-11-28T15:58:27.179Z\n"
+"POT-Creation-Date: 2025-12-01T14:01:45.928Z\n"
+"PO-Revision-Date: 2025-12-01T14:01:45.929Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -231,6 +231,12 @@ msgstr "oldest {{repeatEventIndex}}"
 msgid "most recent {{repeatEventIndex}}"
 msgstr "most recent {{repeatEventIndex}}"
 
+msgid "Column sub-totals"
+msgstr "Column sub-totals"
+
+msgid "Column totals"
+msgstr "Column totals"
+
 msgid "Digit group separator"
 msgstr "Digit group separator"
 
@@ -264,6 +270,15 @@ msgstr "Large"
 msgid "Small"
 msgstr "Small"
 
+msgid "Hide empty columns"
+msgstr "Hide empty columns"
+
+msgid "Hide empty rows"
+msgstr "Hide empty rows"
+
+msgid "Hide N/A data"
+msgstr "Hide N/A data"
+
 msgid "Use a legend for table cell colors"
 msgstr "Use a legend for table cell colors"
 
@@ -294,11 +309,23 @@ msgstr "Select from legends"
 msgid "Loading legends"
 msgstr "Loading legends"
 
+msgid "Row sub-totals"
+msgstr "Row sub-totals"
+
+msgid "Row totals"
+msgstr "Row totals"
+
 msgid "Display organisation unit hierarchy"
 msgstr "Display organisation unit hierarchy"
 
 msgid "Skip rounding"
 msgstr "Skip rounding"
+
+msgid "Add a subtitle"
+msgstr "Add a subtitle"
+
+msgid "Add a title"
+msgstr "Add a title"
 
 msgid "Options"
 msgstr "Options"
@@ -311,6 +338,21 @@ msgstr "Update"
 
 msgid "Display"
 msgstr "Display"
+
+msgid "Totals"
+msgstr "Totals"
+
+msgid "Empty data"
+msgstr "Empty data"
+
+msgid "Table title"
+msgstr "Table title"
+
+msgid "Table subtitle"
+msgstr "Table subtitle"
+
+msgid "Labels"
+msgstr "Labels"
 
 msgid "Getting started"
 msgstr "Getting started"
