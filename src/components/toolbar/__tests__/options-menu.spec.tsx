@@ -1,28 +1,44 @@
-import { screen, waitFor, render } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { vi, describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { OptionsMenu } from '../menu-bar/options-menu'
 import { HoverMenuBar } from '@dhis2/analytics'
-import { useAppSelector } from '@hooks'
+import { getDefaultOptions } from '@modules/options'
+import { renderWithAppWrapper } from '@test-utils/app-wrapper'
 
-// Mock the hooks
-vi.mock('@hooks', () => ({
-    useAppSelector: vi.fn(),
-}))
+const defaultPartialStore = {
+    preloadedState: {
+        visUiConfig: {
+            visualizationType: 'LINE_LIST' as const,
+            outputType: 'EVENT' as const,
+            layout: { columns: [], filters: [], rows: [] },
+            itemsByDimension: {},
+            conditionsByDimension: {},
+            options: getDefaultOptions('COMMA'),
+        },
+    },
+}
 
-const mockUseAppSelector = vi.mocked(useAppSelector)
+const pivotTablePartialStore = {
+    preloadedState: {
+        visUiConfig: {
+            visualizationType: 'PIVOT_TABLE' as const,
+            outputType: 'EVENT' as const,
+            layout: { columns: [], filters: [], rows: [] },
+            itemsByDimension: {},
+            conditionsByDimension: {},
+            options: getDefaultOptions('COMMA'),
+        },
+    },
+}
 
 describe('OptionsMenu', () => {
-    beforeEach(() => {
-        vi.clearAllMocks()
-        mockUseAppSelector.mockReturnValue('LINE_LIST')
-    })
-
-    it('renders the options menu trigger', () => {
-        render(
+    it('renders the options menu trigger', async () => {
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         expect(screen.getByText('Options')).toBeInTheDocument()
@@ -30,10 +46,11 @@ describe('OptionsMenu', () => {
 
     it('opens the menu when the options trigger is clicked', async () => {
         const user = userEvent.setup()
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         await user.click(screen.getByText('Options'))
@@ -46,10 +63,11 @@ describe('OptionsMenu', () => {
 
     it('opens the modal when a menu item is clicked', async () => {
         const user = userEvent.setup()
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         // Open the menu
@@ -67,10 +85,11 @@ describe('OptionsMenu', () => {
 
     it('opens the modal with the correct active tab and section content when clicking Data menu item', async () => {
         const user = userEvent.setup()
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         // Open the menu
@@ -89,10 +108,11 @@ describe('OptionsMenu', () => {
 
     it('opens the modal with the correct active tab and section content when clicking Style menu item', async () => {
         const user = userEvent.setup()
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         // Open the menu
@@ -113,10 +133,11 @@ describe('OptionsMenu', () => {
 
     it('allows switching tabs within the modal', async () => {
         const user = userEvent.setup()
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         // Open menu and click Data
@@ -154,10 +175,11 @@ describe('OptionsMenu', () => {
 
     it('closes the modal when cancel button is clicked', async () => {
         const user = userEvent.setup()
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         // Open menu and modal
@@ -178,13 +200,11 @@ describe('OptionsMenu', () => {
     it('works with different visualization types', async () => {
         const user = userEvent.setup()
 
-        // Test with PIVOT_TABLE
-        mockUseAppSelector.mockReturnValue('PIVOT_TABLE')
-
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: pivotTablePartialStore }
         )
 
         // Open menu

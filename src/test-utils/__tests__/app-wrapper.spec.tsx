@@ -130,6 +130,80 @@ describe('renderHookWithAppWrapper', () => {
         expect(result.current.interpretationId).toBe('test-interp-456')
     })
 
+    it('should use only custom reducer plus API reducer when partialStore.reducer is provided', async () => {
+        const customReducer = {
+            navigation: navigationSlice.reducer,
+        }
+        const { store } = await renderHookWithAppWrapper(
+            () => useAppSelector((state) => state),
+            {
+                partialStore: {
+                    reducer: customReducer,
+                    preloadedState: {},
+                },
+            }
+        )
+
+        const state = store.getState()
+        // Should have the custom navigation reducer
+        expect(state.navigation).toBeDefined()
+        // Should have the API reducer
+        expect(state.api).toBeDefined()
+        // Should not have other app reducers since only partial reducer is provided
+        expect(state.visUiConfig).toBeUndefined()
+        expect(state.currentVis).toBeUndefined()
+    })
+
+    it('should use full app reducer when partialStore.reducer is not provided', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => useAppSelector((state) => state),
+            {
+                partialStore: {
+                    preloadedState: {},
+                },
+            }
+        )
+
+        const state = store.getState()
+        // Should have all full app reducers
+        expect(state.api).toBeDefined()
+        expect(state.visUiConfig).toBeDefined()
+        expect(state.currentVis).toBeDefined()
+        expect(state.navigation).toBeDefined()
+        expect(state.loader).toBeDefined()
+        expect(state.ui).toBeDefined()
+        expect(state.savedVis).toBeDefined()
+    })
+
+    it('should apply default preloaded state and merge with custom preloadedState', async () => {
+        const customPreloadedState = {
+            navigation: {
+                visualizationId: 'custom-viz',
+                interpretationId: null,
+            },
+        }
+
+        const { result } = await renderHookWithAppWrapper(
+            () => ({
+                navigation: useAppSelector((state) => state.navigation),
+                visUiConfig: useAppSelector((state) => state.visUiConfig),
+            }),
+            {
+                partialStore: {
+                    preloadedState: customPreloadedState,
+                },
+            }
+        )
+
+        // Custom preloaded state should be applied
+        expect(result.current.navigation.visualizationId).toBe('custom-viz')
+        // Default preloaded state should be applied (visUiConfig with options)
+        expect(result.current.visUiConfig.options).toBeDefined()
+        expect(result.current.visUiConfig.options.digitGroupSeparator).toBe(
+            'SPACE'
+        )
+    })
+
     it('should allow RTK Query with mocked queryData', async () => {
         const testData = { a: 'a', b: 'b' }
         const { result } = await renderHookWithAppWrapper(

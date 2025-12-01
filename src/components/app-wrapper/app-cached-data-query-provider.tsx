@@ -3,7 +3,6 @@ import { freeze } from '@reduxjs/toolkit'
 import type { FC, ReactNode } from 'react'
 import { CachedDataQueryProvider, useCachedDataQuery } from '@dhis2/analytics'
 import type {
-    CurrentVisualization,
     MeDto,
     OrganisationUnit,
     OrganisationUnitLevel,
@@ -17,17 +16,6 @@ const currentUserFields = [
     'displayName~rename(name)',
     'settings',
     'authorities',
-] as const
-const systemSettingsKeys = [
-    'keyDateFormat',
-    'keyAnalysisRelativePeriod',
-    'keyAnalysisDigitGroupSeparator',
-    'keyHideDailyPeriods',
-    'keyHideWeeklyPeriods',
-    'keyHideBiWeeklyPeriods',
-    'keyHideMonthlyPeriods',
-    'keyHideBiMonthlyPeriods',
-    'keyIgnoreAnalyticsApprovalYearThreshold',
 ] as const
 const rootOrgUnitsFields = ['id', 'displayName', 'name', 'path'] as const
 const orgUnitLevelsFields = ['id', 'level', 'displayName', 'name'] as const
@@ -85,14 +73,21 @@ type TransformedCurrentUserSettings = {
     uiLocale: string
     displayProperty: string | undefined
     displayNameProperty: DisplayNameProperty
-    digitGroupSeparator: CurrentVisualization['digitGroupSeparator']
+}
+type TransformedSystemSettings = {
+    dateFormat: SystemSettings['keyDateFormat']
+    relativePeriod: SystemSettings['keyAnalysisRelativePeriod']
+    digitGroupSeparator: SystemSettings['keyAnalysisDigitGroupSeparator']
+    hideDailyPeriods: SystemSettings['keyHideDailyPeriods']
+    hideWeeklyPeriods: SystemSettings['keyHideWeeklyPeriods']
+    hideBiWeeklyPeriods: SystemSettings['keyHideBiWeeklyPeriods']
+    hideMonthlyPeriods: SystemSettings['keyHideMonthlyPeriods']
+    hideBiMonthlyPeriods: SystemSettings['keyHideBiMonthlyPeriods']
+    ignoreApprovalYearThreshold: SystemSettings['keyIgnoreAnalyticsApprovalYearThreshold']
 }
 export type TransformedAppCachedData = {
     currentUser: CurrentUserData & { settings: TransformedCurrentUserSettings }
-    systemSettings: PickWithFieldFilters<
-        SystemSettings,
-        typeof systemSettingsKeys
-    >
+    systemSettings: TransformedSystemSettings
     rootOrgUnits: RootOrgUnitsData
     orgUnitLevels: OrgUnitLevelsData
 }
@@ -114,15 +109,20 @@ const providerDataTransformation = ({
             uiLocale: currentUser.settings?.keyUiLocale ?? 'en',
             displayProperty: currentUser.settings?.keyAnalysisDisplayProperty,
             displayNameProperty,
-            digitGroupSeparator: currentUser.settings
-                ?.keyAnalysisDigitGroupSeparator as CurrentVisualization['digitGroupSeparator'],
         },
     }
-    // filter only the relevant settings to avoid storing all in Redux
-    const transformedSystemSettings = systemSettingsKeys.reduce((obj, key) => {
-        obj[key] = systemSettings[key]
-        return obj
-    }, {}) as TransformedAppCachedData['systemSettings']
+    const transformedSystemSettings: TransformedSystemSettings = {
+        dateFormat: systemSettings.keyDateFormat,
+        relativePeriod: systemSettings.keyAnalysisRelativePeriod,
+        digitGroupSeparator: systemSettings.keyAnalysisDigitGroupSeparator,
+        hideDailyPeriods: systemSettings.keyHideDailyPeriods,
+        hideWeeklyPeriods: systemSettings.keyHideWeeklyPeriods,
+        hideBiWeeklyPeriods: systemSettings.keyHideBiWeeklyPeriods,
+        hideMonthlyPeriods: systemSettings.keyHideMonthlyPeriods,
+        hideBiMonthlyPeriods: systemSettings.keyHideBiMonthlyPeriods,
+        ignoreApprovalYearThreshold:
+            systemSettings.keyIgnoreAnalyticsApprovalYearThreshold,
+    }
     const transformedRootOrgUnits = rootOrgUnits.organisationUnits
     const transformedOrgUnitLevels = orgUnitLevels.organisationUnitLevels
 
@@ -152,11 +152,10 @@ export const useCurrentUser = (): TransformedAppCachedData['currentUser'] => {
     const { currentUser } = useAppCachedDataQuery()
     return currentUser
 }
-export const useSystemSettings =
-    (): TransformedAppCachedData['systemSettings'] => {
-        const { systemSettings } = useAppCachedDataQuery()
-        return systemSettings
-    }
+export const useSystemSettings = (): TransformedSystemSettings => {
+    const { systemSettings } = useAppCachedDataQuery()
+    return systemSettings
+}
 export const useRootOrgUnits = (): TransformedAppCachedData['rootOrgUnits'] => {
     const { rootOrgUnits } = useAppCachedDataQuery()
     return rootOrgUnits

@@ -4,6 +4,7 @@ import { CssVariables } from '@dhis2/ui'
 import type { ReducersMapObject } from '@reduxjs/toolkit'
 import { configureStore } from '@reduxjs/toolkit'
 import { render, renderHook, waitFor } from '@testing-library/react'
+import deepmerge from 'deepmerge'
 import {
     useMemo,
     type FC,
@@ -24,8 +25,17 @@ import {
 import type { InitialMetadataItems } from '@components/app-wrapper/metadata-helpers/types'
 import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider'
 import { useMetadataStore } from '@hooks'
+import { currentVisSlice } from '@store/current-vis-slice'
+import { loaderSlice } from '@store/loader-slice'
 import { listenerMiddleware } from '@store/middleware-listener'
-import { createStore as createDefaultStore } from '@store/store'
+import { navigationSlice } from '@store/navigation-slice'
+import { savedVisSlice } from '@store/saved-vis-slice'
+import {
+    createStore as createDefaultStore,
+    getPreloadedState as getDefaultPreloadedState,
+} from '@store/store'
+import { uiSlice } from '@store/ui-slice'
+import { visUiConfigSlice } from '@store/vis-ui-config-slice'
 import type {
     RootState,
     AppCachedData,
@@ -61,8 +71,8 @@ export type MockOptions = {
      * production store is used instead.
      */
     partialStore?: {
-        /** Partial reducer map to merge with the API reducer */
-        reducer: Partial<ReducersMapObject<RootState>>
+        /** Partial reducer map to merge with the API reducer. If not provided, the full app reducer is used. */
+        reducer?: Partial<ReducersMapObject<RootState>>
         /** Initial state to preload into the store */
         preloadedState: Partial<RootState>
     }
@@ -82,6 +92,15 @@ type CreatePartialOrDefaultStoreParams = CreateStoreBaseParams & {
     partialStore?: MockOptions['partialStore']
 }
 
+const fullAppReducer = {
+    currentVis: currentVisSlice.reducer,
+    loader: loaderSlice.reducer,
+    navigation: navigationSlice.reducer,
+    ui: uiSlice.reducer,
+    visUiConfig: visUiConfigSlice.reducer,
+    savedVis: savedVisSlice.reducer,
+}
+
 const createPartialStore = ({
     partialStore,
     engine,
@@ -91,9 +110,12 @@ const createPartialStore = ({
     return configureStore({
         reducer: {
             [api.reducerPath]: api.reducer,
-            ...partialStore.reducer,
+            ...(partialStore.reducer ?? fullAppReducer),
         } as ReducersMapObject<RootState>,
-        preloadedState: partialStore.preloadedState,
+        preloadedState: deepmerge(
+            getDefaultPreloadedState(appCachedData),
+            partialStore.preloadedState
+        ),
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({
                 thunk: {

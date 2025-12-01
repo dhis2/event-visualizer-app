@@ -1,15 +1,18 @@
 import i18n from '@dhis2/d2-i18n'
+import { isPopulatedString } from '@components/app-wrapper/metadata-helpers/type-guards'
 import {
     DEFAULT_OPTIONS,
     OPTIONS_SECTION_KEYS_LINE_LIST,
     OPTIONS_SECTION_KEYS_PIVOT_TABLE,
 } from '@constants/options'
-import type { CurrentUser, VisualizationType } from '@types'
 import type {
+    VisualizationType,
     EventVisualizationOptions,
     OptionsSection,
     OptionsSectionKey,
-} from 'src/types/options'
+    LegendOption,
+    AppCachedData,
+} from '@types'
 
 type OptionDef = {
     defaultValue: unknown
@@ -66,5 +69,14 @@ export const getOptionsSectionsForVisType = (
 }
 
 export const getDefaultOptions = (
-    digitGroupSeparator: CurrentUser['settings']['digitGroupSeparator']
+    digitGroupSeparator: AppCachedData['systemSettings']['digitGroupSeparator']
 ): EventVisualizationOptions => ({ ...DEFAULT_OPTIONS, digitGroupSeparator })
+
+export const isPopulatedLegendOption = (
+    value: EventVisualizationOptions['legend']
+): value is LegendOption =>
+    typeof value === 'object' &&
+    'style' in value &&
+    'strategy' in value &&
+    isPopulatedString(value.strategy) &&
+    isPopulatedString(value.style)

@@ -30,6 +30,9 @@ export interface VisUiConfigState {
 
 export const initialState: VisUiConfigState = {
     visualizationType: 'LINE_LIST',
+    /* Options will be overridden by a computed preloaded state that takes
+     * the `digitGroupSeparator` user setting into account */
+    options: DEFAULT_OPTIONS,
     outputType: 'EVENT',
     layout: {
         columns: [],
@@ -38,9 +41,6 @@ export const initialState: VisUiConfigState = {
     },
     itemsByDimension: {},
     conditionsByDimension: {},
-    /* Options will be overridden by a computed preloaded state that takes
-     * the `digitGroupSeparator` user setting into account */
-    options: DEFAULT_OPTIONS,
 }
 
 type SetOptionPayload = {
@@ -71,6 +71,15 @@ export const visUiConfigSlice = createSlice({
         ) => {
             state.layout = action.payload
         },
+        setVisUiConfigOption: (
+            state,
+            action: PayloadAction<SetOptionPayload>
+        ) => {
+            state.options = {
+                ...state.options,
+                [action.payload.key]: action.payload.value,
+            }
+        },
         setVisUiConfigOutputType: (
             state,
             action: PayloadAction<OutputType>
@@ -91,26 +100,17 @@ export const visUiConfigSlice = createSlice({
         ) => {
             state.conditionsByDimension = action.payload
         },
-        setVisUiConfigOption: (
-            state,
-            action: PayloadAction<SetOptionPayload>
-        ) => {
-            state.options = {
-                ...state.options,
-                [action.payload.key]: action.payload.value,
-            }
-        },
     },
     selectors: {
         getVisUiConfigVisualizationType: (state) => state.visualizationType,
         getVisUiConfigLayout: (state) => state.layout,
+        getVisUiConfigOption: (state, key: keyof EventVisualizationOptions) =>
+            state.options[key],
         getVisUiConfigOutputType: (state) => state.outputType,
         getVisUiConfigItemsByDimension: (state, dimensionId: string) =>
             state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
         getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
             state.conditionsByDimension[dimensionId] || EMPTY_CONDITIONS_OBJECT,
-        getVisUiConfigOption: (state, key: keyof EventVisualizationOptions) =>
-            state.options[key],
     },
 })
 
@@ -119,17 +119,17 @@ export const {
     setVisUiConfig,
     setVisUiConfigVisualizationType,
     setVisUiConfigLayout,
+    setVisUiConfigOption,
     setVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
-    setVisUiConfigOption,
 } = visUiConfigSlice.actions
 
 export const {
     getVisUiConfigVisualizationType,
     getVisUiConfigLayout,
+    getVisUiConfigOption,
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
-    getVisUiConfigOption,
 } = visUiConfigSlice.selectors
