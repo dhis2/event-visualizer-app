@@ -12,7 +12,7 @@ type SelectBaseOptionProps = {
 export const SelectBaseOption: FC<SelectBaseOptionProps> = ({
     option,
     label,
-    dataTest,
+    dataTest = option.name,
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 
@@ -33,7 +33,7 @@ export const SelectBaseOption: FC<SelectBaseOptionProps> = ({
                         key={value}
                         value={value}
                         label={label}
-                        dataTest={`${dataTest}-option`}
+                        dataTest={`${dataTest}-option-${value}`}
                     />
                 ))}
             </SingleSelectField>

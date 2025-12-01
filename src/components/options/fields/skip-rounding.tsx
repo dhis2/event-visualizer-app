@@ -8,6 +8,5 @@ export const SkipRounding: FC = () => (
         option={{
             name: 'skipRounding',
         }}
-        dataTest="skip-rounding"
     />
 )

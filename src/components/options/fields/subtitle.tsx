@@ -4,13 +4,9 @@ import { TextBaseOption } from './text-base-option'
 
 type SubtitleProps = {
     label: string
-    dataTest?: string
 }
 
-export const Subtitle: FC<SubtitleProps> = ({
-    dataTest = 'visualization-option-subtitle',
-    label,
-}) => (
+export const Subtitle: FC<SubtitleProps> = ({ label }) => (
     <TextBaseOption
         type="text"
         width="280px"
@@ -19,6 +15,5 @@ export const Subtitle: FC<SubtitleProps> = ({
         option={{
             name: 'subtitle',
         }}
-        dataTest={dataTest}
     />
 )

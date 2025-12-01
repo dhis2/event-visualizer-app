@@ -14,7 +14,7 @@ export const CheckboxBaseOption: FC<CheckboxBaseOptionProps> = ({
     option,
     label,
     inverted,
-    dataTest,
+    dataTest = option.name,
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 

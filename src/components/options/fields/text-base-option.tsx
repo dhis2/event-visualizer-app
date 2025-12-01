@@ -20,7 +20,7 @@ export const TextBaseOption: FC<TextBaseOptionProps> = ({
     placeholder,
     width,
     disabled,
-    dataTest,
+    dataTest = option.name,
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 
@@ -33,7 +33,7 @@ export const TextBaseOption: FC<TextBaseOptionProps> = ({
                 label={label}
                 onChange={({ value }) => onChange(value)}
                 name={option.name}
-                value={String(value)}
+                value={value ? String(value) : ''}
                 placeholder={placeholder}
                 inputWidth={width}
                 dense

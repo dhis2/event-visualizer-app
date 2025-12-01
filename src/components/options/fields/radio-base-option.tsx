@@ -10,7 +10,7 @@ type RadioBaseOptionProps = {
 
 export const RadioBaseOption: FC<RadioBaseOptionProps> = ({
     option,
-    dataTest,
+    dataTest = option.name,
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 

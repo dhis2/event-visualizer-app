@@ -102,7 +102,6 @@ const LegendStrategy: FC<{
                         onChange(value as LegendOption['strategy'])
                     }
                     dense
-                    dataTest={`legend-strategy-option-${id}`}
                 />
             ))}
             {strategy === 'FIXED' && (
@@ -143,7 +142,6 @@ const LegendStyle: FC<{
                         onChange(value as LegendOption['style'])
                     }
                     dense
-                    dataTest={`legend-style-option-${id}`}
                 />
             ))}
         </div>
@@ -210,7 +208,6 @@ const LegendSet: FC<{
                             )?.name ?? '',
                     })
                 }
-                dataTest={'legend-set-select'}
             >
                 {Array.isArray(legendSetOptions)
                     ? legendSetOptions.map(({ id, name }) => (
@@ -218,7 +215,6 @@ const LegendSet: FC<{
                               key={id}
                               value={id}
                               label={name}
-                              dataTest={'legend-set-option'}
                           />
                       ))
                     : null}
