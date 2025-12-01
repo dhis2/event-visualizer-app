@@ -5,7 +5,7 @@ import {
     SingleSelectField,
     SingleSelectOption,
 } from '@dhis2/ui'
-import { useCallback, useState, type FC } from 'react'
+import { useCallback, useMemo, type FC } from 'react'
 import classes from './styles/option.module.css'
 import { DEFAULT_LEGEND_OPTION } from '@constants/options'
 import { useOptionsField, useRtkLazyQuery } from '@hooks'
@@ -168,18 +168,24 @@ const LegendSet: FC<{
 }> = ({ set, onChange }) => {
     const [trigger, { data, isLoading }] = useRtkLazyQuery<LegendSetsData>()
 
-    const [legendSetOptions, setLegendSetOptions] = useState(
-        [] as { value: string; label: string }[]
-    )
+    const legendSetOptions: LegendSetItem[] = useMemo(() => {
+        const options = [] as LegendSetItem[]
 
-    if (set?.id) {
-        if (!legendSetOptions.find((option) => option.value === set.id)) {
-            setLegendSetOptions([
-                ...legendSetOptions,
-                { value: set.id, label: set.displayName },
-            ])
+        if (Array.isArray(data?.legendSets)) {
+            options.push(...data.legendSets)
         }
-    }
+
+        if (set?.id) {
+            if (!options.find((option) => option.id === set.id)) {
+                options.push({
+                    id: set.id,
+                    name: set.displayName,
+                } as LegendSetItem)
+            }
+        }
+
+        return options
+    }, [data?.legendSets, set])
 
     const onFocus = useCallback(() => {
         if (!data) {
@@ -190,7 +196,6 @@ const LegendSet: FC<{
         }
     }, [data, trigger])
 
-    console.log('data', data)
     return (
         <div className={classes.optionToggleable}>
             <SingleSelectField
@@ -207,14 +212,14 @@ const LegendSet: FC<{
                         id: selected,
                         displayName:
                             legendSetOptions.find(
-                                (option) => option.value === selected
-                            )?.label ?? '',
+                                (option) => option.id === selected
+                            )?.name ?? '',
                     })
                 }
                 dataTest={'legend-set-select'}
             >
-                {Array.isArray(data?.legendSets)
-                    ? data.legendSets.map(({ id, name }) => (
+                {Array.isArray(legendSetOptions)
+                    ? legendSetOptions.map(({ id, name }) => (
                           <SingleSelectOption
                               key={id}
                               value={id}
