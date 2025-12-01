@@ -10,7 +10,7 @@
         "keyUiLocale": "en",
         "keyAnalysisDisplayProperty": "name",
         "keyMessageEmailNotification": false,
-        "keyDigitGroupSeparator": "NONE"
+        "keyAnalysisDigitGroupSeparator": "NONE"
     },
     "authorities": [
         "F_CATEGORY_OPTION_GROUP_SET_DELETE",
