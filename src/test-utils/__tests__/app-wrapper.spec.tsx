@@ -200,7 +200,7 @@ describe('renderHookWithAppWrapper', () => {
         // Default preloaded state should be applied (visUiConfig with options)
         expect(result.current.visUiConfig.options).toBeDefined()
         expect(result.current.visUiConfig.options.digitGroupSeparator).toBe(
-            'NONE'
+            'SPACE'
         )
     })
 

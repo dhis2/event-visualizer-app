@@ -14,7 +14,7 @@ export const getPreloadedState = (appCachedData: AppCachedData) => ({
     visUiConfig: {
         ...visUiConfigSlice.getInitialState(),
         options: getDefaultOptions(
-            appCachedData.currentUser.settings.digitGroupSeparator
+            appCachedData.systemSettings.digitGroupSeparator
         ),
     },
 })

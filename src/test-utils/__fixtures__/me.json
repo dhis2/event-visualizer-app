@@ -9,8 +9,7 @@
         "keyStyle": "light_blue/light_blue.css",
         "keyUiLocale": "en",
         "keyAnalysisDisplayProperty": "name",
-        "keyMessageEmailNotification": false,
-        "keyAnalysisDigitGroupSeparator": "NONE"
+        "keyMessageEmailNotification": false
     },
     "authorities": [
         "F_CATEGORY_OPTION_GROUP_SET_DELETE",

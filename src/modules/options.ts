@@ -6,12 +6,12 @@ import {
     OPTIONS_SECTION_KEYS_PIVOT_TABLE,
 } from '@constants/options'
 import type {
-    CurrentUser,
     VisualizationType,
     EventVisualizationOptions,
     OptionsSection,
     OptionsSectionKey,
     LegendOption,
+    AppCachedData,
 } from '@types'
 
 type OptionDef = {
@@ -69,7 +69,7 @@ export const getOptionsSectionsForVisType = (
 }
 
 export const getDefaultOptions = (
-    digitGroupSeparator: CurrentUser['settings']['digitGroupSeparator']
+    digitGroupSeparator: AppCachedData['systemSettings']['digitGroupSeparator']
 ): EventVisualizationOptions => ({ ...DEFAULT_OPTIONS, digitGroupSeparator })
 
 export const isPopulatedLegendOption = (
