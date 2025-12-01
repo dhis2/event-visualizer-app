@@ -10,7 +10,7 @@ import classes from './styles/option.module.css'
 import { DEFAULT_LEGEND_OPTION } from '@constants/options'
 import { useOptionsField, useRtkLazyQuery } from '@hooks'
 import { isPopulatedLegendOption } from '@modules/options'
-import type { LegendSet, PickWithFieldFilters, LegendOption } from '@types'
+import type { LegendOption } from '@types'
 
 export const Legend: FC = () => {
     const [value, setValue] = useOptionsField('legend')
@@ -150,13 +150,7 @@ const LegendStyle: FC<{
     )
 }
 
-const fieldsFilter = [
-    'id',
-    'name',
-    'legends[id,displayName~rename(name),startValue,endValue,color]',
-] as const
-
-type LegendSetItem = PickWithFieldFilters<LegendSet, typeof fieldsFilter> & {
+type LegendSetItem = {
     id: string
     name: string
 }
@@ -180,7 +174,7 @@ const LegendSet: FC<{
                 options.push({
                     id: set.id,
                     name: set.displayName,
-                } as LegendSetItem)
+                })
             }
         }
 
@@ -191,7 +185,7 @@ const LegendSet: FC<{
         if (!data) {
             trigger({
                 resource: 'legendSets',
-                params: { fields: [...fieldsFilter], paging: false },
+                params: { fields: 'id,name', paging: false },
             })
         }
     }, [data, trigger])
