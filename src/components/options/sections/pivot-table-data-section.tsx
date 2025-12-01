@@ -3,7 +3,6 @@ import type { FC } from 'react'
 import classes from './styles/sections.module.css'
 import { ColSubTotals } from '@components/options/fields/col-sub-totals'
 import { ColTotals } from '@components/options/fields/col-totals'
-import { HideEmptyColumns } from '@components/options/fields/hide-empty-columns'
 import { HideEmptyRows } from '@components/options/fields/hide-empty-rows'
 import { HideNaData } from '@components/options/fields/hide-na-data'
 import { RowSubTotals } from '@components/options/fields/row-sub-totals'
@@ -17,7 +16,6 @@ export const PivotTableDataSection: FC = () => (
         <RowTotals />
         <RowSubTotals />
         <span className={classes.sectionTitle}>{i18n.t('Empty data')}</span>
-        <HideEmptyColumns />
         <HideEmptyRows />
         <HideNaData />
     </div>
