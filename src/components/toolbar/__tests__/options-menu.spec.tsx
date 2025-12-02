@@ -83,7 +83,7 @@ describe('OptionsMenu', () => {
         expect(dataTab).toBeInTheDocument()
     })
 
-    it('opens the modal with the correct active tab and section content when clicking Data menu item', async () => {
+    it('opens the modal with the correct active tab and content when clicking Data menu item', async () => {
         const user = userEvent.setup()
         await renderWithAppWrapper(
             <HoverMenuBar>
@@ -103,10 +103,10 @@ describe('OptionsMenu', () => {
         const dataTab = screen.getByRole('tab', { name: 'Data' })
         expect(dataTab).toHaveAttribute('aria-selected', 'true')
         // Check that the correct section content is rendered
-        expect(screen.getByTestId('line-list-data-section')).toBeInTheDocument()
+        expect(screen.getByTestId('line-list-data-tab')).toBeInTheDocument()
     })
 
-    it('opens the modal with the correct active tab and section content when clicking Style menu item', async () => {
+    it('opens the modal with the correct active tab and content when clicking Style menu item', async () => {
         const user = userEvent.setup()
         await renderWithAppWrapper(
             <HoverMenuBar>
@@ -126,9 +126,7 @@ describe('OptionsMenu', () => {
         const styleTab = screen.getByRole('tab', { name: 'Style' })
         expect(styleTab).toHaveAttribute('aria-selected', 'true')
         // Check that the correct section content is rendered
-        expect(
-            screen.getByTestId('line-list-style-section')
-        ).toBeInTheDocument()
+        expect(screen.getByTestId('line-list-style-tab')).toBeInTheDocument()
     })
 
     it('allows switching tabs within the modal', async () => {
@@ -150,7 +148,7 @@ describe('OptionsMenu', () => {
             'aria-selected',
             'true'
         )
-        expect(screen.getByTestId('line-list-data-section')).toBeInTheDocument()
+        expect(screen.getByTestId('line-list-data-tab')).toBeInTheDocument()
 
         // Switch to Style tab
         await user.click(screen.getByRole('tab', { name: 'Style' }))
@@ -158,9 +156,7 @@ describe('OptionsMenu', () => {
             'aria-selected',
             'true'
         )
-        expect(
-            screen.getByTestId('line-list-style-section')
-        ).toBeInTheDocument()
+        expect(screen.getByTestId('line-list-style-tab')).toBeInTheDocument()
 
         // Switch to Legend tab
         await user.click(screen.getByRole('tab', { name: 'Legend' }))
@@ -168,9 +164,7 @@ describe('OptionsMenu', () => {
             'aria-selected',
             'true'
         )
-        expect(
-            screen.getByTestId('line-list-legend-section')
-        ).toBeInTheDocument()
+        expect(screen.getByTestId('line-list-legend-tab')).toBeInTheDocument()
     })
 
     it('closes the modal when cancel button is clicked', async () => {
@@ -223,9 +217,7 @@ describe('OptionsMenu', () => {
             'aria-selected',
             'true'
         )
-        expect(
-            screen.getByTestId('pivot-table-data-section')
-        ).toBeInTheDocument()
+        expect(screen.getByTestId('pivot-table-data-tab')).toBeInTheDocument()
 
         // Switch to Style tab
         await user.click(screen.getByRole('tab', { name: 'Style' }))
@@ -233,8 +225,6 @@ describe('OptionsMenu', () => {
             'aria-selected',
             'true'
         )
-        expect(
-            screen.getByTestId('pivot-table-style-section')
-        ).toBeInTheDocument()
+        expect(screen.getByTestId('pivot-table-style-tab')).toBeInTheDocument()
     })
 })
