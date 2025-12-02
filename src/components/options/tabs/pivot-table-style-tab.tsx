@@ -7,15 +7,19 @@ import { FontSize } from '@components/options/fields/font-size'
 import { ShowHierarchy } from '@components/options/fields/show-hierarchy'
 import { Subtitle } from '@components/options/fields/subtitle'
 import { Title } from '@components/options/fields/title'
+import { OptionsFieldSet } from '@components/options/options-fieldset'
 
 export const PivotTableStyleTab: FC = () => (
-    <div className={classes.section} data-test="pivot-table-style-tab">
-        <Title label={i18n.t('Table title')} />
-        <Subtitle label={i18n.t('Table subtitle')} />
-        <DisplayDensity />
-        <FontSize />
-        <DigitGroupSeparator />
-        <span className={classes.subSectionTitle}>{i18n.t('Labels')}</span>
-        <ShowHierarchy />
+    <div className={classes.tab} data-test="pivot-table-style-tab">
+        <OptionsFieldSet>
+            <Title label={i18n.t('Table title')} />
+            <Subtitle label={i18n.t('Table subtitle')} />
+            <DisplayDensity />
+            <FontSize />
+            <DigitGroupSeparator />
+        </OptionsFieldSet>
+        <OptionsFieldSet title={i18n.t('Labels')}>
+            <ShowHierarchy />
+        </OptionsFieldSet>
     </div>
 )

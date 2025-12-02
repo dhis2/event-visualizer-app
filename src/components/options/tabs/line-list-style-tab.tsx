@@ -4,12 +4,15 @@ import { DigitGroupSeparator } from '@components/options/fields/digit-group-sepa
 import { DisplayDensity } from '@components/options/fields/display-density'
 import { FontSize } from '@components/options/fields/font-size'
 import { ShowHierarchy } from '@components/options/fields/show-hierarchy'
+import { OptionsFieldSet } from '@components/options/options-fieldset'
 
 export const LineListStyleTab: FC = () => (
-    <div className={classes.section} data-test="line-list-style-tab">
-        <DisplayDensity />
-        <FontSize />
-        <DigitGroupSeparator />
-        <ShowHierarchy />
+    <div className={classes.tab} data-test="line-list-style-tab">
+        <OptionsFieldSet>
+            <DisplayDensity />
+            <FontSize />
+            <DigitGroupSeparator />
+            <ShowHierarchy />
+        </OptionsFieldSet>
     </div>
 )
