@@ -21,6 +21,8 @@ type OptionsModalProps = {
     visType: VisualizationType
 }
 
+const FORM_ID = 'options-modal-form'
+
 export const OptionsModal: FC<OptionsModalProps> = ({
     activeTabKey,
     setActiveTabKey,
@@ -54,7 +56,12 @@ export const OptionsModal: FC<OptionsModalProps> = ({
                         </Tab>
                     ))}
                 </TabBar>
-                <OptionsTabContent tabKey={activeTabKey} visType={visType} />
+                <form onSubmit={updateVisualizationAndClose} id={FORM_ID}>
+                    <OptionsTabContent
+                        tabKey={activeTabKey}
+                        visType={visType}
+                    />
+                </form>
             </ModalContent>
             <ModalActions dataTest={'options-modal-actions'}>
                 <ButtonStrip>
@@ -67,9 +74,9 @@ export const OptionsModal: FC<OptionsModalProps> = ({
                         {i18n.t('Hide')}
                     </Button>
                     <Button
-                        onClick={updateVisualizationAndClose}
                         dataTest={'options-modal-action-confirm'}
-                        type="button"
+                        form={FORM_ID}
+                        type="submit"
                         primary
                     >
                         {i18n.t('Update')}
