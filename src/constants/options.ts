@@ -1,15 +1,11 @@
 import type { EventVisualizationOptions, LegendOption } from '@types'
 
-export const OPTIONS_SECTION_KEYS_LINE_LIST = [
-    'data',
-    'style',
-    'legend',
-] as const
-export const OPTIONS_SECTION_KEYS_PIVOT_TABLE = [
-    'data',
-    'style',
-    'legend',
-] as const
+// Base options section keys shared by all visualization types
+const OPTIONS_SECTION_KEYS = ['data', 'style', 'legend'] as const
+
+// Re-export with specific names for backwards compatibility and type derivation
+export const OPTIONS_SECTION_KEYS_LINE_LIST = OPTIONS_SECTION_KEYS
+export const OPTIONS_SECTION_KEYS_PIVOT_TABLE = OPTIONS_SECTION_KEYS
 
 export const DEFAULT_LEGEND_OPTION: LegendOption = {
     showKey: false,

@@ -24,7 +24,7 @@ import {
 } from '@modules/dimension'
 import { isValueTypeNumeric } from '@modules/value-type'
 import {
-    headersMap,
+    getDimensionIdFromHeaderName,
     isVisualizationWithTimeDimension,
 } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, OutputType } from '@types'
@@ -182,12 +182,7 @@ const extractHeaders = (
             id: header.name,
             outputType,
         })
-        const idMatch =
-            Object.keys(headersMap).find(
-                (key) => headersMap[key] === dimensionId
-                // TODO: find a better solution
-                // https://dhis2.atlassian.net/browse/DHIS2-20136
-            ) ?? ''
+        const idMatch = getDimensionIdFromHeaderName(dimensionId) ?? ''
 
         const formattedDimensionId = getFullDimensionId({
             dimensionId: [
@@ -242,12 +237,7 @@ const extractHeaders = (
             outputType,
         })
 
-        const idMatch =
-            Object.keys(headersMap).find(
-                (key) => headersMap[key] === dimensionId
-                // TODO: find a better solution
-                // https://dhis2.atlassian.net/browse/DHIS2-20136
-            ) ?? ''
+        const idMatch = getDimensionIdFromHeaderName(dimensionId) ?? ''
 
         result.column =
             labels.find(
