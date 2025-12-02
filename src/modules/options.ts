@@ -2,14 +2,14 @@ import i18n from '@dhis2/d2-i18n'
 import { isPopulatedString } from '@components/app-wrapper/metadata-helpers/type-guards'
 import {
     DEFAULT_OPTIONS,
-    OPTIONS_SECTION_KEYS_LINE_LIST,
-    OPTIONS_SECTION_KEYS_PIVOT_TABLE,
+    OPTIONS_TAB_KEYS_LINE_LIST,
+    OPTIONS_TAB_KEYS_PIVOT_TABLE,
 } from '@constants/options'
 import type {
     VisualizationType,
     EventVisualizationOptions,
-    OptionsSection,
-    OptionsSectionKey,
+    OptionsTab,
+    OptionsTabKey,
     LegendOption,
     AppCachedData,
 } from '@types'
@@ -36,8 +36,8 @@ export const getAllOptions = (): Record<string, OptionDef> => options
 export const getOptionsForRequest = (): [string, OptionDef][] =>
     Object.entries(getAllOptions())
 
-export const getOptionsSectionsDisplayNames = (): Record<
-    OptionsSectionKey,
+export const getOptionsTabsDisplayNames = (): Record<
+    OptionsTabKey,
     string
 > => ({
     data: i18n.t('Data'),
@@ -45,24 +45,22 @@ export const getOptionsSectionsDisplayNames = (): Record<
     legend: i18n.t('Legend'),
 })
 
-const toOptionsSectionsArray = (
-    optionKeys: ReadonlyArray<OptionsSectionKey>
-) => {
-    const displayNameLookup = getOptionsSectionsDisplayNames()
+const toOptionsTabsArray = (optionKeys: ReadonlyArray<OptionsTabKey>) => {
+    const displayNameLookup = getOptionsTabsDisplayNames()
     return optionKeys.map((key) => ({
         key: key,
         label: displayNameLookup[key],
     }))
 }
 
-export const getOptionsSectionsForVisType = (
+export const getOptionsTabsForVisType = (
     visType: VisualizationType
-): OptionsSection[] => {
+): OptionsTab[] => {
     switch (visType) {
         case 'LINE_LIST':
-            return toOptionsSectionsArray(OPTIONS_SECTION_KEYS_LINE_LIST)
+            return toOptionsTabsArray(OPTIONS_TAB_KEYS_LINE_LIST)
         case 'PIVOT_TABLE':
-            return toOptionsSectionsArray(OPTIONS_SECTION_KEYS_PIVOT_TABLE)
+            return toOptionsTabsArray(OPTIONS_TAB_KEYS_PIVOT_TABLE)
         default:
             throw new Error('Unknown visType provided')
     }

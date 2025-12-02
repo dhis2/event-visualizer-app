@@ -7,16 +7,15 @@ import {
     HoverMenuListItem,
 } from '@dhis2/analytics'
 import { useAppSelector } from '@hooks'
-import { getOptionsSectionsForVisType } from '@modules/options'
+import { getOptionsTabsForVisType } from '@modules/options'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
-import type { OptionsSectionKey } from 'src/types/options'
+import type { OptionsTabKey } from 'src/types/options'
 
 export const OptionsMenu: FC = () => {
     const visType = useAppSelector(getVisUiConfigVisualizationType)
-    const [activeSectionKey, setActiveSectionKey] =
-        useState<OptionsSectionKey | null>(null)
-    const optionsSections = useMemo(
-        () => getOptionsSectionsForVisType(visType),
+    const [activeTabKey, setActiveTabKey] = useState<OptionsTabKey | null>(null)
+    const optionsTabs = useMemo(
+        () => getOptionsTabsForVisType(visType),
         [visType]
     )
 
@@ -24,22 +23,22 @@ export const OptionsMenu: FC = () => {
         <>
             <HoverMenuDropdown label={i18n.t('Options')}>
                 <HoverMenuList dataTest="options-menu-list">
-                    {optionsSections.map(({ key, label }) => (
+                    {optionsTabs.map(({ key, label }) => (
                         <HoverMenuListItem
                             key={key}
                             label={label}
                             onClick={() => {
-                                setActiveSectionKey(key)
+                                setActiveTabKey(key)
                             }}
                         />
                     ))}
                 </HoverMenuList>
             </HoverMenuDropdown>
-            {activeSectionKey && (
+            {activeTabKey && (
                 <OptionsModal
-                    activeSectionKey={activeSectionKey}
-                    setActiveSectionKey={setActiveSectionKey}
-                    sections={optionsSections}
+                    activeTabKey={activeTabKey}
+                    setActiveTabKey={setActiveTabKey}
+                    tabs={optionsTabs}
                     visType={visType}
                 />
             )}

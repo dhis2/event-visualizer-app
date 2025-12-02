@@ -1,11 +1,7 @@
 import type { EventVisualizationOptions, LegendOption } from '@types'
 
-export const OPTIONS_SECTION_KEYS_LINE_LIST = [
-    'data',
-    'style',
-    'legend',
-] as const
-export const OPTIONS_SECTION_KEYS_PIVOT_TABLE = ['data', 'style'] as const
+export const OPTIONS_TAB_KEYS_LINE_LIST = ['data', 'style', 'legend'] as const
+export const OPTIONS_TAB_KEYS_PIVOT_TABLE = ['data', 'style'] as const
 
 export const DEFAULT_LEGEND_OPTION: LegendOption = {
     showKey: false,

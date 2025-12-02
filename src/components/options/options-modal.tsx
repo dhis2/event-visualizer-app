@@ -10,26 +10,26 @@ import {
     TabBar,
 } from '@dhis2/ui'
 import { useCallback, type FC } from 'react'
-import { OptionsSectionContent } from './options-section-content'
+import { OptionsTabContent } from './options-tab-content'
 import type { VisualizationType } from '@types'
-import type { OptionsSection, OptionsSectionKey } from 'src/types/options'
+import type { OptionsTab, OptionsTabKey } from 'src/types/options'
 
 type OptionsModalProps = {
-    activeSectionKey: OptionsSectionKey
-    setActiveSectionKey: (key: OptionsSectionKey | null) => void
-    sections: OptionsSection[]
+    activeTabKey: OptionsTabKey
+    setActiveTabKey: (key: OptionsTabKey | null) => void
+    tabs: OptionsTab[]
     visType: VisualizationType
 }
 
 export const OptionsModal: FC<OptionsModalProps> = ({
-    activeSectionKey,
-    setActiveSectionKey,
-    sections,
+    activeTabKey,
+    setActiveTabKey,
+    tabs,
     visType,
 }) => {
     const closeModal = useCallback(() => {
-        setActiveSectionKey(null)
-    }, [setActiveSectionKey])
+        setActiveTabKey(null)
+    }, [setActiveTabKey])
     const updateVisualizationAndClose = useCallback(() => {
         // TODO: dispatch an action here to to "reload the visualization from UI"
         closeModal()
@@ -44,20 +44,17 @@ export const OptionsModal: FC<OptionsModalProps> = ({
             <ModalTitle>{i18n.t('Options')}</ModalTitle>
             <ModalContent dataTest={'options-modal-content'}>
                 <TabBar dataTest={'options-modal-tab-bar'}>
-                    {sections.map(({ key, label }) => (
+                    {tabs.map(({ key, label }) => (
                         <Tab
                             key={key}
-                            onClick={() => setActiveSectionKey(key)}
-                            selected={key === activeSectionKey}
+                            onClick={() => setActiveTabKey(key)}
+                            selected={key === activeTabKey}
                         >
                             {label}
                         </Tab>
                     ))}
                 </TabBar>
-                <OptionsSectionContent
-                    sectionKey={activeSectionKey}
-                    visType={visType}
-                />
+                <OptionsTabContent tabKey={activeTabKey} visType={visType} />
             </ModalContent>
             <ModalActions dataTest={'options-modal-actions'}>
                 <ButtonStrip>
