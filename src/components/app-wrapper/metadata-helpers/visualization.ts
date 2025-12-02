@@ -223,6 +223,7 @@ export const supplementDimensionMetadata = (
     const additionalDimensionMetadata = dimensions.reduce(
         (metadata, dimension) => {
             const collectedItem = metadataInput[dimension.dimension]
+            console.log('dimension', dimension)
 
             // Skip for items without a name
             if (typeof collectedItem?.name !== 'string') {
@@ -251,6 +252,14 @@ export const supplementDimensionMetadata = (
 
             if (dimension.valueType) {
                 item.valueType = dimension.valueType
+            }
+
+            if (dimension.program?.id) {
+                item.program = dimension.program.id
+            }
+
+            if (dimension.programStage?.id) {
+                item.programStage = dimension.programStage.id
             }
 
             metadata[prefixedId] = item
