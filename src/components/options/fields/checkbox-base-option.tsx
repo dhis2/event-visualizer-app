@@ -1,20 +1,18 @@
-import { Checkbox } from '@dhis2/ui'
+import { Checkbox, type CheckboxProps } from '@dhis2/ui'
 import { type FC } from 'react'
 import type { OptionRecord } from './types'
 import { useOptionsField } from '@hooks'
 
-type CheckboxBaseOptionProps = {
-    label: string
+type CheckboxBaseOptionProps = CheckboxProps & {
     option: OptionRecord
-    dataTest?: string
     inverted?: boolean
 }
 
 export const CheckboxBaseOption: FC<CheckboxBaseOptionProps> = ({
     option,
-    label,
     inverted,
     dataTest = option.name,
+    ...rest
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 
@@ -23,8 +21,8 @@ export const CheckboxBaseOption: FC<CheckboxBaseOptionProps> = ({
     return (
         <div>
             <Checkbox
-                checked={Boolean(inverted ? !value : value)}
-                label={label}
+                {...rest}
+                checked={(inverted ? !value : value) as boolean}
                 name={option.name}
                 onChange={({ checked }) =>
                     onChange(inverted ? !checked : checked)

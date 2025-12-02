@@ -9,7 +9,7 @@ type SubtitleProps = {
 export const Subtitle: FC<SubtitleProps> = ({ label }) => (
     <TextBaseOption
         type="text"
-        width="280px"
+        inputWidth="280px"
         placeholder={i18n.t('Add a subtitle')}
         label={label}
         option={{

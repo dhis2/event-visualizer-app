@@ -9,7 +9,7 @@ type TitleProps = {
 export const Title: FC<TitleProps> = ({ label }) => (
     <TextBaseOption
         type="text"
-        width="280px"
+        inputWidth="280px"
         label={label}
         placeholder={i18n.t('Add a title')}
         option={{

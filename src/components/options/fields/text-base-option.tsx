@@ -1,26 +1,16 @@
-import { InputField, type InputProps, type InputFieldProps } from '@dhis2/ui'
+import { InputField, type InputFieldProps } from '@dhis2/ui'
 import { type FC } from 'react'
 import type { OptionRecord } from './types'
 import { useOptionsField } from '@hooks'
 
-type TextBaseOptionProps = {
-    dataTest?: InputFieldProps['dataTest']
-    disabled?: InputFieldProps['disabled']
-    label: InputFieldProps['label']
+type TextBaseOptionProps = InputFieldProps & {
     option: OptionRecord
-    placeholder: InputFieldProps['placeholder']
-    type: InputFieldProps['type']
-    width: InputProps['width']
 }
 
 export const TextBaseOption: FC<TextBaseOptionProps> = ({
-    type,
-    label,
     option,
-    placeholder,
-    width,
-    disabled,
     dataTest = option.name,
+    ...rest
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 
@@ -29,15 +19,11 @@ export const TextBaseOption: FC<TextBaseOptionProps> = ({
     return (
         <div>
             <InputField
-                type={type}
-                label={label}
+                {...rest}
                 onChange={({ value }) => onChange(value)}
                 name={option.name}
-                value={value ? String(value) : ''}
-                placeholder={placeholder}
-                inputWidth={width}
+                value={value as string | undefined}
                 dense
-                disabled={disabled}
                 dataTest={`${dataTest}-input`}
             />
         </div>
