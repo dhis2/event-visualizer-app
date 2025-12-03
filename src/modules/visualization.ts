@@ -249,7 +249,7 @@ export const isVisualizationNew = (
 }
 
 export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
-    const outputType = vis.outputType // The single location where outputType is renamed to outputType
+    const outputType = vis.outputType
     const layout = layoutGetAxisIdDimensionIdsObject(vis)
 
     return {
