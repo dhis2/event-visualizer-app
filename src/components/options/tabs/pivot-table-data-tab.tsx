@@ -3,6 +3,7 @@ import type { FC } from 'react'
 import classes from './styles/tabs.module.css'
 import { ColSubTotals } from '@components/options/fields/col-sub-totals'
 import { ColTotals } from '@components/options/fields/col-totals'
+import { CumulativeValues } from '@components/options/fields/cumulative-values'
 import { HideEmptyRows } from '@components/options/fields/hide-empty-rows'
 import { HideNaData } from '@components/options/fields/hide-na-data'
 import { Limit } from '@components/options/fields/limit'
@@ -15,6 +16,7 @@ import { OptionsFieldSet } from '@components/options/options-fieldset'
 export const PivotTableDataTab: FC = () => (
     <div className={classes.tab} data-test="pivot-table-data-tab">
         <OptionsFieldSet title={i18n.t('Display')}>
+            <CumulativeValues />
             <ShowDimensionLabels />
             <SkipRounding />
         </OptionsFieldSet>
