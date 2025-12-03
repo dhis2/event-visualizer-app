@@ -54,6 +54,28 @@ export const headersMap: Record<DimensionId, string> = {
     lastUpdated: 'lastupdated',
 }
 
+/**
+ * Pre-computed reverse map from API header names to dimension IDs.
+ * Use this when you need to look up multiple dimension IDs efficiently.
+ */
+export const reversedHeadersMap: Record<string, DimensionId> = Object.entries(
+    headersMap
+).reduce((acc, [key, value]) => {
+    acc[value] = key as DimensionId
+    return acc
+}, {} as Record<string, DimensionId>)
+
+/**
+ * Get the dimension ID (app format) from a header name (API format).
+ * This is a reverse lookup from headersMap (e.g., 'eventdate' -> 'eventDate').
+ * Uses the pre-computed reversedHeadersMap for O(1) lookup.
+ * @param headerName - The header name from the API response
+ * @returns The dimension ID for the app, or undefined if not found
+ */
+export const getDimensionIdFromHeaderName = (
+    headerName: string
+): DimensionId | undefined => reversedHeadersMap[headerName]
+
 export const getHeadersMap = ({
     showHierarchy,
 }: {
@@ -170,14 +192,20 @@ const removeDimensionPropertiesBeforeSaving = (
     })
 }
 
-const getDimensionIdFromHeaderName = (
+const getDimensionIdFromHeaderNameWithContext = (
     headerName: string,
     visualization: CurrentVisualization
 ) => {
-    const headersMap = getHeadersMap(
-        getRequestOptions(visualization) as unknown as CurrentVisualization
+    // Type cast is needed because getRequestOptions returns ParameterRecord
+    // which doesn't expose showHierarchy explicitly, but may contain it.
+    // TODO: Consider updating getRequestOptions return type to be more specific
+    // See: https://dhis2.atlassian.net/browse/DHIS2-19823
+    const contextHeadersMap = getHeadersMap(
+        getRequestOptions(visualization) as { showHierarchy?: boolean }
     )
-    return Object.keys(headersMap).find((key) => headersMap[key] === headerName)
+    return Object.keys(contextHeadersMap).find(
+        (key) => contextHeadersMap[key] === headerName
+    )
 }
 
 export const getSaveableVisualization = (
@@ -213,7 +241,7 @@ export const getSaveableVisualization = (
         ? [
               {
                   dimension:
-                      getDimensionIdFromHeaderName(
+                      getDimensionIdFromHeaderNameWithContext(
                           vis.sorting[0].dimension,
                           vis
                       ) || vis.sorting[0].dimension,

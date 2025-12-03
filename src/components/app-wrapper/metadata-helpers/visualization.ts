@@ -1,4 +1,3 @@
-import i18n from '@dhis2/d2-i18n'
 import deepmerge from 'deepmerge'
 import type {
     MetadataInput,
@@ -16,10 +15,13 @@ import {
     getTimeDimensions,
     getUiDimensionType,
 } from '@modules/dimension'
-import { transformVisualization } from '@modules/visualization'
+import { getDefaultOrgUnitMetadata } from '@modules/metadata'
+import {
+    dimensionMetadataPropMap,
+    transformVisualization,
+} from '@modules/visualization'
 import type {
     DimensionId,
-    DimensionType,
     InternalDimensionRecord,
     SavedVisualization,
 } from '@types'
@@ -29,34 +31,6 @@ const FIXED_DIMENSION_LOOKUP = new Set<DimensionId>([
     'eventStatus',
     'programStatus',
 ])
-const DIMENSION_METADATA_PROP_MAP = {
-    dataElementDimensions: 'dataElement',
-    attributeDimensions: 'attribute',
-    programIndicatorDimensions: 'programIndicator',
-    categoryDimensions: 'category',
-    categoryOptionGroupSetDimensions: 'categoryOptionGroupSet',
-    organisationUnitGroupSetDimensions: 'organisationUnitGroupSet',
-    dataElementGroupSetDimensions: 'dataElementGroupSet',
-}
-const getDefaultOrgUnitMetadata = (
-    outputType: SavedVisualization['outputType']
-) => ({
-    ou: {
-        id: 'ou',
-        dimensionType: 'ORGANISATION_UNIT' as DimensionType,
-        name: getDefaultOrgUnitLabel(outputType),
-    },
-})
-
-const getDefaultOrgUnitLabel = (
-    outputType: SavedVisualization['outputType']
-) => {
-    if (outputType === 'TRACKED_ENTITY_INSTANCE') {
-        return i18n.t('Registration org. unit')
-    } else {
-        return i18n.t('Organisation unit')
-    }
-}
 
 const getDefaultDynamicTimeDimensionsMetadata = (
     program?: SavedVisualization['program'],
@@ -165,19 +139,20 @@ export const extractProgramDimensionsMetadata = (
 export const extractDimensionMetadata = (
     visualization: SavedVisualization
 ): MetadataInputMap => {
-    const dimensionMetadata = Object.entries(
-        DIMENSION_METADATA_PROP_MAP
-    ).reduce((metaData, [listName, dimensionName]) => {
-        const dimensionList = visualization[listName] || []
+    const dimensionMetadata = Object.entries(dimensionMetadataPropMap).reduce(
+        (metaData, [listName, dimensionName]) => {
+            const dimensionList = visualization[listName] || []
 
-        dimensionList.forEach((dimensionWrapper: object) => {
-            const dimension: InternalDimensionRecord =
-                dimensionWrapper[dimensionName]
-            metaData[dimension.id] = dimension
-        })
+            dimensionList.forEach((dimensionWrapper: object) => {
+                const dimension: InternalDimensionRecord =
+                    dimensionWrapper[dimensionName]
+                metaData[dimension.id] = dimension
+            })
 
-        return metaData
-    }, {})
+            return metaData
+        },
+        {}
+    )
     return dimensionMetadata
 }
 
