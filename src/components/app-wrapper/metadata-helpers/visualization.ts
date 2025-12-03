@@ -253,6 +253,14 @@ export const supplementDimensionMetadata = (
                 item.valueType = dimension.valueType
             }
 
+            if (dimension.program?.id) {
+                item.program = dimension.program.id
+            }
+
+            if (dimension.programStage?.id) {
+                item.programStage = dimension.programStage.id
+            }
+
             metadata[prefixedId] = item
 
             return metadata

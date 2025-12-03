@@ -11,6 +11,8 @@ import {
 } from '@dhis2/ui'
 import { useCallback, type FC } from 'react'
 import { OptionsSectionContent } from './options-section-content'
+import { useAppDispatch } from '@hooks'
+import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import type { VisualizationType } from '@types'
 import type { OptionsSection, OptionsSectionKey } from 'src/types/options'
 
@@ -29,13 +31,14 @@ export const OptionsModal: FC<OptionsModalProps> = ({
     sections,
     visType,
 }) => {
+    const dispatch = useAppDispatch()
     const closeModal = useCallback(() => {
         setActiveSectionKey(null)
     }, [setActiveSectionKey])
     const updateVisualizationAndClose = useCallback(() => {
-        // TODO: dispatch an action here to to "reload the visualization from UI"
+        dispatch(tUpdateCurrentVisFromVisUiConfig())
         closeModal()
-    }, [closeModal])
+    }, [closeModal, dispatch])
     return (
         <Modal
             onClose={closeModal}
