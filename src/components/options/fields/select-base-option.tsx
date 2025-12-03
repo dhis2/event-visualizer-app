@@ -26,7 +26,8 @@ export const SelectBaseOption: FC<SelectBaseOptionProps> = ({
             <SingleSelectField
                 {...rest}
                 onChange={({ selected }) => onChange(selected)}
-                selected={value as string | undefined}
+                // We need to cast to String because some values are numeric but the UI component only accepts string | undefined
+                selected={value ? String(value) : undefined}
                 inputWidth={inputWidth}
                 dense
                 dataTest={`${dataTest}-select`}

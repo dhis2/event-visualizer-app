@@ -5,6 +5,7 @@ import { ColSubTotals } from '@components/options/fields/col-sub-totals'
 import { ColTotals } from '@components/options/fields/col-totals'
 import { HideEmptyRows } from '@components/options/fields/hide-empty-rows'
 import { HideNaData } from '@components/options/fields/hide-na-data'
+import { Limit } from '@components/options/fields/limit'
 import { RowSubTotals } from '@components/options/fields/row-sub-totals'
 import { RowTotals } from '@components/options/fields/row-totals'
 import { ShowDimensionLabels } from '@components/options/fields/show-dimension-labels'
@@ -26,6 +27,9 @@ export const PivotTableDataTab: FC = () => (
         <OptionsFieldSet title={i18n.t('Empty data')}>
             <HideEmptyRows />
             <HideNaData />
+        </OptionsFieldSet>
+        <OptionsFieldSet>
+            <Limit />
         </OptionsFieldSet>
     </div>
 )
