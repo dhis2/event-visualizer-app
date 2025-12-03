@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-12-03T15:16:22.684Z\n"
-"PO-Revision-Date: 2025-12-03T15:16:22.685Z\n"
+"POT-Creation-Date: 2025-12-03T15:26:17.163Z\n"
+"PO-Revision-Date: 2025-12-03T15:26:17.164Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -374,6 +374,9 @@ msgstr "Display"
 
 msgid "Totals"
 msgstr "Totals"
+
+msgid "Totals are not supported when using cumulative values"
+msgstr "Totals are not supported when using cumulative values"
 
 msgid "Empty data"
 msgstr "Empty data"
