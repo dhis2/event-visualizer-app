@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-12-03T15:06:00.747Z\n"
-"PO-Revision-Date: 2025-12-03T15:06:00.748Z\n"
+"POT-Creation-Date: 2025-12-03T15:16:22.684Z\n"
+"PO-Revision-Date: 2025-12-03T15:16:22.685Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -237,6 +237,12 @@ msgstr "Column sub-totals"
 msgid "Column totals"
 msgstr "Column totals"
 
+msgid "Cumulative values"
+msgstr "Cumulative values"
+
+msgid "Accumulate cell values along rows"
+msgstr "Accumulate cell values along rows"
+
 msgid "Digit group separator"
 msgstr "Digit group separator"
 
@@ -324,11 +330,11 @@ msgstr "Limit"
 msgid "Sort order"
 msgstr "Sort order"
 
-msgid "Bottom"
-msgstr "Bottom"
+msgid "Low to high"
+msgstr "Low to high"
 
-msgid "Top"
-msgstr "Top"
+msgid "High to low"
+msgstr "High to low"
 
 msgid "Top limit"
 msgstr "Top limit"

@@ -47,8 +47,8 @@ const SortOrder: FC = () => (
         option={{
             name: 'sortOrder',
             items: [
-                { value: '-1', label: i18n.t('Bottom') },
-                { value: '1', label: i18n.t('Top') },
+                { value: '-1', label: i18n.t('Low to high') },
+                { value: '1', label: i18n.t('High to low') },
             ],
         }}
     />
