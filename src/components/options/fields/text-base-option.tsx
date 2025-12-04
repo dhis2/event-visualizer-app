@@ -10,6 +10,7 @@ type TextBaseOptionProps = InputFieldProps & {
 export const TextBaseOption: FC<TextBaseOptionProps> = ({
     option,
     dataTest = option.name,
+    inputWidth = '280px',
     ...rest
 }) => {
     const [value, setValue] = useOptionsField(option.name)
@@ -22,7 +23,13 @@ export const TextBaseOption: FC<TextBaseOptionProps> = ({
                 {...rest}
                 onChange={({ value }) => onChange(value)}
                 name={option.name}
-                value={value as string | undefined}
+                // Cast to String because value might be numeric but the UI component only accepts string | undefined
+                value={
+                    value !== undefined && value !== null
+                        ? String(value)
+                        : undefined
+                }
+                inputWidth={inputWidth}
                 dense
                 dataTest={`${dataTest}-input`}
             />
