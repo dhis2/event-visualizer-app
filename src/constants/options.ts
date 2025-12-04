@@ -43,3 +43,10 @@ export const DEFAULT_OPTIONS: EventVisualizationOptions = {
     title: undefined,
     topLimit: undefined,
 }
+export const ANALYTICS_OPTIONS: Pick<
+    EventVisualizationOptions,
+    'completedOnly' | 'skipRounding'
+> = (({ completedOnly, skipRounding }) => ({
+    completedOnly,
+    skipRounding,
+}))(DEFAULT_OPTIONS)

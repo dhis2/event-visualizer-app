@@ -1,22 +1,21 @@
-import { getOptionsForRequest } from '@modules/options'
+import { ANALYTICS_OPTIONS } from '@constants/options'
 import type { CurrentVisualization, DimensionId } from '@types'
 
 export type ParameterRecord = Record<DimensionId, unknown>
 
-// This should be refactored when the work on Options is done.
-// See: https://dhis2.atlassian.net/browse/DHIS2-19823
+// NOTE: visualization here already has the disabled options removed
 export const getRequestOptions = (visualization: CurrentVisualization) => {
-    const options = getOptionsForRequest().reduce(
-        (map, [option, props]): ParameterRecord => {
+    const options = Object.entries(ANALYTICS_OPTIONS).reduce(
+        (obj, [option, defaultValue]) => {
             // only add parameter if value !== default
             if (
                 visualization[option] !== undefined &&
-                visualization[option] !== props.defaultValue
+                visualization[option] !== defaultValue
             ) {
-                map[option] = visualization[option]
+                obj[option] = visualization[option]
             }
 
-            return map
+            return obj
         },
         {} as ParameterRecord
     )

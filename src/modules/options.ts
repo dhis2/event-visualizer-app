@@ -14,28 +14,6 @@ import type {
     AppCachedData,
 } from '@types'
 
-type OptionDef = {
-    defaultValue: unknown
-    persisted: boolean
-}
-
-export const options: Record<string, OptionDef> = {
-    completedOnly: {
-        defaultValue: false,
-        persisted: true,
-    },
-    skipRounding: {
-        defaultValue: false,
-        persisted: true,
-    },
-}
-
-export const getAllOptions = (): Record<string, OptionDef> => options
-
-// This for now has only the 2 options that can be passed to the analytics request
-export const getOptionsForRequest = (): [string, OptionDef][] =>
-    Object.entries(getAllOptions())
-
 export const getOptionsTabsDisplayNames = (): Record<
     OptionsTabKey,
     string
@@ -69,6 +47,22 @@ export const getOptionsTabsForVisType = (
 export const getDefaultOptions = (
     digitGroupSeparator: AppCachedData['systemSettings']['digitGroupSeparator']
 ): EventVisualizationOptions => ({ ...DEFAULT_OPTIONS, digitGroupSeparator })
+
+export const getDisabledOptions = (options: EventVisualizationOptions) => {
+    const disabledOptions = [] as string[]
+
+    // Disable totals options when cumulativeValues is used
+    if (options?.cumulativeValues) {
+        disabledOptions.push(
+            'colTotals',
+            'colSubTotals',
+            'rowTotals',
+            'rowSubTotals'
+        )
+    }
+
+    return disabledOptions
+}
 
 export const isPopulatedLegendOption = (
     value: EventVisualizationOptions['legend']
