@@ -98,3 +98,5 @@ export type EventVisualizationOptions = Partial<
         legend: LegendOption
     }
 >
+
+export type EventVisualizationOptionFieldName = keyof EventVisualizationOptions

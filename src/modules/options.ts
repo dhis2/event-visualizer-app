@@ -12,6 +12,7 @@ import type {
     OptionsTabKey,
     LegendOption,
     AppCachedData,
+    EventVisualizationOptionFieldName,
 } from '@types'
 
 export const getOptionsTabsDisplayNames = (): Record<
@@ -49,7 +50,7 @@ export const getDefaultOptions = (
 ): EventVisualizationOptions => ({ ...DEFAULT_OPTIONS, digitGroupSeparator })
 
 export const getDisabledOptions = (options: EventVisualizationOptions) => {
-    const disabledOptions = [] as string[]
+    const disabledOptions: EventVisualizationOptionFieldName[] = []
 
     // Disable totals options when cumulativeValues is used
     if (options?.cumulativeValues) {
