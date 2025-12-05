@@ -8,7 +8,6 @@ import {
     layoutGetDimensionIdItemIdsObject,
     layoutGetAllDimensions,
 } from '@dhis2/analytics'
-import { getAllOptions } from '@modules/options'
 import { initialState as currentVisDefaultValue } from '@store/current-vis-slice'
 import { initialState as savedVisDefaultValue } from '@store/saved-vis-slice'
 import type {
@@ -184,12 +183,6 @@ export const getSaveableVisualization = (
     vis: NewVisualization | SavedVisualization
 ): NewVisualization | SavedVisualization => {
     const visualization = Object.assign({}, vis)
-    const options = getAllOptions()
-    const nonPersistedOptions = Object.keys(options).filter(
-        (option) => !options[option].persisted
-    )
-
-    nonPersistedOptions.forEach((option) => delete visualization[option])
 
     visualization.columns = removeDimensionPropertiesBeforeSaving(
         visualization.columns

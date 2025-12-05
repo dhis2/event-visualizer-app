@@ -8,6 +8,7 @@ import { clearUi } from './ui-slice'
 import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
+import { getDisabledOptions } from '@modules/options'
 import {
     getVisualizationUiConfig,
     transformVisualization,
@@ -96,5 +97,12 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
             currentVis,
             visUiConfig.options
         ) as CurrentVisualization
+
+        const disabledOptions = getDisabledOptions(visUiConfig.options)
+
+        disabledOptions.forEach((disabledOption) => {
+            delete mergedVis[disabledOption]
+        })
+
         dispatch(setCurrentVis(mergedVis))
     }

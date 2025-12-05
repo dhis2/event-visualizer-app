@@ -13,6 +13,5 @@ export const FontSize: FC = () => (
                 { value: 'SMALL', label: i18n.t('Small') },
             ],
         }}
-        dataTest="font-size"
     />
 )

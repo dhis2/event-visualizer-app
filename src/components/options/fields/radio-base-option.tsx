@@ -1,16 +1,16 @@
-import { Field, Radio } from '@dhis2/ui'
+import { Field, Radio, type RadioProps } from '@dhis2/ui'
 import { type FC } from 'react'
 import type { OptionRecord } from './types'
 import { useOptionsField } from '@hooks'
 
-type RadioBaseOptionProps = {
+type RadioBaseOptionProps = RadioProps & {
     option: OptionRecord & { items: { id: string; label: string }[] }
-    dataTest?: string
 }
 
 export const RadioBaseOption: FC<RadioBaseOptionProps> = ({
     option,
-    dataTest,
+    dataTest = option.name,
+    ...rest
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 
@@ -20,6 +20,7 @@ export const RadioBaseOption: FC<RadioBaseOptionProps> = ({
         <Field name={option.name}>
             {option.items.map(({ id, label }) => (
                 <Radio
+                    {...rest}
                     name={option.name}
                     key={id}
                     label={label}

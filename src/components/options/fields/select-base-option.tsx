@@ -1,18 +1,21 @@
-import { SingleSelectField, SingleSelectOption } from '@dhis2/ui'
+import {
+    SingleSelectField,
+    SingleSelectOption,
+    type SingleSelectFieldProps,
+} from '@dhis2/ui'
 import { type FC } from 'react'
 import type { OptionRecord } from './types'
 import { useOptionsField } from '@hooks'
 
-type SelectBaseOptionProps = {
-    label: string
+type SelectBaseOptionProps = SingleSelectFieldProps & {
     option: OptionRecord & { items: { label: string; value: string }[] }
-    dataTest?: string
 }
 
 export const SelectBaseOption: FC<SelectBaseOptionProps> = ({
     option,
-    label,
-    dataTest,
+    dataTest = option.name,
+    inputWidth = '280px',
+    ...rest
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 
@@ -21,10 +24,15 @@ export const SelectBaseOption: FC<SelectBaseOptionProps> = ({
     return (
         <div>
             <SingleSelectField
-                label={label}
+                {...rest}
                 onChange={({ selected }) => onChange(selected)}
-                selected={String(value)}
-                inputWidth="280px"
+                // Cast to String because values might be numeric but the UI component only accepts string | undefined
+                selected={
+                    value !== undefined && value !== null
+                        ? String(value)
+                        : undefined
+                }
+                inputWidth={inputWidth}
                 dense
                 dataTest={`${dataTest}-select`}
             >
@@ -33,7 +41,7 @@ export const SelectBaseOption: FC<SelectBaseOptionProps> = ({
                         key={value}
                         value={value}
                         label={label}
-                        dataTest={`${dataTest}-option`}
+                        dataTest={`${dataTest}-option-${value}`}
                     />
                 ))}
             </SingleSelectField>

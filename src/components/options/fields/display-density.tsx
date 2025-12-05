@@ -16,6 +16,5 @@ export const DisplayDensity: FC = () => (
                 { value: 'COMPACT', label: i18n.t('Compact') },
             ],
         }}
-        dataTest="display-density"
     />
 )

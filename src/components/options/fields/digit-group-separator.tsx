@@ -13,6 +13,5 @@ export const DigitGroupSeparator: FC = () => (
                 { value: 'COMMA', label: i18n.t('Comma') },
             ],
         }}
-        dataTest="dgs"
     />
 )

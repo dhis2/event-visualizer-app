@@ -2,11 +2,11 @@ import i18n from '@dhis2/d2-i18n'
 import { type FC } from 'react'
 import { CheckboxBaseOption } from './checkbox-base-option'
 
-export const SkipRounding: FC = () => (
+export const HideEmptyRows: FC = () => (
     <CheckboxBaseOption
-        label={i18n.t('Skip rounding')}
+        label={i18n.t('Hide empty rows')}
         option={{
-            name: 'skipRounding',
+            name: 'hideEmptyRows',
         }}
     />
 )

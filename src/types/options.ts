@@ -1,18 +1,15 @@
 import type { EventVisualization } from './dhis2-openapi-schemas'
 import type {
-    OPTIONS_SECTION_KEYS_LINE_LIST,
-    OPTIONS_SECTION_KEYS_PIVOT_TABLE,
+    OPTIONS_TAB_KEYS_LINE_LIST,
+    OPTIONS_TAB_KEYS_PIVOT_TABLE,
 } from '@constants/options'
 
-export type OptionsSectionKeyLineList =
-    (typeof OPTIONS_SECTION_KEYS_LINE_LIST)[number]
-export type OptionsSectionKeyPivotTable =
-    (typeof OPTIONS_SECTION_KEYS_PIVOT_TABLE)[number]
-export type OptionsSectionKey =
-    | OptionsSectionKeyLineList
-    | OptionsSectionKeyPivotTable
-export type OptionsSection = {
-    key: OptionsSectionKey
+export type OptionsTabKeyLineList = (typeof OPTIONS_TAB_KEYS_LINE_LIST)[number]
+export type OptionsTabKeyPivotTable =
+    (typeof OPTIONS_TAB_KEYS_PIVOT_TABLE)[number]
+export type OptionsTabKey = OptionsTabKeyLineList | OptionsTabKeyPivotTable
+export type OptionsTab = {
+    key: OptionsTabKey
     label: string
 }
 export type LegendOption = Pick<
@@ -42,9 +39,13 @@ export type EventVisualizationOptions = Partial<
         | 'cumulativeValues'
         | 'digitGroupSeparator'
         | 'displayDensity'
+        //        | 'fixColumnHeaders'
+        //        | 'fixRowHeaders'
         | 'fontSize'
+        //        | 'hideEmptyColumns'
         | 'hideEmptyRowItems'
         | 'hideEmptyRows'
+        | 'hideNaData'
         | 'hideSubtitle'
         | 'hideTitle'
         | 'noSpaceBetweenColumns'
@@ -71,8 +72,6 @@ export type EventVisualizationOptions = Partial<
         // | 'colorSet'
         // | 'cumulative'
         // | 'decimals'
-        // | 'fixColumnHeaders'
-        // | 'fixRowHeaders'
         // | 'fontStyle'
         // | 'grandParentOrganisationUnit'
         // | 'hideEmptyColumns'
@@ -99,3 +98,5 @@ export type EventVisualizationOptions = Partial<
         legend: LegendOption
     }
 >
+
+export type EventVisualizationOptionFieldName = keyof EventVisualizationOptions
