@@ -6,7 +6,8 @@ import { ChipMenu } from './chip-menu'
 import classes from './styles/chip.module.css'
 import { TooltipContent } from './tooltip-content'
 import { IconButton } from '@components/dimension-item/icon-button'
-import { useAppSelector, useConditionsTexts } from '@hooks'
+import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
+import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
@@ -35,6 +36,8 @@ interface ChipProps {
 }
 
 export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
+    const dispatch = useAppDispatch()
+
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const conditions = useAppSelector((state) =>
         getVisUiConfigConditionsByDimension(state, dimension.id)
@@ -49,7 +52,9 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
     const toggleChipMenu = () => setMenuIsOpen(!menuIsOpen)
 
     const openDimensionModal = () => {
-        console.log('TODO Open chip menu for:', dimension.id)
+        dispatch(setUiActiveDimensionModal(dimension.id))
+
+        console.log('Open dimension modal for:', dimension.id)
     }
 
     const hasConditions =
