@@ -4,30 +4,22 @@ import { type FC } from 'react'
 import type { LayoutDimension } from './chip'
 import { /* useAppDispatch,*/ useAppSelector } from '@hooks'
 import { getAxisName } from '@modules/layout'
-import {
-    //    getVisUiConfigLayout,
-    getVisUiConfigVisualizationType,
-} from '@store/vis-ui-config-slice.js'
+import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice.js'
 import type { Axis } from '@types'
 
 type ChipMenuProps = {
     axisId: Axis
     dimensionId: LayoutDimension['id']
-    //dimensionMetadata?: object // TODO: check what to do here
     onClose: () => void
 }
 
 export const ChipMenu: FC<ChipMenuProps> = ({
     axisId,
     dimensionId,
-    //dimensionMetadata,
     onClose,
 }) => {
     //    const dispatch = useAppDispatch()
     const visType = useAppSelector(getVisUiConfigVisualizationType)
-    // XXX: necessary?
-    //    const layout = useAppSelector(getVisUiConfigLayout)
-    //    axisId ||= getAxisIdForDimension(dimensionId, layout)
 
     const dataTest = 'chip-menu'
 
