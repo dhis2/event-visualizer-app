@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-12-04T16:22:54.198Z\n"
-"PO-Revision-Date: 2025-12-04T16:22:54.199Z\n"
+"POT-Creation-Date: 2025-12-08T14:54:33.626Z\n"
+"PO-Revision-Date: 2025-12-08T14:54:33.627Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -169,6 +169,12 @@ msgstr "Code"
 
 msgid "Name"
 msgstr "Name"
+
+msgid "Move to {{axisName}}"
+msgstr "Move to {{axisName}}"
+
+msgid "Remove"
+msgstr "Remove"
 
 msgid "all"
 msgstr "all"

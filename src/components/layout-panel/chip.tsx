@@ -1,11 +1,13 @@
-import { Tooltip, IconMore16 } from '@dhis2/ui'
+import { Layer, Popper, Tooltip, IconMore16 } from '@dhis2/ui'
 import cx from 'classnames'
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import { ChipBase } from './chip-base'
+import { ChipMenu } from './chip-menu'
 import classes from './styles/chip.module.css'
 import { TooltipContent } from './tooltip-content'
 import { IconButton } from '@components/dimension-item/icon-button'
-import { useAppSelector, useConditionsTexts } from '@hooks'
+import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
+import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
@@ -34,6 +36,8 @@ interface ChipProps {
 }
 
 export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
+    const dispatch = useAppDispatch()
+
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const conditions = useAppSelector((state) =>
         getVisUiConfigConditionsByDimension(state, dimension.id)
@@ -42,9 +46,13 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
         getVisUiConfigItemsByDimension(state, dimension.id)
     )
 
-    const openChipMenu = () => {
-        console.log('TODO Open chip menu for:', dimension.id)
-    }
+    const buttonRef = useRef<HTMLDivElement>(null)
+    const [menuIsOpen, setMenuIsOpen] = useState(false)
+
+    const toggleChipMenu = () => setMenuIsOpen(!menuIsOpen)
+
+    const openDimensionModal = () =>
+        dispatch(setUiActiveDimensionModal(dimension.id))
 
     const hasConditions =
         Boolean(conditions?.condition?.length) || Boolean(conditions?.legendSet)
@@ -82,6 +90,7 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
                     {({ ref, onMouseOver, onMouseOut }) => (
                         <span
                             ref={ref}
+                            onClick={openDimensionModal}
                             onMouseOver={onMouseOver}
                             onMouseOut={onMouseOut}
                         >
@@ -98,15 +107,26 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
                     )}
                 </Tooltip>
             </div>
-            <div>
+            <div ref={buttonRef}>
                 <IconButton
-                    onClick={openChipMenu}
+                    onClick={toggleChipMenu}
                     dataTest={'chip-menu-button'}
                     menuId={`chip-menu-${dimension.id}`}
                 >
                     <IconMore16 />
                 </IconButton>
             </div>
+            {menuIsOpen && (
+                <Layer onBackdropClick={toggleChipMenu}>
+                    <Popper reference={buttonRef} placement="bottom-start">
+                        <ChipMenu
+                            dimensionId={dimension.id}
+                            axisId={axisId}
+                            onClose={toggleChipMenu}
+                        />
+                    </Popper>
+                </Layer>
+            )}
         </div>
     )
 }
