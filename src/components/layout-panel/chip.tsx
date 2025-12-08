@@ -51,11 +51,8 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
 
     const toggleChipMenu = () => setMenuIsOpen(!menuIsOpen)
 
-    const openDimensionModal = () => {
+    const openDimensionModal = () =>
         dispatch(setUiActiveDimensionModal(dimension.id))
-
-        console.log('Open dimension modal for:', dimension.id)
-    }
 
     const hasConditions =
         Boolean(conditions?.condition?.length) || Boolean(conditions?.legendSet)
