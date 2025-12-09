@@ -3,6 +3,7 @@ import cx from 'classnames'
 import React, { useRef, useState } from 'react'
 import { ChipBase } from './chip-base'
 import { ChipMenu } from './chip-menu'
+import { getChipItemsText } from './get-chip-items-text'
 import classes from './styles/chip.module.css'
 import { TooltipContent } from './tooltip-content'
 import { IconButton } from '@components/dimension-item/icon-button'
@@ -95,13 +96,18 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
                             onMouseOut={onMouseOut}
                         >
                             <ChipBase
-                                dimension={dimension}
-                                conditionsLength={conditionsTexts.length}
-                                itemsLength={
-                                    Array.isArray(items) ? items.length : 0
-                                }
-                                outputType={outputType}
-                                axisId={axisId}
+                                dimensionType={dimension.dimensionType}
+                                dimensionName={dimension.name}
+                                suffix={dimension.suffix}
+                                itemsText={getChipItemsText({
+                                    dimension,
+                                    conditionsLength: conditionsTexts.length,
+                                    itemsLength: Array.isArray(items)
+                                        ? items.length
+                                        : 0,
+                                    outputType,
+                                    axisId,
+                                })}
                             />
                         </span>
                     )}
