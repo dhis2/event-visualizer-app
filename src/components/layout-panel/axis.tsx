@@ -1,3 +1,4 @@
+import { SortableContext } from '@dnd-kit/sortable'
 import cx from 'classnames'
 import type { FC } from 'react'
 import { Chip } from './chip'
@@ -22,24 +23,26 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds }) => {
     })
 
     return (
-        <div
-            className={cx(classes.axisContainer, {
-                [classes.columns]: axisId === 'columns',
-                [classes.rows]: axisId === 'rows',
-                [classes.filters]: axisId === 'filters',
-            })}
-            data-test={`axis-${axisId}`}
-        >
-            <div className={classes.label}>{getAxisName(axisId)}</div>
-            <div className={classes.content}>
-                {dimensions.map((dimension, i) => (
-                    <Chip
-                        key={`key-${i}`}
-                        dimension={dimension}
-                        axisId={axisId}
-                    />
-                ))}
+        <SortableContext id={axisId} items={dimensionIds ?? []}>
+            <div
+                className={cx(classes.axisContainer, {
+                    [classes.columns]: axisId === 'columns',
+                    [classes.rows]: axisId === 'rows',
+                    [classes.filters]: axisId === 'filters',
+                })}
+                data-test={`axis-${axisId}`}
+            >
+                <div className={classes.label}>{getAxisName(axisId)}</div>
+                <div className={classes.content}>
+                    {dimensions.map((dimension, i) => (
+                        <Chip
+                            key={`key-${i}`}
+                            dimension={dimension}
+                            axisId={axisId}
+                        />
+                    ))}
+                </div>
             </div>
-        </div>
+        </SortableContext>
     )
 }
