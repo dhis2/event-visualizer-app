@@ -1,5 +1,5 @@
 import type {
-    MetadataItem as GeneratedMetadaItem,
+    MetadataItem as GeneratedDimensionMetadataItem,
     ProgramType,
     OptionSet,
     LegendSet,
@@ -52,9 +52,14 @@ export type NormalizedMetadataInputItem = Record<string, unknown> & {
  **** Phase 4: fully processed MetadataStoreItem ****
  ****************************************************/
 
-export type ResponsePayloadMetadataItem = Partial<
+export type GenericMetadataItem = {
+    id: string
+    name: string
+}
+
+export type DimensionMetadataItem = Partial<
     Omit<
-        GeneratedMetadaItem,
+        GeneratedDimensionMetadataItem,
         | 'uid'
         | 'name'
         | 'dimensionType'
@@ -66,9 +71,9 @@ export type ResponsePayloadMetadataItem = Partial<
 > & {
     id: string
     name: string
-    dimensionType?: DimensionType
-    dimensionItemType?: DimensionType
-    valueType?: ValueType
+    dimensionType: DimensionType
+    dimensionItemType: DimensionType
+    valueType: ValueType
     legendSet?: string
     optionSet?: string
 }
@@ -104,7 +109,10 @@ export type LegendSetMetadataItem = Omit<LegendSet, 'id' | 'legends'> & {
     name?: string
 }
 
-export type OrganisationUnitMetadataItem = ResponsePayloadMetadataItem & {
+export type OrganisationUnitMetadataItem = Pick<
+    DimensionMetadataItem,
+    'id' | 'name' | 'dimensionType'
+> & {
     path: string
 }
 
@@ -136,7 +144,8 @@ export type ProgramStageMetadataItem = {
 }
 
 export type MetadataItem =
-    | ResponsePayloadMetadataItem
+    | GenericMetadataItem
+    | DimensionMetadataItem
     | OptionSetMetadataItem
     | LegendSetMetadataItem
     | ProgramMetadataItem
