@@ -33,9 +33,9 @@ export const initialState: VisUiConfigState = {
     options: DEFAULT_OPTIONS,
     outputType: 'EVENT',
     layout: {
-        columns: [],
-        filters: [],
-        rows: [],
+        columns: EMPTY_STRING_ARRAY,
+        filters: EMPTY_STRING_ARRAY,
+        rows: EMPTY_STRING_ARRAY,
     },
     itemsByDimension: {},
     conditionsByDimension: {},
