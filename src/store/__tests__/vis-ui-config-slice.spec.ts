@@ -82,6 +82,51 @@ describe('moveVisUiConfigLayoutDimension', () => {
         expect(result.layout.filters).toEqual(['b2'])
     })
 
+    it('should reorder dimension within the same axis', () => {
+        const state = {
+            ...initialState,
+            layout: { columns: ['a1', 'a2', 'a3'], filters: [], rows: [] },
+        }
+        const action = moveVisUiConfigLayoutDimension({
+            dimensionId: 'a2',
+            sourceAxis: 'columns',
+            targetAxis: 'columns',
+            insertIndex: 0,
+        })
+        const result = visUiConfigSlice.reducer(state, action)
+        expect(result.layout.columns).toEqual(['a2', 'a1', 'a3'])
+    })
+
+    it('should reorder dimension forward within the same axis', () => {
+        const state = {
+            ...initialState,
+            layout: { columns: ['a1', 'a2', 'a3'], filters: [], rows: [] },
+        }
+        const action = moveVisUiConfigLayoutDimension({
+            dimensionId: 'a1',
+            sourceAxis: 'columns',
+            targetAxis: 'columns',
+            insertIndex: 2,
+        })
+        const result = visUiConfigSlice.reducer(state, action)
+        expect(result.layout.columns).toEqual(['a2', 'a3', 'a1'])
+    })
+
+    it('should reorder dimension forward within the same axis to adjacent position', () => {
+        const state = {
+            ...initialState,
+            layout: { columns: ['a1', 'a2', 'a3'], filters: [], rows: [] },
+        }
+        const action = moveVisUiConfigLayoutDimension({
+            dimensionId: 'a2',
+            sourceAxis: 'columns',
+            targetAxis: 'columns',
+            insertIndex: 2,
+        })
+        const result = visUiConfigSlice.reducer(state, action)
+        expect(result.layout.columns).toEqual(['a1', 'a3', 'a2'])
+    })
+
     it('should throw error if dimension not found in source axis', () => {
         const state = {
             ...initialState,
