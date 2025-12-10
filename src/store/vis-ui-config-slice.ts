@@ -2,7 +2,9 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { DEFAULT_OPTIONS } from '@constants/options'
 import type {
+    Axis,
     EventVisualizationOptions,
+    LayoutType,
     OutputType,
     VisualizationType,
 } from '@types'
@@ -18,11 +20,7 @@ const EMPTY_CONDITIONS_OBJECT: ConditionsObject = {
 export interface VisUiConfigState {
     visualizationType: VisualizationType
     outputType: OutputType
-    layout: {
-        columns: string[]
-        filters: string[]
-        rows: string[]
-    }
+    layout: LayoutType
     itemsByDimension: Record<string, string[]>
     conditionsByDimension: Record<string, ConditionsObject>
     options: EventVisualizationOptions
@@ -35,9 +33,9 @@ export const initialState: VisUiConfigState = {
     options: DEFAULT_OPTIONS,
     outputType: 'EVENT',
     layout: {
-        columns: [],
-        filters: [],
-        rows: [],
+        columns: EMPTY_STRING_ARRAY,
+        filters: EMPTY_STRING_ARRAY,
+        rows: EMPTY_STRING_ARRAY,
     },
     itemsByDimension: {},
     conditionsByDimension: {},
@@ -100,6 +98,56 @@ export const visUiConfigSlice = createSlice({
         ) => {
             state.conditionsByDimension = action.payload
         },
+        addVisUiConfigLayoutDimension: (
+            state,
+            action: PayloadAction<{
+                axis: Axis
+                dimensionId: string
+                insertIndex?: number
+            }>
+        ) => {
+            const { axis, dimensionId, insertIndex } = action.payload
+            const targetArray = state.layout[axis]
+            const index = insertIndex ?? targetArray.length
+            targetArray.splice(index, 0, dimensionId)
+        },
+        moveVisUiConfigLayoutDimension: (
+            state,
+            action: PayloadAction<{
+                dimensionId: string
+                sourceAxis: Axis
+                targetAxis: Axis
+                insertIndex?: number
+            }>
+        ) => {
+            const { dimensionId, sourceAxis, targetAxis, insertIndex } =
+                action.payload
+            const sourceArray = state.layout[sourceAxis]
+            const targetArray = state.layout[targetAxis]
+            const sourceIndex = sourceArray.indexOf(dimensionId)
+            if (sourceIndex === -1) {
+                throw new Error(
+                    `Dimension ${dimensionId} not found in source axis ${sourceAxis}`
+                )
+            }
+            sourceArray.splice(sourceIndex, 1)
+            const index = insertIndex ?? targetArray.length
+            targetArray.splice(index, 0, dimensionId)
+        },
+        deleteVisUiConfigLayoutDimension: (
+            state,
+            action: PayloadAction<{ axis: Axis; dimensionId: string }>
+        ) => {
+            const { axis, dimensionId } = action.payload
+            const array = state.layout[axis]
+            const index = array.indexOf(dimensionId)
+            if (index === -1) {
+                throw new Error(
+                    `Dimension ${dimensionId} not found in axis ${axis}`
+                )
+            }
+            array.splice(index, 1)
+        },
     },
     selectors: {
         getVisUiConfigVisualizationType: (state) => state.visualizationType,
@@ -123,6 +171,9 @@ export const {
     setVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
+    addVisUiConfigLayoutDimension,
+    moveVisUiConfigLayoutDimension,
+    deleteVisUiConfigLayoutDimension,
 } = visUiConfigSlice.actions
 
 export const {
