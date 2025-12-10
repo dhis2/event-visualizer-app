@@ -52,3 +52,13 @@
     align-items: center;
     min-block-size: 20px;
 }
+.isLast {
+    flex: 1;
+}
+.showBlank .content {
+    visibility: hidden;
+    min-inline-size: 100px;
+}
+.active {
+    opacity: 0.4;
+}
