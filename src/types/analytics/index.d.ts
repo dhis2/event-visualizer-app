@@ -20,6 +20,7 @@ import type { ToolbarSidebar } from './toolbar-sidebar'
 import type { UpdateButton } from './update-button'
 import type { VisTypeIcon } from './vis-type-icon'
 import type {
+    Axis,
     CurrentVisualization,
     DimensionArray,
     DimensionId,
@@ -82,6 +83,8 @@ declare module '@dhis2/analytics' {
         valueType: ValueType,
         visualization: Partial<SavedVisualization>
     ) => string
+
+    export const getAvailableAxes: (visType: VisualizationType) => Axis[]
 
     export const getColorByValueFromLegendSet: (
         legendSet?: LegendSet,

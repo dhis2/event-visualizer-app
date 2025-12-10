@@ -8,6 +8,7 @@ import type {
     UserOrgUnitMetadataItem,
     MetadataInputItem,
     MetadataItemWithName,
+    DimensionMetadataItem,
 } from './types'
 
 // Helper function to check if input is a plain object
@@ -153,10 +154,23 @@ export const isUserOrgUnitMetadataItem = (
     )
 }
 
+export const isDimensionMetadataItem = (
+    input: unknown
+): input is DimensionMetadataItem => {
+    return (
+        isObject(input) &&
+        'id' in input &&
+        'dimensionType' in input &&
+        isPopulatedString(input.id) &&
+        isPopulatedString(input.dimensionType)
+    )
+}
+
 export const isMetadataItem = (input: unknown): input is MetadataItem => {
     return (
         isMetadataItemWithName(input) ||
         isLegendSetMetadataItem(input) ||
-        isOptionSetMetadataItem(input)
+        isOptionSetMetadataItem(input) ||
+        isDimensionMetadataItem(input)
     )
 }
