@@ -10,6 +10,7 @@ import {
 } from '@dnd-kit/core'
 import { type FC, type PropsWithChildren } from 'react'
 import { DimensionDragOverlay } from './dimension-drag-overlay'
+import { DndMonitor } from './dnd-monitor'
 
 const getIntersectionRatio = (
     droppableContainerRect: ClientRect | null,
@@ -111,6 +112,7 @@ export const DndContextProvider: FC<PropsWithChildren> = ({ children }) => {
         >
             {children}
             <DimensionDragOverlay />
+            <DndMonitor />
         </DndContext>
     )
 }
