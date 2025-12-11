@@ -38,6 +38,12 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 ? overItemData.sortable.index // insert after hovered item
                 : overItemData.sortable.index - 1 // insert before hovered item
 
+            if (insertIndex < 0) {
+                throw new Error(
+                    `Invalid insertIndex: ${insertIndex}. This should not happen.`
+                )
+            }
+
             if (!draggedItemData.axis) {
                 // Add from sidebar
                 dispatch(
