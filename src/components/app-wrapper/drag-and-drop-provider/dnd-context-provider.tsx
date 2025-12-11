@@ -10,7 +10,7 @@ import {
 } from '@dnd-kit/core'
 import { type FC, type PropsWithChildren } from 'react'
 import { DimensionDragOverlay } from './dimension-drag-overlay'
-import { DndMonitor } from './dnd-monitor'
+import { useDimensionDragEndMonitor } from './use-dimension-drag-end-monitor'
 
 const getIntersectionRatio = (
     droppableContainerRect: ClientRect | null,
@@ -105,6 +105,8 @@ export const DndContextProvider: FC<PropsWithChildren> = ({ children }) => {
     const sensor = useSensor(PointerSensor, activateAt15pixels)
     const sensors = useSensors(sensor)
 
+    useDimensionDragEndMonitor()
+
     return (
         <DndContext
             collisionDetection={rectIntersectionCustom}
@@ -112,7 +114,6 @@ export const DndContextProvider: FC<PropsWithChildren> = ({ children }) => {
         >
             {children}
             <DimensionDragOverlay />
-            <DndMonitor />
         </DndContext>
     )
 }
