@@ -1,26 +1,41 @@
+import type { Active, DataRef, DragEndEvent, Over } from '@dnd-kit/core'
+import type { SortableData } from '@dnd-kit/sortable'
 import type { MetadataInput } from '@components/app-wrapper/metadata-helpers/types'
 import type { ChipBaseProps } from '@components/layout-panel/chip-base'
 import type { Axis } from '@types'
 
-type CommonDroppableData = {
+export type SidebarSortableData = {
     dimensionId: string
-}
-
-export type SidebarDroppableData = CommonDroppableData & {
-    source: 'sidebar'
-    overlayItemProps: unknown
-    metadata: MetadataInput
-}
-
-export type AxisDroppableData = CommonDroppableData & {
-    source: Axis
     overlayItemProps: ChipBaseProps
+    getMetadata: () => MetadataInput
 }
 
-export type DroppableData = SidebarDroppableData | AxisDroppableData
-
-type SortableData = {
-    sortable: { containerId: Axis }
+export type AxisSortableData = {
+    dimensionId: string
+    axis: Axis
+    overlayItemProps: ChipBaseProps
+    insertAfter: boolean
 }
 
-export type OverDroppableData = (DroppableData & SortableData) | null
+export type EmptyAxisDroppableData = {
+    axis: Axis
+    isEmptyAxis: true
+}
+
+export type DraggedItemEventData = (SidebarSortableData | AxisSortableData) &
+    SortableData
+
+export type OverItemEventData =
+    | (AxisSortableData & SortableData)
+    | EmptyAxisDroppableData
+
+export interface LayoutDragEndEvent extends DragEndEvent {
+    active: Omit<Active, 'data'> & {
+        data: DataRef<DraggedItemEventData>
+    }
+    over:
+        | (Omit<Over, 'data'> & {
+              data: DataRef<OverItemEventData>
+          })
+        | null
+}
