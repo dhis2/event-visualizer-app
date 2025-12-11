@@ -1,7 +1,8 @@
 import { SortableContext } from '@dnd-kit/sortable'
 import cx from 'classnames'
-import type { FC } from 'react'
+import { type FC } from 'react'
 import { Chip } from './chip'
+import { EmptyAxisDropArea } from './empty-axis-drop-area'
 import classes from './styles/axis.module.css'
 import { useLayoutDimensions } from './use-layout-dimensions'
 import { useAppSelector } from '@hooks'
@@ -11,19 +12,19 @@ import type { Axis as AxisTD } from '@types'
 
 type AxisProps = {
     axisId: AxisTD
-    dimensionIds?: string[] | undefined
+    dimensionIds?: string[]
 }
+const EMPTY_ARRAY = []
 
-export const Axis: FC<AxisProps> = ({ axisId, dimensionIds }) => {
+export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
     const outputType = useAppSelector(getVisUiConfigOutputType)
-
     const dimensions = useLayoutDimensions({
-        dimensionIds: dimensionIds || [],
+        dimensionIds: dimensionIds,
         outputType,
     })
 
     return (
-        <SortableContext id={axisId} items={dimensionIds ?? []}>
+        <SortableContext id={axisId} items={dimensionIds}>
             <div
                 className={cx(classes.axisContainer, {
                     [classes.columns]: axisId === 'columns',
@@ -34,13 +35,18 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds }) => {
             >
                 <div className={classes.label}>{getAxisName(axisId)}</div>
                 <div className={classes.content}>
-                    {dimensions.map((dimension, i) => (
-                        <Chip
-                            key={`key-${i}`}
-                            dimension={dimension}
-                            axisId={axisId}
-                        />
-                    ))}
+                    {dimensions.length === 0 ? (
+                        <EmptyAxisDropArea axisId={axisId} />
+                    ) : (
+                        dimensions.map((dimension, i) => (
+                            <Chip
+                                key={dimension.id}
+                                dimension={dimension}
+                                axisId={axisId}
+                                isLastItem={i === dimensionIds.length - 1}
+                            />
+                        ))
+                    )}
                 </div>
             </div>
         </SortableContext>

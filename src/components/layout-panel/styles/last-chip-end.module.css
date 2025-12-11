@@ -1,0 +1,6 @@
+.container {
+    flex-grow: 1;
+    /* Last 40px of the chip should also trigger
+     * the "show marker at end" behaviour */
+    margin-inline-start: -40px;
+}

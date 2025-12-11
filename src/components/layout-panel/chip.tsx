@@ -2,13 +2,15 @@ import { Layer, Popper, Tooltip, IconMore16 } from '@dhis2/ui'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import cx from 'classnames'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState, type FC } from 'react'
 import { ChipBase, type ChipBaseProps } from './chip-base'
 import { ChipMenu } from './chip-menu'
 import { getChipItemsText } from './get-chip-items-text'
+import { LastChipEnd } from './last-chip-end'
 import classes from './styles/chip.module.css'
+import insertMarkerClasses from './styles/insert-marker.module.css'
 import { TooltipContent } from './tooltip-content'
-import type { DroppableData } from '@components/app-wrapper/drag-and-drop-provider/types'
+import type { AxisSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import { IconButton } from '@components/dimension-item/icon-button'
 import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
@@ -38,10 +40,12 @@ export type LayoutDimension = {
 interface ChipProps {
     dimension: LayoutDimension
     axisId: Axis
+    isLastItem?: boolean
 }
 
-export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
+export const Chip: FC<ChipProps> = ({ dimension, axisId, isLastItem }) => {
     const dispatch = useAppDispatch()
+    const [insertAfter, setInsertAfter] = useState<boolean>(false)
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const digitGroupSeparator = useAppSelector((state) =>
         getVisUiConfigOption(state, 'digitGroupSeparator')
@@ -91,21 +95,21 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
         }),
         [dimension, chipItemsText]
     )
-    const droppableData = useMemo<DroppableData>(
+    const droppableData = useMemo<AxisSortableData>(
         () => ({
             dimensionId: dimension.id,
-            source: axisId,
+            axis: axisId,
             overlayItemProps: chipBaseProps,
+            insertAfter,
         }),
-        [axisId, dimension, chipBaseProps]
+        [axisId, dimension, chipBaseProps, insertAfter]
     )
     const {
         attributes,
         listeners,
-        // index,
         isDragging,
         isSorting,
-        // over,
+        isOver,
         setNodeRef,
         transform,
         transition,
@@ -113,8 +117,6 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
         id: dimension.id,
         data: droppableData,
     })
-    // TODO: Compute this
-    const isLast = false
     const style = useMemo(
         () =>
             transform
@@ -138,7 +140,7 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
             ref={setNodeRef}
             {...listeners}
             {...attributes}
-            className={isLast ? classes.isLast : undefined}
+            className={isLastItem ? classes.isLast : undefined}
             style={style}
         >
             <div
@@ -148,13 +150,17 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
                         items.length === 0 &&
                         !hasConditions,
                     [classes.active]: isDragging,
-                    // [classes.insertBefore]: insertPosition === BEFORE,
-                    // [classes.insertAfter]: insertPosition === AFTER,
                     [classes.showBlank]: !dimension.name,
                 })}
                 data-test="layout-dimension-chip"
             >
-                <div className={classes.content}>
+                <div
+                    className={cx(classes.content, {
+                        [insertMarkerClasses.withInsertMarker]:
+                            isOver && !isDragging,
+                        [insertMarkerClasses.atEnd]: insertAfter,
+                    })}
+                >
                     <Tooltip
                         content={
                             <TooltipContent
@@ -200,6 +206,9 @@ export const Chip: React.FC<ChipProps> = ({ dimension, axisId }) => {
                     </Layer>
                 )}
             </div>
+            {isLastItem && isOver && !isDragging && (
+                <LastChipEnd setInsertAfter={setInsertAfter} />
+            )}
         </div>
     )
 }

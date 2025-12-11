@@ -1,0 +1,38 @@
+/* Insert marker styles */
+.withInsertMarker::before,
+.withInsertMarker::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+}
+
+/* the vertical line */
+.withInsertMarker::before {
+    inset-block: 6px 0;
+    inline-size: 4px;
+    background-color: #4c9ffe;
+}
+
+/* the circle */
+.withInsertMarker::after {
+    inset-block-start: -4px;
+    inline-size: 12px;
+    block-size: 12px;
+    border: 4px solid #4c9ffe;
+    background: transparent;
+    border-radius: 12px;
+}
+
+.withInsertMarker:not(.atEnd)::before {
+    inset-inline-start: -6px;
+}
+.withInsertMarker:not(.atEnd)::after {
+    inset-inline-start: -10px;
+}
+
+.withInsertMarker.atEnd::before {
+    inset-inline-end: -6px;
+}
+.withInsertMarker.atEnd::after {
+    inset-inline-end: -10px;
+}

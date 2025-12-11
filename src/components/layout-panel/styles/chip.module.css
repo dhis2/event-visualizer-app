@@ -54,6 +54,7 @@
 }
 .isLast {
     flex: 1;
+    display: flex;
 }
 .showBlank .content {
     visibility: hidden;
