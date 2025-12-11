@@ -1,4 +1,3 @@
-import { useDndMonitor } from '@dnd-kit/core'
 import { useCallback } from 'react'
 import type { LayoutDragEndEvent } from './types'
 import { useAppDispatch, useAddMetadata } from '@hooks'
@@ -7,10 +6,12 @@ import {
     moveVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice'
 
-export const useDimensionDragEndMonitor = (): void => {
+type OnDragEndFn = (event: LayoutDragEndEvent) => void
+
+export const useOnDragEnd = (): OnDragEndFn => {
     const addMetadata = useAddMetadata()
     const dispatch = useAppDispatch()
-    const onDragEnd = useCallback(
+    return useCallback(
         (event: LayoutDragEndEvent) => {
             // Only allow dropping if event data is present and dropping onto an axis
             if (
@@ -60,6 +61,4 @@ export const useDimensionDragEndMonitor = (): void => {
         },
         [addMetadata, dispatch]
     )
-
-    useDndMonitor({ onDragEnd })
 }

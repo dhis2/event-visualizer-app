@@ -10,7 +10,7 @@ import {
 } from '@dnd-kit/core'
 import { type FC, type PropsWithChildren } from 'react'
 import { DimensionDragOverlay } from './dimension-drag-overlay'
-import { useDimensionDragEndMonitor } from './use-dimension-drag-end-monitor'
+import { useOnDragEnd } from './use-on-drag-end'
 
 const getIntersectionRatio = (
     droppableContainerRect: ClientRect | null,
@@ -104,13 +104,13 @@ export const DndContextProvider: FC<PropsWithChildren> = ({ children }) => {
     // Wait 15px movement before starting drag, so that click event isn't overridden
     const sensor = useSensor(PointerSensor, activateAt15pixels)
     const sensors = useSensors(sensor)
-
-    useDimensionDragEndMonitor()
+    const onDragEnd = useOnDragEnd()
 
     return (
         <DndContext
             collisionDetection={rectIntersectionCustom}
             sensors={sensors}
+            onDragEnd={onDragEnd}
         >
             {children}
             <DimensionDragOverlay />
