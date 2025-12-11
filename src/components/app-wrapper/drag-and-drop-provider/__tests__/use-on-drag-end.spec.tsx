@@ -20,10 +20,12 @@ vi.mock('@store/vis-ui-config-slice', () => ({
 }))
 
 describe('useOnDragEnd', () => {
-    const mockDispatch = vi.mocked(useAppDispatch)
-    const mockAddMetadata = vi.mocked(useAddMetadata)
+    const mockDispatch = vi.fn()
+    const mockAddMetadata = vi.fn()
 
     beforeEach(() => {
+        vi.mocked(useAppDispatch).mockReturnValue(mockDispatch)
+        vi.mocked(useAddMetadata).mockReturnValue(mockAddMetadata)
         mockDispatch.mockClear()
         mockAddMetadata.mockClear()
     })
