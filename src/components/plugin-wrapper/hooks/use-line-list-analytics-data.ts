@@ -23,11 +23,13 @@ import {
     headersMap,
     isVisualizationWithTimeDimension,
 } from '@modules/visualization'
-import type { CurrentUser, CurrentVisualization, OutputType } from '@types'
 import type {
+    CurrentUser,
+    CurrentVisualization,
     MetadataInputItem,
+    OutputType,
     UserOrgUnitMetadataItem,
-} from 'src/types/metadata.js'
+} from '@types'
 
 const lookupOptionSetOptionMetadata = (optionSetId, code, metaDataItems) => {
     const optionSetMetaData = metaDataItems?.[optionSetId]
