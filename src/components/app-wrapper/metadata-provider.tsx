@@ -9,12 +9,9 @@ import {
 } from 'react'
 import type { FC, ReactNode } from 'react'
 import { getInitialMetadata } from './metadata-helpers/initial-metadata'
-import type {
-    InitialMetadataItems,
-    MetadataItem,
-} from './metadata-helpers/types'
 import { MetadataStore } from './metadata-store'
 import { useRootOrgUnits } from '@hooks'
+import type { InitialMetadataItems, MetadataItem } from '@types'
 
 const MetadataContext = createContext<MetadataStore | null>(null)
 

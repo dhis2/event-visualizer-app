@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-12-08T14:54:33.626Z\n"
-"PO-Revision-Date: 2025-12-08T14:54:33.627Z\n"
+"POT-Creation-Date: 2025-12-15T14:16:13.113Z\n"
+"PO-Revision-Date: 2025-12-15T14:16:13.113Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -133,6 +133,15 @@ msgstr "Registration org. unit"
 
 msgid "Organisation unit"
 msgstr "Organisation unit"
+
+msgid "Add to {{axisName}}"
+msgstr "Add to {{axisName}}"
+
+msgid "Hide"
+msgstr "Hide"
+
+msgid "Update"
+msgstr "Update"
 
 msgid "HTML"
 msgstr "HTML"
@@ -273,6 +282,15 @@ msgstr "Normal"
 msgid "Compact"
 msgstr "Compact"
 
+msgid "Fix column headers to top of table"
+msgstr "Fix column headers to top of table"
+
+msgid "Fix row headers to left of table"
+msgstr "Fix row headers to left of table"
+
+msgid "There aren’t any row headers because Rows is empty."
+msgstr "There aren’t any row headers because Rows is empty."
+
 msgid "Font size"
 msgstr "Font size"
 
@@ -281,6 +299,9 @@ msgstr "Large"
 
 msgid "Small"
 msgstr "Small"
+
+msgid "Hide empty columns"
+msgstr "Hide empty columns"
 
 msgid "Hide empty rows"
 msgstr "Hide empty rows"
@@ -356,12 +377,6 @@ msgstr "Add a title"
 
 msgid "Options"
 msgstr "Options"
-
-msgid "Hide"
-msgstr "Hide"
-
-msgid "Update"
-msgstr "Update"
 
 msgid "Display"
 msgstr "Display"

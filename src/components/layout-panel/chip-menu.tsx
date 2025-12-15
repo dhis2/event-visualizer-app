@@ -2,9 +2,13 @@ import i18n from '@dhis2/d2-i18n'
 import { FlyoutMenu, MenuDivider, MenuItem } from '@dhis2/ui'
 import { useCallback, useMemo, type FC } from 'react'
 import type { LayoutDimension } from './chip'
-import { /* useAppDispatch,*/ useAppSelector } from '@hooks'
+import { useAppDispatch, useAppSelector } from '@hooks'
 import { getAxisName } from '@modules/layout'
-import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice.js'
+import {
+    deleteVisUiConfigLayoutDimension,
+    getVisUiConfigVisualizationType,
+    moveVisUiConfigLayoutDimension,
+} from '@store/vis-ui-config-slice.js'
 import type { Axis } from '@types'
 
 type ChipMenuProps = {
@@ -19,29 +23,40 @@ export const ChipMenu: FC<ChipMenuProps> = ({
     dimensionId,
     onClose,
 }) => {
-    // const dispatch = useAppDispatch()
-    const visType = useAppSelector(getVisUiConfigVisualizationType)
     const dataTest = 'chip-menu'
+
+    const dispatch = useAppDispatch()
+    const visType = useAppSelector(getVisUiConfigVisualizationType)
+
     const axisItemHandler = useCallback(
-        ({ dimensionId, axisId }: { dimensionId: string; axisId: Axis }) => {
-            // dispatch(
-            //     acAddUiLayoutDimensions(
-            //         { [dimensionId]: { axisId } },
-            //         dimensionMetadata
-            //     )
-            // )
-            console.log(`TBD: move dimension ${dimensionId} to axis ${axisId}`)
+        ({
+            dimensionId,
+            targetAxisId,
+        }: {
+            dimensionId: LayoutDimension['id']
+            targetAxisId: Axis
+        }) => {
+            dispatch(
+                moveVisUiConfigLayoutDimension({
+                    sourceAxis: axisId,
+                    targetAxis: targetAxisId,
+                    dimensionId,
+                })
+            )
+
             onClose()
         },
-        [onClose]
+        [dispatch, axisId, onClose]
     )
     const removeItemHandler = useCallback(
-        (dimensionId: string) => {
-            // dispatch(acRemoveUiLayoutDimensions(id))
-            console.log(`TBD: remove dimension ${dimensionId} from layout`)
+        (dimensionId: LayoutDimension['id']) => {
+            dispatch(
+                deleteVisUiConfigLayoutDimension({ axis: axisId, dimensionId })
+            )
+
             onClose()
         },
-        [onClose]
+        [dispatch, axisId, onClose]
     )
 
     const applicableAxisIds = useMemo<Axis[]>(
@@ -62,7 +77,7 @@ export const ChipMenu: FC<ChipMenuProps> = ({
                     onClick={() => {
                         axisItemHandler({
                             dimensionId,
-                            axisId,
+                            targetAxisId: axisId,
                         })
                         onClose()
                     }}

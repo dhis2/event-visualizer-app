@@ -4,7 +4,7 @@ import inpatientVisitVisualization from '../__fixtures__/visualization-inpatient
 import { getInitialMetadata } from '../metadata-helpers/initial-metadata'
 import { MetadataStore } from '../metadata-store'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import type { AppCachedData, MetadataItem, SavedVisualization } from '@types'
+import type { AppCachedData, SavedVisualization, MetadataItem } from '@types'
 
 class TestMetadataStore extends MetadataStore {
     getMetadataSnapshot(): Record<string, MetadataItem> {

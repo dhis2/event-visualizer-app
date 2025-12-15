@@ -1,11 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
 import deepmerge from 'deepmerge'
-import type {
-    MetadataInput,
-    MetadataInputItem,
-    MetadataInputMap,
-    OrganisationUnitMetadataItem,
-} from './types'
 import { DIMENSION_ID_ORGUNIT } from '@constants/dimensions'
 import {
     combineAllDimensionsFromVisualization,
@@ -18,6 +12,10 @@ import {
 } from '@modules/dimension'
 import { transformVisualization } from '@modules/visualization'
 import type {
+    MetadataInput,
+    MetadataInputItem,
+    MetadataInputMap,
+    OrganisationUnitMetadataItem,
     DimensionId,
     DimensionType,
     InternalDimensionRecord,

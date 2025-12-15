@@ -8,7 +8,7 @@ import type {
     MetadataItem,
     MetadataInputItem,
     NormalizedMetadataInputItem,
-} from './types'
+} from '@types'
 
 export const normalizeMetadataInputItem = (
     item: MetadataInputItem | string,
