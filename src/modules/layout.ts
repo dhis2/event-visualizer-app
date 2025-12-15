@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import type { Axis, LayoutType } from '@types'
+import type { Axis, Layout } from '@types'
 
 export const getAxisName = (axisId: Axis): string => getAxisNames()[axisId]
 
@@ -10,13 +10,9 @@ export const getAxisNames = (): Record<Axis, string> => ({
 })
 
 export const isDimensionInLayout = (
-    layout: LayoutType,
+    layout: Layout,
     dimensionId: string
 ): boolean =>
-    Object.values(layout)
-        .reduce(
-            (dimensionIds, axisDimensionIds) =>
-                dimensionIds.concat(axisDimensionIds),
-            []
-        )
-        .includes(dimensionId)
+    Object.values(layout).some((axisDimensionIds) =>
+        axisDimensionIds.includes(dimensionId)
+    )
