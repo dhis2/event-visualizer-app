@@ -4,9 +4,9 @@ import { CSS } from '@dnd-kit/utilities'
 import cx from 'classnames'
 import { useCallback, useMemo, useRef, useState, type FC } from 'react'
 import { ChipBase, type ChipBaseProps } from './chip-base'
+import { ChipEnd } from './chip-end'
 import { ChipMenu } from './chip-menu'
 import { getChipItemsText } from './get-chip-items-text'
-import { LastChipEnd } from './last-chip-end'
 import classes from './styles/chip.module.css'
 import insertMarkerClasses from './styles/insert-marker.module.css'
 import { TooltipContent } from './tooltip-content'
@@ -140,8 +140,11 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId, isLastItem }) => {
             ref={setNodeRef}
             {...listeners}
             {...attributes}
-            className={isLastItem ? classes.isLast : undefined}
+            className={cx(classes.draggableContainer, {
+                [classes.isLast]: isLastItem,
+            })}
             style={style}
+            data-test={`layout-dimension-dnd-${dimension.id}`}
         >
             <div
                 className={cx(classes.chip, {
@@ -206,8 +209,8 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId, isLastItem }) => {
                     </Layer>
                 )}
             </div>
-            {isLastItem && isOver && !isDragging && (
-                <LastChipEnd setInsertAfter={setInsertAfter} />
+            {isOver && !isDragging && (
+                <ChipEnd setInsertAfter={setInsertAfter} />
             )}
         </div>
     )

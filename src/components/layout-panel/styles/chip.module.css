@@ -1,3 +1,10 @@
+.draggableContainer {
+    position: relative;
+}
+.draggableContainer.isLast {
+    flex: 1;
+    display: flex;
+}
 .chip {
     position: relative;
     display: flex;
@@ -51,10 +58,6 @@
     margin: 0;
     align-items: center;
     min-block-size: 20px;
-}
-.isLast {
-    flex: 1;
-    display: flex;
 }
 .showBlank .content {
     visibility: hidden;

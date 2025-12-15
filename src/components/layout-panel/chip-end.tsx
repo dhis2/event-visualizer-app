@@ -1,10 +1,12 @@
 import { useDndMonitor } from '@dnd-kit/core'
+import cx from 'classnames'
 import { useRef, type FC } from 'react'
-import classes from './styles/last-chip-end.module.css'
+import classes from './styles/chip-end.module.css'
 
-export const LastChipEnd: FC<{ setInsertAfter: (flag: boolean) => void }> = ({
-    setInsertAfter,
-}) => {
+export const ChipEnd: FC<{
+    setInsertAfter: (flag: boolean) => void
+    isLastItem?: boolean
+}> = ({ setInsertAfter, isLastItem }) => {
     const ref = useRef<HTMLDivElement>(null)
     const isOverRef = useRef<boolean | null>(null)
     useDndMonitor({
@@ -29,5 +31,12 @@ export const LastChipEnd: FC<{ setInsertAfter: (flag: boolean) => void }> = ({
             setInsertAfter(false)
         },
     })
-    return <div className={classes.container} ref={ref} />
+    return (
+        <div
+            className={cx(classes.container, {
+                [classes.isLastItem]: isLastItem,
+            })}
+            ref={ref}
+        />
+    )
 }
