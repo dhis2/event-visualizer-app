@@ -1,13 +1,11 @@
 import type { Active, DataRef, DragEndEvent, Over } from '@dnd-kit/core'
 import type { SortableData } from '@dnd-kit/sortable'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers/types'
 import type { ChipBaseProps } from '@components/layout-panel/chip-base'
 import type { Axis } from '@types'
 
 export type SidebarSortableData = {
     dimensionId: string
     overlayItemProps: ChipBaseProps
-    getMetadata: () => MetadataInput
 }
 
 export type AxisSortableData = {

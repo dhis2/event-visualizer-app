@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import type { LayoutDragEndEvent } from './types'
-import { useAppDispatch, useAddMetadata } from '@hooks'
+import { useAppDispatch } from '@hooks'
 import {
     addVisUiConfigLayoutDimension,
     moveVisUiConfigLayoutDimension,
@@ -9,7 +9,6 @@ import {
 type OnDragEndFn = (event: LayoutDragEndEvent) => void
 
 export const useOnDragEnd = (): OnDragEndFn => {
-    const addMetadata = useAddMetadata()
     const dispatch = useAppDispatch()
     return useCallback(
         (event: LayoutDragEndEvent) => {
@@ -20,12 +19,6 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 !event.over.data.current?.axis
             ) {
                 return
-            }
-
-            /* Items dragged from the sidebar need to provide a `getMetadata` function
-             * that can be used to add the relevant metadata to the metadata store */
-            if (typeof event.active.data.current?.getMetadata === 'function') {
-                addMetadata(event.active.data.current.getMetadata())
             }
 
             const draggedItemData = event.active.data.current
@@ -65,6 +58,6 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 )
             }
         },
-        [addMetadata, dispatch]
+        [dispatch]
     )
 }

@@ -73,36 +73,6 @@ describe('useOnDragEnd', () => {
         expect(mockDispatch).not.toHaveBeenCalled()
     })
 
-    it('should add metadata if getMetadata is provided', () => {
-        const { result } = renderHook(() => useOnDragEnd())
-        const onDragEnd = result.current
-
-        const mockGetMetadata = vi.fn(() => ({ some: 'metadata' }))
-
-        const event = {
-            active: {
-                data: {
-                    current: {
-                        dimensionId: 'test',
-                        getMetadata: mockGetMetadata,
-                    },
-                },
-            },
-            over: {
-                data: {
-                    current: {
-                        axis: 'columns',
-                        isEmptyAxis: true,
-                    },
-                },
-            },
-        } as unknown as LayoutDragEndEvent
-
-        onDragEnd(event)
-
-        expect(mockAddMetadata).toHaveBeenCalledWith({ some: 'metadata' })
-    })
-
     it('should dispatch addVisUiConfigLayoutDimension for sidebar drag to empty axis', () => {
         const { result } = renderHook(() => useOnDragEnd())
         const onDragEnd = result.current
