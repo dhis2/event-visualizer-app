@@ -6,6 +6,8 @@ import type {
     ValueType,
     DimensionType,
 } from '@types'
+// eslint-disable-next-line no-restricted-imports
+import type { MetadataItem as GeneratedMetadaItem } from 'src/types/dhis2-openapi-schemas'
 
 /** PHASES
  * 1. Data is provided as a single object, object map, or object array
