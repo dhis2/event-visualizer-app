@@ -15,7 +15,6 @@ export type {
     GridHeader,
     LegendSet,
     MeDto,
-    MetadataItem,
     Option,
     OptionSet,
     OrganisationUnit,

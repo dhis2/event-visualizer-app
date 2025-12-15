@@ -9,6 +9,7 @@ describe('normalizeMetadataInputItem', () => {
             {
                 id: 'existing-item',
                 name: 'Existing Item',
+                path: 'a-path-to-make-this-classify-as-a-valid-dimension-item',
             },
         ],
     ])

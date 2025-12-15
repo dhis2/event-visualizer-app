@@ -1,11 +1,12 @@
 import type {
-    MetadataItem as GeneratedDimensionMetadataItem,
     ProgramType,
     OptionSet,
     LegendSet,
     ValueType,
     DimensionType,
 } from '@types'
+// eslint-disable-next-line no-restricted-imports
+import type { MetadataItem as GeneratedMetadaItem } from 'src/types/dhis2-openapi-schemas'
 
 /** PHASES
  * 1. Data is provided as a single object, object map, or object array
@@ -52,30 +53,24 @@ export type NormalizedMetadataInputItem = Record<string, unknown> & {
  **** Phase 4: fully processed MetadataStoreItem ****
  ****************************************************/
 
-export type GenericMetadataItem = {
-    id: string
-    name: string
-}
-
-export type DimensionMetadataItem = Partial<
-    Omit<
-        GeneratedDimensionMetadataItem,
-        | 'uid'
-        | 'name'
-        | 'dimensionType'
-        | 'dimensionItemType'
-        | 'valueType'
-        | 'legendSet'
-        | 'options'
-    >
+export type DimensionMetadataItem = Omit<
+    /* The generated type called MetadataItem actually
+     * actually represents a dimension, but has a `uid`
+     * field rather than an `id` */
+    GeneratedMetadaItem,
+    | 'uid'
+    | 'name'
+    | 'dimensionType'
+    | 'dimensionItemType'
+    | 'valueType'
+    | 'options'
 > & {
-    id: string
-    name: string
-    dimensionType: DimensionType
-    dimensionItemType: DimensionType
-    valueType: ValueType
-    legendSet?: string
-    optionSet?: string
+    id: string // we use id not uid
+    name: string // required instead of optional
+    dimensionType: DimensionType // Use custom DimensionType with additional strings
+    dimensionItemType?: DimensionType // optional instead of required
+    valueType?: ValueType // optional instead of required
+    optionSet?: string // the generated type has an optional array of `options`, but no `optionSet`
 }
 
 // Note that `optionSet` and `legendSet` have an optional name
@@ -109,10 +104,9 @@ export type LegendSetMetadataItem = Omit<LegendSet, 'id' | 'legends'> & {
     name?: string
 }
 
-export type OrganisationUnitMetadataItem = Pick<
-    DimensionMetadataItem,
-    'id' | 'name' | 'dimensionType'
-> & {
+export type OrganisationUnitMetadataItem = {
+    id: string
+    name: string
     path: string
 }
 
@@ -144,13 +138,13 @@ export type ProgramStageMetadataItem = {
 }
 
 export type MetadataItem =
-    | GenericMetadataItem
     | DimensionMetadataItem
     | OptionSetMetadataItem
     | LegendSetMetadataItem
+    | OrganisationUnitMetadataItem
+    | UserOrgUnitMetadataItem
     | ProgramMetadataItem
     | ProgramStageMetadataItem
-    | UserOrgUnitMetadataItem
 
 export type MetadataItemWithName = Exclude<
     MetadataItem,
