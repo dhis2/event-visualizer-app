@@ -1,7 +1,12 @@
 import i18n from '@dhis2/d2-i18n'
-import type { InitialMetadataItems, MetadataInputMap } from './types'
 import { getCreatedDimension, getTimeDimensions } from '@modules/dimension'
-import type { UserOrgUnit, RelativePeriod, Status } from '@types'
+import type {
+    InitialMetadataItems,
+    MetadataInputMap,
+    UserOrgUnit,
+    RelativePeriod,
+    Status,
+} from '@types'
 
 const getOrganisationUnits = (): Record<UserOrgUnit, string> => ({
     USER_ORGUNIT: i18n.t('User organisation unit'),

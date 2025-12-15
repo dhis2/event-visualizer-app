@@ -4,6 +4,7 @@ import { DEFAULT_OPTIONS } from '@constants/options'
 import type {
     Axis,
     EventVisualizationOptions,
+    Layout,
     OutputType,
     VisualizationType,
 } from '@types'
@@ -19,11 +20,7 @@ const EMPTY_CONDITIONS_OBJECT: ConditionsObject = {
 export interface VisUiConfigState {
     visualizationType: VisualizationType
     outputType: OutputType
-    layout: {
-        columns: string[]
-        filters: string[]
-        rows: string[]
-    }
+    layout: Layout
     itemsByDimension: Record<string, string[]>
     conditionsByDimension: Record<string, ConditionsObject>
     options: EventVisualizationOptions

@@ -1,5 +1,5 @@
+import type { MetadataItem as GeneratedMetadaItem } from './dhis2-openapi-schemas'
 import type {
-    MetadataItem as GeneratedMetadaItem,
     ProgramType,
     OptionSet,
     LegendSet,
@@ -23,12 +23,12 @@ import type {
 
 /* An object with some sort of ID field and potentially a name,
  * plus other unspecified properties */
+type PartialMetadataInputItem = Record<string, unknown>
+type StringMap = Record<string, string>
 export type MetadataInputItem = Record<string, unknown> & {
     name?: string
     displayName?: string
 } & ({ id: string; uid?: never } | { uid: string; id?: never })
-export type PartialMetadataInputItem = Record<string, unknown>
-export type StringMap = Record<string, string>
 export type MetadataInputMap = Record<
     string,
     MetadataInputItem | PartialMetadataInputItem
@@ -52,25 +52,24 @@ export type NormalizedMetadataInputItem = Record<string, unknown> & {
  **** Phase 4: fully processed MetadataStoreItem ****
  ****************************************************/
 
-export type ResponsePayloadMetadataItem = Partial<
-    Omit<
-        GeneratedMetadaItem,
-        | 'uid'
-        | 'name'
-        | 'dimensionType'
-        | 'dimensionItemType'
-        | 'valueType'
-        | 'legendSet'
-        | 'options'
-    >
+export type DimensionMetadataItem = Omit<
+    /* The generated type called MetadataItem actually
+     * actually represents a dimension, but has a `uid`
+     * field rather than an `id` */
+    GeneratedMetadaItem,
+    | 'uid'
+    | 'name'
+    | 'dimensionType'
+    | 'dimensionItemType'
+    | 'valueType'
+    | 'options'
 > & {
-    id: string
-    name: string
-    dimensionType?: DimensionType
-    dimensionItemType?: DimensionType
-    valueType?: ValueType
-    legendSet?: string
-    optionSet?: string
+    id: string // we use id not uid
+    name: string // required instead of optional
+    dimensionType: DimensionType // Use custom DimensionType with additional strings
+    dimensionItemType?: DimensionType // optional instead of required
+    valueType?: ValueType // optional instead of required
+    optionSet?: string // the generated type has an optional array of `options`, but no `optionSet`
 }
 
 // Note that `optionSet` and `legendSet` have an optional name
@@ -104,7 +103,9 @@ export type LegendSetMetadataItem = Omit<LegendSet, 'id' | 'legends'> & {
     name?: string
 }
 
-export type OrganisationUnitMetadataItem = ResponsePayloadMetadataItem & {
+export type OrganisationUnitMetadataItem = {
+    id: string
+    name: string
     path: string
 }
 
@@ -136,12 +137,13 @@ export type ProgramStageMetadataItem = {
 }
 
 export type MetadataItem =
-    | ResponsePayloadMetadataItem
+    | DimensionMetadataItem
     | OptionSetMetadataItem
     | LegendSetMetadataItem
+    | OrganisationUnitMetadataItem
+    | UserOrgUnitMetadataItem
     | ProgramMetadataItem
     | ProgramStageMetadataItem
-    | UserOrgUnitMetadataItem
 
 export type MetadataItemWithName = Exclude<
     MetadataItem,

@@ -22,7 +22,6 @@ import {
     AppCachedDataQueryProvider,
     useAppCachedDataQuery,
 } from '@components/app-wrapper/app-cached-data-query-provider'
-import type { InitialMetadataItems } from '@components/app-wrapper/metadata-helpers/types'
 import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider'
 import { useMetadataStore } from '@hooks'
 import { currentVisSlice } from '@store/current-vis-slice'
@@ -42,6 +41,7 @@ import type {
     DataEngine,
     MetadataStore,
     AppStore,
+    InitialMetadataItems,
 } from '@types'
 
 /**

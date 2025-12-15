@@ -2,6 +2,9 @@ import { extractMetadataFromAnalyticsResponse } from './metadata-helpers/analyti
 import { smartMergeWithChangeDetection } from './metadata-helpers/merge-utils'
 import { normalizeMetadataInputItem } from './metadata-helpers/normalization'
 import { isObject, isMetadataInputItem } from './metadata-helpers/type-guards'
+import { extractMetadataFromVisualization } from './metadata-helpers/visualization'
+import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
+import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import type {
     MetadataInputItem,
     MetadataItem,
@@ -9,11 +12,9 @@ import type {
     MetadataInput,
     InitialMetadataItems,
     AnalyticsResponseMetadataItems,
-} from './metadata-helpers/types'
-import { extractMetadataFromVisualization } from './metadata-helpers/visualization'
-import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
-import type { AppCachedData, SavedVisualization } from '@types'
+    AppCachedData,
+    SavedVisualization,
+} from '@types'
 
 declare global {
     interface Window {

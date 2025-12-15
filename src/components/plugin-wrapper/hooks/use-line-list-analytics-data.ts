@@ -6,10 +6,6 @@ import {
     getAnalyticsEndpoint,
 } from './query-tools-line-list.js'
 import type {
-    MetadataInputItem,
-    UserOrgUnitMetadataItem,
-} from '@components/app-wrapper/metadata-helpers/types'
-import type {
     LineListAnalyticsData,
     LineListAnalyticsDataHeader,
 } from '@components/line-list/types.js'
@@ -27,7 +23,13 @@ import {
     headersMap,
     isVisualizationWithTimeDimension,
 } from '@modules/visualization'
-import type { CurrentUser, CurrentVisualization, OutputType } from '@types'
+import type {
+    CurrentUser,
+    CurrentVisualization,
+    MetadataInputItem,
+    OutputType,
+    UserOrgUnitMetadataItem,
+} from '@types'
 
 const lookupOptionSetOptionMetadata = (optionSetId, code, metaDataItems) => {
     const optionSetMetaData = metaDataItems?.[optionSetId]
