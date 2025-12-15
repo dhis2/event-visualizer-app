@@ -8,8 +8,11 @@ import type {
     LegendDisplayStyle,
     DimensionalItemObject,
 } from './dhis2-openapi-schemas'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers/types'
-import type { ExtendedDimensionType, VisualizationType } from '@types'
+import type {
+    ExtendedDimensionType,
+    VisualizationType,
+    MetadataInput,
+} from '@types'
 
 type IdRecord = { id: string }
 type IdNameRecord = IdRecord & { name: string }

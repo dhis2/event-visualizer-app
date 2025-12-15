@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { normalizeMetadataInputItem } from '../normalization'
-import type { MetadataItem, MetadataInputItem } from '../types'
+import type { MetadataItem, MetadataInputItem } from '@types'
 
 describe('normalizeMetadataInputItem', () => {
     const mockMetadataMap = new Map<string, MetadataItem>([

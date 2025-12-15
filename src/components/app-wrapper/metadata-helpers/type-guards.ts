@@ -9,7 +9,7 @@ import type {
     MetadataInputItem,
     MetadataItemWithName,
     DimensionMetadataItem,
-} from './types'
+} from '@types'
 
 // Helper function to check if input is a plain object
 export const isObject = (input: unknown): input is Record<string, unknown> => {

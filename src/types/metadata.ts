@@ -1,3 +1,4 @@
+import type { MetadataItem as GeneratedMetadaItem } from './dhis2-openapi-schemas'
 import type {
     ProgramType,
     OptionSet,
@@ -5,8 +6,6 @@ import type {
     ValueType,
     DimensionType,
 } from '@types'
-// eslint-disable-next-line no-restricted-imports
-import type { MetadataItem as GeneratedMetadaItem } from 'src/types/dhis2-openapi-schemas'
 
 /** PHASES
  * 1. Data is provided as a single object, object map, or object array
@@ -24,12 +23,12 @@ import type { MetadataItem as GeneratedMetadaItem } from 'src/types/dhis2-openap
 
 /* An object with some sort of ID field and potentially a name,
  * plus other unspecified properties */
+type PartialMetadataInputItem = Record<string, unknown>
+type StringMap = Record<string, string>
 export type MetadataInputItem = Record<string, unknown> & {
     name?: string
     displayName?: string
 } & ({ id: string; uid?: never } | { uid: string; id?: never })
-export type PartialMetadataInputItem = Record<string, unknown>
-export type StringMap = Record<string, string>
 export type MetadataInputMap = Record<
     string,
     MetadataInputItem | PartialMetadataInputItem
