@@ -1,5 +1,9 @@
 import { useCallback } from 'react'
-import type { LayoutDragEndEvent } from './types'
+import type {
+    AxisSortableData,
+    EmptyAxisDroppableData,
+    LayoutDragEndEvent,
+} from './types'
 import { useAppDispatch } from '@hooks'
 import {
     addVisUiConfigLayoutDimension,
@@ -7,6 +11,16 @@ import {
 } from '@store/vis-ui-config-slice'
 
 type OnDragEndFn = (event: LayoutDragEndEvent) => void
+
+const isDraggedItemFromAxis = (input: object): input is AxisSortableData =>
+    'sortable' in input &&
+    'dimensionId' in input &&
+    'overlayItemProps' in input &&
+    'axis' in input &&
+    'insertAfter' in input
+
+const isEmptyAxisData = (input: object): input is EmptyAxisDroppableData =>
+    'isEmptyAxis' in input && input.isEmptyAxis === true
 
 export const useOnDragEnd = (): OnDragEndFn => {
     const dispatch = useAppDispatch()
@@ -23,18 +37,14 @@ export const useOnDragEnd = (): OnDragEndFn => {
 
             const draggedItemData = event.active.data.current
             const overItemData = event.over.data.current
+            const targetIndex = isEmptyAxisData(overItemData)
+                ? 0
+                : overItemData.sortable.index
+            const insertAfter = isEmptyAxisData(overItemData)
+                ? false
+                : overItemData.insertAfter
 
-            if (!draggedItemData.axis) {
-                // Add from sidebar
-                dispatch(
-                    addVisUiConfigLayoutDimension({
-                        axis: overItemData.axis,
-                        dimensionId: draggedItemData.dimensionId,
-                        insertIndex: overItemData.sortable.index,
-                        insertAfter: overItemData.insertAfter,
-                    })
-                )
-            } else {
+            if (isDraggedItemFromAxis(draggedItemData)) {
                 // Move between axis
                 dispatch(
                     moveVisUiConfigLayoutDimension({
@@ -42,8 +52,18 @@ export const useOnDragEnd = (): OnDragEndFn => {
                         sourceAxis: draggedItemData.axis,
                         targetAxis: overItemData.axis,
                         sourceIndex: draggedItemData.sortable.index,
-                        targetIndex: overItemData.sortable.index,
-                        insertAfter: overItemData.insertAfter,
+                        targetIndex,
+                        insertAfter,
+                    })
+                )
+            } else {
+                // Add from sidebar
+                dispatch(
+                    addVisUiConfigLayoutDimension({
+                        axis: overItemData.axis,
+                        dimensionId: draggedItemData.dimensionId,
+                        insertIndex: targetIndex,
+                        insertAfter,
                     })
                 )
             }
