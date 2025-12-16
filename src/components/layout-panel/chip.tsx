@@ -31,7 +31,6 @@ export type LayoutDimension = {
     name: string
     dimensionType?: DimensionType
     dimensionItemType?: DimensionType
-    displayName?: string
     optionSet?: string
     programId?: string
     programStageId?: string
