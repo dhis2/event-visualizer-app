@@ -180,7 +180,7 @@ export const visUiConfigSlice = createSlice({
             targetArray.splice(insertionIndex, 0, dimensionId)
             sourceArray.splice(removalIndex, 1)
         },
-        deleteVisUiConfigLayoutDimension: (
+        removeVisUiConfigLayoutDimension: (
             state,
             action: PayloadAction<{ axis: Axis; dimensionId: string }>
         ) => {
@@ -219,7 +219,7 @@ export const {
     setVisUiConfigConditionsByDimension,
     addVisUiConfigLayoutDimension,
     moveVisUiConfigLayoutDimension,
-    deleteVisUiConfigLayoutDimension,
+    removeVisUiConfigLayoutDimension,
 } = visUiConfigSlice.actions
 
 export const {

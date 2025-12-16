@@ -4,7 +4,7 @@ import { visUiConfigSlice, initialState } from '../vis-ui-config-slice'
 const {
     addVisUiConfigLayoutDimension,
     moveVisUiConfigLayoutDimension,
-    deleteVisUiConfigLayoutDimension,
+    removeVisUiConfigLayoutDimension,
 } = visUiConfigSlice.actions
 
 const createStateWithLayout = (layout: typeof initialState.layout) => ({
@@ -288,14 +288,14 @@ describe('moveVisUiConfigLayoutDimension', () => {
     })
 })
 
-describe('deleteVisUiConfigLayoutDimension', () => {
+describe('removeVisUiConfigLayoutDimension', () => {
     it('removes the dimension when it exists', () => {
         const state = createStateWithLayout({
             columns: ['a1', 'a2', 'a3'],
             filters: [],
             rows: [],
         })
-        const action = deleteVisUiConfigLayoutDimension({
+        const action = removeVisUiConfigLayoutDimension({
             axis: 'columns',
             dimensionId: 'a2',
         })
@@ -309,7 +309,7 @@ describe('deleteVisUiConfigLayoutDimension', () => {
             filters: [],
             rows: [],
         })
-        const action = deleteVisUiConfigLayoutDimension({
+        const action = removeVisUiConfigLayoutDimension({
             axis: 'columns',
             dimensionId: 'a3',
         })
