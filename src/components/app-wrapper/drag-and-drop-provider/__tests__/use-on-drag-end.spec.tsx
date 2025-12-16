@@ -90,7 +90,8 @@ describe('useOnDragEnd', () => {
                 data: {
                     current: {
                         axis: 'columns',
-                        isEmptyAxis: true,
+                        sortable: { index: 0 },
+                        insertAfter: false,
                     },
                 },
             },
@@ -103,6 +104,7 @@ describe('useOnDragEnd', () => {
                 axis: 'columns',
                 dimensionId: 'test',
                 insertIndex: 0,
+                insertAfter: false,
             })
         )
     })
@@ -139,12 +141,14 @@ describe('useOnDragEnd', () => {
                 dimensionId: 'test',
                 sourceAxis: 'rows',
                 targetAxis: 'columns',
+                sourceIndex: 1,
                 targetIndex: 2,
+                insertAfter: true,
             })
         )
     })
 
-    it('should calculate insertIndex correctly for insert before', () => {
+    it('should forward sortable index for insert-before operations without adjustment', () => {
         const { result } = renderHook(() => useOnDragEnd())
         const onDragEnd = result.current
 
@@ -176,7 +180,9 @@ describe('useOnDragEnd', () => {
                 dimensionId: 'test',
                 sourceAxis: 'rows',
                 targetAxis: 'columns',
-                targetIndex: 2, // 3 - 1
+                sourceIndex: 1,
+                targetIndex: 3,
+                insertAfter: false,
             })
         )
     })
