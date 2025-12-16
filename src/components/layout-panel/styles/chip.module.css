@@ -58,6 +58,7 @@
     margin: 0;
     align-items: center;
     min-block-size: 20px;
+    opacity: 0.9;
 }
 .showBlank .content {
     visibility: hidden;

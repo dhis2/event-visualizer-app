@@ -21,7 +21,7 @@ const DragOverlayItem: FC<DraggedItemEventData> = (data) =>
                 }
             )}
         >
-            <ChipBase {...data.overlayItemProps} />
+            <ChipBase {...data.overlayItemProps} isDragging />
         </div>
     ) : (
         <div>Dimension overlay item</div>

@@ -8,7 +8,7 @@
 
 /* the vertical line */
 .withInsertMarker::before {
-    inset-block: 6px 0;
+    inset-block: 6px -4px;
     inline-size: 4px;
     background-color: #4c9ffe;
 }
