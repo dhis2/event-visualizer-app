@@ -136,9 +136,12 @@ export const PeriodDimensionModalContent: FC<
 
     const outputType = useAppSelector(getVisUiConfigOutputType)
 
-    const { programId } = getDimensionIdParts({ id: dimension.id, outputType })
-
     const updatePeriodDimensionItems = (items) => {
+        const { programId } = getDimensionIdParts({
+            id: dimension.id,
+            outputType,
+        })
+
         const { uiItems } = items.reduce(
             (acc, item) => {
                 const id = getFullDimensionId({
