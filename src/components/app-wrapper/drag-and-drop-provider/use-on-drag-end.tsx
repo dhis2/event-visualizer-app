@@ -23,37 +23,27 @@ export const useOnDragEnd = (): OnDragEndFn => {
 
             const draggedItemData = event.active.data.current
             const overItemData = event.over.data.current
-            const dimensionId = draggedItemData.dimensionId
-            const targetAxis = overItemData.axis
-            const insertIndex = overItemData.isEmptyAxis
-                ? 0 // insert at start when axis is empty
-                : overItemData.insertAfter
-                ? overItemData.sortable.index // insert after hovered item
-                : overItemData.sortable.index - 1 // insert before hovered item
-
-            if (insertIndex < 0) {
-                throw new Error(
-                    `Invalid insertIndex: ${insertIndex}. This should not happen.`
-                )
-            }
 
             if (!draggedItemData.axis) {
                 // Add from sidebar
                 dispatch(
                     addVisUiConfigLayoutDimension({
-                        axis: targetAxis,
-                        dimensionId,
-                        insertIndex,
+                        axis: overItemData.axis,
+                        dimensionId: draggedItemData.dimensionId,
+                        insertIndex: overItemData.sortable.index,
+                        insertAfter: overItemData.insertAfter,
                     })
                 )
             } else {
                 // Move between axis
                 dispatch(
                     moveVisUiConfigLayoutDimension({
-                        dimensionId,
+                        dimensionId: draggedItemData.dimensionId,
                         sourceAxis: draggedItemData.axis,
-                        targetAxis,
-                        insertIndex,
+                        targetAxis: overItemData.axis,
+                        sourceIndex: draggedItemData.sortable.index,
+                        targetIndex: overItemData.sortable.index,
+                        insertAfter: overItemData.insertAfter,
                     })
                 )
             }

@@ -104,6 +104,7 @@ export const visUiConfigSlice = createSlice({
                 axis: Axis
                 dimensionId: string
                 insertIndex?: number
+                insertAfter?: boolean
             }>
         ) => {
             const { axis, dimensionId, insertIndex } = action.payload
@@ -117,10 +118,12 @@ export const visUiConfigSlice = createSlice({
                 dimensionId: string
                 sourceAxis: Axis
                 targetAxis: Axis
-                insertIndex?: number
+                sourceIndex?: number
+                targetIndex?: number
+                insertAfter?: boolean
             }>
         ) => {
-            const { dimensionId, sourceAxis, targetAxis, insertIndex } =
+            const { dimensionId, sourceAxis, targetAxis, targetIndex } =
                 action.payload
             const sourceArray = state.layout[sourceAxis]
             const targetArray = state.layout[targetAxis]
@@ -131,7 +134,7 @@ export const visUiConfigSlice = createSlice({
                 )
             }
             sourceArray.splice(sourceIndex, 1)
-            const index = insertIndex ?? targetArray.length
+            const index = targetIndex ?? targetArray.length
             targetArray.splice(index, 0, dimensionId)
         },
         deleteVisUiConfigLayoutDimension: (

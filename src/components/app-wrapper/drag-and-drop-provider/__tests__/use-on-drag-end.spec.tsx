@@ -139,7 +139,7 @@ describe('useOnDragEnd', () => {
                 dimensionId: 'test',
                 sourceAxis: 'rows',
                 targetAxis: 'columns',
-                insertIndex: 2,
+                targetIndex: 2,
             })
         )
     })
@@ -176,7 +176,7 @@ describe('useOnDragEnd', () => {
                 dimensionId: 'test',
                 sourceAxis: 'rows',
                 targetAxis: 'columns',
-                insertIndex: 2, // 3 - 1
+                targetIndex: 2, // 3 - 1
             })
         )
     })

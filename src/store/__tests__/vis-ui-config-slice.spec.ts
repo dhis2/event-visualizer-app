@@ -75,7 +75,7 @@ describe('moveVisUiConfigLayoutDimension', () => {
             dimensionId: 'b1',
             sourceAxis: 'filters',
             targetAxis: 'columns',
-            insertIndex: 1,
+            targetIndex: 1,
         })
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a1', 'b1', 'a3'])
@@ -91,7 +91,7 @@ describe('moveVisUiConfigLayoutDimension', () => {
             dimensionId: 'a2',
             sourceAxis: 'columns',
             targetAxis: 'columns',
-            insertIndex: 0,
+            targetIndex: 0,
         })
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a2', 'a1', 'a3'])
@@ -106,7 +106,7 @@ describe('moveVisUiConfigLayoutDimension', () => {
             dimensionId: 'a1',
             sourceAxis: 'columns',
             targetAxis: 'columns',
-            insertIndex: 2,
+            targetIndex: 2,
         })
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a2', 'a3', 'a1'])
@@ -121,7 +121,7 @@ describe('moveVisUiConfigLayoutDimension', () => {
             dimensionId: 'a2',
             sourceAxis: 'columns',
             targetAxis: 'columns',
-            insertIndex: 2,
+            targetIndex: 2,
         })
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a1', 'a3', 'a2'])
