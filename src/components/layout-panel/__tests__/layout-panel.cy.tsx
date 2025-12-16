@@ -111,21 +111,12 @@ describe('<LayoutPanel />', () => {
         )
 
         cy.getByDataTest('layout-dimension-dnd-ou')
-            .trigger('pointerdown', {
-                button: 0,
-                force: true,
-            })
-            // Needed because we have an activation threshold in the provider
-            .trigger('pointermove', {
-                clientX: 30,
-                clientY: 30,
-                force: true,
-            })
-        cy.getByDataTest('axis-content-filters').trigger('pointerenter', {
-            force: true,
+            .realMouseDown({ position: 'center' })
+            .realMouseMove(30, 30) // exceed activation
+        cy.getByDataTest('axis-content-filters').realMouseMove(10, 10, {
+            position: 'center',
         })
-
-        cy.get('body').trigger('pointerup', { force: true })
+        cy.get('body').realMouseUp()
 
         cy.getByDataTest('axis-content-filters').within(() => {
             cy.getByDataTest('layout-dimension-dnd-ou').should('be.visible')
