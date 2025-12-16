@@ -282,6 +282,15 @@ msgstr "Normal"
 msgid "Compact"
 msgstr "Compact"
 
+msgid "Fix column headers to top of table"
+msgstr "Fix column headers to top of table"
+
+msgid "Fix row headers to left of table"
+msgstr "Fix row headers to left of table"
+
+msgid "There aren’t any row headers because Rows is empty."
+msgstr "There aren’t any row headers because Rows is empty."
+
 msgid "Font size"
 msgstr "Font size"
 
@@ -290,6 +299,9 @@ msgstr "Large"
 
 msgid "Small"
 msgstr "Small"
+
+msgid "Hide empty columns"
+msgstr "Hide empty columns"
 
 msgid "Hide empty rows"
 msgstr "Hide empty rows"
