@@ -10,7 +10,10 @@ import { getChipItemsText } from './get-chip-items-text'
 import classes from './styles/chip.module.css'
 import insertMarkerClasses from './styles/insert-marker.module.css'
 import { TooltipContent } from './tooltip-content'
-import type { AxisSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
+import type {
+    AxisSortableData,
+    DraggedItemEventData,
+} from '@components/app-wrapper/drag-and-drop-provider/types'
 import { IconButton } from '@components/dimension-item/icon-button'
 import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
@@ -105,6 +108,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId, isLastItem }) => {
         [axisId, dimension, chipBaseProps, insertAfter]
     )
     const {
+        active,
         activeIndex,
         attributes,
         listeners,
@@ -136,16 +140,28 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId, isLastItem }) => {
                 : undefined,
         [transform, isSorting, transition]
     )
-    const showInsertMarker = useMemo(
-        () =>
-            !isOver ||
-            isDragging ||
-            (insertAfter && index + 1 === activeIndex) ||
-            (!insertAfter && index - 1 === activeIndex)
-                ? false
-                : true,
-        [isDragging, isOver, insertAfter, index, activeIndex]
-    )
+    const showInsertMarker = useMemo(() => {
+        /* Only show marker if there is an active item over the current
+         * which is not the item itself */
+        if (!active || !isOver || isDragging) {
+            return false
+        }
+        /* For elements from a different axis or the sidebar we can always
+         * show the marker now */
+        const draggedItemData = active.data.current as DraggedItemEventData
+        const isActiveElementFromSameAxis =
+            'axis' in draggedItemData && draggedItemData.axis === axisId
+
+        if (!isActiveElementFromSameAxis) {
+            return true
+        }
+        /* When moving within an axis the items adjacent to the active item
+         * need to be taken into account, since dropping after the previous
+         * or before the next item is a no-op. */
+        const adjacentIndex = insertAfter ? index + 1 : index - 1
+
+        return adjacentIndex === activeIndex ? false : true
+    }, [isDragging, isOver, insertAfter, index, active, activeIndex, axisId])
 
     return (
         <div
