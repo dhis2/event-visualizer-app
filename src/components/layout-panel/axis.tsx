@@ -34,7 +34,10 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
                 data-test={`axis-${axisId}`}
             >
                 <div className={classes.label}>{getAxisName(axisId)}</div>
-                <div className={classes.content}>
+                <div
+                    className={classes.content}
+                    data-test={`axis-content-${axisId}`}
+                >
                     {dimensions.length === 0 ? (
                         <EmptyAxisDropArea axisId={axisId} />
                     ) : (

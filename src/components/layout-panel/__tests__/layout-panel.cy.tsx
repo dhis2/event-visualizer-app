@@ -102,4 +102,33 @@ describe('<LayoutPanel />', () => {
             cy.contains('Gender').should('be.visible')
         })
     })
+
+    it('allows dragging a chip from filters to columns', () => {
+        cy.mount(
+            <MockAppWrapper {...mockOptions}>
+                <LayoutPanel />
+            </MockAppWrapper>
+        )
+
+        cy.getByDataTest('layout-dimension-dnd-ou')
+            .trigger('pointerdown', {
+                button: 0,
+                force: true,
+            })
+            // Needed because we have an activation threshold in the provider
+            .trigger('pointermove', {
+                clientX: 30,
+                clientY: 30,
+                force: true,
+            })
+        cy.getByDataTest('axis-content-filters').trigger('pointerenter', {
+            force: true,
+        })
+
+        cy.get('body').trigger('pointerup', { force: true })
+
+        cy.getByDataTest('axis-content-filters').within(() => {
+            cy.getByDataTest('layout-dimension-dnd-ou').should('be.visible')
+        })
+    })
 })
