@@ -1,3 +1,4 @@
+import type { SortableData } from '@dnd-kit/sortable'
 import { useCallback } from 'react'
 import type {
     AxisSortableData,
@@ -12,7 +13,9 @@ import {
 
 type OnDragEndFn = (event: LayoutDragEndEvent) => void
 
-const isDraggedItemFromAxis = (input: object): input is AxisSortableData =>
+const isDraggedItemFromAxis = (
+    input: object
+): input is AxisSortableData & SortableData =>
     'sortable' in input &&
     'dimensionId' in input &&
     'overlayItemProps' in input &&

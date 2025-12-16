@@ -3,12 +3,12 @@ import type { SortableData } from '@dnd-kit/sortable'
 import type { ChipBaseProps } from '@components/layout-panel/chip-base'
 import type { Axis } from '@types'
 
-export type SidebarSortableData = SortableData & {
+export type SidebarSortableData = {
     dimensionId: string
     overlayItemProps: ChipBaseProps
 }
 
-export type AxisSortableData = SortableData & {
+export type AxisSortableData = {
     dimensionId: string
     axis: Axis
     overlayItemProps: ChipBaseProps
@@ -20,9 +20,12 @@ export type EmptyAxisDroppableData = {
     isEmptyAxis: true
 }
 
-export type DraggedItemEventData = SidebarSortableData | AxisSortableData
+export type DraggedItemEventData = (SidebarSortableData | AxisSortableData) &
+    SortableData
 
-export type OverItemEventData = AxisSortableData | EmptyAxisDroppableData
+export type OverItemEventData =
+    | (AxisSortableData & SortableData)
+    | EmptyAxisDroppableData
 
 export interface LayoutDragEndEvent extends DragEndEvent {
     active: Omit<Active, 'data'> & {
