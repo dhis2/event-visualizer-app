@@ -105,8 +105,10 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId, isLastItem }) => {
         [axisId, dimension, chipBaseProps, insertAfter]
     )
     const {
+        activeIndex,
         attributes,
         listeners,
+        index,
         isDragging,
         isSorting,
         isOver,
@@ -134,6 +136,16 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId, isLastItem }) => {
                 : undefined,
         [transform, isSorting, transition]
     )
+    const showInsertMarker = useMemo(
+        () =>
+            !isOver ||
+            isDragging ||
+            (insertAfter && index + 1 === activeIndex) ||
+            (!insertAfter && index - 1 === activeIndex)
+                ? false
+                : true,
+        [isDragging, isOver, insertAfter, index, activeIndex]
+    )
 
     return (
         <div
@@ -160,7 +172,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId, isLastItem }) => {
                 <div
                     className={cx(classes.content, {
                         [insertMarkerClasses.withInsertMarker]:
-                            isOver && !isDragging,
+                            showInsertMarker,
                         [insertMarkerClasses.atEnd]: insertAfter,
                     })}
                 >
