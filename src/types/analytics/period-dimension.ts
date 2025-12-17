@@ -2,8 +2,8 @@ import type { TransferProps } from '@dhis2/ui'
 import type { FC } from 'react'
 
 type PeriodDimensionOnSelectPayload = {
-    dimensionId: string // XXX: LayoutDimension['dimensionId']
-    items: string[] // XXX: LayoutDimension['items']
+    dimensionId: string
+    items: string[]
 }
 
 type PeriodDimensionProps = {
@@ -11,7 +11,7 @@ type PeriodDimensionProps = {
     excludedPeriodTypes?: string[]
     height?: TransferProps['height']
     infoBoxMessage?: string
-    rightFooter?: TransferProps['rightFooter'] // XXX: should this be derived from analytics components?
+    rightFooter?: TransferProps['rightFooter']
     selectedPeriods?: { id: string; name?: string }[]
 }
 
