@@ -234,10 +234,11 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                     </Layer>
                 )}
             </div>
-            {isOver && !isDragging && rect.current && (
+            {isOver && !isDragging && rect.current && active && (
                 <OverChipLocationMonitor
                     setInsertAfter={setInsertAfter}
                     rect={rect.current}
+                    active={active}
                 />
             )}
         </div>
