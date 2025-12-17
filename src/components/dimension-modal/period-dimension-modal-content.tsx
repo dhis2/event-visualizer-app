@@ -10,6 +10,7 @@ import { useEffect, useState, useMemo, type FC } from 'react'
 import classes from './styles/period-dimension-modal-content.module.css'
 import { PeriodDimension } from '@dhis2/analytics'
 import {
+    useAddMetadata,
     useAppCachedDataQuery,
     useAppDispatch,
     useAppSelector,
@@ -92,6 +93,7 @@ export const PeriodDimensionModalContent: FC<
 > = ({ dimension }) => {
     const { systemSettings } = useAppCachedDataQuery()
     const dispatch = useAppDispatch()
+    const addMetadata = useAddMetadata()
 
     const excludedPeriodTypes = useMemo(() => {
         const types: PeriodType[] = []
@@ -142,7 +144,7 @@ export const PeriodDimensionModalContent: FC<
             outputType,
         })
 
-        const { uiItems } = items.reduce(
+        const { uiItems, metadata } = items.reduce(
             (acc, item) => {
                 const id = getFullDimensionId({
                     dimensionId: item.id,
@@ -151,13 +153,11 @@ export const PeriodDimensionModalContent: FC<
                 })
                 acc.uiItems.push(id)
 
-                if (isStartEndDate(item.id)) {
-                    acc.metadata[item.id] = {
-                        id: item.id,
-                        name: item.id.replace('_', ' - '),
-                    }
-                } else {
-                    acc.metadata[item.id] = item
+                acc.metadata[item.id] = {
+                    id: item.id,
+                    name: isStartEndDate(item.id)
+                        ? item.id.replace('_', ' - ')
+                        : item.name,
                 }
 
                 return acc
@@ -165,7 +165,7 @@ export const PeriodDimensionModalContent: FC<
             { uiItems: [], metadata: {} }
         )
 
-        // TODO: see if we need to do anything with metadata
+        addMetadata(metadata)
 
         dispatch(
             setVisUiConfigItemsByDimension({
