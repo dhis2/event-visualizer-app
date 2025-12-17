@@ -61,12 +61,11 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
                             })}
                         />
                     ) : (
-                        dimensions.map((dimension, i) => (
+                        dimensions.map((dimension) => (
                             <Chip
                                 key={dimension.id}
                                 dimension={dimension}
                                 axisId={axisId}
-                                isLastItem={i === dimensionIds.length - 1}
                             />
                         ))
                     )}

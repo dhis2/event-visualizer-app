@@ -4,9 +4,9 @@ import { CSS } from '@dnd-kit/utilities'
 import cx from 'classnames'
 import { useCallback, useMemo, useRef, useState, type FC } from 'react'
 import { ChipBase, type ChipBaseProps } from './chip-base'
-import { ChipEnd } from './chip-end'
 import { ChipMenu } from './chip-menu'
 import { getChipItemsText } from './get-chip-items-text'
+import { OverChipLocationMonitor } from './over-chip-location-monitor'
 import classes from './styles/chip.module.css'
 import insertMarkerClasses from './styles/insert-marker.module.css'
 import { TooltipContent } from './tooltip-content'
@@ -42,10 +42,9 @@ export type LayoutDimension = {
 interface ChipProps {
     dimension: LayoutDimension
     axisId: Axis
-    isLastItem?: boolean
 }
 
-export const Chip: FC<ChipProps> = ({ dimension, axisId, isLastItem }) => {
+export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
     const dispatch = useAppDispatch()
     const [insertAfter, setInsertAfter] = useState<boolean>(false)
     const outputType = useAppSelector(getVisUiConfigOutputType)
@@ -110,11 +109,12 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId, isLastItem }) => {
         active,
         activeIndex,
         attributes,
-        listeners,
         index,
         isDragging,
-        isSorting,
         isOver,
+        isSorting,
+        listeners,
+        rect,
         setNodeRef,
         transform,
         transition,
@@ -167,9 +167,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId, isLastItem }) => {
             ref={setNodeRef}
             {...listeners}
             {...attributes}
-            className={cx(classes.draggableContainer, {
-                [classes.isLast]: isLastItem,
-            })}
+            className={classes.draggableContainer}
             style={style}
             data-test={`layout-dimension-dnd-${dimension.id}`}
         >
@@ -236,8 +234,11 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId, isLastItem }) => {
                     </Layer>
                 )}
             </div>
-            {isOver && !isDragging && (
-                <ChipEnd setInsertAfter={setInsertAfter} />
+            {isOver && !isDragging && rect.current && (
+                <OverChipLocationMonitor
+                    setInsertAfter={setInsertAfter}
+                    rect={rect.current}
+                />
             )}
         </div>
     )

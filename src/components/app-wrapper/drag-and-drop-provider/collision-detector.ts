@@ -7,8 +7,6 @@ import type {
 import type { AxisContainerDroppableData } from './types'
 import { isAxisContainerData } from './use-on-drag-end'
 
-const VERTICAL_PADDING = 9
-
 /**
  * Calculates the intersection ratio (IoU - Intersection over Union) between two rectangles.
  * Returns a value between 0 (no overlap) and 1 (perfect overlap).
@@ -134,7 +132,6 @@ export const computeLineEndMatch = ({
             return current.right > rightmost.right ? current : rightmost
         }
     )
-    console.log('rightmost', rightmostContainer.container)
 
     return rightmostContainer.container
 }
@@ -150,12 +147,12 @@ export const collisionDetector: CollisionDetection = ({
         return collisions
     }
 
-    // Use the dragged chip's dimensions with vertical padding for better collision detection
+    // Use the dragged chip's dimensions for collision detection
     const draggedItemRect: ClientRect = {
         width: activeRect.width,
-        height: activeRect.height + VERTICAL_PADDING * 2,
-        top: activeRect.top - VERTICAL_PADDING,
-        bottom: activeRect.bottom + VERTICAL_PADDING,
+        height: activeRect.height,
+        top: activeRect.top,
+        bottom: activeRect.bottom,
         left: activeRect.left,
         right: activeRect.right,
     }
@@ -165,13 +162,10 @@ export const collisionDetector: CollisionDetection = ({
     let maxItemIntersectionRatio = 0
 
     for (const droppableContainer of droppableContainers) {
-        const isActiveContainer = active.id === droppableContainer.id
-        const intersectionRatio = isActiveContainer
-            ? 0
-            : getIntersectionRatio(
-                  droppableContainer.rect.current,
-                  draggedItemRect
-              )
+        const intersectionRatio = getIntersectionRatio(
+            droppableContainer.rect.current,
+            draggedItemRect
+        )
         const isOverAxisContainer =
             intersectionRatio > 0 &&
             isAxisContainerData(droppableContainer.data.current)
@@ -191,6 +185,13 @@ export const collisionDetector: CollisionDetection = ({
             maxItemIntersectionRatio = intersectionRatio
             hoveredItemDroppableContainer = droppableContainer
         }
+    }
+
+    if (
+        hoveredItemDroppableContainer &&
+        hoveredItemDroppableContainer.id === active.id
+    ) {
+        return collisions
     }
 
     if (hoveredItemDroppableContainer) {

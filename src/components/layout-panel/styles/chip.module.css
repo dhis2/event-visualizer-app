@@ -1,10 +1,6 @@
 .draggableContainer {
     position: relative;
 }
-.draggableContainer.isLast {
-    flex: 1;
-    display: flex;
-}
 .chip {
     position: relative;
     display: flex;

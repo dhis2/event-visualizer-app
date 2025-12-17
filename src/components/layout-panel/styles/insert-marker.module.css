@@ -24,15 +24,15 @@
 }
 
 .withInsertMarker:not(.atEnd)::before {
-    inset-inline-start: -6px;
+    inset-inline-start: -5px;
 }
 .withInsertMarker:not(.atEnd)::after {
-    inset-inline-start: -10px;
+    inset-inline-start: -9px;
 }
 
 .withInsertMarker.atEnd::before {
-    inset-inline-end: -6px;
+    inset-inline-end: -5px;
 }
 .withInsertMarker.atEnd::after {
-    inset-inline-end: -10px;
+    inset-inline-end: -9px;
 }
