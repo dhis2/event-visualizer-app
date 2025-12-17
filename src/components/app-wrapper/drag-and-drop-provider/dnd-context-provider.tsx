@@ -57,6 +57,7 @@ const sortCollisionsDesc = (
 ) => b.data.value - a.data.value
 
 export const rectIntersectionCustom: CollisionDetection = ({
+    active,
     pointerCoordinates,
     droppableContainers,
 }) => {
@@ -74,6 +75,9 @@ export const rectIntersectionCustom: CollisionDetection = ({
     }
     return droppableContainers
         .reduce((collisions, droppableContainer) => {
+            if (active.id === droppableContainer.id) {
+                return collisions
+            }
             const intersectionRatio = getIntersectionRatio(
                 droppableContainer.rect.current,
                 pointerRect
