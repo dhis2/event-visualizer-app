@@ -29,9 +29,8 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
         () => ({
             axis: axisId,
             isAxisContainer: true,
-            isEmpty: dimensions.length === 0,
         }),
-        [axisId, dimensions.length]
+        [axisId]
     )
 
     const { setNodeRef, isOver } = useDroppable({

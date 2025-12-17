@@ -22,10 +22,12 @@ const isDraggedItemFromAxis = (
     'axis' in input &&
     'insertAfter' in input
 
-const isAxisContainerData = (
-    input: object
+export const isAxisContainerData = (
+    input: object | undefined
 ): input is AxisContainerDroppableData =>
-    'isAxisContainer' in input && input.isAxisContainer === true
+    typeof input !== 'undefined' &&
+    'isAxisContainer' in input &&
+    input.isAxisContainer === true
 
 export const useOnDragEnd = (): OnDragEndFn => {
     const dispatch = useAppDispatch()

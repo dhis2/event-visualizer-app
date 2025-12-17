@@ -18,7 +18,6 @@ export type AxisSortableData = {
 export type AxisContainerDroppableData = {
     axis: Axis
     isAxisContainer: true
-    isEmpty: boolean
 }
 
 export type DraggedItemEventData = (SidebarSortableData | AxisSortableData) &
