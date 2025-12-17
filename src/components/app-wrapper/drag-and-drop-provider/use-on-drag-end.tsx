@@ -1,8 +1,8 @@
 import type { SortableData } from '@dnd-kit/sortable'
 import { useCallback } from 'react'
 import type {
+    AxisContainerDroppableData,
     AxisSortableData,
-    EmptyAxisDroppableData,
     LayoutDragEndEvent,
 } from './types'
 import { useAppDispatch } from '@hooks'
@@ -22,8 +22,10 @@ const isDraggedItemFromAxis = (
     'axis' in input &&
     'insertAfter' in input
 
-const isEmptyAxisData = (input: object): input is EmptyAxisDroppableData =>
-    'isEmptyAxis' in input && input.isEmptyAxis === true
+const isAxisContainerData = (
+    input: object
+): input is AxisContainerDroppableData =>
+    'isAxisContainer' in input && input.isAxisContainer === true
 
 export const useOnDragEnd = (): OnDragEndFn => {
     const dispatch = useAppDispatch()
@@ -40,10 +42,10 @@ export const useOnDragEnd = (): OnDragEndFn => {
 
             const draggedItemData = event.active.data.current
             const overItemData = event.over.data.current
-            const targetIndex = isEmptyAxisData(overItemData)
+            const targetIndex = isAxisContainerData(overItemData)
                 ? 0
                 : overItemData.sortable.index
-            const insertAfter = isEmptyAxisData(overItemData)
+            const insertAfter = isAxisContainerData(overItemData)
                 ? false
                 : overItemData.insertAfter
 

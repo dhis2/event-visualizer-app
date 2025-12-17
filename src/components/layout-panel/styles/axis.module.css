@@ -36,8 +36,12 @@
     flex-wrap: wrap;
     min-block-size: 32px;
 }
-
-.emptyDropArea {
+.emptyAxisInsertMarkerAnchor {
     flex: 1;
     min-block-size: 32px;
+    inline-size: 1px;
+    /* Same as chip, which is 20px + 1px border top/bottom */
+    block-size: 22px;
+    margin: 2px;
+    position: relative;
 }

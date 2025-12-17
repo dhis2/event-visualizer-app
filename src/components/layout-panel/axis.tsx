@@ -1,10 +1,12 @@
+import { useDroppable } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
 import cx from 'classnames'
-import { type FC } from 'react'
+import { type FC, useMemo } from 'react'
 import { Chip } from './chip'
-import { EmptyAxisDropArea } from './empty-axis-drop-area'
 import classes from './styles/axis.module.css'
+import insertMarkerClasses from './styles/insert-marker.module.css'
 import { useLayoutDimensions } from './use-layout-dimensions'
+import type { AxisContainerDroppableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import { useAppSelector } from '@hooks'
 import { getAxisName } from '@modules/layout'
 import { getVisUiConfigOutputType } from '@store/vis-ui-config-slice'
@@ -23,6 +25,20 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
         outputType,
     })
 
+    const axisContainerData = useMemo<AxisContainerDroppableData>(
+        () => ({
+            axis: axisId,
+            isAxisContainer: true,
+            isEmpty: dimensions.length === 0,
+        }),
+        [axisId, dimensions.length]
+    )
+
+    const { setNodeRef, isOver } = useDroppable({
+        id: axisId,
+        data: axisContainerData,
+    })
+
     return (
         <SortableContext id={axisId} items={dimensionIds}>
             <div
@@ -35,11 +51,16 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
             >
                 <div className={classes.label}>{getAxisName(axisId)}</div>
                 <div
+                    ref={setNodeRef}
                     className={classes.content}
                     data-test={`axis-content-${axisId}`}
                 >
                     {dimensions.length === 0 ? (
-                        <EmptyAxisDropArea axisId={axisId} />
+                        <div
+                            className={cx(classes.emptyAxisInsertMarkerAnchor, {
+                                [insertMarkerClasses.withInsertMarker]: isOver,
+                            })}
+                        />
                     ) : (
                         dimensions.map((dimension, i) => (
                             <Chip

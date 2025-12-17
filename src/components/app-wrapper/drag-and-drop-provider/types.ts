@@ -15,9 +15,10 @@ export type AxisSortableData = {
     insertAfter: boolean
 }
 
-export type EmptyAxisDroppableData = {
+export type AxisContainerDroppableData = {
     axis: Axis
-    isEmptyAxis: true
+    isAxisContainer: true
+    isEmpty: boolean
 }
 
 export type DraggedItemEventData = (SidebarSortableData | AxisSortableData) &
@@ -25,7 +26,7 @@ export type DraggedItemEventData = (SidebarSortableData | AxisSortableData) &
 
 export type OverItemEventData =
     | (AxisSortableData & SortableData)
-    | EmptyAxisDroppableData
+    | AxisContainerDroppableData
 
 export interface LayoutDragEndEvent extends DragEndEvent {
     active: Omit<Active, 'data'> & {
