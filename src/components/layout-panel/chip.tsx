@@ -5,15 +5,11 @@ import cx from 'classnames'
 import { useCallback, useMemo, useRef, useState, type FC } from 'react'
 import { ChipBase, type ChipBaseProps } from './chip-base'
 import { ChipMenu } from './chip-menu'
+import { DropInsertMarker } from './drop-insert-marker'
 import { getChipItemsText } from './get-chip-items-text'
-import { OverChipLocationMonitor } from './over-chip-location-monitor'
 import classes from './styles/chip.module.css'
-import insertMarkerClasses from './styles/insert-marker.module.css'
 import { TooltipContent } from './tooltip-content'
-import type {
-    AxisSortableData,
-    DraggedItemEventData,
-} from '@components/app-wrapper/drag-and-drop-provider/types'
+import type { AxisSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import { IconButton } from '@components/dimension-item/icon-button'
 import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
@@ -105,23 +101,20 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
         }),
         [axisId, dimension, chipBaseProps, insertAfter]
     )
+    const sortable = useSortable({
+        id: dimension.id,
+        data: droppableData,
+    })
     const {
-        active,
-        activeIndex,
         attributes,
-        index,
         isDragging,
         isOver,
         isSorting,
         listeners,
-        rect,
         setNodeRef,
         transform,
         transition,
-    } = useSortable({
-        id: dimension.id,
-        data: droppableData,
-    })
+    } = sortable
     const style = useMemo(
         () =>
             transform
@@ -139,28 +132,6 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                 : undefined,
         [transform, isSorting, transition]
     )
-    const showInsertMarker = useMemo(() => {
-        /* Only show marker if there is an active item over the current
-         * which is not the item itself */
-        if (!active || !isOver || isDragging) {
-            return false
-        }
-        /* For elements from a different axis or the sidebar we can always
-         * show the marker now */
-        const draggedItemData = active.data.current as DraggedItemEventData
-        const isActiveElementFromSameAxis =
-            'axis' in draggedItemData && draggedItemData.axis === axisId
-
-        if (!isActiveElementFromSameAxis) {
-            return true
-        }
-        /* When moving within an axis the items adjacent to the active item
-         * need to be taken into account, since dropping after the previous
-         * or before the next item is a no-op. */
-        const adjacentIndex = insertAfter ? index + 1 : index - 1
-
-        return adjacentIndex === activeIndex ? false : true
-    }, [isDragging, isOver, insertAfter, index, active, activeIndex, axisId])
 
     return (
         <div
@@ -182,13 +153,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                 })}
                 data-test="layout-dimension-chip"
             >
-                <div
-                    className={cx(classes.content, {
-                        [insertMarkerClasses.withInsertMarker]:
-                            showInsertMarker,
-                        [insertMarkerClasses.atEnd]: insertAfter,
-                    })}
-                >
+                <div className={classes.content}>
                     <Tooltip
                         content={
                             <TooltipContent
@@ -234,11 +199,11 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                     </Layer>
                 )}
             </div>
-            {isOver && !isDragging && rect.current && active && (
-                <OverChipLocationMonitor
+            {isOver && !isDragging && (
+                <DropInsertMarker
+                    sortable={sortable}
                     setInsertAfter={setInsertAfter}
-                    rect={rect.current}
-                    active={active}
+                    axisId={axisId}
                 />
             )}
         </div>

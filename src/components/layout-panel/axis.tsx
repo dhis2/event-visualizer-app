@@ -55,11 +55,11 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
                     data-test={`axis-content-${axisId}`}
                 >
                     {dimensions.length === 0 ? (
-                        <div
-                            className={cx(classes.emptyAxisInsertMarkerAnchor, {
-                                [insertMarkerClasses.withInsertMarker]: isOver,
-                            })}
-                        />
+                        <div className={classes.emptyAxisInsertMarkerAnchor}>
+                            {isOver && (
+                                <span className={insertMarkerClasses.marker} />
+                            )}
+                        </div>
                     ) : (
                         dimensions.map((dimension) => (
                             <Chip
