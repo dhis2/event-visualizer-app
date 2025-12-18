@@ -93,6 +93,7 @@ export const tLoadSavedVisualization = createAsyncThunk<
 export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
     () => (dispatch, getState) => {
         const { currentVis, visUiConfig } = getState()
+
         const mergedVis = deepmerge(
             currentVis,
             visUiConfig.options
@@ -103,6 +104,8 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
         disabledOptions.forEach((disabledOption) => {
             delete mergedVis[disabledOption]
         })
+
+        // TODO: update columns/rows/filters from visUiConfig.layout
 
         dispatch(setCurrentVis(mergedVis))
     }

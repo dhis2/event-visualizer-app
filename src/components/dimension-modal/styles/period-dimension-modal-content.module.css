@@ -1,0 +1,22 @@
+.entry {
+    border-block-start: 1px solid var(--colors-grey400);
+    margin-block-start: var(--spacers-dp8);
+    padding-block-start: var(--spacers-dp12);
+}
+
+.navigation {
+    flex-grow: 0;
+}
+
+.row {
+    display: flex;
+    gap: var(--spacers-dp4);
+    align-items: flex-end;
+}
+
+.icon {
+    flex-grow: 0;
+    block-size: 40px;
+    display: flex;
+    align-items: center;
+}
