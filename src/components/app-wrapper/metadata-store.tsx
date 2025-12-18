@@ -87,6 +87,7 @@ export class MetadataStore {
             this.metadata.delete(key)
             this.notifySubscriber(key)
         }
+
         this.addMetadata(visualizationMetadata)
     }
 
