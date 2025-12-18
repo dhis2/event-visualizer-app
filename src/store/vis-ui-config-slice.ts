@@ -41,6 +41,11 @@ export const initialState: VisUiConfigState = {
     conditionsByDimension: {},
 }
 
+type SetItemsByDimensionPayload = {
+    dimensionId: string // dimensionId, including uids
+    itemIds: string[] // list of item ids
+}
+
 type SetOptionPayload = {
     key: keyof EventVisualizationOptions
     value: EventVisualizationOptions[keyof EventVisualizationOptions]
@@ -86,9 +91,12 @@ export const visUiConfigSlice = createSlice({
         },
         setVisUiConfigItemsByDimension: (
             state,
-            action: PayloadAction<Record<string, string[]>>
+            action: PayloadAction<SetItemsByDimensionPayload>
         ) => {
-            state.itemsByDimension = action.payload
+            state.itemsByDimension = {
+                ...state.itemsByDimension,
+                [action.payload.dimensionId]: action.payload.itemIds,
+            }
         },
         setVisUiConfigConditionsByDimension: (
             state,

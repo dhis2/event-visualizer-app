@@ -1,6 +1,18 @@
 import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 import type { RelativePeriodEnum } from '@types'
 
+export const PERIOD_TYPES = [
+    'DAILY',
+    'WEEKLY',
+    'WEEKLYWED',
+    'WEEKLYTHU',
+    'WEEKLYSAT',
+    'WEEKLYSUN',
+    'BIWEEKLY',
+    'MONTHLY',
+    'BIMONTHLY',
+] as const
+
 export const RELATIVE_PERIODS =
     asStringLiteralSubsetArray<RelativePeriodEnum>()([
         'TODAY',

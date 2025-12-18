@@ -14,6 +14,7 @@ import type { InterpretationsAndDetailsToggler } from './interpretations-and-det
 import type { InterpretationsProvider } from './interpretations-provider'
 import type { InterpretationsUnit } from './interpretations-unit'
 import type { OuIdHelper } from './ou-id-helper'
+import type { PeriodDimension } from './period-dimension'
 import type { PivotTable } from './pivot-table'
 import type { Toolbar } from './toolbar'
 import type { ToolbarSidebar } from './toolbar-sidebar'
@@ -51,6 +52,7 @@ declare module '@dhis2/analytics' {
     export const InterpretationsAndDetailsToggler: InterpretationsAndDetailsToggler
     export const InterpretationsProvider: InterpretationsProvider
     export const InterpretationsUnit: InterpretationsUnit
+    export const PeriodDimension: PeriodDimension
     export const PivotTable: PivotTable
     export const Toolbar: Toolbar
     export const ToolbarSidebar: ToolbarSidebar
