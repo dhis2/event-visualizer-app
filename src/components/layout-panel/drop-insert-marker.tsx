@@ -127,6 +127,7 @@ export const DropInsertMarker: FC<{
 
     return (
         <span
+            data-test="drop-insert-marker"
             className={cx(classes.marker, {
                 [classes.atEnd]: atEnd,
             })}
