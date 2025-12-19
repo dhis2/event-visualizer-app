@@ -21,11 +21,13 @@ import { getUiActiveDimensionModal } from '@store/ui-slice'
 import { getVisUiConfigLayout } from '@store/vis-ui-config-slice'
 import type { InternalDimensionRecord } from '@types'
 
-type DimensionModalProps = {
-    onClose: () => void
+type DimensionModalContentProps = {
+    dimension: InternalDimensionRecord
 }
 
-const renderDimensionModalContent = (dimension: InternalDimensionRecord) => {
+const DimensionModalContent: FC<DimensionModalContentProps> = ({
+    dimension,
+}) => {
     switch (dimension.dimensionType) {
         case 'ORGANISATION_UNIT':
             return <OrgUnitDimensionModalContent dimension={dimension} />
@@ -41,6 +43,10 @@ const renderDimensionModalContent = (dimension: InternalDimensionRecord) => {
         default:
             return `Content for ${dimension.dimensionType}`
     }
+}
+
+type DimensionModalProps = {
+    onClose: () => void
 }
 
 export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
@@ -74,9 +80,9 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
                 dataTest={`${dataTest}-content`}
                 className={classes.modalContent}
             >
-                {renderDimensionModalContent(
-                    dimension as InternalDimensionRecord
-                )}
+                <DimensionModalContent
+                    dimension={dimension as InternalDimensionRecord}
+                />
             </ModalContent>
             <ModalActions dataTest={`${dataTest}-actions`}>
                 <ButtonStrip>
