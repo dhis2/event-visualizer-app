@@ -104,12 +104,12 @@ export const OrgUnitDimensionModalContent: FC<
         return acc
     }, [] as OrgUnit[])
 
-    return dimension ? (
+    return (
         <OrgUnitDimension
             selected={selected}
             roots={rootOrgUnits.map((rootOrgUnit) => rootOrgUnit.id)}
             displayNameProp={currentUser.settings['displayNameProperty']}
             onSelect={updateOrgUnitDimensionItems}
         />
-    ) : null
+    )
 }
