@@ -8,6 +8,7 @@ import { clearUi } from './ui-slice'
 import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
+import { formatLayoutForVisualization } from '@modules/layout'
 import { getDisabledOptions } from '@modules/options'
 import {
     getVisualizationUiConfig,
@@ -105,7 +106,12 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
             delete mergedVis[disabledOption]
         })
 
-        // TODO: update columns/rows/filters from visUiConfig.layout
+        // Overrides
+        const updatedCurrentVis = {
+            ...mergedVis,
+            // columns/rows/filters from visUiConfig.layout
+            ...formatLayoutForVisualization(visUiConfig),
+        }
 
-        dispatch(setCurrentVis(mergedVis))
+        dispatch(setCurrentVis(updatedCurrentVis))
     }
