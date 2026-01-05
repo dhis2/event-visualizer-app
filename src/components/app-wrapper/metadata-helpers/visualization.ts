@@ -205,7 +205,7 @@ const addPathToOrganisationUnitMetadataItems = (
             ] as OrganisationUnitMetadataItem
 
             if (organisationUnitMetadaInputItem) {
-                organisationUnitMetadaInputItem.path = path
+                organisationUnitMetadaInputItem.path = `/${path}/${key}`
             }
         }
     }
@@ -279,6 +279,7 @@ export const extractMetadataFromVisualization = (
      * (e.g. `programStage`) and these object may contain different fields.
      * So these objects should be merged rather than overwritten. */
     const sources: MetadataInputMap[] = [
+        visualization.metaData,
         getDefaultOrgUnitMetadata(visualization.outputType),
         getDefaultDynamicTimeDimensionsMetadata(
             visualization.program,

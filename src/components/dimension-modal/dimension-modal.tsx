@@ -9,6 +9,7 @@ import {
 } from '@dhis2/ui'
 import { useCallback, type FC } from 'react'
 import { AddToLayoutButton } from './add-to-layout-button'
+import { OrgUnitDimensionModalContent } from './orgunit-dimension-modal-content'
 import { PeriodDimensionModalContent } from './period-dimension-modal-content'
 import classes from './styles/dimension-modal.module.css'
 import { isDimensionMetadataItem } from '@components/app-wrapper/metadata-helpers/type-guards'
@@ -20,13 +21,16 @@ import { getUiActiveDimensionModal } from '@store/ui-slice'
 import { getVisUiConfigLayout } from '@store/vis-ui-config-slice'
 import type { InternalDimensionRecord } from '@types'
 
-type DimensionModalProps = {
-    onClose: () => void
+type DimensionModalContentProps = {
+    dimension: InternalDimensionRecord
 }
 
-const renderDimensionModalContent = (dimension: InternalDimensionRecord) => {
+const DimensionModalContent: FC<DimensionModalContentProps> = ({
+    dimension,
+}) => {
     switch (dimension.dimensionType) {
         case 'ORGANISATION_UNIT':
+            return <OrgUnitDimensionModalContent dimension={dimension} />
         case 'STATUS':
             return `Content for fixed dimension ${dimension.dimensionType}`
         case 'PERIOD':
@@ -39,6 +43,10 @@ const renderDimensionModalContent = (dimension: InternalDimensionRecord) => {
         default:
             return `Content for ${dimension.dimensionType}`
     }
+}
+
+type DimensionModalProps = {
+    onClose: () => void
 }
 
 export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
@@ -72,12 +80,9 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
                 dataTest={`${dataTest}-content`}
                 className={classes.modalContent}
             >
-                {
-                    // XXX: check the type to use
-                    renderDimensionModalContent(
-                        dimension as InternalDimensionRecord
-                    )
-                }
+                <DimensionModalContent
+                    dimension={dimension as InternalDimensionRecord}
+                />
             </ModalContent>
             <ModalActions dataTest={`${dataTest}-actions`}>
                 <ButtonStrip>
