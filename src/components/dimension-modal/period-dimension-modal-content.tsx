@@ -182,7 +182,7 @@ export const PeriodDimensionModalContent: FC<
         }
     }
 
-    return dimension ? (
+    return (
         <>
             <div className={classes.navigation}>
                 <SegmentedControl
@@ -227,5 +227,5 @@ export const PeriodDimensionModalContent: FC<
                 )}
             </div>
         </>
-    ) : null
+    )
 }
