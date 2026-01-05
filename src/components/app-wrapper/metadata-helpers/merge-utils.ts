@@ -1,6 +1,6 @@
 import deepEqual from 'deep-equal'
 import { isMetadataItem } from './type-guards'
-import type { MetadataItem, NormalizedMetadataInputItem } from './types'
+import type { MetadataItem, NormalizedMetadataInputItem } from '@types'
 
 // Helper to check if a value is considered "empty" for merge logic
 function isEmpty(value: unknown): boolean {

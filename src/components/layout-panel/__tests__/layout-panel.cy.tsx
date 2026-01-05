@@ -20,10 +20,22 @@ const mockOptions: MockOptions = {
             dimensionType: 'DATA_ELEMENT',
             valueType: 'TEXT',
         },
+        mchNutrition: {
+            uid: 'mchNutrition',
+            name: 'MCH Nutrition',
+            dimensionType: 'DATA_ELEMENT',
+            valueType: 'TEXT',
+        },
         ou: {
             uid: 'ou',
             name: 'Organisation unit',
             dimensionType: 'ORGANISATION_UNIT',
+        },
+        ageAtVisit: {
+            uid: 'ageAtVisit',
+            name: 'Age at visit',
+            dimensionType: 'PROGRAM_ATTRIBUTE',
+            valueType: 'NUMBER',
         },
     },
     partialStore: {
@@ -38,8 +50,8 @@ const mockOptions: MockOptions = {
                 visualizationType: 'LINE_LIST',
                 outputType: 'EVENT',
                 layout: {
-                    columns: ['ou', 'mchInfantFeeding'], // 2 dimensions for columns
-                    filters: ['genderId'], // 1 dimension for filters
+                    columns: ['ou', 'mchInfantFeeding', 'ageAtVisit'],
+                    filters: ['genderId', 'mchNutrition'],
                     rows: [],
                 },
                 itemsByDimension: {
@@ -56,7 +68,7 @@ const mockOptions: MockOptions = {
 }
 
 describe('<LayoutPanel />', () => {
-    it('renders with LINE_LIST visualization type, EVENT input type, 2 column chips and 1 filter chip', () => {
+    it('renders with LINE_LIST visualization type, EVENT input type, 3 column chips and 2 filter chips', () => {
         cy.mount(
             <MockAppWrapper {...mockOptions}>
                 <LayoutPanel />
@@ -77,29 +89,33 @@ describe('<LayoutPanel />', () => {
             .should('be.visible')
         cy.getByDataTest('axis-filters').contains('Filter').should('be.visible')
 
-        // Verify columns axis has 2 chips
+        // Verify columns axis has 3 chips
         cy.getByDataTest('axis-columns')
             .findByDataTest('layout-dimension-chip')
-            .should('have.length', 2)
+            .should('have.length', 3)
 
-        // Verify filters axis has 1 chip
+        // Verify filters axis has 2 chips
         cy.getByDataTest('axis-filters')
             .findByDataTest('layout-dimension-chip')
-            .should('have.length', 1)
+            .should('have.length', 2)
 
         // Check that the correct dimension names are displayed
         cy.contains('Gender').should('be.visible')
         cy.contains('MCH Infant Feeding').should('be.visible')
         cy.contains('Organisation unit').should('be.visible')
+        cy.contains('Age at visit').should('be.visible')
+        cy.contains('MCH Nutrition').should('be.visible')
 
         // Verify the chips are in the correct axes
         cy.getByDataTest('axis-columns').within(() => {
             cy.contains('Organisation unit').should('be.visible')
             cy.contains('MCH Infant Feeding').should('be.visible')
+            cy.contains('Age at visit').should('be.visible')
         })
 
         cy.getByDataTest('axis-filters').within(() => {
             cy.contains('Gender').should('be.visible')
+            cy.contains('MCH Nutrition').should('be.visible')
         })
     })
 })

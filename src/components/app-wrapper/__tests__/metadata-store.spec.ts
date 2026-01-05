@@ -4,7 +4,7 @@ import inpatientVisitVisualization from '../__fixtures__/visualization-inpatient
 import { getInitialMetadata } from '../metadata-helpers/initial-metadata'
 import { MetadataStore } from '../metadata-store'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import type { AppCachedData, MetadataItem, SavedVisualization } from '@types'
+import type { AppCachedData, SavedVisualization, MetadataItem } from '@types'
 
 class TestMetadataStore extends MetadataStore {
     getMetadataSnapshot(): Record<string, MetadataItem> {
@@ -52,6 +52,7 @@ describe('MetadataStore', () => {
               "name": "Completed",
             },
             "GieVkTxp4HH": {
+              "code": "DE_240794",
               "dimensionType": "DATA_ELEMENT",
               "id": "GieVkTxp4HH",
               "name": "Height in cm",
@@ -68,6 +69,7 @@ describe('MetadataStore', () => {
               "path": "/ImspTQPwCqd",
             },
             "K6uUAvq500H": {
+              "code": "DE_3000010",
               "dimensionType": "DATA_ELEMENT",
               "id": "K6uUAvq500H",
               "name": "Diagnosis (ICD-10)",
@@ -163,6 +165,12 @@ describe('MetadataStore', () => {
               "id": "MONTHS_THIS_YEAR",
               "name": "Months this year",
             },
+            "O6uvpzGd5pu": {
+              "code": "OU_264",
+              "id": "O6uvpzGd5pu",
+              "name": "Bo",
+              "path": "/ImspTQPwCqd/O6uvpzGd5pu",
+            },
             "QUARTERS_THIS_YEAR": {
               "id": "QUARTERS_THIS_YEAR",
               "name": "Quarters this year",
@@ -172,6 +180,7 @@ describe('MetadataStore', () => {
               "name": "Scheduled",
             },
             "SWfdB5lX0fk": {
+              "code": "DE_423442",
               "dimensionType": "DATA_ELEMENT",
               "id": "SWfdB5lX0fk",
               "name": "Pregnant",
@@ -301,6 +310,7 @@ describe('MetadataStore', () => {
               "name": "Program status",
             },
             "eMyVanycQSC": {
+              "code": "DE_3000005",
               "dimensionType": "DATA_ELEMENT",
               "id": "eMyVanycQSC",
               "name": "Admission Date",
@@ -317,6 +327,7 @@ describe('MetadataStore', () => {
               "name": "Report date",
             },
             "fWIAEtYVEGk": {
+              "code": "DE_3000009",
               "dimensionType": "DATA_ELEMENT",
               "id": "fWIAEtYVEGk",
               "name": "Mode of Discharge",
@@ -354,12 +365,14 @@ describe('MetadataStore', () => {
               "name": "Last updated on",
             },
             "msodh3rEMJa": {
+              "code": "DE_3000006",
               "dimensionType": "DATA_ELEMENT",
               "id": "msodh3rEMJa",
               "name": "Discharge Date",
               "valueType": "DATE",
             },
             "oZg33kd9taw": {
+              "code": "DE_3000004",
               "dimensionType": "DATA_ELEMENT",
               "id": "oZg33kd9taw",
               "name": "Gender",
@@ -372,6 +385,7 @@ describe('MetadataStore', () => {
               "name": "Organisation unit",
             },
             "qrur9Dvnyt5": {
+              "code": "DE_3000003",
               "dimensionType": "DATA_ELEMENT",
               "id": "qrur9Dvnyt5",
               "name": "Age in years",
@@ -393,6 +407,7 @@ describe('MetadataStore', () => {
               "name": "Average age of deaths",
             },
             "vV9UWAZohSf": {
+              "code": "DE_240795",
               "dimensionType": "DATA_ELEMENT",
               "id": "vV9UWAZohSf",
               "name": "Weight in kg",
@@ -426,7 +441,7 @@ describe('MetadataStore', () => {
 
         // Length grows and decreases
         expect(snapshot0Keys.size).toBe(49)
-        expect(snapshot1Keys.size).toBe(77)
+        expect(snapshot1Keys.size).toBe(78)
         expect(snapshot2Keys.size).toBe(64)
 
         // Initial metadata is always included
@@ -448,8 +463,9 @@ describe('MetadataStore', () => {
         ).toMatchInlineSnapshot(`
           [
             "GieVkTxp4HH",
-            "SWfdB5lX0fk",
             "vV9UWAZohSf",
+            "O6uvpzGd5pu",
+            "SWfdB5lX0fk",
             "tUdBD1JDxpn",
             "sGna2pquXOO",
             "Kswd1r4qWLh",
@@ -472,6 +488,12 @@ describe('MetadataStore', () => {
             )
         ).toMatchInlineSnapshot(`
           [
+            "eMyVanycQSC",
+            "oZg33kd9taw",
+            "fWIAEtYVEGk",
+            "qrur9Dvnyt5",
+            "K6uUAvq500H",
+            "msodh3rEMJa",
             "ou",
             "lastUpdated",
             "createdBy",
@@ -479,12 +501,6 @@ describe('MetadataStore', () => {
             "eBAyeGv0exc.ou",
             "eBAyeGv0exc.eventStatus",
             "eBAyeGv0exc.programStatus",
-            "eMyVanycQSC",
-            "qrur9Dvnyt5",
-            "K6uUAvq500H",
-            "msodh3rEMJa",
-            "oZg33kd9taw",
-            "fWIAEtYVEGk",
             "eBAyeGv0exc",
             "Zj7UnCAulEk",
           ]

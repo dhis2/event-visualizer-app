@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
+import deepmerge from 'deepmerge'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
 import { setIsVisualizationLoading } from './loader-slice'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
@@ -7,11 +8,12 @@ import { clearUi } from './ui-slice'
 import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
+import { getDisabledOptions } from '@modules/options'
 import {
     getVisualizationUiConfig,
     transformVisualization,
 } from '@modules/visualization'
-import type { AppDispatch } from '@types'
+import type { AppDispatch, CurrentVisualization } from '@types'
 
 type AppAsyncThunkConfig = {
     state: RootState
@@ -23,7 +25,13 @@ type AppAsyncThunkConfig = {
     rejectMeta?: unknown
 }
 
-export const tClearVisualization = () => (dispatch: AppDispatch) => {
+type AppThunk = () => (
+    dispatch: AppDispatch,
+    getState: () => RootState,
+    extra: ThunkExtraArg
+) => void
+
+export const tClearVisualization: AppThunk = () => (dispatch) => {
     dispatch(clearUi())
     dispatch(clearSavedVis())
     dispatch(clearCurrentVis())
@@ -81,3 +89,23 @@ export const tLoadSavedVisualization = createAsyncThunk<
         }
     }
 )
+
+export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
+    () => (dispatch, getState) => {
+        const { currentVis, visUiConfig } = getState()
+
+        const mergedVis = deepmerge(
+            currentVis,
+            visUiConfig.options
+        ) as CurrentVisualization
+
+        const disabledOptions = getDisabledOptions(visUiConfig.options)
+
+        disabledOptions.forEach((disabledOption) => {
+            delete mergedVis[disabledOption]
+        })
+
+        // TODO: update columns/rows/filters from visUiConfig.layout
+
+        dispatch(setCurrentVis(mergedVis))
+    }

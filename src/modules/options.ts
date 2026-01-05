@@ -1,40 +1,22 @@
 import i18n from '@dhis2/d2-i18n'
+import { isPopulatedString } from '@components/app-wrapper/metadata-helpers/type-guards'
 import {
     DEFAULT_OPTIONS,
-    OPTIONS_SECTION_KEYS_LINE_LIST,
-    OPTIONS_SECTION_KEYS_PIVOT_TABLE,
+    OPTIONS_TAB_KEYS_LINE_LIST,
+    OPTIONS_TAB_KEYS_PIVOT_TABLE,
 } from '@constants/options'
-import type { CurrentUser, VisualizationType } from '@types'
 import type {
+    VisualizationType,
     EventVisualizationOptions,
-    OptionsSection,
-    OptionsSectionKey,
-} from 'src/types/options'
+    OptionsTab,
+    OptionsTabKey,
+    LegendOption,
+    AppCachedData,
+    EventVisualizationOptionFieldName,
+} from '@types'
 
-type OptionDef = {
-    defaultValue: unknown
-    persisted: boolean
-}
-
-export const options: Record<string, OptionDef> = {
-    completedOnly: {
-        defaultValue: false,
-        persisted: true,
-    },
-    skipRounding: {
-        defaultValue: false,
-        persisted: true,
-    },
-}
-
-export const getAllOptions = (): Record<string, OptionDef> => options
-
-// This for now has only the 2 options that can be passed to the analytics request
-export const getOptionsForRequest = (): [string, OptionDef][] =>
-    Object.entries(getAllOptions())
-
-export const getOptionsSectionsDisplayNames = (): Record<
-    OptionsSectionKey,
+export const getOptionsTabsDisplayNames = (): Record<
+    OptionsTabKey,
     string
 > => ({
     data: i18n.t('Data'),
@@ -42,29 +24,52 @@ export const getOptionsSectionsDisplayNames = (): Record<
     legend: i18n.t('Legend'),
 })
 
-const toOptionsSectionsArray = (
-    optionKeys: ReadonlyArray<OptionsSectionKey>
-) => {
-    const displayNameLookup = getOptionsSectionsDisplayNames()
+const toOptionsTabsArray = (optionKeys: ReadonlyArray<OptionsTabKey>) => {
+    const displayNameLookup = getOptionsTabsDisplayNames()
     return optionKeys.map((key) => ({
         key: key,
         label: displayNameLookup[key],
     }))
 }
 
-export const getOptionsSectionsForVisType = (
+export const getOptionsTabsForVisType = (
     visType: VisualizationType
-): OptionsSection[] => {
+): OptionsTab[] => {
     switch (visType) {
         case 'LINE_LIST':
-            return toOptionsSectionsArray(OPTIONS_SECTION_KEYS_LINE_LIST)
+            return toOptionsTabsArray(OPTIONS_TAB_KEYS_LINE_LIST)
         case 'PIVOT_TABLE':
-            return toOptionsSectionsArray(OPTIONS_SECTION_KEYS_PIVOT_TABLE)
+            return toOptionsTabsArray(OPTIONS_TAB_KEYS_PIVOT_TABLE)
         default:
             throw new Error('Unknown visType provided')
     }
 }
 
 export const getDefaultOptions = (
-    digitGroupSeparator: CurrentUser['settings']['digitGroupSeparator']
+    digitGroupSeparator: AppCachedData['systemSettings']['digitGroupSeparator']
 ): EventVisualizationOptions => ({ ...DEFAULT_OPTIONS, digitGroupSeparator })
+
+export const getDisabledOptions = (options: EventVisualizationOptions) => {
+    const disabledOptions: EventVisualizationOptionFieldName[] = []
+
+    // Disable totals options when cumulativeValues is used
+    if (options?.cumulativeValues) {
+        disabledOptions.push(
+            'colTotals',
+            'colSubTotals',
+            'rowTotals',
+            'rowSubTotals'
+        )
+    }
+
+    return disabledOptions
+}
+
+export const isPopulatedLegendOption = (
+    value: EventVisualizationOptions['legend']
+): value is LegendOption =>
+    typeof value === 'object' &&
+    'style' in value &&
+    'strategy' in value &&
+    isPopulatedString(value.strategy) &&
+    isPopulatedString(value.style)

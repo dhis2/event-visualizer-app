@@ -1,27 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import {
     getSaveableVisualization,
     getVisualizationUiConfig,
 } from '../visualization'
-import * as optionsModule from '@modules/options'
 import type { NewVisualization, SavedVisualization } from '@types'
-
-type OptionsReturn = Record<string, { persisted: boolean }>
-const mockOptions: OptionsReturn = {
-    keepOption: { persisted: true },
-    tempOption: { persisted: false },
-}
-
-beforeEach(() => {
-    const mod = optionsModule as unknown as {
-        getAllOptions: () => OptionsReturn
-    }
-    vi.spyOn(mod, 'getAllOptions').mockReturnValue(mockOptions)
-})
-
-afterEach(() => {
-    vi.restoreAllMocks()
-})
 
 const testCases = {
     lineListEnrollment: {
@@ -334,22 +316,6 @@ describe('getVisualizationUiConfig', () => {
 })
 
 describe('getSaveableVisualization', () => {
-    it('removes non-persisted options from the saved visualization', () => {
-        const vis = {
-            keepOption: 'keep-me',
-            tempOption: 'remove-me',
-            columns: [],
-            filters: [],
-        } as unknown as NewVisualization
-
-        const saved = getSaveableVisualization(vis)
-
-        // persisted option should still be present
-        expect(saved['keepOption']).toBe('keep-me')
-        // non-persisted option should have been removed
-        expect('tempOption' in saved).toBe(false)
-    })
-
     it('strips dimensionType and valueType from columns and filters', () => {
         const vis = {
             columns: [

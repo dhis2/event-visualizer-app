@@ -13,13 +13,16 @@ import type { InterpretationModal } from './interpretation-modal'
 import type { InterpretationsAndDetailsToggler } from './interpretations-and-details-toggler'
 import type { InterpretationsProvider } from './interpretations-provider'
 import type { InterpretationsUnit } from './interpretations-unit'
+import type { OrgUnitDimension } from './org-unit-dimension'
 import type { OuIdHelper } from './ou-id-helper'
+import type { PeriodDimension } from './period-dimension'
 import type { PivotTable } from './pivot-table'
 import type { Toolbar } from './toolbar'
 import type { ToolbarSidebar } from './toolbar-sidebar'
 import type { UpdateButton } from './update-button'
 import type { VisTypeIcon } from './vis-type-icon'
 import type {
+    Axis,
     CurrentVisualization,
     DimensionArray,
     DimensionId,
@@ -50,6 +53,8 @@ declare module '@dhis2/analytics' {
     export const InterpretationsAndDetailsToggler: InterpretationsAndDetailsToggler
     export const InterpretationsProvider: InterpretationsProvider
     export const InterpretationsUnit: InterpretationsUnit
+    export const OrgUnitDimension: OrgUnitDimension
+    export const PeriodDimension: PeriodDimension
     export const PivotTable: PivotTable
     export const Toolbar: Toolbar
     export const ToolbarSidebar: ToolbarSidebar
@@ -82,6 +87,8 @@ declare module '@dhis2/analytics' {
         valueType: ValueType,
         visualization: Partial<SavedVisualization>
     ) => string
+
+    export const getAvailableAxes: (visType: VisualizationType) => Axis[]
 
     export const getColorByValueFromLegendSet: (
         legendSet?: LegendSet,

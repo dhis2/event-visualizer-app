@@ -1,0 +1,21 @@
+.fieldSet {
+    padding: var(--spacers-dp16) 0;
+}
+
+.fieldSet:not(:last-child) {
+    border-block-end: 1px solid var(--colors-grey300);
+}
+
+.fieldSetTitle {
+    display: inline-block;
+    font-size: 15px;
+    color: var(--colors-grey900);
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    padding-block-end: var(--spacers-dp12);
+}
+
+.fieldSetContent {
+    display: grid;
+    gap: var(--spacers-dp16);
+}

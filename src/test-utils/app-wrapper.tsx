@@ -4,6 +4,7 @@ import { CssVariables } from '@dhis2/ui'
 import type { ReducersMapObject } from '@reduxjs/toolkit'
 import { configureStore } from '@reduxjs/toolkit'
 import { render, renderHook, waitFor } from '@testing-library/react'
+import deepmerge from 'deepmerge'
 import {
     useMemo,
     type FC,
@@ -21,17 +22,27 @@ import {
     AppCachedDataQueryProvider,
     useAppCachedDataQuery,
 } from '@components/app-wrapper/app-cached-data-query-provider'
-import type { InitialMetadataItems } from '@components/app-wrapper/metadata-helpers/types'
+import { DndContextProvider } from '@components/app-wrapper/drag-and-drop-provider/dnd-context-provider'
 import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider'
 import { useMetadataStore } from '@hooks'
+import { currentVisSlice } from '@store/current-vis-slice'
+import { loaderSlice } from '@store/loader-slice'
 import { listenerMiddleware } from '@store/middleware-listener'
-import { createStore as createDefaultStore } from '@store/store'
+import { navigationSlice } from '@store/navigation-slice'
+import { savedVisSlice } from '@store/saved-vis-slice'
+import {
+    createStore as createDefaultStore,
+    getPreloadedState as getDefaultPreloadedState,
+} from '@store/store'
+import { uiSlice } from '@store/ui-slice'
+import { visUiConfigSlice } from '@store/vis-ui-config-slice'
 import type {
     RootState,
     AppCachedData,
     DataEngine,
     MetadataStore,
     AppStore,
+    InitialMetadataItems,
 } from '@types'
 
 /**
@@ -61,8 +72,8 @@ export type MockOptions = {
      * production store is used instead.
      */
     partialStore?: {
-        /** Partial reducer map to merge with the API reducer */
-        reducer: Partial<ReducersMapObject<RootState>>
+        /** Partial reducer map to merge with the API reducer. If not provided, the full app reducer is used. */
+        reducer?: Partial<ReducersMapObject<RootState>>
         /** Initial state to preload into the store */
         preloadedState: Partial<RootState>
     }
@@ -82,6 +93,15 @@ type CreatePartialOrDefaultStoreParams = CreateStoreBaseParams & {
     partialStore?: MockOptions['partialStore']
 }
 
+const fullAppReducer = {
+    currentVis: currentVisSlice.reducer,
+    loader: loaderSlice.reducer,
+    navigation: navigationSlice.reducer,
+    ui: uiSlice.reducer,
+    visUiConfig: visUiConfigSlice.reducer,
+    savedVis: savedVisSlice.reducer,
+}
+
 const createPartialStore = ({
     partialStore,
     engine,
@@ -91,9 +111,12 @@ const createPartialStore = ({
     return configureStore({
         reducer: {
             [api.reducerPath]: api.reducer,
-            ...partialStore.reducer,
+            ...(partialStore.reducer ?? fullAppReducer),
         } as ReducersMapObject<RootState>,
-        preloadedState: partialStore.preloadedState,
+        preloadedState: deepmerge(
+            getDefaultPreloadedState(appCachedData),
+            partialStore.preloadedState
+        ),
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({
                 thunk: {
@@ -126,7 +149,7 @@ const createPartialOrDefaultStore = ({
           })
         : createDefaultStore(engine, metadataStore, appCachedData)
 
-const MockStoreProvider: FC<{
+const MockStoreAndDndProvider: FC<{
     children: ReactNode | ((store: PartialOrDefaultStore) => ReactNode)
     partialStore: MockOptions['partialStore']
 }> = ({ children, partialStore }) => {
@@ -145,9 +168,11 @@ const MockStoreProvider: FC<{
     )
     return (
         <Provider store={resolvedStore}>
-            {typeof children === 'function'
-                ? children(resolvedStore)
-                : children}
+            <DndContextProvider>
+                {typeof children === 'function'
+                    ? children(resolvedStore)
+                    : children}
+            </DndContextProvider>
         </Provider>
     )
 }
@@ -170,9 +195,9 @@ const MockAppWrapperCore: FC<{
             <CssVariables colors spacers theme />
             <AppCachedDataQueryProvider>
                 <MockMetadataProvider mockMetadata={metadata}>
-                    <MockStoreProvider partialStore={partialStore}>
+                    <MockStoreAndDndProvider partialStore={partialStore}>
                         {children}
-                    </MockStoreProvider>
+                    </MockStoreAndDndProvider>
                 </MockMetadataProvider>
             </AppCachedDataQueryProvider>
         </CustomDataProvider>

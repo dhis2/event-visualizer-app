@@ -5,6 +5,7 @@ import classes from './app.module.css'
 import { useLoadVisualizationOnMount } from './use-load-visualization-on-mount'
 import { AppWrapper } from '@components/app-wrapper'
 import { DetailsPanel } from '@components/details-panel/details-panel'
+import { DimensionModal } from '@components/dimension-modal/dimension-modal'
 import {
     GridCenterColumnBottom,
     GridCenterColumnTop,
@@ -34,8 +35,10 @@ import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import {
+    getUiActiveDimensionModal,
     getUiDetailsPanelVisible,
     getUiMainSidebarVisible,
+    setUiActiveDimensionModal,
 } from '@store/ui-slice'
 import type { CurrentVisualization, Sorting } from '@types'
 
@@ -45,6 +48,7 @@ const EventVisualizer: FC = () => {
     const dispatch = useAppDispatch()
     const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)
+    const activeDimensionModal = useAppSelector(getUiActiveDimensionModal)
     const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
@@ -72,6 +76,11 @@ const EventVisualizer: FC = () => {
         [addAnalyticsResponseMetadata]
     )
 
+    const onDimensionModalClose = useCallback(
+        () => dispatch(setUiActiveDimensionModal(null)),
+        [dispatch]
+    )
+
     return (
         <GridContainer>
             <GridTopRow>
@@ -85,6 +94,9 @@ const EventVisualizer: FC = () => {
                 >
                     Main sidebar
                 </div>
+                {activeDimensionModal && (
+                    <DimensionModal onClose={onDimensionModalClose} />
+                )}
             </GridStartColumn>
             <GridCenterColumnTop>
                 <LayoutPanel />

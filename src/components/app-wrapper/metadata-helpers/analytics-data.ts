@@ -1,8 +1,8 @@
 import { isMetadataInputItem } from './type-guards'
-import type { AnalyticsResponseMetadataItems, MetadataInput } from './types'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { headersMap } from '@modules/visualization'
+import type { AnalyticsResponseMetadataItems, MetadataInput } from '@types'
 
 const extractItemsMetadata = (
     items: AnalyticsResponseMetadataItems,

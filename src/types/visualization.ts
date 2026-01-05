@@ -8,8 +8,11 @@ import type {
     LegendDisplayStyle,
     DimensionalItemObject,
 } from './dhis2-openapi-schemas'
-import type { MetadataInput } from '@components/app-wrapper/metadata-helpers/types'
-import type { ExtendedDimensionType, VisualizationType } from '@types'
+import type {
+    ExtendedDimensionType,
+    VisualizationType,
+    MetadataInputMap,
+} from '@types'
 
 type IdRecord = { id: string }
 type IdNameRecord = IdRecord & { name: string }
@@ -106,7 +109,7 @@ type SavedVisualizationFieldOverrides = {
         style: LegendDisplayStyle
         showKey: boolean
     }
-    metaData: MetadataInput
+    metaData: MetadataInputMap
     type: VisualizationType
 }
 
