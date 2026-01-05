@@ -23,7 +23,6 @@ export const VALUE_TYPES: ValueType[] = [
     'DATE',
     'DATETIME',
     'TIME',
-    'TRACKER_ASSOCIATE',
     'USERNAME',
     'COORDINATE',
     'ORGANISATION_UNIT',
