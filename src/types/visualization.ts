@@ -11,7 +11,7 @@ import type {
 import type {
     ExtendedDimensionType,
     VisualizationType,
-    MetadataInput,
+    MetadataInputMap,
 } from '@types'
 
 type IdRecord = { id: string }
@@ -109,7 +109,7 @@ type SavedVisualizationFieldOverrides = {
         style: LegendDisplayStyle
         showKey: boolean
     }
-    metaData: MetadataInput
+    metaData: MetadataInputMap
     type: VisualizationType
 }
 
