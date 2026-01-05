@@ -1,0 +1,32 @@
+/* Insert marker styles */
+
+/* Marker line (the main element) */
+.marker {
+    box-sizing: border-box;
+    position: absolute;
+    z-index: 1;
+    inset-block: 7px 2px;
+    inline-size: 4px;
+    background-color: #4c9ffe;
+}
+
+/* Marker circle (pseudo-element at top of line) */
+.marker::before {
+    content: '';
+    position: absolute;
+    inset-block-start: -8px;
+    inset-inline-start: -3px;
+    inline-size: 10px;
+    block-size: 10px;
+    border: 3px solid #4c9ffe;
+    background: transparent;
+    border-radius: 12px;
+}
+
+.marker:not(.atEnd) {
+    inset-inline-start: -2px;
+}
+
+.marker.atEnd {
+    inset-inline-end: -2px;
+}

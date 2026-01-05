@@ -15,7 +15,6 @@ export type {
     GridHeader,
     LegendSet,
     MeDto,
-    MetadataItem,
     Option,
     OptionSet,
     OrganisationUnit,
@@ -52,6 +51,8 @@ export type CurrentUser = TransformedAppCachedData['currentUser']
 
 export type * from './axis'
 export type * from './dimension'
+export type * from './layout'
+export type * from './metadata'
 export type * from './options'
 export type * from './output-type'
 export type * from './org-unit'

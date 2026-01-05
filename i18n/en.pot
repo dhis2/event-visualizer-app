@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-11-25T14:34:25.675Z\n"
-"PO-Revision-Date: 2025-11-25T14:34:25.676Z\n"
+"POT-Creation-Date: 2025-12-17T08:00:12.641Z\n"
+"PO-Revision-Date: 2025-12-17T08:00:12.641Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -134,6 +134,30 @@ msgstr "Registration org. unit"
 msgid "Organisation unit"
 msgstr "Organisation unit"
 
+msgid "Add to {{axisName}}"
+msgstr "Add to {{axisName}}"
+
+msgid "Hide"
+msgstr "Hide"
+
+msgid "Update"
+msgstr "Update"
+
+msgid "Start and end dates are inclusive and will be included in the outputs."
+msgstr "Start and end dates are inclusive and will be included in the outputs."
+
+msgid "Start date"
+msgstr "Start date"
+
+msgid "End date"
+msgstr "End date"
+
+msgid "Choose from presets"
+msgstr "Choose from presets"
+
+msgid "Define start - end dates"
+msgstr "Define start - end dates"
+
 msgid "HTML"
 msgstr "HTML"
 
@@ -169,6 +193,12 @@ msgstr "Code"
 
 msgid "Name"
 msgstr "Name"
+
+msgid "Move to {{axisName}}"
+msgstr "Move to {{axisName}}"
+
+msgid "Remove"
+msgstr "Remove"
 
 msgid "all"
 msgstr "all"
@@ -231,14 +261,146 @@ msgstr "oldest {{repeatEventIndex}}"
 msgid "most recent {{repeatEventIndex}}"
 msgstr "most recent {{repeatEventIndex}}"
 
+msgid "Column sub-totals"
+msgstr "Column sub-totals"
+
+msgid "Column totals"
+msgstr "Column totals"
+
+msgid "Cumulative values"
+msgstr "Cumulative values"
+
+msgid "Accumulate cell values along rows"
+msgstr "Accumulate cell values along rows"
+
+msgid "Digit group separator"
+msgstr "Digit group separator"
+
+msgid "None"
+msgstr "None"
+
+msgid "Space"
+msgstr "Space"
+
+msgid "Comma"
+msgstr "Comma"
+
+msgid "Display density"
+msgstr "Display density"
+
+msgid "Comfortable"
+msgstr "Comfortable"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Compact"
+msgstr "Compact"
+
+msgid "Font size"
+msgstr "Font size"
+
+msgid "Large"
+msgstr "Large"
+
+msgid "Small"
+msgstr "Small"
+
+msgid "Hide empty rows"
+msgstr "Hide empty rows"
+
+msgid "Hide N/A data"
+msgstr "Hide N/A data"
+
+msgid "Use a legend for table cell colors"
+msgstr "Use a legend for table cell colors"
+
+msgid "Use pre-defined legend per data item"
+msgstr "Use pre-defined legend per data item"
+
+msgid "Choose a single legend for the entire visualization"
+msgstr "Choose a single legend for the entire visualization"
+
+msgid "Legend type"
+msgstr "Legend type"
+
+msgid "Legend changes background color"
+msgstr "Legend changes background color"
+
+msgid "Legend changes text color"
+msgstr "Legend changes text color"
+
+msgid "Legend style"
+msgstr "Legend style"
+
+msgid "Legend"
+msgstr "Legend"
+
+msgid "Select from legends"
+msgstr "Select from legends"
+
+msgid "Loading legends"
+msgstr "Loading legends"
+
+msgid "Limit"
+msgstr "Limit"
+
+msgid "Sort order"
+msgstr "Sort order"
+
+msgid "Low to high"
+msgstr "Low to high"
+
+msgid "High to low"
+msgstr "High to low"
+
+msgid "Top limit"
+msgstr "Top limit"
+
+msgid "Row sub-totals"
+msgstr "Row sub-totals"
+
+msgid "Row totals"
+msgstr "Row totals"
+
+msgid "Dimension labels"
+msgstr "Dimension labels"
+
+msgid "Display organisation unit hierarchy"
+msgstr "Display organisation unit hierarchy"
+
+msgid "Skip rounding"
+msgstr "Skip rounding"
+
+msgid "Add a subtitle"
+msgstr "Add a subtitle"
+
+msgid "Add a title"
+msgstr "Add a title"
+
 msgid "Options"
 msgstr "Options"
 
-msgid "Hide"
-msgstr "Hide"
+msgid "Display"
+msgstr "Display"
 
-msgid "Update"
-msgstr "Update"
+msgid "Totals"
+msgstr "Totals"
+
+msgid "Totals are not supported when using cumulative values"
+msgstr "Totals are not supported when using cumulative values"
+
+msgid "Empty data"
+msgstr "Empty data"
+
+msgid "Table title"
+msgstr "Table title"
+
+msgid "Table subtitle"
+msgstr "Table subtitle"
+
+msgid "Labels"
+msgstr "Labels"
 
 msgid "Getting started"
 msgstr "Getting started"
@@ -427,9 +589,6 @@ msgstr "Data"
 
 msgid "Style"
 msgstr "Style"
-
-msgid "Legend"
-msgstr "Legend"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

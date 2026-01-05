@@ -2,6 +2,9 @@ import { extractMetadataFromAnalyticsResponse } from './metadata-helpers/analyti
 import { smartMergeWithChangeDetection } from './metadata-helpers/merge-utils'
 import { normalizeMetadataInputItem } from './metadata-helpers/normalization'
 import { isObject, isMetadataInputItem } from './metadata-helpers/type-guards'
+import { extractMetadataFromVisualization } from './metadata-helpers/visualization'
+import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
+import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import type {
     MetadataInputItem,
     MetadataItem,
@@ -9,11 +12,9 @@ import type {
     MetadataInput,
     InitialMetadataItems,
     AnalyticsResponseMetadataItems,
-} from './metadata-helpers/types'
-import { extractMetadataFromVisualization } from './metadata-helpers/visualization'
-import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
-import type { AppCachedData, SavedVisualization } from '@types'
+    AppCachedData,
+    SavedVisualization,
+} from '@types'
 
 declare global {
     interface Window {
@@ -28,7 +29,8 @@ declare global {
 }
 
 const isItemMatch = (item: MetadataItem, token: string) =>
-    item.id.includes(token) || item.name?.toLowerCase().includes(token)
+    item.id.includes(token) ||
+    item.name?.toLowerCase().includes(token.toLowerCase())
 
 export class MetadataStore {
     private metadata = new Map<string, MetadataItem>()
@@ -86,6 +88,7 @@ export class MetadataStore {
             this.metadata.delete(key)
             this.notifySubscriber(key)
         }
+
         this.addMetadata(visualizationMetadata)
     }
 

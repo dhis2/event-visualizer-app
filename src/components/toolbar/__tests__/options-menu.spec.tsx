@@ -1,28 +1,44 @@
-import { screen, waitFor, render } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { vi, describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { OptionsMenu } from '../menu-bar/options-menu'
 import { HoverMenuBar } from '@dhis2/analytics'
-import { useAppSelector } from '@hooks'
+import { getDefaultOptions } from '@modules/options'
+import { renderWithAppWrapper } from '@test-utils/app-wrapper'
 
-// Mock the hooks
-vi.mock('@hooks', () => ({
-    useAppSelector: vi.fn(),
-}))
+const defaultPartialStore = {
+    preloadedState: {
+        visUiConfig: {
+            visualizationType: 'LINE_LIST' as const,
+            outputType: 'EVENT' as const,
+            layout: { columns: [], filters: [], rows: [] },
+            itemsByDimension: {},
+            conditionsByDimension: {},
+            options: getDefaultOptions('COMMA'),
+        },
+    },
+}
 
-const mockUseAppSelector = vi.mocked(useAppSelector)
+const pivotTablePartialStore = {
+    preloadedState: {
+        visUiConfig: {
+            visualizationType: 'PIVOT_TABLE' as const,
+            outputType: 'EVENT' as const,
+            layout: { columns: [], filters: [], rows: [] },
+            itemsByDimension: {},
+            conditionsByDimension: {},
+            options: getDefaultOptions('COMMA'),
+        },
+    },
+}
 
 describe('OptionsMenu', () => {
-    beforeEach(() => {
-        vi.clearAllMocks()
-        mockUseAppSelector.mockReturnValue('LINE_LIST')
-    })
-
-    it('renders the options menu trigger', () => {
-        render(
+    it('renders the options menu trigger', async () => {
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         expect(screen.getByText('Options')).toBeInTheDocument()
@@ -30,10 +46,11 @@ describe('OptionsMenu', () => {
 
     it('opens the menu when the options trigger is clicked', async () => {
         const user = userEvent.setup()
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         await user.click(screen.getByText('Options'))
@@ -46,10 +63,11 @@ describe('OptionsMenu', () => {
 
     it('opens the modal when a menu item is clicked', async () => {
         const user = userEvent.setup()
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         // Open the menu
@@ -65,12 +83,13 @@ describe('OptionsMenu', () => {
         expect(dataTab).toBeInTheDocument()
     })
 
-    it('opens the modal with the correct active tab and section content when clicking Data menu item', async () => {
+    it('opens the modal with the correct active tab and content when clicking Data menu item', async () => {
         const user = userEvent.setup()
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         // Open the menu
@@ -84,15 +103,16 @@ describe('OptionsMenu', () => {
         const dataTab = screen.getByRole('tab', { name: 'Data' })
         expect(dataTab).toHaveAttribute('aria-selected', 'true')
         // Check that the correct section content is rendered
-        expect(screen.getByTestId('line-list-data-section')).toBeInTheDocument()
+        expect(screen.getByTestId('line-list-data-tab')).toBeInTheDocument()
     })
 
-    it('opens the modal with the correct active tab and section content when clicking Style menu item', async () => {
+    it('opens the modal with the correct active tab and content when clicking Style menu item', async () => {
         const user = userEvent.setup()
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         // Open the menu
@@ -106,17 +126,16 @@ describe('OptionsMenu', () => {
         const styleTab = screen.getByRole('tab', { name: 'Style' })
         expect(styleTab).toHaveAttribute('aria-selected', 'true')
         // Check that the correct section content is rendered
-        expect(
-            screen.getByTestId('line-list-style-section')
-        ).toBeInTheDocument()
+        expect(screen.getByTestId('line-list-style-tab')).toBeInTheDocument()
     })
 
     it('allows switching tabs within the modal', async () => {
         const user = userEvent.setup()
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         // Open menu and click Data
@@ -129,7 +148,7 @@ describe('OptionsMenu', () => {
             'aria-selected',
             'true'
         )
-        expect(screen.getByTestId('line-list-data-section')).toBeInTheDocument()
+        expect(screen.getByTestId('line-list-data-tab')).toBeInTheDocument()
 
         // Switch to Style tab
         await user.click(screen.getByRole('tab', { name: 'Style' }))
@@ -137,9 +156,7 @@ describe('OptionsMenu', () => {
             'aria-selected',
             'true'
         )
-        expect(
-            screen.getByTestId('line-list-style-section')
-        ).toBeInTheDocument()
+        expect(screen.getByTestId('line-list-style-tab')).toBeInTheDocument()
 
         // Switch to Legend tab
         await user.click(screen.getByRole('tab', { name: 'Legend' }))
@@ -147,17 +164,16 @@ describe('OptionsMenu', () => {
             'aria-selected',
             'true'
         )
-        expect(
-            screen.getByTestId('line-list-legend-section')
-        ).toBeInTheDocument()
+        expect(screen.getByTestId('line-list-legend-tab')).toBeInTheDocument()
     })
 
     it('closes the modal when cancel button is clicked', async () => {
         const user = userEvent.setup()
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: defaultPartialStore }
         )
 
         // Open menu and modal
@@ -178,13 +194,11 @@ describe('OptionsMenu', () => {
     it('works with different visualization types', async () => {
         const user = userEvent.setup()
 
-        // Test with PIVOT_TABLE
-        mockUseAppSelector.mockReturnValue('PIVOT_TABLE')
-
-        render(
+        await renderWithAppWrapper(
             <HoverMenuBar>
                 <OptionsMenu />
-            </HoverMenuBar>
+            </HoverMenuBar>,
+            { partialStore: pivotTablePartialStore }
         )
 
         // Open menu
@@ -193,7 +207,6 @@ describe('OptionsMenu', () => {
         expect(screen.getByTestId('options-menu-list')).toBeInTheDocument()
         expect(screen.getByText('Data')).toBeInTheDocument()
         expect(screen.getByText('Style')).toBeInTheDocument()
-        expect(screen.getByText('Legend')).toBeInTheDocument()
 
         // Open modal by clicking Data
         await user.click(screen.getByText('Data'))
@@ -204,9 +217,7 @@ describe('OptionsMenu', () => {
             'aria-selected',
             'true'
         )
-        expect(
-            screen.getByTestId('pivot-table-data-section')
-        ).toBeInTheDocument()
+        expect(screen.getByTestId('pivot-table-data-tab')).toBeInTheDocument()
 
         // Switch to Style tab
         await user.click(screen.getByRole('tab', { name: 'Style' }))
@@ -214,18 +225,6 @@ describe('OptionsMenu', () => {
             'aria-selected',
             'true'
         )
-        expect(
-            screen.getByTestId('pivot-table-style-section')
-        ).toBeInTheDocument()
-
-        // Switch to Legend tab
-        await user.click(screen.getByRole('tab', { name: 'Legend' }))
-        expect(screen.getByRole('tab', { name: 'Legend' })).toHaveAttribute(
-            'aria-selected',
-            'true'
-        )
-        expect(
-            screen.getByTestId('pivot-table-legend-section')
-        ).toBeInTheDocument()
+        expect(screen.getByTestId('pivot-table-style-tab')).toBeInTheDocument()
     })
 })

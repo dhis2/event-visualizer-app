@@ -86,6 +86,8 @@ describe('supplementDimensionMetadata', () => {
                 id: 'stage1.dimension1',
                 name: 'Dimension One',
                 dimensionType: 'DATA_ELEMENT',
+                program: 'program1',
+                programStage: 'stage1',
             },
         })
     })

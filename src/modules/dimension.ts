@@ -101,12 +101,12 @@ export const getDimensionsWithSuffix = ({
 
 type GetDimensionIdPartsParams = {
     id: string
-    outputType: OutputType
+    outputType?: OutputType
 }
 
 export const getDimensionIdParts = ({
     id,
-    outputType,
+    outputType = undefined,
 }: GetDimensionIdPartsParams): {
     dimensionId: string
     programStageId: string

@@ -40,12 +40,16 @@
     flex-shrink: 0;
     font-family: monospace;
     font-size: 11px;
-    background: #c5e4e3;
+    background-color: #c5e4e3;
     border-radius: 2px;
     margin-inline-start: 4px;
     min-inline-size: 12px;
     text-align: center;
     padding: 2px 2px 1px 2px;
+}
+
+.dragging .items {
+    background-color: var(--colors-grey300);
 }
 
 .items:empty {

@@ -2,7 +2,9 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { DEFAULT_OPTIONS } from '@constants/options'
 import type {
+    Axis,
     EventVisualizationOptions,
+    Layout,
     OutputType,
     VisualizationType,
 } from '@types'
@@ -18,11 +20,7 @@ const EMPTY_CONDITIONS_OBJECT: ConditionsObject = {
 export interface VisUiConfigState {
     visualizationType: VisualizationType
     outputType: OutputType
-    layout: {
-        columns: string[]
-        filters: string[]
-        rows: string[]
-    }
+    layout: Layout
     itemsByDimension: Record<string, string[]>
     conditionsByDimension: Record<string, ConditionsObject>
     options: EventVisualizationOptions
@@ -30,6 +28,9 @@ export interface VisUiConfigState {
 
 export const initialState: VisUiConfigState = {
     visualizationType: 'LINE_LIST',
+    /* Options will be overridden by a computed preloaded state that takes
+     * the `digitGroupSeparator` user setting into account */
+    options: DEFAULT_OPTIONS,
     outputType: 'EVENT',
     layout: {
         columns: [],
@@ -38,14 +39,30 @@ export const initialState: VisUiConfigState = {
     },
     itemsByDimension: {},
     conditionsByDimension: {},
-    /* Options will be overridden by a computed preloaded state that takes
-     * the `digitGroupSeparator` user setting into account */
-    options: DEFAULT_OPTIONS,
+}
+
+type SetItemsByDimensionPayload = {
+    dimensionId: string // dimensionId, including uids
+    itemIds: string[] // list of item ids
 }
 
 type SetOptionPayload = {
     key: keyof EventVisualizationOptions
     value: EventVisualizationOptions[keyof EventVisualizationOptions]
+}
+
+const resolveSortInsertIndex = ({
+    insertIndex,
+    insertAfter,
+    targetLength,
+}: {
+    insertIndex?: number
+    insertAfter?: boolean
+    targetLength: number
+}) => {
+    const baseIndex = insertIndex ?? targetLength
+    const adjustedIndex = insertAfter ? baseIndex + 1 : baseIndex
+    return Math.max(0, Math.min(adjustedIndex, targetLength))
 }
 
 export const visUiConfigSlice = createSlice({
@@ -71,26 +88,6 @@ export const visUiConfigSlice = createSlice({
         ) => {
             state.layout = action.payload
         },
-        setVisUiConfigOutputType: (
-            state,
-            action: PayloadAction<OutputType>
-        ) => {
-            state.outputType = action.payload
-        },
-        setVisUiConfigItemsByDimension: (
-            state,
-            action: PayloadAction<Record<string, string[]>>
-        ) => {
-            state.itemsByDimension = action.payload
-        },
-        setVisUiConfigConditionsByDimension: (
-            state,
-            action: PayloadAction<
-                Record<string, { condition?: string; legendSet?: string }>
-            >
-        ) => {
-            state.conditionsByDimension = action.payload
-        },
         setVisUiConfigOption: (
             state,
             action: PayloadAction<SetOptionPayload>
@@ -100,17 +97,122 @@ export const visUiConfigSlice = createSlice({
                 [action.payload.key]: action.payload.value,
             }
         },
+        setVisUiConfigOutputType: (
+            state,
+            action: PayloadAction<OutputType>
+        ) => {
+            state.outputType = action.payload
+        },
+        setVisUiConfigItemsByDimension: (
+            state,
+            action: PayloadAction<SetItemsByDimensionPayload>
+        ) => {
+            state.itemsByDimension = {
+                ...state.itemsByDimension,
+                [action.payload.dimensionId]: action.payload.itemIds,
+            }
+        },
+        setVisUiConfigConditionsByDimension: (
+            state,
+            action: PayloadAction<
+                Record<string, { condition?: string; legendSet?: string }>
+            >
+        ) => {
+            state.conditionsByDimension = action.payload
+        },
+        addVisUiConfigLayoutDimension: (
+            state,
+            action: PayloadAction<{
+                axis: Axis
+                dimensionId: string
+                insertIndex?: number
+                insertAfter?: boolean
+            }>
+        ) => {
+            const {
+                axis,
+                dimensionId,
+                insertIndex,
+                insertAfter = false,
+            } = action.payload
+            const targetArray = state.layout[axis]
+            targetArray.splice(
+                resolveSortInsertIndex({
+                    insertIndex,
+                    insertAfter,
+                    targetLength: targetArray.length,
+                }),
+                0,
+                dimensionId
+            )
+        },
+        moveVisUiConfigLayoutDimension: (
+            state,
+            action: PayloadAction<{
+                dimensionId: string
+                sourceAxis: Axis
+                targetAxis: Axis
+                sourceIndex?: number
+                targetIndex?: number
+                insertAfter?: boolean
+            }>
+        ) => {
+            const {
+                dimensionId,
+                sourceAxis,
+                targetAxis,
+                targetIndex,
+                insertAfter = false,
+            } = action.payload
+            const sourceArray = state.layout[sourceAxis]
+            const targetArray = state.layout[targetAxis]
+            const sourceIndex =
+                action.payload.sourceIndex ?? sourceArray.indexOf(dimensionId)
+
+            if (sourceIndex === -1) {
+                throw new Error(
+                    `Dimension ${dimensionId} not found in source axis ${sourceAxis}`
+                )
+            }
+
+            const insertionIndex = resolveSortInsertIndex({
+                insertIndex: targetIndex,
+                insertAfter,
+                targetLength: targetArray.length,
+            })
+            const removalIndex =
+                sourceAxis === targetAxis && insertionIndex <= sourceIndex
+                    ? sourceIndex + 1
+                    : sourceIndex
+
+            targetArray.splice(insertionIndex, 0, dimensionId)
+            sourceArray.splice(removalIndex, 1)
+        },
+        removeVisUiConfigLayoutDimension: (
+            state,
+            action: PayloadAction<{ axis: Axis; dimensionId: string }>
+        ) => {
+            const { axis, dimensionId } = action.payload
+            const array = state.layout[axis]
+            const index = array.indexOf(dimensionId)
+            if (index === -1) {
+                throw new Error(
+                    `Dimension ${dimensionId} not found in axis ${axis}`
+                )
+            }
+            array.splice(index, 1)
+        },
     },
     selectors: {
         getVisUiConfigVisualizationType: (state) => state.visualizationType,
         getVisUiConfigLayout: (state) => state.layout,
+        getVisUiConfigOption: (state, key: keyof EventVisualizationOptions) =>
+            state.options[key],
         getVisUiConfigOutputType: (state) => state.outputType,
         getVisUiConfigItemsByDimension: (state, dimensionId: string) =>
             state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
         getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
             state.conditionsByDimension[dimensionId] || EMPTY_CONDITIONS_OBJECT,
-        getVisUiConfigOption: (state, key: keyof EventVisualizationOptions) =>
-            state.options[key],
     },
 })
 
@@ -119,17 +221,20 @@ export const {
     setVisUiConfig,
     setVisUiConfigVisualizationType,
     setVisUiConfigLayout,
+    setVisUiConfigOption,
     setVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
-    setVisUiConfigOption,
+    addVisUiConfigLayoutDimension,
+    moveVisUiConfigLayoutDimension,
+    removeVisUiConfigLayoutDimension,
 } = visUiConfigSlice.actions
 
 export const {
     getVisUiConfigVisualizationType,
     getVisUiConfigLayout,
+    getVisUiConfigOption,
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
-    getVisUiConfigOption,
 } = visUiConfigSlice.selectors

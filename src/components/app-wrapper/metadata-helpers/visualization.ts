@@ -1,11 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
 import deepmerge from 'deepmerge'
-import type {
-    MetadataInput,
-    MetadataInputItem,
-    MetadataInputMap,
-    OrganisationUnitMetadataItem,
-} from './types'
 import { DIMENSION_ID_ORGUNIT } from '@constants/dimensions'
 import {
     combineAllDimensionsFromVisualization,
@@ -18,6 +12,10 @@ import {
 } from '@modules/dimension'
 import { transformVisualization } from '@modules/visualization'
 import type {
+    MetadataInput,
+    MetadataInputItem,
+    MetadataInputMap,
+    OrganisationUnitMetadataItem,
     DimensionId,
     DimensionType,
     InternalDimensionRecord,
@@ -207,7 +205,7 @@ const addPathToOrganisationUnitMetadataItems = (
             ] as OrganisationUnitMetadataItem
 
             if (organisationUnitMetadaInputItem) {
-                organisationUnitMetadaInputItem.path = path
+                organisationUnitMetadaInputItem.path = `/${path}/${key}`
             }
         }
     }
@@ -253,6 +251,14 @@ export const supplementDimensionMetadata = (
                 item.valueType = dimension.valueType
             }
 
+            if (dimension.program?.id) {
+                item.program = dimension.program.id
+            }
+
+            if (dimension.programStage?.id) {
+                item.programStage = dimension.programStage.id
+            }
+
             metadata[prefixedId] = item
 
             return metadata
@@ -273,6 +279,7 @@ export const extractMetadataFromVisualization = (
      * (e.g. `programStage`) and these object may contain different fields.
      * So these objects should be merged rather than overwritten. */
     const sources: MetadataInputMap[] = [
+        visualization.metaData,
         getDefaultOrgUnitMetadata(visualization.outputType),
         getDefaultDynamicTimeDimensionsMetadata(
             visualization.program,

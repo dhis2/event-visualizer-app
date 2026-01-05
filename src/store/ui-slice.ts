@@ -4,6 +4,7 @@ import { getUserSidebarWidthFromLocalStorage } from '@modules/local-storage'
 
 export interface UiState {
     accessoryPanelWidth: number
+    activeDimensionModal: string | null
     isAccessoryPanelVisible: boolean
     isDetailsPanelVisible: boolean
     isExpandedLayoutPanelVisible: boolean
@@ -13,6 +14,7 @@ export interface UiState {
 
 export const initialState: UiState = {
     accessoryPanelWidth: getUserSidebarWidthFromLocalStorage(),
+    activeDimensionModal: null,
     isAccessoryPanelVisible: true,
     isDetailsPanelVisible: false,
     isExpandedLayoutPanelVisible: false,
@@ -36,6 +38,12 @@ export const uiSlice = createSlice({
             state.isDetailsPanelVisible = action.payload
                 ? false
                 : state.isDetailsPanelVisible
+        },
+        setUiActiveDimensionModal: (
+            state,
+            action: PayloadAction<string | null>
+        ) => {
+            state.activeDimensionModal = action.payload
         },
         setUiDetailsPanelVisible: (state, action: PayloadAction<boolean>) => {
             state.isDetailsPanelVisible = action.payload
@@ -63,6 +71,7 @@ export const uiSlice = createSlice({
     selectors: {
         getUiAccessoryPanelWidth: (state) => state.accessoryPanelWidth,
         getUiAccessoryPanelVisible: (state) => state.isAccessoryPanelVisible,
+        getUiActiveDimensionModal: (state) => state.activeDimensionModal,
         getUiDetailsPanelVisible: (state) => state.isDetailsPanelVisible,
         getUiLayoutPanelVisible: (state) => state.isLayoutPanelVisible,
         getUiMainSidebarVisible: (state) => state.isMainSidebarVisible,
@@ -75,6 +84,7 @@ export const {
     clearUi,
     setUiAccessoryPanelWidth,
     setUiAccessoryPanelVisible,
+    setUiActiveDimensionModal,
     setUiDetailsPanelVisible,
     toggleUiLayoutPanelVisible,
     toggleUiMainSidebarVisible,
@@ -83,6 +93,7 @@ export const {
 export const {
     getUiAccessoryPanelWidth,
     getUiAccessoryPanelVisible,
+    getUiActiveDimensionModal,
     getUiDetailsPanelVisible,
     getUiLayoutPanelVisible,
     getUiMainSidebarVisible,
