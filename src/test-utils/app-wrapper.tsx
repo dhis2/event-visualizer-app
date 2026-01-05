@@ -22,6 +22,7 @@ import {
     AppCachedDataQueryProvider,
     useAppCachedDataQuery,
 } from '@components/app-wrapper/app-cached-data-query-provider'
+import { DndContextProvider } from '@components/app-wrapper/drag-and-drop-provider/dnd-context-provider'
 import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider'
 import { useMetadataStore } from '@hooks'
 import { currentVisSlice } from '@store/current-vis-slice'
@@ -148,7 +149,7 @@ const createPartialOrDefaultStore = ({
           })
         : createDefaultStore(engine, metadataStore, appCachedData)
 
-const MockStoreProvider: FC<{
+const MockStoreAndDndProvider: FC<{
     children: ReactNode | ((store: PartialOrDefaultStore) => ReactNode)
     partialStore: MockOptions['partialStore']
 }> = ({ children, partialStore }) => {
@@ -167,9 +168,11 @@ const MockStoreProvider: FC<{
     )
     return (
         <Provider store={resolvedStore}>
-            {typeof children === 'function'
-                ? children(resolvedStore)
-                : children}
+            <DndContextProvider>
+                {typeof children === 'function'
+                    ? children(resolvedStore)
+                    : children}
+            </DndContextProvider>
         </Provider>
     )
 }
@@ -192,9 +195,9 @@ const MockAppWrapperCore: FC<{
             <CssVariables colors spacers theme />
             <AppCachedDataQueryProvider>
                 <MockMetadataProvider mockMetadata={metadata}>
-                    <MockStoreProvider partialStore={partialStore}>
+                    <MockStoreAndDndProvider partialStore={partialStore}>
                         {children}
-                    </MockStoreProvider>
+                    </MockStoreAndDndProvider>
                 </MockMetadataProvider>
             </AppCachedDataQueryProvider>
         </CustomDataProvider>

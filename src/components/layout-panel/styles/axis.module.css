@@ -36,3 +36,10 @@
     flex-wrap: wrap;
     min-block-size: 32px;
 }
+.emptyAxisInsertMarkerAnchor {
+    flex: 1;
+    inline-size: 1px;
+    /* Same as chip: 20px content + 1px border top/bottom + 2px margin top/bottom */
+    block-size: 26px;
+    position: relative;
+}
