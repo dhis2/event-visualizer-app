@@ -1,11 +1,15 @@
 import i18n from '@dhis2/d2-i18n'
-import { getCreatedDimension, getTimeDimensions } from '@modules/dimension'
+import {
+    getCreatedDimension,
+    getProgramDimensions,
+    getTimeDimensions,
+} from '@modules/dimension'
+import { getStatusNames } from '@modules/status'
 import type {
     InitialMetadataItems,
     MetadataInputMap,
     UserOrgUnit,
     RelativePeriod,
-    Status,
 } from '@types'
 
 const getOrganisationUnits = (): Record<UserOrgUnit, string> => ({
@@ -50,13 +54,6 @@ const getRelativePeriods = (): Record<RelativePeriod, string> => ({
     LAST_YEAR: i18n.t('Last year'),
 })
 
-const getStatusNames = (): Record<Status, string> => ({
-    ACTIVE: i18n.t('Active'),
-    CANCELLED: i18n.t('Cancelled'),
-    COMPLETED: i18n.t('Completed'),
-    SCHEDULE: i18n.t('Scheduled'),
-})
-
 export const getTimeDimensionsMetadata = (): MetadataInputMap =>
     Object.values(getTimeDimensions()).reduce(
         (acc, { id, dimensionType, defaultName }) => {
@@ -72,6 +69,7 @@ export const getTimeDimensionsMetadata = (): MetadataInputMap =>
 
 export const getInitialMetadata = (): InitialMetadataItems => ({
     ...getStatusNames(),
+    ...getProgramDimensions(),
     ...getCreatedDimension(),
     ...getTimeDimensionsMetadata(),
     ...getRelativePeriods(),

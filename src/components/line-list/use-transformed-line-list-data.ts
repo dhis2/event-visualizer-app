@@ -13,6 +13,7 @@ import {
     getMainDimensions,
     getProgramDimensions,
 } from '@modules/dimension'
+import { getStatusNames } from '@modules/status'
 import { headersMap } from '@modules/visualization'
 import type {
     CurrentVisualization,
@@ -125,15 +126,6 @@ const NON_WRAPPING_VALUE_TYPES_LOOKUP = new Set<ValueType>([
 const cellValueShouldNotWrap = (header: LineListAnalyticsDataHeader) =>
     NON_WRAPPING_VALUE_TYPES_LOOKUP.has(header.valueType) && !header.optionSet
 
-const getStatusNames = (): Record<
-    'ACTIVE' | 'CANCELLED' | 'COMPLETED' | 'SCHEDULE',
-    string
-> => ({
-    ACTIVE: i18n.t('Active'),
-    CANCELLED: i18n.t('Cancelled'),
-    COMPLETED: i18n.t('Completed'),
-    SCHEDULE: i18n.t('Scheduled'),
-})
 const DATE_VALUE_TYPES: ValueType[] = ['DATE', 'DATETIME']
 
 const getFormattedCellValue = ({
