@@ -6,6 +6,7 @@ const testCases = {
     lineListEnrollment: {
         outputType: 'ENROLLMENT',
         input: {
+            program: { id: 'child' },
             itemsByDimension: {
                 ou: ['USER_ORGUNIT'],
                 bcgDoses: [],
@@ -70,26 +71,13 @@ const testCases = {
                     programStage: {
                         id: 'birth',
                     },
-                    // XXX: program should be stored in Redux
-                    //                    program: {
-                    //                        id: 'IpHINAT79UW',
-                    //                    },
                     filter: 'IN:Exclusive;Mixed',
-                    //                    optionSet: {
-                    //                        id: 'x31y45jvIQL',
-                    //                    },
                 },
                 {
                     dimension: 'infantFeeding',
                     programStage: {
                         id: 'babyPostnatal',
                     },
-                    //                    program: {
-                    //                        id: 'IpHINAT79UW',
-                    //                    },
-                    //                    optionSet: {
-                    //                        id: 'x31y45jvIQL',
-                    //                    },
                 },
             ],
             filters: [],
