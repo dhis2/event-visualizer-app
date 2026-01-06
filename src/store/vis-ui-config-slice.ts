@@ -51,6 +51,20 @@ type SetOptionPayload = {
     value: EventVisualizationOptions[keyof EventVisualizationOptions]
 }
 
+const resolveSortInsertIndex = ({
+    insertIndex,
+    insertAfter,
+    targetLength,
+}: {
+    insertIndex?: number
+    insertAfter?: boolean
+    targetLength: number
+}) => {
+    const baseIndex = insertIndex ?? targetLength
+    const adjustedIndex = insertAfter ? baseIndex + 1 : baseIndex
+    return Math.max(0, Math.min(adjustedIndex, targetLength))
+}
+
 export const visUiConfigSlice = createSlice({
     name: 'visUiConfig',
     initialState,
@@ -112,12 +126,25 @@ export const visUiConfigSlice = createSlice({
                 axis: Axis
                 dimensionId: string
                 insertIndex?: number
+                insertAfter?: boolean
             }>
         ) => {
-            const { axis, dimensionId, insertIndex } = action.payload
+            const {
+                axis,
+                dimensionId,
+                insertIndex,
+                insertAfter = false,
+            } = action.payload
             const targetArray = state.layout[axis]
-            const index = insertIndex ?? targetArray.length
-            targetArray.splice(index, 0, dimensionId)
+            targetArray.splice(
+                resolveSortInsertIndex({
+                    insertIndex,
+                    insertAfter,
+                    targetLength: targetArray.length,
+                }),
+                0,
+                dimensionId
+            )
         },
         moveVisUiConfigLayoutDimension: (
             state,
@@ -125,24 +152,43 @@ export const visUiConfigSlice = createSlice({
                 dimensionId: string
                 sourceAxis: Axis
                 targetAxis: Axis
-                insertIndex?: number
+                sourceIndex?: number
+                targetIndex?: number
+                insertAfter?: boolean
             }>
         ) => {
-            const { dimensionId, sourceAxis, targetAxis, insertIndex } =
-                action.payload
+            const {
+                dimensionId,
+                sourceAxis,
+                targetAxis,
+                targetIndex,
+                insertAfter = false,
+            } = action.payload
             const sourceArray = state.layout[sourceAxis]
             const targetArray = state.layout[targetAxis]
-            const sourceIndex = sourceArray.indexOf(dimensionId)
+            const sourceIndex =
+                action.payload.sourceIndex ?? sourceArray.indexOf(dimensionId)
+
             if (sourceIndex === -1) {
                 throw new Error(
                     `Dimension ${dimensionId} not found in source axis ${sourceAxis}`
                 )
             }
-            sourceArray.splice(sourceIndex, 1)
-            const index = insertIndex ?? targetArray.length
-            targetArray.splice(index, 0, dimensionId)
+
+            const insertionIndex = resolveSortInsertIndex({
+                insertIndex: targetIndex,
+                insertAfter,
+                targetLength: targetArray.length,
+            })
+            const removalIndex =
+                sourceAxis === targetAxis && insertionIndex <= sourceIndex
+                    ? sourceIndex + 1
+                    : sourceIndex
+
+            targetArray.splice(insertionIndex, 0, dimensionId)
+            sourceArray.splice(removalIndex, 1)
         },
-        deleteVisUiConfigLayoutDimension: (
+        removeVisUiConfigLayoutDimension: (
             state,
             action: PayloadAction<{ axis: Axis; dimensionId: string }>
         ) => {
@@ -181,7 +227,7 @@ export const {
     setVisUiConfigConditionsByDimension,
     addVisUiConfigLayoutDimension,
     moveVisUiConfigLayoutDimension,
-    deleteVisUiConfigLayoutDimension,
+    removeVisUiConfigLayoutDimension,
 } = visUiConfigSlice.actions
 
 export const {

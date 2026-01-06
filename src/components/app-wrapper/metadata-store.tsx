@@ -29,7 +29,8 @@ declare global {
 }
 
 const isItemMatch = (item: MetadataItem, token: string) =>
-    item.id.includes(token) || item.name?.toLowerCase().includes(token)
+    item.id.includes(token) ||
+    item.name?.toLowerCase().includes(token.toLowerCase())
 
 export class MetadataStore {
     private metadata = new Map<string, MetadataItem>()

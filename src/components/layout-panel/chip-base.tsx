@@ -1,50 +1,40 @@
 import cx from 'classnames'
 import React from 'react'
 import type { LayoutDimension } from './chip'
-import { getChipItemsText } from './get-chip-items-text'
 import classes from './styles/chip-base.module.css'
 import { DimensionTypeIcon } from '@components/dimension-item/dimension-type-icon'
-import type { Axis, OutputType } from '@types'
 
 // Presentational component used by dnd - do not add redux or dnd functionality
 
-interface ChipBaseProps {
-    dimension: LayoutDimension
-    conditionsLength: number | undefined
-    itemsLength: number | undefined
-    outputType: OutputType
-    axisId: Axis
+export interface ChipBaseProps {
+    dimensionType: LayoutDimension['dimensionType']
+    dimensionName: string
+    itemsText: string
+    suffix?: string
+    isDragging?: boolean
 }
 
 export const ChipBase: React.FC<ChipBaseProps> = ({
-    dimension,
-    conditionsLength,
-    itemsLength,
-    outputType,
-    axisId,
+    dimensionType,
+    dimensionName,
+    itemsText,
+    suffix,
+    isDragging,
 }) => (
-    <div className={cx(classes.chipBase)}>
-        {dimension.dimensionType && (
+    <div className={cx(classes.chipBase, { [classes.dragging]: isDragging })}>
+        {dimensionType && (
             <div className={classes.leftIcon}>
-                <DimensionTypeIcon dimensionType={dimension.dimensionType} />
+                <DimensionTypeIcon dimensionType={dimensionType} />
             </div>
         )}
         <span className={classes.label}>
             <span className={classes.primary}>
-                {dimension.suffix ? `${dimension.name},` : `${dimension.name}`}
+                {suffix ? `${dimensionName},` : `${dimensionName}`}
             </span>
-            {dimension.suffix && (
-                <span className={classes.secondary}>{dimension.suffix}</span>
-            )}
+            {suffix && <span className={classes.secondary}>{suffix}</span>}
         </span>
         <span className={classes.items} data-test="chip-items">
-            {getChipItemsText({
-                dimension,
-                conditionsLength,
-                itemsLength,
-                outputType,
-                axisId,
-            })}
+            {itemsText}
         </span>
     </div>
 )
