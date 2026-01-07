@@ -187,6 +187,62 @@ export const useDimensionMetadata = (
     )
 }
 
+export const useDimensionsMetadata = (
+    dimensionIdInputs: string[]
+): Record<string, DimensionMetadata> => {
+    const metadataStore = useContext(MetadataContext)!
+    const cacheRef = useRef<Record<string, DimensionMetadata> | null>(null)
+
+    return useSyncExternalStore(
+        useCallback(
+            (callback) => {
+                const allIds = dimensionIdInputs.flatMap((input) => {
+                    const { ids } = parseDimensionIdInput(input)
+                    return ids
+                })
+                const uniqueIds = Array.from(new Set(allIds))
+                const unsubscribeFunctions = uniqueIds.map((id) =>
+                    metadataStore.subscribe(id, callback)
+                )
+
+                return () => {
+                    unsubscribeFunctions.forEach((unsubscribe) => unsubscribe())
+                }
+            },
+            [metadataStore, dimensionIdInputs]
+        ),
+        useCallback(() => {
+            const currentData = cacheRef.current
+            const freshData: Record<string, DimensionMetadata> = {}
+
+            for (const input of dimensionIdInputs) {
+                freshData[input] = metadataStore.getDimensionMetadata(input)
+            }
+
+            // Two-layer caching: check if all records have the same fields
+            if (currentData) {
+                const allInputsSame = dimensionIdInputs.every((input) => {
+                    const currentItem = currentData[input]
+                    const freshItem = freshData[input]
+                    return (
+                        currentItem &&
+                        Object.keys(currentItem).every(
+                            (key) => currentItem[key] === freshItem[key]
+                        )
+                    )
+                })
+
+                if (allInputsSame) {
+                    return currentData
+                }
+            }
+
+            cacheRef.current = freshData
+            return freshData
+        }, [metadataStore, dimensionIdInputs])
+    )
+}
+
 export type UseMetadataStoreReturnValue = Pick<
     MetadataStore,
     | 'getMetadataItem'

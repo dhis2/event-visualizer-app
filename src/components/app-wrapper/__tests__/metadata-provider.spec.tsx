@@ -8,6 +8,7 @@ import {
     useAddMetadata,
     useMetadataStore,
     useDimensionMetadata,
+    useDimensionsMetadata,
 } from '../metadata-provider'
 
 let renders = { item: 0, items: 0, add: 0, store: 0 }
@@ -584,5 +585,211 @@ describe('useDimensionMetadata', () => {
                 hideDueDate: true,
             },
         })
+    })
+})
+
+describe('useDimensionsMetadata', () => {
+    it('returns empty record for empty array', () => {
+        const { result } = renderHook(
+            () => ({
+                dimensionsMetadata: useDimensionsMetadata([]),
+            }),
+            {
+                wrapper: MetadataProvider,
+            }
+        )
+
+        expect(result.current.dimensionsMetadata).toEqual({})
+    })
+
+    it('returns metadata for multiple dimension ID inputs', () => {
+        const { result } = renderHook(
+            () => ({
+                dimensionsMetadata: useDimensionsMetadata([
+                    'dimension1',
+                    'program.dimension2',
+                    'program.stage.dimension3[1]',
+                ]),
+                addMetadata: useAddMetadata(),
+            }),
+            {
+                wrapper: MetadataProvider,
+            }
+        )
+
+        // Initially all undefined
+        expect(result.current.dimensionsMetadata).toEqual({
+            dimension1: {
+                dimensionId: 'dimension1',
+                programId: undefined,
+                programStageId: undefined,
+                repetitionIndex: undefined,
+                dimension: undefined,
+                program: undefined,
+                programStage: undefined,
+            },
+            'program.dimension2': {
+                dimensionId: 'dimension2',
+                programId: undefined,
+                programStageId: undefined,
+                repetitionIndex: undefined,
+                dimension: undefined,
+                program: undefined,
+                programStage: undefined,
+            },
+            'program.stage.dimension3[1]': {
+                dimensionId: 'dimension3',
+                programId: 'program',
+                programStageId: 'stage',
+                repetitionIndex: '1',
+                dimension: undefined,
+                program: undefined,
+                programStage: undefined,
+            },
+        })
+
+        // Add metadata for all items
+        act(() => {
+            result.current.addMetadata([
+                {
+                    id: 'dimension1',
+                    name: 'Dimension 1',
+                    dimensionType: 'DATA_ELEMENT',
+                    valueType: 'TEXT',
+                },
+                {
+                    id: 'dimension2',
+                    name: 'Dimension 2',
+                    dimensionType: 'DATA_ELEMENT',
+                    valueType: 'NUMBER',
+                },
+                {
+                    id: 'dimension3',
+                    name: 'Dimension 3',
+                    dimensionType: 'DATA_ELEMENT',
+                    valueType: 'INTEGER',
+                },
+                {
+                    id: 'program',
+                    name: 'Test Program',
+                    programType: 'WITH_REGISTRATION',
+                },
+                {
+                    id: 'stage',
+                    name: 'Test Stage',
+                    repeatable: true,
+                    hideDueDate: false,
+                },
+            ])
+        })
+
+        // All items now have metadata
+        expect(result.current.dimensionsMetadata).toEqual({
+            dimension1: {
+                dimensionId: 'dimension1',
+                programId: undefined,
+                programStageId: undefined,
+                repetitionIndex: undefined,
+                dimension: {
+                    id: 'dimension1',
+                    name: 'Dimension 1',
+                    dimensionType: 'DATA_ELEMENT',
+                    valueType: 'TEXT',
+                },
+                program: undefined,
+                programStage: undefined,
+            },
+            'program.dimension2': {
+                dimensionId: 'dimension2',
+                programId: 'program',
+                programStageId: undefined,
+                repetitionIndex: undefined,
+                dimension: {
+                    id: 'dimension2',
+                    name: 'Dimension 2',
+                    dimensionType: 'DATA_ELEMENT',
+                    valueType: 'NUMBER',
+                },
+                program: {
+                    id: 'program',
+                    name: 'Test Program',
+                    programType: 'WITH_REGISTRATION',
+                },
+                programStage: undefined,
+            },
+            'program.stage.dimension3[1]': {
+                dimensionId: 'dimension3',
+                programId: 'program',
+                programStageId: 'stage',
+                repetitionIndex: '1',
+                dimension: {
+                    id: 'dimension3',
+                    name: 'Dimension 3',
+                    dimensionType: 'DATA_ELEMENT',
+                    valueType: 'INTEGER',
+                },
+                program: {
+                    id: 'program',
+                    name: 'Test Program',
+                    programType: 'WITH_REGISTRATION',
+                },
+                programStage: {
+                    id: 'stage',
+                    name: 'Test Stage',
+                    repeatable: true,
+                    hideDueDate: false,
+                },
+            },
+        })
+    })
+
+    it('updates reactively when one item changes', () => {
+        const { result } = renderHook(
+            () => ({
+                dimensionsMetadata: useDimensionsMetadata([
+                    'dimension1',
+                    'dimension2',
+                ]),
+                addMetadata: useAddMetadata(),
+            }),
+            {
+                wrapper: MetadataProvider,
+            }
+        )
+
+        // Add first dimension
+        act(() => {
+            result.current.addMetadata({
+                id: 'dimension1',
+                name: 'Dimension 1',
+                dimensionType: 'DATA_ELEMENT',
+                valueType: 'TEXT',
+            })
+        })
+
+        expect(
+            result.current.dimensionsMetadata.dimension1.dimension
+        ).toBeDefined()
+        expect(
+            result.current.dimensionsMetadata.dimension2.dimension
+        ).toBeUndefined()
+
+        // Add second dimension
+        act(() => {
+            result.current.addMetadata({
+                id: 'dimension2',
+                name: 'Dimension 2',
+                dimensionType: 'DATA_ELEMENT',
+                valueType: 'NUMBER',
+            })
+        })
+
+        // Both now defined
+        expect(
+            result.current.dimensionsMetadata.dimension1.dimension
+        ).toBeDefined()
+        expect(
+            result.current.dimensionsMetadata.dimension2.dimension
+        ).toBeDefined()
     })
 })
