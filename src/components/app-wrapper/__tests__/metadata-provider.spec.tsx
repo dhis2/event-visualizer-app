@@ -7,6 +7,7 @@ import {
     useMetadataItems,
     useAddMetadata,
     useMetadataStore,
+    useDimensionMetadata,
 } from '../metadata-provider'
 
 let renders = { item: 0, items: 0, add: 0, store: 0 }
@@ -451,5 +452,137 @@ describe('MetadataProvider API and return value types', () => {
         expect(result.current.useMetadataStoreResult.getMetadataItems).toEqual(
             initialFunctions.useMetadataStoreGetMetadataItems
         )
+    })
+})
+
+describe('useDimensionMetadata', () => {
+    it('resolves ambiguous ID when program stage metadata is added', () => {
+        const { result } = renderHook(
+            () => ({
+                dimensionMetadata: useDimensionMetadata(
+                    'ambiguousId.testDimension'
+                ),
+                addMetadata: useAddMetadata(),
+            }),
+            {
+                wrapper: MetadataProvider,
+            }
+        )
+
+        // Initially no metadata available for ambiguousId - all ID fields except dimensionId are undefined
+        expect(result.current.dimensionMetadata).toEqual({
+            dimensionId: 'testDimension',
+            programId: undefined,
+            programStageId: undefined,
+            repetitionIndex: undefined,
+            dimension: undefined,
+            program: undefined,
+            programStage: undefined,
+        })
+
+        // Add metadata for ambiguousId as a program stage
+        act(() => {
+            result.current.addMetadata({
+                id: 'ambiguousId',
+                name: 'Ambiguous Stage',
+                repeatable: false,
+                hideDueDate: false,
+            })
+        })
+
+        // Now programStageId is populated and we have programStage metadata
+        expect(result.current.dimensionMetadata).toEqual({
+            dimensionId: 'testDimension',
+            programId: undefined,
+            programStageId: 'ambiguousId',
+            repetitionIndex: undefined,
+            dimension: undefined,
+            program: undefined,
+            programStage: {
+                id: 'ambiguousId',
+                name: 'Ambiguous Stage',
+                repeatable: false,
+                hideDueDate: false,
+            },
+        })
+    })
+
+    it('updates when all three metadata items are added progressively', () => {
+        const { result } = renderHook(
+            () => ({
+                dimensionMetadata: useDimensionMetadata(
+                    'testProgram.testStage.testDimension[1]'
+                ),
+                addMetadata: useAddMetadata(),
+            }),
+            {
+                wrapper: MetadataProvider,
+            }
+        )
+
+        // Initially all undefined
+        expect(result.current.dimensionMetadata.dimension).toBeUndefined()
+        expect(result.current.dimensionMetadata.program).toBeUndefined()
+        expect(result.current.dimensionMetadata.programStage).toBeUndefined()
+
+        // Add dimension
+        act(() => {
+            result.current.addMetadata({
+                id: 'testDimension',
+                name: 'Test Dimension',
+                dimensionType: 'DATA_ELEMENT',
+                valueType: 'INTEGER',
+            })
+        })
+
+        expect(result.current.dimensionMetadata.dimension).toBeDefined()
+        expect(result.current.dimensionMetadata.program).toBeUndefined()
+
+        // Add program
+        act(() => {
+            result.current.addMetadata({
+                id: 'testProgram',
+                name: 'Test Program',
+                programType: 'WITHOUT_REGISTRATION',
+            })
+        })
+
+        expect(result.current.dimensionMetadata.program).toBeDefined()
+        expect(result.current.dimensionMetadata.programStage).toBeUndefined()
+
+        // Add stage
+        act(() => {
+            result.current.addMetadata({
+                id: 'testStage',
+                name: 'Test Stage',
+                repeatable: false,
+                hideDueDate: true,
+            })
+        })
+
+        // All metadata now populated
+        expect(result.current.dimensionMetadata).toEqual({
+            dimensionId: 'testDimension',
+            programId: 'testProgram',
+            programStageId: 'testStage',
+            repetitionIndex: '1',
+            dimension: {
+                id: 'testDimension',
+                name: 'Test Dimension',
+                dimensionType: 'DATA_ELEMENT',
+                valueType: 'INTEGER',
+            },
+            program: {
+                id: 'testProgram',
+                name: 'Test Program',
+                programType: 'WITHOUT_REGISTRATION',
+            },
+            programStage: {
+                id: 'testStage',
+                name: 'Test Stage',
+                repeatable: false,
+                hideDueDate: true,
+            },
+        })
     })
 })

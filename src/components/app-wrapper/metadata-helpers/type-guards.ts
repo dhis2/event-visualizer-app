@@ -18,7 +18,7 @@ export const isObject = (input: unknown): input is Record<string, unknown> => {
 
 // Helper function to check if input is a non-empty string
 export const isPopulatedString = (input: unknown): input is string => {
-    return typeof input === 'string' && input.length > 0
+    return typeof input === 'string' && input.trim().length > 0
 }
 
 export const isMetadataInputItem = (

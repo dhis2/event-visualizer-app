@@ -1,7 +1,14 @@
 import { extractMetadataFromAnalyticsResponse } from './metadata-helpers/analytics-data'
+import { parseDimensionIdInput } from './metadata-helpers/dimension'
 import { smartMergeWithChangeDetection } from './metadata-helpers/merge-utils'
 import { normalizeMetadataInputItem } from './metadata-helpers/normalization'
-import { isObject, isMetadataInputItem } from './metadata-helpers/type-guards'
+import {
+    isObject,
+    isMetadataInputItem,
+    isDimensionMetadataItem,
+    isProgramMetadataItem,
+    isProgramStageMetadataItem,
+} from './metadata-helpers/type-guards'
 import { extractMetadataFromVisualization } from './metadata-helpers/visualization'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
@@ -14,6 +21,7 @@ import type {
     AnalyticsResponseMetadataItems,
     AppCachedData,
     SavedVisualization,
+    DimensionMetadata,
 } from '@types'
 
 declare global {
@@ -114,6 +122,87 @@ export class MetadataStore {
             }
             return metadataStoreItems
         }, {})
+    }
+
+    getDimensionMetadata(input: string): DimensionMetadata {
+        const { ids, repetitionIndex } = parseDimensionIdInput(input)
+        const nestedDimensionId = ids.join('.')
+        const result: DimensionMetadata = {
+            dimensionId: '',
+            programStageId: undefined,
+            programId: undefined,
+            repetitionIndex,
+            dimension: undefined,
+            program: undefined,
+            programStage: undefined,
+        }
+
+        // ids.length > 0 && <= 3 guaranteed by parseDimensionIdInput
+        if (ids.length === 1) {
+            result.dimensionId = ids[0]
+        } else if (ids.length === 2) {
+            /* First ID could be either a program or a stage.
+             * Query the metadata store to find out which one it is or just leave undefined */
+            const [unknownId, dimensionId] = ids
+            const unknownMetadata = this.metadata.get(unknownId)
+
+            result.dimensionId = dimensionId
+            if (unknownMetadata) {
+                if (isProgramMetadataItem(unknownMetadata)) {
+                    result.programId = unknownId
+                } else if (isProgramStageMetadataItem(unknownMetadata)) {
+                    result.programStageId = unknownId
+                } else {
+                    throw new Error(
+                        `"${unknownId}" is not a program or program stage metadata item`
+                    )
+                }
+            }
+        } else if (ids.length === 3) {
+            const [programId, programStageId, dimensionId] = ids
+            result.programId = programId
+            result.programStageId = programStageId
+            result.dimensionId = dimensionId
+        }
+
+        const dimension =
+            this.metadata.get(nestedDimensionId) ??
+            this.metadata.get(result.dimensionId)
+        const program = result.programId && this.metadata.get(result.programId)
+        const programStage =
+            result.programStageId && this.metadata.get(result.programStageId)
+
+        if (dimension) {
+            if (isDimensionMetadataItem(dimension)) {
+                result.dimension = dimension
+            } else {
+                throw new Error(
+                    `"${result.dimensionId}" is not a valid dimension metadata item`
+                )
+            }
+        }
+
+        if (program) {
+            if (isProgramMetadataItem(program)) {
+                result.program = program
+            } else {
+                throw new Error(
+                    `"${result.programId}" is not a valid program metadata item`
+                )
+            }
+        }
+
+        if (programStage) {
+            if (isProgramStageMetadataItem(programStage)) {
+                result.programStage = programStage
+            } else {
+                throw new Error(
+                    `"${result.programStageId}" is not a valid programStage metadata item`
+                )
+            }
+        }
+
+        return result
     }
 
     subscribe(key: string, cb: Subscriber) {

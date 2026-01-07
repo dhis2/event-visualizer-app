@@ -20,6 +20,7 @@ export {
     useAddMetadata,
     useAddAnalyticsResponseMetadata,
     useMetadataStore,
+    useDimensionMetadata,
 } from '@components/app-wrapper/metadata-provider'
 
 /* Note that useRtkQuery and useRtkLazyQuery accept both a complex query object
