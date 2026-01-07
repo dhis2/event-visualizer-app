@@ -326,6 +326,11 @@ describe('MetadataStore', () => {
               "id": "eventDate",
               "name": "Report date",
             },
+            "eventStatus": {
+              "dimensionType": "STATUS",
+              "id": "eventStatus",
+              "name": "Event status",
+            },
             "fWIAEtYVEGk": {
               "code": "DE_3000009",
               "dimensionType": "DATA_ELEMENT",
@@ -384,6 +389,11 @@ describe('MetadataStore', () => {
               "id": "ou",
               "name": "Organisation unit",
             },
+            "programStatus": {
+              "dimensionType": "STATUS",
+              "id": "programStatus",
+              "name": "Program status",
+            },
             "qrur9Dvnyt5": {
               "code": "DE_3000003",
               "dimensionType": "DATA_ELEMENT",
@@ -440,9 +450,9 @@ describe('MetadataStore', () => {
         const snapshot2Keys = new Set(Object.keys(snapshot2))
 
         // Length grows and decreases
-        expect(snapshot0Keys.size).toBe(49)
-        expect(snapshot1Keys.size).toBe(78)
-        expect(snapshot2Keys.size).toBe(64)
+        expect(snapshot0Keys.size).toBe(52)
+        expect(snapshot1Keys.size).toBe(80)
+        expect(snapshot2Keys.size).toBe(66)
 
         // Initial metadata is always included
         expect(snapshot0Keys.isSubsetOf(snapshot1Keys)).toBe(true)
@@ -494,7 +504,6 @@ describe('MetadataStore', () => {
             "qrur9Dvnyt5",
             "K6uUAvq500H",
             "msodh3rEMJa",
-            "ou",
             "lastUpdated",
             "createdBy",
             "lastUpdatedBy",

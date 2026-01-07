@@ -11,6 +11,7 @@ import { useCallback, type FC } from 'react'
 import { AddToLayoutButton } from './add-to-layout-button'
 import { OrgUnitDimensionModalContent } from './orgunit-dimension-modal-content'
 import { PeriodDimensionModalContent } from './period-dimension-modal-content'
+import { StatusDimensionModalContent } from './status-dimension-modal-content'
 import classes from './styles/dimension-modal.module.css'
 import { isDimensionMetadataItem } from '@components/app-wrapper/metadata-helpers/type-guards'
 import type { LayoutDimension } from '@components/layout-panel/chip'
@@ -32,7 +33,7 @@ const DimensionModalContent: FC<DimensionModalContentProps> = ({
         case 'ORGANISATION_UNIT':
             return <OrgUnitDimensionModalContent dimension={dimension} />
         case 'STATUS':
-            return `Content for fixed dimension ${dimension.dimensionType}`
+            return <StatusDimensionModalContent dimension={dimension} />
         case 'PERIOD':
             return <PeriodDimensionModalContent dimension={dimension} />
         case 'CATEGORY':
@@ -68,7 +69,9 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
     }, [dispatch, onClose])
 
     if (!isDimensionMetadataItem(dimension)) {
-        throw new Error('Invalid dimension metadata')
+        throw new Error(
+            `Invalid dimension metadata for dimension id: ${dimensionId}`
+        )
     }
 
     return (
