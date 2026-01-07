@@ -193,24 +193,24 @@ export const getMainDimensions = (
     },
 })
 
-const prefixDimensionId = (prefix: string, dimensionId: string): string =>
+const prefixDimensionId = (dimensionId: string, prefix?: string): string =>
     prefix ? `${prefix}.${dimensionId}` : dimensionId
 
 export const getProgramDimensions = (
-    programId: string
+    programId?: string
 ): DimensionRecordObject => ({
-    [prefixDimensionId(programId, 'ou')]: {
-        id: prefixDimensionId(programId, 'ou'),
+    [prefixDimensionId('ou', programId)]: {
+        id: prefixDimensionId('ou', programId),
         dimensionType: 'ORGANISATION_UNIT',
         name: getDefaultOrgUnitLabel(),
     },
-    [prefixDimensionId(programId, 'eventStatus')]: {
-        id: prefixDimensionId(programId, 'eventStatus'),
+    [prefixDimensionId('eventStatus', programId)]: {
+        id: prefixDimensionId('eventStatus', programId),
         dimensionType: 'STATUS',
         name: i18n.t('Event status'),
     },
-    [prefixDimensionId(programId, 'programStatus')]: {
-        id: prefixDimensionId(programId, 'programStatus'),
+    [prefixDimensionId('programStatus', programId)]: {
+        id: prefixDimensionId('programStatus', programId),
         dimensionType: 'STATUS',
         name: i18n.t('Program status'),
     },
