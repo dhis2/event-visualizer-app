@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-12-17T08:00:12.641Z\n"
-"PO-Revision-Date: 2025-12-17T08:00:12.641Z\n"
+"POT-Creation-Date: 2026-01-06T14:13:02.576Z\n"
+"PO-Revision-Date: 2026-01-06T14:13:02.576Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -116,18 +116,6 @@ msgstr "This year"
 msgid "Last year"
 msgstr "Last year"
 
-msgid "Active"
-msgstr "Active"
-
-msgid "Cancelled"
-msgstr "Cancelled"
-
-msgid "Completed"
-msgstr "Completed"
-
-msgid "Scheduled"
-msgstr "Scheduled"
-
 msgid "Registration org. unit"
 msgstr "Registration org. unit"
 
@@ -157,6 +145,9 @@ msgstr "Choose from presets"
 
 msgid "Define start - end dates"
 msgstr "Define start - end dates"
+
+msgid "Show items where the status is:"
+msgstr "Show items where the status is:"
 
 msgid "HTML"
 msgstr "HTML"
@@ -589,6 +580,18 @@ msgstr "Data"
 
 msgid "Style"
 msgstr "Style"
+
+msgid "Active"
+msgstr "Active"
+
+msgid "Cancelled"
+msgstr "Cancelled"
+
+msgid "Completed"
+msgstr "Completed"
+
+msgid "Scheduled"
+msgstr "Scheduled"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
