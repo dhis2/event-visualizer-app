@@ -154,3 +154,13 @@ export type Subscriber = () => void
 
 export type InitialMetadataItems = Record<string, string | MetadataInputItem>
 export type AnalyticsResponseMetadataItems = Record<string, MetadataInputItem>
+
+export type DimensionMetadata = {
+    dimensionId: string
+    programId?: string
+    programStageId?: string
+    repetitionIndex?: string
+    dimension?: DimensionMetadataItem
+    program?: ProgramMetadataItem
+    programStage?: ProgramStageMetadataItem
+}

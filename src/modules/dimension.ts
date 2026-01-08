@@ -1,4 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
+import { isPopulatedString } from '@components/app-wrapper/metadata-helpers/type-guards'
 import {
     PROGRAM_DIMENSION_TYPES,
     TIME_DIMENSION_IDS,
@@ -22,6 +23,18 @@ import type {
     ValueType,
     YourDimensionType,
 } from '@types'
+
+export const extractPlainDimensionId = (input: string): string => {
+    if (!isPopulatedString(input)) {
+        throw new Error('Input is not a populated string')
+    }
+    const dimensionId = input.split('.').pop()
+
+    if (!isPopulatedString(dimensionId)) {
+        throw new Error(`Input "${input}" does not contain a dimension ID`)
+    }
+    return dimensionId
+}
 
 export const getDimensionsWithSuffix = ({
     dimensionIds,
