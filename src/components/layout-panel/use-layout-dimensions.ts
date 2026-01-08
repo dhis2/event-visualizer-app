@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useMetadataItems } from '@components/app-wrapper/metadata-provider'
+import { useMetadataItems } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import type { LayoutDimension } from '@components/layout-panel/chip'
 import { getDimensionIdParts } from '@modules/dimension'
 import type { DimensionType, OutputType } from '@types'

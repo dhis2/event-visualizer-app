@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
-import { isOptionSetMetadataItem } from '@components/app-wrapper/metadata-helpers/type-guards'
-import { useMetadataItems } from '@components/app-wrapper/metadata-provider'
+import { useMetadataItems } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import type { LayoutDimension } from '@components/layout-panel/chip'
 import { ouIdHelper } from '@dhis2/analytics'
 import {
@@ -15,6 +14,7 @@ import {
     getOrgUnitConditionMetadataIds,
     getOperatorConditionTexts,
 } from '@modules/conditions'
+import { isOptionSetMetadataItem } from '@modules/metadata'
 import type { SavedVisualization } from '@types'
 
 type Conditions = {
