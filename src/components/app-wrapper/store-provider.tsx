@@ -4,7 +4,7 @@ import { useState } from 'react'
 import type { FC, ReactNode } from 'react'
 import { Provider } from 'react-redux'
 import { useAppCachedDataQuery } from './app-cached-data-query-provider'
-import { useMetadataStore } from './metadata-provider'
+import { useMetadataStore } from './metadata-provider/metadata-provider'
 import { createStore } from '@store/store'
 
 export const StoreProvider: FC<{ children: ReactNode }> = ({ children }) => {

@@ -1,17 +1,17 @@
-import { extractMetadataFromAnalyticsResponse } from './metadata-helpers/analytics-data'
-import { parseDimensionIdInput } from './metadata-helpers/dimension'
-import { smartMergeWithChangeDetection } from './metadata-helpers/merge-utils'
-import { normalizeMetadataInputItem } from './metadata-helpers/normalization'
+import { extractMetadataFromAnalyticsResponse } from './analytics-data'
+import { parseDimensionIdInput } from './dimension'
+import { smartMergeWithChangeDetection } from './merge-utils'
+import { normalizeMetadataInputItem } from './normalization'
+import { extractMetadataFromVisualization } from './visualization'
+import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
+import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import {
-    isObject,
     isMetadataInputItem,
     isDimensionMetadataItem,
     isProgramMetadataItem,
     isProgramStageMetadataItem,
-} from './metadata-helpers/type-guards'
-import { extractMetadataFromVisualization } from './metadata-helpers/visualization'
-import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
+} from '@modules/metadata'
+import { isObject } from '@modules/validation'
 import type {
     MetadataInputItem,
     MetadataItem,

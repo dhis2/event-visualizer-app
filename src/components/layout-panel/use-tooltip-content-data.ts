@@ -1,8 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import { useMemo } from 'react'
 import type { LayoutDimension } from './chip'
-import { isProgramMetadataItem } from '@components/app-wrapper/metadata-helpers/type-guards'
-import { useMetadataItems } from '@components/app-wrapper/metadata-provider'
+import { useMetadataItems } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import { ouIdHelper } from '@dhis2/analytics'
 import { useAppSelector } from '@hooks'
 import {
@@ -10,6 +9,7 @@ import {
     useLocalizedStartEndDateFormatter,
 } from '@modules/dates'
 import { getDimensionIdParts } from '@modules/dimension'
+import { isProgramMetadataItem } from '@modules/metadata'
 import {
     getVisUiConfigItemsByDimension,
     getVisUiConfigOutputType,

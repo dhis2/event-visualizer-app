@@ -6,7 +6,7 @@ import { useConditionsTexts } from '../use-conditions-texts'
 import {
     MockMetadataProvider,
     useAddMetadata,
-} from '@components/app-wrapper/metadata-provider'
+} from '@components/app-wrapper/metadata-provider/metadata-provider'
 import type { LayoutDimension } from '@components/layout-panel/chip'
 
 const mockRootOrgUnits = [

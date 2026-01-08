@@ -45,7 +45,7 @@ export type SingleQuery = {
     >
 }
 export type { AppStore, AppDispatch, RootState } from '@store/store'
-export type { UseMetadataStoreReturnValue as MetadataStore } from '../components/app-wrapper/metadata-provider'
+export type { UseMetadataStoreReturnValue as MetadataStore } from '../components/app-wrapper/metadata-provider/metadata-provider'
 export type AppCachedData = TransformedAppCachedData
 export type CurrentUser = TransformedAppCachedData['currentUser']
 
