@@ -1,4 +1,3 @@
-import type { Store } from '@reduxjs/toolkit'
 import { render } from '@testing-library/react'
 import type { PropsWithChildren, ReactElement } from 'react'
 import { Provider } from 'react-redux'
@@ -9,7 +8,7 @@ export const renderWithReduxStoreProvider = (
     store: ReturnType<typeof setupStore>
 ) => {
     const Wrapper = ({ children }: PropsWithChildren) => (
-        <Provider store={store as Store}>{children}</Provider>
+        <Provider store={store}>{children}</Provider>
     )
 
     return render(ui, { wrapper: Wrapper })
