@@ -512,7 +512,7 @@ describe('useDimensionMetadata', () => {
         const { result } = renderHook(
             () => ({
                 dimensionMetadata: useDimensionMetadata(
-                    'testProgram.testStage.testDimension[1]'
+                    'testProgram.testStage[1].testDimension'
                 ),
                 addMetadata: useAddMetadata(),
             }),
@@ -608,7 +608,7 @@ describe('useDimensionsMetadata', () => {
                 dimensionsMetadata: useDimensionsMetadata([
                     'dimension1',
                     'program.dimension2',
-                    'program.stage.dimension3[1]',
+                    'program.stage[1].dimension3',
                 ]),
                 addMetadata: useAddMetadata(),
             }),
@@ -637,7 +637,7 @@ describe('useDimensionsMetadata', () => {
                 program: undefined,
                 programStage: undefined,
             },
-            'program.stage.dimension3[1]': {
+            'program.stage[1].dimension3': {
                 dimensionId: 'dimension3',
                 programId: 'program',
                 programStageId: 'stage',
@@ -717,7 +717,7 @@ describe('useDimensionsMetadata', () => {
                 },
                 programStage: undefined,
             },
-            'program.stage.dimension3[1]': {
+            'program.stage[1].dimension3': {
                 dimensionId: 'dimension3',
                 programId: 'program',
                 programStageId: 'stage',

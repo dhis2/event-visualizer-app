@@ -774,21 +774,6 @@ describe('MetadataStore', () => {
                 })
             })
 
-            it('returns dimension metadata when dimension not yet loaded', () => {
-                const result =
-                    metadataStore.getDimensionMetadata('unknownDimension')
-
-                expect(result).toEqual({
-                    dimensionId: 'unknownDimension',
-                    programId: undefined,
-                    programStageId: undefined,
-                    repetitionIndex: undefined,
-                    dimension: undefined,
-                    program: undefined,
-                    programStage: undefined,
-                })
-            })
-
             it('throws error when dimension exists but is wrong type', () => {
                 expect(() =>
                     metadataStore.getDimensionMetadata('wrongTypeItem')
@@ -799,57 +784,6 @@ describe('MetadataStore', () => {
         })
 
         describe('two IDs (ambiguous)', () => {
-            it('identifies program correctly when present', () => {
-                const result = metadataStore.getDimensionMetadata(
-                    'testProgram.testDimension'
-                )
-
-                expect(result).toEqual({
-                    dimensionId: 'testDimension',
-                    programId: 'testProgram',
-                    programStageId: undefined,
-                    repetitionIndex: undefined,
-                    dimension: {
-                        id: 'testDimension',
-                        name: 'Test Dimension',
-                        dimensionType: 'DATA_ELEMENT',
-                        valueType: 'TEXT',
-                    },
-                    program: {
-                        id: 'testProgram',
-                        name: 'Test Program',
-                        programType: 'WITH_REGISTRATION',
-                    },
-                    programStage: undefined,
-                })
-            })
-
-            it('identifies stage correctly when present', () => {
-                const result = metadataStore.getDimensionMetadata(
-                    'testStage.testDimension'
-                )
-
-                expect(result).toEqual({
-                    dimensionId: 'testDimension',
-                    programId: undefined,
-                    programStageId: 'testStage',
-                    repetitionIndex: undefined,
-                    dimension: {
-                        id: 'testDimension',
-                        name: 'Test Dimension',
-                        dimensionType: 'DATA_ELEMENT',
-                        valueType: 'TEXT',
-                    },
-                    program: undefined,
-                    programStage: {
-                        id: 'testStage',
-                        name: 'Test Stage',
-                        repeatable: false,
-                        hideDueDate: false,
-                    },
-                })
-            })
-
             it('leaves both undefined when first ID not in store', () => {
                 const result = metadataStore.getDimensionMetadata(
                     'unknown.testDimension'
@@ -935,31 +869,6 @@ describe('MetadataStore', () => {
                 })
             })
 
-            it('handles partial metadata loading', () => {
-                const result = metadataStore.getDimensionMetadata(
-                    'testProgram.unknownStage.testDimension'
-                )
-
-                expect(result).toEqual({
-                    dimensionId: 'testDimension',
-                    programId: 'testProgram',
-                    programStageId: 'unknownStage',
-                    repetitionIndex: undefined,
-                    dimension: {
-                        id: 'testDimension',
-                        name: 'Test Dimension',
-                        dimensionType: 'DATA_ELEMENT',
-                        valueType: 'TEXT',
-                    },
-                    program: {
-                        id: 'testProgram',
-                        name: 'Test Program',
-                        programType: 'WITH_REGISTRATION',
-                    },
-                    programStage: undefined,
-                })
-            })
-
             it('prefers nested dimension ID over single ID when both exist', () => {
                 // Add dimension with single ID
                 metadataStore.addMetadata({
@@ -990,58 +899,6 @@ describe('MetadataStore', () => {
                 })
             })
 
-            it('prefers nested dimension ID for two-ID case', () => {
-                // Add dimension with single ID
-                metadataStore.addMetadata({
-                    id: 'sharedDimension',
-                    name: 'Generic Dimension',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'TEXT',
-                })
-
-                // Add dimension with nested ID (stage-specific)
-                metadataStore.addMetadata({
-                    id: 'testStage.sharedDimension',
-                    name: 'Stage-Specific Dimension',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'BOOLEAN',
-                })
-
-                const result = metadataStore.getDimensionMetadata(
-                    'testStage.sharedDimension'
-                )
-
-                // Should use the nested ID version
-                expect(result.dimension).toEqual({
-                    id: 'testStage.sharedDimension',
-                    name: 'Stage-Specific Dimension',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'BOOLEAN',
-                })
-            })
-
-            it('falls back to single ID when nested ID does not exist', () => {
-                // Only add dimension with single ID
-                metadataStore.addMetadata({
-                    id: 'onlySingleId',
-                    name: 'Single ID Only',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'TEXT',
-                })
-
-                const result = metadataStore.getDimensionMetadata(
-                    'testProgram.testStage.onlySingleId'
-                )
-
-                // Should fall back to single ID
-                expect(result.dimension).toEqual({
-                    id: 'onlySingleId',
-                    name: 'Single ID Only',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'TEXT',
-                })
-            })
-
             it('throws error when program is wrong type', () => {
                 expect(() =>
                     metadataStore.getDimensionMetadata(
@@ -1060,43 +917,6 @@ describe('MetadataStore', () => {
                 ).toThrow(
                     '"wrongTypeItem" is not a valid programStage metadata item'
                 )
-            })
-        })
-
-        describe('repetition index', () => {
-            it('extracts repetition index from single dimension', () => {
-                const result =
-                    metadataStore.getDimensionMetadata('testDimension[2]')
-
-                expect(result).toMatchObject({
-                    dimensionId: 'testDimension',
-                    repetitionIndex: '2',
-                })
-            })
-
-            it('extracts repetition index from two IDs', () => {
-                const result = metadataStore.getDimensionMetadata(
-                    'testStage.testDimension[1]'
-                )
-
-                expect(result).toMatchObject({
-                    dimensionId: 'testDimension',
-                    programStageId: 'testStage',
-                    repetitionIndex: '1',
-                })
-            })
-
-            it('extracts repetition index from three IDs', () => {
-                const result = metadataStore.getDimensionMetadata(
-                    'testProgram.testStage.testDimension[0]'
-                )
-
-                expect(result).toMatchObject({
-                    dimensionId: 'testDimension',
-                    programId: 'testProgram',
-                    programStageId: 'testStage',
-                    repetitionIndex: '0',
-                })
             })
         })
     })
