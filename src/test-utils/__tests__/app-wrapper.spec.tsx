@@ -2,6 +2,7 @@ import { FetchError } from '@dhis2/app-runtime'
 import { screen, waitFor } from '@testing-library/react'
 import { describe, it, expect } from 'vitest'
 import { renderWithAppWrapper, renderHookWithAppWrapper } from '../app-wrapper'
+import eventVisualizationFixture from '@components/plugin-wrapper/__fixtures__/inpatient-visit-overview-this-year-bonthe.json'
 import {
     useCurrentUser,
     useAppSelector,
@@ -272,7 +273,16 @@ describe('renderHookWithAppWrapper', () => {
                 // This test will trigger the action listener middleware to fire some requests
                 // By adding some response data here, we prevent errors to clutter the console
                 queryData: {
-                    eventVisualizations: {},
+                    eventVisualizations: async (_, query) => {
+                        if (query.id === 'updated-viz') {
+                            return {
+                                ...eventVisualizationFixture,
+                                id: 'updated-viz',
+                            }
+                        } else {
+                            return {}
+                        }
+                    },
                     dataStatistics: {},
                 },
             }

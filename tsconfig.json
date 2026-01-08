@@ -40,7 +40,8 @@
         ]
     },
     "include": [
-        "src",
+        "src/**/*.ts",
+        "src/**/*.tsx",
         "*.d.ts",
         "*.cjs",
         ".*.cjs",

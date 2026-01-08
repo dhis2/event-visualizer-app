@@ -34,6 +34,30 @@ export default defineConfig({
             ) {
                 return false
             }
+            // Suppress styled-jsx StyleSheet warnings from DHIS2 UI components
+            if (type === 'stderr' && log.includes('StyleSheet: illegal rule')) {
+                return false
+            }
+
+            // This message was coming from analytics so we can't fix it
+            if (
+                type === 'stdout' &&
+                log.includes(
+                    'Button component has no children but is missing title and ariaLabel attribute'
+                )
+            ) {
+                return false
+            }
+
+            // For tests this is not helpful. You may want to assert the whole state
+            if (
+                type === 'stderr' &&
+                log.includes(
+                    'Selector unknown returned the root state when called. This can lead to unnecessary rerenders.'
+                )
+            ) {
+                return false
+            }
         },
     },
 })

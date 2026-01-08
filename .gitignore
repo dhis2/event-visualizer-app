@@ -11,3 +11,4 @@ cypress/downloads
 .aider*
 .github/copilot-instructions.md
 cypress/downloads
+.vscode

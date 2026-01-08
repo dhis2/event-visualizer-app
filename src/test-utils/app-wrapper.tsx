@@ -113,10 +113,12 @@ const createPartialStore = ({
             [api.reducerPath]: api.reducer,
             ...(partialStore.reducer ?? fullAppReducer),
         } as ReducersMapObject<RootState>,
-        preloadedState: deepmerge(
-            getDefaultPreloadedState(appCachedData),
-            partialStore.preloadedState
-        ),
+        preloadedState: partialStore.reducer
+            ? partialStore.preloadedState
+            : deepmerge(
+                  getDefaultPreloadedState(appCachedData),
+                  partialStore.preloadedState
+              ),
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({
                 thunk: {
