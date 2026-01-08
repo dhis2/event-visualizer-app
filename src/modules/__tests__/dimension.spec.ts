@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
+    extractPlainDimensionId,
     getFullDimensionId,
     getDimensionIdParts,
     getDimensionsWithSuffix,
@@ -21,6 +22,43 @@ import type {
 } from '@types'
 
 const outputType = 'EVENT'
+
+describe('extractPlainDimensionId', () => {
+    it('throws error for empty string', () => {
+        expect(() => extractPlainDimensionId('')).toThrow(
+            'Input is not a populated string'
+        )
+    })
+
+    it('throws error for whitespace-only string', () => {
+        expect(() => extractPlainDimensionId('   ')).toThrow(
+            'Input is not a populated string'
+        )
+    })
+
+    it('throws error when input ends with dot', () => {
+        expect(() => extractPlainDimensionId('dimension.')).toThrow(
+            'Input "dimension." does not contain a dimension ID'
+        )
+    })
+
+    it('extracts dimension ID from all valid nested dimension ID formats', () => {
+        expect(extractPlainDimensionId('dimensionId')).toBe('dimensionId')
+        expect(extractPlainDimensionId('unknownId.dimensionId')).toBe(
+            'dimensionId'
+        )
+        expect(extractPlainDimensionId('unknownId[-1].dimensionId')).toBe(
+            'dimensionId'
+        )
+        expect(extractPlainDimensionId('programId.stageId.dimensionId')).toBe(
+            'dimensionId'
+        )
+        expect(
+            extractPlainDimensionId('programId.stageId[1].dimensionId')
+        ).toBe('dimensionId')
+    })
+})
+
 describe('getFullDimensionId', () => {
     it('returns correct result for: dimensionId', () => {
         const dimensionId = 'did'
