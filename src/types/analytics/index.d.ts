@@ -24,6 +24,7 @@ import type { VisTypeIcon } from './vis-type-icon'
 import type {
     Axis,
     CurrentVisualization,
+    DataEngine,
     DimensionArray,
     DimensionId,
     DimensionRecord,
@@ -77,6 +78,23 @@ declare module '@dhis2/analytics' {
     }
 
     // Functions
+    export const apiFetchItemsByDimension: ({
+        dataEngine,
+        dimensionId,
+        searchTerm,
+        page,
+        nameProp,
+    }: {
+        dataEngine: DataEngine
+        dimensionId: string
+        searchTerm?: string
+        page: number
+        nameProp: CurrentUser['settings']['displayNameProperty']
+    }) => {
+        dimensionItems: { id: string; name: string; disabled: boolean }[]
+        nextPage: number | null
+    }
+
     export const dimensionCreate: (
         dimensionId: string,
         itemIds: string[],
