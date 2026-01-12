@@ -1,4 +1,4 @@
-import { isPopulatedString } from './type-guards'
+import { isPopulatedString } from '@modules/validation'
 
 // Pattern to match repetition index like [0], [1], [-1] etc.
 const REPETITION_INDEX_PATTERN = /\[(-?\d+)\]/
