@@ -8,8 +8,8 @@ import {
     useRef,
 } from 'react'
 import type { FC, ReactNode } from 'react'
-import { parseDimensionIdInput } from './metadata-helpers/dimension'
-import { getInitialMetadata } from './metadata-helpers/initial-metadata'
+import { parseDimensionIdInput } from './dimension'
+import { getInitialMetadata } from './initial-metadata'
 import { MetadataStore } from './metadata-store'
 import { useRootOrgUnits } from '@hooks'
 import type {

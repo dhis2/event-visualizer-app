@@ -3,6 +3,16 @@ import { DIMENSION_ID_ORGUNIT } from '@constants/dimensions'
 import { AXIS, dimensionIsValid, layoutGetDimension } from '@dhis2/analytics'
 import type { CurrentVisualization } from '@types'
 
+// Helper function to check if input is a plain object
+export const isObject = (input: unknown): input is Record<string, unknown> => {
+    return typeof input === 'object' && input !== null && !Array.isArray(input)
+}
+
+// Helper function to check if input is a non-empty string
+export const isPopulatedString = (input: unknown): input is string => {
+    return typeof input === 'string' && input.trim().length > 0
+}
+
 // Layout validation helper functions
 const isAxisValid = (axis) =>
     AXIS.isValid(axis) &&

@@ -21,7 +21,7 @@ export {
     useAddAnalyticsResponseMetadata,
     useMetadataStore,
     useDimensionMetadata,
-} from '@components/app-wrapper/metadata-provider'
+} from '@components/app-wrapper/metadata-provider/metadata-provider'
 
 /* Note that useRtkQuery and useRtkLazyQuery accept both a complex query object
  * (as useDataQuery from @dhis2/app-runtime) which can be used to query multiple

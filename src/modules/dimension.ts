@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { isPopulatedString } from '@components/app-wrapper/metadata-helpers/type-guards'
+import { isPopulatedString } from './validation'
 import {
     PROGRAM_DIMENSION_TYPES,
     TIME_DIMENSION_IDS,

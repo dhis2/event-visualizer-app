@@ -1,9 +1,9 @@
 import {
     isOptionSetMetadataItem,
     isLegendSetMetadataItem,
-    isPopulatedString,
     isMetadataInputItem,
-} from './type-guards'
+} from '@modules/metadata'
+import { isPopulatedString } from '@modules/validation'
 import type {
     MetadataItem,
     MetadataInputItem,
