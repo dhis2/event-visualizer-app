@@ -1,10 +1,22 @@
 // eslint-disable-next-line no-restricted-imports
 import i18n from '@dhis2/d2-i18n'
-import { InputField, Transfer, TransferOption } from '@dhis2/ui'
-import { useEffect, useMemo, useState, type FC } from 'react'
+import { Transfer, TransferOption } from '@dhis2/ui'
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useReducer,
+    useRef,
+    useState,
+    type FC,
+} from 'react'
 import { useDebounceValue } from 'usehooks-ts'
+import { dimensionsApi } from './dimensions-api'
 import classes from './styles/dynamic-dimension-modal-content.module.css'
-import { dimensionsApi } from '@api/dimensions-api'
+import { TransferEmptySelection } from './transfer-empty-selection'
+import { TransferLeftHeader } from './transfer-left-header'
+import { TransferRightHeader } from './transfer-right-header'
+import { TransferSourceEmptyPlaceholder } from './transfer-source-empty-placeholder'
 import {
     useAddMetadata,
     useAppDispatch,
@@ -22,67 +34,11 @@ const TRANSFER_OPTIONS_WIDTH = '359px'
 const TRANSFER_SELECTED_WIDTH = '359px'
 const TRANSFER_HEIGHT = '512px'
 
-type TransferItemRecord = {
+export type TransferItemRecord = {
     label: string
     value: string
     disabled: boolean
 }
-
-const TransferEmptySelection: FC = () => (
-    <p className={classes.transferEmptyList}>{i18n.t('No items selected')}</p>
-)
-
-type TransferSourceEmptyPlaceholderProps = {
-    dataTest: string
-    loading: boolean
-    options: TransferItemRecord[]
-    searchTerm?: string
-}
-
-const TransferSourceEmptyPlaceholder: FC<
-    TransferSourceEmptyPlaceholderProps
-> = ({ loading, searchTerm, options, dataTest }) =>
-    !loading &&
-    !options.length && (
-        <p className={classes.transferEmptyList} data-test={dataTest}>
-            {searchTerm
-                ? i18n.t('Nothing found for "{{- searchTerm}}"', {
-                      searchTerm: searchTerm,
-                  })
-                : i18n.t('No options')}
-        </p>
-    )
-
-type TransferLeftHeaderProps = {
-    dataTest: string
-    searchTerm?: string
-    setSearchTerm: (searchTerm?: string) => void
-}
-
-const TransferLeftHeader: FC<TransferLeftHeaderProps> = ({
-    searchTerm,
-    setSearchTerm,
-    dataTest,
-}) => (
-    <div className={classes.transferLeftHeader}>
-        <p className={classes.transferLeftTitle}>
-            {i18n.t('Available options')}
-        </p>
-        <InputField
-            value={searchTerm}
-            onChange={({ value }) => setSearchTerm(value)}
-            placeholder={i18n.t('Filter options')}
-            dataTest={`${dataTest}-filter-input-field`}
-            dense
-            initialFocus
-            type="search"
-        />
-    </div>
-)
-
-const TransferRightHeader: FC = () => (
-    <p className={classes.transferRightHeader}>{i18n.t('Selected options')}</p>
-)
 
 type DynamicDimensionModalContentProps = {
     dimension: InternalDimensionRecord
@@ -94,10 +50,27 @@ export const DynamicDimensionModalContent: FC<
     const dispatch = useAppDispatch()
     const addMetadata = useAddMetadata()
 
-    const [items, setItems] = useState<TransferItemRecord[]>([])
-    const [nextPage, setNextPage] = useState<number | null>()
+    type ItemsReducerAction =
+        | { type: 'APPEND_ITEMS'; payload: TransferItemRecord[] }
+        | { type: 'REPLACE_ITEMS'; payload: TransferItemRecord[] }
+
+    const itemsReducer = (
+        state: TransferItemRecord[],
+        action: ItemsReducerAction
+    ): TransferItemRecord[] => {
+        switch (action.type) {
+            case 'APPEND_ITEMS':
+                return [...state, ...action.payload]
+            case 'REPLACE_ITEMS':
+                return action.payload
+        }
+    }
+
+    const [items, dispatchItems] = useReducer(itemsReducer, [])
     const [searchTerm, setSearchTerm] = useState<string | undefined>()
     const [debouncedSearchTerm] = useDebounceValue(searchTerm, 500)
+    const debouncedSearchTermRef = useRef(debouncedSearchTerm)
+    const nextPageRef = useRef<number | null>(null) //, setNextPage] = useState<number | null>()
 
     const dataTest = `dynamic-dimension-${dimension.id}`
 
@@ -126,41 +99,57 @@ export const DynamicDimensionModalContent: FC<
         dimensionsApi.useLazyFetchItemsByDimensionQuery()
 
     useEffect(() => {
-        if (data?.dimensionItems.length) {
-            const newItems: TransferItemRecord[] = data.dimensionItems.map(
-                ({ id, name, disabled }) => ({
-                    label: name,
-                    value: id,
-                    disabled,
+        if (data) {
+            if (data.dimensionItems.length) {
+                console.log('new data', data.dimensionItems)
+                const newItems: TransferItemRecord[] = data.dimensionItems.map(
+                    ({ id, name, disabled }) => ({
+                        label: name,
+                        value: id,
+                        disabled,
+                    })
+                )
+
+                dispatchItems({
+                    type: debouncedSearchTermRef.current
+                        ? 'REPLACE_ITEMS'
+                        : 'APPEND_ITEMS',
+                    payload: newItems,
                 })
-            )
+            }
 
-            setItems(newItems)
-        }
-
-        if (data?.nextPage) {
-            setNextPage(data.nextPage)
+            console.log('set page', data.nextPage)
+            //setNextPage(data.nextPage)
+            nextPageRef.current = data.nextPage
         }
     }, [data])
 
     // fetch if dimension.id or searchTerm change
     useEffect(() => {
+        console.log('dimensionId/search change')
+        debouncedSearchTermRef.current = debouncedSearchTerm
+
         triggerFetchItems({
             dimensionId: dimension.id,
             searchTerm: debouncedSearchTerm,
             page: 1,
         })
+
+        //setNextPage(null)
+        nextPageRef.current = null
     }, [dimension.id, debouncedSearchTerm, triggerFetchItems])
 
-    const onEndReached = () => {
-        if (nextPage) {
+    const onEndReached = useCallback(() => {
+        console.log('end reached', nextPageRef.current)
+        if (nextPageRef.current) {
+            console.log('end reached and nextPage', nextPageRef.current)
             triggerFetchItems({
                 dimensionId: dimension.id,
-                searchTerm,
-                page: nextPage,
+                searchTerm: debouncedSearchTermRef.current,
+                page: nextPageRef.current,
             })
         }
-    }
+    }, [dimension.id, triggerFetchItems])
 
     const updateDynamicDimensionItems = ({ selected }) => {
         const { uiItems, metadata } = items
@@ -189,12 +178,6 @@ export const DynamicDimensionModalContent: FC<
         )
     }
 
-    if (process.env.NODE_ENV !== 'production') {
-        console.log(
-            `dimensionType: ${dimension.dimensionType}, id: ${dimension.id}`
-        )
-    }
-
     return (
         <>
             <p className={classes.paragraph}>
@@ -206,7 +189,16 @@ export const DynamicDimensionModalContent: FC<
                 <Transfer
                     onChange={updateDynamicDimensionItems}
                     selected={selected.map((item) => item.value)}
-                    options={[...items, ...selected]}
+                    options={[
+                        ...items,
+                        // remove items already in the option list to avoid duplication
+                        ...selected.filter(
+                            (selectedItem) =>
+                                !items.find(
+                                    (item) => item.value === selectedItem.value
+                                )
+                        ),
+                    ]}
                     loading={isLoading}
                     loadingPicked={isLoading}
                     sourceEmptyPlaceholder={
