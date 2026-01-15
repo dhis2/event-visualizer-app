@@ -1,4 +1,4 @@
-import type { TransferOption as TransferOptionComponent } from '@dhis2/ui'
+import type { Transfer } from '@dhis2/ui'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ComponentProps } from 'react'
 import { useDebounceValue } from 'usehooks-ts'
@@ -8,9 +8,9 @@ type UseLazyQueryResult = ReturnType<
     typeof dimensionsApi.useLazyFetchItemsByDimensionQuery
 >
 // | ReturnType<typeof anotherApi.useLazyOtherFetch>
-type TransferOption = ComponentProps<typeof TransferOptionComponent>
+type TransferOptions = ComponentProps<typeof Transfer>['options']
 type UseInfiniteTransferOptionsResult = UseLazyQueryResult[1] & {
-    data: TransferOption[]
+    data: TransferOptions
     searchTerm: string
     setSearchTerm: (value: string) => void
     onEndReached: () => void
@@ -25,7 +25,7 @@ export const useInfiniteTransferOptions = (
     const [debouncedSearchTerm] = useDebounceValue(searchTerm, 500)
     const prevDebouncedSearchTermRef = useRef<string>(debouncedSearchTerm)
     const nextPageRef = useRef<number | null>(1)
-    const [options, setOptions] = useState<TransferOption[]>([])
+    const [options, setOptions] = useState<TransferOptions>([])
     const onEndReached = useCallback(() => {
         if (nextPageRef.current !== null) {
             fetchOptionsFn({
@@ -59,7 +59,7 @@ export const useInfiniteTransferOptions = (
     useEffect(() => {
         if (state.data) {
             // TODO: Figure out how to normalize and type the data for the second endpoint
-            const newOptions: TransferOption[] = state.data.dimensionItems.map(
+            const newOptions: TransferOptions = state.data.dimensionItems.map(
                 ({ id, name, disabled }) => ({
                     label: name,
                     value: id,
