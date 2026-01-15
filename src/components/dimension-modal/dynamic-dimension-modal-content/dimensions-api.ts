@@ -10,7 +10,7 @@ type FetchItemsByDimensionQueryArgs = {
 }
 
 type FetchResult = {
-    dimensionItems: { id: string; name: string; disabled: boolean }[]
+    items: { id: string; name: string }[]
     nextPage: number | null
 }
 
@@ -37,7 +37,12 @@ export const dimensionsApi = api.injectEndpoints({
                                 .displayNameProperty,
                     })
 
-                    return { data: result }
+                    return {
+                        data: {
+                            items: result.dimensionItems,
+                            nextPage: result.nextPage,
+                        },
+                    }
                 } catch (error) {
                     return { error: parseEngineError(error) }
                 }
