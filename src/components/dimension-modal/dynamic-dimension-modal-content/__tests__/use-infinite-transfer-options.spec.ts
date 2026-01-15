@@ -6,7 +6,7 @@ import type { FetchItemsByDimensionQueryArgs } from '../dimensions-api'
 import { useInfiniteTransferOptions } from '../use-infinite-transfer-options'
 
 type MockData = {
-    dimensionItems: Array<{ id: string; name: string; disabled: boolean }>
+    items: Array<{ id: string; name: string }>
     nextPage: number | null
 }
 
@@ -129,9 +129,7 @@ describe('useInfiniteTransferOptions', () => {
 
         it('does not call fetch function when nextPage is null', async () => {
             const mockData: MockData = {
-                dimensionItems: [
-                    { id: 'ou1', name: 'Org Unit 1', disabled: false },
-                ],
+                items: [{ id: 'ou1', name: 'Org Unit 1' }],
                 nextPage: null,
             }
             const triggerFn = vi.fn()
@@ -177,9 +175,7 @@ describe('useInfiniteTransferOptions', () => {
 
         it('increments page number for subsequent calls', async () => {
             const mockData: MockData = {
-                dimensionItems: [
-                    { id: 'ou1', name: 'Org Unit 1', disabled: false },
-                ],
+                items: [{ id: 'ou1', name: 'Org Unit 1' }],
                 nextPage: 2,
             }
             const triggerFn = vi.fn()
@@ -227,9 +223,9 @@ describe('useInfiniteTransferOptions', () => {
     describe('data transformation', () => {
         it('transforms dimension items to transfer options format', async () => {
             const mockData: MockData = {
-                dimensionItems: [
-                    { id: 'ou1', name: 'Org Unit 1', disabled: false },
-                    { id: 'ou2', name: 'Org Unit 2', disabled: true },
+                items: [
+                    { id: 'ou1', name: 'Org Unit 1' },
+                    { id: 'ou2', name: 'Org Unit 2' },
                 ],
                 nextPage: 2,
             }
@@ -260,17 +256,15 @@ describe('useInfiniteTransferOptions', () => {
 
             await vi.waitFor(() => {
                 expect(result.current.data).toEqual([
-                    { label: 'Org Unit 1', value: 'ou1', disabled: false },
-                    { label: 'Org Unit 2', value: 'ou2', disabled: true },
+                    { label: 'Org Unit 1', value: 'ou1' },
+                    { label: 'Org Unit 2', value: 'ou2' },
                 ])
             })
         })
 
         it('appends new items to existing data', async () => {
             const initialData: MockData = {
-                dimensionItems: [
-                    { id: 'ou1', name: 'Org Unit 1', disabled: false },
-                ],
+                items: [{ id: 'ou1', name: 'Org Unit 1' }],
                 nextPage: 2,
             }
             const triggerFn = vi.fn()
@@ -304,9 +298,7 @@ describe('useInfiniteTransferOptions', () => {
 
             // Simulate fetching page 2
             const newData: MockData = {
-                dimensionItems: [
-                    { id: 'ou2', name: 'Org Unit 2', disabled: false },
-                ],
+                items: [{ id: 'ou2', name: 'Org Unit 2' }],
                 nextPage: null,
             }
             state = { ...state, data: newData }
@@ -314,8 +306,8 @@ describe('useInfiniteTransferOptions', () => {
 
             await vi.waitFor(() => {
                 expect(result.current.data).toEqual([
-                    { label: 'Org Unit 1', value: 'ou1', disabled: false },
-                    { label: 'Org Unit 2', value: 'ou2', disabled: false },
+                    { label: 'Org Unit 1', value: 'ou1' },
+                    { label: 'Org Unit 2', value: 'ou2' },
                 ])
             })
         })
@@ -337,9 +329,7 @@ describe('useInfiniteTransferOptions', () => {
 
         it('resets options and fetches with search term when debounced search changes', async () => {
             const initialData: MockData = {
-                dimensionItems: [
-                    { id: 'ou1', name: 'Org Unit 1', disabled: false },
-                ],
+                items: [{ id: 'ou1', name: 'Org Unit 1' }],
                 nextPage: null,
             }
             const triggerFn = vi.fn()
