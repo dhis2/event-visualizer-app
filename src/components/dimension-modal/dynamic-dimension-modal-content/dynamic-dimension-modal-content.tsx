@@ -57,8 +57,14 @@ export const DynamicDimensionModalContent: FC<
     )
     const [fetchOptionsFn, queryState] =
         dimensionsApi.useLazyFetchItemsByDimensionQuery()
-    const { data, isLoading, searchTerm, setSearchTerm, onEndReached } =
-        useInfiniteTransferOptions(dimension.id, fetchOptionsFn, queryState)
+    const {
+        data,
+        isLoading,
+        isFetching,
+        searchTerm,
+        setSearchTerm,
+        onEndReached,
+    } = useInfiniteTransferOptions(dimension.id, fetchOptionsFn, queryState)
 
     const updateDynamicDimensionItems = ({ selected }) => {
         const { uiItems, metadata } = data
@@ -100,7 +106,7 @@ export const DynamicDimensionModalContent: FC<
                     selected={selectedIds}
                     selectedOptionsLookup={selectedOptionsLookup}
                     options={data}
-                    loading={isLoading}
+                    loading={isLoading || isFetching}
                     loadingPicked={isLoading}
                     sourceEmptyPlaceholder={
                         <TransferSourceEmptyPlaceholder

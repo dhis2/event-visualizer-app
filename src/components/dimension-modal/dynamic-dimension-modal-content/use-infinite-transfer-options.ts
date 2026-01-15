@@ -70,7 +70,6 @@ export const useInfiniteTransferOptions = (
                 fetchOptions.searchTerm = debouncedSearchTerm
             }
 
-            setOptions([])
             console.log('FETCH - search term changed')
             fetchOptionsFn(fetchOptions)
         }
@@ -90,8 +89,16 @@ export const useInfiniteTransferOptions = (
                     value: id,
                 })
             )
-            console.log('setting options')
-            setOptions((prev) => [...prev, ...newOptions])
+            const hasReceivedNextPage =
+                queryState.data.nextPage === (nextPageRef.current ?? 1) + 1
+            console.log(
+                hasReceivedNextPage
+                    ? 'adding to exisiting options'
+                    : 'resetting options'
+            )
+            setOptions((prev) =>
+                hasReceivedNextPage ? [...prev, ...newOptions] : newOptions
+            )
             nextPageRef.current = queryState.data.nextPage
         }
     }, [queryState.data])
