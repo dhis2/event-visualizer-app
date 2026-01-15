@@ -8,7 +8,7 @@ type UseLazyQueryResult = ReturnType<
     typeof dimensionsApi.useLazyFetchItemsByDimensionQuery
 >
 // | ReturnType<typeof anotherApi.useLazyOtherFetch>
-type TransferOptions = ComponentProps<typeof Transfer>['options']
+export type TransferOptions = ComponentProps<typeof Transfer>['options']
 type UseInfiniteTransferOptionsResult = UseLazyQueryResult[1] & {
     data: TransferOptions
     searchTerm: string
@@ -59,11 +59,10 @@ export const useInfiniteTransferOptions = (
     useEffect(() => {
         if (state.data) {
             // TODO: Figure out how to normalize and type the data for the second endpoint
-            const newOptions: TransferOptions = state.data.dimensionItems.map(
-                ({ id, name, disabled }) => ({
+            const newOptions: TransferOptions = state.data.items.map(
+                ({ id, name }) => ({
                     label: name,
                     value: id,
-                    disabled,
                 })
             )
             setOptions((prev) => [...prev, ...newOptions])
