@@ -90,7 +90,8 @@ export const useInfiniteTransferOptions = (
                 })
             )
             const hasReceivedNextPage =
-                queryState.data.nextPage === (nextPageRef.current ?? 1) + 1
+                typeof nextPageRef.current === 'number' &&
+                nextPageRef.current > 1
             console.log(
                 hasReceivedNextPage
                     ? 'adding to exisiting options'

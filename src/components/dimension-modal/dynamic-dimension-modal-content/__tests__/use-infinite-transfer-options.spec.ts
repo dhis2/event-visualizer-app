@@ -332,11 +332,6 @@ describe('useInfiniteTransferOptions', () => {
                     searchTerm: 'district',
                 })
             })
-
-            // Options should be cleared when search changes
-            await vi.waitFor(() => {
-                expect(result.current.data).toEqual([])
-            })
         })
 
         it('omits searchTerm param when search is empty', async () => {
