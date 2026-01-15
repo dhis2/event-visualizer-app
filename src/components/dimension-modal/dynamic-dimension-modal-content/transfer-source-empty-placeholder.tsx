@@ -1,12 +1,12 @@
 import i18n from '@dhis2/d2-i18n'
 import { type FC } from 'react'
-import { type TransferItemRecord } from './dynamic-dimension-modal-content'
 import classes from './styles/dynamic-dimension-modal-content.module.css'
+import { type TransferOptions } from './use-infinite-transfer-options'
 
 type TransferSourceEmptyPlaceholderProps = {
     dataTest: string
     loading: boolean
-    options: TransferItemRecord[]
+    options: TransferOptions
     searchTerm?: string
 }
 
