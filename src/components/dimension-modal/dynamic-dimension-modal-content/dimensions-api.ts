@@ -3,7 +3,7 @@ import type { BaseQueryApiWithExtraArg } from '@api/custom-base-query'
 import { parseEngineError } from '@api/parse-engine-error'
 import { apiFetchItemsByDimension } from '@dhis2/analytics'
 
-type FetchItemsByDimensionQueryArgs = {
+export type FetchItemsByDimensionQueryArgs = {
     dimensionId: string
     searchTerm?: string
     page: number

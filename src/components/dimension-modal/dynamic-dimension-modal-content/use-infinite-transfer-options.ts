@@ -16,6 +16,13 @@ type UseInfiniteTransferOptionsResult = UseLazyQueryResult[1] & {
     onEndReached: () => void
 }
 
+/**
+ * Hook for managing infinite scroll/pagination with search for Transfer component options.
+ *
+ * @param dimensionId - The dimension ID to fetch items for (expected to be constant during component lifecycle)
+ * @param useLazyQueryResult - Result tuple from a lazy RTK Query hook
+ * @returns Extended query result with Transfer-compatible options, search state, and pagination handler
+ */
 export const useInfiniteTransferOptions = (
     dimensionId: string,
     useLazyQueryResult: UseLazyQueryResult
