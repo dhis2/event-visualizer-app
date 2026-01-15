@@ -1,6 +1,5 @@
 import type { QueryStatus } from '@reduxjs/toolkit/query'
-import { renderHook } from '@testing-library/react'
-import { act } from 'react'
+import { renderHook, act } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { FetchItemsByDimensionQueryArgs } from '../dimensions-api'
 import { useInfiniteTransferOptions } from '../use-infinite-transfer-options'
@@ -84,8 +83,9 @@ describe('useInfiniteTransferOptions', () => {
     describe('initialization', () => {
         it('returns initial state with empty data array', () => {
             const mockQueryResult = createMockLazyQueryResult()
+            const [triggerFn, state] = mockQueryResult
             const { result } = renderHook(() =>
-                useInfiniteTransferOptions('ou', mockQueryResult)
+                useInfiniteTransferOptions('ou', triggerFn, state)
             )
 
             expect(result.current.data).toEqual([])
@@ -97,8 +97,9 @@ describe('useInfiniteTransferOptions', () => {
 
         it('preserves all state properties from lazy query result', () => {
             const mockQueryResult = createMockLazyQueryResult()
+            const [triggerFn, state] = mockQueryResult
             const { result } = renderHook(() =>
-                useInfiniteTransferOptions('ou', mockQueryResult)
+                useInfiniteTransferOptions('ou', triggerFn, state)
             )
 
             expect(result.current.isError).toBe(false)
@@ -111,9 +112,9 @@ describe('useInfiniteTransferOptions', () => {
     describe('onEndReached', () => {
         it('calls fetch function with correct arguments on initial call', () => {
             const mockQueryResult = createMockLazyQueryResult()
-            const [triggerFn] = mockQueryResult
+            const [triggerFn, state] = mockQueryResult
             const { result } = renderHook(() =>
-                useInfiniteTransferOptions('ou', mockQueryResult)
+                useInfiniteTransferOptions('ou', triggerFn, state)
             )
 
             act(() => {
@@ -123,7 +124,6 @@ describe('useInfiniteTransferOptions', () => {
             expect(triggerFn).toHaveBeenCalledWith({
                 dimensionId: 'ou',
                 page: 1,
-                searchTerm: '',
             })
         })
 
@@ -144,17 +144,7 @@ describe('useInfiniteTransferOptions', () => {
             }
 
             const { result } = renderHook(() =>
-                useInfiniteTransferOptions('ou', [
-                    triggerFn,
-                    state,
-                    {
-                        lastArg: {
-                            dimensionId: 'ou',
-                            page: 1,
-                            searchTerm: '',
-                        } as FetchItemsByDimensionQueryArgs,
-                    },
-                ])
+                useInfiniteTransferOptions('ou', triggerFn, state)
             )
 
             // Wait for initial data to be processed
@@ -190,17 +180,7 @@ describe('useInfiniteTransferOptions', () => {
             }
 
             const { result } = renderHook(() =>
-                useInfiniteTransferOptions('ou', [
-                    triggerFn,
-                    state,
-                    {
-                        lastArg: {
-                            dimensionId: 'ou',
-                            page: 1,
-                            searchTerm: '',
-                        } as FetchItemsByDimensionQueryArgs,
-                    },
-                ])
+                useInfiniteTransferOptions('ou', triggerFn, state)
             )
 
             // Wait for initial data to be processed
@@ -241,17 +221,7 @@ describe('useInfiniteTransferOptions', () => {
             }
 
             const { result } = renderHook(() =>
-                useInfiniteTransferOptions('ou', [
-                    triggerFn,
-                    state,
-                    {
-                        lastArg: {
-                            dimensionId: 'ou',
-                            page: 1,
-                            searchTerm: '',
-                        } as FetchItemsByDimensionQueryArgs,
-                    },
-                ])
+                useInfiniteTransferOptions('ou', triggerFn, state)
             )
 
             await vi.waitFor(() => {
@@ -279,17 +249,7 @@ describe('useInfiniteTransferOptions', () => {
             }
 
             const { result, rerender } = renderHook(() =>
-                useInfiniteTransferOptions('ou', [
-                    triggerFn,
-                    state,
-                    {
-                        lastArg: {
-                            dimensionId: 'ou',
-                            page: 1,
-                            searchTerm: '',
-                        } as FetchItemsByDimensionQueryArgs,
-                    },
-                ])
+                useInfiniteTransferOptions('ou', triggerFn, state)
             )
 
             await vi.waitFor(() => {
@@ -316,8 +276,9 @@ describe('useInfiniteTransferOptions', () => {
     describe('search functionality', () => {
         it('updates search term when setSearchTerm is called', () => {
             const mockQueryResult = createMockLazyQueryResult()
+            const [triggerFn, state] = mockQueryResult
             const { result } = renderHook(() =>
-                useInfiniteTransferOptions('ou', mockQueryResult)
+                useInfiniteTransferOptions('ou', triggerFn, state)
             )
 
             act(() => {
@@ -344,17 +305,7 @@ describe('useInfiniteTransferOptions', () => {
             }
 
             const { result } = renderHook(() =>
-                useInfiniteTransferOptions('ou', [
-                    triggerFn,
-                    state,
-                    {
-                        lastArg: {
-                            dimensionId: 'ou',
-                            page: 1,
-                            searchTerm: '',
-                        } as FetchItemsByDimensionQueryArgs,
-                    },
-                ])
+                useInfiniteTransferOptions('ou', triggerFn, state)
             )
 
             await vi.waitFor(() => {
@@ -390,10 +341,10 @@ describe('useInfiniteTransferOptions', () => {
 
         it('omits searchTerm param when search is empty', async () => {
             const mockQueryResult = createMockLazyQueryResult()
-            const [triggerFn] = mockQueryResult
+            const [triggerFn, state] = mockQueryResult
 
             const { result } = renderHook(() =>
-                useInfiniteTransferOptions('ou', mockQueryResult)
+                useInfiniteTransferOptions('ou', triggerFn, state)
             )
 
             // Set search term
@@ -423,6 +374,86 @@ describe('useInfiniteTransferOptions', () => {
                     dimensionId: 'ou',
                     page: 1,
                 })
+            })
+        })
+
+        it('preserves search term when onEndReached is called during search', async () => {
+            const initialData: MockData = {
+                items: [{ id: 'ou1', name: 'District 1' }],
+                nextPage: 2,
+            }
+            const triggerFn = vi.fn()
+            let state: MockState = {
+                ...baseMockState,
+                data: initialData,
+                currentData: initialData,
+                isSuccess: true,
+                isUninitialized: false,
+                status: 'fulfilled' as QueryStatus,
+                reset: vi.fn(),
+            }
+
+            const { result, rerender } = renderHook(() =>
+                useInfiniteTransferOptions('ou', triggerFn, state)
+            )
+
+            await vi.waitFor(() => {
+                expect(result.current.data).toHaveLength(1)
+            })
+
+            // Perform a search
+            act(() => {
+                result.current.setSearchTerm('district')
+            })
+
+            // Advance past debounce
+            act(() => {
+                vi.advanceTimersByTime(500)
+            })
+
+            // Wait for search to be triggered
+            await vi.waitFor(() => {
+                expect(triggerFn).toHaveBeenCalledWith({
+                    dimensionId: 'ou',
+                    page: 1,
+                    searchTerm: 'district',
+                })
+            })
+
+            // Update state to simulate search results with nextPage
+            const searchResultData: MockData = {
+                items: [{ id: 'ou2', name: 'District 2' }],
+                nextPage: 2,
+            }
+            state = {
+                ...baseMockState,
+                data: searchResultData,
+                currentData: searchResultData,
+                isSuccess: true,
+                isUninitialized: false,
+                status: 'fulfilled' as QueryStatus,
+                reset: vi.fn(),
+            }
+            rerender()
+
+            // Wait for search results to be processed
+            await vi.waitFor(() => {
+                expect(result.current.data).toHaveLength(1)
+            })
+
+            // Clear mocks to check next call
+            vi.clearAllMocks()
+
+            // Now call onEndReached to load more search results
+            act(() => {
+                result.current.onEndReached()
+            })
+
+            // Should preserve the search term when paginating
+            expect(triggerFn).toHaveBeenCalledWith({
+                dimensionId: 'ou',
+                page: 2,
+                searchTerm: 'district',
             })
         })
     })

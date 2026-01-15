@@ -25,12 +25,6 @@ const TRANSFER_OPTIONS_WIDTH = '359px'
 const TRANSFER_SELECTED_WIDTH = '359px'
 const TRANSFER_HEIGHT = '512px'
 
-export type TransferItemRecord = {
-    label: string
-    value: string
-    disabled: boolean
-}
-
 type DynamicDimensionModalContentProps = {
     dimension: InternalDimensionRecord
 }
@@ -40,17 +34,13 @@ export const DynamicDimensionModalContent: FC<
 > = ({ dimension }) => {
     const dispatch = useAppDispatch()
     const addMetadata = useAddMetadata()
-
     const dataTest = `dynamic-dimension-${dimension.id}`
-
     const selectedIds = useAppSelector((state) =>
         getVisUiConfigItemsByDimension(state, dimension?.id).map(
             (id) => getDimensionIdParts({ id }).dimensionId
         )
     )
-
     const selectedIdsMetadata = useMetadataItems(selectedIds)
-
     const selectedOptionsLookup = useMemo(
         () =>
             selectedIds.reduce((lookupMap, id) => {
@@ -65,12 +55,10 @@ export const DynamicDimensionModalContent: FC<
             }, {}),
         [selectedIds, selectedIdsMetadata]
     )
-
+    const [fetchOptionsFn, queryState] =
+        dimensionsApi.useLazyFetchItemsByDimensionQuery()
     const { data, isLoading, searchTerm, setSearchTerm, onEndReached } =
-        useInfiniteTransferOptions(
-            dimension.id,
-            dimensionsApi.useLazyFetchItemsByDimensionQuery()
-        )
+        useInfiniteTransferOptions(dimension.id, fetchOptionsFn, queryState)
 
     const updateDynamicDimensionItems = ({ selected }) => {
         const { uiItems, metadata } = data

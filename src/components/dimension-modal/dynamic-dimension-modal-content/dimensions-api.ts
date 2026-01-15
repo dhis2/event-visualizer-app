@@ -9,7 +9,7 @@ export type FetchItemsByDimensionQueryArgs = {
     page: number
 }
 
-type FetchResult = {
+export type FetchResult = {
     items: { id: string; name: string }[]
     nextPage: number | null
 }
