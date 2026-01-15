@@ -31,40 +31,48 @@ export const useInfiniteTransferOptions = (
     const [searchTerm, setSearchTerm] = useState<string>('')
     const [debouncedSearchTerm] = useDebounceValue(searchTerm, 500)
     const prevDebouncedSearchTermRef = useRef<string>(debouncedSearchTerm)
-    const nextPageRef = useRef<number | null>(1)
+    const nextPageRef = useRef<number | null>(null)
     const [options, setOptions] = useState<TransferOptions>([])
     const onEndReached = useCallback(() => {
         if (nextPageRef.current !== null) {
+            console.log(
+                'end reached',
+                prevDebouncedSearchTermRef.current,
+                nextPageRef.current
+            )
             fetchOptionsFn({
                 dimensionId,
                 page: nextPageRef.current,
+                searchTerm: prevDebouncedSearchTermRef.current,
+            })
+        }
+    }, [dimensionId, fetchOptionsFn])
+
+    useEffect(() => {
+        if (debouncedSearchTerm !== prevDebouncedSearchTermRef.current) {
+            prevDebouncedSearchTermRef.current = debouncedSearchTerm
+            setOptions([])
+        }
+
+        if (debouncedSearchTerm) {
+            console.log('fetch with search', debouncedSearchTerm)
+            fetchOptionsFn({
+                dimensionId,
+                page: 1,
                 searchTerm: debouncedSearchTerm,
+            })
+        } else {
+            console.log('fetch without search')
+            fetchOptionsFn({
+                dimensionId,
+                page: 1,
             })
         }
     }, [debouncedSearchTerm, dimensionId, fetchOptionsFn])
 
     useEffect(() => {
-        if (debouncedSearchTerm !== prevDebouncedSearchTermRef.current) {
-            prevDebouncedSearchTermRef.current = debouncedSearchTerm
-            nextPageRef.current = 1
-            setOptions([])
-            if (debouncedSearchTerm) {
-                fetchOptionsFn({
-                    dimensionId,
-                    page: nextPageRef.current,
-                    searchTerm: debouncedSearchTerm,
-                })
-            } else {
-                fetchOptionsFn({
-                    dimensionId,
-                    page: nextPageRef.current,
-                })
-            }
-        }
-    }, [debouncedSearchTerm, dimensionId, fetchOptionsFn])
-
-    useEffect(() => {
         if (state.data) {
+            console.log('data', state.data)
             // TODO: Figure out how to normalize and type the data for the second endpoint
             const newOptions: TransferOptions = state.data.items.map(
                 ({ id, name }) => ({
