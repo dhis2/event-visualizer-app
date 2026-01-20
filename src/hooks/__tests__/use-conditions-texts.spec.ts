@@ -3,11 +3,9 @@ import { createElement } from 'react'
 import type { ReactNode } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useConditionsTexts } from '../use-conditions-texts'
-import {
-    MockMetadataProvider,
-    useAddMetadata,
-} from '@components/app-wrapper/metadata-provider/metadata-provider'
+import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import type { LayoutDimension } from '@components/layout-panel/chip'
+import { useAddMetadata } from '@hooks'
 
 const mockRootOrgUnits = [
     {

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { useMetadataItems } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import type { LayoutDimension } from '@components/layout-panel/chip'
 import { ouIdHelper } from '@dhis2/analytics'
+import { useMetadataItems } from '@hooks'
 import {
     parseConditionsStringToArray,
     shouldUseLegendSetConditions,

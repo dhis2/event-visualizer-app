@@ -2,7 +2,7 @@ import { act } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { LayoutDimension } from '../chip'
 import { useTooltipContentData } from '../use-tooltip-content-data'
-import { useAddMetadata } from '@components/app-wrapper/metadata-provider/metadata-provider'
+import { useAddMetadata } from '@hooks'
 import {
     visUiConfigSlice,
     type VisUiConfigState,
