@@ -43,7 +43,6 @@ export const useInfiniteTransferOptions = (
     const [options, setOptions] = useState<TransferOptions>([])
     const onEndReached = useCallback(() => {
         if (nextPageRef.current !== null) {
-            console.log('FETCH - on end reached')
             fetchOptionsFn({
                 dimensionId,
                 page: nextPageRef.current,
@@ -55,7 +54,6 @@ export const useInfiniteTransferOptions = (
     useEffect(() => {
         if (queryState.isUninitialized) {
             // Initial request on mount
-            console.log('FETCH - initial')
             fetchOptionsFn({ dimensionId, page: 1 })
         } else if (debouncedSearchTerm !== prevDebouncedSearchTermRef.current) {
             // Requests when searchTerm changes
@@ -70,7 +68,6 @@ export const useInfiniteTransferOptions = (
                 fetchOptions.searchTerm = debouncedSearchTerm
             }
 
-            console.log('FETCH - search term changed')
             fetchOptionsFn(fetchOptions)
         }
     }, [
@@ -92,11 +89,7 @@ export const useInfiniteTransferOptions = (
             const hasReceivedNextPage =
                 typeof nextPageRef.current === 'number' &&
                 nextPageRef.current > 1
-            console.log(
-                hasReceivedNextPage
-                    ? 'adding to exisiting options'
-                    : 'resetting options'
-            )
+
             setOptions((prev) =>
                 hasReceivedNextPage ? [...prev, ...newOptions] : newOptions
             )
