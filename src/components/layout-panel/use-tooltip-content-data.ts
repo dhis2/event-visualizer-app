@@ -1,9 +1,8 @@
 import i18n from '@dhis2/d2-i18n'
 import { useMemo } from 'react'
 import type { LayoutDimension } from './chip'
-import { useMetadataItems } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import { ouIdHelper } from '@dhis2/analytics'
-import { useAppSelector } from '@hooks'
+import { useMetadataItems, useAppSelector } from '@hooks'
 import {
     isStartEndDate,
     useLocalizedStartEndDateFormatter,

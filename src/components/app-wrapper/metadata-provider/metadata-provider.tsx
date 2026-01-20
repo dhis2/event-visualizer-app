@@ -12,10 +12,26 @@ import { parseDimensionIdInput } from './dimension'
 import { getInitialMetadata } from './initial-metadata'
 import { MetadataStore } from './metadata-store'
 import { useRootOrgUnits } from '@hooks'
+import {
+    isProgramMetadataItem,
+    isProgramStageMetadataItem,
+    isOptionSetMetadataItem,
+    isLegendSetMetadataItem,
+    isOrganisationUnitMetadataItem,
+    isUserOrgUnitMetadataItem,
+    isDimensionMetadataItem,
+} from '@modules/metadata'
 import type {
     InitialMetadataItems,
     MetadataItem,
     DimensionMetadata,
+    ProgramMetadataItem,
+    ProgramStageMetadataItem,
+    OptionSetMetadataItem,
+    LegendSetMetadataItem,
+    OrganisationUnitMetadataItem,
+    UserOrgUnitMetadataItem,
+    DimensionMetadataItem,
 } from '@types'
 
 const MetadataContext = createContext<MetadataStore | null>(null)
@@ -63,6 +79,69 @@ export const useMetadataItem = (
         () => metadataStore.getMetadataItem(metadataId)
     )
     return result
+}
+export const useProgramMetadataItem = (
+    metadataId: string
+): ProgramMetadataItem | undefined => {
+    const item = useMetadataItem(metadataId)
+    if (item && !isProgramMetadataItem(item)) {
+        throw new Error('Item is not a program')
+    }
+    return item
+}
+export const useProgramStageMetadataItem = (
+    metadataId: string
+): ProgramStageMetadataItem | undefined => {
+    const item = useMetadataItem(metadataId)
+    if (item && !isProgramStageMetadataItem(item)) {
+        throw new Error('Item is not a program stage')
+    }
+    return item
+}
+export const useOptionSetMetadataItem = (
+    metadataId: string
+): OptionSetMetadataItem | undefined => {
+    const item = useMetadataItem(metadataId)
+    if (item && !isOptionSetMetadataItem(item)) {
+        throw new Error('Item is not an option set')
+    }
+    return item
+}
+export const useLegendSetMetadataItem = (
+    metadataId: string
+): LegendSetMetadataItem | undefined => {
+    const item = useMetadataItem(metadataId)
+    if (item && !isLegendSetMetadataItem(item)) {
+        throw new Error('Item is not a legend set')
+    }
+    return item
+}
+export const useOrganisationUnitMetadataItem = (
+    metadataId: string
+): OrganisationUnitMetadataItem | undefined => {
+    const item = useMetadataItem(metadataId)
+    if (item && !isOrganisationUnitMetadataItem(item)) {
+        throw new Error('Item is not an organisation unit')
+    }
+    return item
+}
+export const useUserOrgUnitMetadataItem = (
+    metadataId: string
+): UserOrgUnitMetadataItem | undefined => {
+    const item = useMetadataItem(metadataId)
+    if (item && !isUserOrgUnitMetadataItem(item)) {
+        throw new Error('Item is not a user org unit')
+    }
+    return item
+}
+export const useDimensionMetadataItem = (
+    metadataId: string
+): DimensionMetadataItem | undefined => {
+    const item = useMetadataItem(metadataId)
+    if (item && !isDimensionMetadataItem(item)) {
+        throw new Error('Item is not a dimension')
+    }
+    return item
 }
 const sentinel = '|'
 export const useMetadataItems = (
