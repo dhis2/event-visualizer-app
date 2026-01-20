@@ -16,7 +16,8 @@ const mockRootOrgUnits = [
     },
 ]
 
-vi.mock('@hooks', () => ({
+vi.mock('@hooks', async () => ({
+    ...(await vi.importActual('@hooks')),
     useRootOrgUnits: () => mockRootOrgUnits,
 }))
 
