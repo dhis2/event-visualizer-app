@@ -9,6 +9,7 @@ import {
 } from '@dhis2/ui'
 import { useCallback, type FC } from 'react'
 import { AddToLayoutButton } from './add-to-layout-button'
+import { DynamicDimensionModalContent } from './dynamic-dimension-modal-content/dynamic-dimension-modal-content'
 import { OrgUnitDimensionModalContent } from './orgunit-dimension-modal-content'
 import { PeriodDimensionModalContent } from './period-dimension-modal-content'
 import { StatusDimensionModalContent } from './status-dimension-modal-content'
@@ -39,8 +40,7 @@ const DimensionModalContent: FC<DimensionModalContentProps> = ({
         case 'CATEGORY':
         case 'CATEGORY_OPTION_GROUP_SET':
         case 'ORGANISATION_UNIT_GROUP_SET':
-            return `Content for dynamic dimension ${dimension.dimensionType}`
-
+            return <DynamicDimensionModalContent dimension={dimension} />
         default:
             return `Content for ${dimension.dimensionType}`
     }
