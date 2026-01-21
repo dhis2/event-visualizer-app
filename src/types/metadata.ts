@@ -64,6 +64,8 @@ export type DimensionMetadataItem = Omit<
     dimensionItemType?: DimensionType // optional instead of required
     valueType?: ValueType // optional instead of required
     optionSet?: string // the generated type has an optional array of `options`, but no `optionSet`
+    program?: string // program ID for program-scoped dimensions
+    programStage?: string // program stage ID for stage-scoped dimensions
 }
 
 // Note that `optionSet` and `legendSet` have an optional name
@@ -146,7 +148,10 @@ export type MetadataItemWithName = Exclude<
 
 export type Subscriber = () => void
 
-export type InitialMetadataItems = Record<string, string | MetadataInputItem>
+export type InitialMetadataItems = Record<
+    string,
+    string | MetadataInputItem | Partial<DimensionMetadataItem>
+>
 export type AnalyticsResponseMetadataItems = Record<string, MetadataInputItem>
 
 export type DimensionMetadata = {

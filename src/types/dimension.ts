@@ -15,11 +15,3 @@ export type YourDimensionType = (typeof YOUR_DIMENSION_TYPES)[number]
 export type DimensionId = (typeof DIMENSION_IDS)[number]
 
 export type TimeDimensionId = (typeof TIME_DIMENSION_IDS)[number]
-
-// TODO: check about this one
-// https://dhis2.atlassian.net/browse/DHIS2-20136
-export type InternalDimensionRecord = {
-    id: string
-    name: string
-    dimensionType?: DimensionType
-}

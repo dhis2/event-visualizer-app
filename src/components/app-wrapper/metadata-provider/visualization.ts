@@ -16,7 +16,7 @@ import type {
     MetadataInputMap,
     OrganisationUnitMetadataItem,
     DimensionId,
-    InternalDimensionRecord,
+    DimensionMetadataItem,
     SavedVisualization,
 } from '@types'
 
@@ -167,7 +167,7 @@ export const extractDimensionMetadata = (
         const dimensionList = visualization[listName] || []
 
         dimensionList.forEach((dimensionWrapper: object) => {
-            const dimension: InternalDimensionRecord =
+            const dimension: DimensionMetadataItem =
                 dimensionWrapper[dimensionName]
             metaData[dimension.id] = dimension
         })

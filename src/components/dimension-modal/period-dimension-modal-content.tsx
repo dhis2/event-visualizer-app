@@ -23,7 +23,7 @@ import {
     getVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
-import type { InternalDimensionRecord, PeriodType } from '@types'
+import type { DimensionMetadataItem, PeriodType } from '@types'
 
 export const OPTION_PRESETS = 'PRESETS'
 export const OPTION_START_END_DATES = 'START_END_DATES'
@@ -85,7 +85,7 @@ const StartEndDate: FC<StartEndDateProps> = ({
 }
 
 type PeriodDimensionModalContentProps = {
-    dimension: InternalDimensionRecord
+    dimension: DimensionMetadataItem
 }
 
 export const PeriodDimensionModalContent: FC<

@@ -9,10 +9,10 @@ import type {
     CurrentVisualization,
     DimensionArray,
     DimensionId,
+    DimensionMetadataItem,
     DimensionRecord,
     DimensionType,
     OutputType,
-    InternalDimensionRecord,
     SavedVisualization,
     TimeDimensionId,
     ValueType,
@@ -96,7 +96,7 @@ export const getDimensionsWithSuffix = ({
         if (!dimension.id) {
             dimension.id = id
         }
-        return dimension as InternalDimensionRecord
+        return dimension as DimensionMetadataItem
     })
 
     if (!['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(outputType)) {
@@ -209,7 +209,7 @@ export const getFullDimensionId = ({
 }
 
 type DimensionRecordObject = Partial<
-    Record<DimensionId, InternalDimensionRecord>
+    Record<DimensionId, Partial<DimensionMetadataItem>>
 >
 
 export const getCreatedDimension = (): DimensionRecordObject => ({

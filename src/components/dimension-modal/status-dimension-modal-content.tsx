@@ -9,10 +9,10 @@ import {
     getVisUiConfigItemsByDimension,
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice'
-import type { InternalDimensionRecord } from '@types'
+import type { DimensionMetadataItem } from '@types'
 
 type StatusDimensionModalContentProps = {
-    dimension: InternalDimensionRecord
+    dimension: DimensionMetadataItem
 }
 
 export const StatusDimensionModalContent: FC<

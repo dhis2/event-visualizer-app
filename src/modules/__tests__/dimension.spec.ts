@@ -17,7 +17,7 @@ import {
 import type {
     DimensionArray,
     CurrentVisualization,
-    InternalDimensionRecord,
+    DimensionMetadataItem,
     SavedVisualization,
 } from '@types'
 
@@ -469,7 +469,7 @@ describe('transformDimensions', () => {
 describe('getDimensionsWithSuffix', () => {
     const mockMetadata: Record<
         string,
-        InternalDimensionRecord | { name: string }
+        DimensionMetadataItem | { name: string }
     > = {
         did: {
             id: 'did',
