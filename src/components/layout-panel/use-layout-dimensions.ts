@@ -1,8 +1,7 @@
 import { useMemo } from 'react'
 import type { LayoutDimension } from '@components/layout-panel/chip'
 import { useMetadataItems } from '@hooks'
-import { getDimensionIdParts } from '@modules/dimension'
-import { isStatusDimension } from '@modules/dimension-helpers'
+import { getDimensionIdParts, isStatusDimension } from '@modules/dimension'
 import type { OutputType } from '@types'
 
 interface UseLayoutDimensionsParams {

@@ -1,9 +1,4 @@
 import i18n from '@dhis2/d2-i18n'
-import {
-    isProgramDimensionType as isProgramDimensionTypeHelper,
-    isStatusDimension,
-    isYourDimensionType as isYourDimensionTypeHelper,
-} from './dimension-helpers'
 import { isPopulatedString } from './validation'
 import { TIME_DIMENSION_IDS } from '@constants/dimensions'
 import {
@@ -18,11 +13,9 @@ import type {
     DimensionType,
     OutputType,
     InternalDimensionRecord,
-    ProgramDimensionType,
     SavedVisualization,
     TimeDimensionId,
     ValueType,
-    YourDimensionType,
 } from '@types'
 
 export const extractPlainDimensionId = (input: string): string => {
@@ -35,6 +28,52 @@ export const extractPlainDimensionId = (input: string): string => {
         throw new Error(`Input "${input}" does not contain a dimension ID`)
     }
     return dimensionId
+}
+
+/**
+ * Check if a dimension ID represents a status dimension (eventStatus or programStatus)
+ */
+export const isStatusDimension = (dimensionId: string): boolean => {
+    const plainId = extractPlainDimensionId(dimensionId)
+    return plainId === 'eventStatus' || plainId === 'programStatus'
+}
+
+/**
+ * Check if a dimension ID represents a user dimension (createdBy or lastUpdatedBy)
+ */
+export const isUserDimension = (dimensionId: string): boolean => {
+    const plainId = extractPlainDimensionId(dimensionId)
+    return plainId === 'createdBy' || plainId === 'lastUpdatedBy'
+}
+
+/**
+ * Check if a dimension type is a program-related dimension type
+ */
+export const isProgramDimensionType = (
+    dimensionType: DimensionType | undefined
+): boolean => {
+    if (!dimensionType) {
+        return false
+    }
+    return [
+        'PROGRAM_DATA_ELEMENT',
+        'CATEGORY',
+        'CATEGORY_OPTION_GROUP_SET',
+        'PROGRAM_ATTRIBUTE',
+        'PROGRAM_INDICATOR',
+    ].includes(dimensionType)
+}
+
+/**
+ * Check if a dimension type is a "your dimensions" type
+ */
+export const isYourDimensionType = (
+    dimensionType: DimensionType | undefined
+): boolean => {
+    if (!dimensionType) {
+        return false
+    }
+    return dimensionType === 'ORGANISATION_UNIT_GROUP_SET'
 }
 
 export const getDimensionsWithSuffix = ({
@@ -298,16 +337,6 @@ export const transformDimensions = (
 }
 
 // Type guards
-export const isProgramDimensionType = (
-    dimensionType: DimensionType | undefined
-): dimensionType is ProgramDimensionType =>
-    isProgramDimensionTypeHelper(dimensionType)
-
-export const isYourDimensionType = (
-    dimensionType: DimensionType | undefined
-): dimensionType is YourDimensionType =>
-    isYourDimensionTypeHelper(dimensionType)
-
 export const isTimeDimensionId = (
     dimensionId: DimensionRecord['dimension']
 ): dimensionId is TimeDimensionId =>
