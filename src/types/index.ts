@@ -19,12 +19,10 @@ export type {
     OptionSet,
     OrganisationUnit,
     OrganisationUnitLevel,
-    Program,
     ProgramType,
     RelativePeriodEnum,
     SortDirection,
     Sorting,
-    TrackedEntity,
     ValueType,
 } from './dhis2-openapi-schemas'
 export type { PickWithFieldFilters } from './pick-with-field-filters'
