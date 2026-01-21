@@ -83,7 +83,9 @@ export const dimensionSelectionSlice = createSlice({
             state.multiSelectedDimensionIds = []
         },
         addItemToMultiSelection: (state, action: PayloadAction<string>) => {
-            state.multiSelectedDimensionIds.push(action.payload)
+            if (!state.multiSelectedDimensionIds.includes(action.payload)) {
+                state.multiSelectedDimensionIds.push(action.payload)
+            }
         },
         removeItemFromMultiSelection: (
             state,

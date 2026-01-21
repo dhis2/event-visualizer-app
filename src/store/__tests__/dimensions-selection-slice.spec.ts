@@ -180,6 +180,16 @@ describe('dimensionSelectionSlice', () => {
             expect(state.multiSelectedDimensionIds).toEqual(['id1'])
         })
 
+        it('should not add duplicate item to multi selection', () => {
+            const prevstate: DimensionSelectionState = {
+                ...initialState,
+                multiSelectedDimensionIds: ['id1', 'id2'],
+            }
+
+            const state = reducer(prevstate, addItemToMultiSelection('id1'))
+            expect(state.multiSelectedDimensionIds).toEqual(['id1', 'id2'])
+        })
+
         it('should remove item from multi selection', () => {
             const prevstate: DimensionSelectionState = {
                 ...initialState,
