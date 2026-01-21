@@ -1,11 +1,11 @@
-import type { MetadataItem as GeneratedMetadaItem } from './dhis2-openapi-schemas'
 import type {
+    MetadataItem as GeneratedMetadaItem,
     ProgramType,
     OptionSet,
     LegendSet,
     ValueType,
-    DimensionType,
-} from '@types'
+} from './dhis2-openapi-schemas'
+import type { DimensionType } from './dimension'
 
 /** PHASES
  * 1. Data is provided as a single object, object map, or object array
@@ -57,16 +57,10 @@ export type DimensionMetadataItem = Omit<
      * actually represents a dimension, but has a `uid`
      * field rather than an `id` */
     GeneratedMetadaItem,
-    | 'uid'
-    | 'name'
-    | 'dimensionType'
-    | 'dimensionItemType'
-    | 'valueType'
-    | 'options'
+    'uid' | 'name' | 'dimensionItemType' | 'valueType' | 'options'
 > & {
     id: string // we use id not uid
     name: string // required instead of optional
-    dimensionType: DimensionType // Use custom DimensionType with additional strings
     dimensionItemType?: DimensionType // optional instead of required
     valueType?: ValueType // optional instead of required
     optionSet?: string // the generated type has an optional array of `options`, but no `optionSet`

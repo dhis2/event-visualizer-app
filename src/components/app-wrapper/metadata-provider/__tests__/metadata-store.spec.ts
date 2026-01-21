@@ -53,7 +53,7 @@ describe('MetadataStore', () => {
             },
             "GieVkTxp4HH": {
               "code": "DE_240794",
-              "dimensionType": "DATA_ELEMENT",
+              "dimensionType": "PROGRAM_DATA_ELEMENT",
               "id": "GieVkTxp4HH",
               "name": "Height in cm",
               "valueType": "NUMBER",
@@ -70,7 +70,7 @@ describe('MetadataStore', () => {
             },
             "K6uUAvq500H": {
               "code": "DE_3000010",
-              "dimensionType": "DATA_ELEMENT",
+              "dimensionType": "PROGRAM_DATA_ELEMENT",
               "id": "K6uUAvq500H",
               "name": "Diagnosis (ICD-10)",
               "optionSet": "eUZ79clX7y1",
@@ -181,7 +181,7 @@ describe('MetadataStore', () => {
             },
             "SWfdB5lX0fk": {
               "code": "DE_423442",
-              "dimensionType": "DATA_ELEMENT",
+              "dimensionType": "PROGRAM_DATA_ELEMENT",
               "id": "SWfdB5lX0fk",
               "name": "Pregnant",
               "valueType": "BOOLEAN",
@@ -271,7 +271,6 @@ describe('MetadataStore', () => {
               "name": "Registration date",
             },
             "createdBy": {
-              "dimensionType": "USER",
               "id": "createdBy",
               "name": "Created by",
             },
@@ -295,7 +294,6 @@ describe('MetadataStore', () => {
               "programType": "WITHOUT_REGISTRATION",
             },
             "eBAyeGv0exc.eventStatus": {
-              "dimensionType": "STATUS",
               "id": "eBAyeGv0exc.eventStatus",
               "name": "Event status",
             },
@@ -305,13 +303,12 @@ describe('MetadataStore', () => {
               "name": "Organisation unit",
             },
             "eBAyeGv0exc.programStatus": {
-              "dimensionType": "STATUS",
               "id": "eBAyeGv0exc.programStatus",
               "name": "Program status",
             },
             "eMyVanycQSC": {
               "code": "DE_3000005",
-              "dimensionType": "DATA_ELEMENT",
+              "dimensionType": "PROGRAM_DATA_ELEMENT",
               "id": "eMyVanycQSC",
               "name": "Admission Date",
               "valueType": "DATE",
@@ -327,13 +324,12 @@ describe('MetadataStore', () => {
               "name": "Report date",
             },
             "eventStatus": {
-              "dimensionType": "STATUS",
               "id": "eventStatus",
               "name": "Event status",
             },
             "fWIAEtYVEGk": {
               "code": "DE_3000009",
-              "dimensionType": "DATA_ELEMENT",
+              "dimensionType": "PROGRAM_DATA_ELEMENT",
               "id": "fWIAEtYVEGk",
               "name": "Mode of Discharge",
               "optionSet": "iDFPKpFTiVw",
@@ -360,7 +356,6 @@ describe('MetadataStore', () => {
               "name": "Last updated on",
             },
             "lastUpdatedBy": {
-              "dimensionType": "USER",
               "id": "lastUpdatedBy",
               "name": "Last updated by",
             },
@@ -371,14 +366,14 @@ describe('MetadataStore', () => {
             },
             "msodh3rEMJa": {
               "code": "DE_3000006",
-              "dimensionType": "DATA_ELEMENT",
+              "dimensionType": "PROGRAM_DATA_ELEMENT",
               "id": "msodh3rEMJa",
               "name": "Discharge Date",
               "valueType": "DATE",
             },
             "oZg33kd9taw": {
               "code": "DE_3000004",
-              "dimensionType": "DATA_ELEMENT",
+              "dimensionType": "PROGRAM_DATA_ELEMENT",
               "id": "oZg33kd9taw",
               "name": "Gender",
               "optionSet": "pC3N9N77UmT",
@@ -390,13 +385,12 @@ describe('MetadataStore', () => {
               "name": "Organisation unit",
             },
             "programStatus": {
-              "dimensionType": "STATUS",
               "id": "programStatus",
               "name": "Program status",
             },
             "qrur9Dvnyt5": {
               "code": "DE_3000003",
-              "dimensionType": "DATA_ELEMENT",
+              "dimensionType": "PROGRAM_DATA_ELEMENT",
               "id": "qrur9Dvnyt5",
               "name": "Age in years",
               "valueType": "INTEGER",
@@ -418,7 +412,7 @@ describe('MetadataStore', () => {
             },
             "vV9UWAZohSf": {
               "code": "DE_240795",
-              "dimensionType": "DATA_ELEMENT",
+              "dimensionType": "PROGRAM_DATA_ELEMENT",
               "id": "vV9UWAZohSf",
               "name": "Weight in kg",
               "valueType": "INTEGER_POSITIVE",
@@ -731,7 +725,7 @@ describe('MetadataStore', () => {
                 {
                     id: 'testDimension',
                     name: 'Test Dimension',
-                    dimensionType: 'DATA_ELEMENT',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
                     valueType: 'TEXT',
                 },
                 {
@@ -766,7 +760,7 @@ describe('MetadataStore', () => {
                     dimension: {
                         id: 'testDimension',
                         name: 'Test Dimension',
-                        dimensionType: 'DATA_ELEMENT',
+                        dimensionType: 'PROGRAM_DATA_ELEMENT',
                         valueType: 'TEXT',
                     },
                     program: undefined,
@@ -797,7 +791,7 @@ describe('MetadataStore', () => {
                     dimension: {
                         id: 'testDimension',
                         name: 'Test Dimension',
-                        dimensionType: 'DATA_ELEMENT',
+                        dimensionType: 'PROGRAM_DATA_ELEMENT',
                         valueType: 'TEXT',
                     },
                     program: undefined,
@@ -836,7 +830,7 @@ describe('MetadataStore', () => {
                     dimension: {
                         id: 'testDimension',
                         name: 'Test Dimension',
-                        dimensionType: 'DATA_ELEMENT',
+                        dimensionType: 'PROGRAM_DATA_ELEMENT',
                         valueType: 'TEXT',
                     },
                     program: {
@@ -874,7 +868,7 @@ describe('MetadataStore', () => {
                 metadataStore.addMetadata({
                     id: 'sharedDimension',
                     name: 'Generic Dimension',
-                    dimensionType: 'DATA_ELEMENT',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
                     valueType: 'TEXT',
                 })
 
@@ -882,7 +876,7 @@ describe('MetadataStore', () => {
                 metadataStore.addMetadata({
                     id: 'testProgram.testStage.sharedDimension',
                     name: 'Program-Specific Dimension',
-                    dimensionType: 'DATA_ELEMENT',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
                     valueType: 'NUMBER',
                 })
 
@@ -894,7 +888,7 @@ describe('MetadataStore', () => {
                 expect(result.dimension).toEqual({
                     id: 'testProgram.testStage.sharedDimension',
                     name: 'Program-Specific Dimension',
-                    dimensionType: 'DATA_ELEMENT',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
                     valueType: 'NUMBER',
                 })
             })

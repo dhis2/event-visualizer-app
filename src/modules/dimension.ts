@@ -1,10 +1,11 @@
 import i18n from '@dhis2/d2-i18n'
-import { isPopulatedString } from './validation'
 import {
-    PROGRAM_DIMENSION_TYPES,
-    TIME_DIMENSION_IDS,
-    YOUR_DIMENSION_TYPES,
-} from '@constants/dimensions'
+    isProgramDimensionType as isProgramDimensionTypeHelper,
+    isStatusDimension,
+    isYourDimensionType as isYourDimensionTypeHelper,
+} from './dimension-helpers'
+import { isPopulatedString } from './validation'
+import { TIME_DIMENSION_IDS } from '@constants/dimensions'
 import {
     getDefaultOrgUnitLabel,
     getDefaultOrgUnitMetadata,
@@ -14,7 +15,7 @@ import type {
     DimensionArray,
     DimensionId,
     DimensionRecord,
-    ExtendedDimensionType,
+    DimensionType,
     OutputType,
     InternalDimensionRecord,
     ProgramDimensionType,
@@ -65,7 +66,7 @@ export const getDimensionsWithSuffix = ({
 
     return dimensions.map((dimension) => {
         if (
-            ['DATA_ELEMENT', 'PERIOD'].includes(
+            ['PROGRAM_DATA_ELEMENT', 'PERIOD'].includes(
                 dimension.dimensionType || dimension.dimensionItemType
             )
         ) {
@@ -100,10 +101,10 @@ export const getDimensionsWithSuffix = ({
         } else if (
             // always suffix ou and statuses for TE
             outputType === 'TRACKED_ENTITY_INSTANCE' &&
-            ['ORGANISATION_UNIT', 'STATUS'].includes(
-                dimension.dimensionType || dimension.dimensionItemType
-            ) &&
-            dimension.programId
+            dimension.programId &&
+            ((dimension.dimensionType || dimension.dimensionItemType) ===
+                'ORGANISATION_UNIT' ||
+                isStatusDimension(dimension.dimensionId))
         ) {
             dimension.suffix = metadata[dimension.programId]?.name
         }
@@ -196,12 +197,12 @@ export const getMainDimensions = (
     },
     createdBy: {
         id: 'createdBy',
-        dimensionType: 'USER',
+        // No dimensionType - this is a special internal dimension identified by ID
         name: i18n.t('Created by'),
     },
     lastUpdatedBy: {
         id: 'lastUpdatedBy',
-        dimensionType: 'USER',
+        // No dimensionType - this is a special internal dimension identified by ID
         name: i18n.t('Last updated by'),
     },
 })
@@ -219,16 +220,31 @@ export const getProgramDimensions = (
     },
     [prefixDimensionId('eventStatus', programId)]: {
         id: prefixDimensionId('eventStatus', programId),
-        dimensionType: 'STATUS',
+        // No dimensionType - this is a special internal dimension identified by ID
         name: i18n.t('Event status'),
     },
     [prefixDimensionId('programStatus', programId)]: {
         id: prefixDimensionId('programStatus', programId),
-        dimensionType: 'STATUS',
+        // No dimensionType - this is a special internal dimension identified by ID
         name: i18n.t('Program status'),
     },
 })
 
+/**
+ * Transforms dimensions from API format to app format.
+ *
+ * IMPORTANT: This function changes the semantic type of dimensions:
+ * - Input: dimensions with OpenApiDimensionType (e.g., PROGRAM_DATA_ELEMENT)
+ * - Output: dimensions with DimensionType (e.g., DATA_ELEMENT)
+ *
+ * The return type is still DimensionArray, which accepts both types as a union.
+ * This is technical debt - ideally this should return a TransformedDimensionArray type.
+ *
+ * Transformations:
+ * - PROGRAM_DATA_ELEMENT → DATA_ELEMENT
+ * - Legacy 'pe' dimension → appropriate time dimension based on outputType/timeField
+ * - Filters out special dimensions (dy, latitude, longitude)
+ */
 export const transformDimensions = (
     dimensions: DimensionArray,
     visualization: CurrentVisualization
@@ -262,11 +278,12 @@ export const transformDimensions = (
         )
         .map((dimensionObj) => {
             if (dimensionObj.dimensionType === 'PROGRAM_DATA_ELEMENT') {
-                return {
-                    ...dimensionObj,
-                    dimensionType: 'DATA_ELEMENT',
-                }
-            } else if (dimensionObj.dimension === 'pe') {
+                // PROGRAM_DATA_ELEMENT is a valid OpenAPI type but needs special handling
+                // It represents a data element within a program context
+                // Keep it as PROGRAM_DATA_ELEMENT rather than mapping to something else
+                return dimensionObj
+            }
+            if (dimensionObj.dimension === 'pe') {
                 return {
                     ...dimensionObj,
                     // TEI and pe (legacy visualization) should not normally happen
@@ -275,22 +292,21 @@ export const transformDimensions = (
                         : outputTypeTimeDimensionMap[outputType],
                     dimensionType: 'PERIOD',
                 }
-            } else {
-                return dimensionObj
             }
+            return dimensionObj
         })
 }
 
 // Type guards
 export const isProgramDimensionType = (
-    dimensionType: ExtendedDimensionType
+    dimensionType: DimensionType | undefined
 ): dimensionType is ProgramDimensionType =>
-    (PROGRAM_DIMENSION_TYPES as readonly string[]).includes(dimensionType)
+    isProgramDimensionTypeHelper(dimensionType)
 
 export const isYourDimensionType = (
-    dimensionType: ExtendedDimensionType
+    dimensionType: DimensionType | undefined
 ): dimensionType is YourDimensionType =>
-    (YOUR_DIMENSION_TYPES as readonly string[]).includes(dimensionType)
+    isYourDimensionTypeHelper(dimensionType)
 
 export const isTimeDimensionId = (
     dimensionId: DimensionRecord['dimension']
@@ -300,7 +316,7 @@ export const isTimeDimensionId = (
 type NameParentProperty = 'program' | 'stage'
 type TimeDimension = {
     id: TimeDimensionId
-    dimensionType: ExtendedDimensionType
+    dimensionType: 'PERIOD'
     formatType: ValueType
     defaultName: string
     nameParentProperty: NameParentProperty
@@ -382,24 +398,6 @@ export const getTimeDimensionName = (
             : stage?.[dimension.nameProperty]
 
     return name || dimension.defaultName
-}
-
-export const getUiDimensionType = (
-    dimensionId: DimensionId | string,
-    dimensionType: ExtendedDimensionType
-): ExtendedDimensionType => {
-    switch (dimensionId) {
-        case 'programStatus':
-        case 'eventStatus':
-            return 'STATUS'
-
-        case 'createdBy':
-        case 'lastUpdatedBy':
-            return 'USER'
-
-        default:
-            return dimensionType
-    }
 }
 
 export const combineAllDimensionsFromVisualization = (

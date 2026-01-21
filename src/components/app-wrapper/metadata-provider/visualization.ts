@@ -8,7 +8,6 @@ import {
     getProgramDimensions,
     getTimeDimensionName,
     getTimeDimensions,
-    getUiDimensionType,
 } from '@modules/dimension'
 import { transformVisualization } from '@modules/visualization'
 import type {
@@ -17,7 +16,6 @@ import type {
     MetadataInputMap,
     OrganisationUnitMetadataItem,
     DimensionId,
-    DimensionType,
     InternalDimensionRecord,
     SavedVisualization,
 } from '@types'
@@ -41,7 +39,7 @@ const getDefaultOrgUnitMetadata = (
 ) => ({
     ou: {
         id: 'ou',
-        dimensionType: 'ORGANISATION_UNIT' as DimensionType,
+        dimensionType: 'ORGANISATION_UNIT',
         name: getDefaultOrgUnitLabel(outputType),
     },
 })
@@ -237,10 +235,11 @@ export const supplementDimensionMetadata = (
             const item: MetadataInputItem = {
                 id: prefixedId,
                 name: collectedItem.name,
-                dimensionType: getUiDimensionType(
-                    prefixedId,
-                    dimension.dimensionType!
-                ),
+            }
+
+            // Only set dimensionType if it exists (special dimensions like STATUS/USER don't have it)
+            if (dimension.dimensionType) {
+                item.dimensionType = dimension.dimensionType
             }
 
             if (dimension.optionSet?.id) {

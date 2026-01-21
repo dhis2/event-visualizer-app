@@ -2,7 +2,8 @@ import { useMemo } from 'react'
 import type { LayoutDimension } from '@components/layout-panel/chip'
 import { useMetadataItems } from '@hooks'
 import { getDimensionIdParts } from '@modules/dimension'
-import type { DimensionType, OutputType } from '@types'
+import { isStatusDimension } from '@modules/dimension-helpers'
+import type { OutputType } from '@types'
 
 interface UseLayoutDimensionsParams {
     dimensionIds: string[]
@@ -94,8 +95,8 @@ export const useLayoutDimensions = ({
                 dimension.dimensionType || dimension.dimensionItemType
             if (
                 dimensionTypeOrItemType &&
-                ['DATA_ELEMENT', 'PERIOD'].includes(
-                    dimensionTypeOrItemType as DimensionType
+                ['PROGRAM_DATA_ELEMENT', 'PERIOD'].includes(
+                    dimensionTypeOrItemType
                 )
             ) {
                 const duplicates = dimensions.filter(
@@ -131,13 +132,11 @@ export const useLayoutDimensions = ({
                     }
                 }
             } else if (
-                // always suffix ou and statuses for TE
+                // always suffix ou and statuses for TE with programId
                 outputType === 'TRACKED_ENTITY_INSTANCE' &&
-                dimensionTypeOrItemType &&
-                ['ORGANISATION_UNIT', 'STATUS'].includes(
-                    dimensionTypeOrItemType as DimensionType
-                ) &&
-                dimension.programId
+                dimension.programId &&
+                (dimensionTypeOrItemType === 'ORGANISATION_UNIT' ||
+                    isStatusDimension(dimension.dimensionId))
             ) {
                 dimension.suffix = metadataItems[dimension.programId]?.name
             }

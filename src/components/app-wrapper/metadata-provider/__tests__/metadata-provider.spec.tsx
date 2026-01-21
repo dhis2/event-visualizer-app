@@ -531,7 +531,7 @@ describe('useDimensionMetadata', () => {
             result.current.addMetadata({
                 id: 'testDimension',
                 name: 'Test Dimension',
-                dimensionType: 'DATA_ELEMENT',
+                dimensionType: 'PROGRAM_DATA_ELEMENT',
                 valueType: 'INTEGER',
             })
         })
@@ -570,7 +570,7 @@ describe('useDimensionMetadata', () => {
             dimension: {
                 id: 'testDimension',
                 name: 'Test Dimension',
-                dimensionType: 'DATA_ELEMENT',
+                dimensionType: 'PROGRAM_DATA_ELEMENT',
                 valueType: 'INTEGER',
             },
             program: {
@@ -654,19 +654,19 @@ describe('useDimensionsMetadata', () => {
                 {
                     id: 'dimension1',
                     name: 'Dimension 1',
-                    dimensionType: 'DATA_ELEMENT',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
                     valueType: 'TEXT',
                 },
                 {
                     id: 'dimension2',
                     name: 'Dimension 2',
-                    dimensionType: 'DATA_ELEMENT',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
                     valueType: 'NUMBER',
                 },
                 {
                     id: 'dimension3',
                     name: 'Dimension 3',
-                    dimensionType: 'DATA_ELEMENT',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
                     valueType: 'INTEGER',
                 },
                 {
@@ -693,7 +693,7 @@ describe('useDimensionsMetadata', () => {
                 dimension: {
                     id: 'dimension1',
                     name: 'Dimension 1',
-                    dimensionType: 'DATA_ELEMENT',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
                     valueType: 'TEXT',
                 },
                 program: undefined,
@@ -707,7 +707,7 @@ describe('useDimensionsMetadata', () => {
                 dimension: {
                     id: 'dimension2',
                     name: 'Dimension 2',
-                    dimensionType: 'DATA_ELEMENT',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
                     valueType: 'NUMBER',
                 },
                 program: {
@@ -725,7 +725,7 @@ describe('useDimensionsMetadata', () => {
                 dimension: {
                     id: 'dimension3',
                     name: 'Dimension 3',
-                    dimensionType: 'DATA_ELEMENT',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
                     valueType: 'INTEGER',
                 },
                 program: {
@@ -762,7 +762,7 @@ describe('useDimensionsMetadata', () => {
             result.current.addMetadata({
                 id: 'dimension1',
                 name: 'Dimension 1',
-                dimensionType: 'DATA_ELEMENT',
+                dimensionType: 'PROGRAM_DATA_ELEMENT',
                 valueType: 'TEXT',
             })
         })
@@ -779,7 +779,7 @@ describe('useDimensionsMetadata', () => {
             result.current.addMetadata({
                 id: 'dimension2',
                 name: 'Dimension 2',
-                dimensionType: 'DATA_ELEMENT',
+                dimensionType: 'PROGRAM_DATA_ELEMENT',
                 valueType: 'NUMBER',
             })
         })

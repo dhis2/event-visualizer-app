@@ -400,7 +400,7 @@ describe('getProgramDimensions', () => {
 })
 
 describe('transformDimensions', () => {
-    it('transforms PROGRAM_DATA_ELEMENT to DATA_ELEMENT', () => {
+    it('keeps PROGRAM_DATA_ELEMENT as is', () => {
         const dimensions = [
             {
                 dimension: 'de1',
@@ -417,7 +417,7 @@ describe('transformDimensions', () => {
           [
             {
               "dimension": "de1",
-              "dimensionType": "DATA_ELEMENT",
+              "dimensionType": "PROGRAM_DATA_ELEMENT",
               "items": [],
             },
           ]
@@ -471,20 +471,24 @@ describe('getDimensionsWithSuffix', () => {
         string,
         InternalDimensionRecord | { name: string }
     > = {
-        did: { id: 'did', dimensionType: 'DATA_ELEMENT', name: 'Data Element' },
+        did: {
+            id: 'did',
+            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            name: 'Data Element',
+        },
         'sid.did': {
             id: 'sid.did',
-            dimensionType: 'DATA_ELEMENT',
+            dimensionType: 'PROGRAM_DATA_ELEMENT',
             name: 'Data Element',
         },
         'pid.sid.did': {
             id: 'pid.sid.did',
-            dimensionType: 'DATA_ELEMENT',
+            dimensionType: 'PROGRAM_DATA_ELEMENT',
             name: 'Data Element',
         },
         'pid.sid.did2': {
             id: 'pid.sid.did2',
-            dimensionType: 'DATA_ELEMENT',
+            dimensionType: 'PROGRAM_DATA_ELEMENT',
             name: 'Data Element 2',
         },
         sid: { name: 'Stage Name' },
@@ -515,7 +519,7 @@ describe('getDimensionsWithSuffix', () => {
                 ...mockMetadata,
                 'pid.sid2.did': {
                     id: 'pid.sid2.did',
-                    dimensionType: 'DATA_ELEMENT',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
                 },
                 sid2: { name: 'Stage2 Name' },
             },
@@ -537,7 +541,7 @@ describe('getDimensionsWithSuffix', () => {
 
 describe('isProgramDimensionType', () => {
     it('returns true for program dimension types', () => {
-        expect(isProgramDimensionType('DATA_ELEMENT')).toBe(true)
+        expect(isProgramDimensionType('PROGRAM_DATA_ELEMENT')).toBe(true)
         expect(isProgramDimensionType('PROGRAM_ATTRIBUTE')).toBe(true)
         expect(isProgramDimensionType('PROGRAM_INDICATOR')).toBe(true)
         expect(isProgramDimensionType('CATEGORY')).toBe(true)
@@ -547,8 +551,6 @@ describe('isProgramDimensionType', () => {
     it('returns false for non-program dimension types', () => {
         expect(isProgramDimensionType('PERIOD')).toBe(false)
         expect(isProgramDimensionType('ORGANISATION_UNIT')).toBe(false)
-        expect(isProgramDimensionType('USER')).toBe(false)
-        expect(isProgramDimensionType('STATUS')).toBe(false)
     })
 })
 
@@ -558,7 +560,7 @@ describe('isYourDimensionType', () => {
     })
 
     it('returns false for non-your dimension types', () => {
-        expect(isYourDimensionType('DATA_ELEMENT')).toBe(false)
+        expect(isYourDimensionType('PROGRAM_DATA_ELEMENT')).toBe(false)
         expect(isYourDimensionType('PERIOD')).toBe(false)
         expect(isYourDimensionType('ORGANISATION_UNIT')).toBe(false)
     })
