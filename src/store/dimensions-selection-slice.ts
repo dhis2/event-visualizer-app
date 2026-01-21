@@ -1,6 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { EngineError } from '@api/parse-engine-error'
+import type { DataSource } from '@types'
 
 type ListLoadingState = {
     isLoading: boolean
@@ -9,6 +10,7 @@ type ListLoadingState = {
 type AllListsLoadErrors = Array<{ groupKey: string; error: EngineError }>
 
 export interface DimensionSelectionState {
+    dataSource: DataSource | null
     searchTerm: string
     // TODO: update to a string literal once all allowed filter strings are known
     filter: string | null
@@ -19,6 +21,7 @@ export interface DimensionSelectionState {
 }
 
 export const initialState: DimensionSelectionState = {
+    dataSource: null,
     searchTerm: '',
     filter: null,
     isAllCollapsed: false,
@@ -27,9 +30,15 @@ export const initialState: DimensionSelectionState = {
 }
 
 export const dimensionSelectionSlice = createSlice({
-    name: 'dimension-selection',
+    name: 'dimensionSelection',
     initialState,
     reducers: {
+        clearDataSource: (state) => {
+            state.dataSource = null
+        },
+        setDataSource: (state, action: PayloadAction<DataSource>) => {
+            state.dataSource = action.payload
+        },
         clearSearchTerm: (state) => {
             state.searchTerm = initialState.searchTerm
         },
@@ -87,18 +96,19 @@ export const dimensionSelectionSlice = createSlice({
         },
     },
     selectors: {
+        getDataSource: (state) => state.dataSource,
         getSearchTerm: (state) => state.searchTerm,
         getFilter: (state) => state.filter,
         getIsAllCollapsed: (state) => state.isAllCollapsed,
         isAnyListLoading: createSelector(
-            [(state: DimensionSelectionState) => state.listsLoadingStates],
+            (state: DimensionSelectionState) => state.listsLoadingStates,
             (listsLoadingStates) =>
                 Object.values(listsLoadingStates).some(
                     (listLoadingState) => listLoadingState.isLoading
                 )
         ),
         getAllListLoadErrors: createSelector(
-            [(state: DimensionSelectionState) => state.listsLoadingStates],
+            (state: DimensionSelectionState) => state.listsLoadingStates,
             (listsLoadingStates): AllListsLoadErrors =>
                 Object.entries(listsLoadingStates).reduce<AllListsLoadErrors>(
                     (allErrors, [key, listLoadingState]) => {
@@ -124,6 +134,8 @@ export const dimensionSelectionSlice = createSlice({
 })
 
 export const {
+    clearDataSource,
+    setDataSource,
     clearSearchTerm,
     setSearchTerm,
     clearFilter,
@@ -140,6 +152,7 @@ export const {
     removeItemFromMultiSelection,
 } = dimensionSelectionSlice.actions
 export const {
+    getDataSource,
     getSearchTerm,
     getFilter,
     getIsAllCollapsed,

@@ -19,10 +19,12 @@ export type {
     OptionSet,
     OrganisationUnit,
     OrganisationUnitLevel,
+    Program,
     ProgramType,
     RelativePeriodEnum,
     SortDirection,
     Sorting,
+    TrackedEntity,
     ValueType,
 } from './dhis2-openapi-schemas'
 export type { PickWithFieldFilters } from './pick-with-field-filters'
@@ -50,6 +52,7 @@ export type AppCachedData = TransformedAppCachedData
 export type CurrentUser = TransformedAppCachedData['currentUser']
 
 export type * from './axis'
+export type * from './data-source'
 export type * from './dimension'
 export type * from './layout'
 export type * from './metadata'
