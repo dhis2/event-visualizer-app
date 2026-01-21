@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { currentVisSlice } from './current-vis-slice'
+import { dimensionSelectionSlice } from './dimensions-selection-slice'
 import { loaderSlice } from './loader-slice'
 import { listenerMiddleware } from './middleware-listener'
 import { navigationSlice } from './navigation-slice'
@@ -28,6 +29,7 @@ export const createStore = (
         reducer: {
             [api.reducerPath]: api.reducer,
             currentVis: currentVisSlice.reducer,
+            dimensionsSelection: dimensionSelectionSlice.reducer,
             loader: loaderSlice.reducer,
             navigation: navigationSlice.reducer,
             ui: uiSlice.reducer,
