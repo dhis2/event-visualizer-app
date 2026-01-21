@@ -2,8 +2,8 @@
  * Types exported from here can be imported as follows:
  * `import type { MyType } from '@types'` */
 import type { TransformedAppCachedData } from '../components/app-wrapper/app-cached-data-query-provider'
-/* We have an ESLint rule in place to prevent imports from
- * `src/types/dhis2-openapi-schemas` anywhere else in the codebase.
+/* We have an ESLint rule in place to only allows imports from
+ * `src/types/dhis2-openapi-schemas` from the `src/types` dir.
  * The reason for this is so that we can apply manual overrides
  * for generated types here, as we have done for `SystemSettings`.
  * Anything that is needed from the generated types should be explicitly exported here;
