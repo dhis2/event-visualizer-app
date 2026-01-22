@@ -8,6 +8,7 @@ import {
     getProgramDimensions,
     getTimeDimensionName,
     getTimeDimensions,
+    getUiDimensionType,
 } from '@modules/dimension'
 import { transformVisualization } from '@modules/visualization'
 import type {
@@ -235,11 +236,10 @@ export const supplementDimensionMetadata = (
             const item: MetadataInputItem = {
                 id: prefixedId,
                 name: collectedItem.name,
-            }
-
-            // Only set dimensionType if it exists (special dimensions like STATUS/USER don't have it)
-            if (dimension.dimensionType) {
-                item.dimensionType = dimension.dimensionType
+                dimensionType: getUiDimensionType(
+                    prefixedId,
+                    dimension.dimensionType!
+                ),
             }
 
             if (dimension.optionSet?.id) {
