@@ -52,10 +52,9 @@ export type NormalizedMetadataInputItem = Record<string, unknown> & {
  ****************************************************/
 
 export type DimensionMetadataItem = Omit<
-    /* The generated type called MetadataItem actually
-     * actually represents a dimension of sorts, but has a `uid`
-     * field rather than an `id` and some required fields that we
-     * do not always populate */
+    /* The generated type called MetadataItem actually represents a
+     * dimension of sorts, but has a `uid` field rather than an `id`
+     * and some required fields that we do not always populate */
     Partial<GeneratedMetadaItem>, // make all fiels optional
     | 'uid' // Omit because we use `id`
     | 'name' // Omit to make required
