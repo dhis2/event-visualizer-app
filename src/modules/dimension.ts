@@ -13,10 +13,10 @@ import type {
     CurrentVisualization,
     DimensionArray,
     DimensionId,
+    DimensionMetadataItem,
     DimensionRecord,
-    ExtendedDimensionType,
+    DimensionType,
     OutputType,
-    InternalDimensionRecord,
     ProgramDimensionType,
     SavedVisualization,
     TimeDimensionId,
@@ -56,7 +56,7 @@ export const getDimensionsWithSuffix = ({
         if (!dimension.id) {
             dimension.id = id
         }
-        return dimension as InternalDimensionRecord
+        return dimension as DimensionMetadataItem
     })
 
     if (!['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(outputType)) {
@@ -168,11 +168,11 @@ export const getFullDimensionId = ({
         .join('.')
 }
 
-type DimensionRecordObject = Partial<
-    Record<DimensionId, InternalDimensionRecord>
->
+type DimensionRecordObject = Partial<Record<DimensionId, DimensionMetadataItem>>
 
-export const getCreatedDimension = (): DimensionRecordObject => ({
+export const getCreatedDimension = (): Partial<
+    Record<DimensionId, DimensionMetadataItem>
+> => ({
     created: {
         id: 'created',
         dimensionType: 'PERIOD',
@@ -283,12 +283,12 @@ export const transformDimensions = (
 
 // Type guards
 export const isProgramDimensionType = (
-    dimensionType: ExtendedDimensionType
+    dimensionType: DimensionType
 ): dimensionType is ProgramDimensionType =>
     (PROGRAM_DIMENSION_TYPES as readonly string[]).includes(dimensionType)
 
 export const isYourDimensionType = (
-    dimensionType: ExtendedDimensionType
+    dimensionType: DimensionType
 ): dimensionType is YourDimensionType =>
     (YOUR_DIMENSION_TYPES as readonly string[]).includes(dimensionType)
 
@@ -300,7 +300,7 @@ export const isTimeDimensionId = (
 type NameParentProperty = 'program' | 'stage'
 type TimeDimension = {
     id: TimeDimensionId
-    dimensionType: ExtendedDimensionType
+    dimensionType: DimensionType
     formatType: ValueType
     defaultName: string
     nameParentProperty: NameParentProperty
@@ -386,8 +386,8 @@ export const getTimeDimensionName = (
 
 export const getUiDimensionType = (
     dimensionId: DimensionId | string,
-    dimensionType: ExtendedDimensionType
-): ExtendedDimensionType => {
+    dimensionType: DimensionType
+): DimensionType => {
     switch (dimensionId) {
         case 'programStatus':
         case 'eventStatus':

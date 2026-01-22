@@ -171,7 +171,7 @@ export const isMetadataItem = (input: unknown): input is MetadataItem => {
 
 export const getDefaultOrgUnitMetadata = (
     outputType?: OutputType
-): Partial<Record<DimensionId, Partial<DimensionMetadataItem>>> => ({
+): Partial<Record<DimensionId, DimensionMetadataItem>> => ({
     ou: {
         id: 'ou',
         dimensionType: 'ORGANISATION_UNIT',

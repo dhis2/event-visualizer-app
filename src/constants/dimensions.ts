@@ -3,7 +3,7 @@ import type { DimensionId, DimensionType } from '@types'
 
 export const PROGRAM_DIMENSION_TYPES =
     asStringLiteralSubsetArray<DimensionType>()([
-        'PROGRAM_DATA_ELEMENT', // Use actual OpenAPI type
+        'DATA_ELEMENT',
         'CATEGORY',
         'CATEGORY_OPTION_GROUP_SET',
         'PROGRAM_ATTRIBUTE',
