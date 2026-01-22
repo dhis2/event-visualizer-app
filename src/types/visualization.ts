@@ -26,7 +26,7 @@ type MetadataRecordArray<T extends string> = Array<Record<T, IdNameRecord>>
  */
 export type DimensionRecord = {
     dimension: string
-    dimensionType?: DimensionType
+    dimensionType?: DimensionType | 'PROGRAM_DATA_ELEMENT'
     filter?: string
     program?: IdRecord
     programStage?: IdRecord

@@ -3,7 +3,6 @@ import type {
     ProgramType,
     OptionSet,
     LegendSet,
-    ValueType,
 } from './dhis2-openapi-schemas'
 import type { DimensionType } from './dimension'
 
@@ -54,18 +53,23 @@ export type NormalizedMetadataInputItem = Record<string, unknown> & {
 
 export type DimensionMetadataItem = Omit<
     /* The generated type called MetadataItem actually
-     * actually represents a dimension, but has a `uid`
-     * field rather than an `id` */
-    GeneratedMetadaItem,
-    'uid' | 'name' | 'dimensionItemType' | 'valueType' | 'options'
+     * actually represents a dimension of sorts, but has a `uid`
+     * field rather than an `id` and some required fields that we
+     * do not always populate */
+    Partial<GeneratedMetadaItem>, // make all fiels optional
+    | 'uid' // Omit because we use `id`
+    | 'name' // Omit to make required
+    | 'dimensionType' // Omit to make required and customise
+    | 'dimensionItemType' // Omit to customise
+    | 'options' // Omit because it does not reflect reality
 > & {
     id: string // we use id not uid
     name: string // required instead of optional
-    dimensionItemType?: DimensionType // optional instead of required
-    valueType?: ValueType // optional instead of required
-    optionSet?: string // the generated type has an optional array of `options`, but no `optionSet`
-    program?: string // program ID for program-scoped dimensions
-    programStage?: string // program stage ID for stage-scoped dimensions
+    dimensionType: DimensionType // require and use "our" dimension type
+    dimensionItemType?: DimensionType // use "our" dimension type
+    optionSet?: string // Add ID reference to `optionSet`
+    program?: string // Add ID reference to `program`
+    programStage?: string // Add ID reference to `programStage`
 }
 
 // Note that `optionSet` and `legendSet` have an optional name

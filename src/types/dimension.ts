@@ -1,4 +1,4 @@
-import type { DimensionType } from './dhis2-openapi-schemas'
+import type { DimensionType as GeneratedDimensionType } from './dhis2-openapi-schemas'
 import type {
     PROGRAM_DIMENSION_TYPES,
     YOUR_DIMENSION_TYPES,
@@ -6,7 +6,11 @@ import type {
     TIME_DIMENSION_IDS,
 } from '@constants/dimensions'
 
-export type { DimensionType }
+export type DimensionType =
+    | Exclude<GeneratedDimensionType, 'PROGRAM_DATA_ELEMENT'>
+    | 'DATA_ELEMENT'
+    | 'STATUS'
+    | 'USER'
 
 export type ProgramDimensionType = (typeof PROGRAM_DIMENSION_TYPES)[number]
 
