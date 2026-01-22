@@ -19,10 +19,13 @@ type MetadataRecordArray<T extends string> = Array<Record<T, IdNameRecord>>
 
 /**
  * DimensionRecord represents dimension data from the DHIS2 API.
- * dimensionType uses OpenApiDimensionType directly (e.g., PROGRAM_DATA_ELEMENT, not DATA_ELEMENT).
  *
- * Note: transformDimensions() may map PROGRAM_DATA_ELEMENT → PROGRAM_DATA_ELEMENT for certain contexts,
- * but the type remains OpenApiDimensionType throughout.
+ * dimensionType can be:
+ * - 'PROGRAM_DATA_ELEMENT' (untransformed API value)
+ * - A DimensionType value (includes transformed values like 'DATA_ELEMENT',
+ *   plus app-specific types like 'STATUS' and 'USER')
+ *
+ * transformDimensions() converts PROGRAM_DATA_ELEMENT → DATA_ELEMENT where needed.
  */
 export type DimensionRecord = {
     dimension: string
