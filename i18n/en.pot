@@ -131,24 +131,6 @@ msgstr "Hide"
 msgid "Update"
 msgstr "Update"
 
-msgid "No items selected"
-msgstr "No items selected"
-
-msgid "Available options"
-msgstr "Available options"
-
-msgid "Filter options"
-msgstr "Filter options"
-
-msgid "Selected options"
-msgstr "Selected options"
-
-msgid "Nothing found for \"{{- searchTerm}}\""
-msgstr "Nothing found for \"{{- searchTerm}}\""
-
-msgid "No options"
-msgstr "No options"
-
 msgid "Start and end dates are inclusive and will be included in the outputs."
 msgstr "Start and end dates are inclusive and will be included in the outputs."
 
@@ -166,6 +148,24 @@ msgstr "Define start - end dates"
 
 msgid "Show items where the status is:"
 msgstr "Show items where the status is:"
+
+msgid "No items selected"
+msgstr "No items selected"
+
+msgid "Available options"
+msgstr "Available options"
+
+msgid "Filter options"
+msgstr "Filter options"
+
+msgid "Selected options"
+msgstr "Selected options"
+
+msgid "Nothing found for \"{{- searchTerm}}\""
+msgstr "Nothing found for \"{{- searchTerm}}\""
+
+msgid "No options"
+msgstr "No options"
 
 msgid "HTML"
 msgstr "HTML"

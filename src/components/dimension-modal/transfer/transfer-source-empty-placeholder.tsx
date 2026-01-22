@@ -1,12 +1,12 @@
 import i18n from '@dhis2/d2-i18n'
-import { type FC } from 'react'
-import classes from './styles/dynamic-dimension-modal-content.module.css'
-import { type TransferOptions } from './use-infinite-transfer-options'
+import type { Transfer } from '@dhis2/ui'
+import type { FC, ComponentProps } from 'react'
+import classes from './styles/transfer.module.css'
 
 type TransferSourceEmptyPlaceholderProps = {
     dataTest: string
     loading: boolean
-    options: TransferOptions
+    options: ComponentProps<typeof Transfer>['options']
     searchTerm?: string
 }
 
