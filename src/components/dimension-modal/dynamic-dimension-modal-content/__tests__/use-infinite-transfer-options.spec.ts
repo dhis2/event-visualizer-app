@@ -2,7 +2,7 @@ import type { QueryStatus } from '@reduxjs/toolkit/query'
 import { renderHook, act } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { FetchItemsByDimensionQueryArgs } from '../dimensions-api'
-import { useInfiniteTransferOptions } from '../use-infinite-transfer-options'
+import { useInfiniteTransferOptions } from '@components/dimension-modal/transfer/use-infinite-transfer-options'
 
 type MockData = {
     items: Array<{ id: string; name: string }>
@@ -60,7 +60,7 @@ const createMockLazyQueryResult = (data?: MockData) => {
     }
     const lastPromiseInfo = {
         lastArg: {
-            dimensionId: 'ou',
+            id: 'ou',
             page: 1,
             searchTerm: '',
         } as FetchItemsByDimensionQueryArgs,
