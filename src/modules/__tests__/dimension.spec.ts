@@ -17,7 +17,7 @@ import {
 import type {
     DimensionArray,
     CurrentVisualization,
-    DimensionMetadataItem,
+    InternalDimensionRecord,
     SavedVisualization,
 } from '@types'
 
@@ -400,7 +400,7 @@ describe('getProgramDimensions', () => {
 })
 
 describe('transformDimensions', () => {
-    it('keeps PROGRAM_DATA_ELEMENT as is', () => {
+    it('transforms PROGRAM_DATA_ELEMENT to DATA_ELEMENT', () => {
         const dimensions = [
             {
                 dimension: 'de1',
@@ -417,7 +417,7 @@ describe('transformDimensions', () => {
           [
             {
               "dimension": "de1",
-              "dimensionType": "PROGRAM_DATA_ELEMENT",
+              "dimensionType": "DATA_ELEMENT",
               "items": [],
             },
           ]
@@ -469,26 +469,22 @@ describe('transformDimensions', () => {
 describe('getDimensionsWithSuffix', () => {
     const mockMetadata: Record<
         string,
-        DimensionMetadataItem | { name: string }
+        InternalDimensionRecord | { name: string }
     > = {
-        did: {
-            id: 'did',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
-            name: 'Data Element',
-        },
+        did: { id: 'did', dimensionType: 'DATA_ELEMENT', name: 'Data Element' },
         'sid.did': {
             id: 'sid.did',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             name: 'Data Element',
         },
         'pid.sid.did': {
             id: 'pid.sid.did',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             name: 'Data Element',
         },
         'pid.sid.did2': {
             id: 'pid.sid.did2',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             name: 'Data Element 2',
         },
         sid: { name: 'Stage Name' },
@@ -519,7 +515,7 @@ describe('getDimensionsWithSuffix', () => {
                 ...mockMetadata,
                 'pid.sid2.did': {
                     id: 'pid.sid2.did',
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                 },
                 sid2: { name: 'Stage2 Name' },
             },
@@ -541,7 +537,7 @@ describe('getDimensionsWithSuffix', () => {
 
 describe('isProgramDimensionType', () => {
     it('returns true for program dimension types', () => {
-        expect(isProgramDimensionType('PROGRAM_DATA_ELEMENT')).toBe(true)
+        expect(isProgramDimensionType('DATA_ELEMENT')).toBe(true)
         expect(isProgramDimensionType('PROGRAM_ATTRIBUTE')).toBe(true)
         expect(isProgramDimensionType('PROGRAM_INDICATOR')).toBe(true)
         expect(isProgramDimensionType('CATEGORY')).toBe(true)
@@ -551,6 +547,8 @@ describe('isProgramDimensionType', () => {
     it('returns false for non-program dimension types', () => {
         expect(isProgramDimensionType('PERIOD')).toBe(false)
         expect(isProgramDimensionType('ORGANISATION_UNIT')).toBe(false)
+        expect(isProgramDimensionType('USER')).toBe(false)
+        expect(isProgramDimensionType('STATUS')).toBe(false)
     })
 })
 
@@ -560,7 +558,7 @@ describe('isYourDimensionType', () => {
     })
 
     it('returns false for non-your dimension types', () => {
-        expect(isYourDimensionType('PROGRAM_DATA_ELEMENT')).toBe(false)
+        expect(isYourDimensionType('DATA_ELEMENT')).toBe(false)
         expect(isYourDimensionType('PERIOD')).toBe(false)
         expect(isYourDimensionType('ORGANISATION_UNIT')).toBe(false)
     })

@@ -31,77 +31,77 @@ describe('useLayoutDimensions for data elements', () => {
         'p1s1.d1': {
             id: 'p1s1.d1',
             name: 'Dimension1',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p1s1.d2': {
             id: 'p1s1.d2',
             name: 'Dimension2',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet2',
             valueType: 'TEXT',
         },
         'p1s2.d1': {
             id: 'p1s2.d1',
             name: 'Dimension1',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p1s2.d2': {
             id: 'p1s2.d2',
             name: 'Dimension2',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet2',
             valueType: 'TEXT',
         },
         'p1s2.d3': {
             id: 'p1s2.d3',
             name: 'Dimension3',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet3',
             valueType: 'TEXT',
         },
         'p1.p1s1.d1': {
             id: 'p1.p1s1.d1',
             name: 'Dimension1',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p1.p1s2.d1': {
             id: 'p1.p1s2.d1',
             name: 'Dimension1',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p1.p1s2.d2': {
             id: 'p1.p1s2.d2',
             name: 'Dimension2',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet2',
             valueType: 'TEXT',
         },
         'p2.p2s1.d1': {
             id: 'p2.p2s1.d1',
             name: 'Dimension1',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
         'p2.p2s1.d3': {
             id: 'p2.p2s1.d3',
             name: 'Dimension3',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet3',
             valueType: 'TEXT',
         },
         'p2.p2s2.d1': {
             id: 'p2.p2s2.d1',
             name: 'Dimension1',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             optionSet: 'OptionSet1',
             valueType: 'TEXT',
         },
@@ -127,21 +127,21 @@ describe('useLayoutDimensions for data elements', () => {
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Dimension1')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[0].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[0].optionSet).toEqual('OptionSet1')
         expect(output[0].valueType).toEqual('TEXT')
         expect(output[0].suffix).toBeUndefined()
 
         expect(output[1].id).toEqual(id2)
         expect(output[1].name).toEqual('Dimension2')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[1].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[1].optionSet).toEqual('OptionSet2')
         expect(output[1].valueType).toEqual('TEXT')
         expect(output[1].suffix).toBeUndefined()
 
         expect(output[2].id).toEqual(id3)
         expect(output[2].name).toEqual('Dimension3')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[2].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[2].optionSet).toEqual('OptionSet3')
         expect(output[2].valueType).toEqual('TEXT')
         expect(output[2].suffix).toBeUndefined()
@@ -167,14 +167,14 @@ describe('useLayoutDimensions for data elements', () => {
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Dimension1')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[0].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[0].optionSet).toEqual('OptionSet1')
         expect(output[0].valueType).toEqual('TEXT')
         expect(output[0].suffix).toEqual('P1 Stage1')
 
         expect(output[1].id).toEqual(id2)
         expect(output[1].name).toEqual('Dimension1')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[1].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[1].optionSet).toEqual('OptionSet1')
         expect(output[1].valueType).toEqual('TEXT')
         expect(output[1].suffix).toEqual('P1 Stage2')
@@ -201,21 +201,21 @@ describe('useLayoutDimensions for data elements', () => {
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Dimension1')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[0].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[0].optionSet).toEqual('OptionSet1')
         expect(output[0].valueType).toEqual('TEXT')
         expect(output[0].suffix).toBeUndefined()
 
         expect(output[1].id).toEqual(id2)
         expect(output[1].name).toEqual('Dimension2')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[1].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[1].optionSet).toEqual('OptionSet2')
         expect(output[1].valueType).toEqual('TEXT')
         expect(output[1].suffix).toBeUndefined()
 
         expect(output[2].id).toEqual(id3)
         expect(output[2].name).toEqual('Dimension3')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[2].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[2].optionSet).toEqual('OptionSet3')
         expect(output[2].valueType).toEqual('TEXT')
         expect(output[2].suffix).toBeUndefined()
@@ -235,21 +235,21 @@ describe('useLayoutDimensions for data elements', () => {
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Dimension1')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[0].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[0].optionSet).toEqual('OptionSet1')
         expect(output[0].valueType).toEqual('TEXT')
         expect(output[0].suffix).toEqual('P1 Stage1')
 
         expect(output[1].id).toEqual(id2)
         expect(output[1].name).toEqual('Dimension1')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[1].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[1].optionSet).toEqual('OptionSet1')
         expect(output[1].valueType).toEqual('TEXT')
         expect(output[1].suffix).toEqual('P1 Stage2')
 
         expect(output[2].id).toEqual(id3)
         expect(output[2].name).toEqual('Dimension2')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[2].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[2].optionSet).toEqual('OptionSet2')
         expect(output[2].valueType).toEqual('TEXT')
         expect(output[2].suffix).toBeUndefined()
@@ -276,21 +276,21 @@ describe('useLayoutDimensions for data elements', () => {
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Dimension1')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[0].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[0].optionSet).toEqual('OptionSet1')
         expect(output[0].valueType).toEqual('TEXT')
         expect(output[0].suffix).toEqual('Program1')
 
         expect(output[1].id).toEqual(id2)
         expect(output[1].name).toEqual('Dimension1')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[1].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[1].optionSet).toEqual('OptionSet1')
         expect(output[1].valueType).toEqual('TEXT')
         expect(output[1].suffix).toEqual('Program2')
 
         expect(output[2].id).toEqual(id3)
         expect(output[2].name).toEqual('Dimension2')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[2].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[2].optionSet).toEqual('OptionSet2')
         expect(output[2].valueType).toEqual('TEXT')
         expect(output[2].suffix).toBeUndefined()
@@ -311,28 +311,28 @@ describe('useLayoutDimensions for data elements', () => {
 
         expect(output[0].id).toEqual(id1)
         expect(output[0].name).toEqual('Dimension1')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[0].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[0].optionSet).toEqual('OptionSet1')
         expect(output[0].valueType).toEqual('TEXT')
         expect(output[0].suffix).toEqual('P1 Stage1')
 
         expect(output[1].id).toEqual(id2)
         expect(output[1].name).toEqual('Dimension1')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[1].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[1].optionSet).toEqual('OptionSet1')
         expect(output[1].valueType).toEqual('TEXT')
         expect(output[1].suffix).toEqual('P1 Stage2')
 
         expect(output[2].id).toEqual(id3)
         expect(output[2].name).toEqual('Dimension1')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[2].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[2].optionSet).toEqual('OptionSet1')
         expect(output[2].valueType).toEqual('TEXT')
         expect(output[2].suffix).toEqual('P2 Stage1')
 
         expect(output[3].id).toEqual(id4)
         expect(output[3].name).toEqual('Dimension2')
-        expect(output[0].dimensionType).toEqual('PROGRAM_DATA_ELEMENT')
+        expect(output[3].dimensionType).toEqual('DATA_ELEMENT')
         expect(output[3].optionSet).toEqual('OptionSet2')
         expect(output[3].valueType).toEqual('TEXT')
         expect(output[3].suffix).toBeUndefined()
@@ -624,7 +624,7 @@ describe('useLayoutDimensions for program dimensions', () => {
         },
         XYZ123: {
             aggregationType: 'NONE',
-            dimensionItemType: 'PROGRAM_DATA_ELEMENT',
+            dimensionItemType: 'DATA_ELEMENT',
             name: 'Some data element',
             totalAggregationType: 'SUM',
             id: 'XYZ123',
@@ -632,7 +632,7 @@ describe('useLayoutDimensions for program dimensions', () => {
         },
         'p1.p1s1.XYZ123': {
             aggregationType: 'NONE',
-            dimensionItemType: 'PROGRAM_DATA_ELEMENT',
+            dimensionItemType: 'DATA_ELEMENT',
             name: 'Some data element 1',
             totalAggregationType: 'SUM',
             id: 'XYZ123',
@@ -640,7 +640,7 @@ describe('useLayoutDimensions for program dimensions', () => {
         },
         'p2.p2s1.XYZ123': {
             aggregationType: 'NONE',
-            dimensionItemType: 'PROGRAM_DATA_ELEMENT',
+            dimensionItemType: 'DATA_ELEMENT',
             name: 'Some data element 2',
             totalAggregationType: 'SUM',
             id: 'XYZ123',
@@ -669,10 +669,12 @@ describe('useLayoutDimensions for program dimensions', () => {
 
         expect(output[1].id).toEqual(id2)
         expect(output[1].name).toEqual('Event status')
+        expect(output[1].dimensionType).toEqual('STATUS')
         expect(output[1].suffix).toBeUndefined()
 
         expect(output[2].id).toEqual(id3)
         expect(output[2].name).toEqual('Program status')
+        expect(output[2].dimensionType).toEqual('STATUS')
         expect(output[2].suffix).toBeUndefined()
 
         expect(output[3].id).toEqual(id4)
@@ -714,10 +716,12 @@ describe('useLayoutDimensions for program dimensions', () => {
 
         expect(output[2].id).toEqual(id3)
         expect(output[2].name).toEqual('Event status')
+        expect(output[2].dimensionType).toEqual('STATUS')
         expect(output[2].suffix).toEqual('Program1')
 
         expect(output[3].id).toEqual(id4)
         expect(output[3].name).toEqual('Program status')
+        expect(output[3].dimensionType).toEqual('STATUS')
         expect(output[3].suffix).toEqual('Program1')
 
         expect(output[4].id).toEqual(id5)
@@ -768,18 +772,22 @@ describe('useLayoutDimensions for program dimensions', () => {
 
         expect(output[3].id).toEqual(id4)
         expect(output[3].name).toEqual('Event status')
+        expect(output[3].dimensionType).toEqual('STATUS')
         expect(output[3].suffix).toEqual('Program1')
 
         expect(output[4].id).toEqual(id5)
         expect(output[4].name).toEqual('Event status')
+        expect(output[4].dimensionType).toEqual('STATUS')
         expect(output[4].suffix).toEqual('Program2')
 
         expect(output[5].id).toEqual(id6)
         expect(output[5].name).toEqual('Program status')
+        expect(output[5].dimensionType).toEqual('STATUS')
         expect(output[5].suffix).toEqual('Program1')
 
         expect(output[6].id).toEqual(id7)
         expect(output[6].name).toEqual('Program status')
+        expect(output[6].dimensionType).toEqual('STATUS')
         expect(output[6].suffix).toEqual('Program2')
 
         expect(output[7].id).toEqual(id8)

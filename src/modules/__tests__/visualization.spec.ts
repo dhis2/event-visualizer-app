@@ -50,7 +50,7 @@ const testCases = {
                     dimension: 'programStatus',
                 },
                 {
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                     items: [],
                     programStage: {
                         id: 'birth',
@@ -66,7 +66,7 @@ const testCases = {
                     },
                 },
                 {
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                     items: [],
                     programStage: {
                         id: 'babyPostnatal',
@@ -254,7 +254,7 @@ const testCases = {
                     dimension: 'enrollmentDate',
                 },
                 {
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                     items: [],
                     programStage: {
                         id: 'dateOfFociRegistrationId',

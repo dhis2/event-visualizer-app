@@ -115,6 +115,7 @@ export const TooltipContent: FC<TooltipContentProps> = ({
         case 'CATEGORY':
         case 'CATEGORY_OPTION_GROUP_SET':
         case 'ORGANISATION_UNIT_GROUP_SET':
+        case 'STATUS':
             return (
                 <TooltipList>
                     <ProgramName programName={programName} />
@@ -140,7 +141,7 @@ export const TooltipContent: FC<TooltipContentProps> = ({
                     )}
                 </TooltipList>
             )
-        case 'PROGRAM_DATA_ELEMENT': {
+        case 'DATA_ELEMENT': {
             return (
                 <TooltipList>
                     <ProgramName programName={programName} />

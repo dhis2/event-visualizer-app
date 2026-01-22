@@ -100,6 +100,7 @@ describe('<Chip />', () => {
     it('shows hover color when hovered and returns to normal color when unhovered', () => {
         const dimension: LayoutDimension = {
             id: 'programStatus',
+            dimensionType: 'STATUS',
             name: 'Program status',
             dimensionId: 'programStatus',
             programStageId: '',
@@ -141,7 +142,7 @@ describe('<Chip />', () => {
         const dimension: LayoutDimension = {
             id: 'ZzYYXq4fJie.X8zyunlgUfM',
             name: 'MCH Infant Feeding',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             valueType: 'TEXT',
             optionSet: 'x31y45jvIQL',
             dimensionId: 'X8zyunlgUfM',
@@ -175,7 +176,7 @@ describe('<Chip />', () => {
         const dimension: LayoutDimension = {
             id: 'ZzYYXq4fJie.X8zyunlgUfM',
             name: 'MCH Infant Feeding',
-            dimensionType: 'PROGRAM_DATA_ELEMENT',
+            dimensionType: 'DATA_ELEMENT',
             valueType: 'TEXT',
             optionSet: 'x31y45jvIQL',
             dimensionId: 'X8zyunlgUfM',
@@ -232,6 +233,7 @@ describe('<Chip />', () => {
 
         const dimension: LayoutDimension = {
             id: 'programStatus',
+            dimensionType: 'STATUS',
             name: 'Program status',
             dimensionId: 'programStatus',
             programStageId: '',
@@ -298,6 +300,7 @@ describe('<Chip />', () => {
 
         const dimension: LayoutDimension = {
             id: 'programStatus',
+            dimensionType: 'STATUS',
             name: 'Program status',
             dimensionId: 'programStatus',
             programStageId: '',

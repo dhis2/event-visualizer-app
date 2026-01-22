@@ -27,7 +27,7 @@ describe('supplementDimensionMetadata', () => {
             columns: [
                 {
                     dimension: 'dimension1',
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                     valueType: 'TEXT',
                     optionSet: { id: 'optionSet1' },
                 } as DimensionRecord,
@@ -42,7 +42,7 @@ describe('supplementDimensionMetadata', () => {
             dimension1: {
                 id: 'dimension1',
                 name: 'Dimension One',
-                dimensionType: 'PROGRAM_DATA_ELEMENT',
+                dimensionType: 'DATA_ELEMENT',
                 optionSet: 'optionSet1',
                 valueType: 'TEXT',
             },
@@ -67,7 +67,7 @@ describe('supplementDimensionMetadata', () => {
             rows: [
                 {
                     dimension: 'dimension1',
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                     program: { id: 'program1' },
                     programStage: { id: 'stage1' },
                 } as DimensionRecord,
@@ -85,7 +85,7 @@ describe('supplementDimensionMetadata', () => {
             'stage1.dimension1': {
                 id: 'stage1.dimension1',
                 name: 'Dimension One',
-                dimensionType: 'PROGRAM_DATA_ELEMENT',
+                dimensionType: 'DATA_ELEMENT',
                 program: 'program1',
                 programStage: 'stage1',
             },
@@ -105,11 +105,11 @@ describe('supplementDimensionMetadata', () => {
             columns: [
                 {
                     dimension: 'dimension1',
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                 } as DimensionRecord,
                 {
                     dimension: 'dimension2', // No matching metadata
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                 } as DimensionRecord,
             ],
             rows: [],
@@ -122,7 +122,7 @@ describe('supplementDimensionMetadata', () => {
             dimension1: {
                 id: 'dimension1',
                 name: 'Dimension One',
-                dimensionType: 'PROGRAM_DATA_ELEMENT',
+                dimensionType: 'DATA_ELEMENT',
             },
         })
     })
@@ -168,7 +168,7 @@ describe('supplementDimensionMetadata', () => {
             columns: [
                 {
                     dimension: 'dimension1',
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                 } as DimensionRecord,
             ],
             rows: [],
@@ -197,7 +197,7 @@ describe('supplementDimensionMetadata', () => {
             columns: [
                 {
                     dimension: 'dimension1',
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                     valueType: 'NUMBER',
                     optionSet: { id: 'optionSet1' },
                 } as DimensionRecord,
@@ -212,7 +212,7 @@ describe('supplementDimensionMetadata', () => {
             dimension1: {
                 id: 'dimension1',
                 name: 'Dimension One',
-                dimensionType: 'PROGRAM_DATA_ELEMENT',
+                dimensionType: 'DATA_ELEMENT',
                 valueType: 'NUMBER',
                 optionSet: 'optionSet1',
             },
@@ -231,19 +231,19 @@ describe('supplementDimensionMetadata', () => {
             columns: [
                 {
                     dimension: 'dim1',
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                 } as DimensionRecord,
             ],
             rows: [
                 {
                     dimension: 'dim2',
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                 } as DimensionRecord,
             ],
             filters: [
                 {
                     dimension: 'dim3',
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                 } as DimensionRecord,
             ],
         } as unknown as SavedVisualization
@@ -254,17 +254,17 @@ describe('supplementDimensionMetadata', () => {
             dim1: {
                 id: 'dim1',
                 name: 'Dimension 1',
-                dimensionType: 'PROGRAM_DATA_ELEMENT',
+                dimensionType: 'DATA_ELEMENT',
             },
             dim2: {
                 id: 'dim2',
                 name: 'Dimension 2',
-                dimensionType: 'PROGRAM_DATA_ELEMENT',
+                dimensionType: 'DATA_ELEMENT',
             },
             dim3: {
                 id: 'dim3',
                 name: 'Dimension 3',
-                dimensionType: 'PROGRAM_DATA_ELEMENT',
+                dimensionType: 'DATA_ELEMENT',
             },
         })
     })
@@ -325,7 +325,7 @@ describe('extractFixedDimensionsMetadata', () => {
             columns: [
                 {
                     dimension: 'dataElement1',
-                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    dimensionType: 'DATA_ELEMENT',
                 } as DimensionRecord,
             ],
             rows: [],

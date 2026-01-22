@@ -16,30 +16,25 @@ import { StatusDimensionModalContent } from './status-dimension-modal-content'
 import classes from './styles/dimension-modal.module.css'
 import type { LayoutDimension } from '@components/layout-panel/chip'
 import { useAppDispatch, useAppSelector, useMetadataItem } from '@hooks'
-import { isStatusDimension } from '@modules/dimension'
 import { isDimensionInLayout } from '@modules/layout'
 import { isDimensionMetadataItem } from '@modules/metadata'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getUiActiveDimensionModal } from '@store/ui-slice'
 import { getVisUiConfigLayout } from '@store/vis-ui-config-slice'
-import type { DimensionMetadataItem } from '@types'
+import type { InternalDimensionRecord } from '@types'
 
 type DimensionModalContentProps = {
-    dimension: DimensionMetadataItem
+    dimension: InternalDimensionRecord
 }
 
 const DimensionModalContent: FC<DimensionModalContentProps> = ({
     dimension,
 }) => {
-    // Check for special dimensions by ID (status dimensions don't have dimensionType)
-    if (isStatusDimension(dimension.id)) {
-        return <StatusDimensionModalContent dimension={dimension} />
-    }
-
-    // Check by dimensionType for other cases
     switch (dimension.dimensionType) {
         case 'ORGANISATION_UNIT':
             return <OrgUnitDimensionModalContent dimension={dimension} />
+        case 'STATUS':
+            return <StatusDimensionModalContent dimension={dimension} />
         case 'PERIOD':
             return <PeriodDimensionModalContent dimension={dimension} />
         case 'CATEGORY':
@@ -89,7 +84,7 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
                 className={classes.modalContent}
             >
                 <DimensionModalContent
-                    dimension={dimension as DimensionMetadataItem}
+                    dimension={dimension as InternalDimensionRecord}
                 />
             </ModalContent>
             <ModalActions dataTest={`${dataTest}-actions`}>

@@ -30,10 +30,7 @@ describe('getChipItemsText', () => {
         it('returns "all" when no conditions or items', () => {
             expect(
                 getChipItemsText({
-                    dimension: {
-                        id: 'dx',
-                        dimensionType: 'PROGRAM_DATA_ELEMENT',
-                    },
+                    dimension: { id: 'dx', dimensionType: 'DATA_ELEMENT' },
                     conditionsLength: undefined,
                     itemsLength: undefined,
                     outputType: 'EVENT',

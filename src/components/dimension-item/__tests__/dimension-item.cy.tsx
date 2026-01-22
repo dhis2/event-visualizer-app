@@ -22,7 +22,7 @@ describe('<DimensionItem />', () => {
     const defaultProps = {
         id: 'test-dimension',
         name: 'Test Dimension',
-        dimensionType: 'PROGRAM_DATA_ELEMENT' as const,
+        dimensionType: 'DATA_ELEMENT' as const,
         valueType: 'TEXT' as const,
         optionSet: null,
         disabled: false,
