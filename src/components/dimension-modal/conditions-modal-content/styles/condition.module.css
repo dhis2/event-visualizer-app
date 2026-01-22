@@ -1,0 +1,51 @@
+.container {
+    display: flex;
+    align-items: flex-start;
+}
+
+.caseSensitiveCheckbox {
+    margin-inline-end: var(--spacers-dp4);
+}
+
+.checkboxOption {
+    margin-inline-end: var(--spacers-dp16);
+}
+
+.legendSelect,
+.textInput {
+    flex: 2 1 auto;
+    margin-inline-end: var(--spacers-dp4);
+}
+
+.legendSetSelect {
+    flex: 0 1 auto;
+    margin-inline-end: var(--spacers-dp4);
+}
+
+.removeButton {
+    flex: 0 0 auto;
+    margin-inline-start: var(--spacers-dp4);
+}
+
+.operatorSelect {
+    flex: 0 1 auto;
+    min-inline-size: 204px;
+    margin-inline-end: var(--spacers-dp4);
+}
+
+.dateInput,
+.numericInput {
+    flex: 0 1 auto;
+    min-inline-size: 150px;
+    margin-inline-end: var(--spacers-dp4);
+}
+
+.phoneNumberInput {
+    min-inline-size: 200px;
+    margin-inline-end: var(--spacers-dp4);
+}
+
+.letterInput {
+    min-inline-size: 100px;
+    margin-inline-end: var(--spacers-dp4);
+}

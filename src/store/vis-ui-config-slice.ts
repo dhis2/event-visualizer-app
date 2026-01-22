@@ -22,7 +22,7 @@ export interface VisUiConfigState {
     outputType: OutputType
     layout: Layout
     itemsByDimension: Record<string, string[]>
-    conditionsByDimension: Record<string, ConditionsObject>
+    conditionsByDimension: Record<string, ConditionsObject | undefined>
     options: EventVisualizationOptions
 }
 
@@ -39,6 +39,12 @@ export const initialState: VisUiConfigState = {
     },
     itemsByDimension: {},
     conditionsByDimension: {},
+}
+
+type SetConditionsByDimensionPayload = {
+    dimensionId: string
+    conditions?: string
+    legendSet?: string
 }
 
 type SetItemsByDimensionPayload = {
@@ -114,11 +120,17 @@ export const visUiConfigSlice = createSlice({
         },
         setVisUiConfigConditionsByDimension: (
             state,
-            action: PayloadAction<
-                Record<string, { condition?: string; legendSet?: string }>
-            >
+            action: PayloadAction<SetConditionsByDimensionPayload>
         ) => {
-            state.conditionsByDimension = action.payload
+            const { dimensionId, conditions, legendSet } = action.payload
+
+            state.conditionsByDimension = {
+                ...state.conditionsByDimension,
+                [dimensionId]:
+                    conditions?.length || legendSet
+                        ? { condition: conditions, legendSet }
+                        : undefined,
+            }
         },
         addVisUiConfigLayoutDimension: (
             state,
