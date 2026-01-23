@@ -158,13 +158,15 @@ export const API_TIME_DIVIDER = '.'
 export const UI_TIME_DIVIDER = ':'
 export const API_DATETIME_DIVIDER = 'T'
 export const UI_DATETIME_DIVIDER = ' '
-export const PREFIX_CASE_INSENSITIVE: QueryPrefix = 'I'
-export const PREFIX_NOT: QueryPrefix = '!'
+export const FALSE_VALUE: BooleanValue = '0'
+export const NULL_VALUE: BooleanValue = 'NV'
+export const TRUE_VALUE: BooleanValue = '1'
 export const OPERATOR_IN: QueryOperator = 'IN'
 export const OPERATOR_EQUAL: QueryOperator = 'EQ'
-export const NULL_VALUE: BooleanValue = 'NV'
 export const OPERATOR_EMPTY = `EQ:${NULL_VALUE}`
 export const OPERATOR_NOT_EMPTY = `NE:${NULL_VALUE}`
+export const PREFIX_CASE_INSENSITIVE: QueryPrefix = 'I'
+export const PREFIX_NOT: QueryPrefix = '!'
 
 export const addCaseSensitivePrefix = (
     operator: QueryOperator,

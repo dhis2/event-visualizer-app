@@ -6,7 +6,7 @@ import {
     CaseSensitiveAlphanumericCondition,
     //    LetterCondition,
 } from './alphanumeric-condition'
-//import { BooleanCondition, TrueOnlyCondition } from './BooleanCondition.jsx'
+import { BooleanCondition, TrueOnlyCondition } from './boolean-condition'
 //import {
 //    DateCondition,
 //    DateTimeCondition,
@@ -284,26 +284,26 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
                     </div>
                 ))
             }
-            //            case VALUE_TYPE_BOOLEAN: {
-            //                return conditionsList.map((condition, index) => (
-            //                    <div key={index}>
-            //                        <BooleanCondition
-            //                            condition={condition}
-            //                            onChange={(value) => setCondition(index, value)}
-            //                        />
-            //                    </div>
-            //                ))
-            //            }
-            //            case VALUE_TYPE_TRUE_ONLY: {
-            //                return conditionsList.map((condition, index) => (
-            //                    <div key={index}>
-            //                        <TrueOnlyCondition
-            //                            condition={condition}
-            //                            onChange={(value) => setCondition(index, value)}
-            //                        />
-            //                    </div>
-            //                ))
-            //            }
+            case 'BOOLEAN': {
+                return conditionsList.map((condition, index) => (
+                    <div key={index}>
+                        <BooleanCondition
+                            condition={condition}
+                            onChange={(value) => setCondition(index, value)}
+                        />
+                    </div>
+                ))
+            }
+            case 'TRUE_ONLY': {
+                return conditionsList.map((condition, index) => (
+                    <div key={index}>
+                        <TrueOnlyCondition
+                            condition={condition}
+                            onChange={(value) => setCondition(index, value)}
+                        />
+                    </div>
+                ))
+            }
             //            case VALUE_TYPE_DATE: {
             //                return conditionsList.map((condition, index) => (
             //                    <div key={index}>

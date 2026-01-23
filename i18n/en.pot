@@ -125,6 +125,49 @@ msgstr "Organisation unit"
 msgid "Add to {{axisName}}"
 msgstr "Add to {{axisName}}"
 
+msgid "Choose a condition type"
+msgstr "Choose a condition type"
+
+msgid "Case sensitive"
+msgstr "Case sensitive"
+
+msgid "Remove"
+msgstr "Remove"
+
+msgid "and"
+msgstr "and"
+
+msgid "Show items that meet the following conditions for this data item:"
+msgstr "Show items that meet the following conditions for this data item:"
+
+msgid "This dimension can't be filtered. All values will be shown."
+msgstr "This dimension can't be filtered. All values will be shown."
+
+msgid ""
+"No conditions yet, so all values will be included. Add a condition to "
+"filter results."
+msgstr ""
+"No conditions yet, so all values will be included. Add a condition to "
+"filter results."
+
+msgid "Preset options can't be combined with other conditions"
+msgstr "Preset options can't be combined with other conditions"
+
+msgid "Add another condition"
+msgstr "Add another condition"
+
+msgid "Add a condition"
+msgstr "Add a condition"
+
+msgid "Repeated events"
+msgstr "Repeated events"
+
+msgid "Conditions"
+msgstr "Conditions"
+
+msgid "Only available for repeatable stages"
+msgstr "Only available for repeatable stages"
+
 msgid "Hide"
 msgstr "Hide"
 
@@ -205,9 +248,6 @@ msgstr "Name"
 
 msgid "Move to {{axisName}}"
 msgstr "Move to {{axisName}}"
-
-msgid "Remove"
-msgstr "Remove"
 
 msgid "all"
 msgstr "all"
