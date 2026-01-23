@@ -2,9 +2,9 @@ import i18n from '@dhis2/d2-i18n'
 import { Button, IconInfo16, Tooltip, TabBar, Tab } from '@dhis2/ui'
 import { type FC, type ReactNode, /*useMemo,*/ useState } from 'react'
 import {
-    //    PhoneNumberCondition,
+    PhoneNumberCondition,
     CaseSensitiveAlphanumericCondition,
-    //    LetterCondition,
+    LetterCondition,
 } from './alphanumeric-condition'
 import { BooleanCondition, TrueOnlyCondition } from './boolean-condition'
 import {
@@ -14,7 +14,7 @@ import {
 } from './date-condition'
 //import NumericCondition from './NumericCondition.jsx'
 import { OptionSetCondition } from './option-set-condition/option-set-condition'
-//import OrgUnitCondition from './OrgUnitCondition.jsx'
+import { OrgUnitCondition } from './org-unit-condition'
 import { RepeatableEvents } from './repeatable-events'
 import classes from './styles/conditions-modal-content.module.css'
 import {
@@ -242,30 +242,30 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
             //            case VALUE_TYPE_PERCENTAGE: {
             //                return renderNumericCondition()
             //            }
-            //            case VALUE_TYPE_PHONE_NUMBER: {
-            //                return conditionsList.map((condition, index) => (
-            //                    <div key={index}>
-            //                        <PhoneNumberCondition
-            //                            condition={condition}
-            //                            onChange={(value) => setCondition(index, value)}
-            //                            onRemove={() => removeCondition(index)}
-            //                        />
-            //                        {getDividerContent(index)}
-            //                    </div>
-            //                ))
-            //            }
-            //            case VALUE_TYPE_LETTER: {
-            //                return conditionsList.map((condition, index) => (
-            //                    <div key={index}>
-            //                        <LetterCondition
-            //                            condition={condition}
-            //                            onChange={(value) => setCondition(index, value)}
-            //                            onRemove={() => removeCondition(index)}
-            //                        />
-            //                        {getDividerContent(index)}
-            //                    </div>
-            //                ))
-            //            }
+            case 'PHONE_NUMBER': {
+                return conditionsList.map((condition, index) => (
+                    <div key={index}>
+                        <PhoneNumberCondition
+                            condition={condition}
+                            onChange={(value) => setCondition(index, value)}
+                            onRemove={() => removeCondition(index)}
+                        />
+                        {getDividerContent(index)}
+                    </div>
+                ))
+            }
+            case 'LETTER': {
+                return conditionsList.map((condition, index) => (
+                    <div key={index}>
+                        <LetterCondition
+                            condition={condition}
+                            onChange={(value) => setCondition(index, value)}
+                            onRemove={() => removeCondition(index)}
+                        />
+                        {getDividerContent(index)}
+                    </div>
+                ))
+            }
             case 'TEXT':
             case 'LONG_TEXT':
             case 'EMAIL':
@@ -340,16 +340,16 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
                     </div>
                 ))
             }
-            //            case VALUE_TYPE_ORGANISATION_UNIT: {
-            //                return conditionsList.map((condition, index) => (
-            //                    <div key={index}>
-            //                        <OrgUnitCondition
-            //                            condition={condition}
-            //                            onChange={(value) => setCondition(index, value)}
-            //                        />
-            //                    </div>
-            //                ))
-            //            }
+            case 'ORGANISATION_UNIT': {
+                return conditionsList.map((condition, index) => (
+                    <div key={index}>
+                        <OrgUnitCondition
+                            condition={condition}
+                            onChange={(value) => setCondition(index, value)}
+                        />
+                    </div>
+                ))
+            }
         }
     }
 
