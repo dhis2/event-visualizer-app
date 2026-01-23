@@ -7,11 +7,11 @@ import {
     //    LetterCondition,
 } from './alphanumeric-condition'
 import { BooleanCondition, TrueOnlyCondition } from './boolean-condition'
-//import {
-//    DateCondition,
-//    DateTimeCondition,
-//    TimeCondition,
-//} from './DateCondition.jsx'
+import {
+    DateCondition,
+    DateTimeCondition,
+    TimeCondition,
+} from './date-condition'
 //import NumericCondition from './NumericCondition.jsx'
 import { OptionSetCondition } from './option-set-condition/option-set-condition'
 //import OrgUnitCondition from './OrgUnitCondition.jsx'
@@ -304,42 +304,42 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
                     </div>
                 ))
             }
-            //            case VALUE_TYPE_DATE: {
-            //                return conditionsList.map((condition, index) => (
-            //                    <div key={index}>
-            //                        <DateCondition
-            //                            condition={condition}
-            //                            onChange={(value) => setCondition(index, value)}
-            //                            onRemove={() => removeCondition(index)}
-            //                        />
-            //                        {getDividerContent(index)}
-            //                    </div>
-            //                ))
-            //            }
-            //            case VALUE_TYPE_TIME: {
-            //                return conditionsList.map((condition, index) => (
-            //                    <div key={index}>
-            //                        <TimeCondition
-            //                            condition={condition}
-            //                            onChange={(value) => setCondition(index, value)}
-            //                            onRemove={() => removeCondition(index)}
-            //                        />
-            //                        {getDividerContent(index)}
-            //                    </div>
-            //                ))
-            //            }
-            //            case VALUE_TYPE_DATETIME: {
-            //                return conditionsList.map((condition, index) => (
-            //                    <div key={index}>
-            //                        <DateTimeCondition
-            //                            condition={condition}
-            //                            onChange={(value) => setCondition(index, value)}
-            //                            onRemove={() => removeCondition(index)}
-            //                        />
-            //                        {getDividerContent(index)}
-            //                    </div>
-            //                ))
-            //            }
+            case 'DATE': {
+                return conditionsList.map((condition, index) => (
+                    <div key={index}>
+                        <DateCondition
+                            condition={condition}
+                            onChange={(value) => setCondition(index, value)}
+                            onRemove={() => removeCondition(index)}
+                        />
+                        {getDividerContent(index)}
+                    </div>
+                ))
+            }
+            case 'TIME': {
+                return conditionsList.map((condition, index) => (
+                    <div key={index}>
+                        <TimeCondition
+                            condition={condition}
+                            onChange={(value) => setCondition(index, value)}
+                            onRemove={() => removeCondition(index)}
+                        />
+                        {getDividerContent(index)}
+                    </div>
+                ))
+            }
+            case 'DATETIME': {
+                return conditionsList.map((condition, index) => (
+                    <div key={index}>
+                        <DateTimeCondition
+                            condition={condition}
+                            onChange={(value) => setCondition(index, value)}
+                            onRemove={() => removeCondition(index)}
+                        />
+                        {getDividerContent(index)}
+                    </div>
+                ))
+            }
             //            case VALUE_TYPE_ORGANISATION_UNIT: {
             //                return conditionsList.map((condition, index) => (
             //                    <div key={index}>
