@@ -20,20 +20,20 @@
         "postinstall": "./scripts/postinstall.sh"
     },
     "devDependencies": {
-        "@cypress/vite-dev-server": "^7.0.1",
+        "@cypress/vite-dev-server": "^7.2.0",
         "@dhis2/cli-app-scripts": "^12.10.0",
         "@dhis2/cli-style": "^10.7.8",
         "@dhis2/cypress-commands": "^10.1.0",
         "@testing-library/dom": "^10.4.0",
         "@testing-library/jest-dom": "^6.9.1",
-        "@testing-library/react": "^16.3.1",
+        "@testing-library/react": "^16.3.2",
         "@testing-library/user-event": "^14.6.1",
         "@types/jest": "^30.0.0",
         "@types/prop-types": "^15",
         "@types/react": "^18.3.23",
         "@types/react-dom": "^18.3.7",
         "@vitejs/plugin-react": "^5.1.2",
-        "cypress": "^15.8.1",
+        "cypress": "^15.9.0",
         "cypress-real-events": "^1.15.0",
         "cypress-tags": "^1.2.2",
         "eslint-import-resolver-typescript": "^4.4.4",
@@ -44,7 +44,7 @@
         "start-server-and-test": "^2.1.3",
         "typescript": "^5",
         "typescript-plugin-css-modules": "^5.2.0",
-        "vitest": "^4.0.16",
+        "vitest": "^4.0.18",
         "vitest-canvas-mock": "^1.1.3"
     },
     "dependencies": {
