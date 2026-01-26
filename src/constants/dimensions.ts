@@ -1,22 +1,8 @@
 import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
-import type { DimensionId, ExtendedDimensionType } from '@types'
-
-export const DIMENSION_TYPES =
-    asStringLiteralSubsetArray<ExtendedDimensionType>()([
-        'PROGRAM_ATTRIBUTE',
-        'PROGRAM_INDICATOR',
-        'PERIOD',
-        'ORGANISATION_UNIT',
-        'CATEGORY_OPTION_GROUP_SET',
-        'ORGANISATION_UNIT_GROUP_SET',
-        'CATEGORY',
-        'DATA_ELEMENT',
-        'STATUS',
-        'USER',
-    ] as const)
+import type { DimensionId, DimensionType } from '@types'
 
 export const PROGRAM_DIMENSION_TYPES =
-    asStringLiteralSubsetArray<ExtendedDimensionType>()([
+    asStringLiteralSubsetArray<DimensionType>()([
         'DATA_ELEMENT',
         'CATEGORY',
         'CATEGORY_OPTION_GROUP_SET',
@@ -24,10 +10,9 @@ export const PROGRAM_DIMENSION_TYPES =
         'PROGRAM_INDICATOR',
     ] as const)
 
-export const YOUR_DIMENSION_TYPES =
-    asStringLiteralSubsetArray<ExtendedDimensionType>()([
-        'ORGANISATION_UNIT_GROUP_SET',
-    ] as const)
+export const YOUR_DIMENSION_TYPES = asStringLiteralSubsetArray<DimensionType>()(
+    ['ORGANISATION_UNIT_GROUP_SET'] as const
+)
 
 export const DIMENSION_IDS = [
     'completedDate',

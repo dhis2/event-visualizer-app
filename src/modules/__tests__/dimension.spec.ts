@@ -17,8 +17,8 @@ import {
 import type {
     DimensionArray,
     CurrentVisualization,
-    InternalDimensionRecord,
     SavedVisualization,
+    DimensionMetadataItem,
 } from '@types'
 
 const outputType = 'EVENT'
@@ -469,7 +469,7 @@ describe('transformDimensions', () => {
 describe('getDimensionsWithSuffix', () => {
     const mockMetadata: Record<
         string,
-        InternalDimensionRecord | { name: string }
+        DimensionMetadataItem | { name: string }
     > = {
         did: { id: 'did', dimensionType: 'DATA_ELEMENT', name: 'Data Element' },
         'sid.did': {

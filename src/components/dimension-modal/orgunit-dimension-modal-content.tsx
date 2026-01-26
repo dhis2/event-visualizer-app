@@ -15,13 +15,13 @@ import {
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
 import type {
-    InternalDimensionRecord,
+    DimensionMetadataItem,
     OrgUnit,
     OrganisationUnitMetadataItem,
 } from '@types'
 
 type OrgUnitDimensionModalContentProps = {
-    dimension: InternalDimensionRecord
+    dimension: DimensionMetadataItem
 }
 
 export const OrgUnitDimensionModalContent: FC<

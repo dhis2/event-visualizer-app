@@ -19,14 +19,14 @@ import {
     getVisUiConfigItemsByDimension,
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
-import type { InternalDimensionRecord, MetadataItemWithName } from '@types'
+import type { DimensionMetadataItem, MetadataItemWithName } from '@types'
 
 const TRANSFER_OPTIONS_WIDTH = '359px'
 const TRANSFER_SELECTED_WIDTH = '359px'
 const TRANSFER_HEIGHT = '512px'
 
 type DynamicDimensionModalContentProps = {
-    dimension: InternalDimensionRecord
+    dimension: DimensionMetadataItem
 }
 
 export const DynamicDimensionModalContent: FC<

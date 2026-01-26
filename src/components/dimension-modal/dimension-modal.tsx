@@ -21,10 +21,10 @@ import { isDimensionMetadataItem } from '@modules/metadata'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getUiActiveDimensionModal } from '@store/ui-slice'
 import { getVisUiConfigLayout } from '@store/vis-ui-config-slice'
-import type { InternalDimensionRecord } from '@types'
+import type { DimensionMetadataItem } from '@types'
 
 type DimensionModalContentProps = {
-    dimension: InternalDimensionRecord
+    dimension: DimensionMetadataItem
 }
 
 const DimensionModalContent: FC<DimensionModalContentProps> = ({
@@ -83,9 +83,7 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
                 dataTest={`${dataTest}-content`}
                 className={classes.modalContent}
             >
-                <DimensionModalContent
-                    dimension={dimension as InternalDimensionRecord}
-                />
+                <DimensionModalContent dimension={dimension} />
             </ModalContent>
             <ModalActions dataTest={`${dataTest}-actions`}>
                 <ButtonStrip>
