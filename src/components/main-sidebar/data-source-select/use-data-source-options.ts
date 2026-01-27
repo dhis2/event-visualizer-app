@@ -72,9 +72,11 @@ function filterByNameWithMaxLength<T extends { name: string }>(
         return [[], false]
     }
     const lowerCasedFilterString = filterString.toLocaleLowerCase()
-    const filteredList = list.filter((item) =>
-        item?.name?.toLocaleLowerCase().includes(lowerCasedFilterString)
-    )
+    const filteredList = list
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .filter((item) =>
+            item?.name?.toLocaleLowerCase().includes(lowerCasedFilterString)
+        )
     const slicedList = filteredList.slice(
         0,
         Math.min(visibleListLength, filteredList.length)
