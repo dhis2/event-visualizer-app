@@ -17,6 +17,7 @@ import {
 import { InterpretationModal } from '@components/interpretation-modal/interpretation-modal'
 import { LayoutPanel } from '@components/layout-panel/layout-panel'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
+import { MainSidebar } from '@components/main-sidebar/main-sidebar'
 import type {
     AnalyticsResponseMetadataDimensions,
     AnalyticsResponseMetadataItems,
@@ -37,7 +38,6 @@ import { getIsVisualizationLoading } from '@store/loader-slice'
 import {
     getUiActiveDimensionModal,
     getUiDetailsPanelVisible,
-    getUiMainSidebarVisible,
     setUiActiveDimensionModal,
 } from '@store/ui-slice'
 import type { CurrentVisualization, Sorting } from '@types'
@@ -49,7 +49,6 @@ const EventVisualizer: FC = () => {
     const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)
     const activeDimensionModal = useAppSelector(getUiActiveDimensionModal)
-    const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
 
@@ -87,13 +86,7 @@ const EventVisualizer: FC = () => {
                 <Toolbar />
             </GridTopRow>
             <GridStartColumn>
-                <div
-                    className={cx(classes.mainSidebar, {
-                        [classes.hidden]: !isMainSidebarVisible,
-                    })}
-                >
-                    Main sidebar
-                </div>
+                <MainSidebar />
                 {activeDimensionModal && (
                     <DimensionModal onClose={onDimensionModalClose} />
                 )}

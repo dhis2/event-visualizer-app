@@ -1,0 +1,99 @@
+/* Root container */
+.root {
+    position: relative;
+    inline-size: 240px;
+}
+
+/* Combobox trigger */
+.combobox {
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+}
+
+.comboboxError {
+    border: 1px solid #d32f2f;
+    background: #fff0f0;
+}
+
+.loadingMessage {
+    padding: 16px;
+    text-align: center;
+    color: #888;
+}
+
+.errorMessage {
+    padding: 16px;
+    text-align: center;
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+/* Dropdown container */
+.dropdown {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-block-start: 4px;
+    inline-size: 100%;
+    background: #fff;
+    position: absolute;
+    z-index: 1000;
+}
+
+/* Filter input wrapper */
+.filterWrapper {
+    padding: 8px;
+}
+
+.filterInput {
+    inline-size: 100%;
+}
+
+/* Listbox */
+.listbox {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Section header */
+.sectionHeader {
+    font-weight: bold;
+    padding: 8px 8px 4px 8px;
+    background: #f6f6f6;
+}
+
+/* Empty message */
+.emptyMessage {
+    padding: 6px 8px;
+    color: #888;
+}
+
+/* Option */
+.option {
+    padding: 6px 8px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.optionActive {
+    background: #e0eaff;
+}
+
+/* Show more wrapper */
+.showMoreWrapper {
+    padding: 4px 8px;
+}
+
+.showMoreButton {
+    background: none;
+    border: none;
+    color: #1976d2;
+    cursor: pointer;
+    padding: 0;
+}

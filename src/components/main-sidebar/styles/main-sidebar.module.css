@@ -1,0 +1,10 @@
+.container {
+    block-size: 100%;
+    box-sizing: border-box;
+    inline-size: 260px;
+    border-inline-end: 1px solid #d5dde5;
+}
+
+.container.hidden {
+    display: none;
+}
