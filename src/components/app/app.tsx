@@ -122,7 +122,7 @@ const EventVisualizer: FC = () => {
                     {isDetailsPanelVisible && <DetailsPanel />}
                 </div>
             </GridEndColumn>
-            <CssVariables colors spacers theme />
+            <CssVariables colors spacers theme elevations />
         </GridContainer>
     )
 }
