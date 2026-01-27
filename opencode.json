@@ -1,0 +1,38 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    // Project-specific MCP servers
+    "mcp": {
+        "eslint": {
+            "type": "local",
+            "command": ["npx", "-y", "@eslint/mcp"],
+            "enabled": true,
+            "timeout": 10000
+        }
+    },
+    // Enable specific MCP tools for this project (overriding global disable)
+    "tools": {
+        "github_*": true,
+        "grep_*": true,
+        "context7_*": true,
+        "neovim_*": true,
+        "eslint_*": true
+    },
+    // Project-specific formatters (optional)
+    "formatter": {
+        "prettier": {
+            "command": ["npx", "prettier", "--write", "$FILE"],
+            "extensions": [
+                ".js",
+                ".ts",
+                ".jsx",
+                ".tsx",
+                ".json",
+                ".md",
+                ".css",
+                ".scss"
+            ]
+        }
+    },
+    // Instructions for this project
+    "instructions": [".eslintrc.js", ".prettierrc.js", "README.md", "AGENTS.md"]
+}
