@@ -3,6 +3,7 @@
     box-sizing: border-box;
     inline-size: 260px;
     border-inline-end: 1px solid #d5dde5;
+    padding: 4px;
 }
 
 .container.hidden {

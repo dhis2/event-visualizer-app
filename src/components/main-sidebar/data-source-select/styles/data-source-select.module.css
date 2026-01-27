@@ -1,71 +1,77 @@
-/* Root container */
-.root {
-    position: relative;
-    inline-size: 240px;
+.comboboxWrap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2px;
 }
-
-/* Combobox trigger */
 .combobox {
-    border: 1px solid #ccc;
-    padding: 8px;
-    border-radius: 4px;
-    cursor: pointer;
     display: flex;
     align-items: center;
+    border: 1px solid var(--colors-grey500);
+    border-radius: 3px;
+    background-color: var(--colors-white);
+    padding-block: 2px;
+    padding-inline: 8px 4px;
+    min-block-size: 32px;
     justify-content: space-between;
-    background: #fff;
+    flex-grow: 2;
 }
-
+.chevronWrap {
+    display: flex;
+}
 .comboboxError {
-    border: 1px solid #d32f2f;
-    background: #fff0f0;
+    border: 1px solid var(--theme-error);
 }
 
-.loadingMessage {
-    padding: 16px;
-    text-align: center;
-    color: #888;
-}
-
+.loadingMessage,
 .errorMessage {
-    padding: 16px;
+    display: flex;
     text-align: center;
-    color: #d32f2f;
-    font-weight: bold;
+    justify-content: center;
+    padding-block: 8px;
+    padding-inline: 24px;
+    font-size: 13px;
+    line-height: 20px;
+}
+.loadingMessage {
+    color: var(--colors-grey700);
+    gap: 16px;
+}
+.errorMessage {
+    color: var(--theme-error);
 }
 
-/* Dropdown container */
 .dropdown {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-block-start: 4px;
-    inline-size: 100%;
-    background: #fff;
-    position: absolute;
-    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    block-size: auto;
+    background: var(--colors-white);
+    border: 1px solid var(--colors-grey200);
+    border-radius: 3px;
+    box-shadow: var(--elevations-e300);
+    box-sizing: content-box;
 }
 
-/* Filter input wrapper */
 .filterWrapper {
-    padding: 8px;
+    padding: 8px 8px 4px 8px;
 }
 
-.filterInput {
-    inline-size: 100%;
-}
-
-/* Listbox */
 .listbox {
     list-style: none;
     margin: 0;
     padding: 0;
+    max-block-size: 400px;
+    overflow-y: auto;
 }
 
 /* Section header */
 .sectionHeader {
-    font-weight: bold;
-    padding: 8px 8px 4px 8px;
-    background: #f6f6f6;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    color: var(--colors-grey600);
+    padding-block: 12px 4px;
+    padding-inline: 6px 12px;
 }
 
 /* Empty message */
@@ -87,13 +93,19 @@
 
 /* Show more wrapper */
 .showMoreWrapper {
-    padding: 4px 8px;
+    display: flex;
+    padding: 4px 8px 10px 8px;
 }
 
 .showMoreButton {
-    background: none;
-    border: none;
-    color: #1976d2;
+    all: unset;
+    inline-size: 100%;
+    font-style: italic;
+    text-align: center;
+    font-size: 13px;
     cursor: pointer;
-    padding: 0;
+    color: var(--theme-primary700);
+}
+.showMoreButton:hover {
+    text-decoration: underline;
 }

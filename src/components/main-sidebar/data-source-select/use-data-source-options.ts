@@ -56,12 +56,13 @@ type UseDataSourceOptionsResult = Pick<
     filterString: string
     hasMorePrograms: boolean
     hasMoreTrackedEntityTypes: boolean
+    shouldShowFilter: boolean
     onFilterStringChange: (payload: OnFilterStringChangePayload) => void
     onShowMoreProgramsClick: () => void
     onShowMoreTrackedEntityTypesClick: () => void
 }
 
-const LIST_LENGTH_INCREMENTER = 2
+export const LIST_LENGTH_INCREMENTER = 2
 
 function filterByNameWithMaxLength<T extends { name: string }>(
     filterString: string,
@@ -153,6 +154,13 @@ export const useDataSourceOptions = (): UseDataSourceOptionsResult => {
             ),
         [filterString, data, visibleTrackedEntityTypeLength]
     )
+    const shouldShowFilter = useMemo(
+        () =>
+            (data?.programs.programs.length ?? 0) +
+                (data?.trackedEntityTypes.trackedEntityTypes.length ?? 0) >
+            LIST_LENGTH_INCREMENTER,
+        [data]
+    )
 
     return useMemo<UseDataSourceOptionsResult>(
         () => ({
@@ -163,6 +171,7 @@ export const useDataSourceOptions = (): UseDataSourceOptionsResult => {
             trackedEntityTypes,
             hasMorePrograms,
             hasMoreTrackedEntityTypes,
+            shouldShowFilter,
             filterString,
             onFilterStringChange: onFilterStringChange,
             onShowMoreProgramsClick: () =>
@@ -182,6 +191,7 @@ export const useDataSourceOptions = (): UseDataSourceOptionsResult => {
             onFilterStringChange,
             programs,
             trackedEntityTypes,
+            shouldShowFilter,
             hasMorePrograms,
             hasMoreTrackedEntityTypes,
         ]
