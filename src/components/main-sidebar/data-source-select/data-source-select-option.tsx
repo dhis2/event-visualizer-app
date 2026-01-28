@@ -31,7 +31,6 @@ export const DataSourceSelectOption = ({
         <li
             role="option"
             aria-selected={isSelected}
-            id={option.id}
             tabIndex={-1}
             className={cx(classes.option, isSelected && classes.optionActive)}
             onClick={handleSelect}

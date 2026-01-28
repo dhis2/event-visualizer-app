@@ -25,11 +25,7 @@ export const DataSourceSelectListbox = ({
 }: DataSourceSelectListboxProps) => (
     <ul role="listbox" id="data-source-listbox" className={classes.listbox}>
         {programs.length > 0 && (
-            <li
-                role="presentation"
-                className={classes.sectionHeader}
-                id="programs-header"
-            >
+            <li role="presentation" className={classes.sectionHeader}>
                 Programs
             </li>
         )}
@@ -52,12 +48,8 @@ export const DataSourceSelectListbox = ({
             </li>
         )}
         {trackedEntityTypes.length > 0 && (
-            <li
-                role="presentation"
-                className={classes.sectionHeader}
-                id="tracked-entity-header"
-            >
-                Tracked Entity Types
+            <li role="presentation" className={classes.sectionHeader}>
+                Other data sources
             </li>
         )}
         {trackedEntityTypes.map((tet) => (
