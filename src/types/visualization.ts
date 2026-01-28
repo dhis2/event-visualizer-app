@@ -8,20 +8,28 @@ import type {
     LegendDisplayStyle,
     DimensionalItemObject,
 } from './dhis2-openapi-schemas'
-import type {
-    ExtendedDimensionType,
-    VisualizationType,
-    MetadataInputMap,
-} from '@types'
+import type { DimensionType } from './dimension'
+import type { MetadataInputMap } from './metadata'
+import type { VisualizationType } from './visualization-type'
 
 type IdRecord = { id: string }
 type IdNameRecord = IdRecord & { name: string }
 
 type MetadataRecordArray<T extends string> = Array<Record<T, IdNameRecord>>
 
+/**
+ * DimensionRecord represents dimension data from the DHIS2 API.
+ *
+ * dimensionType can be:
+ * - 'PROGRAM_DATA_ELEMENT' (untransformed API value)
+ * - A DimensionType value (includes transformed values like 'DATA_ELEMENT',
+ *   plus app-specific types like 'STATUS' and 'USER')
+ *
+ * transformDimensions() converts PROGRAM_DATA_ELEMENT → DATA_ELEMENT where needed.
+ */
 export type DimensionRecord = {
     dimension: string
-    dimensionType?: ExtendedDimensionType
+    dimensionType?: DimensionType | 'PROGRAM_DATA_ELEMENT'
     filter?: string
     program?: IdRecord
     programStage?: IdRecord

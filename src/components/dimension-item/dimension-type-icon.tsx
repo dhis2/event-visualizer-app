@@ -13,7 +13,7 @@ import {
 import React, { type ReactNode } from 'react'
 import type { DimensionType } from '@types'
 
-type DimensionTypeIconMap = Record<DimensionType, ReactNode>
+type DimensionTypeIconMap = Partial<Record<DimensionType, ReactNode>>
 
 const dimensionTypeIconMap: DimensionTypeIconMap = {
     DATA_ELEMENT: <IconDimensionData16 />,

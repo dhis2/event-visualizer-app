@@ -17,8 +17,7 @@ import type {
     MetadataInputMap,
     OrganisationUnitMetadataItem,
     DimensionId,
-    DimensionType,
-    InternalDimensionRecord,
+    DimensionMetadataItem,
     SavedVisualization,
 } from '@types'
 
@@ -41,7 +40,7 @@ const getDefaultOrgUnitMetadata = (
 ) => ({
     ou: {
         id: 'ou',
-        dimensionType: 'ORGANISATION_UNIT' as DimensionType,
+        dimensionType: 'ORGANISATION_UNIT',
         name: getDefaultOrgUnitLabel(outputType),
     },
 })
@@ -169,7 +168,7 @@ export const extractDimensionMetadata = (
         const dimensionList = visualization[listName] || []
 
         dimensionList.forEach((dimensionWrapper: object) => {
-            const dimension: InternalDimensionRecord =
+            const dimension: DimensionMetadataItem =
                 dimensionWrapper[dimensionName]
             metaData[dimension.id] = dimension
         })

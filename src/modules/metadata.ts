@@ -3,7 +3,6 @@ import { isObject, isPopulatedString } from './validation'
 import type {
     DimensionId,
     OutputType,
-    InternalDimensionRecord,
     ProgramMetadataItem,
     ProgramStageMetadataItem,
     OptionSetMetadataItem,
@@ -172,7 +171,7 @@ export const isMetadataItem = (input: unknown): input is MetadataItem => {
 
 export const getDefaultOrgUnitMetadata = (
     outputType?: OutputType
-): Partial<Record<DimensionId, InternalDimensionRecord>> => ({
+): Partial<Record<DimensionId, DimensionMetadataItem>> => ({
     ou: {
         id: 'ou',
         dimensionType: 'ORGANISATION_UNIT',

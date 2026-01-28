@@ -1,11 +1,10 @@
-import type { MetadataItem as GeneratedMetadaItem } from './dhis2-openapi-schemas'
 import type {
+    MetadataItem as GeneratedMetadaItem,
     ProgramType,
     OptionSet,
     LegendSet,
-    ValueType,
-    DimensionType,
-} from '@types'
+} from './dhis2-openapi-schemas'
+import type { DimensionType } from './dimension'
 
 /** PHASES
  * 1. Data is provided as a single object, object map, or object array
@@ -53,23 +52,23 @@ export type NormalizedMetadataInputItem = Record<string, unknown> & {
  ****************************************************/
 
 export type DimensionMetadataItem = Omit<
-    /* The generated type called MetadataItem actually
-     * actually represents a dimension, but has a `uid`
-     * field rather than an `id` */
-    GeneratedMetadaItem,
-    | 'uid'
-    | 'name'
-    | 'dimensionType'
-    | 'dimensionItemType'
-    | 'valueType'
-    | 'options'
+    /* The generated type called MetadataItem actually represents a
+     * dimension of sorts, but has a `uid` field rather than an `id`
+     * and some required fields that we do not always populate */
+    Partial<GeneratedMetadaItem>, // make all fiels optional
+    | 'uid' // Omit because we use `id`
+    | 'name' // Omit to make required
+    | 'dimensionType' // Omit to make required and customise
+    | 'dimensionItemType' // Omit to customise
+    | 'options' // Omit because it does not reflect reality
 > & {
     id: string // we use id not uid
     name: string // required instead of optional
-    dimensionType: DimensionType // Use custom DimensionType with additional strings
-    dimensionItemType?: DimensionType // optional instead of required
-    valueType?: ValueType // optional instead of required
-    optionSet?: string // the generated type has an optional array of `options`, but no `optionSet`
+    dimensionType: DimensionType // require and use "our" dimension type
+    dimensionItemType?: DimensionType // use "our" dimension type
+    optionSet?: string // Add ID reference to `optionSet`
+    program?: string // Add ID reference to `program`
+    programStage?: string // Add ID reference to `programStage`
 }
 
 // Note that `optionSet` and `legendSet` have an optional name
@@ -152,7 +151,10 @@ export type MetadataItemWithName = Exclude<
 
 export type Subscriber = () => void
 
-export type InitialMetadataItems = Record<string, string | MetadataInputItem>
+export type InitialMetadataItems = Record<
+    string,
+    string | MetadataInputItem | Partial<DimensionMetadataItem>
+>
 export type AnalyticsResponseMetadataItems = Record<string, MetadataInputItem>
 
 export type DimensionMetadata = {
