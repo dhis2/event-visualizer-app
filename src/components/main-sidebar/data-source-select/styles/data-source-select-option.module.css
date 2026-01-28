@@ -1,0 +1,9 @@
+/* Styles for DataSourceSelectOption */
+.option {
+    padding: 6px 8px;
+    background: transparent;
+    cursor: pointer;
+}
+.optionActive {
+    background: #e0eaff;
+}

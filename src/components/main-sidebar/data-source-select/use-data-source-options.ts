@@ -36,6 +36,7 @@ type TrackedEntityTypeData = Omit<
     id: string
     name: string
 }
+export type DataSource = ProgramData | TrackedEntityTypeData
 type ResponseData = {
     programs: {
         programs: ProgramData[]
@@ -47,7 +48,7 @@ type ResponseData = {
 type OnFilterStringChangePayload = {
     value: string | undefined
 }
-type UseDataSourceOptionsResult = Pick<
+export type UseDataSourceOptionsResult = Pick<
     UseRtkQueryResult<ResponseData>,
     'isLoading' | 'isError' | 'error'
 > & {

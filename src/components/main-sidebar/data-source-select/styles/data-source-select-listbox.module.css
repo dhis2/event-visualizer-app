@@ -1,0 +1,36 @@
+/* Styles for DataSourceSelectListbox */
+.listbox {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-block-size: 400px;
+    overflow-y: auto;
+}
+.sectionHeader {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    color: var(--colors-grey600);
+    padding-block: 12px 4px;
+    padding-inline: 6px 12px;
+}
+.emptyMessage {
+    padding: 6px 8px;
+    color: #888;
+}
+.showMoreWrapper {
+    display: flex;
+    padding: 4px 8px 10px 8px;
+}
+.showMoreButton {
+    all: unset;
+    inline-size: 100%;
+    font-style: italic;
+    text-align: center;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--theme-primary700);
+}
+.showMoreButton:hover {
+    text-decoration: underline;
+}

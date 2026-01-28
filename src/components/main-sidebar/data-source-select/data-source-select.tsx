@@ -1,16 +1,8 @@
 import i18n from '@dhis2/d2-i18n'
-import {
-    CircularLoader,
-    IconChevronDown16,
-    IconChevronUp16,
-    IconErrorFilled24,
-    Input,
-    Layer,
-    Popper,
-    theme,
-} from '@dhis2/ui'
-import cx from 'classnames'
-import React, { useRef, useState } from 'react'
+import { CircularLoader, Input, Layer, Popper } from '@dhis2/ui'
+import { useCallback, useRef, useState } from 'react'
+import { DataSourceSelectCombobox } from './data-source-select-combobox'
+import { DataSourceSelectListbox } from './data-source-select-listbox'
 import classes from './styles/data-source-select.module.css'
 import { useDataSourceOptions } from './use-data-source-options'
 
@@ -31,35 +23,20 @@ export const DataSourceSelect = () => {
     } = useDataSourceOptions()
     const comboboxRef = useRef<HTMLDivElement | null>(null)
     const [isOpen, setIsOpen] = useState(false)
-    const [selectedId, setSelectedId] = useState<string | null>(null)
+    const closeDropDown = useCallback(() => {
+        setIsOpen(false)
+    }, [])
 
     return (
         <>
-            <div className={classes.comboboxWrap}>
-                <div
-                    ref={comboboxRef}
-                    role="combobox"
-                    aria-haspopup="listbox"
-                    aria-expanded={isOpen}
-                    aria-controls="data-source-listbox"
-                    tabIndex={0}
-                    className={cx(
-                        classes.combobox,
-                        isError && classes.comboboxError
-                    )}
-                    onClick={() => setIsOpen((open) => !open)}
-                >
-                    <span>{i18n.t('Choose a data source')}</span>
-                    <span className={classes.chevronWrap} aria-hidden="true">
-                        {isOpen ? <IconChevronUp16 /> : <IconChevronDown16 />}
-                    </span>
-                </div>
-                {isError && <IconErrorFilled24 color={theme.error} />}
-            </div>
-
-            {/* Dropdown */}
+            <DataSourceSelectCombobox
+                isError={isError}
+                isOpen={isOpen}
+                onClick={() => setIsOpen((open) => !open)}
+                comboboxRef={comboboxRef}
+            />
             {isOpen && (
-                <Layer onBackdropClick={() => setIsOpen(false)}>
+                <Layer onBackdropClick={closeDropDown}>
                     <Popper
                         reference={comboboxRef}
                         placement="bottom-start"
@@ -99,137 +76,21 @@ export const DataSourceSelect = () => {
                                             />
                                         </div>
                                     )}
-                                    <ul
-                                        role="listbox"
-                                        id="data-source-listbox"
-                                        className={classes.listbox}
-                                    >
-                                        {programs.length > 0 && (
-                                            <li
-                                                role="presentation"
-                                                className={
-                                                    classes.sectionHeader
-                                                }
-                                                id="programs-header"
-                                            >
-                                                {i18n.t('Programs')}
-                                            </li>
-                                        )}
-                                        {programs.length === 0 &&
-                                            trackedEntityTypes.length === 0 && (
-                                                <li
-                                                    role="presentation"
-                                                    className={
-                                                        classes.emptyMessage
-                                                    }
-                                                >
-                                                    {i18n.t(
-                                                        'No data sources available'
-                                                    )}
-                                                </li>
-                                            )}
-                                        {programs.map((program) => (
-                                            <li
-                                                key={program.id}
-                                                role="option"
-                                                aria-selected={
-                                                    selectedId === program.id
-                                                }
-                                                id={program.id}
-                                                tabIndex={-1}
-                                                className={cx(
-                                                    classes.option,
-                                                    selectedId === program.id &&
-                                                        classes.optionActive
-                                                )}
-                                                onClick={() => {
-                                                    setSelectedId(program.id)
-                                                    setIsOpen(false)
-                                                }}
-                                            >
-                                                {program.name}
-                                            </li>
-                                        ))}
-                                        {hasMorePrograms && (
-                                            <li
-                                                role="presentation"
-                                                className={
-                                                    classes.showMoreWrapper
-                                                }
-                                            >
-                                                <button
-                                                    type="button"
-                                                    className={
-                                                        classes.showMoreButton
-                                                    }
-                                                    onClick={
-                                                        onShowMoreProgramsClick
-                                                    }
-                                                >
-                                                    {i18n.t(
-                                                        'Show more programs'
-                                                    )}
-                                                </button>
-                                            </li>
-                                        )}
-
-                                        {trackedEntityTypes.length > 0 && (
-                                            <li
-                                                role="presentation"
-                                                className={
-                                                    classes.sectionHeader
-                                                }
-                                                id="tracked-entity-header"
-                                            >
-                                                {i18n.t('Tracked Entity Types')}
-                                            </li>
-                                        )}
-
-                                        {trackedEntityTypes.map((type) => (
-                                            <li
-                                                key={type.id}
-                                                role="option"
-                                                aria-selected={
-                                                    selectedId === type.id
-                                                }
-                                                id={type.id}
-                                                tabIndex={-1}
-                                                className={cx(
-                                                    classes.option,
-                                                    selectedId === type.id &&
-                                                        classes.optionActive
-                                                )}
-                                                onClick={() => {
-                                                    setSelectedId(type.id)
-                                                    setIsOpen(false)
-                                                }}
-                                            >
-                                                {type.name}
-                                            </li>
-                                        ))}
-                                        {hasMoreTrackedEntityTypes && (
-                                            <li
-                                                role="presentation"
-                                                className={
-                                                    classes.showMoreWrapper
-                                                }
-                                            >
-                                                <button
-                                                    type="button"
-                                                    className={
-                                                        classes.showMoreButton
-                                                    }
-                                                    onClick={
-                                                        onShowMoreTrackedEntityTypesClick
-                                                    }
-                                                >
-                                                    {i18n.t(
-                                                        'Show more other data source'
-                                                    )}
-                                                </button>
-                                            </li>
-                                        )}
-                                    </ul>
+                                    <DataSourceSelectListbox
+                                        programs={programs}
+                                        trackedEntityTypes={trackedEntityTypes}
+                                        hasMorePrograms={hasMorePrograms}
+                                        hasMoreTrackedEntityTypes={
+                                            hasMoreTrackedEntityTypes
+                                        }
+                                        onShowMoreProgramsClick={
+                                            onShowMoreProgramsClick
+                                        }
+                                        onShowMoreTrackedEntityTypesClick={
+                                            onShowMoreTrackedEntityTypesClick
+                                        }
+                                        closeDropdown={closeDropDown}
+                                    />
                                 </>
                             )}
                         </div>
