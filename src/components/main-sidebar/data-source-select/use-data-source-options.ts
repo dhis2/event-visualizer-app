@@ -1,9 +1,8 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useCurrentUser, useRtkQuery } from '@hooks'
 import type {
-    PickWithFieldFilters,
-    Program,
-    TrackedEntityType,
+    MetadataItemWithName,
+    ProgramMetadataItem,
     UseRtkQueryResult,
 } from '@types'
 
@@ -22,27 +21,12 @@ const programFields = [
 const trackedEntityTypeFields = ['id', 'displayName~rename(name)'] as const
 const sharedParams = { filter: 'access.data.read:eq:true', paging: false }
 
-type ProgramData = Omit<
-    PickWithFieldFilters<Program, typeof programFields>,
-    'id' | 'name' | 'displayName' | 'displayShortName'
-> & {
-    id: string
-    name: string
-}
-type TrackedEntityTypeData = Omit<
-    PickWithFieldFilters<TrackedEntityType, typeof trackedEntityTypeFields>,
-    'id' | 'name' | 'displayName' | 'displayShortName'
-> & {
-    id: string
-    name: string
-}
-export type DataSource = ProgramData | TrackedEntityTypeData
 type ResponseData = {
     programs: {
-        programs: ProgramData[]
+        programs: ProgramMetadataItem[]
     }
     trackedEntityTypes: {
-        trackedEntityTypes: TrackedEntityTypeData[]
+        trackedEntityTypes: MetadataItemWithName[]
     }
 }
 type OnFilterStringChangePayload = {
@@ -52,8 +36,8 @@ export type UseDataSourceOptionsResult = Pick<
     UseRtkQueryResult<ResponseData>,
     'isLoading' | 'isError' | 'error'
 > & {
-    programs: ProgramData[]
-    trackedEntityTypes: TrackedEntityTypeData[]
+    programs: ProgramMetadataItem[]
+    trackedEntityTypes: MetadataItemWithName[]
     filterString: string
     hasMorePrograms: boolean
     hasMoreTrackedEntityTypes: boolean
@@ -135,7 +119,9 @@ export const useDataSourceOptions = (): UseDataSourceOptionsResult => {
     const onFilterStringChange = useCallback(({ value = '' }) => {
         setFilterString(value)
     }, [])
-    const [programs, hasMorePrograms] = useMemo<[ProgramData[], boolean]>(
+    const [programs, hasMorePrograms] = useMemo<
+        [ProgramMetadataItem[], boolean]
+    >(
         () =>
             filterByNameWithMaxLength(
                 filterString,
@@ -145,7 +131,7 @@ export const useDataSourceOptions = (): UseDataSourceOptionsResult => {
         [filterString, data, visibleProgramsLength]
     )
     const [trackedEntityTypes, hasMoreTrackedEntityTypes] = useMemo<
-        [TrackedEntityTypeData[], boolean]
+        [MetadataItemWithName[], boolean]
     >(
         () =>
             filterByNameWithMaxLength(
