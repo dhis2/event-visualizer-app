@@ -28,13 +28,13 @@ export const createStore = (
     configureStore({
         reducer: {
             [api.reducerPath]: api.reducer,
-            currentVis: currentVisSlice.reducer,
-            dimensionsSelection: dimensionSelectionSlice.reducer,
-            loader: loaderSlice.reducer,
-            navigation: navigationSlice.reducer,
-            ui: uiSlice.reducer,
-            visUiConfig: visUiConfigSlice.reducer,
-            savedVis: savedVisSlice.reducer,
+            [currentVisSlice.name]: currentVisSlice.reducer,
+            [dimensionSelectionSlice.name]: dimensionSelectionSlice.reducer,
+            [loaderSlice.name]: loaderSlice.reducer,
+            [navigationSlice.name]: navigationSlice.reducer,
+            [uiSlice.name]: uiSlice.reducer,
+            [visUiConfigSlice.name]: visUiConfigSlice.reducer,
+            [savedVisSlice.name]: savedVisSlice.reducer,
         },
         middleware: (getDefaultMiddleware) =>
             getDefaultMiddleware({
