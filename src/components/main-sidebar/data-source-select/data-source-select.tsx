@@ -23,7 +23,10 @@ export const DataSourceSelect = () => {
     } = useDataSourceOptions()
     const comboboxRef = useRef<HTMLDivElement | null>(null)
     const [isOpen, setIsOpen] = useState(false)
-    const closeDropDown = useCallback(() => {
+    const openDropdown = useCallback(() => {
+        setIsOpen(true)
+    }, [])
+    const closeDropdown = useCallback(() => {
         setIsOpen(false)
     }, [])
 
@@ -32,11 +35,11 @@ export const DataSourceSelect = () => {
             <DataSourceSelectCombobox
                 isError={isError}
                 isOpen={isOpen}
-                onClick={() => setIsOpen((open) => !open)}
+                onClick={openDropdown}
                 comboboxRef={comboboxRef}
             />
             {isOpen && (
-                <Layer onBackdropClick={closeDropDown}>
+                <Layer onBackdropClick={closeDropdown}>
                     <Popper
                         reference={comboboxRef}
                         placement="bottom-start"
@@ -89,7 +92,7 @@ export const DataSourceSelect = () => {
                                         onShowMoreTrackedEntityTypesClick={
                                             onShowMoreTrackedEntityTypesClick
                                         }
-                                        closeDropdown={closeDropDown}
+                                        closeDropdown={closeDropdown}
                                     />
                                 </>
                             )}
