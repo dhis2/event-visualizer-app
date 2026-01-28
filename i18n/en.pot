@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-01-27T14:49:08.681Z\n"
-"PO-Revision-Date: 2026-01-27T14:49:08.682Z\n"
+"POT-Creation-Date: 2026-01-28T10:17:47.130Z\n"
+"PO-Revision-Date: 2026-01-28T10:17:47.131Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -284,21 +284,6 @@ msgstr "Filter data sources"
 
 msgid "Type to filter…"
 msgstr "Type to filter…"
-
-msgid "Programs"
-msgstr "Programs"
-
-msgid "No data sources available"
-msgstr "No data sources available"
-
-msgid "Show more programs"
-msgstr "Show more programs"
-
-msgid "Tracked Entity Types"
-msgstr "Tracked Entity Types"
-
-msgid "Show more other data source"
-msgstr "Show more other data source"
 
 msgid "Column sub-totals"
 msgstr "Column sub-totals"
