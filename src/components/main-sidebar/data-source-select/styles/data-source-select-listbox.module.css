@@ -1,4 +1,3 @@
-/* Styles for DataSourceSelectListbox */
 .listbox {
     list-style: none;
     margin: 0;
@@ -12,11 +11,14 @@
     letter-spacing: 0.3px;
     color: var(--colors-grey600);
     padding-block: 12px 4px;
-    padding-inline: 6px 12px;
+    padding-inline: 14px 12px;
 }
 .emptyMessage {
-    padding: 6px 8px;
-    color: #888;
+    padding: 8px;
+    font-size: 13px;
+    color: var(--colors-grey700);
+    text-align: center;
+    font-style: italic;
 }
 .showMoreWrapper {
     display: flex;

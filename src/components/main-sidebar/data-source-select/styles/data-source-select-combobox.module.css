@@ -1,4 +1,3 @@
-/* Styles for DataSourceSelectCombobox */
 .comboboxWrap {
     display: flex;
     flex-direction: row;
@@ -15,20 +14,39 @@
     padding-inline: 8px 4px;
     min-block-size: 32px;
     justify-content: space-between;
-    flex-grow: 2;
+    flex-grow: 1;
+    max-inline-size: 100%;
 }
-.chevronWrap {
-    display: flex;
-}
-.comboboxError {
+.combobox.error {
     border: 1px solid var(--theme-error);
 }
+.combobox:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--theme-focus);
+    border-color: var(--theme-focus);
+}
+
 .label {
-    font-size: 15px;
-    font-weight: 400;
+    display: flex;
+    gap: 12px;
+    font-size: 13px;
+    font-weight: 500;
     color: var(--colors-grey900);
     flex: 1 1 auto;
     overflow: hidden;
+}
+.label.empty {
+    color: var(--colors-grey600);
+}
+.label > :global(svg) {
+    flex-shrink: 0;
+}
+.ellipsis {
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.chevronWrap {
+    display: flex;
 }
