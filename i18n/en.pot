@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-01-22T08:48:59.509Z\n"
-"PO-Revision-Date: 2026-01-22T08:48:59.509Z\n"
+"POT-Creation-Date: 2026-01-28T15:35:49.651Z\n"
+"PO-Revision-Date: 2026-01-28T15:35:49.652Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -269,6 +269,24 @@ msgstr "oldest {{repeatEventIndex}}"
 
 msgid "most recent {{repeatEventIndex}}"
 msgstr "most recent {{repeatEventIndex}}"
+
+msgid "Choose a data source"
+msgstr "Choose a data source"
+
+msgid "No data sources available"
+msgstr "No data sources available"
+
+msgid "Loading options"
+msgstr "Loading options"
+
+msgid "Failed to load data sources."
+msgstr "Failed to load data sources."
+
+msgid "Filter data sources"
+msgstr "Filter data sources"
+
+msgid "Type to filter…"
+msgstr "Type to filter…"
 
 msgid "Column sub-totals"
 msgstr "Column sub-totals"

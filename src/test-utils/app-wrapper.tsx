@@ -194,7 +194,7 @@ const MockAppWrapperCore: FC<{
 }> = ({ children, queryData, metadata, partialStore }) => {
     return (
         <CustomDataProvider data={{ ...defaultAppCachedData, ...queryData }}>
-            <CssVariables colors spacers theme />
+            <CssVariables colors spacers theme elevations />
             <AppCachedDataQueryProvider>
                 <MockMetadataProvider mockMetadata={metadata}>
                     <MockStoreAndDndProvider partialStore={partialStore}>

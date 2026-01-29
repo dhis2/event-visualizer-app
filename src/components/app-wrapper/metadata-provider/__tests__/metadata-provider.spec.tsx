@@ -1,5 +1,5 @@
 import { render, act, renderHook } from '@testing-library/react'
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { expect, describe, it, beforeEach } from 'vitest'
 import {
     MetadataProvider,
@@ -391,6 +391,35 @@ describe('MetadataProvider API and return value types', () => {
             wrapper: ProviderWithComponents,
         })
         expect(result.current).toBeUndefined()
+    })
+
+    it('useMetadataItem handles keys that resolve during rerenders', () => {
+        const item = { id: 'id-1', name: 'A name' }
+        const { result } = renderHook(
+            () => {
+                const [key, setKey] = useState<string | null>(null)
+                const metadataItem = useMetadataItem(key)
+                const addMetadata = useAddMetadata()
+                return { setKey, metadataItem, addMetadata }
+            },
+            {
+                wrapper: ProviderWithComponents,
+            }
+        )
+
+        expect(result.current.metadataItem).toBeUndefined()
+
+        act(() => {
+            result.current.setKey(item.id)
+        })
+
+        expect(result.current.metadataItem).toBeUndefined()
+
+        act(() => {
+            result.current.addMetadata(item)
+        })
+
+        expect(result.current.metadataItem).toEqual(item)
     })
 
     it('useMetadataItems returns empty object for non-existent keys', () => {

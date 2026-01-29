@@ -3,8 +3,8 @@ import {
     dimensionSelectionSlice,
     initialState,
     type DimensionSelectionState,
-    clearDataSource,
-    setDataSource,
+    clearDataSourceId,
+    setDataSourceId,
     clearSearchTerm,
     setSearchTerm,
     clearFilter,
@@ -20,7 +20,8 @@ import {
     addItemToMultiSelection,
     removeItemFromMultiSelection,
     getSearchTerm,
-    getDataSource,
+    getDataSourceId,
+    getIsSelectedDataSourceId,
     getFilter,
     getIsAllCollapsed,
     isAnyListLoading,
@@ -31,7 +32,6 @@ import {
     isDimensionMultiSelected,
 } from '../dimensions-selection-slice'
 import type { EngineError } from '@api/parse-engine-error'
-import type { DataSource } from '@types'
 
 type RootState = {
     dimensionSelection: DimensionSelectionState
@@ -54,27 +54,19 @@ describe('dimensionSelectionSlice', () => {
     })
 
     describe('reducers', () => {
-        it('should clear data source', () => {
-            const dataSource = {
-                id: 'test',
-                programType: 'WITH_REGISTRATION',
-            } as DataSource
+        it('should clear data source ID', () => {
             const prevstate: DimensionSelectionState = {
                 ...initialState,
-                dataSource,
+                dataSourceId: 'test',
             }
 
-            const state = reducer(prevstate, clearDataSource())
-            expect(state.dataSource).toBe(null)
+            const state = reducer(prevstate, clearDataSourceId())
+            expect(state.dataSourceId).toBe(null)
         })
 
         it('should set data source', () => {
-            const dataSource = {
-                id: 'test',
-                programType: 'WITH_REGISTRATION',
-            } as DataSource
-            const state = reducer(initialState, setDataSource(dataSource))
-            expect(state.dataSource).toEqual(dataSource)
+            const state = reducer(initialState, setDataSourceId('test'))
+            expect(state.dataSourceId).toEqual('test')
         })
 
         it('should clear search term', () => {
@@ -204,13 +196,14 @@ describe('dimensionSelectionSlice', () => {
     })
 
     describe('selectors', () => {
-        it('should get data source', () => {
-            const dataSource = {
-                id: 'test',
-                programType: 'WITH_REGISTRATION',
-            } as DataSource
-            const state = createRootState({ dataSource })
-            expect(getDataSource(state)).toEqual(dataSource)
+        it('should get data source ID', () => {
+            const state = createRootState({ dataSourceId: 'test' })
+            expect(getDataSourceId(state)).toEqual('test')
+        })
+
+        it('should get is selected data source for a provided data source ID', () => {
+            const state = createRootState({ dataSourceId: 'test' })
+            expect(getIsSelectedDataSourceId(state, 'test')).toEqual(true)
         })
 
         it('should get search term', () => {

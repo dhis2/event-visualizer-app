@@ -1,22 +1,24 @@
+import { isMetadataItemWithName, isProgramMetadataItem } from './metadata'
 import type {
     DataSource,
     DataSourceProgramWithoutRegistration,
     DataSourceProgramWithRegistration,
-    DataSourceTrackedEntity,
-} from 'src/types/data-source'
+    MetadataItemWithName,
+} from '@types'
 
 export const isDataSourceProgramWithRegistration = (
     dataSource: DataSource
 ): dataSource is DataSourceProgramWithRegistration =>
-    'programType' in dataSource &&
+    isProgramMetadataItem(dataSource) &&
     dataSource.programType === 'WITH_REGISTRATION'
 
 export const isDataSourceProgramWithoutRegistration = (
     dataSource: DataSource
 ): dataSource is DataSourceProgramWithoutRegistration =>
-    'programType' in dataSource &&
+    isProgramMetadataItem(dataSource) &&
     dataSource.programType === 'WITHOUT_REGISTRATION'
 
 export const isDataSourceTrackedEntity = (
     dataSource: DataSource
-): dataSource is DataSourceTrackedEntity => !('programType' in dataSource)
+): dataSource is MetadataItemWithName =>
+    !isProgramMetadataItem(dataSource) && isMetadataItemWithName(dataSource)

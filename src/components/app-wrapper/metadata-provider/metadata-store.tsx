@@ -11,7 +11,7 @@ import {
     isProgramMetadataItem,
     isProgramStageMetadataItem,
 } from '@modules/metadata'
-import { isObject } from '@modules/validation'
+import { isObject, isPopulatedString } from '@modules/validation'
 import type {
     MetadataInputItem,
     MetadataItem,
@@ -35,6 +35,8 @@ declare global {
         filterMetadataStoreItems: (token: string) => MetadataItem[]
     }
 }
+
+const noop = () => {}
 
 const isItemMatch = (item: MetadataItem, token: string) =>
     item.id.includes(token) ||
@@ -205,7 +207,10 @@ export class MetadataStore {
         return result
     }
 
-    subscribe(key: string, cb: Subscriber) {
+    subscribe(key: string | null | undefined, cb: Subscriber) {
+        if (!isPopulatedString(key)) {
+            return noop
+        }
         if (!this.subscribers.has(key)) {
             this.subscribers.set(key, new Set())
         }

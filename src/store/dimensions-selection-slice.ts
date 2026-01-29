@@ -1,7 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { EngineError } from '@api/parse-engine-error'
-import type { DataSource } from '@types'
 
 type ListLoadingState = {
     isLoading: boolean
@@ -10,7 +9,7 @@ type ListLoadingState = {
 type AllListsLoadErrors = Array<{ groupKey: string; error: EngineError }>
 
 export interface DimensionSelectionState {
-    dataSource: DataSource | null
+    dataSourceId: string | null
     searchTerm: string
     // TODO: update to a string literal once all allowed filter strings are known
     filter: string | null
@@ -21,7 +20,7 @@ export interface DimensionSelectionState {
 }
 
 export const initialState: DimensionSelectionState = {
-    dataSource: null,
+    dataSourceId: null,
     searchTerm: '',
     filter: null,
     isAllCollapsed: false,
@@ -33,11 +32,11 @@ export const dimensionSelectionSlice = createSlice({
     name: 'dimensionSelection',
     initialState,
     reducers: {
-        clearDataSource: (state) => {
-            state.dataSource = null
+        clearDataSourceId: (state) => {
+            state.dataSourceId = null
         },
-        setDataSource: (state, action: PayloadAction<DataSource>) => {
-            state.dataSource = action.payload
+        setDataSourceId: (state, action: PayloadAction<string>) => {
+            state.dataSourceId = action.payload
         },
         clearSearchTerm: (state) => {
             state.searchTerm = initialState.searchTerm
@@ -98,7 +97,9 @@ export const dimensionSelectionSlice = createSlice({
         },
     },
     selectors: {
-        getDataSource: (state) => state.dataSource,
+        getDataSourceId: (state) => state.dataSourceId,
+        getIsSelectedDataSourceId: (state, id: string) =>
+            state.dataSourceId === id,
         getSearchTerm: (state) => state.searchTerm,
         getFilter: (state) => state.filter,
         getIsAllCollapsed: (state) => state.isAllCollapsed,
@@ -136,8 +137,8 @@ export const dimensionSelectionSlice = createSlice({
 })
 
 export const {
-    clearDataSource,
-    setDataSource,
+    clearDataSourceId,
+    setDataSourceId,
     clearSearchTerm,
     setSearchTerm,
     clearFilter,
@@ -154,7 +155,8 @@ export const {
     removeItemFromMultiSelection,
 } = dimensionSelectionSlice.actions
 export const {
-    getDataSource,
+    getDataSourceId,
+    getIsSelectedDataSourceId,
     getSearchTerm,
     getFilter,
     getIsAllCollapsed,
