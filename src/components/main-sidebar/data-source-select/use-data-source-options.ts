@@ -70,6 +70,7 @@ function filterByNameWithMaxLength<T extends { name: string }>(
     const hasMore = filteredList.length > slicedList.length
     return [slicedList, hasMore]
 }
+
 const replaceDisplayNameProperty = (
     fields: ReadonlyArray<string>,
     displayNameProperty: string
@@ -103,7 +104,9 @@ const getQueryOptions = (displayNameProperty: string) => ({
     },
 })
 
-export const useDataSourceOptions = (): UseDataSourceOptionsResult => {
+export const useDataSourceOptions = (
+    listLengthIncrementer: number = LIST_LENGTH_INCREMENTER
+): UseDataSourceOptionsResult => {
     const {
         settings: { displayNameProperty },
     } = useCurrentUser()
@@ -112,45 +115,34 @@ export const useDataSourceOptions = (): UseDataSourceOptionsResult => {
     )
     const [filterString, setFilterString] = useState('')
     const [visibleProgramsLength, setVisibleProgramsLength] = useState(
-        LIST_LENGTH_INCREMENTER
+        listLengthIncrementer
     )
     const [visibleTrackedEntityTypeLength, setVisibleTrackedEntityTypeLength] =
-        useState(LIST_LENGTH_INCREMENTER)
+        useState(listLengthIncrementer)
     const onFilterStringChange = useCallback(({ value = '' }) => {
         setFilterString(value)
     }, [])
-    const [programs, hasMorePrograms] = useMemo<
-        [ProgramMetadataItem[], boolean]
-    >(
-        () =>
-            filterByNameWithMaxLength(
-                filterString,
-                visibleProgramsLength,
-                data?.programs.programs
-            ),
-        [filterString, data, visibleProgramsLength]
-    )
-    const [trackedEntityTypes, hasMoreTrackedEntityTypes] = useMemo<
-        [MetadataItemWithName[], boolean]
-    >(
-        () =>
+
+    return useMemo<UseDataSourceOptionsResult>(() => {
+        const [programs, hasMorePrograms] = filterByNameWithMaxLength(
+            filterString,
+            visibleProgramsLength,
+            data?.programs.programs
+        )
+
+        const [trackedEntityTypes, hasMoreTrackedEntityTypes] =
             filterByNameWithMaxLength(
                 filterString,
                 visibleTrackedEntityTypeLength,
                 data?.trackedEntityTypes.trackedEntityTypes
-            ),
-        [filterString, data, visibleTrackedEntityTypeLength]
-    )
-    const shouldShowFilter = useMemo(
-        () =>
+            )
+
+        const shouldShowFilter =
             (data?.programs.programs.length ?? 0) +
                 (data?.trackedEntityTypes.trackedEntityTypes.length ?? 0) >
-            LIST_LENGTH_INCREMENTER,
-        [data]
-    )
+            listLengthIncrementer
 
-    return useMemo<UseDataSourceOptionsResult>(
-        () => ({
+        return {
             isLoading,
             isError,
             error,
@@ -163,24 +155,22 @@ export const useDataSourceOptions = (): UseDataSourceOptionsResult => {
             onFilterStringChange: onFilterStringChange,
             onShowMoreProgramsClick: () =>
                 setVisibleProgramsLength(
-                    (curr) => curr + LIST_LENGTH_INCREMENTER
+                    (curr) => curr + listLengthIncrementer
                 ),
             onShowMoreTrackedEntityTypesClick: () =>
                 setVisibleTrackedEntityTypeLength(
-                    (curr) => curr + LIST_LENGTH_INCREMENTER
+                    (curr) => curr + listLengthIncrementer
                 ),
-        }),
-        [
-            error,
-            filterString,
-            isError,
-            isLoading,
-            onFilterStringChange,
-            programs,
-            trackedEntityTypes,
-            shouldShowFilter,
-            hasMorePrograms,
-            hasMoreTrackedEntityTypes,
-        ]
-    )
+        }
+    }, [
+        data,
+        error,
+        filterString,
+        isError,
+        isLoading,
+        listLengthIncrementer,
+        onFilterStringChange,
+        visibleProgramsLength,
+        visibleTrackedEntityTypeLength,
+    ])
 }
