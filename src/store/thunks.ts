@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import deepmerge from 'deepmerge'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
+import { setDataSourceId } from './dimensions-selection-slice'
 import { setIsVisualizationLoading } from './loader-slice'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
 import type { RootState } from './store'
@@ -8,6 +9,7 @@ import { clearUi } from './ui-slice'
 import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
+import { extractDataSourceIdFromVisualization } from '@modules/data-source'
 import { formatLayoutForVisualization } from '@modules/layout'
 import { getDisabledOptions } from '@modules/options'
 import {
@@ -61,6 +63,9 @@ export const tLoadSavedVisualization = createAsyncThunk<
         )
         if (data) {
             const transformedVisualization = transformVisualization(data)
+            const selectedDataSourceId = extractDataSourceIdFromVisualization(
+                transformedVisualization
+            )
 
             dispatch(setSavedVis(data))
             dispatch(
@@ -70,6 +75,7 @@ export const tLoadSavedVisualization = createAsyncThunk<
             )
             dispatch(setCurrentVis(data))
             dispatch(setIsVisualizationLoading(false))
+            dispatch(setDataSourceId(selectedDataSourceId))
 
             if (updateStatistics) {
                 // update most viewed statistics
