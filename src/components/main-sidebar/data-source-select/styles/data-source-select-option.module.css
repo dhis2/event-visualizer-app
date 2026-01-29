@@ -10,6 +10,13 @@
     padding-inline-start: 28px;
     padding-inline-end: 12px;
 }
+.option:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+.option:focus:not(:focus-visible) {
+    outline: none;
+}
 .option.selected {
     background-color: var(--theme-secondary050);
     cursor: default;

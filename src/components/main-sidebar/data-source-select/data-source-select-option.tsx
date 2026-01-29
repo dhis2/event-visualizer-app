@@ -1,5 +1,5 @@
 import cx from 'classnames'
-import React, { useCallback } from 'react'
+import { type KeyboardEvent, useCallback } from 'react'
 import classes from './styles/data-source-select-option.module.css'
 import { useAppSelector, useAppDispatch, useAddMetadata } from '@hooks'
 import {
@@ -11,6 +11,32 @@ import type { MetadataItemWithName, ProgramMetadataItem } from '@types'
 export type DataSourceSelectOptionProps = {
     option: ProgramMetadataItem | MetadataItemWithName
     closeDropdown: () => void
+}
+
+const getSiblingByDirection = (
+    element: HTMLElement,
+    direction: 'forward' | 'backward'
+): HTMLElement | null => {
+    return direction === 'forward'
+        ? (element.nextElementSibling as HTMLElement)
+        : (element.previousElementSibling as HTMLElement)
+}
+
+const focusSibling = (
+    event: KeyboardEvent<HTMLLIElement>,
+    direction: 'forward' | 'backward'
+) => {
+    event.preventDefault()
+
+    let sibling = getSiblingByDirection(event.currentTarget, direction)
+
+    while (sibling && sibling.tabIndex < 0) {
+        sibling = getSiblingByDirection(sibling, direction)
+    }
+
+    if (sibling) {
+        sibling.focus()
+    }
 }
 
 export const DataSourceSelectOption = ({
@@ -28,17 +54,32 @@ export const DataSourceSelectOption = ({
         closeDropdown()
     }, [addMetadata, dispatch, closeDropdown, option])
 
-    console.log('isSelected', isSelected, option.name)
+    const onKeyDown = useCallback(
+        (event: KeyboardEvent<HTMLLIElement>) => {
+            if (event.code === 'Enter' || event.code === 'Space') {
+                event.preventDefault()
+                handleSelect()
+            }
+            if (event.code === 'ArrowDown') {
+                focusSibling(event, 'forward')
+            }
+            if (event.code === 'ArrowUp') {
+                focusSibling(event, 'backward')
+            }
+        },
+        [handleSelect]
+    )
 
     return (
         <li
             role="option"
             aria-selected={isSelected}
-            tabIndex={-1}
+            tabIndex={isSelected ? undefined : 0}
             className={cx(classes.option, {
                 [classes.selected]: isSelected,
             })}
             onClick={isSelected ? undefined : handleSelect}
+            onKeyDown={onKeyDown}
         >
             {isSelected && (
                 <span aria-hidden={true} className={classes.checkmark} />

@@ -33,6 +33,13 @@
     cursor: pointer;
     color: var(--theme-primary700);
 }
+.showMoreButton:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: 4px -3px;
+}
+.showMoreButton:focus:not(:focus-visible) {
+    outline: none;
+}
 .showMoreButton:hover {
     text-decoration: underline;
 }

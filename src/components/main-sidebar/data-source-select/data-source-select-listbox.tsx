@@ -45,6 +45,7 @@ export const DataSourceSelectListbox = ({
         {hasMorePrograms && (
             <li role="presentation" className={classes.showMoreWrapper}>
                 <button
+                    tabIndex={0}
                     type="button"
                     className={classes.showMoreButton}
                     onClick={onShowMoreProgramsClick}
@@ -68,6 +69,7 @@ export const DataSourceSelectListbox = ({
         {hasMoreTrackedEntityTypes && (
             <li role="presentation" className={classes.showMoreWrapper}>
                 <button
+                    tabIndex={0}
                     type="button"
                     className={classes.showMoreButton}
                     onClick={onShowMoreTrackedEntityTypesClick}

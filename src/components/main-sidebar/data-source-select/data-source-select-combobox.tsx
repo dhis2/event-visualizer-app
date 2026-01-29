@@ -7,6 +7,7 @@ import {
     theme,
 } from '@dhis2/ui'
 import cx from 'classnames'
+import { type KeyboardEvent, useCallback } from 'react'
 import classes from './styles/data-source-select-combobox.module.css'
 import { useAppSelector, useMetadataItem } from '@hooks'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
@@ -26,6 +27,15 @@ export const DataSourceSelectCombobox = ({
 }: DataSourceSelectComboboxProps) => {
     const selectedId = useAppSelector(getDataSourceId)
     const dataSourceMetadata = useMetadataItem(selectedId)
+    const onKeyDown = useCallback(
+        (event: KeyboardEvent<HTMLDivElement>) => {
+            if (event.code === 'Enter' || event.code === 'Space') {
+                event.preventDefault()
+                onClick()
+            }
+        },
+        [onClick]
+    )
 
     return (
         <div className={classes.comboboxWrap}>
@@ -40,6 +50,7 @@ export const DataSourceSelectCombobox = ({
                     [classes.error]: isError,
                 })}
                 onClick={onClick}
+                onKeyDown={onKeyDown}
             >
                 <span
                     className={cx(classes.label, {

@@ -1,10 +1,22 @@
 import i18n from '@dhis2/d2-i18n'
 import { CircularLoader, Input, Layer, Popper } from '@dhis2/ui'
-import { useCallback, useRef, useState } from 'react'
+import { type KeyboardEvent, useCallback, useRef, useState } from 'react'
 import { DataSourceSelectCombobox } from './data-source-select-combobox'
 import { DataSourceSelectListbox } from './data-source-select-listbox'
 import classes from './styles/data-source-select.module.css'
 import { useDataSourceOptions } from './use-data-source-options'
+
+const focusFirstFocusableChild = (node: HTMLDivElement) => {
+    const firstFocusableChild = node?.querySelector(
+        'input[type="search"], li[tabindex="0"]'
+    ) as HTMLElement
+
+    if (firstFocusableChild) {
+        requestAnimationFrame(() => {
+            firstFocusableChild?.focus()
+        })
+    }
+}
 
 export const DataSourceSelect = () => {
     const {
@@ -23,23 +35,30 @@ export const DataSourceSelect = () => {
     } = useDataSourceOptions()
     const comboboxRef = useRef<HTMLDivElement | null>(null)
     const [isOpen, setIsOpen] = useState(false)
-    const openDropdown = useCallback(() => {
-        setIsOpen(true)
+    const toggleDropdownIsOpen = useCallback(() => {
+        setIsOpen((currentIsOpen) => !currentIsOpen)
     }, [])
-    const closeDropdown = useCallback(() => {
-        setIsOpen(false)
-    }, [])
+    const closeWithEsc = useCallback(
+        (event: KeyboardEvent<HTMLDivElement>) => {
+            if (event.code === 'Escape') {
+                event.preventDefault()
+                toggleDropdownIsOpen()
+            }
+        },
+
+        [toggleDropdownIsOpen]
+    )
 
     return (
         <>
             <DataSourceSelectCombobox
                 isError={isError}
                 isOpen={isOpen}
-                onClick={openDropdown}
+                onClick={toggleDropdownIsOpen}
                 comboboxRef={comboboxRef}
             />
             {isOpen && (
-                <Layer onBackdropClick={closeDropdown}>
+                <Layer onBackdropClick={toggleDropdownIsOpen}>
                     <Popper
                         reference={comboboxRef}
                         placement="bottom-start"
@@ -50,6 +69,9 @@ export const DataSourceSelect = () => {
                             style={{
                                 width: comboboxRef.current?.scrollWidth ?? 260,
                             }}
+                            tabIndex={0}
+                            ref={focusFirstFocusableChild}
+                            onKeyDown={closeWithEsc}
                         >
                             {isLoading ? (
                                 <div className={classes.loadingMessage}>
@@ -92,7 +114,7 @@ export const DataSourceSelect = () => {
                                         onShowMoreTrackedEntityTypesClick={
                                             onShowMoreTrackedEntityTypesClick
                                         }
-                                        closeDropdown={closeDropdown}
+                                        closeDropdown={toggleDropdownIsOpen}
                                     />
                                 </>
                             )}
