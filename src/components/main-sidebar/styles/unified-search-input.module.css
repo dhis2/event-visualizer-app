@@ -1,0 +1,66 @@
+.container {
+    inline-size: 100%;
+}
+
+.inputWrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    inline-size: 100%;
+}
+
+.searchIcon {
+    position: absolute;
+    inset-inline-start: 8px;
+    pointer-events: none;
+    color: #666; /* Adjust color as needed */
+}
+
+.input {
+    inline-size: 100%;
+    padding-inline: 32px; /* Space for left icon */ /* Space for right icons */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    box-sizing: border-box;
+    background-color: #fff;
+    transition: border-color 0.2s ease;
+}
+/* Shift the "clear button" when we're showing an icon */
+.input.loading::-webkit-search-cancel-button,
+.input.error::-webkit-search-cancel-button {
+    inset-inline-end: 20px;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #007bff; /* Focus color */
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.input.error {
+    border-color: #dc3545; /* Error color */
+}
+
+.input.error:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+}
+
+.statusIcon {
+    position: absolute;
+    inset-inline-end: 8px;
+    pointer-events: none;
+}
+
+.help {
+    font-size: 12px;
+    margin-block-start: 4px;
+}
+
+.errorHelp {
+    color: #dc3545;
+    font-size: 12px;
+    margin-block-start: 4px;
+}

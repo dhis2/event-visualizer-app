@@ -1,6 +1,7 @@
 import cx from 'classnames'
 import { DataSourceSelect } from './data-source-select/data-source-select'
 import classes from './styles/main-sidebar.module.css'
+import { UnifiedSearchInput } from './unified-search-input'
 import { useAppSelector } from '@hooks'
 import { getUiMainSidebarVisible } from '@store/ui-slice'
 
@@ -13,6 +14,7 @@ export const MainSidebar = () => {
             })}
         >
             <DataSourceSelect />
+            <UnifiedSearchInput />
         </div>
     )
 }
