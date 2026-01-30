@@ -1,6 +1,6 @@
 import i18n from '@dhis2/d2-i18n'
 import { Button, IconInfo16, Tooltip, TabBar, Tab } from '@dhis2/ui'
-import { type FC, type ReactNode, /*useMemo,*/ useState } from 'react'
+import { useState, type FC, type ReactNode } from 'react'
 import {
     PhoneNumberCondition,
     CaseSensitiveAlphanumericCondition,
@@ -12,7 +12,7 @@ import {
     DateTimeCondition,
     TimeCondition,
 } from './date-condition'
-//import NumericCondition from './NumericCondition.jsx'
+import { NumericCondition } from './numeric-condition/numeric-condition'
 import { OptionSetCondition } from './option-set-condition/option-set-condition'
 import { OrgUnitCondition } from './org-unit-condition'
 import { RepeatableEvents } from './repeatable-events'
@@ -79,8 +79,6 @@ type ConditionsModalContentProps = {
 export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
     dimension,
 }) => {
-    console.log('dimension', dimension)
-
     const dispatch = useAppDispatch()
 
     const visType = useAppSelector(getVisUiConfigVisualizationType)
@@ -89,13 +87,9 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
         getVisUiConfigConditionsByDimension(state, dimension?.id)
     )
 
-    console.log('conditions', conditions)
-
     const stage = useProgramStageMetadataItem(
         getDimensionIdParts({ id: dimension.id }).programStageId
     )
-
-    console.log('stage', stage)
 
     const valueType = dimension.valueType!
     const isProgramIndicator: boolean =
@@ -122,9 +116,6 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
         getInitConditions() || getEmptyConditions()
     )
     const [currentTab, setCurrentTab] = useState<string>(TAB_CONDITIONS)
-    const [selectedLegendSet, setSelectedLegendSet] = useState<
-        string | undefined
-    >(conditions.legendSet)
 
     const addCondition = (): void => {
         setConditionsList((prev) => [...prev, EMPTY_CONDITION])
@@ -136,32 +127,35 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
                 (_, index) => index !== conditionIndex
             )
 
-            storeConditions(updatedConditionsList)
+            const hasInOperator = updatedConditionsList.some((condition) =>
+                condition.includes(OPERATOR_IN)
+            )
 
-            if (
-                selectedLegendSet &&
-                !updatedConditionsList.some((condition) =>
-                    condition.includes(OPERATOR_IN)
-                )
-            ) {
-                setSelectedLegendSet(undefined)
-            }
+            const nextLegendSet = hasInOperator
+                ? conditions.legendSet
+                : undefined
+
+            storeConditions(updatedConditionsList, nextLegendSet)
 
             return updatedConditionsList
         })
 
-    const setCondition = (conditionIndex: number, value: string): void =>
+    const setCondition = (
+        conditionIndex: number,
+        value: string,
+        legendSet?: string
+    ): void =>
         setConditionsList((prev) => {
             const updatedConditionsList = prev.map((condition, index) =>
                 index === conditionIndex ? value : condition
             )
-            console.log('updatedConditionsList', updatedConditionsList)
-            storeConditions(updatedConditionsList)
+
+            storeConditions(updatedConditionsList, legendSet)
 
             return updatedConditionsList
         })
 
-    const storeConditions = (conditionsList: string[]) =>
+    const storeConditions = (conditionsList: string[], legendSet?: string) =>
         dispatch(
             setVisUiConfigConditionsByDimension({
                 dimensionId: dimension.id,
@@ -171,7 +165,7 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
                             condition.length && condition.slice(-1) !== ':'
                     )
                 ),
-                legendSet: selectedLegendSet,
+                legendSet,
             })
         )
 
@@ -181,7 +175,6 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
             index < conditionsList.length - 1 && (
                 <span className={classes.separator}>{i18n.t('and')}</span>
             )
-        console.log('conditions list', conditionsList)
 
         if (isOptionSetCondition) {
             return conditionsList.map((condition, index) => (
@@ -194,54 +187,65 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
                 </div>
             ))
         }
-        //
-        //        const renderNumericCondition = ({
-        //            enableDecimalSteps,
-        //            allowIntegerOnly,
-        //        } = {}) => {
-        //            return (
-        //                (conditionsList.length && conditionsList) ||
-        //                (selectedLegendSet && [''])
-        //            ).map((condition, index) => (
-        //                <div key={index}>
-        //                    <NumericCondition
-        //                        condition={condition}
-        //                        onChange={(value) => setCondition(index, value)}
-        //                        onRemove={() => removeCondition(index)}
-        //                        numberOfConditions={
-        //                            conditionsList.length || (selectedLegendSet ? 1 : 0)
-        //                        }
-        //                        legendSetId={selectedLegendSet}
-        //                        onLegendSetChange={(value) =>
-        //                            setSelectedLegendSet(value)
-        //                        }
-        //                        enableDecimalSteps={enableDecimalSteps}
-        //                        allowIntegerOnly={allowIntegerOnly}
-        //                        dimension={dimension}
-        //                    />
-        //                    {getDividerContent(index)}
-        //                </div>
-        //            ))
-        //        }
-        //
-        //        if (isProgramIndicator) {
-        //            return renderNumericCondition()
-        //        }
-        //
+
+        const renderNumericCondition = ({
+            // TODO: add min and max for controlling POSITVE/NEGATIVE/ZERO valueTypes
+            // XXX: don't these 2 mean the same thing?
+            enableDecimalSteps,
+            allowIntegerOnly,
+        }: {
+            enableDecimalSteps?: boolean
+            allowIntegerOnly?: boolean
+        } = {}): ReactNode => {
+            return (
+                conditionsList.length
+                    ? conditionsList
+                    : conditions.legendSet
+                    ? ['']
+                    : []
+            )?.map((condition, index) => (
+                <div key={index}>
+                    <NumericCondition
+                        dimension={dimension}
+                        condition={condition}
+                        onChange={(value, legendSet) =>
+                            setCondition(index, value, legendSet)
+                        }
+                        onRemove={() => removeCondition(index)}
+                        numberOfConditions={
+                            conditionsList.length ||
+                            (conditions.legendSet ? 1 : 0)
+                        }
+                        legendSetId={conditions.legendSet}
+                        enableDecimalSteps={enableDecimalSteps}
+                        allowIntegerOnly={allowIntegerOnly}
+                    />
+                    {getDividerContent(index)}
+                </div>
+            ))
+        }
+
+        if (isProgramIndicator) {
+            console.log('isProgramIndicator')
+            return renderNumericCondition()
+        }
+
         switch (valueType) {
-            //            case VALUE_TYPE_UNIT_INTERVAL: {
-            //                return renderNumericCondition({ enableDecimalSteps: true })
-            //            }
-            //            case VALUE_TYPE_INTEGER:
-            //            case VALUE_TYPE_INTEGER_POSITIVE:
-            //            case VALUE_TYPE_INTEGER_NEGATIVE:
-            //            case VALUE_TYPE_INTEGER_ZERO_OR_POSITIVE: {
-            //                return renderNumericCondition({ allowIntegerOnly: true })
-            //            }
-            //            case VALUE_TYPE_NUMBER:
-            //            case VALUE_TYPE_PERCENTAGE: {
-            //                return renderNumericCondition()
-            //            }
+            case 'UNIT_INTERVAL': {
+                console.log('render unit interval')
+                return renderNumericCondition({ enableDecimalSteps: true })
+            }
+            case 'INTEGER':
+            case 'INTEGER_POSITIVE':
+            case 'INTEGER_NEGATIVE':
+            case 'INTEGER_ZERO_OR_POSITIVE': {
+                return renderNumericCondition({ allowIntegerOnly: true })
+            }
+            case 'NUMBER':
+            case 'PERCENTAGE': {
+                console.log('render number/percentage')
+                return renderNumericCondition()
+            }
             case 'PHONE_NUMBER': {
                 return conditionsList.map((condition, index) => (
                     <div key={index}>
@@ -356,7 +360,7 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
     const disableAddButton: boolean =
         canHaveLegendSets &&
         (conditionsList.some((condition) => condition.includes(OPERATOR_IN)) ||
-            Boolean(selectedLegendSet))
+            Boolean(conditions.legendSet))
 
     const isRepeatable: boolean =
         visType === 'LINE_LIST' &&
@@ -384,7 +388,7 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
             {isSupported && (
                 <div className={classes.mainSection}>
                     {!conditionsList.length &&
-                    !selectedLegendSet &&
+                    !conditions.legendSet &&
                     !(
                         SINGLETON_TYPES.includes(valueType) ||
                         isOptionSetCondition
