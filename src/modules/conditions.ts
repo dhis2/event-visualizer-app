@@ -206,11 +206,16 @@ export const removeCaseSensitivePrefix = (
     }
 }
 
-// TODO - in practice this function isn't used for the 'IN' operator
+// TODO: - in practice this function isn't used for the 'IN' operator
 // but if it were the result would be wrong. The function
 // should probably control for the allowed operators and throw if the
 // operator isn't one of the allowed ones.
 export const isIsCaseSensitive = (operator: QueryOperator): boolean => {
+    // default is false (case insensitive)
+    if (!operator) {
+        return false
+    }
+
     if (operator[0] === PREFIX_NOT) {
         // !LIKE, !ILIKE, !EQ, !IEQ
         return operator[1] !== PREFIX_CASE_INSENSITIVE
