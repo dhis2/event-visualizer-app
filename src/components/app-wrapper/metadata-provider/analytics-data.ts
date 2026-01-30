@@ -21,7 +21,13 @@ const extractItemsMetadata = (
             return acc
         }
 
-        acc[key] = value
+        /* XXX: skip valueType from analytics response data as this is wrong in many cases.
+         * In this way we keep the original valueType from the visualization's metadata which is correct
+         * and avoid issues with the conditions modal which relies on valueType to render the correct content */
+        acc[key] = {
+            ...value,
+            valueType: undefined,
+        }
 
         /* Add legendSet metadata items so that legend items can be
          * related to dataElements */
