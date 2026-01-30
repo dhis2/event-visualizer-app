@@ -18,25 +18,27 @@ import type {
     DataEngine,
 } from '@types'
 
-const dimensionFields: string =
-    'dimension,dimensionType,filter,program[id],programStage[id],optionSet[id],valueType,legendSet[id],repetition,items[dimensionItem~rename(id)]'
+const getDimensionFields = (
+    displayNameProp: CurrentUser['settings']['displayNameProperty']
+): string =>
+    `dimension,dimensionType,filter,program[id],programStage[id],optionSet[id],valueType,legendSet[id,${displayNameProp}~rename(name)],repetition,items[dimensionItem~rename(id)]`
 
 export const getVisualizationQueryFields = (
     displayNameProp: CurrentUser['settings']['displayNameProperty']
 ): string[] => [
     '*',
-    `columns[${dimensionFields}]`,
-    `rows[${dimensionFields}]`,
-    `filters[${dimensionFields}]`,
+    `columns[${getDimensionFields(displayNameProp)}]`,
+    `rows[${getDimensionFields(displayNameProp)}]`,
+    `filters[${getDimensionFields(displayNameProp)}]`,
     `program[id,programType,${displayNameProp}~rename(name),displayEnrollmentDateLabel,displayIncidentDateLabel,displayIncidentDate,programStages[id,displayName~rename(name),repeatable]]`,
     'programStage[id,displayName~rename(name),displayExecutionDateLabel,displayDueDateLabel,hideDueDate,repeatable]',
     `programDimensions[id,${displayNameProp}~rename(name),enrollmentDateLabel,incidentDateLabel,programType,displayIncidentDate,displayEnrollmentDateLabel,displayIncidentDateLabel,programStages[id,${displayNameProp}~rename(name),repeatable,hideDueDate,displayExecutionDateLabel,displayDueDateLabel]]`,
     'access',
     'href',
     ...getDimensionMetadataFields(),
-    'dataElementDimensions[legendSet[id,name],dataElement[id,name]]',
+    'dataElementDimensions[legendSet[id,name]]',
     'legend[set[id,displayName],strategy,style,showKey]',
-    'trackedEntityType[id,displayName~rename(name)]',
+    `trackedEntityType[id,${displayNameProp}~rename(name)]`,
     '!interpretations',
     '!userGroupAccesses',
     '!publicAccess',
@@ -87,16 +89,20 @@ export const eventVisualizationsApi = api.injectEndpoints({
             async queryFn(id, apiArg: BaseQueryApiWithExtraArg) {
                 const { appCachedData, engine, metadataStore } = apiArg.extra
 
+                const displayNameProperty =
+                    appCachedData.currentUser.settings.displayNameProperty
+
                 try {
                     const visualization = await fetchEventVisualization(
                         engine,
                         id,
-                        appCachedData.currentUser.settings.displayNameProperty
+                        displayNameProperty
                     )
 
                     metadataStore.setVisualizationMetadata(visualization)
 
                     const optionSetsMetadata = {}
+                    const legendSetsMetadata = {}
 
                     const dimensions = [
                         ...(visualization.columns || []),
@@ -122,7 +128,7 @@ export const eventVisualizationsApi = api.injectEndpoints({
                                 options: {
                                     resource: 'options',
                                     params: {
-                                        fields: 'id,code,displayName~rename(name)',
+                                        fields: `id,code,${displayNameProperty}~rename(name)`,
                                         filter: [
                                             `optionSet.id:eq:${optionSetId}`,
                                             `code:in:[${conditions.join(',')}]`,
@@ -134,7 +140,7 @@ export const eventVisualizationsApi = api.injectEndpoints({
 
                             const options = optionsData?.options?.options
 
-                            if (optionsData?.options) {
+                            if (Array.isArray(options)) {
                                 // update options in the optionSet metadata used for the lookup of the correct
                                 // name from code (options for different option sets have the same code)
                                 optionSetsMetadata[optionSetId] = {
@@ -143,9 +149,57 @@ export const eventVisualizationsApi = api.injectEndpoints({
                                 }
                             }
                         }
+
+                        // This is to ensure that we have the required metadata to display the selected legendSet and legends in the conditions modal
+                        // (NumericCondition component)
+                        if (dimension.legendSet?.id) {
+                            const legendSetId = dimension.legendSet.id
+
+                            legendSetsMetadata[legendSetId] =
+                                dimension.legendSet
+
+                            if (dimension.filter?.startsWith('IN')) {
+                                const conditions = parseCondition(
+                                    dimension.filter
+                                )
+
+                                if (!conditions) {
+                                    throw new Error(
+                                        `Could not parse dimension filter "${dimension.filter}"`
+                                    )
+                                }
+
+                                const legendsData = (await engine.query({
+                                    legends: {
+                                        resource: `legendSets/${legendSetId}/legends/gist`,
+                                        params: {
+                                            fields: `id,${displayNameProperty}~rename(name)`,
+                                            filter: `id:in:[${conditions.join(
+                                                ','
+                                            )}]`,
+                                            headless: true,
+                                            pageSize: 1000,
+                                        },
+                                    },
+                                })) as {
+                                    legends?: { id: string; name: string }[]
+                                }
+
+                                const legends = legendsData?.legends
+
+                                if (Array.isArray(legends)) {
+                                    metadataStore.addMetadata(legends)
+                                }
+                            }
+                        }
                     }
+
                     if (Object.keys(optionSetsMetadata).length) {
                         metadataStore.addMetadata(optionSetsMetadata)
+                    }
+
+                    if (Object.keys(legendSetsMetadata).length) {
+                        metadataStore.addMetadata(legendSetsMetadata)
                     }
 
                     return { data: visualization }
