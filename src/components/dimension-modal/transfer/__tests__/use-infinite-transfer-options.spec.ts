@@ -1,8 +1,8 @@
 import type { QueryStatus } from '@reduxjs/toolkit/query'
 import { renderHook, act } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { FetchItemsByDimensionQueryArgs } from '../dimensions-api'
-import { useInfiniteTransferOptions } from '@components/dimension-modal/transfer/use-infinite-transfer-options'
+import { useInfiniteTransferOptions } from '../use-infinite-transfer-options'
+import type { FetchItemsByDimensionQueryArgs } from '@components/dimension-modal/dynamic-dimension-modal-content/dimensions-api'
 
 type MockData = {
     items: Array<{ id: string; name: string }>
@@ -122,7 +122,7 @@ describe('useInfiniteTransferOptions', () => {
             })
 
             expect(triggerFn).toHaveBeenCalledWith({
-                dimensionId: 'ou',
+                id: 'ou',
                 page: 1,
             })
         })
@@ -193,7 +193,7 @@ describe('useInfiniteTransferOptions', () => {
             })
 
             expect(triggerFn).toHaveBeenCalledWith({
-                dimensionId: 'ou',
+                id: 'ou',
                 page: 2,
                 searchTerm: '',
             })
@@ -226,8 +226,8 @@ describe('useInfiniteTransferOptions', () => {
 
             await vi.waitFor(() => {
                 expect(result.current.data).toEqual([
-                    { label: 'Org Unit 1', value: 'ou1' },
-                    { label: 'Org Unit 2', value: 'ou2' },
+                    { name: 'Org Unit 1', id: 'ou1' },
+                    { name: 'Org Unit 2', id: 'ou2' },
                 ])
             })
         })
@@ -266,8 +266,8 @@ describe('useInfiniteTransferOptions', () => {
 
             await vi.waitFor(() => {
                 expect(result.current.data).toEqual([
-                    { label: 'Org Unit 1', value: 'ou1' },
-                    { label: 'Org Unit 2', value: 'ou2' },
+                    { name: 'Org Unit 1', id: 'ou1' },
+                    { name: 'Org Unit 2', id: 'ou2' },
                 ])
             })
         })
@@ -327,7 +327,7 @@ describe('useInfiniteTransferOptions', () => {
 
             await vi.waitFor(() => {
                 expect(triggerFn).toHaveBeenCalledWith({
-                    dimensionId: 'ou',
+                    id: 'ou',
                     page: 1,
                     searchTerm: 'district',
                 })
@@ -366,7 +366,7 @@ describe('useInfiniteTransferOptions', () => {
 
             await vi.waitFor(() => {
                 expect(triggerFn).toHaveBeenCalledWith({
-                    dimensionId: 'ou',
+                    id: 'ou',
                     page: 1,
                 })
             })
@@ -409,7 +409,7 @@ describe('useInfiniteTransferOptions', () => {
             // Wait for search to be triggered
             await vi.waitFor(() => {
                 expect(triggerFn).toHaveBeenCalledWith({
-                    dimensionId: 'ou',
+                    id: 'ou',
                     page: 1,
                     searchTerm: 'district',
                 })
@@ -446,7 +446,7 @@ describe('useInfiniteTransferOptions', () => {
 
             // Should preserve the search term when paginating
             expect(triggerFn).toHaveBeenCalledWith({
-                dimensionId: 'ou',
+                id: 'ou',
                 page: 2,
                 searchTerm: 'district',
             })
