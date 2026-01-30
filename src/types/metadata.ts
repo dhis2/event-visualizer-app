@@ -81,6 +81,8 @@ type OptionSetOption = Omit<OptionSet['options'], 'id' | 'code' | 'name'> & {
 type LegendSetLegend = Omit<LegendSet['legends'], 'id' | 'name'> & {
     id: string
     name: string
+    endValue: number
+    startValue: number
 }
 
 export type OptionSetMetadataItem = Omit<

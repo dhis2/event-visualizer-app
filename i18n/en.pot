@@ -171,17 +171,20 @@ msgstr "Only available for repeatable stages"
 msgid "is one of preset options"
 msgstr "is one of preset options"
 
-msgid "Loading..."
-msgstr "Loading..."
+msgid "Choose a legend set"
+msgstr "Choose a legend set"
 
-msgid "Choose a set of options"
-msgstr "Choose a set of options"
+msgid "Loading legend sets"
+msgstr "Loading legend sets"
 
 msgid "No preset option sets for this data item"
 msgstr "No preset option sets for this data item"
 
-msgid "Choose options"
-msgstr "Choose options"
+msgid "Choose legends"
+msgstr "Choose legends"
+
+msgid "Loading legends"
+msgstr "Loading legends"
 
 msgid "Hide"
 msgstr "Hide"
@@ -459,9 +462,6 @@ msgstr "Legend"
 
 msgid "Select from legends"
 msgstr "Select from legends"
-
-msgid "Loading legends"
-msgstr "Loading legends"
 
 msgid "Limit"
 msgstr "Limit"
