@@ -578,7 +578,7 @@ describe('MetadataStore', () => {
             expect(snapshot['dataElement.programStage1']).toEqual({
                 id: 'dataElement.programStage1',
                 name: 'Nested Data Element',
-                valueType: 'TEXT',
+                valueType: undefined,
             })
         })
 
@@ -603,7 +603,7 @@ describe('MetadataStore', () => {
             expect(snapshot.regularItem).toEqual({
                 id: 'regularItem',
                 name: 'Regular Item',
-                valueType: 'NUMBER',
+                valueType: undefined,
             })
         })
 
@@ -640,7 +640,7 @@ describe('MetadataStore', () => {
             expect(snapshot.dataElement1).toEqual({
                 id: 'dataElement1',
                 name: 'Data Element with Legend',
-                valueType: 'NUMBER',
+                valueType: undefined,
                 legendSet: legendSetId,
             })
             expect(snapshot[legendSetId]).toEqual({
@@ -683,7 +683,6 @@ describe('MetadataStore', () => {
             expect(snapshot.ou).toEqual({
                 id: 'ou',
                 name: 'Organisation Unit UPDATED',
-                valueType: 'TEXT',
                 dimensionType: 'ORGANISATION_UNIT',
             })
         })
