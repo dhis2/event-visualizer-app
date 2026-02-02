@@ -17,11 +17,12 @@ import {
     getFilter,
     setFilter,
 } from '@store/dimensions-selection-slice'
+import type { DataSourceFilter } from '@types'
 
 type MenuItemClickHandler = NonNullable<MenuItemProps['onClick']>
 
 export const FilterDropdownButton: FC = () => {
-    const filters = useMemo(
+    const filters = useMemo<Record<DataSourceFilter, string>>(
         () => ({
             ORG_UNITS: i18n.t('Org units'),
             PERIODS: i18n.t('Periods'),
@@ -51,7 +52,7 @@ export const FilterDropdownButton: FC = () => {
             if (!value) {
                 throw new Error('No value set on menu item')
             }
-            dispatch(setFilter(value))
+            dispatch(setFilter(value as DataSourceFilter))
             toggleIsOpen()
         },
         [dispatch, toggleIsOpen]
