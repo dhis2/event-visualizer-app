@@ -81,8 +81,8 @@ export const UnifiedSearchInput = () => {
                 return i18n.t('There was a problem trying to search')
             default:
                 return i18n.t(
-                    'There were {{count}} problems trying to search',
-                    { count: errors.length }
+                    'There were {{errorsLength}} problems trying to search',
+                    { errorsLength: errors.length }
                 )
         }
     }, [errors.length])
