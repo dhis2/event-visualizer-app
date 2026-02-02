@@ -5,6 +5,8 @@ import { InterpretationsProvider } from './interpretations-provider'
 import { MetadataProvider } from './metadata-provider/metadata-provider'
 import { StoreProvider } from './store-provider'
 import { StoreToLocationSyncer } from './store-to-location-syncer'
+// eslint-disable-next-line no-restricted-imports
+import '../../locales/index.js'
 
 export const AppWrapper: FC<{ children: ReactNode }> = ({ children }) => (
     <AppCachedDataQueryProvider>
