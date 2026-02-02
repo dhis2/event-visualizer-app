@@ -98,7 +98,6 @@ export const dimensionSelectionSlice = createSlice({
     },
     selectors: {
         getDataSourceId: (state) => state.dataSourceId,
-        getHasDataSource: (state) => !!state.dataSourceId,
         getIsSelectedDataSourceId: (state, id: string) =>
             state.dataSourceId === id,
         getSearchTerm: (state) => state.searchTerm,
@@ -157,7 +156,6 @@ export const {
 } = dimensionSelectionSlice.actions
 export const {
     getDataSourceId,
-    getHasDataSource,
     getIsSelectedDataSourceId,
     getSearchTerm,
     getFilter,

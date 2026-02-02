@@ -21,7 +21,6 @@ import {
     removeItemFromMultiSelection,
     getSearchTerm,
     getDataSourceId,
-    getHasDataSource,
     getIsSelectedDataSourceId,
     getFilter,
     getIsAllCollapsed,
@@ -200,17 +199,6 @@ describe('dimensionSelectionSlice', () => {
         it('should get data source ID', () => {
             const state = createRootState({ dataSourceId: 'test' })
             expect(getDataSourceId(state)).toEqual('test')
-        })
-
-        it('should get data has source', () => {
-            const stateWithDataSource = createRootState({
-                dataSourceId: 'test',
-            })
-            expect(getHasDataSource(stateWithDataSource)).toEqual(true)
-            const stateWithoutDataSource = createRootState({
-                dataSourceId: null,
-            })
-            expect(getHasDataSource(stateWithoutDataSource)).toEqual(false)
         })
 
         it('should get is selected data source for a provided data source ID', () => {
