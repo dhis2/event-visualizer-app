@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-02T11:51:16.376Z\n"
-"PO-Revision-Date: 2026-02-02T11:51:16.376Z\n"
+"POT-Creation-Date: 2026-02-02T14:28:06.975Z\n"
+"PO-Revision-Date: 2026-02-02T14:28:06.976Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -287,6 +287,33 @@ msgstr "Filter data sources"
 
 msgid "Type to filter…"
 msgstr "Type to filter…"
+
+msgid "Org units"
+msgstr "Org units"
+
+msgid "Periods"
+msgstr "Periods"
+
+msgid "Statuses"
+msgstr "Statuses"
+
+msgid "Data elements"
+msgstr "Data elements"
+
+msgid "Program attributes"
+msgstr "Program attributes"
+
+msgid "Program indicators"
+msgstr "Program indicators"
+
+msgid "Categories"
+msgstr "Categories"
+
+msgid "Category option group sets"
+msgstr "Category option group sets"
+
+msgid "Filter"
+msgstr "Filter"
 
 msgid "There was a problem trying to search"
 msgstr "There was a problem trying to search"
@@ -613,9 +640,6 @@ msgstr "Scheduled date"
 
 msgid "Columns"
 msgstr "Columns"
-
-msgid "Filter"
-msgstr "Filter"
 
 msgid "Rows"
 msgstr "Rows"
