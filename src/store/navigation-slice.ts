@@ -52,9 +52,10 @@ startAppListening({
          * we are only interested in visualizationId changes in this
          * listener middleware */
         if (originalVisualizationId !== newVisualizationId) {
-            if (newVisualizationId === 'new') {
-                dispatch(tClearVisualization())
-            } else {
+            // always clear the "old" visualization to keep consistency between the URL address, metadata store and Redux store
+            dispatch(tClearVisualization())
+
+            if (newVisualizationId !== 'new') {
                 dispatch(
                     tLoadSavedVisualization({
                         id: newVisualizationId,
