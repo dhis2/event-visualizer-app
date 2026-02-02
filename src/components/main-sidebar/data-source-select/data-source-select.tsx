@@ -96,7 +96,7 @@ export const DataSourceSelect = () => {
                                                 value={filterString}
                                                 onChange={onFilterStringChange}
                                                 placeholder={i18n.t(
-                                                    'Type to filter…'
+                                                    'Filter data sources'
                                                 )}
                                             />
                                         </div>

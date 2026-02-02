@@ -50,13 +50,13 @@ export const DataSourceSelectListbox = ({
                     className={classes.showMoreButton}
                     onClick={onShowMoreProgramsClick}
                 >
-                    Show more programs
+                    Show more
                 </button>
             </li>
         )}
         {trackedEntityTypes.length > 0 && (
             <li role="presentation" className={classes.sectionHeader}>
-                Other data sources
+                Analyze without a program
             </li>
         )}
         {trackedEntityTypes.map((tet) => (
@@ -74,7 +74,7 @@ export const DataSourceSelectListbox = ({
                     className={classes.showMoreButton}
                     onClick={onShowMoreTrackedEntityTypesClick}
                 >
-                    Show more other data source
+                    Show more
                 </button>
             </li>
         )}

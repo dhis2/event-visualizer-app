@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-01-29T09:20:04.459Z\n"
-"PO-Revision-Date: 2026-01-29T09:20:04.460Z\n"
+"POT-Creation-Date: 2026-02-02T13:11:03.843Z\n"
+"PO-Revision-Date: 2026-02-02T13:11:03.844Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -284,9 +284,6 @@ msgstr "Failed to load data sources."
 
 msgid "Filter data sources"
 msgstr "Filter data sources"
-
-msgid "Type to filter…"
-msgstr "Type to filter…"
 
 msgid "Column sub-totals"
 msgstr "Column sub-totals"
