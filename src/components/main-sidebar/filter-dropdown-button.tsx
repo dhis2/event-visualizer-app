@@ -63,11 +63,12 @@ export const FilterDropdownButton: FC = () => {
     return (
         <>
             <div
-                className={classes.buttonWrap}
+                className={cx(classes.buttonWrap, {
+                    [classes.withBoxShadow]: activeFilter,
+                })}
                 data-test="filter-dropdown-button-wrap"
                 ref={buttonWrapRef}
             >
-                <IconFilter16 />
                 <button
                     className={cx(classes.filterButton, {
                         [classes.withSelection]: activeFilter,
@@ -75,6 +76,7 @@ export const FilterDropdownButton: FC = () => {
                     data-test="filter-dropdown-button"
                     onClick={toggleIsOpen}
                 >
+                    <IconFilter16 />
                     {activeFilterLabel ?? i18n.t('Filter')}
                 </button>
                 {activeFilter && (

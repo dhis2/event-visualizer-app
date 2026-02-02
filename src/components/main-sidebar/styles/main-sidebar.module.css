@@ -2,8 +2,9 @@
     block-size: 100%;
     box-sizing: border-box;
     inline-size: 260px;
-    border-inline-end: 1px solid #d5dde5;
+    border-inline-end: 1px solid var(--colors-grey400);
     padding: 4px;
+    background-color: var(--colors-grey200);
 }
 
 .container.hidden {
@@ -13,5 +14,5 @@
     display: flex;
     flex-direction: row;
     padding-block: 6px 2px;
-    gap: 8px;
+    gap: 2px;
 }
