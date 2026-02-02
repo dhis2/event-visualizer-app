@@ -29,6 +29,9 @@ const MIN_SEARCH_TERM_LENGTH = 2
 const SEARCH_ERROR_ID = 'search-error'
 const SEARCH_HELP_ID = 'search-help'
 
+const isValidSearchTerm = (searchTerm: string) =>
+    searchTerm.length === 0 || searchTerm.length >= MIN_SEARCH_TERM_LENGTH
+
 export const UnifiedSearchInput = () => {
     const store = useAppStore()
     const isLoading = useAppSelector(isAnyListLoading)
@@ -56,7 +59,7 @@ export const UnifiedSearchInput = () => {
         (event) => {
             const { value } = event.target
             setText(value)
-            if (value.length > 0 && value.length < MIN_SEARCH_TERM_LENGTH) {
+            if (!isValidSearchTerm(value)) {
                 debouncedSetHelpMessage(
                     i18n.t('Enter at least {{count}} characters to search', {
                         count: MIN_SEARCH_TERM_LENGTH,
@@ -69,19 +72,20 @@ export const UnifiedSearchInput = () => {
         },
         [debouncedSetHelpMessage]
     )
-    const errorMessage = useMemo<string | undefined>(
-        () =>
-            errors.length === 0
-                ? undefined
-                : i18n.t('There was a problem trying to search', {
-                      count: errors.length,
-                      defaultValue: 'There was a problem trying to search',
-                      defaultValue_plural:
-                          'There were {{count}} problems trying to search',
-                  }),
-
-        [errors.length]
-    )
+    const errorMessage = useMemo<string | undefined>(() => {
+        // TODO: Could not get the i18n pluralization to work here
+        switch (errors.length) {
+            case 0:
+                return undefined
+            case 1:
+                return i18n.t('There was a problem trying to search')
+            default:
+                return i18n.t(
+                    'There were {{count}} problems trying to search',
+                    { count: errors.length }
+                )
+        }
+    }, [errors.length])
     const describedBy = useMemo(() => {
         const messages: string[] = []
 
@@ -100,7 +104,7 @@ export const UnifiedSearchInput = () => {
         const currentSearchTerm = state.dimensionSelection.searchTerm
 
         if (
-            debouncedSearchTerm.length > 1 &&
+            isValidSearchTerm(debouncedSearchTerm) &&
             currentSearchTerm !== debouncedSearchTerm
         ) {
             store.dispatch(setSearchTerm(debouncedSearchTerm))
@@ -116,6 +120,7 @@ export const UnifiedSearchInput = () => {
                     placeholder={i18n.t('Search')}
                     onChange={onChange}
                     aria-describedby={describedBy}
+                    data-test="unified-search-input"
                     className={cx(classes.input, {
                         [classes.error]: !!errorMessage,
                         [classes.loading]: debouncedIsLoading,
@@ -125,23 +130,39 @@ export const UnifiedSearchInput = () => {
                     <IconSearch16 />
                 </span>
                 {debouncedIsLoading && (
-                    <span className={classes.statusIcon} aria-hidden="true">
+                    <span
+                        className={classes.statusIcon}
+                        aria-hidden="true"
+                        data-test="search-loader"
+                    >
                         <CircularLoader extrasmall />
                     </span>
                 )}
                 {!!errorMessage && (
-                    <span className={classes.statusIcon} aria-hidden="true">
+                    <span
+                        className={classes.statusIcon}
+                        aria-hidden="true"
+                        data-test="search-error-icon"
+                    >
                         <IconErrorFilled16 color={theme.error} />
                     </span>
                 )}
             </div>
             {!!errorMessage && (
-                <div id={SEARCH_ERROR_ID} className={classes.errorHelp}>
+                <div
+                    id={SEARCH_ERROR_ID}
+                    className={cx(classes.help, classes.errorHelp)}
+                    data-test="search-error-message"
+                >
                     {errorMessage}
                 </div>
             )}
             {!!helpMessage && (
-                <div id={SEARCH_HELP_ID} className={classes.help}>
+                <div
+                    id={SEARCH_HELP_ID}
+                    className={classes.help}
+                    data-test="search-help-message"
+                >
                     {helpMessage}
                 </div>
             )}
