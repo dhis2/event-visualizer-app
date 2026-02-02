@@ -23,10 +23,10 @@
     inline-size: 100%;
     box-sizing: border-box;
     padding-inline-start: 30px; /* Space for left search icon */
-    padding-block: 7px;
+    padding-block: 5px;
     border: 1px solid var(--colors-grey500);
     border-radius: 3px;
-    font-size: 14px;
+    font-size: 13px;
     line-height: 16px;
     box-sizing: border-box;
     user-select: text;
