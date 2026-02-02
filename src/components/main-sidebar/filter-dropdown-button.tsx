@@ -90,9 +90,12 @@ export const FilterDropdownButton: FC = () => {
                 )}
             </div>
             {isOpen && (
-                <Layer onBackdropClick={toggleIsOpen}>
+                <Layer
+                    onBackdropClick={toggleIsOpen}
+                    dataTest="filter-dropdown-backdrop"
+                >
                     <Popper reference={buttonWrapRef} placement="bottom-end">
-                        <FlyoutMenu dense>
+                        <FlyoutMenu dense dataTest="filter-dropdown-menu">
                             {Object.entries(filters).map(([key, label]) => (
                                 <MenuItem
                                     label={label}
