@@ -9,3 +9,9 @@
 .container.hidden {
     display: none;
 }
+.searchRow {
+    display: flex;
+    flex-direction: row;
+    padding-block: 6px 2px;
+    gap: 8px;
+}
