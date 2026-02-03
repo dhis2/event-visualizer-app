@@ -1,0 +1,44 @@
+.listbox {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-block-size: 640px;
+    overflow-y: auto;
+}
+.sectionHeader {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    color: var(--colors-grey600);
+    padding-block: 12px 4px;
+    padding-inline: 14px 12px;
+}
+.emptyMessage {
+    padding: 8px;
+    font-size: 13px;
+    color: var(--colors-grey700);
+    text-align: center;
+    font-style: italic;
+}
+.showMoreWrapper {
+    display: flex;
+}
+.showMoreButton {
+    all: unset;
+    padding: 8px 8px 8px 28px;
+    inline-size: 100%;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--colors-grey600);
+}
+.showMoreButton:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+.showMoreButton:focus:not(:focus-visible) {
+    outline: none;
+}
+.showMoreButton:hover {
+    color: var(--colors-grey900);
+    background-color: var(--colors-grey200);
+}

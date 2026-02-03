@@ -3,8 +3,8 @@ import {
     dimensionSelectionSlice,
     initialState,
     type DimensionSelectionState,
-    clearDataSource,
-    setDataSource,
+    clearDataSourceId,
+    setDataSourceId,
     clearSearchTerm,
     setSearchTerm,
     clearFilter,
@@ -20,9 +20,10 @@ import {
     addItemToMultiSelection,
     removeItemFromMultiSelection,
     getSearchTerm,
-    getDataSource,
+    getDataSourceId,
+    isSelectedDataSourceId,
     getFilter,
-    getIsAllCollapsed,
+    isAllCollapsed,
     isAnyListLoading,
     getAllListLoadErrors,
     isListLoading,
@@ -31,7 +32,6 @@ import {
     isDimensionMultiSelected,
 } from '../dimensions-selection-slice'
 import type { EngineError } from '@api/parse-engine-error'
-import type { DataSource } from '@types'
 
 type RootState = {
     dimensionSelection: DimensionSelectionState
@@ -54,27 +54,19 @@ describe('dimensionSelectionSlice', () => {
     })
 
     describe('reducers', () => {
-        it('should clear data source', () => {
-            const dataSource = {
-                id: 'test',
-                programType: 'WITH_REGISTRATION',
-            } as DataSource
+        it('should clear data source ID', () => {
             const prevstate: DimensionSelectionState = {
                 ...initialState,
-                dataSource,
+                dataSourceId: 'test',
             }
 
-            const state = reducer(prevstate, clearDataSource())
-            expect(state.dataSource).toBe(null)
+            const state = reducer(prevstate, clearDataSourceId())
+            expect(state.dataSourceId).toBe(null)
         })
 
         it('should set data source', () => {
-            const dataSource = {
-                id: 'test',
-                programType: 'WITH_REGISTRATION',
-            } as DataSource
-            const state = reducer(initialState, setDataSource(dataSource))
-            expect(state.dataSource).toEqual(dataSource)
+            const state = reducer(initialState, setDataSourceId('test'))
+            expect(state.dataSourceId).toEqual('test')
         })
 
         it('should clear search term', () => {
@@ -95,15 +87,15 @@ describe('dimensionSelectionSlice', () => {
         it('should clear filter', () => {
             const prevstate: DimensionSelectionState = {
                 ...initialState,
-                filter: 'test',
+                filter: 'ORG_UNITS',
             }
             const state = reducer(prevstate, clearFilter())
             expect(state.filter).toBe(null)
         })
 
         it('should set filter', () => {
-            const state = reducer(initialState, setFilter('new filter'))
-            expect(state.filter).toBe('new filter')
+            const state = reducer(initialState, setFilter('PERIODS'))
+            expect(state.filter).toBe('PERIODS')
         })
 
         it('should toggle all collapsed', () => {
@@ -204,13 +196,14 @@ describe('dimensionSelectionSlice', () => {
     })
 
     describe('selectors', () => {
-        it('should get data source', () => {
-            const dataSource = {
-                id: 'test',
-                programType: 'WITH_REGISTRATION',
-            } as DataSource
-            const state = createRootState({ dataSource })
-            expect(getDataSource(state)).toEqual(dataSource)
+        it('should get data source ID', () => {
+            const state = createRootState({ dataSourceId: 'test' })
+            expect(getDataSourceId(state)).toEqual('test')
+        })
+
+        it('should get is selected data source for a provided data source ID', () => {
+            const state = createRootState({ dataSourceId: 'test' })
+            expect(isSelectedDataSourceId(state, 'test')).toEqual(true)
         })
 
         it('should get search term', () => {
@@ -219,13 +212,13 @@ describe('dimensionSelectionSlice', () => {
         })
 
         it('should get filter', () => {
-            const state = createRootState({ filter: 'test filter' })
-            expect(getFilter(state)).toBe('test filter')
+            const state = createRootState({ filter: 'DATA_ELEMENTS' })
+            expect(getFilter(state)).toBe('DATA_ELEMENTS')
         })
 
         it('should get is all collapsed', () => {
             const state = createRootState({ isAllCollapsed: true })
-            expect(getIsAllCollapsed(state)).toBe(true)
+            expect(isAllCollapsed(state)).toBe(true)
         })
 
         it('should detect if any list is loading', () => {

@@ -286,7 +286,7 @@ export const extractMetadataFromVisualization = (
             visualization.outputType
         ),
         getMainDimensions(visualization.outputType),
-        getProgramDimensions(visualization.program.id),
+        getProgramDimensions(visualization.program?.id),
         extractTrackedEntityTypeMetadata(transformedVisualization),
         extractFixedDimensionsMetadata(transformedVisualization),
         extractProgramDimensionsMetadata(transformedVisualization),
