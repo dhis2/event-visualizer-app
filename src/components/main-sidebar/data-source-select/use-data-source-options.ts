@@ -47,7 +47,7 @@ export type UseDataSourceOptionsResult = Pick<
     onShowMoreTrackedEntityTypesClick: () => void
 }
 
-export const LIST_LENGTH_INCREMENTER = 4
+export const LIST_LENGTH_INCREMENTER = 10
 
 function filterByNameWithMaxLength<T extends { name: string }>(
     filterString: string,

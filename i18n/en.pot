@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-02T13:11:03.843Z\n"
-"PO-Revision-Date: 2026-02-02T13:11:03.844Z\n"
+"POT-Creation-Date: 2026-02-03T10:53:08.815Z\n"
+"PO-Revision-Date: 2026-02-03T10:53:08.817Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -275,6 +275,15 @@ msgstr "Choose a data source"
 
 msgid "No data sources available"
 msgstr "No data sources available"
+
+msgid "Programs"
+msgstr "Programs"
+
+msgid "Show more"
+msgstr "Show more"
+
+msgid "Analyze without a program"
+msgstr "Analyze without a program"
 
 msgid "Loading options"
 msgstr "Loading options"
