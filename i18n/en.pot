@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-03T10:53:08.815Z\n"
-"PO-Revision-Date: 2026-02-03T10:53:08.817Z\n"
+"POT-Creation-Date: 2026-02-03T11:02:42.429Z\n"
+"PO-Revision-Date: 2026-02-03T11:02:42.429Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -294,14 +294,8 @@ msgstr "Failed to load data sources."
 msgid "Filter data sources"
 msgstr "Filter data sources"
 
-msgid "Type to filter…"
-msgstr "Type to filter…"
-
-msgid "There was a problem trying to search"
-msgstr "There was a problem trying to search"
-
-msgid "There were {{errorsLength}} problems trying to search"
-msgstr "There were {{errorsLength}} problems trying to search"
+msgid "Something went wrong while searching."
+msgstr "Something went wrong while searching."
 
 msgid "Search"
 msgstr "Search"
