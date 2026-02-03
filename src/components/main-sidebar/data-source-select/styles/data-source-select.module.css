@@ -25,6 +25,7 @@
     border-radius: 3px;
     box-shadow: var(--elevations-e400);
     box-sizing: content-box;
+    min-inline-size: 400px;
 }
 
 .filterWrapper {

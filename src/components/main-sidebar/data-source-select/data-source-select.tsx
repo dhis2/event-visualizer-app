@@ -67,7 +67,10 @@ export const DataSourceSelect = () => {
                         <div
                             className={classes.dropdown}
                             style={{
-                                width: comboboxRef.current?.scrollWidth ?? 260,
+                                /* We have a min-width of 400px, so this will
+                                 * only cause the dropdown to expand beyond 400px
+                                 * when the sidebar is wider than 400px.*/
+                                width: comboboxRef.current?.scrollWidth ?? 0,
                             }}
                             tabIndex={0}
                             ref={focusFirstFocusableChild}
