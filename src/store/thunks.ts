@@ -14,7 +14,7 @@ import {
     getVisualizationUiConfig,
     transformVisualization,
 } from '@modules/visualization'
-import type { AppDispatch, CurrentVisualization } from '@types'
+import type { AppDispatch, NewVisualization, SavedVisualization } from '@types'
 
 type AppAsyncThunkConfig = {
     state: RootState
@@ -95,10 +95,9 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
     () => (dispatch, getState) => {
         const { currentVis, visUiConfig } = getState()
 
-        const mergedVis = deepmerge(
-            currentVis,
-            visUiConfig.options
-        ) as CurrentVisualization
+        const mergedVis = deepmerge(currentVis, visUiConfig.options) as
+            | NewVisualization
+            | SavedVisualization
 
         const disabledOptions = getDisabledOptions(visUiConfig.options)
 

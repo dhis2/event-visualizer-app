@@ -40,7 +40,7 @@ import {
     getUiMainSidebarVisible,
     setUiActiveDimensionModal,
 } from '@store/ui-slice'
-import type { CurrentVisualization, Sorting } from '@types'
+import type { SavedVisualization, Sorting } from '@types'
 
 const EventVisualizer: FC = () => {
     useLoadVisualizationOnMount()
@@ -59,7 +59,7 @@ const EventVisualizer: FC = () => {
                 setCurrentVis({
                     ...currentVis,
                     sorting: sorting ? [sorting] : undefined,
-                } as CurrentVisualization)
+                } as SavedVisualization)
             )
         },
         [currentVis, dispatch]
