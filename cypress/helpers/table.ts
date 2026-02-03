@@ -7,9 +7,9 @@ export const expectVisTitleToContain = (value: string) =>
 
 export const expectVisTitleToEqual = (value: string) =>
     cy
-        .getByDataTest('title-bar')
-        .containsExact(value)
+        .contains(value)
         .should('have.length', 1)
+        .and('have.attr', 'data-test', 'title-bar')
         .and('be.visible')
 
 const getLineListTable = () => cy.getByDataTest('line-list-data-table')
