@@ -44,59 +44,73 @@ const cleanErrorReport = (errorReport: ResponseErrorReport): ErrorReport => {
     }
 }
 
-export const parseEngineError = (error: unknown): EngineError => {
-    if (error instanceof FetchError) {
-        const { type, message, details } = error
-        // Use shared type list for runtime check
-        const errorType: EngineErrorType = ENGINE_ERROR_TYPES.includes(
-            type as EngineErrorType
-        )
-            ? (type as EngineErrorType)
-            : 'unknown'
-        const parsedError: EngineError = {
-            type: errorType,
-            message: typeof message === 'string' ? message : 'Unknown error',
-            httpStatusCode:
-                typeof details?.httpStatusCode === 'number'
-                    ? details.httpStatusCode
-                    : undefined,
-            httpStatus:
-                typeof details?.httpStatus === 'string'
-                    ? details.httpStatus
-                    : undefined,
-            errorCode:
-                typeof details?.errorCode === 'string'
-                    ? details.errorCode
-                    : undefined,
-            uid:
-                typeof details?.response?.uid === 'string'
-                    ? details.response.uid
-                    : undefined,
-            errorReports: Array.isArray(details?.response?.errorReports)
-                ? details.response.errorReports.map(cleanErrorReport)
+const parseFetchError = (error: FetchError): EngineError => {
+    const { type, message, details } = error
+    // Use shared type list for runtime check
+    const errorType: EngineErrorType = ENGINE_ERROR_TYPES.includes(
+        type as EngineErrorType
+    )
+        ? (type as EngineErrorType)
+        : 'unknown'
+    const parsedError: EngineError = {
+        type: errorType,
+        message: typeof message === 'string' ? message : 'Unknown error',
+        httpStatusCode:
+            typeof details?.httpStatusCode === 'number'
+                ? details.httpStatusCode
                 : undefined,
-        }
-
-        /* If we end up with an error without an errorCode, try to read them
-         * from the errorReports */
-        if (!parsedError.errorCode && parsedError.errorReports?.length) {
-            if (parsedError.errorReports.length === 1) {
-                parsedError.errorCode = parsedError.errorReports[0].errorCode
-            } else {
-                parsedError.errorCodes = parsedError.errorReports.map(
-                    ({ errorCode }) => errorCode
-                )
-            }
-        }
-
-        return parsedError
+        httpStatus:
+            typeof details?.httpStatus === 'string'
+                ? details.httpStatus
+                : undefined,
+        errorCode:
+            typeof details?.errorCode === 'string'
+                ? details.errorCode
+                : undefined,
+        uid:
+            typeof details?.response?.uid === 'string'
+                ? details.response.uid
+                : undefined,
+        errorReports: Array.isArray(details?.response?.errorReports)
+            ? details.response.errorReports.map(cleanErrorReport)
+            : undefined,
     }
 
-    return {
-        type: 'runtime',
-        message:
-            error instanceof Error && typeof error.message === 'string'
-                ? error.message
-                : 'An unexpected runtime error occurred',
+    /* If we end up with an error without an errorCode, try to read them
+     * from the errorReports */
+    if (!parsedError.errorCode && parsedError.errorReports?.length) {
+        if (parsedError.errorReports.length === 1) {
+            parsedError.errorCode = parsedError.errorReports[0].errorCode
+        } else {
+            parsedError.errorCodes = parsedError.errorReports.map(
+                ({ errorCode }) => errorCode
+            )
+        }
     }
+
+    return parsedError
+}
+
+export const parseEngineError = (error: unknown): EngineError => {
+    const parsedError: EngineError =
+        error instanceof FetchError
+            ? parseFetchError(error)
+            : {
+                  type: 'runtime',
+                  message:
+                      error instanceof Error &&
+                      typeof error.message === 'string'
+                          ? error.message
+                          : 'An unexpected runtime error occurred',
+              }
+
+    // Ensure non-network errors are logged to the console in dev mode
+    if (
+        process.env.NODE_ENV === 'development' &&
+        (parsedError.type === 'unknown' || parsedError.type === 'runtime')
+    ) {
+        console.error(error)
+    }
+
+    return parsedError
 }

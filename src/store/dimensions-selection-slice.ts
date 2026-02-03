@@ -1,7 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { EngineError } from '@api/parse-engine-error'
-import type { DataSource } from '@types'
+import type { DataSourceFilter } from '@types'
 
 type ListLoadingState = {
     isLoading: boolean
@@ -10,10 +10,9 @@ type ListLoadingState = {
 type AllListsLoadErrors = Array<{ groupKey: string; error: EngineError }>
 
 export interface DimensionSelectionState {
-    dataSource: DataSource | null
+    dataSourceId: string | null
     searchTerm: string
-    // TODO: update to a string literal once all allowed filter strings are known
-    filter: string | null
+    filter: DataSourceFilter | null
     isAllCollapsed: boolean
     // TODO: update to a string literal once all dimension-lists identifiers are known
     listsLoadingStates: Record<string, ListLoadingState>
@@ -21,7 +20,7 @@ export interface DimensionSelectionState {
 }
 
 export const initialState: DimensionSelectionState = {
-    dataSource: null,
+    dataSourceId: null,
     searchTerm: '',
     filter: null,
     isAllCollapsed: false,
@@ -33,11 +32,11 @@ export const dimensionSelectionSlice = createSlice({
     name: 'dimensionSelection',
     initialState,
     reducers: {
-        clearDataSource: (state) => {
-            state.dataSource = null
+        clearDataSourceId: (state) => {
+            state.dataSourceId = null
         },
-        setDataSource: (state, action: PayloadAction<DataSource>) => {
-            state.dataSource = action.payload
+        setDataSourceId: (state, action: PayloadAction<string>) => {
+            state.dataSourceId = action.payload
         },
         clearSearchTerm: (state) => {
             state.searchTerm = initialState.searchTerm
@@ -48,7 +47,7 @@ export const dimensionSelectionSlice = createSlice({
         clearFilter: (state) => {
             state.filter = initialState.filter
         },
-        setFilter: (state, action: PayloadAction<string>) => {
+        setFilter: (state, action: PayloadAction<DataSourceFilter>) => {
             state.filter = action.payload
         },
         toggleAllCollapsed: (state) => {
@@ -98,10 +97,12 @@ export const dimensionSelectionSlice = createSlice({
         },
     },
     selectors: {
-        getDataSource: (state) => state.dataSource,
+        getDataSourceId: (state) => state.dataSourceId,
+        isSelectedDataSourceId: (state, id: string) =>
+            state.dataSourceId === id,
         getSearchTerm: (state) => state.searchTerm,
         getFilter: (state) => state.filter,
-        getIsAllCollapsed: (state) => state.isAllCollapsed,
+        isAllCollapsed: (state) => state.isAllCollapsed,
         isAnyListLoading: createSelector(
             (state: DimensionSelectionState) => state.listsLoadingStates,
             (listsLoadingStates) =>
@@ -136,8 +137,8 @@ export const dimensionSelectionSlice = createSlice({
 })
 
 export const {
-    clearDataSource,
-    setDataSource,
+    clearDataSourceId,
+    setDataSourceId,
     clearSearchTerm,
     setSearchTerm,
     clearFilter,
@@ -154,10 +155,11 @@ export const {
     removeItemFromMultiSelection,
 } = dimensionSelectionSlice.actions
 export const {
-    getDataSource,
+    getDataSourceId,
+    isSelectedDataSourceId,
     getSearchTerm,
     getFilter,
-    getIsAllCollapsed,
+    isAllCollapsed,
     isAnyListLoading,
     getAllListLoadErrors,
     isListLoading,

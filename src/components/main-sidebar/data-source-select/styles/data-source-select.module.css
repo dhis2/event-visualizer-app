@@ -1,0 +1,33 @@
+.loadingMessage,
+.errorMessage {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    padding-block: 8px;
+    padding-inline: 24px;
+    font-size: 13px;
+    line-height: 20px;
+}
+.loadingMessage {
+    color: var(--colors-grey700);
+    gap: 16px;
+}
+.errorMessage {
+    color: var(--theme-error);
+}
+
+.dropdown {
+    display: flex;
+    flex-direction: column;
+    block-size: auto;
+    background: var(--colors-white);
+    border: 1px solid var(--colors-grey400);
+    border-radius: 3px;
+    box-shadow: var(--elevations-e400);
+    box-sizing: content-box;
+    min-inline-size: 400px;
+}
+
+.filterWrapper {
+    padding: 8px 8px 4px 8px;
+}

@@ -21,6 +21,7 @@ import {
     isUserOrgUnitMetadataItem,
     isDimensionMetadataItem,
 } from '@modules/metadata'
+import { isPopulatedString } from '@modules/validation'
 import type {
     InitialMetadataItems,
     MetadataItem,
@@ -68,7 +69,7 @@ export const MockMetadataProvider: FC<{
 }
 
 export const useMetadataItem = (
-    metadataId: string
+    metadataId: string | null | undefined
 ): MetadataItem | undefined => {
     const metadataStore = useContext(MetadataContext)!
     const result = useSyncExternalStore(
@@ -76,7 +77,10 @@ export const useMetadataItem = (
             (callback) => metadataStore.subscribe(metadataId, callback),
             [metadataStore, metadataId]
         ),
-        () => metadataStore.getMetadataItem(metadataId)
+        () =>
+            isPopulatedString(metadataId)
+                ? metadataStore.getMetadataItem(metadataId)
+                : undefined
     )
     return result
 }
