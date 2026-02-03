@@ -2,13 +2,13 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    max-block-size: 400px;
+    max-block-size: 640px;
     overflow-y: auto;
 }
 .sectionHeader {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
     color: var(--colors-grey600);
     padding-block: 12px 4px;
     padding-inline: 14px 12px;
@@ -22,24 +22,23 @@
 }
 .showMoreWrapper {
     display: flex;
-    padding: 4px 8px 10px 8px;
 }
 .showMoreButton {
     all: unset;
+    padding: 8px 8px 8px 28px;
     inline-size: 100%;
-    font-style: italic;
-    text-align: center;
     font-size: 13px;
     cursor: pointer;
-    color: var(--theme-primary700);
+    color: var(--colors-grey600);
 }
 .showMoreButton:focus {
     outline: 3px solid var(--theme-focus);
-    outline-offset: 4px -3px;
+    outline-offset: -3px;
 }
 .showMoreButton:focus:not(:focus-visible) {
     outline: none;
 }
 .showMoreButton:hover {
-    text-decoration: underline;
+    color: var(--colors-grey900);
+    background-color: var(--colors-grey200);
 }

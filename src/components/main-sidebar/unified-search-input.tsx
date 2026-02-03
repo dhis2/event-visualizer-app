@@ -72,20 +72,13 @@ export const UnifiedSearchInput = () => {
         },
         [debouncedSetHelpMessage]
     )
-    const errorMessage = useMemo<string | undefined>(() => {
-        // TODO: Could not get the i18n pluralization to work here
-        switch (errors.length) {
-            case 0:
-                return undefined
-            case 1:
-                return i18n.t('There was a problem trying to search')
-            default:
-                return i18n.t(
-                    'There were {{errorsLength}} problems trying to search',
-                    { errorsLength: errors.length }
-                )
-        }
-    }, [errors.length])
+    const errorMessage = useMemo<string | undefined>(
+        () =>
+            errors.length === 0
+                ? undefined
+                : i18n.t('Something went wrong while searching.'),
+        [errors.length]
+    )
     const describedBy = useMemo(() => {
         const messages: string[] = []
 

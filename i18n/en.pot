@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-02T14:28:06.975Z\n"
-"PO-Revision-Date: 2026-02-02T14:28:06.976Z\n"
+"POT-Creation-Date: 2026-02-03T11:02:42.429Z\n"
+"PO-Revision-Date: 2026-02-03T11:02:42.429Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -276,6 +276,15 @@ msgstr "Choose a data source"
 msgid "No data sources available"
 msgstr "No data sources available"
 
+msgid "Programs"
+msgstr "Programs"
+
+msgid "Show more"
+msgstr "Show more"
+
+msgid "Analyze without a program"
+msgstr "Analyze without a program"
+
 msgid "Loading options"
 msgstr "Loading options"
 
@@ -320,6 +329,8 @@ msgstr "There was a problem trying to search"
 
 msgid "There were {{errorsLength}} problems trying to search"
 msgstr "There were {{errorsLength}} problems trying to search"
+msgid "Something went wrong while searching."
+msgstr "Something went wrong while searching."
 
 msgid "Search"
 msgstr "Search"
