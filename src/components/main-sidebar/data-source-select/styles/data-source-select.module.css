@@ -21,10 +21,11 @@
     flex-direction: column;
     block-size: auto;
     background: var(--colors-white);
-    border: 1px solid var(--colors-grey200);
+    border: 1px solid var(--colors-grey400);
     border-radius: 3px;
-    box-shadow: var(--elevations-e300);
+    box-shadow: var(--elevations-e400);
     box-sizing: content-box;
+    min-inline-size: 400px;
 }
 
 .filterWrapper {

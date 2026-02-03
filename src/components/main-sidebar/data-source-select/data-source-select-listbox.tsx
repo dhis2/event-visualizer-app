@@ -32,7 +32,7 @@ export const DataSourceSelectListbox = ({
         )}
         {programs.length > 0 && (
             <li role="presentation" className={classes.sectionHeader}>
-                Programs
+                {i18n.t('Programs')}
             </li>
         )}
         {programs.map((program) => (
@@ -50,13 +50,13 @@ export const DataSourceSelectListbox = ({
                     className={classes.showMoreButton}
                     onClick={onShowMoreProgramsClick}
                 >
-                    Show more programs
+                    {i18n.t('Show more')}
                 </button>
             </li>
         )}
         {trackedEntityTypes.length > 0 && (
             <li role="presentation" className={classes.sectionHeader}>
-                Other data sources
+                {i18n.t('Analyze without a program')}
             </li>
         )}
         {trackedEntityTypes.map((tet) => (
@@ -74,7 +74,7 @@ export const DataSourceSelectListbox = ({
                     className={classes.showMoreButton}
                     onClick={onShowMoreTrackedEntityTypesClick}
                 >
-                    Show more other data source
+                    {i18n.t('Show more')}
                 </button>
             </li>
         )}
