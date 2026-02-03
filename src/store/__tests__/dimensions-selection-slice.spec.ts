@@ -87,15 +87,15 @@ describe('dimensionSelectionSlice', () => {
         it('should clear filter', () => {
             const prevstate: DimensionSelectionState = {
                 ...initialState,
-                filter: 'test',
+                filter: 'ORG_UNITS',
             }
             const state = reducer(prevstate, clearFilter())
             expect(state.filter).toBe(null)
         })
 
         it('should set filter', () => {
-            const state = reducer(initialState, setFilter('new filter'))
-            expect(state.filter).toBe('new filter')
+            const state = reducer(initialState, setFilter('PERIODS'))
+            expect(state.filter).toBe('PERIODS')
         })
 
         it('should toggle all collapsed', () => {
@@ -212,8 +212,8 @@ describe('dimensionSelectionSlice', () => {
         })
 
         it('should get filter', () => {
-            const state = createRootState({ filter: 'test filter' })
-            expect(getFilter(state)).toBe('test filter')
+            const state = createRootState({ filter: 'DATA_ELEMENTS' })
+            expect(getFilter(state)).toBe('DATA_ELEMENTS')
         })
 
         it('should get is all collapsed', () => {
