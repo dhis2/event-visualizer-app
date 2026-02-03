@@ -40,7 +40,7 @@ import {
     getUiDetailsPanelVisible,
     setUiActiveDimensionModal,
 } from '@store/ui-slice'
-import type { SavedVisualization, Sorting } from '@types'
+import type { NewVisualization, SavedVisualization, Sorting } from '@types'
 
 const EventVisualizer: FC = () => {
     useLoadVisualizationOnMount()
@@ -58,7 +58,7 @@ const EventVisualizer: FC = () => {
                 setCurrentVis({
                     ...currentVis,
                     sorting: sorting ? [sorting] : undefined,
-                } as SavedVisualization)
+                } as SavedVisualization | NewVisualization)
             )
         },
         [currentVis, dispatch]
