@@ -21,9 +21,9 @@ import {
     removeItemFromMultiSelection,
     getSearchTerm,
     getDataSourceId,
-    getIsSelectedDataSourceId,
+    isSelectedDataSourceId,
     getFilter,
-    getIsAllCollapsed,
+    isAllCollapsed,
     isAnyListLoading,
     getAllListLoadErrors,
     isListLoading,
@@ -203,7 +203,7 @@ describe('dimensionSelectionSlice', () => {
 
         it('should get is selected data source for a provided data source ID', () => {
             const state = createRootState({ dataSourceId: 'test' })
-            expect(getIsSelectedDataSourceId(state, 'test')).toEqual(true)
+            expect(isSelectedDataSourceId(state, 'test')).toEqual(true)
         })
 
         it('should get search term', () => {
@@ -218,7 +218,7 @@ describe('dimensionSelectionSlice', () => {
 
         it('should get is all collapsed', () => {
             const state = createRootState({ isAllCollapsed: true })
-            expect(getIsAllCollapsed(state)).toBe(true)
+            expect(isAllCollapsed(state)).toBe(true)
         })
 
         it('should detect if any list is loading', () => {

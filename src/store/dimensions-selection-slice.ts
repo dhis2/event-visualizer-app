@@ -98,11 +98,11 @@ export const dimensionSelectionSlice = createSlice({
     },
     selectors: {
         getDataSourceId: (state) => state.dataSourceId,
-        getIsSelectedDataSourceId: (state, id: string) =>
+        isSelectedDataSourceId: (state, id: string) =>
             state.dataSourceId === id,
         getSearchTerm: (state) => state.searchTerm,
         getFilter: (state) => state.filter,
-        getIsAllCollapsed: (state) => state.isAllCollapsed,
+        isAllCollapsed: (state) => state.isAllCollapsed,
         isAnyListLoading: createSelector(
             (state: DimensionSelectionState) => state.listsLoadingStates,
             (listsLoadingStates) =>
@@ -156,10 +156,10 @@ export const {
 } = dimensionSelectionSlice.actions
 export const {
     getDataSourceId,
-    getIsSelectedDataSourceId,
+    isSelectedDataSourceId,
     getSearchTerm,
     getFilter,
-    getIsAllCollapsed,
+    isAllCollapsed,
     isAnyListLoading,
     getAllListLoadErrors,
     isListLoading,
