@@ -1,0 +1,56 @@
+.buttonWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.buttonWrap.withBoxShadow {
+    box-shadow: 0 1px 3px #0c0c0c17;
+}
+.filterButton,
+.filterClearButton {
+    all: unset;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: var(--colors-grey600);
+    flex-shrink: 0;
+    transition: background-color 0.15s ease;
+}
+.filterButton {
+    gap: 4px;
+    padding: 5px 6px 5px 4px;
+    border: 1px dashed #c8d1db;
+    border-radius: 5px;
+    background-color: transparent;
+    font-size: 13px;
+    font-weight: 400;
+    white-space: nowrap;
+}
+.filterButton:hover {
+    background-color: var(--colors-grey100);
+    border-color: var(--colors-grey500);
+}
+.filterButton.withSelection {
+    background-color: var(--colors-white);
+    border: 1px solid var(--colors-grey500);
+    border-inline-end: none;
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+    color: var(--colors-grey900);
+}
+.filterClearButton {
+    justify-content: center;
+    padding: 5px;
+    border: 1px solid var(--colors-grey500);
+    border-inline-start-color: var(--colors-grey300);
+    background-color: var(--colors-white);
+    border-start-end-radius: 5px;
+    border-end-end-radius: 5px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.filterButton.withSelection:hover,
+.filterClearButton:hover {
+    background-color: var(--colors-grey200);
+    color: var(--colors-grey800);
+}

@@ -20,3 +20,13 @@ export type DataSource =
     /* TrackedEntityType does not have any distinguishing features
      * it just has `id` and `name` */
     | MetadataItemWithName
+
+export type DataSourceFilter =
+    | 'ORG_UNITS'
+    | 'PERIODS'
+    | 'STATUSES'
+    | 'DATA_ELEMENTS'
+    | 'PROGRAM_ATTRIBUTES'
+    | 'PROGRAM_INDICATORS'
+    | 'CATEGORIES'
+    | 'CATEGORY_OPTION_GROUP_SETS'

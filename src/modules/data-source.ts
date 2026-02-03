@@ -2,26 +2,25 @@ import { isMetadataItemWithName, isProgramMetadataItem } from './metadata'
 import { isPopulatedString } from './validation'
 import type {
     CurrentVisualization,
-    DataSource,
     DataSourceProgramWithoutRegistration,
     DataSourceProgramWithRegistration,
     MetadataItemWithName,
 } from '@types'
 
 export const isDataSourceProgramWithRegistration = (
-    dataSource: DataSource
+    dataSource: unknown
 ): dataSource is DataSourceProgramWithRegistration =>
     isProgramMetadataItem(dataSource) &&
     dataSource.programType === 'WITH_REGISTRATION'
 
 export const isDataSourceProgramWithoutRegistration = (
-    dataSource: DataSource
+    dataSource: unknown
 ): dataSource is DataSourceProgramWithoutRegistration =>
     isProgramMetadataItem(dataSource) &&
     dataSource.programType === 'WITHOUT_REGISTRATION'
 
 export const isDataSourceTrackedEntity = (
-    dataSource: DataSource
+    dataSource: unknown
 ): dataSource is MetadataItemWithName =>
     !isProgramMetadataItem(dataSource) && isMetadataItemWithName(dataSource)
 
