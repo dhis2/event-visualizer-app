@@ -441,10 +441,10 @@ describe('UnifiedSearchInput', () => {
 
             render(<UnifiedSearchInput />)
 
-            assertError('There was a problem trying to search')
+            assertError('Something went wrong while searching.')
         })
 
-        it('should show plural error message when there are multiple errors', () => {
+        it('should show same error message when there are multiple errors', () => {
             const mockErrors = [
                 { type: 'network', message: 'Network error' },
                 { type: 'timeout', message: 'Timeout' },
@@ -453,7 +453,7 @@ describe('UnifiedSearchInput', () => {
 
             render(<UnifiedSearchInput />)
 
-            assertError('There were 2 problems trying to search')
+            assertError('Something went wrong while searching.')
         })
 
         it('should add error class to input when there is an error', () => {
