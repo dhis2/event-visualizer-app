@@ -80,6 +80,8 @@ export const useLayoutDimensions = ({
                 ) {
                     dimension.dimensionItemType = metadataItem.dimensionItemType
                 }
+            } else {
+                throw new Error(`missing metadata for dimension ${dimensionId}`)
             }
 
             return dimension
