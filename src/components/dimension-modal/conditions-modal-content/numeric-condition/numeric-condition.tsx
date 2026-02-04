@@ -109,7 +109,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
             })
         }
 
-        return options
+        return options.sort((a, b) => a.startValue - b.startValue)
     }, [legendSet, legendSetId, legendSetMetadata?.legends])
 
     useEffect(() => {
@@ -256,15 +256,13 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                             dense
                         >
                             {Array.isArray(availableLegendSetLegends) &&
-                                availableLegendSetLegends
-                                    .sort((a, b) => a.startValue - b.startValue)
-                                    .map((legend) => (
-                                        <MultiSelectOption
-                                            key={legend.id}
-                                            value={legend.id}
-                                            label={legend.name}
-                                        />
-                                    ))}
+                                availableLegendSetLegends.map((legend) => (
+                                    <MultiSelectOption
+                                        key={legend.id}
+                                        value={legend.id}
+                                        label={legend.name}
+                                    />
+                                ))}
                         </MultiSelectField>
                     )}
                 </>
