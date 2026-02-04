@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
     dimensionSelectionSlice,
     initialState,
+    initialDimensionGroupState,
     type DimensionSelectionState,
     clearDataSourceId,
     setDataSourceId,
@@ -9,13 +10,14 @@ import {
     setSearchTerm,
     clearFilter,
     setFilter,
-    toggleAllCollapsed,
-    clearListsLoadingStates,
-    removeListsLoadingState,
-    addListsLoadingState,
-    setListLoadingStart,
-    setListLoadingError,
-    setListLoadingSuccess,
+    toggleAllDimensionGroupsIsCollapsed,
+    clearDimensionGroupStates,
+    removeDimensionGroupState,
+    addDimensionGroupState,
+    toggleDimensionGroupIsCollapsed,
+    setDimensionGroupLoadStart,
+    setDimensionGroupLoadError,
+    setDimensionGroupLoadSuccess,
     clearMultiSelection,
     addItemToMultiSelection,
     removeItemFromMultiSelection,
@@ -23,11 +25,12 @@ import {
     getDataSourceId,
     isSelectedDataSourceId,
     getFilter,
-    isAllCollapsed,
-    isAnyListLoading,
-    getAllListLoadErrors,
-    isListLoading,
-    getListError,
+    areAllDimensionGroupsCollapsed,
+    isAnyDimensionGroupLoading,
+    getAllDimensionGroupLoadErrors,
+    isDimensionGroupCollapsed,
+    isDimensionGroupLoading,
+    getDimensionGroupError,
     isMultiSelecting,
     isDimensionMultiSelected,
 } from '../dimensions-selection-slice'
@@ -98,63 +101,194 @@ describe('dimensionSelectionSlice', () => {
             expect(state.filter).toBe('PERIODS')
         })
 
-        it('should toggle all collapsed', () => {
-            const state = reducer(initialState, toggleAllCollapsed())
-            expect(state.isAllCollapsed).toBe(true)
-        })
-
-        it('should clear lists loading states', () => {
-            const prevstate: DimensionSelectionState = {
+        it('should toggle all collapsed when groups exist', () => {
+            const prevState: DimensionSelectionState = {
                 ...initialState,
-                listsLoadingStates: { test: { isLoading: true } },
+                dimensionGroupStates: {
+                    group1: { isCollapsed: false, isLoading: false },
+                    group2: { isCollapsed: false, isLoading: false },
+                },
             }
-            const state = reducer(prevstate, clearListsLoadingStates())
-            expect(state.listsLoadingStates).toEqual({})
+
+            // First toggle: should collapse all
+            let state = reducer(
+                prevState,
+                toggleAllDimensionGroupsIsCollapsed()
+            )
+            expect(state.dimensionGroupStates.group1.isCollapsed).toBe(true)
+            expect(state.dimensionGroupStates.group2.isCollapsed).toBe(true)
+
+            // Second toggle: should expand all
+            state = reducer(state, toggleAllDimensionGroupsIsCollapsed())
+            expect(state.dimensionGroupStates.group1.isCollapsed).toBe(false)
+            expect(state.dimensionGroupStates.group2.isCollapsed).toBe(false)
         })
 
-        it('should remove lists loading state', () => {
-            const prevstate: DimensionSelectionState = {
+        it('should handle toggle all collapsed when some groups are collapsed', () => {
+            const prevState: DimensionSelectionState = {
                 ...initialState,
-                listsLoadingStates: { test: { isLoading: true } },
+                dimensionGroupStates: {
+                    group1: { isCollapsed: true, isLoading: false },
+                    group2: { isCollapsed: false, isLoading: false },
+                },
             }
-            const state = reducer(prevstate, removeListsLoadingState('test'))
-            expect(state.listsLoadingStates).toEqual({})
+
+            // Not all collapsed, so should collapse all
+            const state = reducer(
+                prevState,
+                toggleAllDimensionGroupsIsCollapsed()
+            )
+            expect(state.dimensionGroupStates.group1.isCollapsed).toBe(true)
+            expect(state.dimensionGroupStates.group2.isCollapsed).toBe(true)
         })
 
-        it('should add lists loading state', () => {
-            const state = reducer(initialState, addListsLoadingState('test'))
-            expect(state.listsLoadingStates).toEqual({
-                test: { isLoading: false },
+        it('should do nothing when toggling all collapsed with no groups', () => {
+            const state = reducer(
+                initialState,
+                toggleAllDimensionGroupsIsCollapsed()
+            )
+            expect(state.dimensionGroupStates).toEqual({})
+        })
+
+        it('should clear dimension group states', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionGroupStates: {
+                    test: { isCollapsed: false, isLoading: true },
+                },
+            }
+            const state = reducer(prevState, clearDimensionGroupStates())
+            expect(state.dimensionGroupStates).toEqual({})
+        })
+
+        it('should remove dimension group state', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionGroupStates: {
+                    test: { isCollapsed: false, isLoading: true },
+                    keep: { isCollapsed: true, isLoading: false },
+                },
+            }
+            const state = reducer(prevState, removeDimensionGroupState('test'))
+            expect(state.dimensionGroupStates).toEqual({
+                keep: { isCollapsed: true, isLoading: false },
             })
         })
 
-        it('should set list loading start', () => {
-            const state = reducer(initialState, setListLoadingStart('test'))
-            expect(state.listsLoadingStates).toEqual({
-                test: { isLoading: true },
+        it('should add dimension group state with initial values', () => {
+            const state = reducer(initialState, addDimensionGroupState('test'))
+            expect(state.dimensionGroupStates).toEqual({
+                test: initialDimensionGroupState,
             })
         })
 
-        it('should set list loading error', () => {
+        it('should toggle dimension group collapsed state', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionGroupStates: {
+                    test: { isCollapsed: false, isLoading: false },
+                },
+            }
+
+            // First toggle: false -> true
+            let state = reducer(
+                prevState,
+                toggleDimensionGroupIsCollapsed('test')
+            )
+            expect(state.dimensionGroupStates.test.isCollapsed).toBe(true)
+
+            // Second toggle: true -> false
+            state = reducer(state, toggleDimensionGroupIsCollapsed('test'))
+            expect(state.dimensionGroupStates.test.isCollapsed).toBe(false)
+        })
+
+        it('should throw error when toggling non-existent dimension group', () => {
+            expect(() =>
+                reducer(
+                    initialState,
+                    toggleDimensionGroupIsCollapsed('nonExistent')
+                )
+            ).toThrow('Dimension group nonExistent does not exist')
+        })
+
+        it('should set dimension group load start', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionGroupStates: {
+                    test: {
+                        isCollapsed: false,
+                        isLoading: false,
+                        error: { message: 'old error', type: 'runtime' },
+                    },
+                },
+            }
+
+            const state = reducer(prevState, setDimensionGroupLoadStart('test'))
+            expect(state.dimensionGroupStates.test.isLoading).toBe(true)
+            expect(state.dimensionGroupStates.test.error).toBeUndefined()
+        })
+
+        it('should throw error when setting load start for non-existent dimension group', () => {
+            expect(() =>
+                reducer(initialState, setDimensionGroupLoadStart('nonExistent'))
+            ).toThrow('Dimension group nonExistent does not exist')
+        })
+
+        it('should set dimension group load error', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionGroupStates: {
+                    test: { isCollapsed: false, isLoading: true },
+                },
+            }
             const error: EngineError = {
                 message: 'test error',
                 type: 'runtime',
             }
 
             const state = reducer(
-                initialState,
-                setListLoadingError({ id: 'test', error })
+                prevState,
+                setDimensionGroupLoadError({ id: 'test', error })
             )
-            expect(state.listsLoadingStates).toEqual({
-                test: { isLoading: false, error },
-            })
+            expect(state.dimensionGroupStates.test.isLoading).toBe(false)
+            expect(state.dimensionGroupStates.test.error).toEqual(error)
         })
 
-        it('should set list loading success', () => {
-            const state = reducer(initialState, setListLoadingSuccess('test'))
-            expect(state.listsLoadingStates).toEqual({
-                test: { isLoading: false },
-            })
+        it('should throw error when setting load error for non-existent dimension group', () => {
+            const error: EngineError = {
+                message: 'test error',
+                type: 'runtime',
+            }
+            expect(() =>
+                reducer(
+                    initialState,
+                    setDimensionGroupLoadError({ id: 'nonExistent', error })
+                )
+            ).toThrow('Dimension group nonExistent does not exist')
+        })
+
+        it('should set dimension group load success', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionGroupStates: {
+                    test: { isCollapsed: false, isLoading: true },
+                },
+            }
+
+            const state = reducer(
+                prevState,
+                setDimensionGroupLoadSuccess('test')
+            )
+            expect(state.dimensionGroupStates.test.isLoading).toBe(false)
+        })
+
+        it('should throw error when setting load success for non-existent dimension group', () => {
+            expect(() =>
+                reducer(
+                    initialState,
+                    setDimensionGroupLoadSuccess('nonExistent')
+                )
+            ).toThrow('Dimension group nonExistent does not exist')
         })
 
         it('should clear multi selection', () => {
@@ -216,30 +350,52 @@ describe('dimensionSelectionSlice', () => {
             expect(getFilter(state)).toBe('DATA_ELEMENTS')
         })
 
-        it('should get is all collapsed', () => {
-            const state = createRootState({ isAllCollapsed: true })
-            expect(isAllCollapsed(state)).toBe(true)
-        })
-
-        it('should detect if any list is loading', () => {
-            const stateWithLoading = createRootState({
-                listsLoadingStates: {
-                    list1: { isLoading: false },
-                    list2: { isLoading: true },
+        it('should get are all dimension groups collapsed when all are collapsed', () => {
+            const state = createRootState({
+                dimensionGroupStates: {
+                    group1: { isCollapsed: true, isLoading: false },
+                    group2: { isCollapsed: true, isLoading: false },
                 },
             })
-            expect(isAnyListLoading(stateWithLoading)).toBe(true)
+            expect(areAllDimensionGroupsCollapsed(state)).toBe(true)
+        })
+
+        it('should get are all dimension groups collapsed when some are not collapsed', () => {
+            const state = createRootState({
+                dimensionGroupStates: {
+                    group1: { isCollapsed: true, isLoading: false },
+                    group2: { isCollapsed: false, isLoading: false },
+                },
+            })
+            expect(areAllDimensionGroupsCollapsed(state)).toBe(false)
+        })
+
+        it('should get are all dimension groups collapsed when none exist', () => {
+            const state = createRootState({
+                dimensionGroupStates: {},
+            })
+            expect(areAllDimensionGroupsCollapsed(state)).toBe(false)
+        })
+
+        it('should detect if any dimension group is loading', () => {
+            const stateWithLoading = createRootState({
+                dimensionGroupStates: {
+                    group1: { isCollapsed: false, isLoading: false },
+                    group2: { isCollapsed: false, isLoading: true },
+                },
+            })
+            expect(isAnyDimensionGroupLoading(stateWithLoading)).toBe(true)
 
             const stateWithoutLoading = createRootState({
-                listsLoadingStates: {
-                    list1: { isLoading: false },
-                    list2: { isLoading: false },
+                dimensionGroupStates: {
+                    group1: { isCollapsed: false, isLoading: false },
+                    group2: { isCollapsed: false, isLoading: false },
                 },
             })
-            expect(isAnyListLoading(stateWithoutLoading)).toBe(false)
+            expect(isAnyDimensionGroupLoading(stateWithoutLoading)).toBe(false)
         })
 
-        it('should get all list load errors', () => {
+        it('should get all dimension group load errors', () => {
             const error1: EngineError = {
                 message: 'error 1',
                 type: 'runtime',
@@ -250,49 +406,72 @@ describe('dimensionSelectionSlice', () => {
             }
 
             const state = createRootState({
-                listsLoadingStates: {
-                    list1: { isLoading: false, error: error1 },
-                    list2: { isLoading: false },
-                    list3: { isLoading: false, error: error2 },
+                dimensionGroupStates: {
+                    group1: {
+                        isCollapsed: false,
+                        isLoading: false,
+                        error: error1,
+                    },
+                    group2: { isCollapsed: false, isLoading: false },
+                    group3: {
+                        isCollapsed: false,
+                        isLoading: false,
+                        error: error2,
+                    },
                 },
             })
 
-            const errors = getAllListLoadErrors(state)
+            const errors = getAllDimensionGroupLoadErrors(state)
             expect(errors).toEqual([
-                { groupKey: 'list1', error: error1 },
-                { groupKey: 'list3', error: error2 },
+                { groupKey: 'group1', error: error1 },
+                { groupKey: 'group3', error: error2 },
             ])
         })
 
-        it('should check if list is loading', () => {
+        it('should check if dimension group is collapsed', () => {
             const state = createRootState({
-                listsLoadingStates: {
-                    loading: { isLoading: true },
-                    notLoading: { isLoading: false },
+                dimensionGroupStates: {
+                    collapsed: { isCollapsed: true, isLoading: false },
+                    notCollapsed: { isCollapsed: false, isLoading: false },
                 },
             })
 
-            expect(isListLoading(state, 'loading')).toBe(true)
-            expect(isListLoading(state, 'notLoading')).toBe(false)
-            expect(isListLoading(state, 'nonExistent')).toBe(false)
+            expect(isDimensionGroupCollapsed(state, 'collapsed')).toBe(true)
+            expect(isDimensionGroupCollapsed(state, 'notCollapsed')).toBe(false)
+            expect(isDimensionGroupCollapsed(state, 'nonExistent')).toBe(false)
         })
 
-        it('should get list error', () => {
+        it('should check if dimension group is loading', () => {
+            const state = createRootState({
+                dimensionGroupStates: {
+                    loading: { isCollapsed: false, isLoading: true },
+                    notLoading: { isCollapsed: false, isLoading: false },
+                },
+            })
+
+            expect(isDimensionGroupLoading(state, 'loading')).toBe(true)
+            expect(isDimensionGroupLoading(state, 'notLoading')).toBe(false)
+            expect(isDimensionGroupLoading(state, 'nonExistent')).toBe(false)
+        })
+
+        it('should get dimension group error', () => {
             const error: EngineError = {
                 message: 'test error',
                 type: 'runtime',
             }
 
             const state = createRootState({
-                listsLoadingStates: {
-                    withError: { isLoading: false, error },
-                    withoutError: { isLoading: false },
+                dimensionGroupStates: {
+                    withError: { isCollapsed: false, isLoading: false, error },
+                    withoutError: { isCollapsed: false, isLoading: false },
                 },
             })
 
-            expect(getListError(state, 'withError')).toEqual(error)
-            expect(getListError(state, 'withoutError')).toBeUndefined()
-            expect(getListError(state, 'nonExistent')).toBeUndefined()
+            expect(getDimensionGroupError(state, 'withError')).toEqual(error)
+            expect(
+                getDimensionGroupError(state, 'withoutError')
+            ).toBeUndefined()
+            expect(getDimensionGroupError(state, 'nonExistent')).toBeUndefined()
         })
 
         it('should detect multi selecting', () => {
