@@ -40,12 +40,6 @@ export const NumericCondition: FC<NumericConditionProps> = ({
     dimension,
     allowIntegerOnly,
 }) => {
-    console.log(
-        'enableDecimalSteps',
-        enableDecimalSteps,
-        'allowIntegerOnly',
-        allowIntegerOnly
-    )
     let operator: string = '',
         value: string = ''
 
@@ -79,7 +73,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
     const addMetadata = useAddMetadata()
     const [selectedLegendSetId, setSelectedLegendSetId] = useState(legendSetId)
 
-    const legendSetMetadata = useLegendSetMetadataItem(legendSetId ?? '')
+    const legendSetMetadata = useLegendSetMetadataItem(legendSetId)
 
     const availableLegendSets = useMemo(() => {
         const options = [] as { id: string; name?: string }[]
@@ -264,7 +258,6 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                         >
                             {Array.isArray(availableLegendSetLegends) &&
                                 availableLegendSetLegends
-                                    .slice()
                                     .sort((a, b) => a.startValue - b.startValue)
                                     .map((legend) => (
                                         <MultiSelectOption
