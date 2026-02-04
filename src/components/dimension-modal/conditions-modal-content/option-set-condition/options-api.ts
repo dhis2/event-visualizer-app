@@ -47,12 +47,7 @@ export const optionsApi = api.injectEndpoints({
                         },
                     })
                     const result = response?.options as {
-                        // XXX: use Option[] type ?! as in event-visualization custom endpoint
-                        options: {
-                            id: string
-                            code: string
-                            name: string
-                        }[]
+                        options: FetchResult['items']
                         pager: {
                             page: number
                             pageCount: number
