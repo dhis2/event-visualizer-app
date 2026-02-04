@@ -118,33 +118,36 @@ export const NumericCondition: FC<NumericConditionProps> = ({
         }
     }, [dimension.id, legendSet, addMetadata])
 
-    const setOperator = (input: string) => {
-        if (input.includes(NULL_VALUE)) {
-            onChange(`${input}`)
-            // here we "remove" value if the previous operator is "IN"
-            // so we can clear legend ids from the value which do not make sense when the selected operator is not "IN"
-            // we also clear the internal selectedLegendSetId
-        } else if (operator === OPERATOR_IN) {
-            onChange(`${input}:`)
-            setSelectedLegendSetId(undefined)
-        } else if (input === OPERATOR_IN) {
-            onChange(`${input}:`, selectedLegendSetId)
-        } else {
-            onChange(`${input}:${value || ''}`)
-        }
-    }
+    const setOperator = useCallback(
+        (input: string) => {
+            if (input.includes(NULL_VALUE)) {
+                onChange(`${input}`)
+            } else if (input === OPERATOR_IN) {
+                onChange(`${input}:`, selectedLegendSetId)
+            } else if (operator === OPERATOR_IN) {
+                // here we "remove" value if the previous operator is "IN"
+                // so we can clear legend ids from the value which do not make sense when the selected operator is not "IN"
+                // we also clear the internal selectedLegendSetId
+                onChange(`${input}:`)
+                setSelectedLegendSetId(undefined)
+            } else {
+                onChange(`${input}:${value || ''}`)
+            }
+        },
+        [onChange, operator, selectedLegendSetId, value]
+    )
 
-    const setValue = (
-        input: number | string | undefined,
-        legendSetId?: string
-    ) => {
-        onChange(
-            `${operator}:${input || input === 0 ? input : ''}`,
-            legendSetId
-        )
+    const setValue = useCallback(
+        (input: number | string | undefined, legendSetId?: string) => {
+            onChange(
+                `${operator}:${input || input === 0 ? input : ''}`,
+                legendSetId
+            )
 
-        setSelectedLegendSetId(legendSetId ?? undefined)
-    }
+            setSelectedLegendSetId(legendSetId ?? undefined)
+        },
+        [onChange, operator]
+    )
 
     const onLegendSetDropdownFocus = useCallback(() => {
         if (!legendSets) {
