@@ -2,6 +2,7 @@ import cx from 'classnames'
 import { DataSourceSelect } from './data-source-select/data-source-select'
 import { FilterDropdownButton } from './filter-dropdown-button'
 import classes from './styles/main-sidebar.module.css'
+import { ToggleCollapseAllButton } from './toggle-collapse-all-button'
 import { UnifiedSearchInput } from './unified-search-input'
 import { useAppSelector, useMetadataItem } from '@hooks'
 import { isDataSourceProgramWithRegistration } from '@modules/data-source'
@@ -26,6 +27,7 @@ export const MainSidebar = () => {
                     {isDataSourceProgramWithRegistration(
                         dataSourceMetadataItem
                     ) && <FilterDropdownButton />}
+                    <ToggleCollapseAllButton />
                 </div>
             )}
         </div>

@@ -13,6 +13,7 @@
 .searchRow {
     display: flex;
     flex-direction: row;
+    align-items: center;
     padding-block: 6px 2px;
     gap: 2px;
 }
