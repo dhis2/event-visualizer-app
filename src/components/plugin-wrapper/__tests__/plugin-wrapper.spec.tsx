@@ -13,7 +13,7 @@ import { getIsVisualizationLoading } from '@store/loader-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import type { RootState } from '@store/store'
 import { renderWithAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
-import type { CurrentVisualization, SavedVisualization, Sorting } from '@types'
+import type { NewVisualization, SavedVisualization, Sorting } from '@types'
 
 describe('PluginWrapper', () => {
     const eventVisualization1Id = 'TIuOzZ0ID0V'
@@ -51,7 +51,7 @@ describe('PluginWrapper', () => {
                 setCurrentVis({
                     ...currentVis,
                     sorting: sorting ? [sorting] : undefined,
-                } as CurrentVisualization)
+                } as SavedVisualization | NewVisualization)
             )
         })
 
