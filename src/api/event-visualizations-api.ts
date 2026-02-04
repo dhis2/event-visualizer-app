@@ -9,7 +9,6 @@ import {
 } from '@modules/visualization'
 import type {
     CurrentUser,
-    Option,
     SavedVisualization,
     MutationResult,
     RootState,
@@ -21,7 +20,7 @@ import type {
 const getDimensionFields = (
     displayNameProp: CurrentUser['settings']['displayNameProperty']
 ): string =>
-    `dimension,dimensionType,filter,program[id],programStage[id],optionSet[id],valueType,legendSet[id,${displayNameProp}~rename(name)],repetition,items[dimensionItem~rename(id)]`
+    `dimension,dimensionType,filter,program[id],programStage[id],optionSet[id,${displayNameProp}~rename(name)],valueType,legendSet[id,${displayNameProp}~rename(name)],repetition,items[dimensionItem~rename(id)]`
 
 export const getVisualizationQueryFields = (
     displayNameProp: CurrentUser['settings']['displayNameProperty']
@@ -111,41 +110,56 @@ export const eventVisualizationsApi = api.injectEndpoints({
                     ]
 
                     for (const dimension of dimensions) {
-                        if (
-                            dimension?.optionSet?.id &&
-                            dimension.filter?.startsWith('IN')
-                        ) {
+                        if (dimension?.optionSet?.id) {
                             const optionSetId = dimension.optionSet.id
-                            const conditions = parseCondition(dimension.filter)
 
-                            if (!conditions) {
-                                throw new Error(
-                                    `Could not parse dimension filter "${dimension.filter}"`
+                            optionSetsMetadata[optionSetId] =
+                                dimension.optionSet
+
+                            if (dimension.filter?.startsWith('IN')) {
+                                const conditions = parseCondition(
+                                    dimension.filter
                                 )
-                            }
 
-                            const optionsData = (await engine.query({
-                                options: {
-                                    resource: 'options',
-                                    params: {
-                                        fields: `id,code,${displayNameProperty}~rename(name)`,
-                                        filter: [
-                                            `optionSet.id:eq:${optionSetId}`,
-                                            `code:in:[${conditions.join(',')}]`,
-                                        ],
-                                        paging: false,
+                                if (!conditions) {
+                                    throw new Error(
+                                        `Could not parse dimension filter "${dimension.filter}"`
+                                    )
+                                }
+
+                                const optionsData = (await engine.query({
+                                    options: {
+                                        resource: 'options',
+                                        params: {
+                                            fields: `id,code,${displayNameProperty}~rename(name)`,
+                                            filter: [
+                                                `optionSet.id:eq:${optionSetId}`,
+                                                `code:in:[${conditions.join(
+                                                    ','
+                                                )}]`,
+                                            ],
+                                            paging: false,
+                                        },
                                     },
-                                },
-                            })) as { options?: { options: Option[] } }
+                                })) as {
+                                    options?: {
+                                        options: {
+                                            id: string
+                                            code: string
+                                            name: string
+                                        }[]
+                                    }
+                                }
 
-                            const options = optionsData?.options?.options
+                                const options = optionsData?.options?.options
 
-                            if (Array.isArray(options)) {
-                                // update options in the optionSet metadata used for the lookup of the correct
-                                // name from code (options for different option sets have the same code)
-                                optionSetsMetadata[optionSetId] = {
-                                    id: optionSetId,
-                                    options,
+                                if (Array.isArray(options) && options.length) {
+                                    metadataStore.addMetadata(options)
+
+                                    // update options in the optionSet metadata used for the lookup of the correct
+                                    // name from code (options for different option sets have the same code)
+                                    optionSetsMetadata[optionSetId].options =
+                                        options
                                 }
                             }
                         }
@@ -187,8 +201,11 @@ export const eventVisualizationsApi = api.injectEndpoints({
 
                                 const legends = legendsData?.legends
 
-                                if (Array.isArray(legends)) {
+                                if (Array.isArray(legends) && legends.length) {
                                     metadataStore.addMetadata(legends)
+
+                                    legendSetsMetadata[legendSetId].legends =
+                                        legends
                                 }
                             }
                         }

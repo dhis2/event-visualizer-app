@@ -565,14 +565,9 @@ describe('MetadataStore', () => {
                     valueType: 'TEXT',
                 },
             }
-            const dimensions = {}
             const headers: Array<LineListAnalyticsDataHeader> = []
 
-            metadataStore.addAnalyticsResponseMetadata(
-                analyticsItems,
-                dimensions,
-                headers
-            )
+            metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
 
             const snapshot = metadataStore.getMetadataSnapshot()
             expect(snapshot['dataElement.programStage1']).toEqual({
@@ -590,14 +585,9 @@ describe('MetadataStore', () => {
                     valueType: 'NUMBER',
                 },
             }
-            const dimensions = {}
             const headers: Array<LineListAnalyticsDataHeader> = []
 
-            metadataStore.addAnalyticsResponseMetadata(
-                analyticsItems,
-                dimensions,
-                headers
-            )
+            metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
 
             const snapshot = metadataStore.getMetadataSnapshot()
             expect(snapshot.regularItem).toEqual({
@@ -607,7 +597,8 @@ describe('MetadataStore', () => {
             })
         })
 
-        it('adds legend set metadata when data element has legendSet', () => {
+        // TODO: this is not done anymore, legendSets metdata is not handled in the analytics response
+        it.skip('adds legend set metadata when data element has legendSet', () => {
             const legendSetId = 'legendSet123'
             const analyticsItems = {
                 dataElement1: {
@@ -625,16 +616,9 @@ describe('MetadataStore', () => {
                     name: 'Legend 2',
                 },
             }
-            const dimensions = {
-                dataElement1: ['legend1', 'legend2'],
-            }
             const headers: Array<LineListAnalyticsDataHeader> = []
 
-            metadataStore.addAnalyticsResponseMetadata(
-                analyticsItems,
-                dimensions,
-                headers
-            )
+            metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
 
             const snapshot = metadataStore.getMetadataSnapshot()
             expect(snapshot.dataElement1).toEqual({
@@ -660,7 +644,6 @@ describe('MetadataStore', () => {
                     valueType: 'TEXT',
                 },
             }
-            const dimensions = {}
             const headers = [
                 {
                     name: 'ouname',
@@ -673,11 +656,7 @@ describe('MetadataStore', () => {
                 } as unknown as LineListAnalyticsDataHeader,
             ]
 
-            metadataStore.addAnalyticsResponseMetadata(
-                analyticsItems,
-                dimensions,
-                headers
-            )
+            metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
 
             const snapshot = metadataStore.getMetadataSnapshot()
             expect(snapshot.ou).toEqual({
@@ -689,7 +668,6 @@ describe('MetadataStore', () => {
 
         it('creates new metadata items from headers when not present', () => {
             const analyticsItems = {}
-            const dimensions = {}
             const headers: Array<LineListAnalyticsDataHeader> = [
                 {
                     name: 'eventdate',
@@ -702,11 +680,7 @@ describe('MetadataStore', () => {
                 } as unknown as LineListAnalyticsDataHeader,
             ]
 
-            metadataStore.addAnalyticsResponseMetadata(
-                analyticsItems,
-                dimensions,
-                headers
-            )
+            metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
 
             const snapshot = metadataStore.getMetadataSnapshot()
             expect(snapshot.eventDate).toEqual({
