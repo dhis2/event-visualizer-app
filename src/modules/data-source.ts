@@ -19,7 +19,7 @@ export const isDataSourceProgramWithoutRegistration = (
     isProgramMetadataItem(dataSource) &&
     dataSource.programType === 'WITHOUT_REGISTRATION'
 
-export const isDataSourceTrackedEntity = (
+export const isDataSourceTrackedEntityType = (
     dataSource: unknown
 ): dataSource is MetadataItemWithName =>
     !isProgramMetadataItem(dataSource) && isMetadataItemWithName(dataSource)
