@@ -6,7 +6,7 @@ import {
     SingleSelectField,
     SingleSelectOption,
 } from '@dhis2/ui'
-import { type FC } from 'react'
+import { useCallback, useMemo, type FC } from 'react'
 import classes from './styles/condition.module.css'
 import {
     NULL_VALUE,
@@ -31,41 +31,51 @@ const BaseCondition: FC<
         valueClassName?: string
     }
 > = ({ condition, onChange, onRemove, allowCaseSensitive, valueClassName }) => {
-    console.log('alphanum condition', condition)
-    let operator, value, isCaseSensitive
-
-    if (condition.includes(NULL_VALUE)) {
-        operator = condition
-    } else {
-        const parts = condition.split(':')
-        isCaseSensitive = isIsCaseSensitive(parts[0] as QueryOperator)
-        operator = removeCaseSensitivePrefix(parts[0] as QueryOperator)
-        value = parts[1]
-    }
-
-    const setOperator = (input) => {
-        if (input.includes(NULL_VALUE)) {
-            onChange(`${input}`)
+    const [operator, value, isCaseSensitive] = useMemo(() => {
+        if (condition.includes(NULL_VALUE)) {
+            return [condition as QueryOperator, '', false]
         } else {
+            const parts = condition.split(':')
+            return [
+                removeCaseSensitivePrefix(parts[0] as QueryOperator),
+                parts[1],
+                isIsCaseSensitive(parts[0] as QueryOperator),
+            ]
+        }
+    }, [condition])
+
+    const setOperator = useCallback(
+        (input) => {
+            if (input.includes(NULL_VALUE)) {
+                onChange(`${input}`)
+            } else {
+                onChange(
+                    `${addCaseSensitivePrefix(input, isCaseSensitive)}:${
+                        value || ''
+                    }`
+                )
+            }
+        },
+        [isCaseSensitive, onChange, value]
+    )
+
+    const setValue = useCallback(
+        (input) => {
             onChange(
-                `${addCaseSensitivePrefix(input, isCaseSensitive)}:${
-                    value || ''
+                `${addCaseSensitivePrefix(operator, isCaseSensitive)}:${
+                    input || ''
                 }`
             )
-        }
-    }
+        },
+        [isCaseSensitive, onChange, operator]
+    )
 
-    const setValue = (input) => {
-        onChange(
-            `${addCaseSensitivePrefix(operator, isCaseSensitive)}:${
-                input || ''
-            }`
-        )
-    }
-
-    const toggleCaseSensitive = (cs) => {
-        onChange(`${addCaseSensitivePrefix(operator, cs)}:${value || ''}`)
-    }
+    const toggleCaseSensitive = useCallback(
+        (cs) => {
+            onChange(`${addCaseSensitivePrefix(operator, cs)}:${value || ''}`)
+        },
+        [onChange, operator, value]
+    )
 
     return (
         <div className={classes.container} data-test="alphanumeric-condition">

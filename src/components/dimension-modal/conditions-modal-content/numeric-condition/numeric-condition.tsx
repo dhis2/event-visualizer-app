@@ -40,18 +40,16 @@ export const NumericCondition: FC<NumericConditionProps> = ({
     dimension,
     allowIntegerOnly,
 }) => {
-    let operator: string = '',
-        value: string = ''
-
-    if (condition.includes(NULL_VALUE)) {
-        operator = condition
-    } else if (legendSetId && !condition) {
-        operator = OPERATOR_IN
-    } else {
-        const parts = condition.split(':')
-        operator = parts[0]
-        value = parts[1]
-    }
+    const [operator, value] = useMemo(() => {
+        if (condition.includes(NULL_VALUE)) {
+            return [condition, '']
+        } else if (legendSetId && !condition) {
+            return [OPERATOR_IN, '']
+        } else {
+            const parts = condition.split(':')
+            return [parts[0], parts[1]]
+        }
+    }, [condition, legendSetId])
 
     const [
         fetchLegendSets,
