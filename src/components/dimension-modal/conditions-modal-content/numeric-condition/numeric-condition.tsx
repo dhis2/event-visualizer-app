@@ -115,7 +115,6 @@ export const NumericCondition: FC<NumericConditionProps> = ({
     useEffect(() => {
         if (legendSet) {
             addMetadata({ [dimension.id]: { legendSet: legendSet.id } })
-            addMetadata(legendSet as LegendSetMetadataItem)
         }
     }, [dimension.id, legendSet, addMetadata])
 
