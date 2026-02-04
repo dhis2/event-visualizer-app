@@ -242,7 +242,13 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                     </SingleSelectField>
                     {selectedLegendSetId && (
                         <MultiSelectField
-                            selected={value.split(';')}
+                            selected={
+                                Array.isArray(availableLegendSets) &&
+                                availableLegendSets.length &&
+                                value.length
+                                    ? value.split(';')
+                                    : []
+                            }
                             onChange={({ selected }) =>
                                 setValue(
                                     selected.join(';'),
