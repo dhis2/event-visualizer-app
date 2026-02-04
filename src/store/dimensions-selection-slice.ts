@@ -30,7 +30,7 @@ export const initialState: DimensionSelectionState = {
 
 export const initialDimensionGroupState: DimensionGroupState = {
     isCollapsed: false,
-    isLoading: true,
+    isLoading: false,
     error: undefined,
 }
 
