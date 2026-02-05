@@ -91,7 +91,7 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
         getDimensionIdParts({ id: dimension.id }).programStageId
     )
 
-    const valueType = dimension.valueType!
+    const valueType = dimension.valueType
     const isProgramIndicator: boolean =
         dimension.dimensionType === 'PROGRAM_INDICATOR'
     const isOptionSetCondition: boolean = Boolean(dimension.optionSet)
