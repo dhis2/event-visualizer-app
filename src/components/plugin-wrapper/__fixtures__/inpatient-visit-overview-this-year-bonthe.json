@@ -19,7 +19,6 @@
     },
     "sharing": {
         "owner": "GOLswS44mh8",
-        "external": false,
         "users": {},
         "userGroups": {},
         "public": "rw------"
@@ -145,6 +144,9 @@
     "outputType": "EVENT",
     "collapseDataDimensions": false,
     "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
     "legacy": true,
     "dataType": "EVENTS",
     "filters": [],
@@ -201,14 +203,16 @@
             "dimension": "oZg33kd9taw",
             "valueType": "TEXT",
             "optionSet": {
-                "id": "pC3N9N77UmT"
+                "id": "pC3N9N77UmT",
+                "name": "Gender"
             }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
             "items": [],
             "legendSet": {
-                "id": "TBxGTceyzwy"
+                "id": "TBxGTceyzwy",
+                "name": "Height in cm"
             },
             "dimension": "GieVkTxp4HH",
             "valueType": "NUMBER"
@@ -222,7 +226,8 @@
             "dimensionType": "PROGRAM_DATA_ELEMENT",
             "items": [],
             "legendSet": {
-                "id": "OrkEzxZEH4X"
+                "id": "OrkEzxZEH4X",
+                "name": "Weight in kg"
             },
             "dimension": "vV9UWAZohSf",
             "valueType": "INTEGER_POSITIVE"
@@ -232,13 +237,12 @@
     "displayName": "Inpatient: Visit overview this year Bonthe",
     "access": {
         "manage": true,
-        "externalize": true,
         "write": true,
         "read": true,
         "update": true,
         "delete": true
     },
-    "href": "https://test.e2e.dhis2.org/anly-dev/api/eventVisualizations/waPjzoJyIQ9",
+    "href": "https://dev.im.dhis2.org/ever-playground/api/eventVisualizations/waPjzoJyIQ9",
     "subscribed": false,
     "metaData": {
         "GieVkTxp4HH": {

@@ -12,7 +12,6 @@
     },
     "sharing": {
         "owner": "xE7jOejl9FI",
-        "external": false,
         "users": {},
         "userGroups": {},
         "public": "rw------"
@@ -105,6 +104,9 @@
     "outputType": "EVENT",
     "collapseDataDimensions": false,
     "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
     "legacy": true,
     "dataType": "EVENTS",
     "filters": [],
@@ -149,7 +151,8 @@
             "dimension": "oZg33kd9taw",
             "valueType": "TEXT",
             "optionSet": {
-                "id": "pC3N9N77UmT"
+                "id": "pC3N9N77UmT",
+                "name": "Gender"
             }
         },
         {
@@ -158,7 +161,8 @@
             "dimension": "fWIAEtYVEGk",
             "valueType": "TEXT",
             "optionSet": {
-                "id": "iDFPKpFTiVw"
+                "id": "iDFPKpFTiVw",
+                "name": "Mode of discharge"
             }
         },
         {
@@ -172,13 +176,12 @@
     "displayName": "Inpatient: Cases 5 to 15 years this year (case)",
     "access": {
         "manage": true,
-        "externalize": true,
         "write": true,
         "read": true,
         "update": true,
         "delete": true
     },
-    "href": "https://test.e2e.dhis2.org/anly-dev/api/eventVisualizations/TIuOzZ0ID0V",
+    "href": "https://dev.im.dhis2.org/ever-playground/api/eventVisualizations/TIuOzZ0ID0V",
     "subscribed": false,
     "metaData": {
         "ImspTQPwCqd": {
