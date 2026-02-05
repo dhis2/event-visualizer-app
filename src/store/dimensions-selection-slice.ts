@@ -1,22 +1,29 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { EngineError } from '@api/parse-engine-error'
-import type { DataSourceFilter } from '@types'
+import { isObject } from '@modules/validation'
+import type {
+    DataSourceFilter,
+    DimensionCardKey,
+    DimensionListKey,
+} from '@types'
 
-type DimensionGroupState = {
-    isCollapsed: boolean
+type DimensionCardCollapseStates = Partial<Record<DimensionCardKey, boolean>>
+type DimensionListLoadingState = {
     isLoading: boolean
     error?: EngineError
 }
-type DimensionGroupStates = Record<string, DimensionGroupState>
-type AllGroupLoadErrors = Array<{ groupKey: string; error: EngineError }>
+type DimensionListLoadingStates = Partial<
+    Record<DimensionListKey, DimensionListLoadingState>
+>
+type AllListLoadErrors = Array<{ listKey: string; error: EngineError }>
 
 export interface DimensionSelectionState {
     dataSourceId: string | null
     searchTerm: string
     filter: DataSourceFilter | null
-    // TODO: update to a string literal once all dimension-group identifiers are known
-    dimensionGroupStates: DimensionGroupStates
+    dimensionCardCollapseStates: DimensionCardCollapseStates
+    dimensionListLoadingStates: DimensionListLoadingStates
     multiSelectedDimensionIds: Array<string>
 }
 
@@ -24,26 +31,28 @@ export const initialState: DimensionSelectionState = {
     dataSourceId: null,
     searchTerm: '',
     filter: null,
-    dimensionGroupStates: {},
+    dimensionCardCollapseStates: {},
+    dimensionListLoadingStates: {},
     multiSelectedDimensionIds: [],
 }
 
-export const initialDimensionGroupState: DimensionGroupState = {
-    isCollapsed: false,
+export const initialListLoadingState: DimensionListLoadingState = {
     isLoading: false,
     error: undefined,
 }
 
-const throwErrorIfGroupIsUndefined = (
-    dimensionGroupStates: DimensionGroupStates,
-    key: string
-) => {
-    if (!dimensionGroupStates[key]) {
-        throw new Error(
-            `Dimension group ${key} does not exist. Ensure to create it before updating.`
-        )
-    }
-}
+const isValidCardCollapseState = (state: unknown): state is boolean =>
+    typeof state === 'boolean'
+
+const isValidListLoadingState = (
+    state: unknown
+): state is DimensionListLoadingState =>
+    isObject(state) &&
+    'isLoading' in state &&
+    typeof (state as DimensionListLoadingState).isLoading === 'boolean'
+
+const getDimensionListLoadingStateErrorMessage = (key: string) =>
+    `List loading state for "${key}" is not initialized. Call addDimensionListLoadingState first.`
 
 export const dimensionSelectionSlice = createSlice({
     name: 'dimensionSelection',
@@ -67,73 +76,108 @@ export const dimensionSelectionSlice = createSlice({
         setFilter: (state, action: PayloadAction<DataSourceFilter>) => {
             state.filter = action.payload
         },
-        clearDimensionGroupStates: (state) => {
-            state.dimensionGroupStates = initialState.dimensionGroupStates
+        clearDimensionCardCollapseStates: (state) => {
+            state.dimensionCardCollapseStates =
+                initialState.dimensionCardCollapseStates
         },
-        removeDimensionGroupState: (state, action: PayloadAction<string>) => {
-            delete state.dimensionGroupStates[action.payload]
+        clearDimensionListLoadingStates: (state) => {
+            state.dimensionListLoadingStates =
+                initialState.dimensionListLoadingStates
         },
-        addDimensionGroupState: (state, action: PayloadAction<string>) => {
-            state.dimensionGroupStates[action.payload] =
-                initialDimensionGroupState
+        removeDimensionCardCollapseState: (
+            state,
+            action: PayloadAction<DimensionCardKey>
+        ) => {
+            delete state.dimensionCardCollapseStates[action.payload]
         },
-        toggleAllDimensionGroupsIsCollapsed: (state) => {
-            const dimensionGroupStatesArray = Object.values(
-                state.dimensionGroupStates
+        removeDimensionListLoadingState: (
+            state,
+            action: PayloadAction<DimensionListKey>
+        ) => {
+            delete state.dimensionListLoadingStates[action.payload]
+        },
+        addDimensionCardCollapseState: (
+            state,
+            action: PayloadAction<DimensionCardKey>
+        ) => {
+            state.dimensionCardCollapseStates[action.payload] = false
+        },
+        addDimensionListLoadingState: (
+            state,
+            action: PayloadAction<DimensionListKey>
+        ) => {
+            state.dimensionListLoadingStates[action.payload] =
+                initialListLoadingState
+        },
+        toggleAllDimensionCardsIsCollapsed: (state) => {
+            const dimensionCardCollapsedStatesKeys = Object.keys(
+                state.dimensionCardCollapseStates
             )
             // When there are no groups, they cannot be collapsed
-            if (dimensionGroupStatesArray.length === 0) {
+            if (dimensionCardCollapsedStatesKeys.length === 0) {
                 return
             }
-            const areAllCollapsed = dimensionGroupStatesArray.every(
-                ({ isCollapsed }) => isCollapsed
+            const areAllCollapsed = dimensionCardCollapsedStatesKeys.every(
+                (key) => state.dimensionCardCollapseStates[key]
             )
-            dimensionGroupStatesArray.forEach((dimensionGroupState) => {
-                dimensionGroupState.isCollapsed = !areAllCollapsed
+            dimensionCardCollapsedStatesKeys.forEach((key) => {
+                state.dimensionCardCollapseStates[key] = !areAllCollapsed
             })
         },
-        toggleDimensionGroupIsCollapsed: (
+        toggleDimensionCardIsCollapsed: (
             state,
-            action: PayloadAction<string>
+            action: PayloadAction<DimensionCardKey>
         ) => {
-            throwErrorIfGroupIsUndefined(
-                state.dimensionGroupStates,
-                action.payload
-            )
-
-            state.dimensionGroupStates[action.payload].isCollapsed =
-                !state.dimensionGroupStates[action.payload].isCollapsed
+            const collapseState =
+                state.dimensionCardCollapseStates[action.payload]
+            if (!isValidCardCollapseState(collapseState)) {
+                throw new Error(
+                    `Card collapse state for "${action.payload}" is not initialized. Call addDimensionCardCollapseState first.`
+                )
+            }
+            state.dimensionCardCollapseStates[action.payload] = !collapseState
         },
-        setDimensionGroupLoadStart: (state, action: PayloadAction<string>) => {
-            throwErrorIfGroupIsUndefined(
-                state.dimensionGroupStates,
-                action.payload
-            )
-
-            state.dimensionGroupStates[action.payload].isLoading = true
-            state.dimensionGroupStates[action.payload].error = undefined
-        },
-        setDimensionGroupLoadError: (
+        setDimensionListLoadStart: (
             state,
-            action: PayloadAction<{ id: string; error: EngineError }>
+            action: PayloadAction<DimensionListKey>
         ) => {
-            throwErrorIfGroupIsUndefined(
-                state.dimensionGroupStates,
-                action.payload.id
-            )
-            state.dimensionGroupStates[action.payload.id].isLoading = false
-            state.dimensionGroupStates[action.payload.id].error =
-                action.payload.error
+            const loadingState =
+                state.dimensionListLoadingStates[action.payload]
+            if (!isValidListLoadingState(loadingState)) {
+                throw new Error(
+                    getDimensionListLoadingStateErrorMessage(action.payload)
+                )
+            }
+            loadingState.isLoading = true
+            loadingState.error = undefined
         },
-        setDimensionGroupLoadSuccess: (
+        setDimensionListLoadError: (
             state,
-            action: PayloadAction<string>
+            action: PayloadAction<{ id: DimensionListKey; error: EngineError }>
         ) => {
-            throwErrorIfGroupIsUndefined(
-                state.dimensionGroupStates,
-                action.payload
-            )
-            state.dimensionGroupStates[action.payload].isLoading = false
+            const loadingState =
+                state.dimensionListLoadingStates[action.payload.id]
+            if (!isValidListLoadingState(loadingState)) {
+                throw new Error(
+                    getDimensionListLoadingStateErrorMessage(action.payload.id)
+                )
+            }
+            loadingState.isLoading = false
+            loadingState.error = action.payload.error
+        },
+        setDimensionListLoadSuccess: (
+            state,
+            action: PayloadAction<DimensionListKey>
+        ) => {
+            const loadingState =
+                state.dimensionListLoadingStates[action.payload]
+            if (!isValidListLoadingState(loadingState)) {
+                throw new Error(
+                    getDimensionListLoadingStateErrorMessage(action.payload)
+                )
+            }
+            loadingState.isLoading = false
+            loadingState.error = undefined
         },
         clearMultiSelection: (state) => {
             state.multiSelectedDimensionIds = []
@@ -159,33 +203,39 @@ export const dimensionSelectionSlice = createSlice({
             state.dataSourceId === id,
         getSearchTerm: (state) => state.searchTerm,
         getFilter: (state) => state.filter,
-        areAllDimensionGroupsCollapsed: createSelector(
-            (state: DimensionSelectionState) => state.dimensionGroupStates,
-            (dimensionGroupStates) => {
-                const values = Object.values(dimensionGroupStates)
-                // When there are no groups, they cannot be collapsed
+        areAllDimensionCardsCollapsed: createSelector(
+            (state: DimensionSelectionState) =>
+                state.dimensionCardCollapseStates,
+            (dimensionCardCollapseStates) => {
+                const values = Object.values(dimensionCardCollapseStates)
+                // When there are no cards, they cannot be collapsed
                 if (values.length === 0) {
                     return false
                 }
-                return values.every(({ isCollapsed }) => isCollapsed)
+                return values.every(Boolean)
             }
         ),
-        isAnyDimensionGroupLoading: createSelector(
-            (state: DimensionSelectionState) => state.dimensionGroupStates,
-            (dimensionGroupStates) =>
-                Object.values(dimensionGroupStates).some(
-                    (dimensionGroupState) => dimensionGroupState.isLoading
+        isAnyDimensionListLoading: createSelector(
+            (state: DimensionSelectionState) =>
+                state.dimensionListLoadingStates,
+            (dimensionListLoadingStates) =>
+                Object.values(dimensionListLoadingStates).some(
+                    (dimensionListLoadingState) =>
+                        dimensionListLoadingState!.isLoading
                 )
         ),
-        getAllDimensionGroupLoadErrors: createSelector(
-            (state: DimensionSelectionState) => state.dimensionGroupStates,
-            (dimensionGroupStates): AllGroupLoadErrors =>
-                Object.entries(dimensionGroupStates).reduce<AllGroupLoadErrors>(
-                    (allErrors, [key, dimensionGroupState]) => {
-                        if (dimensionGroupState.error) {
+        getAllDimensionListLoadErrors: createSelector(
+            (state: DimensionSelectionState) =>
+                state.dimensionListLoadingStates,
+            (dimensionListLoadingStates): AllListLoadErrors =>
+                Object.entries(
+                    dimensionListLoadingStates
+                ).reduce<AllListLoadErrors>(
+                    (allErrors, [key, dimensionListLoadingState]) => {
+                        if (dimensionListLoadingState!.error) {
                             allErrors.push({
-                                groupKey: key,
-                                error: dimensionGroupState.error,
+                                listKey: key,
+                                error: dimensionListLoadingState!.error,
                             })
                         }
                         return allErrors
@@ -193,12 +243,12 @@ export const dimensionSelectionSlice = createSlice({
                     []
                 )
         ),
-        isDimensionGroupCollapsed: (state, key: string) =>
-            state.dimensionGroupStates[key]?.isCollapsed ?? false,
-        isDimensionGroupLoading: (state, key: string) =>
-            state.dimensionGroupStates[key]?.isLoading ?? false,
-        getDimensionGroupError: (state, key: string) =>
-            state.dimensionGroupStates[key]?.error,
+        isDimensionCardCollapsed: (state, key: DimensionCardKey) =>
+            !!state.dimensionCardCollapseStates[key],
+        isDimensionListLoading: (state, key: DimensionListKey) =>
+            state.dimensionListLoadingStates[key]?.isLoading ?? false,
+        getDimensionListError: (state, key: DimensionListKey) =>
+            state.dimensionListLoadingStates[key]?.error,
         isMultiSelecting: (state) => state.multiSelectedDimensionIds.length > 1,
         isDimensionMultiSelected: (state, dimensionId: string) =>
             state.multiSelectedDimensionIds.includes(dimensionId),
@@ -212,14 +262,17 @@ export const {
     setSearchTerm,
     clearFilter,
     setFilter,
-    toggleAllDimensionGroupsIsCollapsed,
-    clearDimensionGroupStates,
-    removeDimensionGroupState,
-    addDimensionGroupState,
-    toggleDimensionGroupIsCollapsed,
-    setDimensionGroupLoadStart,
-    setDimensionGroupLoadError,
-    setDimensionGroupLoadSuccess,
+    clearDimensionCardCollapseStates,
+    clearDimensionListLoadingStates,
+    removeDimensionCardCollapseState,
+    removeDimensionListLoadingState,
+    addDimensionCardCollapseState,
+    addDimensionListLoadingState,
+    toggleAllDimensionCardsIsCollapsed,
+    toggleDimensionCardIsCollapsed,
+    setDimensionListLoadStart,
+    setDimensionListLoadError,
+    setDimensionListLoadSuccess,
     clearMultiSelection,
     addItemToMultiSelection,
     removeItemFromMultiSelection,
@@ -229,12 +282,12 @@ export const {
     isSelectedDataSourceId,
     getSearchTerm,
     getFilter,
-    areAllDimensionGroupsCollapsed,
-    isAnyDimensionGroupLoading,
-    getAllDimensionGroupLoadErrors,
-    isDimensionGroupCollapsed,
-    isDimensionGroupLoading,
-    getDimensionGroupError,
+    areAllDimensionCardsCollapsed,
+    isAnyDimensionListLoading,
+    getAllDimensionListLoadErrors,
+    isDimensionCardCollapsed,
+    isDimensionListLoading,
+    getDimensionListError,
     isMultiSelecting,
     isDimensionMultiSelected,
 } = dimensionSelectionSlice.selectors
