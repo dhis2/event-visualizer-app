@@ -598,6 +598,7 @@ describe('MetadataStore', () => {
         })
 
         // TODO: this is not done anymore, legendSets metdata is not handled in the analytics response
+        // the test should be changed to check that the correct metadata for legendSet is added from a visualization object
         it.skip('adds legend set metadata when data element has legendSet', () => {
             const legendSetId = 'legendSet123'
             const analyticsItems = {
