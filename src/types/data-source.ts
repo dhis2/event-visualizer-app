@@ -30,3 +30,24 @@ export type DataSourceFilter =
     | 'PROGRAM_INDICATORS'
     | 'CATEGORIES'
     | 'CATEGORY_OPTION_GROUP_SETS'
+
+export type DimensionCardKey =
+    // program-with-registration data-source
+    | 'enrollment'
+    | 'event-with-registration'
+    | 'program-indicators'
+    | 'program-tracked-entity-type'
+    // program-without-registration data-source
+    | 'event-without-registration'
+    // tracked-entity-type data-source
+    | 'tracked-entity-type'
+    // generic
+    | 'metadata'
+    | 'other'
+
+export type DimensionListKey =
+    | Exclude<
+          DimensionCardKey,
+          'enrollment' | 'event-with-registration' | 'metadata'
+      >
+    | `stage-${string}`
