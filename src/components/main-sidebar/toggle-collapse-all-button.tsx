@@ -3,8 +3,8 @@ import { useCallback, type FC } from 'react'
 import classes from './styles/toggle-collapse-all-button.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
-    areAllDimensionGroupsCollapsed,
-    toggleAllDimensionGroupsIsCollapsed,
+    areAllDimensionCardsCollapsed,
+    toggleAllDimensionCardsIsCollapsed,
 } from '@store/dimensions-selection-slice'
 
 const CollapseIcon = () => (
@@ -57,9 +57,9 @@ const ExpandIcon = () => (
 
 export const ToggleCollapseAllButton: FC = () => {
     const dispatch = useAppDispatch()
-    const isCollapsed = useAppSelector(areAllDimensionGroupsCollapsed)
+    const isCollapsed = useAppSelector(areAllDimensionCardsCollapsed)
     const toggleCollapsed = useCallback(() => {
-        dispatch(toggleAllDimensionGroupsIsCollapsed())
+        dispatch(toggleAllDimensionCardsIsCollapsed())
     }, [dispatch])
     return (
         <button
