@@ -17,3 +17,10 @@
     padding-block: 6px 2px;
     gap: 2px;
 }
+
+.dimensionCardsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-block-start: 8px;
+}
