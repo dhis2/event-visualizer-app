@@ -40,24 +40,16 @@ export const NumericCondition: FC<NumericConditionProps> = ({
     dimension,
     allowIntegerOnly,
 }) => {
-    console.log(
-        'enableDecimalSteps',
-        enableDecimalSteps,
-        'allowIntegerOnly',
-        allowIntegerOnly
-    )
-    let operator: string = '',
-        value: string = ''
-
-    if (condition.includes(NULL_VALUE)) {
-        operator = condition
-    } else if (legendSetId && !condition) {
-        operator = OPERATOR_IN
-    } else {
-        const parts = condition.split(':')
-        operator = parts[0]
-        value = parts[1]
-    }
+    const [operator, value] = useMemo(() => {
+        if (condition.includes(NULL_VALUE)) {
+            return [condition, '']
+        } else if (legendSetId && !condition) {
+            return [OPERATOR_IN, '']
+        } else {
+            const parts = condition.split(':')
+            return [parts[0], parts[1]]
+        }
+    }, [condition, legendSetId])
 
     const [
         fetchLegendSets,
@@ -79,7 +71,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
     const addMetadata = useAddMetadata()
     const [selectedLegendSetId, setSelectedLegendSetId] = useState(legendSetId)
 
-    const legendSetMetadata = useLegendSetMetadataItem(legendSetId ?? '')
+    const legendSetMetadata = useLegendSetMetadataItem(legendSetId)
 
     const availableLegendSets = useMemo(() => {
         const options = [] as { id: string; name?: string }[]
@@ -115,43 +107,45 @@ export const NumericCondition: FC<NumericConditionProps> = ({
             })
         }
 
-        return options
+        return options.sort((a, b) => a.startValue - b.startValue)
     }, [legendSet, legendSetId, legendSetMetadata?.legends])
 
     useEffect(() => {
         if (legendSet) {
             addMetadata({ [dimension.id]: { legendSet: legendSet.id } })
-            addMetadata(legendSet as LegendSetMetadataItem)
         }
     }, [dimension.id, legendSet, addMetadata])
 
-    const setOperator = (input: string) => {
-        if (input.includes(NULL_VALUE)) {
-            onChange(`${input}`)
-            // here we "remove" value if the previous operator is "IN"
-            // so we can clear legend ids from the value which do not make sense when the selected operator is not "IN"
-            // we also clear the internal selectedLegendSetId
-        } else if (operator === OPERATOR_IN) {
-            onChange(`${input}:`)
-            setSelectedLegendSetId(undefined)
-        } else if (input === OPERATOR_IN) {
-            onChange(`${input}:`, selectedLegendSetId)
-        } else {
-            onChange(`${input}:${value || ''}`)
-        }
-    }
+    const setOperator = useCallback(
+        (input: string) => {
+            if (input.includes(NULL_VALUE)) {
+                onChange(`${input}`)
+            } else if (input === OPERATOR_IN) {
+                onChange(`${input}:`, selectedLegendSetId)
+            } else if (operator === OPERATOR_IN) {
+                // here we "remove" value if the previous operator is "IN"
+                // so we can clear legend ids from the value which do not make sense when the selected operator is not "IN"
+                // we also clear the internal selectedLegendSetId
+                onChange(`${input}:`)
+                setSelectedLegendSetId(undefined)
+            } else {
+                onChange(`${input}:${value || ''}`)
+            }
+        },
+        [onChange, operator, selectedLegendSetId, value]
+    )
 
-    const setValue = (
-        input: number | string | undefined,
-        legendSetId?: string
-    ) => {
-        onChange(
-            `${operator}:${input || input === 0 ? input : ''}`,
-            legendSetId
-        )
+    const setValue = useCallback(
+        (input: number | string | undefined, legendSetId?: string) => {
+            onChange(
+                `${operator}:${input || input === 0 ? input : ''}`,
+                legendSetId
+            )
 
-        setSelectedLegendSetId(legendSetId ?? undefined)
-    }
+            setSelectedLegendSetId(legendSetId ?? undefined)
+        },
+        [onChange, operator]
+    )
 
     const onLegendSetDropdownFocus = useCallback(() => {
         if (!legendSets) {
@@ -263,16 +257,13 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                             dense
                         >
                             {Array.isArray(availableLegendSetLegends) &&
-                                availableLegendSetLegends
-                                    .slice()
-                                    .sort((a, b) => a.startValue - b.startValue)
-                                    .map((legend) => (
-                                        <MultiSelectOption
-                                            key={legend.id}
-                                            value={legend.id}
-                                            label={legend.name}
-                                        />
-                                    ))}
+                                availableLegendSetLegends.map((legend) => (
+                                    <MultiSelectOption
+                                        key={legend.id}
+                                        value={legend.id}
+                                        label={legend.name}
+                                    />
+                                ))}
                         </MultiSelectField>
                     )}
                 </>

@@ -139,8 +139,10 @@ describe('PluginWrapper', () => {
             )
         })
 
-        // Loading state switched to true
+        // Loading state switched to true and currentVis cleared
         await waitFor(() => {
+            const currentVis = store.getState().currentVis as SavedVisualization
+            expect(currentVis.id).not.toBeDefined()
             expect(store.getState().loader.isVisualizationLoading).toBe(true)
         })
 

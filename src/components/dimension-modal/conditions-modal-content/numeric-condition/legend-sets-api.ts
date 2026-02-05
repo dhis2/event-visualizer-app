@@ -13,7 +13,7 @@ export const legendSetsApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getLegendSet: builder.query<LegendSetMetadataItem, string>({
             async queryFn(id, apiArg: BaseQueryApiWithExtraArg) {
-                const { appCachedData, engine } = apiArg.extra
+                const { appCachedData, engine, metadataStore } = apiArg.extra
 
                 const nameProp =
                     appCachedData.currentUser.settings.displayNameProperty
@@ -34,12 +34,10 @@ export const legendSetsApi = api.injectEndpoints({
                         },
                     })
 
-                    console.log('legend sets response', legendSetsResponse)
-
                     const legendSet =
                         legendSetsResponse.legendSet as LegendSetMetadataItem
 
-                    console.log('legendSet', legendSet)
+                    metadataStore.addMetadata(legendSet)
 
                     return { data: legendSet }
                 } catch (error) {

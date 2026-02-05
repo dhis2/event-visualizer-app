@@ -85,7 +85,7 @@ export const useMetadataItem = (
     return result
 }
 export const useProgramMetadataItem = (
-    metadataId: string
+    metadataId: string | null | undefined
 ): ProgramMetadataItem | undefined => {
     const item = useMetadataItem(metadataId)
     if (item && !isProgramMetadataItem(item)) {
@@ -94,7 +94,7 @@ export const useProgramMetadataItem = (
     return item
 }
 export const useProgramStageMetadataItem = (
-    metadataId: string
+    metadataId: string | null | undefined
 ): ProgramStageMetadataItem | undefined => {
     const item = useMetadataItem(metadataId)
     if (item && !isProgramStageMetadataItem(item)) {
@@ -103,7 +103,7 @@ export const useProgramStageMetadataItem = (
     return item
 }
 export const useOptionSetMetadataItem = (
-    metadataId: string
+    metadataId: string | null | undefined
 ): OptionSetMetadataItem | undefined => {
     const item = useMetadataItem(metadataId)
     if (item && !isOptionSetMetadataItem(item)) {
@@ -112,7 +112,7 @@ export const useOptionSetMetadataItem = (
     return item
 }
 export const useLegendSetMetadataItem = (
-    metadataId: string
+    metadataId: string | null | undefined
 ): LegendSetMetadataItem | undefined => {
     const item = useMetadataItem(metadataId)
     if (item && !isLegendSetMetadataItem(item)) {
@@ -121,7 +121,7 @@ export const useLegendSetMetadataItem = (
     return item
 }
 export const useOrganisationUnitMetadataItem = (
-    metadataId: string
+    metadataId: string | null | undefined
 ): OrganisationUnitMetadataItem | undefined => {
     const item = useMetadataItem(metadataId)
     if (item && !isOrganisationUnitMetadataItem(item)) {
@@ -130,7 +130,7 @@ export const useOrganisationUnitMetadataItem = (
     return item
 }
 export const useUserOrgUnitMetadataItem = (
-    metadataId: string
+    metadataId: string | null | undefined
 ): UserOrgUnitMetadataItem | undefined => {
     const item = useMetadataItem(metadataId)
     if (item && !isUserOrgUnitMetadataItem(item)) {
@@ -139,7 +139,7 @@ export const useUserOrgUnitMetadataItem = (
     return item
 }
 export const useDimensionMetadataItem = (
-    metadataId: string
+    metadataId: string | null | undefined
 ): DimensionMetadataItem | undefined => {
     const item = useMetadataItem(metadataId)
     if (item && !isDimensionMetadataItem(item)) {

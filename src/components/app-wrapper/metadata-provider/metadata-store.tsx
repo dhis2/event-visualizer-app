@@ -4,7 +4,6 @@ import { smartMergeWithChangeDetection } from './merge-utils'
 import { normalizeMetadataInputItem } from './normalization'
 import { extractMetadataFromVisualization } from './visualization'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import {
     isMetadataInputItem,
     isDimensionMetadataItem,
@@ -104,12 +103,9 @@ export class MetadataStore {
 
     addAnalyticsResponseMetadata(
         items: AnalyticsResponseMetadataItems,
-        dimensions: AnalyticsResponseMetadataDimensions,
         headers: Array<LineListAnalyticsDataHeader>
     ) {
-        this.addMetadata(
-            extractMetadataFromAnalyticsResponse(items, dimensions, headers)
-        )
+        this.addMetadata(extractMetadataFromAnalyticsResponse(items, headers))
     }
 
     getMetadataItem(key: string): MetadataItem | undefined {

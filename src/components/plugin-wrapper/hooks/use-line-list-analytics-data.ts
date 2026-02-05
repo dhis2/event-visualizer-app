@@ -332,7 +332,6 @@ export type AnalyticsResponseMetadataItems = Record<
 export type AnalyticsResponseMetadataDimensions = Record<string, string[]>
 export type OnAnalyticsResponseReceivedCb = (
     items: AnalyticsResponseMetadataItems,
-    dimensions: AnalyticsResponseMetadataDimensions,
     headers: Array<LineListAnalyticsDataHeader>
 ) => void
 
@@ -460,11 +459,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     isFetching: false,
                 })
 
-                onResponseReceived(
-                    analyticsResponse.metaData.items,
-                    analyticsResponse.metaData.dimensions,
-                    headers
-                )
+                onResponseReceived(analyticsResponse.metaData.items, headers)
             } catch (error) {
                 setState({
                     data: null,

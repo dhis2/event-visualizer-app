@@ -31,10 +31,10 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
     const onResponseReceived = useCallback<OnAnalyticsResponseReceivedCb>(
-        (items, dimensions, headers) => {
+        (items, headers) => {
             setHasAnalyticsData(true)
 
-            onResponsesReceivedCb?.(items, dimensions, headers)
+            onResponsesReceivedCb?.(items, headers)
         },
         [onResponsesReceivedCb]
     )
