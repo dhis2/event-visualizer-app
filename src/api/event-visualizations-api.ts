@@ -113,8 +113,10 @@ export const eventVisualizationsApi = api.injectEndpoints({
                         if (dimension?.optionSet?.id) {
                             const optionSetId = dimension.optionSet.id
 
-                            optionSetsMetadata[optionSetId] =
-                                dimension.optionSet
+                            optionSetsMetadata[optionSetId] = {
+                                ...dimension.optionSet,
+                                options: [],
+                            }
 
                             if (dimension.filter?.startsWith('IN')) {
                                 const conditions = parseCondition(
@@ -169,8 +171,10 @@ export const eventVisualizationsApi = api.injectEndpoints({
                         if (dimension.legendSet?.id) {
                             const legendSetId = dimension.legendSet.id
 
-                            legendSetsMetadata[legendSetId] =
-                                dimension.legendSet
+                            legendSetsMetadata[legendSetId] = {
+                                ...dimension.legendSet,
+                                legends: [],
+                            }
 
                             if (dimension.filter?.startsWith('IN')) {
                                 const conditions = parseCondition(
