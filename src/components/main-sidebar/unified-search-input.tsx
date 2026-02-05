@@ -17,8 +17,8 @@ import { useDebounceCallback, useDebounceValue } from 'usehooks-ts'
 import classes from './styles/unified-search-input.module.css'
 import { useAppSelector, useAppStore } from '@hooks'
 import {
-    getAllDimensionGroupLoadErrors,
-    isAnyDimensionGroupLoading,
+    getAllDimensionListLoadErrors,
+    isAnyDimensionListLoading,
     setSearchTerm,
 } from '@store/dimensions-selection-slice'
 
@@ -34,8 +34,8 @@ const isValidSearchTerm = (searchTerm: string) =>
 
 export const UnifiedSearchInput = () => {
     const store = useAppStore()
-    const isLoading = useAppSelector(isAnyDimensionGroupLoading)
-    const errors = useAppSelector(getAllDimensionGroupLoadErrors)
+    const isLoading = useAppSelector(isAnyDimensionListLoading)
+    const errors = useAppSelector(getAllDimensionListLoadErrors)
     const [text, setText] = useState(() => {
         const state = store.getState()
         return state.dimensionSelection.searchTerm
