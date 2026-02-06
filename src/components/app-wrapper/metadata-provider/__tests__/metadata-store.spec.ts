@@ -269,11 +269,13 @@ describe('MetadataStore', () => {
               "dimensionType": "PERIOD",
               "id": "created",
               "name": "Registration date",
+              "valueType": "DATE",
             },
             "createdBy": {
               "dimensionType": "USER",
               "id": "createdBy",
               "name": "Created by",
+              "valueType": "USERNAME",
             },
             "createdDate": {
               "dimensionType": "PERIOD",
@@ -358,11 +360,13 @@ describe('MetadataStore', () => {
               "dimensionType": "PERIOD",
               "id": "lastUpdated",
               "name": "Last updated on",
+              "valueType": "DATETIME",
             },
             "lastUpdatedBy": {
               "dimensionType": "USER",
               "id": "lastUpdatedBy",
               "name": "Last updated by",
+              "valueType": "USERNAME",
             },
             "lastUpdatedOn": {
               "dimensionType": "PERIOD",
