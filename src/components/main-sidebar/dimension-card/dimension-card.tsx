@@ -1,10 +1,12 @@
 import cx from 'classnames'
-import { useCallback, type ReactNode } from 'react'
+import { useCallback, useEffect, type ReactNode } from 'react'
 import { DimensionCardHeader } from './dimension-card-header'
 import classes from './styles/dimension-card.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
+    addDimensionCardCollapseState,
     isDimensionCardCollapsed,
+    removeDimensionCardCollapseState,
     toggleDimensionCardIsCollapsed,
 } from '@store/dimensions-selection-slice'
 import type { DimensionCardKey } from '@types'
@@ -31,6 +33,13 @@ export const DimensionCard = ({
 
     const handleToggle = useCallback(() => {
         dispatch(toggleDimensionCardIsCollapsed(dimensionCardKey))
+    }, [dispatch, dimensionCardKey])
+
+    useEffect(() => {
+        dispatch(addDimensionCardCollapseState(dimensionCardKey))
+        return () => {
+            dispatch(removeDimensionCardCollapseState(dimensionCardKey))
+        }
     }, [dispatch, dimensionCardKey])
 
     return (
