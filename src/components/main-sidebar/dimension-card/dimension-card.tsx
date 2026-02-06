@@ -14,6 +14,7 @@ type DimensionCardProps = {
     title: string
     selectedCount?: number
     children: ReactNode
+    withSubSections?: boolean
 }
 
 export const DimensionCard = ({
@@ -21,6 +22,7 @@ export const DimensionCard = ({
     title,
     selectedCount = 0,
     children,
+    withSubSections = false,
 }: DimensionCardProps) => {
     const dispatch = useAppDispatch()
     const isCollapsed = useAppSelector((state) =>
@@ -48,6 +50,7 @@ export const DimensionCard = ({
             <div
                 className={cx(classes.content, {
                     [classes.collapsed]: isCollapsed,
+                    [classes.withSubSections]: withSubSections,
                 })}
                 data-test="dimension-card-content"
             >

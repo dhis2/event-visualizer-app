@@ -9,10 +9,21 @@
     outline: 3px solid var(--theme-focus);
     outline-offset: -3px;
 }
+.container:focus:not(:focus-visible) {
+    outline: none;
+}
 .content {
     display: flex;
     flex-direction: column;
 }
 .content.collapsed {
     display: none;
+}
+
+.content {
+    margin-block-start: 4px;
+}
+
+.content.withSubSections {
+    margin-block-start: 0;
 }

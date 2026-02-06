@@ -13,7 +13,11 @@ export const CardEvent = ({ program }: CardEventProps) => {
     const label = 'Event data'
 
     return (
-        <DimensionCard dimensionCardKey="event-with-registration" title={label}>
+        <DimensionCard
+            dimensionCardKey="event-with-registration"
+            title={label}
+            withSubSections
+        >
             {program.programStages!.map((stage) => (
                 <DimensionsCardSubsection title={stage.name} key={stage.id}>
                     <DimensionListItem />
