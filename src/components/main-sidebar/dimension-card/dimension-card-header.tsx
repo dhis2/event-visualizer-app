@@ -18,21 +18,16 @@ export const DimensionCardHeader = ({
 }: DimensionCardHeaderProps) => {
     return (
         <div
-            className={classes.header}
+            className={classes.container}
             onClick={onToggle}
             data-test="dimension-card-header"
         >
+            <CollapseIcon isCollapsed={isCollapsed} />
             <div
-                className={classes.icon}
-                data-test="dimension-card-header-icon"
-            >
-                <CollapseIcon isCollapsed={isCollapsed} />
-            </div>
-            <div
-                className={cx(classes.label, {
+                className={cx(classes.title, {
                     [classes.withSelection]: selectedCount > 0,
                 })}
-                data-test="dimension-card-header-label"
+                data-test="dimension-card-header-title"
             >
                 {children}
             </div>

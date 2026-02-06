@@ -32,7 +32,11 @@ export const DimensionCard = ({
     }, [dispatch, dimensionCardKey])
 
     return (
-        <div className={classes.dimensionCard} data-test="dimension-card">
+        <div
+            className={classes.container}
+            data-test="dimension-card"
+            tabIndex={0}
+        >
             <DimensionCardHeader
                 selectedCount={selectedCount}
                 isCollapsed={isCollapsed}

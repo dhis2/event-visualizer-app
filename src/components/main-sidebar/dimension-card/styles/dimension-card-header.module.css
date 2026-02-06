@@ -1,13 +1,38 @@
-.header {
+.container {
+    min-block-size: 29px;
+    display: flex;
+    align-items: center;
+    background-color: var(--colors-grey050);
+    border-block-end: 1px solid var(--colors-grey300);
+    border-radius: 4px 4px 0 0;
+    padding: 10px 6px 10px 4px;
+    cursor: pointer;
 }
 
-.icon {
+.title {
+    display: inline-flex;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+    font-size: 13px;
+    line-height: 16px;
+    font-weight: 500;
+    color: var(--colors-grey700);
 }
-
-.label {
-}
-.label.withSelection {
+.title.withSelection {
+    color: var(--colors-teal600);
 }
 
 .count {
+    flex-grow: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 4px;
+    color: var(--colors-teal800);
+    background-color: #076f721a;
+    font-size: 11px;
+    font-family: monospace;
+    line-height: 11px;
+    border-radius: 3px;
 }

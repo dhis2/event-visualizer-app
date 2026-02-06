@@ -1,7 +1,7 @@
 .container {
     block-size: 100%;
     box-sizing: border-box;
-    inline-size: 260px;
+    inline-size: 460px;
     border-inline-end: 1px solid var(--colors-grey400);
     padding: 4px;
     background-color: var(--colors-grey200);

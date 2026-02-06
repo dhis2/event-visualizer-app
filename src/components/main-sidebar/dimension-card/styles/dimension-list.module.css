@@ -1,2 +1,9 @@
 .list {
+    all: unset;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 4px 4px 4px 16px;
+    flex-grow: 1;
 }

@@ -1,6 +1,7 @@
 import cx from 'classnames'
 import { useCallback, useState, type ReactNode } from 'react'
 import { CollapseIcon } from './collapse-icon'
+import { DimensionList } from './dimension-list'
 import classes from './styles/dimension-card-subsection.module.css'
 
 type DimensionsCardSubsectionProps = {
@@ -30,12 +31,7 @@ export const DimensionsCardSubsection = ({
                 onClick={handleToggle}
                 data-test="dimension-card-subsection-header"
             >
-                <div
-                    className={classes.icon}
-                    data-test="dimension-card-subsection-icon"
-                >
-                    {<CollapseIcon isCollapsed={isCollapsed} />}
-                </div>
+                {<CollapseIcon isCollapsed={isCollapsed} />}
                 <div
                     className={cx(classes.title, {
                         [classes.withSelection]: selectedCount > 0,
@@ -59,7 +55,7 @@ export const DimensionsCardSubsection = ({
                 })}
                 data-test="dimension-card-subsection-content"
             >
-                {children}
+                <DimensionList>{children}</DimensionList>
             </div>
         </div>
     )

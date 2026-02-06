@@ -32,7 +32,7 @@ const ChevronRight = () => (
 )
 
 export const CollapseIcon: FC<{ isCollapsed: boolean }> = ({ isCollapsed }) => (
-    <div className={classes.container}>
+    <div className={classes.container} data-test="dimension-card-collapse-item">
         {isCollapsed ? <ChevronRight /> : <ChevronDown />}
     </div>
 )

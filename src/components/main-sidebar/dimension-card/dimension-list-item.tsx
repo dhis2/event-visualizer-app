@@ -7,8 +7,8 @@ type DimensionListItemProps = {
 
 export const DimensionListItem = ({ dimension }: DimensionListItemProps) => {
     return (
-        <div className={classes.item} data-test="dimension-list-item">
+        <li className={classes.item} data-test="dimension-list-item">
             {dimension?.name ?? 'TEMP PLACEHOLDER'}
-        </div>
+        </li>
     )
 }
