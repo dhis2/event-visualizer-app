@@ -9,7 +9,10 @@ import type {
     VisualizationType,
 } from '@types'
 
-type ConditionsObject = { condition?: string | string[]; legendSet?: string }
+export type ConditionsObject = {
+    condition?: string | string[]
+    legendSet?: string
+}
 
 const EMPTY_STRING_ARRAY: string[] = []
 const EMPTY_CONDITIONS_OBJECT: ConditionsObject = {

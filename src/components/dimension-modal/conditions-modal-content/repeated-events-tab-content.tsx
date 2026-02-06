@@ -20,11 +20,11 @@ import { /*useState, useEffect,*/ type FC } from 'react'
 //    )
 //}
 
-type RepeatableEventsProps = {
+type RepeatedEventsTabContentProps = {
     dimensionId: string
 }
 
-export const RepeatableEvents: FC<RepeatableEventsProps> = ({
+export const RepeatedEventsTabContent: FC<RepeatedEventsTabContentProps> = ({
     dimensionId,
 }) => {
     return <div>Placeholder repetition content for {dimensionId}</div>
