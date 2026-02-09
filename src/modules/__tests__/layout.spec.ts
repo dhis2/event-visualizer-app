@@ -21,6 +21,12 @@ const testCases = {
                     condition: 'IN:Exclusive;Mixed',
                 },
             },
+            repetitionsByDimension: {
+                'babyPostnatal.infantFeeding': {
+                    mostRecent: 3,
+                    oldest: 0,
+                },
+            },
             layout: {
                 columns: [
                     'ou',
@@ -78,6 +84,9 @@ const testCases = {
                     programStage: {
                         id: 'babyPostnatal',
                     },
+                    repetition: {
+                        indexes: [-2, -1, 0],
+                    },
                 },
             ],
             filters: [],
@@ -98,6 +107,7 @@ const testCases = {
                     condition: 'ILIKE:je',
                 },
             },
+            repetitionsByDimension: {},
             layout: {
                 columns: [
                     'ou',
@@ -163,6 +173,7 @@ const testCases = {
                     condition: 'GT:100',
                 },
             },
+            repetitionsByDimension: {},
             layout: {
                 columns: [
                     'ou',
