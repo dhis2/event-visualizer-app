@@ -94,15 +94,15 @@ describe('dimensionSelectionSlice', () => {
         it('should clear filter', () => {
             const prevstate: DimensionSelectionState = {
                 ...initialState,
-                filter: 'ORG_UNITS',
+                filter: 'ORGANISATION_UNIT',
             }
             const state = reducer(prevstate, clearFilter())
             expect(state.filter).toBe(null)
         })
 
         it('should set filter', () => {
-            const state = reducer(initialState, setFilter('PERIODS'))
-            expect(state.filter).toBe('PERIODS')
+            const state = reducer(initialState, setFilter('PERIOD'))
+            expect(state.filter).toBe('PERIOD')
         })
 
         it('should toggle all collapsed when groups exist', () => {
@@ -408,8 +408,8 @@ describe('dimensionSelectionSlice', () => {
         })
 
         it('should get filter', () => {
-            const state = createRootState({ filter: 'DATA_ELEMENTS' })
-            expect(getFilter(state)).toBe('DATA_ELEMENTS')
+            const state = createRootState({ filter: 'DATA_ELEMENT' })
+            expect(getFilter(state)).toBe('DATA_ELEMENT')
         })
 
         it('should get are all dimension cards collapsed when all are collapsed', () => {

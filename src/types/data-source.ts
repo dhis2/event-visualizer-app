@@ -1,4 +1,5 @@
 import type { ProgramType } from './dhis2-openapi-schemas'
+import type { DimensionType } from './dimension'
 import type { MetadataItemWithName, ProgramMetadataItem } from './metadata'
 
 export type DataSourceProgramWithRegistration = Omit<
@@ -21,15 +22,17 @@ export type DataSource =
      * it just has `id` and `name` */
     | MetadataItemWithName
 
-export type DataSourceFilter =
-    | 'ORG_UNITS'
-    | 'PERIODS'
-    | 'STATUSES'
-    | 'DATA_ELEMENTS'
-    | 'PROGRAM_ATTRIBUTES'
-    | 'PROGRAM_INDICATORS'
-    | 'CATEGORIES'
-    | 'CATEGORY_OPTION_GROUP_SETS'
+export type DataSourceFilter = Extract<
+    DimensionType,
+    | 'ORGANISATION_UNIT'
+    | 'PERIOD'
+    | 'STATUS'
+    | 'DATA_ELEMENT'
+    | 'PROGRAM_ATTRIBUTE'
+    | 'PROGRAM_INDICATOR'
+    | 'CATEGORY'
+    | 'CATEGORY_OPTION_GROUP_SET'
+>
 
 export type DimensionCardKey =
     // program-with-registration data-source

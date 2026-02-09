@@ -24,14 +24,14 @@ type MenuItemClickHandler = NonNullable<MenuItemProps['onClick']>
 export const FilterDropdownButton: FC = () => {
     const filters = useMemo<Record<DataSourceFilter, string>>(
         () => ({
-            ORG_UNITS: i18n.t('Org units'),
-            PERIODS: i18n.t('Periods'),
-            STATUSES: i18n.t('Statuses'),
-            DATA_ELEMENTS: i18n.t('Data elements'),
-            PROGRAM_ATTRIBUTES: i18n.t('Program attributes'),
-            PROGRAM_INDICATORS: i18n.t('Program indicators'),
-            CATEGORIES: i18n.t('Categories'),
-            CATEGORY_OPTION_GROUP_SETS: i18n.t('Category option group sets'),
+            ORGANISATION_UNIT: i18n.t('Org units'),
+            PERIOD: i18n.t('Periods'),
+            STATUS: i18n.t('Statuses'),
+            DATA_ELEMENT: i18n.t('Data elements'),
+            PROGRAM_ATTRIBUTE: i18n.t('Program attributes'),
+            PROGRAM_INDICATOR: i18n.t('Program indicators'),
+            CATEGORY: i18n.t('Categories'),
+            CATEGORY_OPTION_GROUP_SET: i18n.t('Category option group sets'),
         }),
         []
     )

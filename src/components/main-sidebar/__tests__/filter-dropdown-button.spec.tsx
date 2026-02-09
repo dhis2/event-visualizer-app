@@ -43,7 +43,7 @@ describe('FilterDropdownButton', () => {
     })
 
     it('renders with active filter label', () => {
-        mockUseAppSelector.mockReturnValue('ORG_UNITS')
+        mockUseAppSelector.mockReturnValue('ORGANISATION_UNIT')
 
         render(<FilterDropdownButton />)
 
@@ -52,7 +52,7 @@ describe('FilterDropdownButton', () => {
     })
 
     it('shows clear button when filter is active', () => {
-        mockUseAppSelector.mockReturnValue('PERIODS')
+        mockUseAppSelector.mockReturnValue('PERIOD')
 
         render(<FilterDropdownButton />)
 
@@ -132,7 +132,7 @@ describe('FilterDropdownButton', () => {
         await user.click(orgUnitsOption)
 
         expect(mockDispatch).toHaveBeenCalledTimes(1)
-        expect(setFilter).toHaveBeenCalledWith('ORG_UNITS')
+        expect(setFilter).toHaveBeenCalledWith('ORGANISATION_UNIT')
     })
 
     it('closes menu after selecting a filter option', async () => {
@@ -168,7 +168,7 @@ describe('FilterDropdownButton', () => {
 
     it('marks the active filter in the menu', async () => {
         const user = userEvent.setup()
-        mockUseAppSelector.mockReturnValue('DATA_ELEMENTS')
+        mockUseAppSelector.mockReturnValue('DATA_ELEMENT')
 
         render(<FilterDropdownButton />)
 
@@ -177,7 +177,7 @@ describe('FilterDropdownButton', () => {
         await user.click(button)
 
         const activeMenuItem = screen.getByTestId(
-            'filter-menu-item-DATA_ELEMENTS'
+            'filter-menu-item-DATA_ELEMENT'
         )
         // Check that the active prop is set (DHIS2 UI applies special styling)
         expect(activeMenuItem).toBeInTheDocument()
@@ -191,15 +191,15 @@ describe('FilterDropdownButton', () => {
         await user.click(button)
 
         const expectedFilters = [
-            { key: 'ORG_UNITS', label: 'Org units' },
-            { key: 'PERIODS', label: 'Periods' },
-            { key: 'STATUSES', label: 'Statuses' },
-            { key: 'DATA_ELEMENTS', label: 'Data elements' },
-            { key: 'PROGRAM_ATTRIBUTES', label: 'Program attributes' },
-            { key: 'PROGRAM_INDICATORS', label: 'Program indicators' },
-            { key: 'CATEGORIES', label: 'Categories' },
+            { key: 'ORGANISATION_UNIT', label: 'Org units' },
+            { key: 'PERIOD', label: 'Periods' },
+            { key: 'STATUS', label: 'Statuses' },
+            { key: 'DATA_ELEMENT', label: 'Data elements' },
+            { key: 'PROGRAM_ATTRIBUTE', label: 'Program attributes' },
+            { key: 'PROGRAM_INDICATOR', label: 'Program indicators' },
+            { key: 'CATEGORY', label: 'Categories' },
             {
-                key: 'CATEGORY_OPTION_GROUP_SETS',
+                key: 'CATEGORY_OPTION_GROUP_SET',
                 label: 'Category option group sets',
             },
         ]
