@@ -18,6 +18,13 @@ import { OrgUnitCondition } from './org-unit-condition'
 import classes from './styles/conditions-modal-content.module.css'
 import { PREFIX_CASE_INSENSITIVE } from '@modules/conditions'
 
+const ConditionDivider: FC = () => (
+    <span className={classes.separator}>{i18n.t('and')}</span>
+)
+
+const showConditionDivider = (total: number, index: number): boolean =>
+    total > 1 && index < total - 1
+
 export const Conditions: FC = () => {
     const {
         dimension,
@@ -30,15 +37,7 @@ export const Conditions: FC = () => {
         removeCondition,
     } = useConditions()
 
-    const getDividerContent = (index: number): ReactNode =>
-        conditionsList.length > 1 &&
-        index < conditionsList.length - 1 && (
-            <span className={classes.separator}>{i18n.t('and')}</span>
-        )
-
     const renderNumericCondition = ({
-        // TODO: add min and max for controlling POSITVE/NEGATIVE/ZERO valueTypes
-        // XXX: don't these 2 mean the same thing?
         enableDecimalSteps,
         allowIntegerOnly,
     }: {
@@ -49,7 +48,8 @@ export const Conditions: FC = () => {
             conditionsList.length
                 ? conditionsList
                 : conditions.legendSet
-                ? ['']
+                ? // show the condition component also when no conditions are present but a legendSet is selected
+                  ['']
                 : []
         )?.map((condition, index) => (
             <div key={index}>
@@ -67,7 +67,9 @@ export const Conditions: FC = () => {
                     enableDecimalSteps={enableDecimalSteps}
                     allowIntegerOnly={allowIntegerOnly}
                 />
-                {getDividerContent(index)}
+                {showConditionDivider(conditionsList.length, index) && (
+                    <ConditionDivider />
+                )}
             </div>
         ))
     }
@@ -85,13 +87,11 @@ export const Conditions: FC = () => {
     }
 
     if (isProgramIndicator) {
-        console.log('isProgramIndicator')
         return renderNumericCondition()
     }
 
     switch (valueType) {
         case 'UNIT_INTERVAL': {
-            console.log('render unit interval')
             return renderNumericCondition({ enableDecimalSteps: true })
         }
         case 'INTEGER':
@@ -102,7 +102,6 @@ export const Conditions: FC = () => {
         }
         case 'NUMBER':
         case 'PERCENTAGE': {
-            console.log('render number/percentage')
             return renderNumericCondition()
         }
         case 'PHONE_NUMBER': {
@@ -113,7 +112,9 @@ export const Conditions: FC = () => {
                         onChange={(value) => setCondition(index, value)}
                         onRemove={() => removeCondition(index)}
                     />
-                    {getDividerContent(index)}
+                    {showConditionDivider(conditionsList.length, index) && (
+                        <ConditionDivider />
+                    )}
                 </div>
             ))
         }
@@ -125,7 +126,9 @@ export const Conditions: FC = () => {
                         onChange={(value) => setCondition(index, value)}
                         onRemove={() => removeCondition(index)}
                     />
-                    {getDividerContent(index)}
+                    {showConditionDivider(conditionsList.length, index) && (
+                        <ConditionDivider />
+                    )}
                 </div>
             ))
         }
@@ -141,7 +144,9 @@ export const Conditions: FC = () => {
                         onChange={(value) => setCondition(index, value)}
                         onRemove={() => removeCondition(index)}
                     />
-                    {getDividerContent(index)}
+                    {showConditionDivider(conditionsList.length, index) && (
+                        <ConditionDivider />
+                    )}
                 </div>
             ))
         }
@@ -173,7 +178,9 @@ export const Conditions: FC = () => {
                         onChange={(value) => setCondition(index, value)}
                         onRemove={() => removeCondition(index)}
                     />
-                    {getDividerContent(index)}
+                    {showConditionDivider(conditionsList.length, index) && (
+                        <ConditionDivider />
+                    )}
                 </div>
             ))
         }
@@ -185,7 +192,9 @@ export const Conditions: FC = () => {
                         onChange={(value) => setCondition(index, value)}
                         onRemove={() => removeCondition(index)}
                     />
-                    {getDividerContent(index)}
+                    {showConditionDivider(conditionsList.length, index) && (
+                        <ConditionDivider />
+                    )}
                 </div>
             ))
         }
@@ -197,7 +206,9 @@ export const Conditions: FC = () => {
                         onChange={(value) => setCondition(index, value)}
                         onRemove={() => removeCondition(index)}
                     />
-                    {getDividerContent(index)}
+                    {showConditionDivider(conditionsList.length, index) && (
+                        <ConditionDivider />
+                    )}
                 </div>
             ))
         }
