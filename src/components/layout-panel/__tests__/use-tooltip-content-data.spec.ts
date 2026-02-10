@@ -27,6 +27,7 @@ const createVisUiConfigState = (
     },
     itemsByDimension: {},
     conditionsByDimension: {},
+    repetitionsByDimension: {},
     options: {},
     ...overrides,
 })

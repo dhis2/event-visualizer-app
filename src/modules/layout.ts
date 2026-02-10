@@ -1,6 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import { dimensionCreate } from '@dhis2/analytics'
 import { getDimensionIdParts } from '@modules/dimension'
+import { parseUiRepetitions } from '@modules/repetitions'
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
 import type { Axis, Layout } from '@types'
 
@@ -45,8 +46,13 @@ export const formatLayoutForVisualization = (visUiConfig: VisUiConfigState) =>
                                         .legendSet,
                                 },
                             }),
-                            // TODO: convert repetition from visUiConfig to currentVis
-
+                            ...(visUiConfig.repetitionsByDimension[id] && {
+                                repetition: {
+                                    indexes: parseUiRepetitions(
+                                        visUiConfig.repetitionsByDimension[id]
+                                    ),
+                                },
+                            }),
                             ...(programId && {
                                 program: {
                                     id: programId,

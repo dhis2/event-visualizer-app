@@ -7,7 +7,7 @@ import {
     ModalTitle,
     Button,
 } from '@dhis2/ui'
-import { useCallback, type FC } from 'react'
+import { useCallback, useMemo, type FC } from 'react'
 import { AddToLayoutButton } from './add-to-layout-button'
 import { ConditionsModalContent } from './conditions-modal-content/conditions-modal-content'
 import { DynamicDimensionModalContent } from './dynamic-dimension-modal-content/dynamic-dimension-modal-content'
@@ -16,7 +16,13 @@ import { PeriodDimensionModalContent } from './period-dimension-modal-content'
 import { StatusDimensionModalContent } from './status-dimension-modal-content'
 import classes from './styles/dimension-modal.module.css'
 import type { LayoutDimension } from '@components/layout-panel/chip'
-import { useAppDispatch, useAppSelector, useMetadataItem } from '@hooks'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useDimensionMetadataItem,
+    useProgramStageMetadataItem,
+} from '@hooks'
+import { getDimensionIdParts } from '@modules/dimension'
 import { isDimensionInLayout } from '@modules/layout'
 import { isDimensionMetadataItem } from '@modules/metadata'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
@@ -59,9 +65,32 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
     const dimensionId = useAppSelector(
         getUiActiveDimensionModal
     ) as LayoutDimension['id']
-    const dimension = useMetadataItem(dimensionId)
+    const dimension = useDimensionMetadataItem(dimensionId)
 
     const isInLayout = isDimensionInLayout(layout, dimensionId)
+
+    const stage = useProgramStageMetadataItem(
+        getDimensionIdParts({ id: dimensionId }).programStageId
+    )
+
+    // XXX: this logic might need to include more dimension types
+    // for example per-stage ou and period dimensions
+    const modalTitle = useMemo(
+        () =>
+            stage?.name &&
+            dimension?.dimensionType &&
+            ![
+                'ORGANISATION_UNIT',
+                'STATUS',
+                'PERIOD',
+                'CATEGORY',
+                'CATEGORY_OPTION_GROUP_SET',
+                'ORGANISATION_UNIT_GROUP_SET',
+            ].includes(dimension.dimensionType)
+                ? `${dimension.name} - ${stage.name}`
+                : dimension?.name,
+        [dimension?.dimensionType, dimension?.name, stage?.name]
+    )
 
     const onUpdate = useCallback(() => {
         dispatch(tUpdateCurrentVisFromVisUiConfig())
@@ -77,9 +106,7 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
 
     return (
         <Modal onClose={onClose} dataTest={`${dataTest}`} position="top" large>
-            <ModalTitle dataTest={`${dataTest}-title`}>
-                {dimension?.name}
-            </ModalTitle>
+            <ModalTitle dataTest={`${dataTest}-title`}>{modalTitle}</ModalTitle>
             <ModalContent
                 dataTest={`${dataTest}-content`}
                 className={classes.modalContent}

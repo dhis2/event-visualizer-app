@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-06T11:33:12.641Z\n"
-"PO-Revision-Date: 2026-02-06T11:33:12.641Z\n"
+"POT-Creation-Date: 2026-02-09T13:23:29.500Z\n"
+"PO-Revision-Date: 2026-02-09T13:23:29.501Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -185,6 +185,15 @@ msgstr "Choose legends"
 
 msgid "Loading legends"
 msgstr "Loading legends"
+
+msgid "From stages with repeatable events, show values for this data element from:"
+msgstr "From stages with repeatable events, show values for this data element from:"
+
+msgid "Most recent events:"
+msgstr "Most recent events:"
+
+msgid "Oldest events:"
+msgstr "Oldest events:"
 
 msgid "Hide"
 msgstr "Hide"
