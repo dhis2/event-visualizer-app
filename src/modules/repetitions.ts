@@ -62,7 +62,8 @@ export const parseUiRepetitions = (
         throw new Error('parseUiRepetitions: Invalid input')
     }
 
-    // default
+    // return empty repetitions indexes if oldest/mostRecent match the UI default
+    // or it's an "invalid" combination
     if (repetitions.oldest === 0 && [0, 1].includes(repetitions.mostRecent)) {
         return getDefaultSavedRepetitions()
     }
