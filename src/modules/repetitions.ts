@@ -13,13 +13,11 @@ export const getDefaultSavedRepetitions = (): SavedRepetitions => []
 
 export const getRepetitionsFromVisualisation = (
     vis: CurrentVisualization
-): Record<string, RepetitionsObject> => {
-    const repetitionsByDimension = {}
-
+): Record<string, RepetitionsObject> =>
     layoutGetAllDimensions(vis)
         .filter((d) => d.repetition)
-        .forEach((d) => {
-            repetitionsByDimension[
+        .reduce((obj, d) => {
+            obj[
                 getFullDimensionId({
                     dimensionId: d.dimension,
                     programId: d.program?.id,
@@ -27,10 +25,9 @@ export const getRepetitionsFromVisualisation = (
                     outputType: vis.outputType,
                 })
             ] = parseSavedRepetitions(d.repetition?.indexes)
-        })
 
-    return repetitionsByDimension
-}
+            return obj
+        }, {})
 
 export const parseSavedRepetitions = (repetitions): RepetitionsObject => {
     if (
