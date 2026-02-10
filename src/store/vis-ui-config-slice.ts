@@ -157,9 +157,13 @@ export const visUiConfigSlice = createSlice({
         ) => {
             const { dimensionId, repetitions } = action.payload
 
-            state.repetitionsByDimension = {
-                ...state.repetitionsByDimension,
-                [dimensionId]: repetitions ?? undefined,
+            if (!repetitions) {
+                delete state.repetitionsByDimension[dimensionId]
+            } else {
+                state.repetitionsByDimension = {
+                    ...state.repetitionsByDimension,
+                    [dimensionId]: repetitions,
+                }
             }
         },
         addVisUiConfigLayoutDimension: (

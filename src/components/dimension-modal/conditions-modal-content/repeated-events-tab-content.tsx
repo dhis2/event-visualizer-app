@@ -37,12 +37,8 @@ export const RepeatedEventsTabContent: FC<RepeatedEventsTabContentProps> = ({
                 repetitions.mostRecent === defaultMostRecent &&
                 repetitions.oldest === defaultOldest
             ) {
-                // Remove repetitions configuration
-                dispatch(
-                    setVisUiConfigRepetitionsByDimension({
-                        dimensionId,
-                    })
-                )
+                // Remove repetitions configuration when the selection matches the default
+                dispatch(setVisUiConfigRepetitionsByDimension({ dimensionId }))
             } else {
                 dispatch(
                     setVisUiConfigRepetitionsByDimension({
