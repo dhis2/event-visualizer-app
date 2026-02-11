@@ -4,7 +4,7 @@ import { parseEngineError } from '@api/parse-engine-error'
 import { apiFetchItemsByDimension } from '@dhis2/analytics'
 
 export type FetchItemsByDimensionQueryArgs = {
-    dimensionId: string
+    id: string
     searchTerm?: string
     page: number
 }
@@ -21,7 +21,7 @@ export const dimensionsApi = api.injectEndpoints({
             FetchItemsByDimensionQueryArgs
         >({
             async queryFn(
-                { dimensionId, searchTerm, page = 1 },
+                { id, searchTerm, page = 1 },
                 apiArg: BaseQueryApiWithExtraArg
             ) {
                 const { appCachedData, engine } = apiArg.extra
@@ -29,7 +29,7 @@ export const dimensionsApi = api.injectEndpoints({
                 try {
                     const result = await apiFetchItemsByDimension({
                         dataEngine: engine,
-                        dimensionId,
+                        dimensionId: id,
                         searchTerm,
                         page,
                         nameProp:

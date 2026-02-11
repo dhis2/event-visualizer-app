@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-03T13:39:15.417Z\n"
-"PO-Revision-Date: 2026-02-03T13:39:15.417Z\n"
+"POT-Creation-Date: 2026-02-09T13:23:29.500Z\n"
+"PO-Revision-Date: 2026-02-09T13:23:29.501Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -125,29 +125,81 @@ msgstr "Organisation unit"
 msgid "Add to {{axisName}}"
 msgstr "Add to {{axisName}}"
 
+msgid "Choose a condition type"
+msgstr "Choose a condition type"
+
+msgid "Case sensitive"
+msgstr "Case sensitive"
+
+msgid "Remove"
+msgstr "Remove"
+
+msgid "Repeated events"
+msgstr "Repeated events"
+
+msgid "Conditions"
+msgstr "Conditions"
+
+msgid "Only available for repeatable stages"
+msgstr "Only available for repeatable stages"
+
+msgid "Show items that meet the following conditions for this data item:"
+msgstr "Show items that meet the following conditions for this data item:"
+
+msgid "This dimension can't be filtered. All values will be shown."
+msgstr "This dimension can't be filtered. All values will be shown."
+
+msgid ""
+"No conditions yet, so all values will be included. Add a condition to "
+"filter results."
+msgstr ""
+"No conditions yet, so all values will be included. Add a condition to "
+"filter results."
+
+msgid "Preset options can't be combined with other conditions"
+msgstr "Preset options can't be combined with other conditions"
+
+msgid "Add another condition"
+msgstr "Add another condition"
+
+msgid "Add a condition"
+msgstr "Add a condition"
+
+msgid "and"
+msgstr "and"
+
+msgid "is one of preset options"
+msgstr "is one of preset options"
+
+msgid "Choose a legend set"
+msgstr "Choose a legend set"
+
+msgid "Loading legend sets"
+msgstr "Loading legend sets"
+
+msgid "No preset option sets for this data item"
+msgstr "No preset option sets for this data item"
+
+msgid "Choose legends"
+msgstr "Choose legends"
+
+msgid "Loading legends"
+msgstr "Loading legends"
+
+msgid "From stages with repeatable events, show values for this data element from:"
+msgstr "From stages with repeatable events, show values for this data element from:"
+
+msgid "Most recent events:"
+msgstr "Most recent events:"
+
+msgid "Oldest events:"
+msgstr "Oldest events:"
+
 msgid "Hide"
 msgstr "Hide"
 
 msgid "Update"
 msgstr "Update"
-
-msgid "No items selected"
-msgstr "No items selected"
-
-msgid "Available options"
-msgstr "Available options"
-
-msgid "Filter options"
-msgstr "Filter options"
-
-msgid "Selected options"
-msgstr "Selected options"
-
-msgid "Nothing found for \"{{- searchTerm}}\""
-msgstr "Nothing found for \"{{- searchTerm}}\""
-
-msgid "No options"
-msgstr "No options"
 
 msgid "Start and end dates are inclusive and will be included in the outputs."
 msgstr "Start and end dates are inclusive and will be included in the outputs."
@@ -166,6 +218,24 @@ msgstr "Define start - end dates"
 
 msgid "Show items where the status is:"
 msgstr "Show items where the status is:"
+
+msgid "No items selected"
+msgstr "No items selected"
+
+msgid "Available options"
+msgstr "Available options"
+
+msgid "Filter options"
+msgstr "Filter options"
+
+msgid "Selected options"
+msgstr "Selected options"
+
+msgid "Nothing found for \"{{- searchTerm}}\""
+msgstr "Nothing found for \"{{- searchTerm}}\""
+
+msgid "No options"
+msgstr "No options"
 
 msgid "HTML"
 msgstr "HTML"
@@ -205,9 +275,6 @@ msgstr "Name"
 
 msgid "Move to {{axisName}}"
 msgstr "Move to {{axisName}}"
-
-msgid "Remove"
-msgstr "Remove"
 
 msgid "all"
 msgstr "all"
@@ -404,9 +471,6 @@ msgstr "Legend"
 
 msgid "Select from legends"
 msgstr "Select from legends"
-
-msgid "Loading legends"
-msgstr "Loading legends"
 
 msgid "Limit"
 msgstr "Limit"

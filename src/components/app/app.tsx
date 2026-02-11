@@ -18,10 +18,7 @@ import { InterpretationModal } from '@components/interpretation-modal/interpreta
 import { LayoutPanel } from '@components/layout-panel/layout-panel'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import { MainSidebar } from '@components/main-sidebar/main-sidebar'
-import type {
-    AnalyticsResponseMetadataDimensions,
-    AnalyticsResponseMetadataItems,
-} from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
+import type { AnalyticsResponseMetadataItems } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
 import { TitleBar } from '@components/title-bar/title-bar'
@@ -67,10 +64,9 @@ const EventVisualizer: FC = () => {
     const onResponsesReceived = useCallback(
         (
             analyticsMetadata: AnalyticsResponseMetadataItems,
-            dimensions: AnalyticsResponseMetadataDimensions,
             headers: Array<LineListAnalyticsDataHeader>
         ) => {
-            addAnalyticsResponseMetadata(analyticsMetadata, dimensions, headers)
+            addAnalyticsResponseMetadata(analyticsMetadata, headers)
         },
         [addAnalyticsResponseMetadata]
     )

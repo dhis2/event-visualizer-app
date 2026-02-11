@@ -1,12 +1,10 @@
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import type { AnalyticsResponseMetadataDimensions } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { isMetadataInputItem } from '@modules/metadata'
 import { headersMap } from '@modules/visualization'
 import type { AnalyticsResponseMetadataItems, MetadataInput } from '@types'
 
 const extractItemsMetadata = (
-    items: AnalyticsResponseMetadataItems,
-    dimensions: AnalyticsResponseMetadataDimensions
+    items: AnalyticsResponseMetadataItems
 ): MetadataInput =>
     Object.entries(items).reduce((acc, [key, value]) => {
         /* Do not add optionSets from analytics response data, because the options
@@ -21,30 +19,12 @@ const extractItemsMetadata = (
             return acc
         }
 
-        acc[key] = value
-
-        /* Add legendSet metadata items so that legend items can be
-         * related to dataElements */
-        if (
-            typeof value.legendSet === 'string' &&
-            value.legendSet.length > 0 &&
-            Array.isArray(dimensions[key])
-        ) {
-            acc[value.legendSet] = {
-                id: value.legendSet,
-                legends: dimensions[key].map((legendItemKey) => {
-                    const legendItem = items[legendItemKey]
-                    if (!isMetadataInputItem(legendItem)) {
-                        throw new Error(
-                            'Legend item not found in analytics response data'
-                        )
-                    }
-                    return {
-                        id: legendItem.uid,
-                        name: legendItem.name,
-                    }
-                }),
-            }
+        /* Skip valueType from analytics response data as this is wrong in many cases.
+         * In this way we keep the original valueType from the visualization's metadata which is correct
+         * and avoid issues with the conditions modal which relies on valueType to render the correct content */
+        acc[key] = {
+            ...value,
+            valueType: undefined,
         }
 
         return acc
@@ -94,9 +74,8 @@ const updateNamesFromHeaders = (
 
 export const extractMetadataFromAnalyticsResponse = (
     items: AnalyticsResponseMetadataItems,
-    dimensions: AnalyticsResponseMetadataDimensions,
     headers: Array<LineListAnalyticsDataHeader>
 ): MetadataInput => {
-    const metdataFromItems = extractItemsMetadata(items, dimensions)
+    const metdataFromItems = extractItemsMetadata(items)
     return updateNamesFromHeaders(headers, metdataFromItems)
 }

@@ -55,12 +55,13 @@ export type DimensionMetadataItem = Omit<
     /* The generated type called MetadataItem actually represents a
      * dimension of sorts, but has a `uid` field rather than an `id`
      * and some required fields that we do not always populate */
-    Partial<GeneratedMetadaItem>, // make all fiels optional
+    Partial<GeneratedMetadaItem>, // make all fields optional
     | 'uid' // Omit because we use `id`
     | 'name' // Omit to make required
     | 'dimensionType' // Omit to make required and customise
     | 'dimensionItemType' // Omit to customise
     | 'options' // Omit because it does not reflect reality
+    | 'valueType' // Omit to make required
 > & {
     id: string // we use id not uid
     name: string // required instead of optional
@@ -69,6 +70,7 @@ export type DimensionMetadataItem = Omit<
     optionSet?: string // Add ID reference to `optionSet`
     program?: string // Add ID reference to `program`
     programStage?: string // Add ID reference to `programStage`
+    valueType: GeneratedMetadaItem['valueType']
 }
 
 // Note that `optionSet` and `legendSet` have an optional name
@@ -81,6 +83,8 @@ type OptionSetOption = Omit<OptionSet['options'], 'id' | 'code' | 'name'> & {
 type LegendSetLegend = Omit<LegendSet['legends'], 'id' | 'name'> & {
     id: string
     name: string
+    endValue: number
+    startValue: number
 }
 
 export type OptionSetMetadataItem = Omit<
