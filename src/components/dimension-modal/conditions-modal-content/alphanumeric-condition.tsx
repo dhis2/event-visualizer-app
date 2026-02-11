@@ -12,6 +12,7 @@ import {
     NULL_VALUE,
     OPERATOR_EMPTY,
     OPERATOR_NOT_EMPTY,
+    PREFIX_CASE_INSENSITIVE,
     addCaseSensitivePrefix,
     removeCaseSensitivePrefix,
     isIsCaseSensitive,
@@ -144,4 +145,13 @@ export const LetterCondition: FC<ConditionProps> = (props) => (
 
 export const CaseSensitiveAlphanumericCondition: FC<ConditionProps> = (
     props
-) => <BaseCondition allowCaseSensitive={true} {...props} />
+) => {
+    const { condition, ...rest } = props
+    return (
+        <BaseCondition
+            allowCaseSensitive={true}
+            condition={condition || `${PREFIX_CASE_INSENSITIVE}`}
+            {...rest}
+        />
+    )
+}
