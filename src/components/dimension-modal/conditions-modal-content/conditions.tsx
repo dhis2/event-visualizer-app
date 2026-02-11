@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import type { ComponentType, FC, ReactNode } from 'react'
+import type { ComponentType, FC } from 'react'
 import {
     PhoneNumberCondition,
     CaseSensitiveAlphanumericCondition,
@@ -31,59 +31,67 @@ type ConditionComponentProps = {
     onRemove?: (index: number) => void
 }
 
+const ConditionsList: FC<{
+    conditionComponent: ComponentType<ConditionComponentProps>
+}> = ({ conditionComponent: ConditionComponent }) => {
+    const { conditionsList, setCondition, removeCondition } = useConditions()
+
+    return conditionsList.map((condition, index) => (
+        <div key={index}>
+            <ConditionComponent
+                condition={condition}
+                onChange={(value) => setCondition(index, value)}
+                onRemove={() => removeCondition(index)}
+            />
+            <ConditionDivider total={conditionsList.length} index={index} />
+        </div>
+    ))
+}
+
+const NumericConditionsList: FC = () => {
+    const {
+        conditionsList,
+        conditions,
+        dimension,
+        removeCondition,
+        setCondition,
+    } = useConditions()
+
+    return (
+        conditionsList.length
+            ? conditionsList
+            : conditions.legendSet
+            ? // show the condition component also when no conditions are present but a legendSet is selected
+              ['']
+            : []
+    )?.map((condition, index) => (
+        <div key={index}>
+            <NumericCondition
+                dimension={dimension}
+                condition={condition}
+                onChange={(value, legendSet) =>
+                    setCondition(index, value, legendSet)
+                }
+                onRemove={() => removeCondition(index)}
+                numberOfConditions={
+                    conditionsList.length || (conditions.legendSet ? 1 : 0)
+                }
+                legendSetId={conditions.legendSet}
+            />
+            <ConditionDivider total={conditionsList.length} index={index} />
+        </div>
+    ))
+}
+
 export const Conditions: FC = () => {
     const {
         dimension,
-        conditions,
         conditionsList,
         valueType,
         isOptionSetCondition,
         isProgramIndicator,
         setCondition,
-        removeCondition,
     } = useConditions()
-
-    const renderConditions = (
-        ConditionComponent: ComponentType<ConditionComponentProps>
-    ): ReactNode => {
-        return conditionsList.map((condition, index) => (
-            <div key={index}>
-                <ConditionComponent
-                    condition={condition}
-                    onChange={(value) => setCondition(index, value)}
-                    onRemove={() => removeCondition(index)}
-                />
-                <ConditionDivider total={conditionsList.length} index={index} />
-            </div>
-        ))
-    }
-
-    const renderNumericConditions = (): ReactNode => {
-        return (
-            conditionsList.length
-                ? conditionsList
-                : conditions.legendSet
-                ? // show the condition component also when no conditions are present but a legendSet is selected
-                  ['']
-                : []
-        )?.map((condition, index) => (
-            <div key={index}>
-                <NumericCondition
-                    dimension={dimension}
-                    condition={condition}
-                    onChange={(value, legendSet) =>
-                        setCondition(index, value, legendSet)
-                    }
-                    onRemove={() => removeCondition(index)}
-                    numberOfConditions={
-                        conditionsList.length || (conditions.legendSet ? 1 : 0)
-                    }
-                    legendSetId={conditions.legendSet}
-                />
-                <ConditionDivider total={conditionsList.length} index={index} />
-            </div>
-        ))
-    }
 
     if (isOptionSetCondition) {
         return (
@@ -96,7 +104,7 @@ export const Conditions: FC = () => {
     }
 
     if (isProgramIndicator) {
-        return renderNumericConditions()
+        return <NumericConditionsList />
     }
 
     switch (valueType) {
@@ -107,38 +115,42 @@ export const Conditions: FC = () => {
         case 'INTEGER_ZERO_OR_POSITIVE':
         case 'NUMBER':
         case 'PERCENTAGE': {
-            return renderNumericConditions()
+            return <NumericConditionsList />
         }
         case 'PHONE_NUMBER': {
-            return renderConditions(PhoneNumberCondition)
+            return <ConditionsList conditionComponent={PhoneNumberCondition} />
         }
         case 'LETTER': {
-            return renderConditions(LetterCondition)
+            return <ConditionsList conditionComponent={LetterCondition} />
         }
         case 'TEXT':
         case 'LONG_TEXT':
         case 'EMAIL':
         case 'USERNAME':
         case 'URL': {
-            return renderConditions(CaseSensitiveAlphanumericCondition)
+            return (
+                <ConditionsList
+                    conditionComponent={CaseSensitiveAlphanumericCondition}
+                />
+            )
         }
         case 'BOOLEAN': {
-            return renderConditions(BooleanCondition)
+            return <ConditionsList conditionComponent={BooleanCondition} />
         }
         case 'TRUE_ONLY': {
-            return renderConditions(TrueOnlyCondition)
+            return <ConditionsList conditionComponent={TrueOnlyCondition} />
         }
         case 'DATE': {
-            return renderConditions(DateCondition)
+            return <ConditionsList conditionComponent={DateCondition} />
         }
         case 'TIME': {
-            return renderConditions(TimeCondition)
+            return <ConditionsList conditionComponent={TimeCondition} />
         }
         case 'DATETIME': {
-            return renderConditions(DateTimeCondition)
+            return <ConditionsList conditionComponent={DateTimeCondition} />
         }
         case 'ORGANISATION_UNIT': {
-            return renderConditions(OrgUnitCondition)
+            return <ConditionsList conditionComponent={OrgUnitCondition} />
         }
     }
 }
