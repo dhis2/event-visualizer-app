@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { type FC, type ReactNode } from 'react'
+import type { ComponentType, FC, ReactNode } from 'react'
 import {
     PhoneNumberCondition,
     CaseSensitiveAlphanumericCondition,
@@ -16,14 +16,20 @@ import { NumericCondition } from './numeric-condition/numeric-condition'
 import { OptionSetCondition } from './option-set-condition/option-set-condition'
 import { OrgUnitCondition } from './org-unit-condition'
 import classes from './styles/conditions-modal-content.module.css'
-import { PREFIX_CASE_INSENSITIVE } from '@modules/conditions'
 
-const ConditionDivider: FC = () => (
-    <span className={classes.separator}>{i18n.t('and')}</span>
-)
+const ConditionDivider: FC<{ total: number; index: number }> = ({
+    total,
+    index,
+}) =>
+    total > 1 && index < total - 1 ? (
+        <span className={classes.separator}>{i18n.t('and')}</span>
+    ) : null
 
-const showConditionDivider = (total: number, index: number): boolean =>
-    total > 1 && index < total - 1
+type ConditionComponentProps = {
+    condition: string
+    onChange: (value: string) => void
+    onRemove?: (index: number) => void
+}
 
 export const Conditions: FC = () => {
     const {
@@ -37,13 +43,22 @@ export const Conditions: FC = () => {
         removeCondition,
     } = useConditions()
 
-    const renderNumericCondition = ({
-        enableDecimalSteps,
-        allowIntegerOnly,
-    }: {
-        enableDecimalSteps?: boolean
-        allowIntegerOnly?: boolean
-    } = {}): ReactNode => {
+    const renderConditions = (
+        ConditionComponent: ComponentType<ConditionComponentProps>
+    ): ReactNode => {
+        return conditionsList.map((condition, index) => (
+            <div key={index}>
+                <ConditionComponent
+                    condition={condition}
+                    onChange={(value) => setCondition(index, value)}
+                    onRemove={() => removeCondition(index)}
+                />
+                <ConditionDivider total={conditionsList.length} index={index} />
+            </div>
+        ))
+    }
+
+    const renderNumericConditions = (): ReactNode => {
         return (
             conditionsList.length
                 ? conditionsList
@@ -64,163 +79,66 @@ export const Conditions: FC = () => {
                         conditionsList.length || (conditions.legendSet ? 1 : 0)
                     }
                     legendSetId={conditions.legendSet}
-                    enableDecimalSteps={enableDecimalSteps}
-                    allowIntegerOnly={allowIntegerOnly}
                 />
-                {showConditionDivider(conditionsList.length, index) && (
-                    <ConditionDivider />
-                )}
+                <ConditionDivider total={conditionsList.length} index={index} />
             </div>
         ))
     }
 
     if (isOptionSetCondition) {
-        return conditionsList.map((condition, index) => (
-            <div key={index}>
-                <OptionSetCondition
-                    condition={condition}
-                    optionSetId={dimension.optionSet!}
-                    onChange={(value) => setCondition(index, value)}
-                />
-            </div>
-        ))
+        return (
+            <OptionSetCondition
+                condition={conditionsList[0]}
+                optionSetId={dimension.optionSet!}
+                onChange={(value) => setCondition(0, value)}
+            />
+        )
     }
 
     if (isProgramIndicator) {
-        return renderNumericCondition()
+        return renderNumericConditions()
     }
 
     switch (valueType) {
-        case 'UNIT_INTERVAL': {
-            return renderNumericCondition({ enableDecimalSteps: true })
-        }
+        case 'UNIT_INTERVAL':
         case 'INTEGER':
         case 'INTEGER_POSITIVE':
         case 'INTEGER_NEGATIVE':
-        case 'INTEGER_ZERO_OR_POSITIVE': {
-            return renderNumericCondition({ allowIntegerOnly: true })
-        }
+        case 'INTEGER_ZERO_OR_POSITIVE':
         case 'NUMBER':
         case 'PERCENTAGE': {
-            return renderNumericCondition()
+            return renderNumericConditions()
         }
         case 'PHONE_NUMBER': {
-            return conditionsList.map((condition, index) => (
-                <div key={index}>
-                    <PhoneNumberCondition
-                        condition={condition}
-                        onChange={(value) => setCondition(index, value)}
-                        onRemove={() => removeCondition(index)}
-                    />
-                    {showConditionDivider(conditionsList.length, index) && (
-                        <ConditionDivider />
-                    )}
-                </div>
-            ))
+            return renderConditions(PhoneNumberCondition)
         }
         case 'LETTER': {
-            return conditionsList.map((condition, index) => (
-                <div key={index}>
-                    <LetterCondition
-                        condition={condition}
-                        onChange={(value) => setCondition(index, value)}
-                        onRemove={() => removeCondition(index)}
-                    />
-                    {showConditionDivider(conditionsList.length, index) && (
-                        <ConditionDivider />
-                    )}
-                </div>
-            ))
+            return renderConditions(LetterCondition)
         }
         case 'TEXT':
         case 'LONG_TEXT':
         case 'EMAIL':
         case 'USERNAME':
         case 'URL': {
-            return conditionsList.map((condition, index) => (
-                <div key={index}>
-                    <CaseSensitiveAlphanumericCondition
-                        condition={condition || `${PREFIX_CASE_INSENSITIVE}:`}
-                        onChange={(value) => setCondition(index, value)}
-                        onRemove={() => removeCondition(index)}
-                    />
-                    {showConditionDivider(conditionsList.length, index) && (
-                        <ConditionDivider />
-                    )}
-                </div>
-            ))
+            return renderConditions(CaseSensitiveAlphanumericCondition)
         }
         case 'BOOLEAN': {
-            return conditionsList.map((condition, index) => (
-                <div key={index}>
-                    <BooleanCondition
-                        condition={condition}
-                        onChange={(value) => setCondition(index, value)}
-                    />
-                </div>
-            ))
+            return renderConditions(BooleanCondition)
         }
         case 'TRUE_ONLY': {
-            return conditionsList.map((condition, index) => (
-                <div key={index}>
-                    <TrueOnlyCondition
-                        condition={condition}
-                        onChange={(value) => setCondition(index, value)}
-                    />
-                </div>
-            ))
+            return renderConditions(TrueOnlyCondition)
         }
         case 'DATE': {
-            return conditionsList.map((condition, index) => (
-                <div key={index}>
-                    <DateCondition
-                        condition={condition}
-                        onChange={(value) => setCondition(index, value)}
-                        onRemove={() => removeCondition(index)}
-                    />
-                    {showConditionDivider(conditionsList.length, index) && (
-                        <ConditionDivider />
-                    )}
-                </div>
-            ))
+            return renderConditions(DateCondition)
         }
         case 'TIME': {
-            return conditionsList.map((condition, index) => (
-                <div key={index}>
-                    <TimeCondition
-                        condition={condition}
-                        onChange={(value) => setCondition(index, value)}
-                        onRemove={() => removeCondition(index)}
-                    />
-                    {showConditionDivider(conditionsList.length, index) && (
-                        <ConditionDivider />
-                    )}
-                </div>
-            ))
+            return renderConditions(TimeCondition)
         }
         case 'DATETIME': {
-            return conditionsList.map((condition, index) => (
-                <div key={index}>
-                    <DateTimeCondition
-                        condition={condition}
-                        onChange={(value) => setCondition(index, value)}
-                        onRemove={() => removeCondition(index)}
-                    />
-                    {showConditionDivider(conditionsList.length, index) && (
-                        <ConditionDivider />
-                    )}
-                </div>
-            ))
+            return renderConditions(DateTimeCondition)
         }
         case 'ORGANISATION_UNIT': {
-            return conditionsList.map((condition, index) => (
-                <div key={index}>
-                    <OrgUnitCondition
-                        condition={condition}
-                        onChange={(value) => setCondition(index, value)}
-                    />
-                </div>
-            ))
+            return renderConditions(OrgUnitCondition)
         }
     }
 }
