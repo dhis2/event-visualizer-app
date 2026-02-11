@@ -3,7 +3,7 @@ import { api } from '@api/api'
 import { type EngineError, parseEngineError } from '@api/parse-engine-error'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { isDimensionMetadataItem } from '@modules/metadata'
-import { isObject } from '@modules/validation'
+import { isObject, isPopulatedString } from '@modules/validation'
 import {
     addDimensionListLoadingState,
     getDimensionListError,
@@ -69,7 +69,7 @@ export const transformResponseData = (
     }
 
     const dimensions = data[dimensionsKey]
-    const hasMore = data.pager.page <= data.pager.pageCount
+    const hasMore = data.pager.page < data.pager.pageCount
 
     if (dimensions.length > 0 && !isDimensionMetadataItem(dimensions[0])) {
         throw new Error(
@@ -81,7 +81,10 @@ export const transformResponseData = (
 }
 
 type SingleQueryWithFilterParam = Omit<SingleQuery, 'params'> & {
-    params: { filter: string[]; page: number } & SingleQuery['params']
+    params: Omit<SingleQuery['params'], 'filter' | 'page'> & {
+        filter: string[]
+        page: number
+    }
 }
 
 const FILTER_PARAM_SEARCH_TERM = 'displayName:ilike:'
@@ -142,6 +145,13 @@ const normalizeBaseQuery = (
     }
 
     query.params.page = 1
+
+    if (
+        !Array.isArray(query.params.filter) ||
+        query.params.filter.some((str) => !isPopulatedString(str))
+    ) {
+        throw new Error('Invalid filter query params')
+    }
 
     return query as SingleQueryWithFilterParam
 }
@@ -204,6 +214,9 @@ const useMutableQuery = ({
                     queryRef.current,
                     newSearchTerm
                 )
+                if (queryRef.current) {
+                    queryRef.current.params.page = 1
+                }
             },
 
             incrementPage: () => {
@@ -241,8 +254,6 @@ export const useDimensionList = ({
         const query = getQuery()
 
         if (!query) {
-            setFetchedDimensions((curr) => (curr.length === 0 ? curr : []))
-            setHasMore(false)
             return
         }
 
@@ -255,7 +266,11 @@ export const useDimensionList = ({
 
             const { dimensions, hasMore } = transformResponseData(responseData)
 
-            setFetchedDimensions((prev) => [...prev, ...dimensions])
+            if (query.params.page === 1) {
+                setFetchedDimensions(dimensions)
+            } else {
+                setFetchedDimensions((prev) => [...prev, ...dimensions])
+            }
             setHasMore(hasMore)
             dispatch(setDimensionListLoadSuccess(dimensionListKey))
         } catch (error) {
@@ -307,16 +322,17 @@ export const useDimensionList = ({
     // END OF STABILITY CHECK CODE
 
     const loadMore = useCallback(() => {
-        if (hasMore && !isLoading) {
+        if (!!getQuery() && hasMore && !isLoading) {
             incrementPage()
             fetchDimensions()
         }
-    }, [hasMore, isLoading, incrementPage, fetchDimensions])
+    }, [hasMore, isLoading, incrementPage, fetchDimensions, getQuery])
 
     const dimensions = useMemo(() => {
         /* Initial items need to be filtered, but not sorted.
          * Fetched items are sorted and filtered server side. */
         const lowerSearchTerm = searchTerm.toLocaleLowerCase()
+        const hasQuery = !!getQuery()
 
         return initialDimensions
             .filter((dimension) => {
@@ -327,8 +343,8 @@ export const useDimensionList = ({
                     !filter || dimension.dimensionType === filter
                 return searchTermMatch && filterMatch
             })
-            .concat(fetchedDimensions)
-    }, [initialDimensions, fetchedDimensions, searchTerm, filter])
+            .concat(hasQuery ? fetchedDimensions : [])
+    }, [initialDimensions, fetchedDimensions, searchTerm, filter, getQuery])
 
     useEffect(() => {
         dispatch(addDimensionListLoadingState(dimensionListKey))
@@ -354,9 +370,9 @@ export const useDimensionList = ({
             dimensions,
             isLoading,
             error,
-            hasMore,
+            hasMore: !!getQuery() && hasMore,
             loadMore,
         }),
-        [dimensions, isLoading, error, hasMore, loadMore]
+        [dimensions, isLoading, error, hasMore, loadMore, getQuery]
     )
 }
