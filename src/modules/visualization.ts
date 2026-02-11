@@ -2,6 +2,7 @@ import i18n from '@dhis2/d2-i18n'
 import deepEqual from 'deep-equal'
 import { getConditionsFromVisualization } from './conditions'
 import { isTimeDimensionId, transformDimensions } from './dimension'
+import { getRepetitionsFromVisualisation } from './repetitions'
 import { getRequestOptions } from '@components/plugin-wrapper/hooks/query-tools-common'
 import {
     layoutGetAxisIdDimensionIdsObject,
@@ -255,5 +256,6 @@ export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
         },
         itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
         conditionsByDimension: getConditionsFromVisualization(vis, outputType),
+        repetitionsByDimension: getRepetitionsFromVisualisation(vis),
     }
 }

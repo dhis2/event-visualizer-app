@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-03T13:39:15.417Z\n"
-"PO-Revision-Date: 2026-02-03T13:39:15.417Z\n"
+"POT-Creation-Date: 2026-02-09T13:23:29.500Z\n"
+"PO-Revision-Date: 2026-02-09T13:23:29.501Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -134,8 +134,14 @@ msgstr "Case sensitive"
 msgid "Remove"
 msgstr "Remove"
 
-msgid "and"
-msgstr "and"
+msgid "Repeated events"
+msgstr "Repeated events"
+
+msgid "Conditions"
+msgstr "Conditions"
+
+msgid "Only available for repeatable stages"
+msgstr "Only available for repeatable stages"
 
 msgid "Show items that meet the following conditions for this data item:"
 msgstr "Show items that meet the following conditions for this data item:"
@@ -159,14 +165,8 @@ msgstr "Add another condition"
 msgid "Add a condition"
 msgstr "Add a condition"
 
-msgid "Repeated events"
-msgstr "Repeated events"
-
-msgid "Conditions"
-msgstr "Conditions"
-
-msgid "Only available for repeatable stages"
-msgstr "Only available for repeatable stages"
+msgid "and"
+msgstr "and"
 
 msgid "is one of preset options"
 msgstr "is one of preset options"
@@ -185,6 +185,15 @@ msgstr "Choose legends"
 
 msgid "Loading legends"
 msgstr "Loading legends"
+
+msgid "From stages with repeatable events, show values for this data element from:"
+msgstr "From stages with repeatable events, show values for this data element from:"
+
+msgid "Most recent events:"
+msgstr "Most recent events:"
+
+msgid "Oldest events:"
+msgstr "Oldest events:"
 
 msgid "Hide"
 msgstr "Hide"
