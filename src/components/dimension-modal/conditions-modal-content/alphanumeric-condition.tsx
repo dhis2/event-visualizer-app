@@ -149,9 +149,9 @@ export const CaseSensitiveAlphanumericCondition: FC<ConditionProps> = (
     const { condition, ...rest } = props
     return (
         <BaseCondition
+            {...rest}
             allowCaseSensitive={true}
             condition={condition || `${PREFIX_CASE_INSENSITIVE}`}
-            {...rest}
         />
     )
 }
