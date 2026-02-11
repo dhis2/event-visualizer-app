@@ -24,9 +24,7 @@ type NumericConditionProps = {
     numberOfConditions: number
     onChange: (value: string, legendSet?: string) => void
     onRemove: () => void
-    allowIntegerOnly?: boolean
     dimension: DimensionMetadataItem
-    enableDecimalSteps?: boolean
     legendSetId?: string
 }
 
@@ -36,10 +34,24 @@ export const NumericCondition: FC<NumericConditionProps> = ({
     onRemove,
     legendSetId,
     numberOfConditions,
-    enableDecimalSteps,
     dimension,
-    allowIntegerOnly,
 }) => {
+    const allowIntegerOnly: boolean = useMemo(
+        () =>
+            [
+                'INTEGER',
+                'INTEGER_POSITIVE',
+                'INTEGER_NEGATIVE',
+                'INTEGER_ZERO_OR_POSITIVE',
+            ].includes(dimension.valueType),
+        [dimension.valueType]
+    )
+
+    const enableDecimalSteps: boolean = useMemo(
+        () => dimension.valueType === 'UNIT_INTERVAL',
+        [dimension.valueType]
+    )
+
     const [operator, value] = useMemo(() => {
         if (condition.includes(NULL_VALUE)) {
             return [condition, '']
