@@ -37,7 +37,7 @@ export type UseDimensionListReturn = {
     loadMore: () => void
 }
 
-type ResponseData = Record<string, DimensionMetadataItem[]> & {
+export type ResponseData = Record<string, DimensionMetadataItem[]> & {
     pager: {
         page: number
         pageCount: number
@@ -88,7 +88,7 @@ type SingleQueryWithFilterParam = Omit<SingleQuery, 'params'> & {
 }
 
 const FILTER_PARAM_SEARCH_TERM = 'displayName:ilike:'
-const FILTER_PARAM_DIMENSION_TYPE = 'dimensionType:eq:'
+export const FILTER_PARAM_DIMENSION_TYPE = 'dimensionType:eq:'
 const DEFAULT_INITIAL_DIMENSIONS = []
 
 const updateQuerySearchFilter = (
