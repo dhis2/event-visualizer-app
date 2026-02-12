@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { api } from '@api/api'
 import { type EngineError, parseEngineError } from '@api/parse-engine-error'
-import { useAppDispatch, useAppSelector } from '@hooks'
+import { useEffectEvent, useAppDispatch, useAppSelector } from '@hooks'
 import { isDimensionMetadataItem } from '@modules/metadata'
 import { isObject, isPopulatedString } from '@modules/validation'
 import {
@@ -29,12 +29,14 @@ export type UseDimensionListOptions = {
     baseQuery?: SingleQuery
 }
 
-export type UseDimensionListReturn = {
+export type UseDimensionListResult = {
     dimensions: DimensionMetadataItem[]
     isLoading: boolean
+    isFetching: boolean
     error?: EngineError
     hasMore: boolean
     loadMore: () => void
+    isSearching: boolean
 }
 
 export type ResponseData = Record<string, DimensionMetadataItem[]> & {
@@ -46,11 +48,22 @@ export type ResponseData = Record<string, DimensionMetadataItem[]> & {
     }
 }
 
+type SingleQueryWithFilterParam = Omit<SingleQuery, 'params'> & {
+    params: Omit<SingleQuery['params'], 'filter' | 'page'> & {
+        filter: string[]
+        page: number
+    }
+}
+
+const FILTER_PARAM_SEARCH_TERM = 'displayName:ilike:'
+const FILTER_PARAM_DIMENSION_TYPE = 'dimensionType:eq:'
+const DEFAULT_INITIAL_DIMENSIONS = []
+
 export const transformResponseData = (
     data: ResponseData
 ): {
     dimensions: DimensionMetadataItem[]
-    hasMore: boolean
+    nextPage: number | null
 } => {
     const dimensionsKey = Object.keys(data).find((key) => key !== 'pager')
 
@@ -69,191 +82,132 @@ export const transformResponseData = (
     }
 
     const dimensions = data[dimensionsKey]
-    const hasMore = data.pager.page < data.pager.pageCount
+    const nextPage =
+        data.pager.page < data.pager.pageCount ? data.pager.page + 1 : null
 
     if (dimensions.length > 0 && !isDimensionMetadataItem(dimensions[0])) {
         throw new Error(
-            'Dimensions array item is not a valid dimension metadata item'
+            'Dimensions array item is not a valid dimension dimension metadata item'
         )
     }
 
-    return { dimensions, hasMore }
+    return { dimensions, nextPage }
 }
 
-type SingleQueryWithFilterParam = Omit<SingleQuery, 'params'> & {
-    params: Omit<SingleQuery['params'], 'filter' | 'page'> & {
-        filter: string[]
-        page: number
-    }
-}
-
-const FILTER_PARAM_SEARCH_TERM = 'displayName:ilike:'
-export const FILTER_PARAM_DIMENSION_TYPE = 'dimensionType:eq:'
-const DEFAULT_INITIAL_DIMENSIONS = []
-
-const updateQuerySearchFilter = (
-    query: SingleQueryWithFilterParam | null,
-    searchTerm: string
-): SingleQueryWithFilterParam | null => {
-    if (!query) {
-        return null
-    }
-
-    if (!searchTerm) {
-        // Remove search filter param if no searchTerm is provided
-        query.params.filter = query.params.filter.filter(
-            (str) => !str.startsWith(FILTER_PARAM_SEARCH_TERM)
-        )
-    } else {
-        let hasExistingFilter = false
-        const newSearchFilterParam = `${FILTER_PARAM_SEARCH_TERM}${searchTerm}`
-
-        for (let index = 0; index < query.params.filter.length; index++) {
-            if (
-                query.params.filter[index].startsWith(FILTER_PARAM_SEARCH_TERM)
-            ) {
-                // Replace existing filter if one is found
-                hasExistingFilter = true
-                query.params.filter[index] = newSearchFilterParam
-            }
-        }
-        if (!hasExistingFilter) {
-            // Add filter if none was present
-            query.params.filter.push(newSearchFilterParam)
-        }
-    }
-    return query
-}
-
-const normalizeBaseQuery = (
+export const getFilterParamsFromBaseQuery = (
     baseQuery: SingleQuery | undefined
-): SingleQueryWithFilterParam | null => {
-    if (!baseQuery) {
-        return null
+): string[] => {
+    if (!(isObject(baseQuery?.params) && 'filter' in baseQuery.params)) {
+        return []
     }
 
-    const query = { ...baseQuery }
-
-    if (!query.params) {
-        query.params = {}
-    }
-    if (!query.params.filter) {
-        query.params.filter = []
-    }
-    if (typeof query.params.filter === 'string') {
-        query.params.filter = query.params.filter.split(',')
-    }
-
-    query.params.page = 1
-
-    if (
-        !Array.isArray(query.params.filter) ||
-        query.params.filter.some((str) => !isPopulatedString(str))
+    if (typeof baseQuery.params.filter === 'string') {
+        return baseQuery.params.filter
+            .split(',')
+            .filter((str) => str.length > 0)
+    } else if (
+        Array.isArray(baseQuery.params.filter) &&
+        baseQuery.params.filter.every((str) => isPopulatedString(str))
     ) {
+        return [...baseQuery.params.filter]
+    } else {
         throw new Error('Invalid filter query params')
     }
-
-    return query as SingleQueryWithFilterParam
 }
-type UseMutableQueryOptions = {
-    baseQuery: UseDimensionListOptions['baseQuery']
-    searchTerm: string
+
+export const buildQuery = (
+    baseQuery: SingleQuery,
+    searchTerm: string,
+    page: number
+): SingleQueryWithFilterParam => {
+    const query = { ...baseQuery }
+    const params = {
+        ...query.params,
+        filter: getFilterParamsFromBaseQuery(query),
+        page,
+    }
+
+    if (searchTerm) {
+        params.filter.push(`${FILTER_PARAM_SEARCH_TERM}${searchTerm}`)
+    }
+
+    return {
+        ...query,
+        params,
+    }
+}
+
+export const isFetchEnabledByFilter = (
+    baseQuery: SingleQuery | undefined,
     filter: DataSourceFilter | null
-}
-type UseMutableQueryResult = {
-    getQuery: () => SingleQueryWithFilterParam | null
-    updateFilter: (newFilter: DataSourceFilter | null) => void
-    updateSearchTerm: (newSearchTerm: string) => void
-    incrementPage: () => void
-}
-const useMutableQuery = ({
-    baseQuery,
-    searchTerm,
-    filter,
-}: UseMutableQueryOptions): UseMutableQueryResult => {
-    const baseQueryRef = useRef(baseQuery)
-    const filterRef = useRef(filter)
-    const queryRef = useRef<SingleQueryWithFilterParam | null>(
-        updateQuerySearchFilter(normalizeBaseQuery(baseQuery), searchTerm)
-    )
+): boolean => {
+    if (!baseQuery) {
+        return false
+    } else if (!filter) {
+        return true
+    } else {
+        const dimensionTypeFilter = getFilterParamsFromBaseQuery(
+            baseQuery
+        ).find((str) => str.startsWith(FILTER_PARAM_DIMENSION_TYPE))
 
-    useEffect(() => {
-        if (baseQuery !== baseQueryRef.current) {
-            throw new Error('Ensure baseQuery is stable')
+        if (!dimensionTypeFilter) {
+            // No dimension type filter in query, fetch regardless of filter
+            return true
+        } else {
+            const dimensionType = dimensionTypeFilter.replace(
+                FILTER_PARAM_DIMENSION_TYPE,
+                ''
+            ) as DimensionType
+            // Fetch only when query filter matches enabled filter
+            return dimensionType === filter
         }
-    }, [baseQuery])
-
-    return useMemo<UseMutableQueryResult>(
-        () => ({
-            getQuery: () => {
-                if (!queryRef.current) {
-                    return null
-                }
-                const filterParamDimensionType = queryRef.current.params.filter
-                    .find((str) => str.startsWith(FILTER_PARAM_DIMENSION_TYPE))
-                    ?.replace(FILTER_PARAM_DIMENSION_TYPE, '') as
-                    | DimensionType
-                    | undefined
-                const shouldFetch =
-                    !filterParamDimensionType ||
-                    filterParamDimensionType === filterRef.current
-
-                if (!shouldFetch) {
-                    return null
-                } else {
-                    return queryRef.current
-                }
-            },
-
-            updateFilter: (newFilter: DataSourceFilter | null) => {
-                filterRef.current = newFilter
-            },
-
-            updateSearchTerm: (newSearchTerm: string) => {
-                queryRef.current = updateQuerySearchFilter(
-                    queryRef.current,
-                    newSearchTerm
-                )
-                if (queryRef.current) {
-                    queryRef.current.params.page = 1
-                }
-            },
-
-            incrementPage: () => {
-                if (queryRef.current) {
-                    queryRef.current.params.page =
-                        queryRef.current.params.page + 1
-                }
-            },
-        }),
-        []
-    )
+    }
 }
+
+export const filterDimensions = (
+    dimensions: DimensionMetadataItem[],
+    searchTerm: string,
+    filter: DataSourceFilter | null
+): DimensionMetadataItem[] => {
+    const lowerSearchTerm = searchTerm.toLocaleLowerCase()
+
+    return dimensions.filter((dimension) => {
+        const searchTermMatch =
+            !lowerSearchTerm ||
+            dimension.name.toLocaleLowerCase().includes(lowerSearchTerm)
+        const filterMatch = !filter || dimension.dimensionType === filter
+        return searchTermMatch && filterMatch
+    })
+}
+
 export const useDimensionList = ({
     dimensionListKey,
     initialDimensions = DEFAULT_INITIAL_DIMENSIONS,
     baseQuery,
-}: UseDimensionListOptions): UseDimensionListReturn => {
+}: UseDimensionListOptions): UseDimensionListResult => {
     const dispatch = useAppDispatch()
     const searchTerm = useAppSelector(getSearchTerm)
     const filter = useAppSelector(getFilter)
-    const isLoading = useAppSelector((state) =>
+    const isFetching = useAppSelector((state) =>
         isDimensionListLoading(state, dimensionListKey)
     )
     const error = useAppSelector((state) =>
         getDimensionListError(state, dimensionListKey)
     )
-    const { getQuery, incrementPage, updateSearchTerm, updateFilter } =
-        useMutableQuery({ baseQuery, searchTerm, filter })
     const [fetchedDimensions, setFetchedDimensions] = useState<
         DimensionMetadataItem[]
     >([])
-    const [hasMore, setHasMore] = useState(() => !!getQuery())
+    const isInitalFetchSuccessRef = useRef(false)
+    const [isSearching, setIsSearching] = useState(false)
+    const nextPageRef = useRef<number | null>(null)
+    const prevBaseQueryRef = useRef(baseQuery)
 
-    const fetchDimensions = useCallback(async () => {
-        const query = getQuery()
-
-        if (!query) {
+    const fetchDimensions = useEffectEvent(async () => {
+        if (
+            !baseQuery ||
+            nextPageRef.current === null ||
+            !isFetchEnabledByFilter(baseQuery, filter)
+        ) {
             return
         }
 
@@ -261,17 +215,22 @@ export const useDimensionList = ({
 
         try {
             const responseData = (await dispatch(
-                api.endpoints.query.initiate(query)
+                api.endpoints.query.initiate(
+                    buildQuery(baseQuery, searchTerm, nextPageRef.current)
+                )
             ).unwrap()) as ResponseData
 
-            const { dimensions, hasMore } = transformResponseData(responseData)
+            const { dimensions, nextPage } = transformResponseData(responseData)
 
-            if (query.params.page === 1) {
+            isInitalFetchSuccessRef.current = true
+            setIsSearching(false)
+
+            if (nextPageRef.current === 1) {
                 setFetchedDimensions(dimensions)
             } else {
                 setFetchedDimensions((prev) => [...prev, ...dimensions])
             }
-            setHasMore(hasMore)
+            nextPageRef.current = nextPage
             dispatch(setDimensionListLoadSuccess(dimensionListKey))
         } catch (error) {
             const engineError = parseEngineError(error)
@@ -282,69 +241,22 @@ export const useDimensionList = ({
                 })
             )
         }
-    }, [dispatch, dimensionListKey, getQuery])
-
-    // TODO: Should we keep this? It should just work
-    const stabilityCheckRef = useRef({
-        dimensionListKey,
-        initialDimensions,
-        baseQuery,
-        fetchDimensions,
-        getQuery,
-        incrementPage,
-        updateSearchTerm,
-        updateFilter,
     })
 
-    useEffect(() => {
-        if (
-            dimensionListKey !== stabilityCheckRef.current.dimensionListKey ||
-            initialDimensions !== stabilityCheckRef.current.initialDimensions ||
-            baseQuery !== stabilityCheckRef.current.baseQuery ||
-            fetchDimensions !== stabilityCheckRef.current.fetchDimensions ||
-            getQuery !== stabilityCheckRef.current.getQuery ||
-            incrementPage !== stabilityCheckRef.current.incrementPage ||
-            updateSearchTerm !== stabilityCheckRef.current.updateSearchTerm ||
-            updateFilter !== stabilityCheckRef.current.updateFilter
-        ) {
-            throw new Error('Found an instable property')
-        }
-    }, [
-        dimensionListKey,
-        initialDimensions,
-        baseQuery,
-        fetchDimensions,
-        getQuery,
-        incrementPage,
-        updateSearchTerm,
-        updateFilter,
-    ])
-    // END OF STABILITY CHECK CODE
-
     const loadMore = useCallback(() => {
-        if (!!getQuery() && hasMore && !isLoading) {
-            incrementPage()
+        if (nextPageRef.current && !isFetching) {
             fetchDimensions()
         }
-    }, [hasMore, isLoading, incrementPage, fetchDimensions, getQuery])
+    }, [isFetching, fetchDimensions])
 
     const dimensions = useMemo(() => {
-        /* Initial items need to be filtered, but not sorted.
-         * Fetched items are sorted and filtered server side. */
-        const lowerSearchTerm = searchTerm.toLocaleLowerCase()
-        const hasQuery = !!getQuery()
-
-        return initialDimensions
-            .filter((dimension) => {
-                const searchTermMatch =
-                    !lowerSearchTerm ||
-                    dimension.name.toLocaleLowerCase().includes(lowerSearchTerm)
-                const filterMatch =
-                    !filter || dimension.dimensionType === filter
-                return searchTermMatch && filterMatch
-            })
-            .concat(hasQuery ? fetchedDimensions : [])
-    }, [initialDimensions, fetchedDimensions, searchTerm, filter, getQuery])
+        const filteredInitial = filterDimensions(
+            initialDimensions,
+            searchTerm,
+            filter
+        )
+        return [...filteredInitial, ...fetchedDimensions]
+    }, [initialDimensions, fetchedDimensions, searchTerm, filter])
 
     useEffect(() => {
         dispatch(addDimensionListLoadingState(dimensionListKey))
@@ -355,22 +267,46 @@ export const useDimensionList = ({
     }, [dispatch, dimensionListKey])
 
     useEffect(() => {
-        updateFilter(filter)
-    }, [filter, updateFilter])
+        nextPageRef.current = 1
+
+        // Skip on initial fetch
+        if (isInitalFetchSuccessRef.current) {
+            setIsSearching(true)
+        }
+        fetchDimensions()
+    }, [searchTerm, fetchDimensions])
 
     useEffect(() => {
-        updateSearchTerm(searchTerm)
-        fetchDimensions()
-    }, [searchTerm, updateSearchTerm, fetchDimensions])
+        if (
+            (process.env.NODE_ENV === 'development' ||
+                process.env.NODE_ENV === 'test') &&
+            prevBaseQueryRef.current !== baseQuery
+        ) {
+            throw new Error('baseQuery changed - it should remain stable')
+        }
+        prevBaseQueryRef.current = baseQuery
+    }, [baseQuery])
 
     return useMemo(
         () => ({
             dimensions,
-            isLoading,
+            isFetching,
+            isLoading: !isInitalFetchSuccessRef.current && isFetching,
             error,
-            hasMore: !!getQuery() && hasMore,
+            hasMore:
+                nextPageRef.current !== null &&
+                isFetchEnabledByFilter(baseQuery, filter),
             loadMore,
+            isSearching,
         }),
-        [dimensions, isLoading, error, hasMore, loadMore, getQuery]
+        [
+            baseQuery,
+            dimensions,
+            isFetching,
+            isSearching,
+            error,
+            loadMore,
+            filter,
+        ]
     )
 }
