@@ -348,13 +348,11 @@ export const useDimensionList = ({
 
     useEffect(() => {
         dispatch(addDimensionListLoadingState(dimensionListKey))
-        // initial fetch
-        fetchDimensions()
 
         return () => {
             dispatch(removeDimensionListLoadingState(dimensionListKey))
         }
-    }, [dispatch, dimensionListKey, fetchDimensions])
+    }, [dispatch, dimensionListKey])
 
     useEffect(() => {
         updateFilter(filter)
