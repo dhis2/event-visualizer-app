@@ -743,12 +743,18 @@ msgstr "Open"
 msgid "Save"
 msgstr "Save"
 
+msgid "An unknown error occurred."
+msgstr "An unknown error occurred."
+
 msgid ""
 "This visualization can't be deleted because it is used on one or more "
 "dashboards."
 msgstr ""
 "This visualization can't be deleted because it is used on one or more "
 "dashboards."
+
+msgid "You don't have sufficient permissions."
+msgstr "You don't have sufficient permissions."
 
 msgid "equal to (=)"
 msgstr "equal to (=)"
