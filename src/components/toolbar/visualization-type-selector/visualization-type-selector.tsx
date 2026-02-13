@@ -5,7 +5,7 @@ import { useState, useRef } from 'react'
 import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
 import { VisualizationTypeListItem } from './visualization-type-list-item'
-import { ArrowDown } from '@assets/arrow-down'
+import { IconArrowDown } from '@assets/icon-arrow-down'
 import { VISUALIZATION_TYPES } from '@constants/visualization-types'
 import { visTypeDisplayNames, ToolbarSidebar } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
@@ -64,7 +64,7 @@ export const VisualizationTypeSelector: FC = () => {
                             [classes.listIsOpen]: listIsOpen,
                         })}
                     >
-                        <ArrowDown />
+                        <IconArrowDown />
                     </span>
                 </div>
             </ToolbarSidebar>
