@@ -3,7 +3,6 @@ import i18n from '@dhis2/d2-i18n'
 import { useCallback } from 'react'
 import type { FC } from 'react'
 import { DownloadMenu } from './download-menu'
-import { OptionsMenu } from './options-menu'
 import { ViewMenu } from './view-menu'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { parseEngineError } from '@api/parse-engine-error'
@@ -211,40 +210,42 @@ export const MenuBar: FC = () => {
     const onDeleteError = (error) => onError(parseEngineError(error))
 
     return (
-        <HoverMenuBar>
-            <FileMenu
-                currentUser={currentUser}
-                fileObject={{ ...savedVis, ...currentVis }}
-                fileType="eventVisualization"
-                filterVisTypes={filterVisTypes}
-                defaultFilterVisType="ALL"
-                onNew={onNew}
-                onOpen={onOpen}
-                // TODO: perhaps disable with a dirty visualization as the changes are lost and it's not transparent
-                // needs a change in the analytics component
-                onRename={onRename}
-                onSave={
-                    ['UNSAVED', 'DIRTY'].includes(
-                        getVisualizationState(savedVis, currentVis)
-                    ) &&
-                    isVisualizationValidForSave({
-                        ...currentVis,
-                        legacy: savedVis?.legacy,
-                    })
-                        ? onSave
-                        : undefined
-                }
-                onSaveAs={
-                    isVisualizationValidForSaveAs(currentVis)
-                        ? (nameAndDescription) => onSaveAs(nameAndDescription)
-                        : undefined
-                }
-                onDelete={onDelete}
-                onError={onDeleteError}
-            />
-            <ViewMenu />
-            <DownloadMenu />
-            <OptionsMenu />
-        </HoverMenuBar>
+        <div style={{ display: 'flex', flexGrow: 0, alignItems: 'stretch' }}>
+            <HoverMenuBar>
+                <FileMenu
+                    currentUser={currentUser}
+                    fileObject={{ ...savedVis, ...currentVis }}
+                    fileType="eventVisualization"
+                    filterVisTypes={filterVisTypes}
+                    defaultFilterVisType="ALL"
+                    onNew={onNew}
+                    onOpen={onOpen}
+                    // TODO: perhaps disable with a dirty visualization as the changes are lost and it's not transparent
+                    // needs a change in the analytics component
+                    onRename={onRename}
+                    onSave={
+                        ['UNSAVED', 'DIRTY'].includes(
+                            getVisualizationState(savedVis, currentVis)
+                        ) &&
+                        isVisualizationValidForSave({
+                            ...currentVis,
+                            legacy: savedVis?.legacy,
+                        })
+                            ? onSave
+                            : undefined
+                    }
+                    onSaveAs={
+                        isVisualizationValidForSaveAs(currentVis)
+                            ? (nameAndDescription) =>
+                                  onSaveAs(nameAndDescription)
+                            : undefined
+                    }
+                    onDelete={onDelete}
+                    onError={onDeleteError}
+                />
+                <ViewMenu />
+                <DownloadMenu />
+            </HoverMenuBar>
+        </div>
     )
 }
