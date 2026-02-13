@@ -554,30 +554,29 @@ msgstr "Click a dimension to add or remove conditions."
 msgid "Your most viewed event visualizations"
 msgstr "Your most viewed event visualizations"
 
-msgid "Show panels"
-msgstr "Show panels"
-
-msgid "Expand visualization and hide panels"
-msgstr "Expand visualization and hide panels"
-
 msgid "Unsaved visualization"
 msgstr "Unsaved visualization"
 
 msgid "Edited"
 msgstr "Edited"
 
+msgid "Show panels"
+msgstr "Show panels"
+
+msgid "Expand visualization and hide panels"
+msgstr "Expand visualization and hide panels"
+
+msgid "Hide details panel"
+msgstr "Hide details panel"
+
+msgid "Show details panel"
+msgstr "Show details panel"
+
 msgid "Download"
 msgstr "Download"
 
 msgid "An unknown error occurred."
 msgstr "An unknown error occurred."
-
-msgid ""
-"This visualization can't be deleted because it is used on one or more "
-"dashboards."
-msgstr ""
-"This visualization can't be deleted because it is used on one or more "
-"dashboards."
 
 msgid "You don't have sufficient permissions."
 msgstr "You don't have sufficient permissions."
@@ -614,6 +613,22 @@ msgstr "View"
 
 msgid "Reset sidebar width"
 msgstr "Reset sidebar width"
+
+msgid "New"
+msgstr "New"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Save"
+msgstr "Save"
+
+msgid ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+msgstr ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
 
 msgid "equal to (=)"
 msgstr "equal to (=)"
