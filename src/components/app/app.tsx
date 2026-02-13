@@ -21,7 +21,6 @@ import { MainSidebar } from '@components/main-sidebar/main-sidebar'
 import type { AnalyticsResponseMetadataItems } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
-import { TitleBar } from '@components/title-bar/title-bar'
 import { Toolbar } from '@components/toolbar/toolbar'
 import {
     useAddAnalyticsResponseMetadata,
@@ -89,7 +88,6 @@ const EventVisualizer: FC = () => {
             </GridStartColumn>
             <GridCenterColumnTop>
                 <LayoutPanel />
-                <TitleBar />
             </GridCenterColumnTop>
             <GridCenterColumnBottom>
                 {isVisualizationEmpty(currentVis) && !isVisualizationLoading ? (

@@ -1,7 +1,6 @@
 import i18n from '@dhis2/d2-i18n'
 import cx from 'classnames'
 import type { FC, ReactNode } from 'react'
-import { ExpandedVisualizationCanvasToggle } from './expanded-visualization-canvas-toggle'
 import classes from './styles/title-bar.module.css'
 import { useAppSelector } from '@hooks'
 import { getVisualizationState } from '@modules/visualization'
@@ -54,9 +53,6 @@ export const TitleBar: FC = () => {
 
     return titleText ? (
         <div data-test="title-bar" className={classes.titleBar}>
-            <div className={classes.buttonContainer}>
-                <ExpandedVisualizationCanvasToggle />
-            </div>
             <div className={classes.titleContainer}>
                 <div className={titleClasses}>
                     {titleText}

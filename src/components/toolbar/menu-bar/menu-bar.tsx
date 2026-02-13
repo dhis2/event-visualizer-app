@@ -3,35 +3,24 @@ import i18n from '@dhis2/d2-i18n'
 import { useCallback } from 'react'
 import type { FC } from 'react'
 import { DownloadMenu } from './download-menu'
-import { OptionsMenu } from './options-menu'
 import { ViewMenu } from './view-menu'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { parseEngineError } from '@api/parse-engine-error'
+import { useToolbarActions } from '@components/toolbar/use-toolbar-actions'
 import { VISUALIZATION_TYPES } from '@constants/visualization-types'
-import {
-    FileMenu,
-    HoverMenuBar,
-    preparePayloadForSave,
-    preparePayloadForSaveAs,
-} from '@dhis2/analytics'
+import { FileMenu, HoverMenuBar } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
 import {
     isVisualizationValidForSave,
     isVisualizationValidForSaveAs,
 } from '@modules/validation'
-import {
-    getVisualizationState,
-    getSaveableVisualization,
-    isVisualizationSaved,
-} from '@modules/visualization'
+import { getVisualizationState } from '@modules/visualization'
 import {
     getCurrentVis,
     setCurrentVisNameDescription,
 } from '@store/current-vis-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import { getSavedVis, setSavedVisNameDescription } from '@store/saved-vis-slice'
-import { tLoadSavedVisualization } from '@store/thunks'
-import type { NewVisualization, SavedVisualization } from '@types'
 
 export const MenuBar: FC = () => {
     const dispatch = useAppDispatch()
@@ -39,6 +28,8 @@ export const MenuBar: FC = () => {
     const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)
     const savedVis = useAppSelector(getSavedVis)
+
+    const { onError, onNew, onOpen, onSave, onSaveAs } = useToolbarActions()
 
     const { show: showAlert } = useAlert(
         ({ message }) => message,
@@ -51,111 +42,6 @@ export const MenuBar: FC = () => {
             type: visType,
         })),
     ]
-
-    const onError = useCallback(
-        (error) => {
-            console.error(error)
-            let message = error.message || i18n.t('An unknown error occurred.')
-
-            switch (error.errorCode) {
-                case 'E4030':
-                    message = i18n.t(
-                        "This visualization can't be deleted because it is used on one or more dashboards."
-                    )
-                    break
-                case 'E1006':
-                    message = i18n.t("You don't have sufficient permissions.")
-                    break
-                default:
-                    break
-            }
-
-            const alertLevel = /50\d/.test(String(error.httpStatusCode))
-                ? 'error'
-                : 'warning'
-
-            showAlert({
-                message,
-                options: {
-                    [alertLevel]: true,
-                },
-            })
-        },
-        [showAlert]
-    )
-
-    const onNew = useCallback(
-        () => dispatch(setNavigationState({ visualizationId: 'new' })),
-        [dispatch]
-    )
-
-    const onOpen = useCallback(
-        (id: string) => {
-            if (isVisualizationSaved(currentVis) && currentVis.id === id) {
-                dispatch(
-                    tLoadSavedVisualization({ id, updateStatistics: false })
-                )
-            } else {
-                dispatch(setNavigationState({ visualizationId: id }))
-            }
-        },
-        [dispatch, currentVis]
-    )
-
-    // New visualization
-    // it can be a copy of an existing one, but a new id is returned
-    const onSaveAs = useCallback(
-        async (nameAndDescription: { name: string; description: string }) => {
-            const { data, error } = await dispatch(
-                eventVisualizationsApi.endpoints.createVisualization.initiate(
-                    preparePayloadForSaveAs({
-                        visualization: {
-                            ...getSaveableVisualization(
-                                currentVis as unknown as NewVisualization
-                            ),
-                            // XXX: this ideally should be done in preparePayloadForSaveAs
-                            subscribers: [],
-                        },
-                        ...nameAndDescription,
-                    })
-                )
-            )
-
-            if (data) {
-                // Navigate to the new visualization
-                dispatch(setNavigationState({ visualizationId: data }))
-            } else if (error) {
-                onError(error)
-            }
-        },
-        [dispatch, currentVis, onError]
-    )
-
-    // Existing visualization
-    const onSave = useCallback(async () => {
-        const { data, error } = await dispatch(
-            eventVisualizationsApi.endpoints.updateVisualization.initiate(
-                preparePayloadForSave({
-                    visualization: getSaveableVisualization(
-                        currentVis as unknown as SavedVisualization
-                    ) as SavedVisualization,
-                })
-            )
-        )
-
-        if (data && isVisualizationSaved(currentVis)) {
-            // Reload the saved visualization after saving
-            // here we should *not* update statistics
-            dispatch(
-                tLoadSavedVisualization({
-                    id: currentVis.id,
-                    updateStatistics: false,
-                })
-            )
-        } else if (error) {
-            onError(error)
-        }
-    }, [dispatch, currentVis, onError])
 
     // Existing visualization
     // the visualization is updated with only name and/or description from the rename dialog
@@ -211,40 +97,42 @@ export const MenuBar: FC = () => {
     const onDeleteError = (error) => onError(parseEngineError(error))
 
     return (
-        <HoverMenuBar>
-            <FileMenu
-                currentUser={currentUser}
-                fileObject={{ ...savedVis, ...currentVis }}
-                fileType="eventVisualization"
-                filterVisTypes={filterVisTypes}
-                defaultFilterVisType="ALL"
-                onNew={onNew}
-                onOpen={onOpen}
-                // TODO: perhaps disable with a dirty visualization as the changes are lost and it's not transparent
-                // needs a change in the analytics component
-                onRename={onRename}
-                onSave={
-                    ['UNSAVED', 'DIRTY'].includes(
-                        getVisualizationState(savedVis, currentVis)
-                    ) &&
-                    isVisualizationValidForSave({
-                        ...currentVis,
-                        legacy: savedVis?.legacy,
-                    })
-                        ? onSave
-                        : undefined
-                }
-                onSaveAs={
-                    isVisualizationValidForSaveAs(currentVis)
-                        ? (nameAndDescription) => onSaveAs(nameAndDescription)
-                        : undefined
-                }
-                onDelete={onDelete}
-                onError={onDeleteError}
-            />
-            <ViewMenu />
-            <DownloadMenu />
-            <OptionsMenu />
-        </HoverMenuBar>
+        <div style={{ display: 'flex', flexGrow: 0, alignItems: 'stretch' }}>
+            <HoverMenuBar>
+                <FileMenu
+                    currentUser={currentUser}
+                    fileObject={{ ...savedVis, ...currentVis }}
+                    fileType="eventVisualization"
+                    filterVisTypes={filterVisTypes}
+                    defaultFilterVisType="ALL"
+                    onNew={onNew}
+                    onOpen={onOpen}
+                    // TODO: perhaps disable with a dirty visualization as the changes are lost and it's not transparent
+                    // needs a change in the analytics component
+                    onRename={onRename}
+                    onSave={
+                        ['UNSAVED', 'DIRTY'].includes(
+                            getVisualizationState(savedVis, currentVis)
+                        ) &&
+                        isVisualizationValidForSave({
+                            ...currentVis,
+                            legacy: savedVis?.legacy,
+                        })
+                            ? onSave
+                            : undefined
+                    }
+                    onSaveAs={
+                        isVisualizationValidForSaveAs(currentVis)
+                            ? (nameAndDescription) =>
+                                  onSaveAs(nameAndDescription)
+                            : undefined
+                    }
+                    onDelete={onDelete}
+                    onError={onDeleteError}
+                />
+                <ViewMenu />
+                <DownloadMenu />
+            </HoverMenuBar>
+        </div>
     )
 }

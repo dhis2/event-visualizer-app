@@ -1,8 +1,3 @@
-.tooltipAnchor {
-    display: flex;
-    align-self: center;
-}
-
 .tooltipAnchor > :global(button.small.icon-only) {
     padding: 6px 5px;
 }

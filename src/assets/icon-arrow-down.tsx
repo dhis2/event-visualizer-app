@@ -2,7 +2,7 @@ import type { FC } from 'react'
 
 // TODO: check if this should be removed in favour of IconChevronDown from the ui library.
 // See: https://dhis2.atlassian.net/browse/DHIS2-19961
-export const ArrowDown: FC = () => (
+export const IconArrowDown: FC = () => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 16 16"

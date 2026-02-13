@@ -1,0 +1,23 @@
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    background: none;
+    border: none !important;
+    cursor: pointer;
+    color: var(--colors-grey700);
+    fill: var(--colors-grey700);
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.button:hover:not(:disabled) {
+    color: var(--colors-grey900);
+    background-color: var(--colors-grey200);
+}
+
+.button:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+}
