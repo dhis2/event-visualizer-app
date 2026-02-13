@@ -1,6 +1,9 @@
+import i18n from '@dhis2/d2-i18n'
 import type { FC } from 'react'
 import { useCallback } from 'react'
-import { InterpretationsAndDetailsToggler as AnalyticsInterpretationsAndDetailsToggler } from '@dhis2/analytics'
+import { Toggler } from './toggler'
+import { IconPanelHide } from '@assets/icon-panel-hide'
+import { IconPanelShow } from '@assets/icon-panel-show'
 import { useAppSelector, useAppDispatch } from '@hooks'
 import { getCurrentVisId } from '@store/current-vis-slice'
 import {
@@ -18,11 +21,16 @@ export const InterpretationsAndDetailsToggler: FC = () => {
         dispatch(setUiDetailsPanelVisible(!isDetailsPanelVisible))
     }, [dispatch, isDetailsPanelVisible])
 
+    const tooltipText = isDetailsPanelVisible
+        ? i18n.t('Hide details panel')
+        : i18n.t('Show details panel')
+
     return (
-        <AnalyticsInterpretationsAndDetailsToggler
+        <Toggler
             disabled={!id}
+            tooltipText={tooltipText}
+            icon={isDetailsPanelVisible ? <IconPanelHide /> : <IconPanelShow />}
             onClick={onClick}
-            isShowing={isDetailsPanelVisible}
         />
     )
 }
