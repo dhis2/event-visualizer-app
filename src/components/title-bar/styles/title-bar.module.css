@@ -1,5 +1,6 @@
 .titleBar {
     display: flex;
+    flex-grow: 1;
     justify-content: flex-start;
     /* Same amount of whitespace as the expanded canvas button */
     padding-inline-end: 28px;
@@ -14,7 +15,6 @@
 .titleBar > .titleContainer {
     display: flex;
     flex-grow: 1;
-    justify-content: center;
 }
 
 .cell {
@@ -27,7 +27,9 @@
 }
 
 .title {
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--colors-grey800);
 }
 
 .suffix {
