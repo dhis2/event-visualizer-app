@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-13T13:00:54.967Z\n"
-"PO-Revision-Date: 2026-02-13T13:00:54.968Z\n"
+"POT-Creation-Date: 2026-02-13T13:12:36.294Z\n"
+"PO-Revision-Date: 2026-02-13T13:12:36.295Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -572,12 +572,6 @@ msgstr "Show details panel"
 msgid "Download"
 msgstr "Download"
 
-msgid "An unknown error occurred."
-msgstr "An unknown error occurred."
-
-msgid "You don't have sufficient permissions."
-msgstr "You don't have sufficient permissions."
-
 msgid "Rename successful"
 msgstr "Rename successful"
 
@@ -620,12 +614,18 @@ msgstr "Open"
 msgid "Save"
 msgstr "Save"
 
+msgid "An unknown error occurred."
+msgstr "An unknown error occurred."
+
 msgid ""
 "This visualization can't be deleted because it is used on one or more "
 "dashboards."
 msgstr ""
 "This visualization can't be deleted because it is used on one or more "
 "dashboards."
+
+msgid "You don't have sufficient permissions."
+msgstr "You don't have sufficient permissions."
 
 msgid "equal to (=)"
 msgstr "equal to (=)"
