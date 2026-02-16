@@ -11,7 +11,7 @@ import type { CurrentVisualization, VisualizationState } from '@types'
 export const getTitleUnsaved = () => i18n.t('Unsaved visualization')
 export const getTitleDirty = () => i18n.t('Edited')
 
-const defaultTitleClasses = `${classes.cell} ${classes.title}`
+const defaultTitleClasses = `${classes.cell}`
 
 const getTitleText = (
     titleState: VisualizationState,
@@ -56,7 +56,7 @@ export const TitleBar: FC = () => {
             <div className={classes.titleContainer}>
                 {titleText && (
                     <div className={titleClasses}>
-                        {titleText}
+                        <span className={classes.title}>{titleText}</span>
                         {getSuffix(titleState)}
                     </div>
                 )}
