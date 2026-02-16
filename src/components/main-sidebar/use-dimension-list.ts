@@ -37,6 +37,7 @@ export type UseDimensionListResult = {
     hasMore: boolean
     loadMore: () => void
     isSearching: boolean
+    isDisabledByFilter: boolean
 }
 
 export type ResponseData = Record<string, DimensionMetadataItem[]> & {
@@ -258,6 +259,18 @@ export const useDimensionList = ({
         return [...filteredInitial, ...fetchedDimensions]
     }, [fixedDimensions, fetchedDimensions, searchTerm, filter])
 
+    const isDisabledByFilter = useMemo(() => {
+        return (
+            !isFetchEnabledByFilter(baseQuery, filter) &&
+            !(
+                Array.isArray(fixedDimensions) &&
+                fixedDimensions.some(
+                    (dimension) => dimension.dimensionType === filter
+                )
+            )
+        )
+    }, [baseQuery, filter, fixedDimensions])
+
     useEffect(() => {
         dispatch(addDimensionListLoadingState(dimensionListKey))
 
@@ -298,6 +311,7 @@ export const useDimensionList = ({
                 isFetchEnabledByFilter(baseQuery, filter),
             loadMore,
             isSearching,
+            isDisabledByFilter,
         }),
         [
             baseQuery,
@@ -307,6 +321,7 @@ export const useDimensionList = ({
             error,
             loadMore,
             filter,
+            isDisabledByFilter,
         ]
     )
 }
