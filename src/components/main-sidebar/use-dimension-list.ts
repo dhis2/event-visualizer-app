@@ -200,6 +200,7 @@ export const useDimensionList = ({
     >([])
     const isInitalFetchSuccessRef = useRef(false)
     const [isSearching, setIsSearching] = useState(false)
+    const [resolvedSearchTerm, setResolvedSearchTerm] = useState(searchTerm)
     const nextPageRef = useRef<number | null>(null)
     const prevBaseQueryRef = useRef(baseQuery)
 
@@ -209,6 +210,7 @@ export const useDimensionList = ({
             nextPageRef.current === null ||
             !isFetchEnabledByFilter(baseQuery, filter)
         ) {
+            setResolvedSearchTerm(searchTerm)
             return
         }
 
@@ -224,6 +226,7 @@ export const useDimensionList = ({
             const { dimensions, nextPage } = transformResponseData(responseData)
 
             isInitalFetchSuccessRef.current = true
+            setResolvedSearchTerm(searchTerm)
             setIsSearching(false)
 
             if (nextPageRef.current === 1) {
@@ -234,6 +237,8 @@ export const useDimensionList = ({
             nextPageRef.current = nextPage
             dispatch(setDimensionListLoadSuccess(dimensionListKey))
         } catch (error) {
+            setResolvedSearchTerm(searchTerm)
+            setIsSearching(false)
             const engineError = parseEngineError(error)
             dispatch(
                 setDimensionListLoadError({
@@ -253,11 +258,11 @@ export const useDimensionList = ({
     const dimensions = useMemo(() => {
         const filteredInitial = filterDimensions(
             fixedDimensions,
-            searchTerm,
+            resolvedSearchTerm,
             filter
         )
         return [...filteredInitial, ...fetchedDimensions]
-    }, [fixedDimensions, fetchedDimensions, searchTerm, filter])
+    }, [fixedDimensions, fetchedDimensions, resolvedSearchTerm, filter])
 
     const isDisabledByFilter = useMemo(() => {
         return (

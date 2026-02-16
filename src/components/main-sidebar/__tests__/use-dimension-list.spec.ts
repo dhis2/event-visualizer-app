@@ -2214,6 +2214,200 @@ describe('useDimensionList', () => {
         })
     })
 
+    it('shows stale data while fetching new search results (stale-while-revalidate)', async () => {
+        // Setup fixed dimensions
+        const fixedDimensions: DimensionMetadataItem[] = [
+            createDimension({
+                id: 'fixed-1',
+                name: 'Apple',
+                dimensionType: 'DATA_ELEMENT',
+            }),
+            createDimension({
+                id: 'fixed-2',
+                name: 'Banana',
+                dimensionType: 'DATA_ELEMENT',
+            }),
+            createDimension({
+                id: 'fixed-3',
+                name: 'Apricot',
+                dimensionType: 'DATA_ELEMENT',
+            }),
+        ]
+
+        const baseQuery: SingleQuery = {
+            resource: 'dimensions',
+            params: {
+                filter: ['dimensionType:eq:DATA_ELEMENT'],
+            },
+        }
+
+        // Initial API response (empty search)
+        const initialFetchedDimension = createDimension({
+            id: 'fetched-1',
+            name: 'Initial Fetched',
+            dimensionType: 'DATA_ELEMENT',
+        })
+        mockApiResponse = {
+            dataElements: [initialFetchedDimension],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
+        } as unknown as ResponseData
+
+        const { result, store } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    fixedDimensions,
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '',
+                            filter: 'DATA_ELEMENT',
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // Wait for initial fetch to complete
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false)
+        })
+
+        // Verify initial state: all fixed dimensions + fetched dimension
+        expect(result.current.dimensions).toEqual([
+            ...fixedDimensions,
+            initialFetchedDimension,
+        ])
+
+        // Setup search API response (search for "Apple")
+        const searchFetchedDimension = createDimension({
+            id: 'search-fetched-1',
+            name: 'Apple Pie',
+            dimensionType: 'DATA_ELEMENT',
+        })
+        mockApiResponse = {
+            dataElements: [searchFetchedDimension],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
+        } as unknown as ResponseData
+
+        // Clear previous call count to track new fetch
+        const initialCallCount = mockInitiateCallCount
+
+        // Update search term to "Apple"
+        act(() => {
+            store.dispatch(setSearchTerm('Apple'))
+        })
+
+        // Immediately after dispatch: isFetching and isSearching should be true
+        expect(result.current.isFetching).toBe(true)
+        expect(result.current.isSearching).toBe(true)
+
+        // During fetch, dimensions should still show stale data (previous resolvedSearchTerm)
+        // Fixed dimensions filtered with empty search term (all), plus previous fetched dimensions
+        expect(result.current.dimensions).toEqual([
+            ...fixedDimensions,
+            initialFetchedDimension,
+        ])
+
+        // Wait for fetch to complete
+        await waitFor(() => {
+            expect(result.current.isFetching).toBe(false)
+            expect(result.current.isSearching).toBe(false)
+        })
+
+        // After fetch completes: dimensions should be filtered with new search term
+        // Fixed dimensions filtered with "Apple" (only 'Apple' matches),
+        // plus new fetched dimensions (already filtered by server-side search)
+        expect(result.current.dimensions).toEqual([
+            fixedDimensions[0], // Apple
+            searchFetchedDimension,
+        ])
+
+        // Verify API was called with search filter
+        expect(mockInitiateCallCount).toBe(initialCallCount + 1)
+        expect(lastInitiateQuery?.params?.filter).toContain(
+            'displayName:ilike:Apple'
+        )
+    })
+
+    it('immediately filters fixed dimensions when fetch disabled (filter mismatch)', async () => {
+        // Setup fixed dimensions
+        const fixedDimensions: DimensionMetadataItem[] = [
+            createDimension({
+                id: 'fixed-1',
+                name: 'Apple',
+                dimensionType: 'DATA_ELEMENT',
+            }),
+            createDimension({
+                id: 'fixed-2',
+                name: 'Banana',
+                dimensionType: 'DATA_ELEMENT',
+            }),
+        ]
+
+        const baseQuery: SingleQuery = {
+            resource: 'dimensions',
+            params: {
+                filter: ['dimensionType:eq:DATA_ELEMENT'],
+            },
+        }
+
+        // No API response needed because filter mismatch disables fetch
+        mockApiResponse = null
+
+        const { result, store } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    fixedDimensions,
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '',
+                            filter: 'PROGRAM_INDICATOR', // does not match DATA_ELEMENT
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // No fetch should occur
+        expect(mockInitiateCallCount).toBe(0)
+        // Fixed dimensions filtered by filter (none match PROGRAM_INDICATOR)
+        expect(result.current.dimensions).toEqual([])
+
+        // Update search term to "Apple"
+        act(() => {
+            store.dispatch(setSearchTerm('Apple'))
+        })
+
+        // Still no fetch (filter still mismatched)
+        expect(mockInitiateCallCount).toBe(0)
+        // Fixed dimensions should be filtered immediately with new search term
+        // Only Apple matches, but filter still PROGRAM_INDICATOR, so none match
+        expect(result.current.dimensions).toEqual([])
+    })
+
     it('isDisabledByFilter returns false when filter matches baseQuery dimension type', async () => {
         const baseQuery: SingleQuery = {
             resource: 'dataElements',
