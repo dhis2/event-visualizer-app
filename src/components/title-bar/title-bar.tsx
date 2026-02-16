@@ -33,9 +33,9 @@ const getCustomTitleClasses = (titleState: VisualizationState): string =>
 
 const getSuffix = (titleState: VisualizationState): ReactNode =>
     titleState === 'DIRTY' ? (
-        <div
-            className={cx(classes.titleDirty, classes.suffix)}
-        >{`- ${getTitleDirty()}`}</div>
+        <div className={cx(classes.titleDirty, classes.suffix)}>
+            {getTitleDirty()}
+        </div>
     ) : (
         ''
     )
