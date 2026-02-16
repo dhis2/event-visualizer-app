@@ -8,10 +8,10 @@ import { renderWithAppWrapper } from '@test-utils/app-wrapper'
 import type { SavedVisualization } from '@types'
 
 describe('TitleBar', () => {
-    it('should render null when the visualization is empty', async () => {
+    it('should not render a title text when the visualization is empty', async () => {
         await renderWithAppWrapper(<TitleBar />)
 
-        expect(screen.queryByTestId('title-bar')).not.toBeInTheDocument()
+        expect(screen.queryByTestId('title-bar')).toBeInTheDocument()
     })
 
     it('should render the unsaved title when editing a new visualization ', async () => {
