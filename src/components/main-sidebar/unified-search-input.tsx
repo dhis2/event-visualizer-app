@@ -96,13 +96,19 @@ export const UnifiedSearchInput = () => {
         const state = store.getState()
         const currentSearchTerm = state.dimensionSelection.searchTerm
 
+        /* This blocks searchTerm updates while lists are loading, which
+         * prevents race conditions in the useDimensionList hook.
+         * The thinking behind this logic is that it's OK to block the store
+         * update while isLoading is true because eventually the fetch will
+         * complete and this effect will run again to update the store. */
         if (
             isValidSearchTerm(debouncedSearchTerm) &&
+            !isLoading &&
             currentSearchTerm !== debouncedSearchTerm
         ) {
             store.dispatch(setSearchTerm(debouncedSearchTerm))
         }
-    }, [store, debouncedSearchTerm])
+    }, [store, debouncedSearchTerm, isLoading])
 
     return (
         <div className={classes.container}>
