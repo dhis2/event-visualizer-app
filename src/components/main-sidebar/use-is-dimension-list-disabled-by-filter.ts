@@ -5,12 +5,12 @@ import { getFilter } from '@store/dimensions-selection-slice'
 import type { DimensionMetadataItem, SingleQuery } from '@types'
 
 export type UseIsDimensionListDisabledByFilterOptions = {
-    initialDimensions?: DimensionMetadataItem[]
+    fixedDimensions?: DimensionMetadataItem[]
     baseQuery?: SingleQuery
 }
 
 export const useIsDimensionListDisabledByFilter = ({
-    initialDimensions,
+    fixedDimensions,
     baseQuery,
 }: UseIsDimensionListDisabledByFilterOptions): boolean => {
     const filter = useAppSelector(getFilter)
@@ -18,11 +18,11 @@ export const useIsDimensionListDisabledByFilter = ({
         return (
             !isFetchEnabledByFilter(baseQuery, filter) &&
             !(
-                Array.isArray(initialDimensions) &&
-                initialDimensions.some(
+                Array.isArray(fixedDimensions) &&
+                fixedDimensions.some(
                     (dimension) => dimension.dimensionType === filter
                 )
             )
         )
-    }, [initialDimensions, baseQuery, filter])
+    }, [fixedDimensions, baseQuery, filter])
 }

@@ -25,7 +25,7 @@ import type {
 
 export type UseDimensionListOptions = {
     dimensionListKey: DimensionListKey
-    initialDimensions?: DimensionMetadataItem[]
+    fixedDimensions?: DimensionMetadataItem[]
     baseQuery?: SingleQuery
 }
 
@@ -57,7 +57,7 @@ type SingleQueryWithFilterParam = Omit<SingleQuery, 'params'> & {
 
 const FILTER_PARAM_SEARCH_TERM = 'displayName:ilike:'
 const FILTER_PARAM_DIMENSION_TYPE = 'dimensionType:eq:'
-const DEFAULT_INITIAL_DIMENSIONS = []
+const DEFAULT_FIXED_DIMENSIONS = []
 
 export const transformResponseData = (
     data: ResponseData
@@ -182,7 +182,7 @@ export const filterDimensions = (
 
 export const useDimensionList = ({
     dimensionListKey,
-    initialDimensions = DEFAULT_INITIAL_DIMENSIONS,
+    fixedDimensions = DEFAULT_FIXED_DIMENSIONS,
     baseQuery,
 }: UseDimensionListOptions): UseDimensionListResult => {
     const dispatch = useAppDispatch()
@@ -251,12 +251,12 @@ export const useDimensionList = ({
 
     const dimensions = useMemo(() => {
         const filteredInitial = filterDimensions(
-            initialDimensions,
+            fixedDimensions,
             searchTerm,
             filter
         )
         return [...filteredInitial, ...fetchedDimensions]
-    }, [initialDimensions, fetchedDimensions, searchTerm, filter])
+    }, [fixedDimensions, fetchedDimensions, searchTerm, filter])
 
     useEffect(() => {
         dispatch(addDimensionListLoadingState(dimensionListKey))

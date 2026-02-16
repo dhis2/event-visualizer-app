@@ -579,7 +579,7 @@ describe('useDimensionList', () => {
         dimensionType: 'DATA_ELEMENT',
         valueType: 'TEXT',
     }
-    const initialDimensions: DimensionMetadataItem[] = [mockDimension]
+    const fixedDimensions: DimensionMetadataItem[] = [mockDimension]
     const baseQuery: SingleQuery = {
         resource: 'dimensions',
         params: {
@@ -599,7 +599,7 @@ describe('useDimensionList', () => {
             () =>
                 useDimensionList({
                     dimensionListKey: 'program-indicators',
-                    initialDimensions,
+                    fixedDimensions,
                 }),
             {
                 partialStore: {
@@ -620,14 +620,14 @@ describe('useDimensionList', () => {
             }
         )
 
-        expect(result.current.dimensions).toEqual(initialDimensions)
+        expect(result.current.dimensions).toEqual(fixedDimensions)
         expect(result.current.isLoading).toBe(false)
         expect(result.current.hasMore).toBe(false)
         expect(result.current.loadMore).toBeDefined()
         expect(mockInitiateCallCount).toBe(0)
     })
 
-    it('returns empty array without initialDimensions', async () => {
+    it('returns empty array without fixedDimensions', async () => {
         const { result } = await renderHookWithAppWrapper(
             () =>
                 useDimensionList({
@@ -804,7 +804,7 @@ describe('useDimensionList', () => {
 
     it('search does NOT trigger fetch when filter does NOT match dimension type', async () => {
         // Setup initial dimensions
-        const initialDimensions: DimensionMetadataItem[] = [
+        const fixedDimensions: DimensionMetadataItem[] = [
             {
                 id: 'test-id-1',
                 name: 'Test Dimension One',
@@ -823,7 +823,7 @@ describe('useDimensionList', () => {
             () =>
                 useDimensionList({
                     dimensionListKey: 'program-indicators',
-                    initialDimensions,
+                    fixedDimensions,
                     baseQuery,
                 }),
             {
@@ -1030,9 +1030,9 @@ describe('useDimensionList', () => {
         )
     })
 
-    it('combines filtered initialDimensions with fetched results during search', async () => {
+    it('combines filtered fixedDimensions with fetched results during search', async () => {
         // Setup initial dimensions (client-side data)
-        const initialDimensions: DimensionMetadataItem[] = [
+        const fixedDimensions: DimensionMetadataItem[] = [
             {
                 id: 'initial-1',
                 name: 'Test Initial Item',
@@ -1068,7 +1068,7 @@ describe('useDimensionList', () => {
             () =>
                 useDimensionList({
                     dimensionListKey: 'program-indicators',
-                    initialDimensions,
+                    fixedDimensions,
                     baseQuery,
                 }),
             {
@@ -1095,9 +1095,9 @@ describe('useDimensionList', () => {
             expect(result.current.isLoading).toBe(false)
         })
 
-        // Verify initial state: initialDimensions + fetchedDimensions
+        // Verify initial state: fixedDimensions + fetchedDimensions
         expect(result.current.dimensions).toEqual([
-            ...initialDimensions,
+            ...fixedDimensions,
             fetchedDimension1,
         ])
 
@@ -1122,10 +1122,10 @@ describe('useDimensionList', () => {
         })
 
         // Verify search results combine:
-        // 1. Client-side filtered initialDimensions (only "Test Initial Item" matches)
+        // 1. Client-side filtered fixedDimensions (only "Test Initial Item" matches)
         // 2. Server-side filtered fetched results
         expect(result.current.dimensions).toEqual([
-            initialDimensions[0], // "Test Initial Item" matches "Test"
+            fixedDimensions[0], // "Test Initial Item" matches "Test"
             searchFetchedDimension, // "Test Search Result" from API
         ])
 
@@ -1135,9 +1135,9 @@ describe('useDimensionList', () => {
         )
     })
 
-    it('filters combined initialDimensions and fetched results by dimensionType', async () => {
+    it('filters combined fixedDimensions and fetched results by dimensionType', async () => {
         // Setup initial dimensions with mixed dimension types
-        const initialDimensions: DimensionMetadataItem[] = [
+        const fixedDimensions: DimensionMetadataItem[] = [
             {
                 id: 'initial-de-1',
                 name: 'Initial Data Element',
@@ -1174,7 +1174,7 @@ describe('useDimensionList', () => {
             () =>
                 useDimensionList({
                     dimensionListKey: 'program-indicators',
-                    initialDimensions,
+                    fixedDimensions,
                     baseQuery,
                 }),
             {
@@ -1201,9 +1201,9 @@ describe('useDimensionList', () => {
             expect(result.current.isLoading).toBe(false)
         })
 
-        // Verify initial state with no filter: all initialDimensions + fetchedDimensions
+        // Verify initial state with no filter: all fixedDimensions + fetchedDimensions
         expect(result.current.dimensions).toEqual([
-            ...initialDimensions,
+            ...fixedDimensions,
             fetchedDimension1,
         ])
 
@@ -1212,11 +1212,11 @@ describe('useDimensionList', () => {
             store.dispatch(setFilter('DATA_ELEMENT'))
         })
 
-        // Should show only DATA_ELEMENT items from initialDimensions + all fetchedDimensions
+        // Should show only DATA_ELEMENT items from fixedDimensions + all fetchedDimensions
         // (fetchedDimensions are not filtered client-side, they come from server-side filter)
         expect(result.current.dimensions).toEqual([
-            initialDimensions[0], // Initial Data Element
-            initialDimensions[2], // Another Data Element
+            fixedDimensions[0], // Initial Data Element
+            fixedDimensions[2], // Another Data Element
             fetchedDimension1, // Fetched Data Element (always included)
         ])
 
@@ -1225,11 +1225,11 @@ describe('useDimensionList', () => {
             store.dispatch(setFilter('PROGRAM_INDICATOR'))
         })
 
-        // Should show only PROGRAM_INDICATOR items from initialDimensions
+        // Should show only PROGRAM_INDICATOR items from fixedDimensions
         // fetchedDimensions persist (they were fetched with baseQuery for DATA_ELEMENT)
         // Note: No new fetch happens because filter doesn't match baseQuery
         expect(result.current.dimensions).toEqual([
-            initialDimensions[1], // Initial Program Indicator
+            fixedDimensions[1], // Initial Program Indicator
             fetchedDimension1, // Fetched dimensions persist (not filtered client-side)
         ])
 
@@ -1238,7 +1238,7 @@ describe('useDimensionList', () => {
             store.dispatch(setFilter('CATEGORY'))
         })
 
-        // Should show only fetchedDimensions (no initialDimensions match CATEGORY)
+        // Should show only fetchedDimensions (no fixedDimensions match CATEGORY)
         // fetchedDimensions persist from previous fetch
         expect(result.current.dimensions).toEqual([fetchedDimension1])
 
@@ -1249,7 +1249,7 @@ describe('useDimensionList', () => {
 
         // Should show all items again
         expect(result.current.dimensions).toEqual([
-            ...initialDimensions,
+            ...fixedDimensions,
             fetchedDimension1,
         ])
     })
@@ -1418,8 +1418,8 @@ describe('useDimensionList', () => {
         expect(result.current.dimensions).toEqual([mockApiDimension])
     })
 
-    it('works without baseQuery using only initialDimensions', async () => {
-        const initialDimensions: DimensionMetadataItem[] = [
+    it('works without baseQuery using only fixedDimensions', async () => {
+        const fixedDimensions: DimensionMetadataItem[] = [
             {
                 id: 'initial-1',
                 name: 'Initial Item 1',
@@ -1438,7 +1438,7 @@ describe('useDimensionList', () => {
             () =>
                 useDimensionList({
                     dimensionListKey: 'program-indicators',
-                    initialDimensions,
+                    fixedDimensions,
                     // No baseQuery provided
                 }),
             {
@@ -1460,8 +1460,8 @@ describe('useDimensionList', () => {
             }
         )
 
-        // Should show all initialDimensions, no fetch should occur
-        expect(result.current.dimensions).toEqual(initialDimensions)
+        // Should show all fixedDimensions, no fetch should occur
+        expect(result.current.dimensions).toEqual(fixedDimensions)
         expect(result.current.isLoading).toBe(false)
         expect(result.current.hasMore).toBe(false)
         expect(mockInitiateCallCount).toBe(0)
@@ -1471,7 +1471,7 @@ describe('useDimensionList', () => {
             store.dispatch(setFilter('DATA_ELEMENT'))
         })
 
-        expect(result.current.dimensions).toEqual([initialDimensions[0]])
+        expect(result.current.dimensions).toEqual([fixedDimensions[0]])
         expect(mockInitiateCallCount).toBe(0)
 
         // Apply search - should filter client-side only
@@ -1489,7 +1489,7 @@ describe('useDimensionList', () => {
             store.dispatch(clearFilter())
         })
 
-        expect(result.current.dimensions).toEqual([initialDimensions[1]])
+        expect(result.current.dimensions).toEqual([fixedDimensions[1]])
     })
 
     it('cleans up loading state on unmount', async () => {
@@ -1804,7 +1804,7 @@ describe('useDimensionList', () => {
 
     it('handles filter change followed by search', async () => {
         // Initial dimensions (client-side only, no API fetch since filter doesn't match)
-        const initialDimensions: DimensionMetadataItem[] = [
+        const fixedDimensions: DimensionMetadataItem[] = [
             {
                 id: 'initial-1',
                 name: 'Initial Data Element',
@@ -1817,7 +1817,7 @@ describe('useDimensionList', () => {
             () =>
                 useDimensionList({
                     dimensionListKey: 'program-indicators',
-                    initialDimensions,
+                    fixedDimensions,
                     baseQuery, // baseQuery has DATA_ELEMENT filter
                 }),
             {
@@ -1841,7 +1841,7 @@ describe('useDimensionList', () => {
 
         // No API call expected (filter doesn't match baseQuery)
         expect(mockInitiateCallCount).toBe(0)
-        // initialDimensions filtered out by filter (none match PROGRAM_INDICATOR)
+        // fixedDimensions filtered out by filter (none match PROGRAM_INDICATOR)
         expect(result.current.dimensions).toEqual([])
 
         const callCountAfterFilterChange = mockInitiateCallCount

@@ -119,8 +119,8 @@ describe('useIsDimensionListDisabledByFilter', () => {
         expect(result.current).toBe(false)
     })
 
-    it('returns false when initialDimensions contains item matching filter', async () => {
-        const initialDimensions: DimensionMetadataItem[] = [
+    it('returns false when fixedDimensions contains item matching filter', async () => {
+        const fixedDimensions: DimensionMetadataItem[] = [
             createDimension('dim-1', 'PROGRAM_INDICATOR'),
             createDimension('dim-2', 'DATA_ELEMENT'),
         ]
@@ -129,7 +129,7 @@ describe('useIsDimensionListDisabledByFilter', () => {
             () =>
                 useIsDimensionListDisabledByFilter({
                     baseQuery,
-                    initialDimensions,
+                    fixedDimensions,
                 }),
             {
                 partialStore: {
@@ -153,8 +153,8 @@ describe('useIsDimensionListDisabledByFilter', () => {
         expect(result.current).toBe(false)
     })
 
-    it('returns true when filter does not match baseQuery or any initialDimensions', async () => {
-        const initialDimensions: DimensionMetadataItem[] = [
+    it('returns true when filter does not match baseQuery or any fixedDimensions', async () => {
+        const fixedDimensions: DimensionMetadataItem[] = [
             createDimension('dim-1', 'DATA_ELEMENT'),
             createDimension('dim-2', 'DATA_ELEMENT'),
         ]
@@ -163,7 +163,7 @@ describe('useIsDimensionListDisabledByFilter', () => {
             () =>
                 useIsDimensionListDisabledByFilter({
                     baseQuery,
-                    initialDimensions,
+                    fixedDimensions,
                 }),
             {
                 partialStore: {
@@ -187,12 +187,12 @@ describe('useIsDimensionListDisabledByFilter', () => {
         expect(result.current).toBe(true)
     })
 
-    it('returns true when initialDimensions is empty and filter does not match baseQuery', async () => {
+    it('returns true when fixedDimensions is empty and filter does not match baseQuery', async () => {
         const { result } = await renderHookWithAppWrapper(
             () =>
                 useIsDimensionListDisabledByFilter({
                     baseQuery,
-                    initialDimensions: [],
+                    fixedDimensions: [],
                 }),
             {
                 partialStore: {
@@ -216,7 +216,7 @@ describe('useIsDimensionListDisabledByFilter', () => {
         expect(result.current).toBe(true)
     })
 
-    it('returns true when no baseQuery and no initialDimensions provided', async () => {
+    it('returns true when no baseQuery and no fixedDimensions provided', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useIsDimensionListDisabledByFilter({}),
             {
@@ -241,15 +241,15 @@ describe('useIsDimensionListDisabledByFilter', () => {
         expect(result.current).toBe(true)
     })
 
-    it('returns false when no baseQuery but initialDimensions match filter', async () => {
-        const initialDimensions: DimensionMetadataItem[] = [
+    it('returns false when no baseQuery but fixedDimensions match filter', async () => {
+        const fixedDimensions: DimensionMetadataItem[] = [
             createDimension('dim-1', 'DATA_ELEMENT'),
         ]
 
         const { result } = await renderHookWithAppWrapper(
             () =>
                 useIsDimensionListDisabledByFilter({
-                    initialDimensions,
+                    fixedDimensions,
                 }),
             {
                 partialStore: {
@@ -274,7 +274,7 @@ describe('useIsDimensionListDisabledByFilter', () => {
     })
 
     it('recomputes when filter changes', async () => {
-        const initialDimensions: DimensionMetadataItem[] = [
+        const fixedDimensions: DimensionMetadataItem[] = [
             createDimension('dim-1', 'DATA_ELEMENT'),
             createDimension('dim-2', 'PROGRAM_INDICATOR'),
         ]
@@ -283,7 +283,7 @@ describe('useIsDimensionListDisabledByFilter', () => {
             () =>
                 useIsDimensionListDisabledByFilter({
                     baseQuery,
-                    initialDimensions,
+                    fixedDimensions,
                 }),
             {
                 partialStore: {
@@ -307,14 +307,14 @@ describe('useIsDimensionListDisabledByFilter', () => {
         // Initially enabled (DATA_ELEMENT matches baseQuery)
         expect(result.current).toBe(false)
 
-        // Change to PROGRAM_INDICATOR (doesn't match baseQuery but matches initialDimensions)
+        // Change to PROGRAM_INDICATOR (doesn't match baseQuery but matches fixedDimensions)
         act(() => {
             store.dispatch(setFilter('PROGRAM_INDICATOR'))
         })
 
         expect(result.current).toBe(false)
 
-        // Change to CATEGORY (doesn't match baseQuery or initialDimensions)
+        // Change to CATEGORY (doesn't match baseQuery or fixedDimensions)
         act(() => {
             store.dispatch(setFilter('CATEGORY'))
         })
@@ -359,7 +359,7 @@ describe('useIsDimensionListDisabledByFilter', () => {
     })
 
     it('memoizes result and does not recompute unnecessarily', async () => {
-        const initialDimensions: DimensionMetadataItem[] = [
+        const fixedDimensions: DimensionMetadataItem[] = [
             createDimension('dim-1', 'DATA_ELEMENT'),
         ]
 
@@ -367,7 +367,7 @@ describe('useIsDimensionListDisabledByFilter', () => {
             () =>
                 useIsDimensionListDisabledByFilter({
                     baseQuery,
-                    initialDimensions,
+                    fixedDimensions,
                 }),
             {
                 partialStore: {
