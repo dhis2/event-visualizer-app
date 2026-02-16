@@ -33,7 +33,7 @@
 }
 
 .suffix {
-    padding-inline-start: 4px;
+    margin-inline-start: 4px;
 }
 
 .titleUnsaved {
@@ -42,5 +42,13 @@
 }
 
 .titleDirty {
-    color: var(--colors-grey700);
+    color: var(--colors-grey800);
+    padding: 2px 4px;
+    border-radius: 3px;
+    background-color: var(--colors-grey200);
+    margin-block-start: -1px;
+    font-size: 11px;
+    letter-spacing: -0.2px;
+    font-family: monospace;
+    line-height: normal;
 }
