@@ -12,6 +12,7 @@ describe('TitleBar', () => {
         await renderWithAppWrapper(<TitleBar />)
 
         expect(screen.queryByTestId('title-bar')).toBeInTheDocument()
+        expect(screen.queryByTestId('title-text')).not.toBeInTheDocument()
     })
 
     it('should render the unsaved title when editing a new visualization ', async () => {
