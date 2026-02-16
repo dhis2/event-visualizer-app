@@ -577,6 +577,7 @@ describe('useDimensionList', () => {
         id: 'test-id',
         name: 'Test Dimension',
         dimensionType: 'DATA_ELEMENT',
+        valueType: 'TEXT',
     }
     const initialDimensions: DimensionMetadataItem[] = [mockDimension]
     const baseQuery: SingleQuery = {
@@ -808,11 +809,13 @@ describe('useDimensionList', () => {
                 id: 'test-id-1',
                 name: 'Test Dimension One',
                 dimensionType: 'DATA_ELEMENT',
+                valueType: 'TEXT',
             },
             {
                 id: 'test-id-2',
                 name: 'Another Dimension',
                 dimensionType: 'DATA_ELEMENT',
+                valueType: 'TEXT',
             },
         ]
 
@@ -1034,16 +1037,19 @@ describe('useDimensionList', () => {
                 id: 'initial-1',
                 name: 'Test Initial Item',
                 dimensionType: 'DATA_ELEMENT',
+                valueType: 'TEXT',
             },
             {
                 id: 'initial-2',
                 name: 'Another Initial Item',
                 dimensionType: 'DATA_ELEMENT',
+                valueType: 'TEXT',
             },
             {
                 id: 'initial-3',
                 name: 'Different Item',
                 dimensionType: 'DATA_ELEMENT',
+                valueType: 'TEXT',
             },
         ]
 
@@ -1136,16 +1142,19 @@ describe('useDimensionList', () => {
                 id: 'initial-de-1',
                 name: 'Initial Data Element',
                 dimensionType: 'DATA_ELEMENT',
+                valueType: 'TEXT',
             },
             {
                 id: 'initial-pi-1',
                 name: 'Initial Program Indicator',
                 dimensionType: 'PROGRAM_INDICATOR',
+                valueType: 'NUMBER',
             },
             {
                 id: 'initial-de-2',
                 name: 'Another Data Element',
                 dimensionType: 'DATA_ELEMENT',
+                valueType: 'TEXT',
             },
         ]
 
@@ -1415,11 +1424,13 @@ describe('useDimensionList', () => {
                 id: 'initial-1',
                 name: 'Initial Item 1',
                 dimensionType: 'DATA_ELEMENT',
+                valueType: 'TEXT',
             },
             {
                 id: 'initial-2',
                 name: 'Initial Item 2',
                 dimensionType: 'PROGRAM_INDICATOR',
+                valueType: 'NUMBER',
             },
         ]
 
@@ -1798,6 +1809,7 @@ describe('useDimensionList', () => {
                 id: 'initial-1',
                 name: 'Initial Data Element',
                 dimensionType: 'DATA_ELEMENT',
+                valueType: 'TEXT',
             },
         ]
 

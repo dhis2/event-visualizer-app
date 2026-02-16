@@ -32,6 +32,7 @@ describe('useIsDimensionListDisabledByFilter', () => {
         id,
         name: `Dimension ${id}`,
         dimensionType: dimensionType as DimensionMetadataItem['dimensionType'],
+        valueType: 'TEXT',
     })
 
     it('returns false when filter matches baseQuery dimension type', async () => {
