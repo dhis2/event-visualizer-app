@@ -14,7 +14,7 @@ export const OpenButton: FC = () => {
             className={classes.button}
             small
         >
-            {i18n.t('Open')}
+            <span className={classes.label}>{i18n.t('Open')}</span>
         </Button>
     )
 }

@@ -41,7 +41,7 @@ export const SaveButton: FC = () => {
             small
             disabled={!saveEnabled}
         >
-            {i18n.t('Save')}
+            <span className={classes.label}>{i18n.t('Save')}</span>
         </Button>
     )
 }
