@@ -118,17 +118,14 @@ export type UserOrgUnitMetadataItem = {
     organisationUnits: string[]
 }
 
-export type ProgramMetadataItem = Program
-export type ProgramStageMetadataItem = ProgramStage
-
 export type MetadataItem =
     | DimensionMetadataItem
     | OptionSetMetadataItem
     | LegendSetMetadataItem
     | OrganisationUnitMetadataItem
     | UserOrgUnitMetadataItem
-    | ProgramMetadataItem
-    | ProgramStageMetadataItem
+    | Program
+    | ProgramStage
 
 export type MetadataItemWithName = Exclude<
     MetadataItem,
@@ -149,6 +146,6 @@ export type DimensionMetadata = {
     programStageId?: string
     repetitionIndex?: string
     dimension?: DimensionMetadataItem
-    program?: ProgramMetadataItem
-    programStage?: ProgramStageMetadataItem
+    program?: Program
+    programStage?: ProgramStage
 }

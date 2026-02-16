@@ -41,9 +41,6 @@ export type DimensionRecord = {
 
 export type DimensionArray = Array<DimensionRecord>
 
-type ProgramStageRecord = ProgramStage
-type ProgramRecord = Program
-
 type ProgramDimensionArray = Array<Program>
 
 type DataElementDimensionArray = Array<{
@@ -57,8 +54,8 @@ type SavedVisualizationFieldOverrides = {
     columns: DimensionArray
     rows: DimensionArray
     filters: DimensionArray
-    program: ProgramRecord
-    programStage: ProgramStageRecord
+    program: Program
+    programStage: ProgramStage
     programDimensions: ProgramDimensionArray
     trackedEntityType: IdNameRecord
 

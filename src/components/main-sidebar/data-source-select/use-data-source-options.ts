@@ -4,7 +4,7 @@ import { getProgramFields, getTrackedEntityTypeFields } from '@modules/query'
 import type {
     CurrentUser,
     MetadataItemWithName,
-    ProgramMetadataItem,
+    Program,
     UseRtkQueryResult,
 } from '@types'
 
@@ -12,7 +12,7 @@ const sharedParams = { filter: 'access.data.read:eq:true', paging: false }
 
 type ResponseData = {
     programs: {
-        programs: ProgramMetadataItem[]
+        programs: Program[]
     }
     trackedEntityTypes: {
         trackedEntityTypes: MetadataItemWithName[]
@@ -25,7 +25,7 @@ export type UseDataSourceOptionsResult = Pick<
     UseRtkQueryResult<ResponseData>,
     'isLoading' | 'isError' | 'error'
 > & {
-    programs: ProgramMetadataItem[]
+    programs: Program[]
     trackedEntityTypes: MetadataItemWithName[]
     filterString: string
     hasMorePrograms: boolean

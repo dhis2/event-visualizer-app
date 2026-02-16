@@ -6,10 +6,10 @@ import {
     isSelectedDataSourceId,
     setDataSourceId,
 } from '@store/dimensions-selection-slice'
-import type { MetadataItemWithName, ProgramMetadataItem } from '@types'
+import type { MetadataItemWithName, Program } from '@types'
 
 export type DataSourceSelectOptionProps = {
-    option: ProgramMetadataItem | MetadataItemWithName
+    option: Program | MetadataItemWithName
     closeDropdown: () => void
 }
 

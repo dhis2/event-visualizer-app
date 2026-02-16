@@ -1,15 +1,13 @@
 import type { ProgramType } from './dhis2-openapi-schemas'
 import type { DimensionType } from './dimension'
-import type { MetadataItemWithName, ProgramMetadataItem } from './metadata'
+import type { MetadataItemWithName } from './metadata'
+import type { Program } from './program'
 
-export type DataSourceProgramWithRegistration = Omit<
-    ProgramMetadataItem,
-    'programType'
-> & {
+export type DataSourceProgramWithRegistration = Omit<Program, 'programType'> & {
     programType: Extract<ProgramType, 'WITH_REGISTRATION'>
 }
 export type DataSourceProgramWithoutRegistration = Omit<
-    ProgramMetadataItem,
+    Program,
     'programType'
 > & {
     programType: Extract<ProgramType, 'WITHOUT_REGISTRATION'>
