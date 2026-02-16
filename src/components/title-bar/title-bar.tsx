@@ -1,4 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
+import { Tooltip } from '@dhis2/ui'
 import cx from 'classnames'
 import type { FC, ReactNode } from 'react'
 import classes from './styles/title-bar.module.css'
@@ -55,10 +56,22 @@ export const TitleBar: FC = () => {
         <div data-test="title-bar" className={classes.titleBar}>
             <div className={classes.titleContainer}>
                 {titleText && (
-                    <div data-test="title-text" className={titleClasses}>
-                        <span className={classes.title}>{titleText}</span>
-                        {getSuffix(titleState)}
-                    </div>
+                    <Tooltip content={titleText} closeDelay={0} openDelay={500}>
+                        {({ ref, onMouseOver, onMouseOut }) => (
+                            <span
+                                ref={ref}
+                                onMouseOver={onMouseOver}
+                                onMouseOut={onMouseOut}
+                                data-test="title-text"
+                                className={titleClasses}
+                            >
+                                <span className={classes.title}>
+                                    {titleText}
+                                </span>
+                                {getSuffix(titleState)}
+                            </span>
+                        )}
+                    </Tooltip>
                 )}
             </div>
         </div>
