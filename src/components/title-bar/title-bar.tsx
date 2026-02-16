@@ -51,14 +51,16 @@ export const TitleBar: FC = () => {
         titleState
     )}`
 
-    return titleText ? (
+    return (
         <div data-test="title-bar" className={classes.titleBar}>
             <div className={classes.titleContainer}>
-                <div className={titleClasses}>
-                    {titleText}
-                    {getSuffix(titleState)}
-                </div>
+                {titleText && (
+                    <div className={titleClasses}>
+                        {titleText}
+                        {getSuffix(titleState)}
+                    </div>
+                )}
             </div>
         </div>
-    ) : null
+    )
 }
