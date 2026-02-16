@@ -15,7 +15,7 @@ export const NewButton: FC = () => {
             className={classes.button}
             small
         >
-            {i18n.t('New')}
+            <span className={classes.label}>{i18n.t('New')}</span>
         </Button>
     )
 }
