@@ -110,7 +110,7 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                 })
 
                 // TODO: enable this once the metadata PR is merged
-                onResponseReceived({}, {}, [])
+                onResponseReceived(analyticsResponse.metaData.items, [])
             } catch (error) {
                 console.log('PT fetch error', error)
                 setState({

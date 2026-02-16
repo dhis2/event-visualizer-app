@@ -1,24 +1,29 @@
-import type { Transfer } from '@dhis2/ui'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import type { ComponentProps } from 'react'
 import { useDebounceValue } from 'usehooks-ts'
+import type {
+    optionsApi,
+    FetchOptionsByOptionSetQueryArgs,
+} from '@components/dimension-modal/conditions-modal-content/option-set-condition/options-api'
 import type {
     dimensionsApi,
     FetchItemsByDimensionQueryArgs,
-    FetchResult,
-} from './dimensions-api'
+} from '@components/dimension-modal/dynamic-dimension-modal-content/dimensions-api'
 import type { UseLazyQueryStateResult } from '@types'
 
-type FetchOptionsFn = ReturnType<
-    typeof dimensionsApi.useLazyFetchItemsByDimensionQuery
->[0]
-// | ReturnType<typeof anotherApi.useLazyOtherFetch>
-export type TransferOptions = ComponentProps<typeof Transfer>['options']
+type FetchOptionsFn =
+    | ReturnType<typeof dimensionsApi.useLazyFetchItemsByDimensionQuery>[0]
+    | ReturnType<typeof optionsApi.useLazyFetchOptionsByOptionSetQuery>[0]
+
+type FetchResult = {
+    items: unknown[]
+    nextPage: number | null
+}
+
 type UseInfiniteTransferOptionsResult = Omit<
     UseLazyQueryStateResult<FetchResult>,
     'data'
 > & {
-    data: TransferOptions
+    data: FetchResult['items']
     searchTerm: string
     setSearchTerm: (value: string) => void
     onEndReached: () => void
@@ -31,36 +36,40 @@ type UseInfiniteTransferOptionsResult = Omit<
  * @param useLazyQueryResult - Result tuple from a lazy RTK Query hook
  * @returns Extended query result with Transfer-compatible options, search state, and pagination handler
  */
-export const useInfiniteTransferOptions = (
-    dimensionId: string,
+export function useInfiniteTransferOptions(
+    id: string,
     fetchOptionsFn: FetchOptionsFn,
     queryState: UseLazyQueryStateResult<FetchResult>
-): UseInfiniteTransferOptionsResult => {
+): UseInfiniteTransferOptionsResult {
     const [searchTerm, setSearchTerm] = useState<string>('')
     const [debouncedSearchTerm] = useDebounceValue(searchTerm, 500)
     const prevDebouncedSearchTermRef = useRef<string>(debouncedSearchTerm)
     const nextPageRef = useRef<number | null>(null)
-    const [options, setOptions] = useState<TransferOptions>([])
+    const [options, setOptions] = useState<
+        UseInfiniteTransferOptionsResult['data']
+    >([])
     const onEndReached = useCallback(() => {
         if (nextPageRef.current !== null) {
             fetchOptionsFn({
-                dimensionId,
+                id,
                 page: nextPageRef.current,
                 searchTerm: prevDebouncedSearchTermRef.current,
             })
         }
-    }, [dimensionId, fetchOptionsFn])
+    }, [id, fetchOptionsFn])
 
     useEffect(() => {
         if (queryState.isUninitialized) {
             // Initial request on mount
-            fetchOptionsFn({ dimensionId, page: 1 })
+            fetchOptionsFn({ id, page: 1 })
         } else if (debouncedSearchTerm !== prevDebouncedSearchTermRef.current) {
             // Requests when searchTerm changes
             prevDebouncedSearchTermRef.current = debouncedSearchTerm
             nextPageRef.current = null
-            const fetchOptions: FetchItemsByDimensionQueryArgs = {
-                dimensionId,
+            const fetchOptions:
+                | FetchItemsByDimensionQueryArgs
+                | FetchOptionsByOptionSetQueryArgs = {
+                id,
                 page: 1,
             }
 
@@ -70,22 +79,12 @@ export const useInfiniteTransferOptions = (
 
             fetchOptionsFn(fetchOptions)
         }
-    }, [
-        debouncedSearchTerm,
-        dimensionId,
-        fetchOptionsFn,
-        queryState.isUninitialized,
-    ])
+    }, [debouncedSearchTerm, id, fetchOptionsFn, queryState.isUninitialized])
 
     useEffect(() => {
         if (queryState.data) {
-            // TODO: Figure out how to normalize and type the data for the second endpoint
-            const newOptions: TransferOptions = queryState.data.items.map(
-                ({ id, name }) => ({
-                    label: name,
-                    value: id,
-                })
-            )
+            const newOptions = queryState.data.items
+
             const hasReceivedNextPage =
                 typeof nextPageRef.current === 'number' &&
                 nextPageRef.current > 1

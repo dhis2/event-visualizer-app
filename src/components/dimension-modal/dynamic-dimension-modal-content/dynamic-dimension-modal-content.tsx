@@ -1,13 +1,18 @@
 import i18n from '@dhis2/d2-i18n'
 import { Transfer, TransferOption } from '@dhis2/ui'
 import { useMemo, type FC } from 'react'
-import { dimensionsApi } from './dimensions-api'
+import { dimensionsApi, type FetchResult } from './dimensions-api'
 import classes from './styles/dynamic-dimension-modal-content.module.css'
-import { TransferEmptySelection } from './transfer-empty-selection'
-import { TransferLeftHeader } from './transfer-left-header'
-import { TransferRightHeader } from './transfer-right-header'
-import { TransferSourceEmptyPlaceholder } from './transfer-source-empty-placeholder'
-import { useInfiniteTransferOptions } from './use-infinite-transfer-options'
+import {
+    TRANSFER_HEIGHT,
+    TRANSFER_OPTIONS_WIDTH,
+    TRANSFER_SELECTED_WIDTH,
+} from '@components/dimension-modal/transfer/transfer'
+import { TransferEmptySelection } from '@components/dimension-modal/transfer/transfer-empty-selection'
+import { TransferLeftHeader } from '@components/dimension-modal/transfer/transfer-left-header'
+import { TransferRightHeader } from '@components/dimension-modal/transfer/transfer-right-header'
+import { TransferSourceEmptyPlaceholder } from '@components/dimension-modal/transfer/transfer-source-empty-placeholder'
+import { useInfiniteTransferOptions } from '@components/dimension-modal/transfer/use-infinite-transfer-options'
 import {
     useAddMetadata,
     useAppDispatch,
@@ -20,10 +25,6 @@ import {
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
 import type { DimensionMetadataItem, MetadataItemWithName } from '@types'
-
-const TRANSFER_OPTIONS_WIDTH = '359px'
-const TRANSFER_SELECTED_WIDTH = '359px'
-const TRANSFER_HEIGHT = '512px'
 
 type DynamicDimensionModalContentProps = {
     dimension: DimensionMetadataItem
@@ -58,7 +59,7 @@ export const DynamicDimensionModalContent: FC<
     const [fetchOptionsFn, queryState] =
         dimensionsApi.useLazyFetchItemsByDimensionQuery()
     const {
-        data,
+        data: rawData,
         isLoading,
         isFetching,
         searchTerm,
@@ -66,17 +67,16 @@ export const DynamicDimensionModalContent: FC<
         onEndReached,
     } = useInfiniteTransferOptions(dimension.id, fetchOptionsFn, queryState)
 
+    const data = rawData as FetchResult['items']
+
     const updateDynamicDimensionItems = ({ selected }) => {
         const { uiItems, metadata } = data
-            .filter((item) => selected.includes(item.value))
+            .filter((item) => selected.includes(item.id))
             .reduce(
                 (acc, item) => {
-                    acc.uiItems.push(item.value)
+                    acc.uiItems.push(item.id)
 
-                    acc.metadata[item.value] = {
-                        id: item.value,
-                        name: item.label,
-                    }
+                    acc.metadata[item.id] = item
 
                     return acc
                 },
@@ -93,6 +93,11 @@ export const DynamicDimensionModalContent: FC<
         )
     }
 
+    const transferOptions = useMemo(
+        () => data.map(({ id, name }) => ({ value: id, label: name })),
+        [data]
+    )
+
     return (
         <>
             <p className={classes.paragraph}>
@@ -105,14 +110,14 @@ export const DynamicDimensionModalContent: FC<
                     onChange={updateDynamicDimensionItems}
                     selected={selectedIds}
                     selectedOptionsLookup={selectedOptionsLookup}
-                    options={data}
+                    options={transferOptions}
                     loading={isLoading || isFetching}
                     loadingPicked={isLoading}
                     sourceEmptyPlaceholder={
                         <TransferSourceEmptyPlaceholder
                             loading={isLoading}
                             searchTerm={searchTerm}
-                            options={data}
+                            options={transferOptions}
                             dataTest={`${dataTest}-empty-source`}
                         />
                     }

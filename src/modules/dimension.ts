@@ -177,6 +177,7 @@ export const getCreatedDimension = (): Partial<
         id: 'created',
         dimensionType: 'PERIOD',
         name: i18n.t('Registration date'),
+        valueType: 'DATE',
     },
 })
 
@@ -193,16 +194,19 @@ export const getMainDimensions = (
         id: 'lastUpdated',
         dimensionType: 'PERIOD',
         name: i18n.t('Last updated on'),
+        valueType: 'DATETIME',
     },
     createdBy: {
         id: 'createdBy',
         dimensionType: 'USER',
         name: i18n.t('Created by'),
+        valueType: 'USERNAME',
     },
     lastUpdatedBy: {
         id: 'lastUpdatedBy',
         dimensionType: 'USER',
         name: i18n.t('Last updated by'),
+        valueType: 'USERNAME',
     },
 })
 

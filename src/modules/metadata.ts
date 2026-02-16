@@ -176,6 +176,7 @@ export const getDefaultOrgUnitMetadata = (
         id: 'ou',
         dimensionType: 'ORGANISATION_UNIT',
         name: getDefaultOrgUnitLabel(outputType),
+        valueType: 'ORGANISATION_UNIT',
     },
 })
 

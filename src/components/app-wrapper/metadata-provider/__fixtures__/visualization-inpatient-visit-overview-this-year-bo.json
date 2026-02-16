@@ -19,7 +19,6 @@
     },
     "sharing": {
         "owner": "GOLswS44mh8",
-        "external": false,
         "users": {},
         "userGroups": {},
         "public": "rw------"
@@ -209,6 +208,9 @@
     "outputType": "EVENT",
     "collapseDataDimensions": false,
     "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
     "legacy": true,
     "dataType": "EVENTS",
     "filters": [],
@@ -244,7 +246,8 @@
             "dimensionType": "PROGRAM_DATA_ELEMENT",
             "items": [],
             "legendSet": {
-                "id": "Yf6UHoPkdS6"
+                "id": "Yf6UHoPkdS6",
+                "name": "Age 10y interval"
             },
             "dimension": "qrur9Dvnyt5",
             "valueType": "INTEGER"
@@ -300,7 +303,8 @@
             "dimension": "K6uUAvq500H",
             "valueType": "TEXT",
             "optionSet": {
-                "id": "eUZ79clX7y1"
+                "id": "eUZ79clX7y1",
+                "name": "Diagnosis ICD10"
             }
         },
         {
@@ -315,14 +319,16 @@
             "dimension": "oZg33kd9taw",
             "valueType": "TEXT",
             "optionSet": {
-                "id": "pC3N9N77UmT"
+                "id": "pC3N9N77UmT",
+                "name": "Gender"
             }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
             "items": [],
             "legendSet": {
-                "id": "TBxGTceyzwy"
+                "id": "TBxGTceyzwy",
+                "name": "Height in cm"
             },
             "dimension": "GieVkTxp4HH",
             "valueType": "NUMBER"
@@ -338,7 +344,8 @@
             "dimension": "fWIAEtYVEGk",
             "valueType": "TEXT",
             "optionSet": {
-                "id": "iDFPKpFTiVw"
+                "id": "iDFPKpFTiVw",
+                "name": "Mode of discharge"
             }
         },
         {
@@ -351,7 +358,8 @@
             "dimensionType": "PROGRAM_DATA_ELEMENT",
             "items": [],
             "legendSet": {
-                "id": "OrkEzxZEH4X"
+                "id": "OrkEzxZEH4X",
+                "name": "Weight in kg"
             },
             "dimension": "vV9UWAZohSf",
             "valueType": "INTEGER_POSITIVE"
@@ -361,13 +369,12 @@
     "displayName": "Inpatient: Visit overview this year Bo",
     "access": {
         "manage": true,
-        "externalize": true,
         "write": true,
         "read": true,
         "update": true,
         "delete": true
     },
-    "href": "https://test.e2e.dhis2.org/anly-dev/api/eventVisualizations/PRVegIpABeb",
+    "href": "https://dev.im.dhis2.org/ever-playground/api/eventVisualizations/PRVegIpABeb",
     "subscribed": false,
     "metaData": {
         "eMyVanycQSC": {

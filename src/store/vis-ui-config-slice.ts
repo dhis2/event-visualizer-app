@@ -9,12 +9,24 @@ import type {
     VisualizationType,
 } from '@types'
 
-type ConditionsObject = { condition?: string | string[]; legendSet?: string }
+export type ConditionsObject = {
+    condition?: string | string[]
+    legendSet?: string
+}
+
+export type RepetitionsObject = {
+    mostRecent: number
+    oldest: number
+}
 
 const EMPTY_STRING_ARRAY: string[] = []
 const EMPTY_CONDITIONS_OBJECT: ConditionsObject = {
     condition: undefined,
     legendSet: undefined,
+}
+export const DEFAULT_REPETITIONS_OBJECT: RepetitionsObject = {
+    mostRecent: 1,
+    oldest: 0,
 }
 
 export interface VisUiConfigState {
@@ -22,7 +34,8 @@ export interface VisUiConfigState {
     outputType: OutputType
     layout: Layout
     itemsByDimension: Record<string, string[]>
-    conditionsByDimension: Record<string, ConditionsObject>
+    conditionsByDimension: Record<string, ConditionsObject | undefined>
+    repetitionsByDimension: Record<string, RepetitionsObject | undefined>
     options: EventVisualizationOptions
 }
 
@@ -39,6 +52,13 @@ export const initialState: VisUiConfigState = {
     },
     itemsByDimension: {},
     conditionsByDimension: {},
+    repetitionsByDimension: {},
+}
+
+type SetConditionsByDimensionPayload = {
+    dimensionId: string
+    conditions?: string
+    legendSet?: string
 }
 
 type SetItemsByDimensionPayload = {
@@ -49,6 +69,11 @@ type SetItemsByDimensionPayload = {
 type SetOptionPayload = {
     key: keyof EventVisualizationOptions
     value: EventVisualizationOptions[keyof EventVisualizationOptions]
+}
+
+type SetRepetitionsByDimensionPayload = {
+    dimensionId: string
+    repetitions?: RepetitionsObject
 }
 
 const resolveSortInsertIndex = ({
@@ -114,11 +139,32 @@ export const visUiConfigSlice = createSlice({
         },
         setVisUiConfigConditionsByDimension: (
             state,
-            action: PayloadAction<
-                Record<string, { condition?: string; legendSet?: string }>
-            >
+            action: PayloadAction<SetConditionsByDimensionPayload>
         ) => {
-            state.conditionsByDimension = action.payload
+            const { dimensionId, conditions, legendSet } = action.payload
+
+            state.conditionsByDimension = {
+                ...state.conditionsByDimension,
+                [dimensionId]:
+                    conditions?.length || legendSet
+                        ? { condition: conditions, legendSet }
+                        : undefined,
+            }
+        },
+        setVisUiConfigRepetitionsByDimension: (
+            state,
+            action: PayloadAction<SetRepetitionsByDimensionPayload>
+        ) => {
+            const { dimensionId, repetitions } = action.payload
+
+            if (!repetitions) {
+                delete state.repetitionsByDimension[dimensionId]
+            } else {
+                state.repetitionsByDimension = {
+                    ...state.repetitionsByDimension,
+                    [dimensionId]: repetitions,
+                }
+            }
         },
         addVisUiConfigLayoutDimension: (
             state,
@@ -213,6 +259,9 @@ export const visUiConfigSlice = createSlice({
             state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
         getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
             state.conditionsByDimension[dimensionId] || EMPTY_CONDITIONS_OBJECT,
+        getVisUiConfigRepetitionsByDimension: (state, dimensionId: string) =>
+            state.repetitionsByDimension[dimensionId] ||
+            DEFAULT_REPETITIONS_OBJECT,
     },
 })
 
@@ -225,6 +274,7 @@ export const {
     setVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
+    setVisUiConfigRepetitionsByDimension,
     addVisUiConfigLayoutDimension,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimension,
@@ -237,4 +287,5 @@ export const {
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
+    getVisUiConfigRepetitionsByDimension,
 } = visUiConfigSlice.selectors

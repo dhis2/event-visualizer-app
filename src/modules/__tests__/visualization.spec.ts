@@ -79,6 +79,9 @@ const testCases = {
                     optionSet: {
                         id: 'x31y45jvIQL',
                     },
+                    repetition: {
+                        indexes: [-2, -1, 0],
+                    },
                 },
             ],
             filters: [],
@@ -96,6 +99,12 @@ const testCases = {
             conditionsByDimension: {
                 'birth.infantFeeding': {
                     condition: 'IN:Exclusive;Mixed',
+                },
+            },
+            repetitionsByDimension: {
+                'babyPostnatal.infantFeeding': {
+                    mostRecent: 3,
+                    oldest: 0,
                 },
             },
             visualizationType: 'LINE_LIST',
@@ -175,6 +184,7 @@ const testCases = {
                     condition: 'ILIKE:je',
                 },
             },
+            repetitionsByDimension: {},
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
@@ -284,6 +294,7 @@ const testCases = {
                     condition: 'GT:100',
                 },
             },
+            repetitionsByDimension: {},
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [

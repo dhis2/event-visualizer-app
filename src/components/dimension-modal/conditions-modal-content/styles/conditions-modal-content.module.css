@@ -1,0 +1,62 @@
+.infoIcon svg {
+    color: var(--colors-grey900);
+    margin-inline-end: 6px;
+    vertical-align: text-bottom;
+}
+
+.separator {
+    display: block;
+    font-size: 12px;
+    line-height: 14px;
+    font-weight: 500;
+    color: var(--colors-grey700);
+    padding: var(--spacers-dp4) 0;
+}
+
+.tooltipReference {
+    display: inline-flex;
+    cursor: not-allowed;
+    margin-block-start: var(--spacers-dp16);
+}
+
+.tooltipReference > .addConditionButton:disabled {
+    pointer-events: none;
+}
+
+.tabBar {
+    margin-block-end: var(--spacers-dp16);
+}
+
+.repeatableWrapper {
+    display: flex;
+    align-items: center;
+    margin-inline-start: var(--spacers-dp8);
+}
+
+.repeatableWrapper:first-child {
+    margin-block-start: var(--spacers-dp16);
+}
+
+.repeatableWrapper:not(:last-child) {
+    margin-block-end: var(--spacers-dp12);
+}
+
+.repeatableInput {
+    inline-size: 100px;
+    margin-inline-start: var(--spacers-dp4);
+}
+
+.paragraph {
+    font-size: 14px;
+    line-height: 19px;
+    color: var(--colors-grey900);
+    margin: 0;
+}
+
+.mainSection {
+    background: var(--colors-grey050);
+    border: 1px solid var(--colors-grey200);
+    margin: var(--spacers-dp12) 0 var(--spacers-dp8);
+    padding: var(--spacers-dp8) var(--spacers-dp8) var(--spacers-dp16);
+    overflow: auto;
+}

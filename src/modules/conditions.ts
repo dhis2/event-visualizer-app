@@ -158,11 +158,15 @@ export const API_TIME_DIVIDER = '.'
 export const UI_TIME_DIVIDER = ':'
 export const API_DATETIME_DIVIDER = 'T'
 export const UI_DATETIME_DIVIDER = ' '
-export const PREFIX_CASE_INSENSITIVE: QueryPrefix = 'I'
-export const PREFIX_NOT: QueryPrefix = '!'
+export const FALSE_VALUE: BooleanValue = '0'
+export const NULL_VALUE: BooleanValue = 'NV'
+export const TRUE_VALUE: BooleanValue = '1'
 export const OPERATOR_IN: QueryOperator = 'IN'
 export const OPERATOR_EQUAL: QueryOperator = 'EQ'
-export const NULL_VALUE: BooleanValue = 'NV'
+export const OPERATOR_EMPTY = `EQ:${NULL_VALUE}`
+export const OPERATOR_NOT_EMPTY = `NE:${NULL_VALUE}`
+export const PREFIX_CASE_INSENSITIVE: QueryPrefix = 'I'
+export const PREFIX_NOT: QueryPrefix = '!'
 
 export const addCaseSensitivePrefix = (
     operator: QueryOperator,
@@ -202,11 +206,16 @@ export const removeCaseSensitivePrefix = (
     }
 }
 
-// TODO - in practice this function isn't used for the 'IN' operator
+// TODO: - in practice this function isn't used for the 'IN' operator
 // but if it were the result would be wrong. The function
 // should probably control for the allowed operators and throw if the
 // operator isn't one of the allowed ones.
 export const isIsCaseSensitive = (operator: QueryOperator): boolean => {
+    // default is false (case insensitive)
+    if (!operator) {
+        return false
+    }
+
     if (operator[0] === PREFIX_NOT) {
         // !LIKE, !ILIKE, !EQ, !IEQ
         return operator[1] !== PREFIX_CASE_INSENSITIVE
