@@ -55,7 +55,7 @@ export const TitleBar: FC = () => {
         <div data-test="title-bar" className={classes.titleBar}>
             <div className={classes.titleContainer}>
                 {titleText && (
-                    <div className={titleClasses}>
+                    <div data-test="title-text" className={titleClasses}>
                         <span className={classes.title}>{titleText}</span>
                         {getSuffix(titleState)}
                     </div>
