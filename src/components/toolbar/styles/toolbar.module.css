@@ -1,5 +1,15 @@
+.actionButtons {
+    display: flex;
+}
+
 .toolbarDivider {
     inline-size: 1px;
     background-color: var(--colors-grey300);
     margin: 8px 4px;
+}
+
+@media screen and (max-width: 768px) {
+    .actionButtons {
+        display: none;
+    }
 }
