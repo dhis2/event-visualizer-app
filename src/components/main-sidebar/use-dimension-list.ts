@@ -37,6 +37,7 @@ export type UseDimensionListResult = {
     isLoadingMore: boolean
     error?: EngineError
     hasMore: boolean
+    hasNoData: boolean
     loadMore: () => void
     isDisabledByFilter: boolean
 }
@@ -212,6 +213,7 @@ export const useDimensionList = ({
     const [fetchedDimensions, setFetchedDimensions] = useState<
         DimensionMetadataItem[]
     >([])
+    const [hasNoData, setHasNoData] = useState(false)
     const isInitalFetchSuccessRef = useRef(false)
     const [isSearching, setIsSearching] = useState(false)
     const [resolvedSearchTerm, setResolvedSearchTerm] = useState(searchTerm)
@@ -247,6 +249,10 @@ export const useDimensionList = ({
                 setFetchedDimensions(dimensions)
             } else {
                 setFetchedDimensions((prev) => [...prev, ...dimensions])
+            }
+
+            if (!searchTerm && fixedDimensions.length === 0) {
+                setHasNoData(responseData.pager.total === 0)
             }
             nextPageRef.current = nextPage
             dispatch(setDimensionListLoadSuccess(dimensionListKey))
@@ -329,6 +335,7 @@ export const useDimensionList = ({
             isLoadingMore,
             error,
             hasMore,
+            hasNoData,
             loadMore,
             isDisabledByFilter,
         }
@@ -338,6 +345,7 @@ export const useDimensionList = ({
         isFetching,
         isSearching,
         error,
+        hasNoData,
         loadMore,
         filter,
         isDisabledByFilter,

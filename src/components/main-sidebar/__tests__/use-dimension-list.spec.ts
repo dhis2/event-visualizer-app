@@ -1074,6 +1074,468 @@ describe('useDimensionList', () => {
         ])
     })
 
+    it('hasNoData is true when server returns empty result without search', async () => {
+        // Setup API response with 0 total items
+        mockApiResponse = {
+            dataElements: [],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
+        } as unknown as ResponseData
+
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '',
+                            filter: 'DATA_ELEMENT',
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // Wait for fetch to complete
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false)
+        })
+
+        expect(result.current.hasNoData).toBe(true)
+        expect(result.current.dimensions).toEqual([])
+    })
+
+    it('hasNoData is false when server returns empty result with search', async () => {
+        // Setup API response with 0 total items
+        mockApiResponse = {
+            dataElements: [],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
+        } as unknown as ResponseData
+
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: 'test',
+                            filter: 'DATA_ELEMENT',
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // Wait for fetch to complete
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false)
+        })
+
+        expect(result.current.hasNoData).toBe(false)
+        expect(result.current.dimensions).toEqual([])
+    })
+
+    it('hasNoData is false when server returns data', async () => {
+        // Setup API response with data
+        mockApiResponse = {
+            dataElements: [mockApiDimension],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
+        } as unknown as ResponseData
+
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '',
+                            filter: 'DATA_ELEMENT',
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // Wait for fetch to complete
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false)
+        })
+
+        expect(result.current.hasNoData).toBe(false)
+        expect(result.current.dimensions).toEqual([mockApiDimension])
+    })
+
+    it('hasNoData is false when there are fixed dimensions even if server returns empty', async () => {
+        // Setup API response with 0 total items
+        mockApiResponse = {
+            dataElements: [],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
+        } as unknown as ResponseData
+
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    fixedDimensions,
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '',
+                            filter: 'DATA_ELEMENT',
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // Wait for fetch to complete
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false)
+        })
+
+        // hasNoData should be false because we have fixed dimensions
+        expect(result.current.hasNoData).toBe(false)
+        expect(result.current.dimensions).toEqual(fixedDimensions)
+    })
+
+    it('hasNoData updates when search is cleared and server has no data', async () => {
+        // Setup initial state with search that returns data
+        mockApiResponse = {
+            dataElements: [mockApiDimension],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
+        } as unknown as ResponseData
+
+        const { result, store } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: 'test',
+                            filter: 'DATA_ELEMENT',
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // Wait for initial fetch with search
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false)
+        })
+
+        expect(result.current.hasNoData).toBe(false)
+
+        // Setup response for cleared search (no data)
+        mockApiResponse = {
+            dataElements: [],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
+        } as unknown as ResponseData
+
+        // Clear search term
+        act(() => {
+            store.dispatch(setSearchTerm(''))
+        })
+
+        // Wait for fetch to complete
+        await waitFor(() => {
+            expect(result.current.isFetching).toBe(false)
+        })
+
+        expect(result.current.hasNoData).toBe(true)
+    })
+
+    it('hasNoData is true only when no fixed dimensions AND no server data AND no search', async () => {
+        // Test 1: No fixed dimensions, no server data, no search
+        mockApiResponse = {
+            dataElements: [],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
+        } as unknown as ResponseData
+
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    // No fixed dimensions
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '',
+                            filter: 'DATA_ELEMENT',
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false)
+        })
+
+        // Should be true: no fixed dims, no server data, no search
+        expect(result.current.hasNoData).toBe(true)
+
+        // Test 2: Add fixed dimensions (use different key to avoid state conflict)
+        mockApiResponse = {
+            dataElements: [],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
+        } as unknown as ResponseData
+
+        const { result: result2 } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-tracked-entity-type', // Different valid key
+                    fixedDimensions, // Now has fixed dimensions
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '',
+                            filter: 'DATA_ELEMENT',
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        await waitFor(() => {
+            expect(result2.current.isLoading).toBe(false)
+        })
+
+        // Should be false: has fixed dimensions
+        expect(result2.current.hasNoData).toBe(false)
+
+        // Test 3: Add search term (use another different key)
+        mockApiResponse = {
+            dataElements: [],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
+        } as unknown as ResponseData
+
+        const { result: result3 } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'event-without-registration', // Different valid key
+                    // No fixed dimensions
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: 'test', // Has search term
+                            filter: 'DATA_ELEMENT',
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        await waitFor(() => {
+            expect(result3.current.isLoading).toBe(false)
+        })
+
+        // Should be false: has search term
+        expect(result3.current.hasNoData).toBe(false)
+    })
+
+    it('hasNoData is sticky during search - retains value from before search', async () => {
+        // Test 1: Start with no data, then search
+        mockApiResponse = {
+            dataElements: [],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
+        } as unknown as ResponseData
+
+        const { result, store } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '', // No search initially
+                            filter: 'DATA_ELEMENT',
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // Wait for initial fetch (no search, no data)
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false)
+        })
+
+        // Should be true: no search, no data, no fixed dims
+        expect(result.current.hasNoData).toBe(true)
+
+        // Setup search response (still no data)
+        mockApiResponse = {
+            dataElements: [],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
+        } as unknown as ResponseData
+
+        // Apply search
+        act(() => {
+            store.dispatch(setSearchTerm('test'))
+        })
+
+        // Wait for search fetch
+        await waitFor(() => {
+            expect(result.current.isFetching).toBe(false)
+        })
+
+        // hasNoData should remain true (sticky during search)
+        expect(result.current.hasNoData).toBe(true)
+
+        // Test 2: Start with data, then search
+        mockApiResponse = {
+            dataElements: [mockApiDimension],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
+        } as unknown as ResponseData
+
+        const { result: result2, store: store2 } =
+            await renderHookWithAppWrapper(
+                () =>
+                    useDimensionList({
+                        dimensionListKey: 'program-tracked-entity-type', // Different key
+                        baseQuery,
+                    }),
+                {
+                    partialStore: {
+                        reducer: {
+                            dimensionSelection: dimensionSelectionSlice.reducer,
+                        },
+                        preloadedState: {
+                            dimensionSelection: {
+                                dataSourceId: null,
+                                searchTerm: '', // No search initially
+                                filter: 'DATA_ELEMENT',
+                                dimensionCardCollapseStates: {},
+                                dimensionListLoadingStates: {},
+                                multiSelectedDimensionIds: [],
+                            },
+                        },
+                    },
+                }
+            )
+
+        // Wait for initial fetch (no search, has data)
+        await waitFor(() => {
+            expect(result2.current.isLoading).toBe(false)
+        })
+
+        // Should be false: no search, has data
+        expect(result2.current.hasNoData).toBe(false)
+
+        // Setup search response
+        mockApiResponse = {
+            dataElements: [],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
+        } as unknown as ResponseData
+
+        // Apply search
+        act(() => {
+            store2.dispatch(setSearchTerm('test'))
+        })
+
+        // Wait for search fetch
+        await waitFor(() => {
+            expect(result2.current.isFetching).toBe(false)
+        })
+
+        // hasNoData should remain false (sticky during search)
+        expect(result2.current.hasNoData).toBe(false)
+    })
+
     // ===== Advanced hook tests =====
 
     it('shows loading state during fetch and error state after failure', async () => {
