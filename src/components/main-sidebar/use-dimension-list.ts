@@ -33,10 +33,11 @@ export type UseDimensionListResult = {
     dimensions: DimensionMetadataItem[]
     isLoading: boolean
     isFetching: boolean
+    isSearching: boolean
+    isLoadingMore: boolean
     error?: EngineError
     hasMore: boolean
     loadMore: () => void
-    isSearching: boolean
     isDisabledByFilter: boolean
 }
 
@@ -184,14 +185,14 @@ export const filterDimensions = (
 export const computeIsDisabledByFilter = (
     baseQuery: SingleQuery | undefined,
     filter: DataSourceFilter | null,
-    fixedDimensions: DimensionMetadataItem[] = []
+    fixedDimensionTypes: DimensionType[] = []
 ): boolean => {
     const isFetchEnabled = isFetchEnabledByFilter(baseQuery, filter)
-    const hasMatchingFixedDimension =
-        Array.isArray(fixedDimensions) &&
-        fixedDimensions.some((dimension) => dimension.dimensionType === filter)
+    const hasMatchingFixedDimensionType =
+        Array.isArray(fixedDimensionTypes) &&
+        fixedDimensionTypes.some((dimensionType) => dimensionType === filter)
 
-    return !isFetchEnabled && !hasMatchingFixedDimension
+    return !isFetchEnabled && !hasMatchingFixedDimensionType
 }
 
 export const useDimensionList = ({
@@ -278,7 +279,10 @@ export const useDimensionList = ({
     }, [fixedDimensions, fetchedDimensions, resolvedSearchTerm, filter])
 
     const isDisabledByFilter = useMemo(() => {
-        return computeIsDisabledByFilter(baseQuery, filter, fixedDimensions)
+        const fixedDimensionTypes = fixedDimensions.map(
+            (dimension) => dimension.dimensionType
+        )
+        return computeIsDisabledByFilter(baseQuery, filter, fixedDimensionTypes)
     }, [baseQuery, filter, fixedDimensions])
 
     useEffect(() => {
@@ -310,28 +314,32 @@ export const useDimensionList = ({
         prevBaseQueryRef.current = baseQuery
     }, [baseQuery])
 
-    return useMemo(
-        () => ({
+    return useMemo(() => {
+        const isLoading = !isInitalFetchSuccessRef.current && isFetching
+        const isLoadingMore = isFetching && !isLoading && !isSearching
+        const hasMore =
+            nextPageRef.current !== null &&
+            isFetchEnabledByFilter(baseQuery, filter)
+
+        return {
             dimensions,
             isFetching,
-            isLoading: !isInitalFetchSuccessRef.current && isFetching,
-            error,
-            hasMore:
-                nextPageRef.current !== null &&
-                isFetchEnabledByFilter(baseQuery, filter),
-            loadMore,
+            isLoading,
             isSearching,
-            isDisabledByFilter,
-        }),
-        [
-            baseQuery,
-            dimensions,
-            isFetching,
-            isSearching,
+            isLoadingMore,
             error,
+            hasMore,
             loadMore,
-            filter,
             isDisabledByFilter,
-        ]
-    )
+        }
+    }, [
+        baseQuery,
+        dimensions,
+        isFetching,
+        isSearching,
+        error,
+        loadMore,
+        filter,
+        isDisabledByFilter,
+    ])
 }

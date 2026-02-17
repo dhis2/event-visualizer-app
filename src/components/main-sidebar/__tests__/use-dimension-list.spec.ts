@@ -600,7 +600,7 @@ describe('computeIsDisabledByFilter', () => {
         expect(result).toBe(false)
     })
 
-    it('returns false when fixedDimensions contains item matching filter', () => {
+    it('returns false when fixedDimensionTypes contains matching dimension type', () => {
         const baseQuery: SingleQuery = {
             resource: 'dataElements',
             params: {
@@ -610,22 +610,19 @@ describe('computeIsDisabledByFilter', () => {
                 ],
             },
         }
-        const fixedDimensions: DimensionMetadataItem[] = [
-            createDimension({
-                id: 'dim-1',
-                dimensionType: 'PROGRAM_INDICATOR',
-            }),
-            createDimension({ id: 'dim-2', dimensionType: 'DATA_ELEMENT' }),
+        const fixedDimensionTypes: DimensionType[] = [
+            'PROGRAM_INDICATOR',
+            'DATA_ELEMENT',
         ]
         const result = computeIsDisabledByFilter(
             baseQuery,
             'PROGRAM_INDICATOR',
-            fixedDimensions
+            fixedDimensionTypes
         )
         expect(result).toBe(false)
     })
 
-    it('returns true when filter does not match baseQuery or any fixedDimensions', () => {
+    it('returns true when filter does not match baseQuery or any fixedDimensionTypes', () => {
         const baseQuery: SingleQuery = {
             resource: 'dataElements',
             params: {
@@ -635,19 +632,19 @@ describe('computeIsDisabledByFilter', () => {
                 ],
             },
         }
-        const fixedDimensions: DimensionMetadataItem[] = [
-            createDimension({ id: 'dim-1', dimensionType: 'DATA_ELEMENT' }),
-            createDimension({ id: 'dim-2', dimensionType: 'DATA_ELEMENT' }),
+        const fixedDimensionTypes: DimensionType[] = [
+            'DATA_ELEMENT',
+            'DATA_ELEMENT',
         ]
         const result = computeIsDisabledByFilter(
             baseQuery,
             'PROGRAM_INDICATOR',
-            fixedDimensions
+            fixedDimensionTypes
         )
         expect(result).toBe(true)
     })
 
-    it('returns true when fixedDimensions is empty and filter does not match baseQuery', () => {
+    it('returns true when fixedDimensionTypes is empty and filter does not match baseQuery', () => {
         const baseQuery: SingleQuery = {
             resource: 'dataElements',
             params: {
@@ -665,19 +662,17 @@ describe('computeIsDisabledByFilter', () => {
         expect(result).toBe(true)
     })
 
-    it('returns true when no baseQuery and no fixedDimensions provided', () => {
+    it('returns true when no baseQuery and no fixedDimensionTypes provided', () => {
         const result = computeIsDisabledByFilter(undefined, 'DATA_ELEMENT')
         expect(result).toBe(true)
     })
 
-    it('returns false when no baseQuery but fixedDimensions match filter', () => {
-        const fixedDimensions: DimensionMetadataItem[] = [
-            createDimension({ id: 'dim-1', dimensionType: 'DATA_ELEMENT' }),
-        ]
+    it('returns false when no baseQuery but fixedDimensionTypes match filter', () => {
+        const fixedDimensionTypes: DimensionType[] = ['DATA_ELEMENT']
         const result = computeIsDisabledByFilter(
             undefined,
             'DATA_ELEMENT',
-            fixedDimensions
+            fixedDimensionTypes
         )
         expect(result).toBe(false)
     })
@@ -1059,9 +1054,15 @@ describe('useDimensionList', () => {
             result.current.loadMore()
         })
 
-        // Wait for second fetch (use isFetching since isLoading is only for first load)
+        // Check isLoadingMore is true during fetch
+        await waitFor(() => {
+            expect(result.current.isLoadingMore).toBe(true)
+        })
+
+        // Wait for second fetch to complete
         await waitFor(() => {
             expect(result.current.isFetching).toBe(false)
+            expect(result.current.isLoadingMore).toBe(false)
         })
 
         expect(mockInitiateCallCount).toBe(2)
@@ -2285,12 +2286,14 @@ describe('useDimensionList', () => {
         expect(result.current.isLoading).toBe(true)
         expect(result.current.isFetching).toBe(true)
         expect(result.current.isSearching).toBe(false)
+        expect(result.current.isLoadingMore).toBe(false)
 
         // Stage 1: After initial data loads
         await waitFor(() => {
             expect(result.current.isLoading).toBe(false)
             expect(result.current.isFetching).toBe(false)
             expect(result.current.isSearching).toBe(false)
+            expect(result.current.isLoadingMore).toBe(false)
             expect(result.current.dimensions).toEqual([mockApiDimension])
         })
 
@@ -2313,12 +2316,14 @@ describe('useDimensionList', () => {
             expect(result.current.isLoading).toBe(false)
             expect(result.current.isFetching).toBe(true)
             expect(result.current.isSearching).toBe(false)
+            expect(result.current.isLoadingMore).toBe(true)
         })
 
         await waitFor(() => {
             expect(result.current.isLoading).toBe(false)
             expect(result.current.isFetching).toBe(false)
             expect(result.current.isSearching).toBe(false)
+            expect(result.current.isLoadingMore).toBe(false)
             expect(result.current.dimensions).toEqual([
                 mockApiDimension,
                 secondDimension,
@@ -2344,6 +2349,7 @@ describe('useDimensionList', () => {
             expect(result.current.isLoading).toBe(false)
             expect(result.current.isFetching).toBe(true)
             expect(result.current.isSearching).toBe(true)
+            expect(result.current.isLoadingMore).toBe(false)
         })
 
         // Wait for search to complete
@@ -2351,6 +2357,7 @@ describe('useDimensionList', () => {
             expect(result.current.isLoading).toBe(false)
             expect(result.current.isFetching).toBe(false)
             expect(result.current.isSearching).toBe(false)
+            expect(result.current.isLoadingMore).toBe(false)
             expect(result.current.dimensions).toEqual([searchDimension])
         })
     })
@@ -2452,6 +2459,7 @@ describe('useDimensionList', () => {
         // Immediately after dispatch: isFetching and isSearching should be true
         expect(result.current.isFetching).toBe(true)
         expect(result.current.isSearching).toBe(true)
+        expect(result.current.isLoadingMore).toBe(false)
 
         // During fetch, dimensions should still show stale data (previous resolvedSearchTerm)
         // Fixed dimensions filtered with empty search term (all), plus previous fetched dimensions
@@ -2464,6 +2472,7 @@ describe('useDimensionList', () => {
         await waitFor(() => {
             expect(result.current.isFetching).toBe(false)
             expect(result.current.isSearching).toBe(false)
+            expect(result.current.isLoadingMore).toBe(false)
         })
 
         // After fetch completes: dimensions should be filtered with new search term
