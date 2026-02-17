@@ -1,6 +1,5 @@
 import { Button, Tooltip } from '@dhis2/ui'
 import type { FC, ReactElement } from 'react'
-import buttonClasses from './styles/button.module.css'
 import classes from './styles/toggler.module.css'
 
 type TogglerProps = {
@@ -31,7 +30,7 @@ export const Toggler: FC<TogglerProps> = ({
                     small
                     secondary
                     aria-label={tooltipText}
-                    className={buttonClasses.button}
+                    className={classes.button}
                 />
             </span>
         )}
