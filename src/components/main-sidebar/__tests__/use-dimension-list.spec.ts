@@ -7,6 +7,7 @@ import {
     buildQuery,
     isFetchEnabledByFilter,
     filterDimensions,
+    computeIsDisabledByFilter,
     type ResponseData,
 } from '../use-dimension-list'
 import * as dimensionSelectionActions from '@store/dimensions-selection-slice'
@@ -553,6 +554,146 @@ describe('filterDimensions', () => {
     it('preserves order of filtered dimensions', () => {
         const result = filterDimensions(dimensions, '', 'DATA_ELEMENT')
         expect(result.map((d) => d.id)).toEqual(['1', '2'])
+    })
+})
+
+describe('computeIsDisabledByFilter', () => {
+    it('returns false when filter matches baseQuery dimension type', () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dataElements',
+            params: {
+                filter: [
+                    'dimensionType:eq:DATA_ELEMENT',
+                    'domainType:eq:TRACKER',
+                ],
+            },
+        }
+        const result = computeIsDisabledByFilter(baseQuery, 'DATA_ELEMENT')
+        expect(result).toBe(false)
+    })
+
+    it('returns true when filter does not match baseQuery dimension type', () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dataElements',
+            params: {
+                filter: [
+                    'dimensionType:eq:DATA_ELEMENT',
+                    'domainType:eq:TRACKER',
+                ],
+            },
+        }
+        const result = computeIsDisabledByFilter(baseQuery, 'PROGRAM_INDICATOR')
+        expect(result).toBe(true)
+    })
+
+    it('returns false when filter is null', () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dataElements',
+            params: {
+                filter: [
+                    'dimensionType:eq:DATA_ELEMENT',
+                    'domainType:eq:TRACKER',
+                ],
+            },
+        }
+        const result = computeIsDisabledByFilter(baseQuery, null)
+        expect(result).toBe(false)
+    })
+
+    it('returns false when fixedDimensions contains item matching filter', () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dataElements',
+            params: {
+                filter: [
+                    'dimensionType:eq:DATA_ELEMENT',
+                    'domainType:eq:TRACKER',
+                ],
+            },
+        }
+        const fixedDimensions: DimensionMetadataItem[] = [
+            createDimension({
+                id: 'dim-1',
+                dimensionType: 'PROGRAM_INDICATOR',
+            }),
+            createDimension({ id: 'dim-2', dimensionType: 'DATA_ELEMENT' }),
+        ]
+        const result = computeIsDisabledByFilter(
+            baseQuery,
+            'PROGRAM_INDICATOR',
+            fixedDimensions
+        )
+        expect(result).toBe(false)
+    })
+
+    it('returns true when filter does not match baseQuery or any fixedDimensions', () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dataElements',
+            params: {
+                filter: [
+                    'dimensionType:eq:DATA_ELEMENT',
+                    'domainType:eq:TRACKER',
+                ],
+            },
+        }
+        const fixedDimensions: DimensionMetadataItem[] = [
+            createDimension({ id: 'dim-1', dimensionType: 'DATA_ELEMENT' }),
+            createDimension({ id: 'dim-2', dimensionType: 'DATA_ELEMENT' }),
+        ]
+        const result = computeIsDisabledByFilter(
+            baseQuery,
+            'PROGRAM_INDICATOR',
+            fixedDimensions
+        )
+        expect(result).toBe(true)
+    })
+
+    it('returns true when fixedDimensions is empty and filter does not match baseQuery', () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dataElements',
+            params: {
+                filter: [
+                    'dimensionType:eq:DATA_ELEMENT',
+                    'domainType:eq:TRACKER',
+                ],
+            },
+        }
+        const result = computeIsDisabledByFilter(
+            baseQuery,
+            'PROGRAM_INDICATOR',
+            []
+        )
+        expect(result).toBe(true)
+    })
+
+    it('returns true when no baseQuery and no fixedDimensions provided', () => {
+        const result = computeIsDisabledByFilter(undefined, 'DATA_ELEMENT')
+        expect(result).toBe(true)
+    })
+
+    it('returns false when no baseQuery but fixedDimensions match filter', () => {
+        const fixedDimensions: DimensionMetadataItem[] = [
+            createDimension({ id: 'dim-1', dimensionType: 'DATA_ELEMENT' }),
+        ]
+        const result = computeIsDisabledByFilter(
+            undefined,
+            'DATA_ELEMENT',
+            fixedDimensions
+        )
+        expect(result).toBe(false)
+    })
+
+    it('handles baseQuery without dimension type filter', () => {
+        const baseQueryWithoutDimensionType: SingleQuery = {
+            resource: 'programIndicators',
+            params: {
+                filter: ['program.id:eq:abc123'],
+            },
+        }
+        const result = computeIsDisabledByFilter(
+            baseQueryWithoutDimensionType,
+            'DATA_ELEMENT'
+        )
+        expect(result).toBe(false)
     })
 })
 
@@ -2408,311 +2549,6 @@ describe('useDimensionList', () => {
         expect(result.current.dimensions).toEqual([])
     })
 
-    it('isDisabledByFilter returns false when filter matches baseQuery dimension type', async () => {
-        const baseQuery: SingleQuery = {
-            resource: 'dataElements',
-            params: {
-                filter: [
-                    'dimensionType:eq:DATA_ELEMENT',
-                    'domainType:eq:TRACKER',
-                ],
-            },
-        }
-        const { result } = await renderHookWithAppWrapper(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            {
-                partialStore: {
-                    reducer: {
-                        dimensionSelection: dimensionSelectionSlice.reducer,
-                    },
-                    preloadedState: {
-                        dimensionSelection: {
-                            dataSourceId: null,
-                            searchTerm: '',
-                            filter: 'DATA_ELEMENT',
-                            dimensionCardCollapseStates: {},
-                            dimensionListLoadingStates: {},
-                            multiSelectedDimensionIds: [],
-                        },
-                    },
-                },
-            }
-        )
-
-        expect(result.current.isDisabledByFilter).toBe(false)
-    })
-
-    it('isDisabledByFilter returns true when filter does not match baseQuery dimension type', async () => {
-        const baseQuery: SingleQuery = {
-            resource: 'dataElements',
-            params: {
-                filter: [
-                    'dimensionType:eq:DATA_ELEMENT',
-                    'domainType:eq:TRACKER',
-                ],
-            },
-        }
-        const { result } = await renderHookWithAppWrapper(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            {
-                partialStore: {
-                    reducer: {
-                        dimensionSelection: dimensionSelectionSlice.reducer,
-                    },
-                    preloadedState: {
-                        dimensionSelection: {
-                            dataSourceId: null,
-                            searchTerm: '',
-                            filter: 'PROGRAM_INDICATOR',
-                            dimensionCardCollapseStates: {},
-                            dimensionListLoadingStates: {},
-                            multiSelectedDimensionIds: [],
-                        },
-                    },
-                },
-            }
-        )
-
-        expect(result.current.isDisabledByFilter).toBe(true)
-    })
-
-    it('isDisabledByFilter returns false when filter is null', async () => {
-        const baseQuery: SingleQuery = {
-            resource: 'dataElements',
-            params: {
-                filter: [
-                    'dimensionType:eq:DATA_ELEMENT',
-                    'domainType:eq:TRACKER',
-                ],
-            },
-        }
-        const { result } = await renderHookWithAppWrapper(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            {
-                partialStore: {
-                    reducer: {
-                        dimensionSelection: dimensionSelectionSlice.reducer,
-                    },
-                    preloadedState: {
-                        dimensionSelection: {
-                            dataSourceId: null,
-                            searchTerm: '',
-                            filter: null,
-                            dimensionCardCollapseStates: {},
-                            dimensionListLoadingStates: {},
-                            multiSelectedDimensionIds: [],
-                        },
-                    },
-                },
-            }
-        )
-
-        expect(result.current.isDisabledByFilter).toBe(false)
-    })
-
-    it('isDisabledByFilter returns false when fixedDimensions contains item matching filter', async () => {
-        const baseQuery: SingleQuery = {
-            resource: 'dataElements',
-            params: {
-                filter: [
-                    'dimensionType:eq:DATA_ELEMENT',
-                    'domainType:eq:TRACKER',
-                ],
-            },
-        }
-        const fixedDimensions: DimensionMetadataItem[] = [
-            createDimension({
-                id: 'dim-1',
-                dimensionType: 'PROGRAM_INDICATOR',
-            }),
-            createDimension({ id: 'dim-2', dimensionType: 'DATA_ELEMENT' }),
-        ]
-
-        const { result } = await renderHookWithAppWrapper(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                    fixedDimensions,
-                }),
-            {
-                partialStore: {
-                    reducer: {
-                        dimensionSelection: dimensionSelectionSlice.reducer,
-                    },
-                    preloadedState: {
-                        dimensionSelection: {
-                            dataSourceId: null,
-                            searchTerm: '',
-                            filter: 'PROGRAM_INDICATOR',
-                            dimensionCardCollapseStates: {},
-                            dimensionListLoadingStates: {},
-                            multiSelectedDimensionIds: [],
-                        },
-                    },
-                },
-            }
-        )
-
-        expect(result.current.isDisabledByFilter).toBe(false)
-    })
-
-    it('isDisabledByFilter returns true when filter does not match baseQuery or any fixedDimensions', async () => {
-        const baseQuery: SingleQuery = {
-            resource: 'dataElements',
-            params: {
-                filter: [
-                    'dimensionType:eq:DATA_ELEMENT',
-                    'domainType:eq:TRACKER',
-                ],
-            },
-        }
-        const fixedDimensions: DimensionMetadataItem[] = [
-            createDimension({ id: 'dim-1', dimensionType: 'DATA_ELEMENT' }),
-            createDimension({ id: 'dim-2', dimensionType: 'DATA_ELEMENT' }),
-        ]
-
-        const { result } = await renderHookWithAppWrapper(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                    fixedDimensions,
-                }),
-            {
-                partialStore: {
-                    reducer: {
-                        dimensionSelection: dimensionSelectionSlice.reducer,
-                    },
-                    preloadedState: {
-                        dimensionSelection: {
-                            dataSourceId: null,
-                            searchTerm: '',
-                            filter: 'PROGRAM_INDICATOR',
-                            dimensionCardCollapseStates: {},
-                            dimensionListLoadingStates: {},
-                            multiSelectedDimensionIds: [],
-                        },
-                    },
-                },
-            }
-        )
-
-        expect(result.current.isDisabledByFilter).toBe(true)
-    })
-
-    it('isDisabledByFilter returns true when fixedDimensions is empty and filter does not match baseQuery', async () => {
-        const baseQuery: SingleQuery = {
-            resource: 'dataElements',
-            params: {
-                filter: [
-                    'dimensionType:eq:DATA_ELEMENT',
-                    'domainType:eq:TRACKER',
-                ],
-            },
-        }
-        const { result } = await renderHookWithAppWrapper(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                    fixedDimensions: [],
-                }),
-            {
-                partialStore: {
-                    reducer: {
-                        dimensionSelection: dimensionSelectionSlice.reducer,
-                    },
-                    preloadedState: {
-                        dimensionSelection: {
-                            dataSourceId: null,
-                            searchTerm: '',
-                            filter: 'PROGRAM_INDICATOR',
-                            dimensionCardCollapseStates: {},
-                            dimensionListLoadingStates: {},
-                            multiSelectedDimensionIds: [],
-                        },
-                    },
-                },
-            }
-        )
-
-        expect(result.current.isDisabledByFilter).toBe(true)
-    })
-
-    it('isDisabledByFilter returns true when no baseQuery and no fixedDimensions provided', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                }),
-            {
-                partialStore: {
-                    reducer: {
-                        dimensionSelection: dimensionSelectionSlice.reducer,
-                    },
-                    preloadedState: {
-                        dimensionSelection: {
-                            dataSourceId: null,
-                            searchTerm: '',
-                            filter: 'DATA_ELEMENT',
-                            dimensionCardCollapseStates: {},
-                            dimensionListLoadingStates: {},
-                            multiSelectedDimensionIds: [],
-                        },
-                    },
-                },
-            }
-        )
-
-        expect(result.current.isDisabledByFilter).toBe(true)
-    })
-
-    it('isDisabledByFilter returns false when no baseQuery but fixedDimensions match filter', async () => {
-        const fixedDimensions: DimensionMetadataItem[] = [
-            createDimension({ id: 'dim-1', dimensionType: 'DATA_ELEMENT' }),
-        ]
-
-        const { result } = await renderHookWithAppWrapper(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    fixedDimensions,
-                }),
-            {
-                partialStore: {
-                    reducer: {
-                        dimensionSelection: dimensionSelectionSlice.reducer,
-                    },
-                    preloadedState: {
-                        dimensionSelection: {
-                            dataSourceId: null,
-                            searchTerm: '',
-                            filter: 'DATA_ELEMENT',
-                            dimensionCardCollapseStates: {},
-                            dimensionListLoadingStates: {},
-                            multiSelectedDimensionIds: [],
-                        },
-                    },
-                },
-            }
-        )
-
-        expect(result.current.isDisabledByFilter).toBe(false)
-    })
-
     it('isDisabledByFilter recomputes when filter changes', async () => {
         const baseQuery: SingleQuery = {
             resource: 'dataElements',
@@ -2773,42 +2609,5 @@ describe('useDimensionList', () => {
         })
 
         expect(result.current.isDisabledByFilter).toBe(true)
-    })
-
-    it('isDisabledByFilter handles baseQuery without dimension type filter', async () => {
-        const baseQueryWithoutDimensionType: SingleQuery = {
-            resource: 'programIndicators',
-            params: {
-                filter: ['program.id:eq:abc123'],
-            },
-        }
-
-        const { result } = await renderHookWithAppWrapper(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery: baseQueryWithoutDimensionType,
-                }),
-            {
-                partialStore: {
-                    reducer: {
-                        dimensionSelection: dimensionSelectionSlice.reducer,
-                    },
-                    preloadedState: {
-                        dimensionSelection: {
-                            dataSourceId: null,
-                            searchTerm: '',
-                            filter: 'DATA_ELEMENT',
-                            dimensionCardCollapseStates: {},
-                            dimensionListLoadingStates: {},
-                            multiSelectedDimensionIds: [],
-                        },
-                    },
-                },
-            }
-        )
-
-        // Should be enabled since baseQuery has no dimension type restriction
-        expect(result.current.isDisabledByFilter).toBe(false)
     })
 })

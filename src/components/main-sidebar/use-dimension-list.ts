@@ -181,6 +181,19 @@ export const filterDimensions = (
     })
 }
 
+export const computeIsDisabledByFilter = (
+    baseQuery: SingleQuery | undefined,
+    filter: DataSourceFilter | null,
+    fixedDimensions: DimensionMetadataItem[] = []
+): boolean => {
+    const isFetchEnabled = isFetchEnabledByFilter(baseQuery, filter)
+    const hasMatchingFixedDimension =
+        Array.isArray(fixedDimensions) &&
+        fixedDimensions.some((dimension) => dimension.dimensionType === filter)
+
+    return !isFetchEnabled && !hasMatchingFixedDimension
+}
+
 export const useDimensionList = ({
     dimensionListKey,
     fixedDimensions = DEFAULT_FIXED_DIMENSIONS,
@@ -265,15 +278,7 @@ export const useDimensionList = ({
     }, [fixedDimensions, fetchedDimensions, resolvedSearchTerm, filter])
 
     const isDisabledByFilter = useMemo(() => {
-        return (
-            !isFetchEnabledByFilter(baseQuery, filter) &&
-            !(
-                Array.isArray(fixedDimensions) &&
-                fixedDimensions.some(
-                    (dimension) => dimension.dimensionType === filter
-                )
-            )
-        )
+        return computeIsDisabledByFilter(baseQuery, filter, fixedDimensions)
     }, [baseQuery, filter, fixedDimensions])
 
     useEffect(() => {
