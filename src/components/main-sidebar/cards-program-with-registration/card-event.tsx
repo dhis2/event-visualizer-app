@@ -31,7 +31,7 @@ export const STAGE_QUERY_WITHOUT_STAGE_ID = {
 
 export const CardEvent = ({ program }: CardEventProps) => {
     const filter = useAppSelector(getFilter)
-    const isDisabled = useMemo(
+    const isDisabledByFilter = useMemo(
         () =>
             computeIsDisabledByFilter(
                 STAGE_QUERY_WITHOUT_STAGE_ID,
@@ -40,12 +40,12 @@ export const CardEvent = ({ program }: CardEventProps) => {
             ),
         [filter]
     )
-    console.log('isDisabled', isDisabled)
     return (
         <DimensionCard
             dimensionCardKey="event-with-registration"
             title={program.displayEventLabel ?? i18n.t('Event data')}
             withSubSections
+            isDisabledByFilter={isDisabledByFilter}
         >
             {program.programStages!.map((stage) => (
                 <ProgramStageSubsection

@@ -17,6 +17,7 @@ type DimensionCardProps = {
     selectedCount?: number
     children: ReactNode
     withSubSections?: boolean
+    isDisabledByFilter?: boolean
 }
 
 export const DimensionCard = ({
@@ -25,6 +26,7 @@ export const DimensionCard = ({
     selectedCount = 0,
     children,
     withSubSections = false,
+    isDisabledByFilter = false,
 }: DimensionCardProps) => {
     const dispatch = useAppDispatch()
     const isCollapsed = useAppSelector((state) =>
@@ -44,7 +46,9 @@ export const DimensionCard = ({
 
     return (
         <div
-            className={classes.container}
+            className={cx(classes.container, {
+                [classes.isDisabledByFilter]: isDisabledByFilter,
+            })}
             data-test="dimension-card"
             tabIndex={0}
         >

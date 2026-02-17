@@ -5,6 +5,9 @@
     border: 1px solid var(--colors-grey400);
     border-radius: 5px;
 }
+.container.isDisabledByFilter {
+    opacity: 0.5;
+}
 .container:focus {
     outline: 3px solid var(--theme-focus);
     outline-offset: -3px;
