@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { IconErrorFilled16 } from '@dhis2/ui'
+import { CircularLoader, IconErrorFilled16 } from '@dhis2/ui'
 import cx from 'classnames'
 import type { FC } from 'react'
 import { DimensionListItem } from './dimension-list-item'
@@ -13,6 +13,7 @@ const ErrorListItem: FC<{ error: EngineError; isEmptyList: boolean }> = ({
     isEmptyList,
 }) => (
     <li
+        data-test="dimension-list-error-list-item"
         className={cx(classes.error, { [classes.emptyListError]: isEmptyList })}
     >
         <p>
@@ -29,31 +30,24 @@ const ErrorListItem: FC<{ error: EngineError; isEmptyList: boolean }> = ({
 
 const LoaderSkeleton: FC = () => (
     <>
-        <li>
+        <li data-test="dimension-list-skeleton-list-item">
             <SkeletonChip width="100%" />
         </li>
-        <li>
+        <li data-test="dimension-list-skeleton-list-item">
             <SkeletonChip width="100%" />
         </li>
-        <li>
+        <li data-test="dimension-list-skeleton-list-item">
             <SkeletonChip width="100%" />
         </li>
     </>
 )
 
-const error: EngineError = {
-    message: 'Oopsie!',
-    type: 'runtime',
-    errorCode: 'TSTS',
-}
-const dimensions = []
-
 const DimensionListContent: FC<UseDimensionListResult> = ({
-    dimensions: whatDimensions,
+    dimensions,
     isLoading,
     isDisabledByFilter,
     isLoadingMore,
-    error: whatError,
+    error,
     hasMore,
     hasNoData,
     loadMore,
@@ -64,7 +58,10 @@ const DimensionListContent: FC<UseDimensionListResult> = ({
 
     if (!error && (isDisabledByFilter || dimensions.length === 0)) {
         return (
-            <li>
+            <li
+                data-test="dimension-list-empty-list-item"
+                className={hasNoData ? classes.noData : classes.noResults}
+            >
                 {hasNoData ? i18n.t('No data found') : i18n.t('No results')}
             </li>
         )
@@ -82,9 +79,27 @@ const DimensionListContent: FC<UseDimensionListResult> = ({
                 />
             )}
             {hasMore && !isLoadingMore && !error && (
-                <li onClick={loadMore}>{i18n.t('Show more')}</li>
+                <li
+                    className={classes.loadMore}
+                    data-test="dimension-list-load-more-list-item"
+                >
+                    <button
+                        data-test="dimension-list-load-more-button"
+                        onClick={loadMore}
+                    >
+                        {i18n.t('Load more')}
+                    </button>
+                </li>
             )}
-            {isLoadingMore && <li>{i18n.t('Load more')}</li>}
+            {isLoadingMore && (
+                <li
+                    className={classes.loadingMore}
+                    data-test="dimension-list-loading-more-list-item"
+                >
+                    <CircularLoader extrasmall />
+                    <span>{i18n.t('Loading more...')}</span>
+                </li>
+            )}
         </>
     )
 }
