@@ -1,28 +1,58 @@
-import {
-    DimensionCard,
-    DimensionsCardSubsection,
-    DimensionListItem,
-} from '@components/main-sidebar/dimension-card'
-import type { DataSourceProgramWithRegistration } from '@types'
+import i18n from '@dhis2/d2-i18n'
+import { useMemo } from 'react'
+import { ProgramStageSubsection } from './program-stage-subsection'
+import { DimensionCard } from '@components/main-sidebar/dimension-card'
+import { computeIsDisabledByFilter } from '@components/main-sidebar/use-dimension-list'
+import { useAppSelector } from '@hooks'
+import { getFilter } from '@store/dimensions-selection-slice'
+import type { DataSourceProgramWithRegistration, DimensionType } from '@types'
 
 type CardEventProps = {
     program: DataSourceProgramWithRegistration
 }
+const EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES: DimensionType[] = [
+    'ORGANISATION_UNIT',
+    'STATUS',
+    'PERIOD',
+] as const
+
+export type EventWithRegistrationFixedDimensionType =
+    (typeof EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES)[number]
+
+export const STAGE_QUERY_WITHOUT_STAGE_ID = {
+    resource: 'analytics/events/query/dimensions',
+    params: {
+        pageSize: 10,
+        fields: 'id,dimensionType,valueType,optionSet,displayName~rename(name)',
+        filter: 'dimensionType:eq:DATA_ELEMENT',
+        order: 'displayName:asc',
+    },
+}
 
 export const CardEvent = ({ program }: CardEventProps) => {
-    const label = 'Event data'
-
+    const filter = useAppSelector(getFilter)
+    const isDisabled = useMemo(
+        () =>
+            computeIsDisabledByFilter(
+                STAGE_QUERY_WITHOUT_STAGE_ID,
+                filter,
+                EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES
+            ),
+        [filter]
+    )
+    console.log('isDisabled', isDisabled)
     return (
         <DimensionCard
             dimensionCardKey="event-with-registration"
-            title={label}
+            title={program.displayEventLabel ?? i18n.t('Event data')}
             withSubSections
         >
             {program.programStages!.map((stage) => (
-                <DimensionsCardSubsection title={stage.name} key={stage.id}>
-                    <DimensionListItem />
-                    <DimensionListItem />
-                </DimensionsCardSubsection>
+                <ProgramStageSubsection
+                    program={program}
+                    programStage={stage}
+                    key={stage.id}
+                />
             ))}
         </DimensionCard>
     )
