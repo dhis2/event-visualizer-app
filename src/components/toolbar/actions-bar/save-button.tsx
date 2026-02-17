@@ -41,7 +41,9 @@ export const SaveButton: FC = () => {
             small
             disabled={!saveEnabled}
         >
-            <span className={classes.label}>{i18n.t('Save')}</span>
+            <span className={classes.label}>
+                {savedVis.id ? i18n.t('Save') : i18n.t('Save…')}
+            </span>
         </Button>
     )
 }
