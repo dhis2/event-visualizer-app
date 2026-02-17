@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-16T08:17:58.354Z\n"
-"PO-Revision-Date: 2026-02-16T08:17:58.355Z\n"
+"POT-Creation-Date: 2026-02-17T14:19:20.092Z\n"
+"PO-Revision-Date: 2026-02-17T14:19:20.093Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -560,27 +560,6 @@ msgstr "Click a dimension to add or remove conditions."
 msgid "Your most viewed event visualizations"
 msgstr "Your most viewed event visualizations"
 
-msgid "Unsaved visualization"
-msgstr "Unsaved visualization"
-
-msgid "Edited"
-msgstr "Edited"
-
-msgid "Show panels"
-msgstr "Show panels"
-
-msgid "Expand visualization and hide panels"
-msgstr "Expand visualization and hide panels"
-
-msgid "Hide details panel"
-msgstr "Hide details panel"
-
-msgid "Show details panel"
-msgstr "Show details panel"
-
-msgid "Download"
-msgstr "Download"
-
 msgid "Rename successful"
 msgstr "Rename successful"
 
@@ -589,6 +568,55 @@ msgstr "Rename failed"
 
 msgid "\"{{- deletedObject}}\" successfully deleted."
 msgstr "\"{{- deletedObject}}\" successfully deleted."
+
+msgid "Download"
+msgstr "Download"
+
+msgid "File"
+msgstr "File"
+
+msgid "Save as…"
+msgstr "Save as…"
+
+msgid "Rename…"
+msgstr "Rename…"
+
+msgid "Translate…"
+msgstr "Translate…"
+
+msgid "Share…"
+msgstr "Share…"
+
+msgid "Get link…"
+msgstr "Get link…"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "New"
+msgstr "New"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Save…"
+msgstr "Save…"
+
+msgid "An unknown error occurred."
+msgstr "An unknown error occurred."
+
+msgid ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+msgstr ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+
+msgid "You don't have sufficient permissions."
+msgstr "You don't have sufficient permissions."
 
 msgid "Hide layout"
 msgstr "Hide layout"
@@ -614,27 +642,23 @@ msgstr "View"
 msgid "Reset sidebar width"
 msgstr "Reset sidebar width"
 
-msgid "New"
-msgstr "New"
+msgid "Show panels"
+msgstr "Show panels"
 
-msgid "Open"
-msgstr "Open"
+msgid "Expand visualization and hide panels"
+msgstr "Expand visualization and hide panels"
 
-msgid "Save"
-msgstr "Save"
+msgid "Hide details panel"
+msgstr "Hide details panel"
 
-msgid "An unknown error occurred."
-msgstr "An unknown error occurred."
+msgid "Show details panel"
+msgstr "Show details panel"
 
-msgid ""
-"This visualization can't be deleted because it is used on one or more "
-"dashboards."
-msgstr ""
-"This visualization can't be deleted because it is used on one or more "
-"dashboards."
+msgid "Unsaved visualization"
+msgstr "Unsaved visualization"
 
-msgid "You don't have sufficient permissions."
-msgstr "You don't have sufficient permissions."
+msgid "Edited"
+msgstr "Edited"
 
 msgid "equal to (=)"
 msgstr "equal to (=)"
