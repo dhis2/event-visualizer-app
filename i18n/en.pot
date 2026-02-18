@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-18T10:09:28.471Z\n"
-"PO-Revision-Date: 2026-02-18T10:09:28.471Z\n"
+"POT-Creation-Date: 2026-02-18T11:37:45.525Z\n"
+"PO-Revision-Date: 2026-02-18T11:37:45.526Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -656,6 +656,9 @@ msgstr "Hide details panel"
 
 msgid "Show details panel"
 msgstr "Show details panel"
+
+msgid "Loading visualization"
+msgstr "Loading visualization"
 
 msgid "Unsaved visualization"
 msgstr "Unsaved visualization"

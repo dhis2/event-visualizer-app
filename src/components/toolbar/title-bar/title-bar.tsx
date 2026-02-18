@@ -6,13 +6,13 @@ import classes from './styles/title-bar.module.css'
 import { useAppSelector } from '@hooks'
 import { getVisualizationState } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
+import { getIsVisualizationLoading } from '@store/loader-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import type { CurrentVisualization, VisualizationState } from '@types'
 
+export const getTitleLoading = () => i18n.t('Loading visualization')
 export const getTitleUnsaved = () => i18n.t('Unsaved visualization')
 export const getTitleDirty = () => i18n.t('Edited')
-
-const defaultTitleClasses = `${classes.cell}`
 
 const getTitleText = (
     titleState: VisualizationState,
@@ -29,12 +29,9 @@ const getTitleText = (
     }
 }
 
-const getCustomTitleClasses = (titleState: VisualizationState): string =>
-    titleState === 'UNSAVED' ? classes.titleUnsaved : ''
-
 const getSuffix = (titleState: VisualizationState): ReactNode =>
     titleState === 'DIRTY' ? (
-        <div className={cx(classes.titleDirty, classes.suffix)}>
+        <div className={cx(classes.suffix, classes.edited)}>
             {getTitleDirty()}
         </div>
     ) : (
@@ -45,12 +42,12 @@ export const TitleBar: FC = () => {
     const currentVis = useAppSelector(getCurrentVis)
     const savedVis = useAppSelector(getSavedVis)
 
-    const titleState = getVisualizationState(savedVis, currentVis)
-    const titleText = getTitleText(titleState, currentVis)
+    const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
 
-    const titleClasses = `${defaultTitleClasses} ${getCustomTitleClasses(
-        titleState
-    )}`
+    const titleState = getVisualizationState(savedVis, currentVis)
+    const titleText = isVisualizationLoading
+        ? getTitleLoading()
+        : getTitleText(titleState, currentVis)
 
     return (
         <div data-test="title-bar" className={classes.titleBar}>
@@ -63,9 +60,16 @@ export const TitleBar: FC = () => {
                                 onMouseOver={onMouseOver}
                                 onMouseOut={onMouseOut}
                                 data-test="title-text"
-                                className={titleClasses}
+                                className={classes.cell}
                             >
-                                <span className={classes.title}>
+                                <span
+                                    className={cx(classes.title, {
+                                        [classes.loading]:
+                                            isVisualizationLoading,
+                                        [classes.unsaved]:
+                                            titleState === 'UNSAVED',
+                                    })}
+                                >
                                     {titleText}
                                 </span>
                                 {getSuffix(titleState)}
