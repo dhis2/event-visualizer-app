@@ -578,6 +578,18 @@ msgstr "Download"
 msgid "File"
 msgstr "File"
 
+msgid "New"
+msgstr "New"
+
+msgid "Open…"
+msgstr "Open…"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Save…"
+msgstr "Save…"
+
 msgid "Save as…"
 msgstr "Save as…"
 
@@ -596,17 +608,8 @@ msgstr "Get link…"
 msgid "Delete"
 msgstr "Delete"
 
-msgid "New"
-msgstr "New"
-
 msgid "Open"
 msgstr "Open"
-
-msgid "Save"
-msgstr "Save"
-
-msgid "Save…"
-msgstr "Save…"
 
 msgid "An unknown error occurred."
 msgstr "An unknown error occurred."
