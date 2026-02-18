@@ -27,6 +27,7 @@ export const InterpretationsAndDetailsToggler: FC = () => {
 
     return (
         <Toggler
+            dataTest="interpretations-and-details-toggler"
             disabled={!id}
             tooltipText={tooltipText}
             icon={isDetailsPanelVisible ? <IconPanelHide /> : <IconPanelShow />}

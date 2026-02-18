@@ -1,17 +1,3 @@
-export const expectVisTitleToContain = (value: string) =>
-    cy
-        .getByDataTest('title-bar')
-        .should('have.length', 1)
-        .and('be.visible')
-        .and('contain', value)
-
-export const expectVisTitleToEqual = (value: string) =>
-    cy
-        .getByDataTest('title-bar')
-        .should('have.length', 1)
-        .and('contain.text', value)
-        .and('be.visible')
-
 const getLineListTable = () => cy.getByDataTest('line-list-data-table')
 
 export const getTableHeaderCells = () => getLineListTable().find('th')

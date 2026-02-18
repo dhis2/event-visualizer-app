@@ -1,7 +1,7 @@
 import {
     typeTextarea,
-    clickMenubarInterpretationsButton,
-    clickMenubarViewButton,
+    clickToolbarInterpretationsButton,
+    clickToolbarViewButton,
     expectInterpretationsButtonToBeEnabled,
     expectInterpretationFormToBeVisible,
     expectInterpretationThreadToBeVisible,
@@ -23,11 +23,11 @@ describe('interpretations', () => {
     })
 
     it('the interpretations button and item in View menu are disabled without a saved visualization', () => {
-        cy.getByDataTest('dhis2-analytics-toolbar')
-            .contains('Interpretations and details')
-            .should('be.disabled')
+        cy.getByDataTest('interpretations-and-details-toggler').should(
+            'be.disabled'
+        )
 
-        clickMenubarViewButton()
+        clickToolbarViewButton()
 
         cy.getByDataTest('dhis2-uicore-hovermenulistitem')
             .contains('Show interpretations and details')
@@ -35,21 +35,21 @@ describe('interpretations', () => {
             .should('have.class', 'disabled')
     })
 
-    it('the interpretations and details panel can be toggled by clicking the button in the menu bar', () => {
+    it('the interpretations and details panel can be toggled by clicking the button in the toolbar', () => {
         openVisByName('Inpatient: Cases last quarter (case)')
 
         expectInterpretationsButtonToBeEnabled()
 
         cy.getByDataTest('details-panel').should('not.exist')
 
-        clickMenubarInterpretationsButton()
+        clickToolbarInterpretationsButton()
 
         cy.getByDataTest('details-panel').should('be.visible')
 
         cy.getByDataTest('details-panel').contains('Interpretations')
         expectInterpretationFormToBeVisible()
 
-        clickMenubarInterpretationsButton()
+        clickToolbarInterpretationsButton()
 
         cy.getByDataTest('details-panel').should('not.exist')
     })
@@ -59,7 +59,7 @@ describe('interpretations', () => {
 
         cy.getByDataTest('details-panel').should('not.exist')
 
-        clickMenubarViewButton()
+        clickToolbarViewButton()
 
         cy.getByDataTest('dhis2-uicore-hovermenulistitem')
             .contains('Show interpretations and details')
@@ -71,7 +71,7 @@ describe('interpretations', () => {
         cy.getByDataTest('details-panel').contains('Interpretations')
         expectInterpretationFormToBeVisible()
 
-        clickMenubarViewButton()
+        clickToolbarViewButton()
 
         cy.getByDataTest('dhis2-uicore-hovermenulistitem')
             .contains('Hide interpretations and details')
@@ -91,7 +91,7 @@ describe('interpretations', () => {
         expectVisTitleToEqual(visTitle)
         expectTableToBeVisible()
 
-        clickMenubarInterpretationsButton()
+        clickToolbarInterpretationsButton()
 
         // the rich text editor shows when clicking the input
         cy.getByDataTest('interpretation-form')
