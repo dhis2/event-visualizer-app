@@ -24,7 +24,7 @@ import type {
 } from '@types'
 
 export type UseDimensionListOptions = {
-    dimensionListKey: DimensionListKey
+    dimensionListKey?: DimensionListKey
     fixedDimensions?: DimensionMetadataItem[]
     baseQuery?: SingleQuery
 }
@@ -222,6 +222,7 @@ export const useDimensionList = ({
 
     const fetchDimensions = useEffectEvent(async () => {
         if (
+            !dimensionListKey ||
             !baseQuery ||
             nextPageRef.current === null ||
             !isFetchEnabledByFilter(baseQuery, filter)
@@ -295,10 +296,12 @@ export const useDimensionList = ({
     }, [baseQuery, filter, fixedDimensions])
 
     useEffect(() => {
-        dispatch(addDimensionListLoadingState(dimensionListKey))
+        if (dimensionListKey) {
+            dispatch(addDimensionListLoadingState(dimensionListKey))
 
-        return () => {
-            dispatch(removeDimensionListLoadingState(dimensionListKey))
+            return () => {
+                dispatch(removeDimensionListLoadingState(dimensionListKey))
+            }
         }
     }, [dispatch, dimensionListKey])
 

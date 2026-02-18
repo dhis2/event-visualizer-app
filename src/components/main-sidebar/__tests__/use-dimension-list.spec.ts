@@ -3162,4 +3162,173 @@ describe('useDimensionList', () => {
             fetchedDataElement2,
         ])
     })
+
+    it('works without dimensionListKey (for cards without async data)', async () => {
+        const fixedDimensions: DimensionMetadataItem[] = [
+            createDimension({
+                id: 'fixed-1',
+                name: 'Fixed Dimension 1',
+                dimensionType: 'ORGANISATION_UNIT',
+            }),
+            createDimension({
+                id: 'fixed-2',
+                name: 'Fixed Dimension 2',
+                dimensionType: 'PERIOD',
+            }),
+        ]
+
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    // No dimensionListKey provided
+                    fixedDimensions,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '',
+                            filter: null,
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // Should return fixed dimensions without any API calls
+        expect(result.current.dimensions).toEqual(fixedDimensions)
+        expect(result.current.isLoading).toBe(false)
+        expect(result.current.isFetching).toBe(false)
+        expect(result.current.error).toBeUndefined()
+        expect(result.current.hasMore).toBe(false)
+        expect(mockInitiateCallCount).toBe(0)
+    })
+
+    it('does not fetch when dimensionListKey is undefined even with baseQuery', async () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dimensions',
+            params: {
+                filter: ['dimensionType:eq:DATA_ELEMENT'],
+            },
+        }
+
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    // No dimensionListKey provided
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '',
+                            filter: 'DATA_ELEMENT',
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // Should not fetch even though filter matches baseQuery
+        expect(result.current.dimensions).toEqual([])
+        expect(result.current.isLoading).toBe(false)
+        expect(result.current.isFetching).toBe(false)
+        expect(mockInitiateCallCount).toBe(0)
+    })
+
+    it('filters fixed dimensions when dimensionListKey is undefined', async () => {
+        const fixedDimensions: DimensionMetadataItem[] = [
+            createDimension({
+                id: 'fixed-1',
+                name: 'Fixed Dimension 1',
+                dimensionType: 'ORGANISATION_UNIT',
+            }),
+            createDimension({
+                id: 'fixed-2',
+                name: 'Fixed Dimension 2',
+                dimensionType: 'PERIOD',
+            }),
+            createDimension({
+                id: 'fixed-3',
+                name: 'Another Fixed Dimension',
+                dimensionType: 'ORGANISATION_UNIT',
+            }),
+        ]
+
+        const { result, store } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    // No dimensionListKey provided
+                    fixedDimensions,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '',
+                            filter: null,
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // Initially all fixed dimensions should be shown
+        expect(result.current.dimensions).toEqual(fixedDimensions)
+
+        // Apply ORGANISATION_UNIT filter
+        act(() => {
+            store.dispatch(setFilter('ORGANISATION_UNIT'))
+        })
+
+        // Only ORGANISATION_UNIT dimensions should be shown
+        expect(result.current.dimensions).toEqual([
+            createDimension({
+                id: 'fixed-1',
+                name: 'Fixed Dimension 1',
+                dimensionType: 'ORGANISATION_UNIT',
+            }),
+            createDimension({
+                id: 'fixed-3',
+                name: 'Another Fixed Dimension',
+                dimensionType: 'ORGANISATION_UNIT',
+            }),
+        ])
+
+        // Apply search term
+        act(() => {
+            store.dispatch(setSearchTerm('Another'))
+        })
+
+        // Only matching dimension should be shown
+        expect(result.current.dimensions).toEqual([
+            createDimension({
+                id: 'fixed-3',
+                name: 'Another Fixed Dimension',
+                dimensionType: 'ORGANISATION_UNIT',
+            }),
+        ])
+    })
 })

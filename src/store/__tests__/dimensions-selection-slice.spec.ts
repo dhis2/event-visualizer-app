@@ -574,6 +574,37 @@ describe('dimensionSelectionSlice', () => {
             ).toBeUndefined()
         })
 
+        it('should handle undefined dimension list key for loading state', () => {
+            const state = createRootState({
+                dimensionListLoadingStates: {
+                    other: { isLoading: true, error: undefined },
+                },
+            })
+
+            expect(isDimensionListLoading(state, undefined)).toBe(false)
+            expect(
+                isDimensionListLoading(state, 'other' as DimensionListKey)
+            ).toBe(true)
+        })
+
+        it('should handle undefined dimension list key for error state', () => {
+            const error: EngineError = {
+                message: 'test error',
+                type: 'runtime',
+            }
+
+            const state = createRootState({
+                dimensionListLoadingStates: {
+                    other: { isLoading: false, error },
+                },
+            })
+
+            expect(getDimensionListError(state, undefined)).toBeUndefined()
+            expect(
+                getDimensionListError(state, 'other' as DimensionListKey)
+            ).toEqual(error)
+        })
+
         it('should detect multi selecting', () => {
             const stateMultiSelecting = createRootState({
                 multiSelectedDimensionIds: ['id1', 'id2'],

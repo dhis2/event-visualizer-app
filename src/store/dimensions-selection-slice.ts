@@ -245,10 +245,12 @@ export const dimensionSelectionSlice = createSlice({
         ),
         isDimensionCardCollapsed: (state, key: DimensionCardKey) =>
             !!state.dimensionCardCollapseStates[key],
-        isDimensionListLoading: (state, key: DimensionListKey) =>
-            state.dimensionListLoadingStates[key]?.isLoading ?? false,
-        getDimensionListError: (state, key: DimensionListKey) =>
-            state.dimensionListLoadingStates[key]?.error,
+        isDimensionListLoading: (state, key?: DimensionListKey) =>
+            key
+                ? state.dimensionListLoadingStates[key]?.isLoading ?? false
+                : false,
+        getDimensionListError: (state, key?: DimensionListKey) =>
+            key ? state.dimensionListLoadingStates[key]?.error : undefined,
         isMultiSelecting: (state) => state.multiSelectedDimensionIds.length > 1,
         isDimensionMultiSelected: (state, dimensionId: string) =>
             state.multiSelectedDimensionIds.includes(dimensionId),
