@@ -7,6 +7,12 @@ import classes from './styles/dimension-list.module.css'
 import type { EngineError } from '@api/parse-engine-error'
 import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
 import { SkeletonChip } from '@components/shared/skeleton-chip'
+import type { Program, ProgramStage } from '@types'
+
+type DimensionListProps = UseDimensionListResult & {
+    program?: Program
+    programStage?: ProgramStage
+}
 
 const ErrorListItem: FC<{ error: EngineError; isEmptyList: boolean }> = ({
     error,
@@ -42,7 +48,7 @@ const LoaderSkeleton: FC = () => (
     </>
 )
 
-const DimensionListContent: FC<UseDimensionListResult> = ({
+const DimensionListContent: FC<DimensionListProps> = ({
     dimensions,
     isLoading,
     isDisabledByFilter,
@@ -51,6 +57,8 @@ const DimensionListContent: FC<UseDimensionListResult> = ({
     hasMore,
     hasNoData,
     loadMore,
+    program,
+    programStage,
 }) => {
     if (isLoading) {
         return <LoaderSkeleton />
@@ -70,7 +78,12 @@ const DimensionListContent: FC<UseDimensionListResult> = ({
     return (
         <>
             {dimensions.map((dimension) => (
-                <DimensionListItem key={dimension.id} dimension={dimension} />
+                <DimensionListItem
+                    key={dimension.id}
+                    dimension={dimension}
+                    program={program}
+                    programStage={programStage}
+                />
             ))}
             {error && (
                 <ErrorListItem
@@ -104,7 +117,7 @@ const DimensionListContent: FC<UseDimensionListResult> = ({
     )
 }
 
-export const DimensionList: FC<UseDimensionListResult> = (props) => {
+export const DimensionList: FC<DimensionListProps> = (props) => {
     return (
         <ul className={classes.list} data-test="dimension-list">
             <DimensionListContent {...props} />
