@@ -7,6 +7,7 @@ import {
     preparePayloadForSaveAs,
 } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
+import { isVisualizationValidForSave } from '@modules/validation'
 import {
     isVisualizationValidForSave,
     isVisualizationValidForSaveAs,
