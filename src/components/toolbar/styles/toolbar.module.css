@@ -1,5 +1,6 @@
 .toolbarDivider {
+    align-self: stretch;
     inline-size: 1px;
     background-color: var(--colors-grey300);
-    margin: 8px 4px;
+    margin: 2px 4px;
 }

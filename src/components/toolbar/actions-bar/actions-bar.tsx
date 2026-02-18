@@ -213,9 +213,7 @@ export const ActionsBar: FC = () => {
                 onNew={onNew}
                 currentUser={currentUser}
             />
-            <div
-                style={{ display: 'flex', flexGrow: 0, alignItems: 'stretch' }}
-            >
+            <div className={classes.actionsBar}>
                 <div className={classes.actionButtons}>
                     <NewButton />
                     <OpenButton onClick={() => onMenuItemClick('open')} />
