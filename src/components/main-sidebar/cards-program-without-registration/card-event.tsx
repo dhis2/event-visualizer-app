@@ -1,34 +1,67 @@
+import i18n from '@dhis2/d2-i18n'
+import { useMemo } from 'react'
 import {
     DimensionCard,
     DimensionList,
-    DimensionListItem,
 } from '@components/main-sidebar/dimension-card'
-import type { DataSourceProgramWithoutRegistration } from '@types'
+import { getEventFixedDimensions } from '@components/main-sidebar/get-event-fixed-dimensions'
+import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
+import type { DataSourceProgramWithoutRegistration, ProgramStage } from '@types'
 
 type CardEventProps = {
     program: DataSourceProgramWithoutRegistration
 }
+const CARD_AND_LIST_KEY = 'event-without-registration'
 
-export const CardEvent = ({
-    program, // eslint-disable-line @typescript-eslint/no-unused-vars
-}: CardEventProps) => {
-    const label = 'Event data'
+export const CardEvent = ({ program }: CardEventProps) => {
+    const programStage = useMemo<ProgramStage>(() => {
+        const programStage = program.programStages?.[0]
+
+        if (!programStage) {
+            throw new Error(`No programStage found for program "${program.id}"`)
+        }
+
+        return programStage
+    }, [program])
+    const fixedDimensions = useMemo(
+        () => getEventFixedDimensions(program, programStage),
+        [program, programStage]
+    )
+    const baseQuery = useMemo(
+        () => ({
+            resource: 'analytics/events/query/dimensions',
+            params: {
+                pageSize: 10,
+                fields: [
+                    'id',
+                    'dimensionType',
+                    'valueType',
+                    'optionSet',
+                    'displayName~rename(name)',
+                ],
+                filter: 'dimensionType:eq:DATA_ELEMENT',
+                order: 'displayName:asc',
+                programStageId: programStage.id,
+            },
+        }),
+        [programStage]
+    )
+    const listProps = useDimensionList({
+        dimensionListKey: CARD_AND_LIST_KEY,
+        fixedDimensions,
+        baseQuery,
+    })
 
     return (
         <DimensionCard
-            dimensionCardKey="event-without-registration"
-            title={label}
+            dimensionCardKey={CARD_AND_LIST_KEY}
+            title={program.displayEventLabel ?? i18n.t('Event')}
         >
-            <DimensionList>
-                {/* TODO: Add event dimensions:
-                    - Event organisation unit
-                    - Event period(s)
-                    - Event status
-                    - Event data items (listed alphanumerically)
-                */}
-                <DimensionListItem />
-                <DimensionListItem />
-            </DimensionList>
+            <DimensionList
+                {...listProps}
+                program={program}
+                programStage={programStage}
+            />
         </DimensionCard>
     )
 }

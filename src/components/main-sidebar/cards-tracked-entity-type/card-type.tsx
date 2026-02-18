@@ -1,6 +1,5 @@
 import {
     DimensionCard,
-    DimensionList,
     DimensionListItem,
 } from '@components/main-sidebar/dimension-card'
 import type { MetadataItemWithName } from '@types'
@@ -17,10 +16,8 @@ export const CardType = ({
 
     return (
         <DimensionCard dimensionCardKey="tracked-entity-type" title={label}>
-            <DimensionList>
-                <DimensionListItem />
-                <DimensionListItem />
-            </DimensionList>
+            <DimensionListItem />
+            <DimensionListItem />
         </DimensionCard>
     )
 }

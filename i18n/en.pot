@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-18T15:23:45.694Z\n"
-"PO-Revision-Date: 2026-02-18T15:23:45.695Z\n"
+"POT-Creation-Date: 2026-02-18T16:19:09.216Z\n"
+"PO-Revision-Date: 2026-02-18T16:19:09.217Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -364,17 +364,8 @@ msgstr "Registration date"
 msgid "{{name}} registration"
 msgstr "{{name}} registration"
 
-msgid "Event org. unit"
-msgstr "Event org. unit"
-
-msgid "Event date"
-msgstr "Event date"
-
-msgid "Scheduled date"
-msgstr "Scheduled date"
-
-msgid "Event status"
-msgstr "Event status"
+msgid "Event"
+msgstr "Event"
 
 msgid "Choose a data source"
 msgstr "Choose a data source"
@@ -441,6 +432,18 @@ msgstr "Category option group sets"
 
 msgid "Filter"
 msgstr "Filter"
+
+msgid "Event org. unit"
+msgstr "Event org. unit"
+
+msgid "Event date"
+msgstr "Event date"
+
+msgid "Scheduled date"
+msgstr "Scheduled date"
+
+msgid "Event status"
+msgstr "Event status"
 
 msgid "Expand all cards"
 msgstr "Expand all cards"
