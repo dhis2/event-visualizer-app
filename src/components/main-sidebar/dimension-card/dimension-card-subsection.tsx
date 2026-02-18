@@ -1,7 +1,6 @@
 import cx from 'classnames'
 import { useCallback, useState, type ReactNode } from 'react'
 import { CollapseIcon } from './collapse-icon'
-import { DimensionList } from './dimension-list'
 import classes from './styles/dimension-card-subsection.module.css'
 
 type DimensionsCardSubsectionProps = {
@@ -55,7 +54,7 @@ export const DimensionsCardSubsection = ({
                 })}
                 data-test="dimension-card-subsection-content"
             >
-                <DimensionList>{children}</DimensionList>
+                {children}
             </div>
         </div>
     )
