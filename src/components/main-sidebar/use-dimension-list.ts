@@ -281,7 +281,10 @@ export const useDimensionList = ({
             resolvedSearchTerm,
             filter
         )
-        return [...filteredInitial, ...fetchedDimensions]
+        // Fetched dimensions are filtered server side but we still need to
+        // apply a filter based on the redux store filter
+        const filteredFetched = filterDimensions(fetchedDimensions, '', filter)
+        return [...filteredInitial, ...filteredFetched]
     }, [fixedDimensions, fetchedDimensions, resolvedSearchTerm, filter])
 
     const isDisabledByFilter = useMemo(() => {

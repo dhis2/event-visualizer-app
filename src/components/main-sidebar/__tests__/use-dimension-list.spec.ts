@@ -1816,12 +1816,11 @@ describe('useDimensionList', () => {
             store.dispatch(setFilter('DATA_ELEMENT'))
         })
 
-        // Should show only DATA_ELEMENT items from fixedDimensions + all fetchedDimensions
-        // (fetchedDimensions are not filtered client-side, they come from server-side filter)
+        // Only DATA_ELEMENT items should be shown (both fixed and fetched)
         expect(result.current.dimensions).toEqual([
-            fixedDimensions[0], // Initial Data Element
-            fixedDimensions[2], // Another Data Element
-            fetchedDimension1, // Fetched Data Element (always included)
+            fixedDimensions[0],
+            fixedDimensions[2],
+            fetchedDimension1,
         ])
 
         // Apply PROGRAM_INDICATOR filter
@@ -1829,22 +1828,17 @@ describe('useDimensionList', () => {
             store.dispatch(setFilter('PROGRAM_INDICATOR'))
         })
 
-        // Should show only PROGRAM_INDICATOR items from fixedDimensions
-        // fetchedDimensions persist (they were fetched with baseQuery for DATA_ELEMENT)
-        // Note: No new fetch happens because filter doesn't match baseQuery
-        expect(result.current.dimensions).toEqual([
-            fixedDimensions[1], // Initial Program Indicator
-            fetchedDimension1, // Fetched dimensions persist (not filtered client-side)
-        ])
+        // Only PROGRAM_INDICATOR items should be shown
+        // No new fetch happens because filter doesn't match baseQuery
+        expect(result.current.dimensions).toEqual([fixedDimensions[1]])
 
         // Apply filter that matches no items
         act(() => {
             store.dispatch(setFilter('CATEGORY'))
         })
 
-        // Should show only fetchedDimensions (no fixedDimensions match CATEGORY)
-        // fetchedDimensions persist from previous fetch
-        expect(result.current.dimensions).toEqual([fetchedDimension1])
+        // No dimensions match CATEGORY filter
+        expect(result.current.dimensions).toEqual([])
 
         // Remove filter (set to null)
         act(() => {
@@ -2217,12 +2211,9 @@ describe('useDimensionList', () => {
             store.dispatch(setFilter('PROGRAM_INDICATOR'))
         })
 
-        // Should preserve both pages of data, hasMore becomes false, no new fetch
+        // DATA_ELEMENT dimensions should be filtered out by PROGRAM_INDICATOR filter
         expect(mockInitiateCallCount).toBe(callCountAfterLoadMore)
-        expect(result.current.dimensions).toEqual([
-            mockApiDimension,
-            secondDimension,
-        ])
+        expect(result.current.dimensions).toEqual([])
         expect(result.current.hasMore).toBe(false)
     })
 
@@ -3080,5 +3071,95 @@ describe('useDimensionList', () => {
         })
 
         expect(result.current.isDisabledByFilter).toBe(true)
+    })
+
+    it('filters fetched dimensions by UI filter when filter changes (regression test for fix)', async () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dimensions',
+            params: {
+                filter: ['dimensionType:eq:DATA_ELEMENT'],
+            },
+        }
+
+        // Setup API response with DATA_ELEMENT dimensions
+        const fetchedDataElement1 = createDimension({
+            id: 'fetched-de-1',
+            name: 'Fetched Data Element 1',
+            dimensionType: 'DATA_ELEMENT',
+        })
+        const fetchedDataElement2 = createDimension({
+            id: 'fetched-de-2',
+            name: 'Fetched Data Element 2',
+            dimensionType: 'DATA_ELEMENT',
+        })
+
+        mockApiResponse = {
+            dataElements: [fetchedDataElement1, fetchedDataElement2],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 2 },
+        } as unknown as ResponseData
+
+        const { result, store } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '',
+                            filter: 'DATA_ELEMENT',
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // Wait for initial fetch
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false)
+        })
+
+        expect(result.current.dimensions).toEqual([
+            fetchedDataElement1,
+            fetchedDataElement2,
+        ])
+
+        // Change filter to PROGRAM_INDICATOR
+        act(() => {
+            store.dispatch(setFilter('PROGRAM_INDICATOR'))
+        })
+
+        // DATA_ELEMENT dimensions should be filtered out
+        expect(result.current.dimensions).toEqual([])
+
+        // Change filter back to DATA_ELEMENT
+        act(() => {
+            store.dispatch(setFilter('DATA_ELEMENT'))
+        })
+
+        expect(result.current.dimensions).toEqual([
+            fetchedDataElement1,
+            fetchedDataElement2,
+        ])
+
+        // Clear filter
+        act(() => {
+            store.dispatch(clearFilter())
+        })
+
+        // All dimensions should be shown with no filter
+        expect(result.current.dimensions).toEqual([
+            fetchedDataElement1,
+            fetchedDataElement2,
+        ])
     })
 })
