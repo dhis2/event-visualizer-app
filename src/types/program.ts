@@ -23,4 +23,8 @@ export type Program = Pick<
     id: string
     name: string
     programStages?: ProgramStage[]
+    trackedEntityType: {
+        id: string
+        name: string
+    }
 }

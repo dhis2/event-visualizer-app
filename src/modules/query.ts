@@ -39,6 +39,7 @@ export const getProgramFields = (
         'enrollmentDateLabel',
         'incidentDateLabel',
         `programStages[${getProgramStageFields(displayNameProp)}]`,
+        `trackedEntityType[id,${displayNameProp}~rename(name)]`,
     ].join(',')
 
 /**

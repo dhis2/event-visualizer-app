@@ -3,8 +3,16 @@ import type { DimensionType } from './dimension'
 import type { MetadataItemWithName } from './metadata'
 import type { Program } from './program'
 
-export type DataSourceProgramWithRegistration = Omit<Program, 'programType'> & {
+export type DataSourceProgramWithRegistration = Omit<
+    Program,
+    'programType' | 'trackedEntityType'
+> & {
     programType: Extract<ProgramType, 'WITH_REGISTRATION'>
+    // Required field for tracker program
+    trackedEntityType: {
+        id: string
+        name: string
+    }
 }
 export type DataSourceProgramWithoutRegistration = Omit<
     Program,
