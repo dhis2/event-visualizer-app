@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-18T11:38:30.973Z\n"
-"PO-Revision-Date: 2026-02-18T11:38:30.974Z\n"
+"POT-Creation-Date: 2026-02-18T12:59:40.579Z\n"
+"PO-Revision-Date: 2026-02-18T12:59:40.580Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -337,14 +337,26 @@ msgstr "oldest {{repeatEventIndex}}"
 msgid "most recent {{repeatEventIndex}}"
 msgstr "most recent {{repeatEventIndex}}"
 
-msgid "Event org. unit"
-msgstr "Event org. unit"
+msgid "Enrollment org. unit"
+msgstr "Enrollment org. unit"
+
+msgid "Date of enrollment"
+msgstr "Date of enrollment"
+
+msgid "Incident date"
+msgstr "Incident date"
+
+msgid "Enrollment status"
+msgstr "Enrollment status"
 
 msgid "Enrollment data"
 msgstr "Enrollment data"
 
 msgid "Event data"
 msgstr "Event data"
+
+msgid "Event org. unit"
+msgstr "Event org. unit"
 
 msgid "Event date"
 msgstr "Event date"
@@ -734,9 +746,6 @@ msgstr "Created date"
 
 msgid "Enrollment date"
 msgstr "Enrollment date"
-
-msgid "Incident date"
-msgstr "Incident date"
 
 msgid "Columns"
 msgstr "Columns"

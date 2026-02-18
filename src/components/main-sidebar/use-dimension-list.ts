@@ -141,12 +141,10 @@ export const buildQuery = (
 }
 
 export const isFetchEnabledByFilter = (
-    baseQuery: SingleQuery | undefined,
+    baseQuery: SingleQuery,
     filter: DataSourceFilter | null
 ): boolean => {
-    if (!baseQuery) {
-        return false
-    } else if (!filter) {
+    if (!filter) {
         return true
     } else {
         const dimensionTypeFilter = getFilterParamsFromBaseQuery(
@@ -188,12 +186,18 @@ export const computeIsDisabledByFilter = (
     filter: DataSourceFilter | null,
     fixedDimensionTypes: DimensionType[] = []
 ): boolean => {
-    const isFetchEnabled = isFetchEnabledByFilter(baseQuery, filter)
     const hasMatchingFixedDimensionType =
         Array.isArray(fixedDimensionTypes) &&
         fixedDimensionTypes.some((dimensionType) => dimensionType === filter)
 
-    return !isFetchEnabled && !hasMatchingFixedDimensionType
+    if (!baseQuery) {
+        // Fixed-only list: disabled only if filter doesn't match any fixed dimension
+        return filter !== null && !hasMatchingFixedDimensionType
+    } else {
+        // List with query: disabled if fetch not enabled AND no matching fixed dimension
+        const isFetchEnabled = isFetchEnabledByFilter(baseQuery, filter)
+        return !isFetchEnabled && !hasMatchingFixedDimensionType
+    }
 }
 
 export const useDimensionList = ({
@@ -329,9 +333,11 @@ export const useDimensionList = ({
     return useMemo(() => {
         const isLoading = !isInitalFetchSuccessRef.current && isFetching
         const isLoadingMore = isFetching && !isLoading && !isSearching
-        const hasMore =
+        const hasMore = Boolean(
             nextPageRef.current !== null &&
-            isFetchEnabledByFilter(baseQuery, filter)
+                baseQuery &&
+                isFetchEnabledByFilter(baseQuery, filter)
+        )
 
         return {
             dimensions,

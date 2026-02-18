@@ -385,11 +385,6 @@ describe('isFetchEnabledByFilter', () => {
         resource: 'dimensions',
     }
 
-    it('returns false for undefined baseQuery', () => {
-        const result = isFetchEnabledByFilter(undefined, null)
-        expect(result).toBe(false)
-    })
-
     it('returns true when filter is null', () => {
         const result = isFetchEnabledByFilter(baseQueryWithDimensionType, null)
         expect(result).toBe(true)
@@ -689,6 +684,24 @@ describe('computeIsDisabledByFilter', () => {
             'DATA_ELEMENT'
         )
         expect(result).toBe(false)
+    })
+
+    it('returns false when no baseQuery and filter is null (fixed-only list with no filter)', () => {
+        const result = computeIsDisabledByFilter(undefined, null)
+        expect(result).toBe(false)
+    })
+
+    it('returns true when no baseQuery and filter does not match fixedDimensionTypes', () => {
+        const fixedDimensionTypes: DimensionType[] = [
+            'DATA_ELEMENT',
+            'PROGRAM_INDICATOR',
+        ]
+        const result = computeIsDisabledByFilter(
+            undefined,
+            'CATEGORY',
+            fixedDimensionTypes
+        )
+        expect(result).toBe(true)
     })
 })
 
