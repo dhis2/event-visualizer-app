@@ -755,6 +755,9 @@ msgstr "Hide details panel"
 msgid "Show details panel"
 msgstr "Show details panel"
 
+msgid "Loading visualization"
+msgstr "Loading visualization"
+
 msgid "Unsaved visualization"
 msgstr "Unsaved visualization"
 
