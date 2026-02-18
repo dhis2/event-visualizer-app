@@ -59,10 +59,10 @@ export const TitleBar: FC = () => {
                                 ref={ref}
                                 onMouseOver={onMouseOver}
                                 onMouseOut={onMouseOut}
-                                data-test="title-text"
                                 className={classes.cell}
                             >
                                 <span
+                                    data-test="title-text"
                                     className={cx(classes.title, {
                                         [classes.loading]:
                                             isVisualizationLoading,
