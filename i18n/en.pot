@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-18T12:59:40.579Z\n"
-"PO-Revision-Date: 2026-02-18T12:59:40.580Z\n"
+"POT-Creation-Date: 2026-02-18T13:55:50.365Z\n"
+"PO-Revision-Date: 2026-02-18T13:55:50.366Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -355,6 +355,9 @@ msgstr "Enrollment data"
 msgid "Event data"
 msgstr "Event data"
 
+msgid "Program indicators"
+msgstr "Program indicators"
+
 msgid "Event org. unit"
 msgstr "Event org. unit"
 
@@ -423,9 +426,6 @@ msgstr "Data elements"
 
 msgid "Program attributes"
 msgstr "Program attributes"
-
-msgid "Program indicators"
-msgstr "Program indicators"
 
 msgid "Categories"
 msgstr "Categories"

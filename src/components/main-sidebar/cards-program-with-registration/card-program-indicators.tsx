@@ -1,35 +1,60 @@
+import i18n from '@dhis2/d2-i18n'
+import { useMemo } from 'react'
 import {
     DimensionCard,
     DimensionList,
-    DimensionListItem,
 } from '@components/main-sidebar/dimension-card'
+import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import type { DataSourceProgramWithRegistration } from '@types'
 
 type CardProgramIndicatorsProps = {
     program: DataSourceProgramWithRegistration
 }
 
+const CARD_AND_LIST_KEY = 'program-indicators'
+
 export const CardProgramIndicators = ({
-    program, // eslint-disable-line @typescript-eslint/no-unused-vars
+    program,
 }: CardProgramIndicatorsProps) => {
-    const label = 'Program indicators'
+    const baseQuery = useMemo(
+        () => ({
+            resource: 'analytics/enrollments/query/dimensions',
+            params: {
+                pageSize: 10,
+                fields: [
+                    'id',
+                    'dimensionType',
+                    'valueType',
+                    'optionSet',
+                    'displayName~rename(name)',
+                ],
+                filter: 'dimensionType:eq:PROGRAM_INDICATOR',
+                order: 'displayName:asc',
+                programId: program.id,
+            },
+        }),
+        [program]
+    )
+    const { dimensions, ...listProps } = useDimensionList({
+        dimensionListKey: CARD_AND_LIST_KEY,
+        baseQuery,
+    })
 
-    // TODO: Fetch program indicators
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const programIndicators: any[] = []
-
-    // Hide card if there are 0 program indicators
-    if (programIndicators.length === 0) {
+    // This card should be hidden completely if there are no program indicators
+    if (dimensions.length === 0) {
         return null
     }
 
     return (
-        <DimensionCard dimensionCardKey="program-indicators" title={label}>
-            <DimensionList>
-                {/* TODO: Render program indicators */}
-                <DimensionListItem />
-                <DimensionListItem />
-            </DimensionList>
+        <DimensionCard
+            dimensionCardKey={CARD_AND_LIST_KEY}
+            title={i18n.t('Program indicators')}
+        >
+            <DimensionList
+                {...listProps}
+                dimensions={dimensions}
+                program={program}
+            />
         </DimensionCard>
     )
 }
