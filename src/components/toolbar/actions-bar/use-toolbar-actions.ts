@@ -1,18 +1,21 @@
 import { useAlert } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import {
     preparePayloadForSave,
     preparePayloadForSaveAs,
 } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
+import { isVisualizationValidForSave } from '@modules/validation'
 import {
     getSaveableVisualization,
+    getVisualizationState,
     isVisualizationSaved,
 } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { setNavigationState } from '@store/navigation-slice'
+import { getSavedVis } from '@store/saved-vis-slice'
 import { tLoadSavedVisualization } from '@store/thunks'
 import type { NewVisualization, SavedVisualization } from '@types'
 
@@ -20,10 +23,25 @@ export const useToolbarActions = () => {
     const dispatch = useAppDispatch()
 
     const currentVis = useAppSelector(getCurrentVis)
+    const savedVis = useAppSelector(getSavedVis)
 
     const { show: showAlert } = useAlert(
         ({ message }) => message,
         ({ options }) => options
+    )
+
+    const isSaveEnabled = useMemo(
+        () =>
+            ['UNSAVED', 'DIRTY'].includes(
+                getVisualizationState(savedVis, currentVis)
+            ) &&
+            isVisualizationValidForSave({
+                ...currentVis,
+                legacy: savedVis?.legacy,
+            }) &&
+            isVisualizationSaved(savedVis) &&
+            (!savedVis.id || savedVis.access?.update),
+        [currentVis, savedVis]
     )
 
     const onError = useCallback(
@@ -132,6 +150,7 @@ export const useToolbarActions = () => {
     )
 
     return {
+        isSaveEnabled,
         onError,
         onOpen,
         onNew,

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-02-17T14:19:20.092Z\n"
-"PO-Revision-Date: 2026-02-17T14:19:20.093Z\n"
+"POT-Creation-Date: 2026-02-18T10:09:28.471Z\n"
+"PO-Revision-Date: 2026-02-18T10:09:28.471Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -575,6 +575,18 @@ msgstr "Download"
 msgid "File"
 msgstr "File"
 
+msgid "New"
+msgstr "New"
+
+msgid "Open…"
+msgstr "Open…"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Save…"
+msgstr "Save…"
+
 msgid "Save as…"
 msgstr "Save as…"
 
@@ -593,17 +605,8 @@ msgstr "Get link…"
 msgid "Delete"
 msgstr "Delete"
 
-msgid "New"
-msgstr "New"
-
 msgid "Open"
 msgstr "Open"
-
-msgid "Save"
-msgstr "Save"
-
-msgid "Save…"
-msgstr "Save…"
 
 msgid "An unknown error occurred."
 msgstr "An unknown error occurred."
