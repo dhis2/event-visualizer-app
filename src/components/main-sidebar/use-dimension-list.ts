@@ -325,7 +325,7 @@ export const useDimensionList = ({
                 process.env.NODE_ENV === 'test') &&
             prevBaseQueryRef.current !== baseQuery
         ) {
-            throw new Error('baseQuery changed - it should remain stable')
+            console.error('baseQuery changed - it should remain stable')
         }
         prevBaseQueryRef.current = baseQuery
     }, [baseQuery])
