@@ -1,18 +1,18 @@
 import i18n from '@dhis2/d2-i18n'
 import {
-    IconSave24,
-    IconEdit24,
-    IconTranslate24,
-    IconShare24,
-    IconLink24,
+    IconAdd24,
     IconDelete24,
-    colors,
+    IconEdit24,
+    IconFolderOpen24,
+    IconLink24,
+    IconSave24,
+    IconShare24,
+    IconTranslate24,
     MenuDivider,
+    colors,
 } from '@dhis2/ui'
 import { useMemo, type FC } from 'react'
-import { NewButton } from './new-button'
-import { OpenButton } from './open-button'
-import { SaveButton } from './save-button'
+import { useToolbarActions } from './use-toolbar-actions'
 import {
     HoverMenuListItem,
     HoverMenuList,
@@ -30,6 +30,8 @@ type FileMenuProps = {
 export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
     const currentVis = useAppSelector(getCurrentVis)
 
+    const { isSaveEnabled, onNew, onSave } = useToolbarActions()
+
     const isOnSaveAsEnabled = useMemo(
         () => isVisualizationValidForSaveAs(currentVis),
         [currentVis]
@@ -41,10 +43,42 @@ export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
     return (
         <HoverMenuDropdown label={i18n.t('File')}>
             <HoverMenuList dataTest="file-menu-container">
-                <NewButton />
+                <HoverMenuListItem
+                    label={i18n.t('New')}
+                    icon={<IconAdd24 color={iconActiveColor} />}
+                    onClick={onNew}
+                    dataTest="file-menu-new"
+                />
                 <MenuDivider dense />
-                <OpenButton onClick={() => onMenuItemClick('open')} />
-                <SaveButton />
+                <HoverMenuListItem
+                    label={i18n.t('Open…')}
+                    icon={<IconFolderOpen24 color={iconActiveColor} />}
+                    onClick={() => onMenuItemClick('open')}
+                    dataTest="file-menu-open"
+                />
+                <HoverMenuListItem
+                    label={
+                        isVisualizationSaved(currentVis)
+                            ? i18n.t('Save')
+                            : i18n.t('Save…')
+                    }
+                    icon={
+                        <IconSave24
+                            color={
+                                isSaveEnabled
+                                    ? iconActiveColor
+                                    : iconInactiveColor
+                            }
+                        />
+                    }
+                    disabled={!isSaveEnabled}
+                    onClick={
+                        isVisualizationSaved(currentVis)
+                            ? onSave
+                            : () => onMenuItemClick('saveas')
+                    }
+                    dataTest="file-menu-save"
+                />
                 <HoverMenuListItem
                     label={i18n.t('Save as…')}
                     icon={
