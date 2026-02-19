@@ -319,11 +319,14 @@ describe('buildQuery', () => {
     })
 
     it('does not mutate input baseQuery', () => {
-        const filter = baseQuery.params!.filter!
+        const filter = baseQuery.params?.filter
+        if (!filter) {
+            throw new Error('Expected filter to be defined')
+        }
         const originalFilter = Array.isArray(filter) ? [...filter] : [filter]
         const result = buildQuery(baseQuery, 'test', 1)
         // Original should remain unchanged
-        expect(baseQuery.params!.filter).toEqual(originalFilter)
+        expect(baseQuery.params?.filter).toEqual(originalFilter)
         // Result should have added search term
         expect(result.params.filter).toEqual([
             'dimensionType:eq:DATA_ELEMENT',
