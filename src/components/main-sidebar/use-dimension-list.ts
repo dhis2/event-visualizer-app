@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useIsMounted } from 'usehooks-ts'
 import { api } from '@api/api'
 import { type EngineError, parseEngineError } from '@api/parse-engine-error'
 import { useEffectEvent, useAppDispatch, useAppSelector } from '@hooks'
@@ -217,6 +218,7 @@ export const useDimensionList = ({
     const loadMoreDelayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
         null
     )
+    const isMounted = useIsMounted()
 
     const fetchDimensions = useEffectEvent(
         async (shouldResetPager: boolean = false) => {
@@ -246,6 +248,11 @@ export const useDimensionList = ({
                 const prevNextPage = shouldResetPager ? 1 : nextPageRef.current
                 const { dimensions, nextPage } = transformer(rawResponseData)
 
+                // Check if component is still mounted before updating state
+                if (!isMounted()) {
+                    return
+                }
+
                 isInitalFetchSuccessRef.current = true
                 nextPageRef.current = nextPage
 
@@ -267,6 +274,11 @@ export const useDimensionList = ({
                 setIsSearching(false)
                 dispatch(setDimensionListLoadSuccess(dimensionListKey))
             } catch (error) {
+                // Check if component is still mounted before updating state
+                if (!isMounted()) {
+                    return
+                }
+
                 setResolvedSearchTerm(searchTerm)
                 setIsSearching(false)
                 const engineError = parseEngineError(error)
