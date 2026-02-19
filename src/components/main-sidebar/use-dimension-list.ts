@@ -212,64 +212,83 @@ export const useDimensionList = ({
     const isInitalFetchSuccessRef = useRef(false)
     const [isSearching, setIsSearching] = useState(false)
     const [resolvedSearchTerm, setResolvedSearchTerm] = useState(searchTerm)
+    const [isLoadMoreDelayActive, setIsLoadMoreDelayActive] = useState(false)
     const nextPageRef = useRef<number | null>(null)
+    const loadMoreDelayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+        null
+    )
 
-    const fetchDimensions = useEffectEvent(async () => {
-        if (
-            !dimensionListKey ||
-            !baseQuery ||
-            nextPageRef.current === null ||
-            !isFetchEnabledByFilter(baseQuery, filter)
-        ) {
-            setResolvedSearchTerm(searchTerm)
-            return
-        }
-
-        dispatch(setDimensionListLoadStart(dimensionListKey))
-
-        try {
-            const rawResponseData = await dispatch(
-                api.endpoints.query.initiate(
-                    buildQuery(baseQuery, searchTerm, nextPageRef.current)
-                )
-            ).unwrap()
-
-            const { dimensions, nextPage } = transformer(rawResponseData)
-
-            if (nextPageRef.current === 1) {
-                setFetchedDimensions(dimensions)
-            } else {
-                setFetchedDimensions((prev) => [...prev, ...dimensions])
-            }
-
+    const fetchDimensions = useEffectEvent(
+        async (shouldResetPager: boolean = false) => {
             if (
-                !searchTerm &&
-                fixedDimensions.length === 0 &&
-                nextPageRef.current === 1
+                !dimensionListKey ||
+                !baseQuery ||
+                (!shouldResetPager && nextPageRef.current === null) ||
+                !isFetchEnabledByFilter(baseQuery, filter)
             ) {
-                setHasNoData(dimensions.length === 0)
+                setResolvedSearchTerm(searchTerm)
+                return
             }
 
-            setResolvedSearchTerm(searchTerm)
-            setIsSearching(false)
-            isInitalFetchSuccessRef.current = true
-            nextPageRef.current = nextPage
-            dispatch(setDimensionListLoadSuccess(dimensionListKey))
-        } catch (error) {
-            setResolvedSearchTerm(searchTerm)
-            setIsSearching(false)
-            const engineError = parseEngineError(error)
-            dispatch(
-                setDimensionListLoadError({
-                    id: dimensionListKey,
-                    error: engineError,
-                })
-            )
+            dispatch(setDimensionListLoadStart(dimensionListKey))
+
+            try {
+                const rawResponseData = await dispatch(
+                    api.endpoints.query.initiate(
+                        buildQuery(
+                            baseQuery,
+                            searchTerm,
+                            shouldResetPager ? 1 : nextPageRef.current!
+                        )
+                    )
+                ).unwrap()
+
+                const prevNextPage = shouldResetPager ? 1 : nextPageRef.current
+                const { dimensions, nextPage } = transformer(rawResponseData)
+
+                isInitalFetchSuccessRef.current = true
+                nextPageRef.current = nextPage
+
+                if (prevNextPage === 1) {
+                    setFetchedDimensions(dimensions)
+                } else {
+                    setFetchedDimensions((prev) => [...prev, ...dimensions])
+                }
+
+                if (
+                    !searchTerm &&
+                    fixedDimensions.length === 0 &&
+                    prevNextPage === 1
+                ) {
+                    setHasNoData(dimensions.length === 0)
+                }
+
+                setResolvedSearchTerm(searchTerm)
+                setIsSearching(false)
+                dispatch(setDimensionListLoadSuccess(dimensionListKey))
+            } catch (error) {
+                setResolvedSearchTerm(searchTerm)
+                setIsSearching(false)
+                const engineError = parseEngineError(error)
+                dispatch(
+                    setDimensionListLoadError({
+                        id: dimensionListKey,
+                        error: engineError,
+                    })
+                )
+            }
         }
-    })
+    )
 
     const loadMore = useCallback(() => {
         if (nextPageRef.current && !isFetching) {
+            // Start the delay timer
+            setIsLoadMoreDelayActive(true)
+            loadMoreDelayTimerRef.current = setTimeout(() => {
+                setIsLoadMoreDelayActive(false)
+            }, 400)
+
+            // Fetch immediately
             fetchDimensions()
         }
     }, [isFetching, fetchDimensions])
@@ -299,23 +318,25 @@ export const useDimensionList = ({
 
             return () => {
                 dispatch(removeDimensionListLoadingState(dimensionListKey))
+                if (loadMoreDelayTimerRef.current) {
+                    clearTimeout(loadMoreDelayTimerRef.current)
+                }
             }
         }
     }, [dispatch, dimensionListKey])
 
     useEffect(() => {
-        nextPageRef.current = 1
-
         // Skip on initial fetch
         if (isInitalFetchSuccessRef.current) {
             setIsSearching(true)
         }
-        fetchDimensions()
+        fetchDimensions(true)
     }, [searchTerm, fetchDimensions])
 
     return useMemo(() => {
         const isLoading = !isInitalFetchSuccessRef.current && isFetching
-        const isLoadingMore = isFetching && !isLoading && !isSearching
+        const isLoadingMore =
+            isFetching && !isLoading && !isSearching && !isLoadMoreDelayActive
         const hasMore = Boolean(
             nextPageRef.current !== null &&
                 baseQuery &&
@@ -337,6 +358,7 @@ export const useDimensionList = ({
         dimensions,
         isFetching,
         isSearching,
+        isLoadMoreDelayActive,
         error,
         hasNoData,
         loadMore,
