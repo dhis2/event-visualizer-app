@@ -8,7 +8,6 @@ import {
     isFetchEnabledByFilter,
     filterDimensions,
     computeIsDisabledByFilter,
-    type ResponseData,
     type Transformer,
 } from '../use-dimension-list'
 import * as dimensionSelectionActions from '@store/dimensions-selection-slice'
@@ -788,7 +787,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         const { result } = await renderHookWithAppWrapper(
             () =>
@@ -839,7 +838,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         const { result } = await renderHookWithAppWrapper(
             () =>
@@ -879,7 +878,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         const { result, store } = await renderHookWithAppWrapper(
             () =>
@@ -994,7 +993,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
-        } as unknown as ResponseData
+        }
 
         const { result } = await renderHookWithAppWrapper(
             () =>
@@ -1039,7 +1038,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [secondDimension],
             pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
-        } as unknown as ResponseData
+        }
 
         // Load more
         act(() => {
@@ -1053,7 +1052,7 @@ describe('useDimensionList', () => {
 
         // Wait for second fetch to complete
         await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
+            expect(result.current.isLoading).toBe(false)
             expect(result.current.isLoadingMore).toBe(false)
         })
 
@@ -1071,7 +1070,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        } as unknown as ResponseData
+        }
 
         const { result } = await renderHookWithAppWrapper(
             () =>
@@ -1112,7 +1111,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        } as unknown as ResponseData
+        }
 
         const { result } = await renderHookWithAppWrapper(
             () =>
@@ -1153,7 +1152,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         const { result } = await renderHookWithAppWrapper(
             () =>
@@ -1194,7 +1193,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        } as unknown as ResponseData
+        }
 
         const { result } = await renderHookWithAppWrapper(
             () =>
@@ -1237,7 +1236,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         const { result, store } = await renderHookWithAppWrapper(
             () =>
@@ -1275,19 +1274,17 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        } as unknown as ResponseData
+        }
 
         // Clear search term
         act(() => {
             store.dispatch(setSearchTerm(''))
         })
 
-        // Wait for fetch to complete
+        // Wait for hasNoData to update
         await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
+            expect(result.current.hasNoData).toBe(true)
         })
-
-        expect(result.current.hasNoData).toBe(true)
     })
 
     it('hasNoData is true only when no fixed dimensions AND no server data AND no search', async () => {
@@ -1295,7 +1292,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        } as unknown as ResponseData
+        }
 
         const { result } = await renderHookWithAppWrapper(
             () =>
@@ -1334,7 +1331,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        } as unknown as ResponseData
+        }
 
         const { result: result2 } = await renderHookWithAppWrapper(
             () =>
@@ -1373,7 +1370,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        } as unknown as ResponseData
+        }
 
         const { result: result3 } = await renderHookWithAppWrapper(
             () =>
@@ -1414,7 +1411,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        } as unknown as ResponseData
+        }
 
         const { result, store } = await renderHookWithAppWrapper(
             () =>
@@ -1453,7 +1450,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        } as unknown as ResponseData
+        }
 
         // Apply search
         act(() => {
@@ -1462,7 +1459,7 @@ describe('useDimensionList', () => {
 
         // Wait for search fetch
         await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
+            expect(result.current.isLoading).toBe(false)
         })
 
         // hasNoData should remain true (sticky during search)
@@ -1472,7 +1469,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         const { result: result2, store: store2 } =
             await renderHookWithAppWrapper(
@@ -1512,7 +1509,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        } as unknown as ResponseData
+        }
 
         // Apply search
         act(() => {
@@ -1521,7 +1518,7 @@ describe('useDimensionList', () => {
 
         // Wait for search fetch
         await waitFor(() => {
-            expect(result2.current.isFetching).toBe(false)
+            expect(result2.current.isLoading).toBe(false)
         })
 
         // hasNoData should remain false (sticky during search)
@@ -1576,7 +1573,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        } as unknown as ResponseData
+        }
 
         const { store } = await renderHookWithAppWrapper(
             () =>
@@ -1658,7 +1655,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [fetchedDimension1],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         const { result, store } = await renderHookWithAppWrapper(
             () =>
@@ -1706,24 +1703,22 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [searchFetchedDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         // Apply search for "Test"
         act(() => {
             store.dispatch(setSearchTerm('Test'))
         })
 
-        await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
-        })
-
         // Verify search results combine:
         // 1. Client-side filtered fixedDimensions (only "Test Initial Item" matches)
         // 2. Server-side filtered fetched results
-        expect(result.current.dimensions).toEqual([
-            fixedDimensions[0], // "Test Initial Item" matches "Test"
-            searchFetchedDimension, // "Test Search Result" from API
-        ])
+        await waitFor(() => {
+            expect(result.current.dimensions).toEqual([
+                fixedDimensions[0], // "Test Initial Item" matches "Test"
+                searchFetchedDimension, // "Test Search Result" from API
+            ])
+        })
 
         // Verify API was called with search filter
         expect(lastInitiateQuery?.params?.filter).toContain(
@@ -1764,7 +1759,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [fetchedDimension1],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         const { result, store } = await renderHookWithAppWrapper(
             () =>
@@ -1854,7 +1849,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [initialFetchedDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         const { result, store } = await renderHookWithAppWrapper(
             () =>
@@ -1897,7 +1892,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [searchDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         // Apply search
         act(() => {
@@ -1905,11 +1900,8 @@ describe('useDimensionList', () => {
         })
 
         await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
+            expect(result.current.dimensions).toEqual([searchDimension])
         })
-
-        expect(result.current.dimensions).toEqual([searchDimension])
-        expect(result.current.isSearching).toBe(false)
 
         // Setup response for cleared search (back to original)
         const clearedSearchDimension = {
@@ -1920,28 +1912,20 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [clearedSearchDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         // Clear search term (set to empty string)
         act(() => {
             store.dispatch(setSearchTerm(''))
         })
 
-        // Should trigger isSearching since initial fetch already succeeded
-        await waitFor(() => {
-            expect(result.current.isSearching).toBe(true)
-        })
-
-        await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
-        })
-
         // Verify refetch occurred with cleared search
-        expect(result.current.dimensions).toEqual([clearedSearchDimension])
+        await waitFor(() => {
+            expect(result.current.dimensions).toEqual([clearedSearchDimension])
+        })
         expect(lastInitiateQuery?.params?.filter).not.toContain(
             'displayName:ilike:'
         )
-        expect(result.current.isSearching).toBe(false)
     })
 
     it('handles error during loadMore', async () => {
@@ -1949,7 +1933,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
-        } as unknown as ResponseData
+        }
 
         const { result } = await renderHookWithAppWrapper(
             () =>
@@ -1996,14 +1980,13 @@ describe('useDimensionList', () => {
 
         // Wait for error
         await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
+            expect(result.current.error).toHaveProperty(
+                'message',
+                'Page 2 Load Error'
+            )
         })
 
         // Should set error but preserve page 1 data
-        expect(result.current.error).toHaveProperty(
-            'message',
-            'Page 2 Load Error'
-        )
         expect(result.current.error).toHaveProperty('type', 'runtime')
         expect(result.current.dimensions).toEqual([mockApiDimension])
     })
@@ -2092,7 +2075,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         const { unmount, result } = await renderHookWithAppWrapper(
             () =>
@@ -2138,7 +2121,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 3, pageSize: 50, total: 150 },
-        } as unknown as ResponseData
+        }
 
         const { result, store } = await renderHookWithAppWrapper(
             () =>
@@ -2180,7 +2163,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [secondDimension],
             pager: { page: 2, pageCount: 3, pageSize: 50, total: 150 },
-        } as unknown as ResponseData
+        }
 
         // Load more (page 2)
         act(() => {
@@ -2214,7 +2197,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 3, pageSize: 50, total: 150 },
-        } as unknown as ResponseData
+        }
 
         const { result, store } = await renderHookWithAppWrapper(
             () =>
@@ -2255,7 +2238,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [secondDimension],
             pager: { page: 2, pageCount: 3, pageSize: 50, total: 150 },
-        } as unknown as ResponseData
+        }
 
         // Load more
         act(() => {
@@ -2263,13 +2246,11 @@ describe('useDimensionList', () => {
         })
 
         await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
+            expect(result.current.dimensions).toEqual([
+                mockApiDimension,
+                secondDimension,
+            ])
         })
-
-        expect(result.current.dimensions).toEqual([
-            mockApiDimension,
-            secondDimension,
-        ])
 
         // Setup new search results (page 1)
         const searchDimension = {
@@ -2280,19 +2261,17 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [searchDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         // Change search term - should reset to page 1 and clear previous data
         act(() => {
             store.dispatch(setSearchTerm('search'))
         })
 
-        await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
-        })
-
         // Verify data was reset and only search results are shown
-        expect(result.current.dimensions).toEqual([searchDimension])
+        await waitFor(() => {
+            expect(result.current.dimensions).toEqual([searchDimension])
+        })
         expect(lastInitiateQuery?.params?.page).toBe(1)
         expect(lastInitiateQuery?.params?.filter).toContain(
             'displayName:ilike:search'
@@ -2300,16 +2279,11 @@ describe('useDimensionList', () => {
     })
 
     it('handles search followed by loadMore', async () => {
-        // Setup initial search results (page 1)
-        const searchDimension1 = {
-            ...mockApiDimension,
-            id: 'search-id-1',
-            name: 'Search Result 1',
-        }
+        // Setup initial fetch response (no search)
         mockApiResponse = {
-            dimensions: [searchDimension1],
-            pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
-        } as unknown as ResponseData
+            dimensions: [mockApiDimension],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
+        }
 
         const { result, store } = await renderHookWithAppWrapper(
             () =>
@@ -2341,16 +2315,25 @@ describe('useDimensionList', () => {
             expect(result.current.isLoading).toBe(false)
         })
 
+        // Setup page 1 of search results
+        const searchDimension1 = {
+            ...mockApiDimension,
+            id: 'search-id-1',
+            name: 'Search Result 1',
+        }
+        mockApiResponse = {
+            dimensions: [searchDimension1],
+            pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
+        }
+
         // Apply search
         act(() => {
             store.dispatch(setSearchTerm('test'))
         })
 
         await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
+            expect(result.current.dimensions).toEqual([searchDimension1])
         })
-
-        expect(result.current.dimensions).toEqual([searchDimension1])
 
         // Verify search filter was applied
         expect(lastInitiateQuery?.params?.filter).toContain(
@@ -2367,15 +2350,22 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [searchDimension2],
             pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
-        } as unknown as ResponseData
+        }
 
         // Load more
         act(() => {
             result.current.loadMore()
         })
 
+        // Wait for loadMore to start
         await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
+            expect(result.current.isLoadingMore).toBe(true)
+        })
+
+        // Wait for loadMore to complete
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false)
+            expect(result.current.isLoadingMore).toBe(false)
         })
 
         // Verify both pages have search filter and data accumulates
@@ -2450,7 +2440,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [dimension1],
             pager: { page: 1, pageCount: 3, pageSize: 50, total: 150 },
-        } as unknown as ResponseData
+        }
 
         const { result } = await renderHookWithAppWrapper(
             () =>
@@ -2490,7 +2480,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [dimension2],
             pager: { page: 2, pageCount: 3, pageSize: 50, total: 150 },
-        } as unknown as ResponseData
+        }
 
         // Load more (page 2)
         act(() => {
@@ -2508,7 +2498,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [dimension3],
             pager: { page: 3, pageCount: 3, pageSize: 50, total: 150 },
-        } as unknown as ResponseData
+        }
 
         // Load more (page 3)
         act(() => {
@@ -2570,7 +2560,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         // Change search term
         act(() => {
@@ -2591,16 +2581,11 @@ describe('useDimensionList', () => {
     })
 
     it('resets pagination when search changes after loadMore', async () => {
-        // Setup page 1 for first search
-        const firstSearch1 = {
-            ...mockApiDimension,
-            id: 'first-1',
-            name: 'First Search 1',
-        }
+        // Setup initial fetch response (no search)
         mockApiResponse = {
-            dimensions: [firstSearch1],
-            pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
-        } as unknown as ResponseData
+            dimensions: [mockApiDimension],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
+        }
 
         const { result, store } = await renderHookWithAppWrapper(
             () =>
@@ -2632,6 +2617,17 @@ describe('useDimensionList', () => {
             expect(result.current.isLoading).toBe(false)
         })
 
+        // Setup page 1 for first search
+        const firstSearch1 = {
+            ...mockApiDimension,
+            id: 'first-1',
+            name: 'First Search 1',
+        }
+        mockApiResponse = {
+            dimensions: [firstSearch1],
+            pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
+        }
+
         // Apply first search
         act(() => {
             store.dispatch(setSearchTerm('first'))
@@ -2639,10 +2635,8 @@ describe('useDimensionList', () => {
 
         // Wait for search to complete
         await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
+            expect(result.current.dimensions).toEqual([firstSearch1])
         })
-
-        expect(result.current.dimensions).toEqual([firstSearch1])
 
         // Setup page 2 of first search
         const firstSearch2 = {
@@ -2653,16 +2647,22 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [firstSearch2],
             pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
-        } as unknown as ResponseData
+        }
 
         // Load more
         act(() => {
             result.current.loadMore()
         })
 
+        // Wait for loadMore to start
+        await waitFor(() => {
+            expect(result.current.isLoadingMore).toBe(true)
+        })
+
         // Wait for loadMore to complete
         await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
+            expect(result.current.isLoading).toBe(false)
+            expect(result.current.isLoadingMore).toBe(false)
         })
 
         expect(result.current.dimensions).toEqual([firstSearch1, firstSearch2])
@@ -2676,7 +2676,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [secondSearch1],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         // Change search term - should clear previous data and start from page 1
         act(() => {
@@ -2684,7 +2684,7 @@ describe('useDimensionList', () => {
         })
 
         await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
+            expect(result.current.dimensions).toEqual([secondSearch1])
         })
 
         // Verify pagination reset and data cleared
@@ -2695,12 +2695,12 @@ describe('useDimensionList', () => {
         )
     })
 
-    it('tracks isLoading, isFetching and isSearching states correctly', async () => {
+    it('tracks isLoading and isLoadingMore states correctly', async () => {
         // Setup page 1
         mockApiResponse = {
             dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
-        } as unknown as ResponseData
+        }
 
         const { result, store } = await renderHookWithAppWrapper(
             () =>
@@ -2729,15 +2729,11 @@ describe('useDimensionList', () => {
 
         // Initial state
         expect(result.current.isLoading).toBe(true)
-        expect(result.current.isFetching).toBe(true)
-        expect(result.current.isSearching).toBe(false)
         expect(result.current.isLoadingMore).toBe(false)
 
         // Stage 1: After initial data loads
         await waitFor(() => {
             expect(result.current.isLoading).toBe(false)
-            expect(result.current.isFetching).toBe(false)
-            expect(result.current.isSearching).toBe(false)
             expect(result.current.isLoadingMore).toBe(false)
             expect(result.current.dimensions).toEqual([mockApiDimension])
         })
@@ -2751,7 +2747,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [secondDimension],
             pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
-        } as unknown as ResponseData
+        }
 
         act(() => {
             result.current.loadMore()
@@ -2759,15 +2755,11 @@ describe('useDimensionList', () => {
 
         await waitFor(() => {
             expect(result.current.isLoading).toBe(false)
-            expect(result.current.isFetching).toBe(true)
-            expect(result.current.isSearching).toBe(false)
             expect(result.current.isLoadingMore).toBe(true)
         })
 
         await waitFor(() => {
             expect(result.current.isLoading).toBe(false)
-            expect(result.current.isFetching).toBe(false)
-            expect(result.current.isSearching).toBe(false)
             expect(result.current.isLoadingMore).toBe(false)
             expect(result.current.dimensions).toEqual([
                 mockApiDimension,
@@ -2775,7 +2767,7 @@ describe('useDimensionList', () => {
             ])
         })
 
-        // Stage 3: Trigger search
+        // Stage 3: Trigger search (should not show isLoading or isLoadingMore)
         const searchDimension = {
             ...mockApiDimension,
             id: 'search-id',
@@ -2784,24 +2776,15 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [searchDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         act(() => {
             store.dispatch(setSearchTerm('test'))
         })
 
-        await waitFor(() => {
-            expect(result.current.isLoading).toBe(false)
-            expect(result.current.isFetching).toBe(true)
-            expect(result.current.isSearching).toBe(true)
-            expect(result.current.isLoadingMore).toBe(false)
-        })
-
         // Wait for search to complete
         await waitFor(() => {
             expect(result.current.isLoading).toBe(false)
-            expect(result.current.isFetching).toBe(false)
-            expect(result.current.isSearching).toBe(false)
             expect(result.current.isLoadingMore).toBe(false)
             expect(result.current.dimensions).toEqual([searchDimension])
         })
@@ -2843,7 +2826,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [initialFetchedDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         const { result, store } = await renderHookWithAppWrapper(
             () =>
@@ -2891,7 +2874,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [searchFetchedDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        } as unknown as ResponseData
+        }
 
         // Clear previous call count to track new fetch
         const initialCallCount = mockInitiateCallCount
@@ -2901,11 +2884,6 @@ describe('useDimensionList', () => {
             store.dispatch(setSearchTerm('Apple'))
         })
 
-        // Immediately after dispatch: isFetching and isSearching should be true
-        expect(result.current.isFetching).toBe(true)
-        expect(result.current.isSearching).toBe(true)
-        expect(result.current.isLoadingMore).toBe(false)
-
         // During fetch, dimensions should still show stale data (previous resolvedSearchTerm)
         // Fixed dimensions filtered with empty search term (all), plus previous fetched dimensions
         expect(result.current.dimensions).toEqual([
@@ -2913,20 +2891,13 @@ describe('useDimensionList', () => {
             initialFetchedDimension,
         ])
 
-        // Wait for fetch to complete
+        // Wait for search results to update
         await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
-            expect(result.current.isSearching).toBe(false)
-            expect(result.current.isLoadingMore).toBe(false)
+            expect(result.current.dimensions).toEqual([
+                fixedDimensions[0], // Apple
+                searchFetchedDimension,
+            ])
         })
-
-        // After fetch completes: dimensions should be filtered with new search term
-        // Fixed dimensions filtered with "Apple" (only 'Apple' matches),
-        // plus new fetched dimensions (already filtered by server-side search)
-        expect(result.current.dimensions).toEqual([
-            fixedDimensions[0], // Apple
-            searchFetchedDimension,
-        ])
 
         // Verify API was called with search filter
         expect(mockInitiateCallCount).toBe(initialCallCount + 1)
@@ -3088,7 +3059,7 @@ describe('useDimensionList', () => {
         mockApiResponse = {
             dimensions: [fetchedDataElement1, fetchedDataElement2],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 2 },
-        } as unknown as ResponseData
+        }
 
         const { result, store } = await renderHookWithAppWrapper(
             () =>
@@ -3197,7 +3168,7 @@ describe('useDimensionList', () => {
         // Should return fixed dimensions without any API calls
         expect(result.current.dimensions).toEqual(fixedDimensions)
         expect(result.current.isLoading).toBe(false)
-        expect(result.current.isFetching).toBe(false)
+        expect(result.current.isLoading).toBe(false)
         expect(result.current.error).toBeUndefined()
         expect(result.current.hasMore).toBe(false)
         expect(mockInitiateCallCount).toBe(0)
@@ -3239,7 +3210,7 @@ describe('useDimensionList', () => {
         // Should not fetch even though filter matches baseQuery
         expect(result.current.dimensions).toEqual([])
         expect(result.current.isLoading).toBe(false)
-        expect(result.current.isFetching).toBe(false)
+        expect(result.current.isLoading).toBe(false)
         expect(mockInitiateCallCount).toBe(0)
     })
 
@@ -3398,7 +3369,7 @@ describe('useDimensionList', () => {
 
         // Wait for initial fetch
         await waitFor(() => {
-            expect(result.current.isFetching).toBe(false)
+            expect(result.current.isLoading).toBe(false)
         })
 
         expect(customTransformer).toHaveBeenCalledWith(mockApiResponse)

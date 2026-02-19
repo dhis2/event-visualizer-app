@@ -33,8 +33,6 @@ export type UseDimensionListOptions = {
 export type UseDimensionListResult = {
     dimensions: DimensionMetadataItem[]
     isLoading: boolean
-    isFetching: boolean
-    isSearching: boolean
     isLoadingMore: boolean
     error?: EngineError
     hasMore: boolean
@@ -46,16 +44,6 @@ export type UseDimensionListResult = {
 export type Transformer = (data: unknown) => {
     dimensions: DimensionMetadataItem[]
     nextPage: number | null
-}
-
-// @deprecated - Use Transformer type instead
-export type ResponseData = Record<string, DimensionMetadataItem[]> & {
-    pager: {
-        page: number
-        pageCount: number
-        pageSize: number
-        total: number
-    }
 }
 
 type SingleQueryWithFilterParam = Omit<SingleQuery, 'params'> & {
@@ -248,27 +236,23 @@ export const useDimensionList = ({
 
             const { dimensions, nextPage } = transformer(rawResponseData)
 
-            isInitalFetchSuccessRef.current = true
-            setResolvedSearchTerm(searchTerm)
-            setIsSearching(false)
-
             if (nextPageRef.current === 1) {
                 setFetchedDimensions(dimensions)
             } else {
                 setFetchedDimensions((prev) => [...prev, ...dimensions])
             }
 
-            if (!searchTerm && fixedDimensions.length === 0) {
-                // We need to check if the data has a pager with total
-                if (
-                    isObject(rawResponseData) &&
-                    'pager' in rawResponseData &&
-                    isObject(rawResponseData.pager) &&
-                    typeof rawResponseData.pager.total === 'number'
-                ) {
-                    setHasNoData(rawResponseData.pager.total === 0)
-                }
+            if (
+                !searchTerm &&
+                fixedDimensions.length === 0 &&
+                nextPageRef.current === 1
+            ) {
+                setHasNoData(dimensions.length === 0)
             }
+
+            setResolvedSearchTerm(searchTerm)
+            setIsSearching(false)
+            isInitalFetchSuccessRef.current = true
             nextPageRef.current = nextPage
             dispatch(setDimensionListLoadSuccess(dimensionListKey))
         } catch (error) {
@@ -340,9 +324,7 @@ export const useDimensionList = ({
 
         return {
             dimensions,
-            isFetching,
             isLoading,
-            isSearching,
             isLoadingMore,
             error,
             hasMore,
