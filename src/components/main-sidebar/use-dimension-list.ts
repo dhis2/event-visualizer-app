@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIsMounted } from 'usehooks-ts'
 import { api } from '@api/api'
 import { type EngineError, parseEngineError } from '@api/parse-engine-error'
-import { useEffectEvent, useAppDispatch, useAppSelector } from '@hooks'
+import { useStableCallback, useAppDispatch, useAppSelector } from '@hooks'
 import { isDimensionMetadataItem } from '@modules/metadata'
 import { isObject, isPopulatedString } from '@modules/validation'
 import {
@@ -220,7 +220,7 @@ export const useDimensionList = ({
     )
     const isMounted = useIsMounted()
 
-    const fetchDimensions = useEffectEvent(
+    const fetchDimensions = useStableCallback(
         async (shouldResetPager: boolean = false) => {
             if (
                 !dimensionListKey ||

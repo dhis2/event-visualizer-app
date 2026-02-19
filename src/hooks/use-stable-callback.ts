@@ -5,7 +5,7 @@ import {
     type MutableRefObject,
 } from 'react'
 
-export function useEffectEvent<
+export function useStableCallback<
     T extends (...args: unknown[]) => unknown | void
 >(callback: T): T {
     const ref = useRef<T>(null) as MutableRefObject<T | null>
