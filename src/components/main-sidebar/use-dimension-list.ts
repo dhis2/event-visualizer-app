@@ -225,7 +225,6 @@ export const useDimensionList = ({
     const [isSearching, setIsSearching] = useState(false)
     const [resolvedSearchTerm, setResolvedSearchTerm] = useState(searchTerm)
     const nextPageRef = useRef<number | null>(null)
-    const prevBaseQueryRef = useRef(baseQuery)
 
     const fetchDimensions = useEffectEvent(async () => {
         if (
@@ -329,17 +328,6 @@ export const useDimensionList = ({
         }
         fetchDimensions()
     }, [searchTerm, fetchDimensions])
-
-    useEffect(() => {
-        if (
-            (process.env.NODE_ENV === 'development' ||
-                process.env.NODE_ENV === 'test') &&
-            prevBaseQueryRef.current !== baseQuery
-        ) {
-            console.error('baseQuery changed - it should remain stable')
-        }
-        prevBaseQueryRef.current = baseQuery
-    }, [baseQuery])
 
     return useMemo(() => {
         const isLoading = !isInitalFetchSuccessRef.current && isFetching

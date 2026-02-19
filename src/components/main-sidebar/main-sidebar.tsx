@@ -58,6 +58,7 @@ export const MainSidebar = () => {
                             dataSourceMetadataItem
                         ) && (
                             <CardsProgramWithRegistration
+                                key={dataSourceMetadataItem.id}
                                 program={dataSourceMetadataItem}
                             />
                         )}
@@ -65,6 +66,7 @@ export const MainSidebar = () => {
                             dataSourceMetadataItem
                         ) && (
                             <CardsProgramWithoutRegistration
+                                key={dataSourceMetadataItem.id}
                                 program={dataSourceMetadataItem}
                             />
                         )}
@@ -72,6 +74,7 @@ export const MainSidebar = () => {
                             dataSourceMetadataItem
                         ) && (
                             <CardsTrackedEntityType
+                                key={dataSourceMetadataItem.id}
                                 trackedEntityType={dataSourceMetadataItem}
                             />
                         )}
