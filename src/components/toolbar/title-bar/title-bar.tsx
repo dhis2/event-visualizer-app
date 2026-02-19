@@ -54,9 +54,17 @@ export const TitleBar: FC = () => {
             <div className={classes.titleContainer}>
                 {titleText && (
                     <Tooltip content={titleText} closeDelay={0} openDelay={500}>
-                        {({ ref, onMouseOver, onMouseOut }) => (
+                        {({
+                            onBlur,
+                            onFocus,
+                            onMouseOver,
+                            onMouseOut,
+                            ref,
+                        }) => (
                             <span
                                 ref={ref}
+                                onBlur={onBlur}
+                                onFocus={onFocus}
                                 onMouseOver={onMouseOver}
                                 onMouseOut={onMouseOut}
                                 className={classes.cell}
