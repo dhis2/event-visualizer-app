@@ -27,6 +27,7 @@ export type UseDimensionListOptions = {
     dimensionListKey?: DimensionListKey
     fixedDimensions?: DimensionMetadataItem[]
     baseQuery?: SingleQuery
+    transformer?: Transformer
 }
 
 export type UseDimensionListResult = {
@@ -42,6 +43,12 @@ export type UseDimensionListResult = {
     isDisabledByFilter: boolean
 }
 
+export type Transformer = (data: unknown) => {
+    dimensions: DimensionMetadataItem[]
+    nextPage: number | null
+}
+
+// @deprecated - Use Transformer type instead
 export type ResponseData = Record<string, DimensionMetadataItem[]> & {
     pager: {
         page: number
@@ -62,38 +69,33 @@ const FILTER_PARAM_SEARCH_TERM = 'displayName:ilike:'
 const FILTER_PARAM_DIMENSION_TYPE = 'dimensionType:eq:'
 const DEFAULT_FIXED_DIMENSIONS = []
 
-export const transformResponseData = (
-    data: ResponseData
-): {
-    dimensions: DimensionMetadataItem[]
-    nextPage: number | null
-} => {
-    const dimensionsKey = Object.keys(data).find((key) => key !== 'pager')
-
-    if (
-        !(
-            isObject(data) &&
-            'pager' in data &&
-            Object.keys(data).length === 2 &&
-            typeof data.pager.page === 'number' &&
-            typeof data.pager.pageCount === 'number' &&
-            typeof dimensionsKey === 'string' &&
-            Array.isArray(data[dimensionsKey])
-        )
-    ) {
+export const defaultTransformer: Transformer = (data) => {
+    if (!isObject(data) || !('pager' in data) || !('dimensions' in data)) {
         throw new Error('Invalid response data')
     }
 
-    const dimensions = data[dimensionsKey]
-    const nextPage =
-        data.pager.page < data.pager.pageCount ? data.pager.page + 1 : null
+    const pager = data.pager
+    const dimensions = data.dimensions
 
-    if (dimensions.length > 0 && !isDimensionMetadataItem(dimensions[0])) {
-        throw new Error(
-            'Dimensions array item is not a valid dimension dimension metadata item'
-        )
+    if (
+        !isObject(pager) ||
+        typeof pager.page !== 'number' ||
+        typeof pager.pageCount !== 'number' ||
+        typeof pager.pageSize !== 'number' ||
+        typeof pager.total !== 'number'
+    ) {
+        throw new Error('Invalid pager structure')
     }
 
+    if (!Array.isArray(dimensions)) {
+        throw new Error('Dimensions is not an array')
+    }
+
+    if (dimensions.length > 0 && !isDimensionMetadataItem(dimensions[0])) {
+        throw new Error('Invalid dimension metadata items')
+    }
+
+    const nextPage = pager.page < pager.pageCount ? pager.page + 1 : null
     return { dimensions, nextPage }
 }
 
@@ -204,6 +206,7 @@ export const useDimensionList = ({
     dimensionListKey,
     fixedDimensions = DEFAULT_FIXED_DIMENSIONS,
     baseQuery,
+    transformer = defaultTransformer,
 }: UseDimensionListOptions): UseDimensionListResult => {
     const dispatch = useAppDispatch()
     const searchTerm = useAppSelector(getSearchTerm)
@@ -238,13 +241,13 @@ export const useDimensionList = ({
         dispatch(setDimensionListLoadStart(dimensionListKey))
 
         try {
-            const responseData = (await dispatch(
+            const rawResponseData = await dispatch(
                 api.endpoints.query.initiate(
                     buildQuery(baseQuery, searchTerm, nextPageRef.current)
                 )
-            ).unwrap()) as ResponseData
+            ).unwrap()
 
-            const { dimensions, nextPage } = transformResponseData(responseData)
+            const { dimensions, nextPage } = transformer(rawResponseData)
 
             isInitalFetchSuccessRef.current = true
             setResolvedSearchTerm(searchTerm)
@@ -257,7 +260,15 @@ export const useDimensionList = ({
             }
 
             if (!searchTerm && fixedDimensions.length === 0) {
-                setHasNoData(responseData.pager.total === 0)
+                // We need to check if the data has a pager with total
+                if (
+                    isObject(rawResponseData) &&
+                    'pager' in rawResponseData &&
+                    isObject(rawResponseData.pager) &&
+                    typeof rawResponseData.pager.total === 'number'
+                ) {
+                    setHasNoData(rawResponseData.pager.total === 0)
+                }
             }
             nextPageRef.current = nextPage
             dispatch(setDimensionListLoadSuccess(dimensionListKey))

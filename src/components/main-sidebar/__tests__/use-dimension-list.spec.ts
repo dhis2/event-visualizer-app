@@ -2,13 +2,14 @@ import { act, waitFor } from '@testing-library/react'
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
 import {
     useDimensionList,
-    transformResponseData,
+    defaultTransformer,
     getFilterParamsFromBaseQuery,
     buildQuery,
     isFetchEnabledByFilter,
     filterDimensions,
     computeIsDisabledByFilter,
     type ResponseData,
+    type Transformer,
 } from '../use-dimension-list'
 import * as dimensionSelectionActions from '@store/dimensions-selection-slice'
 import {
@@ -21,7 +22,7 @@ import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 import type { DimensionMetadataItem, SingleQuery, DimensionType } from '@types'
 
 // ===== MOCK SETUP =====
-let mockApiResponse: ResponseData | null = null
+let mockApiResponse: unknown = null
 let mockApiError: Error | null = null
 let mockInitiateCallCount = 0
 let lastInitiateQuery: SingleQuery | null = null
@@ -92,10 +93,10 @@ const createDimension = (
     ...overrides,
 })
 
-describe('transformResponseData', () => {
+describe('defaultTransformer', () => {
     it('transforms API response correctly', () => {
         const mockApiResponse = {
-            dataElements: [
+            dimensions: [
                 {
                     id: 'api-id-1',
                     name: 'API Dimension 1',
@@ -105,16 +106,16 @@ describe('transformResponseData', () => {
                 },
             ],
             pager: { page: 1, pageCount: 3, pageSize: 50, total: 150 },
-        } as unknown as ResponseData
+        }
 
-        const result = transformResponseData(mockApiResponse)
+        const result = defaultTransformer(mockApiResponse)
         expect(result.dimensions[0].id).toBe('api-id-1')
         expect(result.nextPage).toBe(2)
     })
 
-    it('returns false hasMore on last page', () => {
+    it('returns null nextPage on last page', () => {
         const mockApiResponse = {
-            dataElements: [
+            dimensions: [
                 {
                     id: 'api-id-1',
                     name: 'API Dimension 1',
@@ -124,32 +125,62 @@ describe('transformResponseData', () => {
                 },
             ],
             pager: { page: 3, pageCount: 3, pageSize: 50, total: 150 },
-        } as unknown as ResponseData
+        }
 
-        const result = transformResponseData(mockApiResponse)
+        const result = defaultTransformer(mockApiResponse)
         expect(result.nextPage).toBe(null)
     })
 
     it('throws on invalid response', () => {
-        expect(() =>
-            transformResponseData({} as unknown as ResponseData)
-        ).toThrow('Invalid response data')
+        expect(() => defaultTransformer({})).toThrow('Invalid response data')
     })
 
     it('handles empty dimensions array', () => {
         const mockApiResponse = {
-            dataElements: [],
+            dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        } as unknown as ResponseData
+        }
 
-        const result = transformResponseData(mockApiResponse)
+        const result = defaultTransformer(mockApiResponse)
         expect(result.dimensions).toEqual([])
         expect(result.nextPage).toBe(null)
     })
 
-    it('throws when dimension array item is invalid', () => {
+    it('throws when pager is missing', () => {
         const mockApiResponse = {
-            dataElements: [
+            dimensions: [],
+        }
+
+        expect(() => defaultTransformer(mockApiResponse)).toThrow(
+            'Invalid response data'
+        )
+    })
+
+    it('throws when pager properties are invalid', () => {
+        const mockApiResponse = {
+            dimensions: [],
+            pager: { page: 'invalid', pageCount: 1, pageSize: 50, total: 0 },
+        }
+
+        expect(() => defaultTransformer(mockApiResponse)).toThrow(
+            'Invalid pager structure'
+        )
+    })
+
+    it('throws when dimensions is not an array', () => {
+        const mockApiResponse = {
+            dimensions: 'not an array',
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
+        }
+
+        expect(() => defaultTransformer(mockApiResponse)).toThrow(
+            'Dimensions is not an array'
+        )
+    })
+
+    it('throws when dimension items are invalid', () => {
+        const mockApiResponse = {
+            dimensions: [
                 {
                     id: 'api-id-1',
                     name: 'API Dimension 1',
@@ -157,62 +188,10 @@ describe('transformResponseData', () => {
                 },
             ],
             pager: { page: 1, pageCount: 3, pageSize: 50, total: 150 },
-        } as unknown as ResponseData
+        }
 
-        expect(() => transformResponseData(mockApiResponse)).toThrow(
-            'Dimensions array item is not a valid dimension dimension metadata item'
-        )
-    })
-
-    it('handles different dimension key names', () => {
-        const mockApiResponse = {
-            programIndicators: [
-                {
-                    id: 'api-id-1',
-                    name: 'API Program Indicator',
-                    dimensionType: 'PROGRAM_INDICATOR',
-                    dimensionItemType: 'PROGRAM_INDICATOR',
-                    valueType: 'NUMBER',
-                },
-            ],
-            pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
-        } as unknown as ResponseData
-
-        const result = transformResponseData(mockApiResponse)
-        expect(result.dimensions[0].dimensionType).toBe('PROGRAM_INDICATOR')
-        expect(result.nextPage).toBe(2)
-    })
-
-    it('throws when response has more than 2 keys', () => {
-        const mockApiResponse = {
-            dataElements: [],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-            extraKey: 'should not be here',
-        } as unknown as ResponseData
-
-        expect(() => transformResponseData(mockApiResponse)).toThrow(
-            'Invalid response data'
-        )
-    })
-
-    it('throws when pager is missing', () => {
-        const mockApiResponse = {
-            dataElements: [],
-        } as unknown as ResponseData
-
-        expect(() => transformResponseData(mockApiResponse)).toThrow(
-            'Invalid response data'
-        )
-    })
-
-    it('throws when pager properties are invalid', () => {
-        const mockApiResponse = {
-            dataElements: [],
-            pager: { page: 'invalid', pageCount: 1, pageSize: 50, total: 0 },
-        } as unknown as ResponseData
-
-        expect(() => transformResponseData(mockApiResponse)).toThrow(
-            'Invalid response data'
+        expect(() => defaultTransformer(mockApiResponse)).toThrow(
+            'Invalid dimension metadata items'
         )
     })
 })
@@ -807,7 +786,7 @@ describe('useDimensionList', () => {
 
     it('fetches when filter matches dimension type in query', async () => {
         mockApiResponse = {
-            dataElements: [mockApiDimension],
+            dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -858,7 +837,7 @@ describe('useDimensionList', () => {
 
     it('does not fetch when filter does not match dimension type in query', async () => {
         mockApiResponse = {
-            dataElements: [mockApiDimension],
+            dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -898,7 +877,7 @@ describe('useDimensionList', () => {
     it('search triggers fetch when filter matches dimension type', async () => {
         // Setup API response
         mockApiResponse = {
-            dataElements: [mockApiDimension],
+            dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -1013,7 +992,7 @@ describe('useDimensionList', () => {
     it('loadMore function works and accumulates dimensions', async () => {
         // Setup API response for page 1 (hasMore true)
         mockApiResponse = {
-            dataElements: [mockApiDimension],
+            dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
         } as unknown as ResponseData
 
@@ -1058,7 +1037,7 @@ describe('useDimensionList', () => {
             name: 'API Dimension 2',
         }
         mockApiResponse = {
-            dataElements: [secondDimension],
+            dimensions: [secondDimension],
             pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
         } as unknown as ResponseData
 
@@ -1090,7 +1069,7 @@ describe('useDimensionList', () => {
     it('hasNoData is true when server returns empty result without search', async () => {
         // Setup API response with 0 total items
         mockApiResponse = {
-            dataElements: [],
+            dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
         } as unknown as ResponseData
 
@@ -1131,7 +1110,7 @@ describe('useDimensionList', () => {
     it('hasNoData is false when server returns empty result with search', async () => {
         // Setup API response with 0 total items
         mockApiResponse = {
-            dataElements: [],
+            dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
         } as unknown as ResponseData
 
@@ -1172,7 +1151,7 @@ describe('useDimensionList', () => {
     it('hasNoData is false when server returns data', async () => {
         // Setup API response with data
         mockApiResponse = {
-            dataElements: [mockApiDimension],
+            dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -1213,7 +1192,7 @@ describe('useDimensionList', () => {
     it('hasNoData is false when there are fixed dimensions even if server returns empty', async () => {
         // Setup API response with 0 total items
         mockApiResponse = {
-            dataElements: [],
+            dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
         } as unknown as ResponseData
 
@@ -1256,7 +1235,7 @@ describe('useDimensionList', () => {
     it('hasNoData updates when search is cleared and server has no data', async () => {
         // Setup initial state with search that returns data
         mockApiResponse = {
-            dataElements: [mockApiDimension],
+            dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -1294,7 +1273,7 @@ describe('useDimensionList', () => {
 
         // Setup response for cleared search (no data)
         mockApiResponse = {
-            dataElements: [],
+            dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
         } as unknown as ResponseData
 
@@ -1314,7 +1293,7 @@ describe('useDimensionList', () => {
     it('hasNoData is true only when no fixed dimensions AND no server data AND no search', async () => {
         // Test 1: No fixed dimensions, no server data, no search
         mockApiResponse = {
-            dataElements: [],
+            dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
         } as unknown as ResponseData
 
@@ -1353,7 +1332,7 @@ describe('useDimensionList', () => {
 
         // Test 2: Add fixed dimensions (use different key to avoid state conflict)
         mockApiResponse = {
-            dataElements: [],
+            dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
         } as unknown as ResponseData
 
@@ -1392,7 +1371,7 @@ describe('useDimensionList', () => {
 
         // Test 3: Add search term (use another different key)
         mockApiResponse = {
-            dataElements: [],
+            dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
         } as unknown as ResponseData
 
@@ -1433,7 +1412,7 @@ describe('useDimensionList', () => {
     it('hasNoData is sticky during search - retains value from before search', async () => {
         // Test 1: Start with no data, then search
         mockApiResponse = {
-            dataElements: [],
+            dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
         } as unknown as ResponseData
 
@@ -1472,7 +1451,7 @@ describe('useDimensionList', () => {
 
         // Setup search response (still no data)
         mockApiResponse = {
-            dataElements: [],
+            dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
         } as unknown as ResponseData
 
@@ -1491,7 +1470,7 @@ describe('useDimensionList', () => {
 
         // Test 2: Start with data, then search
         mockApiResponse = {
-            dataElements: [mockApiDimension],
+            dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -1531,7 +1510,7 @@ describe('useDimensionList', () => {
 
         // Setup search response
         mockApiResponse = {
-            dataElements: [],
+            dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
         } as unknown as ResponseData
 
@@ -1595,7 +1574,7 @@ describe('useDimensionList', () => {
 
     it('handles rapid search term changes - latest search term wins', async () => {
         mockApiResponse = {
-            dataElements: [],
+            dimensions: [],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
         } as unknown as ResponseData
 
@@ -1677,7 +1656,7 @@ describe('useDimensionList', () => {
             name: 'Fetched Dimension 1',
         }
         mockApiResponse = {
-            dataElements: [fetchedDimension1],
+            dimensions: [fetchedDimension1],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -1725,7 +1704,7 @@ describe('useDimensionList', () => {
             name: 'Test Search Result',
         }
         mockApiResponse = {
-            dataElements: [searchFetchedDimension],
+            dimensions: [searchFetchedDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -1783,7 +1762,7 @@ describe('useDimensionList', () => {
             dimensionType: 'DATA_ELEMENT' as DimensionType,
         }
         mockApiResponse = {
-            dataElements: [fetchedDimension1],
+            dimensions: [fetchedDimension1],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -1873,7 +1852,7 @@ describe('useDimensionList', () => {
             name: 'Initial Fetched',
         }
         mockApiResponse = {
-            dataElements: [initialFetchedDimension],
+            dimensions: [initialFetchedDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -1916,7 +1895,7 @@ describe('useDimensionList', () => {
             name: 'Search Result',
         }
         mockApiResponse = {
-            dataElements: [searchDimension],
+            dimensions: [searchDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -1939,7 +1918,7 @@ describe('useDimensionList', () => {
             name: 'Cleared Search Result',
         }
         mockApiResponse = {
-            dataElements: [clearedSearchDimension],
+            dimensions: [clearedSearchDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -1968,7 +1947,7 @@ describe('useDimensionList', () => {
     it('handles error during loadMore', async () => {
         // Setup page 1 successfully
         mockApiResponse = {
-            dataElements: [mockApiDimension],
+            dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
         } as unknown as ResponseData
 
@@ -2111,7 +2090,7 @@ describe('useDimensionList', () => {
 
         // Set up mock response to allow the fetch to complete
         mockApiResponse = {
-            dataElements: [mockApiDimension],
+            dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -2157,7 +2136,7 @@ describe('useDimensionList', () => {
     it('handles loadMore followed by filter change', async () => {
         // Setup page 1 with hasMore
         mockApiResponse = {
-            dataElements: [mockApiDimension],
+            dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 3, pageSize: 50, total: 150 },
         } as unknown as ResponseData
 
@@ -2199,7 +2178,7 @@ describe('useDimensionList', () => {
             name: 'API Dimension 2',
         }
         mockApiResponse = {
-            dataElements: [secondDimension],
+            dimensions: [secondDimension],
             pager: { page: 2, pageCount: 3, pageSize: 50, total: 150 },
         } as unknown as ResponseData
 
@@ -2233,7 +2212,7 @@ describe('useDimensionList', () => {
     it('handles loadMore followed by search term change', async () => {
         // Setup page 1
         mockApiResponse = {
-            dataElements: [mockApiDimension],
+            dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 3, pageSize: 50, total: 150 },
         } as unknown as ResponseData
 
@@ -2274,7 +2253,7 @@ describe('useDimensionList', () => {
             name: 'API Dimension 2',
         }
         mockApiResponse = {
-            dataElements: [secondDimension],
+            dimensions: [secondDimension],
             pager: { page: 2, pageCount: 3, pageSize: 50, total: 150 },
         } as unknown as ResponseData
 
@@ -2299,7 +2278,7 @@ describe('useDimensionList', () => {
             name: 'Search Result',
         }
         mockApiResponse = {
-            dataElements: [searchDimension],
+            dimensions: [searchDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -2328,7 +2307,7 @@ describe('useDimensionList', () => {
             name: 'Search Result 1',
         }
         mockApiResponse = {
-            dataElements: [searchDimension1],
+            dimensions: [searchDimension1],
             pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
         } as unknown as ResponseData
 
@@ -2386,7 +2365,7 @@ describe('useDimensionList', () => {
             name: 'Search Result 2',
         }
         mockApiResponse = {
-            dataElements: [searchDimension2],
+            dimensions: [searchDimension2],
             pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
         } as unknown as ResponseData
 
@@ -2469,7 +2448,7 @@ describe('useDimensionList', () => {
         // Setup page 1
         const dimension1 = { ...mockApiDimension, id: 'id-1', name: 'Dim 1' }
         mockApiResponse = {
-            dataElements: [dimension1],
+            dimensions: [dimension1],
             pager: { page: 1, pageCount: 3, pageSize: 50, total: 150 },
         } as unknown as ResponseData
 
@@ -2509,7 +2488,7 @@ describe('useDimensionList', () => {
         // Setup page 2
         const dimension2 = { ...mockApiDimension, id: 'id-2', name: 'Dim 2' }
         mockApiResponse = {
-            dataElements: [dimension2],
+            dimensions: [dimension2],
             pager: { page: 2, pageCount: 3, pageSize: 50, total: 150 },
         } as unknown as ResponseData
 
@@ -2527,7 +2506,7 @@ describe('useDimensionList', () => {
         // Setup page 3
         const dimension3 = { ...mockApiDimension, id: 'id-3', name: 'Dim 3' }
         mockApiResponse = {
-            dataElements: [dimension3],
+            dimensions: [dimension3],
             pager: { page: 3, pageCount: 3, pageSize: 50, total: 150 },
         } as unknown as ResponseData
 
@@ -2589,7 +2568,7 @@ describe('useDimensionList', () => {
         // Clear error and setup successful response
         mockApiError = null
         mockApiResponse = {
-            dataElements: [mockApiDimension],
+            dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -2619,7 +2598,7 @@ describe('useDimensionList', () => {
             name: 'First Search 1',
         }
         mockApiResponse = {
-            dataElements: [firstSearch1],
+            dimensions: [firstSearch1],
             pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
         } as unknown as ResponseData
 
@@ -2672,7 +2651,7 @@ describe('useDimensionList', () => {
             name: 'First Search 2',
         }
         mockApiResponse = {
-            dataElements: [firstSearch2],
+            dimensions: [firstSearch2],
             pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
         } as unknown as ResponseData
 
@@ -2695,7 +2674,7 @@ describe('useDimensionList', () => {
             name: 'Second Search 1',
         }
         mockApiResponse = {
-            dataElements: [secondSearch1],
+            dimensions: [secondSearch1],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -2719,7 +2698,7 @@ describe('useDimensionList', () => {
     it('tracks isLoading, isFetching and isSearching states correctly', async () => {
         // Setup page 1
         mockApiResponse = {
-            dataElements: [mockApiDimension],
+            dimensions: [mockApiDimension],
             pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
         } as unknown as ResponseData
 
@@ -2770,7 +2749,7 @@ describe('useDimensionList', () => {
             name: 'API Dimension 2',
         }
         mockApiResponse = {
-            dataElements: [secondDimension],
+            dimensions: [secondDimension],
             pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
         } as unknown as ResponseData
 
@@ -2803,7 +2782,7 @@ describe('useDimensionList', () => {
             name: 'Search Result',
         }
         mockApiResponse = {
-            dataElements: [searchDimension],
+            dimensions: [searchDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -2862,7 +2841,7 @@ describe('useDimensionList', () => {
             dimensionType: 'DATA_ELEMENT',
         })
         mockApiResponse = {
-            dataElements: [initialFetchedDimension],
+            dimensions: [initialFetchedDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -2910,7 +2889,7 @@ describe('useDimensionList', () => {
             dimensionType: 'DATA_ELEMENT',
         })
         mockApiResponse = {
-            dataElements: [searchFetchedDimension],
+            dimensions: [searchFetchedDimension],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
         } as unknown as ResponseData
 
@@ -3107,7 +3086,7 @@ describe('useDimensionList', () => {
         })
 
         mockApiResponse = {
-            dataElements: [fetchedDataElement1, fetchedDataElement2],
+            dimensions: [fetchedDataElement1, fetchedDataElement2],
             pager: { page: 1, pageCount: 1, pageSize: 50, total: 2 },
         } as unknown as ResponseData
 
@@ -3343,5 +3322,89 @@ describe('useDimensionList', () => {
                 dimensionType: 'ORGANISATION_UNIT',
             }),
         ])
+    })
+
+    it('accepts custom transformer', async () => {
+        const customTransformer: Transformer = vi.fn((data) => {
+            // Simulate a different response structure (non-paginated example)
+            const response = data as {
+                trackedEntityTypeAttributes: Array<{
+                    trackedEntityAttribute: {
+                        id: string
+                        name: string
+                        valueType: string
+                    }
+                }>
+            }
+            const dimensions = response.trackedEntityTypeAttributes.map(
+                (item) => ({
+                    id: item.trackedEntityAttribute.id,
+                    name: item.trackedEntityAttribute.name,
+                    dimensionType: 'DATA_ELEMENT' as const,
+                    valueType: item.trackedEntityAttribute.valueType as 'TEXT',
+                    dimensionItemType: 'DATA_ELEMENT' as const,
+                })
+            )
+            // No pager in this response, so nextPage is null
+            return { dimensions, nextPage: null }
+        })
+
+        mockApiResponse = {
+            trackedEntityTypeAttributes: [
+                {
+                    trackedEntityAttribute: {
+                        id: 'attr-1',
+                        name: 'Attribute 1',
+                        valueType: 'TEXT',
+                    },
+                },
+                {
+                    trackedEntityAttribute: {
+                        id: 'attr-2',
+                        name: 'Attribute 2',
+                        valueType: 'NUMBER',
+                    },
+                },
+            ],
+        }
+
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    baseQuery: {
+                        resource: 'trackedEntityTypes',
+                    } as SingleQuery,
+                    transformer: customTransformer,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '',
+                            filter: null,
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // Wait for initial fetch
+        await waitFor(() => {
+            expect(result.current.isFetching).toBe(false)
+        })
+
+        expect(customTransformer).toHaveBeenCalledWith(mockApiResponse)
+        expect(result.current.dimensions).toHaveLength(2)
+        expect(result.current.dimensions[0].id).toBe('attr-1')
+        expect(result.current.dimensions[0].name).toBe('Attribute 1')
+        expect(result.current.hasMore).toBe(false) // No pager in response
     })
 })
