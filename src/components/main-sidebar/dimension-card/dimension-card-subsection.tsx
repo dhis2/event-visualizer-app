@@ -20,27 +20,15 @@ export const DimensionsCardSubsection = ({
         setIsCollapsed((prev) => !prev)
     }, [])
 
-    const handleKeyDown = useCallback(
-        (event: React.KeyboardEvent) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault()
-                handleToggle()
-            }
-        },
-        [handleToggle]
-    )
-
     return (
         <div
             className={classes.container}
             data-test="dimension-card-subsection"
         >
-            <div
+            <button
+                type="button"
                 className={classes.header}
                 onClick={handleToggle}
-                onKeyDown={handleKeyDown}
-                role="button"
-                tabIndex={0}
                 aria-expanded={!isCollapsed}
                 data-test="dimension-card-subsection-header"
             >
@@ -61,7 +49,7 @@ export const DimensionsCardSubsection = ({
                         {selectedCount}
                     </div>
                 )}
-            </div>
+            </button>
             <div
                 className={cx(classes.content, {
                     [classes.collapsed]: isCollapsed,

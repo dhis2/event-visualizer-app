@@ -176,8 +176,9 @@ export const computeIsDisabledByFilter = (
     fixedDimensionTypes: DimensionType[] = []
 ): boolean => {
     const hasMatchingFixedDimensionType =
+        filter !== null &&
         Array.isArray(fixedDimensionTypes) &&
-        fixedDimensionTypes.includes(filter as DimensionType)
+        fixedDimensionTypes.includes(filter)
 
     if (baseQuery) {
         // List with query: disabled if fetch not enabled AND no matching fixed dimension

@@ -1,4 +1,6 @@
 .container {
+    all: unset;
+    box-sizing: border-box;
     min-block-size: 29px;
     display: flex;
     align-items: center;
@@ -7,6 +9,7 @@
     border-radius: 4px 4px 0 0;
     padding: 10px 6px 10px 4px;
     cursor: pointer;
+    inline-size: 100%;
 }
 
 .title {

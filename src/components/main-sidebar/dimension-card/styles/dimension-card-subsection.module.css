@@ -7,10 +7,13 @@
 }
 
 .header {
+    all: unset;
+    box-sizing: border-box;
     align-items: center;
     display: flex;
     padding: 8px 6px 8px 12px;
     cursor: pointer;
+    inline-size: 100%;
 }
 .header:hover {
     background-color: var(--colors-grey100);

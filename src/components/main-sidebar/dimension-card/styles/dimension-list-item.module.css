@@ -1,5 +1,10 @@
 .item {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    inline-size: 100%;
     border: 1px solid grey;
     border-radius: 4px;
     cursor: pointer;
+    text-align: start;
 }

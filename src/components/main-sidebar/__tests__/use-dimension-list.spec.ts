@@ -319,7 +319,8 @@ describe('buildQuery', () => {
     })
 
     it('does not mutate input baseQuery', () => {
-        const originalFilter = [...(baseQuery.params!.filter! as string[])]
+        const filter = baseQuery.params!.filter!
+        const originalFilter = Array.isArray(filter) ? [...filter] : [filter]
         const result = buildQuery(baseQuery, 'test', 1)
         // Original should remain unchanged
         expect(baseQuery.params!.filter).toEqual(originalFilter)

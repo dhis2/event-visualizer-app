@@ -1,4 +1,4 @@
-import { useCallback, type FC, type KeyboardEvent } from 'react'
+import { useCallback, type FC } from 'react'
 import classes from './styles/dimension-list-item.module.css'
 import { useAddMetadata, useAppDispatch } from '@hooks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
@@ -32,26 +32,15 @@ export const DimensionListItem: FC<DimensionListItemProps> = ({
         dispatch(setUiActiveDimensionModal(dimension.id))
     }, [addMetadata, dispatch, dimension, program, programStage])
 
-    const onKeyDown = useCallback(
-        (event: KeyboardEvent<HTMLLIElement>) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault()
-                handleActivate()
-            }
-        },
-        [handleActivate]
-    )
-
     return (
-        <li
-            className={classes.item}
-            data-test="dimension-list-item"
-            onClick={handleActivate}
-            onKeyDown={onKeyDown}
-            role="button"
-            tabIndex={0}
-        >
-            {dimension?.name ?? 'TEMP PLACEHOLDER'}
+        <li data-test="dimension-list-item">
+            <button
+                type="button"
+                className={classes.item}
+                onClick={handleActivate}
+            >
+                {dimension?.name ?? 'TEMP PLACEHOLDER'}
+            </button>
         </li>
     )
 }
