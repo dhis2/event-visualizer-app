@@ -18,13 +18,10 @@
 .content {
     display: flex;
     flex-direction: column;
+    margin-block-start: 4px;
 }
 .content.collapsed {
     display: none;
-}
-
-.content {
-    margin-block-start: 4px;
 }
 
 .content.withSubSections {

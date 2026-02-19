@@ -29,33 +29,23 @@ let allInitiateQueries: SingleQuery[] = []
 let mockApiDelay = 10 // Default delay in ms
 
 vi.mock('@api/api', () => {
+    const createUnwrapPromise = async () => {
+        await new Promise((resolve) => setTimeout(resolve, mockApiDelay))
+        if (mockApiError) {
+            throw mockApiError
+        }
+        return mockApiResponse || {}
+    }
+
     const mockQueryInitiate = vi.fn((query: SingleQuery) => {
         mockInitiateCallCount++
         lastInitiateQuery = query
         // Deep clone to prevent mutation issues
-        allInitiateQueries.push(JSON.parse(JSON.stringify(query)))
+        allInitiateQueries.push(structuredClone(query))
 
-        return () => {
-            if (mockApiError) {
-                return {
-                    unwrap: vi.fn(async () => {
-                        await new Promise((resolve) =>
-                            setTimeout(resolve, mockApiDelay)
-                        )
-                        throw mockApiError
-                    }),
-                }
-            }
-
-            return {
-                unwrap: vi.fn(async () => {
-                    await new Promise((resolve) =>
-                        setTimeout(resolve, mockApiDelay)
-                    )
-                    return mockApiResponse || {}
-                }),
-            }
-        }
+        return () => ({
+            unwrap: vi.fn(createUnwrapPromise),
+        })
     })
 
     return {
@@ -73,10 +63,7 @@ vi.mock('@api/api', () => {
             },
             internalActions: {},
             util: {},
-            reducer: vi.fn((state = {}, action) => {
-                void action
-                return state
-            }),
+            reducer: vi.fn((state = {}) => state),
             middleware: vi.fn(() => (next) => (action) => next(action)),
             usePrefetch: vi.fn(),
             useQueryQuery: vi.fn(),
@@ -335,7 +322,7 @@ describe('buildQuery', () => {
         const originalFilter = [...(baseQuery.params!.filter! as string[])]
         const result = buildQuery(baseQuery, 'test', 1)
         // Original should remain unchanged
-        expect(baseQuery.params!.filter as string[]).toEqual(originalFilter)
+        expect(baseQuery.params!.filter).toEqual(originalFilter)
         // Result should have added search term
         expect(result.params.filter).toEqual([
             'dimensionType:eq:DATA_ELEMENT',

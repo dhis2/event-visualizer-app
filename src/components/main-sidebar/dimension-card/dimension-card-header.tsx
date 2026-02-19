@@ -16,10 +16,21 @@ export const DimensionCardHeader = ({
     isCollapsed,
     onToggle,
 }: DimensionCardHeaderProps) => {
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            onToggle()
+        }
+    }
+
     return (
         <div
             className={classes.container}
             onClick={onToggle}
+            onKeyDown={handleKeyDown}
+            role="button"
+            tabIndex={0}
+            aria-expanded={!isCollapsed}
             data-test="dimension-card-header"
         >
             <CollapseIcon isCollapsed={isCollapsed} />

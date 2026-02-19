@@ -46,7 +46,6 @@
     justify-content: flex-start;
     align-items: center;
     overflow: hidden;
-    padding: 0;
     font-style: italic;
     padding: 0 var(--spacers-dp4);
     block-size: 24px;

@@ -77,7 +77,7 @@ export const defaultTransformer: Transformer = (data) => {
     }
 
     if (!Array.isArray(dimensions)) {
-        throw new Error('Dimensions is not an array')
+        throw new TypeError('Dimensions is not an array')
     }
 
     if (dimensions.length > 0 && !isDimensionMetadataItem(dimensions[0])) {
@@ -135,17 +135,12 @@ export const isFetchEnabledByFilter = (
     baseQuery: SingleQuery,
     filter: DataSourceFilter | null
 ): boolean => {
-    if (!filter) {
-        return true
-    } else {
+    if (filter) {
         const dimensionTypeFilter = getFilterParamsFromBaseQuery(
             baseQuery
         ).find((str) => str.startsWith(FILTER_PARAM_DIMENSION_TYPE))
 
-        if (!dimensionTypeFilter) {
-            // No dimension type filter in query, fetch regardless of filter
-            return true
-        } else {
+        if (dimensionTypeFilter) {
             const dimensionType = dimensionTypeFilter.replace(
                 FILTER_PARAM_DIMENSION_TYPE,
                 ''
@@ -153,7 +148,10 @@ export const isFetchEnabledByFilter = (
             // Fetch only when query filter matches enabled filter
             return dimensionType === filter
         }
+        // No dimension type filter in query, fetch regardless of filter
+        return true
     }
+    return true
 }
 
 export const filterDimensions = (
@@ -179,16 +177,15 @@ export const computeIsDisabledByFilter = (
 ): boolean => {
     const hasMatchingFixedDimensionType =
         Array.isArray(fixedDimensionTypes) &&
-        fixedDimensionTypes.some((dimensionType) => dimensionType === filter)
+        fixedDimensionTypes.includes(filter as DimensionType)
 
-    if (!baseQuery) {
-        // Fixed-only list: disabled only if filter doesn't match any fixed dimension
-        return filter !== null && !hasMatchingFixedDimensionType
-    } else {
+    if (baseQuery) {
         // List with query: disabled if fetch not enabled AND no matching fixed dimension
         const isFetchEnabled = isFetchEnabledByFilter(baseQuery, filter)
         return !isFetchEnabled && !hasMatchingFixedDimensionType
     }
+    // Fixed-only list: disabled only if filter doesn't match any fixed dimension
+    return filter !== null && !hasMatchingFixedDimensionType
 }
 
 export const useDimensionList = ({

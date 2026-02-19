@@ -50,7 +50,6 @@ export const DimensionCard = ({
                 [classes.isDisabledByFilter]: isDisabledByFilter,
             })}
             data-test="dimension-card"
-            tabIndex={0}
         >
             <DimensionCardHeader
                 selectedCount={selectedCount}
