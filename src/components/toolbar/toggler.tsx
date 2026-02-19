@@ -18,8 +18,11 @@ export const Toggler: FC<TogglerProps> = ({
     dataTest,
 }) => (
     <Tooltip content={tooltipText} closeDelay={0}>
-        {({ onMouseOver, onMouseOut, ref }) => (
+        {({ onBlur, onFocus, onMouseOver, onMouseOut, ref }) => (
             <span
+                role="button"
+                onBlur={onBlur}
+                onFocus={onFocus}
                 onMouseOver={onMouseOver}
                 onMouseOut={onMouseOut}
                 ref={ref}
