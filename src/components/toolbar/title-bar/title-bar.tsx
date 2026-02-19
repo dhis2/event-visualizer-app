@@ -63,6 +63,7 @@ export const TitleBar: FC = () => {
                         }) => (
                             <span
                                 ref={ref}
+                                tabIndex={0}
                                 onBlur={onBlur}
                                 onFocus={onFocus}
                                 onMouseOver={onMouseOver}
