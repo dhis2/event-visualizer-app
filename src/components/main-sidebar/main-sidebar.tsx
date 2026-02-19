@@ -1,4 +1,6 @@
 import cx from 'classnames'
+import { useState } from 'react'
+import type { UIEvent } from 'react'
 import { CardsProgramWithRegistration } from './cards-program-with-registration/cards-program-with-registration'
 import { CardsProgramWithoutRegistration } from './cards-program-without-registration/cards-program-without-registration'
 import { CardsTrackedEntityType } from './cards-tracked-entity-type/cards-tracked-entity-type'
@@ -22,6 +24,11 @@ export const MainSidebar = () => {
     const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
     const dataSourceId = useAppSelector(getDataSourceId)
     const dataSourceMetadataItem = useMetadataItem(dataSourceId)
+    const [isScrolled, setIsScrolled] = useState(false)
+    const handleScroll = (event: UIEvent<HTMLDivElement>) => {
+        const target = event.currentTarget
+        setIsScrolled(target.scrollTop > 0)
+    }
 
     return (
         <div
@@ -32,14 +39,21 @@ export const MainSidebar = () => {
             <DataSourceSelect />
             {!!dataSourceMetadataItem && (
                 <>
-                    <div className={classes.searchRow}>
+                    <div
+                        className={cx(classes.searchRow, {
+                            [classes.scrolled]: isScrolled,
+                        })}
+                    >
                         <UnifiedSearchInput />
                         {isDataSourceProgramWithRegistration(
                             dataSourceMetadataItem
                         ) && <FilterDropdownButton />}
                         <ToggleCollapseAllButton />
                     </div>
-                    <div className={classes.dimensionCardsContainer}>
+                    <div
+                        onScroll={handleScroll}
+                        className={classes.dimensionCardsContainer}
+                    >
                         {isDataSourceProgramWithRegistration(
                             dataSourceMetadataItem
                         ) && (
