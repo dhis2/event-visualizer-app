@@ -19,9 +19,11 @@ import {
     HoverMenuDropdown,
 } from '@dhis2/analytics'
 import { useAppSelector } from '@hooks'
-import { isVisualizationValidForSaveAs } from '@modules/validation'
 import { isVisualizationSaved } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
+
+const iconActiveColor = colors.grey700
+const iconInactiveColor = colors.grey500
 
 type FileMenuProps = {
     onMenuItemClick: (dialogName: string) => void
@@ -30,15 +32,29 @@ type FileMenuProps = {
 export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
     const currentVis = useAppSelector(getCurrentVis)
 
-    const { isSaveEnabled, onNew, onSave } = useToolbarActions()
+    const { isSaveEnabled, isSaveAsEnabled, onNew, onSave } =
+        useToolbarActions()
 
-    const isOnSaveAsEnabled = useMemo(
-        () => isVisualizationValidForSaveAs(currentVis),
+    const hasVisualizationDeleteAccess: boolean = useMemo(
+        () =>
+            isVisualizationSaved(currentVis) &&
+            Boolean(currentVis?.access?.delete),
         [currentVis]
     )
 
-    const iconActiveColor = colors.grey700
-    const iconInactiveColor = colors.grey500
+    const hasVisualizationManageAccess: boolean = useMemo(
+        () =>
+            isVisualizationSaved(currentVis) &&
+            Boolean(currentVis?.access?.manage),
+        [currentVis]
+    )
+
+    const hasVisualizationUpdateAccess: boolean = useMemo(
+        () =>
+            isVisualizationSaved(currentVis) &&
+            Boolean(currentVis?.access?.update),
+        [currentVis]
+    )
 
     return (
         <HoverMenuDropdown label={i18n.t('File')}>
@@ -84,13 +100,13 @@ export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
                     icon={
                         <IconSave24
                             color={
-                                isOnSaveAsEnabled
+                                isSaveAsEnabled
                                     ? iconActiveColor
                                     : iconInactiveColor
                             }
                         />
                     }
-                    disabled={!isOnSaveAsEnabled}
+                    disabled={!isSaveAsEnabled}
                     onClick={() => onMenuItemClick('saveas')}
                     dataTest="file-menu-saveas"
                 />
@@ -99,19 +115,13 @@ export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
                     icon={
                         <IconEdit24
                             color={
-                                isVisualizationSaved(currentVis) &&
-                                currentVis?.access?.update
+                                hasVisualizationUpdateAccess
                                     ? iconActiveColor
                                     : iconInactiveColor
                             }
                         />
                     }
-                    disabled={
-                        !(
-                            isVisualizationSaved(currentVis) &&
-                            currentVis?.access?.update
-                        )
-                    }
+                    disabled={!hasVisualizationUpdateAccess}
                     onClick={() => onMenuItemClick('rename')}
                     dataTest="file-menu-rename"
                 />
@@ -120,19 +130,13 @@ export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
                     icon={
                         <IconTranslate24
                             color={
-                                isVisualizationSaved(currentVis) &&
-                                currentVis?.access?.update
+                                hasVisualizationUpdateAccess
                                     ? iconActiveColor
                                     : iconInactiveColor
                             }
                         />
                     }
-                    disabled={
-                        !(
-                            isVisualizationSaved(currentVis) &&
-                            currentVis?.access?.update
-                        )
-                    }
+                    disabled={!hasVisualizationUpdateAccess}
                     onClick={() => onMenuItemClick('translate')}
                     dataTest="file-menu-translate"
                 />
@@ -142,19 +146,13 @@ export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
                     icon={
                         <IconShare24
                             color={
-                                isVisualizationSaved(currentVis) &&
-                                currentVis?.access?.manage
+                                hasVisualizationManageAccess
                                     ? iconActiveColor
                                     : iconInactiveColor
                             }
                         />
                     }
-                    disabled={
-                        !(
-                            isVisualizationSaved(currentVis) &&
-                            currentVis?.access?.manage
-                        )
-                    }
+                    disabled={!hasVisualizationManageAccess}
                     onClick={() => onMenuItemClick('sharing')}
                     dataTest="file-menu-sharing"
                 />
@@ -180,19 +178,13 @@ export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
                     icon={
                         <IconDelete24
                             color={
-                                isVisualizationSaved(currentVis) &&
-                                currentVis?.access?.delete
+                                hasVisualizationDeleteAccess
                                     ? colors.red700
                                     : iconInactiveColor
                             }
                         />
                     }
-                    disabled={
-                        !(
-                            isVisualizationSaved(currentVis) &&
-                            currentVis?.access?.delete
-                        )
-                    }
+                    disabled={!hasVisualizationDeleteAccess}
                     onClick={() => onMenuItemClick('delete')}
                     dataTest="file-menu-delete"
                 />

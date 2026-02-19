@@ -7,7 +7,10 @@ import {
     preparePayloadForSaveAs,
 } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
-import { isVisualizationValidForSave } from '@modules/validation'
+import {
+    isVisualizationValidForSave,
+    isVisualizationValidForSaveAs,
+} from '@modules/validation'
 import {
     getSaveableVisualization,
     getVisualizationState,
@@ -42,6 +45,11 @@ export const useToolbarActions = () => {
             isVisualizationSaved(savedVis) &&
             (!savedVis.id || savedVis.access?.update),
         [currentVis, savedVis]
+    )
+
+    const isSaveAsEnabled = useMemo(
+        () => isVisualizationValidForSaveAs(currentVis),
+        [currentVis]
     )
 
     const onError = useCallback(
@@ -151,6 +159,7 @@ export const useToolbarActions = () => {
 
     return {
         isSaveEnabled,
+        isSaveAsEnabled,
         onError,
         onOpen,
         onNew,
