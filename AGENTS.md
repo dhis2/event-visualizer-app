@@ -214,6 +214,8 @@ The following Model Context Protocol servers are enabled for this project (see `
 
 ## Git Workflow
 
+**IMPORTANT FOR AI AGENTS**: **DO NOT stage files or create commits**. The user reviews diffs, stages changes, and commits. Your role is to modify code files only - all git operations (staging, committing, pushing) are the user's responsibility.
+
 ### Git Hooks
 
 Pre-commit hooks are configured via Husky to:
@@ -252,3 +254,142 @@ Pre-commit hooks are configured via Husky to:
 -   **Dual deployment**: The app can be deployed as both a standalone app and a plugin
 -   **Path aliases**: Always prefer path aliases over relative imports for better maintainability
 -   **DHIS2 platform**: Leverage DHIS2 Platform capabilities and conventions throughout development
+
+## Testing & Linting Workflow for AI Agents
+
+**Golden Rule**: When building a solution, test and lint **specific files only**. When finishing, always run **full project validation** with `yarn test` and `yarn lint`.
+
+### During Development (File-Specific Commands)
+
+Use these commands when actively working on code to get fast feedback:
+
+#### Testing Individual Files
+
+```bash
+npx vitest run <file-path>
+# Example: npx vitest run src/hooks/useEventData.spec.ts
+```
+
+#### Linting Individual Files
+
+**Preferred Method: Use LSP Diagnostics (Fastest)**
+
+OpenCode has built-in LSP integration (TypeScript, ESLint) that automatically reports errors when files are read or edited. LSP diagnostics provide real-time TypeScript and ESLint errors with full project context (path aliases, type checking). This is the fastest and most accurate method.
+
+When you read or edit a file, OpenCode will automatically display LSP diagnostics if errors are present:
+
+```
+LSP errors detected in this file, please fix:
+<diagnostics file="/path/to/file.ts">
+ERROR [line:col] Error message here
+</diagnostics>
+```
+
+**No manual command needed** - LSP diagnostics appear automatically when working with files.
+
+**Important**: LSP only covers **TypeScript and ESLint** checks. It does **not** cover:
+
+-   **Stylelint** (CSS/SCSS linting) - must be run manually with `npx stylelint`
+-   **Prettier** formatting - some issues are caught by ESLint's Prettier integration, but not all formatting issues are reported by LSP
+
+**TypeScript Checking (When LSP Not Available)**
+
+If LSP diagnostics are unavailable, run the project-wide TypeScript check frequently:
+
+```bash
+./scripts/check-typescript.sh
+# Or directly:
+npx tsc --project tsconfig.json --noEmit --skipLibCheck
+npx tsc --project cypress/tsconfig.json --noEmit --skipLibCheck
+```
+
+**Rationale**: TypeScript issues are the most common errors, so checks should happen regularly. The project has path aliases and project references that require full project context - individual file checking is not supported.
+
+**Alternative: Direct Commands for Other Linters**
+
+For **TypeScript/JavaScript files** (`.ts`, `.tsx`, `.js`, `.jsx`):
+
+```bash
+npx eslint <file-path>                    # Check only
+npx eslint <file-path> --fix              # Fix automatically
+npx prettier --check <file-path>          # Check formatting
+npx prettier --write <file-path>          # Format automatically
+```
+
+For **CSS/SCSS files** (`.css`, `.scss`):
+
+```bash
+npx stylelint <file-path> --max-warnings=0         # Check only
+npx stylelint <file-path> --fix --max-warnings=0   # Fix automatically
+npx prettier --check <file-path>                   # Check formatting
+npx prettier --write <file-path>                   # Format automatically
+```
+
+For **TSX files** (`.tsx`) - needs all three tools:
+
+```bash
+npx eslint <file-path>                             # ESLint check
+npx stylelint <file-path> --max-warnings=0         # Stylelint check
+npx prettier --check <file-path>                   # Prettier check
+```
+
+For **other formats** (`.json`, `.md`, `.yml`, `.yaml`):
+
+```bash
+npx prettier --check <file-path>          # Check only
+npx prettier --write <file-path>          # Format automatically
+```
+
+### After Completing Work (Project-Wide Commands)
+
+**Always run these before finishing**:
+
+```bash
+yarn test          # Run all unit tests (vitest)
+yarn lint          # Run all linters (ESLint, Stylelint, Prettier, TypeScript, ls-lint)
+```
+
+If there are failures, many can be fixed automatically using `yarn format`:
+
+```bash
+yarn format        # Auto-fix formatting and auto-fixable lint issues
+```
+
+After running `yarn format`, run `yarn lint` again to verify all issues are resolved. Note that `yarn format` can resolve:
+
+-   Prettier formatting issues (indentation, spacing, quotes, etc.)
+-   Auto-fixable ESLint issues (marked with wrench 🔧 icon in ESLint output)
+-   Auto-fixable Stylelint issues
+
+Some errors require manual fixes (e.g., type errors, logic issues, certain lint violations).
+
+**Note on TypeScript**: The project has two TypeScript configurations:
+
+-   `tsconfig.json` - Main configuration for src files with path aliases
+-   `cypress/tsconfig.json` - Configuration for Cypress tests
+
+The `yarn lint` command checks both configurations. Individual file TypeScript checking via `npx tsc` is not recommended as it lacks the full project context (path aliases, project references). Use `./scripts/check-typescript.sh` or LSP diagnostics instead.
+
+### Decision Tree
+
+**While working on a solution**:
+
+-   Modified 1-3 files → Use file-specific `npx` commands for each file
+-   Need to fix formatting → Use `npx prettier --write <file-path>` or `npx eslint <file-path> --fix`
+-   Modified many files → Use `yarn lint` and `yarn test`
+
+**When finishing a task**:
+
+-   Always run `yarn test` (ensures all tests pass)
+-   Always run `yarn lint` (ensures code quality across project)
+-   If lint fails with formatting issues → Run `yarn format` then `yarn lint` again
+
+### Common Pitfalls to Avoid
+
+-   ❌ **Don't** run `yarn test` and `yarn lint` after every small change (wastes time)
+-   ❌ **Don't** use `npx eslint .` when you only changed one file
+-   ❌ **Don't** forget to run full `yarn test` and `yarn lint` when finishing
+-   ✅ **Do** prefer LSP diagnostics over manual commands for TypeScript and ESLint checks
+-   ✅ **Do** use file-specific commands during development
+-   ✅ **Do** run project-wide commands as final validation
+-   ✅ **Do** use `npx prettier --write` to quickly fix formatting issues
