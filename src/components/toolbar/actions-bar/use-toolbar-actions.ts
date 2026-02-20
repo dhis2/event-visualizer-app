@@ -45,8 +45,7 @@ export const useToolbarActions = () => {
                 ...currentVis,
                 legacy: savedVis?.legacy,
             }) &&
-            isVisualizationSaved(savedVis) &&
-            (!savedVis.id || savedVis.access?.update),
+            (!('id' in currentVis) || currentVis.access?.update),
         [currentVis, savedVis]
     )
 
