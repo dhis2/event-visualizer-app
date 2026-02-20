@@ -16,9 +16,12 @@ import {
     getVisualizationState,
     isVisualizationSaved,
 } from '@modules/visualization'
-import { getCurrentVis } from '@store/current-vis-slice'
+import {
+    getCurrentVis,
+    setCurrentVisNameDescription,
+} from '@store/current-vis-slice'
 import { setNavigationState } from '@store/navigation-slice'
-import { getSavedVis } from '@store/saved-vis-slice'
+import { getSavedVis, setSavedVisNameDescription } from '@store/saved-vis-slice'
 import { tLoadSavedVisualization } from '@store/thunks'
 import type { NewVisualization, SavedVisualization } from '@types'
 
@@ -51,6 +54,20 @@ export const useToolbarActions = () => {
         () => isVisualizationValidForSaveAs(currentVis),
         [currentVis]
     )
+
+    const onDelete = useCallback(() => {
+        dispatch(setNavigationState({ visualizationId: 'new' }))
+
+        showAlert({
+            message: i18n.t('"{{- deletedObject}}" successfully deleted.', {
+                deletedObject: savedVis.name,
+            }),
+            options: {
+                success: true,
+                duration: 2000,
+            },
+        })
+    }, [dispatch, savedVis.name, showAlert])
 
     const onError = useCallback(
         (error) => {
@@ -100,6 +117,41 @@ export const useToolbarActions = () => {
             }
         },
         [dispatch, currentVis]
+    )
+
+    // Existing visualization
+    // the visualization is updated with only name and/or description from the rename dialog
+    const onRename = useCallback(
+        async ({ name, description }) => {
+            const { data, error } = await dispatch(
+                eventVisualizationsApi.endpoints.renameVisualization.initiate({
+                    name,
+                    description,
+                })
+            )
+
+            if (data) {
+                // Update current and visualization with edited name/description
+                dispatch(setCurrentVisNameDescription(data))
+                dispatch(setSavedVisNameDescription(data))
+
+                showAlert({
+                    message: i18n.t('Rename successful'),
+                    options: {
+                        success: true,
+                        duration: 2000,
+                    },
+                })
+            } else if (error) {
+                showAlert({
+                    message: i18n.t('Rename failed'),
+                    options: {
+                        critical: true,
+                    },
+                })
+            }
+        },
+        [dispatch, showAlert]
     )
 
     // Existing visualization
@@ -160,9 +212,11 @@ export const useToolbarActions = () => {
     return {
         isSaveEnabled,
         isSaveAsEnabled,
+        onDelete,
         onError,
         onOpen,
         onNew,
+        onRename,
         onSave,
         onSaveAs,
     }

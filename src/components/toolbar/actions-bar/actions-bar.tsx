@@ -1,7 +1,5 @@
-import { useAlert } from '@dhis2/app-runtime'
-import i18n from '@dhis2/d2-i18n'
 import { SharingDialog } from '@dhis2/ui'
-import { useCallback, useMemo, useState, type FC } from 'react'
+import { useMemo, useState, type FC } from 'react'
 import { DownloadMenu } from './download-menu'
 import { FileMenu } from './file-menu'
 import { NewButton } from './new-button'
@@ -10,7 +8,6 @@ import { SaveButton } from './save-button'
 import classes from './styles/actions-bar.module.css'
 import { useToolbarActions } from './use-toolbar-actions'
 import { ViewMenu } from './view-menu'
-import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { parseEngineError } from '@api/parse-engine-error'
 import { ToolbarDivider } from '@components/toolbar/toolbar-divider'
 import { VISUALIZATION_TYPES } from '@constants/visualization-types'
@@ -23,22 +20,30 @@ import {
     SaveAsDialog,
     TranslationDialog,
 } from '@dhis2/analytics'
-import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
+import { useAppSelector, useCurrentUser } from '@hooks'
 import { isVisualizationValidForSaveAs } from '@modules/validation'
-import {
-    getCurrentVis,
-    setCurrentVisNameDescription,
-} from '@store/current-vis-slice'
-import { setNavigationState } from '@store/navigation-slice'
-import { getSavedVis, setSavedVisNameDescription } from '@store/saved-vis-slice'
+import { getCurrentVis } from '@store/current-vis-slice'
+import { getSavedVis } from '@store/saved-vis-slice'
 import type { SavedVisualization } from '@types'
 
-export const ActionsBar: FC = () => {
-    const dispatch = useAppDispatch()
+const FILE_TYPE = 'eventVisualization'
 
-    const [currentDialog, setCurrentDialog] = useState<string | null>(null)
+const FILTER_VIS_TYPES = [
+    { type: 'ALL', insertDivider: true },
+    ...VISUALIZATION_TYPES.map((visType) => ({
+        type: visType,
+    })),
+]
 
-    const currentUser = useCurrentUser()
+type ActionsBarDialogProps = {
+    currentDialog: string | null
+    onClose: () => void
+}
+
+const ActionsBarDialog: FC<ActionsBarDialogProps> = ({
+    currentDialog,
+    onClose,
+}) => {
     const currentVis = useAppSelector(getCurrentVis)
     const savedVis = useAppSelector(getSavedVis)
 
@@ -47,19 +52,89 @@ export const ActionsBar: FC = () => {
         [currentVis, savedVis]
     )
 
-    const fileType = 'eventVisualization'
-
-    const filterVisTypes = [
-        { type: 'ALL', insertDivider: true },
-        ...VISUALIZATION_TYPES.map((visType) => ({
-            type: visType,
-        })),
-    ]
-
     const isOnSaveAsEnabled = useMemo(
         () => isVisualizationValidForSaveAs(currentVis),
         [currentVis]
     )
+
+    const { onDelete, onError, onRename, onSaveAs } = useToolbarActions()
+
+    const onDeleteConfirm = () => {
+        // The dialog must be closed before calling the callback
+        // otherwise the currentVis is changed to null before the
+        // dialog is closed causing a crash in the delete switch case below
+        // due to fileObject.id not being available
+        onClose()
+        onDelete()
+    }
+
+    const onDeleteError = (error) => onError(parseEngineError(error))
+
+    switch (currentDialog) {
+        case 'rename':
+            return (
+                <RenameDialog
+                    type={FILE_TYPE}
+                    object={fileObject}
+                    onClose={onClose}
+                    onRename={onRename}
+                />
+            )
+        case 'translate':
+            return (
+                <TranslationDialog
+                    objectToTranslate={fileObject}
+                    fieldsToTranslate={['name', 'description']}
+                    onClose={onClose}
+                    onTranslationSaved={() => {
+                        onClose()
+                    }}
+                />
+            )
+        case 'sharing':
+            return (
+                <SharingDialog
+                    type={FILE_TYPE}
+                    id={fileObject.id}
+                    onClose={onClose}
+                />
+            )
+        case 'getlink':
+            return (
+                <GetLinkDialog
+                    type={FILE_TYPE}
+                    id={fileObject.id}
+                    onClose={onClose}
+                />
+            )
+        case 'delete':
+            return (
+                <DeleteDialog
+                    type={FILE_TYPE}
+                    id={fileObject.id}
+                    onDelete={onDeleteConfirm}
+                    onError={onDeleteError}
+                    onClose={onClose}
+                />
+            )
+        case 'saveas':
+            return (
+                <SaveAsDialog
+                    type={FILE_TYPE}
+                    object={fileObject}
+                    onSaveAs={isOnSaveAsEnabled ? onSaveAs : undefined}
+                    onClose={onClose}
+                />
+            )
+        default:
+            return null
+    }
+}
+
+export const ActionsBar: FC = () => {
+    const [currentDialog, setCurrentDialog] = useState<string | null>(null)
+
+    const currentUser = useCurrentUser()
 
     const onMenuItemClick = (dialogToOpen) => {
         setCurrentDialog(dialogToOpen)
@@ -67,152 +142,10 @@ export const ActionsBar: FC = () => {
 
     const onDialogClose = () => setCurrentDialog(null)
 
-    const { onError, onNew, onOpen, onSaveAs } = useToolbarActions()
-
-    const { show: showAlert } = useAlert(
-        ({ message }) => message,
-        ({ options }) => options
-    )
-
-    // Existing visualization
-    // the visualization is updated with only name and/or description from the rename dialog
-    const onRename = useCallback(
-        async ({ name, description }) => {
-            const { data, error } = await dispatch(
-                eventVisualizationsApi.endpoints.renameVisualization.initiate({
-                    name,
-                    description,
-                })
-            )
-
-            if (data) {
-                // Update current and visualization with edited name/description
-                dispatch(setCurrentVisNameDescription(data))
-                dispatch(setSavedVisNameDescription(data))
-
-                showAlert({
-                    message: i18n.t('Rename successful'),
-                    options: {
-                        success: true,
-                        duration: 2000,
-                    },
-                })
-            } else if (error) {
-                showAlert({
-                    message: i18n.t('Rename failed'),
-                    options: {
-                        critical: true,
-                    },
-                })
-            }
-        },
-        [dispatch, showAlert]
-    )
-
-    const onDelete = useCallback(() => {
-        const deletedVisualization = savedVis.name
-
-        dispatch(setNavigationState({ visualizationId: 'new' }))
-
-        showAlert({
-            message: i18n.t('"{{- deletedObject}}" successfully deleted.', {
-                deletedObject: deletedVisualization,
-            }),
-            options: {
-                success: true,
-                duration: 2000,
-            },
-        })
-    }, [dispatch, savedVis.name, showAlert])
-
-    const onDeleteConfirm = () => {
-        // The dialog must be closed before calling the callback
-        // otherwise the currentVis is changed to null before the
-        // dialog is closed causing a crash in renderDialog() below
-        // due to currentVis.id not being available
-        onDialogClose()
-        onDelete()
-    }
-
-    const onDeleteError = (error) => onError(parseEngineError(error))
-
-    const renderDialog = () => {
-        switch (currentDialog) {
-            case 'rename':
-                return (
-                    <RenameDialog
-                        type={fileType}
-                        object={fileObject}
-                        onClose={onDialogClose}
-                        onRename={onRename}
-                    />
-                )
-            case 'translate':
-                return (
-                    <TranslationDialog
-                        objectToTranslate={fileObject}
-                        fieldsToTranslate={['name', 'description']}
-                        onClose={onDialogClose}
-                        onTranslationSaved={() => {
-                            onDialogClose()
-                        }}
-                    />
-                )
-            case 'sharing':
-                return (
-                    <SharingDialog
-                        type={fileType}
-                        id={fileObject.id}
-                        onClose={onDialogClose}
-                    />
-                )
-            case 'getlink':
-                return (
-                    <GetLinkDialog
-                        type={fileType}
-                        id={fileObject.id}
-                        onClose={onDialogClose}
-                    />
-                )
-            case 'delete':
-                return (
-                    <DeleteDialog
-                        type={fileType}
-                        id={fileObject.id}
-                        onDelete={onDeleteConfirm}
-                        onError={onDeleteError}
-                        onClose={onDialogClose}
-                    />
-                )
-            case 'saveas':
-                return (
-                    <SaveAsDialog
-                        type={fileType}
-                        object={fileObject}
-                        onSaveAs={isOnSaveAsEnabled ? onSaveAs : undefined}
-                        onClose={onDialogClose}
-                    />
-                )
-            default:
-                return null
-        }
-    }
+    const { onNew, onOpen } = useToolbarActions()
 
     return (
         <>
-            <OpenFileDialog
-                open={currentDialog === 'open'}
-                type={fileType}
-                filterVisTypes={filterVisTypes}
-                defaultFilterVisType="ALL"
-                onClose={onDialogClose}
-                onFileSelect={(id) => {
-                    onOpen(id)
-                    onDialogClose()
-                }}
-                onNew={onNew}
-                currentUser={currentUser}
-            />
             <div className={classes.actionsBar}>
                 <div className={classes.actionButtons}>
                     <NewButton />
@@ -226,7 +159,23 @@ export const ActionsBar: FC = () => {
                     <DownloadMenu />
                 </HoverMenuBar>
             </div>
-            {renderDialog()}
+            <OpenFileDialog
+                open={currentDialog === 'open'}
+                type={FILE_TYPE}
+                filterVisTypes={FILTER_VIS_TYPES}
+                defaultFilterVisType="ALL"
+                onClose={onDialogClose}
+                onFileSelect={(id) => {
+                    onOpen(id)
+                    onDialogClose()
+                }}
+                onNew={onNew}
+                currentUser={currentUser}
+            />
+            <ActionsBarDialog
+                currentDialog={currentDialog}
+                onClose={onDialogClose}
+            />
         </>
     )
 }

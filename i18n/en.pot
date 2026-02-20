@@ -563,15 +563,6 @@ msgstr "Click a dimension to add or remove conditions."
 msgid "Your most viewed event visualizations"
 msgstr "Your most viewed event visualizations"
 
-msgid "Rename successful"
-msgstr "Rename successful"
-
-msgid "Rename failed"
-msgstr "Rename failed"
-
-msgid "\"{{- deletedObject}}\" successfully deleted."
-msgstr "\"{{- deletedObject}}\" successfully deleted."
-
 msgid "Download"
 msgstr "Download"
 
@@ -611,6 +602,9 @@ msgstr "Delete"
 msgid "Open"
 msgstr "Open"
 
+msgid "\"{{- deletedObject}}\" successfully deleted."
+msgstr "\"{{- deletedObject}}\" successfully deleted."
+
 msgid "An unknown error occurred."
 msgstr "An unknown error occurred."
 
@@ -623,6 +617,12 @@ msgstr ""
 
 msgid "You don't have sufficient permissions."
 msgstr "You don't have sufficient permissions."
+
+msgid "Rename successful"
+msgstr "Rename successful"
+
+msgid "Rename failed"
+msgstr "Rename failed"
 
 msgid "Hide layout"
 msgstr "Hide layout"
