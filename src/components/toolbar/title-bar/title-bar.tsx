@@ -63,7 +63,7 @@ export const TitleBar: FC = () => {
                         }) => (
                             <span
                                 ref={ref}
-                                tabIndex={0}
+                                role="tooltip"
                                 onBlur={onBlur}
                                 onFocus={onFocus}
                                 onMouseOver={onMouseOver}
