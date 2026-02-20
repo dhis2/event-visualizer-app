@@ -16,6 +16,15 @@
     flex-shrink: 0;
     transition: background-color 0.15s ease;
 }
+.filterButton:focus,
+.filterClearButton:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+.filterButton:focus:not(:focus-visible),
+.filterClearButton:focus:not(:focus-visible) {
+    outline: none;
+}
 .filterButton {
     gap: 4px;
     padding: 5px 6px 5px 4px;

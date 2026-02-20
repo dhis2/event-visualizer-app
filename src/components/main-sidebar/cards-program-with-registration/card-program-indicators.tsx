@@ -35,13 +35,13 @@ export const CardProgramIndicators = ({
         }),
         [program]
     )
-    const { dimensions, ...listProps } = useDimensionList({
+    const listProps = useDimensionList({
         dimensionListKey: CARD_AND_LIST_KEY,
         baseQuery,
     })
 
     // This card should be hidden completely if there are no program indicators
-    if (dimensions.length === 0) {
+    if (listProps.dimensions.length === 0) {
         return null
     }
 
@@ -49,12 +49,9 @@ export const CardProgramIndicators = ({
         <DimensionCard
             dimensionCardKey={CARD_AND_LIST_KEY}
             title={i18n.t('Program indicators')}
+            isDisabledByFilter={listProps.isDisabledByFilter}
         >
-            <DimensionList
-                {...listProps}
-                dimensions={dimensions}
-                program={program}
-            />
+            <DimensionList {...listProps} program={program} />
         </DimensionCard>
     )
 }

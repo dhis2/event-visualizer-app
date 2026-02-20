@@ -8,13 +8,6 @@
 .container.isDisabledByFilter {
     opacity: 0.5;
 }
-.container:focus {
-    outline: 3px solid var(--theme-focus);
-    outline-offset: -3px;
-}
-.container:focus:not(:focus-visible) {
-    outline: none;
-}
 .content {
     display: flex;
     flex-direction: column;

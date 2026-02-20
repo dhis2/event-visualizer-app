@@ -8,6 +8,7 @@ type DimensionCardHeaderProps = {
     selectedCount: number
     isCollapsed: boolean
     onToggle: () => void
+    isDisabled?: boolean
 }
 
 export const DimensionCardHeader = ({
@@ -15,6 +16,7 @@ export const DimensionCardHeader = ({
     selectedCount,
     isCollapsed,
     onToggle,
+    isDisabled = false,
 }: DimensionCardHeaderProps) => {
     return (
         <button
@@ -22,6 +24,8 @@ export const DimensionCardHeader = ({
             className={classes.container}
             onClick={onToggle}
             aria-expanded={!isCollapsed}
+            disabled={isDisabled}
+            tabIndex={isDisabled ? -1 : 0}
             data-test="dimension-card-header"
         >
             <CollapseIcon isCollapsed={isCollapsed} />

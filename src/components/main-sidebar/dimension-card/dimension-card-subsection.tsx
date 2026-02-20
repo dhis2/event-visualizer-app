@@ -7,12 +7,14 @@ type DimensionsCardSubsectionProps = {
     title: string
     children: ReactNode
     selectedCount?: number
+    isDisabled?: boolean
 }
 
 export const DimensionsCardSubsection = ({
     title,
     children,
     selectedCount = 0,
+    isDisabled = false,
 }: DimensionsCardSubsectionProps) => {
     const [isCollapsed, setIsCollapsed] = useState(false)
 
@@ -30,6 +32,8 @@ export const DimensionsCardSubsection = ({
                 className={classes.header}
                 onClick={handleToggle}
                 aria-expanded={!isCollapsed}
+                disabled={isDisabled}
+                tabIndex={isDisabled ? -1 : 0}
                 data-test="dimension-card-subsection-header"
             >
                 {<CollapseIcon isCollapsed={isCollapsed} />}

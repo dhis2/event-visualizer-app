@@ -66,6 +66,13 @@
     background: var(--colors-grey100);
     color: var(--colors-grey900);
 }
+.loadMore > button:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+.loadMore > button:focus:not(:focus-visible) {
+    outline: none;
+}
 .loadingMore {
     display: flex;
     justify-content: flex-start;

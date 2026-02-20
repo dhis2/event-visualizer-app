@@ -56,6 +56,7 @@ export const CardEvent = ({ program }: CardEventProps) => {
         <DimensionCard
             dimensionCardKey={CARD_AND_LIST_KEY}
             title={program.displayEventLabel ?? i18n.t('Event')}
+            isDisabledByFilter={listProps.isDisabledByFilter}
         >
             <DimensionList
                 {...listProps}

@@ -11,6 +11,13 @@
     cursor: pointer;
     inline-size: 100%;
 }
+.container:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+.container:focus:not(:focus-visible) {
+    outline: none;
+}
 
 .title {
     display: inline-flex;

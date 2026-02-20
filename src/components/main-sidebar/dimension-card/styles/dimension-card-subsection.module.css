@@ -18,6 +18,13 @@
 .header:hover {
     background-color: var(--colors-grey100);
 }
+.header:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+.header:focus:not(:focus-visible) {
+    outline: none;
+}
 
 .title {
     display: inline-flex;

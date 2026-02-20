@@ -56,7 +56,11 @@ export const CardEnrollment = ({ program }: CardEnrollmentProps) => {
     )
     const listProps = useDimensionList({ fixedDimensions })
     return (
-        <DimensionCard dimensionCardKey={dimensionCardKey} title={title}>
+        <DimensionCard
+            dimensionCardKey={dimensionCardKey}
+            title={title}
+            isDisabledByFilter={listProps.isDisabledByFilter}
+        >
             <DimensionList {...listProps} program={program} />
         </DimensionCard>
     )

@@ -18,12 +18,12 @@ const BASE_QUERY: SingleQuery = {
 }
 
 export const CardOther = () => {
-    const { dimensions, ...listProps } = useDimensionList({
+    const listProps = useDimensionList({
         dimensionListKey: CARD_AND_LIST_KEY,
         baseQuery: BASE_QUERY,
     })
 
-    if (dimensions.length === 0) {
+    if (listProps.dimensions.length === 0) {
         return null
     }
 
@@ -31,8 +31,9 @@ export const CardOther = () => {
         <DimensionCard
             dimensionCardKey={CARD_AND_LIST_KEY}
             title={i18n.t('Other')}
+            isDisabledByFilter={listProps.isDisabledByFilter}
         >
-            <DimensionList {...listProps} dimensions={dimensions} />
+            <DimensionList {...listProps} />
         </DimensionCard>
     )
 }

@@ -55,6 +55,7 @@ export const DimensionCard = ({
                 selectedCount={selectedCount}
                 isCollapsed={isCollapsed}
                 onToggle={handleToggle}
+                isDisabled={isDisabledByFilter}
             >
                 {title}
             </DimensionCardHeader>

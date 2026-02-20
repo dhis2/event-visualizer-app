@@ -9,7 +9,14 @@ import {
     type MenuItemProps,
 } from '@dhis2/ui'
 import cx from 'classnames'
-import { useCallback, useMemo, useRef, useState, type FC } from 'react'
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    type FC,
+} from 'react'
 import classes from './styles/filter-dropdown-button.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
@@ -60,6 +67,22 @@ export const FilterDropdownButton: FC = () => {
     const clearActiveFilter = useCallback(() => {
         dispatch(clearFilter())
     }, [dispatch])
+
+    useEffect(() => {
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key === 'Escape' && isOpen) {
+                setIsOpen(false)
+            }
+        }
+
+        if (isOpen) {
+            document.addEventListener('keydown', handleEscape)
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleEscape)
+        }
+    }, [isOpen])
 
     return (
         <>

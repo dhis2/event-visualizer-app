@@ -71,7 +71,11 @@ export const CardTrackedEntityType = ({
         fixedDimensions,
     })
     return (
-        <DimensionCard dimensionCardKey={CARD_AND_LIST_KEY} title={title}>
+        <DimensionCard
+            dimensionCardKey={CARD_AND_LIST_KEY}
+            title={title}
+            isDisabledByFilter={listProps.isDisabledByFilter}
+        >
             <DimensionList {...listProps} />
         </DimensionCard>
     )

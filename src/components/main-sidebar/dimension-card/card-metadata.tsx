@@ -45,7 +45,11 @@ export const CardMetadata = () => {
     const listProps = useDimensionList({ fixedDimensions })
 
     return (
-        <DimensionCard dimensionCardKey="metadata" title={i18n.t('Metadata')}>
+        <DimensionCard
+            dimensionCardKey="metadata"
+            title={i18n.t('Metadata')}
+            isDisabledByFilter={listProps.isDisabledByFilter}
+        >
             <DimensionList {...listProps} />
         </DimensionCard>
     )

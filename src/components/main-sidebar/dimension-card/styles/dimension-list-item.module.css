@@ -8,3 +8,10 @@
     cursor: pointer;
     text-align: start;
 }
+.item:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+.item:focus:not(:focus-visible) {
+    outline: none;
+}

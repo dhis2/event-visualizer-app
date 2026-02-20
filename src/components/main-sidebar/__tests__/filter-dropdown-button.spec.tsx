@@ -209,4 +209,23 @@ describe('FilterDropdownButton', () => {
             expect(within(menuItem).getByText(label)).toBeInTheDocument()
         })
     })
+
+    it('closes menu when Escape key is pressed', async () => {
+        const user = userEvent.setup()
+        render(<FilterDropdownButton />)
+
+        // Open menu
+        const button = screen.getByTestId('filter-dropdown-button')
+        await user.click(button)
+
+        expect(screen.getByTestId('filter-dropdown-menu')).toBeInTheDocument()
+
+        // Press Escape key
+        await user.keyboard('{Escape}')
+
+        // Menu should be closed
+        expect(
+            screen.queryByTestId('filter-dropdown-menu')
+        ).not.toBeInTheDocument()
+    })
 })

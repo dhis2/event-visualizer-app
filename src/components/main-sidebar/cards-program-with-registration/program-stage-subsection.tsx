@@ -39,6 +39,7 @@ export const ProgramStageSubsection: FC<{
     return (
         <DimensionsCardSubsection
             title={programStage.displayProgramStageLabel ?? programStage.name}
+            isDisabled={listProps.isDisabledByFilter}
         >
             <DimensionList
                 {...listProps}
