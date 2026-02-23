@@ -23,7 +23,7 @@
 }
 
 .tooltipAnchor > :global(button.small.icon-only) {
-    padding: 6px 5px;
+    padding: 6px;
 }
 
 .tooltipAnchor > :global(button.small.icon-only) > :global(span.button-icon) {

@@ -21,7 +21,7 @@ import {
     setUiDetailsPanelVisible,
 } from '@store/ui-slice'
 
-export const ViewMenu: FC = () => {
+export const ViewMenu: FC<{ className?: string }> = ({ className }) => {
     const dispatch = useAppDispatch()
 
     const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
@@ -58,7 +58,7 @@ export const ViewMenu: FC = () => {
         : i18n.t('Show interpretations and details')
 
     return (
-        <HoverMenuDropdown label={i18n.t('View')}>
+        <HoverMenuDropdown label={i18n.t('View')} className={className}>
             <HoverMenuList>
                 <HoverMenuListItem
                     label={toggleLayoutPanelText}

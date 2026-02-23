@@ -4,14 +4,18 @@ import { DownloadMenu as BaseDownloadMenu } from '@components/download-menu/down
 import { useDownload } from '@components/download-menu/use-download'
 import { HoverMenuDropdown } from '@dhis2/analytics'
 
-export const DownloadMenu: FC = () => {
+export const DownloadMenu: FC<{ className?: string }> = ({ className }) => {
     const { isDownloadDisabled, download } = useDownload()
 
     return (
         <HoverMenuDropdown
             label={i18n.t('Download')}
             disabled={isDownloadDisabled}
-            className="push-analytics-download-dropdown-menu-button"
+            className={
+                className
+                    ? `push-analytics-download-dropdown-menu-button ${className}`
+                    : 'push-analytics-download-dropdown-menu-button'
+            }
         >
             <BaseDownloadMenu download={download} hoverable />
         </HoverMenuDropdown>
