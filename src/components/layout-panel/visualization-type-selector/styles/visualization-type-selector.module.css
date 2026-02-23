@@ -1,23 +1,18 @@
-.arrowIcon {
+.chevron {
     display: flex;
-    margin-inline-start: auto;
-}
-
-.arrowIcon.listIsOpen {
-    transform: rotate(180deg);
+    margin-inline-start: 2px;
 }
 
 .button {
-    padding-block-start: 7px;
-    padding-block-end: 7px;
-    padding-inline-start: var(--spacers-dp8);
-    padding-inline-end: var(--spacers-dp8);
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    gap: var(--spacers-dp4);
+    padding: 6px 8px;
+    block-size: 100%;
+    border: none;
+    border-radius: 5px;
     background-color: var(--colors-white);
     cursor: pointer;
-    flex-grow: 1;
 }
 
 .button:hover,
@@ -26,11 +21,11 @@
 }
 
 .button > .selectedVizTypeLabel {
-    font-size: 14px;
-    padding-block-start: 1px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
     user-select: none;
-    color: var(--colors-grey900);
-    margin-inline-start: 4px;
+    color: var(--colors-grey800);
 }
 
 .cardContainer {

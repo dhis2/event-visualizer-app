@@ -1,13 +1,12 @@
-import { Popper, Layer } from '@dhis2/ui'
+import { Popper, Layer, IconChevronDown16 } from '@dhis2/ui'
 import cx from 'classnames'
 import type { FC } from 'react'
 import { useState, useRef } from 'react'
 import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
 import { VisualizationTypeListItem } from './visualization-type-list-item'
-import { IconArrowDown } from '@assets/icon-arrow-down'
 import { VISUALIZATION_TYPES } from '@constants/visualization-types'
-import { visTypeDisplayNames, ToolbarSidebar } from '@dhis2/analytics'
+import { visTypeDisplayNames } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getVisTypeDescriptions } from '@modules/visualization'
 import {
@@ -40,34 +39,28 @@ export const VisualizationTypeSelector: FC = () => {
 
     return (
         <>
-            <ToolbarSidebar isHidden={false}>
-                <div
-                    onClick={toggleList}
-                    ref={buttonRef}
-                    className={cx(classes.button, {
-                        [classes.listIsOpen]: listIsOpen,
-                    })}
-                    data-test={'visualization-type-selector-button'}
+            <div
+                onClick={toggleList}
+                ref={buttonRef}
+                className={cx(classes.button, {
+                    [classes.listIsOpen]: listIsOpen,
+                })}
+                data-test={'visualization-type-selector-button'}
+            >
+                <ListItemIcon
+                    iconType={visualizationType}
+                    style={{ width: 16, height: 16 }}
+                />
+                <span
+                    className={classes.selectedVizTypeLabel}
+                    data-test="visualization-type-selector-currently-selected-text"
                 >
-                    <ListItemIcon
-                        iconType={visualizationType}
-                        style={{ width: 24, height: 24 }}
-                    />
-                    <span
-                        className={classes.selectedVizTypeLabel}
-                        data-test="visualization-type-selector-currently-selected-text"
-                    >
-                        {visTypeDisplayNames[visualizationType]}
-                    </span>
-                    <span
-                        className={cx(classes.arrowIcon, {
-                            [classes.listIsOpen]: listIsOpen,
-                        })}
-                    >
-                        <IconArrowDown />
-                    </span>
-                </div>
-            </ToolbarSidebar>
+                    {visTypeDisplayNames[visualizationType]}
+                </span>
+                <span className={classes.chevron}>
+                    <IconChevronDown16 />
+                </span>
+            </div>
             {listIsOpen && (
                 <Layer onBackdropClick={toggleList}>
                     <Popper reference={buttonRef} placement="bottom-start">

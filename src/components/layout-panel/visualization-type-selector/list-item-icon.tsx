@@ -1,6 +1,6 @@
 import {
-    IconVisualizationLinelist24,
-    IconVisualizationPivotTable24,
+    IconVisualizationLinelist16,
+    IconVisualizationPivotTable16,
 } from '@dhis2/ui'
 import type { FC } from 'react'
 import type { VisualizationType } from '@types'
@@ -16,13 +16,13 @@ export const ListItemIcon: FC<ListItemIconProps> = ({ iconType, style }) => {
     if (iconType === 'LINE_LIST') {
         return (
             <div style={style}>
-                <IconVisualizationLinelist24 />
+                <IconVisualizationLinelist16 />
             </div>
         )
     } else if (iconType === 'PIVOT_TABLE') {
         return (
             <div style={style}>
-                <IconVisualizationPivotTable24 />
+                <IconVisualizationPivotTable16 />
             </div>
         )
     }
