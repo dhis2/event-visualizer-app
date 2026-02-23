@@ -27,9 +27,10 @@ const iconInactiveColor = colors.grey500
 
 type FileMenuProps = {
     onMenuItemClick: (dialogName: string) => void
+    className?: string
 }
 
-export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
+export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick, className }) => {
     const currentVis = useAppSelector(getCurrentVis)
 
     const { isSaveEnabled, isSaveAsEnabled, onNew, onSave } =
@@ -57,7 +58,7 @@ export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
     )
 
     return (
-        <HoverMenuDropdown label={i18n.t('File')}>
+        <HoverMenuDropdown label={i18n.t('File')} className={className}>
             <HoverMenuList dataTest="file-menu-container">
                 <HoverMenuListItem
                     label={i18n.t('New')}
