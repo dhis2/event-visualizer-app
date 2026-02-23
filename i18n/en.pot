@@ -282,15 +282,6 @@ msgstr "Move to {{axisName}}"
 msgid "all"
 msgstr "all"
 
-msgid "List options"
-msgstr "List options"
-
-msgid "Table options"
-msgstr "Table options"
-
-msgid "Chart options"
-msgstr "Chart options"
-
 msgid "None selected"
 msgstr "None selected"
 

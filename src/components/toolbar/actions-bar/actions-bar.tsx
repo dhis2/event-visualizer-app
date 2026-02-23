@@ -154,9 +154,12 @@ export const ActionsBar: FC = () => {
                     <ToolbarDivider />
                 </div>
                 <HoverMenuBar>
-                    <FileMenu onMenuItemClick={onMenuItemClick} />
-                    <ViewMenu />
-                    <DownloadMenu />
+                    <FileMenu
+                        onMenuItemClick={onMenuItemClick}
+                        className={classes.menuDropdown}
+                    />
+                    <ViewMenu className={classes.menuDropdown} />
+                    <DownloadMenu className={classes.menuDropdown} />
                 </HoverMenuBar>
             </div>
             <OpenFileDialog

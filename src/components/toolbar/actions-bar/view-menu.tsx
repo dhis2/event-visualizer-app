@@ -22,7 +22,7 @@ import {
     setUiDetailsPanelVisible,
 } from '@store/ui-slice'
 
-export const ViewMenu: FC = () => {
+export const ViewMenu: FC<{ className?: string }> = ({ className }) => {
     const dispatch = useAppDispatch()
 
     const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
