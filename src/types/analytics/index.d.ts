@@ -22,7 +22,6 @@ import type { PeriodDimension } from './period-dimension'
 import type { PivotTable } from './pivot-table'
 import type { RenameDialog } from './rename-dialog'
 import type { SaveAsDialog } from './save-as-dialog'
-import type { Toolbar } from './toolbar'
 import type { ToolbarSidebar } from './toolbar-sidebar'
 import type { TranslationDialog } from './translation-dialog'
 import type { UpdateButton } from './update-button'
@@ -68,7 +67,6 @@ declare module '@dhis2/analytics' {
     export const PivotTable: PivotTable
     export const RenameDialog: RenameDialog
     export const SaveAsDialog: SaveAsDialog
-    export const Toolbar: Toolbar
     export const ToolbarSidebar: ToolbarSidebar
     export const TranslationDialog: TranslationDialog
     export const UpdateButton: UpdateButton
