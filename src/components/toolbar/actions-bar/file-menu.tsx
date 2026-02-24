@@ -12,6 +12,7 @@ import {
     colors,
 } from '@dhis2/ui'
 import { useMemo, type FC } from 'react'
+import classes from './styles/actions-bar.module.css'
 import { useToolbarActions } from './use-toolbar-actions'
 import {
     HoverMenuListItem,
@@ -27,10 +28,9 @@ const iconInactiveColor = colors.grey500
 
 type FileMenuProps = {
     onMenuItemClick: (dialogName: string) => void
-    className?: string
 }
 
-export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick, className }) => {
+export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
     const currentVis = useAppSelector(getCurrentVis)
 
     const { isSaveEnabled, isSaveAsEnabled, onNew, onSave } =
@@ -58,7 +58,10 @@ export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick, className }) => {
     )
 
     return (
-        <HoverMenuDropdown label={i18n.t('File')} className={className}>
+        <HoverMenuDropdown
+            label={i18n.t('File')}
+            className={classes.menuDropdown}
+        >
             <HoverMenuList dataTest="file-menu-container">
                 <HoverMenuListItem
                     label={i18n.t('New')}
