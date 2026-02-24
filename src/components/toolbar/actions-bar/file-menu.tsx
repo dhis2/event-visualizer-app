@@ -28,10 +28,9 @@ const iconInactiveColor = colors.grey500
 
 type FileMenuProps = {
     onMenuItemClick: (dialogName: string) => void
-    className?: string
 }
 
-export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick, className }) => {
+export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
     const currentVis = useAppSelector(getCurrentVis)
 
     const { isSaveEnabled, isSaveAsEnabled, onNew, onSave } =
