@@ -38,13 +38,12 @@ export const LayoutPanel: FC = () => {
     const isLayoutPanelVisible = useAppSelector(getUiLayoutPanelVisible)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
 
-    return (
+    return isLayoutPanelVisible ? (
         <div className={classes.panel}>
             <TopBar />
             {isLayoutPanelExpanded ? (
                 <div
                     className={cx(classes.container, {
-                        [classes.hidden]: !isLayoutPanelVisible,
                         [classes.lineList]: visualizationType === 'LINE_LIST',
                     })}
                 >
@@ -55,5 +54,5 @@ export const LayoutPanel: FC = () => {
             )}
             <BottomBar />
         </div>
-    )
+    ) : null
 }

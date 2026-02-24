@@ -24,10 +24,6 @@
     grid-template-areas: 'columns filters';
 }
 
-.container.hidden {
-    display: none;
-}
-
 .expandButton {
     display: flex;
     align-items: center;
