@@ -1,0 +1,32 @@
+.topBar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 4px;
+    background-color: var(--colors-white);
+    border-block-end: 1px solid var(--colors-grey300);
+    inline-size: 100%;
+    box-sizing: border-box;
+}
+
+.topBarSpacer {
+    flex: 1;
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacers-dp4);
+    padding: 6px 8px;
+    block-size: 100%;
+    border: none !important;
+    border-radius: 5px;
+    background-color: var(--colors-white);
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.button:hover {
+    background-color: var(--colors-grey200);
+}

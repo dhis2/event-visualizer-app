@@ -1,31 +1,59 @@
+import { IconMore16 } from '@dhis2/ui'
 import cx from 'classnames'
 import type { FC } from 'react'
-import { Axis } from './axis'
+import { Axes } from './axes'
+import { BottomBar } from './bottom-bar/bottom-bar'
 import classes from './styles/layout-panel.module.css'
-import { useAppSelector } from '@hooks'
-import { getUiLayoutPanelVisible } from '@store/ui-slice'
+import { TopBar } from './top-bar/top-bar'
+import { useAppDispatch, useAppSelector } from '@hooks'
 import {
-    getVisUiConfigLayout,
-    getVisUiConfigVisualizationType,
-} from '@store/vis-ui-config-slice'
+    getUiLayoutPanelExpanded,
+    getUiLayoutPanelVisible,
+    toggleUiLayoutPanelExpanded,
+} from '@store/ui-slice'
+import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 
-export const LayoutPanel: FC = () => {
-    const isLayoutPanelVisible = useAppSelector(getUiLayoutPanelVisible)
-    const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
-    const { columns, filters, rows } = useAppSelector(getVisUiConfigLayout)
+const ExpandLayoutPanelButton: FC = () => {
+    const dispatch = useAppDispatch()
 
     return (
         <div
-            className={cx(classes.container, {
-                [classes.hidden]: !isLayoutPanelVisible,
-                [classes.lineList]: visualizationType === 'LINE_LIST',
-            })}
+            className={classes.expandButton}
+            onClick={() => dispatch(toggleUiLayoutPanelExpanded())}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    dispatch(toggleUiLayoutPanelExpanded())
+                }
+            }}
         >
-            <Axis axisId="columns" dimensionIds={columns} />
-            {visualizationType !== 'LINE_LIST' && (
-                <Axis axisId="rows" dimensionIds={rows} />
+            <IconMore16 color="var(--colors-grey800)" />
+        </div>
+    )
+}
+
+export const LayoutPanel: FC = () => {
+    const isLayoutPanelExpanded = useAppSelector(getUiLayoutPanelExpanded)
+    const isLayoutPanelVisible = useAppSelector(getUiLayoutPanelVisible)
+    const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
+
+    return (
+        <div className={classes.panel}>
+            <TopBar />
+            {isLayoutPanelExpanded ? (
+                <div
+                    className={cx(classes.container, {
+                        [classes.hidden]: !isLayoutPanelVisible,
+                        [classes.lineList]: visualizationType === 'LINE_LIST',
+                    })}
+                >
+                    <Axes />
+                </div>
+            ) : (
+                <ExpandLayoutPanelButton />
             )}
-            <Axis axisId="filters" dimensionIds={filters} />
+            <BottomBar />
         </div>
     )
 }

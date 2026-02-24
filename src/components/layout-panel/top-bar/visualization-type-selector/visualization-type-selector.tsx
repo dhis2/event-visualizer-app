@@ -40,6 +40,7 @@ export const VisualizationTypeSelector: FC = () => {
     return (
         <>
             <div
+                role="button"
                 onClick={toggleList}
                 ref={buttonRef}
                 className={cx(classes.button, {

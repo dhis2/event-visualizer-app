@@ -1,4 +1,5 @@
-import type { FC } from 'react'
+import { type FC } from 'react'
+//import classes from './styles/bottom-bar.module.css'
 import { UpdateButton as UiUpdateButton } from '@dhis2/analytics'
 import { useAppDispatch } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'

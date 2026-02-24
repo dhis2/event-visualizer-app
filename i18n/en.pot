@@ -300,6 +300,21 @@ msgstr "Levels"
 msgid "Groups"
 msgstr "Groups"
 
+msgid "Collapse layout"
+msgstr "Collapse layout"
+
+msgid "Expand layout"
+msgstr "Expand layout"
+
+msgid "List options"
+msgstr "List options"
+
+msgid "Table options"
+msgstr "Table options"
+
+msgid "Chart options"
+msgstr "Chart options"
+
 msgid "No event"
 msgstr "No event"
 

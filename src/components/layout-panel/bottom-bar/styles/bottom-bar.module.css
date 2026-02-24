@@ -1,0 +1,36 @@
+.bottomBar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 6px 6px;
+    background-color: var(--colors-white);
+    border-block-start: 1px solid var(--colors-grey300);
+    inline-size: 100%;
+    box-sizing: border-box;
+}
+
+.bottomBarButtons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.buttonUpdate {
+    border: 1px solid #c8e4f9;
+    padding: 0 8px 0 6px;
+    color: var(--colors-blue800);
+    background-color: var(--colors-blue100);
+    box-shadow: 0 1px 2px 0 rgba(33, 41, 52, 0.04);
+}
+
+.buttonUpdate:hover:not(:disabled) {
+    background-color: #daedfb;
+    border-color: #c8e4f9;
+    color: var(--colors-blue900);
+}
+
+.buttonUpdate:active:not(:disabled) {
+    background-color: #d1e8fa;
+    border-color: #c8e4f9;
+    transform: translateY(1px);
+}
