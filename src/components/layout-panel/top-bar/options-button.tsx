@@ -1,12 +1,10 @@
 import i18n from '@dhis2/d2-i18n'
 import { Button } from '@dhis2/ui'
-import { useMemo, useState, type FC } from 'react'
+import { useCallback, useMemo, useState, type FC } from 'react'
 import classes from './styles/top-bar.module.css'
 import { OptionsModal } from '@components/options/options-modal'
 import { useAppSelector } from '@hooks'
-import { getOptionsTabsForVisType } from '@modules/options'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
-import type { OptionsTabKey } from 'src/types/options'
 
 const IconOptions: FC = () => (
     <svg
@@ -28,13 +26,11 @@ const IconOptions: FC = () => (
 export const OptionsButton: FC = () => {
     const visType = useAppSelector(getVisUiConfigVisualizationType)
 
-    // TODO: this can be moved to the modal
-    const toggleOptionsModal = () => setActiveTabKey('data')
+    const [isOptionsModalOpen, setIsOptionsModalOpen] = useState<boolean>(false)
 
-    const [activeTabKey, setActiveTabKey] = useState<OptionsTabKey | null>(null)
-    const optionsTabs = useMemo(
-        () => getOptionsTabsForVisType(visType),
-        [visType]
+    const toggleOptionsModal = useCallback(
+        () => setIsOptionsModalOpen((currentIsOpen) => !currentIsOpen),
+        []
     )
 
     const buttonLabel = useMemo(() => {
@@ -48,6 +44,11 @@ export const OptionsButton: FC = () => {
         }
     }, [visType])
 
+    const onClose = useCallback(
+        () => setIsOptionsModalOpen(false),
+        [setIsOptionsModalOpen]
+    )
+
     return (
         <>
             <Button
@@ -59,14 +60,7 @@ export const OptionsButton: FC = () => {
             >
                 {buttonLabel}
             </Button>
-            {activeTabKey && (
-                <OptionsModal
-                    activeTabKey={activeTabKey!}
-                    setActiveTabKey={setActiveTabKey}
-                    tabs={optionsTabs}
-                    visType={visType}
-                />
-            )}
+            {isOptionsModalOpen && <OptionsModal onClose={onClose} />}
         </>
     )
 }
