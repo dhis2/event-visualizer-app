@@ -12,6 +12,7 @@
     gap: var(--spacers-dp12);
 }
 
+.container.empty,
 .container.loading {
     visibility: hidden;
 }

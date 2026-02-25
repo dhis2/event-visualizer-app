@@ -1,12 +1,40 @@
+import { IconMore16, colors } from '@dhis2/ui'
 import cx from 'classnames'
 import { useState, type FC } from 'react'
 import { Axis } from './axis/axis'
 import classes from './styles/axes.module.css'
-import { useAppSelector } from '@hooks'
+import { SkeletonChip } from '@components/shared/skeleton-chip'
+import { useAppDispatch, useAppSelector } from '@hooks'
+import { getDataSourceId } from '@store/dimensions-selection-slice'
+import { getIsVisualizationLoading } from '@store/loader-slice'
+import {
+    getUiLayoutPanelExpanded,
+    toggleUiLayoutPanelExpanded,
+} from '@store/ui-slice'
 import {
     getVisUiConfigLayout,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
+
+const ExpandLayoutPanelButton: FC = () => {
+    const dispatch = useAppDispatch()
+
+    return (
+        <div
+            className={classes.expandButton}
+            onClick={() => dispatch(toggleUiLayoutPanelExpanded())}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    dispatch(toggleUiLayoutPanelExpanded())
+                }
+            }}
+        >
+            <IconMore16 color={colors.grey800} />
+        </div>
+    )
+}
 
 const ResizeHandle: FC = () => {
     const [isDraggingAxes /*, setIsDraggingAxes*/] = useState<boolean>(false)
@@ -43,24 +71,51 @@ const ResizeHandle: FC = () => {
     )
 }
 
+const LoadingSkeletons: FC = () => (
+    <div className={classes.loadingSkeletons}>
+        <SkeletonChip width={120} />
+        <SkeletonChip width={90} />
+        <SkeletonChip width={120} />
+        <SkeletonChip width={90} />
+    </div>
+)
+
 export const Axes: FC = () => {
+    const dataSourceId = useAppSelector(getDataSourceId)
+    const isLayoutPanelExpanded = useAppSelector(getUiLayoutPanelExpanded)
+    const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const { columns, filters, rows } = useAppSelector(getVisUiConfigLayout)
 
+    if (isVisualizationLoading) {
+        return <LoadingSkeletons />
+    } else if (!isLayoutPanelExpanded && dataSourceId) {
+        return <ExpandLayoutPanelButton />
+    }
+
     return (
-        <div>
-            <div
-                className={cx(classes.axes, {
-                    [classes.lineList]: visualizationType === 'LINE_LIST',
-                })}
-            >
-                <Axis axisId="columns" dimensionIds={columns} />
-                {visualizationType !== 'LINE_LIST' && (
-                    <Axis axisId="rows" dimensionIds={rows} />
-                )}
-                <Axis axisId="filters" dimensionIds={filters} />
-            </div>
-            <ResizeHandle />
+        <div
+            className={cx(classes.container, {
+                [classes.empty]: !dataSourceId,
+            })}
+        >
+            {dataSourceId && (
+                <>
+                    <div
+                        className={cx(classes.axes, {
+                            [classes.lineList]:
+                                visualizationType === 'LINE_LIST',
+                        })}
+                    >
+                        <Axis axisId="columns" dimensionIds={columns} />
+                        {visualizationType !== 'LINE_LIST' && (
+                            <Axis axisId="rows" dimensionIds={rows} />
+                        )}
+                        <Axis axisId="filters" dimensionIds={filters} />
+                    </div>
+                    <ResizeHandle />
+                </>
+            )}
         </div>
     )
 }

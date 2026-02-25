@@ -8,26 +8,3 @@
     overflow: hidden;
     background: var(--colors-white);
 }
-
-.expandButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2px;
-    box-shadow: inset 0 4px 8px -6px rgba(40, 60, 85, 0.05),
-        inset 0 -4px 8px -6px rgba(40, 60, 85, 0.05);
-    background-color: var(--colors-white);
-    cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.expandButton:hover {
-    background-color: var(--colors-grey100);
-}
-
-.loadingSkeletons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: var(--spacers-dp8) 6px;
-}
