@@ -41,7 +41,7 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
     return (
         <SortableContext id={axisId} items={dimensionIds}>
             <div
-                className={cx(classes.axisContainer, {
+                className={cx(classes.container, {
                     [classes.columns]: axisId === 'columns',
                     [classes.rows]: axisId === 'rows',
                     [classes.filters]: axisId === 'filters',

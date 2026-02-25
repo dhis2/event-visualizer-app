@@ -1,20 +1,27 @@
 .topBar {
+    padding: 4px;
+    background-color: var(--colors-white);
+    border-block-end: 1px solid var(--colors-grey300);
+    box-sizing: border-box;
+}
+
+.container {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 4px;
-    padding: 4px;
-    background-color: var(--colors-white);
-    border-block-end: 1px solid var(--colors-grey300);
     inline-size: 100%;
-    box-sizing: border-box;
 }
 
-.topBarSpacer {
+.container.loading {
+    visibility: hidden;
+}
+
+.containerSpacer {
     flex: 1;
 }
 
-.button {
+button {
     display: flex;
     align-items: center;
     gap: var(--spacers-dp4);

@@ -1,17 +1,17 @@
 import { IconMore16 } from '@dhis2/ui'
-import cx from 'classnames'
-import type { FC } from 'react'
+import { type FC } from 'react'
 import { Axes } from './axes'
 import { BottomBar } from './bottom-bar/bottom-bar'
 import classes from './styles/layout-panel.module.css'
 import { TopBar } from './top-bar/top-bar'
+import { SkeletonChip } from '@components/shared/skeleton-chip'
 import { useAppDispatch, useAppSelector } from '@hooks'
+import { getIsVisualizationLoading } from '@store/loader-slice'
 import {
     getUiLayoutPanelExpanded,
     getUiLayoutPanelVisible,
     toggleUiLayoutPanelExpanded,
 } from '@store/ui-slice'
-import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 
 const ExpandLayoutPanelButton: FC = () => {
     const dispatch = useAppDispatch()
@@ -33,22 +33,27 @@ const ExpandLayoutPanelButton: FC = () => {
     )
 }
 
+const LoadingSkeletons: FC = () => (
+    <div className={classes.loadingSkeletons}>
+        <SkeletonChip width={120} />
+        <SkeletonChip width={90} />
+        <SkeletonChip width={120} />
+        <SkeletonChip width={90} />
+    </div>
+)
+
 export const LayoutPanel: FC = () => {
     const isLayoutPanelExpanded = useAppSelector(getUiLayoutPanelExpanded)
     const isLayoutPanelVisible = useAppSelector(getUiLayoutPanelVisible)
-    const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
+    const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
 
     return isLayoutPanelVisible ? (
         <div className={classes.panel}>
             <TopBar />
-            {isLayoutPanelExpanded ? (
-                <div
-                    className={cx(classes.container, {
-                        [classes.lineList]: visualizationType === 'LINE_LIST',
-                    })}
-                >
-                    <Axes />
-                </div>
+            {isVisualizationLoading ? (
+                <LoadingSkeletons />
+            ) : isLayoutPanelExpanded ? (
+                <Axes />
             ) : (
                 <ExpandLayoutPanelButton />
             )}

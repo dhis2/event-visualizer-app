@@ -1,34 +1,37 @@
-.axisContainer {
+.container {
     display: flex;
-    padding-block: 2px 4px;
-    padding-inline: 6px 4px;
-    background-color: white;
+    flex-direction: column;
+    padding: 4px 4px 4px 6px;
+    background-color: var(--colors-white);
 }
 
-.axisContainer.columns {
+.container.columns {
     grid-area: columns;
 }
 
-.axisContainer.rows {
+.container.rows {
     grid-area: rows;
+    border-block-start: 1px solid var(--colors-grey300);
 }
 
-.axisContainer.filters {
+.container.filters {
     grid-area: filters;
+    border-inline-start: 1px solid var(--colors-grey300);
 }
 
 .label {
-    min-inline-size: 55px;
-    max-inline-size: 55px;
-    padding: 2px 0 0 0;
-    font-size: 11px;
-    color: var(--colors-grey700);
+    padding: 2px 0;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--colors-grey600);
     user-select: none;
     letter-spacing: 0.2px;
+    text-transform: uppercase;
+    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas,
+        Liberation Mono, monospace !important;
 }
 
 .content {
-    position: relative;
     inline-size: 100%;
     display: flex;
     align-items: flex-start;
@@ -36,6 +39,7 @@
     flex-wrap: wrap;
     min-block-size: 32px;
 }
+
 .emptyAxisInsertMarkerAnchor {
     flex: 1;
     inline-size: 1px;

@@ -1,0 +1,51 @@
+.axes {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-areas:
+        'columns filters'
+        'rows filters';
+    gap: 1px;
+    border-color: var(--colors-grey300);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.03);
+    max-block-size: 20vh;
+    overflow-y: auto;
+}
+
+.axes.lineList {
+    grid-template-areas: 'columns filters';
+}
+
+.resizeHandle {
+    position: relative;
+    block-size: 0;
+    flex-shrink: 0;
+    cursor: row-resize;
+    z-index: 2;
+}
+
+/* Invisible hit area for easier grabbing */
+.resizeHandle::before {
+    content: '';
+    position: absolute;
+    inset-block-start: -4px;
+    inset-inline: 0;
+    block-size: 9px;
+    cursor: row-resize;
+}
+
+/* Visual indicator line */
+.resizeHandle::after {
+    content: '';
+    position: absolute;
+    inset-block-start: -1px;
+    inset-inline: 0;
+    block-size: 3px;
+    background-color: transparent;
+    transition: background-color 0.15s ease;
+    border-radius: 1px;
+}
+
+.resizeHandle:hover::after,
+.resizeHandleActive::after {
+    background-color: var(--colors-blue400);
+}

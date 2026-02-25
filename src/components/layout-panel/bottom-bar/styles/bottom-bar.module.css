@@ -1,18 +1,19 @@
 .bottomBar {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 6px 6px;
+    padding: 6px;
     background-color: var(--colors-white);
     border-block-start: 1px solid var(--colors-grey300);
-    inline-size: 100%;
     box-sizing: border-box;
 }
 
-.bottomBarButtons {
+.container {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: flex-start;
+    gap: var(--spacers-dp12);
+}
+
+.container.loading {
+    visibility: hidden;
 }
 
 .buttonUpdate {
