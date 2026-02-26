@@ -5,16 +5,17 @@
     box-sizing: border-box;
 }
 
+.bottomBar.empty,
+.bottomBar.loading {
+    block-size: 29px;
+}
+
 .container {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: var(--spacers-dp12);
-}
-
-.container.empty,
-.container.loading {
-    visibility: hidden;
+    animation: fadeIn 0.4s ease-out forwards;
 }
 
 .buttonUpdate {
@@ -35,4 +36,13 @@
     background-color: #d1e8fa;
     border-color: #c8e4f9;
     transform: translateY(1px);
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }

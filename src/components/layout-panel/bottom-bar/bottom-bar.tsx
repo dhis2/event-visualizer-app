@@ -11,15 +11,17 @@ export const BottomBar: FC = () => {
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
 
     return (
-        <div className={classes.bottomBar}>
-            <div
-                className={cx(classes.container, {
-                    [classes.loading]: isVisualizationLoading,
-                    [classes.empty]: !dataSourceId,
-                })}
-            >
-                <UpdateButton />
-            </div>
+        <div
+            className={cx(classes.bottomBar, {
+                [classes.loading]: isVisualizationLoading,
+                [classes.empty]: !dataSourceId,
+            })}
+        >
+            {dataSourceId && !isVisualizationLoading && (
+                <div className={classes.container}>
+                    <UpdateButton />
+                </div>
+            )}
         </div>
     )
 }
