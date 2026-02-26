@@ -1,19 +1,58 @@
-import { Popper, Layer, IconChevronDown16 } from '@dhis2/ui'
+import i18n from '@dhis2/d2-i18n'
+import {
+    Popper,
+    Layer,
+    IconChevronDown16,
+    IconVisualizationLinelist16,
+    IconVisualizationPivotTable16,
+} from '@dhis2/ui'
 import cx from 'classnames'
-import type { FC } from 'react'
+import type { FC, ReactNode } from 'react'
 import { useState, useRef } from 'react'
-import { ListItemIcon } from './list-item-icon'
 import classes from './styles/visualization-type-selector.module.css'
-import { VisualizationTypeListItem } from './visualization-type-list-item'
-import { VISUALIZATION_TYPES } from '@constants/visualization-types'
+import {
+    AGGREGATED_VISUALIZATION_TYPES,
+    INDIVIDUAL_VISUALIZATION_TYPES,
+} from '@constants/visualization-types'
 import { visTypeDisplayNames } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
-import { getVisTypeDescriptions } from '@modules/visualization'
 import {
     setVisUiConfigVisualizationType,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
 import type { VisualizationType } from '@types'
+
+const visTypeIcons: Record<VisualizationType, ReactNode> = {
+    LINE_LIST: <IconVisualizationLinelist16 />,
+    PIVOT_TABLE: <IconVisualizationPivotTable16 />,
+}
+
+type ListItemProps = {
+    visType: VisualizationType
+    isSelected: boolean
+    onClick: () => void
+}
+
+export const ListItem: FC<ListItemProps> = ({
+    visType,
+    isSelected,
+    onClick,
+}) => {
+    return (
+        <button
+            className={cx(classes.gridItem, {
+                [classes.active]: isSelected,
+            })}
+            onClick={onClick}
+            type="button"
+        >
+            {visTypeIcons[visType]}
+            <span className={classes.gridItemLabel}>
+                {visTypeDisplayNames[visType]}
+            </span>
+        </button>
+    )
+}
 
 export const VisualizationTypeSelector: FC = () => {
     const dispatch = useAppDispatch()
@@ -48,10 +87,7 @@ export const VisualizationTypeSelector: FC = () => {
                 })}
                 data-test={'visualization-type-selector-button'}
             >
-                <ListItemIcon
-                    iconType={visualizationType}
-                    style={{ width: 16, height: 16 }}
-                />
+                {visTypeIcons[visualizationType]}
                 <span
                     className={classes.selectedVizTypeLabel}
                     data-test="visualization-type-selector-currently-selected-text"
@@ -65,22 +101,20 @@ export const VisualizationTypeSelector: FC = () => {
             {listIsOpen && (
                 <Layer onBackdropClick={toggleList}>
                     <Popper reference={buttonRef} placement="bottom-start">
-                        <div className={classes.cardContainer}>
-                            <div data-test="visualization-type-selector-card">
-                                <div className={classes.listContainer}>
-                                    <div className={classes.listSection}>
-                                        {VISUALIZATION_TYPES.map((visType) => (
-                                            <VisualizationTypeListItem
+                        <div
+                            className={classes.container}
+                            data-test="visualization-type-selector-list"
+                        >
+                            <div className={classes.section}>
+                                <div className={classes.sectionHeader}>
+                                    {i18n.t('Individual data view')}
+                                </div>
+                                <div className={classes.grid}>
+                                    {INDIVIDUAL_VISUALIZATION_TYPES.map(
+                                        (visType) => (
+                                            <ListItem
                                                 key={visType}
-                                                iconType={visType}
-                                                label={
-                                                    visTypeDisplayNames[visType]
-                                                }
-                                                description={
-                                                    getVisTypeDescriptions()[
-                                                        visType
-                                                    ]
-                                                }
+                                                visType={visType}
                                                 isSelected={
                                                     visType ===
                                                     visualizationType
@@ -89,8 +123,30 @@ export const VisualizationTypeSelector: FC = () => {
                                                     visType
                                                 )}
                                             />
-                                        ))}
-                                    </div>
+                                        )
+                                    )}
+                                </div>
+                            </div>
+                            <div className={classes.section}>
+                                <div className={classes.sectionHeader}>
+                                    {i18n.t('Aggregated view')}
+                                </div>
+                                <div className={classes.grid}>
+                                    {AGGREGATED_VISUALIZATION_TYPES.map(
+                                        (visType) => (
+                                            <ListItem
+                                                key={visType}
+                                                visType={visType}
+                                                isSelected={
+                                                    visType ===
+                                                    visualizationType
+                                                }
+                                                onClick={handleListItemClick(
+                                                    visType
+                                                )}
+                                            />
+                                        )
+                                    )}
                                 </div>
                             </div>
                         </div>

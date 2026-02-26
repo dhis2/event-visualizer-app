@@ -315,6 +315,12 @@ msgstr "Table options"
 msgid "Chart options"
 msgstr "Chart options"
 
+msgid "Individual data view"
+msgstr "Individual data view"
+
+msgid "Aggregated view"
+msgstr "Aggregated view"
+
 msgid "No event"
 msgstr "No event"
 
