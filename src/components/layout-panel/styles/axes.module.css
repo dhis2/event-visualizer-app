@@ -1,8 +1,12 @@
-.container.empty {
+.axes.empty {
     min-block-size: 60px;
 }
 
-.axes {
+.container {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+.axisContainer {
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-template-areas:
@@ -15,7 +19,7 @@
     overflow-y: auto;
 }
 
-.axes.lineList {
+.axisContainer.lineList {
     grid-template-areas: 'columns filters';
 }
 
@@ -75,4 +79,13 @@
 .resizeHandle:hover::after,
 .resizeHandleActive::after {
     background-color: var(--colors-blue400);
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }

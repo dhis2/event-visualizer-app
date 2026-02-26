@@ -95,14 +95,14 @@ export const Axes: FC = () => {
 
     return (
         <div
-            className={cx(classes.container, {
+            className={cx(classes.axes, {
                 [classes.empty]: !dataSourceId,
             })}
         >
             {dataSourceId && (
-                <>
+                <div className={classes.container}>
                     <div
-                        className={cx(classes.axes, {
+                        className={cx(classes.axisContainer, {
                             [classes.lineList]:
                                 visualizationType === 'LINE_LIST',
                         })}
@@ -114,7 +114,7 @@ export const Axes: FC = () => {
                         <Axis axisId="filters" dimensionIds={filters} />
                     </div>
                     <ResizeHandle />
-                </>
+                </div>
             )}
         </div>
     )
