@@ -13,17 +13,21 @@ export const TopBar: FC = () => {
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
 
     return (
-        <div className={classes.topBar}>
-            <div
-                className={cx(classes.container, {
-                    [classes.loading]: isVisualizationLoading,
-                })}
-            >
-                <VisualizationTypeSelector />
-                <OptionsButton />
-                <div className={classes.containerSpacer} />
-                {dataSourceId && <ExpandedLayoutPanelToggler />}
-            </div>
+        <div
+            className={cx(classes.topBar, {
+                [classes.loading]: isVisualizationLoading,
+            })}
+        >
+            {!isVisualizationLoading && (
+                <div className={classes.container}>
+                    <>
+                        <VisualizationTypeSelector />
+                        <OptionsButton />
+                        <div className={classes.containerSpacer} />
+                        {dataSourceId && <ExpandedLayoutPanelToggler />}
+                    </>
+                </div>
+            )}
         </div>
     )
 }

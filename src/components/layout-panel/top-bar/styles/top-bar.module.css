@@ -5,16 +5,17 @@
     box-sizing: border-box;
 }
 
+.topBar.loading {
+    block-size: 37px;
+}
+
 .container {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 4px;
     inline-size: 100%;
-}
-
-.container.loading {
-    visibility: hidden;
+    animation: fadeIn 1s ease-out forwards;
 }
 
 .containerSpacer {
@@ -36,4 +37,13 @@ button {
 
 .button:hover {
     background-color: var(--colors-grey200);
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
