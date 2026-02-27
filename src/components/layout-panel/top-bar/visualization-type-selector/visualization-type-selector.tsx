@@ -78,25 +78,25 @@ export const VisualizationTypeSelector: FC = () => {
 
     return (
         <>
-            <div
-                role="button"
-                onClick={toggleList}
-                ref={buttonRef}
-                className={cx(classes.button, {
-                    [classes.listIsOpen]: listIsOpen,
-                })}
-                data-test={'visualization-type-selector-button'}
-            >
-                {visTypeIcons[visualizationType]}
-                <span
-                    className={classes.selectedVizTypeLabel}
-                    data-test="visualization-type-selector-currently-selected-text"
+            <div ref={buttonRef}>
+                <button
+                    onClick={toggleList}
+                    className={cx(classes.button, {
+                        [classes.listIsOpen]: listIsOpen,
+                    })}
+                    data-test={'visualization-type-selector-button'}
                 >
-                    {visTypeDisplayNames[visualizationType]}
-                </span>
-                <span className={classes.chevron}>
-                    <IconChevronDown16 />
-                </span>
+                    {visTypeIcons[visualizationType]}
+                    <span
+                        className={classes.selectedVizTypeLabel}
+                        data-test="visualization-type-selector-currently-selected-text"
+                    >
+                        {visTypeDisplayNames[visualizationType]}
+                    </span>
+                    <span className={classes.chevron}>
+                        <IconChevronDown16 />
+                    </span>
+                </button>
             </div>
             {listIsOpen && (
                 <Layer onBackdropClick={toggleList}>
