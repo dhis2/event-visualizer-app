@@ -57,6 +57,7 @@ export const OptionsButton: FC = () => {
                 small
                 secondary
                 onClick={toggleOptionsModal}
+                dataTest="visualization-options-button"
             >
                 {buttonLabel}
             </Button>

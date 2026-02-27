@@ -18,7 +18,7 @@ export const BottomBar: FC = () => {
             })}
         >
             {dataSourceId && !isVisualizationLoading && (
-                <div className={classes.container}>
+                <div className={classes.container} data-test="update-buttons">
                     <UpdateButton />
                 </div>
             )}

@@ -56,6 +56,7 @@ export const ExpandedLayoutPanelToggler: FC = () => {
             icon={togglerIcon}
             onClick={toggleLayoutPanelExpanded}
             tooltipText={togglerTooltipText}
+            dataTest="expand-layout-panel-toggle"
         />
     )
 }

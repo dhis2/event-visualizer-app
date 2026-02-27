@@ -72,7 +72,10 @@ const ResizeHandle: FC = () => {
 }
 
 const LoadingSkeletons: FC = () => (
-    <div className={classes.loadingSkeletons}>
+    <div
+        className={classes.loadingSkeletons}
+        data-test="axes-loading-skeletons"
+    >
         <SkeletonChip width={120} />
         <SkeletonChip width={90} />
         <SkeletonChip width={120} />
