@@ -180,7 +180,6 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                                 onFocus={onFocus}
                                 onMouseOver={onMouseOver}
                                 onMouseOut={onMouseOut}
-                                role="tooltip"
                             >
                                 <ChipBase {...chipBaseProps} />
                             </span>
