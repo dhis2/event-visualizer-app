@@ -21,13 +21,13 @@ describe('VisualizationTypeSelector', () => {
     }
 
     beforeEach(() => {
-        if (!store) {
+        if (store) {
+            store.dispatch(setVisUiConfigVisualizationType('LINE_LIST'))
+        } else {
             store = setupStore(
                 { visUiConfig: visUiConfigSlice.reducer },
                 { visUiConfig: initialState }
             )
-        } else {
-            store.dispatch(setVisUiConfigVisualizationType('LINE_LIST'))
         }
     })
 

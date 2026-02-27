@@ -20,10 +20,9 @@ const ExpandLayoutPanelButton: FC = () => {
     const dispatch = useAppDispatch()
 
     return (
-        <div
+        <button
             className={classes.expandButton}
             onClick={() => dispatch(toggleUiLayoutPanelExpanded())}
-            role="button"
             tabIndex={0}
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -32,7 +31,7 @@ const ExpandLayoutPanelButton: FC = () => {
             }}
         >
             <IconMore16 color={colors.grey800} />
-        </div>
+        </button>
     )
 }
 
@@ -64,7 +63,6 @@ const ResizeHandle: FC = () => {
             })}
             //onMouseDown={handleAxesResizeStart}
             //onDoubleClick={handleAxesResizeDoubleClick}
-            role="separator"
             aria-orientation="horizontal"
             aria-label="Resize axes panel"
         />

@@ -166,12 +166,21 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                         dataTest="layout-chip-tooltip"
                         closeDelay={0}
                     >
-                        {({ ref, onMouseOver, onMouseOut }) => (
+                        {({
+                            ref,
+                            onBlur,
+                            onFocus,
+                            onMouseOver,
+                            onMouseOut,
+                        }) => (
                             <span
                                 ref={ref}
                                 onClick={openDimensionModal}
+                                onBlur={onBlur}
+                                onFocus={onFocus}
                                 onMouseOver={onMouseOver}
                                 onMouseOut={onMouseOut}
+                                role="tooltip"
                             >
                                 <ChipBase {...chipBaseProps} />
                             </span>

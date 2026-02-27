@@ -20,12 +20,10 @@ export const TopBar: FC = () => {
         >
             {!isVisualizationLoading && (
                 <div className={classes.container}>
-                    <>
-                        <VisualizationTypeSelector />
-                        <OptionsButton />
-                        <div className={classes.containerSpacer} />
-                        {dataSourceId && <ExpandedLayoutPanelToggler />}
-                    </>
+                    <VisualizationTypeSelector />
+                    <OptionsButton />
+                    <div className={classes.containerSpacer} />
+                    {dataSourceId && <ExpandedLayoutPanelToggler />}
                 </div>
             )}
         </div>
