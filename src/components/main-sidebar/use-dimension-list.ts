@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useIsMounted } from 'usehooks-ts'
+import { useDebounceValue, useIsMounted } from 'usehooks-ts'
 import { api } from '@api/api'
 import { type EngineError, parseEngineError } from '@api/parse-engine-error'
 import { useStableCallback, useAppDispatch, useAppSelector } from '@hooks'
@@ -211,12 +211,9 @@ export const useDimensionList = ({
     const isInitalFetchSuccessRef = useRef(false)
     const [isSearching, setIsSearching] = useState(false)
     const [resolvedSearchTerm, setResolvedSearchTerm] = useState(searchTerm)
-    const [isLoadMoreDelayActive, setIsLoadMoreDelayActive] = useState(false)
     const nextPageRef = useRef<number | null>(null)
-    const loadMoreDelayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
-        null
-    )
     const isMounted = useIsMounted()
+    const [debouncedIsFetching] = useDebounceValue(isFetching, 300)
 
     const fetchDimensions = useStableCallback(
         async (shouldResetPager: boolean = false) => {
@@ -292,13 +289,6 @@ export const useDimensionList = ({
 
     const loadMore = useCallback(() => {
         if (nextPageRef.current && !isFetching) {
-            // Start the delay timer
-            setIsLoadMoreDelayActive(true)
-            loadMoreDelayTimerRef.current = setTimeout(() => {
-                setIsLoadMoreDelayActive(false)
-            }, 400)
-
-            // Fetch immediately
             fetchDimensions()
         }
     }, [isFetching, fetchDimensions])
@@ -328,9 +318,6 @@ export const useDimensionList = ({
 
             return () => {
                 dispatch(removeDimensionListLoadingState(dimensionListKey))
-                if (loadMoreDelayTimerRef.current) {
-                    clearTimeout(loadMoreDelayTimerRef.current)
-                }
             }
         }
     }, [dispatch, dimensionListKey])
@@ -346,7 +333,9 @@ export const useDimensionList = ({
     return useMemo(() => {
         const isLoading = !isInitalFetchSuccessRef.current && isFetching
         const isLoadingMore =
-            isFetching && !isLoading && !isSearching && !isLoadMoreDelayActive
+            debouncedIsFetching &&
+            isInitalFetchSuccessRef.current &&
+            !isSearching
         const hasMore = Boolean(
             nextPageRef.current !== null &&
                 baseQuery &&
@@ -368,7 +357,7 @@ export const useDimensionList = ({
         dimensions,
         isFetching,
         isSearching,
-        isLoadMoreDelayActive,
+        debouncedIsFetching,
         error,
         hasNoData,
         loadMore,

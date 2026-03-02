@@ -1042,13 +1042,11 @@ describe('useDimensionList', () => {
             result.current.loadMore()
         })
 
-        // Wait for 400ms delay to expire, then check isLoadingMore is true
+        // Wait for 300ms delay to expire, then check isLoadingMore is true
         await act(async () => {
-            await new Promise((resolve) => setTimeout(resolve, 450))
+            await new Promise((resolve) => setTimeout(resolve, 350))
         })
-
-        // After delay expires, if fetch is still ongoing, isLoadingMore should be true
-        // Note: The API mock returns after 10ms, so by 450ms the fetch might be done
+        // Note: The API mock returns after 10ms, so by 350ms the fetch might be done
         // We check that the fetch happened and dimensions were accumulated
         await waitFor(() => {
             expect(result.current.isLoading).toBe(false)
@@ -1064,7 +1062,7 @@ describe('useDimensionList', () => {
         ])
     })
 
-    it('isLoadingMore respects 400ms delay - does not show loading immediately', async () => {
+    it('isLoadingMore respects 300ms delay - does not show loading immediately', async () => {
         // Setup API response for page 1 (hasMore true)
         mockApiResponse = {
             dimensions: [mockApiDimension],
@@ -1102,7 +1100,7 @@ describe('useDimensionList', () => {
         })
 
         // Setup API response for page 2 with SLOW response (600ms)
-        // This ensures the fetch is still ongoing after the 400ms delay
+        // This ensures the fetch is still ongoing after the 300ms delay
         mockApiDelay = 600
         const secondDimension = {
             ...mockApiDimension,
@@ -1130,7 +1128,7 @@ describe('useDimensionList', () => {
         // isLoadingMore should still be false (delay still active)
         expect(result.current.isLoadingMore).toBe(false)
 
-        // Wait for delay to expire (another 250ms, total > 400ms)
+        // Wait for delay to expire (another 150ms, total > 300ms)
         // At this point the fetch is still ongoing (600ms total), so isLoadingMore should be true
         await waitFor(
             () => {
@@ -1150,7 +1148,7 @@ describe('useDimensionList', () => {
         ])
     })
 
-    it('isLoadingMore remains false when fetch completes before 400ms delay', async () => {
+    it('isLoadingMore remains false when fetch completes before 300ms delay', async () => {
         // Setup API response for page 1 (hasMore true)
         mockApiResponse = {
             dimensions: [mockApiDimension],
@@ -1187,7 +1185,7 @@ describe('useDimensionList', () => {
             expect(result.current.isLoading).toBe(false)
         })
 
-        // Setup API response for page 2 (fast response - 10ms, completes before 400ms delay)
+        // Setup API response for page 2 (fast response - 10ms, completes before 300ms delay)
         mockApiDelay = 10
         const secondDimension = {
             ...mockApiDimension,
@@ -1212,12 +1210,12 @@ describe('useDimensionList', () => {
             ])
         })
 
-        // isLoadingMore should never have been true (fetch completed before 400ms delay)
+        // isLoadingMore should never have been true (fetch completed before 300ms delay)
         expect(result.current.isLoadingMore).toBe(false)
 
-        // Wait for delay to expire (400ms)
+        // Wait for delay to expire (300ms)
         await act(async () => {
-            await new Promise((resolve) => setTimeout(resolve, 450))
+            await new Promise((resolve) => setTimeout(resolve, 350))
         })
 
         // isLoadingMore should still be false (fetch already completed)
@@ -1288,6 +1286,112 @@ describe('useDimensionList', () => {
 
         // No errors should occur from state updates after unmount
         // This test passes if no warnings/errors are thrown
+    })
+
+    it('isLoadingMore delays hiding loading UI for 300ms after fetch completes', async () => {
+        // Setup API response for page 1 (hasMore true)
+        mockApiResponse = {
+            dimensions: [mockApiDimension],
+            pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
+        }
+
+        const { result } = await renderHookWithAppWrapper(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    baseQuery,
+                }),
+            {
+                partialStore: {
+                    reducer: {
+                        dimensionSelection: dimensionSelectionSlice.reducer,
+                    },
+                    preloadedState: {
+                        dimensionSelection: {
+                            dataSourceId: null,
+                            searchTerm: '',
+                            filter: 'DATA_ELEMENT',
+                            dimensionCardCollapseStates: {},
+                            dimensionListLoadingStates: {},
+                            multiSelectedDimensionIds: [],
+                        },
+                    },
+                },
+            }
+        )
+
+        // Wait for initial fetch
+        await waitFor(() => {
+            expect(result.current.isLoading).toBe(false)
+        })
+
+        // Setup API response for page 2 with SLOW response (500ms)
+        // This ensures fetch completes AFTER the 300ms debounce delay
+        // so loading UI will show, then we test it stays visible for 300ms after fetch completes
+        mockApiDelay = 500
+        const secondDimension = {
+            ...mockApiDimension,
+            id: 'api-id-2',
+            name: 'API Dimension 2',
+        }
+        mockApiResponse = {
+            dimensions: [secondDimension],
+            pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
+        }
+
+        // Load more
+        act(() => {
+            result.current.loadMore()
+        })
+
+        // Immediately after loadMore, isLoadingMore should be false (delay is active)
+        expect(result.current.isLoadingMore).toBe(false)
+
+        // Wait 350ms (just past the 300ms delay, fetch still ongoing at 500ms)
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 350))
+        })
+
+        // isLoadingMore should now be true (300ms delay expired, fetch still ongoing)
+        expect(result.current.isLoadingMore).toBe(true)
+
+        // Wait another 200ms (total 550ms, fetch completed at 500ms)
+        // At 550ms: fetch completed 50ms ago, but loading UI should still be visible
+        // because debounce delays hiding for 300ms after isFetching becomes false
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 200))
+        })
+        expect(result.current.isLoadingMore).toBe(true)
+
+        // Wait another 100ms (total 650ms, 150ms after fetch completed)
+        // Loading UI should still be visible (total 250ms since fetch completed, < 300ms)
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 100))
+        })
+        expect(result.current.isLoadingMore).toBe(true)
+
+        // Wait another 100ms (total 750ms, 250ms after fetch completed)
+        // Loading UI should still be visible (total 250ms since fetch completed, < 300ms)
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 100))
+        })
+        expect(result.current.isLoadingMore).toBe(true)
+
+        // Wait for loading UI to eventually hide
+        // It should hide 300ms after fetch completed (at 800ms total)
+        // Give it extra time (400ms) to account for any timing inconsistencies
+        await waitFor(
+            () => {
+                expect(result.current.isLoadingMore).toBe(false)
+            },
+            { timeout: 400 }
+        )
+
+        // Verify dimensions were loaded
+        expect(result.current.dimensions).toEqual([
+            mockApiDimension,
+            secondDimension,
+        ])
     })
 
     it('hasNoData is true when server returns empty result without search', async () => {
@@ -2583,7 +2687,7 @@ describe('useDimensionList', () => {
             result.current.loadMore()
         })
 
-        // Wait for loadMore to start (after 400ms delay)
+        // Wait for loadMore to start (after 300ms delay)
         await waitFor(() => {
             expect(result.current.isLoadingMore).toBe(true)
         })
@@ -2881,7 +2985,7 @@ describe('useDimensionList', () => {
             result.current.loadMore()
         })
 
-        // Wait for loadMore to start (after 400ms delay)
+        // Wait for loadMore to start (after 300ms delay)
         await waitFor(() => {
             expect(result.current.isLoadingMore).toBe(true)
         })
