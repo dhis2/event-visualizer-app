@@ -3,8 +3,9 @@ import {
     createTestVisualization,
     deleteVisualization,
     renameVisualization,
-    // table
+    // title-bar
     expectVisTitleToEqual,
+    // table
     expectTableToBeVisible,
     expectStartScreenToBeVisible,
 } from '../../helpers/index'
@@ -52,7 +53,7 @@ describe('rename', () => {
         // expectDescriptionToEqual(description)
 
         deleteVisualization()
-        cy.getByDataTest('title-bar').should('not.exist')
+        cy.getByDataTest('title-text').should('not.exist')
 
         expectStartScreenToBeVisible()
     })
@@ -91,7 +92,7 @@ describe('rename', () => {
         // expectDescriptionToEqual('No description')
 
         deleteVisualization()
-        cy.getByDataTest('title-bar').should('not.exist')
+        cy.getByDataTest('title-text').should('not.exist')
         expectStartScreenToBeVisible()
     })
 
@@ -122,7 +123,7 @@ describe('rename', () => {
         expectVisTitleToEqual(TEST_VIS_TITLE)
 
         deleteVisualization()
-        cy.getByDataTest('title-bar').should('not.exist')
+        cy.getByDataTest('title-text').should('not.exist')
 
         expectStartScreenToBeVisible()
     })

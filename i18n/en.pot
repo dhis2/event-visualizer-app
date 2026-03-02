@@ -554,20 +554,47 @@ msgstr "Click a dimension to add or remove conditions."
 msgid "Your most viewed event visualizations"
 msgstr "Your most viewed event visualizations"
 
-msgid "Show panels"
-msgstr "Show panels"
-
-msgid "Expand visualization and hide panels"
-msgstr "Expand visualization and hide panels"
-
-msgid "Unsaved visualization"
-msgstr "Unsaved visualization"
-
-msgid "Edited"
-msgstr "Edited"
-
 msgid "Download"
 msgstr "Download"
+
+msgid "File"
+msgstr "File"
+
+msgid "New"
+msgstr "New"
+
+msgid "Open…"
+msgstr "Open…"
+
+msgid "Save"
+msgstr "Save"
+
+msgid "Save…"
+msgstr "Save…"
+
+msgid "Save as…"
+msgstr "Save as…"
+
+msgid "Rename…"
+msgstr "Rename…"
+
+msgid "Translate…"
+msgstr "Translate…"
+
+msgid "Share…"
+msgstr "Share…"
+
+msgid "Get link…"
+msgstr "Get link…"
+
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Open"
+msgstr "Open"
+
+msgid "\"{{- deletedObject}}\" successfully deleted."
+msgstr "\"{{- deletedObject}}\" successfully deleted."
 
 msgid "An unknown error occurred."
 msgstr "An unknown error occurred."
@@ -587,9 +614,6 @@ msgstr "Rename successful"
 
 msgid "Rename failed"
 msgstr "Rename failed"
-
-msgid "\"{{- deletedObject}}\" successfully deleted."
-msgstr "\"{{- deletedObject}}\" successfully deleted."
 
 msgid "Hide layout"
 msgstr "Hide layout"
@@ -614,6 +638,27 @@ msgstr "View"
 
 msgid "Reset sidebar width"
 msgstr "Reset sidebar width"
+
+msgid "Show panels"
+msgstr "Show panels"
+
+msgid "Expand visualization and hide panels"
+msgstr "Expand visualization and hide panels"
+
+msgid "Hide details panel"
+msgstr "Hide details panel"
+
+msgid "Show details panel"
+msgstr "Show details panel"
+
+msgid "Loading visualization"
+msgstr "Loading visualization"
+
+msgid "Unsaved visualization"
+msgstr "Unsaved visualization"
+
+msgid "Edited"
+msgstr "Edited"
 
 msgid "equal to (=)"
 msgstr "equal to (=)"
