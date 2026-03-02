@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { useMemo } from 'react'
+import { useMemo, type FC } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -47,7 +47,7 @@ const getFixedDimensions = (
     ]
 }
 
-export const CardEnrollment = ({ program }: CardEnrollmentProps) => {
+export const CardEnrollment: FC<CardEnrollmentProps> = ({ program }) => {
     const dimensionCardKey = 'enrollment'
     const title = program.displayEnrollmentLabel ?? i18n.t('Enrollment data')
     const fixedDimensions = useMemo(

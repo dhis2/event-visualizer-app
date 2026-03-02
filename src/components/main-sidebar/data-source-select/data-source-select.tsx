@@ -1,6 +1,12 @@
 import i18n from '@dhis2/d2-i18n'
 import { CircularLoader, Input, Layer, Popper } from '@dhis2/ui'
-import { type KeyboardEvent, useCallback, useRef, useState } from 'react'
+import {
+    type FC,
+    type KeyboardEvent,
+    useCallback,
+    useRef,
+    useState,
+} from 'react'
 import { DataSourceSelectCombobox } from './data-source-select-combobox'
 import { DataSourceSelectListbox } from './data-source-select-listbox'
 import classes from './styles/data-source-select.module.css'
@@ -18,7 +24,7 @@ const focusFirstFocusableChild = (node: HTMLDivElement) => {
     }
 }
 
-export const DataSourceSelect = () => {
+export const DataSourceSelect: FC = () => {
     const {
         error,
         filterString,

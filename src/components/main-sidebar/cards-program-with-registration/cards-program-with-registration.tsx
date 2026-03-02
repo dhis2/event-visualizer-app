@@ -1,3 +1,4 @@
+import type { FC } from 'react'
 import { CardEnrollment } from './card-enrollment'
 import { CardEvent } from './card-event'
 import { CardProgramIndicators } from './card-program-indicators'
@@ -8,9 +9,9 @@ type CardsProgramWithRegistrationProps = {
     program: DataSourceProgramWithRegistration
 }
 
-export const CardsProgramWithRegistration = ({
-    program,
-}: CardsProgramWithRegistrationProps) => {
+export const CardsProgramWithRegistration: FC<
+    CardsProgramWithRegistrationProps
+> = ({ program }: CardsProgramWithRegistrationProps) => {
     return (
         <>
             <CardEnrollment program={program} />

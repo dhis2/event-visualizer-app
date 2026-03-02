@@ -1,5 +1,5 @@
 import cx from 'classnames'
-import { useCallback, useEffect, type ReactNode } from 'react'
+import { useCallback, useEffect, type ReactNode, type FC } from 'react'
 import { DimensionCardHeader } from './dimension-card-header'
 import classes from './styles/dimension-card.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
@@ -20,7 +20,7 @@ type DimensionCardProps = {
     isDisabledByFilter?: boolean
 }
 
-export const DimensionCard = ({
+export const DimensionCard: FC<DimensionCardProps> = ({
     dimensionCardKey,
     title,
     selectedCount = 0,

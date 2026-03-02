@@ -1,4 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
+import type { FC } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -17,7 +18,7 @@ const BASE_QUERY: SingleQuery = {
     },
 }
 
-export const CardOther = () => {
+export const CardOther: FC = () => {
     const listProps = useDimensionList({
         dimensionListKey: CARD_AND_LIST_KEY,
         baseQuery: BASE_QUERY,

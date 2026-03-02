@@ -1,6 +1,5 @@
 import cx from 'classnames'
-import { useState } from 'react'
-import type { UIEvent } from 'react'
+import { type UIEvent, useState, type FC } from 'react'
 import { CardsProgramWithRegistration } from './cards-program-with-registration/cards-program-with-registration'
 import { CardsProgramWithoutRegistration } from './cards-program-without-registration/cards-program-without-registration'
 import { CardsTrackedEntityType } from './cards-tracked-entity-type/cards-tracked-entity-type'
@@ -20,7 +19,7 @@ import {
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 import { getUiMainSidebarVisible } from '@store/ui-slice'
 
-export const MainSidebar = () => {
+export const MainSidebar: FC = () => {
     const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
     const dataSourceId = useAppSelector(getDataSourceId)
     const dataSourceMetadataItem = useMetadataItem(dataSourceId)

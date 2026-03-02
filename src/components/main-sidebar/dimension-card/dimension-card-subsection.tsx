@@ -1,5 +1,5 @@
 import cx from 'classnames'
-import { useCallback, useState, type ReactNode } from 'react'
+import { type FC, useCallback, useState, type ReactNode } from 'react'
 import { CollapseIcon } from './collapse-icon'
 import classes from './styles/dimension-card-subsection.module.css'
 
@@ -10,7 +10,7 @@ type DimensionsCardSubsectionProps = {
     isDisabled?: boolean
 }
 
-export const DimensionsCardSubsection = ({
+export const DimensionsCardSubsection: FC<DimensionsCardSubsectionProps> = ({
     title,
     children,
     selectedCount = 0,

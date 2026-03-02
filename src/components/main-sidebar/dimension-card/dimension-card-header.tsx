@@ -1,5 +1,5 @@
 import cx from 'classnames'
-import type { ReactNode } from 'react'
+import { type FC, type ReactNode } from 'react'
 import { CollapseIcon } from './collapse-icon'
 import classes from './styles/dimension-card-header.module.css'
 
@@ -11,7 +11,7 @@ type DimensionCardHeaderProps = {
     isDisabled?: boolean
 }
 
-export const DimensionCardHeader = ({
+export const DimensionCardHeader: FC<DimensionCardHeaderProps> = ({
     children,
     selectedCount,
     isCollapsed,

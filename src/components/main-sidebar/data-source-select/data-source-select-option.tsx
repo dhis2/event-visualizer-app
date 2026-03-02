@@ -1,5 +1,5 @@
 import cx from 'classnames'
-import { type KeyboardEvent, useCallback } from 'react'
+import { type FC, type KeyboardEvent, useCallback } from 'react'
 import classes from './styles/data-source-select-option.module.css'
 import { useAppSelector, useAppDispatch, useAddMetadata } from '@hooks'
 import {
@@ -39,7 +39,7 @@ const focusSibling = (
     }
 }
 
-export const DataSourceSelectOption = ({
+export const DataSourceSelectOption: FC<DataSourceSelectOptionProps> = ({
     option,
     closeDropdown,
 }: DataSourceSelectOptionProps) => {

@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import { ProgramStageSubsection } from './program-stage-subsection'
 import { DimensionCard } from '@components/main-sidebar/dimension-card'
 import { EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES } from '@components/main-sidebar/get-event-fixed-dimensions'
@@ -22,7 +22,7 @@ export const STAGE_QUERY_WITHOUT_STAGE_ID = {
     },
 }
 
-export const CardEvent = ({ program }: CardEventProps) => {
+export const CardEvent: FC<CardEventProps> = ({ program }) => {
     const filter = useAppSelector(getFilter)
     const isDisabledByFilter = useMemo(
         () =>

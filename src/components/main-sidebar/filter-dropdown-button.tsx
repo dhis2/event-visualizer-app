@@ -9,14 +9,8 @@ import {
     type MenuItemProps,
 } from '@dhis2/ui'
 import cx from 'classnames'
-import {
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-    type FC,
-} from 'react'
+import { type FC } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import classes from './styles/filter-dropdown-button.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {

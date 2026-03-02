@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -13,7 +13,7 @@ type CardEventProps = {
 }
 const CARD_AND_LIST_KEY = 'event-without-registration'
 
-export const CardEvent = ({ program }: CardEventProps) => {
+export const CardEvent: FC<CardEventProps> = ({ program }: CardEventProps) => {
     const programStage = useMemo<ProgramStage>(() => {
         const programStage = program.programStages?.[0]
 

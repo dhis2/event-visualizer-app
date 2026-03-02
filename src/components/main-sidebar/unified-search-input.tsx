@@ -7,6 +7,7 @@ import {
 } from '@dhis2/ui'
 import cx from 'classnames'
 import {
+    type FC,
     useCallback,
     useEffect,
     useMemo,
@@ -32,7 +33,7 @@ const SEARCH_HELP_ID = 'search-help'
 const isValidSearchTerm = (searchTerm: string) =>
     searchTerm.length === 0 || searchTerm.length >= MIN_SEARCH_TERM_LENGTH
 
-export const UnifiedSearchInput = () => {
+export const UnifiedSearchInput: FC = () => {
     const store = useAppStore()
     const isLoading = useAppSelector(isAnyDimensionListLoading)
     const errors = useAppSelector(getAllDimensionListLoadErrors)

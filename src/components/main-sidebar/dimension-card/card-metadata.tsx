@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { useMemo } from 'react'
+import { useMemo, type FC } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -40,7 +40,7 @@ const getFixedDimensions = (): DimensionMetadataItem[] => [
     },
 ]
 
-export const CardMetadata = () => {
+export const CardMetadata: FC = () => {
     const fixedDimensions = useMemo(getFixedDimensions, [])
     const listProps = useDimensionList({ fixedDimensions })
 

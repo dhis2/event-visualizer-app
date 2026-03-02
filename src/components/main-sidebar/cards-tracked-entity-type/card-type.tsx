@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -74,7 +74,9 @@ export const getFixedDimensions = (
         },
     ]
 }
-export const CardType = ({ trackedEntityType }: CardTypeProps) => {
+export const CardType: FC<CardTypeProps> = ({
+    trackedEntityType,
+}: CardTypeProps) => {
     const title = i18n.t('{{name}} registration', {
         name: trackedEntityType.name,
     })
