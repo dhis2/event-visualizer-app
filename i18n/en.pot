@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-03-02T11:01:53.859Z\n"
-"PO-Revision-Date: 2026-03-02T11:01:53.860Z\n"
+"POT-Creation-Date: 2026-03-02T14:42:00.007Z\n"
+"PO-Revision-Date: 2026-03-02T14:42:00.010Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -659,24 +659,6 @@ msgstr "Click a dimension to add or remove conditions."
 msgid "Your most viewed event visualizations"
 msgstr "Your most viewed event visualizations"
 
-msgid "Unsaved visualization"
-msgstr "Unsaved visualization"
-
-msgid "Edited"
-msgstr "Edited"
-
-msgid "Show panels"
-msgstr "Show panels"
-
-msgid "Expand visualization and hide panels"
-msgstr "Expand visualization and hide panels"
-
-msgid "Hide details panel"
-msgstr "Hide details panel"
-
-msgid "Show details panel"
-msgstr "Show details panel"
-
 msgid "Download"
 msgstr "Download"
 
@@ -721,6 +703,13 @@ msgstr "\"{{- deletedObject}}\" successfully deleted."
 
 msgid "An unknown error occurred."
 msgstr "An unknown error occurred."
+
+msgid ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+msgstr ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
 
 msgid "You don't have sufficient permissions."
 msgstr "You don't have sufficient permissions."

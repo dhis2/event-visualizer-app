@@ -12,10 +12,6 @@ import {
     isVisualizationValidForSaveAs,
 } from '@modules/validation'
 import {
-    isVisualizationValidForSave,
-    isVisualizationValidForSaveAs,
-} from '@modules/validation'
-import {
     getSaveableVisualization,
     getVisualizationState,
     isVisualizationSaved,
