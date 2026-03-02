@@ -330,12 +330,12 @@ npx prettier --write <file-path>          # Format automatically
 -   **ESLint**: Use file-specific CLI commands
 -   **Prettier**: Use file-specific CLI commands
 
-**CSS/SCSS files** (`.css`, `.scss`):
+**CSS/SCSS files** (`.css`):
 
 -   **Stylelint**: Use file-specific CLI commands
 -   **Prettier**: Use file-specific CLI commands
 
-**Other formats** (`.json`, `.md`, `.yml`, `.yaml`, `.js`, `.jsx`):
+**Other formats** (`.json`, `.md`, `.yml`, `.yaml`):
 
 -   **Prettier**: Use file-specific CLI commands
 
