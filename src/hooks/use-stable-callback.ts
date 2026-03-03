@@ -1,7 +1,7 @@
 import {
     useRef,
     useCallback,
-    useInsertionEffect,
+    useLayoutEffect,
     type MutableRefObject,
 } from 'react'
 
@@ -11,7 +11,7 @@ export function useStableCallback<T extends (...args: any[]) => any>(
 ): T {
     const ref = useRef<T>(null) as MutableRefObject<T | null>
 
-    useInsertionEffect(() => {
+    useLayoutEffect(() => {
         ref.current = callback
     })
 
