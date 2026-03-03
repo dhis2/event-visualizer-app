@@ -1,16 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { useDebounceValue, useIsMounted } from 'usehooks-ts'
 import { api } from '@api/api'
 import { type EngineError, parseEngineError } from '@api/parse-engine-error'
-import { useStableCallback, useAppDispatch, useAppSelector } from '@hooks'
+import { useAppDispatch, useAppSelector, useStableCallback } from '@hooks'
 import { isDimensionMetadataItem } from '@modules/metadata'
 import { isObject, isPopulatedString } from '@modules/validation'
 import {
     addDimensionListLoadingState,
-    getDimensionListError,
     getFilter,
     getSearchTerm,
-    isDimensionListLoading,
     removeDimensionListLoadingState,
     setDimensionListLoadError,
     setDimensionListLoadStart,
@@ -53,6 +51,52 @@ type SingleQueryWithFilterParam = Omit<SingleQuery, 'params'> & {
         page: number
     }
 }
+
+// State Machine Types
+type DimensionListStatus =
+    | 'uninitialized' // Never attempted to fetch
+    | 'initial-loading' // First fetch in progress
+    | 'idle' // Ready for actions (initial load complete)
+    | 'searching' // Search operation in progress
+    | 'loading-more' // Loading more data (pagination)
+    | 'error' // Error state
+
+type DimensionListState = {
+    status: DimensionListStatus
+    dimensions: DimensionMetadataItem[]
+    nextPage: number | null
+    error?: EngineError
+    hasNoData: boolean // True only when page 1, no search term, no data, no fixed dimensions
+}
+
+type DimensionListAction =
+    | { type: 'INITIAL_LOAD_START' }
+    | {
+          type: 'INITIAL_LOAD_SUCCESS'
+          payload: {
+              dimensions: DimensionMetadataItem[]
+              nextPage: number | null
+              searchTerm: string
+              hasFixedDimensions: boolean
+          }
+      }
+    | { type: 'SEARCH_START' }
+    | {
+          type: 'SEARCH_SUCCESS'
+          payload: {
+              dimensions: DimensionMetadataItem[]
+              nextPage: number | null
+              searchTerm: string
+              hasFixedDimensions: boolean
+          }
+      }
+    | { type: 'LOAD_MORE_START' }
+    | {
+          type: 'LOAD_MORE_SUCCESS'
+          payload: { dimensions: DimensionMetadataItem[]; nextPage: number | null }
+      }
+    | { type: 'ERROR'; payload: EngineError }
+    | { type: 'RESET' }
 
 const FILTER_PARAM_SEARCH_TERM = 'displayName:ilike:'
 const FILTER_PARAM_DIMENSION_TYPE = 'dimensionType:eq:'
@@ -189,179 +233,368 @@ export const computeIsDisabledByFilter = (
     return filter !== null && !hasMatchingFixedDimensionType
 }
 
+// State Machine Reducer
+const initialDimensionListState: DimensionListState = {
+    status: 'uninitialized',
+    dimensions: [],
+    nextPage: null,
+    error: undefined,
+    hasNoData: false,
+}
+
+const dimensionListReducer = (
+    state: DimensionListState,
+    action: DimensionListAction
+): DimensionListState => {
+    switch (action.type) {
+        case 'INITIAL_LOAD_START':
+            return {
+                ...state,
+                status: 'initial-loading',
+                error: undefined,
+            }
+
+        case 'INITIAL_LOAD_SUCCESS': {
+            // hasNoData is true ONLY when:
+            // - page 1 (initial load)
+            // - no search term
+            // - no dimensions returned
+            // - no fixed dimensions
+            const hasNoData =
+                !action.payload.searchTerm &&
+                action.payload.dimensions.length === 0 &&
+                !action.payload.hasFixedDimensions
+
+            return {
+                status: 'idle',
+                dimensions: action.payload.dimensions,
+                nextPage: action.payload.nextPage,
+                error: undefined,
+                hasNoData,
+            }
+        }
+
+        case 'SEARCH_START':
+            return {
+                ...state,
+                status: 'searching',
+                // Clear error when starting a new search
+                error: undefined,
+            }
+
+        case 'SEARCH_SUCCESS': {
+            // Update hasNoData ONLY if this is a search with no search term (i.e., clearing search)
+            // Otherwise, keep the existing hasNoData value
+            const hasNoData = !action.payload.searchTerm
+                ? action.payload.dimensions.length === 0 &&
+                  !action.payload.hasFixedDimensions
+                : state.hasNoData
+
+            return {
+                status: 'idle',
+                dimensions: action.payload.dimensions,
+                nextPage: action.payload.nextPage,
+                error: undefined,
+                hasNoData,
+            }
+        }
+
+        case 'LOAD_MORE_START':
+            return {
+                ...state,
+                status: 'loading-more',
+                error: undefined,
+            }
+
+        case 'LOAD_MORE_SUCCESS':
+            return {
+                status: 'idle',
+                dimensions: [...state.dimensions, ...action.payload.dimensions],
+                nextPage: action.payload.nextPage,
+                error: undefined,
+                hasNoData: state.hasNoData, // Keep existing hasNoData
+            }
+
+        case 'ERROR':
+            return {
+                ...state,
+                status: 'error',
+                error: action.payload,
+            }
+
+        case 'RESET':
+            return initialDimensionListState
+
+        default:
+            return state
+    }
+}
+
 export const useDimensionList = ({
     dimensionListKey,
     fixedDimensions = DEFAULT_FIXED_DIMENSIONS,
     baseQuery,
     transformer = defaultTransformer,
 }: UseDimensionListOptions): UseDimensionListResult => {
-    const dispatch = useAppDispatch()
+    // Redux for shared state
+    const appDispatch = useAppDispatch()
     const searchTerm = useAppSelector(getSearchTerm)
     const filter = useAppSelector(getFilter)
-    const isFetching = useAppSelector((state) =>
-        isDimensionListLoading(state, dimensionListKey)
-    )
-    const error = useAppSelector((state) =>
-        getDimensionListError(state, dimensionListKey)
-    )
-    const [fetchedDimensions, setFetchedDimensions] = useState<
-        DimensionMetadataItem[]
-    >([])
-    const [hasNoData, setHasNoData] = useState(false)
-    const isInitalFetchSuccessRef = useRef(false)
-    const [isSearching, setIsSearching] = useState(false)
-    const [resolvedSearchTerm, setResolvedSearchTerm] = useState(searchTerm)
-    const nextPageRef = useRef<number | null>(null)
-    const isMounted = useIsMounted()
-    const [debouncedIsFetching] = useDebounceValue(isFetching, 300)
 
-    const fetchDimensions = useStableCallback(
-        async (shouldResetPager: boolean = false) => {
-            if (
-                !dimensionListKey ||
-                !baseQuery ||
-                (!shouldResetPager && nextPageRef.current === null) ||
-                !isFetchEnabledByFilter(baseQuery, filter)
-            ) {
-                setResolvedSearchTerm(searchTerm)
+    // Local state machine
+    const [state, localDispatch] = useReducer(
+        dimensionListReducer,
+        initialDimensionListState
+    )
+
+    // Mount tracking for cleanup
+    const isMounted = useIsMounted()
+
+    // Track previous searchTerm to detect actual changes
+    const prevSearchTermRef = useRef<string>(searchTerm)
+
+    // Track the search term used for current fetched data
+    const [resolvedSearchTerm, setResolvedSearchTerm] = useState<string>('')
+
+    // For fixed-only lists (no baseQuery), sync resolvedSearchTerm with searchTerm
+    useEffect(() => {
+        if (!baseQuery) {
+            setResolvedSearchTerm(searchTerm)
+        }
+    }, [searchTerm, baseQuery])
+
+    // Debounced UI state for isLoadingMore
+    const isLoadingMoreRaw = state.status === 'loading-more'
+    const [debouncedIsLoadingMore] = useDebounceValue(isLoadingMoreRaw, 300)
+
+    // Stable fetch function with access to latest values
+    const performFetch = useStableCallback(
+        async (mode: 'initial' | 'search' | 'load-more', page: number) => {
+            if (!dimensionListKey || !baseQuery) {
                 return
             }
 
-            dispatch(setDimensionListLoadStart(dimensionListKey))
+            if (!isFetchEnabledByFilter(baseQuery, filter)) {
+                return
+            }
 
             try {
-                const rawResponseData = await dispatch(
+                const rawResponseData = await appDispatch(
                     api.endpoints.query.initiate(
-                        buildQuery(
-                            baseQuery,
-                            searchTerm,
-                            shouldResetPager ? 1 : nextPageRef.current!
-                        )
+                        buildQuery(baseQuery, searchTerm, page)
                     )
                 ).unwrap()
 
-                const prevNextPage = shouldResetPager ? 1 : nextPageRef.current
+                // Check if still mounted
+                if (!isMounted()) {
+                    return
+                }
+
                 const { dimensions, nextPage } = transformer(rawResponseData)
 
-                // Check if component is still mounted before updating state
-                if (!isMounted()) {
-                    return
-                }
-
-                isInitalFetchSuccessRef.current = true
-                nextPageRef.current = nextPage
-
-                if (prevNextPage === 1) {
-                    setFetchedDimensions(dimensions)
-                } else {
-                    setFetchedDimensions((prev) => [...prev, ...dimensions])
-                }
-
-                if (
-                    !searchTerm &&
-                    fixedDimensions.length === 0 &&
-                    prevNextPage === 1
-                ) {
-                    setHasNoData(dimensions.length === 0)
-                }
-
+                // Update resolved search term to match the fetch
                 setResolvedSearchTerm(searchTerm)
-                setIsSearching(false)
-                dispatch(setDimensionListLoadSuccess(dimensionListKey))
+
+                return { dimensions, nextPage }
             } catch (error) {
-                // Check if component is still mounted before updating state
                 if (!isMounted()) {
                     return
                 }
-
-                setResolvedSearchTerm(searchTerm)
-                setIsSearching(false)
-                const engineError = parseEngineError(error)
-                dispatch(
-                    setDimensionListLoadError({
-                        id: dimensionListKey,
-                        error: engineError,
-                    })
-                )
+                throw error
             }
         }
     )
 
-    const loadMore = useCallback(() => {
-        if (nextPageRef.current && !isFetching) {
-            fetchDimensions()
-        }
-    }, [isFetching, fetchDimensions])
+    // Register loading state in Redux on mount
+    useEffect(() => {
+        if (dimensionListKey) {
+            appDispatch(addDimensionListLoadingState(dimensionListKey))
 
+            return () => {
+                appDispatch(removeDimensionListLoadingState(dimensionListKey))
+            }
+        }
+    }, [appDispatch, dimensionListKey])
+
+    // Sync local state to Redux
+    useEffect(() => {
+        if (!dimensionListKey) {
+            return
+        }
+
+        const isLoading =
+            state.status === 'initial-loading' ||
+            state.status === 'searching' ||
+            state.status === 'loading-more'
+
+        if (isLoading) {
+            appDispatch(setDimensionListLoadStart(dimensionListKey))
+        } else if (state.status === 'error' && state.error) {
+            appDispatch(
+                setDimensionListLoadError({
+                    id: dimensionListKey,
+                    error: state.error,
+                })
+            )
+        } else if (state.status === 'idle') {
+            appDispatch(setDimensionListLoadSuccess(dimensionListKey))
+        }
+    }, [state.status, state.error, dimensionListKey, appDispatch])
+
+    // Initial fetch
+    // Note: performFetch is stable via useStableCallback with access to fresh values.
+    // baseQuery, filter, and fixedDimensions.length are in the condition but not deps
+    // because components are keyed by dataSource ID - when these change, component remounts.
+    useEffect(() => {
+        if (
+            state.status === 'uninitialized' &&
+            dimensionListKey &&
+            baseQuery &&
+            isFetchEnabledByFilter(baseQuery, filter)
+        ) {
+            localDispatch({ type: 'INITIAL_LOAD_START' })
+
+            performFetch('initial', 1).then(
+                (result) => {
+                    if (result) {
+                        localDispatch({
+                            type: 'INITIAL_LOAD_SUCCESS',
+                            payload: {
+                                ...result,
+                                searchTerm,
+                                hasFixedDimensions: fixedDimensions.length > 0,
+                            },
+                        })
+                    }
+                },
+                (error) => {
+                    localDispatch({
+                        type: 'ERROR',
+                        payload: parseEngineError(error),
+                    })
+                }
+            )
+        } else if (
+            state.status === 'uninitialized' &&
+            (!baseQuery || !isFetchEnabledByFilter(baseQuery, filter))
+        ) {
+            // No fetch needed, transition directly to idle
+            localDispatch({
+                type: 'INITIAL_LOAD_SUCCESS',
+                payload: {
+                    dimensions: [],
+                    nextPage: null,
+                    searchTerm,
+                    hasFixedDimensions: fixedDimensions.length > 0,
+                },
+            })
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [state.status, dimensionListKey, performFetch])
+
+    // Search on searchTerm change
+    useEffect(() => {
+        // Check if searchTerm actually changed
+        const hasSearchTermChanged = prevSearchTermRef.current !== searchTerm
+        prevSearchTermRef.current = searchTerm
+
+        // Only search after initial load, if baseQuery exists, and searchTerm changed
+        if (
+            state.status !== 'uninitialized' &&
+            baseQuery &&
+            hasSearchTermChanged
+        ) {
+            localDispatch({ type: 'SEARCH_START' })
+
+            performFetch('search', 1).then(
+                (result) => {
+                    // If result is undefined (fetch was skipped), still transition to success state
+                    localDispatch({
+                        type: 'SEARCH_SUCCESS',
+                        payload: {
+                            dimensions: result?.dimensions || [],
+                            nextPage: result?.nextPage || null,
+                            searchTerm,
+                            hasFixedDimensions: fixedDimensions.length > 0,
+                        },
+                    })
+                },
+                (error) => {
+                    localDispatch({
+                        type: 'ERROR',
+                        payload: parseEngineError(error),
+                    })
+                }
+            )
+        }
+        // Note: performFetch is stable via useStableCallback with access to fresh values.
+        // fixedDimensions.length is in the condition but not deps because components are
+        // keyed by dataSource ID - when it changes, component remounts.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchTerm, state.status, performFetch])
+
+    // Combine and filter dimensions
     const dimensions = useMemo(() => {
         const filteredInitial = filterDimensions(
             fixedDimensions,
             resolvedSearchTerm,
             filter
         )
-        // Fetched dimensions are filtered server side but we still need to
-        // apply a filter based on the redux store filter
-        const filteredFetched = filterDimensions(fetchedDimensions, '', filter)
+        // Fetched dimensions are filtered server-side but need client-side filter
+        const filteredFetched = filterDimensions(state.dimensions, '', filter)
         return [...filteredInitial, ...filteredFetched]
-    }, [fixedDimensions, fetchedDimensions, resolvedSearchTerm, filter])
+    }, [fixedDimensions, state.dimensions, resolvedSearchTerm, filter])
 
+    // Compute isDisabledByFilter
     const isDisabledByFilter = useMemo(() => {
-        const fixedDimensionTypes = fixedDimensions.map(
-            (dimension) => dimension.dimensionType
-        )
+        const fixedDimensionTypes = fixedDimensions.map((d) => d.dimensionType)
         return computeIsDisabledByFilter(baseQuery, filter, fixedDimensionTypes)
     }, [baseQuery, filter, fixedDimensions])
 
-    useEffect(() => {
-        if (dimensionListKey) {
-            dispatch(addDimensionListLoadingState(dimensionListKey))
+    // Compute hasMore
+    const hasMore = useMemo(
+        () =>
+            Boolean(
+                state.nextPage !== null &&
+                    baseQuery &&
+                    isFetchEnabledByFilter(baseQuery, filter)
+            ),
+        [state.nextPage, baseQuery, filter]
+    )
 
-            return () => {
-                dispatch(removeDimensionListLoadingState(dimensionListKey))
-            }
+    // loadMore callback
+    const loadMore = useCallback(() => {
+        if (state.nextPage !== null && state.status === 'idle') {
+            localDispatch({ type: 'LOAD_MORE_START' })
+
+            performFetch('load-more', state.nextPage).then(
+                (result) => {
+                    if (result) {
+                        localDispatch({
+                            type: 'LOAD_MORE_SUCCESS',
+                            payload: result,
+                        })
+                    }
+                },
+                (error) => {
+                    localDispatch({
+                        type: 'ERROR',
+                        payload: parseEngineError(error),
+                    })
+                }
+            )
         }
-    }, [dispatch, dimensionListKey])
+    }, [state.nextPage, state.status, performFetch])
 
-    useEffect(() => {
-        // Skip on initial fetch
-        if (isInitalFetchSuccessRef.current) {
-            setIsSearching(true)
-        }
-        fetchDimensions(true)
-    }, [searchTerm, fetchDimensions])
-
-    return useMemo(() => {
-        const isLoading = !isInitalFetchSuccessRef.current && isFetching
-        const isLoadingMore =
-            debouncedIsFetching &&
-            isInitalFetchSuccessRef.current &&
-            !isSearching
-        const hasMore = Boolean(
-            nextPageRef.current !== null &&
-                baseQuery &&
-                isFetchEnabledByFilter(baseQuery, filter)
-        )
-
-        return {
-            dimensions,
-            isLoading,
-            isLoadingMore,
-            error,
-            hasMore,
-            hasNoData,
-            loadMore,
-            isDisabledByFilter,
-        }
-    }, [
-        baseQuery,
+    // Return the hook result
+    return {
         dimensions,
-        isFetching,
-        isSearching,
-        debouncedIsFetching,
-        error,
-        hasNoData,
+        isLoading: state.status === 'initial-loading',
+        isLoadingMore: debouncedIsLoadingMore,
+        error: state.error,
+        hasMore,
+        hasNoData: state.hasNoData,
         loadMore,
-        filter,
         isDisabledByFilter,
-    ])
+    }
 }

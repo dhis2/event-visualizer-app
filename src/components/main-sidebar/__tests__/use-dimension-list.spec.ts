@@ -2897,17 +2897,15 @@ describe('useDimensionList', () => {
             store.dispatch(setSearchTerm('new'))
         })
 
-        // Wait for successful fetch
+        // Wait for successful fetch and data to be loaded
         await waitFor(() => {
-            expect(result.current.isLoading).toBe(false)
+            expect(result.current.error).toBeUndefined()
+            expect(result.current.dimensions).toEqual([mockApiDimension])
+            // Verify query contained search term
+            expect(lastInitiateQuery?.params?.filter).toContain(
+                'displayName:ilike:new'
+            )
         })
-
-        // Verify error cleared and data loaded
-        expect(result.current.error).toBeUndefined()
-        expect(result.current.dimensions).toEqual([mockApiDimension])
-        expect(lastInitiateQuery?.params?.filter).toContain(
-            'displayName:ilike:new'
-        )
     })
 
     it('resets pagination when search changes after loadMore', async () => {
