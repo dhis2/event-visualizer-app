@@ -143,9 +143,13 @@ export const useDimensionList = ({
             if (!isMounted()) {
                 return
             }
-            onFetchError(parseEngineError(error))
+            const parsedError = parseEngineError(error)
+            onFetchError(parsedError)
             appDispatch(
-                setDimensionListLoadError({ id: dimensionListKey!, error })
+                setDimensionListLoadError({
+                    id: dimensionListKey!,
+                    error: parsedError,
+                })
             )
             setResolvedSearchTerm(searchTerm)
         }

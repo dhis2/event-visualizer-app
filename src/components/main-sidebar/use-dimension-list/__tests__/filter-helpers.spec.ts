@@ -4,146 +4,354 @@ import {
     filterDimensions,
     isFetchEnabledByFilter,
 } from '../filter-helpers'
-import type { DimensionMetadataItem, SingleQuery } from '@types'
+import type { DimensionMetadataItem, SingleQuery, DimensionType } from '@types'
 
 describe('isFetchEnabledByFilter', () => {
+    const baseQueryWithDimensionType: SingleQuery = {
+        resource: 'dimensions',
+        params: {
+            filter: ['dimensionType:eq:DATA_ELEMENT'],
+        },
+    }
+
+    const baseQueryWithoutDimensionType: SingleQuery = {
+        resource: 'dimensions',
+        params: {
+            filter: ['displayName:ilike:test'],
+        },
+    }
+
+    const baseQueryWithoutFilter: SingleQuery = {
+        resource: 'dimensions',
+    }
+
     it('returns true when filter is null', () => {
-        const baseQuery = {
-            resource: 'dimensions',
-            params: { filter: 'dimensionType:eq:DATA_ELEMENT' },
-        } as SingleQuery
-        expect(isFetchEnabledByFilter(baseQuery, null)).toBe(true)
+        const result = isFetchEnabledByFilter(baseQueryWithDimensionType, null)
+        expect(result).toBe(true)
     })
 
-    it('returns true when dimension type matches filter', () => {
-        const baseQuery = {
-            resource: 'dimensions',
-            params: { filter: 'dimensionType:eq:DATA_ELEMENT' },
-        } as SingleQuery
-        expect(isFetchEnabledByFilter(baseQuery, 'DATA_ELEMENT')).toBe(true)
+    it('returns true when filter matches dimension type in query', () => {
+        const result = isFetchEnabledByFilter(
+            baseQueryWithDimensionType,
+            'DATA_ELEMENT'
+        )
+        expect(result).toBe(true)
     })
 
-    it('returns false when dimension type does not match filter', () => {
-        const baseQuery = {
-            resource: 'dimensions',
-            params: { filter: 'dimensionType:eq:DATA_ELEMENT' },
-        } as SingleQuery
-        expect(isFetchEnabledByFilter(baseQuery, 'PERIOD')).toBe(false)
+    it('returns false when filter does not match dimension type in query', () => {
+        const result = isFetchEnabledByFilter(
+            baseQueryWithDimensionType,
+            'PROGRAM_INDICATOR'
+        )
+        expect(result).toBe(false)
     })
 
-    it('returns true when no dimension type filter in query', () => {
-        const baseQuery = {
+    it('returns true when query has no dimension type filter', () => {
+        const result = isFetchEnabledByFilter(
+            baseQueryWithoutDimensionType,
+            'PROGRAM_INDICATOR'
+        )
+        expect(result).toBe(true)
+    })
+
+    it('returns true when query has no dimension type filter and filter is null', () => {
+        const result = isFetchEnabledByFilter(
+            baseQueryWithoutDimensionType,
+            null
+        )
+        expect(result).toBe(true)
+    })
+
+    it('returns true when baseQuery has no params', () => {
+        const result = isFetchEnabledByFilter(
+            baseQueryWithoutFilter,
+            'DATA_ELEMENT'
+        )
+        expect(result).toBe(true)
+    })
+
+    it('returns true when baseQuery has params but no filter', () => {
+        const baseQuery: SingleQuery = {
             resource: 'dimensions',
-            params: { filter: 'valueType:eq:TEXT' },
-        } as SingleQuery
-        expect(isFetchEnabledByFilter(baseQuery, 'DATA_ELEMENT')).toBe(true)
+            params: {},
+        }
+        const result = isFetchEnabledByFilter(baseQuery, 'DATA_ELEMENT')
+        expect(result).toBe(true)
+    })
+
+    it('handles dimension type filter with extra characters', () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dimensions',
+            params: {
+                filter: [
+                    'dimensionType:eq:DATA_ELEMENT',
+                    'displayName:ilike:test',
+                ],
+            },
+        }
+        const result = isFetchEnabledByFilter(baseQuery, 'DATA_ELEMENT')
+        expect(result).toBe(true)
     })
 })
 
 describe('filterDimensions', () => {
-    const mockDimensions: DimensionMetadataItem[] = [
-        {
+    const createDimension = (
+        overrides?: Partial<DimensionMetadataItem>
+    ): DimensionMetadataItem => ({
+        id: 'test-id',
+        name: 'Test Dimension',
+        dimensionType: 'DATA_ELEMENT',
+        dimensionItemType: 'DATA_ELEMENT',
+        valueType: 'TEXT',
+        ...overrides,
+    })
+
+    const dimensions = [
+        createDimension({
             id: '1',
-            name: 'Data Element 1',
+            name: 'Apple',
             dimensionType: 'DATA_ELEMENT',
-            dimensionItemType: 'DATA_ELEMENT',
-            valueType: 'TEXT',
-        },
-        {
+        }),
+        createDimension({
             id: '2',
-            name: 'Period 1',
-            dimensionType: 'PERIOD',
-            dimensionItemType: 'PERIOD',
-            valueType: 'NUMBER',
-        },
-        {
-            id: '3',
-            name: 'Data Element 2',
+            name: 'Banana',
             dimensionType: 'DATA_ELEMENT',
-            dimensionItemType: 'DATA_ELEMENT',
-            valueType: 'NUMBER',
-        },
+        }),
+        createDimension({
+            id: '3',
+            name: 'Cherry',
+            dimensionType: 'PROGRAM_INDICATOR',
+        }),
+        createDimension({
+            id: '4',
+            name: 'Apricot',
+            dimensionType: 'PROGRAM_INDICATOR',
+        }),
     ]
 
-    it('filters by search term', () => {
-        const result = filterDimensions(mockDimensions, 'period', null)
-        expect(result).toHaveLength(1)
-        expect(result[0].id).toBe('2')
+    it('returns all dimensions when no search term and no filter', () => {
+        const result = filterDimensions(dimensions, '', null)
+        expect(result).toEqual(dimensions)
+    })
+
+    it('filters by search term (case-insensitive)', () => {
+        const result = filterDimensions(dimensions, 'ap', null)
+        expect(result).toEqual([
+            createDimension({
+                id: '1',
+                name: 'Apple',
+                dimensionType: 'DATA_ELEMENT',
+            }),
+            createDimension({
+                id: '4',
+                name: 'Apricot',
+                dimensionType: 'PROGRAM_INDICATOR',
+            }),
+        ])
     })
 
     it('filters by dimension type', () => {
-        const result = filterDimensions(mockDimensions, '', 'DATA_ELEMENT')
-        expect(result).toHaveLength(2)
-        expect(result[0].id).toBe('1')
-        expect(result[1].id).toBe('3')
+        const result = filterDimensions(dimensions, '', 'DATA_ELEMENT')
+        expect(result).toEqual([
+            createDimension({
+                id: '1',
+                name: 'Apple',
+                dimensionType: 'DATA_ELEMENT',
+            }),
+            createDimension({
+                id: '2',
+                name: 'Banana',
+                dimensionType: 'DATA_ELEMENT',
+            }),
+        ])
     })
 
-    it('filters by both search term and type', () => {
-        const result = filterDimensions(
-            mockDimensions,
-            'element 2',
-            'DATA_ELEMENT'
-        )
-        expect(result).toHaveLength(1)
-        expect(result[0].id).toBe('3')
+    it('filters by both search term and dimension type (AND logic)', () => {
+        const result = filterDimensions(dimensions, 'a', 'DATA_ELEMENT')
+        expect(result).toEqual([
+            createDimension({
+                id: '1',
+                name: 'Apple',
+                dimensionType: 'DATA_ELEMENT',
+            }),
+            createDimension({
+                id: '2',
+                name: 'Banana',
+                dimensionType: 'DATA_ELEMENT',
+            }),
+        ])
     })
 
-    it('returns all dimensions when no filters', () => {
-        const result = filterDimensions(mockDimensions, '', null)
-        expect(result).toHaveLength(3)
+    it('returns empty array when no matches', () => {
+        const result = filterDimensions(dimensions, 'xyz', 'DATA_ELEMENT')
+        expect(result).toEqual([])
     })
 
-    it('is case insensitive', () => {
-        const result = filterDimensions(mockDimensions, 'PERIOD', null)
-        expect(result).toHaveLength(1)
+    it('handles empty dimensions array', () => {
+        const result = filterDimensions([], 'test', 'DATA_ELEMENT')
+        expect(result).toEqual([])
+    })
+
+    it('returns empty array when filter matches no dimensions', () => {
+        const result = filterDimensions(dimensions, '', 'STATUS')
+        expect(result).toEqual([])
+    })
+
+    it('preserves order of filtered dimensions', () => {
+        const result = filterDimensions(dimensions, '', 'DATA_ELEMENT')
+        expect(result.map((d) => d.id)).toEqual(['1', '2'])
     })
 })
 
 describe('computeIsDisabledByFilter', () => {
-    it('returns false when no filter', () => {
-        const baseQuery = {
-            resource: 'dimensions',
-            params: { filter: 'dimensionType:eq:DATA_ELEMENT' },
-        } as SingleQuery
-        expect(computeIsDisabledByFilter(baseQuery, null, [])).toBe(false)
+    it('returns false when filter matches baseQuery dimension type', () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dataElements',
+            params: {
+                filter: [
+                    'dimensionType:eq:DATA_ELEMENT',
+                    'domainType:eq:TRACKER',
+                ],
+            },
+        }
+        const result = computeIsDisabledByFilter(baseQuery, 'DATA_ELEMENT')
+        expect(result).toBe(false)
     })
 
-    it('returns false when fetch is enabled', () => {
-        const baseQuery = {
-            resource: 'dimensions',
-            params: { filter: 'dimensionType:eq:DATA_ELEMENT' },
-        } as SingleQuery
-        expect(computeIsDisabledByFilter(baseQuery, 'DATA_ELEMENT', [])).toBe(
-            false
+    it('returns true when filter does not match baseQuery dimension type', () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dataElements',
+            params: {
+                filter: [
+                    'dimensionType:eq:DATA_ELEMENT',
+                    'domainType:eq:TRACKER',
+                ],
+            },
+        }
+        const result = computeIsDisabledByFilter(baseQuery, 'PROGRAM_INDICATOR')
+        expect(result).toBe(true)
+    })
+
+    it('returns false when filter is null', () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dataElements',
+            params: {
+                filter: [
+                    'dimensionType:eq:DATA_ELEMENT',
+                    'domainType:eq:TRACKER',
+                ],
+            },
+        }
+        const result = computeIsDisabledByFilter(baseQuery, null)
+        expect(result).toBe(false)
+    })
+
+    it('returns false when fixedDimensionTypes contains matching dimension type', () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dataElements',
+            params: {
+                filter: [
+                    'dimensionType:eq:DATA_ELEMENT',
+                    'domainType:eq:TRACKER',
+                ],
+            },
+        }
+        const fixedDimensionTypes: DimensionType[] = [
+            'PROGRAM_INDICATOR',
+            'DATA_ELEMENT',
+        ]
+        const result = computeIsDisabledByFilter(
+            baseQuery,
+            'PROGRAM_INDICATOR',
+            fixedDimensionTypes
         )
+        expect(result).toBe(false)
     })
 
-    it('returns true when fetch not enabled and no matching fixed dimensions', () => {
-        const baseQuery = {
-            resource: 'dimensions',
-            params: { filter: 'dimensionType:eq:DATA_ELEMENT' },
-        } as SingleQuery
-        expect(computeIsDisabledByFilter(baseQuery, 'PERIOD', [])).toBe(true)
-    })
-
-    it('returns false when fetch not enabled but has matching fixed dimension', () => {
-        const baseQuery = {
-            resource: 'dimensions',
-            params: { filter: 'dimensionType:eq:DATA_ELEMENT' },
-        } as SingleQuery
-        expect(computeIsDisabledByFilter(baseQuery, 'PERIOD', ['PERIOD'])).toBe(
-            false
+    it('returns true when filter does not match baseQuery or any fixedDimensionTypes', () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dataElements',
+            params: {
+                filter: [
+                    'dimensionType:eq:DATA_ELEMENT',
+                    'domainType:eq:TRACKER',
+                ],
+            },
+        }
+        const fixedDimensionTypes: DimensionType[] = [
+            'DATA_ELEMENT',
+            'DATA_ELEMENT',
+        ]
+        const result = computeIsDisabledByFilter(
+            baseQuery,
+            'PROGRAM_INDICATOR',
+            fixedDimensionTypes
         )
+        expect(result).toBe(true)
     })
 
-    it('handles fixed-only list without baseQuery', () => {
-        expect(computeIsDisabledByFilter(undefined, 'DATA_ELEMENT', [])).toBe(
-            true
+    it('returns true when fixedDimensionTypes is empty and filter does not match baseQuery', () => {
+        const baseQuery: SingleQuery = {
+            resource: 'dataElements',
+            params: {
+                filter: [
+                    'dimensionType:eq:DATA_ELEMENT',
+                    'domainType:eq:TRACKER',
+                ],
+            },
+        }
+        const result = computeIsDisabledByFilter(
+            baseQuery,
+            'PROGRAM_INDICATOR',
+            []
         )
-        expect(
-            computeIsDisabledByFilter(undefined, 'DATA_ELEMENT', [
-                'DATA_ELEMENT',
-            ])
-        ).toBe(false)
+        expect(result).toBe(true)
+    })
+
+    it('returns true when no baseQuery and no fixedDimensionTypes provided', () => {
+        const result = computeIsDisabledByFilter(undefined, 'DATA_ELEMENT')
+        expect(result).toBe(true)
+    })
+
+    it('returns false when no baseQuery but fixedDimensionTypes match filter', () => {
+        const fixedDimensionTypes: DimensionType[] = ['DATA_ELEMENT']
+        const result = computeIsDisabledByFilter(
+            undefined,
+            'DATA_ELEMENT',
+            fixedDimensionTypes
+        )
+        expect(result).toBe(false)
+    })
+
+    it('handles baseQuery without dimension type filter', () => {
+        const baseQueryWithoutDimensionType: SingleQuery = {
+            resource: 'programIndicators',
+            params: {
+                filter: ['program.id:eq:abc123'],
+            },
+        }
+        const result = computeIsDisabledByFilter(
+            baseQueryWithoutDimensionType,
+            'DATA_ELEMENT'
+        )
+        expect(result).toBe(false)
+    })
+
+    it('returns false when no baseQuery and filter is null (fixed-only list with no filter)', () => {
+        const result = computeIsDisabledByFilter(undefined, null)
+        expect(result).toBe(false)
+    })
+
+    it('returns true when no baseQuery and filter does not match fixedDimensionTypes', () => {
+        const fixedDimensionTypes: DimensionType[] = [
+            'DATA_ELEMENT',
+            'PROGRAM_INDICATOR',
+        ]
+        const result = computeIsDisabledByFilter(
+            undefined,
+            'CATEGORY',
+            fixedDimensionTypes
+        )
+        expect(result).toBe(true)
     })
 })

@@ -87,39 +87,70 @@ describe('getFilterParamsFromBaseQuery', () => {
 })
 
 describe('buildQuery', () => {
-    it('builds query with search term', () => {
-        const baseQuery = {
-            resource: 'dimensions',
-            params: { filter: 'dimensionType:eq:DATA_ELEMENT' },
-        } as SingleQuery
-        const result = buildQuery(baseQuery, 'test', 1)
-        expect(result.params.filter).toContain('dimensionType:eq:DATA_ELEMENT')
-        expect(result.params.filter).toContain('displayName:ilike:test')
+    const baseQuery: SingleQuery = {
+        resource: 'dimensions',
+        params: {
+            filter: ['dimensionType:eq:DATA_ELEMENT'],
+        },
+    }
+
+    it('builds query with page number', () => {
+        const result = buildQuery(baseQuery, '', 1)
         expect(result.params.page).toBe(1)
-    })
-
-    it('builds query without search term', () => {
-        const baseQuery = {
-            resource: 'dimensions',
-            params: { filter: 'dimensionType:eq:DATA_ELEMENT' },
-        } as SingleQuery
-        const result = buildQuery(baseQuery, '', 2)
+        expect(result.resource).toBe('dimensions')
         expect(result.params.filter).toEqual(['dimensionType:eq:DATA_ELEMENT'])
-        expect(result.params.page).toBe(2)
     })
 
-    it('handles array filters', () => {
-        const baseQuery = {
+    it('adds search term to filter', () => {
+        const result = buildQuery(baseQuery, 'test', 1)
+        expect(result.params.filter).toEqual([
+            'dimensionType:eq:DATA_ELEMENT',
+            'displayName:ilike:test',
+        ])
+    })
+
+    it('preserves existing filters when adding search term', () => {
+        const baseQueryWithMultipleFilters: SingleQuery = {
             resource: 'dimensions',
             params: {
                 filter: ['dimensionType:eq:DATA_ELEMENT', 'valueType:eq:TEXT'],
             },
-        } as SingleQuery
-        const result = buildQuery(baseQuery, 'search', 1)
+        }
+        const result = buildQuery(baseQueryWithMultipleFilters, 'search', 2)
         expect(result.params.filter).toEqual([
             'dimensionType:eq:DATA_ELEMENT',
             'valueType:eq:TEXT',
             'displayName:ilike:search',
         ])
+    })
+
+    it('handles query without params', () => {
+        const baseQueryWithoutParams: SingleQuery = {
+            resource: 'dimensions',
+        }
+        const result = buildQuery(baseQueryWithoutParams, '', 1)
+        expect(result.params.page).toBe(1)
+        expect(result.params.filter).toEqual([])
+    })
+
+    it('does not mutate input baseQuery', () => {
+        const filter = baseQuery.params?.filter
+        if (!filter) {
+            throw new Error('Expected filter to be defined')
+        }
+        const originalFilter = Array.isArray(filter) ? [...filter] : [filter]
+        const result = buildQuery(baseQuery, 'test', 1)
+        // Original should remain unchanged
+        expect(baseQuery.params?.filter).toEqual(originalFilter)
+        // Result should have added search term
+        expect(result.params.filter).toEqual([
+            'dimensionType:eq:DATA_ELEMENT',
+            'displayName:ilike:test',
+        ])
+    })
+
+    it('handles empty search term', () => {
+        const result = buildQuery(baseQuery, '', 1)
+        expect(result.params.filter).toEqual(['dimensionType:eq:DATA_ELEMENT'])
     })
 })
