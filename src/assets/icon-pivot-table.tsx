@@ -1,10 +1,10 @@
 import type { FC } from 'react'
 
-type PivotTableIcon = {
+type IconPivotTableProps = {
     style: { width: number; height: number }
 }
 
-export const PivotTableIcon: FC<PivotTableIcon> = ({ style }) => (
+export const IconPivotTable: FC<IconPivotTableProps> = ({ style }) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0,0,48,48" style={style}>
         <g fill="none" fillRule="evenodd">
             <polygon points="0 0 48 0 48 48 0 48" />

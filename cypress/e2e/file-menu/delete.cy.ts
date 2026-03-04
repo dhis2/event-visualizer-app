@@ -2,8 +2,9 @@ import {
     // file-menu
     createTestVisualization,
     deleteVisualization,
-    // table
+    // title-bar
     expectVisTitleToEqual,
+    // table
     expectTableToBeVisible,
     expectStartScreenToBeVisible,
 } from '../../helpers/index'

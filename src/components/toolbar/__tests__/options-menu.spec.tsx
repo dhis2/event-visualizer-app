@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect } from 'vitest'
-import { OptionsMenu } from '../menu-bar/options-menu'
+import { OptionsMenu } from '../actions-bar/options-menu'
 import { HoverMenuBar } from '@dhis2/analytics'
 import { getDefaultOptions } from '@modules/options'
 import { renderWithAppWrapper } from '@test-utils/app-wrapper'

@@ -1,5 +1,6 @@
 import { clearInput, typeInput, clearTextarea, typeTextarea } from './common'
-import { expectVisTitleToEqual, expectTableToBeVisible } from './table'
+import { expectTableToBeVisible } from './table'
+import { expectVisTitleToEqual } from './title-bar'
 
 const ITEM_OPEN = 'file-menu-open'
 const ITEM_SAVE = 'file-menu-save'

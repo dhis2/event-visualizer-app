@@ -1,0 +1,55 @@
+.titleBar {
+    display: flex;
+    flex-grow: 1;
+    min-inline-size: 0;
+    justify-content: flex-start;
+}
+
+.titleBar > .titleContainer {
+    display: flex;
+    flex-grow: 1;
+    min-inline-size: 0;
+}
+
+.cell {
+    display: flex;
+    min-inline-size: 0;
+    align-items: center;
+    background-color: var(--colors-white);
+    padding: 6px;
+    border-radius: 5px;
+}
+
+.title {
+    font-size: 13px;
+    line-height: 1;
+    font-weight: 500;
+    color: var(--colors-grey800);
+    min-inline-size: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.title.loading,
+.title.unsaved {
+    color: var(--colors-grey500);
+    font-style: italic;
+    font-weight: normal;
+}
+
+.suffix {
+    margin-inline-start: 4px;
+}
+
+.suffix.edited {
+    color: var(--colors-grey800);
+    padding: 2px 4px;
+    border-radius: 3px;
+    background-color: var(--colors-grey200);
+    margin-block-start: -1px;
+    font-size: 11px;
+    letter-spacing: -0.2px;
+    font-family: monospace;
+    line-height: normal;
+}

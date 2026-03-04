@@ -393,6 +393,10 @@ describe('MetadataStore', () => {
               "id": "ou",
               "name": "Organisation unit",
             },
+            "pe": {
+              "id": "pe",
+              "name": "Period",
+            },
             "programStatus": {
               "dimensionType": "STATUS",
               "id": "programStatus",
@@ -454,9 +458,9 @@ describe('MetadataStore', () => {
         const snapshot2Keys = new Set(Object.keys(snapshot2))
 
         // Length grows and decreases
-        expect(snapshot0Keys.size).toBe(52)
-        expect(snapshot1Keys.size).toBe(80)
-        expect(snapshot2Keys.size).toBe(66)
+        expect(snapshot0Keys.size).toBe(53)
+        expect(snapshot1Keys.size).toBe(81)
+        expect(snapshot2Keys.size).toBe(67)
 
         // Initial metadata is always included
         expect(snapshot0Keys.isSubsetOf(snapshot1Keys)).toBe(true)

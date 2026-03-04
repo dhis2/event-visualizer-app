@@ -1,0 +1,32 @@
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 8px !important;
+    gap: 2px;
+    background-color: transparent !important;
+    border: none !important;
+    cursor: pointer;
+    color: var(--colors-grey700);
+    fill: var(--colors-grey700);
+    border-radius: 4px;
+    font-size: 13px !important;
+    line-height: 1 !important;
+    letter-spacing: unset !important;
+}
+
+.button:hover:not(:disabled) {
+    color: var(--colors-grey900);
+    background-color: var(--colors-grey200) !important;
+}
+
+.button:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+
+@media screen and (max-width: 960px) {
+    .label {
+        display: none;
+    }
+}

@@ -4,8 +4,9 @@ import {
     deleteVisualization,
     resaveVisualization,
     saveVisualizationAs,
-    // table
+    // title-bar
     expectVisTitleToEqual,
+    // table
     expectTableToBeVisible,
     getTableHeaderCells,
     expectStartScreenToBeVisible,
@@ -120,7 +121,7 @@ describe('save and save as', () => {
 
             // Delete the test visualizations
             deleteVisualization()
-            cy.getByDataTest('title-bar').should('not.exist')
+            cy.getByDataTest('title-text').should('not.exist')
             expectStartScreenToBeVisible()
 
             cy.request({

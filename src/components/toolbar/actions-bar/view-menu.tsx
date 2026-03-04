@@ -1,6 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import type { FC } from 'react'
 import { useCallback } from 'react'
+import classes from './styles/actions-bar.module.css'
 import { ACCESSORY_PANEL_DEFAULT_WIDTH } from '@constants/panels'
 import {
     HoverMenuDropdown,
@@ -58,7 +59,10 @@ export const ViewMenu: FC = () => {
         : i18n.t('Show interpretations and details')
 
     return (
-        <HoverMenuDropdown label={i18n.t('View')}>
+        <HoverMenuDropdown
+            label={i18n.t('View')}
+            className={classes.menuDropdown}
+        >
             <HoverMenuList>
                 <HoverMenuListItem
                     label={toggleLayoutPanelText}

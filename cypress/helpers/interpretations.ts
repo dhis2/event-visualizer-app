@@ -1,8 +1,5 @@
 export const expectInterpretationsButtonToBeEnabled = () =>
-    cy
-        .getByDataTest('dhis2-analytics-toolbar')
-        .contains('Interpretations and details')
-        .should('be.enabled')
+    cy.getByDataTest('interpretations-and-details-toggler').should('be.enabled')
 
 export const expectInterpretationFormToBeVisible = () =>
     cy
