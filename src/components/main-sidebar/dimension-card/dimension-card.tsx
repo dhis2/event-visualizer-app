@@ -4,9 +4,9 @@ import { DimensionCardHeader } from './dimension-card-header'
 import classes from './styles/dimension-card.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
-    addDimensionCardCollapseState,
+    addDimensionCardCollapsedState,
     isDimensionCardCollapsed,
-    removeDimensionCardCollapseState,
+    removeDimensionCardCollapsedState,
     toggleDimensionCardIsCollapsed,
 } from '@store/dimensions-selection-slice'
 import type { DimensionCardKey } from '@types'
@@ -38,9 +38,9 @@ export const DimensionCard: FC<DimensionCardProps> = ({
     }, [dispatch, dimensionCardKey])
 
     useEffect(() => {
-        dispatch(addDimensionCardCollapseState(dimensionCardKey))
+        dispatch(addDimensionCardCollapsedState(dimensionCardKey))
         return () => {
-            dispatch(removeDimensionCardCollapseState(dimensionCardKey))
+            dispatch(removeDimensionCardCollapsedState(dimensionCardKey))
         }
     }, [dispatch, dimensionCardKey])
 

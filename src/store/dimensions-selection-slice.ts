@@ -8,7 +8,7 @@ import type {
     DimensionListKey,
 } from '@types'
 
-type DimensionCardCollapseStates = Partial<Record<DimensionCardKey, boolean>>
+type DimensionCardCollapsedStates = Partial<Record<DimensionCardKey, boolean>>
 type DimensionListLoadingState = {
     isLoading: boolean
     error?: EngineError
@@ -22,7 +22,7 @@ export interface DimensionSelectionState {
     dataSourceId: string | null
     searchTerm: string
     filter: DataSourceFilter | null
-    dimensionCardCollapseStates: DimensionCardCollapseStates
+    dimensionCardCollapsedStates: DimensionCardCollapsedStates
     dimensionListLoadingStates: DimensionListLoadingStates
     multiSelectedDimensionIds: Array<string>
 }
@@ -31,7 +31,7 @@ export const initialState: DimensionSelectionState = {
     dataSourceId: null,
     searchTerm: '',
     filter: null,
-    dimensionCardCollapseStates: {},
+    dimensionCardCollapsedStates: {},
     dimensionListLoadingStates: {},
     multiSelectedDimensionIds: [],
 }
@@ -41,7 +41,7 @@ export const initialListLoadingState: DimensionListLoadingState = {
     error: undefined,
 }
 
-const isValidCardCollapseState = (state: unknown): state is boolean =>
+const isValidCardCollapsedState = (state: unknown): state is boolean =>
     typeof state === 'boolean'
 
 const isValidListLoadingState = (
@@ -76,19 +76,19 @@ export const dimensionSelectionSlice = createSlice({
         setFilter: (state, action: PayloadAction<DataSourceFilter>) => {
             state.filter = action.payload
         },
-        clearDimensionCardCollapseStates: (state) => {
-            state.dimensionCardCollapseStates =
-                initialState.dimensionCardCollapseStates
+        clearDimensionCardCollapsedStates: (state) => {
+            state.dimensionCardCollapsedStates =
+                initialState.dimensionCardCollapsedStates
         },
         clearDimensionListLoadingStates: (state) => {
             state.dimensionListLoadingStates =
                 initialState.dimensionListLoadingStates
         },
-        removeDimensionCardCollapseState: (
+        removeDimensionCardCollapsedState: (
             state,
             action: PayloadAction<DimensionCardKey>
         ) => {
-            delete state.dimensionCardCollapseStates[action.payload]
+            delete state.dimensionCardCollapsedStates[action.payload]
         },
         removeDimensionListLoadingState: (
             state,
@@ -96,11 +96,11 @@ export const dimensionSelectionSlice = createSlice({
         ) => {
             delete state.dimensionListLoadingStates[action.payload]
         },
-        addDimensionCardCollapseState: (
+        addDimensionCardCollapsedState: (
             state,
             action: PayloadAction<DimensionCardKey>
         ) => {
-            state.dimensionCardCollapseStates[action.payload] = false
+            state.dimensionCardCollapsedStates[action.payload] = false
         },
         addDimensionListLoadingState: (
             state,
@@ -111,31 +111,31 @@ export const dimensionSelectionSlice = createSlice({
         },
         toggleAllDimensionCardsIsCollapsed: (state) => {
             const dimensionCardCollapsedStatesKeys = Object.keys(
-                state.dimensionCardCollapseStates
+                state.dimensionCardCollapsedStates
             )
             // When there are no groups, they cannot be collapsed
             if (dimensionCardCollapsedStatesKeys.length === 0) {
                 return
             }
             const areAllCollapsed = dimensionCardCollapsedStatesKeys.every(
-                (key) => state.dimensionCardCollapseStates[key]
+                (key) => state.dimensionCardCollapsedStates[key]
             )
             dimensionCardCollapsedStatesKeys.forEach((key) => {
-                state.dimensionCardCollapseStates[key] = !areAllCollapsed
+                state.dimensionCardCollapsedStates[key] = !areAllCollapsed
             })
         },
         toggleDimensionCardIsCollapsed: (
             state,
             action: PayloadAction<DimensionCardKey>
         ) => {
-            const collapseState =
-                state.dimensionCardCollapseStates[action.payload]
-            if (!isValidCardCollapseState(collapseState)) {
+            const collapsedState =
+                state.dimensionCardCollapsedStates[action.payload]
+            if (!isValidCardCollapsedState(collapsedState)) {
                 throw new Error(
-                    `Card collapse state for "${action.payload}" is not initialized. Call addDimensionCardCollapseState first.`
+                    `Card collapse state for "${action.payload}" is not initialized. Call addDimensionCardCollapsedState first.`
                 )
             }
-            state.dimensionCardCollapseStates[action.payload] = !collapseState
+            state.dimensionCardCollapsedStates[action.payload] = !collapsedState
         },
         setDimensionListLoadStart: (
             state,
@@ -205,9 +205,9 @@ export const dimensionSelectionSlice = createSlice({
         getFilter: (state) => state.filter,
         areAllDimensionCardsCollapsed: createSelector(
             (state: DimensionSelectionState) =>
-                state.dimensionCardCollapseStates,
-            (dimensionCardCollapseStates) => {
-                const values = Object.values(dimensionCardCollapseStates)
+                state.dimensionCardCollapsedStates,
+            (dimensionCardCollapsedStates) => {
+                const values = Object.values(dimensionCardCollapsedStates)
                 // When there are no cards, they cannot be collapsed
                 if (values.length === 0) {
                     return false
@@ -244,7 +244,7 @@ export const dimensionSelectionSlice = createSlice({
                 )
         ),
         isDimensionCardCollapsed: (state, key: DimensionCardKey) =>
-            !!state.dimensionCardCollapseStates[key],
+            !!state.dimensionCardCollapsedStates[key],
         isDimensionListLoading: (state, key?: DimensionListKey) =>
             key
                 ? state.dimensionListLoadingStates[key]?.isLoading ?? false
@@ -264,11 +264,11 @@ export const {
     setSearchTerm,
     clearFilter,
     setFilter,
-    clearDimensionCardCollapseStates,
+    clearDimensionCardCollapsedStates,
     clearDimensionListLoadingStates,
-    removeDimensionCardCollapseState,
+    removeDimensionCardCollapsedState,
     removeDimensionListLoadingState,
-    addDimensionCardCollapseState,
+    addDimensionCardCollapsedState,
     addDimensionListLoadingState,
     toggleAllDimensionCardsIsCollapsed,
     toggleDimensionCardIsCollapsed,

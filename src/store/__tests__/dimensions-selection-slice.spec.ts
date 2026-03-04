@@ -11,11 +11,11 @@ import {
     clearFilter,
     setFilter,
     toggleAllDimensionCardsIsCollapsed,
-    clearDimensionCardCollapseStates,
+    clearDimensionCardCollapsedStates,
     clearDimensionListLoadingStates,
-    removeDimensionCardCollapseState,
+    removeDimensionCardCollapsedState,
     removeDimensionListLoadingState,
-    addDimensionCardCollapseState,
+    addDimensionCardCollapsedState,
     addDimensionListLoadingState,
     toggleDimensionCardIsCollapsed,
     setDimensionListLoadStart,
@@ -108,7 +108,7 @@ describe('dimensionSelectionSlice', () => {
         it('should toggle all collapsed when groups exist', () => {
             const prevState: DimensionSelectionState = {
                 ...initialState,
-                dimensionCardCollapseStates: {
+                dimensionCardCollapsedStates: {
                     metadata: false,
                     other: false,
                 },
@@ -116,19 +116,19 @@ describe('dimensionSelectionSlice', () => {
 
             // First toggle: should collapse all
             let state = reducer(prevState, toggleAllDimensionCardsIsCollapsed())
-            expect(state.dimensionCardCollapseStates.metadata).toBe(true)
-            expect(state.dimensionCardCollapseStates.other).toBe(true)
+            expect(state.dimensionCardCollapsedStates.metadata).toBe(true)
+            expect(state.dimensionCardCollapsedStates.other).toBe(true)
 
             // Second toggle: should expand all
             state = reducer(state, toggleAllDimensionCardsIsCollapsed())
-            expect(state.dimensionCardCollapseStates.metadata).toBe(false)
-            expect(state.dimensionCardCollapseStates.other).toBe(false)
+            expect(state.dimensionCardCollapsedStates.metadata).toBe(false)
+            expect(state.dimensionCardCollapsedStates.other).toBe(false)
         })
 
         it('should handle toggle all collapsed when some groups are collapsed', () => {
             const prevState: DimensionSelectionState = {
                 ...initialState,
-                dimensionCardCollapseStates: {
+                dimensionCardCollapsedStates: {
                     metadata: true,
                     other: false,
                 },
@@ -139,8 +139,8 @@ describe('dimensionSelectionSlice', () => {
                 prevState,
                 toggleAllDimensionCardsIsCollapsed()
             )
-            expect(state.dimensionCardCollapseStates.metadata).toBe(true)
-            expect(state.dimensionCardCollapseStates.other).toBe(true)
+            expect(state.dimensionCardCollapsedStates.metadata).toBe(true)
+            expect(state.dimensionCardCollapsedStates.other).toBe(true)
         })
 
         it('should do nothing when toggling all collapsed with no groups', () => {
@@ -148,18 +148,21 @@ describe('dimensionSelectionSlice', () => {
                 initialState,
                 toggleAllDimensionCardsIsCollapsed()
             )
-            expect(state.dimensionCardCollapseStates).toEqual({})
+            expect(state.dimensionCardCollapsedStates).toEqual({})
         })
 
         it('should clear dimension card collapse states', () => {
             const prevState: DimensionSelectionState = {
                 ...initialState,
-                dimensionCardCollapseStates: {
+                dimensionCardCollapsedStates: {
                     metadata: true,
                 },
             }
-            const state = reducer(prevState, clearDimensionCardCollapseStates())
-            expect(state.dimensionCardCollapseStates).toEqual({})
+            const state = reducer(
+                prevState,
+                clearDimensionCardCollapsedStates()
+            )
+            expect(state.dimensionCardCollapsedStates).toEqual({})
         })
 
         it('should clear dimension list loading states', () => {
@@ -176,16 +179,16 @@ describe('dimensionSelectionSlice', () => {
         it('should remove dimension card collapse state', () => {
             const prevState: DimensionSelectionState = {
                 ...initialState,
-                dimensionCardCollapseStates: {
+                dimensionCardCollapsedStates: {
                     metadata: false,
                     other: true,
                 },
             }
             const state = reducer(
                 prevState,
-                removeDimensionCardCollapseState('metadata')
+                removeDimensionCardCollapsedState('metadata')
             )
-            expect(state.dimensionCardCollapseStates).toEqual({
+            expect(state.dimensionCardCollapsedStates).toEqual({
                 other: true,
             })
         })
@@ -213,9 +216,9 @@ describe('dimensionSelectionSlice', () => {
         it('should add dimension card collapse state with initial value', () => {
             const state = reducer(
                 initialState,
-                addDimensionCardCollapseState('metadata')
+                addDimensionCardCollapsedState('metadata')
             )
-            expect(state.dimensionCardCollapseStates).toEqual({
+            expect(state.dimensionCardCollapsedStates).toEqual({
                 metadata: false,
             })
         })
@@ -233,7 +236,7 @@ describe('dimensionSelectionSlice', () => {
         it('should toggle dimension card collapsed state', () => {
             const prevState: DimensionSelectionState = {
                 ...initialState,
-                dimensionCardCollapseStates: {
+                dimensionCardCollapsedStates: {
                     metadata: false,
                 },
             }
@@ -243,11 +246,11 @@ describe('dimensionSelectionSlice', () => {
                 prevState,
                 toggleDimensionCardIsCollapsed('metadata')
             )
-            expect(state.dimensionCardCollapseStates.metadata).toBe(true)
+            expect(state.dimensionCardCollapsedStates.metadata).toBe(true)
 
             // Second toggle: true -> false
             state = reducer(state, toggleDimensionCardIsCollapsed('metadata'))
-            expect(state.dimensionCardCollapseStates.metadata).toBe(false)
+            expect(state.dimensionCardCollapsedStates.metadata).toBe(false)
         })
 
         it('should throw error when toggling non-existent dimension card', () => {
@@ -414,7 +417,7 @@ describe('dimensionSelectionSlice', () => {
 
         it('should get are all dimension cards collapsed when all are collapsed', () => {
             const state = createRootState({
-                dimensionCardCollapseStates: {
+                dimensionCardCollapsedStates: {
                     metadata: true,
                     other: true,
                 },
@@ -424,7 +427,7 @@ describe('dimensionSelectionSlice', () => {
 
         it('should get are all dimension cards collapsed when some are not collapsed', () => {
             const state = createRootState({
-                dimensionCardCollapseStates: {
+                dimensionCardCollapsedStates: {
                     metadata: true,
                     other: false,
                 },
@@ -434,7 +437,7 @@ describe('dimensionSelectionSlice', () => {
 
         it('should get are all dimension cards collapsed when none exist', () => {
             const state = createRootState({
-                dimensionCardCollapseStates: {},
+                dimensionCardCollapsedStates: {},
             })
             expect(areAllDimensionCardsCollapsed(state)).toBe(false)
         })
@@ -499,7 +502,7 @@ describe('dimensionSelectionSlice', () => {
 
         it('should check if dimension card is collapsed', () => {
             const state = createRootState({
-                dimensionCardCollapseStates: {
+                dimensionCardCollapsedStates: {
                     metadata: true,
                     other: false,
                 },
