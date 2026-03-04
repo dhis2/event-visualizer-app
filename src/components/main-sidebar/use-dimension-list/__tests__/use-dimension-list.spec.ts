@@ -604,7 +604,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         // This test passes if no warnings/errors are thrown
     })
 
-    it('isLoadingMore delays hiding loading UI for 300ms after fetch completes', async () => {
+    it('isLoadingMore shows after 250ms and stays visible for minimum 400ms total', async () => {
         // Setup API response for page 1 (hasMore true)
         mockApiResponse = {
             dimensions: [mockApiDimension],
@@ -621,8 +621,8 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         )
 
         // Setup API response for page 2 with SLOW response (500ms)
-        // This ensures fetch completes AFTER the 300ms debounce delay
-        // so loading UI will show, then we test it stays visible for 300ms after fetch completes
+        // This ensures fetch completes AFTER the 250ms SHOW_DELAY
+        // so loading UI will show at 250ms, then we test it stays visible for minimum 400ms total
         mockApiDelay = 500
         const secondDimension = {
             ...mockApiDimension,
@@ -639,34 +639,32 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
             result.current.loadMore()
         })
 
-        // Immediately after loadMore, isLoadingMore should be false (delay is active)
+        // Immediately after loadMore, isLoadingMore should be false (SHOW_DELAY is active)
         expect(result.current.isLoadingMore).toBe(false)
 
-        // Wait 350ms (just past the 300ms delay, fetch still ongoing at 500ms)
-        await act(() => vi.advanceTimersByTimeAsync(350))
+        // Wait 249ms (just before SHOW_DELAY of 250ms)
+        await act(() => vi.advanceTimersByTimeAsync(249))
+        expect(result.current.isLoadingMore).toBe(false)
 
-        // isLoadingMore should now be true (300ms delay expired, fetch still ongoing)
+        // Wait 1ms more (total 250ms, SHOW_DELAY expires)
+        await act(() => vi.advanceTimersByTimeAsync(1))
         expect(result.current.isLoadingMore).toBe(true)
 
-        // Wait another 200ms (total 550ms, fetch completed at 500ms)
-        // At 550ms: fetch completed 50ms ago, but loading UI should still be visible
-        // because debounce delays hiding for 300ms after isFetching becomes false
+        // Wait another 200ms (total 450ms, fetch still ongoing at 500ms)
         await act(() => vi.advanceTimersByTimeAsync(200))
         expect(result.current.isLoadingMore).toBe(true)
 
-        // Wait another 100ms (total 650ms, 150ms after fetch completed)
-        // Loading UI should still be visible (total 250ms since fetch completed, < 300ms)
-        await act(() => vi.advanceTimersByTimeAsync(100))
+        // Wait another 50ms (total 500ms, fetch completes)
+        await act(() => vi.advanceTimersByTimeAsync(50))
+        // Fetch completed, but loading started at 250ms, elapsed = 250ms
+        // MIN_LOAD_DURATION = 400ms, so need to wait 150ms more
+
+        // Wait 149ms (total 649ms, 149ms after fetch completed)
+        await act(() => vi.advanceTimersByTimeAsync(149))
         expect(result.current.isLoadingMore).toBe(true)
 
-        // Wait another 100ms (total 750ms, 250ms after fetch completed)
-        // Loading UI should still be visible (total 250ms since fetch completed, < 300ms)
-        await act(() => vi.advanceTimersByTimeAsync(100))
-        expect(result.current.isLoadingMore).toBe(true)
-
-        // Wait another 100ms (total 850ms, 350ms after fetch completed)
-        // Loading UI should now be hidden (> 300ms since fetch completed)
-        await act(() => vi.advanceTimersByTimeAsync(100))
+        // Wait 1ms more (total 650ms, 150ms after fetch completed, total loading time = 400ms)
+        await act(() => vi.advanceTimersByTimeAsync(1))
         expect(result.current.isLoadingMore).toBe(false)
 
         // Verify dimensions were loaded
@@ -1570,23 +1568,28 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
             result.current.loadMore()
         })
 
-        // Wait for loadMore to start (after 300ms delay)
-        await act(() => vi.advanceTimersByTimeAsync(350))
+        // Wait 249ms (just before SHOW_DELAY of 250ms)
+        await act(() => vi.advanceTimersByTimeAsync(249))
+        expect(result.current.isLoadingMore).toBe(false)
 
-        // Should be loading more after debounce delay
+        // Wait 1ms more (total 250ms, SHOW_DELAY expires)
+        await act(() => vi.advanceTimersByTimeAsync(1))
         expect(result.current.isLoadingMore).toBe(true)
 
-        // Wait for loadMore to complete (API delay)
-        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
+        // Wait for loadMore to complete (API delay - 600ms total from start)
+        // At 600ms: fetch completes, loading started at 250ms, elapsed = 350ms
+        // MIN_LOAD_DURATION = 400ms, so need to wait 50ms more
+        await act(() => vi.advanceTimersByTimeAsync(350)) // Total 600ms from start
 
-        // Still loading (trailing debounce keeps it visible)
+        // Still loading (needs to complete MIN_LOAD_DURATION of 400ms total)
         expect(result.current.isLoadingMore).toBe(true)
 
-        // Wait for trailing debounce (300ms)
-        await act(() => vi.advanceTimersByTimeAsync(300))
+        // Wait 49ms (total 649ms, 49ms after fetch completed)
+        await act(() => vi.advanceTimersByTimeAsync(49))
+        expect(result.current.isLoadingMore).toBe(true)
 
-        // Now loading should be false
-        expect(result.current.isLoading).toBe(false)
+        // Wait 1ms more (total 650ms, 50ms after fetch completed, total loading time = 400ms)
+        await act(() => vi.advanceTimersByTimeAsync(1))
         expect(result.current.isLoadingMore).toBe(false)
 
         // Verify both pages have search filter and data accumulates
@@ -1774,23 +1777,28 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
             result.current.loadMore()
         })
 
-        // Wait for loadMore to start (after 300ms delay)
-        await act(() => vi.advanceTimersByTimeAsync(350))
+        // Wait 249ms (just before SHOW_DELAY of 250ms)
+        await act(() => vi.advanceTimersByTimeAsync(249))
+        expect(result.current.isLoadingMore).toBe(false)
 
-        // Should be loading more after debounce delay
+        // Wait 1ms more (total 250ms, SHOW_DELAY expires)
+        await act(() => vi.advanceTimersByTimeAsync(1))
         expect(result.current.isLoadingMore).toBe(true)
 
-        // Wait for loadMore to complete (API delay)
-        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
+        // Wait for loadMore to complete (API delay - 600ms total from start)
+        // At 600ms: fetch completes, loading started at 250ms, elapsed = 350ms
+        // MIN_LOAD_DURATION = 400ms, so need to wait 50ms more
+        await act(() => vi.advanceTimersByTimeAsync(350)) // Total 600ms from start
 
-        // Still loading (trailing debounce keeps it visible)
+        // Still loading (needs to complete MIN_LOAD_DURATION of 400ms total)
         expect(result.current.isLoadingMore).toBe(true)
 
-        // Wait for trailing debounce (300ms)
-        await act(() => vi.advanceTimersByTimeAsync(300))
+        // Wait 49ms (total 649ms, 49ms after fetch completed)
+        await act(() => vi.advanceTimersByTimeAsync(49))
+        expect(result.current.isLoadingMore).toBe(true)
 
-        // Now loading should be false
-        expect(result.current.isLoading).toBe(false)
+        // Wait 1ms more (total 650ms, 50ms after fetch completed, total loading time = 400ms)
+        await act(() => vi.advanceTimersByTimeAsync(1))
         expect(result.current.isLoadingMore).toBe(false)
 
         expect(result.current.dimensions).toEqual([firstSearch1, firstSearch2])
@@ -1872,21 +1880,29 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
             result.current.loadMore()
         })
 
-        // Wait for delay to expire and loading to show (300ms debounce)
-        await act(() => vi.advanceTimersByTimeAsync(350))
+        // Wait 249ms (just before SHOW_DELAY of 250ms)
+        await act(() => vi.advanceTimersByTimeAsync(249))
+        expect(result.current.isLoadingMore).toBe(false)
 
+        // Wait 1ms more (total 250ms, SHOW_DELAY expires)
+        await act(() => vi.advanceTimersByTimeAsync(1))
         expect(result.current.isLoading).toBe(false)
         expect(result.current.isLoadingMore).toBe(true)
 
-        // Wait for API to complete
-        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
+        // Wait for API to complete (600ms total from start)
+        // At 600ms: fetch completes, loading started at 250ms, elapsed = 350ms
+        // MIN_LOAD_DURATION = 400ms, so need to wait 50ms more
+        await act(() => vi.advanceTimersByTimeAsync(350)) // Total 600ms from start
 
-        // Still loading (trailing debounce)
+        // Still loading (needs to complete MIN_LOAD_DURATION of 400ms total)
         expect(result.current.isLoadingMore).toBe(true)
 
-        // Wait for trailing debounce
-        await act(() => vi.advanceTimersByTimeAsync(300))
+        // Wait 49ms (total 649ms, 49ms after fetch completed)
+        await act(() => vi.advanceTimersByTimeAsync(49))
+        expect(result.current.isLoadingMore).toBe(true)
 
+        // Wait 1ms more (total 650ms, 50ms after fetch completed, total loading time = 400ms)
+        await act(() => vi.advanceTimersByTimeAsync(1))
         expect(result.current.isLoading).toBe(false)
         expect(result.current.isLoadingMore).toBe(false)
         expect(result.current.dimensions).toEqual([

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useDebounceValue, useIsMounted } from 'usehooks-ts'
+import { useIsMounted } from 'usehooks-ts'
 import { defaultTransformer, type Transformer } from './default-transformer'
 import {
     computeIsDisabledByFilter,
@@ -7,6 +7,7 @@ import {
     isFetchEnabledByFilter,
 } from './filter-helpers'
 import { buildQuery } from './query-helpers'
+import { useIsDelayedLoadingMore } from './use-delayed-is-loading-more'
 import { useListFetchState } from './use-list-fetch-state'
 import { api } from '@api/api'
 import { parseEngineError, type EngineError } from '@api/parse-engine-error'
@@ -58,6 +59,11 @@ export const useDimensionList = ({
     const { fetchState, onFetchStart, onFetchSuccess, onFetchError } =
         useListFetchState()
     const isMounted = useIsMounted()
+    const {
+        isDelayedLoadingMore,
+        startDelayedLoadingMore,
+        completeDelayedLoadingMore,
+    } = useIsDelayedLoadingMore()
     const isInAsyncMode = useMemo(
         () =>
             Boolean(
@@ -95,11 +101,6 @@ export const useDimensionList = ({
         return computeIsDisabledByFilter(baseQuery, filter, fixedDimensionTypes)
     }, [baseQuery, filter, fixedDimensions])
 
-    const [debouncedIsLoadingMore] = useDebounceValue(
-        fetchState.isLoadingMore,
-        300
-    )
-
     // Stable fetch function with access to latest values
     const performFetch = useStableCallback(async (page: number) => {
         if (!isInAsyncMode || fetchState.isFetching) {
@@ -130,7 +131,7 @@ export const useDimensionList = ({
             }
 
             const { dimensions, nextPage } = transformer(rawResponseData)
-
+            await completeDelayedLoadingMore()
             onFetchSuccess({
                 dimensions,
                 currentPage: page,
@@ -165,8 +166,14 @@ export const useDimensionList = ({
     const loadMore = useCallback(() => {
         if (fetchState.nextPage !== null && !fetchState.isFetching) {
             performFetch(fetchState.nextPage)
+            startDelayedLoadingMore()
         }
-    }, [fetchState.nextPage, fetchState.isFetching, performFetch])
+    }, [
+        fetchState.nextPage,
+        fetchState.isFetching,
+        performFetch,
+        startDelayedLoadingMore,
+    ])
 
     // Register loading state in Redux on mount
     useEffect(() => {
@@ -188,7 +195,7 @@ export const useDimensionList = ({
         () => ({
             dimensions,
             isLoading: fetchState.isLoading,
-            isLoadingMore: debouncedIsLoadingMore,
+            isLoadingMore: isDelayedLoadingMore,
             error: fetchState.error,
             hasMore: isInAsyncMode && fetchState.nextPage !== null,
             hasNoData: fixedDimensions.length === 0 && fetchState.hasNoData,
@@ -202,7 +209,7 @@ export const useDimensionList = ({
             fetchState.nextPage,
             fetchState.error,
             fetchState.hasNoData,
-            debouncedIsLoadingMore,
+            isDelayedLoadingMore,
             fixedDimensions.length,
             loadMore,
             isDisabledByFilter,
