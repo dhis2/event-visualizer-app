@@ -75,7 +75,7 @@ export const createDimensionBaseQuery = ({
         fields: `id,${nameProp}~rename(name),dimensionType,valueType,optionSet`,
         filter: `dimensionType:eq:${dimensionType}`,
         order: `${nameProp}:asc`,
-        paging: false,
+        paging: true,
         ...additionalParams,
     },
 })
