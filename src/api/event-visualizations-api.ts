@@ -4,7 +4,7 @@ import { parseEngineError } from '@api/parse-engine-error'
 import { preparePayloadForSave } from '@dhis2/analytics'
 import { parseCondition } from '@modules/conditions'
 import {
-    getDimensionFields as getDimensionFieldsFromQuery,
+    getDimensionFields,
     getProgramFields,
     getProgramStageFields,
     getTrackedEntityTypeFields,
@@ -27,9 +27,9 @@ export const getVisualizationQueryFields = (
     displayNameProp: CurrentUser['settings']['displayNameProperty']
 ): string[] => [
     '*',
-    `columns[${getDimensionFieldsFromQuery(displayNameProp)}]`,
-    `rows[${getDimensionFieldsFromQuery(displayNameProp)}]`,
-    `filters[${getDimensionFieldsFromQuery(displayNameProp)}]`,
+    `columns[${getDimensionFields(displayNameProp)}]`,
+    `rows[${getDimensionFields(displayNameProp)}]`,
+    `filters[${getDimensionFields(displayNameProp)}]`,
     `program[${getProgramFields(displayNameProp)}]`,
     `programStage[${getProgramStageFields(displayNameProp)}]`,
     `programDimensions[${getProgramFields(displayNameProp)}]`,
