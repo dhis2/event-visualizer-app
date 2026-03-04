@@ -6,6 +6,8 @@ import {
 } from '@components/main-sidebar/dimension-card'
 import { getEventFixedDimensions } from '@components/main-sidebar/get-event-fixed-dimensions'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
+import { getDataElementQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
+import { useCurrentUser } from '@hooks'
 import type { DataSourceProgramWithoutRegistration, ProgramStage } from '@types'
 
 type CardEventProps = {
@@ -14,6 +16,9 @@ type CardEventProps = {
 const CARD_AND_LIST_KEY = 'event-without-registration'
 
 export const CardEvent: FC<CardEventProps> = ({ program }: CardEventProps) => {
+    const {
+        settings: { displayNameProperty },
+    } = useCurrentUser()
     const programStage = useMemo<ProgramStage>(() => {
         const programStage = program.programStages?.[0]
 
@@ -28,23 +33,8 @@ export const CardEvent: FC<CardEventProps> = ({ program }: CardEventProps) => {
         [program, programStage]
     )
     const baseQuery = useMemo(
-        () => ({
-            resource: 'analytics/events/query/dimensions',
-            params: {
-                pageSize: 10,
-                fields: [
-                    'id',
-                    'dimensionType',
-                    'valueType',
-                    'optionSet',
-                    'displayName~rename(name)',
-                ],
-                filter: 'dimensionType:eq:DATA_ELEMENT',
-                order: 'displayName:asc',
-                programStageId: programStage.id,
-            },
-        }),
-        [programStage]
+        () => getDataElementQuery(programStage.id, displayNameProperty),
+        [programStage.id, displayNameProperty]
     )
     const listProps = useDimensionList({
         dimensionListKey: CARD_AND_LIST_KEY,

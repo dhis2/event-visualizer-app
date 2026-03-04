@@ -5,6 +5,8 @@ import {
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
+import { getProgramIndicatorQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
+import { useCurrentUser } from '@hooks'
 import type { DataSourceProgramWithRegistration } from '@types'
 
 type CardProgramIndicatorsProps = {
@@ -16,24 +18,12 @@ const CARD_AND_LIST_KEY = 'program-indicators'
 export const CardProgramIndicators = ({
     program,
 }: CardProgramIndicatorsProps) => {
+    const {
+        settings: { displayNameProperty },
+    } = useCurrentUser()
     const baseQuery = useMemo(
-        () => ({
-            resource: 'analytics/enrollments/query/dimensions',
-            params: {
-                pageSize: 10,
-                fields: [
-                    'id',
-                    'dimensionType',
-                    'valueType',
-                    'optionSet',
-                    'displayName~rename(name)',
-                ],
-                filter: 'dimensionType:eq:PROGRAM_INDICATOR',
-                order: 'displayName:asc',
-                programId: program.id,
-            },
-        }),
-        [program]
+        () => getProgramIndicatorQuery(program.id, displayNameProperty),
+        [program.id, displayNameProperty]
     )
     const listProps = useDimensionList({
         dimensionListKey: CARD_AND_LIST_KEY,

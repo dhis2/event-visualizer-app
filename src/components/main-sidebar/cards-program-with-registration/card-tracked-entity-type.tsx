@@ -5,6 +5,8 @@ import {
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
+import { getProgramAttributeQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
+import { useCurrentUser } from '@hooks'
 import type {
     DataSourceProgramWithRegistration,
     DimensionMetadataItem,
@@ -36,6 +38,9 @@ const getFixedDimensions = (
 export const CardTrackedEntityType = ({
     program,
 }: CardTrackedEntityTypeProps) => {
+    const {
+        settings: { displayNameProperty },
+    } = useCurrentUser()
     const title = i18n.t('{{name}} registration', {
         name:
             program.displayTrackedEntityAttributeLabel ??
@@ -46,24 +51,13 @@ export const CardTrackedEntityType = ({
         [program]
     )
     const baseQuery = useMemo(
-        () => ({
-            resource: 'analytics/trackedEntities/query/dimensions',
-            params: {
-                pageSize: 10,
-                fields: [
-                    'id',
-                    'dimensionType',
-                    'valueType',
-                    'optionSet',
-                    'displayName~rename(name)',
-                ],
-                filter: 'dimensionType:eq:PROGRAM_ATTRIBUTE',
-                order: 'displayName:asc',
-                trackedEntityType: program.trackedEntityType.id,
-                program: program.id,
-            },
-        }),
-        [program]
+        () =>
+            getProgramAttributeQuery(
+                program.id,
+                program.trackedEntityType.id,
+                displayNameProperty
+            ),
+        [program.id, program.trackedEntityType.id, displayNameProperty]
     )
     const listProps = useDimensionList({
         dimensionListKey: CARD_AND_LIST_KEY,

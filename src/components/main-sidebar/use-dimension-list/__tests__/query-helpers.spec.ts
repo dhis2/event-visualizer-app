@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest'
-import { buildQuery, getFilterParamsFromBaseQuery } from '../query-helpers'
+import {
+    buildQuery,
+    getFilterParamsFromBaseQuery,
+    createDimensionBaseQuery,
+    getProgramIndicatorQuery,
+    getProgramAttributeQuery,
+    getDataElementQuery,
+    getDataElementQueryTemplate,
+    getOtherDimensionsQuery,
+} from '../query-helpers'
 import type { SingleQuery } from '@types'
 
 describe('getFilterParamsFromBaseQuery', () => {
@@ -152,5 +161,214 @@ describe('buildQuery', () => {
     it('handles empty search term', () => {
         const result = buildQuery(baseQuery, '', 1)
         expect(result.params.filter).toEqual(['dimensionType:eq:DATA_ELEMENT'])
+    })
+})
+
+describe('dimension query helpers', () => {
+    describe('createDimensionBaseQuery', () => {
+        it('creates basic dimension query with displayName', () => {
+            const result = createDimensionBaseQuery({
+                resource: 'test/resource',
+                dimensionType: 'TEST_TYPE',
+                nameProp: 'displayName',
+            })
+
+            expect(result).toMatchInlineSnapshot(`
+              {
+                "params": {
+                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet",
+                  "filter": "dimensionType:eq:TEST_TYPE",
+                  "order": "displayName:asc",
+                  "pageSize": 10,
+                  "paging": false,
+                },
+                "resource": "test/resource",
+              }
+            `)
+        })
+
+        it('creates basic dimension query with displayShortName', () => {
+            const result = createDimensionBaseQuery({
+                resource: 'test/resource',
+                dimensionType: 'TEST_TYPE',
+                nameProp: 'displayShortName',
+            })
+
+            expect(result).toMatchInlineSnapshot(`
+              {
+                "params": {
+                  "fields": "id,displayShortName~rename(name),dimensionType,valueType,optionSet",
+                  "filter": "dimensionType:eq:TEST_TYPE",
+                  "order": "displayShortName:asc",
+                  "pageSize": 10,
+                  "paging": false,
+                },
+                "resource": "test/resource",
+              }
+            `)
+        })
+
+        it('includes additional parameters', () => {
+            const result = createDimensionBaseQuery({
+                resource: 'test/resource',
+                dimensionType: 'TEST_TYPE',
+                nameProp: 'displayName',
+                additionalParams: { customParam: 'value', anotherParam: 123 },
+            })
+
+            expect(result).toMatchInlineSnapshot(`
+              {
+                "params": {
+                  "anotherParam": 123,
+                  "customParam": "value",
+                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet",
+                  "filter": "dimensionType:eq:TEST_TYPE",
+                  "order": "displayName:asc",
+                  "pageSize": 10,
+                  "paging": false,
+                },
+                "resource": "test/resource",
+              }
+            `)
+        })
+
+        it('overrides default parameters with additional params', () => {
+            const result = createDimensionBaseQuery({
+                resource: 'test/resource',
+                dimensionType: 'TEST_TYPE',
+                nameProp: 'displayName',
+                additionalParams: { pageSize: 20, paging: true },
+            })
+
+            expect(result.params!.pageSize).toBe(20)
+            expect(result.params!.paging).toBe(true)
+        })
+    })
+
+    describe('getProgramIndicatorQuery', () => {
+        it('creates program indicator query with displayName', () => {
+            const result = getProgramIndicatorQuery(
+                'program-123',
+                'displayName'
+            )
+
+            expect(result).toMatchInlineSnapshot(`
+              {
+                "params": {
+                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet",
+                  "filter": "dimensionType:eq:PROGRAM_INDICATOR",
+                  "order": "displayName:asc",
+                  "pageSize": 10,
+                  "paging": false,
+                  "programId": "program-123",
+                },
+                "resource": "analytics/enrollments/query/dimensions",
+              }
+            `)
+        })
+
+        it('creates program indicator query with displayShortName', () => {
+            const result = getProgramIndicatorQuery(
+                'program-123',
+                'displayShortName'
+            )
+
+            expect(result).toMatchInlineSnapshot(`
+              {
+                "params": {
+                  "fields": "id,displayShortName~rename(name),dimensionType,valueType,optionSet",
+                  "filter": "dimensionType:eq:PROGRAM_INDICATOR",
+                  "order": "displayShortName:asc",
+                  "pageSize": 10,
+                  "paging": false,
+                  "programId": "program-123",
+                },
+                "resource": "analytics/enrollments/query/dimensions",
+              }
+            `)
+        })
+    })
+
+    describe('getProgramAttributeQuery', () => {
+        it('creates program attribute query with displayName', () => {
+            const result = getProgramAttributeQuery(
+                'program-123',
+                'tet-456',
+                'displayName'
+            )
+
+            expect(result).toMatchInlineSnapshot(`
+              {
+                "params": {
+                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet",
+                  "filter": "dimensionType:eq:PROGRAM_ATTRIBUTE",
+                  "order": "displayName:asc",
+                  "pageSize": 10,
+                  "paging": false,
+                  "program": "program-123",
+                  "trackedEntityType": "tet-456",
+                },
+                "resource": "analytics/trackedEntities/query/dimensions",
+              }
+            `)
+        })
+    })
+
+    describe('getDataElementQuery', () => {
+        it('creates data element query with displayName', () => {
+            const result = getDataElementQuery('stage-789', 'displayName')
+
+            expect(result).toMatchInlineSnapshot(`
+              {
+                "params": {
+                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet",
+                  "filter": "dimensionType:eq:DATA_ELEMENT",
+                  "order": "displayName:asc",
+                  "pageSize": 10,
+                  "paging": false,
+                  "programStageId": "stage-789",
+                },
+                "resource": "analytics/events/query/dimensions",
+              }
+            `)
+        })
+    })
+
+    describe('getDataElementQueryTemplate', () => {
+        it('creates data element query template without programStageId', () => {
+            const result = getDataElementQueryTemplate('displayName')
+
+            expect(result).toMatchInlineSnapshot(`
+              {
+                "params": {
+                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet",
+                  "filter": "dimensionType:eq:DATA_ELEMENT",
+                  "order": "displayName:asc",
+                  "pageSize": 10,
+                  "paging": false,
+                },
+                "resource": "analytics/events/query/dimensions",
+              }
+            `)
+        })
+    })
+
+    describe('getOtherDimensionsQuery', () => {
+        it('creates other dimensions query with displayShortName', () => {
+            const result = getOtherDimensionsQuery('displayShortName')
+
+            expect(result).toMatchInlineSnapshot(`
+              {
+                "params": {
+                  "fields": "id,displayShortName~rename(name),dimensionType,valueType,optionSet",
+                  "filter": "dimensionType:eq:ORGANISATION_UNIT_GROUP_SET",
+                  "order": "displayShortName:asc",
+                  "pageSize": 10,
+                  "paging": false,
+                },
+                "resource": "dimensions",
+              }
+            `)
+        })
     })
 })
