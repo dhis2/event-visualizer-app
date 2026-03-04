@@ -23,6 +23,8 @@ Use this skill when:
 -   You want to fetch and prioritize SonarQube issues from the API
 -   You need to verify all issues are resolved before merging
 
+**Note**: This skill will automatically detect which PR to analyze based on your current git branch. If you're on the `main` or `master` branch, you'll be asked to choose from open PRs.
+
 ## SonarQube API Access
 
 ### Fetching Issues from SonarCloud (Public Projects)
@@ -34,6 +36,8 @@ curl -s "https://sonarcloud.io/api/issues/search?componentKeys=<org>_<repo>&pull
 ```
 
 **Example for DHIS2 projects:**
+
+After identifying the PR number (e.g., `153`), repository (`dhis2/event-visualizer-app`), and organization (`dhis2`):
 
 ```bash
 curl -s "https://sonarcloud.io/api/issues/search?componentKeys=dhis2_event-visualizer-app&pullRequest=153&resolved=false&ps=100"
@@ -77,6 +81,52 @@ This outputs format: `SEVERITY - TYPE - MESSAGE - FILE:LINE`
 ## Systematic Fixing Workflow
 
 This is an **iterative, human-in-the-loop process**. The user will commit and push changes, then ask you to refetch and continue if issues remain.
+
+### Step 0: Identify the PR
+
+Before fetching issues, determine which pull request to analyze:
+
+1. **Check current git branch**:
+
+    ```bash
+    git branch --show-current
+    ```
+
+2. **Identify repository**:
+
+    ```bash
+    git remote -v | head -1
+    ```
+
+    Extract the organization and repository name (e.g., `dhis2/event-visualizer-app`).
+
+3. **Find matching PR**:
+
+    - If on a feature branch, use GitHub MCP tools (`github_list_pull_requests`) to find open PRs
+    - Match the current branch name to a PR's `head.ref` field
+    - Extract the PR number from the matching PR
+
+4. **Handle main/master branch**:
+
+    - If on `main` or `master` branch, list all open PRs
+    - Present the list to the user and ask which PR to work on
+    - Example format:
+
+        ```
+        Found 3 open PRs:
+        - PR #153: feat: sidebar group cards and toggle collapse all button [DHIS2-20773/20772]
+        - PR #155: refactor: implement new Layout design
+        - PR #156: chore(deps-dev): bump the dependencies group
+
+        Which PR would you like to fix SonarQube issues for?
+        ```
+
+5. **Store key information**:
+    - Organization (e.g., `dhis2`)
+    - Repository (e.g., `event-visualizer-app`)
+    - PR number (e.g., `153`)
+
+This information is needed to construct the SonarQube API URL: `componentKeys=<org>_<repo>&pullRequest=<pr-number>`
 
 ### Step 1: Fetch and Analyze
 
@@ -152,6 +202,12 @@ yarn format        # Auto-fix formatting (if needed)
 -   **Filter by type** - add `&types=BUG` to API URL to focus on specific types
 
 ## Troubleshooting
+
+### PR Detection Fails
+
+-   **No matching PR found**: Check if the branch has an associated PR. Use `gh pr list` or GitHub UI to verify.
+-   **Multiple PRs match**: Ask the user to specify which PR number to use.
+-   **On main/master branch**: List open PRs and ask user to choose one.
 
 ### Tests Failing After Fix
 
