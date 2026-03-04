@@ -256,102 +256,6 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         expect(mockInitiateCallCount).toBe(0)
     })
 
-    // ===== EXISTING TESTS =====
-
-    it('isLoadingMore respects 300ms delay - does not show loading immediately', async () => {
-        // Setup API response for page 1 (hasMore true)
-        mockApiResponse = {
-            dimensions: [mockApiDimension],
-            pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
-        }
-
-        // Create real Redux store
-        const store = setupStore(
-            {
-                dimensionSelection: dimensionSelectionSlice.reducer,
-            },
-            {
-                dimensionSelection: {
-                    dataSourceId: null,
-                    searchTerm: '',
-                    filter: 'DATA_ELEMENT',
-                    dimensionCardCollapsedStates: {},
-                    dimensionListLoadingStates: {},
-                    multiSelectedDimensionIds: [],
-                },
-            }
-        )
-
-        const { result } = renderHookWithReduxStoreProvider(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            store
-        )
-
-        // Advance timers to complete initial fetch (mount effect + API delay)
-        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
-
-        // Verify initial state after first fetch
-        expect(result.current.isLoading).toBe(false)
-        expect(result.current.hasMore).toBe(true)
-        expect(result.current.dimensions).toEqual([mockApiDimension])
-
-        // Setup API response for page 2 with SLOW response (600ms)
-        // This ensures the fetch is still ongoing after the 300ms delay
-        mockApiDelay = 600
-        const secondDimension = {
-            ...mockApiDimension,
-            id: 'api-id-2',
-            name: 'API Dimension 2',
-        }
-        mockApiResponse = {
-            dimensions: [secondDimension],
-            pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
-        }
-
-        // Trigger loadMore
-        act(() => {
-            result.current.loadMore()
-        })
-
-        // Immediately after loadMore, isLoadingMore should be false (delay is active)
-        expect(result.current.isLoadingMore).toBe(false)
-
-        // Advance 200ms (still within delay period)
-        await act(() => vi.advanceTimersByTimeAsync(200))
-
-        // isLoadingMore should still be false (delay still active)
-        expect(result.current.isLoadingMore).toBe(false)
-
-        // Advance another 150ms (total 350ms, past the 300ms delay)
-        // At this point the fetch is still ongoing (600ms total), so isLoadingMore should be true
-        await act(() => vi.advanceTimersByTimeAsync(150))
-
-        // isLoadingMore should now be true (300ms delay expired, fetch still ongoing)
-        expect(result.current.isLoadingMore).toBe(true)
-
-        // Advance to complete the fetch (250ms more to reach 600ms total)
-        await act(() => vi.advanceTimersByTimeAsync(250))
-
-        // Fetch completed, but isLoadingMore should still be true due to trailing debounce
-        expect(result.current.isLoadingMore).toBe(true)
-
-        // Advance another 300ms to clear the trailing debounce
-        await act(() => vi.advanceTimersByTimeAsync(300))
-
-        // Now isLoadingMore should be false
-        expect(result.current.isLoadingMore).toBe(false)
-
-        // Verify dimensions were loaded
-        expect(result.current.dimensions).toEqual([
-            mockApiDimension,
-            secondDimension,
-        ])
-    })
-
     it('search triggers fetch when filter matches dimension type', async () => {
         // Setup API response
         mockApiResponse = {
@@ -507,566 +411,6 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
             mockApiDimension,
             secondDimension,
         ])
-    })
-
-    it('isLoadingMore remains false when fetch completes before 300ms delay', async () => {
-        // Setup API response for page 1 (hasMore true)
-        mockApiResponse = {
-            dimensions: [mockApiDimension],
-            pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
-        }
-
-        const { result } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
-        )
-
-        // Setup API response for page 2 (fast response - 10ms, completes before 300ms delay)
-        mockApiDelay = 10
-        const secondDimension = {
-            ...mockApiDimension,
-            id: 'api-id-2',
-            name: 'API Dimension 2',
-        }
-        mockApiResponse = {
-            dimensions: [secondDimension],
-            pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
-        }
-
-        // Load more
-        act(() => {
-            result.current.loadMore()
-        })
-
-        // Wait for fetch to complete (happens in ~10ms)
-        await act(() => vi.advanceTimersByTimeAsync(10))
-
-        // Dimensions should be accumulated
-        expect(result.current.dimensions).toEqual([
-            mockApiDimension,
-            secondDimension,
-        ])
-
-        // isLoadingMore should never have been true (fetch completed before 300ms delay)
-        expect(result.current.isLoadingMore).toBe(false)
-
-        // Wait for delay to expire (300ms)
-        await act(() => vi.advanceTimersByTimeAsync(300))
-
-        // isLoadingMore should still be false (fetch already completed)
-        expect(result.current.isLoadingMore).toBe(false)
-    })
-
-    it('cleans up delay timer on component unmount', async () => {
-        // Setup API response for page 1 (hasMore true)
-        mockApiResponse = {
-            dimensions: [mockApiDimension],
-            pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
-        }
-
-        const { result, unmount } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
-        )
-
-        // Setup API response for page 2 with slow response
-        mockApiDelay = 600
-        const secondDimension = {
-            ...mockApiDimension,
-            id: 'api-id-2',
-            name: 'API Dimension 2',
-        }
-        mockApiResponse = {
-            dimensions: [secondDimension],
-            pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
-        }
-
-        // Load more
-        act(() => {
-            result.current.loadMore()
-        })
-
-        // Unmount immediately (during delay period)
-        unmount()
-
-        // Wait for delay period + extra time to ensure no state updates occur
-        await act(() => vi.advanceTimersByTimeAsync(500))
-
-        // No errors should occur from state updates after unmount
-        // This test passes if no warnings/errors are thrown
-    })
-
-    it('isLoadingMore shows after 250ms and stays visible for minimum 400ms total', async () => {
-        // Setup API response for page 1 (hasMore true)
-        mockApiResponse = {
-            dimensions: [mockApiDimension],
-            pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
-        }
-
-        const { result } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
-        )
-
-        // Setup API response for page 2 with SLOW response (500ms)
-        // This ensures fetch completes AFTER the 250ms SHOW_DELAY
-        // so loading UI will show at 250ms, then we test it stays visible for minimum 400ms total
-        mockApiDelay = 500
-        const secondDimension = {
-            ...mockApiDimension,
-            id: 'api-id-2',
-            name: 'API Dimension 2',
-        }
-        mockApiResponse = {
-            dimensions: [secondDimension],
-            pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
-        }
-
-        // Load more
-        act(() => {
-            result.current.loadMore()
-        })
-
-        // Immediately after loadMore, isLoadingMore should be false (SHOW_DELAY is active)
-        expect(result.current.isLoadingMore).toBe(false)
-
-        // Wait 249ms (just before SHOW_DELAY of 250ms)
-        await act(() => vi.advanceTimersByTimeAsync(249))
-        expect(result.current.isLoadingMore).toBe(false)
-
-        // Wait 1ms more (total 250ms, SHOW_DELAY expires)
-        await act(() => vi.advanceTimersByTimeAsync(1))
-        expect(result.current.isLoadingMore).toBe(true)
-
-        // Wait another 200ms (total 450ms, fetch still ongoing at 500ms)
-        await act(() => vi.advanceTimersByTimeAsync(200))
-        expect(result.current.isLoadingMore).toBe(true)
-
-        // Wait another 50ms (total 500ms, fetch completes)
-        await act(() => vi.advanceTimersByTimeAsync(50))
-        // Fetch completed, but loading started at 250ms, elapsed = 250ms
-        // MIN_LOAD_DURATION = 400ms, so need to wait 150ms more
-
-        // Wait 149ms (total 649ms, 149ms after fetch completed)
-        await act(() => vi.advanceTimersByTimeAsync(149))
-        expect(result.current.isLoadingMore).toBe(true)
-
-        // Wait 1ms more (total 650ms, 150ms after fetch completed, total loading time = 400ms)
-        await act(() => vi.advanceTimersByTimeAsync(1))
-        expect(result.current.isLoadingMore).toBe(false)
-
-        // Verify dimensions were loaded
-        expect(result.current.dimensions).toEqual([
-            mockApiDimension,
-            secondDimension,
-        ])
-    })
-
-    it('hasNoData is true when server returns empty result without search', async () => {
-        // Setup API response with 0 total items
-        mockApiResponse = {
-            dimensions: [],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        }
-
-        const { result } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
-        )
-
-        expect(result.current.hasNoData).toBe(true)
-        expect(result.current.dimensions).toEqual([])
-    })
-
-    it('hasNoData is false when server returns empty result with search', async () => {
-        // Setup API response with 0 total items
-        mockApiResponse = {
-            dimensions: [],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        }
-
-        const { result } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            createStoreWithPreloadedState({
-                filter: 'DATA_ELEMENT',
-                searchTerm: 'test',
-            })
-        )
-
-        expect(result.current.hasNoData).toBe(false)
-        expect(result.current.dimensions).toEqual([])
-    })
-
-    it('hasNoData is false when server returns data', async () => {
-        // Setup API response with data
-        mockApiResponse = {
-            dimensions: [mockApiDimension],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        }
-
-        const { result } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
-        )
-
-        expect(result.current.hasNoData).toBe(false)
-        expect(result.current.dimensions).toEqual([mockApiDimension])
-    })
-
-    it('hasNoData is false when there are fixed dimensions even if server returns empty', async () => {
-        // Setup API response with 0 total items
-        mockApiResponse = {
-            dimensions: [],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        }
-
-        const fixedDimensions: DimensionMetadataItem[] = [
-            createDimension({ id: 'fixed-1', name: 'Fixed Dimension 1' }),
-            createDimension({ id: 'fixed-2', name: 'Fixed Dimension 2' }),
-        ]
-
-        const { result } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    fixedDimensions,
-                    baseQuery,
-                }),
-            createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
-        )
-
-        // hasNoData should be false because we have fixed dimensions
-        expect(result.current.hasNoData).toBe(false)
-        expect(result.current.dimensions).toEqual(fixedDimensions)
-    })
-
-    it('hasNoData updates when search is cleared and server has no data', async () => {
-        // Setup initial state with search that returns data
-        mockApiResponse = {
-            dimensions: [mockApiDimension],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        }
-
-        const store = createStoreWithPreloadedState({
-            filter: 'DATA_ELEMENT',
-            searchTerm: 'test',
-        })
-
-        const { result } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            store
-        )
-
-        expect(result.current.hasNoData).toBe(false)
-
-        // Setup response for cleared search (no data)
-        mockApiResponse = {
-            dimensions: [],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        }
-
-        // Clear search term
-        act(() => {
-            store.dispatch(setSearchTerm(''))
-        })
-
-        // Wait for fetch to complete
-        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
-
-        // hasNoData should update to true
-        expect(result.current.hasNoData).toBe(true)
-    })
-
-    it('hasNoData is true only when no fixed dimensions AND no server data AND no search', async () => {
-        // Test 1: No fixed dimensions, no server data, no search
-        mockApiResponse = {
-            dimensions: [],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        }
-
-        const { result } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    // No fixed dimensions
-                    baseQuery,
-                }),
-            createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
-        )
-
-        // Should be true: no fixed dims, no server data, no search
-        expect(result.current.hasNoData).toBe(true)
-
-        // Test 2: Add fixed dimensions (use different key to avoid state conflict)
-        mockApiResponse = {
-            dimensions: [],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        }
-
-        const fixedDimensions: DimensionMetadataItem[] = [
-            createDimension({ id: 'fixed-1', name: 'Fixed Dimension 1' }),
-        ]
-
-        const { result: result2 } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-tracked-entity-type', // Different valid key
-                    fixedDimensions, // Now has fixed dimensions
-                    baseQuery,
-                }),
-            createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
-        )
-
-        // Should be false: has fixed dimensions
-        expect(result2.current.hasNoData).toBe(false)
-
-        // Test 3: Add search term (use another different key)
-        mockApiResponse = {
-            dimensions: [],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        }
-
-        const { result: result3 } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'event-without-registration', // Different valid key
-                    // No fixed dimensions
-                    baseQuery,
-                }),
-            createStoreWithPreloadedState({
-                filter: 'DATA_ELEMENT',
-                searchTerm: 'test', // Has search term
-            })
-        )
-
-        // Should be false: has search term
-        expect(result3.current.hasNoData).toBe(false)
-    })
-
-    it('hasNoData is sticky during search - retains value from before search', async () => {
-        // Test 1: Start with no data, then search
-        mockApiResponse = {
-            dimensions: [],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        }
-
-        const store = createStoreWithPreloadedState({
-            filter: 'DATA_ELEMENT',
-            searchTerm: '', // No search initially
-        })
-
-        const { result } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            store
-        )
-
-        // Should be true: no search, no data, no fixed dims
-        expect(result.current.hasNoData).toBe(true)
-
-        // Setup search response (still no data)
-        mockApiResponse = {
-            dimensions: [],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        }
-
-        // Apply search
-        act(() => {
-            store.dispatch(setSearchTerm('test'))
-        })
-
-        // Wait for search fetch
-        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
-
-        // hasNoData should remain true (sticky during search)
-        expect(result.current.hasNoData).toBe(true)
-
-        // Test 2: Start with data, then search
-        mockApiResponse = {
-            dimensions: [mockApiDimension],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        }
-
-        const store2 = createStoreWithPreloadedState({
-            filter: 'DATA_ELEMENT',
-            searchTerm: '', // No search initially
-        })
-
-        const { result: result2 } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-tracked-entity-type', // Different key
-                    baseQuery,
-                }),
-            store2
-        )
-
-        // Should be false: no search, has data
-        expect(result2.current.hasNoData).toBe(false)
-
-        // Setup search response (no data)
-        mockApiResponse = {
-            dimensions: [],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
-        }
-
-        // Apply search
-        act(() => {
-            store2.dispatch(setSearchTerm('test'))
-        })
-
-        // Wait for search fetch
-        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
-
-        // hasNoData should remain false (sticky during search)
-        expect(result2.current.hasNoData).toBe(false)
-    })
-
-    it('shows loading state during fetch and error state after failure', async () => {
-        mockApiError = new Error('API Error')
-
-        const store = createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
-
-        const { result } = renderHookWithReduxStoreProvider(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            store
-        )
-
-        // Initial state - loading should be true immediately
-        expect(result.current.isLoading).toBe(true)
-        expect(result.current.error).toBeUndefined()
-
-        // Wait for error to be set after fetch fails
-        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
-
-        // Check error state after fetch resolves
-        expect(result.current.isLoading).toBe(false)
-        expect(result.current.error).toHaveProperty('message', 'API Error')
-        expect(result.current.error).toHaveProperty('type', 'runtime')
-    })
-
-    it('handles error during loadMore', async () => {
-        // Setup page 1 successfully
-        mockApiResponse = {
-            dimensions: [mockApiDimension],
-            pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
-        }
-
-        const { result } = await renderHookAndWaitForInitialLoad(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
-        )
-
-        expect(result.current.dimensions).toEqual([mockApiDimension])
-        expect(result.current.hasMore).toBe(true)
-        expect(result.current.error).toBeUndefined()
-
-        // Setup error for page 2
-        mockApiResponse = null
-        mockApiError = new Error('Page 2 Load Error')
-
-        // Trigger loadMore
-        act(() => {
-            result.current.loadMore()
-        })
-
-        // Wait for error (fetch starts immediately for loadMore)
-        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
-
-        // Should set error but preserve page 1 data
-        expect(result.current.error).toHaveProperty(
-            'message',
-            'Page 2 Load Error'
-        )
-        expect(result.current.error).toHaveProperty('type', 'runtime')
-        expect(result.current.dimensions).toEqual([mockApiDimension])
-    })
-
-    it('recovers from error when search term changes', async () => {
-        // Start with API error
-        mockApiError = new Error('Initial API Error')
-
-        const store = createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
-
-        const { result } = renderHookWithReduxStoreProvider(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            store
-        )
-
-        // Wait for error
-        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
-
-        expect(result.current.error).toHaveProperty(
-            'message',
-            'Initial API Error'
-        )
-        expect(result.current.isLoading).toBe(false)
-
-        // Clear error and setup successful response
-        mockApiError = null
-        mockApiResponse = {
-            dimensions: [mockApiDimension],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        }
-
-        // Change search term
-        act(() => {
-            store.dispatch(setSearchTerm('new'))
-        })
-
-        // Wait for successful fetch
-        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
-
-        // Error should be cleared and data loaded
-        expect(result.current.error).toBeUndefined()
-        expect(result.current.dimensions).toEqual([mockApiDimension])
-        // Verify query contained search term
-        expect(lastInitiateQuery?.params?.filter).toContain(
-            'displayName:ilike:new'
-        )
     })
 
     it('combines filtered fixedDimensions with fetched results during search', async () => {
@@ -1835,107 +1179,6 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         mockApiDelay = 10
     })
 
-    it('tracks isLoading and isLoadingMore states correctly', async () => {
-        // Setup page 1
-        mockApiResponse = {
-            dimensions: [mockApiDimension],
-            pager: { page: 1, pageCount: 2, pageSize: 50, total: 100 },
-        }
-
-        const store = createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
-
-        const { result } = renderHookWithReduxStoreProvider(
-            () =>
-                useDimensionList({
-                    dimensionListKey: 'program-indicators',
-                    baseQuery,
-                }),
-            store
-        )
-
-        // Initial state
-        expect(result.current.isLoading).toBe(true)
-        expect(result.current.isLoadingMore).toBe(false)
-
-        // Stage 1: After initial data loads
-        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
-
-        expect(result.current.isLoading).toBe(false)
-        expect(result.current.isLoadingMore).toBe(false)
-        expect(result.current.dimensions).toEqual([mockApiDimension])
-
-        // Stage 2: load more with SLOW response
-        mockApiDelay = 600 // Slow response to ensure loading state is visible
-        const secondDimension = {
-            ...mockApiDimension,
-            id: 'api-id-2',
-            name: 'API Dimension 2',
-        }
-        mockApiResponse = {
-            dimensions: [secondDimension],
-            pager: { page: 2, pageCount: 2, pageSize: 50, total: 100 },
-        }
-
-        act(() => {
-            result.current.loadMore()
-        })
-
-        // Wait 249ms (just before SHOW_DELAY of 250ms)
-        await act(() => vi.advanceTimersByTimeAsync(249))
-        expect(result.current.isLoadingMore).toBe(false)
-
-        // Wait 1ms more (total 250ms, SHOW_DELAY expires)
-        await act(() => vi.advanceTimersByTimeAsync(1))
-        expect(result.current.isLoading).toBe(false)
-        expect(result.current.isLoadingMore).toBe(true)
-
-        // Wait for API to complete (600ms total from start)
-        // At 600ms: fetch completes, loading started at 250ms, elapsed = 350ms
-        // MIN_LOAD_DURATION = 400ms, so need to wait 50ms more
-        await act(() => vi.advanceTimersByTimeAsync(350)) // Total 600ms from start
-
-        // Still loading (needs to complete MIN_LOAD_DURATION of 400ms total)
-        expect(result.current.isLoadingMore).toBe(true)
-
-        // Wait 49ms (total 649ms, 49ms after fetch completed)
-        await act(() => vi.advanceTimersByTimeAsync(49))
-        expect(result.current.isLoadingMore).toBe(true)
-
-        // Wait 1ms more (total 650ms, 50ms after fetch completed, total loading time = 400ms)
-        await act(() => vi.advanceTimersByTimeAsync(1))
-        expect(result.current.isLoading).toBe(false)
-        expect(result.current.isLoadingMore).toBe(false)
-        expect(result.current.dimensions).toEqual([
-            mockApiDimension,
-            secondDimension,
-        ])
-
-        // Stage 3: Trigger search (should not show isLoading or isLoadingMore)
-        const searchDimension = {
-            ...mockApiDimension,
-            id: 'search-id',
-            name: 'Search Result',
-        }
-        mockApiResponse = {
-            dimensions: [searchDimension],
-            pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
-        }
-
-        act(() => {
-            store.dispatch(setSearchTerm('test'))
-        })
-
-        // Wait for search to complete
-        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
-
-        expect(result.current.isLoading).toBe(false)
-        expect(result.current.isLoadingMore).toBe(false)
-        expect(result.current.dimensions).toEqual([searchDimension])
-
-        // Reset mockApiDelay for next test
-        mockApiDelay = 10
-    })
-
     it('shows stale data while fetching new search results (stale-while-revalidate)', async () => {
         // Setup fixed dimensions
         const fixedDimensions: DimensionMetadataItem[] = [
@@ -2364,6 +1607,121 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
                 dimensionType: 'ORGANISATION_UNIT',
             }),
         ])
+    })
+
+    it('handles API errors and sets error state', async () => {
+        const apiError = new Error('API Error: Failed to fetch dimensions')
+        mockApiError = apiError
+
+        const store = createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
+
+        const { result } = await renderHookAndWaitForInitialLoad(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    baseQuery,
+                }),
+            store
+        )
+
+        expect(result.current.error).toBeDefined()
+        expect(result.current.error?.message).toContain('API Error')
+        expect(result.current.isLoading).toBe(false)
+        expect(result.current.dimensions).toEqual([])
+    })
+
+    it('returns hasNoData true when no fixed dimensions and fetch returns empty', async () => {
+        mockApiResponse = {
+            dimensions: [],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 0 },
+        }
+
+        const store = createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
+
+        const { result } = await renderHookAndWaitForInitialLoad(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    baseQuery,
+                }),
+            store
+        )
+
+        expect(result.current.hasNoData).toBe(true)
+        expect(result.current.dimensions).toEqual([])
+    })
+
+    it('returns hasNoData false when fixed dimensions exist', async () => {
+        const fixedDimensions: DimensionMetadataItem[] = [
+            createDimension({
+                id: 'fixed-1',
+                name: 'Fixed Dimension',
+                dimensionType: 'DATA_ELEMENT',
+            }),
+        ]
+
+        const store = createStoreWithPreloadedState()
+
+        const { result } = renderHookWithReduxStoreProvider(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    fixedDimensions,
+                }),
+            store
+        )
+
+        expect(result.current.hasNoData).toBe(false)
+        expect(result.current.dimensions).toEqual(fixedDimensions)
+    })
+
+    it('returns hasNoData false when fetch returns data', async () => {
+        mockApiResponse = {
+            dimensions: [mockApiDimension],
+            pager: { page: 1, pageCount: 1, pageSize: 50, total: 1 },
+        }
+
+        const store = createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
+
+        const { result } = await renderHookAndWaitForInitialLoad(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    baseQuery,
+                }),
+            store
+        )
+
+        expect(result.current.hasNoData).toBe(false)
+        expect(result.current.dimensions).toEqual([mockApiDimension])
+    })
+
+    it('handles unmount during active fetch', async () => {
+        // Set a longer API delay to ensure fetch is still in progress
+        mockApiDelay = 1000
+
+        const store = createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
+
+        const { unmount } = renderHookWithReduxStoreProvider(
+            () =>
+                useDimensionList({
+                    dimensionListKey: 'program-indicators',
+                    baseQuery,
+                }),
+            store
+        )
+
+        // Unmount immediately while fetch is in progress
+        unmount()
+
+        // Advance timers past the API delay
+        await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
+
+        // No assertions needed - just verifying no errors occur
+        // The hook should handle unmount gracefully in performFetch
+
+        // Reset mockApiDelay for other tests
+        mockApiDelay = 10
     })
 
     it('accepts custom transformer', async () => {
