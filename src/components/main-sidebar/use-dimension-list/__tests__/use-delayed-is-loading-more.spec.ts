@@ -95,7 +95,7 @@ describe('useIsDelayedLoadingMore', () => {
     })
 
     it('should clear timeouts on unmount', async () => {
-        const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout')
+        const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout')
         const { result, unmount } = renderHook(() => useIsDelayedLoadingMore())
 
         act(() => {

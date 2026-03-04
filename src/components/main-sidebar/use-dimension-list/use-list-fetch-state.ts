@@ -58,7 +58,7 @@ const reducer = (
             return {
                 ...state,
                 isUninitialized: false,
-                isLoading: state.isUninitialized ? true : false,
+                isLoading: state.isUninitialized,
                 isFetching: true,
                 isLoadingMore: action.payload.page > 1,
                 error: undefined,
@@ -80,9 +80,9 @@ const reducer = (
                           ],
                 nextPage: action.payload.nextPage,
                 error: undefined,
-                hasNoData: !action.payload.searchTerm
-                    ? action.payload.dimensions.length === 0
-                    : state.hasNoData,
+                hasNoData: action.payload.searchTerm
+                    ? state.hasNoData
+                    : action.payload.dimensions.length === 0,
             }
         }
 
