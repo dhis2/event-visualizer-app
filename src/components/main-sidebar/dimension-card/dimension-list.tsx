@@ -34,12 +34,14 @@ const ErrorListItem: FC<{ error: EngineError; isEmptyList: boolean }> = ({
     </li>
 )
 
+const SKELETON_ID_PREFIX = 'dimension-list-skeleton-list-item'
+const createArrayOfSkeletonIds = (length: number) =>
+    Array.from({ length }).map(
+        (_, index) => `${SKELETON_ID_PREFIX}-${index + 1}`
+    )
 const LoaderSkeleton: FC<{ count?: number }> = ({ count = 5 }) =>
-    Array.from({ length: count }).map((_, index) => (
-        <li
-            key={`loader-skeleton${index}`}
-            data-test="dimension-list-skeleton-list-item"
-        >
+    createArrayOfSkeletonIds(count).map((id) => (
+        <li key={id} data-test={SKELETON_ID_PREFIX}>
             <SkeletonChip width="100%" />
         </li>
     ))
