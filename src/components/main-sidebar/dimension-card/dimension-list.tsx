@@ -34,19 +34,15 @@ const ErrorListItem: FC<{ error: EngineError; isEmptyList: boolean }> = ({
     </li>
 )
 
-const LoaderSkeleton: FC = () => (
-    <>
-        <li data-test="dimension-list-skeleton-list-item">
+const LoaderSkeleton: FC<{ count?: number }> = ({ count = 5 }) =>
+    Array.from({ length: count }).map((_, index) => (
+        <li
+            key={`loader-skeleton${index}`}
+            data-test="dimension-list-skeleton-list-item"
+        >
             <SkeletonChip width="100%" />
         </li>
-        <li data-test="dimension-list-skeleton-list-item">
-            <SkeletonChip width="100%" />
-        </li>
-        <li data-test="dimension-list-skeleton-list-item">
-            <SkeletonChip width="100%" />
-        </li>
-    </>
-)
+    ))
 
 const DimensionListContent: FC<DimensionListProps> = ({
     dimensions,
