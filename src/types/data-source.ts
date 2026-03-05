@@ -1,6 +1,6 @@
 import type { ProgramType } from './dhis2-openapi-schemas'
 import type { DimensionType } from './dimension'
-import type { MetadataItemWithName } from './metadata'
+import type { MetadataItem } from './metadata'
 import type { Program } from './program'
 
 export type DataSourceProgramWithRegistration = Omit<
@@ -26,7 +26,7 @@ export type DataSource =
     | DataSourceProgramWithoutRegistration
     /* TrackedEntityType does not have any distinguishing features
      * it just has `id` and `name` */
-    | MetadataItemWithName
+    | MetadataItem
 
 export type DataSourceFilter = Extract<
     DimensionType,

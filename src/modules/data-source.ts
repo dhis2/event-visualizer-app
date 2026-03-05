@@ -1,10 +1,10 @@
-import { isMetadataItemWithName, isProgramMetadataItem } from './metadata'
+import { isMetadataItem, isProgramMetadataItem } from './metadata'
 import { isPopulatedString } from './validation'
 import type {
     CurrentVisualization,
     DataSourceProgramWithoutRegistration,
     DataSourceProgramWithRegistration,
-    MetadataItemWithName,
+    MetadataItem,
 } from '@types'
 
 export const isDataSourceProgramWithRegistration = (
@@ -21,8 +21,8 @@ export const isDataSourceProgramWithoutRegistration = (
 
 export const isDataSourceTrackedEntityType = (
     dataSource: unknown
-): dataSource is MetadataItemWithName =>
-    !isProgramMetadataItem(dataSource) && isMetadataItemWithName(dataSource)
+): dataSource is MetadataItem =>
+    !isProgramMetadataItem(dataSource) && isMetadataItem(dataSource)
 
 export const extractDataSourceIdFromVisualization = ({
     outputType,
