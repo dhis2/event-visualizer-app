@@ -12,6 +12,10 @@ describe('extractDataSourceIdFromVisualization', () => {
                 name: 'Program 1',
                 programType: 'WITH_REGISTRATION',
                 programStages: [],
+                trackedEntityType: {
+                    id: 'tet1',
+                    name: 'Tracked Entity Type 1',
+                },
             },
             programDimensions: [],
             trackedEntityType: undefined,
@@ -30,6 +34,10 @@ describe('extractDataSourceIdFromVisualization', () => {
                 name: 'Program 2',
                 programType: 'WITHOUT_REGISTRATION',
                 programStages: [],
+                trackedEntityType: {
+                    id: 'tet2',
+                    name: 'Tracked Entity Type 2',
+                },
             },
             programDimensions: [],
             trackedEntityType: undefined,
@@ -48,6 +56,10 @@ describe('extractDataSourceIdFromVisualization', () => {
                 name: 'Program',
                 programType: 'WITH_REGISTRATION',
                 programStages: [],
+                trackedEntityType: {
+                    id: 'tet3',
+                    name: 'Tracked Entity Type 3',
+                },
             },
             programDimensions: [],
             trackedEntityType: undefined,
@@ -77,10 +89,24 @@ describe('extractDataSourceIdFromVisualization', () => {
             program: undefined,
             programDimensions: [
                 {
+                    id: 'prog2',
+                    name: 'Program B',
+                    programType: 'WITH_REGISTRATION',
+                    programStages: [],
+                    trackedEntityType: {
+                        id: 'tet5',
+                        name: 'Tracked Entity Type 5',
+                    },
+                },
+                {
                     id: 'prog1',
                     name: 'Program A',
                     programType: 'WITH_REGISTRATION',
                     programStages: [],
+                    trackedEntityType: {
+                        id: 'tet6',
+                        name: 'Tracked Entity Type 6',
+                    },
                 },
             ],
             trackedEntityType: undefined,
@@ -97,16 +123,24 @@ describe('extractDataSourceIdFromVisualization', () => {
             program: undefined,
             programDimensions: [
                 {
-                    id: 'prog2',
-                    name: 'Program B',
+                    id: 'prog1',
+                    name: 'Program A',
                     programType: 'WITH_REGISTRATION',
                     programStages: [],
+                    trackedEntityType: {
+                        id: 'tet4',
+                        name: 'Tracked Entity Type 4',
+                    },
                 },
                 {
                     id: 'prog1',
                     name: 'Program A',
                     programType: 'WITH_REGISTRATION',
                     programStages: [],
+                    trackedEntityType: {
+                        id: 'tet6',
+                        name: 'Tracked Entity Type 6',
+                    },
                 },
             ],
             trackedEntityType: undefined,
@@ -151,6 +185,10 @@ describe('extractDataSourceIdFromVisualization', () => {
                     name: 'Program A',
                     programType: 'WITH_REGISTRATION',
                     programStages: [],
+                    trackedEntityType: {
+                        id: 'tet7',
+                        name: 'Tracked Entity Type 7',
+                    },
                 },
             ],
             trackedEntityType: undefined,

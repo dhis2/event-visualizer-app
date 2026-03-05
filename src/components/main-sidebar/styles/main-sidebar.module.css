@@ -1,9 +1,11 @@
 .container {
+    display: flex;
+    flex-direction: column;
     block-size: 100%;
     box-sizing: border-box;
-    inline-size: 260px;
+    inline-size: 460px;
     border-inline-end: 1px solid var(--colors-grey400);
-    padding: 4px;
+    padding: 4px 0;
     background-color: var(--colors-grey200);
 }
 
@@ -13,6 +15,25 @@
 .searchRow {
     display: flex;
     flex-direction: row;
+    align-items: start;
     padding-block: 6px 2px;
+    padding-inline: 4px;
     gap: 2px;
+    z-index: 1;
+}
+
+.searchRow.scrolled {
+    box-shadow: 0 1px 4px #090a0f1a;
+}
+
+.dimensionCardsContainer {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #c7cfd6 transparent;
+    gap: 8px;
+    padding-block-start: 8px;
+    padding-inline: 4px;
 }

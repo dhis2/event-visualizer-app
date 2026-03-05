@@ -7,6 +7,7 @@ import {
 } from '@dhis2/ui'
 import cx from 'classnames'
 import {
+    type FC,
     useCallback,
     useEffect,
     useMemo,
@@ -17,8 +18,8 @@ import { useDebounceCallback, useDebounceValue } from 'usehooks-ts'
 import classes from './styles/unified-search-input.module.css'
 import { useAppSelector, useAppStore } from '@hooks'
 import {
-    getAllListLoadErrors,
-    isAnyListLoading,
+    getAllDimensionListLoadErrors,
+    isAnyDimensionListLoading,
     setSearchTerm,
 } from '@store/dimensions-selection-slice'
 
@@ -32,10 +33,10 @@ const SEARCH_HELP_ID = 'search-help'
 const isValidSearchTerm = (searchTerm: string) =>
     searchTerm.length === 0 || searchTerm.length >= MIN_SEARCH_TERM_LENGTH
 
-export const UnifiedSearchInput = () => {
+export const UnifiedSearchInput: FC = () => {
     const store = useAppStore()
-    const isLoading = useAppSelector(isAnyListLoading)
-    const errors = useAppSelector(getAllListLoadErrors)
+    const isLoading = useAppSelector(isAnyDimensionListLoading)
+    const errors = useAppSelector(getAllDimensionListLoadErrors)
     const [text, setText] = useState(() => {
         const state = store.getState()
         return state.dimensionSelection.searchTerm
@@ -96,13 +97,19 @@ export const UnifiedSearchInput = () => {
         const state = store.getState()
         const currentSearchTerm = state.dimensionSelection.searchTerm
 
+        /* This blocks searchTerm updates while lists are loading, which
+         * prevents race conditions in the useDimensionList hook.
+         * The thinking behind this logic is that it's OK to block the store
+         * update while isLoading is true because eventually the fetch will
+         * complete and this effect will run again to update the store. */
         if (
             isValidSearchTerm(debouncedSearchTerm) &&
+            !isLoading &&
             currentSearchTerm !== debouncedSearchTerm
         ) {
             store.dispatch(setSearchTerm(debouncedSearchTerm))
         }
-    }, [store, debouncedSearchTerm])
+    }, [store, debouncedSearchTerm, isLoading])
 
     return (
         <div className={classes.container}>

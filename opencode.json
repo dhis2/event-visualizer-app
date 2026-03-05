@@ -1,0 +1,17 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    // Enable specific MCP tools for this project (overriding global settings)
+    // This assumes you do have a global config,
+    "tools": {
+        "github_*": true,
+        "grep_*": true,
+        "context7_*": true,
+        "neovim_*": true
+    },
+    "permission": {
+        "github_*": "allow",
+        "grep_*": "allow",
+        "context7_*": "allow",
+        "neovim_*": "allow"
+    }
+}

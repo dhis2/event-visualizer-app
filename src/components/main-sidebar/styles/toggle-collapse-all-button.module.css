@@ -1,0 +1,37 @@
+.button {
+    all: unset;
+    inline-size: 24px;
+    block-size: 24px;
+    margin-inline-start: 6px;
+    /* Input height is 28, so we need 24+2*2=28 */
+    margin-block: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 150ms ease;
+    color: var(--colors-grey600);
+    flex-shrink: 0;
+}
+.button:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+.button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.button svg {
+    flex-shrink: 0;
+    display: block;
+    fill: currentColor;
+}
+.button:hover {
+    background-color: var(--colors-grey300);
+    color: var(--colors-grey700);
+}
+
+.button:active {
+    background-color: var(--colors-grey400);
+}

@@ -1,4 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
+import { type FC } from 'react'
 import { DataSourceSelectOption } from './data-source-select-option'
 import classes from './styles/data-source-select-listbox.module.css'
 import type { UseDataSourceOptionsResult } from './use-data-source-options'
@@ -15,7 +16,7 @@ export type DataSourceSelectListboxProps = Pick<
     closeDropdown: () => void
 }
 
-export const DataSourceSelectListbox = ({
+export const DataSourceSelectListbox: FC<DataSourceSelectListboxProps> = ({
     closeDropdown,
     hasMorePrograms,
     hasMoreTrackedEntityTypes,
@@ -23,7 +24,7 @@ export const DataSourceSelectListbox = ({
     onShowMoreTrackedEntityTypesClick,
     programs,
     trackedEntityTypes,
-}: DataSourceSelectListboxProps) => (
+}) => (
     <ul role="listbox" id="data-source-listbox" className={classes.listbox}>
         {programs.length === 0 && trackedEntityTypes.length === 0 && (
             <li role="presentation" className={classes.emptyMessage}>

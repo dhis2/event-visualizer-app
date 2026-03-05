@@ -9,7 +9,8 @@ import {
     type MenuItemProps,
 } from '@dhis2/ui'
 import cx from 'classnames'
-import { useCallback, useMemo, useRef, useState, type FC } from 'react'
+import { type FC } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import classes from './styles/filter-dropdown-button.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
@@ -24,14 +25,14 @@ type MenuItemClickHandler = NonNullable<MenuItemProps['onClick']>
 export const FilterDropdownButton: FC = () => {
     const filters = useMemo<Record<DataSourceFilter, string>>(
         () => ({
-            ORG_UNITS: i18n.t('Org units'),
-            PERIODS: i18n.t('Periods'),
-            STATUSES: i18n.t('Statuses'),
-            DATA_ELEMENTS: i18n.t('Data elements'),
-            PROGRAM_ATTRIBUTES: i18n.t('Program attributes'),
-            PROGRAM_INDICATORS: i18n.t('Program indicators'),
-            CATEGORIES: i18n.t('Categories'),
-            CATEGORY_OPTION_GROUP_SETS: i18n.t('Category option group sets'),
+            ORGANISATION_UNIT: i18n.t('Org units'),
+            PERIOD: i18n.t('Periods'),
+            STATUS: i18n.t('Statuses'),
+            DATA_ELEMENT: i18n.t('Data elements'),
+            PROGRAM_ATTRIBUTE: i18n.t('Program attributes'),
+            PROGRAM_INDICATOR: i18n.t('Program indicators'),
+            CATEGORY: i18n.t('Categories'),
+            CATEGORY_OPTION_GROUP_SET: i18n.t('Category option group sets'),
         }),
         []
     )
@@ -60,6 +61,22 @@ export const FilterDropdownButton: FC = () => {
     const clearActiveFilter = useCallback(() => {
         dispatch(clearFilter())
     }, [dispatch])
+
+    useEffect(() => {
+        const handleEscape = (event: KeyboardEvent) => {
+            if (event.key === 'Escape' && isOpen) {
+                setIsOpen(false)
+            }
+        }
+
+        if (isOpen) {
+            document.addEventListener('keydown', handleEscape)
+        }
+
+        return () => {
+            document.removeEventListener('keydown', handleEscape)
+        }
+    }, [isOpen])
 
     return (
         <>

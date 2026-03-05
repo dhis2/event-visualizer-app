@@ -1,0 +1,17 @@
+.item {
+    all: unset;
+    box-sizing: border-box;
+    display: block;
+    inline-size: 100%;
+    border: 1px solid grey;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: start;
+}
+.item:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+.item:focus:not(:focus-visible) {
+    outline: none;
+}

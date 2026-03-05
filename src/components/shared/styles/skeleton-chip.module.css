@@ -1,0 +1,21 @@
+.skeletonChip {
+    block-size: 22px;
+    border-radius: 2px;
+    background: linear-gradient(
+        90deg,
+        var(--colors-grey100) 25%,
+        var(--colors-grey200) 50%,
+        var(--colors-grey100) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}

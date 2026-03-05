@@ -1,8 +1,6 @@
 import type {
     EventVisualization as EventVisualizationGenerated,
     EventRepetition,
-    Program,
-    ProgramStage,
     ValueType,
     LegendDisplayStrategy,
     LegendDisplayStyle,
@@ -11,6 +9,7 @@ import type {
 import type { DimensionType } from './dimension'
 import type { MetadataInputMap } from './metadata'
 import type { VisualizationType } from './visualization-type'
+import type { Program, ProgramStage } from '.'
 
 type IdRecord = { id: string }
 type IdNameRecord = IdRecord & { name: string }
@@ -42,48 +41,7 @@ export type DimensionRecord = {
 
 export type DimensionArray = Array<DimensionRecord>
 
-type ProgramStageRecord = Pick<
-    ProgramStage,
-    | 'displayExecutionDateLabel'
-    | 'displayDueDateLabel'
-    | 'hideDueDate'
-    | 'repeatable'
-> & {
-    id: string
-    name: string
-}
-
-type ProgramRecord = Pick<
-    Program,
-    | 'programType'
-    | 'displayEnrollmentDateLabel'
-    | 'displayIncidentDateLabel'
-    | 'displayIncidentDate'
-> & {
-    id: string
-    name: string
-    programStages: Array<
-        Pick<ProgramStage, 'id' | 'repeatable'> & {
-            name: string
-        }
-    >
-}
-
-type ProgramDimensionArray = Array<
-    Pick<
-        Program,
-        | 'enrollmentDateLabel'
-        | 'incidentDateLabel'
-        | 'programType'
-        | 'displayIncidentDate'
-        | 'displayEnrollmentDateLabel'
-        | 'displayIncidentDateLabel'
-    > & {
-        id: string
-        name: string
-        programStages: Array<ProgramStageRecord>
-    }
->
+type ProgramDimensionArray = Array<Program>
 
 type DataElementDimensionArray = Array<{
     legendSet: IdNameRecord
@@ -96,8 +54,8 @@ type SavedVisualizationFieldOverrides = {
     columns: DimensionArray
     rows: DimensionArray
     filters: DimensionArray
-    program: ProgramRecord
-    programStage: ProgramStageRecord
+    program: Program
+    programStage: ProgramStage
     programDimensions: ProgramDimensionArray
     trackedEntityType: IdNameRecord
 

@@ -1,14 +1,21 @@
 import type { ProgramType } from './dhis2-openapi-schemas'
-import type { MetadataItemWithName, ProgramMetadataItem } from './metadata'
+import type { DimensionType } from './dimension'
+import type { MetadataItemWithName } from './metadata'
+import type { Program } from './program'
 
 export type DataSourceProgramWithRegistration = Omit<
-    ProgramMetadataItem,
-    'programType'
+    Program,
+    'programType' | 'trackedEntityType'
 > & {
     programType: Extract<ProgramType, 'WITH_REGISTRATION'>
+    // Required field for tracker program
+    trackedEntityType: {
+        id: string
+        name: string
+    }
 }
 export type DataSourceProgramWithoutRegistration = Omit<
-    ProgramMetadataItem,
+    Program,
     'programType'
 > & {
     programType: Extract<ProgramType, 'WITHOUT_REGISTRATION'>
@@ -21,12 +28,35 @@ export type DataSource =
      * it just has `id` and `name` */
     | MetadataItemWithName
 
-export type DataSourceFilter =
-    | 'ORG_UNITS'
-    | 'PERIODS'
-    | 'STATUSES'
-    | 'DATA_ELEMENTS'
-    | 'PROGRAM_ATTRIBUTES'
-    | 'PROGRAM_INDICATORS'
-    | 'CATEGORIES'
-    | 'CATEGORY_OPTION_GROUP_SETS'
+export type DataSourceFilter = Extract<
+    DimensionType,
+    | 'ORGANISATION_UNIT'
+    | 'PERIOD'
+    | 'STATUS'
+    | 'DATA_ELEMENT'
+    | 'PROGRAM_ATTRIBUTE'
+    | 'PROGRAM_INDICATOR'
+    | 'CATEGORY'
+    | 'CATEGORY_OPTION_GROUP_SET'
+>
+
+export type DimensionCardKey =
+    // program-with-registration data-source
+    | 'enrollment'
+    | 'event-with-registration'
+    | 'program-indicators'
+    | 'program-tracked-entity-type'
+    // program-without-registration data-source
+    | 'event-without-registration'
+    // tracked-entity-type data-source
+    | 'tracked-entity-type'
+    // generic
+    | 'metadata'
+    | 'other'
+
+export type DimensionListKey =
+    | Exclude<
+          DimensionCardKey,
+          'enrollment' | 'event-with-registration' | 'metadata'
+      >
+    | `stage-${string}`

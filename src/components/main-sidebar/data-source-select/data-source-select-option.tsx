@@ -1,15 +1,15 @@
 import cx from 'classnames'
-import { type KeyboardEvent, useCallback } from 'react'
+import { type FC, type KeyboardEvent, useCallback } from 'react'
 import classes from './styles/data-source-select-option.module.css'
 import { useAppSelector, useAppDispatch, useAddMetadata } from '@hooks'
 import {
     isSelectedDataSourceId,
     setDataSourceId,
 } from '@store/dimensions-selection-slice'
-import type { MetadataItemWithName, ProgramMetadataItem } from '@types'
+import type { MetadataItemWithName, Program } from '@types'
 
 export type DataSourceSelectOptionProps = {
-    option: ProgramMetadataItem | MetadataItemWithName
+    option: Program | MetadataItemWithName
     closeDropdown: () => void
 }
 
@@ -39,10 +39,10 @@ const focusSibling = (
     }
 }
 
-export const DataSourceSelectOption = ({
+export const DataSourceSelectOption: FC<DataSourceSelectOptionProps> = ({
     option,
     closeDropdown,
-}: DataSourceSelectOptionProps) => {
+}) => {
     const dispatch = useAppDispatch()
     const addMetadata = useAddMetadata()
     const isSelected = useAppSelector((state) =>

@@ -3,8 +3,8 @@ import { isObject, isPopulatedString } from './validation'
 import type {
     DimensionId,
     OutputType,
-    ProgramMetadataItem,
-    ProgramStageMetadataItem,
+    Program,
+    ProgramStage,
     OptionSetMetadataItem,
     OrganisationUnitMetadataItem,
     MetadataItem,
@@ -68,9 +68,7 @@ export const isMetadataItemWithName = (
     )
 }
 
-export const isProgramMetadataItem = (
-    input: unknown
-): input is ProgramMetadataItem => {
+export const isProgramMetadataItem = (input: unknown): input is Program => {
     return (
         isObject(input) &&
         'id' in input &&
@@ -84,7 +82,7 @@ export const isProgramMetadataItem = (
 
 export const isProgramStageMetadataItem = (
     input: unknown
-): input is ProgramStageMetadataItem => {
+): input is ProgramStage => {
     return (
         isObject(input) &&
         'id' in input &&

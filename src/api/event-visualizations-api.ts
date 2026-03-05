@@ -4,6 +4,12 @@ import { parseEngineError } from '@api/parse-engine-error'
 import { preparePayloadForSave } from '@dhis2/analytics'
 import { parseCondition } from '@modules/conditions'
 import {
+    getDimensionFields,
+    getProgramFields,
+    getProgramStageFields,
+    getTrackedEntityTypeFields,
+} from '@modules/query'
+import {
     getDimensionMetadataFields,
     getSaveableVisualization,
 } from '@modules/visualization'
@@ -17,11 +23,6 @@ import type {
     DataEngine,
 } from '@types'
 
-const getDimensionFields = (
-    displayNameProp: CurrentUser['settings']['displayNameProperty']
-): string =>
-    `dimension,dimensionType,filter,program[id],programStage[id],optionSet[id,${displayNameProp}~rename(name)],valueType,legendSet[id,${displayNameProp}~rename(name)],repetition,items[dimensionItem~rename(id)]`
-
 export const getVisualizationQueryFields = (
     displayNameProp: CurrentUser['settings']['displayNameProperty']
 ): string[] => [
@@ -29,15 +30,15 @@ export const getVisualizationQueryFields = (
     `columns[${getDimensionFields(displayNameProp)}]`,
     `rows[${getDimensionFields(displayNameProp)}]`,
     `filters[${getDimensionFields(displayNameProp)}]`,
-    `program[id,programType,${displayNameProp}~rename(name),displayEnrollmentDateLabel,displayIncidentDateLabel,displayIncidentDate,programStages[id,displayName~rename(name),repeatable]]`,
-    'programStage[id,displayName~rename(name),displayExecutionDateLabel,displayDueDateLabel,hideDueDate,repeatable]',
-    `programDimensions[id,${displayNameProp}~rename(name),enrollmentDateLabel,incidentDateLabel,programType,displayIncidentDate,displayEnrollmentDateLabel,displayIncidentDateLabel,programStages[id,${displayNameProp}~rename(name),repeatable,hideDueDate,displayExecutionDateLabel,displayDueDateLabel]]`,
+    `program[${getProgramFields(displayNameProp)}]`,
+    `programStage[${getProgramStageFields(displayNameProp)}]`,
+    `programDimensions[${getProgramFields(displayNameProp)}]`,
     'access',
     'href',
     ...getDimensionMetadataFields(),
     'dataElementDimensions[legendSet[id,name]]',
     'legend[set[id,displayName],strategy,style,showKey]',
-    `trackedEntityType[id,${displayNameProp}~rename(name)]`,
+    `trackedEntityType[${getTrackedEntityTypeFields(displayNameProp)}]`,
     '!interpretations',
     '!userGroupAccesses',
     '!publicAccess',

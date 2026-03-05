@@ -1,0 +1,8 @@
+.container {
+    border-radius: 3px;
+    margin-inline-end: 2px;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    color: var(--colors-grey700);
+}

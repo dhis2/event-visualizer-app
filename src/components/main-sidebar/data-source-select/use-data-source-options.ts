@@ -1,29 +1,18 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useCurrentUser, useRtkQuery } from '@hooks'
+import { getProgramFields, getTrackedEntityTypeFields } from '@modules/query'
 import type {
+    CurrentUser,
     MetadataItemWithName,
-    ProgramMetadataItem,
+    Program,
     UseRtkQueryResult,
 } from '@types'
 
-const programFields = [
-    'id',
-    'displayName~rename(name)',
-    'enrollmentDateLabel',
-    'incidentDateLabel',
-    'programType',
-    'programStages[id,displayName~rename(name),displayExecutionDateLabel,hideDueDate,displayDueDateLabel,repeatable]',
-    'displayIncidentDate',
-    'displayIncidentDateLabel',
-    'displayEnrollmentDateLabel',
-] as const
-
-const trackedEntityTypeFields = ['id', 'displayName~rename(name)'] as const
 const sharedParams = { filter: 'access.data.read:eq:true', paging: false }
 
 type ResponseData = {
     programs: {
-        programs: ProgramMetadataItem[]
+        programs: Program[]
     }
     trackedEntityTypes: {
         trackedEntityTypes: MetadataItemWithName[]
@@ -36,7 +25,7 @@ export type UseDataSourceOptionsResult = Pick<
     UseRtkQueryResult<ResponseData>,
     'isLoading' | 'isError' | 'error'
 > & {
-    programs: ProgramMetadataItem[]
+    programs: Program[]
     trackedEntityTypes: MetadataItemWithName[]
     filterString: string
     hasMorePrograms: boolean
@@ -71,35 +60,21 @@ function filterByNameWithMaxLength<T extends { name: string }>(
     return [slicedList, hasMore]
 }
 
-const replaceDisplayNameProperty = (
-    fields: ReadonlyArray<string>,
-    displayNameProperty: string
-) =>
-    fields
-        .join(',')
-        .replaceAll(
-            'displayName~rename(name)',
-            `${displayNameProperty}~rename(name)`
-        )
-const getQueryOptions = (displayNameProperty: string) => ({
+const getQueryOptions = (
+    displayNameProperty: CurrentUser['settings']['displayNameProperty']
+) => ({
     programs: {
         resource: 'programs',
         params: {
             ...sharedParams,
-            fields: replaceDisplayNameProperty(
-                programFields,
-                displayNameProperty
-            ),
+            fields: getProgramFields(displayNameProperty),
         },
     },
     trackedEntityTypes: {
         resource: 'trackedEntityTypes',
         params: {
             ...sharedParams,
-            fields: replaceDisplayNameProperty(
-                trackedEntityTypeFields,
-                displayNameProperty
-            ),
+            fields: getTrackedEntityTypeFields(displayNameProperty),
         },
     },
 })

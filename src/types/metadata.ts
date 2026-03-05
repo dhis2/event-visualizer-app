@@ -1,10 +1,10 @@
 import type {
     MetadataItem as GeneratedMetadaItem,
-    ProgramType,
     OptionSet,
     LegendSet,
 } from './dhis2-openapi-schemas'
 import type { DimensionType } from './dimension'
+import type { Program, ProgramStage } from '.'
 
 /** PHASES
  * 1. Data is provided as a single object, object map, or object array
@@ -118,35 +118,14 @@ export type UserOrgUnitMetadataItem = {
     organisationUnits: string[]
 }
 
-export type ProgramMetadataItem = {
-    id: string
-    programType: ProgramType
-    name: string
-    displayIncidentDate?: boolean
-    programStages?: Array<{
-        id: string
-        repeatable: boolean
-        name: string
-    }>
-    code?: string
-}
-
-export type ProgramStageMetadataItem = {
-    id: string
-    name: string
-    repeatable: boolean
-    hideDueDate: boolean
-    displayExecutionDateLabel?: string
-}
-
 export type MetadataItem =
     | DimensionMetadataItem
     | OptionSetMetadataItem
     | LegendSetMetadataItem
     | OrganisationUnitMetadataItem
     | UserOrgUnitMetadataItem
-    | ProgramMetadataItem
-    | ProgramStageMetadataItem
+    | Program
+    | ProgramStage
 
 export type MetadataItemWithName = Exclude<
     MetadataItem,
@@ -167,6 +146,6 @@ export type DimensionMetadata = {
     programStageId?: string
     repetitionIndex?: string
     dimension?: DimensionMetadataItem
-    program?: ProgramMetadataItem
-    programStage?: ProgramStageMetadataItem
+    program?: Program
+    programStage?: ProgramStage
 }

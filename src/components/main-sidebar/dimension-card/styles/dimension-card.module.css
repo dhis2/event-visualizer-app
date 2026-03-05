@@ -1,0 +1,22 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--colors-white);
+    border: 1px solid var(--colors-grey400);
+    border-radius: 5px;
+}
+.container.isDisabledByFilter {
+    opacity: 0.5;
+}
+.content {
+    display: flex;
+    flex-direction: column;
+    margin-block-start: 4px;
+}
+.content.collapsed {
+    display: none;
+}
+
+.content.withSubSections {
+    margin-block-start: 0;
+}

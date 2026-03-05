@@ -7,7 +7,7 @@ import {
     theme,
 } from '@dhis2/ui'
 import cx from 'classnames'
-import { type KeyboardEvent, useCallback } from 'react'
+import { type FC, type KeyboardEvent, useCallback } from 'react'
 import classes from './styles/data-source-select-combobox.module.css'
 import { useAppSelector, useMetadataItem } from '@hooks'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
@@ -19,12 +19,12 @@ export type DataSourceSelectComboboxProps = {
     comboboxRef: React.RefObject<HTMLDivElement>
 }
 
-export const DataSourceSelectCombobox = ({
+export const DataSourceSelectCombobox: FC<DataSourceSelectComboboxProps> = ({
     isError,
     isOpen,
     onClick,
     comboboxRef,
-}: DataSourceSelectComboboxProps) => {
+}) => {
     const selectedId = useAppSelector(getDataSourceId)
     const dataSourceMetadata = useMetadataItem(selectedId)
     const onKeyDown = useCallback(

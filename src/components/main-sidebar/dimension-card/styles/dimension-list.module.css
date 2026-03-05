@@ -1,0 +1,89 @@
+.list {
+    all: unset;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 0 4px 4px 16px;
+    flex-grow: 1;
+}
+.error > p {
+    display: flex;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+    color: var(--theme-error);
+    font-size: 12px;
+    line-height: 16px;
+}
+/* Let the container shrink to the content so that
+ * we can use center align the text and avoid an
+ * indentation */
+.error.emptyListError {
+    flex-grow: 0;
+    flex-shrink: 0;
+    inline-size: fit-content;
+    max-inline-size: max-content;
+}
+.noData {
+    padding: 8px;
+    color: var(--colors-grey500);
+    text-align: center;
+    font-size: 14px;
+    line-height: 16px;
+}
+.noResults {
+    padding: 0 8px;
+    color: var(--colors-grey600);
+    text-align: start;
+    font-size: 12px;
+    line-height: 16px;
+}
+.loadMore {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    overflow: hidden;
+    font-style: italic;
+    padding: 0 var(--spacers-dp4);
+    block-size: 24px;
+}
+.loadMore > button {
+    border: none;
+    background: none;
+    color: var(--colors-grey600);
+    font-size: 13px;
+    cursor: pointer;
+    inline-size: 100%;
+    text-decoration: underline;
+    text-align: start;
+    padding: var(--spacers-dp4);
+    border-radius: 2px;
+}
+.loadMore > button:hover {
+    background: var(--colors-grey100);
+    color: var(--colors-grey900);
+}
+.loadMore > button:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+.loadMore > button:focus:not(:focus-visible) {
+    outline: none;
+}
+.loadingMore {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: var(--spacers-dp8);
+    overflow: hidden;
+    padding: 0 var(--spacers-dp8);
+    block-size: 24px;
+}
+.loadingMore > span {
+    color: var(--colors-grey700);
+    font-size: 13px;
+    font-style: italic;
+}

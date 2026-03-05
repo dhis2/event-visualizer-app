@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
     dimensionSelectionSlice,
     initialState,
+    initialListLoadingState,
     type DimensionSelectionState,
     clearDataSourceId,
     setDataSourceId,
@@ -9,13 +10,17 @@ import {
     setSearchTerm,
     clearFilter,
     setFilter,
-    toggleAllCollapsed,
-    clearListsLoadingStates,
-    removeListsLoadingState,
-    addListsLoadingState,
-    setListLoadingStart,
-    setListLoadingError,
-    setListLoadingSuccess,
+    toggleAllDimensionCardsIsCollapsed,
+    clearDimensionCardCollapsedStates,
+    clearDimensionListLoadingStates,
+    removeDimensionCardCollapsedState,
+    removeDimensionListLoadingState,
+    addDimensionCardCollapsedState,
+    addDimensionListLoadingState,
+    toggleDimensionCardIsCollapsed,
+    setDimensionListLoadStart,
+    setDimensionListLoadError,
+    setDimensionListLoadSuccess,
     clearMultiSelection,
     addItemToMultiSelection,
     removeItemFromMultiSelection,
@@ -23,15 +28,17 @@ import {
     getDataSourceId,
     isSelectedDataSourceId,
     getFilter,
-    isAllCollapsed,
-    isAnyListLoading,
-    getAllListLoadErrors,
-    isListLoading,
-    getListError,
+    areAllDimensionCardsCollapsed,
+    isAnyDimensionListLoading,
+    getAllDimensionListLoadErrors,
+    isDimensionCardCollapsed,
+    isDimensionListLoading,
+    getDimensionListError,
     isMultiSelecting,
     isDimensionMultiSelected,
 } from '../dimensions-selection-slice'
 import type { EngineError } from '@api/parse-engine-error'
+import type { DimensionCardKey, DimensionListKey } from '@types'
 
 type RootState = {
     dimensionSelection: DimensionSelectionState
@@ -87,74 +94,266 @@ describe('dimensionSelectionSlice', () => {
         it('should clear filter', () => {
             const prevstate: DimensionSelectionState = {
                 ...initialState,
-                filter: 'ORG_UNITS',
+                filter: 'ORGANISATION_UNIT',
             }
             const state = reducer(prevstate, clearFilter())
             expect(state.filter).toBe(null)
         })
 
         it('should set filter', () => {
-            const state = reducer(initialState, setFilter('PERIODS'))
-            expect(state.filter).toBe('PERIODS')
+            const state = reducer(initialState, setFilter('PERIOD'))
+            expect(state.filter).toBe('PERIOD')
         })
 
-        it('should toggle all collapsed', () => {
-            const state = reducer(initialState, toggleAllCollapsed())
-            expect(state.isAllCollapsed).toBe(true)
-        })
-
-        it('should clear lists loading states', () => {
-            const prevstate: DimensionSelectionState = {
+        it('should toggle all collapsed when groups exist', () => {
+            const prevState: DimensionSelectionState = {
                 ...initialState,
-                listsLoadingStates: { test: { isLoading: true } },
+                dimensionCardCollapsedStates: {
+                    metadata: false,
+                    other: false,
+                },
             }
-            const state = reducer(prevstate, clearListsLoadingStates())
-            expect(state.listsLoadingStates).toEqual({})
+
+            // First toggle: should collapse all
+            let state = reducer(prevState, toggleAllDimensionCardsIsCollapsed())
+            expect(state.dimensionCardCollapsedStates.metadata).toBe(true)
+            expect(state.dimensionCardCollapsedStates.other).toBe(true)
+
+            // Second toggle: should expand all
+            state = reducer(state, toggleAllDimensionCardsIsCollapsed())
+            expect(state.dimensionCardCollapsedStates.metadata).toBe(false)
+            expect(state.dimensionCardCollapsedStates.other).toBe(false)
         })
 
-        it('should remove lists loading state', () => {
-            const prevstate: DimensionSelectionState = {
+        it('should handle toggle all collapsed when some groups are collapsed', () => {
+            const prevState: DimensionSelectionState = {
                 ...initialState,
-                listsLoadingStates: { test: { isLoading: true } },
+                dimensionCardCollapsedStates: {
+                    metadata: true,
+                    other: false,
+                },
             }
-            const state = reducer(prevstate, removeListsLoadingState('test'))
-            expect(state.listsLoadingStates).toEqual({})
+
+            // Not all collapsed, so should collapse all
+            const state = reducer(
+                prevState,
+                toggleAllDimensionCardsIsCollapsed()
+            )
+            expect(state.dimensionCardCollapsedStates.metadata).toBe(true)
+            expect(state.dimensionCardCollapsedStates.other).toBe(true)
         })
 
-        it('should add lists loading state', () => {
-            const state = reducer(initialState, addListsLoadingState('test'))
-            expect(state.listsLoadingStates).toEqual({
-                test: { isLoading: false },
+        it('should do nothing when toggling all collapsed with no groups', () => {
+            const state = reducer(
+                initialState,
+                toggleAllDimensionCardsIsCollapsed()
+            )
+            expect(state.dimensionCardCollapsedStates).toEqual({})
+        })
+
+        it('should clear dimension card collapse states', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionCardCollapsedStates: {
+                    metadata: true,
+                },
+            }
+            const state = reducer(
+                prevState,
+                clearDimensionCardCollapsedStates()
+            )
+            expect(state.dimensionCardCollapsedStates).toEqual({})
+        })
+
+        it('should clear dimension list loading states', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionListLoadingStates: {
+                    other: { isLoading: true, error: undefined },
+                },
+            }
+            const state = reducer(prevState, clearDimensionListLoadingStates())
+            expect(state.dimensionListLoadingStates).toEqual({})
+        })
+
+        it('should remove dimension card collapse state', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionCardCollapsedStates: {
+                    metadata: false,
+                    other: true,
+                },
+            }
+            const state = reducer(
+                prevState,
+                removeDimensionCardCollapsedState('metadata')
+            )
+            expect(state.dimensionCardCollapsedStates).toEqual({
+                other: true,
             })
         })
 
-        it('should set list loading start', () => {
-            const state = reducer(initialState, setListLoadingStart('test'))
-            expect(state.listsLoadingStates).toEqual({
-                test: { isLoading: true },
+        it('should remove dimension list loading state', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionListLoadingStates: {
+                    other: { isLoading: true, error: undefined },
+                    'program-indicators': {
+                        isLoading: false,
+                        error: undefined,
+                    },
+                },
+            }
+            const state = reducer(
+                prevState,
+                removeDimensionListLoadingState('other')
+            )
+            expect(state.dimensionListLoadingStates).toEqual({
+                'program-indicators': { isLoading: false, error: undefined },
             })
         })
 
-        it('should set list loading error', () => {
+        it('should add dimension card collapse state with initial value', () => {
+            const state = reducer(
+                initialState,
+                addDimensionCardCollapsedState('metadata')
+            )
+            expect(state.dimensionCardCollapsedStates).toEqual({
+                metadata: false,
+            })
+        })
+
+        it('should add dimension list loading state with initial value', () => {
+            const state = reducer(
+                initialState,
+                addDimensionListLoadingState('other')
+            )
+            expect(state.dimensionListLoadingStates).toEqual({
+                other: initialListLoadingState,
+            })
+        })
+
+        it('should toggle dimension card collapsed state', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionCardCollapsedStates: {
+                    metadata: false,
+                },
+            }
+
+            // First toggle: false -> true
+            let state = reducer(
+                prevState,
+                toggleDimensionCardIsCollapsed('metadata')
+            )
+            expect(state.dimensionCardCollapsedStates.metadata).toBe(true)
+
+            // Second toggle: true -> false
+            state = reducer(state, toggleDimensionCardIsCollapsed('metadata'))
+            expect(state.dimensionCardCollapsedStates.metadata).toBe(false)
+        })
+
+        it('should throw error when toggling non-existent dimension card', () => {
+            expect(() =>
+                reducer(
+                    initialState,
+                    toggleDimensionCardIsCollapsed('metadata')
+                )
+            ).toThrow('Card collapse state for "metadata" is not initialized')
+        })
+
+        it('should set dimension list load start', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionListLoadingStates: {
+                    other: {
+                        isLoading: false,
+                        error: { message: 'old error', type: 'runtime' },
+                    },
+                },
+            }
+
+            const state = reducer(prevState, setDimensionListLoadStart('other'))
+            expect(state.dimensionListLoadingStates.other!.isLoading).toBe(true)
+            expect(
+                state.dimensionListLoadingStates.other!.error
+            ).toBeUndefined()
+        })
+
+        it('should throw error when setting load start for non-existent dimension list', () => {
+            expect(() =>
+                reducer(
+                    initialState,
+                    setDimensionListLoadStart('other' as DimensionListKey)
+                )
+            ).toThrow('List loading state for "other" is not initialized')
+        })
+
+        it('should set dimension list load error', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionListLoadingStates: {
+                    other: { isLoading: true, error: undefined },
+                },
+            }
             const error: EngineError = {
                 message: 'test error',
                 type: 'runtime',
             }
 
             const state = reducer(
-                initialState,
-                setListLoadingError({ id: 'test', error })
+                prevState,
+                setDimensionListLoadError({ id: 'other', error })
             )
-            expect(state.listsLoadingStates).toEqual({
-                test: { isLoading: false, error },
-            })
+            expect(state.dimensionListLoadingStates.other!.isLoading).toBe(
+                false
+            )
+            expect(state.dimensionListLoadingStates.other!.error).toEqual(error)
         })
 
-        it('should set list loading success', () => {
-            const state = reducer(initialState, setListLoadingSuccess('test'))
-            expect(state.listsLoadingStates).toEqual({
-                test: { isLoading: false },
-            })
+        it('should throw error when setting load error for non-existent dimension list', () => {
+            const error: EngineError = {
+                message: 'test error',
+                type: 'runtime',
+            }
+            expect(() =>
+                reducer(
+                    initialState,
+                    setDimensionListLoadError({
+                        id: 'other' as DimensionListKey,
+                        error,
+                    })
+                )
+            ).toThrow('List loading state for "other" is not initialized')
+        })
+
+        it('should set dimension list load success', () => {
+            const prevState: DimensionSelectionState = {
+                ...initialState,
+                dimensionListLoadingStates: {
+                    other: { isLoading: true, error: undefined },
+                },
+            }
+
+            const state = reducer(
+                prevState,
+                setDimensionListLoadSuccess('other')
+            )
+            expect(state.dimensionListLoadingStates.other!.isLoading).toBe(
+                false
+            )
+            expect(
+                state.dimensionListLoadingStates.other!.error
+            ).toBeUndefined()
+        })
+
+        it('should throw error when setting load success for non-existent dimension list', () => {
+            expect(() =>
+                reducer(
+                    initialState,
+                    setDimensionListLoadSuccess('other' as DimensionListKey)
+                )
+            ).toThrow('List loading state for "other" is not initialized')
         })
 
         it('should clear multi selection', () => {
@@ -212,34 +411,62 @@ describe('dimensionSelectionSlice', () => {
         })
 
         it('should get filter', () => {
-            const state = createRootState({ filter: 'DATA_ELEMENTS' })
-            expect(getFilter(state)).toBe('DATA_ELEMENTS')
+            const state = createRootState({ filter: 'DATA_ELEMENT' })
+            expect(getFilter(state)).toBe('DATA_ELEMENT')
         })
 
-        it('should get is all collapsed', () => {
-            const state = createRootState({ isAllCollapsed: true })
-            expect(isAllCollapsed(state)).toBe(true)
-        })
-
-        it('should detect if any list is loading', () => {
-            const stateWithLoading = createRootState({
-                listsLoadingStates: {
-                    list1: { isLoading: false },
-                    list2: { isLoading: true },
+        it('should get are all dimension cards collapsed when all are collapsed', () => {
+            const state = createRootState({
+                dimensionCardCollapsedStates: {
+                    metadata: true,
+                    other: true,
                 },
             })
-            expect(isAnyListLoading(stateWithLoading)).toBe(true)
+            expect(areAllDimensionCardsCollapsed(state)).toBe(true)
+        })
+
+        it('should get are all dimension cards collapsed when some are not collapsed', () => {
+            const state = createRootState({
+                dimensionCardCollapsedStates: {
+                    metadata: true,
+                    other: false,
+                },
+            })
+            expect(areAllDimensionCardsCollapsed(state)).toBe(false)
+        })
+
+        it('should get are all dimension cards collapsed when none exist', () => {
+            const state = createRootState({
+                dimensionCardCollapsedStates: {},
+            })
+            expect(areAllDimensionCardsCollapsed(state)).toBe(false)
+        })
+
+        it('should detect if any dimension list is loading', () => {
+            const stateWithLoading = createRootState({
+                dimensionListLoadingStates: {
+                    other: { isLoading: false, error: undefined },
+                    'program-indicators': {
+                        isLoading: true,
+                        error: undefined,
+                    },
+                },
+            })
+            expect(isAnyDimensionListLoading(stateWithLoading)).toBe(true)
 
             const stateWithoutLoading = createRootState({
-                listsLoadingStates: {
-                    list1: { isLoading: false },
-                    list2: { isLoading: false },
+                dimensionListLoadingStates: {
+                    other: { isLoading: false, error: undefined },
+                    'program-indicators': {
+                        isLoading: false,
+                        error: undefined,
+                    },
                 },
             })
-            expect(isAnyListLoading(stateWithoutLoading)).toBe(false)
+            expect(isAnyDimensionListLoading(stateWithoutLoading)).toBe(false)
         })
 
-        it('should get all list load errors', () => {
+        it('should get all dimension list load errors', () => {
             const error1: EngineError = {
                 message: 'error 1',
                 type: 'runtime',
@@ -250,49 +477,135 @@ describe('dimensionSelectionSlice', () => {
             }
 
             const state = createRootState({
-                listsLoadingStates: {
-                    list1: { isLoading: false, error: error1 },
-                    list2: { isLoading: false },
-                    list3: { isLoading: false, error: error2 },
+                dimensionListLoadingStates: {
+                    other: {
+                        isLoading: false,
+                        error: error1,
+                    },
+                    'program-indicators': {
+                        isLoading: false,
+                        error: undefined,
+                    },
+                    'tracked-entity-type': {
+                        isLoading: false,
+                        error: error2,
+                    },
                 },
             })
 
-            const errors = getAllListLoadErrors(state)
+            const errors = getAllDimensionListLoadErrors(state)
             expect(errors).toEqual([
-                { groupKey: 'list1', error: error1 },
-                { groupKey: 'list3', error: error2 },
+                { listKey: 'other', error: error1 },
+                { listKey: 'tracked-entity-type', error: error2 },
             ])
         })
 
-        it('should check if list is loading', () => {
+        it('should check if dimension card is collapsed', () => {
             const state = createRootState({
-                listsLoadingStates: {
-                    loading: { isLoading: true },
-                    notLoading: { isLoading: false },
+                dimensionCardCollapsedStates: {
+                    metadata: true,
+                    other: false,
                 },
             })
 
-            expect(isListLoading(state, 'loading')).toBe(true)
-            expect(isListLoading(state, 'notLoading')).toBe(false)
-            expect(isListLoading(state, 'nonExistent')).toBe(false)
+            expect(
+                isDimensionCardCollapsed(state, 'metadata' as DimensionCardKey)
+            ).toBe(true)
+            expect(
+                isDimensionCardCollapsed(state, 'other' as DimensionCardKey)
+            ).toBe(false)
+            expect(
+                isDimensionCardCollapsed(
+                    state,
+                    'enrollment' as DimensionCardKey
+                )
+            ).toBe(false)
         })
 
-        it('should get list error', () => {
+        it('should check if dimension list is loading', () => {
+            const state = createRootState({
+                dimensionListLoadingStates: {
+                    other: { isLoading: true, error: undefined },
+                    'program-indicators': {
+                        isLoading: false,
+                        error: undefined,
+                    },
+                },
+            })
+
+            expect(
+                isDimensionListLoading(state, 'other' as DimensionListKey)
+            ).toBe(true)
+            expect(
+                isDimensionListLoading(
+                    state,
+                    'program-indicators' as DimensionListKey
+                )
+            ).toBe(false)
+            expect(
+                isDimensionListLoading(state, 'metadata' as DimensionListKey)
+            ).toBe(false)
+        })
+
+        it('should get dimension list error', () => {
             const error: EngineError = {
                 message: 'test error',
                 type: 'runtime',
             }
 
             const state = createRootState({
-                listsLoadingStates: {
-                    withError: { isLoading: false, error },
-                    withoutError: { isLoading: false },
+                dimensionListLoadingStates: {
+                    other: { isLoading: false, error },
+                    'program-indicators': {
+                        isLoading: false,
+                        error: undefined,
+                    },
                 },
             })
 
-            expect(getListError(state, 'withError')).toEqual(error)
-            expect(getListError(state, 'withoutError')).toBeUndefined()
-            expect(getListError(state, 'nonExistent')).toBeUndefined()
+            expect(
+                getDimensionListError(state, 'other' as DimensionListKey)
+            ).toEqual(error)
+            expect(
+                getDimensionListError(
+                    state,
+                    'program-indicators' as DimensionListKey
+                )
+            ).toBeUndefined()
+            expect(
+                getDimensionListError(state, 'metadata' as DimensionListKey)
+            ).toBeUndefined()
+        })
+
+        it('should handle undefined dimension list key for loading state', () => {
+            const state = createRootState({
+                dimensionListLoadingStates: {
+                    other: { isLoading: true, error: undefined },
+                },
+            })
+
+            expect(isDimensionListLoading(state, undefined)).toBe(false)
+            expect(
+                isDimensionListLoading(state, 'other' as DimensionListKey)
+            ).toBe(true)
+        })
+
+        it('should handle undefined dimension list key for error state', () => {
+            const error: EngineError = {
+                message: 'test error',
+                type: 'runtime',
+            }
+
+            const state = createRootState({
+                dimensionListLoadingStates: {
+                    other: { isLoading: false, error },
+                },
+            })
+
+            expect(getDimensionListError(state, undefined)).toBeUndefined()
+            expect(
+                getDimensionListError(state, 'other' as DimensionListKey)
+            ).toEqual(error)
         })
 
         it('should detect multi selecting', () => {

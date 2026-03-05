@@ -26,8 +26,8 @@ import type {
     InitialMetadataItems,
     MetadataItem,
     DimensionMetadata,
-    ProgramMetadataItem,
-    ProgramStageMetadataItem,
+    Program,
+    ProgramStage,
     OptionSetMetadataItem,
     LegendSetMetadataItem,
     OrganisationUnitMetadataItem,
@@ -86,7 +86,7 @@ export const useMetadataItem = (
 }
 export const useProgramMetadataItem = (
     metadataId: string | null | undefined
-): ProgramMetadataItem | undefined => {
+): Program | undefined => {
     const item = useMetadataItem(metadataId)
     if (item && !isProgramMetadataItem(item)) {
         throw new Error('Item is not a program')
@@ -95,7 +95,7 @@ export const useProgramMetadataItem = (
 }
 export const useProgramStageMetadataItem = (
     metadataId: string | null | undefined
-): ProgramStageMetadataItem | undefined => {
+): ProgramStage | undefined => {
     const item = useMetadataItem(metadataId)
     if (item && !isProgramStageMetadataItem(item)) {
         throw new Error('Item is not a program stage')

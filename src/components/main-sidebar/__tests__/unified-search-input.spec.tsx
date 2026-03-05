@@ -422,6 +422,41 @@ describe('UnifiedSearchInput', () => {
             // CSS modules hash class names, so we check if the class attribute contains 'loading'
             expect(input.className).toContain('loading')
         })
+
+        it('should block search term dispatch while loading and dispatch after loading ends', () => {
+            // Start with loading true
+            setupSelectorMock(true, [])
+            const { rerender } = render(<UnifiedSearchInput />)
+
+            const input = screen.getByTestId('unified-search-input')
+
+            // Type a search term while loading
+            act(() => {
+                fireEvent.change(input, { target: { value: 'test' } })
+            })
+
+            // Fast-forward past debounce time (250ms)
+            act(() => {
+                vi.advanceTimersByTime(250)
+            })
+
+            // Should not dispatch because loading is true
+            expect(mockDispatch).not.toHaveBeenCalled()
+
+            // Simulate loading ending (store updates loading state)
+            setupSelectorMock(false, [])
+            rerender(<UnifiedSearchInput />)
+
+            // The effect should run now that loading is false
+            // It should dispatch the pending search term
+            expect(mockDispatch).toHaveBeenCalledTimes(1)
+            expect(mockDispatch).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: expect.stringContaining('setSearchTerm'),
+                    payload: 'test',
+                })
+            )
+        })
     })
 
     describe('error state', () => {
