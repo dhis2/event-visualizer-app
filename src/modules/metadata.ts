@@ -133,13 +133,11 @@ export const isDimensionMetadataItem = (
     isPopulatedString(input.dimensionType)
 
 export const isMetadataItem = (input: unknown): input is MetadataItem =>
-    isProgramMetadataItem(input) ||
-    isProgramStageMetadataItem(input) ||
-    isOptionSetMetadataItem(input) ||
-    isLegendSetMetadataItem(input) ||
-    isOrganisationUnitMetadataItem(input) ||
-    isUserOrgUnitMetadataItem(input) ||
-    isDimensionMetadataItem(input)
+    isObject(input) &&
+    'id' in input &&
+    'name' in input &&
+    isPopulatedString(input.id) &&
+    isPopulatedString(input.name)
 
 export const getDefaultOrgUnitMetadata = (
     outputType?: OutputType

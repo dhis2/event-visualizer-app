@@ -107,12 +107,18 @@ describe('type-guards', () => {
             ).toBe(true)
         })
 
+        it('returns true for generic metadata items with id and name', () => {
+            expect(isMetadataItem({ id: 'test123', name: 'Test Name' })).toBe(
+                true
+            )
+        })
+
         it('returns false for invalid objects', () => {
             expect(isMetadataItem({ uid: 'test' })).toBe(false)
             expect(isMetadataItem({})).toBe(false)
-            expect(isMetadataItem({ id: 'test123', name: 'Test Name' })).toBe(
-                false
-            )
+            expect(isMetadataItem({ id: '' })).toBe(false)
+            expect(isMetadataItem({ id: 'test', name: '' })).toBe(false)
+            expect(isMetadataItem({ id: '', name: '' })).toBe(false)
         })
     })
 
