@@ -24,7 +24,7 @@ export const DataSourceSelectCombobox: FC<DataSourceSelectComboboxProps> = ({
     isOpen,
     onClick,
     comboboxRef,
-}: DataSourceSelectComboboxProps) => {
+}) => {
     const selectedId = useAppSelector(getDataSourceId)
     const dataSourceMetadata = useMetadataItem(selectedId)
     const onKeyDown = useCallback(

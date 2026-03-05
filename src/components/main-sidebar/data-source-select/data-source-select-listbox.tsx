@@ -24,7 +24,7 @@ export const DataSourceSelectListbox: FC<DataSourceSelectListboxProps> = ({
     onShowMoreTrackedEntityTypesClick,
     programs,
     trackedEntityTypes,
-}: DataSourceSelectListboxProps) => (
+}) => (
     <ul role="listbox" id="data-source-listbox" className={classes.listbox}>
         {programs.length === 0 && trackedEntityTypes.length === 0 && (
             <li role="presentation" className={classes.emptyMessage}>

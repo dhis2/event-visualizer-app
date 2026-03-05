@@ -74,9 +74,7 @@ export const getFixedDimensions = (
         },
     ]
 }
-export const CardType: FC<CardTypeProps> = ({
-    trackedEntityType,
-}: CardTypeProps) => {
+export const CardType: FC<CardTypeProps> = ({ trackedEntityType }) => {
     const title = i18n.t('{{name}} registration', {
         name: trackedEntityType.name,
     })

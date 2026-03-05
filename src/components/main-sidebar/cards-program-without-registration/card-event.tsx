@@ -15,7 +15,7 @@ type CardEventProps = {
 }
 const CARD_AND_LIST_KEY = 'event-without-registration'
 
-export const CardEvent: FC<CardEventProps> = ({ program }: CardEventProps) => {
+export const CardEvent: FC<CardEventProps> = ({ program }) => {
     const {
         settings: { displayNameProperty },
     } = useCurrentUser()

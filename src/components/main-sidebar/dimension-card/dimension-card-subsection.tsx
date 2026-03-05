@@ -15,7 +15,7 @@ export const DimensionsCardSubsection: FC<DimensionsCardSubsectionProps> = ({
     children,
     selectedCount = 0,
     isDisabled = false,
-}: DimensionsCardSubsectionProps) => {
+}) => {
     const [isCollapsed, setIsCollapsed] = useState(false)
 
     const handleToggle = useCallback(() => {

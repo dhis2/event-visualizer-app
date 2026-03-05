@@ -17,7 +17,7 @@ export const DimensionCardHeader: FC<DimensionCardHeaderProps> = ({
     isCollapsed,
     onToggle,
     isDisabled = false,
-}: DimensionCardHeaderProps) => {
+}) => {
     return (
         <button
             type="button"

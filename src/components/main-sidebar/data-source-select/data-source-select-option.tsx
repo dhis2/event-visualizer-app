@@ -42,7 +42,7 @@ const focusSibling = (
 export const DataSourceSelectOption: FC<DataSourceSelectOptionProps> = ({
     option,
     closeDropdown,
-}: DataSourceSelectOptionProps) => {
+}) => {
     const dispatch = useAppDispatch()
     const addMetadata = useAddMetadata()
     const isSelected = useAppSelector((state) =>

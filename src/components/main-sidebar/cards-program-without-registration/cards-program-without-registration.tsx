@@ -8,6 +8,6 @@ type CardsProgramWithoutRegistrationProps = {
 
 export const CardsProgramWithoutRegistration: FC<
     CardsProgramWithoutRegistrationProps
-> = ({ program }: CardsProgramWithoutRegistrationProps) => {
+> = ({ program }) => {
     return <CardEvent program={program} />
 }

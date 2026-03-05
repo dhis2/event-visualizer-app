@@ -27,7 +27,7 @@ export const DimensionCard: FC<DimensionCardProps> = ({
     children,
     withSubSections = false,
     isDisabledByFilter = false,
-}: DimensionCardProps) => {
+}) => {
     const dispatch = useAppDispatch()
     const isCollapsed = useAppSelector((state) =>
         isDimensionCardCollapsed(state, dimensionCardKey)
