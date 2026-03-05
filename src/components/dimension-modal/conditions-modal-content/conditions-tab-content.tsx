@@ -101,7 +101,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         getVisUiConfigConditionsByDimension(state, dimension?.id)
     )
 
-    const valueType = dimension.valueType
+    const valueType = dimension.valueType!
     const isProgramIndicator: boolean =
         dimension.dimensionType === 'PROGRAM_INDICATOR'
     const isOptionSetCondition: boolean = Boolean(dimension.optionSet)

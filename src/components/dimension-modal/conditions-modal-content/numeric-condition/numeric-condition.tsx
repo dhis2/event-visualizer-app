@@ -43,7 +43,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                 'INTEGER_POSITIVE',
                 'INTEGER_NEGATIVE',
                 'INTEGER_ZERO_OR_POSITIVE',
-            ].includes(dimension.valueType),
+            ].includes(dimension.valueType!),
         [dimension.valueType]
     )
 
