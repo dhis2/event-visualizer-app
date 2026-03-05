@@ -61,7 +61,6 @@ export type DimensionMetadataItem = Omit<
     | 'dimensionType' // Omit to make required and customise
     | 'dimensionItemType' // Omit to customise
     | 'options' // Omit because it does not reflect reality
-    | 'valueType' // Omit to make required
 > & {
     id: string // we use id not uid
     name: string // required instead of optional
@@ -70,10 +69,8 @@ export type DimensionMetadataItem = Omit<
     optionSet?: string // Add ID reference to `optionSet`
     program?: string // Add ID reference to `program`
     programStage?: string // Add ID reference to `programStage`
-    valueType: GeneratedMetadaItem['valueType']
 }
 
-// Note that `optionSet` and `legendSet` have an optional name
 type OptionSetOption = Omit<OptionSet['options'], 'id' | 'code' | 'name'> & {
     id: string
     code: string
@@ -91,9 +88,9 @@ export type OptionSetMetadataItem = Omit<
     OptionSet,
     'id' | 'options' | 'valueType' | 'version'
 > & {
-    // `id` and `options` are required fields
-    id: string
-    options: Array<OptionSetOption>
+    id: string // required
+    name: string // required
+    options: Array<OptionSetOption> // required
     /* `valueType` and `version` need to be kept optional, because when loading a saved
      * visualization, the option set metadata object is nothing more than a list of options */
     valueType?: OptionSet['valueType']
@@ -101,9 +98,9 @@ export type OptionSetMetadataItem = Omit<
 }
 
 export type LegendSetMetadataItem = Omit<LegendSet, 'id' | 'legends'> & {
-    id: string
+    id: string // required
+    name: string // required
     legends: Array<LegendSetLegend>
-    name?: string
 }
 
 export type OrganisationUnitMetadataItem = {
@@ -126,11 +123,6 @@ export type MetadataItem =
     | UserOrgUnitMetadataItem
     | Program
     | ProgramStage
-
-export type MetadataItemWithName = Exclude<
-    MetadataItem,
-    OptionSetMetadataItem | LegendSetMetadataItem
->
 
 export type Subscriber = () => void
 
