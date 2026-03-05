@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { useMemo } from 'react'
+import { useMemo, type FC } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -15,9 +15,9 @@ type CardProgramIndicatorsProps = {
 
 const CARD_AND_LIST_KEY = 'program-indicators'
 
-export const CardProgramIndicators = ({
+export const CardProgramIndicators: FC<CardProgramIndicatorsProps> = ({
     program,
-}: CardProgramIndicatorsProps) => {
+}) => {
     const {
         settings: { displayNameProperty },
     } = useCurrentUser()

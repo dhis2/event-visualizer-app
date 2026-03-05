@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { useMemo } from 'react'
+import { useMemo, type FC } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -35,9 +35,9 @@ const getFixedDimensions = (
     },
 ]
 
-export const CardTrackedEntityType = ({
+export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
     program,
-}: CardTrackedEntityTypeProps) => {
+}) => {
     const {
         settings: { displayNameProperty },
     } = useCurrentUser()
