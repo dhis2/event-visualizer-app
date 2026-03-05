@@ -6,7 +6,7 @@ export type ListFetchState = {
     isUninitialized: boolean
     isLoading: boolean
     isFetching: boolean
-    isLoadingMore: boolean
+    isFetchingMore: boolean
     fetchedDimensions: DimensionMetadataItem[]
     nextPage: number | null
     error?: EngineError
@@ -42,7 +42,7 @@ const initialDimensionListState: ListFetchState = {
     isUninitialized: true,
     isLoading: false,
     isFetching: false,
-    isLoadingMore: false,
+    isFetchingMore: false,
     fetchedDimensions: [],
     nextPage: null,
     error: undefined,
@@ -60,7 +60,7 @@ const reducer = (
                 isUninitialized: false,
                 isLoading: state.isUninitialized,
                 isFetching: true,
-                isLoadingMore: action.payload.page > 1,
+                isFetchingMore: action.payload.page > 1,
                 error: undefined,
             }
 
@@ -69,7 +69,7 @@ const reducer = (
                 ...state,
                 isUninitialized: false,
                 isLoading: false,
-                isLoadingMore: false,
+                isFetchingMore: false,
                 isFetching: false,
                 fetchedDimensions:
                     action.payload.currentPage === 1
@@ -91,7 +91,7 @@ const reducer = (
                 ...state,
                 isUninitialized: false,
                 isLoading: false,
-                isLoadingMore: false,
+                isFetchingMore: false,
                 isFetching: false,
                 error: action.payload,
             }

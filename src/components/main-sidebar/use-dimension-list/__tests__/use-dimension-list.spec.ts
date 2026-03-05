@@ -405,8 +405,8 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         expect(lastInitiateQuery?.params?.page).toBe(2)
         expect(result.current.hasMore).toBe(false)
         expect(result.current.isLoading).toBe(false)
-        // Note: Not checking isLoadingMore here - behavior depends on exact timing
-        // Dedicated tests below cover isLoadingMore timing scenarios
+        // Note: Not checking isFetchingMore here - behavior depends on exact timing
+        // Dedicated tests below cover isFetchingMore timing scenarios
         expect(result.current.dimensions).toEqual([
             mockApiDimension,
             secondDimension,
@@ -914,11 +914,11 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
 
         // Wait 249ms (just before SHOW_DELAY of 250ms)
         await act(() => vi.advanceTimersByTimeAsync(249))
-        expect(result.current.isLoadingMore).toBe(false)
+        expect(result.current.isFetchingMore).toBe(false)
 
         // Wait 1ms more (total 250ms, SHOW_DELAY expires)
         await act(() => vi.advanceTimersByTimeAsync(1))
-        expect(result.current.isLoadingMore).toBe(true)
+        expect(result.current.isFetchingMore).toBe(true)
 
         // Wait for loadMore to complete (API delay - 600ms total from start)
         // At 600ms: fetch completes, loading started at 250ms, elapsed = 350ms
@@ -926,15 +926,15 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         await act(() => vi.advanceTimersByTimeAsync(350)) // Total 600ms from start
 
         // Still loading (needs to complete MIN_LOAD_DURATION of 400ms total)
-        expect(result.current.isLoadingMore).toBe(true)
+        expect(result.current.isFetchingMore).toBe(true)
 
         // Wait 49ms (total 649ms, 49ms after fetch completed)
         await act(() => vi.advanceTimersByTimeAsync(49))
-        expect(result.current.isLoadingMore).toBe(true)
+        expect(result.current.isFetchingMore).toBe(true)
 
         // Wait 1ms more (total 650ms, 50ms after fetch completed, total loading time = 400ms)
         await act(() => vi.advanceTimersByTimeAsync(1))
-        expect(result.current.isLoadingMore).toBe(false)
+        expect(result.current.isFetchingMore).toBe(false)
 
         // Verify both pages have search filter and data accumulates
         expect(result.current.dimensions).toEqual([
@@ -1123,11 +1123,11 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
 
         // Wait 249ms (just before SHOW_DELAY of 250ms)
         await act(() => vi.advanceTimersByTimeAsync(249))
-        expect(result.current.isLoadingMore).toBe(false)
+        expect(result.current.isFetchingMore).toBe(false)
 
         // Wait 1ms more (total 250ms, SHOW_DELAY expires)
         await act(() => vi.advanceTimersByTimeAsync(1))
-        expect(result.current.isLoadingMore).toBe(true)
+        expect(result.current.isFetchingMore).toBe(true)
 
         // Wait for loadMore to complete (API delay - 600ms total from start)
         // At 600ms: fetch completes, loading started at 250ms, elapsed = 350ms
@@ -1135,15 +1135,15 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         await act(() => vi.advanceTimersByTimeAsync(350)) // Total 600ms from start
 
         // Still loading (needs to complete MIN_LOAD_DURATION of 400ms total)
-        expect(result.current.isLoadingMore).toBe(true)
+        expect(result.current.isFetchingMore).toBe(true)
 
         // Wait 49ms (total 649ms, 49ms after fetch completed)
         await act(() => vi.advanceTimersByTimeAsync(49))
-        expect(result.current.isLoadingMore).toBe(true)
+        expect(result.current.isFetchingMore).toBe(true)
 
         // Wait 1ms more (total 650ms, 50ms after fetch completed, total loading time = 400ms)
         await act(() => vi.advanceTimersByTimeAsync(1))
-        expect(result.current.isLoadingMore).toBe(false)
+        expect(result.current.isFetchingMore).toBe(false)
 
         expect(result.current.dimensions).toEqual([firstSearch1, firstSearch2])
 

@@ -48,7 +48,7 @@ const DimensionListContent: FC<DimensionListProps> = ({
     dimensions,
     isLoading,
     isDisabledByFilter,
-    isLoadingMore,
+    isFetchingMore,
     error,
     hasMore,
     hasNoData,
@@ -87,7 +87,7 @@ const DimensionListContent: FC<DimensionListProps> = ({
                     isEmptyList={dimensions.length === 0}
                 />
             )}
-            {hasMore && !isLoadingMore && !error && (
+            {hasMore && !isFetchingMore && !error && (
                 <li
                     className={classes.loadMore}
                     data-test="dimension-list-load-more-list-item"
@@ -100,7 +100,7 @@ const DimensionListContent: FC<DimensionListProps> = ({
                     </button>
                 </li>
             )}
-            {isLoadingMore && (
+            {isFetchingMore && (
                 <li
                     className={classes.loadingMore}
                     data-test="dimension-list-loading-more-list-item"

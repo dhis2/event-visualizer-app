@@ -7,7 +7,7 @@ import {
     isFetchEnabledByFilter,
 } from './filter-helpers'
 import { buildQuery } from './query-helpers'
-import { useIsDelayedLoadingMore } from './use-delayed-is-loading-more'
+import { useIsDelayedFetchingMore } from './use-delayed-is-fetching-more'
 import { useListFetchState } from './use-list-fetch-state'
 import { api } from '@api/api'
 import { parseEngineError, type EngineError } from '@api/parse-engine-error'
@@ -37,7 +37,7 @@ export type UseDimensionListOptions = {
 export type UseDimensionListResult = {
     dimensions: DimensionMetadataItem[]
     isLoading: boolean
-    isLoadingMore: boolean
+    isFetchingMore: boolean
     error?: EngineError
     hasMore: boolean
     hasNoData: boolean
@@ -60,10 +60,10 @@ export const useDimensionList = ({
         useListFetchState()
     const isMounted = useIsMounted()
     const {
-        isDelayedLoadingMore,
-        startDelayedLoadingMore,
-        completeDelayedLoadingMore,
-    } = useIsDelayedLoadingMore()
+        isDelayedFetchingMore,
+        startDelayedFetchingMore,
+        completeDelayedFetchingMore,
+    } = useIsDelayedFetchingMore()
     const isInAsyncMode = useMemo(
         () =>
             Boolean(
@@ -131,7 +131,7 @@ export const useDimensionList = ({
             }
 
             const { dimensions, nextPage } = transformer(rawResponseData)
-            await completeDelayedLoadingMore()
+            await completeDelayedFetchingMore()
             onFetchSuccess({
                 dimensions,
                 currentPage: page,
@@ -166,13 +166,13 @@ export const useDimensionList = ({
     const loadMore = useCallback(() => {
         if (fetchState.nextPage !== null && !fetchState.isFetching) {
             performFetch(fetchState.nextPage)
-            startDelayedLoadingMore()
+            startDelayedFetchingMore()
         }
     }, [
         fetchState.nextPage,
         fetchState.isFetching,
         performFetch,
-        startDelayedLoadingMore,
+        startDelayedFetchingMore,
     ])
 
     // Register loading state in Redux on mount
@@ -195,7 +195,7 @@ export const useDimensionList = ({
         () => ({
             dimensions,
             isLoading: fetchState.isLoading,
-            isLoadingMore: isDelayedLoadingMore,
+            isFetchingMore: isDelayedFetchingMore,
             error: fetchState.error,
             hasMore: isInAsyncMode && fetchState.nextPage !== null,
             hasNoData: fixedDimensions.length === 0 && fetchState.hasNoData,
@@ -209,7 +209,7 @@ export const useDimensionList = ({
             fetchState.nextPage,
             fetchState.error,
             fetchState.hasNoData,
-            isDelayedLoadingMore,
+            isDelayedFetchingMore,
             fixedDimensions.length,
             loadMore,
             isDisabledByFilter,

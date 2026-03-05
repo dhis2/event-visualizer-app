@@ -4,15 +4,15 @@ import { useUnmount } from 'usehooks-ts'
 const SHOW_DELAY = 250
 const MIN_LOAD_DURATION = 400
 
-export const useIsDelayedLoadingMore = () => {
-    const [isLoading, setIsLoading] = useState(false)
+export const useIsDelayedFetchingMore = () => {
+    const [isFetching, setIsFetching] = useState(false)
     const startTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const finishTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-    const startLoadingTimestampRef = useRef<number | null>(null)
-    const startDelayedLoadingMore = useCallback(() => {
+    const startFetchingTimestampRef = useRef<number | null>(null)
+    const startDelayedFetchingMore = useCallback(() => {
         startTimeoutRef.current = setTimeout(() => {
-            setIsLoading(true)
-            startLoadingTimestampRef.current = Date.now()
+            setIsFetching(true)
+            startFetchingTimestampRef.current = Date.now()
         }, SHOW_DELAY)
     }, [])
     const clearTimeouts = useCallback(() => {
@@ -25,31 +25,31 @@ export const useIsDelayedLoadingMore = () => {
             finishTimeoutRef.current = null
         }
     }, [])
-    const completeDelayedLoadingMore = useCallback(
+    const completeDelayedFetchingMore = useCallback(
         async (): Promise<void> =>
             new Promise((resolve) => {
                 clearTimeouts()
 
                 // Never transitioned to loading state
-                if (!startLoadingTimestampRef.current) {
+                if (!startFetchingTimestampRef.current) {
                     return resolve()
                 }
 
                 const elapsedTime =
-                    Date.now() - startLoadingTimestampRef.current
+                    Date.now() - startFetchingTimestampRef.current
 
                 // We can unset it now
-                startLoadingTimestampRef.current = null
+                startFetchingTimestampRef.current = null
 
                 // Loading state lasted long enough
                 if (elapsedTime >= MIN_LOAD_DURATION) {
-                    setIsLoading(false)
+                    setIsFetching(false)
                     resolve()
                 } else {
                     // Wait until min load duration expires
                     const remainingTime = MIN_LOAD_DURATION - elapsedTime
                     finishTimeoutRef.current = setTimeout(() => {
-                        setIsLoading(false)
+                        setIsFetching(false)
                         resolve()
                     }, remainingTime)
                 }
@@ -63,10 +63,10 @@ export const useIsDelayedLoadingMore = () => {
 
     return useMemo(
         () => ({
-            isDelayedLoadingMore: isLoading,
-            startDelayedLoadingMore,
-            completeDelayedLoadingMore,
+            isDelayedFetchingMore: isFetching,
+            startDelayedFetchingMore,
+            completeDelayedFetchingMore,
         }),
-        [isLoading, startDelayedLoadingMore, completeDelayedLoadingMore]
+        [isFetching, startDelayedFetchingMore, completeDelayedFetchingMore]
     )
 }
