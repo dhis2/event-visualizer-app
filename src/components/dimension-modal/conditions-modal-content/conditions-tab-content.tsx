@@ -60,7 +60,7 @@ type ConditionsProviderValue = {
     dimension: DimensionMetadataItem
     conditions: ConditionsObject
     conditionsList: string[]
-    valueType: ValueType
+    valueType?: ValueType
     isOptionSetCondition: boolean
     isProgramIndicator: boolean
     isSupported: boolean
@@ -101,16 +101,20 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         getVisUiConfigConditionsByDimension(state, dimension?.id)
     )
 
-    const valueType = dimension.valueType!
+    const valueType = dimension.valueType
     const isProgramIndicator: boolean =
         dimension.dimensionType === 'PROGRAM_INDICATOR'
     const isOptionSetCondition: boolean = Boolean(dimension.optionSet)
-    const isSingleCondition: boolean =
-        SINGLETON_TYPES.includes(valueType) || isOptionSetCondition
-    const isSupported: boolean =
-        SUPPORTED_TYPES.includes(valueType) || isProgramIndicator
-    const canHaveLegendSets: boolean =
-        isValueTypeNumeric(valueType) || isProgramIndicator
+    const isSingleCondition: boolean = Boolean(
+        isOptionSetCondition ||
+            (valueType && SINGLETON_TYPES.includes(valueType))
+    )
+    const isSupported: boolean = Boolean(
+        isProgramIndicator || (valueType && SUPPORTED_TYPES.includes(valueType))
+    )
+    const canHaveLegendSets: boolean = Boolean(
+        isProgramIndicator || (valueType && isValueTypeNumeric(valueType))
+    )
 
     const [conditionsList, setConditionsList] = useState<string[]>(
         conditions.condition?.length
