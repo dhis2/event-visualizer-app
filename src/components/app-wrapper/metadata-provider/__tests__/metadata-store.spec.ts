@@ -1,5 +1,5 @@
 import { expect, describe, it, beforeEach } from 'vitest'
-import inpatientCasesVisualization from '../__fixtures__/-visualization-inpatient-cases-last-quarter-case.json'
+import inpatientCasesVisualization from '../__fixtures__/visualization-inpatient-cases-last-quarter-case.json'
 import inpatientVisitVisualization from '../__fixtures__/visualization-inpatient-visit-overview-this-year-bo.json'
 import { getInitialMetadata } from '../initial-metadata'
 import { MetadataStore } from '../metadata-store'
