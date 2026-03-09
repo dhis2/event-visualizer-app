@@ -1,3 +1,4 @@
+import i18n from '@dhis2/d2-i18n'
 import { IconMore16, colors } from '@dhis2/ui'
 import cx from 'classnames'
 import { useEffect, useMemo, type FC } from 'react'
@@ -112,7 +113,7 @@ export const Axes: FC = () => {
                     <ResizeHandle
                         isDragging={isDragging}
                         orientation="horizontal"
-                        ariaLabel="Resize axes panel"
+                        ariaLabel={i18n.t('Resize axes panel')}
                         {...eventHandlers}
                     />
                 </div>
