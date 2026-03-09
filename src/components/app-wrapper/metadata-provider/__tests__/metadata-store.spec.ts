@@ -286,9 +286,12 @@ describe('MetadataStore', () => {
               "displayIncidentDate": false,
               "displayIncidentDateLabel": "Date of Discharge",
               "id": "eBAyeGv0exc",
+              "incidentDateLabel": "Date of Discharge",
               "name": "Inpatient morbidity and mortality",
               "programStages": [
                 {
+                  "displayExecutionDateLabel": "Report date",
+                  "hideDueDate": false,
                   "id": "Zj7UnCAulEk",
                   "name": "Inpatient morbidity and mortality",
                   "repeatable": false,
