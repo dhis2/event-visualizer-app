@@ -66,19 +66,31 @@ export const Axes: FC = () => {
         [height]
     )
 
-    const { containerRef, size, isDragging, minReached, eventHandlers } =
-        useResizeHandle({
-            orientation: 'horizontal',
-            storageKey: AXES_HEIGHT_STORAGE_KEY,
-            min: 56,
-            max: maxHeight,
-        })
+    const {
+        containerRef,
+        eventHandlers,
+        isDragging,
+        minReached,
+        resetSize,
+        size,
+    } = useResizeHandle({
+        orientation: 'horizontal',
+        storageKey: AXES_HEIGHT_STORAGE_KEY,
+        min: 56,
+        max: maxHeight,
+    })
 
     useEffect(() => {
         if (minReached) {
             dispatch(toggleUiLayoutPanelExpanded())
         }
     }, [minReached, dispatch])
+
+    useEffect(() => {
+        if (isVisualizationLoading) {
+            resetSize()
+        }
+    }, [isVisualizationLoading, resetSize])
 
     if (isVisualizationLoading) {
         return <LoadingSkeletons />

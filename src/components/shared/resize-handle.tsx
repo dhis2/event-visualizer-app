@@ -98,6 +98,17 @@ export const useResizeHandle = ({
         [max, min, orientation]
     )
 
+    // Callback for resetting the size, it's returned by the hook.
+    // This is handy for resetting the internal size value from the consumer of the hook.
+    // For example in the Axes component when switching visualization, this solves the issue of the container
+    // having empty space when a bigger size is stored from a previous visualization.
+    // Resetting the size causes the container to not have a defined height (auto is used) and the real height is then
+    // computed in the containerRef callback.
+    const resetSize = useCallback(() => {
+        setSize(null)
+        setMinReached(false)
+    }, [])
+
     // Start dragging
     const onPointerDown = useCallback((event: React.PointerEvent) => {
         event.preventDefault()
@@ -114,6 +125,7 @@ export const useResizeHandle = ({
         setIsDragging(true)
     }, [])
 
+    // Move the drag handle
     const onPointerMove = useCallback(
         (event: React.PointerEvent) => {
             if (!event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -181,13 +193,14 @@ export const useResizeHandle = ({
         }
 
         storedSizeRef.current = null
-        setSize(null)
-        setMinReached(false)
-    }, [storageKey])
+
+        resetSize()
+    }, [resetSize, storageKey])
 
     return {
         containerRef,
         size,
+        resetSize,
         isDragging,
         minReached,
         eventHandlers: {
