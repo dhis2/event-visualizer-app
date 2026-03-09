@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-03-09T13:17:16.160Z\n"
-"PO-Revision-Date: 2026-03-09T13:17:16.162Z\n"
+"POT-Creation-Date: 2026-03-09T14:03:44.053Z\n"
+"PO-Revision-Date: 2026-03-09T14:03:44.054Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -492,9 +492,6 @@ msgstr "Scheduled date"
 
 msgid "Event status"
 msgstr "Event status"
-
-msgid "Resize sidebar width"
-msgstr "Resize sidebar width"
 
 msgid "Expand all cards"
 msgstr "Expand all cards"
