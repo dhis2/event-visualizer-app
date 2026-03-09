@@ -51,17 +51,9 @@ export const useResizeHandle = ({
     const sizeRef = useRef<number | null>(size)
     const storedSizeRef = useRef<number | null>(
         (() => {
-            try {
                 const storedSize = localStorage.getItem(storageKey)
 
-                if (storedSize) {
-                    return Number(storedSize)
-                }
-            } catch {
-                // ignored
-            }
-
-            return null
+                return storedSize ?Number(storedSize) : null
         })()
     )
 
