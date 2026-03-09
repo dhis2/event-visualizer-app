@@ -91,11 +91,11 @@ export const useResizeHandle = ({
                 if (storedSizeRef.current) {
                     setSize(Math.min(storedSizeRef.current, containerMaxSize))
                 } else {
-                    setSize(containerMaxSize)
+                    setSize(Math.max(containerMaxSize, min))
                 }
             }
         },
-        [max, orientation]
+        [max, min, orientation]
     )
 
     // Start dragging
