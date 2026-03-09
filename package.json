@@ -17,7 +17,7 @@
         "cy:run": "start-server-and-test 'yarn start' http://localhost:3000 'yarn cypress run --browser chrome headless'",
         "cy:comp:open": "cypress open --component",
         "cy:comp:run": "cypress run --component --browser chrome headless",
-        "sonar": "npx @sonar/scan",
+        "sonar": "npx @sonar/scan -Dsonar.branch.name=$(git rev-parse --abbrev-ref HEAD)",
         "postinstall": "./scripts/postinstall.sh"
     },
     "devDependencies": {
