@@ -129,6 +129,7 @@ jobs:
                   result: ${{ needs.e2e.result }}
 
     sonarqube:
+        needs: e2e-success
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
