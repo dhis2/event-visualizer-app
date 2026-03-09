@@ -22,7 +22,7 @@
     },
     "devDependencies": {
         "@cypress/vite-dev-server": "^7.2.0",
-        "@dhis2/cli-app-scripts": "^12.10.2",
+        "@dhis2/cli-app-scripts": "^12.10.4",
         "@dhis2/cli-style": "^10.7.8",
         "@dhis2/cypress-commands": "^10.1.0",
         "@sonar/scan": "^4.3.4",
