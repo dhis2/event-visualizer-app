@@ -5,9 +5,14 @@
     align-items: center;
     font-size: 13px;
     line-height: 15px;
+    background-color: var(--colors-teal100);
     color: var(--colors-teal900);
     margin-inline-end: 2px;
     padding: 1px 2px 1px 4px;
+}
+
+.chipBase:hover {
+    background: #cdeae8;
 }
 
 .label {

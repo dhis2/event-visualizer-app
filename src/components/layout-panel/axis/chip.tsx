@@ -89,8 +89,9 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
             dimensionName: dimension.name,
             suffix: dimension.suffix,
             itemsText: chipItemsText,
+            onClick: openDimensionModal,
         }),
-        [dimension, chipItemsText]
+        [dimension, chipItemsText, openDimensionModal]
     )
     const droppableData = useMemo<AxisSortableData>(
         () => ({
@@ -175,7 +176,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                         }) => (
                             <span
                                 ref={ref}
-                                onClick={openDimensionModal}
+                                role="tooltip"
                                 onBlur={onBlur}
                                 onFocus={onFocus}
                                 onMouseOver={onMouseOver}
