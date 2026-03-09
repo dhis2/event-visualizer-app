@@ -180,6 +180,7 @@ export const useResizeHandle = ({
             // ignore
         }
 
+        storedSizeRef.current = null
         setSize(null)
         setMinReached(false)
     }, [storageKey])
