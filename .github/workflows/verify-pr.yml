@@ -127,3 +127,14 @@ jobs:
             - run: if [ $result != 'success' ]; then exit 1; fi;
               env:
                   result: ${{ needs.e2e.result }}
+
+    sonarqube:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+            - name: SonarQube Scan
+              uses: SonarSource/sonarqube-scan-action@v6
+              env:
+                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
