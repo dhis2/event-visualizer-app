@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-03-02T11:01:53.859Z\n"
-"PO-Revision-Date: 2026-03-02T11:01:53.860Z\n"
+"POT-Creation-Date: 2026-03-09T14:03:44.053Z\n"
+"PO-Revision-Date: 2026-03-09T14:03:44.054Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -276,6 +276,9 @@ msgstr "Code"
 msgid "Name"
 msgstr "Name"
 
+msgid "Resize axes panel"
+msgstr "Resize axes panel"
+
 msgid "Move to {{axisName}}"
 msgstr "Move to {{axisName}}"
 
@@ -299,6 +302,27 @@ msgstr "Levels"
 
 msgid "Groups"
 msgstr "Groups"
+
+msgid "Collapse layout"
+msgstr "Collapse layout"
+
+msgid "Expand layout"
+msgstr "Expand layout"
+
+msgid "List options"
+msgstr "List options"
+
+msgid "Table options"
+msgstr "Table options"
+
+msgid "Chart options"
+msgstr "Chart options"
+
+msgid "Individual data view"
+msgstr "Individual data view"
+
+msgid "Aggregated view"
+msgstr "Aggregated view"
 
 msgid "No event"
 msgstr "No event"

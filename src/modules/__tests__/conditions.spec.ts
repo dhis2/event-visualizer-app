@@ -16,7 +16,7 @@ import {
     parseConditionsStringToArray,
 } from '../conditions.js'
 import type { QueryOperator } from '../conditions.js'
-import type { LayoutDimension } from '@components/layout-panel/chip.js'
+import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import type { CurrentVisualization } from '@types'
 
 describe('getLegendSetConditionMetadataIds', () => {

@@ -7,7 +7,7 @@ export interface UiState {
     activeDimensionModal: string | null
     isAccessoryPanelVisible: boolean
     isDetailsPanelVisible: boolean
-    isExpandedLayoutPanelVisible: boolean
+    isLayoutPanelExpanded: boolean
     isLayoutPanelVisible: boolean
     isMainSidebarVisible: boolean
 }
@@ -17,7 +17,7 @@ export const initialState: UiState = {
     activeDimensionModal: null,
     isAccessoryPanelVisible: true,
     isDetailsPanelVisible: false,
-    isExpandedLayoutPanelVisible: false,
+    isLayoutPanelExpanded: true,
     isLayoutPanelVisible: true,
     isMainSidebarVisible: true,
 }
@@ -56,6 +56,9 @@ export const uiSlice = createSlice({
         toggleUiMainSidebarVisible: (state) => {
             state.isMainSidebarVisible = !state.isMainSidebarVisible
         },
+        toggleUiLayoutPanelExpanded: (state) => {
+            state.isLayoutPanelExpanded = !state.isLayoutPanelExpanded
+        },
         toggleUiLayoutPanelVisible: (state) => {
             state.isLayoutPanelVisible = !state.isLayoutPanelVisible
         },
@@ -73,6 +76,7 @@ export const uiSlice = createSlice({
         getUiAccessoryPanelVisible: (state) => state.isAccessoryPanelVisible,
         getUiActiveDimensionModal: (state) => state.activeDimensionModal,
         getUiDetailsPanelVisible: (state) => state.isDetailsPanelVisible,
+        getUiLayoutPanelExpanded: (state) => state.isLayoutPanelExpanded,
         getUiLayoutPanelVisible: (state) => state.isLayoutPanelVisible,
         getUiMainSidebarVisible: (state) => state.isMainSidebarVisible,
         getUiShowExpandedVisualizationCanvas: (state) =>
@@ -86,6 +90,7 @@ export const {
     setUiAccessoryPanelVisible,
     setUiActiveDimensionModal,
     setUiDetailsPanelVisible,
+    toggleUiLayoutPanelExpanded,
     toggleUiLayoutPanelVisible,
     toggleUiMainSidebarVisible,
     toggleUiShowExpandedVisualizationCanvas,
@@ -95,6 +100,7 @@ export const {
     getUiAccessoryPanelVisible,
     getUiActiveDimensionModal,
     getUiDetailsPanelVisible,
+    getUiLayoutPanelExpanded,
     getUiLayoutPanelVisible,
     getUiMainSidebarVisible,
     getUiShowExpandedVisualizationCanvas,

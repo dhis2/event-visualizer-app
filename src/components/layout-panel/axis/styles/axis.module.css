@@ -1,0 +1,49 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 4px 4px 6px;
+    background-color: var(--colors-white);
+}
+
+.container.columns {
+    grid-area: columns;
+}
+
+.container.rows {
+    grid-area: rows;
+    border-block-start: 1px solid var(--colors-grey300);
+}
+
+.container.filters {
+    grid-area: filters;
+    border-inline-start: 1px solid var(--colors-grey300);
+}
+
+.label {
+    padding: 2px 0;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--colors-grey600);
+    user-select: none;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas,
+        Liberation Mono, monospace !important;
+}
+
+.content {
+    inline-size: 100%;
+    display: flex;
+    align-items: flex-start;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    min-block-size: 32px;
+}
+
+.emptyAxisInsertMarkerAnchor {
+    flex: 1;
+    inline-size: 1px;
+    /* Same as chip: 20px content + 1px border top/bottom + 2px margin top/bottom */
+    block-size: 26px;
+    position: relative;
+}

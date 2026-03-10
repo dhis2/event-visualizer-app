@@ -21,13 +21,13 @@ describe('VisualizationTypeSelector', () => {
     }
 
     beforeEach(() => {
-        if (!store) {
+        if (store) {
+            store.dispatch(setVisUiConfigVisualizationType('LINE_LIST'))
+        } else {
             store = setupStore(
                 { visUiConfig: visUiConfigSlice.reducer },
                 { visUiConfig: initialState }
             )
-        } else {
-            store.dispatch(setVisUiConfigVisualizationType('LINE_LIST'))
         }
     })
 
@@ -46,7 +46,7 @@ describe('VisualizationTypeSelector', () => {
             screen.getByTestId('visualization-type-selector-button')
         )
 
-        const modal = screen.getByTestId('visualization-type-selector-card')
+        const modal = screen.getByTestId('visualization-type-selector-list')
         expect(modal).toBeInTheDocument()
         expect(within(modal).getByText('Line list')).toBeInTheDocument()
         expect(within(modal).getByText('Pivot table')).toBeInTheDocument()

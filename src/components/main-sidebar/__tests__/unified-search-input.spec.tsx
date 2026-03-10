@@ -76,10 +76,8 @@ describe('UnifiedSearchInput', () => {
 
         render(<UnifiedSearchInput />)
 
-        const input = screen.getByTestId(
-            'unified-search-input'
-        ) as HTMLInputElement
-        expect(input.value).toBe('initial search')
+        const input = screen.getByTestId('unified-search-input')
+        expect(input).toHaveAttribute('value', 'initial search')
     })
 
     it('should dispatch search term to store after 250ms debounce', () => {
