@@ -1,9 +1,9 @@
 import type { FC } from 'react'
 import { CardType } from './card-type'
-import type { MetadataItemWithName } from '@types'
+import type { MetadataItem } from '@types'
 
 type CardsTrackedEntityTypeProps = {
-    trackedEntityType: MetadataItemWithName
+    trackedEntityType: MetadataItem
 }
 
 export const CardsTrackedEntityType: FC<CardsTrackedEntityTypeProps> = ({

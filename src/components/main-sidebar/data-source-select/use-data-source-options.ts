@@ -3,7 +3,7 @@ import { useCurrentUser, useRtkQuery } from '@hooks'
 import { getProgramFields, getTrackedEntityTypeFields } from '@modules/query'
 import type {
     CurrentUser,
-    MetadataItemWithName,
+    MetadataItem,
     Program,
     UseRtkQueryResult,
 } from '@types'
@@ -15,7 +15,7 @@ type ResponseData = {
         programs: Program[]
     }
     trackedEntityTypes: {
-        trackedEntityTypes: MetadataItemWithName[]
+        trackedEntityTypes: MetadataItem[]
     }
 }
 type OnFilterStringChangePayload = {
@@ -26,7 +26,7 @@ export type UseDataSourceOptionsResult = Pick<
     'isLoading' | 'isError' | 'error'
 > & {
     programs: Program[]
-    trackedEntityTypes: MetadataItemWithName[]
+    trackedEntityTypes: MetadataItem[]
     filterString: string
     hasMorePrograms: boolean
     hasMoreTrackedEntityTypes: boolean

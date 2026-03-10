@@ -12,7 +12,6 @@
     },
     "sharing": {
         "owner": "xE7jOejl9FI",
-        "external": false,
         "users": {},
         "userGroups": {},
         "public": "rw------"
@@ -87,12 +86,15 @@
     "showDimensionLabels": false,
     "type": "LINE_LIST",
     "program": {
+        "incidentDateLabel": "Date of Discharge",
         "programType": "WITHOUT_REGISTRATION",
         "displayIncidentDate": false,
         "displayIncidentDateLabel": "Date of Discharge",
         "id": "eBAyeGv0exc",
         "programStages": [
             {
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Report date",
                 "id": "Zj7UnCAulEk",
                 "repeatable": false,
                 "name": "Inpatient morbidity and mortality"
@@ -111,6 +113,9 @@
     "outputType": "EVENT",
     "collapseDataDimensions": false,
     "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
     "legacy": true,
     "dataType": "EVENTS",
     "filters": [],
@@ -154,7 +159,8 @@
             "dimension": "K6uUAvq500H",
             "valueType": "TEXT",
             "optionSet": {
-                "id": "eUZ79clX7y1"
+                "id": "eUZ79clX7y1",
+                "name": "Diagnosis ICD10"
             }
         },
         {
@@ -169,7 +175,8 @@
             "dimension": "oZg33kd9taw",
             "valueType": "TEXT",
             "optionSet": {
-                "id": "pC3N9N77UmT"
+                "id": "pC3N9N77UmT",
+                "name": "Gender"
             }
         },
         {
@@ -178,7 +185,8 @@
             "dimension": "fWIAEtYVEGk",
             "valueType": "TEXT",
             "optionSet": {
-                "id": "iDFPKpFTiVw"
+                "id": "iDFPKpFTiVw",
+                "name": "Mode of discharge"
             }
         }
     ],
@@ -186,13 +194,12 @@
     "displayName": "Inpatient: Cases last quarter (case)",
     "access": {
         "manage": true,
-        "externalize": true,
         "write": true,
         "read": true,
         "update": true,
         "delete": true
     },
-    "href": "https://test.e2e.dhis2.org/anly-dev/api/eventVisualizations/R4wAb2yMLik",
+    "href": "https://dev.im.dhis2.org/ever-playground/api/eventVisualizations/R4wAb2yMLik",
     "subscribed": false,
     "metaData": {
         "ImspTQPwCqd": {

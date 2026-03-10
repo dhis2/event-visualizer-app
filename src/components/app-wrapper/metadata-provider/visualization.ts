@@ -246,6 +246,10 @@ export const supplementDimensionMetadata = (
                 item.optionSet = dimension.optionSet?.id
             }
 
+            if (dimension.legendSet?.id) {
+                item.legendSet = dimension.legendSet.id
+            }
+
             if (dimension.valueType) {
                 item.valueType = dimension.valueType
             }

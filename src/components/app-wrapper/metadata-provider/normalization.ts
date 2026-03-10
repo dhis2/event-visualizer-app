@@ -1,8 +1,4 @@
-import {
-    isOptionSetMetadataItem,
-    isLegendSetMetadataItem,
-    isMetadataInputItem,
-} from '@modules/metadata'
+import { isMetadataInputItem } from '@modules/metadata'
 import { isPopulatedString } from '@modules/validation'
 import type {
     MetadataItem,
@@ -41,16 +37,9 @@ export const normalizeMetadataInputItem = (
 
     if (isPopulatedString(resolvedName)) {
         return { id: resolvedId, name: resolvedName, ...rest }
-    } else if (
-        existingMetadataMap.has(resolvedId) ||
-        isOptionSetMetadataItem(item) ||
-        isLegendSetMetadataItem(item)
-    ) {
-        /* Items that already exist in the store must have a name field
-         * so for these we can send partial updates (objects with a name).
-         * optionSets and legendSets are also valid without a name field
-         * because they are mainly used as option/legend lookups for
-         * DE and TEIs */
+    } else if (existingMetadataMap.has(resolvedId)) {
+        /* Items that already exist in the store must have a name field so
+         * for these we can send partial updates (objects with a name). */
         return {
             id: resolvedId,
             ...rest,
