@@ -24,7 +24,7 @@ import {
     getVisUiConfigItemsByDimension,
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
-import type { DimensionMetadataItem, MetadataItemWithName } from '@types'
+import type { DimensionMetadataItem } from '@types'
 
 type DynamicDimensionModalContentProps = {
     dimension: DimensionMetadataItem
@@ -45,7 +45,7 @@ export const DynamicDimensionModalContent: FC<
     const selectedOptionsLookup = useMemo(
         () =>
             selectedIds.reduce((lookupMap, id) => {
-                const metadata = selectedIdsMetadata[id] as MetadataItemWithName
+                const metadata = selectedIdsMetadata[id]
 
                 lookupMap[id] = {
                     value: id,

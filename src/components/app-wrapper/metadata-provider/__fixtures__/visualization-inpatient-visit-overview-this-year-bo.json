@@ -184,12 +184,15 @@
     "showDimensionLabels": true,
     "type": "LINE_LIST",
     "program": {
+        "incidentDateLabel": "Date of Discharge",
         "programType": "WITHOUT_REGISTRATION",
         "displayIncidentDate": false,
         "displayIncidentDateLabel": "Date of Discharge",
         "id": "eBAyeGv0exc",
         "programStages": [
             {
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Report date",
                 "id": "Zj7UnCAulEk",
                 "repeatable": false,
                 "name": "Inpatient morbidity and mortality"

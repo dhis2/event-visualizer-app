@@ -1,5 +1,5 @@
 import { expect, describe, it, beforeEach } from 'vitest'
-import inpatientCasesVisualization from '../__fixtures__/-visualization-inpatient-cases-last-quarter-case.json'
+import inpatientCasesVisualization from '../__fixtures__/visualization-inpatient-cases-last-quarter-case.json'
 import inpatientVisitVisualization from '../__fixtures__/visualization-inpatient-visit-overview-this-year-bo.json'
 import { getInitialMetadata } from '../initial-metadata'
 import { MetadataStore } from '../metadata-store'
@@ -55,6 +55,7 @@ describe('MetadataStore', () => {
               "code": "DE_240794",
               "dimensionType": "DATA_ELEMENT",
               "id": "GieVkTxp4HH",
+              "legendSet": "TBxGTceyzwy",
               "name": "Height in cm",
               "valueType": "NUMBER",
             },
@@ -286,9 +287,12 @@ describe('MetadataStore', () => {
               "displayIncidentDate": false,
               "displayIncidentDateLabel": "Date of Discharge",
               "id": "eBAyeGv0exc",
+              "incidentDateLabel": "Date of Discharge",
               "name": "Inpatient morbidity and mortality",
               "programStages": [
                 {
+                  "displayExecutionDateLabel": "Report date",
+                  "hideDueDate": false,
                   "id": "Zj7UnCAulEk",
                   "name": "Inpatient morbidity and mortality",
                   "repeatable": false,
@@ -406,6 +410,7 @@ describe('MetadataStore', () => {
               "code": "DE_3000003",
               "dimensionType": "DATA_ELEMENT",
               "id": "qrur9Dvnyt5",
+              "legendSet": "Yf6UHoPkdS6",
               "name": "Age in years",
               "valueType": "INTEGER",
             },
@@ -428,6 +433,7 @@ describe('MetadataStore', () => {
               "code": "DE_240795",
               "dimensionType": "DATA_ELEMENT",
               "id": "vV9UWAZohSf",
+              "legendSet": "OrkEzxZEH4X",
               "name": "Weight in kg",
               "valueType": "INTEGER_POSITIVE",
             },
@@ -602,46 +608,6 @@ describe('MetadataStore', () => {
                 id: 'regularItem',
                 name: 'Regular Item',
                 valueType: undefined,
-            })
-        })
-
-        // TODO: this is not done anymore, legendSets metdata is not handled in the analytics response
-        // the test should be changed to check that the correct metadata for legendSet is added from a visualization object
-        it.skip('adds legend set metadata when data element has legendSet', () => {
-            const legendSetId = 'legendSet123'
-            const analyticsItems = {
-                dataElement1: {
-                    uid: 'dataElement1',
-                    name: 'Data Element with Legend',
-                    valueType: 'NUMBER',
-                    legendSet: legendSetId,
-                },
-                legend1: {
-                    uid: 'legend1',
-                    name: 'Legend 1',
-                },
-                legend2: {
-                    uid: 'legend2',
-                    name: 'Legend 2',
-                },
-            }
-            const headers: Array<LineListAnalyticsDataHeader> = []
-
-            metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
-
-            const snapshot = metadataStore.getMetadataSnapshot()
-            expect(snapshot.dataElement1).toEqual({
-                id: 'dataElement1',
-                name: 'Data Element with Legend',
-                valueType: undefined,
-                legendSet: legendSetId,
-            })
-            expect(snapshot[legendSetId]).toEqual({
-                id: legendSetId,
-                legends: [
-                    { id: 'legend1', name: 'Legend 1' },
-                    { id: 'legend2', name: 'Legend 2' },
-                ],
             })
         })
 

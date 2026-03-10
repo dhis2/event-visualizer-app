@@ -23,7 +23,7 @@ export type Program = Pick<
     id: string
     name: string
     programStages?: ProgramStage[]
-    trackedEntityType: {
+    trackedEntityType?: {
         id: string
         name: string
     }

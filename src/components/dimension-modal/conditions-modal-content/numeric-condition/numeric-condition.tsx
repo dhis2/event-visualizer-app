@@ -38,12 +38,15 @@ export const NumericCondition: FC<NumericConditionProps> = ({
 }) => {
     const allowIntegerOnly: boolean = useMemo(
         () =>
-            [
-                'INTEGER',
-                'INTEGER_POSITIVE',
-                'INTEGER_NEGATIVE',
-                'INTEGER_ZERO_OR_POSITIVE',
-            ].includes(dimension.valueType),
+            Boolean(
+                dimension.valueType &&
+                    [
+                        'INTEGER',
+                        'INTEGER_POSITIVE',
+                        'INTEGER_NEGATIVE',
+                        'INTEGER_ZERO_OR_POSITIVE',
+                    ].includes(dimension.valueType)
+            ),
         [dimension.valueType]
     )
 

@@ -219,6 +219,42 @@ describe('supplementDimensionMetadata', () => {
         })
     })
 
+    it('should include legendSet when available', () => {
+        const metadataInput = {
+            dimension1: {
+                id: 'dimension1',
+                name: 'Dimension One',
+            },
+        }
+
+        const visualization = {
+            outputType: 'EVENT' as const,
+            columns: [
+                {
+                    dimension: 'dimension1',
+                    dimensionType: 'DATA_ELEMENT',
+                    valueType: 'NUMBER',
+                    legendSet: { id: 'legendSet1', name: 'Legend Set 1' },
+                    items: [],
+                } as DimensionRecord,
+            ],
+            rows: [],
+            filters: [],
+        } as unknown as SavedVisualization
+
+        const result = supplementDimensionMetadata(metadataInput, visualization)
+
+        expect(result).toEqual({
+            dimension1: {
+                id: 'dimension1',
+                name: 'Dimension One',
+                dimensionType: 'DATA_ELEMENT',
+                valueType: 'NUMBER',
+                legendSet: 'legendSet1',
+            },
+        })
+    })
+
     it('should handle multiple dimensions from columns, rows, and filters', () => {
         const metadataInput = {
             dim1: { id: 'dim1', name: 'Dimension 1' },

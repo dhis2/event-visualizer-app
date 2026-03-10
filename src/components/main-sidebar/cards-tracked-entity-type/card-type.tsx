@@ -9,13 +9,13 @@ import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import { isObject, isPopulatedString } from '@modules/validation'
 import type {
     DimensionMetadataItem,
-    MetadataItemWithName,
+    MetadataItem,
     SingleQuery,
     ValueType,
 } from '@types'
 
 type CardTypeProps = {
-    trackedEntityType: MetadataItemWithName
+    trackedEntityType: MetadataItem
 }
 
 const CARD_AND_LIST_KEY = 'tracked-entity-type'
@@ -57,7 +57,7 @@ const transformer: Transformer = (data) => {
 }
 
 export const getFixedDimensions = (
-    trackedEntityType: MetadataItemWithName
+    trackedEntityType: MetadataItem
 ): DimensionMetadataItem[] => {
     return [
         {

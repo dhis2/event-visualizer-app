@@ -2,7 +2,6 @@
 import { expect, describe, it } from 'vitest'
 import {
     isMetadataInputItem,
-    isMetadataItemWithName,
     isProgramMetadataItem,
     isProgramStageMetadataItem,
     isOptionSetMetadataItem,
@@ -36,38 +35,90 @@ describe('type-guards', () => {
         })
     })
 
-    describe('isMetadataItemWithName', () => {
-        it('returns true for objects with id and name', () => {
+    describe('isMetadataItem', () => {
+        it('returns true for Program objects', () => {
             expect(
-                isMetadataItemWithName({ id: 'test123', name: 'Test Name' })
+                isMetadataItem({
+                    id: 'program123',
+                    name: 'Test Program',
+                    programType: 'WITH_REGISTRATION',
+                })
             ).toBe(true)
         })
 
-        it('returns false for objects missing id or name', () => {
-            expect(isMetadataItemWithName({ name: 'Test' })).toBe(false)
-            expect(isMetadataItemWithName({ id: 'test' })).toBe(false)
-            expect(isMetadataItemWithName({})).toBe(false)
+        it('returns true for ProgramStage objects', () => {
+            expect(
+                isMetadataItem({
+                    id: 'stage123',
+                    name: 'Test Stage',
+                    repeatable: false,
+                    hideDueDate: false,
+                })
+            ).toBe(true)
         })
-    })
 
-    describe('isMetadataItem', () => {
-        it('returns true for MetadataItemWithName objects', () => {
+        it('returns true for OptionSetMetadataItem objects', () => {
+            expect(
+                isMetadataItem({
+                    id: 'option123',
+                    name: 'Option Set',
+                    options: [],
+                })
+            ).toBe(true)
+        })
+
+        it('returns true for LegendSetMetadataItem objects', () => {
+            expect(
+                isMetadataItem({
+                    id: 'legend123',
+                    name: 'Legend Set',
+                    legends: [],
+                })
+            ).toBe(true)
+        })
+
+        it('returns true for OrganisationUnitMetadataItem objects', () => {
+            expect(
+                isMetadataItem({
+                    id: 'ou123',
+                    name: 'Org Unit',
+                    path: '/path/to/ou',
+                })
+            ).toBe(true)
+        })
+
+        it('returns true for UserOrgUnitMetadataItem objects', () => {
+            expect(
+                isMetadataItem({
+                    id: 'userou123',
+                    name: 'User OU',
+                    organisationUnits: [],
+                })
+            ).toBe(true)
+        })
+
+        it('returns true for DimensionMetadataItem objects', () => {
+            expect(
+                isMetadataItem({
+                    id: 'dim123',
+                    name: 'Dimension',
+                    dimensionType: 'DATA_ELEMENT',
+                })
+            ).toBe(true)
+        })
+
+        it('returns true for generic metadata items with id and name', () => {
             expect(isMetadataItem({ id: 'test123', name: 'Test Name' })).toBe(
                 true
             )
         })
 
-        it('returns true for LegendSetMetadataItem objects', () => {
-            expect(isMetadataItem({ id: 'legend123', legends: [] })).toBe(true)
-        })
-
-        it('returns true for OptionSetMetadataItem objects', () => {
-            expect(isMetadataItem({ id: 'option123', options: [] })).toBe(true)
-        })
-
         it('returns false for invalid objects', () => {
             expect(isMetadataItem({ uid: 'test' })).toBe(false)
             expect(isMetadataItem({})).toBe(false)
+            expect(isMetadataItem({ id: '' })).toBe(false)
+            expect(isMetadataItem({ id: 'test', name: '' })).toBe(false)
+            expect(isMetadataItem({ id: '', name: '' })).toBe(false)
         })
     })
 
@@ -111,6 +162,7 @@ describe('type-guards', () => {
             expect(
                 isOptionSetMetadataItem({
                     id: 'opt123',
+                    name: 'Option Set',
                     options: [],
                 })
             ).toBe(true)
@@ -127,6 +179,7 @@ describe('type-guards', () => {
             expect(
                 isLegendSetMetadataItem({
                     id: 'legend123',
+                    name: 'Legend Set',
                     legends: [],
                 })
             ).toBe(true)
@@ -143,6 +196,7 @@ describe('type-guards', () => {
             expect(
                 isOrganisationUnitMetadataItem({
                     id: 'org123',
+                    name: 'Org Unit',
                     path: '/path',
                 })
             ).toBe(true)
