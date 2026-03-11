@@ -1,23 +1,19 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { DEFAULT_OPTIONS } from '@constants/options'
+import { dimensionMatches, findDimensionInLayout } from '@modules/layout'
 import type {
     Axis,
+    ConditionsObject,
+    DimensionIdentifier,
     EventVisualizationOptions,
     Layout,
+    LayoutDimension,
+    LayoutDimensionUpdate,
     OutputType,
+    RepetitionsObject,
     VisualizationType,
 } from '@types'
-
-export type ConditionsObject = {
-    condition?: string | string[]
-    legendSet?: string
-}
-
-export type RepetitionsObject = {
-    mostRecent: number
-    oldest: number
-}
 
 const EMPTY_STRING_ARRAY: string[] = []
 const EMPTY_CONDITIONS_OBJECT: ConditionsObject = {
@@ -29,13 +25,13 @@ export const DEFAULT_REPETITIONS_OBJECT: RepetitionsObject = {
     oldest: 0,
 }
 
+// Re-export types for consumers of this slice
+export type { ConditionsObject, RepetitionsObject }
+
 export interface VisUiConfigState {
     visualizationType: VisualizationType
     outputType: OutputType
     layout: Layout
-    itemsByDimension: Record<string, string[]>
-    conditionsByDimension: Record<string, ConditionsObject | undefined>
-    repetitionsByDimension: Record<string, RepetitionsObject | undefined>
     options: EventVisualizationOptions
 }
 
@@ -47,23 +43,9 @@ export const initialState: VisUiConfigState = {
     outputType: 'EVENT',
     layout: {
         columns: [],
-        filters: [],
         rows: [],
+        filters: [],
     },
-    itemsByDimension: {},
-    conditionsByDimension: {},
-    repetitionsByDimension: {},
-}
-
-type SetConditionsByDimensionPayload = {
-    dimensionId: string
-    conditions?: string
-    legendSet?: string
-}
-
-type SetItemsByDimensionPayload = {
-    dimensionId: string // dimensionId, including uids
-    itemIds: string[] // list of item ids
 }
 
 type SetOptionPayload = {
@@ -71,9 +53,28 @@ type SetOptionPayload = {
     value: EventVisualizationOptions[keyof EventVisualizationOptions]
 }
 
-type SetRepetitionsByDimensionPayload = {
-    dimensionId: string
-    repetitions?: RepetitionsObject
+type AddLayoutDimensionPayload = LayoutDimension & {
+    axis: Axis
+    insertIndex?: number
+    insertAfter?: boolean
+}
+
+type UpdateLayoutDimensionPayload = {
+    identifier: DimensionIdentifier
+    updates: LayoutDimensionUpdate
+}
+
+type MoveLayoutDimensionPayload = {
+    identifier: DimensionIdentifier
+    sourceAxis: Axis
+    targetAxis: Axis
+    sourceIndex?: number
+    targetIndex?: number
+    insertAfter?: boolean
+}
+
+type RemoveLayoutDimensionPayload = {
+    identifier: DimensionIdentifier
 }
 
 const resolveSortInsertIndex = ({
@@ -107,12 +108,6 @@ export const visUiConfigSlice = createSlice({
         ) => {
             state.visualizationType = action.payload
         },
-        setVisUiConfigLayout: (
-            state,
-            action: PayloadAction<VisUiConfigState['layout']>
-        ) => {
-            state.layout = action.payload
-        },
         setVisUiConfigOption: (
             state,
             action: PayloadAction<SetOptionPayload>
@@ -128,96 +123,73 @@ export const visUiConfigSlice = createSlice({
         ) => {
             state.outputType = action.payload
         },
-        setVisUiConfigItemsByDimension: (
+        setVisUiConfigLayout: (
             state,
-            action: PayloadAction<SetItemsByDimensionPayload>
+            action: PayloadAction<VisUiConfigState['layout']>
         ) => {
-            state.itemsByDimension = {
-                ...state.itemsByDimension,
-                [action.payload.dimensionId]: action.payload.itemIds,
-            }
-        },
-        setVisUiConfigConditionsByDimension: (
-            state,
-            action: PayloadAction<SetConditionsByDimensionPayload>
-        ) => {
-            const { dimensionId, conditions, legendSet } = action.payload
-
-            state.conditionsByDimension = {
-                ...state.conditionsByDimension,
-                [dimensionId]:
-                    conditions?.length || legendSet
-                        ? { condition: conditions, legendSet }
-                        : undefined,
-            }
-        },
-        setVisUiConfigRepetitionsByDimension: (
-            state,
-            action: PayloadAction<SetRepetitionsByDimensionPayload>
-        ) => {
-            const { dimensionId, repetitions } = action.payload
-
-            if (!repetitions) {
-                delete state.repetitionsByDimension[dimensionId]
-            } else {
-                state.repetitionsByDimension = {
-                    ...state.repetitionsByDimension,
-                    [dimensionId]: repetitions,
-                }
-            }
+            state.layout = action.payload
         },
         addVisUiConfigLayoutDimension: (
             state,
-            action: PayloadAction<{
-                axis: Axis
-                dimensionId: string
-                insertIndex?: number
-                insertAfter?: boolean
-            }>
+            action: PayloadAction<AddLayoutDimensionPayload>
         ) => {
             const {
                 axis,
-                dimensionId,
                 insertIndex,
                 insertAfter = false,
+                ...dimensionData
             } = action.payload
-            const targetArray = state.layout[axis]
-            targetArray.splice(
-                resolveSortInsertIndex({
-                    insertIndex,
-                    insertAfter,
-                    targetLength: targetArray.length,
-                }),
-                0,
-                dimensionId
-            )
+
+            const newDimension: LayoutDimension = dimensionData
+            const axisArray = state.layout[axis]
+            const index = resolveSortInsertIndex({
+                insertIndex,
+                insertAfter,
+                targetLength: axisArray.length,
+            })
+
+            axisArray.splice(index, 0, newDimension)
+        },
+        updateVisUiConfigLayoutDimension: (
+            state,
+            action: PayloadAction<UpdateLayoutDimensionPayload>
+        ) => {
+            const { identifier, updates } = action.payload
+            const dimension = findDimensionInLayout(state.layout, identifier)
+
+            if (dimension) {
+                Object.assign(dimension, updates)
+            } else {
+                throw new Error(
+                    `Dimension not found: ${JSON.stringify(identifier)}`
+                )
+            }
         },
         moveVisUiConfigLayoutDimension: (
             state,
-            action: PayloadAction<{
-                dimensionId: string
-                sourceAxis: Axis
-                targetAxis: Axis
-                sourceIndex?: number
-                targetIndex?: number
-                insertAfter?: boolean
-            }>
+            action: PayloadAction<MoveLayoutDimensionPayload>
         ) => {
             const {
-                dimensionId,
+                identifier,
                 sourceAxis,
                 targetAxis,
                 targetIndex,
                 insertAfter = false,
             } = action.payload
+            const dimension = findDimensionInLayout(state.layout, identifier)
+
+            if (!dimension) {
+                throw new Error('Could not find dimension in layout')
+            }
+
             const sourceArray = state.layout[sourceAxis]
             const targetArray = state.layout[targetAxis]
             const sourceIndex =
-                action.payload.sourceIndex ?? sourceArray.indexOf(dimensionId)
+                action.payload.sourceIndex ?? sourceArray.indexOf(dimension)
 
             if (sourceIndex === -1) {
                 throw new Error(
-                    `Dimension ${dimensionId} not found in source axis ${sourceAxis}`
+                    `Dimension ${dimension.dimensionId} not found in source axis ${sourceAxis}`
                 )
             }
 
@@ -231,36 +203,121 @@ export const visUiConfigSlice = createSlice({
                     ? sourceIndex + 1
                     : sourceIndex
 
-            targetArray.splice(insertionIndex, 0, dimensionId)
+            targetArray.splice(insertionIndex, 0, dimension)
             sourceArray.splice(removalIndex, 1)
         },
         removeVisUiConfigLayoutDimension: (
             state,
-            action: PayloadAction<{ axis: Axis; dimensionId: string }>
+            action: PayloadAction<RemoveLayoutDimensionPayload>
         ) => {
-            const { axis, dimensionId } = action.payload
-            const array = state.layout[axis]
-            const index = array.indexOf(dimensionId)
-            if (index === -1) {
+            const { identifier } = action.payload
+
+            // Search across all axes
+            for (const axis of ['columns', 'rows', 'filters'] as Axis[]) {
+                const axisArray = state.layout[axis]
+                const index = axisArray.findIndex((layoutDimension) =>
+                    dimensionMatches(layoutDimension, identifier)
+                )
+                if (index !== -1) {
+                    axisArray.splice(index, 1)
+                    return
+                }
+            }
+
+            throw new Error(
+                `Dimension not found: ${JSON.stringify(identifier)}`
+            )
+        },
+        setVisUiConfigLayoutDimensionItems: (
+            state,
+            action: PayloadAction<{
+                identifier: DimensionIdentifier
+                items: string[]
+            }>
+        ) => {
+            const { identifier, items } = action.payload
+            const dimension = findDimensionInLayout(state.layout, identifier)
+
+            if (!dimension) {
                 throw new Error(
-                    `Dimension ${dimensionId} not found in axis ${axis}`
+                    `Dimension not found: ${JSON.stringify(identifier)}`
                 )
             }
-            array.splice(index, 1)
+
+            dimension.items = items
+        },
+        setVisUiConfigLayoutDimensionConditions: (
+            state,
+            action: PayloadAction<{
+                identifier: DimensionIdentifier
+                conditions: ConditionsObject
+            }>
+        ) => {
+            const { identifier, conditions } = action.payload
+            const dimension = findDimensionInLayout(state.layout, identifier)
+
+            if (!dimension) {
+                throw new Error(
+                    `Dimension not found: ${JSON.stringify(identifier)}`
+                )
+            }
+
+            dimension.conditions = conditions
+        },
+        setVisUiConfigLayoutDimensionRepetitions: (
+            state,
+            action: PayloadAction<{
+                identifier: DimensionIdentifier
+                repetitions: RepetitionsObject
+            }>
+        ) => {
+            const { identifier, repetitions } = action.payload
+            const dimension = findDimensionInLayout(state.layout, identifier)
+
+            if (!dimension) {
+                throw new Error(
+                    `Dimension not found: ${JSON.stringify(identifier)}`
+                )
+            }
+
+            dimension.repetitions = repetitions
         },
     },
     selectors: {
         getVisUiConfigVisualizationType: (state) => state.visualizationType,
         getVisUiConfigLayout: (state) => state.layout,
+        getVisUiConfigOutputType: (state) => state.outputType,
         getVisUiConfigOption: (state, key: keyof EventVisualizationOptions) =>
             state.options[key],
-        getVisUiConfigOutputType: (state) => state.outputType,
-        getVisUiConfigItemsByDimension: (state, dimensionId: string) =>
-            state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
-        getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
-            state.conditionsByDimension[dimensionId] || EMPTY_CONDITIONS_OBJECT,
-        getVisUiConfigRepetitionsByDimension: (state, dimensionId: string) =>
-            state.repetitionsByDimension[dimensionId] ||
+        getVisUiConfigLayoutDimensionsForAxis: (state, axis: Axis) =>
+            state.layout[axis],
+        getVisUiConfigAllLayoutDimensions: (state): LayoutDimension[] => [
+            ...state.layout.columns,
+            ...state.layout.rows,
+            ...state.layout.filters,
+        ],
+        getVisUiConfigLayoutDimension: (
+            state,
+            identifier: DimensionIdentifier
+        ): LayoutDimension | undefined =>
+            findDimensionInLayout(state.layout, identifier),
+        getVisUiConfigLayoutDimensionItems: (
+            state,
+            identifier: DimensionIdentifier
+        ): string[] =>
+            findDimensionInLayout(state.layout, identifier)?.items ??
+            EMPTY_STRING_ARRAY,
+        getVisUiConfigLayoutDimensionConditions: (
+            state,
+            identifier: DimensionIdentifier
+        ): ConditionsObject =>
+            findDimensionInLayout(state.layout, identifier)?.conditions ??
+            EMPTY_CONDITIONS_OBJECT,
+        getVisUiConfigLayoutDimensionRepetitions: (
+            state,
+            identifier: DimensionIdentifier
+        ): RepetitionsObject =>
+            findDimensionInLayout(state.layout, identifier)?.repetitions ??
             DEFAULT_REPETITIONS_OBJECT,
     },
 })
@@ -269,23 +326,27 @@ export const {
     clearVisUiConfig,
     setVisUiConfig,
     setVisUiConfigVisualizationType,
-    setVisUiConfigLayout,
     setVisUiConfigOption,
     setVisUiConfigOutputType,
-    setVisUiConfigItemsByDimension,
-    setVisUiConfigConditionsByDimension,
-    setVisUiConfigRepetitionsByDimension,
+    setVisUiConfigLayout,
     addVisUiConfigLayoutDimension,
+    updateVisUiConfigLayoutDimension,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimension,
+    setVisUiConfigLayoutDimensionItems,
+    setVisUiConfigLayoutDimensionConditions,
+    setVisUiConfigLayoutDimensionRepetitions,
 } = visUiConfigSlice.actions
 
 export const {
     getVisUiConfigVisualizationType,
     getVisUiConfigLayout,
-    getVisUiConfigOption,
     getVisUiConfigOutputType,
-    getVisUiConfigItemsByDimension,
-    getVisUiConfigConditionsByDimension,
-    getVisUiConfigRepetitionsByDimension,
+    getVisUiConfigOption,
+    getVisUiConfigLayoutDimensionsForAxis,
+    getVisUiConfigAllLayoutDimensions,
+    getVisUiConfigLayoutDimension,
+    getVisUiConfigLayoutDimensionItems,
+    getVisUiConfigLayoutDimensionConditions,
+    getVisUiConfigLayoutDimensionRepetitions,
 } = visUiConfigSlice.selectors

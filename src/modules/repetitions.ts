@@ -15,7 +15,7 @@ export const getRepetitionsFromVisualisation = (
     vis: CurrentVisualization
 ): Record<string, RepetitionsObject> =>
     layoutGetAllDimensions(vis)
-        .filter((d) => d.repetition)
+        .filter((d) => d.repetition?.indexes)
         .reduce((obj, d) => {
             obj[
                 getFullDimensionId({
@@ -24,12 +24,14 @@ export const getRepetitionsFromVisualisation = (
                     programStageId: d.programStage?.id,
                     outputType: vis.outputType,
                 })
-            ] = parseSavedRepetitions(d.repetition?.indexes)
+            ] = parseSavedRepetitions(d.repetition!.indexes)
 
             return obj
         }, {})
 
-export const parseSavedRepetitions = (repetitions): RepetitionsObject => {
+export const parseSavedRepetitions = (
+    repetitions: SavedRepetitions
+): RepetitionsObject => {
     if (
         !(
             Array.isArray(repetitions) &&
