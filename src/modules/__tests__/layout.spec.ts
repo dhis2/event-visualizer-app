@@ -16,27 +16,27 @@ const testCases = {
             layout: {
                 columns: [
                     {
-                        dimensionId: 'ou',
+                        id: 'ou',
                         items: ['USER_ORGUNIT'],
                     },
                     {
-                        dimensionId: 'bcgDoses',
+                        id: 'bcgDoses',
                         items: [],
                     },
                     {
-                        dimensionId: 'lastName',
+                        id: 'lastName',
                         items: [],
                     },
                     {
-                        dimensionId: 'enrollmentDate',
+                        id: 'enrollmentDate',
                         items: [],
                     },
                     {
-                        dimensionId: 'programStatus',
+                        id: 'programStatus',
                         items: ['COMPLETED', 'ACTIVE'],
                     },
                     {
-                        dimensionId: 'infantFeeding',
+                        id: 'infantFeeding',
                         programStageId: 'birth',
                         items: [],
                         conditions: {
@@ -44,7 +44,7 @@ const testCases = {
                         },
                     },
                     {
-                        dimensionId: 'infantFeeding',
+                        id: 'infantFeeding',
                         programStageId: 'babyPostnatal',
                         items: [],
                         repetitions: {
@@ -114,26 +114,26 @@ const testCases = {
             layout: {
                 columns: [
                     {
-                        dimensionId: 'ou',
+                        id: 'ou',
                         items: ['USER_ORGUNIT'],
                     },
                     {
-                        dimensionId: 'enrollmentDate',
+                        id: 'enrollmentDate',
                         items: [],
                     },
                     {
-                        dimensionId: 'firstName',
+                        id: 'firstName',
                         items: [],
                         conditions: {
                             condition: 'ILIKE:je',
                         },
                     },
                     {
-                        dimensionId: 'bcgDoses',
+                        id: 'bcgDoses',
                         items: [],
                     },
                     {
-                        dimensionId: 'facilityOwnership',
+                        id: 'facilityOwnership',
                         items: ['privateClinic', 'publicFacility'],
                     },
                 ],
@@ -183,36 +183,36 @@ const testCases = {
             layout: {
                 columns: [
                     {
-                        dimensionId: 'ou',
+                        id: 'ou',
                         items: ['USER_ORGUNIT'],
                     },
                     {
-                        dimensionId: 'focusName',
+                        id: 'focusName',
                         items: [],
                     },
                     {
-                        dimensionId: 'localFocusId',
+                        id: 'localFocusId',
                         items: [],
                     },
                     {
-                        dimensionId: 'area',
+                        id: 'area',
                         items: [],
                         conditions: {
                             condition: 'GT:100',
                         },
                     },
                     {
-                        dimensionId: 'ou',
+                        id: 'ou',
                         programId: 'program1Id',
                         items: ['bombali', 'bonthe', 'bo', 'kailahun'],
                     },
                     {
-                        dimensionId: 'enrollmentDate',
+                        id: 'enrollmentDate',
                         programId: 'program1Id',
                         items: [],
                     },
                     {
-                        dimensionId: 'focusDateOfClassification',
+                        id: 'focusDateOfClassification',
                         programId: 'program1Id',
                         programStageId: 'stage1Id',
                         items: [],
@@ -299,11 +299,11 @@ describe('formatLayoutForVisualization', () => {
 describe('dimensionMatches', () => {
     it('should match dimension with just dimensionId', () => {
         const dimension: LayoutDimension = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             items: [],
         }
         const identifier: DimensionIdentifier = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
         }
 
         expect(dimensionMatches(dimension, identifier)).toBe(true)
@@ -311,12 +311,12 @@ describe('dimensionMatches', () => {
 
     it('should match dimension with dimensionId and programId', () => {
         const dimension: LayoutDimension = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             programId: 'program1',
             items: [],
         }
         const identifier: DimensionIdentifier = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             programId: 'program1',
         }
 
@@ -325,7 +325,7 @@ describe('dimensionMatches', () => {
 
     it('should match dimension with full context', () => {
         const dimension: LayoutDimension = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             programId: 'program1',
             programStageId: 'stage1',
             trackedEntityTypeId: 'type1',
@@ -333,7 +333,7 @@ describe('dimensionMatches', () => {
             items: [],
         }
         const identifier: DimensionIdentifier = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             programId: 'program1',
             programStageId: 'stage1',
             trackedEntityTypeId: 'type1',
@@ -345,11 +345,11 @@ describe('dimensionMatches', () => {
 
     it('should not match when dimensionId differs', () => {
         const dimension: LayoutDimension = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             items: [],
         }
         const identifier: DimensionIdentifier = {
-            dimensionId: 'dataElement2',
+            id: 'dataElement2',
         }
 
         expect(dimensionMatches(dimension, identifier)).toBe(false)
@@ -357,12 +357,12 @@ describe('dimensionMatches', () => {
 
     it('should not match when programId differs', () => {
         const dimension: LayoutDimension = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             programId: 'program1',
             items: [],
         }
         const identifier: DimensionIdentifier = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             programId: 'program2',
         }
 
@@ -371,11 +371,11 @@ describe('dimensionMatches', () => {
 
     it('should not match when identifier has programId but dimension does not', () => {
         const dimension: LayoutDimension = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             items: [],
         }
         const identifier: DimensionIdentifier = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             programId: 'program1',
         }
 
@@ -384,12 +384,12 @@ describe('dimensionMatches', () => {
 
     it('should not match when dimension has programId but identifier does not', () => {
         const dimension: LayoutDimension = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             programId: 'program1',
             items: [],
         }
         const identifier: DimensionIdentifier = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
         }
 
         expect(dimensionMatches(dimension, identifier)).toBe(false)
@@ -397,12 +397,12 @@ describe('dimensionMatches', () => {
 
     it('should not match when repetitionIndex differs', () => {
         const dimension: LayoutDimension = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             repetitionIndex: 0,
             items: [],
         }
         const identifier: DimensionIdentifier = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             repetitionIndex: 1,
         }
 
@@ -411,11 +411,11 @@ describe('dimensionMatches', () => {
 
     it('should match when both have undefined repetitionIndex', () => {
         const dimension: LayoutDimension = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             items: [],
         }
         const identifier: DimensionIdentifier = {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
         }
 
         expect(dimensionMatches(dimension, identifier)).toBe(true)
@@ -426,20 +426,20 @@ describe('findDimensionInLayout', () => {
     const layout: Layout = {
         columns: [
             {
-                dimensionId: 'dataElement1',
+                id: 'dataElement1',
                 items: ['item1'],
             },
         ],
         rows: [
             {
-                dimensionId: 'dataElement2',
+                id: 'dataElement2',
                 programId: 'program1',
                 items: ['item2'],
             },
         ],
         filters: [
             {
-                dimensionId: 'dataElement1',
+                id: 'dataElement1',
                 programId: 'program2',
                 programStageId: 'stage1',
                 items: ['item3'],
@@ -449,41 +449,41 @@ describe('findDimensionInLayout', () => {
 
     it('should find dimension by dimensionId only', () => {
         const result = findDimensionInLayout(layout, {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
         })
 
         expect(result).toBeDefined()
-        expect(result?.dimensionId).toBe('dataElement1')
+        expect(result?.id).toBe('dataElement1')
         expect(result?.programId).toBeUndefined()
     })
 
     it('should find dimension by dimensionId and programId', () => {
         const result = findDimensionInLayout(layout, {
-            dimensionId: 'dataElement2',
+            id: 'dataElement2',
             programId: 'program1',
         })
 
         expect(result).toBeDefined()
-        expect(result?.dimensionId).toBe('dataElement2')
+        expect(result?.id).toBe('dataElement2')
         expect(result?.programId).toBe('program1')
     })
 
     it('should find dimension with full context', () => {
         const result = findDimensionInLayout(layout, {
-            dimensionId: 'dataElement1',
+            id: 'dataElement1',
             programId: 'program2',
             programStageId: 'stage1',
         })
 
         expect(result).toBeDefined()
-        expect(result?.dimensionId).toBe('dataElement1')
+        expect(result?.id).toBe('dataElement1')
         expect(result?.programId).toBe('program2')
         expect(result?.programStageId).toBe('stage1')
     })
 
     it('should return undefined when dimension not found', () => {
         const result = findDimensionInLayout(layout, {
-            dimensionId: 'nonexistent',
+            id: 'nonexistent',
         })
 
         expect(result).toBeUndefined()
@@ -491,7 +491,7 @@ describe('findDimensionInLayout', () => {
 
     it('should return undefined when context does not match', () => {
         const result = findDimensionInLayout(layout, {
-            dimensionId: 'dataElement2',
+            id: 'dataElement2',
             programId: 'wrongProgram',
         })
 
@@ -500,13 +500,13 @@ describe('findDimensionInLayout', () => {
 
     it('should return first match when multiple exist (searches rows -> columns -> filters)', () => {
         const layoutWithDuplicates: Layout = {
-            rows: [{ dimensionId: 'ou', items: [] }],
-            columns: [{ dimensionId: 'ou', items: [] }],
+            rows: [{ id: 'ou', items: [] }],
+            columns: [{ id: 'ou', items: [] }],
             filters: [],
         }
 
         const result = findDimensionInLayout(layoutWithDuplicates, {
-            dimensionId: 'ou',
+            id: 'ou',
         })
 
         expect(result).toBeDefined()
@@ -517,10 +517,10 @@ describe('findDimensionInLayout', () => {
 
 describe('isDimensionInLayout', () => {
     const layout: Layout = {
-        columns: [{ dimensionId: 'dim1', items: [] }],
+        columns: [{ id: 'dim1', items: [] }],
         rows: [
             {
-                dimensionId: 'dim2',
+                id: 'dim2',
                 programId: 'program1',
                 items: [],
             },
@@ -529,28 +529,26 @@ describe('isDimensionInLayout', () => {
     }
 
     it('should return true when dimension exists', () => {
-        expect(isDimensionInLayout(layout, { dimensionId: 'dim1' })).toBe(true)
+        expect(isDimensionInLayout(layout, { id: 'dim1' })).toBe(true)
     })
 
     it('should return true when dimension with context exists', () => {
         expect(
             isDimensionInLayout(layout, {
-                dimensionId: 'dim2',
+                id: 'dim2',
                 programId: 'program1',
             })
         ).toBe(true)
     })
 
     it('should return false when dimension does not exist', () => {
-        expect(
-            isDimensionInLayout(layout, { dimensionId: 'nonexistent' })
-        ).toBe(false)
+        expect(isDimensionInLayout(layout, { id: 'nonexistent' })).toBe(false)
     })
 
     it('should return false when context does not match', () => {
         expect(
             isDimensionInLayout(layout, {
-                dimensionId: 'dim2',
+                id: 'dim2',
                 programId: 'wrongProgram',
             })
         ).toBe(false)

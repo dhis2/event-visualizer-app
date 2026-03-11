@@ -189,7 +189,7 @@ export const visUiConfigSlice = createSlice({
 
             if (sourceIndex === -1) {
                 throw new Error(
-                    `Dimension ${dimension.dimensionId} not found in source axis ${sourceAxis}`
+                    `Dimension ${dimension.id} not found in source axis ${sourceAxis}`
                 )
             }
 

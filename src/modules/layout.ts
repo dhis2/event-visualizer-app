@@ -52,7 +52,7 @@ export const formatLayoutForVisualization = (visUiConfig: VisUiConfigState) =>
                     }
 
                     return dimensionCreate(
-                        dimension.dimensionId,
+                        dimension.id,
                         dimension.items,
                         options
                     )
@@ -70,7 +70,7 @@ export const dimensionMatches = (
     dimension: LayoutDimension,
     identifier: DimensionIdentifier
 ): boolean => {
-    if (dimension.dimensionId !== identifier.dimensionId) {
+    if (dimension.id !== identifier.id) {
         return false
     }
     if (dimension.programId !== identifier.programId) {
