@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { visUiConfigSlice, initialState } from '../vis-ui-config-slice'
-import type { Axis, LayoutDimension } from '@types'
+import type { LayoutDimension } from '@types'
 
 const {
     addVisUiConfigLayoutDimension,
@@ -19,15 +19,18 @@ const {
     getVisUiConfigLayoutDimensionRepetitions,
 } = visUiConfigSlice.selectors
 
-// Helper to create dimensions with axis field for input
-type DimensionWithAxis = LayoutDimension & { axis: Axis }
+// Helper to create state with specific layout dimensions
+type LayoutInput = Partial<{
+    columns: LayoutDimension[]
+    rows: LayoutDimension[]
+    filters: LayoutDimension[]
+}>
 
-const createStateWithDimensions = (dimensions: DimensionWithAxis[]) => {
-    // Group dimensions by axis
+const createStateWithDimensions = (layoutInput: LayoutInput = {}) => {
     const layout = {
-        columns: dimensions.filter((d) => d.axis === 'columns'),
-        rows: dimensions.filter((d) => d.axis === 'rows'),
-        filters: dimensions.filter((d) => d.axis === 'filters'),
+        columns: layoutInput.columns ?? [],
+        rows: layoutInput.rows ?? [],
+        filters: layoutInput.filters ?? [],
     }
     return {
         ...initialState,
@@ -41,7 +44,7 @@ const wrapStateForSelectors = (sliceState: typeof initialState) => ({
 
 describe('addVisUiConfigLayoutDimension', () => {
     it('adds to an empty layout axis', () => {
-        const state = createStateWithDimensions([])
+        const state = createStateWithDimensions()
         const action = addVisUiConfigLayoutDimension({
             id: 'dx',
             axis: 'columns',
@@ -56,18 +59,18 @@ describe('addVisUiConfigLayoutDimension', () => {
     })
 
     it('appends to the end of the axis when insertIndex is omitted', () => {
-        const state = createStateWithDimensions([
-            {
-                id: 'dx',
-                axis: 'columns',
-                items: ['item1'],
-            },
-            {
-                id: 'pe',
-                axis: 'columns',
-                items: ['2024'],
-            },
-        ])
+        const state = createStateWithDimensions({
+            columns: [
+                {
+                    id: 'dx',
+                    items: ['item1'],
+                },
+                {
+                    id: 'pe',
+                    items: ['2024'],
+                },
+            ],
+        })
         const action = addVisUiConfigLayoutDimension({
             id: 'ou',
             axis: 'columns',
@@ -81,18 +84,18 @@ describe('addVisUiConfigLayoutDimension', () => {
     })
 
     it('inserts before the provided index within the axis', () => {
-        const state = createStateWithDimensions([
-            {
-                id: 'dx',
-                axis: 'columns',
-                items: [],
-            },
-            {
-                id: 'ou',
-                axis: 'columns',
-                items: [],
-            },
-        ])
+        const state = createStateWithDimensions({
+            columns: [
+                {
+                    id: 'dx',
+                    items: [],
+                },
+                {
+                    id: 'ou',
+                    items: [],
+                },
+            ],
+        })
         const action = addVisUiConfigLayoutDimension({
             id: 'pe',
             axis: 'columns',
@@ -108,18 +111,18 @@ describe('addVisUiConfigLayoutDimension', () => {
     })
 
     it('inserts after the provided index when insertAfter is true', () => {
-        const state = createStateWithDimensions([
-            {
-                id: 'dx',
-                axis: 'columns',
-                items: [],
-            },
-            {
-                id: 'ou',
-                axis: 'columns',
-                items: [],
-            },
-        ])
+        const state = createStateWithDimensions({
+            columns: [
+                {
+                    id: 'dx',
+                    items: [],
+                },
+                {
+                    id: 'ou',
+                    items: [],
+                },
+            ],
+        })
         const action = addVisUiConfigLayoutDimension({
             id: 'pe',
             axis: 'columns',
@@ -136,18 +139,20 @@ describe('addVisUiConfigLayoutDimension', () => {
     })
 
     it('adds to a different axis without affecting other axes', () => {
-        const state = createStateWithDimensions([
-            {
-                id: 'dx',
-                axis: 'columns',
-                items: [],
-            },
-            {
-                id: 'pe',
-                axis: 'rows',
-                items: [],
-            },
-        ])
+        const state = createStateWithDimensions({
+            columns: [
+                {
+                    id: 'dx',
+                    items: [],
+                },
+            ],
+            rows: [
+                {
+                    id: 'pe',
+                    items: [],
+                },
+            ],
+        })
         const action = addVisUiConfigLayoutDimension({
             id: 'ou',
             axis: 'filters',
@@ -161,7 +166,7 @@ describe('addVisUiConfigLayoutDimension', () => {
     })
 
     it('preserves all dimension fields including conditions and repetitions', () => {
-        const state = createStateWithDimensions([])
+        const state = createStateWithDimensions()
         const action = addVisUiConfigLayoutDimension({
             id: 'programStageDataElement.id',
             programId: 'prog1',
@@ -199,13 +204,14 @@ describe('addVisUiConfigLayoutDimension', () => {
 
 describe('updateVisUiConfigLayoutDimension', () => {
     it('updates items for a dimension', () => {
-        const state = createStateWithDimensions([
-            {
-                id: 'dx',
-                axis: 'columns',
-                items: ['item1'],
-            },
-        ])
+        const state = createStateWithDimensions({
+            columns: [
+                {
+                    id: 'dx',
+                    items: ['item1'],
+                },
+            ],
+        })
         const action = updateVisUiConfigLayoutDimension({
             identifier: { id: 'dx' },
             updates: { items: ['item1', 'item2'] },
@@ -215,13 +221,14 @@ describe('updateVisUiConfigLayoutDimension', () => {
     })
 
     it('updates conditions for a dimension', () => {
-        const state = createStateWithDimensions([
-            {
-                id: 'dx',
-                axis: 'columns',
-                items: [],
-            },
-        ])
+        const state = createStateWithDimensions({
+            columns: [
+                {
+                    id: 'dx',
+                    items: [],
+                },
+            ],
+        })
         const action = updateVisUiConfigLayoutDimension({
             identifier: { id: 'dx' },
             updates: {
@@ -239,13 +246,14 @@ describe('updateVisUiConfigLayoutDimension', () => {
     })
 
     it('updates repetitions for a dimension', () => {
-        const state = createStateWithDimensions([
-            {
-                id: 'dx',
-                axis: 'columns',
-                items: [],
-            },
-        ])
+        const state = createStateWithDimensions({
+            columns: [
+                {
+                    id: 'dx',
+                    items: [],
+                },
+            ],
+        })
         const action = updateVisUiConfigLayoutDimension({
             identifier: { id: 'dx' },
             updates: {
@@ -263,22 +271,22 @@ describe('updateVisUiConfigLayoutDimension', () => {
     })
 
     it('matches dimension with programId and programStageId', () => {
-        const state = createStateWithDimensions([
-            {
-                id: 'dataElement1',
-                programId: 'prog1',
-                programStageId: 'stage1',
-                axis: 'columns',
-                items: [],
-            },
-            {
-                id: 'dataElement1',
-                programId: 'prog2',
-                programStageId: 'stage2',
-                axis: 'columns',
-                items: [],
-            },
-        ])
+        const state = createStateWithDimensions({
+            columns: [
+                {
+                    id: 'dataElement1',
+                    programId: 'prog1',
+                    programStageId: 'stage1',
+                    items: [],
+                },
+                {
+                    id: 'dataElement1',
+                    programId: 'prog2',
+                    programStageId: 'stage2',
+                    items: [],
+                },
+            ],
+        })
         const action = updateVisUiConfigLayoutDimension({
             identifier: {
                 id: 'dataElement1',
@@ -293,13 +301,14 @@ describe('updateVisUiConfigLayoutDimension', () => {
     })
 
     it('throws when dimension is not found', () => {
-        const state = createStateWithDimensions([
-            {
-                id: 'dx',
-                axis: 'columns',
-                items: [],
-            },
-        ])
+        const state = createStateWithDimensions({
+            columns: [
+                {
+                    id: 'dx',
+                    items: [],
+                },
+            ],
+        })
         const action = updateVisUiConfigLayoutDimension({
             identifier: { id: 'nonexistent' },
             updates: { items: [] },
@@ -312,13 +321,14 @@ describe('updateVisUiConfigLayoutDimension', () => {
 
 describe('moveVisUiConfigLayoutDimension', () => {
     it('throws if the dimension does not exist', () => {
-        const state = createStateWithDimensions([
-            {
-                id: 'dx',
-                axis: 'columns',
-                items: [],
-            },
-        ])
+        const state = createStateWithDimensions({
+            columns: [
+                {
+                    id: 'dx',
+                    items: [],
+                },
+            ],
+        })
         const action = moveVisUiConfigLayoutDimension({
             identifier: { id: 'nonexistent' },
             sourceAxis: 'columns',
@@ -331,23 +341,24 @@ describe('moveVisUiConfigLayoutDimension', () => {
 
     describe('moving between axes', () => {
         it('appends to the end of target axis by default', () => {
-            const state = createStateWithDimensions([
-                {
-                    id: 'dx',
-                    axis: 'columns',
-                    items: [],
-                },
-                {
-                    id: 'pe',
-                    axis: 'columns',
-                    items: [],
-                },
-                {
-                    id: 'ou',
-                    axis: 'rows',
-                    items: [],
-                },
-            ])
+            const state = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dx',
+                        items: [],
+                    },
+                    {
+                        id: 'pe',
+                        items: [],
+                    },
+                ],
+                rows: [
+                    {
+                        id: 'ou',
+                        items: [],
+                    },
+                ],
+            })
             const action = moveVisUiConfigLayoutDimension({
                 identifier: { id: 'dx' },
                 sourceAxis: 'columns',
@@ -359,23 +370,24 @@ describe('moveVisUiConfigLayoutDimension', () => {
         })
 
         it('moves to the start of target axis when targetIndex is 0', () => {
-            const state = createStateWithDimensions([
-                {
-                    id: 'dx',
-                    axis: 'columns',
-                    items: [],
-                },
-                {
-                    id: 'ou',
-                    axis: 'rows',
-                    items: [],
-                },
-                {
-                    id: 'pe',
-                    axis: 'rows',
-                    items: [],
-                },
-            ])
+            const state = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dx',
+                        items: [],
+                    },
+                ],
+                rows: [
+                    {
+                        id: 'ou',
+                        items: [],
+                    },
+                    {
+                        id: 'pe',
+                        items: [],
+                    },
+                ],
+            })
             const action = moveVisUiConfigLayoutDimension({
                 identifier: { id: 'dx' },
                 sourceAxis: 'columns',
@@ -391,23 +403,24 @@ describe('moveVisUiConfigLayoutDimension', () => {
         })
 
         it('moves into the middle before the target index', () => {
-            const state = createStateWithDimensions([
-                {
-                    id: 'dx',
-                    axis: 'columns',
-                    items: [],
-                },
-                {
-                    id: 'ou',
-                    axis: 'rows',
-                    items: [],
-                },
-                {
-                    id: 'pe',
-                    axis: 'rows',
-                    items: [],
-                },
-            ])
+            const state = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dx',
+                        items: [],
+                    },
+                ],
+                rows: [
+                    {
+                        id: 'ou',
+                        items: [],
+                    },
+                    {
+                        id: 'pe',
+                        items: [],
+                    },
+                ],
+            })
             const action = moveVisUiConfigLayoutDimension({
                 identifier: { id: 'dx' },
                 sourceAxis: 'columns',
@@ -423,23 +436,24 @@ describe('moveVisUiConfigLayoutDimension', () => {
         })
 
         it('moves into the middle after the target index when insertAfter is true', () => {
-            const state = createStateWithDimensions([
-                {
-                    id: 'dx',
-                    axis: 'columns',
-                    items: [],
-                },
-                {
-                    id: 'ou',
-                    axis: 'rows',
-                    items: [],
-                },
-                {
-                    id: 'pe',
-                    axis: 'rows',
-                    items: [],
-                },
-            ])
+            const state = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dx',
+                        items: [],
+                    },
+                ],
+                rows: [
+                    {
+                        id: 'ou',
+                        items: [],
+                    },
+                    {
+                        id: 'pe',
+                        items: [],
+                    },
+                ],
+            })
             const action = moveVisUiConfigLayoutDimension({
                 identifier: { id: 'dx' },
                 sourceAxis: 'columns',
@@ -458,14 +472,16 @@ describe('moveVisUiConfigLayoutDimension', () => {
 
     describe('moving within the same axis', () => {
         const buildState = () =>
-            createStateWithDimensions([
-                { id: 'c1', axis: 'columns', items: [] },
-                { id: 'c2', axis: 'columns', items: [] },
-                { id: 'c3', axis: 'columns', items: [] },
-                { id: 'c4', axis: 'columns', items: [] },
-                { id: 'c5', axis: 'columns', items: [] },
-                { id: 'c6', axis: 'columns', items: [] },
-            ])
+            createStateWithDimensions({
+                columns: [
+                    { id: 'c1', items: [] },
+                    { id: 'c2', items: [] },
+                    { id: 'c3', items: [] },
+                    { id: 'c4', items: [] },
+                    { id: 'c5', items: [] },
+                    { id: 'c6', items: [] },
+                ],
+            })
 
         it('moves from start to end when no targetIndex is provided', () => {
             const state = buildState()
@@ -586,23 +602,22 @@ describe('moveVisUiConfigLayoutDimension', () => {
 
 describe('removeVisUiConfigLayoutDimension', () => {
     it('removes the dimension when it exists', () => {
-        const state = createStateWithDimensions([
-            {
-                id: 'dx',
-                axis: 'columns',
-                items: [],
-            },
-            {
-                id: 'pe',
-                axis: 'columns',
-                items: [],
-            },
-            {
-                id: 'ou',
-                axis: 'columns',
-                items: [],
-            },
-        ])
+        const state = createStateWithDimensions({
+            columns: [
+                {
+                    id: 'dx',
+                    items: [],
+                },
+                {
+                    id: 'pe',
+                    items: [],
+                },
+                {
+                    id: 'ou',
+                    items: [],
+                },
+            ],
+        })
         const action = removeVisUiConfigLayoutDimension({
             identifier: { id: 'pe' },
         })
@@ -611,13 +626,14 @@ describe('removeVisUiConfigLayoutDimension', () => {
     })
 
     it('throws when trying to remove a missing dimension', () => {
-        const state = createStateWithDimensions([
-            {
-                id: 'dx',
-                axis: 'columns',
-                items: [],
-            },
-        ])
+        const state = createStateWithDimensions({
+            columns: [
+                {
+                    id: 'dx',
+                    items: [],
+                },
+            ],
+        })
         const action = removeVisUiConfigLayoutDimension({
             identifier: { id: 'nonexistent' },
         })
@@ -627,22 +643,22 @@ describe('removeVisUiConfigLayoutDimension', () => {
     })
 
     it('matches dimension with full context (programId, programStageId)', () => {
-        const state = createStateWithDimensions([
-            {
-                id: 'dataElement1',
-                programId: 'prog1',
-                programStageId: 'stage1',
-                axis: 'columns',
-                items: [],
-            },
-            {
-                id: 'dataElement1',
-                programId: 'prog2',
-                programStageId: 'stage2',
-                axis: 'columns',
-                items: [],
-            },
-        ])
+        const state = createStateWithDimensions({
+            columns: [
+                {
+                    id: 'dataElement1',
+                    programId: 'prog1',
+                    programStageId: 'stage1',
+                    items: [],
+                },
+                {
+                    id: 'dataElement1',
+                    programId: 'prog2',
+                    programStageId: 'stage2',
+                    items: [],
+                },
+            ],
+        })
         const action = removeVisUiConfigLayoutDimension({
             identifier: {
                 id: 'dataElement1',
@@ -659,18 +675,20 @@ describe('removeVisUiConfigLayoutDimension', () => {
 describe('selectors', () => {
     describe('getVisUiConfigLayout', () => {
         it('returns the entire layout', () => {
-            const sliceState = createStateWithDimensions([
-                {
-                    id: 'dx',
-                    axis: 'columns',
-                    items: [],
-                },
-                {
-                    id: 'pe',
-                    axis: 'rows',
-                    items: [],
-                },
-            ])
+            const sliceState = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dx',
+                        items: [],
+                    },
+                ],
+                rows: [
+                    {
+                        id: 'pe',
+                        items: [],
+                    },
+                ],
+            })
             const result = getVisUiConfigLayout(
                 wrapStateForSelectors(sliceState)
             )
@@ -684,18 +702,20 @@ describe('selectors', () => {
 
     describe('getVisUiConfigAllLayoutDimensions', () => {
         it('returns all layout dimensions as flat array', () => {
-            const sliceState = createStateWithDimensions([
-                {
-                    id: 'dx',
-                    axis: 'columns',
-                    items: [],
-                },
-                {
-                    id: 'pe',
-                    axis: 'rows',
-                    items: [],
-                },
-            ])
+            const sliceState = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dx',
+                        items: [],
+                    },
+                ],
+                rows: [
+                    {
+                        id: 'pe',
+                        items: [],
+                    },
+                ],
+            })
             const result = getVisUiConfigAllLayoutDimensions(
                 wrapStateForSelectors(sliceState)
             )
@@ -707,23 +727,24 @@ describe('selectors', () => {
 
     describe('getVisUiConfigLayoutDimensionsForAxis', () => {
         it('returns only dimensions for the specified axis', () => {
-            const sliceState = createStateWithDimensions([
-                {
-                    id: 'dx',
-                    axis: 'columns',
-                    items: [],
-                },
-                {
-                    id: 'pe',
-                    axis: 'rows',
-                    items: [],
-                },
-                {
-                    id: 'ou',
-                    axis: 'columns',
-                    items: [],
-                },
-            ])
+            const sliceState = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dx',
+                        items: [],
+                    },
+                    {
+                        id: 'ou',
+                        items: [],
+                    },
+                ],
+                rows: [
+                    {
+                        id: 'pe',
+                        items: [],
+                    },
+                ],
+            })
             const result = getVisUiConfigLayoutDimensionsForAxis(
                 wrapStateForSelectors(sliceState),
                 'columns'
@@ -735,13 +756,14 @@ describe('selectors', () => {
 
     describe('getVisUiConfigLayoutDimension', () => {
         it('returns the dimension matching the identifier', () => {
-            const sliceState = createStateWithDimensions([
-                {
-                    id: 'dx',
-                    axis: 'columns',
-                    items: ['item1'],
-                },
-            ])
+            const sliceState = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dx',
+                        items: ['item1'],
+                    },
+                ],
+            })
             const result = getVisUiConfigLayoutDimension(
                 wrapStateForSelectors(sliceState),
                 { id: 'dx' }
@@ -753,7 +775,7 @@ describe('selectors', () => {
         })
 
         it('returns undefined when dimension is not found', () => {
-            const sliceState = createStateWithDimensions([])
+            const sliceState = createStateWithDimensions({})
             const result = getVisUiConfigLayoutDimension(
                 wrapStateForSelectors(sliceState),
                 {
@@ -764,22 +786,22 @@ describe('selectors', () => {
         })
 
         it('matches dimension with context fields', () => {
-            const sliceState = createStateWithDimensions([
-                {
-                    id: 'dataElement1',
-                    programId: 'prog1',
-                    programStageId: 'stage1',
-                    axis: 'columns',
-                    items: [],
-                },
-                {
-                    id: 'dataElement1',
-                    programId: 'prog2',
-                    programStageId: 'stage2',
-                    axis: 'columns',
-                    items: [],
-                },
-            ])
+            const sliceState = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dataElement1',
+                        programId: 'prog1',
+                        programStageId: 'stage1',
+                        items: [],
+                    },
+                    {
+                        id: 'dataElement1',
+                        programId: 'prog2',
+                        programStageId: 'stage2',
+                        items: [],
+                    },
+                ],
+            })
             const result = getVisUiConfigLayoutDimension(
                 wrapStateForSelectors(sliceState),
                 {
@@ -794,13 +816,14 @@ describe('selectors', () => {
 
     describe('getVisUiConfigLayoutDimensionItems', () => {
         it('returns items for the dimension', () => {
-            const sliceState = createStateWithDimensions([
-                {
-                    id: 'dx',
-                    axis: 'columns',
-                    items: ['item1', 'item2'],
-                },
-            ])
+            const sliceState = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dx',
+                        items: ['item1', 'item2'],
+                    },
+                ],
+            })
             const result = getVisUiConfigLayoutDimensionItems(
                 wrapStateForSelectors(sliceState),
                 {
@@ -811,7 +834,7 @@ describe('selectors', () => {
         })
 
         it('returns empty array when dimension is not found', () => {
-            const sliceState = createStateWithDimensions([])
+            const sliceState = createStateWithDimensions({})
             const result = getVisUiConfigLayoutDimensionItems(
                 wrapStateForSelectors(sliceState),
                 {
@@ -824,17 +847,18 @@ describe('selectors', () => {
 
     describe('getVisUiConfigLayoutDimensionConditions', () => {
         it('returns conditions for the dimension', () => {
-            const sliceState = createStateWithDimensions([
-                {
-                    id: 'dx',
-                    axis: 'columns',
-                    items: [],
-                    conditions: {
-                        condition: 'GT:5',
-                        legendSet: 'legend1',
+            const sliceState = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dx',
+                        items: [],
+                        conditions: {
+                            condition: 'GT:5',
+                            legendSet: 'legend1',
+                        },
                     },
-                },
-            ])
+                ],
+            })
             const result = getVisUiConfigLayoutDimensionConditions(
                 wrapStateForSelectors(sliceState),
                 {
@@ -848,7 +872,7 @@ describe('selectors', () => {
         })
 
         it('returns empty conditions object when dimension is not found', () => {
-            const sliceState = createStateWithDimensions([])
+            const sliceState = createStateWithDimensions({})
             const result = getVisUiConfigLayoutDimensionConditions(
                 wrapStateForSelectors(sliceState),
                 {
@@ -862,13 +886,14 @@ describe('selectors', () => {
         })
 
         it('returns empty conditions object when dimension has no conditions', () => {
-            const sliceState = createStateWithDimensions([
-                {
-                    id: 'dx',
-                    axis: 'columns',
-                    items: [],
-                },
-            ])
+            const sliceState = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dx',
+                        items: [],
+                    },
+                ],
+            })
             const result = getVisUiConfigLayoutDimensionConditions(
                 wrapStateForSelectors(sliceState),
                 {
@@ -884,17 +909,18 @@ describe('selectors', () => {
 
     describe('getVisUiConfigLayoutDimensionRepetitions', () => {
         it('returns repetitions for the dimension', () => {
-            const sliceState = createStateWithDimensions([
-                {
-                    id: 'dx',
-                    axis: 'columns',
-                    items: [],
-                    repetitions: {
-                        mostRecent: 3,
-                        oldest: 2,
+            const sliceState = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dx',
+                        items: [],
+                        repetitions: {
+                            mostRecent: 3,
+                            oldest: 2,
+                        },
                     },
-                },
-            ])
+                ],
+            })
             const result = getVisUiConfigLayoutDimensionRepetitions(
                 wrapStateForSelectors(sliceState),
                 {
@@ -908,7 +934,7 @@ describe('selectors', () => {
         })
 
         it('returns default repetitions when dimension is not found', () => {
-            const sliceState = createStateWithDimensions([])
+            const sliceState = createStateWithDimensions({})
             const result = getVisUiConfigLayoutDimensionRepetitions(
                 wrapStateForSelectors(sliceState),
                 {
@@ -922,13 +948,14 @@ describe('selectors', () => {
         })
 
         it('returns default repetitions when dimension has no repetitions', () => {
-            const sliceState = createStateWithDimensions([
-                {
-                    id: 'dx',
-                    axis: 'columns',
-                    items: [],
-                },
-            ])
+            const sliceState = createStateWithDimensions({
+                columns: [
+                    {
+                        id: 'dx',
+                        items: [],
+                    },
+                ],
+            })
             const result = getVisUiConfigLayoutDimensionRepetitions(
                 wrapStateForSelectors(sliceState),
                 {
