@@ -5,7 +5,7 @@ const REPETITION_INDEX_PATTERN = /\[(-?\d+)\]/
 
 export const parseDimensionIdInput = (
     input: string
-): { ids: string[]; repetitionIndex?: string } => {
+): { ids: string[]; repetitionIndex?: number } => {
     if (!isPopulatedString(input)) {
         throw new Error('Dimension ID input is not a populated string')
     }
@@ -15,7 +15,9 @@ export const parseDimensionIdInput = (
     const processedInput = repetitionMatch
         ? input.replace(REPETITION_INDEX_PATTERN, '')
         : input
-    const repetitionIndex = repetitionMatch?.[1]
+    const repetitionIndex = repetitionMatch
+        ? Number(repetitionMatch[1])
+        : undefined
     const ids = processedInput.split('.')
 
     if (!isPopulatedString(ids[ids.length - 1])) {

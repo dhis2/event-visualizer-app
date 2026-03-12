@@ -69,6 +69,8 @@ export type DimensionMetadataItem = Omit<
     optionSet?: string // Add ID reference to `optionSet`
     program?: string // Add ID reference to `program`
     programStage?: string // Add ID reference to `programStage`
+    trackedEntityType?: string // Add ID reference to `trackedEntityType`
+    repetitionIndex?: number // Not persisted in the store but added dynamically
 }
 
 type OptionSetOption = Omit<OptionSet['options'], 'id' | 'code' | 'name'> & {
@@ -131,13 +133,3 @@ export type InitialMetadataItems = Record<
     string | MetadataInputItem | Partial<DimensionMetadataItem>
 >
 export type AnalyticsResponseMetadataItems = Record<string, MetadataInputItem>
-
-export type DimensionMetadata = {
-    dimensionId: string
-    programId?: string
-    programStageId?: string
-    repetitionIndex?: string
-    dimension?: DimensionMetadataItem
-    program?: Program
-    programStage?: ProgramStage
-}

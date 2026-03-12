@@ -20,7 +20,7 @@ import type {
     AnalyticsResponseMetadataItems,
     AppCachedData,
     SavedVisualization,
-    DimensionMetadata,
+    DimensionMetadataItem,
 } from '@types'
 
 declare global {
@@ -109,98 +109,19 @@ export class MetadataStore {
     }
 
     getMetadataItem(key: string): MetadataItem | undefined {
-        return this.metadata.get(key)
+        return key.includes('.')
+            ? this.getDimensionMetadataWithDottedKey(key)
+            : this.metadata.get(key)
     }
 
     getMetadataItems(keys: string[]): Record<string, MetadataItem> {
         return keys.reduce((metadataStoreItems, key) => {
-            const item = this.metadata.get(key)
+            const item = this.getMetadataItem(key)
             if (item) {
                 metadataStoreItems[key] = item
             }
             return metadataStoreItems
         }, {})
-    }
-
-    getDimensionMetadata(input: string): DimensionMetadata {
-        const { ids, repetitionIndex } = parseDimensionIdInput(input)
-        const nestedDimensionId = ids.join('.')
-        const result: DimensionMetadata = {
-            dimensionId: '',
-            programStageId: undefined,
-            programId: undefined,
-            repetitionIndex,
-            dimension: undefined,
-            program: undefined,
-            programStage: undefined,
-        }
-
-        // ids.length > 0 && <= 3 guaranteed by parseDimensionIdInput
-        if (ids.length === 1) {
-            result.dimensionId = ids[0]
-        } else if (ids.length === 2) {
-            /* First ID could be either a program or a stage.
-             * Query the metadata store to find out which one it is or just leave undefined */
-            const [unknownId, dimensionId] = ids
-            const unknownMetadata = this.metadata.get(unknownId)
-
-            result.dimensionId = dimensionId
-            if (unknownMetadata) {
-                if (isProgramMetadataItem(unknownMetadata)) {
-                    result.programId = unknownId
-                } else if (isProgramStageMetadataItem(unknownMetadata)) {
-                    result.programStageId = unknownId
-                } else {
-                    throw new Error(
-                        `"${unknownId}" is not a program or program stage metadata item`
-                    )
-                }
-            }
-        } else if (ids.length === 3) {
-            const [programId, programStageId, dimensionId] = ids
-            result.programId = programId
-            result.programStageId = programStageId
-            result.dimensionId = dimensionId
-        }
-
-        const dimension =
-            this.metadata.get(nestedDimensionId) ??
-            this.metadata.get(result.dimensionId)
-        const program = result.programId && this.metadata.get(result.programId)
-        const programStage =
-            result.programStageId && this.metadata.get(result.programStageId)
-
-        if (dimension) {
-            if (isDimensionMetadataItem(dimension)) {
-                result.dimension = dimension
-            } else {
-                throw new Error(
-                    `"${result.dimensionId}" is not a valid dimension metadata item`
-                )
-            }
-        }
-
-        if (program) {
-            if (isProgramMetadataItem(program)) {
-                result.program = program
-            } else {
-                throw new Error(
-                    `"${result.programId}" is not a valid program metadata item`
-                )
-            }
-        }
-
-        if (programStage) {
-            if (isProgramStageMetadataItem(programStage)) {
-                result.programStage = programStage
-            } else {
-                throw new Error(
-                    `"${result.programStageId}" is not a valid programStage metadata item`
-                )
-            }
-        }
-
-        return result
     }
 
     subscribe(key: string | null | undefined, cb: Subscriber) {
@@ -298,5 +219,113 @@ export class MetadataStore {
         })
 
         this.addMetadata(initialMetadataWithRootOrgUnits as MetadataInput)
+    }
+
+    private getDimensionMetadataWithDottedKey(
+        dottedKey: string
+    ): DimensionMetadataItem | undefined {
+        const { ids, repetitionIndex } = parseDimensionIdInput(dottedKey)
+        const plainDimensionId = ids.pop()
+        const potentialDimensionItemKeys: string[] = []
+        let programId: string | null = null
+        let programStageId: string | null = null
+        let trackedEntityTypeId: string | null = null
+        let dimensionMetadataItem: DimensionMetadataItem | null = null
+
+        if (ids.length === 2) {
+            // If 2 IDs remain we know this must be a program and its stage
+            programId = ids[0]
+            programStageId = ids[1]
+        } else if (ids.length === 1) {
+            const unknownId = ids[0]
+            const unknownMetadata = this.metadata.get(unknownId)
+
+            if (unknownMetadata) {
+                if (isProgramMetadataItem(unknownMetadata)) {
+                    programId = unknownId
+                    // If the program only has 1 stage we can use it
+                    programStageId =
+                        unknownMetadata.programStages?.length === 1
+                            ? unknownMetadata.programStages[0].id
+                            : null
+                } else if (isProgramStageMetadataItem(unknownMetadata)) {
+                    programStageId = unknownId
+                    programId = unknownMetadata.program.id
+                } else {
+                    /* trackedEntityType does not have discriminating features but that's
+                     * OK because there are only 3 options and the other 2 do have
+                     * discriminating features */
+                    trackedEntityTypeId = unknownId
+                }
+            } else {
+                throw new Error(
+                    `No context metadata found for dimension with dotted ID`
+                )
+            }
+        } else {
+            throw new Error(`Could not process key ${dottedKey}`)
+        }
+
+        if (trackedEntityTypeId) {
+            potentialDimensionItemKeys.push(
+                `${trackedEntityTypeId}.${plainDimensionId}`
+            )
+        } else {
+            programStageId = repetitionIndex
+                ? `${programStageId}[${repetitionIndex}]`
+                : programStageId
+
+            if (programId && programStageId) {
+                potentialDimensionItemKeys.push(
+                    `${programId}.${programStageId}.${plainDimensionId}`
+                )
+            }
+            if (programStageId) {
+                potentialDimensionItemKeys.push(
+                    `${programStageId}.${plainDimensionId}`
+                )
+            }
+            if (programId) {
+                potentialDimensionItemKeys.push(
+                    `${programId}.${plainDimensionId}`
+                )
+            }
+        }
+
+        for (const key of potentialDimensionItemKeys) {
+            const potentialItem = this.metadata.get(key)
+
+            if (isDimensionMetadataItem(potentialItem)) {
+                dimensionMetadataItem = potentialItem
+                break
+            }
+        }
+
+        if (!dimensionMetadataItem) {
+            return undefined
+        }
+
+        const result: DimensionMetadataItem = {
+            ...dimensionMetadataItem,
+            id: plainDimensionId!,
+        }
+
+        if (programId) {
+            result.program = programId
+        }
+
+        if (programStageId) {
+            result.programStage = programStageId
+        }
+
+        if (trackedEntityTypeId) {
+            result.trackedEntityType = trackedEntityTypeId
+        }
+
+        if (typeof repetitionIndex === 'number') {
+            result.repetitionIndex = repetitionIndex
+        }
+
+        return result
     }
 }
