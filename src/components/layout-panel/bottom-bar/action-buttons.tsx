@@ -255,12 +255,12 @@ const useActionButton = (buttonType: OutputType) => {
         // Empty visualization
         if (isVisualizationEmpty(currentVis)) {
             return 'create'
-            // visualization or error and different outputType
-        } else if (outputType !== buttonType) {
-            return 'switch'
+        } else if (outputType === buttonType) {
             // visualization or error and same outputType
-        } else {
             return 'update'
+            // visualization or error and different outputType
+        } else {
+            return 'switch'
         }
     }, [buttonType, currentVis, outputType])
 
