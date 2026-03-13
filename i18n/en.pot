@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-03-09T14:03:44.053Z\n"
-"PO-Revision-Date: 2026-03-09T14:03:44.054Z\n"
+"POT-Creation-Date: 2026-03-13T15:03:26.002Z\n"
+"PO-Revision-Date: 2026-03-13T15:03:26.003Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -302,6 +302,66 @@ msgstr "Levels"
 
 msgid "Groups"
 msgstr "Groups"
+
+msgid "{{ eventLabel }} list"
+msgstr "{{ eventLabel }} list"
+
+msgid "{{ eventLabel }} table"
+msgstr "{{ eventLabel }} table"
+
+msgid "Create {{targetVisualization}}"
+msgstr "Create {{targetVisualization}}"
+
+msgid "Switch to {{targetVisualization}}"
+msgstr "Switch to {{targetVisualization}}"
+
+msgid "Update {{targetVisualization}}"
+msgstr "Update {{targetVisualization}}"
+
+msgid "{{ enrollmentLabel }} list"
+msgstr "{{ enrollmentLabel }} list"
+
+msgid "{{ enrollmentLabel }} table"
+msgstr "{{ enrollmentLabel }} table"
+
+msgid "{{ trackedEntityTypeName }} list"
+msgstr "{{ trackedEntityTypeName }} list"
+
+msgid "custom value table"
+msgstr "custom value table"
+
+msgid "Nothing selected. Add items to the layout to get started."
+msgstr "Nothing selected. Add items to the layout to get started."
+
+msgid "Not valid with multiple programs"
+msgstr "Not valid with multiple programs"
+
+msgid "Not valid with registration date or registration org. unit"
+msgstr "Not valid with registration date or registration org. unit"
+
+msgid "Not valid with registration date"
+msgstr "Not valid with registration date"
+
+msgid "Not valid with registration org. unit"
+msgstr "Not valid with registration org. unit"
+
+msgid "Not valid with event programs"
+msgstr "Not valid with event programs"
+
+msgid "Not valid with categories or category option group sets"
+msgstr "Not valid with categories or category option group sets"
+
+msgid "Not valid with categories"
+msgstr "Not valid with categories"
+
+msgid "Not valid with category option sets"
+msgstr "Not valid with category option sets"
+
+msgid "Not valid with multiple program stages"
+msgstr "Not valid with multiple program stages"
+
+msgid "Not valid with program indicators"
+msgstr "Not valid with program indicators"
 
 msgid "Collapse layout"
 msgstr "Collapse layout"
