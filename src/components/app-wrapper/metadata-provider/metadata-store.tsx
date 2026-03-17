@@ -1,15 +1,13 @@
 import { extractMetadataFromAnalyticsResponse } from './analytics-data'
-import { parseDimensionIdInput } from './dimension'
+import {
+    CompoundDimensionIdAliasLookup,
+    isCompoundDimensionId,
+} from './dimension'
 import { smartMergeWithChangeDetection } from './merge-utils'
 import { normalizeMetadataInputItem } from './normalization'
 import { extractMetadataFromVisualization } from './visualization'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import {
-    isMetadataInputItem,
-    isDimensionMetadataItem,
-    isProgramMetadataItem,
-    isProgramStageMetadataItem,
-} from '@modules/metadata'
+import { isMetadataInputItem } from '@modules/metadata'
 import { isObject, isPopulatedString } from '@modules/validation'
 import type {
     MetadataInputItem,
@@ -20,7 +18,7 @@ import type {
     AnalyticsResponseMetadataItems,
     AppCachedData,
     SavedVisualization,
-    DimensionMetadataItem,
+    MetadataMap,
 } from '@types'
 
 declare global {
@@ -42,9 +40,10 @@ const isItemMatch = (item: MetadataItem, token: string) =>
     item.name?.toLowerCase().includes(token.toLowerCase())
 
 export class MetadataStore {
-    private metadata = new Map<string, MetadataItem>()
+    private metadata: MetadataMap = new Map()
     private subscribers = new Map<string, Set<Subscriber>>()
     private initialMetadataKeys = new Set<string>()
+    private compoundDimensionIdAliasLookup: CompoundDimensionIdAliasLookup
 
     constructor(
         initialMetadataItems: InitialMetadataItems,
@@ -52,6 +51,8 @@ export class MetadataStore {
          *  but when rendered by the plugin it is not */
         rootOrgUnits?: AppCachedData['rootOrgUnits']
     ) {
+        this.compoundDimensionIdAliasLookup =
+            new CompoundDimensionIdAliasLookup(this.metadata)
         this.addInitialMetadataItems(initialMetadataItems, rootOrgUnits)
 
         if (
@@ -98,6 +99,7 @@ export class MetadataStore {
             this.notifySubscriber(key)
         }
 
+        this.compoundDimensionIdAliasLookup.clear()
         this.addMetadata(visualizationMetadata)
     }
 
@@ -109,9 +111,15 @@ export class MetadataStore {
     }
 
     getMetadataItem(key: string): MetadataItem | undefined {
-        return key.includes('.')
-            ? this.getDimensionMetadataWithDottedKey(key)
-            : this.metadata.get(key)
+        const item = this.metadata.get(key)
+
+        if (item) {
+            return item
+        } else {
+            const aliasKey =
+                this.compoundDimensionIdAliasLookup.getTargetForAlias(key)
+            return aliasKey ? this.metadata.get(aliasKey) : undefined
+        }
     }
 
     getMetadataItems(keys: string[]): Record<string, MetadataItem> {
@@ -132,10 +140,15 @@ export class MetadataStore {
             this.subscribers.set(key, new Set())
         }
         this.subscribers.get(key)!.add(cb)
+
+        if (!this.metadata.has(key) && isCompoundDimensionId(key)) {
+            this.compoundDimensionIdAliasLookup.registerAlias(key)
+        }
         return () => {
             this.subscribers.get(key)!.delete(cb)
             if (this.subscribers.get(key)!.size === 0) {
                 this.subscribers.delete(key)
+                this.compoundDimensionIdAliasLookup.removeAlias(key)
             }
         }
     }
@@ -148,25 +161,43 @@ export class MetadataStore {
     addMetadata(metadataInput: MetadataInput) {
         // Track ids of items that were actually updated
         const updatedMetadataIds = new Set<string>()
+        /* These are dimensions which need some context to be processed properly
+         * so we first process all the items with plain IDs which includes programs,
+         * programStages and trackedEntityTypes and then dottedIds */
+        const metadataRecordsWithDottedIds = new Map<
+            string,
+            MetadataInputItem
+        >()
 
         const processMetadataItem = (
             metadataInputItem: MetadataInputItem | string,
-            key?: string
+            key?: string,
+            includeCompoundDimensionIds: boolean = false
         ) => {
-            const newMetadataStoreItem = normalizeMetadataInputItem(
+            const { key: normalizedKey, item } = normalizeMetadataInputItem(
                 metadataInputItem,
                 this.metadata,
                 key
             )
-            const itemId = newMetadataStoreItem.id
-            const existingMetadataStoreItem = this.metadata.get(itemId)
+
+            if (!includeCompoundDimensionIds && isCompoundDimensionId(key)) {
+                metadataRecordsWithDottedIds.set(normalizedKey, item)
+                return
+            }
+
+            const existingMetadataStoreItem = this.metadata.get(normalizedKey)
+
+            if (includeCompoundDimensionIds && isCompoundDimensionId(key)) {
+                this.compoundDimensionIdAliasLookup.resolvePendingAliases(key)
+            }
+
             const { hasChanges, mergedItem } = smartMergeWithChangeDetection(
                 existingMetadataStoreItem,
-                newMetadataStoreItem
+                item
             )
             if (hasChanges) {
-                this.metadata.set(itemId, mergedItem)
-                updatedMetadataIds.add(itemId)
+                this.metadata.set(normalizedKey, mergedItem)
+                updatedMetadataIds.add(normalizedKey)
             }
         }
 
@@ -185,11 +216,27 @@ export class MetadataStore {
             }
         }
 
+        for (const [key, item] of metadataRecordsWithDottedIds) {
+            processMetadataItem(item, key, true)
+        }
+
         this.notifySubscribers(updatedMetadataIds)
     }
 
     private notifySubscribers(keys: Set<string>) {
+        const keysToNotify = new Set<string>()
+
         for (const key of keys) {
+            keysToNotify.add(key)
+
+            const aliasKeys =
+                this.compoundDimensionIdAliasLookup.getAliases(key)
+            if (aliasKeys) {
+                aliasKeys.forEach((aliasKey) => keysToNotify.add(aliasKey))
+            }
+        }
+
+        for (const key of keysToNotify) {
             this.notifySubscriber(key)
         }
     }
@@ -219,113 +266,5 @@ export class MetadataStore {
         })
 
         this.addMetadata(initialMetadataWithRootOrgUnits as MetadataInput)
-    }
-
-    private getDimensionMetadataWithDottedKey(
-        dottedKey: string
-    ): DimensionMetadataItem | undefined {
-        const { ids, repetitionIndex } = parseDimensionIdInput(dottedKey)
-        const plainDimensionId = ids.pop()
-        const potentialDimensionItemKeys: string[] = []
-        let programId: string | null = null
-        let programStageId: string | null = null
-        let trackedEntityTypeId: string | null = null
-        let dimensionMetadataItem: DimensionMetadataItem | null = null
-
-        if (ids.length === 2) {
-            // If 2 IDs remain we know this must be a program and its stage
-            programId = ids[0]
-            programStageId = ids[1]
-        } else if (ids.length === 1) {
-            const unknownId = ids[0]
-            const unknownMetadata = this.metadata.get(unknownId)
-
-            if (unknownMetadata) {
-                if (isProgramMetadataItem(unknownMetadata)) {
-                    programId = unknownId
-                    // If the program only has 1 stage we can use it
-                    programStageId =
-                        unknownMetadata.programStages?.length === 1
-                            ? unknownMetadata.programStages[0].id
-                            : null
-                } else if (isProgramStageMetadataItem(unknownMetadata)) {
-                    programStageId = unknownId
-                    programId = unknownMetadata.program.id
-                } else {
-                    /* trackedEntityType does not have discriminating features but that's
-                     * OK because there are only 3 options and the other 2 do have
-                     * discriminating features */
-                    trackedEntityTypeId = unknownId
-                }
-            } else {
-                throw new Error(
-                    `No context metadata found for dimension with dotted ID`
-                )
-            }
-        } else {
-            throw new Error(`Could not process key ${dottedKey}`)
-        }
-
-        if (trackedEntityTypeId) {
-            potentialDimensionItemKeys.push(
-                `${trackedEntityTypeId}.${plainDimensionId}`
-            )
-        } else {
-            programStageId = repetitionIndex
-                ? `${programStageId}[${repetitionIndex}]`
-                : programStageId
-
-            if (programId && programStageId) {
-                potentialDimensionItemKeys.push(
-                    `${programId}.${programStageId}.${plainDimensionId}`
-                )
-            }
-            if (programStageId) {
-                potentialDimensionItemKeys.push(
-                    `${programStageId}.${plainDimensionId}`
-                )
-            }
-            if (programId) {
-                potentialDimensionItemKeys.push(
-                    `${programId}.${plainDimensionId}`
-                )
-            }
-        }
-
-        for (const key of potentialDimensionItemKeys) {
-            const potentialItem = this.metadata.get(key)
-
-            if (isDimensionMetadataItem(potentialItem)) {
-                dimensionMetadataItem = potentialItem
-                break
-            }
-        }
-
-        if (!dimensionMetadataItem) {
-            return undefined
-        }
-
-        const result: DimensionMetadataItem = {
-            ...dimensionMetadataItem,
-            id: plainDimensionId!,
-        }
-
-        if (programId) {
-            result.program = programId
-        }
-
-        if (programStageId) {
-            result.programStage = programStageId
-        }
-
-        if (trackedEntityTypeId) {
-            result.trackedEntityType = trackedEntityTypeId
-        }
-
-        if (typeof repetitionIndex === 'number') {
-            result.repetitionIndex = repetitionIndex
-        }
-
-        return result
     }
 }

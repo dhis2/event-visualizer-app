@@ -69,7 +69,6 @@ export type DimensionMetadataItem = Omit<
     optionSet?: string // Add ID reference to `optionSet`
     program?: string // Add ID reference to `program`
     programStage?: string // Add ID reference to `programStage`
-    trackedEntityType?: string // Add ID reference to `trackedEntityType`
     repetitionIndex?: number // Not persisted in the store but added dynamically
 }
 
@@ -126,6 +125,7 @@ export type MetadataItem =
     | Program
     | ProgramStage
 
+export type MetadataMap = Map<string, MetadataItem>
 export type Subscriber = () => void
 
 export type InitialMetadataItems = Record<
