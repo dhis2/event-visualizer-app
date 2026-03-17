@@ -22,40 +22,27 @@ export const transformDimensionItemWithCompoundId = (
         )
     }
     const identifier = compoundIdToIdentifier(item.id!, existingMetadataMap)
-    const transformedItem: DimensionMetadataItem = {
+    return {
         ...item,
         dimensionId: identifier.id,
+        ...(identifier.programId ? { program: identifier.programId } : {}),
+        ...(identifier.programStageId
+            ? { programStage: identifier.programStageId }
+            : {}),
+        ...(typeof identifier.repetitionIndex === 'number'
+            ? { repetitionIndex: identifier.repetitionIndex }
+            : {}),
     }
-
-    if (identifier.programId) {
-        transformedItem.program = identifier.programId
-    }
-
-    if (identifier.programStageId) {
-        transformedItem.programStage = identifier.programStageId
-    }
-
-    if (typeof identifier.repetitionIndex === 'number') {
-        transformedItem.repetitionIndex = identifier.repetitionIndex
-    }
-
-    return transformedItem
 }
 
 export const normalizeMetadataInputItem = (
     item: MetadataInputItem | string,
     existingMetadataMap: MetadataMap,
     key?: string
-): { key: string; item: NormalizedMetadataInputItem } => {
+): NormalizedMetadataInputItem => {
     if (isPopulatedString(item)) {
         if (isPopulatedString(key)) {
-            return {
-                key,
-                item: {
-                    id: key,
-                    name: item,
-                },
-            }
+            return { id: key, name: item }
         } else {
             throw new Error(
                 'Invalid metadata input: string value without a key'
@@ -82,24 +69,18 @@ export const normalizeMetadataInputItem = (
     if (isPopulatedString(resolvedName)) {
         const resolvedItem = { id: resolvedKey, name: resolvedName, ...rest }
 
-        return {
-            key: resolvedKey,
-            item: isCompoundDimensionId(resolvedKey)
-                ? transformDimensionItemWithCompoundId(
-                      resolvedItem,
-                      existingMetadataMap
-                  )
-                : resolvedItem,
-        }
+        return isCompoundDimensionId(resolvedKey)
+            ? transformDimensionItemWithCompoundId(
+                  resolvedItem,
+                  existingMetadataMap
+              )
+            : resolvedItem
     } else if (existingItem) {
         /* Items that already exist in the store must have a name field so
          * for these we can send partial updates (objects with a name). */
         return {
-            key: resolvedKey,
-            item: {
-                id: existingItem.id,
-                ...rest,
-            },
+            id: existingItem.id,
+            ...rest,
         }
     } else if (!isMetadataInputItem(item)) {
         if ('id' in item && 'uid' in item) {

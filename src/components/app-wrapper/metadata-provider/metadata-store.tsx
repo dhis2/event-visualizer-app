@@ -191,19 +191,20 @@ export class MetadataStore {
                 return
             }
 
-            const { key: normalizedStoreKey, item } =
-                normalizeMetadataInputItem(
-                    metadataInputItem,
-                    this.metadata,
-                    key
-                )
+            const normalizedStoreItem = normalizeMetadataInputItem(
+                metadataInputItem,
+                this.metadata,
+                key
+            )
+
+            const normalizedStoreKey = normalizedStoreItem.id
 
             const existingMetadataStoreItem =
                 this.metadata.get(normalizedStoreKey)
 
             const { hasChanges, mergedItem } = smartMergeWithChangeDetection(
                 existingMetadataStoreItem,
-                item
+                normalizedStoreItem
             )
             if (hasChanges) {
                 this.metadata.set(normalizedStoreKey, mergedItem)
