@@ -132,7 +132,12 @@ export class MetadataStore {
             return undefined
         }
 
-        const possibleKeys = this.getSafeCompoundDimensionIdVariants(key)
+        let possibleKeys: string[]
+        try {
+            possibleKeys = getCompoundDimensionIdVariants(key, this.metadata)
+        } catch {
+            return undefined
+        }
 
         for (const possibleKey of possibleKeys) {
             const potentialItem = this.metadata.get(possibleKey)
@@ -273,14 +278,6 @@ export class MetadataStore {
     private notifySubscriber(key: string) {
         if (this.subscribers.has(key)) {
             this.subscribers.get(key)!.forEach((callback) => callback())
-        }
-    }
-
-    private getSafeCompoundDimensionIdVariants(compoundKey: string): string[] {
-        try {
-            return getCompoundDimensionIdVariants(compoundKey, this.metadata)
-        } catch {
-            return []
         }
     }
 
