@@ -62,7 +62,8 @@ export type DimensionMetadataItem = Omit<
     | 'dimensionItemType' // Omit to customise
     | 'options' // Omit because it does not reflect reality
 > & {
-    id: string // we use id not uid
+    id: string // we use id not uid. This is the compound ID
+    dimensionId?: string // plain dimension id for compound keys
     name: string // required instead of optional
     dimensionType: DimensionType // require and use "our" dimension type
     dimensionItemType?: DimensionType // use "our" dimension type

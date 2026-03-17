@@ -1,4 +1,8 @@
-import { compoundIdToIdentifier, isCompoundDimensionId } from './dimension'
+import {
+    compoundIdToIdentifier,
+    isCompoundDimensionId,
+    normalizeCompoundDimensionId,
+} from './dimension'
 import { isDimensionMetadataItem, isMetadataInputItem } from '@modules/metadata'
 import { isPopulatedString } from '@modules/validation'
 import type {
@@ -20,7 +24,7 @@ export const transformDimensionItemWithCompoundId = (
     const identifier = compoundIdToIdentifier(item.id!, existingMetadataMap)
     const transformedItem: DimensionMetadataItem = {
         ...item,
-        id: identifier.id,
+        dimensionId: identifier.id,
     }
 
     if (identifier.programId) {
@@ -31,7 +35,7 @@ export const transformDimensionItemWithCompoundId = (
         transformedItem.programStage = identifier.programStageId
     }
 
-    if (identifier.repetitionIndex) {
+    if (typeof identifier.repetitionIndex === 'number') {
         transformedItem.repetitionIndex = identifier.repetitionIndex
     }
 
@@ -62,14 +66,18 @@ export const normalizeMetadataInputItem = (
     const { id, uid, name, displayName, ...rest } = item
 
     // Prefer key because this has the nested version of the ID with the dot
-    const resolvedKey = key ?? uid ?? id
+    const inputKey = key ?? uid ?? id
 
-    if (!isPopulatedString(resolvedKey)) {
+    if (!isPopulatedString(inputKey)) {
         throw new Error('Invalid metadata input: no ID field present')
     }
 
+    const resolvedKey = isCompoundDimensionId(inputKey)
+        ? normalizeCompoundDimensionId(inputKey, existingMetadataMap)
+        : inputKey
+
     const resolvedName = displayName ?? name
-    const exitistingItem = existingMetadataMap.get(resolvedKey)
+    const existingItem = existingMetadataMap.get(resolvedKey)
 
     if (isPopulatedString(resolvedName)) {
         const resolvedItem = { id: resolvedKey, name: resolvedName, ...rest }
@@ -83,13 +91,13 @@ export const normalizeMetadataInputItem = (
                   )
                 : resolvedItem,
         }
-    } else if (exitistingItem) {
+    } else if (existingItem) {
         /* Items that already exist in the store must have a name field so
          * for these we can send partial updates (objects with a name). */
         return {
             key: resolvedKey,
             item: {
-                id: exitistingItem.id,
+                id: existingItem.id,
                 ...rest,
             },
         }

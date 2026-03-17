@@ -1,6 +1,6 @@
 import { extractMetadataFromAnalyticsResponse } from './analytics-data'
 import {
-    CompoundDimensionIdAliasLookup,
+    getCompoundDimensionIdVariants,
     isCompoundDimensionId,
 } from './dimension'
 import { smartMergeWithChangeDetection } from './merge-utils'
@@ -43,7 +43,6 @@ export class MetadataStore {
     private metadata: MetadataMap = new Map()
     private subscribers = new Map<string, Set<Subscriber>>()
     private initialMetadataKeys = new Set<string>()
-    private compoundDimensionIdAliasLookup: CompoundDimensionIdAliasLookup
 
     constructor(
         initialMetadataItems: InitialMetadataItems,
@@ -51,8 +50,6 @@ export class MetadataStore {
          *  but when rendered by the plugin it is not */
         rootOrgUnits?: AppCachedData['rootOrgUnits']
     ) {
-        this.compoundDimensionIdAliasLookup =
-            new CompoundDimensionIdAliasLookup(this.metadata)
         this.addInitialMetadataItems(initialMetadataItems, rootOrgUnits)
 
         if (
@@ -99,7 +96,6 @@ export class MetadataStore {
             this.notifySubscriber(key)
         }
 
-        this.compoundDimensionIdAliasLookup.clear()
         this.addMetadata(visualizationMetadata)
     }
 
@@ -115,11 +111,22 @@ export class MetadataStore {
 
         if (item) {
             return item
-        } else {
-            const aliasKey =
-                this.compoundDimensionIdAliasLookup.getTargetForAlias(key)
-            return aliasKey ? this.metadata.get(aliasKey) : undefined
         }
+
+        if (!isCompoundDimensionId(key)) {
+            return undefined
+        }
+
+        const possibleKeys = this.getSafeCompoundDimensionIdVariants(key)
+
+        for (const possibleKey of possibleKeys) {
+            const potentialItem = this.metadata.get(possibleKey)
+            if (potentialItem) {
+                return potentialItem
+            }
+        }
+
+        return undefined
     }
 
     getMetadataItems(keys: string[]): Record<string, MetadataItem> {
@@ -141,14 +148,10 @@ export class MetadataStore {
         }
         this.subscribers.get(key)!.add(cb)
 
-        if (!this.metadata.has(key) && isCompoundDimensionId(key)) {
-            this.compoundDimensionIdAliasLookup.registerAlias(key)
-        }
         return () => {
             this.subscribers.get(key)!.delete(cb)
             if (this.subscribers.get(key)!.size === 0) {
                 this.subscribers.delete(key)
-                this.compoundDimensionIdAliasLookup.removeAlias(key)
             }
         }
     }
@@ -159,14 +162,14 @@ export class MetadataStore {
      * Notifies subscribers only if the item actually changed.
      */
     addMetadata(metadataInput: MetadataInput) {
-        // Track ids of items that were actually updated
-        const updatedMetadataIds = new Set<string>()
-        /* These are dimensions which need some context to be processed properly
-         * so we first process all the items with plain IDs which includes programs,
-         * programStages and trackedEntityTypes and then dottedIds */
-        const metadataRecordsWithDottedIds = new Map<
+        // Track keys of items that were actually updated
+        const updatedMetadataKeys = new Set<string>()
+        /* Compound dimension keys need context metadata to be processed correctly,
+         * so process plain keys first (programs, stages, trackedEntityTypes),
+         * then process deferred compound keys. */
+        const deferredCompoundMetadataInputs = new Map<
             string,
-            MetadataInputItem
+            MetadataInputItem | string
         >()
 
         const processMetadataItem = (
@@ -174,30 +177,37 @@ export class MetadataStore {
             key?: string,
             includeCompoundDimensionIds: boolean = false
         ) => {
-            const { key: normalizedKey, item } = normalizeMetadataInputItem(
-                metadataInputItem,
-                this.metadata,
-                key
-            )
+            const inputKey =
+                key ??
+                (isObject(metadataInputItem) && 'id' in metadataInputItem
+                    ? metadataInputItem.id
+                    : undefined)
 
-            if (!includeCompoundDimensionIds && isCompoundDimensionId(key)) {
-                metadataRecordsWithDottedIds.set(normalizedKey, item)
+            if (
+                !includeCompoundDimensionIds &&
+                isCompoundDimensionId(inputKey)
+            ) {
+                deferredCompoundMetadataInputs.set(inputKey, metadataInputItem)
                 return
             }
 
-            const existingMetadataStoreItem = this.metadata.get(normalizedKey)
+            const { key: normalizedStoreKey, item } =
+                normalizeMetadataInputItem(
+                    metadataInputItem,
+                    this.metadata,
+                    key
+                )
 
-            if (includeCompoundDimensionIds && isCompoundDimensionId(key)) {
-                this.compoundDimensionIdAliasLookup.resolvePendingAliases(key)
-            }
+            const existingMetadataStoreItem =
+                this.metadata.get(normalizedStoreKey)
 
             const { hasChanges, mergedItem } = smartMergeWithChangeDetection(
                 existingMetadataStoreItem,
                 item
             )
             if (hasChanges) {
-                this.metadata.set(normalizedKey, mergedItem)
-                updatedMetadataIds.add(normalizedKey)
+                this.metadata.set(normalizedStoreKey, mergedItem)
+                updatedMetadataKeys.add(normalizedStoreKey)
             }
         }
 
@@ -216,11 +226,11 @@ export class MetadataStore {
             }
         }
 
-        for (const [key, item] of metadataRecordsWithDottedIds) {
+        for (const [key, item] of deferredCompoundMetadataInputs) {
             processMetadataItem(item, key, true)
         }
 
-        this.notifySubscribers(updatedMetadataIds)
+        this.notifySubscribers(updatedMetadataKeys)
     }
 
     private notifySubscribers(keys: Set<string>) {
@@ -229,10 +239,13 @@ export class MetadataStore {
         for (const key of keys) {
             keysToNotify.add(key)
 
-            const aliasKeys =
-                this.compoundDimensionIdAliasLookup.getAliases(key)
-            if (aliasKeys) {
-                aliasKeys.forEach((aliasKey) => keysToNotify.add(aliasKey))
+            if (isCompoundDimensionId(key)) {
+                const variants = this.getSafeCompoundDimensionIdVariants(key)
+                variants.forEach((variantKey) => {
+                    if (this.subscribers.has(variantKey)) {
+                        keysToNotify.add(variantKey)
+                    }
+                })
             }
         }
 
@@ -244,6 +257,14 @@ export class MetadataStore {
     private notifySubscriber(key: string) {
         if (this.subscribers.has(key)) {
             this.subscribers.get(key)!.forEach((callback) => callback())
+        }
+    }
+
+    private getSafeCompoundDimensionIdVariants(compoundKey: string): string[] {
+        try {
+            return getCompoundDimensionIdVariants(compoundKey, this.metadata)
+        } catch {
+            return []
         }
     }
 

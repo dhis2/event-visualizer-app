@@ -5,7 +5,7 @@ import {
 import { isPopulatedString } from '@modules/validation'
 import type { MetadataMap } from '@types'
 
-type DimensionIdentifier = {
+export type DimensionIdentifier = {
     id: string
     programId?: string
     programStageId?: string
@@ -19,30 +19,24 @@ export const isCompoundDimensionId = (input: unknown): input is string =>
     isPopulatedString(input) && input.includes('.')
 
 export const parseCompoundDimensionId = (
-    compoundId: string
+    compoundKey: string
 ): { ids: string[]; repetitionIndex?: number } => {
+    if (!isPopulatedString(compoundKey)) {
+        throw new Error('Dimension ID input is not a populated string')
+    }
+
     // Extract repetition index pattern `[<integer>]` from anywhere in the input string (applies to programStage)
-    const repetitionMatch = compoundId.match(REPETITION_INDEX_PATTERN)
+    const repetitionMatch = compoundKey.match(REPETITION_INDEX_PATTERN)
     const processedInput = repetitionMatch
-        ? compoundId.replace(REPETITION_INDEX_PATTERN, '')
-        : compoundId
+        ? compoundKey.replace(REPETITION_INDEX_PATTERN, '')
+        : compoundKey
     const repetitionIndex = repetitionMatch
         ? Number(repetitionMatch[1])
         : undefined
     const ids = processedInput.split('.')
 
-    return { ids, repetitionIndex }
-}
-
-export const compoundIdToIdentifier = (
-    compoundId: string,
-    metadataMap: MetadataMap
-): DimensionIdentifier => {
-    const { ids, repetitionIndex } = parseCompoundDimensionId(compoundId)
-    const plainDimensionId = ids.pop()
-
-    if (!plainDimensionId) {
-        throw new Error(`No valid dimension ID found in "${compoundId}"`)
+    if (!isPopulatedString(ids[ids.length - 1])) {
+        throw new Error(`No valid dimension ID found in "${compoundKey}"`)
     }
 
     if (ids.length < 1 || ids.length > 3) {
@@ -53,15 +47,37 @@ export const compoundIdToIdentifier = (
 
     if (ids.some((id) => !isPopulatedString(id))) {
         throw new Error(
-            `Invalid dimension ID format: empty ID found in "${compoundId}"`
+            `Invalid dimension ID format: empty ID found in "${compoundKey}"`
         )
+    }
+
+    return { ids, repetitionIndex }
+}
+
+const getProgramStageIdWithRepetitionIndex = (
+    programStageId: string,
+    repetitionIndex?: number
+) =>
+    typeof repetitionIndex === 'number'
+        ? `${programStageId}[${repetitionIndex}]`
+        : programStageId
+
+export const compoundIdToIdentifier = (
+    compoundKey: string,
+    metadataMap: MetadataMap
+): DimensionIdentifier => {
+    const { ids, repetitionIndex } = parseCompoundDimensionId(compoundKey)
+    const plainDimensionId = ids.pop()
+
+    if (!plainDimensionId) {
+        throw new Error(`No valid dimension ID found in "${compoundKey}"`)
     }
 
     const identifier: DimensionIdentifier = {
         id: plainDimensionId,
     }
 
-    if (repetitionIndex) {
+    if (typeof repetitionIndex === 'number') {
         identifier.repetitionIndex = repetitionIndex
     }
 
@@ -83,7 +99,8 @@ export const compoundIdToIdentifier = (
                 }
             } else if (isProgramStageMetadataItem(unknownMetadata)) {
                 identifier.programStageId = unknownId
-                identifier.programId = unknownMetadata.program.id
+                identifier.programId =
+                    unknownMetadata.program?.id ?? identifier.programId
             } else {
                 throw new Error(
                     `Metadata item with ID "${unknownMetadata.id}" is not a program or program stage`
@@ -91,7 +108,7 @@ export const compoundIdToIdentifier = (
             }
         } else {
             throw new Error(
-                `No context metadata found for dimension with compound ID "${compoundId}"`
+                `No context metadata found for dimension with compound ID "${compoundKey}"`
             )
         }
     }
@@ -105,164 +122,60 @@ export const compoundIdToIdentifier = (
     return identifier
 }
 
+export const getCanonicalCompoundDimensionId = (
+    identifier: DimensionIdentifier
+): string => {
+    if (!identifier.programStageId) {
+        throw new Error(
+            `Could not canonicalize dimension "${identifier.id}" without a program stage`
+        )
+    }
+
+    return `${getProgramStageIdWithRepetitionIndex(
+        identifier.programStageId,
+        identifier.repetitionIndex
+    )}.${identifier.id}`
+}
+
+export const normalizeCompoundDimensionId = (
+    compoundKey: string,
+    metadataMap: MetadataMap
+): string => {
+    const identifier = compoundIdToIdentifier(compoundKey, metadataMap)
+    return getCanonicalCompoundDimensionId(identifier)
+}
+
+export const getCompoundDimensionIdVariants = (
+    compoundKey: string,
+    metadataMap: MetadataMap
+): string[] => {
+    const identifier = compoundIdToIdentifier(compoundKey, metadataMap)
+    const canonicalKey = getCanonicalCompoundDimensionId(identifier)
+    const aliases = computeCompoundIdAliasesFromDimensionIdentifier(identifier)
+
+    return Array.from(new Set([canonicalKey, ...aliases]))
+}
+
 export const computeCompoundIdAliasesFromDimensionIdentifier = (
     identifier: DimensionIdentifier
 ) => {
     const { id, programId, programStageId, repetitionIndex } = identifier
-    const compoundIdAliases: string[] = []
-    const programStageIdWithRepetition = repetitionIndex
-        ? `${programStageId}[${repetitionIndex}]`
-        : programStageId
+    const compoundKeyAliases: string[] = []
+    const programStageIdWithRepetition = programStageId
+        ? getProgramStageIdWithRepetitionIndex(programStageId, repetitionIndex)
+        : undefined
 
     if (programId && programStageId) {
-        compoundIdAliases.push(
+        compoundKeyAliases.push(
             `${programId}.${programStageIdWithRepetition}.${id}`
         )
     }
     if (programStageId) {
-        compoundIdAliases.push(`${programStageIdWithRepetition}.${id}`)
+        compoundKeyAliases.push(`${programStageIdWithRepetition}.${id}`)
     }
     if (programId) {
-        compoundIdAliases.push(`${programId}.${id}`)
+        compoundKeyAliases.push(`${programId}.${id}`)
     }
 
-    return compoundIdAliases
-}
-
-export const isDimensionIdentifierMatch = (
-    a: DimensionIdentifier,
-    b: DimensionIdentifier
-): boolean => {
-    if (a.id !== b.id) {
-        return false
-    }
-
-    if (
-        a.programStageId &&
-        b.programStageId &&
-        a.programStageId === b.programStageId &&
-        // Also true if both do not have a repetitionIndex
-        a.repetitionIndex === b.repetitionIndex
-    ) {
-        return true
-    }
-
-    if (
-        !a.programStageId &&
-        !b.programStageId &&
-        a.programId &&
-        b.programId &&
-        a.programId === b.programId
-    ) {
-        return true
-    }
-
-    return false
-}
-
-export class CompoundDimensionIdAliasLookup {
-    private metadataMap: MetadataMap
-    private aliasToTarget = new Map<string, string>()
-    private targetToAliases = new Map<string, Set<string>>()
-    private pendingAliases = new Set<string>()
-
-    constructor(metadataMap: MetadataMap) {
-        this.metadataMap = metadataMap
-    }
-
-    registerAlias(aliasId: string) {
-        if (this.metadataMap.has(aliasId)) {
-            console.error(`Item with ID ${aliasId} exist, no alias needed.`)
-            return
-        }
-        const identifier = compoundIdToIdentifier(aliasId, this.metadataMap)
-        const potentialTargetIds =
-            computeCompoundIdAliasesFromDimensionIdentifier(identifier)
-        const targetId = potentialTargetIds.find((potentialTargetId) =>
-            this.metadataMap.has(potentialTargetId)
-        )
-
-        if (targetId) {
-            this.bindAlias(aliasId, targetId)
-        } else {
-            this.pendingAliases.add(aliasId)
-        }
-    }
-
-    resolvePendingAliases(targetId: string) {
-        const targetIdentifier = compoundIdToIdentifier(
-            targetId,
-            this.metadataMap
-        )
-
-        for (const aliasId of this.pendingAliases) {
-            if (this.metadataMap.has(aliasId)) {
-                console.error(
-                    `Item with ID ${aliasId} exist, no alias needed (removing).`
-                )
-                this.pendingAliases.delete(aliasId)
-                continue
-            }
-
-            const aliasIdentifier = compoundIdToIdentifier(
-                aliasId,
-                this.metadataMap
-            )
-
-            if (isDimensionIdentifierMatch(targetIdentifier, aliasIdentifier)) {
-                this.bindAlias(aliasId, targetId)
-                this.pendingAliases.delete(aliasId)
-            }
-        }
-    }
-
-    getAliases(targetId: string): ReadonlySet<string> | undefined {
-        return this.targetToAliases.get(targetId)
-    }
-
-    getTargetForAlias(aliasId: string): string | undefined {
-        return this.aliasToTarget.get(aliasId)
-    }
-
-    removeAlias(aliasId: string): void {
-        if (this.pendingAliases.has(aliasId)) {
-            this.pendingAliases.delete(aliasId)
-        } else {
-            const targetKey = this.aliasToTarget.get(aliasId)
-            if (!targetKey) {
-                return
-            }
-
-            this.aliasToTarget.delete(aliasId)
-            this.removeReverseAlias(targetKey, aliasId)
-        }
-    }
-
-    clear(): void {
-        this.aliasToTarget.clear()
-        this.targetToAliases.clear()
-        this.pendingAliases.clear()
-    }
-
-    private bindAlias(aliasId: string, targetId: string): void {
-        this.aliasToTarget.set(aliasId, targetId)
-
-        if (!this.targetToAliases.has(targetId)) {
-            this.targetToAliases.set(targetId, new Set())
-        }
-
-        this.targetToAliases.get(targetId)!.add(aliasId)
-    }
-
-    private removeReverseAlias(targetId: string, aliasId: string): void {
-        const aliases = this.targetToAliases.get(targetId)
-        if (!aliases) {
-            return
-        }
-
-        aliases.delete(aliasId)
-        if (aliases.size === 0) {
-            this.targetToAliases.delete(targetId)
-        }
-    }
+    return compoundKeyAliases
 }
