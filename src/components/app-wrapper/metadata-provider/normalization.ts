@@ -28,7 +28,7 @@ export const normalizeMetadataInputItem = (
 
     const { id, uid, name, displayName, ...rest } = item
 
-    // Prefer key because this has the nested version of the ID with the dot
+    // Prefer key because this has the compound ID
     const inputKey = key ?? uid ?? id
 
     if (!isPopulatedString(inputKey)) {
