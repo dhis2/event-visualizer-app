@@ -66,8 +66,8 @@ export const useLayoutDimensions = ({
                     dimension.dimensionType = metadataItem.dimensionType
                 }
 
-                if ('optionSet' in metadataItem && metadataItem.optionSet) {
-                    dimension.optionSet = metadataItem.optionSet
+                if ('optionSetId' in metadataItem && metadataItem.optionSetId) {
+                    dimension.optionSet = metadataItem.optionSetId
                 }
 
                 if ('valueType' in metadataItem && metadataItem.valueType) {

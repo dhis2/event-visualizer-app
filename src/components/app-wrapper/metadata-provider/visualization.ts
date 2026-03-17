@@ -243,11 +243,11 @@ export const supplementDimensionMetadata = (
             }
 
             if (dimension.optionSet?.id) {
-                item.optionSet = dimension.optionSet?.id
+                item.optionSetId = dimension.optionSet?.id
             }
 
             if (dimension.legendSet?.id) {
-                item.legendSet = dimension.legendSet.id
+                item.legendSetId = dimension.legendSet.id
             }
 
             if (dimension.valueType) {
@@ -255,11 +255,11 @@ export const supplementDimensionMetadata = (
             }
 
             if (dimension.program?.id) {
-                item.program = dimension.program.id
+                item.programId = dimension.program.id
             }
 
             if (dimension.programStage?.id) {
-                item.programStage = dimension.programStage.id
+                item.programStageId = dimension.programStage.id
             }
 
             metadata[prefixedId] = item

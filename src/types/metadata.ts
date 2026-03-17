@@ -61,16 +61,18 @@ export type DimensionMetadataItem = Omit<
     | 'dimensionType' // Omit to make required and customise
     | 'dimensionItemType' // Omit to customise
     | 'options' // Omit because it does not reflect reality
+    | 'legendSet' // Omit to rename to legendSetId
 > & {
     id: string // we use id not uid. This is the compound ID
-    dimensionId?: string // plain dimension id for compound keys
+    dimensionId: string // plain dimension, always added but mostly useful when the dimension has a compound ID
     name: string // required instead of optional
     dimensionType: DimensionType // require and use "our" dimension type
     dimensionItemType?: DimensionType // use "our" dimension type
-    optionSet?: string // Add ID reference to `optionSet`
-    program?: string // Add ID reference to `program`
-    programStage?: string // Add ID reference to `programStage`
-    repetitionIndex?: number // Not persisted in the store but added dynamically
+    optionSetId?: string // Add ID reference to optionSet
+    legendSetId?: string // Add ID reference to legendSet
+    programId?: string // Add ID reference to program
+    programStageId?: string // Add ID reference to programStage
+    repetitionIndex?: number // Also added
 }
 
 type OptionSetOption = Omit<OptionSet['options'], 'id' | 'code' | 'name'> & {

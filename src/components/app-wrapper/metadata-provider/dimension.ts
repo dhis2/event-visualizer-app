@@ -3,14 +3,12 @@ import {
     isProgramStageMetadataItem,
 } from '@modules/metadata'
 import { isPopulatedString } from '@modules/validation'
-import type { MetadataMap } from '@types'
+import type { DimensionMetadataItem, MetadataMap } from '@types'
 
-export type DimensionIdentifier = {
-    id: string
-    programId?: string
-    programStageId?: string
-    repetitionIndex?: number
-}
+export type DimensionIdentifier = Pick<
+    DimensionMetadataItem,
+    'dimensionId' | 'programId' | 'programStageId' | 'repetitionIndex'
+>
 
 // Pattern to match repetition index like [0], [1], [-1] etc.
 const REPETITION_INDEX_PATTERN = /\[(-?\d+)\]/
@@ -39,9 +37,9 @@ export const parseCompoundDimensionId = (
         throw new Error(`No valid dimension ID found in "${compoundKey}"`)
     }
 
-    if (ids.length < 1 || ids.length > 3) {
+    if (ids.length > 3) {
         throw new Error(
-            `Invalid dimension ID format: expected 1-3 IDs, got ${ids.length}`
+            `Invalid dimension ID format: expected at most 3 IDs, got ${ids.length}`
         )
     }
 
@@ -74,7 +72,7 @@ export const compoundIdToIdentifier = (
     }
 
     const identifier: DimensionIdentifier = {
-        id: plainDimensionId,
+        dimensionId: plainDimensionId,
     }
 
     if (typeof repetitionIndex === 'number') {
@@ -127,14 +125,14 @@ export const getCanonicalCompoundDimensionId = (
 ): string => {
     if (!identifier.programStageId) {
         throw new Error(
-            `Could not canonicalize dimension "${identifier.id}" without a program stage`
+            `Could not canonicalize dimension "${identifier.dimensionId}" without a program stage`
         )
     }
 
     return `${getProgramStageIdWithRepetitionIndex(
         identifier.programStageId,
         identifier.repetitionIndex
-    )}.${identifier.id}`
+    )}.${identifier.dimensionId}`
 }
 
 export const normalizeCompoundDimensionId = (
@@ -159,7 +157,8 @@ export const getCompoundDimensionIdVariants = (
 export const computeCompoundIdAliasesFromDimensionIdentifier = (
     identifier: DimensionIdentifier
 ) => {
-    const { id, programId, programStageId, repetitionIndex } = identifier
+    const { dimensionId, programId, programStageId, repetitionIndex } =
+        identifier
     const compoundKeyAliases: string[] = []
     const programStageIdWithRepetition = programStageId
         ? getProgramStageIdWithRepetitionIndex(programStageId, repetitionIndex)
@@ -167,14 +166,16 @@ export const computeCompoundIdAliasesFromDimensionIdentifier = (
 
     if (programId && programStageId) {
         compoundKeyAliases.push(
-            `${programId}.${programStageIdWithRepetition}.${id}`
+            `${programId}.${programStageIdWithRepetition}.${dimensionId}`
         )
     }
     if (programStageId) {
-        compoundKeyAliases.push(`${programStageIdWithRepetition}.${id}`)
+        compoundKeyAliases.push(
+            `${programStageIdWithRepetition}.${dimensionId}`
+        )
     }
     if (programId) {
-        compoundKeyAliases.push(`${programId}.${id}`)
+        compoundKeyAliases.push(`${programId}.${dimensionId}`)
     }
 
     return compoundKeyAliases

@@ -83,20 +83,35 @@ export class MetadataStore {
          * The initial metadata does not need to be updated because it remains unchanged.
          * The metadata items for the new visualization are updated as needed by calling `addMetadata`
          * The removed metadata items could have subscriptions remaining, so these are notified */
-        const newMetadataKeys = new Set([
-            ...Object.keys(visualizationMetadata),
-            ...Array.from(this.initialMetadataKeys),
-        ])
-        const metadataKeysToRemove = Array.from(this.metadata.keys()).filter(
-            (key) => !newMetadataKeys.has(key)
+
+        /* Snapshot keys before adding new metadata so we can diff afterwards.
+         * We must add first so that context metadata (programs, stages) is present
+         * in the map before we attempt to resolve compound key variants for deletion. */
+        const previousMetadataKeys = new Set(this.metadata.keys())
+
+        this.addMetadata(visualizationMetadata)
+
+        /* Any key that was present before, is not initial metadata, and was not
+         * kept or replaced by addMetadata belongs to the old visualization only. */
+        const metadataKeysToRemove = Array.from(previousMetadataKeys).filter(
+            (key) =>
+                !this.initialMetadataKeys.has(key) && !this.metadata.has(key)
         )
 
         for (const key of metadataKeysToRemove) {
+            /* Snapshot alias variants before deletion so that subscribers
+             * registered under non-canonical keys are still notified.
+             * Context metadata is guaranteed present at this point because
+             * addMetadata has already run. */
+            const variantsToNotify = isCompoundDimensionId(key)
+                ? getCompoundDimensionIdVariants(key, this.metadata)
+                : []
             this.metadata.delete(key)
             this.notifySubscriber(key)
+            for (const variant of variantsToNotify) {
+                this.notifySubscriber(variant)
+            }
         }
-
-        this.addMetadata(visualizationMetadata)
     }
 
     addAnalyticsResponseMetadata(
@@ -175,7 +190,7 @@ export class MetadataStore {
         const processMetadataItem = (
             metadataInputItem: MetadataInputItem | string,
             key?: string,
-            includeCompoundDimensionIds: boolean = false
+            { deferred = false }: { deferred?: boolean } = {}
         ) => {
             const inputKey =
                 key ??
@@ -183,10 +198,7 @@ export class MetadataStore {
                     ? metadataInputItem.id
                     : undefined)
 
-            if (
-                !includeCompoundDimensionIds &&
-                isCompoundDimensionId(inputKey)
-            ) {
+            if (!deferred && isCompoundDimensionId(inputKey)) {
                 deferredCompoundMetadataInputs.set(inputKey, metadataInputItem)
                 return
             }
@@ -228,7 +240,7 @@ export class MetadataStore {
         }
 
         for (const [key, item] of deferredCompoundMetadataInputs) {
-            processMetadataItem(item, key, true)
+            processMetadataItem(item, key, { deferred: true })
         }
 
         this.notifySubscribers(updatedMetadataKeys)
@@ -241,7 +253,10 @@ export class MetadataStore {
             keysToNotify.add(key)
 
             if (isCompoundDimensionId(key)) {
-                const variants = this.getSafeCompoundDimensionIdVariants(key)
+                const variants = getCompoundDimensionIdVariants(
+                    key,
+                    this.metadata
+                )
                 variants.forEach((variantKey) => {
                     if (this.subscribers.has(variantKey)) {
                         keysToNotify.add(variantKey)
