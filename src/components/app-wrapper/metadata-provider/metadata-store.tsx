@@ -43,7 +43,7 @@ const isItemMatch = (item: MetadataItem, token: string) =>
     item.name?.toLowerCase().includes(token.toLowerCase())
 
 export class MetadataStore {
-    private metadata: MetadataMap = new Map()
+    private readonly metadata: MetadataMap = new Map()
     private subscribers = new Map<string, Set<Subscriber>>()
     private initialMetadataKeys = new Set<string>()
 

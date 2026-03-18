@@ -24,7 +24,7 @@ export const parseCompoundDimensionId = (
     }
 
     // Extract repetition index pattern `[<integer>]` from anywhere in the input string (applies to programStage)
-    const repetitionMatch = compoundKey.match(REPETITION_INDEX_PATTERN)
+    const repetitionMatch = REPETITION_INDEX_PATTERN.exec(compoundKey)
     const processedInput = repetitionMatch
         ? compoundKey.replace(REPETITION_INDEX_PATTERN, '')
         : compoundKey
@@ -60,6 +60,47 @@ const getProgramStageIdWithRepetitionIndex = (
         ? `${programStageId}[${repetitionIndex}]`
         : programStageId
 
+type ResolveIdentifierFromContextMetadataArgs = {
+    unknownId: string
+    compoundKey: string
+    identifier: DimensionIdentifier
+    metadataMap: MetadataMap
+}
+
+const resolveIdentifierFromContextMetadata = ({
+    unknownId,
+    compoundKey,
+    identifier,
+    metadataMap,
+}: ResolveIdentifierFromContextMetadataArgs): void => {
+    const unknownMetadata = metadataMap.get(unknownId)
+
+    if (!unknownMetadata) {
+        throw new Error(
+            `No context metadata found for dimension with compound ID "${compoundKey}"`
+        )
+    }
+
+    if (isProgramMetadataItem(unknownMetadata)) {
+        identifier.programId = unknownId
+        /* Event programs (WITHOUT_REGISTRATION) always have exactly one
+         * stage in the data model, so we can safely use it. Tracker
+         * programs (WITH_REGISTRATION) may have many stages, in which
+         * case the compound ID must include the stage explicitly. */
+        if (unknownMetadata.programStages?.length === 1) {
+            identifier.programStageId = unknownMetadata.programStages[0].id
+        }
+    } else if (isProgramStageMetadataItem(unknownMetadata)) {
+        identifier.programStageId = unknownId
+        identifier.programId =
+            unknownMetadata.program?.id ?? identifier.programId
+    } else {
+        throw new Error(
+            `Metadata item with ID "${unknownMetadata.id}" is not a program or program stage`
+        )
+    }
+}
+
 export const compoundIdToIdentifier = (
     compoundKey: string,
     metadataMap: MetadataMap
@@ -84,34 +125,12 @@ export const compoundIdToIdentifier = (
         identifier.programId = ids[0]
         identifier.programStageId = ids[1]
     } else if (ids.length === 1) {
-        const unknownId = ids[0]
-        const unknownMetadata = metadataMap.get(unknownId)
-
-        if (unknownMetadata) {
-            if (isProgramMetadataItem(unknownMetadata)) {
-                identifier.programId = unknownId
-                /* Event programs (WITHOUT_REGISTRATION) always have exactly one
-                 * stage in the data model, so we can safely use it. Tracker
-                 * programs (WITH_REGISTRATION) may have many stages, in which
-                 * case the compound ID must include the stage explicitly. */
-                if (unknownMetadata.programStages?.length === 1) {
-                    identifier.programStageId =
-                        unknownMetadata.programStages[0].id
-                }
-            } else if (isProgramStageMetadataItem(unknownMetadata)) {
-                identifier.programStageId = unknownId
-                identifier.programId =
-                    unknownMetadata.program?.id ?? identifier.programId
-            } else {
-                throw new Error(
-                    `Metadata item with ID "${unknownMetadata.id}" is not a program or program stage`
-                )
-            }
-        } else {
-            throw new Error(
-                `No context metadata found for dimension with compound ID "${compoundKey}"`
-            )
-        }
+        resolveIdentifierFromContextMetadata({
+            unknownId: ids[0],
+            compoundKey,
+            identifier,
+            metadataMap,
+        })
     }
 
     if (!identifier.programStageId && typeof repetitionIndex === 'number') {
