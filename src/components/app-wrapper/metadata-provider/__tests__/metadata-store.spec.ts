@@ -274,7 +274,6 @@ describe('MetadataStore', () => {
               "dimensionType": "STATUS",
               "id": "Zj7UnCAulEk.eventStatus",
               "name": "Event status",
-              "programId": "eBAyeGv0exc",
               "programStageId": "Zj7UnCAulEk",
             },
             "Zj7UnCAulEk.ou": {
@@ -282,7 +281,6 @@ describe('MetadataStore', () => {
               "dimensionType": "ORGANISATION_UNIT",
               "id": "Zj7UnCAulEk.ou",
               "name": "Organisation unit",
-              "programId": "eBAyeGv0exc",
               "programStageId": "Zj7UnCAulEk",
             },
             "Zj7UnCAulEk.programStatus": {
@@ -290,7 +288,6 @@ describe('MetadataStore', () => {
               "dimensionType": "STATUS",
               "id": "Zj7UnCAulEk.programStatus",
               "name": "Program status",
-              "programId": "eBAyeGv0exc",
               "programStageId": "Zj7UnCAulEk",
             },
             "completedDate": {

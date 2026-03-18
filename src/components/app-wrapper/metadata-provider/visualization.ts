@@ -101,12 +101,14 @@ export const extractFixedDimensionsMetadata = (
         const dimensionId = getFullDimensionId({
             dimensionId: dimension.dimension as DimensionId,
             programId: dimension.program?.id,
+            programStageId: visualization.programStage?.id,
             outputType: visualization.outputType,
         })
         if (dimension.program?.id) {
-            const metadata = getProgramDimensions(dimension.program?.id)[
-                dimensionId
-            ]
+            const metadata = getProgramDimensions(
+                dimension.program?.id,
+                visualization.programStage?.id
+            )[dimensionId]
 
             if (metadata) {
                 fixedDimensionsMetadata[dimensionId] = metadata
@@ -290,7 +292,10 @@ export const extractMetadataFromVisualization = (
             visualization.outputType
         ),
         getMainDimensions(visualization.outputType),
-        getProgramDimensions(visualization.program?.id),
+        getProgramDimensions(
+            visualization.program?.id,
+            visualization.programStage?.id
+        ),
         extractTrackedEntityTypeMetadata(transformedVisualization),
         extractFixedDimensionsMetadata(transformedVisualization),
         extractProgramDimensionsMetadata(transformedVisualization),
