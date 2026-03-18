@@ -1,0 +1,272 @@
+{
+    "name": "A1",
+    "created": "2026-01-07T13:09:31.402",
+    "lastUpdated": "2026-03-10T15:37:34.103",
+    "translations": [],
+    "createdBy": {
+        "id": "xE7jOejl9FI",
+        "code": null,
+        "name": "John Traore",
+        "displayName": "John Traore",
+        "username": "admin"
+    },
+    "favorites": [],
+    "lastUpdatedBy": {
+        "id": "xE7jOejl9FI",
+        "code": null,
+        "name": "John Traore",
+        "displayName": "John Traore",
+        "username": "admin"
+    },
+    "sharing": {
+        "owner": "xE7jOejl9FI",
+        "users": {},
+        "userGroups": {},
+        "public": "--------"
+    },
+    "regressionType": "NONE",
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": [],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [],
+    "dataElementDimensions": [
+        {
+            "dataElement": {
+                "name": "WHOMCH Insecticide treated bednet promoted",
+                "id": "NPZPVg2rVh4"
+            }
+        }
+    ],
+    "programIndicatorDimensions": [],
+    "subscribers": [],
+    "digitGroupSeparator": "SPACE",
+    "hideEmptyRowItems": "NONE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": false,
+    "type": "LINE_LIST",
+    "program": {
+        "enrollmentDateLabel": "Date of first visit",
+        "incidentDateLabel": "Date of incident",
+        "programType": "WITH_REGISTRATION",
+        "displayIncidentDate": false,
+        "trackedEntityType": {
+            "id": "nEenWmSyUEp",
+            "name": "Person"
+        },
+        "displayEnrollmentDateLabel": "Date of first visit",
+        "displayIncidentDateLabel": "Date of incident",
+        "id": "WSGAb5XwJ3Y",
+        "programStages": [
+            {
+                "program": {
+                    "id": "WSGAb5XwJ3Y"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Date of birth",
+                "id": "PUZaKR0Jh2k",
+                "repeatable": false,
+                "name": "Previous deliveries"
+            },
+            {
+                "program": {
+                    "id": "WSGAb5XwJ3Y"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Date of visit",
+                "displayDueDateLabel": "Appointment date",
+                "id": "WZbXY0S00lP",
+                "repeatable": false,
+                "name": "First antenatal care visit"
+            },
+            {
+                "program": {
+                    "id": "WSGAb5XwJ3Y"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Date of visit",
+                "displayDueDateLabel": "Appointment date",
+                "id": "edqlbukwRfQ",
+                "repeatable": true,
+                "name": "Second antenatal care visit"
+            },
+            {
+                "program": {
+                    "id": "WSGAb5XwJ3Y"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Date of visit",
+                "id": "PFDfvmGpsR3",
+                "repeatable": false,
+                "name": "Care at birth"
+            },
+            {
+                "program": {
+                    "id": "WSGAb5XwJ3Y"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Date of visit",
+                "id": "bbKtnxRZKEP",
+                "repeatable": false,
+                "name": "Postpartum care visit"
+            }
+        ],
+        "name": "WHO RMNCH Tracker"
+    },
+    "programDimensions": [
+        {
+            "enrollmentDateLabel": "Date of first visit",
+            "incidentDateLabel": "Date of incident",
+            "programType": "WITH_REGISTRATION",
+            "displayIncidentDate": false,
+            "trackedEntityType": {
+                "id": "nEenWmSyUEp",
+                "name": "Person"
+            },
+            "displayEnrollmentDateLabel": "Date of first visit",
+            "displayIncidentDateLabel": "Date of incident",
+            "id": "WSGAb5XwJ3Y",
+            "programStages": [
+                {
+                    "program": {
+                        "id": "WSGAb5XwJ3Y"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Date of birth",
+                    "id": "PUZaKR0Jh2k",
+                    "repeatable": false,
+                    "name": "Previous deliveries"
+                },
+                {
+                    "program": {
+                        "id": "WSGAb5XwJ3Y"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Date of visit",
+                    "displayDueDateLabel": "Appointment date",
+                    "id": "WZbXY0S00lP",
+                    "repeatable": false,
+                    "name": "First antenatal care visit"
+                },
+                {
+                    "program": {
+                        "id": "WSGAb5XwJ3Y"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Date of visit",
+                    "displayDueDateLabel": "Appointment date",
+                    "id": "edqlbukwRfQ",
+                    "repeatable": true,
+                    "name": "Second antenatal care visit"
+                },
+                {
+                    "program": {
+                        "id": "WSGAb5XwJ3Y"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Date of visit",
+                    "id": "PFDfvmGpsR3",
+                    "repeatable": false,
+                    "name": "Care at birth"
+                },
+                {
+                    "program": {
+                        "id": "WSGAb5XwJ3Y"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Date of visit",
+                    "id": "bbKtnxRZKEP",
+                    "repeatable": false,
+                    "name": "Postpartum care visit"
+                }
+            ],
+            "name": "WHO RMNCH Tracker"
+        }
+    ],
+    "simpleDimensions": [
+        {
+            "parent": "COLUMN",
+            "dimension": "ou",
+            "values": ["USER_ORGUNIT"]
+        }
+    ],
+    "outputType": "EVENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": false,
+    "filters": [],
+    "parentGraphMap": {},
+    "columns": [
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "USER_ORGUNIT"
+                }
+            ],
+            "dimension": "ou"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "programStage": {
+                "id": "edqlbukwRfQ"
+            },
+            "program": {
+                "id": "WSGAb5XwJ3Y"
+            },
+            "dimension": "NPZPVg2rVh4",
+            "valueType": "BOOLEAN"
+        }
+    ],
+    "rows": [],
+    "displayName": "A1",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "href": "https://dev.im.dhis2.org/ever-playground/api/eventVisualizations/meCuSB23Bsc",
+    "subscribed": false,
+    "metaData": {
+        "NPZPVg2rVh4": {
+            "uid": "NPZPVg2rVh4",
+            "code": "DE_423714",
+            "name": "WHOMCH Insecticide treated bednet promoted"
+        }
+    },
+    "displayFormName": "A1",
+    "favorite": false,
+    "id": "meCuSB23Bsc",
+    "attributeValues": [],
+    "legend": {
+        "showKey": false
+    },
+    "sorting": [],
+    "repetitions": []
+}
