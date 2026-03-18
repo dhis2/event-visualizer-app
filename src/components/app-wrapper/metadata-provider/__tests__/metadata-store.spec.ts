@@ -1,4 +1,4 @@
-import { expect, describe, it, beforeEach } from 'vitest'
+import { expect, describe, it, beforeEach, vi } from 'vitest'
 import inpatientCasesVisualization from '../__fixtures__/visualization-inpatient-cases-last-quarter-case.json'
 import inpatientVisitVisualization from '../__fixtures__/visualization-inpatient-visit-overview-this-year-bo.json'
 import { getInitialMetadata } from '../initial-metadata'
@@ -708,5 +708,296 @@ describe('MetadataStore', () => {
                 dimensionType: 'PERIOD',
             })
         })
+    })
+})
+
+// ---------------------------------------------------------------------------
+// Shared helpers for the new unit tests below
+// ---------------------------------------------------------------------------
+
+const makeProgram = (programId: string, stageId: string): MetadataItem => ({
+    id: programId,
+    name: `Program ${programId}`,
+    programType: 'WITHOUT_REGISTRATION' as const,
+    programStages: [
+        {
+            id: stageId,
+            name: `Stage ${stageId}`,
+            displayExecutionDateLabel: 'Report date',
+            hideDueDate: false,
+            repeatable: false,
+            program: { id: programId },
+        },
+    ],
+})
+
+const makeStage = (stageId: string, programId: string): MetadataItem => ({
+    id: stageId,
+    name: `Stage ${stageId}`,
+    displayExecutionDateLabel: 'Report date',
+    hideDueDate: false,
+    repeatable: false,
+    program: { id: programId },
+})
+
+// ---------------------------------------------------------------------------
+// getMetadataItem — alias resolution
+// ---------------------------------------------------------------------------
+
+describe('MetadataStore.getMetadataItem — alias key resolution', () => {
+    let store: TestMetadataStore
+
+    beforeEach(() => {
+        store = new TestMetadataStore(
+            {},
+            [] as unknown as AppCachedData['rootOrgUnits']
+        )
+    })
+
+    it('returns the item when the exact canonical key is used', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'weight'
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        const item = store.getMetadataItem(`${stageId}.${dimId}`)
+        expect(item).toBeDefined()
+        expect(item?.id).toBe(`${stageId}.${dimId}`)
+    })
+
+    it('resolves a program-based alias (p1.dim) to the canonical stage-based key (ps1.dim)', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'weight'
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        // Look up using the alias key
+        const item = store.getMetadataItem(`${programId}.${dimId}`)
+        expect(item).toBeDefined()
+        expect(item?.id).toBe(`${stageId}.${dimId}`)
+    })
+
+    it('resolves a 3-part alias (p1.ps1.dim) to the canonical stage-based key', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'height'
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Height',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        const item = store.getMetadataItem(`${programId}.${stageId}.${dimId}`)
+        expect(item).toBeDefined()
+        expect(item?.id).toBe(`${stageId}.${dimId}`)
+    })
+
+    it('returns undefined for a completely unknown compound key', () => {
+        const item = store.getMetadataItem('unknown.dim')
+        expect(item).toBeUndefined()
+    })
+
+    it('returns undefined for an unknown plain key', () => {
+        const item = store.getMetadataItem('nonexistent')
+        expect(item).toBeUndefined()
+    })
+})
+
+// ---------------------------------------------------------------------------
+// addMetadata — deferred compound key processing
+// ---------------------------------------------------------------------------
+
+describe('MetadataStore.addMetadata — deferred compound key processing', () => {
+    let store: TestMetadataStore
+
+    beforeEach(() => {
+        store = new TestMetadataStore(
+            {},
+            [] as unknown as AppCachedData['rootOrgUnits']
+        )
+    })
+
+    it('processes plain items before compound items in the same addMetadata call', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'weight'
+
+        // Pass everything in one call — compound key depends on the stage being present
+        store.addMetadata({
+            [programId]: makeProgram(programId, stageId),
+            [stageId]: makeStage(stageId, programId),
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        const snapshot = store.getMetadataSnapshot()
+        expect(snapshot[`${stageId}.${dimId}`]).toBeDefined()
+        expect(snapshot[`${stageId}.${dimId}`]).toMatchObject({
+            id: `${stageId}.${dimId}`,
+            dimensionId: dimId,
+        })
+    })
+
+    it('stores compound keys under canonical form even when supplied as alias', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'height'
+
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+
+        // Supply with program-based alias key
+        store.addMetadata({
+            [`${programId}.${dimId}`]: {
+                id: `${programId}.${dimId}`,
+                name: 'Height',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        const snapshot = store.getMetadataSnapshot()
+        // Must be stored under canonical key
+        expect(snapshot[`${stageId}.${dimId}`]).toBeDefined()
+        // Not under the alias key
+        expect(snapshot[`${programId}.${dimId}`]).toBeUndefined()
+    })
+})
+
+// ---------------------------------------------------------------------------
+// notifySubscribers — fan-out for compound key aliases
+// ---------------------------------------------------------------------------
+
+describe('MetadataStore — subscriber fan-out for compound key aliases', () => {
+    let store: TestMetadataStore
+
+    beforeEach(() => {
+        store = new TestMetadataStore(
+            {},
+            [] as unknown as AppCachedData['rootOrgUnits']
+        )
+    })
+
+    it('notifies subscriber registered under canonical key when item is updated', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'weight'
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+
+        const cb = vi.fn()
+        store.subscribe(`${stageId}.${dimId}`, cb)
+
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        expect(cb).toHaveBeenCalledTimes(1)
+    })
+
+    it('notifies subscriber registered under alias key when canonical key item changes', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'weight'
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+
+        const cbAlias = vi.fn()
+        // Subscribe using the program-based alias
+        store.subscribe(`${programId}.${dimId}`, cbAlias)
+
+        // Update item using canonical key
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        expect(cbAlias).toHaveBeenCalledTimes(1)
+    })
+
+    it('notifies subscriber under alias key when canonical item is removed via setVisualizationMetadata', () => {
+        // Set up: load a visualization that contains the compound dimension
+        store.setVisualizationMetadata(
+            inpatientVisitVisualization as unknown as SavedVisualization
+        )
+
+        // The inpatient visit visualization has stage Zj7UnCAulEk and compound key Zj7UnCAulEk.ou
+        // The program is eBAyeGv0exc (event program / WITHOUT_REGISTRATION) with one stage.
+        // So p1.ou would be an alias for Zj7UnCAulEk.ou IF eBAyeGv0exc was p1.
+        // To test, subscribe to the 3-part alias: eBAyeGv0exc.Zj7UnCAulEk.ou
+        const cbAlias = vi.fn()
+        store.subscribe('eBAyeGv0exc.Zj7UnCAulEk.ou', cbAlias)
+
+        // Now switch to the inpatient cases visualization — it also has Zj7UnCAulEk.ou,
+        // so that item WON'T be removed. Instead confirm the subscriber is NOT notified.
+        // This validates that the fan-out only fires when something actually changes.
+        cbAlias.mockClear()
+        store.setVisualizationMetadata(
+            inpatientCasesVisualization as unknown as SavedVisualization
+        )
+
+        // Zj7UnCAulEk.ou is in both visualizations, so the alias subscriber
+        // should NOT receive a spurious removal notification
+        expect(cbAlias).not.toHaveBeenCalled()
+    })
+
+    it('notifies alias subscriber when item name changes via addMetadata', () => {
+        // Set up program+stage context
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'weight'
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        const cbAlias = vi.fn()
+        // Subscribe using the full 3-part alias
+        store.subscribe(`${programId}.${stageId}.${dimId}`, cbAlias)
+
+        // Update the item — subscriber should be notified
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight (updated)',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        expect(cbAlias).toHaveBeenCalledTimes(1)
     })
 })

@@ -482,3 +482,114 @@ describe('MetadataProvider API and return value types', () => {
         )
     })
 })
+
+// ---------------------------------------------------------------------------
+// Alias key resolution through hooks
+// ---------------------------------------------------------------------------
+
+describe('MetadataProvider — compound-key alias resolution via hooks', () => {
+    const programId = 'p1'
+    const stageId = 'ps1'
+    const dimId = 'weight'
+    const canonicalKey = `${stageId}.${dimId}`
+    const aliasKey = `${programId}.${dimId}`
+
+    const makeProgram = () => ({
+        id: programId,
+        name: 'My Program',
+        programType: 'WITHOUT_REGISTRATION',
+        programStages: [
+            {
+                id: stageId,
+                name: 'Stage 1',
+                displayExecutionDateLabel: 'Report date',
+                hideDueDate: false,
+                repeatable: false,
+                program: { id: programId },
+            },
+        ],
+    })
+
+    const makeStage = () => ({
+        id: stageId,
+        name: 'Stage 1',
+        displayExecutionDateLabel: 'Report date',
+        hideDueDate: false,
+        repeatable: false,
+        program: { id: programId },
+    })
+
+    const makeDimension = (name: string) => ({
+        [`${canonicalKey}`]: {
+            id: canonicalKey,
+            name,
+            dimensionType: 'DATA_ELEMENT',
+        },
+    })
+
+    it('useMetadataItem resolves the item when looked up via alias key', () => {
+        const { result } = renderHook(
+            () => {
+                const item = useMetadataItem(aliasKey)
+                const store = useMetadataStore()
+                return { item, store }
+            },
+            { wrapper: MetadataProvider }
+        )
+
+        expect(result.current.item).toBeUndefined()
+
+        // Add context metadata (program + stage) then the dimension
+        act(() => {
+            result.current.store.addMetadata(makeProgram())
+            result.current.store.addMetadata(makeStage())
+            result.current.store.addMetadata(makeDimension('Weight'))
+        })
+
+        // Even though item is stored under canonicalKey, alias lookup should find it
+        expect(result.current.item).toBeDefined()
+        expect(result.current.item?.id).toBe(canonicalKey)
+        expect(result.current.item?.name).toBe('Weight')
+    })
+
+    it('useMetadataItem re-renders when canonical item is updated and subscription is via alias key', () => {
+        let renderCount = 0
+
+        const { result } = renderHook(
+            () => {
+                renderCount++
+                const item = useMetadataItem(aliasKey)
+                const store = useMetadataStore()
+                return { item, store }
+            },
+            { wrapper: MetadataProvider }
+        )
+
+        // Set up context
+        act(() => {
+            result.current.store.addMetadata(makeProgram())
+            result.current.store.addMetadata(makeStage())
+            result.current.store.addMetadata(makeDimension('Weight v1'))
+        })
+
+        const rendersAfterFirstAdd = renderCount
+
+        // Now update the item under the canonical key
+        act(() => {
+            result.current.store.addMetadata(makeDimension('Weight v2'))
+        })
+
+        // Hook should have re-rendered because the subscribed alias key was notified
+        expect(renderCount).toBeGreaterThan(rendersAfterFirstAdd)
+        expect(result.current.item?.name).toBe('Weight v2')
+    })
+
+    it('useMetadataItem with alias key returns undefined when context metadata is missing', () => {
+        const { result } = renderHook(() => useMetadataItem(aliasKey), {
+            wrapper: MetadataProvider,
+        })
+
+        // Without program/stage context, alias cannot be resolved
+        expect(result.current).toBeUndefined()
+    })
+})

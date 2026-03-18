@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { normalizeMetadataInputItem } from '../normalization'
+import {
+    getCanonicalKeysForInput,
+    normalizeMetadataInputItem,
+} from '../normalization'
 import type { MetadataItem, MetadataInputItem } from '@types'
 
 describe('normalizeMetadataInputItem', () => {
@@ -192,5 +195,216 @@ describe('normalizeMetadataInputItem', () => {
                 normalizeMetadataInputItem(input, mockMetadataMap)
             }).toThrow('New metadata item "new-item-id" does not have a name')
         })
+    })
+})
+
+describe('normalizeMetadataInputItem — dimensionId assignment', () => {
+    const emptyMap = new Map<string, MetadataItem>()
+
+    it('sets dimensionId to the plain id for a plain dimension item', () => {
+        const input: MetadataInputItem = {
+            id: 'eventDate',
+            name: 'Event date',
+            dimensionType: 'PERIOD',
+        }
+
+        const result = normalizeMetadataInputItem(input, emptyMap)
+
+        expect(result).toMatchObject({
+            id: 'eventDate',
+            dimensionId: 'eventDate',
+        })
+    })
+
+    it('sets dimensionId to the plain (last) part for a compound key stored under stageId.dimensionId', () => {
+        const stageId = 'ps1'
+        const dimId = 'myDimension'
+        const stageMetadata: MetadataItem = {
+            id: stageId,
+            name: 'Stage 1',
+            displayExecutionDateLabel: 'Report date',
+            hideDueDate: false,
+            repeatable: false,
+            program: { id: 'p1' },
+        }
+        const mapWithStage = new Map<string, MetadataItem>([
+            [stageId, stageMetadata],
+        ])
+
+        const input: MetadataInputItem = {
+            id: `${stageId}.${dimId}`,
+            name: 'My Dimension',
+            dimensionType: 'DATA_ELEMENT',
+        }
+
+        const result = normalizeMetadataInputItem(input, mapWithStage)
+
+        expect(result).toMatchObject({
+            id: `${stageId}.${dimId}`,
+            dimensionId: dimId,
+            programStageId: stageId,
+            programId: 'p1',
+        })
+    })
+
+    it('resolves p1.dimId to stageId.dimId when program is an event program (1 stage)', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'height'
+        const programMetadata: MetadataItem = {
+            id: programId,
+            name: 'My Event Program',
+            programType: 'WITHOUT_REGISTRATION',
+            programStages: [
+                {
+                    id: stageId,
+                    name: 'Stage 1',
+                    displayExecutionDateLabel: 'Report date',
+                    hideDueDate: false,
+                    repeatable: false,
+                    program: { id: programId },
+                },
+            ],
+        }
+        const mapWithProgram = new Map<string, MetadataItem>([
+            [programId, programMetadata],
+        ])
+
+        const input: MetadataInputItem = {
+            id: `${programId}.${dimId}`,
+            name: 'Height',
+            dimensionType: 'DATA_ELEMENT',
+        }
+
+        const result = normalizeMetadataInputItem(input, mapWithProgram)
+
+        // Canonical key must be stage-based
+        expect(result.id).toBe(`${stageId}.${dimId}`)
+        expect(result).toMatchObject({
+            dimensionId: dimId,
+            programId,
+            programStageId: stageId,
+        })
+    })
+
+    it('does not set dimensionId for a non-dimension plain item (e.g. period shortcut)', () => {
+        // A plain item that is NOT a DimensionMetadataItem (no dimensionType)
+        const input: MetadataInputItem = {
+            id: 'TODAY',
+            name: 'Today',
+        }
+
+        const result = normalizeMetadataInputItem(input, emptyMap)
+
+        expect(result).toEqual({ id: 'TODAY', name: 'Today' })
+        expect(result).not.toHaveProperty('dimensionId')
+    })
+})
+
+describe('getCanonicalKeysForInput', () => {
+    const emptyMap = new Map<string, MetadataItem>()
+
+    it('returns the id of each normalizable input item', () => {
+        const input = {
+            key1: { id: 'key1', name: 'Item 1' },
+            key2: { id: 'key2', name: 'Item 2' },
+        }
+
+        const result = getCanonicalKeysForInput(input, emptyMap)
+
+        expect(result).toEqual(new Set(['key1', 'key2']))
+    })
+
+    it('falls back to the raw key when normalization fails (e.g. missing name)', () => {
+        const input = {
+            unknownKey: { id: 'unknownKey' },
+        }
+
+        const result = getCanonicalKeysForInput(input, emptyMap)
+
+        // normalizeMetadataInputItem throws for items with no name and not in map,
+        // so getCanonicalKeysForInput falls back to the raw key
+        expect(result).toEqual(new Set(['unknownKey']))
+    })
+
+    it('resolves compound keys to their canonical form', () => {
+        const stageId = 'ps1'
+        const dimId = 'weight'
+        const stageMetadata: MetadataItem = {
+            id: stageId,
+            name: 'Stage 1',
+            displayExecutionDateLabel: 'Report date',
+            hideDueDate: false,
+            repeatable: false,
+            program: { id: 'p1' },
+        }
+
+        // Input uses programId.dimId alias — should resolve to stageId.dimId
+        const programMetadata: MetadataItem = {
+            id: 'p1',
+            name: 'My Program',
+            programType: 'WITHOUT_REGISTRATION',
+            programStages: [
+                {
+                    id: stageId,
+                    name: 'Stage 1',
+                    displayExecutionDateLabel: 'Report date',
+                    hideDueDate: false,
+                    repeatable: false,
+                    program: { id: 'p1' },
+                },
+            ],
+        }
+        const mapWithBoth = new Map<string, MetadataItem>([
+            ['p1', programMetadata],
+            [stageId, stageMetadata],
+        ])
+
+        const input = {
+            [`p1.${dimId}`]: {
+                id: `p1.${dimId}`,
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        }
+
+        const result = getCanonicalKeysForInput(input, mapWithBoth)
+
+        // The canonical key is stage-based, not program-based
+        expect(result).toEqual(new Set([`${stageId}.${dimId}`]))
+    })
+
+    it('returns an empty set for an empty input', () => {
+        const result = getCanonicalKeysForInput({}, emptyMap)
+
+        expect(result).toEqual(new Set())
+    })
+
+    it('handles a mix of plain and compound keys', () => {
+        const stageId = 'ps1'
+        const stageMetadata: MetadataItem = {
+            id: stageId,
+            name: 'Stage 1',
+            displayExecutionDateLabel: 'Report date',
+            hideDueDate: false,
+            repeatable: false,
+            program: { id: 'p1' },
+        }
+        const mapWithStage = new Map<string, MetadataItem>([
+            [stageId, stageMetadata],
+        ])
+
+        const input = {
+            plainKey: { id: 'plainKey', name: 'Plain' },
+            [`${stageId}.dim1`]: {
+                id: `${stageId}.dim1`,
+                name: 'Dimension 1',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        }
+
+        const result = getCanonicalKeysForInput(input, mapWithStage)
+
+        expect(result).toEqual(new Set(['plainKey', `${stageId}.dim1`]))
     })
 })
