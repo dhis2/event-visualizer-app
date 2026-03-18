@@ -90,7 +90,10 @@ export const compoundIdToIdentifier = (
         if (unknownMetadata) {
             if (isProgramMetadataItem(unknownMetadata)) {
                 identifier.programId = unknownId
-                // If the program only has 1 stage we can use it
+                /* Event programs (WITHOUT_REGISTRATION) always have exactly one
+                 * stage in the data model, so we can safely use it. Tracker
+                 * programs (WITH_REGISTRATION) may have many stages, in which
+                 * case the compound ID must include the stage explicitly. */
                 if (unknownMetadata.programStages?.length === 1) {
                     identifier.programStageId =
                         unknownMetadata.programStages[0].id

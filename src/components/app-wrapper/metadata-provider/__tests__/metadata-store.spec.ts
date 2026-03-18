@@ -53,13 +53,15 @@ describe('MetadataStore', () => {
             },
             "GieVkTxp4HH": {
               "code": "DE_240794",
+              "dimensionId": "GieVkTxp4HH",
               "dimensionType": "DATA_ELEMENT",
               "id": "GieVkTxp4HH",
-              "legendSet": "TBxGTceyzwy",
+              "legendSetId": "TBxGTceyzwy",
               "name": "Height in cm",
               "valueType": "NUMBER",
             },
             "HS8QXAJtuKV": {
+              "dimensionId": "HS8QXAJtuKV",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "HS8QXAJtuKV",
               "name": "Inpatient bed days average",
@@ -71,13 +73,15 @@ describe('MetadataStore', () => {
             },
             "K6uUAvq500H": {
               "code": "DE_3000010",
+              "dimensionId": "K6uUAvq500H",
               "dimensionType": "DATA_ELEMENT",
               "id": "K6uUAvq500H",
               "name": "Diagnosis (ICD-10)",
-              "optionSet": "eUZ79clX7y1",
+              "optionSetId": "eUZ79clX7y1",
               "valueType": "TEXT",
             },
             "Kswd1r4qWLh": {
+              "dimensionId": "Kswd1r4qWLh",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "Kswd1r4qWLh",
               "name": "Average height of boys at 10 years old",
@@ -182,6 +186,7 @@ describe('MetadataStore', () => {
             },
             "SWfdB5lX0fk": {
               "code": "DE_423442",
+              "dimensionId": "SWfdB5lX0fk",
               "dimensionType": "DATA_ELEMENT",
               "id": "SWfdB5lX0fk",
               "name": "Pregnant",
@@ -220,6 +225,7 @@ describe('MetadataStore', () => {
               "name": "Today",
             },
             "Thkx2BnO5Kq": {
+              "dimensionId": "Thkx2BnO5Kq",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "Thkx2BnO5Kq",
               "name": "BMI male",
@@ -241,11 +247,13 @@ describe('MetadataStore', () => {
               "name": "Weeks this year",
             },
             "XCMi7Wvnplm": {
+              "dimensionId": "XCMi7Wvnplm",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "XCMi7Wvnplm",
               "name": "BMI female",
             },
             "Y7hKDSuqEtH": {
+              "dimensionId": "Y7hKDSuqEtH",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "Y7hKDSuqEtH",
               "name": "BMI male under 5 y",
@@ -261,24 +269,52 @@ describe('MetadataStore', () => {
               "name": "Inpatient morbidity and mortality",
               "repeatable": false,
             },
+            "Zj7UnCAulEk.eventStatus": {
+              "dimensionId": "eventStatus",
+              "dimensionType": "STATUS",
+              "id": "Zj7UnCAulEk.eventStatus",
+              "name": "Event status",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+            },
+            "Zj7UnCAulEk.ou": {
+              "dimensionId": "ou",
+              "dimensionType": "ORGANISATION_UNIT",
+              "id": "Zj7UnCAulEk.ou",
+              "name": "Organisation unit",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+            },
+            "Zj7UnCAulEk.programStatus": {
+              "dimensionId": "programStatus",
+              "dimensionType": "STATUS",
+              "id": "Zj7UnCAulEk.programStatus",
+              "name": "Program status",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+            },
             "completedDate": {
+              "dimensionId": "completedDate",
               "dimensionType": "PERIOD",
               "id": "completedDate",
               "name": "Completed date",
             },
             "created": {
+              "dimensionId": "created",
               "dimensionType": "PERIOD",
               "id": "created",
               "name": "Registration date",
               "valueType": "DATE",
             },
             "createdBy": {
+              "dimensionId": "createdBy",
               "dimensionType": "USER",
               "id": "createdBy",
               "name": "Created by",
               "valueType": "USERNAME",
             },
             "createdDate": {
+              "dimensionId": "createdDate",
               "dimensionType": "PERIOD",
               "id": "createdDate",
               "name": "Created date",
@@ -300,85 +336,82 @@ describe('MetadataStore', () => {
               ],
               "programType": "WITHOUT_REGISTRATION",
             },
-            "eBAyeGv0exc.eventStatus": {
-              "dimensionType": "STATUS",
-              "id": "eBAyeGv0exc.eventStatus",
-              "name": "Event status",
-            },
-            "eBAyeGv0exc.ou": {
-              "dimensionType": "ORGANISATION_UNIT",
-              "id": "eBAyeGv0exc.ou",
-              "name": "Organisation unit",
-            },
-            "eBAyeGv0exc.programStatus": {
-              "dimensionType": "STATUS",
-              "id": "eBAyeGv0exc.programStatus",
-              "name": "Program status",
-            },
             "eMyVanycQSC": {
               "code": "DE_3000005",
+              "dimensionId": "eMyVanycQSC",
               "dimensionType": "DATA_ELEMENT",
               "id": "eMyVanycQSC",
               "name": "Admission Date",
               "valueType": "DATE",
             },
             "enrollmentDate": {
+              "dimensionId": "enrollmentDate",
               "dimensionType": "PERIOD",
               "id": "enrollmentDate",
               "name": "Enrollment date",
             },
             "eventDate": {
+              "dimensionId": "eventDate",
               "dimensionType": "PERIOD",
               "id": "eventDate",
               "name": "Report date",
             },
             "eventStatus": {
+              "dimensionId": "eventStatus",
               "dimensionType": "STATUS",
               "id": "eventStatus",
               "name": "Event status",
             },
             "fWIAEtYVEGk": {
               "code": "DE_3000009",
+              "dimensionId": "fWIAEtYVEGk",
               "dimensionType": "DATA_ELEMENT",
               "id": "fWIAEtYVEGk",
               "name": "Mode of Discharge",
-              "optionSet": "iDFPKpFTiVw",
+              "optionSetId": "iDFPKpFTiVw",
               "valueType": "TEXT",
             },
             "gWxh7DiRmG7": {
+              "dimensionId": "gWxh7DiRmG7",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "gWxh7DiRmG7",
               "name": "Average height of girls at 5 years old",
             },
             "hlPt8H4bUOQ": {
+              "dimensionId": "hlPt8H4bUOQ",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "hlPt8H4bUOQ",
               "name": "BMI female under 5 y",
             },
             "incidentDate": {
+              "dimensionId": "incidentDate",
               "dimensionType": "PERIOD",
               "id": "incidentDate",
               "name": "Date of Discharge",
             },
             "lastUpdated": {
+              "dimensionId": "lastUpdated",
               "dimensionType": "PERIOD",
               "id": "lastUpdated",
               "name": "Last updated on",
               "valueType": "DATETIME",
             },
             "lastUpdatedBy": {
+              "dimensionId": "lastUpdatedBy",
               "dimensionType": "USER",
               "id": "lastUpdatedBy",
               "name": "Last updated by",
               "valueType": "USERNAME",
             },
             "lastUpdatedOn": {
+              "dimensionId": "lastUpdatedOn",
               "dimensionType": "PERIOD",
               "id": "lastUpdatedOn",
               "name": "Last updated on",
             },
             "msodh3rEMJa": {
               "code": "DE_3000006",
+              "dimensionId": "msodh3rEMJa",
               "dimensionType": "DATA_ELEMENT",
               "id": "msodh3rEMJa",
               "name": "Discharge Date",
@@ -386,13 +419,15 @@ describe('MetadataStore', () => {
             },
             "oZg33kd9taw": {
               "code": "DE_3000004",
+              "dimensionId": "oZg33kd9taw",
               "dimensionType": "DATA_ELEMENT",
               "id": "oZg33kd9taw",
               "name": "Gender",
-              "optionSet": "pC3N9N77UmT",
+              "optionSetId": "pC3N9N77UmT",
               "valueType": "TEXT",
             },
             "ou": {
+              "dimensionId": "ou",
               "dimensionType": "ORGANISATION_UNIT",
               "id": "ou",
               "name": "Organisation unit",
@@ -402,42 +437,49 @@ describe('MetadataStore', () => {
               "name": "Period",
             },
             "programStatus": {
+              "dimensionId": "programStatus",
               "dimensionType": "STATUS",
               "id": "programStatus",
               "name": "Program status",
             },
             "qrur9Dvnyt5": {
               "code": "DE_3000003",
+              "dimensionId": "qrur9Dvnyt5",
               "dimensionType": "DATA_ELEMENT",
               "id": "qrur9Dvnyt5",
-              "legendSet": "Yf6UHoPkdS6",
+              "legendSetId": "Yf6UHoPkdS6",
               "name": "Age in years",
               "valueType": "INTEGER",
             },
             "sGna2pquXOO": {
+              "dimensionId": "sGna2pquXOO",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "sGna2pquXOO",
               "name": "Average age of female discharges",
             },
             "scheduledDate": {
+              "dimensionId": "scheduledDate",
               "dimensionType": "PERIOD",
               "id": "scheduledDate",
               "name": "Scheduled date",
             },
             "tUdBD1JDxpn": {
+              "dimensionId": "tUdBD1JDxpn",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "tUdBD1JDxpn",
               "name": "Average age of deaths",
             },
             "vV9UWAZohSf": {
               "code": "DE_240795",
+              "dimensionId": "vV9UWAZohSf",
               "dimensionType": "DATA_ELEMENT",
               "id": "vV9UWAZohSf",
-              "legendSet": "OrkEzxZEH4X",
+              "legendSetId": "OrkEzxZEH4X",
               "name": "Weight in kg",
               "valueType": "INTEGER_POSITIVE",
             },
             "x7PaHGvgWY2": {
+              "dimensionId": "x7PaHGvgWY2",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "x7PaHGvgWY2",
               "name": "BMI",
@@ -521,11 +563,11 @@ describe('MetadataStore', () => {
             "lastUpdated",
             "createdBy",
             "lastUpdatedBy",
-            "eBAyeGv0exc.ou",
-            "eBAyeGv0exc.eventStatus",
-            "eBAyeGv0exc.programStatus",
             "eBAyeGv0exc",
             "Zj7UnCAulEk",
+            "Zj7UnCAulEk.ou",
+            "Zj7UnCAulEk.eventStatus",
+            "Zj7UnCAulEk.programStatus",
           ]
         `)
     })
@@ -573,7 +615,7 @@ describe('MetadataStore', () => {
 
         it('adds metadata items with nested IDs correctly', () => {
             const analyticsItems = {
-                'dataElement.programStage1': {
+                'Zj7UnCAulEk.someDataElement': {
                     uid: 'originalUid',
                     name: 'Nested Data Element',
                     valueType: 'TEXT',
@@ -584,8 +626,8 @@ describe('MetadataStore', () => {
             metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
 
             const snapshot = metadataStore.getMetadataSnapshot()
-            expect(snapshot['dataElement.programStage1']).toEqual({
-                id: 'dataElement.programStage1',
+            expect(snapshot['Zj7UnCAulEk.someDataElement']).toEqual({
+                id: 'Zj7UnCAulEk.someDataElement',
                 name: 'Nested Data Element',
                 valueType: undefined,
             })
@@ -636,6 +678,7 @@ describe('MetadataStore', () => {
             const snapshot = metadataStore.getMetadataSnapshot()
             expect(snapshot.ou).toEqual({
                 id: 'ou',
+                dimensionId: 'ou',
                 name: 'Organisation Unit UPDATED',
                 dimensionType: 'ORGANISATION_UNIT',
             })
@@ -660,211 +703,9 @@ describe('MetadataStore', () => {
             const snapshot = metadataStore.getMetadataSnapshot()
             expect(snapshot.eventDate).toEqual({
                 id: 'eventDate',
+                dimensionId: 'eventDate',
                 name: 'Report date',
                 dimensionType: 'PERIOD',
-            })
-        })
-    })
-
-    describe('getDimensionMetadata', () => {
-        let metadataStore: TestMetadataStore
-
-        beforeEach(() => {
-            metadataStore = new TestMetadataStore(
-                getInitialMetadata(),
-                rootOrgUnits
-            )
-            // Add test metadata
-            metadataStore.addMetadata([
-                {
-                    id: 'testDimension',
-                    name: 'Test Dimension',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'TEXT',
-                },
-                {
-                    id: 'testProgram',
-                    name: 'Test Program',
-                    programType: 'WITH_REGISTRATION',
-                },
-                {
-                    id: 'testStage',
-                    name: 'Test Stage',
-                    repeatable: false,
-                    hideDueDate: false,
-                },
-                {
-                    id: 'wrongTypeItem',
-                    name: 'Wrong Type',
-                    path: '/some/path',
-                },
-            ])
-        })
-
-        describe('single dimension ID', () => {
-            it('returns dimension metadata for valid dimension ID', () => {
-                const result =
-                    metadataStore.getDimensionMetadata('testDimension')
-
-                expect(result).toEqual({
-                    dimensionId: 'testDimension',
-                    programId: undefined,
-                    programStageId: undefined,
-                    repetitionIndex: undefined,
-                    dimension: {
-                        id: 'testDimension',
-                        name: 'Test Dimension',
-                        dimensionType: 'DATA_ELEMENT',
-                        valueType: 'TEXT',
-                    },
-                    program: undefined,
-                    programStage: undefined,
-                })
-            })
-
-            it('throws error when dimension exists but is wrong type', () => {
-                expect(() =>
-                    metadataStore.getDimensionMetadata('wrongTypeItem')
-                ).toThrow(
-                    '"wrongTypeItem" is not a valid dimension metadata item'
-                )
-            })
-        })
-
-        describe('two IDs (ambiguous)', () => {
-            it('leaves both undefined when first ID not in store', () => {
-                const result = metadataStore.getDimensionMetadata(
-                    'unknown.testDimension'
-                )
-
-                expect(result).toEqual({
-                    dimensionId: 'testDimension',
-                    programId: undefined,
-                    programStageId: undefined,
-                    repetitionIndex: undefined,
-                    dimension: {
-                        id: 'testDimension',
-                        name: 'Test Dimension',
-                        dimensionType: 'DATA_ELEMENT',
-                        valueType: 'TEXT',
-                    },
-                    program: undefined,
-                    programStage: undefined,
-                })
-            })
-
-            it('throws error when first ID is wrong type in store', () => {
-                metadataStore.addMetadata({
-                    id: 'wrongTypeItem',
-                    type: 'DataElementOperand',
-                    displayName: 'Wrong Type',
-                })
-
-                expect(() =>
-                    metadataStore.getDimensionMetadata(
-                        'wrongTypeItem.testDimension'
-                    )
-                ).toThrow(
-                    '"wrongTypeItem" is not a program or program stage metadata item'
-                )
-            })
-        })
-
-        describe('three IDs (program.stage.dimension)', () => {
-            it('returns all metadata when all are present', () => {
-                const result = metadataStore.getDimensionMetadata(
-                    'testProgram.testStage.testDimension'
-                )
-
-                expect(result).toEqual({
-                    dimensionId: 'testDimension',
-                    programId: 'testProgram',
-                    programStageId: 'testStage',
-                    repetitionIndex: undefined,
-                    dimension: {
-                        id: 'testDimension',
-                        name: 'Test Dimension',
-                        dimensionType: 'DATA_ELEMENT',
-                        valueType: 'TEXT',
-                    },
-                    program: {
-                        id: 'testProgram',
-                        name: 'Test Program',
-                        programType: 'WITH_REGISTRATION',
-                    },
-                    programStage: {
-                        id: 'testStage',
-                        name: 'Test Stage',
-                        repeatable: false,
-                        hideDueDate: false,
-                    },
-                })
-            })
-
-            it('sets IDs correctly even when metadata not loaded', () => {
-                const result = metadataStore.getDimensionMetadata(
-                    'unknownProgram.unknownStage.unknownDimension'
-                )
-
-                expect(result).toEqual({
-                    dimensionId: 'unknownDimension',
-                    programId: 'unknownProgram',
-                    programStageId: 'unknownStage',
-                    repetitionIndex: undefined,
-                    dimension: undefined,
-                    program: undefined,
-                    programStage: undefined,
-                })
-            })
-
-            it('prefers nested dimension ID over single ID when both exist', () => {
-                // Add dimension with single ID
-                metadataStore.addMetadata({
-                    id: 'sharedDimension',
-                    name: 'Generic Dimension',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'TEXT',
-                })
-
-                // Add dimension with nested ID (program-specific)
-                metadataStore.addMetadata({
-                    id: 'testProgram.testStage.sharedDimension',
-                    name: 'Program-Specific Dimension',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'NUMBER',
-                })
-
-                const result = metadataStore.getDimensionMetadata(
-                    'testProgram.testStage.sharedDimension'
-                )
-
-                // Should use the nested ID version, not the single ID
-                expect(result.dimension).toEqual({
-                    id: 'testProgram.testStage.sharedDimension',
-                    name: 'Program-Specific Dimension',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'NUMBER',
-                })
-            })
-
-            it('throws error when program is wrong type', () => {
-                expect(() =>
-                    metadataStore.getDimensionMetadata(
-                        'wrongTypeItem.testStage.testDimension'
-                    )
-                ).toThrow(
-                    '"wrongTypeItem" is not a valid program metadata item'
-                )
-            })
-
-            it('throws error when stage is wrong type', () => {
-                expect(() =>
-                    metadataStore.getDimensionMetadata(
-                        'testProgram.wrongTypeItem.testDimension'
-                    )
-                ).toThrow(
-                    '"wrongTypeItem" is not a valid programStage metadata item'
-                )
             })
         })
     })

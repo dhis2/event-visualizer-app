@@ -4,7 +4,10 @@ import {
     isCompoundDimensionId,
 } from './dimension'
 import { smartMergeWithChangeDetection } from './merge-utils'
-import { normalizeMetadataInputItem } from './normalization'
+import {
+    getCanonicalKeysForInput,
+    normalizeMetadataInputItem,
+} from './normalization'
 import { extractMetadataFromVisualization } from './visualization'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import { isMetadataInputItem } from '@modules/metadata'
@@ -91,11 +94,18 @@ export class MetadataStore {
 
         this.addMetadata(visualizationMetadata)
 
-        /* Any key that was present before, is not initial metadata, and was not
-         * kept or replaced by addMetadata belongs to the old visualization only. */
+        /* Now that context metadata is present, compute the canonical keys contributed
+         * by the new visualization. This must happen AFTER addMetadata so that compound
+         * IDs can be resolved against the updated map (programs/stages are now present). */
+        const newVisualizationCanonicalKeys = new Set([
+            ...getCanonicalKeysForInput(visualizationMetadata, this.metadata),
+            ...Array.from(this.initialMetadataKeys),
+        ])
+
+        /* Any key that was present before and is not contributed by the new
+         * visualization (nor initial metadata) belongs to the old visualization only. */
         const metadataKeysToRemove = Array.from(previousMetadataKeys).filter(
-            (key) =>
-                !this.initialMetadataKeys.has(key) && !this.metadata.has(key)
+            (key) => !newVisualizationCanonicalKeys.has(key)
         )
 
         for (const key of metadataKeysToRemove) {

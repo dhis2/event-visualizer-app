@@ -7,6 +7,7 @@ import { isDimensionMetadataItem } from '@modules/metadata'
 import { isPopulatedString } from '@modules/validation'
 import type {
     MetadataInputItem,
+    MetadataInputMap,
     NormalizedMetadataInputItem,
     MetadataMap,
 } from '@types'
@@ -64,4 +65,31 @@ export const normalizeMetadataInputItem = (
     }
 
     return resolvedItem
+}
+
+/**
+ * Returns the set of canonical (normalized) keys that a metadata input map
+ * would produce when added to the given metadata map. Uses the provided map
+ * for compound ID resolution, so this should be called after context metadata
+ * (programs, stages) has already been added.
+ */
+export const getCanonicalKeysForInput = (
+    metadataInput: MetadataInputMap,
+    existingMetadataMap: MetadataMap
+): Set<string> => {
+    const canonicalKeys = new Set<string>()
+    for (const [key, value] of Object.entries(metadataInput)) {
+        try {
+            const normalized = normalizeMetadataInputItem(
+                value as MetadataInputItem,
+                existingMetadataMap,
+                key
+            )
+            canonicalKeys.add(normalized.id)
+        } catch {
+            // If normalization fails, fall back to the raw input key
+            canonicalKeys.add(key)
+        }
+    }
+    return canonicalKeys
 }

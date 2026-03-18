@@ -141,6 +141,7 @@ describe('normalizeMetadataInputItem', () => {
 
             expect(result).toEqual({
                 id: 'existing-item',
+                name: 'Existing Item',
                 extraProp: 'updated value',
             })
         })
@@ -189,7 +190,7 @@ describe('normalizeMetadataInputItem', () => {
 
             expect(() => {
                 normalizeMetadataInputItem(input, mockMetadataMap)
-            }).toThrow('Invalid metadata input: expected name field not found')
+            }).toThrow('New metadata item "new-item-id" does not have a name')
         })
     })
 })

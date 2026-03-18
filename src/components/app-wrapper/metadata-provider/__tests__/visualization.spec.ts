@@ -43,7 +43,7 @@ describe('supplementDimensionMetadata', () => {
                 id: 'dimension1',
                 name: 'Dimension One',
                 dimensionType: 'DATA_ELEMENT',
-                optionSet: 'optionSet1',
+                optionSetId: 'optionSet1',
                 valueType: 'TEXT',
             },
             dimension2: {
@@ -86,8 +86,8 @@ describe('supplementDimensionMetadata', () => {
                 id: 'stage1.dimension1',
                 name: 'Dimension One',
                 dimensionType: 'DATA_ELEMENT',
-                program: 'program1',
-                programStage: 'stage1',
+                programId: 'program1',
+                programStageId: 'stage1',
             },
         })
     })
@@ -214,7 +214,7 @@ describe('supplementDimensionMetadata', () => {
                 name: 'Dimension One',
                 dimensionType: 'DATA_ELEMENT',
                 valueType: 'NUMBER',
-                optionSet: 'optionSet1',
+                optionSetId: 'optionSet1',
             },
         })
     })
@@ -250,7 +250,7 @@ describe('supplementDimensionMetadata', () => {
                 name: 'Dimension One',
                 dimensionType: 'DATA_ELEMENT',
                 valueType: 'NUMBER',
-                legendSet: 'legendSet1',
+                legendSetId: 'legendSet1',
             },
         })
     })
