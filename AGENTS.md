@@ -355,6 +355,62 @@ Pre-commit hooks are configured via Husky to:
 -   **Path aliases**: Always prefer path aliases over relative imports for better maintainability
 -   **DHIS2 platform**: Leverage DHIS2 Platform capabilities and conventions throughout development
 
+## DHIS2 Program Dimension IDs
+
+Dimensions in DHIS2 programs are identified by **compound IDs** — dot-separated strings that
+encode program, stage, and dimension context. This system surfaces throughout the codebase: in
+visualization objects, the layout, the sidebar, the Redux store (`visUiConfig` slice), and the
+metadata provider. Understanding it is essential when working with any program dimension.
+
+### Dimension types
+
+-   **Tracked entity attribute dimensions** are independent of program/stage context — they always
+    have the same properties across tracked entity types and are identified by a plain (non-compound)
+    ID. No special handling is needed.
+-   **Program dimensions** are context-dependent and use compound IDs (see below).
+
+### Program types
+
+-   **Event programs** (`programType: 'WITHOUT_REGISTRATION'`) always have **exactly one stage**.
+    A 2-part key `programId.dimensionId` is therefore unambiguous — the stage can be inferred from
+    `programStages[0].id`.
+-   **Tracker programs** (`WITH_REGISTRATION`) may have many stages. A bare `programId.dimensionId`
+    is **ambiguous and invalid** for tracker programs. Only `stageId.dimensionId` or the fully
+    explicit `programId.stageId.dimensionId` form should be used.
+-   `ProgramStage` always carries a `program: { id: string }` back-reference, so the owning
+    program can be resolved from a stage without a separate lookup.
+
+### Compound ID forms
+
+| Form                            | Example                      | When valid                              |
+| ------------------------------- | ---------------------------- | --------------------------------------- |
+| `stageId.dimensionId`           | `Zj7UnCAulEk.ou`             | Always — this is the **canonical** form |
+| `programId.dimensionId`         | `eBAyeGv0exc.ou`             | Event programs only                     |
+| `programId.stageId.dimensionId` | `eBAyeGv0exc.Zj7UnCAulEk.ou` | Any program — fully explicit            |
+
+A repetition index `[n]` may be appended to the stage segment: `ps1[0].ou`.
+
+The **canonical** form is always `stageId.dimensionId`. Items are stored and compared in canonical
+form. The metadata provider (`src/components/app-wrapper/metadata-provider/`) implements alias
+resolution so that lookups with any valid form return the correct item.
+
+When adding metadata to the store in a **single batch** (via `addMetadata`), plain items (programs,
+stages) are always processed before compound-key items, so context metadata is guaranteed to be
+present. When adding items **one at a time**, you must add programs and stages before any dimensions
+that reference them, otherwise canonicalization will fail due to missing context.
+
+### `DimensionMetadataItem` key fields
+
+| Field             | Description                                                                                    |
+| ----------------- | ---------------------------------------------------------------------------------------------- |
+| `id`              | The **compound** ID (canonical form: `stageId.dimId`), or plain ID for non-compound dimensions |
+| `dimensionId`     | The **plain** (last) segment — always set on `DimensionMetadataItem`                           |
+| `programId`       | ID of the owning program (if applicable)                                                       |
+| `programStageId`  | ID of the owning stage (if applicable)                                                         |
+| `repetitionIndex` | Repetition index extracted from `[n]` suffix                                                   |
+| `optionSetId`     | ID reference to the option set (if applicable)                                                 |
+| `legendSetId`     | ID reference to the legend set (if applicable)                                                 |
+
 ## Testing & Linting Workflow for AI Agents
 
 **Golden Rule**: When building a solution, test and lint **specific files only**. When finishing, always run **full project validation** with `yarn test` and `yarn lint`.
