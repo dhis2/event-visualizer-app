@@ -97,7 +97,7 @@ export const Conditions: FC = () => {
         return (
             <OptionSetCondition
                 condition={conditionsList[0]}
-                optionSetId={dimension.optionSet!}
+                optionSetId={dimension.optionSetId!}
                 onChange={(value) => setCondition(0, value)}
             />
         )

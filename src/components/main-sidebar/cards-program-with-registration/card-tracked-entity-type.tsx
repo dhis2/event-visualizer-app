@@ -23,12 +23,14 @@ const getFixedDimensions = (
 ): DimensionMetadataItem[] => [
     {
         id: `${program.trackedEntityType.id}.ou`,
+        dimensionId: 'ou',
         dimensionType: 'ORGANISATION_UNIT',
         name: i18n.t('Registration org. unit'),
         valueType: 'ORGANISATION_UNIT',
     },
     {
         id: `${program.trackedEntityType.id}.created`,
+        dimensionId: 'created',
         dimensionType: 'PERIOD',
         name: i18n.t('Registration date'),
         valueType: 'DATE',

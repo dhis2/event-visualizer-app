@@ -144,6 +144,7 @@ export const getDefaultOrgUnitMetadata = (
 ): Partial<Record<DimensionId, DimensionMetadataItem>> => ({
     ou: {
         id: 'ou',
+        dimensionId: 'ou',
         dimensionType: 'ORGANISATION_UNIT',
         name: getDefaultOrgUnitLabel(outputType),
         valueType: 'ORGANISATION_UNIT',

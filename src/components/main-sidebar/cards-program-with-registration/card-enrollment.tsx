@@ -20,12 +20,14 @@ const getFixedDimensions = (
     return [
         {
             id: 'ou',
+            dimensionId: 'ou',
             dimensionType: 'ORGANISATION_UNIT',
             name: program.displayOrgUnitLabel ?? i18n.t('Enrollment org. unit'),
             valueType: 'ORGANISATION_UNIT',
         },
         {
             id: 'enrollmentDate',
+            dimensionId: 'enrollmentDate',
             dimensionType: 'PERIOD',
             name:
                 program.displayEnrollmentDateLabel ??
@@ -34,12 +36,14 @@ const getFixedDimensions = (
         },
         {
             id: 'incidentDate',
+            dimensionId: 'incidentDate',
             dimensionType: 'PERIOD',
             name: program.displayIncidentDateLabel ?? i18n.t('Incident date'),
             valueType: 'DATE',
         },
         {
             id: 'programStatus',
+            dimensionId: 'programStatus',
             dimensionType: 'STATUS',
             name: i18n.t('Enrollment status'),
             valueType: 'TEXT',
