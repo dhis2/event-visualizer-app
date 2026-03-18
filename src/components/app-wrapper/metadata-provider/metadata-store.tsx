@@ -80,45 +80,43 @@ export class MetadataStore {
     }
 
     setVisualizationMetadata(visualization: SavedVisualization) {
+        /* Strategy: add new metadata first, then remove stale keys.
+         * This keeps rerenders minimal — unchanged items are skipped by
+         * addMetadata, and only truly removed keys notify their subscribers. */
         const visualizationMetadata =
             extractMetadataFromVisualization(visualization)
-        /* The code below is designed to keep metadata hook rerenders to a minimum:
-         * The initial metadata does not need to be updated because it remains unchanged.
-         * The metadata items for the new visualization are updated as needed by calling `addMetadata`
-         * The removed metadata items could have subscriptions remaining, so these are notified */
 
-        /* Snapshot keys before adding new metadata so we can diff afterwards.
-         * We must add first so that context metadata (programs, stages) is present
-         * in the map before we attempt to resolve compound key variants for deletion. */
-        const previousMetadataKeys = new Set(this.metadata.keys())
+        const previousKeys = new Set(this.metadata.keys())
 
+        // Add new visualization metadata. Programs/stages are processed before
+        // compound keys, so context is present for compound ID resolution.
         this.addMetadata(visualizationMetadata)
 
-        /* Now that context metadata is present, compute the canonical keys contributed
-         * by the new visualization. This must happen AFTER addMetadata so that compound
-         * IDs can be resolved against the updated map (programs/stages are now present). */
-        const newVisualizationCanonicalKeys = new Set([
+        // Keys retained by the new visualization (resolved after addMetadata so
+        // compound IDs can be canonicalized against the updated map).
+        const nextKeys = new Set([
             ...getCanonicalKeysForInput(visualizationMetadata, this.metadata),
-            ...Array.from(this.initialMetadataKeys),
+            ...this.initialMetadataKeys,
         ])
 
-        /* Any key that was present before and is not contributed by the new
-         * visualization (nor initial metadata) belongs to the old visualization only. */
-        const metadataKeysToRemove = Array.from(previousMetadataKeys).filter(
-            (key) => !newVisualizationCanonicalKeys.has(key)
+        const keysToRemove = [...previousKeys].filter((k) => !nextKeys.has(k))
+
+        // Resolve compound key variants before any deletion. Plain context keys
+        // (programs, stages) may also be stale and would be deleted first, making
+        // subsequent variant lookups fail if we resolved lazily inside the loop.
+        const variantsByKey = new Map(
+            keysToRemove
+                .filter(isCompoundDimensionId)
+                .map((k) => [
+                    k,
+                    getCompoundDimensionIdVariants(k, this.metadata),
+                ])
         )
 
-        for (const key of metadataKeysToRemove) {
-            /* Snapshot alias variants before deletion so that subscribers
-             * registered under non-canonical keys are still notified.
-             * Context metadata is guaranteed present at this point because
-             * addMetadata has already run. */
-            const variantsToNotify = isCompoundDimensionId(key)
-                ? getCompoundDimensionIdVariants(key, this.metadata)
-                : []
+        for (const key of keysToRemove) {
             this.metadata.delete(key)
             this.notifySubscriber(key)
-            for (const variant of variantsToNotify) {
+            for (const variant of variantsByKey.get(key) ?? []) {
                 this.notifySubscriber(variant)
             }
         }

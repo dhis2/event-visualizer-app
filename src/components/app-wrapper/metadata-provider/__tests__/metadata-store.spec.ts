@@ -967,6 +967,49 @@ describe('MetadataStore — subscriber fan-out for compound key aliases', () => 
         expect(cbAlias).not.toHaveBeenCalled()
     })
 
+    it('does not throw when switching from a visualization that has compound keys whose context (program/stage) is not in the new visualization', () => {
+        // Regression test for: "No context metadata found for dimension with
+        // compound ID" when opening a second visualization whose program/stage
+        // differs from the first one.
+        //
+        // The bug: in the deletion loop, plain keys (e.g. old stage "oldStage")
+        // were deleted before compound keys that reference them (e.g.
+        // "oldStage.ou"), so the context lookup inside
+        // getCompoundDimensionIdVariants would fail.
+        const oldProgramId = 'oldProgram'
+        const oldStageId = 'oldStage'
+
+        // Simulate the store state left by a previous visualization that used
+        // a different program/stage than the inpatient visit fixture.
+        store.addMetadata(makeProgram(oldProgramId, oldStageId))
+        store.addMetadata(makeStage(oldStageId, oldProgramId))
+        store.addMetadata({
+            [`${oldStageId}.ou`]: {
+                id: `${oldStageId}.ou`,
+                name: 'Organisation unit',
+                dimensionType: 'ORGANISATION_UNIT',
+            },
+        })
+
+        // Now open a new visualization that uses a completely different program
+        // (eBAyeGv0exc / Zj7UnCAulEk). This must not throw.
+        expect(() => {
+            store.setVisualizationMetadata(
+                inpatientVisitVisualization as unknown as SavedVisualization
+            )
+        }).not.toThrow()
+
+        // The old program/stage and its compound keys must be gone
+        const snapshot = store.getMetadataSnapshot()
+        expect(snapshot[oldProgramId]).toBeUndefined()
+        expect(snapshot[oldStageId]).toBeUndefined()
+        expect(snapshot[`${oldStageId}.ou`]).toBeUndefined()
+
+        // The new visualization's keys must be present
+        expect(snapshot['Zj7UnCAulEk']).toBeDefined()
+        expect(snapshot['Zj7UnCAulEk.ou']).toBeDefined()
+    })
+
     it('notifies alias subscriber when item name changes via addMetadata', () => {
         // Set up program+stage context
         const programId = 'p1'
