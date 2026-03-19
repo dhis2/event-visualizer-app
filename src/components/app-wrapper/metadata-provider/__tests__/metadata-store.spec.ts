@@ -1,7 +1,6 @@
 import { expect, describe, it, beforeEach, vi } from 'vitest'
 import inpatientCasesVisualization from '../__fixtures__/visualization-inpatient-cases-last-quarter-case.json'
 import inpatientVisitVisualization from '../__fixtures__/visualization-inpatient-visit-overview-this-year-bo.json'
-import trackerProgramNoStageVisualization from '../__fixtures__/visualization-tracker-program-no-stage.json'
 import { getInitialMetadata } from '../initial-metadata'
 import { MetadataStore } from '../metadata-store'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
@@ -706,31 +705,6 @@ describe('MetadataStore', () => {
                 dimensionType: 'PERIOD',
             })
         })
-    })
-
-    it('does not throw when loading a tracker program (WITH_REGISTRATION) visualization without a programStage at root', () => {
-        // Regression test: a tracker program with multiple stages and an "ou"
-        // column that has no program/programStage on it caused
-        // getProgramDimensions to generate "programId.ou" compound keys that
-        // could not be canonicalized (no single stage to resolve to).
-        const metadataStore = new TestMetadataStore(
-            getInitialMetadata(),
-            rootOrgUnits
-        )
-
-        expect(() => {
-            metadataStore.setVisualizationMetadata(
-                trackerProgramNoStageVisualization as unknown as SavedVisualization
-            )
-        }).not.toThrow()
-
-        const snapshot = metadataStore.getMetadataSnapshot()
-        // Plain "ou" should be present (from getDefaultOrgUnitMetadata)
-        expect(snapshot['ou']).toBeDefined()
-        // No ambiguous programId-prefixed compound key for "ou" should exist
-        expect(snapshot['WSGAb5XwJ3Y.ou']).toBeUndefined()
-        // The data element column with a proper stage prefix should be present
-        expect(snapshot['edqlbukwRfQ.NPZPVg2rVh4']).toBeDefined()
     })
 })
 

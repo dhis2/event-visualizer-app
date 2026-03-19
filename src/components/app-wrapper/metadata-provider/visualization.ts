@@ -292,15 +292,8 @@ export const extractMetadataFromVisualization = (
             visualization.outputType
         ),
         getMainDimensions(visualization.outputType),
-        // Only generate program-prefixed dimension keys when a programStage is
-        // available. Without a stage the prefix would be the programId alone,
-        // which is an ambiguous compound key for tracker programs
-        // (WITH_REGISTRATION) that have multiple stages and cannot be
-        // canonicalized.
         getProgramDimensions(
-            visualization.programStage?.id
-                ? visualization.program?.id
-                : undefined,
+            visualization.program?.id,
             visualization.programStage?.id
         ),
         extractTrackedEntityTypeMetadata(transformedVisualization),
