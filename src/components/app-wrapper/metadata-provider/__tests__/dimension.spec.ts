@@ -3,7 +3,7 @@ import {
     isCompoundDimensionId,
     parseCompoundDimensionId,
     extractDimensionContextFromCompoundKey,
-    resolveKey,
+    resolveId,
 } from '../dimension'
 import type { MetadataMap } from '@types'
 
@@ -302,27 +302,25 @@ describe('compoundIdToIdentifier', () => {
     })
 })
 
-describe('resolveKey', () => {
+describe('resolveId', () => {
     it('returns a plain key unchanged', () => {
-        expect(resolveKey('dimensionId')).toBe('dimensionId')
+        expect(resolveId('dimensionId')).toBe('dimensionId')
     })
 
     it('returns a 2-segment key unchanged (already canonical)', () => {
-        expect(resolveKey('stageId.dimId')).toBe('stageId.dimId')
+        expect(resolveId('stageId.dimId')).toBe('stageId.dimId')
     })
 
     it('drops the first segment of a 3-segment key', () => {
-        expect(resolveKey('programId.stageId.dimId')).toBe('stageId.dimId')
+        expect(resolveId('programId.stageId.dimId')).toBe('stageId.dimId')
     })
 
     it('handles a 3-segment key with a repetition index on the stage segment', () => {
         // [n] contains no dots, so the segment count is still 3
-        expect(resolveKey('programId.stageId[0].dimId')).toBe(
-            'stageId[0].dimId'
-        )
+        expect(resolveId('programId.stageId[0].dimId')).toBe('stageId[0].dimId')
     })
 
     it('handles a 2-segment key with a repetition index', () => {
-        expect(resolveKey('stageId[1].dimId')).toBe('stageId[1].dimId')
+        expect(resolveId('stageId[1].dimId')).toBe('stageId[1].dimId')
     })
 })

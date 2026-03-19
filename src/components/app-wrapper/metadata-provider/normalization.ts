@@ -1,7 +1,7 @@
 import {
     extractDimensionContextFromCompoundKey,
     isCompoundDimensionId,
-    resolveKey,
+    resolveId,
 } from './dimension'
 import { isDimensionMetadataItem } from '@modules/metadata'
 import { isObject, isPopulatedString } from '@modules/validation'
@@ -12,20 +12,20 @@ import type {
     MetadataMap,
 } from '@types'
 
-export const extractInputKey = (
+export const extractInputId = (
     item: MetadataInputItem | string,
     key?: string
 ): string => {
     if (isPopulatedString(key)) {
         return key
     }
-    const id = isObject(item) ? item.uid ?? item.id : undefined
+    const itemId = isObject(item) ? item.uid ?? item.id : undefined
 
-    if (!id) {
+    if (!itemId) {
         throw new Error('Invalid metadata input: no ID field present')
     }
 
-    return id
+    return itemId
 }
 
 export const normalizeMetadataInputItem = (
@@ -38,7 +38,7 @@ export const normalizeMetadataInputItem = (
             return { id: key, name: item }
         } else {
             throw new Error(
-                'Invalid metadata input: string value without a key'
+                'Invalid metadata input: string value without an ID'
             )
         }
     }
@@ -47,35 +47,35 @@ export const normalizeMetadataInputItem = (
     delete rest.id
     delete rest.uid
 
-    const inputKey = extractInputKey(item, key)
+    const inputId = extractInputId(item, key)
 
     // Canonicalize to 2-segment form if needed (3-segment → drop program prefix)
-    const resolvedKey = isCompoundDimensionId(inputKey)
-        ? resolveKey(inputKey)
-        : inputKey
-    const existingItem = existingMetadataMap.get(resolvedKey)
+    const canonicalId = isCompoundDimensionId(inputId)
+        ? resolveId(inputId)
+        : inputId
+    const existingItem = existingMetadataMap.get(canonicalId)
     const resolvedName = displayName ?? name ?? existingItem?.name
 
     if (!resolvedName) {
         throw new Error(
-            `New metadata item "${resolvedKey}" does not have a name`
+            `New metadata item "${canonicalId}" does not have a name`
         )
     }
 
     const resolvedItem = {
-        id: resolvedKey,
+        id: canonicalId,
         name: resolvedName,
         ...rest,
     }
 
     if (isDimensionMetadataItem(resolvedItem)) {
-        // Enrich with programId/programStageId from compound key context.
-        const dimensionContext = isCompoundDimensionId(inputKey)
+        // Enrich with programId/programStageId from compound ID context.
+        const dimensionContext = isCompoundDimensionId(inputId)
             ? extractDimensionContextFromCompoundKey(
-                  inputKey,
+                  inputId,
                   existingMetadataMap
               )
-            : { dimensionId: resolvedKey }
+            : { dimensionId: canonicalId }
         Object.assign(resolvedItem, dimensionContext)
     }
 
@@ -83,7 +83,7 @@ export const normalizeMetadataInputItem = (
 }
 
 /**
- * Returns the set of canonical (normalized) keys that a metadata input map
+ * Returns the set of canonical (normalized) IDs that a metadata input map
  * would produce when added to the given metadata map. Uses the provided map
  * for compound ID resolution, so this should be called after context metadata
  * (programs, stages) has already been added.
@@ -92,19 +92,19 @@ export const getCanonicalKeysForInput = (
     metadataInput: MetadataInputMap,
     existingMetadataMap: MetadataMap
 ): Set<string> => {
-    const canonicalKeys = new Set<string>()
-    for (const [key, value] of Object.entries(metadataInput)) {
+    const canonicalIds = new Set<string>()
+    for (const [id, value] of Object.entries(metadataInput)) {
         try {
             const normalized = normalizeMetadataInputItem(
                 value as MetadataInputItem,
                 existingMetadataMap,
-                key
+                id
             )
-            canonicalKeys.add(normalized.id)
+            canonicalIds.add(normalized.id)
         } catch {
-            // If normalization fails, fall back to the raw input key
-            canonicalKeys.add(key)
+            // If normalization fails, fall back to the raw input ID
+            canonicalIds.add(id)
         }
     }
-    return canonicalKeys
+    return canonicalIds
 }

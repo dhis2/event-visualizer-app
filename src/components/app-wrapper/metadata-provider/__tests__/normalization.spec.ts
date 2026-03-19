@@ -31,10 +31,10 @@ describe('normalizeMetadataInputItem', () => {
             })
         })
 
-        it('throws error for string without key', () => {
+        it('throws error for string without an ID', () => {
             expect(() => {
                 normalizeMetadataInputItem('Test Name', mockMetadataMap)
-            }).toThrow('Invalid metadata input: string value without a key')
+            }).toThrow('Invalid metadata input: string value without an ID')
         })
     })
 

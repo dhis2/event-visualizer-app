@@ -17,24 +17,24 @@ export const isCompoundDimensionId = (input: unknown): input is string =>
     isPopulatedString(input) && input.includes('.')
 
 export const parseCompoundDimensionId = (
-    compoundKey: string
+    compoundId: string
 ): { ids: string[]; repetitionIndex?: number } => {
-    if (!isPopulatedString(compoundKey)) {
+    if (!isPopulatedString(compoundId)) {
         throw new Error('Dimension ID input is not a populated string')
     }
 
     // Extract repetition index pattern `[<integer>]` from anywhere in the input string (applies to programStage)
-    const repetitionMatch = REPETITION_INDEX_PATTERN.exec(compoundKey)
+    const repetitionMatch = REPETITION_INDEX_PATTERN.exec(compoundId)
     const processedInput = repetitionMatch
-        ? compoundKey.replace(REPETITION_INDEX_PATTERN, '')
-        : compoundKey
+        ? compoundId.replace(REPETITION_INDEX_PATTERN, '')
+        : compoundId
     const repetitionIndex = repetitionMatch
         ? Number(repetitionMatch[1])
         : undefined
     const ids = processedInput.split('.')
 
     if (!isPopulatedString(ids[ids.length - 1])) {
-        throw new Error(`No valid dimension ID found in "${compoundKey}"`)
+        throw new Error(`No valid dimension ID found in "${compoundId}"`)
     }
 
     if (ids.length > 3) {
@@ -45,7 +45,7 @@ export const parseCompoundDimensionId = (
 
     if (ids.some((id) => !isPopulatedString(id))) {
         throw new Error(
-            `Invalid dimension ID format: empty ID found in "${compoundKey}"`
+            `Invalid dimension ID format: empty ID found in "${compoundId}"`
         )
     }
 
@@ -53,32 +53,32 @@ export const parseCompoundDimensionId = (
 }
 
 /**
- * Resolves a compound dimension key to its canonical form:
+ * Resolves a compound dimension ID to its canonical form:
  * - 3-segment (programId.stageId.dimId) → stageId.dimId
- * - 2-segment or plain key → unchanged
+ * - 2-segment or plain ID → unchanged
  */
-export const resolveKey = (key: string): string => {
-    const first = key.indexOf('.')
+export const resolveId = (id: string): string => {
+    const first = id.indexOf('.')
     if (first === -1) {
-        return key // plain key
+        return id // plain ID
     }
-    const second = key.indexOf('.', first + 1)
+    const second = id.indexOf('.', first + 1)
     if (second === -1) {
-        return key // 2-segment → already canonical
+        return id // 2-segment → already canonical
     }
-    return key.slice(first + 1) // 3-segment → drop first part
+    return id.slice(first + 1) // 3-segment → drop first part
 }
 
 type ResolveIdentifierFromContextMetadataArgs = {
     unknownId: string
-    compoundKey: string
+    compoundId: string
     identifier: DimensionIdentifier
     metadataMap: MetadataMap
 }
 
 const resolveIdentifierFromContextMetadata = ({
     unknownId,
-    compoundKey,
+    compoundId,
     identifier,
     metadataMap,
 }: ResolveIdentifierFromContextMetadataArgs): void => {
@@ -86,7 +86,7 @@ const resolveIdentifierFromContextMetadata = ({
 
     if (!unknownMetadata) {
         throw new Error(
-            `No context metadata found for dimension with compound ID "${compoundKey}"`
+            `No context metadata found for dimension with compound ID "${compoundId}"`
         )
     }
 
@@ -108,20 +108,20 @@ const resolveIdentifierFromContextMetadata = ({
 
 /**
  * Extracts dimension context (programId, programStageId, dimensionId,
- * repetitionIndex) from a compound key. For 2-segment keys, consults the
+ * repetitionIndex) from a compound ID. For 2-segment IDs, consults the
  * metadata map to determine whether the first segment is a program or stage.
  *
- * Used during metadata field enrichment only — not for key canonicalization.
+ * Used during metadata field enrichment only — not for ID canonicalization.
  */
 export const extractDimensionContextFromCompoundKey = (
-    compoundKey: string,
+    compoundId: string,
     metadataMap: MetadataMap
 ): DimensionIdentifier => {
-    const { ids, repetitionIndex } = parseCompoundDimensionId(compoundKey)
+    const { ids, repetitionIndex } = parseCompoundDimensionId(compoundId)
     const plainDimensionId = ids.pop()
 
     if (!plainDimensionId) {
-        throw new Error(`No valid dimension ID found in "${compoundKey}"`)
+        throw new Error(`No valid dimension ID found in "${compoundId}"`)
     }
 
     const identifier: DimensionIdentifier = {
@@ -139,7 +139,7 @@ export const extractDimensionContextFromCompoundKey = (
     } else if (ids.length === 1) {
         resolveIdentifierFromContextMetadata({
             unknownId: ids[0],
-            compoundKey,
+            compoundId,
             identifier,
             metadataMap,
         })

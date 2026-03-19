@@ -1,10 +1,10 @@
 import { extractMetadataFromAnalyticsResponse } from './analytics-data'
-import { isCompoundDimensionId, resolveKey } from './dimension'
+import { isCompoundDimensionId, resolveId } from './dimension'
 import { smartMergeWithChangeDetection } from './merge-utils'
 import {
     getCanonicalKeysForInput,
     normalizeMetadataInputItem,
-    extractInputKey,
+    extractInputId,
 } from './normalization'
 import { extractMetadataFromVisualization } from './visualization'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
@@ -43,7 +43,7 @@ const isItemMatch = (item: MetadataItem, token: string) =>
 export class MetadataStore {
     private readonly metadata: MetadataMap = new Map()
     private subscribers = new Map<string, Set<Subscriber>>()
-    private initialMetadataKeys = new Set<string>()
+    private initialMetadataIds = new Set<string>()
 
     constructor(
         initialMetadataItems: InitialMetadataItems,
@@ -81,22 +81,22 @@ export class MetadataStore {
         const visualizationMetadata =
             extractMetadataFromVisualization(visualization)
 
-        const previousKeys = new Set(this.metadata.keys())
+        const previousIds = new Set(this.metadata.keys())
 
-        // Add new items before computing retained keys, so compound IDs
+        // Add new items before computing retained IDs, so compound IDs
         // can be canonicalized against the updated map.
         this.addMetadata(visualizationMetadata)
 
-        const nextKeys = new Set([
+        const nextIds = new Set([
             ...getCanonicalKeysForInput(visualizationMetadata, this.metadata),
-            ...this.initialMetadataKeys,
+            ...this.initialMetadataIds,
         ])
 
-        const keysToRemove = [...previousKeys].filter((k) => !nextKeys.has(k))
+        const idsToRemove = [...previousIds].filter((id) => !nextIds.has(id))
 
-        for (const key of keysToRemove) {
-            this.metadata.delete(key)
-            this.notifySubscriber(key)
+        for (const id of idsToRemove) {
+            this.metadata.delete(id)
+            this.notifySubscriber(id)
         }
     }
 
@@ -107,35 +107,35 @@ export class MetadataStore {
         this.addMetadata(extractMetadataFromAnalyticsResponse(items, headers))
     }
 
-    getMetadataItem(key: string): MetadataItem | undefined {
-        return this.metadata.get(resolveKey(key))
+    getMetadataItem(id: string): MetadataItem | undefined {
+        return this.metadata.get(resolveId(id))
     }
 
-    getMetadataItems(keys: string[]): Record<string, MetadataItem> {
-        return keys.reduce((metadataStoreItems, key) => {
-            const item = this.getMetadataItem(key)
+    getMetadataItems(ids: string[]): Record<string, MetadataItem> {
+        return ids.reduce((metadataStoreItems, id) => {
+            const item = this.getMetadataItem(id)
             if (item) {
-                metadataStoreItems[key] = item
+                metadataStoreItems[id] = item
             }
             return metadataStoreItems
         }, {})
     }
 
-    subscribe(key: string | null | undefined, cb: Subscriber) {
-        if (!isPopulatedString(key)) {
+    subscribe(id: string | null | undefined, cb: Subscriber) {
+        if (!isPopulatedString(id)) {
             return noop
         }
-        // Resolve to canonical key at subscription time.
-        const canonicalKey = resolveKey(key)
-        if (!this.subscribers.has(canonicalKey)) {
-            this.subscribers.set(canonicalKey, new Set())
+        // Resolve to canonical ID at subscription time.
+        const canonicalId = resolveId(id)
+        if (!this.subscribers.has(canonicalId)) {
+            this.subscribers.set(canonicalId, new Set())
         }
-        this.subscribers.get(canonicalKey)!.add(cb)
+        this.subscribers.get(canonicalId)!.add(cb)
 
         return () => {
-            this.subscribers.get(canonicalKey)!.delete(cb)
-            if (this.subscribers.get(canonicalKey)!.size === 0) {
-                this.subscribers.delete(canonicalKey)
+            this.subscribers.get(canonicalId)!.delete(cb)
+            if (this.subscribers.get(canonicalId)!.size === 0) {
+                this.subscribers.delete(canonicalId)
             }
         }
     }
@@ -143,11 +143,11 @@ export class MetadataStore {
     /**
      * Adds or updates metadata items in the store, notifying subscribers only
      * for items that actually changed. Plain items (programs, stages) are
-     * processed before compound-key items so context is available for
+     * processed before compound-ID items so context is available for
      * field enrichment.
      */
     addMetadata(metadataInput: MetadataInput) {
-        const updatedMetadataKeys = new Set<string>()
+        const updatedIds = new Set<string>()
         const deferredCompoundMetadataInputs = new Map<
             string,
             MetadataInputItem | string
@@ -155,34 +155,33 @@ export class MetadataStore {
 
         const processMetadataItem = (
             metadataInputItem: MetadataInputItem | string,
-            key?: string,
+            id?: string,
             { deferred = false }: { deferred?: boolean } = {}
         ) => {
-            const inputKey = extractInputKey(metadataInputItem, key)
+            const inputId = extractInputId(metadataInputItem, id)
 
-            if (!deferred && isCompoundDimensionId(inputKey)) {
-                deferredCompoundMetadataInputs.set(inputKey, metadataInputItem)
+            if (!deferred && isCompoundDimensionId(inputId)) {
+                deferredCompoundMetadataInputs.set(inputId, metadataInputItem)
                 return
             }
 
             const normalizedStoreItem = normalizeMetadataInputItem(
                 metadataInputItem,
                 this.metadata,
-                key
+                id
             )
 
-            const normalizedStoreKey = normalizedStoreItem.id
+            const normalizedId = normalizedStoreItem.id
 
-            const existingMetadataStoreItem =
-                this.metadata.get(normalizedStoreKey)
+            const existingMetadataStoreItem = this.metadata.get(normalizedId)
 
             const { hasChanges, mergedItem } = smartMergeWithChangeDetection(
                 existingMetadataStoreItem,
                 normalizedStoreItem
             )
             if (hasChanges) {
-                this.metadata.set(normalizedStoreKey, mergedItem)
-                updatedMetadataKeys.add(normalizedStoreKey)
+                this.metadata.set(normalizedId, mergedItem)
+                updatedIds.add(normalizedId)
             }
         }
 
@@ -195,28 +194,28 @@ export class MetadataStore {
             if (isMetadataInputItem(metadataInput)) {
                 processMetadataItem(metadataInput)
             } else {
-                Object.entries(metadataInput).forEach(([key, value]) => {
-                    processMetadataItem(value, key)
+                Object.entries(metadataInput).forEach(([id, value]) => {
+                    processMetadataItem(value, id)
                 })
             }
         }
 
-        for (const [key, item] of deferredCompoundMetadataInputs) {
-            processMetadataItem(item, key, { deferred: true })
+        for (const [id, item] of deferredCompoundMetadataInputs) {
+            processMetadataItem(item, id, { deferred: true })
         }
 
-        this.notifySubscribers(updatedMetadataKeys)
+        this.notifySubscribers(updatedIds)
     }
 
-    private notifySubscribers(keys: Set<string>) {
-        for (const key of keys) {
-            this.notifySubscriber(key)
+    private notifySubscribers(ids: Set<string>) {
+        for (const id of ids) {
+            this.notifySubscriber(id)
         }
     }
 
-    private notifySubscriber(key: string) {
-        if (this.subscribers.has(key)) {
-            this.subscribers.get(key)!.forEach((callback) => callback())
+    private notifySubscriber(id: string) {
+        if (this.subscribers.has(id)) {
+            this.subscribers.get(id)!.forEach((callback) => callback())
         }
     }
 
@@ -234,8 +233,8 @@ export class MetadataStore {
               }, initialMetadataItems)
             : initialMetadataItems
 
-        Object.keys(initialMetadataWithRootOrgUnits).forEach((key) => {
-            this.initialMetadataKeys.add(key)
+        Object.keys(initialMetadataWithRootOrgUnits).forEach((id) => {
+            this.initialMetadataIds.add(id)
         })
 
         this.addMetadata(initialMetadataWithRootOrgUnits as MetadataInput)
