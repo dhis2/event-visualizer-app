@@ -102,6 +102,13 @@ yarn generate-types # Regenerate DHIS2 API types from OpenAPI specs
 
 ## Code Conventions
 
+### Code Style
+
+-   **Comments**: Describe what the code does and why, not the journey that led to it. Avoid
+    comments that explain rejected alternatives, implementation history, or defensive rationale.
+    Keep inline comments short (one line where possible); use JSDoc only for public API surfaces
+    that benefit from a brief description.
+
 ### TypeScript & Imports
 
 -   **Strict mode**: TypeScript strict mode is enabled in tsconfig
@@ -371,33 +378,32 @@ metadata provider. Understanding it is essential when working with any program d
 
 ### Program types
 
--   **Event programs** (`programType: 'WITHOUT_REGISTRATION'`) always have **exactly one stage**.
-    A 2-part key `programId.dimensionId` is therefore unambiguous — the stage can be inferred from
-    `programStages[0].id`.
+-   **Event programs** (`programType: 'WITHOUT_REGISTRATION'`) always have exactly one stage.
 -   **Tracker programs** (`WITH_REGISTRATION`) may have many stages. A bare `programId.dimensionId`
-    is **ambiguous and invalid** for tracker programs. Only `stageId.dimensionId` or the fully
-    explicit `programId.stageId.dimensionId` form should be used.
+    key is ambiguous for tracker programs — prefer `stageId.dimensionId` or the fully explicit
+    `programId.stageId.dimensionId` form.
 -   `ProgramStage` always carries a `program: { id: string }` back-reference, so the owning
     program can be resolved from a stage without a separate lookup.
 
 ### Compound ID forms
 
-| Form                            | Example                      | When valid                              |
-| ------------------------------- | ---------------------------- | --------------------------------------- |
-| `stageId.dimensionId`           | `Zj7UnCAulEk.ou`             | Always — this is the **canonical** form |
-| `programId.dimensionId`         | `eBAyeGv0exc.ou`             | Event programs only                     |
-| `programId.stageId.dimensionId` | `eBAyeGv0exc.Zj7UnCAulEk.ou` | Any program — fully explicit            |
+| Form                            | Example                      | When valid                                                                                     |
+| ------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------- |
+| `stageId.dimensionId`           | `Zj7UnCAulEk.ou`             | Always — this is the **canonical** form                                                        |
+| `programId.dimensionId`         | `eBAyeGv0exc.ou`             | Enrollment-level fixed dimensions in tracker programs (e.g. enrollment date, org unit, status) |
+| `programId.stageId.dimensionId` | `eBAyeGv0exc.Zj7UnCAulEk.ou` | Any program — collapsed to canonical on ingest                                                 |
 
 A repetition index `[n]` may be appended to the stage segment: `ps1[0].ou`.
 
-The **canonical** form is always `stageId.dimensionId`. Items are stored and compared in canonical
-form. The metadata provider (`src/components/app-wrapper/metadata-provider/`) implements alias
-resolution so that lookups with any valid form return the correct item.
+The **canonical** form is always `stageId.dimensionId`. 3-segment keys are collapsed to canonical
+form on ingest via pure string manipulation (drop the first segment) — no metadata map lookup
+required. `programId.dimensionId` keys are stored as-is because they are semantically tied to the
+program (enrollment scope), not to any stage.
 
 When adding metadata to the store in a **single batch** (via `addMetadata`), plain items (programs,
-stages) are always processed before compound-key items, so context metadata is guaranteed to be
-present. When adding items **one at a time**, you must add programs and stages before any dimensions
-that reference them, otherwise canonicalization will fail due to missing context.
+stages) are always processed before compound-key items, so context is available for field
+enrichment. When adding items **one at a time**, add programs and stages before any dimensions that
+reference them.
 
 ### `DimensionMetadataItem` key fields
 
