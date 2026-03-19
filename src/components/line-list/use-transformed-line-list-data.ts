@@ -97,8 +97,7 @@ const getHeaderDimensionId = (
     ) {
         defaultMetadata[formattedDimensionId] = getProgramDimensions(
             // TODO: remove initialisation to '' and fix args order in function
-            programId ?? '',
-            programStageId
+            programId ?? ''
         )[formattedDimensionId]
     }
 

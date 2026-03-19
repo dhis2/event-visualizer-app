@@ -218,30 +218,24 @@ const prefixDimensionId = (dimensionId: string, prefix?: string): string =>
     prefix ? `${prefix}.${dimensionId}` : dimensionId
 
 export const getProgramDimensions = (
-    programId?: string,
-    programStageId?: string
-): DimensionRecordObject => {
-    // Use programStageId as key prefix when available (canonical form: stageId.dimensionId),
-    // otherwise fall back to programId
-    const keyPrefix = programStageId ?? programId
-    return {
-        [prefixDimensionId('ou', keyPrefix)]: {
-            id: prefixDimensionId('ou', keyPrefix),
-            dimensionType: 'ORGANISATION_UNIT',
-            name: getDefaultOrgUnitLabel(),
-        },
-        [prefixDimensionId('eventStatus', keyPrefix)]: {
-            id: prefixDimensionId('eventStatus', keyPrefix),
-            dimensionType: 'STATUS',
-            name: i18n.t('Event status'),
-        },
-        [prefixDimensionId('programStatus', keyPrefix)]: {
-            id: prefixDimensionId('programStatus', keyPrefix),
-            dimensionType: 'STATUS',
-            name: i18n.t('Program status'),
-        },
-    }
-}
+    programId?: string
+): DimensionRecordObject => ({
+    [prefixDimensionId('ou', programId)]: {
+        id: prefixDimensionId('ou', programId),
+        dimensionType: 'ORGANISATION_UNIT',
+        name: getDefaultOrgUnitLabel(),
+    },
+    [prefixDimensionId('eventStatus', programId)]: {
+        id: prefixDimensionId('eventStatus', programId),
+        dimensionType: 'STATUS',
+        name: i18n.t('Event status'),
+    },
+    [prefixDimensionId('programStatus', programId)]: {
+        id: prefixDimensionId('programStatus', programId),
+        dimensionType: 'STATUS',
+        name: i18n.t('Program status'),
+    },
+})
 
 export const transformDimensions = (
     dimensions: DimensionArray,

@@ -92,11 +92,8 @@ const resolveIdentifierFromContextMetadata = ({
         }
     } else if (isProgramStageMetadataItem(unknownMetadata)) {
         identifier.programStageId = unknownId
-        const resolvedProgramId =
+        identifier.programId =
             unknownMetadata.program?.id ?? identifier.programId
-        if (resolvedProgramId) {
-            identifier.programId = resolvedProgramId
-        }
     } else {
         throw new Error(
             `Metadata item with ID "${unknownMetadata.id}" is not a program or program stage`
