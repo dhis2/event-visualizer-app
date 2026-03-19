@@ -4,6 +4,7 @@ import { smartMergeWithChangeDetection } from './merge-utils'
 import {
     getCanonicalKeysForInput,
     normalizeMetadataInputItem,
+    extractInputKey,
 } from './normalization'
 import { extractMetadataFromVisualization } from './visualization'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
@@ -157,11 +158,7 @@ export class MetadataStore {
             key?: string,
             { deferred = false }: { deferred?: boolean } = {}
         ) => {
-            const inputKey =
-                key ??
-                (isObject(metadataInputItem) && 'id' in metadataInputItem
-                    ? metadataInputItem.id
-                    : undefined)
+            const inputKey = extractInputKey(metadataInputItem, key)
 
             if (!deferred && isCompoundDimensionId(inputKey)) {
                 deferredCompoundMetadataInputs.set(inputKey, metadataInputItem)

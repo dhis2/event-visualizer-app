@@ -4,13 +4,29 @@ import {
     resolveKey,
 } from './dimension'
 import { isDimensionMetadataItem } from '@modules/metadata'
-import { isPopulatedString } from '@modules/validation'
+import { isObject, isPopulatedString } from '@modules/validation'
 import type {
     MetadataInputItem,
     MetadataInputMap,
     NormalizedMetadataInputItem,
     MetadataMap,
 } from '@types'
+
+export const extractInputKey = (
+    item: MetadataInputItem | string,
+    key?: string
+): string => {
+    if (isPopulatedString(key)) {
+        return key
+    }
+    const id = isObject(item) ? item.uid ?? item.id : undefined
+
+    if (!id) {
+        throw new Error('Invalid metadata input: no ID field present')
+    }
+
+    return id
+}
 
 export const normalizeMetadataInputItem = (
     item: MetadataInputItem | string,
@@ -27,14 +43,11 @@ export const normalizeMetadataInputItem = (
         }
     }
 
-    const { id, uid, name, displayName, ...rest } = item
+    const { name, displayName, ...rest } = item
+    delete rest.id
+    delete rest.uid
 
-    // Prefer key because this has the compound ID
-    const inputKey = key ?? uid ?? id
-
-    if (!isPopulatedString(inputKey)) {
-        throw new Error('Invalid metadata input: no ID field present')
-    }
+    const inputKey = extractInputKey(item, key)
 
     // Canonicalize to 2-segment form if needed (3-segment → drop program prefix)
     const resolvedKey = isCompoundDimensionId(inputKey)
