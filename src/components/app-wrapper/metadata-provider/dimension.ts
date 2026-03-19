@@ -171,13 +171,10 @@ export const normalizeCompoundDimensionId = (
 export const getCompoundDimensionIdVariants = (
     compoundKey: string,
     metadataMap: MetadataMap
-): string[] => {
-    const identifier = compoundIdToIdentifier(compoundKey, metadataMap)
-    const canonicalKey = getCanonicalCompoundDimensionId(identifier)
-    const aliases = computeCompoundIdAliasesFromDimensionIdentifier(identifier)
-
-    return Array.from(new Set([canonicalKey, ...aliases]))
-}
+): string[] =>
+    computeCompoundIdAliasesFromDimensionIdentifier(
+        compoundIdToIdentifier(compoundKey, metadataMap)
+    )
 
 export const computeCompoundIdAliasesFromDimensionIdentifier = (
     identifier: DimensionIdentifier
