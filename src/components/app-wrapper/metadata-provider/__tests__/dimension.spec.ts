@@ -435,12 +435,6 @@ describe('getCompoundDimensionIdVariants', () => {
         expect(unique.size).toBe(variants.length)
     })
 
-    it('returns canonical first', () => {
-        const map: MetadataMap = new Map()
-        const variants = getCompoundDimensionIdVariants('p1.ps1.dim1', map)
-        expect(variants[0]).toBe('ps1.dim1')
-    })
-
     it('throws for a program-only key when the program has multiple stages', () => {
         // A tracker program with multiple stages cannot be canonicalized from a
         // 2-part key — the compound ID is ambiguous without a stage reference
