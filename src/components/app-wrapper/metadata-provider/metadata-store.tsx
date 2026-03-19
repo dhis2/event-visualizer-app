@@ -43,7 +43,7 @@ const isItemMatch = (item: MetadataItem, token: string) =>
 export class MetadataStore {
     private readonly metadata: MetadataMap = new Map()
     private subscribers = new Map<string, Set<Subscriber>>()
-    private initialMetadataIds = new Set<string>()
+    private readonly initialMetadataIds = new Set<string>()
 
     constructor(
         initialMetadataItems: InitialMetadataItems,
@@ -155,10 +155,10 @@ export class MetadataStore {
 
         const processMetadataItem = (
             metadataInputItem: MetadataInputItem | string,
-            id?: string,
+            key?: string,
             { deferred = false }: { deferred?: boolean } = {}
         ) => {
-            const inputId = extractInputId(metadataInputItem, id)
+            const inputId = extractInputId(metadataInputItem, key)
 
             if (!deferred && isCompoundDimensionId(inputId)) {
                 deferredCompoundMetadataInputs.set(inputId, metadataInputItem)
@@ -168,7 +168,7 @@ export class MetadataStore {
             const normalizedStoreItem = normalizeMetadataInputItem(
                 metadataInputItem,
                 this.metadata,
-                id
+                key
             )
 
             const normalizedId = normalizedStoreItem.id
