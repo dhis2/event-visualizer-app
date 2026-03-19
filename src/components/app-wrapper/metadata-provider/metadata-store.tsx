@@ -1,8 +1,5 @@
 import { extractMetadataFromAnalyticsResponse } from './analytics-data'
-import {
-    getCompoundDimensionIdVariants,
-    isCompoundDimensionId,
-} from './dimension'
+import { isCompoundDimensionId, resolveKey } from './dimension'
 import { smartMergeWithChangeDetection } from './merge-utils'
 import {
     getCanonicalKeysForInput,
@@ -80,20 +77,15 @@ export class MetadataStore {
     }
 
     setVisualizationMetadata(visualization: SavedVisualization) {
-        /* Strategy: add new metadata first, then remove stale keys.
-         * This keeps rerenders minimal — unchanged items are skipped by
-         * addMetadata, and only truly removed keys notify their subscribers. */
         const visualizationMetadata =
             extractMetadataFromVisualization(visualization)
 
         const previousKeys = new Set(this.metadata.keys())
 
-        // Add new visualization metadata. Programs/stages are processed before
-        // compound keys, so context is present for compound ID resolution.
+        // Add new items before computing retained keys, so compound IDs
+        // can be canonicalized against the updated map.
         this.addMetadata(visualizationMetadata)
 
-        // Keys retained by the new visualization (resolved after addMetadata so
-        // compound IDs can be canonicalized against the updated map).
         const nextKeys = new Set([
             ...getCanonicalKeysForInput(visualizationMetadata, this.metadata),
             ...this.initialMetadataKeys,
@@ -101,24 +93,9 @@ export class MetadataStore {
 
         const keysToRemove = [...previousKeys].filter((k) => !nextKeys.has(k))
 
-        // Resolve compound key variants before any deletion. Plain context keys
-        // (programs, stages) may also be stale and would be deleted first, making
-        // subsequent variant lookups fail if we resolved lazily inside the loop.
-        const variantsByKey = new Map(
-            keysToRemove
-                .filter(isCompoundDimensionId)
-                .map((k) => [
-                    k,
-                    getCompoundDimensionIdVariants(k, this.metadata),
-                ])
-        )
-
         for (const key of keysToRemove) {
             this.metadata.delete(key)
             this.notifySubscriber(key)
-            for (const variant of variantsByKey.get(key) ?? []) {
-                this.notifySubscriber(variant)
-            }
         }
     }
 
@@ -130,31 +107,7 @@ export class MetadataStore {
     }
 
     getMetadataItem(key: string): MetadataItem | undefined {
-        const item = this.metadata.get(key)
-
-        if (item) {
-            return item
-        }
-
-        if (!isCompoundDimensionId(key)) {
-            return undefined
-        }
-
-        let possibleKeys: string[]
-        try {
-            possibleKeys = getCompoundDimensionIdVariants(key, this.metadata)
-        } catch {
-            return undefined
-        }
-
-        for (const possibleKey of possibleKeys) {
-            const potentialItem = this.metadata.get(possibleKey)
-            if (potentialItem) {
-                return potentialItem
-            }
-        }
-
-        return undefined
+        return this.metadata.get(resolveKey(key))
     }
 
     getMetadataItems(keys: string[]): Record<string, MetadataItem> {
@@ -171,30 +124,29 @@ export class MetadataStore {
         if (!isPopulatedString(key)) {
             return noop
         }
-        if (!this.subscribers.has(key)) {
-            this.subscribers.set(key, new Set())
+        // Resolve to canonical key at subscription time.
+        const canonicalKey = resolveKey(key)
+        if (!this.subscribers.has(canonicalKey)) {
+            this.subscribers.set(canonicalKey, new Set())
         }
-        this.subscribers.get(key)!.add(cb)
+        this.subscribers.get(canonicalKey)!.add(cb)
 
         return () => {
-            this.subscribers.get(key)!.delete(cb)
-            if (this.subscribers.get(key)!.size === 0) {
-                this.subscribers.delete(key)
+            this.subscribers.get(canonicalKey)!.delete(cb)
+            if (this.subscribers.get(canonicalKey)!.size === 0) {
+                this.subscribers.delete(canonicalKey)
             }
         }
     }
 
     /**
-     * Adds or updates metadata items in the store.
-     * Handles validation, shallow equality, and property removal detection in a single pass.
-     * Notifies subscribers only if the item actually changed.
+     * Adds or updates metadata items in the store, notifying subscribers only
+     * for items that actually changed. Plain items (programs, stages) are
+     * processed before compound-key items so context is available for
+     * field enrichment.
      */
     addMetadata(metadataInput: MetadataInput) {
-        // Track keys of items that were actually updated
         const updatedMetadataKeys = new Set<string>()
-        /* Compound dimension keys need context metadata to be processed correctly,
-         * so process plain keys first (programs, stages, trackedEntityTypes),
-         * then process deferred compound keys. */
         const deferredCompoundMetadataInputs = new Map<
             string,
             MetadataInputItem | string
@@ -260,25 +212,7 @@ export class MetadataStore {
     }
 
     private notifySubscribers(keys: Set<string>) {
-        const keysToNotify = new Set<string>()
-
         for (const key of keys) {
-            keysToNotify.add(key)
-
-            if (isCompoundDimensionId(key)) {
-                const variants = getCompoundDimensionIdVariants(
-                    key,
-                    this.metadata
-                )
-                variants.forEach((variantKey) => {
-                    if (this.subscribers.has(variantKey)) {
-                        keysToNotify.add(variantKey)
-                    }
-                })
-            }
-        }
-
-        for (const key of keysToNotify) {
             this.notifySubscriber(key)
         }
     }

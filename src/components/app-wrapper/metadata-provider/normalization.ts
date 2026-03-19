@@ -1,7 +1,7 @@
 import {
-    compoundIdToIdentifier,
-    getCanonicalCompoundDimensionId,
+    extractDimensionContextFromCompoundKey,
     isCompoundDimensionId,
+    resolveKey,
 } from './dimension'
 import { isDimensionMetadataItem } from '@modules/metadata'
 import { isPopulatedString } from '@modules/validation'
@@ -36,11 +36,9 @@ export const normalizeMetadataInputItem = (
         throw new Error('Invalid metadata input: no ID field present')
     }
 
-    const compoundIdentifier = isCompoundDimensionId(inputKey)
-        ? compoundIdToIdentifier(inputKey, existingMetadataMap)
-        : undefined
-    const resolvedKey = compoundIdentifier
-        ? getCanonicalCompoundDimensionId(compoundIdentifier)
+    // Canonicalize to 2-segment form if needed (3-segment → drop program prefix)
+    const resolvedKey = isCompoundDimensionId(inputKey)
+        ? resolveKey(inputKey)
         : inputKey
     const existingItem = existingMetadataMap.get(resolvedKey)
     const resolvedName = displayName ?? name ?? existingItem?.name
@@ -58,10 +56,14 @@ export const normalizeMetadataInputItem = (
     }
 
     if (isDimensionMetadataItem(resolvedItem)) {
-        Object.assign(
-            resolvedItem,
-            compoundIdentifier ?? { dimensionId: resolvedKey }
-        )
+        // Enrich with programId/programStageId from compound key context.
+        const dimensionContext = isCompoundDimensionId(inputKey)
+            ? extractDimensionContextFromCompoundKey(
+                  inputKey,
+                  existingMetadataMap
+              )
+            : { dimensionId: resolvedKey }
+        Object.assign(resolvedItem, dimensionContext)
     }
 
     return resolvedItem

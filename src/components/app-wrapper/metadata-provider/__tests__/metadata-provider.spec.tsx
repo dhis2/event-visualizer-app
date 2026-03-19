@@ -492,7 +492,7 @@ describe('MetadataProvider — compound-key alias resolution via hooks', () => {
     const stageId = 'ps1'
     const dimId = 'weight'
     const canonicalKey = `${stageId}.${dimId}`
-    const aliasKey = `${programId}.${dimId}`
+    const aliasKey = `${programId}.${stageId}.${dimId}`
 
     const makeProgram = () => ({
         id: programId,
@@ -546,7 +546,7 @@ describe('MetadataProvider — compound-key alias resolution via hooks', () => {
             result.current.store.addMetadata(makeDimension('Weight'))
         })
 
-        // Even though item is stored under canonicalKey, alias lookup should find it
+        // Even though item is stored under canonicalKey, 3-part alias lookup should find it
         expect(result.current.item).toBeDefined()
         expect(result.current.item?.id).toBe(canonicalKey)
         expect(result.current.item?.name).toBe('Weight')
@@ -579,7 +579,7 @@ describe('MetadataProvider — compound-key alias resolution via hooks', () => {
             result.current.store.addMetadata(makeDimension('Weight v2'))
         })
 
-        // Hook should have re-rendered because the subscribed alias key was notified
+        // Hook should have re-rendered because the subscribed 3-part alias key was notified
         expect(renderCount).toBeGreaterThan(rendersAfterFirstAdd)
         expect(result.current.item?.name).toBe('Weight v2')
     })
@@ -589,7 +589,7 @@ describe('MetadataProvider — compound-key alias resolution via hooks', () => {
             wrapper: MetadataProvider,
         })
 
-        // Without program/stage context, alias cannot be resolved
+        // Without program/stage context, 3-part alias cannot be resolved
         expect(result.current).toBeUndefined()
     })
 })

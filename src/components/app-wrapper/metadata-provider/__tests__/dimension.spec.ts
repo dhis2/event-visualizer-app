@@ -2,11 +2,8 @@ import { describe, it, expect } from 'vitest'
 import {
     isCompoundDimensionId,
     parseCompoundDimensionId,
-    compoundIdToIdentifier,
-    getCanonicalCompoundDimensionId,
-    normalizeCompoundDimensionId,
-    computeCompoundIdAliasesFromDimensionIdentifier,
-    getCompoundDimensionIdVariants,
+    extractDimensionContextFromCompoundKey,
+    resolveKey,
 } from '../dimension'
 import type { MetadataMap } from '@types'
 
@@ -228,7 +225,9 @@ const makeMap = (
 describe('compoundIdToIdentifier', () => {
     it('resolves 3-part compound key directly without metadata lookup', () => {
         const map: MetadataMap = new Map()
-        expect(compoundIdToIdentifier('p1.ps1.dim1', map)).toEqual({
+        expect(
+            extractDimensionContextFromCompoundKey('p1.ps1.dim1', map)
+        ).toEqual({
             dimensionId: 'dim1',
             programId: 'p1',
             programStageId: 'ps1',
@@ -237,7 +236,9 @@ describe('compoundIdToIdentifier', () => {
 
     it('resolves 3-part key with repetition index', () => {
         const map: MetadataMap = new Map()
-        expect(compoundIdToIdentifier('p1.ps1[2].dim1', map)).toEqual({
+        expect(
+            extractDimensionContextFromCompoundKey('p1.ps1[2].dim1', map)
+        ).toEqual({
             dimensionId: 'dim1',
             programId: 'p1',
             programStageId: 'ps1',
@@ -247,25 +248,26 @@ describe('compoundIdToIdentifier', () => {
 
     it('resolves 2-part key where first ID is a program stage in metadata', () => {
         const map = makeMap([stageItem])
-        expect(compoundIdToIdentifier('ps1.dim1', map)).toEqual({
-            dimensionId: 'dim1',
-            programStageId: 'ps1',
-            programId: 'p1',
-        })
+        expect(extractDimensionContextFromCompoundKey('ps1.dim1', map)).toEqual(
+            {
+                dimensionId: 'dim1',
+                programStageId: 'ps1',
+                programId: 'p1',
+            }
+        )
     })
 
-    it('resolves 2-part key where first ID is a program with one stage', () => {
+    it('resolves 2-part key where first ID is a program with one stage (no stage inferred)', () => {
         const map = makeMap([programItem])
-        expect(compoundIdToIdentifier('p1.dim1', map)).toEqual({
+        expect(extractDimensionContextFromCompoundKey('p1.dim1', map)).toEqual({
             dimensionId: 'dim1',
             programId: 'p1',
-            programStageId: 'ps1',
         })
     })
 
     it('resolves 2-part key where first ID is a program with multiple stages (no stage set)', () => {
         const map = makeMap([programWithMultipleStages])
-        expect(compoundIdToIdentifier('p2.dim1', map)).toEqual({
+        expect(extractDimensionContextFromCompoundKey('p2.dim1', map)).toEqual({
             dimensionId: 'dim1',
             programId: 'p2',
         })
@@ -273,14 +275,18 @@ describe('compoundIdToIdentifier', () => {
 
     it('throws when 2-part key has unrecognised context ID', () => {
         const map: MetadataMap = new Map()
-        expect(() => compoundIdToIdentifier('unknownId.dim1', map)).toThrow(
+        expect(() =>
+            extractDimensionContextFromCompoundKey('unknownId.dim1', map)
+        ).toThrow(
             'No context metadata found for dimension with compound ID "unknownId.dim1"'
         )
     })
 
     it('throws when context ID is neither a program nor a program stage', () => {
         const map = makeMap([{ id: 'other', name: 'Other' }])
-        expect(() => compoundIdToIdentifier('other.dim1', map)).toThrow(
+        expect(() =>
+            extractDimensionContextFromCompoundKey('other.dim1', map)
+        ).toThrow(
             'Metadata item with ID "other" is not a program or program stage'
         )
     })
@@ -288,159 +294,35 @@ describe('compoundIdToIdentifier', () => {
     it('throws when repetitionIndex is set but no programStageId is resolved', () => {
         // 2-part key with a program that has multiple stages — no stage resolved
         const map = makeMap([programWithMultipleStages])
-        expect(() => compoundIdToIdentifier('p2[0].dim1', map)).toThrow(
+        expect(() =>
+            extractDimensionContextFromCompoundKey('p2[0].dim1', map)
+        ).toThrow(
             'Invalid combination: repetitionIndex "0" but no programStage'
         )
     })
 })
 
-describe('getCanonicalCompoundDimensionId', () => {
-    it('uses programStageId when available', () => {
-        expect(
-            getCanonicalCompoundDimensionId({
-                dimensionId: 'dim1',
-                programId: 'p1',
-                programStageId: 'ps1',
-            })
-        ).toBe('ps1.dim1')
+describe('resolveKey', () => {
+    it('returns a plain key unchanged', () => {
+        expect(resolveKey('dimensionId')).toBe('dimensionId')
     })
 
-    it('includes repetition index in programStageId part', () => {
-        expect(
-            getCanonicalCompoundDimensionId({
-                dimensionId: 'dim1',
-                programStageId: 'ps1',
-                repetitionIndex: 3,
-            })
-        ).toBe('ps1[3].dim1')
+    it('returns a 2-segment key unchanged (already canonical)', () => {
+        expect(resolveKey('stageId.dimId')).toBe('stageId.dimId')
     })
 
-    it('throws when programStageId is absent (even if programId is present)', () => {
-        expect(() =>
-            getCanonicalCompoundDimensionId({
-                dimensionId: 'dim1',
-                programId: 'p1',
-            })
-        ).toThrow(
-            'Could not canonicalize dimension "dim1" without a program stage'
+    it('drops the first segment of a 3-segment key', () => {
+        expect(resolveKey('programId.stageId.dimId')).toBe('stageId.dimId')
+    })
+
+    it('handles a 3-segment key with a repetition index on the stage segment', () => {
+        // [n] contains no dots, so the segment count is still 3
+        expect(resolveKey('programId.stageId[0].dimId')).toBe(
+            'stageId[0].dimId'
         )
     })
 
-    it('throws when neither programStageId nor programId is present', () => {
-        expect(() =>
-            getCanonicalCompoundDimensionId({ dimensionId: 'dim1' })
-        ).toThrow(
-            'Could not canonicalize dimension "dim1" without a program stage'
-        )
-    })
-
-    it('handles repetitionIndex of zero', () => {
-        expect(
-            getCanonicalCompoundDimensionId({
-                dimensionId: 'dim1',
-                programStageId: 'ps1',
-                repetitionIndex: 0,
-            })
-        ).toBe('ps1[0].dim1')
-    })
-
-    it('handles negative repetitionIndex', () => {
-        expect(
-            getCanonicalCompoundDimensionId({
-                dimensionId: 'dim1',
-                programStageId: 'ps1',
-                repetitionIndex: -1,
-            })
-        ).toBe('ps1[-1].dim1')
-    })
-})
-
-describe('computeCompoundIdAliasesFromDimensionIdentifier', () => {
-    it('returns all three alias forms when programId, programStageId, and dimensionId are present', () => {
-        const aliases = computeCompoundIdAliasesFromDimensionIdentifier({
-            dimensionId: 'dim1',
-            programId: 'p1',
-            programStageId: 'ps1',
-        })
-        expect(aliases).toEqual(['p1.ps1.dim1', 'ps1.dim1', 'p1.dim1'])
-    })
-
-    it('returns only the stage alias when only programStageId and dimensionId are present', () => {
-        const aliases = computeCompoundIdAliasesFromDimensionIdentifier({
-            dimensionId: 'dim1',
-            programStageId: 'ps1',
-        })
-        expect(aliases).toEqual(['ps1.dim1'])
-    })
-
-    it('returns only the program alias when only programId and dimensionId are present', () => {
-        const aliases = computeCompoundIdAliasesFromDimensionIdentifier({
-            dimensionId: 'dim1',
-            programId: 'p1',
-        })
-        expect(aliases).toEqual(['p1.dim1'])
-    })
-
-    it('returns empty array when only dimensionId is present', () => {
-        const aliases = computeCompoundIdAliasesFromDimensionIdentifier({
-            dimensionId: 'dim1',
-        })
-        expect(aliases).toEqual([])
-    })
-
-    it('includes repetition index in stage-related aliases', () => {
-        const aliases = computeCompoundIdAliasesFromDimensionIdentifier({
-            dimensionId: 'dim1',
-            programId: 'p1',
-            programStageId: 'ps1',
-            repetitionIndex: 2,
-        })
-        expect(aliases).toEqual(['p1.ps1[2].dim1', 'ps1[2].dim1', 'p1.dim1'])
-    })
-})
-
-describe('normalizeCompoundDimensionId', () => {
-    it('normalizes a 3-part key to canonical stage.dimension form', () => {
-        const map: MetadataMap = new Map()
-        expect(normalizeCompoundDimensionId('p1.ps1.dim1', map)).toBe(
-            'ps1.dim1'
-        )
-    })
-
-    it('normalizes a stage-prefixed key using metadata', () => {
-        const map = makeMap([stageItem])
-        expect(normalizeCompoundDimensionId('ps1.dim1', map)).toBe('ps1.dim1')
-    })
-
-    it('normalizes a program-prefixed key to stage form when program has one stage', () => {
-        const map = makeMap([programItem])
-        expect(normalizeCompoundDimensionId('p1.dim1', map)).toBe('ps1.dim1')
-    })
-})
-
-describe('getCompoundDimensionIdVariants', () => {
-    it('returns canonical key plus aliases for a 3-part key', () => {
-        const map: MetadataMap = new Map()
-        const variants = getCompoundDimensionIdVariants('p1.ps1.dim1', map)
-        // canonical is ps1.dim1; aliases include p1.ps1.dim1, ps1.dim1, p1.dim1
-        expect(variants).toContain('ps1.dim1')
-        expect(variants).toContain('p1.ps1.dim1')
-        expect(variants).toContain('p1.dim1')
-    })
-
-    it('deduplicates: canonical key is not listed twice', () => {
-        const map: MetadataMap = new Map()
-        const variants = getCompoundDimensionIdVariants('p1.ps1.dim1', map)
-        const unique = new Set(variants)
-        expect(unique.size).toBe(variants.length)
-    })
-
-    it('throws for a program-only key when the program has multiple stages', () => {
-        // A tracker program with multiple stages cannot be canonicalized from a
-        // 2-part key — the compound ID is ambiguous without a stage reference
-        const map = makeMap([programWithMultipleStages])
-        expect(() => getCompoundDimensionIdVariants('p2.dim1', map)).toThrow(
-            'Could not canonicalize dimension "dim1" without a program stage'
-        )
+    it('handles a 2-segment key with a repetition index', () => {
+        expect(resolveKey('stageId[1].dimId')).toBe('stageId[1].dimId')
     })
 })

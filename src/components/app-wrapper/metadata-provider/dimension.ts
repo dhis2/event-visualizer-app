@@ -52,13 +52,22 @@ export const parseCompoundDimensionId = (
     return { ids, repetitionIndex }
 }
 
-const getProgramStageIdWithRepetitionIndex = (
-    programStageId: string,
-    repetitionIndex?: number
-) =>
-    typeof repetitionIndex === 'number'
-        ? `${programStageId}[${repetitionIndex}]`
-        : programStageId
+/**
+ * Resolves a compound dimension key to its canonical form:
+ * - 3-segment (programId.stageId.dimId) → stageId.dimId
+ * - 2-segment or plain key → unchanged
+ */
+export const resolveKey = (key: string): string => {
+    const first = key.indexOf('.')
+    if (first === -1) {
+        return key // plain key
+    }
+    const second = key.indexOf('.', first + 1)
+    if (second === -1) {
+        return key // 2-segment → already canonical
+    }
+    return key.slice(first + 1) // 3-segment → drop first part
+}
 
 type ResolveIdentifierFromContextMetadataArgs = {
     unknownId: string
@@ -83,13 +92,6 @@ const resolveIdentifierFromContextMetadata = ({
 
     if (isProgramMetadataItem(unknownMetadata)) {
         identifier.programId = unknownId
-        /* Event programs (WITHOUT_REGISTRATION) always have exactly one
-         * stage in the data model, so we can safely use it. Tracker
-         * programs (WITH_REGISTRATION) may have many stages, in which
-         * case the compound ID must include the stage explicitly. */
-        if (unknownMetadata.programStages?.length === 1) {
-            identifier.programStageId = unknownMetadata.programStages[0].id
-        }
     } else if (isProgramStageMetadataItem(unknownMetadata)) {
         identifier.programStageId = unknownId
         const resolvedProgramId =
@@ -104,7 +106,14 @@ const resolveIdentifierFromContextMetadata = ({
     }
 }
 
-export const compoundIdToIdentifier = (
+/**
+ * Extracts dimension context (programId, programStageId, dimensionId,
+ * repetitionIndex) from a compound key. For 2-segment keys, consults the
+ * metadata map to determine whether the first segment is a program or stage.
+ *
+ * Used during metadata field enrichment only — not for key canonicalization.
+ */
+export const extractDimensionContextFromCompoundKey = (
     compoundKey: string,
     metadataMap: MetadataMap
 ): DimensionIdentifier => {
@@ -143,67 +152,4 @@ export const compoundIdToIdentifier = (
     }
 
     return identifier
-}
-
-export const getCanonicalCompoundDimensionId = (
-    identifier: DimensionIdentifier
-): string => {
-    if (!identifier.programStageId) {
-        throw new Error(
-            `Could not canonicalize dimension "${identifier.dimensionId}" without a program stage`
-        )
-    }
-
-    return `${getProgramStageIdWithRepetitionIndex(
-        identifier.programStageId,
-        identifier.repetitionIndex
-    )}.${identifier.dimensionId}`
-}
-
-export const normalizeCompoundDimensionId = (
-    compoundKey: string,
-    metadataMap: MetadataMap
-): string => {
-    const identifier = compoundIdToIdentifier(compoundKey, metadataMap)
-    return getCanonicalCompoundDimensionId(identifier)
-}
-
-export const getCompoundDimensionIdVariants = (
-    compoundKey: string,
-    metadataMap: MetadataMap
-): string[] => {
-    const identifier = compoundIdToIdentifier(compoundKey, metadataMap)
-    if (!identifier.programStageId) {
-        throw new Error(
-            `Could not canonicalize dimension "${identifier.dimensionId}" without a program stage`
-        )
-    }
-    return computeCompoundIdAliasesFromDimensionIdentifier(identifier)
-}
-
-export const computeCompoundIdAliasesFromDimensionIdentifier = (
-    identifier: DimensionIdentifier
-) => {
-    const { dimensionId, programId, programStageId, repetitionIndex } =
-        identifier
-    const compoundKeyAliases: string[] = []
-    const programStageIdWithRepetition = programStageId
-        ? getProgramStageIdWithRepetitionIndex(programStageId, repetitionIndex)
-        : undefined
-
-    if (programId && programStageId) {
-        compoundKeyAliases.push(
-            `${programId}.${programStageIdWithRepetition}.${dimensionId}`
-        )
-    }
-    if (programStageId) {
-        compoundKeyAliases.push(
-            `${programStageIdWithRepetition}.${dimensionId}`
-        )
-    }
-    if (programId) {
-        compoundKeyAliases.push(`${programId}.${dimensionId}`)
-    }
-
-    return compoundKeyAliases
 }

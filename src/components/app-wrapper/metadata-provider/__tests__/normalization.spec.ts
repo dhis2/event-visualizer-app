@@ -247,7 +247,7 @@ describe('normalizeMetadataInputItem — dimensionId assignment', () => {
         })
     })
 
-    it('resolves p1.dimId to stageId.dimId when program is an event program (1 stage)', () => {
+    it('keeps p1.dimId as program-canonical when program is an event program (1 stage)', () => {
         const programId = 'p1'
         const stageId = 'ps1'
         const dimId = 'height'
@@ -278,13 +278,13 @@ describe('normalizeMetadataInputItem — dimensionId assignment', () => {
 
         const result = normalizeMetadataInputItem(input, mapWithProgram)
 
-        // Canonical key must be stage-based
-        expect(result.id).toBe(`${stageId}.${dimId}`)
+        // Canonical key is program-based — p1.dim stays as p1.dim (no auto-resolve to stage)
+        expect(result.id).toBe(`${programId}.${dimId}`)
         expect(result).toMatchObject({
             dimensionId: dimId,
             programId,
-            programStageId: stageId,
         })
+        expect(result).not.toHaveProperty('programStageId')
     })
 
     it('does not set dimensionId for a non-dimension plain item (e.g. period shortcut)', () => {
@@ -327,7 +327,7 @@ describe('getCanonicalKeysForInput', () => {
         expect(result).toEqual(new Set(['unknownKey']))
     })
 
-    it('resolves compound keys to their canonical form', () => {
+    it('returns program-based canonical key for a program-prefixed compound key', () => {
         const stageId = 'ps1'
         const dimId = 'weight'
         const stageMetadata: MetadataItem = {
@@ -339,7 +339,7 @@ describe('getCanonicalKeysForInput', () => {
             program: { id: 'p1' },
         }
 
-        // Input uses programId.dimId alias — should resolve to stageId.dimId
+        // Input uses programId.dimId — stays as programId.dimId (it IS canonical)
         const programMetadata: MetadataItem = {
             id: 'p1',
             name: 'My Program',
@@ -370,8 +370,8 @@ describe('getCanonicalKeysForInput', () => {
 
         const result = getCanonicalKeysForInput(input, mapWithBoth)
 
-        // The canonical key is stage-based, not program-based
-        expect(result).toEqual(new Set([`${stageId}.${dimId}`]))
+        // p1.dim stays as p1.dim — no auto-resolve to stage
+        expect(result).toEqual(new Set([`p1.${dimId}`]))
     })
 
     it('returns an empty set for an empty input', () => {

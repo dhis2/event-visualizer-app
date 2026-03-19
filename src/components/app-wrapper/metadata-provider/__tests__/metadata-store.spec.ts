@@ -269,30 +269,6 @@ describe('MetadataStore', () => {
               "name": "Inpatient morbidity and mortality",
               "repeatable": false,
             },
-            "Zj7UnCAulEk.eventStatus": {
-              "dimensionId": "eventStatus",
-              "dimensionType": "STATUS",
-              "id": "Zj7UnCAulEk.eventStatus",
-              "name": "Event status",
-              "programId": "eBAyeGv0exc",
-              "programStageId": "Zj7UnCAulEk",
-            },
-            "Zj7UnCAulEk.ou": {
-              "dimensionId": "ou",
-              "dimensionType": "ORGANISATION_UNIT",
-              "id": "Zj7UnCAulEk.ou",
-              "name": "Organisation unit",
-              "programId": "eBAyeGv0exc",
-              "programStageId": "Zj7UnCAulEk",
-            },
-            "Zj7UnCAulEk.programStatus": {
-              "dimensionId": "programStatus",
-              "dimensionType": "STATUS",
-              "id": "Zj7UnCAulEk.programStatus",
-              "name": "Program status",
-              "programId": "eBAyeGv0exc",
-              "programStageId": "Zj7UnCAulEk",
-            },
             "completedDate": {
               "dimensionId": "completedDate",
               "dimensionType": "PERIOD",
@@ -335,6 +311,27 @@ describe('MetadataStore', () => {
                 },
               ],
               "programType": "WITHOUT_REGISTRATION",
+            },
+            "eBAyeGv0exc.eventStatus": {
+              "dimensionId": "eventStatus",
+              "dimensionType": "STATUS",
+              "id": "eBAyeGv0exc.eventStatus",
+              "name": "Event status",
+              "programId": "eBAyeGv0exc",
+            },
+            "eBAyeGv0exc.ou": {
+              "dimensionId": "ou",
+              "dimensionType": "ORGANISATION_UNIT",
+              "id": "eBAyeGv0exc.ou",
+              "name": "Organisation unit",
+              "programId": "eBAyeGv0exc",
+            },
+            "eBAyeGv0exc.programStatus": {
+              "dimensionId": "programStatus",
+              "dimensionType": "STATUS",
+              "id": "eBAyeGv0exc.programStatus",
+              "name": "Program status",
+              "programId": "eBAyeGv0exc",
             },
             "eMyVanycQSC": {
               "code": "DE_3000005",
@@ -565,9 +562,9 @@ describe('MetadataStore', () => {
             "lastUpdatedBy",
             "eBAyeGv0exc",
             "Zj7UnCAulEk",
-            "Zj7UnCAulEk.ou",
-            "Zj7UnCAulEk.eventStatus",
-            "Zj7UnCAulEk.programStatus",
+            "eBAyeGv0exc.ou",
+            "eBAyeGv0exc.eventStatus",
+            "eBAyeGv0exc.programStatus",
           ]
         `)
     })
@@ -773,7 +770,7 @@ describe('MetadataStore.getMetadataItem — alias key resolution', () => {
         expect(item?.id).toBe(`${stageId}.${dimId}`)
     })
 
-    it('resolves a program-based alias (p1.dim) to the canonical stage-based key (ps1.dim)', () => {
+    it('p1.dim is a canonical key on its own — not an alias for ps1.dim', () => {
         const programId = 'p1'
         const stageId = 'ps1'
         const dimId = 'weight'
@@ -787,10 +784,14 @@ describe('MetadataStore.getMetadataItem — alias key resolution', () => {
             },
         })
 
-        // Look up using the alias key
+        // p1.dim is NOT an alias for ps1.dim — they are different canonical keys
         const item = store.getMetadataItem(`${programId}.${dimId}`)
-        expect(item).toBeDefined()
-        expect(item?.id).toBe(`${stageId}.${dimId}`)
+        expect(item).toBeUndefined()
+
+        // The stage-based item is still accessible via its canonical key
+        const stageItem = store.getMetadataItem(`${stageId}.${dimId}`)
+        expect(stageItem).toBeDefined()
+        expect(stageItem?.id).toBe(`${stageId}.${dimId}`)
     })
 
     it('resolves a 3-part alias (p1.ps1.dim) to the canonical stage-based key', () => {
@@ -861,7 +862,7 @@ describe('MetadataStore.addMetadata — deferred compound key processing', () =>
         })
     })
 
-    it('stores compound keys under canonical form even when supplied as alias', () => {
+    it('stores program-prefixed compound key under program-canonical form (p1.dim stays as p1.dim)', () => {
         const programId = 'p1'
         const stageId = 'ps1'
         const dimId = 'height'
@@ -869,7 +870,7 @@ describe('MetadataStore.addMetadata — deferred compound key processing', () =>
         store.addMetadata(makeProgram(programId, stageId))
         store.addMetadata(makeStage(stageId, programId))
 
-        // Supply with program-based alias key
+        // Supply with program-based key (no stageId in the key)
         store.addMetadata({
             [`${programId}.${dimId}`]: {
                 id: `${programId}.${dimId}`,
@@ -879,10 +880,10 @@ describe('MetadataStore.addMetadata — deferred compound key processing', () =>
         })
 
         const snapshot = store.getMetadataSnapshot()
-        // Must be stored under canonical key
-        expect(snapshot[`${stageId}.${dimId}`]).toBeDefined()
-        // Not under the alias key
-        expect(snapshot[`${programId}.${dimId}`]).toBeUndefined()
+        // Stored under program-canonical key (p1.dim) — NOT auto-resolved to ps1.dim
+        expect(snapshot[`${programId}.${dimId}`]).toBeDefined()
+        // Not under the stage key
+        expect(snapshot[`${stageId}.${dimId}`]).toBeUndefined()
     })
 })
 
@@ -921,7 +922,7 @@ describe('MetadataStore — subscriber fan-out for compound key aliases', () => 
         expect(cb).toHaveBeenCalledTimes(1)
     })
 
-    it('notifies subscriber registered under alias key when canonical key item changes', () => {
+    it('notifies subscriber registered under 3-part alias key when canonical key item changes', () => {
         const programId = 'p1'
         const stageId = 'ps1'
         const dimId = 'weight'
@@ -929,8 +930,8 @@ describe('MetadataStore — subscriber fan-out for compound key aliases', () => 
         store.addMetadata(makeStage(stageId, programId))
 
         const cbAlias = vi.fn()
-        // Subscribe using the program-based alias
-        store.subscribe(`${programId}.${dimId}`, cbAlias)
+        // Subscribe using the 3-part alias (p1.ps1.dim) — valid alias for ps1.dim
+        store.subscribe(`${programId}.${stageId}.${dimId}`, cbAlias)
 
         // Update item using canonical key
         store.addMetadata({
@@ -1010,7 +1011,7 @@ describe('MetadataStore — subscriber fan-out for compound key aliases', () => 
 
         // The new visualization's keys must be present
         expect(snapshot['Zj7UnCAulEk']).toBeDefined()
-        expect(snapshot['Zj7UnCAulEk.ou']).toBeDefined()
+        expect(snapshot['eBAyeGv0exc.ou']).toBeDefined()
     })
 
     it('notifies alias subscriber when item name changes via addMetadata', () => {
