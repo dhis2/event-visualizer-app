@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-03-13T15:03:26.002Z\n"
-"PO-Revision-Date: 2026-03-13T15:03:26.003Z\n"
+"POT-Creation-Date: 2026-03-20T09:33:30.202Z\n"
+"PO-Revision-Date: 2026-03-20T09:33:30.203Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -324,11 +324,14 @@ msgstr "{{ enrollmentLabel }} list"
 msgid "{{ enrollmentLabel }} table"
 msgstr "{{ enrollmentLabel }} table"
 
-msgid "{{ trackedEntityTypeName }} list"
-msgstr "{{ trackedEntityTypeName }} list"
+msgid "Create {{trackedEntityTypeName}} list"
+msgstr "Create {{trackedEntityTypeName}} list"
 
-msgid "custom value table"
-msgstr "custom value table"
+msgid "Switch to {{trackedEntityTypeName}} list"
+msgstr "Switch to {{trackedEntityTypeName}} list"
+
+msgid "Update {{trackedEntityTypeName}} list"
+msgstr "Update {{trackedEntityTypeName}} list"
 
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr "Nothing selected. Add items to the layout to get started."
@@ -362,6 +365,30 @@ msgstr "Not valid with multiple program stages"
 
 msgid "Not valid with program indicators"
 msgstr "Not valid with program indicators"
+
+msgid "Configure custom value"
+msgstr "Configure custom value"
+
+msgid "Choose the numeric data element to show in table cells."
+msgstr "Choose the numeric data element to show in table cells."
+
+msgid "Loading data"
+msgstr "Loading data"
+
+msgid "Aggregation"
+msgstr "Aggregation"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Create custom value table"
+msgstr "Create custom value table"
+
+msgid "Switch to custom value table"
+msgstr "Switch to custom value table"
+
+msgid "Update custom value table"
+msgstr "Update custom value table"
 
 msgid "Collapse layout"
 msgstr "Collapse layout"

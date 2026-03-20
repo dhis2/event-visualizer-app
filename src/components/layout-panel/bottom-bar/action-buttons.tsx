@@ -190,13 +190,11 @@ export const EnrollmentButton: FC = () => {
 }
 
 export const TrackedEntityInstanceButton: FC = () => {
-    const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
-
     const { action, dataSourceMetadata, tooltipConfig } = useActionButton(
         'TRACKED_ENTITY_INSTANCE'
     )
 
-    const tetName = useMemo(() => {
+    const trackedEntityTypeName = useMemo(() => {
         if (isDataSourceProgramWithRegistration(dataSourceMetadata)) {
             return dataSourceMetadata.trackedEntityType.name
         } else if (isDataSourceTrackedEntityType(dataSourceMetadata)) {
@@ -207,28 +205,21 @@ export const TrackedEntityInstanceButton: FC = () => {
     }, [dataSourceMetadata])
 
     const label = useMemo(() => {
-        const targetVisualization =
-            visualizationType === 'LINE_LIST'
-                ? i18n.t(`{{ trackedEntityTypeName }} list`, {
-                      trackedEntityTypeName: tetName,
-                  })
-                : i18n.t('custom value table')
-
         switch (action) {
             case 'create':
-                return i18n.t(`Create {{targetVisualization}}`, {
-                    targetVisualization,
+                return i18n.t(`Create {{trackedEntityTypeName}} list`, {
+                    trackedEntityTypeName,
                 })
             case 'switch':
-                return i18n.t(`Switch to {{targetVisualization}}`, {
-                    targetVisualization,
+                return i18n.t(`Switch to {{trackedEntityTypeName}} list`, {
+                    trackedEntityTypeName,
                 })
             case 'update':
-                return i18n.t(`Update {{targetVisualization}}`, {
-                    targetVisualization,
+                return i18n.t(`Update {{trackedEntityTypeName}} list`, {
+                    trackedEntityTypeName,
                 })
         }
-    }, [action, tetName, visualizationType])
+    }, [action, trackedEntityTypeName])
 
     return (
         <ActionButtonWithConditionalTooltip
@@ -241,7 +232,7 @@ export const TrackedEntityInstanceButton: FC = () => {
     )
 }
 
-const useActionButton = (buttonType: OutputType) => {
+export const useActionButton = (buttonType: OutputType) => {
     const currentVis = useAppSelector(getCurrentVis)
     const dataSourceId = useAppSelector(getDataSourceId)
     const layout = useAppSelector(getVisUiConfigLayout)
@@ -250,6 +241,8 @@ const useActionButton = (buttonType: OutputType) => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
 
     const dataSourceMetadata = useMetadataItem(dataSourceId)
+
+    console.log('ds metadata', dataSourceMetadata)
 
     const action = useMemo((): ButtonAction => {
         // Empty visualization
