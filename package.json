@@ -39,7 +39,7 @@
         "cypress-real-events": "^1.15.0",
         "cypress-tags": "^1.2.2",
         "eslint-import-resolver-typescript": "^4.4.4",
-        "jsdom": "^27.4.0",
+        "jsdom": "^29.0.1",
         "lint-staged": "^16.4.0",
         "openapi-typescript": "^7.13.0",
         "resize-observer-polyfill": "^1.5.1",
