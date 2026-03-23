@@ -1,0 +1,72 @@
+.resizeHandle {
+    position: relative;
+    z-index: 2;
+}
+
+/* Cursor */
+.resizeHandle.horizontal,
+.resizeHandle.horizontal::before {
+    cursor: row-resize;
+}
+
+.resizeHandle.vertical,
+.resizeHandle.vertical::before {
+    cursor: col-resize;
+}
+
+/* Horizontal handle, covers the full width of the container */
+.resizeHandle.horizontal {
+    block-size: 0;
+    inline-size: 100%;
+}
+
+/* Invisible hit area for easier grabbing */
+.resizeHandle.horizontal::before {
+    content: '';
+    position: absolute;
+    inset-block-start: -4px;
+    inset-inline: 0;
+    block-size: 9px;
+}
+
+/* Visual indicator line */
+.resizeHandle.horizontal::after {
+    content: '';
+    position: absolute;
+    inset-block-start: -1px;
+    inset-inline: 0;
+    block-size: 3px;
+    background-color: transparent;
+    transition: background-color 0.15s ease;
+    border-radius: 1px;
+}
+
+/* Vertical handle, covers the full height of the container */
+.resizeHandle.vertical {
+    block-size: 100%;
+    inline-size: 0;
+}
+
+.resizeHandle.vertical::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: -4px;
+    inset-block: 0;
+    inline-size: 9px;
+}
+
+.resizeHandle.vertical::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: -1px;
+    inset-block: 0;
+    inline-size: 3px;
+    background-color: transparent;
+    transition: background-color 0.15s ease;
+    border-radius: 1px;
+}
+
+.resizeHandle:hover::after,
+.resizeHandle.active::after {
+    background-color: var(--colors-blue400);
+}

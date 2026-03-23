@@ -1,7 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import { SplitButton, FlyoutMenu, MenuItem, Button } from '@dhis2/ui'
 import { useCallback, type FC } from 'react'
-import type { LayoutDimension } from '@components/layout-panel/chip'
+import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { getAvailableAxes } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getAxisName } from '@modules/layout.js'

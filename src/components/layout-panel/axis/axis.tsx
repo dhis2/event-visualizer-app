@@ -5,8 +5,8 @@ import { type FC, useMemo } from 'react'
 import { Chip } from './chip'
 import classes from './styles/axis.module.css'
 import insertMarkerClasses from './styles/insert-marker.module.css'
-import { useLayoutDimensions } from './use-layout-dimensions'
 import type { AxisContainerDroppableData } from '@components/app-wrapper/drag-and-drop-provider/types'
+import { useLayoutDimensions } from '@components/layout-panel/use-layout-dimensions'
 import { useAppSelector } from '@hooks'
 import { getAxisName } from '@modules/layout'
 import { getVisUiConfigOutputType } from '@store/vis-ui-config-slice'
@@ -41,7 +41,7 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
     return (
         <SortableContext id={axisId} items={dimensionIds}>
             <div
-                className={cx(classes.axisContainer, {
+                className={cx(classes.container, {
                     [classes.columns]: axisId === 'columns',
                     [classes.rows]: axisId === 'rows',
                     [classes.filters]: axisId === 'filters',

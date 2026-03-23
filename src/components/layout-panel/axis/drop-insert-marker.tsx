@@ -3,7 +3,7 @@ import type { useSortable } from '@dnd-kit/sortable'
 import cx from 'classnames'
 import { useEffect, useState, type FC } from 'react'
 import classes from './styles/insert-marker.module.css'
-import type { DraggedItemEventData } from '@components/app-wrapper/drag-and-drop-provider/types'
+import { isObject } from '@modules/validation'
 import type { Axis } from '@types'
 
 const calculateInsertAfter = (
@@ -42,9 +42,11 @@ const calculateShouldShowMarker = ({
 
     /* For elements from a different axis or the sidebar we can always
      * show the marker now */
-    const draggedItemData = active.data.current as DraggedItemEventData
+    const draggedItemData = active.data.current // as DraggedItemEventData
     const isActiveElementFromSameAxis =
-        'axis' in draggedItemData && draggedItemData.axis === axisId
+        isObject(draggedItemData) &&
+        'axis' in draggedItemData &&
+        draggedItemData.axis === axisId
 
     if (!isActiveElementFromSameAxis) {
         return true
