@@ -72,6 +72,7 @@ export type DimensionMetadataItem = Omit<
     legendSetId?: string // Add ID reference to legendSet
     programId?: string // Add ID reference to program
     programStageId?: string // Add ID reference to programStage
+    trackedEntityTypeId?: string // Add ID reference to trackedEntityType
     repetitionIndex?: number // Also added
 }
 

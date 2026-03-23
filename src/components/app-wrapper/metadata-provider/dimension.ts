@@ -7,7 +7,11 @@ import type { DimensionMetadataItem, MetadataMap } from '@types'
 
 export type DimensionIdentifier = Pick<
     DimensionMetadataItem,
-    'dimensionId' | 'programId' | 'programStageId' | 'repetitionIndex'
+    | 'dimensionId'
+    | 'programId'
+    | 'programStageId'
+    | 'trackedEntityTypeId'
+    | 'repetitionIndex'
 >
 
 // Pattern to match repetition index like [0], [1], [-1] etc.
@@ -100,9 +104,9 @@ const resolveIdentifierFromContextMetadata = ({
             identifier.programId = resolvedProgramId
         }
     } else {
-        throw new Error(
-            `Metadata item with ID "${unknownMetadata.id}" is not a program or program stage`
-        )
+        // TrackedEntityType has no distinguishing fields (only `id` and `name`),
+        // so no type guard is possible — assume the prefix is a tracked entity type ID.
+        identifier.trackedEntityTypeId = unknownId
     }
 }
 

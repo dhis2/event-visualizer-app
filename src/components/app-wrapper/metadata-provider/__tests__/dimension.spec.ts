@@ -280,13 +280,32 @@ describe('compoundIdToIdentifier', () => {
         )
     })
 
-    it('throws when context ID is neither a program nor a program stage', () => {
-        const map = makeMap([{ id: 'other', name: 'Other' }])
-        expect(() =>
-            extractDimensionContextFromCompoundId('other.dim1', map)
-        ).toThrow(
-            'Metadata item with ID "other" is not a program or program stage'
+    it('resolves 2-part key where first ID is a tracked entity type in metadata', () => {
+        const map = makeMap([{ id: 'tet1', name: 'Person' }])
+        expect(extractDimensionContextFromCompoundId('tet1.dim1', map)).toEqual(
+            {
+                dimensionId: 'dim1',
+                trackedEntityTypeId: 'tet1',
+            }
         )
+    })
+
+    it('resolves ou fixed dimension prefixed with a tracked entity type ID', () => {
+        const map = makeMap([{ id: 'tet1', name: 'Person' }])
+        expect(extractDimensionContextFromCompoundId('tet1.ou', map)).toEqual({
+            dimensionId: 'ou',
+            trackedEntityTypeId: 'tet1',
+        })
+    })
+
+    it('resolves created fixed dimension prefixed with a tracked entity type ID', () => {
+        const map = makeMap([{ id: 'tet1', name: 'Person' }])
+        expect(
+            extractDimensionContextFromCompoundId('tet1.created', map)
+        ).toEqual({
+            dimensionId: 'created',
+            trackedEntityTypeId: 'tet1',
+        })
     })
 
     it('throws when repetitionIndex is set but no programStageId is resolved', () => {
