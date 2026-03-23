@@ -1,5 +1,5 @@
 import {
-    extractDimensionContextFromCompoundKey,
+    extractDimensionContextFromCompoundId,
     isCompoundDimensionId,
     resolveId,
 } from './dimension'
@@ -71,7 +71,7 @@ export const normalizeMetadataInputItem = (
     if (isDimensionMetadataItem(resolvedItem)) {
         // Enrich with programId/programStageId from compound ID context.
         const dimensionContext = isCompoundDimensionId(inputId)
-            ? extractDimensionContextFromCompoundKey(
+            ? extractDimensionContextFromCompoundId(
                   inputId,
                   existingMetadataMap
               )

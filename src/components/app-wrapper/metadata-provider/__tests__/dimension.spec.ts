@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
     isCompoundDimensionId,
     parseCompoundDimensionId,
-    extractDimensionContextFromCompoundKey,
+    extractDimensionContextFromCompoundId,
     resolveId,
 } from '../dimension'
 import type { MetadataMap } from '@types'
@@ -226,7 +226,7 @@ describe('compoundIdToIdentifier', () => {
     it('resolves 3-part compound key directly without metadata lookup', () => {
         const map: MetadataMap = new Map()
         expect(
-            extractDimensionContextFromCompoundKey('p1.ps1.dim1', map)
+            extractDimensionContextFromCompoundId('p1.ps1.dim1', map)
         ).toEqual({
             dimensionId: 'dim1',
             programId: 'p1',
@@ -237,7 +237,7 @@ describe('compoundIdToIdentifier', () => {
     it('resolves 3-part key with repetition index', () => {
         const map: MetadataMap = new Map()
         expect(
-            extractDimensionContextFromCompoundKey('p1.ps1[2].dim1', map)
+            extractDimensionContextFromCompoundId('p1.ps1[2].dim1', map)
         ).toEqual({
             dimensionId: 'dim1',
             programId: 'p1',
@@ -248,18 +248,16 @@ describe('compoundIdToIdentifier', () => {
 
     it('resolves 2-part key where first ID is a program stage in metadata', () => {
         const map = makeMap([stageItem])
-        expect(extractDimensionContextFromCompoundKey('ps1.dim1', map)).toEqual(
-            {
-                dimensionId: 'dim1',
-                programStageId: 'ps1',
-                programId: 'p1',
-            }
-        )
+        expect(extractDimensionContextFromCompoundId('ps1.dim1', map)).toEqual({
+            dimensionId: 'dim1',
+            programStageId: 'ps1',
+            programId: 'p1',
+        })
     })
 
     it('resolves 2-part key where first ID is a program with one stage (no stage inferred)', () => {
         const map = makeMap([programItem])
-        expect(extractDimensionContextFromCompoundKey('p1.dim1', map)).toEqual({
+        expect(extractDimensionContextFromCompoundId('p1.dim1', map)).toEqual({
             dimensionId: 'dim1',
             programId: 'p1',
         })
@@ -267,7 +265,7 @@ describe('compoundIdToIdentifier', () => {
 
     it('resolves 2-part key where first ID is a program with multiple stages (no stage set)', () => {
         const map = makeMap([programWithMultipleStages])
-        expect(extractDimensionContextFromCompoundKey('p2.dim1', map)).toEqual({
+        expect(extractDimensionContextFromCompoundId('p2.dim1', map)).toEqual({
             dimensionId: 'dim1',
             programId: 'p2',
         })
@@ -276,7 +274,7 @@ describe('compoundIdToIdentifier', () => {
     it('throws when 2-part key has unrecognised context ID', () => {
         const map: MetadataMap = new Map()
         expect(() =>
-            extractDimensionContextFromCompoundKey('unknownId.dim1', map)
+            extractDimensionContextFromCompoundId('unknownId.dim1', map)
         ).toThrow(
             'No context metadata found for dimension with compound ID "unknownId.dim1"'
         )
@@ -285,7 +283,7 @@ describe('compoundIdToIdentifier', () => {
     it('throws when context ID is neither a program nor a program stage', () => {
         const map = makeMap([{ id: 'other', name: 'Other' }])
         expect(() =>
-            extractDimensionContextFromCompoundKey('other.dim1', map)
+            extractDimensionContextFromCompoundId('other.dim1', map)
         ).toThrow(
             'Metadata item with ID "other" is not a program or program stage'
         )
@@ -295,7 +293,7 @@ describe('compoundIdToIdentifier', () => {
         // 2-part key with a program that has multiple stages — no stage resolved
         const map = makeMap([programWithMultipleStages])
         expect(() =>
-            extractDimensionContextFromCompoundKey('p2[0].dim1', map)
+            extractDimensionContextFromCompoundId('p2[0].dim1', map)
         ).toThrow(
             'Invalid combination: repetitionIndex "0" but no programStage'
         )

@@ -113,7 +113,7 @@ const resolveIdentifierFromContextMetadata = ({
  *
  * Used during metadata field enrichment only — not for ID canonicalization.
  */
-export const extractDimensionContextFromCompoundKey = (
+export const extractDimensionContextFromCompoundId = (
     compoundId: string,
     metadataMap: MetadataMap
 ): DimensionIdentifier => {
