@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import type { LayoutDimension } from '@components/layout-panel/chip'
+import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { ouIdHelper } from '@dhis2/analytics'
 import { useMetadataItems } from '@hooks'
 import {

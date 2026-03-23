@@ -12,6 +12,7 @@ export interface ChipBaseProps {
     itemsText: string
     suffix?: string
     isDragging?: boolean
+    onClick: () => void
 }
 
 export const ChipBase: React.FC<ChipBaseProps> = ({
@@ -20,8 +21,13 @@ export const ChipBase: React.FC<ChipBaseProps> = ({
     itemsText,
     suffix,
     isDragging,
+    onClick,
 }) => (
-    <div className={cx(classes.chipBase, { [classes.dragging]: isDragging })}>
+    <button
+        type="button"
+        className={cx(classes.chipBase, { [classes.dragging]: isDragging })}
+        onClick={onClick}
+    >
         {dimensionType && (
             <div className={classes.leftIcon}>
                 <DimensionTypeIcon dimensionType={dimensionType} />
@@ -36,5 +42,5 @@ export const ChipBase: React.FC<ChipBaseProps> = ({
         <span className={classes.items} data-test="chip-items">
             {itemsText}
         </span>
-    </div>
+    </button>
 )

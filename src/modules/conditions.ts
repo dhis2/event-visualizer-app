@@ -3,7 +3,7 @@ import {
     combineAllDimensionsFromVisualization,
     getFullDimensionId,
 } from './dimension'
-import type { LayoutDimension } from '@components/layout-panel/chip'
+import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { formatValue, ouIdHelper } from '@dhis2/analytics'
 import type {
     CurrentVisualization,

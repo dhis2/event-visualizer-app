@@ -28,16 +28,16 @@ const createMockOptions = (
 })
 
 const assertTooltipContent = (expectedTexts: string[]) => {
-    const tooltipSelector = '[role="tooltip"]'
+    const tooltipSelector = 'layout-chip-tooltip-content'
     cy.getByDataTest('layout-dimension-chip').realHover()
-    cy.get(tooltipSelector).should('be.visible')
+    cy.getByDataTest(tooltipSelector).should('be.visible')
 
     expectedTexts.forEach((text) => {
-        cy.get(tooltipSelector).should('contain.text', text)
+        cy.getByDataTest(tooltipSelector).should('contain.text', text)
     })
 
     cy.get('body').realHover({ position: 'bottomLeft' })
-    cy.get(tooltipSelector).should('not.exist')
+    cy.getByDataTest(tooltipSelector).should('not.exist')
     cy.getByDataTest('layout-dimension-chip').should(
         'not.have.css',
         'background-color',

@@ -15,7 +15,7 @@ import { OrgUnitDimensionModalContent } from './orgunit-dimension-modal-content'
 import { PeriodDimensionModalContent } from './period-dimension-modal-content'
 import { StatusDimensionModalContent } from './status-dimension-modal-content'
 import classes from './styles/dimension-modal.module.css'
-import type { LayoutDimension } from '@components/layout-panel/chip'
+import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import {
     useAppDispatch,
     useAppSelector,

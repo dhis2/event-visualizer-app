@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import type { LayoutDimension } from '@components/layout-panel/chip'
+import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { useMetadataItems } from '@hooks'
 import { getDimensionIdParts } from '@modules/dimension'
 import type { DimensionType, OutputType } from '@types'

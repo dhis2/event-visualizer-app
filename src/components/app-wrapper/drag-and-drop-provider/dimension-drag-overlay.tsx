@@ -3,8 +3,8 @@ import cx from 'classnames'
 import { useState, type FC } from 'react'
 import classes from './styles/dimension-drag-overlay.module.css'
 import type { AxisSortableData, DraggedItemEventData } from './types'
-import { ChipBase } from '@components/layout-panel/chip-base'
-import chipClasses from '@components/layout-panel/styles/chip.module.css'
+import { ChipBase } from '@components/layout-panel/axis/chip-base'
+import chipClasses from '@components/layout-panel/axis/styles/chip.module.css'
 
 const isAxisSortableData = (data: object): data is AxisSortableData =>
     'axis' in data
