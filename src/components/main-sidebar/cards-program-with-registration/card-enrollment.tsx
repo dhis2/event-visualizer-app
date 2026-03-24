@@ -1,13 +1,18 @@
 import i18n from '@dhis2/d2-i18n'
-import { useMemo, type FC } from 'react'
+import { useCallback, useMemo, type FC } from 'react'
 import {
     DimensionCard,
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
+import {
+    useSelectedDimensionCount,
+    type UseSelectedDimensionCountMatchFn,
+} from '@components/main-sidebar/use-selected-dimension-count'
 import type {
     DataSourceProgramWithRegistration,
     DimensionMetadataItem,
+    DimensionType,
 } from '@types'
 
 type CardEnrollmentProps = {
@@ -58,12 +63,28 @@ export const CardEnrollment: FC<CardEnrollmentProps> = ({ program }) => {
         () => getFixedDimensions(program),
         [program]
     )
+    const dimensionTypeLookup = useMemo(
+        () =>
+            new Set<DimensionType>(
+                fixedDimensions.map((dimension) => dimension.dimensionType)
+            ),
+        [fixedDimensions]
+    )
     const listProps = useDimensionList({ fixedDimensions })
+    const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
+        (dimension) =>
+            dimensionTypeLookup.has(dimension.dimensionType) &&
+            dimension.programId === program.id &&
+            !dimension.programStageId,
+        [dimensionTypeLookup, program.id]
+    )
+    const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)
     return (
         <DimensionCard
             dimensionCardKey={dimensionCardKey}
             title={title}
             isDisabledByFilter={listProps.isDisabledByFilter}
+            selectedCount={selectedCount}
         >
             <DimensionList {...listProps} program={program} />
         </DimensionCard>
