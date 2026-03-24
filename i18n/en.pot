@@ -852,6 +852,66 @@ msgstr "Unsaved visualization"
 msgid "Edited"
 msgstr "Edited"
 
+msgid "Use data element default"
+msgstr "Use data element default"
+
+msgid "Sum"
+msgstr "Sum"
+
+msgid "Average"
+msgstr "Average"
+
+msgid "Average (sum in org unit hiararchy)"
+msgstr "Average (sum in org unit hiararchy)"
+
+msgid "Last value"
+msgstr "Last value"
+
+msgid "Last value (sum in org unit hiararchy)"
+msgstr "Last value (sum in org unit hiararchy)"
+
+msgid "Last value (last in org unit hierarchy)"
+msgstr "Last value (last in org unit hierarchy)"
+
+msgid "Last value in period"
+msgstr "Last value in period"
+
+msgid "Last value in period (sum in org unit hierarchy"
+msgstr "Last value in period (sum in org unit hierarchy"
+
+msgid "First"
+msgstr "First"
+
+msgid "First value (sum in org unit hierarchy"
+msgstr "First value (sum in org unit hierarchy"
+
+msgid "First value (first in org unit hierarchy"
+msgstr "First value (first in org unit hierarchy"
+
+msgid "Count"
+msgstr "Count"
+
+msgid "Standard deviation"
+msgstr "Standard deviation"
+
+msgid "Variance"
+msgstr "Variance"
+
+msgid "Min"
+msgstr "Min"
+
+msgid "Max"
+msgstr "Max"
+
+msgid "Min (sum in org unit hierarchy"
+msgstr "Min (sum in org unit hierarchy"
+
+msgid "Max (sum in org unit hierarchy"
+msgstr "Max (sum in org unit hierarchy"
+
+msgid "Custom"
+msgstr "Custom"
+
 msgid "equal to (=)"
 msgstr "equal to (=)"
 
