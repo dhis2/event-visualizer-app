@@ -242,8 +242,6 @@ export const useActionButton = (buttonType: OutputType) => {
 
     const dataSourceMetadata = useMetadataItem(dataSourceId)
 
-    console.log('ds metadata', dataSourceMetadata)
-
     const action = useMemo((): ButtonAction => {
         // Empty visualization
         if (isVisualizationEmpty(currentVis)) {
@@ -426,7 +424,7 @@ export const useActionButton = (buttonType: OutputType) => {
         }
 
         if (
-            ['EVENT', 'TRACKED_ENTITY_INSTANCE'].includes(buttonType) &&
+            ['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(buttonType) &&
             hasCategoryInLayout &&
             hasCategoryOptionGroupSetInLayout
         ) {
@@ -436,18 +434,18 @@ export const useActionButton = (buttonType: OutputType) => {
                 ),
             }
         } else if (
-            ['EVENT', 'TRACKED_ENTITY_INSTANCE'].includes(buttonType) &&
+            ['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(buttonType) &&
             hasCategoryInLayout
         ) {
             return {
                 content: i18n.t('Not valid with categories'),
             }
         } else if (
-            ['EVENT', 'TRACKED_ENTITY_INSTANCE'].includes(buttonType) &&
+            ['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(buttonType) &&
             hasCategoryOptionGroupSetInLayout
         ) {
             return {
-                content: i18n.t('Not valid with category option sets'),
+                content: i18n.t('Not valid with category option group sets'),
             }
         }
 
