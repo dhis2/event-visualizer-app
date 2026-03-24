@@ -99,6 +99,7 @@ describe('filterDimensions', () => {
         overrides?: Partial<DimensionMetadataItem>
     ): DimensionMetadataItem => ({
         id: 'test-id',
+        dimensionId: 'test-id',
         name: 'Test Dimension',
         dimensionType: 'DATA_ELEMENT',
         dimensionItemType: 'DATA_ELEMENT',

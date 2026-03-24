@@ -61,14 +61,19 @@ export type DimensionMetadataItem = Omit<
     | 'dimensionType' // Omit to make required and customise
     | 'dimensionItemType' // Omit to customise
     | 'options' // Omit because it does not reflect reality
+    | 'legendSet' // Omit to rename to legendSetId
 > & {
-    id: string // we use id not uid
+    id: string // we use id not uid. This is the compound ID
+    dimensionId: string // plain dimension, always added but mostly useful when the dimension has a compound ID
     name: string // required instead of optional
     dimensionType: DimensionType // require and use "our" dimension type
     dimensionItemType?: DimensionType // use "our" dimension type
-    optionSet?: string // Add ID reference to `optionSet`
-    program?: string // Add ID reference to `program`
-    programStage?: string // Add ID reference to `programStage`
+    optionSetId?: string // Add ID reference to optionSet
+    legendSetId?: string // Add ID reference to legendSet
+    programId?: string // Add ID reference to program
+    programStageId?: string // Add ID reference to programStage
+    trackedEntityTypeId?: string // Add ID reference to trackedEntityType
+    repetitionIndex?: number // Also added
 }
 
 type OptionSetOption = Omit<OptionSet['options'], 'id' | 'code' | 'name'> & {
@@ -124,6 +129,7 @@ export type MetadataItem =
     | Program
     | ProgramStage
 
+export type MetadataMap = Map<string, MetadataItem>
 export type Subscriber = () => void
 
 export type InitialMetadataItems = Record<
@@ -131,13 +137,3 @@ export type InitialMetadataItems = Record<
     string | MetadataInputItem | Partial<DimensionMetadataItem>
 >
 export type AnalyticsResponseMetadataItems = Record<string, MetadataInputItem>
-
-export type DimensionMetadata = {
-    dimensionId: string
-    programId?: string
-    programStageId?: string
-    repetitionIndex?: string
-    dimension?: DimensionMetadataItem
-    program?: Program
-    programStage?: ProgramStage
-}

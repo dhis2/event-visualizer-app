@@ -1,15 +1,14 @@
 import { extractMetadataFromAnalyticsResponse } from './analytics-data'
-import { parseDimensionIdInput } from './dimension'
+import { isCompoundDimensionId, resolveId } from './dimension'
 import { smartMergeWithChangeDetection } from './merge-utils'
-import { normalizeMetadataInputItem } from './normalization'
+import {
+    getCanonicalKeysForInput,
+    normalizeMetadataInputItem,
+    extractInputId,
+} from './normalization'
 import { extractMetadataFromVisualization } from './visualization'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import {
-    isMetadataInputItem,
-    isDimensionMetadataItem,
-    isProgramMetadataItem,
-    isProgramStageMetadataItem,
-} from '@modules/metadata'
+import { isMetadataInputItem } from '@modules/metadata'
 import { isObject, isPopulatedString } from '@modules/validation'
 import type {
     MetadataInputItem,
@@ -20,7 +19,7 @@ import type {
     AnalyticsResponseMetadataItems,
     AppCachedData,
     SavedVisualization,
-    DimensionMetadata,
+    MetadataMap,
 } from '@types'
 
 declare global {
@@ -42,9 +41,9 @@ const isItemMatch = (item: MetadataItem, token: string) =>
     item.name?.toLowerCase().includes(token.toLowerCase())
 
 export class MetadataStore {
-    private metadata = new Map<string, MetadataItem>()
+    private readonly metadata: MetadataMap = new Map()
     private subscribers = new Map<string, Set<Subscriber>>()
-    private initialMetadataKeys = new Set<string>()
+    private readonly initialMetadataIds = new Set<string>()
 
     constructor(
         initialMetadataItems: InitialMetadataItems,
@@ -81,24 +80,24 @@ export class MetadataStore {
     setVisualizationMetadata(visualization: SavedVisualization) {
         const visualizationMetadata =
             extractMetadataFromVisualization(visualization)
-        /* The code below is designed to keep metadata hook rerenders to a minimum:
-         * The initial metadata does not need to be updated because it remains unchanged.
-         * The metadata items for the new visualization are updated as needed by calling `addMetadata`
-         * The removed metadata items could have subscriptions remaining, so these are notified */
-        const newMetadataKeys = new Set([
-            ...Object.keys(visualizationMetadata),
-            ...Array.from(this.initialMetadataKeys),
-        ])
-        const metadataKeysToRemove = Array.from(this.metadata.keys()).filter(
-            (key) => !newMetadataKeys.has(key)
-        )
 
-        for (const key of metadataKeysToRemove) {
-            this.metadata.delete(key)
-            this.notifySubscriber(key)
-        }
+        const previousIds = new Set(this.metadata.keys())
 
+        // Add new items before computing retained IDs, so compound IDs
+        // can be canonicalized against the updated map.
         this.addMetadata(visualizationMetadata)
+
+        const nextIds = new Set([
+            ...getCanonicalKeysForInput(visualizationMetadata, this.metadata),
+            ...this.initialMetadataIds,
+        ])
+
+        const idsToRemove = [...previousIds].filter((id) => !nextIds.has(id))
+
+        for (const id of idsToRemove) {
+            this.metadata.delete(id)
+            this.notifySubscriber(id)
+        }
     }
 
     addAnalyticsResponseMetadata(
@@ -108,144 +107,81 @@ export class MetadataStore {
         this.addMetadata(extractMetadataFromAnalyticsResponse(items, headers))
     }
 
-    getMetadataItem(key: string): MetadataItem | undefined {
-        return this.metadata.get(key)
+    getMetadataItem(id: string): MetadataItem | undefined {
+        return this.metadata.get(resolveId(id))
     }
 
-    getMetadataItems(keys: string[]): Record<string, MetadataItem> {
-        return keys.reduce((metadataStoreItems, key) => {
-            const item = this.metadata.get(key)
+    getMetadataItems(ids: string[]): Record<string, MetadataItem> {
+        return ids.reduce((metadataStoreItems, id) => {
+            const item = this.getMetadataItem(id)
             if (item) {
-                metadataStoreItems[key] = item
+                metadataStoreItems[id] = item
             }
             return metadataStoreItems
         }, {})
     }
 
-    getDimensionMetadata(input: string): DimensionMetadata {
-        const { ids, repetitionIndex } = parseDimensionIdInput(input)
-        const nestedDimensionId = ids.join('.')
-        const result: DimensionMetadata = {
-            dimensionId: '',
-            programStageId: undefined,
-            programId: undefined,
-            repetitionIndex,
-            dimension: undefined,
-            program: undefined,
-            programStage: undefined,
-        }
-
-        // ids.length > 0 && <= 3 guaranteed by parseDimensionIdInput
-        if (ids.length === 1) {
-            result.dimensionId = ids[0]
-        } else if (ids.length === 2) {
-            /* First ID could be either a program or a stage.
-             * Query the metadata store to find out which one it is or just leave undefined */
-            const [unknownId, dimensionId] = ids
-            const unknownMetadata = this.metadata.get(unknownId)
-
-            result.dimensionId = dimensionId
-            if (unknownMetadata) {
-                if (isProgramMetadataItem(unknownMetadata)) {
-                    result.programId = unknownId
-                } else if (isProgramStageMetadataItem(unknownMetadata)) {
-                    result.programStageId = unknownId
-                } else {
-                    throw new Error(
-                        `"${unknownId}" is not a program or program stage metadata item`
-                    )
-                }
-            }
-        } else if (ids.length === 3) {
-            const [programId, programStageId, dimensionId] = ids
-            result.programId = programId
-            result.programStageId = programStageId
-            result.dimensionId = dimensionId
-        }
-
-        const dimension =
-            this.metadata.get(nestedDimensionId) ??
-            this.metadata.get(result.dimensionId)
-        const program = result.programId && this.metadata.get(result.programId)
-        const programStage =
-            result.programStageId && this.metadata.get(result.programStageId)
-
-        if (dimension) {
-            if (isDimensionMetadataItem(dimension)) {
-                result.dimension = dimension
-            } else {
-                throw new Error(
-                    `"${result.dimensionId}" is not a valid dimension metadata item`
-                )
-            }
-        }
-
-        if (program) {
-            if (isProgramMetadataItem(program)) {
-                result.program = program
-            } else {
-                throw new Error(
-                    `"${result.programId}" is not a valid program metadata item`
-                )
-            }
-        }
-
-        if (programStage) {
-            if (isProgramStageMetadataItem(programStage)) {
-                result.programStage = programStage
-            } else {
-                throw new Error(
-                    `"${result.programStageId}" is not a valid programStage metadata item`
-                )
-            }
-        }
-
-        return result
-    }
-
-    subscribe(key: string | null | undefined, cb: Subscriber) {
-        if (!isPopulatedString(key)) {
+    subscribe(id: string | null | undefined, cb: Subscriber) {
+        if (!isPopulatedString(id)) {
             return noop
         }
-        if (!this.subscribers.has(key)) {
-            this.subscribers.set(key, new Set())
+        // Resolve to canonical ID at subscription time.
+        const canonicalId = resolveId(id)
+        if (!this.subscribers.has(canonicalId)) {
+            this.subscribers.set(canonicalId, new Set())
         }
-        this.subscribers.get(key)!.add(cb)
+        this.subscribers.get(canonicalId)!.add(cb)
+
         return () => {
-            this.subscribers.get(key)!.delete(cb)
-            if (this.subscribers.get(key)!.size === 0) {
-                this.subscribers.delete(key)
+            this.subscribers.get(canonicalId)!.delete(cb)
+            if (this.subscribers.get(canonicalId)!.size === 0) {
+                this.subscribers.delete(canonicalId)
             }
         }
     }
 
     /**
-     * Adds or updates metadata items in the store.
-     * Handles validation, shallow equality, and property removal detection in a single pass.
-     * Notifies subscribers only if the item actually changed.
+     * Adds or updates metadata items in the store, notifying subscribers only
+     * for items that actually changed. Plain items (programs, stages) are
+     * processed before compound-ID items so context is available for
+     * field enrichment.
      */
     addMetadata(metadataInput: MetadataInput) {
-        // Track ids of items that were actually updated
-        const updatedMetadataIds = new Set<string>()
+        const updatedIds = new Set<string>()
+        const deferredCompoundMetadataInputs = new Map<
+            string,
+            MetadataInputItem | string
+        >()
 
         const processMetadataItem = (
             metadataInputItem: MetadataInputItem | string,
-            key?: string
+            key?: string,
+            { deferred = false }: { deferred?: boolean } = {}
         ) => {
-            const newMetadataStoreItem = normalizeMetadataInputItem(
+            const inputId = extractInputId(metadataInputItem, key)
+
+            if (!deferred && isCompoundDimensionId(inputId)) {
+                deferredCompoundMetadataInputs.set(inputId, metadataInputItem)
+                return
+            }
+
+            const normalizedStoreItem = normalizeMetadataInputItem(
                 metadataInputItem,
                 this.metadata,
                 key
             )
-            const itemId = newMetadataStoreItem.id
-            const existingMetadataStoreItem = this.metadata.get(itemId)
+
+            const normalizedId = normalizedStoreItem.id
+
+            const existingMetadataStoreItem = this.metadata.get(normalizedId)
+
             const { hasChanges, mergedItem } = smartMergeWithChangeDetection(
                 existingMetadataStoreItem,
-                newMetadataStoreItem
+                normalizedStoreItem
             )
             if (hasChanges) {
-                this.metadata.set(itemId, mergedItem)
-                updatedMetadataIds.add(itemId)
+                this.metadata.set(normalizedId, mergedItem)
+                updatedIds.add(normalizedId)
             }
         }
 
@@ -258,24 +194,28 @@ export class MetadataStore {
             if (isMetadataInputItem(metadataInput)) {
                 processMetadataItem(metadataInput)
             } else {
-                Object.entries(metadataInput).forEach(([key, value]) => {
-                    processMetadataItem(value, key)
+                Object.entries(metadataInput).forEach(([id, value]) => {
+                    processMetadataItem(value, id)
                 })
             }
         }
 
-        this.notifySubscribers(updatedMetadataIds)
+        for (const [id, item] of deferredCompoundMetadataInputs) {
+            processMetadataItem(item, id, { deferred: true })
+        }
+
+        this.notifySubscribers(updatedIds)
     }
 
-    private notifySubscribers(keys: Set<string>) {
-        for (const key of keys) {
-            this.notifySubscriber(key)
+    private notifySubscribers(ids: Set<string>) {
+        for (const id of ids) {
+            this.notifySubscriber(id)
         }
     }
 
-    private notifySubscriber(key: string) {
-        if (this.subscribers.has(key)) {
-            this.subscribers.get(key)!.forEach((callback) => callback())
+    private notifySubscriber(id: string) {
+        if (this.subscribers.has(id)) {
+            this.subscribers.get(id)!.forEach((callback) => callback())
         }
     }
 
@@ -293,8 +233,8 @@ export class MetadataStore {
               }, initialMetadataItems)
             : initialMetadataItems
 
-        Object.keys(initialMetadataWithRootOrgUnits).forEach((key) => {
-            this.initialMetadataKeys.add(key)
+        Object.keys(initialMetadataWithRootOrgUnits).forEach((id) => {
+            this.initialMetadataIds.add(id)
         })
 
         this.addMetadata(initialMetadataWithRootOrgUnits as MetadataInput)

@@ -19,13 +19,15 @@ const getFixedDimensions = (
 ): DimensionMetadataItem[] => {
     return [
         {
-            id: 'ou',
+            id: `${program.id}.ou`,
+            dimensionId: 'ou',
             dimensionType: 'ORGANISATION_UNIT',
             name: program.displayOrgUnitLabel ?? i18n.t('Enrollment org. unit'),
             valueType: 'ORGANISATION_UNIT',
         },
         {
-            id: 'enrollmentDate',
+            id: `${program.id}.enrollmentDate`,
+            dimensionId: 'enrollmentDate',
             dimensionType: 'PERIOD',
             name:
                 program.displayEnrollmentDateLabel ??
@@ -33,13 +35,15 @@ const getFixedDimensions = (
             valueType: 'DATE',
         },
         {
-            id: 'incidentDate',
+            id: `${program.id}.incidentDate`,
+            dimensionId: 'incidentDate',
             dimensionType: 'PERIOD',
             name: program.displayIncidentDateLabel ?? i18n.t('Incident date'),
             valueType: 'DATE',
         },
         {
-            id: 'programStatus',
+            id: `${program.id}.programStatus`,
+            dimensionId: 'programStatus',
             dimensionType: 'STATUS',
             name: i18n.t('Enrollment status'),
             valueType: 'TEXT',

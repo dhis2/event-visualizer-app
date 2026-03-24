@@ -409,8 +409,8 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     headers.reduce((acc, header) => {
                         const metadataItem =
                             analyticsResponse.metaData.items[header.name!]
-                        if (typeof metadataItem?.legendSet === 'string') {
-                            acc[header.name!] = metadataItem.legendSet
+                        if (typeof metadataItem?.legendSetId === 'string') {
+                            acc[header.name!] = metadataItem.legendSetId
                         }
                         return acc
                     }, {})

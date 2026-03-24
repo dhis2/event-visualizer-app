@@ -1,4 +1,4 @@
-import { expect, describe, it, beforeEach } from 'vitest'
+import { expect, describe, it, beforeEach, vi } from 'vitest'
 import inpatientCasesVisualization from '../__fixtures__/visualization-inpatient-cases-last-quarter-case.json'
 import inpatientVisitVisualization from '../__fixtures__/visualization-inpatient-visit-overview-this-year-bo.json'
 import { getInitialMetadata } from '../initial-metadata'
@@ -53,13 +53,15 @@ describe('MetadataStore', () => {
             },
             "GieVkTxp4HH": {
               "code": "DE_240794",
+              "dimensionId": "GieVkTxp4HH",
               "dimensionType": "DATA_ELEMENT",
               "id": "GieVkTxp4HH",
-              "legendSet": "TBxGTceyzwy",
+              "legendSetId": "TBxGTceyzwy",
               "name": "Height in cm",
               "valueType": "NUMBER",
             },
             "HS8QXAJtuKV": {
+              "dimensionId": "HS8QXAJtuKV",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "HS8QXAJtuKV",
               "name": "Inpatient bed days average",
@@ -71,13 +73,15 @@ describe('MetadataStore', () => {
             },
             "K6uUAvq500H": {
               "code": "DE_3000010",
+              "dimensionId": "K6uUAvq500H",
               "dimensionType": "DATA_ELEMENT",
               "id": "K6uUAvq500H",
               "name": "Diagnosis (ICD-10)",
-              "optionSet": "eUZ79clX7y1",
+              "optionSetId": "eUZ79clX7y1",
               "valueType": "TEXT",
             },
             "Kswd1r4qWLh": {
+              "dimensionId": "Kswd1r4qWLh",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "Kswd1r4qWLh",
               "name": "Average height of boys at 10 years old",
@@ -182,6 +186,7 @@ describe('MetadataStore', () => {
             },
             "SWfdB5lX0fk": {
               "code": "DE_423442",
+              "dimensionId": "SWfdB5lX0fk",
               "dimensionType": "DATA_ELEMENT",
               "id": "SWfdB5lX0fk",
               "name": "Pregnant",
@@ -220,6 +225,7 @@ describe('MetadataStore', () => {
               "name": "Today",
             },
             "Thkx2BnO5Kq": {
+              "dimensionId": "Thkx2BnO5Kq",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "Thkx2BnO5Kq",
               "name": "BMI male",
@@ -241,11 +247,13 @@ describe('MetadataStore', () => {
               "name": "Weeks this year",
             },
             "XCMi7Wvnplm": {
+              "dimensionId": "XCMi7Wvnplm",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "XCMi7Wvnplm",
               "name": "BMI female",
             },
             "Y7hKDSuqEtH": {
+              "dimensionId": "Y7hKDSuqEtH",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "Y7hKDSuqEtH",
               "name": "BMI male under 5 y",
@@ -262,23 +270,27 @@ describe('MetadataStore', () => {
               "repeatable": false,
             },
             "completedDate": {
+              "dimensionId": "completedDate",
               "dimensionType": "PERIOD",
               "id": "completedDate",
               "name": "Completed date",
             },
             "created": {
+              "dimensionId": "created",
               "dimensionType": "PERIOD",
               "id": "created",
               "name": "Registration date",
               "valueType": "DATE",
             },
             "createdBy": {
+              "dimensionId": "createdBy",
               "dimensionType": "USER",
               "id": "createdBy",
               "name": "Created by",
               "valueType": "USERNAME",
             },
             "createdDate": {
+              "dimensionId": "createdDate",
               "dimensionType": "PERIOD",
               "id": "createdDate",
               "name": "Created date",
@@ -301,84 +313,102 @@ describe('MetadataStore', () => {
               "programType": "WITHOUT_REGISTRATION",
             },
             "eBAyeGv0exc.eventStatus": {
+              "dimensionId": "eventStatus",
               "dimensionType": "STATUS",
               "id": "eBAyeGv0exc.eventStatus",
               "name": "Event status",
+              "programId": "eBAyeGv0exc",
             },
             "eBAyeGv0exc.ou": {
+              "dimensionId": "ou",
               "dimensionType": "ORGANISATION_UNIT",
               "id": "eBAyeGv0exc.ou",
               "name": "Organisation unit",
+              "programId": "eBAyeGv0exc",
             },
             "eBAyeGv0exc.programStatus": {
+              "dimensionId": "programStatus",
               "dimensionType": "STATUS",
               "id": "eBAyeGv0exc.programStatus",
               "name": "Program status",
+              "programId": "eBAyeGv0exc",
             },
             "eMyVanycQSC": {
               "code": "DE_3000005",
+              "dimensionId": "eMyVanycQSC",
               "dimensionType": "DATA_ELEMENT",
               "id": "eMyVanycQSC",
               "name": "Admission Date",
               "valueType": "DATE",
             },
             "enrollmentDate": {
+              "dimensionId": "enrollmentDate",
               "dimensionType": "PERIOD",
               "id": "enrollmentDate",
               "name": "Enrollment date",
             },
             "eventDate": {
+              "dimensionId": "eventDate",
               "dimensionType": "PERIOD",
               "id": "eventDate",
               "name": "Report date",
             },
             "eventStatus": {
+              "dimensionId": "eventStatus",
               "dimensionType": "STATUS",
               "id": "eventStatus",
               "name": "Event status",
             },
             "fWIAEtYVEGk": {
               "code": "DE_3000009",
+              "dimensionId": "fWIAEtYVEGk",
               "dimensionType": "DATA_ELEMENT",
               "id": "fWIAEtYVEGk",
               "name": "Mode of Discharge",
-              "optionSet": "iDFPKpFTiVw",
+              "optionSetId": "iDFPKpFTiVw",
               "valueType": "TEXT",
             },
             "gWxh7DiRmG7": {
+              "dimensionId": "gWxh7DiRmG7",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "gWxh7DiRmG7",
               "name": "Average height of girls at 5 years old",
             },
             "hlPt8H4bUOQ": {
+              "dimensionId": "hlPt8H4bUOQ",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "hlPt8H4bUOQ",
               "name": "BMI female under 5 y",
             },
             "incidentDate": {
+              "dimensionId": "incidentDate",
               "dimensionType": "PERIOD",
               "id": "incidentDate",
               "name": "Date of Discharge",
             },
             "lastUpdated": {
+              "dimensionId": "lastUpdated",
               "dimensionType": "PERIOD",
               "id": "lastUpdated",
               "name": "Last updated on",
               "valueType": "DATETIME",
             },
             "lastUpdatedBy": {
+              "dimensionId": "lastUpdatedBy",
               "dimensionType": "USER",
               "id": "lastUpdatedBy",
               "name": "Last updated by",
               "valueType": "USERNAME",
             },
             "lastUpdatedOn": {
+              "dimensionId": "lastUpdatedOn",
               "dimensionType": "PERIOD",
               "id": "lastUpdatedOn",
               "name": "Last updated on",
             },
             "msodh3rEMJa": {
               "code": "DE_3000006",
+              "dimensionId": "msodh3rEMJa",
               "dimensionType": "DATA_ELEMENT",
               "id": "msodh3rEMJa",
               "name": "Discharge Date",
@@ -386,13 +416,15 @@ describe('MetadataStore', () => {
             },
             "oZg33kd9taw": {
               "code": "DE_3000004",
+              "dimensionId": "oZg33kd9taw",
               "dimensionType": "DATA_ELEMENT",
               "id": "oZg33kd9taw",
               "name": "Gender",
-              "optionSet": "pC3N9N77UmT",
+              "optionSetId": "pC3N9N77UmT",
               "valueType": "TEXT",
             },
             "ou": {
+              "dimensionId": "ou",
               "dimensionType": "ORGANISATION_UNIT",
               "id": "ou",
               "name": "Organisation unit",
@@ -402,42 +434,49 @@ describe('MetadataStore', () => {
               "name": "Period",
             },
             "programStatus": {
+              "dimensionId": "programStatus",
               "dimensionType": "STATUS",
               "id": "programStatus",
               "name": "Program status",
             },
             "qrur9Dvnyt5": {
               "code": "DE_3000003",
+              "dimensionId": "qrur9Dvnyt5",
               "dimensionType": "DATA_ELEMENT",
               "id": "qrur9Dvnyt5",
-              "legendSet": "Yf6UHoPkdS6",
+              "legendSetId": "Yf6UHoPkdS6",
               "name": "Age in years",
               "valueType": "INTEGER",
             },
             "sGna2pquXOO": {
+              "dimensionId": "sGna2pquXOO",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "sGna2pquXOO",
               "name": "Average age of female discharges",
             },
             "scheduledDate": {
+              "dimensionId": "scheduledDate",
               "dimensionType": "PERIOD",
               "id": "scheduledDate",
               "name": "Scheduled date",
             },
             "tUdBD1JDxpn": {
+              "dimensionId": "tUdBD1JDxpn",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "tUdBD1JDxpn",
               "name": "Average age of deaths",
             },
             "vV9UWAZohSf": {
               "code": "DE_240795",
+              "dimensionId": "vV9UWAZohSf",
               "dimensionType": "DATA_ELEMENT",
               "id": "vV9UWAZohSf",
-              "legendSet": "OrkEzxZEH4X",
+              "legendSetId": "OrkEzxZEH4X",
               "name": "Weight in kg",
               "valueType": "INTEGER_POSITIVE",
             },
             "x7PaHGvgWY2": {
+              "dimensionId": "x7PaHGvgWY2",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "x7PaHGvgWY2",
               "name": "BMI",
@@ -521,11 +560,11 @@ describe('MetadataStore', () => {
             "lastUpdated",
             "createdBy",
             "lastUpdatedBy",
+            "eBAyeGv0exc",
+            "Zj7UnCAulEk",
             "eBAyeGv0exc.ou",
             "eBAyeGv0exc.eventStatus",
             "eBAyeGv0exc.programStatus",
-            "eBAyeGv0exc",
-            "Zj7UnCAulEk",
           ]
         `)
     })
@@ -573,7 +612,7 @@ describe('MetadataStore', () => {
 
         it('adds metadata items with nested IDs correctly', () => {
             const analyticsItems = {
-                'dataElement.programStage1': {
+                'Zj7UnCAulEk.someDataElement': {
                     uid: 'originalUid',
                     name: 'Nested Data Element',
                     valueType: 'TEXT',
@@ -584,8 +623,8 @@ describe('MetadataStore', () => {
             metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
 
             const snapshot = metadataStore.getMetadataSnapshot()
-            expect(snapshot['dataElement.programStage1']).toEqual({
-                id: 'dataElement.programStage1',
+            expect(snapshot['Zj7UnCAulEk.someDataElement']).toEqual({
+                id: 'Zj7UnCAulEk.someDataElement',
                 name: 'Nested Data Element',
                 valueType: undefined,
             })
@@ -636,6 +675,7 @@ describe('MetadataStore', () => {
             const snapshot = metadataStore.getMetadataSnapshot()
             expect(snapshot.ou).toEqual({
                 id: 'ou',
+                dimensionId: 'ou',
                 name: 'Organisation Unit UPDATED',
                 dimensionType: 'ORGANISATION_UNIT',
             })
@@ -660,212 +700,348 @@ describe('MetadataStore', () => {
             const snapshot = metadataStore.getMetadataSnapshot()
             expect(snapshot.eventDate).toEqual({
                 id: 'eventDate',
+                dimensionId: 'eventDate',
                 name: 'Report date',
                 dimensionType: 'PERIOD',
             })
         })
     })
+})
 
-    describe('getDimensionMetadata', () => {
-        let metadataStore: TestMetadataStore
+// ---------------------------------------------------------------------------
+// Shared helpers for the new unit tests below
+// ---------------------------------------------------------------------------
 
-        beforeEach(() => {
-            metadataStore = new TestMetadataStore(
-                getInitialMetadata(),
-                rootOrgUnits
+const makeProgram = (programId: string, stageId: string): MetadataItem => ({
+    id: programId,
+    name: `Program ${programId}`,
+    programType: 'WITHOUT_REGISTRATION' as const,
+    programStages: [
+        {
+            id: stageId,
+            name: `Stage ${stageId}`,
+            displayExecutionDateLabel: 'Report date',
+            hideDueDate: false,
+            repeatable: false,
+            program: { id: programId },
+        },
+    ],
+})
+
+const makeStage = (stageId: string, programId: string): MetadataItem => ({
+    id: stageId,
+    name: `Stage ${stageId}`,
+    displayExecutionDateLabel: 'Report date',
+    hideDueDate: false,
+    repeatable: false,
+    program: { id: programId },
+})
+
+// ---------------------------------------------------------------------------
+// getMetadataItem — alias resolution
+// ---------------------------------------------------------------------------
+
+describe('MetadataStore.getMetadataItem — alias key resolution', () => {
+    let store: TestMetadataStore
+
+    beforeEach(() => {
+        store = new TestMetadataStore(
+            {},
+            [] as unknown as AppCachedData['rootOrgUnits']
+        )
+    })
+
+    it('returns the item when the exact canonical key is used', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'weight'
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        const item = store.getMetadataItem(`${stageId}.${dimId}`)
+        expect(item).toBeDefined()
+        expect(item?.id).toBe(`${stageId}.${dimId}`)
+    })
+
+    it('p1.dim is a canonical key on its own — not an alias for ps1.dim', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'weight'
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        // p1.dim is NOT an alias for ps1.dim — they are different canonical keys
+        const item = store.getMetadataItem(`${programId}.${dimId}`)
+        expect(item).toBeUndefined()
+
+        // The stage-based item is still accessible via its canonical key
+        const stageItem = store.getMetadataItem(`${stageId}.${dimId}`)
+        expect(stageItem).toBeDefined()
+        expect(stageItem?.id).toBe(`${stageId}.${dimId}`)
+    })
+
+    it('resolves a 3-part alias (p1.ps1.dim) to the canonical stage-based key', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'height'
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Height',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        const item = store.getMetadataItem(`${programId}.${stageId}.${dimId}`)
+        expect(item).toBeDefined()
+        expect(item?.id).toBe(`${stageId}.${dimId}`)
+    })
+
+    it('returns undefined for a completely unknown compound key', () => {
+        const item = store.getMetadataItem('unknown.dim')
+        expect(item).toBeUndefined()
+    })
+
+    it('returns undefined for an unknown plain key', () => {
+        const item = store.getMetadataItem('nonexistent')
+        expect(item).toBeUndefined()
+    })
+})
+
+// ---------------------------------------------------------------------------
+// addMetadata — deferred compound key processing
+// ---------------------------------------------------------------------------
+
+describe('MetadataStore.addMetadata — deferred compound key processing', () => {
+    let store: TestMetadataStore
+
+    beforeEach(() => {
+        store = new TestMetadataStore(
+            {},
+            [] as unknown as AppCachedData['rootOrgUnits']
+        )
+    })
+
+    it('processes plain items before compound items in the same addMetadata call', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'weight'
+
+        // Pass everything in one call — compound key depends on the stage being present
+        store.addMetadata({
+            [programId]: makeProgram(programId, stageId),
+            [stageId]: makeStage(stageId, programId),
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        const snapshot = store.getMetadataSnapshot()
+        expect(snapshot[`${stageId}.${dimId}`]).toBeDefined()
+        expect(snapshot[`${stageId}.${dimId}`]).toMatchObject({
+            id: `${stageId}.${dimId}`,
+            dimensionId: dimId,
+        })
+    })
+
+    it('stores program-prefixed compound key under program-canonical form (p1.dim stays as p1.dim)', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'height'
+
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+
+        // Supply with program-based key (no stageId in the key)
+        store.addMetadata({
+            [`${programId}.${dimId}`]: {
+                id: `${programId}.${dimId}`,
+                name: 'Height',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        const snapshot = store.getMetadataSnapshot()
+        // Stored under program-canonical key (p1.dim) — NOT auto-resolved to ps1.dim
+        expect(snapshot[`${programId}.${dimId}`]).toBeDefined()
+        // Not under the stage key
+        expect(snapshot[`${stageId}.${dimId}`]).toBeUndefined()
+    })
+})
+
+// ---------------------------------------------------------------------------
+// notifySubscribers — fan-out for compound key aliases
+// ---------------------------------------------------------------------------
+
+describe('MetadataStore — subscriber fan-out for compound key aliases', () => {
+    let store: TestMetadataStore
+
+    beforeEach(() => {
+        store = new TestMetadataStore(
+            {},
+            [] as unknown as AppCachedData['rootOrgUnits']
+        )
+    })
+
+    it('notifies subscriber registered under canonical key when item is updated', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'weight'
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+
+        const cb = vi.fn()
+        store.subscribe(`${stageId}.${dimId}`, cb)
+
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        expect(cb).toHaveBeenCalledTimes(1)
+    })
+
+    it('notifies subscriber registered under 3-part alias key when canonical key item changes', () => {
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'weight'
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+
+        const cbAlias = vi.fn()
+        // Subscribe using the 3-part alias (p1.ps1.dim) — valid alias for ps1.dim
+        store.subscribe(`${programId}.${stageId}.${dimId}`, cbAlias)
+
+        // Update item using canonical key
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+
+        expect(cbAlias).toHaveBeenCalledTimes(1)
+    })
+
+    it('notifies subscriber under alias key when canonical item is removed via setVisualizationMetadata', () => {
+        // Set up: load a visualization that contains the compound dimension
+        store.setVisualizationMetadata(
+            inpatientVisitVisualization as unknown as SavedVisualization
+        )
+
+        // The inpatient visit visualization has stage Zj7UnCAulEk and compound key Zj7UnCAulEk.ou
+        // The program is eBAyeGv0exc (event program / WITHOUT_REGISTRATION) with one stage.
+        // So p1.ou would be an alias for Zj7UnCAulEk.ou IF eBAyeGv0exc was p1.
+        // To test, subscribe to the 3-part alias: eBAyeGv0exc.Zj7UnCAulEk.ou
+        const cbAlias = vi.fn()
+        store.subscribe('eBAyeGv0exc.Zj7UnCAulEk.ou', cbAlias)
+
+        // Now switch to the inpatient cases visualization — it also has Zj7UnCAulEk.ou,
+        // so that item WON'T be removed. Instead confirm the subscriber is NOT notified.
+        // This validates that the fan-out only fires when something actually changes.
+        cbAlias.mockClear()
+        store.setVisualizationMetadata(
+            inpatientCasesVisualization as unknown as SavedVisualization
+        )
+
+        // Zj7UnCAulEk.ou is in both visualizations, so the alias subscriber
+        // should NOT receive a spurious removal notification
+        expect(cbAlias).not.toHaveBeenCalled()
+    })
+
+    it('does not throw when switching from a visualization that has compound keys whose context (program/stage) is not in the new visualization', () => {
+        // Regression test for: "No context metadata found for dimension with
+        // compound ID" when opening a second visualization whose program/stage
+        // differs from the first one.
+        //
+        // The bug: in the deletion loop, plain keys (e.g. old stage "oldStage")
+        // were deleted before compound keys that reference them (e.g.
+        // "oldStage.ou"), so the context lookup inside
+        // getCompoundDimensionIdVariants would fail.
+        const oldProgramId = 'oldProgram'
+        const oldStageId = 'oldStage'
+
+        // Simulate the store state left by a previous visualization that used
+        // a different program/stage than the inpatient visit fixture.
+        store.addMetadata(makeProgram(oldProgramId, oldStageId))
+        store.addMetadata(makeStage(oldStageId, oldProgramId))
+        store.addMetadata({
+            [`${oldStageId}.ou`]: {
+                id: `${oldStageId}.ou`,
+                name: 'Organisation unit',
+                dimensionType: 'ORGANISATION_UNIT',
+            },
+        })
+
+        // Now open a new visualization that uses a completely different program
+        // (eBAyeGv0exc / Zj7UnCAulEk). This must not throw.
+        expect(() => {
+            store.setVisualizationMetadata(
+                inpatientVisitVisualization as unknown as SavedVisualization
             )
-            // Add test metadata
-            metadataStore.addMetadata([
-                {
-                    id: 'testDimension',
-                    name: 'Test Dimension',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'TEXT',
-                },
-                {
-                    id: 'testProgram',
-                    name: 'Test Program',
-                    programType: 'WITH_REGISTRATION',
-                },
-                {
-                    id: 'testStage',
-                    name: 'Test Stage',
-                    repeatable: false,
-                    hideDueDate: false,
-                },
-                {
-                    id: 'wrongTypeItem',
-                    name: 'Wrong Type',
-                    path: '/some/path',
-                },
-            ])
+        }).not.toThrow()
+
+        // The old program/stage and its compound keys must be gone
+        const snapshot = store.getMetadataSnapshot()
+        expect(snapshot[oldProgramId]).toBeUndefined()
+        expect(snapshot[oldStageId]).toBeUndefined()
+        expect(snapshot[`${oldStageId}.ou`]).toBeUndefined()
+
+        // The new visualization's keys must be present
+        expect(snapshot['Zj7UnCAulEk']).toBeDefined()
+        expect(snapshot['eBAyeGv0exc.ou']).toBeDefined()
+    })
+
+    it('notifies alias subscriber when item name changes via addMetadata', () => {
+        // Set up program+stage context
+        const programId = 'p1'
+        const stageId = 'ps1'
+        const dimId = 'weight'
+        store.addMetadata(makeProgram(programId, stageId))
+        store.addMetadata(makeStage(stageId, programId))
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
         })
 
-        describe('single dimension ID', () => {
-            it('returns dimension metadata for valid dimension ID', () => {
-                const result =
-                    metadataStore.getDimensionMetadata('testDimension')
+        const cbAlias = vi.fn()
+        // Subscribe using the full 3-part alias
+        store.subscribe(`${programId}.${stageId}.${dimId}`, cbAlias)
 
-                expect(result).toEqual({
-                    dimensionId: 'testDimension',
-                    programId: undefined,
-                    programStageId: undefined,
-                    repetitionIndex: undefined,
-                    dimension: {
-                        id: 'testDimension',
-                        name: 'Test Dimension',
-                        dimensionType: 'DATA_ELEMENT',
-                        valueType: 'TEXT',
-                    },
-                    program: undefined,
-                    programStage: undefined,
-                })
-            })
-
-            it('throws error when dimension exists but is wrong type', () => {
-                expect(() =>
-                    metadataStore.getDimensionMetadata('wrongTypeItem')
-                ).toThrow(
-                    '"wrongTypeItem" is not a valid dimension metadata item'
-                )
-            })
+        // Update the item — subscriber should be notified
+        store.addMetadata({
+            [`${stageId}.${dimId}`]: {
+                id: `${stageId}.${dimId}`,
+                name: 'Weight (updated)',
+                dimensionType: 'DATA_ELEMENT',
+            },
         })
 
-        describe('two IDs (ambiguous)', () => {
-            it('leaves both undefined when first ID not in store', () => {
-                const result = metadataStore.getDimensionMetadata(
-                    'unknown.testDimension'
-                )
-
-                expect(result).toEqual({
-                    dimensionId: 'testDimension',
-                    programId: undefined,
-                    programStageId: undefined,
-                    repetitionIndex: undefined,
-                    dimension: {
-                        id: 'testDimension',
-                        name: 'Test Dimension',
-                        dimensionType: 'DATA_ELEMENT',
-                        valueType: 'TEXT',
-                    },
-                    program: undefined,
-                    programStage: undefined,
-                })
-            })
-
-            it('throws error when first ID is wrong type in store', () => {
-                metadataStore.addMetadata({
-                    id: 'wrongTypeItem',
-                    type: 'DataElementOperand',
-                    displayName: 'Wrong Type',
-                })
-
-                expect(() =>
-                    metadataStore.getDimensionMetadata(
-                        'wrongTypeItem.testDimension'
-                    )
-                ).toThrow(
-                    '"wrongTypeItem" is not a program or program stage metadata item'
-                )
-            })
-        })
-
-        describe('three IDs (program.stage.dimension)', () => {
-            it('returns all metadata when all are present', () => {
-                const result = metadataStore.getDimensionMetadata(
-                    'testProgram.testStage.testDimension'
-                )
-
-                expect(result).toEqual({
-                    dimensionId: 'testDimension',
-                    programId: 'testProgram',
-                    programStageId: 'testStage',
-                    repetitionIndex: undefined,
-                    dimension: {
-                        id: 'testDimension',
-                        name: 'Test Dimension',
-                        dimensionType: 'DATA_ELEMENT',
-                        valueType: 'TEXT',
-                    },
-                    program: {
-                        id: 'testProgram',
-                        name: 'Test Program',
-                        programType: 'WITH_REGISTRATION',
-                    },
-                    programStage: {
-                        id: 'testStage',
-                        name: 'Test Stage',
-                        repeatable: false,
-                        hideDueDate: false,
-                    },
-                })
-            })
-
-            it('sets IDs correctly even when metadata not loaded', () => {
-                const result = metadataStore.getDimensionMetadata(
-                    'unknownProgram.unknownStage.unknownDimension'
-                )
-
-                expect(result).toEqual({
-                    dimensionId: 'unknownDimension',
-                    programId: 'unknownProgram',
-                    programStageId: 'unknownStage',
-                    repetitionIndex: undefined,
-                    dimension: undefined,
-                    program: undefined,
-                    programStage: undefined,
-                })
-            })
-
-            it('prefers nested dimension ID over single ID when both exist', () => {
-                // Add dimension with single ID
-                metadataStore.addMetadata({
-                    id: 'sharedDimension',
-                    name: 'Generic Dimension',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'TEXT',
-                })
-
-                // Add dimension with nested ID (program-specific)
-                metadataStore.addMetadata({
-                    id: 'testProgram.testStage.sharedDimension',
-                    name: 'Program-Specific Dimension',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'NUMBER',
-                })
-
-                const result = metadataStore.getDimensionMetadata(
-                    'testProgram.testStage.sharedDimension'
-                )
-
-                // Should use the nested ID version, not the single ID
-                expect(result.dimension).toEqual({
-                    id: 'testProgram.testStage.sharedDimension',
-                    name: 'Program-Specific Dimension',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'NUMBER',
-                })
-            })
-
-            it('throws error when program is wrong type', () => {
-                expect(() =>
-                    metadataStore.getDimensionMetadata(
-                        'wrongTypeItem.testStage.testDimension'
-                    )
-                ).toThrow(
-                    '"wrongTypeItem" is not a valid program metadata item'
-                )
-            })
-
-            it('throws error when stage is wrong type', () => {
-                expect(() =>
-                    metadataStore.getDimensionMetadata(
-                        'testProgram.wrongTypeItem.testDimension'
-                    )
-                ).toThrow(
-                    '"wrongTypeItem" is not a valid programStage metadata item'
-                )
-            })
-        })
+        expect(cbAlias).toHaveBeenCalledTimes(1)
     })
 })

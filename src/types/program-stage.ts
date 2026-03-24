@@ -15,4 +15,7 @@ export type ProgramStage = Pick<
 > & {
     id: string
     name: string
+    program: {
+        id: string
+    }
 }

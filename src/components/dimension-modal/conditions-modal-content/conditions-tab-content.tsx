@@ -104,7 +104,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
     const valueType = dimension.valueType
     const isProgramIndicator: boolean =
         dimension.dimensionType === 'PROGRAM_INDICATOR'
-    const isOptionSetCondition: boolean = Boolean(dimension.optionSet)
+    const isOptionSetCondition: boolean = Boolean(dimension.optionSetId)
     const isSingleCondition: boolean = Boolean(
         isOptionSetCondition ||
             (valueType && SINGLETON_TYPES.includes(valueType))

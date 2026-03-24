@@ -71,6 +71,7 @@ const createDimension = (
     overrides?: Partial<DimensionMetadataItem>
 ): DimensionMetadataItem => ({
     id: 'test-id',
+    dimensionId: 'test-id',
     name: 'Test Dimension',
     dimensionType: 'DATA_ELEMENT',
     dimensionItemType: 'DATA_ELEMENT',
@@ -103,6 +104,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
     // ===== TEST DATA =====
     const mockDimension: DimensionMetadataItem = {
         id: 'test-id',
+        dimensionId: 'test-id',
         name: 'Test Dimension',
         dimensionType: 'DATA_ELEMENT',
         valueType: 'TEXT',
@@ -110,6 +112,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
 
     const mockApiDimension: DimensionMetadataItem = {
         id: 'api-id-1',
+        dimensionId: 'api-id-1',
         name: 'API Dimension 1',
         dimensionType: 'DATA_ELEMENT',
         dimensionItemType: 'DATA_ELEMENT',
@@ -318,12 +321,14 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const fixedDimensions: DimensionMetadataItem[] = [
             {
                 id: 'test-id-1',
+                dimensionId: 'test-id-1',
                 name: 'Test Dimension One',
                 dimensionType: 'DATA_ELEMENT',
                 valueType: 'TEXT',
             },
             {
                 id: 'test-id-2',
+                dimensionId: 'test-id-2',
                 name: 'Another Dimension',
                 dimensionType: 'DATA_ELEMENT',
                 valueType: 'TEXT',
@@ -657,12 +662,14 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const fixedDimensions: DimensionMetadataItem[] = [
             {
                 id: 'initial-1',
+                dimensionId: 'initial-1',
                 name: 'Initial Item 1',
                 dimensionType: 'DATA_ELEMENT',
                 valueType: 'TEXT',
             },
             {
                 id: 'initial-2',
+                dimensionId: 'initial-2',
                 name: 'Initial Item 2',
                 dimensionType: 'PROGRAM_INDICATOR',
                 valueType: 'NUMBER',
@@ -955,6 +962,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const fixedDimensions: DimensionMetadataItem[] = [
             {
                 id: 'initial-1',
+                dimensionId: 'initial-1',
                 name: 'Initial Data Element',
                 dimensionType: 'DATA_ELEMENT',
                 valueType: 'TEXT',
@@ -1739,6 +1747,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
             const dimensions = response.trackedEntityTypeAttributes.map(
                 (item) => ({
                     id: item.trackedEntityAttribute.id,
+                    dimensionId: item.trackedEntityAttribute.id,
                     name: item.trackedEntityAttribute.name,
                     dimensionType: 'DATA_ELEMENT' as const,
                     valueType: item.trackedEntityAttribute.valueType as 'TEXT',
