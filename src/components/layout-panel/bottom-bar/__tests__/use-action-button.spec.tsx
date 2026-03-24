@@ -310,7 +310,7 @@ describe('useActionButton for Event button', () => {
         })
     })
 
-    it('returns correct result for: LL, registration data and registration org. unit in layout', async () => {
+    it('returns correct result for: LL, registration date and registration org. unit in layout', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('EVENT'),
             createStoreWithPreloadedState({
@@ -527,7 +527,7 @@ describe('useActionButton for Enrollment button', () => {
         })
     })
 
-    it('returns correct result for: LL, registration data and registration org. unit in layout', async () => {
+    it('returns correct result for: LL, registration date and registration org. unit in layout', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('ENROLLMENT'),
             createStoreWithPreloadedState({
