@@ -285,7 +285,6 @@ const getCategoryTooltipContent = ({
 }
 
 type EventTooltipContentParams = {
-    dataSourceMetadata: ReturnType<typeof useMetadataItem>
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
     hasMultiplePrograms: boolean
@@ -390,33 +389,6 @@ const getTrackedEntityInstanceTooltipContent = ({
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
     })
-}
-
-type TooltipContentParams = {
-    buttonType: OutputType
-    dataSourceMetadata: ReturnType<typeof useMetadataItem>
-    hasCategoryInLayout: boolean
-    hasCategoryOptionGroupSetInLayout: boolean
-    hasMultiplePrograms: boolean
-    hasMultipleProgramStages: boolean
-    hasProgramIndicatorsInLayout: boolean
-    isRegistrationDateInLayout: boolean
-    isRegistrationOuInLayout: boolean
-    visualizationType: string
-}
-
-const getTooltipContent = ({
-    buttonType,
-    ...params
-}: TooltipContentParams): TooltipContent => {
-    switch (buttonType) {
-        case 'EVENT':
-            return getEventTooltipContent(params)
-        case 'ENROLLMENT':
-            return getEnrollmentTooltipContent(params)
-        case 'TRACKED_ENTITY_INSTANCE':
-            return getTrackedEntityInstanceTooltipContent(params)
-    }
 }
 
 export const useActionButton = (buttonType: OutputType) => {
@@ -557,18 +529,35 @@ export const useActionButton = (buttonType: OutputType) => {
             }
         }
 
-        return getTooltipContent({
-            buttonType,
-            dataSourceMetadata,
-            hasCategoryInLayout,
-            hasCategoryOptionGroupSetInLayout,
-            hasMultiplePrograms,
-            hasMultipleProgramStages,
-            hasProgramIndicatorsInLayout,
-            isRegistrationDateInLayout,
-            isRegistrationOuInLayout,
-            visualizationType,
-        })
+        switch (buttonType) {
+            case 'EVENT':
+                return getEventTooltipContent({
+                    hasCategoryInLayout,
+                    hasCategoryOptionGroupSetInLayout,
+                    hasMultiplePrograms,
+                    hasMultipleProgramStages,
+                    isRegistrationDateInLayout,
+                    isRegistrationOuInLayout,
+                    visualizationType,
+                })
+            case 'ENROLLMENT':
+                return getEnrollmentTooltipContent({
+                    dataSourceMetadata,
+                    hasMultiplePrograms,
+                    isRegistrationDateInLayout,
+                    isRegistrationOuInLayout,
+                    visualizationType,
+                })
+            case 'TRACKED_ENTITY_INSTANCE':
+                return getTrackedEntityInstanceTooltipContent({
+                    dataSourceMetadata,
+                    hasCategoryInLayout,
+                    hasCategoryOptionGroupSetInLayout,
+                    hasMultiplePrograms,
+                    hasProgramIndicatorsInLayout,
+                    visualizationType,
+                })
+        }
     }, [
         buttonType,
         dataSourceMetadata,
