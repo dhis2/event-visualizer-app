@@ -232,6 +232,165 @@ export const TrackedEntityInstanceButton: FC = () => {
     )
 }
 
+type TooltipContent = { content: string; openDelay?: number } | undefined
+
+type RegistrationLayoutState = {
+    isRegistrationDateInLayout: boolean
+    isRegistrationOuInLayout: boolean
+}
+
+const getRegistrationTooltipContent = ({
+    isRegistrationDateInLayout,
+    isRegistrationOuInLayout,
+}: RegistrationLayoutState): TooltipContent => {
+    if (isRegistrationDateInLayout && isRegistrationOuInLayout) {
+        return {
+            content: i18n.t(
+                'Not valid with registration date or registration org. unit'
+            ),
+        }
+    }
+    if (isRegistrationDateInLayout) {
+        return { content: i18n.t('Not valid with registration date') }
+    }
+    if (isRegistrationOuInLayout) {
+        return { content: i18n.t('Not valid with registration org. unit') }
+    }
+    return undefined
+}
+
+type CategoryLayoutState = {
+    hasCategoryInLayout: boolean
+    hasCategoryOptionGroupSetInLayout: boolean
+}
+
+const getCategoryTooltipContent = ({
+    hasCategoryInLayout,
+    hasCategoryOptionGroupSetInLayout,
+}: CategoryLayoutState): TooltipContent => {
+    if (hasCategoryInLayout && hasCategoryOptionGroupSetInLayout) {
+        return {
+            content: i18n.t(
+                'Not valid with categories or category option group sets'
+            ),
+        }
+    }
+    if (hasCategoryInLayout) {
+        return { content: i18n.t('Not valid with categories') }
+    }
+    if (hasCategoryOptionGroupSetInLayout) {
+        return { content: i18n.t('Not valid with category option group sets') }
+    }
+    return undefined
+}
+
+type EventTooltipContentParams = {
+    hasMultiplePrograms: boolean
+    hasMultipleProgramStages: boolean
+    isRegistrationDateInLayout: boolean
+    isRegistrationOuInLayout: boolean
+    visualizationType: string
+}
+
+const getEventTooltipContent = ({
+    hasMultiplePrograms,
+    hasMultipleProgramStages,
+    isRegistrationDateInLayout,
+    isRegistrationOuInLayout,
+    visualizationType,
+}: EventTooltipContentParams): TooltipContent => {
+    if (
+        hasMultiplePrograms &&
+        (visualizationType === 'LINE_LIST' ||
+            visualizationType === 'PIVOT_TABLE')
+    ) {
+        return { content: i18n.t('Not valid with multiple programs') }
+    }
+    if (isRegistrationDateInLayout || isRegistrationOuInLayout) {
+        return getRegistrationTooltipContent({
+            isRegistrationDateInLayout,
+            isRegistrationOuInLayout,
+        })
+    }
+    if (hasMultipleProgramStages) {
+        return { content: i18n.t('Not valid with multiple program stages') }
+    }
+    return undefined
+}
+
+type EnrollmentTooltipContentParams = {
+    dataSourceMetadata: ReturnType<typeof useMetadataItem>
+    hasCategoryInLayout: boolean
+    hasCategoryOptionGroupSetInLayout: boolean
+    hasMultiplePrograms: boolean
+    isRegistrationDateInLayout: boolean
+    isRegistrationOuInLayout: boolean
+    visualizationType: string
+}
+
+const getEnrollmentTooltipContent = ({
+    dataSourceMetadata,
+    hasCategoryInLayout,
+    hasCategoryOptionGroupSetInLayout,
+    hasMultiplePrograms,
+    isRegistrationDateInLayout,
+    isRegistrationOuInLayout,
+    visualizationType,
+}: EnrollmentTooltipContentParams): TooltipContent => {
+    if (
+        hasMultiplePrograms &&
+        (visualizationType === 'LINE_LIST' ||
+            visualizationType === 'PIVOT_TABLE')
+    ) {
+        return { content: i18n.t('Not valid with multiple programs') }
+    }
+    if (isDataSourceProgramWithoutRegistration(dataSourceMetadata)) {
+        return { content: i18n.t('Not valid with event programs') }
+    }
+    if (isRegistrationDateInLayout || isRegistrationOuInLayout) {
+        return getRegistrationTooltipContent({
+            isRegistrationDateInLayout,
+            isRegistrationOuInLayout,
+        })
+    }
+    return getCategoryTooltipContent({
+        hasCategoryInLayout,
+        hasCategoryOptionGroupSetInLayout,
+    })
+}
+
+type TrackedEntityInstanceTooltipContentParams = {
+    dataSourceMetadata: ReturnType<typeof useMetadataItem>
+    hasCategoryInLayout: boolean
+    hasCategoryOptionGroupSetInLayout: boolean
+    hasMultiplePrograms: boolean
+    hasProgramIndicatorsInLayout: boolean
+    visualizationType: string
+}
+
+const getTrackedEntityInstanceTooltipContent = ({
+    dataSourceMetadata,
+    hasCategoryInLayout,
+    hasCategoryOptionGroupSetInLayout,
+    hasMultiplePrograms,
+    hasProgramIndicatorsInLayout,
+    visualizationType,
+}: TrackedEntityInstanceTooltipContentParams): TooltipContent => {
+    if (hasMultiplePrograms && visualizationType === 'PIVOT_TABLE') {
+        return { content: i18n.t('Not valid with multiple programs') }
+    }
+    if (isDataSourceProgramWithoutRegistration(dataSourceMetadata)) {
+        return { content: i18n.t('Not valid with event programs') }
+    }
+    if (visualizationType === 'LINE_LIST' && hasProgramIndicatorsInLayout) {
+        return { content: i18n.t('Not valid with program indicators') }
+    }
+    return getCategoryTooltipContent({
+        hasCategoryInLayout,
+        hasCategoryOptionGroupSetInLayout,
+    })
+}
+
 export const useActionButton = (buttonType: OutputType) => {
     const currentVis = useAppSelector(getCurrentVis)
     const dataSourceId = useAppSelector(getDataSourceId)
@@ -358,7 +517,7 @@ export const useActionButton = (buttonType: OutputType) => {
         return false
     }, [dataSourceMetadata, layout])
 
-    const tooltipConfig = useMemo(() => {
+    const tooltipConfig = useMemo((): TooltipContent => {
         if (isLayoutEmpty) {
             return {
                 content: i18n.t(
@@ -368,101 +527,34 @@ export const useActionButton = (buttonType: OutputType) => {
             }
         }
 
-        if (hasMultiplePrograms && visualizationType === 'PIVOT_TABLE') {
-            return {
-                content: i18n.t('Not valid with multiple programs'),
-            }
-        }
-
-        if (
-            ['EVENT', 'ENROLLMENT'].includes(buttonType) &&
-            hasMultiplePrograms &&
-            visualizationType === 'LINE_LIST'
-        ) {
-            return {
-                content: i18n.t('Not valid with multiple programs'),
-            }
-        }
-
-        if (
-            ['ENROLLMENT', 'EVENT'].includes(buttonType) &&
-            isRegistrationDateInLayout &&
-            isRegistrationOuInLayout
-        ) {
-            return {
-                content: i18n.t(
-                    'Not valid with registration date or registration org. unit'
-                ),
-            }
-        }
-
-        if (
-            ['ENROLLMENT', 'EVENT'].includes(buttonType) &&
-            isRegistrationDateInLayout
-        ) {
-            return {
-                content: i18n.t('Not valid with registration date'),
-            }
-        }
-
-        if (
-            ['ENROLLMENT', 'EVENT'].includes(buttonType) &&
-            isRegistrationOuInLayout
-        ) {
-            return {
-                content: i18n.t('Not valid with registration org. unit'),
-            }
-        }
-
-        if (
-            ['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(buttonType) &&
-            isDataSourceProgramWithoutRegistration(dataSourceMetadata)
-        ) {
-            return {
-                content: i18n.t('Not valid with event programs'),
-            }
-        }
-
-        if (
-            ['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(buttonType) &&
-            hasCategoryInLayout &&
-            hasCategoryOptionGroupSetInLayout
-        ) {
-            return {
-                content: i18n.t(
-                    'Not valid with categories or category option group sets'
-                ),
-            }
-        } else if (
-            ['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(buttonType) &&
-            hasCategoryInLayout
-        ) {
-            return {
-                content: i18n.t('Not valid with categories'),
-            }
-        } else if (
-            ['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(buttonType) &&
-            hasCategoryOptionGroupSetInLayout
-        ) {
-            return {
-                content: i18n.t('Not valid with category option group sets'),
-            }
-        }
-
-        if (buttonType === 'EVENT' && hasMultipleProgramStages) {
-            return {
-                content: i18n.t('Not valid with multiple program stages'),
-            }
-        }
-
-        if (
-            buttonType === 'TRACKED_ENTITY_INSTANCE' &&
-            visualizationType === 'LINE_LIST' &&
-            hasProgramIndicatorsInLayout
-        ) {
-            return {
-                content: i18n.t('Not valid with program indicators'),
-            }
+        switch (buttonType) {
+            case 'EVENT':
+                return getEventTooltipContent({
+                    hasMultiplePrograms,
+                    hasMultipleProgramStages,
+                    isRegistrationDateInLayout,
+                    isRegistrationOuInLayout,
+                    visualizationType,
+                })
+            case 'ENROLLMENT':
+                return getEnrollmentTooltipContent({
+                    dataSourceMetadata,
+                    hasCategoryInLayout,
+                    hasCategoryOptionGroupSetInLayout,
+                    hasMultiplePrograms,
+                    isRegistrationDateInLayout,
+                    isRegistrationOuInLayout,
+                    visualizationType,
+                })
+            case 'TRACKED_ENTITY_INSTANCE':
+                return getTrackedEntityInstanceTooltipContent({
+                    dataSourceMetadata,
+                    hasCategoryInLayout,
+                    hasCategoryOptionGroupSetInLayout,
+                    hasMultiplePrograms,
+                    hasProgramIndicatorsInLayout,
+                    visualizationType,
+                })
         }
     }, [
         buttonType,

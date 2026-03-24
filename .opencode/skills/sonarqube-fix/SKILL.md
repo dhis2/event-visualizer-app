@@ -80,11 +80,11 @@ This outputs format: `SEVERITY - TYPE - MESSAGE - FILE:LINE`
 
 ## Systematic Fixing Workflow
 
-This is an **iterative, human-in-the-loop process**. The user will commit and push changes, then ask you to refetch and continue if issues remain.
+This is a **fully autonomous process** — no human interaction is needed between iterations. Run `yarn sonar` to publish results, then fetch from the branch URL to verify, and repeat until all issues are resolved.
 
-### Step 0: Identify the PR
+### Step 0: Identify the PR and Branch
 
-Before fetching issues, determine which pull request to analyze:
+Before fetching issues, determine which pull request and branch to analyze:
 
 1. **Check current git branch**:
 
@@ -125,12 +125,16 @@ Before fetching issues, determine which pull request to analyze:
     - Organization (e.g., `dhis2`)
     - Repository (e.g., `event-visualizer-app`)
     - PR number (e.g., `153`)
+    - Branch name (e.g., `feat/update-buttons`) — needed for the branch API URL
 
-This information is needed to construct the SonarQube API URL: `componentKeys=<org>_<repo>&pullRequest=<pr-number>`
+This information is needed to construct the SonarQube API URLs:
+
+-   PR issues: `componentKeys=<org>_<repo>&pullRequest=<pr-number>`
+-   Branch issues (after `yarn sonar`): `componentKeys=<org>_<repo>&branch=<branch-name>`
 
 ### Step 1: Fetch and Analyze
 
-1. **Fetch all issues** using the API command
+1. **Fetch all issues** using the PR API command
 2. **Parse and categorize** by severity and type using jq
 3. **Create a todo list** with all issues using the TodoWrite tool
 
@@ -150,7 +154,7 @@ For each issue:
 -   Apply the fix following project conventions
 -   Mark todo as completed immediately after fixing
 
-### Step 3: Test Regularly
+### Step 3: Test and Lint
 
 After fixing a batch of related issues (3-5 fixes):
 
@@ -158,17 +162,40 @@ After fixing a batch of related issues (3-5 fixes):
 2. Run linter: `yarn lint`
 3. Fix any breaking changes immediately
 
-**Never fix all issues without testing** - you might introduce bugs!
+**Never fix all issues without testing** — you might introduce bugs!
 
-### Step 4: Process Complete
+### Step 4: Publish to SonarCloud
+
+Run the sonar command to analyze and publish results:
+
+```bash
+yarn sonar
+```
+
+This takes several minutes to complete. Wait for it to finish before fetching results.
+
+### Step 5: Fetch Branch Results and Verify
+
+After `yarn sonar` completes, fetch issues using the **branch** parameter (not `pullRequest`):
+
+```bash
+curl -s "https://sonarcloud.io/api/issues/search?componentKeys=<org>_<repo>&branch=<branch-name>&resolved=false&ps=100" \
+  | jq -r '.issues[] | "\(.severity) - \(.type) - \(.rule) - \(.message) - \(.component):\(.line)"' | sort
+```
+
+Note: use URL-encoded branch names (e.g. `feat%2Fupdate-buttons` for `feat/update-buttons`).
+
+-   If issues remain → go back to **Step 2** and continue fixing
+-   If no issues remain → the process is complete
+
+### Step 6: Process Complete
 
 The fixing process is complete when:
 
 -   ✅ **All todos are marked as completed**
 -   ✅ **All tests pass** (`yarn test`)
 -   ✅ **All linters pass** (`yarn lint`)
-
-**Note**: The user will commit and push the changes. If SonarQube still reports issues after the push, the user will ask you to refetch and continue fixing.
+-   ✅ **Branch API returns zero unresolved issues**
 
 ## Key Principles
 
@@ -216,11 +243,11 @@ yarn format        # Auto-fix formatting (if needed)
 -   Check if test expectations need updating
 -   Ask the user for guidance if stuck
 
-### Issues Still Showing After Push
+### Issues Still Showing After `yarn sonar`
 
--   User will refetch and provide updated issue list
--   SonarQube needs time to re-analyze after push
--   Continue with remaining issues
+-   Re-fetch using the branch URL (not the PR URL) after `yarn sonar` completes
+-   SonarCloud needs the publish step to re-analyze — results won't update without running `yarn sonar`
+-   Continue with remaining issues from the branch results
 
 ## Resources
 
