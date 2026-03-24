@@ -22,13 +22,17 @@ export const DimensionListItem: FC<DimensionListItemProps> = ({
             console.log('TODO: make dimension required later')
             return
         }
-        addMetadata(dimension)
         if (program) {
             addMetadata(program)
         }
         if (programStage) {
             addMetadata(programStage)
         }
+        if (program?.trackedEntityType) {
+            addMetadata(program.trackedEntityType)
+        }
+
+        addMetadata(dimension)
         dispatch(setUiActiveDimensionModal(dimension.id))
     }, [addMetadata, dispatch, dimension, program, programStage])
 
