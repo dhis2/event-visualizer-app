@@ -279,14 +279,12 @@ const getCategoryTooltipContent = ({
         return { content: i18n.t('Not valid with categories') }
     }
     if (hasCategoryOptionGroupSetInLayout) {
-        return { content: i18n.t('Not valid with category option sets') }
+        return { content: i18n.t('Not valid with category option group sets') }
     }
     return undefined
 }
 
 type EventTooltipContentParams = {
-    hasCategoryInLayout: boolean
-    hasCategoryOptionGroupSetInLayout: boolean
     hasMultiplePrograms: boolean
     hasMultipleProgramStages: boolean
     isRegistrationDateInLayout: boolean
@@ -295,8 +293,6 @@ type EventTooltipContentParams = {
 }
 
 const getEventTooltipContent = ({
-    hasCategoryInLayout,
-    hasCategoryOptionGroupSetInLayout,
     hasMultiplePrograms,
     hasMultipleProgramStages,
     isRegistrationDateInLayout,
@@ -316,12 +312,6 @@ const getEventTooltipContent = ({
             isRegistrationOuInLayout,
         })
     }
-    if (hasCategoryInLayout || hasCategoryOptionGroupSetInLayout) {
-        return getCategoryTooltipContent({
-            hasCategoryInLayout,
-            hasCategoryOptionGroupSetInLayout,
-        })
-    }
     if (hasMultipleProgramStages) {
         return { content: i18n.t('Not valid with multiple program stages') }
     }
@@ -330,6 +320,8 @@ const getEventTooltipContent = ({
 
 type EnrollmentTooltipContentParams = {
     dataSourceMetadata: ReturnType<typeof useMetadataItem>
+    hasCategoryInLayout: boolean
+    hasCategoryOptionGroupSetInLayout: boolean
     hasMultiplePrograms: boolean
     isRegistrationDateInLayout: boolean
     isRegistrationOuInLayout: boolean
@@ -338,6 +330,8 @@ type EnrollmentTooltipContentParams = {
 
 const getEnrollmentTooltipContent = ({
     dataSourceMetadata,
+    hasCategoryInLayout,
+    hasCategoryOptionGroupSetInLayout,
     hasMultiplePrograms,
     isRegistrationDateInLayout,
     isRegistrationOuInLayout,
@@ -353,9 +347,15 @@ const getEnrollmentTooltipContent = ({
     if (isDataSourceProgramWithoutRegistration(dataSourceMetadata)) {
         return { content: i18n.t('Not valid with event programs') }
     }
-    return getRegistrationTooltipContent({
-        isRegistrationDateInLayout,
-        isRegistrationOuInLayout,
+    if (isRegistrationDateInLayout || isRegistrationOuInLayout) {
+        return getRegistrationTooltipContent({
+            isRegistrationDateInLayout,
+            isRegistrationOuInLayout,
+        })
+    }
+    return getCategoryTooltipContent({
+        hasCategoryInLayout,
+        hasCategoryOptionGroupSetInLayout,
     })
 }
 
@@ -530,8 +530,6 @@ export const useActionButton = (buttonType: OutputType) => {
         switch (buttonType) {
             case 'EVENT':
                 return getEventTooltipContent({
-                    hasCategoryInLayout,
-                    hasCategoryOptionGroupSetInLayout,
                     hasMultiplePrograms,
                     hasMultipleProgramStages,
                     isRegistrationDateInLayout,
@@ -541,6 +539,8 @@ export const useActionButton = (buttonType: OutputType) => {
             case 'ENROLLMENT':
                 return getEnrollmentTooltipContent({
                     dataSourceMetadata,
+                    hasCategoryInLayout,
+                    hasCategoryOptionGroupSetInLayout,
                     hasMultiplePrograms,
                     isRegistrationDateInLayout,
                     isRegistrationOuInLayout,
