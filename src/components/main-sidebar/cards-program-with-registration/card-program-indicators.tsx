@@ -1,11 +1,15 @@
 import i18n from '@dhis2/d2-i18n'
-import { useMemo, type FC } from 'react'
+import { useCallback, useMemo, type FC } from 'react'
 import {
     DimensionCard,
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import { getProgramIndicatorQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
+import {
+    useSelectedDimensionCount,
+    type UseSelectedDimensionCountMatchFn,
+} from '@components/main-sidebar/use-selected-dimension-count'
 import { useCurrentUser } from '@hooks'
 import type { DataSourceProgramWithRegistration } from '@types'
 
@@ -29,6 +33,13 @@ export const CardProgramIndicators: FC<CardProgramIndicatorsProps> = ({
         dimensionListKey: CARD_AND_LIST_KEY,
         baseQuery,
     })
+    const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
+        (dimension) =>
+            dimension.dimensionType === 'PROGRAM_INDICATOR' &&
+            dimension.programId === program.id,
+        [program.id]
+    )
+    const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)
 
     // This card should be hidden completely if there are no program indicators
     if (listProps.dimensions.length === 0) {
@@ -40,6 +51,7 @@ export const CardProgramIndicators: FC<CardProgramIndicatorsProps> = ({
             dimensionCardKey={CARD_AND_LIST_KEY}
             title={i18n.t('Program indicators')}
             isDisabledByFilter={listProps.isDisabledByFilter}
+            selectedCount={selectedCount}
         >
             <DimensionList {...listProps} program={program} />
         </DimensionCard>
