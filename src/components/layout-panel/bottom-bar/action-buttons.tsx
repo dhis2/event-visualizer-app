@@ -304,7 +304,11 @@ const getEventTooltipContent = ({
     isRegistrationOuInLayout,
     visualizationType,
 }: EventTooltipContentParams): TooltipContent => {
-    if (hasMultiplePrograms && visualizationType === 'LINE_LIST') {
+    if (
+        hasMultiplePrograms &&
+        (visualizationType === 'LINE_LIST' ||
+            visualizationType === 'PIVOT_TABLE')
+    ) {
         return { content: i18n.t('Not valid with multiple programs') }
     }
     if (isRegistrationDateInLayout || isRegistrationOuInLayout) {
@@ -330,6 +334,7 @@ type EnrollmentTooltipContentParams = {
     hasMultiplePrograms: boolean
     isRegistrationDateInLayout: boolean
     isRegistrationOuInLayout: boolean
+    visualizationType: string
 }
 
 const getEnrollmentTooltipContent = ({
@@ -337,8 +342,13 @@ const getEnrollmentTooltipContent = ({
     hasMultiplePrograms,
     isRegistrationDateInLayout,
     isRegistrationOuInLayout,
+    visualizationType,
 }: EnrollmentTooltipContentParams): TooltipContent => {
-    if (hasMultiplePrograms) {
+    if (
+        hasMultiplePrograms &&
+        (visualizationType === 'LINE_LIST' ||
+            visualizationType === 'PIVOT_TABLE')
+    ) {
         return { content: i18n.t('Not valid with multiple programs') }
     }
     if (isDataSourceProgramWithoutRegistration(dataSourceMetadata)) {
@@ -367,7 +377,7 @@ const getTrackedEntityInstanceTooltipContent = ({
     hasProgramIndicatorsInLayout,
     visualizationType,
 }: TrackedEntityInstanceTooltipContentParams): TooltipContent => {
-    if (hasMultiplePrograms) {
+    if (hasMultiplePrograms && visualizationType === 'PIVOT_TABLE') {
         return { content: i18n.t('Not valid with multiple programs') }
     }
     if (isDataSourceProgramWithoutRegistration(dataSourceMetadata)) {
