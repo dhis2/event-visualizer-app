@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-03-23T15:41:16.814Z\n"
-"PO-Revision-Date: 2026-03-23T15:41:16.814Z\n"
+"POT-Creation-Date: 2026-03-24T14:57:16.506Z\n"
+"PO-Revision-Date: 2026-03-24T14:57:16.507Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -348,8 +348,8 @@ msgstr "Not valid with categories or category option group sets"
 msgid "Not valid with categories"
 msgstr "Not valid with categories"
 
-msgid "Not valid with category option sets"
-msgstr "Not valid with category option sets"
+msgid "Not valid with category option group sets"
+msgstr "Not valid with category option group sets"
 
 msgid "Not valid with multiple programs"
 msgstr "Not valid with multiple programs"
@@ -830,6 +830,66 @@ msgstr "Unsaved visualization"
 
 msgid "Edited"
 msgstr "Edited"
+
+msgid "Use data element default"
+msgstr "Use data element default"
+
+msgid "Sum"
+msgstr "Sum"
+
+msgid "Average"
+msgstr "Average"
+
+msgid "Average (sum in org unit hiararchy)"
+msgstr "Average (sum in org unit hiararchy)"
+
+msgid "Last value"
+msgstr "Last value"
+
+msgid "Last value (sum in org unit hiararchy)"
+msgstr "Last value (sum in org unit hiararchy)"
+
+msgid "Last value (last in org unit hierarchy)"
+msgstr "Last value (last in org unit hierarchy)"
+
+msgid "Last value in period"
+msgstr "Last value in period"
+
+msgid "Last value in period (sum in org unit hierarchy"
+msgstr "Last value in period (sum in org unit hierarchy"
+
+msgid "First"
+msgstr "First"
+
+msgid "First value (sum in org unit hierarchy"
+msgstr "First value (sum in org unit hierarchy"
+
+msgid "First value (first in org unit hierarchy"
+msgstr "First value (first in org unit hierarchy"
+
+msgid "Count"
+msgstr "Count"
+
+msgid "Standard deviation"
+msgstr "Standard deviation"
+
+msgid "Variance"
+msgstr "Variance"
+
+msgid "Min"
+msgstr "Min"
+
+msgid "Max"
+msgstr "Max"
+
+msgid "Min (sum in org unit hierarchy"
+msgstr "Min (sum in org unit hierarchy"
+
+msgid "Max (sum in org unit hierarchy"
+msgstr "Max (sum in org unit hierarchy"
+
+msgid "Custom"
+msgstr "Custom"
 
 msgid "equal to (=)"
 msgstr "equal to (=)"

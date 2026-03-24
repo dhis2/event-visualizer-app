@@ -401,8 +401,6 @@ export const useActionButton = (buttonType: OutputType) => {
 
     const dataSourceMetadata = useMetadataItem(dataSourceId)
 
-    console.log('ds metadata', dataSourceMetadata)
-
     const action = useMemo((): ButtonAction => {
         // Empty visualization
         if (isVisualizationEmpty(currentVis)) {
