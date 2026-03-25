@@ -13,5 +13,5 @@ export const assertTypedMetadataItem = <T extends MetadataItem>(
     if (item && !guard(item)) {
         throw new Error(errorMessage)
     }
-    return item as T | undefined
+    return item && guard(item) ? item : undefined
 }

@@ -700,6 +700,12 @@ describe('MetadataProvider — typed use* hooks', () => {
 
     const orgUnit = { id: 'ou1', name: 'Sierra Leone', path: '/ou1' }
 
+    const wrapperWithProgram = ({ children }: { children?: ReactNode }) => (
+        <MockMetadataProvider mockMetadata={{ p1: program }}>
+            {children}
+        </MockMetadataProvider>
+    )
+
     it('useProgramMetadataItem returns the item when it is a program', () => {
         const { result } = renderHook(
             () => {
@@ -746,13 +752,10 @@ describe('MetadataProvider — typed use* hooks', () => {
     })
 
     it('useProgramStageMetadataItem throws when the item is not a program stage', () => {
-        const wrapper = ({ children }: { children?: ReactNode }) => (
-            <MockMetadataProvider mockMetadata={{ p1: program }}>
-                {children}
-            </MockMetadataProvider>
-        )
         expect(() =>
-            renderHook(() => useProgramStageMetadataItem('p1'), { wrapper })
+            renderHook(() => useProgramStageMetadataItem('p1'), {
+                wrapper: wrapperWithProgram,
+            })
         ).toThrow('Item is not a program stage')
     })
 
@@ -781,13 +784,10 @@ describe('MetadataProvider — typed use* hooks', () => {
     })
 
     it('useDimensionMetadataItem throws when the item is not a dimension', () => {
-        const wrapper = ({ children }: { children?: ReactNode }) => (
-            <MockMetadataProvider mockMetadata={{ p1: program }}>
-                {children}
-            </MockMetadataProvider>
-        )
         expect(() =>
-            renderHook(() => useDimensionMetadataItem('p1'), { wrapper })
+            renderHook(() => useDimensionMetadataItem('p1'), {
+                wrapper: wrapperWithProgram,
+            })
         ).toThrow('Item is not a dimension')
     })
 
@@ -805,13 +805,10 @@ describe('MetadataProvider — typed use* hooks', () => {
     })
 
     it('useOrganisationUnitMetadataItem throws when the item is not an org unit', () => {
-        const wrapper = ({ children }: { children?: ReactNode }) => (
-            <MockMetadataProvider mockMetadata={{ p1: program }}>
-                {children}
-            </MockMetadataProvider>
-        )
         expect(() =>
-            renderHook(() => useOrganisationUnitMetadataItem('p1'), { wrapper })
+            renderHook(() => useOrganisationUnitMetadataItem('p1'), {
+                wrapper: wrapperWithProgram,
+            })
         ).toThrow('Item is not an organisation unit')
     })
 })

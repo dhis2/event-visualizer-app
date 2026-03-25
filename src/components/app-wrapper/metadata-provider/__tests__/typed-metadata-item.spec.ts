@@ -58,6 +58,6 @@ describe('assertTypedMetadataItem', () => {
                 isOrganisationUnitMetadataItem,
                 'Item is not an organisation unit'
             )
-        ).toThrowError('Item is not an organisation unit')
+        ).toThrow('Item is not an organisation unit')
     })
 })
