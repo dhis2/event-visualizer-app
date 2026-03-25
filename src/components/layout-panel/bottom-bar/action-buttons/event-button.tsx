@@ -6,51 +6,51 @@ import { useAppSelector } from '@hooks'
 import { isDataSourceProgramWithRegistration } from '@modules/data-source'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 
-export const EnrollmentButton: FC = () => {
+export const EventButton: FC = () => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
 
     const { action, dataSourceMetadata, tooltipConfig } =
-        useActionButton('ENROLLMENT')
+        useActionButton('EVENT')
 
-    const enrollmentLabel = useMemo(() => {
+    const eventLabel = useMemo(() => {
         if (
             isDataSourceProgramWithRegistration(dataSourceMetadata) &&
-            dataSourceMetadata.displayEnrollmentLabel
+            dataSourceMetadata.displayEventLabel
         ) {
-            return dataSourceMetadata.displayEnrollmentLabel
+            return dataSourceMetadata.displayEventLabel
         }
 
-        return i18n.t('Enrollment')
+        return i18n.t('Event')
     }, [dataSourceMetadata])
 
     const buttonLabelLookup = useMemo(
         () => ({
             create: {
-                list: i18n.t('Create {{enrollmentLabel}} list', {
-                    enrollmentLabel,
+                list: i18n.t('Create {{eventLabel}} list', {
+                    eventLabel,
                 }),
-                table: i18n.t('Create {{enrollmentLabel}} table', {
-                    enrollmentLabel,
+                table: i18n.t('Create {{eventLabel}} table', {
+                    eventLabel,
                 }),
             },
             switch: {
-                list: i18n.t('Switch to {{enrollmentLabel}} list', {
-                    enrollmentLabel,
+                list: i18n.t('Switch to {{eventLabel}} list', {
+                    eventLabel,
                 }),
-                table: i18n.t('Switch to {{enrollmentLabel}} table', {
-                    enrollmentLabel,
+                table: i18n.t('Switch to {{eventLabel}} table', {
+                    eventLabel,
                 }),
             },
             update: {
-                list: i18n.t('Update {{enrollmentLabel}} list', {
-                    enrollmentLabel,
+                list: i18n.t('Update {{eventLabel}} list', {
+                    eventLabel,
                 }),
-                table: i18n.t('Update {{enrollmentLabel}} table', {
-                    enrollmentLabel,
+                table: i18n.t('Update {{eventLabel}} table', {
+                    eventLabel,
                 }),
             },
         }),
-        [enrollmentLabel]
+        [eventLabel]
     )
 
     return (
@@ -63,7 +63,7 @@ export const EnrollmentButton: FC = () => {
                 ]
             }
             tooltipConfig={tooltipConfig}
-            type="ENROLLMENT"
+            type="EVENT"
         />
     )
 }

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-03-25T09:22:02.035Z\n"
-"PO-Revision-Date: 2026-03-25T09:22:02.036Z\n"
+"POT-Creation-Date: 2026-03-25T10:02:34.292Z\n"
+"PO-Revision-Date: 2026-03-25T10:02:34.292Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -303,20 +303,50 @@ msgstr "Levels"
 msgid "Groups"
 msgstr "Groups"
 
-msgid "{{ eventLabel }} list"
-msgstr "{{ eventLabel }} list"
+msgid "Enrollment"
+msgstr "Enrollment"
 
-msgid "{{ eventLabel }} table"
-msgstr "{{ eventLabel }} table"
+msgid "Create {{enrollmentLabel}} list"
+msgstr "Create {{enrollmentLabel}} list"
 
-msgid "Create {{targetVisualization}}"
-msgstr "Create {{targetVisualization}}"
+msgid "Create {{enrollmentLabel}} table"
+msgstr "Create {{enrollmentLabel}} table"
 
-msgid "Switch to {{targetVisualization}}"
-msgstr "Switch to {{targetVisualization}}"
+msgid "Switch to {{enrollmentLabel}} list"
+msgstr "Switch to {{enrollmentLabel}} list"
 
-msgid "Update {{targetVisualization}}"
-msgstr "Update {{targetVisualization}}"
+msgid "Switch to {{enrollmentLabel}} table"
+msgstr "Switch to {{enrollmentLabel}} table"
+
+msgid "Update {{enrollmentLabel}} list"
+msgstr "Update {{enrollmentLabel}} list"
+
+msgid "Update {{enrollmentLabel}} table"
+msgstr "Update {{enrollmentLabel}} table"
+
+msgid "Event"
+msgstr "Event"
+
+msgid "Create {{eventLabel}} list"
+msgstr "Create {{eventLabel}} list"
+
+msgid "Create {{eventLabel}} table"
+msgstr "Create {{eventLabel}} table"
+
+msgid "Switch to {{eventLabel}} list"
+msgstr "Switch to {{eventLabel}} list"
+
+msgid "Switch to {{eventLabel}} table"
+msgstr "Switch to {{eventLabel}} table"
+
+msgid "Update {{eventLabel}} list"
+msgstr "Update {{eventLabel}} list"
+
+msgid "Update {{eventLabel}} table"
+msgstr "Update {{eventLabel}} table"
+
+msgid "tracked entity"
+msgstr "tracked entity"
 
 msgid "Create {{trackedEntityTypeName}} list"
 msgstr "Create {{trackedEntityTypeName}} list"
@@ -447,9 +477,6 @@ msgstr "Registration date"
 
 msgid "{{name}} registration"
 msgstr "{{name}} registration"
-
-msgid "Event"
-msgstr "Event"
 
 msgid "Choose a data source"
 msgstr "Choose a data source"

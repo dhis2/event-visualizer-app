@@ -1,10 +1,8 @@
 import cx from 'classnames'
 import { type FC } from 'react'
-import {
-    EnrollmentButton,
-    EventButton,
-    TrackedEntityInstanceButton,
-} from './action-buttons'
+import { EnrollmentButton } from './action-buttons/enrollment-button'
+import { EventButton } from './action-buttons/event-button'
+import { TrackedEntityInstanceButton } from './action-buttons/tracked-entity-instance-button'
 import classes from './styles/bottom-bar.module.css'
 import { useAppSelector } from '@hooks'
 import { getDataSourceId } from '@store/dimensions-selection-slice'

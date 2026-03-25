@@ -1,6 +1,6 @@
 import deepmerge from 'deepmerge'
 import { describe, it, expect } from 'vitest'
-import { useActionButton } from '../action-buttons'
+import { useActionButton } from '../use-action-button'
 import {
     currentVisSlice,
     initialState as currentVisInitialState,
