@@ -14841,7 +14841,7 @@ exports[`LineList > Snapshot test > renders large table with legend set correctl
                   <div
                     class="_stickyContainer_015c2d"
                     data-test="sticky-pagination-container"
-                    style="max-width: 0;"
+                    style="max-width: 0px;"
                   >
                     <div
                       class="jsx-3590660020 container"
