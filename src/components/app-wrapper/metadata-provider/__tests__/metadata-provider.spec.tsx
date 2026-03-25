@@ -3,10 +3,15 @@ import { useState, type ReactNode } from 'react'
 import { expect, describe, it, beforeEach } from 'vitest'
 import {
     MetadataProvider,
+    MockMetadataProvider,
     useMetadataItem,
     useMetadataItems,
     useAddMetadata,
     useMetadataStore,
+    useProgramMetadataItem,
+    useProgramStageMetadataItem,
+    useDimensionMetadataItem,
+    useOrganisationUnitMetadataItem,
 } from '../metadata-provider'
 
 let renders = { item: 0, items: 0, add: 0, store: 0 }
@@ -440,7 +445,76 @@ describe('MetadataProvider API and return value types', () => {
         })
         expect(typeof result.current.getMetadataItem).toBe('function')
         expect(typeof result.current.getMetadataItems).toBe('function')
+        expect(typeof result.current.getProgramMetadataItem).toBe('function')
+        expect(typeof result.current.getProgramStageMetadataItem).toBe(
+            'function'
+        )
+        expect(typeof result.current.getOptionSetMetadataItem).toBe('function')
+        expect(typeof result.current.getLegendSetMetadataItem).toBe('function')
+        expect(typeof result.current.getOrganisationUnitMetadataItem).toBe(
+            'function'
+        )
+        expect(typeof result.current.getUserOrgUnitMetadataItem).toBe(
+            'function'
+        )
+        expect(typeof result.current.getDimensionMetadataItem).toBe('function')
         expect(typeof result.current.addMetadata).toBe('function')
+    })
+
+    it('useMetadataStore typed getters return correctly typed items', () => {
+        const { result } = renderHook(() => useMetadataStore(), {
+            wrapper: MetadataProvider,
+        })
+
+        const program = {
+            id: 'p1',
+            name: 'My Program',
+            programType: 'WITHOUT_REGISTRATION' as const,
+            programStages: [],
+        }
+        const stage = {
+            id: 'ps1',
+            name: 'Stage 1',
+            displayExecutionDateLabel: 'Report date',
+            hideDueDate: false,
+            repeatable: false,
+            program: { id: 'p1' },
+        }
+        const orgUnit = { id: 'ou1', name: 'Sierra Leone', path: '/ou1' }
+
+        act(() => {
+            result.current.addMetadata(program)
+            result.current.addMetadata(stage)
+            result.current.addMetadata(orgUnit)
+        })
+
+        expect(result.current.getProgramMetadataItem('p1')?.id).toBe('p1')
+        expect(result.current.getProgramStageMetadataItem('ps1')?.id).toBe(
+            'ps1'
+        )
+        expect(
+            result.current.getOrganisationUnitMetadataItem('ou1')?.path
+        ).toBe('/ou1')
+        expect(result.current.getProgramMetadataItem('nope')).toBeUndefined()
+    })
+
+    it('useMetadataStore typed getters throw on wrong type', () => {
+        const { result } = renderHook(() => useMetadataStore(), {
+            wrapper: MetadataProvider,
+        })
+        act(() =>
+            result.current.addMetadata({
+                id: 'ps1',
+                name: 'Stage 1',
+                displayExecutionDateLabel: 'Report date',
+                hideDueDate: false,
+                repeatable: false,
+                program: { id: 'p1' },
+            })
+        )
+        expect(() => result.current.getProgramMetadataItem('ps1')).toThrow(
+            'Item is not a program'
+        )
     })
 
     it('hooks return stable functions', () => {
@@ -591,5 +665,150 @@ describe('MetadataProvider — compound-key alias resolution via hooks', () => {
 
         // Without program/stage context, 3-part alias cannot be resolved
         expect(result.current).toBeUndefined()
+    })
+})
+
+// ---------------------------------------------------------------------------
+// Typed use* hooks
+// ---------------------------------------------------------------------------
+
+describe('MetadataProvider — typed use* hooks', () => {
+    const program = {
+        id: 'p1',
+        name: 'My Program',
+        programType: 'WITHOUT_REGISTRATION' as const,
+        programStages: [
+            {
+                id: 'ps1',
+                name: 'Stage 1',
+                displayExecutionDateLabel: 'Report date',
+                hideDueDate: false,
+                repeatable: false,
+                program: { id: 'p1' },
+            },
+        ],
+    }
+
+    const stage = {
+        id: 'ps1',
+        name: 'Stage 1',
+        displayExecutionDateLabel: 'Report date',
+        hideDueDate: false,
+        repeatable: false,
+        program: { id: 'p1' },
+    }
+
+    const orgUnit = { id: 'ou1', name: 'Sierra Leone', path: '/ou1' }
+
+    const wrapperWithProgram = ({ children }: { children?: ReactNode }) => (
+        <MockMetadataProvider mockMetadata={{ p1: program }}>
+            {children}
+        </MockMetadataProvider>
+    )
+
+    it('useProgramMetadataItem returns the item when it is a program', () => {
+        const { result } = renderHook(
+            () => {
+                const item = useProgramMetadataItem('p1')
+                const store = useMetadataStore()
+                return { item, store }
+            },
+            { wrapper: MetadataProvider }
+        )
+        act(() => result.current.store.addMetadata(program))
+        expect(result.current.item?.id).toBe('p1')
+    })
+
+    it('useProgramMetadataItem returns undefined for an unknown id', () => {
+        const { result } = renderHook(() => useProgramMetadataItem('nope'), {
+            wrapper: MetadataProvider,
+        })
+        expect(result.current).toBeUndefined()
+    })
+
+    it('useProgramMetadataItem throws when the item is not a program', () => {
+        // Use MockMetadataProvider so the stage item exists on first render
+        const wrapper = ({ children }: { children?: ReactNode }) => (
+            <MockMetadataProvider mockMetadata={{ ps1: stage }}>
+                {children}
+            </MockMetadataProvider>
+        )
+        expect(() =>
+            renderHook(() => useProgramMetadataItem('ps1'), { wrapper })
+        ).toThrow('Item is not a program')
+    })
+
+    it('useProgramStageMetadataItem returns the item when it is a program stage', () => {
+        const { result } = renderHook(
+            () => {
+                const item = useProgramStageMetadataItem('ps1')
+                const store = useMetadataStore()
+                return { item, store }
+            },
+            { wrapper: MetadataProvider }
+        )
+        act(() => result.current.store.addMetadata(stage))
+        expect(result.current.item?.id).toBe('ps1')
+    })
+
+    it('useProgramStageMetadataItem throws when the item is not a program stage', () => {
+        expect(() =>
+            renderHook(() => useProgramStageMetadataItem('p1'), {
+                wrapper: wrapperWithProgram,
+            })
+        ).toThrow('Item is not a program stage')
+    })
+
+    it('useDimensionMetadataItem returns the item when it is a dimension', () => {
+        const { result } = renderHook(
+            () => {
+                const item = useDimensionMetadataItem('ps1.weight')
+                const store = useMetadataStore()
+                return { item, store }
+            },
+            { wrapper: MetadataProvider }
+        )
+        // Add program+stage context first, then the compound-key dimension
+        act(() => {
+            result.current.store.addMetadata(program)
+            result.current.store.addMetadata(stage)
+            result.current.store.addMetadata({
+                'ps1.weight': {
+                    id: 'ps1.weight',
+                    name: 'Weight',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+            })
+        })
+        expect(result.current.item?.dimensionId).toBe('weight')
+    })
+
+    it('useDimensionMetadataItem throws when the item is not a dimension', () => {
+        expect(() =>
+            renderHook(() => useDimensionMetadataItem('p1'), {
+                wrapper: wrapperWithProgram,
+            })
+        ).toThrow('Item is not a dimension')
+    })
+
+    it('useOrganisationUnitMetadataItem returns the item when it is an org unit', () => {
+        const { result } = renderHook(
+            () => {
+                const item = useOrganisationUnitMetadataItem('ou1')
+                const store = useMetadataStore()
+                return { item, store }
+            },
+            { wrapper: MetadataProvider }
+        )
+        act(() => result.current.store.addMetadata(orgUnit))
+        expect(result.current.item?.path).toBe('/ou1')
+    })
+
+    it('useOrganisationUnitMetadataItem throws when the item is not an org unit', () => {
+        expect(() =>
+            renderHook(() => useOrganisationUnitMetadataItem('p1'), {
+                wrapper: wrapperWithProgram,
+            })
+        ).toThrow('Item is not an organisation unit')
     })
 })

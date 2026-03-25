@@ -1045,3 +1045,91 @@ describe('MetadataStore — subscriber fan-out for compound key aliases', () => 
         expect(cbAlias).toHaveBeenCalledTimes(1)
     })
 })
+
+// ---------------------------------------------------------------------------
+// Typed get* methods
+// ---------------------------------------------------------------------------
+
+describe('MetadataStore — typed get* methods', () => {
+    let store: TestMetadataStore
+
+    beforeEach(() => {
+        store = new TestMetadataStore(
+            {},
+            [] as unknown as AppCachedData['rootOrgUnits']
+        )
+    })
+
+    it('getProgramMetadataItem returns the item when it is a program', () => {
+        store.addMetadata(makeProgram('p1', 'ps1'))
+        const result = store.getProgramMetadataItem('p1')
+        expect(result).toBeDefined()
+        expect(result?.id).toBe('p1')
+    })
+
+    it('getProgramMetadataItem returns undefined for an unknown id', () => {
+        expect(store.getProgramMetadataItem('nope')).toBeUndefined()
+    })
+
+    it('getProgramMetadataItem throws when the item is not a program', () => {
+        store.addMetadata(makeStage('ps1', 'p1'))
+        expect(() => store.getProgramMetadataItem('ps1')).toThrow(
+            'Item is not a program'
+        )
+    })
+
+    it('getProgramStageMetadataItem returns the item when it is a program stage', () => {
+        store.addMetadata(makeStage('ps1', 'p1'))
+        const result = store.getProgramStageMetadataItem('ps1')
+        expect(result).toBeDefined()
+        expect(result?.id).toBe('ps1')
+    })
+
+    it('getProgramStageMetadataItem returns undefined for an unknown id', () => {
+        expect(store.getProgramStageMetadataItem('nope')).toBeUndefined()
+    })
+
+    it('getProgramStageMetadataItem throws when the item is not a program stage', () => {
+        store.addMetadata(makeProgram('p1', 'ps1'))
+        expect(() => store.getProgramStageMetadataItem('p1')).toThrow(
+            'Item is not a program stage'
+        )
+    })
+
+    it('getDimensionMetadataItem returns the item when it is a dimension', () => {
+        // Compound key requires program+stage context to normalize correctly
+        store.addMetadata(makeProgram('p1', 'ps1'))
+        store.addMetadata(makeStage('ps1', 'p1'))
+        store.addMetadata({
+            'ps1.weight': {
+                id: 'ps1.weight',
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        })
+        const result = store.getDimensionMetadataItem('ps1.weight')
+        expect(result).toBeDefined()
+        expect(result?.dimensionId).toBe('weight')
+    })
+
+    it('getDimensionMetadataItem throws when the item is not a dimension', () => {
+        store.addMetadata(makeProgram('p1', 'ps1'))
+        expect(() => store.getDimensionMetadataItem('p1')).toThrow(
+            'Item is not a dimension'
+        )
+    })
+
+    it('getOrganisationUnitMetadataItem returns the item when it is an org unit', () => {
+        store.addMetadata({ id: 'ou1', name: 'Sierra Leone', path: '/ou1' })
+        const result = store.getOrganisationUnitMetadataItem('ou1')
+        expect(result).toBeDefined()
+        expect(result?.path).toBe('/ou1')
+    })
+
+    it('getOrganisationUnitMetadataItem throws when the item is not an org unit', () => {
+        store.addMetadata(makeProgram('p1', 'ps1'))
+        expect(() => store.getOrganisationUnitMetadataItem('p1')).toThrow(
+            'Item is not an organisation unit'
+        )
+    })
+})

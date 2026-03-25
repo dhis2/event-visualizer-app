@@ -1,5 +1,9 @@
 import { LayoutPanel } from '../layout-panel'
 import {
+    currentVisSlice,
+    initialState as currentVisSliceInitialState,
+} from '@store/current-vis-slice'
+import {
     dimensionSelectionSlice,
     initialState as dimensionSelectionInitialState,
 } from '@store/dimensions-selection-slice'
@@ -48,12 +52,14 @@ const mockOptions: MockOptions = {
     },
     partialStore: {
         reducer: {
+            currentVis: currentVisSlice.reducer,
             dimensionSelection: dimensionSelectionSlice.reducer,
             loader: loaderSlice.reducer,
             ui: uiSlice.reducer,
             visUiConfig: visUiConfigSlice.reducer,
         },
         preloadedState: {
+            currentVis: currentVisSliceInitialState,
             dimensionSelection: dimensionSelectionInitialState,
             loader: loaderSliceInitialState,
             ui: uiSliceInitialState,
@@ -174,7 +180,7 @@ describe('<LayoutPanel />', () => {
             </MockAppWrapper>
         )
 
-        // Check that the visu type selector is visible
+        // Check that the vis type selector is visible
         cy.getByDataTest('visualization-type-selector-button').should(
             'be.visible'
         )

@@ -23,7 +23,7 @@
     flex: 1;
 }
 
-button {
+.button {
     display: flex;
     align-items: center;
     gap: var(--spacers-dp4);
@@ -37,7 +37,8 @@ button {
 }
 
 .button:hover {
-    background-color: var(--colors-grey200);
+    color: var(--colors-grey900) !important;
+    background-color: var(--colors-grey200) !important;
 }
 
 @keyframes fadeIn {

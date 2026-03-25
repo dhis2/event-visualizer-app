@@ -1,7 +1,9 @@
 import cx from 'classnames'
 import { type FC } from 'react'
+import { EnrollmentButton } from './action-buttons/enrollment-button'
+import { EventButton } from './action-buttons/event-button'
+import { TrackedEntityInstanceButton } from './action-buttons/tracked-entity-instance-button'
 import classes from './styles/bottom-bar.module.css'
-import { UpdateButton } from './update-button'
 import { useAppSelector } from '@hooks'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
@@ -19,7 +21,9 @@ export const BottomBar: FC = () => {
         >
             {dataSourceId && !isVisualizationLoading && (
                 <div className={classes.container} data-test="update-buttons">
-                    <UpdateButton />
+                    <EventButton />
+                    <EnrollmentButton />
+                    <TrackedEntityInstanceButton />
                 </div>
             )}
         </div>

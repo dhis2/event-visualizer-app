@@ -6,9 +6,19 @@ import {
     normalizeMetadataInputItem,
     extractInputId,
 } from './normalization'
+import { assertTypedMetadataItem } from './typed-metadata-item'
 import { extractMetadataFromVisualization } from './visualization'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import { isMetadataInputItem } from '@modules/metadata'
+import {
+    isMetadataInputItem,
+    isProgramMetadataItem,
+    isProgramStageMetadataItem,
+    isOptionSetMetadataItem,
+    isLegendSetMetadataItem,
+    isOrganisationUnitMetadataItem,
+    isUserOrgUnitMetadataItem,
+    isDimensionMetadataItem,
+} from '@modules/metadata'
 import { isObject, isPopulatedString } from '@modules/validation'
 import type {
     MetadataInputItem,
@@ -20,6 +30,13 @@ import type {
     AppCachedData,
     SavedVisualization,
     MetadataMap,
+    Program,
+    ProgramStage,
+    OptionSetMetadataItem,
+    LegendSetMetadataItem,
+    OrganisationUnitMetadataItem,
+    UserOrgUnitMetadataItem,
+    DimensionMetadataItem,
 } from '@types'
 
 declare global {
@@ -119,6 +136,66 @@ export class MetadataStore {
             }
             return metadataStoreItems
         }, {})
+    }
+
+    getProgramMetadataItem(id: string): Program | undefined {
+        return assertTypedMetadataItem(
+            this.getMetadataItem(id),
+            isProgramMetadataItem,
+            'Item is not a program'
+        )
+    }
+
+    getProgramStageMetadataItem(id: string): ProgramStage | undefined {
+        return assertTypedMetadataItem(
+            this.getMetadataItem(id),
+            isProgramStageMetadataItem,
+            'Item is not a program stage'
+        )
+    }
+
+    getOptionSetMetadataItem(id: string): OptionSetMetadataItem | undefined {
+        return assertTypedMetadataItem(
+            this.getMetadataItem(id),
+            isOptionSetMetadataItem,
+            'Item is not an option set'
+        )
+    }
+
+    getLegendSetMetadataItem(id: string): LegendSetMetadataItem | undefined {
+        return assertTypedMetadataItem(
+            this.getMetadataItem(id),
+            isLegendSetMetadataItem,
+            'Item is not a legend set'
+        )
+    }
+
+    getOrganisationUnitMetadataItem(
+        id: string
+    ): OrganisationUnitMetadataItem | undefined {
+        return assertTypedMetadataItem(
+            this.getMetadataItem(id),
+            isOrganisationUnitMetadataItem,
+            'Item is not an organisation unit'
+        )
+    }
+
+    getUserOrgUnitMetadataItem(
+        id: string
+    ): UserOrgUnitMetadataItem | undefined {
+        return assertTypedMetadataItem(
+            this.getMetadataItem(id),
+            isUserOrgUnitMetadataItem,
+            'Item is not a user org unit'
+        )
+    }
+
+    getDimensionMetadataItem(id: string): DimensionMetadataItem | undefined {
+        return assertTypedMetadataItem(
+            this.getMetadataItem(id),
+            isDimensionMetadataItem,
+            'Item is not a dimension'
+        )
     }
 
     subscribe(id: string | null | undefined, cb: Subscriber) {

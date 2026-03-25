@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-03-23T14:17:20.941Z\n"
-"PO-Revision-Date: 2026-03-23T14:17:20.942Z\n"
+"POT-Creation-Date: 2026-03-25T14:37:21.553Z\n"
+"PO-Revision-Date: 2026-03-25T14:37:21.554Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -303,6 +303,93 @@ msgstr "Levels"
 msgid "Groups"
 msgstr "Groups"
 
+msgid "Enrollment"
+msgstr "Enrollment"
+
+msgid "Create {{enrollmentLabel}} list"
+msgstr "Create {{enrollmentLabel}} list"
+
+msgid "Create {{enrollmentLabel}} table"
+msgstr "Create {{enrollmentLabel}} table"
+
+msgid "Switch to {{enrollmentLabel}} list"
+msgstr "Switch to {{enrollmentLabel}} list"
+
+msgid "Switch to {{enrollmentLabel}} table"
+msgstr "Switch to {{enrollmentLabel}} table"
+
+msgid "Update {{enrollmentLabel}} list"
+msgstr "Update {{enrollmentLabel}} list"
+
+msgid "Update {{enrollmentLabel}} table"
+msgstr "Update {{enrollmentLabel}} table"
+
+msgid "Event"
+msgstr "Event"
+
+msgid "Create {{eventLabel}} list"
+msgstr "Create {{eventLabel}} list"
+
+msgid "Create {{eventLabel}} table"
+msgstr "Create {{eventLabel}} table"
+
+msgid "Switch to {{eventLabel}} list"
+msgstr "Switch to {{eventLabel}} list"
+
+msgid "Switch to {{eventLabel}} table"
+msgstr "Switch to {{eventLabel}} table"
+
+msgid "Update {{eventLabel}} list"
+msgstr "Update {{eventLabel}} list"
+
+msgid "Update {{eventLabel}} table"
+msgstr "Update {{eventLabel}} table"
+
+msgid "tracked entity"
+msgstr "tracked entity"
+
+msgid "Create {{trackedEntityTypeName}} list"
+msgstr "Create {{trackedEntityTypeName}} list"
+
+msgid "Switch to {{trackedEntityTypeName}} list"
+msgstr "Switch to {{trackedEntityTypeName}} list"
+
+msgid "Update {{trackedEntityTypeName}} list"
+msgstr "Update {{trackedEntityTypeName}} list"
+
+msgid "Not valid with registration date or registration org. unit"
+msgstr "Not valid with registration date or registration org. unit"
+
+msgid "Not valid with registration date"
+msgstr "Not valid with registration date"
+
+msgid "Not valid with registration org. unit"
+msgstr "Not valid with registration org. unit"
+
+msgid "Not valid with categories or category option group sets"
+msgstr "Not valid with categories or category option group sets"
+
+msgid "Not valid with categories"
+msgstr "Not valid with categories"
+
+msgid "Not valid with category option group sets"
+msgstr "Not valid with category option group sets"
+
+msgid "Not valid with multiple programs"
+msgstr "Not valid with multiple programs"
+
+msgid "Not valid with multiple program stages"
+msgstr "Not valid with multiple program stages"
+
+msgid "Not valid with event programs"
+msgstr "Not valid with event programs"
+
+msgid "Not valid with program indicators"
+msgstr "Not valid with program indicators"
+
+msgid "Nothing selected. Add items to the layout to get started."
+msgstr "Nothing selected. Add items to the layout to get started."
+
 msgid "Collapse layout"
 msgstr "Collapse layout"
 
@@ -387,9 +474,6 @@ msgstr "Program indicators"
 
 msgid "{{name}} registration"
 msgstr "{{name}} registration"
-
-msgid "Event"
-msgstr "Event"
 
 msgid "Registration date"
 msgstr "Registration date"
