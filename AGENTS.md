@@ -102,6 +102,13 @@ yarn generate-types # Regenerate DHIS2 API types from OpenAPI specs
 
 ## Code Conventions
 
+### Code Style
+
+-   **Comments**: Describe what the code does and why, not the journey that led to it. Avoid
+    comments that explain rejected alternatives, implementation history, or defensive rationale.
+    Keep inline comments short (one line where possible); use JSDoc only for public API surfaces
+    that benefit from a brief description.
+
 ### TypeScript & Imports
 
 -   **Strict mode**: TypeScript strict mode is enabled in tsconfig
@@ -354,6 +361,61 @@ Pre-commit hooks are configured via Husky to:
 -   **Dual deployment**: The app can be deployed as both a standalone app and a plugin
 -   **Path aliases**: Always prefer path aliases over relative imports for better maintainability
 -   **DHIS2 platform**: Leverage DHIS2 Platform capabilities and conventions throughout development
+
+## DHIS2 Program Dimension IDs
+
+Dimensions in DHIS2 programs are identified by **compound IDs** — dot-separated strings that
+encode program, stage, and dimension context. This system surfaces throughout the codebase: in
+visualization objects, the layout, the sidebar, the Redux store (`visUiConfig` slice), and the
+metadata provider. Understanding it is essential when working with any program dimension.
+
+### Dimension types
+
+-   **Tracked entity attribute dimensions** are independent of program/stage context — they always
+    have the same properties across tracked entity types and are identified by a plain (non-compound)
+    ID. No special handling is needed.
+-   **Program dimensions** are context-dependent and use compound IDs (see below).
+
+### Program types
+
+-   **Event programs** (`programType: 'WITHOUT_REGISTRATION'`) always have exactly one stage.
+-   **Tracker programs** (`WITH_REGISTRATION`) may have many stages. A bare `programId.dimensionId`
+    key is ambiguous for tracker programs — prefer `stageId.dimensionId` or the fully explicit
+    `programId.stageId.dimensionId` form.
+-   `ProgramStage` always carries a `program: { id: string }` back-reference, so the owning
+    program can be resolved from a stage without a separate lookup.
+
+### Compound ID forms
+
+| Form                            | Example                      | When valid                                                                                     |
+| ------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------- |
+| `stageId.dimensionId`           | `Zj7UnCAulEk.ou`             | Always — this is the **canonical** form                                                        |
+| `programId.dimensionId`         | `eBAyeGv0exc.ou`             | Enrollment-level fixed dimensions in tracker programs (e.g. enrollment date, org unit, status) |
+| `programId.stageId.dimensionId` | `eBAyeGv0exc.Zj7UnCAulEk.ou` | Any program — collapsed to canonical on ingest                                                 |
+
+A repetition index `[n]` may be appended to the stage segment: `ps1[0].ou`.
+
+The **canonical** form is always `stageId.dimensionId`. 3-segment keys are collapsed to canonical
+form on ingest via pure string manipulation (drop the first segment) — no metadata map lookup
+required. `programId.dimensionId` keys are stored as-is because they are semantically tied to the
+program (enrollment scope), not to any stage.
+
+When adding metadata to the store in a **single batch** (via `addMetadata`), plain items (programs,
+stages) are always processed before compound-key items, so context is available for field
+enrichment. When adding items **one at a time**, add programs and stages before any dimensions that
+reference them.
+
+### `DimensionMetadataItem` key fields
+
+| Field             | Description                                                                                    |
+| ----------------- | ---------------------------------------------------------------------------------------------- |
+| `id`              | The **compound** ID (canonical form: `stageId.dimId`), or plain ID for non-compound dimensions |
+| `dimensionId`     | The **plain** (last) segment — always set on `DimensionMetadataItem`                           |
+| `programId`       | ID of the owning program (if applicable)                                                       |
+| `programStageId`  | ID of the owning stage (if applicable)                                                         |
+| `repetitionIndex` | Repetition index extracted from `[n]` suffix                                                   |
+| `optionSetId`     | ID reference to the option set (if applicable)                                                 |
+| `legendSetId`     | ID reference to the legend set (if applicable)                                                 |
 
 ## Testing & Linting Workflow for AI Agents
 

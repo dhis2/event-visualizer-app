@@ -361,6 +361,7 @@ describe('getCreatedDimension', () => {
         expect(result).toEqual({
             created: {
                 id: 'created',
+                dimensionId: 'created',
                 dimensionType: 'PERIOD',
                 name: expect.any(String), // Assuming i18n.t returns a string
                 valueType: 'DATE',

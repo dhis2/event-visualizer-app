@@ -10,30 +10,35 @@ import type { DimensionMetadataItem } from '@types'
 const getFixedDimensions = (): DimensionMetadataItem[] => [
     {
         id: 'lastUpdated',
+        dimensionId: 'lastUpdated',
         name: i18n.t('Last updated on'),
         dimensionType: 'PERIOD',
         valueType: 'DATE',
     },
     {
         id: 'lastUpdatedBy',
+        dimensionId: 'lastUpdatedBy',
         name: i18n.t('Last updated by'),
         dimensionType: 'USER',
         valueType: 'USERNAME',
     },
     {
         id: 'created',
+        dimensionId: 'created',
         name: i18n.t('Created on'),
         dimensionType: 'PERIOD',
         valueType: 'DATE',
     },
     {
         id: 'createdBy',
+        dimensionId: 'createdBy',
         name: i18n.t('Created by'),
         dimensionType: 'USER',
         valueType: 'USERNAME',
     },
     {
         id: 'completed',
+        dimensionId: 'completed',
         name: i18n.t('Completed on'),
         dimensionType: 'PERIOD',
         valueType: 'DATE',

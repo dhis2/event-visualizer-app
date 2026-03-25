@@ -20,8 +20,6 @@ export {
     useAddMetadata,
     useAddAnalyticsResponseMetadata,
     useMetadataStore,
-    useDimensionMetadata,
-    useProgramMetadataItem,
     useProgramStageMetadataItem,
     useOptionSetMetadataItem,
     useLegendSetMetadataItem,

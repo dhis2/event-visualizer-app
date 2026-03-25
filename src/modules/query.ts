@@ -15,6 +15,7 @@ export const getProgramStageFields = (
         'displayEventLabel',
         'repeatable',
         'hideDueDate',
+        'program[id]',
     ].join(',')
 
 /**

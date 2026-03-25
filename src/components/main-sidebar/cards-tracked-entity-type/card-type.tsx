@@ -34,6 +34,7 @@ const transformItem = (item: unknown): DimensionMetadataItem => {
     ) {
         return {
             id: item.trackedEntityAttribute.id,
+            dimensionId: item.trackedEntityAttribute.id,
             name: item.trackedEntityAttribute.name,
             valueType: item.trackedEntityAttribute.valueType as ValueType,
             dimensionType: 'PROGRAM_ATTRIBUTE',
@@ -62,12 +63,14 @@ export const getFixedDimensions = (
     return [
         {
             id: `${trackedEntityType.id}.ou`,
+            dimensionId: 'ou',
             dimensionType: 'ORGANISATION_UNIT',
             name: i18n.t('Registration org. unit'),
             valueType: 'ORGANISATION_UNIT',
         },
         {
             id: `${trackedEntityType.id}.created`,
+            dimensionId: 'created',
             dimensionType: 'PERIOD',
             name: i18n.t('Registration date'),
             valueType: 'DATE',

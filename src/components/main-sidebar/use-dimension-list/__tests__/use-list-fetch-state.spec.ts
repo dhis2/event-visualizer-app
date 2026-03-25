@@ -6,11 +6,12 @@ import type { DimensionMetadataItem } from '@types'
 
 const mockDimension: DimensionMetadataItem = {
     id: 'test-id',
+    dimensionId: 'test-id',
     name: 'Test Dimension',
     dimensionType: 'CATEGORY',
     valueType: 'TEXT',
-    optionSet: undefined,
-    legendSet: undefined,
+    optionSetId: undefined,
+    legendSetId: undefined,
 }
 
 const mockEngineError: EngineError = {

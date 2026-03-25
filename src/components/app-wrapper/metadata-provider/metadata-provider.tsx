@@ -8,7 +8,6 @@ import {
     useRef,
 } from 'react'
 import type { FC, ReactNode } from 'react'
-import { parseDimensionIdInput } from './dimension'
 import { getInitialMetadata } from './initial-metadata'
 import { MetadataStore } from './metadata-store'
 import { useRootOrgUnits } from '@hooks'
@@ -25,7 +24,6 @@ import { isPopulatedString } from '@modules/validation'
 import type {
     InitialMetadataItems,
     MetadataItem,
-    DimensionMetadata,
     Program,
     ProgramStage,
     OptionSetMetadataItem,
@@ -231,108 +229,12 @@ export const useAddAnalyticsResponseMetadata =
         return addAnalyticsResponseMetadata
     }
 
-export const useDimensionMetadata = (
-    dimensionIdInput: string
-): DimensionMetadata => {
-    const metadataStore = useContext(MetadataContext)!
-    const cacheRef = useRef<DimensionMetadata | null>(null)
-
-    return useSyncExternalStore(
-        useCallback(
-            (callback) => {
-                const { ids } = parseDimensionIdInput(dimensionIdInput)
-                const unsubscribeFunctions = ids.map((id) =>
-                    metadataStore.subscribe(id, callback)
-                )
-
-                return () => {
-                    unsubscribeFunctions.forEach((unsubscribe) => unsubscribe())
-                }
-            },
-            [metadataStore, dimensionIdInput]
-        ),
-        useCallback(() => {
-            const currentData = cacheRef.current
-            const freshData =
-                metadataStore.getDimensionMetadata(dimensionIdInput)
-            if (
-                currentData &&
-                Object.keys(currentData).every(
-                    (key) => currentData[key] === freshData[key]
-                )
-            ) {
-                return currentData
-            } else {
-                cacheRef.current = freshData
-                return freshData
-            }
-        }, [metadataStore, dimensionIdInput])
-    )
-}
-
-export const useDimensionsMetadata = (
-    dimensionIdInputs: string[]
-): Record<string, DimensionMetadata> => {
-    const metadataStore = useContext(MetadataContext)!
-    const cacheRef = useRef<Record<string, DimensionMetadata> | null>(null)
-
-    return useSyncExternalStore(
-        useCallback(
-            (callback) => {
-                const allIds = dimensionIdInputs.flatMap((input) => {
-                    const { ids } = parseDimensionIdInput(input)
-                    return ids
-                })
-                const uniqueIds = Array.from(new Set(allIds))
-                const unsubscribeFunctions = uniqueIds.map((id) =>
-                    metadataStore.subscribe(id, callback)
-                )
-
-                return () => {
-                    unsubscribeFunctions.forEach((unsubscribe) => unsubscribe())
-                }
-            },
-            [metadataStore, dimensionIdInputs]
-        ),
-        useCallback(() => {
-            const currentData = cacheRef.current
-            const freshData: Record<string, DimensionMetadata> = {}
-
-            for (const input of dimensionIdInputs) {
-                freshData[input] = metadataStore.getDimensionMetadata(input)
-            }
-
-            // Two-layer caching: check if all records have the same fields
-            if (currentData) {
-                const allInputsSame = dimensionIdInputs.every((input) => {
-                    const currentItem = currentData[input]
-                    const freshItem = freshData[input]
-                    return (
-                        currentItem &&
-                        Object.keys(currentItem).every(
-                            (key) => currentItem[key] === freshItem[key]
-                        )
-                    )
-                })
-
-                if (allInputsSame) {
-                    return currentData
-                }
-            }
-
-            cacheRef.current = freshData
-            return freshData
-        }, [metadataStore, dimensionIdInputs])
-    )
-}
-
 export type UseMetadataStoreReturnValue = Pick<
     MetadataStore,
     | 'getMetadataItem'
     | 'getMetadataItems'
     | 'addMetadata'
     | 'setVisualizationMetadata'
-    | 'getDimensionMetadata'
 >
 export const useMetadataStore = (): UseMetadataStoreReturnValue => {
     const metadataStore = useContext(MetadataContext) as MetadataStore
@@ -342,8 +244,6 @@ export const useMetadataStore = (): UseMetadataStoreReturnValue => {
         addMetadata: metadataStore.addMetadata.bind(metadataStore),
         setVisualizationMetadata:
             metadataStore.setVisualizationMetadata.bind(metadataStore),
-        getDimensionMetadata:
-            metadataStore.getDimensionMetadata.bind(metadataStore),
     }))
     return api
 }

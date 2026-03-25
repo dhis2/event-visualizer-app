@@ -472,11 +472,11 @@ msgstr "Event data"
 msgid "Program indicators"
 msgstr "Program indicators"
 
-msgid "Registration date"
-msgstr "Registration date"
-
 msgid "{{name}} registration"
 msgstr "{{name}} registration"
+
+msgid "Registration date"
+msgstr "Registration date"
 
 msgid "Choose a data source"
 msgstr "Choose a data source"
@@ -565,7 +565,7 @@ msgstr "Category option group sets"
 msgid "Filter"
 msgstr "Filter"
 
-msgid "Event org. unit"
+msgid "org. unit"
 msgstr "Event org. unit"
 
 msgid "Event date"

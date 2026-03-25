@@ -1,58 +1,110 @@
-import { isMetadataInputItem } from '@modules/metadata'
-import { isPopulatedString } from '@modules/validation'
+import {
+    extractDimensionContextFromCompoundId,
+    isCompoundDimensionId,
+    resolveId,
+} from './dimension'
+import { isDimensionMetadataItem } from '@modules/metadata'
+import { isObject, isPopulatedString } from '@modules/validation'
 import type {
-    MetadataItem,
     MetadataInputItem,
+    MetadataInputMap,
     NormalizedMetadataInputItem,
+    MetadataMap,
 } from '@types'
+
+export const extractInputId = (
+    item: MetadataInputItem | string,
+    key?: string
+): string => {
+    if (isPopulatedString(key)) {
+        return key
+    }
+    const itemId = isObject(item) ? item.uid ?? item.id : undefined
+
+    if (!itemId) {
+        throw new Error('Invalid metadata input: no ID field present')
+    }
+
+    return itemId
+}
 
 export const normalizeMetadataInputItem = (
     item: MetadataInputItem | string,
-    existingMetadataMap: Map<string, MetadataItem>,
+    existingMetadataMap: MetadataMap,
     key?: string
 ): NormalizedMetadataInputItem => {
     if (isPopulatedString(item)) {
         if (isPopulatedString(key)) {
-            return {
-                id: key,
-                name: item,
-            }
+            return { id: key, name: item }
         } else {
             throw new Error(
-                'Invalid metadata input: string value without a key'
+                'Invalid metadata input: string value without an ID'
             )
         }
     }
 
-    const { id, uid, name, displayName, ...rest } = item
+    const { name, displayName, ...rest } = item
+    delete rest.id
+    delete rest.uid
 
-    // Prefer key because this has the nested version of the ID with the dot
-    const resolvedId = key ?? uid ?? id
+    const inputId = extractInputId(item, key)
 
-    if (!isPopulatedString(resolvedId)) {
-        throw new Error('Invalid metadata input: no ID field present')
+    // Canonicalize to 2-segment form if needed (3-segment → drop program prefix)
+    const canonicalId = isCompoundDimensionId(inputId)
+        ? resolveId(inputId)
+        : inputId
+    const existingItem = existingMetadataMap.get(canonicalId)
+    const resolvedName = displayName ?? name ?? existingItem?.name
+
+    if (!resolvedName) {
+        throw new Error(
+            `New metadata item "${canonicalId}" does not have a name`
+        )
     }
 
-    const resolvedName = displayName ?? name
+    const resolvedItem = {
+        id: canonicalId,
+        name: resolvedName,
+        ...rest,
+    }
 
-    if (isPopulatedString(resolvedName)) {
-        return { id: resolvedId, name: resolvedName, ...rest }
-    } else if (existingMetadataMap.has(resolvedId)) {
-        /* Items that already exist in the store must have a name field so
-         * for these we can send partial updates (objects with a name). */
-        return {
-            id: resolvedId,
-            ...rest,
-        }
-    } else if (!isMetadataInputItem(item)) {
-        if ('id' in item && 'uid' in item) {
-            throw new Error(
-                'Invalid metadata input: item has both an id and uid'
+    if (isDimensionMetadataItem(resolvedItem)) {
+        // Enrich with programId/programStageId from compound ID context.
+        const dimensionContext = isCompoundDimensionId(inputId)
+            ? extractDimensionContextFromCompoundId(
+                  inputId,
+                  existingMetadataMap
+              )
+            : { dimensionId: canonicalId }
+        Object.assign(resolvedItem, dimensionContext)
+    }
+
+    return resolvedItem
+}
+
+/**
+ * Returns the set of canonical (normalized) IDs that a metadata input map
+ * would produce when added to the given metadata map. Uses the provided map
+ * for compound ID resolution, so this should be called after context metadata
+ * (programs, stages) has already been added.
+ */
+export const getCanonicalKeysForInput = (
+    metadataInput: MetadataInputMap,
+    existingMetadataMap: MetadataMap
+): Set<string> => {
+    const canonicalIds = new Set<string>()
+    for (const [id, value] of Object.entries(metadataInput)) {
+        try {
+            const normalized = normalizeMetadataInputItem(
+                value as MetadataInputItem,
+                existingMetadataMap,
+                id
             )
-        } else {
-            throw new Error('Invalid metadata input: name field not a string')
+            canonicalIds.add(normalized.id)
+        } catch {
+            // If normalization fails, fall back to the raw input ID
+            canonicalIds.add(id)
         }
-    } else {
-        throw new Error('Invalid metadata input: expected name field not found')
     }
+    return canonicalIds
 }
