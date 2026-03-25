@@ -2,9 +2,9 @@ import i18n from '@dhis2/d2-i18n'
 import { IconSettings16, IconSync16, Tooltip } from '@dhis2/ui'
 import cx from 'classnames'
 import { useCallback, useMemo, useState, type FC } from 'react'
-import { useActionButton } from './action-buttons'
-import { CustomValueModal } from './custom-value/custom-value-modal'
-import classes from './styles/bottom-bar.module.css'
+import classes from './styles/action-buttons.module.css'
+import { useActionButton } from './use-action-button'
+import { CustomValueModal } from '@components/layout-panel/bottom-bar/custom-value-modal'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
@@ -118,6 +118,7 @@ export const CustomValueButton: FC = () => {
             {
                 dataElementName: customValue.dataElementName,
                 aggregationType: customValue.aggregationType,
+                nsSeparator: '^^',
             }
         )
 
