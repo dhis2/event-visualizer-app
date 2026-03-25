@@ -7,12 +7,12 @@ import {
     EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES,
     getEventFixedDimensions,
 } from '@components/main-sidebar/get-event-fixed-dimensions'
-import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
-import { getDataElementQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import {
     useSelectedDimensionCount,
     type UseSelectedDimensionCountMatchFn,
-} from '@components/main-sidebar/use-selected-dimension-count'
+} from '@components/main-sidebar/selected-dimensions-provider'
+import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
+import { getDataElementQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import { useCurrentUser } from '@hooks'
 import type {
     DataSourceProgramWithRegistration,

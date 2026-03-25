@@ -3,12 +3,12 @@ import { type FC, useMemo } from 'react'
 import { ProgramStageSubsection } from './program-stage-subsection'
 import { DimensionCard } from '@components/main-sidebar/dimension-card'
 import { EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES } from '@components/main-sidebar/get-event-fixed-dimensions'
-import { computeIsDisabledByFilter } from '@components/main-sidebar/use-dimension-list'
-import { getDataElementQueryTemplate } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import {
     useSelectedDimensionCount,
     type UseSelectedDimensionCountMatchFn,
-} from '@components/main-sidebar/use-selected-dimension-count'
+} from '@components/main-sidebar/selected-dimensions-provider'
+import { computeIsDisabledByFilter } from '@components/main-sidebar/use-dimension-list'
+import { getDataElementQueryTemplate } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import { useAppSelector, useCurrentUser } from '@hooks'
 import { isPopulatedString } from '@modules/validation'
 import { getFilter } from '@store/dimensions-selection-slice'

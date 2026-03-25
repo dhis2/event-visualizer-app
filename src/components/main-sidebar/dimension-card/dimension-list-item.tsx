@@ -1,5 +1,6 @@
 import { useCallback, type FC } from 'react'
 import classes from './styles/dimension-list-item.module.css'
+import { useIsDimensionSelected } from '@components/main-sidebar/selected-dimensions-provider'
 import { useAddMetadata, useAppDispatch } from '@hooks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import type { DimensionMetadataItem, Program, ProgramStage } from '@types'
@@ -17,6 +18,7 @@ export const DimensionListItem: FC<DimensionListItemProps> = ({
 }) => {
     const dispatch = useAppDispatch()
     const addMetadata = useAddMetadata()
+    const isSelected = useIsDimensionSelected(dimension?.id)
     const handleActivate = useCallback(() => {
         if (!dimension) {
             console.log('TODO: make dimension required later')
@@ -37,7 +39,7 @@ export const DimensionListItem: FC<DimensionListItemProps> = ({
     }, [addMetadata, dispatch, dimension, program, programStage])
 
     return (
-        <li data-test="dimension-list-item">
+        <li data-test="dimension-list-item" data-selected={isSelected}>
             <button
                 type="button"
                 className={classes.item}

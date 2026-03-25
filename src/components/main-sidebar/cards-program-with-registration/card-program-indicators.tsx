@@ -4,12 +4,12 @@ import {
     DimensionCard,
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
-import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
-import { getProgramIndicatorQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import {
     useSelectedDimensionCount,
     type UseSelectedDimensionCountMatchFn,
-} from '@components/main-sidebar/use-selected-dimension-count'
+} from '@components/main-sidebar/selected-dimensions-provider'
+import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
+import { getProgramIndicatorQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import { useCurrentUser } from '@hooks'
 import type { DataSourceProgramWithRegistration } from '@types'
 

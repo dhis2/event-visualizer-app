@@ -7,6 +7,7 @@ import { DataSourceSelect } from './data-source-select/data-source-select'
 import { CardMetadata } from './dimension-card/card-metadata'
 import { CardOther } from './dimension-card/card-other'
 import { FilterDropdownButton } from './filter-dropdown-button'
+import { SelectedDimensionsProvider } from './selected-dimensions-provider'
 import classes from './styles/main-sidebar.module.css'
 import { ToggleCollapseAllButton } from './toggle-collapse-all-button'
 import { UnifiedSearchInput } from './unified-search-input'
@@ -49,37 +50,39 @@ export const MainSidebar: FC = () => {
                         ) && <FilterDropdownButton />}
                         <ToggleCollapseAllButton />
                     </div>
-                    <div
-                        onScroll={handleScroll}
-                        className={classes.dimensionCardsContainer}
-                    >
-                        {isDataSourceProgramWithRegistration(
-                            dataSourceMetadataItem
-                        ) && (
-                            <CardsProgramWithRegistration
-                                key={dataSourceMetadataItem.id}
-                                program={dataSourceMetadataItem}
-                            />
-                        )}
-                        {isDataSourceProgramWithoutRegistration(
-                            dataSourceMetadataItem
-                        ) && (
-                            <CardsProgramWithoutRegistration
-                                key={dataSourceMetadataItem.id}
-                                program={dataSourceMetadataItem}
-                            />
-                        )}
-                        {isDataSourceTrackedEntityType(
-                            dataSourceMetadataItem
-                        ) && (
-                            <CardsTrackedEntityType
-                                key={dataSourceMetadataItem.id}
-                                trackedEntityType={dataSourceMetadataItem}
-                            />
-                        )}
-                        <CardMetadata />
-                        <CardOther />
-                    </div>
+                    <SelectedDimensionsProvider>
+                        <div
+                            onScroll={handleScroll}
+                            className={classes.dimensionCardsContainer}
+                        >
+                            {isDataSourceProgramWithRegistration(
+                                dataSourceMetadataItem
+                            ) && (
+                                <CardsProgramWithRegistration
+                                    key={dataSourceMetadataItem.id}
+                                    program={dataSourceMetadataItem}
+                                />
+                            )}
+                            {isDataSourceProgramWithoutRegistration(
+                                dataSourceMetadataItem
+                            ) && (
+                                <CardsProgramWithoutRegistration
+                                    key={dataSourceMetadataItem.id}
+                                    program={dataSourceMetadataItem}
+                                />
+                            )}
+                            {isDataSourceTrackedEntityType(
+                                dataSourceMetadataItem
+                            ) && (
+                                <CardsTrackedEntityType
+                                    key={dataSourceMetadataItem.id}
+                                    trackedEntityType={dataSourceMetadataItem}
+                                />
+                            )}
+                            <CardMetadata />
+                            <CardOther />
+                        </div>
+                    </SelectedDimensionsProvider>
                 </>
             )}
         </div>

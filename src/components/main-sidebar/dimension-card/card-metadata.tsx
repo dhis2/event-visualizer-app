@@ -4,11 +4,11 @@ import {
     DimensionCard,
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
-import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import {
     useSelectedDimensionCount,
     type UseSelectedDimensionCountMatchFn,
-} from '@components/main-sidebar/use-selected-dimension-count'
+} from '@components/main-sidebar/selected-dimensions-provider'
+import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import type { DimensionMetadataItem } from '@types'
 
 const getFixedDimensions = (): DimensionMetadataItem[] => [

@@ -4,12 +4,12 @@ import {
     DimensionCard,
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
-import type { Transformer } from '@components/main-sidebar/use-dimension-list'
-import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import {
     useSelectedDimensionCount,
     type UseSelectedDimensionCountMatchFn,
-} from '@components/main-sidebar/use-selected-dimension-count'
+} from '@components/main-sidebar/selected-dimensions-provider'
+import type { Transformer } from '@components/main-sidebar/use-dimension-list'
+import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import { isObject, isPopulatedString } from '@modules/validation'
 import type {
     DimensionMetadataItem,
