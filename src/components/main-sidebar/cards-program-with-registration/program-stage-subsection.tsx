@@ -1,4 +1,4 @@
-import { useCallback, useMemo, type FC } from 'react'
+import { useMemo, type FC } from 'react'
 import {
     DimensionList,
     DimensionsCardSubsection,
@@ -26,6 +26,12 @@ const STAGE_DIMENSION_TYPES = new Set<DimensionType>(
 )
 STAGE_DIMENSION_TYPES.add('DATA_ELEMENT')
 
+export const createIsSelectedMatchFn =
+    (programStageId: string): UseSelectedDimensionCountMatchFn =>
+    (dimension) =>
+        STAGE_DIMENSION_TYPES.has(dimension.dimensionType) &&
+        dimension.programStageId === programStageId
+
 export const ProgramStageSubsection: FC<{
     program: DataSourceProgramWithRegistration
     programStage: ProgramStage
@@ -47,10 +53,8 @@ export const ProgramStageSubsection: FC<{
         fixedDimensions,
         baseQuery,
     })
-    const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
-        (dimension) =>
-            STAGE_DIMENSION_TYPES.has(dimension.dimensionType) &&
-            dimension.programStageId === programStage.id,
+    const isSelectedMatchFn = useMemo(
+        () => createIsSelectedMatchFn(programStage.id),
         [programStage.id]
     )
     const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)

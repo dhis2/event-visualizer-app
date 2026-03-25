@@ -53,8 +53,9 @@ const METADATA_DIMENSION_IDS = new Set(
     getFixedDimensions().map((dimension) => dimension.id)
 )
 
-const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = (dimension) =>
-    METADATA_DIMENSION_IDS.has(dimension.dimensionId)
+export const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = (
+    dimension
+) => METADATA_DIMENSION_IDS.has(dimension.dimensionId)
 
 export const CardMetadata: FC = () => {
     const fixedDimensions = useMemo(getFixedDimensions, [])

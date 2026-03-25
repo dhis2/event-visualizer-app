@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { useCallback, type FC, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -82,6 +82,30 @@ export const getFixedDimensions = (
     ]
 }
 
+export const createIsSelectedMatchFn =
+    (
+        trackedEntityTypeId: string,
+        fixedDimensionIdLookup: Set<string>
+    ): UseSelectedDimensionCountMatchFn =>
+    (dimension) => {
+        if (
+            dimension.trackedEntityTypeId === trackedEntityTypeId &&
+            fixedDimensionIdLookup.has(dimension.id)
+        ) {
+            return true
+        }
+        /* TEAs fetched from the web api have plain IDs, no enrichment context,
+         * they can only be identified by the absense of a program/stage */
+        if (
+            dimension.dimensionType === 'PROGRAM_ATTRIBUTE' &&
+            !dimension.programId &&
+            !dimension.programStageId
+        ) {
+            return true
+        }
+        return false
+    }
+
 export const CardType: FC<CardTypeProps> = ({ trackedEntityType }) => {
     const title = i18n.t('{{name}} registration', {
         name: trackedEntityType.name,
@@ -119,25 +143,12 @@ export const CardType: FC<CardTypeProps> = ({ trackedEntityType }) => {
         fixedDimensions,
         transformer,
     })
-    const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
-        (dimension) => {
-            if (
-                dimension.trackedEntityTypeId === trackedEntityType.id &&
-                fixedDimensionIdLookup.has(dimension.id)
-            ) {
-                return true
-            }
-            /* TEAs fetched from the web api have plain IDs, no enrichment context,
-             * they can only be identified by the absense of a program/stage */
-            if (
-                dimension.dimensionType === 'PROGRAM_ATTRIBUTE' &&
-                !dimension.programId &&
-                !dimension.programStageId
-            ) {
-                return true
-            }
-            return false
-        },
+    const isSelectedMatchFn = useMemo(
+        () =>
+            createIsSelectedMatchFn(
+                trackedEntityType.id,
+                fixedDimensionIdLookup
+            ),
         [trackedEntityType.id, fixedDimensionIdLookup]
     )
     const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)

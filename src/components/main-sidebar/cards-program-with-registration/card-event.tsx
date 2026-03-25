@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { type FC, useCallback, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import { ProgramStageSubsection } from './program-stage-subsection'
 import { DimensionCard } from '@components/main-sidebar/dimension-card'
 import { EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES } from '@components/main-sidebar/get-event-fixed-dimensions'
@@ -21,6 +21,13 @@ type CardEventProps = {
 const EVENT_DIMENSION_TYPES = new Set<DimensionType>(
     EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES
 ).add('DATA_ELEMENT')
+
+export const createIsSelectedMatchFn =
+    (stageIdLookup: Set<string>): UseSelectedDimensionCountMatchFn =>
+    (dimension) =>
+        EVENT_DIMENSION_TYPES.has(dimension.dimensionType) &&
+        isPopulatedString(dimension.programStageId) &&
+        stageIdLookup.has(dimension.programStageId)
 
 export const CardEvent: FC<CardEventProps> = ({ program }) => {
     const {
@@ -47,11 +54,8 @@ export const CardEvent: FC<CardEventProps> = ({ program }) => {
             ),
         [program.programStages]
     )
-    const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
-        (dimension) =>
-            EVENT_DIMENSION_TYPES.has(dimension.dimensionType) &&
-            isPopulatedString(dimension.programStageId) &&
-            stageIdLookup.has(dimension.programStageId),
+    const isSelectedMatchFn = useMemo(
+        () => createIsSelectedMatchFn(stageIdLookup),
         [stageIdLookup]
     )
     const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)

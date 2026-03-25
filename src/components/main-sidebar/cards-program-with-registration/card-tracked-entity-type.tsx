@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { useCallback, useMemo, type FC } from 'react'
+import { useMemo, type FC } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -21,6 +21,24 @@ type CardTrackedEntityTypeProps = {
 }
 
 const CARD_AND_LIST_KEY = 'program-tracked-entity-type'
+
+export const createIsSelectedMatchFn =
+    (trackedEntityTypeId: string): UseSelectedDimensionCountMatchFn =>
+    (dimension) => {
+        if (dimension.id === `${trackedEntityTypeId}.ou`) {
+            return true
+        }
+        /* TEAs fetched from the web api have plain IDs, no enrichment context,
+         * they can only be identified by the absence of a program/stage */
+        if (
+            dimension.dimensionType === 'PROGRAM_ATTRIBUTE' &&
+            !dimension.programId &&
+            !dimension.programStageId
+        ) {
+            return true
+        }
+        return false
+    }
 
 const getFixedDimensions = (
     program: DataSourceProgramWithRegistration
@@ -63,16 +81,8 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
         baseQuery,
         fixedDimensions,
     })
-    const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
-        (selectedDimension) => {
-            if (selectedDimension.id === `${program.trackedEntityType.id}.ou`) {
-                return true
-            }
-            if (selectedDimension.dimensionType === 'PROGRAM_ATTRIBUTE') {
-                return true
-            }
-            return false
-        },
+    const isSelectedMatchFn = useMemo(
+        () => createIsSelectedMatchFn(program.trackedEntityType.id),
         [program.trackedEntityType.id]
     )
     const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)

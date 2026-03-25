@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { useCallback, useMemo, type FC } from 'react'
+import { useMemo, type FC } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -56,6 +56,16 @@ const getFixedDimensions = (
     ]
 }
 
+export const createIsSelectedMatchFn =
+    (
+        programId: string,
+        dimensionTypeLookup: Set<DimensionType>
+    ): UseSelectedDimensionCountMatchFn =>
+    (dimension) =>
+        dimensionTypeLookup.has(dimension.dimensionType) &&
+        dimension.programId === programId &&
+        !dimension.programStageId
+
 export const CardEnrollment: FC<CardEnrollmentProps> = ({ program }) => {
     const dimensionCardKey = 'enrollment'
     const title = program.displayEnrollmentLabel ?? i18n.t('Enrollment data')
@@ -71,12 +81,9 @@ export const CardEnrollment: FC<CardEnrollmentProps> = ({ program }) => {
         [fixedDimensions]
     )
     const listProps = useDimensionList({ fixedDimensions })
-    const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
-        (dimension) =>
-            dimensionTypeLookup.has(dimension.dimensionType) &&
-            dimension.programId === program.id &&
-            !dimension.programStageId,
-        [dimensionTypeLookup, program.id]
+    const isSelectedMatchFn = useMemo(
+        () => createIsSelectedMatchFn(program.id, dimensionTypeLookup),
+        [program.id, dimensionTypeLookup]
     )
     const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)
     return (

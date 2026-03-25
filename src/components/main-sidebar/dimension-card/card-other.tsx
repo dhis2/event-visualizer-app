@@ -15,9 +15,9 @@ import type { SingleQuery } from '@types'
 
 const CARD_AND_LIST_KEY = 'other'
 
-const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = (
-    selectedDimension
-) => selectedDimension.dimensionType === 'ORGANISATION_UNIT_GROUP_SET'
+export const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = (
+    dimension
+) => dimension.dimensionType === 'ORGANISATION_UNIT_GROUP_SET'
 
 export const CardOther: FC = () => {
     const {

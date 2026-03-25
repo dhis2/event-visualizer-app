@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { type FC, useCallback, useMemo } from 'react'
+import { type FC, useMemo } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -22,6 +22,15 @@ type CardEventProps = {
     program: DataSourceProgramWithoutRegistration
 }
 const CARD_AND_LIST_KEY = 'event-without-registration'
+
+export const createIsSelectedMatchFn =
+    (
+        programStageId: string,
+        dimensionTypeLookup: Set<DimensionType>
+    ): UseSelectedDimensionCountMatchFn =>
+    (dimension) =>
+        dimensionTypeLookup.has(dimension.dimensionType) &&
+        dimension.programStageId === programStageId
 
 export const CardEvent: FC<CardEventProps> = ({ program }) => {
     const {
@@ -56,10 +65,8 @@ export const CardEvent: FC<CardEventProps> = ({ program }) => {
         fixedDimensions,
         baseQuery,
     })
-    const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
-        (dimension) =>
-            dimensionTypeLookup.has(dimension.dimensionType) &&
-            dimension.programStageId === programStage.id,
+    const isSelectedMatchFn = useMemo(
+        () => createIsSelectedMatchFn(programStage.id, dimensionTypeLookup),
         [dimensionTypeLookup, programStage.id]
     )
     const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)

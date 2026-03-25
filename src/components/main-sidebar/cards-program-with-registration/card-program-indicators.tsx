@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { useCallback, useMemo, type FC } from 'react'
+import { useMemo, type FC } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -19,6 +19,12 @@ type CardProgramIndicatorsProps = {
 
 const CARD_AND_LIST_KEY = 'program-indicators'
 
+export const createIsSelectedMatchFn =
+    (programId: string): UseSelectedDimensionCountMatchFn =>
+    (dimension) =>
+        dimension.dimensionType === 'PROGRAM_INDICATOR' &&
+        dimension.programId === programId
+
 export const CardProgramIndicators: FC<CardProgramIndicatorsProps> = ({
     program,
 }) => {
@@ -33,10 +39,8 @@ export const CardProgramIndicators: FC<CardProgramIndicatorsProps> = ({
         dimensionListKey: CARD_AND_LIST_KEY,
         baseQuery,
     })
-    const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
-        (dimension) =>
-            dimension.dimensionType === 'PROGRAM_INDICATOR' &&
-            dimension.programId === program.id,
+    const isSelectedMatchFn = useMemo(
+        () => createIsSelectedMatchFn(program.id),
         [program.id]
     )
     const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)
