@@ -10,6 +10,7 @@ import {
 import type { FC, ReactNode } from 'react'
 import { getInitialMetadata } from './initial-metadata'
 import { MetadataStore } from './metadata-store'
+import { assertTypedMetadataItem } from './typed-metadata-item'
 import { useRootOrgUnits } from '@hooks'
 import {
     isProgramMetadataItem,
@@ -84,67 +85,66 @@ export const useMetadataItem = (
 }
 export const useProgramMetadataItem = (
     metadataId: string | null | undefined
-): Program | undefined => {
-    const item = useMetadataItem(metadataId)
-    if (item && !isProgramMetadataItem(item)) {
-        throw new Error('Item is not a program')
-    }
-    return item
-}
+): Program | undefined =>
+    assertTypedMetadataItem(
+        useMetadataItem(metadataId),
+        isProgramMetadataItem,
+        'Item is not a program'
+    )
+
 export const useProgramStageMetadataItem = (
     metadataId: string | null | undefined
-): ProgramStage | undefined => {
-    const item = useMetadataItem(metadataId)
-    if (item && !isProgramStageMetadataItem(item)) {
-        throw new Error('Item is not a program stage')
-    }
-    return item
-}
+): ProgramStage | undefined =>
+    assertTypedMetadataItem(
+        useMetadataItem(metadataId),
+        isProgramStageMetadataItem,
+        'Item is not a program stage'
+    )
+
 export const useOptionSetMetadataItem = (
     metadataId: string | null | undefined
-): OptionSetMetadataItem | undefined => {
-    const item = useMetadataItem(metadataId)
-    if (item && !isOptionSetMetadataItem(item)) {
-        throw new Error('Item is not an option set')
-    }
-    return item
-}
+): OptionSetMetadataItem | undefined =>
+    assertTypedMetadataItem(
+        useMetadataItem(metadataId),
+        isOptionSetMetadataItem,
+        'Item is not an option set'
+    )
+
 export const useLegendSetMetadataItem = (
     metadataId: string | null | undefined
-): LegendSetMetadataItem | undefined => {
-    const item = useMetadataItem(metadataId)
-    if (item && !isLegendSetMetadataItem(item)) {
-        throw new Error('Item is not a legend set')
-    }
-    return item
-}
+): LegendSetMetadataItem | undefined =>
+    assertTypedMetadataItem(
+        useMetadataItem(metadataId),
+        isLegendSetMetadataItem,
+        'Item is not a legend set'
+    )
+
 export const useOrganisationUnitMetadataItem = (
     metadataId: string | null | undefined
-): OrganisationUnitMetadataItem | undefined => {
-    const item = useMetadataItem(metadataId)
-    if (item && !isOrganisationUnitMetadataItem(item)) {
-        throw new Error('Item is not an organisation unit')
-    }
-    return item
-}
+): OrganisationUnitMetadataItem | undefined =>
+    assertTypedMetadataItem(
+        useMetadataItem(metadataId),
+        isOrganisationUnitMetadataItem,
+        'Item is not an organisation unit'
+    )
+
 export const useUserOrgUnitMetadataItem = (
     metadataId: string | null | undefined
-): UserOrgUnitMetadataItem | undefined => {
-    const item = useMetadataItem(metadataId)
-    if (item && !isUserOrgUnitMetadataItem(item)) {
-        throw new Error('Item is not a user org unit')
-    }
-    return item
-}
+): UserOrgUnitMetadataItem | undefined =>
+    assertTypedMetadataItem(
+        useMetadataItem(metadataId),
+        isUserOrgUnitMetadataItem,
+        'Item is not a user org unit'
+    )
+
 export const useDimensionMetadataItem = (
     metadataId: string | null | undefined
-): DimensionMetadataItem | undefined => {
-    const item = useMetadataItem(metadataId)
-    if (item && !isDimensionMetadataItem(item)) {
-        throw new Error('Item is not a dimension')
-    }
-    return item
-}
+): DimensionMetadataItem | undefined =>
+    assertTypedMetadataItem(
+        useMetadataItem(metadataId),
+        isDimensionMetadataItem,
+        'Item is not a dimension'
+    )
 const sentinel = '|'
 export const useMetadataItems = (
     metadataIds: string[]
@@ -233,6 +233,13 @@ export type UseMetadataStoreReturnValue = Pick<
     MetadataStore,
     | 'getMetadataItem'
     | 'getMetadataItems'
+    | 'getProgramMetadataItem'
+    | 'getProgramStageMetadataItem'
+    | 'getOptionSetMetadataItem'
+    | 'getLegendSetMetadataItem'
+    | 'getOrganisationUnitMetadataItem'
+    | 'getUserOrgUnitMetadataItem'
+    | 'getDimensionMetadataItem'
     | 'addMetadata'
     | 'setVisualizationMetadata'
 >
@@ -241,6 +248,20 @@ export const useMetadataStore = (): UseMetadataStoreReturnValue => {
     const [api] = useState(() => ({
         getMetadataItem: metadataStore.getMetadataItem.bind(metadataStore),
         getMetadataItems: metadataStore.getMetadataItems.bind(metadataStore),
+        getProgramMetadataItem:
+            metadataStore.getProgramMetadataItem.bind(metadataStore),
+        getProgramStageMetadataItem:
+            metadataStore.getProgramStageMetadataItem.bind(metadataStore),
+        getOptionSetMetadataItem:
+            metadataStore.getOptionSetMetadataItem.bind(metadataStore),
+        getLegendSetMetadataItem:
+            metadataStore.getLegendSetMetadataItem.bind(metadataStore),
+        getOrganisationUnitMetadataItem:
+            metadataStore.getOrganisationUnitMetadataItem.bind(metadataStore),
+        getUserOrgUnitMetadataItem:
+            metadataStore.getUserOrgUnitMetadataItem.bind(metadataStore),
+        getDimensionMetadataItem:
+            metadataStore.getDimensionMetadataItem.bind(metadataStore),
         addMetadata: metadataStore.addMetadata.bind(metadataStore),
         setVisualizationMetadata:
             metadataStore.setVisualizationMetadata.bind(metadataStore),
