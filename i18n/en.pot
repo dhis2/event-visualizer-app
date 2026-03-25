@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-03-24T15:20:19.491Z\n"
-"PO-Revision-Date: 2026-03-24T15:20:19.492Z\n"
+"POT-Creation-Date: 2026-03-25T09:22:02.035Z\n"
+"PO-Revision-Date: 2026-03-25T09:22:02.036Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -317,12 +317,6 @@ msgstr "Switch to {{targetVisualization}}"
 
 msgid "Update {{targetVisualization}}"
 msgstr "Update {{targetVisualization}}"
-
-msgid "{{ enrollmentLabel }} list"
-msgstr "{{ enrollmentLabel }} list"
-
-msgid "{{ enrollmentLabel }} table"
-msgstr "{{ enrollmentLabel }} table"
 
 msgid "Create {{trackedEntityTypeName}} list"
 msgstr "Create {{trackedEntityTypeName}} list"
