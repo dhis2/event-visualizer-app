@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-03-25T14:23:47.178Z\n"
-"PO-Revision-Date: 2026-03-25T14:23:47.178Z\n"
+"POT-Creation-Date: 2026-03-25T14:37:21.553Z\n"
+"PO-Revision-Date: 2026-03-25T14:37:21.554Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -303,15 +303,6 @@ msgstr "Levels"
 msgid "Groups"
 msgstr "Groups"
 
-msgid "Create custom value table"
-msgstr "Create custom value table"
-
-msgid "Switch to custom value table"
-msgstr "Switch to custom value table"
-
-msgid "Update custom value table"
-msgstr "Update custom value table"
-
 msgid "Enrollment"
 msgstr "Enrollment"
 
@@ -398,33 +389,6 @@ msgstr "Not valid with program indicators"
 
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr "Nothing selected. Add items to the layout to get started."
-
-msgid "Configure custom value"
-msgstr "Configure custom value"
-
-msgid "Choose the numeric data element to show in table cells."
-msgstr "Choose the numeric data element to show in table cells."
-
-msgid "Loading data"
-msgstr "Loading data"
-
-msgid "Error loading data"
-msgstr "Error loading data"
-
-msgid "Failed to load data elements"
-msgstr "Failed to load data elements"
-
-msgid "No numeric data elements"
-msgstr "No numeric data elements"
-
-msgid "This program does not have any numeric data elements available."
-msgstr "This program does not have any numeric data elements available."
-
-msgid "Aggregation"
-msgstr "Aggregation"
-
-msgid "Cancel"
-msgstr "Cancel"
 
 msgid "Collapse layout"
 msgstr "Collapse layout"

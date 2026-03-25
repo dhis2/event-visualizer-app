@@ -203,10 +203,10 @@ export const useActionButton = (buttonType: OutputType) => {
         const dimensionIds = Object.values(layout).flat()
 
         return dimensionIds.some((dimensionId) => {
-            const dimensionMetadataItem =
+            const dimensionMetadata =
                 metadataStore.getDimensionMetadataItem(dimensionId)
 
-            return dimensionMetadataItem?.dimensionType === 'CATEGORY'
+            return dimensionMetadata?.dimensionType === 'CATEGORY'
         })
     }, [layout, metadataStore])
 
@@ -214,10 +214,12 @@ export const useActionButton = (buttonType: OutputType) => {
         const dimensionIds = Object.values(layout).flat()
 
         return dimensionIds.some((dimensionId) => {
-            const dimension =
+            const dimensionMetadata =
                 metadataStore.getDimensionMetadataItem(dimensionId)
 
-            return dimension?.dimensionType === 'CATEGORY_OPTION_GROUP_SET'
+            return (
+                dimensionMetadata?.dimensionType === 'CATEGORY_OPTION_GROUP_SET'
+            )
         })
     }, [layout, metadataStore])
 
@@ -225,12 +227,14 @@ export const useActionButton = (buttonType: OutputType) => {
         const programs = Object.values(layout)
             .flat()
             .reduce((programs, dimensionId) => {
-                const dimension =
+                const dimensionMetadata =
                     metadataStore.getDimensionMetadataItem(dimensionId)
 
                 const program =
-                    dimension?.programId &&
-                    metadataStore.getProgramMetadataItem(dimension.programId)
+                    dimensionMetadata?.programId &&
+                    metadataStore.getProgramMetadataItem(
+                        dimensionMetadata.programId
+                    )
 
                 if (program) {
                     programs[program.id] = program
@@ -246,13 +250,13 @@ export const useActionButton = (buttonType: OutputType) => {
         const programStages = Object.values(layout)
             .flat()
             .reduce((programStages, dimensionId) => {
-                const dimension =
+                const dimensionMetadata =
                     metadataStore.getDimensionMetadataItem(dimensionId)
 
                 const programStage =
-                    dimension?.programStageId &&
+                    dimensionMetadata?.programStageId &&
                     metadataStore.getProgramStageMetadataItem(
-                        dimension.programStageId
+                        dimensionMetadata.programStageId
                     )
 
                 if (programStage) {
@@ -269,10 +273,10 @@ export const useActionButton = (buttonType: OutputType) => {
         const dimensionIds = Object.values(layout).flat()
 
         return dimensionIds.some((dimensionId) => {
-            const dimension =
+            const dimensionMetadata =
                 metadataStore.getDimensionMetadataItem(dimensionId)
 
-            return dimension?.dimensionType === 'PROGRAM_INDICATOR'
+            return dimensionMetadata?.dimensionType === 'PROGRAM_INDICATOR'
         })
     }, [layout, metadataStore])
 
