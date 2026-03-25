@@ -28,6 +28,10 @@ const metadata = {
         programType: 'WITH_REGISTRATION',
         trackedEntityType: { id: 'tei1' },
     },
+    tei1: {
+        id: 'tei1',
+        name: 'Person',
+    },
     p1s1: {
         id: 'p1s1',
         name: 'P1 Stage1',
