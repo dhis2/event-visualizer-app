@@ -5,7 +5,7 @@ import {
 import { isPopulatedString } from '@modules/validation'
 import type { DimensionMetadataItem, DimensionType } from '@types'
 
-type MatcherFn = (item: DimensionMetadataItem) => boolean
+export type MatcherFn = (item: DimensionMetadataItem) => boolean
 
 // permanent cards (always visible, not tied to a data source)
 

@@ -50,7 +50,9 @@ export const MainSidebar: FC = () => {
                         ) && <FilterDropdownButton />}
                         <ToggleCollapseAllButton />
                     </div>
-                    <DimensionCardsProvider>
+                    <DimensionCardsProvider
+                        dataSourceMetadataItem={dataSourceMetadataItem}
+                    >
                         <div
                             onScroll={handleScroll}
                             className={classes.dimensionCardsContainer}
