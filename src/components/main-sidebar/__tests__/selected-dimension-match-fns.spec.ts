@@ -1,16 +1,16 @@
 import { describe, it, expect } from 'vitest'
-import { createIsSelectedMatchFn as createEnrollmentMatchFn } from '@components/main-sidebar/cards-program-with-registration/card-enrollment'
-import { createIsSelectedMatchFn as createEventWithRegMatchFn } from '@components/main-sidebar/cards-program-with-registration/card-event'
-import { createIsSelectedMatchFn as createProgramIndicatorsMatchFn } from '@components/main-sidebar/cards-program-with-registration/card-program-indicators'
-import { createIsSelectedMatchFn as createTrackedEntityTypeWithRegMatchFn } from '@components/main-sidebar/cards-program-with-registration/card-tracked-entity-type'
-import { createIsSelectedMatchFn as createProgramStageSubsectionMatchFn } from '@components/main-sidebar/cards-program-with-registration/program-stage-subsection'
-import { createIsSelectedMatchFn as createEventWithoutRegMatchFn } from '@components/main-sidebar/cards-program-without-registration/card-event'
 import {
-    createIsSelectedMatchFn as createTetCardMatchFn,
-    getFixedDimensions as getTetCardFixedDimensions,
-} from '@components/main-sidebar/cards-tracked-entity-type/card-type'
-import { isSelectedMatchFn as metadataMatchFn } from '@components/main-sidebar/dimension-card/card-metadata'
-import { isSelectedMatchFn as otherMatchFn } from '@components/main-sidebar/dimension-card/card-other'
+    createEnrollmentMatchFn,
+    createEventWithRegistrationMatchFn as createEventWithRegMatchFn,
+    createProgramIndicatorsMatchFn,
+    createProgramTrackedEntityTypeMatchFn as createTrackedEntityTypeWithRegMatchFn,
+    createProgramStageMatchFn as createProgramStageSubsectionMatchFn,
+    createEventWithoutRegistrationMatchFn as createEventWithoutRegMatchFn,
+    createTrackedEntityTypeMatchFn as createTetCardMatchFn,
+    metadataMatchFn,
+    otherMatchFn,
+} from '@components/main-sidebar/dimension-cards-provider/matcher-functions'
+import { getTetFixedDimensions as getTetCardFixedDimensions } from '@components/main-sidebar/fixed-dimensions'
 import type { DimensionMetadataItem, DimensionType } from '@types'
 
 // Shared IDs used across tests

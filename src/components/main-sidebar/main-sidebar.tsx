@@ -6,8 +6,8 @@ import { CardsTrackedEntityType } from './cards-tracked-entity-type/cards-tracke
 import { DataSourceSelect } from './data-source-select/data-source-select'
 import { CardMetadata } from './dimension-card/card-metadata'
 import { CardOther } from './dimension-card/card-other'
+import { DimensionCardsProvider } from './dimension-cards-provider'
 import { FilterDropdownButton } from './filter-dropdown-button'
-import { SelectedDimensionsProvider } from './selected-dimensions-provider'
 import classes from './styles/main-sidebar.module.css'
 import { ToggleCollapseAllButton } from './toggle-collapse-all-button'
 import { UnifiedSearchInput } from './unified-search-input'
@@ -50,7 +50,7 @@ export const MainSidebar: FC = () => {
                         ) && <FilterDropdownButton />}
                         <ToggleCollapseAllButton />
                     </div>
-                    <SelectedDimensionsProvider>
+                    <DimensionCardsProvider>
                         <div
                             onScroll={handleScroll}
                             className={classes.dimensionCardsContainer}
@@ -82,7 +82,7 @@ export const MainSidebar: FC = () => {
                             <CardMetadata />
                             <CardOther />
                         </div>
-                    </SelectedDimensionsProvider>
+                    </DimensionCardsProvider>
                 </>
             )}
         </div>

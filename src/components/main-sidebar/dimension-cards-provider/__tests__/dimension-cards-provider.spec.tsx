@@ -1,8 +1,8 @@
 import { renderHook } from '@testing-library/react'
 import type { FC, PropsWithChildren } from 'react'
 import { describe, it, expect } from 'vitest'
-import { SelectedDimensionsContext } from '../selected-dimensions-context'
-import type { SelectedDimensionsContextValue } from '../selected-dimensions-context'
+import { DimensionCardsContext } from '../dimension-cards-context'
+import type { DimensionCardsContextValue } from '../dimension-cards-context'
 import { useIsDimensionSelected } from '../use-is-dimension-selected'
 import { useSelectedDimensionCount } from '../use-selected-dimension-count'
 import type { DimensionMetadataItem, DimensionType } from '@types'
@@ -18,14 +18,14 @@ const dim = (
     ...overrides,
 })
 
-// Helper to create a wrapper that provides a custom SelectedDimensionsContext value
+// Helper to create a wrapper that provides a custom DimensionCardsContext value
 const createContextWrapper = (
-    value: SelectedDimensionsContextValue
+    value: DimensionCardsContextValue
 ): FC<PropsWithChildren> => {
     const ContextWrapper: FC<PropsWithChildren> = ({ children }) => (
-        <SelectedDimensionsContext.Provider value={value}>
+        <DimensionCardsContext.Provider value={value}>
             {children}
-        </SelectedDimensionsContext.Provider>
+        </DimensionCardsContext.Provider>
     )
     return ContextWrapper
 }

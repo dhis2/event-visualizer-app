@@ -4,10 +4,9 @@ import {
     DimensionCard,
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
-import {
-    useSelectedDimensionCount,
-    type UseSelectedDimensionCountMatchFn,
-} from '@components/main-sidebar/selected-dimensions-provider'
+import { useSelectedDimensionCount } from '@components/main-sidebar/dimension-cards-provider'
+import { createTrackedEntityTypeMatchFn } from '@components/main-sidebar/dimension-cards-provider/matcher-functions'
+import { getTetFixedDimensions } from '@components/main-sidebar/fixed-dimensions'
 import type { Transformer } from '@components/main-sidebar/use-dimension-list'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import { isObject, isPopulatedString } from '@modules/validation'
@@ -61,63 +60,18 @@ const transformer: Transformer = (data) => {
     }
 }
 
-export const getFixedDimensions = (
-    trackedEntityType: MetadataItem
-): DimensionMetadataItem[] => {
-    return [
-        {
-            id: `${trackedEntityType.id}.ou`,
-            dimensionId: 'ou',
-            dimensionType: 'ORGANISATION_UNIT',
-            name: i18n.t('Registration org. unit'),
-            valueType: 'ORGANISATION_UNIT',
-        },
-        {
-            id: `${trackedEntityType.id}.created`,
-            dimensionId: 'created',
-            dimensionType: 'PERIOD',
-            name: i18n.t('Registration date'),
-            valueType: 'DATE',
-        },
-    ]
-}
-
-export const createIsSelectedMatchFn =
-    (
-        trackedEntityTypeId: string,
-        fixedDimensionIdLookup: Set<string>
-    ): UseSelectedDimensionCountMatchFn =>
-    (dimension) => {
-        if (
-            dimension.trackedEntityTypeId === trackedEntityTypeId &&
-            fixedDimensionIdLookup.has(dimension.id)
-        ) {
-            return true
-        }
-        /* TEAs fetched from the web api have plain IDs, no enrichment context,
-         * they can only be identified by the absense of a program/stage */
-        if (
-            dimension.dimensionType === 'PROGRAM_ATTRIBUTE' &&
-            !dimension.programId &&
-            !dimension.programStageId
-        ) {
-            return true
-        }
-        return false
-    }
-
 export const CardType: FC<CardTypeProps> = ({ trackedEntityType }) => {
     const title = i18n.t('{{name}} registration', {
         name: trackedEntityType.name,
     })
     const fixedDimensions = useMemo(
-        () => getFixedDimensions(trackedEntityType),
+        () => getTetFixedDimensions(trackedEntityType),
         [trackedEntityType]
     )
     const fixedDimensionIdLookup = useMemo(
         () =>
             new Set(
-                getFixedDimensions(trackedEntityType).map(
+                getTetFixedDimensions(trackedEntityType).map(
                     (dimension) => dimension.id
                 )
             ),
@@ -145,7 +99,7 @@ export const CardType: FC<CardTypeProps> = ({ trackedEntityType }) => {
     })
     const isSelectedMatchFn = useMemo(
         () =>
-            createIsSelectedMatchFn(
+            createTrackedEntityTypeMatchFn(
                 trackedEntityType.id,
                 fixedDimensionIdLookup
             ),

@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react'
-import { SelectedDimensionsContext } from './selected-dimensions-context'
+import { DimensionCardsContext } from './dimension-cards-context'
 import type { DimensionMetadataItem } from '@types'
 
 export type UseSelectedDimensionCountMatchFn = (
@@ -9,7 +9,7 @@ export type UseSelectedDimensionCountMatchFn = (
 export const useSelectedDimensionCount = (
     matchFn: UseSelectedDimensionCountMatchFn
 ): number => {
-    const { selectedDimensions } = useContext(SelectedDimensionsContext)
+    const { selectedDimensions } = useContext(DimensionCardsContext)
     return useMemo(
         () => selectedDimensions.filter(matchFn).length,
         [selectedDimensions, matchFn]

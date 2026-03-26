@@ -4,10 +4,8 @@ import {
     DimensionCard,
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
-import {
-    useSelectedDimensionCount,
-    type UseSelectedDimensionCountMatchFn,
-} from '@components/main-sidebar/selected-dimensions-provider'
+import { useSelectedDimensionCount } from '@components/main-sidebar/dimension-cards-provider'
+import { createProgramIndicatorsMatchFn } from '@components/main-sidebar/dimension-cards-provider/matcher-functions'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import { getProgramIndicatorQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import { useCurrentUser } from '@hooks'
@@ -18,12 +16,6 @@ type CardProgramIndicatorsProps = {
 }
 
 const CARD_AND_LIST_KEY = 'program-indicators'
-
-export const createIsSelectedMatchFn =
-    (programId: string): UseSelectedDimensionCountMatchFn =>
-    (dimension) =>
-        dimension.dimensionType === 'PROGRAM_INDICATOR' &&
-        dimension.programId === programId
 
 export const CardProgramIndicators: FC<CardProgramIndicatorsProps> = ({
     program,
@@ -40,7 +32,7 @@ export const CardProgramIndicators: FC<CardProgramIndicatorsProps> = ({
         baseQuery,
     })
     const isSelectedMatchFn = useMemo(
-        () => createIsSelectedMatchFn(program.id),
+        () => createProgramIndicatorsMatchFn(program.id),
         [program.id]
     )
     const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)

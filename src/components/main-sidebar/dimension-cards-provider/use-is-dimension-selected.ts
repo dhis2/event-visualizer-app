@@ -1,9 +1,9 @@
 import { useContext } from 'react'
-import { SelectedDimensionsContext } from './selected-dimensions-context'
+import { DimensionCardsContext } from './dimension-cards-context'
 
 export const useIsDimensionSelected = (
     dimensionId: string | undefined
 ): boolean => {
-    const { selectedIds } = useContext(SelectedDimensionsContext)
+    const { selectedIds } = useContext(DimensionCardsContext)
     return dimensionId !== undefined && selectedIds.has(dimensionId)
 }

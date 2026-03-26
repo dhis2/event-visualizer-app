@@ -4,11 +4,9 @@ import {
     DimensionCard,
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
-import { getEventFixedDimensions } from '@components/main-sidebar/get-event-fixed-dimensions'
-import {
-    useSelectedDimensionCount,
-    type UseSelectedDimensionCountMatchFn,
-} from '@components/main-sidebar/selected-dimensions-provider'
+import { useSelectedDimensionCount } from '@components/main-sidebar/dimension-cards-provider'
+import { createEventWithoutRegistrationMatchFn } from '@components/main-sidebar/dimension-cards-provider/matcher-functions'
+import { getEventFixedDimensions } from '@components/main-sidebar/fixed-dimensions'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import { getDataElementQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import { useCurrentUser } from '@hooks'
@@ -22,15 +20,6 @@ type CardEventProps = {
     program: DataSourceProgramWithoutRegistration
 }
 const CARD_AND_LIST_KEY = 'event-without-registration'
-
-export const createIsSelectedMatchFn =
-    (
-        programStageId: string,
-        dimensionTypeLookup: Set<DimensionType>
-    ): UseSelectedDimensionCountMatchFn =>
-    (dimension) =>
-        dimensionTypeLookup.has(dimension.dimensionType) &&
-        dimension.programStageId === programStageId
 
 export const CardEvent: FC<CardEventProps> = ({ program }) => {
     const {
@@ -66,7 +55,11 @@ export const CardEvent: FC<CardEventProps> = ({ program }) => {
         baseQuery,
     })
     const isSelectedMatchFn = useMemo(
-        () => createIsSelectedMatchFn(programStage.id, dimensionTypeLookup),
+        () =>
+            createEventWithoutRegistrationMatchFn(
+                programStage.id,
+                dimensionTypeLookup
+            ),
         [dimensionTypeLookup, programStage.id]
     )
     const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)

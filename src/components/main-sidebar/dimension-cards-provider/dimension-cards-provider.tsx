@@ -1,16 +1,16 @@
 import { useMemo, type FC, type ReactNode } from 'react'
-import { SelectedDimensionsContext } from './selected-dimensions-context'
+import { DimensionCardsContext } from './dimension-cards-context'
 import { useAppSelector, useMetadataItems } from '@hooks'
 import { getVisUiConfigLayoutAllDimensionIds } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
 
-type SelectedDimensionsProviderProps = {
+type DimensionCardsProviderProps = {
     children: ReactNode
 }
 
-export const SelectedDimensionsProvider: FC<
-    SelectedDimensionsProviderProps
-> = ({ children }) => {
+export const DimensionCardsProvider: FC<DimensionCardsProviderProps> = ({
+    children,
+}) => {
     const selectedDimensionIds = useAppSelector(
         getVisUiConfigLayoutAllDimensionIds
     )
@@ -33,8 +33,8 @@ export const SelectedDimensionsProvider: FC<
     )
 
     return (
-        <SelectedDimensionsContext.Provider value={value}>
+        <DimensionCardsContext.Provider value={value}>
             {children}
-        </SelectedDimensionsContext.Provider>
+        </DimensionCardsContext.Provider>
     )
 }

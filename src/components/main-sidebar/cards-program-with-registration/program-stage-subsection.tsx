@@ -3,34 +3,17 @@ import {
     DimensionList,
     DimensionsCardSubsection,
 } from '@components/main-sidebar/dimension-card'
-import {
-    EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES,
-    getEventFixedDimensions,
-} from '@components/main-sidebar/get-event-fixed-dimensions'
-import {
-    useSelectedDimensionCount,
-    type UseSelectedDimensionCountMatchFn,
-} from '@components/main-sidebar/selected-dimensions-provider'
+import { useSelectedDimensionCount } from '@components/main-sidebar/dimension-cards-provider'
+import { createProgramStageMatchFn } from '@components/main-sidebar/dimension-cards-provider/matcher-functions'
+import { getEventFixedDimensions } from '@components/main-sidebar/fixed-dimensions'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import { getDataElementQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import { useCurrentUser } from '@hooks'
 import type {
     DataSourceProgramWithRegistration,
     DimensionListKey,
-    DimensionType,
     ProgramStage,
 } from '@types'
-
-const STAGE_DIMENSION_TYPES = new Set<DimensionType>(
-    EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES
-)
-STAGE_DIMENSION_TYPES.add('DATA_ELEMENT')
-
-export const createIsSelectedMatchFn =
-    (programStageId: string): UseSelectedDimensionCountMatchFn =>
-    (dimension) =>
-        STAGE_DIMENSION_TYPES.has(dimension.dimensionType) &&
-        dimension.programStageId === programStageId
 
 export const ProgramStageSubsection: FC<{
     program: DataSourceProgramWithRegistration
@@ -54,7 +37,7 @@ export const ProgramStageSubsection: FC<{
         baseQuery,
     })
     const isSelectedMatchFn = useMemo(
-        () => createIsSelectedMatchFn(programStage.id),
+        () => createProgramStageMatchFn(programStage.id),
         [programStage.id]
     )
     const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)

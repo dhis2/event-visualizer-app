@@ -4,53 +4,19 @@ import {
     DimensionCard,
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
-import {
-    useSelectedDimensionCount,
-    type UseSelectedDimensionCountMatchFn,
-} from '@components/main-sidebar/selected-dimensions-provider'
+import { useSelectedDimensionCount } from '@components/main-sidebar/dimension-cards-provider'
+import { createProgramTrackedEntityTypeMatchFn } from '@components/main-sidebar/dimension-cards-provider/matcher-functions'
+import { getTrackedEntityTypeWithRegFixedDimensions } from '@components/main-sidebar/fixed-dimensions'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import { getProgramAttributeQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import { useCurrentUser } from '@hooks'
-import type {
-    DataSourceProgramWithRegistration,
-    DimensionMetadataItem,
-} from '@types'
+import type { DataSourceProgramWithRegistration } from '@types'
 
 type CardTrackedEntityTypeProps = {
     program: DataSourceProgramWithRegistration
 }
 
 const CARD_AND_LIST_KEY = 'program-tracked-entity-type'
-
-export const createIsSelectedMatchFn =
-    (trackedEntityTypeId: string): UseSelectedDimensionCountMatchFn =>
-    (dimension) => {
-        if (dimension.id === `${trackedEntityTypeId}.ou`) {
-            return true
-        }
-        /* TEAs fetched from the web api have plain IDs, no enrichment context,
-         * they can only be identified by the absence of a program/stage */
-        if (
-            dimension.dimensionType === 'PROGRAM_ATTRIBUTE' &&
-            !dimension.programId &&
-            !dimension.programStageId
-        ) {
-            return true
-        }
-        return false
-    }
-
-const getFixedDimensions = (
-    program: DataSourceProgramWithRegistration
-): DimensionMetadataItem[] => [
-    {
-        id: `${program.trackedEntityType.id}.ou`,
-        dimensionId: 'ou',
-        dimensionType: 'ORGANISATION_UNIT',
-        name: i18n.t('Registration org. unit'),
-        valueType: 'ORGANISATION_UNIT',
-    },
-]
 
 export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
     program,
@@ -64,7 +30,7 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
             program.trackedEntityType.name,
     })
     const fixedDimensions = useMemo(
-        () => getFixedDimensions(program),
+        () => getTrackedEntityTypeWithRegFixedDimensions(program),
         [program]
     )
     const baseQuery = useMemo(
@@ -82,7 +48,8 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
         fixedDimensions,
     })
     const isSelectedMatchFn = useMemo(
-        () => createIsSelectedMatchFn(program.trackedEntityType.id),
+        () =>
+            createProgramTrackedEntityTypeMatchFn(program.trackedEntityType.id),
         [program.trackedEntityType.id]
     )
     const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)

@@ -1,6 +1,6 @@
 import { useCallback, type FC } from 'react'
 import classes from './styles/dimension-list-item.module.css'
-import { useIsDimensionSelected } from '@components/main-sidebar/selected-dimensions-provider'
+import { useIsDimensionSelected } from '@components/main-sidebar/dimension-cards-provider'
 import { useAddMetadata, useAppDispatch } from '@hooks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import type { DimensionMetadataItem, Program, ProgramStage } from '@types'
