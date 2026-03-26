@@ -30,6 +30,7 @@ export const getVisualizationQueryFields = (
     `columns[${getDimensionFields(displayNameProp)}]`,
     `rows[${getDimensionFields(displayNameProp)}]`,
     `filters[${getDimensionFields(displayNameProp)}]`,
+    `value[id,${displayNameProp}~rename(name)]`,
     `program[${getProgramFields(displayNameProp)}]`,
     `programStage[${getProgramStageFields(displayNameProp)}]`,
     `programDimensions[${getProgramFields(displayNameProp)}]`,

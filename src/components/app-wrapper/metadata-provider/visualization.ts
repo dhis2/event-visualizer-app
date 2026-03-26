@@ -193,6 +193,18 @@ export const extractProgramMetadata = (
     return programAndStagesMetadata
 }
 
+export const extractValueMetadata = (
+    visualization: SavedVisualization
+): MetadataInputMap =>
+    visualization.value
+        ? {
+              [visualization.value.id]: {
+                  id: visualization.value.id,
+                  name: visualization.value.name,
+              },
+          }
+        : {}
+
 const addPathToOrganisationUnitMetadataItems = (
     metadataInput: MetadataInput,
     parentGraphMap?: SavedVisualization['parentGraphMap']
@@ -296,6 +308,7 @@ export const extractMetadataFromVisualization = (
         extractProgramDimensionsMetadata(transformedVisualization),
         extractDimensionMetadata(transformedVisualization),
         extractProgramMetadata(transformedVisualization),
+        extractValueMetadata(transformedVisualization),
     ]
     const baseMetadataInput: MetadataInputMap = sources.reduce(
         (acc, obj) => deepmerge(acc, obj),
