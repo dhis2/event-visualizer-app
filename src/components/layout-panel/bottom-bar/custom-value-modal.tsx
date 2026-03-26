@@ -13,7 +13,10 @@ import {
 } from '@dhis2/ui'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import classes from './styles/custom-value-modal.module.css'
-import { AGGREGATION_TYPES } from '@constants/aggregation-types'
+import {
+    AGGREGATION_TYPES,
+    aggregationTypeDisplayNames,
+} from '@constants/aggregation-types'
 import { NUMERIC_VALUE_TYPES } from '@constants/value-types'
 import {
     useAppDispatch,
@@ -90,13 +93,12 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     })
 
     const onAggregationTypeChange = useCallback(
-        (aggregationType) => setAggregationType(aggregationType),
+        ({ selected }) => setAggregationType(selected),
         []
     )
 
     const onDataElementChange = useCallback(
         (dataElement: DataElementRecord) => {
-            console.log('DE change', dataElement)
             setDataItemId(dataElement.id)
             setDataElement(dataElement)
         },
@@ -112,7 +114,6 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                             ? dataElement.aggregationType
                             : aggregationType,
                     dataElementId: dataElement.id,
-                    dataElementName: dataElement.name,
                 })
             )
         }
@@ -171,7 +172,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                             <SingleSelectOption
                                 key={value}
                                 value={value}
-                                label={value}
+                                label={aggregationTypeDisplayNames[value]}
                             />
                         ))}
                     </SingleSelectField>

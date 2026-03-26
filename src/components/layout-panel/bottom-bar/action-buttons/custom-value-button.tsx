@@ -5,7 +5,8 @@ import { useCallback, useMemo, useState, type FC } from 'react'
 import classes from './styles/action-buttons.module.css'
 import { useActionButton } from './use-action-button'
 import { CustomValueModal } from '@components/layout-panel/bottom-bar/custom-value-modal'
-import { useAppDispatch, useAppSelector } from '@hooks'
+import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
+import { useAppDispatch, useAppSelector, useMetadataItem } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
     getVisUiConfigCustomValue,
@@ -41,7 +42,6 @@ const BaseCustomValueButton: FC<BaseButtonProps> = ({
 
     const onClick = () => {
         if (customValue) {
-            console.log('customValue', customValue)
             dispatch(setVisUiConfigOutputType(type))
 
             dispatch(tUpdateCurrentVisFromVisUiConfig())
@@ -90,6 +90,8 @@ const BaseCustomValueButton: FC<BaseButtonProps> = ({
 export const CustomValueButton: FC = () => {
     const customValue = useAppSelector(getVisUiConfigCustomValue)
 
+    const customValueMetadata = useMetadataItem(customValue?.dataElementId)
+
     const { action } = useActionButton('EVENT')
 
     const label = useMemo(() => {
@@ -116,8 +118,9 @@ export const CustomValueButton: FC = () => {
         const tooltipContent = i18n.t(
             `Using: {{dataElementName}} ({{aggregationType}})`,
             {
-                dataElementName: customValue.dataElementName,
-                aggregationType: customValue.aggregationType,
+                dataElementName: customValueMetadata?.name,
+                aggregationType:
+                    aggregationTypeDisplayNames[customValue.aggregationType],
                 nsSeparator: '^^',
             }
         )
