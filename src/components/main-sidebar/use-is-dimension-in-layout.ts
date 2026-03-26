@@ -8,7 +8,7 @@ const selectAllLayoutDimensionsLookup = createSelector(
     (ids) => new Set(ids.map(resolveId))
 )
 
-export const useIsDimensionSelected = (id: string | undefined) => {
+export const useIsDimensionInLayout = (id: string | undefined) => {
     const lookup = useAppSelector(selectAllLayoutDimensionsLookup)
-    return typeof id === 'string' ? lookup.has(id) : false
+    return typeof id === 'string' && lookup.has(id)
 }
