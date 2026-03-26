@@ -960,3 +960,141 @@ describe('useActionButton for Tracked entity instance button', () => {
         })
     })
 })
+
+describe('useActionButton for Custom value button', () => {
+    it('returns correct result for: PT, currentVis with outputType !== EVENT', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            createStoreWithPreloadedState({
+                currentVis: {
+                    outputType: 'ENROLLMENT',
+                    type: 'PIVOT_TABLE',
+                },
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [metadata['p2.p2s1.d1'].id],
+                    },
+                    outputType: 'ENROLLMENT',
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('switch')
+        expect(output.dataSourceMetadata).toEqual(metadata.p2)
+        expect(output.tooltipConfig).toEqual(undefined)
+    })
+
+    it('returns correct result for: PT, currentVis with outputType === EVENT', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            createStoreWithPreloadedState({
+                currentVis: {
+                    outputType: 'EVENT',
+                    type: 'PIVOT_TABLE',
+                },
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [metadata['p2.p2s1.d1'].id],
+                    },
+                    outputType: 'EVENT',
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('update')
+        expect(output.dataSourceMetadata).toEqual(metadata.p2)
+        expect(output.tooltipConfig).toEqual(undefined)
+    })
+
+    it('returns correct result for: PT, empty layout', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p1.id,
+                },
+                visUiConfig: {
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('create')
+        expect(output.dataSourceMetadata).toEqual(metadata.p1)
+        expect(output.tooltipConfig).toEqual({
+            content:
+                'Nothing selected. Add items to the layout to get started.',
+            openDelay: 1000,
+        })
+    })
+
+    it('returns correct result for: PT, multiple programs', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [
+                            metadata['p1.p1s1.d1'].id,
+                            metadata['p2.p2s1.d1'].id,
+                        ],
+                    },
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('create')
+        expect(output.dataSourceMetadata).toEqual(metadata.p2)
+        expect(output.tooltipConfig).toEqual({
+            content: 'Not valid with multiple programs',
+        })
+    })
+
+    it('returns correct result for: PT, multiple program stages', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p1.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [
+                            metadata['p1.p1s1.d1'].id,
+                            metadata['p1.p1s2.d1'].id,
+                        ],
+                    },
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('create')
+        expect(output.dataSourceMetadata).toEqual(metadata.p1)
+        expect(output.tooltipConfig).toEqual({
+            content: 'Not valid with multiple program stages',
+        })
+    })
+})
