@@ -1,11 +1,23 @@
 import { describe, it, expect } from 'vitest'
-import { visUiConfigSlice, initialState } from '../vis-ui-config-slice'
+import {
+    visUiConfigSlice,
+    initialState,
+    getVisUiConfigLayoutIsEmpty,
+    getVisUiConfigItemsByDimensionMapped,
+    type VisUiConfigState,
+} from '../vis-ui-config-slice'
 
 const {
     addVisUiConfigLayoutDimension,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimension,
 } = visUiConfigSlice.actions
+
+type RootState = { visUiConfig: VisUiConfigState }
+
+const createRootState = (sliceState: Partial<VisUiConfigState>): RootState => ({
+    visUiConfig: { ...initialState, ...sliceState },
+})
 
 const createStateWithLayout = (layout: typeof initialState.layout) => ({
     ...initialState,
@@ -316,5 +328,86 @@ describe('removeVisUiConfigLayoutDimension', () => {
         expect(() => visUiConfigSlice.reducer(state, action)).toThrow(
             'Dimension a3 not found in axis columns'
         )
+    })
+})
+
+describe('getVisUiConfigLayoutIsEmpty', () => {
+    it('returns true when all axes are empty', () => {
+        const state = createRootState({
+            layout: { columns: [], filters: [], rows: [] },
+        })
+        expect(getVisUiConfigLayoutIsEmpty(state)).toBe(true)
+    })
+
+    it('returns false when columns has a dimension', () => {
+        const state = createRootState({
+            layout: { columns: ['a1'], filters: [], rows: [] },
+        })
+        expect(getVisUiConfigLayoutIsEmpty(state)).toBe(false)
+    })
+
+    it('returns false when filters has a dimension', () => {
+        const state = createRootState({
+            layout: { columns: [], filters: ['f1'], rows: [] },
+        })
+        expect(getVisUiConfigLayoutIsEmpty(state)).toBe(false)
+    })
+
+    it('returns false when rows has a dimension', () => {
+        const state = createRootState({
+            layout: { columns: [], filters: [], rows: ['r1'] },
+        })
+        expect(getVisUiConfigLayoutIsEmpty(state)).toBe(false)
+    })
+
+    it('memoizes: returns the same reference when layout is unchanged', () => {
+        const state = createRootState({
+            layout: { columns: ['a1'], filters: [], rows: [] },
+        })
+        expect(getVisUiConfigLayoutIsEmpty(state)).toBe(
+            getVisUiConfigLayoutIsEmpty(state)
+        )
+    })
+})
+
+describe('getVisUiConfigItemsByDimensionMapped', () => {
+    it('returns an empty array for an unknown dimensionId', () => {
+        const state = createRootState({ itemsByDimension: {} })
+        expect(getVisUiConfigItemsByDimensionMapped(state, 'unknown')).toEqual(
+            []
+        )
+    })
+
+    it('strips the stage prefix and returns plain dimensionIds', () => {
+        const state = createRootState({
+            itemsByDimension: {
+                'stage1.dim1': ['stage1.item1', 'stage1.item2'],
+            },
+        })
+        expect(
+            getVisUiConfigItemsByDimensionMapped(state, 'stage1.dim1')
+        ).toEqual(['item1', 'item2'])
+    })
+
+    it('passes through plain ids that have no prefix', () => {
+        const state = createRootState({
+            itemsByDimension: { dim1: ['item1', 'item2'] },
+        })
+        expect(getVisUiConfigItemsByDimensionMapped(state, 'dim1')).toEqual([
+            'item1',
+            'item2',
+        ])
+    })
+
+    it('memoizes: returns the same array reference when items are unchanged', () => {
+        const state = createRootState({
+            itemsByDimension: { 'stage1.dim1': ['stage1.item1'] },
+        })
+        const first = getVisUiConfigItemsByDimensionMapped(state, 'stage1.dim1')
+        const second = getVisUiConfigItemsByDimensionMapped(
+            state,
+            'stage1.dim1'
+        )
+        expect(first).toBe(second)
     })
 })

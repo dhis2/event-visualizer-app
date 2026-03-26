@@ -10,7 +10,7 @@ import {
 } from '@hooks'
 import { getDimensionIdParts, getFullDimensionId } from '@modules/dimension'
 import {
-    getVisUiConfigItemsByDimension,
+    getVisUiConfigItemsByDimensionMapped,
     getVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
@@ -86,9 +86,7 @@ export const OrgUnitDimensionModalContent: FC<
     )
 
     const selectedIds = useAppSelector((state) =>
-        getVisUiConfigItemsByDimension(state, dimension?.id).map(
-            (id) => getDimensionIdParts({ id }).dimensionId
-        )
+        getVisUiConfigItemsByDimensionMapped(state, dimension?.id)
     )
 
     const selectedIdsMetadata = useMetadataItems(

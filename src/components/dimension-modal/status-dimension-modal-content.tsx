@@ -3,10 +3,9 @@ import { Checkbox } from '@dhis2/ui'
 import { type FC, useCallback, useMemo } from 'react'
 import classes from './styles/status-dimension-modal-content.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
-import { getDimensionIdParts } from '@modules/dimension'
 import { getStatusNames } from '@modules/status'
 import {
-    getVisUiConfigItemsByDimension,
+    getVisUiConfigItemsByDimensionMapped,
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
@@ -30,9 +29,7 @@ export const StatusDimensionModalContent: FC<
     const statusNames = getStatusNames()
 
     const selectedIds = useAppSelector((state) =>
-        getVisUiConfigItemsByDimension(state, dimension?.id).map(
-            (id) => getDimensionIdParts({ id }).dimensionId
-        )
+        getVisUiConfigItemsByDimensionMapped(state, dimension?.id)
     )
 
     const statuses = useMemo(() => {
