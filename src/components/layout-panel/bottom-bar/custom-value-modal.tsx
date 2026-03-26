@@ -12,7 +12,7 @@ import {
     SingleSelectOption,
 } from '@dhis2/ui'
 import { type FC, useCallback, useMemo, useState } from 'react'
-import classes from './styles/custom-value.modal.module.css'
+import classes from './styles/custom-value-modal.module.css'
 import { AGGREGATION_TYPES } from '@constants/aggregation-types'
 import { NUMERIC_VALUE_TYPES } from '@constants/value-types'
 import {
