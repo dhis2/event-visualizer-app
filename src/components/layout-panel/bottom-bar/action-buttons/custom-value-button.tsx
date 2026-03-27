@@ -35,8 +35,7 @@ const BaseCustomValueButton: FC<BaseButtonProps> = ({
     const customValue = useAppSelector(getVisUiConfigCustomValue)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const isButtonReady = useMemo(
-        () =>
-            Boolean(customValue?.dataElementId && customValue.aggregationType),
+        () => Boolean(customValue?.id && customValue.aggregationType),
         [customValue]
     )
 
@@ -90,7 +89,7 @@ const BaseCustomValueButton: FC<BaseButtonProps> = ({
 export const CustomValueButton: FC = () => {
     const customValue = useAppSelector(getVisUiConfigCustomValue)
 
-    const customValueMetadata = useMetadataItem(customValue?.dataElementId)
+    const customValueMetadata = useMetadataItem(customValue?.id)
 
     const { action } = useActionButton('EVENT')
 

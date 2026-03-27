@@ -16,7 +16,7 @@ export type ConditionsObject = {
 }
 
 export type CustomValueObject = {
-    dataElementId: string
+    id: string
     aggregationType: AggregationType
 }
 

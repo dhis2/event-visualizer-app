@@ -49,9 +49,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     const [aggregationType, setAggregationType] = useState<AggregationType>(
         customValue?.aggregationType ?? 'DEFAULT'
     )
-    const [dataElementId, setDataElementId] = useState(
-        customValue?.dataElementId
-    )
+    const [dataElementId, setDataElementId] = useState(customValue?.id)
     const [dataElement, setDataElement] = useState<
         DataElementRecord | undefined
     >(undefined)
@@ -116,7 +114,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                         aggregationType === 'DEFAULT'
                             ? dataElement.aggregationType
                             : aggregationType,
-                    dataElementId: dataElement.id,
+                    id: dataElement.id,
                 })
             )
         }

@@ -119,7 +119,7 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
             // custom value and aggregation
             ...(visUiConfig.customValue && {
                 value: {
-                    id: visUiConfig.customValue.dataElementId,
+                    id: visUiConfig.customValue.id,
                 },
                 aggregationType: visUiConfig.customValue.aggregationType,
             }),
