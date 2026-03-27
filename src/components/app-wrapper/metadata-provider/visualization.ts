@@ -198,10 +198,7 @@ export const extractValueMetadata = (
 ): MetadataInputMap =>
     visualization.value
         ? {
-              [visualization.value.id]: {
-                  id: visualization.value.id,
-                  name: visualization.value.name,
-              },
+              [visualization.value.id]: visualization.value,
           }
         : {}
 

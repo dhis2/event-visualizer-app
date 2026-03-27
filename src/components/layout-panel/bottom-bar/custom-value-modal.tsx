@@ -102,8 +102,10 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
         (dataElement: DataElementRecord) => {
             setDataElementId(dataElement.id)
             setDataElement(dataElement)
+
+            metadataStore.addMetadata(dataElement)
         },
-        []
+        [metadataStore]
     )
 
     const onUpdate = useCallback(() => {
