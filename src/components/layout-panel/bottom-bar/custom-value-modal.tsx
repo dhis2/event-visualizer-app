@@ -85,9 +85,8 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
         params: {
             fields: 'dataElement[id,name,aggregationType]',
             filter: [
-                `dataElement.valueType:in:[${['BOOLEAN', 'TRUE_ONLY']
-                    .concat(NUMERIC_VALUE_TYPES)
-                    .join(',')}]`,
+                // TODO: add BOOLEAN and TRUE_ONLY if/when backend suppors it
+                `dataElement.valueType:in:[${NUMERIC_VALUE_TYPES.join(',')}]`,
             ],
             headless: true,
             pageSize: 1000,
