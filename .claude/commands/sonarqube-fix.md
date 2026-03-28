@@ -1,246 +1,214 @@
 # SonarQube Issue Resolution Workflow
 
-This skill provides a systematic approach to fixing SonarQube quality gate failures by fetching issues directly from the API and addressing them in priority order.
+Fix SonarQube quality gate failures systematically by fetching issues directly from the API and addressing them in priority order.
 
-**Note**: This skill is designed for **public projects only**. All DHIS2 projects on GitHub/SonarCloud are public, so this skill works perfectly for DHIS2 repositories. For private projects, authentication would be required (not covered by this skill).
+**Note**: Designed for **public projects only**. All DHIS2 projects on SonarCloud are public, so no authentication is required. For private projects, authentication would be needed (not covered here).
 
-## When to Use This Skill
+## When to Use
 
-Use this skill when:
+Use this command when:
 
 -   A pull request fails SonarQube quality gate checks
 -   You need to systematically fix code quality issues
 -   You want to fetch and prioritize SonarQube issues from the API
 -   You need to verify all issues are resolved before merging
 
-**Note**: This skill will automatically detect which PR to analyze based on your current git branch. If you're on the `main` or `master` branch, you'll be asked to choose from open PRs.
+The current git branch is used to detect the relevant PR automatically. If you're on `main` or `master`, you'll be asked to choose from open PRs.
 
-## SonarQube API Access
+## Instructions
 
-### Fetching Issues from SonarCloud (Public Projects)
+### Step 1: Identify the PR and Branch
 
-All DHIS2 projects are public and can be queried without authentication:
-
-```bash
-curl -s "https://sonarcloud.io/api/issues/search?componentKeys=<org>_<repo>&pullRequest=<pr-number>&resolved=false&ps=100"
-```
-
-**Example for DHIS2 projects:**
-
-After identifying the PR number (e.g., `153`), repository (`dhis2/event-visualizer-app`), and organization (`dhis2`):
-
-```bash
-curl -s "https://sonarcloud.io/api/issues/search?componentKeys=dhis2_event-visualizer-app&pullRequest=153&resolved=false&ps=100"
-```
-
-**Key Parameters:**
-
--   `componentKeys`: Format is `org_repo` (e.g., `dhis2_event-visualizer-app`)
--   `pullRequest`: The PR number
--   `resolved=false`: Only show unresolved issues
--   `ps=100`: Page size (max 100 per request)
--   `statuses=OPEN,REOPENED`: Filter by status if needed
-
-### Parsing Issues with jq
-
-To get a readable list of issues:
-
-```bash
-curl -s "<api-url>" | jq -r '.issues[] | "\(.severity) - \(.type) - \(.message) - \(.component):\(.line)"' | sort
-```
-
-This outputs format: `SEVERITY - TYPE - MESSAGE - FILE:LINE`
-
-### Understanding Issue Types
-
-**Severities (Priority Order):**
-
-1. **BLOCKER** - Must fix immediately
-2. **CRITICAL** - High priority, blocks merge
-3. **MAJOR** - Important issues
-4. **MINOR** - Minor improvements
-5. **INFO** - Informational suggestions
-
-**Types:**
-
--   **BUG** - Code that is wrong or will likely fail
--   **VULNERABILITY** - Security-related issues
--   **CODE_SMELL** - Maintainability issues (non-functional)
--   **SECURITY_HOTSPOT** - Security-sensitive code to review
-
-## Systematic Fixing Workflow
-
-This is a **fully autonomous process** — no human interaction is needed between iterations. Run `yarn sonar` to publish results, then fetch from the branch URL to verify, and repeat until all issues are resolved.
-
-### Step 0: Identify the PR and Branch
-
-Before fetching issues, determine which pull request and branch to analyze:
-
-1. **Check current git branch**:
+1. **Check current branch:**
 
     ```bash
     git branch --show-current
     ```
 
-2. **Identify repository**:
+2. **Identify repository:**
 
     ```bash
     git remote -v | head -1
     ```
 
-    Extract the organization and repository name (e.g., `dhis2/event-visualizer-app`).
+    Extract the organization and repository name (e.g. `dhis2/event-visualizer-app`).
 
-3. **Find matching PR**:
+3. **Find the matching PR:**
 
-    - If on a feature branch, use GitHub MCP tools (`mcp__github__list_pull_requests`) to find open PRs
-    - Match the current branch name to a PR's `head.ref` field
-    - Extract the PR number from the matching PR
-
-4. **Handle main/master branch**:
-
-    - If on `main` or `master` branch, list all open PRs
-    - Present the list to the user and ask which PR to work on
-    - Example format:
+    - On a feature branch: use `mcp__github__list_pull_requests` to find open PRs, match `head.ref` to the current branch, and extract the PR number.
+    - On `main`/`master`: list all open PRs and ask the user which one to work on:
 
         ```
         Found 3 open PRs:
-        - PR #153: feat: sidebar group cards and toggle collapse all button [DHIS2-20773/20772]
+        - PR #153: feat: sidebar group cards [DHIS2-20773]
         - PR #155: refactor: implement new Layout design
         - PR #156: chore(deps-dev): bump the dependencies group
 
         Which PR would you like to fix SonarQube issues for?
         ```
 
-5. **Store key information**:
-    - Organization (e.g., `dhis2`)
-    - Repository (e.g., `event-visualizer-app`)
-    - PR number (e.g., `153`)
-    - Branch name (e.g., `feat/update-buttons`) — needed for the branch API URL
+4. **Store for use in later steps:**
+    - Organization (e.g. `dhis2`)
+    - Repository (e.g. `event-visualizer-app`)
+    - PR number (e.g. `153`)
+    - Branch name (e.g. `feat/update-buttons`)
 
-This information is needed to construct the SonarQube API URLs:
+### Step 2: Fetch and Analyze Issues
 
--   PR issues: `componentKeys=<org>_<repo>&pullRequest=<pr-number>`
--   Branch issues (after `yarn sonar`): `componentKeys=<org>_<repo>&branch=<branch-name>`
+Fetch all unresolved issues for the PR:
 
-### Step 1: Fetch and Analyze
+```bash
+curl -s "https://sonarcloud.io/api/issues/search?componentKeys=<org>_<repo>&pullRequest=<pr-number>&resolved=false&ps=100"
+```
 
-1. **Fetch all issues** using the PR API command
-2. **Parse and categorize** by severity and type using jq
-3. **Create a todo list** with all issues using the TodoWrite tool
+Parse into a readable list:
 
-### Step 2: Fix Issues in Priority Order
+```bash
+curl -s "<url>" | jq -r '.issues[] | "\(.severity) - \(.type) - \(.message) - \(.component):\(.line)"' | sort
+```
 
-Fix issues in this order:
+Expected output format: `SEVERITY - TYPE - MESSAGE - FILE:LINE`
 
-1. **BLOCKER** and **CRITICAL** issues first (any type)
-2. **BUGs** before CODE_SMELLs
-3. **Group similar issues** together (same rule, same file)
-4. **High severity** before low severity within each type
+**Issue severities (fix in this order):**
+
+1. BLOCKER
+2. CRITICAL
+3. MAJOR
+4. MINOR
+5. INFO
+
+**Issue types:**
+
+-   BUG — code that is wrong or will likely fail
+-   VULNERABILITY — security-related issues
+-   CODE_SMELL — maintainability issues
+-   SECURITY_HOTSPOT — security-sensitive code to review
+
+**CRITICAL: Create a todo list** using the TodoWrite tool with all issues before starting any fixes. This keeps progress visible.
+
+### Step 3: Fix Issues in Priority Order
+
+Fix in this order:
+
+1. BLOCKER and CRITICAL issues first (any type)
+2. BUGs before CODE_SMELLs
+3. Group by rule and file — fix all instances of the same rule together
+4. High severity before low severity within each type
 
 For each issue:
 
 -   Read the file to understand context
--   Understand what SonarQube is complaining about
--   Apply the fix following project conventions
--   Mark todo as completed immediately after fixing
+-   Understand what SonarQube is flagging and why
+-   Apply a minimal, focused fix following project conventions
+-   Mark the todo item as completed immediately after fixing
 
-### Step 3: Test and Lint
+### Step 4: Test and Lint After Each Batch
 
-After fixing a batch of related issues (3-5 fixes):
+**CRITICAL: After every 3–5 related fixes**, run:
 
-1. Run tests: `yarn test`
-2. Run linter: `yarn lint`
-3. Fix any breaking changes immediately
+```bash
+yarn test   # Run all unit tests
+yarn lint   # Run all linters
+```
 
-**Never fix all issues without testing** — you might introduce bugs!
+Fix any regressions immediately before continuing. Never accumulate fixes without testing — you might introduce bugs that are hard to trace later.
 
-### Step 4: Publish to SonarCloud
+### Step 5: Publish to SonarCloud
 
-Run the sonar command to analyze and publish results:
+Once a batch of fixes is complete and tests pass:
 
 ```bash
 yarn sonar
 ```
 
-This takes several minutes to complete. Wait for it to finish before fetching results.
+This takes several minutes. Wait for it to finish before fetching results.
 
-### Step 5: Fetch Branch Results and Verify
+### Step 6: Fetch Branch Results and Verify
 
-After `yarn sonar` completes, fetch issues using the **branch** parameter (not `pullRequest`):
+After `yarn sonar` completes, verify using the **branch** parameter (not `pullRequest`):
 
 ```bash
 curl -s "https://sonarcloud.io/api/issues/search?componentKeys=<org>_<repo>&branch=<branch-name>&resolved=false&ps=100" \
   | jq -r '.issues[] | "\(.severity) - \(.type) - \(.rule) - \(.message) - \(.component):\(.line)"' | sort
 ```
 
-Note: use URL-encoded branch names (e.g. `feat%2Fupdate-buttons` for `feat/update-buttons`).
+Note: URL-encode the branch name (e.g. `feat%2Fupdate-buttons` for `feat/update-buttons`).
 
--   If issues remain → go back to **Step 2** and continue fixing
--   If no issues remain → the process is complete
+-   Issues remain → return to Step 3 and continue fixing
+-   No issues → process is complete
 
-### Step 6: Process Complete
+### Step 7: Completion Criteria
 
-The fixing process is complete when:
+The process is complete when all of the following are true:
 
--   ✅ **All todos are marked as completed**
--   ✅ **All tests pass** (`yarn test`)
--   ✅ **All linters pass** (`yarn lint`)
--   ✅ **Branch API returns zero unresolved issues**
+-   ✅ All todos are marked as completed
+-   ✅ All tests pass (`yarn test`)
+-   ✅ All linters pass (`yarn lint`)
+-   ✅ Branch API returns zero unresolved issues
+
+## Examples
+
+### Example 1: Feature branch with failing quality gate
+
+```
+User: /sonarqube-fix
+
+1. Branch is `feat/update-buttons` → mcp__github__list_pull_requests finds PR #153
+2. Fetch issues: 2 MAJOR CODE_SMELLs, 1 MINOR BUG
+3. Create todos for all 3 issues
+4. Fix MINOR BUG first (it's a BUG), then the two CODE_SMELLs
+5. After fixes: yarn test && yarn lint → passes
+6. yarn sonar → publishes results
+7. Branch API → 0 issues remaining ✅
+```
+
+### Example 2: On main branch, multiple open PRs
+
+```
+User: /sonarqube-fix
+
+1. Branch is `main` → list open PRs, ask user to choose
+2. User selects PR #155
+3. Fetch issues for PR #155
+4. Proceed with workflow as normal
+```
 
 ## Key Principles
 
-### Fix What's Reported
+**Fix only what SonarQube reports** — don't refactor surrounding code, clean up style, or make improvements beyond the reported issues. Keep changes minimal and focused.
 
--   Fix only what SonarQube reports - don't refactor unnecessarily
--   Keep changes minimal and focused
--   Follow project conventions and coding style
--   Read context before changing code to avoid breaking functionality
+**Test frequently** — after every batch of 3–5 related fixes, not at the end. Catch regressions early.
 
-### Test Frequently
-
--   Test after every 3-5 related fixes
--   Don't wait until all fixes are done
--   Catch breaking changes early
-
-### Common Test Commands
-
-```bash
-yarn test          # Run all tests
-yarn lint          # Run all linters
-yarn format        # Auto-fix formatting (if needed)
-```
-
-## Tips for Efficiency
-
--   **Group similar issues** - fix all instances of the same rule together
--   **Use jq for parsing** - easier than parsing JSON manually
--   **Sort issues** - `| sort` makes grouping easier
--   **Track progress** - TodoWrite keeps work visible
--   **Filter by type** - add `&types=BUG` to API URL to focus on specific types
+**Group similar issues** — fixing all instances of the same rule together is faster and reduces context switching.
 
 ## Troubleshooting
 
-### PR Detection Fails
+### PR detection fails
 
--   **No matching PR found**: Check if the branch has an associated PR. Use `gh pr list` or GitHub UI to verify.
--   **Multiple PRs match**: Ask the user to specify which PR number to use.
--   **On main/master branch**: List open PRs and ask user to choose one.
+-   **No matching PR**: Check that the branch has an open PR. Use `gh pr list` or the GitHub UI.
+-   **Multiple PRs match**: Ask the user to specify the PR number explicitly.
+-   **On main/master**: List all open PRs and let the user choose.
 
-### Tests Failing After Fix
+### Tests fail after a fix
 
--   Revert the change and understand what broke
--   Read error messages carefully
--   Check if test expectations need updating
--   Ask the user for guidance if stuck
+-   Revert the change and re-read the error carefully
+-   Check if test expectations need updating alongside the fix
+-   Ask the user for guidance if the root cause is unclear
 
-### Issues Still Showing After `yarn sonar`
+### Issues still showing after `yarn sonar`
 
--   Re-fetch using the branch URL (not the PR URL) after `yarn sonar` completes
--   SonarCloud needs the publish step to re-analyze — results won't update without running `yarn sonar`
--   Continue with remaining issues from the branch results
+-   Always re-fetch using the **branch** URL (not the PR URL) after `yarn sonar`
+-   SonarCloud only updates after the publish step — results won't change without running `yarn sonar`
+-   Continue working through remaining issues from the branch results
+
+### MCP connection issues
+
+-   Verify the github MCP server is connected (check `.claude/settings.json`)
+-   Confirm `GITHUB_API_KEY` environment variable is set and valid
+-   Test by calling `mcp__github__list_pull_requests` directly without the skill
 
 ## Resources
 
--   **SonarQube API Docs**: https://sonarcloud.io/web_api
--   **SonarQube Rules**: https://rules.sonarsource.com/
--   **DHIS2 Code Style**: Project follows `@dhis2/cli-style` conventions
+-   SonarQube API docs: https://sonarcloud.io/web_api
+-   SonarQube rules: https://rules.sonarsource.com/
+-   DHIS2 code style: project follows `@dhis2/cli-style` conventions
