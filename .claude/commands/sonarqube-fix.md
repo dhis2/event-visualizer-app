@@ -1,13 +1,3 @@
----
-name: sonarqube-fix
-description: Fix SonarQube quality gate issues systematically using the API
-license: MIT
-compatibility: opencode
-metadata:
-    audience: developers
-    workflow: code-quality
----
-
 # SonarQube Issue Resolution Workflow
 
 This skill provides a systematic approach to fixing SonarQube quality gate failures by fetching issues directly from the API and addressing them in priority order.
@@ -102,7 +92,7 @@ Before fetching issues, determine which pull request and branch to analyze:
 
 3. **Find matching PR**:
 
-    - If on a feature branch, use GitHub MCP tools (`github_list_pull_requests`) to find open PRs
+    - If on a feature branch, use GitHub MCP tools (`mcp__github__list_pull_requests`) to find open PRs
     - Match the current branch name to a PR's `head.ref` field
     - Extract the PR number from the matching PR
 
