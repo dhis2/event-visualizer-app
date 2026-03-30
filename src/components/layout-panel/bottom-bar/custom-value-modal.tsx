@@ -62,7 +62,6 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
             .some((dimensionId) => {
                 const dimensionMetadata =
                     metadataStore.getDimensionMetadataItem(dimensionId)
-                console.log('dimension metadata', dimensionMetadata)
 
                 if (dimensionMetadata?.programStageId) {
                     programStageId = dimensionMetadata.programStageId
@@ -73,8 +72,6 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
 
         return programStageId
     }, [layout, metadataStore])
-
-    console.log('programStageId', programStageId)
 
     const { data, isLoading, isError, error } = useRtkQuery<
         Record<'dataElement', DataElementRecord>[]
