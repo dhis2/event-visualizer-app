@@ -81,7 +81,10 @@ export const CustomValueButton: FC = () => {
 
     const customValueMetadata = useMetadataItem(customValue?.id)
 
-    const { action } = useActionButton('EVENT')
+    const { action, tooltipConfig } = useActionButton('EVENT')
+
+    let tooltipContent = tooltipConfig?.content
+    const openDelay = tooltipConfig?.openDelay || 500
 
     const label = useMemo(() => {
         switch (action) {
@@ -99,12 +102,13 @@ export const CustomValueButton: FC = () => {
             action,
             label,
             type: 'EVENT',
+            disabled: Boolean(tooltipConfig),
         }),
-        [action, label]
+        [action, label, tooltipConfig]
     )
 
     if (customValue) {
-        const tooltipContent = i18n.t(
+        tooltipContent = i18n.t(
             `Using: {{dataElementName}} ({{aggregationType}})`,
             {
                 dataElementName: customValueMetadata?.name,
@@ -113,9 +117,11 @@ export const CustomValueButton: FC = () => {
                 nsSeparator: '^^',
             }
         )
+    }
 
+    if (tooltipContent) {
         return (
-            <Tooltip content={tooltipContent} openDelay={500}>
+            <Tooltip content={tooltipContent} openDelay={openDelay}>
                 {(tooltipProps) => (
                     <BaseCustomValueButton
                         {...buttonProps}
