@@ -2,6 +2,7 @@ import i18n from '@dhis2/d2-i18n'
 import { IconSettings16, IconSync16, Tooltip } from '@dhis2/ui'
 import cx from 'classnames'
 import { useCallback, useMemo, useState, type FC } from 'react'
+import type { BaseButtonProps } from './base-button'
 import classes from './styles/action-buttons.module.css'
 import { useActionButton } from './use-action-button'
 import { CustomValueModal } from '@components/layout-panel/bottom-bar/custom-value-modal'
@@ -12,17 +13,6 @@ import {
     getVisUiConfigCustomValue,
     setVisUiConfigOutputType,
 } from '@store/vis-ui-config-slice'
-import { type OutputType } from '@types'
-
-type ButtonAction = 'create' | 'switch' | 'update'
-
-type BaseButtonProps = {
-    action: ButtonAction
-    disabled?: boolean
-    label: string
-    tooltipProps?: object
-    type: OutputType
-}
 
 const BaseCustomValueButton: FC<BaseButtonProps> = ({
     action,
