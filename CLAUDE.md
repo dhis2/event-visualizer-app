@@ -296,23 +296,19 @@ The following Model Context Protocol servers are enabled for this project (see `
     -   Create/update issues and PRs
     -   Search repositories, files, and code
     -   Manage branches and commits
+    -   **Usage**: Use proactively for any repo/issue/PR operations
 -   **Grep by Vercel** (`grep_*`): Fast code search across GitHub repositories
     -   Search code patterns across multiple repos
     -   Find usage examples
-    -   **Usage**: Add `use the grep tool` to your prompts
+    -   **Usage**: Trigger-based only — add `use the grep tool` to your prompts when you want cross-repo search
 -   **Context7** (`context7_*`): Search technical documentation
     -   Query documentation for libraries and frameworks
     -   Find API references and examples
-    -   **Usage**: Add `use context7` to your prompts
+    -   **Usage**: Use proactively when answering questions about specific library/framework APIs; otherwise trigger with `use context7`
 
 **Note for ClaudeCode users**: No neovim MCP server is needed — editor integration is handled natively via the claudecode.nvim WebSocket protocol.
 
 **Note**: These servers override the global configuration which disables them by default. Other DHIS2 projects may have different MCP server configurations.
-
-**How to use MCP servers**: Add `use <server-name>` or `use the <server-name> tool` to your prompts. For example:
-
--   `What's the right way to use Redux createSlice? use the grep tool`
--   `How do I configure Vite plugins? use context7`
 
 **Linting**: For ESLint functionality, use the bash tool with `npx eslint <file-path>` instead of an MCP server.
 
