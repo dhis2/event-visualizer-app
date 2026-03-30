@@ -22,7 +22,6 @@ import {
     useDimensionMetadataItem,
     useProgramStageMetadataItem,
 } from '@hooks'
-import { getDimensionIdParts } from '@modules/dimension'
 import { isDimensionInLayout } from '@modules/layout'
 import { isDimensionMetadataItem } from '@modules/metadata'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
@@ -69,9 +68,7 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
 
     const isInLayout = isDimensionInLayout(layout, dimensionId)
 
-    const stage = useProgramStageMetadataItem(
-        getDimensionIdParts({ id: dimensionId }).programStageId
-    )
+    const stage = useProgramStageMetadataItem(dimension?.programStageId)
 
     // XXX: this logic might need to include more dimension types
     // for example per-stage ou and period dimensions

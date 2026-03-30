@@ -19,9 +19,8 @@ import {
     useAppSelector,
     useMetadataItems,
 } from '@hooks'
-import { getDimensionIdParts } from '@modules/dimension.js'
 import {
-    getVisUiConfigItemsByDimension,
+    getVisUiConfigItemsByDimensionMapped,
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
 import type { DimensionMetadataItem } from '@types'
@@ -37,9 +36,7 @@ export const DynamicDimensionModalContent: FC<
     const addMetadata = useAddMetadata()
     const dataTest = `dynamic-dimension-${dimension.id}`
     const selectedIds = useAppSelector((state) =>
-        getVisUiConfigItemsByDimension(state, dimension?.id).map(
-            (id) => getDimensionIdParts({ id }).dimensionId
-        )
+        getVisUiConfigItemsByDimensionMapped(state, dimension?.id)
     )
     const selectedIdsMetadata = useMetadataItems(selectedIds)
     const selectedOptionsLookup = useMemo(

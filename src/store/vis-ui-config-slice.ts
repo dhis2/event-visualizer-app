@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { DEFAULT_OPTIONS } from '@constants/options'
 import type {
@@ -262,6 +262,26 @@ export const visUiConfigSlice = createSlice({
         getVisUiConfigRepetitionsByDimension: (state, dimensionId: string) =>
             state.repetitionsByDimension[dimensionId] ||
             DEFAULT_REPETITIONS_OBJECT,
+        getVisUiConfigLayoutAllDimensionIds: createSelector(
+            (state: VisUiConfigState) => state.layout.columns,
+            (state: VisUiConfigState) => state.layout.filters,
+            (state: VisUiConfigState) => state.layout.rows,
+            (columns, filters, rows) => [...columns, ...filters, ...rows]
+        ),
+        getVisUiConfigLayoutIsEmpty: createSelector(
+            (state: VisUiConfigState) => state.layout.columns,
+            (state: VisUiConfigState) => state.layout.filters,
+            (state: VisUiConfigState) => state.layout.rows,
+            (columns, filters, rows) =>
+                columns.length === 0 &&
+                filters.length === 0 &&
+                rows.length === 0
+        ),
+        getVisUiConfigItemsByDimensionMapped: createSelector(
+            (state: VisUiConfigState, dimensionId: string) =>
+                state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
+            (items) => items.map((id) => id.split('.').pop()!)
+        ),
     },
 })
 
@@ -288,4 +308,7 @@ export const {
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
     getVisUiConfigRepetitionsByDimension,
+    getVisUiConfigLayoutAllDimensionIds,
+    getVisUiConfigLayoutIsEmpty,
+    getVisUiConfigItemsByDimensionMapped,
 } = visUiConfigSlice.selectors

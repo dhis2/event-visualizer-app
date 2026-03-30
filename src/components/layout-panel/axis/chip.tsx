@@ -10,7 +10,7 @@ import { getChipItemsText } from './get-chip-items-text'
 import classes from './styles/chip.module.css'
 import { TooltipContent } from './tooltip-content'
 import type { AxisSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
-import { IconButton } from '@components/dimension-item/icon-button'
+import { IconButton } from '@components/shared/icon-button'
 import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
