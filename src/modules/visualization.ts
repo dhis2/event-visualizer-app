@@ -257,5 +257,11 @@ export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
         itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
         conditionsByDimension: getConditionsFromVisualization(vis, outputType),
         repetitionsByDimension: getRepetitionsFromVisualisation(vis),
+        ...(vis.value?.id && {
+            customValue: {
+                id: vis.value.id,
+                aggregationType: vis.aggregationType || 'DEFAULT',
+            },
+        }),
     }
 }

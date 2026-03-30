@@ -10,6 +10,7 @@ import type { TransformedAppCachedData } from '../components/app-wrapper/app-cac
  * this list should not contain the types we override. */
 export type { DataEngine, QueryResult, MutationResult } from './data-engine'
 export type {
+    AggregationType,
     EventVisualizationType,
     FavoriteStatistics,
     GridHeader,

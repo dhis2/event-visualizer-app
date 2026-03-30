@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { DEFAULT_OPTIONS } from '@constants/options'
 import type {
+    AggregationType,
     Axis,
     EventVisualizationOptions,
     Layout,
@@ -12,6 +13,11 @@ import type {
 export type ConditionsObject = {
     condition?: string | string[]
     legendSet?: string
+}
+
+export type CustomValueObject = {
+    id: string
+    aggregationType: AggregationType
 }
 
 export type RepetitionsObject = {
@@ -35,6 +41,7 @@ export interface VisUiConfigState {
     layout: Layout
     itemsByDimension: Record<string, string[]>
     conditionsByDimension: Record<string, ConditionsObject | undefined>
+    customValue?: CustomValueObject
     repetitionsByDimension: Record<string, RepetitionsObject | undefined>
     options: EventVisualizationOptions
 }
@@ -151,6 +158,12 @@ export const visUiConfigSlice = createSlice({
                         : undefined,
             }
         },
+        setVisUiConfigCustomValue: (
+            state,
+            action: PayloadAction<CustomValueObject>
+        ) => {
+            state.customValue = action.payload
+        },
         setVisUiConfigRepetitionsByDimension: (
             state,
             action: PayloadAction<SetRepetitionsByDimensionPayload>
@@ -259,6 +272,7 @@ export const visUiConfigSlice = createSlice({
             state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
         getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
             state.conditionsByDimension[dimensionId] || EMPTY_CONDITIONS_OBJECT,
+        getVisUiConfigCustomValue: (state) => state.customValue,
         getVisUiConfigRepetitionsByDimension: (state, dimensionId: string) =>
             state.repetitionsByDimension[dimensionId] ||
             DEFAULT_REPETITIONS_OBJECT,
@@ -274,6 +288,7 @@ export const {
     setVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
+    setVisUiConfigCustomValue,
     setVisUiConfigRepetitionsByDimension,
     addVisUiConfigLayoutDimension,
     moveVisUiConfigLayoutDimension,
@@ -287,5 +302,6 @@ export const {
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
+    getVisUiConfigCustomValue,
     getVisUiConfigRepetitionsByDimension,
 } = visUiConfigSlice.selectors

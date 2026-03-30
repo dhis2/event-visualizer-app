@@ -114,6 +114,15 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
         // Overrides
         const updatedCurrentVis = {
             ...mergedVis,
+            // visualization type
+            type: visUiConfig.visualizationType,
+            // custom value and aggregation
+            ...(visUiConfig.customValue && {
+                value: {
+                    id: visUiConfig.customValue.id,
+                },
+                aggregationType: visUiConfig.customValue.aggregationType,
+            }),
             // columns/rows/filters from visUiConfig.layout
             ...formatLayoutForVisualization(visUiConfig),
         }

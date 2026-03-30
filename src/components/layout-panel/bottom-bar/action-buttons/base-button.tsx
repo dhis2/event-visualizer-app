@@ -9,7 +9,7 @@ import type { OutputType } from '@types'
 
 export type ButtonAction = 'create' | 'switch' | 'update'
 
-type BaseButtonProps = {
+export type BaseButtonProps = {
     action: ButtonAction
     disabled?: boolean
     label: string

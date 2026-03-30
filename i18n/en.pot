@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-03-25T14:37:21.553Z\n"
-"PO-Revision-Date: 2026-03-25T14:37:21.554Z\n"
+"POT-Creation-Date: 2026-03-26T10:33:04.991Z\n"
+"PO-Revision-Date: 2026-03-26T10:33:04.991Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -303,6 +303,18 @@ msgstr "Levels"
 msgid "Groups"
 msgstr "Groups"
 
+msgid "Create custom value table"
+msgstr "Create custom value table"
+
+msgid "Switch to custom value table"
+msgstr "Switch to custom value table"
+
+msgid "Update custom value table"
+msgstr "Update custom value table"
+
+msgid "Using: {{dataElementName}} ({{aggregationType}})"
+msgstr "Using: {{dataElementName}} ({{aggregationType}})"
+
 msgid "Enrollment"
 msgstr "Enrollment"
 
@@ -389,6 +401,33 @@ msgstr "Not valid with program indicators"
 
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr "Nothing selected. Add items to the layout to get started."
+
+msgid "Configure custom value"
+msgstr "Configure custom value"
+
+msgid "Choose the numeric data element to show in table cells."
+msgstr "Choose the numeric data element to show in table cells."
+
+msgid "Loading data"
+msgstr "Loading data"
+
+msgid "Error loading data"
+msgstr "Error loading data"
+
+msgid "Failed to load data elements"
+msgstr "Failed to load data elements"
+
+msgid "No numeric data elements"
+msgstr "No numeric data elements"
+
+msgid "This program does not have any numeric data elements available."
+msgstr "This program does not have any numeric data elements available."
+
+msgid "Aggregation"
+msgstr "Aggregation"
+
+msgid "Cancel"
+msgstr "Cancel"
 
 msgid "Collapse layout"
 msgstr "Collapse layout"
@@ -851,6 +890,66 @@ msgstr "Unsaved visualization"
 
 msgid "Edited"
 msgstr "Edited"
+
+msgid "Use data element default"
+msgstr "Use data element default"
+
+msgid "Sum"
+msgstr "Sum"
+
+msgid "Average"
+msgstr "Average"
+
+msgid "Average (sum in org unit hierarchy)"
+msgstr "Average (sum in org unit hierarchy)"
+
+msgid "Last value (sum in org unit hierarchy)"
+msgstr "Last value (sum in org unit hierarchy)"
+
+msgid "Last value (average in org unit hierarchy)"
+msgstr "Last value (average in org unit hierarchy)"
+
+msgid "Last value in period (last value in org unit hierarchy)"
+msgstr "Last value in period (last value in org unit hierarchy)"
+
+msgid "Last value in period (sum in org unit hierarchy)"
+msgstr "Last value in period (sum in org unit hierarchy)"
+
+msgid "Last value in period (average in org unit hierarchy)"
+msgstr "Last value in period (average in org unit hierarchy)"
+
+msgid "First value (sum in org unit hierarchy)"
+msgstr "First value (sum in org unit hierarchy)"
+
+msgid "First value (average in org unit hierarchy)"
+msgstr "First value (average in org unit hierarchy)"
+
+msgid "First value in period (first value in org unit hierarchy)"
+msgstr "First value in period (first value in org unit hierarchy)"
+
+msgid "Count"
+msgstr "Count"
+
+msgid "Standard deviation"
+msgstr "Standard deviation"
+
+msgid "Variance"
+msgstr "Variance"
+
+msgid "Min"
+msgstr "Min"
+
+msgid "Max"
+msgstr "Max"
+
+msgid "Min value (sum in org unit hierarchy)"
+msgstr "Min value (sum in org unit hierarchy)"
+
+msgid "Max value (sum in org unit hierarchy)"
+msgstr "Max value (sum in org unit hierarchy)"
+
+msgid "Custom"
+msgstr "Custom"
 
 msgid "equal to (=)"
 msgstr "equal to (=)"
