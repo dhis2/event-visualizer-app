@@ -10,6 +10,7 @@ cypress/screenshots
 cypress/downloads
 .aider*
 .github/copilot-instructions.md
+.claude/settings.local.json
 cypress/downloads
 .vscode
 .scannerwork

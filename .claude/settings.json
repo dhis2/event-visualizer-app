@@ -1,0 +1,23 @@
+{
+    "mcpServers": {
+        "github": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-github"],
+            "env": {
+                "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_API_KEY}"
+            }
+        },
+        "grep": {
+            "type": "sse",
+            "url": "https://mcp.grep.app"
+        },
+        "context7": {
+            "type": "sse",
+            "url": "https://mcp.context7.com/mcp"
+        }
+    },
+    "permissions": {
+        "allow": ["mcp__github__*", "mcp__grep__*", "mcp__context7__*"]
+    }
+}
