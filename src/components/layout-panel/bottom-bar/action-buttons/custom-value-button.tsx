@@ -61,6 +61,7 @@ const BaseCustomValueButton: FC<BaseButtonProps> = ({
             {isButtonReady && (
                 <button
                     onClick={onCogwheelClick}
+                    disabled={disabled}
                     className={cx(classes.button, classes.splitRight, {
                         [classes.disabled]: disabled,
                         [classes.update]: action === 'update' && isButtonReady,
@@ -107,7 +108,7 @@ export const CustomValueButton: FC = () => {
         [action, label, tooltipConfig]
     )
 
-    if (customValue) {
+    if (!tooltipContent && customValue) {
         tooltipContent = i18n.t(
             `Using: {{dataElementName}} ({{aggregationType}})`,
             {

@@ -21,6 +21,7 @@ import { NUMERIC_VALUE_TYPES } from '@constants/value-types'
 import {
     useAppDispatch,
     useAppSelector,
+    useCurrentUser,
     useMetadataStore,
     useRtkQuery,
 } from '@hooks'
@@ -43,6 +44,9 @@ type DataElementRecord = {
 
 export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     const dispatch = useAppDispatch()
+    const {
+        settings: { displayNameProperty },
+    } = useCurrentUser()
     const metadataStore = useMetadataStore()
     const layout = useAppSelector(getVisUiConfigLayout)
     const customValue = useAppSelector(getVisUiConfigCustomValue)
@@ -54,8 +58,8 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
         DataElementRecord | undefined
     >(undefined)
 
-    const programStageId: string = useMemo(() => {
-        let programStageId
+    const programId: string = useMemo(() => {
+        let programId
 
         Object.values(layout)
             .flat()
@@ -63,28 +67,31 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                 const dimensionMetadata =
                     metadataStore.getDimensionMetadataItem(dimensionId)
 
-                if (dimensionMetadata?.programStageId) {
-                    programStageId = dimensionMetadata.programStageId
+                if (dimensionMetadata?.programId) {
+                    programId = dimensionMetadata.programId
 
                     return true
                 }
             })
 
-        return programStageId
+        return programId
     }, [layout, metadataStore])
 
     const { data, isLoading, isError, error } = useRtkQuery<
-        Record<'dataElement', DataElementRecord>[]
+        Record<
+            'programDataElements',
+            Record<'dataElement', DataElementRecord>[]
+        >
     >({
-        resource: `programStages/${programStageId}/programStageDataElements/gist`,
+        resource: 'programDataElements',
         params: {
-            fields: 'dataElement[id,name,aggregationType]',
+            program: programId,
+            fields: `dataElement[id,${displayNameProperty}~rename(name),aggregationType]`,
             filter: [
                 // TODO: add BOOLEAN and TRUE_ONLY if/when backend suppors it
-                `dataElement.valueType:in:[${NUMERIC_VALUE_TYPES.join(',')}]`,
+                `valueType:in:[${NUMERIC_VALUE_TYPES.join(',')}]`,
             ],
-            headless: true,
-            pageSize: 1000,
+            paging: false,
         },
     })
 
@@ -140,16 +147,20 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                             {error || i18n.t('Failed to load data elements')}
                         </NoticeBox>
                     )}
-                    {!isLoading && !error && data.length === 0 && (
-                        <NoticeBox title={i18n.t('No numeric data elements')}>
-                            {i18n.t(
-                                'This program does not have any numeric data elements available.'
-                            )}
-                        </NoticeBox>
-                    )}
+                    {!isLoading &&
+                        !error &&
+                        data.programDataElements.length === 0 && (
+                            <NoticeBox
+                                title={i18n.t('No numeric data elements')}
+                            >
+                                {i18n.t(
+                                    'This program does not have any numeric data elements available.'
+                                )}
+                            </NoticeBox>
+                        )}
                     {!isLoading &&
                         !isError &&
-                        data.map(({ dataElement }) => (
+                        data.programDataElements.map(({ dataElement }) => (
                             <SingleSelectOption
                                 key={dataElement.id}
                                 label={dataElement.name}
