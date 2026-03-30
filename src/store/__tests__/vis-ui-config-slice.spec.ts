@@ -10,7 +10,7 @@ import {
 const {
     addVisUiConfigLayoutDimension,
     moveVisUiConfigLayoutDimension,
-    removeVisUiConfigLayoutDimension,
+    removeVisUiConfigLayoutDimensionFromAxis,
 } = visUiConfigSlice.actions
 
 type RootState = { visUiConfig: VisUiConfigState }
@@ -300,14 +300,14 @@ describe('moveVisUiConfigLayoutDimension', () => {
     })
 })
 
-describe('removeVisUiConfigLayoutDimension', () => {
+describe('removeVisUiConfigLayoutDimensionFromAxis', () => {
     it('removes the dimension when it exists', () => {
         const state = createStateWithLayout({
             columns: ['a1', 'a2', 'a3'],
             filters: [],
             rows: [],
         })
-        const action = removeVisUiConfigLayoutDimension({
+        const action = removeVisUiConfigLayoutDimensionFromAxis({
             axis: 'columns',
             dimensionId: 'a2',
         })
@@ -321,7 +321,7 @@ describe('removeVisUiConfigLayoutDimension', () => {
             filters: [],
             rows: [],
         })
-        const action = removeVisUiConfigLayoutDimension({
+        const action = removeVisUiConfigLayoutDimensionFromAxis({
             axis: 'columns',
             dimensionId: 'a3',
         })

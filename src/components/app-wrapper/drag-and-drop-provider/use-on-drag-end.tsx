@@ -4,6 +4,7 @@ import type {
     AxisContainerDroppableData,
     AxisSortableData,
     LayoutDragEndEvent,
+    SidebarSortableData,
 } from './types'
 import { useAppDispatch } from '@hooks'
 import {
@@ -21,6 +22,13 @@ const isDraggedItemFromAxis = (
     'overlayItemProps' in input &&
     'axis' in input &&
     'insertAfter' in input
+
+const isSidebarSortableData = (
+    input: object
+): input is SidebarSortableData & SortableData =>
+    'dimensionId' in input &&
+    'overlayItemProps' in input &&
+    'populateMetadata' in input
 
 export const isAxisContainerData = (
     input: object | undefined
@@ -63,8 +71,9 @@ export const useOnDragEnd = (): OnDragEndFn => {
                         insertAfter,
                     })
                 )
-            } else {
+            } else if (isSidebarSortableData(draggedItemData)) {
                 // Add from sidebar
+                draggedItemData.populateMetadata()
                 dispatch(
                     addVisUiConfigLayoutDimension({
                         axis: overItemData.axis,

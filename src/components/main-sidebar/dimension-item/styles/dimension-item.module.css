@@ -1,0 +1,34 @@
+.dimensionItem {
+    background: none;
+    border: none;
+    color: var(--colors-grey900);
+    cursor: pointer;
+    display: flex;
+    fill: var(--colors-grey800);
+    line-height: 15px;
+    margin: 0;
+    min-block-size: 20px;
+    padding: 0 0 0 var(--spacers-dp4);
+    text-align: start;
+    inline-size: 100%;
+}
+
+.selected {
+    fill: var(--colors-teal800);
+}
+
+.icon {
+    align-self: flex-start;
+    block-size: 16px;
+    flex: 0 0 auto;
+    inline-size: 16px;
+    margin: 2px 4px 0 0;
+}
+
+.label {
+    flex: 0 1 auto;
+    font-size: 13px;
+    line-height: 15px;
+    overflow-wrap: anywhere;
+    padding: 2px 0;
+}

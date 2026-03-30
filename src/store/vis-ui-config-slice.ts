@@ -234,7 +234,7 @@ export const visUiConfigSlice = createSlice({
             targetArray.splice(insertionIndex, 0, dimensionId)
             sourceArray.splice(removalIndex, 1)
         },
-        removeVisUiConfigLayoutDimension: (
+        removeVisUiConfigLayoutDimensionFromAxis: (
             state,
             action: PayloadAction<{ axis: Axis; dimensionId: string }>
         ) => {
@@ -247,6 +247,21 @@ export const visUiConfigSlice = createSlice({
                 )
             }
             array.splice(index, 1)
+        },
+        removeVisUiConfigLayoutDimension: (
+            state,
+            action: PayloadAction<{ dimensionId: string }>
+        ) => {
+            const { dimensionId } = action.payload
+            const axes = ['columns', 'rows', 'filters'] as const
+            for (const axis of axes) {
+                const index = state.layout[axis].indexOf(dimensionId)
+                if (index !== -1) {
+                    state.layout[axis].splice(index, 1)
+                    return
+                }
+            }
+            throw new Error(`Dimension ${dimensionId} not found in any axis`)
         },
     },
     selectors: {
@@ -297,6 +312,7 @@ export const {
     setVisUiConfigRepetitionsByDimension,
     addVisUiConfigLayoutDimension,
     moveVisUiConfigLayoutDimension,
+    removeVisUiConfigLayoutDimensionFromAxis,
     removeVisUiConfigLayoutDimension,
 } = visUiConfigSlice.actions
 

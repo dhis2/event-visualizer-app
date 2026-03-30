@@ -5,6 +5,10 @@ import classes from './styles/dimension-drag-overlay.module.css'
 import type { AxisSortableData, DraggedItemEventData } from './types'
 import { ChipBase } from '@components/layout-panel/axis/chip-base'
 import chipClasses from '@components/layout-panel/axis/styles/chip.module.css'
+import {
+    DimensionItem,
+    DimensionItemContainer,
+} from '@components/main-sidebar/dimension-item'
 
 const isAxisSortableData = (data: object): data is AxisSortableData =>
     'axis' in data
@@ -23,9 +27,15 @@ const DragOverlayItem: FC<DraggedItemEventData> = (data) =>
         >
             <ChipBase {...data.overlayItemProps} isDragging />
         </div>
-    ) : (
-        <div>Dimension overlay item</div>
-    )
+    ) : data.overlayItemProps.dimensionType ? (
+        <DimensionItemContainer isDragging>
+            <DimensionItem
+                name={data.overlayItemProps.dimensionName}
+                dimensionType={data.overlayItemProps.dimensionType}
+                onClick={() => undefined}
+            />
+        </DimensionItemContainer>
+    ) : null
 
 export const DimensionDragOverlay: FC = () => {
     const [draggedDimensionData, setDraggedDimensionData] =
