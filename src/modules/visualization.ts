@@ -246,6 +246,10 @@ export const isVisualizationNew = (
 export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
     const outputType = vis.outputType
     const layout = layoutGetAxisIdDimensionIdsObject(vis)
+    let lastActiveButton: LastActiveButton | undefined
+    if (outputType === 'EVENT') {
+        lastActiveButton = vis.value?.id ? 'CUSTOM_VALUE' : 'EVENT'
+    }
 
     return {
         visualizationType: vis.type,
@@ -264,10 +268,6 @@ export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
                 aggregationType: vis.aggregationType || 'DEFAULT',
             },
         }),
-        lastActiveButton: (outputType === 'EVENT'
-            ? vis.value?.id
-                ? 'CUSTOM_VALUE'
-                : 'EVENT'
-            : undefined) as LastActiveButton | undefined,
+        lastActiveButton,
     }
 }
