@@ -11,10 +11,12 @@ import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 import {
+    getVisUiConfigLastActiveButton,
     getVisUiConfigLayout,
     getVisUiConfigOutputType,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
+import type { LastActiveButton } from '@store/vis-ui-config-slice'
 import type { OutputType } from '@types'
 
 type TooltipContent = { content: string; openDelay?: number } | undefined
@@ -176,9 +178,13 @@ const getTrackedEntityInstanceTooltipContent = ({
     })
 }
 
-export const useActionButton = (buttonType: OutputType) => {
+export const useActionButton = (
+    buttonType: OutputType,
+    buttonVariant?: LastActiveButton
+) => {
     const currentVis = useAppSelector(getCurrentVis)
     const dataSourceId = useAppSelector(getDataSourceId)
+    const lastActiveButton = useAppSelector(getVisUiConfigLastActiveButton)
     const layout = useAppSelector(getVisUiConfigLayout)
     const metadataStore = useMetadataStore()
     const outputType = useAppSelector(getVisUiConfigOutputType)
@@ -191,13 +197,25 @@ export const useActionButton = (buttonType: OutputType) => {
         if (isVisualizationEmpty(currentVis)) {
             return 'create'
         } else if (outputType === buttonType) {
-            // visualization or error and same outputType
+            if (
+                visualizationType === 'PIVOT_TABLE' &&
+                buttonType === 'EVENT' &&
+                buttonVariant !== undefined
+            ) {
+                return lastActiveButton === buttonVariant ? 'update' : 'switch'
+            }
             return 'update'
-            // visualization or error and different outputType
         } else {
             return 'switch'
         }
-    }, [buttonType, currentVis, outputType])
+    }, [
+        buttonType,
+        buttonVariant,
+        currentVis,
+        lastActiveButton,
+        outputType,
+        visualizationType,
+    ])
 
     const hasCategoryInLayout: boolean = useMemo(() => {
         const dimensionIds = Object.values(layout).flat()

@@ -29,6 +29,7 @@ import {
     getVisUiConfigCustomValue,
     getVisUiConfigLayout,
     setVisUiConfigCustomValue,
+    setVisUiConfigLastActiveButton,
 } from '@store/vis-ui-config-slice'
 import type { AggregationType } from '@types'
 
@@ -112,6 +113,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
 
     const onUpdate = useCallback(() => {
         if (dataElement) {
+            dispatch(setVisUiConfigLastActiveButton('CUSTOM_VALUE'))
             dispatch(
                 setVisUiConfigCustomValue({
                     aggregationType:

@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector, useMetadataItem } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
     getVisUiConfigCustomValue,
+    setVisUiConfigLastActiveButton,
     setVisUiConfigOutputType,
 } from '@store/vis-ui-config-slice'
 
@@ -31,8 +32,8 @@ const BaseCustomValueButton: FC<BaseButtonProps> = ({
 
     const onClick = () => {
         if (customValue) {
+            dispatch(setVisUiConfigLastActiveButton('CUSTOM_VALUE'))
             dispatch(setVisUiConfigOutputType(type))
-
             dispatch(tUpdateCurrentVisFromVisUiConfig())
         } else {
             setIsModalOpen(true)
@@ -82,7 +83,7 @@ export const CustomValueButton: FC = () => {
 
     const customValueMetadata = useMetadataItem(customValue?.id)
 
-    const { action, tooltipConfig } = useActionButton('EVENT')
+    const { action, tooltipConfig } = useActionButton('EVENT', 'CUSTOM_VALUE')
 
     let tooltipContent = tooltipConfig?.content
     const openDelay = tooltipConfig?.openDelay || 500

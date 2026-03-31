@@ -11,6 +11,7 @@ import {
 } from '@dhis2/analytics'
 import { initialState as currentVisDefaultValue } from '@store/current-vis-slice'
 import { initialState as savedVisDefaultValue } from '@store/saved-vis-slice'
+import type { LastActiveButton } from '@store/vis-ui-config-slice'
 import type {
     DimensionArray,
     CurrentVisualization,
@@ -263,5 +264,10 @@ export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
                 aggregationType: vis.aggregationType || 'DEFAULT',
             },
         }),
+        lastActiveButton: (outputType === 'EVENT'
+            ? vis.value?.id
+                ? 'CUSTOM_VALUE'
+                : 'EVENT'
+            : undefined) as LastActiveButton | undefined,
     }
 }

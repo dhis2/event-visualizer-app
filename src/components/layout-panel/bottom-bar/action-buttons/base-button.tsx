@@ -4,7 +4,11 @@ import { type FC } from 'react'
 import classes from './styles/action-buttons.module.css'
 import { useAppDispatch } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
-import { setVisUiConfigOutputType } from '@store/vis-ui-config-slice'
+import {
+    setVisUiConfigLastActiveButton,
+    setVisUiConfigOutputType,
+} from '@store/vis-ui-config-slice'
+import type { LastActiveButton } from '@store/vis-ui-config-slice'
 import type { OutputType } from '@types'
 
 export type ButtonAction = 'create' | 'switch' | 'update'
@@ -13,6 +17,7 @@ export type BaseButtonProps = {
     action: ButtonAction
     disabled?: boolean
     label: string
+    lastActiveButton?: LastActiveButton
     tooltipProps?: object
     type: OutputType
 }
@@ -21,14 +26,17 @@ const BaseButton: FC<BaseButtonProps> = ({
     action,
     disabled = false,
     label,
+    lastActiveButton,
     tooltipProps,
     type,
 }) => {
     const dispatch = useAppDispatch()
 
     const onClick = () => {
+        if (lastActiveButton !== undefined) {
+            dispatch(setVisUiConfigLastActiveButton(lastActiveButton))
+        }
         dispatch(setVisUiConfigOutputType(type))
-
         dispatch(tUpdateCurrentVisFromVisUiConfig())
     }
 
