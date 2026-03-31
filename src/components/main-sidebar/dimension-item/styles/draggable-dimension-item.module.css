@@ -5,6 +5,7 @@
 }
 
 .iconButtonWrapper {
+    align-self: stretch;
     visibility: hidden;
 }
 
