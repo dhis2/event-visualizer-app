@@ -3,22 +3,29 @@
     flex-direction: row;
     align-items: center;
     gap: 2px;
+    border-radius: 5px 5px 0 0;
+    background-color: var(--colors-white);
+    border-block-end: 1px solid #dfe6ec;
+    padding: 4px;
 }
 .combobox {
     display: flex;
     align-items: center;
-    border: 1px solid var(--colors-grey500);
+    border: 1px solid transparent;
     border-radius: 3px;
-    background-color: var(--colors-white);
     padding-block: 2px;
     padding-inline: 8px 4px;
-    min-block-size: 32px;
+    min-block-size: 28px;
     justify-content: space-between;
     flex-grow: 1;
     max-inline-size: 100%;
+    cursor: pointer;
+}
+.combobox:hover {
+    background-color: var(--colors-grey200);
 }
 .combobox.error {
-    border: 1px solid var(--theme-error);
+    border-color: var(--theme-error);
 }
 .combobox:focus {
     outline: none;
@@ -28,7 +35,7 @@
 .combobox:focus:not(:focus-visible) {
     outline: none;
     box-shadow: none;
-    border-color: var(--colors-grey500);
+    border-color: transparent;
 }
 
 .label {
@@ -41,6 +48,7 @@
     overflow: hidden;
 }
 .label.empty {
+    font-weight: normal;
     color: var(--colors-grey600);
 }
 .label > :global(svg) {

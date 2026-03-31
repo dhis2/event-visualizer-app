@@ -1,12 +1,14 @@
 .container {
     display: flex;
     flex-direction: column;
-    block-size: 100%;
+    margin: 4px 0 4px 4px;
+    block-size: calc(100% - 8px);
     box-sizing: border-box;
     inline-size: 460px;
-    border-inline-end: 1px solid var(--colors-grey400);
-    padding: 4px 0;
-    background-color: var(--colors-grey200);
+    border: 1px solid var(--colors-grey400);
+    border-radius: 5px;
+    padding-block-end: 4px;
+    background-color: var(--colors-grey100);
 }
 
 .container.hidden {

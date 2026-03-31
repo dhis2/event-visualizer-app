@@ -4,12 +4,14 @@
     min-block-size: 29px;
     display: flex;
     align-items: center;
-    background-color: var(--colors-grey050);
-    border-block-end: 1px solid var(--colors-grey300);
+    background-color: var(--colors-white);
     border-radius: 4px 4px 0 0;
     padding: 10px 6px 10px 4px;
     cursor: pointer;
     inline-size: 100%;
+}
+.container:hover {
+    background-color: var(--colors-grey100);
 }
 .container:focus {
     outline: 3px solid var(--theme-focus);
@@ -28,9 +30,6 @@
     line-height: 16px;
     font-weight: 500;
     color: var(--colors-grey700);
-}
-.title.withSelection {
-    color: var(--colors-teal600);
 }
 
 .count {

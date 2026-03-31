@@ -7,7 +7,7 @@
         'start-column center-column-top end-column'
         'start-column center-column-bottom end-column';
     block-size: 100%;
-    background-color: var(--colors-white);
+    background-color: var(--colors-grey300);
 }
 
 .topRow,
