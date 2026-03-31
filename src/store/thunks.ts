@@ -101,9 +101,10 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
     () => (dispatch, getState) => {
         const { currentVis, visUiConfig } = getState()
 
-        const mergedVis = deepmerge(currentVis, visUiConfig.options) as
-            | NewVisualization
-            | SavedVisualization
+        const mergedVis = deepmerge(
+            currentVis as Record<string, unknown>,
+            visUiConfig.options as Record<string, unknown>
+        ) as unknown as NewVisualization | SavedVisualization
 
         const disabledOptions = getDisabledOptions(visUiConfig.options)
 
