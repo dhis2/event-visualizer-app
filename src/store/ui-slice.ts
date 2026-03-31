@@ -1,5 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
+import { getInitialMainSidebarWidth } from '@components/main-sidebar/use-resizable-sidebar'
 import { getUserSidebarWidthFromLocalStorage } from '@modules/local-storage'
 
 export interface UiState {
@@ -10,6 +11,7 @@ export interface UiState {
     isLayoutPanelExpanded: boolean
     isLayoutPanelVisible: boolean
     isMainSidebarVisible: boolean
+    mainSidebarWidth: number
 }
 
 export const initialState: UiState = {
@@ -20,6 +22,7 @@ export const initialState: UiState = {
     isLayoutPanelExpanded: true,
     isLayoutPanelVisible: true,
     isMainSidebarVisible: true,
+    mainSidebarWidth: getInitialMainSidebarWidth(),
 }
 
 export const uiSlice = createSlice({
@@ -29,6 +32,9 @@ export const uiSlice = createSlice({
         clearUi: () => initialState,
         setUiAccessoryPanelWidth: (state, action: PayloadAction<number>) => {
             state.accessoryPanelWidth = action.payload
+        },
+        setUiMainSidebarWidth: (state, action: PayloadAction<number>) => {
+            state.mainSidebarWidth = action.payload
         },
 
         setUiAccessoryPanelVisible: (state, action: PayloadAction<boolean>) => {
@@ -79,6 +85,7 @@ export const uiSlice = createSlice({
         getUiLayoutPanelExpanded: (state) => state.isLayoutPanelExpanded,
         getUiLayoutPanelVisible: (state) => state.isLayoutPanelVisible,
         getUiMainSidebarVisible: (state) => state.isMainSidebarVisible,
+        getUiMainSidebarWidth: (state) => state.mainSidebarWidth,
         getUiShowExpandedVisualizationCanvas: (state) =>
             !state.isMainSidebarVisible && !state.isLayoutPanelVisible,
     },
@@ -88,6 +95,7 @@ export const {
     clearUi,
     setUiAccessoryPanelWidth,
     setUiAccessoryPanelVisible,
+    setUiMainSidebarWidth,
     setUiActiveDimensionModal,
     setUiDetailsPanelVisible,
     toggleUiLayoutPanelExpanded,
@@ -103,5 +111,6 @@ export const {
     getUiLayoutPanelExpanded,
     getUiLayoutPanelVisible,
     getUiMainSidebarVisible,
+    getUiMainSidebarWidth,
     getUiShowExpandedVisualizationCanvas,
 } = uiSlice.selectors

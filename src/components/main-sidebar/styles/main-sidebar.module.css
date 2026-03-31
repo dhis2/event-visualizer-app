@@ -1,19 +1,39 @@
 .container {
+    position: relative;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
+    flex-shrink: 0;
     margin: 4px 0 4px 4px;
     block-size: calc(100% - 8px);
-    box-sizing: border-box;
-    inline-size: 460px;
     border: 1px solid var(--colors-grey400);
     border-radius: 5px;
     padding-block-end: 4px;
     background-color: var(--colors-grey100);
+    overflow: hidden;
 }
 
 .container.hidden {
     display: none;
 }
+
+.resizeHandle {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: 4px;
+    z-index: 6;
+    cursor: col-resize;
+    touch-action: none;
+    background-color: transparent;
+    transition: background-color 0.15s ease;
+}
+
+.resizeHandle:hover,
+.resizeHandle.active {
+    background-color: var(--colors-blue500);
+}
+
 .searchRow {
     display: flex;
     flex-direction: row;
@@ -38,6 +58,7 @@
     gap: 8px;
     padding-block-start: 8px;
     padding-inline: 4px;
+    margin-inline-end: 2px;
 }
 
 .dimensionCardsContainer:hover {
