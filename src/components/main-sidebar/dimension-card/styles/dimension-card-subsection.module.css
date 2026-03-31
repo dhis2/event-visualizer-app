@@ -13,6 +13,10 @@
     cursor: pointer;
     inline-size: 100%;
 }
+.header.collapsed {
+    border-end-start-radius: 4px;
+    border-end-end-radius: 4px;
+}
 .header:hover {
     background-color: var(--colors-grey100);
 }
