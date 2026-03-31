@@ -43,9 +43,7 @@ describe('<DraggableDimensionItem />', () => {
             .and('not.be.visible')
         cy.getByDataTest('subtract-button-test-dimension').should('not.exist')
 
-        cy.getByDataTest('dimension-item-Test-Dimension')
-            .should('be.visible')
-            .realHover()
+        cy.getByDataTest('dimension-item').should('be.visible').realHover()
 
         cy.getByDataTest('add-button-test-dimension').should('be.visible')
         cy.getByDataTest('subtract-button-test-dimension').should('not.exist')
@@ -72,10 +70,9 @@ describe('<DraggableDimensionItem />', () => {
             </TestWrapper>
         )
 
-        cy.getByDataTest('dimension-item-Test-Dimension').should(
-            'have.css',
-            'cursor',
-            'not-allowed'
-        )
+        cy.getByDataTest('dimension-item')
+            .parent()
+            .parent()
+            .should('have.css', 'cursor', 'not-allowed')
     })
 })
