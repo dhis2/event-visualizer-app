@@ -262,6 +262,14 @@ export const visUiConfigSlice = createSlice({
             array.splice(index, 1)
         },
     },
+    extraReducers: (builder) => {
+        builder.addMatcher(
+            (action) => action.type === 'dimensionSelection/setDataSourceId',
+            (state) => {
+                state.customValue = undefined
+            }
+        )
+    },
     selectors: {
         getVisUiConfigVisualizationType: (state) => state.visualizationType,
         getVisUiConfigLayout: (state) => state.layout,

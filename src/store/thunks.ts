@@ -68,6 +68,7 @@ export const tLoadSavedVisualization = createAsyncThunk<
             )
 
             dispatch(setSavedVis(data))
+            dispatch(setDataSourceId(selectedDataSourceId))
             dispatch(
                 setVisUiConfig(
                     getVisualizationUiConfig(transformedVisualization)
@@ -75,7 +76,6 @@ export const tLoadSavedVisualization = createAsyncThunk<
             )
             dispatch(setCurrentVis(data))
             dispatch(setIsVisualizationLoading(false))
-            dispatch(setDataSourceId(selectedDataSourceId))
 
             if (updateStatistics) {
                 // update most viewed statistics
