@@ -151,7 +151,9 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                         !error &&
                         data.programDataElements.length === 0 && (
                             <NoticeBox
-                                title={i18n.t('No numeric data elements')}
+                                title={i18n.t(
+                                    'No numeric data items in this program'
+                                )}
                             >
                                 {i18n.t(
                                     'This program does not have any numeric data elements available.'
