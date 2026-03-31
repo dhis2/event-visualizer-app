@@ -1,43 +1,34 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounceCallback } from 'usehooks-ts'
-import { useAppDispatch } from '@hooks'
-import { setUiMainSidebarWidth } from '@store/ui-slice'
+import {
+    MAIN_SIDEBAR_DEBOUNCE_DELAY,
+    MAIN_SIDEBAR_DEFAULT_WIDTH,
+    MAIN_SIDEBAR_MAX_OFFSET,
+    MAIN_SIDEBAR_MIN_WIDTH,
+} from '@constants/panels'
+import { useAppDispatch, useAppSelector } from '@hooks'
+import {
+    getMainSidebarWidthFromLocalStorage,
+    setMainSidebarWidthToLocalStorage,
+} from '@modules/local-storage'
+import { getUiMainSidebarWidth, setUiMainSidebarWidth } from '@store/ui-slice'
 
-const DEFAULT_WIDTH = 400
-const MIN_WIDTH = 200
-const MAX_OFFSET = 580
-const DEBOUNCE_DELAY = 600
-const STORAGE_KEY = 'dhis2.event-visualizer.mainSidebarWidth'
-
-const computeMaxWidth = () => window.innerWidth - MAX_OFFSET
+const computeMaxWidth = () => window.innerWidth - MAIN_SIDEBAR_MAX_OFFSET
 
 const clampWidth = (width: number) =>
-    Math.max(MIN_WIDTH, Math.min(width, computeMaxWidth()))
-
-export const getInitialMainSidebarWidth = () => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    return clampWidth(stored !== null ? Number(stored) : DEFAULT_WIDTH)
-}
-
-const persistWidth = (width: number) => {
-    try {
-        localStorage.setItem(STORAGE_KEY, String(Math.round(width)))
-    } catch {
-        // ignore
-    }
-}
+    Math.max(MAIN_SIDEBAR_MIN_WIDTH, Math.min(width, computeMaxWidth()))
 
 export const useResizableSidebar = () => {
-    const [width, setWidth] = useState(getInitialMainSidebarWidth)
+    const [width, setWidth] = useState(getMainSidebarWidthFromLocalStorage)
     const [isDragging, setIsDragging] = useState(false)
     const dispatch = useAppDispatch()
     const containerRef = useRef<HTMLDivElement>(null)
     const startEdgePosRef = useRef(0)
 
     const syncToStore = useDebounceCallback((value: number) => {
-        persistWidth(value)
+        setMainSidebarWidthToLocalStorage(value)
         dispatch(setUiMainSidebarWidth(value))
-    }, DEBOUNCE_DELAY)
+    }, MAIN_SIDEBAR_DEBOUNCE_DELAY)
 
     // Re-clamp on window resize (handles monitor switches, window resizing)
     const onWindowResize = useDebounceCallback(() => {
@@ -68,12 +59,20 @@ export const useResizableSidebar = () => {
     }, [])
 
     const onDoubleClick = useCallback(() => {
-        setWidth(clampWidth(DEFAULT_WIDTH))
+        setWidth(clampWidth(MAIN_SIDEBAR_DEFAULT_WIDTH))
     }, [])
 
     useEffect(() => {
         syncToStore(width)
     }, [width, syncToStore])
+
+    // Respond to reset via View menu
+    const storeWidth = useAppSelector(getUiMainSidebarWidth)
+    useEffect(() => {
+        if (storeWidth === MAIN_SIDEBAR_DEFAULT_WIDTH) {
+            setWidth(MAIN_SIDEBAR_DEFAULT_WIDTH)
+        }
+    }, [storeWidth])
 
     useEffect(() => {
         window.addEventListener('resize', onWindowResize)

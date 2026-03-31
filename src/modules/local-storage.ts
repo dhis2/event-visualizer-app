@@ -2,6 +2,10 @@ import {
     ACCESSORY_PANEL_DEFAULT_WIDTH,
     ACCESSORY_PANEL_MIN_PX_AT_END,
     ACCESSORY_PANEL_MIN_WIDTH,
+    MAIN_SIDEBAR_DEFAULT_WIDTH,
+    MAIN_SIDEBAR_MAX_OFFSET,
+    MAIN_SIDEBAR_MIN_WIDTH,
+    MAIN_SIDEBAR_STORAGE_KEY,
     PRIMARY_PANEL_WIDTH,
 } from '@constants/panels'
 
@@ -37,3 +41,23 @@ export const getUserSidebarWidthFromLocalStorage = (): number => {
 
 export const setUserSidebarWidthToLocalStorage = (width: number): void =>
     window.localStorage.setItem(STORAGE_KEY, sanitizeWidth(width).toString())
+
+export const getMainSidebarWidthFromLocalStorage = (): number => {
+    const stored = window.localStorage.getItem(MAIN_SIDEBAR_STORAGE_KEY)
+    const width =
+        stored !== null ? parseInt(stored) : MAIN_SIDEBAR_DEFAULT_WIDTH
+    const maxWidth = window.innerWidth - MAIN_SIDEBAR_MAX_OFFSET
+
+    return Math.max(MAIN_SIDEBAR_MIN_WIDTH, Math.min(width, maxWidth))
+}
+
+export const setMainSidebarWidthToLocalStorage = (width: number): void => {
+    try {
+        window.localStorage.setItem(
+            MAIN_SIDEBAR_STORAGE_KEY,
+            String(Math.round(width))
+        )
+    } catch {
+        // ignore
+    }
+}

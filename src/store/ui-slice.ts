@@ -1,7 +1,10 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
-import { getInitialMainSidebarWidth } from '@components/main-sidebar/use-resizable-sidebar'
-import { getUserSidebarWidthFromLocalStorage } from '@modules/local-storage'
+import { MAIN_SIDEBAR_DEFAULT_WIDTH } from '@constants/panels'
+import {
+    getMainSidebarWidthFromLocalStorage,
+    getUserSidebarWidthFromLocalStorage,
+} from '@modules/local-storage'
 
 export interface UiState {
     accessoryPanelWidth: number
@@ -22,7 +25,7 @@ export const initialState: UiState = {
     isLayoutPanelExpanded: true,
     isLayoutPanelVisible: true,
     isMainSidebarVisible: true,
-    mainSidebarWidth: getInitialMainSidebarWidth(),
+    mainSidebarWidth: getMainSidebarWidthFromLocalStorage(),
 }
 
 export const uiSlice = createSlice({
@@ -35,6 +38,9 @@ export const uiSlice = createSlice({
         },
         setUiMainSidebarWidth: (state, action: PayloadAction<number>) => {
             state.mainSidebarWidth = action.payload
+        },
+        resetUiMainSidebarWidth: (state) => {
+            state.mainSidebarWidth = MAIN_SIDEBAR_DEFAULT_WIDTH
         },
 
         setUiAccessoryPanelVisible: (state, action: PayloadAction<boolean>) => {
@@ -96,6 +102,7 @@ export const {
     setUiAccessoryPanelWidth,
     setUiAccessoryPanelVisible,
     setUiMainSidebarWidth,
+    resetUiMainSidebarWidth,
     setUiActiveDimensionModal,
     setUiDetailsPanelVisible,
     toggleUiLayoutPanelExpanded,

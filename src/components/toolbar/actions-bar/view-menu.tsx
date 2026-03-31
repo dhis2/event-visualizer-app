@@ -2,7 +2,10 @@ import i18n from '@dhis2/d2-i18n'
 import type { FC } from 'react'
 import { useCallback } from 'react'
 import classes from './styles/actions-bar.module.css'
-import { ACCESSORY_PANEL_DEFAULT_WIDTH } from '@constants/panels'
+import {
+    ACCESSORY_PANEL_DEFAULT_WIDTH,
+    MAIN_SIDEBAR_DEFAULT_WIDTH,
+} from '@constants/panels'
 import {
     HoverMenuDropdown,
     HoverMenuList,
@@ -13,7 +16,9 @@ import { setUserSidebarWidthToLocalStorage } from '@modules/local-storage'
 import { getCurrentVisId } from '@store/current-vis-slice'
 import {
     getUiAccessoryPanelWidth,
+    getUiMainSidebarWidth,
     setUiAccessoryPanelWidth,
+    resetUiMainSidebarWidth,
     getUiLayoutPanelVisible,
     getUiMainSidebarVisible,
     getUiDetailsPanelVisible,
@@ -29,6 +34,7 @@ export const ViewMenu: FC = () => {
     const isLayoutPanelVisible = useAppSelector(getUiLayoutPanelVisible)
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
     const userSettingWidth = useAppSelector(getUiAccessoryPanelWidth)
+    const mainSidebarWidth = useAppSelector(getUiMainSidebarWidth)
     const id = useAppSelector(getCurrentVisId)
 
     const toggleLayoutPanelVisible = useCallback(() => {
@@ -42,6 +48,10 @@ export const ViewMenu: FC = () => {
     const resetAccessorySidebarWidth = useCallback(() => {
         setUserSidebarWidthToLocalStorage(ACCESSORY_PANEL_DEFAULT_WIDTH)
         dispatch(setUiAccessoryPanelWidth(ACCESSORY_PANEL_DEFAULT_WIDTH))
+    }, [dispatch])
+
+    const resetMainSidebarWidth = useCallback(() => {
+        dispatch(resetUiMainSidebarWidth())
     }, [dispatch])
 
     const toggleDetailsPanelVisible = useCallback(() => {
@@ -74,6 +84,11 @@ export const ViewMenu: FC = () => {
                 />
                 <HoverMenuListItem
                     label={i18n.t('Reset sidebar width')}
+                    onClick={resetMainSidebarWidth}
+                    disabled={mainSidebarWidth === MAIN_SIDEBAR_DEFAULT_WIDTH}
+                />
+                <HoverMenuListItem
+                    label={i18n.t('Reset details panel width')}
                     onClick={resetAccessorySidebarWidth}
                     disabled={
                         userSettingWidth === ACCESSORY_PANEL_DEFAULT_WIDTH
