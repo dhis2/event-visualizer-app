@@ -82,6 +82,7 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
 
     const {
         attributes,
+        isDragging,
         listeners,
         isSorting,
         setNodeRef,
@@ -116,6 +117,7 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
             aria-roledescription="draggable item"
             selected={selected}
             disabled={disabled}
+            isDragging={isDragging}
         >
             <div className={styles.content}>
                 <DimensionItem

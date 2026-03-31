@@ -82,6 +82,8 @@ export const useOnDragEnd = (): OnDragEndFn => {
                         insertAfter,
                     })
                 )
+            } else {
+                throw new Error('Dropped an unexpected item')
             }
         },
         [dispatch]
