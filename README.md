@@ -65,6 +65,29 @@ Before making your first contribution, please:
 3. **Start the development server** with `yarn start` to familiarize yourself with the app
 4. **Read through the architectural guidelines** below to understand the codebase structure
 
+### Claude Code Setup (optional)
+
+If you use [Claude Code](https://claude.ai/code) for AI-assisted development, the project includes shared configuration in `.claude/settings.json` (PostToolUse hooks for auto-formatting and linting). These work automatically.
+
+Per-developer setup (one-time):
+
+```bash
+# 1. TypeScript LSP — provides automatic type-checking diagnostics after edits
+npm install -g typescript-language-server
+# Do NOT install typescript globally — the language server uses the project's node_modules/typescript
+
+# 2. GitHub CLI — used for all GitHub operations (issues, PRs, actions)
+# Install: https://cli.github.com/
+gh auth login
+
+# 3. Chrome extension — enables browser automation for testing the running app
+# Install from: https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn
+
+# 4. Inside Claude Code, install and activate plugins
+/plugin install typescript-lsp@claude-plugins-official
+/reload-plugins
+```
+
 ### Development Workflow
 
 1. **Create a feature branch** from `main`

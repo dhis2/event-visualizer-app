@@ -274,6 +274,7 @@ describe('useMyUtilityHook', () => {
 -   **Internationalization**: Use DHIS2 i18n utilities for all user-facing strings
 -   **Testing environments**: Test against DHIS2 instances (development and production)
 -   **Authentication**: Handle DHIS2 authentication and authorization properly
+-   **Browser testing with Chrome DevTools**: When using the Chrome DevTools plugin to test the running app, read `cypress.env.json` (gitignored) for the DHIS2 server URL and login credentials. The dev server on `localhost:3000` shows a login form requiring Server, Username, and Password
 -   **Deployment**: App can be deployed as both a standalone app and a plugin
 
 ## Important Configuration Files
@@ -288,29 +289,23 @@ describe('useMyUtilityHook', () => {
 -   `.stylelintrc.js` - Stylelint CSS/SCSS rules
 -   `d2.config.js` - DHIS2 app configuration
 
-## MCP Servers Enabled for This Project
+## Plugins and MCP Servers
 
-The following Model Context Protocol servers are enabled for this project (see `.claude/settings.json`):
+The following are enabled for this project via `.claude/settings.json`:
 
--   **GitHub** (`github_*`): Interact with repositories, issues, PRs, search code
-    -   Create/update issues and PRs
-    -   Search repositories, files, and code
-    -   Manage branches and commits
-    -   **Usage**: Use proactively for any repo/issue/PR operations
--   **Grep by Vercel** (`grep_*`): Fast code search across GitHub repositories
-    -   Search code patterns across multiple repos
-    -   Find usage examples
-    -   **Usage**: Trigger-based only — add `use the grep tool` to your prompts when you want cross-repo search
--   **Context7** (`context7_*`): Search technical documentation
-    -   Query documentation for libraries and frameworks
-    -   Find API references and examples
-    -   **Usage**: Use proactively when answering questions about specific library/framework APIs; otherwise trigger with `use context7`
+### Plugins (marketplace)
 
-**Note for ClaudeCode users**: No neovim MCP server is needed — editor integration is handled natively via the claudecode.nvim WebSocket protocol.
+-   **TypeScript LSP** (`typescript-lsp`): Automatic TypeScript diagnostics after file edits with full project context. See [Claude Code Setup in README](#) for per-developer installation.
+-   **Chrome DevTools** (`chrome-devtools-mcp`): Browser automation, screenshots, network inspection, console reading. When testing the running app, read `cypress.env.json` for DHIS2 server URL and login credentials.
+-   **Context7** (`context7`): Library and framework documentation search. **Usage**: Use proactively when answering questions about specific library/framework APIs; otherwise trigger with `use context7`.
 
-**Note**: These servers override the global configuration which disables them by default. Other DHIS2 projects may have different MCP server configurations.
+### MCP Servers (manual)
 
-**Linting**: For ESLint functionality, use the bash tool with `npx eslint <file-path>` instead of an MCP server.
+-   **Grep by Vercel** (`grep_*`): Fast code search across GitHub repositories. **Usage**: Trigger-based only — add `use the grep tool` to your prompts when you want cross-repo search.
+
+**GitHub**: Use the `gh` CLI via Bash for all GitHub operations (issues, PRs, code search, actions). Requires the [GitHub CLI](https://cli.github.com/) to be installed and authenticated (`gh auth login`).
+
+**Linting**: ESLint, Stylelint, and Prettier are run automatically via PostToolUse hooks. For manual checks, use `npx eslint <file-path>`.
 
 ## Git Workflow
 
@@ -318,11 +313,7 @@ The following Model Context Protocol servers are enabled for this project (see `
 
 ### Git Hooks
 
-Pre-commit hooks are configured via Husky to:
-
--   Run linters (ESLint, Prettier, Stylelint)
--   Enforce commit message conventions (conventional commits)
--   Run type checking
+The project has `lint-staged` configured in `package.json` for pre-commit checks (ESLint, Prettier, Stylelint). Husky is a dependency but is not currently installed — run `npx husky install` to enable git pre-commit hooks.
 
 ### Commit Guidelines
 
@@ -429,9 +420,9 @@ npx vitest run <file-path>
 
 **TypeScript Checking**
 
-**Primary: Use LSP Diagnostics** - The built-in LSP integration shows TypeScript errors when files are read or edited. This is the fastest method with full project context (path aliases, type checking).
+**Primary: LSP Plugin** — The `typescript-lsp` plugin provides automatic TypeScript diagnostics after every file edit, with full project context (path aliases, multiple tsconfig files). This is the fastest and most accurate method. See [Claude Code Setup](#claude-code-setup) for installation.
 
-**Fallback: Project-wide CLI** - File-specific TypeScript checking is **not possible** due to project references and path aliases. Use:
+**Fallback: Project-wide CLI** — If the LSP plugin is not installed, use:
 
 ```bash
 ./scripts/check-typescript.sh
@@ -440,59 +431,20 @@ npx tsc --project tsconfig.json --noEmit --skipLibCheck
 npx tsc --project cypress/tsconfig.json --noEmit --skipLibCheck
 ```
 
-**Rationale**: Project has path aliases and references requiring full project context.
+File-specific `tsc` checking is **not possible** due to path aliases and project references.
 
-**ESLint Checking**
+**ESLint, Stylelint, and Prettier**
 
-**Primary: File-specific CLI** - Use CLI commands for reliable, complete linting:
+These are handled **automatically by PostToolUse hooks** (configured in `.claude/settings.json`). After every Edit/Write, the hook runs Prettier auto-fix and the relevant linter for the file type. You do not need to run these manually during development.
 
-```bash
-npx eslint <file-path>                    # Check only
-npx eslint <file-path> --fix              # Fix automatically
-```
-
-**Secondary: LSP Diagnostics** - NeoVim LSP may show ESLint errors, but OpenCode's LSP integration may filter them. CLI commands are more reliable.
-
-**Rationale**: CLI commands are more reliable and complete than LSP for ESLint.
-
-**Stylelint Checking**
-
-**Primary: File-specific CLI** - Always use CLI commands:
+If you need to run them manually (e.g., for debugging):
 
 ```bash
-npx stylelint <file-path> --max-warnings=0         # Check only
-npx stylelint <file-path> --fix --max-warnings=0   # Fix automatically
+npx eslint <file-path>                             # ESLint check
+npx eslint <file-path> --fix                       # ESLint auto-fix
+npx stylelint <file-path> --max-warnings=0         # Stylelint check
+npx prettier --write <file-path>                   # Prettier auto-fix
 ```
-
-**Rationale**: CLI commands ensure consistent and complete Stylelint checking.
-
-**Prettier Formatting**
-
-**Primary: File-specific CLI**:
-
-```bash
-npx prettier --check <file-path>          # Check formatting
-npx prettier --write <file-path>          # Format automatically
-```
-
-**Rationale**: CLI commands ensure consistent formatting.
-
-**File Type Specific Instructions**:
-
-**TypeScript/TSX files** (`.ts`, `.tsx`):
-
--   **TypeScript**: LSP diagnostics (automatic when reading/editing)
--   **ESLint**: Use file-specific CLI commands
--   **Prettier**: Use file-specific CLI commands
-
-**CSS/SCSS files** (`.css`):
-
--   **Stylelint**: Use file-specific CLI commands
--   **Prettier**: Use file-specific CLI commands
-
-**Other formats** (`.json`, `.md`, `.yml`, `.yaml`):
-
--   **Prettier**: Use file-specific CLI commands
 
 ### After Completing Work (Project-Wide Commands)
 
@@ -528,25 +480,22 @@ The `yarn lint` command checks both configurations. Individual file TypeScript c
 
 **While working on a solution**:
 
--   Modified 1-3 files → Use file-specific `npx` commands for each file
--   Need to fix formatting → Use `npx prettier --write <file-path>` or `npx eslint <file-path> --fix`
--   Modified many files → Use `yarn lint` and `yarn test`
+-   Formatting and linting are handled automatically by PostToolUse hooks — no manual action needed
+-   TypeScript errors are reported automatically by the LSP plugin (if installed)
+-   If a hook reports ESLint/Stylelint errors in its output, fix them before moving on
 
 **When finishing a task**:
 
 -   Always run `yarn test` (ensures all tests pass)
--   Always run `yarn lint` (ensures code quality across project)
+-   Always run `yarn lint` (ensures code quality across project — catches anything hooks may have missed)
 -   If lint fails with formatting issues → Run `yarn format` then `yarn lint` again
 
 ### Common Pitfalls to Avoid
 
--   ❌ **Don't** run `yarn test` and `yarn lint` after every small change (wastes time)
--   ❌ **Don't** use `npx eslint .` when you only changed one file
--   ❌ **Don't** forget to run full `yarn test` and `yarn lint` when finishing
--   ✅ **Do** prefer LSP diagnostics for TypeScript checking (fastest with full context)
--   ✅ **Do** use file-specific CLI commands for ESLint and Stylelint (more reliable than LSP)
+-   ❌ **Don't** skip the final `yarn test` and `yarn lint` — hooks catch per-file issues but not cross-file problems
+-   ❌ **Don't** ignore hook output — if a PostToolUse hook reports errors, fix them immediately
 -   ✅ **Do** run project-wide commands as final validation
--   ✅ **Do** use `npx prettier --write` to quickly fix formatting issues
+-   ✅ **Do** trust the LSP plugin for TypeScript errors (it handles multiple tsconfig files correctly)
 
 ---
 

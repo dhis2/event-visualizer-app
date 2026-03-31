@@ -35,8 +35,8 @@ The current git branch is used to detect the relevant PR automatically. If you'r
 
 3. **Find the matching PR:**
 
-    - On a feature branch: use `mcp__github__list_pull_requests` to find open PRs, match `head.ref` to the current branch, and extract the PR number.
-    - On `main`/`master`: list all open PRs and ask the user which one to work on:
+    - On a feature branch: use `gh pr view --json number` to get the PR for the current branch.
+    - On `main`/`master`: use `gh pr list` to list all open PRs and ask the user which one to work on:
 
         ```
         Found 3 open PRs:
@@ -153,7 +153,7 @@ The process is complete when all of the following are true:
 ```
 User: /sonarqube-fix
 
-1. Branch is `feat/update-buttons` → mcp__github__list_pull_requests finds PR #153
+1. Branch is `feat/update-buttons` → `gh pr view --json number` finds PR #153
 2. Fetch issues: 2 MAJOR CODE_SMELLs, 1 MINOR BUG
 3. Create todos for all 3 issues
 4. Fix MINOR BUG first (it's a BUG), then the two CODE_SMELLs
@@ -201,11 +201,10 @@ User: /sonarqube-fix
 -   SonarCloud only updates after the publish step — results won't change without running `yarn sonar`
 -   Continue working through remaining issues from the branch results
 
-### MCP connection issues
+### GitHub CLI issues
 
--   Verify the github MCP server is connected (check `.claude/settings.json`)
--   Confirm `GITHUB_API_KEY` environment variable is set and valid
--   Test by calling `mcp__github__list_pull_requests` directly without the skill
+-   Verify `gh` is installed and authenticated (`gh auth status`)
+-   Test by running `gh pr list` directly
 
 ## Resources
 
