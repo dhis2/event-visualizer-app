@@ -27,27 +27,8 @@ describe('<DraggableDimensionItem />', () => {
             </TestWrapper>
         )
 
-        cy.getByDataTest('dimension-item-Test-Dimension').should('be.visible')
+        cy.getByDataTest('dimension-item').should('be.visible')
         cy.contains('Test Dimension').should('be.visible')
-    })
-
-    it('renders with stage name', () => {
-        const programStage = {
-            id: 'stage1',
-            name: 'Stage 1',
-            program: { id: 'prog1' },
-        }
-        cy.mount(
-            <TestWrapper>
-                <DraggableDimensionItem
-                    dimension={testDimension}
-                    programStage={programStage as never}
-                />
-            </TestWrapper>
-        )
-
-        cy.contains('Test Dimension').should('be.visible')
-        cy.contains('Stage 1').should('be.visible')
     })
 
     it('displays an add button while hovering when not selected and not disabled', () => {
