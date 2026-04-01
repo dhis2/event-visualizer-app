@@ -143,6 +143,7 @@ describe('DropInsertMarker', () => {
                     },
                 },
             },
+            activatorEvent: { clientX: 100 },
             over: null,
             delta: { x: 100, y: 0 },
             collisions: null,
@@ -156,9 +157,8 @@ describe('DropInsertMarker', () => {
         })
     })
 
-    it('should render marker at end when dragged from different axis (after center)', () => {
+    it('should set marker at end after drag move past chip center', async () => {
         const chipRect = createMockRect({ left: 100, width: 100 }) // center at 150
-        const draggedRect = createMockRect({ left: 150, width: 100 }) // center at 200
 
         const setInsertAfter = vi.fn()
         const mockSortable: ReturnType<typeof useSortable> = {
@@ -167,7 +167,7 @@ describe('DropInsertMarker', () => {
                 data: { current: { axis: 'filters', dimensionId: 'test' } },
                 rect: {
                     current: {
-                        translated: draggedRect,
+                        translated: null,
                         initial: null,
                     },
                 },
@@ -185,15 +185,30 @@ describe('DropInsertMarker', () => {
             />
         )
 
-        const marker = getByTestId('drop-insert-marker')
-        expect(marker).toBeInTheDocument()
-        expect(marker).toHaveClass(classes.atEnd)
-        expect(setInsertAfter).toHaveBeenCalledWith(true)
+        // Initially marker is at start
+        expect(getByTestId('drop-insert-marker')).not.toHaveClass(classes.atEnd)
+
+        // Simulate drag move past chip center (pointerX = 50 + 150 = 200 > 150)
+        mockOnDragMove!({
+            active: {
+                id: 'dragged-id',
+                data: { current: { axis: 'filters', dimensionId: 'test' } },
+                rect: { current: { translated: null, initial: null } },
+            },
+            activatorEvent: { clientX: 50 },
+            over: null,
+            delta: { x: 150, y: 0 },
+            collisions: null,
+        } as any)
+
+        await waitFor(() => {
+            expect(getByTestId('drop-insert-marker')).toHaveClass(classes.atEnd)
+            expect(setInsertAfter).toHaveBeenCalledWith(true)
+        })
     })
 
-    it('should not render when hovering adjacent chip before active (no-op)', () => {
-        const chipRect = createMockRect({ left: 100, width: 100 })
-        const draggedRect = createMockRect({ left: 150, width: 100 }) // AFTER chip center
+    it('should hide marker when drag move reveals adjacent no-op (before active)', async () => {
+        const chipRect = createMockRect({ left: 100, width: 100 }) // center at 150
 
         const mockSortable: ReturnType<typeof useSortable> = {
             active: {
@@ -201,7 +216,7 @@ describe('DropInsertMarker', () => {
                 data: { current: { axis: 'columns', dimensionId: 'test' } },
                 rect: {
                     current: {
-                        translated: draggedRect,
+                        translated: null,
                         initial: null,
                     },
                 },
@@ -219,8 +234,23 @@ describe('DropInsertMarker', () => {
             />
         )
 
-        // Dropping AFTER index 0 would put it at index 1 (where it already is) = no-op
-        expect(queryByTestId('drop-insert-marker')).not.toBeInTheDocument()
+        // Simulate drag move past chip center (pointerX = 100 + 100 = 200 > 150)
+        // insertAfter=true → adjacentIndex = 0+1 = 1 = activeIndex → no-op
+        mockOnDragMove!({
+            active: {
+                id: 'dragged-id',
+                data: { current: { axis: 'columns', dimensionId: 'test' } },
+                rect: { current: { translated: null, initial: null } },
+            },
+            activatorEvent: { clientX: 100 },
+            over: null,
+            delta: { x: 100, y: 0 },
+            collisions: null,
+        } as any)
+
+        await waitFor(() => {
+            expect(queryByTestId('drop-insert-marker')).not.toBeInTheDocument()
+        })
     })
 
     it('should not render when hovering adjacent chip after active (no-op)', () => {

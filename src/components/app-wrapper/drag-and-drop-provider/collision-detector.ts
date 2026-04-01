@@ -138,23 +138,26 @@ export const computeLineEndMatch = ({
 
 export const collisionDetector: CollisionDetection = ({
     active,
+    pointerCoordinates,
     droppableContainers,
 }) => {
     const collisions: Collision[] = []
-    const activeRect = active.rect.current.translated
 
-    if (!activeRect) {
+    if (!pointerCoordinates) {
         return collisions
     }
 
-    // Use the dragged chip's dimensions for collision detection
+    // Build a small rect centered on the pointer so collision detection
+    // stays aligned with the cursor-snapped DragOverlay.
+    const size = 10
+    const half = size / 2
     const draggedItemRect: ClientRect = {
-        width: activeRect.width,
-        height: activeRect.height,
-        top: activeRect.top,
-        bottom: activeRect.bottom,
-        left: activeRect.left,
-        right: activeRect.right,
+        width: size,
+        height: size,
+        top: pointerCoordinates.y - half,
+        bottom: pointerCoordinates.y + half,
+        left: pointerCoordinates.x - half,
+        right: pointerCoordinates.x + half,
     }
     let hoveredAxisDroppableContainer: DroppableContainer | null = null
     let hoveredItemDroppableContainer: DroppableContainer | null = null
