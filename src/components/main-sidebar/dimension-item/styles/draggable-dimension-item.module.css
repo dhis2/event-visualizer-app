@@ -10,6 +10,6 @@
 }
 
 .content:hover .iconButtonWrapper,
-.content:focus-within .iconButtonWrapper {
+.content:has(:focus-visible) .iconButtonWrapper {
     visibility: visible;
 }
