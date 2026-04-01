@@ -124,7 +124,7 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
                     name={dimension.name}
                     dimensionType={dimension.dimensionType}
                     selected={selected}
-                    disabled={disabled}
+                    disabled={disabled || selected}
                     onClick={handleOpen}
                 />
                 {!disabled && (
