@@ -8,7 +8,12 @@ import styles from './styles/draggable-dimension-item.module.css'
 import type { SidebarSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import { useIsDimensionInLayout } from '@components/main-sidebar/use-is-dimension-in-layout'
 import { IconButton } from '@components/shared/icon-button'
-import { useAddMetadata, useAppDispatch } from '@hooks'
+import { useAddMetadata, useAppDispatch, useAppSelector } from '@hooks'
+import {
+    clearMultiSelection,
+    isDimensionMultiSelected,
+    toggleItemInMultiSelection,
+} from '@store/dimensions-selection-slice'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
     addVisUiConfigLayoutDimension,
@@ -34,6 +39,9 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
     const dispatch = useAppDispatch()
     const addMetadata = useAddMetadata()
     const selected = useIsDimensionInLayout(dimension.id)
+    const multiSelected = useAppSelector((state) =>
+        isDimensionMultiSelected(state, dimension.id)
+    )
 
     const populateMetadata = useCallback(() => {
         if (program) {
@@ -48,12 +56,23 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
         addMetadata(dimension)
     }, [addMetadata, dimension, program, programStage])
 
-    const handleOpen = useCallback(() => {
-        populateMetadata()
-        dispatch(setUiActiveDimensionModal(dimension.id))
-    }, [dispatch, dimension.id, populateMetadata])
+    const handleClick = useCallback(
+        (event: React.MouseEvent) => {
+            event.stopPropagation()
+            if (event.shiftKey && !selected) {
+                populateMetadata()
+                dispatch(toggleItemInMultiSelection(dimension.id))
+            } else {
+                dispatch(clearMultiSelection())
+                populateMetadata()
+                dispatch(setUiActiveDimensionModal(dimension.id))
+            }
+        },
+        [dispatch, dimension.id, populateMetadata, selected]
+    )
 
     const handleAddRemove = useCallback(() => {
+        dispatch(clearMultiSelection())
         if (selected) {
             dispatch(
                 removeVisUiConfigLayoutDimension({ dimensionId: dimension.id })
@@ -116,6 +135,7 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
             {...listeners}
             aria-roledescription="draggable item"
             selected={selected}
+            multiSelected={multiSelected}
             disabled={disabled}
             isDragging={isDragging}
         >
@@ -125,7 +145,7 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
                     dimensionType={dimension.dimensionType}
                     selected={selected}
                     disabled={disabled || selected}
-                    onClick={handleOpen}
+                    onClick={handleClick}
                 />
                 {!disabled && (
                     <div className={styles.iconButtonWrapper}>

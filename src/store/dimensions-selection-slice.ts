@@ -196,6 +196,16 @@ export const dimensionSelectionSlice = createSlice({
                     (id) => id !== action.payload
                 )
         },
+        toggleItemInMultiSelection: (state, action: PayloadAction<string>) => {
+            const index = state.multiSelectedDimensionIds.indexOf(
+                action.payload
+            )
+            if (index === -1) {
+                state.multiSelectedDimensionIds.push(action.payload)
+            } else {
+                state.multiSelectedDimensionIds.splice(index, 1)
+            }
+        },
     },
     selectors: {
         getDataSourceId: (state) => state.dataSourceId,
@@ -251,6 +261,8 @@ export const dimensionSelectionSlice = createSlice({
                 : false,
         getDimensionListError: (state, key?: DimensionListKey) =>
             key ? state.dimensionListLoadingStates[key]?.error : undefined,
+        getMultiSelectedDimensionIds: (state) =>
+            state.multiSelectedDimensionIds,
         isMultiSelecting: (state) => state.multiSelectedDimensionIds.length > 1,
         isDimensionMultiSelected: (state, dimensionId: string) =>
             state.multiSelectedDimensionIds.includes(dimensionId),
@@ -278,6 +290,7 @@ export const {
     clearMultiSelection,
     addItemToMultiSelection,
     removeItemFromMultiSelection,
+    toggleItemInMultiSelection,
 } = dimensionSelectionSlice.actions
 export const {
     getDataSourceId,
@@ -290,6 +303,7 @@ export const {
     isDimensionCardCollapsed,
     isDimensionListLoading,
     getDimensionListError,
+    getMultiSelectedDimensionIds,
     isMultiSelecting,
     isDimensionMultiSelected,
 } = dimensionSelectionSlice.selectors

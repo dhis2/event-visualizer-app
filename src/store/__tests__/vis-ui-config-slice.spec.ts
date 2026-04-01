@@ -9,6 +9,7 @@ import {
 
 const {
     addVisUiConfigLayoutDimension,
+    addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
 } = visUiConfigSlice.actions
@@ -82,6 +83,81 @@ describe('addVisUiConfigLayoutDimension', () => {
         })
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a1', 'a2', 'a3', 'a4'])
+    })
+})
+
+describe('addVisUiConfigLayoutDimensions', () => {
+    it('adds multiple items to an empty axis', () => {
+        const state = createStateWithLayout({
+            columns: [],
+            filters: [],
+            rows: [],
+        })
+        const action = addVisUiConfigLayoutDimensions({
+            axis: 'columns',
+            dimensionIds: ['a1', 'a2', 'a3'],
+        })
+        const result = visUiConfigSlice.reducer(state, action)
+        expect(result.layout.columns).toEqual(['a1', 'a2', 'a3'])
+    })
+
+    it('appends to a populated axis when insertIndex is omitted', () => {
+        const state = createStateWithLayout({
+            columns: ['a1'],
+            filters: [],
+            rows: [],
+        })
+        const action = addVisUiConfigLayoutDimensions({
+            axis: 'columns',
+            dimensionIds: ['a2', 'a3'],
+        })
+        const result = visUiConfigSlice.reducer(state, action)
+        expect(result.layout.columns).toEqual(['a1', 'a2', 'a3'])
+    })
+
+    it('inserts before the provided index', () => {
+        const state = createStateWithLayout({
+            columns: ['a1', 'a4'],
+            filters: [],
+            rows: [],
+        })
+        const action = addVisUiConfigLayoutDimensions({
+            axis: 'columns',
+            dimensionIds: ['a2', 'a3'],
+            insertIndex: 1,
+        })
+        const result = visUiConfigSlice.reducer(state, action)
+        expect(result.layout.columns).toEqual(['a1', 'a2', 'a3', 'a4'])
+    })
+
+    it('inserts after the provided index when insertAfter is true', () => {
+        const state = createStateWithLayout({
+            columns: ['a1', 'a2'],
+            filters: [],
+            rows: [],
+        })
+        const action = addVisUiConfigLayoutDimensions({
+            axis: 'columns',
+            dimensionIds: ['a3', 'a4'],
+            insertIndex: 1,
+            insertAfter: true,
+        })
+        const result = visUiConfigSlice.reducer(state, action)
+        expect(result.layout.columns).toEqual(['a1', 'a2', 'a3', 'a4'])
+    })
+
+    it('handles a single-item array the same as the singular action', () => {
+        const state = createStateWithLayout({
+            columns: ['a1'],
+            filters: [],
+            rows: [],
+        })
+        const action = addVisUiConfigLayoutDimensions({
+            axis: 'columns',
+            dimensionIds: ['a2'],
+        })
+        const result = visUiConfigSlice.reducer(state, action)
+        expect(result.layout.columns).toEqual(['a1', 'a2'])
     })
 })
 

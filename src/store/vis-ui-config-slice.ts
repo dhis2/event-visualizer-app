@@ -192,6 +192,32 @@ export const visUiConfigSlice = createSlice({
                 dimensionId
             )
         },
+        addVisUiConfigLayoutDimensions: (
+            state,
+            action: PayloadAction<{
+                axis: Axis
+                dimensionIds: string[]
+                insertIndex?: number
+                insertAfter?: boolean
+            }>
+        ) => {
+            const {
+                axis,
+                dimensionIds,
+                insertIndex,
+                insertAfter = false,
+            } = action.payload
+            const targetArray = state.layout[axis]
+            targetArray.splice(
+                resolveSortInsertIndex({
+                    insertIndex,
+                    insertAfter,
+                    targetLength: targetArray.length,
+                }),
+                0,
+                ...dimensionIds
+            )
+        },
         moveVisUiConfigLayoutDimension: (
             state,
             action: PayloadAction<{
@@ -311,6 +337,7 @@ export const {
     setVisUiConfigConditionsByDimension,
     setVisUiConfigRepetitionsByDimension,
     addVisUiConfigLayoutDimension,
+    addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
     removeVisUiConfigLayoutDimension,

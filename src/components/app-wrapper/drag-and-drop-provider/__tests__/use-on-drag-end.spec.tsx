@@ -2,20 +2,29 @@ import { renderHook } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { LayoutDragEndEvent } from '../types'
 import { useOnDragEnd } from '../use-on-drag-end'
-import { useAppDispatch, useAddMetadata } from '@hooks'
+import { useAppDispatch, useAppSelector, useAddMetadata } from '@hooks'
+import { clearMultiSelection } from '@store/dimensions-selection-slice'
 import {
     addVisUiConfigLayoutDimension,
+    addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice'
 
 // Mock the hooks
 vi.mock('@hooks', () => ({
     useAppDispatch: vi.fn(),
+    useAppSelector: vi.fn(),
     useAddMetadata: vi.fn(),
+}))
+
+vi.mock('@store/dimensions-selection-slice', () => ({
+    clearMultiSelection: vi.fn(),
+    getMultiSelectedDimensionIds: vi.fn(),
 }))
 
 vi.mock('@store/vis-ui-config-slice', () => ({
     addVisUiConfigLayoutDimension: vi.fn(),
+    addVisUiConfigLayoutDimensions: vi.fn(),
     moveVisUiConfigLayoutDimension: vi.fn(),
 }))
 
@@ -25,6 +34,7 @@ describe('useOnDragEnd', () => {
 
     beforeEach(() => {
         vi.mocked(useAppDispatch).mockReturnValue(mockDispatch)
+        vi.mocked(useAppSelector).mockReturnValue([])
         vi.mocked(useAddMetadata).mockReturnValue(mockAddMetadata)
         mockDispatch.mockClear()
         mockAddMetadata.mockClear()
@@ -150,6 +160,119 @@ describe('useOnDragEnd', () => {
                 insertAfter: true,
             })
         )
+    })
+
+    it('should dispatch addVisUiConfigLayoutDimensions for multi-select drag', () => {
+        vi.mocked(useAppSelector).mockReturnValue(['dim1', 'dim2', 'dim3'])
+        const { result } = renderHook(() => useOnDragEnd())
+        const onDragEnd = result.current
+
+        const populateMetadata = vi.fn()
+        const event = {
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 'dim2',
+                        overlayItemProps: {},
+                        populateMetadata,
+                    },
+                },
+            },
+            over: {
+                data: {
+                    current: {
+                        axis: 'rows',
+                        sortable: { index: 1 },
+                        insertAfter: false,
+                    },
+                },
+            },
+        } as unknown as LayoutDragEndEvent
+
+        onDragEnd(event)
+
+        expect(populateMetadata).not.toHaveBeenCalled()
+        expect(mockDispatch).toHaveBeenCalledWith(
+            addVisUiConfigLayoutDimensions({
+                axis: 'rows',
+                dimensionIds: ['dim1', 'dim2', 'dim3'],
+                insertIndex: 1,
+                insertAfter: false,
+            })
+        )
+        expect(mockDispatch).toHaveBeenCalledWith(clearMultiSelection())
+    })
+
+    it('should use single add when dragged item is not in multi-selection', () => {
+        vi.mocked(useAppSelector).mockReturnValue(['dim1', 'dim2'])
+        const { result } = renderHook(() => useOnDragEnd())
+        const onDragEnd = result.current
+
+        const populateMetadata = vi.fn()
+        const event = {
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 'dim3',
+                        overlayItemProps: {},
+                        populateMetadata,
+                    },
+                },
+            },
+            over: {
+                data: {
+                    current: {
+                        axis: 'columns',
+                        sortable: { index: 0 },
+                        insertAfter: false,
+                    },
+                },
+            },
+        } as unknown as LayoutDragEndEvent
+
+        onDragEnd(event)
+
+        expect(populateMetadata).toHaveBeenCalled()
+        expect(mockDispatch).toHaveBeenCalledWith(
+            addVisUiConfigLayoutDimension({
+                axis: 'columns',
+                dimensionId: 'dim3',
+                insertIndex: 0,
+                insertAfter: false,
+            })
+        )
+        expect(mockDispatch).toHaveBeenCalledWith(clearMultiSelection())
+    })
+
+    it('should clear multi-selection after any sidebar drop', () => {
+        const { result } = renderHook(() => useOnDragEnd())
+        const onDragEnd = result.current
+
+        const populateMetadata = vi.fn()
+        const event = {
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 'test',
+                        overlayItemProps: {},
+                        populateMetadata,
+                    },
+                },
+            },
+            over: {
+                data: {
+                    current: {
+                        axis: 'columns',
+                        sortable: { index: 0 },
+                        insertAfter: false,
+                    },
+                },
+            },
+        } as unknown as LayoutDragEndEvent
+
+        onDragEnd(event)
+
+        expect(mockDispatch).toHaveBeenCalledWith(clearMultiSelection())
     })
 
     it('should forward sortable index for insert-before operations without adjustment', () => {

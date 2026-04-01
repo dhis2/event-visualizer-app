@@ -6,9 +6,14 @@ import type {
     LayoutDragEndEvent,
     SidebarSortableData,
 } from './types'
-import { useAppDispatch } from '@hooks'
+import { useAppDispatch, useAppSelector } from '@hooks'
+import {
+    clearMultiSelection,
+    getMultiSelectedDimensionIds,
+} from '@store/dimensions-selection-slice'
 import {
     addVisUiConfigLayoutDimension,
+    addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice'
 
@@ -39,6 +44,7 @@ export const isAxisContainerData = (
 
 export const useOnDragEnd = (): OnDragEndFn => {
     const dispatch = useAppDispatch()
+    const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
     return useCallback(
         (event: LayoutDragEndEvent) => {
             // Only allow dropping if event data is present and dropping onto an axis
@@ -72,20 +78,37 @@ export const useOnDragEnd = (): OnDragEndFn => {
                     })
                 )
             } else if (isSidebarSortableData(draggedItemData)) {
-                // Add from sidebar
-                draggedItemData.populateMetadata()
-                dispatch(
-                    addVisUiConfigLayoutDimension({
-                        axis: overItemData.axis,
-                        dimensionId: draggedItemData.dimensionId,
-                        insertIndex: targetIndex,
-                        insertAfter,
-                    })
-                )
+                const isMultiSelectDrag =
+                    multiSelectedIds.length >= 1 &&
+                    multiSelectedIds.includes(draggedItemData.dimensionId)
+
+                if (isMultiSelectDrag) {
+                    // Batch add from sidebar (metadata already populated eagerly)
+                    dispatch(
+                        addVisUiConfigLayoutDimensions({
+                            axis: overItemData.axis,
+                            dimensionIds: multiSelectedIds,
+                            insertIndex: targetIndex,
+                            insertAfter,
+                        })
+                    )
+                } else {
+                    // Single add from sidebar
+                    draggedItemData.populateMetadata()
+                    dispatch(
+                        addVisUiConfigLayoutDimension({
+                            axis: overItemData.axis,
+                            dimensionId: draggedItemData.dimensionId,
+                            insertIndex: targetIndex,
+                            insertAfter,
+                        })
+                    )
+                }
+                dispatch(clearMultiSelection())
             } else {
                 throw new Error('Dropped an unexpected item')
             }
         },
-        [dispatch]
+        [dispatch, multiSelectedIds]
     )
 }

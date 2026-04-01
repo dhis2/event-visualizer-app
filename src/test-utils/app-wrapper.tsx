@@ -26,6 +26,7 @@ import { DndContextProvider } from '@components/app-wrapper/drag-and-drop-provid
 import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import { useMetadataStore } from '@hooks'
 import { currentVisSlice } from '@store/current-vis-slice'
+import { dimensionSelectionSlice } from '@store/dimensions-selection-slice'
 import { loaderSlice } from '@store/loader-slice'
 import { listenerMiddleware } from '@store/middleware-listener'
 import { navigationSlice } from '@store/navigation-slice'
@@ -95,6 +96,7 @@ type CreatePartialOrDefaultStoreParams = CreateStoreBaseParams & {
 
 const fullAppReducer = {
     currentVis: currentVisSlice.reducer,
+    dimensionSelection: dimensionSelectionSlice.reducer,
     loader: loaderSlice.reducer,
     navigation: navigationSlice.reducer,
     ui: uiSlice.reducer,
@@ -111,6 +113,7 @@ const createPartialStore = ({
     return configureStore({
         reducer: {
             [api.reducerPath]: api.reducer,
+            dimensionSelection: dimensionSelectionSlice.reducer,
             ...(partialStore.reducer ?? fullAppReducer),
         } as ReducersMapObject<RootState>,
         preloadedState: partialStore.reducer

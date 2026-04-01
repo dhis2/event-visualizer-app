@@ -24,6 +24,7 @@ import {
     clearMultiSelection,
     addItemToMultiSelection,
     removeItemFromMultiSelection,
+    toggleItemInMultiSelection,
     getSearchTerm,
     getDataSourceId,
     isSelectedDataSourceId,
@@ -34,6 +35,7 @@ import {
     isDimensionCardCollapsed,
     isDimensionListLoading,
     getDimensionListError,
+    getMultiSelectedDimensionIds,
     isMultiSelecting,
     isDimensionMultiSelected,
 } from '../dimensions-selection-slice'
@@ -392,6 +394,31 @@ describe('dimensionSelectionSlice', () => {
             )
             expect(state.multiSelectedDimensionIds).toEqual(['id2'])
         })
+
+        it('should toggle item into multi selection when absent', () => {
+            const state = reducer(
+                initialState,
+                toggleItemInMultiSelection('id1')
+            )
+            expect(state.multiSelectedDimensionIds).toEqual(['id1'])
+        })
+
+        it('should toggle item out of multi selection when present', () => {
+            const prevstate: DimensionSelectionState = {
+                ...initialState,
+                multiSelectedDimensionIds: ['id1', 'id2', 'id3'],
+            }
+            const state = reducer(prevstate, toggleItemInMultiSelection('id2'))
+            expect(state.multiSelectedDimensionIds).toEqual(['id1', 'id3'])
+        })
+
+        it('should toggle the same item in and out', () => {
+            let state = reducer(initialState, toggleItemInMultiSelection('id1'))
+            expect(state.multiSelectedDimensionIds).toEqual(['id1'])
+
+            state = reducer(state, toggleItemInMultiSelection('id1'))
+            expect(state.multiSelectedDimensionIds).toEqual([])
+        })
     })
 
     describe('selectors', () => {
@@ -606,6 +633,20 @@ describe('dimensionSelectionSlice', () => {
             expect(
                 getDimensionListError(state, 'other' as DimensionListKey)
             ).toEqual(error)
+        })
+
+        it('should get multi selected dimension ids', () => {
+            const state = createRootState({
+                multiSelectedDimensionIds: ['id1', 'id2'],
+            })
+            expect(getMultiSelectedDimensionIds(state)).toEqual(['id1', 'id2'])
+        })
+
+        it('should return empty array when no multi selection', () => {
+            const state = createRootState({
+                multiSelectedDimensionIds: [],
+            })
+            expect(getMultiSelectedDimensionIds(state)).toEqual([])
         })
 
         it('should detect multi selecting', () => {
