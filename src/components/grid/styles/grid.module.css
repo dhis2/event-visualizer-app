@@ -37,6 +37,7 @@
 
 .centerColumnBottom {
     grid-area: center-column-bottom;
+    padding: 4px;
 }
 
 .endColumn {
