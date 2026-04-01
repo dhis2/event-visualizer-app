@@ -41,7 +41,7 @@ describe('useResizableSidebar', () => {
             MAIN_SIDEBAR_DEFAULT_WIDTH
         )
         // Default viewport: 1440px wide
-        Object.defineProperty(window, 'innerWidth', {
+        Object.defineProperty(globalThis, 'innerWidth', {
             value: 1440,
             writable: true,
         })
@@ -115,7 +115,7 @@ describe('useResizableSidebar', () => {
         it('clamps to min width if default exceeds max', () => {
             vi.mocked(getMainSidebarWidthFromLocalStorage).mockReturnValue(600)
             // Tiny viewport where max = 500 - 580 = -80, clamped to min
-            Object.defineProperty(window, 'innerWidth', { value: 500 })
+            Object.defineProperty(globalThis, 'innerWidth', { value: 500 })
 
             const { result } = renderResizableHook(600)
 
@@ -150,9 +150,9 @@ describe('useResizableSidebar', () => {
             expect(result.current.width).toBe(800)
 
             // Shrink viewport: max = 700 - 580 = 120, but min is 200
-            Object.defineProperty(window, 'innerWidth', { value: 700 })
+            Object.defineProperty(globalThis, 'innerWidth', { value: 700 })
             act(() => {
-                window.dispatchEvent(new Event('resize'))
+                globalThis.dispatchEvent(new Event('resize'))
             })
             await act(() => vi.advanceTimersByTimeAsync(150))
 
@@ -163,9 +163,9 @@ describe('useResizableSidebar', () => {
             vi.mocked(getMainSidebarWidthFromLocalStorage).mockReturnValue(500)
             const { result } = renderResizableHook(500)
 
-            Object.defineProperty(window, 'innerWidth', { value: 1920 })
+            Object.defineProperty(globalThis, 'innerWidth', { value: 1920 })
             act(() => {
-                window.dispatchEvent(new Event('resize'))
+                globalThis.dispatchEvent(new Event('resize'))
             })
             await act(() => vi.advanceTimersByTimeAsync(150))
 

@@ -13,29 +13,37 @@ import {
 const isAxisSortableData = (data: object): data is AxisSortableData =>
     'axis' in data
 
-const DragOverlayItem: FC<DraggedItemEventData> = (data) =>
-    isAxisSortableData(data) ? (
-        <div
-            className={cx(
-                chipClasses.chip,
-                chipClasses.dragging,
-                classes.overlay,
-                {
-                    [chipClasses.chipEmpty]: !!data.overlayItemProps.itemsText,
-                }
-            )}
-        >
-            <ChipBase {...data.overlayItemProps} isDragging />
-        </div>
-    ) : data.overlayItemProps.dimensionType ? (
-        <DimensionItemContainer isDragOverlay>
-            <DimensionItem
-                name={data.overlayItemProps.dimensionName}
-                dimensionType={data.overlayItemProps.dimensionType}
-                onClick={() => undefined}
-            />
-        </DimensionItemContainer>
-    ) : null
+const DragOverlayItem: FC<DraggedItemEventData> = (data) => {
+    if (isAxisSortableData(data)) {
+        return (
+            <div
+                className={cx(
+                    chipClasses.chip,
+                    chipClasses.dragging,
+                    classes.overlay,
+                    {
+                        [chipClasses.chipEmpty]:
+                            !!data.overlayItemProps.itemsText,
+                    }
+                )}
+            >
+                <ChipBase {...data.overlayItemProps} isDragging />
+            </div>
+        )
+    }
+    if (data.overlayItemProps.dimensionType) {
+        return (
+            <DimensionItemContainer isDragOverlay>
+                <DimensionItem
+                    name={data.overlayItemProps.dimensionName}
+                    dimensionType={data.overlayItemProps.dimensionType}
+                    onClick={() => undefined}
+                />
+            </DimensionItemContainer>
+        )
+    }
+    return null
+}
 
 export const DimensionDragOverlay: FC = () => {
     const [draggedDimensionData, setDraggedDimensionData] =
