@@ -25,13 +25,16 @@
     z-index: 6;
     cursor: col-resize;
     touch-action: none;
-    background-color: transparent;
-    transition: background-color 0.15s ease;
+    background-color: var(--colors-blue500);
+    opacity: 0;
+    transition: opacity 0.18s ease;
+    transition-delay: 0ms;
 }
 
 .resizeHandle:hover,
 .resizeHandle.active {
-    background-color: var(--colors-blue500);
+    opacity: 1;
+    transition-delay: 0.25s;
 }
 
 .searchRow {
@@ -59,6 +62,7 @@
     padding-block-start: 8px;
     padding-inline: 4px;
     margin-inline-end: 2px;
+    transition: scrollbar-color 0.18s ease;
 }
 
 .dimensionCardsContainer:hover {

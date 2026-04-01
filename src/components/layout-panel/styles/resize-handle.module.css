@@ -63,10 +63,12 @@
     inline-size: 3px;
     background-color: transparent;
     transition: background-color 0.15s ease;
+    transition-delay: 0ms;
     border-radius: 1px;
 }
 
 .resizeHandle:hover::after,
 .resizeHandle.active::after {
     background-color: var(--colors-blue400);
+    transition-delay: 250ms;
 }
