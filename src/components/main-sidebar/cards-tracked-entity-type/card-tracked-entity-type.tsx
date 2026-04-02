@@ -18,7 +18,7 @@ import type {
     ValueType,
 } from '@types'
 
-type CardTypeProps = {
+type CardTrackedEntityTypeProps = {
     trackedEntityType: MetadataItem
 }
 
@@ -82,7 +82,9 @@ export const getFixedDimensions = (
     ]
 }
 
-export const CardType: FC<CardTypeProps> = ({ trackedEntityType }) => {
+export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
+    trackedEntityType,
+}) => {
     const title = i18n.t('{{name}} registration', {
         name: trackedEntityType.name,
     })

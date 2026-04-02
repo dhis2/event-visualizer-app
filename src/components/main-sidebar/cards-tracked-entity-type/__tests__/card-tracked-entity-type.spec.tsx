@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { CardType, getFixedDimensions } from '../card-type'
+import {
+    CardTrackedEntityType,
+    getFixedDimensions,
+} from '../card-tracked-entity-type'
 import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
 import type { MetadataItem } from '@types'
 
@@ -60,7 +63,7 @@ const createTrackedEntityType = (overrides: Partial<MetadataItem> = {}) =>
         ...overrides,
     } as MetadataItem)
 
-describe('CardType', () => {
+describe('CardTrackedEntityType', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         mockUseDimensionList.mockReturnValue(defaultListResult)
@@ -68,7 +71,11 @@ describe('CardType', () => {
     })
 
     it('renders with title containing the tracked entity type name', () => {
-        render(<CardType trackedEntityType={createTrackedEntityType()} />)
+        render(
+            <CardTrackedEntityType
+                trackedEntityType={createTrackedEntityType()}
+            />
+        )
 
         expect(screen.getByTestId('card-title')).toHaveTextContent(
             'Person registration'
@@ -76,7 +83,11 @@ describe('CardType', () => {
     })
 
     it('uses the correct dimension card key', () => {
-        render(<CardType trackedEntityType={createTrackedEntityType()} />)
+        render(
+            <CardTrackedEntityType
+                trackedEntityType={createTrackedEntityType()}
+            />
+        )
 
         expect(screen.getByTestId('dimension-card')).toHaveAttribute(
             'data-card-key',
@@ -85,7 +96,11 @@ describe('CardType', () => {
     })
 
     it('passes a custom transformer to useDimensionList', () => {
-        render(<CardType trackedEntityType={createTrackedEntityType()} />)
+        render(
+            <CardTrackedEntityType
+                trackedEntityType={createTrackedEntityType()}
+            />
+        )
 
         const call = mockUseDimensionList.mock.calls[0][0] as {
             transformer: unknown
@@ -95,7 +110,11 @@ describe('CardType', () => {
     })
 
     it('builds a query for trackedEntityTypes resource', () => {
-        render(<CardType trackedEntityType={createTrackedEntityType()} />)
+        render(
+            <CardTrackedEntityType
+                trackedEntityType={createTrackedEntityType()}
+            />
+        )
 
         const call = mockUseDimensionList.mock.calls[0][0] as {
             baseQuery: { resource: string; id: string }
@@ -107,7 +126,11 @@ describe('CardType', () => {
     it('passes selectedCount from useSelectedDimensionCount', () => {
         mockUseSelectedDimensionCount.mockReturnValue(4)
 
-        render(<CardType trackedEntityType={createTrackedEntityType()} />)
+        render(
+            <CardTrackedEntityType
+                trackedEntityType={createTrackedEntityType()}
+            />
+        )
 
         expect(screen.getByTestId('dimension-card')).toHaveAttribute(
             'data-count',
