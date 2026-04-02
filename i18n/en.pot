@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-03-31T15:40:24.878Z\n"
-"PO-Revision-Date: 2026-03-31T15:40:24.879Z\n"
+"POT-Creation-Date: 2026-04-02T12:31:06.142Z\n"
+"PO-Revision-Date: 2026-04-02T12:31:06.143Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -830,9 +830,6 @@ msgstr "View"
 
 msgid "Reset sidebar width"
 msgstr "Reset sidebar width"
-
-msgid "Reset details panel width"
-msgstr "Reset details panel width"
 
 msgid "Show panels"
 msgstr "Show panels"

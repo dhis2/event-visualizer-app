@@ -1,8 +1,7 @@
 import { CssVariables } from '@dhis2/ui'
-import cx from 'classnames'
 import { useCallback, type FC } from 'react'
-import classes from './app.module.css'
 import { useLoadVisualizationOnMount } from './use-load-visualization-on-mount'
+import './styles/app.module.css'
 import { AppWrapper } from '@components/app-wrapper'
 import { DetailsPanel } from '@components/details-panel/details-panel'
 import { DimensionModal } from '@components/dimension-modal/dimension-modal'
@@ -33,7 +32,6 @@ import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import {
     getUiActiveDimensionModal,
-    getUiDetailsPanelVisible,
     setUiActiveDimensionModal,
 } from '@store/ui-slice'
 import type { NewVisualization, SavedVisualization, Sorting } from '@types'
@@ -45,7 +43,6 @@ const EventVisualizer: FC = () => {
     const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)
     const activeDimensionModal = useAppSelector(getUiActiveDimensionModal)
-    const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
 
     const onDataSorted = useCallback(
@@ -108,13 +105,7 @@ const EventVisualizer: FC = () => {
                 )}
             </GridCenterColumnBottom>
             <GridEndColumn>
-                <div
-                    className={cx(classes.rightSidebar, {
-                        [classes.hidden]: !isDetailsPanelVisible,
-                    })}
-                >
-                    {isDetailsPanelVisible && <DetailsPanel />}
-                </div>
+                <DetailsPanel />
             </GridEndColumn>
             <CssVariables colors spacers theme elevations />
         </GridContainer>

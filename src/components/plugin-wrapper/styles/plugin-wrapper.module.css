@@ -1,4 +1,4 @@
 .pluginWrapper {
-    padding: 4px;
-    block-size: 100%;
+    margin: 4px;
+    block-size: calc(100% - 8px);
 }
