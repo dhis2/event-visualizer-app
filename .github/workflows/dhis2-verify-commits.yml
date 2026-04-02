@@ -18,7 +18,7 @@ jobs:
             - id: commitlint
               run: |
                   echo "CONFIG_PATH=$(node -e 'process.stdout.write(require("@dhis2/cli-style").config.commitlint)')" >> "$GITHUB_OUTPUT"
-            - run: echo "${{ github.event.pull_request.title }}" | pnpm exec commitlint --config ${{ steps.commitlint.outputs.CONFIG_PATH }}
+            - run: echo "${{ github.event.pull_request.title }}" | pnpm dlx commitlint --config ${{ steps.commitlint.outputs.CONFIG_PATH }}
 
     lint-commits:
         runs-on: ubuntu-latest
