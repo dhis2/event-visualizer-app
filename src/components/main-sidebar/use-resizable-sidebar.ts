@@ -5,12 +5,12 @@ import {
     MAIN_SIDEBAR_DEFAULT_WIDTH,
     MAIN_SIDEBAR_MAX_OFFSET,
     MAIN_SIDEBAR_MIN_WIDTH,
-} from '@constants/panels'
-import { useAppDispatch, useAppSelector } from '@hooks'
+} from './constants'
 import {
     getMainSidebarWidthFromLocalStorage,
     setMainSidebarWidthToLocalStorage,
-} from '@modules/local-storage'
+} from './local-storage'
+import { useAppDispatch, useAppSelector } from '@hooks'
 import { getUiMainSidebarWidth, setUiMainSidebarWidth } from '@store/ui-slice'
 
 const computeMaxWidth = () => window.innerWidth - MAIN_SIDEBAR_MAX_OFFSET

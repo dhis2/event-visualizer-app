@@ -1,15 +1,10 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
-import { MAIN_SIDEBAR_DEFAULT_WIDTH } from '@constants/panels'
-import {
-    getMainSidebarWidthFromLocalStorage,
-    getUserSidebarWidthFromLocalStorage,
-} from '@modules/local-storage'
+import { MAIN_SIDEBAR_DEFAULT_WIDTH } from '@components/main-sidebar/constants'
+import { getMainSidebarWidthFromLocalStorage } from '@components/main-sidebar/local-storage'
 
 export interface UiState {
-    accessoryPanelWidth: number
     activeDimensionModal: string | null
-    isAccessoryPanelVisible: boolean
     isDetailsPanelVisible: boolean
     isLayoutPanelExpanded: boolean
     isLayoutPanelVisible: boolean
@@ -18,9 +13,7 @@ export interface UiState {
 }
 
 export const initialState: UiState = {
-    accessoryPanelWidth: getUserSidebarWidthFromLocalStorage(),
     activeDimensionModal: null,
-    isAccessoryPanelVisible: true,
     isDetailsPanelVisible: false,
     isLayoutPanelExpanded: true,
     isLayoutPanelVisible: true,
@@ -33,23 +26,11 @@ export const uiSlice = createSlice({
     initialState,
     reducers: {
         clearUi: () => initialState,
-        setUiAccessoryPanelWidth: (state, action: PayloadAction<number>) => {
-            state.accessoryPanelWidth = action.payload
-        },
         setUiMainSidebarWidth: (state, action: PayloadAction<number>) => {
             state.mainSidebarWidth = action.payload
         },
         resetUiMainSidebarWidth: (state) => {
             state.mainSidebarWidth = MAIN_SIDEBAR_DEFAULT_WIDTH
-        },
-
-        setUiAccessoryPanelVisible: (state, action: PayloadAction<boolean>) => {
-            state.isAccessoryPanelVisible = action.payload
-            // Always close right sidebar when opening the left sidebar
-            // Leave right sidebar unaffected when closing the left sidebar
-            state.isDetailsPanelVisible = action.payload
-                ? false
-                : state.isDetailsPanelVisible
         },
         setUiActiveDimensionModal: (
             state,
@@ -59,11 +40,6 @@ export const uiSlice = createSlice({
         },
         setUiDetailsPanelVisible: (state, action: PayloadAction<boolean>) => {
             state.isDetailsPanelVisible = action.payload
-            // Always close left sidebar when opening the right sidebar
-            // Leave left sidebar unaffected when closing the right sidebar
-            state.isAccessoryPanelVisible = action.payload
-                ? false
-                : state.isAccessoryPanelVisible
         },
         toggleUiMainSidebarVisible: (state) => {
             state.isMainSidebarVisible = !state.isMainSidebarVisible
@@ -84,8 +60,6 @@ export const uiSlice = createSlice({
         },
     },
     selectors: {
-        getUiAccessoryPanelWidth: (state) => state.accessoryPanelWidth,
-        getUiAccessoryPanelVisible: (state) => state.isAccessoryPanelVisible,
         getUiActiveDimensionModal: (state) => state.activeDimensionModal,
         getUiDetailsPanelVisible: (state) => state.isDetailsPanelVisible,
         getUiLayoutPanelExpanded: (state) => state.isLayoutPanelExpanded,
@@ -99,8 +73,6 @@ export const uiSlice = createSlice({
 
 export const {
     clearUi,
-    setUiAccessoryPanelWidth,
-    setUiAccessoryPanelVisible,
     setUiMainSidebarWidth,
     resetUiMainSidebarWidth,
     setUiActiveDimensionModal,
@@ -111,8 +83,6 @@ export const {
     toggleUiShowExpandedVisualizationCanvas,
 } = uiSlice.actions
 export const {
-    getUiAccessoryPanelWidth,
-    getUiAccessoryPanelVisible,
     getUiActiveDimensionModal,
     getUiDetailsPanelVisible,
     getUiLayoutPanelExpanded,

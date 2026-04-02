@@ -1,12 +1,12 @@
 import { CssVariables } from '@dhis2/ui'
 import React from 'react'
 import { Provider } from 'react-redux'
-import { useResizableSidebar } from '../use-resizable-sidebar'
 import {
     MAIN_SIDEBAR_DEFAULT_WIDTH,
     MAIN_SIDEBAR_MIN_WIDTH,
     MAIN_SIDEBAR_STORAGE_KEY,
-} from '@constants/panels'
+} from '../constants'
+import { useResizableSidebar } from '../use-resizable-sidebar'
 import { uiSlice } from '@store/ui-slice'
 import { setupStore } from '@test-utils/setup-store'
 
