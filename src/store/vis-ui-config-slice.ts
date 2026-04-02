@@ -292,7 +292,7 @@ export const visUiConfigSlice = createSlice({
                 filters.length === 0 &&
                 rows.length === 0
         ),
-        getVisUiConfigItemsByDimensionMapped: createSelector(
+        getVisUiConfigPlainItemIdsByDimension: createSelector(
             (state: VisUiConfigState, dimensionId: string) =>
                 state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
             (items) => items.map((id) => id.split('.').pop()!)
@@ -326,5 +326,5 @@ export const {
     getVisUiConfigRepetitionsByDimension,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigLayoutIsEmpty,
-    getVisUiConfigItemsByDimensionMapped,
+    getVisUiConfigPlainItemIdsByDimension,
 } = visUiConfigSlice.selectors

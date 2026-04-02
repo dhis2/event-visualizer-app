@@ -19,7 +19,7 @@ import {
 import { getStartEndDate, isStartEndDate } from '@modules/dates'
 import { getDimensionIdParts, getFullDimensionId } from '@modules/dimension.js'
 import {
-    getVisUiConfigItemsByDimensionMapped,
+    getVisUiConfigPlainItemIdsByDimension,
     getVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
@@ -123,7 +123,7 @@ export const PeriodDimensionModalContent: FC<
     }, [systemSettings])
 
     const selectedIds = useAppSelector((state) =>
-        getVisUiConfigItemsByDimensionMapped(state, dimension?.id)
+        getVisUiConfigPlainItemIdsByDimension(state, dimension?.id)
     )
 
     const selectedIdsMetadata = useMetadataItems(selectedIds)

@@ -5,7 +5,7 @@ import classes from './styles/status-dimension-modal-content.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getStatusNames } from '@modules/status'
 import {
-    getVisUiConfigItemsByDimensionMapped,
+    getVisUiConfigPlainItemIdsByDimension,
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
@@ -29,7 +29,7 @@ export const StatusDimensionModalContent: FC<
     const statusNames = getStatusNames()
 
     const selectedIds = useAppSelector((state) =>
-        getVisUiConfigItemsByDimensionMapped(state, dimension?.id)
+        getVisUiConfigPlainItemIdsByDimension(state, dimension?.id)
     )
 
     const statuses = useMemo(() => {

@@ -3,7 +3,7 @@ import {
     visUiConfigSlice,
     initialState,
     getVisUiConfigLayoutIsEmpty,
-    getVisUiConfigItemsByDimensionMapped,
+    getVisUiConfigPlainItemIdsByDimension,
     type VisUiConfigState,
 } from '../vis-ui-config-slice'
 
@@ -370,10 +370,10 @@ describe('getVisUiConfigLayoutIsEmpty', () => {
     })
 })
 
-describe('getVisUiConfigItemsByDimensionMapped', () => {
+describe('getVisUiConfigPlainItemIdsByDimension', () => {
     it('returns an empty array for an unknown dimensionId', () => {
         const state = createRootState({ itemsByDimension: {} })
-        expect(getVisUiConfigItemsByDimensionMapped(state, 'unknown')).toEqual(
+        expect(getVisUiConfigPlainItemIdsByDimension(state, 'unknown')).toEqual(
             []
         )
     })
@@ -385,7 +385,7 @@ describe('getVisUiConfigItemsByDimensionMapped', () => {
             },
         })
         expect(
-            getVisUiConfigItemsByDimensionMapped(state, 'stage1.dim1')
+            getVisUiConfigPlainItemIdsByDimension(state, 'stage1.dim1')
         ).toEqual(['item1', 'item2'])
     })
 
@@ -393,7 +393,7 @@ describe('getVisUiConfigItemsByDimensionMapped', () => {
         const state = createRootState({
             itemsByDimension: { dim1: ['item1', 'item2'] },
         })
-        expect(getVisUiConfigItemsByDimensionMapped(state, 'dim1')).toEqual([
+        expect(getVisUiConfigPlainItemIdsByDimension(state, 'dim1')).toEqual([
             'item1',
             'item2',
         ])
@@ -403,8 +403,11 @@ describe('getVisUiConfigItemsByDimensionMapped', () => {
         const state = createRootState({
             itemsByDimension: { 'stage1.dim1': ['stage1.item1'] },
         })
-        const first = getVisUiConfigItemsByDimensionMapped(state, 'stage1.dim1')
-        const second = getVisUiConfigItemsByDimensionMapped(
+        const first = getVisUiConfigPlainItemIdsByDimension(
+            state,
+            'stage1.dim1'
+        )
+        const second = getVisUiConfigPlainItemIdsByDimension(
             state,
             'stage1.dim1'
         )
