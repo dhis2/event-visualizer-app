@@ -12,8 +12,6 @@ on:
     push:
         branches:
             - master
-            # TODO: remove after verifying the workflow works
-            - chore/migrate-from-yarn-to-pnpm
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
