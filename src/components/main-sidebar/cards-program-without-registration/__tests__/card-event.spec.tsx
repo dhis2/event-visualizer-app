@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { CardEvent } from '../card-event'
+import { CardEvent, getProgramStage } from '../card-event'
 import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
 import type { DataSourceProgramWithoutRegistration } from '@types'
 
@@ -147,7 +147,7 @@ describe('CardEvent (without registration)', () => {
             programStages: [],
         })
 
-        expect(() => render(<CardEvent program={program} />)).toThrow(
+        expect(() => getProgramStage(program)).toThrow(
             'No programStage found for program "prog1"'
         )
     })
@@ -157,6 +157,6 @@ describe('CardEvent (without registration)', () => {
             programStages: undefined as unknown as [],
         })
 
-        expect(() => render(<CardEvent program={program} />)).toThrow()
+        expect(() => getProgramStage(program)).toThrow()
     })
 })

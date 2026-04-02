@@ -3,7 +3,6 @@ import { useState, type ReactNode } from 'react'
 import { expect, describe, it, beforeEach } from 'vitest'
 import {
     MetadataProvider,
-    MockMetadataProvider,
     useMetadataItem,
     useMetadataItems,
     useAddMetadata,
@@ -700,12 +699,6 @@ describe('MetadataProvider — typed use* hooks', () => {
 
     const orgUnit = { id: 'ou1', name: 'Sierra Leone', path: '/ou1' }
 
-    const wrapperWithProgram = ({ children }: { children?: ReactNode }) => (
-        <MockMetadataProvider mockMetadata={{ p1: program }}>
-            {children}
-        </MockMetadataProvider>
-    )
-
     it('useProgramMetadataItem returns the item when it is a program', () => {
         const { result } = renderHook(
             () => {
@@ -726,18 +719,6 @@ describe('MetadataProvider — typed use* hooks', () => {
         expect(result.current).toBeUndefined()
     })
 
-    it('useProgramMetadataItem throws when the item is not a program', () => {
-        // Use MockMetadataProvider so the stage item exists on first render
-        const wrapper = ({ children }: { children?: ReactNode }) => (
-            <MockMetadataProvider mockMetadata={{ ps1: stage }}>
-                {children}
-            </MockMetadataProvider>
-        )
-        expect(() =>
-            renderHook(() => useProgramMetadataItem('ps1'), { wrapper })
-        ).toThrow('Item is not a program')
-    })
-
     it('useProgramStageMetadataItem returns the item when it is a program stage', () => {
         const { result } = renderHook(
             () => {
@@ -749,14 +730,6 @@ describe('MetadataProvider — typed use* hooks', () => {
         )
         act(() => result.current.store.addMetadata(stage))
         expect(result.current.item?.id).toBe('ps1')
-    })
-
-    it('useProgramStageMetadataItem throws when the item is not a program stage', () => {
-        expect(() =>
-            renderHook(() => useProgramStageMetadataItem('p1'), {
-                wrapper: wrapperWithProgram,
-            })
-        ).toThrow('Item is not a program stage')
     })
 
     it('useDimensionMetadataItem returns the item when it is a dimension', () => {
@@ -783,14 +756,6 @@ describe('MetadataProvider — typed use* hooks', () => {
         expect(result.current.item?.dimensionId).toBe('weight')
     })
 
-    it('useDimensionMetadataItem throws when the item is not a dimension', () => {
-        expect(() =>
-            renderHook(() => useDimensionMetadataItem('p1'), {
-                wrapper: wrapperWithProgram,
-            })
-        ).toThrow('Item is not a dimension')
-    })
-
     it('useOrganisationUnitMetadataItem returns the item when it is an org unit', () => {
         const { result } = renderHook(
             () => {
@@ -804,11 +769,5 @@ describe('MetadataProvider — typed use* hooks', () => {
         expect(result.current.item?.path).toBe('/ou1')
     })
 
-    it('useOrganisationUnitMetadataItem throws when the item is not an org unit', () => {
-        expect(() =>
-            renderHook(() => useOrganisationUnitMetadataItem('p1'), {
-                wrapper: wrapperWithProgram,
-            })
-        ).toThrow('Item is not an organisation unit')
-    })
+    // Type-mismatch throw behavior is covered by typed-metadata-item.spec.ts
 })

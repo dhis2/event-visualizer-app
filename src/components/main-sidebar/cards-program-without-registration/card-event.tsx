@@ -23,19 +23,26 @@ type CardEventProps = {
 }
 const CARD_AND_LIST_KEY = 'event-without-registration'
 
+export const getProgramStage = (
+    program: DataSourceProgramWithoutRegistration
+): ProgramStage => {
+    const programStage = program.programStages?.[0]
+
+    if (!programStage) {
+        throw new Error(`No programStage found for program "${program.id}"`)
+    }
+
+    return programStage
+}
+
 export const CardEvent: FC<CardEventProps> = ({ program }) => {
     const {
         settings: { displayNameProperty },
     } = useCurrentUser()
-    const programStage = useMemo<ProgramStage>(() => {
-        const programStage = program.programStages?.[0]
-
-        if (!programStage) {
-            throw new Error(`No programStage found for program "${program.id}"`)
-        }
-
-        return programStage
-    }, [program])
+    const programStage = useMemo<ProgramStage>(
+        () => getProgramStage(program),
+        [program]
+    )
     const fixedDimensions = useMemo(
         () => getEventFixedDimensions(program, programStage),
         [program, programStage]
