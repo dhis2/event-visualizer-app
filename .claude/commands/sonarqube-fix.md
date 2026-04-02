@@ -107,8 +107,8 @@ For each issue:
 **CRITICAL: After every 3–5 related fixes**, run:
 
 ```bash
-yarn test   # Run all unit tests
-yarn lint   # Run all linters
+pnpm test   # Run all unit tests
+pnpm lint   # Run all linters
 ```
 
 Fix any regressions immediately before continuing. Never accumulate fixes without testing — you might introduce bugs that are hard to trace later.
@@ -118,14 +118,14 @@ Fix any regressions immediately before continuing. Never accumulate fixes withou
 Once a batch of fixes is complete and tests pass:
 
 ```bash
-yarn sonar
+pnpm sonar
 ```
 
 This takes several minutes. Wait for it to finish before fetching results.
 
 ### Step 6: Fetch Branch Results and Verify
 
-After `yarn sonar` completes, verify using the **branch** parameter (not `pullRequest`):
+After `pnpm sonar` completes, verify using the **branch** parameter (not `pullRequest`):
 
 ```bash
 curl -s "https://sonarcloud.io/api/issues/search?componentKeys=<org>_<repo>&branch=<branch-name>&resolved=false&ps=100" \
@@ -142,8 +142,8 @@ Note: URL-encode the branch name (e.g. `feat%2Fupdate-buttons` for `feat/update-
 The process is complete when all of the following are true:
 
 -   ✅ All todos are marked as completed
--   ✅ All tests pass (`yarn test`)
--   ✅ All linters pass (`yarn lint`)
+-   ✅ All tests pass (`pnpm test`)
+-   ✅ All linters pass (`pnpm lint`)
 -   ✅ Branch API returns zero unresolved issues
 
 ## Examples
@@ -157,8 +157,8 @@ User: /sonarqube-fix
 2. Fetch issues: 2 MAJOR CODE_SMELLs, 1 MINOR BUG
 3. Create todos for all 3 issues
 4. Fix MINOR BUG first (it's a BUG), then the two CODE_SMELLs
-5. After fixes: yarn test && yarn lint → passes
-6. yarn sonar → publishes results
+5. After fixes: pnpm test && pnpm lint → passes
+6. pnpm sonar → publishes results
 7. Branch API → 0 issues remaining ✅
 ```
 
@@ -195,10 +195,10 @@ User: /sonarqube-fix
 -   Check if test expectations need updating alongside the fix
 -   Ask the user for guidance if the root cause is unclear
 
-### Issues still showing after `yarn sonar`
+### Issues still showing after `pnpm sonar`
 
--   Always re-fetch using the **branch** URL (not the PR URL) after `yarn sonar`
--   SonarCloud only updates after the publish step — results won't change without running `yarn sonar`
+-   Always re-fetch using the **branch** URL (not the PR URL) after `pnpm sonar`
+-   SonarCloud only updates after the publish step — results won't change without running `pnpm sonar`
 -   Continue working through remaining issues from the branch results
 
 ### GitHub CLI issues

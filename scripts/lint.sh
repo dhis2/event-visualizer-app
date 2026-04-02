@@ -15,7 +15,7 @@ echo ""
 
 # ESLint check
 echo "🔍 Checking ESLint..."
-if ! npx eslint .; then
+if ! pnpm exec eslint .; then
     echo "❌ ESLint check failed"
     EXIT_CODE=1
 else
@@ -25,7 +25,7 @@ echo ""
 
 # Stylelint check
 echo "🔍 Checking Stylelint..."
-if ! npx stylelint "**/*.{css,scss,tsx}" --max-warnings=0; then
+if ! pnpm exec stylelint "**/*.{css,scss,tsx}" --max-warnings=0; then
     echo "❌ Stylelint check failed"
     EXIT_CODE=1
 else
@@ -35,7 +35,7 @@ echo ""
 
 # ls-lint check
 echo "🔍 Checking ls-lint..."
-if ! npx ls-lint; then
+if ! pnpm exec ls-lint; then
     echo "❌ ls-lint check failed"
     EXIT_CODE=1
 else
@@ -45,7 +45,7 @@ echo ""
 
 # Prettier check
 echo "🔍 Checking Prettier..."
-if ! npx prettier --check .; then
+if ! pnpm exec prettier --check .; then
     echo "❌ Prettier check failed"
     EXIT_CODE=1
 else

@@ -6,7 +6,7 @@ This project was bootstrapped with [DHIS2 Application Platform](https://github.c
 
 In the project directory, you can run:
 
-### `yarn install`
+### `pnpm install`
 
 This will install the required dependencies and on the first `postinstall` it will do the following:
 
@@ -14,17 +14,17 @@ This will install the required dependencies and on the first `postinstall` it wi
 2. Install Husky hooks to run on `pre-commit`, `pre-push` and `commit-msg`
 3. Copy `cypress.env.template.json` to `cypress.env.json` so that the Cypress E2E suite can run successfully
 
-### `yarn start`
+### `pnpm start`
 
 Runs the app in the development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits. You will also see any lint errors in the console.
 
-### `yarn test`
+### `pnpm test`
 
-Launches the test runner and runs all available unit tests found in `/src` using vitest. Using `yarn test:watch` will run the tests in watch mode.
+Launches the test runner and runs all available unit tests found in `/src` using vitest. Using `pnpm test:watch` will run the tests in watch mode.
 
-### `yarn build`
+### `pnpm build`
 
 Builds the app for production to the `build` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
 
@@ -32,23 +32,23 @@ The build is minified and the filenames include hashes. A deployable `.zip` file
 
 See the section about [building](https://platform.dhis2.nu/#/scripts/build) for more information.
 
-### `yarn deploy`
+### `pnpm deploy`
 
 Deploys the built app in the `build` folder to a running DHIS2 instance. This command will prompt you to enter a server URL as well as the username and password of a DHIS2 user with the App Management authority.
 
-You must run `yarn build` before running `yarn deploy`.
+You must run `pnpm build` before running `pnpm deploy`.
 
 See the section about [deploying](https://platform.dhis2.nu/#/scripts/deploy) for more information.
 
-### `yarn lint` / `yarn format`
+### `pnpm lint` / `pnpm format`
 
-These commands use `d2-style` to lint the code, but `yarn format` also attempts to fix/format the violations it finds.
+These commands use `d2-style` to lint the code, but `pnpm format` also attempts to fix/format the violations it finds.
 
-### `yarn cy:open` / `yarn cy:run`
+### `pnpm cy:open` / `pnpm cy:run`
 
 Run the Cypress E2E test suite, either in the Cypress GUI or in the terminal.
 
-### `yarn generate-types`
+### `pnpm generate-types`
 
 Will (re)generate the TypesScript types from the DHIS2 Core OpenAPI schemas.
 
@@ -60,9 +60,9 @@ All changes to the app are done via PRs which need to be approved by a member of
 
 Before making your first contribution, please:
 
-1. **Set up your development environment** by running `yarn install` (this will also run the `postinstall` script)
-2. **Run the tests** with `yarn test` to ensure everything is working
-3. **Start the development server** with `yarn start` to familiarize yourself with the app
+1. **Set up your development environment** by running `pnpm install` (this will also run the `postinstall` script)
+2. **Run the tests** with `pnpm test` to ensure everything is working
+3. **Start the development server** with `pnpm start` to familiarize yourself with the app
 4. **Read through the architectural guidelines** below to understand the codebase structure
 
 ### Claude Code Setup (optional)
@@ -93,8 +93,8 @@ gh auth login
 1. **Create a feature branch** from `main`
 2. **Make your changes** following the guidelines below
 3. **Write or update tests** to maintain good test coverage
-4. **Run linting and formatting** with `yarn lint` and `yarn format`
-5. **Test your changes** with both unit tests (`yarn test`) and e2e tests (`yarn cy:run`)
+4. **Run linting and formatting** with `pnpm lint` and `pnpm format`
+5. **Test your changes** with both unit tests (`pnpm test`) and e2e tests (`pnpm cy:run`)
 6. **Create a pull request** for Team Analytics review
 
 ### Code Organisation
