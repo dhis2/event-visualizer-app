@@ -23,7 +23,12 @@ const setupNodeEvents = async (
                 }
             }
         } catch (error) {
-            if (error.code === 'ENOENT') {
+            if (
+                typeof error === 'object' &&
+                error !== null &&
+                'code' in error &&
+                error.code === 'ENOENT'
+            ) {
                 console.log('Video already deleted')
             } else {
                 throw error
@@ -35,6 +40,16 @@ const setupNodeEvents = async (
         throw new Error(
             'dhis2InstanceVersion is missing. Check the README for more information.'
         )
+    }
+
+    // Bridge non-sensitive env vars to expose so browser code can use
+    // Cypress.expose() instead of the deprecated Cypress.env()
+    config.expose = {
+        ...config.expose,
+        dhis2BaseUrl: config.env.dhis2BaseUrl,
+        dhis2InstanceVersion: config.env.dhis2InstanceVersion,
+        dhis2DatatestPrefix: config.env.dhis2DatatestPrefix,
+        hideRequestsFromLog: config.env.hideRequestsFromLog,
     }
 
     return config
@@ -64,6 +79,12 @@ module.exports = defineConfig({
         defaultCommandTimeout: 30000,
     },
     env: {
+        // Duplicated in `expose` below. Kept here because
+        // @dhis2/cypress-commands still reads it via Cypress.env().
+        // Remove once that package migrates, then set allowCypressEnv: false.
+        dhis2DatatestPrefix: 'dhis2-eventvisualizer',
+    },
+    expose: {
         dhis2DatatestPrefix: 'dhis2-eventvisualizer',
     },
     component: {

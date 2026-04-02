@@ -55,20 +55,26 @@ const findSessionCookieForBaseUrl = (
     )
 
 before(() => {
-    const username = Cypress.env('dhis2Username')
-    const password = Cypress.env('dhis2Password')
-    const baseUrl = Cypress.env('dhis2BaseUrl')
-    const instanceVersion = Cypress.env('dhis2InstanceVersion')
-    const hideRequestsFromLog = Cypress.env('hideRequestsFromLog')
+    const baseUrl = Cypress.expose('dhis2BaseUrl')
+    const instanceVersion = Cypress.expose('dhis2InstanceVersion')
+    const hideRequestsFromLog = Cypress.expose('hideRequestsFromLog')
 
     if (hideRequestsFromLog) {
         // disable Cypress's default behavior of logging all XMLHttpRequests and fetches
         cy.intercept({ resourceType: /xhr|fetch/ }, { log: false })
     }
 
-    cy.loginByApi({ username, password, baseUrl })
-        .its('status')
-        .should('equal', 200)
+    cy.env(['dhis2Username', 'dhis2Password']).then(
+        ({ dhis2Username, dhis2Password }) => {
+            cy.loginByApi({
+                username: dhis2Username,
+                password: dhis2Password,
+                baseUrl,
+            })
+                .its('status')
+                .should('equal', 200)
+        }
+    )
 
     cy.getAllCookies()
         .should((cookies) => {
@@ -79,7 +85,7 @@ before(() => {
                 baseUrl,
                 cookies
             )
-            Cypress.env(
+            Cypress.expose(
                 computeEnvVariableName(instanceVersion),
                 JSON.stringify(sessionCookieForBaseUrl)
             )
@@ -87,10 +93,12 @@ before(() => {
 })
 
 beforeEach(() => {
-    const baseUrl = Cypress.env('dhis2BaseUrl')
-    const instanceVersion = Cypress.env('dhis2InstanceVersion')
+    const baseUrl = Cypress.expose('dhis2BaseUrl')
+    const instanceVersion = Cypress.expose('dhis2InstanceVersion')
     const envVariableName = computeEnvVariableName(instanceVersion)
-    const { name, value, ...options } = JSON.parse(Cypress.env(envVariableName))
+    const { name, value, ...options } = JSON.parse(
+        Cypress.expose(envVariableName)
+    )
 
     localStorage.setItem(LOCAL_STORAGE_KEY, baseUrl)
     cy.setCookie(name, value, options)
