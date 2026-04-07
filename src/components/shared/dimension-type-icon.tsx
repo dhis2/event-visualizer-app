@@ -32,10 +32,6 @@ interface DimensionTypeIconProps {
     dimensionType: DimensionType
 }
 
-// Presentational component used by dnd - do not add redux or dnd functionality
-
-const DimensionTypeIcon: React.FC<DimensionTypeIconProps> = ({
+export const DimensionTypeIcon: React.FC<DimensionTypeIconProps> = ({
     dimensionType,
 }) => dimensionTypeIconMap[dimensionType]
-
-export { DimensionTypeIcon }

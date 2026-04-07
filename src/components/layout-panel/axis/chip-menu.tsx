@@ -5,7 +5,7 @@ import type { LayoutDimension } from './chip'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getAxisName } from '@modules/layout'
 import {
-    removeVisUiConfigLayoutDimension,
+    removeVisUiConfigLayoutDimensionFromAxis,
     getVisUiConfigVisualizationType,
     moveVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice.js'
@@ -51,7 +51,10 @@ export const ChipMenu: FC<ChipMenuProps> = ({
     const removeItemHandler = useCallback(
         (dimensionId: LayoutDimension['id']) => {
             dispatch(
-                removeVisUiConfigLayoutDimension({ axis: axisId, dimensionId })
+                removeVisUiConfigLayoutDimensionFromAxis({
+                    axis: axisId,
+                    dimensionId,
+                })
             )
 
             onClose()

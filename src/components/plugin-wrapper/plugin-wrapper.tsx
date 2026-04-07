@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import type { OnAnalyticsResponseReceivedCb } from './hooks/use-line-list-analytics-data'
 import { LineListPlugin } from './line-list-plugin'
 import { PivotTablePlugin } from './pivot-table-plugin'
+import classes from './styles/plugin-wrapper.module.css'
 import { isVisualizationSaved } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
 
@@ -49,7 +50,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     }, [isVisualizationLoading])
 
     return (
-        <>
+        <div className={classes.pluginWrapper}>
             {(isVisualizationLoading || !hasAnalyticsData) && (
                 <Center>
                     <CircularLoader />
@@ -86,6 +87,6 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     onResponseReceived={onResponseReceived}
                 />
             )}
-        </>
+        </div>
     )
 }

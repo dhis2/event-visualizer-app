@@ -2,9 +2,9 @@ import i18n from '@dhis2/d2-i18n'
 import { CircularLoader, IconErrorFilled16 } from '@dhis2/ui'
 import cx from 'classnames'
 import type { FC } from 'react'
-import { DimensionListItem } from './dimension-list-item'
 import classes from './styles/dimension-list.module.css'
 import type { EngineError } from '@api/parse-engine-error'
+import { DraggableDimensionItem } from '@components/main-sidebar/dimension-item'
 import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
 import { SkeletonChip } from '@components/shared/skeleton-chip'
 import type { Program, ProgramStage } from '@types'
@@ -76,12 +76,13 @@ const DimensionListContent: FC<DimensionListProps> = ({
     return (
         <>
             {dimensions.map((dimension) => (
-                <DimensionListItem
-                    key={dimension.id}
-                    dimension={dimension}
-                    program={program}
-                    programStage={programStage}
-                />
+                <li key={dimension.id} data-test="dimension-list-item">
+                    <DraggableDimensionItem
+                        dimension={dimension}
+                        program={program}
+                        programStage={programStage}
+                    />
+                </li>
             ))}
             {error && (
                 <ErrorListItem

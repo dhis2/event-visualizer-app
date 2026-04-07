@@ -1,11 +1,15 @@
 import i18n from '@dhis2/d2-i18n'
-import { type FC, useMemo } from 'react'
+import { useCallback, type FC, useMemo } from 'react'
 import {
     DimensionCard,
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
 import type { Transformer } from '@components/main-sidebar/use-dimension-list'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
+import {
+    useSelectedDimensionCount,
+    type UseSelectedDimensionCountMatchFn,
+} from '@components/main-sidebar/use-selected-dimension-count'
 import { isObject, isPopulatedString } from '@modules/validation'
 import type {
     DimensionMetadataItem,
@@ -14,7 +18,7 @@ import type {
     ValueType,
 } from '@types'
 
-type CardTypeProps = {
+type CardTrackedEntityTypeProps = {
     trackedEntityType: MetadataItem
 }
 
@@ -77,12 +81,24 @@ export const getFixedDimensions = (
         },
     ]
 }
-export const CardType: FC<CardTypeProps> = ({ trackedEntityType }) => {
+
+export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
+    trackedEntityType,
+}) => {
     const title = i18n.t('{{name}} registration', {
         name: trackedEntityType.name,
     })
     const fixedDimensions = useMemo(
         () => getFixedDimensions(trackedEntityType),
+        [trackedEntityType]
+    )
+    const fixedDimensionIdLookup = useMemo(
+        () =>
+            new Set(
+                getFixedDimensions(trackedEntityType).map(
+                    (dimension) => dimension.id
+                )
+            ),
         [trackedEntityType]
     )
     const baseQuery = useMemo<SingleQuery>(
@@ -105,12 +121,35 @@ export const CardType: FC<CardTypeProps> = ({ trackedEntityType }) => {
         fixedDimensions,
         transformer,
     })
+    const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
+        (dimension) => {
+            if (
+                dimension.trackedEntityTypeId === trackedEntityType.id &&
+                fixedDimensionIdLookup.has(dimension.id)
+            ) {
+                return true
+            }
+            /* TEAs fetched from the web api have plain IDs, no enrichment context,
+             * they can only be identified by the absense of a program/stage */
+            if (
+                dimension.dimensionType === 'PROGRAM_ATTRIBUTE' &&
+                !dimension.programId &&
+                !dimension.programStageId
+            ) {
+                return true
+            }
+            return false
+        },
+        [trackedEntityType.id, fixedDimensionIdLookup]
+    )
+    const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)
 
     return (
         <DimensionCard
             dimensionCardKey={CARD_AND_LIST_KEY}
             title={title}
             isDisabledByFilter={listProps.isDisabledByFilter}
+            selectedCount={selectedCount}
         >
             <DimensionList {...listProps} />
         </DimensionCard>

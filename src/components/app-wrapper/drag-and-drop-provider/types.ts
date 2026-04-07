@@ -6,6 +6,7 @@ import type { Axis } from '@types'
 export type SidebarSortableData = {
     dimensionId: string
     overlayItemProps: ChipBaseProps
+    populateMetadata: () => void
 }
 
 export type AxisSortableData = {

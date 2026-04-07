@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { DEFAULT_OPTIONS } from '@constants/options'
 import type {
@@ -234,7 +234,7 @@ export const visUiConfigSlice = createSlice({
             targetArray.splice(insertionIndex, 0, dimensionId)
             sourceArray.splice(removalIndex, 1)
         },
-        removeVisUiConfigLayoutDimension: (
+        removeVisUiConfigLayoutDimensionFromAxis: (
             state,
             action: PayloadAction<{ axis: Axis; dimensionId: string }>
         ) => {
@@ -247,6 +247,21 @@ export const visUiConfigSlice = createSlice({
                 )
             }
             array.splice(index, 1)
+        },
+        removeVisUiConfigLayoutDimension: (
+            state,
+            action: PayloadAction<{ dimensionId: string }>
+        ) => {
+            const { dimensionId } = action.payload
+            const axes = ['columns', 'rows', 'filters'] as const
+            for (const axis of axes) {
+                const index = state.layout[axis].indexOf(dimensionId)
+                if (index !== -1) {
+                    state.layout[axis].splice(index, 1)
+                    return
+                }
+            }
+            throw new Error(`Dimension ${dimensionId} not found in any axis`)
         },
     },
     selectors: {
@@ -262,6 +277,26 @@ export const visUiConfigSlice = createSlice({
         getVisUiConfigRepetitionsByDimension: (state, dimensionId: string) =>
             state.repetitionsByDimension[dimensionId] ||
             DEFAULT_REPETITIONS_OBJECT,
+        getVisUiConfigLayoutAllDimensionIds: createSelector(
+            (state: VisUiConfigState) => state.layout.columns,
+            (state: VisUiConfigState) => state.layout.filters,
+            (state: VisUiConfigState) => state.layout.rows,
+            (columns, filters, rows) => [...columns, ...filters, ...rows]
+        ),
+        getVisUiConfigLayoutIsEmpty: createSelector(
+            (state: VisUiConfigState) => state.layout.columns,
+            (state: VisUiConfigState) => state.layout.filters,
+            (state: VisUiConfigState) => state.layout.rows,
+            (columns, filters, rows) =>
+                columns.length === 0 &&
+                filters.length === 0 &&
+                rows.length === 0
+        ),
+        getVisUiConfigPlainItemIdsByDimension: createSelector(
+            (state: VisUiConfigState, dimensionId: string) =>
+                state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
+            (items) => items.map((id) => id.split('.').pop()!)
+        ),
     },
 })
 
@@ -277,6 +312,7 @@ export const {
     setVisUiConfigRepetitionsByDimension,
     addVisUiConfigLayoutDimension,
     moveVisUiConfigLayoutDimension,
+    removeVisUiConfigLayoutDimensionFromAxis,
     removeVisUiConfigLayoutDimension,
 } = visUiConfigSlice.actions
 
@@ -288,4 +324,7 @@ export const {
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
     getVisUiConfigRepetitionsByDimension,
+    getVisUiConfigLayoutAllDimensionIds,
+    getVisUiConfigLayoutIsEmpty,
+    getVisUiConfigPlainItemIdsByDimension,
 } = visUiConfigSlice.selectors

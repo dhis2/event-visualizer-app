@@ -1,33 +1,6 @@
-import cx from 'classnames'
-import { useCallback, useRef, useState, type FC } from 'react'
-import classes from './styles/resize-handle.module.css'
+import { useCallback, useRef, useState } from 'react'
 
 type Orientation = 'horizontal' | 'vertical'
-
-interface ResizeHandleProps extends React.HTMLAttributes<HTMLDivElement> {
-    ariaLabel?: string
-    isDragging: boolean
-    orientation: Orientation
-}
-
-export const ResizeHandle: FC<ResizeHandleProps> = ({
-    ariaLabel,
-    isDragging,
-    orientation,
-    ...rest
-}) => (
-    <div
-        {...rest}
-        className={cx(classes.resizeHandle, {
-            [classes.active]: isDragging,
-            [classes.horizontal]: orientation === 'horizontal',
-            [classes.vertical]: orientation === 'vertical',
-        })}
-        aria-orientation={orientation}
-        aria-label={ariaLabel}
-        style={{ touchAction: 'none' }}
-    />
-)
 
 interface UseResizeHandleProps {
     max: number
@@ -63,7 +36,7 @@ export const useResizeHandle = ({
     // Container ref callback
     // Computes the effective max size, based on the container, max and stored size
     const containerRef = useCallback(
-        (node) => {
+        (node: HTMLDivElement | null) => {
             if (node !== null) {
                 // Store the container edge position to avoid calculating it on each pointer move
                 containerEdgePosRef.current =

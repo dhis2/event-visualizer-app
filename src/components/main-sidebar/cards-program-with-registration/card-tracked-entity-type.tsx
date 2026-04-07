@@ -1,11 +1,15 @@
 import i18n from '@dhis2/d2-i18n'
-import { useMemo, type FC } from 'react'
+import { useCallback, useMemo, type FC } from 'react'
 import {
     DimensionCard,
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import { getProgramAttributeQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
+import {
+    useSelectedDimensionCount,
+    type UseSelectedDimensionCountMatchFn,
+} from '@components/main-sidebar/use-selected-dimension-count'
 import { useCurrentUser } from '@hooks'
 import type {
     DataSourceProgramWithRegistration,
@@ -59,13 +63,27 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
         baseQuery,
         fixedDimensions,
     })
+    const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
+        (selectedDimension) => {
+            if (selectedDimension.id === `${program.trackedEntityType.id}.ou`) {
+                return true
+            }
+            if (selectedDimension.dimensionType === 'PROGRAM_ATTRIBUTE') {
+                return true
+            }
+            return false
+        },
+        [program.trackedEntityType.id]
+    )
+    const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)
     return (
         <DimensionCard
             dimensionCardKey={CARD_AND_LIST_KEY}
             title={title}
             isDisabledByFilter={listProps.isDisabledByFilter}
+            selectedCount={selectedCount}
         >
-            <DimensionList {...listProps} />
+            <DimensionList {...listProps} program={program} />
         </DimensionCard>
     )
 }

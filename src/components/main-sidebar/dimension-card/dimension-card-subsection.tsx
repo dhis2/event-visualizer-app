@@ -29,7 +29,9 @@ export const DimensionsCardSubsection: FC<DimensionsCardSubsectionProps> = ({
         >
             <button
                 type="button"
-                className={classes.header}
+                className={cx(classes.header, {
+                    [classes.collapsed]: isCollapsed,
+                })}
                 onClick={handleToggle}
                 aria-expanded={!isCollapsed}
                 disabled={isDisabled}

@@ -10,6 +10,7 @@ import { FilterDropdownButton } from './filter-dropdown-button'
 import classes from './styles/main-sidebar.module.css'
 import { ToggleCollapseAllButton } from './toggle-collapse-all-button'
 import { UnifiedSearchInput } from './unified-search-input'
+import { useResizableSidebar } from './use-resizable-sidebar'
 import { useAppSelector, useMetadataItem } from '@hooks'
 import {
     isDataSourceProgramWithRegistration,
@@ -29,11 +30,16 @@ export const MainSidebar: FC = () => {
         setIsScrolled(target.scrollTop > 0)
     }
 
+    const { containerRef, isDragging, width, eventHandlers } =
+        useResizableSidebar()
+
     return (
         <div
+            ref={containerRef}
             className={cx(classes.container, {
                 [classes.hidden]: !isMainSidebarVisible,
             })}
+            style={{ inlineSize: width }}
         >
             <DataSourceSelect />
             {!!dataSourceMetadataItem && (
@@ -82,6 +88,12 @@ export const MainSidebar: FC = () => {
                     </div>
                 </>
             )}
+            <div
+                className={cx(classes.resizeHandle, {
+                    [classes.active]: isDragging,
+                })}
+                {...eventHandlers}
+            />
         </div>
     )
 }

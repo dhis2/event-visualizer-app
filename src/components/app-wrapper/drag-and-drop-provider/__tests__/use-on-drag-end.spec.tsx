@@ -77,12 +77,14 @@ describe('useOnDragEnd', () => {
         const { result } = renderHook(() => useOnDragEnd())
         const onDragEnd = result.current
 
+        const populateMetadata = vi.fn()
         const event = {
             active: {
                 data: {
                     current: {
                         dimensionId: 'test',
-                        // no axis, so from sidebar
+                        overlayItemProps: {},
+                        populateMetadata,
                     },
                 },
             },
@@ -120,6 +122,8 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'test',
                         axis: 'rows',
                         sortable: { index: 1 },
+                        overlayItemProps: {},
+                        insertAfter: false,
                     },
                 },
             },
@@ -159,6 +163,8 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'test',
                         axis: 'rows',
                         sortable: { index: 1 },
+                        overlayItemProps: {},
+                        insertAfter: false,
                     },
                 },
             },
