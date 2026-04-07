@@ -1,5 +1,5 @@
 import { CssVariables } from '@dhis2/ui'
-import { useCallback, type FC } from 'react'
+import { useCallback, type FC, type ReactNode } from 'react'
 import { useLoadVisualizationOnMount } from './use-load-visualization-on-mount'
 import './styles/app.module.css'
 import { AppWrapper } from '@components/app-wrapper'
@@ -84,6 +84,28 @@ const EventVisualizer: FC = () => {
         [dispatch]
     )
 
+    let centerContent: ReactNode
+    if (loadError) {
+        centerContent = <ErrorScreen error={loadError} />
+    } else if (isVisualizationEmpty(currentVis) && !isVisualizationLoading) {
+        centerContent = <StartScreen />
+    } else {
+        centerContent = (
+            <>
+                <ErrorBoundary onError={onError}>
+                    <PluginWrapper
+                        isVisualizationLoading={isVisualizationLoading}
+                        visualization={currentVis}
+                        displayProperty={currentUser.settings.displayProperty}
+                        onDataSorted={onDataSorted}
+                        onResponsesReceived={onResponsesReceived}
+                    />
+                </ErrorBoundary>
+                <InterpretationModal />
+            </>
+        )
+    }
+
     return (
         <GridContainer>
             <GridTopRow>
@@ -102,29 +124,7 @@ const EventVisualizer: FC = () => {
                     <LayoutPanel />
                 </ErrorBoundary>
             </GridCenterColumnTop>
-            <GridCenterColumnBottom>
-                {loadError ? (
-                    <ErrorScreen error={loadError} />
-                ) : isVisualizationEmpty(currentVis) &&
-                  !isVisualizationLoading ? (
-                    <StartScreen />
-                ) : (
-                    <>
-                        <ErrorBoundary onError={onError}>
-                            <PluginWrapper
-                                isVisualizationLoading={isVisualizationLoading}
-                                visualization={currentVis}
-                                displayProperty={
-                                    currentUser.settings.displayProperty
-                                }
-                                onDataSorted={onDataSorted}
-                                onResponsesReceived={onResponsesReceived}
-                            />
-                        </ErrorBoundary>
-                        <InterpretationModal />
-                    </>
-                )}
-            </GridCenterColumnBottom>
+            <GridCenterColumnBottom>{centerContent}</GridCenterColumnBottom>
             <GridEndColumn>
                 <DetailsPanel />
             </GridEndColumn>
