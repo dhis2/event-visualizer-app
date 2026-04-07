@@ -78,12 +78,7 @@ module.exports = defineConfig({
         },
         defaultCommandTimeout: 30000,
     },
-    env: {
-        // Duplicated in `expose` below. Kept here because
-        // @dhis2/cypress-commands still reads it via Cypress.env().
-        // Remove once that package migrates, then set allowCypressEnv: false.
-        dhis2DatatestPrefix: 'dhis2-eventvisualizer',
-    },
+    allowCypressEnv: false,
     expose: {
         dhis2DatatestPrefix: 'dhis2-eventvisualizer',
     },
