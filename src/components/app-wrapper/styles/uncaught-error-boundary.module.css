@@ -1,0 +1,5 @@
+.uncaughtErrorBoundary {
+    margin: auto;
+    padding-block-start: 16px;
+    max-inline-size: 600px;
+}
