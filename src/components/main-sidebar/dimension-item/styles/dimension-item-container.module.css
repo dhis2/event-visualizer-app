@@ -20,16 +20,6 @@
     background-color: #d8e1e9;
 }
 
-.container.multiSelected {
-    background-color: #e3f2fd;
-    border-color: #90caf9;
-}
-
-.container.multiSelected:hover {
-    background-color: #bbdefb;
-    border-color: #64b5f6;
-}
-
 .container.selected {
     background-color: var(--colors-teal100);
     border-color: var(--colors-teal200);
@@ -50,6 +40,17 @@
 .container.dragging {
     background-color: var(--colors-grey100);
     border-color: var(--colors-grey400);
+}
+
+.container.multiSelected,
+.container.dragging.multiSelected {
+    background-color: #e3f2fd;
+    border-color: #90caf9;
+}
+
+.container.multiSelected:hover {
+    background-color: #bbdefb;
+    border-color: #64b5f6;
 }
 
 .container.dragOverlay {
