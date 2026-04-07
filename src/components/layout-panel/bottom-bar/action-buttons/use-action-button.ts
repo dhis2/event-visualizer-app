@@ -13,6 +13,7 @@ import { getDataSourceId } from '@store/dimensions-selection-slice'
 import {
     getVisUiConfigLastActiveButton,
     getVisUiConfigLayout,
+    getVisUiConfigLayoutIsEmpty,
     getVisUiConfigOutputType,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
@@ -186,6 +187,7 @@ export const useActionButton = (
     const dataSourceId = useAppSelector(getDataSourceId)
     const lastActiveButton = useAppSelector(getVisUiConfigLastActiveButton)
     const layout = useAppSelector(getVisUiConfigLayout)
+    const isLayoutEmpty = useAppSelector(getVisUiConfigLayoutIsEmpty)
     const metadataStore = useMetadataStore()
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
@@ -297,11 +299,6 @@ export const useActionButton = (
             return dimensionMetadata?.dimensionType === 'PROGRAM_INDICATOR'
         })
     }, [layout, metadataStore])
-
-    const isLayoutEmpty: boolean = useMemo(
-        () => Object.values(layout).flat().length === 0,
-        [layout]
-    )
 
     const isRegistrationDateInLayout = useMemo(() => {
         if (isDataSourceProgramWithRegistration(dataSourceMetadata)) {

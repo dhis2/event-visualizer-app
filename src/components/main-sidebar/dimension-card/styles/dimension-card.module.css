@@ -8,6 +8,9 @@
 .container.isDisabledByFilter {
     opacity: 0.5;
 }
+.container:hover {
+    border-color: #b7c4d2;
+}
 .content {
     display: flex;
     flex-direction: column;

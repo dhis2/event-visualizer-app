@@ -1,0 +1,15 @@
+.content {
+    align-items: center;
+    display: flex;
+    inline-size: 100%;
+}
+
+.iconButtonWrapper {
+    align-self: stretch;
+    visibility: hidden;
+}
+
+.content:hover .iconButtonWrapper,
+.content:has(:focus-visible) .iconButtonWrapper {
+    visibility: visible;
+}

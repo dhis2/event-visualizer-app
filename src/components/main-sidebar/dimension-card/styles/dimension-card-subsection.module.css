@@ -1,8 +1,6 @@
 .container {
     display: flex;
     flex-direction: column;
-}
-.container:not(:first-child) {
     border-block-start: 1px solid var(--colors-grey300);
 }
 
@@ -14,6 +12,10 @@
     padding: 8px 6px 8px 12px;
     cursor: pointer;
     inline-size: 100%;
+}
+.header.collapsed {
+    border-end-start-radius: 4px;
+    border-end-end-radius: 4px;
 }
 .header:hover {
     background-color: var(--colors-grey100);
@@ -35,9 +37,6 @@
     line-height: 16px;
     font-weight: 500;
     color: var(--colors-grey900);
-}
-.title.withSelection {
-    color: var(--colors-teal600);
 }
 .count {
     flex-grow: 0;

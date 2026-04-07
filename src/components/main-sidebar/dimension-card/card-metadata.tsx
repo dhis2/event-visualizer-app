@@ -5,6 +5,10 @@ import {
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
+import {
+    useSelectedDimensionCount,
+    type UseSelectedDimensionCountMatchFn,
+} from '@components/main-sidebar/use-selected-dimension-count'
 import type { DimensionMetadataItem } from '@types'
 
 const getFixedDimensions = (): DimensionMetadataItem[] => [
@@ -45,15 +49,24 @@ const getFixedDimensions = (): DimensionMetadataItem[] => [
     },
 ]
 
+const METADATA_DIMENSION_IDS = new Set(
+    getFixedDimensions().map((dimension) => dimension.id)
+)
+
+const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = (dimension) =>
+    METADATA_DIMENSION_IDS.has(dimension.dimensionId)
+
 export const CardMetadata: FC = () => {
     const fixedDimensions = useMemo(getFixedDimensions, [])
     const listProps = useDimensionList({ fixedDimensions })
+    const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)
 
     return (
         <DimensionCard
             dimensionCardKey="metadata"
             title={i18n.t('Metadata')}
             isDisabledByFilter={listProps.isDisabledByFilter}
+            selectedCount={selectedCount}
         >
             <DimensionList {...listProps} />
         </DimensionCard>

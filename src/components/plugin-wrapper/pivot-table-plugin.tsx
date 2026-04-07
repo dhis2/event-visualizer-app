@@ -13,18 +13,13 @@ type PivotTablePluginProps = {
     isInModal: boolean
     onResponseReceived: OnAnalyticsResponseReceivedCb
     //    id?: number
-    style?: Record<string, string>
 }
-
-// TODO: this is to avoid height 0 on the PT component which hides the table
-const STYLE_PROP_DEFAULT = { height: '100%' }
 
 export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
     displayProperty,
     visualization,
     filters,
     onResponseReceived,
-    style = STYLE_PROP_DEFAULT,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isInDashboard,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -72,13 +67,11 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
     console.log('PT analytics data', data)
 
     return (
-        <div style={style}>
-            <PivotTable
-                visualization={visualizationForPTComponent}
-                data={data}
-                //legendSets={legendSets}
-                //renderCounter={id}
-            />
-        </div>
+        <PivotTable
+            visualization={visualizationForPTComponent}
+            data={data}
+            //legendSets={legendSets}
+            //renderCounter={id}
+        />
     )
 }

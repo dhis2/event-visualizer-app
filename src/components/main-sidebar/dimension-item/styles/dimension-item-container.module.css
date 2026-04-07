@@ -1,0 +1,56 @@
+.container {
+    border-color: transparent;
+    border-radius: 2px;
+    border-style: solid;
+    border-width: 1px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+}
+
+.container:not(.disabled):not(.dragging):not(.selected):not(
+        .dragOverlay
+    ):hover {
+    background-color: var(--colors-grey100);
+    border-color: var(--colors-grey400);
+    color: #8a949f;
+}
+
+.container:not(.disabled):active {
+    background-color: #d8e1e9;
+}
+
+.container.selected {
+    background-color: var(--colors-teal100);
+    border-color: var(--colors-teal200);
+    color: var(--colors-teal800);
+    font-weight: 400;
+}
+
+.container.selected:hover {
+    background: #cdeae8;
+    border-color: #93c4bf;
+    box-shadow: 0 1px 2px #0000000d;
+}
+
+.container.selected:active {
+    background-color: #bbe2e0;
+}
+
+.container.dragging {
+    background-color: var(--colors-grey100);
+    border-color: var(--colors-grey400);
+}
+
+.container.dragOverlay {
+    background: white;
+    border-color: var(--colors-blue600);
+    border-width: 2px;
+    inline-size: fit-content;
+    min-inline-size: 300px;
+}
+
+.container.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}

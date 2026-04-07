@@ -6,10 +6,18 @@ import {
 } from '@components/main-sidebar/dimension-card'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import { getOtherDimensionsQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
+import {
+    useSelectedDimensionCount,
+    type UseSelectedDimensionCountMatchFn,
+} from '@components/main-sidebar/use-selected-dimension-count'
 import { useCurrentUser } from '@hooks'
 import type { SingleQuery } from '@types'
 
 const CARD_AND_LIST_KEY = 'other'
+
+const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = (
+    selectedDimension
+) => selectedDimension.dimensionType === 'ORGANISATION_UNIT_GROUP_SET'
 
 export const CardOther: FC = () => {
     const {
@@ -23,6 +31,7 @@ export const CardOther: FC = () => {
         dimensionListKey: CARD_AND_LIST_KEY,
         baseQuery,
     })
+    const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)
 
     if (listProps.dimensions.length === 0) {
         return null
@@ -33,6 +42,7 @@ export const CardOther: FC = () => {
             dimensionCardKey={CARD_AND_LIST_KEY}
             title={i18n.t('Other')}
             isDisabledByFilter={listProps.isDisabledByFilter}
+            selectedCount={selectedCount}
         >
             <DimensionList {...listProps} />
         </DimensionCard>

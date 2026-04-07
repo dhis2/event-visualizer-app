@@ -1,17 +1,30 @@
-import { useMemo, type FC } from 'react'
+import { useCallback, useMemo, type FC } from 'react'
 import {
     DimensionList,
     DimensionsCardSubsection,
 } from '@components/main-sidebar/dimension-card'
-import { getEventFixedDimensions } from '@components/main-sidebar/get-event-fixed-dimensions'
+import {
+    EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES,
+    getEventFixedDimensions,
+} from '@components/main-sidebar/get-event-fixed-dimensions'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
 import { getDataElementQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
+import {
+    useSelectedDimensionCount,
+    type UseSelectedDimensionCountMatchFn,
+} from '@components/main-sidebar/use-selected-dimension-count'
 import { useCurrentUser } from '@hooks'
 import type {
     DataSourceProgramWithRegistration,
     DimensionListKey,
+    DimensionType,
     ProgramStage,
 } from '@types'
+
+const STAGE_DIMENSION_TYPES = new Set<DimensionType>(
+    EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES
+)
+STAGE_DIMENSION_TYPES.add('DATA_ELEMENT')
 
 export const ProgramStageSubsection: FC<{
     program: DataSourceProgramWithRegistration
@@ -34,10 +47,18 @@ export const ProgramStageSubsection: FC<{
         fixedDimensions,
         baseQuery,
     })
+    const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
+        (dimension) =>
+            STAGE_DIMENSION_TYPES.has(dimension.dimensionType) &&
+            dimension.programStageId === programStage.id,
+        [programStage.id]
+    )
+    const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)
     return (
         <DimensionsCardSubsection
             title={programStage.displayProgramStageLabel ?? programStage.name}
             isDisabled={listProps.isDisabledByFilter}
+            selectedCount={selectedCount}
         >
             <DimensionList
                 {...listProps}

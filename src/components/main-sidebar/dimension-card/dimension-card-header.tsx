@@ -21,7 +21,9 @@ export const DimensionCardHeader: FC<DimensionCardHeaderProps> = ({
     return (
         <button
             type="button"
-            className={classes.container}
+            className={cx(classes.container, {
+                [classes.collapsed]: isCollapsed,
+            })}
             onClick={onToggle}
             aria-expanded={!isCollapsed}
             disabled={isDisabled}
