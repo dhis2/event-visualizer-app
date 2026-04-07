@@ -5,6 +5,8 @@ import './styles/app.module.css'
 import { AppWrapper } from '@components/app-wrapper'
 import { DetailsPanel } from '@components/details-panel/details-panel'
 import { DimensionModal } from '@components/dimension-modal/dimension-modal'
+import { ErrorBoundary } from '@components/error-boundary/error-boundary'
+import { ErrorScreen } from '@components/error-screen/error-screen'
 import {
     GridCenterColumnBottom,
     GridCenterColumnTop,
@@ -29,7 +31,11 @@ import {
 } from '@hooks'
 import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
-import { getIsVisualizationLoading } from '@store/loader-slice'
+import {
+    getIsVisualizationLoading,
+    getLoadError,
+    setLoadError,
+} from '@store/loader-slice'
 import {
     getUiActiveDimensionModal,
     setUiActiveDimensionModal,
@@ -44,6 +50,12 @@ const EventVisualizer: FC = () => {
     const currentVis = useAppSelector(getCurrentVis)
     const activeDimensionModal = useAppSelector(getUiActiveDimensionModal)
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
+    const loadError = useAppSelector(getLoadError)
+
+    const onError = useCallback(
+        (error: Error) => dispatch(setLoadError(error)),
+        [dispatch]
+    )
 
     const onDataSorted = useCallback(
         (sorting: Sorting) => {
@@ -78,28 +90,37 @@ const EventVisualizer: FC = () => {
                 <Toolbar />
             </GridTopRow>
             <GridStartColumn>
-                <MainSidebar />
+                <ErrorBoundary onError={onError}>
+                    <MainSidebar />
+                </ErrorBoundary>
                 {activeDimensionModal && (
                     <DimensionModal onClose={onDimensionModalClose} />
                 )}
             </GridStartColumn>
             <GridCenterColumnTop>
-                <LayoutPanel />
+                <ErrorBoundary onError={onError}>
+                    <LayoutPanel />
+                </ErrorBoundary>
             </GridCenterColumnTop>
             <GridCenterColumnBottom>
-                {isVisualizationEmpty(currentVis) && !isVisualizationLoading ? (
+                {loadError ? (
+                    <ErrorScreen error={loadError} />
+                ) : isVisualizationEmpty(currentVis) &&
+                  !isVisualizationLoading ? (
                     <StartScreen />
                 ) : (
                     <>
-                        <PluginWrapper
-                            isVisualizationLoading={isVisualizationLoading}
-                            visualization={currentVis}
-                            displayProperty={
-                                currentUser.settings.displayProperty
-                            }
-                            onDataSorted={onDataSorted}
-                            onResponsesReceived={onResponsesReceived}
-                        />
+                        <ErrorBoundary onError={onError}>
+                            <PluginWrapper
+                                isVisualizationLoading={isVisualizationLoading}
+                                visualization={currentVis}
+                                displayProperty={
+                                    currentUser.settings.displayProperty
+                                }
+                                onDataSorted={onDataSorted}
+                                onResponsesReceived={onResponsesReceived}
+                            />
+                        </ErrorBoundary>
                         <InterpretationModal />
                     </>
                 )}
