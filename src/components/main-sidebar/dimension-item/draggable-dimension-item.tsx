@@ -160,11 +160,12 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
                                     : `add-button-${dimension.id}`
                             }
                         >
-                            {selected ? (
-                                <IconSubtract16 />
-                            ) : (
-                                <IconAdd16 color="var(--colors-grey600)" />
-                            )}
+                            {!multiSelected &&
+                                (selected ? (
+                                    <IconSubtract16 />
+                                ) : (
+                                    <IconAdd16 color="var(--colors-grey600)" />
+                                ))}
                         </IconButton>
                     </div>
                 )}
