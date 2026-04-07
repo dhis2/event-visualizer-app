@@ -1,8 +1,8 @@
 import { useDndMonitor, type Active, type ClientRect } from '@dnd-kit/core'
 import type { useSortable } from '@dnd-kit/sortable'
 import cx from 'classnames'
-import { useEffect, useState, type FC } from 'react'
-import classes from './styles/insert-marker.module.css'
+import { useState, type FC } from 'react'
+import classes from './styles/drop-insert-marker.module.css'
 import { isObject } from '@modules/validation'
 import type { Axis } from '@types'
 
@@ -79,36 +79,15 @@ export const DropInsertMarker: FC<{
     setInsertAfter: (flag: boolean) => void
     axisId: Axis
 }> = ({ sortable, setInsertAfter, axisId }) => {
-    const { active, activeIndex, index, rect } = sortable
+    const { activeIndex, index, rect } = sortable
     const [shouldShowMarker, setShouldShowMarker] = useState(false)
     const [atEnd, setAtEnd] = useState(false)
 
-    useEffect(() => {
-        // Visibility can be determined immediately; insertAfter position
-        // is deferred to the first onDragMove so we use pointer coordinates
-        // instead of the (potentially oversized) source element rect.
-        const initialShouldShow = calculateShouldShowMarker({
-            active,
-            activeIndex,
-            index,
-            axisId,
-            insertAfter: false,
-        })
-
-        setShouldShowMarker(initialShouldShow)
-
-        return () => {
-            setInsertAfter(false)
-        }
-    }, [active, activeIndex, index, axisId, setInsertAfter])
-
     useDndMonitor({
         onDragMove(event) {
-            // Calculate position using pointer coordinates
             const pointerX = getPointerX(event.activatorEvent, event.delta)
             const newInsertAfter = calculateInsertAfter(pointerX, rect.current)
 
-            // Then use it to determine visibility
             const newShouldShow = calculateShouldShowMarker({
                 active: event.active,
                 activeIndex,

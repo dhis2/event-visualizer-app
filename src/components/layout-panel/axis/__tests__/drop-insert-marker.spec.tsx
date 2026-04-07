@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type ClientRect, type DndMonitorListener } from '@dnd-kit/core'
 import type { useSortable } from '@dnd-kit/sortable'
-import { render, waitFor } from '@testing-library/react'
+import { act, render, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { DropInsertMarker } from '../drop-insert-marker'
-import classes from '../styles/insert-marker.module.css'
+import classes from '../styles/drop-insert-marker.module.css'
 
 let mockOnDragMove: DndMonitorListener['onDragMove'] | undefined
 
@@ -37,12 +37,31 @@ const createMockRect = ({
     bottom: top + height,
 })
 
+const fireDragMove = ({
+    active,
+    clientX,
+    deltaX,
+}: {
+    active: { id: string; data: { current: object } }
+    clientX: number
+    deltaX: number
+}) => {
+    act(() => {
+        mockOnDragMove!({
+            active: active as any,
+            activatorEvent: { clientX } as any,
+            over: null,
+            delta: { x: deltaX, y: 0 },
+            collisions: null,
+        } as any)
+    })
+}
+
 describe('DropInsertMarker', () => {
     beforeEach(() => {
         mockOnDragMove = undefined
     })
 
-    // Helper to access the onDragMove callback
     it('should not render when active is null', () => {
         const mockSortable: ReturnType<typeof useSortable> = {
             active: null,
@@ -64,19 +83,13 @@ describe('DropInsertMarker', () => {
 
     it('should render marker at start when dragged from different axis (before center)', () => {
         const chipRect = createMockRect({ left: 100, width: 100 }) // center at 150
-        const draggedRect = createMockRect({ left: 50, width: 100 }) // center at 100
+        const active = {
+            id: 'dragged-id',
+            data: { current: { axis: 'filters', dimensionId: 'test' } },
+        }
 
         const mockSortable: ReturnType<typeof useSortable> = {
-            active: {
-                id: 'dragged-id',
-                data: { current: { axis: 'filters', dimensionId: 'test' } },
-                rect: {
-                    current: {
-                        translated: draggedRect,
-                        initial: null,
-                    },
-                },
-            },
+            active,
             activeIndex: 0,
             index: 1,
             rect: { current: chipRect },
@@ -90,6 +103,9 @@ describe('DropInsertMarker', () => {
             />
         )
 
+        // pointerX = 120 + 0 = 120, before chip center at 150
+        fireDragMove({ active, clientX: 120, deltaX: 0 })
+
         const marker = getByTestId('drop-insert-marker')
         expect(marker).toBeInTheDocument()
         expect(marker).not.toHaveClass(classes.atEnd)
@@ -97,19 +113,13 @@ describe('DropInsertMarker', () => {
 
     it('should update marker position from left to right on drag move', async () => {
         const chipRect = createMockRect({ left: 100, width: 100 }) // center at 150
-        const initialDraggedRect = createMockRect({ left: 50, width: 100 }) // center at 100 (before chip center)
+        const active = {
+            id: 'dragged-id',
+            data: { current: { axis: 'filters', dimensionId: 'test' } },
+        }
 
         const mockSortable: ReturnType<typeof useSortable> = {
-            active: {
-                id: 'dragged-id',
-                data: { current: { axis: 'filters', dimensionId: 'test' } },
-                rect: {
-                    current: {
-                        translated: initialDraggedRect,
-                        initial: null,
-                    },
-                },
-            },
+            active,
             activeIndex: 0,
             index: 1,
             rect: { current: chipRect },
@@ -123,33 +133,16 @@ describe('DropInsertMarker', () => {
             />
         )
 
-        // Initially marker should be at start (left)
+        // pointerX = 120 + 0 = 120, before chip center at 150
+        fireDragMove({ active, clientX: 120, deltaX: 0 })
+
         let marker = getByTestId('drop-insert-marker')
         expect(marker).toBeInTheDocument()
         expect(marker).not.toHaveClass(classes.atEnd)
 
-        // Simulate drag move to the right side of chip
-        const newDraggedRect = createMockRect({ left: 150, width: 100 }) // center at 200 (after chip center)
-        expect(mockOnDragMove).toBeDefined()
+        // Move to right side of chip (pointerX = 100 + 100 = 200 > 150)
+        fireDragMove({ active, clientX: 100, deltaX: 100 })
 
-        mockOnDragMove!({
-            active: {
-                id: 'dragged-id',
-                data: { current: { axis: 'filters', dimensionId: 'test' } },
-                rect: {
-                    current: {
-                        translated: newDraggedRect,
-                        initial: null,
-                    },
-                },
-            },
-            activatorEvent: { clientX: 100 },
-            over: null,
-            delta: { x: 100, y: 0 },
-            collisions: null,
-        } as any)
-
-        // Wait for state update and marker should now be at end (right)
         await waitFor(() => {
             marker = queryByTestId('drop-insert-marker')!
             expect(marker).toBeInTheDocument()
@@ -159,19 +152,14 @@ describe('DropInsertMarker', () => {
 
     it('should set marker at end after drag move past chip center', async () => {
         const chipRect = createMockRect({ left: 100, width: 100 }) // center at 150
+        const active = {
+            id: 'dragged-id',
+            data: { current: { axis: 'filters', dimensionId: 'test' } },
+        }
 
         const setInsertAfter = vi.fn()
         const mockSortable: ReturnType<typeof useSortable> = {
-            active: {
-                id: 'dragged-id',
-                data: { current: { axis: 'filters', dimensionId: 'test' } },
-                rect: {
-                    current: {
-                        translated: null,
-                        initial: null,
-                    },
-                },
-            },
+            active,
             activeIndex: 0,
             index: 1,
             rect: { current: chipRect },
@@ -185,21 +173,12 @@ describe('DropInsertMarker', () => {
             />
         )
 
-        // Initially marker is at start
+        // pointerX = 120 + 0 = 120, before chip center at 150
+        fireDragMove({ active, clientX: 120, deltaX: 0 })
         expect(getByTestId('drop-insert-marker')).not.toHaveClass(classes.atEnd)
 
-        // Simulate drag move past chip center (pointerX = 50 + 150 = 200 > 150)
-        mockOnDragMove!({
-            active: {
-                id: 'dragged-id',
-                data: { current: { axis: 'filters', dimensionId: 'test' } },
-                rect: { current: { translated: null, initial: null } },
-            },
-            activatorEvent: { clientX: 50 },
-            over: null,
-            delta: { x: 150, y: 0 },
-            collisions: null,
-        } as any)
+        // Move past chip center (pointerX = 50 + 150 = 200 > 150)
+        fireDragMove({ active, clientX: 50, deltaX: 150 })
 
         await waitFor(() => {
             expect(getByTestId('drop-insert-marker')).toHaveClass(classes.atEnd)
@@ -209,18 +188,13 @@ describe('DropInsertMarker', () => {
 
     it('should hide marker when drag move reveals adjacent no-op (before active)', async () => {
         const chipRect = createMockRect({ left: 100, width: 100 }) // center at 150
+        const active = {
+            id: 'dragged-id',
+            data: { current: { axis: 'columns', dimensionId: 'test' } },
+        }
 
         const mockSortable: ReturnType<typeof useSortable> = {
-            active: {
-                id: 'dragged-id',
-                data: { current: { axis: 'columns', dimensionId: 'test' } },
-                rect: {
-                    current: {
-                        translated: null,
-                        initial: null,
-                    },
-                },
-            },
+            active,
             activeIndex: 1,
             index: 0, // chip before active
             rect: { current: chipRect },
@@ -234,19 +208,9 @@ describe('DropInsertMarker', () => {
             />
         )
 
-        // Simulate drag move past chip center (pointerX = 100 + 100 = 200 > 150)
+        // Move past chip center (pointerX = 100 + 100 = 200 > 150)
         // insertAfter=true → adjacentIndex = 0+1 = 1 = activeIndex → no-op
-        mockOnDragMove!({
-            active: {
-                id: 'dragged-id',
-                data: { current: { axis: 'columns', dimensionId: 'test' } },
-                rect: { current: { translated: null, initial: null } },
-            },
-            activatorEvent: { clientX: 100 },
-            over: null,
-            delta: { x: 100, y: 0 },
-            collisions: null,
-        } as any)
+        fireDragMove({ active, clientX: 100, deltaX: 100 })
 
         await waitFor(() => {
             expect(queryByTestId('drop-insert-marker')).not.toBeInTheDocument()
@@ -255,19 +219,13 @@ describe('DropInsertMarker', () => {
 
     it('should not render when hovering adjacent chip after active (no-op)', () => {
         const chipRect = createMockRect({ left: 100, width: 100 })
-        const draggedRect = createMockRect({ left: 50, width: 100 }) // BEFORE chip center
+        const active = {
+            id: 'dragged-id',
+            data: { current: { axis: 'columns', dimensionId: 'test' } },
+        }
 
         const mockSortable: ReturnType<typeof useSortable> = {
-            active: {
-                id: 'dragged-id',
-                data: { current: { axis: 'columns', dimensionId: 'test' } },
-                rect: {
-                    current: {
-                        translated: draggedRect,
-                        initial: null,
-                    },
-                },
-            },
+            active,
             activeIndex: 0,
             index: 1, // chip after active
             rect: { current: chipRect },
@@ -281,25 +239,22 @@ describe('DropInsertMarker', () => {
             />
         )
 
-        // Dropping BEFORE index 1 would put it at index 0 (where it already is) = no-op
+        // pointerX = 120 + 0 = 120, before chip center → insertAfter=false
+        // adjacentIndex = 1-1 = 0 = activeIndex → no-op
+        fireDragMove({ active, clientX: 120, deltaX: 0 })
+
         expect(queryByTestId('drop-insert-marker')).not.toBeInTheDocument()
     })
 
     it('should render when hovering non-adjacent chip on same axis', () => {
         const chipRect = createMockRect({ left: 100, width: 100 })
-        const draggedRect = createMockRect({ left: 50, width: 100 })
+        const active = {
+            id: 'dragged-id',
+            data: { current: { axis: 'columns', dimensionId: 'test' } },
+        }
 
         const mockSortable: ReturnType<typeof useSortable> = {
-            active: {
-                id: 'dragged-id',
-                data: { current: { axis: 'columns', dimensionId: 'test' } },
-                rect: {
-                    current: {
-                        translated: draggedRect,
-                        initial: null,
-                    },
-                },
-            },
+            active,
             activeIndex: 0,
             index: 2,
             rect: { current: chipRect },
@@ -312,6 +267,9 @@ describe('DropInsertMarker', () => {
                 axisId="columns"
             />
         )
+
+        // pointerX = 120 + 0 = 120, before chip center at 150
+        fireDragMove({ active, clientX: 120, deltaX: 0 })
 
         const marker = getByTestId('drop-insert-marker')
         expect(marker).toBeInTheDocument()
