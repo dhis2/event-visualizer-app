@@ -22,11 +22,11 @@ export const useUncaughtErrorAlert = () => {
     const { show } = useAlert(extractMessageFromErrorEvent, { critical: true })
 
     useEffect(() => {
-        window.addEventListener('error', show)
-        window.addEventListener('unhandledrejection', show)
+        globalThis.addEventListener('error', show)
+        globalThis.addEventListener('unhandledrejection', show)
         return () => {
-            window.removeEventListener('error', show)
-            window.removeEventListener('unhandledrejection', show)
+            globalThis.removeEventListener('error', show)
+            globalThis.removeEventListener('unhandledrejection', show)
         }
     }, [show])
 }
