@@ -5,12 +5,14 @@ import { InterpretationsProvider } from './interpretations-provider'
 import { MetadataProvider } from './metadata-provider/metadata-provider'
 import { StoreProvider } from './store-provider'
 import { StoreToLocationSyncer } from './store-to-location-syncer'
-import { UncaughtErrorBoundary } from './uncaught-error-boundary'
+import { useUncaughtErrorAlert } from './use-uncaught-error-alert'
 // eslint-disable-next-line no-restricted-imports
 import '../../locales/index.js'
 
-export const AppWrapper: FC<{ children: ReactNode }> = ({ children }) => (
-    <UncaughtErrorBoundary>
+export const AppWrapper: FC<{ children: ReactNode }> = ({ children }) => {
+    useUncaughtErrorAlert()
+
+    return (
         <AppCachedDataQueryProvider>
             <MetadataProvider>
                 <StoreProvider>
@@ -23,5 +25,5 @@ export const AppWrapper: FC<{ children: ReactNode }> = ({ children }) => (
                 </StoreProvider>
             </MetadataProvider>
         </AppCachedDataQueryProvider>
-    </UncaughtErrorBoundary>
-)
+    )
+}
