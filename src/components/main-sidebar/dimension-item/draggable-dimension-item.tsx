@@ -147,7 +147,7 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
                     disabled={disabled || selected}
                     onClick={handleClick}
                 />
-                {!disabled && (
+                {!disabled && !multiSelected && (
                     <div className={styles.iconButtonWrapper}>
                         <IconButton
                             onClick={(e) => {
@@ -160,12 +160,11 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
                                     : `add-button-${dimension.id}`
                             }
                         >
-                            {!multiSelected &&
-                                (selected ? (
-                                    <IconSubtract16 />
-                                ) : (
-                                    <IconAdd16 color="var(--colors-grey600)" />
-                                ))}
+                            {selected ? (
+                                <IconSubtract16 />
+                            ) : (
+                                <IconAdd16 color="var(--colors-grey600)" />
+                            )}
                         </IconButton>
                     </div>
                 )}
