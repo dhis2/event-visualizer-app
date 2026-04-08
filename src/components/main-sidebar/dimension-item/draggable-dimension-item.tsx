@@ -25,7 +25,6 @@ interface DraggableDimensionItemProps {
     dimension: DimensionMetadataItem
     program?: Program
     programStage?: ProgramStage
-    draggableId?: string
     disabled?: boolean
 }
 
@@ -33,7 +32,6 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
     dimension,
     program,
     programStage,
-    draggableId,
     disabled,
 }) => {
     const dispatch = useAppDispatch()
@@ -108,7 +106,7 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
         transform,
         transition,
     } = useSortable({
-        id: draggableId ?? dimension.id,
+        id: `sidebar-${dimension.id}`,
         disabled: disabled || selected,
         data: droppableData,
     })
