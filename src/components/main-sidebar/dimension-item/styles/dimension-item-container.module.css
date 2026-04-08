@@ -59,7 +59,8 @@
     border-color: var(--colors-blue600);
     border-width: 2px;
     inline-size: fit-content;
-    min-inline-size: 300px;
+    max-inline-size: 100%;
+    padding-inline-end: 4px;
 }
 
 .container.disabled {
