@@ -1,0 +1,4 @@
+.container {
+    padding: var(--spacers-dp16);
+    max-inline-size: 600px;
+}

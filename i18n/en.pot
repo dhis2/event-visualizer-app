@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-04-02T12:49:50.591Z\n"
-"PO-Revision-Date: 2026-04-02T12:49:50.592Z\n"
+"POT-Creation-Date: 2026-04-08T09:35:58.387Z\n"
+"PO-Revision-Date: 2026-04-08T09:35:58.388Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -275,6 +275,9 @@ msgstr "Code"
 
 msgid "Name"
 msgstr "Name"
+
+msgid "An error occurred"
+msgstr "An error occurred"
 
 msgid "Resize axes panel"
 msgstr "Resize axes panel"

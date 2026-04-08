@@ -18,9 +18,17 @@ export const loaderSlice = createSlice({
     reducers: {
         setIsVisualizationLoading: (state, action: PayloadAction<boolean>) => {
             state.isVisualizationLoading = action.payload
+            if (action.payload) {
+                state.loadError = null
+            }
         },
-        setLoadError: (state, action: PayloadAction<string>) => {
-            state.loadError = parseEngineError(action.payload)
+        setLoadError: {
+            reducer: (state, action: PayloadAction<EngineError>) => {
+                state.loadError = action.payload
+            },
+            prepare: (error: unknown) => ({
+                payload: parseEngineError(error),
+            }),
         },
         clearLoadError: (state) => {
             state.loadError = initialState.loadError
