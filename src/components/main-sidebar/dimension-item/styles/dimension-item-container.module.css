@@ -8,7 +8,7 @@
     align-items: center;
 }
 
-.container:not(.disabled):not(.dragging):not(.selected):not(
+.container:not(.disabled):not(.dragging):not(.selected):not(.multiSelected):not(
         .dragOverlay
     ):hover {
     background-color: var(--colors-grey100);
@@ -42,7 +42,19 @@
     border-color: var(--colors-grey400);
 }
 
+.container.multiSelected,
+.container.dragging.multiSelected {
+    background-color: #e3f2fd;
+    border-color: #90caf9;
+}
+
+.container.multiSelected:hover {
+    background-color: #bbdefb;
+    border-color: #64b5f6;
+}
+
 .container.dragOverlay {
+    position: relative;
     background: white;
     border-color: var(--colors-blue600);
     border-width: 2px;
