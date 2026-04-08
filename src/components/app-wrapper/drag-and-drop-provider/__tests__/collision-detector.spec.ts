@@ -463,13 +463,7 @@ describe('collision-detector', () => {
             disabled: false,
         })
 
-        it('should return chip collision when dragged item overlaps with a chip', () => {
-            const draggedRect = createMockRect({
-                top: 10,
-                left: 10,
-                width: 100,
-                height: 20,
-            })
+        it('should return chip collision when pointer overlaps with a chip', () => {
             const chip1 = createMockChipContainer({
                 id: 'chip1',
                 rect: createMockRect({
@@ -488,23 +482,18 @@ describe('collision-detector', () => {
                     left: 15,
                     width: 80,
                     height: 20,
-                }), // Overlaps with dragged
+                }),
                 axis: 'rows',
                 index: 1,
             })
 
             const active = {
                 id: 'dragged',
-                rect: {
-                    current: {
-                        initial: null,
-                        translated: draggedRect,
-                    },
-                },
             } as any
 
             const collisions = collisionDetector({
                 active,
+                pointerCoordinates: { x: 50, y: 20 },
                 droppableContainers: [chip1, chip2],
             } as any)
 
@@ -512,13 +501,7 @@ describe('collision-detector', () => {
             expect(collisions[0].id).toBe('chip2')
         })
 
-        it('should return axis container collision when dragged over empty axis', () => {
-            const draggedRect = createMockRect({
-                top: 10,
-                left: 10,
-                width: 100,
-                height: 20,
-            })
+        it('should return axis container collision when pointer is over empty axis', () => {
             const emptyAxis = createMockAxisContainer(
                 'rows',
                 createMockRect({ top: 0, left: 0, width: 400, height: 100 })
@@ -526,16 +509,11 @@ describe('collision-detector', () => {
 
             const active = {
                 id: 'dragged',
-                rect: {
-                    current: {
-                        initial: null,
-                        translated: draggedRect,
-                    },
-                },
             } as any
 
             const collisions = collisionDetector({
                 active,
+                pointerCoordinates: { x: 50, y: 20 },
                 droppableContainers: [emptyAxis],
             } as any)
 
@@ -544,13 +522,6 @@ describe('collision-detector', () => {
         })
 
         it('should use computeLineEndMatch when over axis container with chips', () => {
-            const draggedRect = createMockRect({
-                top: 10,
-                left: 10,
-                width: 80,
-                height: 20,
-            })
-
             const axisContainer = createMockAxisContainer(
                 'rows',
                 createMockRect({ top: 0, left: 0, width: 400, height: 100 })
@@ -569,16 +540,11 @@ describe('collision-detector', () => {
 
             const active = {
                 id: 'dragged',
-                rect: {
-                    current: {
-                        initial: null,
-                        translated: draggedRect,
-                    },
-                },
             } as any
 
             const collisions = collisionDetector({
                 active,
+                pointerCoordinates: { x: 50, y: 20 },
                 droppableContainers: [axisContainer, chip],
             } as any)
 
@@ -586,19 +552,14 @@ describe('collision-detector', () => {
             expect(collisions[0].id).toBe('chip')
         })
 
-        it('should return empty array when no active rect', () => {
+        it('should return empty array when no pointer coordinates', () => {
             const active = {
                 id: 'dragged',
-                rect: {
-                    current: {
-                        initial: null,
-                        translated: null,
-                    },
-                },
             } as any
 
             const collisions = collisionDetector({
                 active,
+                pointerCoordinates: null,
                 droppableContainers: [],
             } as any)
 
@@ -606,12 +567,6 @@ describe('collision-detector', () => {
         })
 
         it('should exclude the active container from collisions', () => {
-            const draggedRect = createMockRect({
-                top: 10,
-                left: 10,
-                width: 100,
-                height: 20,
-            })
             const chip1 = createMockChipContainer({
                 id: 'chip1',
                 rect: createMockRect({
@@ -626,16 +581,11 @@ describe('collision-detector', () => {
 
             const active = {
                 id: 'chip1', // Same as container
-                rect: {
-                    current: {
-                        initial: null,
-                        translated: draggedRect,
-                    },
-                },
             } as any
 
             const collisions = collisionDetector({
                 active,
+                pointerCoordinates: { x: 50, y: 20 },
                 droppableContainers: [chip1],
             } as any)
 
@@ -643,12 +593,6 @@ describe('collision-detector', () => {
         })
 
         it('should prioritize chip collisions over axis container collisions', () => {
-            const draggedRect = createMockRect({
-                top: 10,
-                left: 10,
-                width: 100,
-                height: 20,
-            })
             const axisContainer = createMockAxisContainer(
                 'rows',
                 createMockRect({ top: 0, left: 0, width: 400, height: 100 })
@@ -660,23 +604,18 @@ describe('collision-detector', () => {
                     left: 10,
                     width: 80,
                     height: 20,
-                }), // Overlaps with dragged
+                }),
                 axis: 'rows',
                 index: 0,
             })
 
             const active = {
                 id: 'dragged',
-                rect: {
-                    current: {
-                        initial: null,
-                        translated: draggedRect,
-                    },
-                },
             } as any
 
             const collisions = collisionDetector({
                 active,
+                pointerCoordinates: { x: 50, y: 20 },
                 droppableContainers: [axisContainer, chip],
             } as any)
 

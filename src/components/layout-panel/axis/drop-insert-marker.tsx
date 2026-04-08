@@ -1,21 +1,35 @@
 import { useDndMonitor, type Active, type ClientRect } from '@dnd-kit/core'
 import type { useSortable } from '@dnd-kit/sortable'
 import cx from 'classnames'
-import { useEffect, useState, type FC } from 'react'
-import classes from './styles/insert-marker.module.css'
+import { useState, type FC } from 'react'
+import classes from './styles/drop-insert-marker.module.css'
 import { isObject } from '@modules/validation'
 import type { Axis } from '@types'
 
+const getPointerX = (
+    activatorEvent: Event | null | undefined,
+    delta: { x: number } | undefined
+): number | undefined => {
+    if (
+        !activatorEvent ||
+        !delta ||
+        !('clientX' in activatorEvent) ||
+        typeof activatorEvent.clientX !== 'number'
+    ) {
+        return undefined
+    }
+    return activatorEvent.clientX + delta.x
+}
+
 const calculateInsertAfter = (
-    translatedRect: ClientRect | null | undefined,
+    pointerX: number | undefined,
     chipRect: ClientRect | null | undefined
 ): boolean => {
-    if (!translatedRect || !chipRect) {
+    if (pointerX === undefined || !chipRect) {
         return false
     }
     const chipCenterX = chipRect.left + chipRect.width / 2
-    const draggedCenterX = translatedRect.left + translatedRect.width / 2
-    return draggedCenterX > chipCenterX
+    return pointerX > chipCenterX
 }
 
 const calculateShouldShowMarker = ({
@@ -65,45 +79,15 @@ export const DropInsertMarker: FC<{
     setInsertAfter: (flag: boolean) => void
     axisId: Axis
 }> = ({ sortable, setInsertAfter, axisId }) => {
-    const { active, activeIndex, index, rect } = sortable
+    const { activeIndex, index, rect } = sortable
     const [shouldShowMarker, setShouldShowMarker] = useState(false)
     const [atEnd, setAtEnd] = useState(false)
 
-    useEffect(() => {
-        // Calculate initial visibility and position on mount
-        const initialInsertAfter = calculateInsertAfter(
-            active?.rect.current.translated,
-            rect.current
-        )
-        const initialShouldShow = calculateShouldShowMarker({
-            active,
-            activeIndex,
-            index,
-            axisId,
-            insertAfter: initialInsertAfter,
-        })
-
-        setShouldShowMarker(initialShouldShow)
-        setAtEnd(initialInsertAfter)
-
-        if (initialInsertAfter) {
-            setInsertAfter(true)
-        }
-
-        return () => {
-            setInsertAfter(false)
-        }
-    }, [active, activeIndex, index, axisId, rect, setInsertAfter])
-
     useDndMonitor({
         onDragMove(event) {
-            // Calculate position first
-            const newInsertAfter = calculateInsertAfter(
-                event.active.rect.current.translated,
-                rect.current
-            )
+            const pointerX = getPointerX(event.activatorEvent, event.delta)
+            const newInsertAfter = calculateInsertAfter(pointerX, rect.current)
 
-            // Then use it to determine visibility
             const newShouldShow = calculateShouldShowMarker({
                 active: event.active,
                 activeIndex,

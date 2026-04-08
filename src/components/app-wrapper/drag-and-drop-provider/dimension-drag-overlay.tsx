@@ -1,4 +1,5 @@
 import { DragOverlay, useDndMonitor } from '@dnd-kit/core'
+import { snapCenterToCursor } from '@dnd-kit/modifiers'
 import cx from 'classnames'
 import { useState, type FC } from 'react'
 import classes from './styles/dimension-drag-overlay.module.css'
@@ -96,7 +97,7 @@ export const DimensionDragOverlay: FC = () => {
             : 0
 
     return (
-        <DragOverlay dropAnimation={null}>
+        <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>
             {draggedDimensionData ? (
                 <DragOverlayItem
                     {...draggedDimensionData}
