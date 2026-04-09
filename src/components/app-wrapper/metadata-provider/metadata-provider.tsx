@@ -1,4 +1,4 @@
-import { useRootOrgUnits } from '@hooks'
+import { useRootOrgUnits } from '@components/app-wrapper/app-cached-data-query-provider'
 import {
     isProgramMetadataItem,
     isProgramStageMetadataItem,
