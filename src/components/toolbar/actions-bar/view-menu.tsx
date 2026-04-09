@@ -71,7 +71,7 @@ export const ViewMenu: FC = () => {
                     onClick={toggleMainSidebarVisible}
                 />
                 <HoverMenuListItem
-                    label={i18n.t('Reset dimension sidebar width')}
+                    label={i18n.t('Reset dimensions sidebar width')}
                     onClick={resetMainSidebarWidth}
                     disabled={mainSidebarWidth === MAIN_SIDEBAR_DEFAULT_WIDTH}
                 />

@@ -51,12 +51,14 @@ export const uiSlice = createSlice({
             state.isLayoutPanelVisible = !state.isLayoutPanelVisible
         },
         toggleUiShowExpandedVisualizationCanvas: (state) => {
-            const nextValue = !(
-                state.isMainSidebarVisible && state.isLayoutPanelVisible
-            )
+            const shouldShow =
+                !state.isMainSidebarVisible &&
+                !state.isLayoutPanelVisible &&
+                !state.isDetailsPanelVisible
 
-            state.isMainSidebarVisible = nextValue
-            state.isLayoutPanelVisible = nextValue
+            state.isMainSidebarVisible = shouldShow
+            state.isLayoutPanelVisible = shouldShow
+            state.isDetailsPanelVisible = shouldShow
         },
     },
     selectors: {
