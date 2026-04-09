@@ -1,9 +1,9 @@
+import type { ResponseErrorReport } from '@api/parse-engine-error'
 import type {
     ContextType,
     ExecuteOptions,
     Query,
 } from '@dhis2/app-service-data'
-import type { ResponseErrorReport } from '@api/parse-engine-error'
 
 export type DataEngine = Omit<ContextType['engine'], 'query'> & {
     query(

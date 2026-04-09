@@ -6,8 +6,6 @@ import {
     SingleSelectField,
     SingleSelectOption,
 } from '@dhis2/ui'
-import { useCallback, useMemo, type FC } from 'react'
-import classes from './styles/condition.module.css'
 import {
     NULL_VALUE,
     OPERATOR_EMPTY,
@@ -19,6 +17,8 @@ import {
     getAlphaNumericOperators,
     type QueryOperator,
 } from '@modules/conditions'
+import { useCallback, useMemo, type FC } from 'react'
+import classes from './styles/condition.module.css'
 
 type ConditionProps = {
     condition: string

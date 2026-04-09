@@ -1,5 +1,3 @@
-import i18n from '@dhis2/d2-i18n'
-import { type FC, useMemo } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -10,8 +8,10 @@ import {
     useSelectedDimensionCount,
     type UseSelectedDimensionCountMatchFn,
 } from '@components/main-sidebar/use-selected-dimension-count'
+import i18n from '@dhis2/d2-i18n'
 import { useCurrentUser } from '@hooks'
 import type { SingleQuery } from '@types'
+import { type FC, useMemo } from 'react'
 
 const CARD_AND_LIST_KEY = 'other'
 

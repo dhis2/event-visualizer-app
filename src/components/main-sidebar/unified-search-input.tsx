@@ -5,6 +5,12 @@ import {
     IconSearch16,
     theme,
 } from '@dhis2/ui'
+import { useAppSelector, useAppStore } from '@hooks'
+import {
+    getAllDimensionListLoadErrors,
+    isAnyDimensionListLoading,
+    setSearchTerm,
+} from '@store/dimensions-selection-slice'
 import cx from 'classnames'
 import {
     type FC,
@@ -16,12 +22,6 @@ import {
 } from 'react'
 import { useDebounceCallback, useDebounceValue } from 'usehooks-ts'
 import classes from './styles/unified-search-input.module.css'
-import { useAppSelector, useAppStore } from '@hooks'
-import {
-    getAllDimensionListLoadErrors,
-    isAnyDimensionListLoading,
-    setSearchTerm,
-} from '@store/dimensions-selection-slice'
 
 const DEBOUNCE_TIME_SEARCH_TERM = 250
 const DEBOUNCE_TIME_LOADER = 250

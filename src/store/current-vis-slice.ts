@@ -1,9 +1,9 @@
-import type { PayloadAction } from '@reduxjs/toolkit'
-import { createSlice } from '@reduxjs/toolkit'
 import {
     isVisualizationEmpty,
     isVisualizationSaved,
 } from '@modules/visualization'
+import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import type {
     CurrentVisualization,
     NewVisualization,

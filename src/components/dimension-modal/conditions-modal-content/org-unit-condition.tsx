@@ -1,4 +1,3 @@
-import { useCallback, useMemo, type FC } from 'react'
 import { OrgUnitDimension, ouIdHelper } from '@dhis2/analytics'
 //import { removeLastPathSegment } from '../../../modules/orgUnit.js'
 import {
@@ -9,6 +8,7 @@ import {
 } from '@hooks'
 import { OPERATOR_IN } from '@modules/conditions'
 import type { OrganisationUnitMetadataItem, OrgUnit } from '@types'
+import { useCallback, useMemo, type FC } from 'react'
 
 type OrgUnitConditionProps = {
     condition: string

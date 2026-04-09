@@ -1,8 +1,8 @@
+import { useAppDispatch, useAppSelector } from '@hooks'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { ToggleCollapseAllButton } from '../toggle-collapse-all-button'
-import { useAppDispatch, useAppSelector } from '@hooks'
 
 vi.mock('@hooks', () => ({
     useAppDispatch: vi.fn(),

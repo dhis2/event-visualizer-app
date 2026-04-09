@@ -122,8 +122,8 @@ pnpm generate-types # Regenerate DHIS2 API types from OpenAPI specs
 
 - **Functional components**: Use functional components with hooks
 - **Restricted hooks**:
-  - DHIS2 app-runtime hooks (`useDataQuery`, `useDataMutation`) are restricted - use RTK hooks from `src/hooks` instead
-  - React Redux hooks are restricted - use typed hooks from `src/hooks` (`useAppDispatch`, `useAppSelector`)
+    - DHIS2 app-runtime hooks (`useDataQuery`, `useDataMutation`) are restricted - use RTK hooks from `src/hooks` instead
+    - React Redux hooks are restricted - use typed hooks from `src/hooks` (`useAppDispatch`, `useAppSelector`)
 - **DHIS2 UI components**: Use DHIS2 UI components where possible for consistency
 - **Component size**: Keep components focused and small
 - **Styling**: Use CSS modules for styling

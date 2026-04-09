@@ -1,6 +1,3 @@
-import { Transfer, TransferOption } from '@dhis2/ui'
-import { type FC, useMemo } from 'react'
-import { type FetchResult, optionsApi } from './options-api'
 import {
     TRANSFER_HEIGHT,
     TRANSFER_OPTIONS_WIDTH,
@@ -11,8 +8,11 @@ import { TransferLeftHeader } from '@components/dimension-modal/transfer/transfe
 import { TransferRightHeader } from '@components/dimension-modal/transfer/transfer-right-header'
 import { TransferSourceEmptyPlaceholder } from '@components/dimension-modal/transfer/transfer-source-empty-placeholder'
 import { useInfiniteTransferOptions } from '@components/dimension-modal/transfer/use-infinite-transfer-options'
+import { Transfer, TransferOption } from '@dhis2/ui'
 import { useAddMetadata, useOptionSetMetadataItem } from '@hooks'
 import { OPERATOR_IN } from '@modules/conditions'
+import { type FC, useMemo } from 'react'
+import { type FetchResult, optionsApi } from './options-api'
 
 type OptionSetConditionProps = {
     condition: string

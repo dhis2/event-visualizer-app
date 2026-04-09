@@ -1,13 +1,6 @@
+import { SkeletonChip } from '@components/shared/skeleton-chip'
 import i18n from '@dhis2/d2-i18n'
 import { IconMore16, colors } from '@dhis2/ui'
-import cx from 'classnames'
-import { useEffect, useMemo, type FC } from 'react'
-import { useWindowSize } from 'usehooks-ts'
-import { Axis } from './axis/axis'
-import { ResizeHandle } from './resize-handle'
-import classes from './styles/axes.module.css'
-import { useResizeHandle } from './use-resize-handle'
-import { SkeletonChip } from '@components/shared/skeleton-chip'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
@@ -19,6 +12,13 @@ import {
     getVisUiConfigLayout,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
+import cx from 'classnames'
+import { useEffect, useMemo, type FC } from 'react'
+import { useWindowSize } from 'usehooks-ts'
+import { Axis } from './axis/axis'
+import { ResizeHandle } from './resize-handle'
+import classes from './styles/axes.module.css'
+import { useResizeHandle } from './use-resize-handle'
 
 const ExpandLayoutPanelButton: FC = () => {
     const dispatch = useAppDispatch()

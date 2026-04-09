@@ -1,11 +1,11 @@
-import { isMetadataItem, isProgramMetadataItem } from './metadata'
-import { isPopulatedString } from './validation'
 import type {
     CurrentVisualization,
     DataSourceProgramWithoutRegistration,
     DataSourceProgramWithRegistration,
     MetadataItem,
 } from '@types'
+import { isMetadataItem, isProgramMetadataItem } from './metadata'
+import { isPopulatedString } from './validation'
 
 export const isDataSourceProgramWithRegistration = (
     dataSource: unknown

@@ -1,4 +1,3 @@
-import { useCallback, useMemo, useState } from 'react'
 import { useCurrentUser, useRtkQuery } from '@hooks'
 import { getProgramFields, getTrackedEntityTypeFields } from '@modules/query'
 import type {
@@ -7,6 +6,7 @@ import type {
     Program,
     UseRtkQueryResult,
 } from '@types'
+import { useCallback, useMemo, useState } from 'react'
 
 const sharedParams = { filter: 'access.data.read:eq:true', paging: false }
 

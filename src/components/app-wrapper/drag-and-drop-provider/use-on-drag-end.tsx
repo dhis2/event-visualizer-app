@@ -1,11 +1,4 @@
 import type { SortableData } from '@dnd-kit/sortable'
-import { useCallback } from 'react'
-import type {
-    AxisContainerDroppableData,
-    AxisSortableData,
-    LayoutDragEndEvent,
-    SidebarSortableData,
-} from './types'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     clearMultiSelection,
@@ -16,6 +9,13 @@ import {
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice'
+import { useCallback } from 'react'
+import type {
+    AxisContainerDroppableData,
+    AxisSortableData,
+    LayoutDragEndEvent,
+    SidebarSortableData,
+} from './types'
 
 type OnDragEndFn = (event: LayoutDragEndEvent) => void
 

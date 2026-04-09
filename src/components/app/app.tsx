@@ -1,7 +1,3 @@
-import { CssVariables } from '@dhis2/ui'
-import { useCallback, type FC, type ReactNode } from 'react'
-import { useLoadVisualizationOnMount } from './use-load-visualization-on-mount'
-import './styles/app.module.css'
 import { AppWrapper } from '@components/app-wrapper'
 import { DetailsPanel } from '@components/details-panel/details-panel'
 import { DimensionModal } from '@components/dimension-modal/dimension-modal'
@@ -23,6 +19,7 @@ import type { AnalyticsResponseMetadataItems } from '@components/plugin-wrapper/
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
 import { Toolbar } from '@components/toolbar/toolbar'
+import { CssVariables } from '@dhis2/ui'
 import {
     useAddAnalyticsResponseMetadata,
     useAppDispatch,
@@ -41,6 +38,9 @@ import {
     setUiActiveDimensionModal,
 } from '@store/ui-slice'
 import type { NewVisualization, SavedVisualization, Sorting } from '@types'
+import { useCallback, type FC, type ReactNode } from 'react'
+import { useLoadVisualizationOnMount } from './use-load-visualization-on-mount'
+import './styles/app.module.css'
 
 const EventVisualizer: FC = () => {
     useLoadVisualizationOnMount()

@@ -1,7 +1,7 @@
 import { InputField, type InputFieldProps } from '@dhis2/ui'
+import { useOptionsField } from '@hooks'
 import { type FC } from 'react'
 import type { OptionRecord } from './types'
-import { useOptionsField } from '@hooks'
 
 type TextBaseOptionProps = InputFieldProps & {
     option: OptionRecord

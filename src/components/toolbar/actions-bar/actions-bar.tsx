@@ -1,13 +1,3 @@
-import { SharingDialog } from '@dhis2/ui'
-import { useMemo, useState, type FC } from 'react'
-import { DownloadMenu } from './download-menu'
-import { FileMenu } from './file-menu'
-import { NewButton } from './new-button'
-import { OpenButton } from './open-button'
-import { SaveButton } from './save-button'
-import classes from './styles/actions-bar.module.css'
-import { useToolbarActions } from './use-toolbar-actions'
-import { ViewMenu } from './view-menu'
 import { parseEngineError } from '@api/parse-engine-error'
 import { ToolbarDivider } from '@components/toolbar/toolbar-divider'
 import { VISUALIZATION_TYPES } from '@constants/visualization-types'
@@ -20,11 +10,21 @@ import {
     SaveAsDialog,
     TranslationDialog,
 } from '@dhis2/analytics'
+import { SharingDialog } from '@dhis2/ui'
 import { useAppSelector, useCurrentUser } from '@hooks'
 import { isVisualizationValidForSaveAs } from '@modules/validation'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import type { SavedVisualization } from '@types'
+import { useMemo, useState, type FC } from 'react'
+import { DownloadMenu } from './download-menu'
+import { FileMenu } from './file-menu'
+import { NewButton } from './new-button'
+import { OpenButton } from './open-button'
+import { SaveButton } from './save-button'
+import classes from './styles/actions-bar.module.css'
+import { useToolbarActions } from './use-toolbar-actions'
+import { ViewMenu } from './view-menu'
 
 const FILE_TYPE = 'eventVisualization'
 
@@ -48,7 +48,7 @@ const ActionsBarDialog: FC<ActionsBarDialogProps> = ({
     const savedVis = useAppSelector(getSavedVis)
 
     const fileObject = useMemo(
-        () => ({ ...savedVis, ...currentVis } as SavedVisualization),
+        () => ({ ...savedVis, ...currentVis }) as SavedVisualization,
         [currentVis, savedVis]
     )
 

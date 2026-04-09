@@ -1,16 +1,16 @@
-import i18n from '@dhis2/d2-i18n'
-import {
-    combineAllDimensionsFromVisualization,
-    getFullDimensionId,
-} from './dimension'
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { formatValue, ouIdHelper } from '@dhis2/analytics'
+import i18n from '@dhis2/d2-i18n'
 import type {
     CurrentVisualization,
     OutputType,
     SavedVisualization,
     ValueType,
 } from '@types'
+import {
+    combineAllDimensionsFromVisualization,
+    getFullDimensionId,
+} from './dimension'
 
 type Conditions = {
     condition?: string | string[]
@@ -28,7 +28,7 @@ export const parseConditionsStringToArray = (
 ): Array<string> =>
     Array.isArray(conditionsStringOrArray)
         ? conditionsStringOrArray
-        : conditionsStringOrArray.match(/[^:]+:[^:]+/g) ?? []
+        : (conditionsStringOrArray.match(/[^:]+:[^:]+/g) ?? [])
 
 // parse e.g. ['LT:25', 'GT:15'] to 'LT:25:GT:15'
 export const parseConditionsArrayToString = (

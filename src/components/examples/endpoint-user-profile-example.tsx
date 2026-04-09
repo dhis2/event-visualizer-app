@@ -1,8 +1,8 @@
-import type { FC } from 'react'
 import { api } from '@api/api'
 import type { BaseQueryApiWithExtraArg } from '@api/custom-base-query'
 import { parseEngineError } from '@api/parse-engine-error'
 import type { MeDto } from '@types'
+import type { FC } from 'react'
 
 export const meApi = api.injectEndpoints({
     endpoints: (builder) => ({

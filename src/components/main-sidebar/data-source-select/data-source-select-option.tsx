@@ -1,12 +1,12 @@
-import cx from 'classnames'
-import { type FC, type KeyboardEvent, useCallback } from 'react'
-import classes from './styles/data-source-select-option.module.css'
 import { useAppSelector, useAppDispatch, useAddMetadata } from '@hooks'
 import {
     isSelectedDataSourceId,
     setDataSourceId,
 } from '@store/dimensions-selection-slice'
 import type { MetadataItem, Program } from '@types'
+import cx from 'classnames'
+import { type FC, type KeyboardEvent, useCallback } from 'react'
+import classes from './styles/data-source-select-option.module.css'
 
 export type DataSourceSelectOptionProps = {
     option: Program | MetadataItem

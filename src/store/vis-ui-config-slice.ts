@@ -1,6 +1,6 @@
+import { DEFAULT_OPTIONS } from '@constants/options'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { DEFAULT_OPTIONS } from '@constants/options'
 import type {
     Axis,
     EventVisualizationOptions,

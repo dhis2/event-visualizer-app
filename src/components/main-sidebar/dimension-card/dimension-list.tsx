@@ -1,13 +1,13 @@
-import i18n from '@dhis2/d2-i18n'
-import { CircularLoader, IconErrorFilled16 } from '@dhis2/ui'
-import cx from 'classnames'
-import type { FC } from 'react'
-import classes from './styles/dimension-list.module.css'
 import type { EngineError } from '@api/parse-engine-error'
 import { DraggableDimensionItem } from '@components/main-sidebar/dimension-item'
 import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
 import { SkeletonChip } from '@components/shared/skeleton-chip'
+import i18n from '@dhis2/d2-i18n'
+import { CircularLoader, IconErrorFilled16 } from '@dhis2/ui'
 import type { Program, ProgramStage } from '@types'
+import cx from 'classnames'
+import type { FC } from 'react'
+import classes from './styles/dimension-list.module.css'
 
 type DimensionListProps = UseDimensionListResult & {
     program?: Program

@@ -1,11 +1,11 @@
 import i18n from '@dhis2/d2-i18n'
-import { useMemo, type FC } from 'react'
-import { BaseButtonWithConditionalTooltip } from './base-button'
-import { useActionButton } from './use-action-button'
 import {
     isDataSourceProgramWithRegistration,
     isDataSourceTrackedEntityType,
 } from '@modules/data-source'
+import { useMemo, type FC } from 'react'
+import { BaseButtonWithConditionalTooltip } from './base-button'
+import { useActionButton } from './use-action-button'
 
 export const TrackedEntityInstanceButton: FC = () => {
     const { action, dataSourceMetadata, tooltipConfig } = useActionButton(

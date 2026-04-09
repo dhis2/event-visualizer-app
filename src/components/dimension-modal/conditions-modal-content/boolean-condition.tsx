@@ -1,6 +1,4 @@
 import { Checkbox } from '@dhis2/ui'
-import { type FC } from 'react'
-import classes from './styles/condition.module.css'
 import {
     OPERATOR_IN,
     NULL_VALUE,
@@ -8,6 +6,8 @@ import {
     FALSE_VALUE,
     getBooleanValues,
 } from '@modules/conditions.js'
+import { type FC } from 'react'
+import classes from './styles/condition.module.css'
 
 type ConditionProps = {
     condition: string

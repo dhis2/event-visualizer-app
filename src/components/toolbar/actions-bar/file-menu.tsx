@@ -1,3 +1,8 @@
+import {
+    HoverMenuListItem,
+    HoverMenuList,
+    HoverMenuDropdown,
+} from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import {
     IconAdd24,
@@ -11,17 +16,12 @@ import {
     MenuDivider,
     colors,
 } from '@dhis2/ui'
-import { useMemo, type FC } from 'react'
-import classes from './styles/actions-bar.module.css'
-import { useToolbarActions } from './use-toolbar-actions'
-import {
-    HoverMenuListItem,
-    HoverMenuList,
-    HoverMenuDropdown,
-} from '@dhis2/analytics'
 import { useAppSelector } from '@hooks'
 import { isVisualizationSaved } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
+import { useMemo, type FC } from 'react'
+import classes from './styles/actions-bar.module.css'
+import { useToolbarActions } from './use-toolbar-actions'
 
 const iconActiveColor = colors.grey700
 const iconInactiveColor = colors.grey500

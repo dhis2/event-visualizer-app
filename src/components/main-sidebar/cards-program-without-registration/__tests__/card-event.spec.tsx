@@ -1,8 +1,8 @@
+import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
 import { render, screen } from '@testing-library/react'
+import type { DataSourceProgramWithoutRegistration } from '@types'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { CardEvent, getProgramStage } from '../card-event'
-import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
-import type { DataSourceProgramWithoutRegistration } from '@types'
 
 const mockUseDimensionList = vi.fn()
 const mockUseSelectedDimensionCount = vi.fn()
@@ -77,7 +77,7 @@ const createProgram = (
             },
         ],
         ...overrides,
-    } as DataSourceProgramWithoutRegistration)
+    }) as DataSourceProgramWithoutRegistration
 
 describe('CardEvent (without registration)', () => {
     beforeEach(() => {

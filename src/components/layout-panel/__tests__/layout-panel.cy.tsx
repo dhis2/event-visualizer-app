@@ -1,4 +1,3 @@
-import { LayoutPanel } from '../layout-panel'
 import {
     currentVisSlice,
     initialState as currentVisSliceInitialState,
@@ -17,6 +16,7 @@ import {
     initialState as visUiConfigInitialState,
 } from '@store/vis-ui-config-slice'
 import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
+import { LayoutPanel } from '../layout-panel'
 
 const mockOptions: MockOptions = {
     metadata: {

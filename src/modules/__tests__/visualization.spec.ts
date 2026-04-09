@@ -1,9 +1,9 @@
+import type { NewVisualization, SavedVisualization } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     getSaveableVisualization,
     getVisualizationUiConfig,
 } from '../visualization'
-import type { NewVisualization, SavedVisualization } from '@types'
 
 const testCases = {
     lineListEnrollment: {

@@ -1,3 +1,8 @@
+import {
+    AGGREGATED_VISUALIZATION_TYPES,
+    INDIVIDUAL_VISUALIZATION_TYPES,
+} from '@constants/visualization-types'
+import { visTypeDisplayNames } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import {
     Popper,
@@ -6,21 +11,16 @@ import {
     IconVisualizationLinelist16,
     IconVisualizationPivotTable16,
 } from '@dhis2/ui'
-import cx from 'classnames'
-import type { FC, ReactNode } from 'react'
-import { useState, useRef } from 'react'
-import classes from './styles/visualization-type-selector.module.css'
-import {
-    AGGREGATED_VISUALIZATION_TYPES,
-    INDIVIDUAL_VISUALIZATION_TYPES,
-} from '@constants/visualization-types'
-import { visTypeDisplayNames } from '@dhis2/analytics'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     setVisUiConfigVisualizationType,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
 import type { VisualizationType } from '@types'
+import cx from 'classnames'
+import type { FC, ReactNode } from 'react'
+import { useState, useRef } from 'react'
+import classes from './styles/visualization-type-selector.module.css'
 
 const visTypeIcons: Record<VisualizationType, ReactNode> = {
     LINE_LIST: <IconVisualizationLinelist16 />,

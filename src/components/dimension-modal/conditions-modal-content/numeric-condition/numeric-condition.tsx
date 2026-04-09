@@ -1,3 +1,4 @@
+import classes from '@components/dimension-modal/conditions-modal-content/styles/condition.module.css'
 import i18n from '@dhis2/d2-i18n'
 import {
     SingleSelectField,
@@ -8,9 +9,6 @@ import {
     MultiSelectOption,
     MenuDivider,
 } from '@dhis2/ui'
-import { useCallback, useEffect, useMemo, useState, type FC } from 'react'
-import { legendSetsApi } from './legend-sets-api'
-import classes from '@components/dimension-modal/conditions-modal-content/styles/condition.module.css'
 import { useAddMetadata, useLegendSetMetadataItem } from '@hooks'
 import {
     getNumericOperators,
@@ -18,6 +16,8 @@ import {
     OPERATOR_IN,
 } from '@modules/conditions.js'
 import type { DimensionMetadataItem, LegendSetMetadataItem } from '@types'
+import { useCallback, useEffect, useMemo, useState, type FC } from 'react'
+import { legendSetsApi } from './legend-sets-api'
 
 type NumericConditionProps = {
     condition: string
@@ -40,12 +40,12 @@ export const NumericCondition: FC<NumericConditionProps> = ({
         () =>
             Boolean(
                 dimension.valueType &&
-                    [
-                        'INTEGER',
-                        'INTEGER_POSITIVE',
-                        'INTEGER_NEGATIVE',
-                        'INTEGER_ZERO_OR_POSITIVE',
-                    ].includes(dimension.valueType)
+                [
+                    'INTEGER',
+                    'INTEGER_POSITIVE',
+                    'INTEGER_NEGATIVE',
+                    'INTEGER_ZERO_OR_POSITIVE',
+                ].includes(dimension.valueType)
             ),
         [dimension.valueType]
     )
@@ -214,8 +214,8 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                                 value == null
                                     ? undefined
                                     : allowIntegerOnly
-                                    ? parseInt(value, 10)
-                                    : value
+                                      ? parseInt(value, 10)
+                                      : value
                             )
                         }
                         className={classes.numericInput}

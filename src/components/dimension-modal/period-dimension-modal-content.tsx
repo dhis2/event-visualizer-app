@@ -1,3 +1,4 @@
+import { PeriodDimension } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import {
     Field,
@@ -6,9 +7,6 @@ import {
     SegmentedControl,
     colors,
 } from '@dhis2/ui'
-import { useEffect, useState, useMemo, type FC } from 'react'
-import classes from './styles/period-dimension-modal-content.module.css'
-import { PeriodDimension } from '@dhis2/analytics'
 import {
     useAddMetadata,
     useAppCachedDataQuery,
@@ -24,6 +22,8 @@ import {
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
 import type { DimensionMetadataItem, PeriodType } from '@types'
+import { useEffect, useState, useMemo, type FC } from 'react'
+import classes from './styles/period-dimension-modal-content.module.css'
 
 export const OPTION_PRESETS = 'PRESETS'
 export const OPTION_START_END_DATES = 'START_END_DATES'

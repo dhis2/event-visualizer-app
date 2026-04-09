@@ -9,13 +9,13 @@ import {
     Tab,
     TabBar,
 } from '@dhis2/ui'
-import { useCallback, useMemo, useState, type FC } from 'react'
-import { OptionsTabContent } from './options-tab-content'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getOptionsTabsForVisType } from '@modules/options'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
+import { useCallback, useMemo, useState, type FC } from 'react'
 import type { OptionsTabKey } from 'src/types/options'
+import { OptionsTabContent } from './options-tab-content'
 
 const FORM_ID = 'options-modal-form'
 

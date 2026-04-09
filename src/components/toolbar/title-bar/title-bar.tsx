@@ -1,14 +1,14 @@
 import i18n from '@dhis2/d2-i18n'
 import { Tooltip } from '@dhis2/ui'
-import cx from 'classnames'
-import type { FC, ReactNode } from 'react'
-import classes from './styles/title-bar.module.css'
 import { useAppSelector } from '@hooks'
 import { getVisualizationState } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import type { CurrentVisualization, VisualizationState } from '@types'
+import cx from 'classnames'
+import type { FC, ReactNode } from 'react'
+import classes from './styles/title-bar.module.css'
 
 export const getTitleLoading = () => i18n.t('Loading visualization')
 export const getTitleUnsaved = () => i18n.t('Unsaved visualization')

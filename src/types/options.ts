@@ -1,8 +1,8 @@
-import type { EventVisualization } from './dhis2-openapi-schemas'
 import type {
     OPTIONS_TAB_KEYS_LINE_LIST,
     OPTIONS_TAB_KEYS_PIVOT_TABLE,
 } from '@constants/options'
+import type { EventVisualization } from './dhis2-openapi-schemas'
 
 export type OptionsTabKeyLineList = (typeof OPTIONS_TAB_KEYS_LINE_LIST)[number]
 export type OptionsTabKeyPivotTable =

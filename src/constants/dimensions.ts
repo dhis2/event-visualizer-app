@@ -1,5 +1,5 @@
-import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 import type { DimensionId, DimensionType } from '@types'
+import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 
 export const PROGRAM_DIMENSION_TYPES =
     asStringLiteralSubsetArray<DimensionType>()([

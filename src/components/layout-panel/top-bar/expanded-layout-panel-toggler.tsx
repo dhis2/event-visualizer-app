@@ -1,11 +1,11 @@
-import i18n from '@dhis2/d2-i18n'
-import { useCallback, type FC } from 'react'
 import { Toggler } from '@components/shared/toggler'
+import i18n from '@dhis2/d2-i18n'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     getUiLayoutPanelExpanded,
     toggleUiLayoutPanelExpanded,
 } from '@store/ui-slice'
+import { useCallback, type FC } from 'react'
 
 const IconLayoutCollapse: FC = () => (
     <svg

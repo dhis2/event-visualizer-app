@@ -1,6 +1,6 @@
-import { Axis } from '../axis'
 import { visUiConfigSlice, initialState } from '@store/vis-ui-config-slice'
 import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
+import { Axis } from '../axis'
 
 const mockOptions: MockOptions = {
     metadata: {

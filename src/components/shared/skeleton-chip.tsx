@@ -9,7 +9,7 @@ export const SkeletonChip: FC<{
         data-test={dataTest ?? 'skeleton-chip'}
         className={classes.skeletonChip}
         style={{
-            width: typeof width === 'number' ? `${width}px` : width ?? '100%',
+            width: typeof width === 'number' ? `${width}px` : (width ?? '100%'),
         }}
     />
 )

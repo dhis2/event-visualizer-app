@@ -1,5 +1,3 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useDebounceValue } from 'usehooks-ts'
 import type {
     optionsApi,
     FetchOptionsByOptionSetQueryArgs,
@@ -9,6 +7,8 @@ import type {
     FetchItemsByDimensionQueryArgs,
 } from '@components/dimension-modal/dynamic-dimension-modal-content/dimensions-api'
 import type { UseLazyQueryStateResult } from '@types'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useDebounceValue } from 'usehooks-ts'
 
 type FetchOptionsFn =
     | ReturnType<typeof dimensionsApi.useLazyFetchItemsByDimensionQuery>[0]

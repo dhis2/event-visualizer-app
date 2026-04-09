@@ -1,7 +1,3 @@
-import { screen, within } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { vi, describe, it, beforeEach, expect } from 'vitest'
-import { VisualizationTypeSelector } from '../visualization-type-selector'
 import {
     visUiConfigSlice,
     initialState,
@@ -9,7 +5,11 @@ import {
 } from '@store/vis-ui-config-slice'
 import { renderWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
 import { setupStore } from '@test-utils/setup-store'
+import { screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import type { RootState } from '@types'
+import { vi, describe, it, beforeEach, expect } from 'vitest'
+import { VisualizationTypeSelector } from '../visualization-type-selector'
 
 vi.mock('@dhis2/app-runtime', () => ({
     useConfig: vi.fn(() => ({ serverVersion: { minor: 43 } })),

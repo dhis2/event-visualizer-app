@@ -1,8 +1,3 @@
-import {
-    extractDimensionContextFromCompoundId,
-    isCompoundDimensionId,
-    resolveId,
-} from './dimension'
 import { isDimensionMetadataItem } from '@modules/metadata'
 import { isObject, isPopulatedString } from '@modules/validation'
 import type {
@@ -11,6 +6,11 @@ import type {
     NormalizedMetadataInputItem,
     MetadataMap,
 } from '@types'
+import {
+    extractDimensionContextFromCompoundId,
+    isCompoundDimensionId,
+    resolveId,
+} from './dimension'
 
 export const extractInputId = (
     item: MetadataInputItem | string,
@@ -19,7 +19,7 @@ export const extractInputId = (
     if (isPopulatedString(key)) {
         return key
     }
-    const itemId = isObject(item) ? item.uid ?? item.id : undefined
+    const itemId = isObject(item) ? (item.uid ?? item.id) : undefined
 
     if (!itemId) {
         throw new Error('Invalid metadata input: no ID field present')

@@ -1,10 +1,10 @@
 import i18n from '@dhis2/d2-i18n'
 import { Checkbox } from '@dhis2/ui'
+import { useOptionsField } from '@hooks'
 import { useCallback, useMemo, type FC } from 'react'
 import { SelectBaseOption } from './select-base-option'
 import classes from './styles/option.module.css'
 import { TextBaseOption } from './text-base-option'
-import { useOptionsField } from '@hooks'
 
 export const Limit: FC = () => {
     const [sortOrder, setSortOrder] = useOptionsField('sortOrder')

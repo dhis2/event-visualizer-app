@@ -1,6 +1,6 @@
-import { createSelector } from '@reduxjs/toolkit'
 import { resolveId } from '@components/app-wrapper/metadata-provider/dimension'
 import { useAppSelector } from '@hooks'
+import { createSelector } from '@reduxjs/toolkit'
 import { getVisUiConfigLayoutAllDimensionIds } from '@store/vis-ui-config-slice'
 
 const selectAllLayoutDimensionsLookup = createSelector(

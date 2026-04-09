@@ -1,4 +1,3 @@
-import { useCallback, useMemo, type FC } from 'react'
 import { OrgUnitDimension, ouIdHelper } from '@dhis2/analytics'
 import {
     useAddMetadata,
@@ -19,6 +18,7 @@ import type {
     OrgUnit,
     OrganisationUnitMetadataItem,
 } from '@types'
+import { useCallback, useMemo, type FC } from 'react'
 
 type OrgUnitDimensionModalContentProps = {
     dimension: DimensionMetadataItem

@@ -1,11 +1,11 @@
-import cx from 'classnames'
-import { type FC } from 'react'
-import classes from './styles/details-panel.module.css'
 import { useInterpretationModalTogglers } from '@components/app-wrapper/interpretations-provider'
 import { AboutAOUnit, InterpretationsUnit } from '@dhis2/analytics'
 import { useAppSelector } from '@hooks'
 import { getCurrentVisId } from '@store/current-vis-slice'
 import { getUiDetailsPanelVisible } from '@store/ui-slice'
+import cx from 'classnames'
+import { type FC } from 'react'
+import classes from './styles/details-panel.module.css'
 
 export const DetailsPanel: FC<{ disabled?: boolean }> = ({
     disabled = false,

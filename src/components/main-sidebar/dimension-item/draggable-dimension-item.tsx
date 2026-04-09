@@ -1,13 +1,9 @@
-import { IconAdd16, IconSubtract16 } from '@dhis2/ui'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { useCallback, type FC } from 'react'
-import { DimensionItem } from './dimension-item'
-import { DimensionItemContainer } from './dimension-item-container'
-import styles from './styles/draggable-dimension-item.module.css'
 import type { SidebarSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import { useIsDimensionInLayout } from '@components/main-sidebar/use-is-dimension-in-layout'
 import { IconButton } from '@components/shared/icon-button'
+import { IconAdd16, IconSubtract16 } from '@dhis2/ui'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { useAddMetadata, useAppDispatch, useAppSelector } from '@hooks'
 import {
     clearMultiSelection,
@@ -20,6 +16,10 @@ import {
     removeVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem, Program, ProgramStage } from '@types'
+import { useCallback, type FC } from 'react'
+import { DimensionItem } from './dimension-item'
+import { DimensionItemContainer } from './dimension-item-container'
+import styles from './styles/draggable-dimension-item.module.css'
 
 interface DraggableDimensionItemProps {
     dimension: DimensionMetadataItem

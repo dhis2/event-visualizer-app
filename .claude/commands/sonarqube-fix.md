@@ -8,10 +8,10 @@ Fix SonarQube quality gate failures systematically by fetching issues directly f
 
 Use this command when:
 
--   A pull request fails SonarQube quality gate checks
--   You need to systematically fix code quality issues
--   You want to fetch and prioritize SonarQube issues from the API
--   You need to verify all issues are resolved before merging
+- A pull request fails SonarQube quality gate checks
+- You need to systematically fix code quality issues
+- You want to fetch and prioritize SonarQube issues from the API
+- You need to verify all issues are resolved before merging
 
 The current git branch is used to detect the relevant PR automatically. If you're on `main` or `master`, you'll be asked to choose from open PRs.
 
@@ -34,7 +34,6 @@ The current git branch is used to detect the relevant PR automatically. If you'r
     Extract the organization and repository name (e.g. `dhis2/event-visualizer-app`).
 
 3. **Find the matching PR:**
-
     - On a feature branch: use `gh pr view --json number` to get the PR for the current branch.
     - On `main`/`master`: use `gh pr list` to list all open PRs and ask the user which one to work on:
 
@@ -79,10 +78,10 @@ Expected output format: `SEVERITY - TYPE - MESSAGE - FILE:LINE`
 
 **Issue types:**
 
--   BUG — code that is wrong or will likely fail
--   VULNERABILITY — security-related issues
--   CODE_SMELL — maintainability issues
--   SECURITY_HOTSPOT — security-sensitive code to review
+- BUG — code that is wrong or will likely fail
+- VULNERABILITY — security-related issues
+- CODE_SMELL — maintainability issues
+- SECURITY_HOTSPOT — security-sensitive code to review
 
 **CRITICAL: Create a todo list** using the TodoWrite tool with all issues before starting any fixes. This keeps progress visible.
 
@@ -97,10 +96,10 @@ Fix in this order:
 
 For each issue:
 
--   Read the file to understand context
--   Understand what SonarQube is flagging and why
--   Apply a minimal, focused fix following project conventions
--   Mark the todo item as completed immediately after fixing
+- Read the file to understand context
+- Understand what SonarQube is flagging and why
+- Apply a minimal, focused fix following project conventions
+- Mark the todo item as completed immediately after fixing
 
 ### Step 4: Test and Lint After Each Batch
 
@@ -134,17 +133,17 @@ curl -s "https://sonarcloud.io/api/issues/search?componentKeys=<org>_<repo>&bran
 
 Note: URL-encode the branch name (e.g. `feat%2Fupdate-buttons` for `feat/update-buttons`).
 
--   Issues remain → return to Step 3 and continue fixing
--   No issues → process is complete
+- Issues remain → return to Step 3 and continue fixing
+- No issues → process is complete
 
 ### Step 7: Completion Criteria
 
 The process is complete when all of the following are true:
 
--   ✅ All todos are marked as completed
--   ✅ All tests pass (`pnpm test`)
--   ✅ All linters pass (`pnpm lint`)
--   ✅ Branch API returns zero unresolved issues
+- ✅ All todos are marked as completed
+- ✅ All tests pass (`pnpm test`)
+- ✅ All linters pass (`pnpm lint`)
+- ✅ Branch API returns zero unresolved issues
 
 ## Examples
 
@@ -185,29 +184,29 @@ User: /sonarqube-fix
 
 ### PR detection fails
 
--   **No matching PR**: Check that the branch has an open PR. Use `gh pr list` or the GitHub UI.
--   **Multiple PRs match**: Ask the user to specify the PR number explicitly.
--   **On main/master**: List all open PRs and let the user choose.
+- **No matching PR**: Check that the branch has an open PR. Use `gh pr list` or the GitHub UI.
+- **Multiple PRs match**: Ask the user to specify the PR number explicitly.
+- **On main/master**: List all open PRs and let the user choose.
 
 ### Tests fail after a fix
 
--   Revert the change and re-read the error carefully
--   Check if test expectations need updating alongside the fix
--   Ask the user for guidance if the root cause is unclear
+- Revert the change and re-read the error carefully
+- Check if test expectations need updating alongside the fix
+- Ask the user for guidance if the root cause is unclear
 
 ### Issues still showing after `pnpm sonar`
 
--   Always re-fetch using the **branch** URL (not the PR URL) after `pnpm sonar`
--   SonarCloud only updates after the publish step — results won't change without running `pnpm sonar`
--   Continue working through remaining issues from the branch results
+- Always re-fetch using the **branch** URL (not the PR URL) after `pnpm sonar`
+- SonarCloud only updates after the publish step — results won't change without running `pnpm sonar`
+- Continue working through remaining issues from the branch results
 
 ### GitHub CLI issues
 
--   Verify `gh` is installed and authenticated (`gh auth status`)
--   Test by running `gh pr list` directly
+- Verify `gh` is installed and authenticated (`gh auth status`)
+- Test by running `gh pr list` directly
 
 ## Resources
 
--   SonarQube API docs: https://sonarcloud.io/web_api
--   SonarQube rules: https://rules.sonarsource.com/
--   DHIS2 code style: project follows `@dhis2/cli-style` conventions
+- SonarQube API docs: https://sonarcloud.io/web_api
+- SonarQube rules: https://rules.sonarsource.com/
+- DHIS2 code style: project follows `@dhis2/cli-style` conventions

@@ -10,8 +10,9 @@ import {
     IconUser16,
     IconCalendar16,
 } from '@dhis2/ui'
-import React, { type ReactNode } from 'react'
 import type { DimensionType } from '@types'
+import type React from 'react'
+import { type ReactNode } from 'react'
 
 type DimensionTypeIconMap = Partial<Record<DimensionType, ReactNode>>
 

@@ -1,3 +1,4 @@
+import type { SavedVisualization, DimensionRecord } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     supplementDimensionMetadata,
@@ -7,7 +8,6 @@ import {
     extractDimensionMetadata,
     extractProgramMetadata,
 } from '../visualization'
-import type { SavedVisualization, DimensionRecord } from '@types'
 
 describe('supplementDimensionMetadata', () => {
     it('should add prefixed dimension metadata for dimensions with matching metadata items', () => {

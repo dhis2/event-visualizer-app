@@ -1,6 +1,6 @@
+import type { VisUiConfigState } from '@store/vis-ui-config-slice'
 import { describe, it, expect } from 'vitest'
 import { formatLayoutForVisualization } from '../layout'
-import type { VisUiConfigState } from '@store/vis-ui-config-slice'
 
 const testCases = {
     lineListEnrollment: {

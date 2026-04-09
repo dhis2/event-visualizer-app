@@ -1,7 +1,3 @@
-import cx from 'classnames'
-import { useCallback, useEffect, type ReactNode, type FC } from 'react'
-import { DimensionCardHeader } from './dimension-card-header'
-import classes from './styles/dimension-card.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     addDimensionCardCollapsedState,
@@ -10,6 +6,10 @@ import {
     toggleDimensionCardIsCollapsed,
 } from '@store/dimensions-selection-slice'
 import type { DimensionCardKey } from '@types'
+import cx from 'classnames'
+import { useCallback, useEffect, type ReactNode, type FC } from 'react'
+import { DimensionCardHeader } from './dimension-card-header'
+import classes from './styles/dimension-card.module.css'
 
 type DimensionCardProps = {
     dimensionCardKey: DimensionCardKey

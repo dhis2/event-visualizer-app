@@ -1,5 +1,3 @@
-import { expect, describe, it } from 'vitest'
-import { assertTypedMetadataItem } from '../typed-metadata-item'
 import {
     isDimensionMetadataItem,
     isOrganisationUnitMetadataItem,
@@ -8,6 +6,8 @@ import type {
     DimensionMetadataItem,
     OrganisationUnitMetadataItem,
 } from '@types'
+import { expect, describe, it } from 'vitest'
+import { assertTypedMetadataItem } from '../typed-metadata-item'
 
 const dimension: DimensionMetadataItem = {
     id: 'weight',

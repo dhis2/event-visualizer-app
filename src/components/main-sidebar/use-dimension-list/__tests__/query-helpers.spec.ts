@@ -1,3 +1,4 @@
+import type { SingleQuery } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     buildQuery,
@@ -9,7 +10,6 @@ import {
     getDataElementQueryTemplate,
     getOtherDimensionsQuery,
 } from '../query-helpers'
-import type { SingleQuery } from '@types'
 
 describe('getFilterParamsFromBaseQuery', () => {
     it('returns empty array for undefined baseQuery', () => {

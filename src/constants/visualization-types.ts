@@ -1,5 +1,5 @@
-import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 import type { EventVisualizationType } from '@types'
+import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 
 export const AGGREGATED_VISUALIZATION_TYPES =
     asStringLiteralSubsetArray<EventVisualizationType>()([
