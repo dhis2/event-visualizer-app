@@ -1,5 +1,5 @@
-import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 import type { RelativePeriodEnum } from '@types'
+import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 
 export const PERIOD_TYPES = [
     'DAILY',

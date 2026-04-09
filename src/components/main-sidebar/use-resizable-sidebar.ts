@@ -1,3 +1,5 @@
+import { useAppDispatch, useAppSelector } from '@hooks'
+import { getUiMainSidebarWidth, setUiMainSidebarWidth } from '@store/ui-slice'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounceCallback } from 'usehooks-ts'
 import {
@@ -10,8 +12,6 @@ import {
     getMainSidebarWidthFromLocalStorage,
     setMainSidebarWidthToLocalStorage,
 } from './local-storage'
-import { useAppDispatch, useAppSelector } from '@hooks'
-import { getUiMainSidebarWidth, setUiMainSidebarWidth } from '@store/ui-slice'
 
 const computeMaxWidth = () => window.innerWidth - MAIN_SIDEBAR_MAX_OFFSET
 

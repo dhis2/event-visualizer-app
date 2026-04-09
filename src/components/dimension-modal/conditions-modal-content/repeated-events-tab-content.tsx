@@ -1,7 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
 import { Input } from '@dhis2/ui'
-import { useCallback, type FC } from 'react'
-import classes from './styles/conditions-modal-content.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     DEFAULT_REPETITIONS_OBJECT,
@@ -9,6 +7,8 @@ import {
     setVisUiConfigRepetitionsByDimension,
     type RepetitionsObject,
 } from '@store/vis-ui-config-slice'
+import { useCallback, type FC } from 'react'
+import classes from './styles/conditions-modal-content.module.css'
 
 type RepeatedEventsTabContentProps = {
     dimensionId: string

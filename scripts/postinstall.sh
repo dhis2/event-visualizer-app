@@ -2,11 +2,11 @@
 set -e
 
 if [ ! -f .hooks/_/husky.sh ]; then
-    yarn d2-style install
+    pnpm d2-style install
 fi
 
 if [ ! -f src/types/dhis2-openapi-schemas/index.ts ]; then
-    yarn generate-types
+    pnpm generate-types
 fi
 
 if [ ! -f cypress.env.json ]; then

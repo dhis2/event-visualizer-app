@@ -1,12 +1,3 @@
-import { createAsyncThunk } from '@reduxjs/toolkit'
-import deepmerge from 'deepmerge'
-import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
-import { setDataSourceId } from './dimensions-selection-slice'
-import { setIsVisualizationLoading, setLoadError } from './loader-slice'
-import { clearSavedVis, setSavedVis } from './saved-vis-slice'
-import type { RootState } from './store'
-import { clearUi } from './ui-slice'
-import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { extractDataSourceIdFromVisualization } from '@modules/data-source'
@@ -16,7 +7,16 @@ import {
     getVisualizationUiConfig,
     transformVisualization,
 } from '@modules/visualization'
+import { createAsyncThunk } from '@reduxjs/toolkit'
 import type { AppDispatch, NewVisualization, SavedVisualization } from '@types'
+import deepmerge from 'deepmerge'
+import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
+import { setDataSourceId } from './dimensions-selection-slice'
+import { setIsVisualizationLoading, setLoadError } from './loader-slice'
+import { clearSavedVis, setSavedVis } from './saved-vis-slice'
+import type { RootState } from './store'
+import { clearUi } from './ui-slice'
+import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
 
 type AppAsyncThunkConfig = {
     state: RootState

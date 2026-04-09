@@ -1,5 +1,5 @@
-import i18n from '@dhis2/d2-i18n'
 import { dimensionCreate } from '@dhis2/analytics'
+import i18n from '@dhis2/d2-i18n'
 import { getDimensionIdParts } from '@modules/dimension'
 import { parseUiRepetitions } from '@modules/repetitions'
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'

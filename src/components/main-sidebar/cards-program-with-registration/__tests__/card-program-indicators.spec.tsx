@@ -1,8 +1,8 @@
+import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
 import { render, screen } from '@testing-library/react'
+import type { DataSourceProgramWithRegistration } from '@types'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { CardProgramIndicators } from '../card-program-indicators'
-import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
-import type { DataSourceProgramWithRegistration } from '@types'
 
 const mockUseDimensionList = vi.fn()
 const mockUseSelectedDimensionCount = vi.fn()
@@ -57,7 +57,7 @@ const createProgram = (): DataSourceProgramWithRegistration =>
         programType: 'WITH_REGISTRATION',
         programStages: [],
         trackedEntityType: { id: 'tet1', name: 'Person' },
-    } as DataSourceProgramWithRegistration)
+    }) as DataSourceProgramWithRegistration
 
 describe('CardProgramIndicators', () => {
     beforeEach(() => {

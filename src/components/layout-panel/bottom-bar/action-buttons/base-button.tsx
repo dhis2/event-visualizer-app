@@ -1,11 +1,11 @@
 import { IconSync16, Tooltip } from '@dhis2/ui'
-import cx from 'classnames'
-import { type FC } from 'react'
-import classes from './styles/action-buttons.module.css'
 import { useAppDispatch } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { setVisUiConfigOutputType } from '@store/vis-ui-config-slice'
 import type { OutputType } from '@types'
+import cx from 'classnames'
+import { type FC } from 'react'
+import classes from './styles/action-buttons.module.css'
 
 export type ButtonAction = 'create' | 'switch' | 'update'
 

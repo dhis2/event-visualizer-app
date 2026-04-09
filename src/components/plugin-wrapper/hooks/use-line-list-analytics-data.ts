@@ -1,15 +1,10 @@
-// eslint-disable-next-line no-restricted-imports
-import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
-import { useCallback, useState } from 'react'
-import {
-    getAdaptedVisualization,
-    getAnalyticsEndpoint,
-} from './query-tools-line-list.js'
 import type {
     LineListAnalyticsData,
     LineListAnalyticsDataHeader,
 } from '@components/line-list/types.js'
 import { Analytics } from '@dhis2/analytics'
+// eslint-disable-next-line no-restricted-imports
+import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
 import { getBooleanValues } from '@modules/conditions'
 import {
     getDimensionIdParts,
@@ -30,6 +25,11 @@ import type {
     OutputType,
     UserOrgUnitMetadataItem,
 } from '@types'
+import { useCallback, useState } from 'react'
+import {
+    getAdaptedVisualization,
+    getAnalyticsEndpoint,
+} from './query-tools-line-list.js'
 
 const lookupOptionSetOptionMetadata = (optionSetId, code, metaDataItems) => {
     const optionSetMetaData = metaDataItems?.[optionSetId]
@@ -134,9 +134,8 @@ const fetchAnalyticsDataForLL = async ({
 
     const analyticsApiEndpoint = getAnalyticsEndpoint(visualization.outputType)
 
-    const rawResponse = await analyticsEngine[analyticsApiEndpoint].getQuery(
-        req
-    )
+    const rawResponse =
+        await analyticsEngine[analyticsApiEndpoint].getQuery(req)
 
     return rawResponse
 }

@@ -1,7 +1,7 @@
-import { isVisualizationEmpty } from './visualization'
 import { DIMENSION_ID_ORGUNIT } from '@constants/dimensions'
 import { AXIS, dimensionIsValid, layoutGetDimension } from '@dhis2/analytics'
 import type { CurrentVisualization } from '@types'
+import { isVisualizationEmpty } from './visualization'
 
 // Helper function to check if input is a plain object
 export const isObject = (input: unknown): input is Record<string, unknown> => {

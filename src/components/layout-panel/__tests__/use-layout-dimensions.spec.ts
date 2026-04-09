@@ -1,6 +1,6 @@
+import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 import { describe, it, expect } from 'vitest'
 import { useLayoutDimensions } from '../use-layout-dimensions'
-import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 
 describe('useLayoutDimensions for data elements', () => {
     const metadata = {

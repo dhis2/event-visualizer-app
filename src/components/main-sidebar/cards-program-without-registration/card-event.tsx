@@ -1,5 +1,3 @@
-import i18n from '@dhis2/d2-i18n'
-import { type FC, useCallback, useMemo } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -11,12 +9,14 @@ import {
     useSelectedDimensionCount,
     type UseSelectedDimensionCountMatchFn,
 } from '@components/main-sidebar/use-selected-dimension-count'
+import i18n from '@dhis2/d2-i18n'
 import { useCurrentUser } from '@hooks'
 import type {
     DataSourceProgramWithoutRegistration,
     DimensionType,
     ProgramStage,
 } from '@types'
+import { type FC, useCallback, useMemo } from 'react'
 
 type CardEventProps = {
     program: DataSourceProgramWithoutRegistration

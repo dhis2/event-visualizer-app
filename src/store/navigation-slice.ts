@@ -1,8 +1,8 @@
+import { getNavigationStateFromLocation } from '@modules/history'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 import { startAppListening } from './middleware-listener'
 import { tClearVisualization, tLoadSavedVisualization } from './thunks'
-import { getNavigationStateFromLocation } from '@modules/history'
 
 export interface NavigationState {
     visualizationId: string | 'new'

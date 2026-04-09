@@ -1,7 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
 import { FlyoutMenu, MenuDivider, MenuItem } from '@dhis2/ui'
-import { useCallback, useMemo, type FC } from 'react'
-import type { LayoutDimension } from './chip'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getAxisName } from '@modules/layout'
 import {
@@ -10,6 +8,8 @@ import {
     moveVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice.js'
 import type { Axis } from '@types'
+import { useCallback, useMemo, type FC } from 'react'
+import type { LayoutDimension } from './chip'
 
 type ChipMenuProps = {
     axisId: Axis

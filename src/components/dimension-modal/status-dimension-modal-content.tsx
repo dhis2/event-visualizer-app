@@ -1,7 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
 import { Checkbox } from '@dhis2/ui'
-import { type FC, useCallback, useMemo } from 'react'
-import classes from './styles/status-dimension-modal-content.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getStatusNames } from '@modules/status'
 import {
@@ -9,6 +7,8 @@ import {
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
+import { type FC, useCallback, useMemo } from 'react'
+import classes from './styles/status-dimension-modal-content.module.css'
 
 type StatusDimensionModalContentProps = {
     dimension: DimensionMetadataItem

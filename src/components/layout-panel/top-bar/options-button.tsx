@@ -1,10 +1,10 @@
+import { OptionsModal } from '@components/options/options-modal'
 import i18n from '@dhis2/d2-i18n'
 import { Button } from '@dhis2/ui'
-import { useCallback, useMemo, useState, type FC } from 'react'
-import classes from './styles/top-bar.module.css'
-import { OptionsModal } from '@components/options/options-modal'
 import { useAppSelector } from '@hooks'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
+import { useCallback, useMemo, useState, type FC } from 'react'
+import classes from './styles/top-bar.module.css'
 
 const IconOptions: FC = () => (
     <svg

@@ -1,11 +1,11 @@
-import React from 'react'
-import { Chip } from '../chip'
-import type { LayoutDimension } from '../chip'
 import {
     visUiConfigSlice,
     initialState as visUiConfigInitialState,
 } from '@store/vis-ui-config-slice'
 import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
+import React from 'react'
+import { Chip } from '../chip'
+import type { LayoutDimension } from '../chip'
 
 // Chip background colors
 const CHIP_NORMAL_COLOR = 'rgb(224, 242, 241)' // teal-100 normal state

@@ -1,8 +1,8 @@
 /// <reference types="cypress" />
 
 export const getApiBaseUrl = () => {
-    const baseUrl = Cypress.env('dhis2BaseUrl') || ''
-    const apiVersion = Cypress.env('dhis2InstanceVersion') || ''
+    const baseUrl = Cypress.expose('dhis2BaseUrl') || ''
+    const apiVersion = Cypress.expose('dhis2InstanceVersion') || ''
 
     if (!baseUrl) {
         throw new Error(

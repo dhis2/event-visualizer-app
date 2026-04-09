@@ -1,11 +1,11 @@
+import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
 import { render, screen } from '@testing-library/react'
+import type { MetadataItem } from '@types'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
     CardTrackedEntityType,
     getFixedDimensions,
 } from '../card-tracked-entity-type'
-import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
-import type { MetadataItem } from '@types'
 
 const mockUseDimensionList = vi.fn()
 const mockUseSelectedDimensionCount = vi.fn()
@@ -61,7 +61,7 @@ const createTrackedEntityType = (overrides: Partial<MetadataItem> = {}) =>
         id: 'tet1',
         name: 'Person',
         ...overrides,
-    } as MetadataItem)
+    }) as MetadataItem
 
 describe('CardTrackedEntityType', () => {
     beforeEach(() => {

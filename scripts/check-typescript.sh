@@ -13,7 +13,7 @@ set +e  # Don't exit on error
 for config in "${TSCONFIG_FILES[@]}"; do
     if [ -n "$TYPESCRIPT_ERRORS_OUTPUT" ]; then
         # Pre-commit mode: capture output for filtering
-        TS_OUTPUT=$(npx tsc --project "$config" --noEmit --skipLibCheck 2>&1)
+        TS_OUTPUT=$(pnpm exec tsc --project "$config" --noEmit --skipLibCheck 2>&1)
         if [ $? -ne 0 ]; then
             TS_FAILED=true
             # Filter out "Checking..." messages and add to accumulated errors
@@ -22,7 +22,7 @@ for config in "${TSCONFIG_FILES[@]}"; do
         fi
     else
         # Direct mode: let tsc write directly to terminal (preserves colors/links)
-        if ! npx tsc --project "$config" --noEmit --skipLibCheck; then
+        if ! pnpm exec tsc --project "$config" --noEmit --skipLibCheck; then
             TS_FAILED=true
         fi
     fi

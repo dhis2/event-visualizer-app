@@ -1,7 +1,7 @@
-import type { PayloadAction } from '@reduxjs/toolkit'
-import { createSlice } from '@reduxjs/toolkit'
 import { MAIN_SIDEBAR_DEFAULT_WIDTH } from '@components/main-sidebar/constants'
 import { getMainSidebarWidthFromLocalStorage } from '@components/main-sidebar/local-storage'
+import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
 export interface UiState {
     activeDimensionModal: string | null

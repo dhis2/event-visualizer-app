@@ -1,12 +1,12 @@
+import { Toggler } from '@components/shared/toggler'
 import i18n from '@dhis2/d2-i18n'
 import { IconFullscreen16, IconFullscreenExit16 } from '@dhis2/ui'
-import { type FC, useCallback } from 'react'
-import { Toggler } from '@components/shared/toggler'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     getUiShowExpandedVisualizationCanvas,
     toggleUiShowExpandedVisualizationCanvas,
 } from '@store/ui-slice.js'
+import { type FC, useCallback } from 'react'
 
 export const ExpandedVisualizationCanvasToggler: FC = () => {
     const dispatch = useAppDispatch()

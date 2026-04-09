@@ -1,5 +1,7 @@
 import { CssVariables } from '@dhis2/ui'
-import React from 'react'
+import { uiSlice } from '@store/ui-slice'
+import { setupStore } from '@test-utils/setup-store'
+import type React from 'react'
 import { Provider } from 'react-redux'
 import {
     MAIN_SIDEBAR_DEFAULT_WIDTH,
@@ -7,8 +9,6 @@ import {
     MAIN_SIDEBAR_STORAGE_KEY,
 } from '../constants'
 import { useResizableSidebar } from '../use-resizable-sidebar'
-import { uiSlice } from '@store/ui-slice'
-import { setupStore } from '@test-utils/setup-store'
 
 const ResizableTestHarness: React.FC = () => {
     const { containerRef, isDragging, width, eventHandlers } =

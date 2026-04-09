@@ -18,7 +18,7 @@ curl -H "Accept: application/x-yaml" -H "$AUTH_HEADER" "$API_URL" -o "$TEMP_DIR/
 
 # Generate types with openapi-typescript
 echo "⌛ Generating TypeScript types..."
-npx openapi-typescript "$TEMP_DIR/openapi.yaml" --output "$TYPES_DIR/generated.ts"
+pnpm exec openapi-typescript "$TEMP_DIR/openapi.yaml" --output "$TYPES_DIR/generated.ts"
 
 # Generate named type aliases
 echo "🔗 Generating named type aliases..."
@@ -48,7 +48,7 @@ in_components && /^}/ { in_components=0 }
 
 # Format the output
 echo "💅 Formatting output..."
-npx prettier --write "$TYPES_DIR" >/dev/null
+pnpm exec prettier --write "$TYPES_DIR" >/dev/null
 
 # Cleanup
 echo "🧹 Cleaning up..."

@@ -1,7 +1,6 @@
+import { CachedDataQueryProvider, useCachedDataQuery } from '@dhis2/analytics'
 import type { Query } from '@dhis2/app-service-data'
 import { freeze } from '@reduxjs/toolkit'
-import type { FC, ReactNode } from 'react'
-import { CachedDataQueryProvider, useCachedDataQuery } from '@dhis2/analytics'
 import type {
     MeDto,
     OrganisationUnit,
@@ -9,6 +8,7 @@ import type {
     PickWithFieldFilters,
     SystemSettings,
 } from '@types'
+import type { FC, ReactNode } from 'react'
 
 const currentUserFields = [
     'id',

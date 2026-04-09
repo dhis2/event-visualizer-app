@@ -1,6 +1,6 @@
+import type { ChipBaseProps } from '@components/layout-panel/axis/chip-base'
 import type { Active, DataRef, DragEndEvent, Over } from '@dnd-kit/core'
 import type { SortableData } from '@dnd-kit/sortable'
-import type { ChipBaseProps } from '@components/layout-panel/axis/chip-base'
 import type { Axis } from '@types'
 
 export type SidebarSortableData = {

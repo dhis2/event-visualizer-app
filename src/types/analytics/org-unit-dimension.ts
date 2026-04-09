@@ -1,5 +1,5 @@
-import type { FC } from 'react'
 import type { OrgUnit } from '@types'
+import type { FC } from 'react'
 
 type OrgUnitDimensionSelectPayload = {
     dimensionId: string

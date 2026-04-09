@@ -1,11 +1,11 @@
 import { CssVariables } from '@dhis2/ui'
+import type { CurrentVisualization } from '@types'
 import type { FC, ReactNode } from 'react'
 import simpleLineList from '../__fixtures__/e2e-enrollment.json'
 import largeLineListWithLegend from '../__fixtures__/inpatient-cases-under-5-years-female-this-year-additional-columns-and-legends.json'
 import inpatientVisit from '../__fixtures__/inpatient-visit-overview-this-year-bombali.json'
 import { LineList } from '../line-list'
 import type { LineListAnalyticsData } from '../types'
-import type { CurrentVisualization } from '@types'
 
 const TestContainer: FC<{ children: ReactNode }> = ({ children }) => (
     <div style={{ width: '100vw', height: '100vh' }}>

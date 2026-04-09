@@ -1,5 +1,16 @@
+import { ChipBase } from '@components/layout-panel/axis/chip-base'
+import chipClasses from '@components/layout-panel/axis/styles/chip.module.css'
+import {
+    DimensionItem,
+    DimensionItemContainer,
+} from '@components/main-sidebar/dimension-item'
 import { DragOverlay, useDndMonitor } from '@dnd-kit/core'
 import { snapCenterToCursor } from '@dnd-kit/modifiers'
+import { useAppDispatch, useAppSelector } from '@hooks'
+import {
+    clearMultiSelection,
+    getMultiSelectedDimensionIds,
+} from '@store/dimensions-selection-slice'
 import cx from 'classnames'
 import { useState, type FC } from 'react'
 import classes from './styles/dimension-drag-overlay.module.css'
@@ -8,17 +19,6 @@ import type {
     DraggedItemEventData,
     SidebarSortableData,
 } from './types'
-import { ChipBase } from '@components/layout-panel/axis/chip-base'
-import chipClasses from '@components/layout-panel/axis/styles/chip.module.css'
-import {
-    DimensionItem,
-    DimensionItemContainer,
-} from '@components/main-sidebar/dimension-item'
-import { useAppDispatch, useAppSelector } from '@hooks'
-import {
-    clearMultiSelection,
-    getMultiSelectedDimensionIds,
-} from '@store/dimensions-selection-slice'
 
 const isAxisSortableData = (data: object): data is AxisSortableData =>
     'axis' in data

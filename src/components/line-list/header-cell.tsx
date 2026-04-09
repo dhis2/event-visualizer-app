@@ -1,10 +1,10 @@
 import i18n from '@dhis2/d2-i18n'
 import { DataTableColumnHeader } from '@dhis2/ui'
+import type { SortDirection } from '@types'
 import cx from 'classnames'
 import { useCallback, useMemo, type FC } from 'react'
 import classes from './styles/header-cell.module.css'
 import type { ColumnHeaderClickFn, DataSortFn, LineListHeader } from './types'
-import type { SortDirection } from '@types'
 
 type HeaderCellProps = LineListHeader & {
     isDisconnected: boolean

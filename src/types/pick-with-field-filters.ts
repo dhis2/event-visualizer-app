@@ -31,8 +31,8 @@ type GetModel<T> = NonNullable<T extends Array<infer U> ? U : T>
 // we cannot pick within collections, so we keep the original model if it is an array
 // then we wrap in this helper to get the array-type back
 // use extract to keep modifiers like undefined | null
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type MaybeCollection<Model, FullModel> = FullModel extends Array<infer U>
+
+type MaybeCollection<Model, FullModel> = FullModel extends unknown[]
     ? Model[] | Extract<FullModel, undefined | null>
     : Model | Extract<FullModel, undefined | null>
 
@@ -44,23 +44,19 @@ type Rename<T, K extends keyof T, N extends string> = Pick<
 type IsFieldTransformer<S> = S extends `${string}~size`
     ? true
     : S extends `${string}~rename(${string})`
-    ? true
-    : false
+      ? true
+      : false
 
-type ResolveTransformer<Model, S> =
-    S extends `${infer FieldName extends string &
-        keyof Model}~rename(${infer NewName extends string})${infer Rest}`
-        ? ResolveTransformer<
-              Pick<Rename<Model, FieldName, NewName>, NewName>,
-              `${NewName}${Rest}`
-          >
-        : S extends `${infer FieldName extends string &
-              keyof Model}~size${infer Rest}`
-        ? ResolveTransformer<
-              { [K in FieldName]: number },
-              `${FieldName}${Rest}`
-          >
-        : Model
+type ResolveTransformer<Model, S> = S extends `${infer FieldName extends
+    string & keyof Model}~rename(${infer NewName extends string})${infer Rest}`
+    ? ResolveTransformer<
+          Pick<Rename<Model, FieldName, NewName>, NewName>,
+          `${NewName}${Rest}`
+      >
+    : S extends `${infer FieldName extends string &
+            keyof Model}~size${infer Rest}`
+      ? ResolveTransformer<{ [K in FieldName]: number }, `${FieldName}${Rest}`>
+      : Model
 
 type SplitNested<S> = S extends `${infer Nested}],${infer Rest}`
     ? [`${Nested}]`, Rest]
@@ -69,33 +65,33 @@ type SplitNested<S> = S extends `${infer Nested}],${infer Rest}`
 type RecursivePickWithFieldFilter<
     Model,
     S extends string,
-    D extends string = ','
+    D extends string = ',',
 > = string extends S
     ? Model // if we cant infer the actual value of the string, return full model
     : S extends ''
-    ? never
-    : S extends `${infer Root extends string & keyof Model}[${infer Nested}]` // we have a nested filter eg. user[access]
-    ? {
-          // create an object with root key, and recursively pick the nested fields
-          [K in Root]: MaybeCollection<
-              Prettify<
-                  PickWithFieldFilters<
-                      GetModel<Model[Root]>,
-                      SplitNested<Nested>
-                  >
-              >,
-              Model[Root]
-          >
-      }
-    : S extends `${infer T extends string & keyof Model}${D}${infer U}` // simple filter eg. id,name
-    ? Pick<Model, T> & RecursivePickWithFieldFilter<Model, U>
-    : S extends keyof Model
-    ? Pick<Model, S>
-    : S extends ':owner'
-    ? BaseIdentifiableObject
-    : IsFieldTransformer<S> extends true
-    ? ResolveTransformer<Model, S>
-    : never
+      ? never
+      : S extends `${infer Root extends string & keyof Model}[${infer Nested}]` // we have a nested filter eg. user[access]
+        ? {
+              // create an object with root key, and recursively pick the nested fields
+              [K in Root]: MaybeCollection<
+                  Prettify<
+                      PickWithFieldFilters<
+                          GetModel<Model[Root]>,
+                          SplitNested<Nested>
+                      >
+                  >,
+                  Model[Root]
+              >
+          }
+        : S extends `${infer T extends string & keyof Model}${D}${infer U}` // simple filter eg. id,name
+          ? Pick<Model, T> & RecursivePickWithFieldFilter<Model, U>
+          : S extends keyof Model
+            ? Pick<Model, S>
+            : S extends ':owner'
+              ? BaseIdentifiableObject
+              : IsFieldTransformer<S> extends true
+                ? ResolveTransformer<Model, S>
+                : never
 // : never //[Model, S] // not a key of Model, ignore
 
 /**
@@ -110,7 +106,7 @@ type RecursivePickWithFieldFilter<
 
 export type PickWithFieldFilters<
     TModel,
-    TFieldFilters extends readonly string[]
+    TFieldFilters extends readonly string[],
 > =
     // RecursivePick<TModel, TFieldFilters[number]> will return an union of objects for each entry in fieldFilter-array.
     // Thus we convert this to an intersection to get one object with all the picked properties.

@@ -27,8 +27,15 @@
     user-select: none;
     letter-spacing: 0.2px;
     text-transform: uppercase;
-    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas,
-        Liberation Mono, monospace !important;
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        SF Mono,
+        Menlo,
+        Monaco,
+        Consolas,
+        Liberation Mono,
+        monospace !important;
 }
 
 .content {

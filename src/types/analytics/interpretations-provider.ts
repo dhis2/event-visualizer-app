@@ -1,5 +1,5 @@
-import type { FC, ReactNode } from 'react'
 import type { CurrentUser } from '@types'
+import type { FC, ReactNode } from 'react'
 
 type InterpretationsProviderProps = {
     children: ReactNode

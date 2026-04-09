@@ -1,5 +1,5 @@
-import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 import type { ValueType } from '@types'
+import { asStringLiteralSubsetArray } from './as-string-literal-subset-array'
 
 export const NUMERIC_VALUE_TYPES = asStringLiteralSubsetArray<ValueType>()([
     'NUMBER',

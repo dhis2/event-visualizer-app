@@ -1,4 +1,3 @@
-import type { FC } from 'react'
 import {
     useInterpretationModalState,
     useInterpretationModalTogglers,
@@ -10,6 +9,7 @@ import { useAppSelector } from '@hooks'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import type { MetadataInput } from '@types'
+import type { FC } from 'react'
 
 // The onResponsesReceived prop is required in the analytics component but there is
 // no need to store metadata from the interpretation modal analytics response when viewing an interpretation.

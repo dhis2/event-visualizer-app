@@ -1,9 +1,9 @@
-import i18n from '@dhis2/d2-i18n'
 import {
     DEFAULT_OPTIONS,
     OPTIONS_TAB_KEYS_LINE_LIST,
     OPTIONS_TAB_KEYS_PIVOT_TABLE,
 } from '@constants/options'
+import i18n from '@dhis2/d2-i18n'
 import { isPopulatedString } from '@modules/validation'
 import type {
     VisualizationType,

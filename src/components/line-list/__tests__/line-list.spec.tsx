@@ -1,12 +1,12 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import type { CurrentVisualization } from '@types'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import simpleLineList from '../__fixtures__/e2e-enrollment.json'
 import largeLineListWithLegend from '../__fixtures__/inpatient-cases-under-5-years-female-this-year-additional-columns-and-legends.json'
 import noTimeDimension from '../__fixtures__/no-time-dimension.json'
 import { LineList } from '../line-list'
 import type { LineListAnalyticsData } from '../types'
-import type { CurrentVisualization } from '@types'
 
 // Mock the DHIS2 connection status hook
 const mockUseDhis2ConnectionStatus = vi.hoisted(() => vi.fn())

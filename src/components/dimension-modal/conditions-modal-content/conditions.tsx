@@ -61,9 +61,9 @@ const NumericConditionsList: FC = () => {
         conditionsList.length
             ? conditionsList
             : conditions.legendSet
-            ? // show the condition component also when no conditions are present but a legendSet is selected
-              ['']
-            : []
+              ? // show the condition component also when no conditions are present but a legendSet is selected
+                ['']
+              : []
     )?.map((condition, index) => (
         <div key={index}>
             <NumericCondition

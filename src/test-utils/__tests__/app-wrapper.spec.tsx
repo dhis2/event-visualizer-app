@@ -1,8 +1,5 @@
-import { FetchError } from '@dhis2/app-runtime'
-import { screen, waitFor } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
-import { renderWithAppWrapper, renderHookWithAppWrapper } from '../app-wrapper'
 import eventVisualizationFixture from '@components/plugin-wrapper/__fixtures__/inpatient-visit-overview-this-year-bonthe.json'
+import { FetchError } from '@dhis2/app-runtime'
 import {
     useCurrentUser,
     useAppSelector,
@@ -13,6 +10,9 @@ import {
 import { navigationSlice, setNavigationState } from '@store/navigation-slice'
 import type { RootState } from '@store/store'
 import { suppressConsoleError } from '@test-utils/suppress-console-error'
+import { screen, waitFor } from '@testing-library/react'
+import { describe, it, expect } from 'vitest'
+import { renderWithAppWrapper, renderHookWithAppWrapper } from '../app-wrapper'
 
 /* renderWithAppWrapper and renderHookWithAppWrapper are virtually identical and
  * renderHookWithAppWrapper is much more convenient to test. So the bulk of the

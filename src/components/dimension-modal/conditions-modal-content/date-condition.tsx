@@ -1,13 +1,13 @@
 import i18n from '@dhis2/d2-i18n'
 import { SingleSelectField, SingleSelectOption, Button, Input } from '@dhis2/ui'
-import type { ComponentProps, FC } from 'react'
-import classes from './styles/condition.module.css'
 import {
     NULL_VALUE,
     UI_TIME_DIVIDER,
     API_TIME_DIVIDER,
     getDateOperators,
 } from '@modules/conditions'
+import type { ComponentProps, FC } from 'react'
+import classes from './styles/condition.module.css'
 
 type BaseConditionProps = {
     condition: string

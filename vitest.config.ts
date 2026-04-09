@@ -16,7 +16,7 @@ export const importAliases = {
 }
 
 // https://vitejs.dev/config/
-// eslint-disable-next-line import/no-default-export
+
 export default defineConfig({
     plugins: [react()],
     resolve: { alias: importAliases },

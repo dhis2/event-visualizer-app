@@ -1,3 +1,4 @@
+import { DEFAULT_LEGEND_OPTION } from '@constants/options'
 import i18n from '@dhis2/d2-i18n'
 import {
     Checkbox,
@@ -5,12 +6,11 @@ import {
     SingleSelectField,
     SingleSelectOption,
 } from '@dhis2/ui'
-import { useCallback, useMemo, type FC } from 'react'
-import classes from './styles/option.module.css'
-import { DEFAULT_LEGEND_OPTION } from '@constants/options'
 import { useOptionsField, useRtkLazyQuery } from '@hooks'
 import { isPopulatedLegendOption } from '@modules/options'
 import type { LegendOption } from '@types'
+import { useCallback, useMemo, type FC } from 'react'
+import classes from './styles/option.module.css'
 
 export const Legend: FC = () => {
     const [value, setValue] = useOptionsField('legend')

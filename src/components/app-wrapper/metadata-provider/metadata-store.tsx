@@ -1,13 +1,3 @@
-import { extractMetadataFromAnalyticsResponse } from './analytics-data'
-import { isCompoundDimensionId, resolveId } from './dimension'
-import { smartMergeWithChangeDetection } from './merge-utils'
-import {
-    getCanonicalKeysForInput,
-    normalizeMetadataInputItem,
-    extractInputId,
-} from './normalization'
-import { assertTypedMetadataItem } from './typed-metadata-item'
-import { extractMetadataFromVisualization } from './visualization'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import {
     isMetadataInputItem,
@@ -38,6 +28,16 @@ import type {
     UserOrgUnitMetadataItem,
     DimensionMetadataItem,
 } from '@types'
+import { extractMetadataFromAnalyticsResponse } from './analytics-data'
+import { isCompoundDimensionId, resolveId } from './dimension'
+import { smartMergeWithChangeDetection } from './merge-utils'
+import {
+    getCanonicalKeysForInput,
+    normalizeMetadataInputItem,
+    extractInputId,
+} from './normalization'
+import { assertTypedMetadataItem } from './typed-metadata-item'
+import { extractMetadataFromVisualization } from './visualization'
 
 declare global {
     interface Window {

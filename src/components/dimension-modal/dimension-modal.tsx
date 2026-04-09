@@ -1,3 +1,4 @@
+import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import i18n from '@dhis2/d2-i18n'
 import {
     Modal,
@@ -7,15 +8,6 @@ import {
     ModalTitle,
     Button,
 } from '@dhis2/ui'
-import { useCallback, useMemo, type FC } from 'react'
-import { AddToLayoutButton } from './add-to-layout-button'
-import { ConditionsModalContent } from './conditions-modal-content/conditions-modal-content'
-import { DynamicDimensionModalContent } from './dynamic-dimension-modal-content/dynamic-dimension-modal-content'
-import { OrgUnitDimensionModalContent } from './orgunit-dimension-modal-content'
-import { PeriodDimensionModalContent } from './period-dimension-modal-content'
-import { StatusDimensionModalContent } from './status-dimension-modal-content'
-import classes from './styles/dimension-modal.module.css'
-import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import {
     useAppDispatch,
     useAppSelector,
@@ -28,6 +20,14 @@ import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getUiActiveDimensionModal } from '@store/ui-slice'
 import { getVisUiConfigLayout } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
+import { useCallback, useMemo, type FC } from 'react'
+import { AddToLayoutButton } from './add-to-layout-button'
+import { ConditionsModalContent } from './conditions-modal-content/conditions-modal-content'
+import { DynamicDimensionModalContent } from './dynamic-dimension-modal-content/dynamic-dimension-modal-content'
+import { OrgUnitDimensionModalContent } from './orgunit-dimension-modal-content'
+import { PeriodDimensionModalContent } from './period-dimension-modal-content'
+import { StatusDimensionModalContent } from './status-dimension-modal-content'
+import classes from './styles/dimension-modal.module.css'
 
 type DimensionModalContentProps = {
     dimension: DimensionMetadataItem

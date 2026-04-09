@@ -1,9 +1,9 @@
-import { type FC, useEffect, useMemo } from 'react'
-import type { OnAnalyticsResponseReceivedCb } from './hooks/use-line-list-analytics-data'
-import { usePivotTableAnalyticsData } from './hooks/use-pivot-table-analytics-data'
 import { PivotTable } from '@dhis2/analytics'
 import { transformVisualization } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, DimensionRecord } from '@types'
+import { type FC, useEffect, useMemo } from 'react'
+import type { OnAnalyticsResponseReceivedCb } from './hooks/use-line-list-analytics-data'
+import { usePivotTableAnalyticsData } from './hooks/use-pivot-table-analytics-data'
 
 type PivotTablePluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
@@ -39,7 +39,7 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
                 columns: visualization.columns?.filter(filterDimension),
                 rows: visualization.rows?.filter(filterDimension),
                 filters: visualization.filters?.filter(filterDimension),
-            } as CurrentVisualization),
+            }) as CurrentVisualization,
         [visualization]
     )
 

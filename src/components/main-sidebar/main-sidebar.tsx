@@ -1,3 +1,11 @@
+import { useAppSelector, useMetadataItem } from '@hooks'
+import {
+    isDataSourceProgramWithRegistration,
+    isDataSourceProgramWithoutRegistration,
+    isDataSourceTrackedEntityType,
+} from '@modules/data-source'
+import { getDataSourceId } from '@store/dimensions-selection-slice'
+import { getUiMainSidebarVisible } from '@store/ui-slice'
 import cx from 'classnames'
 import { type UIEvent, useState, type FC } from 'react'
 import { CardsProgramWithRegistration } from './cards-program-with-registration/cards-program-with-registration'
@@ -11,14 +19,6 @@ import classes from './styles/main-sidebar.module.css'
 import { ToggleCollapseAllButton } from './toggle-collapse-all-button'
 import { UnifiedSearchInput } from './unified-search-input'
 import { useResizableSidebar } from './use-resizable-sidebar'
-import { useAppSelector, useMetadataItem } from '@hooks'
-import {
-    isDataSourceProgramWithRegistration,
-    isDataSourceProgramWithoutRegistration,
-    isDataSourceTrackedEntityType,
-} from '@modules/data-source'
-import { getDataSourceId } from '@store/dimensions-selection-slice'
-import { getUiMainSidebarVisible } from '@store/ui-slice'
 
 export const MainSidebar: FC = () => {
     const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)

@@ -1,11 +1,11 @@
 import type { FetchError } from '@dhis2/app-runtime'
-import type { FC } from 'react'
 import type {
     CurrentUser,
     CurrentVisualization,
     EventVisualizationType,
     VisualizationType,
 } from '@types'
+import type { FC } from 'react'
 
 type FileType = 'visualization' | 'eventVisualization' | 'eventReport' | 'map'
 

@@ -1,10 +1,10 @@
 import { useDndMonitor, type Active, type ClientRect } from '@dnd-kit/core'
 import type { useSortable } from '@dnd-kit/sortable'
+import { isObject } from '@modules/validation'
+import type { Axis } from '@types'
 import cx from 'classnames'
 import { useState, type FC } from 'react'
 import classes from './styles/drop-insert-marker.module.css'
-import { isObject } from '@modules/validation'
-import type { Axis } from '@types'
 
 const getPointerX = (
     activatorEvent: Event | null | undefined,

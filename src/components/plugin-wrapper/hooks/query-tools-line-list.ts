@@ -1,5 +1,3 @@
-import type { ParameterRecord } from './query-tools-common'
-import { getRequestOptions } from './query-tools-common'
 import { getFullDimensionId, isTimeDimensionId } from '@modules/dimension'
 import { getHeadersMap } from '@modules/visualization'
 import type {
@@ -8,6 +6,8 @@ import type {
     DimensionArray,
     OutputType,
 } from '@types'
+import { getRequestOptions } from './query-tools-common'
+import type { ParameterRecord } from './query-tools-common'
 
 const adaptDimensions = (
     dimensions: DimensionArray,

@@ -1,11 +1,10 @@
-import { useAlert } from '@dhis2/app-runtime'
-import i18n from '@dhis2/d2-i18n'
-import { useCallback, useMemo } from 'react'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import {
     preparePayloadForSave,
     preparePayloadForSaveAs,
 } from '@dhis2/analytics'
+import { useAlert } from '@dhis2/app-runtime'
+import i18n from '@dhis2/d2-i18n'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     isVisualizationValidForSave,
@@ -24,6 +23,7 @@ import { setNavigationState } from '@store/navigation-slice'
 import { getSavedVis, setSavedVisNameDescription } from '@store/saved-vis-slice'
 import { tLoadSavedVisualization } from '@store/thunks'
 import type { NewVisualization, SavedVisualization } from '@types'
+import { useCallback, useMemo } from 'react'
 
 export const useToolbarActions = () => {
     const dispatch = useAppDispatch()

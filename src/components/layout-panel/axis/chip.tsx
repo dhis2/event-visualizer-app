@@ -1,16 +1,8 @@
+import type { AxisSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
+import { IconButton } from '@components/shared/icon-button'
 import { Layer, Popper, Tooltip, IconMore16 } from '@dhis2/ui'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import cx from 'classnames'
-import { useCallback, useMemo, useRef, useState, type FC } from 'react'
-import { ChipBase, type ChipBaseProps } from './chip-base'
-import { ChipMenu } from './chip-menu'
-import { DropInsertMarker } from './drop-insert-marker'
-import { getChipItemsText } from './get-chip-items-text'
-import classes from './styles/chip.module.css'
-import { TooltipContent } from './tooltip-content'
-import type { AxisSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
-import { IconButton } from '@components/shared/icon-button'
 import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
@@ -20,6 +12,14 @@ import {
     getVisUiConfigOption,
 } from '@store/vis-ui-config-slice'
 import type { Axis, DimensionType, SavedVisualization, ValueType } from '@types'
+import cx from 'classnames'
+import { useCallback, useMemo, useRef, useState, type FC } from 'react'
+import { ChipBase, type ChipBaseProps } from './chip-base'
+import { ChipMenu } from './chip-menu'
+import { DropInsertMarker } from './drop-insert-marker'
+import { getChipItemsText } from './get-chip-items-text'
+import classes from './styles/chip.module.css'
+import { TooltipContent } from './tooltip-content'
 
 export type LayoutDimension = {
     id: string

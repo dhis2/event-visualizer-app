@@ -1,15 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
 import { Button, IconInfo16, Tooltip } from '@dhis2/ui'
-import {
-    type FC,
-    createContext,
-    useCallback,
-    useContext,
-    useMemo,
-    useState,
-} from 'react'
-import { Conditions } from './conditions'
-import classes from './styles/conditions-modal-content.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     OPERATOR_IN,
@@ -23,6 +13,16 @@ import {
     setVisUiConfigConditionsByDimension,
 } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem, ValueType } from '@types'
+import {
+    type FC,
+    createContext,
+    useCallback,
+    useContext,
+    useMemo,
+    useState,
+} from 'react'
+import { Conditions } from './conditions'
+import classes from './styles/conditions-modal-content.module.css'
 
 const EMPTY_CONDITION = ''
 
@@ -107,7 +107,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
     const isOptionSetCondition: boolean = Boolean(dimension.optionSetId)
     const isSingleCondition: boolean = Boolean(
         isOptionSetCondition ||
-            (valueType && SINGLETON_TYPES.includes(valueType))
+        (valueType && SINGLETON_TYPES.includes(valueType))
     )
     const isSupported: boolean = Boolean(
         isProgramIndicator || (valueType && SUPPORTED_TYPES.includes(valueType))
@@ -120,8 +120,8 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         conditions.condition?.length
             ? parseConditionsStringToArray(conditions.condition)
             : isSingleCondition || conditions.legendSet
-            ? [EMPTY_CONDITION]
-            : []
+              ? [EMPTY_CONDITION]
+              : []
     )
 
     const disableAddButton: boolean =

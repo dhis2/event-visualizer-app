@@ -1,12 +1,12 @@
-import { act } from '@testing-library/react'
-import { expect, describe, it, beforeEach, afterEach } from 'vitest'
-import { StoreToLocationSyncer } from '../store-to-location-syncer'
 import { history } from '@modules/history'
 import { navigationSlice, setNavigationState } from '@store/navigation-slice'
 import type { NavigationState } from '@store/navigation-slice'
 import { renderWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
 import { setupStore } from '@test-utils/setup-store'
+import { act } from '@testing-library/react'
 import type { RootState } from '@types'
+import { expect, describe, it, beforeEach, afterEach } from 'vitest'
+import { StoreToLocationSyncer } from '../store-to-location-syncer'
 
 describe('StoreToLocationSyncer', () => {
     let store: ReturnType<typeof setupStore> & {

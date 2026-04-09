@@ -1,10 +1,10 @@
+import type { DimensionMetadataItem, SingleQuery, DimensionType } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     computeIsDisabledByFilter,
     filterDimensions,
     isFetchEnabledByFilter,
 } from '../filter-helpers'
-import type { DimensionMetadataItem, SingleQuery, DimensionType } from '@types'
 
 describe('isFetchEnabledByFilter', () => {
     const baseQueryWithDimensionType: SingleQuery = {

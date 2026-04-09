@@ -1,10 +1,10 @@
-import type { DimensionType as GeneratedDimensionType } from './dhis2-openapi-schemas'
 import type {
     PROGRAM_DIMENSION_TYPES,
     YOUR_DIMENSION_TYPES,
     DIMENSION_IDS,
     TIME_DIMENSION_IDS,
 } from '@constants/dimensions'
+import type { DimensionType as GeneratedDimensionType } from './dhis2-openapi-schemas'
 
 export type DimensionType =
     | Exclude<GeneratedDimensionType, 'PROGRAM_DATA_ELEMENT'>

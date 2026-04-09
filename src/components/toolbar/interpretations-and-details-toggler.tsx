@@ -1,15 +1,15 @@
-import i18n from '@dhis2/d2-i18n'
-import type { FC } from 'react'
-import { useCallback } from 'react'
 import { IconPanelHide } from '@assets/icon-panel-hide'
 import { IconPanelShow } from '@assets/icon-panel-show'
 import { Toggler } from '@components/shared/toggler'
+import i18n from '@dhis2/d2-i18n'
 import { useAppSelector, useAppDispatch } from '@hooks'
 import { getCurrentVisId } from '@store/current-vis-slice'
 import {
     getUiDetailsPanelVisible,
     setUiDetailsPanelVisible,
 } from '@store/ui-slice'
+import { useCallback } from 'react'
+import type { FC } from 'react'
 
 export const InterpretationsAndDetailsToggler: FC = () => {
     const dispatch = useAppDispatch()

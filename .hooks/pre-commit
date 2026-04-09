@@ -1,6 +1,6 @@
 #!/bin/sh
 
-yarn d2-app-scripts i18n extract
+pnpm d2-app-scripts i18n extract
 git add i18n
 
 # Track overall failure state
@@ -64,7 +64,7 @@ fi
 echo ""
 echo "🔍 Running lint-staged..."
 set +e  # Don't exit on error
-npx lint-staged
+pnpm exec lint-staged
 LINT_STAGED_EXIT_CODE=$?
 set -e  # Re-enable exit on error
 

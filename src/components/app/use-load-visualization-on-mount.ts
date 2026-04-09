@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
 import { useAppDispatch, useAppStore } from '@hooks'
 import { tLoadSavedVisualization } from '@store/thunks'
+import { useEffect } from 'react'
 
 export const useLoadVisualizationOnMount = () => {
     const store = useAppStore()

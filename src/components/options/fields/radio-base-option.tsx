@@ -1,7 +1,7 @@
 import { Field, Radio, type RadioProps } from '@dhis2/ui'
+import { useOptionsField } from '@hooks'
 import { type FC } from 'react'
 import type { OptionRecord } from './types'
-import { useOptionsField } from '@hooks'
 
 type RadioBaseOptionProps = RadioProps & {
     option: OptionRecord & { items: { id: string; label: string }[] }

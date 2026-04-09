@@ -1,6 +1,3 @@
-import { act } from '@testing-library/react'
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { useDimensionList, type Transformer } from '..'
 import {
     dimensionSelectionSlice,
     setSearchTerm,
@@ -10,7 +7,10 @@ import {
 import * as dimensionSelectionActions from '@store/dimensions-selection-slice'
 import { renderHookWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
 import { setupStore } from '@test-utils/setup-store'
+import { act } from '@testing-library/react'
 import type { DimensionMetadataItem, SingleQuery } from '@types'
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { useDimensionList, type Transformer } from '..'
 
 // ===== MOCK SETUP =====
 let mockApiResponse: unknown = null

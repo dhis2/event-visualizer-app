@@ -3,9 +3,9 @@ import {
     SingleSelectOption,
     type SingleSelectFieldProps,
 } from '@dhis2/ui'
+import { useOptionsField } from '@hooks'
 import { type FC } from 'react'
 import type { OptionRecord } from './types'
-import { useOptionsField } from '@hooks'
 
 type SelectBaseOptionProps = SingleSelectFieldProps & {
     option: OptionRecord & { items: { label: string; value: string }[] }

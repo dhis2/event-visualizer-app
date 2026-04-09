@@ -1,7 +1,3 @@
-import { renderHook } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import type { LayoutDragEndEvent } from '../types'
-import { useOnDragEnd } from '../use-on-drag-end'
 import { useAppDispatch, useAppSelector, useAddMetadata } from '@hooks'
 import { clearMultiSelection } from '@store/dimensions-selection-slice'
 import {
@@ -9,6 +5,10 @@ import {
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice'
+import { renderHook } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type { LayoutDragEndEvent } from '../types'
+import { useOnDragEnd } from '../use-on-drag-end'
 
 // Mock the hooks
 vi.mock('@hooks', () => ({

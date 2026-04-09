@@ -1,5 +1,4 @@
 import i18n from '@dhis2/d2-i18n'
-import { isObject, isPopulatedString } from './validation'
 import type {
     DimensionId,
     OutputType,
@@ -13,6 +12,7 @@ import type {
     MetadataInputItem,
     DimensionMetadataItem,
 } from '@types'
+import { isObject, isPopulatedString } from './validation'
 
 export const isMetadataInputItem = (
     input: unknown

@@ -1,8 +1,8 @@
 import { CssVariables } from '@dhis2/ui'
-import React from 'react'
-import { DraggableDimensionItem } from '../draggable-dimension-item'
 import { MockAppWrapper } from '@test-utils/app-wrapper'
 import type { DimensionMetadataItem } from '@types'
+import type React from 'react'
+import { DraggableDimensionItem } from '../draggable-dimension-item'
 
 const testDimension: DimensionMetadataItem = {
     id: 'test-dimension',

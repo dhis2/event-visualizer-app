@@ -1,12 +1,10 @@
-// eslint-disable-next-line no-restricted-imports
-import { useConfig, useDataEngine } from '@dhis2/app-runtime'
-import { useCallback, useState } from 'react'
-import type { DownloadFn } from './types'
 import {
     getAdaptedVisualization,
     getAnalyticsEndpoint,
 } from '@components/plugin-wrapper/hooks/query-tools-line-list'
 import { Analytics } from '@dhis2/analytics'
+// eslint-disable-next-line no-restricted-imports
+import { useConfig, useDataEngine } from '@dhis2/app-runtime'
 import { useAppSelector, useCurrentUser } from '@hooks'
 import { isVisualizationValid } from '@modules/validation'
 import {
@@ -15,6 +13,8 @@ import {
 } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import type { CurrentVisualization } from '@types'
+import { useCallback, useState } from 'react'
+import type { DownloadFn } from './types'
 
 type UseDownloadResult = {
     isDownloadDisabled: boolean
