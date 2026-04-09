@@ -9,7 +9,7 @@ interface DimensionItemProps {
     dimensionType: DimensionType
     selected?: boolean
     disabled?: boolean
-    onClick: () => void
+    onClick?: (event: React.MouseEvent) => void
 }
 
 export const DimensionItem: FC<DimensionItemProps> = ({
@@ -25,10 +25,7 @@ export const DimensionItem: FC<DimensionItemProps> = ({
             [styles.selected]: selected,
         })}
         disabled={disabled}
-        onClick={(e) => {
-            e.stopPropagation()
-            onClick()
-        }}
+        onClick={onClick}
         data-test="dimension-item"
     >
         <span className={styles.icon}>

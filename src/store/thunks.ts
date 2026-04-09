@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 import deepmerge from 'deepmerge'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
 import { setDataSourceId } from './dimensions-selection-slice'
-import { setIsVisualizationLoading } from './loader-slice'
+import { setIsVisualizationLoading, setLoadError } from './loader-slice'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
 import type { RootState } from './store'
 import { clearUi } from './ui-slice'
@@ -92,7 +92,8 @@ export const tLoadSavedVisualization = createAsyncThunk<
                     .catch((error) => console.error(error))
             }
         } else if (error) {
-            console.error(error)
+            dispatch(setLoadError(error))
+            dispatch(setIsVisualizationLoading(false))
         }
     }
 )
