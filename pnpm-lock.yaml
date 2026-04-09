@@ -153,6 +153,9 @@ importers:
       openapi-typescript:
         specifier: ^7.13.0
         version: 7.13.0(typescript@5.9.3)
+      opensrc:
+        specifier: ^0.7.1
+        version: 0.7.1
       prettier:
         specifier: ^3.8.1
         version: 3.8.1
@@ -6292,6 +6295,10 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: ^5.x
+
+  opensrc@0.7.1:
+    resolution: {integrity: sha512-Dah1lZtpOckjJt4yHwTK2/VwMQX6WRoaWzsMc11OzS+EjyETUvdLqEEYqRBSaOd+uDZ3EQcxl2UeYl2AdCnpLw==}
+    hasBin: true
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -16279,6 +16286,8 @@ snapshots:
       supports-color: 10.2.2
       typescript: 5.9.3
       yargs-parser: 21.1.1
+
+  opensrc@0.7.1: {}
 
   optionator@0.9.4:
     dependencies:

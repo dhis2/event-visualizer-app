@@ -10,3 +10,4 @@ src/locales/*
 build
 src/types/dhis2-openapi-schemas
 pnpm-lock.yaml
+pnpm-workspace.yaml
