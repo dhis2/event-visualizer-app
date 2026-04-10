@@ -1,8 +1,8 @@
+import { useAppSelector, useAppStore } from '@hooks'
+import type { AppStore } from '@store/store'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { UnifiedSearchInput } from '../unified-search-input'
-import { useAppSelector, useAppStore } from '@hooks'
-import type { AppStore } from '@store/store'
 
 vi.mock('@hooks', () => ({
     useAppSelector: vi.fn(),

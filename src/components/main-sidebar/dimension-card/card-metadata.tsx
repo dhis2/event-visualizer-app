@@ -1,5 +1,3 @@
-import i18n from '@dhis2/d2-i18n'
-import { useMemo, type FC } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -9,7 +7,9 @@ import {
     useSelectedDimensionCount,
     type UseSelectedDimensionCountMatchFn,
 } from '@components/main-sidebar/use-selected-dimension-count'
+import i18n from '@dhis2/d2-i18n'
 import type { DimensionMetadataItem } from '@types'
+import { useMemo, type FC } from 'react'
 
 const getFixedDimensions = (): DimensionMetadataItem[] => [
     {

@@ -1,6 +1,5 @@
-import i18n from '@dhis2/d2-i18n'
-import deepmerge from 'deepmerge'
 import { DIMENSION_ID_ORGUNIT } from '@constants/dimensions'
+import i18n from '@dhis2/d2-i18n'
 import {
     combineAllDimensionsFromVisualization,
     getFullDimensionId,
@@ -20,6 +19,7 @@ import type {
     DimensionMetadataItem,
     SavedVisualization,
 } from '@types'
+import deepmerge from 'deepmerge'
 
 const FIXED_DIMENSION_LOOKUP = new Set<DimensionId>([
     'ou',

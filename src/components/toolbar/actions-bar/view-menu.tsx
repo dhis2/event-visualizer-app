@@ -1,13 +1,10 @@
-import i18n from '@dhis2/d2-i18n'
-import type { FC } from 'react'
-import { useCallback } from 'react'
-import classes from './styles/actions-bar.module.css'
 import { MAIN_SIDEBAR_DEFAULT_WIDTH } from '@components/main-sidebar/constants'
 import {
     HoverMenuDropdown,
     HoverMenuList,
     HoverMenuListItem,
 } from '@dhis2/analytics'
+import i18n from '@dhis2/d2-i18n'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getCurrentVisId } from '@store/current-vis-slice'
 import {
@@ -20,6 +17,9 @@ import {
     toggleUiMainSidebarVisible,
     setUiDetailsPanelVisible,
 } from '@store/ui-slice'
+import { useCallback } from 'react'
+import type { FC } from 'react'
+import classes from './styles/actions-bar.module.css'
 
 export const ViewMenu: FC = () => {
     const dispatch = useAppDispatch()

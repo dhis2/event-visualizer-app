@@ -1,11 +1,11 @@
-// eslint-disable-next-line  no-restricted-imports
-import { useDataQuery } from '@dhis2/app-runtime'
-import { type FC } from 'react'
 import { getVisualizationQueryFields } from '@api/event-visualizations-api'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
-import './locales/index.js'
+// eslint-disable-next-line no-restricted-imports
+import { useDataQuery } from '@dhis2/app-runtime'
 import type { CurrentUser, SavedVisualization } from '@types'
+import { type FC } from 'react'
+import './locales/index.js'
 
 type DashboardPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']

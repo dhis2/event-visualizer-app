@@ -1,3 +1,9 @@
+import type {
+    DimensionArray,
+    CurrentVisualization,
+    SavedVisualization,
+    DimensionMetadataItem,
+} from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     extractPlainDimensionId,
@@ -14,12 +20,6 @@ import {
     getTimeDimensions,
     getTimeDimensionName,
 } from '../dimension'
-import type {
-    DimensionArray,
-    CurrentVisualization,
-    SavedVisualization,
-    DimensionMetadataItem,
-} from '@types'
 
 const outputType = 'EVENT'
 

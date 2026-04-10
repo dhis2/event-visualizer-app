@@ -1,16 +1,16 @@
+import type { AxisContainerDroppableData } from '@components/app-wrapper/drag-and-drop-provider/types'
+import { useLayoutDimensions } from '@components/layout-panel/use-layout-dimensions'
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
+import { useAppSelector } from '@hooks'
+import { getAxisName } from '@modules/layout'
+import { getVisUiConfigOutputType } from '@store/vis-ui-config-slice'
+import type { Axis as AxisTD } from '@types'
 import cx from 'classnames'
 import { type FC, useMemo } from 'react'
 import { Chip } from './chip'
 import classes from './styles/axis.module.css'
 import insertMarkerClasses from './styles/drop-insert-marker.module.css'
-import type { AxisContainerDroppableData } from '@components/app-wrapper/drag-and-drop-provider/types'
-import { useLayoutDimensions } from '@components/layout-panel/use-layout-dimensions'
-import { useAppSelector } from '@hooks'
-import { getAxisName } from '@modules/layout'
-import { getVisUiConfigOutputType } from '@store/vis-ui-config-slice'
-import type { Axis as AxisTD } from '@types'
 
 type AxisProps = {
     axisId: AxisTD

@@ -1,7 +1,5 @@
-import i18n from '@dhis2/d2-i18n'
-import { useMemo } from 'react'
-import type { LayoutDimension } from './chip'
 import { ouIdHelper } from '@dhis2/analytics'
+import i18n from '@dhis2/d2-i18n'
 import { useMetadataItems, useAppSelector } from '@hooks'
 import {
     isStartEndDate,
@@ -13,6 +11,8 @@ import {
     getVisUiConfigItemsByDimension,
     getVisUiConfigOutputType,
 } from '@store/vis-ui-config-slice'
+import { useMemo } from 'react'
+import type { LayoutDimension } from './chip'
 
 // Helper function to format a list of metadata IDs into a labeled string
 const getNameList = (
@@ -120,7 +120,7 @@ export const useTooltipContentData = (dimension: LayoutDimension) => {
                 itemDisplayNames.push(
                     isStartEndDate(dimensionId)
                         ? formatStartEndDate(dimensionId)
-                        : metadataItems[dimensionId]?.name ?? id
+                        : (metadataItems[dimensionId]?.name ?? id)
                 )
             }
         })

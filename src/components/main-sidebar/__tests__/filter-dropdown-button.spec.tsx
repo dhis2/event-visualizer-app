@@ -1,9 +1,9 @@
+import { useAppDispatch, useAppSelector } from '@hooks'
+import { clearFilter, setFilter } from '@store/dimensions-selection-slice'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { FilterDropdownButton } from '../filter-dropdown-button'
-import { useAppDispatch, useAppSelector } from '@hooks'
-import { clearFilter, setFilter } from '@store/dimensions-selection-slice'
 
 vi.mock('@hooks', () => ({
     useAppDispatch: vi.fn(),

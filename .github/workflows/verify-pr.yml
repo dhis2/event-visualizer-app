@@ -28,23 +28,25 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
             - uses: actions/setup-node@v4
               with:
                   node-version: lts/*
+                  cache: pnpm
 
             - name: Install
               # Note that we do NOT add `--ignore-scripts` here because the TS types
               # need to be present in order for the linting to pass
-              run: yarn install --frozen-lockfile
+              run: pnpm install --frozen-lockfile
 
             - name: Generate translations
-              run: yarn d2-app-scripts i18n generate
+              run: pnpm d2-app-scripts i18n generate
 
             - name: Lint
-              run: yarn lint
+              run: pnpm lint
 
             - name: Unit tests
-              run: npx vitest run
+              run: pnpm exec vitest run
 
             - name: Cypress component tests
               uses: cypress-io/github-action@v6
@@ -57,7 +59,7 @@ jobs:
                   CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
 
             - name: Build
-              run: yarn d2-app-scripts build
+              run: pnpm d2-app-scripts build
 
             - uses: actions/upload-artifact@v4
               with:
@@ -88,19 +90,21 @@ jobs:
                 spec-group: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
         steps:
             - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
             - uses: actions/setup-node@v4
               with:
                   node-version: lts/*
+                  cache: pnpm
             - name: Install
-              run: yarn install --frozen-lockfile
+              run: pnpm install --frozen-lockfile
 
             - name: Generate translations
-              run: yarn d2-app-scripts i18n generate
+              run: pnpm d2-app-scripts i18n generate
 
             - name: Run e2e tests
               uses: cypress-io/github-action@v6
               with:
-                  start: yarn d2-app-scripts start
+                  start: pnpm d2-app-scripts start
                   wait-on: 'http://localhost:3000'
                   wait-on-timeout: 300
                   record: ${{ env.SHOULD_RECORD  == 'true' }}

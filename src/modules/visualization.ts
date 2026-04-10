@@ -1,14 +1,10 @@
-import i18n from '@dhis2/d2-i18n'
-import deepEqual from 'deep-equal'
-import { getConditionsFromVisualization } from './conditions'
-import { isTimeDimensionId, transformDimensions } from './dimension'
-import { getRepetitionsFromVisualisation } from './repetitions'
 import { getRequestOptions } from '@components/plugin-wrapper/hooks/query-tools-common'
 import {
     layoutGetAxisIdDimensionIdsObject,
     layoutGetDimensionIdItemIdsObject,
     layoutGetAllDimensions,
 } from '@dhis2/analytics'
+import i18n from '@dhis2/d2-i18n'
 import { initialState as currentVisDefaultValue } from '@store/current-vis-slice'
 import { initialState as savedVisDefaultValue } from '@store/saved-vis-slice'
 import type { LastActiveButton } from '@store/vis-ui-config-slice'
@@ -23,6 +19,10 @@ import type {
     VisualizationState,
     SortDirection,
 } from '@types'
+import deepEqual from 'deep-equal'
+import { getConditionsFromVisualization } from './conditions'
+import { isTimeDimensionId, transformDimensions } from './dimension'
+import { getRepetitionsFromVisualisation } from './repetitions'
 
 // TODO: adjust the descriptions
 // See: https://dhis2.atlassian.net/browse/DHIS2-19961

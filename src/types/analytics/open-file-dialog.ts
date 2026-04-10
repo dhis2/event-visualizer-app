@@ -1,5 +1,5 @@
-import type { FC } from 'react'
 import type { CurrentUser } from '@types'
+import type { FC } from 'react'
 
 type OpenFileDialogProps = {
     currentUser: CurrentUser

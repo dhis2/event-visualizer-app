@@ -1,6 +1,6 @@
+import type { DataSourceProgramWithoutRegistration } from '@types'
 import type { FC } from 'react'
 import { CardEvent } from './card-event'
-import type { DataSourceProgramWithoutRegistration } from '@types'
 
 type CardsProgramWithoutRegistrationProps = {
     program: DataSourceProgramWithoutRegistration

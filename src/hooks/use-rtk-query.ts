@@ -1,11 +1,11 @@
+import { api } from '@api/api'
+import type { CustomBaseQueryFn, EngineArgs } from '@api/custom-base-query'
+import type { EngineError } from '@api/parse-engine-error'
 import type { Query } from '@dhis2/app-service-data'
 import type {
     QueryActionCreatorResult,
     QueryDefinition,
 } from '@reduxjs/toolkit/query'
-import { api } from '@api/api'
-import type { CustomBaseQueryFn, EngineArgs } from '@api/custom-base-query'
-import type { EngineError } from '@api/parse-engine-error'
 import type { SingleQuery } from '@types'
 
 // https://redux-toolkit.js.org/rtk-query/api/created-api/hooks#usequery-signature

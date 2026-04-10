@@ -1,3 +1,5 @@
+import type { LayoutDimension } from '@components/layout-panel/axis/chip'
+import type { CurrentVisualization } from '@types'
 import { expect, it, test, describe } from 'vitest'
 import {
     getLegendSetConditionMetadataIds,
@@ -16,8 +18,6 @@ import {
     parseConditionsStringToArray,
 } from '../conditions.js'
 import type { QueryOperator } from '../conditions.js'
-import type { LayoutDimension } from '@components/layout-panel/axis/chip'
-import type { CurrentVisualization } from '@types'
 
 describe('getLegendSetConditionMetadataIds', () => {
     test('Legend set chosen without legends selected', () => {

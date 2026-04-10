@@ -1,6 +1,4 @@
 import i18n from '@dhis2/d2-i18n'
-import { useMemo } from 'react'
-import type { ButtonAction } from './base-button'
 import { useAppSelector, useMetadataItem, useMetadataStore } from '@hooks'
 import {
     isDataSourceProgramWithoutRegistration,
@@ -19,6 +17,8 @@ import {
 } from '@store/vis-ui-config-slice'
 import type { LastActiveButton } from '@store/vis-ui-config-slice'
 import type { OutputType } from '@types'
+import { useMemo } from 'react'
+import type { ButtonAction } from './base-button'
 
 type TooltipContent = { content: string; openDelay?: number } | undefined
 

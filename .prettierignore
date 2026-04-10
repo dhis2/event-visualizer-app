@@ -9,3 +9,4 @@ node_modules
 src/locales/*
 build
 src/types/dhis2-openapi-schemas
+pnpm-lock.yaml

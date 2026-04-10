@@ -1,13 +1,13 @@
-import { act } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { LayoutDimension } from '../chip'
-import { useTooltipContentData } from '../use-tooltip-content-data'
 import { useAddMetadata } from '@hooks'
 import {
     visUiConfigSlice,
     type VisUiConfigState,
 } from '@store/vis-ui-config-slice'
 import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
+import { act } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { LayoutDimension } from '../chip'
+import { useTooltipContentData } from '../use-tooltip-content-data'
 
 const baseDimension: LayoutDimension = {
     id: 'dx',

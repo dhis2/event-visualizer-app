@@ -1,11 +1,11 @@
 import i18n from '@dhis2/d2-i18n'
-import { useCallback, type FC } from 'react'
-import classes from './styles/toggle-collapse-all-button.module.css'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     areAllDimensionCardsCollapsed,
     toggleAllDimensionCardsIsCollapsed,
 } from '@store/dimensions-selection-slice'
+import { useCallback, type FC } from 'react'
+import classes from './styles/toggle-collapse-all-button.module.css'
 
 const CollapseIcon = () => (
     <svg

@@ -1,9 +1,37 @@
+import { api } from '@api/api'
+import {
+    AppCachedDataQueryProvider,
+    useAppCachedDataQuery,
+} from '@components/app-wrapper/app-cached-data-query-provider'
+import { DndContextProvider } from '@components/app-wrapper/drag-and-drop-provider/dnd-context-provider'
+import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider/metadata-provider'
 // eslint-disable-next-line no-restricted-imports
 import { CustomDataProvider, useDataEngine } from '@dhis2/app-runtime'
 import { CssVariables } from '@dhis2/ui'
-import type { ReducersMapObject } from '@reduxjs/toolkit'
+import { useMetadataStore } from '@hooks'
 import { configureStore } from '@reduxjs/toolkit'
+import type { ReducersMapObject } from '@reduxjs/toolkit'
+import { currentVisSlice } from '@store/current-vis-slice'
+import { dimensionSelectionSlice } from '@store/dimensions-selection-slice'
+import { loaderSlice } from '@store/loader-slice'
+import { listenerMiddleware } from '@store/middleware-listener'
+import { navigationSlice } from '@store/navigation-slice'
+import { savedVisSlice } from '@store/saved-vis-slice'
+import {
+    createStore as createDefaultStore,
+    getPreloadedState as getDefaultPreloadedState,
+} from '@store/store'
+import { uiSlice } from '@store/ui-slice'
+import { visUiConfigSlice } from '@store/vis-ui-config-slice'
 import { render, renderHook, waitFor } from '@testing-library/react'
+import type {
+    RootState,
+    AppCachedData,
+    DataEngine,
+    MetadataStore,
+    AppStore,
+    InitialMetadataItems,
+} from '@types'
 import deepmerge from 'deepmerge'
 import {
     useMemo,
@@ -17,34 +45,6 @@ import meData from './__fixtures__/me.json'
 import organisationUnitLevelsData from './__fixtures__/organisation-unit-levels.json'
 import organisationUnitsData from './__fixtures__/organisation-units.json'
 import systemSettingsData from './__fixtures__/system-settings.json'
-import { api } from '@api/api'
-import {
-    AppCachedDataQueryProvider,
-    useAppCachedDataQuery,
-} from '@components/app-wrapper/app-cached-data-query-provider'
-import { DndContextProvider } from '@components/app-wrapper/drag-and-drop-provider/dnd-context-provider'
-import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import { useMetadataStore } from '@hooks'
-import { currentVisSlice } from '@store/current-vis-slice'
-import { dimensionSelectionSlice } from '@store/dimensions-selection-slice'
-import { loaderSlice } from '@store/loader-slice'
-import { listenerMiddleware } from '@store/middleware-listener'
-import { navigationSlice } from '@store/navigation-slice'
-import { savedVisSlice } from '@store/saved-vis-slice'
-import {
-    createStore as createDefaultStore,
-    getPreloadedState as getDefaultPreloadedState,
-} from '@store/store'
-import { uiSlice } from '@store/ui-slice'
-import { visUiConfigSlice } from '@store/vis-ui-config-slice'
-import type {
-    RootState,
-    AppCachedData,
-    DataEngine,
-    MetadataStore,
-    AppStore,
-    InitialMetadataItems,
-} from '@types'
 
 /**
  * Configuration options for mocking the app wrapper in tests.

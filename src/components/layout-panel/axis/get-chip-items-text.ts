@@ -1,5 +1,5 @@
-import i18n from '@dhis2/d2-i18n'
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
+import i18n from '@dhis2/d2-i18n'
 import type { Axis, OutputType } from '@types'
 
 const DIMENSION_ID_ORGUNIT = 'ou'

@@ -1,8 +1,8 @@
+import { DimensionTypeIcon } from '@components/shared/dimension-type-icon'
 import cx from 'classnames'
-import React from 'react'
+import type React from 'react'
 import type { LayoutDimension } from './chip'
 import classes from './styles/chip-base.module.css'
-import { DimensionTypeIcon } from '@components/shared/dimension-type-icon'
 
 // Presentational component used by dnd - do not add redux or dnd functionality
 

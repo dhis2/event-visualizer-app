@@ -1,5 +1,3 @@
-import i18n from '@dhis2/d2-i18n'
-import { useCallback, type FC, useMemo } from 'react'
 import {
     DimensionCard,
     DimensionList,
@@ -10,6 +8,7 @@ import {
     useSelectedDimensionCount,
     type UseSelectedDimensionCountMatchFn,
 } from '@components/main-sidebar/use-selected-dimension-count'
+import i18n from '@dhis2/d2-i18n'
 import { isObject, isPopulatedString } from '@modules/validation'
 import type {
     DimensionMetadataItem,
@@ -17,6 +16,7 @@ import type {
     SingleQuery,
     ValueType,
 } from '@types'
+import { useCallback, type FC, useMemo } from 'react'
 
 type CardTrackedEntityTypeProps = {
     trackedEntityType: MetadataItem

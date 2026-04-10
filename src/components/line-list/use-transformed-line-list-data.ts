@@ -1,12 +1,10 @@
-import i18n from '@dhis2/d2-i18n'
-import moment from 'moment'
-import { useMemo } from 'react'
 import type {
     LineListData,
     LineListAnalyticsData,
     LineListAnalyticsDataHeader,
 } from '@components/line-list/types'
 import { getColorByValueFromLegendSet, formatValue } from '@dhis2/analytics'
+import i18n from '@dhis2/d2-i18n'
 import {
     getFullDimensionId,
     getDimensionIdParts,
@@ -21,6 +19,8 @@ import type {
     LegendSet,
     ValueType,
 } from '@types'
+import moment from 'moment'
+import { useMemo } from 'react'
 
 const isStageOffsetInteger = (stageOffset: unknown): stageOffset is number =>
     Number.isInteger(stageOffset)

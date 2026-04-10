@@ -6,6 +6,7 @@ import {
     DataTableHead,
     DataTableRow,
 } from '@dhis2/ui'
+import type { CurrentVisualization } from '@types'
 import cx from 'classnames'
 import {
     useCallback,
@@ -30,7 +31,6 @@ import type {
     PaginateFn,
 } from './types'
 import { useTransformedLineListData } from './use-transformed-line-list-data'
-import type { CurrentVisualization } from '@types'
 
 const ModalHeightConstrainer: FC<PropsWithChildren> = ({ children }) => {
     const [blockSize, setBlockSize] = useState<number | string>('100%')

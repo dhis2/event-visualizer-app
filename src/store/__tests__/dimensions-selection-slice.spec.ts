@@ -1,3 +1,5 @@
+import type { EngineError } from '@api/parse-engine-error'
+import type { DimensionCardKey, DimensionListKey } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     dimensionSelectionSlice,
@@ -39,8 +41,6 @@ import {
     isMultiSelecting,
     isDimensionMultiSelected,
 } from '../dimensions-selection-slice'
-import type { EngineError } from '@api/parse-engine-error'
-import type { DimensionCardKey, DimensionListKey } from '@types'
 
 type RootState = {
     dimensionSelection: DimensionSelectionState

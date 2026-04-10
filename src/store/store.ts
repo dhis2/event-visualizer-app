@@ -1,4 +1,7 @@
+import { api } from '@api/api'
+import { getDefaultOptions } from '@modules/options'
 import { configureStore } from '@reduxjs/toolkit'
+import type { AppCachedData, DataEngine, MetadataStore } from '@types'
 import { currentVisSlice } from './current-vis-slice'
 import { dimensionSelectionSlice } from './dimensions-selection-slice'
 import { loaderSlice } from './loader-slice'
@@ -7,9 +10,6 @@ import { navigationSlice } from './navigation-slice'
 import { savedVisSlice } from './saved-vis-slice'
 import { uiSlice } from './ui-slice'
 import { visUiConfigSlice } from './vis-ui-config-slice'
-import { api } from '@api/api'
-import { getDefaultOptions } from '@modules/options'
-import type { AppCachedData, DataEngine, MetadataStore } from '@types'
 
 export const getPreloadedState = (appCachedData: AppCachedData) => ({
     visUiConfig: {

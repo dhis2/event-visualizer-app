@@ -1,8 +1,7 @@
-import i18n from '@dhis2/d2-i18n'
-import { SplitButton, FlyoutMenu, MenuItem, Button } from '@dhis2/ui'
-import { useCallback, type FC } from 'react'
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { getAvailableAxes } from '@dhis2/analytics'
+import i18n from '@dhis2/d2-i18n'
+import { SplitButton, FlyoutMenu, MenuItem, Button } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getAxisName } from '@modules/layout.js'
 import { getUiActiveDimensionModal } from '@store/ui-slice.js'
@@ -11,6 +10,7 @@ import {
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice.js'
 import type { Axis } from '@types'
+import { useCallback, type FC } from 'react'
 
 type AddToLayoutButtonProps = {
     onClick: () => void

@@ -1,6 +1,3 @@
-import i18n from '@dhis2/d2-i18n'
-import { type FC, useCallback, useMemo } from 'react'
-import { ProgramStageSubsection } from './program-stage-subsection'
 import { DimensionCard } from '@components/main-sidebar/dimension-card'
 import { EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES } from '@components/main-sidebar/get-event-fixed-dimensions'
 import { computeIsDisabledByFilter } from '@components/main-sidebar/use-dimension-list'
@@ -9,10 +6,13 @@ import {
     useSelectedDimensionCount,
     type UseSelectedDimensionCountMatchFn,
 } from '@components/main-sidebar/use-selected-dimension-count'
+import i18n from '@dhis2/d2-i18n'
 import { useAppSelector, useCurrentUser } from '@hooks'
 import { isPopulatedString } from '@modules/validation'
 import { getFilter } from '@store/dimensions-selection-slice'
 import type { DataSourceProgramWithRegistration, DimensionType } from '@types'
+import { type FC, useCallback, useMemo } from 'react'
+import { ProgramStageSubsection } from './program-stage-subsection'
 
 type CardEventProps = {
     program: DataSourceProgramWithRegistration

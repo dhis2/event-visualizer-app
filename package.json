@@ -13,24 +13,30 @@
         "lint": "./scripts/lint.sh",
         "format": "./scripts/format.sh",
         "generate-types": "./scripts/generate-types.sh",
-        "cy:open": "start-server-and-test 'yarn start' http://localhost:3000 'yarn cypress open --e2e'",
-        "cy:run": "start-server-and-test 'yarn start' http://localhost:3000 'yarn cypress run --browser chrome headless'",
+        "cy:open": "start-server-and-test 'pnpm start' http://localhost:3000 'pnpm cypress open --e2e'",
+        "cy:run": "start-server-and-test 'pnpm start' http://localhost:3000 'pnpm cypress run --browser chrome headless'",
         "cy:comp:open": "cypress open --component",
         "cy:comp:run": "cypress run --component --browser chrome headless",
-        "sonar": "npx @sonar/scan -Dsonar.branch.name=$(git rev-parse --abbrev-ref HEAD)",
+        "sonar": "pnpm exec @sonar/scan -Dsonar.branch.name=$(git rev-parse --abbrev-ref HEAD)",
         "postinstall": "./scripts/postinstall.sh"
     },
     "devDependencies": {
+        "@commitlint/cli": "^12.1.4",
         "@cypress/vite-dev-server": "^7.2.1",
         "@dhis2/cli-app-scripts": "^12.11.0",
         "@dhis2/cli-style": "^10.7.8",
-        "@dhis2/cypress-commands": "^10.1.0",
+        "@dhis2/config-eslint": "^0.2.2",
+        "@dhis2/config-prettier": "^0.2.2",
+        "@dhis2/cypress-commands": "^10.1.2",
+        "@eslint/compat": "^2.0.4",
+        "@ls-lint/ls-lint": "^1.11.0",
         "@sonar/scan": "^4.3.5",
         "@testing-library/dom": "^10.4.0",
         "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/react": "^16.3.2",
         "@testing-library/user-event": "^14.6.1",
         "@types/jest": "^30.0.0",
+        "@types/node": "^22.0.0",
         "@types/prop-types": "^15",
         "@types/react": "^18.3.23",
         "@types/react-dom": "^18.3.7",
@@ -38,21 +44,25 @@
         "cypress": "^15.13.0",
         "cypress-real-events": "^1.15.0",
         "cypress-tags": "^1.2.2",
-        "eslint-import-resolver-typescript": "^4.4.4",
+        "eslint": "^9.39.4",
         "jsdom": "^29.0.1",
         "lint-staged": "^16.4.0",
         "openapi-typescript": "^7.13.0",
+        "prettier": "^3.8.1",
         "resize-observer-polyfill": "^1.5.1",
         "start-server-and-test": "^3.0.0",
+        "stylelint": "^16.26.0",
         "typescript": "^5",
         "typescript-language-server": "^5.1.3",
         "typescript-plugin-css-modules": "^5.2.0",
+        "vite": "^6.0.0",
         "vitest": "^4.1.2",
         "vitest-canvas-mock": "^1.1.4"
     },
     "dependencies": {
         "@dhis2/analytics": "^29.4.2",
         "@dhis2/app-runtime": "^3.16.0",
+        "@dhis2/app-service-data": "^3.16.0",
         "@dhis2/ui": "^10.12.12",
         "@dnd-kit/core": "^6.3.1",
         "@dnd-kit/modifiers": "^9.0.0",
@@ -60,18 +70,17 @@
         "@dnd-kit/utilities": "^3.2.2",
         "@reduxjs/toolkit": "^2.11.2",
         "@types/deep-equal": "^1.0.4",
+        "classnames": "^2.5.1",
         "deep-equal": "^2.2.3",
         "deepmerge": "^4.3.1",
         "history": "^5.3.0",
+        "moment": "^2.30.1",
         "prop-types": "^15.8.1",
         "query-string": "^9.3.1",
         "react": "^18.0.0",
         "react-dom": "^18.0.0",
         "react-redux": "^9.2.0",
         "usehooks-ts": "^3.1.1"
-    },
-    "resolutions": {
-        "vite": "^6.0.0"
     },
     "lint-staged": {
         "*.{js,jsx,ts,tsx,cjs,mjs,cts,mts}": [
@@ -85,5 +94,5 @@
             "prettier --check"
         ]
     },
-    "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+    "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
 }

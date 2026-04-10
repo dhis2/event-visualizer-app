@@ -1,8 +1,8 @@
+import { useCurrentUser, useRtkQuery } from '@hooks'
+import type { UseRtkQueryResult } from '@hooks'
 import { renderHook, act } from '@testing-library/react'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { useDataSourceOptions } from '../use-data-source-options'
-import { useCurrentUser, useRtkQuery } from '@hooks'
-import type { UseRtkQueryResult } from '@hooks'
 
 vi.mock('@hooks', () => ({
     useCurrentUser: vi.fn(() => ({

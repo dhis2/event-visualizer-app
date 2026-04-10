@@ -9,7 +9,7 @@ EXIT_CODE=0
 
 # ESLint fix
 echo "🔧 Running ESLint --fix..."
-if ! npx eslint . --fix; then
+if ! pnpm exec eslint . --fix; then
     echo "❌ ESLint formatting failed"
     EXIT_CODE=1
 else
@@ -19,7 +19,7 @@ echo ""
 
 # Stylelint fix
 echo "🔧 Running Stylelint --fix..."
-if ! npx stylelint "**/*.{css,scss,tsx}" --fix --max-warnings=0; then
+if ! pnpm exec stylelint "**/*.{css,scss,tsx}" --fix --max-warnings=0; then
     echo "❌ Stylelint formatting failed"
     EXIT_CODE=1
 else
@@ -29,7 +29,7 @@ echo ""
 
 # Prettier fix
 echo "🔧 Running Prettier --write..."
-if ! npx prettier --write . > /dev/null 2>&1; then
+if ! pnpm exec prettier --write . > /dev/null 2>&1; then
     echo "❌ Prettier formatting failed"
     EXIT_CODE=1
 else

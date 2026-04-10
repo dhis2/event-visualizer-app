@@ -1,7 +1,7 @@
+import type { NavigationState } from '@store/navigation-slice'
 import { createHashHistory } from 'history'
 import type { Location } from 'history'
 import queryString from 'query-string'
-import type { NavigationState } from '@store/navigation-slice'
 
 export const history = createHashHistory()
 

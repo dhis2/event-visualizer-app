@@ -1,10 +1,10 @@
-import { getFilterParamsFromBaseQuery } from './query-helpers'
 import type {
     DataSourceFilter,
     DimensionMetadataItem,
     DimensionType,
     SingleQuery,
 } from '@types'
+import { getFilterParamsFromBaseQuery } from './query-helpers'
 
 const FILTER_PARAM_DIMENSION_TYPE = 'dimensionType:eq:'
 

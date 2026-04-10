@@ -1,5 +1,5 @@
-import { MockAppWrapper } from '../app-wrapper'
 import { useCurrentUser, useMetadataItem } from '@hooks'
+import { MockAppWrapper } from '../app-wrapper'
 
 const TestComponent = () => {
     const currentUser = useCurrentUser()

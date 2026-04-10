@@ -1,7 +1,7 @@
+import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { CardOther } from '../card-other'
-import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
 
 const mockUseDimensionList = vi.fn()
 const mockUseSelectedDimensionCount = vi.fn()

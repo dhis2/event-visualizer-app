@@ -1,10 +1,9 @@
-import i18n from '@dhis2/d2-i18n'
-import { isPopulatedString } from './validation'
 import {
     PROGRAM_DIMENSION_TYPES,
     TIME_DIMENSION_IDS,
     YOUR_DIMENSION_TYPES,
 } from '@constants/dimensions'
+import i18n from '@dhis2/d2-i18n'
 import {
     getDefaultOrgUnitLabel,
     getDefaultOrgUnitMetadata,
@@ -23,6 +22,7 @@ import type {
     ValueType,
     YourDimensionType,
 } from '@types'
+import { isPopulatedString } from './validation'
 
 export const extractPlainDimensionId = (input: string): string => {
     if (!isPopulatedString(input)) {

@@ -1,8 +1,3 @@
-import i18n from '@dhis2/d2-i18n'
-import { Transfer, TransferOption } from '@dhis2/ui'
-import { useMemo, type FC } from 'react'
-import { dimensionsApi, type FetchResult } from './dimensions-api'
-import classes from './styles/dynamic-dimension-modal-content.module.css'
 import {
     TRANSFER_HEIGHT,
     TRANSFER_OPTIONS_WIDTH,
@@ -13,6 +8,8 @@ import { TransferLeftHeader } from '@components/dimension-modal/transfer/transfe
 import { TransferRightHeader } from '@components/dimension-modal/transfer/transfer-right-header'
 import { TransferSourceEmptyPlaceholder } from '@components/dimension-modal/transfer/transfer-source-empty-placeholder'
 import { useInfiniteTransferOptions } from '@components/dimension-modal/transfer/use-infinite-transfer-options'
+import i18n from '@dhis2/d2-i18n'
+import { Transfer, TransferOption } from '@dhis2/ui'
 import {
     useAddMetadata,
     useAppDispatch,
@@ -24,6 +21,9 @@ import {
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
 import type { DimensionMetadataItem } from '@types'
+import { useMemo, type FC } from 'react'
+import { dimensionsApi, type FetchResult } from './dimensions-api'
+import classes from './styles/dynamic-dimension-modal-content.module.css'
 
 type DynamicDimensionModalContentProps = {
     dimension: DimensionMetadataItem

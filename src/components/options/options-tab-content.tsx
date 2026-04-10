@@ -1,15 +1,15 @@
-import type { FC } from 'react'
-import { LineListDataTab } from './tabs/line-list-data-tab'
-import { LineListLegendTab } from './tabs/line-list-legend-tab'
-import { LineListStyleTab } from './tabs/line-list-style-tab'
-import { PivotTableDataTab } from './tabs/pivot-table-data-tab'
-import { PivotTableStyleTab } from './tabs/pivot-table-style-tab'
 import type { VisualizationType } from '@types'
+import type { FC } from 'react'
 import type {
     OptionsTabKey,
     OptionsTabKeyLineList,
     OptionsTabKeyPivotTable,
 } from 'src/types/options'
+import { LineListDataTab } from './tabs/line-list-data-tab'
+import { LineListLegendTab } from './tabs/line-list-legend-tab'
+import { LineListStyleTab } from './tabs/line-list-style-tab'
+import { PivotTableDataTab } from './tabs/pivot-table-data-tab'
+import { PivotTableStyleTab } from './tabs/pivot-table-style-tab'
 
 type OptionsTabContentProps = {
     visType: VisualizationType

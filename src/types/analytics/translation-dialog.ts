@@ -1,5 +1,5 @@
-import { type FC } from 'react'
 import type { SavedVisualization } from '@types'
+import { type FC } from 'react'
 
 type TranslationDialogProps = {
     fieldsToTranslate: string[]

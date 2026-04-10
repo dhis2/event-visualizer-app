@@ -1,5 +1,3 @@
-import React, { useState, useRef, memo } from 'react'
-import { ScrollBox, useScrollBoxWidth } from '../scroll-box'
 import {
     GridCenterColumnBottom,
     GridCenterColumnTop,
@@ -8,6 +6,9 @@ import {
     GridStartColumn,
     GridTopRow,
 } from '@components/grid'
+import type React from 'react'
+import { useState, useRef, memo } from 'react'
+import { ScrollBox, useScrollBoxWidth } from '../scroll-box'
 
 const updateInputValue = (dataTest: string, value: number) => {
     cy.getByDataTest(dataTest)

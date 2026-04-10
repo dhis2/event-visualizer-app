@@ -1,12 +1,17 @@
 # Event visualizer app and plugin
 
+[![CI](https://github.com/dhis2/event-visualizer-app/actions/workflows/verify-pr.yml/badge.svg)](https://github.com/dhis2/event-visualizer-app/actions/workflows/verify-pr.yml)
+[![deploy: netlify production](https://github.com/dhis2/event-visualizer-app/actions/workflows/netlify-deploy-master.yml/badge.svg)](https://github.com/dhis2/event-visualizer-app/actions/workflows/netlify-deploy-master.yml)
+
+**[Live demo](https://event-visualizer.netlify.app/)** (standalone build, requires a DHIS2 backend)
+
 This project was bootstrapped with [DHIS2 Application Platform](https://github.com/dhis2/app-platform).
 
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `yarn install`
+### `pnpm install`
 
 This will install the required dependencies and on the first `postinstall` it will do the following:
 
@@ -14,17 +19,17 @@ This will install the required dependencies and on the first `postinstall` it wi
 2. Install Husky hooks to run on `pre-commit`, `pre-push` and `commit-msg`
 3. Copy `cypress.env.template.json` to `cypress.env.json` so that the Cypress E2E suite can run successfully
 
-### `yarn start`
+### `pnpm start`
 
 Runs the app in the development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits. You will also see any lint errors in the console.
 
-### `yarn test`
+### `pnpm test`
 
-Launches the test runner and runs all available unit tests found in `/src` using vitest. Using `yarn test:watch` will run the tests in watch mode.
+Launches the test runner and runs all available unit tests found in `/src` using vitest. Using `pnpm test:watch` will run the tests in watch mode.
 
-### `yarn build`
+### `pnpm build`
 
 Builds the app for production to the `build` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
 
@@ -32,23 +37,23 @@ The build is minified and the filenames include hashes. A deployable `.zip` file
 
 See the section about [building](https://platform.dhis2.nu/#/scripts/build) for more information.
 
-### `yarn deploy`
+### `pnpm deploy`
 
 Deploys the built app in the `build` folder to a running DHIS2 instance. This command will prompt you to enter a server URL as well as the username and password of a DHIS2 user with the App Management authority.
 
-You must run `yarn build` before running `yarn deploy`.
+You must run `pnpm build` before running `pnpm deploy`.
 
 See the section about [deploying](https://platform.dhis2.nu/#/scripts/deploy) for more information.
 
-### `yarn lint` / `yarn format`
+### `pnpm lint` / `pnpm format`
 
-These commands use `d2-style` to lint the code, but `yarn format` also attempts to fix/format the violations it finds.
+These commands use `d2-style` to lint the code, but `pnpm format` also attempts to fix/format the violations it finds.
 
-### `yarn cy:open` / `yarn cy:run`
+### `pnpm cy:open` / `pnpm cy:run`
 
 Run the Cypress E2E test suite, either in the Cypress GUI or in the terminal.
 
-### `yarn generate-types`
+### `pnpm generate-types`
 
 Will (re)generate the TypesScript types from the DHIS2 Core OpenAPI schemas.
 
@@ -60,9 +65,9 @@ All changes to the app are done via PRs which need to be approved by a member of
 
 Before making your first contribution, please:
 
-1. **Set up your development environment** by running `yarn install` (this will also run the `postinstall` script)
-2. **Run the tests** with `yarn test` to ensure everything is working
-3. **Start the development server** with `yarn start` to familiarize yourself with the app
+1. **Set up your development environment** by running `pnpm install` (this will also run the `postinstall` script)
+2. **Run the tests** with `pnpm test` to ensure everything is working
+3. **Start the development server** with `pnpm start` to familiarize yourself with the app
 4. **Read through the architectural guidelines** below to understand the codebase structure
 
 ### Claude Code Setup (optional)
@@ -93,8 +98,8 @@ gh auth login
 1. **Create a feature branch** from `main`
 2. **Make your changes** following the guidelines below
 3. **Write or update tests** to maintain good test coverage
-4. **Run linting and formatting** with `yarn lint` and `yarn format`
-5. **Test your changes** with both unit tests (`yarn test`) and e2e tests (`yarn cy:run`)
+4. **Run linting and formatting** with `pnpm lint` and `pnpm format`
+5. **Test your changes** with both unit tests (`pnpm test`) and e2e tests (`pnpm cy:run`)
 6. **Create a pull request** for Team Analytics review
 
 ### Code Organisation
@@ -120,20 +125,20 @@ When accessing the store and dispatching actions, you would normally use the `us
 
 Redux Toolkit comes with a powerful data fetching and caching tool called RTK Query. In this app, RTK Query is integrated with the DHIS2 Data Engine from `@dhis2/app-service-data` as follows:
 
--   The `engine` (Data Engine) is injected into `thunk.extraArgument` when creating the Redux store.
--   A [custom base query](https://redux-toolkit.js.org/rtk-query/usage/customizing-queries#customizing-queries-with-basequery) is implemented to call `engine.query` or `engine.mutate`.
--   Two generic endpoints are added to the API for generic queries and mutations.
+- The `engine` (Data Engine) is injected into `thunk.extraArgument` when creating the Redux store.
+- A [custom base query](https://redux-toolkit.js.org/rtk-query/usage/customizing-queries#customizing-queries-with-basequery) is implemented to call `engine.query` or `engine.mutate`.
+- Two generic endpoints are added to the API for generic queries and mutations.
 
 You should interact with the DHIS2 Core Web API using the `useRtkQuery`, `useRtkMutation`, and `useRtkLazyQuery` hooks exported from `/src/hooks`. **Do not use** `useDataQuery` or `useDataMutation` from `@dhis2/app-service-data` directly—this is enforced by ESLint rules.
 
 The `useRtkQuery` and `useRtkMutation` hooks are similar to those from `@dhis2/app-service-data`, with a few key differences:
 
--   The hooks from `@dhis2/app-service-data` accept a second positional `options` object, while the RTK Query hooks do not. However, for each options field, there is usually a more ergonomic alternative in RTK Query:
-    -   Since `useRtkQuery` and `useRtkMutation` accept dynamically constructed query/mutation objects, the `variables` field is redundant (as are the callback forms of the `id` and `params` fields).
-    -   To perform a lazy query, use the `useRtkLazyQuery` hook.
-    -   Instead of `onSuccess`/`onError` callbacks, use `useEffect` to monitor state transitions, or use the `trigger().unwrap()` function returned from `useRtkLazyQuery` for promise-based handling.
--   The `useDataQuery` hook only accepts a nested query definition (e.g., `{ me: { resource: 'me' } }`), but `useRtkQuery` also accepts a simple query object (e.g., `{ resource: 'me' }`). This makes accessing response data more straightforward (e.g., `data.name` instead of `data.me.name`).
--   The data returned from the hook is slightly different; see the [Redux Toolkit Hooks docs](https://redux-toolkit.js.org/rtk-query/api/created-api/hooks) for details.
+- The hooks from `@dhis2/app-service-data` accept a second positional `options` object, while the RTK Query hooks do not. However, for each options field, there is usually a more ergonomic alternative in RTK Query:
+    - Since `useRtkQuery` and `useRtkMutation` accept dynamically constructed query/mutation objects, the `variables` field is redundant (as are the callback forms of the `id` and `params` fields).
+    - To perform a lazy query, use the `useRtkLazyQuery` hook.
+    - Instead of `onSuccess`/`onError` callbacks, use `useEffect` to monitor state transitions, or use the `trigger().unwrap()` function returned from `useRtkLazyQuery` for promise-based handling.
+- The `useDataQuery` hook only accepts a nested query definition (e.g., `{ me: { resource: 'me' } }`), but `useRtkQuery` also accepts a simple query object (e.g., `{ resource: 'me' }`). This makes accessing response data more straightforward (e.g., `data.name` instead of `data.me.name`).
+- The data returned from the hook is slightly different; see the [Redux Toolkit Hooks docs](https://redux-toolkit.js.org/rtk-query/api/created-api/hooks) for details.
 
 #### Custom Endpoints
 
@@ -141,12 +146,12 @@ While the generic hooks are suitable for most use cases, you can also create cus
 
 **When to create a custom endpoint:**
 
--   Analytics requests, where you want to create an analytics request instance in the function body.
--   Chained requests, where the response from one request is needed to initiate another.
--   Requests to resources outside the DHIS2 Web API scope (not on `${baseUrl}/api/${version}`).
--   Common requests that occur in multiple places in the codebase, to avoid repetition and prevent duplicate requests.
--   Paginated requests (infinite queries), which may benefit from a dedicated endpoint.
--   Requests to the [Gist API](https://docs.dhis2.org/en/develop/using-the-api/dhis-core-version-master/metadata-gist.html).
+- Analytics requests, where you want to create an analytics request instance in the function body.
+- Chained requests, where the response from one request is needed to initiate another.
+- Requests to resources outside the DHIS2 Web API scope (not on `${baseUrl}/api/${version}`).
+- Common requests that occur in multiple places in the codebase, to avoid repetition and prevent duplicate requests.
+- Paginated requests (infinite queries), which may benefit from a dedicated endpoint.
+- Requests to the [Gist API](https://docs.dhis2.org/en/develop/using-the-api/dhis-core-version-master/metadata-gist.html).
 
 #### Using `useRtkQuery`
 
@@ -416,10 +421,10 @@ In some other Analytics apps, metadata is stored in the Redux store, but this ca
 
 The app is wrapped in the `MetadataProvider`, which manages an instance of the metadata store. You have several hooks available to interact with it:
 
--   `useMetadataItem`: Access a single metadata item; triggers a re-render if that item is updated.
--   `useMetadataItems`: Access multiple metadata items; triggers a re-render if any of these items are updated.
--   `useAddMetadata`: Returns a stable function to add metadata to the store (will never cause a re-render).
--   `useMetadataStore`: Returns a stable reference to the store, providing access to `getMetadataItem`, `getMetadataItems`, and `addMetadata`. Use `getMetadataItem` for reading metadata during iteration, but note that these items will not update automatically. If you are rendering a list with metadata that could change while the list is "statically" displayed, do not use this hook. Instead, extract each list item into a component and use `useMetadataItem` in each component.
+- `useMetadataItem`: Access a single metadata item; triggers a re-render if that item is updated.
+- `useMetadataItems`: Access multiple metadata items; triggers a re-render if any of these items are updated.
+- `useAddMetadata`: Returns a stable function to add metadata to the store (will never cause a re-render).
+- `useMetadataStore`: Returns a stable reference to the store, providing access to `getMetadataItem`, `getMetadataItems`, and `addMetadata`. Use `getMetadataItem` for reading metadata during iteration, but note that these items will not update automatically. If you are rendering a list with metadata that could change while the list is "statically" displayed, do not use this hook. Instead, extract each list item into a component and use `useMetadataItem` in each component.
 
 Function signatures and return types can be found in `src/app-wrapper/metadata-provider.tsx`, or will become apparent when you use the hooks.
 
@@ -429,19 +434,19 @@ In addition to being available via hooks, you can also access the metadata store
 
 The outermost component of the `AppWrapper` is the `AppCachedDataQueryProvider`. This fetches data considered static for the app's lifecycle. This data is guaranteed to be available before the app loads and can be accessed via the `useAppCachedDataQuery` hook. You can also directly access individual cached data properties using these hooks:
 
--   `useCurrentUser`
--   `useSystemSettings`
--   `useRootOrgUnits`
--   `useOrgUnitLevels`
+- `useCurrentUser`
+- `useSystemSettings`
+- `useRootOrgUnits`
+- `useOrgUnitLevels`
 
 ### Browser Navigation
 
 The `AppWrapper` contains a `StoreToLocationSyncer` component that keeps the `navigation` slice in the Redux store in sync with the browser URL. This synchronization is bidirectional:
 
--   When a user navigates using the browser's back/forward buttons or address bar, the `navigation` state is updated.
--   When the `navigation` state is updated, the browser's address bar and history stack are updated accordingly.
+- When a user navigates using the browser's back/forward buttons or address bar, the `navigation` state is updated.
+- When the `navigation` state is updated, the browser's address bar and history stack are updated accordingly.
 
 A few conventions to note:
 
--   `visualizationId` will always be populated in the store; the value `new` signifies that no saved AO is selected.
--   A blank URL `/` and `/new` are treated equally, so accessing the app at `#/` will not redirect to `#/new`.
+- `visualizationId` will always be populated in the store; the value `new` signifies that no saved AO is selected.
+- A blank URL `/` and `/new` are treated equally, so accessing the app at `#/` will not redirect to `#/new`.

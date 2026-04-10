@@ -1,7 +1,7 @@
-import { useMemo } from 'react'
 import { useAppSelector, useMetadataItems } from '@hooks'
 import { getVisUiConfigLayoutAllDimensionIds } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
+import { useMemo } from 'react'
 
 export type UseSelectedDimensionCountMatchFn = (
     item: DimensionMetadataItem

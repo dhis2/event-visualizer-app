@@ -1,0 +1,54 @@
+name: 'deploy: netlify production'
+
+# Requirements:
+#
+# - Org secrets:
+#       DHIS2_BOT_NETLIFY_TOKEN
+#       DHIS2_BOT_GITHUB_TOKEN
+# - Repo secrets:
+#       NETLIFY_SITE_ID
+
+on:
+    push:
+        branches:
+            - master
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        if: '!github.event.push.repository.fork'
+        steps:
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: lts/*
+                  cache: pnpm
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile --ignore-scripts
+
+            - name: Build
+              run: pnpm d2-app-scripts build --standalone
+
+            - name: Deploy
+              id: netlify-deploy
+              uses: nwtgck/actions-netlify@v3
+              timeout-minutes: 1
+              with:
+                  github-token: ${{ secrets.DHIS2_BOT_GITHUB_TOKEN }}
+                  github-deployment-environment: 'netlify'
+                  github-deployment-description: 'Production deploy on Netlify'
+                  deploy-message: ${{ github.event.head_commit.message }}
+                  production-deploy: true
+                  enable-pull-request-comment: false
+                  enable-commit-comment: true
+                  enable-commit-status: true
+                  publish-dir: 'build/app'
+              env:
+                  NETLIFY_AUTH_TOKEN: ${{ secrets.DHIS2_BOT_NETLIFY_TOKEN }}
+                  NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

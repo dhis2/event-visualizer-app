@@ -1,14 +1,14 @@
-import type { FC } from 'react'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import {
-    useLineListAnalyticsData,
-    type OnAnalyticsResponseReceivedCb,
-} from './hooks/use-line-list-analytics-data'
 import { LineList } from '@components/line-list'
 import type { LineListAnalyticsData } from '@components/line-list'
 import type { DataSortFn, PaginateFn } from '@components/line-list/types'
 import { transformVisualization } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { FC } from 'react'
+import {
+    useLineListAnalyticsData,
+    type OnAnalyticsResponseReceivedCb,
+} from './hooks/use-line-list-analytics-data'
 
 type InternalSorting = Sorting | undefined
 

@@ -1,6 +1,6 @@
+import type { CurrentVisualization } from '@types'
 import { expect, it, describe } from 'vitest'
 import { extractDataSourceIdFromVisualization } from '../data-source'
-import type { CurrentVisualization } from '@types'
 
 describe('extractDataSourceIdFromVisualization', () => {
     it('should return program.id for outputType ENROLLMENT when program.id is present', () => {

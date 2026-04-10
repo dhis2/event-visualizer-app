@@ -1,3 +1,17 @@
+import type {
+    Axis,
+    CurrentVisualization,
+    DataEngine,
+    DimensionArray,
+    DimensionId,
+    DimensionRecord,
+    EventVisualizationType,
+    LegendSet,
+    NewVisualization,
+    SavedVisualization,
+    ValueType,
+    VisualizationType,
+} from '@types'
 import type { AboutAOUnit } from './about-ao-unit'
 import type {
     CachedDataQueryProvider,
@@ -26,20 +40,6 @@ import type { ToolbarSidebar } from './toolbar-sidebar'
 import type { TranslationDialog } from './translation-dialog'
 import type { UpdateButton } from './update-button'
 import type { VisTypeIcon } from './vis-type-icon'
-import type {
-    Axis,
-    CurrentVisualization,
-    DataEngine,
-    DimensionArray,
-    DimensionId,
-    DimensionRecord,
-    EventVisualizationType,
-    LegendSet,
-    NewVisualization,
-    SavedVisualization,
-    ValueType,
-    VisualizationType,
-} from '@types'
 
 declare module '@dhis2/analytics' {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

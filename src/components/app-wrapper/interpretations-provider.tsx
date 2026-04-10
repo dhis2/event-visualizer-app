@@ -1,3 +1,9 @@
+import { InterpretationsProvider as AnalyticsInterpretationsProvider } from '@dhis2/analytics'
+import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
+import {
+    getNavigationInterpretationId,
+    setNavigationInterpretationId,
+} from '@store/navigation-slice'
 import {
     createContext,
     useCallback,
@@ -7,12 +13,6 @@ import {
     type FC,
     type ReactNode,
 } from 'react'
-import { InterpretationsProvider as AnalyticsInterpretationsProvider } from '@dhis2/analytics'
-import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
-import {
-    getNavigationInterpretationId,
-    setNavigationInterpretationId,
-} from '@store/navigation-slice'
 
 const InterpretationModalProvider = createContext({
     current: false,

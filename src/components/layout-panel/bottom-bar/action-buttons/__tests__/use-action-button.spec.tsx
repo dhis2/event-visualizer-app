@@ -1,6 +1,3 @@
-import deepmerge from 'deepmerge'
-import { describe, it, expect } from 'vitest'
-import { useActionButton } from '../use-action-button'
 import {
     currentVisSlice,
     initialState as currentVisInitialState,
@@ -15,6 +12,9 @@ import {
 } from '@store/vis-ui-config-slice'
 import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 import type { RootState } from '@types'
+import deepmerge from 'deepmerge'
+import { describe, it, expect } from 'vitest'
+import { useActionButton } from '../use-action-button'
 
 const metadata = {
     p1: {

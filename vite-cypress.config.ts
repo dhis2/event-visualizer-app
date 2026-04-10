@@ -3,7 +3,7 @@ import { defineConfig } from 'vite'
 import { importAliases } from './vitest.config'
 
 // This config is used for Cypress component testing
-// eslint-disable-next-line import/no-default-export
+
 export default defineConfig({
     plugins: [react()],
     root: '.',

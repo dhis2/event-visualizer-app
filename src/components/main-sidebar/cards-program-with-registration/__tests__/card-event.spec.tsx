@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
+import type { DataSourceProgramWithRegistration } from '@types'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { CardEvent } from '../card-event'
-import type { DataSourceProgramWithRegistration } from '@types'
 
 const mockUseAppSelector = vi.fn()
 const mockUseDimensionList = vi.fn()
@@ -84,7 +84,7 @@ const createProgram = (
         ],
         trackedEntityType: { id: 'tet1', name: 'Person' },
         ...overrides,
-    } as DataSourceProgramWithRegistration)
+    }) as DataSourceProgramWithRegistration
 
 describe('CardEvent (with registration)', () => {
     beforeEach(() => {

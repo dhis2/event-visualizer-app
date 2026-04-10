@@ -1,7 +1,7 @@
 import type { Query, Mutation } from '@dhis2/app-service-data'
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { customBaseQuery } from './custom-base-query'
 import type { MutationResult, QueryResult, SingleQuery } from '@types'
+import { customBaseQuery } from './custom-base-query'
 
 export const api = createApi({
     reducerPath: 'api',

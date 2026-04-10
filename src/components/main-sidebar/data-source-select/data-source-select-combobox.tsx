@@ -6,11 +6,11 @@ import {
     IconErrorFilled24,
     theme,
 } from '@dhis2/ui'
+import { useAppSelector, useMetadataItem } from '@hooks'
+import { getDataSourceId } from '@store/dimensions-selection-slice'
 import cx from 'classnames'
 import { type FC, type KeyboardEvent, useCallback } from 'react'
 import classes from './styles/data-source-select-combobox.module.css'
-import { useAppSelector, useMetadataItem } from '@hooks'
-import { getDataSourceId } from '@store/dimensions-selection-slice'
 
 export type DataSourceSelectComboboxProps = {
     isError: boolean

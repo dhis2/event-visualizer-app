@@ -1,9 +1,9 @@
+import { LegendKey as UiLegendKey } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import { IconLegend24, Button } from '@dhis2/ui'
+import type { LegendSet } from '@types'
 import { useCallback, useState, type FC } from 'react'
 import classes from './styles/legend-key.module.css'
-import { LegendKey as UiLegendKey } from '@dhis2/analytics'
-import type { LegendSet } from '@types'
 
 type LegendKeyProps = {
     isInDashboard: boolean

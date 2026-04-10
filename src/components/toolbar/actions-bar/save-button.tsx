@@ -1,10 +1,10 @@
 import i18n from '@dhis2/d2-i18n'
 import { Button, IconSave16 } from '@dhis2/ui'
+import { useAppSelector } from '@hooks'
+import { getSavedVis } from '@store/saved-vis-slice'
 import { type FC } from 'react'
 import classes from './styles/button.module.css'
 import { useToolbarActions } from './use-toolbar-actions'
-import { useAppSelector } from '@hooks'
-import { getSavedVis } from '@store/saved-vis-slice'
 
 export const SaveButton: FC = () => {
     const savedVis = useAppSelector(getSavedVis)

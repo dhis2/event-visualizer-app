@@ -1,3 +1,6 @@
+import { uiSlice } from '@store/ui-slice'
+import { renderHookWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
+import { setupStore } from '@test-utils/setup-store'
 import { act } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
@@ -9,9 +12,6 @@ import {
     setMainSidebarWidthToLocalStorage,
 } from '../local-storage'
 import { useResizableSidebar } from '../use-resizable-sidebar'
-import { uiSlice } from '@store/ui-slice'
-import { renderHookWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
-import { setupStore } from '@test-utils/setup-store'
 
 vi.mock('../local-storage', () => ({
     getMainSidebarWidthFromLocalStorage: vi.fn(() => 400),

@@ -1,10 +1,10 @@
+import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
+import type { AppCachedData, SavedVisualization, MetadataItem } from '@types'
 import { expect, describe, it, beforeEach, vi } from 'vitest'
 import inpatientCasesVisualization from '../__fixtures__/visualization-inpatient-cases-last-quarter-case.json'
 import inpatientVisitVisualization from '../__fixtures__/visualization-inpatient-visit-overview-this-year-bo.json'
 import { getInitialMetadata } from '../initial-metadata'
 import { MetadataStore } from '../metadata-store'
-import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import type { AppCachedData, SavedVisualization, MetadataItem } from '@types'
 
 class TestMetadataStore extends MetadataStore {
     getMetadataSnapshot(): Record<string, MetadataItem> {

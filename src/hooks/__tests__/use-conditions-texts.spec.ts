@@ -1,11 +1,11 @@
+import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider/metadata-provider'
+import type { LayoutDimension } from '@components/layout-panel/axis/chip'
+import { useAddMetadata } from '@hooks'
 import { act, renderHook } from '@testing-library/react'
 import { createElement } from 'react'
 import type { ReactNode } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useConditionsTexts } from '../use-conditions-texts'
-import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import type { LayoutDimension } from '@components/layout-panel/axis/chip'
-import { useAddMetadata } from '@hooks'
 
 const mockRootOrgUnits = [
     {

@@ -1,11 +1,11 @@
-import { act, screen, waitFor } from '@testing-library/react'
-import { describe, it, expect } from 'vitest'
-import eventVisualization1 from '../__fixtures__/inpatient-cases-5-to-15-years-this-year.json'
-import { TitleBar } from '../title-bar'
 import { setCurrentVis } from '@store/current-vis-slice'
 import { setSavedVis } from '@store/saved-vis-slice'
 import { renderWithAppWrapper } from '@test-utils/app-wrapper'
+import { act, screen, waitFor } from '@testing-library/react'
 import type { SavedVisualization } from '@types'
+import { describe, it, expect } from 'vitest'
+import eventVisualization1 from '../__fixtures__/inpatient-cases-5-to-15-years-this-year.json'
+import { TitleBar } from '../title-bar'
 
 describe('TitleBar', () => {
     it('should not render a title text when the visualization is empty', async () => {

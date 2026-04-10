@@ -1,6 +1,6 @@
+import { type EngineError, parseEngineError } from '@api/parse-engine-error'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
-import { type EngineError, parseEngineError } from '@api/parse-engine-error'
 
 export interface LoaderState {
     loadError: EngineError | null

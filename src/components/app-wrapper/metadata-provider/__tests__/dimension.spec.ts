@@ -1,3 +1,4 @@
+import type { MetadataMap } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     isCompoundDimensionId,
@@ -5,7 +6,6 @@ import {
     extractDimensionContextFromCompoundId,
     resolveId,
 } from '../dimension'
-import type { MetadataMap } from '@types'
 
 describe('parseCompoundDimensionId', () => {
     describe('valid inputs', () => {

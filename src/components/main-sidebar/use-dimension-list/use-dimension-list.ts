@@ -1,14 +1,3 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useIsMounted } from 'usehooks-ts'
-import { defaultTransformer, type Transformer } from './default-transformer'
-import {
-    computeIsDisabledByFilter,
-    filterDimensions,
-    isFetchEnabledByFilter,
-} from './filter-helpers'
-import { buildQuery } from './query-helpers'
-import { useIsDelayedFetchingMore } from './use-delayed-is-fetching-more'
-import { useListFetchState } from './use-list-fetch-state'
 import { api } from '@api/api'
 import { parseEngineError, type EngineError } from '@api/parse-engine-error'
 import { useAppDispatch, useAppSelector, useStableCallback } from '@hooks'
@@ -26,6 +15,17 @@ import type {
     DimensionMetadataItem,
     SingleQuery,
 } from '@types'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useIsMounted } from 'usehooks-ts'
+import { defaultTransformer, type Transformer } from './default-transformer'
+import {
+    computeIsDisabledByFilter,
+    filterDimensions,
+    isFetchEnabledByFilter,
+} from './filter-helpers'
+import { buildQuery } from './query-helpers'
+import { useIsDelayedFetchingMore } from './use-delayed-is-fetching-more'
+import { useListFetchState } from './use-list-fetch-state'
 
 export type UseDimensionListOptions = {
     dimensionListKey?: DimensionListKey
@@ -68,8 +68,8 @@ export const useDimensionList = ({
         () =>
             Boolean(
                 dimensionListKey &&
-                    baseQuery &&
-                    isFetchEnabledByFilter(baseQuery, filter)
+                baseQuery &&
+                isFetchEnabledByFilter(baseQuery, filter)
             ),
         [dimensionListKey, baseQuery, filter]
     )

@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { ouIdHelper } from '@dhis2/analytics'
 import { useMetadataItems } from '@hooks'
@@ -16,6 +15,7 @@ import {
 } from '@modules/conditions'
 import { isOptionSetMetadataItem } from '@modules/metadata'
 import type { SavedVisualization } from '@types'
+import { useMemo } from 'react'
 
 type Conditions = {
     condition?: string | string[]

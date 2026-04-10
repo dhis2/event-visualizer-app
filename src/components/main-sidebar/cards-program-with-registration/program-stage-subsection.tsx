@@ -1,4 +1,3 @@
-import { useCallback, useMemo, type FC } from 'react'
 import {
     DimensionList,
     DimensionsCardSubsection,
@@ -20,6 +19,7 @@ import type {
     DimensionType,
     ProgramStage,
 } from '@types'
+import { useCallback, useMemo, type FC } from 'react'
 
 const STAGE_DIMENSION_TYPES = new Set<DimensionType>(
     EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES

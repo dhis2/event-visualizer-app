@@ -1,5 +1,5 @@
-import type { FC } from 'react'
 import type { CurrentVisualization, MetadataInput } from '@types'
+import type { FC } from 'react'
 
 type InterpretationModalProps = {
     interpretationId: string

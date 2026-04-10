@@ -1,10 +1,10 @@
+import { Analytics, transformEventAggregateResponse } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
+import type { CurrentUser, CurrentVisualization } from '@types'
 import { useCallback, useState } from 'react'
 import { getAdaptedVisualization } from './query-tools-line-list'
 import type { OnAnalyticsResponseReceivedCb } from './use-line-list-analytics-data'
-import { Analytics, transformEventAggregateResponse } from '@dhis2/analytics'
-import type { CurrentUser, CurrentVisualization } from '@types'
 
 export const fetchAnalyticsDataForPT = async ({
     analyticsEngine,

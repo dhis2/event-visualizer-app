@@ -1,9 +1,9 @@
 import i18n from '@dhis2/d2-i18n'
 import { NoticeBox } from '@dhis2/ui'
-import { useMemo, type FC } from 'react'
-import classes from './styles/no-time-dimension-warning.module.css'
 import { isVisualizationWithTimeDimension } from '@modules/visualization'
 import type { CurrentVisualization } from '@types'
+import { useMemo, type FC } from 'react'
+import classes from './styles/no-time-dimension-warning.module.css'
 
 type NoTimeDimensionWarningProps = {
     isInModal: boolean

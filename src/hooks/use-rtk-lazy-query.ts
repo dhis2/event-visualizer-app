@@ -1,11 +1,11 @@
+import { api } from '@api/api'
+import type { EngineError } from '@api/parse-engine-error'
 import type { Query } from '@dhis2/app-service-data'
 import type {
     SubscriptionOptions,
     QueryResultSelectorResult,
     QueryDefinition,
 } from '@reduxjs/toolkit/query'
-import { api } from '@api/api'
-import type { EngineError } from '@api/parse-engine-error'
 import type { SingleQuery } from '@types'
 
 type TriggerArg = Query | SingleQuery
@@ -161,7 +161,7 @@ export type UseRtkLazyQueryResult<T = unknown> =
 type UseRtkLazyQueryReturnValue<T> = [
     UseLazyQueryTrigger<TriggerArg>,
     UseRtkLazyQueryResult<T>,
-    UseLazyQueryLastPromiseInfo
+    UseLazyQueryLastPromiseInfo,
 ]
 
 export function useRtkLazyQuery<TData = unknown>(

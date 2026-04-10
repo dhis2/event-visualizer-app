@@ -1,11 +1,11 @@
-import i18n from '@dhis2/d2-i18n'
-import { colors } from '@dhis2/ui'
-import type { FC } from 'react'
-import classes from './styles/start-screen.module.css'
 import { dataStatisticsApi } from '@api/data-statistics-api'
 import { VisTypeIcon } from '@dhis2/analytics'
+import i18n from '@dhis2/d2-i18n'
+import { colors } from '@dhis2/ui'
 import { useAppDispatch } from '@hooks'
 import { setNavigationState } from '@store/navigation-slice.js'
+import type { FC } from 'react'
+import classes from './styles/start-screen.module.css'
 
 export const StartScreen: FC = () => {
     const dispatch = useAppDispatch()

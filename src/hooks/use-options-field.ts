@@ -1,10 +1,10 @@
-import { useCallback, useMemo } from 'react'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     getVisUiConfigOption,
     setVisUiConfigOption,
 } from '@store/vis-ui-config-slice'
 import type { EventVisualizationOptions } from '@types'
+import { useCallback, useMemo } from 'react'
 
 export function useOptionsField<K extends keyof EventVisualizationOptions>(
     key: K

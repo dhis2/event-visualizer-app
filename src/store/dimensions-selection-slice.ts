@@ -1,7 +1,7 @@
-import type { PayloadAction } from '@reduxjs/toolkit'
-import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { EngineError } from '@api/parse-engine-error'
 import { isObject } from '@modules/validation'
+import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type {
     DataSourceFilter,
     DimensionCardKey,
@@ -257,7 +257,7 @@ export const dimensionSelectionSlice = createSlice({
             !!state.dimensionCardCollapsedStates[key],
         isDimensionListLoading: (state, key?: DimensionListKey) =>
             key
-                ? state.dimensionListLoadingStates[key]?.isLoading ?? false
+                ? (state.dimensionListLoadingStates[key]?.isLoading ?? false)
                 : false,
         getDimensionListError: (state, key?: DimensionListKey) =>
             key ? state.dimensionListLoadingStates[key]?.error : undefined,

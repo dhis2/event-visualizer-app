@@ -1,5 +1,5 @@
 export const goToStartPage = () => {
-    cy.visit('/').log(Cypress.env('dhis2BaseUrl'))
+    cy.visit('/').log(Cypress.expose('dhis2BaseUrl'))
     expectStartScreenToBeVisible()
 }
 
