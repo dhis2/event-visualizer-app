@@ -1,3 +1,8 @@
+import {
+    AGGREGATION_TYPES,
+    aggregationTypeDisplayNames,
+} from '@constants/aggregation-types'
+import { NUMERIC_VALUE_TYPES } from '@constants/value-types'
 import i18n from '@dhis2/d2-i18n'
 import {
     Button,
@@ -11,13 +16,6 @@ import {
     SingleSelectField,
     SingleSelectOption,
 } from '@dhis2/ui'
-import { type FC, useCallback, useMemo, useState } from 'react'
-import classes from './styles/custom-value-modal.module.css'
-import {
-    AGGREGATION_TYPES,
-    aggregationTypeDisplayNames,
-} from '@constants/aggregation-types'
-import { NUMERIC_VALUE_TYPES } from '@constants/value-types'
 import {
     useAppDispatch,
     useAppSelector,
@@ -32,6 +30,8 @@ import {
     setVisUiConfigLastActiveButton,
 } from '@store/vis-ui-config-slice'
 import type { AggregationType } from '@types'
+import { type FC, useCallback, useMemo, useState } from 'react'
+import classes from './styles/custom-value-modal.module.css'
 
 type CustomValueModalProps = {
     onClose: () => void

@@ -1,12 +1,7 @@
-import i18n from '@dhis2/d2-i18n'
-import { IconSettings16, IconSync16, Tooltip } from '@dhis2/ui'
-import cx from 'classnames'
-import { useCallback, useMemo, useState, type FC } from 'react'
-import type { BaseButtonProps } from './base-button'
-import classes from './styles/action-buttons.module.css'
-import { useActionButton } from './use-action-button'
 import { CustomValueModal } from '@components/layout-panel/bottom-bar/custom-value-modal'
 import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
+import i18n from '@dhis2/d2-i18n'
+import { IconSettings16, IconSync16, Tooltip } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector, useMetadataItem } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
@@ -14,6 +9,11 @@ import {
     setVisUiConfigLastActiveButton,
     setVisUiConfigOutputType,
 } from '@store/vis-ui-config-slice'
+import cx from 'classnames'
+import { useCallback, useMemo, useState, type FC } from 'react'
+import type { BaseButtonProps } from './base-button'
+import classes from './styles/action-buttons.module.css'
+import { useActionButton } from './use-action-button'
 
 const BaseCustomValueButton: FC<BaseButtonProps> = ({
     action,
