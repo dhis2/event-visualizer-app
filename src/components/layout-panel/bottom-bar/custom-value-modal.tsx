@@ -25,7 +25,7 @@ import {
 } from '@hooks'
 import {
     getVisUiConfigCustomValue,
-    getVisUiConfigLayout,
+    getVisUiConfigLayoutAllDimensionIds,
     setVisUiConfigCustomValue,
     setVisUiConfigLastActiveButton,
 } from '@store/vis-ui-config-slice'
@@ -49,7 +49,9 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
         settings: { displayNameProperty },
     } = useCurrentUser()
     const metadataStore = useMetadataStore()
-    const layout = useAppSelector(getVisUiConfigLayout)
+    const layoutDimensionIds = useAppSelector(
+        getVisUiConfigLayoutAllDimensionIds
+    )
     const customValue = useAppSelector(getVisUiConfigCustomValue)
     const [aggregationType, setAggregationType] = useState<AggregationType>(
         customValue?.aggregationType ?? 'DEFAULT'
@@ -59,24 +61,16 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
         DataElementRecord | undefined
     >(undefined)
 
-    const programId: string = useMemo(() => {
-        let programId
+    const programId = useMemo(() => {
+        for (const dimensionId of layoutDimensionIds) {
+            const programId =
+                metadataStore.getDimensionMetadataItem(dimensionId)?.programId
 
-        Object.values(layout)
-            .flat()
-            .some((dimensionId) => {
-                const dimensionMetadata =
-                    metadataStore.getDimensionMetadataItem(dimensionId)
-
-                if (dimensionMetadata?.programId) {
-                    programId = dimensionMetadata.programId
-
-                    return true
-                }
-            })
-
-        return programId
-    }, [layout, metadataStore])
+            if (programId) {
+                return programId
+            }
+        }
+    }, [layoutDimensionIds, metadataStore])
 
     const { data, isLoading, isError, error } = useRtkQuery<
         Record<
@@ -86,7 +80,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     >({
         resource: 'programDataElements',
         params: {
-            program: programId,
+            program: programId!,
             fields: `dataElement[id,${displayNameProperty}~rename(name),aggregationType]`,
             filter: [
                 // TODO: add BOOLEAN and TRUE_ONLY if/when backend suppors it

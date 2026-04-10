@@ -964,7 +964,7 @@ describe('useActionButton for Tracked entity instance button', () => {
 describe('useActionButton for Custom value button', () => {
     it('returns correct result for: PT, currentVis with outputType !== EVENT', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT'),
+            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
             createStoreWithPreloadedState({
                 currentVis: {
                     outputType: 'ENROLLMENT',
@@ -992,7 +992,7 @@ describe('useActionButton for Custom value button', () => {
 
     it('returns correct result for: PT, currentVis with outputType === EVENT', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT'),
+            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
             createStoreWithPreloadedState({
                 currentVis: {
                     outputType: 'EVENT',
@@ -1013,14 +1013,14 @@ describe('useActionButton for Custom value button', () => {
 
         const output = result.current
 
-        expect(output.action).toEqual('update')
+        expect(output.action).toEqual('switch')
         expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual(undefined)
     })
 
     it('returns correct result for: PT, empty layout', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT'),
+            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
             createStoreWithPreloadedState({
                 dimensionSelection: {
                     dataSourceId: metadata.p1.id,
@@ -1042,9 +1042,30 @@ describe('useActionButton for Custom value button', () => {
         })
     })
 
+    it('returns correct result for: PT, no program', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
+            createStoreWithPreloadedState({
+                visUiConfig: {
+                    layout: {
+                        columns: [metadata['tei1.ou'].id],
+                    },
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('create')
+        expect(output.tooltipConfig).toEqual({
+            content: 'Not valid without a program',
+        })
+    })
+
     it('returns correct result for: PT, multiple programs', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT'),
+            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
             createStoreWithPreloadedState({
                 dimensionSelection: {
                     dataSourceId: metadata.p2.id,
@@ -1072,7 +1093,7 @@ describe('useActionButton for Custom value button', () => {
 
     it('returns correct result for: PT, multiple program stages', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useActionButton('EVENT'),
+            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
             createStoreWithPreloadedState({
                 dimensionSelection: {
                     dataSourceId: metadata.p1.id,

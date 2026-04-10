@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-04-08T09:35:58.387Z\n"
-"PO-Revision-Date: 2026-04-08T09:35:58.388Z\n"
+"POT-Creation-Date: 2026-04-10T13:20:05.589Z\n"
+"PO-Revision-Date: 2026-04-10T13:20:05.589Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -389,6 +389,9 @@ msgstr "Not valid with categories"
 
 msgid "Not valid with category option group sets"
 msgstr "Not valid with category option group sets"
+
+msgid "Not valid without a program"
+msgstr "Not valid without a program"
 
 msgid "Not valid with multiple programs"
 msgstr "Not valid with multiple programs"
