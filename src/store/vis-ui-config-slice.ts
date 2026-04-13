@@ -312,15 +312,6 @@ export const visUiConfigSlice = createSlice({
             throw new Error(`Dimension ${dimensionId} not found in any axis`)
         },
     },
-    extraReducers: (builder) => {
-        builder.addMatcher(
-            (action) => action.type === 'dimensionSelection/setDataSourceId',
-            (state) => {
-                state.customValue = undefined
-                state.lastActiveButton = undefined
-            }
-        )
-    },
     selectors: {
         getVisUiConfigVisualizationType: (state) => state.visualizationType,
         getVisUiConfigLayout: (state) => state.layout,
