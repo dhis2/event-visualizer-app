@@ -3,6 +3,12 @@ import { getMainSidebarWidthFromLocalStorage } from '@components/main-sidebar/lo
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 
+interface PanelVisibility {
+    isDetailsPanelVisible: boolean
+    isLayoutPanelVisible: boolean
+    isMainSidebarVisible: boolean
+}
+
 export interface UiState {
     activeDimensionModal: string | null
     isDetailsPanelVisible: boolean
@@ -10,6 +16,7 @@ export interface UiState {
     isLayoutPanelVisible: boolean
     isMainSidebarVisible: boolean
     mainSidebarWidth: number
+    savedPanelVisibility: PanelVisibility | null
 }
 
 export const initialState: UiState = {
@@ -19,6 +26,39 @@ export const initialState: UiState = {
     isLayoutPanelVisible: true,
     isMainSidebarVisible: true,
     mainSidebarWidth: getMainSidebarWidthFromLocalStorage(),
+    savedPanelVisibility: null,
+}
+
+const panelKeys: (keyof PanelVisibility)[] = [
+    'isDetailsPanelVisible',
+    'isLayoutPanelVisible',
+    'isMainSidebarVisible',
+]
+
+function isFullscreen(state: UiState) {
+    return panelKeys.every((key) => !state[key])
+}
+
+function savePanelVisibility(state: UiState) {
+    state.savedPanelVisibility = {
+        isDetailsPanelVisible: state.isDetailsPanelVisible,
+        isLayoutPanelVisible: state.isLayoutPanelVisible,
+        isMainSidebarVisible: state.isMainSidebarVisible,
+    }
+}
+
+function hideAllPanels(state: UiState) {
+    for (const key of panelKeys) {
+        state[key] = false
+    }
+}
+
+function restorePanelVisibility(state: UiState) {
+    const saved = state.savedPanelVisibility
+    for (const key of panelKeys) {
+        state[key] = saved?.[key] ?? initialState[key]
+    }
+    state.savedPanelVisibility = null
 }
 
 export const uiSlice = createSlice({
@@ -38,25 +78,28 @@ export const uiSlice = createSlice({
         ) => {
             state.activeDimensionModal = action.payload
         },
-        setUiDetailsPanelVisible: (state, action: PayloadAction<boolean>) => {
-            state.isDetailsPanelVisible = action.payload
+        toggleUiDetailsPanelVisible: (state) => {
+            state.isDetailsPanelVisible = !state.isDetailsPanelVisible
+            state.savedPanelVisibility = null
         },
         toggleUiMainSidebarVisible: (state) => {
             state.isMainSidebarVisible = !state.isMainSidebarVisible
+            state.savedPanelVisibility = null
         },
         toggleUiLayoutPanelExpanded: (state) => {
             state.isLayoutPanelExpanded = !state.isLayoutPanelExpanded
         },
         toggleUiLayoutPanelVisible: (state) => {
             state.isLayoutPanelVisible = !state.isLayoutPanelVisible
+            state.savedPanelVisibility = null
         },
         toggleUiShowExpandedVisualizationCanvas: (state) => {
-            const nextValue = !(
-                state.isMainSidebarVisible && state.isLayoutPanelVisible
-            )
-
-            state.isMainSidebarVisible = nextValue
-            state.isLayoutPanelVisible = nextValue
+            if (isFullscreen(state)) {
+                restorePanelVisibility(state)
+            } else {
+                savePanelVisibility(state)
+                hideAllPanels(state)
+            }
         },
     },
     selectors: {
@@ -67,7 +110,9 @@ export const uiSlice = createSlice({
         getUiMainSidebarVisible: (state) => state.isMainSidebarVisible,
         getUiMainSidebarWidth: (state) => state.mainSidebarWidth,
         getUiShowExpandedVisualizationCanvas: (state) =>
-            !state.isMainSidebarVisible && !state.isLayoutPanelVisible,
+            !state.isMainSidebarVisible &&
+            !state.isLayoutPanelVisible &&
+            !state.isDetailsPanelVisible,
     },
 })
 
@@ -76,7 +121,7 @@ export const {
     setUiMainSidebarWidth,
     resetUiMainSidebarWidth,
     setUiActiveDimensionModal,
-    setUiDetailsPanelVisible,
+    toggleUiDetailsPanelVisible,
     toggleUiLayoutPanelExpanded,
     toggleUiLayoutPanelVisible,
     toggleUiMainSidebarVisible,

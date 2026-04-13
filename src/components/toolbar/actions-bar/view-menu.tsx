@@ -13,9 +13,9 @@ import {
     getUiLayoutPanelVisible,
     getUiMainSidebarVisible,
     getUiDetailsPanelVisible,
+    toggleUiDetailsPanelVisible,
     toggleUiLayoutPanelVisible,
     toggleUiMainSidebarVisible,
-    setUiDetailsPanelVisible,
 } from '@store/ui-slice'
 import { useCallback } from 'react'
 import type { FC } from 'react'
@@ -43,8 +43,8 @@ export const ViewMenu: FC = () => {
     }, [dispatch])
 
     const toggleDetailsPanelVisible = useCallback(() => {
-        dispatch(setUiDetailsPanelVisible(!isDetailsPanelVisible))
-    }, [dispatch, isDetailsPanelVisible])
+        dispatch(toggleUiDetailsPanelVisible())
+    }, [dispatch])
 
     const toggleLayoutPanelText = isLayoutPanelVisible
         ? i18n.t('Hide layout')
@@ -71,7 +71,7 @@ export const ViewMenu: FC = () => {
                     onClick={toggleMainSidebarVisible}
                 />
                 <HoverMenuListItem
-                    label={i18n.t('Reset dimension sidebar width')}
+                    label={i18n.t('Reset dimensions sidebar width')}
                     onClick={resetMainSidebarWidth}
                     disabled={mainSidebarWidth === MAIN_SIDEBAR_DEFAULT_WIDTH}
                 />
