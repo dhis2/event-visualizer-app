@@ -13,9 +13,9 @@ import {
     getUiLayoutPanelVisible,
     getUiMainSidebarVisible,
     getUiDetailsPanelVisible,
+    toggleUiDetailsPanelVisible,
     toggleUiLayoutPanelVisible,
     toggleUiMainSidebarVisible,
-    setUiDetailsPanelVisible,
 } from '@store/ui-slice'
 import { useCallback } from 'react'
 import type { FC } from 'react'
@@ -43,8 +43,8 @@ export const ViewMenu: FC = () => {
     }, [dispatch])
 
     const toggleDetailsPanelVisible = useCallback(() => {
-        dispatch(setUiDetailsPanelVisible(!isDetailsPanelVisible))
-    }, [dispatch, isDetailsPanelVisible])
+        dispatch(toggleUiDetailsPanelVisible())
+    }, [dispatch])
 
     const toggleLayoutPanelText = isLayoutPanelVisible
         ? i18n.t('Hide layout')

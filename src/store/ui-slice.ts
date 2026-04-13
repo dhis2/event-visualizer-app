@@ -78,8 +78,8 @@ export const uiSlice = createSlice({
         ) => {
             state.activeDimensionModal = action.payload
         },
-        setUiDetailsPanelVisible: (state, action: PayloadAction<boolean>) => {
-            state.isDetailsPanelVisible = action.payload
+        toggleUiDetailsPanelVisible: (state) => {
+            state.isDetailsPanelVisible = !state.isDetailsPanelVisible
             state.savedPanelVisibility = null
         },
         toggleUiMainSidebarVisible: (state) => {
@@ -121,7 +121,7 @@ export const {
     setUiMainSidebarWidth,
     resetUiMainSidebarWidth,
     setUiActiveDimensionModal,
-    setUiDetailsPanelVisible,
+    toggleUiDetailsPanelVisible,
     toggleUiLayoutPanelExpanded,
     toggleUiLayoutPanelVisible,
     toggleUiMainSidebarVisible,

@@ -4,7 +4,7 @@ import {
     uiSlice,
     initialState,
     clearUi,
-    setUiDetailsPanelVisible,
+    toggleUiDetailsPanelVisible,
     toggleUiMainSidebarVisible,
     toggleUiLayoutPanelVisible,
     toggleUiShowExpandedVisualizationCanvas,
@@ -164,10 +164,10 @@ describe('uiSlice', () => {
             expect(state.savedPanelVisibility).toBeNull()
         })
 
-        it('setUiDetailsPanelVisible clears savedPanelVisibility', () => {
+        it('toggleUiDetailsPanelVisible clears savedPanelVisibility', () => {
             const state = reducer(
                 fullscreenState,
-                setUiDetailsPanelVisible(true)
+                toggleUiDetailsPanelVisible()
             )
 
             expect(state.isDetailsPanelVisible).toBe(true)
