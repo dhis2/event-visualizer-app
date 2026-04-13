@@ -5,8 +5,13 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
+<<<<<<< feat/custom-value
 "POT-Creation-Date: 2026-04-10T13:20:05.589Z\n"
 "PO-Revision-Date: 2026-04-10T13:20:05.589Z\n"
+=======
+"POT-Creation-Date: 2026-04-09T12:26:43.877Z\n"
+"PO-Revision-Date: 2026-04-09T12:26:43.878Z\n"
+>>>>>>> master
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -873,8 +878,8 @@ msgstr "Show interpretations and details"
 msgid "View"
 msgstr "View"
 
-msgid "Reset dimension sidebar width"
-msgstr "Reset dimension sidebar width"
+msgid "Reset dimensions sidebar width"
+msgstr "Reset dimensions sidebar width"
 
 msgid "Show panels"
 msgstr "Show panels"

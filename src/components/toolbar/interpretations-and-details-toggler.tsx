@@ -6,7 +6,7 @@ import { useAppSelector, useAppDispatch } from '@hooks'
 import { getCurrentVisId } from '@store/current-vis-slice'
 import {
     getUiDetailsPanelVisible,
-    setUiDetailsPanelVisible,
+    toggleUiDetailsPanelVisible,
 } from '@store/ui-slice'
 import { useCallback } from 'react'
 import type { FC } from 'react'
@@ -18,8 +18,8 @@ export const InterpretationsAndDetailsToggler: FC = () => {
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
 
     const onClick = useCallback(() => {
-        dispatch(setUiDetailsPanelVisible(!isDetailsPanelVisible))
-    }, [dispatch, isDetailsPanelVisible])
+        dispatch(toggleUiDetailsPanelVisible())
+    }, [dispatch])
 
     const tooltipText = isDetailsPanelVisible
         ? i18n.t('Hide details panel')
