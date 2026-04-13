@@ -68,6 +68,7 @@ export const tLoadSavedVisualization = createAsyncThunk<
             )
 
             dispatch(setSavedVis(data))
+            dispatch(setDataSourceId(selectedDataSourceId))
             dispatch(
                 setVisUiConfig(
                     getVisualizationUiConfig(transformedVisualization)
@@ -75,7 +76,6 @@ export const tLoadSavedVisualization = createAsyncThunk<
             )
             dispatch(setCurrentVis(data))
             dispatch(setIsVisualizationLoading(false))
-            dispatch(setDataSourceId(selectedDataSourceId))
 
             if (updateStatistics) {
                 // update most viewed statistics
@@ -102,9 +102,10 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
     () => (dispatch, getState) => {
         const { currentVis, visUiConfig } = getState()
 
-        const mergedVis = deepmerge(currentVis, visUiConfig.options) as
-            | NewVisualization
-            | SavedVisualization
+        const mergedVis = deepmerge(
+            currentVis as Record<string, unknown>,
+            visUiConfig.options as Record<string, unknown>
+        ) as unknown as NewVisualization | SavedVisualization
 
         const disabledOptions = getDisabledOptions(visUiConfig.options)
 
@@ -115,6 +116,15 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
         // Overrides
         const updatedCurrentVis = {
             ...mergedVis,
+            // visualization type
+            type: visUiConfig.visualizationType,
+            // custom value and aggregation
+            ...(visUiConfig.customValue && {
+                value: {
+                    id: visUiConfig.customValue.id,
+                },
+                aggregationType: visUiConfig.customValue.aggregationType,
+            }),
             // columns/rows/filters from visUiConfig.layout
             ...formatLayoutForVisualization(visUiConfig),
         }
