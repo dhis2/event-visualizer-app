@@ -25,10 +25,14 @@ export const useResizableSidebar = () => {
     const containerRef = useRef<HTMLDivElement>(null)
     const startEdgePosRef = useRef(0)
 
-    const syncToStore = useDebounceCallback((value: number) => {
-        setMainSidebarWidthToLocalStorage(value)
-        dispatch(setUiMainSidebarWidth(value))
-    }, MAIN_SIDEBAR_DEBOUNCE_DELAY)
+    const onSync = useCallback(
+        (value: number) => {
+            setMainSidebarWidthToLocalStorage(value)
+            dispatch(setUiMainSidebarWidth(value))
+        },
+        [dispatch]
+    )
+    const syncToStore = useDebounceCallback(onSync, MAIN_SIDEBAR_DEBOUNCE_DELAY)
 
     // Re-clamp on window resize (handles monitor switches, window resizing)
     const onWindowResize = useDebounceCallback(() => {
