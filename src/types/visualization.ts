@@ -8,8 +8,10 @@ import type {
 } from './dhis2-openapi-schemas'
 import type { DimensionType } from './dimension'
 import type { MetadataInputMap } from './metadata'
+import type { EventVisualizationOptions } from './options'
+import type { Program } from './program'
+import type { ProgramStage } from './program-stage'
 import type { VisualizationType } from './visualization-type'
-import type { Program, ProgramStage } from '.'
 
 type IdRecord = { id: string }
 type IdNameRecord = IdRecord & { name: string }
@@ -112,12 +114,14 @@ export type SavedVisualization = Omit<
     SavedVisualizationFieldOverrides
 
 export type EmptyVisualization = Record<string, never>
-export type NewVisualization = Partial<Omit<SavedVisualization, 'id'>> &
-    Required<Pick<SavedVisualization, 'outputType' | 'type'>>
-export type CurrentVisualization =
-    | EmptyVisualization
-    | NewVisualization
-    | SavedVisualization
+export type CurrentVisualization = Pick<
+    SavedVisualization,
+    'type' | 'outputType' | 'columns' | 'rows' | 'filters' | 'trackedEntityType'
+> &
+    EventVisualizationOptions & {
+        id?: string
+        programDimensions?: Array<IdRecord>
+    }
 
 export type VisualizationNameDescription = Pick<
     SavedVisualization,
