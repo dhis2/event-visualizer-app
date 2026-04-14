@@ -436,20 +436,70 @@ metadata provider. Understanding it is essential when working with any program d
 - `ProgramStage` always carries a `program: { id: string }` back-reference, so the owning
   program can be resolved from a stage without a separate lookup.
 
-### Compound ID forms
+### Backend vs frontend compound ID formats
 
-| Form                            | Example                      | When valid                                                                                     |
-| ------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------- |
-| `stageId.dimensionId`           | `Zj7UnCAulEk.ou`             | Always — this is the **canonical** form                                                        |
-| `programId.dimensionId`         | `eBAyeGv0exc.ou`             | Enrollment-level fixed dimensions in tracker programs (e.g. enrollment date, org unit, status) |
-| `programId.stageId.dimensionId` | `eBAyeGv0exc.Zj7UnCAulEk.ou` | Any program — collapsed to canonical on ingest                                                 |
+The DHIS2 backend uses **different compound ID formats** across endpoints. The frontend normalizes
+this inconsistency by adopting the analytics format as its canonical internal representation.
+
+**Analytics API** (`/api/analytics/events/query/{programId}`): returns `stageId.dimensionId` in
+response headers and `metaData.dimensions` keys. The program is implicit in the request URL, so
+the stage is the only prefix needed to disambiguate dimensions.
+
+**eventVisualizations API** (`/api/eventVisualizations`): uses `programId.stageId.dimensionId`
+(or `programId.dimensionId`) in the persisted `columnDimensions`/`rowDimensions`/`filterDimensions`
+string arrays. On the populated `columns`/`rows`/`filters` objects, `program` and `programStage`
+are transient fields (not persisted) — they are resolved at read time from the qualified dimension
+strings and from hydrated Hibernate associations.
+
+**Frontend canonical form**: `stageId.dimensionId` — matching the analytics API. This is the
+format used in Redux state (metadata keys, layout arrays, `visUiConfig`). The frontend chose this
+format because analytics data flows continuously during rendering, while the visualization API is
+only hit on save/load. The translation cost is paid once at the API boundary (see below).
+
+### Compound ID forms (frontend canonical)
+
+| Form                            | Example                      | When used                                                                             |
+| ------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------- |
+| `stageId.dimensionId`           | `Zj7UnCAulEk.ou`             | EVENT/ENROLLMENT — this is the **canonical** form                                     |
+| `programId.dimensionId`         | `eBAyeGv0exc.ou`             | TRACKED_ENTITY — enrollment-level dimensions (e.g. enrollment date, org unit, status) |
+| `programId.stageId.dimensionId` | `eBAyeGv0exc.Zj7UnCAulEk.ou` | TRACKED_ENTITY — stage-level dimensions; collapsed to canonical on ingest             |
 
 A repetition index `[n]` may be appended to the stage segment: `ps1[0].ou`.
 
-The **canonical** form is always `stageId.dimensionId`. 3-segment keys are collapsed to canonical
-form on ingest via pure string manipulation (drop the first segment) — no metadata map lookup
-required. `programId.dimensionId` keys are stored as-is because they are semantically tied to the
-program (enrollment scope), not to any stage.
+The interpretation of a 2-segment ID depends on `outputType`:
+
+- **EVENT/ENROLLMENT**: `part1.part2` → `stageId.dimensionId` (no programId)
+- **TRACKED_ENTITY**: `part1.part2` → `programId.dimensionId` (no stageId)
+
+3-segment keys (`programId.stageId.dimensionId`) are collapsed to `stageId.dimensionId` on ingest
+for EVENT/ENROLLMENT via pure string manipulation (drop the first segment). For TRACKED_ENTITY,
+the programId is preserved. `programId.dimensionId` keys in TRACKED_ENTITY context are stored
+as-is because they are semantically tied to the program (enrollment scope), not to any stage.
+
+### Save/load translation at the visualization API boundary
+
+**Loading** (API → frontend): `acSetVisualization` reads each dimension's `program` and
+`programStage` from the populated `columns`/`rows`/`filters` objects and calls `getFullDimensionId`
+(or `formatDimensionId` in the line-listing-app). For EVENT/ENROLLMENT this produces
+`stageId.dimensionId` (dropping the programId). For TRACKED_ENTITY it produces
+`programId.stageId.dimensionId` or `programId.dimensionId`.
+
+**Saving** (frontend → API): `getAxesFromUi` (or equivalent) decomposes the internal compound ID
+via `getDimensionIdParts` (`extractDimensionIdParts` in the line-listing-app) and sends each
+dimension to the API with a plain `dimension` ID plus separate `program` and `programStage`
+objects. The backend's `mergeAnalyticalObject` hydrates the stage from the database (including its
+parent program via `loadProgramForStage`), then `getQualifiedDimension` rebuilds the persisted
+string as `programId.stageId.dimensionId`.
+
+### `programDimensions` field on eventVisualizations
+
+`programDimensions` is a **computed, read-only** field — not persisted. On each GET, the backend
+(`EventVisualizationController.postProcessResponseEntity`) iterates all `DimensionalObject`s in
+`columns`, `rows`, and `filters`, extracts distinct program references, and fetches the full
+`Program` objects. It provides clients with a convenience list of all programs referenced in the
+layout. POSTing this field has no effect.
+
+### Metadata store ordering
 
 When adding metadata to the store in a **single batch** (via `addMetadata`), plain items (programs,
 stages) are always processed before compound-key items, so context is available for field
