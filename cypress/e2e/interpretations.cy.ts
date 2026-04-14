@@ -40,7 +40,7 @@ describe('interpretations', () => {
 
         expectInterpretationsButtonToBeEnabled()
 
-        cy.getByDataTest('details-panel').should('not.be.visible')
+        cy.getByDataTest('details-panel').should('not.exist')
 
         clickToolbarInterpretationsButton()
 
@@ -51,13 +51,13 @@ describe('interpretations', () => {
 
         clickToolbarInterpretationsButton()
 
-        cy.getByDataTest('details-panel').should('not.be.visible')
+        cy.getByDataTest('details-panel').should('not.exist')
     })
 
     it('the interpretations and details panel can be toggled by clicking the option in the view menu', () => {
         openVisByName('Inpatient: Cases last quarter (case)')
 
-        cy.getByDataTest('details-panel').should('not.be.visible')
+        cy.getByDataTest('details-panel').should('not.exist')
 
         clickToolbarViewButton()
 
@@ -78,7 +78,7 @@ describe('interpretations', () => {
             .should('be.visible')
             .click()
 
-        cy.getByDataTest('details-panel').should('not.be.visible')
+        cy.getByDataTest('details-panel').should('not.exist')
     })
 
     it('a new interpretation can be added, viewed and deleted', () => {
