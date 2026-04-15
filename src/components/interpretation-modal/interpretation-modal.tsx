@@ -6,6 +6,7 @@ import { ModalDownloadDropdown } from '@components/download-menu/modal-download-
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { InterpretationModal as AnalyticsInterpretationModal } from '@dhis2/analytics'
 import { useAppSelector } from '@hooks'
+import { isVisualizationSaved } from '@modules/visualization'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import type { MetadataInput } from '@types'
@@ -23,7 +24,13 @@ export const InterpretationModal: FC = () => {
     const { onCloseInterpretationModal } = useInterpretationModalTogglers()
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
 
-    return interpretationId ? (
+    // The interpretation modal only makes sense for an already-saved vis;
+    // if none is loaded we don't render it.
+    if (!interpretationId || !isVisualizationSaved(savedVis)) {
+        return null
+    }
+
+    return (
         <AnalyticsInterpretationModal
             interpretationId={interpretationId}
             visualization={savedVis}
@@ -34,5 +41,5 @@ export const InterpretationModal: FC = () => {
             onClose={onCloseInterpretationModal}
             onResponsesReceived={onResponsesReceivedNoop}
         />
-    ) : null
+    )
 }

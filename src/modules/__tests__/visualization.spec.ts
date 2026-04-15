@@ -1,4 +1,4 @@
-import type { NewVisualization, SavedVisualization } from '@types'
+import type { SavedVisualization } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     getSaveableVisualization,
@@ -344,7 +344,7 @@ describe('getSaveableVisualization', () => {
                     valueType: 'NUMBER',
                 },
             ],
-        } as unknown as NewVisualization
+        } as unknown as SavedVisualization
 
         const saved = getSaveableVisualization(vis)
 
@@ -366,7 +366,7 @@ describe('getSaveableVisualization', () => {
             programStage: {},
             columns: [],
             filters: [],
-        } as unknown as NewVisualization
+        } as unknown as SavedVisualization
 
         const saved = getSaveableVisualization(vis)
         expect(saved.programStage).toBeUndefined()
@@ -377,7 +377,7 @@ describe('getSaveableVisualization', () => {
             programStage: { id: 'stage-1', name: 'Stage 1' },
             columns: [],
             filters: [],
-        } as unknown as NewVisualization
+        } as unknown as SavedVisualization
 
         const saved = getSaveableVisualization(vis)
         expect(saved.programStage).toEqual({ id: 'stage-1', name: 'Stage 1' })
@@ -388,7 +388,7 @@ describe('getSaveableVisualization', () => {
             legacy: true,
             columns: [],
             filters: [],
-        } as unknown as NewVisualization
+        } as unknown as SavedVisualization
 
         const saved = getSaveableVisualization(vis)
         expect('legacy' in (saved as Record<string, unknown>)).toBe(false)
@@ -402,7 +402,7 @@ describe('getSaveableVisualization', () => {
             ],
             columns: [],
             filters: [],
-        } as unknown as NewVisualization
+        } as unknown as SavedVisualization
 
         const saved = getSaveableVisualization(vis)
         expect(saved.sorting).toBeDefined()
@@ -416,12 +416,12 @@ describe('getSaveableVisualization', () => {
         const vis1 = {
             columns: [],
             filters: [],
-        } as unknown as NewVisualization
+        } as unknown as SavedVisualization
         const vis2 = {
             sorting: [],
             columns: [],
             filters: [],
-        } as unknown as NewVisualization
+        } as unknown as SavedVisualization
 
         const saved1 = getSaveableVisualization(vis1)
         const saved2 = getSaveableVisualization(vis2)

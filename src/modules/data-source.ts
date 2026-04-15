@@ -6,6 +6,7 @@ import type {
 } from '@types'
 import { isMetadataItem, isProgramMetadataItem } from './metadata'
 import { isPopulatedString } from './validation'
+import { getSingleProgramFromVisualization } from './visualization'
 
 export const isDataSourceProgramWithRegistration = (
     dataSource: unknown
@@ -24,15 +25,15 @@ export const isDataSourceTrackedEntityType = (
 ): dataSource is MetadataItem =>
     !isProgramMetadataItem(dataSource) && isMetadataItem(dataSource)
 
-export const extractDataSourceIdFromVisualization = ({
-    outputType,
-    program,
-    programDimensions,
-    trackedEntityType,
-}: CurrentVisualization): string => {
+export const extractDataSourceIdFromVisualization = (
+    visualization: CurrentVisualization
+): string => {
+    const { outputType, programDimensions, trackedEntityType } = visualization
+
     if (outputType === 'ENROLLMENT' || outputType === 'EVENT') {
-        // 'ENROLLMENT' and 'EVENT' are single program, so we look at the `program` field
-        if (isPopulatedString(program?.id)) {
+        // 'ENROLLMENT' and 'EVENT' are single program — look it up in programDimensions
+        const program = getSingleProgramFromVisualization(visualization)
+        if (isPopulatedString(program.id)) {
             return program.id
         }
     } else if (outputType === 'TRACKED_ENTITY_INSTANCE') {

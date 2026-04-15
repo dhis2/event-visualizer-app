@@ -1,7 +1,16 @@
 import { DIMENSION_ID_ORGUNIT } from '@constants/dimensions'
 import { AXIS, dimensionIsValid, layoutGetDimension } from '@dhis2/analytics'
-import type { CurrentVisualization } from '@types'
+import type { CurrentVisualization, EmptyVisualization } from '@types'
 import { isVisualizationEmpty } from './visualization'
+
+const getProgramDimensionsCount = (
+    visualization: CurrentVisualization | EmptyVisualization
+): number => {
+    if (!('programDimensions' in visualization)) {
+        return 0
+    }
+    return visualization.programDimensions?.length ?? 0
+}
 
 // Helper function to check if input is a plain object
 export const isObject = (input: unknown): input is Record<string, unknown> => {
@@ -23,11 +32,11 @@ const isAxisValid = (axis) =>
     )
 
 const visualizationHasProgramId = (
-    visualization: CurrentVisualization
-): boolean => Boolean(visualization?.program?.id)
+    visualization: CurrentVisualization | EmptyVisualization
+): boolean => getProgramDimensionsCount(visualization) > 0
 
 const visualizationHasTrackedEntityTypeId = (
-    visualization: CurrentVisualization
+    visualization: CurrentVisualization | EmptyVisualization
 ): boolean => Boolean(visualization?.trackedEntityType?.id)
 
 // Validation functions for Update and Download
@@ -70,7 +79,7 @@ const validateLineListVisualization = (
 }
 
 export const validateVisualization = (
-    visualization: CurrentVisualization
+    visualization: CurrentVisualization | EmptyVisualization
 ): void => {
     if (isVisualizationEmpty(visualization)) {
         throw new Error('Empty visualization')
@@ -89,7 +98,7 @@ export const validateVisualization = (
 }
 
 export const isVisualizationValid = (
-    visualization: CurrentVisualization
+    visualization: CurrentVisualization | EmptyVisualization
 ): boolean => {
     try {
         validateVisualization(visualization)
@@ -102,13 +111,8 @@ export const isVisualizationValid = (
 
 // Validation functions for FileMenu actions
 export const isVisualizationValidForSaveAs = (
-    visualization: CurrentVisualization
+    visualization: CurrentVisualization | EmptyVisualization
 ): boolean =>
     visualization.outputType === 'TRACKED_ENTITY_INSTANCE'
         ? visualizationHasTrackedEntityTypeId(visualization)
         : visualizationHasProgramId(visualization)
-
-export const isVisualizationValidForSave = (
-    visualization: CurrentVisualization
-): boolean =>
-    !visualization.legacy && isVisualizationValidForSaveAs(visualization)

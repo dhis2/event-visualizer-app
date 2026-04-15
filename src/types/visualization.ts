@@ -116,11 +116,18 @@ export type SavedVisualization = Omit<
 export type EmptyVisualization = Record<string, never>
 export type CurrentVisualization = Pick<
     SavedVisualization,
-    'type' | 'outputType' | 'columns' | 'rows' | 'filters' | 'trackedEntityType'
+    | 'type'
+    | 'outputType'
+    | 'columns'
+    | 'rows'
+    | 'filters'
+    | 'trackedEntityType'
+    | 'sorting'
+    | 'value'
 > &
     EventVisualizationOptions & {
         id?: string
-        programDimensions?: Array<IdRecord>
+        programDimensions?: Array<Program>
     }
 
 export type VisualizationNameDescription = Pick<

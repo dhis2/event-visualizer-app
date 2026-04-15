@@ -6,13 +6,11 @@ import {
 import { useAlert } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import { useAppDispatch, useAppSelector } from '@hooks'
-import {
-    isVisualizationValidForSave,
-    isVisualizationValidForSaveAs,
-} from '@modules/validation'
+import { isVisualizationValidForSaveAs } from '@modules/validation'
 import {
     getSaveableVisualization,
     getVisualizationState,
+    isVisualizationEmpty,
     isVisualizationSaved,
 } from '@modules/visualization'
 import {
@@ -22,7 +20,7 @@ import {
 import { setNavigationState } from '@store/navigation-slice'
 import { getSavedVis, setSavedVisNameDescription } from '@store/saved-vis-slice'
 import { tLoadSavedVisualization } from '@store/thunks'
-import type { NewVisualization, SavedVisualization } from '@types'
+import type { SavedVisualization } from '@types'
 import { useCallback, useMemo } from 'react'
 
 export const useToolbarActions = () => {
@@ -36,18 +34,26 @@ export const useToolbarActions = () => {
         ({ options }) => options
     )
 
-    const isSaveEnabled = useMemo(
-        () =>
+    const isSaveEnabled = useMemo(() => {
+        /* If no saved vis exists yet we're creating a new one, so there's
+         * nothing to overwrite. Otherwise require update access on the saved
+         * vis AND that it is not legacy — saving a legacy vis in the new
+         * format would break it in the older app, so "Save as" is the only
+         * allowed path for those. */
+        const isNewVis = isVisualizationEmpty(savedVis)
+        const canUpdateSavedVis =
+            isVisualizationSaved(savedVis) &&
+            Boolean(savedVis.access?.update) &&
+            !savedVis.legacy
+
+        return (
+            (isNewVis || canUpdateSavedVis) &&
+            isVisualizationValidForSaveAs(currentVis) &&
             ['UNSAVED', 'DIRTY'].includes(
                 getVisualizationState(savedVis, currentVis)
-            ) &&
-            isVisualizationValidForSave({
-                ...currentVis,
-                legacy: savedVis?.legacy,
-            }) &&
-            (!('id' in currentVis) || currentVis.access?.update),
-        [currentVis, savedVis]
-    )
+            )
+        )
+    }, [currentVis, savedVis])
 
     const isSaveAsEnabled = useMemo(
         () => isVisualizationValidForSaveAs(currentVis),
@@ -188,7 +194,7 @@ export const useToolbarActions = () => {
                     preparePayloadForSaveAs({
                         visualization: {
                             ...getSaveableVisualization(
-                                currentVis as unknown as NewVisualization
+                                currentVis as unknown as SavedVisualization
                             ),
                             // XXX: this ideally should be done in preparePayloadForSaveAs
                             subscribers: [],

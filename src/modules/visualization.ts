@@ -1,19 +1,20 @@
 import { getRequestOptions } from '@components/plugin-wrapper/hooks/query-tools-common'
+import { DEFAULT_OPTIONS } from '@constants/options'
 import {
     layoutGetAxisIdDimensionIdsObject,
     layoutGetDimensionIdItemIdsObject,
     layoutGetAllDimensions,
 } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import { initialState as currentVisDefaultValue } from '@store/current-vis-slice'
-import { initialState as savedVisDefaultValue } from '@store/saved-vis-slice'
 import type { LastActiveButton } from '@store/vis-ui-config-slice'
 import type {
     DimensionArray,
     CurrentVisualization,
     DimensionId,
     EmptyVisualization,
-    NewVisualization,
+    EventVisualizationOptions,
+    Program,
+    ProgramStage,
     SavedVisualization,
     VisualizationType,
     VisualizationState,
@@ -143,13 +144,57 @@ export const isVisualizationWithTimeDimension = (vis: CurrentVisualization) =>
             items.length > 0
     )
 
+// Keys on CurrentVisualization that are NOT part of EventVisualizationOptions.
+// Combined with the option keys (derived from DEFAULT_OPTIONS below) this
+// gives the full set of CurrentVisualization keys at runtime.
+const CURRENT_VIS_NON_OPTION_KEYS: ReadonlyArray<
+    Exclude<keyof CurrentVisualization, keyof EventVisualizationOptions>
+> = [
+    'type',
+    'outputType',
+    'columns',
+    'rows',
+    'filters',
+    'trackedEntityType',
+    'sorting',
+    'value',
+    'id',
+    'programDimensions',
+]
+
+const CURRENT_VIS_KEYS: ReadonlyArray<keyof CurrentVisualization> = [
+    ...CURRENT_VIS_NON_OPTION_KEYS,
+    ...(Object.keys(DEFAULT_OPTIONS) as Array<keyof EventVisualizationOptions>),
+]
+
+/**
+ * Extracts the CurrentVisualization-shaped subset of a SavedVisualization.
+ * Used to compare a saved visualization to the current (edited) one —
+ * the current vis is already in CurrentVisualization shape, but the saved
+ * vis carries extra fields (access, createdBy, …) that we don't care about
+ * when determining whether there are unsaved changes.
+ */
+export const toCurrentVis = (
+    savedVis: SavedVisualization
+): CurrentVisualization => {
+    const result: Record<string, unknown> = {}
+    for (const key of CURRENT_VIS_KEYS) {
+        if (savedVis[key] !== undefined) {
+            result[key] = savedVis[key]
+        }
+    }
+    return result as CurrentVisualization
+}
+
 export const getVisualizationState = (
     savedVis: SavedVisualization | EmptyVisualization,
-    currentVis: CurrentVisualization
+    currentVis: CurrentVisualization | EmptyVisualization
 ): VisualizationState => {
-    if (savedVis === savedVisDefaultValue) {
-        return currentVis === currentVisDefaultValue ? 'EMPTY' : 'UNSAVED'
-    } else if (deepEqual(savedVis, currentVis)) {
+    if (isVisualizationEmpty(savedVis)) {
+        return isVisualizationEmpty(currentVis) ? 'EMPTY' : 'UNSAVED'
+    } else if (isVisualizationEmpty(currentVis)) {
+        return 'DIRTY'
+    } else if (deepEqual(toCurrentVis(savedVis), currentVis)) {
         return 'SAVED'
     } else {
         return 'DIRTY'
@@ -157,9 +202,9 @@ export const getVisualizationState = (
 }
 
 const removeDimensionPropertiesBeforeSaving = (
-    axis: DimensionArray | undefined
-) => {
-    return axis?.map((dim) => {
+    axis: DimensionArray
+): DimensionArray => {
+    return axis.map((dim) => {
         const dimension = Object.assign({}, dim)
         const propsToRemove = ['dimensionType', 'valueType']
 
@@ -182,8 +227,10 @@ const getDimensionIdFromHeaderName = (
 }
 
 export const getSaveableVisualization = (
-    vis: NewVisualization | SavedVisualization
-): NewVisualization | SavedVisualization => {
+    // TODO: revisit param type — this function accesses SavedVisualization fields
+    // (programStage, legacy, sorting) but callers pass CurrentVisualization with casts
+    vis: SavedVisualization
+): SavedVisualization => {
     const visualization = Object.assign({}, vis)
 
     visualization.columns = removeDimensionPropertiesBeforeSaving(
@@ -196,15 +243,10 @@ export const getSaveableVisualization = (
         visualization.rows
     )
 
-    if (!visualization.programStage?.id) {
-        delete visualization.programStage
-    }
-
-    // Remove legacy property when saving
-    delete visualization.legacy
+    const { programStage, ...rest } = visualization
 
     // Use the first sorting item only and format for saving
-    visualization.sorting = vis.sorting?.length
+    const sorting = vis.sorting?.length
         ? [
               {
                   dimension:
@@ -219,29 +261,30 @@ export const getSaveableVisualization = (
           ]
         : undefined
 
-    return visualization
+    const result: Partial<SavedVisualization> = {
+        ...rest,
+        ...(programStage?.id ? { programStage } : {}),
+        sorting,
+    }
+    // Remove legacy flag when saving — a legacy-loaded vis is re-saved in the new format.
+    delete result.legacy
+    return result as SavedVisualization
 }
 
-// Type guards for CurrentVisualization union
 export const isVisualizationEmpty = (
-    visualization: CurrentVisualization
+    visualization: CurrentVisualization | EmptyVisualization
 ): visualization is EmptyVisualization =>
     Object.keys(visualization).length === 0
 
 export const isVisualizationSaved = (
-    visualization: CurrentVisualization
-): visualization is SavedVisualization => {
-    return 'id' in visualization && typeof visualization.id === 'string'
-}
+    visualization: CurrentVisualization | EmptyVisualization
+): visualization is SavedVisualization =>
+    'id' in visualization && typeof visualization.id === 'string'
 
 export const isVisualizationNew = (
-    visualization: CurrentVisualization
-): visualization is NewVisualization => {
-    return (
-        !isVisualizationEmpty(visualization) &&
-        !isVisualizationSaved(visualization)
-    )
-}
+    visualization: CurrentVisualization | EmptyVisualization
+): boolean =>
+    !isVisualizationEmpty(visualization) && !isVisualizationSaved(visualization)
 
 export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
     const outputType = vis.outputType
@@ -270,4 +313,29 @@ export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
         }),
         lastActiveButton,
     }
+}
+
+export const getSingleProgramFromVisualization = (
+    visualization: CurrentVisualization
+): Program => {
+    const programs = visualization.programDimensions ?? []
+    if (programs.length !== 1) {
+        throw new Error(
+            `Expected exactly one program in programDimensions, found ${programs.length}`
+        )
+    }
+    return programs[0]
+}
+
+export const getSingleProgramStageFromVisualization = (
+    visualization: CurrentVisualization
+): ProgramStage => {
+    const program = getSingleProgramFromVisualization(visualization)
+    const stages = program.programStages ?? []
+    if (stages.length !== 1) {
+        throw new Error(
+            `Expected exactly one stage on program ${program.id}, found ${stages.length}`
+        )
+    }
+    return stages[0]
 }

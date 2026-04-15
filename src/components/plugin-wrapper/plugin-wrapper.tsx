@@ -1,6 +1,11 @@
 import { Center, CircularLoader } from '@dhis2/ui'
 import { isVisualizationSaved } from '@modules/visualization'
-import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
+import type {
+    CurrentUser,
+    CurrentVisualization,
+    EmptyVisualization,
+    Sorting,
+} from '@types'
 import type { FC } from 'react'
 import { useCallback, useEffect, useState } from 'react'
 import type { OnAnalyticsResponseReceivedCb } from './hooks/use-line-list-analytics-data'
@@ -10,7 +15,7 @@ import classes from './styles/plugin-wrapper.module.css'
 
 type PluginWrapperProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
-    visualization: CurrentVisualization
+    visualization: CurrentVisualization | EmptyVisualization
     filters?: Record<'relativePeriodDate', string> // TODO: check what dashboard passes here
     isInDashboard?: boolean
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
@@ -64,7 +69,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                             : 'new'
                     }
                     displayProperty={displayProperty}
-                    visualization={visualization}
+                    visualization={visualization as CurrentVisualization}
                     filters={filters}
                     isInDashboard={isInDashboard}
                     isInModal={isInModal}
@@ -80,7 +85,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                             : 'new'
                     }
                     displayProperty={displayProperty}
-                    visualization={visualization}
+                    visualization={visualization as CurrentVisualization}
                     filters={filters}
                     isInDashboard={isInDashboard}
                     isInModal={isInModal}

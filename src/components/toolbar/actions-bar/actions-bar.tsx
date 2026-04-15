@@ -48,7 +48,7 @@ const ActionsBarDialog: FC<ActionsBarDialogProps> = ({
     const savedVis = useAppSelector(getSavedVis)
 
     const fileObject = useMemo(
-        () => ({ ...savedVis, ...currentVis }) as SavedVisualization,
+        () => ({ ...savedVis, ...currentVis }) as unknown as SavedVisualization,
         [currentVis, savedVis]
     )
 

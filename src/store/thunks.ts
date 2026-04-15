@@ -8,7 +8,7 @@ import {
     transformVisualization,
 } from '@modules/visualization'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import type { AppDispatch, NewVisualization, SavedVisualization } from '@types'
+import type { AppDispatch, CurrentVisualization } from '@types'
 import deepmerge from 'deepmerge'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
 import { setDataSourceId } from './dimensions-selection-slice'
@@ -105,7 +105,7 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
         const mergedVis = deepmerge(
             currentVis as Record<string, unknown>,
             visUiConfig.options as Record<string, unknown>
-        ) as unknown as NewVisualization | SavedVisualization
+        ) as unknown as CurrentVisualization
 
         const disabledOptions = getDisabledOptions(visUiConfig.options)
 

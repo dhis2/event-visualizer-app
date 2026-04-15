@@ -37,7 +37,7 @@ import {
     getUiActiveDimensionModal,
     setUiActiveDimensionModal,
 } from '@store/ui-slice'
-import type { NewVisualization, SavedVisualization, Sorting } from '@types'
+import type { CurrentVisualization, Sorting } from '@types'
 import { useCallback, type FC, type ReactNode } from 'react'
 import { useLoadVisualizationOnMount } from './use-load-visualization-on-mount'
 import './styles/app.module.css'
@@ -63,7 +63,7 @@ const EventVisualizer: FC = () => {
                 setCurrentVis({
                     ...currentVis,
                     sorting: sorting ? [sorting] : undefined,
-                } as SavedVisualization | NewVisualization)
+                } as unknown as CurrentVisualization)
             )
         },
         [currentVis, dispatch]

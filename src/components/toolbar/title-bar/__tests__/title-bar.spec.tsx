@@ -21,7 +21,13 @@ describe('TitleBar', () => {
         act(() =>
             // simulate an Update click with a minimum viable visualization object
             store.dispatch(
-                setCurrentVis({ type: 'LINE_LIST', outputType: 'EVENT' })
+                setCurrentVis({
+                    type: 'LINE_LIST',
+                    outputType: 'EVENT',
+                    columns: [],
+                    rows: [],
+                    filters: [],
+                })
             )
         )
 
