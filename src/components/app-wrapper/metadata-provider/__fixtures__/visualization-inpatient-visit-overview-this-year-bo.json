@@ -183,31 +183,25 @@
     "hideSubtitle": false,
     "showDimensionLabels": true,
     "type": "LINE_LIST",
-    "program": {
-        "incidentDateLabel": "Date of Discharge",
-        "programType": "WITHOUT_REGISTRATION",
-        "displayIncidentDate": false,
-        "displayIncidentDateLabel": "Date of Discharge",
-        "id": "eBAyeGv0exc",
-        "programStages": [
-            {
-                "hideDueDate": false,
-                "displayExecutionDateLabel": "Report date",
-                "id": "Zj7UnCAulEk",
-                "repeatable": false,
-                "name": "Inpatient morbidity and mortality"
-            }
-        ],
-        "name": "Inpatient morbidity and mortality"
-    },
-    "programStage": {
-        "hideDueDate": false,
-        "displayExecutionDateLabel": "Report date",
-        "id": "Zj7UnCAulEk",
-        "repeatable": false,
-        "name": "Inpatient morbidity and mortality"
-    },
-    "programDimensions": [],
+    "programDimensions": [
+        {
+            "incidentDateLabel": "Date of Discharge",
+            "programType": "WITHOUT_REGISTRATION",
+            "displayIncidentDate": false,
+            "displayIncidentDateLabel": "Date of Discharge",
+            "id": "eBAyeGv0exc",
+            "programStages": [
+                {
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Report date",
+                    "id": "Zj7UnCAulEk",
+                    "repeatable": false,
+                    "name": "Inpatient morbidity and mortality"
+                }
+            ],
+            "name": "Inpatient morbidity and mortality"
+        }
+    ],
     "outputType": "EVENT",
     "collapseDataDimensions": false,
     "hideNaData": false,
@@ -228,7 +222,13 @@
                     "id": "THIS_YEAR"
                 }
             ],
-            "dimension": "pe"
+            "dimension": "eventDate",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "ORGANISATION_UNIT",
@@ -237,13 +237,25 @@
                     "id": "O6uvpzGd5pu"
                 }
             ],
-            "dimension": "ou"
+            "dimension": "ou",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
             "items": [],
             "dimension": "eMyVanycQSC",
-            "valueType": "DATE"
+            "valueType": "DATE",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
@@ -253,52 +265,112 @@
                 "name": "Age 10y interval"
             },
             "dimension": "qrur9Dvnyt5",
-            "valueType": "INTEGER"
+            "valueType": "INTEGER",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_INDICATOR",
             "items": [],
-            "dimension": "tUdBD1JDxpn"
+            "dimension": "tUdBD1JDxpn",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_INDICATOR",
             "items": [],
-            "dimension": "sGna2pquXOO"
+            "dimension": "sGna2pquXOO",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_INDICATOR",
             "items": [],
-            "dimension": "Kswd1r4qWLh"
+            "dimension": "Kswd1r4qWLh",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_INDICATOR",
             "items": [],
-            "dimension": "gWxh7DiRmG7"
+            "dimension": "gWxh7DiRmG7",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_INDICATOR",
             "items": [],
-            "dimension": "x7PaHGvgWY2"
+            "dimension": "x7PaHGvgWY2",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_INDICATOR",
             "items": [],
-            "dimension": "XCMi7Wvnplm"
+            "dimension": "XCMi7Wvnplm",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_INDICATOR",
             "items": [],
-            "dimension": "hlPt8H4bUOQ"
+            "dimension": "hlPt8H4bUOQ",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_INDICATOR",
             "items": [],
-            "dimension": "Thkx2BnO5Kq"
+            "dimension": "Thkx2BnO5Kq",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_INDICATOR",
             "items": [],
-            "dimension": "Y7hKDSuqEtH"
+            "dimension": "Y7hKDSuqEtH",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
@@ -308,13 +380,25 @@
             "optionSet": {
                 "id": "eUZ79clX7y1",
                 "name": "Diagnosis ICD10"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
             }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
             "items": [],
             "dimension": "msodh3rEMJa",
-            "valueType": "DATE"
+            "valueType": "DATE",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
@@ -324,6 +408,12 @@
             "optionSet": {
                 "id": "pC3N9N77UmT",
                 "name": "Gender"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
             }
         },
         {
@@ -334,12 +424,24 @@
                 "name": "Height in cm"
             },
             "dimension": "GieVkTxp4HH",
-            "valueType": "NUMBER"
+            "valueType": "NUMBER",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_INDICATOR",
             "items": [],
-            "dimension": "HS8QXAJtuKV"
+            "dimension": "HS8QXAJtuKV",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
@@ -349,13 +451,25 @@
             "optionSet": {
                 "id": "iDFPKpFTiVw",
                 "name": "Mode of discharge"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
             }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
             "items": [],
             "dimension": "SWfdB5lX0fk",
-            "valueType": "BOOLEAN"
+            "valueType": "BOOLEAN",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
@@ -365,7 +479,13 @@
                 "name": "Weight in kg"
             },
             "dimension": "vV9UWAZohSf",
-            "valueType": "INTEGER_POSITIVE"
+            "valueType": "INTEGER_POSITIVE",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         }
     ],
     "rows": [],

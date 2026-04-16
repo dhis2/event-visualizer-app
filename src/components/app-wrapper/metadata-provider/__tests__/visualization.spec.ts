@@ -3,10 +3,8 @@ import { describe, it, expect } from 'vitest'
 import {
     supplementDimensionMetadata,
     extractTrackedEntityTypeMetadata,
-    extractFixedDimensionsMetadata,
     extractProgramDimensionsMetadata,
     extractDimensionMetadata,
-    extractProgramMetadata,
 } from '../visualization'
 
 describe('supplementDimensionMetadata', () => {
@@ -334,46 +332,6 @@ describe('extractTrackedEntityTypeMetadata', () => {
     })
 })
 
-describe('extractFixedDimensionsMetadata', () => {
-    it('should return fixed dimensions metadata for TRACKED_ENTITY_INSTANCE with ou dimension', () => {
-        const visualization = {
-            outputType: 'TRACKED_ENTITY_INSTANCE' as const,
-            columns: [
-                {
-                    dimension: 'ou',
-                    dimensionType: 'ORGANISATION_UNIT',
-                } as DimensionRecord,
-            ],
-            rows: [],
-            filters: [],
-        } as unknown as SavedVisualization
-
-        const result = extractFixedDimensionsMetadata(visualization)
-
-        expect(result).toHaveProperty('ou')
-        expect(result.ou).toHaveProperty('id', 'ou')
-        expect(result.ou).toHaveProperty('dimensionType', 'ORGANISATION_UNIT')
-    })
-
-    it('should return empty object when no fixed dimensions match', () => {
-        const visualization = {
-            outputType: 'EVENT' as const,
-            columns: [
-                {
-                    dimension: 'dataElement1',
-                    dimensionType: 'DATA_ELEMENT',
-                } as DimensionRecord,
-            ],
-            rows: [],
-            filters: [],
-        } as unknown as SavedVisualization
-
-        const result = extractFixedDimensionsMetadata(visualization)
-
-        expect(result).toEqual({})
-    })
-})
-
 describe('extractProgramDimensionsMetadata', () => {
     it('should return program dimensions metadata for EVENT outputType', () => {
         const visualization = {
@@ -439,60 +397,6 @@ describe('extractDimensionMetadata', () => {
         const visualization = {} as SavedVisualization
 
         const result = extractDimensionMetadata(visualization)
-
-        expect(result).toEqual({})
-    })
-})
-
-describe('extractProgramMetadata', () => {
-    it('should return program and programStage metadata when both exist', () => {
-        const visualization = {
-            program: {
-                id: 'program1',
-                name: 'Program 1',
-            },
-            programStage: {
-                id: 'stage1',
-                name: 'Stage 1',
-            },
-        } as unknown as SavedVisualization
-
-        const result = extractProgramMetadata(visualization)
-
-        expect(result).toEqual({
-            program1: {
-                id: 'program1',
-                name: 'Program 1',
-            },
-            stage1: {
-                id: 'stage1',
-                name: 'Stage 1',
-            },
-        })
-    })
-
-    it('should return only program metadata when programStage does not exist', () => {
-        const visualization = {
-            program: {
-                id: 'program1',
-                name: 'Program 1',
-            },
-        } as unknown as SavedVisualization
-
-        const result = extractProgramMetadata(visualization)
-
-        expect(result).toEqual({
-            program1: {
-                id: 'program1',
-                name: 'Program 1',
-            },
-        })
-    })
-
-    it('should return empty object when neither program nor programStage exist', () => {
-        const visualization = {} as SavedVisualization
-
-        const result = extractProgramMetadata(visualization)
 
         expect(result).toEqual({})
     })

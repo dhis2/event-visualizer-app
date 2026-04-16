@@ -1,31 +1,26 @@
-import { DIMENSION_ID_ORGUNIT } from '@constants/dimensions'
-import i18n from '@dhis2/d2-i18n'
 import {
     combineAllDimensionsFromVisualization,
+    getEnrollmentFixedDimensions,
     getFullDimensionId,
     getMainDimensions,
-    getProgramDimensions,
+    getStageFixedDimensions,
     getTimeDimensionName,
     getTimeDimensions,
+    getTrackedEntityTypeFixedDimensions,
     getUiDimensionType,
 } from '@modules/dimension'
-import { transformVisualization } from '@modules/visualization'
 import type {
     MetadataInput,
     MetadataInputItem,
     MetadataInputMap,
     OrganisationUnitMetadataItem,
-    DimensionId,
     DimensionMetadataItem,
+    Program,
+    ProgramStage,
     SavedVisualization,
 } from '@types'
 import deepmerge from 'deepmerge'
 
-const FIXED_DIMENSION_LOOKUP = new Set<DimensionId>([
-    'ou',
-    'eventStatus',
-    'programStatus',
-])
 const DIMENSION_METADATA_PROP_MAP = {
     dataElementDimensions: 'dataElement',
     attributeDimensions: 'attribute',
@@ -35,29 +30,9 @@ const DIMENSION_METADATA_PROP_MAP = {
     organisationUnitGroupSetDimensions: 'organisationUnitGroupSet',
     dataElementGroupSetDimensions: 'dataElementGroupSet',
 }
-const getDefaultOrgUnitMetadata = (
-    outputType: SavedVisualization['outputType']
-) => ({
-    ou: {
-        id: 'ou',
-        dimensionType: 'ORGANISATION_UNIT',
-        name: getDefaultOrgUnitLabel(outputType),
-    },
-})
-
-const getDefaultOrgUnitLabel = (
-    outputType: SavedVisualization['outputType']
-) => {
-    if (outputType === 'TRACKED_ENTITY_INSTANCE') {
-        return i18n.t('Registration org. unit')
-    } else {
-        return i18n.t('Organisation unit')
-    }
-}
-
 const getDefaultDynamicTimeDimensionsMetadata = (
-    program?: SavedVisualization['program'],
-    stage?: SavedVisualization['programStage'],
+    program?: Program,
+    stage?: ProgramStage,
     outputType?: SavedVisualization['outputType']
 ): MetadataInputMap =>
     Object.values(getTimeDimensions()).reduce((acc, dimension) => {
@@ -87,44 +62,6 @@ export const extractTrackedEntityTypeMetadata = (
           }
         : {}
 
-export const extractFixedDimensionsMetadata = (
-    visualization: SavedVisualization
-): MetadataInputMap => {
-    const fixedDimensionsMetadata = {}
-    const dimensions = combineAllDimensionsFromVisualization(visualization)
-
-    for (const dimension of dimensions.filter(
-        (d) =>
-            FIXED_DIMENSION_LOOKUP.has(d.dimension as DimensionId) &&
-            d.program?.id
-    )) {
-        const dimensionId = getFullDimensionId({
-            dimensionId: dimension.dimension as DimensionId,
-            programId: dimension.program?.id,
-            outputType: visualization.outputType,
-        })
-        if (dimension.program?.id) {
-            const metadata = getProgramDimensions(dimension.program?.id)[
-                dimensionId
-            ]
-
-            if (metadata) {
-                fixedDimensionsMetadata[dimensionId] = metadata
-            }
-        }
-    }
-    if (
-        visualization.outputType === 'TRACKED_ENTITY_INSTANCE' &&
-        dimensions.some((d) => (d.dimension as DimensionId) === 'ou')
-    ) {
-        fixedDimensionsMetadata[DIMENSION_ID_ORGUNIT] =
-            getDefaultOrgUnitMetadata(visualization.outputType)[
-                DIMENSION_ID_ORGUNIT
-            ]
-    }
-    return fixedDimensionsMetadata
-}
-
 export const extractProgramDimensionsMetadata = (
     visualization: SavedVisualization
 ): MetadataInputMap => {
@@ -136,18 +73,6 @@ export const extractProgramDimensionsMetadata = (
 
     visualization.programDimensions.forEach((program) => {
         programDimensionsMetadata[program.id] = program
-        const timeDimensions = getDefaultDynamicTimeDimensionsMetadata(program)
-        Object.keys(timeDimensions).forEach((timeDimensionId) => {
-            const formattedId = getFullDimensionId({
-                dimensionId: timeDimensionId as DimensionId,
-                programId: program.id,
-                outputType: visualization.outputType,
-            })
-            programDimensionsMetadata[formattedId] = {
-                ...timeDimensions[timeDimensionId],
-                id: formattedId,
-            }
-        })
 
         if (program.programStages) {
             program.programStages.forEach((stage) => {
@@ -176,21 +101,6 @@ export const extractDimensionMetadata = (
         return metaData
     }, {})
     return dimensionMetadata
-}
-
-export const extractProgramMetadata = (
-    visualization: SavedVisualization
-): MetadataInputMap => {
-    const programAndStagesMetadata = {}
-    if (visualization.program) {
-        programAndStagesMetadata[visualization.program.id] =
-            visualization.program
-    }
-    if (visualization.programStage) {
-        programAndStagesMetadata[visualization.programStage.id] =
-            visualization.programStage
-    }
-    return programAndStagesMetadata
 }
 
 export const extractValueMetadata = (
@@ -242,14 +152,29 @@ export const supplementDimensionMetadata = (
                 outputType,
             })
 
-            const item: MetadataInputItem = {
-                id: prefixedId,
-                name: collectedItem.name,
-                dimensionType: getUiDimensionType(
-                    prefixedId,
-                    dimension.dimensionType!
-                ),
-            }
+            const item: MetadataInputItem = Object.entries(
+                collectedItem
+            ).reduce(
+                (acc, [key, value]) => {
+                    if (
+                        key !== 'uid' &&
+                        key !== 'id' &&
+                        key !== 'name' &&
+                        key !== 'dimensionType'
+                    ) {
+                        acc[key] = value
+                    }
+                    return acc
+                },
+                {
+                    id: prefixedId,
+                    name: collectedItem.name,
+                    dimensionType: getUiDimensionType(
+                        prefixedId,
+                        dimension.dimensionType!
+                    ),
+                }
+            )
 
             if (dimension.optionSet?.id) {
                 item.optionSetId = dimension.optionSet?.id
@@ -281,31 +206,57 @@ export const supplementDimensionMetadata = (
     return deepmerge(metadataInput, additionalDimensionMetadata)
 }
 
+const getFixedDimensionOverrides = (
+    visualization: SavedVisualization
+): MetadataInputMap => {
+    const overrides: MetadataInputMap = {}
+
+    for (const program of visualization.programDimensions ?? []) {
+        if (program.programType === 'WITH_REGISTRATION') {
+            for (const dim of getEnrollmentFixedDimensions(program)) {
+                overrides[dim.id] = dim
+            }
+        }
+
+        for (const stage of program.programStages ?? []) {
+            for (const dim of getStageFixedDimensions(program, stage)) {
+                overrides[dim.id] = dim
+            }
+        }
+    }
+
+    if (visualization.trackedEntityType) {
+        for (const dim of getTrackedEntityTypeFixedDimensions(
+            visualization.trackedEntityType
+        )) {
+            overrides[dim.id] = dim
+        }
+    }
+
+    return overrides
+}
+
 export const extractMetadataFromVisualization = (
     visualization: SavedVisualization
 ): MetadataInputMap => {
-    const transformedVisualization = transformVisualization(
-        visualization
-    ) as SavedVisualization
+    const program = visualization.programDimensions?.[0]
+    const stage = program?.programStages?.[0]
+
     /* Some of the collected metadata could contains duplicated IDs
      * (e.g. `programStage`) and these object may contain different fields.
      * So these objects should be merged rather than overwritten. */
     const sources: MetadataInputMap[] = [
         visualization.metaData,
-        getDefaultOrgUnitMetadata(visualization.outputType),
         getDefaultDynamicTimeDimensionsMetadata(
-            visualization.program,
-            visualization.programStage,
+            program,
+            stage,
             visualization.outputType
         ),
         getMainDimensions(visualization.outputType),
-        getProgramDimensions(visualization.program?.id),
-        extractTrackedEntityTypeMetadata(transformedVisualization),
-        extractFixedDimensionsMetadata(transformedVisualization),
-        extractProgramDimensionsMetadata(transformedVisualization),
-        extractDimensionMetadata(transformedVisualization),
-        extractProgramMetadata(transformedVisualization),
-        extractValueMetadata(transformedVisualization),
+        extractTrackedEntityTypeMetadata(visualization),
+        extractProgramDimensionsMetadata(visualization),
+        extractDimensionMetadata(visualization),
+        extractValueMetadata(visualization),
     ]
     const baseMetadataInput: MetadataInputMap = sources.reduce(
         (acc, obj) => deepmerge(acc, obj),
@@ -314,12 +265,36 @@ export const extractMetadataFromVisualization = (
 
     const supplementedMetadataInput = supplementDimensionMetadata(
         baseMetadataInput,
-        transformedVisualization
+        visualization
+    )
+
+    // Overlay fixed dimensions with canonical names from shared helpers.
+    // Applied after supplement so the shared helpers' names win.
+    const withFixedNames = deepmerge(
+        supplementedMetadataInput,
+        getFixedDimensionOverrides(visualization)
     )
 
     addPathToOrganisationUnitMetadataItems(
-        supplementedMetadataInput,
-        transformedVisualization.parentGraphMap
+        withFixedNames,
+        visualization.parentGraphMap
     )
-    return supplementedMetadataInput
+
+    // Remove plain-keyed entries that now have a compound counterpart.
+    // The compound entries carry all the fields (code, dimensionType, etc.),
+    // so the plain duplicates are no longer needed.
+    const dimensions = combineAllDimensionsFromVisualization(visualization)
+    for (const dimension of dimensions) {
+        const compoundId = getFullDimensionId({
+            dimensionId: dimension.dimension,
+            programStageId: dimension.programStage?.id,
+            programId: dimension.program?.id,
+            outputType: visualization.outputType,
+        })
+        if (compoundId !== dimension.dimension && withFixedNames[compoundId]) {
+            delete withFixedNames[dimension.dimension]
+        }
+    }
+
+    return withFixedNames
 }
