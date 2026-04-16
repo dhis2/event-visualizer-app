@@ -9,6 +9,7 @@ import {
     type UseSelectedDimensionCountMatchFn,
 } from '@components/main-sidebar/use-selected-dimension-count'
 import i18n from '@dhis2/d2-i18n'
+import { getTrackedEntityTypeFixedDimensions } from '@modules/dimension'
 import { isObject, isPopulatedString } from '@modules/validation'
 import type {
     DimensionMetadataItem,
@@ -61,26 +62,7 @@ const transformer: Transformer = (data) => {
     }
 }
 
-export const getFixedDimensions = (
-    trackedEntityType: MetadataItem
-): DimensionMetadataItem[] => {
-    return [
-        {
-            id: `${trackedEntityType.id}.ou`,
-            dimensionId: 'ou',
-            dimensionType: 'ORGANISATION_UNIT',
-            name: i18n.t('Registration org. unit'),
-            valueType: 'ORGANISATION_UNIT',
-        },
-        {
-            id: `${trackedEntityType.id}.created`,
-            dimensionId: 'created',
-            dimensionType: 'PERIOD',
-            name: i18n.t('Registration date'),
-            valueType: 'DATE',
-        },
-    ]
-}
+export const getFixedDimensions = getTrackedEntityTypeFixedDimensions
 
 export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
     trackedEntityType,

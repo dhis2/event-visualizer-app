@@ -427,8 +427,7 @@ export const normalizeApiSavedVisualization = (
     // data-element / attribute UID (non-legacy usage that the analytics
     // request still needs).
     const preserveTimeField =
-        typeof timeField === 'string' &&
-        !KNOWN_TIME_FIELD_VALUES.has(timeField)
+        typeof timeField === 'string' && !KNOWN_TIME_FIELD_VALUES.has(timeField)
 
     // Detect either legacy shape — shape-1 carried an explicit `legacy: true`
     // flag; shape-2 didn't, but having top-level program/programStage is the

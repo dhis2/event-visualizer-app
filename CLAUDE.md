@@ -476,6 +476,44 @@ for EVENT/ENROLLMENT via pure string manipulation (drop the first segment). For 
 the programId is preserved. `programId.dimensionId` keys in TRACKED_ENTITY context are stored
 as-is because they are semantically tied to the program (enrollment scope), not to any stage.
 
+### Fixed dimensions
+
+Fixed dimensions are the structural dimensions that exist for every program/stage (org units,
+dates, statuses). They are built by shared helpers in `src/modules/dimension.ts`
+(`getStageFixedDimensions`, `getEnrollmentFixedDimensions`, `getTrackedEntityTypeFixedDimensions`)
+and consumed by both the sidebar cards and the metadata provider.
+
+| Scope       | Dimension ID     | Compound ID notation            | Display name source                                   | Sidebar card    |
+| ----------- | ---------------- | ------------------------------- | ----------------------------------------------------- | --------------- |
+| Stage       | `ou`             | `stageId.ou`                    | `program.displayOrgUnitLabel` or "Event org. unit"    | Stage           |
+| Stage       | `eventDate`      | `stageId.eventDate`             | `stage.displayExecutionDateLabel` or "Event date"     | Stage           |
+| Stage       | `scheduledDate`  | `stageId.scheduledDate`         | `stage.displayDueDateLabel` or "Scheduled date"       | Stage           |
+| Stage       | `eventStatus`    | `stageId.eventStatus`           | "Event status"                                        | Stage           |
+| Enrollment  | `ou`             | `programId.ou`                  | `program.displayOrgUnitLabel` or "Enrollment org. unit" | Enrollment    |
+| Enrollment  | `enrollmentDate` | `programId.enrollmentDate`      | `program.displayEnrollmentDateLabel` or "Date of enrollment" | Enrollment |
+| Enrollment  | `incidentDate`   | `programId.incidentDate`        | `program.displayIncidentDateLabel` or "Incident date" | Enrollment      |
+| Enrollment  | `programStatus`  | `programId.programStatus`       | "Enrollment status"                                   | Enrollment      |
+| TEI         | `ou`             | `trackedEntityTypeId.ou`        | "Registration org. unit"                              | Registration    |
+| TEI         | `created`        | `trackedEntityTypeId.created`   | "Registration date"                                   | Registration    |
+
+Non-fixed dimensions (data elements, program indicators, attributes, categories, COGS) use
+`stageId.dimensionId` and get their names from the visualization's `metaData` or from the
+`dataElementDimensions` / `programIndicatorDimensions` / etc. arrays.
+
+Plain dimensions (no compound prefix): `lastUpdated`, `createdBy`, `lastUpdatedBy`, `created`,
+`completed` appear in the Metadata sidebar card and are output-type-agnostic.
+
+**Org unit disambiguation**: the plain dimension ID `ou` appears in multiple scopes. The context
+determines which org unit it represents:
+
+- `ou` + `programStage` → event org unit (stage-scoped)
+- `ou` + `program` (no `programStage`) → enrollment org unit (program-scoped)
+- `ou` alone (no `program` or `programStage`) → registration org unit (TEI-scoped)
+
+**`enrollmentOu` note**: the app uses `enrollmentOu` as the internal dimension ID for enrollment
+org unit, but the analytics query parameter is just `ou` (without program prefix). The translation
+happens at the analytics request boundary.
+
 ### Save/load translation at the visualization API boundary
 
 **Loading** (API → frontend): `acSetVisualization` reads each dimension's `program` and

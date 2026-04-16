@@ -1,8 +1,4 @@
-import {
-    PROGRAM_DIMENSION_TYPES,
-    TIME_DIMENSION_IDS,
-    YOUR_DIMENSION_TYPES,
-} from '@constants/dimensions'
+import { TIME_DIMENSION_IDS } from '@constants/dimensions'
 import i18n from '@dhis2/d2-i18n'
 import {
     getDefaultOrgUnitLabel,
@@ -17,13 +13,10 @@ import type {
     DimensionType,
     OutputType,
     Program,
-    ProgramDimensionType,
     ProgramStage,
     TimeDimensionId,
     ValueType,
-    YourDimensionType,
 } from '@types'
-import { isPopulatedString } from './validation'
 
 export const outputTypeTimeDimensionMap: Record<OutputType, DimensionId> = {
     EVENT: 'eventDate',
@@ -54,18 +47,6 @@ export const timeFieldTimeDimensionMap: Record<string, DimensionId> = {
 export const KNOWN_TIME_FIELD_VALUES: ReadonlySet<string> = new Set(
     Object.keys(timeFieldTimeDimensionMap)
 )
-
-export const extractPlainDimensionId = (input: string): string => {
-    if (!isPopulatedString(input)) {
-        throw new Error('Input is not a populated string')
-    }
-    const dimensionId = input.split('.').pop()
-
-    if (!isPopulatedString(dimensionId)) {
-        throw new Error(`Input "${input}" does not contain a dimension ID`)
-    }
-    return dimensionId
-}
 
 export const getDimensionsWithSuffix = ({
     dimensionIds,
@@ -288,17 +269,6 @@ export const transformDimensions = (
             return dimensionObj
         })
 
-// Type guards
-export const isProgramDimensionType = (
-    dimensionType: DimensionType
-): dimensionType is ProgramDimensionType =>
-    (PROGRAM_DIMENSION_TYPES as readonly string[]).includes(dimensionType)
-
-export const isYourDimensionType = (
-    dimensionType: DimensionType
-): dimensionType is YourDimensionType =>
-    (YOUR_DIMENSION_TYPES as readonly string[]).includes(dimensionType)
-
 export const isTimeDimensionId = (
     dimensionId: DimensionRecord['dimension']
 ): dimensionId is TimeDimensionId =>
@@ -418,4 +388,110 @@ export const combineAllDimensionsFromVisualization = (
     ...(visualization.columns || []),
     ...(visualization.rows || []),
     ...(visualization.filters || []),
+]
+
+// ---------------------------------------------------------------------------
+// Fixed dimension builders — shared between sidebar and metadata provider.
+// These are the canonical source of truth for fixed dimension names.
+// ---------------------------------------------------------------------------
+
+export const getStageFixedDimensions = (
+    program: Program,
+    programStage: ProgramStage
+): DimensionMetadataItem[] => [
+    {
+        id: `${programStage.id}.ou`,
+        dimensionId: 'ou',
+        dimensionType: 'ORGANISATION_UNIT',
+        name: program.displayOrgUnitLabel ?? i18n.t('Event org. unit'),
+        programId: program.id,
+        programStageId: programStage.id,
+        valueType: 'ORGANISATION_UNIT',
+    },
+    {
+        id: `${programStage.id}.eventDate`,
+        dimensionId: 'eventDate',
+        dimensionType: 'PERIOD',
+        name: programStage.displayExecutionDateLabel ?? i18n.t('Event date'),
+        programId: program.id,
+        programStageId: programStage.id,
+        valueType: 'DATE',
+    },
+    {
+        id: `${programStage.id}.scheduledDate`,
+        dimensionId: 'scheduledDate',
+        dimensionType: 'PERIOD',
+        name: programStage.displayDueDateLabel ?? i18n.t('Scheduled date'),
+        programId: program.id,
+        programStageId: programStage.id,
+        valueType: 'DATE',
+    },
+    {
+        id: `${programStage.id}.eventStatus`,
+        dimensionId: 'eventStatus',
+        dimensionType: 'STATUS',
+        name: i18n.t('Event status'),
+        programId: program.id,
+        programStageId: programStage.id,
+        valueType: 'TEXT',
+    },
+]
+
+export const getEnrollmentFixedDimensions = (
+    program: Program
+): DimensionMetadataItem[] => [
+    {
+        id: `${program.id}.ou`,
+        dimensionId: 'ou',
+        dimensionType: 'ORGANISATION_UNIT',
+        name: program.displayOrgUnitLabel ?? i18n.t('Enrollment org. unit'),
+        programId: program.id,
+        valueType: 'ORGANISATION_UNIT',
+    },
+    {
+        id: `${program.id}.enrollmentDate`,
+        dimensionId: 'enrollmentDate',
+        dimensionType: 'PERIOD',
+        name:
+            program.displayEnrollmentDateLabel ?? i18n.t('Date of enrollment'),
+        programId: program.id,
+        valueType: 'DATE',
+    },
+    {
+        id: `${program.id}.incidentDate`,
+        dimensionId: 'incidentDate',
+        dimensionType: 'PERIOD',
+        name: program.displayIncidentDateLabel ?? i18n.t('Incident date'),
+        programId: program.id,
+        valueType: 'DATE',
+    },
+    {
+        id: `${program.id}.programStatus`,
+        dimensionId: 'programStatus',
+        dimensionType: 'STATUS',
+        name: i18n.t('Enrollment status'),
+        programId: program.id,
+        valueType: 'TEXT',
+    },
+]
+
+export const getTrackedEntityTypeFixedDimensions = (trackedEntityType: {
+    id: string
+}): DimensionMetadataItem[] => [
+    {
+        id: `${trackedEntityType.id}.ou`,
+        dimensionId: 'ou',
+        dimensionType: 'ORGANISATION_UNIT',
+        name: i18n.t('Registration org. unit'),
+        trackedEntityTypeId: trackedEntityType.id,
+        valueType: 'ORGANISATION_UNIT',
+    },
+    {
+        id: `${trackedEntityType.id}.created`,
+        dimensionId: 'created',
+        dimensionType: 'PERIOD',
+        name: i18n.t('Registration date'),
+        trackedEntityTypeId: trackedEntityType.id,
+        valueType: 'DATE',
+    },
 ]

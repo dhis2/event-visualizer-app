@@ -6,7 +6,6 @@ import type {
 } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
-    extractPlainDimensionId,
     getFullDimensionId,
     getDimensionIdParts,
     getDimensionsWithSuffix,
@@ -14,50 +13,12 @@ import {
     getMainDimensions,
     getProgramDimensions,
     transformDimensions,
-    isProgramDimensionType,
-    isYourDimensionType,
     isTimeDimensionId,
     getTimeDimensions,
     getTimeDimensionName,
 } from '../dimension'
 
 const outputType = 'EVENT'
-
-describe('extractPlainDimensionId', () => {
-    it('throws error for empty string', () => {
-        expect(() => extractPlainDimensionId('')).toThrow(
-            'Input is not a populated string'
-        )
-    })
-
-    it('throws error for whitespace-only string', () => {
-        expect(() => extractPlainDimensionId('   ')).toThrow(
-            'Input is not a populated string'
-        )
-    })
-
-    it('throws error when input ends with dot', () => {
-        expect(() => extractPlainDimensionId('dimension.')).toThrow(
-            'Input "dimension." does not contain a dimension ID'
-        )
-    })
-
-    it('extracts dimension ID from all valid nested dimension ID formats', () => {
-        expect(extractPlainDimensionId('dimensionId')).toBe('dimensionId')
-        expect(extractPlainDimensionId('unknownId.dimensionId')).toBe(
-            'dimensionId'
-        )
-        expect(extractPlainDimensionId('unknownId[-1].dimensionId')).toBe(
-            'dimensionId'
-        )
-        expect(extractPlainDimensionId('programId.stageId.dimensionId')).toBe(
-            'dimensionId'
-        )
-        expect(
-            extractPlainDimensionId('programId.stageId[1].dimensionId')
-        ).toBe('dimensionId')
-    })
-})
 
 describe('getFullDimensionId', () => {
     it('returns correct result for: dimensionId', () => {
@@ -530,35 +491,6 @@ describe('getDimensionsWithSuffix', () => {
             outputType: 'TRACKED_ENTITY_INSTANCE',
         })
         expect(result[0].suffix).toBe('Program Name')
-    })
-})
-
-describe('isProgramDimensionType', () => {
-    it('returns true for program dimension types', () => {
-        expect(isProgramDimensionType('DATA_ELEMENT')).toBe(true)
-        expect(isProgramDimensionType('PROGRAM_ATTRIBUTE')).toBe(true)
-        expect(isProgramDimensionType('PROGRAM_INDICATOR')).toBe(true)
-        expect(isProgramDimensionType('CATEGORY')).toBe(true)
-        expect(isProgramDimensionType('CATEGORY_OPTION_GROUP_SET')).toBe(true)
-    })
-
-    it('returns false for non-program dimension types', () => {
-        expect(isProgramDimensionType('PERIOD')).toBe(false)
-        expect(isProgramDimensionType('ORGANISATION_UNIT')).toBe(false)
-        expect(isProgramDimensionType('USER')).toBe(false)
-        expect(isProgramDimensionType('STATUS')).toBe(false)
-    })
-})
-
-describe('isYourDimensionType', () => {
-    it('returns true for your dimension types', () => {
-        expect(isYourDimensionType('ORGANISATION_UNIT_GROUP_SET')).toBe(true)
-    })
-
-    it('returns false for non-your dimension types', () => {
-        expect(isYourDimensionType('DATA_ELEMENT')).toBe(false)
-        expect(isYourDimensionType('PERIOD')).toBe(false)
-        expect(isYourDimensionType('ORGANISATION_UNIT')).toBe(false)
     })
 })
 

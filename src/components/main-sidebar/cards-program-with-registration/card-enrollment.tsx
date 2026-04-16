@@ -8,59 +8,19 @@ import {
     type UseSelectedDimensionCountMatchFn,
 } from '@components/main-sidebar/use-selected-dimension-count'
 import i18n from '@dhis2/d2-i18n'
-import type {
-    DataSourceProgramWithRegistration,
-    DimensionMetadataItem,
-    DimensionType,
-} from '@types'
+import { getEnrollmentFixedDimensions } from '@modules/dimension'
+import type { DataSourceProgramWithRegistration, DimensionType } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
 
 type CardEnrollmentProps = {
     program: DataSourceProgramWithRegistration
 }
 
-const getFixedDimensions = (
-    program: DataSourceProgramWithRegistration
-): DimensionMetadataItem[] => {
-    return [
-        {
-            id: `${program.id}.ou`,
-            dimensionId: 'ou',
-            dimensionType: 'ORGANISATION_UNIT',
-            name: program.displayOrgUnitLabel ?? i18n.t('Enrollment org. unit'),
-            valueType: 'ORGANISATION_UNIT',
-        },
-        {
-            id: `${program.id}.enrollmentDate`,
-            dimensionId: 'enrollmentDate',
-            dimensionType: 'PERIOD',
-            name:
-                program.displayEnrollmentDateLabel ??
-                i18n.t('Date of enrollment'),
-            valueType: 'DATE',
-        },
-        {
-            id: `${program.id}.incidentDate`,
-            dimensionId: 'incidentDate',
-            dimensionType: 'PERIOD',
-            name: program.displayIncidentDateLabel ?? i18n.t('Incident date'),
-            valueType: 'DATE',
-        },
-        {
-            id: `${program.id}.programStatus`,
-            dimensionId: 'programStatus',
-            dimensionType: 'STATUS',
-            name: i18n.t('Enrollment status'),
-            valueType: 'TEXT',
-        },
-    ]
-}
-
 export const CardEnrollment: FC<CardEnrollmentProps> = ({ program }) => {
     const dimensionCardKey = 'enrollment'
     const title = program.displayEnrollmentLabel ?? i18n.t('Enrollment data')
     const fixedDimensions = useMemo(
-        () => getFixedDimensions(program),
+        () => getEnrollmentFixedDimensions(program),
         [program]
     )
     const dimensionTypeLookup = useMemo(

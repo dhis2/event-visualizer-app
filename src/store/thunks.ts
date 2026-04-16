@@ -3,10 +3,7 @@ import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { extractDataSourceIdFromVisualization } from '@modules/data-source'
 import { formatLayoutForVisualization } from '@modules/layout'
 import { getDisabledOptions } from '@modules/options'
-import {
-    getVisualizationUiConfig,
-    toCurrentVis,
-} from '@modules/visualization'
+import { getVisualizationUiConfig, toCurrentVis } from '@modules/visualization'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import type { AppDispatch, CurrentVisualization } from '@types'
 import deepmerge from 'deepmerge'
