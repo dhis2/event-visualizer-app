@@ -12,7 +12,7 @@ import {
     getSingleProgramStageFromVisualization,
     isVisualizationEmpty,
     isVisualizationWithTimeDimension,
-    transformVisualization,
+    transformVisualizationForAnalyticsRequest,
 } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { useCallback, useState } from 'react'
@@ -41,7 +41,8 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
 
             let target = '_top'
 
-            const visualization = transformVisualization(currentVis)
+            const visualization =
+                transformVisualizationForAnalyticsRequest(currentVis)
 
             const { adaptedVisualization, headers, parameters } =
                 getAdaptedVisualization(visualization)

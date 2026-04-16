@@ -1,5 +1,5 @@
 import { PivotTable } from '@dhis2/analytics'
-import { transformVisualization } from '@modules/visualization'
+import { transformVisualizationForAnalyticsRequest } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, DimensionRecord } from '@types'
 import { type FC, useEffect, useMemo } from 'react'
 import type { OnAnalyticsResponseReceivedCb } from './hooks/use-line-list-analytics-data'
@@ -47,7 +47,8 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
 
     useEffect(() => {
         fetchAnalyticsData({
-            visualization: transformVisualization(visualization),
+            visualization:
+                transformVisualizationForAnalyticsRequest(visualization),
             filters,
             displayProperty,
             onResponseReceived,

@@ -1,7 +1,7 @@
 import { LineList } from '@components/line-list'
 import type { LineListAnalyticsData } from '@components/line-list'
 import type { DataSortFn, PaginateFn } from '@components/line-list/types'
-import { transformVisualization } from '@modules/visualization'
+import { transformVisualizationForAnalyticsRequest } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FC } from 'react'
@@ -58,7 +58,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     const onPaginate = useCallback<PaginateFn>(
         ({ page, pageSize }) => {
             fetchAnalyticsData({
-                visualization: transformVisualization(eventVisualization),
+                visualization: transformVisualizationForAnalyticsRequest(eventVisualization),
                 filters,
                 displayProperty,
                 onResponseReceived,
@@ -96,7 +96,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
 
     useEffect(() => {
         fetchAnalyticsData({
-            visualization: transformVisualization(eventVisualization),
+            visualization: transformVisualizationForAnalyticsRequest(eventVisualization),
             filters,
             displayProperty,
             onResponseReceived,

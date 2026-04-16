@@ -1,8 +1,8 @@
 import type {
     DimensionArray,
-    CurrentVisualization,
-    SavedVisualization,
     DimensionMetadataItem,
+    Program,
+    ProgramStage,
 } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
@@ -410,11 +410,7 @@ describe('transformDimensions', () => {
                 items: [],
             },
         ] as unknown as DimensionArray
-        const visualization = {
-            outputType: 'EVENT',
-            type: 'LINE_LIST',
-        } as CurrentVisualization
-        const result = transformDimensions(dimensions, visualization)
+        const result = transformDimensions(dimensions)
         expect(result).toMatchInlineSnapshot(`
           [
             {
@@ -426,20 +422,19 @@ describe('transformDimensions', () => {
         `)
     })
 
-    it('transforms pe dimension to appropriate time dimension for LINE_LIST', () => {
+    it('strips dy, latitude, and longitude dimensions', () => {
         const dimensions = [
-            { dimension: 'pe', dimensionType: 'PERIOD', items: [] },
+            { dimension: 'ou', dimensionType: 'ORGANISATION_UNIT', items: [] },
+            { dimension: 'dy', dimensionType: 'DATA_X', items: [] },
+            { dimension: 'latitude', dimensionType: 'COORDINATE', items: [] },
+            { dimension: 'longitude', dimensionType: 'COORDINATE', items: [] },
         ] as unknown as DimensionArray
-        const visualization = {
-            outputType: 'EVENT',
-            type: 'LINE_LIST',
-        } as CurrentVisualization
-        const result = transformDimensions(dimensions, visualization)
+        const result = transformDimensions(dimensions)
         expect(result).toMatchInlineSnapshot(`
           [
             {
-              "dimension": "eventDate",
-              "dimensionType": "PERIOD",
+              "dimension": "ou",
+              "dimensionType": "ORGANISATION_UNIT",
               "items": [],
             },
           ]
@@ -449,18 +444,19 @@ describe('transformDimensions', () => {
     it('leaves other dimensions unchanged', () => {
         const dimensions = [
             { dimension: 'ou', dimensionType: 'ORGANISATION_UNIT', items: [] },
-            { dimension: 'longitude', dimensionType: 'COORDINATE', items: [] },
+            { dimension: 'eventDate', dimensionType: 'PERIOD', items: [] },
         ] as unknown as DimensionArray
-        const visualization = {
-            outputType: 'EVENT',
-            type: 'LINE_LIST',
-        } as CurrentVisualization
-        const result = transformDimensions(dimensions, visualization)
+        const result = transformDimensions(dimensions)
         expect(result).toMatchInlineSnapshot(`
           [
             {
               "dimension": "ou",
               "dimensionType": "ORGANISATION_UNIT",
+              "items": [],
+            },
+            {
+              "dimension": "eventDate",
+              "dimensionType": "PERIOD",
               "items": [],
             },
           ]
@@ -653,11 +649,11 @@ describe('getTimeDimensionName', () => {
         displayEnrollmentDateLabel: 'Custom Enrollment Date',
         displayIncidentDateLabel: 'Custom Incident Date',
         programType: 'WITH_REGISTRATION',
-    } as unknown as SavedVisualization['program']
+    } as unknown as Program
     const mockStage = {
         displayExecutionDateLabel: 'Custom Event Date',
         displayDueDateLabel: 'Custom Due Date',
-    } as unknown as SavedVisualization['programStage']
+    } as unknown as ProgramStage
 
     it('returns default name when no program provided', () => {
         const dimension = getTimeDimensions().eventDate
@@ -690,7 +686,7 @@ describe('getTimeDimensionName', () => {
         const dimension = getTimeDimensions().incidentDate
         const programWithoutLabel = {
             programType: 'WITH_REGISTRATION',
-        } as unknown as SavedVisualization['program']
+        } as unknown as Program
         expect(getTimeDimensionName(dimension, programWithoutLabel)).toBe(
             'Incident date'
         )

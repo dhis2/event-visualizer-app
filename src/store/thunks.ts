@@ -5,7 +5,7 @@ import { formatLayoutForVisualization } from '@modules/layout'
 import { getDisabledOptions } from '@modules/options'
 import {
     getVisualizationUiConfig,
-    transformVisualization,
+    toCurrentVis,
 } from '@modules/visualization'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import type { AppDispatch, CurrentVisualization } from '@types'
@@ -62,19 +62,14 @@ export const tLoadSavedVisualization = createAsyncThunk<
             })
         )
         if (data) {
-            const transformedVisualization = transformVisualization(data)
-            const selectedDataSourceId = extractDataSourceIdFromVisualization(
-                transformedVisualization
-            )
+            const currentVis = toCurrentVis(data)
+            const selectedDataSourceId =
+                extractDataSourceIdFromVisualization(currentVis)
 
             dispatch(setSavedVis(data))
             dispatch(setDataSourceId(selectedDataSourceId))
-            dispatch(
-                setVisUiConfig(
-                    getVisualizationUiConfig(transformedVisualization)
-                )
-            )
-            dispatch(setCurrentVis(data))
+            dispatch(setVisUiConfig(getVisualizationUiConfig(currentVis)))
+            dispatch(setCurrentVis(currentVis))
             dispatch(setIsVisualizationLoading(false))
 
             if (updateStatistics) {

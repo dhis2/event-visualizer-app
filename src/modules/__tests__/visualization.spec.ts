@@ -337,6 +337,7 @@ describe('getSaveableVisualization', () => {
                     valueType: 'TEXT',
                 },
             ],
+            rows: [],
             filters: [
                 {
                     dimension: 'b',
@@ -361,32 +362,11 @@ describe('getSaveableVisualization', () => {
         expect('valueType' in filt0).toBe(false)
     })
 
-    it('removes programStage when id is not provided', () => {
-        const vis = {
-            programStage: {},
-            columns: [],
-            filters: [],
-        } as unknown as SavedVisualization
-
-        const saved = getSaveableVisualization(vis)
-        expect(saved.programStage).toBeUndefined()
-    })
-
-    it('keeps programStage when id is present', () => {
-        const vis = {
-            programStage: { id: 'stage-1', name: 'Stage 1' },
-            columns: [],
-            filters: [],
-        } as unknown as SavedVisualization
-
-        const saved = getSaveableVisualization(vis)
-        expect(saved.programStage).toEqual({ id: 'stage-1', name: 'Stage 1' })
-    })
-
     it('removes legacy property before saving', () => {
         const vis = {
             legacy: true,
             columns: [],
+            rows: [],
             filters: [],
         } as unknown as SavedVisualization
 
@@ -401,6 +381,7 @@ describe('getSaveableVisualization', () => {
                 { dimension: 'other', direction: 'asc' },
             ],
             columns: [],
+            rows: [],
             filters: [],
         } as unknown as SavedVisualization
 
@@ -415,11 +396,13 @@ describe('getSaveableVisualization', () => {
     it('sets sorting to undefined when sorting is not provided or empty', () => {
         const vis1 = {
             columns: [],
+            rows: [],
             filters: [],
         } as unknown as SavedVisualization
         const vis2 = {
             sorting: [],
             columns: [],
+            rows: [],
             filters: [],
         } as unknown as SavedVisualization
 
