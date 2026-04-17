@@ -1,5 +1,6 @@
 import {
     combineAllDimensionsFromVisualization,
+    getCompoundDimensionId,
     getEnrollmentFixedDimensions,
     getFullDimensionId,
     getMainDimensions,
@@ -146,12 +147,7 @@ export const supplementDimensionMetadata = (
                 return metadata
             }
 
-            const prefixedId = getFullDimensionId({
-                dimensionId: dimension.dimension,
-                programStageId: dimension.programStage?.id,
-                programId: dimension.program?.id,
-                outputType,
-            })
+            const prefixedId = getCompoundDimensionId(dimension, outputType)
 
             const item: MetadataInputItem = Object.entries(
                 collectedItem
@@ -295,12 +291,7 @@ export const extractMetadataFromVisualization = (
     // so the plain duplicates are no longer needed.
     const dimensions = combineAllDimensionsFromVisualization(vis)
     for (const dimension of dimensions) {
-        const compoundId = getFullDimensionId({
-            dimensionId: dimension.dimension,
-            programStageId: dimension.programStage?.id,
-            programId: dimension.program?.id,
-            outputType: vis.outputType,
-        })
+        const compoundId = getCompoundDimensionId(dimension, vis.outputType)
         if (compoundId !== dimension.dimension && withFixedNames[compoundId]) {
             delete withFixedNames[dimension.dimension]
         }
