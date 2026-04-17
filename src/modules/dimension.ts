@@ -391,16 +391,15 @@ export const combineAllDimensionsFromVisualization = (
 ]
 
 // ---------------------------------------------------------------------------
-// API → app-local dimension ID translation.
-// Applied at the boundary between SavedVisualization/CurrentVisualization
-// (Web API layer, uses API dimension IDs) and the app-local layer
-// (visUiConfig layout, metadata store, which uses canonical app IDs).
+// Dimension ID translation between API and app-local layers.
 //
-// Currently translates:
-// - `ou` → `enrollmentOu` for enrollment-scoped org unit dimensions
-//   (has `program` but no `programStage`)
+// SavedVisualization/CurrentVisualization use API dimension IDs (e.g. `ou`
+// for enrollment org unit). The app-local layer (visUiConfig, metadata store)
+// uses distinct IDs (e.g. `enrollmentOu`). These functions translate at the
+// boundary.
 // ---------------------------------------------------------------------------
 
+/** Forward: API → app-local dimension IDs on a DimensionArray. */
 export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
     dims.map((dim) => {
         if (dim.dimension === 'ou' && dim.program && !dim.programStage) {
@@ -408,6 +407,10 @@ export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
         }
         return dim
     })
+
+/** Inverse: app-local → API dimension ID (single dimension). */
+export const toApiDimensionId = (dimId: string): string =>
+    dimId === 'enrollmentOu' ? 'ou' : dimId
 
 /**
  * Constructs the canonical compound dimension ID from a DimensionRecord.

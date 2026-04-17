@@ -1,6 +1,11 @@
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
+import type { DimensionMetadataItem } from '@types'
 import { describe, it, expect } from 'vitest'
 import { formatLayoutForVisualization } from '../layout'
+
+const makeDim = (
+    overrides: Partial<DimensionMetadataItem>
+): DimensionMetadataItem => overrides as DimensionMetadataItem
 
 const testCases = {
     lineListEnrollment: {
@@ -40,6 +45,21 @@ const testCases = {
                 rows: [],
                 filters: [],
             },
+        },
+        metadata: {
+            ou: makeDim({ dimensionId: 'ou' }),
+            bcgDoses: makeDim({ dimensionId: 'bcgDoses' }),
+            lastName: makeDim({ dimensionId: 'lastName' }),
+            enrollmentDate: makeDim({ dimensionId: 'enrollmentDate' }),
+            programStatus: makeDim({ dimensionId: 'programStatus' }),
+            'birth.infantFeeding': makeDim({
+                dimensionId: 'infantFeeding',
+                programStageId: 'birth',
+            }),
+            'babyPostnatal.infantFeeding': makeDim({
+                dimensionId: 'infantFeeding',
+                programStageId: 'babyPostnatal',
+            }),
         },
         expected: {
             rows: [],
@@ -120,6 +140,13 @@ const testCases = {
                 filters: [],
             },
         },
+        metadata: {
+            ou: makeDim({ dimensionId: 'ou' }),
+            enrollmentDate: makeDim({ dimensionId: 'enrollmentDate' }),
+            firstName: makeDim({ dimensionId: 'firstName' }),
+            bcgDoses: makeDim({ dimensionId: 'bcgDoses' }),
+            facilityOwnership: makeDim({ dimensionId: 'facilityOwnership' }),
+        },
         expected: {
             rows: [],
             columns: [
@@ -188,6 +215,25 @@ const testCases = {
                 filters: [],
             },
         },
+        metadata: {
+            ou: makeDim({ dimensionId: 'ou' }),
+            focusName: makeDim({ dimensionId: 'focusName' }),
+            localFocusId: makeDim({ dimensionId: 'localFocusId' }),
+            area: makeDim({ dimensionId: 'area' }),
+            'program1Id.ou': makeDim({
+                dimensionId: 'ou',
+                programId: 'program1Id',
+            }),
+            'program1Id.enrollmentDate': makeDim({
+                dimensionId: 'enrollmentDate',
+                programId: 'program1Id',
+            }),
+            'program1Id.stage1Id.focusDateOfClassification': makeDim({
+                dimensionId: 'focusDateOfClassification',
+                programId: 'program1Id',
+                programStageId: 'stage1Id',
+            }),
+        },
         expected: {
             rows: [],
             columns: [
@@ -253,9 +299,12 @@ const testCases = {
 describe('formatLayoutForVisualization', () => {
     it.each(Object.entries(testCases))(
         'should return correct columns/rows/filters from visUiConfig %s layout',
-        (name, { input, expected }) => {
+        (_name, { input, metadata, expected }) => {
+            const getDimension = (id: string) =>
+                (metadata as Record<string, DimensionMetadataItem>)[id]
             const result = formatLayoutForVisualization(
-                input as unknown as VisUiConfigState
+                input as unknown as VisUiConfigState,
+                getDimension
             )
             expect(result).toEqual(expected)
         }

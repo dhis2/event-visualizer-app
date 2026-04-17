@@ -1,9 +1,9 @@
 import { dimensionCreate } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import { getDimensionIdParts } from '@modules/dimension'
+import { toApiDimensionId } from '@modules/dimension'
 import { parseUiRepetitions } from '@modules/repetitions'
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
-import type { Axis, Layout } from '@types'
+import type { Axis, DimensionMetadataItem, Layout } from '@types'
 
 export const getAxisName = (axisId: Axis): string => getAxisNames()[axisId]
 
@@ -21,20 +21,24 @@ export const isDimensionInLayout = (
         axisDimensionIds.includes(dimensionId)
     )
 
-export const formatLayoutForVisualization = (visUiConfig: VisUiConfigState) =>
+type DimensionLookup = (compoundId: string) => DimensionMetadataItem | undefined
+
+export const formatLayoutForVisualization = (
+    visUiConfig: VisUiConfigState,
+    getDimension: DimensionLookup
+) =>
     Object.entries(visUiConfig.layout).reduce(
         (layout, [axisId, dimensionIds]: [string, string[]]) => ({
             ...layout,
             [axisId]: dimensionIds
                 .map((id) => {
-                    const { programId, programStageId, dimensionId } =
-                        getDimensionIdParts({
-                            id,
-                            outputType: visUiConfig.outputType,
-                        })
+                    const dim = getDimension(id)
+                    const dimensionId = dim?.dimensionId ?? id
+                    const programId = dim?.programId
+                    const programStageId = dim?.programStageId
 
                     return dimensionCreate(
-                        dimensionId,
+                        toApiDimensionId(dimensionId),
                         visUiConfig.itemsByDimension[id],
                         {
                             filter: visUiConfig.conditionsByDimension[id]

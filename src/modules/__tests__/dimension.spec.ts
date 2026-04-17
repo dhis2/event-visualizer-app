@@ -17,6 +17,7 @@ import {
     getTimeDimensions,
     getTimeDimensionName,
     toAppLocalDimensions,
+    toApiDimensionId,
 } from '../dimension'
 
 const outputType = 'EVENT'
@@ -680,5 +681,17 @@ describe('toAppLocalDimensions', () => {
         const result = toAppLocalDimensions(dims)
         expect(result[0].dimension).toBe('enrollmentDate')
         expect(result[1].dimension).toBe('eventDate')
+    })
+})
+
+describe('toApiDimensionId', () => {
+    it('translates enrollmentOu back to ou', () => {
+        expect(toApiDimensionId('enrollmentOu')).toBe('ou')
+    })
+
+    it('passes through other dimension IDs unchanged', () => {
+        expect(toApiDimensionId('eventDate')).toBe('eventDate')
+        expect(toApiDimensionId('ou')).toBe('ou')
+        expect(toApiDimensionId('enrollmentDate')).toBe('enrollmentDate')
     })
 })

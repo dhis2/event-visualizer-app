@@ -91,7 +91,7 @@ export const tLoadSavedVisualization = createAsyncThunk<
 )
 
 export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
-    () => (dispatch, getState) => {
+    () => (dispatch, getState, extra) => {
         const { currentVis, visUiConfig } = getState()
 
         const mergedVis = deepmerge(
@@ -117,8 +117,15 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
                 },
                 aggregationType: visUiConfig.customValue.aggregationType,
             }),
-            // columns/rows/filters from visUiConfig.layout
-            ...formatLayoutForVisualization(visUiConfig),
+            // columns/rows/filters from visUiConfig.layout — the metadata
+            // store provides the decomposed context (programId, programStageId)
+            // for each compound dimension ID.
+            ...formatLayoutForVisualization(
+                visUiConfig,
+                extra.metadataStore.getDimensionMetadataItem.bind(
+                    extra.metadataStore
+                )
+            ),
         }
 
         dispatch(setCurrentVis(updatedCurrentVis))
