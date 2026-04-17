@@ -15,20 +15,20 @@ export const fetchAnalyticsDataForPT = async ({
     const { adaptedVisualization, parameters } =
         getAdaptedVisualization(visualization)
 
-    console.log('vis', adaptedVisualization)
-
     // TODO: figure out what to do for the DE time dimensions
     if (visualization.timeField) {
         parameters['timeField'] = visualization.timeField
     }
 
+    const program = visualization.programDimensions?.[0]
+
     let req = new analyticsEngine.request()
         .fromVisualization(adaptedVisualization)
-        .withProgram(visualization.program?.id)
+        .withProgram(program?.id)
         .withOutputType(adaptedVisualization.outputType)
         .withParameters({
             totalPages: false,
-            stage: visualization.programStage?.id,
+            stage: program?.programStages?.[0]?.id,
             ...parameters,
         })
         .withDisplayProperty(displayProperty?.toUpperCase())

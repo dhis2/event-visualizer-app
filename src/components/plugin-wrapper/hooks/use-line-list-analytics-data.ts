@@ -88,7 +88,7 @@ const fetchAnalyticsDataForLL = async ({
         getAdaptedVisualization(visualization)
 
     let req = new analyticsEngine.request()
-        .fromVisualization(adaptedVisualization)
+        .fromVisualization(adaptedVisualization, true)
         .withParameters({
             headers,
             totalPages: false,
@@ -104,13 +104,14 @@ const fetchAnalyticsDataForLL = async ({
 
     // trackedEntity request can use multiple programs
     if (visualization.outputType !== 'TRACKED_ENTITY_INSTANCE') {
+        const program = visualization.programDimensions?.[0]
         req = req
-            .withProgram(visualization.program.id)
+            .withProgram(program?.id)
             .withOutputType(visualization.outputType)
-    }
 
-    if (visualization.outputType === 'EVENT') {
-        req = req.withStage(visualization.programStage?.id)
+        if (visualization.outputType === 'EVENT') {
+            req = req.withStage(program?.programStages?.[0]?.id)
+        }
     }
 
     if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {
