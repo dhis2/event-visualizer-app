@@ -9,7 +9,7 @@ import type {
 } from '@types'
 import {
     combineAllDimensionsFromVisualization,
-    getFullDimensionId,
+    getCompoundDimensionId,
 } from './dimension'
 
 type Conditions = {
@@ -432,12 +432,7 @@ export const getConditionsFromVisualization = (
     )
 
     for (const item of items) {
-        const dimensionId = getFullDimensionId({
-            dimensionId: item.dimension,
-            programId: item.program?.id,
-            programStageId: item.programStage?.id,
-            outputType,
-        })
+        const dimensionId = getCompoundDimensionId(item, outputType)
         result[dimensionId] = {
             condition: item.filter,
             legendSet: item.legendSet?.id,

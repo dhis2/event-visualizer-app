@@ -1,10 +1,6 @@
 import { getRequestOptions } from '@components/plugin-wrapper/hooks/query-tools-common'
 import { DEFAULT_OPTIONS } from '@constants/options'
-import {
-    layoutGetAxisIdDimensionIdsObject,
-    layoutGetDimensionIdItemIdsObject,
-    layoutGetAllDimensions,
-} from '@dhis2/analytics'
+import { layoutGetAllDimensions } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import type { LastActiveButton } from '@store/vis-ui-config-slice'
 import type {
@@ -25,6 +21,7 @@ import type {
 import deepEqual from 'deep-equal'
 import { getConditionsFromVisualization } from './conditions'
 import {
+    getCompoundDimensionId,
     isTimeDimensionId,
     KNOWN_TIME_FIELD_VALUES,
     outputTypeTimeDimensionMap,
@@ -282,7 +279,8 @@ export const getVisualizationUiConfig = (raw: CurrentVisualization) => {
         filters: toAppLocalDimensions(raw.filters ?? []),
     }
     const outputType = vis.outputType
-    const layout = layoutGetAxisIdDimensionIdsObject(vis)
+    const toDimId = (dim: DimensionArray[number]) =>
+        getCompoundDimensionId(dim, outputType)
     let lastActiveButton: LastActiveButton | undefined
     if (outputType === 'EVENT') {
         lastActiveButton = vis.value?.id ? 'CUSTOM_VALUE' : 'EVENT'
@@ -292,11 +290,23 @@ export const getVisualizationUiConfig = (raw: CurrentVisualization) => {
         visualizationType: vis.type,
         outputType,
         layout: {
-            columns: layout.columns ?? [],
-            filters: layout.filters ?? [],
-            rows: layout.rows ?? [],
+            columns: (vis.columns ?? []).map(toDimId),
+            filters: (vis.filters ?? []).map(toDimId),
+            rows: (vis.rows ?? []).map(toDimId),
         },
-        itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
+        itemsByDimension: [
+            ...(vis.columns ?? []),
+            ...(vis.rows ?? []),
+            ...(vis.filters ?? []),
+        ].reduce(
+            (obj, dim) => {
+                obj[toDimId(dim)] = (dim.items ?? [])
+                    .map((item) => item.id)
+                    .filter(Boolean) as string[]
+                return obj
+            },
+            {} as Record<string, string[]>
+        ),
         conditionsByDimension: getConditionsFromVisualization(vis, outputType),
         repetitionsByDimension: getRepetitionsFromVisualisation(vis),
         ...(vis.value?.id && {

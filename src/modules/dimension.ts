@@ -409,6 +409,32 @@ export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
         return dim
     })
 
+/**
+ * Constructs the canonical compound dimension ID from a DimensionRecord.
+ *
+ * We do NOT use `formatDimension` / `dimensionGetId` from `@dhis2/analytics`
+ * because those helpers assume the old visualization shape where `programId`
+ * was only included for TRACKED_ENTITY_INSTANCE. In the canonical app-local
+ * format, enrollment-scoped dimensions (program but no programStage) always
+ * carry a programId prefix, regardless of outputType.
+ */
+export const getCompoundDimensionId = (
+    dim: DimensionRecord,
+    outputType?: OutputType
+): string => {
+    if (dim.programStage?.id) {
+        // TEI stage-scoped dims keep the programId prefix (3-part form)
+        if (outputType === 'TRACKED_ENTITY_INSTANCE' && dim.program?.id) {
+            return `${dim.program.id}.${dim.programStage.id}.${dim.dimension}`
+        }
+        return `${dim.programStage.id}.${dim.dimension}`
+    }
+    if (dim.program?.id) {
+        return `${dim.program.id}.${dim.dimension}`
+    }
+    return dim.dimension
+}
+
 // ---------------------------------------------------------------------------
 // Fixed dimension builders — shared between sidebar and metadata provider.
 // These are the canonical source of truth for fixed dimension names.
