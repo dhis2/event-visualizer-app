@@ -2,7 +2,6 @@ import {
     combineAllDimensionsFromVisualization,
     getCompoundDimensionId,
     getEnrollmentFixedDimensions,
-    getFullDimensionId,
     getMainDimensions,
     getStageFixedDimensions,
     getTimeDimensionName,
@@ -34,18 +33,11 @@ const DIMENSION_METADATA_PROP_MAP = {
 }
 const getDefaultDynamicTimeDimensionsMetadata = (
     program?: Program,
-    stage?: ProgramStage,
-    outputType?: SavedVisualization['outputType']
+    stage?: ProgramStage
 ): MetadataInputMap =>
     Object.values(getTimeDimensions()).reduce((acc, dimension) => {
-        const id = getFullDimensionId({
-            dimensionId: dimension.id,
-            programId: program?.id,
-            outputType: outputType,
-        })
-
-        acc[id] = {
-            id,
+        acc[dimension.id] = {
+            id: dimension.id,
             dimensionType: dimension.dimensionType,
             name: getTimeDimensionName(dimension, program, stage),
         }
@@ -256,11 +248,7 @@ export const extractMetadataFromVisualization = (
 
     const sources: MetadataInputMap[] = [
         vis.metaData,
-        getDefaultDynamicTimeDimensionsMetadata(
-            singleProgram,
-            singleStage,
-            vis.outputType
-        ),
+        getDefaultDynamicTimeDimensionsMetadata(singleProgram, singleStage),
         getMainDimensions(vis.outputType),
         extractTrackedEntityTypeMetadata(vis),
         extractProgramDimensionsMetadata(vis),
