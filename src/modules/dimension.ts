@@ -391,6 +391,25 @@ export const combineAllDimensionsFromVisualization = (
 ]
 
 // ---------------------------------------------------------------------------
+// API → app-local dimension ID translation.
+// Applied at the boundary between SavedVisualization/CurrentVisualization
+// (Web API layer, uses API dimension IDs) and the app-local layer
+// (visUiConfig layout, metadata store, which uses canonical app IDs).
+//
+// Currently translates:
+// - `ou` → `enrollmentOu` for enrollment-scoped org unit dimensions
+//   (has `program` but no `programStage`)
+// ---------------------------------------------------------------------------
+
+export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
+    dims.map((dim) => {
+        if (dim.dimension === 'ou' && dim.program && !dim.programStage) {
+            return { ...dim, dimension: 'enrollmentOu' }
+        }
+        return dim
+    })
+
+// ---------------------------------------------------------------------------
 // Fixed dimension builders — shared between sidebar and metadata provider.
 // These are the canonical source of truth for fixed dimension names.
 // ---------------------------------------------------------------------------
@@ -441,8 +460,8 @@ export const getEnrollmentFixedDimensions = (
     program: Program
 ): DimensionMetadataItem[] => [
     {
-        id: `${program.id}.ou`,
-        dimensionId: 'ou',
+        id: `${program.id}.enrollmentOu`,
+        dimensionId: 'enrollmentOu',
         dimensionType: 'ORGANISATION_UNIT',
         name: program.displayOrgUnitLabel ?? i18n.t('Enrollment org. unit'),
         programId: program.id,

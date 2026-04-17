@@ -16,6 +16,7 @@ import {
     isTimeDimensionId,
     getTimeDimensions,
     getTimeDimensionName,
+    toAppLocalDimensions,
 } from '../dimension'
 
 const outputType = 'EVENT'
@@ -622,5 +623,62 @@ describe('getTimeDimensionName', () => {
         expect(getTimeDimensionName(dimension, programWithoutLabel)).toBe(
             'Incident date'
         )
+    })
+})
+
+describe('toAppLocalDimensions', () => {
+    it('renames ou to enrollmentOu when dimension has program but no programStage', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'ou',
+                items: [],
+                program: { id: 'prog1' },
+            },
+        ]
+        const result = toAppLocalDimensions(dims)
+        expect(result[0].dimension).toBe('enrollmentOu')
+        expect(result[0].program).toEqual({ id: 'prog1' })
+    })
+
+    it('keeps ou unchanged when dimension has programStage (stage-scoped)', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'ou',
+                items: [],
+                program: { id: 'prog1' },
+                programStage: { id: 'stage1' },
+            },
+        ]
+        const result = toAppLocalDimensions(dims)
+        expect(result[0].dimension).toBe('ou')
+    })
+
+    it('keeps ou unchanged when dimension has no program (TEI registration ou)', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'ou',
+                items: [],
+            },
+        ]
+        const result = toAppLocalDimensions(dims)
+        expect(result[0].dimension).toBe('ou')
+    })
+
+    it('does not modify non-ou dimensions', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'enrollmentDate',
+                items: [],
+                program: { id: 'prog1' },
+            },
+            {
+                dimension: 'eventDate',
+                items: [],
+                programStage: { id: 'stage1' },
+            },
+        ]
+        const result = toAppLocalDimensions(dims)
+        expect(result[0].dimension).toBe('enrollmentDate')
+        expect(result[1].dimension).toBe('eventDate')
     })
 })

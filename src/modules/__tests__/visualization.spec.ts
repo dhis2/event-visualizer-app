@@ -285,7 +285,12 @@ const testCases = {
                 focusName: [],
                 localFocusId: [],
                 area: [],
-                'incidentDateId.ou': ['bombali', 'bonthe', 'bo', 'kailahun'],
+                'incidentDateId.enrollmentOu': [
+                    'bombali',
+                    'bonthe',
+                    'bo',
+                    'kailahun',
+                ],
                 'incidentDateId.enrollmentDate': [],
                 'incidentDateId.dateOfFociRegistrationId.focusDateOfClassification':
                     [],
@@ -303,7 +308,7 @@ const testCases = {
                     'focusName',
                     'localFocusId',
                     'area',
-                    'incidentDateId.ou',
+                    'incidentDateId.enrollmentOu',
                     'incidentDateId.enrollmentDate',
                     'incidentDateId.dateOfFociRegistrationId.focusDateOfClassification',
                 ],

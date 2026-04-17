@@ -8,6 +8,7 @@ import {
     getTimeDimensions,
     getTrackedEntityTypeFixedDimensions,
     getUiDimensionType,
+    toAppLocalDimensions,
 } from '@modules/dimension'
 import type {
     MetadataInput,
@@ -239,24 +240,36 @@ const getFixedDimensionOverrides = (
 export const extractMetadataFromVisualization = (
     visualization: SavedVisualization
 ): MetadataInputMap => {
-    const program = visualization.programDimensions?.[0]
-    const stage = program?.programStages?.[0]
+    // Translate API dimension IDs to app-local IDs (e.g. ou → enrollmentOu
+    // for enrollment-scoped org units) before any downstream processing.
+    const vis: SavedVisualization = {
+        ...visualization,
+        columns: toAppLocalDimensions(visualization.columns ?? []),
+        rows: toAppLocalDimensions(visualization.rows ?? []),
+        filters: toAppLocalDimensions(visualization.filters ?? []),
+    }
 
-    /* Some of the collected metadata could contains duplicated IDs
-     * (e.g. `programStage`) and these object may contain different fields.
-     * So these objects should be merged rather than overwritten. */
+    // Only use the single-program shortcut when there's exactly one program.
+    // Multi-program visualizations (e.g. TEI with multiple programs) need
+    // different handling — deferred for now.
+    const singleProgram =
+        vis.programDimensions?.length === 1
+            ? vis.programDimensions[0]
+            : undefined
+    const singleStage = singleProgram?.programStages?.[0]
+
     const sources: MetadataInputMap[] = [
-        visualization.metaData,
+        vis.metaData,
         getDefaultDynamicTimeDimensionsMetadata(
-            program,
-            stage,
-            visualization.outputType
+            singleProgram,
+            singleStage,
+            vis.outputType
         ),
-        getMainDimensions(visualization.outputType),
-        extractTrackedEntityTypeMetadata(visualization),
-        extractProgramDimensionsMetadata(visualization),
-        extractDimensionMetadata(visualization),
-        extractValueMetadata(visualization),
+        getMainDimensions(vis.outputType),
+        extractTrackedEntityTypeMetadata(vis),
+        extractProgramDimensionsMetadata(vis),
+        extractDimensionMetadata(vis),
+        extractValueMetadata(vis),
     ]
     const baseMetadataInput: MetadataInputMap = sources.reduce(
         (acc, obj) => deepmerge(acc, obj),
@@ -265,31 +278,28 @@ export const extractMetadataFromVisualization = (
 
     const supplementedMetadataInput = supplementDimensionMetadata(
         baseMetadataInput,
-        visualization
+        vis
     )
 
     // Overlay fixed dimensions with canonical names from shared helpers.
     // Applied after supplement so the shared helpers' names win.
     const withFixedNames = deepmerge(
         supplementedMetadataInput,
-        getFixedDimensionOverrides(visualization)
+        getFixedDimensionOverrides(vis)
     )
 
-    addPathToOrganisationUnitMetadataItems(
-        withFixedNames,
-        visualization.parentGraphMap
-    )
+    addPathToOrganisationUnitMetadataItems(withFixedNames, vis.parentGraphMap)
 
     // Remove plain-keyed entries that now have a compound counterpart.
     // The compound entries carry all the fields (code, dimensionType, etc.),
     // so the plain duplicates are no longer needed.
-    const dimensions = combineAllDimensionsFromVisualization(visualization)
+    const dimensions = combineAllDimensionsFromVisualization(vis)
     for (const dimension of dimensions) {
         const compoundId = getFullDimensionId({
             dimensionId: dimension.dimension,
             programStageId: dimension.programStage?.id,
             programId: dimension.program?.id,
-            outputType: visualization.outputType,
+            outputType: vis.outputType,
         })
         if (compoundId !== dimension.dimension && withFixedNames[compoundId]) {
             delete withFixedNames[dimension.dimension]

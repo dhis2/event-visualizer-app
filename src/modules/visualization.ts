@@ -29,6 +29,7 @@ import {
     KNOWN_TIME_FIELD_VALUES,
     outputTypeTimeDimensionMap,
     timeFieldTimeDimensionMap,
+    toAppLocalDimensions,
     transformDimensions,
 } from './dimension'
 import { getRepetitionsFromVisualisation } from './repetitions'
@@ -272,7 +273,14 @@ export const isVisualizationNew = (
 ): boolean =>
     !isVisualizationEmpty(visualization) && !isVisualizationSaved(visualization)
 
-export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
+export const getVisualizationUiConfig = (raw: CurrentVisualization) => {
+    // Translate API dimension IDs to app-local IDs before building the config.
+    const vis: CurrentVisualization = {
+        ...raw,
+        columns: toAppLocalDimensions(raw.columns ?? []),
+        rows: toAppLocalDimensions(raw.rows ?? []),
+        filters: toAppLocalDimensions(raw.filters ?? []),
+    }
     const outputType = vis.outputType
     const layout = layoutGetAxisIdDimensionIdsObject(vis)
     let lastActiveButton: LastActiveButton | undefined
