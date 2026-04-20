@@ -434,6 +434,14 @@ const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
     'programStatus',
 ])
 
+// Dimension IDs that belong at TEI registration scope — prefixed with
+// trackedEntityTypeId when there is no program or stage context.
+// Must match what getTrackedEntityTypeFixedDimensions produces.
+const TEI_REGISTRATION_DIMENSION_IDS: ReadonlySet<string> = new Set([
+    'ou',
+    'created',
+])
+
 /**
  * Constructs the canonical compound dimension ID from a DimensionRecord.
  *
@@ -468,7 +476,10 @@ export const getCompoundDimensionId = (
         return `${dim.program.id}.${dim.dimension}`
     }
     // TEI registration-scoped: no program or stage, prefix with trackedEntityTypeId
-    if (trackedEntityTypeId) {
+    if (
+        trackedEntityTypeId &&
+        TEI_REGISTRATION_DIMENSION_IDS.has(dim.dimension)
+    ) {
         return `${trackedEntityTypeId}.${dim.dimension}`
     }
     return dim.dimension

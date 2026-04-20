@@ -33,9 +33,14 @@ export const formatLayoutForVisualization = (
             [axisId]: dimensionIds
                 .map((id) => {
                     const dim = getDimension(id)
-                    const dimensionId = dim?.dimensionId ?? id
-                    const programId = dim?.programId
-                    const programStageId = dim?.programStageId
+                    if (!dim) {
+                        throw new Error(
+                            `No metadata found for dimension "${id}" — cannot decompose compound ID for API`
+                        )
+                    }
+                    const dimensionId = dim.dimensionId ?? id
+                    const programId = dim.programId
+                    const programStageId = dim.programStageId
 
                     return dimensionCreate(
                         toApiDimensionId(dimensionId),
