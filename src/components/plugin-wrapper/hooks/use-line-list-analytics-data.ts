@@ -15,6 +15,8 @@ import {
 } from '@modules/dimension'
 import { isValueTypeNumeric } from '@modules/value-type'
 import {
+    getSingleProgramFromVisualization,
+    getSingleProgramStageFromVisualization,
     headersMap,
     isVisualizationWithTimeDimension,
 } from '@modules/visualization'
@@ -104,13 +106,14 @@ const fetchAnalyticsDataForLL = async ({
 
     // trackedEntity request can use multiple programs
     if (visualization.outputType !== 'TRACKED_ENTITY_INSTANCE') {
-        const program = visualization.programDimensions?.[0]
         req = req
-            .withProgram(program?.id)
+            .withProgram(getSingleProgramFromVisualization(visualization).id)
             .withOutputType(visualization.outputType)
 
         if (visualization.outputType === 'EVENT') {
-            req = req.withStage(program?.programStages?.[0]?.id)
+            req = req.withStage(
+                getSingleProgramStageFromVisualization(visualization).id
+            )
         }
     }
 

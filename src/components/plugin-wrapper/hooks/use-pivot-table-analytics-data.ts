@@ -1,6 +1,10 @@
 import { Analytics, transformEventAggregateResponse } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
+import {
+    getSingleProgramFromVisualization,
+    getSingleProgramStageFromVisualization,
+} from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization } from '@types'
 import { useCallback, useState } from 'react'
 import { getAdaptedVisualization } from './query-tools-line-list'
@@ -20,15 +24,16 @@ export const fetchAnalyticsDataForPT = async ({
         parameters['timeField'] = visualization.timeField
     }
 
-    const program = visualization.programDimensions?.[0]
+    const program = getSingleProgramFromVisualization(visualization)
+    const stage = getSingleProgramStageFromVisualization(visualization)
 
     let req = new analyticsEngine.request()
         .fromVisualization(adaptedVisualization)
-        .withProgram(program?.id)
+        .withProgram(program.id)
         .withOutputType(adaptedVisualization.outputType)
         .withParameters({
             totalPages: false,
-            stage: program?.programStages?.[0]?.id,
+            stage: stage.id,
             ...parameters,
         })
         .withDisplayProperty(displayProperty?.toUpperCase())

@@ -10,8 +10,8 @@ import { isVisualizationValidForSaveAs } from '@modules/validation'
 import {
     getSaveableVisualization,
     getVisualizationState,
+    isCurrentVisExisting,
     isVisualizationEmpty,
-    isVisualizationSaved,
 } from '@modules/visualization'
 import {
     getCurrentVis,
@@ -35,24 +35,21 @@ export const useToolbarActions = () => {
     )
 
     const isSaveEnabled = useMemo(() => {
-        /* If no saved vis exists yet we're creating a new one, so there's
-         * nothing to overwrite. Otherwise require update access on the saved
-         * vis AND that it is not legacy — saving a legacy vis in the new
-         * format would break it in the older app, so "Save as" is the only
-         * allowed path for those. */
-        const isNewVis = isVisualizationEmpty(savedVis)
-        const canUpdateSavedVis =
-            isVisualizationSaved(savedVis) &&
-            Boolean(savedVis.access?.update) &&
-            !savedVis.legacy
-
-        return (
-            (isNewVis || canUpdateSavedVis) &&
-            isVisualizationValidForSaveAs(currentVis) &&
-            ['UNSAVED', 'DIRTY'].includes(
-                getVisualizationState(savedVis, currentVis)
-            )
-        )
+        if (!isVisualizationValidForSaveAs(currentVis)) {
+            return false
+        }
+        switch (getVisualizationState(savedVis, currentVis)) {
+            case 'UNSAVED':
+                // Brand-new vis — nothing to overwrite.
+                return true
+            case 'DIRTY':
+                // Require update access AND non-legacy. Re-saving a legacy
+                // vis in the new format would break it in the older app, so
+                // "Save as" is the only allowed path for those.
+                return Boolean(savedVis.access?.update) && !savedVis.legacy
+            default:
+                return false
+        }
     }, [currentVis, savedVis])
 
     const isSaveAsEnabled = useMemo(
@@ -113,7 +110,7 @@ export const useToolbarActions = () => {
 
     const onOpen = useCallback(
         (id: string) => {
-            if (isVisualizationSaved(currentVis) && currentVis.id === id) {
+            if (isCurrentVisExisting(currentVis) && currentVis.id === id) {
                 dispatch(
                     tLoadSavedVisualization({ id, updateStatistics: false })
                 )
@@ -161,17 +158,21 @@ export const useToolbarActions = () => {
 
     // Existing visualization
     const onSave = useCallback(async () => {
+        if (isVisualizationEmpty(currentVis)) {
+            throw new Error('onSave called with an empty visualization')
+        }
+
         const { data, error } = await dispatch(
             eventVisualizationsApi.endpoints.updateVisualization.initiate(
                 preparePayloadForSave({
                     visualization: getSaveableVisualization(
-                        currentVis as unknown as SavedVisualization
+                        currentVis as SavedVisualization
                     ),
                 })
             )
         )
 
-        if (data && isVisualizationSaved(currentVis)) {
+        if (data && isCurrentVisExisting(currentVis)) {
             // Reload the saved visualization after saving
             // here we should *not* update statistics
             dispatch(
@@ -189,12 +190,16 @@ export const useToolbarActions = () => {
     // it can be a copy of an existing one, but a new id is returned
     const onSaveAs = useCallback(
         async (nameAndDescription: { name: string; description: string }) => {
+            if (isVisualizationEmpty(currentVis)) {
+                throw new Error('onSaveAs called with an empty visualization')
+            }
+
             const { data, error } = await dispatch(
                 eventVisualizationsApi.endpoints.createVisualization.initiate(
                     preparePayloadForSaveAs({
                         visualization: {
                             ...getSaveableVisualization(
-                                currentVis as unknown as SavedVisualization
+                                currentVis as SavedVisualization
                             ),
                             // XXX: this ideally should be done in preparePayloadForSaveAs
                             subscribers: [],

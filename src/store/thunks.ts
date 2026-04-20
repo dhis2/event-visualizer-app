@@ -3,7 +3,11 @@ import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { extractDataSourceIdFromVisualization } from '@modules/data-source'
 import { formatLayoutForVisualization } from '@modules/layout'
 import { getDisabledOptions } from '@modules/options'
-import { getVisualizationUiConfig, toCurrentVis } from '@modules/visualization'
+import {
+    getVisualizationUiConfig,
+    isVisualizationEmpty,
+    toCurrentVis,
+} from '@modules/visualization'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import type { AppDispatch, CurrentVisualization } from '@types'
 import deepmerge from 'deepmerge'
@@ -94,10 +98,16 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
     () => (dispatch, getState, extra) => {
         const { currentVis, visUiConfig } = getState()
 
+        if (isVisualizationEmpty(currentVis)) {
+            throw new Error(
+                'tUpdateCurrentVisFromVisUiConfig called with an empty visualization'
+            )
+        }
+
         const mergedVis = deepmerge(
             currentVis as Record<string, unknown>,
             visUiConfig.options as Record<string, unknown>
-        ) as unknown as CurrentVisualization
+        ) as CurrentVisualization
 
         const disabledOptions = getDisabledOptions(visUiConfig.options)
 

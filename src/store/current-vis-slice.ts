@@ -1,6 +1,6 @@
 import {
+    isCurrentVisExisting,
     isVisualizationEmpty,
-    isVisualizationSaved,
 } from '@modules/visualization'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
@@ -35,7 +35,7 @@ export const currentVisSlice = createSlice({
     selectors: {
         getCurrentVis: (state) => state,
         getCurrentVisId: (state) =>
-            isVisualizationSaved(state) ? state.id : null,
+            isCurrentVisExisting(state) ? state.id : null,
     },
 })
 

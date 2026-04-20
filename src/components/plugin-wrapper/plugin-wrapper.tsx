@@ -1,5 +1,8 @@
 import { Center, CircularLoader } from '@dhis2/ui'
-import { isVisualizationSaved } from '@modules/visualization'
+import {
+    isCurrentVisExisting,
+    isVisualizationEmpty,
+} from '@modules/visualization'
 import type {
     CurrentUser,
     CurrentVisualization,
@@ -54,6 +57,10 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
         }
     }, [isVisualizationLoading])
 
+    if (isVisualizationEmpty(visualization)) {
+        return null
+    }
+
     return (
         <div className={classes.pluginWrapper}>
             {(isVisualizationLoading || !hasAnalyticsData) && (
@@ -64,12 +71,12 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
             {visualization.type === 'LINE_LIST' && (
                 <LineListPlugin
                     key={
-                        isVisualizationSaved(visualization)
+                        isCurrentVisExisting(visualization)
                             ? visualization.id
                             : 'new'
                     }
                     displayProperty={displayProperty}
-                    visualization={visualization as CurrentVisualization}
+                    visualization={visualization}
                     filters={filters}
                     isInDashboard={isInDashboard}
                     isInModal={isInModal}
@@ -80,12 +87,12 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
             {visualization.type === 'PIVOT_TABLE' && (
                 <PivotTablePlugin
                     key={
-                        isVisualizationSaved(visualization)
+                        isCurrentVisExisting(visualization)
                             ? visualization.id
                             : 'new'
                     }
                     displayProperty={displayProperty}
-                    visualization={visualization as CurrentVisualization}
+                    visualization={visualization}
                     filters={filters}
                     isInDashboard={isInDashboard}
                     isInModal={isInModal}

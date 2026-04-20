@@ -259,15 +259,26 @@ export const isVisualizationEmpty = (
 ): visualization is EmptyVisualization =>
     Object.keys(visualization).length === 0
 
-export const isVisualizationSaved = (
-    visualization: CurrentVisualization | EmptyVisualization
+/**
+ * For the savedVis slice: narrow to SavedVisualization. Presence (having an
+ * id) and "is fully saved" are equivalent for this slice since its state is
+ * always either EmptyVisualization or a complete SavedVisualization.
+ */
+export const isSavedVisPresent = (
+    visualization: SavedVisualization | EmptyVisualization
 ): visualization is SavedVisualization =>
     'id' in visualization && typeof visualization.id === 'string'
 
-export const isVisualizationNew = (
+/**
+ * For the currentVis slice: narrow to a CurrentVisualization with a known id.
+ * A CurrentVisualization with an id is NOT a full SavedVisualization — it
+ * lacks access/name/legacy/etc. (toCurrentVis strips those). Consumers that
+ * need those fields must read from the savedVis slice.
+ */
+export const isCurrentVisExisting = (
     visualization: CurrentVisualization | EmptyVisualization
-): boolean =>
-    !isVisualizationEmpty(visualization) && !isVisualizationSaved(visualization)
+): visualization is CurrentVisualization & { id: string } =>
+    'id' in visualization && typeof visualization.id === 'string'
 
 const toAppLocalAxes = (dims: DimensionArray): DimensionArray =>
     toAppLocalDimensions(
