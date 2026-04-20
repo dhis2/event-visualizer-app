@@ -66,7 +66,7 @@ const getHeaderDimensionId = (
     })
     const idMatch =
         Object.keys(headersMap).find(
-            (key) => headersMap[key] === dimensionId
+            (key) => headersMap[key] === header.name
             // TODO: find a better solution
             // https://dhis2.atlassian.net/browse/DHIS2-20136
         ) ?? ''
@@ -93,7 +93,7 @@ const getHeaderDimensionId = (
             (programId || outputType !== 'TRACKED_ENTITY_INSTANCE')) ||
         ['programStatus', 'eventStatus'].includes(idMatch)
         // org unit only if there's a programId or not tracked entity: this prevents pid.ou from being mixed up with just ou in TE
-        // program status + event status in all cases
+        // program status + event status in all cases XXX: these 2 are not in defaultMetadata ...
     ) {
         defaultMetadata[formattedDimensionId] = getProgramDimensions(
             // TODO: remove initialisation to '' and fix args order in function
@@ -130,18 +130,16 @@ const DATE_VALUE_TYPES: ValueType[] = ['DATE', 'DATETIME']
 
 const getFormattedCellValue = ({
     value,
-    dimensionId,
     header,
     visualization,
 }: {
     value: string
-    dimensionId: string
     header: LineListAnalyticsDataHeader
     visualization: CurrentVisualization
 }) => {
     if (
         header.name &&
-        [headersMap.eventStatus, headersMap.programStatus].includes(dimensionId)
+        [headersMap.eventStatus, headersMap.programStatus].includes(header.name)
     ) {
         return getStatusNames()[value] ?? value
     }
@@ -156,7 +154,7 @@ const getFormattedCellValue = ({
                 headersMap.enrollmentDate,
                 headersMap.incidentDate,
                 headersMap.scheduledDate,
-            ].includes(dimensionId)
+            ].includes(header.name)
         ) {
             // override valueType for time dimensions to format the value as date (DHIS2-17855)
             valueType = 'DATE'
@@ -221,7 +219,6 @@ export const transformLineListData = (
         row.map((value, columnIndex) => ({
             formattedValue: getFormattedCellValue({
                 value,
-                dimensionId: headers[columnIndex].dimensionId,
                 header: data.headers[columnIndex],
                 visualization,
             }),
