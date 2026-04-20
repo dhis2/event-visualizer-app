@@ -7,7 +7,7 @@ import {
 import i18n from '@dhis2/d2-i18n'
 import { initialState as currentVisDefaultValue } from '@store/current-vis-slice'
 import { initialState as savedVisDefaultValue } from '@store/saved-vis-slice'
-import type { LastActiveButton } from '@store/vis-ui-config-slice'
+import { type LastActiveButton } from '@store/vis-ui-config-slice'
 import type {
     DimensionArray,
     CurrentVisualization,
@@ -42,6 +42,7 @@ export const headersMap: Record<DimensionId, string> = {
     ou: 'ouname',
     programStatus: 'programstatus',
     eventStatus: 'eventstatus',
+    completed: 'completed',
     completedDate: 'completeddate',
     created: 'created',
     createdBy: 'createdbydisplayname',
@@ -50,20 +51,25 @@ export const headersMap: Record<DimensionId, string> = {
     lastUpdatedOn: 'lastupdatedon', // XXX: needed here? is this used also in LL?
     eventDate: 'eventdate',
     enrollmentDate: 'enrollmentdate',
+    enrollmentOu: 'enrollmentouname',
     incidentDate: 'incidentdate',
     scheduledDate: 'scheduleddate',
     lastUpdated: 'lastupdated',
 }
 
-export const getHeadersMap = ({
-    showHierarchy,
-}: {
-    showHierarchy?: boolean
-}): Record<DimensionId, string> => {
+export const getHeadersMap = (
+    visualization: CurrentVisualization
+): Record<DimensionId, string> => {
+    const { outputType, showHierarchy } = visualization
+
     const map = Object.assign({}, headersMap)
 
     if (showHierarchy) {
         map['ou'] = 'ounamehierarchy'
+    }
+
+    if (outputType === 'ENROLLMENT') {
+        map['enrollmentOu'] = 'ouname'
     }
 
     return map

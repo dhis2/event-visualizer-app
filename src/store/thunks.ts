@@ -1,7 +1,10 @@
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { extractDataSourceIdFromVisualization } from '@modules/data-source'
-import { formatLayoutForVisualization } from '@modules/layout'
+import {
+    formatLayoutForVisualization,
+    formatProgramDimensionsForVisualization,
+} from '@modules/layout'
 import { getDisabledOptions } from '@modules/options'
 import {
     getVisualizationUiConfig,
@@ -99,7 +102,7 @@ export const tLoadSavedVisualization = createAsyncThunk<
 )
 
 export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
-    () => (dispatch, getState) => {
+    () => (dispatch, getState, extra) => {
         const { currentVis, visUiConfig } = getState()
 
         const mergedVis = deepmerge(
@@ -118,6 +121,8 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
             ...mergedVis,
             // visualization type
             type: visUiConfig.visualizationType,
+            // output type
+            outputType: visUiConfig.outputType,
             // custom value and aggregation
             ...(visUiConfig.customValue && {
                 value: {
@@ -127,6 +132,11 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
             }),
             // columns/rows/filters from visUiConfig.layout
             ...formatLayoutForVisualization(visUiConfig),
+            // programDimensions from visUiConfig.layout + metadataStore
+            programDimensions: formatProgramDimensionsForVisualization(
+                visUiConfig,
+                extra.metadataStore
+            ),
         }
 
         dispatch(setCurrentVis(updatedCurrentVis))

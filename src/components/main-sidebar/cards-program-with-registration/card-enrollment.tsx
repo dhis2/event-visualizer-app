@@ -24,8 +24,8 @@ const getFixedDimensions = (
 ): DimensionMetadataItem[] => {
     return [
         {
-            id: `${program.id}.ou`,
-            dimensionId: 'ou',
+            id: `${program.id}.enrollmentOu`,
+            dimensionId: 'enrollmentOu',
             dimensionType: 'ORGANISATION_UNIT',
             name: program.displayOrgUnitLabel ?? i18n.t('Enrollment org. unit'),
             valueType: 'ORGANISATION_UNIT',

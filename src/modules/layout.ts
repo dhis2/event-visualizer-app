@@ -3,7 +3,7 @@ import i18n from '@dhis2/d2-i18n'
 import { getDimensionIdParts } from '@modules/dimension'
 import { parseUiRepetitions } from '@modules/repetitions'
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
-import type { Axis, Layout } from '@types'
+import type { Axis, Layout, MetadataStore, Program } from '@types'
 
 export const getAxisName = (axisId: Axis): string => getAxisNames()[axisId]
 
@@ -70,3 +70,25 @@ export const formatLayoutForVisualization = (visUiConfig: VisUiConfigState) =>
         }),
         {}
     )
+
+export const formatProgramDimensionsForVisualization = (
+    visUiConfig: VisUiConfigState,
+    metadataStore: MetadataStore
+) =>
+    Object.values(visUiConfig.layout)
+        .flat()
+        .reduce<Program[]>((programDimensions, dimensionId) => {
+            const programId =
+                metadataStore.getDimensionMetadataItem(dimensionId)?.programId
+
+            if (programId) {
+                const programMetadata =
+                    metadataStore.getProgramMetadataItem(programId)
+
+                if (programMetadata) {
+                    programDimensions.push(programMetadata)
+                }
+            }
+
+            return programDimensions
+        }, [])
