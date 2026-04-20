@@ -20,8 +20,20 @@ export const currentVisSlice = createSlice({
     initialState,
     reducers: {
         clearCurrentVis: () => initialState,
-        setCurrentVis: (state, action: PayloadAction<CurrentVisualization>) =>
-            Object.assign(state, action.payload),
+        /**
+         * Explicit object spreading ensures a new reference is always created,
+         * bypassing two optimization mechanisms:
+         * 1. RTK Query's caching: Returns the same object reference for
+         *    structurally identical data, even with forceRefetch: true
+         * 2. Immer's structural sharing: Returns the original reference when
+         *    mutations don't change values
+         * Without spreading, reloading the same visualization would maintain
+         * referential equality, preventing React effects from triggering.
+         */
+        setCurrentVis: (
+            state,
+            action: PayloadAction<CurrentVisualization>
+        ) => ({ ...state, ...action.payload }),
         setCurrentVisNameDescription: (
             state,
             action: PayloadAction<VisualizationNameDescription>
@@ -29,7 +41,7 @@ export const currentVisSlice = createSlice({
             if (isVisualizationEmpty(state)) {
                 throw new Error('Cannot rename an empty visualization')
             }
-            Object.assign(state, action.payload)
+            return { ...state, ...action.payload }
         },
     },
     selectors: {
