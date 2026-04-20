@@ -6,12 +6,6 @@
     background-color: var(--colors-grey100);
     padding-inline-end: 4px;
     overflow: hidden;
-    transition: inline-size 0.2s ease;
-}
-.detailsPanel.hidden {
-    inline-size: 0;
-    border-inline-start: none;
-    padding-inline-end: 0;
 }
 .detailsPanelContent {
     display: flex;
