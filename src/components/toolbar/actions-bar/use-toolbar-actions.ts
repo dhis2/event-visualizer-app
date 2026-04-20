@@ -166,7 +166,7 @@ export const useToolbarActions = () => {
                 preparePayloadForSave({
                     visualization: getSaveableVisualization(
                         currentVis as unknown as SavedVisualization
-                    ) as SavedVisualization,
+                    ),
                 })
             )
         )

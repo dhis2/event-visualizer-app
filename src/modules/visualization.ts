@@ -215,8 +215,6 @@ const getDimensionIdFromHeaderName = (
 }
 
 export const getSaveableVisualization = (
-    // TODO: revisit param type — this function accesses SavedVisualization fields
-    // (programStage, legacy, sorting) but callers pass CurrentVisualization with casts
     vis: SavedVisualization
 ): SavedVisualization => {
     const visualization = Object.assign({}, vis)

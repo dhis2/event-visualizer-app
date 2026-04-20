@@ -288,9 +288,8 @@ export const eventVisualizationsApi = api.injectEndpoints({
                         data: {
                             // prepare the visualization payload with the new name/description
                             ...preparePayloadForSave({
-                                visualization: getSaveableVisualization(
-                                    visualization
-                                ) as SavedVisualization,
+                                visualization:
+                                    getSaveableVisualization(visualization),
                                 name: args.name,
                                 description: args.description,
                             }),

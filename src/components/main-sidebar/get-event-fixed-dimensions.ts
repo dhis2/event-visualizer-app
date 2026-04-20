@@ -1,4 +1,3 @@
-import { getStageFixedDimensions } from '@modules/dimension'
 import type { DimensionMetadataItem, DimensionType } from '@types'
 
 export const EVENT_WITH_REGISTRATION_FIXED_DIMENSION_TYPES: DimensionType[] = [
@@ -19,4 +18,4 @@ export type StageFixedDimension = Omit<
     dimensionType: EventWithRegistrationFixedDimensionType
 }
 
-export const getEventFixedDimensions = getStageFixedDimensions
+export { getStageFixedDimensions as getEventFixedDimensions } from '@modules/dimension'
