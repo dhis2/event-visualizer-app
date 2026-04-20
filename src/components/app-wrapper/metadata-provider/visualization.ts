@@ -139,7 +139,11 @@ export const supplementDimensionMetadata = (
                 return metadata
             }
 
-            const prefixedId = getCompoundDimensionId(dimension, outputType)
+            const prefixedId = getCompoundDimensionId(
+                dimension,
+                outputType,
+                visualization.trackedEntityType?.id
+            )
 
             const item: MetadataInputItem = Object.entries(
                 collectedItem
@@ -279,7 +283,11 @@ export const extractMetadataFromVisualization = (
     // so the plain duplicates are no longer needed.
     const dimensions = combineAllDimensionsFromVisualization(vis)
     for (const dimension of dimensions) {
-        const compoundId = getCompoundDimensionId(dimension, vis.outputType)
+        const compoundId = getCompoundDimensionId(
+            dimension,
+            vis.outputType,
+            vis.trackedEntityType?.id
+        )
         if (compoundId !== dimension.dimension && withFixedNames[compoundId]) {
             delete withFixedNames[dimension.dimension]
         }

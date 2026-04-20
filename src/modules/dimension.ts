@@ -424,6 +424,16 @@ const PLAIN_ID_DIMENSION_TYPES: ReadonlySet<string> = new Set([
     'PROGRAM_ATTRIBUTE',
 ])
 
+// Dimension IDs that are always enrollment-scoped (prefixed with programId,
+// never stageId). Legacy visualizations propagate programStage onto all
+// dimensions, but these IDs are inherently tied to the program, not a stage.
+const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
+    'enrollmentOu',
+    'enrollmentDate',
+    'incidentDate',
+    'programStatus',
+])
+
 /**
  * Constructs the canonical compound dimension ID from a DimensionRecord.
  *
@@ -439,10 +449,14 @@ const PLAIN_ID_DIMENSION_TYPES: ReadonlySet<string> = new Set([
  */
 export const getCompoundDimensionId = (
     dim: DimensionRecord,
-    outputType?: OutputType
+    outputType?: OutputType,
+    trackedEntityTypeId?: string
 ): string => {
     if (dim.dimensionType && PLAIN_ID_DIMENSION_TYPES.has(dim.dimensionType)) {
         return dim.dimension
+    }
+    if (ENROLLMENT_SCOPED_DIMENSION_IDS.has(dim.dimension) && dim.program?.id) {
+        return `${dim.program.id}.${dim.dimension}`
     }
     if (dim.programStage?.id) {
         if (outputType === 'TRACKED_ENTITY_INSTANCE' && dim.program?.id) {
@@ -452,6 +466,10 @@ export const getCompoundDimensionId = (
     }
     if (dim.program?.id) {
         return `${dim.program.id}.${dim.dimension}`
+    }
+    // TEI registration-scoped: no program or stage, prefix with trackedEntityTypeId
+    if (trackedEntityTypeId) {
+        return `${trackedEntityTypeId}.${dim.dimension}`
     }
     return dim.dimension
 }

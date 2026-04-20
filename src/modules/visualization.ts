@@ -284,8 +284,9 @@ export const getVisualizationUiConfig = (raw: CurrentVisualization) => {
         filters: toAppLocalAxes(raw.filters ?? []),
     }
     const outputType = vis.outputType
+    const tetId = vis.trackedEntityType?.id
     const toDimId = (dim: DimensionArray[number]) =>
-        getCompoundDimensionId(dim, outputType)
+        getCompoundDimensionId(dim, outputType, tetId)
     let lastActiveButton: LastActiveButton | undefined
     if (outputType === 'EVENT') {
         lastActiveButton = vis.value?.id ? 'CUSTOM_VALUE' : 'EVENT'

@@ -432,7 +432,11 @@ export const getConditionsFromVisualization = (
     )
 
     for (const item of items) {
-        const dimensionId = getCompoundDimensionId(item, outputType)
+        const dimensionId = getCompoundDimensionId(
+            item,
+            outputType,
+            vis.trackedEntityType?.id
+        )
         result[dimensionId] = {
             condition: item.filter,
             legendSet: item.legendSet?.id,

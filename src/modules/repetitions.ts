@@ -17,8 +17,13 @@ export const getRepetitionsFromVisualisation = (
     layoutGetAllDimensions(vis)
         .filter((d) => d.repetition)
         .reduce((obj, d) => {
-            obj[getCompoundDimensionId(d, vis.outputType)] =
-                parseSavedRepetitions(d.repetition?.indexes)
+            obj[
+                getCompoundDimensionId(
+                    d,
+                    vis.outputType,
+                    vis.trackedEntityType?.id
+                )
+            ] = parseSavedRepetitions(d.repetition?.indexes)
 
             return obj
         }, {})

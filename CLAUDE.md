@@ -504,19 +504,24 @@ Non-fixed dimensions use compound or plain IDs depending on their type:
 - **Metadata dims** (`lastUpdated`, `createdBy`, `lastUpdatedBy`, `created`, `completed`)
   → plain `dimensionId`
 
-`getCompoundDimensionId` in `src/modules/dimension.ts` checks `dimensionType` and skips the
-prefix for `PROGRAM_INDICATOR` and `PROGRAM_ATTRIBUTE`.
+`getCompoundDimensionId` in `src/modules/dimension.ts` constructs the canonical app-local
+compound ID from a `DimensionRecord`. It applies these rules in order:
 
-**Org unit disambiguation**: the plain dimension ID `ou` appears in multiple scopes. The context
-determines which org unit it represents:
+1. `PROGRAM_INDICATOR` / `PROGRAM_ATTRIBUTE` → always plain `dimensionId`
+2. Enrollment-scoped IDs (`enrollmentOu`, `enrollmentDate`, `incidentDate`, `programStatus`)
+   → `programId.dimensionId`
+3. Has `programStage` → `stageId.dimensionId` (or `programId.stageId.dimensionId` for TEI)
+4. Has `program` → `programId.dimensionId`
+5. TEI with `trackedEntityTypeId` → `trackedEntityTypeId.dimensionId`
+6. Otherwise → plain `dimensionId`
 
-- `ou` + `programStage` → event org unit (stage-scoped)
-- `ou` + `program` (no `programStage`) → enrollment org unit (program-scoped)
-- `ou` alone (no `program` or `programStage`) → registration org unit (TEI-scoped)
+**Org unit scopes**: the app uses distinct dimension IDs for different org unit scopes:
 
-**`enrollmentOu` note**: the app uses `enrollmentOu` as the internal dimension ID for enrollment
-org unit, but the analytics query parameter is just `ou` (without program prefix). The translation
-happens at the analytics request boundary.
+- **Event org unit**: `ou` with `programStage` → compound `stageId.ou`
+- **Enrollment org unit**: `enrollmentOu` → compound `programId.enrollmentOu`.
+  The API uses `ou` with program context; `toAppLocalDimensions` renames it to `enrollmentOu`
+  at the API → app-local boundary. The inverse (`toApiDimensionId`) translates back on save.
+- **Registration org unit**: `ou` with `trackedEntityType` → compound `tetId.ou`
 
 ### Save/load translation at the visualization API boundary
 
