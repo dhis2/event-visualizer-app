@@ -18,6 +18,7 @@ import {
     getTimeDimensionName,
     toAppLocalDimensions,
     toApiDimensionId,
+    getCompoundDimensionId,
 } from '../dimension'
 
 const outputType = 'EVENT'
@@ -693,5 +694,160 @@ describe('toApiDimensionId', () => {
         expect(toApiDimensionId('eventDate')).toBe('eventDate')
         expect(toApiDimensionId('ou')).toBe('ou')
         expect(toApiDimensionId('enrollmentDate')).toBe('enrollmentDate')
+    })
+})
+
+describe('getCompoundDimensionId', () => {
+    it('returns plain ID for PROGRAM_INDICATOR regardless of context', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'bcgDoses',
+                    dimensionType: 'PROGRAM_INDICATOR',
+                    items: [],
+                    program: { id: 'prog1' },
+                    programStage: { id: 'stage1' },
+                },
+                'EVENT'
+            )
+        ).toBe('bcgDoses')
+    })
+
+    it('returns plain ID for PROGRAM_ATTRIBUTE regardless of context', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'firstName',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                    items: [],
+                    program: { id: 'prog1' },
+                },
+                'ENROLLMENT'
+            )
+        ).toBe('firstName')
+    })
+
+    it('prefixes enrollment-scoped dimensions with programId', () => {
+        const enrollmentDims = [
+            'enrollmentOu',
+            'enrollmentDate',
+            'incidentDate',
+            'programStatus',
+        ]
+        for (const dimId of enrollmentDims) {
+            expect(
+                getCompoundDimensionId(
+                    {
+                        dimension: dimId,
+                        items: [],
+                        program: { id: 'prog1' },
+                    },
+                    'ENROLLMENT'
+                )
+            ).toBe(`prog1.${dimId}`)
+        }
+    })
+
+    it('prefixes enrollment-scoped dimensions with programId even when programStage is present', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'enrollmentDate',
+                    items: [],
+                    program: { id: 'prog1' },
+                    programStage: { id: 'stage1' },
+                },
+                'ENROLLMENT'
+            )
+        ).toBe('prog1.enrollmentDate')
+    })
+
+    it('uses stageId.dimensionId for EVENT with programStage', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'weight',
+                    items: [],
+                    program: { id: 'prog1' },
+                    programStage: { id: 'stage1' },
+                },
+                'EVENT'
+            )
+        ).toBe('stage1.weight')
+    })
+
+    it('uses stageId.dimensionId for ENROLLMENT with programStage', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'weight',
+                    items: [],
+                    program: { id: 'prog1' },
+                    programStage: { id: 'stage1' },
+                },
+                'ENROLLMENT'
+            )
+        ).toBe('stage1.weight')
+    })
+
+    it('uses programId.stageId.dimensionId for TRACKED_ENTITY_INSTANCE with programStage', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'weight',
+                    items: [],
+                    program: { id: 'prog1' },
+                    programStage: { id: 'stage1' },
+                },
+                'TRACKED_ENTITY_INSTANCE'
+            )
+        ).toBe('prog1.stage1.weight')
+    })
+
+    it('uses programId.dimensionId when only program is present (no stage)', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'someField',
+                    items: [],
+                    program: { id: 'prog1' },
+                },
+                'EVENT'
+            )
+        ).toBe('prog1.someField')
+    })
+
+    it('uses trackedEntityTypeId prefix for TEI registration dimensions', () => {
+        expect(
+            getCompoundDimensionId(
+                { dimension: 'ou', items: [] },
+                'TRACKED_ENTITY_INSTANCE',
+                'tet1'
+            )
+        ).toBe('tet1.ou')
+
+        expect(
+            getCompoundDimensionId(
+                { dimension: 'created', items: [] },
+                'TRACKED_ENTITY_INSTANCE',
+                'tet1'
+            )
+        ).toBe('tet1.created')
+    })
+
+    it('does not prefix non-registration dimensions with trackedEntityTypeId', () => {
+        expect(
+            getCompoundDimensionId(
+                { dimension: 'lastUpdated', items: [] },
+                'TRACKED_ENTITY_INSTANCE',
+                'tet1'
+            )
+        ).toBe('lastUpdated')
+    })
+
+    it('returns plain ID when no context is present', () => {
+        expect(
+            getCompoundDimensionId({ dimension: 'someField', items: [] })
+        ).toBe('someField')
     })
 })

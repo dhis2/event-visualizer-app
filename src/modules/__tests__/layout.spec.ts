@@ -309,4 +309,20 @@ describe('formatLayoutForVisualization', () => {
             expect(result).toEqual(expected)
         }
     )
+
+    it('throws when metadata lookup returns undefined for a dimension', () => {
+        const input = {
+            layout: { columns: ['unknown.dim'], rows: [], filters: [] },
+            itemsByDimension: { 'unknown.dim': [] },
+            conditionsByDimension: {},
+            repetitionsByDimension: {},
+        }
+        const getDimension = () => undefined
+        expect(() =>
+            formatLayoutForVisualization(
+                input as unknown as VisUiConfigState,
+                getDimension
+            )
+        ).toThrow('No metadata found for dimension "unknown.dim"')
+    })
 })
