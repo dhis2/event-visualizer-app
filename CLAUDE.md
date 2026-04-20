@@ -496,12 +496,16 @@ and consumed by both the sidebar cards and the metadata provider.
 | TEI        | `ou`             | `trackedEntityTypeId.ou`      | "Registration org. unit"                                     | Registration |
 | TEI        | `created`        | `trackedEntityTypeId.created` | "Registration date"                                          | Registration |
 
-Non-fixed dimensions (data elements, program indicators, attributes, categories, COGS) use
-`stageId.dimensionId` and get their names from the visualization's `metaData` or from the
-`dataElementDimensions` / `programIndicatorDimensions` / etc. arrays.
+Non-fixed dimensions use compound or plain IDs depending on their type:
 
-Plain dimensions (no compound prefix): `lastUpdated`, `createdBy`, `lastUpdatedBy`, `created`,
-`completed` appear in the Metadata sidebar card and are output-type-agnostic.
+- **Data elements, categories, COGS** → compound: `stageId.dimensionId`
+- **Program indicators, tracked entity attributes** → **plain** `dimensionId` (no prefix,
+  even though their dimension records carry `program`/`programStage` context)
+- **Metadata dims** (`lastUpdated`, `createdBy`, `lastUpdatedBy`, `created`, `completed`)
+  → plain `dimensionId`
+
+`getCompoundDimensionId` in `src/modules/dimension.ts` checks `dimensionType` and skips the
+prefix for `PROGRAM_INDICATOR` and `PROGRAM_ATTRIBUTE`.
 
 **Org unit disambiguation**: the plain dimension ID `ou` appears in multiple scopes. The context
 determines which org unit it represents:

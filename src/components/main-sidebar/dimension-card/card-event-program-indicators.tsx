@@ -3,30 +3,30 @@ import {
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
-import { getProgramIndicatorQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
+import { getEventProgramIndicatorQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import {
     useSelectedDimensionCount,
     type UseSelectedDimensionCountMatchFn,
 } from '@components/main-sidebar/use-selected-dimension-count'
 import i18n from '@dhis2/d2-i18n'
 import { useCurrentUser } from '@hooks'
-import type { DataSourceProgramWithRegistration } from '@types'
+import type { Program } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
 
-type CardProgramIndicatorsProps = {
-    program: DataSourceProgramWithRegistration
+type CardEventProgramIndicatorsProps = {
+    program: Program
 }
 
 const CARD_AND_LIST_KEY = 'program-indicators'
 
-export const CardProgramIndicators: FC<CardProgramIndicatorsProps> = ({
-    program,
-}) => {
+export const CardEventProgramIndicators: FC<
+    CardEventProgramIndicatorsProps
+> = ({ program }) => {
     const {
         settings: { displayNameProperty },
     } = useCurrentUser()
     const baseQuery = useMemo(
-        () => getProgramIndicatorQuery(program.id, displayNameProperty),
+        () => getEventProgramIndicatorQuery(program.id, displayNameProperty),
         [program.id, displayNameProperty]
     )
     const listProps = useDimensionList({
@@ -41,7 +41,6 @@ export const CardProgramIndicators: FC<CardProgramIndicatorsProps> = ({
     )
     const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)
 
-    // This card should be hidden completely if there are no program indicators
     if (listProps.dimensions.length === 0) {
         return null
     }

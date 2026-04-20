@@ -1,8 +1,8 @@
 import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
 import { render, screen } from '@testing-library/react'
-import type { DataSourceProgramWithRegistration } from '@types'
+import type { Program } from '@types'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { CardProgramIndicators } from '../card-program-indicators'
+import { CardEnrollmentProgramIndicators } from '../card-enrollment-program-indicators'
 
 const mockUseDimensionList = vi.fn()
 const mockUseSelectedDimensionCount = vi.fn()
@@ -50,16 +50,16 @@ const defaultListResult: UseDimensionListResult = {
     isDisabledByFilter: false,
 }
 
-const createProgram = (): DataSourceProgramWithRegistration =>
+const createProgram = (): Program =>
     ({
         id: 'prog1',
         name: 'Test Program',
         programType: 'WITH_REGISTRATION',
         programStages: [],
         trackedEntityType: { id: 'tet1', name: 'Person' },
-    }) as DataSourceProgramWithRegistration
+    }) as Program
 
-describe('CardProgramIndicators', () => {
+describe('CardEnrollmentProgramIndicators', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         mockUseDimensionList.mockReturnValue(defaultListResult)
@@ -73,7 +73,7 @@ describe('CardProgramIndicators', () => {
         })
 
         const { container } = render(
-            <CardProgramIndicators program={createProgram()} />
+            <CardEnrollmentProgramIndicators program={createProgram()} />
         )
 
         expect(container.innerHTML).toBe('')
@@ -93,7 +93,7 @@ describe('CardProgramIndicators', () => {
             ],
         })
 
-        render(<CardProgramIndicators program={createProgram()} />)
+        render(<CardEnrollmentProgramIndicators program={createProgram()} />)
 
         expect(screen.getByTestId('dimension-card')).toBeInTheDocument()
         expect(screen.getByTestId('card-title')).toHaveTextContent(
@@ -115,7 +115,7 @@ describe('CardProgramIndicators', () => {
             ],
         })
 
-        render(<CardProgramIndicators program={createProgram()} />)
+        render(<CardEnrollmentProgramIndicators program={createProgram()} />)
 
         expect(screen.getByTestId('dimension-card')).toHaveAttribute(
             'data-card-key',

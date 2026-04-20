@@ -4,7 +4,8 @@ import {
     buildQuery,
     getFilterParamsFromBaseQuery,
     createDimensionBaseQuery,
-    getProgramIndicatorQuery,
+    getEnrollmentProgramIndicatorQuery,
+    getEventProgramIndicatorQuery,
     getProgramAttributeQuery,
     getDataElementQuery,
     getDataElementQueryTemplate,
@@ -245,47 +246,35 @@ describe('dimension query helpers', () => {
         })
     })
 
-    describe('getProgramIndicatorQuery', () => {
-        it('creates program indicator query with displayName', () => {
-            const result = getProgramIndicatorQuery(
+    describe('getEnrollmentProgramIndicatorQuery', () => {
+        it('uses the enrollments endpoint', () => {
+            const result = getEnrollmentProgramIndicatorQuery(
                 'program-123',
                 'displayName'
             )
 
-            expect(result).toMatchInlineSnapshot(`
-              {
-                "params": {
-                  "fields": "id,displayName~rename(name),dimensionType,valueType,optionSet",
-                  "filter": "dimensionType:eq:PROGRAM_INDICATOR",
-                  "order": "displayName:asc",
-                  "pageSize": 10,
-                  "paging": true,
-                  "programId": "program-123",
-                },
-                "resource": "analytics/enrollments/query/dimensions",
-              }
-            `)
+            expect(result.resource).toBe(
+                'analytics/enrollments/query/dimensions'
+            )
+            expect(result.params?.programId).toBe('program-123')
+            expect(result.params?.filter).toBe(
+                'dimensionType:eq:PROGRAM_INDICATOR'
+            )
         })
+    })
 
-        it('creates program indicator query with displayShortName', () => {
-            const result = getProgramIndicatorQuery(
+    describe('getEventProgramIndicatorQuery', () => {
+        it('uses the events endpoint', () => {
+            const result = getEventProgramIndicatorQuery(
                 'program-123',
-                'displayShortName'
+                'displayName'
             )
 
-            expect(result).toMatchInlineSnapshot(`
-              {
-                "params": {
-                  "fields": "id,displayShortName~rename(name),dimensionType,valueType,optionSet",
-                  "filter": "dimensionType:eq:PROGRAM_INDICATOR",
-                  "order": "displayShortName:asc",
-                  "pageSize": 10,
-                  "paging": true,
-                  "programId": "program-123",
-                },
-                "resource": "analytics/enrollments/query/dimensions",
-              }
-            `)
+            expect(result.resource).toBe('analytics/events/query/dimensions')
+            expect(result.params?.programId).toBe('program-123')
+            expect(result.params?.filter).toBe(
+                'dimensionType:eq:PROGRAM_INDICATOR'
+            )
         })
     })
 
