@@ -246,14 +246,12 @@ export const getMainDimensions = (
         dimensionId: 'createdBy',
         dimensionType: 'USER',
         name: i18n.t('Created by'),
-        valueType: 'USERNAME',
     },
     lastUpdatedBy: {
         id: 'lastUpdatedBy',
         dimensionId: 'lastUpdatedBy',
         dimensionType: 'USER',
         name: i18n.t('Last updated by'),
-        valueType: 'USERNAME',
     },
 })
 

@@ -7,14 +7,12 @@ import type {
     OutputType,
 } from '@types'
 import { getRequestOptions } from './query-tools-common'
-import type { ParameterRecord } from './query-tools-common'
 
 const convertToScreamingSnakeCase = (input: string) =>
-    input.replace(/[A-Z]/g, (c) => `_${c}`).toUpperCase()
+    input.replaceAll(/[A-Z]/g, (c) => `_${c}`).toUpperCase()
 
 const adaptDimensions = (
     dimensions: DimensionArray,
-    parameters: ParameterRecord,
     outputType: OutputType
 ) => {
     const adaptedDimensions: DimensionArray = []
@@ -65,6 +63,7 @@ const adaptDimensions = (
             }
         } else if (dimensionId === 'enrollmentOu') {
             // enrollmentOu must be passed as ou for ENROLLMENT
+            // program prefix must be removed for EVENT/ENROLLMENT
             adaptedDimensions.push({
                 ...dimensionObj,
                 dimension: outputType === 'ENROLLMENT' ? 'ou' : 'ENROLLMENT_OU',
@@ -77,7 +76,7 @@ const adaptDimensions = (
         } else if (
             // "dy" dimension can be present in PT visualizations
             // everything else is a normal dimension id with program/programStage prefix
-            !['createdBy', 'lastUpdatedBy', 'dy'].includes(dimensionId)
+            !['dy'].includes(dimensionId)
         ) {
             adaptedDimensions.push(dimensionObj)
         }
@@ -103,9 +102,9 @@ export const getAdaptedVisualization = (
     const rows = visualization.rows ?? []
     const filters = visualization.filters ?? []
 
-    const adaptedColumns = adaptDimensions(columns, parameters, outputType)
-    const adaptedRows = adaptDimensions(rows, parameters, outputType)
-    const adaptedFilters = adaptDimensions(filters, parameters, outputType)
+    const adaptedColumns = adaptDimensions(columns, outputType)
+    const adaptedRows = adaptDimensions(rows, outputType)
+    const adaptedFilters = adaptDimensions(filters, outputType)
 
     const baseHeadersMap = getHeadersMap(visualization)
     const dimensionHeadersMap: Record<string, string> = {
@@ -145,6 +144,7 @@ export const getAdaptedVisualization = (
 
     return {
         adaptedVisualization: {
+            // only pass dimensions with conditions
             columns: adaptedColumns.filter(({ items }) => items?.length),
             rows: adaptedRows.filter(({ items }) => items?.length),
             filters: adaptedFilters.filter(({ items }) => items?.length),
