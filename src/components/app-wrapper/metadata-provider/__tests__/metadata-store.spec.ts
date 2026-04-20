@@ -287,7 +287,6 @@ describe('MetadataStore', () => {
               "dimensionType": "USER",
               "id": "createdBy",
               "name": "Created by",
-              "valueType": "USERNAME",
             },
             "createdDate": {
               "dimensionId": "createdDate",
@@ -398,7 +397,6 @@ describe('MetadataStore', () => {
               "dimensionType": "USER",
               "id": "lastUpdatedBy",
               "name": "Last updated by",
-              "valueType": "USERNAME",
             },
             "lastUpdatedOn": {
               "dimensionId": "lastUpdatedOn",
