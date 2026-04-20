@@ -85,9 +85,11 @@ const fetchAnalyticsDataForLL = async ({
     sortField,
     sortDirection,
     displayProperty,
-}) => {
+}: FetchAnalyticsDataForLLParams) => {
     const { adaptedVisualization, headers, parameters } =
         getAdaptedVisualization(visualization)
+
+    console.log('adaptedVisualization', adaptedVisualization)
 
     let req = new analyticsEngine.request()
         .fromVisualization(adaptedVisualization)
@@ -99,10 +101,13 @@ const fetchAnalyticsDataForLL = async ({
                 : {}),
             ...parameters,
         })
-        .withDisplayProperty(displayProperty.toUpperCase())
         .withPageSize(pageSize)
         .withPage(page)
         .withIncludeMetadataDetails()
+
+    if (displayProperty) {
+        req = req.withDisplayProperty(displayProperty.toUpperCase())
+    }
 
     // trackedEntity request can use multiple programs
     if (visualization.outputType !== 'TRACKED_ENTITY_INSTANCE') {
@@ -118,7 +123,11 @@ const fetchAnalyticsDataForLL = async ({
     }
 
     if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {
-        req = req.withTrackedEntityType(visualization.trackedEntityType.id)
+        const trackedEntityTypeId = visualization.trackedEntityType?.id
+
+        if (trackedEntityTypeId) {
+            req = req.withTrackedEntityType(trackedEntityTypeId)
+        }
     }
 
     if (relativePeriodDate && isVisualizationWithTimeDimension(visualization)) {
@@ -338,6 +347,17 @@ export type OnAnalyticsResponseReceivedCb = (
     headers: Array<LineListAnalyticsDataHeader>
 ) => void
 
+type FetchAnalyticsDataForLLParams = {
+    analyticsEngine: ReturnType<typeof Analytics.getAnalytics>
+    visualization: CurrentVisualization
+    pageSize: number
+    page: number
+    relativePeriodDate: unknown
+    sortField: string | undefined
+    sortDirection: 'ASC' | 'DESC' | undefined
+    displayProperty: CurrentUser['settings']['displayProperty']
+}
+
 type FetchAnalyticsDataParams = {
     visualization: CurrentVisualization
     filters?: Record<string, unknown>
@@ -387,6 +407,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     : { dimension: undefined, direction: undefined }
 
             try {
+                console.log('in fetch analytics data try')
                 const analyticsResponse = await fetchAnalyticsDataForLL({
                     analyticsEngine,
                     page,
@@ -464,6 +485,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
 
                 onResponseReceived(analyticsResponse.metaData.items, headers)
             } catch (error) {
+                console.log('fetch LL data error', error)
                 setState({
                     data: null,
                     error,

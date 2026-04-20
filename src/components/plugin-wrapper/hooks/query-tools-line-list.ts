@@ -1,4 +1,4 @@
-import { getFullDimensionId, isTimeDimensionId } from '@modules/dimension'
+import { getFullDimensionId } from '@modules/dimension'
 import { getHeadersMap } from '@modules/visualization'
 import type {
     Axis,
@@ -9,6 +9,9 @@ import type {
 import { getRequestOptions } from './query-tools-common'
 import type { ParameterRecord } from './query-tools-common'
 
+const convertToScreamingSnakeCase = (input: string) =>
+    input.replace(/[A-Z]/g, (c) => `_${c}`).toUpperCase()
+
 const adaptDimensions = (
     dimensions: DimensionArray,
     parameters: ParameterRecord,
@@ -16,35 +19,65 @@ const adaptDimensions = (
 ) => {
     const adaptedDimensions: DimensionArray = []
 
+    // This function should accommodate the various dimension cases and exceptions detailed in the Analytics apis spreadsheet
+
     dimensions.forEach((dimensionObj) => {
         const dimensionId = dimensionObj.dimension
 
-        if (
-            isTimeDimensionId(dimensionId) ||
-            dimensionId === 'eventStatus' ||
-            dimensionId === 'programStatus' ||
-            dimensionId === 'created' ||
-            (dimensionId === 'ou' && outputType === 'TRACKED_ENTITY_INSTANCE')
+        console.log('adapt dim', dimensionId)
+
+        // these are always passed without any prefix
+        if (['completed', 'created', 'lastUpdated'].includes(dimensionId)) {
+            adaptedDimensions.push({
+                ...dimensionObj,
+                dimension: convertToScreamingSnakeCase(dimensionId),
+                program: undefined,
+                programStage: undefined,
+            })
+            // eventDate, eventStatus and sheduledDate have a program or stage id prefixed
+        } else if (
+            ['eventDate', 'eventStatus', 'scheduledDate'].includes(dimensionId)
         ) {
-            if (dimensionObj.items?.length) {
-                const items = dimensionObj.items?.map((item) => item.id)
-                if (
-                    (dimensionId === 'programStatus' ||
-                        isTimeDimensionId(dimensionId)) &&
-                    Array.isArray(parameters[dimensionId])
-                ) {
-                    parameters[dimensionId].push(...items)
-                } else if (dimensionId === 'ou') {
-                    adaptedDimensions.push(dimensionObj)
-                } else {
-                    parameters[dimensionId] = items
-                }
+            adaptedDimensions.push({
+                ...dimensionObj,
+                dimension: convertToScreamingSnakeCase(dimensionId),
+            })
+        } else if (
+            dimensionId === 'programStatus' ||
+            dimensionId === 'enrollmentDate' ||
+            dimensionId === 'incidentDate'
+        ) {
+            const dimension = convertToScreamingSnakeCase(dimensionId)
+
+            if (outputType === 'TRACKED_ENTITY_INSTANCE') {
+                adaptedDimensions.push({
+                    ...dimensionObj,
+                    dimension,
+                })
+            } else {
+                // remove program/programStage for these dimensions for event/enrollment
+                adaptedDimensions.push({
+                    ...dimensionObj,
+                    dimension,
+                    program: undefined,
+                    programStage: undefined,
+                })
             }
+        } else if (dimensionId === 'enrollmentOu') {
+            // enrollmentOu must be passed as ou for ENROLLMENT
+            adaptedDimensions.push({
+                ...dimensionObj,
+                dimension: outputType === 'ENROLLMENT' ? 'ou' : 'ENROLLMENT_OU',
+                program:
+                    outputType === 'TRACKED_ENTITY_INSTANCE'
+                        ? dimensionObj.program
+                        : undefined,
+                programStage: undefined,
+            })
         } else if (
             // "dy" dimension can be present in PT visualizations
-            !['created', 'createdBy', 'lastUpdatedBy', 'dy'].includes(
-                dimensionId
-            )
+            // everything else is a normal dimension id with program/programStage prefix
+            !['createdBy', 'lastUpdatedBy', 'dy'].includes(dimensionId)
         ) {
             adaptedDimensions.push(dimensionObj)
         }
@@ -74,9 +107,18 @@ export const getAdaptedVisualization = (
     const adaptedRows = adaptDimensions(rows, parameters, outputType)
     const adaptedFilters = adaptDimensions(filters, parameters, outputType)
 
-    const dimensionHeadersMap = getHeadersMap(visualization)
+    const baseHeadersMap = getHeadersMap(visualization)
+    const dimensionHeadersMap: Record<string, string> = {
+        ...baseHeadersMap,
+        ...Object.fromEntries(
+            Object.entries(baseHeadersMap).map(([key, value]) => [
+                convertToScreamingSnakeCase(key),
+                value,
+            ])
+        ),
+    }
 
-    const headers = [...columns, ...rows].map(
+    const headers = [...adaptedColumns, ...adaptedRows].map(
         ({ dimension, program, programStage, repetition }) => {
             const programStageId = programStage?.id
 
@@ -103,9 +145,9 @@ export const getAdaptedVisualization = (
 
     return {
         adaptedVisualization: {
-            columns: adaptedColumns,
-            rows: adaptedRows,
-            filters: adaptedFilters,
+            columns: adaptedColumns.filter(({ items }) => items?.length),
+            rows: adaptedRows.filter(({ items }) => items?.length),
+            filters: adaptedFilters.filter(({ items }) => items?.length),
             outputType: outputType,
         },
         headers,

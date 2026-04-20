@@ -98,6 +98,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     )
 
     useEffect(() => {
+        console.log('fetch analytics data')
         fetchAnalyticsData({
             visualization:
                 transformVisualizationForAnalyticsRequest(eventVisualization),

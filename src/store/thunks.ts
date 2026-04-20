@@ -124,6 +124,7 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
                 ? undefined
                 : currentVis.sorting,
             type: visUiConfig.visualizationType,
+            // output type
             outputType: visUiConfig.outputType,
             columns: buildAxis(
                 visUiConfig.layout.columns,
