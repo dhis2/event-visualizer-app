@@ -28,6 +28,7 @@ import {
     timeFieldTimeDimensionMap,
     toAppLocalDimensions,
     transformDimensions,
+    WIRE_ONLY_DIMENSIONS,
 } from './dimension'
 import { getRepetitionsFromVisualisation } from './repetitions'
 
@@ -270,13 +271,17 @@ export const isVisualizationNew = (
 ): boolean =>
     !isVisualizationEmpty(visualization) && !isVisualizationSaved(visualization)
 
+const toAppLocalAxes = (dims: DimensionArray): DimensionArray =>
+    toAppLocalDimensions(
+        dims.filter((dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension))
+    )
+
 export const getVisualizationUiConfig = (raw: CurrentVisualization) => {
-    // Translate API dimension IDs to app-local IDs before building the config.
     const vis: CurrentVisualization = {
         ...raw,
-        columns: toAppLocalDimensions(raw.columns ?? []),
-        rows: toAppLocalDimensions(raw.rows ?? []),
-        filters: toAppLocalDimensions(raw.filters ?? []),
+        columns: toAppLocalAxes(raw.columns ?? []),
+        rows: toAppLocalAxes(raw.rows ?? []),
+        filters: toAppLocalAxes(raw.filters ?? []),
     }
     const outputType = vis.outputType
     const toDimId = (dim: DimensionArray[number]) =>

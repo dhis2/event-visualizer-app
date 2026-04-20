@@ -1,4 +1,5 @@
 import { PivotTable } from '@dhis2/analytics'
+import { WIRE_ONLY_DIMENSIONS } from '@modules/dimension'
 import { transformVisualizationForAnalyticsRequest } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, DimensionRecord } from '@types'
 import { type FC, useEffect, useMemo } from 'react'
@@ -30,7 +31,7 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
     // XXX: temporary code until the analytics api is updated and returns all the correect metadata
     // at that point we can pass a fully transformed visualization to the PivotTable component
     const filterDimension = (dimensionObj: DimensionRecord) =>
-        !['dy', 'latitude', 'longitude'].includes(dimensionObj.dimension)
+        !WIRE_ONLY_DIMENSIONS.has(dimensionObj.dimension)
 
     const visualizationForPTComponent: CurrentVisualization = useMemo(
         () =>

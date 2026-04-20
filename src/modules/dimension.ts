@@ -249,15 +249,20 @@ export const getProgramDimensions = (
     },
 })
 
+// Dimensions that exist only in the wire format (legacy event chart shape)
+// and have no meaning in the app-local layer.
+export const WIRE_ONLY_DIMENSIONS: ReadonlySet<string> = new Set([
+    'dy',
+    'latitude',
+    'longitude',
+])
+
 export const transformDimensions = (
     dimensions: DimensionArray
 ): DimensionArray =>
     dimensions
         .filter(
-            (dimensionObj) =>
-                !['dy', 'latitude', 'longitude'].includes(
-                    dimensionObj.dimension
-                )
+            (dimensionObj) => !WIRE_ONLY_DIMENSIONS.has(dimensionObj.dimension)
         )
         .map((dimensionObj) => {
             if (dimensionObj.dimensionType === 'PROGRAM_DATA_ELEMENT') {
@@ -412,6 +417,13 @@ export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
 export const toApiDimensionId = (dimId: string): string =>
     dimId === 'enrollmentOu' ? 'ou' : dimId
 
+// Dimension types that use plain IDs (no compound prefix) even when
+// the dimension record carries program/programStage context.
+const PLAIN_ID_DIMENSION_TYPES: ReadonlySet<string> = new Set([
+    'PROGRAM_INDICATOR',
+    'PROGRAM_ATTRIBUTE',
+])
+
 /**
  * Constructs the canonical compound dimension ID from a DimensionRecord.
  *
@@ -420,13 +432,19 @@ export const toApiDimensionId = (dimId: string): string =>
  * was only included for TRACKED_ENTITY_INSTANCE. In the canonical app-local
  * format, enrollment-scoped dimensions (program but no programStage) always
  * carry a programId prefix, regardless of outputType.
+ *
+ * Program indicators and tracked entity attributes always use plain IDs —
+ * they carry program/stage context on the dimension record but their
+ * canonical ID is not prefixed.
  */
 export const getCompoundDimensionId = (
     dim: DimensionRecord,
     outputType?: OutputType
 ): string => {
+    if (dim.dimensionType && PLAIN_ID_DIMENSION_TYPES.has(dim.dimensionType)) {
+        return dim.dimension
+    }
     if (dim.programStage?.id) {
-        // TEI stage-scoped dims keep the programId prefix (3-part form)
         if (outputType === 'TRACKED_ENTITY_INSTANCE' && dim.program?.id) {
             return `${dim.program.id}.${dim.programStage.id}.${dim.dimension}`
         }
