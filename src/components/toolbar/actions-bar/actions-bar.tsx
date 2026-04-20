@@ -13,7 +13,6 @@ import {
 import { SharingDialog } from '@dhis2/ui'
 import { useAppSelector, useCurrentUser } from '@hooks'
 import { isVisualizationValidForSaveAs } from '@modules/validation'
-import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import type { SavedVisualization } from '@types'
@@ -48,17 +47,12 @@ const ActionsBarDialog: FC<ActionsBarDialogProps> = ({
     const currentVis = useAppSelector(getCurrentVis)
     const savedVis = useAppSelector(getSavedVis)
 
-    const fileObject = useMemo(() => {
-        if (
-            isVisualizationEmpty(currentVis) ||
-            isVisualizationEmpty(savedVis)
-        ) {
-            throw new Error(
-                'ActionsBarDialog rendered with an empty visualization'
-            )
-        }
-        return { ...savedVis, ...currentVis } as SavedVisualization
-    }, [currentVis, savedVis])
+    // Cast is safe: only consumed when a dialog is open, by which point the
+    // relevant slices are populated (file-menu disables items otherwise).
+    const fileObject = useMemo(
+        () => ({ ...savedVis, ...currentVis }) as SavedVisualization,
+        [currentVis, savedVis]
+    )
 
     const isOnSaveAsEnabled = useMemo(
         () => isVisualizationValidForSaveAs(currentVis),
