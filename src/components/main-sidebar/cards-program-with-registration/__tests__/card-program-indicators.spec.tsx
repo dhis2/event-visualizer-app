@@ -2,7 +2,7 @@ import type { UseDimensionListResult } from '@components/main-sidebar/use-dimens
 import { render, screen } from '@testing-library/react'
 import type { Program } from '@types'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { CardEnrollmentProgramIndicators } from '../card-enrollment-program-indicators'
+import { CardProgramIndicators } from '../card-program-indicators'
 
 const mockUseDimensionList = vi.fn()
 const mockUseSelectedDimensionCount = vi.fn()
@@ -59,7 +59,7 @@ const createProgram = (): Program =>
         trackedEntityType: { id: 'tet1', name: 'Person' },
     }) as Program
 
-describe('CardEnrollmentProgramIndicators', () => {
+describe('CardProgramIndicators (enrollment)', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         mockUseDimensionList.mockReturnValue(defaultListResult)
@@ -73,7 +73,7 @@ describe('CardEnrollmentProgramIndicators', () => {
         })
 
         const { container } = render(
-            <CardEnrollmentProgramIndicators program={createProgram()} />
+            <CardProgramIndicators program={createProgram()} />
         )
 
         expect(container.innerHTML).toBe('')
@@ -93,7 +93,7 @@ describe('CardEnrollmentProgramIndicators', () => {
             ],
         })
 
-        render(<CardEnrollmentProgramIndicators program={createProgram()} />)
+        render(<CardProgramIndicators program={createProgram()} />)
 
         expect(screen.getByTestId('dimension-card')).toBeInTheDocument()
         expect(screen.getByTestId('card-title')).toHaveTextContent(
@@ -115,11 +115,11 @@ describe('CardEnrollmentProgramIndicators', () => {
             ],
         })
 
-        render(<CardEnrollmentProgramIndicators program={createProgram()} />)
+        render(<CardProgramIndicators program={createProgram()} />)
 
         expect(screen.getByTestId('dimension-card')).toHaveAttribute(
             'data-card-key',
-            'program-indicators'
+            'enrollment-program-indicators'
         )
     })
 })

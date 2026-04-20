@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-04-20T11:11:40.907Z\n"
-"PO-Revision-Date: 2026-04-20T11:11:40.910Z\n"
+"POT-Creation-Date: 2026-04-20T12:25:49.079Z\n"
+"PO-Revision-Date: 2026-04-20T12:25:49.079Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -496,6 +496,9 @@ msgstr "Enrollment data"
 msgid "Event data"
 msgstr "Event data"
 
+msgid "Program indicators"
+msgstr "Program indicators"
+
 msgid "Registration org. unit"
 msgstr "Registration org. unit"
 
@@ -525,9 +528,6 @@ msgstr "Failed to load data sources."
 
 msgid "Filter data sources"
 msgstr "Filter data sources"
-
-msgid "Program indicators"
-msgstr "Program indicators"
 
 msgid "Last updated on"
 msgstr "Last updated on"

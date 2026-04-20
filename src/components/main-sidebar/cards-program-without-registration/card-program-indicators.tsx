@@ -13,15 +13,15 @@ import { useCurrentUser } from '@hooks'
 import type { Program } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
 
-type CardEventProgramIndicatorsProps = {
+type CardProgramIndicatorsProps = {
     program: Program
 }
 
-const CARD_AND_LIST_KEY = 'program-indicators'
+const CARD_AND_LIST_KEY = 'event-program-indicators'
 
-export const CardEventProgramIndicators: FC<
-    CardEventProgramIndicatorsProps
-> = ({ program }) => {
+export const CardProgramIndicators: FC<CardProgramIndicatorsProps> = ({
+    program,
+}) => {
     const {
         settings: { displayNameProperty },
     } = useCurrentUser()

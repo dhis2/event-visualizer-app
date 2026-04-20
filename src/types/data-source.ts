@@ -44,10 +44,11 @@ export type DimensionCardKey =
     // program-with-registration data-source
     | 'enrollment'
     | 'event-with-registration'
-    | 'program-indicators'
+    | 'enrollment-program-indicators'
     | 'program-tracked-entity-type'
     // program-without-registration data-source
     | 'event-without-registration'
+    | 'event-program-indicators'
     // tracked-entity-type data-source
     | 'tracked-entity-type'
     // generic
