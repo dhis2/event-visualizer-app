@@ -115,7 +115,7 @@ describe('CardEnrollment', () => {
         expect(fixedDimensions).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({
-                    id: 'prog1.ou',
+                    id: 'prog1.enrollmentOu',
                     dimensionType: 'ORGANISATION_UNIT',
                 }),
                 expect.objectContaining({
@@ -147,7 +147,7 @@ describe('CardEnrollment', () => {
             fixedDimensions: Array<{ id: string; name: string }>
         }
         const ouDimension = call.fixedDimensions.find(
-            (d) => d.id === 'prog1.ou'
+            (d) => d.id === 'prog1.enrollmentOu'
         )
         expect(ouDimension?.name).toBe('Facility')
     })
