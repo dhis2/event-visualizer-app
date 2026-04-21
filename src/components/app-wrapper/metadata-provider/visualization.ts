@@ -65,7 +65,7 @@ export const extractProgramDimensionsMetadata = (
         return programDimensionsMetadata
     }
 
-    visualization.programDimensions.forEach((program) => {
+    visualization.programDimensions?.forEach((program) => {
         programDimensionsMetadata[program.id] = program
 
         if (program.programStages) {
@@ -129,6 +129,12 @@ export const supplementDimensionMetadata = (
 ) => {
     const { outputType } = visualization
     const dimensions = combineAllDimensionsFromVisualization(visualization)
+    const tetId = visualization.trackedEntityType?.id
+    const teaIdsInAttributeDimensions = new Set(
+        (visualization.attributeDimensions ?? [])
+            .map((entry) => entry.attribute?.id)
+            .filter(Boolean)
+    )
 
     const additionalDimensionMetadata = dimensions.reduce(
         (metadata, dimension) => {
@@ -142,7 +148,7 @@ export const supplementDimensionMetadata = (
             const prefixedId = getCompoundDimensionId(
                 dimension,
                 outputType,
-                visualization.trackedEntityType?.id
+                tetId
             )
 
             const item: MetadataInputItem = Object.entries(
@@ -187,6 +193,18 @@ export const supplementDimensionMetadata = (
 
             if (dimension.programStage?.id) {
                 item.programStageId = dimension.programStage.id
+            }
+
+            // Attach trackedEntityTypeId to TEA dimensions that belong to the
+            // viz's TET. Gate on both trackedEntityType (the TEI-scope signal)
+            // and attributeDimensions membership (an EVENT viz may carry TEAs
+            // in attributeDimensions but has no top-level TET).
+            if (
+                tetId &&
+                dimension.dimensionType === 'PROGRAM_ATTRIBUTE' &&
+                teaIdsInAttributeDimensions.has(dimension.dimension)
+            ) {
+                item.trackedEntityTypeId = tetId
             }
 
             metadata[prefixedId] = item

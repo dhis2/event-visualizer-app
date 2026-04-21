@@ -144,6 +144,7 @@ const CURRENT_VIS_NON_OPTION_KEYS: ReadonlyArray<
     'rows',
     'filters',
     'trackedEntityType',
+    'attributeDimensions',
     'sorting',
     'value',
     'id',

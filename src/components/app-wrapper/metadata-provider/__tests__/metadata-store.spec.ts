@@ -1187,3 +1187,80 @@ describe('MetadataStore — typed get* methods', () => {
         )
     })
 })
+
+// ---------------------------------------------------------------------------
+// Load-path enrichment for tracked entity attribute dimensions
+// ---------------------------------------------------------------------------
+
+describe('MetadataStore — TEA enrichment with trackedEntityTypeId', () => {
+    it('TEI saved vis ingests TEA metadata with trackedEntityTypeId populated', () => {
+        const store = new TestMetadataStore(
+            {},
+            [] as unknown as AppCachedData['rootOrgUnits']
+        )
+
+        const vis = {
+            outputType: 'TRACKED_ENTITY_INSTANCE',
+            trackedEntityType: { id: 'tetA', name: 'Person' },
+            programDimensions: [],
+            attributeDimensions: [
+                { attribute: { id: 'teaFirst', name: 'First name' } },
+            ],
+            columns: [
+                {
+                    dimension: 'teaFirst',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                    items: [],
+                },
+            ],
+            rows: [],
+            filters: [],
+            metaData: {
+                teaFirst: { name: 'First name' },
+            },
+        } as unknown as SavedVisualization
+
+        store.setVisualizationMetadata(vis)
+
+        const snapshot = store.getMetadataSnapshot()
+        expect(snapshot['teaFirst']).toMatchObject({
+            id: 'teaFirst',
+            dimensionId: 'teaFirst',
+            dimensionType: 'PROGRAM_ATTRIBUTE',
+            trackedEntityTypeId: 'tetA',
+        })
+    })
+
+    it('EVENT viz with attributeDimensions but no trackedEntityType does NOT attach trackedEntityTypeId', () => {
+        const store = new TestMetadataStore(
+            {},
+            [] as unknown as AppCachedData['rootOrgUnits']
+        )
+
+        const vis = {
+            outputType: 'EVENT',
+            programDimensions: [],
+            attributeDimensions: [
+                { attribute: { id: 'teaFirst', name: 'First name' } },
+            ],
+            columns: [
+                {
+                    dimension: 'teaFirst',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                    items: [],
+                },
+            ],
+            rows: [],
+            filters: [],
+            metaData: {
+                teaFirst: { name: 'First name' },
+            },
+        } as unknown as SavedVisualization
+
+        store.setVisualizationMetadata(vis)
+
+        const snapshot = store.getMetadataSnapshot()
+        expect(snapshot['teaFirst']).toBeDefined()
+        expect(snapshot['teaFirst']).not.toHaveProperty('trackedEntityTypeId')
+    })
+})

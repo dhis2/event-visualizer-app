@@ -1,7 +1,11 @@
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { extractDataSourceIdFromVisualization } from '@modules/data-source'
-import { formatLayoutForVisualization } from '@modules/layout'
+import {
+    buildTeiFieldsFromLayout,
+    formatLayoutForVisualization,
+    formatProgramDimensionsForVisualization,
+} from '@modules/layout'
 import { getDisabledOptions } from '@modules/options'
 import {
     getVisualizationUiConfig,
@@ -116,10 +120,11 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
         })
 
         // Overrides
-        const updatedCurrentVis = {
+        const updatedCurrentVis: CurrentVisualization = {
             ...mergedVis,
             // visualization type
             type: visUiConfig.visualizationType,
+            outputType: visUiConfig.outputType,
             // custom value and aggregation
             ...(visUiConfig.customValue && {
                 value: {
@@ -135,6 +140,16 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
                 extra.metadataStore.getDimensionMetadataItem.bind(
                     extra.metadataStore
                 )
+            ),
+            // Reset TEI-related fields before applying buildTeiFieldsFromLayout.
+            // The helper returns them sparsely (omits when not populated), so
+            // without this reset stale values from mergedVis could survive.
+            trackedEntityType: undefined,
+            attributeDimensions: undefined,
+            ...buildTeiFieldsFromLayout(visUiConfig, extra.metadataStore),
+            programDimensions: formatProgramDimensionsForVisualization(
+                visUiConfig,
+                extra.metadataStore
             ),
         }
 

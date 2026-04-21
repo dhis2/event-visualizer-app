@@ -58,12 +58,12 @@ type SavedVisualizationFieldOverrides = {
     filters: DimensionArray
     program: Program
     programStage: ProgramStage
-    programDimensions: ProgramDimensionArray
+    programDimensions?: ProgramDimensionArray
     trackedEntityType?: IdNameRecord
 
     // Custom dimension metadata arrays (from getDimensionMetadataFields)
     dataElementDimensions: DataElementDimensionArray
-    attributeDimensions: MetadataRecordArray<'attribute'>
+    attributeDimensions?: MetadataRecordArray<'attribute'>
     programIndicatorDimensions: MetadataRecordArray<'programIndicator'>
     categoryDimensions: MetadataRecordArray<'category'>
     categoryOptionGroupSetDimensions: MetadataRecordArray<'categoryOptionGroupSet'>
@@ -142,12 +142,13 @@ export type CurrentVisualization = Pick<
     | 'rows'
     | 'filters'
     | 'trackedEntityType'
+    | 'attributeDimensions'
+    | 'programDimensions'
     | 'sorting'
     | 'value'
 > &
     EventVisualizationOptions & {
         id?: string
-        programDimensions?: Array<Program>
     }
 
 export type VisualizationNameDescription = Pick<

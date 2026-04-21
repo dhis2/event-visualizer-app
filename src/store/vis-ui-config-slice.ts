@@ -86,6 +86,13 @@ type SetRepetitionsByDimensionPayload = {
     repetitions?: RepetitionsObject
 }
 
+export const selectLayoutAllDimensionIds = createSelector(
+    (state: VisUiConfigState) => state.layout.columns,
+    (state: VisUiConfigState) => state.layout.filters,
+    (state: VisUiConfigState) => state.layout.rows,
+    (columns, filters, rows) => [...columns, ...filters, ...rows]
+)
+
 const resolveSortInsertIndex = ({
     insertIndex,
     insertAfter,
@@ -327,12 +334,7 @@ export const visUiConfigSlice = createSlice({
         getVisUiConfigRepetitionsByDimension: (state, dimensionId: string) =>
             state.repetitionsByDimension[dimensionId] ||
             DEFAULT_REPETITIONS_OBJECT,
-        getVisUiConfigLayoutAllDimensionIds: createSelector(
-            (state: VisUiConfigState) => state.layout.columns,
-            (state: VisUiConfigState) => state.layout.filters,
-            (state: VisUiConfigState) => state.layout.rows,
-            (columns, filters, rows) => [...columns, ...filters, ...rows]
-        ),
+        getVisUiConfigLayoutAllDimensionIds: selectLayoutAllDimensionIds,
         getVisUiConfigLayoutIsEmpty: createSelector(
             (state: VisUiConfigState) => state.layout.columns,
             (state: VisUiConfigState) => state.layout.filters,

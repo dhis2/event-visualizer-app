@@ -25,7 +25,10 @@ type CardTrackedEntityTypeProps = {
 
 const CARD_AND_LIST_KEY = 'tracked-entity-type'
 
-const transformItem = (item: unknown): DimensionMetadataItem => {
+const transformItem = (
+    item: unknown,
+    trackedEntityTypeId: string
+): DimensionMetadataItem => {
     if (
         isObject(item) &&
         'trackedEntityAttribute' in item &&
@@ -43,19 +46,25 @@ const transformItem = (item: unknown): DimensionMetadataItem => {
             name: item.trackedEntityAttribute.name,
             valueType: item.trackedEntityAttribute.valueType as ValueType,
             dimensionType: 'PROGRAM_ATTRIBUTE',
+            trackedEntityTypeId,
         }
     } else {
         throw new Error('Invalid response data item')
     }
 }
 
-const transformer: Transformer = (data) => {
+export const transformTrackedEntityTypeAttributes = (
+    data: unknown,
+    trackedEntityTypeId: string
+): ReturnType<Transformer> => {
     if (
         isObject(data) &&
         'trackedEntityTypeAttributes' in data &&
         Array.isArray(data.trackedEntityTypeAttributes)
     ) {
-        const dimensions = data.trackedEntityTypeAttributes.map(transformItem)
+        const dimensions = data.trackedEntityTypeAttributes.map((item) =>
+            transformItem(item, trackedEntityTypeId)
+        )
         return { dimensions, nextPage: null }
     } else {
         throw new Error('Invalid response data')
@@ -95,6 +104,11 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
                 ],
             },
         }),
+        [trackedEntityType.id]
+    )
+    const transformer = useCallback<Transformer>(
+        (data) =>
+            transformTrackedEntityTypeAttributes(data, trackedEntityType.id),
         [trackedEntityType.id]
     )
     const listProps = useDimensionList({

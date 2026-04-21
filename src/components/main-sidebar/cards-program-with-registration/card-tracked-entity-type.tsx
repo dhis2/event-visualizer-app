@@ -3,6 +3,8 @@ import {
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
+import { defaultTransformer } from '@components/main-sidebar/use-dimension-list/default-transformer'
+import type { Transformer } from '@components/main-sidebar/use-dimension-list/default-transformer'
 import { getProgramAttributeQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import {
     useSelectedDimensionCount,
@@ -15,6 +17,20 @@ import type {
     DimensionMetadataItem,
 } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
+
+export const transformProgramAttributes = (
+    data: unknown,
+    trackedEntityTypeId: string
+): ReturnType<Transformer> => {
+    const { dimensions, nextPage } = defaultTransformer(data)
+    return {
+        nextPage,
+        dimensions: dimensions.map((dimension) => ({
+            ...dimension,
+            trackedEntityTypeId,
+        })),
+    }
+}
 
 type CardTrackedEntityTypeProps = {
     program: DataSourceProgramWithRegistration
@@ -58,10 +74,16 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
             ),
         [program.id, program.trackedEntityType.id, displayNameProperty]
     )
+    const transformer = useCallback<Transformer>(
+        (data) =>
+            transformProgramAttributes(data, program.trackedEntityType.id),
+        [program.trackedEntityType.id]
+    )
     const listProps = useDimensionList({
         dimensionListKey: CARD_AND_LIST_KEY,
         baseQuery,
         fixedDimensions,
+        transformer,
     })
     const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
         (selectedDimension) => {
