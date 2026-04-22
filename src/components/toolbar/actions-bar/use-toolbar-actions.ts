@@ -6,7 +6,7 @@ import {
 import { useAlert } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import { useAppDispatch, useAppSelector } from '@hooks'
-import { isVisualizationValidForSaveAs } from '@modules/validation'
+import { isVisualizationPersistable } from '@modules/validation'
 import {
     getSaveableVisualization,
     getVisualizationState,
@@ -35,15 +35,14 @@ export const useToolbarActions = () => {
     )
 
     const isSaveEnabled = useMemo(() => {
-        // Save and "Save as" persist the same payload, so they share the
-        // same shape-validity gate. The extra Save-only gates (update
-        // access, non-legacy) are layered on below.
-        if (!isVisualizationValidForSaveAs(currentVis)) {
+        if (!isVisualizationPersistable(currentVis)) {
             return false
         }
         switch (getVisualizationState(savedVis, currentVis)) {
             case 'UNSAVED':
-                // Brand-new vis — nothing to overwrite.
+                // Brand-new vis — no existing record to overwrite; Save
+                // routes through the SaveAs dialog to create the first
+                // persisted copy.
                 return true
             case 'DIRTY':
                 // Overwriting an existing saved vis. Requires update access
@@ -57,10 +56,16 @@ export const useToolbarActions = () => {
         }
     }, [currentVis, savedVis])
 
-    const isSaveAsEnabled = useMemo(
-        () => isVisualizationValidForSaveAs(currentVis),
-        [currentVis]
-    )
+    const isSaveAsEnabled = useMemo(() => {
+        if (!isVisualizationPersistable(currentVis)) {
+            return false
+        }
+        // Save As copies an existing saved visualization under a new name,
+        // so it requires a savedVis to copy from. UNSAVED (brand-new) is
+        // excluded — there is nothing to copy.
+        const state = getVisualizationState(savedVis, currentVis)
+        return state === 'SAVED' || state === 'DIRTY'
+    }, [currentVis, savedVis])
 
     const onDelete = useCallback(() => {
         dispatch(setNavigationState({ visualizationId: 'new' }))

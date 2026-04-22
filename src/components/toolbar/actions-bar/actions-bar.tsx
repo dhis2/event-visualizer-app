@@ -12,7 +12,7 @@ import {
 } from '@dhis2/analytics'
 import { SharingDialog } from '@dhis2/ui'
 import { useAppSelector, useCurrentUser } from '@hooks'
-import { isVisualizationValidForSaveAs } from '@modules/validation'
+import { isVisualizationPersistable } from '@modules/validation'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import type { SavedVisualization } from '@types'
@@ -54,8 +54,11 @@ const ActionsBarDialog: FC<ActionsBarDialogProps> = ({
         [currentVis, savedVis]
     )
 
+    // The SaveAs dialog is also opened from the Save button for brand-new
+    // (UNSAVED) visualizations, so this gate must only check persistability
+    // and not require a savedVis.
     const isOnSaveAsEnabled = useMemo(
-        () => isVisualizationValidForSaveAs(currentVis),
+        () => isVisualizationPersistable(currentVis),
         [currentVis]
     )
 

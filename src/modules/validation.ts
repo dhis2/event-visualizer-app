@@ -109,8 +109,11 @@ export const isVisualizationValid = (
     }
 }
 
-// Validation functions for FileMenu actions
-export const isVisualizationValidForSaveAs = (
+// Shape check: does the visualization carry the minimum fields required for
+// the API to accept a save payload (POST or PUT). Weaker than
+// `isVisualizationValid` (which also requires columns and org unit for
+// render).
+export const isVisualizationPersistable = (
     visualization: CurrentVisualization | EmptyVisualization
 ): boolean =>
     visualization.outputType === 'TRACKED_ENTITY_INSTANCE'
