@@ -519,9 +519,29 @@ compound ID from a `DimensionRecord`. It applies these rules in order:
 
 - **Event org unit**: `ou` with `programStage` → compound `stageId.ou`
 - **Enrollment org unit**: `enrollmentOu` → compound `programId.enrollmentOu`.
-  The API uses `ou` with program context; `toAppLocalDimensions` renames it to `enrollmentOu`
-  at the API → app-local boundary. The inverse (`toApiDimensionId`) translates back on save.
+  `toAppLocalDimensions` renames API `ou` (with program, no programStage) to `enrollmentOu`
+  at the API → app-local boundary. `toApiDimensionId` does the inverse on save — but only
+  in some outputType/visType combinations (see table below).
 - **Registration org unit**: `ou` with `trackedEntityType` → compound `tetId.ou`
+
+**`enrollmentOu` POST translation by outputType/visType**: the eventVisualizations POST
+endpoint accepts `enrollmentOu` verbatim for some combinations and requires plain `ou` for
+others. `toApiDimensionId` applies this mapping on save:
+
+| outputType                | visType       | POST dimension | Rewrite `enrollmentOu` → `ou`? |
+| ------------------------- | ------------- | -------------- | ------------------------------ |
+| `EVENT`                   | `LINE_LIST`   | `enrollmentOu` | no                             |
+| `ENROLLMENT`              | `LINE_LIST`   | `ou`           | yes                            |
+| `TRACKED_ENTITY_INSTANCE` | `LINE_LIST`   | `enrollmentOu` | no                             |
+| `EVENT`                   | `PIVOT_TABLE` | `ou`           | yes                            |
+| `ENROLLMENT`              | `PIVOT_TABLE` | `ou`           | yes                            |
+
+Rule: rewrite to `ou` when `outputType === 'ENROLLMENT'` OR `visType === 'PIVOT_TABLE'`.
+Keep as `enrollmentOu` otherwise (i.e. `LINE_LIST` with `EVENT` or `TRACKED_ENTITY_INSTANCE`).
+
+The reverse (load) direction does not need the same conditional — `toAppLocalDimensions`
+keys purely on the shape `dim.dimension === 'ou' && dim.program && !dim.programStage`, which
+catches the three `ou`-cases and leaves the two `enrollmentOu`-cases untouched.
 
 ### Save/load translation at the visualization API boundary
 

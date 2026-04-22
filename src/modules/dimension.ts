@@ -16,6 +16,7 @@ import type {
     ProgramStage,
     TimeDimensionId,
     ValueType,
+    VisualizationType,
 } from '@types'
 
 export const outputTypeTimeDimensionMap: Record<OutputType, DimensionId> = {
@@ -413,9 +414,28 @@ export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
         return dim
     })
 
-/** Inverse: app-local → API dimension ID (single dimension). */
-export const toApiDimensionId = (dimId: string): string =>
-    dimId === 'enrollmentOu' ? 'ou' : dimId
+/**
+ * Inverse: app-local → API dimension ID (single dimension).
+ *
+ * `enrollmentOu` is the app-local ID for the enrollment org unit. The
+ * eventVisualizations POST endpoint accepts it verbatim in some
+ * outputType/visType combinations and requires plain `ou` in others. See the
+ * "Org unit scopes" table in CLAUDE.md for the authoritative mapping.
+ */
+export const toApiDimensionId = (
+    dimId: string,
+    {
+        outputType,
+        visType,
+    }: { outputType?: OutputType; visType?: VisualizationType } = {}
+): string => {
+    if (dimId !== 'enrollmentOu') {
+        return dimId
+    }
+    const shouldRewriteToOu =
+        outputType === 'ENROLLMENT' || visType === 'PIVOT_TABLE'
+    return shouldRewriteToOu ? 'ou' : dimId
+}
 
 // Dimension types that use plain IDs (no compound prefix) even when
 // the dimension record carries program/programStage context.

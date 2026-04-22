@@ -686,14 +686,61 @@ describe('toAppLocalDimensions', () => {
 })
 
 describe('toApiDimensionId', () => {
-    it('translates enrollmentOu back to ou', () => {
-        expect(toApiDimensionId('enrollmentOu')).toBe('ou')
+    describe('enrollmentOu', () => {
+        it('keeps enrollmentOu for EVENT + LINE_LIST', () => {
+            expect(
+                toApiDimensionId('enrollmentOu', {
+                    outputType: 'EVENT',
+                    visType: 'LINE_LIST',
+                })
+            ).toBe('enrollmentOu')
+        })
+
+        it('rewrites to ou for ENROLLMENT + LINE_LIST', () => {
+            expect(
+                toApiDimensionId('enrollmentOu', {
+                    outputType: 'ENROLLMENT',
+                    visType: 'LINE_LIST',
+                })
+            ).toBe('ou')
+        })
+
+        it('keeps enrollmentOu for TRACKED_ENTITY_INSTANCE + LINE_LIST', () => {
+            expect(
+                toApiDimensionId('enrollmentOu', {
+                    outputType: 'TRACKED_ENTITY_INSTANCE',
+                    visType: 'LINE_LIST',
+                })
+            ).toBe('enrollmentOu')
+        })
+
+        it('rewrites to ou for EVENT + PIVOT_TABLE', () => {
+            expect(
+                toApiDimensionId('enrollmentOu', {
+                    outputType: 'EVENT',
+                    visType: 'PIVOT_TABLE',
+                })
+            ).toBe('ou')
+        })
+
+        it('rewrites to ou for ENROLLMENT + PIVOT_TABLE', () => {
+            expect(
+                toApiDimensionId('enrollmentOu', {
+                    outputType: 'ENROLLMENT',
+                    visType: 'PIVOT_TABLE',
+                })
+            ).toBe('ou')
+        })
     })
 
     it('passes through other dimension IDs unchanged', () => {
-        expect(toApiDimensionId('eventDate')).toBe('eventDate')
-        expect(toApiDimensionId('ou')).toBe('ou')
-        expect(toApiDimensionId('enrollmentDate')).toBe('enrollmentDate')
+        const ctx = {
+            outputType: 'ENROLLMENT' as const,
+            visType: 'PIVOT_TABLE' as const,
+        }
+        expect(toApiDimensionId('eventDate', ctx)).toBe('eventDate')
+        expect(toApiDimensionId('ou', ctx)).toBe('ou')
+        expect(toApiDimensionId('enrollmentDate', ctx)).toBe('enrollmentDate')
     })
 })
 

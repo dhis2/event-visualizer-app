@@ -67,7 +67,10 @@ export const buildAxis = (
                 options.programStage = { id: dim.programStageId }
             }
             return dimensionCreate(
-                toApiDimensionId(dimensionId),
+                toApiDimensionId(dimensionId, {
+                    outputType: visUiConfig.outputType,
+                    visType: visUiConfig.visualizationType,
+                }),
                 visUiConfig.itemsByDimension[id],
                 options
             )
