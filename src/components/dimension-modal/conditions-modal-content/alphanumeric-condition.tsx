@@ -24,6 +24,7 @@ type ConditionProps = {
     condition: string
     onChange: (condition: string) => void
     onRemove: () => void
+    initialFocus?: boolean
 }
 
 const BaseCondition: FC<
@@ -31,7 +32,14 @@ const BaseCondition: FC<
         allowCaseSensitive?: boolean
         valueClassName?: string
     }
-> = ({ condition, onChange, onRemove, allowCaseSensitive, valueClassName }) => {
+> = ({
+    condition,
+    onChange,
+    onRemove,
+    allowCaseSensitive,
+    valueClassName,
+    initialFocus,
+}) => {
     const [operator, value, isCaseSensitive] = useMemo(() => {
         if (condition.includes(NULL_VALUE)) {
             return [condition as QueryOperator, '', false]
@@ -105,6 +113,7 @@ const BaseCondition: FC<
                     onChange={({ value }) => setValue(value)}
                     className={valueClassName || classes.textInput}
                     dense
+                    initialFocus={initialFocus}
                 />
             )}
             {allowCaseSensitive &&

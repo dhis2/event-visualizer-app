@@ -26,6 +26,7 @@ type NumericConditionProps = {
     onRemove: () => void
     dimension: DimensionMetadataItem
     legendSetId?: string
+    initialFocus?: boolean
 }
 
 export const NumericCondition: FC<NumericConditionProps> = ({
@@ -35,6 +36,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
     legendSetId,
     numberOfConditions,
     dimension,
+    initialFocus,
 }) => {
     const allowIntegerOnly: boolean = useMemo(
         () =>
@@ -221,6 +223,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                         className={classes.numericInput}
                         dense
                         step={enableDecimalSteps ? '0.1' : '1'}
+                        initialFocus={initialFocus}
                     />
                 )}
             {operator === OPERATOR_IN && (

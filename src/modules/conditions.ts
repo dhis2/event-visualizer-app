@@ -3,6 +3,7 @@ import { formatValue, ouIdHelper } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import type {
     CurrentVisualization,
+    DimensionType,
     OutputType,
     SavedVisualization,
     ValueType,
@@ -225,7 +226,24 @@ export const isIsCaseSensitive = (operator: QueryOperator): boolean => {
     }
 }
 
-const getOperatorsByValueType = (valueType?: ValueType) => {
+export const isAlphanumericValueType = (valueType?: ValueType): boolean => {
+    switch (valueType) {
+        case 'LETTER':
+        case 'TEXT':
+        case 'LONG_TEXT':
+        case 'EMAIL':
+        case 'USERNAME':
+        case 'URL':
+        case 'PHONE_NUMBER':
+            return true
+        default:
+            return false
+    }
+}
+
+export const getOperatorsByValueType = (
+    valueType?: ValueType
+): Record<string, string> => {
     switch (valueType) {
         case 'LETTER':
         case 'TEXT':
@@ -254,7 +272,10 @@ const getOperatorsByValueType = (valueType?: ValueType) => {
     }
 }
 
-const getOperatorsForDimension = (dimension: LayoutDimension) => {
+export const getOperatorsForDimension = (dimension: {
+    valueType?: ValueType
+    dimensionType?: DimensionType
+}): Record<string, string> => {
     const valueType =
         dimension.dimensionType === 'PROGRAM_INDICATOR' && !dimension.valueType
             ? 'NUMBER'

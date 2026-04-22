@@ -29,12 +29,14 @@ type ConditionComponentProps = {
     condition: string
     onChange: (value: string) => void
     onRemove?: (index: number) => void
+    initialFocus?: boolean
 }
 
 const ConditionsList: FC<{
     conditionComponent: ComponentType<ConditionComponentProps>
 }> = ({ conditionComponent: ConditionComponent }) => {
-    const { conditionsList, setCondition, removeCondition } = useConditions()
+    const { conditionsList, setCondition, removeCondition, initialFocusIndex } =
+        useConditions()
 
     return conditionsList.map((condition, index) => (
         <div key={index}>
@@ -42,6 +44,7 @@ const ConditionsList: FC<{
                 condition={condition}
                 onChange={(value) => setCondition(index, value)}
                 onRemove={() => removeCondition(index)}
+                initialFocus={index === initialFocusIndex}
             />
             <ConditionDivider total={conditionsList.length} index={index} />
         </div>
@@ -55,6 +58,7 @@ const NumericConditionsList: FC = () => {
         dimension,
         removeCondition,
         setCondition,
+        initialFocusIndex,
     } = useConditions()
 
     return (
@@ -77,6 +81,7 @@ const NumericConditionsList: FC = () => {
                     conditionsList.length || (conditions.legendSet ? 1 : 0)
                 }
                 legendSetId={conditions.legendSet}
+                initialFocus={index === initialFocusIndex}
             />
             <ConditionDivider total={conditionsList.length} index={index} />
         </div>

@@ -1,8 +1,21 @@
 import i18n from '@dhis2/d2-i18n'
-import { Button, IconInfo16, Tooltip } from '@dhis2/ui'
+import {
+    DropdownButton,
+    FlyoutMenu,
+    IconInfo16,
+    MenuDivider,
+    MenuItem,
+    Tooltip,
+} from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
+    OPERATOR_EMPTY,
     OPERATOR_IN,
+    OPERATOR_NOT_EMPTY,
+    type QueryOperator,
+    addCaseSensitivePrefix,
+    getOperatorsForDimension,
+    isAlphanumericValueType,
     parseConditionsArrayToString,
     parseConditionsStringToArray,
 } from '@modules/conditions'
@@ -18,11 +31,29 @@ import {
     createContext,
     useCallback,
     useContext,
+    useEffect,
     useMemo,
     useState,
 } from 'react'
 import { Conditions } from './conditions'
 import classes from './styles/conditions-modal-content.module.css'
+
+const buildInitialConditionString = (
+    operatorKey: QueryOperator,
+    isAlphanumeric: boolean
+): string => {
+    if (operatorKey === OPERATOR_EMPTY || operatorKey === OPERATOR_NOT_EMPTY) {
+        return operatorKey
+    }
+
+    // Alphanumeric dimensions default to case-insensitive, which means the
+    // stored operator is prefixed with "I" (e.g. LIKE -> ILIKE, EQ -> IEQ).
+    const prefixedOperator = isAlphanumeric
+        ? addCaseSensitivePrefix(operatorKey, false)
+        : operatorKey
+
+    return `${prefixedOperator}:`
+}
 
 const EMPTY_CONDITION = ''
 
@@ -64,6 +95,7 @@ type ConditionsProviderValue = {
     isOptionSetCondition: boolean
     isProgramIndicator: boolean
     isSupported: boolean
+    initialFocusIndex: number | null
     setCondition: (
         conditionIndex: number,
         value: string,
@@ -146,9 +178,58 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         [dimension.id, dispatch]
     )
 
-    const addCondition = (): void => {
-        setConditionsList((prev) => [...prev, EMPTY_CONDITION])
-    }
+    const isAlphanumeric: boolean =
+        !isProgramIndicator && isAlphanumericValueType(valueType)
+
+    const dropdownOperators = useMemo(
+        () =>
+            getOperatorsForDimension({
+                valueType,
+                dimensionType: dimension.dimensionType,
+            }),
+        [valueType, dimension.dimensionType]
+    )
+
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+    const [initialFocusIndex, setInitialFocusIndex] = useState<number | null>(
+        null
+    )
+
+    // Consume-once: clear the flag after the child mounts with initialFocus so
+    // a subsequent re-render doesn't try to steal focus again.
+    useEffect(() => {
+        if (initialFocusIndex !== null) {
+            setInitialFocusIndex(null)
+        }
+    }, [initialFocusIndex])
+
+    const toggleDropdown = useCallback(
+        () => setIsDropdownOpen((open) => !open),
+        []
+    )
+
+    const addCondition = useCallback(
+        (operatorKey: QueryOperator) => {
+            setIsDropdownOpen(false)
+            const initialCondition = buildInitialConditionString(
+                operatorKey,
+                isAlphanumeric
+            )
+            const updated = [...conditionsList, initialCondition]
+            setConditionsList(updated)
+            // storeConditions drops entries ending with ':', so operator-only
+            // placeholders stay local; complete conditions (EQ:NV, NE:NV) persist.
+            storeConditions(updated, conditions.legendSet)
+            // Focus the value input of the newly-added condition. Skip operators
+            // that don't take a value (NV) or open a separate picker flow (IN).
+            const shouldFocus =
+                operatorKey !== OPERATOR_EMPTY &&
+                operatorKey !== OPERATOR_NOT_EMPTY &&
+                operatorKey !== OPERATOR_IN
+            setInitialFocusIndex(shouldFocus ? updated.length - 1 : null)
+        },
+        [conditionsList, isAlphanumeric, storeConditions, conditions.legendSet]
+    )
 
     const removeCondition = useCallback<
         ConditionsProviderValue['removeCondition']
@@ -197,6 +278,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
             isProgramIndicator,
             isSupported,
             valueType,
+            initialFocusIndex,
             setCondition,
             removeCondition,
         }
@@ -208,6 +290,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         isProgramIndicator,
         isSupported,
         valueType,
+        initialFocusIndex,
         setCondition,
         removeCondition,
     ])
@@ -265,18 +348,62 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                                     }
                                     className={classes.tooltipReference}
                                 >
-                                    <Button
+                                    <DropdownButton
                                         type="button"
                                         small
-                                        onClick={addCondition}
+                                        open={isDropdownOpen}
+                                        onClick={toggleDropdown}
                                         className={classes.addConditionButton}
                                         disabled={disableAddButton}
                                         dataTest="button-add-condition"
+                                        component={
+                                            <FlyoutMenu
+                                                dense
+                                                dataTest="add-condition-menu"
+                                            >
+                                                {Object.entries(
+                                                    dropdownOperators
+                                                ).map(([key, label]) => (
+                                                    <MenuItem
+                                                        key={key}
+                                                        label={label}
+                                                        onClick={() =>
+                                                            addCondition(
+                                                                key as QueryOperator
+                                                            )
+                                                        }
+                                                        dataTest={`add-condition-menu-item-${key}`}
+                                                    />
+                                                ))}
+                                                {canHaveLegendSets && (
+                                                    <>
+                                                        <MenuDivider dense />
+                                                        {/* Stricter than disableAddButton: once any condition exists, the IN operator is not offered at all, since it is mutually exclusive with every other operator. */}
+                                                        <MenuItem
+                                                            dense
+                                                            label={i18n.t(
+                                                                'is one of preset options'
+                                                            )}
+                                                            disabled={
+                                                                conditionsList.length >
+                                                                0
+                                                            }
+                                                            onClick={() =>
+                                                                addCondition(
+                                                                    OPERATOR_IN
+                                                                )
+                                                            }
+                                                            dataTest={`add-condition-menu-item-${OPERATOR_IN}`}
+                                                        />
+                                                    </>
+                                                )}
+                                            </FlyoutMenu>
+                                        }
                                     >
                                         {conditionsList.length
                                             ? i18n.t('Add another condition')
                                             : i18n.t('Add a condition')}
-                                    </Button>
+                                    </DropdownButton>
                                 </span>
                             )}
                         </Tooltip>
