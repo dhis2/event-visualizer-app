@@ -9,17 +9,12 @@ import {
 import type {
     Axis,
     CurrentVisualization,
+    DimensionArray,
     DimensionMetadataItem,
     Layout,
     MetadataStore,
-    OutputType,
     Program,
 } from '@types'
-
-type TeiFields = Pick<
-    CurrentVisualization,
-    'trackedEntityType' | 'attributeDimensions'
->
 
 export const getAxisName = (axisId: Axis): string => getAxisNames()[axisId]
 
@@ -37,47 +32,47 @@ export const isDimensionInLayout = (
         axisDimensionIds.includes(dimensionId)
     )
 
-type DimensionLookup = (compoundId: string) => DimensionMetadataItem | undefined
-
-const buildAttributeDimensions = (
-    layoutDims: DimensionMetadataItem[]
-): NonNullable<CurrentVisualization['attributeDimensions']> =>
-    layoutDims
-        .filter((dim) => dim.dimensionType === 'PROGRAM_ATTRIBUTE')
-        .map((dim) => ({
-            attribute: { id: dim.dimensionId, name: dim.name },
-        }))
-
-const resolveTrackedEntityType = (
-    outputType: OutputType,
-    layoutDims: DimensionMetadataItem[],
+export const buildAxis = (
+    dimensionIds: string[],
+    visUiConfig: VisUiConfigState,
     metadataStore: MetadataStore
-): { id: string; name: string } | undefined => {
-    if (outputType === 'EVENT') {
-        return undefined
-    }
-    const hasTea = layoutDims.some(
-        (dim) => dim.dimensionType === 'PROGRAM_ATTRIBUTE'
-    )
-    if (outputType === 'ENROLLMENT' && !hasTea) {
-        return undefined
-    }
-    const tetId = layoutDims.find(
-        (dim) => dim.trackedEntityTypeId
-    )?.trackedEntityTypeId
-    if (!tetId) {
-        throw new Error(
-            `Cannot resolve trackedEntityType for outputType=${outputType}: no layout dimension carries a trackedEntityTypeId`
-        )
-    }
-    const tet = metadataStore.getMetadataItem(tetId)
-    if (!tet) {
-        throw new Error(
-            `Tracked entity type "${tetId}" referenced by a layout dimension but not found in the metadata store`
-        )
-    }
-    return { id: tet.id, name: tet.name }
-}
+): DimensionArray =>
+    dimensionIds
+        .map((id) => {
+            const dim = metadataStore.getDimensionMetadataItem(id)
+            if (!dim) {
+                throw new Error(
+                    `No metadata found for dimension "${id}" — cannot decompose compound ID for API`
+                )
+            }
+            const dimensionId = dim.dimensionId ?? id
+            const conditions = visUiConfig.conditionsByDimension[id]
+            const repetitions = visUiConfig.repetitionsByDimension[id]
+            const options: Record<string, unknown> = {}
+            if (conditions?.condition) {
+                options.filter = conditions.condition
+            }
+            if (conditions?.legendSet) {
+                options.legendSet = { id: conditions.legendSet }
+            }
+            if (repetitions) {
+                options.repetition = {
+                    indexes: parseUiRepetitions(repetitions),
+                }
+            }
+            if (dim.programId) {
+                options.program = { id: dim.programId }
+            }
+            if (dim.programStageId) {
+                options.programStage = { id: dim.programStageId }
+            }
+            return dimensionCreate(
+                toApiDimensionId(dimensionId),
+                visUiConfig.itemsByDimension[id],
+                options
+            )
+        })
+        .filter((dim): dim is DimensionArray[number] => dim !== null)
 
 const getLayoutDims = (
     visUiConfig: VisUiConfigState,
@@ -93,31 +88,7 @@ const getLayoutDims = (
         return dim
     })
 
-export const buildTeiFieldsFromLayout = (
-    visUiConfig: VisUiConfigState,
-    metadataStore: MetadataStore
-): TeiFields => {
-    const layoutDims = getLayoutDims(visUiConfig, metadataStore)
-    const result: TeiFields = {}
-
-    const attributeDimensions = buildAttributeDimensions(layoutDims)
-    if (attributeDimensions.length > 0) {
-        result.attributeDimensions = attributeDimensions
-    }
-
-    const trackedEntityType = resolveTrackedEntityType(
-        visUiConfig.outputType,
-        layoutDims,
-        metadataStore
-    )
-    if (trackedEntityType) {
-        result.trackedEntityType = trackedEntityType
-    }
-
-    return result
-}
-
-export const formatProgramDimensionsForVisualization = (
+export const collectProgramDimensions = (
     visUiConfig: VisUiConfigState,
     metadataStore: MetadataStore
 ): Program[] => {
@@ -139,59 +110,52 @@ export const formatProgramDimensionsForVisualization = (
     return Array.from(programsById.values())
 }
 
-export const formatLayoutForVisualization = (
-    visUiConfig: VisUiConfigState,
-    getDimension: DimensionLookup
-) =>
-    Object.entries(visUiConfig.layout).reduce(
-        (layout, [axisId, dimensionIds]: [string, string[]]) => ({
-            ...layout,
-            [axisId]: dimensionIds
-                .map((id) => {
-                    const dim = getDimension(id)
-                    if (!dim) {
-                        throw new Error(
-                            `No metadata found for dimension "${id}" — cannot decompose compound ID for API`
-                        )
-                    }
-                    const dimensionId = dim.dimensionId ?? id
-                    const programId = dim.programId
-                    const programStageId = dim.programStageId
+type TeiFields = {
+    trackedEntityType: CurrentVisualization['trackedEntityType']
+    attributeDimensions: CurrentVisualization['attributeDimensions']
+}
 
-                    return dimensionCreate(
-                        toApiDimensionId(dimensionId),
-                        visUiConfig.itemsByDimension[id],
-                        {
-                            filter: visUiConfig.conditionsByDimension[id]
-                                ?.condition,
-                            ...(visUiConfig.conditionsByDimension[id]
-                                ?.legendSet && {
-                                legendSet: {
-                                    id: visUiConfig.conditionsByDimension[id]
-                                        .legendSet,
-                                },
-                            }),
-                            ...(visUiConfig.repetitionsByDimension[id] && {
-                                repetition: {
-                                    indexes: parseUiRepetitions(
-                                        visUiConfig.repetitionsByDimension[id]
-                                    ),
-                                },
-                            }),
-                            ...(programId && {
-                                program: {
-                                    id: programId,
-                                },
-                            }),
-                            ...(programStageId && {
-                                programStage: {
-                                    id: programStageId,
-                                },
-                            }),
-                        }
-                    )
-                })
-                .filter((dim) => dim !== null),
-        }),
-        {}
+export const resolveTeiFields = (
+    visUiConfig: VisUiConfigState,
+    metadataStore: MetadataStore
+): TeiFields => {
+    const layoutDims = getLayoutDims(visUiConfig, metadataStore)
+    const { outputType } = visUiConfig
+
+    const teaDims = layoutDims.filter(
+        (dim) => dim.dimensionType === 'PROGRAM_ATTRIBUTE'
     )
+    const attributeDimensions =
+        teaDims.length > 0
+            ? teaDims.map((dim) => ({
+                  attribute: { id: dim.dimensionId, name: dim.name },
+              }))
+            : undefined
+
+    const needsTrackedEntityType =
+        outputType === 'TRACKED_ENTITY_INSTANCE' ||
+        (outputType === 'ENROLLMENT' && teaDims.length > 0)
+
+    if (!needsTrackedEntityType) {
+        return { trackedEntityType: undefined, attributeDimensions }
+    }
+
+    const tetId = layoutDims.find(
+        (dim) => dim.trackedEntityTypeId
+    )?.trackedEntityTypeId
+    if (!tetId) {
+        throw new Error(
+            `Cannot resolve trackedEntityType for outputType=${outputType}: no layout dimension carries a trackedEntityTypeId`
+        )
+    }
+    const tet = metadataStore.getMetadataItem(tetId)
+    if (!tet) {
+        throw new Error(
+            `Tracked entity type "${tetId}" referenced by a layout dimension but not found in the metadata store`
+        )
+    }
+    return {
+        trackedEntityType: { id: tet.id, name: tet.name },
+        attributeDimensions,
+    }
+}

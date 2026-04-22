@@ -65,6 +65,20 @@ export const getDisabledOptions = (options: EventVisualizationOptions) => {
     return disabledOptions
 }
 
+// Returns options with disabled keys blanked to undefined so they don't land
+// on the persisted visualization (e.g. col/row totals when cumulativeValues
+// is set). Caller can spread the result into the vis object.
+export const getEnabledOptions = (
+    options: EventVisualizationOptions
+): EventVisualizationOptions => {
+    const disabled = new Set(getDisabledOptions(options))
+    const result: EventVisualizationOptions = { ...options }
+    for (const key of disabled) {
+        result[key] = undefined
+    }
+    return result
+}
+
 export const isPopulatedLegendOption = (
     value: EventVisualizationOptions['legend']
 ): value is LegendOption =>

@@ -286,7 +286,26 @@ const toAppLocalAxes = (dims: DimensionArray): DimensionArray =>
         dims.filter((dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension))
     )
 
-export const getVisualizationUiConfig = (raw: CurrentVisualization) => {
+const OPTION_KEYS = Object.keys(DEFAULT_OPTIONS) as Array<
+    keyof EventVisualizationOptions
+>
+
+const extractOptions = (
+    vis: CurrentVisualization
+): Partial<EventVisualizationOptions> => {
+    const extracted: Partial<EventVisualizationOptions> = {}
+    for (const key of OPTION_KEYS) {
+        if (vis[key] !== undefined) {
+            ;(extracted as Record<string, unknown>)[key] = vis[key]
+        }
+    }
+    return extracted
+}
+
+export const getVisualizationUiConfig = (
+    raw: CurrentVisualization,
+    baseOptions: EventVisualizationOptions = DEFAULT_OPTIONS
+) => {
     const vis: CurrentVisualization = {
         ...raw,
         columns: toAppLocalAxes(raw.columns ?? []),
@@ -325,6 +344,7 @@ export const getVisualizationUiConfig = (raw: CurrentVisualization) => {
         ),
         conditionsByDimension: getConditionsFromVisualization(vis, outputType),
         repetitionsByDimension: getRepetitionsFromVisualisation(vis),
+        options: { ...baseOptions, ...extractOptions(vis) },
         ...(vis.value?.id && {
             customValue: {
                 id: vis.value.id,

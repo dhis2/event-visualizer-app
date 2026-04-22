@@ -1,3 +1,4 @@
+import { DEFAULT_OPTIONS } from '@constants/options'
 import type { SavedVisualization } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
@@ -327,9 +328,37 @@ describe('getVisualizationUiConfig', () => {
             const result = getVisualizationUiConfig(
                 input as unknown as SavedVisualization
             )
-            expect(result).toEqual(expected)
+            expect(result).toEqual({ ...expected, options: DEFAULT_OPTIONS })
         }
     )
+
+    it('extracts option fields from the saved vis and overrides the base options', () => {
+        const input = {
+            type: 'LINE_LIST',
+            outputType: 'EVENT',
+            rows: [],
+            columns: [],
+            filters: [],
+            hideTitle: true,
+            title: 'My Saved Title',
+            fontSize: 'LARGE',
+        } as unknown as SavedVisualization
+
+        const baseOptions = {
+            ...DEFAULT_OPTIONS,
+            digitGroupSeparator: 'COMMA' as const,
+            hideTitle: false,
+        }
+
+        const result = getVisualizationUiConfig(input, baseOptions)
+
+        expect(result.options).toEqual({
+            ...baseOptions,
+            hideTitle: true,
+            title: 'My Saved Title',
+            fontSize: 'LARGE',
+        })
+    })
 })
 
 describe('getSaveableVisualization', () => {

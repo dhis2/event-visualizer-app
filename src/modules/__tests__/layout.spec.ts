@@ -7,9 +7,9 @@ import type {
 } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
-    buildTeiFieldsFromLayout,
-    formatLayoutForVisualization,
-    formatProgramDimensionsForVisualization,
+    buildAxis,
+    collectProgramDimensions,
+    resolveTeiFields,
 } from '../layout'
 
 const makeDim = (
@@ -305,17 +305,19 @@ const testCases = {
     },
 }
 
-describe('formatLayoutForVisualization', () => {
+describe('buildAxis', () => {
     it.each(Object.entries(testCases))(
-        'should return correct columns/rows/filters from visUiConfig %s layout',
+        'should produce correct DimensionArray from visUiConfig %s columns',
         (_name, { input, metadata, expected }) => {
-            const getDimension = (id: string) =>
-                (metadata as Record<string, DimensionMetadataItem>)[id]
-            const result = formatLayoutForVisualization(
+            const store = makeStore({
+                dims: metadata as Record<string, DimensionMetadataItem>,
+            })
+            const result = buildAxis(
+                input.layout.columns,
                 input as unknown as VisUiConfigState,
-                getDimension
+                store
             )
-            expect(result).toEqual(expected)
+            expect(result).toEqual(expected.columns)
         }
     )
 
@@ -326,13 +328,16 @@ describe('formatLayoutForVisualization', () => {
             conditionsByDimension: {},
             repetitionsByDimension: {},
         }
-        const getDimension = () => undefined
+        const store = makeStore({})
         expect(() =>
-            formatLayoutForVisualization(
+            buildAxis(
+                input.layout.columns,
                 input as unknown as VisUiConfigState,
-                getDimension
+                store
             )
-        ).toThrow('No metadata found for dimension "unknown.dim"')
+        ).toThrow(
+            'No metadata found for dimension "unknown.dim" — cannot decompose compound ID for API'
+        )
     })
 })
 
@@ -366,7 +371,7 @@ const baseState = (
         layout: layout(ids),
     }) as unknown as VisUiConfigState
 
-describe('buildTeiFieldsFromLayout', () => {
+describe('resolveTeiFields', () => {
     it('TEI viz with TEAs → trackedEntityType set, attributeDimensions populated', () => {
         const state = baseState('TRACKED_ENTITY_INSTANCE', ['tea1', 'tea2'])
         const store = makeStore({
@@ -389,7 +394,7 @@ describe('buildTeiFieldsFromLayout', () => {
             metadata: { tetA: { id: 'tetA', name: 'Person' } },
         })
 
-        expect(buildTeiFieldsFromLayout(state, store)).toEqual({
+        expect(resolveTeiFields(state, store)).toEqual({
             trackedEntityType: { id: 'tetA', name: 'Person' },
             attributeDimensions: [
                 { attribute: { id: 'tea1', name: 'First name' } },
@@ -413,8 +418,9 @@ describe('buildTeiFieldsFromLayout', () => {
             metadata: { tetA: { id: 'tetA', name: 'Person' } },
         })
 
-        expect(buildTeiFieldsFromLayout(state, store)).toEqual({
+        expect(resolveTeiFields(state, store)).toEqual({
             trackedEntityType: { id: 'tetA', name: 'Person' },
+            attributeDimensions: undefined,
         })
     })
 
@@ -433,7 +439,7 @@ describe('buildTeiFieldsFromLayout', () => {
             metadata: { tetA: { id: 'tetA', name: 'Person' } },
         })
 
-        expect(buildTeiFieldsFromLayout(state, store)).toEqual({
+        expect(resolveTeiFields(state, store)).toEqual({
             trackedEntityType: { id: 'tetA', name: 'Person' },
             attributeDimensions: [
                 { attribute: { id: 'tea1', name: 'First name' } },
@@ -454,7 +460,10 @@ describe('buildTeiFieldsFromLayout', () => {
             },
         })
 
-        expect(buildTeiFieldsFromLayout(state, store)).toEqual({})
+        expect(resolveTeiFields(state, store)).toEqual({
+            trackedEntityType: undefined,
+            attributeDimensions: undefined,
+        })
     })
 
     it('EVENT viz with TEA → trackedEntityType cleared, attributeDimensions populated', () => {
@@ -470,7 +479,8 @@ describe('buildTeiFieldsFromLayout', () => {
             },
         })
 
-        expect(buildTeiFieldsFromLayout(state, store)).toEqual({
+        expect(resolveTeiFields(state, store)).toEqual({
+            trackedEntityType: undefined,
             attributeDimensions: [
                 { attribute: { id: 'tea1', name: 'First name' } },
             ],
@@ -490,7 +500,7 @@ describe('buildTeiFieldsFromLayout', () => {
             },
         })
 
-        expect(() => buildTeiFieldsFromLayout(state, store)).toThrow(
+        expect(() => resolveTeiFields(state, store)).toThrow(
             'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: no layout dimension carries a trackedEntityTypeId'
         )
     })
@@ -509,7 +519,7 @@ describe('buildTeiFieldsFromLayout', () => {
             },
         })
 
-        expect(() => buildTeiFieldsFromLayout(state, store)).toThrow(
+        expect(() => resolveTeiFields(state, store)).toThrow(
             'Tracked entity type "tetGhost" referenced by a layout dimension but not found in the metadata store'
         )
     })
@@ -518,13 +528,13 @@ describe('buildTeiFieldsFromLayout', () => {
         const state = baseState('EVENT', ['ghost'])
         const store = makeStore({})
 
-        expect(() => buildTeiFieldsFromLayout(state, store)).toThrow(
+        expect(() => resolveTeiFields(state, store)).toThrow(
             'No metadata found for dimension "ghost" in the layout'
         )
     })
 })
 
-describe('formatProgramDimensionsForVisualization', () => {
+describe('collectProgramDimensions', () => {
     it('dedupes programs referenced across layout dims', () => {
         const state = baseState('ENROLLMENT', [
             'stage1.de1',
@@ -569,7 +579,7 @@ describe('formatProgramDimensionsForVisualization', () => {
             programs: { pA: programA, pB: programB },
         })
 
-        expect(formatProgramDimensionsForVisualization(state, store)).toEqual([
+        expect(collectProgramDimensions(state, store)).toEqual([
             programA,
             programB,
         ])
@@ -588,9 +598,7 @@ describe('formatProgramDimensionsForVisualization', () => {
             },
         })
 
-        expect(formatProgramDimensionsForVisualization(state, store)).toEqual(
-            []
-        )
+        expect(collectProgramDimensions(state, store)).toEqual([])
     })
 
     it('throws when a referenced program is missing from the metadata store', () => {
@@ -609,9 +617,7 @@ describe('formatProgramDimensionsForVisualization', () => {
             programs: {},
         })
 
-        expect(() =>
-            formatProgramDimensionsForVisualization(state, store)
-        ).toThrow(
+        expect(() => collectProgramDimensions(state, store)).toThrow(
             'Program "pMissing" referenced by dimension "stage1.de1" but not found in the metadata store'
         )
     })
@@ -620,8 +626,8 @@ describe('formatProgramDimensionsForVisualization', () => {
         const state = baseState('EVENT', ['ghost'])
         const store = makeStore({})
 
-        expect(() =>
-            formatProgramDimensionsForVisualization(state, store)
-        ).toThrow('No metadata found for dimension "ghost" in the layout')
+        expect(() => collectProgramDimensions(state, store)).toThrow(
+            'No metadata found for dimension "ghost" in the layout'
+        )
     })
 })

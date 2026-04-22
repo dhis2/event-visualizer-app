@@ -2,19 +2,19 @@ import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { extractDataSourceIdFromVisualization } from '@modules/data-source'
 import {
-    buildTeiFieldsFromLayout,
-    formatLayoutForVisualization,
-    formatProgramDimensionsForVisualization,
+    buildAxis,
+    collectProgramDimensions,
+    resolveTeiFields,
 } from '@modules/layout'
-import { getDisabledOptions } from '@modules/options'
+import { getEnabledOptions } from '@modules/options'
 import {
     getVisualizationUiConfig,
+    isCurrentVisExisting,
     isVisualizationEmpty,
     toCurrentVis,
 } from '@modules/visualization'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import type { AppDispatch, CurrentVisualization } from '@types'
-import deepmerge from 'deepmerge'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
 import { setDataSourceId } from './dimensions-selection-slice'
 import { setIsVisualizationLoading, setLoadError } from './loader-slice'
@@ -57,7 +57,7 @@ export const tLoadSavedVisualization = createAsyncThunk<
     AppAsyncThunkConfig
 >(
     'visualization/load',
-    async ({ id, updateStatistics = false }, { dispatch, extra }) => {
+    async ({ id, updateStatistics = false }, { dispatch, getState, extra }) => {
         dispatch(setIsVisualizationLoading(true))
 
         const { data, error } = await dispatch(
@@ -70,10 +70,15 @@ export const tLoadSavedVisualization = createAsyncThunk<
             const currentVis = toCurrentVis(data)
             const selectedDataSourceId =
                 extractDataSourceIdFromVisualization(currentVis)
+            const currentOptions = getState().visUiConfig.options
 
             dispatch(setSavedVis(data))
             dispatch(setDataSourceId(selectedDataSourceId))
-            dispatch(setVisUiConfig(getVisualizationUiConfig(currentVis)))
+            dispatch(
+                setVisUiConfig(
+                    getVisualizationUiConfig(currentVis, currentOptions)
+                )
+            )
             dispatch(setCurrentVis(currentVis))
             dispatch(setIsVisualizationLoading(false))
 
@@ -101,56 +106,43 @@ export const tLoadSavedVisualization = createAsyncThunk<
 export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
     () => (dispatch, getState, extra) => {
         const { currentVis, visUiConfig } = getState()
+        const { metadataStore } = extra
+        const { customValue } = visUiConfig
 
-        if (isVisualizationEmpty(currentVis)) {
-            throw new Error(
-                'tUpdateCurrentVisFromVisUiConfig called with an empty visualization'
-            )
-        }
-
-        const mergedVis = deepmerge(
-            currentVis as Record<string, unknown>,
-            visUiConfig.options as Record<string, unknown>
-        ) as CurrentVisualization
-
-        const disabledOptions = getDisabledOptions(visUiConfig.options)
-
-        disabledOptions.forEach((disabledOption) => {
-            delete mergedVis[disabledOption]
-        })
-
-        // Overrides
+        // Build fresh from visUiConfig so stale currentVis fields can't leak
+        // through. Carry over only id and sorting from the previous currentVis.
         const updatedCurrentVis: CurrentVisualization = {
-            ...mergedVis,
-            // visualization type
+            id: isCurrentVisExisting(currentVis) ? currentVis.id : undefined,
+            sorting: isVisualizationEmpty(currentVis)
+                ? undefined
+                : currentVis.sorting,
             type: visUiConfig.visualizationType,
             outputType: visUiConfig.outputType,
-            // custom value and aggregation
-            ...(visUiConfig.customValue && {
-                value: {
-                    id: visUiConfig.customValue.id,
-                },
-                aggregationType: visUiConfig.customValue.aggregationType,
-            }),
-            // columns/rows/filters from visUiConfig.layout — the metadata
-            // store provides the decomposed context (programId, programStageId)
-            // for each compound dimension ID.
-            ...formatLayoutForVisualization(
+            columns: buildAxis(
+                visUiConfig.layout.columns,
                 visUiConfig,
-                extra.metadataStore.getDimensionMetadataItem.bind(
-                    extra.metadataStore
-                )
+                metadataStore
             ),
-            // Reset TEI-related fields before applying buildTeiFieldsFromLayout.
-            // The helper returns them sparsely (omits when not populated), so
-            // without this reset stale values from mergedVis could survive.
-            trackedEntityType: undefined,
-            attributeDimensions: undefined,
-            ...buildTeiFieldsFromLayout(visUiConfig, extra.metadataStore),
-            programDimensions: formatProgramDimensionsForVisualization(
+            rows: buildAxis(
+                visUiConfig.layout.rows,
                 visUiConfig,
-                extra.metadataStore
+                metadataStore
             ),
+            filters: buildAxis(
+                visUiConfig.layout.filters,
+                visUiConfig,
+                metadataStore
+            ),
+            programDimensions: collectProgramDimensions(
+                visUiConfig,
+                metadataStore
+            ),
+            value: customValue ? { id: customValue.id } : undefined,
+            aggregationType:
+                customValue?.aggregationType ??
+                visUiConfig.options.aggregationType,
+            ...getEnabledOptions(visUiConfig.options),
+            ...resolveTeiFields(visUiConfig, metadataStore),
         }
 
         dispatch(setCurrentVis(updatedCurrentVis))
