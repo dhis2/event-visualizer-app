@@ -6,7 +6,7 @@ import { ModalDownloadDropdown } from '@components/download-menu/modal-download-
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { InterpretationModal as AnalyticsInterpretationModal } from '@dhis2/analytics'
 import { useAppSelector } from '@hooks'
-import { isSavedVisPresent } from '@modules/visualization'
+import { isSavedVisualization } from '@modules/visualization'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import type { MetadataInput } from '@types'
@@ -26,7 +26,7 @@ export const InterpretationModal: FC = () => {
 
     // The interpretation modal only makes sense for an already-saved vis;
     // if none is loaded we don't render it.
-    if (!interpretationId || !isSavedVisPresent(savedVis)) {
+    if (!interpretationId || !isSavedVisualization(savedVis)) {
         return null
     }
 

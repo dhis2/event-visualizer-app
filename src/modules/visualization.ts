@@ -256,30 +256,54 @@ export const getSaveableVisualization = (
 }
 
 export const isVisualizationEmpty = (
-    visualization: CurrentVisualization | EmptyVisualization
+    visualization:
+        | CurrentVisualization
+        | SavedVisualization
+        | EmptyVisualization
 ): visualization is EmptyVisualization =>
     Object.keys(visualization).length === 0
 
-/**
- * For the savedVis slice: narrow to SavedVisualization. Presence (having an
- * id) and "is fully saved" are equivalent for this slice since its state is
- * always either EmptyVisualization or a complete SavedVisualization.
- */
-export const isSavedVisPresent = (
+// Structural check for the minimal fields shared by CurrentVisualization and
+// SavedVisualization. Declaring the return as the union lets TypeScript
+// narrow each slice input to its specific member (Empty is excluded either
+// way), so we get useful narrowing in both currentVis and savedVis contexts
+// without resorting to overloads.
+const isPopulatedVisualization = (
+    visualization:
+        | CurrentVisualization
+        | SavedVisualization
+        | EmptyVisualization
+): visualization is SavedVisualization | CurrentVisualization => {
+    const candidate = visualization as Partial<CurrentVisualization>
+    return (
+        typeof candidate.type === 'string' &&
+        Array.isArray(candidate.columns) &&
+        Array.isArray(candidate.rows) &&
+        Array.isArray(candidate.filters)
+    )
+}
+
+export const isSavedVisualization = (
     visualization: SavedVisualization | EmptyVisualization
 ): visualization is SavedVisualization =>
-    'id' in visualization && typeof visualization.id === 'string'
+    isPopulatedVisualization(visualization) &&
+    typeof visualization.id === 'string' &&
+    // `access` is SavedVisualization-only: CurrentVisualization doesn't carry
+    // it, so its presence distinguishes a full saved vis from a persisted
+    // currentVis that merely has an id.
+    'access' in visualization
 
-/**
- * For the currentVis slice: narrow to a CurrentVisualization with a known id.
- * A CurrentVisualization with an id is NOT a full SavedVisualization — it
- * lacks access/name/legacy/etc. (toCurrentVis strips those). Consumers that
- * need those fields must read from the savedVis slice.
- */
-export const isCurrentVisExisting = (
+export const isCurrentVisualizationPersisted = (
     visualization: CurrentVisualization | EmptyVisualization
 ): visualization is CurrentVisualization & { id: string } =>
-    'id' in visualization && typeof visualization.id === 'string'
+    isPopulatedVisualization(visualization) &&
+    typeof visualization.id === 'string'
+
+export const isCurrentVisualizationNew = (
+    visualization: CurrentVisualization | EmptyVisualization
+): visualization is CurrentVisualization =>
+    isPopulatedVisualization(visualization) &&
+    typeof visualization.id !== 'string'
 
 const toAppLocalAxes = (dims: DimensionArray): DimensionArray =>
     toAppLocalDimensions(
@@ -460,16 +484,13 @@ export const normalizeApiSavedVisualization = (
             return out
         })
 
+    const rawFilters = orgUnitField
+        ? [...filters, { dimension: 'ou', items: [{ id: orgUnitField }] }]
+        : filters
+
     const normalizedColumns = normalizeDimensions(columns)
     const normalizedRows = normalizeDimensions(rows)
-    let normalizedFilters = normalizeDimensions(filters)
-
-    if (orgUnitField) {
-        normalizedFilters = [
-            ...normalizedFilters,
-            { dimension: 'ou', items: [{ id: orgUnitField }] },
-        ]
-    }
+    const normalizedFilters = normalizeDimensions(rawFilters)
 
     const normalizedProgramDimensions =
         program && !programDimensions.some((p) => p.id === program.id)

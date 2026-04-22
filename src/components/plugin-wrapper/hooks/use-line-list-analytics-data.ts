@@ -90,7 +90,7 @@ const fetchAnalyticsDataForLL = async ({
         getAdaptedVisualization(visualization)
 
     let req = new analyticsEngine.request()
-        .fromVisualization(adaptedVisualization, true)
+        .fromVisualization(adaptedVisualization)
         .withParameters({
             headers,
             totalPages: false,

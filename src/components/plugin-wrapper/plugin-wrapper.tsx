@@ -1,6 +1,6 @@
 import { Center, CircularLoader } from '@dhis2/ui'
 import {
-    isCurrentVisExisting,
+    isCurrentVisualizationPersisted,
     isVisualizationEmpty,
 } from '@modules/visualization'
 import type {
@@ -71,7 +71,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
             {visualization.type === 'LINE_LIST' && (
                 <LineListPlugin
                     key={
-                        isCurrentVisExisting(visualization)
+                        isCurrentVisualizationPersisted(visualization)
                             ? visualization.id
                             : 'new'
                     }
@@ -87,7 +87,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
             {visualization.type === 'PIVOT_TABLE' && (
                 <PivotTablePlugin
                     key={
-                        isCurrentVisExisting(visualization)
+                        isCurrentVisualizationPersisted(visualization)
                             ? visualization.id
                             : 'new'
                     }

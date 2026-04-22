@@ -9,7 +9,7 @@ import {
 import { getEnabledOptions } from '@modules/options'
 import {
     getVisualizationUiConfig,
-    isCurrentVisExisting,
+    isCurrentVisualizationPersisted,
     isVisualizationEmpty,
     toCurrentVis,
 } from '@modules/visualization'
@@ -112,7 +112,9 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
         // Build fresh from visUiConfig so stale currentVis fields can't leak
         // through. Carry over only id and sorting from the previous currentVis.
         const updatedCurrentVis: CurrentVisualization = {
-            id: isCurrentVisExisting(currentVis) ? currentVis.id : undefined,
+            id: isCurrentVisualizationPersisted(currentVis)
+                ? currentVis.id
+                : undefined,
             sorting: isVisualizationEmpty(currentVis)
                 ? undefined
                 : currentVis.sorting,

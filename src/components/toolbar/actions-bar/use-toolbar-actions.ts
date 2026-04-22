@@ -10,7 +10,7 @@ import { isVisualizationValidForSaveAs } from '@modules/validation'
 import {
     getSaveableVisualization,
     getVisualizationState,
-    isCurrentVisExisting,
+    isCurrentVisualizationPersisted,
     isVisualizationEmpty,
 } from '@modules/visualization'
 import {
@@ -35,6 +35,9 @@ export const useToolbarActions = () => {
     )
 
     const isSaveEnabled = useMemo(() => {
+        // Save and "Save as" persist the same payload, so they share the
+        // same shape-validity gate. The extra Save-only gates (update
+        // access, non-legacy) are layered on below.
         if (!isVisualizationValidForSaveAs(currentVis)) {
             return false
         }
@@ -43,9 +46,11 @@ export const useToolbarActions = () => {
                 // Brand-new vis — nothing to overwrite.
                 return true
             case 'DIRTY':
-                // Require update access AND non-legacy. Re-saving a legacy
-                // vis in the new format would break it in the older app, so
-                // "Save as" is the only allowed path for those.
+                // Overwriting an existing saved vis. Requires update access
+                // and non-legacy status, both read from savedVis because
+                // `toCurrentVis` strips those fields. Re-saving a legacy vis
+                // in the new format would break older apps that still read
+                // it, so "Save as" is the only allowed path for those.
                 return Boolean(savedVis.access?.update) && !savedVis.legacy
             default:
                 return false
@@ -110,7 +115,10 @@ export const useToolbarActions = () => {
 
     const onOpen = useCallback(
         (id: string) => {
-            if (isCurrentVisExisting(currentVis) && currentVis.id === id) {
+            if (
+                isCurrentVisualizationPersisted(currentVis) &&
+                currentVis.id === id
+            ) {
                 dispatch(
                     tLoadSavedVisualization({ id, updateStatistics: false })
                 )
@@ -172,7 +180,7 @@ export const useToolbarActions = () => {
             )
         )
 
-        if (data && isCurrentVisExisting(currentVis)) {
+        if (data && isCurrentVisualizationPersisted(currentVis)) {
             // Reload the saved visualization after saving
             // here we should *not* update statistics
             dispatch(
