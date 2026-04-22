@@ -16,7 +16,6 @@ import {
 import { isValueTypeNumeric } from '@modules/value-type'
 import {
     getSingleProgramFromVisualization,
-    getSingleProgramStageFromVisualization,
     headersMap,
     isVisualizationWithTimeDimension,
 } from '@modules/visualization'
@@ -114,12 +113,6 @@ const fetchAnalyticsDataForLL = async ({
         req = req
             .withProgram(getSingleProgramFromVisualization(visualization).id)
             .withOutputType(visualization.outputType)
-
-        if (visualization.outputType === 'EVENT') {
-            req = req.withStage(
-                getSingleProgramStageFromVisualization(visualization).id
-            )
-        }
     }
 
     if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {
@@ -144,7 +137,7 @@ const fetchAnalyticsDataForLL = async ({
                 break
         }
     }
-
+    console.log('LL req', req)
     const analyticsApiEndpoint = getAnalyticsEndpoint(visualization.outputType)
 
     const rawResponse =
