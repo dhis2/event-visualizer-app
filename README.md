@@ -3,7 +3,7 @@
 [![CI](https://github.com/dhis2/event-visualizer-app/actions/workflows/verify-pr.yml/badge.svg)](https://github.com/dhis2/event-visualizer-app/actions/workflows/verify-pr.yml)
 [![deploy: netlify production](https://github.com/dhis2/event-visualizer-app/actions/workflows/netlify-deploy-master.yml/badge.svg)](https://github.com/dhis2/event-visualizer-app/actions/workflows/netlify-deploy-master.yml)
 
-**[Live demo](https://event-visualizer.netlify.app/)** (standalone build, requires a DHIS2 backend)
+**[Live demo](https://latest.event-visualizer.netlify.app/)** (standalone build, requires a DHIS2 backend)
 
 This project was bootstrapped with [DHIS2 Application Platform](https://github.com/dhis2/app-platform).
 
