@@ -13,6 +13,7 @@ type BaseConditionProps = {
     condition: string
     onChange: (value: string) => void
     onRemove: () => void
+    initialFocus?: boolean
 }
 
 const BaseCondition: FC<
@@ -20,7 +21,7 @@ const BaseCondition: FC<
         type: ComponentProps<typeof Input>['type']
         max?: ComponentProps<typeof Input>['max']
     }
-> = ({ condition, onChange, onRemove, type, max }) => {
+> = ({ condition, onChange, onRemove, type, max, initialFocus }) => {
     let operator, value
 
     if (condition.includes(NULL_VALUE)) {
@@ -73,6 +74,7 @@ const BaseCondition: FC<
                     className={classes.dateInput}
                     max={max}
                     dense
+                    initialFocus={initialFocus}
                 />
             )}
             <Button

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-04-10T13:20:05.589Z\n"
-"PO-Revision-Date: 2026-04-10T13:20:05.589Z\n"
+"POT-Creation-Date: 2026-04-22T17:30:54.602Z\n"
+"PO-Revision-Date: 2026-04-22T17:30:54.603Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -162,6 +162,9 @@ msgstr ""
 msgid "Preset options can't be combined with other conditions"
 msgstr "Preset options can't be combined with other conditions"
 
+msgid "is one of preset options"
+msgstr "is one of preset options"
+
 msgid "Add another condition"
 msgstr "Add another condition"
 
@@ -170,9 +173,6 @@ msgstr "Add a condition"
 
 msgid "and"
 msgstr "and"
-
-msgid "is one of preset options"
-msgstr "is one of preset options"
 
 msgid "Choose a legend set"
 msgstr "Choose a legend set"
