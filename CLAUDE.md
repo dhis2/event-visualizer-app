@@ -104,10 +104,19 @@ pnpm generate-types # Regenerate DHIS2 API types from OpenAPI specs
 
 ### Code Style
 
-- **Comments**: Describe what the code does and why, not the journey that led to it. Avoid
-  comments that explain rejected alternatives, implementation history, or defensive rationale.
-  Keep inline comments short (one line where possible); use JSDoc only for public API surfaces
-  that benefit from a brief description.
+- **Self-documenting code over comments**: Prefer well-named intermediate variables and
+  small helpers over explanatory comments. If a block needs a comment to explain what it
+  does, first ask whether extracting a named variable or function would make the comment
+  unnecessary.
+- **When to comment**: Only for (a) domain/business context that can't be inferred from the
+  code, or (b) code that is genuinely hard to comprehend on its own. Never write a comment
+  that restates what the next line does.
+- **Never include time-bound information**: No references to previous implementations,
+  refactor history, future plans, removed alternatives, or comparisons to other helpers that
+  may move/disappear. Comments describe what's there and why — not how the code evolved.
+- **Multi-line comments always use `/* */`**. Never stack multiple `//` lines for a block
+  comment.
+- **JSDoc**: Reserve for public API surfaces that genuinely benefit from a brief description.
 
 ### TypeScript & Imports
 
