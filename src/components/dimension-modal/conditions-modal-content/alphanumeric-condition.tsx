@@ -1,7 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import {
-    Button,
     Checkbox,
+    IconDelete16,
     Input,
     SingleSelectField,
     SingleSelectOption,
@@ -127,15 +127,15 @@ const BaseCondition: FC<
                         dataTest="condition-case-sensitive-checkbox"
                     />
                 )}
-            <Button
+            <button
                 type="button"
-                small
-                secondary
                 onClick={onRemove}
-                className={classes.removeButton}
+                className={classes.removeIconButton}
+                aria-label={i18n.t('Remove')}
+                data-test="condition-remove-button"
             >
-                {i18n.t('Remove')}
-            </Button>
+                <IconDelete16 />
+            </button>
         </div>
     )
 }

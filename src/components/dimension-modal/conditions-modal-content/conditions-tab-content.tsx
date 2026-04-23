@@ -351,6 +351,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                                     <DropdownButton
                                         type="button"
                                         small
+                                        secondary
                                         open={isDropdownOpen}
                                         onClick={toggleDropdown}
                                         className={classes.addConditionButton}
