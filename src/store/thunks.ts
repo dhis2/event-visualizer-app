@@ -16,7 +16,7 @@ import {
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import type { AppDispatch, CurrentVisualization } from '@types'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
-import { setDataSourceId } from './dimensions-selection-slice'
+import { getDataSourceId, setDataSourceId } from './dimensions-selection-slice'
 import { setIsVisualizationLoading, setLoadError } from './loader-slice'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
 import type { RootState } from './store'
@@ -105,9 +105,14 @@ export const tLoadSavedVisualization = createAsyncThunk<
 
 export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
     () => (dispatch, getState, extra) => {
-        const { currentVis, visUiConfig } = getState()
+        const state = getState()
+        const { currentVis, visUiConfig } = state
         const { metadataStore } = extra
         const { customValue } = visUiConfig
+        const dataSourceId = getDataSourceId(state)
+        const dataSource = dataSourceId
+            ? metadataStore.getMetadataItem(dataSourceId)
+            : undefined
 
         // Build fresh from visUiConfig so stale currentVis fields can't leak
         // through. Carry over only id and sorting from the previous currentVis.
@@ -144,7 +149,7 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
                 customValue?.aggregationType ??
                 visUiConfig.options.aggregationType,
             ...getEnabledOptions(visUiConfig.options),
-            ...resolveTeiFields(visUiConfig, metadataStore),
+            ...resolveTeiFields(visUiConfig, metadataStore, dataSource),
         }
 
         dispatch(setCurrentVis(updatedCurrentVis))

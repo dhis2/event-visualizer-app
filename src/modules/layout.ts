@@ -1,5 +1,6 @@
 import { dimensionCreate } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
+import { getTrackedEntityTypeIdFromDataSource } from '@modules/data-source'
 import { toApiDimensionId } from '@modules/dimension'
 import { parseUiRepetitions } from '@modules/repetitions'
 import {
@@ -12,6 +13,7 @@ import type {
     DimensionArray,
     DimensionMetadataItem,
     Layout,
+    MetadataItem,
     MetadataStore,
     Program,
 } from '@types'
@@ -120,7 +122,8 @@ type TeiFields = {
 
 export const resolveTeiFields = (
     visUiConfig: VisUiConfigState,
-    metadataStore: MetadataStore
+    metadataStore: MetadataStore,
+    dataSource: MetadataItem | undefined
 ): TeiFields => {
     const layoutDims = getLayoutDims(visUiConfig, metadataStore)
     const { outputType } = visUiConfig
@@ -135,26 +138,35 @@ export const resolveTeiFields = (
               }))
             : undefined
 
-    const needsTrackedEntityType =
-        outputType === 'TRACKED_ENTITY_INSTANCE' ||
-        (outputType === 'ENROLLMENT' && teaDims.length > 0)
-
-    if (!needsTrackedEntityType) {
+    // TET is a first-class property of TEI visualizations (see the backend's
+    // EventVisualization.isMultiProgram), so the data source is authoritative.
+    // For ENROLLMENT+TEAs the TET is derived from the TEA's owning program via
+    // the layout.
+    let tetId: string | null = null
+    if (outputType === 'TRACKED_ENTITY_INSTANCE') {
+        tetId = getTrackedEntityTypeIdFromDataSource(dataSource)
+        if (!tetId) {
+            throw new Error(
+                'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the data source does not provide a trackedEntityTypeId'
+            )
+        }
+    } else if (outputType === 'ENROLLMENT' && teaDims.length > 0) {
+        tetId =
+            layoutDims.find((dim) => dim.trackedEntityTypeId)
+                ?.trackedEntityTypeId ?? null
+        if (!tetId) {
+            throw new Error(
+                'Cannot resolve trackedEntityType for outputType=ENROLLMENT: no layout dimension carries a trackedEntityTypeId'
+            )
+        }
+    } else {
         return { trackedEntityType: undefined, attributeDimensions }
     }
 
-    const tetId = layoutDims.find(
-        (dim) => dim.trackedEntityTypeId
-    )?.trackedEntityTypeId
-    if (!tetId) {
-        throw new Error(
-            `Cannot resolve trackedEntityType for outputType=${outputType}: no layout dimension carries a trackedEntityTypeId`
-        )
-    }
     const tet = metadataStore.getMetadataItem(tetId)
     if (!tet) {
         throw new Error(
-            `Tracked entity type "${tetId}" referenced by a layout dimension but not found in the metadata store`
+            `Tracked entity type "${tetId}" referenced but not found in the metadata store`
         )
     }
     return {

@@ -25,6 +25,18 @@ export const isDataSourceTrackedEntityType = (
 ): dataSource is MetadataItem =>
     !isProgramMetadataItem(dataSource) && isMetadataItem(dataSource)
 
+export const getTrackedEntityTypeIdFromDataSource = (
+    dataSource: unknown
+): string | null => {
+    if (isDataSourceProgramWithRegistration(dataSource)) {
+        return dataSource.trackedEntityType.id
+    }
+    if (isDataSourceTrackedEntityType(dataSource)) {
+        return dataSource.id
+    }
+    return null
+}
+
 export const extractDataSourceIdFromVisualization = (
     visualization: CurrentVisualization
 ): string => {
