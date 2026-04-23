@@ -39,6 +39,7 @@ const adaptDimensions = (
             adaptedDimensions.push({
                 ...dimensionObj,
                 dimension: convertToScreamingSnakeCase(dimensionId),
+                program: undefined,
             })
         } else if (
             dimensionId === 'programStatus' ||
@@ -48,9 +49,11 @@ const adaptDimensions = (
             const dimension = convertToScreamingSnakeCase(dimensionId)
 
             if (outputType === 'TRACKED_ENTITY_INSTANCE') {
+                // remove programStage for these dimensions for trackedEntity
                 adaptedDimensions.push({
                     ...dimensionObj,
                     dimension,
+                    programStage: undefined,
                 })
             } else {
                 // remove program/programStage for these dimensions for event/enrollment
@@ -78,7 +81,10 @@ const adaptDimensions = (
             // everything else is a normal dimension id with program/programStage prefix
             !['dy'].includes(dimensionId)
         ) {
-            adaptedDimensions.push(dimensionObj)
+            adaptedDimensions.push({
+                ...dimensionObj,
+                program: undefined,
+            })
         }
     })
 
@@ -145,9 +151,15 @@ export const getAdaptedVisualization = (
     return {
         adaptedVisualization: {
             // only pass dimensions with conditions
-            columns: adaptedColumns.filter(({ items }) => items?.length),
-            rows: adaptedRows.filter(({ items }) => items?.length),
-            filters: adaptedFilters.filter(({ items }) => items?.length),
+            columns: adaptedColumns.filter(
+                ({ filter, items }) => filter || items?.length
+            ),
+            rows: adaptedRows.filter(
+                ({ filter, items }) => filter || items?.length
+            ),
+            filters: adaptedFilters.filter(
+                ({ filter, items }) => filter || items?.length
+            ),
             outputType: outputType,
         },
         headers,
