@@ -1,4 +1,5 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
+import { getDefaultItemsForDimension } from '@modules/dimension'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type {
@@ -9,6 +10,7 @@ import type {
     OutputType,
     VisualizationType,
 } from '@types'
+import { setUiActiveDimensionModal } from './ui-slice'
 
 export type ConditionsObject = {
     condition?: string | string[]
@@ -92,6 +94,21 @@ export const selectLayoutAllDimensionIds = createSelector(
     (state: VisUiConfigState) => state.layout.rows,
     (columns, filters, rows) => [...columns, ...filters, ...rows]
 )
+
+/* Keyed off presence rather than emptiness so a user clearing items in the
+ * modal does not get re-seeded on the next open. */
+const seedDefaultItemsIfAbsent = (
+    state: VisUiConfigState,
+    compoundId: string
+) => {
+    if (compoundId in state.itemsByDimension) {
+        return
+    }
+    const defaults = getDefaultItemsForDimension(compoundId)
+    if (defaults) {
+        state.itemsByDimension[compoundId] = defaults
+    }
+}
 
 const resolveSortInsertIndex = ({
     insertIndex,
@@ -220,6 +237,7 @@ export const visUiConfigSlice = createSlice({
                 0,
                 dimensionId
             )
+            seedDefaultItemsIfAbsent(state, dimensionId)
         },
         addVisUiConfigLayoutDimensions: (
             state,
@@ -246,6 +264,9 @@ export const visUiConfigSlice = createSlice({
                 0,
                 ...dimensionIds
             )
+            for (const dimensionId of dimensionIds) {
+                seedDefaultItemsIfAbsent(state, dimensionId)
+            }
         },
         moveVisUiConfigLayoutDimension: (
             state,
@@ -318,6 +339,13 @@ export const visUiConfigSlice = createSlice({
             }
             throw new Error(`Dimension ${dimensionId} not found in any axis`)
         },
+    },
+    extraReducers: (builder) => {
+        builder.addCase(setUiActiveDimensionModal, (state, action) => {
+            if (action.payload !== null) {
+                seedDefaultItemsIfAbsent(state, action.payload)
+            }
+        })
     },
     selectors: {
         getVisUiConfigVisualizationType: (state) => state.visualizationType,

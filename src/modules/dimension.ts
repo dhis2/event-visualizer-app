@@ -1,4 +1,5 @@
 import { TIME_DIMENSION_IDS } from '@constants/dimensions'
+import { USER_ORGUNIT } from '@constants/org-units'
 import i18n from '@dhis2/d2-i18n'
 import {
     getDefaultOrgUnitLabel,
@@ -157,6 +158,19 @@ export const getDimensionIdParts = ({
             repetitionIndex?.length &&
             repetitionIndex.substring(0, repetitionIndex.indexOf(']')),
     }
+}
+
+export const extractPlainDimensionId = (compoundId?: string | null): string =>
+    (compoundId ?? '').split('.').pop()!
+
+export const getDefaultItemsForDimension = (
+    dimensionId: string
+): string[] | undefined => {
+    const plainId = extractPlainDimensionId(dimensionId)
+    if (plainId === 'ou' || plainId === 'enrollmentOu') {
+        return [USER_ORGUNIT]
+    }
+    return undefined
 }
 
 type GetFullDimensionIdParams = {
