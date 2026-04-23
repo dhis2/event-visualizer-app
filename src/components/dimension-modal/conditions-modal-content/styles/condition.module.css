@@ -1,6 +1,15 @@
 .container {
-    display: flex;
+    display: inline-flex;
     align-items: flex-start;
+    max-block-size: 32px;
+    overflow: hidden;
+}
+
+.container:hover {
+    box-shadow:
+        0 1px 5px rgba(12, 12, 12, 0.05),
+        0 0 40px rgba(12, 12, 12, 0.015);
+    border-radius: 3px;
 }
 
 .caseSensitiveCheckbox {
@@ -17,27 +26,77 @@
     margin-inline-end: var(--spacers-dp4);
 }
 
-.legendSetSelect {
-    flex: 0 1 auto;
-    margin-inline-end: var(--spacers-dp4);
+.legendSelect [data-test='dhis2-uicore-select-input'] {
+    border-radius: 0 3px 3px 0 !important;
 }
 
-.removeButton {
+.legendSetSelect {
     flex: 0 0 auto;
-    margin-inline-start: var(--spacers-dp4);
+    /* margin-inline-end: var(--spacers-dp4); */
+}
+
+.legendSetSelect [data-test='dhis2-uicore-select-input'] {
+    border-radius: 0 !important;
+    border-inline-end: none !important;
+}
+
+.removeIconButton {
+    flex: 0 0 auto;
+    margin-inline-start: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 24px;
+    block-size: 32px;
+    padding: 0;
+    border: 1px solid var(--colors-grey500);
+    border-radius: 0 3px 3px 0;
+    background: transparent;
+    color: var(--colors-grey600);
+    cursor: pointer;
+}
+
+.removeIconButton:hover {
+    background-color: var(--colors-red050);
+    color: var(--colors-red700);
+    border: 1px solid var(--colors-red800);
+}
+
+.removeIconButton:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+
+.removeIconButton:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .operatorSelect {
-    flex: 0 1 auto;
-    min-inline-size: 204px;
-    margin-inline-end: var(--spacers-dp4);
+    flex: 0 0 auto;
+    max-inline-size: 240px;
+}
+.operatorSelect [data-test='dhis2-uicore-select-input'] {
+    border-radius: 3px 0 0 3px !important;
+    border-inline-end: none !important;
 }
 
 .dateInput,
 .numericInput {
     flex: 0 1 auto;
-    min-inline-size: 150px;
-    margin-inline-end: var(--spacers-dp4);
+    min-inline-size: 120px;
+    inline-size: fit-content !important;
+}
+
+.dateInput input,
+.numericInput input {
+    inline-size: fit-content !important;
+    min-inline-size: 120px !important;
+}
+
+.numericInput input,
+.dateInput input {
+    border-radius: 0 !important;
+    border-inline-end: none !important;
 }
 
 .phoneNumberInput {

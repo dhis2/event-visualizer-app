@@ -1,13 +1,13 @@
 import classes from '@components/dimension-modal/conditions-modal-content/styles/condition.module.css'
 import i18n from '@dhis2/d2-i18n'
 import {
-    SingleSelectField,
-    SingleSelectOption,
-    Button,
+    IconDelete16,
     Input,
+    MenuDivider,
     MultiSelectField,
     MultiSelectOption,
-    MenuDivider,
+    SingleSelectField,
+    SingleSelectOption,
 } from '@dhis2/ui'
 import { useAddMetadata, useLegendSetMetadataItem } from '@hooks'
 import {
@@ -286,15 +286,15 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                     )}
                 </>
             )}
-            <Button
+            <button
                 type="button"
-                small
-                secondary
                 onClick={onRemove}
-                className={classes.removeButton}
+                className={classes.removeIconButton}
+                aria-label={i18n.t('Remove')}
+                data-test="condition-remove-button"
             >
-                {i18n.t('Remove')}
-            </Button>
+                <IconDelete16 />
+            </button>
         </div>
     )
 }
