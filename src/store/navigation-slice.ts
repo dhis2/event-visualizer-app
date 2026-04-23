@@ -63,6 +63,8 @@ startAppListening({
                     })
                 )
             }
+        } else if (newVisualizationId === 'new') {
+            dispatch(tClearVisualization())
         }
     },
 })
