@@ -125,8 +125,8 @@ msgstr "Add to {{axisName}}"
 msgid "Choose a condition type"
 msgstr "Choose a condition type"
 
-msgid "Case sensitive"
-msgstr "Case sensitive"
+msgid "Match case"
+msgstr "Match case"
 
 msgid "Remove"
 msgstr "Remove"
@@ -140,18 +140,11 @@ msgstr "Conditions"
 msgid "Only available for repeatable stages"
 msgstr "Only available for repeatable stages"
 
-msgid "Show items that meet the following conditions for this data item:"
-msgstr "Show items that meet the following conditions for this data item:"
-
 msgid "This dimension can't be filtered. All values will be shown."
 msgstr "This dimension can't be filtered. All values will be shown."
 
-msgid ""
-"No conditions yet, so all values will be included. Add a condition to "
-"filter results."
-msgstr ""
-"No conditions yet, so all values will be included. Add a condition to "
-"filter results."
+msgid "Showing all values. Add a condition to filter."
+msgstr "Showing all values. Add a condition to filter."
 
 msgid "Preset options can't be combined with other conditions"
 msgstr "Preset options can't be combined with other conditions"

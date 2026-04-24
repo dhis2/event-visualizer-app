@@ -6,17 +6,29 @@
 
 .separator {
     display: block;
-    font-size: 12px;
-    line-height: 14px;
-    font-weight: 500;
-    color: var(--colors-grey700);
-    padding: var(--spacers-dp4) var(--spacers-dp4);
+    font-family:
+        ui-monospace,
+        SFMono-Regular,
+        SF Mono,
+        Menlo,
+        Monaco,
+        'Liberation Mono',
+        'DejaVu Sans Mono',
+        'Courier New',
+        monospace;
+
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    line-height: 11px;
+
+    color: var(--colors-grey600);
+    padding: var(--spacers-dp8) var(--spacers-dp4);
 }
 
 .tooltipReference {
     display: inline-flex;
     cursor: not-allowed;
-    margin-block-start: var(--spacers-dp12);
 }
 
 .tooltipReference > .addConditionButton:disabled {
@@ -49,14 +61,14 @@
 .paragraph {
     font-size: 14px;
     line-height: 19px;
-    color: var(--colors-grey900);
-    margin: 0;
+    color: var(--colors-grey700);
+    margin: 0 0 var(--spacers-dp8);
 }
 
 .mainSection {
     /* background: var(--colors-grey050); */
     border-inline-start: 2px solid var(--colors-grey300);
-    margin: var(--spacers-dp12) 0 var(--spacers-dp8);
+    margin: 0 0 var(--spacers-dp8);
     padding: var(--spacers-dp8) 0 var(--spacers-dp12) var(--spacers-dp8);
     overflow: auto;
 }

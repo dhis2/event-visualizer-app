@@ -12,8 +12,17 @@
     border-radius: 3px;
 }
 
+.container:last-child {
+    margin-block-end: var(--spacers-dp12);
+}
+
 .caseSensitiveCheckbox {
-    margin-inline-end: var(--spacers-dp4);
+    block-size: 32px;
+    background-color: var(--colors-white);
+    border-block-start: 1px solid var(--colors-grey500);
+    border-block-end: 1px solid var(--colors-grey500);
+    padding: 0 var(--spacers-dp4);
+    flex-shrink: 0;
 }
 
 .checkboxOption {
@@ -24,6 +33,14 @@
 .textInput {
     flex: 2 1 auto;
     margin-inline-end: var(--spacers-dp4);
+}
+
+.textInput {
+    margin-inline-end: 0;
+}
+
+.textInput input {
+    border-radius: 0 !important;
 }
 
 .legendSelect [data-test='dhis2-uicore-select-input'] {
@@ -101,10 +118,15 @@
 
 .phoneNumberInput {
     min-inline-size: 200px;
-    margin-inline-end: var(--spacers-dp4);
+}
+.phoneNumberInput input {
+    border-radius: 0 !important;
 }
 
 .letterInput {
     min-inline-size: 100px;
-    margin-inline-end: var(--spacers-dp4);
+}
+
+.letterInput input {
+    border-radius: 0 !important;
 }
