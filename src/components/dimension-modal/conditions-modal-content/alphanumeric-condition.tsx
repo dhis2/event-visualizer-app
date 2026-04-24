@@ -120,7 +120,7 @@ const BaseCondition: FC<
                 ![OPERATOR_EMPTY, OPERATOR_NOT_EMPTY].includes(operator) && (
                     <Checkbox
                         checked={isCaseSensitive}
-                        label={i18n.t('Case sensitive')}
+                        label={i18n.t('Match case')}
                         onChange={({ checked }) => toggleCaseSensitive(checked)}
                         dense
                         className={classes.caseSensitiveCheckbox}

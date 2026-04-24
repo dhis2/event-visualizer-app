@@ -298,14 +298,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
     return (
         <ConditionsProvider.Provider value={providerValue}>
             <div>
-                {isSupported ? (
-                    <p className={classes.paragraph}>
-                        {i18n.t(
-                            'Show items that meet the following conditions for this data item:',
-                            { nsSeparator: '^^' }
-                        )}
-                    </p>
-                ) : (
+                {isSupported ? null : (
                     <p className={classes.paragraph}>
                         {i18n.t(
                             "This dimension can't be filtered. All values will be shown."
@@ -323,7 +316,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                                 <IconInfo16 />
                             </span>
                             {i18n.t(
-                                'No conditions yet, so all values will be included. Add a condition to filter results.'
+                                'Showing all values. Add a condition to filter.'
                             )}
                         </p>
                     ) : (
