@@ -4,6 +4,7 @@ import styles from './styles/dimension-item-container.module.css'
 
 interface DimensionItemContainerProps extends ComponentPropsWithoutRef<'div'> {
     selected?: boolean
+    activeReference?: boolean
     multiSelected?: boolean
     disabled?: boolean
     isDragging?: boolean
@@ -17,6 +18,7 @@ export const DimensionItemContainer = forwardRef<
     (
         {
             selected,
+            activeReference,
             multiSelected,
             disabled,
             isDragging,
@@ -33,6 +35,7 @@ export const DimensionItemContainer = forwardRef<
                 styles.container,
                 {
                     [styles.selected]: selected,
+                    [styles.activeReference]: activeReference,
                     [styles.multiSelected]: multiSelected,
                     [styles.disabled]: disabled,
                     [styles.dragging]: isDragging,

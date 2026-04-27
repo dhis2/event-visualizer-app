@@ -2,6 +2,7 @@ import { MAIN_SIDEBAR_DEFAULT_WIDTH } from '@components/main-sidebar/constants'
 import { getMainSidebarWidthFromLocalStorage } from '@components/main-sidebar/local-storage'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
+import type { Axis } from '@types'
 
 interface PanelVisibility {
     isDetailsPanelVisible: boolean
@@ -9,8 +10,22 @@ interface PanelVisibility {
     isMainSidebarVisible: boolean
 }
 
+export type ActiveDimensionPopover = {
+    dimensionId: string
+} & (
+    | {
+          source: 'sidebar'
+      }
+    | {
+          source: 'layout'
+          axisId: Axis
+      }
+)
+
+export type ActiveDimensionPopoverState = ActiveDimensionPopover | null
+
 export interface UiState {
-    activeDimensionModal: string | null
+    activeDimensionPopover: ActiveDimensionPopoverState
     isDetailsPanelVisible: boolean
     isLayoutPanelExpanded: boolean
     isLayoutPanelVisible: boolean
@@ -20,7 +35,7 @@ export interface UiState {
 }
 
 export const initialState: UiState = {
-    activeDimensionModal: null,
+    activeDimensionPopover: null,
     isDetailsPanelVisible: false,
     isLayoutPanelExpanded: true,
     isLayoutPanelVisible: true,
@@ -72,11 +87,11 @@ export const uiSlice = createSlice({
         resetUiMainSidebarWidth: (state) => {
             state.mainSidebarWidth = MAIN_SIDEBAR_DEFAULT_WIDTH
         },
-        setUiActiveDimensionModal: (
+        setUiActiveDimensionPopover: (
             state,
-            action: PayloadAction<string | null>
+            action: PayloadAction<ActiveDimensionPopoverState>
         ) => {
-            state.activeDimensionModal = action.payload
+            state.activeDimensionPopover = action.payload
         },
         toggleUiDetailsPanelVisible: (state) => {
             state.isDetailsPanelVisible = !state.isDetailsPanelVisible
@@ -103,7 +118,7 @@ export const uiSlice = createSlice({
         },
     },
     selectors: {
-        getUiActiveDimensionModal: (state) => state.activeDimensionModal,
+        getUiActiveDimensionPopover: (state) => state.activeDimensionPopover,
         getUiDetailsPanelVisible: (state) => state.isDetailsPanelVisible,
         getUiLayoutPanelExpanded: (state) => state.isLayoutPanelExpanded,
         getUiLayoutPanelVisible: (state) => state.isLayoutPanelVisible,
@@ -120,7 +135,7 @@ export const {
     clearUi,
     setUiMainSidebarWidth,
     resetUiMainSidebarWidth,
-    setUiActiveDimensionModal,
+    setUiActiveDimensionPopover,
     toggleUiDetailsPanelVisible,
     toggleUiLayoutPanelExpanded,
     toggleUiLayoutPanelVisible,
@@ -128,7 +143,7 @@ export const {
     toggleUiShowExpandedVisualizationCanvas,
 } = uiSlice.actions
 export const {
-    getUiActiveDimensionModal,
+    getUiActiveDimensionPopover,
     getUiDetailsPanelVisible,
     getUiLayoutPanelExpanded,
     getUiLayoutPanelVisible,

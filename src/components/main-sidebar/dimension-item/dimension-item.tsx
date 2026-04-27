@@ -1,7 +1,7 @@
 import { DimensionTypeIcon } from '@components/shared/dimension-type-icon'
 import type { DimensionType } from '@types'
 import cx from 'classnames'
-import { type FC } from 'react'
+import type { FC } from 'react'
 import styles from './styles/dimension-item.module.css'
 
 interface DimensionItemProps {

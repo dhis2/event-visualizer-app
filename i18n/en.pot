@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-04-24T17:41:56.386Z\n"
-"PO-Revision-Date: 2026-04-24T17:41:56.389Z\n"
+"POT-Creation-Date: 2026-04-27T09:23:03.951Z\n"
+"PO-Revision-Date: 2026-04-27T09:23:03.951Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -191,6 +191,66 @@ msgstr "Most recent events:"
 msgid "Oldest events:"
 msgstr "Oldest events:"
 
+msgid "Data element"
+msgstr "Data element"
+
+msgid "Tracked entity attribute"
+msgstr "Tracked entity attribute"
+
+msgid "Program indicator"
+msgstr "Program indicator"
+
+msgid "Organisation unit group set"
+msgstr "Organisation unit group set"
+
+msgid "Category"
+msgstr "Category"
+
+msgid "Category option group set"
+msgstr "Category option group set"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "User"
+msgstr "User"
+
+msgid "None"
+msgstr "None"
+
+msgid "Not available"
+msgstr "Not available"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Value type"
+msgstr "Value type"
+
+msgid "Option set"
+msgstr "Option set"
+
+msgid "Legend set(s)"
+msgstr "Legend set(s)"
+
+msgid "Data element group(s)"
+msgstr "Data element group(s)"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Code"
+msgstr "Code"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Last updated date"
+msgstr "Last updated date"
+
 msgid "Hide"
 msgstr "Hide"
 
@@ -259,15 +319,6 @@ msgstr "Download data from this date"
 
 msgid "Metadata ID scheme"
 msgstr "Metadata ID scheme"
-
-msgid "ID"
-msgstr "ID"
-
-msgid "Code"
-msgstr "Code"
-
-msgid "Name"
-msgstr "Name"
 
 msgid "An error occurred"
 msgstr "An error occurred"
@@ -641,9 +692,6 @@ msgstr "Accumulate cell values along rows"
 
 msgid "Digit group separator"
 msgstr "Digit group separator"
-
-msgid "None"
-msgstr "None"
 
 msgid "Space"
 msgstr "Space"

@@ -8,9 +8,9 @@
     align-items: center;
 }
 
-.container:not(.disabled):not(.dragging):not(.selected):not(.multiSelected):not(
-        .dragOverlay
-    ):hover {
+.container:not(.disabled):not(.dragging):not(.selected):not(
+        .activeReference
+    ):not(.multiSelected):not(.dragOverlay):hover {
     background-color: var(--colors-grey100);
     border-color: var(--colors-grey400);
     color: #8a949f;
@@ -35,6 +35,13 @@
 
 .container.selected:active {
     background-color: #bbe2e0;
+}
+
+.container.activeReference {
+    background-color: var(--colors-teal100);
+    border-color: var(--colors-teal400);
+    box-shadow: 0 1px 3px rgb(33 41 52 / 0.18);
+    color: var(--colors-teal800);
 }
 
 .container.dragging {

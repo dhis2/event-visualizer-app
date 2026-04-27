@@ -1,10 +1,20 @@
 import type { AxisSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
+import { DimensionPopoverCard } from '@components/dimension-modal/dimension-popover-card'
 import { IconButton } from '@components/shared/icon-button'
 import { Layer, Popper, Tooltip, IconMore16 } from '@dhis2/ui'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
-import { setUiActiveDimensionModal } from '@store/ui-slice'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useConditionsTexts,
+    useDimensionMetadataItem,
+} from '@hooks'
+import { isDimensionMetadataItem } from '@modules/metadata'
+import {
+    getUiActiveDimensionPopover,
+    setUiActiveDimensionPopover,
+} from '@store/ui-slice'
 import {
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
@@ -54,13 +64,29 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
         getVisUiConfigItemsByDimension(state, dimension.id)
     )
     const buttonRef = useRef<HTMLDivElement>(null)
+    const chipRef = useRef<HTMLDivElement>(null)
     const [menuIsOpen, setMenuIsOpen] = useState(false)
     const toggleChipMenu = useCallback(() => {
         setMenuIsOpen((currentMenuIsOpen) => !currentMenuIsOpen)
     }, [])
-    const openDimensionModal = useCallback(() => {
-        dispatch(setUiActiveDimensionModal(dimension.id))
-    }, [dispatch, dimension.id])
+    const activePopover = useAppSelector(getUiActiveDimensionPopover)
+    const popoverIsOpen =
+        activePopover?.source === 'layout' &&
+        activePopover?.dimensionId === dimension.id &&
+        activePopover.axisId === axisId
+    const dimensionMetadata = useDimensionMetadataItem(dimension.id)
+    const openDimensionPopover = useCallback(() => {
+        dispatch(
+            setUiActiveDimensionPopover({
+                dimensionId: dimension.id,
+                source: 'layout',
+                axisId,
+            })
+        )
+    }, [dispatch, dimension.id, axisId])
+    const closeDimensionPopover = useCallback(() => {
+        dispatch(setUiActiveDimensionPopover(null))
+    }, [dispatch])
     const hasConditions = useMemo(
         () =>
             Boolean(conditions?.condition?.length) ||
@@ -89,9 +115,9 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
             dimensionName: dimension.name,
             suffix: dimension.suffix,
             itemsText: chipItemsText,
-            onClick: openDimensionModal,
+            onClick: openDimensionPopover,
         }),
-        [dimension, chipItemsText, openDimensionModal]
+        [dimension, chipItemsText, openDimensionPopover]
     )
     const droppableData = useMemo<AxisSortableData>(
         () => ({
@@ -144,6 +170,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
             data-test={`layout-dimension-dnd-${dimension.id}`}
         >
             <div
+                ref={chipRef}
                 className={cx(classes.chip, {
                     [classes.chipEmpty]:
                         axisId === 'filters' &&
@@ -151,41 +178,46 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                         !hasConditions,
                     [classes.active]: isDragging,
                     [classes.showBlank]: !dimension.name,
+                    [classes.popoverOpen]: popoverIsOpen,
                 })}
                 data-test="layout-dimension-chip"
             >
                 <div className={classes.content}>
-                    <Tooltip
-                        content={
-                            <TooltipContent
-                                dimension={dimension}
-                                conditionsTexts={conditionsTexts}
-                                axisId={axisId}
-                            />
-                        }
-                        placement="bottom"
-                        dataTest="layout-chip-tooltip"
-                        closeDelay={0}
-                    >
-                        {({
-                            ref,
-                            onBlur,
-                            onFocus,
-                            onMouseOver,
-                            onMouseOut,
-                        }) => (
-                            <span
-                                ref={ref}
-                                role="tooltip"
-                                onBlur={onBlur}
-                                onFocus={onFocus}
-                                onMouseOver={onMouseOver}
-                                onMouseOut={onMouseOut}
-                            >
-                                <ChipBase {...chipBaseProps} />
-                            </span>
-                        )}
-                    </Tooltip>
+                    {popoverIsOpen ? (
+                        <ChipBase {...chipBaseProps} />
+                    ) : (
+                        <Tooltip
+                            content={
+                                <TooltipContent
+                                    dimension={dimension}
+                                    conditionsTexts={conditionsTexts}
+                                    axisId={axisId}
+                                />
+                            }
+                            placement="bottom"
+                            dataTest="layout-chip-tooltip"
+                            closeDelay={0}
+                        >
+                            {({
+                                ref,
+                                onBlur,
+                                onFocus,
+                                onMouseOver,
+                                onMouseOut,
+                            }) => (
+                                <span
+                                    ref={ref}
+                                    role="tooltip"
+                                    onBlur={onBlur}
+                                    onFocus={onFocus}
+                                    onMouseOver={onMouseOver}
+                                    onMouseOut={onMouseOut}
+                                >
+                                    <ChipBase {...chipBaseProps} />
+                                </span>
+                            )}
+                        </Tooltip>
+                    )}
                 </div>
                 <div ref={buttonRef}>
                     <IconButton
@@ -207,6 +239,20 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                         </Popper>
                     </Layer>
                 )}
+                {popoverIsOpen &&
+                    isDimensionMetadataItem(dimensionMetadata) && (
+                        <Layer onBackdropClick={closeDimensionPopover}>
+                            <Popper
+                                reference={chipRef}
+                                placement="bottom-start"
+                            >
+                                <DimensionPopoverCard
+                                    dimension={dimensionMetadata}
+                                    onClose={closeDimensionPopover}
+                                />
+                            </Popper>
+                        </Layer>
+                    )}
             </div>
             {isOver && !isDragging && (
                 <DropInsertMarker

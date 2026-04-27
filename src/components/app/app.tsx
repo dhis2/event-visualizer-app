@@ -1,6 +1,5 @@
 import { AppWrapper } from '@components/app-wrapper'
 import { DetailsPanel } from '@components/details-panel/details-panel'
-import { DimensionModal } from '@components/dimension-modal/dimension-modal'
 import { ErrorBoundary } from '@components/error-boundary/error-boundary'
 import { ErrorScreen } from '@components/error-screen/error-screen'
 import {
@@ -33,10 +32,6 @@ import {
     getLoadError,
     setLoadError,
 } from '@store/loader-slice'
-import {
-    getUiActiveDimensionModal,
-    setUiActiveDimensionModal,
-} from '@store/ui-slice'
 import type { NewVisualization, SavedVisualization, Sorting } from '@types'
 import { useCallback, type FC, type ReactNode } from 'react'
 import { useLoadVisualizationOnMount } from './use-load-visualization-on-mount'
@@ -48,7 +43,6 @@ const EventVisualizer: FC = () => {
     const dispatch = useAppDispatch()
     const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)
-    const activeDimensionModal = useAppSelector(getUiActiveDimensionModal)
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
     const loadError = useAppSelector(getLoadError)
 
@@ -77,11 +71,6 @@ const EventVisualizer: FC = () => {
             addAnalyticsResponseMetadata(analyticsMetadata, headers)
         },
         [addAnalyticsResponseMetadata]
-    )
-
-    const onDimensionModalClose = useCallback(
-        () => dispatch(setUiActiveDimensionModal(null)),
-        [dispatch]
     )
 
     let centerContent: ReactNode
@@ -115,9 +104,6 @@ const EventVisualizer: FC = () => {
                 <ErrorBoundary onError={onError}>
                     <MainSidebar />
                 </ErrorBoundary>
-                {activeDimensionModal && (
-                    <DimensionModal onClose={onDimensionModalClose} />
-                )}
             </GridStartColumn>
             <GridCenterColumnTop>
                 <ErrorBoundary onError={onError}>
