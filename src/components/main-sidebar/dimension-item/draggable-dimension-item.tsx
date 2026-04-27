@@ -195,7 +195,7 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
                                 dimension={dimension}
                                 onClose={closeDimensionPopover}
                                 showArrow
-                                variant="sidebar"
+                                initialTab={selected ? 'filters' : 'info'}
                             />
                         </Popper>
                     </Layer>

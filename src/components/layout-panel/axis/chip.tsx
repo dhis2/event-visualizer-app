@@ -249,6 +249,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                                 <DimensionPopoverCard
                                     dimension={dimensionMetadata}
                                     onClose={closeDimensionPopover}
+                                    initialTab="filters"
                                 />
                             </Popper>
                         </Layer>

@@ -53,6 +53,21 @@
     overflow: auto;
 }
 
+.popoverTabBar {
+    margin-block-end: var(--spacers-dp16);
+}
+
+.sidebarInfoBox {
+    margin-block: var(--spacers-dp4);
+    padding: var(--spacers-dp8);
+    color: var(--colors-grey900);
+    font-size: 13px;
+    line-height: 18px;
+    background-color: var(--colors-grey050);
+    border: 1px solid var(--colors-grey300);
+    border-radius: 3px;
+}
+
 .sidebarOverviewActions {
     padding-block: var(--spacers-dp4) var(--spacers-dp8);
     border-block-end: 1px solid var(--colors-grey300);

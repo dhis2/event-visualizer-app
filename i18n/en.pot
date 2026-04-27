@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-04-27T09:23:03.951Z\n"
-"PO-Revision-Date: 2026-04-27T09:23:03.951Z\n"
+"POT-Creation-Date: 2026-04-27T12:51:07.816Z\n"
+"PO-Revision-Date: 2026-04-27T12:51:07.817Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -137,15 +137,6 @@ msgstr "Match case"
 msgid "Remove"
 msgstr "Remove"
 
-msgid "Repeated events"
-msgstr "Repeated events"
-
-msgid "Conditions"
-msgstr "Conditions"
-
-msgid "Only available for repeatable stages"
-msgstr "Only available for repeatable stages"
-
 msgid "This dimension can't be filtered. All values will be shown."
 msgstr "This dimension can't be filtered. All values will be shown."
 
@@ -190,6 +181,77 @@ msgstr "Most recent events:"
 
 msgid "Oldest events:"
 msgstr "Oldest events:"
+
+msgid "The org. unit where the event was registered for this program stage."
+msgstr "The org. unit where the event was registered for this program stage."
+
+msgid ""
+"The org. unit collected during enrollment. Applies to the latest enrollment "
+"if there is more than one."
+msgstr ""
+"The org. unit collected during enrollment. Applies to the latest enrollment "
+"if there is more than one."
+
+msgid ""
+"The date the enrollment was registered. Select one or more periods to "
+"include enrollments from those periods."
+msgstr ""
+"The date the enrollment was registered. Select one or more periods to "
+"include enrollments from those periods."
+
+msgid ""
+"The incident date recorded for the enrollment. Select one or more periods "
+"to include enrollments with incident dates in those periods."
+msgstr ""
+"The incident date recorded for the enrollment. Select one or more periods "
+"to include enrollments with incident dates in those periods."
+
+msgid ""
+"The current enrollment status, such as active, completed, or cancelled. "
+"Applies to the latest enrollment if there is more than one."
+msgstr ""
+"The current enrollment status, such as active, completed, or cancelled. "
+"Applies to the latest enrollment if there is more than one."
+
+msgid ""
+"The date the event occurred for this program stage. Select one or more "
+"periods to include events from those periods."
+msgstr ""
+"The date the event occurred for this program stage. Select one or more "
+"periods to include events from those periods."
+
+msgid ""
+"The scheduled date for events in this program stage. Select one or more "
+"periods to include events scheduled in those periods."
+msgstr ""
+"The scheduled date for events in this program stage. Select one or more "
+"periods to include events scheduled in those periods."
+
+msgid ""
+"The status of events in this program stage, such as active, completed, "
+"skipped, or scheduled."
+msgstr ""
+"The status of events in this program stage, such as active, completed, "
+"skipped, or scheduled."
+
+msgid ""
+"The date when the event, enrollment, or tracked entity was most recently "
+"updated."
+msgstr ""
+"The date when the event, enrollment, or tracked entity was most recently "
+"updated."
+
+msgid "The user who most recently updated the event, enrollment, or tracked entity."
+msgstr "The user who most recently updated the event, enrollment, or tracked entity."
+
+msgid "The date when the event, enrollment, or tracked entity was created."
+msgstr "The date when the event, enrollment, or tracked entity was created."
+
+msgid "The user who created the event, enrollment, or tracked entity."
+msgstr "The user who created the event, enrollment, or tracked entity."
+
+msgid "The date when the event or enrollment was completed."
+msgstr "The date when the event or enrollment was completed."
 
 msgid "Data element"
 msgstr "Data element"
@@ -250,6 +312,18 @@ msgstr "ID"
 
 msgid "Last updated date"
 msgstr "Last updated date"
+
+msgid "Info"
+msgstr "Info"
+
+msgid "Filters"
+msgstr "Filters"
+
+msgid "Repeatability"
+msgstr "Repeatability"
+
+msgid "Only available for repeatable data elements in line lists"
+msgstr "Only available for repeatable data elements in line lists"
 
 msgid "Hide"
 msgstr "Hide"

@@ -1,26 +1,42 @@
 import i18n from '@dhis2/d2-i18n'
-import { ButtonStrip, Button } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
+import { ButtonStrip, Button, Tab, TabBar, Tooltip } from '@dhis2/ui'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useCurrentUser,
+    useProgramStageMetadataItem,
+} from '@hooks'
+import { getDimensionIdParts } from '@modules/dimension'
 import { isDimensionInLayout } from '@modules/layout'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
-import { setUiActiveDimensionPopover } from '@store/ui-slice'
-import { getVisUiConfigLayout } from '@store/vis-ui-config-slice'
-import type { Axis, DimensionMetadataItem } from '@types'
+import {
+    getVisUiConfigLayout,
+    getVisUiConfigVisualizationType,
+} from '@store/vis-ui-config-slice'
+import type { DimensionMetadataItem } from '@types'
 import cx from 'classnames'
 import {
     useCallback,
     useMemo,
+    useState,
     type FC,
     type KeyboardEvent,
     type ReactNode,
 } from 'react'
 import { AddToLayoutButton } from './add-to-layout-button'
 import { ConditionsModalContent } from './conditions-modal-content/conditions-modal-content'
+import { RepeatedEventsTabContent } from './conditions-modal-content/repeated-events-tab-content'
 import { DynamicDimensionModalContent } from './dynamic-dimension-modal-content/dynamic-dimension-modal-content'
 import { OrgUnitDimensionModalContent } from './orgunit-dimension-modal-content'
 import { PeriodDimensionModalContent } from './period-dimension-modal-content'
 import { StatusDimensionModalContent } from './status-dimension-modal-content'
 import classes from './styles/dimension-modal.module.css'
+
+export type DimensionPopoverTab = 'info' | 'filters' | 'repeatability'
+
+const TAB_INFO: DimensionPopoverTab = 'info'
+const TAB_FILTERS: DimensionPopoverTab = 'filters'
+const TAB_REPEATABILITY: DimensionPopoverTab = 'repeatability'
 
 type DimensionPopoverContentProps = {
     dimension: DimensionMetadataItem
@@ -49,7 +65,7 @@ type DimensionPopoverCardProps = {
     dimension: DimensionMetadataItem
     onClose: () => void
     showArrow?: boolean
-    variant?: 'layout' | 'sidebar'
+    initialTab?: DimensionPopoverTab
 }
 
 type SidebarDimensionOverviewProps = {
@@ -83,6 +99,92 @@ const formatEnumValue = (value: string): string =>
         .split('_')
         .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
         .join(' ')
+
+const getSidebarDimensionInfo = (
+    dimension: DimensionMetadataItem
+): string | undefined => {
+    const isStageDimension = Boolean(dimension.programStageId)
+
+    switch (dimension.dimensionId) {
+        case 'ou':
+            return isStageDimension
+                ? i18n.t(
+                      'The org. unit where the event was registered for this program stage.'
+                  )
+                : i18n.t(
+                      'The org. unit collected during enrollment. Applies to the latest enrollment if there is more than one.'
+                  )
+        case 'enrollmentDate':
+            return i18n.t(
+                'The date the enrollment was registered. Select one or more periods to include enrollments from those periods.'
+            )
+        case 'incidentDate':
+            return i18n.t(
+                'The incident date recorded for the enrollment. Select one or more periods to include enrollments with incident dates in those periods.'
+            )
+        case 'programStatus':
+            return i18n.t(
+                'The current enrollment status, such as active, completed, or cancelled. Applies to the latest enrollment if there is more than one.'
+            )
+        case 'eventDate':
+            return i18n.t(
+                'The date the event occurred for this program stage. Select one or more periods to include events from those periods.'
+            )
+        case 'scheduledDate':
+            return i18n.t(
+                'The scheduled date for events in this program stage. Select one or more periods to include events scheduled in those periods.'
+            )
+        case 'eventStatus':
+            return i18n.t(
+                'The status of events in this program stage, such as active, completed, skipped, or scheduled.'
+            )
+        case 'lastUpdated':
+            return i18n.t(
+                'The date when the event, enrollment, or tracked entity was most recently updated.'
+            )
+        case 'lastUpdatedBy':
+            return i18n.t(
+                'The user who most recently updated the event, enrollment, or tracked entity.'
+            )
+        case 'created':
+            return i18n.t(
+                'The date when the event, enrollment, or tracked entity was created.'
+            )
+        case 'createdBy':
+            return i18n.t(
+                'The user who created the event, enrollment, or tracked entity.'
+            )
+        case 'completed':
+            return i18n.t(
+                'The date when the event or enrollment was completed.'
+            )
+        default:
+            return undefined
+    }
+}
+
+type SidebarDimensionInfoBoxProps = {
+    dimension: DimensionMetadataItem
+}
+
+const SidebarDimensionInfoBox: FC<SidebarDimensionInfoBoxProps> = ({
+    dimension,
+}) => {
+    const info = getSidebarDimensionInfo(dimension)
+
+    if (!info) {
+        return null
+    }
+
+    return (
+        <div
+            className={classes.sidebarInfoBox}
+            data-test="dimension-popover-sidebar-info"
+        >
+            {info}
+        </div>
+    )
+}
 
 const getDimensionTypeLabel = (
     dimensionType: DimensionMetadataItem['dimensionType']
@@ -225,15 +327,26 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
     dimension,
     onClose,
     showArrow = false,
-    variant = 'layout',
+    initialTab = TAB_FILTERS,
 }) => {
     const dataTest = 'dimension-popover'
 
     const dispatch = useAppDispatch()
     const currentUser = useCurrentUser()
     const layout = useAppSelector(getVisUiConfigLayout)
+    const visType = useAppSelector(getVisUiConfigVisualizationType)
     const isInLayout = isDimensionInLayout(layout, dimension.id)
-    const isSidebarVariant = variant === 'sidebar'
+    const [activeTab, setActiveTab] = useState<DimensionPopoverTab>(initialTab)
+    const programStageId =
+        dimension.dimensionType === 'DATA_ELEMENT'
+            ? (dimension.programStageId ??
+              getDimensionIdParts({ id: dimension.id }).programStageId)
+            : undefined
+    const programStage = useProgramStageMetadataItem(programStageId)
+    const isRepeatabilityAvailable =
+        visType === 'LINE_LIST' &&
+        dimension.dimensionType === 'DATA_ELEMENT' &&
+        Boolean(programStage?.repeatable)
     const dateFormatter = useMemo(
         () =>
             new Intl.DateTimeFormat(currentUser.settings.uiLocale, {
@@ -263,19 +376,6 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
         onClose()
     }, [dispatch, onClose])
 
-    const onAddToLayout = useCallback(
-        (axisId: Axis) => {
-            dispatch(
-                setUiActiveDimensionPopover({
-                    dimensionId: dimension.id,
-                    source: 'layout',
-                    axisId,
-                })
-            )
-        },
-        [dispatch, dimension.id]
-    )
-
     const onKeyDown = useCallback(
         (event: KeyboardEvent<HTMLDivElement>) => {
             if (event.key === 'Escape') {
@@ -285,6 +385,64 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
         },
         [onClose]
     )
+
+    const renderTab = ({
+        key,
+        label,
+        disabled,
+        tooltip,
+    }: {
+        key: DimensionPopoverTab
+        label: string
+        disabled?: boolean
+        tooltip?: string
+    }) => {
+        const tab = (
+            <Tab
+                key={key}
+                onClick={() => setActiveTab(key)}
+                selected={activeTab === key}
+                disabled={disabled}
+            >
+                {label}
+            </Tab>
+        )
+
+        return disabled && tooltip ? (
+            <Tooltip
+                key={`${key}-tooltip`}
+                placement="bottom"
+                content={tooltip}
+                dataTest={`${dataTest}-${key}-tooltip`}
+            >
+                {tab}
+            </Tooltip>
+        ) : (
+            tab
+        )
+    }
+
+    const renderActiveTabContent = (): ReactNode => {
+        switch (activeTab) {
+            case TAB_INFO:
+                return (
+                    <>
+                        <SidebarDimensionInfoBox dimension={dimension} />
+                        <SidebarDimensionOverview
+                            dimension={dimension}
+                            lastUpdated={lastUpdated}
+                        />
+                    </>
+                )
+            case TAB_REPEATABILITY:
+                return isRepeatabilityAvailable ? (
+                    <RepeatedEventsTabContent dimensionId={dimension.id} />
+                ) : null
+            case TAB_FILTERS:
+            default:
+                return <DimensionPopoverContent dimension={dimension} />
+        }
+    }
 
     return (
         <div
@@ -300,65 +458,59 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
                 className={classes.popoverContent}
                 data-test={`${dataTest}-content`}
             >
-                {isSidebarVariant ? (
-                    <>
-                        {!isInLayout && (
-                            <div
-                                className={classes.sidebarOverviewActions}
-                                data-test={`${dataTest}-sidebar-actions`}
-                            >
-                                <AddToLayoutButton
-                                    dimensionId={dimension.id}
-                                    onClick={onAddToLayout}
-                                    dataTest={`${dataTest}-action-add-to-layout`}
-                                    variant="buttons"
-                                />
-                            </div>
-                        )}
-                        <SidebarDimensionOverview
-                            dimension={dimension}
-                            lastUpdated={lastUpdated}
-                        />
-                    </>
-                ) : (
-                    <DimensionPopoverContent dimension={dimension} />
-                )}
-            </div>
-            {!isSidebarVariant && (
-                <footer
-                    className={classes.popoverFooter}
-                    data-test={`${dataTest}-actions`}
+                <TabBar
+                    className={classes.popoverTabBar}
+                    dataTest={`${dataTest}-tab-bar`}
                 >
-                    <ButtonStrip>
+                    {renderTab({ key: TAB_INFO, label: i18n.t('Info') })}
+                    {renderTab({
+                        key: TAB_FILTERS,
+                        label: i18n.t('Filters'),
+                    })}
+                    {renderTab({
+                        key: TAB_REPEATABILITY,
+                        label: i18n.t('Repeatability'),
+                        disabled: !isRepeatabilityAvailable,
+                        tooltip: i18n.t(
+                            'Only available for repeatable data elements in line lists'
+                        ),
+                    })}
+                </TabBar>
+                {renderActiveTabContent()}
+            </div>
+            <footer
+                className={classes.popoverFooter}
+                data-test={`${dataTest}-actions`}
+            >
+                <ButtonStrip>
+                    <Button
+                        type="button"
+                        small
+                        secondary
+                        onClick={onClose}
+                        dataTest={`${dataTest}-action-cancel`}
+                    >
+                        {i18n.t('Hide')}
+                    </Button>
+                    {isInLayout ? (
                         <Button
                             type="button"
                             small
-                            secondary
-                            onClick={onClose}
-                            dataTest={`${dataTest}-action-cancel`}
+                            primary
+                            onClick={onUpdate}
+                            dataTest={`${dataTest}-action-confirm`}
                         >
-                            {i18n.t('Hide')}
+                            {i18n.t('Update')}
                         </Button>
-                        {isInLayout ? (
-                            <Button
-                                type="button"
-                                small
-                                primary
-                                onClick={onUpdate}
-                                dataTest={`${dataTest}-action-confirm`}
-                            >
-                                {i18n.t('Update')}
-                            </Button>
-                        ) : (
-                            <AddToLayoutButton
-                                dimensionId={dimension.id}
-                                onClick={onClose}
-                                dataTest={`${dataTest}-action-confirm`}
-                            />
-                        )}
-                    </ButtonStrip>
-                </footer>
-            )}
+                    ) : (
+                        <AddToLayoutButton
+                            dimensionId={dimension.id}
+                            onClick={onClose}
+                            dataTest={`${dataTest}-action-confirm`}
+                        />
+                    )}
+                </ButtonStrip>
+            </footer>
         </div>
     )
 }

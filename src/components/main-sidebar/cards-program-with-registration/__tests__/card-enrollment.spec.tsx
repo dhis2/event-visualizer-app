@@ -107,7 +107,11 @@ describe('CardEnrollment', () => {
         render(<CardEnrollment program={createProgram()} />)
 
         const call = mockUseDimensionList.mock.calls[0][0] as {
-            fixedDimensions: Array<{ id: string; dimensionType: string }>
+            fixedDimensions: Array<{
+                id: string
+                dimensionType: string
+                programId: string
+            }>
         }
         const fixedDimensions = call.fixedDimensions
 
@@ -117,18 +121,22 @@ describe('CardEnrollment', () => {
                 expect.objectContaining({
                     id: 'prog1.ou',
                     dimensionType: 'ORGANISATION_UNIT',
+                    programId: 'prog1',
                 }),
                 expect.objectContaining({
                     id: 'prog1.enrollmentDate',
                     dimensionType: 'PERIOD',
+                    programId: 'prog1',
                 }),
                 expect.objectContaining({
                     id: 'prog1.incidentDate',
                     dimensionType: 'PERIOD',
+                    programId: 'prog1',
                 }),
                 expect.objectContaining({
                     id: 'prog1.programStatus',
                     dimensionType: 'STATUS',
+                    programId: 'prog1',
                 }),
             ])
         )

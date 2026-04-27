@@ -31,6 +31,8 @@ export const getEventFixedDimensions = (
             dimensionId: 'ou',
             dimensionType: 'ORGANISATION_UNIT',
             name: program.displayOrgUnitLabel ?? i18n.t('Event org. unit'),
+            programId: program.id,
+            programStageId: programStage.id,
             valueType: 'ORGANISATION_UNIT',
         },
         {
@@ -39,6 +41,8 @@ export const getEventFixedDimensions = (
             dimensionType: 'PERIOD',
             name:
                 programStage.displayExecutionDateLabel ?? i18n.t('Event date'),
+            programId: program.id,
+            programStageId: programStage.id,
             valueType: 'DATE',
         },
         {
@@ -46,6 +50,8 @@ export const getEventFixedDimensions = (
             dimensionId: 'scheduledDate',
             dimensionType: 'PERIOD',
             name: programStage.displayDueDateLabel ?? i18n.t('Scheduled date'),
+            programId: program.id,
+            programStageId: programStage.id,
             valueType: 'DATE',
         },
         {
@@ -53,6 +59,8 @@ export const getEventFixedDimensions = (
             dimensionId: 'eventStatus',
             dimensionType: 'STATUS',
             name: i18n.t('Event status'),
+            programId: program.id,
+            programStageId: programStage.id,
             valueType: 'TEXT',
         },
     ]
