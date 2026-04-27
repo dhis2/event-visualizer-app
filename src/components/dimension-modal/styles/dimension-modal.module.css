@@ -53,41 +53,6 @@
     overflow: auto;
 }
 
-.sidebarOverviewActions {
-    padding-block: var(--spacers-dp4) var(--spacers-dp8);
-    border-block-end: 1px solid var(--colors-grey300);
-}
-
-.sidebarOverview {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacers-dp8);
-    margin: 0;
-    padding-block: var(--spacers-dp8) var(--spacers-dp4);
-}
-
-.sidebarOverviewItem {
-    display: grid;
-    grid-template-columns: 160px minmax(0, 1fr);
-    column-gap: var(--spacers-dp8);
-    align-items: baseline;
-}
-
-.sidebarOverviewItem dt {
-    color: var(--colors-grey700);
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 16px;
-}
-
-.sidebarOverviewItem dd {
-    margin: 0;
-    color: var(--colors-grey900);
-    font-size: 14px;
-    line-height: 18px;
-    overflow-wrap: anywhere;
-}
-
 .popoverFooter {
     padding: var(--spacers-dp8) var(--spacers-dp8);
     border-block-start: 1px solid var(--colors-grey300);

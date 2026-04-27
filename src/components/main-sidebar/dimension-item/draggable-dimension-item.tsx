@@ -195,7 +195,6 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
                                 dimension={dimension}
                                 onClose={closeDimensionPopover}
                                 showArrow
-                                variant="sidebar"
                             />
                         </Popper>
                     </Layer>
