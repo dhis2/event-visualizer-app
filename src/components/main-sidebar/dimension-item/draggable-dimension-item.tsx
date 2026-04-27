@@ -1,8 +1,7 @@
 import type { SidebarSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
-import { DimensionPopoverCard } from '@components/dimension-modal/dimension-popover-card'
-import { useIsDimensionInLayout } from '@components/main-sidebar/use-is-dimension-in-layout'
+import { resolveId } from '@components/app-wrapper/metadata-provider/dimension'
 import { IconButton } from '@components/shared/icon-button'
-import { IconAdd16, IconSubtract16, Layer, Popper } from '@dhis2/ui'
+import { IconAdd16, IconSubtract16 } from '@dhis2/ui'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useAddMetadata, useAppDispatch, useAppSelector } from '@hooks'
@@ -17,13 +16,39 @@ import {
 } from '@store/ui-slice'
 import {
     addVisUiConfigLayoutDimension,
+    getVisUiConfigLayout,
     removeVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice'
-import type { DimensionMetadataItem, Program, ProgramStage } from '@types'
-import { useCallback, useRef, type FC } from 'react'
+import type {
+    Axis,
+    DimensionMetadataItem,
+    Layout,
+    Program,
+    ProgramStage,
+} from '@types'
+import { useCallback, useMemo, type FC } from 'react'
 import { DimensionItem } from './dimension-item'
 import { DimensionItemContainer } from './dimension-item-container'
 import styles from './styles/draggable-dimension-item.module.css'
+
+const LAYOUT_AXES: Axis[] = ['columns', 'filters', 'rows']
+
+const getLayoutDimension = (
+    layout: Layout,
+    dimensionId: string
+): { axisId: Axis; dimensionId: string } | undefined => {
+    const resolvedDimensionId = resolveId(dimensionId)
+
+    for (const axisId of LAYOUT_AXES) {
+        const layoutDimensionId = layout[axisId].find(
+            (id) => resolveId(id) === resolvedDimensionId
+        )
+
+        if (layoutDimensionId) {
+            return { axisId, dimensionId: layoutDimensionId }
+        }
+    }
+}
 
 interface DraggableDimensionItemProps {
     dimension: DimensionMetadataItem
@@ -40,15 +65,19 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
 }) => {
     const dispatch = useAppDispatch()
     const addMetadata = useAddMetadata()
-    const selected = useIsDimensionInLayout(dimension.id)
+    const layout = useAppSelector(getVisUiConfigLayout)
+    const layoutDimension = useMemo(
+        () => getLayoutDimension(layout, dimension.id),
+        [layout, dimension.id]
+    )
+    const selected = Boolean(layoutDimension)
     const multiSelected = useAppSelector((state) =>
         isDimensionMultiSelected(state, dimension.id)
     )
     const activePopover = useAppSelector(getUiActiveDimensionPopover)
-    const dimensionItemRef = useRef<HTMLDivElement>(null)
     const popoverIsOpen =
-        activePopover?.source === 'sidebar' &&
-        activePopover.dimensionId === dimension.id
+        activePopover?.source === 'layout' &&
+        resolveId(activePopover.dimensionId) === resolveId(dimension.id)
 
     const populateMetadata = useCallback(() => {
         if (program) {
@@ -73,25 +102,38 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
             }
             dispatch(clearMultiSelection())
             populateMetadata()
+            const targetLayoutDimension = layoutDimension ?? {
+                axisId: 'columns' as const,
+                dimensionId: dimension.id,
+            }
+
+            if (!layoutDimension) {
+                dispatch(
+                    addVisUiConfigLayoutDimension({
+                        axis: targetLayoutDimension.axisId,
+                        dimensionId: targetLayoutDimension.dimensionId,
+                    })
+                )
+            }
+
             dispatch(
                 setUiActiveDimensionPopover({
-                    dimensionId: dimension.id,
-                    source: 'sidebar',
+                    dimensionId: targetLayoutDimension.dimensionId,
+                    source: 'layout',
+                    axisId: targetLayoutDimension.axisId,
                 })
             )
         },
-        [dispatch, dimension.id, populateMetadata, selected]
+        [dispatch, dimension.id, layoutDimension, populateMetadata, selected]
     )
-
-    const closeDimensionPopover = useCallback(() => {
-        dispatch(setUiActiveDimensionPopover(null))
-    }, [dispatch])
 
     const handleAddRemove = useCallback(() => {
         dispatch(clearMultiSelection())
         if (selected) {
             dispatch(
-                removeVisUiConfigLayoutDimension({ dimensionId: dimension.id })
+                removeVisUiConfigLayoutDimension({
+                    dimensionId: layoutDimension?.dimensionId ?? dimension.id,
+                })
             )
         } else {
             populateMetadata()
@@ -102,7 +144,7 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
                 })
             )
         }
-    }, [dimension.id, populateMetadata, dispatch, selected])
+    }, [dimension.id, layoutDimension, populateMetadata, dispatch, selected])
 
     const droppableData: SidebarSortableData = {
         dimensionId: dimension.id,
@@ -156,7 +198,7 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
             disabled={disabled}
             isDragging={isDragging}
         >
-            <div className={styles.content} ref={dimensionItemRef}>
+            <div className={styles.content}>
                 <DimensionItem
                     name={dimension.name}
                     dimensionType={dimension.dimensionType}
@@ -184,20 +226,6 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
                             )}
                         </IconButton>
                     </div>
-                )}
-                {popoverIsOpen && (
-                    <Layer onBackdropClick={closeDimensionPopover}>
-                        <Popper
-                            reference={dimensionItemRef}
-                            placement="right-start"
-                        >
-                            <DimensionPopoverCard
-                                dimension={dimension}
-                                onClose={closeDimensionPopover}
-                                showArrow
-                            />
-                        </Popper>
-                    </Layer>
                 )}
             </div>
         </DimensionItemContainer>

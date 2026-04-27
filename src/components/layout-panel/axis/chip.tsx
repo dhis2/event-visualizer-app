@@ -23,7 +23,14 @@ import {
 } from '@store/vis-ui-config-slice'
 import type { Axis, DimensionType, SavedVisualization, ValueType } from '@types'
 import cx from 'classnames'
-import { useCallback, useMemo, useRef, useState, type FC } from 'react'
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    type FC,
+} from 'react'
 import { ChipBase, type ChipBaseProps } from './chip-base'
 import { ChipMenu } from './chip-menu'
 import { DropInsertMarker } from './drop-insert-marker'
@@ -65,6 +72,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
     )
     const buttonRef = useRef<HTMLDivElement>(null)
     const chipRef = useRef<HTMLDivElement>(null)
+    const popoverRef = useRef<HTMLDivElement>(null)
     const [menuIsOpen, setMenuIsOpen] = useState(false)
     const toggleChipMenu = useCallback(() => {
         setMenuIsOpen((currentMenuIsOpen) => !currentMenuIsOpen)
@@ -87,6 +95,34 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
     const closeDimensionPopover = useCallback(() => {
         dispatch(setUiActiveDimensionPopover(null))
     }, [dispatch])
+    useEffect(() => {
+        if (!popoverIsOpen) {
+            return
+        }
+
+        const handlePointerDown = (event: PointerEvent) => {
+            const target = event.target
+
+            if (!(target instanceof Node)) {
+                return
+            }
+
+            if (
+                chipRef.current?.contains(target) ||
+                popoverRef.current?.contains(target)
+            ) {
+                return
+            }
+
+            closeDimensionPopover()
+        }
+
+        document.addEventListener('pointerdown', handlePointerDown, true)
+
+        return () => {
+            document.removeEventListener('pointerdown', handlePointerDown, true)
+        }
+    }, [closeDimensionPopover, popoverIsOpen])
     const hasConditions = useMemo(
         () =>
             Boolean(conditions?.condition?.length) ||
@@ -241,15 +277,20 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                 )}
                 {popoverIsOpen &&
                     isDimensionMetadataItem(dimensionMetadata) && (
-                        <Layer onBackdropClick={closeDimensionPopover}>
+                        <Layer className={classes.popoverLayer}>
                             <Popper
                                 reference={chipRef}
                                 placement="bottom-start"
                             >
-                                <DimensionPopoverCard
-                                    dimension={dimensionMetadata}
-                                    onClose={closeDimensionPopover}
-                                />
+                                <div
+                                    ref={popoverRef}
+                                    className={classes.popover}
+                                >
+                                    <DimensionPopoverCard
+                                        dimension={dimensionMetadata}
+                                        onClose={closeDimensionPopover}
+                                    />
+                                </div>
                             </Popper>
                         </Layer>
                     )}
