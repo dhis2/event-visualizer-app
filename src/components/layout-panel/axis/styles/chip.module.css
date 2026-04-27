@@ -63,3 +63,20 @@
 .active {
     opacity: 0.4;
 }
+
+.popoverOpen {
+    background-color: #cdeae8;
+    border-color: var(--colors-teal600);
+    box-shadow: 0 0 0 2px var(--colors-teal200);
+}
+
+.popoverOpen:hover {
+    background-color: #cdeae8;
+    border-color: var(--colors-teal600);
+}
+
+.chipEmpty.popoverOpen {
+    background-color: var(--colors-grey200);
+    border-color: var(--colors-grey700);
+    box-shadow: 0 0 0 2px var(--colors-grey400);
+}

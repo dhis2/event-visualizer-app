@@ -4,8 +4,13 @@
     padding-block-start: var(--spacers-dp12);
 }
 
+[data-test='period-dimension-transfer'] {
+    block-size: 320px !important;
+}
+
 .navigation {
     flex-grow: 0;
+    margin-block-start: var(--spacers-dp4);
 }
 
 .row {

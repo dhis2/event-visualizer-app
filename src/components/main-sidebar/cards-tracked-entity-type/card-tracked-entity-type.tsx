@@ -23,7 +23,24 @@ type CardTrackedEntityTypeProps = {
     trackedEntityType: MetadataItem
 }
 
+type TrackedEntityAttributeResponse = Record<string, unknown> & {
+    id: string
+    name: string
+    valueType: string
+}
+
 const CARD_AND_LIST_KEY = 'tracked-entity-type'
+
+const getOptionalString = (value: unknown): string | undefined =>
+    isPopulatedString(value) ? value : undefined
+
+const isTrackedEntityAttributeResponse = (
+    value: unknown
+): value is TrackedEntityAttributeResponse =>
+    isObject(value) &&
+    isPopulatedString(value.id) &&
+    isPopulatedString(value.name) &&
+    isPopulatedString(value.valueType)
 
 const transformItem = (
     item: unknown,
@@ -32,21 +49,40 @@ const transformItem = (
     if (
         isObject(item) &&
         'trackedEntityAttribute' in item &&
-        isObject(item.trackedEntityAttribute) &&
-        'id' in item.trackedEntityAttribute &&
-        'name' in item.trackedEntityAttribute &&
-        'valueType' in item.trackedEntityAttribute &&
-        isPopulatedString(item.trackedEntityAttribute.id) &&
-        isPopulatedString(item.trackedEntityAttribute.name) &&
-        isPopulatedString(item.trackedEntityAttribute.valueType)
+        isTrackedEntityAttributeResponse(item.trackedEntityAttribute)
     ) {
+        const { trackedEntityAttribute } = item
+        const { id, name, valueType } = trackedEntityAttribute
+        const displayDescription = getOptionalString(
+            trackedEntityAttribute.displayDescription
+        )
+        const description = getOptionalString(
+            trackedEntityAttribute.description
+        )
+        const code = getOptionalString(trackedEntityAttribute.code)
+        const lastUpdated = getOptionalString(
+            trackedEntityAttribute.lastUpdated
+        )
+
         return {
-            id: item.trackedEntityAttribute.id,
-            dimensionId: item.trackedEntityAttribute.id,
-            name: item.trackedEntityAttribute.name,
-            valueType: item.trackedEntityAttribute.valueType as ValueType,
+            id,
+            dimensionId: id,
+            name,
+            valueType: valueType as ValueType,
             dimensionType: 'PROGRAM_ATTRIBUTE',
             trackedEntityTypeId,
+            ...(displayDescription ? { displayDescription } : {}),
+            ...(description ? { description } : {}),
+            ...(code ? { code } : {}),
+            ...(lastUpdated ? { lastUpdated } : {}),
+            ...('optionSet' in trackedEntityAttribute &&
+            trackedEntityAttribute.optionSet
+                ? { optionSet: trackedEntityAttribute.optionSet }
+                : {}),
+            ...('legendSets' in trackedEntityAttribute &&
+            trackedEntityAttribute.legendSets
+                ? { legendSets: trackedEntityAttribute.legendSets }
+                : {}),
         }
     } else {
         throw new Error('Invalid response data item')
@@ -93,7 +129,7 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
                 fields: [
                     'id',
                     'displayName~rename(name)',
-                    'trackedEntityTypeAttributes[trackedEntityAttribute[id,displayName~rename(name),valueType,optionSet]]',
+                    'trackedEntityTypeAttributes[trackedEntityAttribute[id,displayName~rename(name),displayDescription,description,code,lastUpdated,valueType,optionSet[displayName,name],legendSets[id,displayName,name]]]',
                 ],
             },
         }),

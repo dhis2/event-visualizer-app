@@ -2,3 +2,93 @@
     display: flex;
     flex-direction: column;
 }
+
+.popoverCard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-inline-size: 640px;
+    max-inline-size: 640px;
+    max-block-size: calc(100vh - 200px);
+    background-color: var(--colors-white);
+    border: 1px solid var(--colors-grey400);
+    border-radius: 3px;
+    box-shadow:
+        0 4px 12px rgba(12, 12, 12, 0.15),
+        0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+.popoverCard.withArrow {
+    margin-inline-start: 8px;
+}
+
+.popoverArrow,
+.popoverArrow::after {
+    position: absolute;
+    block-size: 12px;
+    inline-size: 12px;
+}
+
+.popoverArrow {
+    inset-block-start: 12px;
+    inset-inline-start: -7px;
+    overflow: hidden;
+}
+
+.popoverArrow::after {
+    content: '';
+    inset-block-start: 0;
+    inset-inline-start: 6px;
+    transform: rotate(45deg);
+    background-color: var(--colors-white);
+    border-block-end: 1px solid var(--colors-grey400);
+    border-inline-start: 1px solid var(--colors-grey400);
+}
+
+.popoverContent {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    padding: var(--spacers-dp4) var(--spacers-dp8);
+    overflow: auto;
+}
+
+.sidebarOverviewActions {
+    padding-block: var(--spacers-dp4) var(--spacers-dp8);
+    border-block-end: 1px solid var(--colors-grey300);
+}
+
+.sidebarOverview {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacers-dp8);
+    margin: 0;
+    padding-block: var(--spacers-dp8) var(--spacers-dp4);
+}
+
+.sidebarOverviewItem {
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr);
+    column-gap: var(--spacers-dp8);
+    align-items: baseline;
+}
+
+.sidebarOverviewItem dt {
+    color: var(--colors-grey700);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 16px;
+}
+
+.sidebarOverviewItem dd {
+    margin: 0;
+    color: var(--colors-grey900);
+    font-size: 14px;
+    line-height: 18px;
+    overflow-wrap: anywhere;
+}
+
+.popoverFooter {
+    padding: var(--spacers-dp8) var(--spacers-dp8);
+    border-block-start: 1px solid var(--colors-grey300);
+}
