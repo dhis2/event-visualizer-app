@@ -1,8 +1,8 @@
 import i18n from '@dhis2/d2-i18n'
 import { useAppSelector, useMetadataItem, useMetadataStore } from '@hooks'
 import {
+    getTrackedEntityTypeIdFromDataSource,
     isDataSourceProgramWithoutRegistration,
-    isDataSourceProgramWithRegistration,
 } from '@modules/data-source'
 import { isDimensionInLayout } from '@modules/layout'
 import { isVisualizationEmpty } from '@modules/visualization'
@@ -75,7 +75,6 @@ const getCategoryTooltipContent = ({
 
 type EventTooltipContentParams = {
     hasNoProgramInLayout: boolean
-    buttonVariant: LastActiveButton | undefined
     hasMultipleProgramsInLayout: boolean
     hasMultipleProgramStagesInLayout: boolean
     isRegistrationDateInLayout: boolean
@@ -84,7 +83,6 @@ type EventTooltipContentParams = {
 }
 
 const getEventTooltipContent = ({
-    buttonVariant,
     hasNoProgramInLayout,
     hasMultipleProgramsInLayout,
     hasMultipleProgramStagesInLayout,
@@ -92,13 +90,10 @@ const getEventTooltipContent = ({
     isRegistrationOuInLayout,
     visualizationType,
 }: EventTooltipContentParams): TooltipContent => {
-    if (
-        buttonVariant === 'CUSTOM_VALUE' &&
-        hasNoProgramInLayout &&
-        visualizationType === 'PIVOT_TABLE'
-    ) {
+    if (hasNoProgramInLayout) {
         return { content: i18n.t('Not valid without a program') }
     }
+
     if (
         hasMultipleProgramsInLayout &&
         (visualizationType === 'LINE_LIST' ||
@@ -106,15 +101,18 @@ const getEventTooltipContent = ({
     ) {
         return { content: i18n.t('Not valid with multiple programs') }
     }
+
     if (isRegistrationDateInLayout || isRegistrationOuInLayout) {
         return getRegistrationTooltipContent({
             isRegistrationDateInLayout,
             isRegistrationOuInLayout,
         })
     }
+
     if (hasMultipleProgramStagesInLayout) {
         return { content: i18n.t('Not valid with multiple program stages') }
     }
+
     return undefined
 }
 
@@ -123,6 +121,7 @@ type EnrollmentTooltipContentParams = {
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
     hasMultipleProgramsInLayout: boolean
+    hasNoProgramInLayout: boolean
     isRegistrationDateInLayout: boolean
     isRegistrationOuInLayout: boolean
     visualizationType: string
@@ -132,11 +131,16 @@ const getEnrollmentTooltipContent = ({
     dataSourceMetadata,
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
+    hasNoProgramInLayout,
     hasMultipleProgramsInLayout,
     isRegistrationDateInLayout,
     isRegistrationOuInLayout,
     visualizationType,
 }: EnrollmentTooltipContentParams): TooltipContent => {
+    if (hasNoProgramInLayout) {
+        return { content: i18n.t('Not valid without a program') }
+    }
+
     if (
         hasMultipleProgramsInLayout &&
         (visualizationType === 'LINE_LIST' ||
@@ -144,15 +148,18 @@ const getEnrollmentTooltipContent = ({
     ) {
         return { content: i18n.t('Not valid with multiple programs') }
     }
+
     if (isDataSourceProgramWithoutRegistration(dataSourceMetadata)) {
         return { content: i18n.t('Not valid with event programs') }
     }
+
     if (isRegistrationDateInLayout || isRegistrationOuInLayout) {
         return getRegistrationTooltipContent({
             isRegistrationDateInLayout,
             isRegistrationOuInLayout,
         })
     }
+
     return getCategoryTooltipContent({
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
@@ -307,23 +314,15 @@ export const useActionButton = (
     )
 
     const isRegistrationDateInLayout = useMemo(() => {
-        if (isDataSourceProgramWithRegistration(dataSourceMetadata)) {
-            const tetId = dataSourceMetadata.trackedEntityType.id
+        const tetId = getTrackedEntityTypeIdFromDataSource(dataSourceMetadata)
 
-            return isDimensionInLayout(layout, `${tetId}.created`)
-        }
-
-        return false
+        return tetId ? isDimensionInLayout(layout, `${tetId}.created`) : false
     }, [dataSourceMetadata, layout])
 
     const isRegistrationOuInLayout = useMemo(() => {
-        if (isDataSourceProgramWithRegistration(dataSourceMetadata)) {
-            const tetId = dataSourceMetadata.trackedEntityType.id
+        const tetId = getTrackedEntityTypeIdFromDataSource(dataSourceMetadata)
 
-            return isDimensionInLayout(layout, `${tetId}.ou`)
-        }
-
-        return false
+        return tetId ? isDimensionInLayout(layout, `${tetId}.ou`) : false
     }, [dataSourceMetadata, layout])
 
     const tooltipConfig = useMemo((): TooltipContent => {
@@ -339,7 +338,6 @@ export const useActionButton = (
         switch (buttonType) {
             case 'EVENT':
                 return getEventTooltipContent({
-                    buttonVariant,
                     hasNoProgramInLayout,
                     hasMultipleProgramsInLayout,
                     hasMultipleProgramStagesInLayout,
@@ -352,6 +350,7 @@ export const useActionButton = (
                     dataSourceMetadata,
                     hasCategoryInLayout,
                     hasCategoryOptionGroupSetInLayout,
+                    hasNoProgramInLayout,
                     hasMultipleProgramsInLayout,
                     isRegistrationDateInLayout,
                     isRegistrationOuInLayout,
@@ -369,7 +368,6 @@ export const useActionButton = (
         }
     }, [
         buttonType,
-        buttonVariant,
         dataSourceMetadata,
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
