@@ -1,12 +1,6 @@
 import { getAvailableAxes } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import {
-    SplitButton,
-    FlyoutMenu,
-    MenuItem,
-    Button,
-    ButtonStrip,
-} from '@dhis2/ui'
+import { SplitButton, FlyoutMenu, MenuItem, Button } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getAxisName } from '@modules/layout.js'
 import {
@@ -18,16 +12,14 @@ import { useCallback, type FC } from 'react'
 
 type AddToLayoutButtonProps = {
     dimensionId: string
-    onClick: (axisId: Axis) => void
+    onClick: () => void
     dataTest?: string
-    variant?: 'split' | 'buttons'
 }
 
 export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
     dimensionId,
     onClick,
     dataTest = 'add-to-layout-button',
-    variant = 'split',
 }) => {
     const dispatch = useAppDispatch()
     const visType = useAppSelector(getVisUiConfigVisualizationType)
@@ -40,7 +32,7 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
                 addVisUiConfigLayoutDimension({ axis: axisId, dimensionId })
             )
 
-            onClick(axisId)
+            onClick()
         },
         [dispatch, dimensionId, onClick]
     )
@@ -52,24 +44,6 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
             }),
         []
     )
-
-    if (variant === 'buttons') {
-        return (
-            <ButtonStrip>
-                {availableAxes.map((axisId) => (
-                    <Button
-                        key={axisId}
-                        type="button"
-                        small
-                        onClick={() => onMenuItemClick(axisId)}
-                        dataTest={`${dataTest}-${axisId}`}
-                    >
-                        {getButtonLabel(axisId)}
-                    </Button>
-                ))}
-            </ButtonStrip>
-        )
-    }
 
     return availableAxes.length > 1 ? (
         <SplitButton
