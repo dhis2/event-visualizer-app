@@ -107,6 +107,12 @@ const metadata = {
         dimensionType: 'DATA_ELEMENT',
         valueType: 'ORGANISATION_UNIT',
     },
+    'tei1.a1': {
+        id: 'tei1.a1',
+        name: 'Program attribute',
+        dimensionType: 'PROGRAM_ATTRIBUTE',
+        valueType: 'TEXT',
+    },
 }
 
 const initialPreloadedState: Partial<RootState> = {
@@ -264,6 +270,31 @@ describe('useActionButton for Event button', () => {
         })
     })
 
+    it('returns correct result for: LL, no program in layout', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [metadata['tei1.a1'].id],
+                    },
+                    visualizationType: 'LINE_LIST',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('create')
+        expect(output.dataSourceMetadata).toEqual(metadata.p2)
+        expect(output.tooltipConfig).toEqual({
+            content: 'Not valid without a program',
+        })
+    })
+
     it('returns correct result for: LL, registration date in layout', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('EVENT'),
@@ -273,7 +304,10 @@ describe('useActionButton for Event button', () => {
                 },
                 visUiConfig: {
                     layout: {
-                        columns: [metadata['tei1.created'].id],
+                        columns: [
+                            metadata['p2.p2s1.d1'].id,
+                            metadata['tei1.created'].id,
+                        ],
                     },
                     visualizationType: 'LINE_LIST',
                 },
@@ -298,7 +332,10 @@ describe('useActionButton for Event button', () => {
                 },
                 visUiConfig: {
                     layout: {
-                        columns: [metadata['tei1.ou'].id],
+                        columns: [
+                            metadata['p2.p2s1.d1'].id,
+                            metadata['tei1.ou'].id,
+                        ],
                     },
                     visualizationType: 'LINE_LIST',
                 },
@@ -324,6 +361,7 @@ describe('useActionButton for Event button', () => {
                 visUiConfig: {
                     layout: {
                         columns: [
+                            metadata['p2.p2s1.d1'].id,
                             metadata['tei1.ou'].id,
                             metadata['tei1.created'].id,
                         ],
@@ -481,6 +519,31 @@ describe('useActionButton for Enrollment button', () => {
         })
     })
 
+    it('returns correct result for: LL, no program in layout', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('ENROLLMENT'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [metadata['tei1.a1'].id],
+                    },
+                    visualizationType: 'LINE_LIST',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('create')
+        expect(output.dataSourceMetadata).toEqual(metadata.p2)
+        expect(output.tooltipConfig).toEqual({
+            content: 'Not valid without a program',
+        })
+    })
+
     it('returns correct result for: LL, registration date in layout', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('ENROLLMENT'),
@@ -490,7 +553,10 @@ describe('useActionButton for Enrollment button', () => {
                 },
                 visUiConfig: {
                     layout: {
-                        columns: [metadata['tei1.created'].id],
+                        columns: [
+                            metadata['p2.p2s1.d1'].id,
+                            metadata['tei1.created'].id,
+                        ],
                     },
                     visualizationType: 'LINE_LIST',
                 },
@@ -515,7 +581,10 @@ describe('useActionButton for Enrollment button', () => {
                 },
                 visUiConfig: {
                     layout: {
-                        columns: [metadata['tei1.ou'].id],
+                        columns: [
+                            metadata['p2.p2s1.d1'].id,
+                            metadata['tei1.ou'].id,
+                        ],
                     },
                     visualizationType: 'LINE_LIST',
                 },
@@ -541,6 +610,7 @@ describe('useActionButton for Enrollment button', () => {
                 visUiConfig: {
                     layout: {
                         columns: [
+                            metadata['p2.p2s1.d1'].id,
                             metadata['tei1.ou'].id,
                             metadata['tei1.created'].id,
                         ],
