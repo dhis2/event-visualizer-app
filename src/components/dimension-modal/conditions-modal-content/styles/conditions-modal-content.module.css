@@ -36,7 +36,18 @@
 }
 
 .tabBar {
-    margin-block-end: var(--spacers-dp16);
+    margin-block-end: var(--spacers-dp8) !important;
+    min-block-size: 36px !important;
+}
+
+.tabBar :global(button),
+.tabBar :global([role='tab']) {
+    min-block-size: 36px !important;
+    block-size: 36px !important;
+    padding: var(--spacers-dp4) var(--spacers-dp12) !important;
+    /* margin: 0 !important; */
+    /* font-size: 13px !important; */
+    /* line-height: 16px !important; */
 }
 
 .repeatableWrapper {

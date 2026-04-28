@@ -53,7 +53,15 @@
     overflow: auto;
 }
 
+.popoverToolbar {
+    padding: var(--spacers-dp8) var(--spacers-dp8);
+    background-color: var(--colors-grey050);
+    border-block-end: 1px solid var(--colors-grey300);
+}
+
 .popoverFooter {
+    display: flex;
+    justify-content: flex-end;
     padding: var(--spacers-dp8) var(--spacers-dp8);
     border-block-start: 1px solid var(--colors-grey300);
 }

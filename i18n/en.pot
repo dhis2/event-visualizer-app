@@ -185,11 +185,11 @@ msgstr "Most recent events:"
 msgid "Oldest events:"
 msgstr "Oldest events:"
 
-msgid "Hide"
-msgstr "Hide"
+msgid "Move to {{axisName}}"
+msgstr "Move to {{axisName}}"
 
-msgid "Update"
-msgstr "Update"
+msgid "Reset filters"
+msgstr "Reset filters"
 
 msgid "Start and end dates are inclusive and will be included in the outputs."
 msgstr "Start and end dates are inclusive and will be included in the outputs."
@@ -268,9 +268,6 @@ msgstr "An error occurred"
 
 msgid "Resize axes panel"
 msgstr "Resize axes panel"
-
-msgid "Move to {{axisName}}"
-msgstr "Move to {{axisName}}"
 
 msgid "all"
 msgstr "all"
@@ -424,6 +421,9 @@ msgstr "Aggregation"
 
 msgid "Cancel"
 msgstr "Cancel"
+
+msgid "Update"
+msgstr "Update"
 
 msgid "Collapse layout"
 msgstr "Collapse layout"
@@ -713,6 +713,9 @@ msgstr "Add a title"
 
 msgid "Options"
 msgstr "Options"
+
+msgid "Hide"
+msgstr "Hide"
 
 msgid "Display"
 msgstr "Display"
