@@ -70,12 +70,12 @@ const DimensionPopoverContent: FC<DimensionPopoverContentProps> = ({
     }
 }
 
-type SidebarAddToolbarProps = {
+type SidebarAddActionsProps = {
     dimensionId: string
     onAdd: (axisId: Axis) => void
 }
 
-const SidebarAddToolbar: FC<SidebarAddToolbarProps> = ({
+const SidebarAddActions: FC<SidebarAddActionsProps> = ({
     dimensionId,
     onAdd,
 }) => {
@@ -83,24 +83,21 @@ const SidebarAddToolbar: FC<SidebarAddToolbarProps> = ({
     const availableAxes = getAvailableAxes(visType)
 
     return (
-        <div className={classes.popoverToolbar}>
-            <ButtonStrip>
-                {availableAxes.map((axisId) => (
-                    <Button
-                        key={axisId}
-                        type="button"
-                        small
-                        // secondary
-                        onClick={() => onAdd(axisId)}
-                        dataTest={`dimension-popover-toolbar-add-${axisId}-${dimensionId}`}
-                    >
-                        {i18n.t('Add to {{axisName}}', {
-                            axisName: getAxisName(axisId).toLocaleLowerCase(),
-                        })}
-                    </Button>
-                ))}
-            </ButtonStrip>
-        </div>
+        <ButtonStrip>
+            {availableAxes.map((axisId) => (
+                <Button
+                    key={axisId}
+                    type="button"
+                    small
+                    onClick={() => onAdd(axisId)}
+                    dataTest={`dimension-popover-action-add-${axisId}-${dimensionId}`}
+                >
+                    {i18n.t('Add to {{axisName}}', {
+                        axisName: getAxisName(axisId).toLocaleLowerCase(),
+                    })}
+                </Button>
+            ))}
+        </ButtonStrip>
     )
 }
 
@@ -128,9 +125,10 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
     const lastActiveButton = useAppSelector(getVisUiConfigLastActiveButton)
     const layout = useAppSelector(getVisUiConfigLayout)
     const isInLayout = isDimensionInLayout(layout, dimension.id)
-    const showSidebarAddToolbar = source === 'sidebar' && !isInLayout
+    const showSidebarAddActions = source === 'sidebar' && !isInLayout
     const showUpdateAction = isInLayout
-    const showFooterActions = source === 'layout' || isInLayout
+    const showFooterActions =
+        source === 'layout' || isInLayout || showSidebarAddActions
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const visType = useAppSelector(getVisUiConfigVisualizationType)
     const currentAxisId = useMemo<Axis | undefined>(() => {
@@ -253,7 +251,7 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
         onClose()
     }, [dispatch, onClose])
 
-    const onToolbarAdd = useCallback(
+    const onSidebarAdd = useCallback(
         (axisId: Axis) => {
             dispatch(
                 addVisUiConfigLayoutDimension({
@@ -327,12 +325,6 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
             onKeyDown={onKeyDown}
             role="dialog"
         >
-            {showSidebarAddToolbar && (
-                <SidebarAddToolbar
-                    dimensionId={dimension.id}
-                    onAdd={onToolbarAdd}
-                />
-            )}
             <div
                 className={classes.popoverContent}
                 data-test={`${dataTest}-content`}
@@ -355,51 +347,64 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
                             {updateButtonLabel}
                         </button>
                     )}
-                    <div className={classes.popoverFooterActions}>
-                        <ButtonStrip>
-                            {applicableMoveAxisIds.map((targetAxisId) => (
+                    <div
+                        className={
+                            showSidebarAddActions
+                                ? classes.popoverFooterActionsLeft
+                                : classes.popoverFooterActions
+                        }
+                    >
+                        {showSidebarAddActions ? (
+                            <SidebarAddActions
+                                dimensionId={dimension.id}
+                                onAdd={onSidebarAdd}
+                            />
+                        ) : (
+                            <ButtonStrip>
+                                {applicableMoveAxisIds.map((targetAxisId) => (
+                                    <Button
+                                        key={targetAxisId}
+                                        type="button"
+                                        small
+                                        secondary
+                                        onClick={() => onMove(targetAxisId)}
+                                        dataTest={`${dataTest}-action-move-to-${targetAxisId}`}
+                                    >
+                                        {i18n.t('Move to {{axisName}}', {
+                                            axisName:
+                                                getAxisName(
+                                                    targetAxisId
+                                                ).toLocaleLowerCase(),
+                                        })}
+                                    </Button>
+                                ))}
                                 <Button
-                                    key={targetAxisId}
                                     type="button"
                                     small
                                     secondary
-                                    onClick={() => onMove(targetAxisId)}
-                                    dataTest={`${dataTest}-action-move-to-${targetAxisId}`}
+                                    onClick={onResetFilters}
+                                    dataTest={`${dataTest}-action-reset-filters`}
                                 >
-                                    {i18n.t('Move to {{axisName}}', {
-                                        axisName:
-                                            getAxisName(
-                                                targetAxisId
-                                            ).toLocaleLowerCase(),
-                                    })}
+                                    {i18n.t('Reset filters')}
                                 </Button>
-                            ))}
-                            <Button
-                                type="button"
-                                small
-                                secondary
-                                onClick={onResetFilters}
-                                dataTest={`${dataTest}-action-reset-filters`}
-                            >
-                                {i18n.t('Reset filters')}
-                            </Button>
-                            <Button
-                                type="button"
-                                small
-                                secondary
-                                onClick={onRemove}
-                                dataTest={`${dataTest}-action-remove`}
-                            >
-                                {i18n.t('Remove')}
-                            </Button>
-                            {!isInLayout && (
-                                <AddToLayoutButton
-                                    dimensionId={dimension.id}
-                                    onClick={onClose}
-                                    dataTest={`${dataTest}-action-confirm`}
-                                />
-                            )}
-                        </ButtonStrip>
+                                <Button
+                                    type="button"
+                                    small
+                                    secondary
+                                    onClick={onRemove}
+                                    dataTest={`${dataTest}-action-remove`}
+                                >
+                                    {i18n.t('Remove')}
+                                </Button>
+                                {!isInLayout && (
+                                    <AddToLayoutButton
+                                        dimensionId={dimension.id}
+                                        onClick={onClose}
+                                        dataTest={`${dataTest}-action-confirm`}
+                                    />
+                                )}
+                            </ButtonStrip>
+                        )}
                     </div>
                 </footer>
             )}
