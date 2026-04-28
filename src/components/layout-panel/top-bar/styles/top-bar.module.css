@@ -12,6 +12,7 @@
 
 .container {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: flex-start;
     gap: 4px;
@@ -20,11 +21,29 @@
 }
 
 .containerSpacer {
-    flex: 1;
+    flex: 1 1 0;
+    min-inline-size: var(--spacers-dp8);
+}
+
+.updateButtons {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--spacers-dp4);
+}
+
+.visualizationControls {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 4px;
 }
 
 .button {
     display: flex;
+    flex: 0 0 auto;
     align-items: center;
     gap: var(--spacers-dp4);
     padding: 6px 8px;
@@ -34,6 +53,7 @@
     background-color: var(--colors-white);
     cursor: pointer;
     font-size: 13px;
+    white-space: nowrap;
 }
 
 .button:hover {
