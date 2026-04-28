@@ -248,6 +248,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                             >
                                 <DimensionPopoverCard
                                     dimension={dimensionMetadata}
+                                    axisId={axisId}
                                     onClose={closeDimensionPopover}
                                 />
                             </Popper>
