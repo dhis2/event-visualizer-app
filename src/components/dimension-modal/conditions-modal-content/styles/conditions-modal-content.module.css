@@ -36,6 +36,7 @@
 }
 
 .tabBar {
+    margin-block-start: -8px !important;
     margin-block-end: var(--spacers-dp8) !important;
     min-block-size: 36px !important;
 }

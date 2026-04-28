@@ -122,8 +122,8 @@ msgstr "Period"
 msgid "Add to {{axisName}}"
 msgstr "Add to {{axisName}}"
 
-msgid "Choose a condition type"
-msgstr "Choose a condition type"
+msgid "Choose a filter type"
+msgstr "Choose a filter type"
 
 msgid "Match case"
 msgstr "Match case"
@@ -134,8 +134,8 @@ msgstr "Remove"
 msgid "Repeated events"
 msgstr "Repeated events"
 
-msgid "Conditions"
-msgstr "Conditions"
+msgid "Filters"
+msgstr "Filters"
 
 msgid "Only available for repeatable stages"
 msgstr "Only available for repeatable stages"
@@ -143,20 +143,20 @@ msgstr "Only available for repeatable stages"
 msgid "This dimension can't be filtered. All values will be shown."
 msgstr "This dimension can't be filtered. All values will be shown."
 
-msgid "Showing all values. Add a condition to filter."
-msgstr "Showing all values. Add a condition to filter."
+msgid "Add a filter to only include some values."
+msgstr "Add a filter to only include some values."
 
-msgid "Preset options can't be combined with other conditions"
-msgstr "Preset options can't be combined with other conditions"
+msgid "Preset options can't be combined with other filters"
+msgstr "Preset options can't be combined with other filters"
 
 msgid "is one of preset options"
 msgstr "is one of preset options"
 
-msgid "Add another condition"
-msgstr "Add another condition"
+msgid "Add another filter"
+msgstr "Add another filter"
 
-msgid "Add a condition"
-msgstr "Add a condition"
+msgid "Add a filter"
+msgstr "Add a filter"
 
 msgid "and"
 msgstr "and"
@@ -751,8 +751,8 @@ msgstr ""
 msgid "Add dimensions to the layout above."
 msgstr "Add dimensions to the layout above."
 
-msgid "Click a dimension to add or remove conditions."
-msgstr "Click a dimension to add or remove conditions."
+msgid "Click a dimension to add or remove filters."
+msgstr "Click a dimension to add or remove filters."
 
 msgid "Your most viewed event visualizations"
 msgstr "Your most viewed event visualizations"

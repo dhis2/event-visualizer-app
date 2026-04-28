@@ -1,8 +1,8 @@
 import type { SidebarSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
-import { DimensionPopoverCard } from '@components/dimension-modal/dimension-popover-card'
+import { DimensionPopover } from '@components/dimension-modal/dimension-popover-card'
 import { useIsDimensionInLayout } from '@components/main-sidebar/use-is-dimension-in-layout'
 import { IconButton } from '@components/shared/icon-button'
-import { IconAdd16, IconSubtract16, Layer, Popper } from '@dhis2/ui'
+import { IconAdd16, IconSubtract16 } from '@dhis2/ui'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useAddMetadata, useAppDispatch, useAppSelector } from '@hooks'
@@ -186,19 +186,13 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
                     </div>
                 )}
                 {popoverIsOpen && (
-                    <Layer onBackdropClick={closeDimensionPopover}>
-                        <Popper
-                            reference={dimensionItemRef}
-                            placement="right-start"
-                        >
-                            <DimensionPopoverCard
-                                dimension={dimension}
-                                onClose={closeDimensionPopover}
-                                showArrow
-                                source="sidebar"
-                            />
-                        </Popper>
-                    </Layer>
+                    <DimensionPopover
+                        dimension={dimension}
+                        onClose={closeDimensionPopover}
+                        placement="right-start"
+                        referenceRef={dimensionItemRef}
+                        source="sidebar"
+                    />
                 )}
             </div>
         </DimensionItemContainer>

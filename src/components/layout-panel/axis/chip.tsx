@@ -1,5 +1,5 @@
 import type { AxisSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
-import { DimensionPopoverCard } from '@components/dimension-modal/dimension-popover-card'
+import { DimensionPopover } from '@components/dimension-modal/dimension-popover-card'
 import { IconButton } from '@components/shared/icon-button'
 import { Layer, Popper, Tooltip, IconMore16 } from '@dhis2/ui'
 import { useSortable } from '@dnd-kit/sortable'
@@ -241,18 +241,13 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                 )}
                 {popoverIsOpen &&
                     isDimensionMetadataItem(dimensionMetadata) && (
-                        <Layer onBackdropClick={closeDimensionPopover}>
-                            <Popper
-                                reference={chipRef}
-                                placement="bottom-start"
-                            >
-                                <DimensionPopoverCard
-                                    dimension={dimensionMetadata}
-                                    axisId={axisId}
-                                    onClose={closeDimensionPopover}
-                                />
-                            </Popper>
-                        </Layer>
+                        <DimensionPopover
+                            dimension={dimensionMetadata}
+                            axisId={axisId}
+                            onClose={closeDimensionPopover}
+                            placement="bottom-start"
+                            referenceRef={chipRef}
+                        />
                     )}
             </div>
             {isOver && !isDragging && (

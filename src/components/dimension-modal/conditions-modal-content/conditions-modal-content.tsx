@@ -51,7 +51,7 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
                         onClick={() => setCurrentTab(TAB_CONDITIONS)}
                         selected={currentTab === TAB_CONDITIONS}
                     >
-                        {i18n.t('Conditions')}
+                        {i18n.t('Filters')}
                     </Tab>
                     {disableRepeatableTab ? (
                         <Tooltip
