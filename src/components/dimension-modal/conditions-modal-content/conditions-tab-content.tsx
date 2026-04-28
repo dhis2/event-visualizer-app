@@ -2,7 +2,6 @@ import i18n from '@dhis2/d2-i18n'
 import {
     DropdownButton,
     FlyoutMenu,
-    IconInfo16,
     MenuDivider,
     MenuItem,
     Tooltip,
@@ -312,11 +311,8 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                     !conditions.legendSet &&
                     !isSingleCondition ? (
                         <p className={classes.paragraph}>
-                            <span className={classes.infoIcon}>
-                                <IconInfo16 />
-                            </span>
                             {i18n.t(
-                                'Showing all values. Add a condition to filter.'
+                                'Add a filter to only include some values.'
                             )}
                         </p>
                     ) : (
@@ -325,7 +321,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                     {!isSingleCondition && (
                         <Tooltip
                             content={i18n.t(
-                                "Preset options can't be combined with other conditions"
+                                "Preset options can't be combined with other filters"
                             )}
                             placement="bottom"
                             closeDelay={200}
@@ -395,8 +391,8 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                                         }
                                     >
                                         {conditionsList.length
-                                            ? i18n.t('Add another condition')
-                                            : i18n.t('Add a condition')}
+                                            ? i18n.t('Add another filter')
+                                            : i18n.t('Add a filter')}
                                     </DropdownButton>
                                 </span>
                             )}

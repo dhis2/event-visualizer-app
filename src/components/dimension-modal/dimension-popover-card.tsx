@@ -1,6 +1,6 @@
 import { getAvailableAxes } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import { ButtonStrip, Button } from '@dhis2/ui'
+import { ButtonStrip, Button, Layer, Popper, type PopperProps } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getAxisName, isDimensionInLayout } from '@modules/layout'
 import {
@@ -14,8 +14,15 @@ import {
     setVisUiConfigRepetitionsByDimension,
 } from '@store/vis-ui-config-slice'
 import type { Axis, DimensionMetadataItem } from '@types'
-import cx from 'classnames'
-import { useCallback, useMemo, type FC, type KeyboardEvent } from 'react'
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    type FC,
+    type KeyboardEvent,
+    type RefObject,
+} from 'react'
 import { AddToLayoutButton } from './add-to-layout-button'
 import { ConditionsModalContent } from './conditions-modal-content/conditions-modal-content'
 import { DynamicDimensionModalContent } from './dynamic-dimension-modal-content/dynamic-dimension-modal-content'
@@ -67,7 +74,7 @@ const SidebarAddToolbar: FC<SidebarAddToolbarProps> = ({
                         key={axisId}
                         type="button"
                         small
-                        secondary
+                        // secondary
                         onClick={() => onAdd(axisId)}
                         dataTest={`dimension-popover-toolbar-add-${axisId}-${dimensionId}`}
                     >
@@ -85,7 +92,7 @@ type DimensionPopoverCardProps = {
     dimension: DimensionMetadataItem
     axisId?: Axis
     onClose: () => void
-    showArrow?: boolean
+    referenceRef?: RefObject<HTMLElement>
     source?: 'layout' | 'sidebar'
 }
 
@@ -93,10 +100,11 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
     dimension,
     axisId,
     onClose,
-    showArrow = false,
+    referenceRef,
     source = 'layout',
 }) => {
     const dataTest = 'dimension-popover'
+    const popoverRef = useRef<HTMLDivElement>(null)
 
     const dispatch = useAppDispatch()
     const layout = useAppSelector(getVisUiConfigLayout)
@@ -194,16 +202,57 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
         [onClose]
     )
 
+    useEffect(() => {
+        const closeOnOutsidePointerDown = (event: PointerEvent) => {
+            const target = event.target
+
+            if (!(target instanceof Node)) {
+                return
+            }
+
+            if (popoverRef.current?.contains(target)) {
+                return
+            }
+
+            if (referenceRef?.current?.contains(target)) {
+                return
+            }
+
+            if (
+                target instanceof Element &&
+                target.closest(
+                    '[data-test="dhis2-uicore-layer"], [data-test="dhis2-uicore-popper"]'
+                )
+            ) {
+                return
+            }
+
+            onClose()
+        }
+
+        document.addEventListener('pointerdown', closeOnOutsidePointerDown, {
+            capture: true,
+        })
+
+        return () => {
+            document.removeEventListener(
+                'pointerdown',
+                closeOnOutsidePointerDown,
+                {
+                    capture: true,
+                }
+            )
+        }
+    }, [onClose, referenceRef])
+
     return (
         <div
-            className={cx(classes.popoverCard, {
-                [classes.withArrow]: showArrow,
-            })}
+            ref={popoverRef}
+            className={classes.popoverCard}
             data-test={dataTest}
             onKeyDown={onKeyDown}
             role="dialog"
         >
-            {showArrow && <span className={classes.popoverArrow} />}
             {showSidebarAddToolbar && (
                 <SidebarAddToolbar
                     dimensionId={dimension.id}
@@ -270,3 +319,27 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
         </div>
     )
 }
+
+type DimensionPopoverProps = Omit<DimensionPopoverCardProps, 'referenceRef'> & {
+    placement: PopperProps['placement']
+    referenceRef: RefObject<HTMLElement>
+}
+
+export const DimensionPopover: FC<DimensionPopoverProps> = ({
+    placement,
+    referenceRef,
+    ...popoverCardProps
+}) => (
+    <Layer className={classes.nonBlockingLayer}>
+        <Popper
+            className={classes.nonBlockingPopper}
+            reference={referenceRef}
+            placement={placement}
+        >
+            <DimensionPopoverCard
+                {...popoverCardProps}
+                referenceRef={referenceRef}
+            />
+        </Popper>
+    </Layer>
+)

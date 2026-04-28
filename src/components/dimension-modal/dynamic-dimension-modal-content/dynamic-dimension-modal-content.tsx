@@ -99,7 +99,7 @@ export const DynamicDimensionModalContent: FC<
         <>
             <p className={classes.paragraph}>
                 {i18n.t(
-                    'Show items that meet the following conditions for this data item:'
+                    'Show items that meet the following filters for this data item:'
                 )}
             </p>
             <div className={classes.mainSection}>

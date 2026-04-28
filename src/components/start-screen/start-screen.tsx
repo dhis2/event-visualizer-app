@@ -34,7 +34,7 @@ export const StartScreen: FC = () => {
                             </li>
                             <li className={classes.guideItem}>
                                 {i18n.t(
-                                    'Click a dimension to add or remove conditions.'
+                                    'Click a dimension to add or remove filters.'
                                 )}
                             </li>
                         </ul>
