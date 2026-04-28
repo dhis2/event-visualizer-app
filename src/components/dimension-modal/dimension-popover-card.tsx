@@ -1,11 +1,27 @@
+import actionButtonClasses from '@components/layout-panel/bottom-bar/action-buttons/styles/action-buttons.module.css'
 import { getAvailableAxes } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import { ButtonStrip, Button, Layer, Popper, type PopperProps } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector } from '@hooks'
+import {
+    ButtonStrip,
+    Button,
+    IconSync16,
+    Layer,
+    Popper,
+    type PopperProps,
+} from '@dhis2/ui'
+import { useAppDispatch, useAppSelector, useMetadataItem } from '@hooks'
+import {
+    isDataSourceProgramWithRegistration,
+    isDataSourceTrackedEntityType,
+} from '@modules/data-source'
 import { getAxisName, isDimensionInLayout } from '@modules/layout'
+import { getDataSourceId } from '@store/dimensions-selection-slice'
+import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
     addVisUiConfigLayoutDimension,
+    getVisUiConfigLastActiveButton,
     getVisUiConfigLayout,
+    getVisUiConfigOutputType,
     getVisUiConfigVisualizationType,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
@@ -107,10 +123,15 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
     const popoverRef = useRef<HTMLDivElement>(null)
 
     const dispatch = useAppDispatch()
+    const dataSourceId = useAppSelector(getDataSourceId)
+    const dataSourceMetadata = useMetadataItem(dataSourceId)
+    const lastActiveButton = useAppSelector(getVisUiConfigLastActiveButton)
     const layout = useAppSelector(getVisUiConfigLayout)
     const isInLayout = isDimensionInLayout(layout, dimension.id)
     const showSidebarAddToolbar = source === 'sidebar' && !isInLayout
+    const showUpdateAction = isInLayout
     const showFooterActions = source === 'layout' || isInLayout
+    const outputType = useAppSelector(getVisUiConfigOutputType)
     const visType = useAppSelector(getVisUiConfigVisualizationType)
     const currentAxisId = useMemo<Axis | undefined>(() => {
         if (axisId) {
@@ -130,6 +151,54 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
                 : [],
         [currentAxisId, visType]
     )
+    const updateButtonLabel = useMemo(() => {
+        const isTable = visType === 'PIVOT_TABLE'
+
+        switch (outputType) {
+            case 'EVENT': {
+                if (isTable && lastActiveButton === 'CUSTOM_VALUE') {
+                    return i18n.t('Update custom value table')
+                }
+
+                const eventLabel =
+                    isDataSourceProgramWithRegistration(dataSourceMetadata) &&
+                    dataSourceMetadata.displayEventLabel
+                        ? dataSourceMetadata.displayEventLabel
+                        : i18n.t('Event')
+
+                return isTable
+                    ? i18n.t('Update {{eventLabel}} table', { eventLabel })
+                    : i18n.t('Update {{eventLabel}} list', { eventLabel })
+            }
+            case 'ENROLLMENT': {
+                const enrollmentLabel =
+                    isDataSourceProgramWithRegistration(dataSourceMetadata) &&
+                    dataSourceMetadata.displayEnrollmentLabel
+                        ? dataSourceMetadata.displayEnrollmentLabel
+                        : i18n.t('Enrollment')
+
+                return isTable
+                    ? i18n.t('Update {{enrollmentLabel}} table', {
+                          enrollmentLabel,
+                      })
+                    : i18n.t('Update {{enrollmentLabel}} list', {
+                          enrollmentLabel,
+                      })
+            }
+            case 'TRACKED_ENTITY_INSTANCE': {
+                const trackedEntityTypeName =
+                    isDataSourceProgramWithRegistration(dataSourceMetadata)
+                        ? dataSourceMetadata.trackedEntityType.name
+                        : isDataSourceTrackedEntityType(dataSourceMetadata)
+                          ? dataSourceMetadata.name
+                          : i18n.t('tracked entity')
+
+                return i18n.t('Update {{trackedEntityTypeName}} list', {
+                    trackedEntityTypeName,
+                })
+            }
+        }
+    }, [dataSourceMetadata, lastActiveButton, outputType, visType])
 
     const onMove = useCallback(
         (targetAxisId: Axis) => {
@@ -178,6 +247,11 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
         )
         onClose()
     }, [currentAxisId, dimension.id, dispatch, onClose])
+
+    const onUpdate = useCallback(() => {
+        dispatch(tUpdateCurrentVisFromVisUiConfig())
+        onClose()
+    }, [dispatch, onClose])
 
     const onToolbarAdd = useCallback(
         (axisId: Axis) => {
@@ -270,50 +344,63 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
                     className={classes.popoverFooter}
                     data-test={`${dataTest}-actions`}
                 >
-                    <ButtonStrip>
-                        {applicableMoveAxisIds.map((targetAxisId) => (
+                    {showUpdateAction && (
+                        <button
+                            type="button"
+                            onClick={onUpdate}
+                            className={`${actionButtonClasses.button} ${actionButtonClasses.update}`}
+                            data-test={`${dataTest}-action-update`}
+                        >
+                            <IconSync16 />
+                            {updateButtonLabel}
+                        </button>
+                    )}
+                    <div className={classes.popoverFooterActions}>
+                        <ButtonStrip>
+                            {applicableMoveAxisIds.map((targetAxisId) => (
+                                <Button
+                                    key={targetAxisId}
+                                    type="button"
+                                    small
+                                    secondary
+                                    onClick={() => onMove(targetAxisId)}
+                                    dataTest={`${dataTest}-action-move-to-${targetAxisId}`}
+                                >
+                                    {i18n.t('Move to {{axisName}}', {
+                                        axisName:
+                                            getAxisName(
+                                                targetAxisId
+                                            ).toLocaleLowerCase(),
+                                    })}
+                                </Button>
+                            ))}
                             <Button
-                                key={targetAxisId}
                                 type="button"
                                 small
                                 secondary
-                                onClick={() => onMove(targetAxisId)}
-                                dataTest={`${dataTest}-action-move-to-${targetAxisId}`}
+                                onClick={onResetFilters}
+                                dataTest={`${dataTest}-action-reset-filters`}
                             >
-                                {i18n.t('Move to {{axisName}}', {
-                                    axisName:
-                                        getAxisName(
-                                            targetAxisId
-                                        ).toLocaleLowerCase(),
-                                })}
+                                {i18n.t('Reset filters')}
                             </Button>
-                        ))}
-                        <Button
-                            type="button"
-                            small
-                            secondary
-                            onClick={onResetFilters}
-                            dataTest={`${dataTest}-action-reset-filters`}
-                        >
-                            {i18n.t('Reset filters')}
-                        </Button>
-                        <Button
-                            type="button"
-                            small
-                            secondary
-                            onClick={onRemove}
-                            dataTest={`${dataTest}-action-remove`}
-                        >
-                            {i18n.t('Remove')}
-                        </Button>
-                        {!isInLayout && (
-                            <AddToLayoutButton
-                                dimensionId={dimension.id}
-                                onClick={onClose}
-                                dataTest={`${dataTest}-action-confirm`}
-                            />
-                        )}
-                    </ButtonStrip>
+                            <Button
+                                type="button"
+                                small
+                                secondary
+                                onClick={onRemove}
+                                dataTest={`${dataTest}-action-remove`}
+                            >
+                                {i18n.t('Remove')}
+                            </Button>
+                            {!isInLayout && (
+                                <AddToLayoutButton
+                                    dimensionId={dimension.id}
+                                    onClick={onClose}
+                                    dataTest={`${dataTest}-action-confirm`}
+                                />
+                            )}
+                        </ButtonStrip>
+                    </div>
                 </footer>
             )}
         </div>

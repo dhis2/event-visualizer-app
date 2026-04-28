@@ -185,6 +185,33 @@ msgstr "Most recent events:"
 msgid "Oldest events:"
 msgstr "Oldest events:"
 
+msgid "Update custom value table"
+msgstr "Update custom value table"
+
+msgid "Event"
+msgstr "Event"
+
+msgid "Update {{eventLabel}} table"
+msgstr "Update {{eventLabel}} table"
+
+msgid "Update {{eventLabel}} list"
+msgstr "Update {{eventLabel}} list"
+
+msgid "Enrollment"
+msgstr "Enrollment"
+
+msgid "Update {{enrollmentLabel}} table"
+msgstr "Update {{enrollmentLabel}} table"
+
+msgid "Update {{enrollmentLabel}} list"
+msgstr "Update {{enrollmentLabel}} list"
+
+msgid "tracked entity"
+msgstr "tracked entity"
+
+msgid "Update {{trackedEntityTypeName}} list"
+msgstr "Update {{trackedEntityTypeName}} list"
+
 msgid "Move to {{axisName}}"
 msgstr "Move to {{axisName}}"
 
@@ -296,14 +323,8 @@ msgstr "Create custom value table"
 msgid "Switch to custom value table"
 msgstr "Switch to custom value table"
 
-msgid "Update custom value table"
-msgstr "Update custom value table"
-
 msgid "Using: {{dataElementName}} ({{aggregationType}})"
 msgstr "Using: {{dataElementName}} ({{aggregationType}})"
-
-msgid "Enrollment"
-msgstr "Enrollment"
 
 msgid "Create {{enrollmentLabel}} list"
 msgstr "Create {{enrollmentLabel}} list"
@@ -317,15 +338,6 @@ msgstr "Switch to {{enrollmentLabel}} list"
 msgid "Switch to {{enrollmentLabel}} table"
 msgstr "Switch to {{enrollmentLabel}} table"
 
-msgid "Update {{enrollmentLabel}} list"
-msgstr "Update {{enrollmentLabel}} list"
-
-msgid "Update {{enrollmentLabel}} table"
-msgstr "Update {{enrollmentLabel}} table"
-
-msgid "Event"
-msgstr "Event"
-
 msgid "Create {{eventLabel}} list"
 msgstr "Create {{eventLabel}} list"
 
@@ -338,23 +350,11 @@ msgstr "Switch to {{eventLabel}} list"
 msgid "Switch to {{eventLabel}} table"
 msgstr "Switch to {{eventLabel}} table"
 
-msgid "Update {{eventLabel}} list"
-msgstr "Update {{eventLabel}} list"
-
-msgid "Update {{eventLabel}} table"
-msgstr "Update {{eventLabel}} table"
-
-msgid "tracked entity"
-msgstr "tracked entity"
-
 msgid "Create {{trackedEntityTypeName}} list"
 msgstr "Create {{trackedEntityTypeName}} list"
 
 msgid "Switch to {{trackedEntityTypeName}} list"
 msgstr "Switch to {{trackedEntityTypeName}} list"
-
-msgid "Update {{trackedEntityTypeName}} list"
-msgstr "Update {{trackedEntityTypeName}} list"
 
 msgid "Not valid with registration date or registration org. unit"
 msgstr "Not valid with registration date or registration org. unit"

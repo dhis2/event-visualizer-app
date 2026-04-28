@@ -45,7 +45,13 @@
 
 .popoverFooter {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    gap: var(--spacers-dp8);
+    justify-content: space-between;
     padding: var(--spacers-dp8) var(--spacers-dp8);
     border-block-start: 1px solid var(--colors-grey300);
+}
+
+.popoverFooterActions {
+    margin-inline-start: auto;
 }
