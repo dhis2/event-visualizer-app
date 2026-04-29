@@ -1,10 +1,44 @@
 import { PivotTable } from '@dhis2/analytics'
-import { WIRE_ONLY_DIMENSIONS } from '@modules/dimension'
-import { transformVisualizationForAnalyticsRequest } from '@modules/visualization'
-import type { CurrentUser, CurrentVisualization, DimensionRecord } from '@types'
+import { getFullDimensionId } from '@modules/dimension'
+import {
+    getHeadersMap,
+    transformVisualizationForAnalyticsRequest,
+} from '@modules/visualization'
+import type { CurrentUser, CurrentVisualization, DimensionArray } from '@types'
 import { type FC, useEffect, useMemo } from 'react'
-import type { OnAnalyticsResponseReceivedCb } from './hooks/use-line-list-analytics-data'
-import { usePivotTableAnalyticsData } from './hooks/use-pivot-table-analytics-data'
+import {
+    usePivotTableAnalyticsData,
+    type OnAnalyticsResponseReceivedCb,
+} from './hooks/use-pivot-table-analytics-data'
+
+const formatVisualizationForPivotTableEngine = (
+    visualization: CurrentVisualization
+): CurrentVisualization => {
+    const headersMap = getHeadersMap(visualization)
+
+    const formatDimensions = (dimensions: DimensionArray): DimensionArray =>
+        dimensions.map((dimensionObj) => ({
+            ...dimensionObj,
+            dimension: getFullDimensionId({
+                dimensionId:
+                    // for event/enrollment aggregate `ou` is always used as API dimension id
+                    dimensionObj.dimension !== 'ou'
+                        ? (headersMap[dimensionObj.dimension] ??
+                          dimensionObj.dimension)
+                        : dimensionObj.dimension,
+                programStageId: dimensionObj.programStage?.id,
+                programId: dimensionObj.program?.id,
+                outputType: visualization.outputType,
+            }),
+        }))
+
+    return {
+        ...visualization,
+        columns: formatDimensions(visualization.columns),
+        rows: formatDimensions(visualization.rows),
+        filters: formatDimensions(visualization.filters),
+    }
+}
 
 type PivotTablePluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
@@ -26,23 +60,13 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isInModal,
 }) => {
-    const [fetchAnalyticsData, { data }] = usePivotTableAnalyticsData()
-
-    // XXX: temporary code until the analytics api is updated and returns all the correect metadata
-    // at that point we can pass a fully transformed visualization to the PivotTable component
-    const filterDimension = (dimensionObj: DimensionRecord) =>
-        !WIRE_ONLY_DIMENSIONS.has(dimensionObj.dimension)
-
-    const visualizationForPTComponent: CurrentVisualization = useMemo(
-        () =>
-            ({
-                ...visualization,
-                columns: visualization.columns?.filter(filterDimension),
-                rows: visualization.rows?.filter(filterDimension),
-                filters: visualization.filters?.filter(filterDimension),
-            }) as CurrentVisualization,
+    // the dimension ids need to be formatted to match the ones returned in the analytics metaData, otherwise the PT engine fails to lookup the metadata
+    const eventVisualization = useMemo(
+        () => formatVisualizationForPivotTableEngine(visualization),
         [visualization]
     )
+
+    const [fetchAnalyticsData, { data }] = usePivotTableAnalyticsData()
 
     // TODO: implement onDataSorted and any other function/callback that cannot rely on the Redux store
 
@@ -70,7 +94,7 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
 
     return (
         <PivotTable
-            visualization={visualizationForPTComponent}
+            visualization={eventVisualization}
             data={data}
             //legendSets={legendSets}
             //renderCounter={id}

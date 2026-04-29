@@ -1,14 +1,15 @@
 import { Analytics, transformEventAggregateResponse } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
-import {
-    getSingleProgramFromVisualization,
-    getSingleProgramStageFromVisualization,
-} from '@modules/visualization'
-import type { CurrentUser, CurrentVisualization } from '@types'
+import { getSingleProgramFromVisualization } from '@modules/visualization'
+import type {
+    CurrentUser,
+    CurrentVisualization,
+    MetadataInputItem,
+    UserOrgUnitMetadataItem,
+} from '@types'
 import { useCallback, useState } from 'react'
-import { getAdaptedVisualization } from './query-tools-line-list'
-import type { OnAnalyticsResponseReceivedCb } from './use-line-list-analytics-data'
+import { getAdaptedVisualization } from './query-tools-pivot-table'
 
 export const fetchAnalyticsDataForPT = async ({
     analyticsEngine,
@@ -25,30 +26,29 @@ export const fetchAnalyticsDataForPT = async ({
     }
 
     const program = getSingleProgramFromVisualization(visualization)
-    const stage = getSingleProgramStageFromVisualization(visualization)
 
     let req = new analyticsEngine.request()
         .fromVisualization(adaptedVisualization)
         .withProgram(program.id)
-        .withOutputType(adaptedVisualization.outputType)
+        .withOutputType(visualization.outputType)
         .withParameters({
             totalPages: false,
-            stage: stage.id,
             ...parameters,
         })
-        .withDisplayProperty(displayProperty?.toUpperCase())
+
+    if (displayProperty) {
+        req = req.withDisplayProperty(displayProperty.toUpperCase())
+    }
 
     if (visualization.programStatus) {
         req = req.withProgramStatus(visualization.programStatus)
     }
 
     // add custom value and aggregationType
-    if (visualization.value) {
-        req = req.withValue(visualization.value.id)
-    }
-
-    if (visualization.aggregationType) {
-        req = req.withAggregationType(visualization.aggregationType)
+    if (visualization.value && visualization.aggregationType) {
+        req = req
+            .withValue(visualization.value.id)
+            .withAggregationType(visualization.aggregationType)
     }
 
     if (relativePeriodDate) {
@@ -61,17 +61,38 @@ export const fetchAnalyticsDataForPT = async ({
 }
 
 // TODO: complete the type definition and check where to put it
+type Row = Array<string>
+
 export type PivotTableAnalyticsData = {
-    rows: Array<Array<string>>
+    rows: Array<Row>
+    pager: {
+        page: number
+        pageSize: number
+        isLastPage: boolean
+    }
 }
 
-type FetchAnalyticsDataParams = {
+export type AnalyticsResponseMetadataItems = Record<
+    string,
+    MetadataInputItem
+> & {
+    USER_ORG_UNIT?: UserOrgUnitMetadataItem
+}
+
+export type AnalyticsResponseMetadataDimensions = Record<string, string[]>
+export type OnAnalyticsResponseReceivedCb = (
+    items: AnalyticsResponseMetadataItems
+) => void
+
+type FetchAnalyticsDataForPTParams = {
     visualization: CurrentVisualization
     filters?: Record<string, unknown>
     displayProperty: CurrentUser['settings']['displayProperty']
     onResponseReceived: OnAnalyticsResponseReceivedCb
 }
-type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
+type FetchAnalyticsDataFn = (
+    params: FetchAnalyticsDataForPTParams
+) => Promise<void>
 type AnalyticsDataState = {
     isFetching: boolean
     error?: FetchError
@@ -107,8 +128,8 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
             try {
                 const analyticsResponse = await fetchAnalyticsDataForPT({
                     analyticsEngine,
-                    displayProperty,
                     visualization,
+                    displayProperty,
                     relativePeriodDate,
                 })
 
@@ -126,7 +147,7 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                 })
 
                 // TODO: enable this once the metadata PR is merged
-                onResponseReceived(analyticsResponse.metaData.items, [])
+                onResponseReceived(analyticsResponse.metaData.items)
             } catch (error) {
                 console.log('PT fetch error', error)
                 setState({
