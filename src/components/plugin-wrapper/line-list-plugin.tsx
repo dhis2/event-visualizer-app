@@ -98,7 +98,6 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     )
 
     useEffect(() => {
-        console.log('fetch analytics data')
         fetchAnalyticsData({
             visualization:
                 transformVisualizationForAnalyticsRequest(eventVisualization),
@@ -129,7 +128,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
             isInModal={isInModal}
             onColumnHeaderClick={(dimensionId) => {
                 console.log(
-                    `Show options modal for dimension ID ${dimensionId}`
+                    `Show dimension modal for dimension ID ${dimensionId}`
                 )
             }}
         />

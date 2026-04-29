@@ -90,8 +90,6 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
         return null
     }
 
-    console.log('PT analytics data', data)
-
     return (
         <PivotTable
             visualization={eventVisualization}
