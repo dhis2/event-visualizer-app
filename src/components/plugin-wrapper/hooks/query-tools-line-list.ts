@@ -76,11 +76,8 @@ const adaptDimensions = (
                         : undefined,
                 programStage: undefined,
             })
-        } else if (
-            // "dy" dimension can be present in PT visualizations
-            // everything else is a normal dimension id with program/programStage prefix
-            !['dy'].includes(dimensionId)
-        ) {
+        } else {
+            // everything else is a normal dimension id with programStage prefix
             adaptedDimensions.push({
                 ...dimensionObj,
                 program: undefined,
