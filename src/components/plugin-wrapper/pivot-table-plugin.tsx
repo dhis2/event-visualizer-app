@@ -22,10 +22,13 @@ const formatVisualizationForPivotTableEngine = (
             dimension: getFullDimensionId({
                 dimensionId:
                     // for event/enrollment aggregate `ou` is always used as API dimension id
-                    dimensionObj.dimension !== 'ou'
-                        ? (headersMap[dimensionObj.dimension] ??
-                          dimensionObj.dimension)
-                        : dimensionObj.dimension,
+                    // but returned as `ou` or `enrollmentou` in the analytics metaData
+                    dimensionObj.dimension === 'ou'
+                        ? dimensionObj.programStage?.id
+                            ? dimensionObj.dimension
+                            : 'enrollmentou'
+                        : (headersMap[dimensionObj.dimension] ??
+                          dimensionObj.dimension),
                 programStageId: dimensionObj.programStage?.id,
                 programId: dimensionObj.program?.id,
                 outputType: visualization.outputType,
