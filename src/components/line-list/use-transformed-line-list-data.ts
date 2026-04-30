@@ -137,9 +137,12 @@ const getFormattedCellValue = ({
     header: LineListAnalyticsDataHeader
     visualization: CurrentVisualization
 }) => {
+    // header.name might be prefixed with programStage.id
+    const dimensionId = header.name?.split('.').at(-1)
+
     if (
-        header.name &&
-        [headersMap.eventStatus, headersMap.programStatus].includes(header.name)
+        dimensionId &&
+        [headersMap.eventStatus, headersMap.programStatus].includes(dimensionId)
     ) {
         return getStatusNames()[value] ?? value
     }
