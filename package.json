@@ -61,7 +61,7 @@
         "vitest-canvas-mock": "^1.1.4"
     },
     "dependencies": {
-        "@dhis2/analytics": "^29.4.2",
+        "@dhis2/analytics": "github:d2-ci/analytics#c17a5bf377635a5422e0e1ff2236339112defac7",
         "@dhis2/app-runtime": "^3.16.0",
         "@dhis2/app-service-data": "^3.16.0",
         "@dhis2/ui": "^10.12.12",
