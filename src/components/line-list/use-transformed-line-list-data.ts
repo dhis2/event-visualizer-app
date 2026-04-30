@@ -93,7 +93,7 @@ const getHeaderDimensionId = (
             (programId || outputType !== 'TRACKED_ENTITY_INSTANCE')) ||
         ['programStatus', 'eventStatus'].includes(idMatch)
         // org unit only if there's a programId or not tracked entity: this prevents pid.ou from being mixed up with just ou in TE
-        // program status + event status in all cases XXX: these 2 are not in defaultMetadata ...
+        // program status + event status in all cases
     ) {
         defaultMetadata[formattedDimensionId] = getProgramDimensions(
             // TODO: remove initialisation to '' and fix args order in function
