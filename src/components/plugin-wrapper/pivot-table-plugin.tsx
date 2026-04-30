@@ -17,23 +17,30 @@ const formatVisualizationForPivotTableEngine = (
     const headersMap = getHeadersMap(visualization)
 
     const formatDimensions = (dimensions: DimensionArray): DimensionArray =>
-        dimensions.map((dimensionObj) => ({
-            ...dimensionObj,
-            dimension: getFullDimensionId({
-                dimensionId:
-                    // for event/enrollment aggregate `ou` is always used as API dimension id
-                    // but returned as `ou` or `enrollmentou` in the analytics metaData
-                    dimensionObj.dimension === 'ou'
-                        ? dimensionObj.programStage?.id
-                            ? dimensionObj.dimension
-                            : 'enrollmentou'
-                        : (headersMap[dimensionObj.dimension] ??
-                          dimensionObj.dimension),
-                programStageId: dimensionObj.programStage?.id,
-                programId: dimensionObj.program?.id,
-                outputType: visualization.outputType,
-            }),
-        }))
+        dimensions.map((dimensionObj) => {
+            /* for event/enrollment aggregate `ou` is always used as API dimension id
+             * but returned as `ou` or `enrollmentou` in the analytics metaData */
+            let dimensionId: string
+
+            if (dimensionObj.dimension === 'ou') {
+                dimensionId = dimensionObj.programStage?.id
+                    ? dimensionObj.dimension
+                    : 'enrollmentou'
+            } else {
+                dimensionId =
+                    headersMap[dimensionObj.dimension] ?? dimensionObj.dimension
+            }
+
+            return {
+                ...dimensionObj,
+                dimension: getFullDimensionId({
+                    dimensionId,
+                    programStageId: dimensionObj.programStage?.id,
+                    programId: dimensionObj.program?.id,
+                    outputType: visualization.outputType,
+                }),
+            }
+        })
 
     return {
         ...visualization,
