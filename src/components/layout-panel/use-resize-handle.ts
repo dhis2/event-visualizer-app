@@ -3,94 +3,128 @@ import { useCallback, useRef, useState } from 'react'
 type Orientation = 'horizontal' | 'vertical'
 
 interface UseResizeHandleProps {
-    max: number
     min: number
     orientation: Orientation
     storageKey: string
 }
 
+const readStoredSize = (storageKey: string): number | null => {
+    try {
+        const stored = localStorage.getItem(storageKey)
+        const parsed = stored !== null ? Number(stored) : NaN
+        return Number.isFinite(parsed) ? parsed : null
+    } catch {
+        return null
+    }
+}
+
+/* When no natural-size measurement has been recorded yet, treat the cap as
+ * unbounded so the user-set size is not clamped down to 0 prematurely. */
+const UNCAPPED = Number.POSITIVE_INFINITY
+
+/* Resizable handle behavior shared by axes / sidebar style panels.
+ *
+ * The default state (size === null) is intended to be CSS-driven: the consumer
+ * lets layout grow naturally, capped by some max-block-size / max-inline-size
+ * rule. An explicit `size` is only set once the user drags the handle (or had
+ * previously dragged it and the value was restored from storage). The hook
+ * never imposes its own default cap; the natural content size is used as the
+ * upper clamp during drag, observed via a ResizeObserver on the content node.
+ */
 export const useResizeHandle = ({
-    max,
     min,
     orientation,
     storageKey,
 }: UseResizeHandleProps) => {
-    const [size, setSize] = useState<number | null>(null)
+    const [size, setSize] = useState<number | null>(() =>
+        readStoredSize(storageKey)
+    )
     const [isDragging, setIsDragging] = useState<boolean>(false)
     const [minReached, setMinReached] = useState<boolean>(false)
+
+    const containerRef = useRef<HTMLDivElement | null>(null)
+    const contentSizeRef = useRef<number>(UNCAPPED)
+    const observerRef = useRef<ResizeObserver | null>(null)
     const containerEdgePosRef = useRef<number>(0)
-    const containerMaxSizeRef = useRef<number>(max)
     const preDragSizeRef = useRef<number | null>(null)
     const sizeRef = useRef<number | null>(size)
-    const storedSizeRef = useRef<number | null>(
-        (() => {
-            const storedSize = localStorage.getItem(storageKey)
 
-            return storedSize ? Number(storedSize) : null
-        })()
-    )
-
-    // Sync the ref with the size value
     sizeRef.current = size
 
-    // Container ref callback
-    // Computes the effective max size, based on the container, max and stored size
-    const containerRef = useCallback(
+    /* Callback ref for the natural-sized inner node. The ResizeObserver
+     * tracks its rendered size; when the user-set size exceeds the natural
+     * content size, we clamp it down (e.g. content shrinks after viz type
+     * change, removed chips, etc.) so the panel cannot leave empty space. */
+    const contentRef = useCallback(
         (node: HTMLDivElement | null) => {
-            if (node !== null) {
-                // Store the container edge position to avoid calculating it on each pointer move
-                containerEdgePosRef.current =
-                    orientation === 'horizontal'
-                        ? node.getBoundingClientRect().top
-                        : node.getBoundingClientRect().left
-
-                const containerSize =
-                    orientation === 'horizontal'
-                        ? node.scrollHeight
-                        : node.scrollWidth
-
-                const containerMaxSize = Math.min(containerSize, max)
-
-                containerMaxSizeRef.current = containerMaxSize
-
-                if (storedSizeRef.current) {
-                    setSize(Math.min(storedSizeRef.current, containerMaxSize))
-                } else {
-                    setSize(Math.max(containerMaxSize, min))
-                }
+            if (observerRef.current) {
+                observerRef.current.disconnect()
+                observerRef.current = null
             }
+
+            if (node === null) {
+                contentSizeRef.current = UNCAPPED
+                return
+            }
+
+            const observer = new ResizeObserver((entries) => {
+                const entry = entries[0]
+                if (!entry) {
+                    return
+                }
+
+                const naturalSize =
+                    orientation === 'horizontal'
+                        ? entry.contentRect.height
+                        : entry.contentRect.width
+
+                contentSizeRef.current = naturalSize
+
+                const current = sizeRef.current
+                if (current !== null && current > naturalSize) {
+                    setSize(Math.max(min, naturalSize))
+                }
+            })
+
+            observer.observe(node)
+            observerRef.current = observer
         },
-        [max, min, orientation]
+        [min, orientation]
     )
 
-    // Callback for resetting the size, it's returned by the hook.
-    // This is handy for resetting the internal size value from the consumer of the hook.
-    // For example in the Axes component when switching visualization, this solves the issue of the container
-    // having empty space when a bigger size is stored from a previous visualization.
-    // Resetting the size causes the container to not have a defined height (auto is used) and the real height is then
-    // computed in the containerRef callback.
     const resetSize = useCallback(() => {
         setSize(null)
         setMinReached(false)
     }, [])
 
-    // Start dragging
-    const onPointerDown = useCallback((event: React.PointerEvent) => {
-        event.preventDefault()
+    const onPointerDown = useCallback(
+        (event: React.PointerEvent) => {
+            event.preventDefault()
 
-        preDragSizeRef.current = sizeRef.current
+            const containerNode = containerRef.current
+            if (!containerNode) {
+                return
+            }
 
-        // This is important since the ResizeHandle presence might be toggled by minReached.
-        // When ResizeHandle is available again and this it's draggable, we must avoid that minReached
-        // triggers the logic in the consumer again whenever the hook updates.
-        setMinReached(false)
+            const rect = containerNode.getBoundingClientRect()
+            containerEdgePosRef.current =
+                orientation === 'horizontal' ? rect.top : rect.left
 
-        event.currentTarget.setPointerCapture(event.pointerId)
+            /* Preserve the pre-drag state verbatim — including null when
+             * the user has not customised the size. On minReached we
+             * restore this so the stored default (or absence of one) is
+             * preserved across a collapse-trigger drag. */
+            preDragSizeRef.current = sizeRef.current
 
-        setIsDragging(true)
-    }, [])
+            setMinReached(false)
 
-    // Move the drag handle
+            event.currentTarget.setPointerCapture(event.pointerId)
+
+            setIsDragging(true)
+        },
+        [orientation]
+    )
+
     const onPointerMove = useCallback(
         (event: React.PointerEvent) => {
             if (!event.currentTarget.hasPointerCapture(event.pointerId)) {
@@ -101,44 +135,38 @@ export const useResizeHandle = ({
                 return
             }
 
-            const size = sizeRef.current
-
             const newSize =
                 (orientation === 'horizontal' ? event.clientY : event.clientX) -
                 containerEdgePosRef.current
 
-            // Trigger minReached only when shrinking the container
-            if (newSize < min && size && size >= min) {
+            if (newSize < min) {
+                /* Restore pre-drag size verbatim so the stored "default"
+                 * value is preserved across a collapse-trigger drag. If the
+                 * pre-drag state was the CSS default (null), we restore
+                 * null so the layout returns to default on re-expand. */
                 setSize(preDragSizeRef.current)
-
                 setMinReached(true)
                 setIsDragging(false)
             } else {
                 setSize(
-                    Math.max(
-                        min,
-                        Math.min(newSize, containerMaxSizeRef.current)
-                    )
+                    Math.max(min, Math.min(newSize, contentSizeRef.current))
                 )
             }
         },
         [min, orientation]
     )
 
-    // Stop dragging
     const onPointerUp = useCallback(
         (event: React.PointerEvent) => {
-            const size = sizeRef.current
+            const finalSize = sizeRef.current
 
             if (event.currentTarget.hasPointerCapture(event.pointerId)) {
                 event.currentTarget.releasePointerCapture(event.pointerId)
             }
 
-            if (size) {
+            if (finalSize !== null) {
                 try {
-                    storedSizeRef.current = +size.toFixed()
-
-                    localStorage.setItem(storageKey, size.toFixed())
+                    localStorage.setItem(storageKey, finalSize.toFixed())
                 } catch {
                     // ignore
                 }
@@ -149,7 +177,6 @@ export const useResizeHandle = ({
         [storageKey]
     )
 
-    // Reset
     const onDoubleClick = useCallback(() => {
         try {
             localStorage.removeItem(storageKey)
@@ -157,13 +184,12 @@ export const useResizeHandle = ({
             // ignore
         }
 
-        storedSizeRef.current = null
-
         resetSize()
     }, [resetSize, storageKey])
 
     return {
         containerRef,
+        contentRef,
         size,
         resetSize,
         isDragging,

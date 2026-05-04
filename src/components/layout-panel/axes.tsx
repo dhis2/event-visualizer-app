@@ -13,8 +13,7 @@ import {
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
 import cx from 'classnames'
-import { useEffect, useMemo, type FC } from 'react'
-import { useWindowSize } from 'usehooks-ts'
+import { useEffect, type CSSProperties, type FC } from 'react'
 import { Axis } from './axis/axis'
 import { ResizeHandle } from './resize-handle'
 import classes from './styles/axes.module.css'
@@ -52,6 +51,7 @@ const LoadingSkeletons: FC = () => (
 )
 
 const AXES_HEIGHT_STORAGE_KEY = 'dhis2.event-visualizer.axesHeight'
+const MIN_AXES_HEIGHT = 56
 
 export const Axes: FC = () => {
     const dispatch = useAppDispatch()
@@ -60,25 +60,18 @@ export const Axes: FC = () => {
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const { columns, filters, rows } = useAppSelector(getVisUiConfigLayout)
-    const { height } = useWindowSize()
-
-    const maxHeight = useMemo(
-        () => height * 0.2, // fallback to 20vh
-        [height]
-    )
 
     const {
         containerRef,
+        contentRef,
         eventHandlers,
         isDragging,
         minReached,
-        resetSize,
         size,
     } = useResizeHandle({
         orientation: 'horizontal',
         storageKey: AXES_HEIGHT_STORAGE_KEY,
-        min: 56,
-        max: maxHeight,
+        min: MIN_AXES_HEIGHT,
     })
 
     useEffect(() => {
@@ -87,17 +80,18 @@ export const Axes: FC = () => {
         }
     }, [minReached, dispatch])
 
-    useEffect(() => {
-        if (isVisualizationLoading) {
-            resetSize()
-        }
-    }, [isVisualizationLoading, resetSize])
-
     if (isVisualizationLoading) {
         return <LoadingSkeletons />
     } else if (!isLayoutPanelExpanded && dataSourceId) {
         return <ExpandLayoutPanelButton />
     }
+
+    /* When the user has dragged the panel to an explicit size we lock that
+     * size in via inline style and disable the default 20vh CSS cap so the
+     * panel can grow up to the available content height. With no stored size
+     * we let CSS handle natural growth (auto height capped at 20vh). */
+    const containerStyle: CSSProperties | undefined =
+        size !== null ? { blockSize: size, maxBlockSize: 'none' } : undefined
 
     return (
         <div
@@ -107,21 +101,24 @@ export const Axes: FC = () => {
         >
             {dataSourceId && (
                 <div
+                    ref={containerRef}
                     className={classes.container}
-                    style={{ blockSize: size ?? 'auto' }}
+                    style={containerStyle}
                 >
-                    <div
-                        className={cx(classes.axisContainer, {
-                            [classes.lineList]:
-                                visualizationType === 'LINE_LIST',
-                        })}
-                        ref={containerRef}
-                    >
-                        <Axis axisId="columns" dimensionIds={columns} />
-                        {visualizationType !== 'LINE_LIST' && (
-                            <Axis axisId="rows" dimensionIds={rows} />
-                        )}
-                        <Axis axisId="filters" dimensionIds={filters} />
+                    <div className={classes.scroller}>
+                        <div
+                            className={cx(classes.axisContainer, {
+                                [classes.lineList]:
+                                    visualizationType === 'LINE_LIST',
+                            })}
+                            ref={contentRef}
+                        >
+                            <Axis axisId="columns" dimensionIds={columns} />
+                            {visualizationType !== 'LINE_LIST' && (
+                                <Axis axisId="rows" dimensionIds={rows} />
+                            )}
+                            <Axis axisId="filters" dimensionIds={filters} />
+                        </div>
                     </div>
                     <ResizeHandle
                         isDragging={isDragging}
