@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-04-20T12:25:49.079Z\n"
-"PO-Revision-Date: 2026-04-20T12:25:49.079Z\n"
+"POT-Creation-Date: 2026-05-04T09:41:47.283Z\n"
+"PO-Revision-Date: 2026-05-04T09:41:47.286Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -395,6 +395,9 @@ msgstr "Not valid with multiple program stages"
 
 msgid "Not valid with event programs"
 msgstr "Not valid with event programs"
+
+msgid "Not valid with multiple tracked entity types"
+msgstr "Not valid with multiple tracked entity types"
 
 msgid "Not valid with program indicators"
 msgstr "Not valid with program indicators"

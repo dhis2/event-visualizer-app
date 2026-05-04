@@ -171,6 +171,7 @@ type TrackedEntityInstanceTooltipContentParams = {
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
     hasMultipleProgramsInLayout: boolean
+    hasMultipleTetInLayout: boolean
     hasProgramIndicatorsInLayout: boolean
     visualizationType: string
 }
@@ -180,18 +181,28 @@ const getTrackedEntityInstanceTooltipContent = ({
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
     hasMultipleProgramsInLayout,
+    hasMultipleTetInLayout,
     hasProgramIndicatorsInLayout,
     visualizationType,
 }: TrackedEntityInstanceTooltipContentParams): TooltipContent => {
+    if (hasMultipleTetInLayout) {
+        return {
+            content: i18n.t('Not valid with multiple tracked entity types'),
+        }
+    }
+
     if (hasMultipleProgramsInLayout && visualizationType === 'PIVOT_TABLE') {
         return { content: i18n.t('Not valid with multiple programs') }
     }
+
     if (isDataSourceProgramWithoutRegistration(dataSourceMetadata)) {
         return { content: i18n.t('Not valid with event programs') }
     }
+
     if (visualizationType === 'LINE_LIST' && hasProgramIndicatorsInLayout) {
         return { content: i18n.t('Not valid with program indicators') }
     }
+
     return getCategoryTooltipContent({
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
@@ -276,8 +287,26 @@ export const useActionButton = (
         return programs.size
     }, [layoutDimensionIds, metadataStore])
 
+    const tetCountInLayout = useMemo(() => {
+        const tetIds = new Set<string>()
+
+        layoutDimensionIds.forEach((dimensionId) => {
+            const tetId =
+                metadataStore.getDimensionMetadataItem(
+                    dimensionId
+                )?.trackedEntityTypeId
+
+            if (tetId) {
+                tetIds.add(tetId)
+            }
+        })
+
+        return tetIds.size
+    }, [layoutDimensionIds, metadataStore])
+
     const hasNoProgramInLayout: boolean = programCountInLayout === 0
     const hasMultipleProgramsInLayout: boolean = programCountInLayout > 1
+    const hasMultipleTetInLayout: boolean = tetCountInLayout > 1
 
     const hasMultipleProgramStagesInLayout: boolean = useMemo(() => {
         const programStages = layoutDimensionIds.reduce(
@@ -362,6 +391,7 @@ export const useActionButton = (
                     hasCategoryInLayout,
                     hasCategoryOptionGroupSetInLayout,
                     hasMultipleProgramsInLayout,
+                    hasMultipleTetInLayout,
                     hasProgramIndicatorsInLayout,
                     visualizationType,
                 })
@@ -374,6 +404,7 @@ export const useActionButton = (
         hasNoProgramInLayout,
         hasMultipleProgramsInLayout,
         hasMultipleProgramStagesInLayout,
+        hasMultipleTetInLayout,
         hasProgramIndicatorsInLayout,
         isLayoutEmpty,
         isRegistrationDateInLayout,
