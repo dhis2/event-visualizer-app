@@ -15,6 +15,13 @@ This is a DHIS2 Event Visualizer application built with React, TypeScript, Vite,
 - **Linting/Formatting**: ESLint, Prettier, Stylelint via `@dhis2/cli-style`
 - **i18n**: DHIS2 i18n utilities for internationalization
 
+### Project Stage
+
+This is an unreleased app under active development. Some defaults that suit stable codebases are loosened:
+
+- **Refactor freely when it improves clarity or reduces tech debt**, even outside the strict scope of the current task. Scope creep is fine here.
+- **Keep README and other documentation in sync with code changes**: when you change behavior, structure, or setup steps, update the relevant docs in the same change rather than waiting for an explicit ask.
+
 ## DHIS2 App Shell Structure
 
 This is a DHIS2 "App Shell App" with a special build structure:
@@ -153,6 +160,9 @@ pnpm generate-types # Regenerate DHIS2 API types from OpenAPI specs
 - **CSS Modules**: kebab-case (e.g., `event-chart.module.css`)
 
 ### Testing Guidelines
+
+- **Test behavior, not implementation details**: assert on what callers observe, not on private state, internal call sequences, or how a result was produced.
+- **Cover new functionality**: when adding or changing logic, add tests in the same change — including edge cases and error conditions, not just the happy path.
 
 #### Unit Tests (Vitest)
 
@@ -596,296 +606,26 @@ reference them.
 
 ## Testing & Linting Workflow for AI Agents
 
-**Golden Rule**: When building a solution, test and lint **specific files only**. When finishing, always run **full project validation** with `pnpm test` and `pnpm lint`.
+**Golden rule**: during development, lint/test only the files you touched. Before finishing, always run `pnpm test` and `pnpm lint`.
 
-### During Development (File-Specific Commands)
+### Per-file commands (during development)
 
-Use these commands when actively working on code to get fast feedback:
+- **Vitest**: `pnpm exec vitest run <file-path>`
+- **ESLint**: `pnpm exec eslint <file-path>` (add `--fix` to auto-fix)
+- **Stylelint**: `pnpm exec stylelint <file-path> --max-warnings=0` (add `--fix` to auto-fix)
+- **Prettier**: `pnpm exec prettier --write <file-path>`
 
-#### Testing Individual Files
+ESLint, Stylelint, and Prettier run automatically via PostToolUse hooks after Edit/Write. Files modified via Bash are **not** auto-formatted — run Prettier manually after.
 
-```bash
-pnpm exec vitest run <file-path>
-# Example: pnpm exec vitest run src/hooks/useEventData.spec.ts
-```
+### TypeScript
 
-#### Linting Individual Files
+File-specific `tsc` is not possible (path aliases, project references). Use the `typescript-lsp` plugin for diagnostics, or run `./scripts/check-typescript.sh` (covers both `tsconfig.json` and `cypress/tsconfig.json`).
 
-**TypeScript Checking**
-
-**Primary: LSP Plugin** — The `typescript-lsp` plugin provides automatic TypeScript diagnostics after every file edit, with full project context (path aliases, multiple tsconfig files). This is the fastest and most accurate method. See [Claude Code Setup](#claude-code-setup) for installation.
-
-**Fallback: Project-wide CLI** — If the LSP plugin is not installed, use:
+### Before finishing
 
 ```bash
-./scripts/check-typescript.sh
-# Or directly:
-pnpm exec tsc --project tsconfig.json --noEmit --skipLibCheck
-pnpm exec tsc --project cypress/tsconfig.json --noEmit --skipLibCheck
+pnpm test     # all unit tests
+pnpm lint     # ESLint, Stylelint, Prettier, TypeScript, ls-lint
 ```
 
-File-specific `tsc` checking is **not possible** due to path aliases and project references.
-
-**ESLint, Stylelint, and Prettier**
-
-These are handled **automatically by PostToolUse hooks** (configured in `.claude/settings.json`). After every Edit/Write, the hook runs Prettier auto-fix and the relevant linter for the file type. Always check the hook output for errors. Note that the hook only runs after Edit/Write tool calls — files modified via Bash are **not** auto-formatted. If you use Bash to write or modify a file, you must run `pnpm exec prettier --write <file>` manually afterward.
-
-If you need to run them manually (e.g., for debugging):
-
-```bash
-pnpm exec eslint <file-path>                    # Check only
-pnpm exec eslint <file-path> --fix              # Fix automatically
-```
-
-**Secondary: LSP Diagnostics** - NeoVim LSP may show ESLint errors, but OpenCode's LSP integration may filter them. CLI commands are more reliable.
-
-**Rationale**: CLI commands are more reliable and complete than LSP for ESLint.
-
-**Stylelint Checking**
-
-**Primary: File-specific CLI** - Always use CLI commands:
-
-```bash
-pnpm exec stylelint <file-path> --max-warnings=0         # Check only
-pnpm exec stylelint <file-path> --fix --max-warnings=0   # Fix automatically
-```
-
-**Rationale**: CLI commands ensure consistent and complete Stylelint checking.
-
-**Prettier Formatting**
-
-**Primary: File-specific CLI**:
-
-```bash
-pnpm exec prettier --check <file-path>          # Check formatting
-pnpm exec prettier --write <file-path>          # Format automatically
-```
-
-**Rationale**: CLI commands ensure consistent formatting.
-
-**File Type Specific Instructions**:
-
-**TypeScript/TSX files** (`.ts`, `.tsx`):
-
-- **TypeScript**: LSP diagnostics (automatic when reading/editing)
-- **ESLint**: Use file-specific CLI commands
-- **Prettier**: Use file-specific CLI commands
-
-**CSS/SCSS files** (`.css`):
-
-- **Stylelint**: Use file-specific CLI commands
-- **Prettier**: Use file-specific CLI commands
-
-**Other formats** (`.json`, `.md`, `.yml`, `.yaml`):
-
-- **Prettier**: Use file-specific CLI commands
-
-### After Completing Work (Project-Wide Commands)
-
-**Always run these before finishing, regardless of how small the change was** (even for non-code files like `.md`, `.json`, `.yml`):
-
-```bash
-pnpm test          # Run all unit tests (vitest)
-pnpm lint          # Run all linters (ESLint, Stylelint, Prettier, TypeScript, ls-lint)
-```
-
-If there are failures, many can be fixed automatically using `pnpm format`:
-
-```bash
-pnpm format        # Auto-fix formatting and auto-fixable lint issues
-```
-
-After running `pnpm format`, run `pnpm lint` again to verify all issues are resolved. Note that `pnpm format` can resolve:
-
-- Prettier formatting issues (indentation, spacing, quotes, etc.)
-- Auto-fixable ESLint issues (marked with wrench 🔧 icon in ESLint output)
-- Auto-fixable Stylelint issues
-
-Some errors require manual fixes (e.g., type errors, logic issues, certain lint violations).
-
-**Note on TypeScript**: The project has two TypeScript configurations:
-
-- `tsconfig.json` - Main configuration for src files with path aliases
-- `cypress/tsconfig.json` - Configuration for Cypress tests
-
-The `pnpm lint` command checks both configurations. Individual file TypeScript checking via `pnpm exec tsc` is not recommended as it lacks the full project context (path aliases, project references). Use `./scripts/check-typescript.sh` or LSP diagnostics instead.
-
-### Decision Tree
-
-**While working on a solution**:
-
-- Modified 1-3 files → Use file-specific `pnpm exec` commands for each file
-- Need to fix formatting → Use `pnpm exec prettier --write <file-path>` or `pnpm exec eslint <file-path> --fix`
-- Modified many files → Use `pnpm lint` and `pnpm test`
-
-**When finishing a task**:
-
-- Always run `pnpm test` (ensures all tests pass)
-- Always run `pnpm lint` (ensures code quality across project)
-- If lint fails with formatting issues → Run `pnpm format` then `pnpm lint` again
-
-### Common Pitfalls to Avoid
-
-- ❌ **Don't** run `pnpm test` and `pnpm lint` after every small change (wastes time)
-- ❌ **Don't** use `pnpm exec eslint .` when you only changed one file
-- ❌ **Don't** forget to run full `pnpm test` and `pnpm lint` when finishing
-- ✅ **Do** prefer LSP diagnostics for TypeScript checking (fastest with full context)
-- ✅ **Do** use file-specific CLI commands for ESLint and Stylelint (more reliable than LSP)
-- ✅ **Do** run project-wide commands as final validation
-- ✅ **Do** use `pnpm exec prettier --write` to quickly fix formatting issues
-
----
-
-# General Guidelines
-
-## General Principles
-
-### Code Quality
-
-- Write clean, readable, and maintainable code
-- Follow established patterns and conventions for each language/framework
-- Prefer simplicity over complexity
-- Use meaningful and descriptive names for variables, functions, and files
-- Write self-documenting code when possible
-
-### Project Structure
-
-- Organize code logically by feature or domain
-- Keep related files close together
-- Separate concerns appropriately
-- Maintain a consistent directory structure within the project
-- Use clear separation between source code, tests, configuration, and build artifacts
-
-### Code Organization
-
-- Keep functions and methods focused on a single responsibility
-- Limit file size to improve readability
-- Group related functionality together
-- Minimize dependencies between modules
-- Use appropriate abstraction levels
-
-## Testing & Quality Assurance
-
-### Testing Principles
-
-- Write tests for new functionality
-- Prefer unit tests for isolated logic
-- Write integration tests for component interactions
-- Write end-to-end tests for critical user journeys
-- Test edge cases and error conditions
-- Avoid testing implementation details
-- Mock external dependencies appropriately
-
-### Quality Practices
-
-- Run tests before committing changes
-- Maintain test coverage for critical paths
-- Use static analysis tools where available
-- Perform code reviews for significant changes
-- Refactor code to improve clarity and maintainability
-
-## Version Control
-
-### Git Best Practices
-
-- Write clear, descriptive commit messages
-- Follow conventional commits when possible
-- Keep commits focused and atomic
-- Use feature branches for new work
-- Regularly sync with remote repositories
-- Use meaningful branch names
-- Review changes before committing
-
-### Collaboration
-
-- Use pull requests for code review
-- Provide context in PR descriptions
-- Request reviews from appropriate team members
-- Address review feedback promptly
-- Keep PRs manageable in size
-
-## Security
-
-### General Security
-
-- Never commit secrets, API keys, or credentials
-- Use environment variables for configuration
-- Validate and sanitize all user input
-- Follow the principle of least privilege
-- Keep dependencies updated to address security vulnerabilities
-- Use secure communication protocols (HTTPS, TLS)
-
-### Data Protection
-
-- Handle sensitive data with care
-- Implement proper authentication and authorization
-- Log security-relevant events appropriately
-- Follow data protection regulations and best practices
-
-## Performance
-
-### Code Performance
-
-- Write efficient algorithms and data structures
-- Avoid unnecessary computations
-- Use appropriate caching strategies
-- Optimize critical paths
-- Profile code to identify bottlenecks
-
-### System Performance
-
-- Minimize resource usage (CPU, memory, disk, network)
-- Implement lazy loading for heavy resources
-- Optimize bundle sizes where applicable
-- Monitor and optimize network requests
-- Use appropriate compression techniques
-
-## Documentation
-
-### Code Documentation
-
-- Document public APIs and complex logic
-- Keep documentation up to date with code changes
-- Use appropriate documentation tools for the language/framework
-- Include examples for complex functionality
-- Document architectural decisions and trade-offs
-
-### Project Documentation
-
-- Maintain current README files
-- Document setup and development procedures
-- Keep architecture diagrams updated
-- Document deployment and operations procedures
-- Maintain changelogs for significant releases
-
-## Development Workflow
-
-### Local Development
-
-- Use consistent development environments
-- Follow project-specific setup instructions
-- Use local development servers where appropriate
-- Test changes thoroughly before committing
-
-### Code Review Process
-
-- Review your own code before submitting
-- Check for common issues and improvements
-- Ensure tests pass and new tests are added
-- Verify compliance with project guidelines
-
-## Maintenance & Operations
-
-### Code Maintenance
-
-- Regularly update dependencies
-- Refactor code to reduce technical debt
-- Remove unused code and dependencies
-- Update documentation alongside code changes
-
-### Operational Considerations
-
-- Design for observability (logging, monitoring, tracing)
-- Implement proper error handling and recovery
-- Consider scalability and performance implications
-- Plan for maintenance and future enhancements
+If lint fails on formatting/auto-fixable issues, run `pnpm format` then re-run `pnpm lint`. Type errors and logic issues require manual fixes.
