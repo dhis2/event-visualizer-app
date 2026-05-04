@@ -146,7 +146,6 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                     isFetching: false,
                 })
 
-                // TODO: enable this once the metadata PR is merged
                 onResponseReceived(analyticsResponse.metaData.items)
             } catch (error) {
                 console.log('PT fetch error', error)
