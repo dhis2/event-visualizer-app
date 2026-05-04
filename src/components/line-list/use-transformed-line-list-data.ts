@@ -10,6 +10,7 @@ import {
     getDimensionIdParts,
     getMainDimensions,
     getProgramDimensions,
+    extractPlainDimensionId,
 } from '@modules/dimension'
 import { getStatusNames } from '@modules/status'
 import { headersMap } from '@modules/visualization'
@@ -138,7 +139,7 @@ const getFormattedCellValue = ({
     visualization: CurrentVisualization
 }) => {
     // header.name might be prefixed with programStage.id
-    const dimensionId = header.name?.split('.').at(-1)
+    const dimensionId = extractPlainDimensionId(header.name)
 
     if (
         dimensionId &&
