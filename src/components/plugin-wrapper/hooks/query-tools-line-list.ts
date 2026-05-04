@@ -65,11 +65,8 @@ const adaptDimensions = (
                 })
             }
         } else if (dimensionId === 'enrollmentOu') {
-            // enrollmentOu must be passed as ou for ENROLLMENT
-            // program prefix must be removed for EVENT/ENROLLMENT
             adaptedDimensions.push({
                 ...dimensionObj,
-                dimension: outputType === 'ENROLLMENT' ? 'ou' : 'ENROLLMENT_OU',
                 program:
                     outputType === 'TRACKED_ENTITY_INSTANCE'
                         ? dimensionObj.program
