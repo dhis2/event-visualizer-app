@@ -4,6 +4,7 @@ import type {
     Axis,
     CurrentVisualization,
     DimensionArray,
+    DimensionRecord,
     OutputType,
 } from '@types'
 import { getRequestOptions } from './query-tools-common'
@@ -142,18 +143,21 @@ export const getAdaptedVisualization = (
         }
     )
 
+    const filterDimensionParameters = ({
+        dimensionType,
+        filter,
+        items,
+    }: DimensionRecord) =>
+        dimensionType === 'ORGANISATION_UNIT_GROUP_SET' ||
+        filter ||
+        items?.length
+
     return {
         adaptedVisualization: {
             // only pass dimensions with conditions
-            columns: adaptedColumns.filter(
-                ({ filter, items }) => filter || items?.length
-            ),
-            rows: adaptedRows.filter(
-                ({ filter, items }) => filter || items?.length
-            ),
-            filters: adaptedFilters.filter(
-                ({ filter, items }) => filter || items?.length
-            ),
+            columns: adaptedColumns.filter(filterDimensionParameters),
+            rows: adaptedRows.filter(filterDimensionParameters),
+            filters: adaptedFilters.filter(filterDimensionParameters),
             outputType: outputType,
         },
         headers,
