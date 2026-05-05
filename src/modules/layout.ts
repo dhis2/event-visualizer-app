@@ -1,7 +1,5 @@
-import { dimensionCreate } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import { getTrackedEntityTypeIdFromDataSource } from '@modules/data-source'
-import { toApiDimensionId } from '@modules/dimension'
+import { toEventVisualizationDimensionId } from '@modules/dimension'
 import { parseUiRepetitions } from '@modules/repetitions'
 import {
     selectLayoutAllDimensionIds,
@@ -12,8 +10,8 @@ import type {
     CurrentVisualization,
     DimensionArray,
     DimensionMetadataItem,
+    DimensionRecord,
     Layout,
-    MetadataItem,
     MetadataStore,
     Program,
 } from '@types'
@@ -39,45 +37,55 @@ export const buildAxis = (
     visUiConfig: VisUiConfigState,
     metadataStore: MetadataStore
 ): DimensionArray =>
-    dimensionIds
-        .map((id) => {
-            const dim = metadataStore.getDimensionMetadataItem(id)
-            if (!dim) {
-                throw new Error(
-                    `No metadata found for dimension "${id}" — cannot decompose compound ID for API`
-                )
-            }
-            const dimensionId = dim.dimensionId ?? id
-            const conditions = visUiConfig.conditionsByDimension[id]
-            const repetitions = visUiConfig.repetitionsByDimension[id]
-            const options: Record<string, unknown> = {}
-            if (conditions?.condition) {
-                options.filter = conditions.condition
-            }
-            if (conditions?.legendSet) {
-                options.legendSet = { id: conditions.legendSet }
-            }
-            if (repetitions) {
-                options.repetition = {
-                    indexes: parseUiRepetitions(repetitions),
-                }
-            }
-            if (dim.programId) {
-                options.program = { id: dim.programId }
-            }
-            if (dim.programStageId) {
-                options.programStage = { id: dim.programStageId }
-            }
-            return dimensionCreate(
-                toApiDimensionId(dimensionId, {
-                    outputType: visUiConfig.outputType,
-                    visType: visUiConfig.visualizationType,
-                }),
-                visUiConfig.itemsByDimension[id],
-                options
+    dimensionIds.map((id) => {
+        const dim = metadataStore.getDimensionMetadataItem(id)
+        if (!dim) {
+            throw new Error(
+                `No metadata found for dimension "${id}" — cannot decompose compound ID for API`
             )
-        })
-        .filter((dim): dim is DimensionArray[number] => dim !== null)
+        }
+        const itemIds = visUiConfig.itemsByDimension[id]
+        const conditions = visUiConfig.conditionsByDimension[id]
+        const repetitions = visUiConfig.repetitionsByDimension[id]
+        const dimensionRecord: DimensionRecord = {
+            dimension: toEventVisualizationDimensionId({
+                dimensionId: dim.dimensionId ?? id,
+                programId: dim.programId,
+                outputType: visUiConfig.outputType,
+                visualizationType: visUiConfig.visualizationType,
+            }),
+        }
+        if (itemIds?.length) {
+            dimensionRecord.items = itemIds.map((itemId) => ({ id: itemId }))
+        }
+        if (conditions?.condition) {
+            dimensionRecord.filter = conditions.condition
+        }
+        if (conditions?.legendSet) {
+            dimensionRecord.legendSet = { id: conditions.legendSet }
+        }
+        if (repetitions) {
+            dimensionRecord.repetition = {
+                indexes: parseUiRepetitions(repetitions),
+            }
+        }
+        if (dim.programId) {
+            dimensionRecord.program = { id: dim.programId }
+        }
+        if (dim.programStageId) {
+            dimensionRecord.programStage = { id: dim.programStageId }
+        }
+        if (dim.dimensionType) {
+            dimensionRecord.dimensionType = dim.dimensionType
+        }
+        if (dim.optionSetId) {
+            dimensionRecord.optionSet = { id: dim.optionSetId }
+        }
+        if (dim.valueType) {
+            dimensionRecord.valueType = dim.valueType
+        }
+        return dimensionRecord
+    })
 
 const getLayoutDims = (
     visUiConfig: VisUiConfigState,
@@ -122,8 +130,7 @@ type TeiFields = {
 
 export const resolveTeiFields = (
     visUiConfig: VisUiConfigState,
-    metadataStore: MetadataStore,
-    dataSource: MetadataItem | undefined
+    metadataStore: MetadataStore
 ): TeiFields => {
     const layoutDims = getLayoutDims(visUiConfig, metadataStore)
     const { outputType } = visUiConfig
@@ -138,28 +145,25 @@ export const resolveTeiFields = (
               }))
             : undefined
 
-    // TET is a first-class property of TEI visualizations (see the backend's
-    // EventVisualization.isMultiProgram), so the data source is authoritative.
-    // For ENROLLMENT+TEAs the TET is derived from the TEA's owning program via
-    // the layout.
-    let tetId: string | null = null
-    if (outputType === 'TRACKED_ENTITY_INSTANCE') {
-        tetId = getTrackedEntityTypeIdFromDataSource(dataSource)
-        if (!tetId) {
+    /* The layout's OU dim is the canonical source for TET context: TET-registration
+     * ou carries trackedEntityTypeId directly; enrollment/stage ou carry a programId
+     * whose program reference provides the TET (or none, for event programs). */
+    const ouDim = layoutDims.find(
+        (dim) => dim.dimensionType === 'ORGANISATION_UNIT'
+    )
+    const tetId =
+        ouDim?.trackedEntityTypeId ??
+        (ouDim?.programId &&
+            metadataStore.getProgramMetadataItem(ouDim.programId)
+                ?.trackedEntityType?.id) ??
+        null
+
+    if (!tetId) {
+        if (outputType === 'TRACKED_ENTITY_INSTANCE') {
             throw new Error(
-                'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the data source does not provide a trackedEntityTypeId'
+                'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the layout has no organisation unit dimension carrying TET context'
             )
         }
-    } else if (outputType === 'ENROLLMENT' && teaDims.length > 0) {
-        tetId =
-            layoutDims.find((dim) => dim.trackedEntityTypeId)
-                ?.trackedEntityTypeId ?? null
-        if (!tetId) {
-            throw new Error(
-                'Cannot resolve trackedEntityType for outputType=ENROLLMENT: no layout dimension carries a trackedEntityTypeId'
-            )
-        }
-    } else {
         return { trackedEntityType: undefined, attributeDimensions }
     }
 

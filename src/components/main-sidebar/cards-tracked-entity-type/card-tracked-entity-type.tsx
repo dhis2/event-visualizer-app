@@ -53,7 +53,7 @@ const transformItem = (
     }
 }
 
-export const transformTrackedEntityTypeAttributes = (
+const transformTrackedEntityTypeAttributes = (
     data: unknown,
     trackedEntityTypeId: string
 ): ReturnType<Transformer> => {
@@ -71,8 +71,6 @@ export const transformTrackedEntityTypeAttributes = (
     }
 }
 
-export const getFixedDimensions = getTrackedEntityTypeFixedDimensions
-
 export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
     trackedEntityType,
 }) => {
@@ -80,17 +78,12 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
         name: trackedEntityType.name,
     })
     const fixedDimensions = useMemo(
-        () => getFixedDimensions(trackedEntityType),
+        () => getTrackedEntityTypeFixedDimensions(trackedEntityType),
         [trackedEntityType]
     )
     const fixedDimensionIdLookup = useMemo(
-        () =>
-            new Set(
-                getFixedDimensions(trackedEntityType).map(
-                    (dimension) => dimension.id
-                )
-            ),
-        [trackedEntityType]
+        () => new Set(fixedDimensions.map((dimension) => dimension.id)),
+        [fixedDimensions]
     )
     const baseQuery = useMemo<SingleQuery>(
         () => ({

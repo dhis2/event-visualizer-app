@@ -419,36 +419,50 @@ export const combineAllDimensionsFromVisualization = (
 // boundary.
 // ---------------------------------------------------------------------------
 
-/** Forward: API → app-local dimension IDs on a DimensionArray. */
+/**
+ * Forward: API → app-local dimension IDs on a DimensionArray.
+ *
+ * The eventVisualizations API uses bare `ou` for both enrollment-scope and
+ * TEI-registration-scope org units; these are distinguished only by the
+ * presence/absence of a `program` qualifier on the dim record. Stage event OU
+ * (with `programStage`) is a different concept and stays as `ou`.
+ */
 export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
     dims.map((dim) => {
-        if (dim.dimension === 'ou' && dim.program && !dim.programStage) {
+        if (dim.dimension === 'ou' && !dim.programStage) {
             return { ...dim, dimension: 'enrollmentOu' }
         }
         return dim
     })
 
 /**
- * Inverse: app-local → API dimension ID (single dimension).
+ * Inverse: app-local dim → eventVisualizations POST `dimension` ID.
  *
- * `enrollmentOu` is the app-local ID for the enrollment org unit. The
- * eventVisualizations POST endpoint accepts it verbatim in some
- * outputType/visType combinations and requires plain `ou` in others. See the
- * "Org unit scopes" table in CLAUDE.md for the authoritative mapping.
+ * `enrollmentOu` is the app-local ID for both program-scope enrollment OU
+ * and TEI-registration-scope OU. The POST endpoint accepts it verbatim only
+ * when it carries a program qualifier AND the visualization is in EVENT/TEI
+ * `LINE_LIST` mode; otherwise it must be sent as bare `ou`. See the "Org
+ * unit scopes" table in CLAUDE.md for the authoritative mapping.
  */
-export const toApiDimensionId = (
-    dimId: string,
-    {
-        outputType,
-        visType,
-    }: { outputType?: OutputType; visType?: VisualizationType } = {}
-): string => {
-    if (dimId !== 'enrollmentOu') {
-        return dimId
+export const toEventVisualizationDimensionId = ({
+    dimensionId,
+    programId,
+    outputType,
+    visualizationType,
+}: {
+    dimensionId: string
+    programId?: string
+    outputType: OutputType
+    visualizationType: VisualizationType
+}): string => {
+    if (dimensionId !== 'enrollmentOu') {
+        return dimensionId
     }
     const shouldRewriteToOu =
-        outputType === 'ENROLLMENT' || visType === 'PIVOT_TABLE'
-    return shouldRewriteToOu ? 'ou' : dimId
+        !programId ||
+        outputType === 'ENROLLMENT' ||
+        visualizationType === 'PIVOT_TABLE'
+    return shouldRewriteToOu ? 'ou' : 'enrollmentOu'
 }
 
 // Dimension types that use plain IDs (no compound prefix) even when
@@ -472,7 +486,7 @@ const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
 // trackedEntityTypeId when there is no program or stage context.
 // Must match what getTrackedEntityTypeFixedDimensions produces.
 const TEI_REGISTRATION_DIMENSION_IDS: ReadonlySet<string> = new Set([
-    'ou',
+    'enrollmentOu',
     'created',
 ])
 
@@ -608,8 +622,8 @@ export const getTrackedEntityTypeFixedDimensions = (trackedEntityType: {
     id: string
 }): DimensionMetadataItem[] => [
     {
-        id: `${trackedEntityType.id}.ou`,
-        dimensionId: 'ou',
+        id: `${trackedEntityType.id}.enrollmentOu`,
+        dimensionId: 'enrollmentOu',
         dimensionType: 'ORGANISATION_UNIT',
         name: i18n.t('Registration org. unit'),
         trackedEntityTypeId: trackedEntityType.id,

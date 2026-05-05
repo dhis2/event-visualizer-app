@@ -2,10 +2,7 @@ import type { UseDimensionListResult } from '@components/main-sidebar/use-dimens
 import { render, screen } from '@testing-library/react'
 import type { MetadataItem } from '@types'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import {
-    CardTrackedEntityType,
-    getFixedDimensions,
-} from '../card-tracked-entity-type'
+import { CardTrackedEntityType } from '../card-tracked-entity-type'
 
 const mockUseDimensionList = vi.fn()
 const mockUseSelectedDimensionCount = vi.fn()
@@ -136,34 +133,5 @@ describe('CardTrackedEntityType', () => {
             'data-count',
             '4'
         )
-    })
-})
-
-describe('getFixedDimensions', () => {
-    it('returns org unit and registration date dimensions', () => {
-        const tet = createTrackedEntityType()
-        const fixedDimensions = getFixedDimensions(tet)
-
-        expect(fixedDimensions).toHaveLength(2)
-        expect(fixedDimensions).toEqual([
-            expect.objectContaining({
-                id: 'tet1.ou',
-                dimensionId: 'ou',
-                dimensionType: 'ORGANISATION_UNIT',
-            }),
-            expect.objectContaining({
-                id: 'tet1.created',
-                dimensionId: 'created',
-                dimensionType: 'PERIOD',
-            }),
-        ])
-    })
-
-    it('uses the tracked entity type id in compound IDs', () => {
-        const tet = createTrackedEntityType({ id: 'custom-tet' })
-        const fixedDimensions = getFixedDimensions(tet)
-
-        expect(fixedDimensions[0].id).toBe('custom-tet.ou')
-        expect(fixedDimensions[1].id).toBe('custom-tet.created')
     })
 })

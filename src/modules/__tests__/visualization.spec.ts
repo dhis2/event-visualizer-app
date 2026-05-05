@@ -89,7 +89,7 @@ const testCases = {
         },
         expected: {
             itemsByDimension: {
-                ou: ['USER_ORGUNIT'],
+                enrollmentOu: ['USER_ORGUNIT'],
                 bcgDoses: [],
                 lastName: [],
                 enrollmentDate: [],
@@ -111,7 +111,7 @@ const testCases = {
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
-                    'ou',
+                    'enrollmentOu',
                     'bcgDoses',
                     'lastName',
                     'enrollmentDate',
@@ -174,7 +174,7 @@ const testCases = {
         },
         expected: {
             itemsByDimension: {
-                ou: ['USER_ORGUNIT'],
+                enrollmentOu: ['USER_ORGUNIT'],
                 enrollmentDate: [],
                 firstName: [],
                 bcgDoses: [],
@@ -189,7 +189,7 @@ const testCases = {
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
-                    'ou',
+                    'enrollmentOu',
                     'enrollmentDate',
                     'firstName',
                     'bcgDoses',
@@ -282,7 +282,7 @@ const testCases = {
         },
         expected: {
             itemsByDimension: {
-                ou: ['USER_ORGUNIT'],
+                enrollmentOu: ['USER_ORGUNIT'],
                 focusName: [],
                 localFocusId: [],
                 area: [],
@@ -305,7 +305,7 @@ const testCases = {
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
-                    'ou',
+                    'enrollmentOu',
                     'focusName',
                     'localFocusId',
                     'area',

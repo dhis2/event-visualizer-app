@@ -320,7 +320,7 @@ export const useActionButton = (
         if (isDataSourceProgramWithRegistration(dataSourceMetadata)) {
             const tetId = dataSourceMetadata.trackedEntityType.id
 
-            return isDimensionInLayout(layout, `${tetId}.ou`)
+            return isDimensionInLayout(layout, `${tetId}.enrollmentOu`)
         }
 
         return false
