@@ -2,6 +2,7 @@ import { DEFAULT_OPTIONS } from '@constants/options'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type {
+    AggregationType,
     Axis,
     EventVisualizationOptions,
     Layout,
@@ -13,6 +14,13 @@ export type ConditionsObject = {
     condition?: string | string[]
     legendSet?: string
 }
+
+export type CustomValueObject = {
+    id: string
+    aggregationType: AggregationType
+}
+
+export type LastActiveButton = 'EVENT' | 'CUSTOM_VALUE'
 
 export type RepetitionsObject = {
     mostRecent: number
@@ -35,6 +43,8 @@ export interface VisUiConfigState {
     layout: Layout
     itemsByDimension: Record<string, string[]>
     conditionsByDimension: Record<string, ConditionsObject | undefined>
+    customValue?: CustomValueObject
+    lastActiveButton?: LastActiveButton
     repetitionsByDimension: Record<string, RepetitionsObject | undefined>
     options: EventVisualizationOptions
 }
@@ -150,6 +160,18 @@ export const visUiConfigSlice = createSlice({
                         ? { condition: conditions, legendSet }
                         : undefined,
             }
+        },
+        setVisUiConfigCustomValue: (
+            state,
+            action: PayloadAction<CustomValueObject>
+        ) => {
+            state.customValue = action.payload
+        },
+        setVisUiConfigLastActiveButton: (
+            state,
+            action: PayloadAction<LastActiveButton>
+        ) => {
+            state.lastActiveButton = action.payload
         },
         setVisUiConfigRepetitionsByDimension: (
             state,
@@ -300,6 +322,8 @@ export const visUiConfigSlice = createSlice({
             state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
         getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
             state.conditionsByDimension[dimensionId] || EMPTY_CONDITIONS_OBJECT,
+        getVisUiConfigCustomValue: (state) => state.customValue,
+        getVisUiConfigLastActiveButton: (state) => state.lastActiveButton,
         getVisUiConfigRepetitionsByDimension: (state, dimensionId: string) =>
             state.repetitionsByDimension[dimensionId] ||
             DEFAULT_REPETITIONS_OBJECT,
@@ -335,6 +359,8 @@ export const {
     setVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
+    setVisUiConfigCustomValue,
+    setVisUiConfigLastActiveButton,
     setVisUiConfigRepetitionsByDimension,
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
@@ -350,6 +376,8 @@ export const {
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
+    getVisUiConfigCustomValue,
+    getVisUiConfigLastActiveButton,
     getVisUiConfigRepetitionsByDimension,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigLayoutIsEmpty,

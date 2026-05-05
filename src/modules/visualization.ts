@@ -7,6 +7,7 @@ import {
 import i18n from '@dhis2/d2-i18n'
 import { initialState as currentVisDefaultValue } from '@store/current-vis-slice'
 import { initialState as savedVisDefaultValue } from '@store/saved-vis-slice'
+import type { LastActiveButton } from '@store/vis-ui-config-slice'
 import type {
     DimensionArray,
     CurrentVisualization,
@@ -245,6 +246,10 @@ export const isVisualizationNew = (
 export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
     const outputType = vis.outputType
     const layout = layoutGetAxisIdDimensionIdsObject(vis)
+    let lastActiveButton: LastActiveButton | undefined
+    if (outputType === 'EVENT') {
+        lastActiveButton = vis.value?.id ? 'CUSTOM_VALUE' : 'EVENT'
+    }
 
     return {
         visualizationType: vis.type,
@@ -257,5 +262,12 @@ export const getVisualizationUiConfig = (vis: CurrentVisualization) => {
         itemsByDimension: layoutGetDimensionIdItemIdsObject(vis),
         conditionsByDimension: getConditionsFromVisualization(vis, outputType),
         repetitionsByDimension: getRepetitionsFromVisualisation(vis),
+        ...(vis.value?.id && {
+            customValue: {
+                id: vis.value.id,
+                aggregationType: vis.aggregationType || 'DEFAULT',
+            },
+        }),
+        lastActiveButton,
     }
 }

@@ -37,6 +37,15 @@ export const fetchAnalyticsDataForPT = async ({
         req = req.withProgramStatus(visualization.programStatus)
     }
 
+    // add custom value and aggregationType
+    if (visualization.value) {
+        req = req.withValue(visualization.value.id)
+    }
+
+    if (visualization.aggregationType) {
+        req = req.withAggregationType(visualization.aggregationType)
+    }
+
     if (relativePeriodDate) {
         req = req.withRelativePeriodDate(relativePeriodDate)
     }
@@ -97,6 +106,8 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                     visualization,
                     relativePeriodDate,
                 })
+
+                console.log('PT analytics response', analyticsResponse)
 
                 // response for PT needs to be transformed
                 const analyticsData =

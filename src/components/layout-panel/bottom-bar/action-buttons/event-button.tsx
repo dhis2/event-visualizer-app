@@ -9,8 +9,10 @@ import { useActionButton } from './use-action-button'
 export const EventButton: FC = () => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
 
-    const { action, dataSourceMetadata, tooltipConfig } =
-        useActionButton('EVENT')
+    const { action, dataSourceMetadata, tooltipConfig } = useActionButton(
+        'EVENT',
+        'EVENT'
+    )
 
     const eventLabel = useMemo(() => {
         if (
@@ -62,6 +64,7 @@ export const EventButton: FC = () => {
                     visualizationType === 'PIVOT_TABLE' ? 'table' : 'list'
                 ]
             }
+            lastActiveButton="EVENT"
             tooltipConfig={tooltipConfig}
             type="EVENT"
         />
