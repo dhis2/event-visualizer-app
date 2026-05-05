@@ -105,12 +105,6 @@ declare module '@dhis2/analytics' {
         nextPage: number | null
     }
 
-    export const dimensionCreate: (
-        dimensionId: string,
-        itemIds: string[],
-        args: Record<string, unknown>
-    ) => DimensionRecord
-
     export const dimensionIsValid: (
         dimension: DimensionRecord,
         flags: { requireItems?: boolean }

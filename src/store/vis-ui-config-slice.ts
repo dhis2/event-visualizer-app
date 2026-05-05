@@ -13,7 +13,7 @@ import type {
 import { setUiActiveDimensionModal } from './ui-slice'
 
 export type ConditionsObject = {
-    condition?: string | string[]
+    condition?: string
     legendSet?: string
 }
 

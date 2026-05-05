@@ -1,4 +1,3 @@
-import { dimensionCreate } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import { toEventVisualizationDimensionId } from '@modules/dimension'
 import { parseUiRepetitions } from '@modules/repetitions'
@@ -11,6 +10,7 @@ import type {
     CurrentVisualization,
     DimensionArray,
     DimensionMetadataItem,
+    DimensionRecord,
     Layout,
     MetadataStore,
     Program,
@@ -37,46 +37,55 @@ export const buildAxis = (
     visUiConfig: VisUiConfigState,
     metadataStore: MetadataStore
 ): DimensionArray =>
-    dimensionIds
-        .map((id) => {
-            const dim = metadataStore.getDimensionMetadataItem(id)
-            if (!dim) {
-                throw new Error(
-                    `No metadata found for dimension "${id}" — cannot decompose compound ID for API`
-                )
-            }
-            const conditions = visUiConfig.conditionsByDimension[id]
-            const repetitions = visUiConfig.repetitionsByDimension[id]
-            const options: Record<string, unknown> = {}
-            if (conditions?.condition) {
-                options.filter = conditions.condition
-            }
-            if (conditions?.legendSet) {
-                options.legendSet = { id: conditions.legendSet }
-            }
-            if (repetitions) {
-                options.repetition = {
-                    indexes: parseUiRepetitions(repetitions),
-                }
-            }
-            if (dim.programId) {
-                options.program = { id: dim.programId }
-            }
-            if (dim.programStageId) {
-                options.programStage = { id: dim.programStageId }
-            }
-            return dimensionCreate(
-                toEventVisualizationDimensionId({
-                    dimensionId: dim.dimensionId ?? id,
-                    programId: dim.programId,
-                    outputType: visUiConfig.outputType,
-                    visualizationType: visUiConfig.visualizationType,
-                }),
-                visUiConfig.itemsByDimension[id],
-                options
+    dimensionIds.map((id) => {
+        const dim = metadataStore.getDimensionMetadataItem(id)
+        if (!dim) {
+            throw new Error(
+                `No metadata found for dimension "${id}" — cannot decompose compound ID for API`
             )
-        })
-        .filter((dim): dim is DimensionArray[number] => dim !== null)
+        }
+        const itemIds = visUiConfig.itemsByDimension[id]
+        const conditions = visUiConfig.conditionsByDimension[id]
+        const repetitions = visUiConfig.repetitionsByDimension[id]
+        const dimensionRecord: DimensionRecord = {
+            dimension: toEventVisualizationDimensionId({
+                dimensionId: dim.dimensionId ?? id,
+                programId: dim.programId,
+                outputType: visUiConfig.outputType,
+                visualizationType: visUiConfig.visualizationType,
+            }),
+        }
+        if (itemIds?.length) {
+            dimensionRecord.items = itemIds.map((itemId) => ({ id: itemId }))
+        }
+        if (conditions?.condition) {
+            dimensionRecord.filter = conditions.condition
+        }
+        if (conditions?.legendSet) {
+            dimensionRecord.legendSet = { id: conditions.legendSet }
+        }
+        if (repetitions) {
+            dimensionRecord.repetition = {
+                indexes: parseUiRepetitions(repetitions),
+            }
+        }
+        if (dim.programId) {
+            dimensionRecord.program = { id: dim.programId }
+        }
+        if (dim.programStageId) {
+            dimensionRecord.programStage = { id: dim.programStageId }
+        }
+        if (dim.dimensionType) {
+            dimensionRecord.dimensionType = dim.dimensionType
+        }
+        if (dim.optionSetId) {
+            dimensionRecord.optionSet = { id: dim.optionSetId }
+        }
+        if (dim.valueType) {
+            dimensionRecord.valueType = dim.valueType
+        }
+        return dimensionRecord
+    })
 
 const getLayoutDims = (
     visUiConfig: VisUiConfigState,
