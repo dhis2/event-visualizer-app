@@ -18,12 +18,8 @@ const adaptDimensions = (
 ) => {
     const adaptedDimensions: DimensionArray = []
 
-    // This function should accommodate the various dimension cases and exceptions detailed in the Analytics apis spreadsheet
-
     dimensions.forEach((dimensionObj) => {
         const dimensionId = dimensionObj.dimension
-
-        console.log('adapt dim', dimensionId)
 
         // these are always passed without any prefix
         if (['completed', 'created', 'lastUpdated'].includes(dimensionId)) {
