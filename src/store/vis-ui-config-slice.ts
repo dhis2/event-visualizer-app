@@ -1,4 +1,9 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
+import {
+    OPERATOR_IN,
+    parseConditionsArrayToString,
+    parseConditionsStringToArray,
+} from '@modules/conditions'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type {
@@ -68,6 +73,11 @@ export const initialState: VisUiConfigState = {
 type SetConditionsByDimensionPayload = {
     dimensionId: string
     conditions?: string
+    legendSet?: string
+}
+
+type SetLegendSetByDimensionPayload = {
+    dimensionId: string
     legendSet?: string
 }
 
@@ -158,6 +168,36 @@ export const visUiConfigSlice = createSlice({
                 [dimensionId]:
                     conditions?.length || legendSet
                         ? { condition: conditions, legendSet }
+                        : undefined,
+            }
+        },
+        setVisUiConfigLegendSetByDimension: (
+            state,
+            action: PayloadAction<SetLegendSetByDimensionPayload>
+        ) => {
+            const { dimensionId, legendSet } = action.payload
+            const existing = state.conditionsByDimension[dimensionId]
+            const previousLegendSet = existing?.legendSet
+            const conditionsList = existing?.condition
+                ? parseConditionsStringToArray(existing.condition)
+                : []
+
+            const isLegendSetChanging = legendSet !== previousLegendSet
+            const filteredList = isLegendSetChanging
+                ? legendSet && !previousLegendSet
+                    ? conditionsList.filter((c) => c.includes(OPERATOR_IN))
+                    : conditionsList.filter((c) => !c.includes(OPERATOR_IN))
+                : conditionsList
+
+            const nextCondition = parseConditionsArrayToString(
+                filteredList.filter((c) => c.length > 0 && c.slice(-1) !== ':')
+            )
+
+            state.conditionsByDimension = {
+                ...state.conditionsByDimension,
+                [dimensionId]:
+                    nextCondition.length > 0 || legendSet
+                        ? { condition: nextCondition, legendSet }
                         : undefined,
             }
         },
@@ -359,6 +399,7 @@ export const {
     setVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
+    setVisUiConfigLegendSetByDimension,
     setVisUiConfigCustomValue,
     setVisUiConfigLastActiveButton,
     setVisUiConfigRepetitionsByDimension,

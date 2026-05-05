@@ -88,6 +88,10 @@ export const NumericCondition: FC<NumericConditionProps> = ({
     const addMetadata = useAddMetadata()
     const [selectedLegendSetId, setSelectedLegendSetId] = useState(legendSetId)
 
+    useEffect(() => {
+        setSelectedLegendSetId(legendSetId)
+    }, [legendSetId])
+
     const legendSetMetadata = useLegendSetMetadataItem(legendSetId)
 
     const availableLegendSets = useMemo(() => {
@@ -193,6 +197,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                         key={key}
                         value={key}
                         label={value}
+                        disabled={Boolean(legendSetId)}
                         dataTest="numeric-condition-type"
                     />
                 ))}
