@@ -12,13 +12,11 @@ import {
 } from '@components/main-sidebar/use-selected-dimension-count'
 import i18n from '@dhis2/d2-i18n'
 import { useCurrentUser } from '@hooks'
-import type {
-    DataSourceProgramWithRegistration,
-    DimensionMetadataItem,
-} from '@types'
+import { getTrackedEntityTypeFixedDimensions } from '@modules/dimension'
+import type { DataSourceProgramWithRegistration } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
 
-export const transformProgramAttributes = (
+const transformProgramAttributes = (
     data: unknown,
     trackedEntityTypeId: string
 ): ReturnType<Transformer> => {
@@ -38,18 +36,6 @@ type CardTrackedEntityTypeProps = {
 
 const CARD_AND_LIST_KEY = 'program-tracked-entity-type'
 
-const getFixedDimensions = (
-    program: DataSourceProgramWithRegistration
-): DimensionMetadataItem[] => [
-    {
-        id: `${program.trackedEntityType.id}.ou`,
-        dimensionId: 'ou',
-        dimensionType: 'ORGANISATION_UNIT',
-        name: i18n.t('Registration org. unit'),
-        valueType: 'ORGANISATION_UNIT',
-    },
-]
-
 export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
     program,
 }) => {
@@ -62,8 +48,11 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
             program.trackedEntityType.name,
     })
     const fixedDimensions = useMemo(
-        () => getFixedDimensions(program),
-        [program]
+        () =>
+            getTrackedEntityTypeFixedDimensions(
+                program.trackedEntityType
+            ).filter((dimension) => dimension.dimensionId === 'enrollmentOu'),
+        [program.trackedEntityType]
     )
     const baseQuery = useMemo(
         () =>
@@ -87,7 +76,10 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
     })
     const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
         (selectedDimension) => {
-            if (selectedDimension.id === `${program.trackedEntityType.id}.ou`) {
+            if (
+                selectedDimension.id ===
+                `${program.trackedEntityType.id}.enrollmentOu`
+            ) {
                 return true
             }
             if (selectedDimension.dimensionType === 'PROGRAM_ATTRIBUTE') {

@@ -372,41 +372,78 @@ const baseState = (
     }) as unknown as VisUiConfigState
 
 describe('resolveTeiFields', () => {
-    const progWithRegDataSource = {
+    const trackerProgram = {
         id: 'progA',
         name: 'Child program',
         programType: 'WITH_REGISTRATION',
         trackedEntityType: { id: 'tetA', name: 'Person' },
-    } as unknown as MetadataItem
+    } as unknown as Program
+    const eventProgram = {
+        id: 'progB',
+        name: 'Event program',
+        programType: 'WITHOUT_REGISTRATION',
+    } as unknown as Program
 
-    const tetDataSource = {
-        id: 'tetA',
-        name: 'Person',
-    } as unknown as MetadataItem
+    const tetOuDim: DimensionMetadataItem = {
+        id: 'tetA.enrollmentOu',
+        dimensionId: 'enrollmentOu',
+        name: 'Registration org. unit',
+        dimensionType: 'ORGANISATION_UNIT',
+        trackedEntityTypeId: 'tetA',
+    } as DimensionMetadataItem
+    const enrollmentOuDim: DimensionMetadataItem = {
+        id: 'progA.enrollmentOu',
+        dimensionId: 'enrollmentOu',
+        name: 'Enrollment org. unit',
+        dimensionType: 'ORGANISATION_UNIT',
+        programId: 'progA',
+    } as DimensionMetadataItem
+    const stageOuDim: DimensionMetadataItem = {
+        id: 'stage1.ou',
+        dimensionId: 'ou',
+        name: 'Event org. unit',
+        dimensionType: 'ORGANISATION_UNIT',
+        programId: 'progA',
+        programStageId: 'stage1',
+    } as DimensionMetadataItem
+    const eventProgramOuDim: DimensionMetadataItem = {
+        id: 'evtStage.ou',
+        dimensionId: 'ou',
+        name: 'Event org. unit',
+        dimensionType: 'ORGANISATION_UNIT',
+        programId: 'progB',
+        programStageId: 'evtStage',
+    } as DimensionMetadataItem
 
-    it('TEI viz with program-with-registration data source → TET resolved from data source', () => {
-        const state = baseState('TRACKED_ENTITY_INSTANCE', ['tea1', 'tea2'])
+    const tea1Dim: DimensionMetadataItem = {
+        id: 'tea1',
+        dimensionId: 'tea1',
+        name: 'First name',
+        dimensionType: 'PROGRAM_ATTRIBUTE',
+    } as DimensionMetadataItem
+    const tea2Dim: DimensionMetadataItem = {
+        id: 'tea2',
+        dimensionId: 'tea2',
+        name: 'Last name',
+        dimensionType: 'PROGRAM_ATTRIBUTE',
+    } as DimensionMetadataItem
+
+    it('TEI viz with TET registration ou → TET resolved from ouDim.trackedEntityTypeId', () => {
+        const state = baseState('TRACKED_ENTITY_INSTANCE', [
+            'tetA.enrollmentOu',
+            'tea1',
+            'tea2',
+        ])
         const store = makeStore({
             dims: {
-                tea1: {
-                    id: 'tea1',
-                    dimensionId: 'tea1',
-                    name: 'First name',
-                    dimensionType: 'PROGRAM_ATTRIBUTE',
-                    trackedEntityTypeId: 'tetA',
-                },
-                tea2: {
-                    id: 'tea2',
-                    dimensionId: 'tea2',
-                    name: 'Last name',
-                    dimensionType: 'PROGRAM_ATTRIBUTE',
-                    trackedEntityTypeId: 'tetA',
-                },
+                'tetA.enrollmentOu': tetOuDim,
+                tea1: tea1Dim,
+                tea2: tea2Dim,
             },
             metadata: { tetA: { id: 'tetA', name: 'Person' } },
         })
 
-        expect(resolveTeiFields(state, store, progWithRegDataSource)).toEqual({
+        expect(resolveTeiFields(state, store)).toEqual({
             trackedEntityType: { id: 'tetA', name: 'Person' },
             attributeDimensions: [
                 { attribute: { id: 'tea1', name: 'First name' } },
@@ -415,42 +452,72 @@ describe('resolveTeiFields', () => {
         })
     })
 
-    it('TEI viz with tracked-entity-type data source → TET resolved from data source', () => {
-        const state = baseState('TRACKED_ENTITY_INSTANCE', ['de1'])
+    it('TEI viz with stage ou → walks programId → program.trackedEntityType', () => {
+        const state = baseState('TRACKED_ENTITY_INSTANCE', ['stage1.ou'])
         const store = makeStore({
-            dims: {
-                de1: {
-                    id: 'de1',
-                    dimensionId: 'de1',
-                    name: 'Weight',
-                    dimensionType: 'DATA_ELEMENT',
-                },
-            },
+            dims: { 'stage1.ou': stageOuDim },
             metadata: { tetA: { id: 'tetA', name: 'Person' } },
+            programs: { progA: trackerProgram },
         })
 
-        expect(resolveTeiFields(state, store, tetDataSource)).toEqual({
+        expect(resolveTeiFields(state, store)).toEqual({
             trackedEntityType: { id: 'tetA', name: 'Person' },
             attributeDimensions: undefined,
         })
     })
 
-    it('TEI viz ignores layout-dim trackedEntityTypeId in favour of data source', () => {
+    it('TEI viz with enrollment ou → walks programId → program.trackedEntityType', () => {
+        const state = baseState('TRACKED_ENTITY_INSTANCE', [
+            'progA.enrollmentOu',
+        ])
+        const store = makeStore({
+            dims: { 'progA.enrollmentOu': enrollmentOuDim },
+            metadata: { tetA: { id: 'tetA', name: 'Person' } },
+            programs: { progA: trackerProgram },
+        })
+
+        expect(resolveTeiFields(state, store)).toEqual({
+            trackedEntityType: { id: 'tetA', name: 'Person' },
+            attributeDimensions: undefined,
+        })
+    })
+
+    it('TEI viz with no ou dim in layout → throws', () => {
         const state = baseState('TRACKED_ENTITY_INSTANCE', ['tea1'])
         const store = makeStore({
-            dims: {
-                tea1: {
-                    id: 'tea1',
-                    dimensionId: 'tea1',
-                    name: 'First name',
-                    dimensionType: 'PROGRAM_ATTRIBUTE',
-                    trackedEntityTypeId: 'tetGhost',
-                },
-            },
+            dims: { tea1: tea1Dim },
             metadata: { tetA: { id: 'tetA', name: 'Person' } },
         })
 
-        expect(resolveTeiFields(state, store, progWithRegDataSource)).toEqual({
+        expect(() => resolveTeiFields(state, store)).toThrow(
+            'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the layout has no organisation unit dimension carrying TET context'
+        )
+    })
+
+    it('TEI viz with event-program stage ou → throws (program has no TET)', () => {
+        const state = baseState('TRACKED_ENTITY_INSTANCE', ['evtStage.ou'])
+        const store = makeStore({
+            dims: { 'evtStage.ou': eventProgramOuDim },
+            programs: { progB: eventProgram },
+        })
+
+        expect(() => resolveTeiFields(state, store)).toThrow(
+            'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the layout has no organisation unit dimension carrying TET context'
+        )
+    })
+
+    it('ENROLLMENT viz with enrollment ou and TEAs → TET + attributeDimensions both emitted', () => {
+        const state = baseState('ENROLLMENT', ['progA.enrollmentOu', 'tea1'])
+        const store = makeStore({
+            dims: {
+                'progA.enrollmentOu': enrollmentOuDim,
+                tea1: tea1Dim,
+            },
+            metadata: { tetA: { id: 'tetA', name: 'Person' } },
+            programs: { progA: trackerProgram },
+        })
+
+        expect(resolveTeiFields(state, store)).toEqual({
             trackedEntityType: { id: 'tetA', name: 'Person' },
             attributeDimensions: [
                 { attribute: { id: 'tea1', name: 'First name' } },
@@ -458,123 +525,41 @@ describe('resolveTeiFields', () => {
         })
     })
 
-    it('TEI viz with no data source → throws', () => {
-        const state = baseState('TRACKED_ENTITY_INSTANCE', ['de1'])
+    it('ENROLLMENT viz with enrollment ou, no TEAs → TET emitted (program is tracker)', () => {
+        const state = baseState('ENROLLMENT', ['progA.enrollmentOu'])
         const store = makeStore({
-            dims: {
-                de1: {
-                    id: 'de1',
-                    dimensionId: 'de1',
-                    name: 'Weight',
-                    dimensionType: 'DATA_ELEMENT',
-                },
-            },
-        })
-
-        expect(() => resolveTeiFields(state, store, undefined)).toThrow(
-            'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the data source does not provide a trackedEntityTypeId'
-        )
-    })
-
-    it('TEI viz with event-program data source (no TET) → throws', () => {
-        const state = baseState('TRACKED_ENTITY_INSTANCE', ['de1'])
-        const store = makeStore({
-            dims: {
-                de1: {
-                    id: 'de1',
-                    dimensionId: 'de1',
-                    name: 'Weight',
-                    dimensionType: 'DATA_ELEMENT',
-                },
-            },
-        })
-        const eventProgramDataSource = {
-            id: 'progB',
-            name: 'Event program',
-            programType: 'WITHOUT_REGISTRATION',
-        } as unknown as MetadataItem
-
-        expect(() =>
-            resolveTeiFields(state, store, eventProgramDataSource)
-        ).toThrow(
-            'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the data source does not provide a trackedEntityTypeId'
-        )
-    })
-
-    it('ENROLLMENT viz with TEA → TET resolved from layout dim (data source ignored)', () => {
-        const state = baseState('ENROLLMENT', ['tea1'])
-        const store = makeStore({
-            dims: {
-                tea1: {
-                    id: 'tea1',
-                    dimensionId: 'tea1',
-                    name: 'First name',
-                    dimensionType: 'PROGRAM_ATTRIBUTE',
-                    trackedEntityTypeId: 'tetA',
-                },
-            },
+            dims: { 'progA.enrollmentOu': enrollmentOuDim },
             metadata: { tetA: { id: 'tetA', name: 'Person' } },
+            programs: { progA: trackerProgram },
         })
 
-        expect(resolveTeiFields(state, store, undefined)).toEqual({
+        expect(resolveTeiFields(state, store)).toEqual({
             trackedEntityType: { id: 'tetA', name: 'Person' },
-            attributeDimensions: [
-                { attribute: { id: 'tea1', name: 'First name' } },
-            ],
+            attributeDimensions: undefined,
         })
     })
 
-    it('ENROLLMENT viz with TEA that lacks trackedEntityTypeId → throws', () => {
-        const state = baseState('ENROLLMENT', ['tea1'])
+    it('EVENT viz with event-program stage ou → no TET, no attributeDimensions', () => {
+        const state = baseState('EVENT', ['evtStage.ou'])
         const store = makeStore({
-            dims: {
-                tea1: {
-                    id: 'tea1',
-                    dimensionId: 'tea1',
-                    name: 'First name',
-                    dimensionType: 'PROGRAM_ATTRIBUTE',
-                },
-            },
+            dims: { 'evtStage.ou': eventProgramOuDim },
+            programs: { progB: eventProgram },
         })
 
-        expect(() => resolveTeiFields(state, store, undefined)).toThrow(
-            'Cannot resolve trackedEntityType for outputType=ENROLLMENT: no layout dimension carries a trackedEntityTypeId'
-        )
-    })
-
-    it('ENROLLMENT viz without TEA → neither field emitted', () => {
-        const state = baseState('ENROLLMENT', ['de1'])
-        const store = makeStore({
-            dims: {
-                de1: {
-                    id: 'de1',
-                    dimensionId: 'de1',
-                    name: 'Weight',
-                    dimensionType: 'DATA_ELEMENT',
-                },
-            },
-        })
-
-        expect(resolveTeiFields(state, store, undefined)).toEqual({
+        expect(resolveTeiFields(state, store)).toEqual({
             trackedEntityType: undefined,
             attributeDimensions: undefined,
         })
     })
 
-    it('EVENT viz with TEA → trackedEntityType cleared, attributeDimensions populated', () => {
-        const state = baseState('EVENT', ['tea1'])
+    it('EVENT viz with event-program ou and TEA → attributeDimensions populated, no TET', () => {
+        const state = baseState('EVENT', ['evtStage.ou', 'tea1'])
         const store = makeStore({
-            dims: {
-                tea1: {
-                    id: 'tea1',
-                    dimensionId: 'tea1',
-                    name: 'First name',
-                    dimensionType: 'PROGRAM_ATTRIBUTE',
-                },
-            },
+            dims: { 'evtStage.ou': eventProgramOuDim, tea1: tea1Dim },
+            programs: { progB: eventProgram },
         })
 
-        expect(resolveTeiFields(state, store, undefined)).toEqual({
+        expect(resolveTeiFields(state, store)).toEqual({
             trackedEntityType: undefined,
             attributeDimensions: [
                 { attribute: { id: 'tea1', name: 'First name' } },
@@ -582,25 +567,16 @@ describe('resolveTeiFields', () => {
         })
     })
 
-    it('TEI viz with data-source tetId not in metadata store → throws', () => {
-        const state = baseState('TRACKED_ENTITY_INSTANCE', ['de1'])
+    it('resolved tetId missing from metadata store → throws', () => {
+        const state = baseState('TRACKED_ENTITY_INSTANCE', [
+            'tetA.enrollmentOu',
+        ])
         const store = makeStore({
-            dims: {
-                de1: {
-                    id: 'de1',
-                    dimensionId: 'de1',
-                    name: 'Weight',
-                    dimensionType: 'DATA_ELEMENT',
-                },
-            },
+            dims: { 'tetA.enrollmentOu': tetOuDim },
         })
-        const dataSource = {
-            id: 'tetGhost',
-            name: 'Ghost',
-        } as unknown as MetadataItem
 
-        expect(() => resolveTeiFields(state, store, dataSource)).toThrow(
-            'Tracked entity type "tetGhost" referenced but not found in the metadata store'
+        expect(() => resolveTeiFields(state, store)).toThrow(
+            'Tracked entity type "tetA" referenced but not found in the metadata store'
         )
     })
 
@@ -608,7 +584,7 @@ describe('resolveTeiFields', () => {
         const state = baseState('EVENT', ['ghost'])
         const store = makeStore({})
 
-        expect(() => resolveTeiFields(state, store, undefined)).toThrow(
+        expect(() => resolveTeiFields(state, store)).toThrow(
             'No metadata found for dimension "ghost" in the layout'
         )
     })

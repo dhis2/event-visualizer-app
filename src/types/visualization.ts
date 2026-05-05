@@ -1,6 +1,5 @@
 import type {
     EventVisualization as EventVisualizationGenerated,
-    EventRepetition,
     ValueType,
     LegendDisplayStrategy,
     LegendDisplayStyle,
@@ -28,6 +27,11 @@ type MetadataRecordArray<T extends string> = Array<Record<T, IdNameRecord>>
  *
  * transformDimensions() converts PROGRAM_DATA_ELEMENT → DATA_ELEMENT where needed.
  */
+/* repetition: only `indexes` is meaningful on write — the backend's
+ * populateEventRepetitions() hydrates `dimension` and `parent` from the
+ * owning DimensionalObject and axis. The OpenAPI EventRepetition type
+ * marks those fields required, but in practice the frontend only sends
+ * indexes and the backend fills in the rest. */
 export type DimensionRecord = {
     dimension: string
     dimensionType?: DimensionType | 'PROGRAM_DATA_ELEMENT'
@@ -37,8 +41,14 @@ export type DimensionRecord = {
     optionSet?: IdRecord
     valueType?: ValueType
     legendSet?: IdRecord
-    repetition?: EventRepetition
-    items: Array<DimensionalItemObject>
+    repetition?: {
+        indexes: number[]
+        dimension?: string
+        parent?: 'COLUMN' | 'ROW' | 'FILTER'
+        program?: string
+        programStage?: string
+    }
+    items?: Array<DimensionalItemObject>
 }
 
 export type DimensionArray = Array<DimensionRecord>

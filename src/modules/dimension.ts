@@ -26,10 +26,10 @@ export const outputTypeTimeDimensionMap: Record<OutputType, DimensionId> = {
     TRACKED_ENTITY_INSTANCE: 'created',
 }
 
-// Mapping from the UPPER_SNAKE_CASE enum values that `timeField` can hold
-// (backend source of truth: `TimeField.java` in dhis2-core) onto the
-// concrete time-dimension id the app uses internally. Used when
-// materialising a legacy `pe` dimension into a proper time dimension.
+/* Mapping from the UPPER_SNAKE_CASE enum values that `timeField` can hold
+ * (backend source of truth: `TimeField.java` in dhis2-core) onto the
+ * concrete time-dimension id the app uses internally. Used when
+ * materialising a legacy `pe` dimension into a proper time dimension. */
 export const timeFieldTimeDimensionMap: Record<string, DimensionId> = {
     COMPLETED_DATE: 'completedDate',
     CREATED: 'created',
@@ -37,15 +37,15 @@ export const timeFieldTimeDimensionMap: Record<string, DimensionId> = {
     EVENT_DATE: 'eventDate',
     INCIDENT_DATE: 'incidentDate',
     LAST_UPDATED: 'lastUpdated',
-    // OCCURRED_DATE is the newer tracker enum name for event date. Mapped
-    // the same as EVENT_DATE; revisit if a semantic distinction emerges.
+    /* OCCURRED_DATE is the newer tracker enum name for event date. Mapped
+     * the same as EVENT_DATE; revisit if a semantic distinction emerges. */
     OCCURRED_DATE: 'eventDate',
     SCHEDULED_DATE: 'scheduledDate',
 }
 
-// Full set of enum values the backend accepts for `timeField`. Derived from
-// the map keys so the two cannot drift. Any value outside this set is
-// treated by the backend as a custom data-element / attribute UID.
+/* Full set of enum values the backend accepts for `timeField`. Derived from
+ * the map keys so the two cannot drift. Any value outside this set is
+ * treated by the backend as a custom data-element / attribute UID. */
 export const KNOWN_TIME_FIELD_VALUES: ReadonlySet<string> = new Set(
     Object.keys(timeFieldTimeDimensionMap)
 )
@@ -264,8 +264,8 @@ export const getProgramDimensions = (
     },
 })
 
-// Dimensions that exist only in the wire format (legacy event chart shape)
-// and have no meaning in the app-local layer.
+/* Dimensions that exist only in the wire format (legacy event chart shape)
+ * and have no meaning in the app-local layer. */
 export const WIRE_ONLY_DIMENSIONS: ReadonlySet<string> = new Set([
     'dy',
     'latitude',
@@ -410,25 +410,32 @@ export const combineAllDimensionsFromVisualization = (
     ...(visualization.filters || []),
 ]
 
-// ---------------------------------------------------------------------------
-// Dimension ID translation between API and app-local layers.
-//
-// SavedVisualization/CurrentVisualization use API dimension IDs (e.g. `ou`
-// for enrollment org unit). The app-local layer (visUiConfig, metadata store)
-// uses distinct IDs (e.g. `enrollmentOu`). These functions translate at the
-// boundary.
-// ---------------------------------------------------------------------------
+/* ---------------------------------------------------------------------------
+ * Dimension ID translation between API and app-local layers.
+ *
+ * SavedVisualization/CurrentVisualization use API dimension IDs (e.g. `ou`
+ * for enrollment org unit). The app-local layer (visUiConfig, metadata store)
+ * uses distinct IDs (e.g. `enrollmentOu`). These functions translate at the
+ * boundary.
+ * --------------------------------------------------------------------------- */
 
-// Dimension types that are not bound to any program or stage. The backend
-// may still populate program/programStage on these in legacy visualizations;
-// drop those fields at the API → app-local boundary so that downstream code
-// (compound ID, save round-trip) treats them as the contextless dimensions
-// they actually are.
+/* Dimension types that are not bound to any program or stage. The backend
+ * may still populate program/programStage on these in legacy visualizations;
+ * drop those fields at the API → app-local boundary so that downstream code
+ * (compound ID, save round-trip) treats them as the contextless dimensions
+ * they actually are. */
 const CONTEXTLESS_DIMENSION_TYPES: ReadonlySet<string> = new Set([
     'ORGANISATION_UNIT_GROUP_SET',
 ])
 
-/** Forward: API → app-local dimension IDs on a DimensionArray. */
+/**
+ * Forward: API → app-local dimension IDs on a DimensionArray.
+ *
+ * The eventVisualizations API uses bare `ou` for both enrollment-scope and
+ * TEI-registration-scope org units; these are distinguished only by the
+ * presence/absence of a `program` qualifier on the dim record. Stage event OU
+ * (with `programStage`) is a different concept and stays as `ou`.
+ */
 export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
     dims.map((dim) => {
         if (
@@ -440,45 +447,52 @@ export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
             delete stripped.programStage
             return stripped
         }
-        if (dim.dimension === 'ou' && dim.program && !dim.programStage) {
+        if (dim.dimension === 'ou' && !dim.programStage) {
             return { ...dim, dimension: 'enrollmentOu' }
         }
         return dim
     })
 
 /**
- * Inverse: app-local → API dimension ID (single dimension).
+ * Inverse: app-local dim → eventVisualizations POST `dimension` ID.
  *
- * `enrollmentOu` is the app-local ID for the enrollment org unit. The
- * eventVisualizations POST endpoint accepts it verbatim in some
- * outputType/visType combinations and requires plain `ou` in others. See the
- * "Org unit scopes" table in CLAUDE.md for the authoritative mapping.
+ * `enrollmentOu` is the app-local ID for both program-scope enrollment OU
+ * and TEI-registration-scope OU. The POST endpoint accepts it verbatim only
+ * when it carries a program qualifier AND the visualization is in EVENT/TEI
+ * `LINE_LIST` mode; otherwise it must be sent as bare `ou`. See the "Org
+ * unit scopes" table in CLAUDE.md for the authoritative mapping.
  */
-export const toApiDimensionId = (
-    dimId: string,
-    {
-        outputType,
-        visType,
-    }: { outputType?: OutputType; visType?: VisualizationType } = {}
-): string => {
-    if (dimId !== 'enrollmentOu') {
-        return dimId
+export const toEventVisualizationDimensionId = ({
+    dimensionId,
+    programId,
+    outputType,
+    visualizationType,
+}: {
+    dimensionId: string
+    programId?: string
+    outputType: OutputType
+    visualizationType: VisualizationType
+}): string => {
+    if (dimensionId !== 'enrollmentOu') {
+        return dimensionId
     }
     const shouldRewriteToOu =
-        outputType === 'ENROLLMENT' || visType === 'PIVOT_TABLE'
-    return shouldRewriteToOu ? 'ou' : dimId
+        !programId ||
+        outputType === 'ENROLLMENT' ||
+        visualizationType === 'PIVOT_TABLE'
+    return shouldRewriteToOu ? 'ou' : 'enrollmentOu'
 }
 
-// Dimension types that use plain IDs (no compound prefix) even when
-// the dimension record carries program/programStage context.
+/* Dimension types that use plain IDs (no compound prefix) even when
+ * the dimension record carries program/programStage context. */
 const PLAIN_ID_DIMENSION_TYPES: ReadonlySet<string> = new Set([
     'PROGRAM_INDICATOR',
     'PROGRAM_ATTRIBUTE',
 ])
 
-// Dimension IDs that are always enrollment-scoped (prefixed with programId,
-// never stageId). Legacy visualizations propagate programStage onto all
-// dimensions, but these IDs are inherently tied to the program, not a stage.
+/* Dimension IDs that are always enrollment-scoped (prefixed with programId,
+ * never stageId). Legacy visualizations propagate programStage onto all
+ * dimensions, but these IDs are inherently tied to the program, not a stage. */
 const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
     'enrollmentOu',
     'enrollmentDate',
@@ -486,11 +500,11 @@ const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
     'programStatus',
 ])
 
-// Dimension IDs that belong at TEI registration scope — prefixed with
-// trackedEntityTypeId when there is no program or stage context.
-// Must match what getTrackedEntityTypeFixedDimensions produces.
+/* Dimension IDs that belong at TEI registration scope — prefixed with
+ * trackedEntityTypeId when there is no program or stage context.
+ * Must match what getTrackedEntityTypeFixedDimensions produces. */
 const TEI_REGISTRATION_DIMENSION_IDS: ReadonlySet<string> = new Set([
-    'ou',
+    'enrollmentOu',
     'created',
 ])
 
@@ -537,10 +551,10 @@ export const getCompoundDimensionId = (
     return dim.dimension
 }
 
-// ---------------------------------------------------------------------------
-// Fixed dimension builders — shared between sidebar and metadata provider.
-// These are the canonical source of truth for fixed dimension names.
-// ---------------------------------------------------------------------------
+/* ---------------------------------------------------------------------------
+ * Fixed dimension builders — shared between sidebar and metadata provider.
+ * These are the canonical source of truth for fixed dimension names.
+ * --------------------------------------------------------------------------- */
 
 export const getStageFixedDimensions = (
     program: Program,
@@ -626,8 +640,8 @@ export const getTrackedEntityTypeFixedDimensions = (trackedEntityType: {
     id: string
 }): DimensionMetadataItem[] => [
     {
-        id: `${trackedEntityType.id}.ou`,
-        dimensionId: 'ou',
+        id: `${trackedEntityType.id}.enrollmentOu`,
+        dimensionId: 'enrollmentOu',
         dimensionType: 'ORGANISATION_UNIT',
         name: i18n.t('Registration org. unit'),
         trackedEntityTypeId: trackedEntityType.id,
