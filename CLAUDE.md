@@ -502,18 +502,18 @@ dates, statuses). They are built by shared helpers in `src/modules/dimension.ts`
 (`getStageFixedDimensions`, `getEnrollmentFixedDimensions`, `getTrackedEntityTypeFixedDimensions`)
 and consumed by both the sidebar cards and the metadata provider.
 
-| Scope      | Dimension ID     | Compound ID notation          | Display name source                                          | Sidebar card |
-| ---------- | ---------------- | ----------------------------- | ------------------------------------------------------------ | ------------ |
-| Stage      | `ou`             | `stageId.ou`                  | `program.displayOrgUnitLabel` or "Event org. unit"           | Stage        |
-| Stage      | `eventDate`      | `stageId.eventDate`           | `stage.displayExecutionDateLabel` or "Event date"            | Stage        |
-| Stage      | `scheduledDate`  | `stageId.scheduledDate`       | `stage.displayDueDateLabel` or "Scheduled date"              | Stage        |
-| Stage      | `eventStatus`    | `stageId.eventStatus`         | "Event status"                                               | Stage        |
-| Enrollment | `ou`             | `programId.ou`                | `program.displayOrgUnitLabel` or "Enrollment org. unit"      | Enrollment   |
-| Enrollment | `enrollmentDate` | `programId.enrollmentDate`    | `program.displayEnrollmentDateLabel` or "Date of enrollment" | Enrollment   |
-| Enrollment | `incidentDate`   | `programId.incidentDate`      | `program.displayIncidentDateLabel` or "Incident date"        | Enrollment   |
-| Enrollment | `programStatus`  | `programId.programStatus`     | "Enrollment status"                                          | Enrollment   |
-| TEI        | `ou`             | `trackedEntityTypeId.ou`      | "Registration org. unit"                                     | Registration |
-| TEI        | `created`        | `trackedEntityTypeId.created` | "Registration date"                                          | Registration |
+| Scope      | Dimension ID     | Compound ID notation               | Display name source                                          | Sidebar card |
+| ---------- | ---------------- | ---------------------------------- | ------------------------------------------------------------ | ------------ |
+| Stage      | `ou`             | `stageId.ou`                       | `program.displayOrgUnitLabel` or "Event org. unit"           | Stage        |
+| Stage      | `eventDate`      | `stageId.eventDate`                | `stage.displayExecutionDateLabel` or "Event date"            | Stage        |
+| Stage      | `scheduledDate`  | `stageId.scheduledDate`            | `stage.displayDueDateLabel` or "Scheduled date"              | Stage        |
+| Stage      | `eventStatus`    | `stageId.eventStatus`              | "Event status"                                               | Stage        |
+| Enrollment | `ou`             | `programId.ou`                     | `program.displayOrgUnitLabel` or "Enrollment org. unit"      | Enrollment   |
+| Enrollment | `enrollmentDate` | `programId.enrollmentDate`         | `program.displayEnrollmentDateLabel` or "Date of enrollment" | Enrollment   |
+| Enrollment | `incidentDate`   | `programId.incidentDate`           | `program.displayIncidentDateLabel` or "Incident date"        | Enrollment   |
+| Enrollment | `programStatus`  | `programId.programStatus`          | "Enrollment status"                                          | Enrollment   |
+| TEI        | `enrollmentOu`   | `trackedEntityTypeId.enrollmentOu` | "Registration org. unit"                                     | Registration |
+| TEI        | `created`        | `trackedEntityTypeId.created`      | "Registration date"                                          | Registration |
 
 Non-fixed dimensions use compound or plain IDs depending on their type:
 
@@ -541,26 +541,35 @@ compound ID from a `DimensionRecord`. It applies these rules in order:
   `toAppLocalDimensions` renames API `ou` (with program, no programStage) to `enrollmentOu`
   at the API → app-local boundary. `toApiDimensionId` does the inverse on save — but only
   in some outputType/visType combinations (see table below).
-- **Registration org unit**: `ou` with `trackedEntityType` → compound `tetId.ou`
+- **Registration org unit**: `enrollmentOu` with `trackedEntityType` (no program/stage) →
+  compound `tetId.enrollmentOu`. The TEI registration OU shares the `enrollmentOu` dimension
+  ID with the program-scope enrollment OU; the prefix (programId vs trackedEntityTypeId)
+  distinguishes them.
 
-**`enrollmentOu` POST translation by outputType/visType**: the eventVisualizations POST
-endpoint accepts `enrollmentOu` verbatim for some combinations and requires plain `ou` for
-others. `toApiDimensionId` applies this mapping on save:
+**`enrollmentOu` POST translation by outputType/visType/scope**: the eventVisualizations
+POST endpoint accepts `enrollmentOu` verbatim only when the dim carries a program qualifier
+AND the visualization is in EVENT/TEI LINE_LIST mode. Other combinations — including the
+TEI registration OU, which has no program qualifier — must be sent as bare `ou`.
+`toEventVisualizationDimensionId` applies this mapping on save:
 
-| outputType                | visType       | POST dimension | Rewrite `enrollmentOu` → `ou`? |
-| ------------------------- | ------------- | -------------- | ------------------------------ |
-| `EVENT`                   | `LINE_LIST`   | `enrollmentOu` | no                             |
-| `ENROLLMENT`              | `LINE_LIST`   | `ou`           | yes                            |
-| `TRACKED_ENTITY_INSTANCE` | `LINE_LIST`   | `enrollmentOu` | no                             |
-| `EVENT`                   | `PIVOT_TABLE` | `ou`           | yes                            |
-| `ENROLLMENT`              | `PIVOT_TABLE` | `ou`           | yes                            |
+| outputType                | visType       | dim has `programId`? | POST dimension | Rewrite `enrollmentOu` → `ou`? |
+| ------------------------- | ------------- | -------------------- | -------------- | ------------------------------ |
+| `EVENT`                   | `LINE_LIST`   | yes                  | `enrollmentOu` | no                             |
+| `ENROLLMENT`              | `LINE_LIST`   | yes                  | `ou`           | yes                            |
+| `TRACKED_ENTITY_INSTANCE` | `LINE_LIST`   | yes (program-scope)  | `enrollmentOu` | no                             |
+| `TRACKED_ENTITY_INSTANCE` | `LINE_LIST`   | no (registration)    | `ou`           | yes                            |
+| `EVENT`                   | `PIVOT_TABLE` | yes                  | `ou`           | yes                            |
+| `ENROLLMENT`              | `PIVOT_TABLE` | yes                  | `ou`           | yes                            |
 
-Rule: rewrite to `ou` when `outputType === 'ENROLLMENT'` OR `visType === 'PIVOT_TABLE'`.
-Keep as `enrollmentOu` otherwise (i.e. `LINE_LIST` with `EVENT` or `TRACKED_ENTITY_INSTANCE`).
+Rule: rewrite to `ou` when the dim has no `programId` (i.e. TEI registration scope)
+OR `outputType === 'ENROLLMENT'` OR `visType === 'PIVOT_TABLE'`. Keep as `enrollmentOu`
+only for program-scope dims in `EVENT`/`TRACKED_ENTITY_INSTANCE` `LINE_LIST`.
 
-The reverse (load) direction does not need the same conditional — `toAppLocalDimensions`
-keys purely on the shape `dim.dimension === 'ou' && dim.program && !dim.programStage`, which
-catches the three `ou`-cases and leaves the two `enrollmentOu`-cases untouched.
+The reverse (load) direction is shape-based — `toAppLocalDimensions` rewrites
+`dim.dimension === 'ou' && !dim.programStage` to `enrollmentOu`. This catches both
+program-scope (`{dimension: 'ou', program: {id}}`) and TEI registration
+(`{dimension: 'ou'}`, no program/stage) and leaves stage event OU
+(`{dimension: 'ou', programStage: {id}}`) untouched.
 
 ### Save/load translation at the visualization API boundary
 

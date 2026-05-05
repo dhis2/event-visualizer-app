@@ -101,8 +101,8 @@ const metadata = {
         dimensionType: 'DATA_ELEMENT',
         valueType: 'DATE',
     },
-    'tei1.ou': {
-        id: 'tei1.ou',
+    'tei1.enrollmentOu': {
+        id: 'tei1.enrollmentOu',
         name: 'Registration org. unit',
         dimensionType: 'DATA_ELEMENT',
         valueType: 'ORGANISATION_UNIT',
@@ -298,7 +298,7 @@ describe('useActionButton for Event button', () => {
                 },
                 visUiConfig: {
                     layout: {
-                        columns: [metadata['tei1.ou'].id],
+                        columns: [metadata['tei1.enrollmentOu'].id],
                     },
                     visualizationType: 'LINE_LIST',
                 },
@@ -324,7 +324,7 @@ describe('useActionButton for Event button', () => {
                 visUiConfig: {
                     layout: {
                         columns: [
-                            metadata['tei1.ou'].id,
+                            metadata['tei1.enrollmentOu'].id,
                             metadata['tei1.created'].id,
                         ],
                     },
@@ -515,7 +515,7 @@ describe('useActionButton for Enrollment button', () => {
                 },
                 visUiConfig: {
                     layout: {
-                        columns: [metadata['tei1.ou'].id],
+                        columns: [metadata['tei1.enrollmentOu'].id],
                     },
                     visualizationType: 'LINE_LIST',
                 },
@@ -541,7 +541,7 @@ describe('useActionButton for Enrollment button', () => {
                 visUiConfig: {
                     layout: {
                         columns: [
-                            metadata['tei1.ou'].id,
+                            metadata['tei1.enrollmentOu'].id,
                             metadata['tei1.created'].id,
                         ],
                     },
@@ -1048,7 +1048,7 @@ describe('useActionButton for Custom value button', () => {
             createStoreWithPreloadedState({
                 visUiConfig: {
                     layout: {
-                        columns: [metadata['tei1.ou'].id],
+                        columns: [metadata['tei1.enrollmentOu'].id],
                     },
                     visualizationType: 'PIVOT_TABLE',
                 },
