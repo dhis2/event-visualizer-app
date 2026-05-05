@@ -1,0 +1,164 @@
+name: 'dhis2: prototype preview'
+
+# Auto-deploy any push to a `prototype/**` branch as a Netlify alias preview,
+# and clean up the deploys when the branch is deleted. No PR required —
+# just push the branch and the URL appears in the Actions tab.
+#
+# - push to prototype/**:  build the branch and publish to
+#                          https://{slug}.event-visualizer.netlify.dhis2.org
+# - delete of prototype/*: remove the Netlify deploys for that branch
+#
+# The `slug` job is the single source of truth for the slugify rules; the
+# `preview` and `cleanup` jobs consume its output via `needs.slug.outputs`.
+#
+# Requirements:
+#
+# - Org secrets:
+#       DHIS2_BOT_NETLIFY_TOKEN
+#       DHIS2_BOT_GITHUB_TOKEN
+# - Repo secrets:
+#       NETLIFY_SITE_ID
+
+on:
+    push:
+        branches:
+            - 'prototype/**'
+    delete:
+
+jobs:
+    slug:
+        if: github.event_name == 'push' || (github.event_name == 'delete' && github.event.ref_type == 'branch' && startsWith(github.event.ref, 'prototype/'))
+        runs-on: ubuntu-latest
+        outputs:
+            slug: ${{ steps.compute.outputs.slug }}
+            branch: ${{ steps.compute.outputs.branch }}
+        steps:
+            - name: Compute alias slug
+              id: compute
+              env:
+                  BRANCH: ${{ github.event_name == 'push' && github.ref_name || github.event.ref }}
+              run: |
+                  slug=$(printf '%s' "$BRANCH" \
+                      | tr '[:upper:]' '[:lower:]' \
+                      | sed -e 's|/|--|g' -e 's|[^a-z0-9-]|-|g' \
+                              -e 's|^-*||' \
+                      | cut -c1-37 \
+                      | sed -e 's|-*$||')
+                  case "$slug" in
+                      [a-z0-9]*) ;;
+                      *)
+                          echo "::error::Branch '$BRANCH' produces an invalid Netlify alias."
+                          exit 1
+                          ;;
+                  esac
+                  echo "slug=$slug" >>"$GITHUB_OUTPUT"
+                  echo "branch=$BRANCH" >>"$GITHUB_OUTPUT"
+
+    preview:
+        if: github.event_name == 'push'
+        needs: slug
+        runs-on: ubuntu-latest
+        concurrency:
+            group: prototype-preview-${{ github.ref_name }}
+            cancel-in-progress: true
+        steps:
+            - name: Announce target URL
+              env:
+                  BRANCH: ${{ needs.slug.outputs.branch }}
+                  SLUG: ${{ needs.slug.outputs.slug }}
+              run: |
+                  {
+                      echo "## Prototype preview"
+                      echo ""
+                      echo "Branch: \`$BRANCH\`"
+                      echo "URL: https://$SLUG.event-visualizer.netlify.dhis2.org"
+                  } >>"$GITHUB_STEP_SUMMARY"
+
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: lts/*
+                  cache: pnpm
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile --ignore-scripts
+
+            - name: Build
+              run: pnpm d2-app-scripts build --standalone
+
+            - name: Deploy
+              uses: nwtgck/actions-netlify@v3
+              timeout-minutes: 2
+              with:
+                  github-token: ${{ secrets.DHIS2_BOT_GITHUB_TOKEN }}
+                  github-deployment-environment: 'netlify-prototype-preview'
+                  github-deployment-description: 'Prototype Preview on Netlify'
+                  deploy-message: 'Prototype deploy: ${{ github.ref_name }}'
+                  enable-pull-request-comment: false
+                  enable-commit-comment: false
+                  enable-commit-status: false
+                  alias: ${{ needs.slug.outputs.slug }}
+                  publish-dir: 'build/app'
+              env:
+                  NETLIFY_AUTH_TOKEN: ${{ secrets.DHIS2_BOT_NETLIFY_TOKEN }}
+                  NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+    cleanup:
+        if: github.event_name == 'delete' && github.event.ref_type == 'branch' && startsWith(github.event.ref, 'prototype/')
+        needs: slug
+        runs-on: ubuntu-latest
+        steps:
+            - name: Delete Netlify deploys for slug
+              env:
+                  NETLIFY_AUTH_TOKEN: ${{ secrets.DHIS2_BOT_NETLIFY_TOKEN }}
+                  NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+                  SLUG: ${{ needs.slug.outputs.slug }}
+                  BRANCH: ${{ needs.slug.outputs.branch }}
+              run: |
+                  set -euo pipefail
+                  api='https://api.netlify.com/api/v1'
+                  auth=(-H "Authorization: Bearer $NETLIFY_AUTH_TOKEN")
+
+                  # Branch deploys created via `alias` are stored with branch=<slug>.
+                  # Paginate defensively in case there are many redeploys.
+                  ids=()
+                  page=1
+                  while :; do
+                      resp=$(curl -fsSL "${auth[@]}" \
+                          "$api/sites/$NETLIFY_SITE_ID/deploys?branch=$SLUG&per_page=100&page=$page")
+                      count=$(printf '%s' "$resp" | jq 'length')
+                      if [ "$count" -eq 0 ]; then
+                          break
+                      fi
+                      while IFS= read -r id; do
+                          ids+=("$id")
+                      done < <(printf '%s' "$resp" | jq -r '.[].id')
+                      if [ "$count" -lt 100 ]; then
+                          break
+                      fi
+                      page=$((page + 1))
+                  done
+
+                  if [ "${#ids[@]}" -eq 0 ]; then
+                      echo "No Netlify deploys found for branch '$BRANCH' (slug '$SLUG')."
+                      {
+                          echo "## Prototype preview cleanup"
+                          echo ""
+                          echo "Branch: \`$BRANCH\` (slug \`$SLUG\`) — nothing to delete."
+                      } >>"$GITHUB_STEP_SUMMARY"
+                      exit 0
+                  fi
+
+                  echo "Found ${#ids[@]} deploy(s) for branch '$BRANCH' (slug '$SLUG')."
+                  for id in "${ids[@]}"; do
+                      echo "Deleting deploy $id"
+                      curl -fsSL -X DELETE "${auth[@]}" "$api/deploys/$id"
+                  done
+
+                  {
+                      echo "## Prototype preview cleanup"
+                      echo ""
+                      echo "Branch: \`$BRANCH\` (slug \`$SLUG\`)"
+                      echo "Deleted ${#ids[@]} Netlify deploy(s)."
+                  } >>"$GITHUB_STEP_SUMMARY"
