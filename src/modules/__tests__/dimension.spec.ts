@@ -683,6 +683,37 @@ describe('toAppLocalDimensions', () => {
         expect(result[0].dimension).toBe('enrollmentDate')
         expect(result[1].dimension).toBe('eventDate')
     })
+
+    it('strips program and programStage from ORGANISATION_UNIT_GROUP_SET dimensions (legacy backend noise)', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'area',
+                dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+                items: [],
+                program: { id: 'prog1' },
+                programStage: { id: 'stage1' },
+            },
+        ]
+        const result = toAppLocalDimensions(dims)
+        expect(result[0].dimension).toBe('area')
+        expect(result[0].program).toBeUndefined()
+        expect(result[0].programStage).toBeUndefined()
+    })
+
+    it('preserves other fields on a stripped contextless dimension', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'area',
+                dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+                items: [{ id: 'urban' }, { id: 'rural' }],
+                program: { id: 'prog1' },
+                programStage: { id: 'stage1' },
+            },
+        ]
+        const result = toAppLocalDimensions(dims)
+        expect(result[0].items).toEqual([{ id: 'urban' }, { id: 'rural' }])
+        expect(result[0].dimensionType).toBe('ORGANISATION_UNIT_GROUP_SET')
+    })
 })
 
 describe('toApiDimensionId', () => {
@@ -896,5 +927,20 @@ describe('getCompoundDimensionId', () => {
         expect(
             getCompoundDimensionId({ dimension: 'someField', items: [] })
         ).toBe('someField')
+    })
+
+    it('returns plain ID for ORGANISATION_UNIT_GROUP_SET after toAppLocalDimensions stripping', () => {
+        // Contextless dimensions have program/programStage stripped at the
+        // boundary; the helper then naturally falls through to plain ID.
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'area',
+                    dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+                    items: [],
+                },
+                'EVENT'
+            )
+        ).toBe('area')
     })
 })

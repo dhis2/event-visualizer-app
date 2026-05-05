@@ -419,9 +419,27 @@ export const combineAllDimensionsFromVisualization = (
 // boundary.
 // ---------------------------------------------------------------------------
 
+// Dimension types that are not bound to any program or stage. The backend
+// may still populate program/programStage on these in legacy visualizations;
+// drop those fields at the API → app-local boundary so that downstream code
+// (compound ID, save round-trip) treats them as the contextless dimensions
+// they actually are.
+const CONTEXTLESS_DIMENSION_TYPES: ReadonlySet<string> = new Set([
+    'ORGANISATION_UNIT_GROUP_SET',
+])
+
 /** Forward: API → app-local dimension IDs on a DimensionArray. */
 export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
     dims.map((dim) => {
+        if (
+            dim.dimensionType &&
+            CONTEXTLESS_DIMENSION_TYPES.has(dim.dimensionType)
+        ) {
+            const stripped = { ...dim }
+            delete stripped.program
+            delete stripped.programStage
+            return stripped
+        }
         if (dim.dimension === 'ou' && dim.program && !dim.programStage) {
             return { ...dim, dimension: 'enrollmentOu' }
         }
