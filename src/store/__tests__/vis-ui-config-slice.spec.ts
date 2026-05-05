@@ -12,6 +12,7 @@ const {
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
+    setVisUiConfigLegendSetByDimension,
 } = visUiConfigSlice.actions
 
 type RootState = { visUiConfig: VisUiConfigState }
@@ -488,5 +489,155 @@ describe('getVisUiConfigPlainItemIdsByDimension', () => {
             'stage1.dim1'
         )
         expect(first).toBe(second)
+    })
+})
+
+describe('setVisUiConfigLegendSetByDimension', () => {
+    const dimensionId = 'stage1.dim1'
+    const legendSetA = 'lsA'
+    const legendSetB = 'lsB'
+
+    it('sets a legend set when none was set', () => {
+        const state = { ...initialState, conditionsByDimension: {} }
+        const result = visUiConfigSlice.reducer(
+            state,
+            setVisUiConfigLegendSetByDimension({
+                dimensionId,
+                legendSet: legendSetA,
+            })
+        )
+        expect(result.conditionsByDimension[dimensionId]).toEqual({
+            condition: '',
+            legendSet: legendSetA,
+        })
+    })
+
+    it('drops non-IN conditions when first setting a legend set', () => {
+        const state = {
+            ...initialState,
+            conditionsByDimension: {
+                [dimensionId]: { condition: 'GT:12', legendSet: undefined },
+            },
+        }
+        const result = visUiConfigSlice.reducer(
+            state,
+            setVisUiConfigLegendSetByDimension({
+                dimensionId,
+                legendSet: legendSetA,
+            })
+        )
+        expect(result.conditionsByDimension[dimensionId]).toEqual({
+            condition: '',
+            legendSet: legendSetA,
+        })
+    })
+
+    it('preserves IN conditions when first setting a legend set', () => {
+        const state = {
+            ...initialState,
+            conditionsByDimension: {
+                [dimensionId]: {
+                    condition: 'IN:legend1;legend2',
+                    legendSet: undefined,
+                },
+            },
+        }
+        const result = visUiConfigSlice.reducer(
+            state,
+            setVisUiConfigLegendSetByDimension({
+                dimensionId,
+                legendSet: legendSetA,
+            })
+        )
+        expect(result.conditionsByDimension[dimensionId]).toEqual({
+            condition: 'IN:legend1;legend2',
+            legendSet: legendSetA,
+        })
+    })
+
+    it('drops IN conditions when switching to a different legend set', () => {
+        const state = {
+            ...initialState,
+            conditionsByDimension: {
+                [dimensionId]: {
+                    condition: 'IN:legend1;legend2',
+                    legendSet: legendSetA,
+                },
+            },
+        }
+        const result = visUiConfigSlice.reducer(
+            state,
+            setVisUiConfigLegendSetByDimension({
+                dimensionId,
+                legendSet: legendSetB,
+            })
+        )
+        expect(result.conditionsByDimension[dimensionId]).toEqual({
+            condition: '',
+            legendSet: legendSetB,
+        })
+    })
+
+    it('drops IN conditions when clearing the legend set', () => {
+        const state = {
+            ...initialState,
+            conditionsByDimension: {
+                [dimensionId]: {
+                    condition: 'IN:legend1;legend2',
+                    legendSet: legendSetA,
+                },
+            },
+        }
+        const result = visUiConfigSlice.reducer(
+            state,
+            setVisUiConfigLegendSetByDimension({
+                dimensionId,
+                legendSet: undefined,
+            })
+        )
+        expect(result.conditionsByDimension[dimensionId]).toBeUndefined()
+    })
+
+    it('keeps conditions unchanged when re-applying the same legend set', () => {
+        const state = {
+            ...initialState,
+            conditionsByDimension: {
+                [dimensionId]: {
+                    condition: 'IN:legend1;legend2',
+                    legendSet: legendSetA,
+                },
+            },
+        }
+        const result = visUiConfigSlice.reducer(
+            state,
+            setVisUiConfigLegendSetByDimension({
+                dimensionId,
+                legendSet: legendSetA,
+            })
+        )
+        expect(result.conditionsByDimension[dimensionId]).toEqual({
+            condition: 'IN:legend1;legend2',
+            legendSet: legendSetA,
+        })
+    })
+
+    it('clears entry entirely when no legend set and no remaining conditions', () => {
+        const state = {
+            ...initialState,
+            conditionsByDimension: {
+                [dimensionId]: {
+                    condition: 'IN:legend1',
+                    legendSet: legendSetA,
+                },
+            },
+        }
+        const result = visUiConfigSlice.reducer(
+            state,
+            setVisUiConfigLegendSetByDimension({
+                dimensionId,
+                legendSet: undefined,
+            })
+        )
+        expect(result.conditionsByDimension[dimensionId]).toBeUndefined()
     })
 })

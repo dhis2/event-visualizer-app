@@ -62,47 +62,43 @@ export const RepeatedEventsTabContent: FC<RepeatedEventsTabContentProps> = ({
     )
 
     return (
-        <div>
-            <p className={classes.paragraph}>
-                {i18n.t(
-                    'From stages with repeatable events, show values for this data element from:',
-                    { nsSeparator: '^^' }
-                )}
-            </p>
-            <div>
-                <div className={classes.repeatableWrapper}>
-                    <p className={classes.paragraph}>
-                        {i18n.t('Most recent events:', {
-                            nsSeparator: '^^',
-                        })}
-                    </p>
+        <div className={classes.repeatedEventsTiles}>
+            <label className={classes.repeatedEventsTile}>
+                <span className={classes.repeatedEventsInputWrapper}>
                     <Input
                         type="number"
                         dense
-                        className={classes.repeatableInput}
+                        className={classes.repeatedEventsInput}
                         value={mostRecent.toString()}
                         onChange={({ value }) => onMostRecentChange(value)}
                         min="0"
                         dataTest="most-recent-input"
                     />
-                </div>
-                <div className={classes.repeatableWrapper}>
-                    <p className={classes.paragraph}>
-                        {i18n.t('Oldest events:', {
-                            nsSeparator: '^^',
-                        })}
-                    </p>
+                </span>
+                <span className={classes.repeatedEventsLabel}>
+                    {i18n.t('Most recent events', {
+                        nsSeparator: '^^',
+                    })}
+                </span>
+            </label>
+            <label className={classes.repeatedEventsTile}>
+                <span className={classes.repeatedEventsInputWrapper}>
                     <Input
                         type="number"
                         dense
-                        className={classes.repeatableInput}
+                        className={classes.repeatedEventsInput}
                         value={oldest.toString()}
                         onChange={({ value }) => onOldestChange(value)}
                         min="0"
                         dataTest="oldest-input"
                     />
-                </div>
-            </div>
+                </span>
+                <span className={classes.repeatedEventsLabel}>
+                    {i18n.t('Oldest events', {
+                        nsSeparator: '^^',
+                    })}
+                </span>
+            </label>
         </div>
     )
 }

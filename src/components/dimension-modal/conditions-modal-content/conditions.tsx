@@ -61,14 +61,7 @@ const NumericConditionsList: FC = () => {
         initialFocusIndex,
     } = useConditions()
 
-    return (
-        conditionsList.length
-            ? conditionsList
-            : conditions.legendSet
-              ? // show the condition component also when no conditions are present but a legendSet is selected
-                ['']
-              : []
-    )?.map((condition, index) => (
+    return conditionsList.map((condition, index) => (
         <div key={index}>
             <NumericCondition
                 dimension={dimension}
@@ -77,9 +70,7 @@ const NumericConditionsList: FC = () => {
                     setCondition(index, value, legendSet)
                 }
                 onRemove={() => removeCondition(index)}
-                numberOfConditions={
-                    conditionsList.length || (conditions.legendSet ? 1 : 0)
-                }
+                numberOfConditions={conditionsList.length}
                 legendSetId={conditions.legendSet}
                 initialFocus={index === initialFocusIndex}
             />
