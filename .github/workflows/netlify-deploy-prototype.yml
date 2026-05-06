@@ -32,15 +32,22 @@ jobs:
         outputs:
             slug: ${{ steps.compute.outputs.slug }}
             branch: ${{ steps.compute.outputs.branch }}
+            skip: ${{ steps.pr-check.outputs.skip }}
         steps:
             - name: Compute alias slug
               id: compute
               env:
                   BRANCH: ${{ github.event_name == 'push' && github.ref_name || github.event.ref }}
               run: |
+                  # Note: Netlify silently normalizes consecutive hyphens
+                  # (e.g. `--`) down to a single `-` when storing branch
+                  # deploys, because `--` is the reserved separator in
+                  # `{branch}--{site}.netlify.app` URLs. Matching that
+                  # behavior here keeps the slug consistent between deploy
+                  # time and cleanup-time API queries.
                   slug=$(printf '%s' "$BRANCH" \
                       | tr '[:upper:]' '[:lower:]' \
-                      | sed -e 's|/|--|g' -e 's|[^a-z0-9-]|-|g' \
+                      | sed -e 's|[^a-z0-9]|-|g' -e 's|--*|-|g' \
                               -e 's|^-*||' \
                       | cut -c1-37 \
                       | sed -e 's|-*$||')
@@ -54,8 +61,22 @@ jobs:
                   echo "slug=$slug" >>"$GITHUB_OUTPUT"
                   echo "branch=$BRANCH" >>"$GITHUB_OUTPUT"
 
+            - name: Skip if branch has an open PR
+              id: pr-check
+              if: github.event_name == 'push'
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  REPO: ${{ github.repository }}
+                  BRANCH: ${{ github.ref_name }}
+              run: |
+                  count=$(gh pr list --repo "$REPO" --head "$BRANCH" --state open --json number --jq 'length')
+                  if [ "$count" -gt 0 ]; then
+                      echo "Branch '$BRANCH' has $count open PR(s); the PR preview workflow will handle deploys for this push."
+                      echo "skip=true" >>"$GITHUB_OUTPUT"
+                  fi
+
     preview:
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && needs.slug.outputs.skip != 'true'
         needs: slug
         runs-on: ubuntu-latest
         concurrency:
