@@ -131,6 +131,20 @@ type TeiFields = {
     attributeDimensions: CurrentVisualization['attributeDimensions']
 }
 
+export const resolveProgramIds = (
+    dimensionIds: string[],
+    metadataStore: MetadataStore
+): string[] => {
+    const programIds = new Set<string>()
+    for (const id of dimensionIds) {
+        const programId = metadataStore.getDimensionMetadataItem(id)?.programId
+        if (programId) {
+            programIds.add(programId)
+        }
+    }
+    return Array.from(programIds)
+}
+
 /* The layout's OU dim is the canonical source for TET context: TET-registration
  * ou carries trackedEntityTypeId directly; enrollment/stage ou carry a programId
  * whose program reference provides the TET (or none, for event programs). */

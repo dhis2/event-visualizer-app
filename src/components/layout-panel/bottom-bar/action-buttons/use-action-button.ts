@@ -1,15 +1,9 @@
 import i18n from '@dhis2/d2-i18n'
-import {
-    useAppSelector,
-    useMetadataItem,
-    useMetadataStore,
-    useTetId,
-} from '@hooks'
+import { useAppSelector, useMetadataStore, useTetId } from '@hooks'
 import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
-import { isDimensionInLayout } from '@modules/layout'
+import { isDimensionInLayout, resolveProgramIds } from '@modules/layout'
 import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
-import { getDataSourceId } from '@store/dimensions-selection-slice'
 import {
     getVisUiConfigLastActiveButton,
     getVisUiConfigLayout,
@@ -19,7 +13,7 @@ import {
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
 import type { LastActiveButton } from '@store/vis-ui-config-slice'
-import type { OutputType } from '@types'
+import type { OutputType, Program } from '@types'
 import { useMemo } from 'react'
 import type { ButtonAction } from './base-button'
 
@@ -119,7 +113,7 @@ const getEventTooltipContent = ({
 }
 
 type EnrollmentTooltipContentParams = {
-    dataSourceMetadata: ReturnType<typeof useMetadataItem>
+    programMetadata: Program | undefined
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
     hasMultipleProgramsInLayout: boolean
@@ -130,7 +124,7 @@ type EnrollmentTooltipContentParams = {
 }
 
 const getEnrollmentTooltipContent = ({
-    dataSourceMetadata,
+    programMetadata,
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
     hasNoProgramInLayout,
@@ -151,7 +145,7 @@ const getEnrollmentTooltipContent = ({
         return { content: i18n.t('Not valid with multiple programs') }
     }
 
-    if (isDataSourceProgramWithoutRegistration(dataSourceMetadata)) {
+    if (isDataSourceProgramWithoutRegistration(programMetadata)) {
         return { content: i18n.t('Not valid with event programs') }
     }
 
@@ -169,7 +163,7 @@ const getEnrollmentTooltipContent = ({
 }
 
 type TrackedEntityInstanceTooltipContentParams = {
-    dataSourceMetadata: ReturnType<typeof useMetadataItem>
+    programMetadata: Program | undefined
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
     hasMultipleProgramsInLayout: boolean
@@ -179,7 +173,7 @@ type TrackedEntityInstanceTooltipContentParams = {
 }
 
 const getTrackedEntityInstanceTooltipContent = ({
-    dataSourceMetadata,
+    programMetadata,
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
     hasMultipleProgramsInLayout,
@@ -197,7 +191,7 @@ const getTrackedEntityInstanceTooltipContent = ({
         return { content: i18n.t('Not valid with multiple programs') }
     }
 
-    if (isDataSourceProgramWithoutRegistration(dataSourceMetadata)) {
+    if (isDataSourceProgramWithoutRegistration(programMetadata)) {
         return { content: i18n.t('Not valid with event programs') }
     }
 
@@ -216,7 +210,6 @@ export const useActionButton = (
     buttonVariant?: LastActiveButton
 ) => {
     const currentVis = useAppSelector(getCurrentVis)
-    const dataSourceId = useAppSelector(getDataSourceId)
     const tetId = useTetId()
     const lastActiveButton = useAppSelector(getVisUiConfigLastActiveButton)
     const layout = useAppSelector(getVisUiConfigLayout)
@@ -228,7 +221,23 @@ export const useActionButton = (
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
 
-    const dataSourceMetadata = useMetadataItem(dataSourceId)
+    const programIdsInLayout = useMemo(
+        () => resolveProgramIds(layoutDimensionIds, metadataStore),
+        [layoutDimensionIds, metadataStore]
+    )
+
+    const firstProgramMetadata = useMemo(
+        () =>
+            programIdsInLayout[0]
+                ? metadataStore.getProgramMetadataItem(programIdsInLayout[0])
+                : undefined,
+        [programIdsInLayout, metadataStore]
+    )
+
+    const tetMetadata = useMemo(
+        () => (tetId ? metadataStore.getMetadataItem(tetId) : undefined),
+        [tetId, metadataStore]
+    )
 
     const action = useMemo((): ButtonAction => {
         // Empty visualization
@@ -275,20 +284,7 @@ export const useActionButton = (
         [layoutDimensionIds, metadataStore]
     )
 
-    const programCountInLayout = useMemo(() => {
-        const programs = new Set<string>()
-
-        layoutDimensionIds.forEach((dimensionId) => {
-            const programId =
-                metadataStore.getDimensionMetadataItem(dimensionId)?.programId
-
-            if (programId) {
-                programs.add(programId)
-            }
-        })
-
-        return programs.size
-    }, [layoutDimensionIds, metadataStore])
+    const programCountInLayout = programIdsInLayout.length
 
     const tetCountInLayout = useMemo(() => {
         const tetIds = new Set<string>()
@@ -377,7 +373,7 @@ export const useActionButton = (
                 })
             case 'ENROLLMENT':
                 return getEnrollmentTooltipContent({
-                    dataSourceMetadata,
+                    programMetadata: firstProgramMetadata,
                     hasCategoryInLayout,
                     hasCategoryOptionGroupSetInLayout,
                     hasNoProgramInLayout,
@@ -388,7 +384,7 @@ export const useActionButton = (
                 })
             case 'TRACKED_ENTITY_INSTANCE':
                 return getTrackedEntityInstanceTooltipContent({
-                    dataSourceMetadata,
+                    programMetadata: firstProgramMetadata,
                     hasCategoryInLayout,
                     hasCategoryOptionGroupSetInLayout,
                     hasMultipleProgramsInLayout,
@@ -399,7 +395,7 @@ export const useActionButton = (
         }
     }, [
         buttonType,
-        dataSourceMetadata,
+        firstProgramMetadata,
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
         hasNoProgramInLayout,
@@ -412,6 +408,11 @@ export const useActionButton = (
         isRegistrationOuInLayout,
         visualizationType,
     ])
+
+    const dataSourceMetadata =
+        buttonType === 'TRACKED_ENTITY_INSTANCE'
+            ? tetMetadata
+            : firstProgramMetadata
 
     return {
         action,

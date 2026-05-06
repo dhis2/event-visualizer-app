@@ -121,8 +121,9 @@ const metadata = {
     'tei1.enrollmentOu': {
         id: 'tei1.enrollmentOu',
         name: 'Registration org. unit',
-        dimensionType: 'DATA_ELEMENT',
+        dimensionType: 'ORGANISATION_UNIT',
         valueType: 'ORGANISATION_UNIT',
+        trackedEntityTypeId: 'tei1',
     },
     'tei1.a1': {
         id: 'tei1.a1',
@@ -926,6 +927,7 @@ describe('useActionButton for Tracked entity instance button', () => {
                 visUiConfig: {
                     layout: {
                         columns: [
+                            metadata['tei1.enrollmentOu'].id,
                             metadata['p2.p2s1.d1'].id,
                             metadata['p3.p3s1.d1'].id,
                         ],
@@ -938,7 +940,7 @@ describe('useActionButton for Tracked entity instance button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
+        expect(output.dataSourceMetadata).toEqual(metadata.tei1)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with multiple tracked entity types',
         })
