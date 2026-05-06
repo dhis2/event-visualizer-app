@@ -1,9 +1,11 @@
 import i18n from '@dhis2/d2-i18n'
-import { useAppSelector, useMetadataItem, useMetadataStore } from '@hooks'
 import {
-    getTrackedEntityTypeIdFromDataSource,
-    isDataSourceProgramWithoutRegistration,
-} from '@modules/data-source'
+    useAppSelector,
+    useMetadataItem,
+    useMetadataStore,
+    useTetId,
+} from '@hooks'
+import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
 import { isDimensionInLayout } from '@modules/layout'
 import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
@@ -215,6 +217,7 @@ export const useActionButton = (
 ) => {
     const currentVis = useAppSelector(getCurrentVis)
     const dataSourceId = useAppSelector(getDataSourceId)
+    const tetId = useTetId()
     const lastActiveButton = useAppSelector(getVisUiConfigLastActiveButton)
     const layout = useAppSelector(getVisUiConfigLayout)
     const layoutDimensionIds = useAppSelector(
@@ -343,16 +346,14 @@ export const useActionButton = (
     )
 
     const isRegistrationDateInLayout = useMemo(() => {
-        const tetId = getTrackedEntityTypeIdFromDataSource(dataSourceMetadata)
-
         return tetId ? isDimensionInLayout(layout, `${tetId}.created`) : false
-    }, [dataSourceMetadata, layout])
+    }, [layout, tetId])
 
     const isRegistrationOuInLayout = useMemo(() => {
-        const tetId = getTrackedEntityTypeIdFromDataSource(dataSourceMetadata)
-
-        return tetId ? isDimensionInLayout(layout, `${tetId}.ou`) : false
-    }, [dataSourceMetadata, layout])
+        return tetId
+            ? isDimensionInLayout(layout, `${tetId}.enrollmentOu`)
+            : false
+    }, [layout, tetId])
 
     const tooltipConfig = useMemo((): TooltipContent => {
         if (isLayoutEmpty) {
