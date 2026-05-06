@@ -28,6 +28,12 @@ const metadata = {
         programType: 'WITH_REGISTRATION',
         trackedEntityType: { id: 'tei1' },
     },
+    p3: {
+        id: 'p3',
+        name: 'Program3',
+        programType: 'WITH_REGISTRATION',
+        trackedEntityType: { id: 'tei2' },
+    },
     tei1: {
         id: 'tei1',
         name: 'Person',
@@ -76,6 +82,8 @@ const metadata = {
         dimensionType: 'DATA_ELEMENT',
         optionSet: 'OptionSet1',
         valueType: 'TEXT',
+        programId: 'p2',
+        trackedEntityTypeId: 'tei1',
     },
     'p2.p2s1.d2': {
         id: 'p2.p2s1.d2',
@@ -94,6 +102,15 @@ const metadata = {
         name: 'Program indicator',
         dimensionType: 'PROGRAM_INDICATOR',
         valueType: 'TEXT',
+    },
+    'p3.p3s1.d1': {
+        id: 'p3.p3s1.d1',
+        name: 'Dimension1',
+        dimensionType: 'DATA_ELEMENT',
+        optionSet: 'OptionSet1',
+        valueType: 'TEXT',
+        programId: 'p3',
+        trackedEntityTypeId: 'tei2',
     },
     'tei1.created': {
         id: 'tei1.created',
@@ -896,6 +913,34 @@ describe('useActionButton for Tracked entity instance button', () => {
         expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with multiple programs',
+        })
+    })
+
+    it.only('returns correct result for: PT, multiple TET', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('TRACKED_ENTITY_INSTANCE'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [
+                            metadata['p2.p2s1.d1'].id,
+                            metadata['p3.p3s1.d1'].id,
+                        ],
+                    },
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('create')
+        expect(output.dataSourceMetadata).toEqual(metadata.p2)
+        expect(output.tooltipConfig).toEqual({
+            content: 'Not valid with multiple tracked entity types',
         })
     })
 
