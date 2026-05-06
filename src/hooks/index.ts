@@ -38,6 +38,7 @@ export * from './use-rtk-lazy-query'
 export * from './use-conditions-texts'
 export * from './use-options-field'
 export * from './use-stable-callback'
+export * from './use-tet-id'
 
 export const { useMutateMutation: useRtkMutation } = api
 

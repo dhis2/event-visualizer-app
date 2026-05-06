@@ -10,6 +10,7 @@ import {
     buildAxis,
     collectProgramDimensions,
     resolveTeiFields,
+    resolveTetId,
 } from '../layout'
 
 const makeDim = (
@@ -585,6 +586,97 @@ describe('resolveTeiFields', () => {
         const store = makeStore({})
 
         expect(() => resolveTeiFields(state, store)).toThrow(
+            'No metadata found for dimension "ghost" in the layout'
+        )
+    })
+})
+
+describe('resolveTetId', () => {
+    const trackerProgram = {
+        id: 'progA',
+        trackedEntityType: { id: 'tetA', name: 'Person' },
+    } as unknown as Program
+    const eventProgram = { id: 'progB' } as unknown as Program
+
+    const tetOuDim = {
+        id: 'tetA.enrollmentOu',
+        dimensionId: 'enrollmentOu',
+        dimensionType: 'ORGANISATION_UNIT',
+        trackedEntityTypeId: 'tetA',
+    } as DimensionMetadataItem
+    const enrollmentOuDim = {
+        id: 'progA.enrollmentOu',
+        dimensionId: 'enrollmentOu',
+        dimensionType: 'ORGANISATION_UNIT',
+        programId: 'progA',
+    } as DimensionMetadataItem
+    const stageOuDim = {
+        id: 'stage1.ou',
+        dimensionId: 'ou',
+        dimensionType: 'ORGANISATION_UNIT',
+        programId: 'progA',
+        programStageId: 'stage1',
+    } as DimensionMetadataItem
+    const eventProgramOuDim = {
+        id: 'evtStage.ou',
+        dimensionId: 'ou',
+        dimensionType: 'ORGANISATION_UNIT',
+        programId: 'progB',
+        programStageId: 'evtStage',
+    } as DimensionMetadataItem
+    const teaDim = {
+        id: 'tea1',
+        dimensionId: 'tea1',
+        dimensionType: 'PROGRAM_ATTRIBUTE',
+    } as DimensionMetadataItem
+
+    it('returns trackedEntityTypeId directly when ou dim carries it', () => {
+        const store = makeStore({
+            dims: { 'tetA.enrollmentOu': tetOuDim },
+        })
+
+        expect(resolveTetId(['tetA.enrollmentOu'], store)).toBe('tetA')
+    })
+
+    it('walks programId → program.trackedEntityType for enrollment ou', () => {
+        const store = makeStore({
+            dims: { 'progA.enrollmentOu': enrollmentOuDim },
+            programs: { progA: trackerProgram },
+        })
+
+        expect(resolveTetId(['progA.enrollmentOu'], store)).toBe('tetA')
+    })
+
+    it('walks programId → program.trackedEntityType for stage ou', () => {
+        const store = makeStore({
+            dims: { 'stage1.ou': stageOuDim },
+            programs: { progA: trackerProgram },
+        })
+
+        expect(resolveTetId(['stage1.ou'], store)).toBe('tetA')
+    })
+
+    it('returns null for event-program stage ou (program has no TET)', () => {
+        const store = makeStore({
+            dims: { 'evtStage.ou': eventProgramOuDim },
+            programs: { progB: eventProgram },
+        })
+
+        expect(resolveTetId(['evtStage.ou'], store)).toBeNull()
+    })
+
+    it('returns null when layout has no ou dim', () => {
+        const store = makeStore({
+            dims: { tea1: teaDim },
+        })
+
+        expect(resolveTetId(['tea1'], store)).toBeNull()
+    })
+
+    it('throws when a layout dim is missing from the metadata store', () => {
+        const store = makeStore({})
+
+        expect(() => resolveTetId(['ghost'], store)).toThrow(
             'No metadata found for dimension "ghost" in the layout'
         )
     })
