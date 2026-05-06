@@ -45,7 +45,7 @@
 .mainSection {
     /* background: var(--colors-grey050); */
     border-inline-start: 2px solid var(--colors-grey300);
-    margin: 0 0 var(--spacers-dp8);
+    /* margin: 0 0 var(--spacers-dp8); */
     padding: var(--spacers-dp8) 0 var(--spacers-dp12) var(--spacers-dp8);
     overflow: auto;
 }
@@ -71,7 +71,6 @@
 .sectionHeaderButton {
     display: flex;
     align-items: center;
-    gap: var(--spacers-dp4);
     inline-size: 100%;
     min-block-size: 32px;
     padding: var(--spacers-dp8) 0;
@@ -83,9 +82,14 @@
 
 .sectionHeaderButton {
     border: 0;
-    background: transparent;
+    background: var(--colors-white);
     cursor: pointer;
     text-align: start;
+    border-radius: 3px;
+}
+
+.sectionHeaderButton:hover {
+    background: var(--colors-grey100);
 }
 
 .sectionHeaderButton:focus {
@@ -99,12 +103,13 @@
 
 .sectionBody {
     padding-block-end: var(--spacers-dp12);
+    padding-inline-start: var(--spacers-dp16);
 }
 
 .repeatedEventsTiles {
     display: flex;
     gap: var(--spacers-dp8);
-    padding-inline-start: var(--spacers-dp16);
+    padding-block-start: var(--spacers-dp4);
 }
 
 .repeatedEventsTile {
@@ -131,7 +136,7 @@
 
 .repeatedEventsLabel {
     margin-block-start: var(--spacers-dp4);
-    font-size: 12px;
+    font-size: 13px;
     line-height: 16px;
     color: var(--colors-grey900);
 }

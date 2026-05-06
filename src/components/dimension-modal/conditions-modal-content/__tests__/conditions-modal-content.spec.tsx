@@ -67,6 +67,25 @@ const renderConditionsModalContent = async (
 }
 
 describe('<ConditionsModalContent />', () => {
+    it('renders filter content without a section header when there are no other sections', async () => {
+        await renderConditionsModalContent(textDimension, {
+            metadata: {
+                stage123: {
+                    ...repeatableStage,
+                    repeatable: false,
+                },
+            },
+        })
+
+        expect(
+            screen.queryByRole('button', { name: 'Filters' })
+        ).not.toBeInTheDocument()
+        expect(screen.queryByText('Filters')).not.toBeInTheDocument()
+        expect(
+            screen.getByText('Add a filter to only include some values.')
+        ).toBeVisible()
+    })
+
     it('shows filters and keeps repeated events collapsed by default', async () => {
         const user = userEvent.setup()
         const { store } = await renderConditionsModalContent(textDimension)
@@ -135,6 +154,14 @@ describe('<ConditionsModalContent />', () => {
             expect(screen.getByText('Legend')).toBeVisible()
             expect(screen.getByText('Age 10y intervals')).toBeVisible()
         })
+
+        await user.click(screen.getByRole('button', { name: 'Legend' }))
+
+        expect(screen.queryByText('Age 10y intervals')).not.toBeInTheDocument()
+
+        await user.click(screen.getByRole('button', { name: 'Legend' }))
+
+        expect(screen.getByText('Age 10y intervals')).toBeVisible()
 
         await waitFor(() => {
             expect(
@@ -210,7 +237,7 @@ describe('<ConditionsModalContent />', () => {
         })
 
         await waitFor(() => {
-            expect(screen.getByText('Age 10y intervals')).toBeVisible()
+            expect(screen.getAllByText('Age 10y intervals')).not.toHaveLength(0)
             expect(screen.getByText('0 - 10')).toBeVisible()
         })
 
@@ -225,5 +252,30 @@ describe('<ConditionsModalContent />', () => {
         expect(
             screen.getByText('Add a filter to only include some values.')
         ).toBeVisible()
+    })
+
+    it('shows the filters section header when a legend section is rendered', async () => {
+        await renderConditionsModalContent(numericDimension, {
+            metadata: {
+                stage123: {
+                    ...repeatableStage,
+                    repeatable: false,
+                },
+            },
+            queryData: {
+                dataElements: {
+                    legendSets: [
+                        { id: 'legend10y', name: 'Age 10y intervals' },
+                    ],
+                },
+            },
+        })
+
+        await waitFor(() => {
+            expect(screen.getByText('Legend')).toBeVisible()
+            expect(screen.getByText('Age 10y intervals')).toBeVisible()
+        })
+
+        expect(screen.getByRole('button', { name: 'Filters' })).toBeVisible()
     })
 })

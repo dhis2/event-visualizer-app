@@ -30,7 +30,7 @@
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
-    padding: var(--spacers-dp8) var(--spacers-dp12) var(--spacers-dp16);
+    padding: var(--spacers-dp8) var(--spacers-dp8) var(--spacers-dp16);
     overflow: auto;
 }
 
