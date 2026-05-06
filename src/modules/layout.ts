@@ -87,11 +87,11 @@ export const buildAxis = (
         return dimensionRecord
     })
 
-const getLayoutDims = (
-    visUiConfig: VisUiConfigState,
+const getLayoutDimensionMetadataItems = (
+    dimensionIds: string[],
     metadataStore: MetadataStore
 ): DimensionMetadataItem[] =>
-    selectLayoutAllDimensionIds(visUiConfig).map((id) => {
+    dimensionIds.map((id) => {
         const dim = metadataStore.getDimensionMetadataItem(id)
         if (!dim) {
             throw new Error(
@@ -105,7 +105,10 @@ export const collectProgramDimensions = (
     visUiConfig: VisUiConfigState,
     metadataStore: MetadataStore
 ): Program[] => {
-    const layoutDims = getLayoutDims(visUiConfig, metadataStore)
+    const layoutDims = getLayoutDimensionMetadataItems(
+        selectLayoutAllDimensionIds(visUiConfig),
+        metadataStore
+    )
     const programsById = new Map<string, Program>()
     for (const dim of layoutDims) {
         const { programId } = dim
@@ -128,11 +131,35 @@ type TeiFields = {
     attributeDimensions: CurrentVisualization['attributeDimensions']
 }
 
+/* The layout's OU dim is the canonical source for TET context: TET-registration
+ * ou carries trackedEntityTypeId directly; enrollment/stage ou carry a programId
+ * whose program reference provides the TET (or none, for event programs). */
+export const resolveTetId = (
+    dimensionIds: string[],
+    metadataStore: MetadataStore
+): string | null => {
+    const ouDim = getLayoutDimensionMetadataItems(
+        dimensionIds,
+        metadataStore
+    ).find((dim) => dim.dimensionType === 'ORGANISATION_UNIT')
+    return (
+        ouDim?.trackedEntityTypeId ??
+        (ouDim?.programId &&
+            metadataStore.getProgramMetadataItem(ouDim.programId)
+                ?.trackedEntityType?.id) ??
+        null
+    )
+}
+
 export const resolveTeiFields = (
     visUiConfig: VisUiConfigState,
     metadataStore: MetadataStore
 ): TeiFields => {
-    const layoutDims = getLayoutDims(visUiConfig, metadataStore)
+    const dimensionIds = selectLayoutAllDimensionIds(visUiConfig)
+    const layoutDims = getLayoutDimensionMetadataItems(
+        dimensionIds,
+        metadataStore
+    )
     const { outputType } = visUiConfig
 
     const teaDims = layoutDims.filter(
@@ -145,18 +172,7 @@ export const resolveTeiFields = (
               }))
             : undefined
 
-    /* The layout's OU dim is the canonical source for TET context: TET-registration
-     * ou carries trackedEntityTypeId directly; enrollment/stage ou carry a programId
-     * whose program reference provides the TET (or none, for event programs). */
-    const ouDim = layoutDims.find(
-        (dim) => dim.dimensionType === 'ORGANISATION_UNIT'
-    )
-    const tetId =
-        ouDim?.trackedEntityTypeId ??
-        (ouDim?.programId &&
-            metadataStore.getProgramMetadataItem(ouDim.programId)
-                ?.trackedEntityType?.id) ??
-        null
+    const tetId = resolveTetId(dimensionIds, metadataStore)
 
     if (!tetId) {
         if (outputType === 'TRACKED_ENTITY_INSTANCE') {
