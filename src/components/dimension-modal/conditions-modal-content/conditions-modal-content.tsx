@@ -39,7 +39,10 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
 
     return (
         <div className={classes.sectionStack}>
-            <ConditionsTabContent dimension={dimension} />
+            <ConditionsTabContent
+                dimension={dimension}
+                hasRepeatedEventsSection={canConfigureRepeatedEvents}
+            />
             {canConfigureRepeatedEvents && (
                 <ConditionsSection
                     title={i18n.t('Repeated events')}

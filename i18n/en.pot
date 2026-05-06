@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-05T13:52:11.910Z\n"
-"PO-Revision-Date: 2026-05-05T13:52:11.911Z\n"
+"POT-Creation-Date: 2026-05-06T07:19:47.162Z\n"
+"PO-Revision-Date: 2026-05-06T07:19:47.163Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -146,9 +146,6 @@ msgstr "Add another filter"
 msgid "Add a filter"
 msgstr "Add a filter"
 
-msgid "Filters"
-msgstr "Filters"
-
 msgid "This dimension can't be filtered. All values will be shown."
 msgstr "This dimension can't be filtered. All values will be shown."
 
@@ -161,11 +158,14 @@ msgstr "Preset options can't be combined with other filters"
 msgid "is one of preset options"
 msgstr "is one of preset options"
 
+msgid "Filters"
+msgstr "Filters"
+
 msgid "and"
 msgstr "and"
 
-msgid "Legend"
-msgstr "Legend"
+msgid "Range grouping"
+msgstr "Range grouping"
 
 msgid "None"
 msgstr "None"
@@ -695,6 +695,9 @@ msgstr "Legend changes text color"
 
 msgid "Legend style"
 msgstr "Legend style"
+
+msgid "Legend"
+msgstr "Legend"
 
 msgid "Select from legends"
 msgstr "Select from legends"

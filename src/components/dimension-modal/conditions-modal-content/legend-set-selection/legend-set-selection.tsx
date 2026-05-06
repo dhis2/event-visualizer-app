@@ -16,7 +16,13 @@ const SUPPORTED_DIMENSION_TYPES: DimensionType[] = [
     'PROGRAM_ATTRIBUTE',
 ]
 
-export const LegendSetSelection: FC = () => {
+type LegendSetSelectionProps = {
+    onSectionVisibilityChange?: (isVisible: boolean) => void
+}
+
+export const LegendSetSelection: FC<LegendSetSelectionProps> = ({
+    onSectionVisibilityChange,
+}) => {
     const { dimension, conditions, setLegendSet } = useConditions()
     const selectedLegendSetId = conditions.legendSet
 
@@ -55,6 +61,11 @@ export const LegendSetSelection: FC = () => {
 
         return options
     }, [legendSets, selectedLegendSetId, selectedLegendSetMetadata?.name])
+    const hasSets = Array.isArray(legendSets) && legendSets.length > 0
+    const isSectionVisible =
+        isSupportedType &&
+        !isLoadingLegendSets &&
+        (hasSets || Boolean(selectedLegendSetId))
 
     /* Auto-pick the data element's first legend set when nothing is chosen yet,
      * once per mount. The modal remounts on each open, so a user who explicitly
@@ -83,6 +94,10 @@ export const LegendSetSelection: FC = () => {
         setLegendSet,
     ])
 
+    useEffect(() => {
+        onSectionVisibilityChange?.(isSectionVisible)
+    }, [isSectionVisible, onSectionVisibilityChange])
+
     const onChange = useCallback<NonNullable<RadioProps['onChange']>>(
         ({ value }) => {
             // Any explicit user choice — including "No legend" — should stop
@@ -96,35 +111,17 @@ export const LegendSetSelection: FC = () => {
         [setLegendSet]
     )
 
-    if (!isSupportedType) {
-        return null
-    }
-
-    if (isLoadingLegendSets) {
-        return null
-    }
-
-    const hasSets = Array.isArray(legendSets) && legendSets.length > 0
-
-    if (!hasSets && !selectedLegendSetId) {
+    if (!isSectionVisible) {
         return null
     }
 
     return (
         <ConditionsSection
-            title={i18n.t('Legend')}
+            title={i18n.t('Range grouping')}
+            collapsible
             dataTest="dimension-popover-legend-section"
         >
             <div className={classes.radioList}>
-                <Radio
-                    name={`legend-set-${dimension.id}`}
-                    value={NO_LEGEND_VALUE}
-                    label={i18n.t('None')}
-                    checked={!selectedLegendSetId}
-                    onChange={onChange}
-                    dense
-                    dataTest="legend-set-option-none"
-                />
                 {availableLegendSets.map((item) => (
                     <Radio
                         name={`legend-set-${dimension.id}`}
@@ -137,6 +134,15 @@ export const LegendSetSelection: FC = () => {
                         dataTest={`legend-set-option-${item.id}`}
                     />
                 ))}
+                <Radio
+                    name={`legend-set-${dimension.id}`}
+                    value={NO_LEGEND_VALUE}
+                    label={i18n.t('None')}
+                    checked={!selectedLegendSetId}
+                    onChange={onChange}
+                    dense
+                    dataTest="legend-set-option-none"
+                />
             </div>
         </ConditionsSection>
     )

@@ -126,10 +126,12 @@ export const useConditions = (): ConditionsProviderValue => {
 
 type ConditionsTabContentProps = {
     dimension: DimensionMetadataItem
+    hasRepeatedEventsSection?: boolean
 }
 
 export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
     dimension,
+    hasRepeatedEventsSection = false,
 }) => {
     const dispatch = useAppDispatch()
 
@@ -197,6 +199,10 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
     const [initialFocusIndex, setInitialFocusIndex] = useState<number | null>(
         null
     )
+    const [legendSectionVisibility, setLegendSectionVisibility] = useState({
+        dimensionId: dimension.id,
+        isVisible: false,
+    })
 
     // Consume-once: clear the flag after the child mounts with initialFocus so
     // a subsequent re-render doesn't try to steal focus again.
@@ -205,6 +211,16 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
             setInitialFocusIndex(null)
         }
     }, [initialFocusIndex])
+
+    const handleLegendSectionVisibilityChange = useCallback(
+        (isVisible: boolean) => {
+            setLegendSectionVisibility({
+                dimensionId: dimension.id,
+                isVisible,
+            })
+        },
+        [dimension.id]
+    )
 
     const toggleDropdown = useCallback(
         () => setIsDropdownOpen((open) => !open),
@@ -330,142 +346,153 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         setLegendSet,
         removeCondition,
     ])
+    const hasLegendSection =
+        legendSectionVisibility.dimensionId === dimension.id &&
+        legendSectionVisibility.isVisible
+    const showFiltersHeader = hasRepeatedEventsSection || hasLegendSection
+    const filterContent = (
+        <>
+            {!isSupported && (
+                <p className={classes.paragraph}>
+                    {i18n.t(
+                        "This dimension can't be filtered. All values will be shown."
+                    )}
+                </p>
+            )}
+            {isSupported && (
+                <div className={classes.mainSection}>
+                    {!conditionsList.length && !isSingleCondition ? (
+                        <p className={classes.paragraph}>
+                            {i18n.t(
+                                'Add a filter to only include some values.'
+                            )}
+                        </p>
+                    ) : (
+                        <Conditions />
+                    )}
+                    {!isSingleCondition && (
+                        <Tooltip
+                            content={i18n.t(
+                                "Preset options can't be combined with other filters"
+                            )}
+                            placement="bottom"
+                            closeDelay={200}
+                        >
+                            {({ onMouseOver, onMouseOut, ref }) => (
+                                <span
+                                    ref={ref}
+                                    onMouseOver={(event) =>
+                                        disableAddButton && onMouseOver(event)
+                                    }
+                                    onMouseOut={(event) =>
+                                        disableAddButton && onMouseOut(event)
+                                    }
+                                    className={classes.tooltipReference}
+                                >
+                                    {conditions.legendSet ? (
+                                        <Button
+                                            type="button"
+                                            small
+                                            secondary
+                                            onClick={addLegendFilter}
+                                            className={
+                                                classes.addConditionButton
+                                            }
+                                            disabled={disableAddButton}
+                                            dataTest="button-add-condition"
+                                        >
+                                            {addButtonLabel}
+                                        </Button>
+                                    ) : (
+                                        <DropdownButton
+                                            type="button"
+                                            small
+                                            secondary
+                                            open={isDropdownOpen}
+                                            onClick={toggleDropdown}
+                                            className={
+                                                classes.addConditionButton
+                                            }
+                                            disabled={disableAddButton}
+                                            dataTest="button-add-condition"
+                                            component={
+                                                <FlyoutMenu
+                                                    dense
+                                                    dataTest="add-condition-menu"
+                                                >
+                                                    {Object.entries(
+                                                        dropdownOperators
+                                                    ).map(([key, label]) => (
+                                                        <MenuItem
+                                                            key={key}
+                                                            label={label}
+                                                            onClick={() =>
+                                                                addCondition(
+                                                                    key as QueryOperator
+                                                                )
+                                                            }
+                                                            dataTest={`add-condition-menu-item-${key}`}
+                                                        />
+                                                    ))}
+                                                    {canHaveLegendSets && (
+                                                        <>
+                                                            <MenuDivider
+                                                                dense
+                                                            />
+                                                            {/* Stricter than disableAddButton: once any condition exists, the IN operator is not offered at all, since it is mutually exclusive with every other operator. */}
+                                                            <MenuItem
+                                                                dense
+                                                                label={i18n.t(
+                                                                    'is one of preset options'
+                                                                )}
+                                                                disabled={
+                                                                    conditionsList.length >
+                                                                    0
+                                                                }
+                                                                onClick={() =>
+                                                                    addCondition(
+                                                                        OPERATOR_IN
+                                                                    )
+                                                                }
+                                                                dataTest={`add-condition-menu-item-${OPERATOR_IN}`}
+                                                            />
+                                                        </>
+                                                    )}
+                                                </FlyoutMenu>
+                                            }
+                                        >
+                                            {addButtonLabel}
+                                        </DropdownButton>
+                                    )}
+                                </span>
+                            )}
+                        </Tooltip>
+                    )}
+                </div>
+            )}
+        </>
+    )
 
     return (
         <ConditionsProvider.Provider value={providerValue}>
-            {canHaveLegendSets && <LegendSetSelection />}
-            <ConditionsSection
-                title={i18n.t('Filters')}
-                collapsible
-                dataTest="dimension-popover-filters-section"
-            >
-                <div>
-                    {isSupported ? null : (
-                        <p className={classes.paragraph}>
-                            {i18n.t(
-                                "This dimension can't be filtered. All values will be shown."
-                            )}
-                        </p>
-                    )}
-                </div>
-                {isSupported && (
-                    <div className={classes.mainSection}>
-                        {!conditionsList.length && !isSingleCondition ? (
-                            <p className={classes.paragraph}>
-                                {i18n.t(
-                                    'Add a filter to only include some values.'
-                                )}
-                            </p>
-                        ) : (
-                            <Conditions />
-                        )}
-                        {!isSingleCondition && (
-                            <Tooltip
-                                content={i18n.t(
-                                    "Preset options can't be combined with other filters"
-                                )}
-                                placement="bottom"
-                                closeDelay={200}
-                            >
-                                {({ onMouseOver, onMouseOut, ref }) => (
-                                    <span
-                                        ref={ref}
-                                        onMouseOver={(event) =>
-                                            disableAddButton &&
-                                            onMouseOver(event)
-                                        }
-                                        onMouseOut={(event) =>
-                                            disableAddButton &&
-                                            onMouseOut(event)
-                                        }
-                                        className={classes.tooltipReference}
-                                    >
-                                        {conditions.legendSet ? (
-                                            <Button
-                                                type="button"
-                                                small
-                                                secondary
-                                                onClick={addLegendFilter}
-                                                className={
-                                                    classes.addConditionButton
-                                                }
-                                                disabled={disableAddButton}
-                                                dataTest="button-add-condition"
-                                            >
-                                                {addButtonLabel}
-                                            </Button>
-                                        ) : (
-                                            <DropdownButton
-                                                type="button"
-                                                small
-                                                secondary
-                                                open={isDropdownOpen}
-                                                onClick={toggleDropdown}
-                                                className={
-                                                    classes.addConditionButton
-                                                }
-                                                disabled={disableAddButton}
-                                                dataTest="button-add-condition"
-                                                component={
-                                                    <FlyoutMenu
-                                                        dense
-                                                        dataTest="add-condition-menu"
-                                                    >
-                                                        {Object.entries(
-                                                            dropdownOperators
-                                                        ).map(
-                                                            ([key, label]) => (
-                                                                <MenuItem
-                                                                    key={key}
-                                                                    label={
-                                                                        label
-                                                                    }
-                                                                    onClick={() =>
-                                                                        addCondition(
-                                                                            key as QueryOperator
-                                                                        )
-                                                                    }
-                                                                    dataTest={`add-condition-menu-item-${key}`}
-                                                                />
-                                                            )
-                                                        )}
-                                                        {canHaveLegendSets && (
-                                                            <>
-                                                                <MenuDivider
-                                                                    dense
-                                                                />
-                                                                {/* Stricter than disableAddButton: once any condition exists, the IN operator is not offered at all, since it is mutually exclusive with every other operator. */}
-                                                                <MenuItem
-                                                                    dense
-                                                                    label={i18n.t(
-                                                                        'is one of preset options'
-                                                                    )}
-                                                                    disabled={
-                                                                        conditionsList.length >
-                                                                        0
-                                                                    }
-                                                                    onClick={() =>
-                                                                        addCondition(
-                                                                            OPERATOR_IN
-                                                                        )
-                                                                    }
-                                                                    dataTest={`add-condition-menu-item-${OPERATOR_IN}`}
-                                                                />
-                                                            </>
-                                                        )}
-                                                    </FlyoutMenu>
-                                                }
-                                            >
-                                                {addButtonLabel}
-                                            </DropdownButton>
-                                        )}
-                                    </span>
-                                )}
-                            </Tooltip>
-                        )}
-                    </div>
-                )}
-            </ConditionsSection>
+            {canHaveLegendSets && (
+                <LegendSetSelection
+                    onSectionVisibilityChange={
+                        handleLegendSectionVisibilityChange
+                    }
+                />
+            )}
+            {showFiltersHeader ? (
+                <ConditionsSection
+                    title={i18n.t('Filters')}
+                    collapsible
+                    dataTest="dimension-popover-filters-section"
+                >
+                    {filterContent}
+                </ConditionsSection>
+            ) : (
+                filterContent
+            )}
         </ConditionsProvider.Provider>
     )
 }
