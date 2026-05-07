@@ -630,6 +630,13 @@ ESLint, Stylelint, and Prettier run automatically via PostToolUse hooks after Ed
 
 File-specific `tsc` is not possible (path aliases, project references). Use the `typescript-lsp` plugin for diagnostics, or run `./scripts/check-typescript.sh` (covers both `tsconfig.json` and `cypress/tsconfig.json`).
 
+**LSP hint-level diagnostics**: the `typescript-lsp` plugin surfaces TypeScript _suggestions_ (LSP severity `Hint`) alongside real errors. Because the project's `tsconfig.json` doesn't enable `noImplicitAny`, `noUnusedLocals`, or `noUnusedParameters`, the following codes show up as informational-only hints and are **not** enforced by `tsc` or `pnpm lint`:
+
+- **TS7044 / TS7043** — "implicitly has an 'any' type, but a better type may be inferred from usage"
+- **TS6133** — "is declared but its value is never read"
+
+If these appear in `<new-diagnostics>` for files you didn't just edit, ignore them silently. Do **not** run `pnpm lint` or `pnpm test` mid-task to confirm they're pre-existing — those belong only in the end-of-task pass. Only act on hints in files you're actually editing.
+
 ### Before finishing
 
 ```bash
