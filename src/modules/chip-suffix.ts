@@ -70,6 +70,34 @@ type SuffixContext = {
     getName: GetName
 }
 
+const getStageScopedSuffix = (
+    dim: SuffixInput,
+    stageId: string,
+    ctx: SuffixContext
+): string | undefined => {
+    if (ctx.stageCount <= 1) {
+        return ctx.programCount > 1 && dim.programId
+            ? ctx.getName(dim.programId)
+            : undefined
+    }
+
+    const stageName = ctx.getName(stageId)
+    if (!stageName) {
+        return undefined
+    }
+
+    const collidingStageIds = ctx.stageIdsByStageName.get(stageName)
+    const hasStageNameCollision =
+        !!collidingStageIds && collidingStageIds.size > 1
+    if (hasStageNameCollision && dim.programId) {
+        const programName = ctx.getName(dim.programId)
+        if (programName) {
+            return `${programName}, ${stageName}`
+        }
+    }
+    return stageName
+}
+
 const computeSuffix = (
     dim: SuffixInput,
     ctx: SuffixContext
@@ -79,28 +107,7 @@ const computeSuffix = (
     }
 
     if (dim.programStageId) {
-        if (ctx.stageCount > 1) {
-            const stageName = ctx.getName(dim.programStageId)
-            if (!stageName) {
-                return undefined
-            }
-            const collidingStageIds = ctx.stageIdsByStageName.get(stageName)
-            if (
-                collidingStageIds &&
-                collidingStageIds.size > 1 &&
-                dim.programId
-            ) {
-                const programName = ctx.getName(dim.programId)
-                if (programName) {
-                    return `${programName}, ${stageName}`
-                }
-            }
-            return stageName
-        }
-        if (ctx.programCount > 1 && dim.programId) {
-            return ctx.getName(dim.programId)
-        }
-        return undefined
+        return getStageScopedSuffix(dim, dim.programStageId, ctx)
     }
 
     if (dim.programId) {

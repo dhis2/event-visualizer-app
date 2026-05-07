@@ -7,19 +7,19 @@ import { useTooltipContentData } from './use-tooltip-content-data'
 
 const MAX_LIST_LENGTH = 5
 
-const ITEM_BASED_DIMENSION_TYPES: ReadonlyArray<DimensionType> = [
+const ITEM_BASED_DIMENSION_TYPES: ReadonlySet<DimensionType> = new Set([
     'CATEGORY',
     'CATEGORY_OPTION_GROUP_SET',
     'ORGANISATION_UNIT_GROUP_SET',
     'STATUS',
     'PERIOD',
     'ORGANISATION_UNIT',
-]
+])
 
-const NO_FALLBACK_DIMENSION_TYPES: ReadonlyArray<DimensionType> = [
+const NO_FALLBACK_DIMENSION_TYPES: ReadonlySet<DimensionType> = new Set([
     'PERIOD',
     'ORGANISATION_UNIT',
-]
+])
 
 type TooltipContentProps = {
     dimension: LayoutDimension
@@ -67,12 +67,15 @@ export const TooltipContent: FC<TooltipContentProps> = ({
 
     const dimensionType = dimension.dimensionType
     const isItemBased =
-        !!dimensionType && ITEM_BASED_DIMENSION_TYPES.includes(dimensionType)
+        !!dimensionType && ITEM_BASED_DIMENSION_TYPES.has(dimensionType)
     const itemsList = isItemBased ? itemDisplayNames : conditionsTexts
     const showStage = dimensionType === 'DATA_ELEMENT'
     const emptyShowsNoneSelected =
         axisId === 'filters' ||
-        (!!dimensionType && NO_FALLBACK_DIMENSION_TYPES.includes(dimensionType))
+        (!!dimensionType && NO_FALLBACK_DIMENSION_TYPES.has(dimensionType))
+    const emptyStateMessage = emptyShowsNoneSelected
+        ? i18n.t('None selected')
+        : i18n.t('Showing all values for this dimension')
 
     return (
         <ul className={styles.list} data-test="tooltip-content">
@@ -97,12 +100,8 @@ export const TooltipContent: FC<TooltipContentProps> = ({
                     itemDisplayNames={itemsList}
                     dimensionId={dimension.id}
                 />
-            ) : emptyShowsNoneSelected ? (
-                <li className={styles.item}>{i18n.t('None selected')}</li>
             ) : (
-                <li className={styles.item}>
-                    {i18n.t('Showing all values for this dimension')}
-                </li>
+                <li className={styles.item}>{emptyStateMessage}</li>
             )}
         </ul>
     )

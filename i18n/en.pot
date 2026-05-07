@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-07T12:55:34.373Z\n"
-"PO-Revision-Date: 2026-05-07T12:55:34.374Z\n"
+"POT-Creation-Date: 2026-05-07T14:12:16.971Z\n"
+"PO-Revision-Date: 2026-05-07T14:12:16.972Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -282,17 +282,17 @@ msgstr "Move to {{axisName}}"
 msgid "all"
 msgstr "all"
 
-msgid "Program: {{- programName}}"
-msgstr "Program: {{- programName}}"
-
-msgid "Program stage: {{- stageName}}"
-msgstr "Program stage: {{- stageName}}"
-
 msgid "None selected"
 msgstr "None selected"
 
 msgid "Showing all values for this dimension"
 msgstr "Showing all values for this dimension"
+
+msgid "Program: {{- programName}}"
+msgstr "Program: {{- programName}}"
+
+msgid "Program stage: {{- stageName}}"
+msgstr "Program stage: {{- stageName}}"
 
 msgid "Levels"
 msgstr "Levels"
