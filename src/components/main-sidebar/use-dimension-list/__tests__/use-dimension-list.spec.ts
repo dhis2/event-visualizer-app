@@ -176,7 +176,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = renderHookWithReduxStoreProvider(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     fixedDimensions,
                 }),
             store
@@ -195,7 +195,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = renderHookWithReduxStoreProvider(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                 }),
             store
         )
@@ -217,7 +217,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -248,7 +248,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = renderHookWithReduxStoreProvider(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -286,7 +286,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = renderHookWithReduxStoreProvider(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -343,7 +343,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = renderHookWithReduxStoreProvider(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     fixedDimensions,
                     baseQuery,
                 }),
@@ -376,7 +376,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             createStoreWithPreloadedState({ filter: 'DATA_ELEMENT' })
@@ -453,7 +453,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     fixedDimensions,
                     baseQuery,
                 }),
@@ -535,7 +535,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     fixedDimensions,
                     baseQuery,
                 }),
@@ -605,7 +605,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -681,7 +681,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = renderHookWithReduxStoreProvider(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     fixedDimensions,
                     // No baseQuery provided
                 }),
@@ -732,7 +732,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -793,7 +793,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -866,7 +866,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -976,7 +976,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = renderHookWithReduxStoreProvider(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     fixedDimensions,
                     baseQuery, // baseQuery has DATA_ELEMENT filter
                 }),
@@ -1014,7 +1014,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -1082,7 +1082,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -1230,7 +1230,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     fixedDimensions,
                     baseQuery,
                 }),
@@ -1316,7 +1316,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = renderHookWithReduxStoreProvider(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     fixedDimensions,
                     baseQuery,
                 }),
@@ -1357,7 +1357,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { unmount, result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -1370,7 +1370,9 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         unmount()
 
         // Verify cleanup action was called
-        expect(removeLoadingStateSpy).toHaveBeenCalledWith('program-indicators')
+        expect(removeLoadingStateSpy).toHaveBeenCalledWith(
+            'event-program-indicators'
+        )
     })
 
     it('isDisabledByFilter recomputes when filter changes', async () => {
@@ -1396,7 +1398,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = renderHookWithReduxStoreProvider(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                     fixedDimensions,
                 }),
@@ -1451,7 +1453,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -1626,7 +1628,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -1649,7 +1651,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -1673,7 +1675,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = renderHookWithReduxStoreProvider(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     fixedDimensions,
                 }),
             store
@@ -1694,7 +1696,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -1713,7 +1715,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { unmount } = renderHookWithReduxStoreProvider(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery,
                 }),
             store
@@ -1782,7 +1784,7 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         const { result } = await renderHookAndWaitForInitialLoad(
             () =>
                 useDimensionList({
-                    dimensionListKey: 'program-indicators',
+                    dimensionListKey: 'event-program-indicators',
                     baseQuery: {
                         resource: 'trackedEntityTypes',
                     } as SingleQuery,

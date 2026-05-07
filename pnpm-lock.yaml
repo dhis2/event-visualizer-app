@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@dhis2/analytics':
-        specifier: ^29.4.2
-        version: 29.4.2(@dhis2/app-runtime@3.16.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@dhis2/d2-i18n@1.2.0)(@dhis2/ui@10.12.13(@dhis2/app-runtime@3.16.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@dhis2/d2-i18n@1.2.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-jsx@4.0.1(@babel/core@7.29.0)(react@18.3.1)))(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-jsx@4.0.1(@babel/core@7.29.0)(react@18.3.1))
+        specifier: ^29.5.0
+        version: 29.5.0(@dhis2/app-runtime@3.16.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@dhis2/d2-i18n@1.2.0)(@dhis2/ui@10.12.13(@dhis2/app-runtime@3.16.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@dhis2/d2-i18n@1.2.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-jsx@4.0.1(@babel/core@7.29.0)(react@18.3.1)))(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-jsx@4.0.1(@babel/core@7.29.0)(react@18.3.1))
       '@dhis2/app-runtime':
         specifier: ^3.16.0
         version: 3.16.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -153,6 +153,9 @@ importers:
       openapi-typescript:
         specifier: ^7.13.0
         version: 7.13.0(typescript@5.9.3)
+      opensrc:
+        specifier: ^0.7.1
+        version: 0.7.1
       prettier:
         specifier: ^3.8.1
         version: 3.8.1
@@ -1395,8 +1398,8 @@ packages:
       react-dom: ^16.13 || ^18
       styled-jsx: ^4
 
-  '@dhis2/analytics@29.4.2':
-    resolution: {integrity: sha512-ROHpjDx2fxoLm7srAnEaftAoKpJ4K11ejlOOZri0y091RXXhgjB0HJtILQLqrbQg1cjvxcOSfNPTz0WrDy9s7w==}
+  '@dhis2/analytics@29.5.0':
+    resolution: {integrity: sha512-/xwcteLBiBkkcp6CdaS3oy7igijKCKuma5vH5tS/eBpgrfS+6MOv6tl0HjqzC2KChGldcGiH5SUebiAM+MLTDw==}
     peerDependencies:
       '@dhis2/app-runtime': ^3
       '@dhis2/d2-i18n': ^1.1
@@ -6300,6 +6303,10 @@ packages:
     peerDependencies:
       typescript: ^5.x
 
+  opensrc@0.7.1:
+    resolution: {integrity: sha512-Dah1lZtpOckjJt4yHwTK2/VwMQX6WRoaWzsMc11OzS+EjyETUvdLqEEYqRBSaOd+uDZ3EQcxl2UeYl2AdCnpLw==}
+    hasBin: true
+
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
     engines: {node: '>= 0.8.0'}
@@ -7997,11 +8004,12 @@ packages:
 
   uuid@3.4.0:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
-    deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   v8-to-istanbul@8.1.1:
@@ -10192,7 +10200,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       styled-jsx: 4.0.1(@babel/core@7.29.0)(react@18.3.1)
 
-  '@dhis2/analytics@29.4.2(@dhis2/app-runtime@3.16.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@dhis2/d2-i18n@1.2.0)(@dhis2/ui@10.12.13(@dhis2/app-runtime@3.16.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@dhis2/d2-i18n@1.2.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-jsx@4.0.1(@babel/core@7.29.0)(react@18.3.1)))(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-jsx@4.0.1(@babel/core@7.29.0)(react@18.3.1))':
+  '@dhis2/analytics@29.5.0(@dhis2/app-runtime@3.16.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@dhis2/d2-i18n@1.2.0)(@dhis2/ui@10.12.13(@dhis2/app-runtime@3.16.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@dhis2/d2-i18n@1.2.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-jsx@4.0.1(@babel/core@7.29.0)(react@18.3.1)))(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(styled-jsx@4.0.1(@babel/core@7.29.0)(react@18.3.1))':
     dependencies:
       '@dhis2/app-runtime': 3.16.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@dhis2/d2-i18n': 1.2.0
@@ -16296,6 +16304,8 @@ snapshots:
       supports-color: 10.2.2
       typescript: 5.9.3
       yargs-parser: 21.1.1
+
+  opensrc@0.7.1: {}
 
   optionator@0.9.4:
     dependencies:

@@ -3,6 +3,8 @@ import {
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
+import { defaultTransformer } from '@components/main-sidebar/use-dimension-list/default-transformer'
+import type { Transformer } from '@components/main-sidebar/use-dimension-list/default-transformer'
 import { getProgramAttributeQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import {
     useSelectedDimensionCount,
@@ -10,29 +12,29 @@ import {
 } from '@components/main-sidebar/use-selected-dimension-count'
 import i18n from '@dhis2/d2-i18n'
 import { useCurrentUser } from '@hooks'
-import type {
-    DataSourceProgramWithRegistration,
-    DimensionMetadataItem,
-} from '@types'
+import { getTrackedEntityTypeFixedDimensions } from '@modules/dimension'
+import type { DataSourceProgramWithRegistration } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
+
+const transformProgramAttributes = (
+    data: unknown,
+    trackedEntityTypeId: string
+): ReturnType<Transformer> => {
+    const { dimensions, nextPage } = defaultTransformer(data)
+    return {
+        nextPage,
+        dimensions: dimensions.map((dimension) => ({
+            ...dimension,
+            trackedEntityTypeId,
+        })),
+    }
+}
 
 type CardTrackedEntityTypeProps = {
     program: DataSourceProgramWithRegistration
 }
 
 const CARD_AND_LIST_KEY = 'program-tracked-entity-type'
-
-const getFixedDimensions = (
-    program: DataSourceProgramWithRegistration
-): DimensionMetadataItem[] => [
-    {
-        id: `${program.trackedEntityType.id}.ou`,
-        dimensionId: 'ou',
-        dimensionType: 'ORGANISATION_UNIT',
-        name: i18n.t('Registration org. unit'),
-        valueType: 'ORGANISATION_UNIT',
-    },
-]
 
 export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
     program,
@@ -46,8 +48,11 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
             program.trackedEntityType.name,
     })
     const fixedDimensions = useMemo(
-        () => getFixedDimensions(program),
-        [program]
+        () =>
+            getTrackedEntityTypeFixedDimensions(
+                program.trackedEntityType
+            ).filter((dimension) => dimension.dimensionId === 'enrollmentOu'),
+        [program.trackedEntityType]
     )
     const baseQuery = useMemo(
         () =>
@@ -58,14 +63,23 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
             ),
         [program.id, program.trackedEntityType.id, displayNameProperty]
     )
+    const transformer = useCallback<Transformer>(
+        (data) =>
+            transformProgramAttributes(data, program.trackedEntityType.id),
+        [program.trackedEntityType.id]
+    )
     const listProps = useDimensionList({
         dimensionListKey: CARD_AND_LIST_KEY,
         baseQuery,
         fixedDimensions,
+        transformer,
     })
     const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
         (selectedDimension) => {
-            if (selectedDimension.id === `${program.trackedEntityType.id}.ou`) {
+            if (
+                selectedDimension.id ===
+                `${program.trackedEntityType.id}.enrollmentOu`
+            ) {
                 return true
             }
             if (selectedDimension.dimensionType === 'PROGRAM_ATTRIBUTE') {

@@ -200,7 +200,7 @@ describe('dimensionSelectionSlice', () => {
                 ...initialState,
                 dimensionListLoadingStates: {
                     other: { isLoading: true, error: undefined },
-                    'program-indicators': {
+                    'event-program-indicators': {
                         isLoading: false,
                         error: undefined,
                     },
@@ -211,7 +211,10 @@ describe('dimensionSelectionSlice', () => {
                 removeDimensionListLoadingState('other')
             )
             expect(state.dimensionListLoadingStates).toEqual({
-                'program-indicators': { isLoading: false, error: undefined },
+                'event-program-indicators': {
+                    isLoading: false,
+                    error: undefined,
+                },
             })
         })
 
@@ -473,7 +476,7 @@ describe('dimensionSelectionSlice', () => {
             const stateWithLoading = createRootState({
                 dimensionListLoadingStates: {
                     other: { isLoading: false, error: undefined },
-                    'program-indicators': {
+                    'event-program-indicators': {
                         isLoading: true,
                         error: undefined,
                     },
@@ -484,7 +487,7 @@ describe('dimensionSelectionSlice', () => {
             const stateWithoutLoading = createRootState({
                 dimensionListLoadingStates: {
                     other: { isLoading: false, error: undefined },
-                    'program-indicators': {
+                    'event-program-indicators': {
                         isLoading: false,
                         error: undefined,
                     },
@@ -509,7 +512,7 @@ describe('dimensionSelectionSlice', () => {
                         isLoading: false,
                         error: error1,
                     },
-                    'program-indicators': {
+                    'event-program-indicators': {
                         isLoading: false,
                         error: undefined,
                     },
@@ -553,7 +556,7 @@ describe('dimensionSelectionSlice', () => {
             const state = createRootState({
                 dimensionListLoadingStates: {
                     other: { isLoading: true, error: undefined },
-                    'program-indicators': {
+                    'event-program-indicators': {
                         isLoading: false,
                         error: undefined,
                     },
@@ -566,7 +569,7 @@ describe('dimensionSelectionSlice', () => {
             expect(
                 isDimensionListLoading(
                     state,
-                    'program-indicators' as DimensionListKey
+                    'event-program-indicators' as DimensionListKey
                 )
             ).toBe(false)
             expect(
@@ -583,7 +586,7 @@ describe('dimensionSelectionSlice', () => {
             const state = createRootState({
                 dimensionListLoadingStates: {
                     other: { isLoading: false, error },
-                    'program-indicators': {
+                    'event-program-indicators': {
                         isLoading: false,
                         error: undefined,
                     },
@@ -596,7 +599,7 @@ describe('dimensionSelectionSlice', () => {
             expect(
                 getDimensionListError(
                     state,
-                    'program-indicators' as DimensionListKey
+                    'event-program-indicators' as DimensionListKey
                 )
             ).toBeUndefined()
             expect(

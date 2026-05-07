@@ -12,7 +12,7 @@ import {
 } from '@dhis2/analytics'
 import { SharingDialog } from '@dhis2/ui'
 import { useAppSelector, useCurrentUser } from '@hooks'
-import { isVisualizationValidForSaveAs } from '@modules/validation'
+import { isVisualizationPersistable } from '@modules/validation'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import type { SavedVisualization } from '@types'
@@ -47,13 +47,18 @@ const ActionsBarDialog: FC<ActionsBarDialogProps> = ({
     const currentVis = useAppSelector(getCurrentVis)
     const savedVis = useAppSelector(getSavedVis)
 
+    // Cast is safe: only consumed when a dialog is open, by which point the
+    // relevant slices are populated (file-menu disables items otherwise).
     const fileObject = useMemo(
         () => ({ ...savedVis, ...currentVis }) as SavedVisualization,
         [currentVis, savedVis]
     )
 
+    // The SaveAs dialog is also opened from the Save button for brand-new
+    // (UNSAVED) visualizations, so this gate must only check persistability
+    // and not require a savedVis.
     const isOnSaveAsEnabled = useMemo(
-        () => isVisualizationValidForSaveAs(currentVis),
+        () => isVisualizationPersistable(currentVis),
         [currentVis]
     )
 

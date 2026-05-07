@@ -9,6 +9,7 @@ import {
     type UseSelectedDimensionCountMatchFn,
 } from '@components/main-sidebar/use-selected-dimension-count'
 import i18n from '@dhis2/d2-i18n'
+import { getTrackedEntityTypeFixedDimensions } from '@modules/dimension'
 import { isObject, isPopulatedString } from '@modules/validation'
 import type {
     DimensionMetadataItem,
@@ -24,7 +25,10 @@ type CardTrackedEntityTypeProps = {
 
 const CARD_AND_LIST_KEY = 'tracked-entity-type'
 
-const transformItem = (item: unknown): DimensionMetadataItem => {
+const transformItem = (
+    item: unknown,
+    trackedEntityTypeId: string
+): DimensionMetadataItem => {
     if (
         isObject(item) &&
         'trackedEntityAttribute' in item &&
@@ -42,44 +46,29 @@ const transformItem = (item: unknown): DimensionMetadataItem => {
             name: item.trackedEntityAttribute.name,
             valueType: item.trackedEntityAttribute.valueType as ValueType,
             dimensionType: 'PROGRAM_ATTRIBUTE',
+            trackedEntityTypeId,
         }
     } else {
         throw new Error('Invalid response data item')
     }
 }
 
-const transformer: Transformer = (data) => {
+const transformTrackedEntityTypeAttributes = (
+    data: unknown,
+    trackedEntityTypeId: string
+): ReturnType<Transformer> => {
     if (
         isObject(data) &&
         'trackedEntityTypeAttributes' in data &&
         Array.isArray(data.trackedEntityTypeAttributes)
     ) {
-        const dimensions = data.trackedEntityTypeAttributes.map(transformItem)
+        const dimensions = data.trackedEntityTypeAttributes.map((item) =>
+            transformItem(item, trackedEntityTypeId)
+        )
         return { dimensions, nextPage: null }
     } else {
         throw new Error('Invalid response data')
     }
-}
-
-export const getFixedDimensions = (
-    trackedEntityType: MetadataItem
-): DimensionMetadataItem[] => {
-    return [
-        {
-            id: `${trackedEntityType.id}.ou`,
-            dimensionId: 'ou',
-            dimensionType: 'ORGANISATION_UNIT',
-            name: i18n.t('Registration org. unit'),
-            valueType: 'ORGANISATION_UNIT',
-        },
-        {
-            id: `${trackedEntityType.id}.created`,
-            dimensionId: 'created',
-            dimensionType: 'PERIOD',
-            name: i18n.t('Registration date'),
-            valueType: 'DATE',
-        },
-    ]
 }
 
 export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
@@ -89,17 +78,12 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
         name: trackedEntityType.name,
     })
     const fixedDimensions = useMemo(
-        () => getFixedDimensions(trackedEntityType),
+        () => getTrackedEntityTypeFixedDimensions(trackedEntityType),
         [trackedEntityType]
     )
     const fixedDimensionIdLookup = useMemo(
-        () =>
-            new Set(
-                getFixedDimensions(trackedEntityType).map(
-                    (dimension) => dimension.id
-                )
-            ),
-        [trackedEntityType]
+        () => new Set(fixedDimensions.map((dimension) => dimension.id)),
+        [fixedDimensions]
     )
     const baseQuery = useMemo<SingleQuery>(
         () => ({
@@ -113,6 +97,11 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
                 ],
             },
         }),
+        [trackedEntityType.id]
+    )
+    const transformer = useCallback<Transformer>(
+        (data) =>
+            transformTrackedEntityTypeAttributes(data, trackedEntityType.id),
         [trackedEntityType.id]
     )
     const listProps = useDimensionList({

@@ -4,7 +4,7 @@ import {
     type RepetitionsObject,
 } from '@store/vis-ui-config-slice'
 import type { CurrentVisualization, DimensionRecord } from '@types'
-import { getFullDimensionId } from './dimension'
+import { getCompoundDimensionId } from './dimension'
 import { isObject } from './validation'
 
 type SavedRepetitions = NonNullable<DimensionRecord['repetition']>['indexes']
@@ -18,12 +18,11 @@ export const getRepetitionsFromVisualisation = (
         .filter((d) => d.repetition)
         .reduce((obj, d) => {
             obj[
-                getFullDimensionId({
-                    dimensionId: d.dimension,
-                    programId: d.program?.id,
-                    programStageId: d.programStage?.id,
-                    outputType: vis.outputType,
-                })
+                getCompoundDimensionId(
+                    d,
+                    vis.outputType,
+                    vis.trackedEntityType?.id
+                )
             ] = parseSavedRepetitions(d.repetition?.indexes)
 
             return obj

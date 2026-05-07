@@ -1,4 +1,5 @@
-import type { NewVisualization, SavedVisualization } from '@types'
+import { DEFAULT_OPTIONS } from '@constants/options'
+import type { SavedVisualization } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     getSaveableVisualization,
@@ -88,7 +89,7 @@ const testCases = {
         },
         expected: {
             itemsByDimension: {
-                ou: ['USER_ORGUNIT'],
+                enrollmentOu: ['USER_ORGUNIT'],
                 bcgDoses: [],
                 lastName: [],
                 enrollmentDate: [],
@@ -110,7 +111,7 @@ const testCases = {
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
-                    'ou',
+                    'enrollmentOu',
                     'bcgDoses',
                     'lastName',
                     'enrollmentDate',
@@ -173,7 +174,7 @@ const testCases = {
         },
         expected: {
             itemsByDimension: {
-                ou: ['USER_ORGUNIT'],
+                enrollmentOu: ['USER_ORGUNIT'],
                 enrollmentDate: [],
                 firstName: [],
                 bcgDoses: [],
@@ -188,7 +189,7 @@ const testCases = {
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
-                    'ou',
+                    'enrollmentOu',
                     'enrollmentDate',
                     'firstName',
                     'bcgDoses',
@@ -281,11 +282,16 @@ const testCases = {
         },
         expected: {
             itemsByDimension: {
-                ou: ['USER_ORGUNIT'],
+                enrollmentOu: ['USER_ORGUNIT'],
                 focusName: [],
                 localFocusId: [],
                 area: [],
-                'incidentDateId.ou': ['bombali', 'bonthe', 'bo', 'kailahun'],
+                'incidentDateId.enrollmentOu': [
+                    'bombali',
+                    'bonthe',
+                    'bo',
+                    'kailahun',
+                ],
                 'incidentDateId.enrollmentDate': [],
                 'incidentDateId.dateOfFociRegistrationId.focusDateOfClassification':
                     [],
@@ -299,11 +305,11 @@ const testCases = {
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
-                    'ou',
+                    'enrollmentOu',
                     'focusName',
                     'localFocusId',
                     'area',
-                    'incidentDateId.ou',
+                    'incidentDateId.enrollmentOu',
                     'incidentDateId.enrollmentDate',
                     'incidentDateId.dateOfFociRegistrationId.focusDateOfClassification',
                 ],
@@ -322,9 +328,37 @@ describe('getVisualizationUiConfig', () => {
             const result = getVisualizationUiConfig(
                 input as unknown as SavedVisualization
             )
-            expect(result).toEqual(expected)
+            expect(result).toEqual({ ...expected, options: DEFAULT_OPTIONS })
         }
     )
+
+    it('extracts option fields from the saved vis and overrides the base options', () => {
+        const input = {
+            type: 'LINE_LIST',
+            outputType: 'EVENT',
+            rows: [],
+            columns: [],
+            filters: [],
+            hideTitle: true,
+            title: 'My Saved Title',
+            fontSize: 'LARGE',
+        } as unknown as SavedVisualization
+
+        const baseOptions = {
+            ...DEFAULT_OPTIONS,
+            digitGroupSeparator: 'COMMA' as const,
+            hideTitle: false,
+        }
+
+        const result = getVisualizationUiConfig(input, baseOptions)
+
+        expect(result.options).toEqual({
+            ...baseOptions,
+            hideTitle: true,
+            title: 'My Saved Title',
+            fontSize: 'LARGE',
+        })
+    })
 })
 
 describe('getSaveableVisualization', () => {
@@ -337,6 +371,7 @@ describe('getSaveableVisualization', () => {
                     valueType: 'TEXT',
                 },
             ],
+            rows: [],
             filters: [
                 {
                     dimension: 'b',
@@ -344,7 +379,7 @@ describe('getSaveableVisualization', () => {
                     valueType: 'NUMBER',
                 },
             ],
-        } as unknown as NewVisualization
+        } as unknown as SavedVisualization
 
         const saved = getSaveableVisualization(vis)
 
@@ -361,34 +396,13 @@ describe('getSaveableVisualization', () => {
         expect('valueType' in filt0).toBe(false)
     })
 
-    it('removes programStage when id is not provided', () => {
-        const vis = {
-            programStage: {},
-            columns: [],
-            filters: [],
-        } as unknown as NewVisualization
-
-        const saved = getSaveableVisualization(vis)
-        expect(saved.programStage).toBeUndefined()
-    })
-
-    it('keeps programStage when id is present', () => {
-        const vis = {
-            programStage: { id: 'stage-1', name: 'Stage 1' },
-            columns: [],
-            filters: [],
-        } as unknown as NewVisualization
-
-        const saved = getSaveableVisualization(vis)
-        expect(saved.programStage).toEqual({ id: 'stage-1', name: 'Stage 1' })
-    })
-
     it('removes legacy property before saving', () => {
         const vis = {
             legacy: true,
             columns: [],
+            rows: [],
             filters: [],
-        } as unknown as NewVisualization
+        } as unknown as SavedVisualization
 
         const saved = getSaveableVisualization(vis)
         expect('legacy' in (saved as Record<string, unknown>)).toBe(false)
@@ -401,8 +415,9 @@ describe('getSaveableVisualization', () => {
                 { dimension: 'other', direction: 'asc' },
             ],
             columns: [],
+            rows: [],
             filters: [],
-        } as unknown as NewVisualization
+        } as unknown as SavedVisualization
 
         const saved = getSaveableVisualization(vis)
         expect(saved.sorting).toBeDefined()
@@ -415,13 +430,15 @@ describe('getSaveableVisualization', () => {
     it('sets sorting to undefined when sorting is not provided or empty', () => {
         const vis1 = {
             columns: [],
+            rows: [],
             filters: [],
-        } as unknown as NewVisualization
+        } as unknown as SavedVisualization
         const vis2 = {
             sorting: [],
             columns: [],
+            rows: [],
             filters: [],
-        } as unknown as NewVisualization
+        } as unknown as SavedVisualization
 
         const saved1 = getSaveableVisualization(vis1)
         const saved2 = getSaveableVisualization(vis2)

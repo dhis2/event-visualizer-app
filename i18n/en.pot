@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-04-10T13:20:05.589Z\n"
-"PO-Revision-Date: 2026-04-10T13:20:05.589Z\n"
+"POT-Creation-Date: 2026-05-05T09:31:10.642Z\n"
+"PO-Revision-Date: 2026-05-05T09:31:10.643Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -118,12 +118,6 @@ msgstr "Last year"
 
 msgid "Period"
 msgstr "Period"
-
-msgid "Registration org. unit"
-msgstr "Registration org. unit"
-
-msgid "Organisation unit"
-msgstr "Organisation unit"
 
 msgid "Add to {{axisName}}"
 msgstr "Add to {{axisName}}"
@@ -402,6 +396,9 @@ msgstr "Not valid with multiple program stages"
 msgid "Not valid with event programs"
 msgstr "Not valid with event programs"
 
+msgid "Not valid with multiple tracked entity types"
+msgstr "Not valid with multiple tracked entity types"
+
 msgid "Not valid with program indicators"
 msgstr "Not valid with program indicators"
 
@@ -496,18 +493,6 @@ msgstr "oldest {{repeatEventIndex}}"
 msgid "most recent {{repeatEventIndex}}"
 msgstr "most recent {{repeatEventIndex}}"
 
-msgid "Enrollment org. unit"
-msgstr "Enrollment org. unit"
-
-msgid "Date of enrollment"
-msgstr "Date of enrollment"
-
-msgid "Incident date"
-msgstr "Incident date"
-
-msgid "Enrollment status"
-msgstr "Enrollment status"
-
 msgid "Enrollment data"
 msgstr "Enrollment data"
 
@@ -519,9 +504,6 @@ msgstr "Program indicators"
 
 msgid "{{name}} registration"
 msgstr "{{name}} registration"
-
-msgid "Registration date"
-msgstr "Registration date"
 
 msgid "Choose a data source"
 msgstr "Choose a data source"
@@ -609,18 +591,6 @@ msgstr "Category option group sets"
 
 msgid "Filter"
 msgstr "Filter"
-
-msgid "Event org. unit"
-msgstr "Event org. unit"
-
-msgid "Event date"
-msgstr "Event date"
-
-msgid "Scheduled date"
-msgstr "Scheduled date"
-
-msgid "Event status"
-msgstr "Event status"
 
 msgid "Expand all cards"
 msgstr "Expand all cards"
@@ -1014,6 +984,12 @@ msgstr "No"
 msgid "Not answered"
 msgstr "Not answered"
 
+msgid "Registration date"
+msgstr "Registration date"
+
+msgid "Event status"
+msgstr "Event status"
+
 msgid "Program status"
 msgstr "Program status"
 
@@ -1023,14 +999,41 @@ msgstr "Completed date"
 msgid "Created date"
 msgstr "Created date"
 
+msgid "Event date"
+msgstr "Event date"
+
 msgid "Enrollment date"
 msgstr "Enrollment date"
+
+msgid "Incident date"
+msgstr "Incident date"
+
+msgid "Scheduled date"
+msgstr "Scheduled date"
+
+msgid "Event org. unit"
+msgstr "Event org. unit"
+
+msgid "Enrollment org. unit"
+msgstr "Enrollment org. unit"
+
+msgid "Date of enrollment"
+msgstr "Date of enrollment"
+
+msgid "Enrollment status"
+msgstr "Enrollment status"
+
+msgid "Registration org. unit"
+msgstr "Registration org. unit"
 
 msgid "Columns"
 msgstr "Columns"
 
 msgid "Rows"
 msgstr "Rows"
+
+msgid "Organisation unit"
+msgstr "Organisation unit"
 
 msgid "Data"
 msgstr "Data"

@@ -15,11 +15,13 @@ export const YOUR_DIMENSION_TYPES = asStringLiteralSubsetArray<DimensionType>()(
 )
 
 export const DIMENSION_IDS = [
+    'completed',
     'completedDate',
     'created',
     'createdBy',
     'createdDate',
     'enrollmentDate',
+    'enrollmentOu',
     'eventDate',
     'eventStatus',
     'incidentDate',
@@ -34,8 +36,8 @@ export const DIMENSION_IDS = [
 export const DIMENSION_ID_ORGUNIT: DimensionId = 'ou'
 
 export const TIME_DIMENSION_IDS = [
-    'completedDate',
-    'createdDate',
+    'completedDate', // XXX: is this a thing? or should it be completed
+    'createdDate', // XXX: same for this one
     'enrollmentDate',
     'eventDate',
     'incidentDate',

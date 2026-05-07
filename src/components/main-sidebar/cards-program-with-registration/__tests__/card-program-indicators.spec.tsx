@@ -1,6 +1,6 @@
 import type { UseDimensionListResult } from '@components/main-sidebar/use-dimension-list'
 import { render, screen } from '@testing-library/react'
-import type { DataSourceProgramWithRegistration } from '@types'
+import type { Program } from '@types'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { CardProgramIndicators } from '../card-program-indicators'
 
@@ -50,16 +50,16 @@ const defaultListResult: UseDimensionListResult = {
     isDisabledByFilter: false,
 }
 
-const createProgram = (): DataSourceProgramWithRegistration =>
+const createProgram = (): Program =>
     ({
         id: 'prog1',
         name: 'Test Program',
         programType: 'WITH_REGISTRATION',
         programStages: [],
         trackedEntityType: { id: 'tet1', name: 'Person' },
-    }) as DataSourceProgramWithRegistration
+    }) as Program
 
-describe('CardProgramIndicators', () => {
+describe('CardProgramIndicators (enrollment)', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         mockUseDimensionList.mockReturnValue(defaultListResult)
@@ -119,7 +119,7 @@ describe('CardProgramIndicators', () => {
 
         expect(screen.getByTestId('dimension-card')).toHaveAttribute(
             'data-card-key',
-            'program-indicators'
+            'enrollment-program-indicators'
         )
     })
 })

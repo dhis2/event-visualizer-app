@@ -85,31 +85,25 @@
     "hideSubtitle": false,
     "showDimensionLabels": false,
     "type": "LINE_LIST",
-    "program": {
-        "incidentDateLabel": "Date of Discharge",
-        "programType": "WITHOUT_REGISTRATION",
-        "displayIncidentDate": false,
-        "displayIncidentDateLabel": "Date of Discharge",
-        "id": "eBAyeGv0exc",
-        "programStages": [
-            {
-                "hideDueDate": false,
-                "displayExecutionDateLabel": "Report date",
-                "id": "Zj7UnCAulEk",
-                "repeatable": false,
-                "name": "Inpatient morbidity and mortality"
-            }
-        ],
-        "name": "Inpatient morbidity and mortality"
-    },
-    "programStage": {
-        "hideDueDate": false,
-        "displayExecutionDateLabel": "Report date",
-        "id": "Zj7UnCAulEk",
-        "repeatable": false,
-        "name": "Inpatient morbidity and mortality"
-    },
-    "programDimensions": [],
+    "programDimensions": [
+        {
+            "incidentDateLabel": "Date of Discharge",
+            "programType": "WITHOUT_REGISTRATION",
+            "displayIncidentDate": false,
+            "displayIncidentDateLabel": "Date of Discharge",
+            "id": "eBAyeGv0exc",
+            "programStages": [
+                {
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Report date",
+                    "id": "Zj7UnCAulEk",
+                    "repeatable": false,
+                    "name": "Inpatient morbidity and mortality"
+                }
+            ],
+            "name": "Inpatient morbidity and mortality"
+        }
+    ],
     "outputType": "EVENT",
     "collapseDataDimensions": false,
     "hideNaData": false,
@@ -130,7 +124,13 @@
                     "id": "THIS_QUARTER"
                 }
             ],
-            "dimension": "pe"
+            "dimension": "eventDate",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "ORGANISATION_UNIT",
@@ -139,19 +139,37 @@
                     "id": "ImspTQPwCqd"
                 }
             ],
-            "dimension": "ou"
+            "dimension": "ou",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
             "items": [],
             "dimension": "eMyVanycQSC",
-            "valueType": "DATE"
+            "valueType": "DATE",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
             "items": [],
             "dimension": "qrur9Dvnyt5",
-            "valueType": "INTEGER"
+            "valueType": "INTEGER",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
@@ -161,13 +179,25 @@
             "optionSet": {
                 "id": "eUZ79clX7y1",
                 "name": "Diagnosis ICD10"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
             }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
             "items": [],
             "dimension": "msodh3rEMJa",
-            "valueType": "DATE"
+            "valueType": "DATE",
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            }
         },
         {
             "dimensionType": "PROGRAM_DATA_ELEMENT",
@@ -177,6 +207,12 @@
             "optionSet": {
                 "id": "pC3N9N77UmT",
                 "name": "Gender"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
             }
         },
         {
@@ -187,6 +223,12 @@
             "optionSet": {
                 "id": "iDFPKpFTiVw",
                 "name": "Mode of discharge"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
             }
         }
     ],

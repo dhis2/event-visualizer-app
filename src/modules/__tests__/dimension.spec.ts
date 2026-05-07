@@ -1,12 +1,11 @@
 import type {
     DimensionArray,
-    CurrentVisualization,
-    SavedVisualization,
     DimensionMetadataItem,
+    Program,
+    ProgramStage,
 } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
-    extractPlainDimensionId,
     getFullDimensionId,
     getDimensionIdParts,
     getDimensionsWithSuffix,
@@ -14,50 +13,16 @@ import {
     getMainDimensions,
     getProgramDimensions,
     transformDimensions,
-    isProgramDimensionType,
-    isYourDimensionType,
     isTimeDimensionId,
     getTimeDimensions,
     getTimeDimensionName,
+    toAppLocalDimensions,
+    toEventVisualizationDimensionId,
+    getCompoundDimensionId,
+    getTrackedEntityTypeFixedDimensions,
 } from '../dimension'
 
 const outputType = 'EVENT'
-
-describe('extractPlainDimensionId', () => {
-    it('throws error for empty string', () => {
-        expect(() => extractPlainDimensionId('')).toThrow(
-            'Input is not a populated string'
-        )
-    })
-
-    it('throws error for whitespace-only string', () => {
-        expect(() => extractPlainDimensionId('   ')).toThrow(
-            'Input is not a populated string'
-        )
-    })
-
-    it('throws error when input ends with dot', () => {
-        expect(() => extractPlainDimensionId('dimension.')).toThrow(
-            'Input "dimension." does not contain a dimension ID'
-        )
-    })
-
-    it('extracts dimension ID from all valid nested dimension ID formats', () => {
-        expect(extractPlainDimensionId('dimensionId')).toBe('dimensionId')
-        expect(extractPlainDimensionId('unknownId.dimensionId')).toBe(
-            'dimensionId'
-        )
-        expect(extractPlainDimensionId('unknownId[-1].dimensionId')).toBe(
-            'dimensionId'
-        )
-        expect(extractPlainDimensionId('programId.stageId.dimensionId')).toBe(
-            'dimensionId'
-        )
-        expect(
-            extractPlainDimensionId('programId.stageId[1].dimensionId')
-        ).toBe('dimensionId')
-    })
-})
 
 describe('getFullDimensionId', () => {
     it('returns correct result for: dimensionId', () => {
@@ -410,11 +375,7 @@ describe('transformDimensions', () => {
                 items: [],
             },
         ] as unknown as DimensionArray
-        const visualization = {
-            outputType: 'EVENT',
-            type: 'LINE_LIST',
-        } as CurrentVisualization
-        const result = transformDimensions(dimensions, visualization)
+        const result = transformDimensions(dimensions)
         expect(result).toMatchInlineSnapshot(`
           [
             {
@@ -426,20 +387,19 @@ describe('transformDimensions', () => {
         `)
     })
 
-    it('transforms pe dimension to appropriate time dimension for LINE_LIST', () => {
+    it('strips dy, latitude, and longitude dimensions', () => {
         const dimensions = [
-            { dimension: 'pe', dimensionType: 'PERIOD', items: [] },
+            { dimension: 'ou', dimensionType: 'ORGANISATION_UNIT', items: [] },
+            { dimension: 'dy', dimensionType: 'DATA_X', items: [] },
+            { dimension: 'latitude', dimensionType: 'COORDINATE', items: [] },
+            { dimension: 'longitude', dimensionType: 'COORDINATE', items: [] },
         ] as unknown as DimensionArray
-        const visualization = {
-            outputType: 'EVENT',
-            type: 'LINE_LIST',
-        } as CurrentVisualization
-        const result = transformDimensions(dimensions, visualization)
+        const result = transformDimensions(dimensions)
         expect(result).toMatchInlineSnapshot(`
           [
             {
-              "dimension": "eventDate",
-              "dimensionType": "PERIOD",
+              "dimension": "ou",
+              "dimensionType": "ORGANISATION_UNIT",
               "items": [],
             },
           ]
@@ -449,18 +409,19 @@ describe('transformDimensions', () => {
     it('leaves other dimensions unchanged', () => {
         const dimensions = [
             { dimension: 'ou', dimensionType: 'ORGANISATION_UNIT', items: [] },
-            { dimension: 'longitude', dimensionType: 'COORDINATE', items: [] },
+            { dimension: 'eventDate', dimensionType: 'PERIOD', items: [] },
         ] as unknown as DimensionArray
-        const visualization = {
-            outputType: 'EVENT',
-            type: 'LINE_LIST',
-        } as CurrentVisualization
-        const result = transformDimensions(dimensions, visualization)
+        const result = transformDimensions(dimensions)
         expect(result).toMatchInlineSnapshot(`
           [
             {
               "dimension": "ou",
               "dimensionType": "ORGANISATION_UNIT",
+              "items": [],
+            },
+            {
+              "dimension": "eventDate",
+              "dimensionType": "PERIOD",
               "items": [],
             },
           ]
@@ -534,35 +495,6 @@ describe('getDimensionsWithSuffix', () => {
             outputType: 'TRACKED_ENTITY_INSTANCE',
         })
         expect(result[0].suffix).toBe('Program Name')
-    })
-})
-
-describe('isProgramDimensionType', () => {
-    it('returns true for program dimension types', () => {
-        expect(isProgramDimensionType('DATA_ELEMENT')).toBe(true)
-        expect(isProgramDimensionType('PROGRAM_ATTRIBUTE')).toBe(true)
-        expect(isProgramDimensionType('PROGRAM_INDICATOR')).toBe(true)
-        expect(isProgramDimensionType('CATEGORY')).toBe(true)
-        expect(isProgramDimensionType('CATEGORY_OPTION_GROUP_SET')).toBe(true)
-    })
-
-    it('returns false for non-program dimension types', () => {
-        expect(isProgramDimensionType('PERIOD')).toBe(false)
-        expect(isProgramDimensionType('ORGANISATION_UNIT')).toBe(false)
-        expect(isProgramDimensionType('USER')).toBe(false)
-        expect(isProgramDimensionType('STATUS')).toBe(false)
-    })
-})
-
-describe('isYourDimensionType', () => {
-    it('returns true for your dimension types', () => {
-        expect(isYourDimensionType('ORGANISATION_UNIT_GROUP_SET')).toBe(true)
-    })
-
-    it('returns false for non-your dimension types', () => {
-        expect(isYourDimensionType('DATA_ELEMENT')).toBe(false)
-        expect(isYourDimensionType('PERIOD')).toBe(false)
-        expect(isYourDimensionType('ORGANISATION_UNIT')).toBe(false)
     })
 })
 
@@ -653,11 +585,11 @@ describe('getTimeDimensionName', () => {
         displayEnrollmentDateLabel: 'Custom Enrollment Date',
         displayIncidentDateLabel: 'Custom Incident Date',
         programType: 'WITH_REGISTRATION',
-    } as unknown as SavedVisualization['program']
+    } as unknown as Program
     const mockStage = {
         displayExecutionDateLabel: 'Custom Event Date',
         displayDueDateLabel: 'Custom Due Date',
-    } as unknown as SavedVisualization['programStage']
+    } as unknown as ProgramStage
 
     it('returns default name when no program provided', () => {
         const dimension = getTimeDimensions().eventDate
@@ -690,9 +622,396 @@ describe('getTimeDimensionName', () => {
         const dimension = getTimeDimensions().incidentDate
         const programWithoutLabel = {
             programType: 'WITH_REGISTRATION',
-        } as unknown as SavedVisualization['program']
+        } as unknown as Program
         expect(getTimeDimensionName(dimension, programWithoutLabel)).toBe(
             'Incident date'
         )
+    })
+})
+
+describe('toAppLocalDimensions', () => {
+    it('renames ou to enrollmentOu when dimension has program but no programStage', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'ou',
+                items: [],
+                program: { id: 'prog1' },
+            },
+        ]
+        const result = toAppLocalDimensions(dims)
+        expect(result[0].dimension).toBe('enrollmentOu')
+        expect(result[0].program).toEqual({ id: 'prog1' })
+    })
+
+    it('keeps ou unchanged when dimension has programStage (stage-scoped)', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'ou',
+                items: [],
+                program: { id: 'prog1' },
+                programStage: { id: 'stage1' },
+            },
+        ]
+        const result = toAppLocalDimensions(dims)
+        expect(result[0].dimension).toBe('ou')
+    })
+
+    it('renames ou to enrollmentOu when dimension has no program/stage (TEI registration ou)', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'ou',
+                items: [],
+            },
+        ]
+        const result = toAppLocalDimensions(dims)
+        expect(result[0].dimension).toBe('enrollmentOu')
+    })
+
+    it('does not modify non-ou dimensions', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'enrollmentDate',
+                items: [],
+                program: { id: 'prog1' },
+            },
+            {
+                dimension: 'eventDate',
+                items: [],
+                programStage: { id: 'stage1' },
+            },
+        ]
+        const result = toAppLocalDimensions(dims)
+        expect(result[0].dimension).toBe('enrollmentDate')
+        expect(result[1].dimension).toBe('eventDate')
+    })
+
+    it('strips program and programStage from ORGANISATION_UNIT_GROUP_SET dimensions (legacy backend noise)', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'area',
+                dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+                items: [],
+                program: { id: 'prog1' },
+                programStage: { id: 'stage1' },
+            },
+        ]
+        const result = toAppLocalDimensions(dims)
+        expect(result[0].dimension).toBe('area')
+        expect(result[0].program).toBeUndefined()
+        expect(result[0].programStage).toBeUndefined()
+    })
+
+    it('preserves other fields on a stripped contextless dimension', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'area',
+                dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+                items: [{ id: 'urban' }, { id: 'rural' }],
+                program: { id: 'prog1' },
+                programStage: { id: 'stage1' },
+            },
+        ]
+        const result = toAppLocalDimensions(dims)
+        expect(result[0].items).toEqual([{ id: 'urban' }, { id: 'rural' }])
+        expect(result[0].dimensionType).toBe('ORGANISATION_UNIT_GROUP_SET')
+    })
+})
+
+describe('toEventVisualizationDimensionId', () => {
+    describe('enrollmentOu', () => {
+        it('keeps enrollmentOu for program-scope + EVENT + LINE_LIST', () => {
+            expect(
+                toEventVisualizationDimensionId({
+                    dimensionId: 'enrollmentOu',
+                    programId: 'prog1',
+                    outputType: 'EVENT',
+                    visualizationType: 'LINE_LIST',
+                })
+            ).toBe('enrollmentOu')
+        })
+
+        it('rewrites to ou for program-scope + ENROLLMENT + LINE_LIST', () => {
+            expect(
+                toEventVisualizationDimensionId({
+                    dimensionId: 'enrollmentOu',
+                    programId: 'prog1',
+                    outputType: 'ENROLLMENT',
+                    visualizationType: 'LINE_LIST',
+                })
+            ).toBe('ou')
+        })
+
+        it('keeps enrollmentOu for program-scope + TRACKED_ENTITY_INSTANCE + LINE_LIST', () => {
+            expect(
+                toEventVisualizationDimensionId({
+                    dimensionId: 'enrollmentOu',
+                    programId: 'prog1',
+                    outputType: 'TRACKED_ENTITY_INSTANCE',
+                    visualizationType: 'LINE_LIST',
+                })
+            ).toBe('enrollmentOu')
+        })
+
+        it('rewrites to ou for program-scope + EVENT + PIVOT_TABLE', () => {
+            expect(
+                toEventVisualizationDimensionId({
+                    dimensionId: 'enrollmentOu',
+                    programId: 'prog1',
+                    outputType: 'EVENT',
+                    visualizationType: 'PIVOT_TABLE',
+                })
+            ).toBe('ou')
+        })
+
+        it('rewrites to ou for program-scope + ENROLLMENT + PIVOT_TABLE', () => {
+            expect(
+                toEventVisualizationDimensionId({
+                    dimensionId: 'enrollmentOu',
+                    programId: 'prog1',
+                    outputType: 'ENROLLMENT',
+                    visualizationType: 'PIVOT_TABLE',
+                })
+            ).toBe('ou')
+        })
+
+        it('rewrites to ou for TEI registration scope (no programId) + LINE_LIST', () => {
+            expect(
+                toEventVisualizationDimensionId({
+                    dimensionId: 'enrollmentOu',
+                    outputType: 'TRACKED_ENTITY_INSTANCE',
+                    visualizationType: 'LINE_LIST',
+                })
+            ).toBe('ou')
+        })
+    })
+
+    it('passes through other dimension IDs unchanged', () => {
+        expect(
+            toEventVisualizationDimensionId({
+                dimensionId: 'eventDate',
+                programId: 'prog1',
+                outputType: 'ENROLLMENT',
+                visualizationType: 'PIVOT_TABLE',
+            })
+        ).toBe('eventDate')
+        expect(
+            toEventVisualizationDimensionId({
+                dimensionId: 'ou',
+                programId: 'prog1',
+                outputType: 'ENROLLMENT',
+                visualizationType: 'PIVOT_TABLE',
+            })
+        ).toBe('ou')
+        expect(
+            toEventVisualizationDimensionId({
+                dimensionId: 'enrollmentDate',
+                programId: 'prog1',
+                outputType: 'ENROLLMENT',
+                visualizationType: 'PIVOT_TABLE',
+            })
+        ).toBe('enrollmentDate')
+    })
+})
+
+describe('getCompoundDimensionId', () => {
+    it('returns plain ID for PROGRAM_INDICATOR regardless of context', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'bcgDoses',
+                    dimensionType: 'PROGRAM_INDICATOR',
+                    items: [],
+                    program: { id: 'prog1' },
+                    programStage: { id: 'stage1' },
+                },
+                'EVENT'
+            )
+        ).toBe('bcgDoses')
+    })
+
+    it('returns plain ID for PROGRAM_ATTRIBUTE regardless of context', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'firstName',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                    items: [],
+                    program: { id: 'prog1' },
+                },
+                'ENROLLMENT'
+            )
+        ).toBe('firstName')
+    })
+
+    it('prefixes enrollment-scoped dimensions with programId', () => {
+        const enrollmentDims = [
+            'enrollmentOu',
+            'enrollmentDate',
+            'incidentDate',
+            'programStatus',
+        ]
+        for (const dimId of enrollmentDims) {
+            expect(
+                getCompoundDimensionId(
+                    {
+                        dimension: dimId,
+                        items: [],
+                        program: { id: 'prog1' },
+                    },
+                    'ENROLLMENT'
+                )
+            ).toBe(`prog1.${dimId}`)
+        }
+    })
+
+    it('prefixes enrollment-scoped dimensions with programId even when programStage is present', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'enrollmentDate',
+                    items: [],
+                    program: { id: 'prog1' },
+                    programStage: { id: 'stage1' },
+                },
+                'ENROLLMENT'
+            )
+        ).toBe('prog1.enrollmentDate')
+    })
+
+    it('uses stageId.dimensionId for EVENT with programStage', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'weight',
+                    items: [],
+                    program: { id: 'prog1' },
+                    programStage: { id: 'stage1' },
+                },
+                'EVENT'
+            )
+        ).toBe('stage1.weight')
+    })
+
+    it('uses stageId.dimensionId for ENROLLMENT with programStage', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'weight',
+                    items: [],
+                    program: { id: 'prog1' },
+                    programStage: { id: 'stage1' },
+                },
+                'ENROLLMENT'
+            )
+        ).toBe('stage1.weight')
+    })
+
+    it('uses programId.stageId.dimensionId for TRACKED_ENTITY_INSTANCE with programStage', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'weight',
+                    items: [],
+                    program: { id: 'prog1' },
+                    programStage: { id: 'stage1' },
+                },
+                'TRACKED_ENTITY_INSTANCE'
+            )
+        ).toBe('prog1.stage1.weight')
+    })
+
+    it('uses programId.dimensionId when only program is present (no stage)', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'someField',
+                    items: [],
+                    program: { id: 'prog1' },
+                },
+                'EVENT'
+            )
+        ).toBe('prog1.someField')
+    })
+
+    it('uses trackedEntityTypeId prefix for TEI registration dimensions', () => {
+        expect(
+            getCompoundDimensionId(
+                { dimension: 'enrollmentOu', items: [] },
+                'TRACKED_ENTITY_INSTANCE',
+                'tet1'
+            )
+        ).toBe('tet1.enrollmentOu')
+
+        expect(
+            getCompoundDimensionId(
+                { dimension: 'created', items: [] },
+                'TRACKED_ENTITY_INSTANCE',
+                'tet1'
+            )
+        ).toBe('tet1.created')
+    })
+
+    it('does not prefix non-registration dimensions with trackedEntityTypeId', () => {
+        expect(
+            getCompoundDimensionId(
+                { dimension: 'lastUpdated', items: [] },
+                'TRACKED_ENTITY_INSTANCE',
+                'tet1'
+            )
+        ).toBe('lastUpdated')
+    })
+
+    it('returns plain ID when no context is present', () => {
+        expect(
+            getCompoundDimensionId({ dimension: 'someField', items: [] })
+        ).toBe('someField')
+    })
+
+    it('returns plain ID for ORGANISATION_UNIT_GROUP_SET after toAppLocalDimensions stripping', () => {
+        // Contextless dimensions have program/programStage stripped at the
+        // boundary; the helper then naturally falls through to plain ID.
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'area',
+                    dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+                    items: [],
+                },
+                'EVENT'
+            )
+        ).toBe('area')
+    })
+})
+
+describe('getTrackedEntityTypeFixedDimensions', () => {
+    it('returns registration org unit and registration date dimensions', () => {
+        const fixedDimensions = getTrackedEntityTypeFixedDimensions({
+            id: 'tet1',
+        })
+
+        expect(fixedDimensions).toHaveLength(2)
+        expect(fixedDimensions).toEqual([
+            expect.objectContaining({
+                id: 'tet1.enrollmentOu',
+                dimensionId: 'enrollmentOu',
+                dimensionType: 'ORGANISATION_UNIT',
+                trackedEntityTypeId: 'tet1',
+            }),
+            expect.objectContaining({
+                id: 'tet1.created',
+                dimensionId: 'created',
+                dimensionType: 'PERIOD',
+                trackedEntityTypeId: 'tet1',
+            }),
+        ])
+    })
+
+    it('uses the tracked entity type id in compound IDs', () => {
+        const fixedDimensions = getTrackedEntityTypeFixedDimensions({
+            id: 'custom-tet',
+        })
+
+        expect(fixedDimensions[0].id).toBe('custom-tet.enrollmentOu')
+        expect(fixedDimensions[1].id).toBe('custom-tet.created')
     })
 })

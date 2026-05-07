@@ -1,17 +1,19 @@
 import {
+    isCurrentVisualizationPersisted,
     isVisualizationEmpty,
-    isVisualizationSaved,
 } from '@modules/visualization'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 import type {
     CurrentVisualization,
-    NewVisualization,
-    SavedVisualization,
+    EmptyVisualization,
     VisualizationNameDescription,
 } from '@types'
 
-export const initialState = {} as CurrentVisualization
+export type CurrentVisState = CurrentVisualization | EmptyVisualization
+
+const makeInitialState = (): CurrentVisState => ({})
+export const initialState = makeInitialState()
 
 export const currentVisSlice = createSlice({
     name: 'currentVis',
@@ -30,7 +32,7 @@ export const currentVisSlice = createSlice({
          */
         setCurrentVis: (
             state,
-            action: PayloadAction<SavedVisualization | NewVisualization>
+            action: PayloadAction<CurrentVisualization>
         ) => ({ ...state, ...action.payload }),
         setCurrentVisNameDescription: (
             state,
@@ -39,16 +41,13 @@ export const currentVisSlice = createSlice({
             if (isVisualizationEmpty(state)) {
                 throw new Error('Cannot rename an empty visualization')
             }
-            return {
-                ...state,
-                ...action.payload,
-            }
+            return { ...state, ...action.payload }
         },
     },
     selectors: {
         getCurrentVis: (state) => state,
         getCurrentVisId: (state) =>
-            isVisualizationSaved(state) ? state.id : null,
+            isCurrentVisualizationPersisted(state) ? state.id : null,
     },
 })
 

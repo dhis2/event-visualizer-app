@@ -6,14 +6,12 @@ import {
 import { useAlert } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import { useAppDispatch, useAppSelector } from '@hooks'
-import {
-    isVisualizationValidForSave,
-    isVisualizationValidForSaveAs,
-} from '@modules/validation'
+import { isVisualizationPersistable } from '@modules/validation'
 import {
     getSaveableVisualization,
     getVisualizationState,
-    isVisualizationSaved,
+    isCurrentVisualizationPersisted,
+    isVisualizationEmpty,
 } from '@modules/visualization'
 import {
     getCurrentVis,
@@ -22,7 +20,7 @@ import {
 import { setNavigationState } from '@store/navigation-slice'
 import { getSavedVis, setSavedVisNameDescription } from '@store/saved-vis-slice'
 import { tLoadSavedVisualization } from '@store/thunks'
-import type { NewVisualization, SavedVisualization } from '@types'
+import type { SavedVisualization } from '@types'
 import { useCallback, useMemo } from 'react'
 
 export const useToolbarActions = () => {
@@ -36,23 +34,38 @@ export const useToolbarActions = () => {
         ({ options }) => options
     )
 
-    const isSaveEnabled = useMemo(
-        () =>
-            ['UNSAVED', 'DIRTY'].includes(
-                getVisualizationState(savedVis, currentVis)
-            ) &&
-            isVisualizationValidForSave({
-                ...currentVis,
-                legacy: savedVis?.legacy,
-            }) &&
-            (!('id' in currentVis) || currentVis.access?.update),
-        [currentVis, savedVis]
-    )
+    const isSaveEnabled = useMemo(() => {
+        if (!isVisualizationPersistable(currentVis)) {
+            return false
+        }
+        switch (getVisualizationState(savedVis, currentVis)) {
+            case 'UNSAVED':
+                // Brand-new vis — no existing record to overwrite; Save
+                // routes through the SaveAs dialog to create the first
+                // persisted copy.
+                return true
+            case 'DIRTY':
+                // Overwriting an existing saved vis. Requires update access
+                // and non-legacy status, both read from savedVis because
+                // `toCurrentVis` strips those fields. Re-saving a legacy vis
+                // in the new format would break older apps that still read
+                // it, so "Save as" is the only allowed path for those.
+                return Boolean(savedVis.access?.update) && !savedVis.legacy
+            default:
+                return false
+        }
+    }, [currentVis, savedVis])
 
-    const isSaveAsEnabled = useMemo(
-        () => isVisualizationValidForSaveAs(currentVis),
-        [currentVis]
-    )
+    const isSaveAsEnabled = useMemo(() => {
+        if (!isVisualizationPersistable(currentVis)) {
+            return false
+        }
+        // Save As copies an existing saved visualization under a new name,
+        // so it requires a savedVis to copy from. UNSAVED (brand-new) is
+        // excluded — there is nothing to copy.
+        const state = getVisualizationState(savedVis, currentVis)
+        return state === 'SAVED' || state === 'DIRTY'
+    }, [currentVis, savedVis])
 
     const onDelete = useCallback(() => {
         dispatch(setNavigationState({ visualizationId: 'new' }))
@@ -107,7 +120,10 @@ export const useToolbarActions = () => {
 
     const onOpen = useCallback(
         (id: string) => {
-            if (isVisualizationSaved(currentVis) && currentVis.id === id) {
+            if (
+                isCurrentVisualizationPersisted(currentVis) &&
+                currentVis.id === id
+            ) {
                 dispatch(
                     tLoadSavedVisualization({ id, updateStatistics: false })
                 )
@@ -155,17 +171,21 @@ export const useToolbarActions = () => {
 
     // Existing visualization
     const onSave = useCallback(async () => {
+        if (isVisualizationEmpty(currentVis)) {
+            throw new Error('onSave called with an empty visualization')
+        }
+
         const { data, error } = await dispatch(
             eventVisualizationsApi.endpoints.updateVisualization.initiate(
                 preparePayloadForSave({
                     visualization: getSaveableVisualization(
-                        currentVis as unknown as SavedVisualization
-                    ) as SavedVisualization,
+                        currentVis as SavedVisualization
+                    ),
                 })
             )
         )
 
-        if (data && isVisualizationSaved(currentVis)) {
+        if (data && isCurrentVisualizationPersisted(currentVis)) {
             // Reload the saved visualization after saving
             // here we should *not* update statistics
             dispatch(
@@ -183,12 +203,16 @@ export const useToolbarActions = () => {
     // it can be a copy of an existing one, but a new id is returned
     const onSaveAs = useCallback(
         async (nameAndDescription: { name: string; description: string }) => {
+            if (isVisualizationEmpty(currentVis)) {
+                throw new Error('onSaveAs called with an empty visualization')
+            }
+
             const { data, error } = await dispatch(
                 eventVisualizationsApi.endpoints.createVisualization.initiate(
                     preparePayloadForSaveAs({
                         visualization: {
                             ...getSaveableVisualization(
-                                currentVis as unknown as NewVisualization
+                                currentVis as SavedVisualization
                             ),
                             // XXX: this ideally should be done in preparePayloadForSaveAs
                             subscribers: [],

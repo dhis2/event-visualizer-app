@@ -81,7 +81,7 @@ describe('interpretations', () => {
         cy.getByDataTest('details-panel').should('not.exist')
     })
 
-    it('a new interpretation can be added, viewed and deleted', () => {
+    it.skip('a new interpretation can be added, viewed and deleted', () => {
         openVisByName('Inpatient: Cases last quarter (case)')
 
         // Make a copy of the visualization

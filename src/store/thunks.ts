@@ -1,15 +1,20 @@
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { extractDataSourceIdFromVisualization } from '@modules/data-source'
-import { formatLayoutForVisualization } from '@modules/layout'
-import { getDisabledOptions } from '@modules/options'
+import {
+    buildAxis,
+    collectProgramDimensions,
+    resolveTeiFields,
+} from '@modules/layout'
+import { getEnabledOptions } from '@modules/options'
 import {
     getVisualizationUiConfig,
-    transformVisualization,
+    isCurrentVisualizationPersisted,
+    isVisualizationEmpty,
+    toCurrentVis,
 } from '@modules/visualization'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import type { AppDispatch, NewVisualization, SavedVisualization } from '@types'
-import deepmerge from 'deepmerge'
+import type { AppDispatch, CurrentVisualization } from '@types'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
 import { setDataSourceId } from './dimensions-selection-slice'
 import { setIsVisualizationLoading, setLoadError } from './loader-slice'
@@ -52,7 +57,7 @@ export const tLoadSavedVisualization = createAsyncThunk<
     AppAsyncThunkConfig
 >(
     'visualization/load',
-    async ({ id, updateStatistics = false }, { dispatch, extra }) => {
+    async ({ id, updateStatistics = false }, { dispatch, getState, extra }) => {
         dispatch(setIsVisualizationLoading(true))
 
         const { data, error } = await dispatch(
@@ -62,19 +67,19 @@ export const tLoadSavedVisualization = createAsyncThunk<
             })
         )
         if (data) {
-            const transformedVisualization = transformVisualization(data)
-            const selectedDataSourceId = extractDataSourceIdFromVisualization(
-                transformedVisualization
-            )
+            const currentVis = toCurrentVis(data)
+            const selectedDataSourceId =
+                extractDataSourceIdFromVisualization(currentVis)
+            const currentOptions = getState().visUiConfig.options
 
             dispatch(setSavedVis(data))
             dispatch(setDataSourceId(selectedDataSourceId))
             dispatch(
                 setVisUiConfig(
-                    getVisualizationUiConfig(transformedVisualization)
+                    getVisualizationUiConfig(currentVis, currentOptions)
                 )
             )
-            dispatch(setCurrentVis(data))
+            dispatch(setCurrentVis(currentVis))
             dispatch(setIsVisualizationLoading(false))
 
             if (updateStatistics) {
@@ -99,34 +104,49 @@ export const tLoadSavedVisualization = createAsyncThunk<
 )
 
 export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
-    () => (dispatch, getState) => {
-        const { currentVis, visUiConfig } = getState()
+    () => (dispatch, getState, extra) => {
+        const state = getState()
+        const { currentVis, visUiConfig } = state
+        const { metadataStore } = extra
+        const { customValue } = visUiConfig
 
-        const mergedVis = deepmerge(
-            currentVis as Record<string, unknown>,
-            visUiConfig.options as Record<string, unknown>
-        ) as unknown as NewVisualization | SavedVisualization
-
-        const disabledOptions = getDisabledOptions(visUiConfig.options)
-
-        disabledOptions.forEach((disabledOption) => {
-            delete mergedVis[disabledOption]
-        })
-
-        // Overrides
-        const updatedCurrentVis = {
-            ...mergedVis,
-            // visualization type
+        // Build fresh from visUiConfig so stale currentVis fields can't leak
+        // through. Carry over only id and sorting from the previous currentVis.
+        const updatedCurrentVis: CurrentVisualization = {
+            id: isCurrentVisualizationPersisted(currentVis)
+                ? currentVis.id
+                : undefined,
+            sorting: isVisualizationEmpty(currentVis)
+                ? undefined
+                : currentVis.sorting,
             type: visUiConfig.visualizationType,
-            // custom value and aggregation
-            ...(visUiConfig.customValue && {
-                value: {
-                    id: visUiConfig.customValue.id,
-                },
-                aggregationType: visUiConfig.customValue.aggregationType,
-            }),
-            // columns/rows/filters from visUiConfig.layout
-            ...formatLayoutForVisualization(visUiConfig),
+            // output type
+            outputType: visUiConfig.outputType,
+            columns: buildAxis(
+                visUiConfig.layout.columns,
+                visUiConfig,
+                metadataStore
+            ),
+            rows: buildAxis(
+                visUiConfig.layout.rows,
+                visUiConfig,
+                metadataStore
+            ),
+            filters: buildAxis(
+                visUiConfig.layout.filters,
+                visUiConfig,
+                metadataStore
+            ),
+            programDimensions: collectProgramDimensions(
+                visUiConfig,
+                metadataStore
+            ),
+            value: customValue ? { id: customValue.id } : undefined,
+            aggregationType:
+                customValue?.aggregationType ??
+                visUiConfig.options.aggregationType,
+            ...getEnabledOptions(visUiConfig.options),
+            ...resolveTeiFields(visUiConfig, metadataStore),
         }
 
         dispatch(setCurrentVis(updatedCurrentVis))

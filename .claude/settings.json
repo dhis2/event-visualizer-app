@@ -13,7 +13,7 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "FILE=$(echo $TOOL_INPUT | jq -r '.file_path // empty'); if [ -n \"$FILE\" ] && [ -f \"$FILE\" ]; then case \"$FILE\" in *.css) npx prettier --write \"$FILE\" 2>/dev/null; npx stylelint \"$FILE\" --max-warnings=0 2>&1 | tail -5;; *.ts|*.tsx) npx prettier --write \"$FILE\" 2>/dev/null; npx eslint \"$FILE\" 2>&1 | tail -10;; *.json|*.md|*.yml|*.yaml) npx prettier --write \"$FILE\" 2>/dev/null;; esac; fi; exit 0"
+                        "command": "FILE=$(echo $TOOL_INPUT | jq -r '.file_path // empty'); if [ -n \"$FILE\" ] && [ -f \"$FILE\" ]; then case \"$FILE\" in *.css) npx prettier --write \"$FILE\" && echo \"prettier: formatted $FILE\" || echo \"prettier: FAILED on $FILE\"; npx stylelint \"$FILE\" --max-warnings=0 2>&1 | tail -5;; *.ts|*.tsx) npx prettier --write \"$FILE\" && echo \"prettier: formatted $FILE\" || echo \"prettier: FAILED on $FILE\"; npx eslint \"$FILE\" 2>&1 | tail -10;; *.json|*.md|*.yml|*.yaml) npx prettier --write \"$FILE\" && echo \"prettier: formatted $FILE\" || echo \"prettier: FAILED on $FILE\";; esac; fi; exit 0"
                     }
                 ]
             }

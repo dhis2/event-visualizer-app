@@ -6,7 +6,10 @@ import type {
     VisualizationNameDescription,
 } from '@types'
 
-export const initialState: SavedVisualization | EmptyVisualization = {}
+export type SavedVisState = SavedVisualization | EmptyVisualization
+
+const makeInitialState = (): SavedVisState => ({})
+export const initialState = makeInitialState()
 
 export const savedVisSlice = createSlice({
     name: 'savedVis',

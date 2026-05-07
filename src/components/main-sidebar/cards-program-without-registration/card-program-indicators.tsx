@@ -3,7 +3,7 @@ import {
     DimensionList,
 } from '@components/main-sidebar/dimension-card'
 import { useDimensionList } from '@components/main-sidebar/use-dimension-list'
-import { getEnrollmentProgramIndicatorQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
+import { getEventProgramIndicatorQuery } from '@components/main-sidebar/use-dimension-list/query-helpers'
 import {
     useSelectedDimensionCount,
     type UseSelectedDimensionCountMatchFn,
@@ -17,7 +17,7 @@ type CardProgramIndicatorsProps = {
     program: Program
 }
 
-const CARD_AND_LIST_KEY = 'enrollment-program-indicators'
+const CARD_AND_LIST_KEY = 'event-program-indicators'
 
 export const CardProgramIndicators: FC<CardProgramIndicatorsProps> = ({
     program,
@@ -26,8 +26,7 @@ export const CardProgramIndicators: FC<CardProgramIndicatorsProps> = ({
         settings: { displayNameProperty },
     } = useCurrentUser()
     const baseQuery = useMemo(
-        () =>
-            getEnrollmentProgramIndicatorQuery(program.id, displayNameProperty),
+        () => getEventProgramIndicatorQuery(program.id, displayNameProperty),
         [program.id, displayNameProperty]
     )
     const listProps = useDimensionList({

@@ -8,11 +8,13 @@ import { useConfig, useDataEngine } from '@dhis2/app-runtime'
 import { useAppSelector, useCurrentUser } from '@hooks'
 import { isVisualizationValid } from '@modules/validation'
 import {
+    getSingleProgramFromVisualization,
+    getSingleProgramStageFromVisualization,
+    isVisualizationEmpty,
     isVisualizationWithTimeDimension,
-    transformVisualization,
+    transformVisualizationForAnalyticsRequest,
 } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
-import type { CurrentVisualization } from '@types'
 import { useCallback, useState } from 'react'
 import type { DownloadFn } from './types'
 
@@ -28,18 +30,19 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
     const dataEngine = useDataEngine()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
 
-    const currentVis = useAppSelector(getCurrentVis) as CurrentVisualization
+    const currentVis = useAppSelector(getCurrentVis)
     const currentUser = useCurrentUser()
 
     const downloadForLL: DownloadFn = useCallback(
         (type, format, idScheme) => {
-            if (!currentVis) {
+            if (isVisualizationEmpty(currentVis)) {
                 return
             }
 
             let target = '_top'
 
-            const visualization = transformVisualization(currentVis)
+            const visualization =
+                transformVisualizationForAnalyticsRequest(currentVis)
 
             const { adaptedVisualization, headers, parameters } =
                 getAdaptedVisualization(visualization)
@@ -54,12 +57,16 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
             // TEI can use multiple programs
             if (visualization.outputType !== 'TRACKED_ENTITY_INSTANCE') {
                 req = req
-                    .withProgram(visualization.program?.id)
+                    .withProgram(
+                        getSingleProgramFromVisualization(visualization).id
+                    )
                     .withOutputType(visualization.outputType)
             }
 
             if (visualization.outputType === 'EVENT') {
-                req = req.withStage(visualization.programStage?.id)
+                req = req.withStage(
+                    getSingleProgramStageFromVisualization(visualization).id
+                )
             }
 
             if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {

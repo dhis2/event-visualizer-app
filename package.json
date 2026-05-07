@@ -48,6 +48,7 @@
         "jsdom": "^29.0.1",
         "lint-staged": "^16.4.0",
         "openapi-typescript": "^7.13.0",
+        "opensrc": "^0.7.1",
         "prettier": "^3.8.1",
         "resize-observer-polyfill": "^1.5.1",
         "start-server-and-test": "^3.0.0",
@@ -60,7 +61,7 @@
         "vitest-canvas-mock": "^1.1.4"
     },
     "dependencies": {
-        "@dhis2/analytics": "^29.4.2",
+        "@dhis2/analytics": "^29.5.0",
         "@dhis2/app-runtime": "^3.16.0",
         "@dhis2/app-service-data": "^3.16.0",
         "@dhis2/ui": "^10.12.12",

@@ -142,7 +142,7 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
                     name={dimension.name}
                     dimensionType={dimension.dimensionType}
                     selected={selected}
-                    disabled={disabled || selected}
+                    disabled={disabled}
                     onClick={handleClick}
                 />
                 {!disabled && !multiSelected && (

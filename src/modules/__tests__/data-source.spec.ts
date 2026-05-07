@@ -1,23 +1,29 @@
-import type { CurrentVisualization } from '@types'
+import type { CurrentVisualization, Program } from '@types'
 import { expect, it, describe } from 'vitest'
 import { extractDataSourceIdFromVisualization } from '../data-source'
 
+const makeProgram = (
+    overrides: Partial<Program> & Pick<Program, 'id'>
+): Program => ({
+    name: `Program ${overrides.id}`,
+    programType: 'WITH_REGISTRATION',
+    programStages: [],
+    trackedEntityType: {
+        id: `tet-${overrides.id}`,
+        name: `Tracked Entity Type ${overrides.id}`,
+    },
+    ...overrides,
+})
+
 describe('extractDataSourceIdFromVisualization', () => {
-    it('should return program.id for outputType ENROLLMENT when program.id is present', () => {
+    it('should return the program id for outputType ENROLLMENT when exactly one program is in programDimensions', () => {
         const visualization: CurrentVisualization = {
             outputType: 'ENROLLMENT',
             type: 'LINE_LIST',
-            program: {
-                id: 'program1',
-                name: 'Program 1',
-                programType: 'WITH_REGISTRATION',
-                programStages: [],
-                trackedEntityType: {
-                    id: 'tet1',
-                    name: 'Tracked Entity Type 1',
-                },
-            },
-            programDimensions: [],
+            columns: [],
+            rows: [],
+            filters: [],
+            programDimensions: [makeProgram({ id: 'program1' })],
             trackedEntityType: undefined,
         }
         expect(extractDataSourceIdFromVisualization(visualization)).toBe(
@@ -25,21 +31,19 @@ describe('extractDataSourceIdFromVisualization', () => {
         )
     })
 
-    it('should return program.id for outputType EVENT when program.id is present', () => {
+    it('should return the program id for outputType EVENT when exactly one program is in programDimensions', () => {
         const visualization: CurrentVisualization = {
             outputType: 'EVENT',
             type: 'LINE_LIST',
-            program: {
-                id: 'program2',
-                name: 'Program 2',
-                programType: 'WITHOUT_REGISTRATION',
-                programStages: [],
-                trackedEntityType: {
-                    id: 'tet2',
-                    name: 'Tracked Entity Type 2',
-                },
-            },
-            programDimensions: [],
+            columns: [],
+            rows: [],
+            filters: [],
+            programDimensions: [
+                makeProgram({
+                    id: 'program2',
+                    programType: 'WITHOUT_REGISTRATION',
+                }),
+            ],
             trackedEntityType: undefined,
         }
         expect(extractDataSourceIdFromVisualization(visualization)).toBe(
@@ -47,21 +51,14 @@ describe('extractDataSourceIdFromVisualization', () => {
         )
     })
 
-    it('should throw error for outputType ENROLLMENT when program.id is missing', () => {
+    it('should throw error for outputType ENROLLMENT when the program id is empty', () => {
         const visualization: CurrentVisualization = {
             outputType: 'ENROLLMENT',
             type: 'LINE_LIST',
-            program: {
-                id: '',
-                name: 'Program',
-                programType: 'WITH_REGISTRATION',
-                programStages: [],
-                trackedEntityType: {
-                    id: 'tet3',
-                    name: 'Tracked Entity Type 3',
-                },
-            },
-            programDimensions: [],
+            columns: [],
+            rows: [],
+            filters: [],
+            programDimensions: [makeProgram({ id: '' })],
             trackedEntityType: undefined,
         }
         expect(() =>
@@ -69,45 +66,49 @@ describe('extractDataSourceIdFromVisualization', () => {
         ).toThrow('No data source could be extracted from visualization object')
     })
 
-    it('should throw error for outputType EVENT when program.id is missing', () => {
+    it('should throw error for outputType EVENT when programDimensions is empty', () => {
         const visualization: CurrentVisualization = {
             outputType: 'EVENT',
             type: 'LINE_LIST',
-            program: undefined,
+            columns: [],
+            rows: [],
+            filters: [],
             programDimensions: [],
             trackedEntityType: undefined,
         }
         expect(() =>
             extractDataSourceIdFromVisualization(visualization)
-        ).toThrow('No data source could be extracted from visualization object')
+        ).toThrow('Expected exactly one program in programDimensions, found 0')
     })
 
-    it('should return first programDimensions.id for outputType TRACKED_ENTITY_INSTANCE with single programDimension', () => {
+    it('should throw error for outputType EVENT when programDimensions has multiple programs', () => {
+        const visualization: CurrentVisualization = {
+            outputType: 'EVENT',
+            type: 'LINE_LIST',
+            columns: [],
+            rows: [],
+            filters: [],
+            programDimensions: [
+                makeProgram({ id: 'prog1' }),
+                makeProgram({ id: 'prog2' }),
+            ],
+            trackedEntityType: undefined,
+        }
+        expect(() =>
+            extractDataSourceIdFromVisualization(visualization)
+        ).toThrow('Expected exactly one program in programDimensions, found 2')
+    })
+
+    it('should return first programDimensions.id alphabetically for outputType TRACKED_ENTITY_INSTANCE with multiple programDimensions', () => {
         const visualization: CurrentVisualization = {
             outputType: 'TRACKED_ENTITY_INSTANCE',
             type: 'LINE_LIST',
-            program: undefined,
+            columns: [],
+            rows: [],
+            filters: [],
             programDimensions: [
-                {
-                    id: 'prog2',
-                    name: 'Program B',
-                    programType: 'WITH_REGISTRATION',
-                    programStages: [],
-                    trackedEntityType: {
-                        id: 'tet5',
-                        name: 'Tracked Entity Type 5',
-                    },
-                },
-                {
-                    id: 'prog1',
-                    name: 'Program A',
-                    programType: 'WITH_REGISTRATION',
-                    programStages: [],
-                    trackedEntityType: {
-                        id: 'tet6',
-                        name: 'Tracked Entity Type 6',
-                    },
-                },
+                makeProgram({ id: 'prog2', name: 'Program B' }),
+                makeProgram({ id: 'prog1', name: 'Program A' }),
             ],
             trackedEntityType: undefined,
         }
@@ -116,45 +117,30 @@ describe('extractDataSourceIdFromVisualization', () => {
         )
     })
 
-    it('should return sorted first programDimensions.id for outputType TRACKED_ENTITY_INSTANCE with multiple programDimensions', () => {
+    it('should return the single programDimensions.id for outputType TRACKED_ENTITY_INSTANCE with a single programDimension', () => {
         const visualization: CurrentVisualization = {
             outputType: 'TRACKED_ENTITY_INSTANCE',
             type: 'LINE_LIST',
-            program: undefined,
+            columns: [],
+            rows: [],
+            filters: [],
             programDimensions: [
-                {
-                    id: 'prog1',
-                    name: 'Program A',
-                    programType: 'WITH_REGISTRATION',
-                    programStages: [],
-                    trackedEntityType: {
-                        id: 'tet4',
-                        name: 'Tracked Entity Type 4',
-                    },
-                },
-                {
-                    id: 'prog1',
-                    name: 'Program A',
-                    programType: 'WITH_REGISTRATION',
-                    programStages: [],
-                    trackedEntityType: {
-                        id: 'tet6',
-                        name: 'Tracked Entity Type 6',
-                    },
-                },
+                makeProgram({ id: 'prog-only', name: 'Program Only' }),
             ],
             trackedEntityType: undefined,
         }
         expect(extractDataSourceIdFromVisualization(visualization)).toBe(
-            'prog1'
-        ) // 'Program A' comes first alphabetically
+            'prog-only'
+        )
     })
 
     it('should return trackedEntityType.id for outputType TRACKED_ENTITY_INSTANCE when programDimensions is empty', () => {
         const visualization: CurrentVisualization = {
             outputType: 'TRACKED_ENTITY_INSTANCE',
             type: 'LINE_LIST',
-            program: undefined,
+            columns: [],
+            rows: [],
+            filters: [],
             programDimensions: [],
             trackedEntityType: { id: 'tet1', name: 'TET 1' },
         }
@@ -165,7 +151,9 @@ describe('extractDataSourceIdFromVisualization', () => {
         const visualization: CurrentVisualization = {
             outputType: 'TRACKED_ENTITY_INSTANCE',
             type: 'LINE_LIST',
-            program: undefined,
+            columns: [],
+            rows: [],
+            filters: [],
             programDimensions: [],
             trackedEntityType: { id: '', name: 'TET' },
         }
@@ -178,19 +166,10 @@ describe('extractDataSourceIdFromVisualization', () => {
         const visualization: CurrentVisualization = {
             outputType: 'TRACKED_ENTITY_INSTANCE',
             type: 'LINE_LIST',
-            program: undefined,
-            programDimensions: [
-                {
-                    id: '',
-                    name: 'Program A',
-                    programType: 'WITH_REGISTRATION',
-                    programStages: [],
-                    trackedEntityType: {
-                        id: 'tet7',
-                        name: 'Tracked Entity Type 7',
-                    },
-                },
-            ],
+            columns: [],
+            rows: [],
+            filters: [],
+            programDimensions: [makeProgram({ id: '', name: 'Program A' })],
             trackedEntityType: undefined,
         }
         expect(() =>

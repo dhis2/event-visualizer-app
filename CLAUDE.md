@@ -15,6 +15,13 @@ This is a DHIS2 Event Visualizer application built with React, TypeScript, Vite,
 - **Linting/Formatting**: ESLint, Prettier, Stylelint via `@dhis2/cli-style`
 - **i18n**: DHIS2 i18n utilities for internationalization
 
+### Project Stage
+
+This is an unreleased app under active development. Some defaults that suit stable codebases are loosened:
+
+- **Refactor freely when it improves clarity or reduces tech debt**, even outside the strict scope of the current task. Scope creep is fine here.
+- **Keep README and other documentation in sync with code changes**: when you change behavior, structure, or setup steps, update the relevant docs in the same change rather than waiting for an explicit ask.
+
 ## DHIS2 App Shell Structure
 
 This is a DHIS2 "App Shell App" with a special build structure:
@@ -104,10 +111,19 @@ pnpm generate-types # Regenerate DHIS2 API types from OpenAPI specs
 
 ### Code Style
 
-- **Comments**: Describe what the code does and why, not the journey that led to it. Avoid
-  comments that explain rejected alternatives, implementation history, or defensive rationale.
-  Keep inline comments short (one line where possible); use JSDoc only for public API surfaces
-  that benefit from a brief description.
+- **Self-documenting code over comments**: Prefer well-named intermediate variables and
+  small helpers over explanatory comments. If a block needs a comment to explain what it
+  does, first ask whether extracting a named variable or function would make the comment
+  unnecessary.
+- **When to comment**: Only for (a) domain/business context that can't be inferred from the
+  code, or (b) code that is genuinely hard to comprehend on its own. Never write a comment
+  that restates what the next line does.
+- **Never include time-bound information**: No references to previous implementations,
+  refactor history, future plans, removed alternatives, or comparisons to other helpers that
+  may move/disappear. Comments describe what's there and why — not how the code evolved.
+- **Multi-line comments always use `/* */`**. Never stack multiple `//` lines for a block
+  comment.
+- **JSDoc**: Reserve for public API surfaces that genuinely benefit from a brief description.
 
 ### TypeScript & Imports
 
@@ -144,6 +160,9 @@ pnpm generate-types # Regenerate DHIS2 API types from OpenAPI specs
 - **CSS Modules**: kebab-case (e.g., `event-chart.module.css`)
 
 ### Testing Guidelines
+
+- **Test behavior, not implementation details**: assert on what callers observe, not on private state, internal call sequences, or how a result was produced.
+- **Cover new functionality**: when adding or changing logic, add tests in the same change — including edge cases and error conditions, not just the happy path.
 
 #### Unit Tests (Vitest)
 
@@ -277,6 +296,73 @@ describe('useMyUtilityHook', () => {
 - **Browser testing with Chrome DevTools**: When using the Chrome DevTools plugin to test the running app, read `cypress.env.json` (gitignored) for the DHIS2 server URL and login credentials. The dev server on `localhost:3000` shows a login form requiring Server, Username, and Password
 - **Deployment**: App can be deployed as both a standalone app and a plugin
 
+## Understanding the DHIS2 Web API
+
+AI models frequently hallucinate DHIS2 API details — endpoint paths, query parameters, response
+shapes, and filter syntax all evolve between versions. Do not rely on training data for DHIS2 API
+specifics. Instead, consult the actual API of the target instance using the approaches below.
+
+Read `cypress.env.json` (gitignored) for the DHIS2 server URL and credentials. Use these for all
+API interactions described in this section.
+
+### Tier 1: OpenAPI spec (endpoint structure, parameters, types)
+
+Fetch the scoped OpenAPI spec for the endpoint you need. The DHIS2 API supports path-filtered
+specs so you get only the relevant section:
+
+```bash
+curl -u <user>:<pass> "<server>/api/openapi.yaml?path=/<resource>"
+```
+
+Examples:
+
+- `/api/openapi.yaml?path=/analytics` — analytics endpoints
+- `/api/openapi.yaml?path=/trackedEntities` — tracker endpoints
+- `/api/openapi.yaml?path=/organisationUnits` — org unit endpoints
+
+This gives you endpoint paths, HTTP methods, query parameters, and request/response schemas —
+accurate for the exact server version. Use this as the first step when working with any DHIS2
+API endpoint.
+
+### Tier 2: Probe the live API (verify actual response shapes)
+
+When the OpenAPI spec doesn't fully answer the question — especially for complex endpoints like
+`/api/analytics` where responses vary based on query parameters — make GET requests against the
+dev instance to see actual data:
+
+```bash
+curl -u <user>:<pass> "<server>/api/<resource>?<params>"
+```
+
+**Rules:**
+
+- **GET requests only** — never POST, PUT, PATCH, or DELETE against the instance
+- **Use the dev/test instance** from `cypress.env.json`, never a production server
+- **Limit response size** — use `pageSize=1` or `pageSize=5` and `fields=` filtering to avoid
+  flooding context with large responses
+
+This is useful for understanding actual response shapes, testing filter syntax, verifying which
+fields are returned, and exploring dimension/analytics data structures.
+
+### Tier 3: Read the DHIS2 backend source (controller logic)
+
+When you need to understand _how_ the API works — filter combination logic, validation rules,
+side effects, or behavior not captured in specs — read the Java source code of the DHIS2 backend.
+
+```bash
+npx opensrc dhis2/dhis2-core --modify
+```
+
+This clones the DHIS2 backend source into `./opensrc/repos/github.com/dhis2/dhis2-core/`.
+The directory is gitignored. Controllers are in `dhis-2/dhis-web-api/`, DTOs and models in
+`dhis-2/dhis-api/`. Search for the controller class (e.g. `AnalyticsController`,
+`OrganisationUnitController`).
+
+If the user specifies a DHIS2 version, target that branch: `npx opensrc dhis2/dhis2-core#2.41 --modify`.
+
+Use an Explore subagent to search the cloned source — the codebase is large and reading Java
+inline floods context. The subagent can extract the API contract and return a compact summary.
+
 ## Important Configuration Files
 
 - `package.json` - Dependencies and scripts
@@ -369,20 +455,146 @@ metadata provider. Understanding it is essential when working with any program d
 - `ProgramStage` always carries a `program: { id: string }` back-reference, so the owning
   program can be resolved from a stage without a separate lookup.
 
-### Compound ID forms
+### Backend vs frontend compound ID formats
 
-| Form                            | Example                      | When valid                                                                                     |
-| ------------------------------- | ---------------------------- | ---------------------------------------------------------------------------------------------- |
-| `stageId.dimensionId`           | `Zj7UnCAulEk.ou`             | Always — this is the **canonical** form                                                        |
-| `programId.dimensionId`         | `eBAyeGv0exc.ou`             | Enrollment-level fixed dimensions in tracker programs (e.g. enrollment date, org unit, status) |
-| `programId.stageId.dimensionId` | `eBAyeGv0exc.Zj7UnCAulEk.ou` | Any program — collapsed to canonical on ingest                                                 |
+The DHIS2 backend uses **different compound ID formats** across endpoints. The frontend normalizes
+this inconsistency by adopting the analytics format as its canonical internal representation.
+
+**Analytics API** (`/api/analytics/events/query/{programId}`): returns `stageId.dimensionId` in
+response headers and `metaData.dimensions` keys. The program is implicit in the request URL, so
+the stage is the only prefix needed to disambiguate dimensions.
+
+**eventVisualizations API** (`/api/eventVisualizations`): uses `programId.stageId.dimensionId`
+(or `programId.dimensionId`) in the persisted `columnDimensions`/`rowDimensions`/`filterDimensions`
+string arrays. On the populated `columns`/`rows`/`filters` objects, `program` and `programStage`
+are transient fields (not persisted) — they are resolved at read time from the qualified dimension
+strings and from hydrated Hibernate associations.
+
+**Frontend canonical form**: `stageId.dimensionId` — matching the analytics API. This is the
+format used in Redux state (metadata keys, layout arrays, `visUiConfig`). The frontend chose this
+format because analytics data flows continuously during rendering, while the visualization API is
+only hit on save/load. The translation cost is paid once at the API boundary (see below).
+
+### Compound ID forms (frontend canonical)
+
+| Form                            | Example                      | When used                                                                             |
+| ------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------- |
+| `stageId.dimensionId`           | `Zj7UnCAulEk.ou`             | EVENT/ENROLLMENT — this is the **canonical** form                                     |
+| `programId.dimensionId`         | `eBAyeGv0exc.ou`             | TRACKED_ENTITY — enrollment-level dimensions (e.g. enrollment date, org unit, status) |
+| `programId.stageId.dimensionId` | `eBAyeGv0exc.Zj7UnCAulEk.ou` | TRACKED_ENTITY — stage-level dimensions; collapsed to canonical on ingest             |
 
 A repetition index `[n]` may be appended to the stage segment: `ps1[0].ou`.
 
-The **canonical** form is always `stageId.dimensionId`. 3-segment keys are collapsed to canonical
-form on ingest via pure string manipulation (drop the first segment) — no metadata map lookup
-required. `programId.dimensionId` keys are stored as-is because they are semantically tied to the
-program (enrollment scope), not to any stage.
+The interpretation of a 2-segment ID depends on `outputType`:
+
+- **EVENT/ENROLLMENT**: `part1.part2` → `stageId.dimensionId` (no programId)
+- **TRACKED_ENTITY**: `part1.part2` → `programId.dimensionId` (no stageId)
+
+3-segment keys (`programId.stageId.dimensionId`) are collapsed to `stageId.dimensionId` on ingest
+for EVENT/ENROLLMENT via pure string manipulation (drop the first segment). For TRACKED_ENTITY,
+the programId is preserved. `programId.dimensionId` keys in TRACKED_ENTITY context are stored
+as-is because they are semantically tied to the program (enrollment scope), not to any stage.
+
+### Fixed dimensions
+
+Fixed dimensions are the structural dimensions that exist for every program/stage (org units,
+dates, statuses). They are built by shared helpers in `src/modules/dimension.ts`
+(`getStageFixedDimensions`, `getEnrollmentFixedDimensions`, `getTrackedEntityTypeFixedDimensions`)
+and consumed by both the sidebar cards and the metadata provider.
+
+| Scope      | Dimension ID     | Compound ID notation               | Display name source                                          | Sidebar card |
+| ---------- | ---------------- | ---------------------------------- | ------------------------------------------------------------ | ------------ |
+| Stage      | `ou`             | `stageId.ou`                       | `program.displayOrgUnitLabel` or "Event org. unit"           | Stage        |
+| Stage      | `eventDate`      | `stageId.eventDate`                | `stage.displayExecutionDateLabel` or "Event date"            | Stage        |
+| Stage      | `scheduledDate`  | `stageId.scheduledDate`            | `stage.displayDueDateLabel` or "Scheduled date"              | Stage        |
+| Stage      | `eventStatus`    | `stageId.eventStatus`              | "Event status"                                               | Stage        |
+| Enrollment | `ou`             | `programId.ou`                     | `program.displayOrgUnitLabel` or "Enrollment org. unit"      | Enrollment   |
+| Enrollment | `enrollmentDate` | `programId.enrollmentDate`         | `program.displayEnrollmentDateLabel` or "Date of enrollment" | Enrollment   |
+| Enrollment | `incidentDate`   | `programId.incidentDate`           | `program.displayIncidentDateLabel` or "Incident date"        | Enrollment   |
+| Enrollment | `programStatus`  | `programId.programStatus`          | "Enrollment status"                                          | Enrollment   |
+| TEI        | `enrollmentOu`   | `trackedEntityTypeId.enrollmentOu` | "Registration org. unit"                                     | Registration |
+| TEI        | `created`        | `trackedEntityTypeId.created`      | "Registration date"                                          | Registration |
+
+Non-fixed dimensions use compound or plain IDs depending on their type:
+
+- **Data elements, categories, COGS** → compound: `stageId.dimensionId`
+- **Program indicators, tracked entity attributes** → **plain** `dimensionId` (no prefix,
+  even though their dimension records carry `program`/`programStage` context)
+- **Metadata dims** (`lastUpdated`, `createdBy`, `lastUpdatedBy`, `created`, `completed`)
+  → plain `dimensionId`
+
+`getCompoundDimensionId` in `src/modules/dimension.ts` constructs the canonical app-local
+compound ID from a `DimensionRecord`. It applies these rules in order:
+
+1. `PROGRAM_INDICATOR` / `PROGRAM_ATTRIBUTE` → always plain `dimensionId`
+2. Enrollment-scoped IDs (`enrollmentOu`, `enrollmentDate`, `incidentDate`, `programStatus`)
+   → `programId.dimensionId`
+3. Has `programStage` → `stageId.dimensionId` (or `programId.stageId.dimensionId` for TEI)
+4. Has `program` → `programId.dimensionId`
+5. TEI with `trackedEntityTypeId` → `trackedEntityTypeId.dimensionId`
+6. Otherwise → plain `dimensionId`
+
+**Org unit scopes**: the app uses distinct dimension IDs for different org unit scopes:
+
+- **Event org unit**: `ou` with `programStage` → compound `stageId.ou`
+- **Enrollment org unit**: `enrollmentOu` → compound `programId.enrollmentOu`.
+  `toAppLocalDimensions` renames API `ou` (with program, no programStage) to `enrollmentOu`
+  at the API → app-local boundary. `toApiDimensionId` does the inverse on save — but only
+  in some outputType/visType combinations (see table below).
+- **Registration org unit**: `enrollmentOu` with `trackedEntityType` (no program/stage) →
+  compound `tetId.enrollmentOu`. The TEI registration OU shares the `enrollmentOu` dimension
+  ID with the program-scope enrollment OU; the prefix (programId vs trackedEntityTypeId)
+  distinguishes them.
+
+**`enrollmentOu` POST translation by outputType/visType/scope**: the eventVisualizations
+POST endpoint accepts `enrollmentOu` verbatim only when the dim carries a program qualifier
+AND the visualization is in EVENT/TEI LINE_LIST mode. Other combinations — including the
+TEI registration OU, which has no program qualifier — must be sent as bare `ou`.
+`toEventVisualizationDimensionId` applies this mapping on save:
+
+| outputType                | visType       | dim has `programId`? | POST dimension | Rewrite `enrollmentOu` → `ou`? |
+| ------------------------- | ------------- | -------------------- | -------------- | ------------------------------ |
+| `EVENT`                   | `LINE_LIST`   | yes                  | `enrollmentOu` | no                             |
+| `ENROLLMENT`              | `LINE_LIST`   | yes                  | `ou`           | yes                            |
+| `TRACKED_ENTITY_INSTANCE` | `LINE_LIST`   | yes (program-scope)  | `enrollmentOu` | no                             |
+| `TRACKED_ENTITY_INSTANCE` | `LINE_LIST`   | no (registration)    | `ou`           | yes                            |
+| `EVENT`                   | `PIVOT_TABLE` | yes                  | `ou`           | yes                            |
+| `ENROLLMENT`              | `PIVOT_TABLE` | yes                  | `ou`           | yes                            |
+
+Rule: rewrite to `ou` when the dim has no `programId` (i.e. TEI registration scope)
+OR `outputType === 'ENROLLMENT'` OR `visType === 'PIVOT_TABLE'`. Keep as `enrollmentOu`
+only for program-scope dims in `EVENT`/`TRACKED_ENTITY_INSTANCE` `LINE_LIST`.
+
+The reverse (load) direction is shape-based — `toAppLocalDimensions` rewrites
+`dim.dimension === 'ou' && !dim.programStage` to `enrollmentOu`. This catches both
+program-scope (`{dimension: 'ou', program: {id}}`) and TEI registration
+(`{dimension: 'ou'}`, no program/stage) and leaves stage event OU
+(`{dimension: 'ou', programStage: {id}}`) untouched.
+
+### Save/load translation at the visualization API boundary
+
+**Loading** (API → frontend): `acSetVisualization` reads each dimension's `program` and
+`programStage` from the populated `columns`/`rows`/`filters` objects and calls `getFullDimensionId`
+(or `formatDimensionId` in the line-listing-app). For EVENT/ENROLLMENT this produces
+`stageId.dimensionId` (dropping the programId). For TRACKED_ENTITY it produces
+`programId.stageId.dimensionId` or `programId.dimensionId`.
+
+**Saving** (frontend → API): `getAxesFromUi` (or equivalent) decomposes the internal compound ID
+via `getDimensionIdParts` (`extractDimensionIdParts` in the line-listing-app) and sends each
+dimension to the API with a plain `dimension` ID plus separate `program` and `programStage`
+objects. The backend's `mergeAnalyticalObject` hydrates the stage from the database (including its
+parent program via `loadProgramForStage`), then `getQualifiedDimension` rebuilds the persisted
+string as `programId.stageId.dimensionId`.
+
+### `programDimensions` field on eventVisualizations
+
+`programDimensions` is a **computed, read-only** field — not persisted. On each GET, the backend
+(`EventVisualizationController.postProcessResponseEntity`) iterates all `DimensionalObject`s in
+`columns`, `rows`, and `filters`, extracts distinct program references, and fetches the full
+`Program` objects. It provides clients with a convenience list of all programs referenced in the
+layout. POSTing this field has no effect.
+
+### Metadata store ordering
 
 When adding metadata to the store in a **single batch** (via `addMetadata`), plain items (programs,
 stages) are always processed before compound-key items, so context is available for field
@@ -403,296 +615,26 @@ reference them.
 
 ## Testing & Linting Workflow for AI Agents
 
-**Golden Rule**: When building a solution, test and lint **specific files only**. When finishing, always run **full project validation** with `pnpm test` and `pnpm lint`.
+**Golden rule**: during development, lint/test only the files you touched. Before finishing, always run `pnpm test` and `pnpm lint`.
 
-### During Development (File-Specific Commands)
+### Per-file commands (during development)
 
-Use these commands when actively working on code to get fast feedback:
+- **Vitest**: `pnpm exec vitest run <file-path>`
+- **ESLint**: `pnpm exec eslint <file-path>` (add `--fix` to auto-fix)
+- **Stylelint**: `pnpm exec stylelint <file-path> --max-warnings=0` (add `--fix` to auto-fix)
+- **Prettier**: `pnpm exec prettier --write <file-path>`
 
-#### Testing Individual Files
+ESLint, Stylelint, and Prettier run automatically via PostToolUse hooks after Edit/Write. Files modified via Bash are **not** auto-formatted — run Prettier manually after.
 
-```bash
-pnpm exec vitest run <file-path>
-# Example: pnpm exec vitest run src/hooks/useEventData.spec.ts
-```
+### TypeScript
 
-#### Linting Individual Files
+File-specific `tsc` is not possible (path aliases, project references). Use the `typescript-lsp` plugin for diagnostics, or run `./scripts/check-typescript.sh` (covers both `tsconfig.json` and `cypress/tsconfig.json`).
 
-**TypeScript Checking**
-
-**Primary: LSP Plugin** — The `typescript-lsp` plugin provides automatic TypeScript diagnostics after every file edit, with full project context (path aliases, multiple tsconfig files). This is the fastest and most accurate method. See [Claude Code Setup](#claude-code-setup) for installation.
-
-**Fallback: Project-wide CLI** — If the LSP plugin is not installed, use:
+### Before finishing
 
 ```bash
-./scripts/check-typescript.sh
-# Or directly:
-pnpm exec tsc --project tsconfig.json --noEmit --skipLibCheck
-pnpm exec tsc --project cypress/tsconfig.json --noEmit --skipLibCheck
+pnpm test     # all unit tests
+pnpm lint     # ESLint, Stylelint, Prettier, TypeScript, ls-lint
 ```
 
-File-specific `tsc` checking is **not possible** due to path aliases and project references.
-
-**ESLint, Stylelint, and Prettier**
-
-These are handled **automatically by PostToolUse hooks** (configured in `.claude/settings.json`). After every Edit/Write, the hook runs Prettier auto-fix and the relevant linter for the file type. You do not need to run these manually during development.
-
-If you need to run them manually (e.g., for debugging):
-
-```bash
-pnpm exec eslint <file-path>                    # Check only
-pnpm exec eslint <file-path> --fix              # Fix automatically
-```
-
-**Secondary: LSP Diagnostics** - NeoVim LSP may show ESLint errors, but OpenCode's LSP integration may filter them. CLI commands are more reliable.
-
-**Rationale**: CLI commands are more reliable and complete than LSP for ESLint.
-
-**Stylelint Checking**
-
-**Primary: File-specific CLI** - Always use CLI commands:
-
-```bash
-pnpm exec stylelint <file-path> --max-warnings=0         # Check only
-pnpm exec stylelint <file-path> --fix --max-warnings=0   # Fix automatically
-```
-
-**Rationale**: CLI commands ensure consistent and complete Stylelint checking.
-
-**Prettier Formatting**
-
-**Primary: File-specific CLI**:
-
-```bash
-pnpm exec prettier --check <file-path>          # Check formatting
-pnpm exec prettier --write <file-path>          # Format automatically
-```
-
-**Rationale**: CLI commands ensure consistent formatting.
-
-**File Type Specific Instructions**:
-
-**TypeScript/TSX files** (`.ts`, `.tsx`):
-
-- **TypeScript**: LSP diagnostics (automatic when reading/editing)
-- **ESLint**: Use file-specific CLI commands
-- **Prettier**: Use file-specific CLI commands
-
-**CSS/SCSS files** (`.css`):
-
-- **Stylelint**: Use file-specific CLI commands
-- **Prettier**: Use file-specific CLI commands
-
-**Other formats** (`.json`, `.md`, `.yml`, `.yaml`):
-
-- **Prettier**: Use file-specific CLI commands
-
-### After Completing Work (Project-Wide Commands)
-
-**Always run these before finishing**:
-
-```bash
-pnpm test          # Run all unit tests (vitest)
-pnpm lint          # Run all linters (ESLint, Stylelint, Prettier, TypeScript, ls-lint)
-```
-
-If there are failures, many can be fixed automatically using `pnpm format`:
-
-```bash
-pnpm format        # Auto-fix formatting and auto-fixable lint issues
-```
-
-After running `pnpm format`, run `pnpm lint` again to verify all issues are resolved. Note that `pnpm format` can resolve:
-
-- Prettier formatting issues (indentation, spacing, quotes, etc.)
-- Auto-fixable ESLint issues (marked with wrench 🔧 icon in ESLint output)
-- Auto-fixable Stylelint issues
-
-Some errors require manual fixes (e.g., type errors, logic issues, certain lint violations).
-
-**Note on TypeScript**: The project has two TypeScript configurations:
-
-- `tsconfig.json` - Main configuration for src files with path aliases
-- `cypress/tsconfig.json` - Configuration for Cypress tests
-
-The `pnpm lint` command checks both configurations. Individual file TypeScript checking via `pnpm exec tsc` is not recommended as it lacks the full project context (path aliases, project references). Use `./scripts/check-typescript.sh` or LSP diagnostics instead.
-
-### Decision Tree
-
-**While working on a solution**:
-
-- Modified 1-3 files → Use file-specific `pnpm exec` commands for each file
-- Need to fix formatting → Use `pnpm exec prettier --write <file-path>` or `pnpm exec eslint <file-path> --fix`
-- Modified many files → Use `pnpm lint` and `pnpm test`
-
-**When finishing a task**:
-
-- Always run `pnpm test` (ensures all tests pass)
-- Always run `pnpm lint` (ensures code quality across project)
-- If lint fails with formatting issues → Run `pnpm format` then `pnpm lint` again
-
-### Common Pitfalls to Avoid
-
-- ❌ **Don't** run `pnpm test` and `pnpm lint` after every small change (wastes time)
-- ❌ **Don't** use `pnpm exec eslint .` when you only changed one file
-- ❌ **Don't** forget to run full `pnpm test` and `pnpm lint` when finishing
-- ✅ **Do** prefer LSP diagnostics for TypeScript checking (fastest with full context)
-- ✅ **Do** use file-specific CLI commands for ESLint and Stylelint (more reliable than LSP)
-- ✅ **Do** run project-wide commands as final validation
-- ✅ **Do** use `pnpm exec prettier --write` to quickly fix formatting issues
-
----
-
-# General Guidelines
-
-## General Principles
-
-### Code Quality
-
-- Write clean, readable, and maintainable code
-- Follow established patterns and conventions for each language/framework
-- Prefer simplicity over complexity
-- Use meaningful and descriptive names for variables, functions, and files
-- Write self-documenting code when possible
-
-### Project Structure
-
-- Organize code logically by feature or domain
-- Keep related files close together
-- Separate concerns appropriately
-- Maintain a consistent directory structure within the project
-- Use clear separation between source code, tests, configuration, and build artifacts
-
-### Code Organization
-
-- Keep functions and methods focused on a single responsibility
-- Limit file size to improve readability
-- Group related functionality together
-- Minimize dependencies between modules
-- Use appropriate abstraction levels
-
-## Testing & Quality Assurance
-
-### Testing Principles
-
-- Write tests for new functionality
-- Prefer unit tests for isolated logic
-- Write integration tests for component interactions
-- Write end-to-end tests for critical user journeys
-- Test edge cases and error conditions
-- Avoid testing implementation details
-- Mock external dependencies appropriately
-
-### Quality Practices
-
-- Run tests before committing changes
-- Maintain test coverage for critical paths
-- Use static analysis tools where available
-- Perform code reviews for significant changes
-- Refactor code to improve clarity and maintainability
-
-## Version Control
-
-### Git Best Practices
-
-- Write clear, descriptive commit messages
-- Follow conventional commits when possible
-- Keep commits focused and atomic
-- Use feature branches for new work
-- Regularly sync with remote repositories
-- Use meaningful branch names
-- Review changes before committing
-
-### Collaboration
-
-- Use pull requests for code review
-- Provide context in PR descriptions
-- Request reviews from appropriate team members
-- Address review feedback promptly
-- Keep PRs manageable in size
-
-## Security
-
-### General Security
-
-- Never commit secrets, API keys, or credentials
-- Use environment variables for configuration
-- Validate and sanitize all user input
-- Follow the principle of least privilege
-- Keep dependencies updated to address security vulnerabilities
-- Use secure communication protocols (HTTPS, TLS)
-
-### Data Protection
-
-- Handle sensitive data with care
-- Implement proper authentication and authorization
-- Log security-relevant events appropriately
-- Follow data protection regulations and best practices
-
-## Performance
-
-### Code Performance
-
-- Write efficient algorithms and data structures
-- Avoid unnecessary computations
-- Use appropriate caching strategies
-- Optimize critical paths
-- Profile code to identify bottlenecks
-
-### System Performance
-
-- Minimize resource usage (CPU, memory, disk, network)
-- Implement lazy loading for heavy resources
-- Optimize bundle sizes where applicable
-- Monitor and optimize network requests
-- Use appropriate compression techniques
-
-## Documentation
-
-### Code Documentation
-
-- Document public APIs and complex logic
-- Keep documentation up to date with code changes
-- Use appropriate documentation tools for the language/framework
-- Include examples for complex functionality
-- Document architectural decisions and trade-offs
-
-### Project Documentation
-
-- Maintain current README files
-- Document setup and development procedures
-- Keep architecture diagrams updated
-- Document deployment and operations procedures
-- Maintain changelogs for significant releases
-
-## Development Workflow
-
-### Local Development
-
-- Use consistent development environments
-- Follow project-specific setup instructions
-- Use local development servers where appropriate
-- Test changes thoroughly before committing
-
-### Code Review Process
-
-- Review your own code before submitting
-- Check for common issues and improvements
-- Ensure tests pass and new tests are added
-- Verify compliance with project guidelines
-
-## Maintenance & Operations
-
-### Code Maintenance
-
-- Regularly update dependencies
-- Refactor code to reduce technical debt
-- Remove unused code and dependencies
-- Update documentation alongside code changes
-
-### Operational Considerations
-
-- Design for observability (logging, monitoring, tracing)
-- Implement proper error handling and recovery
-- Consider scalability and performance implications
-- Plan for maintenance and future enhancements
+If lint fails on formatting/auto-fixable issues, run `pnpm format` then re-run `pnpm lint`. Type errors and logic issues require manual fixes.

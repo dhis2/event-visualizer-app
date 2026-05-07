@@ -17,8 +17,12 @@ import {
     colors,
 } from '@dhis2/ui'
 import { useAppSelector } from '@hooks'
-import { isVisualizationSaved } from '@modules/visualization'
+import {
+    isCurrentVisualizationPersisted,
+    isSavedVisualization,
+} from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
+import { getSavedVis } from '@store/saved-vis-slice'
 import { useMemo, type FC } from 'react'
 import classes from './styles/actions-bar.module.css'
 import { useToolbarActions } from './use-toolbar-actions'
@@ -32,29 +36,27 @@ type FileMenuProps = {
 
 export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
     const currentVis = useAppSelector(getCurrentVis)
+    const savedVis = useAppSelector(getSavedVis)
 
     const { isSaveEnabled, isSaveAsEnabled, onNew, onSave } =
         useToolbarActions()
 
     const hasVisualizationDeleteAccess: boolean = useMemo(
         () =>
-            isVisualizationSaved(currentVis) &&
-            Boolean(currentVis?.access?.delete),
-        [currentVis]
+            isSavedVisualization(savedVis) && Boolean(savedVis.access?.delete),
+        [savedVis]
     )
 
     const hasVisualizationManageAccess: boolean = useMemo(
         () =>
-            isVisualizationSaved(currentVis) &&
-            Boolean(currentVis?.access?.manage),
-        [currentVis]
+            isSavedVisualization(savedVis) && Boolean(savedVis.access?.manage),
+        [savedVis]
     )
 
     const hasVisualizationUpdateAccess: boolean = useMemo(
         () =>
-            isVisualizationSaved(currentVis) &&
-            Boolean(currentVis?.access?.update),
-        [currentVis]
+            isSavedVisualization(savedVis) && Boolean(savedVis.access?.update),
+        [savedVis]
     )
 
     return (
@@ -78,7 +80,7 @@ export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
                 />
                 <HoverMenuListItem
                     label={
-                        isVisualizationSaved(currentVis)
+                        isCurrentVisualizationPersisted(currentVis)
                             ? i18n.t('Save')
                             : i18n.t('Save…')
                     }
@@ -93,7 +95,7 @@ export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
                     }
                     disabled={!isSaveEnabled}
                     onClick={
-                        isVisualizationSaved(currentVis)
+                        isCurrentVisualizationPersisted(currentVis)
                             ? onSave
                             : () => onMenuItemClick('saveas')
                     }
@@ -165,13 +167,13 @@ export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
                     icon={
                         <IconLink24
                             color={
-                                isVisualizationSaved(currentVis)
+                                isCurrentVisualizationPersisted(currentVis)
                                     ? iconActiveColor
                                     : iconInactiveColor
                             }
                         />
                     }
-                    disabled={!isVisualizationSaved(currentVis)}
+                    disabled={!isCurrentVisualizationPersisted(currentVis)}
                     onClick={() => onMenuItemClick('getlink')}
                     dataTest="file-menu-getlink"
                 />

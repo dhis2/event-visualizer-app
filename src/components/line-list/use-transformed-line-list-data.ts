@@ -10,6 +10,7 @@ import {
     getDimensionIdParts,
     getMainDimensions,
     getProgramDimensions,
+    extractPlainDimensionId,
 } from '@modules/dimension'
 import { getStatusNames } from '@modules/status'
 import { headersMap } from '@modules/visualization'
@@ -66,7 +67,7 @@ const getHeaderDimensionId = (
     })
     const idMatch =
         Object.keys(headersMap).find(
-            (key) => headersMap[key] === dimensionId
+            (key) => headersMap[key] === header.name
             // TODO: find a better solution
             // https://dhis2.atlassian.net/browse/DHIS2-20136
         ) ?? ''
@@ -130,17 +131,18 @@ const DATE_VALUE_TYPES: ValueType[] = ['DATE', 'DATETIME']
 
 const getFormattedCellValue = ({
     value,
-    dimensionId,
     header,
     visualization,
 }: {
     value: string
-    dimensionId: string
     header: LineListAnalyticsDataHeader
     visualization: CurrentVisualization
 }) => {
+    // header.name might be prefixed with programStage.id
+    const dimensionId = extractPlainDimensionId(header.name)
+
     if (
-        header.name &&
+        dimensionId &&
         [headersMap.eventStatus, headersMap.programStatus].includes(dimensionId)
     ) {
         return getStatusNames()[value] ?? value
@@ -156,7 +158,7 @@ const getFormattedCellValue = ({
                 headersMap.enrollmentDate,
                 headersMap.incidentDate,
                 headersMap.scheduledDate,
-            ].includes(dimensionId)
+            ].includes(header.name)
         ) {
             // override valueType for time dimensions to format the value as date (DHIS2-17855)
             valueType = 'DATE'
@@ -221,7 +223,6 @@ export const transformLineListData = (
         row.map((value, columnIndex) => ({
             formattedValue: getFormattedCellValue({
                 value,
-                dimensionId: headers[columnIndex].dimensionId,
                 header: data.headers[columnIndex],
                 visualization,
             }),

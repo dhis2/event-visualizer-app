@@ -51,40 +51,26 @@ describe('MetadataStore', () => {
               "id": "COMPLETED",
               "name": "Completed",
             },
-            "GieVkTxp4HH": {
-              "code": "DE_240794",
-              "dimensionId": "GieVkTxp4HH",
-              "dimensionType": "DATA_ELEMENT",
-              "id": "GieVkTxp4HH",
-              "legendSetId": "TBxGTceyzwy",
-              "name": "Height in cm",
-              "valueType": "NUMBER",
-            },
             "HS8QXAJtuKV": {
               "dimensionId": "HS8QXAJtuKV",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "HS8QXAJtuKV",
               "name": "Inpatient bed days average",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
             },
             "ImspTQPwCqd": {
               "id": "ImspTQPwCqd",
               "name": "Sierra Leone",
               "path": "/ImspTQPwCqd",
             },
-            "K6uUAvq500H": {
-              "code": "DE_3000010",
-              "dimensionId": "K6uUAvq500H",
-              "dimensionType": "DATA_ELEMENT",
-              "id": "K6uUAvq500H",
-              "name": "Diagnosis (ICD-10)",
-              "optionSetId": "eUZ79clX7y1",
-              "valueType": "TEXT",
-            },
             "Kswd1r4qWLh": {
               "dimensionId": "Kswd1r4qWLh",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "Kswd1r4qWLh",
               "name": "Average height of boys at 10 years old",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
             },
             "LAST_12_MONTHS": {
               "id": "LAST_12_MONTHS",
@@ -184,14 +170,6 @@ describe('MetadataStore', () => {
               "id": "SCHEDULE",
               "name": "Scheduled",
             },
-            "SWfdB5lX0fk": {
-              "code": "DE_423442",
-              "dimensionId": "SWfdB5lX0fk",
-              "dimensionType": "DATA_ELEMENT",
-              "id": "SWfdB5lX0fk",
-              "name": "Pregnant",
-              "valueType": "BOOLEAN",
-            },
             "THIS_BIMONTH": {
               "id": "THIS_BIMONTH",
               "name": "This bimonth",
@@ -229,6 +207,8 @@ describe('MetadataStore', () => {
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "Thkx2BnO5Kq",
               "name": "BMI male",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
             },
             "USER_ORGUNIT": {
               "id": "USER_ORGUNIT",
@@ -251,12 +231,16 @@ describe('MetadataStore', () => {
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "XCMi7Wvnplm",
               "name": "BMI female",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
             },
             "Y7hKDSuqEtH": {
               "dimensionId": "Y7hKDSuqEtH",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "Y7hKDSuqEtH",
               "name": "BMI male under 5 y",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
             },
             "YESTERDAY": {
               "id": "YESTERDAY",
@@ -268,6 +252,138 @@ describe('MetadataStore', () => {
               "id": "Zj7UnCAulEk",
               "name": "Inpatient morbidity and mortality",
               "repeatable": false,
+            },
+            "Zj7UnCAulEk.GieVkTxp4HH": {
+              "code": "DE_240794",
+              "dimensionId": "GieVkTxp4HH",
+              "dimensionType": "DATA_ELEMENT",
+              "id": "Zj7UnCAulEk.GieVkTxp4HH",
+              "legendSetId": "TBxGTceyzwy",
+              "name": "Height in cm",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+              "valueType": "NUMBER",
+            },
+            "Zj7UnCAulEk.K6uUAvq500H": {
+              "code": "DE_3000010",
+              "dimensionId": "K6uUAvq500H",
+              "dimensionType": "DATA_ELEMENT",
+              "id": "Zj7UnCAulEk.K6uUAvq500H",
+              "name": "Diagnosis (ICD-10)",
+              "optionSetId": "eUZ79clX7y1",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+              "valueType": "TEXT",
+            },
+            "Zj7UnCAulEk.SWfdB5lX0fk": {
+              "code": "DE_423442",
+              "dimensionId": "SWfdB5lX0fk",
+              "dimensionType": "DATA_ELEMENT",
+              "id": "Zj7UnCAulEk.SWfdB5lX0fk",
+              "name": "Pregnant",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+              "valueType": "BOOLEAN",
+            },
+            "Zj7UnCAulEk.eMyVanycQSC": {
+              "code": "DE_3000005",
+              "dimensionId": "eMyVanycQSC",
+              "dimensionType": "DATA_ELEMENT",
+              "id": "Zj7UnCAulEk.eMyVanycQSC",
+              "name": "Admission Date",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+              "valueType": "DATE",
+            },
+            "Zj7UnCAulEk.eventDate": {
+              "dimensionId": "eventDate",
+              "dimensionType": "PERIOD",
+              "id": "Zj7UnCAulEk.eventDate",
+              "name": "Report date",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+              "valueType": "DATE",
+            },
+            "Zj7UnCAulEk.eventStatus": {
+              "dimensionId": "eventStatus",
+              "dimensionType": "STATUS",
+              "id": "Zj7UnCAulEk.eventStatus",
+              "name": "Event status",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+              "valueType": "TEXT",
+            },
+            "Zj7UnCAulEk.fWIAEtYVEGk": {
+              "code": "DE_3000009",
+              "dimensionId": "fWIAEtYVEGk",
+              "dimensionType": "DATA_ELEMENT",
+              "id": "Zj7UnCAulEk.fWIAEtYVEGk",
+              "name": "Mode of Discharge",
+              "optionSetId": "iDFPKpFTiVw",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+              "valueType": "TEXT",
+            },
+            "Zj7UnCAulEk.msodh3rEMJa": {
+              "code": "DE_3000006",
+              "dimensionId": "msodh3rEMJa",
+              "dimensionType": "DATA_ELEMENT",
+              "id": "Zj7UnCAulEk.msodh3rEMJa",
+              "name": "Discharge Date",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+              "valueType": "DATE",
+            },
+            "Zj7UnCAulEk.oZg33kd9taw": {
+              "code": "DE_3000004",
+              "dimensionId": "oZg33kd9taw",
+              "dimensionType": "DATA_ELEMENT",
+              "id": "Zj7UnCAulEk.oZg33kd9taw",
+              "name": "Gender",
+              "optionSetId": "pC3N9N77UmT",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+              "valueType": "TEXT",
+            },
+            "Zj7UnCAulEk.ou": {
+              "dimensionId": "ou",
+              "dimensionType": "ORGANISATION_UNIT",
+              "id": "Zj7UnCAulEk.ou",
+              "name": "Event org. unit",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+              "valueType": "ORGANISATION_UNIT",
+            },
+            "Zj7UnCAulEk.qrur9Dvnyt5": {
+              "code": "DE_3000003",
+              "dimensionId": "qrur9Dvnyt5",
+              "dimensionType": "DATA_ELEMENT",
+              "id": "Zj7UnCAulEk.qrur9Dvnyt5",
+              "legendSetId": "Yf6UHoPkdS6",
+              "name": "Age in years",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+              "valueType": "INTEGER",
+            },
+            "Zj7UnCAulEk.scheduledDate": {
+              "dimensionId": "scheduledDate",
+              "dimensionType": "PERIOD",
+              "id": "Zj7UnCAulEk.scheduledDate",
+              "name": "Scheduled date",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+              "valueType": "DATE",
+            },
+            "Zj7UnCAulEk.vV9UWAZohSf": {
+              "code": "DE_240795",
+              "dimensionId": "vV9UWAZohSf",
+              "dimensionType": "DATA_ELEMENT",
+              "id": "Zj7UnCAulEk.vV9UWAZohSf",
+              "legendSetId": "OrkEzxZEH4X",
+              "name": "Weight in kg",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
+              "valueType": "INTEGER_POSITIVE",
             },
             "completedDate": {
               "dimensionId": "completedDate",
@@ -287,7 +403,6 @@ describe('MetadataStore', () => {
               "dimensionType": "USER",
               "id": "createdBy",
               "name": "Created by",
-              "valueType": "USERNAME",
             },
             "createdDate": {
               "dimensionId": "createdDate",
@@ -312,35 +427,6 @@ describe('MetadataStore', () => {
               ],
               "programType": "WITHOUT_REGISTRATION",
             },
-            "eBAyeGv0exc.eventStatus": {
-              "dimensionId": "eventStatus",
-              "dimensionType": "STATUS",
-              "id": "eBAyeGv0exc.eventStatus",
-              "name": "Event status",
-              "programId": "eBAyeGv0exc",
-            },
-            "eBAyeGv0exc.ou": {
-              "dimensionId": "ou",
-              "dimensionType": "ORGANISATION_UNIT",
-              "id": "eBAyeGv0exc.ou",
-              "name": "Organisation unit",
-              "programId": "eBAyeGv0exc",
-            },
-            "eBAyeGv0exc.programStatus": {
-              "dimensionId": "programStatus",
-              "dimensionType": "STATUS",
-              "id": "eBAyeGv0exc.programStatus",
-              "name": "Program status",
-              "programId": "eBAyeGv0exc",
-            },
-            "eMyVanycQSC": {
-              "code": "DE_3000005",
-              "dimensionId": "eMyVanycQSC",
-              "dimensionType": "DATA_ELEMENT",
-              "id": "eMyVanycQSC",
-              "name": "Admission Date",
-              "valueType": "DATE",
-            },
             "enrollmentDate": {
               "dimensionId": "enrollmentDate",
               "dimensionType": "PERIOD",
@@ -351,7 +437,7 @@ describe('MetadataStore', () => {
               "dimensionId": "eventDate",
               "dimensionType": "PERIOD",
               "id": "eventDate",
-              "name": "Report date",
+              "name": "Event date",
             },
             "eventStatus": {
               "dimensionId": "eventStatus",
@@ -359,26 +445,21 @@ describe('MetadataStore', () => {
               "id": "eventStatus",
               "name": "Event status",
             },
-            "fWIAEtYVEGk": {
-              "code": "DE_3000009",
-              "dimensionId": "fWIAEtYVEGk",
-              "dimensionType": "DATA_ELEMENT",
-              "id": "fWIAEtYVEGk",
-              "name": "Mode of Discharge",
-              "optionSetId": "iDFPKpFTiVw",
-              "valueType": "TEXT",
-            },
             "gWxh7DiRmG7": {
               "dimensionId": "gWxh7DiRmG7",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "gWxh7DiRmG7",
               "name": "Average height of girls at 5 years old",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
             },
             "hlPt8H4bUOQ": {
               "dimensionId": "hlPt8H4bUOQ",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "hlPt8H4bUOQ",
               "name": "BMI female under 5 y",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
             },
             "incidentDate": {
               "dimensionId": "incidentDate",
@@ -398,30 +479,12 @@ describe('MetadataStore', () => {
               "dimensionType": "USER",
               "id": "lastUpdatedBy",
               "name": "Last updated by",
-              "valueType": "USERNAME",
             },
             "lastUpdatedOn": {
               "dimensionId": "lastUpdatedOn",
               "dimensionType": "PERIOD",
               "id": "lastUpdatedOn",
               "name": "Last updated on",
-            },
-            "msodh3rEMJa": {
-              "code": "DE_3000006",
-              "dimensionId": "msodh3rEMJa",
-              "dimensionType": "DATA_ELEMENT",
-              "id": "msodh3rEMJa",
-              "name": "Discharge Date",
-              "valueType": "DATE",
-            },
-            "oZg33kd9taw": {
-              "code": "DE_3000004",
-              "dimensionId": "oZg33kd9taw",
-              "dimensionType": "DATA_ELEMENT",
-              "id": "oZg33kd9taw",
-              "name": "Gender",
-              "optionSetId": "pC3N9N77UmT",
-              "valueType": "TEXT",
             },
             "ou": {
               "dimensionId": "ou",
@@ -439,20 +502,13 @@ describe('MetadataStore', () => {
               "id": "programStatus",
               "name": "Program status",
             },
-            "qrur9Dvnyt5": {
-              "code": "DE_3000003",
-              "dimensionId": "qrur9Dvnyt5",
-              "dimensionType": "DATA_ELEMENT",
-              "id": "qrur9Dvnyt5",
-              "legendSetId": "Yf6UHoPkdS6",
-              "name": "Age in years",
-              "valueType": "INTEGER",
-            },
             "sGna2pquXOO": {
               "dimensionId": "sGna2pquXOO",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "sGna2pquXOO",
               "name": "Average age of female discharges",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
             },
             "scheduledDate": {
               "dimensionId": "scheduledDate",
@@ -465,21 +521,16 @@ describe('MetadataStore', () => {
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "tUdBD1JDxpn",
               "name": "Average age of deaths",
-            },
-            "vV9UWAZohSf": {
-              "code": "DE_240795",
-              "dimensionId": "vV9UWAZohSf",
-              "dimensionType": "DATA_ELEMENT",
-              "id": "vV9UWAZohSf",
-              "legendSetId": "OrkEzxZEH4X",
-              "name": "Weight in kg",
-              "valueType": "INTEGER_POSITIVE",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
             },
             "x7PaHGvgWY2": {
               "dimensionId": "x7PaHGvgWY2",
               "dimensionType": "PROGRAM_INDICATOR",
               "id": "x7PaHGvgWY2",
               "name": "BMI",
+              "programId": "eBAyeGv0exc",
+              "programStageId": "Zj7UnCAulEk",
             },
           }
         `)
@@ -504,8 +555,8 @@ describe('MetadataStore', () => {
 
         // Length grows and decreases
         expect(snapshot0Keys.size).toBe(53)
-        expect(snapshot1Keys.size).toBe(81)
-        expect(snapshot2Keys.size).toBe(67)
+        expect(snapshot1Keys.size).toBe(82)
+        expect(snapshot2Keys.size).toBe(68)
 
         // Initial metadata is always included
         expect(snapshot0Keys.isSubsetOf(snapshot1Keys)).toBe(true)
@@ -525,10 +576,7 @@ describe('MetadataStore', () => {
             )
         ).toMatchInlineSnapshot(`
           [
-            "GieVkTxp4HH",
-            "vV9UWAZohSf",
             "O6uvpzGd5pu",
-            "SWfdB5lX0fk",
             "tUdBD1JDxpn",
             "sGna2pquXOO",
             "Kswd1r4qWLh",
@@ -539,6 +587,9 @@ describe('MetadataStore', () => {
             "Thkx2BnO5Kq",
             "Y7hKDSuqEtH",
             "HS8QXAJtuKV",
+            "Zj7UnCAulEk.GieVkTxp4HH",
+            "Zj7UnCAulEk.SWfdB5lX0fk",
+            "Zj7UnCAulEk.vV9UWAZohSf",
           ]
         `)
 
@@ -551,20 +602,21 @@ describe('MetadataStore', () => {
             )
         ).toMatchInlineSnapshot(`
           [
-            "eMyVanycQSC",
-            "oZg33kd9taw",
-            "fWIAEtYVEGk",
-            "qrur9Dvnyt5",
-            "K6uUAvq500H",
-            "msodh3rEMJa",
             "lastUpdated",
             "createdBy",
             "lastUpdatedBy",
             "eBAyeGv0exc",
             "Zj7UnCAulEk",
-            "eBAyeGv0exc.ou",
-            "eBAyeGv0exc.eventStatus",
-            "eBAyeGv0exc.programStatus",
+            "Zj7UnCAulEk.eventDate",
+            "Zj7UnCAulEk.eMyVanycQSC",
+            "Zj7UnCAulEk.qrur9Dvnyt5",
+            "Zj7UnCAulEk.K6uUAvq500H",
+            "Zj7UnCAulEk.msodh3rEMJa",
+            "Zj7UnCAulEk.oZg33kd9taw",
+            "Zj7UnCAulEk.fWIAEtYVEGk",
+            "Zj7UnCAulEk.ou",
+            "Zj7UnCAulEk.scheduledDate",
+            "Zj7UnCAulEk.eventStatus",
           ]
         `)
     })
@@ -1011,7 +1063,7 @@ describe('MetadataStore — subscriber fan-out for compound key aliases', () => 
 
         // The new visualization's keys must be present
         expect(snapshot['Zj7UnCAulEk']).toBeDefined()
-        expect(snapshot['eBAyeGv0exc.ou']).toBeDefined()
+        expect(snapshot['Zj7UnCAulEk.ou']).toBeDefined()
     })
 
     it('notifies alias subscriber when item name changes via addMetadata', () => {
@@ -1131,5 +1183,82 @@ describe('MetadataStore — typed get* methods', () => {
         expect(() => store.getOrganisationUnitMetadataItem('p1')).toThrow(
             'Item is not an organisation unit'
         )
+    })
+})
+
+// ---------------------------------------------------------------------------
+// Load-path enrichment for tracked entity attribute dimensions
+// ---------------------------------------------------------------------------
+
+describe('MetadataStore — TEA enrichment with trackedEntityTypeId', () => {
+    it('TEI saved vis ingests TEA metadata with trackedEntityTypeId populated', () => {
+        const store = new TestMetadataStore(
+            {},
+            [] as unknown as AppCachedData['rootOrgUnits']
+        )
+
+        const vis = {
+            outputType: 'TRACKED_ENTITY_INSTANCE',
+            trackedEntityType: { id: 'tetA', name: 'Person' },
+            programDimensions: [],
+            attributeDimensions: [
+                { attribute: { id: 'teaFirst', name: 'First name' } },
+            ],
+            columns: [
+                {
+                    dimension: 'teaFirst',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                    items: [],
+                },
+            ],
+            rows: [],
+            filters: [],
+            metaData: {
+                teaFirst: { name: 'First name' },
+            },
+        } as unknown as SavedVisualization
+
+        store.setVisualizationMetadata(vis)
+
+        const snapshot = store.getMetadataSnapshot()
+        expect(snapshot['teaFirst']).toMatchObject({
+            id: 'teaFirst',
+            dimensionId: 'teaFirst',
+            dimensionType: 'PROGRAM_ATTRIBUTE',
+            trackedEntityTypeId: 'tetA',
+        })
+    })
+
+    it('EVENT viz with attributeDimensions but no trackedEntityType does NOT attach trackedEntityTypeId', () => {
+        const store = new TestMetadataStore(
+            {},
+            [] as unknown as AppCachedData['rootOrgUnits']
+        )
+
+        const vis = {
+            outputType: 'EVENT',
+            programDimensions: [],
+            attributeDimensions: [
+                { attribute: { id: 'teaFirst', name: 'First name' } },
+            ],
+            columns: [
+                {
+                    dimension: 'teaFirst',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                    items: [],
+                },
+            ],
+            rows: [],
+            filters: [],
+            metaData: {
+                teaFirst: { name: 'First name' },
+            },
+        } as unknown as SavedVisualization
+
+        store.setVisualizationMetadata(vis)
+
+        const snapshot = store.getMetadataSnapshot()
+        expect(snapshot['teaFirst']).toBeDefined()
+        expect(snapshot['teaFirst']).not.toHaveProperty('trackedEntityTypeId')
     })
 })

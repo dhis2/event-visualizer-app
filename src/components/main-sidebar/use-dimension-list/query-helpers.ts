@@ -83,12 +83,23 @@ export const createDimensionBaseQuery = ({
 /**
  * Create query for program indicators
  */
-export const getProgramIndicatorQuery = (
+export const getEnrollmentProgramIndicatorQuery = (
     programId: string,
     nameProp: CurrentUser['settings']['displayNameProperty']
 ): SingleQuery =>
     createDimensionBaseQuery({
         resource: 'analytics/enrollments/query/dimensions',
+        dimensionType: 'PROGRAM_INDICATOR',
+        nameProp,
+        additionalParams: { programId },
+    })
+
+export const getEventProgramIndicatorQuery = (
+    programId: string,
+    nameProp: CurrentUser['settings']['displayNameProperty']
+): SingleQuery =>
+    createDimensionBaseQuery({
+        resource: 'analytics/events/query/dimensions',
         dimensionType: 'PROGRAM_INDICATOR',
         nameProp,
         additionalParams: { programId },

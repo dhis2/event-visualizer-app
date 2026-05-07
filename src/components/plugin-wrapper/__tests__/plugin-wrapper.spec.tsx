@@ -1,4 +1,5 @@
 import { useCurrentUser, useAppSelector, useAppDispatch } from '@hooks'
+import { isVisualizationEmpty } from '@modules/visualization'
 import type { Store } from '@reduxjs/toolkit'
 import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
@@ -7,7 +8,7 @@ import type { RootState } from '@store/store'
 import { renderWithAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import type { NewVisualization, SavedVisualization, Sorting } from '@types'
+import type { Sorting } from '@types'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import analyticsResponse1 from '../__fixtures__/analytics-response-1.json'
 import analyticsResponse2 from '../__fixtures__/analytics-response-2.json'
@@ -47,11 +48,16 @@ describe('PluginWrapper', () => {
         const currentVis = useAppSelector(getCurrentVis)
         const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
         mockOnDataSorted.mockImplementation((sorting: Sorting) => {
+            if (isVisualizationEmpty(currentVis)) {
+                throw new Error(
+                    'onDataSorted called with an empty visualization'
+                )
+            }
             dispatch(
                 setCurrentVis({
                     ...currentVis,
                     sorting: sorting ? [sorting] : undefined,
-                } as SavedVisualization | NewVisualization)
+                })
             )
         })
 
@@ -93,7 +99,7 @@ describe('PluginWrapper', () => {
 
         // First vis is in the state and loading state is false
         await waitFor(() => {
-            const currentVis = store.getState().currentVis as SavedVisualization
+            const currentVis = store.getState().currentVis
             expect(currentVis.id).toBe(eventVisualization1Id)
             expect(store.getState().loader.isVisualizationLoading).toBe(false)
         })
@@ -141,7 +147,7 @@ describe('PluginWrapper', () => {
 
         // Loading state switched to true and currentVis cleared
         await waitFor(() => {
-            const currentVis = store.getState().currentVis as SavedVisualization
+            const currentVis = store.getState().currentVis
             expect(currentVis.id).not.toBeDefined()
             expect(store.getState().loader.isVisualizationLoading).toBe(true)
         })
@@ -158,7 +164,7 @@ describe('PluginWrapper', () => {
 
         // Second vis is in the state and loading state is false
         await waitFor(() => {
-            const currentVis = store.getState().currentVis as SavedVisualization
+            const currentVis = store.getState().currentVis
             expect(currentVis.id).toBe(eventVisualization2Id)
             expect(store.getState().loader.isVisualizationLoading).toBe(false)
         })
@@ -199,7 +205,7 @@ describe('PluginWrapper', () => {
 
         // Visualisation loading state remains false and current vis remains the same
         await waitFor(() => {
-            const currentVis = store.getState().currentVis as SavedVisualization
+            const currentVis = store.getState().currentVis
             expect(store.getState().loader.isVisualizationLoading).toBe(false)
             expect(currentVis.id).toBe(eventVisualization1Id)
         })

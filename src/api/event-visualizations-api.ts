@@ -12,8 +12,10 @@ import {
 import {
     getDimensionMetadataFields,
     getSaveableVisualization,
+    normalizeApiSavedVisualization,
 } from '@modules/visualization'
 import type {
+    ApiSavedVisualization,
     CurrentUser,
     SavedVisualization,
     MutationResult,
@@ -81,7 +83,9 @@ const fetchEventVisualization = async (
         },
     })
 
-    return data.eventVisualization as SavedVisualization
+    return normalizeApiSavedVisualization(
+        data.eventVisualization as ApiSavedVisualization
+    )
 }
 
 export const eventVisualizationsApi = api.injectEndpoints({
@@ -284,9 +288,8 @@ export const eventVisualizationsApi = api.injectEndpoints({
                         data: {
                             // prepare the visualization payload with the new name/description
                             ...preparePayloadForSave({
-                                visualization: getSaveableVisualization(
-                                    visualization
-                                ) as SavedVisualization,
+                                visualization:
+                                    getSaveableVisualization(visualization),
                                 name: args.name,
                                 description: args.description,
                             }),

@@ -5,7 +5,11 @@ import { getVisualizationState } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
-import type { CurrentVisualization, VisualizationState } from '@types'
+import type {
+    EmptyVisualization,
+    SavedVisualization,
+    VisualizationState,
+} from '@types'
 import cx from 'classnames'
 import type { FC, ReactNode } from 'react'
 import classes from './styles/title-bar.module.css'
@@ -16,14 +20,14 @@ export const getTitleDirty = () => i18n.t('Edited')
 
 const getTitleText = (
     titleState: VisualizationState,
-    visualization: CurrentVisualization
+    savedVis: SavedVisualization | EmptyVisualization
 ): string | undefined => {
     switch (titleState) {
         case 'UNSAVED':
             return getTitleUnsaved()
         case 'SAVED':
         case 'DIRTY':
-            return visualization.displayName
+            return savedVis.name
         default:
             return ''
     }
@@ -47,7 +51,7 @@ export const TitleBar: FC = () => {
     const titleState = getVisualizationState(savedVis, currentVis)
     const titleText = isVisualizationLoading
         ? getTitleLoading()
-        : getTitleText(titleState, currentVis)
+        : getTitleText(titleState, savedVis)
 
     return (
         <div data-test="title-bar" className={classes.titleBar}>
