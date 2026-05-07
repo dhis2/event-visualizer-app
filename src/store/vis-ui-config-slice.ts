@@ -1,5 +1,8 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
-import { getDefaultItemsForDimension } from '@modules/dimension'
+import {
+    extractPlainDimensionId,
+    getDefaultItemsForDimension,
+} from '@modules/dimension'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import type {
@@ -375,7 +378,7 @@ export const visUiConfigSlice = createSlice({
         getVisUiConfigPlainItemIdsByDimension: createSelector(
             (state: VisUiConfigState, dimensionId: string) =>
                 state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
-            (items) => items.map((id) => id.split('.').pop()!)
+            (items) => items.map(extractPlainDimensionId)
         ),
     },
 })
