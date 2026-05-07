@@ -7,7 +7,7 @@ import {
     useMetadataItems,
     useRootOrgUnits,
 } from '@hooks'
-import { getDimensionIdParts, getFullDimensionId } from '@modules/dimension'
+import { getDimensionIdParts, joinDimensionIdParts } from '@modules/dimension'
 import {
     getVisUiConfigPlainItemIdsByDimension,
     getVisUiConfigOutputType,
@@ -48,7 +48,7 @@ export const OrgUnitDimensionModalContent: FC<
 
             const { uiItems, metadata } = items.reduce(
                 (acc, item) => {
-                    const id = getFullDimensionId({
+                    const id = joinDimensionIdParts({
                         dimensionId: item.id,
                         programId,
                         outputType,

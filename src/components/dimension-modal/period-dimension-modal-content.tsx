@@ -15,7 +15,10 @@ import {
     useMetadataItems,
 } from '@hooks'
 import { getStartEndDate, isStartEndDate } from '@modules/dates'
-import { getDimensionIdParts, getFullDimensionId } from '@modules/dimension.js'
+import {
+    getDimensionIdParts,
+    joinDimensionIdParts,
+} from '@modules/dimension.js'
 import {
     getVisUiConfigPlainItemIdsByDimension,
     getVisUiConfigOutputType,
@@ -144,7 +147,7 @@ export const PeriodDimensionModalContent: FC<
 
         const { uiItems, metadata } = items.reduce(
             (acc, item) => {
-                const id = getFullDimensionId({
+                const id = joinDimensionIdParts({
                     dimensionId: item.id,
                     programId,
                     outputType,

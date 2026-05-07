@@ -21,8 +21,9 @@ import type {
 import deepEqual from 'deep-equal'
 import { getConditionsFromVisualization } from './conditions'
 import {
-    getCompoundDimensionId,
+    getCanonicalDimensionId,
     isTimeDimensionId,
+    joinDimensionIdParts,
     KNOWN_TIME_FIELD_VALUES,
     outputTypeTimeDimensionMap,
     timeFieldTimeDimensionMap,
@@ -81,6 +82,106 @@ export const getHeadersMap = (
     }
 
     return map
+}
+
+/* Analytics-request header tokens that the API expects bare (no program
+ * prefix) for EVENT/ENROLLMENT but program-prefixed for TRACKED_ENTITY_INSTANCE.
+ * These all correspond to enrollment-scoped dimensions; in non-TEI requests
+ * the program is implicit in the URL, so no prefix is needed. Tokens listed
+ * here are the *lowercase header form* from `headersMap`. */
+const STANDALONE_REQUEST_HEADER_NAMES_NON_TEI: ReadonlySet<string> = new Set([
+    'completed',
+    'enrollmentdate',
+    'enrollmentouname',
+    'incidentdate',
+    'lastupdated',
+    'programstatus',
+])
+
+/**
+ * Composes the analytics-request column header for an app-side dimension.
+ *
+ * Pass the *lowercase header token* (the value from `headersMap`) as
+ * `dimensionId` — UIDs and tokens not in `headersMap` are passed through
+ * unchanged. The helper joins program/stage prefixes via `joinDimensionIdParts`
+ * except for the standalone tokens above (and `created`, which is always
+ * bare since it lives at TEI-registration scope and the analytics API never
+ * accepts it prefixed).
+ */
+export const composeAnalyticsRequestHeader = ({
+    dimensionId,
+    programId,
+    programStageId,
+    outputType,
+}: {
+    dimensionId: string
+    programId?: string
+    programStageId?: string
+    outputType: OutputType
+}): string => {
+    if (dimensionId === 'created') {
+        return 'created'
+    }
+    if (
+        outputType !== 'TRACKED_ENTITY_INSTANCE' &&
+        STANDALONE_REQUEST_HEADER_NAMES_NON_TEI.has(dimensionId)
+    ) {
+        return dimensionId
+    }
+    return joinDimensionIdParts({
+        dimensionId,
+        programId,
+        programStageId,
+        outputType,
+    })
+}
+
+/* App-side dimension ids whose analytics-response headers should be mapped
+ * back from lowercase to their canonical camelCase form. Other tokens
+ * (including time-dim lowercase like `eventdate`) are kept verbatim because
+ * they're consumed directly by the line-list renderer. */
+const APP_SIDE_RESPONSE_HEADER_TOKENS: ReadonlySet<DimensionId> = new Set([
+    'ou',
+    'programStatus',
+    'eventStatus',
+    'createdBy',
+    'lastUpdatedBy',
+    'lastUpdated',
+    'created',
+])
+
+/**
+ * Composes the app-local column id from an analytics response header.
+ *
+ * Reverse-looks-up the lowercase header token via `headersMap`; for tokens
+ * in `APP_SIDE_RESPONSE_HEADER_TOKENS` it adopts the canonical app-side id,
+ * otherwise it preserves the raw header. Then prefixes via
+ * `joinDimensionIdParts`.
+ */
+export const composeLineListColumnId = ({
+    headerName,
+    programId,
+    programStageId,
+    outputType,
+}: {
+    headerName: string
+    programId?: string
+    programStageId?: string
+    outputType: OutputType
+}): string => {
+    const matched = (Object.keys(headersMap) as DimensionId[]).find(
+        (key) => headersMap[key] === headerName
+    )
+    const dimensionId =
+        matched && APP_SIDE_RESPONSE_HEADER_TOKENS.has(matched)
+            ? matched
+            : headerName
+    return joinDimensionIdParts({
+        dimensionId,
+        programId,
+        programStageId,
+        outputType,
+    })
 }
 
 /**
@@ -345,7 +446,7 @@ export const getVisualizationUiConfig = (
     const outputType = vis.outputType
     const tetId = vis.trackedEntityType?.id
     const toDimId = (dim: DimensionArray[number]) =>
-        getCompoundDimensionId(dim, outputType, tetId)
+        getCanonicalDimensionId(dim, outputType, tetId)
     let lastActiveButton: LastActiveButton | undefined
     if (outputType === 'EVENT') {
         lastActiveButton = vis.value?.id ? 'CUSTOM_VALUE' : 'EVENT'

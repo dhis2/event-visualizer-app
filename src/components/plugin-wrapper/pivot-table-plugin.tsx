@@ -1,6 +1,6 @@
 import { PivotTable } from '@dhis2/analytics'
-import { getFullDimensionId } from '@modules/dimension'
 import {
+    composeAnalyticsRequestHeader,
     getHeadersMap,
     transformVisualizationForAnalyticsRequest,
 } from '@modules/visualization'
@@ -33,7 +33,7 @@ const formatVisualizationForPivotTableEngine = (
 
             return {
                 ...dimensionObj,
-                dimension: getFullDimensionId({
+                dimension: composeAnalyticsRequestHeader({
                     dimensionId,
                     programStageId: dimensionObj.programStage?.id,
                     programId: dimensionObj.program?.id,

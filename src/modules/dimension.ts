@@ -173,43 +173,36 @@ export const getDefaultItemsForDimension = (
     return undefined
 }
 
-type GetFullDimensionIdParams = {
+type JoinDimensionIdPartsParams = {
     dimensionId: string
     outputType?: OutputType
     programId?: string
     programStageId?: string
 }
 
-export const getFullDimensionId = ({
+/**
+ * Mechanical inverse of `getDimensionIdParts`: composes a dotted compound id
+ * from loose parts. Pure structural join — no semantic rules. The programId
+ * is only included for TRACKED_ENTITY_INSTANCE; other outputTypes drop it
+ * because EVENT/ENROLLMENT keys are stage-scoped (`stageId.dimId`).
+ *
+ * For canonical id construction from a hydrated DimensionRecord (where rules
+ * like enrollment-scope, plain-id types, and TEI-registration apply), use
+ * `getCanonicalDimensionId` instead.
+ */
+export const joinDimensionIdParts = ({
     dimensionId,
     programId,
     programStageId,
     outputType,
-}: GetFullDimensionIdParams): string => {
-    if (dimensionId === 'created') {
-        return dimensionId
-    } else if (
-        outputType !== 'TRACKED_ENTITY_INSTANCE' &&
-        [
-            'completed',
-            'enrollmentdate',
-            'enrollmentouname',
-            'incidenddate',
-            'lastupdated',
-            'programstatus',
-        ].includes(dimensionId)
-    ) {
-        return dimensionId
-    } else {
-        return [
-            outputType === 'TRACKED_ENTITY_INSTANCE' ? programId : undefined,
-            programStageId,
-            dimensionId,
-        ]
-            .filter(Boolean)
-            .join('.')
-    }
-}
+}: JoinDimensionIdPartsParams): string =>
+    [
+        outputType === 'TRACKED_ENTITY_INSTANCE' ? programId : undefined,
+        programStageId,
+        dimensionId,
+    ]
+        .filter(Boolean)
+        .join('.')
 
 type DimensionRecordObject = Partial<Record<DimensionId, DimensionMetadataItem>>
 
@@ -523,7 +516,7 @@ const TEI_REGISTRATION_DIMENSION_IDS: ReadonlySet<string> = new Set([
 ])
 
 /**
- * Constructs the canonical compound dimension ID from a DimensionRecord.
+ * Constructs the canonical app-local dimension ID from a DimensionRecord.
  *
  * We do NOT use `formatDimension` / `dimensionGetId` from `@dhis2/analytics`
  * because those helpers assume the old visualization shape where `programId`
@@ -535,7 +528,7 @@ const TEI_REGISTRATION_DIMENSION_IDS: ReadonlySet<string> = new Set([
  * they carry program/stage context on the dimension record but their
  * canonical ID is not prefixed.
  */
-export const getCompoundDimensionId = (
+export const getCanonicalDimensionId = (
     dim: DimensionRecord,
     outputType?: OutputType,
     trackedEntityTypeId?: string

@@ -6,14 +6,13 @@ import type {
 import { getColorByValueFromLegendSet, formatValue } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import {
-    getFullDimensionId,
     getDimensionIdParts,
     getMainDimensions,
     getProgramDimensions,
     extractPlainDimensionId,
 } from '@modules/dimension'
 import { getStatusNames } from '@modules/status'
-import { headersMap } from '@modules/visualization'
+import { composeLineListColumnId, headersMap } from '@modules/visualization'
 import type {
     CurrentVisualization,
     OutputType,
@@ -65,34 +64,19 @@ const getHeaderDimensionId = (
         id: header.name ?? '',
         outputType,
     })
-    const idMatch =
-        Object.keys(headersMap).find(
-            (key) => headersMap[key] === header.name
-            // TODO: find a better solution
-            // https://dhis2.atlassian.net/browse/DHIS2-20136
-        ) ?? ''
 
-    const formattedDimensionId = getFullDimensionId({
-        dimensionId: [
-            'ou',
-            'programStatus',
-            'eventStatus',
-            'createdBy',
-            'lastUpdatedBy',
-            'lastUpdated',
-            'created',
-        ].includes(idMatch)
-            ? idMatch
-            : dimensionId,
+    const formattedDimensionId = composeLineListColumnId({
+        headerName: dimensionId,
         programStageId,
         programId,
         outputType,
     })
 
     if (
-        (idMatch === 'ou' &&
+        (dimensionId === 'ouname' &&
             (programId || outputType !== 'TRACKED_ENTITY_INSTANCE')) ||
-        ['programStatus', 'eventStatus'].includes(idMatch)
+        dimensionId === 'programstatus' ||
+        dimensionId === 'eventstatus'
         // org unit only if there's a programId or not tracked entity: this prevents pid.ou from being mixed up with just ou in TE
         // program status + event status in all cases
     ) {

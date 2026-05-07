@@ -9,14 +9,13 @@ import { getBooleanValues } from '@modules/conditions'
 import {
     getDimensionIdParts,
     getDimensionsWithSuffix,
-    getFullDimensionId,
     getMainDimensions,
     getProgramDimensions,
 } from '@modules/dimension'
 import { isValueTypeNumeric } from '@modules/value-type'
 import {
+    composeLineListColumnId,
     getSingleProgramFromVisualization,
-    headersMap,
     isVisualizationWithTimeDimension,
 } from '@modules/visualization'
 import type {
@@ -189,34 +188,19 @@ const extractHeaders = (
             id: header.name,
             outputType,
         })
-        const idMatch =
-            Object.keys(headersMap).find(
-                (key) => headersMap[key] === dimensionId
-                // TODO: find a better solution
-                // https://dhis2.atlassian.net/browse/DHIS2-20136
-            ) ?? ''
 
-        const formattedDimensionId = getFullDimensionId({
-            dimensionId: [
-                'ou',
-                'programStatus',
-                'eventStatus',
-                'createdBy',
-                'lastUpdatedBy',
-                'lastUpdated',
-                'created',
-            ].includes(idMatch)
-                ? idMatch
-                : dimensionId,
+        const formattedDimensionId = composeLineListColumnId({
+            headerName: dimensionId,
             programStageId,
             programId,
             outputType,
         })
 
         if (
-            (idMatch === 'ou' &&
+            (dimensionId === 'ouname' &&
                 (programId || outputType !== 'TRACKED_ENTITY_INSTANCE')) ||
-            ['programStatus', 'eventStatus'].includes(idMatch)
+            dimensionId === 'programstatus' ||
+            dimensionId === 'eventstatus'
             // org unit only if there's a programId or not tracked entity: this prevents pid.ou from being mixed up with just ou in TE
             // program status + event status in all cases
         ) {
@@ -249,34 +233,16 @@ const extractHeaders = (
             outputType,
         })
 
-        const idMatch =
-            Object.keys(headersMap).find(
-                (key) => headersMap[key] === dimensionId
-                // TODO: find a better solution
-                // https://dhis2.atlassian.net/browse/DHIS2-20136
-            ) ?? ''
+        const formattedDimensionId = composeLineListColumnId({
+            headerName: dimensionId,
+            programId,
+            programStageId,
+            outputType,
+        })
 
         result.column =
-            labels.find(
-                (label) =>
-                    label.id ===
-                    getFullDimensionId({
-                        dimensionId: [
-                            'ou',
-                            'programStatus',
-                            'eventStatus',
-                            'createdBy',
-                            'lastUpdatedBy',
-                            'lastUpdated',
-                            'created',
-                        ].includes(idMatch)
-                            ? idMatch
-                            : dimensionId,
-                        programId,
-                        programStageId,
-                        outputType,
-                    })
-            )?.label || result.column
+            labels.find((label) => label.id === formattedDimensionId)?.label ||
+            result.column
 
         return result
     })

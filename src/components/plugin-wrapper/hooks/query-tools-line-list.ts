@@ -1,5 +1,7 @@
-import { getFullDimensionId } from '@modules/dimension'
-import { getHeadersMap } from '@modules/visualization'
+import {
+    composeAnalyticsRequestHeader,
+    getHeadersMap,
+} from '@modules/visualization'
 import type {
     Axis,
     CurrentVisualization,
@@ -117,22 +119,22 @@ export const getAdaptedVisualization = (
     const headers = [...adaptedColumns, ...adaptedRows].map(
         ({ dimension, program, programStage, repetition }) => {
             const programStageId = programStage?.id
+            const dimensionId = dimensionHeadersMap[dimension] || dimension
 
             if (repetition?.indexes?.length) {
                 return repetition.indexes.map((index) =>
-                    getFullDimensionId({
+                    composeAnalyticsRequestHeader({
                         programId: program?.id,
                         programStageId: `${programStageId}[${index}]`,
-                        dimensionId:
-                            dimensionHeadersMap[dimension] || dimension,
+                        dimensionId,
                         outputType,
                     })
                 )
             } else {
-                return getFullDimensionId({
+                return composeAnalyticsRequestHeader({
                     programId: program?.id,
                     programStageId,
-                    dimensionId: dimensionHeadersMap[dimension] || dimension,
+                    dimensionId,
                     outputType,
                 })
             }

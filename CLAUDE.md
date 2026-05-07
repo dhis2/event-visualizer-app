@@ -523,7 +523,7 @@ Non-fixed dimensions use compound or plain IDs depending on their type:
 - **Metadata dims** (`lastUpdated`, `createdBy`, `lastUpdatedBy`, `created`, `completed`)
   → plain `dimensionId`
 
-`getCompoundDimensionId` in `src/modules/dimension.ts` constructs the canonical app-local
+`getCanonicalDimensionId` in `src/modules/dimension.ts` constructs the canonical app-local
 compound ID from a `DimensionRecord`. It applies these rules in order:
 
 1. `PROGRAM_INDICATOR` / `PROGRAM_ATTRIBUTE` → always plain `dimensionId`
@@ -573,10 +573,10 @@ program-scope (`{dimension: 'ou', program: {id}}`) and TEI registration
 
 ### Save/load translation at the visualization API boundary
 
-**Loading** (API → frontend): `acSetVisualization` reads each dimension's `program` and
-`programStage` from the populated `columns`/`rows`/`filters` objects and calls `getFullDimensionId`
-(or `formatDimensionId` in the line-listing-app). For EVENT/ENROLLMENT this produces
-`stageId.dimensionId` (dropping the programId). For TRACKED_ENTITY it produces
+**Loading** (API → frontend): `getVisualizationUiConfig` reads each dimension's `program` and
+`programStage` from the populated `columns`/`rows`/`filters` objects and calls
+`getCanonicalDimensionId` (or `formatDimensionId` in the line-listing-app). For EVENT/ENROLLMENT
+this produces `stageId.dimensionId` (dropping the programId). For TRACKED_ENTITY it produces
 `programId.stageId.dimensionId` or `programId.dimensionId`.
 
 **Saving** (frontend → API): `getAxesFromUi` (or equivalent) decomposes the internal compound ID

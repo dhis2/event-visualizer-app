@@ -1,6 +1,6 @@
 import {
     combineAllDimensionsFromVisualization,
-    getCompoundDimensionId,
+    getCanonicalDimensionId,
     getEnrollmentFixedDimensions,
     getMainDimensions,
     getStageFixedDimensions,
@@ -145,7 +145,7 @@ export const supplementDimensionMetadata = (
                 return metadata
             }
 
-            const prefixedId = getCompoundDimensionId(
+            const prefixedId = getCanonicalDimensionId(
                 dimension,
                 outputType,
                 tetId
@@ -301,7 +301,7 @@ export const extractMetadataFromVisualization = (
     // so the plain duplicates are no longer needed.
     const dimensions = combineAllDimensionsFromVisualization(vis)
     for (const dimension of dimensions) {
-        const compoundId = getCompoundDimensionId(
+        const compoundId = getCanonicalDimensionId(
             dimension,
             vis.outputType,
             vis.trackedEntityType?.id

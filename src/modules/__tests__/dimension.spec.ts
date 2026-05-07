@@ -6,7 +6,7 @@ import type {
 } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
-    getFullDimensionId,
+    joinDimensionIdParts,
     getDimensionIdParts,
     getDimensionsWithSuffix,
     getCreatedDimension,
@@ -18,24 +18,24 @@ import {
     getTimeDimensionName,
     toAppLocalDimensions,
     toEventVisualizationDimensionId,
-    getCompoundDimensionId,
+    getCanonicalDimensionId,
     getTrackedEntityTypeFixedDimensions,
 } from '../dimension'
 
 const outputType = 'EVENT'
 
-describe('getFullDimensionId', () => {
+describe('joinDimensionIdParts', () => {
     it('returns correct result for: dimensionId', () => {
         const dimensionId = 'did'
 
-        expect(getFullDimensionId({ dimensionId, outputType })).toEqual('did')
+        expect(joinDimensionIdParts({ dimensionId, outputType })).toEqual('did')
     })
     it('returns correct result for: programStageId + dimensionId', () => {
         const dimensionId = 'did'
         const programStageId = 'sid'
 
         expect(
-            getFullDimensionId({ dimensionId, programStageId, outputType })
+            joinDimensionIdParts({ dimensionId, programStageId, outputType })
         ).toEqual('sid.did')
     })
     it('returns correct result for: programId + programStageId + dimensionId', () => {
@@ -44,7 +44,7 @@ describe('getFullDimensionId', () => {
         const programId = 'pid'
 
         expect(
-            getFullDimensionId({
+            joinDimensionIdParts({
                 dimensionId,
                 programStageId,
                 programId,
@@ -58,7 +58,7 @@ describe('getFullDimensionId', () => {
         const programId = 'pid'
 
         expect(
-            getFullDimensionId({
+            joinDimensionIdParts({
                 dimensionId,
                 programStageId,
                 programId,
@@ -176,12 +176,12 @@ describe('getDimensionIdParts', () => {
     })
 })
 
-describe('getFullDimensionId + getDimensionIdParts', () => {
+describe('joinDimensionIdParts + getDimensionIdParts', () => {
     it('returns correct result for: dimensionId', () => {
         const inputDimensionId = 'did'
 
         const { dimensionId, programStageId, programId } = getDimensionIdParts({
-            id: getFullDimensionId({
+            id: joinDimensionIdParts({
                 dimensionId: inputDimensionId,
                 outputType,
             }),
@@ -198,7 +198,7 @@ describe('getFullDimensionId + getDimensionIdParts', () => {
         const inputProgramStageId = 'sid'
 
         const { dimensionId, programStageId, programId } = getDimensionIdParts({
-            id: getFullDimensionId({
+            id: joinDimensionIdParts({
                 dimensionId: inputDimensionId,
                 programStageId: inputProgramStageId,
                 outputType,
@@ -217,7 +217,7 @@ describe('getFullDimensionId + getDimensionIdParts', () => {
         const inputProgramId = 'pid'
 
         const { dimensionId, programStageId, programId } = getDimensionIdParts({
-            id: getFullDimensionId({
+            id: joinDimensionIdParts({
                 dimensionId: inputDimensionId,
                 programStageId: inputProgramStageId,
                 programId: inputProgramId,
@@ -237,7 +237,7 @@ describe('getFullDimensionId + getDimensionIdParts', () => {
         const inputProgramId = 'pid'
 
         const { dimensionId, programStageId, programId } = getDimensionIdParts({
-            id: getFullDimensionId({
+            id: joinDimensionIdParts({
                 dimensionId: inputDimensionId,
                 programStageId: inputProgramStageId,
                 programId: inputProgramId,
@@ -252,13 +252,13 @@ describe('getFullDimensionId + getDimensionIdParts', () => {
     })
 })
 
-describe('getDimensionIdParts + getFullDimensionId', () => {
+describe('getDimensionIdParts + joinDimensionIdParts', () => {
     it('returns correct result for: dimensionId', () => {
         const inputId = 'did'
 
         const { dimensionId } = getDimensionIdParts({ id: inputId, outputType })
 
-        const outputId = getFullDimensionId({
+        const outputId = joinDimensionIdParts({
             dimensionId,
             outputType,
         })
@@ -274,7 +274,7 @@ describe('getDimensionIdParts + getFullDimensionId', () => {
             outputType,
         })
 
-        const outputId = getFullDimensionId({
+        const outputId = joinDimensionIdParts({
             dimensionId,
             programStageId,
             outputType,
@@ -291,7 +291,7 @@ describe('getDimensionIdParts + getFullDimensionId', () => {
             outputType,
         })
 
-        const outputId = getFullDimensionId({
+        const outputId = joinDimensionIdParts({
             dimensionId,
             programStageId,
             programId,
@@ -309,7 +309,7 @@ describe('getDimensionIdParts + getFullDimensionId', () => {
             outputType: 'TRACKED_ENTITY_INSTANCE',
         })
 
-        const outputId = getFullDimensionId({
+        const outputId = joinDimensionIdParts({
             dimensionId,
             programStageId,
             programId,
@@ -813,10 +813,10 @@ describe('toEventVisualizationDimensionId', () => {
     })
 })
 
-describe('getCompoundDimensionId', () => {
+describe('getCanonicalDimensionId', () => {
     it('returns plain ID for PROGRAM_INDICATOR regardless of context', () => {
         expect(
-            getCompoundDimensionId(
+            getCanonicalDimensionId(
                 {
                     dimension: 'bcgDoses',
                     dimensionType: 'PROGRAM_INDICATOR',
@@ -831,7 +831,7 @@ describe('getCompoundDimensionId', () => {
 
     it('returns plain ID for PROGRAM_ATTRIBUTE regardless of context', () => {
         expect(
-            getCompoundDimensionId(
+            getCanonicalDimensionId(
                 {
                     dimension: 'firstName',
                     dimensionType: 'PROGRAM_ATTRIBUTE',
@@ -852,7 +852,7 @@ describe('getCompoundDimensionId', () => {
         ]
         for (const dimId of enrollmentDims) {
             expect(
-                getCompoundDimensionId(
+                getCanonicalDimensionId(
                     {
                         dimension: dimId,
                         items: [],
@@ -866,7 +866,7 @@ describe('getCompoundDimensionId', () => {
 
     it('prefixes enrollment-scoped dimensions with programId even when programStage is present', () => {
         expect(
-            getCompoundDimensionId(
+            getCanonicalDimensionId(
                 {
                     dimension: 'enrollmentDate',
                     items: [],
@@ -880,7 +880,7 @@ describe('getCompoundDimensionId', () => {
 
     it('uses stageId.dimensionId for EVENT with programStage', () => {
         expect(
-            getCompoundDimensionId(
+            getCanonicalDimensionId(
                 {
                     dimension: 'weight',
                     items: [],
@@ -894,7 +894,7 @@ describe('getCompoundDimensionId', () => {
 
     it('uses stageId.dimensionId for ENROLLMENT with programStage', () => {
         expect(
-            getCompoundDimensionId(
+            getCanonicalDimensionId(
                 {
                     dimension: 'weight',
                     items: [],
@@ -908,7 +908,7 @@ describe('getCompoundDimensionId', () => {
 
     it('uses programId.stageId.dimensionId for TRACKED_ENTITY_INSTANCE with programStage', () => {
         expect(
-            getCompoundDimensionId(
+            getCanonicalDimensionId(
                 {
                     dimension: 'weight',
                     items: [],
@@ -922,7 +922,7 @@ describe('getCompoundDimensionId', () => {
 
     it('uses programId.dimensionId when only program is present (no stage)', () => {
         expect(
-            getCompoundDimensionId(
+            getCanonicalDimensionId(
                 {
                     dimension: 'someField',
                     items: [],
@@ -935,7 +935,7 @@ describe('getCompoundDimensionId', () => {
 
     it('uses trackedEntityTypeId prefix for TEI registration dimensions', () => {
         expect(
-            getCompoundDimensionId(
+            getCanonicalDimensionId(
                 { dimension: 'enrollmentOu', items: [] },
                 'TRACKED_ENTITY_INSTANCE',
                 'tet1'
@@ -943,7 +943,7 @@ describe('getCompoundDimensionId', () => {
         ).toBe('tet1.enrollmentOu')
 
         expect(
-            getCompoundDimensionId(
+            getCanonicalDimensionId(
                 { dimension: 'created', items: [] },
                 'TRACKED_ENTITY_INSTANCE',
                 'tet1'
@@ -953,7 +953,7 @@ describe('getCompoundDimensionId', () => {
 
     it('does not prefix non-registration dimensions with trackedEntityTypeId', () => {
         expect(
-            getCompoundDimensionId(
+            getCanonicalDimensionId(
                 { dimension: 'lastUpdated', items: [] },
                 'TRACKED_ENTITY_INSTANCE',
                 'tet1'
@@ -963,7 +963,7 @@ describe('getCompoundDimensionId', () => {
 
     it('returns plain ID when no context is present', () => {
         expect(
-            getCompoundDimensionId({ dimension: 'someField', items: [] })
+            getCanonicalDimensionId({ dimension: 'someField', items: [] })
         ).toBe('someField')
     })
 
@@ -971,7 +971,7 @@ describe('getCompoundDimensionId', () => {
         // Contextless dimensions have program/programStage stripped at the
         // boundary; the helper then naturally falls through to plain ID.
         expect(
-            getCompoundDimensionId(
+            getCanonicalDimensionId(
                 {
                     dimension: 'area',
                     dimensionType: 'ORGANISATION_UNIT_GROUP_SET',

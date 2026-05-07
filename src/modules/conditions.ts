@@ -9,7 +9,7 @@ import type {
 } from '@types'
 import {
     combineAllDimensionsFromVisualization,
-    getCompoundDimensionId,
+    getCanonicalDimensionId,
 } from './dimension'
 
 type Conditions = {
@@ -432,7 +432,7 @@ export const getConditionsFromVisualization = (
     )
 
     for (const item of items) {
-        const dimensionId = getCompoundDimensionId(
+        const dimensionId = getCanonicalDimensionId(
             item,
             outputType,
             vis.trackedEntityType?.id
