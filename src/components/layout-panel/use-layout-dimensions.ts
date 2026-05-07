@@ -1,7 +1,8 @@
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { useMetadataItems } from '@hooks'
+import { getChipSuffixes, type SuffixInput } from '@modules/chip-suffix'
 import { getDimensionIdParts } from '@modules/dimension'
-import type { DimensionType, OutputType } from '@types'
+import type { OutputType } from '@types'
 import { useMemo } from 'react'
 
 interface UseLayoutDimensionsParams {
@@ -87,64 +88,30 @@ export const useLayoutDimensions = ({
             return dimension
         })
 
-        if (!['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(outputType)) {
-            return dimensions
-        }
-
-        return dimensions.map((dimension) => {
-            const dimensionTypeOrItemType =
-                dimension.dimensionType || dimension.dimensionItemType
-            if (
-                dimensionTypeOrItemType &&
-                ['DATA_ELEMENT', 'PERIOD'].includes(
-                    dimensionTypeOrItemType as DimensionType
-                )
-            ) {
-                const duplicates = dimensions.filter(
-                    (d) =>
-                        d.dimensionId === dimension.dimensionId &&
-                        d !== dimension &&
-                        ((dimension.programId && d.programId) ||
-                            (dimension.programStageId && d.programStageId))
-                )
-
-                if (duplicates.length > 0) {
-                    const sameProgramId = duplicates.find(
-                        (dup) => dup.programId === dimension.programId
-                    )
-                    const thirdPartyDuplicates = duplicates
-                        .filter((dup) => dup.programId !== dimension.programId)
-                        .find((dpid) =>
-                            duplicates.find(
-                                (dup) =>
-                                    dup.programStageId !==
-                                        dpid.programStageId &&
-                                    dup.programId === dpid.programId
-                            )
-                        )
-
-                    if (sameProgramId || thirdPartyDuplicates) {
-                        dimension.suffix = dimension.programStageId
-                            ? metadataItems[dimension.programStageId]?.name
-                            : undefined
-                    } else if (dimension.programId) {
-                        dimension.suffix =
-                            metadataItems[dimension.programId]?.name
-                    }
-                }
-            } else if (
-                // always suffix ou and statuses for TE
-                outputType === 'TRACKED_ENTITY_INSTANCE' &&
-                dimensionTypeOrItemType &&
-                ['ORGANISATION_UNIT', 'STATUS'].includes(
-                    dimensionTypeOrItemType as DimensionType
-                ) &&
-                dimension.programId
-            ) {
-                dimension.suffix = metadataItems[dimension.programId]?.name
+        const suffixInputs: SuffixInput[] = dimensions.map((dim) => {
+            const metadataItem = metadataItems[dim.id]
+            return {
+                id: dim.id,
+                dimensionType: dim.dimensionType ?? dim.dimensionItemType,
+                programId: dim.programId,
+                programStageId: dim.programStageId,
+                trackedEntityTypeId:
+                    metadataItem &&
+                    'trackedEntityTypeId' in metadataItem &&
+                    metadataItem.trackedEntityTypeId
+                        ? metadataItem.trackedEntityTypeId
+                        : undefined,
             }
-
-            return dimension
         })
+
+        const suffixes = getChipSuffixes(
+            suffixInputs,
+            (id) => metadataItems[id]?.name
+        )
+
+        return dimensions.map((dimension) => ({
+            ...dimension,
+            suffix: suffixes[dimension.id],
+        }))
     }, [dimensionIds, outputType, metadataItems])
 }

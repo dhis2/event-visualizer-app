@@ -162,8 +162,8 @@ describe('<Chip />', () => {
         )
 
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
-        cy.contains('MCH Infant Feeding,').should('be.visible')
-        cy.contains('Baby Postnatal').should('be.visible')
+        cy.contains('MCH Infant Feeding').should('be.visible')
+        cy.contains('· Baby Postnatal').should('be.visible')
         cy.getByDataTest('chip-items').should('contain.text', 'all')
         cy.getByDataTest('chip-menu-button').should('be.visible')
         assertTooltipContent(['Showing all values for this dimension'])
@@ -220,8 +220,8 @@ describe('<Chip />', () => {
         )
 
         cy.getByDataTest('layout-dimension-chip').should('be.visible')
-        cy.contains('MCH Infant Feeding,').should('be.visible')
-        cy.contains('Baby Postnatal').should('be.visible')
+        cy.contains('MCH Infant Feeding').should('be.visible')
+        cy.contains('· Baby Postnatal').should('be.visible')
         cy.getByDataTest('chip-items').should('contain.text', '2')
         cy.getByDataTest('chip-menu-button').should('be.visible')
         assertTooltipContent([mixedFeedingName, exclusiveBreastfeedingName])
