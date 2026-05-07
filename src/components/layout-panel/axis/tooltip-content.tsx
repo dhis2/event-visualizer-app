@@ -1,10 +1,25 @@
 import i18n from '@dhis2/d2-i18n'
+import type { DimensionType } from '@types'
 import { type FC } from 'react'
 import type { LayoutDimension } from './chip'
 import styles from './styles/tooltip.module.css'
 import { useTooltipContentData } from './use-tooltip-content-data'
 
 const MAX_LIST_LENGTH = 5
+
+const ITEM_BASED_DIMENSION_TYPES: ReadonlyArray<DimensionType> = [
+    'CATEGORY',
+    'CATEGORY_OPTION_GROUP_SET',
+    'ORGANISATION_UNIT_GROUP_SET',
+    'STATUS',
+    'PERIOD',
+    'ORGANISATION_UNIT',
+]
+
+const NO_FALLBACK_DIMENSION_TYPES: ReadonlyArray<DimensionType> = [
+    'PERIOD',
+    'ORGANISATION_UNIT',
+]
 
 type TooltipContentProps = {
     dimension: LayoutDimension
@@ -18,9 +33,6 @@ type ItemsListProps = {
 }
 
 const ItemsList: FC<ItemsListProps> = ({ itemDisplayNames, dimensionId }) => {
-    if (itemDisplayNames.some((name) => !name)) {
-        return null
-    }
     const itemsToRender = itemDisplayNames
         .slice(0, MAX_LIST_LENGTH)
         .map((name) => (
@@ -45,64 +57,6 @@ const ItemsList: FC<ItemsListProps> = ({ itemDisplayNames, dimensionId }) => {
     return <>{itemsToRender}</>
 }
 
-const NoItemsLabel: FC<{ dimensionId: string }> = ({ dimensionId }) => (
-    <li key={`${dimensionId}-none-selected`} className={styles.item}>
-        {i18n.t('None selected')}
-    </li>
-)
-
-const StageName: FC<{ stageName: string }> = ({ stageName }) =>
-    stageName ? (
-        <li className={styles.item}>
-            {i18n.t('Program stage: {{- stageName}}', {
-                stageName,
-                nsSeparator: '^^',
-            })}
-        </li>
-    ) : null
-
-const ProgramName: FC<{ programName: string }> = ({ programName }) =>
-    programName ? (
-        <li className={styles.item}>
-            {i18n.t('Program: {{- programName}}', {
-                programName,
-                nsSeparator: '^^',
-            })}
-        </li>
-    ) : null
-
-const TooltipList: FC<{ children: React.ReactNode }> = ({ children }) => (
-    <ul className={styles.list} data-test="tooltip-content">
-        {children}
-    </ul>
-)
-
-type ItemsSectionProps = {
-    itemsList: string[]
-    axisId: string
-    dimensionId: string
-}
-
-const ItemsSection: FC<ItemsSectionProps> = ({
-    itemsList,
-    axisId,
-    dimensionId,
-}) => {
-    if (itemsList.length) {
-        return (
-            <ItemsList itemDisplayNames={itemsList} dimensionId={dimensionId} />
-        )
-    } else if (axisId === 'filters') {
-        return <NoItemsLabel dimensionId={dimensionId} />
-    } else {
-        return (
-            <li key={`${dimensionId}-all-selected`} className={styles.item}>
-                {i18n.t('Showing all values for this dimension')}
-            </li>
-        )
-    }
-}
-
 export const TooltipContent: FC<TooltipContentProps> = ({
     dimension,
     conditionsTexts,
@@ -111,60 +65,45 @@ export const TooltipContent: FC<TooltipContentProps> = ({
     const { programName, stageName, itemDisplayNames } =
         useTooltipContentData(dimension)
 
-    switch (dimension.dimensionType) {
-        case 'CATEGORY':
-        case 'CATEGORY_OPTION_GROUP_SET':
-        case 'ORGANISATION_UNIT_GROUP_SET':
-        case 'STATUS':
-            return (
-                <TooltipList>
-                    <ProgramName programName={programName} />
-                    <ItemsSection
-                        itemsList={itemDisplayNames}
-                        axisId={axisId}
-                        dimensionId={dimension.id}
-                    />
-                </TooltipList>
-            )
-        case 'PERIOD':
-        case 'ORGANISATION_UNIT':
-            return (
-                <TooltipList>
-                    <ProgramName programName={programName} />
-                    {itemDisplayNames.length > 0 ? (
-                        <ItemsList
-                            itemDisplayNames={itemDisplayNames}
-                            dimensionId={dimension.id}
-                        />
-                    ) : (
-                        <NoItemsLabel dimensionId={dimension.id} />
-                    )}
-                </TooltipList>
-            )
-        case 'DATA_ELEMENT': {
-            return (
-                <TooltipList>
-                    <ProgramName programName={programName} />
-                    <StageName stageName={stageName} />
-                    <ItemsSection
-                        itemsList={conditionsTexts}
-                        axisId={axisId}
-                        dimensionId={dimension.id}
-                    />
-                </TooltipList>
-            )
-        }
-        default: {
-            return (
-                <TooltipList>
-                    <ProgramName programName={programName} />
-                    <ItemsSection
-                        itemsList={conditionsTexts}
-                        axisId={axisId}
-                        dimensionId={dimension.id}
-                    />
-                </TooltipList>
-            )
-        }
-    }
+    const dimensionType = dimension.dimensionType
+    const isItemBased =
+        !!dimensionType && ITEM_BASED_DIMENSION_TYPES.includes(dimensionType)
+    const itemsList = isItemBased ? itemDisplayNames : conditionsTexts
+    const showStage = dimensionType === 'DATA_ELEMENT'
+    const emptyShowsNoneSelected =
+        axisId === 'filters' ||
+        (!!dimensionType && NO_FALLBACK_DIMENSION_TYPES.includes(dimensionType))
+
+    return (
+        <ul className={styles.list} data-test="tooltip-content">
+            {programName && (
+                <li className={styles.item}>
+                    {i18n.t('Program: {{- programName}}', {
+                        programName,
+                        nsSeparator: '^^',
+                    })}
+                </li>
+            )}
+            {showStage && stageName && (
+                <li className={styles.item}>
+                    {i18n.t('Program stage: {{- stageName}}', {
+                        stageName,
+                        nsSeparator: '^^',
+                    })}
+                </li>
+            )}
+            {itemsList.length > 0 ? (
+                <ItemsList
+                    itemDisplayNames={itemsList}
+                    dimensionId={dimension.id}
+                />
+            ) : emptyShowsNoneSelected ? (
+                <li className={styles.item}>{i18n.t('None selected')}</li>
+            ) : (
+                <li className={styles.item}>
+                    {i18n.t('Showing all values for this dimension')}
+                </li>
+            )}
+        </ul>
+    )
 }

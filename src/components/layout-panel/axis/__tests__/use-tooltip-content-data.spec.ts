@@ -111,6 +111,8 @@ describe('useTooltipContentData', () => {
             const programDimension: LayoutDimension = {
                 id: 'programUid.stageUid.dimensionUid',
                 dimensionId: 'dimensionUid',
+                programId: 'programUid',
+                programStageId: 'stageUid',
                 name: 'Program',
             }
 
@@ -140,6 +142,10 @@ describe('useTooltipContentData', () => {
                                     repeatable: true,
                                 },
                             ],
+                        },
+                        stageUid: {
+                            id: 'stageUid',
+                            name: 'Test Stage',
                         },
                     },
                 }
