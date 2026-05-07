@@ -917,7 +917,7 @@ describe('useActionButton for Tracked entity instance button', () => {
         })
     })
 
-    it.only('returns correct result for: PT, multiple TET', async () => {
+    it('returns correct result for: PT, multiple TET', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('TRACKED_ENTITY_INSTANCE'),
             createStoreWithPreloadedState({
