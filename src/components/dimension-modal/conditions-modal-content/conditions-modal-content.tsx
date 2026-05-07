@@ -11,6 +11,7 @@ import type { DimensionMetadataItem /*, ValueType */ } from '@types'
 import { type FC } from 'react'
 import { ConditionsSection } from './conditions-section'
 import { ConditionsTabContent } from './conditions-tab-content'
+import { LegendSetSelection } from './legend-set-selection/legend-set-selection'
 import { RepeatedEventsTabContent } from './repeated-events-tab-content'
 import classes from './styles/conditions-modal-content.module.css'
 
@@ -40,6 +41,7 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
 
     return (
         <div className={classes.sectionStack}>
+            <LegendSetSelection dimension={dimension} />
             <ConditionsTabContent dimension={dimension} />
             {canConfigureRepeatedEvents && (
                 <ConditionsSection

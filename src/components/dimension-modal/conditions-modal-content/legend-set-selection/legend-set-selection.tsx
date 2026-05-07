@@ -1,10 +1,18 @@
 import { ConditionsSection } from '@components/dimension-modal/conditions-modal-content/conditions-section'
-import { useConditions } from '@components/dimension-modal/conditions-modal-content/conditions-tab-content'
 import { legendSetsApi } from '@components/dimension-modal/conditions-modal-content/numeric-condition/legend-sets-api'
 import i18n from '@dhis2/d2-i18n'
 import { IconLegend16, Radio, type RadioProps } from '@dhis2/ui'
-import { useLegendSetMetadataItem } from '@hooks'
-import type { DimensionType } from '@types'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useLegendSetMetadataItem,
+} from '@hooks'
+import { isValueTypeNumeric } from '@modules/value-type'
+import {
+    getVisUiConfigConditionsByDimension,
+    setVisUiConfigLegendSetByDimension,
+} from '@store/vis-ui-config-slice'
+import type { DimensionMetadataItem, DimensionType } from '@types'
 import { useCallback, useEffect, useMemo, useRef, type FC } from 'react'
 import classes from './styles/legend-set-selection.module.css'
 
@@ -17,18 +25,29 @@ const SUPPORTED_DIMENSION_TYPES: DimensionType[] = [
 ]
 
 type LegendSetSelectionProps = {
+    dimension: DimensionMetadataItem
     onSectionVisibilityChange?: (isVisible: boolean) => void
 }
 
 export const LegendSetSelection: FC<LegendSetSelectionProps> = ({
+    dimension,
     onSectionVisibilityChange,
 }) => {
-    const { dimension, conditions, setLegendSet } = useConditions()
+    const dispatch = useAppDispatch()
+    const conditions = useAppSelector((state) =>
+        getVisUiConfigConditionsByDimension(state, dimension.id)
+    )
     const selectedLegendSetId = conditions.legendSet
 
-    const isSupportedType = SUPPORTED_DIMENSION_TYPES.includes(
-        dimension.dimensionType
-    )
+    const isProgramIndicator = dimension.dimensionType === 'PROGRAM_INDICATOR'
+    const canHaveLegendSets =
+        isProgramIndicator ||
+        (dimension.valueType !== undefined &&
+            isValueTypeNumeric(dimension.valueType))
+
+    const isSupportedType =
+        canHaveLegendSets &&
+        SUPPORTED_DIMENSION_TYPES.includes(dimension.dimensionType)
 
     const { data: legendSets, isLoading: isLoadingLegendSets } =
         legendSetsApi.useGetLegendSetsByDimensionQuery(
@@ -66,6 +85,17 @@ export const LegendSetSelection: FC<LegendSetSelectionProps> = ({
         isSupportedType &&
         !isLoadingLegendSets &&
         (hasSets || Boolean(selectedLegendSetId))
+
+    const setLegendSet = useCallback(
+        (legendSet: string | undefined) =>
+            dispatch(
+                setVisUiConfigLegendSetByDimension({
+                    dimensionId: dimension.id,
+                    legendSet,
+                })
+            ),
+        [dispatch, dimension.id]
+    )
 
     /* Auto-pick the data element's first legend set when nothing is chosen yet,
      * once per mount. The modal remounts on each open, so a user who explicitly
@@ -138,7 +168,7 @@ export const LegendSetSelection: FC<LegendSetSelectionProps> = ({
                 <Radio
                     name={`legend-set-${dimension.id}`}
                     value={NO_LEGEND_VALUE}
-                    label={i18n.t('None')}
+                    label={i18n.t('No legend')}
                     checked={!selectedLegendSetId}
                     onChange={onChange}
                     dense

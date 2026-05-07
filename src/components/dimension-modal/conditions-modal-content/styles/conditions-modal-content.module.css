@@ -49,6 +49,13 @@
     overflow: auto;
 }
 
+.dataSectionStack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacers-dp12);
+    padding-inline-end: var(--spacers-dp12);
+}
+
 .sectionStack {
     display: flex;
     flex-direction: column;

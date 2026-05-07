@@ -1,13 +1,3 @@
-import i18n from '@dhis2/d2-i18n'
-import {
-    Button,
-    DropdownButton,
-    FlyoutMenu,
-    IconFilter16,
-    MenuDivider,
-    MenuItem,
-    Tooltip,
-} from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     OPERATOR_EMPTY,
@@ -35,12 +25,10 @@ import {
     useContext,
     useEffect,
     useMemo,
+    useRef,
     useState,
 } from 'react'
-import { Conditions } from './conditions'
-import { ConditionsSection } from './conditions-section'
-import { LegendSetSelection } from './legend-set-selection/legend-set-selection'
-import classes from './styles/conditions-modal-content.module.css'
+import { DataSection } from './data-section'
 
 const buildInitialConditionString = (
     operatorKey: QueryOperator,
@@ -164,31 +152,43 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
               : []
     )
 
-    const disableAddButton: boolean =
-        canHaveLegendSets &&
-        conditionsList.some((condition) => condition.includes(OPERATOR_IN))
-
-    const hasPersistedFilters = useMemo(() => {
-        const parsed = parseConditionsStringToArray(conditions.condition ?? '')
-        return parsed.some(
-            (condition) => condition.length && condition.slice(-1) !== ':'
-        )
-    }, [conditions.condition])
+    /* Re-sync local conditionsList when Redux conditions change externally
+     * (e.g. via the data-section toggle clearing/restoring drafts, or via the
+     * legend-set section dropping IN: entries). The ref tracks what we last
+     * wrote to Redux ourselves so we don't loop on our own dispatches. */
+    const lastSyncedRef = useRef<string>(conditions.condition ?? '')
+    useEffect(() => {
+        const fromRedux = conditions.condition ?? ''
+        if (fromRedux === lastSyncedRef.current) {
+            return
+        }
+        lastSyncedRef.current = fromRedux
+        const next = fromRedux.length
+            ? parseConditionsStringToArray(fromRedux)
+            : isSingleCondition
+              ? [EMPTY_CONDITION]
+              : []
+        setConditionsList(next)
+    }, [conditions.condition, isSingleCondition])
 
     const storeConditions = useCallback(
-        (conditionsList: string[], legendSet?: string) =>
+        (conditionsList: string[], legendSet?: string) => {
+            const next = parseConditionsArrayToString(
+                conditionsList.filter(
+                    (condition) =>
+                        condition.length && condition.slice(-1) !== ':'
+                )
+            )
+            // Track what we just wrote so the external-change effect doesn't fire.
+            lastSyncedRef.current = next
             dispatch(
                 setVisUiConfigConditionsByDimension({
                     dimensionId: dimension.id,
-                    conditions: parseConditionsArrayToString(
-                        conditionsList.filter(
-                            (condition) =>
-                                condition.length && condition.slice(-1) !== ':'
-                        )
-                    ),
+                    conditions: next,
                     legendSet,
                 })
-            ),
+            )
+        },
         [dimension.id, dispatch]
     )
 
@@ -204,7 +204,6 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         [valueType, dimension.dimensionType]
     )
 
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
     const [initialFocusIndex, setInitialFocusIndex] = useState<number | null>(
         null
     )
@@ -217,14 +216,8 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         }
     }, [initialFocusIndex])
 
-    const toggleDropdown = useCallback(
-        () => setIsDropdownOpen((open) => !open),
-        []
-    )
-
     const addCondition = useCallback(
         (operatorKey: QueryOperator) => {
-            setIsDropdownOpen(false)
             const initialCondition = buildInitialConditionString(
                 operatorKey,
                 isAlphanumeric
@@ -243,13 +236,6 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
             setInitialFocusIndex(shouldFocus ? updated.length - 1 : null)
         },
         [conditionsList, isAlphanumeric, storeConditions, conditions.legendSet]
-    )
-    const addButtonLabel = conditionsList.length
-        ? i18n.t('Add another filter')
-        : i18n.t('Add a filter')
-    const addLegendFilter = useCallback(
-        () => addCondition(OPERATOR_IN),
-        [addCondition]
     )
 
     const removeCondition = useCallback<
@@ -347,133 +333,10 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         setLegendSet,
         removeCondition,
     ])
-    const filterContent = (
-        <>
-            {!isSupported && (
-                <p className={classes.paragraph}>
-                    {i18n.t(
-                        "This dimension can't be filtered. All values will be shown."
-                    )}
-                </p>
-            )}
-            {isSupported && (
-                <div className={classes.mainSection}>
-                    <Conditions />
-                    {!isSingleCondition && conditionsList.length > 0 && (
-                        <Tooltip
-                            content={i18n.t(
-                                "Preset options can't be combined with other filters"
-                            )}
-                            placement="bottom"
-                            closeDelay={200}
-                        >
-                            {({ onMouseOver, onMouseOut, ref }) => (
-                                <span
-                                    ref={ref}
-                                    onMouseOver={(event) =>
-                                        disableAddButton && onMouseOver(event)
-                                    }
-                                    onMouseOut={(event) =>
-                                        disableAddButton && onMouseOut(event)
-                                    }
-                                    className={classes.tooltipReference}
-                                >
-                                    {conditions.legendSet ? (
-                                        <Button
-                                            type="button"
-                                            small
-                                            secondary
-                                            onClick={addLegendFilter}
-                                            className={
-                                                classes.addConditionButton
-                                            }
-                                            disabled={disableAddButton}
-                                            dataTest="button-add-condition"
-                                        >
-                                            {addButtonLabel}
-                                        </Button>
-                                    ) : (
-                                        <DropdownButton
-                                            type="button"
-                                            small
-                                            secondary
-                                            open={isDropdownOpen}
-                                            onClick={toggleDropdown}
-                                            className={
-                                                classes.addConditionButton
-                                            }
-                                            disabled={disableAddButton}
-                                            dataTest="button-add-condition"
-                                            component={
-                                                <FlyoutMenu
-                                                    dense
-                                                    dataTest="add-condition-menu"
-                                                >
-                                                    {Object.entries(
-                                                        dropdownOperators
-                                                    ).map(([key, label]) => (
-                                                        <MenuItem
-                                                            key={key}
-                                                            label={label}
-                                                            onClick={() =>
-                                                                addCondition(
-                                                                    key as QueryOperator
-                                                                )
-                                                            }
-                                                            dataTest={`add-condition-menu-item-${key}`}
-                                                        />
-                                                    ))}
-                                                    {canHaveLegendSets && (
-                                                        <>
-                                                            <MenuDivider
-                                                                dense
-                                                            />
-                                                            {/* Stricter than disableAddButton: once any condition exists, the IN operator is not offered at all, since it is mutually exclusive with every other operator. */}
-                                                            <MenuItem
-                                                                dense
-                                                                label={i18n.t(
-                                                                    'is one of preset options'
-                                                                )}
-                                                                disabled={
-                                                                    conditionsList.length >
-                                                                    0
-                                                                }
-                                                                onClick={() =>
-                                                                    addCondition(
-                                                                        OPERATOR_IN
-                                                                    )
-                                                                }
-                                                                dataTest={`add-condition-menu-item-${OPERATOR_IN}`}
-                                                            />
-                                                        </>
-                                                    )}
-                                                </FlyoutMenu>
-                                            }
-                                        >
-                                            {addButtonLabel}
-                                        </DropdownButton>
-                                    )}
-                                </span>
-                            )}
-                        </Tooltip>
-                    )}
-                </div>
-            )}
-        </>
-    )
 
     return (
         <ConditionsProvider.Provider value={providerValue}>
-            {canHaveLegendSets && <LegendSetSelection />}
-            <ConditionsSection
-                title={i18n.t('Filters')}
-                titleIcon={<IconFilter16 />}
-                collapsible
-                defaultExpanded={hasPersistedFilters}
-                dataTest="dimension-popover-filters-section"
-            >
-                {filterContent}
-            </ConditionsSection>
+            <DataSection />
         </ConditionsProvider.Provider>
     )
 }
