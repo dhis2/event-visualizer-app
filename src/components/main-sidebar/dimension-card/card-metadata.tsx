@@ -24,7 +24,6 @@ const getFixedDimensions = (): DimensionMetadataItem[] => [
         dimensionId: 'lastUpdatedBy',
         name: i18n.t('Last updated by'),
         dimensionType: 'USER',
-        valueType: 'USERNAME',
     },
     {
         id: 'created',
@@ -38,7 +37,6 @@ const getFixedDimensions = (): DimensionMetadataItem[] => [
         dimensionId: 'createdBy',
         name: i18n.t('Created by'),
         dimensionType: 'USER',
-        valueType: 'USERNAME',
     },
     {
         id: 'completed',

@@ -1,17 +1,19 @@
-import { getFullDimensionId, isTimeDimensionId } from '@modules/dimension'
+import { getFullDimensionId } from '@modules/dimension'
 import { getHeadersMap } from '@modules/visualization'
 import type {
     Axis,
     CurrentVisualization,
     DimensionArray,
+    DimensionRecord,
     OutputType,
 } from '@types'
 import { getRequestOptions } from './query-tools-common'
-import type { ParameterRecord } from './query-tools-common'
+
+const convertToScreamingSnakeCase = (input: string) =>
+    input.replaceAll(/[A-Z]/g, (c) => `_${c}`).toUpperCase()
 
 const adaptDimensions = (
     dimensions: DimensionArray,
-    parameters: ParameterRecord,
     outputType: OutputType
 ) => {
     const adaptedDimensions: DimensionArray = []
@@ -19,34 +21,61 @@ const adaptDimensions = (
     dimensions.forEach((dimensionObj) => {
         const dimensionId = dimensionObj.dimension
 
-        if (
-            isTimeDimensionId(dimensionId) ||
-            dimensionId === 'eventStatus' ||
-            dimensionId === 'programStatus' ||
-            dimensionId === 'created' ||
-            (dimensionId === 'ou' && outputType === 'TRACKED_ENTITY_INSTANCE')
-        ) {
-            if (dimensionObj.items?.length) {
-                const items = dimensionObj.items?.map((item) => item.id)
-                if (
-                    (dimensionId === 'programStatus' ||
-                        isTimeDimensionId(dimensionId)) &&
-                    Array.isArray(parameters[dimensionId])
-                ) {
-                    parameters[dimensionId].push(...items)
-                } else if (dimensionId === 'ou') {
-                    adaptedDimensions.push(dimensionObj)
-                } else {
-                    parameters[dimensionId] = items
-                }
-            }
+        // these are always passed without any prefix
+        if (['completed', 'created', 'lastUpdated'].includes(dimensionId)) {
+            adaptedDimensions.push({
+                ...dimensionObj,
+                dimension: convertToScreamingSnakeCase(dimensionId),
+                program: undefined,
+                programStage: undefined,
+            })
+            // eventDate, eventStatus and sheduledDate have a program or stage id prefixed
         } else if (
-            // "dy" dimension can be present in PT visualizations
-            !['created', 'createdBy', 'lastUpdatedBy', 'dy'].includes(
-                dimensionId
-            )
+            ['eventDate', 'eventStatus', 'scheduledDate'].includes(dimensionId)
         ) {
-            adaptedDimensions.push(dimensionObj)
+            adaptedDimensions.push({
+                ...dimensionObj,
+                dimension: convertToScreamingSnakeCase(dimensionId),
+                program: undefined,
+            })
+        } else if (
+            dimensionId === 'programStatus' ||
+            dimensionId === 'enrollmentDate' ||
+            dimensionId === 'incidentDate'
+        ) {
+            const dimension = convertToScreamingSnakeCase(dimensionId)
+
+            if (outputType === 'TRACKED_ENTITY_INSTANCE') {
+                // remove programStage for these dimensions for trackedEntity
+                adaptedDimensions.push({
+                    ...dimensionObj,
+                    dimension,
+                    programStage: undefined,
+                })
+            } else {
+                // remove program/programStage for these dimensions for event/enrollment
+                adaptedDimensions.push({
+                    ...dimensionObj,
+                    dimension,
+                    program: undefined,
+                    programStage: undefined,
+                })
+            }
+        } else if (dimensionId === 'enrollmentOu') {
+            adaptedDimensions.push({
+                ...dimensionObj,
+                program:
+                    outputType === 'TRACKED_ENTITY_INSTANCE'
+                        ? dimensionObj.program
+                        : undefined,
+                programStage: undefined,
+            })
+        } else {
+            // everything else is a normal dimension id with programStage prefix
+            adaptedDimensions.push({
+                ...dimensionObj,
+                program: undefined,
+            })
         }
     })
 
@@ -70,13 +99,22 @@ export const getAdaptedVisualization = (
     const rows = visualization.rows ?? []
     const filters = visualization.filters ?? []
 
-    const adaptedColumns = adaptDimensions(columns, parameters, outputType)
-    const adaptedRows = adaptDimensions(rows, parameters, outputType)
-    const adaptedFilters = adaptDimensions(filters, parameters, outputType)
+    const adaptedColumns = adaptDimensions(columns, outputType)
+    const adaptedRows = adaptDimensions(rows, outputType)
+    const adaptedFilters = adaptDimensions(filters, outputType)
 
-    const dimensionHeadersMap = getHeadersMap(visualization)
+    const baseHeadersMap = getHeadersMap(visualization)
+    const dimensionHeadersMap: Record<string, string> = {
+        ...baseHeadersMap,
+        ...Object.fromEntries(
+            Object.entries(baseHeadersMap).map(([key, value]) => [
+                convertToScreamingSnakeCase(key),
+                value,
+            ])
+        ),
+    }
 
-    const headers = [...columns, ...rows].map(
+    const headers = [...adaptedColumns, ...adaptedRows].map(
         ({ dimension, program, programStage, repetition }) => {
             const programStageId = programStage?.id
 
@@ -101,11 +139,21 @@ export const getAdaptedVisualization = (
         }
     )
 
+    const filterDimensionParameters = ({
+        dimensionType,
+        filter,
+        items,
+    }: DimensionRecord) =>
+        dimensionType === 'ORGANISATION_UNIT_GROUP_SET' ||
+        filter ||
+        items?.length
+
     return {
         adaptedVisualization: {
-            columns: adaptedColumns,
-            rows: adaptedRows,
-            filters: adaptedFilters,
+            // only pass dimensions with conditions
+            columns: adaptedColumns.filter(filterDimensionParameters),
+            rows: adaptedRows.filter(filterDimensionParameters),
+            filters: adaptedFilters.filter(filterDimensionParameters),
             outputType: outputType,
         },
         headers,

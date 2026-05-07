@@ -1,3 +1,4 @@
+import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import { Center, CircularLoader } from '@dhis2/ui'
 import {
     isCurrentVisualizationPersisted,
@@ -11,7 +12,11 @@ import type {
 } from '@types'
 import type { FC } from 'react'
 import { useCallback, useEffect, useState } from 'react'
-import type { OnAnalyticsResponseReceivedCb } from './hooks/use-line-list-analytics-data'
+import type {
+    AnalyticsResponseMetadataItems,
+    OnAnalyticsResponseReceivedCb as OnLLAnalyticsResponseReceivedCb,
+} from './hooks/use-line-list-analytics-data'
+import type { OnAnalyticsResponseReceivedCb as OnPTAnalyticsResponseReceivedCb } from './hooks/use-pivot-table-analytics-data'
 import { LineListPlugin } from './line-list-plugin'
 import { PivotTablePlugin } from './pivot-table-plugin'
 import classes from './styles/plugin-wrapper.module.css'
@@ -24,7 +29,10 @@ type PluginWrapperProps = {
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     isVisualizationLoading?: boolean
     onDataSorted?: (sorting: Sorting | undefined) => void
-    onResponsesReceived?: OnAnalyticsResponseReceivedCb
+    onResponsesReceived?: (
+        items: AnalyticsResponseMetadataItems,
+        headers?: Array<LineListAnalyticsDataHeader>
+    ) => void
 }
 
 export const PluginWrapper: FC<PluginWrapperProps> = ({
@@ -39,11 +47,20 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
 }) => {
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
-    const onResponseReceived = useCallback<OnAnalyticsResponseReceivedCb>(
+    const onLLResponseReceived = useCallback<OnLLAnalyticsResponseReceivedCb>(
         (items, headers) => {
             setHasAnalyticsData(true)
 
             onResponsesReceivedCb?.(items, headers)
+        },
+        [onResponsesReceivedCb]
+    )
+
+    const onPTResponseReceived = useCallback<OnPTAnalyticsResponseReceivedCb>(
+        (items) => {
+            setHasAnalyticsData(true)
+
+            onResponsesReceivedCb?.(items)
         },
         [onResponsesReceivedCb]
     )
@@ -81,7 +98,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     isInDashboard={isInDashboard}
                     isInModal={isInModal}
                     onDataSorted={onDataSorted}
-                    onResponseReceived={onResponseReceived}
+                    onResponseReceived={onLLResponseReceived}
                 />
             )}
             {visualization.type === 'PIVOT_TABLE' && (
@@ -96,7 +113,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     filters={filters}
                     isInDashboard={isInDashboard}
                     isInModal={isInModal}
-                    onResponseReceived={onResponseReceived}
+                    onResponseReceived={onPTResponseReceived}
                 />
             )}
         </div>

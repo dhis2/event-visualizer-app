@@ -186,13 +186,29 @@ export const getFullDimensionId = ({
     programStageId,
     outputType,
 }: GetFullDimensionIdParams): string => {
-    return [
-        outputType === 'TRACKED_ENTITY_INSTANCE' ? programId : undefined,
-        programStageId,
-        dimensionId,
-    ]
-        .filter(Boolean)
-        .join('.')
+    if (dimensionId === 'created') {
+        return dimensionId
+    } else if (
+        outputType !== 'TRACKED_ENTITY_INSTANCE' &&
+        [
+            'completed',
+            'enrollmentdate',
+            'enrollmentouname',
+            'incidenddate',
+            'lastupdated',
+            'programstatus',
+        ].includes(dimensionId)
+    ) {
+        return dimensionId
+    } else {
+        return [
+            outputType === 'TRACKED_ENTITY_INSTANCE' ? programId : undefined,
+            programStageId,
+            dimensionId,
+        ]
+            .filter(Boolean)
+            .join('.')
+    }
 }
 
 type DimensionRecordObject = Partial<Record<DimensionId, DimensionMetadataItem>>
@@ -230,14 +246,12 @@ export const getMainDimensions = (
         dimensionId: 'createdBy',
         dimensionType: 'USER',
         name: i18n.t('Created by'),
-        valueType: 'USERNAME',
     },
     lastUpdatedBy: {
         id: 'lastUpdatedBy',
         dimensionId: 'lastUpdatedBy',
         dimensionType: 'USER',
         name: i18n.t('Last updated by'),
-        valueType: 'USERNAME',
     },
 })
 

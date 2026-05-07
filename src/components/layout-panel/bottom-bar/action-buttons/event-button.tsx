@@ -1,5 +1,6 @@
+import { useProgramMetadataItem } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import i18n from '@dhis2/d2-i18n'
-import { useAppSelector } from '@hooks'
+import { useAppSelector, useProgramIds } from '@hooks'
 import { isDataSourceProgramWithRegistration } from '@modules/data-source'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import { useMemo, type FC } from 'react'
@@ -9,21 +10,20 @@ import { useActionButton } from './use-action-button'
 export const EventButton: FC = () => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
 
-    const { action, dataSourceMetadata, tooltipConfig } = useActionButton(
-        'EVENT',
-        'EVENT'
-    )
+    const { action, tooltipConfig } = useActionButton('EVENT', 'EVENT')
+    const programIds = useProgramIds()
+    const programMetadata = useProgramMetadataItem(programIds[0])
 
     const eventLabel = useMemo(() => {
         if (
-            isDataSourceProgramWithRegistration(dataSourceMetadata) &&
-            dataSourceMetadata.displayEventLabel
+            isDataSourceProgramWithRegistration(programMetadata) &&
+            programMetadata.displayEventLabel
         ) {
-            return dataSourceMetadata.displayEventLabel
+            return programMetadata.displayEventLabel
         }
 
         return i18n.t('Event')
-    }, [dataSourceMetadata])
+    }, [programMetadata])
 
     const buttonLabelLookup = useMemo(
         () => ({

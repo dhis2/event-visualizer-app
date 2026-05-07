@@ -50,6 +50,7 @@ export const headersMap: Record<DimensionId, string> = {
     ou: 'ouname',
     programStatus: 'programstatus',
     eventStatus: 'eventstatus',
+    completed: 'completed',
     completedDate: 'completeddate',
     created: 'created',
     createdBy: 'createdbydisplayname',
@@ -58,20 +59,25 @@ export const headersMap: Record<DimensionId, string> = {
     lastUpdatedOn: 'lastupdatedon', // XXX: needed here? is this used also in LL?
     eventDate: 'eventdate',
     enrollmentDate: 'enrollmentdate',
+    enrollmentOu: 'enrollmentouname',
     incidentDate: 'incidentdate',
     scheduledDate: 'scheduleddate',
     lastUpdated: 'lastupdated',
 }
 
-export const getHeadersMap = ({
-    showHierarchy,
-}: {
-    showHierarchy?: boolean
-}): Record<DimensionId, string> => {
+export const getHeadersMap = (
+    visualization: CurrentVisualization
+): Record<DimensionId, string> => {
+    const { outputType, showHierarchy } = visualization
+
     const map = Object.assign({}, headersMap)
 
     if (showHierarchy) {
         map['ou'] = 'ounamehierarchy'
+    }
+
+    if (outputType === 'ENROLLMENT') {
+        map['enrollmentOu'] = 'ouname'
     }
 
     return map

@@ -1,13 +1,9 @@
 import i18n from '@dhis2/d2-i18n'
-import { useAppSelector, useMetadataItem, useMetadataStore } from '@hooks'
-import {
-    isDataSourceProgramWithoutRegistration,
-    isDataSourceProgramWithRegistration,
-} from '@modules/data-source'
-import { isDimensionInLayout } from '@modules/layout'
+import { useAppSelector, useMetadataStore, useTetId } from '@hooks'
+import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
+import { isDimensionInLayout, resolveProgramIds } from '@modules/layout'
 import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
-import { getDataSourceId } from '@store/dimensions-selection-slice'
 import {
     getVisUiConfigLastActiveButton,
     getVisUiConfigLayout,
@@ -17,7 +13,7 @@ import {
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
 import type { LastActiveButton } from '@store/vis-ui-config-slice'
-import type { OutputType } from '@types'
+import type { OutputType, Program } from '@types'
 import { useMemo } from 'react'
 import type { ButtonAction } from './base-button'
 
@@ -75,7 +71,6 @@ const getCategoryTooltipContent = ({
 
 type EventTooltipContentParams = {
     hasNoProgramInLayout: boolean
-    buttonVariant: LastActiveButton | undefined
     hasMultipleProgramsInLayout: boolean
     hasMultipleProgramStagesInLayout: boolean
     isRegistrationDateInLayout: boolean
@@ -84,7 +79,6 @@ type EventTooltipContentParams = {
 }
 
 const getEventTooltipContent = ({
-    buttonVariant,
     hasNoProgramInLayout,
     hasMultipleProgramsInLayout,
     hasMultipleProgramStagesInLayout,
@@ -92,13 +86,10 @@ const getEventTooltipContent = ({
     isRegistrationOuInLayout,
     visualizationType,
 }: EventTooltipContentParams): TooltipContent => {
-    if (
-        buttonVariant === 'CUSTOM_VALUE' &&
-        hasNoProgramInLayout &&
-        visualizationType === 'PIVOT_TABLE'
-    ) {
+    if (hasNoProgramInLayout) {
         return { content: i18n.t('Not valid without a program') }
     }
+
     if (
         hasMultipleProgramsInLayout &&
         (visualizationType === 'LINE_LIST' ||
@@ -106,37 +97,46 @@ const getEventTooltipContent = ({
     ) {
         return { content: i18n.t('Not valid with multiple programs') }
     }
+
     if (isRegistrationDateInLayout || isRegistrationOuInLayout) {
         return getRegistrationTooltipContent({
             isRegistrationDateInLayout,
             isRegistrationOuInLayout,
         })
     }
+
     if (hasMultipleProgramStagesInLayout) {
         return { content: i18n.t('Not valid with multiple program stages') }
     }
+
     return undefined
 }
 
 type EnrollmentTooltipContentParams = {
-    dataSourceMetadata: ReturnType<typeof useMetadataItem>
+    programMetadata: Program | undefined
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
     hasMultipleProgramsInLayout: boolean
+    hasNoProgramInLayout: boolean
     isRegistrationDateInLayout: boolean
     isRegistrationOuInLayout: boolean
     visualizationType: string
 }
 
 const getEnrollmentTooltipContent = ({
-    dataSourceMetadata,
+    programMetadata,
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
+    hasNoProgramInLayout,
     hasMultipleProgramsInLayout,
     isRegistrationDateInLayout,
     isRegistrationOuInLayout,
     visualizationType,
 }: EnrollmentTooltipContentParams): TooltipContent => {
+    if (hasNoProgramInLayout) {
+        return { content: i18n.t('Not valid without a program') }
+    }
+
     if (
         hasMultipleProgramsInLayout &&
         (visualizationType === 'LINE_LIST' ||
@@ -144,15 +144,18 @@ const getEnrollmentTooltipContent = ({
     ) {
         return { content: i18n.t('Not valid with multiple programs') }
     }
-    if (isDataSourceProgramWithoutRegistration(dataSourceMetadata)) {
+
+    if (isDataSourceProgramWithoutRegistration(programMetadata)) {
         return { content: i18n.t('Not valid with event programs') }
     }
+
     if (isRegistrationDateInLayout || isRegistrationOuInLayout) {
         return getRegistrationTooltipContent({
             isRegistrationDateInLayout,
             isRegistrationOuInLayout,
         })
     }
+
     return getCategoryTooltipContent({
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
@@ -160,31 +163,42 @@ const getEnrollmentTooltipContent = ({
 }
 
 type TrackedEntityInstanceTooltipContentParams = {
-    dataSourceMetadata: ReturnType<typeof useMetadataItem>
+    programMetadata: Program | undefined
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
     hasMultipleProgramsInLayout: boolean
+    hasMultipleTetInLayout: boolean
     hasProgramIndicatorsInLayout: boolean
     visualizationType: string
 }
 
 const getTrackedEntityInstanceTooltipContent = ({
-    dataSourceMetadata,
+    programMetadata,
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
     hasMultipleProgramsInLayout,
+    hasMultipleTetInLayout,
     hasProgramIndicatorsInLayout,
     visualizationType,
 }: TrackedEntityInstanceTooltipContentParams): TooltipContent => {
+    if (hasMultipleTetInLayout) {
+        return {
+            content: i18n.t('Not valid with multiple tracked entity types'),
+        }
+    }
+
     if (hasMultipleProgramsInLayout && visualizationType === 'PIVOT_TABLE') {
         return { content: i18n.t('Not valid with multiple programs') }
     }
-    if (isDataSourceProgramWithoutRegistration(dataSourceMetadata)) {
+
+    if (isDataSourceProgramWithoutRegistration(programMetadata)) {
         return { content: i18n.t('Not valid with event programs') }
     }
+
     if (visualizationType === 'LINE_LIST' && hasProgramIndicatorsInLayout) {
         return { content: i18n.t('Not valid with program indicators') }
     }
+
     return getCategoryTooltipContent({
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
@@ -196,7 +210,7 @@ export const useActionButton = (
     buttonVariant?: LastActiveButton
 ) => {
     const currentVis = useAppSelector(getCurrentVis)
-    const dataSourceId = useAppSelector(getDataSourceId)
+    const tetId = useTetId()
     const lastActiveButton = useAppSelector(getVisUiConfigLastActiveButton)
     const layout = useAppSelector(getVisUiConfigLayout)
     const layoutDimensionIds = useAppSelector(
@@ -207,7 +221,23 @@ export const useActionButton = (
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
 
-    const dataSourceMetadata = useMetadataItem(dataSourceId)
+    const programIdsInLayout = useMemo(
+        () => resolveProgramIds(layoutDimensionIds, metadataStore),
+        [layoutDimensionIds, metadataStore]
+    )
+
+    const firstProgramMetadata = useMemo(
+        () =>
+            programIdsInLayout[0]
+                ? metadataStore.getProgramMetadataItem(programIdsInLayout[0])
+                : undefined,
+        [programIdsInLayout, metadataStore]
+    )
+
+    const tetMetadata = useMemo(
+        () => (tetId ? metadataStore.getMetadataItem(tetId) : undefined),
+        [tetId, metadataStore]
+    )
 
     const action = useMemo((): ButtonAction => {
         // Empty visualization
@@ -254,23 +284,28 @@ export const useActionButton = (
         [layoutDimensionIds, metadataStore]
     )
 
-    const programCountInLayout = useMemo(() => {
-        const programs = new Set<string>()
+    const programCountInLayout = programIdsInLayout.length
+
+    const tetCountInLayout = useMemo(() => {
+        const tetIds = new Set<string>()
 
         layoutDimensionIds.forEach((dimensionId) => {
-            const programId =
-                metadataStore.getDimensionMetadataItem(dimensionId)?.programId
+            const tetId =
+                metadataStore.getDimensionMetadataItem(
+                    dimensionId
+                )?.trackedEntityTypeId
 
-            if (programId) {
-                programs.add(programId)
+            if (tetId) {
+                tetIds.add(tetId)
             }
         })
 
-        return programs.size
+        return tetIds.size
     }, [layoutDimensionIds, metadataStore])
 
     const hasNoProgramInLayout: boolean = programCountInLayout === 0
     const hasMultipleProgramsInLayout: boolean = programCountInLayout > 1
+    const hasMultipleTetInLayout: boolean = tetCountInLayout > 1
 
     const hasMultipleProgramStagesInLayout: boolean = useMemo(() => {
         const programStages = layoutDimensionIds.reduce(
@@ -306,25 +341,18 @@ export const useActionButton = (
         [layoutDimensionIds, metadataStore]
     )
 
-    const isRegistrationDateInLayout = useMemo(() => {
-        if (isDataSourceProgramWithRegistration(dataSourceMetadata)) {
-            const tetId = dataSourceMetadata.trackedEntityType.id
+    const isRegistrationDateInLayout = useMemo(
+        () => (tetId ? isDimensionInLayout(layout, `${tetId}.created`) : false),
+        [layout, tetId]
+    )
 
-            return isDimensionInLayout(layout, `${tetId}.created`)
-        }
-
-        return false
-    }, [dataSourceMetadata, layout])
-
-    const isRegistrationOuInLayout = useMemo(() => {
-        if (isDataSourceProgramWithRegistration(dataSourceMetadata)) {
-            const tetId = dataSourceMetadata.trackedEntityType.id
-
-            return isDimensionInLayout(layout, `${tetId}.enrollmentOu`)
-        }
-
-        return false
-    }, [dataSourceMetadata, layout])
+    const isRegistrationOuInLayout = useMemo(
+        () =>
+            tetId
+                ? isDimensionInLayout(layout, `${tetId}.enrollmentOu`)
+                : false,
+        [layout, tetId]
+    )
 
     const tooltipConfig = useMemo((): TooltipContent => {
         if (isLayoutEmpty) {
@@ -339,7 +367,6 @@ export const useActionButton = (
         switch (buttonType) {
             case 'EVENT':
                 return getEventTooltipContent({
-                    buttonVariant,
                     hasNoProgramInLayout,
                     hasMultipleProgramsInLayout,
                     hasMultipleProgramStagesInLayout,
@@ -349,9 +376,10 @@ export const useActionButton = (
                 })
             case 'ENROLLMENT':
                 return getEnrollmentTooltipContent({
-                    dataSourceMetadata,
+                    programMetadata: firstProgramMetadata,
                     hasCategoryInLayout,
                     hasCategoryOptionGroupSetInLayout,
+                    hasNoProgramInLayout,
                     hasMultipleProgramsInLayout,
                     isRegistrationDateInLayout,
                     isRegistrationOuInLayout,
@@ -359,29 +387,35 @@ export const useActionButton = (
                 })
             case 'TRACKED_ENTITY_INSTANCE':
                 return getTrackedEntityInstanceTooltipContent({
-                    dataSourceMetadata,
+                    programMetadata: firstProgramMetadata,
                     hasCategoryInLayout,
                     hasCategoryOptionGroupSetInLayout,
                     hasMultipleProgramsInLayout,
+                    hasMultipleTetInLayout,
                     hasProgramIndicatorsInLayout,
                     visualizationType,
                 })
         }
     }, [
         buttonType,
-        buttonVariant,
-        dataSourceMetadata,
+        firstProgramMetadata,
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
         hasNoProgramInLayout,
         hasMultipleProgramsInLayout,
         hasMultipleProgramStagesInLayout,
+        hasMultipleTetInLayout,
         hasProgramIndicatorsInLayout,
         isLayoutEmpty,
         isRegistrationDateInLayout,
         isRegistrationOuInLayout,
         visualizationType,
     ])
+
+    const dataSourceMetadata =
+        buttonType === 'TRACKED_ENTITY_INSTANCE'
+            ? tetMetadata
+            : firstProgramMetadata
 
     return {
         action,

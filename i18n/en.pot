@@ -396,6 +396,9 @@ msgstr "Not valid with multiple program stages"
 msgid "Not valid with event programs"
 msgstr "Not valid with event programs"
 
+msgid "Not valid with multiple tracked entity types"
+msgstr "Not valid with multiple tracked entity types"
+
 msgid "Not valid with program indicators"
 msgstr "Not valid with program indicators"
 
