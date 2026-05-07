@@ -16,13 +16,16 @@ import type {
     Program,
 } from '@types'
 
-export const getAxisName = (axisId: Axis): string => getAxisNames()[axisId]
-
-export const getAxisNames = (): Record<Axis, string> => ({
-    columns: i18n.t('Columns'),
-    filters: i18n.t('Filter'),
-    rows: i18n.t('Rows'),
-})
+export const getAxisName = (axisId: Axis): string => {
+    switch (axisId) {
+        case 'columns':
+            return i18n.t('Columns')
+        case 'filters':
+            return i18n.t('Filter')
+        case 'rows':
+            return i18n.t('Rows')
+    }
+}
 
 export const isDimensionInLayout = (
     layout: Layout,
