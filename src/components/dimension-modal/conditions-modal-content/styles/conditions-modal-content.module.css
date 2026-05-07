@@ -45,7 +45,7 @@
 .mainSection {
     /* background: var(--colors-grey050); */
     /* margin: 0 0 var(--spacers-dp8); */
-    padding: var(--spacers-dp4) 0 var(--spacers-dp4) var(--spacers-dp12);
+    padding: var(--spacers-dp4) 0 var(--spacers-dp4) 0;
     overflow: auto;
 }
 
