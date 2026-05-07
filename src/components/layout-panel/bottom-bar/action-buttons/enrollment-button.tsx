@@ -14,7 +14,6 @@ export const EnrollmentButton: FC = () => {
     const programMetadata = useProgramMetadataItem(programIds[0])
 
     const enrollmentLabel = useMemo(() => {
-        console.log('pr md', programMetadata)
         if (
             isDataSourceProgramWithRegistration(programMetadata) &&
             programMetadata.displayEnrollmentLabel
