@@ -2,7 +2,7 @@ import { ConditionsSection } from '@components/dimension-modal/conditions-modal-
 import { useConditions } from '@components/dimension-modal/conditions-modal-content/conditions-tab-content'
 import { legendSetsApi } from '@components/dimension-modal/conditions-modal-content/numeric-condition/legend-sets-api'
 import i18n from '@dhis2/d2-i18n'
-import { Radio, type RadioProps } from '@dhis2/ui'
+import { IconLegend16, Radio, type RadioProps } from '@dhis2/ui'
 import { useLegendSetMetadataItem } from '@hooks'
 import type { DimensionType } from '@types'
 import { useCallback, useEffect, useMemo, useRef, type FC } from 'react'
@@ -118,6 +118,7 @@ export const LegendSetSelection: FC<LegendSetSelectionProps> = ({
     return (
         <ConditionsSection
             title={i18n.t('Range grouping')}
+            titleIcon={<IconLegend16 />}
             collapsible
             dataTest="dimension-popover-legend-section"
         >

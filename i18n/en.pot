@@ -143,9 +143,6 @@ msgstr "Add a filter"
 msgid "This dimension can't be filtered. All values will be shown."
 msgstr "This dimension can't be filtered. All values will be shown."
 
-msgid "Add a filter to only include some values."
-msgstr "Add a filter to only include some values."
-
 msgid "Preset options can't be combined with other filters"
 msgstr "Preset options can't be combined with other filters"
 
@@ -163,6 +160,9 @@ msgstr "Range grouping"
 
 msgid "None"
 msgstr "None"
+
+msgid "Choose an operator"
+msgstr "Choose an operator"
 
 msgid "Choose a legend set"
 msgstr "Choose a legend set"
@@ -185,38 +185,11 @@ msgstr "Most recent events"
 msgid "Oldest events"
 msgstr "Oldest events"
 
-msgid "Update custom value table"
-msgstr "Update custom value table"
-
-msgid "Event"
-msgstr "Event"
-
-msgid "Update {{eventLabel}} table"
-msgstr "Update {{eventLabel}} table"
-
-msgid "Update {{eventLabel}} list"
-msgstr "Update {{eventLabel}} list"
-
-msgid "Enrollment"
-msgstr "Enrollment"
-
-msgid "Update {{enrollmentLabel}} table"
-msgstr "Update {{enrollmentLabel}} table"
-
-msgid "Update {{enrollmentLabel}} list"
-msgstr "Update {{enrollmentLabel}} list"
-
-msgid "tracked entity"
-msgstr "tracked entity"
-
-msgid "Update {{trackedEntityTypeName}} list"
-msgstr "Update {{trackedEntityTypeName}} list"
+msgid "About"
+msgstr "About"
 
 msgid "Move to {{axisName}}"
 msgstr "Move to {{axisName}}"
-
-msgid "Reset filters"
-msgstr "Reset filters"
 
 msgid "Start and end dates are inclusive and will be included in the outputs."
 msgstr "Start and end dates are inclusive and will be included in the outputs."
@@ -323,8 +296,14 @@ msgstr "Create custom value table"
 msgid "Switch to custom value table"
 msgstr "Switch to custom value table"
 
+msgid "Update custom value table"
+msgstr "Update custom value table"
+
 msgid "Using: {{dataElementName}} ({{aggregationType}})"
 msgstr "Using: {{dataElementName}} ({{aggregationType}})"
+
+msgid "Enrollment"
+msgstr "Enrollment"
 
 msgid "Create {{enrollmentLabel}} list"
 msgstr "Create {{enrollmentLabel}} list"
@@ -338,6 +317,15 @@ msgstr "Switch to {{enrollmentLabel}} list"
 msgid "Switch to {{enrollmentLabel}} table"
 msgstr "Switch to {{enrollmentLabel}} table"
 
+msgid "Update {{enrollmentLabel}} list"
+msgstr "Update {{enrollmentLabel}} list"
+
+msgid "Update {{enrollmentLabel}} table"
+msgstr "Update {{enrollmentLabel}} table"
+
+msgid "Event"
+msgstr "Event"
+
 msgid "Create {{eventLabel}} list"
 msgstr "Create {{eventLabel}} list"
 
@@ -350,11 +338,23 @@ msgstr "Switch to {{eventLabel}} list"
 msgid "Switch to {{eventLabel}} table"
 msgstr "Switch to {{eventLabel}} table"
 
+msgid "Update {{eventLabel}} list"
+msgstr "Update {{eventLabel}} list"
+
+msgid "Update {{eventLabel}} table"
+msgstr "Update {{eventLabel}} table"
+
+msgid "tracked entity"
+msgstr "tracked entity"
+
 msgid "Create {{trackedEntityTypeName}} list"
 msgstr "Create {{trackedEntityTypeName}} list"
 
 msgid "Switch to {{trackedEntityTypeName}} list"
 msgstr "Switch to {{trackedEntityTypeName}} list"
+
+msgid "Update {{trackedEntityTypeName}} list"
+msgstr "Update {{trackedEntityTypeName}} list"
 
 msgid "Not valid with registration date or registration org. unit"
 msgstr "Not valid with registration date or registration org. unit"

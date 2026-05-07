@@ -1,9 +1,10 @@
-import { CollapseIcon } from '@components/main-sidebar/dimension-card/collapse-icon'
+import { IconChevronDown16, IconChevronUp16 } from '@dhis2/ui'
 import { useCallback, useState, type FC, type ReactNode } from 'react'
 import classes from './styles/conditions-modal-content.module.css'
 
 type ConditionsSectionProps = {
     title: string
+    titleIcon?: ReactNode
     children: ReactNode
     collapsible?: boolean
     defaultExpanded?: boolean
@@ -12,6 +13,7 @@ type ConditionsSectionProps = {
 
 export const ConditionsSection: FC<ConditionsSectionProps> = ({
     title,
+    titleIcon,
     children,
     collapsible = false,
     defaultExpanded = true,
@@ -27,8 +29,19 @@ export const ConditionsSection: FC<ConditionsSectionProps> = ({
 
     const header = (
         <>
-            <CollapseIcon isCollapsed={!isExpanded} />
-            <span>{title}</span>
+            <span className={classes.sectionHeaderLabelRow}>
+                {titleIcon ? (
+                    <span className={classes.sectionHeaderIcon} aria-hidden>
+                        {titleIcon}
+                    </span>
+                ) : null}
+                <span className={classes.sectionHeaderTitle}>{title}</span>
+            </span>
+            {collapsible && (
+                <span className={classes.sectionHeaderChevron} aria-hidden>
+                    {isExpanded ? <IconChevronUp16 /> : <IconChevronDown16 />}
+                </span>
+            )}
         </>
     )
 

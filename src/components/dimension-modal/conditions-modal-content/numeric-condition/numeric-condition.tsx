@@ -14,6 +14,7 @@ import {
     getNumericOperators,
     NULL_VALUE,
     OPERATOR_IN,
+    type QueryOperator,
 } from '@modules/conditions.js'
 import type { DimensionMetadataItem, LegendSetMetadataItem } from '@types'
 import { useCallback, useEffect, useMemo, useState, type FC } from 'react'
@@ -28,6 +29,64 @@ type NumericConditionProps = {
     legendSetId?: string
     initialFocus?: boolean
 }
+
+type NumericConditionPlaceholderProps = {
+    operators: Record<string, string>
+    onSelectOperator: (operatorKey: QueryOperator) => void
+    showLegendSetOperator?: boolean
+}
+
+export const NumericConditionPlaceholder: FC<
+    NumericConditionPlaceholderProps
+> = ({ operators, onSelectOperator, showLegendSetOperator = false }) => (
+    <div className={classes.container} data-test="condition-placeholder">
+        <SingleSelectField
+            selected={undefined}
+            placeholder={i18n.t('Choose an operator')}
+            dense
+            onChange={({ selected }) =>
+                onSelectOperator(selected as QueryOperator)
+            }
+            className={classes.operatorSelect}
+        >
+            {Object.entries(operators).map(([key, value]) => (
+                <SingleSelectOption
+                    key={key}
+                    value={key}
+                    label={value}
+                    dataTest="condition-placeholder-operator"
+                />
+            ))}
+            {showLegendSetOperator && Object.keys(operators).length > 0 && (
+                <MenuDivider dense />
+            )}
+            {showLegendSetOperator && (
+                <SingleSelectOption
+                    key={OPERATOR_IN}
+                    value={OPERATOR_IN}
+                    label={i18n.t('is one of preset options')}
+                    dataTest="condition-placeholder-operator"
+                />
+            )}
+        </SingleSelectField>
+        <Input
+            value=""
+            type="number"
+            disabled
+            className={classes.numericInput}
+            dense
+        />
+        <button
+            type="button"
+            className={classes.removeIconButton}
+            aria-label={i18n.t('Remove')}
+            data-test="condition-remove-button"
+            disabled
+        >
+            <IconDelete16 />
+        </button>
+    </div>
+)
 
 export const NumericCondition: FC<NumericConditionProps> = ({
     condition,

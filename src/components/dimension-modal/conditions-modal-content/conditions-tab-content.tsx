@@ -3,6 +3,7 @@ import {
     Button,
     DropdownButton,
     FlyoutMenu,
+    IconFilter16,
     MenuDivider,
     MenuItem,
     Tooltip,
@@ -99,6 +100,9 @@ type ConditionsProviderValue = {
     isProgramIndicator: boolean
     isSupported: boolean
     initialFocusIndex: number | null
+    dropdownOperators: Record<string, string>
+    canHaveLegendSets: boolean
+    addCondition: (operatorKey: QueryOperator) => void
     setCondition: (
         conditionIndex: number,
         value: string,
@@ -126,12 +130,10 @@ export const useConditions = (): ConditionsProviderValue => {
 
 type ConditionsTabContentProps = {
     dimension: DimensionMetadataItem
-    hasRepeatedEventsSection?: boolean
 }
 
 export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
     dimension,
-    hasRepeatedEventsSection = false,
 }) => {
     const dispatch = useAppDispatch()
 
@@ -166,6 +168,13 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         canHaveLegendSets &&
         conditionsList.some((condition) => condition.includes(OPERATOR_IN))
 
+    const hasPersistedFilters = useMemo(() => {
+        const parsed = parseConditionsStringToArray(conditions.condition ?? '')
+        return parsed.some(
+            (condition) => condition.length && condition.slice(-1) !== ':'
+        )
+    }, [conditions.condition])
+
     const storeConditions = useCallback(
         (conditionsList: string[], legendSet?: string) =>
             dispatch(
@@ -199,10 +208,6 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
     const [initialFocusIndex, setInitialFocusIndex] = useState<number | null>(
         null
     )
-    const [legendSectionVisibility, setLegendSectionVisibility] = useState({
-        dimensionId: dimension.id,
-        isVisible: false,
-    })
 
     // Consume-once: clear the flag after the child mounts with initialFocus so
     // a subsequent re-render doesn't try to steal focus again.
@@ -211,16 +216,6 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
             setInitialFocusIndex(null)
         }
     }, [initialFocusIndex])
-
-    const handleLegendSectionVisibilityChange = useCallback(
-        (isVisible: boolean) => {
-            setLegendSectionVisibility({
-                dimensionId: dimension.id,
-                isVisible,
-            })
-        },
-        [dimension.id]
-    )
 
     const toggleDropdown = useCallback(
         () => setIsDropdownOpen((open) => !open),
@@ -329,6 +324,9 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
             isSupported,
             valueType,
             initialFocusIndex,
+            dropdownOperators,
+            canHaveLegendSets,
+            addCondition,
             setCondition,
             setLegendSet,
             removeCondition,
@@ -342,14 +340,13 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         isSupported,
         valueType,
         initialFocusIndex,
+        dropdownOperators,
+        canHaveLegendSets,
+        addCondition,
         setCondition,
         setLegendSet,
         removeCondition,
     ])
-    const hasLegendSection =
-        legendSectionVisibility.dimensionId === dimension.id &&
-        legendSectionVisibility.isVisible
-    const showFiltersHeader = hasRepeatedEventsSection || hasLegendSection
     const filterContent = (
         <>
             {!isSupported && (
@@ -361,16 +358,8 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
             )}
             {isSupported && (
                 <div className={classes.mainSection}>
-                    {!conditionsList.length && !isSingleCondition ? (
-                        <p className={classes.paragraph}>
-                            {i18n.t(
-                                'Add a filter to only include some values.'
-                            )}
-                        </p>
-                    ) : (
-                        <Conditions />
-                    )}
-                    {!isSingleCondition && (
+                    <Conditions />
+                    {!isSingleCondition && conditionsList.length > 0 && (
                         <Tooltip
                             content={i18n.t(
                                 "Preset options can't be combined with other filters"
@@ -475,24 +464,16 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
 
     return (
         <ConditionsProvider.Provider value={providerValue}>
-            {canHaveLegendSets && (
-                <LegendSetSelection
-                    onSectionVisibilityChange={
-                        handleLegendSectionVisibilityChange
-                    }
-                />
-            )}
-            {showFiltersHeader ? (
-                <ConditionsSection
-                    title={i18n.t('Filters')}
-                    collapsible
-                    dataTest="dimension-popover-filters-section"
-                >
-                    {filterContent}
-                </ConditionsSection>
-            ) : (
-                filterContent
-            )}
+            {canHaveLegendSets && <LegendSetSelection />}
+            <ConditionsSection
+                title={i18n.t('Filters')}
+                titleIcon={<IconFilter16 />}
+                collapsible
+                defaultExpanded={hasPersistedFilters}
+                dataTest="dimension-popover-filters-section"
+            >
+                {filterContent}
+            </ConditionsSection>
         </ConditionsProvider.Provider>
     )
 }

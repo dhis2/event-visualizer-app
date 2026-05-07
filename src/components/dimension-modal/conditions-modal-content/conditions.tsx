@@ -12,7 +12,10 @@ import {
     DateTimeCondition,
     TimeCondition,
 } from './date-condition'
-import { NumericCondition } from './numeric-condition/numeric-condition'
+import {
+    NumericCondition,
+    NumericConditionPlaceholder,
+} from './numeric-condition/numeric-condition'
 import { OptionSetCondition } from './option-set-condition/option-set-condition'
 import { OrgUnitCondition } from './org-unit-condition'
 import classes from './styles/conditions-modal-content.module.css'
@@ -34,21 +37,41 @@ type ConditionComponentProps = {
 
 const ConditionsList: FC<{
     conditionComponent: ComponentType<ConditionComponentProps>
-}> = ({ conditionComponent: ConditionComponent }) => {
-    const { conditionsList, setCondition, removeCondition, initialFocusIndex } =
-        useConditions()
+    showPlaceholder?: boolean
+}> = ({ conditionComponent: ConditionComponent, showPlaceholder = true }) => {
+    const {
+        conditionsList,
+        setCondition,
+        removeCondition,
+        initialFocusIndex,
+        dropdownOperators,
+        addCondition,
+    } = useConditions()
 
-    return conditionsList.map((condition, index) => (
-        <div key={index}>
-            <ConditionComponent
-                condition={condition}
-                onChange={(value) => setCondition(index, value)}
-                onRemove={() => removeCondition(index)}
-                initialFocus={index === initialFocusIndex}
-            />
-            <ConditionDivider total={conditionsList.length} index={index} />
-        </div>
-    ))
+    return (
+        <>
+            {conditionsList.map((condition, index) => (
+                <div key={index}>
+                    <ConditionComponent
+                        condition={condition}
+                        onChange={(value) => setCondition(index, value)}
+                        onRemove={() => removeCondition(index)}
+                        initialFocus={index === initialFocusIndex}
+                    />
+                    <ConditionDivider
+                        total={conditionsList.length}
+                        index={index}
+                    />
+                </div>
+            ))}
+            {showPlaceholder && conditionsList.length === 0 && (
+                <NumericConditionPlaceholder
+                    operators={dropdownOperators}
+                    onSelectOperator={addCondition}
+                />
+            )}
+        </>
+    )
 }
 
 const NumericConditionsList: FC = () => {
@@ -59,24 +82,41 @@ const NumericConditionsList: FC = () => {
         removeCondition,
         setCondition,
         initialFocusIndex,
+        dropdownOperators,
+        canHaveLegendSets,
+        addCondition,
     } = useConditions()
 
-    return conditionsList.map((condition, index) => (
-        <div key={index}>
-            <NumericCondition
-                dimension={dimension}
-                condition={condition}
-                onChange={(value, legendSet) =>
-                    setCondition(index, value, legendSet)
-                }
-                onRemove={() => removeCondition(index)}
-                numberOfConditions={conditionsList.length}
-                legendSetId={conditions.legendSet}
-                initialFocus={index === initialFocusIndex}
-            />
-            <ConditionDivider total={conditionsList.length} index={index} />
-        </div>
-    ))
+    return (
+        <>
+            {conditionsList.map((condition, index) => (
+                <div key={index}>
+                    <NumericCondition
+                        dimension={dimension}
+                        condition={condition}
+                        onChange={(value, legendSet) =>
+                            setCondition(index, value, legendSet)
+                        }
+                        onRemove={() => removeCondition(index)}
+                        numberOfConditions={conditionsList.length}
+                        legendSetId={conditions.legendSet}
+                        initialFocus={index === initialFocusIndex}
+                    />
+                    <ConditionDivider
+                        total={conditionsList.length}
+                        index={index}
+                    />
+                </div>
+            ))}
+            {conditionsList.length === 0 && (
+                <NumericConditionPlaceholder
+                    operators={conditions.legendSet ? {} : dropdownOperators}
+                    onSelectOperator={addCondition}
+                    showLegendSetOperator={canHaveLegendSets}
+                />
+            )}
+        </>
+    )
 }
 
 export const Conditions: FC = () => {
@@ -131,10 +171,20 @@ export const Conditions: FC = () => {
             )
         }
         case 'BOOLEAN': {
-            return <ConditionsList conditionComponent={BooleanCondition} />
+            return (
+                <ConditionsList
+                    conditionComponent={BooleanCondition}
+                    showPlaceholder={false}
+                />
+            )
         }
         case 'TRUE_ONLY': {
-            return <ConditionsList conditionComponent={TrueOnlyCondition} />
+            return (
+                <ConditionsList
+                    conditionComponent={TrueOnlyCondition}
+                    showPlaceholder={false}
+                />
+            )
         }
         case 'DATE': {
             return <ConditionsList conditionComponent={DateCondition} />
@@ -146,7 +196,12 @@ export const Conditions: FC = () => {
             return <ConditionsList conditionComponent={DateTimeCondition} />
         }
         case 'ORGANISATION_UNIT': {
-            return <ConditionsList conditionComponent={OrgUnitCondition} />
+            return (
+                <ConditionsList
+                    conditionComponent={OrgUnitCondition}
+                    showPlaceholder={false}
+                />
+            )
         }
     }
 }

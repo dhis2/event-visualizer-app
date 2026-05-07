@@ -1,33 +1,21 @@
-import actionButtonClasses from '@components/layout-panel/bottom-bar/action-buttons/styles/action-buttons.module.css'
 import { getAvailableAxes } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import {
     ButtonStrip,
     Button,
-    IconSync16,
+    IconInfo16,
     Layer,
     Popper,
     type PopperProps,
 } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector, useMetadataItem } from '@hooks'
-import {
-    isDataSourceProgramWithRegistration,
-    isDataSourceTrackedEntityType,
-} from '@modules/data-source'
+import { useAppDispatch, useAppSelector } from '@hooks'
 import { getAxisName, isDimensionInLayout } from '@modules/layout'
-import { getDataSourceId } from '@store/dimensions-selection-slice'
-import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
     addVisUiConfigLayoutDimension,
-    getVisUiConfigLastActiveButton,
     getVisUiConfigLayout,
-    getVisUiConfigOutputType,
     getVisUiConfigVisualizationType,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
-    setVisUiConfigConditionsByDimension,
-    setVisUiConfigItemsByDimension,
-    setVisUiConfigRepetitionsByDimension,
 } from '@store/vis-ui-config-slice'
 import type { Axis, DimensionMetadataItem } from '@types'
 import {
@@ -41,11 +29,40 @@ import {
 } from 'react'
 import { AddToLayoutButton } from './add-to-layout-button'
 import { ConditionsModalContent } from './conditions-modal-content/conditions-modal-content'
+import { ConditionsSection } from './conditions-modal-content/conditions-section'
 import { DynamicDimensionModalContent } from './dynamic-dimension-modal-content/dynamic-dimension-modal-content'
 import { OrgUnitDimensionModalContent } from './orgunit-dimension-modal-content'
 import { PeriodDimensionModalContent } from './period-dimension-modal-content'
 import { StatusDimensionModalContent } from './status-dimension-modal-content'
 import classes from './styles/dimension-modal.module.css'
+
+const ABOUT_PLACEHOLDER_ROW_COUNT = 5
+
+const DimensionPopoverAboutSection: FC = () => (
+    <div className={classes.aboutSectionOuter}>
+        <ConditionsSection
+            title={i18n.t('About')}
+            titleIcon={<IconInfo16 />}
+            collapsible
+            defaultExpanded={false}
+            dataTest="dimension-popover-about-section"
+        >
+            <dl className={classes.aboutMetadata}>
+                {Array.from(
+                    { length: ABOUT_PLACEHOLDER_ROW_COUNT },
+                    (_, index) => (
+                        <div key={index} className={classes.aboutMetadataRow}>
+                            <dt className={classes.aboutMetadataKey}>Key</dt>
+                            <dd className={classes.aboutMetadataValue}>
+                                value
+                            </dd>
+                        </div>
+                    )
+                )}
+            </dl>
+        </ConditionsSection>
+    </div>
+)
 
 type DimensionPopoverContentProps = {
     dimension: DimensionMetadataItem
@@ -120,16 +137,11 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
     const popoverRef = useRef<HTMLDivElement>(null)
 
     const dispatch = useAppDispatch()
-    const dataSourceId = useAppSelector(getDataSourceId)
-    const dataSourceMetadata = useMetadataItem(dataSourceId)
-    const lastActiveButton = useAppSelector(getVisUiConfigLastActiveButton)
     const layout = useAppSelector(getVisUiConfigLayout)
     const isInLayout = isDimensionInLayout(layout, dimension.id)
     const showSidebarAddActions = source === 'sidebar' && !isInLayout
-    const showUpdateAction = isInLayout
     const showFooterActions =
         source === 'layout' || isInLayout || showSidebarAddActions
-    const outputType = useAppSelector(getVisUiConfigOutputType)
     const visType = useAppSelector(getVisUiConfigVisualizationType)
     const currentAxisId = useMemo<Axis | undefined>(() => {
         if (axisId) {
@@ -149,54 +161,6 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
                 : [],
         [currentAxisId, visType]
     )
-    const updateButtonLabel = useMemo(() => {
-        const isTable = visType === 'PIVOT_TABLE'
-
-        switch (outputType) {
-            case 'EVENT': {
-                if (isTable && lastActiveButton === 'CUSTOM_VALUE') {
-                    return i18n.t('Update custom value table')
-                }
-
-                const eventLabel =
-                    isDataSourceProgramWithRegistration(dataSourceMetadata) &&
-                    dataSourceMetadata.displayEventLabel
-                        ? dataSourceMetadata.displayEventLabel
-                        : i18n.t('Event')
-
-                return isTable
-                    ? i18n.t('Update {{eventLabel}} table', { eventLabel })
-                    : i18n.t('Update {{eventLabel}} list', { eventLabel })
-            }
-            case 'ENROLLMENT': {
-                const enrollmentLabel =
-                    isDataSourceProgramWithRegistration(dataSourceMetadata) &&
-                    dataSourceMetadata.displayEnrollmentLabel
-                        ? dataSourceMetadata.displayEnrollmentLabel
-                        : i18n.t('Enrollment')
-
-                return isTable
-                    ? i18n.t('Update {{enrollmentLabel}} table', {
-                          enrollmentLabel,
-                      })
-                    : i18n.t('Update {{enrollmentLabel}} list', {
-                          enrollmentLabel,
-                      })
-            }
-            case 'TRACKED_ENTITY_INSTANCE': {
-                const trackedEntityTypeName =
-                    isDataSourceProgramWithRegistration(dataSourceMetadata)
-                        ? dataSourceMetadata.trackedEntityType.name
-                        : isDataSourceTrackedEntityType(dataSourceMetadata)
-                          ? dataSourceMetadata.name
-                          : i18n.t('tracked entity')
-
-                return i18n.t('Update {{trackedEntityTypeName}} list', {
-                    trackedEntityTypeName,
-                })
-            }
-        }
-    }, [dataSourceMetadata, lastActiveButton, outputType, visType])
 
     const onMove = useCallback(
         (targetAxisId: Axis) => {
@@ -216,22 +180,6 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
         [currentAxisId, dimension.id, dispatch, onClose]
     )
 
-    const onResetFilters = useCallback(() => {
-        dispatch(
-            setVisUiConfigItemsByDimension({
-                dimensionId: dimension.id,
-                itemIds: [],
-            })
-        )
-        dispatch(
-            setVisUiConfigConditionsByDimension({ dimensionId: dimension.id })
-        )
-        dispatch(
-            setVisUiConfigRepetitionsByDimension({ dimensionId: dimension.id })
-        )
-        onClose()
-    }, [dimension.id, dispatch, onClose])
-
     const onRemove = useCallback(() => {
         if (!currentAxisId) {
             return
@@ -245,11 +193,6 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
         )
         onClose()
     }, [currentAxisId, dimension.id, dispatch, onClose])
-
-    const onUpdate = useCallback(() => {
-        dispatch(tUpdateCurrentVisFromVisUiConfig())
-        onClose()
-    }, [dispatch, onClose])
 
     const onSidebarAdd = useCallback(
         (axisId: Axis) => {
@@ -329,83 +272,75 @@ export const DimensionPopoverCard: FC<DimensionPopoverCardProps> = ({
                 className={classes.popoverContent}
                 data-test={`${dataTest}-content`}
             >
-                <DimensionPopoverContent dimension={dimension} />
+                <div className={classes.popoverContentStack}>
+                    <DimensionPopoverContent dimension={dimension} />
+                    <DimensionPopoverAboutSection />
+                </div>
             </div>
             {showFooterActions && (
                 <footer
                     className={classes.popoverFooter}
                     data-test={`${dataTest}-actions`}
                 >
-                    {showUpdateAction && (
-                        <button
-                            type="button"
-                            onClick={onUpdate}
-                            className={`${actionButtonClasses.button} ${actionButtonClasses.update}`}
-                            data-test={`${dataTest}-action-update`}
-                        >
-                            <IconSync16 />
-                            {updateButtonLabel}
-                        </button>
-                    )}
-                    <div
-                        className={
-                            showSidebarAddActions
-                                ? classes.popoverFooterActionsLeft
-                                : classes.popoverFooterActions
-                        }
-                    >
-                        {showSidebarAddActions ? (
+                    {showSidebarAddActions ? (
+                        <div className={classes.popoverFooterSidebarAdd}>
                             <SidebarAddActions
                                 dimensionId={dimension.id}
                                 onAdd={onSidebarAdd}
                             />
-                        ) : (
-                            <ButtonStrip>
-                                {applicableMoveAxisIds.map((targetAxisId) => (
+                        </div>
+                    ) : (
+                        <div className={classes.popoverFooterLayoutActions}>
+                            <div className={classes.popoverFooterMoveActions}>
+                                <ButtonStrip>
+                                    {applicableMoveAxisIds.map(
+                                        (targetAxisId) => (
+                                            <Button
+                                                key={targetAxisId}
+                                                type="button"
+                                                small
+                                                secondary
+                                                onClick={() =>
+                                                    onMove(targetAxisId)
+                                                }
+                                                dataTest={`${dataTest}-action-move-to-${targetAxisId}`}
+                                            >
+                                                {i18n.t(
+                                                    'Move to {{axisName}}',
+                                                    {
+                                                        axisName:
+                                                            getAxisName(
+                                                                targetAxisId
+                                                            ).toLocaleLowerCase(),
+                                                    }
+                                                )}
+                                            </Button>
+                                        )
+                                    )}
+                                </ButtonStrip>
+                            </div>
+                            <div className={classes.popoverFooterEndActions}>
+                                <ButtonStrip>
+                                    {!isInLayout && (
+                                        <AddToLayoutButton
+                                            dimensionId={dimension.id}
+                                            onClick={onClose}
+                                            dataTest={`${dataTest}-action-confirm`}
+                                        />
+                                    )}
                                     <Button
-                                        key={targetAxisId}
                                         type="button"
                                         small
                                         secondary
-                                        onClick={() => onMove(targetAxisId)}
-                                        dataTest={`${dataTest}-action-move-to-${targetAxisId}`}
+                                        onClick={onRemove}
+                                        dataTest={`${dataTest}-action-remove`}
                                     >
-                                        {i18n.t('Move to {{axisName}}', {
-                                            axisName:
-                                                getAxisName(
-                                                    targetAxisId
-                                                ).toLocaleLowerCase(),
-                                        })}
+                                        {i18n.t('Remove')}
                                     </Button>
-                                ))}
-                                <Button
-                                    type="button"
-                                    small
-                                    secondary
-                                    onClick={onResetFilters}
-                                    dataTest={`${dataTest}-action-reset-filters`}
-                                >
-                                    {i18n.t('Reset filters')}
-                                </Button>
-                                <Button
-                                    type="button"
-                                    small
-                                    secondary
-                                    onClick={onRemove}
-                                    dataTest={`${dataTest}-action-remove`}
-                                >
-                                    {i18n.t('Remove')}
-                                </Button>
-                                {!isInLayout && (
-                                    <AddToLayoutButton
-                                        dimensionId={dimension.id}
-                                        onClick={onClose}
-                                        dataTest={`${dataTest}-action-confirm`}
-                                    />
-                                )}
-                            </ButtonStrip>
-                        )}
-                    </div>
+                                </ButtonStrip>
+                            </div>
+                        </div>
+                    )}
                 </footer>
             )}
         </div>

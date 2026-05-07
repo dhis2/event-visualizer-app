@@ -44,9 +44,8 @@
 
 .mainSection {
     /* background: var(--colors-grey050); */
-    border-inline-start: 2px solid var(--colors-grey300);
     /* margin: 0 0 var(--spacers-dp8); */
-    padding: var(--spacers-dp8) 0 var(--spacers-dp12) var(--spacers-dp8);
+    padding: var(--spacers-dp4) 0 var(--spacers-dp4) var(--spacers-dp12);
     overflow: auto;
 }
 
@@ -71,13 +70,43 @@
 .sectionHeaderButton {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: var(--spacers-dp4);
     inline-size: 100%;
     min-block-size: 32px;
-    padding: var(--spacers-dp8) 0;
+    padding: var(--spacers-dp12) var(--spacers-dp8);
     font-size: 13px;
     font-weight: 500;
     line-height: 14px;
     color: var(--colors-grey900);
+}
+
+.sectionHeaderLabelRow {
+    display: inline-flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--spacers-dp4);
+    min-inline-size: 0;
+    text-align: start;
+}
+
+.sectionHeaderIcon {
+    display: inline-flex;
+    flex-shrink: 0;
+    margin-block-start: -1px;
+    color: var(--colors-grey700);
+}
+
+.sectionHeaderTitle {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    text-align: start;
+}
+
+.sectionHeaderChevron {
+    display: inline-flex;
+    flex-shrink: 0;
+    color: var(--colors-grey700);
 }
 
 .sectionHeaderButton {

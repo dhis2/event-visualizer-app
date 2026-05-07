@@ -7,7 +7,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    min-inline-size: 640px;
+    min-inline-size: 460px;
     max-inline-size: 640px;
     max-block-size: calc(100vh - 200px);
     background-color: var(--colors-white);
@@ -30,23 +30,84 @@
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
-    padding: var(--spacers-dp8) var(--spacers-dp8) var(--spacers-dp16);
     overflow: auto;
+}
+
+.popoverContentStack {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-block-size: 0;
+}
+
+.aboutSectionOuter {
+    /* Toggle: remove `display: none` when About is ready to ship */
+    display: none;
+    border-block-start: 1px solid var(--colors-grey300);
+}
+
+.aboutMetadata {
+    margin: 0;
+}
+
+.aboutMetadataRow {
+    display: grid;
+    grid-template-columns: minmax(120px, 40%) 1fr;
+    gap: var(--spacers-dp8) var(--spacers-dp12);
+    padding-block: var(--spacers-dp4);
+    font-size: 13px;
+    line-height: 16px;
+}
+
+.aboutMetadataRow:not(:last-child) {
+    border-block-end: 1px solid var(--colors-grey200);
+}
+
+.aboutMetadataKey {
+    margin: 0;
+    font-weight: 500;
+    color: var(--colors-grey700);
+}
+
+.aboutMetadataValue {
+    margin: 0;
+    color: var(--colors-grey900);
+    word-break: break-word;
 }
 
 .popoverFooter {
     display: flex;
     align-items: center;
-    gap: var(--spacers-dp8);
-    justify-content: space-between;
     padding: var(--spacers-dp8) var(--spacers-dp8);
-    border-block-start: 1px solid var(--colors-grey300);
+    background: var(--colors-grey100);
+    border-block-start: 1px solid var(--colors-grey400);
 }
 
-.popoverFooterActions {
+.popoverFooterSidebarAdd {
+    display: flex;
+    flex: 1 1 auto;
+}
+
+.popoverFooterLayoutActions {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: var(--spacers-dp8);
+    min-inline-size: 0;
+}
+
+.popoverFooterMoveActions {
+    display: flex;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    min-inline-size: 0;
+}
+
+.popoverFooterEndActions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
     margin-inline-start: auto;
-}
-
-.popoverFooterActionsLeft {
-    margin-inline-start: 0;
 }

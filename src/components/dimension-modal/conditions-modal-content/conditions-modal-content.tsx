@@ -1,4 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
+import { IconSync16 } from '@dhis2/ui'
 import { useAppSelector, useProgramStageMetadataItem } from '@hooks'
 import { getDimensionIdParts } from '@modules/dimension.js'
 import {
@@ -39,13 +40,11 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
 
     return (
         <div className={classes.sectionStack}>
-            <ConditionsTabContent
-                dimension={dimension}
-                hasRepeatedEventsSection={canConfigureRepeatedEvents}
-            />
+            <ConditionsTabContent dimension={dimension} />
             {canConfigureRepeatedEvents && (
                 <ConditionsSection
                     title={i18n.t('Repeated events')}
+                    titleIcon={<IconSync16 />}
                     collapsible
                     defaultExpanded={isRepeatedEventsConfigured}
                     dataTest="dimension-popover-repeated-events-section"
