@@ -341,15 +341,18 @@ export const useActionButton = (
         [layoutDimensionIds, metadataStore]
     )
 
-    const isRegistrationDateInLayout = useMemo(() => {
-        return tetId ? isDimensionInLayout(layout, `${tetId}.created`) : false
-    }, [layout, tetId])
+    const isRegistrationDateInLayout = useMemo(
+        () => (tetId ? isDimensionInLayout(layout, `${tetId}.created`) : false),
+        [layout, tetId]
+    )
 
-    const isRegistrationOuInLayout = useMemo(() => {
-        return tetId
-            ? isDimensionInLayout(layout, `${tetId}.enrollmentOu`)
-            : false
-    }, [layout, tetId])
+    const isRegistrationOuInLayout = useMemo(
+        () =>
+            tetId
+                ? isDimensionInLayout(layout, `${tetId}.enrollmentOu`)
+                : false,
+        [layout, tetId]
+    )
 
     const tooltipConfig = useMemo((): TooltipContent => {
         if (isLayoutEmpty) {

@@ -79,9 +79,8 @@ const metadata = {
     'p2.p2s1.d1': {
         id: 'p2.p2s1.d1',
         name: 'Dimension1',
-        dimensionType: 'DATA_ELEMENT',
-        optionSet: 'OptionSet1',
-        valueType: 'TEXT',
+        dimensionType: 'ORGANISATION_UNIT',
+        valueType: 'ORGANISATION_UNIT',
         programId: 'p2',
         trackedEntityTypeId: 'tei1',
     },
@@ -176,7 +175,6 @@ describe('useActionButton for Event button', () => {
         const output = result.current
 
         expect(output.action).toEqual('switch')
-        expect(output.dataSourceMetadata).toEqual(metadata.p1)
         expect(output.tooltipConfig).toEqual(undefined)
     })
 
@@ -204,7 +202,6 @@ describe('useActionButton for Event button', () => {
         const output = result.current
 
         expect(output.action).toEqual('update')
-        expect(output.dataSourceMetadata).toEqual(metadata.p1)
         expect(output.tooltipConfig).toEqual(undefined)
     })
 
@@ -224,7 +221,6 @@ describe('useActionButton for Event button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p1)
         expect(output.tooltipConfig).toEqual({
             content:
                 'Nothing selected. Add items to the layout to get started.',
@@ -254,7 +250,6 @@ describe('useActionButton for Event button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p1)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with multiple program stages',
         })
@@ -282,7 +277,6 @@ describe('useActionButton for Event button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p1)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with multiple program stages',
         })
@@ -307,7 +301,6 @@ describe('useActionButton for Event button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid without a program',
         })
@@ -335,7 +328,6 @@ describe('useActionButton for Event button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with registration date',
         })
@@ -363,7 +355,6 @@ describe('useActionButton for Event button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with registration org. unit',
         })
@@ -392,7 +383,6 @@ describe('useActionButton for Event button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content:
                 'Not valid with registration date or registration org. unit',
@@ -421,7 +411,6 @@ describe('useActionButton for Event button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with multiple programs',
         })
@@ -449,7 +438,6 @@ describe('useActionButton for Event button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with multiple programs',
         })
@@ -481,7 +469,6 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('switch')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual(undefined)
     })
 
@@ -509,7 +496,6 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('update')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual(undefined)
     })
 
@@ -529,7 +515,6 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p1)
         expect(output.tooltipConfig).toEqual({
             content:
                 'Nothing selected. Add items to the layout to get started.',
@@ -556,7 +541,6 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid without a program',
         })
@@ -584,7 +568,6 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with registration date',
         })
@@ -612,7 +595,6 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with registration org. unit',
         })
@@ -641,7 +623,6 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content:
                 'Not valid with registration date or registration org. unit',
@@ -670,7 +651,6 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with multiple programs',
         })
@@ -698,7 +678,6 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with multiple programs',
         })
@@ -723,7 +702,6 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p1)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with event programs',
         })
@@ -748,7 +726,6 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with categories',
         })
@@ -773,7 +750,6 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with category option group sets',
         })
@@ -801,7 +777,6 @@ describe('useActionButton for Enrollment button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with categories or category option group sets',
         })
@@ -833,7 +808,6 @@ describe('useActionButton for Tracked entity instance button', () => {
         const output = result.current
 
         expect(output.action).toEqual('switch')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual(undefined)
     })
 
@@ -861,7 +835,6 @@ describe('useActionButton for Tracked entity instance button', () => {
         const output = result.current
 
         expect(output.action).toEqual('update')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual(undefined)
     })
 
@@ -881,7 +854,6 @@ describe('useActionButton for Tracked entity instance button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p1)
         expect(output.tooltipConfig).toEqual({
             content:
                 'Nothing selected. Add items to the layout to get started.',
@@ -911,7 +883,6 @@ describe('useActionButton for Tracked entity instance button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with multiple programs',
         })
@@ -940,7 +911,6 @@ describe('useActionButton for Tracked entity instance button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.tei1)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with multiple tracked entity types',
         })
@@ -965,7 +935,6 @@ describe('useActionButton for Tracked entity instance button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p1)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with event programs',
         })
@@ -990,7 +959,6 @@ describe('useActionButton for Tracked entity instance button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with categories',
         })
@@ -1015,7 +983,6 @@ describe('useActionButton for Tracked entity instance button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with category option group sets',
         })
@@ -1043,7 +1010,6 @@ describe('useActionButton for Tracked entity instance button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with categories or category option group sets',
         })
@@ -1071,7 +1037,6 @@ describe('useActionButton for Tracked entity instance button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with program indicators',
         })
@@ -1103,7 +1068,6 @@ describe('useActionButton for Custom value button', () => {
         const output = result.current
 
         expect(output.action).toEqual('switch')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual(undefined)
     })
 
@@ -1131,7 +1095,6 @@ describe('useActionButton for Custom value button', () => {
         const output = result.current
 
         expect(output.action).toEqual('switch')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual(undefined)
     })
 
@@ -1151,7 +1114,6 @@ describe('useActionButton for Custom value button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p1)
         expect(output.tooltipConfig).toEqual({
             content:
                 'Nothing selected. Add items to the layout to get started.',
@@ -1202,7 +1164,6 @@ describe('useActionButton for Custom value button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p2)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with multiple programs',
         })
@@ -1230,7 +1191,6 @@ describe('useActionButton for Custom value button', () => {
         const output = result.current
 
         expect(output.action).toEqual('create')
-        expect(output.dataSourceMetadata).toEqual(metadata.p1)
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with multiple program stages',
         })
