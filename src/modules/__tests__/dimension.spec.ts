@@ -1,14 +1,8 @@
-import type {
-    DimensionArray,
-    DimensionMetadataItem,
-    Program,
-    ProgramStage,
-} from '@types'
+import type { DimensionArray, Program, ProgramStage } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     getFullDimensionId,
     getDimensionIdParts,
-    getDimensionsWithSuffix,
     getCreatedDimension,
     getMainDimensions,
     getProgramDimensions,
@@ -426,75 +420,6 @@ describe('transformDimensions', () => {
             },
           ]
         `)
-    })
-})
-
-describe('getDimensionsWithSuffix', () => {
-    const mockMetadata: Record<
-        string,
-        DimensionMetadataItem | { name: string }
-    > = {
-        did: { id: 'did', dimensionType: 'DATA_ELEMENT', name: 'Data Element' },
-        'sid.did': {
-            id: 'sid.did',
-            dimensionType: 'DATA_ELEMENT',
-            name: 'Data Element',
-        },
-        'pid.sid.did': {
-            id: 'pid.sid.did',
-            dimensionType: 'DATA_ELEMENT',
-            name: 'Data Element',
-        },
-        'pid.sid.did2': {
-            id: 'pid.sid.did2',
-            dimensionType: 'DATA_ELEMENT',
-            name: 'Data Element 2',
-        },
-        sid: { name: 'Stage Name' },
-        pid: { name: 'Program Name' },
-        'pid.ou': {
-            id: 'pid.ou',
-            dimensionType: 'ORGANISATION_UNIT',
-            name: 'Organisation Unit',
-        },
-    }
-
-    it('returns dimensions without suffix for EVENT outputType', () => {
-        const dimensionIds = ['did', 'sid.did']
-        const result = getDimensionsWithSuffix({
-            dimensionIds,
-            metadata: mockMetadata,
-            outputType: 'EVENT',
-        })
-        expect(result[0].suffix).toBeUndefined()
-        expect(result[1].suffix).toBeUndefined()
-    })
-
-    it('adds suffix for TRACKED_ENTITY_INSTANCE with duplicates', () => {
-        const dimensionIds = ['pid.sid.did', 'pid.sid2.did']
-        const result = getDimensionsWithSuffix({
-            dimensionIds,
-            metadata: {
-                ...mockMetadata,
-                'pid.sid2.did': {
-                    id: 'pid.sid2.did',
-                    dimensionType: 'DATA_ELEMENT',
-                },
-                sid2: { name: 'Stage2 Name' },
-            },
-            outputType: 'TRACKED_ENTITY_INSTANCE',
-        })
-        expect(result.some((d) => d.suffix)).toBeTruthy()
-    })
-
-    it('adds suffix for ORGANISATION_UNIT in TRACKED_ENTITY_INSTANCE', () => {
-        const dimensionIds = ['pid.ou']
-        const result = getDimensionsWithSuffix({
-            dimensionIds,
-            metadata: mockMetadata,
-            outputType: 'TRACKED_ENTITY_INSTANCE',
-        })
-        expect(result[0].suffix).toBe('Program Name')
     })
 })
 

@@ -5,10 +5,10 @@ import type {
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
+import { getChipSuffixes, type SuffixInput } from '@modules/chip-suffix'
 import { getBooleanValues } from '@modules/conditions'
 import {
     getDimensionIdParts,
-    getDimensionsWithSuffix,
     getFullDimensionId,
     getMainDimensions,
     getProgramDimensions,
@@ -231,16 +231,24 @@ const extractHeaders = (
 
     const metadata = { ...analyticsResponse.metaData.items, ...defaultMetadata }
 
-    const dimensionsWithSuffix = getDimensionsWithSuffix({
-        dimensionIds,
-        metadata,
-        outputType,
+    const suffixInputs: SuffixInput[] = dimensionIds.map((id) => {
+        const { programId, programStageId } = getDimensionIdParts({
+            id,
+            outputType,
+        })
+        return { id, programId, programStageId }
     })
 
-    const labels = dimensionsWithSuffix.map(({ name, suffix, id }) => ({
-        id,
-        label: suffix ? `${name}, ${suffix}` : name,
-    }))
+    const suffixes = getChipSuffixes(suffixInputs, (id) => metadata[id]?.name)
+
+    const labels = dimensionIds.map((id) => {
+        const name = metadata[id]?.name ?? id
+        const suffix = suffixes[id]
+        return {
+            id,
+            label: suffix ? `${name} · ${suffix}` : name,
+        }
+    })
 
     const headers = analyticsResponse.headers.map((header, index) => {
         const result = { ...header, index }
