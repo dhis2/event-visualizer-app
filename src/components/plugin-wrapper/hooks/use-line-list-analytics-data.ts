@@ -27,10 +27,8 @@ import type {
     UserOrgUnitMetadataItem,
 } from '@types'
 import { useCallback, useState } from 'react'
-import {
-    getAdaptedVisualization,
-    getAnalyticsEndpoint,
-} from './query-tools-line-list.js'
+import { getAnalyticsEndpoint } from './query-tools-common'
+import { getAdaptedVisualization } from './query-tools-line-list'
 
 const lookupOptionSetOptionMetadata = (optionSetId, code, metaDataItems) => {
     const optionSetMetaData = metaDataItems?.[optionSetId]
