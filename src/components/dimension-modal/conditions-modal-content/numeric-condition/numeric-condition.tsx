@@ -172,6 +172,17 @@ export const NumericCondition: FC<NumericConditionProps> = ({
         return options
     }, [legendSets, legendSetId, legendSetMetadata?.name])
 
+    const resolvedLegendSetSelectValue = useMemo(() => {
+        if (!selectedLegendSetId) {
+            return undefined
+        }
+        return availableLegendSets.some(
+            (item) => item.id === selectedLegendSetId
+        )
+            ? selectedLegendSetId
+            : undefined
+    }, [availableLegendSets, selectedLegendSetId])
+
     const availableLegendSetLegends = useMemo(() => {
         const options = [] as LegendSetMetadataItem['legends']
 
@@ -293,7 +304,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
             {operator === OPERATOR_IN && (
                 <>
                     <SingleSelectField
-                        selected={selectedLegendSetId}
+                        selected={resolvedLegendSetSelectValue}
                         onChange={({ selected }) => {
                             setValue(undefined, selected)
                         }}
@@ -312,11 +323,11 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                                 <SingleSelectOption
                                     key={item.id}
                                     value={item.id}
-                                    label={item.name!}
+                                    label={item.name ?? item.id}
                                 />
                             ))}
                     </SingleSelectField>
-                    {selectedLegendSetId && (
+                    {resolvedLegendSetSelectValue && (
                         <MultiSelectField
                             selected={
                                 Array.isArray(availableLegendSets) &&
@@ -328,7 +339,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                             onChange={({ selected }) =>
                                 setValue(
                                     selected.join(';'),
-                                    selectedLegendSetId
+                                    resolvedLegendSetSelectValue
                                 )
                             }
                             onFocus={onLegendSetLegendsDropdownFocus}

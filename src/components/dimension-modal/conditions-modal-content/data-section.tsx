@@ -157,24 +157,13 @@ export const DataSection: FC = () => {
         )
     }
 
-    if (!isSupported) {
-        return (
-            <ConditionsSection
-                title={i18n.t('Data')}
-                titleIcon={<IconDimensionData16 />}
-                dataTest="dimension-popover-data-section"
-            >
-                <p className={classes.paragraph}>
-                    {i18n.t(
-                        "This dimension can't be filtered. All values will be shown."
-                    )}
-                </p>
-            </ConditionsSection>
-        )
-    }
-
     const showAddButton =
-        mode === 'filter' && !isSingleCondition && conditionsList.length > 0
+        isSupported &&
+        mode === 'filter' &&
+        !isSingleCondition &&
+        conditionsList.length > 0
+
+    const toggleMode = isSupported ? mode : ('all' as const)
 
     return (
         <ConditionsSection
@@ -184,11 +173,17 @@ export const DataSection: FC = () => {
         >
             <div className={classes.dataSectionStack}>
                 <DataSectionToggle
-                    mode={mode}
+                    mode={toggleMode}
                     onChange={setMode}
+                    filterDisabled={!isSupported}
+                    filterDisabledTooltip={
+                        !isSupported
+                            ? i18n.t("This dimension can't be filtered")
+                            : undefined
+                    }
                     dataTest="dimension-popover-data-toggle"
                 />
-                {mode === 'filter' && (
+                {isSupported && mode === 'filter' && (
                     <div className={classes.mainSection}>
                         <Conditions />
                         {showAddButton && (

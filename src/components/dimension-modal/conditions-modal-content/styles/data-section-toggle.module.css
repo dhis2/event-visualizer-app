@@ -1,16 +1,20 @@
 .toggle {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    align-items: stretch;
     gap: var(--spacers-dp8);
     inline-size: 100%;
 }
 
 .toggleButton {
+    box-sizing: border-box;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: var(--spacers-dp4);
+    inline-size: 100%;
+    min-inline-size: 0;
     padding: var(--spacers-dp12) var(--spacers-dp8);
     font-size: 13px;
     font-weight: 500;
@@ -35,6 +39,34 @@
     background: var(--colors-teal050);
     border-color: var(--colors-teal400);
     color: var(--colors-teal800);
+}
+
+.toggleButton:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.toggleButton:disabled:hover {
+    background: var(--colors-white);
+}
+
+.toggleButtonSelected:disabled {
+    background: var(--colors-teal050);
+}
+
+.filterTooltipWrap {
+    display: flex;
+    min-inline-size: 0;
+    inline-size: 100%;
+    align-self: stretch;
+}
+
+.filterTooltipWrap > button {
+    flex: 1 1 auto;
+}
+
+.filterTooltipWrap button:disabled {
+    pointer-events: none;
 }
 
 .toggleIcon {

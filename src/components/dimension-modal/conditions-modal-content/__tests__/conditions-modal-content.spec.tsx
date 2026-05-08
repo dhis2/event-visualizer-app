@@ -35,6 +35,14 @@ const numericDimension: DimensionMetadataItem = {
     programStageId: 'stage123',
 }
 
+const unsupportedFilterDimension: DimensionMetadataItem = {
+    id: 'stage123.unsupportedDim',
+    dimensionId: 'unsupportedDim',
+    name: 'Unsupported dimension',
+    dimensionType: 'DATA_ELEMENT',
+    programStageId: 'stage123',
+}
+
 const legendSetMetadata = {
     id: 'legend10y',
     name: 'Age 10y intervals',
@@ -67,7 +75,7 @@ const renderConditionsModalContent = async (
 }
 
 describe('<ConditionsModalContent />', () => {
-    it('renders the filters section header and collapse control even when no repeated events or range grouping', async () => {
+    it('renders the Data section when no repeated events or range grouping', async () => {
         await renderConditionsModalContent(textDimension, {
             metadata: {
                 stage123: {
@@ -77,18 +85,45 @@ describe('<ConditionsModalContent />', () => {
             },
         })
 
-        const filtersToggle = screen.getByRole('button', { name: 'Filters' })
-        expect(filtersToggle).toBeVisible()
-        expect(filtersToggle).toHaveAttribute('aria-expanded', 'false')
+        const dataSection = screen.getByTestId('dimension-popover-data-section')
+        expect(dataSection).toBeVisible()
+        expect(within(dataSection).getByText('Data')).toBeVisible()
+        expect(
+            screen.getByTestId('dimension-popover-data-toggle')
+        ).toBeVisible()
     })
 
-    it('shows filters and keeps repeated events collapsed by default', async () => {
+    it('shows data value toggles with filter disabled when the dimension cannot be filtered', async () => {
+        const user = userEvent.setup()
+        await renderConditionsModalContent(unsupportedFilterDimension)
+
+        expect(
+            screen.getByRole('radio', { name: /Show all values/i })
+        ).toBeEnabled()
+        const filterByRadio = screen.getByRole('radio', {
+            name: /Filter by/i,
+        })
+        expect(filterByRadio).toBeDisabled()
+        expect(screen.queryByText('Choose an operator')).not.toBeInTheDocument()
+
+        const tooltipAnchor = filterByRadio.parentElement
+        expect(tooltipAnchor).toBeTruthy()
+        await user.hover(tooltipAnchor as HTMLElement)
+
+        await waitFor(() => {
+            expect(
+                screen.getByText("This dimension can't be filtered")
+            ).toBeVisible()
+        })
+    })
+
+    it('shows filter controls and keeps repeated events collapsed by default', async () => {
         const user = userEvent.setup()
         const { store } = await renderConditionsModalContent(textDimension)
 
-        expect(screen.getByText('Filters')).toBeVisible()
+        expect(screen.getByText('Data')).toBeVisible()
 
-        await user.click(screen.getByRole('button', { name: 'Filters' }))
+        await user.click(screen.getByRole('radio', { name: /Filter by/i }))
 
         expect(
             screen.queryByRole('button', { name: 'Add a filter' })
@@ -127,7 +162,7 @@ describe('<ConditionsModalContent />', () => {
         const { container, store } =
             await renderConditionsModalContent(numericDimension)
 
-        await user.click(screen.getByRole('button', { name: 'Filters' }))
+        await user.click(screen.getByRole('radio', { name: /Filter by/i }))
 
         const placeholder = container.querySelector(
             '[data-test="condition-placeholder"]'
@@ -237,7 +272,7 @@ describe('<ConditionsModalContent />', () => {
             ).toBe('legend10y')
         })
 
-        await user.click(screen.getByRole('button', { name: 'Filters' }))
+        await user.click(screen.getByRole('radio', { name: /Filter by/i }))
 
         await user.click(screen.getByText('Choose an operator'))
         await user.click(screen.getByText('is one of preset options'))
@@ -247,7 +282,7 @@ describe('<ConditionsModalContent />', () => {
         ).not.toBeInTheDocument()
         expect(screen.getByText('Choose legends')).toBeVisible()
 
-        await user.click(screen.getByText('None'))
+        await user.click(screen.getByTestId('legend-set-option-none'))
 
         expect(
             store.getState().visUiConfig.conditionsByDimension[
@@ -310,7 +345,7 @@ describe('<ConditionsModalContent />', () => {
             expect(screen.getByText('0 - 10')).toBeVisible()
         })
 
-        await user.click(screen.getByText('None'))
+        await user.click(screen.getByTestId('legend-set-option-none'))
 
         expect(
             store.getState().visUiConfig.conditionsByDimension[
@@ -343,6 +378,8 @@ describe('<ConditionsModalContent />', () => {
             expect(screen.getByText('Age 10y intervals')).toBeVisible()
         })
 
-        expect(screen.getByRole('button', { name: 'Filters' })).toBeVisible()
+        expect(
+            screen.getByTestId('dimension-popover-data-section')
+        ).toBeVisible()
     })
 })

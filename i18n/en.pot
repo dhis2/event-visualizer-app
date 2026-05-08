@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-07T12:48:51.966Z\n"
-"PO-Revision-Date: 2026-05-07T12:48:51.967Z\n"
+"POT-Creation-Date: 2026-05-08T07:10:35.072Z\n"
+"PO-Revision-Date: 2026-05-08T07:10:35.075Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -137,11 +137,11 @@ msgstr "Repeated events"
 msgid "and"
 msgstr "and"
 
-msgid "Show all values"
-msgstr "Show all values"
-
 msgid "Filter by…"
 msgstr "Filter by…"
+
+msgid "Show all values"
+msgstr "Show all values"
 
 msgid "Add another filter"
 msgstr "Add another filter"
@@ -152,8 +152,8 @@ msgstr "Add a filter"
 msgid "Data"
 msgstr "Data"
 
-msgid "This dimension can't be filtered. All values will be shown."
-msgstr "This dimension can't be filtered. All values will be shown."
+msgid "This dimension can't be filtered"
+msgstr "This dimension can't be filtered"
 
 msgid "Preset options can't be combined with other filters"
 msgstr "Preset options can't be combined with other filters"
