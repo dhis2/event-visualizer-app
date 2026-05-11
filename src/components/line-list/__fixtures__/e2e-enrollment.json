@@ -157,6 +157,7 @@
         "headers": [
             {
                 "name": "ouname",
+                "dimensionId": "ou",
                 "column": "Organisation unit",
                 "valueType": "TEXT",
                 "type": "java.lang.String",
@@ -166,6 +167,7 @@
             },
             {
                 "name": "enrollmentdate",
+                "dimensionId": "enrollmentDate",
                 "column": "Enrollment date (e2e)",
                 "valueType": "DATETIME",
                 "type": "java.time.LocalDateTime",

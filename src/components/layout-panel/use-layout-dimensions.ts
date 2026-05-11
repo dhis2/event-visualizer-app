@@ -1,7 +1,6 @@
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { useMetadataItems } from '@hooks'
-import { getDimensionIdParts } from '@modules/dimension'
-import type { DimensionType, OutputType } from '@types'
+import type { DimensionMetadataItem, OutputType, DimensionType } from '@types'
 import { useMemo } from 'react'
 
 interface UseLayoutDimensionsParams {
@@ -13,75 +12,54 @@ export const useLayoutDimensions = ({
     dimensionIds,
     outputType,
 }: UseLayoutDimensionsParams): LayoutDimension[] => {
-    // Collect all metadata IDs that will be needed
-    const metadataIds = useMemo(() => {
+    const dimensionMetadataItems = useMetadataItems(dimensionIds)
+
+    const programAndStageIds = useMemo(() => {
         const ids = new Set<string>()
-
-        // Add dimension IDs
-        dimensionIds.forEach((id) => ids.add(id))
-
-        // Add program and stage IDs for suffix calculation
-        dimensionIds.forEach((id) => {
-            const { programId, programStageId } = getDimensionIdParts({
-                id,
-                outputType,
-            })
-            if (programId) {
-                ids.add(programId)
+        for (const id of dimensionIds) {
+            const item = dimensionMetadataItems[id] as
+                | Partial<DimensionMetadataItem>
+                | undefined
+            if (item?.programId) {
+                ids.add(item.programId)
             }
-            if (programStageId) {
-                ids.add(programStageId)
+            if (item?.programStageId) {
+                ids.add(item.programStageId)
             }
-        })
-
+        }
         return Array.from(ids)
-    }, [dimensionIds, outputType])
+    }, [dimensionIds, dimensionMetadataItems])
 
-    // Get reactive metadata
-    const metadataItems = useMetadataItems(metadataIds)
+    const programAndStageMetadataItems = useMetadataItems(programAndStageIds)
 
     return useMemo(() => {
         const dimensions: LayoutDimension[] = dimensionIds.map((id) => {
-            const { dimensionId, programStageId, programId } =
-                getDimensionIdParts({
-                    id,
-                    outputType,
-                })
-
-            const metadataItem = metadataItems[id]
-            const dimension: LayoutDimension = {
-                id,
-                name: metadataItem?.name || id,
-                dimensionId,
-                programStageId,
-                programId,
+            const metadataItem = dimensionMetadataItems[id] as
+                | Partial<DimensionMetadataItem>
+                | undefined
+            if (!metadataItem) {
+                throw new Error(`missing metadata for dimension ${id}`)
             }
 
-            // Build the dimension object with metadata
-            if (metadataItem) {
-                if (
-                    'dimensionType' in metadataItem &&
-                    metadataItem.dimensionType
-                ) {
-                    dimension.dimensionType = metadataItem.dimensionType
-                }
+            const dimension: LayoutDimension = {
+                id,
+                name: metadataItem.name || id,
+                dimensionId: metadataItem.dimensionId ?? id,
+                programStageId: metadataItem.programStageId,
+                programId: metadataItem.programId,
+            }
 
-                if ('optionSetId' in metadataItem && metadataItem.optionSetId) {
-                    dimension.optionSet = metadataItem.optionSetId
-                }
-
-                if ('valueType' in metadataItem && metadataItem.valueType) {
-                    dimension.valueType = metadataItem.valueType
-                }
-
-                if (
-                    'dimensionItemType' in metadataItem &&
-                    metadataItem.dimensionItemType
-                ) {
-                    dimension.dimensionItemType = metadataItem.dimensionItemType
-                }
-            } else {
-                throw new Error(`missing metadata for dimension ${dimensionId}`)
+            if (metadataItem.dimensionType) {
+                dimension.dimensionType = metadataItem.dimensionType
+            }
+            if (metadataItem.optionSetId) {
+                dimension.optionSet = metadataItem.optionSetId
+            }
+            if (metadataItem.valueType) {
+                dimension.valueType = metadataItem.valueType
+            }
+            if (metadataItem.dimensionItemType) {
+                dimension.dimensionItemType = metadataItem.dimensionItemType
             }
 
             return dimension
@@ -125,11 +103,15 @@ export const useLayoutDimensions = ({
 
                     if (sameProgramId || thirdPartyDuplicates) {
                         dimension.suffix = dimension.programStageId
-                            ? metadataItems[dimension.programStageId]?.name
+                            ? programAndStageMetadataItems[
+                                  dimension.programStageId
+                              ]?.name
                             : undefined
                     } else if (dimension.programId) {
                         dimension.suffix =
-                            metadataItems[dimension.programId]?.name
+                            programAndStageMetadataItems[
+                                dimension.programId
+                            ]?.name
                     }
                 }
             } else if (
@@ -141,10 +123,16 @@ export const useLayoutDimensions = ({
                 ) &&
                 dimension.programId
             ) {
-                dimension.suffix = metadataItems[dimension.programId]?.name
+                dimension.suffix =
+                    programAndStageMetadataItems[dimension.programId]?.name
             }
 
             return dimension
         })
-    }, [dimensionIds, outputType, metadataItems])
+    }, [
+        dimensionIds,
+        outputType,
+        dimensionMetadataItems,
+        programAndStageMetadataItems,
+    ])
 }

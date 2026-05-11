@@ -1,6 +1,6 @@
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import { isMetadataInputItem } from '@modules/metadata'
-import { headersMap } from '@modules/visualization'
+import { reversedHeadersMap } from '@modules/visualization'
 import type { AnalyticsResponseMetadataItems, MetadataInput } from '@types'
 
 const extractItemsMetadata = (
@@ -29,18 +29,6 @@ const extractItemsMetadata = (
 
         return acc
     }, {})
-
-/* The headersMap is a lookup for app -> webApi (i.e. eventDate -> eventdate)
- * but here the lookup needs to be in the reverse order (i.e. eventdate -> eventDate)
- * because we need to map the keys from the header columns in the response data
- * for usage in the app */
-const reversedHeadersMap = Object.entries(headersMap).reduce(
-    (acc, [key, value]) => {
-        acc[value] = key
-        return acc
-    },
-    {}
-)
 
 const updateNamesFromHeaders = (
     headers: Array<LineListAnalyticsDataHeader>,

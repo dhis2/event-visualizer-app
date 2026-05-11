@@ -83,6 +83,204 @@ export const getHeadersMap = (
     return map
 }
 
+/* Dimension IDs whose canonical form is always `programId.<id>`. Mirrors the
+ * private ENROLLMENT_SCOPED_DIMENSION_IDS in @modules/dimension; kept local
+ * here to avoid coupling visualization.ts to dimension.ts internals. */
+const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
+    'enrollmentOu',
+    'enrollmentDate',
+    'incidentDate',
+    'programStatus',
+])
+
+/* Static reverse of headersMap plus the `showHierarchy` wire form
+ * `ounamehierarchy`. We deliberately do NOT reverse the ENR-specific
+ * `enrollmentOu → ouname` override here, because `ouname` is ambiguous: when
+ * stage-prefixed it's the stage event OU (canonical `stageId.ou`) and when
+ * bare it's the enrollment OU. The bare-ENR rewrite is handled in
+ * analyticsHeaderToCanonicalDimensionId below. */
+export const reversedHeadersMap: Record<string, string> = {
+    ...Object.entries(headersMap).reduce<Record<string, string>>(
+        (acc, [appLocal, wire]) => {
+            acc[wire] = appLocal
+            return acc
+        },
+        {}
+    ),
+    ounamehierarchy: 'ou',
+}
+
+/**
+ * Translates an analytics-response header name (wire form) to the canonical
+ * app-local dimension ID used as the metadata store key.
+ *
+ * Wire forms vary by outputType and dimension scope:
+ *   - Stage-scoped (any outputType): `stageId.<wireDim>` — prefix preserved.
+ *   - Enrollment-scoped (EVENT/ENR): bare `<wireDim>` — programId injected.
+ *   - Enrollment-scoped (TE): `programId.<wireDim>` — prefix preserved.
+ *   - TEI registration (TE): bare `ouname`/`created` — rewritten to
+ *     `${tetId}.enrollmentOu` / `${tetId}.created` to match
+ *     getTrackedEntityTypeFixedDimensions.
+ *   - Plain (PIs, TEAs, lastUpdated, createdBy, lastUpdatedBy, completed):
+ *     returned without a prefix.
+ */
+export const analyticsHeaderToCanonicalDimensionId = (
+    headerName: string,
+    visualization: CurrentVisualization
+): string => {
+    const { outputType } = visualization
+
+    const lastDotIndex = headerName.lastIndexOf('.')
+    const prefix =
+        lastDotIndex === -1 ? undefined : headerName.slice(0, lastDotIndex)
+    const wireDim =
+        lastDotIndex === -1 ? headerName : headerName.slice(lastDotIndex + 1)
+
+    const appLocalDim = reversedHeadersMap[wireDim] ?? wireDim
+
+    if (prefix) {
+        return `${prefix}.${appLocalDim}`
+    }
+
+    if (outputType === 'TRACKED_ENTITY_INSTANCE') {
+        const tetId = visualization.trackedEntityType?.id
+        if (tetId && appLocalDim === 'ou') {
+            return `${tetId}.enrollmentOu`
+        }
+        if (tetId && appLocalDim === 'created') {
+            return `${tetId}.created`
+        }
+        return appLocalDim
+    }
+
+    const programId = visualization.programDimensions?.[0]?.id
+
+    if (outputType === 'ENROLLMENT' && appLocalDim === 'ou' && programId) {
+        return `${programId}.enrollmentOu`
+    }
+
+    if (ENROLLMENT_SCOPED_DIMENSION_IDS.has(appLocalDim) && programId) {
+        return `${programId}.${appLocalDim}`
+    }
+
+    return appLocalDim
+}
+
+/* Built-in dimension IDs that are sent in the analytics request `dimension=`
+ * param as SCREAMING_SNAKE_CASE (e.g. `eventDate` → `EVENT_DATE`). UID-based
+ * dimensions (data elements, attributes, program indicators, categories, COGS,
+ * OUGS) are sent verbatim. `ou` (stage event OU) is also sent verbatim. */
+const SCREAMING_SNAKE_REQUEST_DIMENSION_IDS: ReadonlySet<string> = new Set([
+    'eventDate',
+    'scheduledDate',
+    'eventStatus',
+    'enrollmentOu',
+    'enrollmentDate',
+    'incidentDate',
+    'programStatus',
+    'lastUpdated',
+    'created',
+    'completed',
+])
+
+const toRequestDimensionWireName = (dimensionId: string): string =>
+    SCREAMING_SNAKE_REQUEST_DIMENSION_IDS.has(dimensionId)
+        ? dimensionId.replaceAll(/[A-Z]/g, (c) => `_${c}`).toUpperCase()
+        : dimensionId
+
+type DimensionContext = {
+    dimensionId: string
+    programId?: string
+    programStageId?: string
+    trackedEntityTypeId?: string
+}
+
+/**
+ * Produces the wire string for the analytics request `?dimension=...` param
+ * for the given canonical dimension. Inverse of the part of
+ * analyticsHeaderToCanonicalDimensionId that decides prefix presence — but
+ * outputs SCREAMING_SNAKE_CASE instead of lowercase.
+ *
+ * Rules (matching the "API dimension" column in the Tracker analytics spec):
+ *   - Stage-scoped (programStageId present): `${stageId}.${wireDim}`. `wireDim`
+ *     is SCREAMING_SNAKE for known built-ins, plain for UID dims and `ou`.
+ *   - TEI registration (trackedEntityTypeId, no program/stage):
+ *       `enrollmentOu` → bare `ou`, otherwise bare `wireDim`.
+ *   - Enrollment-scoped in TE (programId, no stage):
+ *       `${programId}.${wireDim}`.
+ *   - Enrollment-scoped in ENROLLMENT: `enrollmentOu` → bare `ou`,
+ *     otherwise bare `wireDim`.
+ *   - Enrollment-scoped in EVENT, and plain (no program/stage/tet):
+ *     bare `wireDim`.
+ */
+export const getAnalyticsRequestDimensionName = ({
+    dimensionId,
+    programId,
+    programStageId,
+    trackedEntityTypeId,
+    outputType,
+}: DimensionContext & { outputType: OutputType }): string => {
+    if (programStageId) {
+        return `${programStageId}.${toRequestDimensionWireName(dimensionId)}`
+    }
+
+    if (trackedEntityTypeId && !programId) {
+        if (dimensionId === 'enrollmentOu') {
+            return 'ou'
+        }
+        return toRequestDimensionWireName(dimensionId)
+    }
+
+    if (programId && outputType === 'TRACKED_ENTITY_INSTANCE') {
+        return `${programId}.${toRequestDimensionWireName(dimensionId)}`
+    }
+
+    if (outputType === 'ENROLLMENT' && dimensionId === 'enrollmentOu') {
+        return 'ou'
+    }
+
+    return toRequestDimensionWireName(dimensionId)
+}
+
+/**
+ * Produces the wire string for the analytics request `?headers=...` param,
+ * which the engine echoes back verbatim as the response header `name`.
+ *
+ * Same prefix rules as getAnalyticsRequestDimensionName, but the wire dim part
+ * uses lowercase-concat form (from headersMap, with ENR and showHierarchy
+ * overrides via getHeadersMap).
+ */
+export const getAnalyticsRequestHeaderName = ({
+    dimensionId,
+    programId,
+    programStageId,
+    trackedEntityTypeId,
+    visualization,
+}: DimensionContext & {
+    visualization: CurrentVisualization
+}): string => {
+    const { outputType } = visualization
+    const map = getHeadersMap(visualization)
+    const wireDim = map[dimensionId] ?? dimensionId
+
+    if (programStageId) {
+        return `${programStageId}.${wireDim}`
+    }
+
+    if (trackedEntityTypeId && !programId) {
+        if (dimensionId === 'enrollmentOu') {
+            return 'ouname'
+        }
+        return wireDim
+    }
+
+    if (programId && outputType === 'TRACKED_ENTITY_INSTANCE') {
+        return `${programId}.${wireDim}`
+    }
+
+    return wireDim
+}
+
 /**
  * Transforms a canonical CurrentVisualization into the shape needed for
  * analytics requests and rendering. Applies wire-to-app dimension transforms
@@ -96,9 +294,15 @@ export const getHeadersMap = (
 export const transformVisualizationForAnalyticsRequest = (
     visualization: CurrentVisualization
 ): CurrentVisualization => {
-    const columns = transformDimensions(visualization.columns ?? [])
-    const rows = transformDimensions(visualization.rows ?? [])
-    const filters = transformDimensions(visualization.filters ?? [])
+    const columns = toAppLocalDimensions(
+        transformDimensions(visualization.columns ?? [])
+    )
+    const rows = toAppLocalDimensions(
+        transformDimensions(visualization.rows ?? [])
+    )
+    const filters = toAppLocalDimensions(
+        transformDimensions(visualization.filters ?? [])
+    )
 
     if (visualization.completedOnly && visualization.outputType === 'EVENT') {
         filters.push({

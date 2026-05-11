@@ -7,7 +7,6 @@ import {
     useMetadataItems,
     useRootOrgUnits,
 } from '@hooks'
-import { getDimensionIdParts, getFullDimensionId } from '@modules/dimension'
 import {
     getVisUiConfigPlainItemIdsByDimension,
     getVisUiConfigOutputType,
@@ -41,19 +40,14 @@ export const OrgUnitDimensionModalContent: FC<
 
     const updateOrgUnitDimensionItems = useCallback(
         ({ items }) => {
-            const { programId } = getDimensionIdParts({
-                id: dimension.id,
-                outputType,
-            })
+            const itemPrefix =
+                outputType === 'TRACKED_ENTITY_INSTANCE' && dimension.programId
+                    ? `${dimension.programId}.`
+                    : ''
 
             const { uiItems, metadata } = items.reduce(
                 (acc, item) => {
-                    const id = getFullDimensionId({
-                        dimensionId: item.id,
-                        programId,
-                        outputType,
-                    })
-                    acc.uiItems.push(id)
+                    acc.uiItems.push(`${itemPrefix}${item.id}`)
 
                     const ouUid = ouIdHelper.removePrefix(item.id)
 
@@ -82,7 +76,7 @@ export const OrgUnitDimensionModalContent: FC<
                 })
             )
         },
-        [addMetadata, dispatch, dimension.id, outputType]
+        [addMetadata, dispatch, dimension.id, dimension.programId, outputType]
     )
 
     const selectedIds = useAppSelector((state) =>

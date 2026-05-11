@@ -56,19 +56,12 @@ export const getDimensionsWithSuffix = ({
     outputType,
 }) => {
     const dimensions = dimensionIds.map((id) => {
-        const { dimensionId, programStageId, programId } = getDimensionIdParts({
-            id,
-            outputType,
-        })
-        const dimension = {
-            ...metadata[id],
-            dimensionId,
-            programStageId,
-            programId,
-        }
-
+        const dimension = { ...(metadata[id] ?? {}) }
         if (!dimension.id) {
             dimension.id = id
+        }
+        if (!dimension.dimensionId) {
+            dimension.dimensionId = extractPlainDimensionId(id)
         }
         return dimension as DimensionMetadataItem
     })
@@ -126,40 +119,6 @@ export const getDimensionsWithSuffix = ({
     })
 }
 
-type GetDimensionIdPartsParams = {
-    id: string
-    outputType?: OutputType
-}
-
-export const getDimensionIdParts = ({
-    id,
-    outputType = undefined,
-}: GetDimensionIdPartsParams): {
-    dimensionId: string
-    programStageId: string
-    programId?: string
-    repetitionIndex?: string
-} => {
-    let rawStageId
-    const [dimensionId, part2, part3] = (id || '').split('.').reverse()
-    let programId = part3
-    if (part3 || outputType !== 'TRACKED_ENTITY_INSTANCE') {
-        rawStageId = part2
-    }
-    if (outputType === 'TRACKED_ENTITY_INSTANCE' && !part3) {
-        programId = part2
-    }
-    const [programStageId, repetitionIndex] = (rawStageId || '').split('[')
-    return {
-        dimensionId,
-        programStageId,
-        ...(programId ? { programId } : {}),
-        repetitionIndex:
-            repetitionIndex?.length &&
-            repetitionIndex.substring(0, repetitionIndex.indexOf(']')),
-    }
-}
-
 export const extractPlainDimensionId = (compoundId?: string | null): string =>
     (compoundId ?? '').split('.').pop()!
 
@@ -171,44 +130,6 @@ export const getDefaultItemsForDimension = (
         return [USER_ORGUNIT]
     }
     return undefined
-}
-
-type GetFullDimensionIdParams = {
-    dimensionId: string
-    outputType?: OutputType
-    programId?: string
-    programStageId?: string
-}
-
-export const getFullDimensionId = ({
-    dimensionId,
-    programId,
-    programStageId,
-    outputType,
-}: GetFullDimensionIdParams): string => {
-    if (dimensionId === 'created') {
-        return dimensionId
-    } else if (
-        outputType !== 'TRACKED_ENTITY_INSTANCE' &&
-        [
-            'completed',
-            'enrollmentdate',
-            'enrollmentouname',
-            'incidenddate',
-            'lastupdated',
-            'programstatus',
-        ].includes(dimensionId)
-    ) {
-        return dimensionId
-    } else {
-        return [
-            outputType === 'TRACKED_ENTITY_INSTANCE' ? programId : undefined,
-            programStageId,
-            dimensionId,
-        ]
-            .filter(Boolean)
-            .join('.')
-    }
 }
 
 type DimensionRecordObject = Partial<Record<DimensionId, DimensionMetadataItem>>
