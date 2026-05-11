@@ -32,14 +32,17 @@ const iconInactiveColor = colors.grey500
 
 type FileMenuProps = {
     onMenuItemClick: (dialogName: string) => void
+    onSaveOrSaveAs: () => void
 }
 
-export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
+export const FileMenu: FC<FileMenuProps> = ({
+    onMenuItemClick,
+    onSaveOrSaveAs,
+}) => {
     const currentVis = useAppSelector(getCurrentVis)
     const savedVis = useAppSelector(getSavedVis)
 
-    const { isSaveEnabled, isSaveAsEnabled, onNew, onSave } =
-        useToolbarActions()
+    const { isSaveEnabled, isSaveAsEnabled, onNew } = useToolbarActions()
 
     const hasVisualizationDeleteAccess: boolean = useMemo(
         () =>
@@ -94,11 +97,7 @@ export const FileMenu: FC<FileMenuProps> = ({ onMenuItemClick }) => {
                         />
                     }
                     disabled={!isSaveEnabled}
-                    onClick={
-                        isCurrentVisualizationPersisted(currentVis)
-                            ? onSave
-                            : () => onMenuItemClick('saveas')
-                    }
+                    onClick={onSaveOrSaveAs}
                     dataTest="file-menu-save"
                 />
                 <HoverMenuListItem

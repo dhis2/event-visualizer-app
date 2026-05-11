@@ -13,6 +13,7 @@ import {
 import { SharingDialog } from '@dhis2/ui'
 import { useAppSelector, useCurrentUser } from '@hooks'
 import { isVisualizationPersistable } from '@modules/validation'
+import { isCurrentVisualizationPersisted } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import type { SavedVisualization } from '@types'
@@ -140,14 +141,19 @@ export const ActionsBar: FC = () => {
     const [currentDialog, setCurrentDialog] = useState<string | null>(null)
 
     const currentUser = useCurrentUser()
+    const currentVis = useAppSelector(getCurrentVis)
 
-    const onMenuItemClick = (dialogToOpen) => {
+    const onMenuItemClick = (dialogToOpen: string) => {
         setCurrentDialog(dialogToOpen)
     }
 
     const onDialogClose = () => setCurrentDialog(null)
 
-    const { onNew, onOpen } = useToolbarActions()
+    const { onNew, onOpen, onSave } = useToolbarActions()
+
+    const onSaveOrSaveAs = isCurrentVisualizationPersisted(currentVis)
+        ? onSave
+        : () => setCurrentDialog('saveas')
 
     return (
         <>
@@ -155,11 +161,14 @@ export const ActionsBar: FC = () => {
                 <div className={classes.actionButtons}>
                     <NewButton />
                     <OpenButton onClick={() => onMenuItemClick('open')} />
-                    <SaveButton />
+                    <SaveButton onClick={onSaveOrSaveAs} />
                     <ToolbarDivider />
                 </div>
                 <HoverMenuBar>
-                    <FileMenu onMenuItemClick={onMenuItemClick} />
+                    <FileMenu
+                        onMenuItemClick={onMenuItemClick}
+                        onSaveOrSaveAs={onSaveOrSaveAs}
+                    />
                     <ViewMenu />
                     <DownloadMenu />
                 </HoverMenuBar>
