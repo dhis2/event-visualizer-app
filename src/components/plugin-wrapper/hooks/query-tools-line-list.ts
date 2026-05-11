@@ -20,12 +20,13 @@ const adaptDimensions = (
 
     dimensions.forEach((dimensionObj) => {
         const dimensionId = dimensionObj.dimension
+        const dimension = convertToScreamingSnakeCase(dimensionId)
 
         // these are always passed without any prefix
         if (['completed', 'created', 'lastUpdated'].includes(dimensionId)) {
             adaptedDimensions.push({
                 ...dimensionObj,
-                dimension: convertToScreamingSnakeCase(dimensionId),
+                dimension,
                 program: undefined,
                 programStage: undefined,
             })
@@ -35,7 +36,7 @@ const adaptDimensions = (
         ) {
             adaptedDimensions.push({
                 ...dimensionObj,
-                dimension: convertToScreamingSnakeCase(dimensionId),
+                dimension,
                 program: undefined,
             })
         } else if (
@@ -43,8 +44,6 @@ const adaptDimensions = (
             dimensionId === 'enrollmentDate' ||
             dimensionId === 'incidentDate'
         ) {
-            const dimension = convertToScreamingSnakeCase(dimensionId)
-
             if (outputType === 'TRACKED_ENTITY_INSTANCE') {
                 // remove programStage for these dimensions for trackedEntity
                 adaptedDimensions.push({
@@ -64,6 +63,7 @@ const adaptDimensions = (
         } else if (dimensionId === 'enrollmentOu') {
             adaptedDimensions.push({
                 ...dimensionObj,
+                dimension,
                 program:
                     outputType === 'TRACKED_ENTITY_INSTANCE'
                         ? dimensionObj.program
