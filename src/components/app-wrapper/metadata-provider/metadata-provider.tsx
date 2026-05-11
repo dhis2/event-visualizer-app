@@ -36,7 +36,10 @@ import { assertTypedMetadataItem } from './typed-metadata-item'
 
 const MetadataContext = createContext<MetadataStore | null>(null)
 
-export const MetadataProvider: FC<{ children: ReactNode }> = ({ children }) => {
+/* App-side provider: pulls rootOrgUnits from AppCachedDataQueryProvider. */
+export const AppMetadataProvider: FC<{ children: ReactNode }> = ({
+    children,
+}) => {
     const rootOrgUnits = useRootOrgUnits()
     const [metadataStore] = useState(
         () => new MetadataStore(getInitialMetadata(), rootOrgUnits)
@@ -48,6 +51,23 @@ export const MetadataProvider: FC<{ children: ReactNode }> = ({ children }) => {
     )
 }
 
+/* Plugin-side provider: no rootOrgUnits dependency, so the plugin can render
+ * without an AppCachedDataQueryProvider ancestor. */
+export const PluginMetadataProvider: FC<{ children: ReactNode }> = ({
+    children,
+}) => {
+    const [metadataStore] = useState(
+        () => new MetadataStore(getInitialMetadata())
+    )
+    return (
+        <MetadataContext.Provider value={metadataStore}>
+            {children}
+        </MetadataContext.Provider>
+    )
+}
+
+/* Test-side provider: seeds the store with mock metadata. Pulls rootOrgUnits
+ * from AppCachedDataQueryProvider, which the test-utils wrapper sets up. */
 export const MockMetadataProvider: FC<{
     children: ReactNode
     mockMetadata?: InitialMetadataItems
@@ -218,17 +238,6 @@ export const useAddMetadata = (): MetadataStore['addMetadata'] => {
 
     return addMetadata
 }
-export const useAddAnalyticsResponseMetadata =
-    (): MetadataStore['addAnalyticsResponseMetadata'] => {
-        const metadataStore = useContext(MetadataContext)!
-
-        const [addAnalyticsResponseMetadata] = useState(() =>
-            metadataStore.addAnalyticsResponseMetadata.bind(metadataStore)
-        )
-
-        return addAnalyticsResponseMetadata
-    }
-
 export type UseMetadataStoreReturnValue = Pick<
     MetadataStore,
     | 'getMetadataItem'
@@ -241,6 +250,7 @@ export type UseMetadataStoreReturnValue = Pick<
     | 'getUserOrgUnitMetadataItem'
     | 'getDimensionMetadataItem'
     | 'addMetadata'
+    | 'addAnalyticsResponseMetadata'
     | 'setVisualizationMetadata'
 >
 export const useMetadataStore = (): UseMetadataStoreReturnValue => {
@@ -263,6 +273,8 @@ export const useMetadataStore = (): UseMetadataStoreReturnValue => {
         getDimensionMetadataItem:
             metadataStore.getDimensionMetadataItem.bind(metadataStore),
         addMetadata: metadataStore.addMetadata.bind(metadataStore),
+        addAnalyticsResponseMetadata:
+            metadataStore.addAnalyticsResponseMetadata.bind(metadataStore),
         setVisualizationMetadata:
             metadataStore.setVisualizationMetadata.bind(metadataStore),
     }))

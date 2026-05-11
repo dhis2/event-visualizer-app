@@ -2,7 +2,7 @@ import { render, act, renderHook } from '@testing-library/react'
 import { useState, type ReactNode } from 'react'
 import { expect, describe, it, beforeEach } from 'vitest'
 import {
-    MetadataProvider,
+    PluginMetadataProvider,
     useMetadataItem,
     useMetadataItems,
     useAddMetadata,
@@ -59,17 +59,17 @@ const StoreComponent = () => {
 
 const ProviderWithComponents = ({ children }: { children?: ReactNode }) => {
     return (
-        <MetadataProvider>
+        <PluginMetadataProvider>
             <ItemComponent id="a" />
             <ItemsComponent ids={['a', 'b']} />
             <AddComponent />
             <StoreComponent />
             {children}
-        </MetadataProvider>
+        </PluginMetadataProvider>
     )
 }
 
-describe('MetadataProvider rerender behavior', () => {
+describe('PluginMetadataProvider rerender behavior', () => {
     beforeEach(() => {
         renders = { item: 0, items: 0, add: 0, store: 0 }
     })
@@ -206,10 +206,10 @@ describe('MetadataProvider rerender behavior', () => {
     })
 })
 
-describe('MetadataProvider initial metadata behavior', () => {
+describe('PluginMetadataProvider initial metadata behavior', () => {
     it('should load initial metadata on provider initialization', () => {
         const { result } = renderHook(() => useMetadataStore(), {
-            wrapper: MetadataProvider,
+            wrapper: PluginMetadataProvider,
         })
 
         // Test some known initial metadata items
@@ -234,7 +234,7 @@ describe('MetadataProvider initial metadata behavior', () => {
 
     it('should have all expected initial metadata categories', () => {
         const { result } = renderHook(() => useMetadataStore(), {
-            wrapper: MetadataProvider,
+            wrapper: PluginMetadataProvider,
         })
 
         // Test relative period items
@@ -277,7 +277,7 @@ describe('MetadataProvider initial metadata behavior', () => {
 
     it('should allow adding new metadata', () => {
         const { result } = renderHook(() => useMetadataStore(), {
-            wrapper: MetadataProvider,
+            wrapper: PluginMetadataProvider,
         })
 
         // Add new metadata that doesn't conflict
@@ -304,7 +304,7 @@ describe('MetadataProvider initial metadata behavior', () => {
 
     it('should handle bulk operations correctly', () => {
         const { result } = renderHook(() => useMetadataStore(), {
-            wrapper: MetadataProvider,
+            wrapper: PluginMetadataProvider,
         })
 
         // Try bulk operation mixing initial metadata and new items
@@ -327,7 +327,7 @@ describe('MetadataProvider initial metadata behavior', () => {
     })
 })
 
-describe('MetadataProvider API and return value types', () => {
+describe('PluginMetadataProvider API and return value types', () => {
     it('useMetadataItem returns the correct value', () => {
         const { result } = renderHook(
             ({ id }) => {
@@ -462,7 +462,7 @@ describe('MetadataProvider API and return value types', () => {
 
     it('useMetadataStore typed getters return correctly typed items', () => {
         const { result } = renderHook(() => useMetadataStore(), {
-            wrapper: MetadataProvider,
+            wrapper: PluginMetadataProvider,
         })
 
         const program = {
@@ -499,7 +499,7 @@ describe('MetadataProvider API and return value types', () => {
 
     it('useMetadataStore typed getters throw on wrong type', () => {
         const { result } = renderHook(() => useMetadataStore(), {
-            wrapper: MetadataProvider,
+            wrapper: PluginMetadataProvider,
         })
         act(() =>
             result.current.addMetadata({
@@ -560,7 +560,7 @@ describe('MetadataProvider API and return value types', () => {
 // Alias key resolution through hooks
 // ---------------------------------------------------------------------------
 
-describe('MetadataProvider — compound-key alias resolution via hooks', () => {
+describe('PluginMetadataProvider — compound-key alias resolution via hooks', () => {
     const programId = 'p1'
     const stageId = 'ps1'
     const dimId = 'weight'
@@ -607,7 +607,7 @@ describe('MetadataProvider — compound-key alias resolution via hooks', () => {
                 const store = useMetadataStore()
                 return { item, store }
             },
-            { wrapper: MetadataProvider }
+            { wrapper: PluginMetadataProvider }
         )
 
         expect(result.current.item).toBeUndefined()
@@ -635,7 +635,7 @@ describe('MetadataProvider — compound-key alias resolution via hooks', () => {
                 const store = useMetadataStore()
                 return { item, store }
             },
-            { wrapper: MetadataProvider }
+            { wrapper: PluginMetadataProvider }
         )
 
         // Set up context
@@ -659,7 +659,7 @@ describe('MetadataProvider — compound-key alias resolution via hooks', () => {
 
     it('useMetadataItem with alias key returns undefined when context metadata is missing', () => {
         const { result } = renderHook(() => useMetadataItem(aliasKey), {
-            wrapper: MetadataProvider,
+            wrapper: PluginMetadataProvider,
         })
 
         // Without program/stage context, 3-part alias cannot be resolved
@@ -671,7 +671,7 @@ describe('MetadataProvider — compound-key alias resolution via hooks', () => {
 // Typed use* hooks
 // ---------------------------------------------------------------------------
 
-describe('MetadataProvider — typed use* hooks', () => {
+describe('PluginMetadataProvider — typed use* hooks', () => {
     const program = {
         id: 'p1',
         name: 'My Program',
@@ -706,7 +706,7 @@ describe('MetadataProvider — typed use* hooks', () => {
                 const store = useMetadataStore()
                 return { item, store }
             },
-            { wrapper: MetadataProvider }
+            { wrapper: PluginMetadataProvider }
         )
         act(() => result.current.store.addMetadata(program))
         expect(result.current.item?.id).toBe('p1')
@@ -714,7 +714,7 @@ describe('MetadataProvider — typed use* hooks', () => {
 
     it('useProgramMetadataItem returns undefined for an unknown id', () => {
         const { result } = renderHook(() => useProgramMetadataItem('nope'), {
-            wrapper: MetadataProvider,
+            wrapper: PluginMetadataProvider,
         })
         expect(result.current).toBeUndefined()
     })
@@ -726,7 +726,7 @@ describe('MetadataProvider — typed use* hooks', () => {
                 const store = useMetadataStore()
                 return { item, store }
             },
-            { wrapper: MetadataProvider }
+            { wrapper: PluginMetadataProvider }
         )
         act(() => result.current.store.addMetadata(stage))
         expect(result.current.item?.id).toBe('ps1')
@@ -739,7 +739,7 @@ describe('MetadataProvider — typed use* hooks', () => {
                 const store = useMetadataStore()
                 return { item, store }
             },
-            { wrapper: MetadataProvider }
+            { wrapper: PluginMetadataProvider }
         )
         // Add program+stage context first, then the compound-key dimension
         act(() => {
@@ -763,7 +763,7 @@ describe('MetadataProvider — typed use* hooks', () => {
                 const store = useMetadataStore()
                 return { item, store }
             },
-            { wrapper: MetadataProvider }
+            { wrapper: PluginMetadataProvider }
         )
         act(() => result.current.store.addMetadata(orgUnit))
         expect(result.current.item?.path).toBe('/ou1')
