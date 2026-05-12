@@ -49,6 +49,7 @@ export const useLayoutDimensions = ({
                 dimensionId: metadataItem.dimensionId ?? id,
                 programStageId: metadataItem.programStageId,
                 programId: metadataItem.programId,
+                trackedEntityTypeId: metadataItem.trackedEntityTypeId,
             }
 
             if (metadataItem.dimensionType) {
@@ -67,18 +68,13 @@ export const useLayoutDimensions = ({
             return dimension
         })
 
-        const suffixInputs: SuffixInput[] = dimensions.map((dim) => {
-            const metadataItem = dimensionMetadataItems[dim.id] as
-                | Partial<DimensionMetadataItem>
-                | undefined
-            return {
-                id: dim.id,
-                dimensionType: dim.dimensionType ?? dim.dimensionItemType,
-                programId: dim.programId,
-                programStageId: dim.programStageId,
-                trackedEntityTypeId: metadataItem?.trackedEntityTypeId,
-            }
-        })
+        const suffixInputs: SuffixInput[] = dimensions.map((dim) => ({
+            id: dim.id,
+            dimensionType: dim.dimensionType ?? dim.dimensionItemType,
+            programId: dim.programId,
+            programStageId: dim.programStageId,
+            trackedEntityTypeId: dim.trackedEntityTypeId,
+        }))
 
         const suffixes = getDimensionSuffixes(
             suffixInputs,
