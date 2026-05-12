@@ -56,7 +56,7 @@ export const getDimensionsWithSuffix = ({
     outputType,
 }) => {
     const dimensions = dimensionIds.map((id) => {
-        const dimension = { ...(metadata[id] ?? {}) }
+        const dimension = { ...metadata[id] }
         if (!dimension.id) {
             dimension.id = id
         }

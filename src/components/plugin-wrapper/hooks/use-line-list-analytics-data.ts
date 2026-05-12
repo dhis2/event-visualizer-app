@@ -183,7 +183,10 @@ const extractHeaders = (
 ): Array<LineListAnalyticsDataHeader> => {
     const canonicalIds: string[] = analyticsResponse.headers.map(
         (header: LineListAnalyticsDataHeader) =>
-            analyticsHeaderToCanonicalDimensionId(header.name!, visualization)
+            analyticsHeaderToCanonicalDimensionId(
+                header.name ?? '',
+                visualization
+            )
     )
 
     const storeMetadata: Record<string, DimensionMetadataItem> = {}
