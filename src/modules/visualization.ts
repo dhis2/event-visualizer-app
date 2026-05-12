@@ -93,7 +93,7 @@ const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
 /* Static reverse of headersMap. The ENR `enrollmentOu → ouname` override
  * is not reversed here — bare `ouname` is ambiguous (stage event OU vs
  * enrollment OU) and is disambiguated by prefix presence + outputType. */
-export const reversedHeadersMap: Record<string, string> = {
+const reversedHeadersMap: Record<string, string> = {
     ...Object.entries(headersMap).reduce<Record<string, string>>(
         (acc, [appLocal, wire]) => {
             acc[wire] = appLocal

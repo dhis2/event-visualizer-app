@@ -1,6 +1,5 @@
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import { isMetadataInputItem } from '@modules/metadata'
-import { reversedHeadersMap } from '@modules/visualization'
 import type { AnalyticsResponseMetadataItems, MetadataInput } from '@types'
 
 const extractItemsMetadata = (
@@ -35,12 +34,11 @@ const updateNamesFromHeaders = (
     metdataFromItems: MetadataInput
 ): MetadataInput =>
     headers.reduce((acc, header) => {
-        if (!header.name || !header.column) {
+        if (!header.dimensionId || !header.column) {
             return acc
         }
 
-        const dimensionId = reversedHeadersMap[header.name] ?? header.name
-        const dimensionDisplayName = header.column
+        const { dimensionId, column: dimensionDisplayName } = header
 
         if (acc[dimensionId]) {
             /* Exisiting items need their name updated, so that the metadata
