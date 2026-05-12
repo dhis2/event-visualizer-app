@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-12T10:29:27.262Z\n"
-"PO-Revision-Date: 2026-05-12T10:29:27.262Z\n"
+"POT-Creation-Date: 2026-05-12T13:34:36.969Z\n"
+"PO-Revision-Date: 2026-05-12T13:34:36.970Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -365,12 +365,6 @@ msgstr "Switch to {{trackedEntityTypeName}} list"
 
 msgid "Update {{trackedEntityTypeName}} list"
 msgstr "Update {{trackedEntityTypeName}} list"
-
-msgid "Not valid with registration date or registration org. unit"
-msgstr "Not valid with registration date or registration org. unit"
-
-msgid "Not valid with registration date"
-msgstr "Not valid with registration date"
 
 msgid "Not valid with registration org. unit"
 msgstr "Not valid with registration org. unit"
@@ -983,9 +977,6 @@ msgstr "No"
 
 msgid "Not answered"
 msgstr "Not answered"
-
-msgid "Registration date"
-msgstr "Registration date"
 
 msgid "Event status"
 msgstr "Event status"

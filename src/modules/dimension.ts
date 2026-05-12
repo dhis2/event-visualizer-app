@@ -72,7 +72,7 @@ export const getCreatedDimension = (): Partial<
         id: 'created',
         dimensionId: 'created',
         dimensionType: 'PERIOD',
-        name: i18n.t('Registration date'),
+        name: i18n.t('Created on'),
         valueType: 'DATE',
     },
 })
@@ -371,7 +371,6 @@ const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
  * Must match what getTrackedEntityTypeFixedDimensions produces. */
 const TEI_REGISTRATION_DIMENSION_IDS: ReadonlySet<string> = new Set([
     'enrollmentOu',
-    'created',
 ])
 
 /**
@@ -512,13 +511,5 @@ export const getTrackedEntityTypeFixedDimensions = (trackedEntityType: {
         name: i18n.t('Registration org. unit'),
         trackedEntityTypeId: trackedEntityType.id,
         valueType: 'ORGANISATION_UNIT',
-    },
-    {
-        id: `${trackedEntityType.id}.created`,
-        dimensionId: 'created',
-        dimensionType: 'PERIOD',
-        name: i18n.t('Registration date'),
-        trackedEntityTypeId: trackedEntityType.id,
-        valueType: 'DATE',
     },
 ]

@@ -48,10 +48,7 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
             program.trackedEntityType.name,
     })
     const fixedDimensions = useMemo(
-        () =>
-            getTrackedEntityTypeFixedDimensions(
-                program.trackedEntityType
-            ).filter((dimension) => dimension.dimensionId === 'enrollmentOu'),
+        () => getTrackedEntityTypeFixedDimensions(program.trackedEntityType),
         [program.trackedEntityType]
     )
     const baseQuery = useMemo(
