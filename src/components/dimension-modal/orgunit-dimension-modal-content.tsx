@@ -9,7 +9,6 @@ import {
 } from '@hooks'
 import {
     getVisUiConfigPlainItemIdsByDimension,
-    getVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
 import type {
@@ -31,7 +30,6 @@ export const OrgUnitDimensionModalContent: FC<
 
     const currentUser = useCurrentUser()
     const rootOrgUnits = useRootOrgUnits()
-    const outputType = useAppSelector(getVisUiConfigOutputType)
 
     const orgUnitTreeRoots = useMemo(
         () => rootOrgUnits.map((rootOrgUnit) => rootOrgUnit.id),
@@ -40,14 +38,9 @@ export const OrgUnitDimensionModalContent: FC<
 
     const updateOrgUnitDimensionItems = useCallback(
         ({ items }) => {
-            const itemPrefix =
-                outputType === 'TRACKED_ENTITY_INSTANCE' && dimension.programId
-                    ? `${dimension.programId}.`
-                    : ''
-
             const { uiItems, metadata } = items.reduce(
                 (acc, item) => {
-                    acc.uiItems.push(`${itemPrefix}${item.id}`)
+                    acc.uiItems.push(item.id)
 
                     const ouUid = ouIdHelper.removePrefix(item.id)
 
@@ -76,7 +69,7 @@ export const OrgUnitDimensionModalContent: FC<
                 })
             )
         },
-        [addMetadata, dispatch, dimension.id, dimension.programId, outputType]
+        [addMetadata, dispatch, dimension.id]
     )
 
     const selectedIds = useAppSelector((state) =>

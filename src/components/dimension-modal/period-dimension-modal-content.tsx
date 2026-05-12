@@ -17,7 +17,6 @@ import {
 import { getStartEndDate, isStartEndDate } from '@modules/dates'
 import {
     getVisUiConfigPlainItemIdsByDimension,
-    getVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
 import type { DimensionMetadataItem, PeriodType } from '@types'
@@ -133,17 +132,10 @@ export const PeriodDimensionModalContent: FC<
             : OPTION_PRESETS
     )
 
-    const outputType = useAppSelector(getVisUiConfigOutputType)
-
     const updatePeriodDimensionItems = (items) => {
-        const itemPrefix =
-            outputType === 'TRACKED_ENTITY_INSTANCE' && dimension.programId
-                ? `${dimension.programId}.`
-                : ''
-
         const { uiItems, metadata } = items.reduce(
             (acc, item) => {
-                acc.uiItems.push(`${itemPrefix}${item.id}`)
+                acc.uiItems.push(item.id)
 
                 acc.metadata[item.id] = {
                     id: item.id,
