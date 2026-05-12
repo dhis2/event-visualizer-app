@@ -433,18 +433,6 @@ describe('MetadataStore', () => {
               "id": "enrollmentDate",
               "name": "Enrollment date",
             },
-            "eventDate": {
-              "dimensionId": "eventDate",
-              "dimensionType": "PERIOD",
-              "id": "eventDate",
-              "name": "Event date",
-            },
-            "eventStatus": {
-              "dimensionId": "eventStatus",
-              "dimensionType": "STATUS",
-              "id": "eventStatus",
-              "name": "Event status",
-            },
             "gWxh7DiRmG7": {
               "dimensionId": "gWxh7DiRmG7",
               "dimensionType": "PROGRAM_INDICATOR",
@@ -486,21 +474,9 @@ describe('MetadataStore', () => {
               "id": "lastUpdatedOn",
               "name": "Last updated on",
             },
-            "ou": {
-              "dimensionId": "ou",
-              "dimensionType": "ORGANISATION_UNIT",
-              "id": "ou",
-              "name": "Organisation unit",
-            },
             "pe": {
               "id": "pe",
               "name": "Period",
-            },
-            "programStatus": {
-              "dimensionId": "programStatus",
-              "dimensionType": "STATUS",
-              "id": "programStatus",
-              "name": "Program status",
             },
             "sGna2pquXOO": {
               "dimensionId": "sGna2pquXOO",
@@ -554,9 +530,9 @@ describe('MetadataStore', () => {
         const snapshot2Keys = new Set(Object.keys(snapshot2))
 
         // Length grows and decreases
-        expect(snapshot0Keys.size).toBe(53)
-        expect(snapshot1Keys.size).toBe(82)
-        expect(snapshot2Keys.size).toBe(68)
+        expect(snapshot0Keys.size).toBe(43)
+        expect(snapshot1Keys.size).toBe(78)
+        expect(snapshot2Keys.size).toBe(64)
 
         // Initial metadata is always included
         expect(snapshot0Keys.isSubsetOf(snapshot1Keys)).toBe(true)
@@ -602,6 +578,12 @@ describe('MetadataStore', () => {
             )
         ).toMatchInlineSnapshot(`
           [
+            "completedDate",
+            "createdDate",
+            "enrollmentDate",
+            "incidentDate",
+            "lastUpdatedOn",
+            "scheduledDate",
             "lastUpdated",
             "createdBy",
             "lastUpdatedBy",
@@ -728,9 +710,7 @@ describe('MetadataStore', () => {
             const snapshot = metadataStore.getMetadataSnapshot()
             expect(snapshot.ou).toEqual({
                 id: 'ou',
-                dimensionId: 'ou',
                 name: 'Organisation Unit UPDATED',
-                dimensionType: 'ORGANISATION_UNIT',
             })
         })
 
@@ -754,9 +734,7 @@ describe('MetadataStore', () => {
             const snapshot = metadataStore.getMetadataSnapshot()
             expect(snapshot.eventDate).toEqual({
                 id: 'eventDate',
-                dimensionId: 'eventDate',
                 name: 'Report date',
-                dimensionType: 'PERIOD',
             })
         })
     })
