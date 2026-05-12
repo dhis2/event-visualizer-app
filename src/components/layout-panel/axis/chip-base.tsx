@@ -34,10 +34,10 @@ export const ChipBase: React.FC<ChipBaseProps> = ({
             </div>
         )}
         <span className={classes.label}>
-            <span className={classes.primary}>
-                {suffix ? `${dimensionName},` : `${dimensionName}`}
-            </span>
-            {suffix && <span className={classes.secondary}>{suffix}</span>}
+            <span className={classes.primary}>{dimensionName}</span>
+            {suffix && (
+                <span className={classes.secondary}>{`· ${suffix}`}</span>
+            )}
         </span>
         <span className={classes.items} data-test="chip-items">
             {itemsText}

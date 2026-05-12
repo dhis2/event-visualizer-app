@@ -2,9 +2,7 @@ import type { AxisContainerDroppableData } from '@components/app-wrapper/drag-an
 import { useLayoutDimensions } from '@components/layout-panel/use-layout-dimensions'
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
-import { useAppSelector } from '@hooks'
 import { getAxisName } from '@modules/layout'
-import { getVisUiConfigOutputType } from '@store/vis-ui-config-slice'
 import type { Axis as AxisTD } from '@types'
 import cx from 'classnames'
 import { type FC, useMemo } from 'react'
@@ -19,10 +17,8 @@ type AxisProps = {
 const EMPTY_ARRAY = []
 
 export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
-    const outputType = useAppSelector(getVisUiConfigOutputType)
     const dimensions = useLayoutDimensions({
         dimensionIds: dimensionIds,
-        outputType,
     })
 
     const axisContainerData = useMemo<AxisContainerDroppableData>(

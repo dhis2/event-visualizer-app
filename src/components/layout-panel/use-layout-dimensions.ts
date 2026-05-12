@@ -1,16 +1,18 @@
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { useMetadataItems } from '@hooks'
-import type { DimensionMetadataItem, OutputType, DimensionType } from '@types'
+import {
+    getDimensionSuffixes,
+    type SuffixInput,
+} from '@modules/dimension-suffix'
+import type { DimensionMetadataItem } from '@types'
 import { useMemo } from 'react'
 
 interface UseLayoutDimensionsParams {
     dimensionIds: string[]
-    outputType: OutputType
 }
 
 export const useLayoutDimensions = ({
     dimensionIds,
-    outputType,
 }: UseLayoutDimensionsParams): LayoutDimension[] => {
     const dimensionMetadataItems = useMetadataItems(dimensionIds)
 
@@ -65,74 +67,29 @@ export const useLayoutDimensions = ({
             return dimension
         })
 
-        if (!['ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'].includes(outputType)) {
-            return dimensions
-        }
-
-        return dimensions.map((dimension) => {
-            const dimensionTypeOrItemType =
-                dimension.dimensionType || dimension.dimensionItemType
-            if (
-                dimensionTypeOrItemType &&
-                ['DATA_ELEMENT', 'PERIOD'].includes(
-                    dimensionTypeOrItemType as DimensionType
-                )
-            ) {
-                const duplicates = dimensions.filter(
-                    (d) =>
-                        d.dimensionId === dimension.dimensionId &&
-                        d !== dimension &&
-                        ((dimension.programId && d.programId) ||
-                            (dimension.programStageId && d.programStageId))
-                )
-
-                if (duplicates.length > 0) {
-                    const sameProgramId = duplicates.find(
-                        (dup) => dup.programId === dimension.programId
-                    )
-                    const thirdPartyDuplicates = duplicates
-                        .filter((dup) => dup.programId !== dimension.programId)
-                        .find((dpid) =>
-                            duplicates.find(
-                                (dup) =>
-                                    dup.programStageId !==
-                                        dpid.programStageId &&
-                                    dup.programId === dpid.programId
-                            )
-                        )
-
-                    if (sameProgramId || thirdPartyDuplicates) {
-                        dimension.suffix = dimension.programStageId
-                            ? programAndStageMetadataItems[
-                                  dimension.programStageId
-                              ]?.name
-                            : undefined
-                    } else if (dimension.programId) {
-                        dimension.suffix =
-                            programAndStageMetadataItems[
-                                dimension.programId
-                            ]?.name
-                    }
-                }
-            } else if (
-                // always suffix ou and statuses for TE
-                outputType === 'TRACKED_ENTITY_INSTANCE' &&
-                dimensionTypeOrItemType &&
-                ['ORGANISATION_UNIT', 'STATUS'].includes(
-                    dimensionTypeOrItemType as DimensionType
-                ) &&
-                dimension.programId
-            ) {
-                dimension.suffix =
-                    programAndStageMetadataItems[dimension.programId]?.name
+        const suffixInputs: SuffixInput[] = dimensions.map((dim) => {
+            const metadataItem = dimensionMetadataItems[dim.id] as
+                | Partial<DimensionMetadataItem>
+                | undefined
+            return {
+                id: dim.id,
+                dimensionType: dim.dimensionType ?? dim.dimensionItemType,
+                programId: dim.programId,
+                programStageId: dim.programStageId,
+                trackedEntityTypeId: metadataItem?.trackedEntityTypeId,
             }
-
-            return dimension
         })
-    }, [
-        dimensionIds,
-        outputType,
-        dimensionMetadataItems,
-        programAndStageMetadataItems,
-    ])
+
+        const suffixes = getDimensionSuffixes(
+            suffixInputs,
+            (id) =>
+                dimensionMetadataItems[id]?.name ??
+                programAndStageMetadataItems[id]?.name
+        )
+
+        return dimensions.map((dimension) => ({
+            ...dimension,
+            suffix: suffixes[dimension.id],
+        }))
+    }, [dimensionIds, dimensionMetadataItems, programAndStageMetadataItems])
 }
