@@ -159,12 +159,12 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         hook: () => ReturnType<typeof useDimensionList>,
         store: ReturnType<typeof setupStore>
     ) => {
-        const renderResult = renderHookWithReduxStoreProvider(hook, store)
+        const view = renderHookWithReduxStoreProvider(hook, store)
 
         // Advance timers to complete initial fetch (mount effect + API delay)
         await act(() => vi.advanceTimersByTimeAsync(mockApiDelay))
 
-        return renderResult
+        return view
     }
 
     // ===== BASIC HOOK TESTS =====
