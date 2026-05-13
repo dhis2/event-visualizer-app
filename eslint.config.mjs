@@ -139,11 +139,6 @@ export default defineConfig([
         rules: {
             // Disabled so we can access DHIS2-UI internals by className etc.
             'testing-library/no-node-access': 'off',
-        },
-    },
-    {
-        files: ['src/**/*.spec.{ts,tsx}'],
-        rules: {
             'no-restricted-globals': [
                 'error',
                 {
