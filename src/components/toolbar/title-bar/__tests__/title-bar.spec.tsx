@@ -11,7 +11,7 @@ describe('TitleBar', () => {
     it('should not render a title text when the visualization is empty', async () => {
         await renderWithAppWrapper(<TitleBar />)
 
-        expect(screen.queryByTestId('title-bar')).toBeInTheDocument()
+        expect(screen.getByTestId('title-bar')).toBeInTheDocument()
         expect(screen.queryByTestId('title-text')).not.toBeInTheDocument()
     })
 

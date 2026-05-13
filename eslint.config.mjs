@@ -137,16 +137,8 @@ export default defineConfig([
         files: ['src/**/*.spec.{ts,tsx}'],
         extends: [testingLibrary.configs['flat/react']],
         rules: {
-            /* Rules below flag real-best-practices but currently have a
-             * non-trivial number of violations across the codebase. They are
-             * disabled here so the preset can be adopted without a large
-             * cleanup PR; re-enable them one at a time as the cleanups land. */
-            'testing-library/prefer-screen-queries': 'off',
+            // Disabled so we can access DHIS2-UI internals by className etc.
             'testing-library/no-node-access': 'off',
-            'testing-library/no-unnecessary-act': 'off',
-            'testing-library/render-result-naming-convention': 'off',
-            'testing-library/no-wait-for-multiple-assertions': 'off',
-            'testing-library/prefer-presence-queries': 'off',
         },
     },
     {
