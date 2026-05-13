@@ -1,7 +1,7 @@
 import { setCurrentVis } from '@store/current-vis-slice'
 import { setSavedVis } from '@store/saved-vis-slice'
 import { renderWithAppWrapper } from '@test-utils/app-wrapper'
-import { act, screen, waitFor } from '@testing-library/react'
+import { act, screen } from '@testing-library/react'
 import type { SavedVisualization } from '@types'
 import { describe, it, expect } from 'vitest'
 import eventVisualization1 from '../__fixtures__/inpatient-cases-5-to-15-years-this-year.json'
@@ -31,12 +31,8 @@ describe('TitleBar', () => {
             )
         )
 
-        waitFor(() => {
-            expect(screen.getByTestId('title-bar')).toBeInTheDocument()
-            expect(
-                screen.getByText('Unsaved visualization')
-            ).toBeInTheDocument()
-        })
+        expect(screen.getByTestId('title-bar')).toBeInTheDocument()
+        expect(screen.getByText('Unsaved visualization')).toBeInTheDocument()
     })
 
     it('should render the visualization title when looking at a saved visualization', async () => {
@@ -58,12 +54,8 @@ describe('TitleBar', () => {
             )
         )
 
-        waitFor(() => {
-            expect(screen.getByTestId('title-bar')).toBeInTheDocument()
-            expect(
-                screen.getByText(eventVisualization1.name)
-            ).toBeInTheDocument()
-        })
+        expect(screen.getByTestId('title-bar')).toBeInTheDocument()
+        expect(screen.getByText(eventVisualization1.name)).toBeInTheDocument()
     })
 
     it('should render the visualization title with the Edited label when editing a loaded visualization', async () => {
@@ -86,12 +78,8 @@ describe('TitleBar', () => {
             )
         )
 
-        waitFor(() => {
-            expect(screen.getByTestId('title-bar')).toBeInTheDocument()
-            expect(
-                screen.getByText(eventVisualization1.name)
-            ).toBeInTheDocument()
-            expect(screen.getByText('Edited')).toBeInTheDocument()
-        })
+        expect(screen.getByTestId('title-bar')).toBeInTheDocument()
+        expect(screen.getByText(eventVisualization1.name)).toBeInTheDocument()
+        expect(screen.getByText('Edited')).toBeInTheDocument()
     })
 })

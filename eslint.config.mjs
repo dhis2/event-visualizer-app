@@ -2,6 +2,7 @@ import { includeIgnoreFile } from '@eslint/compat'
 import dhis2ReactConfig from '@dhis2/config-eslint/react'
 import { defineConfig, globalIgnores } from 'eslint/config'
 import { fileURLToPath } from 'node:url'
+import testingLibrary from 'eslint-plugin-testing-library'
 
 const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url))
 
@@ -127,7 +128,27 @@ export default defineConfig([
         },
     },
 
-    // Override: vitest spec files
+    // Override: vitest spec files — apply testing-library/react preset to
+    // catch missing-await on async utils (`waitFor`, `findBy*`, etc.) and
+    // other React Testing Library footguns. Scoped to Vitest specs only;
+    // Cypress component tests use a different auto-retrying query API and
+    // would produce false positives under these rules.
+    {
+        files: ['src/**/*.spec.{ts,tsx}'],
+        extends: [testingLibrary.configs['flat/react']],
+        rules: {
+            /* Rules below flag real-best-practices but currently have a
+             * non-trivial number of violations across the codebase. They are
+             * disabled here so the preset can be adopted without a large
+             * cleanup PR; re-enable them one at a time as the cleanups land. */
+            'testing-library/prefer-screen-queries': 'off',
+            'testing-library/no-node-access': 'off',
+            'testing-library/no-unnecessary-act': 'off',
+            'testing-library/render-result-naming-convention': 'off',
+            'testing-library/no-wait-for-multiple-assertions': 'off',
+            'testing-library/prefer-presence-queries': 'off',
+        },
+    },
     {
         files: ['src/**/*.spec.{ts,tsx}'],
         rules: {
