@@ -3,7 +3,6 @@ import { describe, it, expect } from 'vitest'
 import {
     getCreatedDimension,
     getMainDimensions,
-    getProgramDimensions,
     transformDimensions,
     isTimeDimensionId,
     getTimeDimensions,
@@ -44,19 +43,6 @@ describe('getMainDimensions', () => {
         expect(result).toHaveProperty('created')
         expect(result.created?.dimensionType).toBe('PERIOD')
         expect(result).toHaveProperty('lastUpdated')
-    })
-})
-
-describe('getProgramDimensions', () => {
-    it('returns program dimensions for a given programId', () => {
-        const programId = 'pid'
-        const result = getProgramDimensions(programId)
-        expect(result).toHaveProperty(`${programId}.ou`)
-        expect(result).toHaveProperty(`${programId}.eventStatus`)
-        expect(result).toHaveProperty(`${programId}.programStatus`)
-        expect(result[`${programId}.ou`].dimensionType).toBe(
-            'ORGANISATION_UNIT'
-        )
     })
 })
 

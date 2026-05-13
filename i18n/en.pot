@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-12T13:34:36.969Z\n"
-"PO-Revision-Date: 2026-05-12T13:34:36.970Z\n"
+"POT-Creation-Date: 2026-05-13T12:26:32.491Z\n"
+"PO-Revision-Date: 2026-05-13T12:26:32.492Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -983,6 +983,9 @@ msgstr "Event status"
 
 msgid "Program status"
 msgstr "Program status"
+
+msgid "Registration date"
+msgstr "Registration date"
 
 msgid "Completed date"
 msgstr "Completed date"
