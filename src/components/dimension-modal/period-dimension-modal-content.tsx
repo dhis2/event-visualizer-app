@@ -15,10 +15,8 @@ import {
     useMetadataItems,
 } from '@hooks'
 import { getStartEndDate, isStartEndDate } from '@modules/dates'
-import { getDimensionIdParts, getFullDimensionId } from '@modules/dimension.js'
 import {
     getVisUiConfigPlainItemIdsByDimension,
-    getVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
 import type { DimensionMetadataItem, PeriodType } from '@types'
@@ -134,22 +132,10 @@ export const PeriodDimensionModalContent: FC<
             : OPTION_PRESETS
     )
 
-    const outputType = useAppSelector(getVisUiConfigOutputType)
-
     const updatePeriodDimensionItems = (items) => {
-        const { programId } = getDimensionIdParts({
-            id: dimension.id,
-            outputType,
-        })
-
         const { uiItems, metadata } = items.reduce(
             (acc, item) => {
-                const id = getFullDimensionId({
-                    dimensionId: item.id,
-                    programId,
-                    outputType,
-                })
-                acc.uiItems.push(id)
+                acc.uiItems.push(item.id)
 
                 acc.metadata[item.id] = {
                     id: item.id,

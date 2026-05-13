@@ -1,7 +1,6 @@
 import i18n from '@dhis2/d2-i18n'
 import { Tooltip, TabBar, Tab } from '@dhis2/ui'
 import { useAppSelector, useProgramStageMetadataItem } from '@hooks'
-import { getDimensionIdParts } from '@modules/dimension.js'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice.js'
 import type { DimensionMetadataItem /*, ValueType */ } from '@types'
 import { useState, type FC, type ReactNode } from 'react'
@@ -21,9 +20,7 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
 }) => {
     const visType = useAppSelector(getVisUiConfigVisualizationType)
 
-    const stage = useProgramStageMetadataItem(
-        getDimensionIdParts({ id: dimension.id }).programStageId
-    )
+    const stage = useProgramStageMetadataItem(dimension.programStageId)
 
     const [currentTab, setCurrentTab] = useState<string>(TAB_CONDITIONS)
 

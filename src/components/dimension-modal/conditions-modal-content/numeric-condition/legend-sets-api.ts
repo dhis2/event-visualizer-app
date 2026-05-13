@@ -1,7 +1,7 @@
 import { api } from '@api/api'
 import type { BaseQueryApiWithExtraArg } from '@api/custom-base-query'
 import { parseEngineError } from '@api/parse-engine-error'
-import { getDimensionIdParts } from '@modules/dimension'
+import { extractPlainDimensionId } from '@modules/dimension'
 import type { DimensionType, LegendSetMetadataItem } from '@types'
 
 type GetLegendSetsByDimensionQueryArgs = {
@@ -54,15 +54,15 @@ export const legendSetsApi = api.injectEndpoints({
                 { dimensionType, dimensionId },
                 apiArg: BaseQueryApiWithExtraArg
             ) {
-                const { appCachedData, engine } = apiArg.extra
+                const { appCachedData, engine, metadataStore } = apiArg.extra
                 const nameProp =
                     appCachedData.currentUser.settings.displayNameProperty
 
                 let query
 
-                const { dimensionId: id } = getDimensionIdParts({
-                    id: dimensionId,
-                })
+                const id =
+                    metadataStore.getDimensionMetadataItem(dimensionId)
+                        ?.dimensionId ?? extractPlainDimensionId(dimensionId)
 
                 try {
                     switch (dimensionType) {

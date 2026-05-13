@@ -31,6 +31,10 @@ export type CellData = string
 type Row = Array<CellData>
 export type LineListAnalyticsDataHeader = GridHeader & {
     legendSet: Pick<LegendSet, 'id' | 'name' | 'legends'>
+    /* Canonical store ID for this column, computed in extractHeaders and
+     * reused by downstream consumers so the wire-to-canonical translation
+     * happens exactly once per response. */
+    dimensionId: string
 }
 export type LineListAnalyticsData = {
     headers: Array<LineListAnalyticsDataHeader>
