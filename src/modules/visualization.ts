@@ -128,9 +128,6 @@ export const analyticsHeaderToCanonicalDimensionId = (
         if (tetId && appLocalDim === 'ou') {
             return `${tetId}.enrollmentOu`
         }
-        if (tetId && appLocalDim === 'created') {
-            return `${tetId}.created`
-        }
         return appLocalDim
     }
 

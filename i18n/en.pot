@@ -366,12 +366,6 @@ msgstr "Switch to {{trackedEntityTypeName}} list"
 msgid "Update {{trackedEntityTypeName}} list"
 msgstr "Update {{trackedEntityTypeName}} list"
 
-msgid "Not valid with registration date or registration org. unit"
-msgstr "Not valid with registration date or registration org. unit"
-
-msgid "Not valid with registration date"
-msgstr "Not valid with registration date"
-
 msgid "Not valid with registration org. unit"
 msgstr "Not valid with registration org. unit"
 
@@ -984,6 +978,12 @@ msgstr "No"
 msgid "Not answered"
 msgstr "Not answered"
 
+msgid "Event status"
+msgstr "Event status"
+
+msgid "Program status"
+msgstr "Program status"
+
 msgid "Registration date"
 msgstr "Registration date"
 
@@ -1007,9 +1007,6 @@ msgstr "Scheduled date"
 
 msgid "Event org. unit"
 msgstr "Event org. unit"
-
-msgid "Event status"
-msgstr "Event status"
 
 msgid "Enrollment org. unit"
 msgstr "Enrollment org. unit"
