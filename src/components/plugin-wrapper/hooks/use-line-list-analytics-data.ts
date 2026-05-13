@@ -1,3 +1,7 @@
+import {
+    useMetadataStore,
+    type UseMetadataStoreReturnValue,
+} from '@components/app-wrapper/metadata-provider/metadata-provider'
 import type {
     LineListAnalyticsData,
     LineListAnalyticsDataHeader,
@@ -7,23 +11,20 @@ import { Analytics } from '@dhis2/analytics'
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
 import { getBooleanValues } from '@modules/conditions'
 import {
-    getDimensionIdParts,
-    getDimensionsWithSuffix,
-    getFullDimensionId,
-    getMainDimensions,
-    getProgramDimensions,
-} from '@modules/dimension'
+    getDimensionSuffixes,
+    type SuffixInput,
+} from '@modules/dimension-suffix'
 import { isValueTypeNumeric } from '@modules/value-type'
 import {
+    analyticsHeaderToCanonicalDimensionId,
     getSingleProgramFromVisualization,
-    headersMap,
     isVisualizationWithTimeDimension,
 } from '@modules/visualization'
 import type {
     CurrentUser,
     CurrentVisualization,
+    DimensionMetadataItem,
     MetadataInputItem,
-    OutputType,
     UserOrgUnitMetadataItem,
 } from '@types'
 import { useCallback, useState } from 'react'
@@ -180,107 +181,59 @@ const fetchLegendSets = async ({ legendSetIds, dataEngine }) => {
 
 const extractHeaders = (
     analyticsResponse,
-    outputType: OutputType
+    visualization: CurrentVisualization,
+    metadataStore: UseMetadataStoreReturnValue
 ): Array<LineListAnalyticsDataHeader> => {
-    const defaultMetadata = getMainDimensions(outputType)
+    const canonicalIds: string[] = analyticsResponse.headers.map(
+        (header: LineListAnalyticsDataHeader) =>
+            analyticsHeaderToCanonicalDimensionId(
+                header.name ?? '',
+                visualization
+            )
+    )
 
-    const dimensionIds = analyticsResponse.headers.map((header) => {
-        const { dimensionId, programStageId, programId } = getDimensionIdParts({
-            id: header.name,
-            outputType,
-        })
-        const idMatch =
-            Object.keys(headersMap).find(
-                (key) => headersMap[key] === dimensionId
-                // TODO: find a better solution
-                // https://dhis2.atlassian.net/browse/DHIS2-20136
-            ) ?? ''
-
-        const formattedDimensionId = getFullDimensionId({
-            dimensionId: [
-                'ou',
-                'programStatus',
-                'eventStatus',
-                'createdBy',
-                'lastUpdatedBy',
-                'lastUpdated',
-                'created',
-            ].includes(idMatch)
-                ? idMatch
-                : dimensionId,
-            programStageId,
-            programId,
-            outputType,
-        })
-
-        if (
-            (idMatch === 'ou' &&
-                (programId || outputType !== 'TRACKED_ENTITY_INSTANCE')) ||
-            ['programStatus', 'eventStatus'].includes(idMatch)
-            // org unit only if there's a programId or not tracked entity: this prevents pid.ou from being mixed up with just ou in TE
-            // program status + event status in all cases
-        ) {
-            defaultMetadata[formattedDimensionId] = getProgramDimensions(
-                // TODO: remove initialisation to '' and fix args order in function
-                programId ?? ''
-            )[formattedDimensionId]
+    const storeMetadata: Record<string, DimensionMetadataItem> = {}
+    for (const id of canonicalIds) {
+        const item = metadataStore.getDimensionMetadataItem(id)
+        if (item) {
+            storeMetadata[id] = item
         }
+    }
 
-        return formattedDimensionId
+    const metadata = { ...analyticsResponse.metaData.items, ...storeMetadata }
+
+    const suffixInputs: SuffixInput[] = canonicalIds.map((id) => {
+        const storeItem = storeMetadata[id]
+        return {
+            id,
+            dimensionType: storeItem?.dimensionType,
+            programId: storeItem?.programId,
+            programStageId: storeItem?.programStageId,
+            trackedEntityTypeId: storeItem?.trackedEntityTypeId,
+        }
     })
 
-    const metadata = { ...analyticsResponse.metaData.items, ...defaultMetadata }
+    const suffixes = getDimensionSuffixes(
+        suffixInputs,
+        (id) => metadata[id]?.name
+    )
 
-    const dimensionsWithSuffix = getDimensionsWithSuffix({
-        dimensionIds,
-        metadata,
-        outputType,
-    })
-
-    const labels = dimensionsWithSuffix.map(({ name, suffix, id }) => ({
-        id,
-        label: suffix ? `${name}, ${suffix}` : name,
-    }))
-
-    const headers = analyticsResponse.headers.map((header, index) => {
-        const result = { ...header, index }
-        const { dimensionId, programId, programStageId } = getDimensionIdParts({
-            id: header.name,
-            outputType,
+    const labelById = new Map<string, string>(
+        canonicalIds.map((id) => {
+            const name = metadata[id]?.name ?? id
+            const suffix = suffixes[id]
+            return [id, suffix ? `${name} · ${suffix}` : name]
         })
+    )
 
-        const idMatch =
-            Object.keys(headersMap).find(
-                (key) => headersMap[key] === dimensionId
-                // TODO: find a better solution
-                // https://dhis2.atlassian.net/browse/DHIS2-20136
-            ) ?? ''
-
-        result.column =
-            labels.find(
-                (label) =>
-                    label.id ===
-                    getFullDimensionId({
-                        dimensionId: [
-                            'ou',
-                            'programStatus',
-                            'eventStatus',
-                            'createdBy',
-                            'lastUpdatedBy',
-                            'lastUpdated',
-                            'created',
-                        ].includes(idMatch)
-                            ? idMatch
-                            : dimensionId,
-                        programId,
-                        programStageId,
-                        outputType,
-                    })
-            )?.label || result.column
-
-        return result
-    })
-    return headers
+    return analyticsResponse.headers.map(
+        (header: LineListAnalyticsDataHeader, index: number) => ({
+            ...header,
+            index,
+            dimensionId: canonicalIds[index],
+            column: labelById.get(canonicalIds[index]) ?? header.column,
+        })
+    )
 }
 
 const extractRows = (analyticsResponse, headers) => {
@@ -325,8 +278,6 @@ const extractRows = (analyticsResponse, headers) => {
     return filteredRows
 }
 
-const extractRowContext = (analyticsResponse) => analyticsResponse.rowContext
-
 export type AnalyticsResponseMetadataItems = Record<
     string,
     MetadataInputItem
@@ -369,6 +320,7 @@ type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
 
 const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const dataEngine = useDataEngine()
+    const metadataStore = useMetadataStore()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
 
     const [state, setState] = useState<AnalyticsDataState>({
@@ -414,32 +366,36 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
 
                 const headers = extractHeaders(
                     analyticsResponse,
-                    visualization.outputType
+                    visualization,
+                    metadataStore
                 )
 
                 const rows = extractRows(analyticsResponse, headers)
-                const rowContext = extractRowContext(analyticsResponse)
+                const { rowContext } = analyticsResponse
                 const pager = analyticsResponse.metaData.pager
 
-                const legendSetIds: string[] = [] // TODO: check this type
-                const headerLegendSetMap: Record<string, string> =
-                    headers.reduce((acc, header) => {
-                        const metadataItem =
-                            analyticsResponse.metaData.items[header.name!]
-                        if (typeof metadataItem?.legendSetId === 'string') {
-                            acc[header.name!] = metadataItem.legendSetId
-                        }
-                        return acc
-                    }, {})
+                const headerLegendSetIdByDimensionId: Record<string, string> =
+                    {}
+                for (const header of headers) {
+                    const item = metadataStore.getDimensionMetadataItem(
+                        header.dimensionId
+                    )
+                    if (item?.legendSetId) {
+                        headerLegendSetIdByDimensionId[header.dimensionId] =
+                            item.legendSetId
+                    }
+                }
+
+                const legendSetIds: string[] = []
                 if (
                     visualization.legend?.strategy === 'FIXED' &&
                     visualization.legend.set?.id
                 ) {
                     legendSetIds.push(visualization.legend.set.id)
                 } else if (visualization.legend?.strategy === 'BY_DATA_ITEM') {
-                    Object.values(headerLegendSetMap)
-                        .filter((legendSet) => legendSet)
-                        .forEach((legendSet) => legendSetIds.push(legendSet))
+                    legendSetIds.push(
+                        ...Object.values(headerLegendSetIdByDimensionId)
+                    )
                 }
                 const legendSets = await fetchLegendSets({
                     legendSetIds,
@@ -460,7 +416,9 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                                     header.legendSet = legendSets.find(
                                         (legendSet) =>
                                             legendSet.id ===
-                                            headerLegendSetMap[header.name!]
+                                            headerLegendSetIdByDimensionId[
+                                                header.dimensionId
+                                            ]
                                     )
                                     break
                                 }
@@ -486,7 +444,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 })
             }
         },
-        [analyticsEngine, dataEngine]
+        [analyticsEngine, dataEngine, metadataStore]
     )
 
     return [fetchAnalyticsData, state]

@@ -1,10 +1,26 @@
 import { getVisualizationQueryFields } from '@api/event-visualizations-api'
+import {
+    PluginMetadataProvider,
+    useMetadataStore,
+} from '@components/app-wrapper/metadata-provider/metadata-provider'
+import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
+import type { AnalyticsResponseMetadataItems } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { useDataQuery } from '@dhis2/app-runtime'
-import type { CurrentUser, SavedVisualization } from '@types'
-import { type FC } from 'react'
+import {
+    normalizeApiSavedVisualization,
+    toCurrentVis,
+} from '@modules/visualization'
+import type {
+    ApiSavedVisualization,
+    CurrentUser,
+    CurrentVisualization,
+    EmptyVisualization,
+    SavedVisualization,
+} from '@types'
+import { useCallback, useEffect, useMemo, type FC } from 'react'
 import './locales/index.js'
 
 type DashboardPluginProps = {
@@ -13,9 +29,11 @@ type DashboardPluginProps = {
     filters?: Record<string, string>
 }
 
-const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
+const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     console.log('DashboardPlugin props', props)
     console.log('vis id', props.visualization.id)
+
+    const metadataStore = useMetadataStore()
 
     // fetch the visualization
     const { data, error, loading } = useDataQuery({
@@ -34,6 +52,42 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
         },
     })
 
+    // Mirror the in-app load pipeline (see store/thunks.ts): normalise the
+    // raw API response once; the metadata store consumes the SavedVisualization
+    // and the plugin consumes the CurrentVisualization-shaped subset.
+    const savedVisualization = useMemo(() => {
+        const apiVis = data?.eventVisualization as
+            | ApiSavedVisualization
+            | undefined
+        return apiVis ? normalizeApiSavedVisualization(apiVis) : undefined
+    }, [data])
+
+    useEffect(() => {
+        if (savedVisualization) {
+            metadataStore.setVisualizationMetadata(savedVisualization)
+        }
+    }, [savedVisualization, metadataStore])
+
+    const currentVisualization = useMemo<
+        CurrentVisualization | EmptyVisualization
+    >(
+        () => (savedVisualization ? toCurrentVis(savedVisualization) : {}),
+        [savedVisualization]
+    )
+
+    const onResponsesReceived = useCallback(
+        (
+            analyticsMetadata: AnalyticsResponseMetadataItems,
+            headers?: Array<LineListAnalyticsDataHeader>
+        ) => {
+            metadataStore.addAnalyticsResponseMetadata(
+                analyticsMetadata,
+                headers ?? []
+            )
+        },
+        [metadataStore]
+    )
+
     // TODO: handle errors
     if (error) {
         // `error` will be of type EngineError and `data` will is possibly undefined
@@ -41,30 +95,33 @@ const DashboardPlugin: FC<DashboardPluginProps> = (props) => {
         return <div>Error loading event visualization: {error.message}</div>
     }
 
-    // TODO: check this type. The PluginWrapper expects a CurrentVisualization type, which includes empty but not null.
-    // Before the visualization is fetched, the prop is undefined/null and that fails in the check for visualization.type
-    const eventVisualization =
-        (data?.eventVisualization as SavedVisualization) ?? {}
-
-    console.log('dp eventVisualization', eventVisualization, 'loading', loading)
+    console.log(
+        'dp currentVisualization',
+        currentVisualization,
+        'loading',
+        loading
+    )
 
     return (
         <DashboardPluginWrapper {...props}>
-            {(props) => (
-                // TODO: use the metadata provider here?
-                // in that way the plugin components can use the lookup functions and not have to care in which context they are used (app/dashboard-plugin)
-                // the onResponseReceived can also simply be implemented in both cases for adding metadata from analytics to the metadata store
+            {(pluginProps: DashboardPluginProps) => (
                 <PluginWrapper
-                    displayProperty={props.displayProperty}
-                    filters={props.filters}
-                    visualization={eventVisualization}
+                    displayProperty={pluginProps.displayProperty}
+                    filters={pluginProps.filters}
+                    visualization={currentVisualization}
                     isVisualizationLoading={loading}
-                    //onResponseReceived={onResponseReceived}
+                    onResponsesReceived={onResponsesReceived}
                 />
             )}
         </DashboardPluginWrapper>
     )
 }
+
+const DashboardPlugin: FC<DashboardPluginProps> = (props) => (
+    <PluginMetadataProvider>
+        <DashboardPluginContent {...props} />
+    </PluginMetadataProvider>
+)
 
 // eslint-disable-next-line import/no-default-export
 export default DashboardPlugin

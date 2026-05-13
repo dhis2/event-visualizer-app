@@ -7,10 +7,8 @@ import {
     useMetadataItems,
     useRootOrgUnits,
 } from '@hooks'
-import { getDimensionIdParts, getFullDimensionId } from '@modules/dimension'
 import {
     getVisUiConfigPlainItemIdsByDimension,
-    getVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice.js'
 import type {
@@ -32,7 +30,6 @@ export const OrgUnitDimensionModalContent: FC<
 
     const currentUser = useCurrentUser()
     const rootOrgUnits = useRootOrgUnits()
-    const outputType = useAppSelector(getVisUiConfigOutputType)
 
     const orgUnitTreeRoots = useMemo(
         () => rootOrgUnits.map((rootOrgUnit) => rootOrgUnit.id),
@@ -41,19 +38,9 @@ export const OrgUnitDimensionModalContent: FC<
 
     const updateOrgUnitDimensionItems = useCallback(
         ({ items }) => {
-            const { programId } = getDimensionIdParts({
-                id: dimension.id,
-                outputType,
-            })
-
             const { uiItems, metadata } = items.reduce(
                 (acc, item) => {
-                    const id = getFullDimensionId({
-                        dimensionId: item.id,
-                        programId,
-                        outputType,
-                    })
-                    acc.uiItems.push(id)
+                    acc.uiItems.push(item.id)
 
                     const ouUid = ouIdHelper.removePrefix(item.id)
 
@@ -82,7 +69,7 @@ export const OrgUnitDimensionModalContent: FC<
                 })
             )
         },
-        [addMetadata, dispatch, dimension.id, outputType]
+        [addMetadata, dispatch, dimension.id]
     )
 
     const selectedIds = useAppSelector((state) =>
