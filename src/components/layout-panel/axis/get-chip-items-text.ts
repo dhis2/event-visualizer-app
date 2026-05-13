@@ -1,19 +1,16 @@
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import i18n from '@dhis2/d2-i18n'
-import type { Axis, OutputType } from '@types'
-
-const DIMENSION_ID_ORGUNIT = 'ou'
+import type { Axis } from '@types'
 
 type ChipDimension = Pick<
     LayoutDimension,
-    'id' | 'dimensionType' | 'optionSet' | 'valueType'
+    'dimensionType' | 'optionSet' | 'trackedEntityTypeId' | 'valueType'
 >
 
 interface GetChipItemsTextParams {
     dimension: ChipDimension
     conditionsLength: number | undefined
     itemsLength: number | undefined
-    outputType: OutputType
     axisId: Axis
 }
 
@@ -21,17 +18,20 @@ export const getChipItemsText = ({
     dimension,
     conditionsLength,
     itemsLength,
-    outputType,
     axisId,
 }: GetChipItemsTextParams): string => {
-    const { id, dimensionType, optionSet, valueType } = dimension
+    const { dimensionType, optionSet, trackedEntityTypeId, valueType } =
+        dimension
 
-    if (
-        ((['EVENT', 'ENROLLMENT'].includes(outputType) &&
-            id === DIMENSION_ID_ORGUNIT) ||
-            dimensionType === 'PERIOD') &&
-        !itemsLength
-    ) {
+    /* OU and PERIOD dimensions have implicit defaults (USER_ORGUNIT and
+     * a relative period), so an empty itemsList isn't really "all" — keep the
+     * chip text empty. TE-scope OU (registration org unit) is the exception:
+     * it's treated like any other dim. */
+    const hasImplicitDefault =
+        (dimensionType === 'ORGANISATION_UNIT' && !trackedEntityTypeId) ||
+        dimensionType === 'PERIOD'
+
+    if (hasImplicitDefault && !itemsLength) {
         return ''
     }
 

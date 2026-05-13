@@ -6,7 +6,6 @@ import { CSS } from '@dnd-kit/utilities'
 import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
-    getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
     getVisUiConfigOption,
@@ -30,6 +29,7 @@ export type LayoutDimension = {
     optionSet?: string
     programId?: string
     programStageId?: string
+    trackedEntityTypeId?: string
     code?: string
     suffix?: string
     valueType?: ValueType
@@ -43,7 +43,6 @@ interface ChipProps {
 export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
     const dispatch = useAppDispatch()
     const [insertAfter, setInsertAfter] = useState<boolean>(false)
-    const outputType = useAppSelector(getVisUiConfigOutputType)
     const digitGroupSeparator = useAppSelector((state) =>
         getVisUiConfigOption(state, 'digitGroupSeparator')
     ) as SavedVisualization['digitGroupSeparator']
@@ -78,10 +77,9 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                 dimension,
                 conditionsLength: conditionsTexts.length,
                 itemsLength: Array.isArray(items) ? items.length : 0,
-                outputType,
                 axisId,
             }),
-        [dimension, conditionsTexts.length, items, outputType, axisId]
+        [dimension, conditionsTexts.length, items, axisId]
     )
     const chipBaseProps: ChipBaseProps = useMemo(
         () => ({

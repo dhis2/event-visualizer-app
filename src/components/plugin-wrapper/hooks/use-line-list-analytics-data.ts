@@ -10,7 +10,10 @@ import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
 import { getBooleanValues } from '@modules/conditions'
-import { getDimensionsWithSuffix } from '@modules/dimension'
+import {
+    getDimensionSuffixes,
+    type SuffixInput,
+} from '@modules/dimension-suffix'
 import { isValueTypeNumeric } from '@modules/value-type'
 import {
     analyticsHeaderToCanonicalDimensionId,
@@ -199,17 +202,28 @@ const extractHeaders = (
 
     const metadata = { ...analyticsResponse.metaData.items, ...storeMetadata }
 
-    const dimensionsWithSuffix = getDimensionsWithSuffix({
-        dimensionIds: canonicalIds,
-        metadata,
-        outputType: visualization.outputType,
+    const suffixInputs: SuffixInput[] = canonicalIds.map((id) => {
+        const storeItem = storeMetadata[id]
+        return {
+            id,
+            dimensionType: storeItem?.dimensionType,
+            programId: storeItem?.programId,
+            programStageId: storeItem?.programStageId,
+            trackedEntityTypeId: storeItem?.trackedEntityTypeId,
+        }
     })
 
+    const suffixes = getDimensionSuffixes(
+        suffixInputs,
+        (id) => metadata[id]?.name
+    )
+
     const labelById = new Map<string, string>(
-        dimensionsWithSuffix.map(({ name, suffix, id }) => [
-            id,
-            suffix ? `${name}, ${suffix}` : name,
-        ])
+        canonicalIds.map((id) => {
+            const name = metadata[id]?.name ?? id
+            const suffix = suffixes[id]
+            return [id, suffix ? `${name} · ${suffix}` : name]
+        })
     )
 
     return analyticsResponse.headers.map(
