@@ -24,21 +24,27 @@ type QueryHandler<T> = (type: any, query: any) => T | Promise<T>
 export const createDeferredQuery = () => {
     let pending: Array<() => void> = []
 
+    const enqueue = <T>(
+        handler: QueryHandler<T>,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        type: any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        query: any
+    ) =>
+        new Promise<T>((resolve, reject) => {
+            pending.push(() => {
+                try {
+                    Promise.resolve(handler(type, query)).then(resolve, reject)
+                } catch (err) {
+                    reject(err)
+                }
+            })
+        })
+
     const defer =
         <T>(handler: QueryHandler<T>): QueryHandler<T> =>
         (type, query) =>
-            new Promise<T>((resolve, reject) => {
-                pending.push(() => {
-                    try {
-                        Promise.resolve(handler(type, query)).then(
-                            resolve,
-                            reject
-                        )
-                    } catch (err) {
-                        reject(err)
-                    }
-                })
-            })
+            enqueue(handler, type, query)
 
     const releaseAll = async () => {
         await waitFor(() => {
