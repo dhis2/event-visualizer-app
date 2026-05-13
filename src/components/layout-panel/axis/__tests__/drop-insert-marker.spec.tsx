@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type ClientRect, type DndMonitorListener } from '@dnd-kit/core'
 import type { useSortable } from '@dnd-kit/sortable'
-import { act, render, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { DropInsertMarker } from '../drop-insert-marker'
 import classes from '../styles/drop-insert-marker.module.css'
@@ -70,7 +70,7 @@ describe('DropInsertMarker', () => {
             rect: { current: createMockRect({ left: 0, width: 100 }) },
         } as any
 
-        const { queryByTestId } = render(
+        render(
             <DropInsertMarker
                 sortable={mockSortable}
                 setInsertAfter={vi.fn()}
@@ -78,7 +78,9 @@ describe('DropInsertMarker', () => {
             />
         )
 
-        expect(queryByTestId('drop-insert-marker')).not.toBeInTheDocument()
+        expect(
+            screen.queryByTestId('drop-insert-marker')
+        ).not.toBeInTheDocument()
     })
 
     it('should render marker at start when dragged from different axis (before center)', () => {
@@ -95,7 +97,7 @@ describe('DropInsertMarker', () => {
             rect: { current: chipRect },
         } as any
 
-        const { getByTestId } = render(
+        render(
             <DropInsertMarker
                 sortable={mockSortable}
                 setInsertAfter={vi.fn()}
@@ -106,7 +108,7 @@ describe('DropInsertMarker', () => {
         // pointerX = 120 + 0 = 120, before chip center at 150
         fireDragMove({ active, clientX: 120, deltaX: 0 })
 
-        const marker = getByTestId('drop-insert-marker')
+        const marker = screen.getByTestId('drop-insert-marker')
         expect(marker).toBeInTheDocument()
         expect(marker).not.toHaveClass(classes.atEnd)
     })
@@ -125,7 +127,7 @@ describe('DropInsertMarker', () => {
             rect: { current: chipRect },
         } as any
 
-        const { getByTestId, queryByTestId } = render(
+        render(
             <DropInsertMarker
                 sortable={mockSortable}
                 setInsertAfter={vi.fn()}
@@ -136,7 +138,7 @@ describe('DropInsertMarker', () => {
         // pointerX = 120 + 0 = 120, before chip center at 150
         fireDragMove({ active, clientX: 120, deltaX: 0 })
 
-        let marker = getByTestId('drop-insert-marker')
+        const marker = screen.getByTestId('drop-insert-marker')
         expect(marker).toBeInTheDocument()
         expect(marker).not.toHaveClass(classes.atEnd)
 
@@ -144,9 +146,9 @@ describe('DropInsertMarker', () => {
         fireDragMove({ active, clientX: 100, deltaX: 100 })
 
         await waitFor(() => {
-            marker = queryByTestId('drop-insert-marker')!
-            expect(marker).toBeInTheDocument()
-            expect(marker).toHaveClass(classes.atEnd)
+            expect(screen.queryByTestId('drop-insert-marker')).toHaveClass(
+                classes.atEnd
+            )
         })
     })
 
@@ -165,7 +167,7 @@ describe('DropInsertMarker', () => {
             rect: { current: chipRect },
         } as any
 
-        const { getByTestId } = render(
+        render(
             <DropInsertMarker
                 sortable={mockSortable}
                 setInsertAfter={setInsertAfter}
@@ -175,13 +177,17 @@ describe('DropInsertMarker', () => {
 
         // pointerX = 120 + 0 = 120, before chip center at 150
         fireDragMove({ active, clientX: 120, deltaX: 0 })
-        expect(getByTestId('drop-insert-marker')).not.toHaveClass(classes.atEnd)
+        expect(screen.getByTestId('drop-insert-marker')).not.toHaveClass(
+            classes.atEnd
+        )
 
         // Move past chip center (pointerX = 50 + 150 = 200 > 150)
         fireDragMove({ active, clientX: 50, deltaX: 150 })
 
         await waitFor(() => {
-            expect(getByTestId('drop-insert-marker')).toHaveClass(classes.atEnd)
+            expect(screen.getByTestId('drop-insert-marker')).toHaveClass(
+                classes.atEnd
+            )
             expect(setInsertAfter).toHaveBeenCalledWith(true)
         })
     })
@@ -200,7 +206,7 @@ describe('DropInsertMarker', () => {
             rect: { current: chipRect },
         } as any
 
-        const { queryByTestId } = render(
+        render(
             <DropInsertMarker
                 sortable={mockSortable}
                 setInsertAfter={vi.fn()}
@@ -213,7 +219,9 @@ describe('DropInsertMarker', () => {
         fireDragMove({ active, clientX: 100, deltaX: 100 })
 
         await waitFor(() => {
-            expect(queryByTestId('drop-insert-marker')).not.toBeInTheDocument()
+            expect(
+                screen.queryByTestId('drop-insert-marker')
+            ).not.toBeInTheDocument()
         })
     })
 
@@ -231,7 +239,7 @@ describe('DropInsertMarker', () => {
             rect: { current: chipRect },
         } as any
 
-        const { queryByTestId } = render(
+        render(
             <DropInsertMarker
                 sortable={mockSortable}
                 setInsertAfter={vi.fn()}
@@ -243,7 +251,9 @@ describe('DropInsertMarker', () => {
         // adjacentIndex = 1-1 = 0 = activeIndex → no-op
         fireDragMove({ active, clientX: 120, deltaX: 0 })
 
-        expect(queryByTestId('drop-insert-marker')).not.toBeInTheDocument()
+        expect(
+            screen.queryByTestId('drop-insert-marker')
+        ).not.toBeInTheDocument()
     })
 
     it('should render when hovering non-adjacent chip on same axis', () => {
@@ -260,7 +270,7 @@ describe('DropInsertMarker', () => {
             rect: { current: chipRect },
         } as any
 
-        const { getByTestId } = render(
+        render(
             <DropInsertMarker
                 sortable={mockSortable}
                 setInsertAfter={vi.fn()}
@@ -271,7 +281,7 @@ describe('DropInsertMarker', () => {
         // pointerX = 120 + 0 = 120, before chip center at 150
         fireDragMove({ active, clientX: 120, deltaX: 0 })
 
-        const marker = getByTestId('drop-insert-marker')
+        const marker = screen.getByTestId('drop-insert-marker')
         expect(marker).toBeInTheDocument()
     })
 })

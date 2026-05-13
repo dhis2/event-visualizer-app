@@ -2,6 +2,7 @@ import { includeIgnoreFile } from '@eslint/compat'
 import dhis2ReactConfig from '@dhis2/config-eslint/react'
 import { defineConfig, globalIgnores } from 'eslint/config'
 import { fileURLToPath } from 'node:url'
+import testingLibrary from 'eslint-plugin-testing-library'
 
 const gitignorePath = fileURLToPath(new URL('.gitignore', import.meta.url))
 
@@ -127,10 +128,17 @@ export default defineConfig([
         },
     },
 
-    // Override: vitest spec files
+    // Override: vitest spec files — apply testing-library/react preset to
+    // catch missing-await on async utils (`waitFor`, `findBy*`, etc.) and
+    // other React Testing Library footguns. Scoped to Vitest specs only;
+    // Cypress component tests use a different auto-retrying query API and
+    // would produce false positives under these rules.
     {
         files: ['src/**/*.spec.{ts,tsx}'],
+        extends: [testingLibrary.configs['flat/react']],
         rules: {
+            // Disabled so we can access DHIS2-UI internals by className etc.
+            'testing-library/no-node-access': 'off',
             'no-restricted-globals': [
                 'error',
                 {
