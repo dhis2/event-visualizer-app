@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import { AppCachedDataQueryProvider } from './app-cached-data-query-provider'
 import { DndContextProvider } from './drag-and-drop-provider/dnd-context-provider'
 import { InterpretationsProvider } from './interpretations-provider'
-import { MetadataProvider } from './metadata-provider/metadata-provider'
+import { AppMetadataProvider } from './metadata-provider/metadata-provider'
 import { StoreProvider } from './store-provider'
 import { StoreToLocationSyncer } from './store-to-location-syncer'
 import { useUncaughtErrorAlert } from './use-uncaught-error-alert'
@@ -14,7 +14,7 @@ export const AppWrapper: FC<{ children: ReactNode }> = ({ children }) => {
 
     return (
         <AppCachedDataQueryProvider>
-            <MetadataProvider>
+            <AppMetadataProvider>
                 <StoreProvider>
                     <StoreToLocationSyncer />
                     <DndContextProvider>
@@ -23,7 +23,7 @@ export const AppWrapper: FC<{ children: ReactNode }> = ({ children }) => {
                         </InterpretationsProvider>
                     </DndContextProvider>
                 </StoreProvider>
-            </MetadataProvider>
+            </AppMetadataProvider>
         </AppCachedDataQueryProvider>
     )
 }

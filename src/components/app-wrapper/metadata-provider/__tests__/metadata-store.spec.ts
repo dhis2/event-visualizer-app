@@ -713,6 +713,7 @@ describe('MetadataStore', () => {
             const headers = [
                 {
                     name: 'ouname',
+                    dimensionId: 'ou',
                     column: 'Organisation Unit UPDATED',
                     valueType: 'TEXT',
                     type: 'java.lang.String',
@@ -738,6 +739,7 @@ describe('MetadataStore', () => {
             const headers: Array<LineListAnalyticsDataHeader> = [
                 {
                     name: 'eventdate',
+                    dimensionId: 'eventDate',
                     column: 'Report date',
                     valueType: 'DATETIME',
                     type: 'java.time.LocalDateTime',

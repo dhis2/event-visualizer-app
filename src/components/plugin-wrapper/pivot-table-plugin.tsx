@@ -1,7 +1,6 @@
 import { PivotTable } from '@dhis2/analytics'
-import { getFullDimensionId } from '@modules/dimension'
 import {
-    getHeadersMap,
+    getAnalyticsRequestHeaderName,
     transformVisualizationForAnalyticsRequest,
 } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, DimensionArray } from '@types'
@@ -14,36 +13,17 @@ import {
 const formatVisualizationForPivotTableEngine = (
     visualization: CurrentVisualization
 ): CurrentVisualization => {
-    const headersMap = getHeadersMap(visualization)
-
     const formatDimensions = (dimensions: DimensionArray): DimensionArray =>
-        dimensions
-            .filter(({ dimension }) => dimension !== 'dy')
-            .map((dimensionObj) => {
-                /* for event/enrollment aggregate `ou` is always used as API dimension id
-                 * but returned as `ou` or `enrollmentou` in the analytics metaData */
-                let dimensionId: string
-
-                if (dimensionObj.dimension === 'ou') {
-                    dimensionId = dimensionObj.programStage?.id
-                        ? dimensionObj.dimension
-                        : 'enrollmentou'
-                } else {
-                    dimensionId =
-                        headersMap[dimensionObj.dimension] ??
-                        dimensionObj.dimension
-                }
-
-                return {
-                    ...dimensionObj,
-                    dimension: getFullDimensionId({
-                        dimensionId,
-                        programStageId: dimensionObj.programStage?.id,
-                        programId: dimensionObj.program?.id,
-                        outputType: visualization.outputType,
-                    }),
-                }
-            })
+        dimensions.map((dim) => ({
+            ...dim,
+            dimension: getAnalyticsRequestHeaderName({
+                dimensionId: dim.dimension,
+                programId: dim.program?.id,
+                programStageId: dim.programStage?.id,
+                trackedEntityTypeId: visualization.trackedEntityType?.id,
+                visualization,
+            }),
+        }))
 
     return {
         ...visualization,
@@ -60,7 +40,6 @@ type PivotTablePluginProps = {
     isInDashboard: boolean
     isInModal: boolean
     onResponseReceived: OnAnalyticsResponseReceivedCb
-    //    id?: number
 }
 
 export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
@@ -103,12 +82,5 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
         return null
     }
 
-    return (
-        <PivotTable
-            visualization={eventVisualization}
-            data={data}
-            //legendSets={legendSets}
-            //renderCounter={id}
-        />
-    )
+    return <PivotTable visualization={eventVisualization} data={data} />
 }

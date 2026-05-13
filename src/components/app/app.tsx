@@ -21,10 +21,10 @@ import { StartScreen } from '@components/start-screen/start-screen'
 import { Toolbar } from '@components/toolbar/toolbar'
 import { CssVariables } from '@dhis2/ui'
 import {
-    useAddAnalyticsResponseMetadata,
     useAppDispatch,
     useAppSelector,
     useCurrentUser,
+    useMetadataStore,
 } from '@hooks'
 import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
@@ -44,7 +44,7 @@ import './styles/app.module.css'
 
 const EventVisualizer: FC = () => {
     useLoadVisualizationOnMount()
-    const addAnalyticsResponseMetadata = useAddAnalyticsResponseMetadata()
+    const { addAnalyticsResponseMetadata } = useMetadataStore()
     const dispatch = useAppDispatch()
     const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)
