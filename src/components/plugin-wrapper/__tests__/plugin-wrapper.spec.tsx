@@ -6,6 +6,7 @@ import { getIsVisualizationLoading } from '@store/loader-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import type { RootState } from '@store/store'
 import { renderWithAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
+import { createDeferredQuery } from '@test-utils/deferred-query'
 import { act, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { Sorting } from '@types'
@@ -21,16 +22,21 @@ describe('PluginWrapper', () => {
     const eventVisualization2Id = 'waPjzoJyIQ9'
     const mockOnDataSorted = vi.fn()
     const mockOnResponsesReceived = vi.fn()
+    /* The analytics handler is deferred so each test can hold the response
+     * in flight long enough to assert the in-flight UI (spinner shown), then
+     * call `releaseAll()` to let the response arrive and assert the settled
+     * UI (spinner gone). A fixed `setTimeout`-based delay left the
+     * spinner-visible window racing against `userEvent.click` + scheduling
+     * jitter on slow CI runners — the spinner could disappear before
+     * `waitFor`'s first poll, causing flakes. */
+    const deferredAnalytics = createDeferredQuery()
     const mockOptions = {
         queryData: {
-            analytics: async (_, query) => {
-                await new Promise((resolve) => setTimeout(resolve, 200)) // For this follow-up request
-                if (query.params.dimension.includes('qrur9Dvnyt5:GE:5:LE:10')) {
-                    return analyticsResponse1
-                } else {
-                    return analyticsResponse2
-                }
-            },
+            analytics: deferredAnalytics.defer((_, query) =>
+                query.params.dimension.includes('qrur9Dvnyt5:GE:5:LE:10')
+                    ? analyticsResponse1
+                    : analyticsResponse2
+            ),
             // mock the POST to dataStatistics done in the eventVisualization endpoint
             dataStatistics: {},
             eventVisualizations: async (_, query) => {
@@ -114,6 +120,8 @@ describe('PluginWrapper', () => {
             ).not.toBeInTheDocument()
         })
 
+        await deferredAnalytics.releaseAll()
+
         // When analytics data comes in, the loader is removed and the table shows
         await waitFor(() => {
             expect(
@@ -128,6 +136,7 @@ describe('PluginWrapper', () => {
 
     beforeEach(() => {
         vi.clearAllMocks()
+        deferredAnalytics.reset()
     })
 
     it('should render the loading spinner while loading and switching visualizations', async () => {
@@ -179,6 +188,8 @@ describe('PluginWrapper', () => {
             ).not.toBeInTheDocument()
         })
 
+        await deferredAnalytics.releaseAll()
+
         // When analytics data comes in, the loader is removed and the table shows
         await waitFor(() => {
             expect(
@@ -219,6 +230,8 @@ describe('PluginWrapper', () => {
                 screen.getByTestId('line-list-data-table')
             ).toBeInTheDocument()
         })
+
+        await deferredAnalytics.releaseAll()
 
         // When analytics data comes in, the loader is removed and the table still shows
         await waitFor(() => {
@@ -267,6 +280,8 @@ describe('PluginWrapper', () => {
                 screen.getByTestId('line-list-data-table')
             ).toBeInTheDocument()
         })
+
+        await deferredAnalytics.releaseAll()
 
         // When analytics data comes in, the loader is removed and the table still shows
         await waitFor(() => {
