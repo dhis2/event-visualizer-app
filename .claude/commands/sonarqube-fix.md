@@ -2,7 +2,7 @@
 
 Fix SonarQube quality gate failures systematically by fetching issues directly from the API and addressing them in priority order.
 
-**Note**: Designed for **public projects only**. All DHIS2 projects on SonarCloud are public, so no authentication is required. For private projects, authentication would be needed (not covered here).
+**Note**: Designed for **public projects only**. All DHIS2 projects on SonarCloud are public, so every API call in this workflow can be made anonymously — no `SONAR_TOKEN` needed. For private projects you'd need authentication (not covered here).
 
 ## When to Use
 
@@ -114,17 +114,44 @@ Fix any regressions immediately before continuing. Never accumulate fixes withou
 
 ### Step 5: Publish to SonarCloud
 
-Once a batch of fixes is complete and tests pass:
+Local upload and server-side processing are separate steps. The plan is:
+
+1. Record the **previous** `analysisDate` for this branch so we have a baseline to compare against.
+2. Run `pnpm sonar` (waits for the scanner upload to finish).
+3. Poll the same endpoint until `analysisDate` changes — that's how we know the new report has been processed.
+
+Capture the baseline:
+
+```bash
+BEFORE_DATE=$(curl -s "https://sonarcloud.io/api/components/show?component=<org>_<repo>&branch=<branch-name>" \
+  | jq -r '.component.analysisDate')
+echo "$BEFORE_DATE"
+```
+
+URL-encode the branch name (e.g. `feat%2Fupdate-buttons`). If this is the first scan for the branch, `analysisDate` may be `null` — that's fine; the comparison below still works.
+
+Then publish:
 
 ```bash
 pnpm sonar
 ```
 
-This takes several minutes. Wait for it to finish before fetching results.
+The scanner upload takes a minute or two. The tail of the output ends with `ANALYSIS SUCCESSFUL, you can find the results at: ...`. That means the upload finished — but processing is still queued server-side, so don't fetch issues yet.
 
-### Step 6: Fetch Branch Results and Verify
+### Step 6: Wait for Server-Side Processing
 
-After `pnpm sonar` completes, verify using the **branch** parameter (not `pullRequest`):
+Poll until `analysisDate` differs from the baseline. SonarCloud usually processes a report in under a minute, sometimes several:
+
+```bash
+curl -s "https://sonarcloud.io/api/components/show?component=<org>_<repo>&branch=<branch-name>" \
+  | jq -r '.component.analysisDate'
+```
+
+When the returned value is non-null and not equal to `$BEFORE_DATE`, the new analysis has landed. Sleep 10–15 seconds between checks and cap the wait (e.g. 5 minutes). Don't use an uncapped `until` loop — if the URL is mistyped or the branch was deleted you'll spin forever.
+
+### Step 7: Fetch Branch Results and Verify
+
+Once `analysisDate` has updated, verify using the **branch** parameter (not `pullRequest`):
 
 ```bash
 curl -s "https://sonarcloud.io/api/issues/search?componentKeys=<org>_<repo>&branch=<branch-name>&resolved=false&ps=100" \
@@ -136,7 +163,9 @@ Note: URL-encode the branch name (e.g. `feat%2Fupdate-buttons` for `feat/update-
 - Issues remain → return to Step 3 and continue fixing
 - No issues → process is complete
 
-### Step 7: Completion Criteria
+The PR-scoped query (`pullRequest=<pr-number>`) will continue showing the old issues until you push the new commit and GitHub's PR analysis re-runs. After pushing, that view catches up too.
+
+### Step 8: Completion Criteria
 
 The process is complete when all of the following are true:
 
@@ -157,8 +186,9 @@ User: /sonarqube-fix
 3. Create todos for all 3 issues
 4. Fix MINOR BUG first (it's a BUG), then the two CODE_SMELLs
 5. After fixes: pnpm test && pnpm lint → passes
-6. pnpm sonar → publishes results
-7. Branch API → 0 issues remaining ✅
+6. Capture `analysisDate` baseline, then `pnpm sonar` to publish
+7. Poll `/api/components/show` until `analysisDate` changes
+8. Branch API → 0 issues remaining ✅
 ```
 
 ### Example 2: On main branch, multiple open PRs
@@ -198,7 +228,15 @@ User: /sonarqube-fix
 
 - Always re-fetch using the **branch** URL (not the PR URL) after `pnpm sonar`
 - SonarCloud only updates after the publish step — results won't change without running `pnpm sonar`
+- The PR-scoped view stays stuck on the old commit's analysis until you push and CI re-runs against the pushed SHA
 - Continue working through remaining issues from the branch results
+
+### `analysisDate` never changes after `pnpm sonar`
+
+- Confirm the branch name is URL-encoded correctly (e.g. `chore%2Ffix-flaky-test`, not `chore/fix-flaky-test`)
+- Check the scanner output for `ANALYSIS SUCCESSFUL`. If the upload itself failed, no new analysis will ever be queued
+- If you used the wrong component key, the endpoint returns `{"errors":[{"msg":"Component key '...' not found"}]}` — `jq` will yield `null` for `.component.analysisDate` indefinitely
+- Cap your poll loop (e.g. 5 minutes) so a misconfiguration doesn't hang the workflow
 
 ### GitHub CLI issues
 
