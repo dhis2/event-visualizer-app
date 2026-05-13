@@ -26,11 +26,10 @@ const createStore = (mainSidebarWidth = MAIN_SIDEBAR_DEFAULT_WIDTH) =>
 
 const renderResizableHook = (mainSidebarWidth = MAIN_SIDEBAR_DEFAULT_WIDTH) => {
     const store = createStore(mainSidebarWidth)
-    const hookResult = renderHookWithReduxStoreProvider(
-        () => useResizableSidebar(),
-        store
-    )
-    return { ...hookResult, store }
+    return {
+        ...renderHookWithReduxStoreProvider(() => useResizableSidebar(), store),
+        store,
+    }
 }
 
 describe('useResizableSidebar', () => {

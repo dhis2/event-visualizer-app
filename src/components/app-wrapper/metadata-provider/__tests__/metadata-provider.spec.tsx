@@ -537,9 +537,7 @@ describe('PluginMetadataProvider API and return value types', () => {
                 result.current.useMetadataStoreResult.getMetadataItems,
         }
 
-        act(() => {
-            rerender()
-        })
+        rerender()
 
         expect(result.current.useAddMetadataResult).toEqual(
             initialFunctions.useAddMetadata
@@ -645,7 +643,10 @@ describe('PluginMetadataProvider — compound-key alias resolution via hooks', (
             result.current.store.addMetadata(makeDimension('Weight v1'))
         })
 
-        const rendersAfterFirstAdd = renderCount
+        /* False positive: the rule sees `renderCount` on the RHS and
+         * misclassifies this as a `render()` result. It's a plain number. */
+        // eslint-disable-next-line testing-library/render-result-naming-convention
+        const countAfterFirstAdd = renderCount
 
         // Now update the item under the canonical key
         act(() => {
@@ -653,7 +654,7 @@ describe('PluginMetadataProvider — compound-key alias resolution via hooks', (
         })
 
         // Hook should have re-rendered because the subscribed 3-part alias key was notified
-        expect(renderCount).toBeGreaterThan(rendersAfterFirstAdd)
+        expect(renderCount).toBeGreaterThan(countAfterFirstAdd)
         expect(result.current.item?.name).toBe('Weight v2')
     })
 
