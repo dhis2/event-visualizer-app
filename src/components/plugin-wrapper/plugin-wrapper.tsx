@@ -103,11 +103,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
             )}
             {visualization.type === 'PIVOT_TABLE' && (
                 <PivotTablePlugin
-                    key={
-                        isCurrentVisualizationPersisted(visualization)
-                            ? visualization.id
-                            : 'new'
-                    }
+                    key={`${isCurrentVisualizationPersisted(visualization) ? visualization.id : 'new'}-${visualization.outputType}`}
                     displayProperty={displayProperty}
                     visualization={visualization}
                     filters={filters}
