@@ -19,30 +19,9 @@ import type { ButtonAction } from './base-button'
 
 type TooltipContent = { content: string; openDelay?: number } | undefined
 
-type RegistrationLayoutState = {
-    isRegistrationDateInLayout: boolean
-    isRegistrationOuInLayout: boolean
-}
-
-const getRegistrationTooltipContent = ({
-    isRegistrationDateInLayout,
-    isRegistrationOuInLayout,
-}: RegistrationLayoutState): TooltipContent => {
-    if (isRegistrationDateInLayout && isRegistrationOuInLayout) {
-        return {
-            content: i18n.t(
-                'Not valid with registration date or registration org. unit'
-            ),
-        }
-    }
-    if (isRegistrationDateInLayout) {
-        return { content: i18n.t('Not valid with registration date') }
-    }
-    if (isRegistrationOuInLayout) {
-        return { content: i18n.t('Not valid with registration org. unit') }
-    }
-    return undefined
-}
+const getRegistrationOuTooltipContent = (): TooltipContent => ({
+    content: i18n.t('Not valid with registration org. unit'),
+})
 
 type CategoryLayoutState = {
     hasCategoryInLayout: boolean
@@ -73,7 +52,6 @@ type EventTooltipContentParams = {
     hasNoProgramInLayout: boolean
     hasMultipleProgramsInLayout: boolean
     hasMultipleProgramStagesInLayout: boolean
-    isRegistrationDateInLayout: boolean
     isRegistrationOuInLayout: boolean
     visualizationType: string
 }
@@ -82,7 +60,6 @@ const getEventTooltipContent = ({
     hasNoProgramInLayout,
     hasMultipleProgramsInLayout,
     hasMultipleProgramStagesInLayout,
-    isRegistrationDateInLayout,
     isRegistrationOuInLayout,
     visualizationType,
 }: EventTooltipContentParams): TooltipContent => {
@@ -98,11 +75,8 @@ const getEventTooltipContent = ({
         return { content: i18n.t('Not valid with multiple programs') }
     }
 
-    if (isRegistrationDateInLayout || isRegistrationOuInLayout) {
-        return getRegistrationTooltipContent({
-            isRegistrationDateInLayout,
-            isRegistrationOuInLayout,
-        })
+    if (isRegistrationOuInLayout) {
+        return getRegistrationOuTooltipContent()
     }
 
     if (hasMultipleProgramStagesInLayout) {
@@ -118,7 +92,6 @@ type EnrollmentTooltipContentParams = {
     hasCategoryOptionGroupSetInLayout: boolean
     hasMultipleProgramsInLayout: boolean
     hasNoProgramInLayout: boolean
-    isRegistrationDateInLayout: boolean
     isRegistrationOuInLayout: boolean
     visualizationType: string
 }
@@ -129,7 +102,6 @@ const getEnrollmentTooltipContent = ({
     hasCategoryOptionGroupSetInLayout,
     hasNoProgramInLayout,
     hasMultipleProgramsInLayout,
-    isRegistrationDateInLayout,
     isRegistrationOuInLayout,
     visualizationType,
 }: EnrollmentTooltipContentParams): TooltipContent => {
@@ -149,11 +121,8 @@ const getEnrollmentTooltipContent = ({
         return { content: i18n.t('Not valid with event programs') }
     }
 
-    if (isRegistrationDateInLayout || isRegistrationOuInLayout) {
-        return getRegistrationTooltipContent({
-            isRegistrationDateInLayout,
-            isRegistrationOuInLayout,
-        })
+    if (isRegistrationOuInLayout) {
+        return getRegistrationOuTooltipContent()
     }
 
     return getCategoryTooltipContent({
@@ -341,11 +310,6 @@ export const useActionButton = (
         [layoutDimensionIds, metadataStore]
     )
 
-    const isRegistrationDateInLayout = useMemo(
-        () => (tetId ? isDimensionInLayout(layout, `${tetId}.created`) : false),
-        [layout, tetId]
-    )
-
     const isRegistrationOuInLayout = useMemo(
         () =>
             tetId
@@ -370,7 +334,6 @@ export const useActionButton = (
                     hasNoProgramInLayout,
                     hasMultipleProgramsInLayout,
                     hasMultipleProgramStagesInLayout,
-                    isRegistrationDateInLayout,
                     isRegistrationOuInLayout,
                     visualizationType,
                 })
@@ -381,7 +344,6 @@ export const useActionButton = (
                     hasCategoryOptionGroupSetInLayout,
                     hasNoProgramInLayout,
                     hasMultipleProgramsInLayout,
-                    isRegistrationDateInLayout,
                     isRegistrationOuInLayout,
                     visualizationType,
                 })
@@ -407,7 +369,6 @@ export const useActionButton = (
         hasMultipleTetInLayout,
         hasProgramIndicatorsInLayout,
         isLayoutEmpty,
-        isRegistrationDateInLayout,
         isRegistrationOuInLayout,
         visualizationType,
     ])

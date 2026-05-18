@@ -86,9 +86,7 @@ describe('UnifiedSearchInput', () => {
         const input = screen.getByTestId('unified-search-input')
 
         // Type a search term using fireEvent (not userEvent to avoid timer conflicts)
-        act(() => {
-            fireEvent.change(input, { target: { value: 'test' } })
-        })
+        fireEvent.change(input, { target: { value: 'test' } })
 
         // Should not dispatch immediately
         expect(mockDispatch).not.toHaveBeenCalled()
@@ -118,9 +116,7 @@ describe('UnifiedSearchInput', () => {
         const input = screen.getByTestId('unified-search-input')
 
         // Type a single character
-        act(() => {
-            fireEvent.change(input, { target: { value: 'a' } })
-        })
+        fireEvent.change(input, { target: { value: 'a' } })
 
         // Fast-forward past debounce time
         act(() => {
@@ -144,9 +140,7 @@ describe('UnifiedSearchInput', () => {
         const input = screen.getByTestId('unified-search-input')
 
         // Clear the search
-        act(() => {
-            fireEvent.change(input, { target: { value: '' } })
-        })
+        fireEvent.change(input, { target: { value: '' } })
 
         // Fast-forward past debounce time
         act(() => {
@@ -169,9 +163,7 @@ describe('UnifiedSearchInput', () => {
         const input = screen.getByTestId('unified-search-input')
 
         // Type '123'
-        act(() => {
-            fireEvent.change(input, { target: { value: '123' } })
-        })
+        fireEvent.change(input, { target: { value: '123' } })
 
         // Fast-forward past debounce time - should dispatch
         act(() => {
@@ -192,9 +184,7 @@ describe('UnifiedSearchInput', () => {
         })
 
         // Type '1234'
-        act(() => {
-            fireEvent.change(input, { target: { value: '1234' } })
-        })
+        fireEvent.change(input, { target: { value: '1234' } })
 
         // Fast-forward but not past debounce time
         act(() => {
@@ -202,9 +192,7 @@ describe('UnifiedSearchInput', () => {
         })
 
         // Before debounce elapses, change back to '123'
-        act(() => {
-            fireEvent.change(input, { target: { value: '123' } })
-        })
+        fireEvent.change(input, { target: { value: '123' } })
 
         // Fast-forward past debounce time
         act(() => {
@@ -222,9 +210,7 @@ describe('UnifiedSearchInput', () => {
             const input = screen.getByTestId('unified-search-input')
 
             // Type a single character
-            act(() => {
-                fireEvent.change(input, { target: { value: 'a' } })
-            })
+            fireEvent.change(input, { target: { value: 'a' } })
 
             // Should not show help message immediately
             expect(
@@ -282,9 +268,7 @@ describe('UnifiedSearchInput', () => {
             const input = screen.getByTestId('unified-search-input')
 
             // Type a single character
-            act(() => {
-                fireEvent.change(input, { target: { value: 'a' } })
-            })
+            fireEvent.change(input, { target: { value: 'a' } })
 
             // Fast-forward to show help message
             act(() => {
@@ -295,9 +279,7 @@ describe('UnifiedSearchInput', () => {
             ).toBeInTheDocument()
 
             // Clear the input (empty is valid)
-            act(() => {
-                fireEvent.change(input, { target: { value: '' } })
-            })
+            fireEvent.change(input, { target: { value: '' } })
 
             // Help message should disappear immediately
             expect(
@@ -311,9 +293,7 @@ describe('UnifiedSearchInput', () => {
             const input = screen.getByTestId('unified-search-input')
 
             // Type a single character
-            act(() => {
-                fireEvent.change(input, { target: { value: 'a' } })
-            })
+            fireEvent.change(input, { target: { value: 'a' } })
 
             // Fast-forward partway (1000ms)
             act(() => {
@@ -321,9 +301,7 @@ describe('UnifiedSearchInput', () => {
             })
 
             // Make it valid before help message would show
-            act(() => {
-                fireEvent.change(input, { target: { value: 'ab' } })
-            })
+            fireEvent.change(input, { target: { value: 'ab' } })
 
             // Fast-forward past original 2000ms
             act(() => {
@@ -429,9 +407,7 @@ describe('UnifiedSearchInput', () => {
             const input = screen.getByTestId('unified-search-input')
 
             // Type a search term while loading
-            act(() => {
-                fireEvent.change(input, { target: { value: 'test' } })
-            })
+            fireEvent.change(input, { target: { value: 'test' } })
 
             // Fast-forward past debounce time (250ms)
             act(() => {

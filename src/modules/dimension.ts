@@ -1,10 +1,7 @@
 import { TIME_DIMENSION_IDS } from '@constants/dimensions'
 import { USER_ORGUNIT } from '@constants/org-units'
 import i18n from '@dhis2/d2-i18n'
-import {
-    getDefaultOrgUnitLabel,
-    getDefaultOrgUnitMetadata,
-} from '@modules/metadata'
+import { getDefaultOrgUnitMetadata } from '@modules/metadata'
 import type {
     CurrentVisualization,
     DimensionArray,
@@ -72,7 +69,7 @@ export const getCreatedDimension = (): Partial<
         id: 'created',
         dimensionId: 'created',
         dimensionType: 'PERIOD',
-        name: i18n.t('Registration date'),
+        name: i18n.t('Created on'),
         valueType: 'DATE',
     },
 })
@@ -104,29 +101,6 @@ export const getMainDimensions = (
         dimensionId: 'lastUpdatedBy',
         dimensionType: 'USER',
         name: i18n.t('Last updated by'),
-    },
-})
-
-const prefixDimensionId = (dimensionId: string, prefix?: string): string =>
-    prefix ? `${prefix}.${dimensionId}` : dimensionId
-
-export const getProgramDimensions = (
-    programId?: string
-): DimensionRecordObject => ({
-    [prefixDimensionId('ou', programId)]: {
-        id: prefixDimensionId('ou', programId),
-        dimensionType: 'ORGANISATION_UNIT',
-        name: getDefaultOrgUnitLabel(),
-    },
-    [prefixDimensionId('eventStatus', programId)]: {
-        id: prefixDimensionId('eventStatus', programId),
-        dimensionType: 'STATUS',
-        name: i18n.t('Event status'),
-    },
-    [prefixDimensionId('programStatus', programId)]: {
-        id: prefixDimensionId('programStatus', programId),
-        dimensionType: 'STATUS',
-        name: i18n.t('Program status'),
     },
 })
 
@@ -371,7 +345,6 @@ const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
  * Must match what getTrackedEntityTypeFixedDimensions produces. */
 const TEI_REGISTRATION_DIMENSION_IDS: ReadonlySet<string> = new Set([
     'enrollmentOu',
-    'created',
 ])
 
 /**
@@ -512,13 +485,5 @@ export const getTrackedEntityTypeFixedDimensions = (trackedEntityType: {
         name: i18n.t('Registration org. unit'),
         trackedEntityTypeId: trackedEntityType.id,
         valueType: 'ORGANISATION_UNIT',
-    },
-    {
-        id: `${trackedEntityType.id}.created`,
-        dimensionId: 'created',
-        dimensionType: 'PERIOD',
-        name: i18n.t('Registration date'),
-        trackedEntityTypeId: trackedEntityType.id,
-        valueType: 'DATE',
     },
 ]

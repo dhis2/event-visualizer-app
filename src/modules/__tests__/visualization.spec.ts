@@ -486,16 +486,6 @@ describe('analyticsHeaderToCanonicalDimensionId', () => {
         )
     })
 
-    it('rewrites bare `created` to `tetId.created` in TE', () => {
-        const vis = buildVis({
-            outputType: 'TRACKED_ENTITY_INSTANCE',
-            trackedEntityType: { id: TET, name: 'Person' },
-        })
-        expect(analyticsHeaderToCanonicalDimensionId('created', vis)).toBe(
-            `${TET}.created`
-        )
-    })
-
     it('returns plain for other bare wire dims in TE', () => {
         const vis = buildVis({
             outputType: 'TRACKED_ENTITY_INSTANCE',

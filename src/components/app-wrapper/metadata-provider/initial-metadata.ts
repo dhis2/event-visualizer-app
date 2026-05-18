@@ -1,16 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
-import {
-    getCreatedDimension,
-    getProgramDimensions,
-    getTimeDimensions,
-} from '@modules/dimension'
+import { getCreatedDimension } from '@modules/dimension'
 import { getStatusNames } from '@modules/status'
-import type {
-    InitialMetadataItems,
-    MetadataInputMap,
-    UserOrgUnit,
-    RelativePeriod,
-} from '@types'
+import type { InitialMetadataItems, UserOrgUnit, RelativePeriod } from '@types'
 
 const getOrganisationUnits = (): Record<UserOrgUnit, string> => ({
     USER_ORGUNIT: i18n.t('User organisation unit'),
@@ -54,19 +45,6 @@ const getRelativePeriods = (): Record<RelativePeriod, string> => ({
     LAST_YEAR: i18n.t('Last year'),
 })
 
-export const getTimeDimensionsMetadata = (): MetadataInputMap =>
-    Object.values(getTimeDimensions()).reduce(
-        (acc, { id, dimensionType, defaultName }) => {
-            acc[id] = {
-                id,
-                name: defaultName,
-                dimensionType,
-            }
-            return acc
-        },
-        {}
-    )
-
 export const getInitialMetadata = (): InitialMetadataItems => ({
     /* pe must be a DimensionMetadataItem (with dimensionType) so that
      * getDimensionMetadataItem('pe') succeeds when buildAxis processes
@@ -77,9 +55,7 @@ export const getInitialMetadata = (): InitialMetadataItems => ({
         dimensionType: 'PERIOD',
     },
     ...getStatusNames(),
-    ...getProgramDimensions(),
     ...getCreatedDimension(),
-    ...getTimeDimensionsMetadata(),
     ...getRelativePeriods(),
     ...getOrganisationUnits(),
 })

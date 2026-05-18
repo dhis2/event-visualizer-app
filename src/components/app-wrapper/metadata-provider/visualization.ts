@@ -59,7 +59,7 @@ export const extractTrackedEntityTypeMetadata = (
 export const extractProgramDimensionsMetadata = (
     visualization: SavedVisualization
 ): MetadataInputMap => {
-    const programDimensionsMetadata = {}
+    const programDimensionsMetadata: MetadataInputMap = {}
 
     if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {
         return programDimensionsMetadata
@@ -72,6 +72,15 @@ export const extractProgramDimensionsMetadata = (
             program.programStages.forEach((stage) => {
                 programDimensionsMetadata[stage.id!] = stage
             })
+        }
+
+        /* EVENT/ENROLLMENT visualizations don't carry a top-level
+         * trackedEntityType, but tracker programs reference one. The layout's
+         * TET resolver walks program.trackedEntityType.id, so the store needs
+         * an entry for that id to be looked up. */
+        const tet = program.trackedEntityType
+        if (tet?.id && !programDimensionsMetadata[tet.id]) {
+            programDimensionsMetadata[tet.id] = { id: tet.id, name: tet.name }
         }
     })
 

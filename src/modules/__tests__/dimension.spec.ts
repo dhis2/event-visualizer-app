@@ -3,7 +3,6 @@ import { describe, it, expect } from 'vitest'
 import {
     getCreatedDimension,
     getMainDimensions,
-    getProgramDimensions,
     transformDimensions,
     isTimeDimensionId,
     getTimeDimensions,
@@ -44,19 +43,6 @@ describe('getMainDimensions', () => {
         expect(result).toHaveProperty('created')
         expect(result.created?.dimensionType).toBe('PERIOD')
         expect(result).toHaveProperty('lastUpdated')
-    })
-})
-
-describe('getProgramDimensions', () => {
-    it('returns program dimensions for a given programId', () => {
-        const programId = 'pid'
-        const result = getProgramDimensions(programId)
-        expect(result).toHaveProperty(`${programId}.ou`)
-        expect(result).toHaveProperty(`${programId}.eventStatus`)
-        expect(result).toHaveProperty(`${programId}.programStatus`)
-        expect(result[`${programId}.ou`].dimensionType).toBe(
-            'ORGANISATION_UNIT'
-        )
     })
 })
 
@@ -558,7 +544,7 @@ describe('getCompoundDimensionId', () => {
         ).toBe('prog1.someField')
     })
 
-    it('uses trackedEntityTypeId prefix for TEI registration dimensions', () => {
+    it('uses trackedEntityTypeId prefix for the TEI registration org unit', () => {
         expect(
             getCompoundDimensionId(
                 { dimension: 'enrollmentOu', items: [] },
@@ -566,14 +552,6 @@ describe('getCompoundDimensionId', () => {
                 'tet1'
             )
         ).toBe('tet1.enrollmentOu')
-
-        expect(
-            getCompoundDimensionId(
-                { dimension: 'created', items: [] },
-                'TRACKED_ENTITY_INSTANCE',
-                'tet1'
-            )
-        ).toBe('tet1.created')
     })
 
     it('does not prefix non-registration dimensions with trackedEntityTypeId', () => {
@@ -609,12 +587,11 @@ describe('getCompoundDimensionId', () => {
 })
 
 describe('getTrackedEntityTypeFixedDimensions', () => {
-    it('returns registration org unit and registration date dimensions', () => {
+    it('returns the registration org unit dimension', () => {
         const fixedDimensions = getTrackedEntityTypeFixedDimensions({
             id: 'tet1',
         })
 
-        expect(fixedDimensions).toHaveLength(2)
         expect(fixedDimensions).toEqual([
             expect.objectContaining({
                 id: 'tet1.enrollmentOu',
@@ -622,21 +599,14 @@ describe('getTrackedEntityTypeFixedDimensions', () => {
                 dimensionType: 'ORGANISATION_UNIT',
                 trackedEntityTypeId: 'tet1',
             }),
-            expect.objectContaining({
-                id: 'tet1.created',
-                dimensionId: 'created',
-                dimensionType: 'PERIOD',
-                trackedEntityTypeId: 'tet1',
-            }),
         ])
     })
 
-    it('uses the tracked entity type id in compound IDs', () => {
+    it('uses the tracked entity type id in the compound ID', () => {
         const fixedDimensions = getTrackedEntityTypeFixedDimensions({
             id: 'custom-tet',
         })
 
         expect(fixedDimensions[0].id).toBe('custom-tet.enrollmentOu')
-        expect(fixedDimensions[1].id).toBe('custom-tet.created')
     })
 })
