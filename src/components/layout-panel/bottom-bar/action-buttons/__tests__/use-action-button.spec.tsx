@@ -124,6 +124,12 @@ const metadata = {
         dimensionType: 'PROGRAM_ATTRIBUTE',
         valueType: 'TEXT',
     },
+    completed: {
+        id: 'completed',
+        name: 'Completed on',
+        dimensionType: 'PERIOD',
+        valueType: 'DATE',
+    },
 }
 
 const initialPreloadedState: Partial<RootState> = {
@@ -870,6 +876,33 @@ describe('useActionButton for Tracked entity instance button', () => {
         })
     })
 
+    it('returns correct result for: PT, Completed on in layout', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('TRACKED_ENTITY_INSTANCE'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [
+                            metadata['p2.p2s2.d1'].id,
+                            metadata['completed'].id,
+                        ],
+                    },
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('create')
+        expect(output.tooltipConfig).toEqual({
+            content: 'Not valid with Completed on',
+        })
+    })
+
     it('returns correct result for: LL, category and category option group sets in layout', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('TRACKED_ENTITY_INSTANCE'),
@@ -921,6 +954,33 @@ describe('useActionButton for Tracked entity instance button', () => {
         expect(output.action).toEqual('create')
         expect(output.tooltipConfig).toEqual({
             content: 'Not valid with program indicators',
+        })
+    })
+
+    it('returns correct result for: LL, Completed on in layout', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('TRACKED_ENTITY_INSTANCE'),
+            createStoreWithPreloadedState({
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [
+                            metadata['p2.p2s2.d1'].id,
+                            metadata['completed'].id,
+                        ],
+                    },
+                    visualizationType: 'LINE_LIST',
+                },
+            })
+        )
+
+        const output = result.current
+
+        expect(output.action).toEqual('create')
+        expect(output.tooltipConfig).toEqual({
+            content: 'Not valid with Completed on',
         })
     })
 })

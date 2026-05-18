@@ -135,6 +135,7 @@ type TrackedEntityInstanceTooltipContentParams = {
     programMetadata: Program | undefined
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
+    hasCompletedOnInLayout: boolean
     hasMultipleProgramsInLayout: boolean
     hasMultipleTetInLayout: boolean
     hasProgramIndicatorsInLayout: boolean
@@ -145,11 +146,18 @@ const getTrackedEntityInstanceTooltipContent = ({
     programMetadata,
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
+    hasCompletedOnInLayout,
     hasMultipleProgramsInLayout,
     hasMultipleTetInLayout,
     hasProgramIndicatorsInLayout,
     visualizationType,
 }: TrackedEntityInstanceTooltipContentParams): TooltipContent => {
+    if (hasCompletedOnInLayout) {
+        return {
+            content: i18n.t('Not valid with Completed on'),
+        }
+    }
+
     if (hasMultipleTetInLayout) {
         return {
             content: i18n.t('Not valid with multiple tracked entity types'),
@@ -253,6 +261,14 @@ export const useActionButton = (
         [layoutDimensionIds, metadataStore]
     )
 
+    const hasCompletedOnInLayout: boolean = useMemo(
+        () =>
+            layoutDimensionIds.some(
+                (dimensionId) => dimensionId === 'completed'
+            ),
+        [layoutDimensionIds]
+    )
+
     const programCountInLayout = programIdsInLayout.length
 
     const tetCountInLayout = useMemo(() => {
@@ -352,6 +368,7 @@ export const useActionButton = (
                     programMetadata: firstProgramMetadata,
                     hasCategoryInLayout,
                     hasCategoryOptionGroupSetInLayout,
+                    hasCompletedOnInLayout,
                     hasMultipleProgramsInLayout,
                     hasMultipleTetInLayout,
                     hasProgramIndicatorsInLayout,
@@ -363,6 +380,7 @@ export const useActionButton = (
         firstProgramMetadata,
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
+        hasCompletedOnInLayout,
         hasNoProgramInLayout,
         hasMultipleProgramsInLayout,
         hasMultipleProgramStagesInLayout,

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-13T12:26:32.491Z\n"
-"PO-Revision-Date: 2026-05-13T12:26:32.492Z\n"
+"POT-Creation-Date: 2026-05-18T13:11:36.297Z\n"
+"PO-Revision-Date: 2026-05-18T13:11:36.297Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -389,6 +389,9 @@ msgstr "Not valid with multiple program stages"
 
 msgid "Not valid with event programs"
 msgstr "Not valid with event programs"
+
+msgid "Not valid with Completed on"
+msgstr "Not valid with Completed on"
 
 msgid "Not valid with multiple tracked entity types"
 msgstr "Not valid with multiple tracked entity types"
@@ -978,15 +981,6 @@ msgstr "No"
 msgid "Not answered"
 msgstr "Not answered"
 
-msgid "Event status"
-msgstr "Event status"
-
-msgid "Program status"
-msgstr "Program status"
-
-msgid "Registration date"
-msgstr "Registration date"
-
 msgid "Completed date"
 msgstr "Completed date"
 
@@ -1007,6 +1001,9 @@ msgstr "Scheduled date"
 
 msgid "Event org. unit"
 msgstr "Event org. unit"
+
+msgid "Event status"
+msgstr "Event status"
 
 msgid "Enrollment org. unit"
 msgstr "Enrollment org. unit"
