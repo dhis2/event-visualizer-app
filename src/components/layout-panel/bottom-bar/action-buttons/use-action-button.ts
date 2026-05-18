@@ -262,10 +262,7 @@ export const useActionButton = (
     )
 
     const hasCompletedOnInLayout: boolean = useMemo(
-        () =>
-            layoutDimensionIds.some(
-                (dimensionId) => dimensionId === 'completed'
-            ),
+        () => layoutDimensionIds.includes('completed'),
         [layoutDimensionIds]
     )
 
