@@ -68,9 +68,14 @@ export const getTimeDimensionsMetadata = (): MetadataInputMap =>
     )
 
 export const getInitialMetadata = (): InitialMetadataItems => ({
-    // analytics metadata does not always return a name for pe
-    // force a default to avoid the metadata store to throw an error when processing the analytics response
-    pe: i18n.t('Period'),
+    /* pe must be a DimensionMetadataItem (with dimensionType) so that
+     * getDimensionMetadataItem('pe') succeeds when buildAxis processes
+     * period dimensions from the layout during visualization updates. */
+    pe: {
+        id: 'pe',
+        name: i18n.t('Period'),
+        dimensionType: 'PERIOD',
+    },
     ...getStatusNames(),
     ...getProgramDimensions(),
     ...getCreatedDimension(),

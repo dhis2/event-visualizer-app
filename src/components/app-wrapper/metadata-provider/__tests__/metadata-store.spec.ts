@@ -493,6 +493,8 @@ describe('MetadataStore', () => {
               "name": "Organisation unit",
             },
             "pe": {
+              "dimensionId": "pe",
+              "dimensionType": "PERIOD",
               "id": "pe",
               "name": "Period",
             },
