@@ -483,7 +483,7 @@ describe('resolveTeiFields', () => {
         })
     })
 
-    it('TEI viz with no ou dim in layout → throws', () => {
+    it('TEI viz with no TET-bound dim in layout → throws', () => {
         const state = baseState('TRACKED_ENTITY_INSTANCE', ['tea1'])
         const store = makeStore({
             dims: { tea1: tea1Dim },
@@ -491,7 +491,7 @@ describe('resolveTeiFields', () => {
         })
 
         expect(() => resolveTeiFields(state, store)).toThrow(
-            'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the layout has no organisation unit dimension carrying TET context'
+            'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the layout has no dimension carrying TET context'
         )
     })
 
@@ -503,7 +503,7 @@ describe('resolveTeiFields', () => {
         })
 
         expect(() => resolveTeiFields(state, store)).toThrow(
-            'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the layout has no organisation unit dimension carrying TET context'
+            'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the layout has no dimension carrying TET context'
         )
     })
 
@@ -592,9 +592,13 @@ describe('resolveTeiFields', () => {
 })
 
 describe('resolveTetId', () => {
-    const trackerProgram = {
+    const trackerProgramA = {
         id: 'progA',
         trackedEntityType: { id: 'tetA', name: 'Person' },
+    } as unknown as Program
+    const trackerProgramC = {
+        id: 'progC',
+        trackedEntityType: { id: 'tetB', name: 'Household' },
     } as unknown as Program
     const eventProgram = { id: 'progB' } as unknown as Program
 
@@ -624,13 +628,32 @@ describe('resolveTetId', () => {
         programId: 'progB',
         programStageId: 'evtStage',
     } as DimensionMetadataItem
-    const teaDim = {
+    const contextlessTeaDim = {
         id: 'tea1',
         dimensionId: 'tea1',
         dimensionType: 'PROGRAM_ATTRIBUTE',
     } as DimensionMetadataItem
+    const teaWithTetDim = {
+        id: 'tea1',
+        dimensionId: 'tea1',
+        dimensionType: 'PROGRAM_ATTRIBUTE',
+        trackedEntityTypeId: 'tetA',
+    } as DimensionMetadataItem
+    const dataElementInTrackerProgramDim = {
+        id: 'stage1.de1',
+        dimensionId: 'de1',
+        dimensionType: 'DATA_ELEMENT',
+        programId: 'progA',
+        programStageId: 'stage1',
+    } as DimensionMetadataItem
+    const programIndicatorInOtherTrackerDim = {
+        id: 'pi1',
+        dimensionId: 'pi1',
+        dimensionType: 'PROGRAM_INDICATOR',
+        programId: 'progC',
+    } as DimensionMetadataItem
 
-    it('returns trackedEntityTypeId directly when ou dim carries it', () => {
+    it('returns trackedEntityTypeId directly when an ou dim carries it', () => {
         const store = makeStore({
             dims: { 'tetA.enrollmentOu': tetOuDim },
         })
@@ -641,7 +664,7 @@ describe('resolveTetId', () => {
     it('walks programId → program.trackedEntityType for enrollment ou', () => {
         const store = makeStore({
             dims: { 'progA.enrollmentOu': enrollmentOuDim },
-            programs: { progA: trackerProgram },
+            programs: { progA: trackerProgramA },
         })
 
         expect(resolveTetId(['progA.enrollmentOu'], store)).toBe('tetA')
@@ -650,13 +673,57 @@ describe('resolveTetId', () => {
     it('walks programId → program.trackedEntityType for stage ou', () => {
         const store = makeStore({
             dims: { 'stage1.ou': stageOuDim },
-            programs: { progA: trackerProgram },
+            programs: { progA: trackerProgramA },
         })
 
         expect(resolveTetId(['stage1.ou'], store)).toBe('tetA')
     })
 
-    it('returns null for event-program stage ou (program has no TET)', () => {
+    it('returns trackedEntityTypeId directly when a TEA dim carries it (no OU in layout)', () => {
+        const store = makeStore({
+            dims: { tea1: teaWithTetDim },
+        })
+
+        expect(resolveTetId(['tea1'], store)).toBe('tetA')
+    })
+
+    it('walks programId for a non-OU dim (data element in tracker program)', () => {
+        const store = makeStore({
+            dims: { 'stage1.de1': dataElementInTrackerProgramDim },
+            programs: { progA: trackerProgramA },
+        })
+
+        expect(resolveTetId(['stage1.de1'], store)).toBe('tetA')
+    })
+
+    it('returns the single TET when multiple dims all reference the same TET', () => {
+        const store = makeStore({
+            dims: {
+                'stage1.ou': stageOuDim,
+                tea1: teaWithTetDim,
+                'stage1.de1': dataElementInTrackerProgramDim,
+            },
+            programs: { progA: trackerProgramA },
+        })
+
+        expect(resolveTetId(['stage1.ou', 'tea1', 'stage1.de1'], store)).toBe(
+            'tetA'
+        )
+    })
+
+    it('ignores dims without TET context (event-program stage ou) when another dim provides TET', () => {
+        const store = makeStore({
+            dims: {
+                'evtStage.ou': eventProgramOuDim,
+                tea1: teaWithTetDim,
+            },
+            programs: { progB: eventProgram },
+        })
+
+        expect(resolveTetId(['evtStage.ou', 'tea1'], store)).toBe('tetA')
+    })
+
+    it('returns null for event-program-only layout (program has no TET)', () => {
         const store = makeStore({
             dims: { 'evtStage.ou': eventProgramOuDim },
             programs: { progB: eventProgram },
@@ -665,12 +732,28 @@ describe('resolveTetId', () => {
         expect(resolveTetId(['evtStage.ou'], store)).toBeNull()
     })
 
-    it('returns null when layout has no ou dim', () => {
+    it('returns null when no layout dim carries TET context', () => {
         const store = makeStore({
-            dims: { tea1: teaDim },
+            dims: { tea1: contextlessTeaDim },
         })
 
         expect(resolveTetId(['tea1'], store)).toBeNull()
+    })
+
+    it('returns the first TET in layout order when dims reference different TETs', () => {
+        /* Multi-TET layouts are an invalid state that the action buttons
+         * surface separately via tetCountInLayout; resolveTetId picks the
+         * first TET id so callers can still render a single-TET context. */
+        const store = makeStore({
+            dims: {
+                tea1: teaWithTetDim,
+                pi1: programIndicatorInOtherTrackerDim,
+            },
+            programs: { progC: trackerProgramC },
+        })
+
+        expect(resolveTetId(['tea1', 'pi1'], store)).toBe('tetA')
+        expect(resolveTetId(['pi1', 'tea1'], store)).toBe('tetB')
     })
 
     it('throws when a layout dim is missing from the metadata store', () => {
