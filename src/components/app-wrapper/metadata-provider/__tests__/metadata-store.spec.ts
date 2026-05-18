@@ -475,6 +475,8 @@ describe('MetadataStore', () => {
               "name": "Last updated on",
             },
             "pe": {
+              "dimensionId": "pe",
+              "dimensionType": "PERIOD",
               "id": "pe",
               "name": "Period",
             },

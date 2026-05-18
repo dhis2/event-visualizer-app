@@ -54,7 +54,10 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
 }) => {
     // the dimension ids need to be formatted to match the ones returned in the analytics metaData, otherwise the PT engine fails to lookup the metadata
     const eventVisualization = useMemo(
-        () => formatVisualizationForPivotTableEngine(visualization),
+        () =>
+            formatVisualizationForPivotTableEngine(
+                transformVisualizationForAnalyticsRequest(visualization)
+            ),
         [visualization]
     )
 

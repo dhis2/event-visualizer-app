@@ -68,15 +68,16 @@ export const headersMap: Record<DimensionId, string> = {
 export const getHeadersMap = (
     visualization: CurrentVisualization
 ): Record<DimensionId, string> => {
-    const { outputType, showHierarchy } = visualization
+    const { outputType, showHierarchy, type } = visualization
 
     const map = Object.assign({}, headersMap)
 
-    if (showHierarchy) {
+    if (type === 'PIVOT_TABLE') {
+        map['ou'] = 'ou'
+        map['enrollmentOu'] = outputType === 'EVENT' ? 'enrollmentou' : 'ou'
+    } else if (showHierarchy) {
         map['ou'] = 'ounamehierarchy'
-    }
-
-    if (outputType === 'ENROLLMENT') {
+    } else if (outputType === 'ENROLLMENT') {
         map['enrollmentOu'] = 'ouname'
     }
 

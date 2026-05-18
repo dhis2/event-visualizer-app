@@ -9,6 +9,7 @@ import type {
     UserOrgUnitMetadataItem,
 } from '@types'
 import { useCallback, useState } from 'react'
+import { getAnalyticsEndpoint } from './query-tools-common'
 import { getAdaptedVisualization } from './query-tools-pivot-table'
 
 export const fetchAnalyticsDataForPT = async ({
@@ -30,7 +31,6 @@ export const fetchAnalyticsDataForPT = async ({
     let req = new analyticsEngine.request()
         .fromVisualization(adaptedVisualization)
         .withProgram(program.id)
-        .withOutputType(visualization.outputType)
         .withParameters({
             totalPages: false,
             ...parameters,
@@ -55,7 +55,10 @@ export const fetchAnalyticsDataForPT = async ({
         req = req.withRelativePeriodDate(relativePeriodDate)
     }
 
-    const rawResponse = await analyticsEngine.events.getAggregate(req)
+    const analyticsApiEndpoint = getAnalyticsEndpoint(visualization.outputType)
+
+    const rawResponse =
+        await analyticsEngine[analyticsApiEndpoint].getAggregate(req)
 
     return rawResponse
 }
