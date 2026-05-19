@@ -1,6 +1,6 @@
 import i18n from '@dhis2/d2-i18n'
-import { IconFilter16, Tooltip } from '@dhis2/ui'
-import { type FC } from 'react'
+import { Radio, Tooltip } from '@dhis2/ui'
+import { type FC, type ReactNode } from 'react'
 import classes from './styles/data-section-toggle.module.css'
 
 export type DataSectionToggleMode = 'all' | 'filter'
@@ -13,13 +13,37 @@ type DataSectionToggleProps = {
     dataTest?: string
 }
 
-const buttonClassName = (
-    mode: DataSectionToggleMode,
-    target: DataSectionToggleMode
-): string =>
-    mode === target
-        ? `${classes.toggleButton} ${classes.toggleButtonSelected}`
-        : classes.toggleButton
+const cardClassName = (selected: boolean, disabled: boolean): string => {
+    const parts = [classes.card]
+    if (selected) {
+        parts.push(classes.cardSelected)
+    }
+    if (disabled) {
+        parts.push(classes.cardDisabled)
+    }
+    return parts.join(' ')
+}
+
+type CardProps = {
+    selected: boolean
+    disabled?: boolean
+    onSelect: () => void
+    children: ReactNode
+}
+
+const Card: FC<CardProps> = ({
+    selected,
+    disabled = false,
+    onSelect,
+    children,
+}) => (
+    <div
+        className={cardClassName(selected, disabled)}
+        onClick={disabled ? undefined : onSelect}
+    >
+        {children}
+    </div>
+)
 
 export const DataSectionToggle: FC<DataSectionToggleProps> = ({
     mode,
@@ -28,39 +52,38 @@ export const DataSectionToggle: FC<DataSectionToggleProps> = ({
     filterDisabledTooltip,
     dataTest,
 }) => {
-    const filterButton = (
-        <button
-            type="button"
-            role="radio"
-            aria-checked={mode === 'filter'}
-            aria-disabled={filterDisabled}
+    const filterCard = (
+        <Card
+            selected={mode === 'filter'}
             disabled={filterDisabled}
-            className={buttonClassName(mode, 'filter')}
-            onClick={() => onChange('filter')}
-            data-test={dataTest ? `${dataTest}-filter-by` : undefined}
+            onSelect={() => onChange('filter')}
         >
-            <span className={classes.toggleIcon} aria-hidden>
-                <IconFilter16 />
-            </span>
-            {i18n.t('Filter by…')}
-        </button>
+            <Radio
+                dense
+                name="data-section-toggle"
+                value="filter"
+                label={i18n.t('Filter by…')}
+                checked={mode === 'filter'}
+                disabled={filterDisabled}
+                onChange={() => onChange('filter')}
+                dataTest={dataTest ? `${dataTest}-filter-by` : undefined}
+            />
+        </Card>
     )
 
     return (
         <div className={classes.toggle} role="radiogroup" data-test={dataTest}>
-            <button
-                type="button"
-                role="radio"
-                aria-checked={mode === 'all'}
-                className={buttonClassName(mode, 'all')}
-                onClick={() => onChange('all')}
-                data-test={dataTest ? `${dataTest}-show-all` : undefined}
-            >
-                <span className={classes.infinityGlyph} aria-hidden>
-                    {'∞'}
-                </span>
-                {i18n.t('Show all values')}
-            </button>
+            <Card selected={mode === 'all'} onSelect={() => onChange('all')}>
+                <Radio
+                    dense
+                    name="data-section-toggle"
+                    value="all"
+                    label={i18n.t('Show all values')}
+                    checked={mode === 'all'}
+                    onChange={() => onChange('all')}
+                    dataTest={dataTest ? `${dataTest}-show-all` : undefined}
+                />
+            </Card>
             {filterDisabled && filterDisabledTooltip ? (
                 <Tooltip
                     content={filterDisabledTooltip}
@@ -74,12 +97,12 @@ export const DataSectionToggle: FC<DataSectionToggleProps> = ({
                             onMouseOut={onMouseOut}
                             className={classes.filterTooltipWrap}
                         >
-                            {filterButton}
+                            {filterCard}
                         </span>
                     )}
                 </Tooltip>
             ) : (
-                filterButton
+                filterCard
             )}
         </div>
     )

@@ -54,7 +54,7 @@
 
 .aboutSectionOuter {
     /* Toggle: remove `display: none` when About is ready to ship */
-    display: none;
+    /* display: none; */
     border-block-start: 1px solid var(--colors-grey300);
 }
 

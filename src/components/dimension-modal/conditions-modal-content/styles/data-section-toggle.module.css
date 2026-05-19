@@ -6,52 +6,31 @@
     inline-size: 100%;
 }
 
-.toggleButton {
+.card {
     box-sizing: border-box;
-    display: inline-flex;
-    flex-direction: column;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    gap: var(--spacers-dp4);
     inline-size: 100%;
     min-inline-size: 0;
-    padding: var(--spacers-dp12) var(--spacers-dp8);
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 16px;
+    padding: var(--spacers-dp8);
     background: var(--colors-white);
     border: 1px solid var(--colors-grey400);
     border-radius: 4px;
-    color: var(--colors-grey700);
     cursor: pointer;
 }
 
-.toggleButton:hover:not(.toggleButtonSelected) {
+.card:hover:not(.cardSelected):not(.cardDisabled) {
     background: var(--colors-grey050);
 }
 
-.toggleButton:focus-visible {
-    outline: 3px solid var(--theme-focus);
-    outline-offset: -3px;
-}
-
-.toggleButtonSelected {
+.cardSelected {
     background: var(--colors-teal050);
     border-color: var(--colors-teal400);
-    color: var(--colors-teal800);
 }
 
-.toggleButton:disabled {
+.cardDisabled {
     opacity: 0.45;
     cursor: not-allowed;
-}
-
-.toggleButton:disabled:hover {
-    background: var(--colors-white);
-}
-
-.toggleButtonSelected:disabled {
-    background: var(--colors-teal050);
 }
 
 .filterTooltipWrap {
@@ -61,21 +40,6 @@
     align-self: stretch;
 }
 
-.filterTooltipWrap > button {
+.filterTooltipWrap > .card {
     flex: 1 1 auto;
-}
-
-.filterTooltipWrap button:disabled {
-    pointer-events: none;
-}
-
-.toggleIcon {
-    display: inline-flex;
-    color: currentColor;
-}
-
-.infinityGlyph {
-    font-size: 22px;
-    line-height: 16px;
-    font-weight: 400;
 }
