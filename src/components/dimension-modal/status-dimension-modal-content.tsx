@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { Checkbox } from '@dhis2/ui'
+import { Checkbox, IconDimensionData16 } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getStatusNames } from '@modules/status'
 import {
@@ -7,7 +7,13 @@ import {
     setVisUiConfigItemsByDimension,
 } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
-import { type FC, useCallback, useMemo } from 'react'
+import { type FC, useCallback, useMemo, useState } from 'react'
+import { ConditionsSection } from './conditions-modal-content/conditions-section'
+import {
+    DataSectionToggle,
+    type DataSectionToggleMode,
+} from './conditions-modal-content/data-section-toggle'
+import conditionsClasses from './conditions-modal-content/styles/conditions-modal-content.module.css'
 import classes from './styles/status-dimension-modal-content.module.css'
 
 type StatusDimensionModalContentProps = {
@@ -54,48 +60,99 @@ export const StatusDimensionModalContent: FC<
         return statusList
     }, [dimension.id, statusNames])
 
-    const updateStatusDimensionItems = useCallback(
-        ({ selectedIds, itemId, checked }) => {
-            const uiItems = checked
-                ? [...new Set([...selectedIds, itemId])]
-                : selectedIds.filter((id) => id !== itemId)
+    const [mode, setModeState] = useState<DataSectionToggleMode>(() =>
+        selectedIds.length > 0 ? 'filter' : 'all'
+    )
+    const [draftSelectedIds, setDraftSelectedIds] = useState<string[]>([])
 
+    const persistItems = useCallback(
+        (itemIds: string[]) => {
             dispatch(
                 setVisUiConfigItemsByDimension({
                     dimensionId: dimension.id,
-                    itemIds: uiItems,
+                    itemIds,
                 })
             )
         },
         [dispatch, dimension.id]
     )
 
+    const setMode = useCallback(
+        (next: DataSectionToggleMode) => {
+            if (next === mode) {
+                return
+            }
+            setModeState(next)
+            if (next === 'all') {
+                if (selectedIds.length > 0) {
+                    setDraftSelectedIds(selectedIds)
+                    persistItems([])
+                }
+                return
+            }
+            if (selectedIds.length === 0 && draftSelectedIds.length > 0) {
+                persistItems(draftSelectedIds)
+                setDraftSelectedIds([])
+            }
+        },
+        [mode, selectedIds, draftSelectedIds, persistItems]
+    )
+
+    const updateStatusDimensionItems = useCallback(
+        ({
+            selectedIds,
+            itemId,
+            checked,
+        }: {
+            selectedIds: string[]
+            itemId: string
+            checked: boolean
+        }) => {
+            const uiItems = checked
+                ? [...new Set([...selectedIds, itemId])]
+                : selectedIds.filter((id) => id !== itemId)
+
+            persistItems(uiItems)
+        },
+        [persistItems]
+    )
+
     return (
-        <>
-            <p className={classes.paragraph}>
-                {i18n.t('Show items where the status is:', {
-                    nsSeparator: '^^',
-                })}
-            </p>
-            <div>
-                {statuses.map(({ id, name }) => (
-                    <Checkbox
-                        key={id}
-                        checked={selectedIds.includes(id)}
-                        label={name}
-                        onChange={({ checked }) =>
-                            updateStatusDimensionItems({
-                                selectedIds,
-                                itemId: id,
-                                checked,
-                            })
-                        }
-                        dense
-                        className={classes.verticalCheckbox}
-                        dataTest={dataTest}
+        <div className={conditionsClasses.sectionStack}>
+            <ConditionsSection
+                title={i18n.t('Data')}
+                titleIcon={<IconDimensionData16 />}
+                dataTest="dimension-popover-data-section"
+            >
+                <div className={conditionsClasses.dataSectionStack}>
+                    <DataSectionToggle
+                        mode={mode}
+                        onChange={setMode}
+                        dataTest="dimension-popover-data-toggle"
                     />
-                ))}
-            </div>
-        </>
+                    {mode === 'filter' && (
+                        <div className={conditionsClasses.mainSection}>
+                            {statuses.map(({ id, name }) => (
+                                <Checkbox
+                                    key={id}
+                                    checked={selectedIds.includes(id)}
+                                    label={name}
+                                    onChange={({ checked }) =>
+                                        updateStatusDimensionItems({
+                                            selectedIds,
+                                            itemId: id,
+                                            checked,
+                                        })
+                                    }
+                                    dense
+                                    className={classes.verticalCheckbox}
+                                    dataTest={dataTest}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </ConditionsSection>
+        </div>
     )
 }

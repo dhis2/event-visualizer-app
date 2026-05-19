@@ -25,7 +25,6 @@ import {
     useRef,
     type FC,
     type KeyboardEvent,
-    type ReactNode,
     type RefObject,
 } from 'react'
 import { AddToLayoutButton } from './add-to-layout-button'
@@ -69,43 +68,16 @@ type DimensionPopoverContentProps = {
     dimension: DimensionMetadataItem
 }
 
-type NonSectionDimensionBodyProps = {
-    children: ReactNode
-}
-
-const NonSectionDimensionBody: FC<NonSectionDimensionBodyProps> = ({
-    children,
-}) => (
-    <div
-        className={classes.nonSectionDimensionContent}
-        data-test="dimension-popover-non-section-content"
-    >
-        {children}
-    </div>
-)
-
 const DimensionPopoverContent: FC<DimensionPopoverContentProps> = ({
     dimension,
 }) => {
     switch (dimension.dimensionType) {
         case 'ORGANISATION_UNIT':
-            return (
-                <NonSectionDimensionBody>
-                    <OrgUnitDimensionModalContent dimension={dimension} />
-                </NonSectionDimensionBody>
-            )
+            return <OrgUnitDimensionModalContent dimension={dimension} />
         case 'STATUS':
-            return (
-                <NonSectionDimensionBody>
-                    <StatusDimensionModalContent dimension={dimension} />
-                </NonSectionDimensionBody>
-            )
+            return <StatusDimensionModalContent dimension={dimension} />
         case 'PERIOD':
-            return (
-                <NonSectionDimensionBody>
-                    <PeriodDimensionModalContent dimension={dimension} />
-                </NonSectionDimensionBody>
-            )
+            return <PeriodDimensionModalContent dimension={dimension} />
         case 'CATEGORY':
         case 'CATEGORY_OPTION_GROUP_SET':
         case 'ORGANISATION_UNIT_GROUP_SET':

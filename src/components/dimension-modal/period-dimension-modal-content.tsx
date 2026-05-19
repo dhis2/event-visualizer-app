@@ -3,6 +3,7 @@ import i18n from '@dhis2/d2-i18n'
 import {
     Field,
     IconArrowRight16,
+    IconDimensionData16,
     InputField,
     SegmentedControl,
     colors,
@@ -23,6 +24,8 @@ import {
 } from '@store/vis-ui-config-slice.js'
 import type { DimensionMetadataItem, PeriodType } from '@types'
 import { useEffect, useState, useMemo, type FC } from 'react'
+import { ConditionsSection } from './conditions-modal-content/conditions-section'
+import conditionsClasses from './conditions-modal-content/styles/conditions-modal-content.module.css'
 import classes from './styles/period-dimension-modal-content.module.css'
 
 export const OPTION_PRESETS = 'PRESETS'
@@ -181,49 +184,63 @@ export const PeriodDimensionModalContent: FC<
     }
 
     return (
-        <>
-            <div className={classes.navigation}>
-                <SegmentedControl
-                    options={[
-                        {
-                            label: i18n.t('Choose from presets'),
-                            value: OPTION_PRESETS,
-                        },
-                        {
-                            label: i18n.t('Define start - end dates'),
-                            value: OPTION_START_END_DATES,
-                        },
-                    ]}
-                    selected={entryMethod}
-                    onChange={onSegmentedControlChange}
-                ></SegmentedControl>
-            </div>
-            <div className={classes.entry}>
-                {entryMethod === OPTION_PRESETS && (
-                    <PeriodDimension
-                        selectedPeriods={selectedIds.map((id) => ({
-                            id,
-                            name: selectedIdsMetadata[id]?.name,
-                        }))}
-                        onSelect={({ items }) =>
-                            updatePeriodDimensionItems(items)
-                        }
-                        excludedPeriodTypes={excludedPeriodTypes}
-                    />
-                )}
-                {entryMethod === OPTION_START_END_DATES && (
-                    <StartEndDate
-                        value={getStartEndDate(selectedIds[0] || '')}
-                        setValue={(value) => {
-                            if (!value && selectedIds.length) {
-                                updatePeriodDimensionItems([])
-                            } else if (value && value !== selectedIds[0]) {
-                                updatePeriodDimensionItems([{ id: value }])
-                            }
-                        }}
-                    />
-                )}
-            </div>
-        </>
+        <div className={conditionsClasses.sectionStack}>
+            <ConditionsSection
+                title={i18n.t('Data')}
+                titleIcon={<IconDimensionData16 />}
+                collapsible
+                dataTest="dimension-popover-data-section"
+            >
+                <div className={conditionsClasses.dataSectionStack}>
+                    <div className={classes.navigation}>
+                        <SegmentedControl
+                            options={[
+                                {
+                                    label: i18n.t('Choose from presets'),
+                                    value: OPTION_PRESETS,
+                                },
+                                {
+                                    label: i18n.t('Define start - end dates'),
+                                    value: OPTION_START_END_DATES,
+                                },
+                            ]}
+                            selected={entryMethod}
+                            onChange={onSegmentedControlChange}
+                        ></SegmentedControl>
+                    </div>
+                    <div className={classes.entry}>
+                        {entryMethod === OPTION_PRESETS && (
+                            <PeriodDimension
+                                selectedPeriods={selectedIds.map((id) => ({
+                                    id,
+                                    name: selectedIdsMetadata[id]?.name,
+                                }))}
+                                onSelect={({ items }) =>
+                                    updatePeriodDimensionItems(items)
+                                }
+                                excludedPeriodTypes={excludedPeriodTypes}
+                            />
+                        )}
+                        {entryMethod === OPTION_START_END_DATES && (
+                            <StartEndDate
+                                value={getStartEndDate(selectedIds[0] || '')}
+                                setValue={(value) => {
+                                    if (!value && selectedIds.length) {
+                                        updatePeriodDimensionItems([])
+                                    } else if (
+                                        value &&
+                                        value !== selectedIds[0]
+                                    ) {
+                                        updatePeriodDimensionItems([
+                                            { id: value },
+                                        ])
+                                    }
+                                }}
+                            />
+                        )}
+                    </div>
+                </div>
+            </ConditionsSection>
+        </div>
     )
 }

@@ -1,4 +1,6 @@
 import { OrgUnitDimension, ouIdHelper } from '@dhis2/analytics'
+import i18n from '@dhis2/d2-i18n'
+import { IconDimensionData16 } from '@dhis2/ui'
 import {
     useAddMetadata,
     useAppDispatch,
@@ -19,6 +21,8 @@ import type {
     OrganisationUnitMetadataItem,
 } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
+import { ConditionsSection } from './conditions-modal-content/conditions-section'
+import conditionsClasses from './conditions-modal-content/styles/conditions-modal-content.module.css'
 
 type OrgUnitDimensionModalContentProps = {
     dimension: DimensionMetadataItem
@@ -116,11 +120,24 @@ export const OrgUnitDimensionModalContent: FC<
     )
 
     return (
-        <OrgUnitDimension
-            selected={selected}
-            roots={orgUnitTreeRoots}
-            displayNameProp={currentUser.settings['displayNameProperty']}
-            onSelect={updateOrgUnitDimensionItems}
-        />
+        <div className={conditionsClasses.sectionStack}>
+            <ConditionsSection
+                title={i18n.t('Data')}
+                titleIcon={<IconDimensionData16 />}
+                collapsible
+                dataTest="dimension-popover-data-section"
+            >
+                <div className={conditionsClasses.dataSectionStack}>
+                    <OrgUnitDimension
+                        selected={selected}
+                        roots={orgUnitTreeRoots}
+                        displayNameProp={
+                            currentUser.settings['displayNameProperty']
+                        }
+                        onSelect={updateOrgUnitDimensionItems}
+                    />
+                </div>
+            </ConditionsSection>
+        </div>
     )
 }

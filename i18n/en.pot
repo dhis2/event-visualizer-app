@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-08T07:10:35.072Z\n"
-"PO-Revision-Date: 2026-05-08T07:10:35.075Z\n"
+"POT-Creation-Date: 2026-05-19T08:36:27.080Z\n"
+"PO-Revision-Date: 2026-05-19T08:36:27.080Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -211,9 +211,6 @@ msgstr "Choose from presets"
 
 msgid "Define start - end dates"
 msgstr "Define start - end dates"
-
-msgid "Show items where the status is:"
-msgstr "Show items where the status is:"
 
 msgid "No items selected"
 msgstr "No items selected"
