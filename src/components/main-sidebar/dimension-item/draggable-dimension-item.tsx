@@ -1,7 +1,8 @@
 import type { SidebarSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
+import { useDimensionDisabledText } from '@components/main-sidebar/sidebar-disabling'
 import { useIsDimensionInLayout } from '@components/main-sidebar/use-is-dimension-in-layout'
 import { IconButton } from '@components/shared/icon-button'
-import { IconAdd16, IconSubtract16 } from '@dhis2/ui'
+import { IconAdd16, IconSubtract16, Tooltip } from '@dhis2/ui'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useAddMetadata, useAppDispatch, useAppSelector } from '@hooks'
@@ -28,11 +29,24 @@ interface DraggableDimensionItemProps {
     disabled?: boolean
 }
 
-export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
+type TooltipRenderProps = {
+    onBlur: React.FocusEventHandler<HTMLElement>
+    onFocus: React.FocusEventHandler<HTMLElement>
+    onMouseOver: React.MouseEventHandler<HTMLElement>
+    onMouseOut: React.MouseEventHandler<HTMLElement>
+    ref: React.MutableRefObject<HTMLElement>
+}
+
+type DraggableDimensionItemBodyProps = DraggableDimensionItemProps & {
+    tooltipProps?: TooltipRenderProps
+}
+
+const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
     dimension,
     program,
     programStage,
-    disabled,
+    disabled = false,
+    tooltipProps,
 }) => {
     const dispatch = useAppDispatch()
     const addMetadata = useAddMetadata()
@@ -111,6 +125,12 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
         data: droppableData,
     })
 
+    /* Tooltip's MutableRefObject<HTMLElement> targets a wider element
+     * type than the container's HTMLDivElement ref slot. */
+    const ref = tooltipProps
+        ? (tooltipProps.ref as React.Ref<HTMLDivElement>)
+        : setNodeRef
+
     const style = transform
         ? {
               transform: isSorting
@@ -127,10 +147,14 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
 
     return (
         <DimensionItemContainer
-            ref={setNodeRef}
+            ref={ref}
             style={style}
             {...attributes}
             {...listeners}
+            onBlur={tooltipProps?.onBlur}
+            onFocus={tooltipProps?.onFocus}
+            onMouseOver={tooltipProps?.onMouseOver}
+            onMouseOut={tooltipProps?.onMouseOut}
             aria-roledescription="draggable item"
             selected={selected}
             multiSelected={multiSelected}
@@ -169,4 +193,28 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
             </div>
         </DimensionItemContainer>
     )
+}
+
+export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = (
+    props
+) => {
+    const layoutDisabledMessage = useDimensionDisabledText(props.dimension)
+    if (layoutDisabledMessage) {
+        return (
+            <Tooltip
+                content={layoutDisabledMessage}
+                openDelay={1000}
+                closeDelay={0}
+            >
+                {(tooltipProps: TooltipRenderProps) => (
+                    <DraggableDimensionItemBody
+                        {...props}
+                        disabled
+                        tooltipProps={tooltipProps}
+                    />
+                )}
+            </Tooltip>
+        )
+    }
+    return <DraggableDimensionItemBody {...props} />
 }

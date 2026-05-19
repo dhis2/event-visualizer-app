@@ -11,13 +11,11 @@ type CardsProgramWithRegistrationProps = {
 
 export const CardsProgramWithRegistration: FC<
     CardsProgramWithRegistrationProps
-> = ({ program }) => {
-    return (
-        <>
-            <CardEnrollment program={program} />
-            <CardEvent program={program} />
-            <CardTrackedEntityType program={program} />
-            <CardProgramIndicators program={program} />
-        </>
-    )
-}
+> = ({ program }) => (
+    <>
+        <CardEnrollment program={program} />
+        <CardEvent program={program} />
+        <CardTrackedEntityType program={program} />
+        <CardProgramIndicators program={program} />
+    </>
+)

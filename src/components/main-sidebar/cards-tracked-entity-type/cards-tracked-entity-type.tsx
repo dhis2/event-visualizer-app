@@ -8,6 +8,4 @@ type CardsTrackedEntityTypeProps = {
 
 export const CardsTrackedEntityType: FC<CardsTrackedEntityTypeProps> = ({
     trackedEntityType,
-}) => {
-    return <CardTrackedEntityType trackedEntityType={trackedEntityType} />
-}
+}) => <CardTrackedEntityType trackedEntityType={trackedEntityType} />

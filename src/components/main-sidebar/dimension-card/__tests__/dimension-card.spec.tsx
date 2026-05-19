@@ -21,6 +21,11 @@ vi.mock('@store/dimensions-selection-slice', () => ({
     isDimensionCardCollapsed: vi.fn(),
 }))
 
+vi.mock('@components/main-sidebar/sidebar-disabling', () => ({
+    useIsCardDisabledByLayout: () => false,
+    useCardDisabledNoticeText: () => undefined,
+}))
+
 describe('DimensionCard', () => {
     const mockDispatch = vi.fn()
 
@@ -102,7 +107,7 @@ describe('DimensionCard', () => {
         expect(content.className).not.toMatch(/collapsed/)
     })
 
-    it('applies isDisabledByFilter class when isDisabledByFilter is true', () => {
+    it('applies isDisabled class when isDisabledByFilter is true', () => {
         render(
             <DimensionCard
                 dimensionCardKey="metadata"
@@ -114,10 +119,10 @@ describe('DimensionCard', () => {
         )
 
         const container = screen.getByTestId('dimension-card')
-        expect(container.className).toMatch(/isDisabledByFilter/)
+        expect(container.className).toMatch(/isDisabled/)
     })
 
-    it('does not apply isDisabledByFilter class by default', () => {
+    it('does not apply isDisabled class by default', () => {
         render(
             <DimensionCard dimensionCardKey="metadata" title="Metadata">
                 <div />
@@ -125,7 +130,7 @@ describe('DimensionCard', () => {
         )
 
         const container = screen.getByTestId('dimension-card')
-        expect(container.className).not.toMatch(/isDisabledByFilter/)
+        expect(container.className).not.toMatch(/isDisabled/)
     })
 
     it('applies withSubSections class when withSubSections is true', () => {
@@ -197,7 +202,7 @@ describe('DimensionCard', () => {
         expect(header).toHaveAttribute('aria-expanded', 'false')
     })
 
-    it('disables header button when isDisabledByFilter is true', () => {
+    it('keeps the header toggle clickable when isDisabledByFilter is true', () => {
         render(
             <DimensionCard
                 dimensionCardKey="metadata"
@@ -209,6 +214,6 @@ describe('DimensionCard', () => {
         )
 
         const header = screen.getByTestId('dimension-card-header')
-        expect(header).toBeDisabled()
+        expect(header).not.toBeDisabled()
     })
 })
