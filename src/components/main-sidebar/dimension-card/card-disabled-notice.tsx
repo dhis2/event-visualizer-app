@@ -10,6 +10,8 @@ export const CardDisabledNotice: FC<CardDisabledNoticeProps> = ({
     message,
 }) => (
     <div className={classes.container} data-test="card-disabled-notice">
-        <NoticeBox warning>{message}</NoticeBox>
+        <NoticeBox warning dense>
+            {message}
+        </NoticeBox>
     </div>
 )
