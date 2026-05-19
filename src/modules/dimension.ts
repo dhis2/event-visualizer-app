@@ -74,6 +74,42 @@ export const getCreatedDimension = (): Partial<
     },
 })
 
+export const getFixedDimensions = (): DimensionMetadataItem[] => [
+    {
+        id: 'lastUpdated',
+        dimensionId: 'lastUpdated',
+        name: i18n.t('Last updated on'),
+        dimensionType: 'PERIOD',
+        valueType: 'DATE',
+    },
+    {
+        id: 'lastUpdatedBy',
+        dimensionId: 'lastUpdatedBy',
+        name: i18n.t('Last updated by'),
+        dimensionType: 'USER',
+    },
+    {
+        id: 'created',
+        dimensionId: 'created',
+        name: i18n.t('Created on'),
+        dimensionType: 'PERIOD',
+        valueType: 'DATE',
+    },
+    {
+        id: 'createdBy',
+        dimensionId: 'createdBy',
+        name: i18n.t('Created by'),
+        dimensionType: 'USER',
+    },
+    {
+        id: 'completed',
+        dimensionId: 'completed',
+        name: i18n.t('Completed on'),
+        dimensionType: 'PERIOD',
+        valueType: 'DATE',
+    },
+]
+
 export const getMainDimensions = (
     outputType: OutputType
 ): DimensionRecordObject => ({
@@ -259,6 +295,15 @@ export const combineAllDimensionsFromVisualization = (
  * boundary.
  * --------------------------------------------------------------------------- */
 
+/* Dimensions that are not bound to any program or stage. The backend
+ * may still populate program/programStage on these in legacy visualizations;
+ * drop those fields at the API → app-local boundary so that downstream code
+ * (compound ID, save round-trip) treats them as the contextless dimensions
+ * they actually are. */
+export const CONTEXTLESS_DIMENSION_IDS = new Set(
+    getFixedDimensions().map((dimension) => dimension.id)
+)
+
 /* Dimension types that are not bound to any program or stage. The backend
  * may still populate program/programStage on these in legacy visualizations;
  * drop those fields at the API → app-local boundary so that downstream code
@@ -279,8 +324,9 @@ const CONTEXTLESS_DIMENSION_TYPES: ReadonlySet<string> = new Set([
 export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
     dims.map((dim) => {
         if (
-            dim.dimensionType &&
-            CONTEXTLESS_DIMENSION_TYPES.has(dim.dimensionType)
+            (dim.dimensionType &&
+                CONTEXTLESS_DIMENSION_TYPES.has(dim.dimensionType)) ||
+            CONTEXTLESS_DIMENSION_IDS.has(dim.dimension)
         ) {
             const stripped = { ...dim }
             delete stripped.program

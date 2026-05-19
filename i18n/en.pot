@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-18T13:11:36.297Z\n"
-"PO-Revision-Date: 2026-05-18T13:11:36.297Z\n"
+"POT-Creation-Date: 2026-05-19T14:03:47.193Z\n"
+"PO-Revision-Date: 2026-05-19T14:03:47.195Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -526,21 +526,6 @@ msgstr "Failed to load data sources."
 msgid "Filter data sources"
 msgstr "Filter data sources"
 
-msgid "Last updated on"
-msgstr "Last updated on"
-
-msgid "Last updated by"
-msgstr "Last updated by"
-
-msgid "Created on"
-msgstr "Created on"
-
-msgid "Created by"
-msgstr "Created by"
-
-msgid "Completed on"
-msgstr "Completed on"
-
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -980,6 +965,21 @@ msgstr "No"
 
 msgid "Not answered"
 msgstr "Not answered"
+
+msgid "Created on"
+msgstr "Created on"
+
+msgid "Last updated on"
+msgstr "Last updated on"
+
+msgid "Last updated by"
+msgstr "Last updated by"
+
+msgid "Created by"
+msgstr "Created by"
+
+msgid "Completed on"
+msgstr "Completed on"
 
 msgid "Completed date"
 msgstr "Completed date"
