@@ -45,7 +45,7 @@
 .conditionsContent {
     display: flex;
     flex-direction: column;
-    gap: var(--spacers-dp12);
+    gap: var(--spacers-dp8);
 }
 
 .modeRadios {
@@ -57,10 +57,7 @@
 .filterBody {
     display: flex;
     flex-direction: column;
-    gap: var(--spacers-dp12);
-    padding: var(--spacers-dp12);
-    background-color: var(--colors-grey050);
-    border-radius: 4px;
+    padding-inline-start: var(--spacers-dp24);
 }
 
 .repetitionsRow {
