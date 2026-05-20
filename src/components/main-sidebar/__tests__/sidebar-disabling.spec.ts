@@ -58,7 +58,7 @@ describe('getDimensionDisabledMessageByLayout — registration OU rule (Case B)'
         trackedEntityTypeId: 'tetA',
     })
 
-    it('disables the TET registration OU item when viz is PIVOT_TABLE', () => {
+    it('disables the TET registration OU item when vis is PIVOT_TABLE', () => {
         expect(
             getDimensionDisabledMessageByLayout({
                 dimension: registrationOuDim,
@@ -68,7 +68,7 @@ describe('getDimensionDisabledMessageByLayout — registration OU rule (Case B)'
         ).toBe('Not valid with Pivot table')
     })
 
-    it('does not disable the TET registration OU item when viz is LINE_LIST', () => {
+    it('does not disable the TET registration OU item when vis is LINE_LIST', () => {
         expect(
             getDimensionDisabledMessageByLayout({
                 dimension: registrationOuDim,

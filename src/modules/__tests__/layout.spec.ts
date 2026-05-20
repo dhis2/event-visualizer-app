@@ -429,7 +429,7 @@ describe('resolveTeiFields', () => {
         dimensionType: 'PROGRAM_ATTRIBUTE',
     } as DimensionMetadataItem
 
-    it('TEI viz with TET registration ou → TET resolved from ouDim.trackedEntityTypeId', () => {
+    it('TEI vis with TET registration ou → TET resolved from ouDim.trackedEntityTypeId', () => {
         const state = baseState('TRACKED_ENTITY_INSTANCE', [
             'tetA.enrollmentOu',
             'tea1',
@@ -453,7 +453,7 @@ describe('resolveTeiFields', () => {
         })
     })
 
-    it('TEI viz with stage ou → walks programId → program.trackedEntityType', () => {
+    it('TEI vis with stage ou → walks programId → program.trackedEntityType', () => {
         const state = baseState('TRACKED_ENTITY_INSTANCE', ['stage1.ou'])
         const store = makeStore({
             dims: { 'stage1.ou': stageOuDim },
@@ -467,7 +467,7 @@ describe('resolveTeiFields', () => {
         })
     })
 
-    it('TEI viz with enrollment ou → walks programId → program.trackedEntityType', () => {
+    it('TEI vis with enrollment ou → walks programId → program.trackedEntityType', () => {
         const state = baseState('TRACKED_ENTITY_INSTANCE', [
             'progA.enrollmentOu',
         ])
@@ -483,7 +483,7 @@ describe('resolveTeiFields', () => {
         })
     })
 
-    it('TEI viz with no TET-bound dim in layout → throws', () => {
+    it('TEI vis with no TET-bound dim in layout → throws', () => {
         const state = baseState('TRACKED_ENTITY_INSTANCE', ['tea1'])
         const store = makeStore({
             dims: { tea1: tea1Dim },
@@ -495,7 +495,7 @@ describe('resolveTeiFields', () => {
         )
     })
 
-    it('TEI viz with event-program stage ou → throws (program has no TET)', () => {
+    it('TEI vis with event-program stage ou → throws (program has no TET)', () => {
         const state = baseState('TRACKED_ENTITY_INSTANCE', ['evtStage.ou'])
         const store = makeStore({
             dims: { 'evtStage.ou': eventProgramOuDim },
@@ -507,7 +507,7 @@ describe('resolveTeiFields', () => {
         )
     })
 
-    it('ENROLLMENT viz with enrollment ou and TEAs → TET + attributeDimensions both emitted', () => {
+    it('ENROLLMENT vis with enrollment ou and TEAs → TET + attributeDimensions both emitted', () => {
         const state = baseState('ENROLLMENT', ['progA.enrollmentOu', 'tea1'])
         const store = makeStore({
             dims: {
@@ -526,7 +526,7 @@ describe('resolveTeiFields', () => {
         })
     })
 
-    it('ENROLLMENT viz with enrollment ou, no TEAs → TET emitted (program is tracker)', () => {
+    it('ENROLLMENT vis with enrollment ou, no TEAs → TET emitted (program is tracker)', () => {
         const state = baseState('ENROLLMENT', ['progA.enrollmentOu'])
         const store = makeStore({
             dims: { 'progA.enrollmentOu': enrollmentOuDim },
@@ -540,7 +540,7 @@ describe('resolveTeiFields', () => {
         })
     })
 
-    it('EVENT viz with event-program stage ou → no TET, no attributeDimensions', () => {
+    it('EVENT vis with event-program stage ou → no TET, no attributeDimensions', () => {
         const state = baseState('EVENT', ['evtStage.ou'])
         const store = makeStore({
             dims: { 'evtStage.ou': eventProgramOuDim },
@@ -553,7 +553,7 @@ describe('resolveTeiFields', () => {
         })
     })
 
-    it('EVENT viz with event-program ou and TEA → attributeDimensions populated, no TET', () => {
+    it('EVENT vis with event-program ou and TEA → attributeDimensions populated, no TET', () => {
         const state = baseState('EVENT', ['evtStage.ou', 'tea1'])
         const store = makeStore({
             dims: { 'evtStage.ou': eventProgramOuDim, tea1: tea1Dim },

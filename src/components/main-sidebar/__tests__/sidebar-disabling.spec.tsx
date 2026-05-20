@@ -101,7 +101,7 @@ describe('useIsCardDisabledByLayout', () => {
         })
     })
 
-    it('returns true for the PI card when viz is PIVOT_TABLE', async () => {
+    it('returns true for the PI card when vis is PIVOT_TABLE', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => ({
                 enrollment: useIsCardDisabledByLayout('enrollment'),
@@ -272,7 +272,7 @@ describe('useCardDisabledNoticeText', () => {
         expect(result.current.pi).toBeUndefined()
     })
 
-    it('returns the message on the PI card only when viz is PIVOT_TABLE (same TET)', async () => {
+    it('returns the message on the PI card only when vis is PIVOT_TABLE (same TET)', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => ({
                 enrollment: useCardDisabledNoticeText('enrollment'),
@@ -320,7 +320,7 @@ describe('useCardDisabledNoticeText', () => {
         expect(result.current.other).toBeUndefined()
     })
 
-    it('different-TET wins over viz-type when both could fire in a with-registration suite', async () => {
+    it('different-TET wins over vis-type when both could fire in a with-registration suite', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => ({
                 enrollment: useCardDisabledNoticeText('enrollment'),
@@ -388,7 +388,7 @@ describe('useCardDisabledNoticeText', () => {
         expect(result.current).toMatch(/Household/)
     })
 
-    it('returns the viz-type message on the event-program PI card in pivot mode', async () => {
+    it('returns the vis-type message on the event-program PI card in pivot mode', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useCardDisabledNoticeText('event-program-indicators'),
             buildOptions({
@@ -457,7 +457,7 @@ describe('useDimensionDisabledText', () => {
         expect(result.current).toMatch(/custom value/)
     })
 
-    it('returns the viz-type message for the TET registration OU outside line list', async () => {
+    it('returns the vis-type message for the TET registration OU outside line list', async () => {
         const dim = makeDim({
             id: 'tetA.enrollmentOu',
             dimensionId: 'enrollmentOu',

@@ -1211,7 +1211,7 @@ describe('MetadataStore — TEA enrichment with trackedEntityTypeId', () => {
         })
     })
 
-    it('EVENT viz on a tracker program stores TET from programDimensions in the metadata store', () => {
+    it('EVENT vis on a tracker program stores TET from programDimensions in the metadata store', () => {
         const store = new TestMetadataStore({}, [])
 
         const vis = {
@@ -1237,7 +1237,7 @@ describe('MetadataStore — TEA enrichment with trackedEntityTypeId', () => {
         expect(snapshot['tetA']).toEqual({ id: 'tetA', name: 'Person' })
     })
 
-    it('EVENT viz with attributeDimensions but no trackedEntityType does NOT attach trackedEntityTypeId', () => {
+    it('EVENT vis with attributeDimensions but no trackedEntityType does NOT attach trackedEntityTypeId', () => {
         const store = new TestMetadataStore(
             {},
             [] as unknown as AppCachedData['rootOrgUnits']

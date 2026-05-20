@@ -41,12 +41,12 @@ const differentTetMessage = (tetName: string): string =>
         { tetName }
     )
 
-const programIndicatorsVizTypeMessage = (
+const programIndicatorsVisTypeMessage = (
     visualizationType: VisualizationType
 ): string =>
     i18n.t(
-        'Program indicators are not valid with {{vizType}}. Switch to Line list to use them.',
-        { vizType: visTypeDisplayNames[visualizationType] }
+        'Program indicators are not valid with {{visType}}. Switch to Line list to use them.',
+        { visType: visTypeDisplayNames[visualizationType] }
     )
 
 /* The three data-source branches below directly express which cards a
@@ -83,7 +83,7 @@ const stateForProgramWithRegistration = ({
             disabledCards: new Set(['enrollment-program-indicators']),
             disabledMessage: {
                 cardKey: 'enrollment-program-indicators',
-                text: programIndicatorsVizTypeMessage(visualizationType),
+                text: programIndicatorsVisTypeMessage(visualizationType),
             },
         }
     }
@@ -99,7 +99,7 @@ const stateForProgramWithoutRegistration = (
             disabledCards: new Set(['event-program-indicators']),
             disabledMessage: {
                 cardKey: 'event-program-indicators',
-                text: programIndicatorsVizTypeMessage(visualizationType),
+                text: programIndicatorsVisTypeMessage(visualizationType),
             },
         }
     }
@@ -220,7 +220,7 @@ const getCustomValueDimensionMessage = ({
     )
 }
 
-const getRegistrationOuVizTypeMessage = ({
+const getRegistrationOuVisTypeMessage = ({
     dimension,
     visualizationType,
 }: DimensionDisablingInput): string | null => {
@@ -230,8 +230,8 @@ const getRegistrationOuVizTypeMessage = ({
     if (!isTetRegistrationOu || visualizationType === 'LINE_LIST') {
         return null
     }
-    return i18n.t('Not valid with {{vizType}}', {
-        vizType: visTypeDisplayNames[visualizationType],
+    return i18n.t('Not valid with {{visType}}', {
+        visType: visTypeDisplayNames[visualizationType],
     })
 }
 
@@ -243,7 +243,7 @@ export const getDimensionDisabledMessageByLayout = (
     input: DimensionDisablingInput
 ): string | null =>
     getCustomValueDimensionMessage(input) ??
-    getRegistrationOuVizTypeMessage(input)
+    getRegistrationOuVisTypeMessage(input)
 
 export const useDimensionDisabledText = (
     dimension: DimensionMetadataItem
