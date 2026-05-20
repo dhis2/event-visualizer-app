@@ -84,7 +84,7 @@ export const ChipMenu: FC<ChipMenuProps> = ({
                         })
                         onClose()
                     }}
-                    label={i18n.t(`Move to {{axisName}}`, {
+                    label={i18n.t(`Move to {{- axisName}}`, {
                         axisName: getAxisName(axisId),
                     })}
                     dataTest={`${dataTest}-item-move-${dimensionId}-to-${axisId}`}

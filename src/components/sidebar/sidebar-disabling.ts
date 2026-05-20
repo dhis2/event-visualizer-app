@@ -37,7 +37,7 @@ const EMPTY_SIDEBAR_DISABLING_STATE: SidebarDisablingState = Object.freeze({
 
 const differentTetMessage = (tetName: string): string =>
     i18n.t(
-        'These dimensions belong to a different tracked entity type than the one used in the layout ({{tetName}}). Remove the existing dimensions to use these.',
+        'These dimensions belong to a different tracked entity type than the one used in the layout ({{- tetName}}). Remove the existing dimensions to use these.',
         { tetName }
     )
 

@@ -111,7 +111,7 @@ export const CustomValueButton: FC = () => {
 
     if (!tooltipContent && customValue) {
         tooltipContent = i18n.t(
-            `Using: {{dataElementName}} ({{aggregationType}})`,
+            `Using: {{- dataElementName}} ({{- aggregationType}})`,
             {
                 dataElementName: customValueMetadata?.name,
                 aggregationType:

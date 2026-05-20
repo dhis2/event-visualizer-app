@@ -63,7 +63,7 @@ export const HeaderCell: FC<HeaderCellProps> = ({
             sortIconTitle={
                 isDisconnected
                     ? undefined
-                    : i18n.t('Sort by "{{column}}" and update', {
+                    : i18n.t('Sort by "{{- column}}" and update', {
                           column: displayText,
                       })
             }

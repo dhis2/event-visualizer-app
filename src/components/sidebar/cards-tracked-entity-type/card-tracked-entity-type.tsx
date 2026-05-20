@@ -75,7 +75,7 @@ const transformTrackedEntityTypeAttributes = (
 export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
     trackedEntityType,
 }) => {
-    const title = i18n.t('{{name}} registration', {
+    const title = i18n.t('{{- name}} registration', {
         name: trackedEntityType.name,
     })
     const fixedDimensions = useMemo(

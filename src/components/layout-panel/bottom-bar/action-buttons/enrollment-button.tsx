@@ -27,26 +27,26 @@ export const EnrollmentButton: FC = () => {
     const buttonLabelLookup = useMemo(
         () => ({
             create: {
-                list: i18n.t('Create {{enrollmentLabel}} list', {
+                list: i18n.t('Create {{- enrollmentLabel}} list', {
                     enrollmentLabel,
                 }),
-                table: i18n.t('Create {{enrollmentLabel}} table', {
+                table: i18n.t('Create {{- enrollmentLabel}} table', {
                     enrollmentLabel,
                 }),
             },
             switch: {
-                list: i18n.t('Switch to {{enrollmentLabel}} list', {
+                list: i18n.t('Switch to {{- enrollmentLabel}} list', {
                     enrollmentLabel,
                 }),
-                table: i18n.t('Switch to {{enrollmentLabel}} table', {
+                table: i18n.t('Switch to {{- enrollmentLabel}} table', {
                     enrollmentLabel,
                 }),
             },
             update: {
-                list: i18n.t('Update {{enrollmentLabel}} list', {
+                list: i18n.t('Update {{- enrollmentLabel}} list', {
                     enrollmentLabel,
                 }),
-                table: i18n.t('Update {{enrollmentLabel}} table', {
+                table: i18n.t('Update {{- enrollmentLabel}} table', {
                     enrollmentLabel,
                 }),
             },
