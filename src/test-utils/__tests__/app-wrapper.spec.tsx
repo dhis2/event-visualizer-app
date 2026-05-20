@@ -112,7 +112,7 @@ describe('renderHookWithAppWrapper', () => {
         }
         const preloadedState = {
             navigation: {
-                visualizationId: 'test-viz-123',
+                visualizationId: 'test-vis-123',
                 interpretationId: 'test-interp-456',
             },
         }
@@ -127,7 +127,7 @@ describe('renderHookWithAppWrapper', () => {
             }
         )
 
-        expect(result.current.visualizationId).toBe('test-viz-123')
+        expect(result.current.visualizationId).toBe('test-vis-123')
         expect(result.current.interpretationId).toBe('test-interp-456')
     })
 
@@ -179,7 +179,7 @@ describe('renderHookWithAppWrapper', () => {
     it('should apply default preloaded state and merge with custom preloadedState', async () => {
         const customPreloadedState = {
             navigation: {
-                visualizationId: 'custom-viz',
+                visualizationId: 'custom-vis',
                 interpretationId: null,
             },
         }
@@ -197,7 +197,7 @@ describe('renderHookWithAppWrapper', () => {
         )
 
         // Custom preloaded state should be applied
-        expect(result.current.navigation.visualizationId).toBe('custom-viz')
+        expect(result.current.navigation.visualizationId).toBe('custom-vis')
         // Default preloaded state should be applied (visUiConfig with options)
         expect(result.current.visUiConfig.options).toBeDefined()
         expect(result.current.visUiConfig.options.digitGroupSeparator).toBe(
@@ -258,7 +258,7 @@ describe('renderHookWithAppWrapper', () => {
         }
         const preloadedState = {
             navigation: {
-                visualizationId: 'initial-viz',
+                visualizationId: 'initial-vis',
                 interpretationId: null,
             },
         }
@@ -274,10 +274,10 @@ describe('renderHookWithAppWrapper', () => {
                 // By adding some response data here, we prevent errors to clutter the console
                 queryData: {
                     eventVisualizations: async (_, query) => {
-                        if (query.id === 'updated-viz') {
+                        if (query.id === 'updated-vis') {
                             return {
                                 ...eventVisualizationFixture,
-                                id: 'updated-viz',
+                                id: 'updated-vis',
                             }
                         } else {
                             return {}
@@ -289,20 +289,20 @@ describe('renderHookWithAppWrapper', () => {
         )
 
         // Verify initial state
-        expect(result.current.visualizationId).toBe('initial-viz')
+        expect(result.current.visualizationId).toBe('initial-vis')
         expect(result.current.interpretationId).toBe(null)
 
         // Dispatch action to update the store
         store.dispatch(
             setNavigationState({
-                visualizationId: 'updated-viz',
+                visualizationId: 'updated-vis',
                 interpretationId: 'new-interpretation',
             })
         )
 
         // Wait for the state change to propagate and trigger re-render
         await waitFor(() => {
-            expect(result.current.visualizationId).toBe('updated-viz')
+            expect(result.current.visualizationId).toBe('updated-vis')
             expect(result.current.interpretationId).toBe('new-interpretation')
         })
     })

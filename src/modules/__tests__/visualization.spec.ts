@@ -209,6 +209,7 @@ const testCases = {
         input: {
             type: 'LINE_LIST',
             outputType: 'TRACKED_ENTITY_INSTANCE',
+            trackedEntityType: { id: 'tetA', name: 'Person' },
             rows: [],
             columns: [
                 {
@@ -285,10 +286,10 @@ const testCases = {
         },
         expected: {
             itemsByDimension: {
-                enrollmentOu: ['USER_ORGUNIT'],
-                focusName: [],
-                localFocusId: [],
-                area: [],
+                'tetA.enrollmentOu': ['USER_ORGUNIT'],
+                'tetA.focusName': [],
+                'tetA.localFocusId': [],
+                'tetA.area': [],
                 'incidentDateId.enrollmentOu': [
                     'bombali',
                     'bonthe',
@@ -300,7 +301,7 @@ const testCases = {
                     [],
             },
             conditionsByDimension: {
-                area: {
+                'tetA.area': {
                     condition: 'GT:100',
                 },
             },
@@ -308,10 +309,10 @@ const testCases = {
             visualizationType: 'LINE_LIST',
             layout: {
                 columns: [
-                    'enrollmentOu',
-                    'focusName',
-                    'localFocusId',
-                    'area',
+                    'tetA.enrollmentOu',
+                    'tetA.focusName',
+                    'tetA.localFocusId',
+                    'tetA.area',
                     'incidentDateId.enrollmentOu',
                     'incidentDateId.enrollmentDate',
                     'incidentDateId.dateOfFociRegistrationId.focusDateOfClassification',
@@ -327,7 +328,7 @@ const testCases = {
 describe('getVisualizationUiConfig', () => {
     it.each(Object.entries(testCases))(
         'should return correct config for %s visualization',
-        (name, { input, expected }) => {
+        (_name, { input, expected }) => {
             const result = getVisualizationUiConfig(
                 input as unknown as SavedVisualization
             )

@@ -88,7 +88,7 @@ export const VisualizationTypeSelector: FC = () => {
                 >
                     {visTypeIcons[visualizationType]}
                     <span
-                        className={classes.selectedVizTypeLabel}
+                        className={classes.selectedVisTypeLabel}
                         data-test="visualization-type-selector-currently-selected-text"
                     >
                         {visTypeDisplayNames[visualizationType]}

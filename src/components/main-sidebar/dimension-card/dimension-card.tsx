@@ -1,3 +1,7 @@
+import {
+    useCardDisabledNoticeText,
+    useIsCardDisabledByLayout,
+} from '@components/main-sidebar/sidebar-disabling'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     addDimensionCardCollapsedState,
@@ -8,6 +12,7 @@ import {
 import type { DimensionCardKey } from '@types'
 import cx from 'classnames'
 import { useCallback, useEffect, type ReactNode, type FC } from 'react'
+import { CardDisabledNotice } from './card-disabled-notice'
 import { DimensionCardHeader } from './dimension-card-header'
 import classes from './styles/dimension-card.module.css'
 
@@ -32,6 +37,9 @@ export const DimensionCard: FC<DimensionCardProps> = ({
     const isCollapsed = useAppSelector((state) =>
         isDimensionCardCollapsed(state, dimensionCardKey)
     )
+    const isDisabledByLayout = useIsCardDisabledByLayout(dimensionCardKey)
+    const noticeText = useCardDisabledNoticeText(dimensionCardKey)
+    const isVisuallyDisabled = isDisabledByFilter || isDisabledByLayout
 
     const handleToggle = useCallback(() => {
         dispatch(toggleDimensionCardIsCollapsed(dimensionCardKey))
@@ -45,30 +53,32 @@ export const DimensionCard: FC<DimensionCardProps> = ({
     }, [dispatch, dimensionCardKey])
 
     return (
-        <div
-            className={cx(classes.container, {
-                [classes.isDisabledByFilter]: isDisabledByFilter,
-            })}
-            data-test="dimension-card"
-        >
-            <DimensionCardHeader
-                selectedCount={selectedCount}
-                isCollapsed={isCollapsed}
-                onToggle={handleToggle}
-                isDisabled={isDisabledByFilter}
-            >
-                {title}
-            </DimensionCardHeader>
-
+        <>
+            {noticeText && <CardDisabledNotice message={noticeText} />}
             <div
-                className={cx(classes.content, {
-                    [classes.collapsed]: isCollapsed,
-                    [classes.withSubSections]: withSubSections,
+                className={cx(classes.container, {
+                    [classes.isDisabled]: isVisuallyDisabled,
                 })}
-                data-test="dimension-card-content"
+                data-test="dimension-card"
             >
-                {children}
+                <DimensionCardHeader
+                    selectedCount={selectedCount}
+                    isCollapsed={isCollapsed}
+                    onToggle={handleToggle}
+                >
+                    {title}
+                </DimensionCardHeader>
+
+                <div
+                    className={cx(classes.content, {
+                        [classes.collapsed]: isCollapsed,
+                        [classes.withSubSections]: withSubSections,
+                    })}
+                    data-test="dimension-card-content"
+                >
+                    {children}
+                </div>
             </div>
-        </div>
+        </>
     )
 }

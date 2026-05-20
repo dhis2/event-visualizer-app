@@ -5,7 +5,7 @@
     border: 1px solid var(--colors-grey400);
     border-radius: 5px;
 }
-.container.isDisabledByFilter {
+.container.isDisabled {
     opacity: 0.5;
 }
 .container:hover {

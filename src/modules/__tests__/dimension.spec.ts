@@ -503,7 +503,7 @@ describe('getCompoundDimensionId', () => {
         ).toBe('bcgDoses')
     })
 
-    it('returns plain ID for PROGRAM_ATTRIBUTE regardless of context', () => {
+    it('falls back to plain ID for PROGRAM_ATTRIBUTE when no trackedEntityTypeId is provided', () => {
         expect(
             getCompoundDimensionId(
                 {
@@ -515,6 +515,38 @@ describe('getCompoundDimensionId', () => {
                 'ENROLLMENT'
             )
         ).toBe('firstName')
+    })
+
+    it('prefixes PROGRAM_ATTRIBUTE with trackedEntityTypeId when provided', () => {
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'firstName',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                    items: [],
+                },
+                'TRACKED_ENTITY_INSTANCE',
+                'tetA'
+            )
+        ).toBe('tetA.firstName')
+    })
+
+    it('TET prefix wins over a program qualifier for PROGRAM_ATTRIBUTE', () => {
+        /* Disambiguating per-TET takes precedence over per-program — the same
+         * attribute UID can be referenced by multiple TETs but only ever has
+         * one TET context at a time. */
+        expect(
+            getCompoundDimensionId(
+                {
+                    dimension: 'firstName',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                    items: [],
+                    program: { id: 'prog1' },
+                },
+                'TRACKED_ENTITY_INSTANCE',
+                'tetA'
+            )
+        ).toBe('tetA.firstName')
     })
 
     it('prefixes enrollment-scoped dimensions with programId', () => {

@@ -369,13 +369,6 @@ export const toEventVisualizationDimensionId = ({
     return shouldRewriteToOu ? 'ou' : 'enrollmentOu'
 }
 
-/* Dimension types that use plain IDs (no compound prefix) even when
- * the dimension record carries program/programStage context. */
-const PLAIN_ID_DIMENSION_TYPES: ReadonlySet<string> = new Set([
-    'PROGRAM_INDICATOR',
-    'PROGRAM_ATTRIBUTE',
-])
-
 /* Dimension IDs that are always enrollment-scoped (prefixed with programId,
  * never stageId). Legacy visualizations propagate programStage onto all
  * dimensions, but these IDs are inherently tied to the program, not a stage. */
@@ -402,17 +395,23 @@ const TEI_REGISTRATION_DIMENSION_IDS: ReadonlySet<string> = new Set([
  * format, enrollment-scoped dimensions (program but no programStage) always
  * carry a programId prefix, regardless of outputType.
  *
- * Program indicators and tracked entity attributes always use plain IDs —
- * they carry program/stage context on the dimension record but their
- * canonical ID is not prefixed.
+ * Program indicators always use plain IDs — they're owned by a single program
+ * so their UIDs are unique. Tracked entity attributes use a `tetId.attrId`
+ * compound prefix because the same attribute can be referenced by multiple
+ * TETs (per DHIS2's metadata model); the prefix disambiguates per TET.
  */
 export const getCompoundDimensionId = (
     dim: DimensionRecord,
     outputType?: OutputType,
     trackedEntityTypeId?: string
 ): string => {
-    if (dim.dimensionType && PLAIN_ID_DIMENSION_TYPES.has(dim.dimensionType)) {
+    if (dim.dimensionType === 'PROGRAM_INDICATOR') {
         return dim.dimension
+    }
+    if (dim.dimensionType === 'PROGRAM_ATTRIBUTE') {
+        return trackedEntityTypeId
+            ? `${trackedEntityTypeId}.${dim.dimension}`
+            : dim.dimension
     }
     if (ENROLLMENT_SCOPED_DIMENSION_IDS.has(dim.dimension) && dim.program?.id) {
         return `${dim.program.id}.${dim.dimension}`

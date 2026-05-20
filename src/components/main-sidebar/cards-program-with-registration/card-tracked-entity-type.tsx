@@ -25,6 +25,8 @@ const transformProgramAttributes = (
         nextPage,
         dimensions: dimensions.map((dimension) => ({
             ...dimension,
+            id: `${trackedEntityTypeId}.${dimension.dimensionId ?? dimension.id}`,
+            dimensionId: dimension.dimensionId ?? dimension.id,
             trackedEntityTypeId,
         })),
     }
@@ -79,10 +81,11 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
             ) {
                 return true
             }
-            if (selectedDimension.dimensionType === 'PROGRAM_ATTRIBUTE') {
-                return true
-            }
-            return false
+            return (
+                selectedDimension.dimensionType === 'PROGRAM_ATTRIBUTE' &&
+                selectedDimension.trackedEntityTypeId ===
+                    program.trackedEntityType.id
+            )
         },
         [program.trackedEntityType.id]
     )

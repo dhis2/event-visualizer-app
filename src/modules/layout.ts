@@ -145,24 +145,34 @@ export const resolveProgramIds = (
     return Array.from(programIds)
 }
 
-/* The layout's OU dim is the canonical source for TET context: TET-registration
- * ou carries trackedEntityTypeId directly; enrollment/stage ou carry a programId
- * whose program reference provides the TET (or none, for event programs). */
+/* Any TET-bound layout dim can establish the layout's TET context:
+ * TET-registration dims carry trackedEntityTypeId directly; any dim with a
+ * programId resolves through the program's trackedEntityType (or none, for
+ * event programs). Returns the first TET id found in layout iteration order.
+ * Layouts that mix dims from multiple TETs are an invalid state surfaced by
+ * the action buttons (which count TETs separately); this helper does not
+ * police that — it just hands back the primary TET for callers that only need
+ * a single id (TET metadata lookup, card-level "different TET" rule). */
 export const resolveTetId = (
     dimensionIds: string[],
     metadataStore: MetadataStore
 ): string | null => {
-    const ouDim = getLayoutDimensionMetadataItems(
+    for (const dim of getLayoutDimensionMetadataItems(
         dimensionIds,
         metadataStore
-    ).find((dim) => dim.dimensionType === 'ORGANISATION_UNIT')
-    return (
-        ouDim?.trackedEntityTypeId ??
-        (ouDim?.programId &&
-            metadataStore.getProgramMetadataItem(ouDim.programId)
-                ?.trackedEntityType?.id) ??
-        null
-    )
+    )) {
+        if (dim.trackedEntityTypeId) {
+            return dim.trackedEntityTypeId
+        }
+        if (dim.programId) {
+            const tetId = metadataStore.getProgramMetadataItem(dim.programId)
+                ?.trackedEntityType?.id
+            if (tetId) {
+                return tetId
+            }
+        }
+    }
+    return null
 }
 
 export const resolveTeiFields = (
@@ -191,7 +201,7 @@ export const resolveTeiFields = (
     if (!tetId) {
         if (outputType === 'TRACKED_ENTITY_INSTANCE') {
             throw new Error(
-                'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the layout has no organisation unit dimension carrying TET context'
+                'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the layout has no dimension carrying TET context'
             )
         }
         return { trackedEntityType: undefined, attributeDimensions }

@@ -20,7 +20,7 @@
     background-color: var(--colors-grey200);
 }
 
-.button > .selectedVizTypeLabel {
+.button > .selectedVisTypeLabel {
     font-size: 13px;
     font-weight: 500;
     line-height: 1;

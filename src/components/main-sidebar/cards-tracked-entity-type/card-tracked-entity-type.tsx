@@ -40,9 +40,10 @@ const transformItem = (
         isPopulatedString(item.trackedEntityAttribute.name) &&
         isPopulatedString(item.trackedEntityAttribute.valueType)
     ) {
+        const attrId = item.trackedEntityAttribute.id
         return {
-            id: item.trackedEntityAttribute.id,
-            dimensionId: item.trackedEntityAttribute.id,
+            id: `${trackedEntityTypeId}.${attrId}`,
+            dimensionId: attrId,
             name: item.trackedEntityAttribute.name,
             valueType: item.trackedEntityAttribute.valueType as ValueType,
             dimensionType: 'PROGRAM_ATTRIBUTE',
@@ -111,24 +112,10 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
         transformer,
     })
     const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
-        (dimension) => {
-            if (
-                dimension.trackedEntityTypeId === trackedEntityType.id &&
-                fixedDimensionIdLookup.has(dimension.id)
-            ) {
-                return true
-            }
-            /* TEAs fetched from the web api have plain IDs, no enrichment context,
-             * they can only be identified by the absense of a program/stage */
-            if (
-                dimension.dimensionType === 'PROGRAM_ATTRIBUTE' &&
-                !dimension.programId &&
-                !dimension.programStageId
-            ) {
-                return true
-            }
-            return false
-        },
+        (dimension) =>
+            dimension.trackedEntityTypeId === trackedEntityType.id &&
+            (fixedDimensionIdLookup.has(dimension.id) ||
+                dimension.dimensionType === 'PROGRAM_ATTRIBUTE'),
         [trackedEntityType.id, fixedDimensionIdLookup]
     )
     const selectedCount = useSelectedDimensionCount(isSelectedMatchFn)

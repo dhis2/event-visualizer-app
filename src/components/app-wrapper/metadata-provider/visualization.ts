@@ -205,8 +205,8 @@ export const supplementDimensionMetadata = (
             }
 
             // Attach trackedEntityTypeId to TEA dimensions that belong to the
-            // viz's TET. Gate on both trackedEntityType (the TEI-scope signal)
-            // and attributeDimensions membership (an EVENT viz may carry TEAs
+            // vis's TET. Gate on both trackedEntityType (the TEI-scope signal)
+            // and attributeDimensions membership (an EVENT vis may carry TEAs
             // in attributeDimensions but has no top-level TET).
             if (
                 tetId &&
