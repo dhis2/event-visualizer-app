@@ -526,21 +526,6 @@ msgstr "Failed to load data sources."
 msgid "Filter data sources"
 msgstr "Filter data sources"
 
-msgid "Last updated on"
-msgstr "Last updated on"
-
-msgid "Last updated by"
-msgstr "Last updated by"
-
-msgid "Created on"
-msgstr "Created on"
-
-msgid "Created by"
-msgstr "Created by"
-
-msgid "Completed on"
-msgstr "Completed on"
-
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -1006,6 +991,21 @@ msgstr "No"
 
 msgid "Not answered"
 msgstr "Not answered"
+
+msgid "Created on"
+msgstr "Created on"
+
+msgid "Last updated on"
+msgstr "Last updated on"
+
+msgid "Last updated by"
+msgstr "Last updated by"
+
+msgid "Created by"
+msgstr "Created by"
+
+msgid "Completed on"
+msgstr "Completed on"
 
 msgid "Completed date"
 msgstr "Completed date"
