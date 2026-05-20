@@ -2,6 +2,8 @@ import type { DimensionArray, Program, ProgramStage } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     getCreatedDimension,
+    getFixedMetaDimensions,
+    META_DIMENSION_IDS,
     getMainDimensions,
     transformDimensions,
     isTimeDimensionId,
@@ -325,6 +327,67 @@ describe('toAppLocalDimensions', () => {
         const result = toAppLocalDimensions(dims)
         expect(result[0].items).toEqual([{ id: 'urban' }, { id: 'rural' }])
         expect(result[0].dimensionType).toBe('ORGANISATION_UNIT_GROUP_SET')
+    })
+
+    it.each([...META_DIMENSION_IDS])(
+        'strips program and programStage from contextless dimension by ID: %s',
+        (dimensionId) => {
+            const dims: DimensionArray = [
+                {
+                    dimension: dimensionId,
+                    items: [],
+                    program: { id: 'prog1' },
+                    programStage: { id: 'stage1' },
+                },
+            ]
+            const result = toAppLocalDimensions(dims)
+            expect(result[0].dimension).toBe(dimensionId)
+            expect(result[0].program).toBeUndefined()
+            expect(result[0].programStage).toBeUndefined()
+        }
+    )
+})
+
+describe('getFixedMetaDimensions', () => {
+    it('returns all five fixed metadata dimensions', () => {
+        const result = getFixedMetaDimensions()
+        expect(result).toHaveLength(5)
+        expect(result.map((d) => d.id)).toEqual([
+            'lastUpdated',
+            'lastUpdatedBy',
+            'created',
+            'createdBy',
+            'completed',
+        ])
+    })
+
+    it('returns correctly shaped items', () => {
+        const result = getFixedMetaDimensions()
+        for (const dim of result) {
+            expect(dim.id).toBe(dim.dimensionId)
+            expect(typeof dim.name).toBe('string')
+            expect(dim.dimensionType).toMatch(/^(PERIOD|USER)$/)
+        }
+    })
+
+    it('assigns PERIOD dimensionType to date-based dimensions', () => {
+        const result = getFixedMetaDimensions()
+        const dateDims = result.filter((d) => d.valueType === 'DATE')
+        expect(dateDims.map((d) => d.id)).toEqual([
+            'lastUpdated',
+            'created',
+            'completed',
+        ])
+        dateDims.forEach((d) => expect(d.dimensionType).toBe('PERIOD'))
+    })
+
+    it('assigns USER dimensionType to user-based dimensions', () => {
+        const result = getFixedMetaDimensions()
+        const userDims = result.filter((d) => d.dimensionType === 'USER')
+        expect(userDims.map((d) => d.id)).toEqual([
+            'lastUpdatedBy',
+            'createdBy',
+        ])
     })
 })
 
