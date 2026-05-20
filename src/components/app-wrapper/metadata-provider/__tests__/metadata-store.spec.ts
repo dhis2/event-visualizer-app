@@ -1203,8 +1203,8 @@ describe('MetadataStore — TEA enrichment with trackedEntityTypeId', () => {
         store.setVisualizationMetadata(vis)
 
         const snapshot = store.getMetadataSnapshot()
-        expect(snapshot['teaFirst']).toMatchObject({
-            id: 'teaFirst',
+        expect(snapshot['tetA.teaFirst']).toMatchObject({
+            id: 'tetA.teaFirst',
             dimensionId: 'teaFirst',
             dimensionType: 'PROGRAM_ATTRIBUTE',
             trackedEntityTypeId: 'tetA',
