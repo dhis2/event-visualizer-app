@@ -74,7 +74,7 @@ export const getCreatedDimension = (): Partial<
     },
 })
 
-export const getFixedDimensions = (): DimensionMetadataItem[] => [
+export const getFixedMetaDimensions = (): DimensionMetadataItem[] => [
     {
         id: 'lastUpdated',
         dimensionId: 'lastUpdated',
@@ -300,8 +300,8 @@ export const combineAllDimensionsFromVisualization = (
  * drop those fields at the API → app-local boundary so that downstream code
  * (compound ID, save round-trip) treats them as the contextless dimensions
  * they actually are. */
-export const CONTEXTLESS_DIMENSION_IDS = new Set(
-    getFixedDimensions().map((dimension) => dimension.id)
+export const META_DIMENSION_IDS = new Set(
+    getFixedMetaDimensions().map((dimension) => dimension.id)
 )
 
 /* Dimension types that are not bound to any program or stage. The backend
@@ -326,7 +326,7 @@ export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
         if (
             (dim.dimensionType &&
                 CONTEXTLESS_DIMENSION_TYPES.has(dim.dimensionType)) ||
-            CONTEXTLESS_DIMENSION_IDS.has(dim.dimension)
+            META_DIMENSION_IDS.has(dim.dimension)
         ) {
             const stripped = { ...dim }
             delete stripped.program
