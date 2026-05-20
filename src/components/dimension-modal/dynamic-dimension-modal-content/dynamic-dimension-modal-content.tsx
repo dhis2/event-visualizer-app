@@ -1,3 +1,4 @@
+import { Section } from '@components/dimension-modal/section'
 import {
     TRANSFER_HEIGHT,
     TRANSFER_OPTIONS_WIDTH,
@@ -9,7 +10,7 @@ import { TransferRightHeader } from '@components/dimension-modal/transfer/transf
 import { TransferSourceEmptyPlaceholder } from '@components/dimension-modal/transfer/transfer-source-empty-placeholder'
 import { useInfiniteTransferOptions } from '@components/dimension-modal/transfer/use-infinite-transfer-options'
 import i18n from '@dhis2/d2-i18n'
-import { Transfer, TransferOption } from '@dhis2/ui'
+import { IconFilter16, Transfer, TransferOption } from '@dhis2/ui'
 import {
     useAddMetadata,
     useAppDispatch,
@@ -96,7 +97,7 @@ export const DynamicDimensionModalContent: FC<
     )
 
     return (
-        <>
+        <Section icon={<IconFilter16 />} title={i18n.t('Data')}>
             <p className={classes.paragraph}>
                 {i18n.t(
                     'Show items that meet the following conditions for this data item:'
@@ -140,6 +141,6 @@ export const DynamicDimensionModalContent: FC<
                     dataTest={`${dataTest}-transfer`}
                 />
             </div>
-        </>
+        </Section>
     )
 }

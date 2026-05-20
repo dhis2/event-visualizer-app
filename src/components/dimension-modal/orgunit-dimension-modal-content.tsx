@@ -1,4 +1,7 @@
+import { Section } from '@components/dimension-modal/section'
 import { OrgUnitDimension, ouIdHelper } from '@dhis2/analytics'
+import i18n from '@dhis2/d2-i18n'
+import { IconFilter16 } from '@dhis2/ui'
 import {
     useAddMetadata,
     useAppDispatch,
@@ -116,11 +119,13 @@ export const OrgUnitDimensionModalContent: FC<
     )
 
     return (
-        <OrgUnitDimension
-            selected={selected}
-            roots={orgUnitTreeRoots}
-            displayNameProp={currentUser.settings['displayNameProperty']}
-            onSelect={updateOrgUnitDimensionItems}
-        />
+        <Section icon={<IconFilter16 />} title={i18n.t('Data')}>
+            <OrgUnitDimension
+                selected={selected}
+                roots={orgUnitTreeRoots}
+                displayNameProp={currentUser.settings['displayNameProperty']}
+                onSelect={updateOrgUnitDimensionItems}
+            />
+        </Section>
     )
 }

@@ -3,6 +3,7 @@ import {
     IconCross16,
     IconFullscreen16,
     IconFullscreenExit16,
+    IconInfo16,
     Tooltip,
 } from '@dhis2/ui'
 import type { DimensionDialogMode } from '@store/ui-slice'
@@ -11,6 +12,7 @@ import classes from './styles/dimension-dialog.module.css'
 
 type DimensionDialogHeaderProps = {
     title: string
+    info?: string
     mode: DimensionDialogMode
     onToggleMode: () => void
     onClose: () => void
@@ -19,6 +21,7 @@ type DimensionDialogHeaderProps = {
 
 export const DimensionDialogHeader: FC<DimensionDialogHeaderProps> = ({
     title,
+    info,
     mode,
     onToggleMode,
     onClose,
@@ -33,8 +36,23 @@ export const DimensionDialogHeader: FC<DimensionDialogHeaderProps> = ({
 
     return (
         <div className={classes.header} data-test={dataTest}>
-            <div className={classes.title} data-test={`${dataTest}-title`}>
-                {title}
+            <div className={classes.titleWrapper}>
+                <div className={classes.title} data-test={`${dataTest}-title`}>
+                    {title}
+                </div>
+                {info && (
+                    <Tooltip content={info} placement="bottom" maxWidth={320}>
+                        <span
+                            tabIndex={0}
+                            role="img"
+                            aria-label={i18n.t('About this dimension')}
+                            className={classes.infoIcon}
+                            data-test={`${dataTest}-info`}
+                        >
+                            <IconInfo16 />
+                        </span>
+                    </Tooltip>
+                )}
             </div>
             <div className={classes.headerActions}>
                 <Tooltip content={toggleTooltip} placement="bottom">

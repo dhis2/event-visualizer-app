@@ -37,7 +37,6 @@ export const RepeatedEventsTabContent: FC<RepeatedEventsTabContentProps> = ({
                 repetitions.mostRecent === defaultMostRecent &&
                 repetitions.oldest === defaultOldest
             ) {
-                // Remove repetitions configuration when the selection matches the default
                 dispatch(setVisUiConfigRepetitionsByDimension({ dimensionId }))
             } else {
                 dispatch(
@@ -62,46 +61,34 @@ export const RepeatedEventsTabContent: FC<RepeatedEventsTabContentProps> = ({
     )
 
     return (
-        <div>
-            <p className={classes.paragraph}>
-                {i18n.t(
-                    'From stages with repeatable events, show values for this data element from:',
-                    { nsSeparator: '^^' }
-                )}
-            </p>
-            <div>
-                <div className={classes.repeatableWrapper}>
-                    <p className={classes.paragraph}>
-                        {i18n.t('Most recent events:', {
-                            nsSeparator: '^^',
-                        })}
-                    </p>
-                    <Input
-                        type="number"
-                        dense
-                        className={classes.repeatableInput}
-                        value={mostRecent.toString()}
-                        onChange={({ value }) => onMostRecentChange(value)}
-                        min="0"
-                        dataTest="most-recent-input"
-                    />
-                </div>
-                <div className={classes.repeatableWrapper}>
-                    <p className={classes.paragraph}>
-                        {i18n.t('Oldest events:', {
-                            nsSeparator: '^^',
-                        })}
-                    </p>
-                    <Input
-                        type="number"
-                        dense
-                        className={classes.repeatableInput}
-                        value={oldest.toString()}
-                        onChange={({ value }) => onOldestChange(value)}
-                        min="0"
-                        dataTest="oldest-input"
-                    />
-                </div>
+        <div className={classes.repetitionsRow}>
+            <div className={classes.repetitionCard}>
+                <Input
+                    type="number"
+                    dense
+                    className={classes.repetitionInput}
+                    value={mostRecent.toString()}
+                    onChange={({ value }) => onMostRecentChange(value)}
+                    min="0"
+                    dataTest="most-recent-input"
+                />
+                <span className={classes.repetitionLabel}>
+                    {i18n.t('Most recent events')}
+                </span>
+            </div>
+            <div className={classes.repetitionCard}>
+                <Input
+                    type="number"
+                    dense
+                    className={classes.repetitionInput}
+                    value={oldest.toString()}
+                    onChange={({ value }) => onOldestChange(value)}
+                    min="0"
+                    dataTest="oldest-input"
+                />
+                <span className={classes.repetitionLabel}>
+                    {i18n.t('Oldest events')}
+                </span>
             </div>
         </div>
     )

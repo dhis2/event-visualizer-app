@@ -1,5 +1,6 @@
+import { Section } from '@components/dimension-modal/section'
 import i18n from '@dhis2/d2-i18n'
-import { Checkbox } from '@dhis2/ui'
+import { Checkbox, IconFilter16 } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getStatusNames } from '@modules/status'
 import {
@@ -71,7 +72,7 @@ export const StatusDimensionModalContent: FC<
     )
 
     return (
-        <>
+        <Section icon={<IconFilter16 />} title={i18n.t('Data')}>
             <p className={classes.paragraph}>
                 {i18n.t('Show items where the status is:', {
                     nsSeparator: '^^',
@@ -96,6 +97,6 @@ export const StatusDimensionModalContent: FC<
                     />
                 ))}
             </div>
-        </>
+        </Section>
     )
 }

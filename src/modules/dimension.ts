@@ -650,6 +650,87 @@ export const getEnrollmentFixedDimensions = (
     },
 ]
 
+/**
+ * Short, human-readable description of what a fixed/metadata dimension
+ * represents and where its value comes from. Rendered in the info tooltip
+ * shown next to the dimension dialog title. Returns `undefined` for dimensions
+ * that do not have a curated description (e.g. data elements, program
+ * indicators, tracked entity attributes, dynamic dimensions).
+ */
+export const getDimensionInfoText = (
+    dim: DimensionMetadataItem
+): string | undefined => {
+    const { dimensionId, programStageId, programId, trackedEntityTypeId } = dim
+
+    if (dimensionId === 'enrollmentOu') {
+        if (trackedEntityTypeId && !programId) {
+            return i18n.t(
+                'The organisation unit where the tracked entity was first registered. Captured at registration and shared across every program the tracked entity is enrolled in.'
+            )
+        }
+        return i18n.t(
+            'The organisation unit where the tracked entity was enrolled in the program. Recorded once at enrollment and does not change as the case progresses.'
+        )
+    }
+
+    if (dimensionId === 'ou' && programStageId) {
+        return i18n.t(
+            'The organisation unit where the event took place. Captured per event, so different events in the same enrollment may have different org units.'
+        )
+    }
+
+    if (dimensionId === 'ou' && !programStageId && !programId) {
+        return i18n.t(
+            'The organisation unit where the tracked entity was first registered. Captured at registration and shared across every program the tracked entity is enrolled in.'
+        )
+    }
+
+    switch (dimensionId) {
+        case 'enrollmentDate':
+            return i18n.t(
+                'The date the tracked entity was enrolled in the program. Captured by the data entry user at enrollment.'
+            )
+        case 'incidentDate':
+            return i18n.t(
+                'The date the event being tracked actually occurred, such as the date of onset. May differ from the enrollment date. Captured by the data entry user at enrollment.'
+            )
+        case 'programStatus':
+            return i18n.t(
+                'The status of the enrollment in the program: active, completed, or cancelled. Updated automatically when the enrollment is completed or cancelled.'
+            )
+        case 'eventDate':
+            return i18n.t(
+                'The date the event occurred. Captured by the data entry user when the event is recorded.'
+            )
+        case 'scheduledDate':
+            return i18n.t(
+                'The date the event is planned to take place. Used for events that are scheduled in advance and have not yet been carried out.'
+            )
+        case 'eventStatus':
+            return i18n.t(
+                'The status of the event: active, completed, scheduled, skipped, or overdue. Set automatically based on whether the event has been entered, completed, or is awaiting capture.'
+            )
+        case 'lastUpdated':
+            return i18n.t(
+                'The date and time the record was last modified. Set automatically by the system on every change.'
+            )
+        case 'createdBy':
+            return i18n.t(
+                'The user who originally created the record. Set automatically by the system at creation time.'
+            )
+        case 'lastUpdatedBy':
+            return i18n.t(
+                'The user who most recently modified the record. Set automatically by the system on every change.'
+            )
+        case 'created':
+            return i18n.t(
+                'The date the tracked entity was first registered in DHIS2. Set automatically by the system at registration time.'
+            )
+        default:
+            return undefined
+    }
+}
+
 export const getTrackedEntityTypeFixedDimensions = (trackedEntityType: {
     id: string
 }): DimensionMetadataItem[] => [

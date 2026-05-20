@@ -13,6 +13,7 @@ import {
     useDimensionMetadataItem,
     useProgramStageMetadataItem,
 } from '@hooks'
+import { getDimensionInfoText } from '@modules/dimension'
 import { isDimensionInLayout } from '@modules/layout'
 import { isDimensionMetadataItem } from '@modules/metadata'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
@@ -21,8 +22,12 @@ import {
     getUiDimensionDialogMode,
     toggleUiDimensionDialogMode,
 } from '@store/ui-slice'
-import { getVisUiConfigLayout } from '@store/vis-ui-config-slice'
+import {
+    getVisUiConfigLayout,
+    removeVisUiConfigLayoutDimension,
+} from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
+import cx from 'classnames'
 import { useCallback, useMemo, type FC } from 'react'
 import { DimensionDialogHeader } from './dimension-dialog-header'
 import classes from './styles/dimension-dialog.module.css'
@@ -95,6 +100,12 @@ export const DimensionDialogShell: FC<DimensionDialogShellProps> = ({
         onClose()
     }, [dispatch, onClose])
 
+    const onRemove = useCallback(() => {
+        dispatch(removeVisUiConfigLayoutDimension({ dimensionId }))
+        dispatch(tUpdateCurrentVisFromVisUiConfig())
+        onClose()
+    }, [dispatch, dimensionId, onClose])
+
     const onToggleMode = useCallback(() => {
         dispatch(toggleUiDimensionDialogMode())
     }, [dispatch])
@@ -105,32 +116,49 @@ export const DimensionDialogShell: FC<DimensionDialogShellProps> = ({
         )
     }
 
+    const infoText = getDimensionInfoText(dimension)
+
     return (
         <>
             <DimensionDialogHeader
                 title={dialogTitle}
+                info={infoText}
                 mode={mode}
                 onToggleMode={onToggleMode}
                 onClose={onClose}
                 dataTest={`${dataTest}-header`}
             />
             <div
-                className={classes.scrollBody}
+                className={cx(classes.scrollBody, {
+                    [classes.scrollBodyModal]: mode === 'modal',
+                })}
                 data-test={`${dataTest}-content`}
             >
                 <DimensionDialogContent dimension={dimension} />
             </div>
             <div className={classes.footer} data-test={`${dataTest}-actions`}>
                 {isInLayout ? (
-                    <Button
-                        type="button"
-                        primary
-                        small
-                        onClick={onUpdate}
-                        dataTest={`${dataTest}-action-confirm`}
-                    >
-                        {i18n.t('Update')}
-                    </Button>
+                    <>
+                        <Button
+                            type="button"
+                            secondary
+                            destructive
+                            small
+                            onClick={onRemove}
+                            dataTest={`${dataTest}-action-remove`}
+                        >
+                            {i18n.t('Remove')}
+                        </Button>
+                        <Button
+                            type="button"
+                            primary
+                            small
+                            onClick={onUpdate}
+                            dataTest={`${dataTest}-action-confirm`}
+                        >
+                            {i18n.t('Update')}
+                        </Button>
+                    </>
                 ) : (
                     <AddToLayoutButton
                         onClick={onClose}

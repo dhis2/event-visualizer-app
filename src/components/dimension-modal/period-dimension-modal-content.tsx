@@ -1,8 +1,10 @@
+import { Section } from '@components/dimension-modal/section'
 import { PeriodDimension } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import {
     Field,
     IconArrowRight16,
+    IconFilter16,
     InputField,
     SegmentedControl,
     colors,
@@ -181,7 +183,7 @@ export const PeriodDimensionModalContent: FC<
     }
 
     return (
-        <>
+        <Section icon={<IconFilter16 />} title={i18n.t('Data')}>
             <div className={classes.navigation}>
                 <SegmentedControl
                     options={[
@@ -224,6 +226,6 @@ export const PeriodDimensionModalContent: FC<
                     />
                 )}
             </div>
-        </>
+        </Section>
     )
 }

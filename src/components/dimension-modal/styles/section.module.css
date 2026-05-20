@@ -1,0 +1,31 @@
+.section {
+    display: block;
+}
+
+.content {
+    display: block;
+}
+
+.modal {
+    padding-inline: var(--spacers-dp12);
+}
+
+.modal .content {
+    padding-inline-start: var(--spacers-dp8);
+}
+
+.modal.topBorder {
+    border-block-start: 1px solid var(--colors-grey300);
+    padding-block-start: var(--spacers-dp16);
+    padding-inline: 0;
+}
+
+.modal.topBorder > :first-child {
+    padding-inline-start: var(--spacers-dp12);
+    padding-inline-end: var(--spacers-dp12);
+}
+
+.modal.topBorder > .content {
+    padding-inline-start: calc(var(--spacers-dp16) + var(--spacers-dp8));
+    padding-inline-end: var(--spacers-dp16);
+}
