@@ -14,9 +14,9 @@ import {
 import { InterpretationModal } from '@components/interpretation-modal/interpretation-modal'
 import { LayoutPanel } from '@components/layout-panel/layout-panel'
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import { MainSidebar } from '@components/main-sidebar/main-sidebar'
 import type { AnalyticsResponseMetadataItems } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
+import { Sidebar } from '@components/sidebar/sidebar'
 import { StartScreen } from '@components/start-screen/start-screen'
 import { Toolbar } from '@components/toolbar/toolbar'
 import { CssVariables } from '@dhis2/ui'
@@ -118,7 +118,7 @@ const EventVisualizer: FC = () => {
             </GridTopRow>
             <GridStartColumn>
                 <ErrorBoundary onError={onError}>
-                    <MainSidebar />
+                    <Sidebar />
                 </ErrorBoundary>
                 {activeDimensionModal && (
                     <DimensionModal onClose={onDimensionModalClose} />

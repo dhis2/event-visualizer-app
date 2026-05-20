@@ -5,11 +5,11 @@ import {
     initialState,
     clearUi,
     toggleUiDetailsPanelVisible,
-    toggleUiMainSidebarVisible,
+    toggleUiSidebarVisible,
     toggleUiLayoutPanelVisible,
     toggleUiShowExpandedVisualizationCanvas,
     getUiShowExpandedVisualizationCanvas,
-    getUiMainSidebarVisible,
+    getUiSidebarVisible,
     getUiLayoutPanelVisible,
     getUiDetailsPanelVisible,
 } from '../ui-slice'
@@ -39,7 +39,7 @@ describe('uiSlice', () => {
                 toggleUiShowExpandedVisualizationCanvas()
             )
 
-            expect(state.isMainSidebarVisible).toBe(false)
+            expect(state.isSidebarVisible).toBe(false)
             expect(state.isLayoutPanelVisible).toBe(false)
             expect(state.isDetailsPanelVisible).toBe(false)
         })
@@ -47,7 +47,7 @@ describe('uiSlice', () => {
         it('should save panel visibility when entering fullscreen', () => {
             const prevState: UiState = {
                 ...initialState,
-                isMainSidebarVisible: true,
+                isSidebarVisible: true,
                 isLayoutPanelVisible: false,
                 isDetailsPanelVisible: true,
             }
@@ -58,7 +58,7 @@ describe('uiSlice', () => {
             )
 
             expect(state.savedPanelVisibility).toEqual({
-                isMainSidebarVisible: true,
+                isSidebarVisible: true,
                 isLayoutPanelVisible: false,
                 isDetailsPanelVisible: true,
             })
@@ -67,11 +67,11 @@ describe('uiSlice', () => {
         it('should restore saved panel visibility when exiting fullscreen', () => {
             const prevState: UiState = {
                 ...initialState,
-                isMainSidebarVisible: false,
+                isSidebarVisible: false,
                 isLayoutPanelVisible: false,
                 isDetailsPanelVisible: false,
                 savedPanelVisibility: {
-                    isMainSidebarVisible: true,
+                    isSidebarVisible: true,
                     isLayoutPanelVisible: false,
                     isDetailsPanelVisible: true,
                 },
@@ -82,7 +82,7 @@ describe('uiSlice', () => {
                 toggleUiShowExpandedVisualizationCanvas()
             )
 
-            expect(state.isMainSidebarVisible).toBe(true)
+            expect(state.isSidebarVisible).toBe(true)
             expect(state.isLayoutPanelVisible).toBe(false)
             expect(state.isDetailsPanelVisible).toBe(true)
             expect(state.savedPanelVisibility).toBeNull()
@@ -91,7 +91,7 @@ describe('uiSlice', () => {
         it('should restore initial defaults when exiting implicit fullscreen', () => {
             const prevState: UiState = {
                 ...initialState,
-                isMainSidebarVisible: false,
+                isSidebarVisible: false,
                 isLayoutPanelVisible: false,
                 isDetailsPanelVisible: false,
                 savedPanelVisibility: null,
@@ -102,9 +102,7 @@ describe('uiSlice', () => {
                 toggleUiShowExpandedVisualizationCanvas()
             )
 
-            expect(state.isMainSidebarVisible).toBe(
-                initialState.isMainSidebarVisible
-            )
+            expect(state.isSidebarVisible).toBe(initialState.isSidebarVisible)
             expect(state.isLayoutPanelVisible).toBe(
                 initialState.isLayoutPanelVisible
             )
@@ -117,7 +115,7 @@ describe('uiSlice', () => {
         it('should round-trip: enter then exit fullscreen restores original state', () => {
             const prevState: UiState = {
                 ...initialState,
-                isMainSidebarVisible: true,
+                isSidebarVisible: true,
                 isLayoutPanelVisible: false,
                 isDetailsPanelVisible: true,
             }
@@ -131,7 +129,7 @@ describe('uiSlice', () => {
                 toggleUiShowExpandedVisualizationCanvas()
             )
 
-            expect(restored.isMainSidebarVisible).toBe(true)
+            expect(restored.isSidebarVisible).toBe(true)
             expect(restored.isLayoutPanelVisible).toBe(false)
             expect(restored.isDetailsPanelVisible).toBe(true)
         })
@@ -140,20 +138,20 @@ describe('uiSlice', () => {
     describe('individual panel toggles clear savedPanelVisibility', () => {
         const fullscreenState: UiState = {
             ...initialState,
-            isMainSidebarVisible: false,
+            isSidebarVisible: false,
             isLayoutPanelVisible: false,
             isDetailsPanelVisible: false,
             savedPanelVisibility: {
-                isMainSidebarVisible: true,
+                isSidebarVisible: true,
                 isLayoutPanelVisible: true,
                 isDetailsPanelVisible: false,
             },
         }
 
-        it('toggleUiMainSidebarVisible clears savedPanelVisibility', () => {
-            const state = reducer(fullscreenState, toggleUiMainSidebarVisible())
+        it('toggleUiSidebarVisible clears savedPanelVisibility', () => {
+            const state = reducer(fullscreenState, toggleUiSidebarVisible())
 
-            expect(state.isMainSidebarVisible).toBe(true)
+            expect(state.isSidebarVisible).toBe(true)
             expect(state.savedPanelVisibility).toBeNull()
         })
 
@@ -177,11 +175,11 @@ describe('uiSlice', () => {
 
     describe('implicit fullscreen via individual toggles', () => {
         it('hiding all panels one by one then exiting restores defaults', () => {
-            let state = reducer(initialState, toggleUiMainSidebarVisible())
+            let state = reducer(initialState, toggleUiSidebarVisible())
             state = reducer(state, toggleUiLayoutPanelVisible())
 
             // All panels now hidden (details was already false in initialState)
-            expect(state.isMainSidebarVisible).toBe(false)
+            expect(state.isSidebarVisible).toBe(false)
             expect(state.isLayoutPanelVisible).toBe(false)
             expect(state.isDetailsPanelVisible).toBe(false)
             expect(state.savedPanelVisibility).toBeNull()
@@ -189,9 +187,7 @@ describe('uiSlice', () => {
             // Exit fullscreen should restore defaults
             state = reducer(state, toggleUiShowExpandedVisualizationCanvas())
 
-            expect(state.isMainSidebarVisible).toBe(
-                initialState.isMainSidebarVisible
-            )
+            expect(state.isSidebarVisible).toBe(initialState.isSidebarVisible)
             expect(state.isLayoutPanelVisible).toBe(
                 initialState.isLayoutPanelVisible
             )
@@ -212,9 +208,9 @@ describe('uiSlice', () => {
             expect(state.savedPanelVisibility).not.toBeNull()
 
             // Use view menu to show sidebar
-            state = reducer(state, toggleUiMainSidebarVisible())
+            state = reducer(state, toggleUiSidebarVisible())
 
-            expect(state.isMainSidebarVisible).toBe(true)
+            expect(state.isSidebarVisible).toBe(true)
             expect(state.savedPanelVisibility).toBeNull()
         })
     })
@@ -223,9 +219,9 @@ describe('uiSlice', () => {
         it('should reset all state including savedPanelVisibility', () => {
             const prevState: UiState = {
                 ...initialState,
-                isMainSidebarVisible: false,
+                isSidebarVisible: false,
                 savedPanelVisibility: {
-                    isMainSidebarVisible: true,
+                    isSidebarVisible: true,
                     isLayoutPanelVisible: true,
                     isDetailsPanelVisible: false,
                 },
@@ -240,7 +236,7 @@ describe('uiSlice', () => {
     describe('selectors', () => {
         it('getUiShowExpandedVisualizationCanvas returns true when all panels hidden', () => {
             const rootState = createRootState({
-                isMainSidebarVisible: false,
+                isSidebarVisible: false,
                 isLayoutPanelVisible: false,
                 isDetailsPanelVisible: false,
             })
@@ -250,7 +246,7 @@ describe('uiSlice', () => {
 
         it('getUiShowExpandedVisualizationCanvas returns false when any panel visible', () => {
             const rootState = createRootState({
-                isMainSidebarVisible: false,
+                isSidebarVisible: false,
                 isLayoutPanelVisible: false,
                 isDetailsPanelVisible: true,
             })
@@ -260,12 +256,12 @@ describe('uiSlice', () => {
 
         it('panel visibility selectors return the state directly', () => {
             const rootState = createRootState({
-                isMainSidebarVisible: true,
+                isSidebarVisible: true,
                 isLayoutPanelVisible: false,
                 isDetailsPanelVisible: true,
             })
 
-            expect(getUiMainSidebarVisible(rootState)).toBe(true)
+            expect(getUiSidebarVisible(rootState)).toBe(true)
             expect(getUiLayoutPanelVisible(rootState)).toBe(false)
             expect(getUiDetailsPanelVisible(rootState)).toBe(true)
         })

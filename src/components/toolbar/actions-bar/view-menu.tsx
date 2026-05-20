@@ -1,4 +1,4 @@
-import { MAIN_SIDEBAR_DEFAULT_WIDTH } from '@components/main-sidebar/constants'
+import { SIDEBAR_DEFAULT_WIDTH } from '@components/sidebar/constants'
 import {
     HoverMenuDropdown,
     HoverMenuList,
@@ -8,14 +8,14 @@ import i18n from '@dhis2/d2-i18n'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getCurrentVisId } from '@store/current-vis-slice'
 import {
-    getUiMainSidebarWidth,
-    resetUiMainSidebarWidth,
+    getUiSidebarWidth,
+    resetUiSidebarWidth,
     getUiLayoutPanelVisible,
-    getUiMainSidebarVisible,
+    getUiSidebarVisible,
     getUiDetailsPanelVisible,
     toggleUiDetailsPanelVisible,
     toggleUiLayoutPanelVisible,
-    toggleUiMainSidebarVisible,
+    toggleUiSidebarVisible,
 } from '@store/ui-slice'
 import { useCallback } from 'react'
 import type { FC } from 'react'
@@ -24,22 +24,22 @@ import classes from './styles/actions-bar.module.css'
 export const ViewMenu: FC = () => {
     const dispatch = useAppDispatch()
 
-    const isMainSidebarVisible = useAppSelector(getUiMainSidebarVisible)
+    const isSidebarVisible = useAppSelector(getUiSidebarVisible)
     const isLayoutPanelVisible = useAppSelector(getUiLayoutPanelVisible)
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
-    const mainSidebarWidth = useAppSelector(getUiMainSidebarWidth)
+    const sidebarWidth = useAppSelector(getUiSidebarWidth)
     const id = useAppSelector(getCurrentVisId)
 
     const toggleLayoutPanelVisible = useCallback(() => {
         dispatch(toggleUiLayoutPanelVisible())
     }, [dispatch])
 
-    const toggleMainSidebarVisible = useCallback(() => {
-        dispatch(toggleUiMainSidebarVisible())
+    const toggleSidebarVisible = useCallback(() => {
+        dispatch(toggleUiSidebarVisible())
     }, [dispatch])
 
-    const resetMainSidebarWidth = useCallback(() => {
-        dispatch(resetUiMainSidebarWidth())
+    const resetSidebarWidth = useCallback(() => {
+        dispatch(resetUiSidebarWidth())
     }, [dispatch])
 
     const toggleDetailsPanelVisible = useCallback(() => {
@@ -49,7 +49,7 @@ export const ViewMenu: FC = () => {
     const toggleLayoutPanelText = isLayoutPanelVisible
         ? i18n.t('Hide layout')
         : i18n.t('Show layout')
-    const toggleSidebarText = isMainSidebarVisible
+    const toggleSidebarText = isSidebarVisible
         ? i18n.t('Hide dimensions sidebar')
         : i18n.t('Show dimensions sidebar')
     const toggleDetailsPanelText = isDetailsPanelVisible
@@ -68,12 +68,12 @@ export const ViewMenu: FC = () => {
                 />
                 <HoverMenuListItem
                     label={toggleSidebarText}
-                    onClick={toggleMainSidebarVisible}
+                    onClick={toggleSidebarVisible}
                 />
                 <HoverMenuListItem
                     label={i18n.t('Reset dimensions sidebar width')}
-                    onClick={resetMainSidebarWidth}
-                    disabled={mainSidebarWidth === MAIN_SIDEBAR_DEFAULT_WIDTH}
+                    onClick={resetSidebarWidth}
+                    disabled={sidebarWidth === SIDEBAR_DEFAULT_WIDTH}
                 />
                 <HoverMenuListItem
                     label={toggleDetailsPanelText}
