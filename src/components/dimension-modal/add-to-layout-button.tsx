@@ -1,7 +1,7 @@
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { getAvailableAxes } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import { SplitButton, FlyoutMenu, MenuItem, Button } from '@dhis2/ui'
+import { Button, ButtonStrip } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getAxisName } from '@modules/layout.js'
 import { getUiActiveDimensionModal } from '@store/ui-slice.js'
@@ -30,7 +30,7 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
 
     const availableAxes = getAvailableAxes(visType)
 
-    const onMenuItemClick = useCallback(
+    const onAxisClick = useCallback(
         (axisId: Axis): void => {
             dispatch(
                 addVisUiConfigLayoutDimension({ axis: axisId, dimensionId })
@@ -41,42 +41,20 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
         [dispatch, dimensionId, onClick]
     )
 
-    const getButtonLabel = useCallback(
-        (axisId: Axis): string =>
-            i18n.t(`Add to {{axisName}}`, {
-                axisName: getAxisName(axisId),
-            }),
-        []
-    )
-
-    return availableAxes.length > 1 ? (
-        <SplitButton
-            component={
-                <FlyoutMenu
-                    maxWidth="380px"
-                    dataTest={`${dataTest}-flyout-menu`}
+    return (
+        <ButtonStrip>
+            {availableAxes.map((axisId) => (
+                <Button
+                    small
+                    key={axisId}
+                    onClick={() => onAxisClick(axisId)}
+                    dataTest={`${dataTest}-${axisId}`}
                 >
-                    {availableAxes.slice(1).map((axisId) => (
-                        <MenuItem
-                            key={axisId}
-                            dataTest={`${dataTest}-flyout-menu-option-${axisId}`}
-                            onClick={() => onMenuItemClick(axisId)}
-                            label={getButtonLabel(axisId)}
-                        />
-                    ))}
-                </FlyoutMenu>
-            }
-            onClick={() => onMenuItemClick(availableAxes[0])}
-            dataTest={dataTest}
-        >
-            {getButtonLabel(availableAxes[0])}
-        </SplitButton>
-    ) : (
-        <Button
-            onClick={() => onMenuItemClick(availableAxes[0])}
-            dataTest={dataTest}
-        >
-            {getButtonLabel(availableAxes[0])}
-        </Button>
+                    {i18n.t('Add to {{axisName}}', {
+                        axisName: getAxisName(axisId),
+                    })}
+                </Button>
+            ))}
+        </ButtonStrip>
     )
 }

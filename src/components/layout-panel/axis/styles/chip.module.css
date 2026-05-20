@@ -63,3 +63,14 @@
 .active {
     opacity: 0.4;
 }
+
+.dialogOpen {
+    background-color: var(--colors-teal200);
+    border-color: var(--colors-teal500);
+    box-shadow: 0 0 0 2px rgb(33 150 143 / 0.25);
+}
+
+.dialogOpen:hover {
+    background-color: var(--colors-teal200);
+    border-color: var(--colors-teal500);
+}

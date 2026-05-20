@@ -1,10 +1,15 @@
 import type { AxisSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
+import { useDimensionDialogAnchor } from '@components/dimension-dialog/anchor-context'
 import { IconButton } from '@components/shared/icon-button'
 import { Layer, Popper, Tooltip, IconMore16 } from '@dhis2/ui'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
-import { setUiActiveDimensionModal } from '@store/ui-slice'
+import {
+    getUiActiveDimensionModal,
+    setUiActiveDimensionModal,
+    setUiDimensionDialogOriginType,
+} from '@store/ui-slice'
 import {
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
@@ -13,7 +18,14 @@ import {
 } from '@store/vis-ui-config-slice'
 import type { Axis, DimensionType, SavedVisualization, ValueType } from '@types'
 import cx from 'classnames'
-import { useCallback, useMemo, useRef, useState, type FC } from 'react'
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    type FC,
+} from 'react'
 import { ChipBase, type ChipBaseProps } from './chip-base'
 import { ChipMenu } from './chip-menu'
 import { DropInsertMarker } from './drop-insert-marker'
@@ -42,6 +54,9 @@ interface ChipProps {
 
 export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
     const dispatch = useAppDispatch()
+    const { setAnchorEl } = useDimensionDialogAnchor()
+    const activeDimensionModal = useAppSelector(getUiActiveDimensionModal)
+    const isDialogOpen = activeDimensionModal === dimension.id
     const [insertAfter, setInsertAfter] = useState<boolean>(false)
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const digitGroupSeparator = useAppSelector((state) =>
@@ -54,13 +69,32 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
         getVisUiConfigItemsByDimension(state, dimension.id)
     )
     const buttonRef = useRef<HTMLDivElement>(null)
+    const chipRootRef = useRef<HTMLDivElement | null>(null)
     const [menuIsOpen, setMenuIsOpen] = useState(false)
     const toggleChipMenu = useCallback(() => {
         setMenuIsOpen((currentMenuIsOpen) => !currentMenuIsOpen)
     }, [])
     const openDimensionModal = useCallback(() => {
+        if (activeDimensionModal === dimension.id) {
+            dispatch(setUiActiveDimensionModal(null))
+            setAnchorEl(null)
+            return
+        }
+        setAnchorEl(chipRootRef.current)
+        dispatch(setUiDimensionDialogOriginType('chip'))
         dispatch(setUiActiveDimensionModal(dimension.id))
-    }, [dispatch, dimension.id])
+    }, [activeDimensionModal, dispatch, dimension.id, setAnchorEl])
+
+    const isDialogOpenRef = useRef(isDialogOpen)
+    isDialogOpenRef.current = isDialogOpen
+    useEffect(() => {
+        return () => {
+            if (isDialogOpenRef.current) {
+                dispatch(setUiActiveDimensionModal(null))
+                setAnchorEl(null)
+            }
+        }
+    }, [dispatch, setAnchorEl])
     const hasConditions = useMemo(
         () =>
             Boolean(conditions?.condition?.length) ||
@@ -134,9 +168,17 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
         [transform, isSorting, transition]
     )
 
+    const setRefs = useCallback(
+        (node: HTMLDivElement | null) => {
+            chipRootRef.current = node
+            setNodeRef(node)
+        },
+        [setNodeRef]
+    )
+
     return (
         <div
-            ref={setNodeRef}
+            ref={setRefs}
             {...listeners}
             {...attributes}
             className={classes.draggableContainer}
@@ -150,6 +192,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                         items.length === 0 &&
                         !hasConditions,
                     [classes.active]: isDragging,
+                    [classes.dialogOpen]: isDialogOpen,
                     [classes.showBlank]: !dimension.name,
                 })}
                 data-test="layout-dimension-chip"

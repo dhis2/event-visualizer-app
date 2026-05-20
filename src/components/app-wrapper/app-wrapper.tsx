@@ -1,3 +1,4 @@
+import { DimensionDialogAnchorProvider } from '@components/dimension-dialog/anchor-context'
 import type { FC, ReactNode } from 'react'
 import { AppCachedDataQueryProvider } from './app-cached-data-query-provider'
 import { DndContextProvider } from './drag-and-drop-provider/dnd-context-provider'
@@ -19,7 +20,9 @@ export const AppWrapper: FC<{ children: ReactNode }> = ({ children }) => {
                     <StoreToLocationSyncer />
                     <DndContextProvider>
                         <InterpretationsProvider>
-                            {children}
+                            <DimensionDialogAnchorProvider>
+                                {children}
+                            </DimensionDialogAnchorProvider>
                         </InterpretationsProvider>
                     </DndContextProvider>
                 </StoreProvider>

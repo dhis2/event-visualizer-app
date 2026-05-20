@@ -8,6 +8,7 @@ interface DimensionItemContainerProps extends ComponentPropsWithoutRef<'div'> {
     disabled?: boolean
     isDragging?: boolean
     isDragOverlay?: boolean
+    dialogOpen?: boolean
 }
 
 export const DimensionItemContainer = forwardRef<
@@ -21,6 +22,7 @@ export const DimensionItemContainer = forwardRef<
             disabled,
             isDragging,
             isDragOverlay,
+            dialogOpen,
             className,
             children,
             ...rest
@@ -37,6 +39,7 @@ export const DimensionItemContainer = forwardRef<
                     [styles.disabled]: disabled,
                     [styles.dragging]: isDragging,
                     [styles.dragOverlay]: isDragOverlay,
+                    [styles.dialogOpen]: dialogOpen,
                 },
                 className
             )}

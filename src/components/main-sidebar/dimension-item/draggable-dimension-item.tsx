@@ -1,4 +1,5 @@
 import type { SidebarSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
+import { useDimensionDialogAnchor } from '@components/dimension-dialog/anchor-context'
 import { useIsDimensionInLayout } from '@components/main-sidebar/use-is-dimension-in-layout'
 import { IconButton } from '@components/shared/icon-button'
 import { IconAdd16, IconSubtract16 } from '@dhis2/ui'
@@ -10,13 +11,17 @@ import {
     isDimensionMultiSelected,
     toggleItemInMultiSelection,
 } from '@store/dimensions-selection-slice'
-import { setUiActiveDimensionModal } from '@store/ui-slice'
+import {
+    getUiActiveDimensionModal,
+    setUiActiveDimensionModal,
+    setUiDimensionDialogOriginType,
+} from '@store/ui-slice'
 import {
     addVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem, Program, ProgramStage } from '@types'
-import { useCallback, type FC } from 'react'
+import { useCallback, useEffect, useRef, type FC } from 'react'
 import { DimensionItem } from './dimension-item'
 import { DimensionItemContainer } from './dimension-item-container'
 import styles from './styles/draggable-dimension-item.module.css'
@@ -40,6 +45,10 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
     const multiSelected = useAppSelector((state) =>
         isDimensionMultiSelected(state, dimension.id)
     )
+    const activeDimensionModal = useAppSelector(getUiActiveDimensionModal)
+    const isDialogOpen = activeDimensionModal === dimension.id
+    const { setAnchorEl } = useDimensionDialogAnchor()
+    const itemRootRef = useRef<HTMLDivElement | null>(null)
 
     const populateMetadata = useCallback(() => {
         if (program) {
@@ -60,14 +69,37 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
             if (event.shiftKey && !selected) {
                 populateMetadata()
                 dispatch(toggleItemInMultiSelection(dimension.id))
+            } else if (activeDimensionModal === dimension.id) {
+                dispatch(setUiActiveDimensionModal(null))
+                setAnchorEl(null)
             } else {
                 dispatch(clearMultiSelection())
                 populateMetadata()
+                setAnchorEl(itemRootRef.current)
+                dispatch(setUiDimensionDialogOriginType('sidebar'))
                 dispatch(setUiActiveDimensionModal(dimension.id))
             }
         },
-        [dispatch, dimension.id, populateMetadata, selected]
+        [
+            activeDimensionModal,
+            dispatch,
+            dimension.id,
+            populateMetadata,
+            selected,
+            setAnchorEl,
+        ]
     )
+
+    const isDialogOpenRef = useRef(isDialogOpen)
+    isDialogOpenRef.current = isDialogOpen
+    useEffect(() => {
+        return () => {
+            if (isDialogOpenRef.current) {
+                dispatch(setUiActiveDimensionModal(null))
+                setAnchorEl(null)
+            }
+        }
+    }, [dispatch, setAnchorEl])
 
     const handleAddRemove = useCallback(() => {
         dispatch(clearMultiSelection())
@@ -125,9 +157,17 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
           }
         : undefined
 
+    const setRefs = useCallback(
+        (node: HTMLDivElement | null) => {
+            itemRootRef.current = node
+            setNodeRef(node)
+        },
+        [setNodeRef]
+    )
+
     return (
         <DimensionItemContainer
-            ref={setNodeRef}
+            ref={setRefs}
             style={style}
             {...attributes}
             {...listeners}
@@ -136,6 +176,7 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = ({
             multiSelected={multiSelected}
             disabled={disabled}
             isDragging={isDragging}
+            dialogOpen={isDialogOpen}
         >
             <div className={styles.content}>
                 <DimensionItem

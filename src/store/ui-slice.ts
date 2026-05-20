@@ -9,8 +9,13 @@ interface PanelVisibility {
     isMainSidebarVisible: boolean
 }
 
+export type DimensionDialogMode = 'modal' | 'popover'
+export type DimensionDialogOriginType = 'sidebar' | 'chip'
+
 export interface UiState {
     activeDimensionModal: string | null
+    dimensionDialogMode: DimensionDialogMode
+    dimensionDialogOriginType: DimensionDialogOriginType | null
     isDetailsPanelVisible: boolean
     isLayoutPanelExpanded: boolean
     isLayoutPanelVisible: boolean
@@ -21,6 +26,8 @@ export interface UiState {
 
 export const initialState: UiState = {
     activeDimensionModal: null,
+    dimensionDialogMode: 'modal',
+    dimensionDialogOriginType: null,
     isDetailsPanelVisible: false,
     isLayoutPanelExpanded: true,
     isLayoutPanelVisible: true,
@@ -77,6 +84,25 @@ export const uiSlice = createSlice({
             action: PayloadAction<string | null>
         ) => {
             state.activeDimensionModal = action.payload
+            if (action.payload === null) {
+                state.dimensionDialogOriginType = null
+            }
+        },
+        setUiDimensionDialogOriginType: (
+            state,
+            action: PayloadAction<DimensionDialogOriginType | null>
+        ) => {
+            state.dimensionDialogOriginType = action.payload
+        },
+        setUiDimensionDialogMode: (
+            state,
+            action: PayloadAction<DimensionDialogMode>
+        ) => {
+            state.dimensionDialogMode = action.payload
+        },
+        toggleUiDimensionDialogMode: (state) => {
+            state.dimensionDialogMode =
+                state.dimensionDialogMode === 'modal' ? 'popover' : 'modal'
         },
         toggleUiDetailsPanelVisible: (state) => {
             state.isDetailsPanelVisible = !state.isDetailsPanelVisible
@@ -104,6 +130,9 @@ export const uiSlice = createSlice({
     },
     selectors: {
         getUiActiveDimensionModal: (state) => state.activeDimensionModal,
+        getUiDimensionDialogMode: (state) => state.dimensionDialogMode,
+        getUiDimensionDialogOriginType: (state) =>
+            state.dimensionDialogOriginType,
         getUiDetailsPanelVisible: (state) => state.isDetailsPanelVisible,
         getUiLayoutPanelExpanded: (state) => state.isLayoutPanelExpanded,
         getUiLayoutPanelVisible: (state) => state.isLayoutPanelVisible,
@@ -121,7 +150,10 @@ export const {
     setUiMainSidebarWidth,
     resetUiMainSidebarWidth,
     setUiActiveDimensionModal,
+    setUiDimensionDialogMode,
+    setUiDimensionDialogOriginType,
     toggleUiDetailsPanelVisible,
+    toggleUiDimensionDialogMode,
     toggleUiLayoutPanelExpanded,
     toggleUiLayoutPanelVisible,
     toggleUiMainSidebarVisible,
@@ -129,6 +161,8 @@ export const {
 } = uiSlice.actions
 export const {
     getUiActiveDimensionModal,
+    getUiDimensionDialogMode,
+    getUiDimensionDialogOriginType,
     getUiDetailsPanelVisible,
     getUiLayoutPanelExpanded,
     getUiLayoutPanelVisible,

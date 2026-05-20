@@ -1,6 +1,7 @@
 import { AppWrapper } from '@components/app-wrapper'
 import { DetailsPanel } from '@components/details-panel/details-panel'
-import { DimensionModal } from '@components/dimension-modal/dimension-modal'
+import { useDimensionDialogAnchor } from '@components/dimension-dialog/anchor-context'
+import { DimensionDialog } from '@components/dimension-dialog/dimension-dialog'
 import { ErrorBoundary } from '@components/error-boundary/error-boundary'
 import { ErrorScreen } from '@components/error-screen/error-screen'
 import {
@@ -84,10 +85,11 @@ const EventVisualizer: FC = () => {
         [addAnalyticsResponseMetadata]
     )
 
-    const onDimensionModalClose = useCallback(
-        () => dispatch(setUiActiveDimensionModal(null)),
-        [dispatch]
-    )
+    const { setAnchorEl } = useDimensionDialogAnchor()
+    const onDimensionModalClose = useCallback(() => {
+        dispatch(setUiActiveDimensionModal(null))
+        setAnchorEl(null)
+    }, [dispatch, setAnchorEl])
 
     let centerContent: ReactNode
     if (loadError) {
@@ -121,7 +123,7 @@ const EventVisualizer: FC = () => {
                     <MainSidebar />
                 </ErrorBoundary>
                 {activeDimensionModal && (
-                    <DimensionModal onClose={onDimensionModalClose} />
+                    <DimensionDialog onClose={onDimensionModalClose} />
                 )}
             </GridStartColumn>
             <GridCenterColumnTop>

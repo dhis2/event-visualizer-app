@@ -1,13 +1,12 @@
+import { AddToLayoutButton } from '@components/dimension-modal/add-to-layout-button'
+import { ConditionsModalContent } from '@components/dimension-modal/conditions-modal-content/conditions-modal-content'
+import { DynamicDimensionModalContent } from '@components/dimension-modal/dynamic-dimension-modal-content/dynamic-dimension-modal-content'
+import { OrgUnitDimensionModalContent } from '@components/dimension-modal/orgunit-dimension-modal-content'
+import { PeriodDimensionModalContent } from '@components/dimension-modal/period-dimension-modal-content'
+import { StatusDimensionModalContent } from '@components/dimension-modal/status-dimension-modal-content'
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import i18n from '@dhis2/d2-i18n'
-import {
-    Modal,
-    ModalContent,
-    ModalActions,
-    ButtonStrip,
-    ModalTitle,
-    Button,
-} from '@dhis2/ui'
+import { Button } from '@dhis2/ui'
 import {
     useAppDispatch,
     useAppSelector,
@@ -17,23 +16,22 @@ import {
 import { isDimensionInLayout } from '@modules/layout'
 import { isDimensionMetadataItem } from '@modules/metadata'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
-import { getUiActiveDimensionModal } from '@store/ui-slice'
+import {
+    getUiActiveDimensionModal,
+    getUiDimensionDialogMode,
+    toggleUiDimensionDialogMode,
+} from '@store/ui-slice'
 import { getVisUiConfigLayout } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
-import { AddToLayoutButton } from './add-to-layout-button'
-import { ConditionsModalContent } from './conditions-modal-content/conditions-modal-content'
-import { DynamicDimensionModalContent } from './dynamic-dimension-modal-content/dynamic-dimension-modal-content'
-import { OrgUnitDimensionModalContent } from './orgunit-dimension-modal-content'
-import { PeriodDimensionModalContent } from './period-dimension-modal-content'
-import { StatusDimensionModalContent } from './status-dimension-modal-content'
-import classes from './styles/dimension-modal.module.css'
+import { DimensionDialogHeader } from './dimension-dialog-header'
+import classes from './styles/dimension-dialog.module.css'
 
-type DimensionModalContentProps = {
+type DimensionDialogContentProps = {
     dimension: DimensionMetadataItem
 }
 
-const DimensionModalContent: FC<DimensionModalContentProps> = ({
+const DimensionDialogContent: FC<DimensionDialogContentProps> = ({
     dimension,
 }) => {
     switch (dimension.dimensionType) {
@@ -52,12 +50,14 @@ const DimensionModalContent: FC<DimensionModalContentProps> = ({
     }
 }
 
-type DimensionModalProps = {
+type DimensionDialogShellProps = {
     onClose: () => void
 }
 
-export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
-    const dataTest = 'dimension-modal'
+export const DimensionDialogShell: FC<DimensionDialogShellProps> = ({
+    onClose,
+}) => {
+    const dataTest = 'dimension-dialog'
 
     const dispatch = useAppDispatch()
     const layout = useAppSelector(getVisUiConfigLayout)
@@ -65,14 +65,15 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
         getUiActiveDimensionModal
     ) as LayoutDimension['id']
     const dimension = useDimensionMetadataItem(dimensionId)
+    const mode = useAppSelector(getUiDimensionDialogMode)
 
     const isInLayout = isDimensionInLayout(layout, dimensionId)
 
     const stage = useProgramStageMetadataItem(dimension?.programStageId)
 
-    // XXX: this logic might need to include more dimension types
-    // for example per-stage ou and period dimensions
-    const modalTitle = useMemo(
+    /* XXX: this logic might need to include more dimension types
+       for example per-stage ou and period dimensions */
+    const dialogTitle = useMemo(
         () =>
             stage?.name &&
             dimension?.dimensionType &&
@@ -85,15 +86,18 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
                 'ORGANISATION_UNIT_GROUP_SET',
             ].includes(dimension.dimensionType)
                 ? `${dimension.name} - ${stage.name}`
-                : dimension?.name,
+                : (dimension?.name ?? ''),
         [dimension?.dimensionType, dimension?.name, stage?.name]
     )
 
     const onUpdate = useCallback(() => {
         dispatch(tUpdateCurrentVisFromVisUiConfig())
-
         onClose()
     }, [dispatch, onClose])
+
+    const onToggleMode = useCallback(() => {
+        dispatch(toggleUiDimensionDialogMode())
+    }, [dispatch])
 
     if (!isDimensionMetadataItem(dimension)) {
         throw new Error(
@@ -102,41 +106,38 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
     }
 
     return (
-        <Modal onClose={onClose} dataTest={`${dataTest}`} position="top" large>
-            <ModalTitle dataTest={`${dataTest}-title`}>{modalTitle}</ModalTitle>
-            <ModalContent
-                dataTest={`${dataTest}-content`}
-                className={classes.modalContent}
+        <>
+            <DimensionDialogHeader
+                title={dialogTitle}
+                mode={mode}
+                onToggleMode={onToggleMode}
+                onClose={onClose}
+                dataTest={`${dataTest}-header`}
+            />
+            <div
+                className={classes.scrollBody}
+                data-test={`${dataTest}-content`}
             >
-                <DimensionModalContent dimension={dimension} />
-            </ModalContent>
-            <ModalActions dataTest={`${dataTest}-actions`}>
-                <ButtonStrip>
+                <DimensionDialogContent dimension={dimension} />
+            </div>
+            <div className={classes.footer} data-test={`${dataTest}-actions`}>
+                {isInLayout ? (
                     <Button
                         type="button"
-                        secondary
-                        onClick={onClose}
-                        dataTest={`${dataTest}-action-cancel`}
+                        primary
+                        small
+                        onClick={onUpdate}
+                        dataTest={`${dataTest}-action-confirm`}
                     >
-                        {i18n.t('Hide')}
+                        {i18n.t('Update')}
                     </Button>
-                    {isInLayout ? (
-                        <Button
-                            type="button"
-                            primary
-                            onClick={onUpdate}
-                            dataTest={`${dataTest}-action-confirm`}
-                        >
-                            {i18n.t('Update')}
-                        </Button>
-                    ) : (
-                        <AddToLayoutButton
-                            onClick={onClose}
-                            dataTest={`${dataTest}-action-confirm`}
-                        />
-                    )}
-                </ButtonStrip>
-            </ModalActions>
-        </Modal>
+                ) : (
+                    <AddToLayoutButton
+                        onClick={onClose}
+                        dataTest={`${dataTest}-action-confirm`}
+                    />
+                )}
+            </div>
+        </>
     )
 }

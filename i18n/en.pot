@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-05T09:31:10.642Z\n"
-"PO-Revision-Date: 2026-05-05T09:31:10.643Z\n"
+"POT-Creation-Date: 2026-05-20T08:07:37.936Z\n"
+"PO-Revision-Date: 2026-05-20T08:07:37.937Z\n"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
@@ -119,6 +119,18 @@ msgstr "Last year"
 msgid "Period"
 msgstr "Period"
 
+msgid "Switch to popover mode"
+msgstr "Switch to popover mode"
+
+msgid "Switch to modal mode"
+msgstr "Switch to modal mode"
+
+msgid "Close"
+msgstr "Close"
+
+msgid "Update"
+msgstr "Update"
+
 msgid "Add to {{axisName}}"
 msgstr "Add to {{axisName}}"
 
@@ -184,12 +196,6 @@ msgstr "Most recent events:"
 
 msgid "Oldest events:"
 msgstr "Oldest events:"
-
-msgid "Hide"
-msgstr "Hide"
-
-msgid "Update"
-msgstr "Update"
 
 msgid "Start and end dates are inclusive and will be included in the outputs."
 msgstr "Start and end dates are inclusive and will be included in the outputs."
@@ -713,6 +719,9 @@ msgstr "Add a title"
 
 msgid "Options"
 msgstr "Options"
+
+msgid "Hide"
+msgstr "Hide"
 
 msgid "Display"
 msgstr "Display"
