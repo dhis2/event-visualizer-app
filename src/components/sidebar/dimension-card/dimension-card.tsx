@@ -11,10 +11,27 @@ import {
 } from '@store/dimensions-selection-slice'
 import type { DimensionCardKey } from '@types'
 import cx from 'classnames'
-import { useCallback, useEffect, type ReactNode, type FC } from 'react'
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    type ReactNode,
+    type FC,
+} from 'react'
 import { CardDisabledNotice } from './card-disabled-notice'
 import { DimensionCardHeader } from './dimension-card-header'
 import classes from './styles/dimension-card.module.css'
+
+/* Lets dim items inside a card learn whether their containing card is
+ * disabled, so they can suppress interaction (click, drag, + button)
+ * without each per-card component having to thread a flag through
+ * DimensionList. Load-more controls are rendered as siblings of the dim
+ * items (not via DraggableDimensionItem), so they stay interactive. */
+const ContainingCardDisabledContext = createContext<boolean>(false)
+
+export const useIsContainingCardDisabled = (): boolean =>
+    useContext(ContainingCardDisabledContext)
 
 type DimensionCardProps = {
     dimensionCardKey: DimensionCardKey
@@ -65,6 +82,7 @@ export const DimensionCard: FC<DimensionCardProps> = ({
                     selectedCount={selectedCount}
                     isCollapsed={isCollapsed}
                     onToggle={handleToggle}
+                    isDisabled={isVisuallyDisabled}
                 >
                     {title}
                 </DimensionCardHeader>
@@ -76,7 +94,11 @@ export const DimensionCard: FC<DimensionCardProps> = ({
                     })}
                     data-test="dimension-card-content"
                 >
-                    {children}
+                    <ContainingCardDisabledContext.Provider
+                        value={isVisuallyDisabled}
+                    >
+                        {children}
+                    </ContainingCardDisabledContext.Provider>
                 </div>
             </div>
         </>

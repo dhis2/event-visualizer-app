@@ -8,6 +8,7 @@ type DimensionCardHeaderProps = {
     selectedCount: number
     isCollapsed: boolean
     onToggle: () => void
+    isDisabled?: boolean
 }
 
 export const DimensionCardHeader: FC<DimensionCardHeaderProps> = ({
@@ -15,12 +16,14 @@ export const DimensionCardHeader: FC<DimensionCardHeaderProps> = ({
     selectedCount,
     isCollapsed,
     onToggle,
+    isDisabled = false,
 }) => {
     return (
         <button
             type="button"
             className={cx(classes.container, {
                 [classes.collapsed]: isCollapsed,
+                [classes.disabled]: isDisabled,
             })}
             onClick={onToggle}
             aria-expanded={!isCollapsed}

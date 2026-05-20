@@ -6,9 +6,10 @@
     border-radius: 5px;
 }
 .container.isDisabled {
-    opacity: 0.5;
+    border-color: var(--colors-grey300);
+    background-color: var(--colors-grey050);
 }
-.container:hover {
+.container:not(.isDisabled):hover {
     border-color: #b7c4d2;
 }
 .content {
