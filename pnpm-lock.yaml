@@ -97,8 +97,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0(eslint@9.39.4)
       '@ls-lint/ls-lint':
-        specifier: ^1.11.0
-        version: 1.11.2
+        specifier: ^2.3.1
+        version: 2.3.1
       '@sonar/scan':
         specifier: ^4.3.6
         version: 4.3.6
@@ -1999,6 +1999,12 @@ packages:
   '@ls-lint/ls-lint@1.11.2':
     resolution: {integrity: sha512-kX+CCjgNz+NHCaOcFyJLSBLRgAoyOxN18QFLpgucz5ILvbr60BGjwKaoPYTv/rBV/77L+Oz82lpP24mzJ2wGsQ==}
     cpu: [x64, arm64]
+    os: [darwin, linux, win32]
+    hasBin: true
+
+  '@ls-lint/ls-lint@2.3.1':
+    resolution: {integrity: sha512-vPe6IDByQnQRTxcAYjTxrmga/tSIui50VBFTB5KIJWY3OOFmxE2VtymjeSEfQfiMbhZV/ZPAqYy2lt8pZFQ0Rw==}
+    cpu: [x64, arm64, s390x, ppc64le]
     os: [darwin, linux, win32]
     hasBin: true
 
@@ -11160,6 +11166,8 @@ snapshots:
   '@keyv/serialize@1.1.1': {}
 
   '@ls-lint/ls-lint@1.11.2': {}
+
+  '@ls-lint/ls-lint@2.3.1': {}
 
   '@napi-rs/wasm-runtime@1.1.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
