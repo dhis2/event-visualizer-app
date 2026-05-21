@@ -3,7 +3,7 @@ import chipClasses from '@components/layout-panel/axis/styles/chip.module.css'
 import {
     DimensionItem,
     DimensionItemContainer,
-} from '@components/main-sidebar/dimension-item'
+} from '@components/sidebar/dimension-item'
 import { DragOverlay, useDndMonitor } from '@dnd-kit/core'
 import { snapCenterToCursor } from '@dnd-kit/modifiers'
 import { useAppDispatch, useAppSelector } from '@hooks'

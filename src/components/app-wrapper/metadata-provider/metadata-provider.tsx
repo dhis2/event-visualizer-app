@@ -8,6 +8,9 @@ import {
     isUserOrgUnitMetadataItem,
     isDimensionMetadataItem,
 } from '@modules/metadata'
+import { getInitialMetadata } from '@modules/metadata-store/initial-metadata'
+import { MetadataStore } from '@modules/metadata-store/metadata-store'
+import { assertTypedMetadataItem } from '@modules/metadata-store/typed-metadata-item'
 import { isPopulatedString } from '@modules/validation'
 import type {
     InitialMetadataItems,
@@ -30,9 +33,6 @@ import {
     useRef,
 } from 'react'
 import type { FC, ReactNode } from 'react'
-import { getInitialMetadata } from './initial-metadata'
-import { MetadataStore } from './metadata-store'
-import { assertTypedMetadataItem } from './typed-metadata-item'
 
 const MetadataContext = createContext<MetadataStore | null>(null)
 

@@ -1,12 +1,12 @@
-import { MAIN_SIDEBAR_DEFAULT_WIDTH } from '@components/main-sidebar/constants'
-import { getMainSidebarWidthFromLocalStorage } from '@components/main-sidebar/local-storage'
+import { SIDEBAR_DEFAULT_WIDTH } from '@components/sidebar/constants'
+import { getSidebarWidthFromLocalStorage } from '@components/sidebar/local-storage'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 
 interface PanelVisibility {
     isDetailsPanelVisible: boolean
     isLayoutPanelVisible: boolean
-    isMainSidebarVisible: boolean
+    isSidebarVisible: boolean
 }
 
 export interface UiState {
@@ -14,8 +14,8 @@ export interface UiState {
     isDetailsPanelVisible: boolean
     isLayoutPanelExpanded: boolean
     isLayoutPanelVisible: boolean
-    isMainSidebarVisible: boolean
-    mainSidebarWidth: number
+    isSidebarVisible: boolean
+    sidebarWidth: number
     savedPanelVisibility: PanelVisibility | null
 }
 
@@ -24,15 +24,15 @@ export const initialState: UiState = {
     isDetailsPanelVisible: false,
     isLayoutPanelExpanded: true,
     isLayoutPanelVisible: true,
-    isMainSidebarVisible: true,
-    mainSidebarWidth: getMainSidebarWidthFromLocalStorage(),
+    isSidebarVisible: true,
+    sidebarWidth: getSidebarWidthFromLocalStorage(),
     savedPanelVisibility: null,
 }
 
 const panelKeys: (keyof PanelVisibility)[] = [
     'isDetailsPanelVisible',
     'isLayoutPanelVisible',
-    'isMainSidebarVisible',
+    'isSidebarVisible',
 ]
 
 function isFullscreen(state: UiState) {
@@ -43,7 +43,7 @@ function savePanelVisibility(state: UiState) {
     state.savedPanelVisibility = {
         isDetailsPanelVisible: state.isDetailsPanelVisible,
         isLayoutPanelVisible: state.isLayoutPanelVisible,
-        isMainSidebarVisible: state.isMainSidebarVisible,
+        isSidebarVisible: state.isSidebarVisible,
     }
 }
 
@@ -66,11 +66,11 @@ export const uiSlice = createSlice({
     initialState,
     reducers: {
         clearUi: () => initialState,
-        setUiMainSidebarWidth: (state, action: PayloadAction<number>) => {
-            state.mainSidebarWidth = action.payload
+        setUiSidebarWidth: (state, action: PayloadAction<number>) => {
+            state.sidebarWidth = action.payload
         },
-        resetUiMainSidebarWidth: (state) => {
-            state.mainSidebarWidth = MAIN_SIDEBAR_DEFAULT_WIDTH
+        resetUiSidebarWidth: (state) => {
+            state.sidebarWidth = SIDEBAR_DEFAULT_WIDTH
         },
         setUiActiveDimensionModal: (
             state,
@@ -82,8 +82,8 @@ export const uiSlice = createSlice({
             state.isDetailsPanelVisible = !state.isDetailsPanelVisible
             state.savedPanelVisibility = null
         },
-        toggleUiMainSidebarVisible: (state) => {
-            state.isMainSidebarVisible = !state.isMainSidebarVisible
+        toggleUiSidebarVisible: (state) => {
+            state.isSidebarVisible = !state.isSidebarVisible
             state.savedPanelVisibility = null
         },
         toggleUiLayoutPanelExpanded: (state) => {
@@ -107,10 +107,10 @@ export const uiSlice = createSlice({
         getUiDetailsPanelVisible: (state) => state.isDetailsPanelVisible,
         getUiLayoutPanelExpanded: (state) => state.isLayoutPanelExpanded,
         getUiLayoutPanelVisible: (state) => state.isLayoutPanelVisible,
-        getUiMainSidebarVisible: (state) => state.isMainSidebarVisible,
-        getUiMainSidebarWidth: (state) => state.mainSidebarWidth,
+        getUiSidebarVisible: (state) => state.isSidebarVisible,
+        getUiSidebarWidth: (state) => state.sidebarWidth,
         getUiShowExpandedVisualizationCanvas: (state) =>
-            !state.isMainSidebarVisible &&
+            !state.isSidebarVisible &&
             !state.isLayoutPanelVisible &&
             !state.isDetailsPanelVisible,
     },
@@ -118,13 +118,13 @@ export const uiSlice = createSlice({
 
 export const {
     clearUi,
-    setUiMainSidebarWidth,
-    resetUiMainSidebarWidth,
+    setUiSidebarWidth,
+    resetUiSidebarWidth,
     setUiActiveDimensionModal,
     toggleUiDetailsPanelVisible,
     toggleUiLayoutPanelExpanded,
     toggleUiLayoutPanelVisible,
-    toggleUiMainSidebarVisible,
+    toggleUiSidebarVisible,
     toggleUiShowExpandedVisualizationCanvas,
 } = uiSlice.actions
 export const {
@@ -132,7 +132,7 @@ export const {
     getUiDetailsPanelVisible,
     getUiLayoutPanelExpanded,
     getUiLayoutPanelVisible,
-    getUiMainSidebarVisible,
-    getUiMainSidebarWidth,
+    getUiSidebarVisible,
+    getUiSidebarWidth,
     getUiShowExpandedVisualizationCanvas,
 } = uiSlice.selectors

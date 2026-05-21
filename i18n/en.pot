@@ -5,119 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-20T13:53:43.673Z\n"
-"PO-Revision-Date: 2026-05-20T13:53:43.674Z\n"
-
-msgid "User organisation unit"
-msgstr "User organisation unit"
-
-msgid "User sub-units"
-msgstr "User sub-units"
-
-msgid "User sub-x2-units"
-msgstr "User sub-x2-units"
-
-msgid "Today"
-msgstr "Today"
-
-msgid "Yesterday"
-msgstr "Yesterday"
-
-msgid "Last 3 days"
-msgstr "Last 3 days"
-
-msgid "Last 7 days"
-msgstr "Last 7 days"
-
-msgid "Last 14 days"
-msgstr "Last 14 days"
-
-msgid "This week"
-msgstr "This week"
-
-msgid "Last week"
-msgstr "Last week"
-
-msgid "Last 4 weeks"
-msgstr "Last 4 weeks"
-
-msgid "Last 12 weeks"
-msgstr "Last 12 weeks"
-
-msgid "Last 52 weeks"
-msgstr "Last 52 weeks"
-
-msgid "Weeks this year"
-msgstr "Weeks this year"
-
-msgid "This month"
-msgstr "This month"
-
-msgid "Last month"
-msgstr "Last month"
-
-msgid "Last 3 months"
-msgstr "Last 3 months"
-
-msgid "Last 6 months"
-msgstr "Last 6 months"
-
-msgid "Last 12 months"
-msgstr "Last 12 months"
-
-msgid "Months this year"
-msgstr "Months this year"
-
-msgid "This bimonth"
-msgstr "This bimonth"
-
-msgid "Last bimonth"
-msgstr "Last bimonth"
-
-msgid "Last 6 bimonths"
-msgstr "Last 6 bimonths"
-
-msgid "Bimonths this year"
-msgstr "Bimonths this year"
-
-msgid "This quarter"
-msgstr "This quarter"
-
-msgid "Last quarter"
-msgstr "Last quarter"
-
-msgid "Last 4 quarters"
-msgstr "Last 4 quarters"
-
-msgid "Quarters this year"
-msgstr "Quarters this year"
-
-msgid "This six-month"
-msgstr "This six-month"
-
-msgid "Last six-month"
-msgstr "Last six-month"
-
-msgid "Last 2 six-months"
-msgstr "Last 2 six-months"
-
-msgid "This financial year"
-msgstr "This financial year"
-
-msgid "Last financial year"
-msgstr "Last financial year"
-
-msgid "Last 5 financial years"
-msgstr "Last 5 financial years"
-
-msgid "This year"
-msgstr "This year"
-
-msgid "Last year"
-msgstr "Last year"
-
-msgid "Period"
-msgstr "Period"
+"POT-Creation-Date: 2026-05-20T14:40:12.838Z\n"
+"PO-Revision-Date: 2026-05-20T14:40:12.838Z\n"
 
 msgid "Add to {{axisName}}"
 msgstr "Add to {{axisName}}"
@@ -490,128 +379,6 @@ msgstr "oldest {{repeatEventIndex}}"
 msgid "most recent {{repeatEventIndex}}"
 msgstr "most recent {{repeatEventIndex}}"
 
-msgid "Enrollment data"
-msgstr "Enrollment data"
-
-msgid "Event data"
-msgstr "Event data"
-
-msgid "Program indicators"
-msgstr "Program indicators"
-
-msgid "{{name}} registration"
-msgstr "{{name}} registration"
-
-msgid "Choose a data source"
-msgstr "Choose a data source"
-
-msgid "No data sources available"
-msgstr "No data sources available"
-
-msgid "Programs"
-msgstr "Programs"
-
-msgid "Show more"
-msgstr "Show more"
-
-msgid "Analyze without a program"
-msgstr "Analyze without a program"
-
-msgid "Loading options"
-msgstr "Loading options"
-
-msgid "Failed to load data sources."
-msgstr "Failed to load data sources."
-
-msgid "Filter data sources"
-msgstr "Filter data sources"
-
-msgid "Metadata"
-msgstr "Metadata"
-
-msgid "Other"
-msgstr "Other"
-
-msgid "There was a problem and this data could not be loaded"
-msgstr "There was a problem and this data could not be loaded"
-
-msgid "There was problem loading more data"
-msgstr "There was problem loading more data"
-
-msgid "No data found"
-msgstr "No data found"
-
-msgid "No results"
-msgstr "No results"
-
-msgid "Load more"
-msgstr "Load more"
-
-msgid "Loading more..."
-msgstr "Loading more..."
-
-msgid "Org units"
-msgstr "Org units"
-
-msgid "Periods"
-msgstr "Periods"
-
-msgid "Statuses"
-msgstr "Statuses"
-
-msgid "Data elements"
-msgstr "Data elements"
-
-msgid "Program attributes"
-msgstr "Program attributes"
-
-msgid "Categories"
-msgstr "Categories"
-
-msgid "Category option group sets"
-msgstr "Category option group sets"
-
-msgid "Filter"
-msgstr "Filter"
-
-msgid ""
-"These dimensions belong to a different tracked entity type than the one "
-"used in the layout ({{tetName}}). Remove the existing dimensions to use "
-"these."
-msgstr ""
-"These dimensions belong to a different tracked entity type than the one "
-"used in the layout ({{tetName}}). Remove the existing dimensions to use "
-"these."
-
-msgid ""
-"Program indicators are not valid with {{visType}}. Switch to Line list to "
-"use them."
-msgstr ""
-"Program indicators are not valid with {{visType}}. Switch to Line list to "
-"use them."
-
-msgid ""
-"This dimension is used as the custom value. Remove the custom value to use "
-"it in the layout."
-msgstr ""
-"This dimension is used as the custom value. Remove the custom value to use "
-"it in the layout."
-
-msgid "Not valid with {{visType}}"
-msgstr "Not valid with {{visType}}"
-
-msgid "Expand all cards"
-msgstr "Expand all cards"
-
-msgid "Collapse all cards"
-msgstr "Collapse all cards"
-
-msgid "Something went wrong while searching."
-msgstr "Something went wrong while searching."
-
-msgid "Search"
-msgstr "Search"
-
 msgid "Column sub-totals"
 msgstr "Column sub-totals"
 
@@ -749,6 +516,128 @@ msgstr "Table subtitle"
 
 msgid "Labels"
 msgstr "Labels"
+
+msgid "Metadata"
+msgstr "Metadata"
+
+msgid "Other"
+msgstr "Other"
+
+msgid "Enrollment data"
+msgstr "Enrollment data"
+
+msgid "Event data"
+msgstr "Event data"
+
+msgid "Program indicators"
+msgstr "Program indicators"
+
+msgid "{{name}} registration"
+msgstr "{{name}} registration"
+
+msgid "Choose a data source"
+msgstr "Choose a data source"
+
+msgid "No data sources available"
+msgstr "No data sources available"
+
+msgid "Programs"
+msgstr "Programs"
+
+msgid "Show more"
+msgstr "Show more"
+
+msgid "Analyze without a program"
+msgstr "Analyze without a program"
+
+msgid "Loading options"
+msgstr "Loading options"
+
+msgid "Failed to load data sources."
+msgstr "Failed to load data sources."
+
+msgid "Filter data sources"
+msgstr "Filter data sources"
+
+msgid "There was a problem and this data could not be loaded"
+msgstr "There was a problem and this data could not be loaded"
+
+msgid "There was problem loading more data"
+msgstr "There was problem loading more data"
+
+msgid "No data found"
+msgstr "No data found"
+
+msgid "No results"
+msgstr "No results"
+
+msgid "Load more"
+msgstr "Load more"
+
+msgid "Loading more..."
+msgstr "Loading more..."
+
+msgid "Org units"
+msgstr "Org units"
+
+msgid "Periods"
+msgstr "Periods"
+
+msgid "Statuses"
+msgstr "Statuses"
+
+msgid "Data elements"
+msgstr "Data elements"
+
+msgid "Program attributes"
+msgstr "Program attributes"
+
+msgid "Categories"
+msgstr "Categories"
+
+msgid "Category option group sets"
+msgstr "Category option group sets"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid ""
+"These dimensions belong to a different tracked entity type than the one "
+"used in the layout ({{tetName}}). Remove the existing dimensions to use "
+"these."
+msgstr ""
+"These dimensions belong to a different tracked entity type than the one "
+"used in the layout ({{tetName}}). Remove the existing dimensions to use "
+"these."
+
+msgid ""
+"Program indicators are not valid with {{visType}}. Switch to Line list to "
+"use them."
+msgstr ""
+"Program indicators are not valid with {{visType}}. Switch to Line list to "
+"use them."
+
+msgid ""
+"This dimension is used as the custom value. Remove the custom value to use "
+"it in the layout."
+msgstr ""
+"This dimension is used as the custom value. Remove the custom value to use "
+"it in the layout."
+
+msgid "Not valid with {{visType}}"
+msgstr "Not valid with {{visType}}"
+
+msgid "Expand all cards"
+msgstr "Expand all cards"
+
+msgid "Collapse all cards"
+msgstr "Collapse all cards"
+
+msgid "Something went wrong while searching."
+msgstr "Something went wrong while searching."
+
+msgid "Search"
+msgstr "Search"
 
 msgid "Getting started"
 msgstr "Getting started"
@@ -1048,6 +937,117 @@ msgstr "Columns"
 
 msgid "Rows"
 msgstr "Rows"
+
+msgid "User organisation unit"
+msgstr "User organisation unit"
+
+msgid "User sub-units"
+msgstr "User sub-units"
+
+msgid "User sub-x2-units"
+msgstr "User sub-x2-units"
+
+msgid "Today"
+msgstr "Today"
+
+msgid "Yesterday"
+msgstr "Yesterday"
+
+msgid "Last 3 days"
+msgstr "Last 3 days"
+
+msgid "Last 7 days"
+msgstr "Last 7 days"
+
+msgid "Last 14 days"
+msgstr "Last 14 days"
+
+msgid "This week"
+msgstr "This week"
+
+msgid "Last week"
+msgstr "Last week"
+
+msgid "Last 4 weeks"
+msgstr "Last 4 weeks"
+
+msgid "Last 12 weeks"
+msgstr "Last 12 weeks"
+
+msgid "Last 52 weeks"
+msgstr "Last 52 weeks"
+
+msgid "Weeks this year"
+msgstr "Weeks this year"
+
+msgid "This month"
+msgstr "This month"
+
+msgid "Last month"
+msgstr "Last month"
+
+msgid "Last 3 months"
+msgstr "Last 3 months"
+
+msgid "Last 6 months"
+msgstr "Last 6 months"
+
+msgid "Last 12 months"
+msgstr "Last 12 months"
+
+msgid "Months this year"
+msgstr "Months this year"
+
+msgid "This bimonth"
+msgstr "This bimonth"
+
+msgid "Last bimonth"
+msgstr "Last bimonth"
+
+msgid "Last 6 bimonths"
+msgstr "Last 6 bimonths"
+
+msgid "Bimonths this year"
+msgstr "Bimonths this year"
+
+msgid "This quarter"
+msgstr "This quarter"
+
+msgid "Last quarter"
+msgstr "Last quarter"
+
+msgid "Last 4 quarters"
+msgstr "Last 4 quarters"
+
+msgid "Quarters this year"
+msgstr "Quarters this year"
+
+msgid "This six-month"
+msgstr "This six-month"
+
+msgid "Last six-month"
+msgstr "Last six-month"
+
+msgid "Last 2 six-months"
+msgstr "Last 2 six-months"
+
+msgid "This financial year"
+msgstr "This financial year"
+
+msgid "Last financial year"
+msgstr "Last financial year"
+
+msgid "Last 5 financial years"
+msgstr "Last 5 financial years"
+
+msgid "This year"
+msgstr "This year"
+
+msgid "Last year"
+msgstr "Last year"
+
+msgid "Period"
+msgstr "Period"
 
 msgid "Organisation unit"
 msgstr "Organisation unit"
