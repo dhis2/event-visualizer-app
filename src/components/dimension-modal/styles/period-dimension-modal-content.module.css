@@ -4,6 +4,10 @@
     padding-block-start: var(--spacers-dp12);
 }
 
+.modalPadded {
+    padding-inline: var(--spacers-dp12);
+}
+
 .navigation {
     flex-grow: 0;
 }

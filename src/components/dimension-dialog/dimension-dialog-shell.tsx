@@ -76,16 +76,11 @@ export const DimensionDialogShell: FC<DimensionDialogShellProps> = ({
 
     const stage = useProgramStageMetadataItem(dimension?.programStageId)
 
-    /* XXX: this logic might need to include more dimension types
-       for example per-stage ou and period dimensions */
     const dialogTitle = useMemo(
         () =>
             stage?.name &&
             dimension?.dimensionType &&
             ![
-                'ORGANISATION_UNIT',
-                'STATUS',
-                'PERIOD',
                 'CATEGORY',
                 'CATEGORY_OPTION_GROUP_SET',
                 'ORGANISATION_UNIT_GROUP_SET',

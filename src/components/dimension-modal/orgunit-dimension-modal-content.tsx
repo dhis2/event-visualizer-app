@@ -1,7 +1,4 @@
-import { Section } from '@components/dimension-modal/section'
 import { OrgUnitDimension, ouIdHelper } from '@dhis2/analytics'
-import i18n from '@dhis2/d2-i18n'
-import { IconFilter16 } from '@dhis2/ui'
 import {
     useAddMetadata,
     useAppDispatch,
@@ -11,6 +8,7 @@ import {
     useRootOrgUnits,
 } from '@hooks'
 import { getDimensionIdParts, getFullDimensionId } from '@modules/dimension'
+import { getUiDimensionDialogMode } from '@store/ui-slice'
 import {
     getVisUiConfigPlainItemIdsByDimension,
     getVisUiConfigOutputType,
@@ -22,6 +20,7 @@ import type {
     OrganisationUnitMetadataItem,
 } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
+import classes from './styles/orgunit-dimension-modal-content.module.css'
 
 type OrgUnitDimensionModalContentProps = {
     dimension: DimensionMetadataItem
@@ -118,14 +117,16 @@ export const OrgUnitDimensionModalContent: FC<
         [selectedIds, selectedIdsMetadata]
     )
 
+    const isModal = useAppSelector(getUiDimensionDialogMode) === 'modal'
+
     return (
-        <Section icon={<IconFilter16 />} title={i18n.t('Data')}>
+        <div className={isModal ? classes.modalPadded : undefined}>
             <OrgUnitDimension
                 selected={selected}
                 roots={orgUnitTreeRoots}
                 displayNameProp={currentUser.settings['displayNameProperty']}
                 onSelect={updateOrgUnitDimensionItems}
             />
-        </Section>
+        </div>
     )
 }

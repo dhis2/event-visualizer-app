@@ -1,10 +1,8 @@
-import { Section } from '@components/dimension-modal/section'
 import { PeriodDimension } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import {
     Field,
     IconArrowRight16,
-    IconFilter16,
     InputField,
     SegmentedControl,
     colors,
@@ -18,6 +16,7 @@ import {
 } from '@hooks'
 import { getStartEndDate, isStartEndDate } from '@modules/dates'
 import { getDimensionIdParts, getFullDimensionId } from '@modules/dimension.js'
+import { getUiDimensionDialogMode } from '@store/ui-slice'
 import {
     getVisUiConfigPlainItemIdsByDimension,
     getVisUiConfigOutputType,
@@ -182,8 +181,10 @@ export const PeriodDimensionModalContent: FC<
         }
     }
 
+    const isModal = useAppSelector(getUiDimensionDialogMode) === 'modal'
+
     return (
-        <Section icon={<IconFilter16 />} title={i18n.t('Data')}>
+        <div className={isModal ? classes.modalPadded : undefined}>
             <div className={classes.navigation}>
                 <SegmentedControl
                     options={[
@@ -226,6 +227,6 @@ export const PeriodDimensionModalContent: FC<
                     />
                 )}
             </div>
-        </Section>
+        </div>
     )
 }
