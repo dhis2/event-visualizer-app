@@ -1,4 +1,7 @@
-import { isDimensionMetadataItem } from '@modules/metadata'
+import {
+    isDimensionMetadataItem,
+    isProgramMetadataItem,
+} from '@modules/metadata'
 import { isObject, isPopulatedString } from '@modules/validation'
 import type {
     MetadataInputItem,
@@ -11,6 +14,29 @@ import {
     isCompoundDimensionId,
     resolveId,
 } from './dimension'
+
+/**
+ * Returns a Program's stages and TET as input items. Children without a name
+ * are skipped since they can't be stored on their own.
+ */
+export const getProgramChildrenAsInputs = (
+    item: unknown
+): MetadataInputItem[] => {
+    if (!isProgramMetadataItem(item)) {
+        return []
+    }
+    const children: MetadataInputItem[] = []
+    for (const stage of item.programStages ?? []) {
+        if (isPopulatedString(stage.id) && isPopulatedString(stage.name)) {
+            children.push(stage as unknown as MetadataInputItem)
+        }
+    }
+    const tet = item.trackedEntityType
+    if (tet && isPopulatedString(tet.id) && isPopulatedString(tet.name)) {
+        children.push(tet)
+    }
+    return children
+}
 
 export const extractInputId = (
     item: MetadataInputItem | string,
@@ -94,16 +120,18 @@ export const getCanonicalKeysForInput = (
 ): Set<string> => {
     const canonicalIds = new Set<string>()
     for (const [id, value] of Object.entries(metadataInput)) {
-        try {
-            const normalized = normalizeMetadataInputItem(
+        canonicalIds.add(
+            normalizeMetadataInputItem(
                 value as MetadataInputItem,
                 existingMetadataMap,
                 id
+            ).id
+        )
+        // Mirror addMetadata: a Program implies its stages and TET.
+        for (const child of getProgramChildrenAsInputs(value)) {
+            canonicalIds.add(
+                normalizeMetadataInputItem(child, existingMetadataMap).id
             )
-            canonicalIds.add(normalized.id)
-        } catch {
-            // If normalization fails, fall back to the raw input ID
-            canonicalIds.add(id)
         }
     }
     return canonicalIds

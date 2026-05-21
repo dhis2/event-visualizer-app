@@ -14,8 +14,8 @@ const makeDim = (
     }) as DimensionMetadataItem
 
 describe('getDimensionDisabledMessageByLayout — custom-value rule (Case C)', () => {
-    it('disables the dim that matches the custom value id', () => {
-        const dim = makeDim({ id: 'stage1.de1', dimensionId: 'de1' })
+    it('disables the dim whose compound id matches the custom value id', () => {
+        const dim = makeDim({ id: 'stage1.de1' })
         expect(
             getDimensionDisabledMessageByLayout({
                 dimension: dim,
@@ -27,8 +27,19 @@ describe('getDimensionDisabledMessageByLayout — custom-value rule (Case C)', (
         )
     })
 
+    it('does not disable a different stage-instance of the same DE', () => {
+        const dimStageB = makeDim({ id: 'stageB.de1' })
+        expect(
+            getDimensionDisabledMessageByLayout({
+                dimension: dimStageB,
+                visualizationType: 'PIVOT_TABLE',
+                customValueId: 'stageA.de1',
+            })
+        ).toBeNull()
+    })
+
     it('leaves non-matching dims enabled', () => {
-        const dim = makeDim({ id: 'stage1.de2', dimensionId: 'de2' })
+        const dim = makeDim({ id: 'stage1.de2' })
         expect(
             getDimensionDisabledMessageByLayout({
                 dimension: dim,
@@ -39,7 +50,7 @@ describe('getDimensionDisabledMessageByLayout — custom-value rule (Case C)', (
     })
 
     it('does not fire when no custom value is set', () => {
-        const dim = makeDim({ id: 'stage1.de1', dimensionId: 'de1' })
+        const dim = makeDim({ id: 'stage1.de1' })
         expect(
             getDimensionDisabledMessageByLayout({
                 dimension: dim,
