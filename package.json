@@ -29,7 +29,7 @@
         "@dhis2/config-prettier": "^0.2.2",
         "@dhis2/cypress-commands": "^10.1.2",
         "@eslint/compat": "^2.1.0",
-        "@ls-lint/ls-lint": "^1.11.0",
+        "@ls-lint/ls-lint": "^2.3.1",
         "@sonar/scan": "^4.3.6",
         "@testing-library/dom": "^10.4.0",
         "@testing-library/jest-dom": "^6.9.1",
