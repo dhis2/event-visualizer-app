@@ -610,6 +610,8 @@ export const normalizeApiSavedVisualization = (
         rows = [],
         filters = [],
         programDimensions = [],
+        sortOrder,
+        topLimit,
         ...rest
     } = apiVis
 
@@ -683,5 +685,7 @@ export const normalizeApiSavedVisualization = (
         programDimensions: normalizedProgramDimensions,
         ...(preserveTimeField ? { timeField } : {}),
         ...(markLegacy ? { legacy: true } : {}),
+        ...(sortOrder !== 0 && { sortOrder }),
+        ...(topLimit !== 0 && { topLimit }),
     } as SavedVisualization
 }
