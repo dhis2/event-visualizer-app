@@ -43,7 +43,7 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
 
     const getButtonLabel = useCallback(
         (axisId: Axis): string =>
-            i18n.t(`Add to {{axisName}}`, {
+            i18n.t(`Add to {{- axisName}}`, {
                 axisName: getAxisName(axisId),
             }),
         []

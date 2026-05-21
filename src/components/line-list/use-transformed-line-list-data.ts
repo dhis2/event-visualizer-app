@@ -30,11 +30,11 @@ const getHeaderDisplayText = (header: LineListAnalyticsDataHeader) => {
         } else if (stageOffset === 1) {
             repetitionSuffix = i18n.t('oldest')
         } else if (stageOffset > 1) {
-            repetitionSuffix = i18n.t('oldest {{repeatEventIndex}}', {
+            repetitionSuffix = i18n.t('oldest {{- repeatEventIndex}}', {
                 repeatEventIndex: `+${stageOffset - 1}`,
             })
         } else if (stageOffset < 0) {
-            repetitionSuffix = i18n.t('most recent {{repeatEventIndex}}', {
+            repetitionSuffix = i18n.t('most recent {{- repeatEventIndex}}', {
                 repeatEventIndex: stageOffset,
             })
         }

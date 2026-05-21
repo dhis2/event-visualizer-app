@@ -62,7 +62,7 @@ export const UnifiedSearchInput: FC = () => {
             setText(value)
             if (!isValidSearchTerm(value)) {
                 debouncedSetHelpMessage(
-                    i18n.t('Enter at least {{count}} characters to search', {
+                    i18n.t('Enter at least {{- count}} characters to search', {
                         count: MIN_SEARCH_TERM_LENGTH,
                     })
                 )

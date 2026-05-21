@@ -17,17 +17,17 @@ export const TrackedEntityInstanceButton: FC = () => {
     const buttonLabelLookup = useMemo(
         () => ({
             create: {
-                list: i18n.t('Create {{trackedEntityTypeName}} list', {
+                list: i18n.t('Create {{- trackedEntityTypeName}} list', {
                     trackedEntityTypeName,
                 }),
             },
             switch: {
-                list: i18n.t('Switch to {{trackedEntityTypeName}} list', {
+                list: i18n.t('Switch to {{- trackedEntityTypeName}} list', {
                     trackedEntityTypeName,
                 }),
             },
             update: {
-                list: i18n.t('Update {{trackedEntityTypeName}} list', {
+                list: i18n.t('Update {{- trackedEntityTypeName}} list', {
                     trackedEntityTypeName,
                 }),
             },

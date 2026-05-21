@@ -45,10 +45,10 @@ const ItemsList: FC<ItemsListProps> = ({ itemDisplayNames, dimensionId }) => {
     if (numberOverRenderLimit > 0) {
         itemsToRender.push(
             <li key={`${dimensionId}-render-limit`} className={styles.item}>
-                {i18n.t('And {{count}} other...', {
+                {i18n.t('And {{- count}} other...', {
                     count: numberOverRenderLimit,
-                    defaultValue: 'And {{count}} other...',
-                    defaultValue_plural: 'And {{count}} others...',
+                    defaultValue: 'And {{- count}} other...',
+                    defaultValue_plural: 'And {{- count}} others...',
                 })}
             </li>
         )

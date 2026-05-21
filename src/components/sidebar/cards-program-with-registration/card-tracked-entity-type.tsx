@@ -44,7 +44,7 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
     const {
         settings: { displayNameProperty },
     } = useCurrentUser()
-    const title = i18n.t('{{name}} registration', {
+    const title = i18n.t('{{- name}} registration', {
         name:
             program.displayTrackedEntityAttributeLabel ??
             program.trackedEntityType.name,

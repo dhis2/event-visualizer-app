@@ -28,26 +28,26 @@ export const EventButton: FC = () => {
     const buttonLabelLookup = useMemo(
         () => ({
             create: {
-                list: i18n.t('Create {{eventLabel}} list', {
+                list: i18n.t('Create {{- eventLabel}} list', {
                     eventLabel,
                 }),
-                table: i18n.t('Create {{eventLabel}} table', {
+                table: i18n.t('Create {{- eventLabel}} table', {
                     eventLabel,
                 }),
             },
             switch: {
-                list: i18n.t('Switch to {{eventLabel}} list', {
+                list: i18n.t('Switch to {{- eventLabel}} list', {
                     eventLabel,
                 }),
-                table: i18n.t('Switch to {{eventLabel}} table', {
+                table: i18n.t('Switch to {{- eventLabel}} table', {
                     eventLabel,
                 }),
             },
             update: {
-                list: i18n.t('Update {{eventLabel}} list', {
+                list: i18n.t('Update {{- eventLabel}} list', {
                     eventLabel,
                 }),
-                table: i18n.t('Update {{eventLabel}} table', {
+                table: i18n.t('Update {{- eventLabel}} table', {
                     eventLabel,
                 }),
             },

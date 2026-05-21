@@ -65,7 +65,7 @@ const StickyPagination = ({
                     pageLength={pageLength}
                     pageSummaryText={({ firstItem, lastItem, page }) =>
                         i18n.t(
-                            'Page {{page}}, row {{firstItem}}-{{lastItem}}',
+                            'Page {{- page}}, row {{- firstItem}}-{{- lastItem}}',
                             {
                                 firstItem,
                                 lastItem,
