@@ -9,7 +9,6 @@ import { useAppSelector, useCurrentUser } from '@hooks'
 import { isVisualizationValid } from '@modules/validation'
 import {
     getSingleProgramFromVisualization,
-    getSingleProgramStageFromVisualization,
     isVisualizationEmpty,
     isVisualizationWithTimeDimension,
     transformVisualizationForAnalyticsRequest,
@@ -63,17 +62,12 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                     .withOutputType(visualization.outputType)
             }
 
-            if (visualization.outputType === 'EVENT') {
-                req = req.withStage(
-                    getSingleProgramStageFromVisualization(visualization).id
-                )
-            }
-
             if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {
-                // can use multiple programs, so we cannot pass program here
-                req = req.withTrackedEntityType(
-                    visualization.trackedEntityType?.id
-                )
+                const trackedEntityTypeId = visualization.trackedEntityType?.id
+
+                if (trackedEntityTypeId) {
+                    req = req.withTrackedEntityType(trackedEntityTypeId)
+                }
             }
 
             if (
