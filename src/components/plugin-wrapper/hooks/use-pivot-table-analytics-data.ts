@@ -44,6 +44,16 @@ export const fetchAnalyticsDataForPT = async ({
         req = req.withProgramStatus(visualization.programStatus)
     }
 
+    if (visualization.sortOrder) {
+        req = req.withSortOrder(
+            visualization.sortOrder === '1' ? 'ASC' : 'DESC'
+        )
+    }
+
+    if (visualization.topLimit) {
+        req = req.withLimit(visualization.topLimit)
+    }
+
     // add custom value and aggregationType
     if (visualization.value && visualization.aggregationType) {
         req = req
