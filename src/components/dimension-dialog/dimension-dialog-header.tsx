@@ -7,6 +7,7 @@ import {
     Tooltip,
 } from '@dhis2/ui'
 import type { DimensionDialogMode } from '@store/ui-slice'
+import cx from 'classnames'
 import type { FC } from 'react'
 import classes from './styles/dimension-dialog.module.css'
 
@@ -35,9 +36,19 @@ export const DimensionDialogHeader: FC<DimensionDialogHeaderProps> = ({
         mode === 'modal' ? IconFullscreenExit16 : IconFullscreen16
 
     return (
-        <div className={classes.header} data-test={dataTest}>
+        <div
+            className={cx(classes.header, {
+                [classes.headerModal]: mode === 'modal',
+            })}
+            data-test={dataTest}
+        >
             <div className={classes.titleWrapper}>
-                <div className={classes.title} data-test={`${dataTest}-title`}>
+                <div
+                    className={cx(classes.title, {
+                        [classes.titleModal]: mode === 'modal',
+                    })}
+                    data-test={`${dataTest}-title`}
+                >
                     {title}
                 </div>
                 {info && (

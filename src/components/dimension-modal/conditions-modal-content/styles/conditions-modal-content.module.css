@@ -51,13 +51,54 @@
 .modeRadios {
     display: flex;
     flex-direction: column;
-    gap: var(--spacers-dp4);
+    gap: var(--spacers-dp8);
+}
+
+.modeCard {
+    border: 1px solid var(--colors-grey200);
+    border-radius: 4px;
+    padding: var(--spacers-dp8) var(--spacers-dp8);
+    background-color: var(--colors-white);
+    transition:
+        border-color 180ms ease,
+        background-color 180ms ease;
+}
+
+.modeCard:hover {
+    border-color: var(--colors-grey400);
+}
+
+.modeCardActive {
+    border-color: var(--colors-grey400);
+    background-color: var(--colors-grey050);
+}
+
+.modeCardActive:hover {
+    border-color: var(--colors-grey400);
+}
+
+.filterBodyWrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition:
+        grid-template-rows 220ms ease,
+        margin-block-start 220ms ease;
+    margin-block-start: 0;
+}
+
+.modeCardActive .filterBodyWrap {
+    grid-template-rows: 1fr;
+    margin-block-start: var(--spacers-dp8);
+}
+
+.filterBodyInner {
+    min-block-size: 0;
+    overflow: hidden;
 }
 
 .filterBody {
     display: flex;
     flex-direction: column;
-    padding-inline-start: var(--spacers-dp24);
 }
 
 .repetitionsRow {

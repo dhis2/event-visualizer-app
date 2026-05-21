@@ -353,124 +353,161 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         <ConditionsProvider.Provider value={providerValue}>
             <div className={classes.conditionsContent}>
                 <div className={classes.modeRadios}>
-                    <Radio
-                        name={radioName}
-                        label={i18n.t('Show all values')}
-                        value={FILTER_MODE_ALL}
-                        checked={mode === FILTER_MODE_ALL}
-                        onChange={({ value }) =>
-                            onModeChange(value as FilterMode)
-                        }
-                        dense
-                        dataTest="condition-mode-all"
-                    />
-                    <Radio
-                        name={radioName}
-                        label={i18n.t('Filter by...')}
-                        value={FILTER_MODE_FILTER}
-                        checked={mode === FILTER_MODE_FILTER}
-                        onChange={({ value }) =>
-                            onModeChange(value as FilterMode)
-                        }
-                        dense
-                        dataTest="condition-mode-filter"
-                    />
-                </div>
-                {mode === FILTER_MODE_FILTER && (
-                    <div className={classes.filterBody}>
-                        {(conditionsList.length ||
-                            conditions.legendSet ||
-                            isSingleCondition) && <Conditions />}
-                        {!isSingleCondition && (
-                            <Tooltip
-                                content={i18n.t(
-                                    "Preset options can't be combined with other conditions"
-                                )}
-                                placement="bottom"
-                                closeDelay={200}
-                            >
-                                {({ onMouseOver, onMouseOut, ref }) => (
-                                    <span
-                                        ref={ref}
-                                        onMouseOver={(event) =>
-                                            disableAddButton &&
-                                            onMouseOver(event)
-                                        }
-                                        onMouseOut={(event) =>
-                                            disableAddButton &&
-                                            onMouseOut(event)
-                                        }
-                                        className={classes.tooltipReference}
-                                    >
-                                        <DropdownButton
-                                            type="button"
-                                            small
-                                            secondary
-                                            open={isDropdownOpen}
-                                            onClick={toggleDropdown}
-                                            className={
-                                                classes.addConditionButton
-                                            }
-                                            disabled={disableAddButton}
-                                            dataTest="button-add-condition"
-                                            component={
-                                                <FlyoutMenu
-                                                    dense
-                                                    dataTest="add-condition-menu"
-                                                >
-                                                    {Object.entries(
-                                                        dropdownOperators
-                                                    ).map(([key, label]) => (
-                                                        <MenuItem
-                                                            key={key}
-                                                            label={label}
-                                                            onClick={() =>
-                                                                addCondition(
-                                                                    key as QueryOperator
-                                                                )
-                                                            }
-                                                            dataTest={`add-condition-menu-item-${key}`}
-                                                        />
-                                                    ))}
-                                                    {canHaveLegendSets && (
-                                                        <>
-                                                            <MenuDivider
-                                                                dense
-                                                            />
-                                                            {/* Stricter than disableAddButton: once any condition exists, the IN operator is not offered at all, since it is mutually exclusive with every other operator. */}
-                                                            <MenuItem
-                                                                dense
-                                                                label={i18n.t(
-                                                                    'is one of preset options'
-                                                                )}
-                                                                disabled={
-                                                                    conditionsList.length >
-                                                                    0
-                                                                }
-                                                                onClick={() =>
-                                                                    addCondition(
-                                                                        OPERATOR_IN
-                                                                    )
-                                                                }
-                                                                dataTest={`add-condition-menu-item-${OPERATOR_IN}`}
-                                                            />
-                                                        </>
-                                                    )}
-                                                </FlyoutMenu>
-                                            }
-                                        >
-                                            {conditionsList.length
-                                                ? i18n.t(
-                                                      'Add another condition'
-                                                  )
-                                                : i18n.t('Add a condition')}
-                                        </DropdownButton>
-                                    </span>
-                                )}
-                            </Tooltip>
-                        )}
+                    <div
+                        className={`${classes.modeCard} ${
+                            mode === FILTER_MODE_ALL
+                                ? classes.modeCardActive
+                                : ''
+                        }`}
+                    >
+                        <Radio
+                            name={radioName}
+                            label={i18n.t('Show all values')}
+                            value={FILTER_MODE_ALL}
+                            checked={mode === FILTER_MODE_ALL}
+                            onChange={({ value }) =>
+                                onModeChange(value as FilterMode)
+                            }
+                            dense
+                            dataTest="condition-mode-all"
+                        />
                     </div>
-                )}
+                    <div
+                        className={`${classes.modeCard} ${
+                            mode === FILTER_MODE_FILTER
+                                ? classes.modeCardActive
+                                : ''
+                        }`}
+                    >
+                        <Radio
+                            name={radioName}
+                            label={i18n.t('Filter by...')}
+                            value={FILTER_MODE_FILTER}
+                            checked={mode === FILTER_MODE_FILTER}
+                            onChange={({ value }) =>
+                                onModeChange(value as FilterMode)
+                            }
+                            dense
+                            dataTest="condition-mode-filter"
+                        />
+                        <div className={classes.filterBodyWrap}>
+                            <div className={classes.filterBodyInner}>
+                                <div className={classes.filterBody}>
+                                    {(conditionsList.length ||
+                                        conditions.legendSet ||
+                                        isSingleCondition) && <Conditions />}
+                                    {!isSingleCondition && (
+                                        <Tooltip
+                                            content={i18n.t(
+                                                "Preset options can't be combined with other conditions"
+                                            )}
+                                            placement="bottom"
+                                            closeDelay={200}
+                                        >
+                                            {({
+                                                onMouseOver,
+                                                onMouseOut,
+                                                ref,
+                                            }) => (
+                                                <span
+                                                    ref={ref}
+                                                    onMouseOver={(event) =>
+                                                        disableAddButton &&
+                                                        onMouseOver(event)
+                                                    }
+                                                    onMouseOut={(event) =>
+                                                        disableAddButton &&
+                                                        onMouseOut(event)
+                                                    }
+                                                    className={
+                                                        classes.tooltipReference
+                                                    }
+                                                >
+                                                    <DropdownButton
+                                                        type="button"
+                                                        small
+                                                        secondary
+                                                        open={isDropdownOpen}
+                                                        onClick={toggleDropdown}
+                                                        className={
+                                                            classes.addConditionButton
+                                                        }
+                                                        disabled={
+                                                            disableAddButton
+                                                        }
+                                                        dataTest="button-add-condition"
+                                                        component={
+                                                            <FlyoutMenu
+                                                                dense
+                                                                dataTest="add-condition-menu"
+                                                            >
+                                                                {Object.entries(
+                                                                    dropdownOperators
+                                                                ).map(
+                                                                    ([
+                                                                        key,
+                                                                        label,
+                                                                    ]) => (
+                                                                        <MenuItem
+                                                                            key={
+                                                                                key
+                                                                            }
+                                                                            label={
+                                                                                label
+                                                                            }
+                                                                            onClick={() =>
+                                                                                addCondition(
+                                                                                    key as QueryOperator
+                                                                                )
+                                                                            }
+                                                                            dataTest={`add-condition-menu-item-${key}`}
+                                                                        />
+                                                                    )
+                                                                )}
+                                                                {canHaveLegendSets && (
+                                                                    <>
+                                                                        <MenuDivider
+                                                                            dense
+                                                                        />
+                                                                        {/* Stricter than disableAddButton: once any condition exists, the IN operator is not offered at all, since it is mutually exclusive with every other operator. */}
+                                                                        <MenuItem
+                                                                            dense
+                                                                            label={i18n.t(
+                                                                                'is one of preset options'
+                                                                            )}
+                                                                            disabled={
+                                                                                conditionsList.length >
+                                                                                0
+                                                                            }
+                                                                            onClick={() =>
+                                                                                addCondition(
+                                                                                    OPERATOR_IN
+                                                                                )
+                                                                            }
+                                                                            dataTest={`add-condition-menu-item-${OPERATOR_IN}`}
+                                                                        />
+                                                                    </>
+                                                                )}
+                                                            </FlyoutMenu>
+                                                        }
+                                                    >
+                                                        {conditionsList.length
+                                                            ? i18n.t(
+                                                                  'Add another condition'
+                                                              )
+                                                            : i18n.t(
+                                                                  'Add a condition'
+                                                              )}
+                                                    </DropdownButton>
+                                                </span>
+                                            )}
+                                        </Tooltip>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </ConditionsProvider.Provider>
     )
