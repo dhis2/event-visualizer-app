@@ -37,10 +37,12 @@ type CustomValueModalProps = {
     onClose: () => void
 }
 
-type DataElementRecord = {
+// Shape returned by /api/analytics/events/query/dimensions; id is `stageId.deUid`.
+type DataElementDimension = {
     id: string
     name: string
     aggregationType: AggregationType
+    dimensionType: 'DATA_ELEMENT'
 }
 
 export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
@@ -58,7 +60,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     )
     const [dataElementId, setDataElementId] = useState(customValue?.id)
     const [dataElement, setDataElement] = useState<
-        DataElementRecord | undefined
+        DataElementDimension | undefined
     >(undefined)
 
     const programId = useMemo(() => {
@@ -72,18 +74,16 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
         }
     }, [layoutDimensionIds, metadataStore])
 
-    const { data, isLoading, isError, error } = useRtkQuery<
-        Record<
-            'programDataElements',
-            Record<'dataElement', DataElementRecord>[]
-        >
-    >({
-        resource: 'programDataElements',
+    const { data, isLoading, isError, error } = useRtkQuery<{
+        dimensions: DataElementDimension[]
+    }>({
+        resource: 'analytics/events/query/dimensions',
         params: {
-            program: programId!,
-            fields: `dataElement[id,${displayNameProperty}~rename(name),aggregationType]`,
+            programId: programId!,
+            fields: `id,${displayNameProperty}~rename(name),aggregationType,dimensionType`,
             filter: [
-                // TODO: add BOOLEAN and TRUE_ONLY if/when backend suppors it
+                'dimensionType:eq:DATA_ELEMENT',
+                // TODO: add BOOLEAN and TRUE_ONLY if/when backend supports it
                 `valueType:in:[${NUMERIC_VALUE_TYPES.join(',')}]`,
             ],
             paging: false,
@@ -96,10 +96,9 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     )
 
     const onDataElementChange = useCallback(
-        (dataElement: DataElementRecord) => {
+        (dataElement: DataElementDimension) => {
             setDataElementId(dataElement.id)
             setDataElement(dataElement)
-
             metadataStore.addMetadata(dataElement)
         },
         [metadataStore]
@@ -143,28 +142,26 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                             {error || i18n.t('Failed to load data elements')}
                         </NoticeBox>
                     )}
-                    {!isLoading &&
-                        !error &&
-                        data.programDataElements.length === 0 && (
-                            <NoticeBox
-                                title={i18n.t(
-                                    'No numeric data items in this program'
-                                )}
-                            >
-                                {i18n.t(
-                                    'This program does not have any numeric data elements available.'
-                                )}
-                            </NoticeBox>
-                        )}
+                    {!isLoading && !error && data.dimensions.length === 0 && (
+                        <NoticeBox
+                            title={i18n.t(
+                                'No numeric data items in this program'
+                            )}
+                        >
+                            {i18n.t(
+                                'This program does not have any numeric data elements available.'
+                            )}
+                        </NoticeBox>
+                    )}
                     {!isLoading &&
                         !isError &&
-                        data.programDataElements.map(({ dataElement }) => (
+                        data.dimensions.map((dimension) => (
                             <SingleSelectOption
-                                key={dataElement.id}
-                                label={dataElement.name}
-                                value={dataElement.id}
-                                active={dataElementId === dataElement.id}
-                                onClick={() => onDataElementChange(dataElement)}
+                                key={dimension.id}
+                                label={dimension.name}
+                                value={dimension.id}
+                                active={dataElementId === dimension.id}
+                                onClick={() => onDataElementChange(dimension)}
                             />
                         ))}
                 </div>
