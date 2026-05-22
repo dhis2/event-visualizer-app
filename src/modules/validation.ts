@@ -78,6 +78,35 @@ const validateLineListVisualization = (
     }
 }
 
+// Validation functions for Update and Download
+const validatePivotTableVisualization = (
+    visualization: CurrentVisualization
+): void => {
+    // program
+    if (!visualizationHasProgramId(visualization)) {
+        // noProgramError()
+        throw new Error('No program selected')
+    }
+
+    // columns and rows
+    if (
+        !isAxisValid(visualization.columns) &&
+        !isAxisValid(visualization.rows)
+    ) {
+        // TODO: noColumnsAndRowsError()
+        throw new Error('Columns and Rows are empty')
+    }
+
+    // organisation unit
+    const ouDimension = layoutGetDimension(visualization, DIMENSION_ID_ORGUNIT)
+    if (
+        !(ouDimension && dimensionIsValid(ouDimension, { requireItems: true }))
+    ) {
+        // TODO: noOrgUnitError()
+        throw new Error('No organisation unit selected')
+    }
+}
+
 export const validateVisualization = (
     visualization: CurrentVisualization | EmptyVisualization
 ): void => {
@@ -87,6 +116,11 @@ export const validateVisualization = (
         switch (visualization.type) {
             case 'LINE_LIST': {
                 validateLineListVisualization(visualization)
+
+                break
+            }
+            case 'PIVOT_TABLE': {
+                validatePivotTableVisualization(visualization)
 
                 break
             }
