@@ -12,12 +12,33 @@
     border: none;
     border-radius: 5px;
     background-color: var(--colors-white);
+    color: var(--colors-grey800);
     cursor: pointer;
 }
 
-.button:hover,
-.button.listIsOpen {
+.button:hover {
     background-color: var(--colors-grey200);
+}
+
+.button.listIsOpen {
+    background-color: var(--colors-grey300);
+}
+
+.button.listIsOpen .chevron {
+    transform: rotate(180deg);
+}
+
+.button:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+
+.button:active {
+    background-color: var(--colors-grey300);
+}
+
+.button:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .button > .selectedVisTypeLabel {
