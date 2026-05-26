@@ -77,7 +77,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     const { data, isLoading, isError, error } = useRtkQuery<{
         dimensions: DataElementDimension[]
     }>({
-        resource: 'analytics/events/query/dimensions',
+        resource: 'analytics/enrollments/aggregate/dimensions',
         params: {
             programId: programId!,
             fields: `id,${displayNameProperty}~rename(name),aggregationType,dimensionType`,
