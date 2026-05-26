@@ -13,8 +13,14 @@
 .container.collapsed {
     border-radius: 4px;
 }
+.container.disabled {
+    opacity: 0.5;
+}
 .container:hover {
     background-color: var(--colors-grey100);
+}
+.container.disabled:hover {
+    background-color: var(--colors-grey300);
 }
 .container:focus {
     outline: 3px solid var(--theme-focus);

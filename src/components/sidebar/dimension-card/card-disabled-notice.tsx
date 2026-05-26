@@ -1,6 +1,5 @@
 import { NoticeBox } from '@dhis2/ui'
 import type { FC } from 'react'
-import classes from './styles/card-disabled-notice.module.css'
 
 type CardDisabledNoticeProps = {
     message: string
@@ -9,7 +8,7 @@ type CardDisabledNoticeProps = {
 export const CardDisabledNotice: FC<CardDisabledNoticeProps> = ({
     message,
 }) => (
-    <div className={classes.container} data-test="card-disabled-notice">
+    <div data-test="card-disabled-notice">
         <NoticeBox warning dense>
             {message}
         </NoticeBox>

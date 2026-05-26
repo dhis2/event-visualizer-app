@@ -11,10 +11,24 @@ import {
 } from '@store/dimensions-selection-slice'
 import type { DimensionCardKey } from '@types'
 import cx from 'classnames'
-import { useCallback, useEffect, type ReactNode, type FC } from 'react'
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    type ReactNode,
+    type FC,
+} from 'react'
 import { CardDisabledNotice } from './card-disabled-notice'
 import { DimensionCardHeader } from './dimension-card-header'
 import classes from './styles/dimension-card.module.css'
+
+/* Descendants are passed in as `children`, so they can't receive the
+ * disabled state via props — they read it through this context. */
+const ContainingCardDisabledContext = createContext<boolean>(false)
+
+export const useIsContainingCardDisabled = (): boolean =>
+    useContext(ContainingCardDisabledContext)
 
 type DimensionCardProps = {
     dimensionCardKey: DimensionCardKey
@@ -65,6 +79,7 @@ export const DimensionCard: FC<DimensionCardProps> = ({
                     selectedCount={selectedCount}
                     isCollapsed={isCollapsed}
                     onToggle={handleToggle}
+                    isDisabled={isVisuallyDisabled}
                 >
                     {title}
                 </DimensionCardHeader>
@@ -76,7 +91,11 @@ export const DimensionCard: FC<DimensionCardProps> = ({
                     })}
                     data-test="dimension-card-content"
                 >
-                    {children}
+                    <ContainingCardDisabledContext.Provider
+                        value={isVisuallyDisabled}
+                    >
+                        {children}
+                    </ContainingCardDisabledContext.Provider>
                 </div>
             </div>
         </>

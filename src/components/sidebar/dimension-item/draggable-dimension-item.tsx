@@ -1,5 +1,6 @@
 import type { SidebarSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import { IconButton } from '@components/shared/icon-button'
+import { useIsContainingCardDisabled } from '@components/sidebar/dimension-card'
 import { useDimensionDisabledText } from '@components/sidebar/sidebar-disabling'
 import { useIsDimensionInLayout } from '@components/sidebar/use-is-dimension-in-layout'
 import { IconAdd16, IconSubtract16, Tooltip } from '@dhis2/ui'
@@ -54,6 +55,8 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
     const multiSelected = useAppSelector((state) =>
         isDimensionMultiSelected(state, dimension.id)
     )
+    const isContainingCardDisabled = useIsContainingCardDisabled()
+    const cardOrItemDisabled = isContainingCardDisabled || disabled
 
     const populateMetadata = useCallback(() => {
         if (program) {
@@ -121,7 +124,7 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
         transition,
     } = useSortable({
         id: `sidebar-${dimension.id}`,
-        disabled: disabled || selected,
+        disabled: cardOrItemDisabled || selected,
         data: droppableData,
     })
 
@@ -158,7 +161,7 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
             aria-roledescription="draggable item"
             selected={selected}
             multiSelected={multiSelected}
-            disabled={disabled}
+            disabled={cardOrItemDisabled}
             isDragging={isDragging}
         >
             <div className={styles.content}>
@@ -166,10 +169,10 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
                     name={dimension.name}
                     dimensionType={dimension.dimensionType}
                     selected={selected}
-                    disabled={disabled}
+                    disabled={cardOrItemDisabled}
                     onClick={handleClick}
                 />
-                {!disabled && !multiSelected && (
+                {!cardOrItemDisabled && !multiSelected && (
                     <div className={styles.iconButtonWrapper}>
                         <IconButton
                             onClick={(e) => {
