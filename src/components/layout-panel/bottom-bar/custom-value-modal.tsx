@@ -89,6 +89,47 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
             paging: false,
         },
     })
+    const dimensionsWithSuffixedNames = useMemo(() => {
+        if (!data || !programId) {
+            return
+        }
+
+        const program = metadataStore.getProgramMetadataItem(programId)
+
+        if (!program) {
+            throw new Error(
+                `Program with ID "${programId}" not found in the metadata store`
+            )
+        }
+
+        if (
+            !Array.isArray(program.programStages) ||
+            program.programStages.length <= 1
+        ) {
+            return data.dimensions
+        }
+
+        return data.dimensions.map((dimension) => {
+            const idParts = dimension.id.split('.')
+            const stageId = idParts.length === 2 && idParts[0]
+            if (!stageId) {
+                return dimension
+            }
+
+            const stage = metadataStore.getProgramStageMetadataItem(stageId)
+
+            if (!stage) {
+                throw new Error(
+                    `Could not find stage with ID "${stageId}" in the metadata store`
+                )
+            }
+
+            return {
+                ...dimension,
+                name: `${dimension.name} (${stage.name})`,
+            }
+        })
+    }, [data, programId, metadataStore])
 
     const onAggregationTypeChange = useCallback(
         ({ selected }) => setAggregationType(selected),
@@ -155,7 +196,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                     )}
                     {!isLoading &&
                         !isError &&
-                        data.dimensions.map((dimension) => (
+                        dimensionsWithSuffixedNames?.map((dimension) => (
                             <SingleSelectOption
                                 key={dimension.id}
                                 label={dimension.name}
