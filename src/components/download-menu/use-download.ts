@@ -6,9 +6,10 @@ import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { useConfig, useDataEngine } from '@dhis2/app-runtime'
 import { useAppSelector, useCurrentUser } from '@hooks'
-import { isVisualizationValid } from '@modules/validation'
 import {
     getSingleProgramFromVisualization,
+    isCurrentVisualizationNew,
+    isCurrentVisualizationPersisted,
     isVisualizationEmpty,
     isVisualizationWithTimeDimension,
     transformVisualizationForAnalyticsRequest,
@@ -284,7 +285,9 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
     )
 
     // XXX: should the transformed visualization be passed here?
-    const isDownloadEnabled = isVisualizationValid(currentVis)
+    const isDownloadEnabled =
+        isCurrentVisualizationNew(currentVis) ||
+        isCurrentVisualizationPersisted(currentVis)
 
     return {
         isDownloadDisabled: !isDownloadEnabled,
