@@ -23,11 +23,8 @@ import { CardDisabledNotice } from './card-disabled-notice'
 import { DimensionCardHeader } from './dimension-card-header'
 import classes from './styles/dimension-card.module.css'
 
-/* Lets dim items inside a card learn whether their containing card is
- * disabled, so they can suppress interaction (click, drag, + button)
- * without each per-card component having to thread a flag through
- * DimensionList. Load-more controls are rendered as siblings of the dim
- * items (not via DraggableDimensionItem), so they stay interactive. */
+/* Descendants are passed in as `children`, so they can't receive the
+ * disabled state via props — they read it through this context. */
 const ContainingCardDisabledContext = createContext<boolean>(false)
 
 export const useIsContainingCardDisabled = (): boolean =>
