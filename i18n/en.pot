@@ -662,6 +662,9 @@ msgstr "Something went wrong while searching."
 msgid "Search"
 msgstr "Search"
 
+msgid "Clear search"
+msgstr "Clear search"
+
 msgid "Getting started"
 msgstr "Getting started"
 

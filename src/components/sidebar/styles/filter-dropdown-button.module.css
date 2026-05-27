@@ -12,7 +12,7 @@
     display: flex;
     align-items: center;
     cursor: pointer;
-    color: var(--colors-grey600);
+    color: var(--colors-grey800);
     flex-shrink: 0;
     transition: background-color 0.15s ease;
 }
@@ -28,7 +28,8 @@
 .filterButton {
     gap: 4px;
     padding: 5px 6px 5px 4px;
-    border: 1px dashed #c8d1db;
+    border: 1px dashed
+        color-mix(in srgb, var(--colors-grey500) 50%, transparent);
     border-radius: 5px;
     background-color: transparent;
     font-size: 13px;
@@ -36,8 +37,12 @@
     white-space: nowrap;
 }
 .filterButton:hover {
-    background-color: var(--colors-grey100);
+    background-color: var(--colors-grey200);
     border-color: var(--colors-grey500);
+}
+.filterButton:active {
+    background-color: var(--colors-grey300);
+    border-color: var(--colors-grey600);
 }
 .filterButton.withSelection {
     background-color: var(--colors-white);

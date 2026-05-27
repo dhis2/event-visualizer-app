@@ -12,12 +12,33 @@
     border: none;
     border-radius: 5px;
     background-color: var(--colors-white);
+    color: var(--colors-grey800);
     cursor: pointer;
 }
 
-.button:hover,
-.button.listIsOpen {
+.button:hover {
     background-color: var(--colors-grey200);
+}
+
+.button.listIsOpen {
+    background-color: var(--colors-grey300);
+}
+
+.button.listIsOpen .chevron {
+    transform: rotate(180deg);
+}
+
+.button:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+
+.button:active {
+    background-color: var(--colors-grey300);
+}
+
+.button:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .button > .selectedVisTypeLabel {
@@ -48,7 +69,7 @@
 .sectionHeader {
     font-size: 12px;
     font-weight: 500;
-    color: var(--colors-grey800);
+    color: var(--colors-grey700);
     margin-block-end: var(--spacers-dp8);
 }
 
@@ -63,7 +84,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 8px 4px;
+    padding: 8px 4px 6px 4px;
     border: none;
     border-radius: 5px;
     background: var(--colors-grey100);
@@ -83,6 +104,11 @@
 
 .gridItem.active {
     background-color: var(--colors-blue100);
+    color: var(--colors-blue800);
+}
+
+.gridItem.active:hover:not(.disabled) {
+    background-color: var(--colors-blue100);
 }
 
 .gridItem.disabled {
@@ -92,12 +118,16 @@
 }
 
 .gridItemLabel {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
-    color: var(--colors-grey700);
-    margin-block-start: 4px;
+    color: var(--colors-grey800);
+    margin-block-start: 6px;
     text-align: center;
     line-height: 1.2;
+}
+
+.gridItem.active .gridItemLabel {
+    color: var(--colors-blue900);
 }
 
 .gridItem.disabled .gridItemLabel {
