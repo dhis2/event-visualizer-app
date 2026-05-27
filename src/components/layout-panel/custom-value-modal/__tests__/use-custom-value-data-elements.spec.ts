@@ -103,7 +103,7 @@ const buildMockOptions = (
                 },
                 customValue,
             },
-        }) as Partial<RootState>,
+        }),
     },
 })
 
