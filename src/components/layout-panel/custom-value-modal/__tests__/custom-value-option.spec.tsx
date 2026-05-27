@@ -23,19 +23,19 @@ describe('CustomValueOption', () => {
 
     it('omits the stage chip when stageName is absent', () => {
         render(<CustomValueOption {...baseProps} />)
-        expect(screen.getByRole('option').textContent).toBe('Weight in kg')
+        expect(screen.getByRole('button').textContent).toBe('Weight in kg')
     })
 
-    it('reflects active state via aria-selected', () => {
+    it('reflects active state via aria-pressed', () => {
         const { rerender } = render(<CustomValueOption {...baseProps} />)
-        expect(screen.getByRole('option')).toHaveAttribute(
-            'aria-selected',
+        expect(screen.getByRole('button')).toHaveAttribute(
+            'aria-pressed',
             'false'
         )
 
         rerender(<CustomValueOption {...baseProps} active />)
-        expect(screen.getByRole('option')).toHaveAttribute(
-            'aria-selected',
+        expect(screen.getByRole('button')).toHaveAttribute(
+            'aria-pressed',
             'true'
         )
     })
@@ -45,7 +45,7 @@ describe('CustomValueOption', () => {
         const user = userEvent.setup()
         render(<CustomValueOption {...baseProps} onClick={onClick} />)
 
-        await user.click(screen.getByRole('option'))
+        await user.click(screen.getByRole('button'))
         expect(onClick).toHaveBeenCalledOnce()
     })
 })

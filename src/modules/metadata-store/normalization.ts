@@ -28,7 +28,7 @@ export const getProgramChildrenAsInputs = (
     const children: MetadataInputItem[] = []
     for (const stage of item.programStages ?? []) {
         if (isPopulatedString(stage.id) && isPopulatedString(stage.name)) {
-            children.push(stage as unknown as MetadataInputItem)
+            children.push(stage)
         }
     }
     const tet = item.trackedEntityType

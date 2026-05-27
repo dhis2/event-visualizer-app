@@ -71,15 +71,17 @@ const dimensionsResponse = {
     ],
 }
 
+const defaultQueryData: MockOptions['queryData'] = {
+    [ANALYTICS_RESOURCE]: dimensionsResponse,
+}
+
 const initialPreloadedState: Partial<RootState> = {
     visUiConfig: visUiConfigInitialState,
 }
 
 const buildMockOptions = (
     layoutColumns: string[],
-    queryDataOverride: MockOptions['queryData'] = {
-        [ANALYTICS_RESOURCE]: dimensionsResponse,
-    },
+    queryDataOverride: MockOptions['queryData'] = defaultQueryData,
     customValue?: { id: string; aggregationType: 'SUM' | 'AVERAGE' }
 ) => ({
     metadata,
@@ -206,14 +208,12 @@ describe('CustomValueModal', () => {
         await user.click(updateButton)
 
         expect(onClose).toHaveBeenCalledOnce()
-        expect(
-            getVisUiConfigCustomValue(store.getState() as RootState)
-        ).toEqual({
+        expect(getVisUiConfigCustomValue(store.getState())).toEqual({
             aggregationType: 'SUM',
             id: 's1.de1',
         })
-        expect(
-            getVisUiConfigLastActiveButton(store.getState() as RootState)
-        ).toBe('CUSTOM_VALUE')
+        expect(getVisUiConfigLastActiveButton(store.getState())).toBe(
+            'CUSTOM_VALUE'
+        )
     })
 })

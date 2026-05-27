@@ -4,14 +4,13 @@ import { getDimensionDisabledMessageByLayout } from '../sidebar-disabling'
 
 const makeDim = (
     overrides: Partial<DimensionMetadataItem>
-): DimensionMetadataItem =>
-    ({
-        id: overrides.id ?? 'fallback.id',
-        dimensionId: overrides.dimensionId ?? 'fallback',
-        name: overrides.name ?? 'Fallback',
-        dimensionType: overrides.dimensionType ?? 'DATA_ELEMENT',
-        ...overrides,
-    }) as DimensionMetadataItem
+): DimensionMetadataItem => ({
+    id: overrides.id ?? 'fallback.id',
+    dimensionId: overrides.dimensionId ?? 'fallback',
+    name: overrides.name ?? 'Fallback',
+    dimensionType: overrides.dimensionType ?? 'DATA_ELEMENT',
+    ...overrides,
+})
 
 describe('getDimensionDisabledMessageByLayout — custom-value rule (Case C)', () => {
     it('disables the dim whose compound id matches the custom value id', () => {

@@ -17,11 +17,11 @@ export const CustomValueOption: FC<CustomValueOptionProps> = ({
     onClick,
     stageName,
 }) => (
-    <div
+    <button
+        type="button"
         className={cx(classes.option, { [classes.active]: active })}
         onClick={onClick}
-        role="option"
-        aria-selected={active}
+        aria-pressed={active}
         data-value={value}
         data-label={label}
     >
@@ -37,5 +37,5 @@ export const CustomValueOption: FC<CustomValueOptionProps> = ({
         </svg>
         <span className={classes.label}>{label}</span>
         {stageName && <span className={classes.stageChip}>{stageName}</span>}
-    </div>
+    </button>
 )

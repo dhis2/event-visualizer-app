@@ -6,6 +6,12 @@
     font-size: 14px;
     padding-block: var(--spacers-dp8);
     padding-inline: 6px var(--spacers-dp12);
+    appearance: none;
+    background: none;
+    border: 0;
+    inline-size: 100%;
+    text-align: start;
+    font-family: inherit;
 }
 
 .option:hover {
