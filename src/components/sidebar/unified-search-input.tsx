@@ -1,6 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import {
     CircularLoader,
+    IconCross16,
     IconErrorFilled16,
     IconSearch16,
     theme,
@@ -17,6 +18,7 @@ import {
     useCallback,
     useEffect,
     useMemo,
+    useRef,
     useState,
     type ChangeEventHandler,
 } from 'react'
@@ -37,6 +39,7 @@ export const UnifiedSearchInput: FC = () => {
     const store = useAppStore()
     const isLoading = useAppSelector(isAnyDimensionListLoading)
     const errors = useAppSelector(getAllDimensionListLoadErrors)
+    const inputRef = useRef<HTMLInputElement>(null)
     const [text, setText] = useState(() => {
         const state = store.getState()
         return state.dimensionSelection.searchTerm
@@ -73,6 +76,12 @@ export const UnifiedSearchInput: FC = () => {
         },
         [debouncedSetHelpMessage]
     )
+    const onClear = useCallback(() => {
+        setText('')
+        setHelpMessage(undefined)
+        debouncedSetHelpMessage.cancel()
+        inputRef.current?.focus()
+    }, [debouncedSetHelpMessage])
     const errorMessage = useMemo<string | undefined>(
         () =>
             errors.length === 0
@@ -115,6 +124,7 @@ export const UnifiedSearchInput: FC = () => {
         <div className={classes.container}>
             <div className={classes.inputWrap}>
                 <input
+                    ref={inputRef}
                     type="search"
                     value={text}
                     placeholder={i18n.t('Search')}
@@ -124,14 +134,29 @@ export const UnifiedSearchInput: FC = () => {
                     className={cx(classes.input, {
                         [classes.error]: !!errorMessage,
                         [classes.loading]: debouncedIsLoading,
+                        [classes.hasClear]: text.length > 0,
                     })}
                 />
                 <span className={classes.searchIcon} aria-hidden="true">
                     <IconSearch16 />
                 </span>
+                {text.length > 0 && (
+                    <button
+                        type="button"
+                        aria-label={i18n.t('Clear search')}
+                        onMouseDown={(event) => event.preventDefault()}
+                        onClick={onClear}
+                        className={classes.clearButton}
+                        data-test="search-clear-button"
+                    >
+                        <IconCross16 />
+                    </button>
+                )}
                 {debouncedIsLoading && (
                     <span
-                        className={classes.statusIcon}
+                        className={cx(classes.statusIcon, {
+                            [classes.statusIconShifted]: text.length > 0,
+                        })}
                         aria-hidden="true"
                         data-test="search-loader"
                     >
@@ -140,7 +165,9 @@ export const UnifiedSearchInput: FC = () => {
                 )}
                 {!!errorMessage && (
                     <span
-                        className={classes.statusIcon}
+                        className={cx(classes.statusIcon, {
+                            [classes.statusIconShifted]: text.length > 0,
+                        })}
                         aria-hidden="true"
                         data-test="search-error-icon"
                     >

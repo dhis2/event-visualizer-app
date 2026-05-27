@@ -203,6 +203,74 @@ describe('UnifiedSearchInput', () => {
         expect(mockDispatch).toHaveBeenCalledTimes(1)
     })
 
+    describe('clear button', () => {
+        it('should not render the clear button when input is empty', () => {
+            render(<UnifiedSearchInput />)
+
+            expect(
+                screen.queryByTestId('search-clear-button')
+            ).not.toBeInTheDocument()
+        })
+
+        it('should render the clear button as soon as the input has content', () => {
+            render(<UnifiedSearchInput />)
+
+            const input = screen.getByTestId('unified-search-input')
+            fireEvent.change(input, { target: { value: 'a' } })
+
+            expect(
+                screen.getByTestId('search-clear-button')
+            ).toBeInTheDocument()
+        })
+
+        it('should clear the input, dispatch an empty search term, and focus the input when clicked', () => {
+            mockGetState.mockReturnValue({
+                dimensionSelection: {
+                    searchTerm: 'existing',
+                },
+            })
+
+            render(<UnifiedSearchInput />)
+
+            const input = screen.getByTestId('unified-search-input')
+            expect(input).toHaveAttribute('value', 'existing')
+
+            fireEvent.click(screen.getByTestId('search-clear-button'))
+
+            expect(input).toHaveAttribute('value', '')
+            expect(input).toHaveFocus()
+            expect(
+                screen.queryByTestId('search-clear-button')
+            ).not.toBeInTheDocument()
+
+            act(() => {
+                vi.advanceTimersByTime(250)
+            })
+            expect(mockDispatch).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    type: expect.stringContaining('setSearchTerm'),
+                    payload: '',
+                })
+            )
+        })
+
+        it('should cancel a pending help message when clicked', () => {
+            render(<UnifiedSearchInput />)
+
+            const input = screen.getByTestId('unified-search-input')
+            fireEvent.change(input, { target: { value: 'a' } })
+
+            fireEvent.click(screen.getByTestId('search-clear-button'))
+
+            act(() => {
+                vi.advanceTimersByTime(2000)
+            })
+            expect(
+                screen.queryByTestId('search-help-message')
+            ).not.toBeInTheDocument()
+        })
+    })
+
     describe('help message', () => {
         it('should show help message after 2000ms when entering 1 character', () => {
             render(<UnifiedSearchInput />)

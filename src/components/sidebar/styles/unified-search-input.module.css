@@ -16,7 +16,11 @@
     pointer-events: none;
     inset-inline-start: 10px;
     padding: 0px;
-    color: var(--colors-grey600);
+    color: var(--colors-grey700);
+}
+
+.input:not(:placeholder-shown) + .searchIcon {
+    color: var(--colors-grey900);
 }
 
 .input {
@@ -24,8 +28,8 @@
     box-sizing: border-box;
     padding-inline-start: 30px; /* Space for left search icon */
     padding-block: 5px;
-    border: 1px solid var(--colors-grey400);
-    background-color: #fff9;
+    border: 1px solid color-mix(in srgb, var(--colors-grey500) 50%, transparent);
+    background-color: color-mix(in srgb, var(--colors-white) 80%, transparent);
     border-radius: 3px;
     font-size: 13px;
     line-height: 16px;
@@ -37,11 +41,16 @@
     text-overflow: ellipsis;
 }
 
+.input:not(:placeholder-shown) {
+    border-color: var(--colors-grey500);
+    box-shadow: 0 1px 3px #0c0c0c17;
+}
+
 .input:focus {
     outline: none;
     box-shadow: 0 0 0 2px var(--theme-focus) inset;
     border-color: var(--theme-focus);
-    background-color: var(--theme-white);
+    background-color: var(--colors-white);
 }
 .input:focus:not(:focus-visible) {
     outline: none;
@@ -54,20 +63,60 @@
     opacity: 1;
 }
 
-/* Make space for right icon */
+/* Hide the native clear button — we render a custom one that's always visible
+ * when there's content */
+.input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+}
+.input::-ms-clear {
+    display: none;
+}
+
+/* Make space for right-side icon */
 .input.error,
 .input.loading {
     padding-inline-end: 30px;
 }
 
-/* Also shift the "clear button" */
-.input.loading::-webkit-search-cancel-button,
-.input.error::-webkit-search-cancel-button {
-    inset-inline-end: 30px;
+.input.hasClear {
+    padding-inline-end: 28px;
+}
+
+/* Both clear button and status icon present — need space for both */
+.input.hasClear.error,
+.input.hasClear.loading {
+    padding-inline-end: 50px;
 }
 
 .input.error {
     border-color: var(--theme-error);
+}
+
+.clearButton {
+    all: unset;
+    position: absolute;
+    inset-inline-end: var(--spacers-dp4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    border-radius: 3px;
+    color: var(--colors-grey700);
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.clearButton:hover {
+    background-color: var(--colors-grey200);
+    color: var(--colors-grey900);
+}
+
+.clearButton:focus-visible {
+    outline: 2px solid var(--theme-focus);
+    outline-offset: -1px;
 }
 
 .statusIcon {
@@ -76,6 +125,11 @@
     align-items: center;
     pointer-events: none;
     inset-inline-end: 10px;
+}
+
+/* When the clear button is visible, slide the status icon left of it */
+.statusIconShifted {
+    inset-inline-end: 30px;
 }
 
 .help {

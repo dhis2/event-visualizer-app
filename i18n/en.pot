@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-21T06:56:50.174Z\n"
-"PO-Revision-Date: 2026-05-21T06:56:50.174Z\n"
+"POT-Creation-Date: 2026-05-27T08:05:49.741Z\n"
+"PO-Revision-Date: 2026-05-27T08:05:49.741Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -638,6 +638,9 @@ msgstr "Something went wrong while searching."
 
 msgid "Search"
 msgstr "Search"
+
+msgid "Clear search"
+msgstr "Clear search"
 
 msgid "Getting started"
 msgstr "Getting started"
