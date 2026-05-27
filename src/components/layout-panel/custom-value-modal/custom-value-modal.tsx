@@ -15,7 +15,12 @@ import {
     SingleSelectField,
     SingleSelectOption,
 } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector, useMetadataStore } from '@hooks'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useMetadataItem,
+    useMetadataStore,
+} from '@hooks'
 import {
     getVisUiConfigCustomValue,
     setVisUiConfigCustomValue,
@@ -24,6 +29,7 @@ import {
 import type { AggregationType } from '@types'
 import { type FC, useCallback, useState } from 'react'
 import { CustomValueOption } from './custom-value-option'
+import { StageNotice } from './stage-notice'
 import classes from './styles/custom-value-modal.module.css'
 import {
     useCustomValueDataElements,
@@ -38,6 +44,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     const dispatch = useAppDispatch()
     const metadataStore = useMetadataStore()
     const customValue = useAppSelector(getVisUiConfigCustomValue)
+    const customValueMetadata = useMetadataItem(customValue?.id)
     const [aggregationType, setAggregationType] = useState<AggregationType>(
         customValue?.aggregationType ?? 'DEFAULT'
     )
@@ -46,8 +53,14 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
         CustomValueDataElement | undefined
     >(undefined)
 
-    const { dataElements, isLoading, isError, error, filteredByStageName } =
-        useCustomValueDataElements()
+    const {
+        dataElements,
+        isLoading,
+        isError,
+        error,
+        filteredByStageName,
+        customValueStageMismatch,
+    } = useCustomValueDataElements()
 
     const onAggregationTypeChange = useCallback(
         ({ selected }) => setAggregationType(selected),
@@ -89,16 +102,11 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                         'Choose the numeric data element to show in table cells.'
                     )}
                 </p>
-                {filteredByStageName && (
-                    <div className={classes.stageNotice}>
-                        <NoticeBox
-                            title={i18n.t(
-                                'Showing data elements from stage "{{- stageName}}" which is used in the layout',
-                                { stageName: filteredByStageName }
-                            )}
-                        />
-                    </div>
-                )}
+                <StageNotice
+                    filteredByStageName={filteredByStageName}
+                    customValueStageMismatch={customValueStageMismatch}
+                    customValueDataElementName={customValueMetadata?.name}
+                />
                 <div className={classes.listContainer}>
                     {isLoading && (
                         <div className={classes.listLoading}>

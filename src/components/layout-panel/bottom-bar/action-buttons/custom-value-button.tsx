@@ -2,7 +2,12 @@ import { CustomValueModal } from '@components/layout-panel/custom-value-modal'
 import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
 import { IconSettings16, IconSync16, Tooltip } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector, useMetadataItem } from '@hooks'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useMetadataItem,
+    useProgramStageIds,
+} from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
     getVisUiConfigCustomValue,
@@ -10,84 +15,79 @@ import {
     setVisUiConfigOutputType,
 } from '@store/vis-ui-config-slice'
 import cx from 'classnames'
-import { useCallback, useMemo, useState, type FC } from 'react'
-import type { BaseButtonProps } from './base-button'
+import {
+    useCallback,
+    useMemo,
+    useState,
+    type FC,
+    type ReactElement,
+} from 'react'
 import classes from './styles/action-buttons.module.css'
 import { useActionButton } from './use-action-button'
 
-const BaseCustomValueButton: FC<BaseButtonProps> = ({
-    action,
-    disabled = false,
-    label,
-    tooltipProps,
-    type,
+const DEFAULT_TOOLTIP_OPEN_DELAY = 500
+
+type WithTooltipProps = {
+    content?: string
+    openDelay?: number
+    children: ReactElement
+}
+
+const WithTooltip: FC<WithTooltipProps> = ({
+    content,
+    openDelay = DEFAULT_TOOLTIP_OPEN_DELAY,
+    children,
 }) => {
-    const dispatch = useAppDispatch()
-    const customValue = useAppSelector(getVisUiConfigCustomValue)
-    const [isModalOpen, setIsModalOpen] = useState(false)
-    const isButtonReady = useMemo(
-        () => Boolean(customValue?.id && customValue.aggregationType),
-        [customValue]
-    )
-
-    const onClick = () => {
-        if (customValue) {
-            dispatch(setVisUiConfigLastActiveButton('CUSTOM_VALUE'))
-            dispatch(setVisUiConfigOutputType(type))
-            dispatch(tUpdateCurrentVisFromVisUiConfig())
-        } else {
-            setIsModalOpen(true)
-        }
+    if (!content) {
+        return children
     }
-
-    const onCogwheelClick = () => setIsModalOpen((curr) => !curr)
-    const onModalClose = useCallback(() => setIsModalOpen(false), [])
-
     return (
-        <div className={classes.splitButton}>
-            <button
-                type="button"
-                onClick={onClick}
-                disabled={disabled}
-                className={cx(classes.button, {
-                    [classes.disabled]: disabled,
-                    [classes.update]: action === 'update' && isButtonReady,
-                    [classes.splitLeft]: isButtonReady,
-                })}
-                {...tooltipProps}
-            >
-                {action === 'update' && <IconSync16 />}
-                {label}
-            </button>
-            {isButtonReady && (
-                <button
-                    onClick={onCogwheelClick}
-                    disabled={disabled}
-                    className={cx(classes.button, classes.splitRight, {
-                        [classes.disabled]: disabled,
-                        [classes.update]: action === 'update' && isButtonReady,
-                    })}
-                    {...tooltipProps}
-                >
-                    <IconSettings16 />
-                </button>
+        <Tooltip content={content} openDelay={openDelay}>
+            {(tooltipProps: object) => (
+                <span className={classes.tooltipWrapper} {...tooltipProps}>
+                    {children}
+                </span>
             )}
-
-            {isModalOpen && <CustomValueModal onClose={onModalClose} />}
-        </div>
+        </Tooltip>
     )
 }
 
 export const CustomValueButton: FC = () => {
+    const dispatch = useAppDispatch()
     const customValue = useAppSelector(getVisUiConfigCustomValue)
-
+    const programStageIds = useProgramStageIds()
     const customValueMetadata = useMetadataItem(customValue?.id)
-
-    const { action, tooltipConfig } = useActionButton('EVENT', 'CUSTOM_VALUE')
-
-    let tooltipContent = tooltipConfig?.content
-    const openDelay = tooltipConfig?.openDelay || 500
-
+    const { action, tooltipConfig: actionTooltipConfig } = useActionButton(
+        'EVENT',
+        'CUSTOM_VALUE'
+    )
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const isButtonReady = Boolean(
+        customValue?.id && customValue?.aggregationType
+    )
+    const layoutStageId = programStageIds[0] ?? null
+    const hasStageMismatch = Boolean(
+        customValue?.id &&
+        layoutStageId &&
+        customValue.id.split('.')[0] !== layoutStageId
+    )
+    const isFullyDisabled = Boolean(actionTooltipConfig)
+    const isUpdateDisabled = isFullyDisabled || hasStageMismatch
+    const configurationTooltipContent =
+        !isFullyDisabled && customValue && !hasStageMismatch
+            ? i18n.t('Using: {{- dataElementName}} ({{- aggregationType}})', {
+                  dataElementName: customValueMetadata?.name,
+                  aggregationType:
+                      aggregationTypeDisplayNames[customValue.aggregationType],
+                  nsSeparator: '^^',
+              })
+            : undefined
+    const stageMismatchTooltipContent =
+        !isFullyDisabled && hasStageMismatch
+            ? i18n.t(
+                  'Currently selected custom value data element is from a different stage than the dimensions in the layout'
+              )
+            : undefined
     const label = useMemo(() => {
         switch (action) {
             case 'create':
@@ -99,40 +99,63 @@ export const CustomValueButton: FC = () => {
         }
     }, [action])
 
-    const buttonProps = useMemo(
-        (): BaseButtonProps => ({
-            action,
-            label,
-            type: 'EVENT',
-            disabled: Boolean(tooltipConfig),
-        }),
-        [action, label, tooltipConfig]
+    const onUpdateClick = useCallback(() => {
+        if (customValue) {
+            dispatch(setVisUiConfigLastActiveButton('CUSTOM_VALUE'))
+            dispatch(setVisUiConfigOutputType('EVENT'))
+            dispatch(tUpdateCurrentVisFromVisUiConfig())
+        } else {
+            setIsModalOpen(true)
+        }
+    }, [customValue, dispatch])
+    const onConfigureClick = useCallback(() => {
+        setIsModalOpen((curr) => !curr)
+    }, [])
+    const onModalClose = useCallback(() => setIsModalOpen(false), [])
+
+    return (
+        <>
+            <WithTooltip
+                content={
+                    actionTooltipConfig?.content ?? configurationTooltipContent
+                }
+                openDelay={actionTooltipConfig?.openDelay}
+            >
+                <div className={classes.splitButton}>
+                    <WithTooltip content={stageMismatchTooltipContent}>
+                        <button
+                            type="button"
+                            onClick={onUpdateClick}
+                            disabled={isUpdateDisabled}
+                            className={cx(classes.button, {
+                                [classes.disabled]: isUpdateDisabled,
+                                [classes.update]:
+                                    action === 'update' && isButtonReady,
+                                [classes.splitStart]: isButtonReady,
+                            })}
+                        >
+                            {action === 'update' && <IconSync16 />}
+                            {label}
+                        </button>
+                    </WithTooltip>
+
+                    {isButtonReady && (
+                        <button
+                            type="button"
+                            onClick={onConfigureClick}
+                            disabled={isFullyDisabled}
+                            className={cx(classes.button, classes.splitEnd, {
+                                [classes.disabled]: isFullyDisabled,
+                                [classes.update]:
+                                    action === 'update' && !hasStageMismatch,
+                            })}
+                        >
+                            <IconSettings16 />
+                        </button>
+                    )}
+                </div>
+            </WithTooltip>
+            {isModalOpen && <CustomValueModal onClose={onModalClose} />}
+        </>
     )
-
-    if (!tooltipContent && customValue) {
-        tooltipContent = i18n.t(
-            `Using: {{- dataElementName}} ({{- aggregationType}})`,
-            {
-                dataElementName: customValueMetadata?.name,
-                aggregationType:
-                    aggregationTypeDisplayNames[customValue.aggregationType],
-                nsSeparator: '^^',
-            }
-        )
-    }
-
-    if (tooltipContent) {
-        return (
-            <Tooltip content={tooltipContent} openDelay={openDelay}>
-                {(tooltipProps) => (
-                    <BaseCustomValueButton
-                        {...buttonProps}
-                        tooltipProps={tooltipProps}
-                    />
-                )}
-            </Tooltip>
-        )
-    }
-
-    return <BaseCustomValueButton {...buttonProps} />
 }

@@ -2,6 +2,7 @@ import {
     visUiConfigSlice,
     initialState as visUiConfigInitialState,
     type VisUiConfigState,
+    type CustomValueObject,
 } from '@store/vis-ui-config-slice'
 import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 import { waitFor } from '@testing-library/react'
@@ -85,7 +86,8 @@ const initialPreloadedState: Partial<RootState> = {
 }
 
 const buildMockOptions = (
-    layoutOverride: Partial<VisUiConfigState['layout']>
+    layoutOverride: Partial<VisUiConfigState['layout']>,
+    customValue?: CustomValueObject
 ) => ({
     metadata,
     queryData: {
@@ -99,6 +101,7 @@ const buildMockOptions = (
                     ...visUiConfigInitialState.layout,
                     ...layoutOverride,
                 },
+                customValue,
             },
         }) as Partial<RootState>,
     },
@@ -158,6 +161,54 @@ describe('useCustomValueDataElements', () => {
             },
         ])
         expect(result.current.filteredByStageName).toBe('Stage 1')
+    })
+
+    it('flags customValueStageMismatch when the custom value stage differs from the layout stage', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useCustomValueDataElements(),
+            buildMockOptions(
+                { columns: ['s1.de1'] },
+                { id: 's2.de2', aggregationType: 'SUM' }
+            )
+        )
+
+        await waitFor(() => {
+            expect(result.current.dataElements).toBeDefined()
+        })
+
+        expect(result.current.customValueStageMismatch).toBe(true)
+    })
+
+    it('does not flag a mismatch when the custom value stage matches the layout stage', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useCustomValueDataElements(),
+            buildMockOptions(
+                { columns: ['s1.de1'] },
+                { id: 's1.de1', aggregationType: 'SUM' }
+            )
+        )
+
+        await waitFor(() => {
+            expect(result.current.dataElements).toBeDefined()
+        })
+
+        expect(result.current.customValueStageMismatch).toBe(false)
+    })
+
+    it('does not flag a mismatch when there is no layout stage', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useCustomValueDataElements(),
+            buildMockOptions(
+                { columns: ['p1.enrollmentDate'] },
+                { id: 's1.de1', aggregationType: 'SUM' }
+            )
+        )
+
+        await waitFor(() => {
+            expect(result.current.dataElements).toBeDefined()
+        })
+
+        expect(result.current.customValueStageMismatch).toBe(false)
     })
 
     it('returns undefined dataElements while loading', async () => {

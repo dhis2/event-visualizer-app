@@ -1,11 +1,13 @@
 import { NUMERIC_VALUE_TYPES } from '@constants/value-types'
 import {
+    useAppSelector,
     useCurrentUser,
     useMetadataStore,
     useProgramIds,
     useProgramStageIds,
     useRtkQuery,
 } from '@hooks'
+import { getVisUiConfigCustomValue } from '@store/vis-ui-config-slice'
 import type { AggregationType } from '@types'
 import { useMemo } from 'react'
 
@@ -22,7 +24,10 @@ export type CustomValueDataElement = DataElementDimension & {
     stageName?: string
 }
 
-const getStageIdFromDimensionId = (id: string): string | null => {
+const getStageIdFromDimensionId = (id: string | undefined): string | null => {
+    if (!id) {
+        return null
+    }
     const idParts = id.split('.')
     return idParts.length === 2 ? idParts[0] : null
 }
@@ -34,6 +39,7 @@ export const useCustomValueDataElements = () => {
     const metadataStore = useMetadataStore()
     const programIds = useProgramIds()
     const programStageIds = useProgramStageIds()
+    const customValue = useAppSelector(getVisUiConfigCustomValue)
 
     if (programIds.length !== 1) {
         throw new Error(
@@ -50,6 +56,7 @@ export const useCustomValueDataElements = () => {
     const layoutStageId = programStageIds[0] ?? null
 
     let filteredByStageName: string | undefined
+    let customValueStageMismatch = false
     if (layoutStageId) {
         const stage = metadataStore.getProgramStageMetadataItem(layoutStageId)
         if (!stage) {
@@ -58,6 +65,11 @@ export const useCustomValueDataElements = () => {
             )
         }
         filteredByStageName = stage.name
+
+        const customValueStageId = getStageIdFromDimensionId(customValue?.id)
+        customValueStageMismatch = Boolean(
+            customValueStageId && customValueStageId !== layoutStageId
+        )
     }
 
     const { data, ...queryResult } = useRtkQuery<{
@@ -102,5 +114,10 @@ export const useCustomValueDataElements = () => {
         })
     }, [data, layoutStageId, metadataStore])
 
-    return { ...queryResult, dataElements, filteredByStageName }
+    return {
+        ...queryResult,
+        dataElements,
+        filteredByStageName,
+        customValueStageMismatch,
+    }
 }

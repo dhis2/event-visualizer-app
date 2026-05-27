@@ -40,6 +40,12 @@ const metadata = {
         dimensionType: 'DATA_ELEMENT',
         valueType: 'NUMBER',
     },
+    's2.someDe': {
+        id: 's2.someDe',
+        name: 'Some DE',
+        dimensionType: 'DATA_ELEMENT',
+        valueType: 'NUMBER',
+    },
     'p1.enrollmentDate': {
         id: 'p1.enrollmentDate',
         name: 'Enrollment Date',
@@ -73,7 +79,8 @@ const buildMockOptions = (
     layoutColumns: string[],
     queryDataOverride: MockOptions['queryData'] = {
         [ANALYTICS_RESOURCE]: dimensionsResponse,
-    }
+    },
+    customValue?: { id: string; aggregationType: 'SUM' | 'AVERAGE' }
 ) => ({
     metadata,
     queryData: queryDataOverride,
@@ -85,6 +92,7 @@ const buildMockOptions = (
                     ...visUiConfigInitialState.layout,
                     columns: layoutColumns,
                 },
+                customValue,
             },
         }) as Partial<RootState>,
     },
@@ -125,6 +133,27 @@ describe('CustomValueModal', () => {
                 )
             ).toBeInTheDocument()
         })
+    })
+
+    it('shows the warning notice when the current custom value is from a different stage', async () => {
+        await renderWithAppWrapper(
+            <CustomValueModal onClose={() => {}} />,
+            buildMockOptions(['s1.de1'], undefined, {
+                id: 's2.someDe',
+                aggregationType: 'SUM',
+            })
+        )
+
+        await waitFor(() => {
+            expect(
+                screen.getByText(
+                    /Some DE.*different stage than the dimensions in the layout.*Stage 1/
+                )
+            ).toBeInTheDocument()
+        })
+        expect(
+            screen.queryByText(/which is used in the layout$/)
+        ).not.toBeInTheDocument()
     })
 
     it('omits the stage-filter notice when the layout has no program stage', async () => {

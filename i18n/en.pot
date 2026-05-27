@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-27T08:55:16.337Z\n"
-"PO-Revision-Date: 2026-05-27T08:55:16.338Z\n"
+"POT-Creation-Date: 2026-05-27T14:15:07.372Z\n"
+"PO-Revision-Date: 2026-05-27T14:15:07.372Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -189,6 +189,16 @@ msgstr "Levels"
 msgid "Groups"
 msgstr "Groups"
 
+msgid "Using: {{- dataElementName}} ({{- aggregationType}})"
+msgstr "Using: {{- dataElementName}} ({{- aggregationType}})"
+
+msgid ""
+"Currently selected custom value data element is from a different stage than "
+"the dimensions in the layout"
+msgstr ""
+"Currently selected custom value data element is from a different stage than "
+"the dimensions in the layout"
+
 msgid "Create custom value table"
 msgstr "Create custom value table"
 
@@ -197,9 +207,6 @@ msgstr "Switch to custom value table"
 
 msgid "Update custom value table"
 msgstr "Update custom value table"
-
-msgid "Using: {{- dataElementName}} ({{- aggregationType}})"
-msgstr "Using: {{- dataElementName}} ({{- aggregationType}})"
 
 msgid "Enrollment"
 msgstr "Enrollment"
@@ -297,13 +304,6 @@ msgstr "Configure custom value"
 msgid "Choose the numeric data element to show in table cells."
 msgstr "Choose the numeric data element to show in table cells."
 
-msgid ""
-"Showing data elements from stage \"{{- stageName}}\" which is used in the "
-"layout"
-msgstr ""
-"Showing data elements from stage \"{{- stageName}}\" which is used in the "
-"layout"
-
 msgid "Loading data"
 msgstr "Loading data"
 
@@ -324,6 +324,22 @@ msgstr "Aggregation"
 
 msgid "Cancel"
 msgstr "Cancel"
+
+msgid ""
+"The currently selected data element \"{{- dataElementName}}\" is from a "
+"different stage than the dimensions in the layout. Pick a new data element "
+"from stage \"{{- stageName}}\"."
+msgstr ""
+"The currently selected data element \"{{- dataElementName}}\" is from a "
+"different stage than the dimensions in the layout. Pick a new data element "
+"from stage \"{{- stageName}}\"."
+
+msgid ""
+"Showing data elements from stage \"{{- stageName}}\" which is used in the "
+"layout"
+msgstr ""
+"Showing data elements from stage \"{{- stageName}}\" which is used in the "
+"layout"
 
 msgid "Collapse layout"
 msgstr "Collapse layout"

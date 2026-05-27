@@ -22,9 +22,9 @@ import type { OutputType, Program } from '@types'
 import { useMemo } from 'react'
 import type { ButtonAction } from './base-button'
 
-type TooltipContent = { content: string; openDelay?: number } | undefined
+type TooltipConfig = { content: string; openDelay?: number } | undefined
 
-const getRegistrationOuTooltipContent = (): TooltipContent => ({
+const getRegistrationOuTooltipContent = (): TooltipConfig => ({
     content: i18n.t('Not valid with registration org. unit'),
 })
 
@@ -36,7 +36,7 @@ type CategoryLayoutState = {
 const getCategoryTooltipContent = ({
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
-}: CategoryLayoutState): TooltipContent => {
+}: CategoryLayoutState): TooltipConfig => {
     if (hasCategoryInLayout && hasCategoryOptionGroupSetInLayout) {
         return {
             content: i18n.t(
@@ -67,7 +67,7 @@ const getEventTooltipContent = ({
     hasMultipleProgramStagesInLayout,
     isRegistrationOuInLayout,
     visualizationType,
-}: EventTooltipContentParams): TooltipContent => {
+}: EventTooltipContentParams): TooltipConfig => {
     if (hasNoProgramInLayout) {
         return { content: i18n.t('Not valid without a program') }
     }
@@ -109,7 +109,7 @@ const getEnrollmentTooltipContent = ({
     hasMultipleProgramsInLayout,
     isRegistrationOuInLayout,
     visualizationType,
-}: EnrollmentTooltipContentParams): TooltipContent => {
+}: EnrollmentTooltipContentParams): TooltipConfig => {
     if (hasNoProgramInLayout) {
         return { content: i18n.t('Not valid without a program') }
     }
@@ -156,7 +156,7 @@ const getTrackedEntityInstanceTooltipContent = ({
     hasMultipleTetInLayout,
     hasProgramIndicatorsInLayout,
     visualizationType,
-}: TrackedEntityInstanceTooltipContentParams): TooltipContent => {
+}: TrackedEntityInstanceTooltipContentParams): TooltipConfig => {
     if (hasCompletedOnInLayout) {
         return {
             content: i18n.t('Not valid with Completed on'),
@@ -315,7 +315,7 @@ export const useActionButton = (
         [layout, tetId]
     )
 
-    const tooltipConfig = useMemo((): TooltipContent => {
+    const tooltipConfig = useMemo((): TooltipConfig => {
         if (isLayoutEmpty) {
             return {
                 content: i18n.t(

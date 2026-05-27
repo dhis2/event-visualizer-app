@@ -33,7 +33,3 @@
 .aggregationSelect {
     margin-block-start: var(--spacers-dp16);
 }
-
-.stageNotice {
-    margin-block-end: var(--spacers-dp16);
-}
