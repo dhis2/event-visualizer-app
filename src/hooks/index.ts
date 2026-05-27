@@ -38,6 +38,7 @@ export * from './use-conditions-texts'
 export * from './use-options-field'
 export * from './use-stable-callback'
 export * from './use-program-ids'
+export * from './use-program-stage-ids'
 export * from './use-tet-id'
 
 export const { useMutateMutation: useRtkMutation } = api

@@ -1,5 +1,10 @@
 import i18n from '@dhis2/d2-i18n'
-import { useAppSelector, useMetadataStore, useTetId } from '@hooks'
+import {
+    useAppSelector,
+    useMetadataStore,
+    useProgramStageIds,
+    useTetId,
+} from '@hooks'
 import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
 import { isDimensionInLayout, resolveProgramIds } from '@modules/layout'
 import { isVisualizationEmpty } from '@modules/visualization'
@@ -188,6 +193,7 @@ export const useActionButton = (
 ) => {
     const currentVis = useAppSelector(getCurrentVis)
     const tetId = useTetId()
+    const programStageIds = useProgramStageIds()
     const lastActiveButton = useAppSelector(getVisUiConfigLastActiveButton)
     const layout = useAppSelector(getVisUiConfigLayout)
     const layoutDimensionIds = useAppSelector(
@@ -289,29 +295,7 @@ export const useActionButton = (
     const hasMultipleProgramsInLayout: boolean = programCountInLayout > 1
     const hasMultipleTetInLayout: boolean = tetCountInLayout > 1
 
-    const hasMultipleProgramStagesInLayout: boolean = useMemo(() => {
-        const programStages = layoutDimensionIds.reduce(
-            (programStages, dimensionId) => {
-                const dimensionMetadata =
-                    metadataStore.getDimensionMetadataItem(dimensionId)
-
-                const programStage =
-                    dimensionMetadata?.programStageId &&
-                    metadataStore.getProgramStageMetadataItem(
-                        dimensionMetadata.programStageId
-                    )
-
-                if (programStage) {
-                    programStages[programStage.id] = programStage
-                }
-
-                return programStages
-            },
-            {}
-        )
-
-        return Object.keys(programStages).length > 1
-    }, [layoutDimensionIds, metadataStore])
+    const hasMultipleProgramStagesInLayout: boolean = programStageIds.length > 1
 
     const hasProgramIndicatorsInLayout: boolean = useMemo(
         () =>

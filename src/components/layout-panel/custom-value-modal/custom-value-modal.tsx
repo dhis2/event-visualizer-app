@@ -2,7 +2,6 @@ import {
     AGGREGATION_TYPES,
     aggregationTypeDisplayNames,
 } from '@constants/aggregation-types'
-import { NUMERIC_VALUE_TYPES } from '@constants/value-types'
 import i18n from '@dhis2/d2-i18n'
 import {
     Button,
@@ -16,120 +15,39 @@ import {
     SingleSelectField,
     SingleSelectOption,
 } from '@dhis2/ui'
-import {
-    useAppDispatch,
-    useAppSelector,
-    useCurrentUser,
-    useMetadataStore,
-    useRtkQuery,
-} from '@hooks'
+import { useAppDispatch, useAppSelector, useMetadataStore } from '@hooks'
 import {
     getVisUiConfigCustomValue,
-    getVisUiConfigLayoutAllDimensionIds,
     setVisUiConfigCustomValue,
     setVisUiConfigLastActiveButton,
 } from '@store/vis-ui-config-slice'
 import type { AggregationType } from '@types'
-import { type FC, useCallback, useMemo, useState } from 'react'
+import { type FC, useCallback, useState } from 'react'
+import { CustomValueOption } from './custom-value-option'
 import classes from './styles/custom-value-modal.module.css'
+import {
+    useCustomValueDataElements,
+    type CustomValueDataElement,
+} from './use-custom-value-data-elements'
 
 type CustomValueModalProps = {
     onClose: () => void
 }
 
-// Shape returned by /api/analytics/events/query/dimensions; id is `stageId.deUid`.
-type DataElementDimension = {
-    id: string
-    name: string
-    aggregationType: AggregationType
-    dimensionType: 'DATA_ELEMENT'
-}
-
 export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     const dispatch = useAppDispatch()
-    const {
-        settings: { displayNameProperty },
-    } = useCurrentUser()
     const metadataStore = useMetadataStore()
-    const layoutDimensionIds = useAppSelector(
-        getVisUiConfigLayoutAllDimensionIds
-    )
     const customValue = useAppSelector(getVisUiConfigCustomValue)
     const [aggregationType, setAggregationType] = useState<AggregationType>(
         customValue?.aggregationType ?? 'DEFAULT'
     )
     const [dataElementId, setDataElementId] = useState(customValue?.id)
     const [dataElement, setDataElement] = useState<
-        DataElementDimension | undefined
+        CustomValueDataElement | undefined
     >(undefined)
 
-    const programId = useMemo(() => {
-        for (const dimensionId of layoutDimensionIds) {
-            const programId =
-                metadataStore.getDimensionMetadataItem(dimensionId)?.programId
-
-            if (programId) {
-                return programId
-            }
-        }
-    }, [layoutDimensionIds, metadataStore])
-
-    const { data, isLoading, isError, error } = useRtkQuery<{
-        dimensions: DataElementDimension[]
-    }>({
-        resource: 'analytics/enrollments/aggregate/dimensions',
-        params: {
-            programId: programId!,
-            fields: `id,${displayNameProperty}~rename(name),aggregationType,dimensionType`,
-            filter: [
-                'dimensionType:eq:DATA_ELEMENT',
-                // TODO: add BOOLEAN and TRUE_ONLY if/when backend supports it
-                `valueType:in:[${NUMERIC_VALUE_TYPES.join(',')}]`,
-            ],
-            paging: false,
-        },
-    })
-    const dimensionsWithSuffixedNames = useMemo(() => {
-        if (!data || !programId) {
-            return
-        }
-
-        const program = metadataStore.getProgramMetadataItem(programId)
-
-        if (!program) {
-            throw new Error(
-                `Program with ID "${programId}" not found in the metadata store`
-            )
-        }
-
-        if (
-            !Array.isArray(program.programStages) ||
-            program.programStages.length <= 1
-        ) {
-            return data.dimensions
-        }
-
-        return data.dimensions.map((dimension) => {
-            const idParts = dimension.id.split('.')
-            const stageId = idParts.length === 2 && idParts[0]
-            if (!stageId) {
-                return dimension
-            }
-
-            const stage = metadataStore.getProgramStageMetadataItem(stageId)
-
-            if (!stage) {
-                throw new Error(
-                    `Could not find stage with ID "${stageId}" in the metadata store`
-                )
-            }
-
-            return {
-                ...dimension,
-                name: `${dimension.name} (${stage.name})`,
-            }
-        })
-    }, [data, programId, metadataStore])
+    const { dataElements, isLoading, isError, error, filteredByStageName } =
+        useCustomValueDataElements()
 
     const onAggregationTypeChange = useCallback(
         ({ selected }) => setAggregationType(selected),
@@ -137,7 +55,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     )
 
     const onDataElementChange = useCallback(
-        (dataElement: DataElementDimension) => {
+        (dataElement: CustomValueDataElement) => {
             setDataElementId(dataElement.id)
             setDataElement(dataElement)
             metadataStore.addMetadata(dataElement)
@@ -171,6 +89,16 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                         'Choose the numeric data element to show in table cells.'
                     )}
                 </p>
+                {filteredByStageName && (
+                    <div className={classes.stageNotice}>
+                        <NoticeBox
+                            title={i18n.t(
+                                'Showing data elements from stage "{{- stageName}}" which is used in the layout',
+                                { stageName: filteredByStageName }
+                            )}
+                        />
+                    </div>
+                )}
                 <div className={classes.listContainer}>
                     {isLoading && (
                         <div className={classes.listLoading}>
@@ -178,12 +106,13 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                             <span>{i18n.t('Loading data')}</span>
                         </div>
                     )}
-                    {!isError && error && (
+                    {isError && (
                         <NoticeBox error title={i18n.t('Error loading data')}>
-                            {error || i18n.t('Failed to load data elements')}
+                            {error?.message ||
+                                i18n.t('Failed to load data elements')}
                         </NoticeBox>
                     )}
-                    {!isLoading && !error && data.dimensions.length === 0 && (
+                    {!isLoading && !isError && dataElements?.length === 0 && (
                         <NoticeBox
                             title={i18n.t(
                                 'No numeric data items in this program'
@@ -196,13 +125,14 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                     )}
                     {!isLoading &&
                         !isError &&
-                        dimensionsWithSuffixedNames?.map((dimension) => (
-                            <SingleSelectOption
-                                key={dimension.id}
-                                label={dimension.name}
-                                value={dimension.id}
-                                active={dataElementId === dimension.id}
-                                onClick={() => onDataElementChange(dimension)}
+                        dataElements?.map((dataElement) => (
+                            <CustomValueOption
+                                key={dataElement.id}
+                                label={dataElement.name}
+                                value={dataElement.id}
+                                active={dataElementId === dataElement.id}
+                                stageName={dataElement.stageName}
+                                onClick={() => onDataElementChange(dataElement)}
                             />
                         ))}
                 </div>
