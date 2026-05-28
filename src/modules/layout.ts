@@ -1,6 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import { toEventVisualizationDimensionId } from '@modules/dimension'
 import { parseUiRepetitions } from '@modules/repetitions'
+import { isValueTypeNumeric } from '@modules/value-type'
 import {
     selectLayoutAllDimensionIds,
     type VisUiConfigState,
@@ -14,6 +15,7 @@ import type {
     Layout,
     MetadataStore,
     Program,
+    VisualizationType,
 } from '@types'
 
 export const getAxisName = (axisId: Axis): string => getAxisNames()[axisId]
@@ -188,6 +190,75 @@ export const resolveTetId = (
         }
     }
     return null
+}
+
+const EMPTY_AXIS_SET: ReadonlySet<Axis> = Object.freeze(
+    new Set<Axis>()
+) as ReadonlySet<Axis>
+const COLUMNS_AND_ROWS: ReadonlySet<Axis> = Object.freeze(
+    new Set<Axis>(['columns', 'rows'])
+) as ReadonlySet<Axis>
+
+/* A dimension is non-aggregatable when it represents arbitrary per-record
+ * values that the analytics engine cannot aggregate numerically. This applies
+ * to data elements and tracked-entity-attribute dimensions whose value type is
+ * not numeric. Program indicators, fixed dimensions (status, dates, org units)
+ * and categories/COGS are always aggregatable. */
+export const isDimensionAggregatable = (
+    dim: Partial<Pick<DimensionMetadataItem, 'dimensionType' | 'valueType'>>
+): boolean => {
+    if (
+        dim.dimensionType !== 'DATA_ELEMENT' &&
+        dim.dimensionType !== 'PROGRAM_ATTRIBUTE'
+    ) {
+        return true
+    }
+    return !!dim.valueType && isValueTypeNumeric(dim.valueType)
+}
+
+export const getInvalidAxesForDimension = (
+    dim: Partial<Pick<DimensionMetadataItem, 'dimensionType' | 'valueType'>>,
+    visType: VisualizationType
+): ReadonlySet<Axis> => {
+    if (visType === 'PIVOT_TABLE' && !isDimensionAggregatable(dim)) {
+        return COLUMNS_AND_ROWS
+    }
+    return EMPTY_AXIS_SET
+}
+
+export const isAxisInvalidForDimension = (
+    dim: Partial<Pick<DimensionMetadataItem, 'dimensionType' | 'valueType'>>,
+    axis: Axis,
+    visType: VisualizationType
+): boolean => getInvalidAxesForDimension(dim, visType).has(axis)
+
+/* Per-axis allow-list for the set of dims being dragged together. The set
+ * is the intersection: an axis is allowed only if every dim accepts it.
+ * Consumed by the DnD layer to mark droppables disabled for the active drag. */
+export const getAllowedTargetAxis = (
+    dims: ReadonlyArray<
+        Partial<Pick<DimensionMetadataItem, 'dimensionType' | 'valueType'>>
+    >,
+    visType: VisualizationType
+): Record<Axis, boolean> => {
+    const allowed: Record<Axis, boolean> = {
+        columns: true,
+        rows: true,
+        filters: true,
+    }
+    for (const dim of dims) {
+        const invalid = getInvalidAxesForDimension(dim, visType)
+        if (invalid.has('columns')) {
+            allowed.columns = false
+        }
+        if (invalid.has('rows')) {
+            allowed.rows = false
+        }
+        if (invalid.has('filters')) {
+            allowed.filters = false
+        }
+    }
+    return allowed
 }
 
 export const resolveTeiFields = (

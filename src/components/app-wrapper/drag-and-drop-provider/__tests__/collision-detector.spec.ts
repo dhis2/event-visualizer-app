@@ -141,6 +141,11 @@ describe('collision-detector', () => {
                     axis,
                     overlayItemProps: {} as any,
                     insertAfter: false,
+                    allowedTargetAxis: {
+                        columns: true,
+                        rows: true,
+                        filters: true,
+                    },
                     sortable: { index, containerId: axis, items: [] },
                 } as AxisSortableData,
             },
@@ -439,6 +444,11 @@ describe('collision-detector', () => {
                     axis,
                     overlayItemProps: {} as any,
                     insertAfter: false,
+                    allowedTargetAxis: {
+                        columns: true,
+                        rows: true,
+                        filters: true,
+                    },
                     sortable: { index, containerId: axis, items: [] },
                 } as AxisSortableData,
             },

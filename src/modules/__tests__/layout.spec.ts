@@ -1,14 +1,19 @@
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
 import type {
+    Axis,
     DimensionMetadataItem,
     MetadataItem,
     MetadataStore,
     Program,
+    VisualizationType,
 } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     buildAxis,
     collectProgramDimensions,
+    getInvalidAxesForDimension,
+    isAxisInvalidForDimension,
+    isDimensionAggregatable,
     resolveTeiFields,
     resolveTetId,
 } from '../layout'
@@ -860,5 +865,189 @@ describe('collectProgramDimensions', () => {
         expect(() => collectProgramDimensions(state, store)).toThrow(
             'No metadata found for dimension "ghost" in the layout'
         )
+    })
+})
+
+describe('isDimensionAggregatable', () => {
+    describe('DATA_ELEMENT', () => {
+        it.each([
+            'NUMBER',
+            'INTEGER',
+            'INTEGER_POSITIVE',
+            'INTEGER_NEGATIVE',
+            'INTEGER_ZERO_OR_POSITIVE',
+            'PERCENTAGE',
+            'UNIT_INTERVAL',
+            'BOOLEAN',
+            'TRUE_ONLY',
+        ] as const)('is aggregatable when valueType is %s', (valueType) => {
+            expect(
+                isDimensionAggregatable(
+                    makeDim({ dimensionType: 'DATA_ELEMENT', valueType })
+                )
+            ).toBe(true)
+        })
+
+        it.each([
+            'TEXT',
+            'LONG_TEXT',
+            'MULTI_TEXT',
+            'LETTER',
+            'PHONE_NUMBER',
+            'EMAIL',
+            'DATE',
+            'DATETIME',
+            'TIME',
+            'COORDINATE',
+            'FILE_RESOURCE',
+            'IMAGE',
+            'GEOJSON',
+            'URL',
+            'AGE',
+            'ORGANISATION_UNIT',
+            'USERNAME',
+        ] as const)('is non-aggregatable when valueType is %s', (valueType) => {
+            expect(
+                isDimensionAggregatable(
+                    makeDim({ dimensionType: 'DATA_ELEMENT', valueType })
+                )
+            ).toBe(false)
+        })
+
+        it('is non-aggregatable when valueType is missing', () => {
+            expect(
+                isDimensionAggregatable(
+                    makeDim({ dimensionType: 'DATA_ELEMENT' })
+                )
+            ).toBe(false)
+        })
+    })
+
+    describe('PROGRAM_ATTRIBUTE', () => {
+        it('is aggregatable when numeric', () => {
+            expect(
+                isDimensionAggregatable(
+                    makeDim({
+                        dimensionType: 'PROGRAM_ATTRIBUTE',
+                        valueType: 'NUMBER',
+                    })
+                )
+            ).toBe(true)
+        })
+
+        it('is non-aggregatable when text', () => {
+            expect(
+                isDimensionAggregatable(
+                    makeDim({
+                        dimensionType: 'PROGRAM_ATTRIBUTE',
+                        valueType: 'TEXT',
+                    })
+                )
+            ).toBe(false)
+        })
+    })
+
+    describe('other dimension types', () => {
+        it.each([
+            ['PROGRAM_INDICATOR', undefined],
+            ['CATEGORY', undefined],
+            ['CATEGORY_OPTION_GROUP_SET', undefined],
+            ['ORGANISATION_UNIT', undefined],
+            ['ORGANISATION_UNIT_GROUP_SET', undefined],
+            ['PERIOD', 'DATE'],
+            ['STATUS', undefined],
+            ['USER', undefined],
+        ] as const)(
+            'treats %s as aggregatable regardless of valueType',
+            (dimensionType, valueType) => {
+                expect(
+                    isDimensionAggregatable(
+                        makeDim({ dimensionType, valueType })
+                    )
+                ).toBe(true)
+            }
+        )
+    })
+})
+
+describe('getInvalidAxesForDimension', () => {
+    const textDataElement = makeDim({
+        dimensionType: 'DATA_ELEMENT',
+        valueType: 'TEXT',
+    })
+    const numberDataElement = makeDim({
+        dimensionType: 'DATA_ELEMENT',
+        valueType: 'NUMBER',
+    })
+    const programIndicator = makeDim({ dimensionType: 'PROGRAM_INDICATOR' })
+
+    it('returns columns and rows for non-aggregatable dims in PIVOT_TABLE', () => {
+        expect(
+            Array.from(
+                getInvalidAxesForDimension(textDataElement, 'PIVOT_TABLE')
+            ).sort()
+        ).toEqual(['columns', 'rows'])
+    })
+
+    it('returns empty set for aggregatable dims in PIVOT_TABLE', () => {
+        expect(
+            getInvalidAxesForDimension(numberDataElement, 'PIVOT_TABLE').size
+        ).toBe(0)
+        expect(
+            getInvalidAxesForDimension(programIndicator, 'PIVOT_TABLE').size
+        ).toBe(0)
+    })
+
+    it.each(['LINE_LIST'] as const satisfies VisualizationType[])(
+        'returns empty set for non-aggregatable dims in %s',
+        (visType) => {
+            expect(
+                getInvalidAxesForDimension(textDataElement, visType).size
+            ).toBe(0)
+        }
+    )
+})
+
+describe('isAxisInvalidForDimension', () => {
+    const textDataElement = makeDim({
+        dimensionType: 'DATA_ELEMENT',
+        valueType: 'TEXT',
+    })
+    const numberDataElement = makeDim({
+        dimensionType: 'DATA_ELEMENT',
+        valueType: 'NUMBER',
+    })
+
+    it.each([
+        ['columns', true],
+        ['rows', true],
+        ['filters', false],
+    ] as const satisfies Array<[Axis, boolean]>)(
+        'returns %s for non-aggregatable + PIVOT_TABLE + %s axis',
+        (axis, expected) => {
+            expect(
+                isAxisInvalidForDimension(textDataElement, axis, 'PIVOT_TABLE')
+            ).toBe(expected)
+        }
+    )
+
+    it('returns false for aggregatable dim on any axis in PIVOT_TABLE', () => {
+        for (const axis of ['columns', 'rows', 'filters'] as const) {
+            expect(
+                isAxisInvalidForDimension(
+                    numberDataElement,
+                    axis,
+                    'PIVOT_TABLE'
+                )
+            ).toBe(false)
+        }
+    })
+
+    it('returns false in LINE_LIST regardless of dim', () => {
+        for (const axis of ['columns', 'rows', 'filters'] as const) {
+            expect(
+                isAxisInvalidForDimension(textDataElement, axis, 'LINE_LIST')
+            ).toBe(false)
+        }
     })
 })
