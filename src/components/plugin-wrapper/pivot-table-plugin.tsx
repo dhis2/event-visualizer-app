@@ -61,7 +61,19 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
         [visualization]
     )
 
-    const [fetchAnalyticsData, { data }] = usePivotTableAnalyticsData()
+    const layoutKey = useMemo(
+        () =>
+            `${visualization.outputType}|${[
+                ...visualization.columns,
+                ...visualization.rows,
+                ...visualization.filters,
+            ]
+                .map((d) => d.dimension)
+                .join('|')}`,
+        [visualization]
+    )
+
+    const [fetchAnalyticsData, { data }] = usePivotTableAnalyticsData(layoutKey)
 
     // TODO: implement onDataSorted and any other function/callback that cannot rely on the Redux store
 

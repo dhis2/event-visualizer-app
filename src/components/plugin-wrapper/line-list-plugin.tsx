@@ -31,8 +31,20 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     onDataSorted,
     onResponseReceived,
 }) => {
+    const layoutKey = useMemo(
+        () =>
+            `${visualization.outputType}|${[
+                ...visualization.columns,
+                ...visualization.rows,
+                ...visualization.filters,
+            ]
+                .map((d) => d.dimension)
+                .join('|')}`,
+        [visualization]
+    )
+
     const [fetchAnalyticsData, { data, isFetching }] =
-        useLineListAnalyticsData()
+        useLineListAnalyticsData(layoutKey)
 
     // null indicates no custom sorting has been applied
     // undefined cannot be used because that is a valid value to indicate "remove sorting"
