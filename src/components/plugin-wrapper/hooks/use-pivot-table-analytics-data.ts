@@ -113,7 +113,9 @@ type AnalyticsDataState = {
 }
 type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
 
-const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
+const usePivotTableAnalyticsData = (
+    layoutKey: string
+): UseAnalyticsDataResult => {
     const dataEngine = useDataEngine()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
 
@@ -122,6 +124,12 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
         error: undefined,
         data: null,
     })
+
+    const [prevLayoutKey, setPrevLayoutKey] = useState(layoutKey)
+    if (prevLayoutKey !== layoutKey) {
+        setPrevLayoutKey(layoutKey)
+        setState({ isFetching: false, error: undefined, data: null })
+    }
 
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({

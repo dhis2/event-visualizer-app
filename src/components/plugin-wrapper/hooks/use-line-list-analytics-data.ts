@@ -316,7 +316,9 @@ type AnalyticsDataState = {
 }
 type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
 
-const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
+const useLineListAnalyticsData = (
+    layoutKey: string
+): UseAnalyticsDataResult => {
     const dataEngine = useDataEngine()
     const metadataStore = useMetadataStore()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
@@ -326,6 +328,12 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
         error: undefined,
         data: null,
     })
+
+    const [prevLayoutKey, setPrevLayoutKey] = useState(layoutKey)
+    if (prevLayoutKey !== layoutKey) {
+        setPrevLayoutKey(layoutKey)
+        setState({ isFetching: false, error: undefined, data: null })
+    }
 
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
