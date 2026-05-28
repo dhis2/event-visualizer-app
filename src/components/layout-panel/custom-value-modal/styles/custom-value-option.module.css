@@ -1,0 +1,57 @@
+.option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: var(--colors-grey900);
+    font-size: 14px;
+    padding-block: var(--spacers-dp8);
+    padding-inline: 6px var(--spacers-dp12);
+    appearance: none;
+    background: none;
+    border: 0;
+    inline-size: 100%;
+    text-align: start;
+    font-family: inherit;
+}
+
+.option:hover {
+    background-color: var(--colors-grey200);
+}
+
+.option.active {
+    background-color: var(--colors-teal050);
+    cursor: auto;
+}
+
+.checkmark {
+    flex-shrink: 0;
+    inline-size: 16px;
+    block-size: 16px;
+    margin-inline-end: 6px;
+    fill: var(--colors-teal700);
+}
+
+.label {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.stageChip {
+    flex-shrink: 0;
+    margin-inline-start: var(--spacers-dp8);
+    padding: 5px 6px;
+    background-color: var(--colors-grey300);
+    border-radius: 3px;
+    color: var(--colors-grey900);
+    font-size: 13px;
+    white-space: nowrap;
+}
+.option.active .stageChip {
+    background-color: var(--colors-teal200);
+}
+
+.option:hover:not(.active) .stageChip {
+    background-color: var(--colors-grey400);
+}

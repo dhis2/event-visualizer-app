@@ -145,6 +145,21 @@ export const resolveProgramIds = (
     return Array.from(programIds)
 }
 
+export const resolveProgramStageIds = (
+    dimensionIds: string[],
+    metadataStore: MetadataStore
+): string[] => {
+    const programStageIds = new Set<string>()
+    for (const id of dimensionIds) {
+        const programStageId =
+            metadataStore.getDimensionMetadataItem(id)?.programStageId
+        if (programStageId) {
+            programStageIds.add(programStageId)
+        }
+    }
+    return Array.from(programStageIds)
+}
+
 /* Any TET-bound layout dim can establish the layout's TET context:
  * TET-registration dims carry trackedEntityTypeId directly; any dim with a
  * programId resolves through the program's trackedEntityType (or none, for

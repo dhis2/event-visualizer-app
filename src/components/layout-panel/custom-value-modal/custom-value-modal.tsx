@@ -2,7 +2,6 @@ import {
     AGGREGATION_TYPES,
     aggregationTypeDisplayNames,
 } from '@constants/aggregation-types'
-import { NUMERIC_VALUE_TYPES } from '@constants/value-types'
 import i18n from '@dhis2/d2-i18n'
 import {
     Button,
@@ -19,76 +18,49 @@ import {
 import {
     useAppDispatch,
     useAppSelector,
-    useCurrentUser,
+    useMetadataItem,
     useMetadataStore,
-    useRtkQuery,
 } from '@hooks'
 import {
     getVisUiConfigCustomValue,
-    getVisUiConfigLayoutAllDimensionIds,
     setVisUiConfigCustomValue,
     setVisUiConfigLastActiveButton,
 } from '@store/vis-ui-config-slice'
 import type { AggregationType } from '@types'
-import { type FC, useCallback, useMemo, useState } from 'react'
+import { type FC, useCallback, useState } from 'react'
+import { CustomValueOption } from './custom-value-option'
+import { StageNotice } from './stage-notice'
 import classes from './styles/custom-value-modal.module.css'
+import {
+    useCustomValueDataElements,
+    type CustomValueDataElement,
+} from './use-custom-value-data-elements'
 
 type CustomValueModalProps = {
     onClose: () => void
 }
 
-type DataElementRecord = {
-    id: string
-    name: string
-    aggregationType: AggregationType
-}
-
 export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     const dispatch = useAppDispatch()
-    const {
-        settings: { displayNameProperty },
-    } = useCurrentUser()
     const metadataStore = useMetadataStore()
-    const layoutDimensionIds = useAppSelector(
-        getVisUiConfigLayoutAllDimensionIds
-    )
     const customValue = useAppSelector(getVisUiConfigCustomValue)
+    const customValueMetadata = useMetadataItem(customValue?.id)
     const [aggregationType, setAggregationType] = useState<AggregationType>(
         customValue?.aggregationType ?? 'DEFAULT'
     )
     const [dataElementId, setDataElementId] = useState(customValue?.id)
     const [dataElement, setDataElement] = useState<
-        DataElementRecord | undefined
+        CustomValueDataElement | undefined
     >(undefined)
 
-    const programId = useMemo(() => {
-        for (const dimensionId of layoutDimensionIds) {
-            const programId =
-                metadataStore.getDimensionMetadataItem(dimensionId)?.programId
-
-            if (programId) {
-                return programId
-            }
-        }
-    }, [layoutDimensionIds, metadataStore])
-
-    const { data, isLoading, isError, error } = useRtkQuery<
-        Record<
-            'programDataElements',
-            Record<'dataElement', DataElementRecord>[]
-        >
-    >({
-        resource: 'programDataElements',
-        params: {
-            program: programId!,
-            fields: `dataElement[id,${displayNameProperty}~rename(name),aggregationType]`,
-            filter: [
-                // TODO: add BOOLEAN and TRUE_ONLY if/when backend suppors it
-                `valueType:in:[${NUMERIC_VALUE_TYPES.join(',')}]`,
-            ],
-            paging: false,
-        },
-    })
+    const {
+        dataElements,
+        isLoading,
+        isError,
+        error,
+        filteredByStageName,
+        customValueStageMismatch,
+    } = useCustomValueDataElements()
 
     const onAggregationTypeChange = useCallback(
         ({ selected }) => setAggregationType(selected),
@@ -96,10 +68,9 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     )
 
     const onDataElementChange = useCallback(
-        (dataElement: DataElementRecord) => {
+        (dataElement: CustomValueDataElement) => {
             setDataElementId(dataElement.id)
             setDataElement(dataElement)
-
             metadataStore.addMetadata(dataElement)
         },
         [metadataStore]
@@ -131,6 +102,11 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                         'Choose the numeric data element to show in table cells.'
                     )}
                 </p>
+                <StageNotice
+                    filteredByStageName={filteredByStageName}
+                    customValueStageMismatch={customValueStageMismatch}
+                    customValueDataElementName={customValueMetadata?.name}
+                />
                 <div className={classes.listContainer}>
                     {isLoading && (
                         <div className={classes.listLoading}>
@@ -138,32 +114,48 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                             <span>{i18n.t('Loading data')}</span>
                         </div>
                     )}
-                    {!isError && error && (
-                        <NoticeBox error title={i18n.t('Error loading data')}>
-                            {error || i18n.t('Failed to load data elements')}
+                    {isError && (
+                        <NoticeBox
+                            error
+                            dense
+                            title={i18n.t('Error loading data')}
+                        >
+                            {error?.message ||
+                                i18n.t('Failed to load data elements')}
+                        </NoticeBox>
+                    )}
+                    {!isLoading && !isError && dataElements?.length === 0 && (
+                        <NoticeBox
+                            dense
+                            title={
+                                filteredByStageName
+                                    ? i18n.t(
+                                          'No numeric data items in stage "{{- stageName}}"',
+                                          { stageName: filteredByStageName }
+                                      )
+                                    : i18n.t(
+                                          'No numeric data items in this program'
+                                      )
+                            }
+                        >
+                            {filteredByStageName
+                                ? i18n.t(
+                                      'This stage does not have any numeric data elements available.'
+                                  )
+                                : i18n.t(
+                                      'This program does not have any numeric data elements available.'
+                                  )}
                         </NoticeBox>
                     )}
                     {!isLoading &&
-                        !error &&
-                        data.programDataElements.length === 0 && (
-                            <NoticeBox
-                                title={i18n.t(
-                                    'No numeric data items in this program'
-                                )}
-                            >
-                                {i18n.t(
-                                    'This program does not have any numeric data elements available.'
-                                )}
-                            </NoticeBox>
-                        )}
-                    {!isLoading &&
                         !isError &&
-                        data.programDataElements.map(({ dataElement }) => (
-                            <SingleSelectOption
+                        dataElements?.map((dataElement) => (
+                            <CustomValueOption
                                 key={dataElement.id}
                                 label={dataElement.name}
                                 value={dataElement.id}
                                 active={dataElementId === dataElement.id}
+                                stageName={dataElement.stageName}
                                 onClick={() => onDataElementChange(dataElement)}
                             />
                         ))}

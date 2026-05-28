@@ -9,6 +9,8 @@ export const NUMERIC_VALUE_TYPES = asStringLiteralSubsetArray<ValueType>()([
     'INTEGER_POSITIVE',
     'INTEGER_NEGATIVE',
     'INTEGER_ZERO_OR_POSITIVE',
+    'BOOLEAN',
+    'TRUE_ONLY',
 ] as const)
 
 export const VALUE_TYPES: ValueType[] = [

@@ -333,7 +333,7 @@ describe('extractTrackedEntityTypeMetadata', () => {
 })
 
 describe('extractProgramDimensionsMetadata', () => {
-    it('should return program dimensions metadata for EVENT outputType', () => {
+    it('should return programs for EVENT outputType', () => {
         const visualization = {
             outputType: 'EVENT' as const,
             programDimensions: [
@@ -353,7 +353,10 @@ describe('extractProgramDimensionsMetadata', () => {
         const result = extractProgramDimensionsMetadata(visualization)
 
         expect(result).toHaveProperty('program1')
-        expect(result).toHaveProperty('stage1')
+        expect(result.program1).toMatchObject({
+            id: 'program1',
+            name: 'Program 1',
+        })
     })
 
     it('should return empty object for TRACKED_ENTITY_INSTANCE outputType', () => {

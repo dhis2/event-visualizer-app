@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-27T08:05:49.741Z\n"
-"PO-Revision-Date: 2026-05-27T08:05:49.741Z\n"
+"POT-Creation-Date: 2026-05-28T10:11:20.449Z\n"
+"PO-Revision-Date: 2026-05-28T10:11:20.449Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -189,6 +189,15 @@ msgstr "Levels"
 msgid "Groups"
 msgstr "Groups"
 
+msgid "Using: {{- dataElementName}} ({{- aggregationType}})"
+msgstr "Using: {{- dataElementName}} ({{- aggregationType}})"
+
+msgid "Custom value is from a different stage than dimensions in the layout"
+msgstr "Custom value is from a different stage than dimensions in the layout"
+
+msgid "Update custom value"
+msgstr "Update custom value"
+
 msgid "Create custom value table"
 msgstr "Create custom value table"
 
@@ -197,9 +206,6 @@ msgstr "Switch to custom value table"
 
 msgid "Update custom value table"
 msgstr "Update custom value table"
-
-msgid "Using: {{- dataElementName}} ({{- aggregationType}})"
-msgstr "Using: {{- dataElementName}} ({{- aggregationType}})"
 
 msgid "Enrollment"
 msgstr "Enrollment"
@@ -306,8 +312,14 @@ msgstr "Error loading data"
 msgid "Failed to load data elements"
 msgstr "Failed to load data elements"
 
+msgid "No numeric data items in stage \"{{- stageName}}\""
+msgstr "No numeric data items in stage \"{{- stageName}}\""
+
 msgid "No numeric data items in this program"
 msgstr "No numeric data items in this program"
+
+msgid "This stage does not have any numeric data elements available."
+msgstr "This stage does not have any numeric data elements available."
 
 msgid "This program does not have any numeric data elements available."
 msgstr "This program does not have any numeric data elements available."
@@ -317,6 +329,16 @@ msgstr "Aggregation"
 
 msgid "Cancel"
 msgstr "Cancel"
+
+msgid ""
+"\"{{- dataElementName}}\" is from a different stage than the dimensions in "
+"the layout. Choose a data element from stage \"{{- stageName}}\"."
+msgstr ""
+"\"{{- dataElementName}}\" is from a different stage than the dimensions in "
+"the layout. Choose a data element from stage \"{{- stageName}}\"."
+
+msgid "Showing data elements from \"{{- stageName}}\", the stage used in the layout"
+msgstr "Showing data elements from \"{{- stageName}}\", the stage used in the layout"
 
 msgid "Collapse layout"
 msgstr "Collapse layout"

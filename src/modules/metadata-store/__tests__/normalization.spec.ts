@@ -315,16 +315,14 @@ describe('getCanonicalKeysForInput', () => {
         expect(result).toEqual(new Set(['key1', 'key2']))
     })
 
-    it('falls back to the raw key when normalization fails (e.g. missing name)', () => {
+    it('throws when an item has no resolvable name', () => {
         const input = {
             unknownKey: { id: 'unknownKey' },
         }
 
-        const result = getCanonicalKeysForInput(input, emptyMap)
-
-        // normalizeMetadataInputItem throws for items with no name and not in map,
-        // so getCanonicalKeysForInput falls back to the raw key
-        expect(result).toEqual(new Set(['unknownKey']))
+        expect(() => getCanonicalKeysForInput(input, emptyMap)).toThrow(
+            'New metadata item "unknownKey" does not have a name'
+        )
     })
 
     it('returns program-based canonical key for a program-prefixed compound key', () => {
