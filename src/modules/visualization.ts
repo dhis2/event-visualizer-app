@@ -587,6 +587,7 @@ export const getSingleProgramStageFromVisualization = (
  *   data-element / attribute UID, since that's still a live analytics
  *   parameter
  * - Drop top-level `program` and `programStage`
+ * - Convert top-level `programStatus` into a `programStatus` filter dimension
  * - Mark output as `legacy: true` when either legacy shape was detected, so
  *   the vis cannot be overwritten in place — only "Save as" is allowed.
  *   Overwriting would silently persist in the canonical format, breaking
@@ -606,6 +607,7 @@ export const normalizeApiSavedVisualization = (
         orgUnitField,
         timeField,
         legacy,
+        programStatus,
         columns = [],
         rows = [],
         filters = [],
@@ -651,9 +653,15 @@ export const normalizeApiSavedVisualization = (
             return out
         })
 
-    const rawFilters = orgUnitField
-        ? [...filters, { dimension: 'ou', items: [{ id: orgUnitField }] }]
-        : filters
+    const rawFilters = [
+        ...filters,
+        ...(orgUnitField
+            ? [{ dimension: 'ou', items: [{ id: orgUnitField }] }]
+            : []),
+        ...(programStatus
+            ? [{ dimension: 'programStatus', items: [{ id: programStatus }] }]
+            : []),
+    ]
 
     const normalizedColumns = normalizeDimensions(columns)
     const normalizedRows = normalizeDimensions(rows)
