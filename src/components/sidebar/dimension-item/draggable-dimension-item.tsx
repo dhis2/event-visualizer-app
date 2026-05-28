@@ -59,14 +59,11 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
     const cardOrItemDisabled = isContainingCardDisabled || disabled
 
     const populateMetadata = useCallback(() => {
+        // Adding the program also stores its stages and TET.
         if (program) {
             addMetadata(program)
-        }
-        if (programStage) {
+        } else if (programStage) {
             addMetadata(programStage)
-        }
-        if (program?.trackedEntityType) {
-            addMetadata(program.trackedEntityType)
         }
         addMetadata(dimension)
     }, [addMetadata, dimension, program, programStage])

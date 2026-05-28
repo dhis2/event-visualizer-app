@@ -64,14 +64,21 @@
     display: flex;
 }
 
-.button.splitLeft {
+.button.splitStart {
     border-start-end-radius: 0;
     border-end-end-radius: 0;
     border-inline-end: none;
 }
 
-.button.splitRight {
+.button.splitEnd {
     border-start-start-radius: 0;
     border-end-start-radius: 0;
     border-inline-start: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Lets the tooltip's pointer handlers attach to a wrapper around the button
+ * (disabled `<button>` elements don't emit pointer events in some browsers)
+ * without disrupting the flex layout of the parent split button. */
+.tooltipWrapper {
+    display: flex;
 }

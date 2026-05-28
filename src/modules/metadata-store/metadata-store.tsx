@@ -33,6 +33,7 @@ import { isCompoundDimensionId, resolveId } from './dimension'
 import { smartMergeWithChangeDetection } from './merge-utils'
 import {
     getCanonicalKeysForInput,
+    getProgramChildrenAsInputs,
     normalizeMetadataInputItem,
     extractInputId,
 } from './normalization'
@@ -259,6 +260,13 @@ export class MetadataStore {
             if (hasChanges) {
                 this.metadata.set(normalizedId, mergedItem)
                 updatedIds.add(normalizedId)
+            }
+
+            // Also store the program's stages and TET as top-level entries.
+            if (!deferred) {
+                for (const child of getProgramChildrenAsInputs(mergedItem)) {
+                    processMetadataItem(child)
+                }
             }
         }
 
