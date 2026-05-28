@@ -81,7 +81,6 @@ export const useCustomValueDataElements = () => {
             fields: `id,${displayNameProperty}~rename(name),aggregationType,dimensionType`,
             filter: [
                 'dimensionType:eq:DATA_ELEMENT',
-                // TODO: add BOOLEAN and TRUE_ONLY if/when backend supports it
                 `valueType:in:[${NUMERIC_VALUE_TYPES.join(',')}]`,
             ],
             paging: false,
