@@ -21,9 +21,12 @@ import type {
 import deepEqual from 'deep-equal'
 import { getConditionsFromVisualization } from './conditions'
 import {
+    CONTEXTLESS_DIMENSION_TYPES,
+    ENROLLMENT_SCOPED_DIMENSION_IDS,
     getCompoundDimensionId,
     isTimeDimensionId,
     KNOWN_TIME_FIELD_VALUES,
+    META_DIMENSION_IDS,
     outputTypeTimeDimensionMap,
     timeFieldTimeDimensionMap,
     toAppLocalDimensions,
@@ -84,11 +87,16 @@ export const getHeadersMap = (
     return map
 }
 
-const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
-    'enrollmentOu',
-    'enrollmentDate',
-    'incidentDate',
-    'programStatus',
+/* Dimension types whose values are not bound to any program or stage —
+ * program indicators and tracked entity attributes are owned by a program
+ * in the metadata model but their analytics IDs are plain (never carry
+ * program/stage prefixes). Combined with CONTEXTLESS_DIMENSION_TYPES (eg.
+ * organisation unit group sets), this is the set we must never decorate
+ * with the legacy top-level program/programStage refs. */
+const NO_CONTEXT_DIMENSION_TYPES: ReadonlySet<string> = new Set([
+    'PROGRAM_INDICATOR',
+    'PROGRAM_ATTRIBUTE',
+    ...CONTEXTLESS_DIMENSION_TYPES,
 ])
 
 /* Static reverse of headersMap. The ENR `enrollmentOu → ouname` override
@@ -621,21 +629,20 @@ export const normalizeApiSavedVisualization = (
     const stageRef = programStage ? { id: programStage.id } : undefined
     const outputType = rest.outputType as OutputType | undefined
 
-    // Single pass per dimension:
-    //   - propagate top-level program/programStage onto dimensions that
-    //     don't carry them (old event-visualizer shape)
-    //   - convert a legacy `pe` dimension into the concrete time dimension
-    //     (legacy line-listing shape)
+    /* Single pass per dimension:
+     *   - convert a legacy `pe` dimension into the concrete time dimension
+     *     (legacy line-listing shape) — done first so the scope guards
+     *     below evaluate the final dimension ID
+     *   - propagate top-level program/programStage onto dimensions that
+     *     don't carry them (old event-visualizer shape), but only where it
+     *     makes semantic sense:
+     *       · meta dims, contextless dim types, program indicators and
+     *         tracked entity attributes don't carry program/stage context
+     *       · enrollment-scoped IDs are tied to the program, not a stage,
+     *         so they get program only, never programStage */
     const normalizeDimensions = (dims: DimensionArray): DimensionArray =>
         dims.map((dim) => {
             let out = dim
-
-            if (programRef && !out.program) {
-                out = { ...out, program: programRef }
-            }
-            if (stageRef && !out.programStage) {
-                out = { ...out, programStage: stageRef }
-            }
 
             if (out.dimension === 'pe') {
                 const targetDim =
@@ -648,6 +655,26 @@ export const normalizeApiSavedVisualization = (
                         dimensionType: 'PERIOD',
                     }
                 }
+            }
+
+            const skipBothRefs =
+                META_DIMENSION_IDS.has(out.dimension) ||
+                (typeof out.dimensionType === 'string' &&
+                    NO_CONTEXT_DIMENSION_TYPES.has(out.dimensionType))
+
+            if (skipBothRefs) {
+                return out
+            }
+
+            const skipStageRef = ENROLLMENT_SCOPED_DIMENSION_IDS.has(
+                out.dimension
+            )
+
+            if (programRef && !out.program) {
+                out = { ...out, program: programRef }
+            }
+            if (!skipStageRef && stageRef && !out.programStage) {
+                out = { ...out, programStage: stageRef }
             }
 
             return out

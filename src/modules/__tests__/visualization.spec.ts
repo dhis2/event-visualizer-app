@@ -1,5 +1,9 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
-import type { CurrentVisualization, SavedVisualization } from '@types'
+import type {
+    ApiSavedVisualization,
+    CurrentVisualization,
+    SavedVisualization,
+} from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     analyticsHeaderToCanonicalDimensionId,
@@ -7,6 +11,7 @@ import {
     getAnalyticsRequestHeaderName,
     getSaveableVisualization,
     getVisualizationUiConfig,
+    normalizeApiSavedVisualization,
 } from '../visualization'
 
 const testCases = {
@@ -683,5 +688,185 @@ describe('getAnalyticsRequestHeaderName', () => {
                 visualization: buildVis({ showHierarchy: true }),
             })
         ).toBe(`${SID}.ounamehierarchy`)
+    })
+})
+
+describe('normalizeApiSavedVisualization', () => {
+    const PID = 'progXX'
+    const SID = 'stageXX'
+
+    const buildLegacyEventVis = (
+        overrides: Partial<ApiSavedVisualization> = {}
+    ): ApiSavedVisualization =>
+        ({
+            id: 'vis1',
+            type: 'LINE_LIST',
+            outputType: 'EVENT',
+            program: { id: PID },
+            programStage: { id: SID },
+            columns: [],
+            rows: [],
+            filters: [],
+            ...overrides,
+        }) as unknown as ApiSavedVisualization
+
+    it('propagates program and programStage onto stage-scoped data elements', () => {
+        const vis = buildLegacyEventVis({
+            columns: [
+                {
+                    dimension: 'deA',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    items: [],
+                },
+            ],
+        })
+
+        const result = normalizeApiSavedVisualization(vis)
+
+        expect(result.columns[0]).toMatchObject({
+            dimension: 'deA',
+            program: { id: PID },
+            programStage: { id: SID },
+        })
+    })
+
+    it('attaches program only — no programStage — to enrollment-scoped dimensions', () => {
+        const vis = buildLegacyEventVis({
+            filters: [{ dimension: 'enrollmentDate', items: [] }],
+        })
+
+        const [filter] = normalizeApiSavedVisualization(vis).filters
+        expect(filter.program).toEqual({ id: PID })
+        expect(filter.programStage).toBeUndefined()
+    })
+
+    it('does not decorate the legacy top-level programStatus filter with a stage', () => {
+        /* The function synthesises a programStatus filter from the legacy
+         * top-level `programStatus` field. That filter is enrollment-scoped
+         * — it must get program but never programStage. */
+        const vis = buildLegacyEventVis({
+            programStatus: 'COMPLETED',
+        } as Partial<ApiSavedVisualization>)
+
+        const psFilter = normalizeApiSavedVisualization(vis).filters.find(
+            (dim) => dim.dimension === 'programStatus'
+        )
+        expect(psFilter).toBeDefined()
+        expect(psFilter?.program).toEqual({ id: PID })
+        expect(psFilter?.programStage).toBeUndefined()
+    })
+
+    it('leaves meta dimensions without program or programStage refs', () => {
+        const vis = buildLegacyEventVis({
+            columns: [{ dimension: 'lastUpdated', items: [] }],
+        })
+
+        const [col] = normalizeApiSavedVisualization(vis).columns
+        expect(col.program).toBeUndefined()
+        expect(col.programStage).toBeUndefined()
+    })
+
+    it('leaves program indicators without program or programStage refs', () => {
+        const vis = buildLegacyEventVis({
+            columns: [
+                {
+                    dimension: 'piA',
+                    dimensionType: 'PROGRAM_INDICATOR',
+                    items: [],
+                },
+            ],
+        })
+
+        const [col] = normalizeApiSavedVisualization(vis).columns
+        expect(col.program).toBeUndefined()
+        expect(col.programStage).toBeUndefined()
+    })
+
+    it('leaves tracked entity attributes without program or programStage refs', () => {
+        const vis = buildLegacyEventVis({
+            columns: [
+                {
+                    dimension: 'attrA',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                    items: [],
+                },
+            ],
+        })
+
+        const [col] = normalizeApiSavedVisualization(vis).columns
+        expect(col.program).toBeUndefined()
+        expect(col.programStage).toBeUndefined()
+    })
+
+    it('leaves contextless dimension types without program or programStage refs', () => {
+        const vis = buildLegacyEventVis({
+            columns: [
+                {
+                    dimension: 'ougsA',
+                    dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+                    items: [],
+                },
+            ],
+        })
+
+        const [col] = normalizeApiSavedVisualization(vis).columns
+        expect(col.program).toBeUndefined()
+        expect(col.programStage).toBeUndefined()
+    })
+
+    it('renames `pe` to the output-type time dimension before applying scope guards', () => {
+        /* Legacy `pe` in an ENROLLMENT vis becomes `enrollmentDate`, which is
+         * enrollment-scoped. The rename must happen before propagation so
+         * the dim does not end up with a spurious programStage. */
+        const vis = buildLegacyEventVis({
+            outputType: 'ENROLLMENT',
+            columns: [{ dimension: 'pe', items: [] }],
+        })
+
+        const [col] = normalizeApiSavedVisualization(vis).columns
+        expect(col.dimension).toBe('enrollmentDate')
+        expect(col.program).toEqual({ id: PID })
+        expect(col.programStage).toBeUndefined()
+    })
+
+    it('does not overwrite program/programStage already set on a dimension', () => {
+        const otherProgram = { id: 'otherProg' }
+        const otherStage = { id: 'otherStage' }
+        const vis = buildLegacyEventVis({
+            columns: [
+                {
+                    dimension: 'deA',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    program: otherProgram,
+                    programStage: otherStage,
+                    items: [],
+                },
+            ],
+        })
+
+        const [col] = normalizeApiSavedVisualization(vis).columns
+        expect(col.program).toEqual(otherProgram)
+        expect(col.programStage).toEqual(otherStage)
+    })
+
+    it('does not propagate refs on a non-legacy vis (no top-level program/stage)', () => {
+        const vis = {
+            id: 'vis2',
+            type: 'LINE_LIST',
+            outputType: 'EVENT',
+            columns: [
+                {
+                    dimension: 'deA',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    items: [],
+                },
+            ],
+            rows: [],
+            filters: [],
+        } as unknown as ApiSavedVisualization
+
+        const [col] = normalizeApiSavedVisualization(vis).columns
+        expect(col.program).toBeUndefined()
+        expect(col.programStage).toBeUndefined()
     })
 })
