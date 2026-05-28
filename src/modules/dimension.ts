@@ -309,7 +309,7 @@ export const META_DIMENSION_IDS = new Set(
  * drop those fields at the API → app-local boundary so that downstream code
  * (compound ID, save round-trip) treats them as the contextless dimensions
  * they actually are. */
-const CONTEXTLESS_DIMENSION_TYPES: ReadonlySet<string> = new Set([
+export const CONTEXTLESS_DIMENSION_TYPES: ReadonlySet<string> = new Set([
     'ORGANISATION_UNIT_GROUP_SET',
 ])
 
@@ -372,7 +372,7 @@ export const toEventVisualizationDimensionId = ({
 /* Dimension IDs that are always enrollment-scoped (prefixed with programId,
  * never stageId). Legacy visualizations propagate programStage onto all
  * dimensions, but these IDs are inherently tied to the program, not a stage. */
-const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
+export const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
     'enrollmentOu',
     'enrollmentDate',
     'incidentDate',
