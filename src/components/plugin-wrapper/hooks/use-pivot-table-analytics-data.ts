@@ -40,10 +40,6 @@ export const fetchAnalyticsDataForPT = async ({
         req = req.withDisplayProperty(displayProperty.toUpperCase())
     }
 
-    if (visualization.programStatus) {
-        req = req.withProgramStatus(visualization.programStatus)
-    }
-
     if (visualization.sortOrder) {
         req = req.withSortOrder(
             visualization.sortOrder === '1' ? 'ASC' : 'DESC'
