@@ -1,6 +1,12 @@
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import { isMetadataInputItem } from '@modules/metadata'
+import { isObject, isPopulatedString } from '@modules/validation'
 import type { AnalyticsResponseMetadataItems, MetadataInput } from '@types'
+
+const hasName = (value: unknown): boolean =>
+    isObject(value) &&
+    (('name' in value && isPopulatedString(value.name)) ||
+        ('displayName' in value && isPopulatedString(value.displayName)))
 
 const extractItemsMetadata = (
     items: AnalyticsResponseMetadataItems
@@ -18,14 +24,29 @@ const extractItemsMetadata = (
             return acc
         }
 
+        /* The analytics response includes the dimension itself (e.g. an option
+         * set or category) as an empty entry, since its name was already
+         * supplied via the visualization fetch. We also can't fall back to the
+         * existing store record: the analytics response uses plain IDs while
+         * the store files dimensions under compound keys (e.g. stageId.dimId),
+         * so the lookup misses. Nameless entries carry nothing to merge anyway,
+         * so skipping is safe. */
+        if (!hasName(value)) {
+            return acc
+        }
+
         /* Skip valueType from analytics response data as this is wrong in many cases.
          * In this way we keep the original valueType from the visualization's metadata which is correct
          * and avoid issues with the conditions modal which relies on valueType to render the correct content */
-        acc[key] = {
-            ...value,
-            valueType: undefined,
+        if (isPopulatedString(value?.valueType)) {
+            acc[key] = {
+                ...value,
+                valueType: undefined,
+            }
+            return acc
         }
 
+        acc[key] = value
         return acc
     }, {})
 
