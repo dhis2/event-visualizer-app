@@ -87,6 +87,14 @@ export const useCustomValueDataElements = () => {
         },
     })
 
+    const program = metadataStore.getProgramMetadataItem(programId)
+    if (!program) {
+        throw new Error(
+            `Could not find program with ID "${programId}" in the metadata store`
+        )
+    }
+    const programHasMultipleStages = (program.programStages?.length ?? 0) > 1
+
     const dataElements = useMemo<CustomValueDataElement[] | undefined>(() => {
         if (!data) {
             return undefined
@@ -100,7 +108,7 @@ export const useCustomValueDataElements = () => {
 
         return data.dimensions.map((dim) => {
             const stageId = getStageIdFromDimensionId(dim.id)
-            if (!stageId) {
+            if (!stageId || !programHasMultipleStages) {
                 return dim
             }
             const stage = metadataStore.getProgramStageMetadataItem(stageId)
@@ -111,7 +119,7 @@ export const useCustomValueDataElements = () => {
             }
             return { ...dim, stageName: stage.name }
         })
-    }, [data, layoutStageId, metadataStore])
+    }, [data, layoutStageId, metadataStore, programHasMultipleStages])
 
     return {
         ...queryResult,

@@ -73,20 +73,34 @@ export const CustomValueButton: FC = () => {
     )
     const isFullyDisabled = Boolean(actionTooltipConfig)
     const isUpdateDisabled = isFullyDisabled || hasStageMismatch
-    const configurationTooltipContent =
-        !isFullyDisabled && customValue && !hasStageMismatch
-            ? i18n.t('Using: {{- dataElementName}} ({{- aggregationType}})', {
-                  dataElementName: customValueMetadata?.name,
-                  aggregationType:
-                      aggregationTypeDisplayNames[customValue.aggregationType],
-                  nsSeparator: '^^',
-              })
-            : undefined
-    const stageMismatchTooltipContent =
+    const wrapperTooltipContent = (() => {
+        if (actionTooltipConfig) {
+            return actionTooltipConfig.content
+        }
+        if (customValue && !hasStageMismatch) {
+            return i18n.t(
+                'Using: {{- dataElementName}} ({{- aggregationType}})',
+                {
+                    dataElementName: customValueMetadata?.name,
+                    aggregationType:
+                        aggregationTypeDisplayNames[
+                            customValue.aggregationType
+                        ],
+                    nsSeparator: '^^',
+                }
+            )
+        }
+        return undefined
+    })()
+    const updateButtonTooltipContent =
         !isFullyDisabled && hasStageMismatch
             ? i18n.t(
-                  'Currently selected custom value data element is from a different stage than the dimensions in the layout'
+                  'Custom value is from a different stage than dimensions in the layout'
               )
+            : undefined
+    const configureButtonTooltipContent =
+        !isFullyDisabled && hasStageMismatch
+            ? i18n.t('Update custom value')
             : undefined
     const label = useMemo(() => {
         switch (action) {
@@ -116,13 +130,11 @@ export const CustomValueButton: FC = () => {
     return (
         <>
             <WithTooltip
-                content={
-                    actionTooltipConfig?.content ?? configurationTooltipContent
-                }
+                content={wrapperTooltipContent}
                 openDelay={actionTooltipConfig?.openDelay}
             >
                 <div className={classes.splitButton}>
-                    <WithTooltip content={stageMismatchTooltipContent}>
+                    <WithTooltip content={updateButtonTooltipContent}>
                         <button
                             type="button"
                             onClick={onUpdateClick}
@@ -140,18 +152,25 @@ export const CustomValueButton: FC = () => {
                     </WithTooltip>
 
                     {isButtonReady && (
-                        <button
-                            type="button"
-                            onClick={onConfigureClick}
-                            disabled={isFullyDisabled}
-                            className={cx(classes.button, classes.splitEnd, {
-                                [classes.disabled]: isFullyDisabled,
-                                [classes.update]:
-                                    action === 'update' && !hasStageMismatch,
-                            })}
-                        >
-                            <IconSettings16 />
-                        </button>
+                        <WithTooltip content={configureButtonTooltipContent}>
+                            <button
+                                type="button"
+                                onClick={onConfigureClick}
+                                disabled={isFullyDisabled}
+                                className={cx(
+                                    classes.button,
+                                    classes.splitEnd,
+                                    {
+                                        [classes.disabled]: isFullyDisabled,
+                                        [classes.update]:
+                                            action === 'update' &&
+                                            !hasStageMismatch,
+                                    }
+                                )}
+                            >
+                                <IconSettings16 />
+                            </button>
+                        </WithTooltip>
                     )}
                 </div>
             </WithTooltip>

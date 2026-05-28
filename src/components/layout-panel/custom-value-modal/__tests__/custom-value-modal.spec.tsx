@@ -14,26 +14,29 @@ import { CustomValueModal } from '../custom-value-modal'
 
 const ANALYTICS_RESOURCE = 'analytics/enrollments/aggregate/dimensions'
 
+const stage1 = {
+    id: 's1',
+    name: 'Stage 1',
+    repeatable: false,
+    hideDueDate: false,
+    program: { id: 'p1' },
+}
+const stage2 = {
+    id: 's2',
+    name: 'Stage 2',
+    repeatable: false,
+    hideDueDate: false,
+    program: { id: 'p1' },
+}
 const metadata = {
     p1: {
         id: 'p1',
         name: 'Program 1',
         programType: 'WITH_REGISTRATION',
+        programStages: [stage1, stage2],
     },
-    s1: {
-        id: 's1',
-        name: 'Stage 1',
-        repeatable: false,
-        hideDueDate: false,
-        program: { id: 'p1' },
-    },
-    s2: {
-        id: 's2',
-        name: 'Stage 2',
-        repeatable: false,
-        hideDueDate: false,
-        program: { id: 'p1' },
-    },
+    s1: stage1,
+    s2: stage2,
     's1.de1': {
         id: 's1.de1',
         name: 'DE 1',
@@ -131,7 +134,7 @@ describe('CustomValueModal', () => {
         await waitFor(() => {
             expect(
                 screen.getByText(
-                    'Showing data elements from stage "Stage 1" which is used in the layout'
+                    'Showing data elements from "Stage 1", the stage used in the layout'
                 )
             ).toBeInTheDocument()
         })
@@ -154,7 +157,7 @@ describe('CustomValueModal', () => {
             ).toBeInTheDocument()
         })
         expect(
-            screen.queryByText(/which is used in the layout$/)
+            screen.queryByText(/the stage used in the layout$/)
         ).not.toBeInTheDocument()
     })
 
@@ -168,14 +171,29 @@ describe('CustomValueModal', () => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
         })
         expect(
-            screen.queryByText(/Showing data elements from stage/)
+            screen.queryByText(/Showing data elements from/)
         ).not.toBeInTheDocument()
     })
 
-    it('renders the empty-state notice when no data elements are returned', async () => {
+    it('renders the stage-scoped empty-state notice when no data elements are returned and the layout has a stage', async () => {
         await renderWithAppWrapper(
             <CustomValueModal onClose={() => {}} />,
             buildMockOptions(['s1.de1'], {
+                [ANALYTICS_RESOURCE]: { dimensions: [] },
+            })
+        )
+
+        await waitFor(() => {
+            expect(
+                screen.getByText('No numeric data items in stage "Stage 1"')
+            ).toBeInTheDocument()
+        })
+    })
+
+    it('renders the program-scoped empty-state notice when no data elements are returned and the layout has no stage', async () => {
+        await renderWithAppWrapper(
+            <CustomValueModal onClose={() => {}} />,
+            buildMockOptions(['p1.enrollmentDate'], {
                 [ANALYTICS_RESOURCE]: { dimensions: [] },
             })
         )

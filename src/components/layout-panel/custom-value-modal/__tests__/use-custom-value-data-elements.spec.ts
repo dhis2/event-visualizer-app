@@ -13,31 +13,35 @@ import { useCustomValueDataElements } from '../use-custom-value-data-elements'
 
 const ANALYTICS_RESOURCE = 'analytics/enrollments/aggregate/dimensions'
 
+const stage1 = {
+    id: 's1',
+    name: 'Stage 1',
+    repeatable: false,
+    hideDueDate: false,
+    program: { id: 'p1' },
+}
+const stage2 = {
+    id: 's2',
+    name: 'Stage 2',
+    repeatable: false,
+    hideDueDate: false,
+    program: { id: 'p1' },
+}
 const metadata = {
     p1: {
         id: 'p1',
         name: 'Program 1',
         programType: 'WITH_REGISTRATION',
+        programStages: [stage1, stage2],
     },
     p2: {
         id: 'p2',
         name: 'Program 2',
         programType: 'WITH_REGISTRATION',
+        programStages: [],
     },
-    s1: {
-        id: 's1',
-        name: 'Stage 1',
-        repeatable: false,
-        hideDueDate: false,
-        program: { id: 'p1' },
-    },
-    s2: {
-        id: 's2',
-        name: 'Stage 2',
-        repeatable: false,
-        hideDueDate: false,
-        program: { id: 'p1' },
-    },
+    s1: stage1,
+    s2: stage2,
     'p1.enrollmentDate': {
         id: 'p1.enrollmentDate',
         name: 'Enrollment Date',
@@ -113,7 +117,7 @@ const buildMockOptions = (
  * error-boundary wrapper to assert cleanly. Those states are upstream-gated
  * by `useActionButton` — that's the appropriate test surface. */
 describe('useCustomValueDataElements', () => {
-    it('attaches stageName when the layout has no program stage', async () => {
+    it('attaches stageName when the layout has no program stage and dimensions span multiple stages', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useCustomValueDataElements(),
             buildMockOptions({ columns: ['p1.enrollmentDate'] })
@@ -140,6 +144,88 @@ describe('useCustomValueDataElements', () => {
             },
         ])
         expect(result.current.filteredByStageName).toBeUndefined()
+    })
+
+    it('omits stageName when the layout has no program stage and the program has only one stage', async () => {
+        const singleStage = {
+            id: 'sX',
+            name: 'Stage X',
+            repeatable: false,
+            hideDueDate: false,
+            program: { id: 'pSingle' },
+        }
+        const singleStageMetadata = {
+            pSingle: {
+                id: 'pSingle',
+                name: 'Single-stage program',
+                programType: 'WITH_REGISTRATION',
+                programStages: [singleStage],
+            },
+            sX: singleStage,
+            'pSingle.enrollmentDate': {
+                id: 'pSingle.enrollmentDate',
+                name: 'Enrollment Date (single)',
+                dimensionType: 'PERIOD',
+                valueType: 'DATE',
+            },
+            'sX.de1': {
+                id: 'sX.de1',
+                name: 'DE 1',
+                dimensionType: 'DATA_ELEMENT',
+                valueType: 'NUMBER',
+            },
+            'sX.deOther': {
+                id: 'sX.deOther',
+                name: 'DE Other',
+                dimensionType: 'DATA_ELEMENT',
+                valueType: 'NUMBER',
+            },
+        }
+        const singleStageResponse = {
+            dimensions: [
+                {
+                    id: 'sX.de1',
+                    name: 'DE 1',
+                    aggregationType: 'SUM',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+                {
+                    id: 'sX.deOther',
+                    name: 'DE Other',
+                    aggregationType: 'AVERAGE',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+            ],
+        }
+        const { result } = await renderHookWithAppWrapper(
+            () => useCustomValueDataElements(),
+            {
+                ...buildMockOptions({ columns: ['pSingle.enrollmentDate'] }),
+                metadata: singleStageMetadata,
+                queryData: {
+                    [ANALYTICS_RESOURCE]: singleStageResponse,
+                },
+            }
+        )
+
+        await waitFor(() => {
+            expect(result.current.dataElements).toBeDefined()
+        })
+
+        expect(result.current.dataElements).toEqual([
+            {
+                id: 'sX.de1',
+                name: 'DE 1',
+                aggregationType: 'SUM',
+                dimensionType: 'DATA_ELEMENT',
+            },
+            {
+                id: 'sX.deOther',
+                name: 'DE Other',
+                aggregationType: 'AVERAGE',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        ])
     })
 
     it('filters by stage and exposes the layout stage name when one stage is in the layout', async () => {

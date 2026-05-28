@@ -21,9 +21,9 @@ export const StageNotice: FC<StageNoticeProps> = ({
     return (
         <div className={classes.stageNotice}>
             {customValueStageMismatch ? (
-                <NoticeBox warning>
+                <NoticeBox warning dense>
                     {i18n.t(
-                        'The currently selected data element "{{- dataElementName}}" is from a different stage than the dimensions in the layout. Pick a new data element from stage "{{- stageName}}".',
+                        '"{{- dataElementName}}" is from a different stage than the dimensions in the layout. Choose a data element from stage "{{- stageName}}".',
                         {
                             dataElementName: customValueDataElementName ?? '',
                             stageName: filteredByStageName,
@@ -32,8 +32,9 @@ export const StageNotice: FC<StageNoticeProps> = ({
                 </NoticeBox>
             ) : (
                 <NoticeBox
+                    dense
                     title={i18n.t(
-                        'Showing data elements from stage "{{- stageName}}" which is used in the layout',
+                        'Showing data elements from "{{- stageName}}", the stage used in the layout',
                         { stageName: filteredByStageName }
                     )}
                 />

@@ -115,20 +115,36 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                         </div>
                     )}
                     {isError && (
-                        <NoticeBox error title={i18n.t('Error loading data')}>
+                        <NoticeBox
+                            error
+                            dense
+                            title={i18n.t('Error loading data')}
+                        >
                             {error?.message ||
                                 i18n.t('Failed to load data elements')}
                         </NoticeBox>
                     )}
                     {!isLoading && !isError && dataElements?.length === 0 && (
                         <NoticeBox
-                            title={i18n.t(
-                                'No numeric data items in this program'
-                            )}
+                            dense
+                            title={
+                                filteredByStageName
+                                    ? i18n.t(
+                                          'No numeric data items in stage "{{- stageName}}"',
+                                          { stageName: filteredByStageName }
+                                      )
+                                    : i18n.t(
+                                          'No numeric data items in this program'
+                                      )
+                            }
                         >
-                            {i18n.t(
-                                'This program does not have any numeric data elements available.'
-                            )}
+                            {filteredByStageName
+                                ? i18n.t(
+                                      'This stage does not have any numeric data elements available.'
+                                  )
+                                : i18n.t(
+                                      'This program does not have any numeric data elements available.'
+                                  )}
                         </NoticeBox>
                     )}
                     {!isLoading &&
