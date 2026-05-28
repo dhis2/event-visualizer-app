@@ -1,13 +1,12 @@
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import { isMetadataInputItem } from '@modules/metadata'
-import { isPopulatedString } from '@modules/validation'
+import { isObject, isPopulatedString } from '@modules/validation'
 import type { AnalyticsResponseMetadataItems, MetadataInput } from '@types'
 
 const hasName = (value: unknown): boolean =>
-    typeof value === 'object' &&
-    value !== null &&
-    (isPopulatedString((value as { name?: unknown }).name) ||
-        isPopulatedString((value as { displayName?: unknown }).displayName))
+    isObject(value) &&
+    (('name' in value && isPopulatedString(value.name)) ||
+        ('displayName' in value && isPopulatedString(value.displayName)))
 
 const extractItemsMetadata = (
     items: AnalyticsResponseMetadataItems
