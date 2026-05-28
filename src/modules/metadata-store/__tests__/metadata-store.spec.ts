@@ -739,6 +739,35 @@ describe('MetadataStore', () => {
                 name: 'Report date',
             })
         })
+
+        it('skips nameless entries (e.g. the dimension itself) and still adds the named ones', () => {
+            /* The analytics response includes one entry per ID referenced by the
+             * query, including the dimension itself (e.g. an option set or
+             * category) as an empty object. extractItemsMetadata must drop those
+             * so they don't reach the store layer. */
+            const analyticsItems = {
+                optionA: { name: 'Option A' },
+                LFsZ8v5v7rq: {},
+                optionB: { name: 'Option B' },
+            } as unknown as Parameters<
+                MetadataStore['addAnalyticsResponseMetadata']
+            >[0]
+
+            metadataStore.addAnalyticsResponseMetadata(analyticsItems, [])
+
+            const snapshot = metadataStore.getMetadataSnapshot()
+            expect(snapshot.optionA).toEqual({
+                id: 'optionA',
+                name: 'Option A',
+                valueType: undefined,
+            })
+            expect(snapshot.optionB).toEqual({
+                id: 'optionB',
+                name: 'Option B',
+                valueType: undefined,
+            })
+            expect(snapshot.LFsZ8v5v7rq).toBeUndefined()
+        })
     })
 })
 
