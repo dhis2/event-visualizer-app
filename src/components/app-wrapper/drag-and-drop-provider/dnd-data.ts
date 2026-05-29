@@ -25,7 +25,7 @@ export const isSidebarSortableData = (
 export const isAxisContainerData = (
     input: object | undefined
 ): input is AxisContainerDroppableData =>
-    typeof input !== 'undefined' &&
+    input !== undefined &&
     'isAxisContainer' in input &&
     input.isAxisContainer === true
 

@@ -33,7 +33,7 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
         | undefined
 
     const availableAxes = useMemo<Axis[]>(() => {
-        const all = getAvailableAxes(visType) as Axis[]
+        const all = getAvailableAxes(visType)
         if (!dimension) {
             return all
         }

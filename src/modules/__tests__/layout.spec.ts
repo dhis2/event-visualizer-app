@@ -1004,7 +1004,7 @@ describe('getInvalidAxesForDimension', () => {
         expect(
             Array.from(
                 getInvalidAxesForDimension(textDataElement, 'PIVOT_TABLE')
-            ).sort()
+            ).sort((a, b) => a.localeCompare(b))
         ).toEqual(['columns', 'rows'])
     })
 
