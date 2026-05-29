@@ -21,7 +21,7 @@ const isLogLevel = (value: unknown): value is LogLevel =>
 
 const readLocalStorageOverride = (): LogLevel | null => {
     try {
-        const raw = window.localStorage?.getItem(LOG_LEVEL_KEY)
+        const raw = globalThis.localStorage?.getItem(LOG_LEVEL_KEY)
         return isLogLevel(raw) ? raw : null
     } catch {
         return null
