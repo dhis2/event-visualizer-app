@@ -29,12 +29,6 @@ type UseChipDndReturn = {
     style: CSSProperties | undefined
 }
 
-/* Encapsulates everything tied to the duration of a drag operation
- * originating from (or targeting) a layout chip: the per-axis allow-list
- * for the dim being represented, the sortable data payload, the dnd-kit
- * sortable hook call with droppable-disabled tracking based on the active
- * drag, and the drag-transform style. The whole `sortable` is exposed
- * because DropInsertMarker reads activeIndex/index/rect from it. */
 export const useChipDnd = ({
     dimension,
     axisId,

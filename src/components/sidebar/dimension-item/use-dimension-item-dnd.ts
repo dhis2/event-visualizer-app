@@ -24,13 +24,6 @@ type UseDimensionItemDndReturn = {
     style: CSSProperties | undefined
 }
 
-/* Encapsulates everything tied to the duration of a drag operation
- * originating from a sidebar dimension item: the multi-select intersection
- * for the per-axis allow-list, the sortable data payload, the dnd-kit
- * sortable hook call, and the drag-transform style. Values that exist
- * outside drags (selfAllowedTargetAxis used by the + icon,
- * populateMetadata used by clicks) stay with the component and are
- * passed in. */
 export const useDimensionItemDnd = ({
     dimension,
     populateMetadata,

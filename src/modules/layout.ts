@@ -243,9 +243,6 @@ export const isAxisInvalidForDimension = (
     visType: VisualizationType
 ): boolean => getInvalidAxesForDimension(dim, visType).has(axis)
 
-/* Per-axis allow-list for the set of dims being dragged together. The set
- * is the intersection: an axis is allowed only if every dim accepts it.
- * Consumed by the DnD layer to mark droppables disabled for the active drag. */
 export const getAllowedTargetAxis = (
     dims: ReadonlyArray<
         Partial<Pick<DimensionMetadataItem, 'dimensionType' | 'valueType'>>
