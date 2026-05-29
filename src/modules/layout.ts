@@ -199,17 +199,28 @@ const COLUMNS_AND_ROWS: ReadonlySet<Axis> = Object.freeze(
     new Set<Axis>(['columns', 'rows'])
 ) as ReadonlySet<Axis>
 
-/* A dimension is non-aggregatable when it represents arbitrary per-record
- * values that the analytics engine cannot aggregate numerically. This applies
- * to data elements and tracked-entity-attribute dimensions whose value type is
- * not numeric. Program indicators, fixed dimensions (status, dates, org units)
- * and categories/COGS are always aggregatable. */
+/* Aggregatable dimensions are those that can serve as a column/row axis in
+ * a pivot table: their value space is either a numeric scalar (which the
+ * analytics engine can sum/average) or a controlled categorical vocabulary
+ * (status enums, categories, COGS, OUGS, program indicators). Anything else
+ * — per-record OUs, dates, free text, coordinates, user identifiers —
+ * yields one bucket per record and isn't useful as a pivot axis. */
+const ALWAYS_AGGREGATABLE_DIMENSION_TYPES: ReadonlySet<
+    DimensionMetadataItem['dimensionType']
+> = new Set([
+    'PROGRAM_INDICATOR',
+    'STATUS',
+    'CATEGORY',
+    'CATEGORY_OPTION_GROUP_SET',
+    'ORGANISATION_UNIT_GROUP_SET',
+])
+
 export const isDimensionAggregatable = (
     dim: Partial<Pick<DimensionMetadataItem, 'dimensionType' | 'valueType'>>
 ): boolean => {
     if (
-        dim.dimensionType !== 'DATA_ELEMENT' &&
-        dim.dimensionType !== 'PROGRAM_ATTRIBUTE'
+        dim.dimensionType &&
+        ALWAYS_AGGREGATABLE_DIMENSION_TYPES.has(dim.dimensionType)
     ) {
         return true
     }

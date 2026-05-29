@@ -947,24 +947,43 @@ describe('isDimensionAggregatable', () => {
         })
     })
 
-    describe('other dimension types', () => {
+    describe('categorical dimension types are always aggregatable', () => {
         it.each([
             ['PROGRAM_INDICATOR', undefined],
+            ['PROGRAM_INDICATOR', 'NUMBER'],
+            ['STATUS', 'TEXT'],
             ['CATEGORY', undefined],
+            ['CATEGORY', 'TEXT'],
             ['CATEGORY_OPTION_GROUP_SET', undefined],
-            ['ORGANISATION_UNIT', undefined],
-            ['ORGANISATION_UNIT_GROUP_SET', undefined],
-            ['PERIOD', 'DATE'],
-            ['STATUS', undefined],
-            ['USER', undefined],
+            ['CATEGORY_OPTION_GROUP_SET', 'TEXT'],
+            ['ORGANISATION_UNIT_GROUP_SET', 'TEXT'],
         ] as const)(
-            'treats %s as aggregatable regardless of valueType',
+            'treats %s (valueType=%s) as aggregatable',
             (dimensionType, valueType) => {
                 expect(
                     isDimensionAggregatable(
                         makeDim({ dimensionType, valueType })
                     )
                 ).toBe(true)
+            }
+        )
+    })
+
+    describe('per-record dimension types are non-aggregatable', () => {
+        it.each([
+            ['ORGANISATION_UNIT', 'ORGANISATION_UNIT'],
+            ['ORGANISATION_UNIT', undefined],
+            ['PERIOD', 'DATE'],
+            ['PERIOD', 'DATETIME'],
+            ['USER', undefined],
+        ] as const)(
+            'treats %s (valueType=%s) as non-aggregatable',
+            (dimensionType, valueType) => {
+                expect(
+                    isDimensionAggregatable(
+                        makeDim({ dimensionType, valueType })
+                    )
+                ).toBe(false)
             }
         )
     })
