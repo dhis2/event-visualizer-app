@@ -1,7 +1,8 @@
 import {
-    getAdaptedVisualization,
+    getAdaptedVisualization as getAdaptedVisualizationForLL,
     getAnalyticsEndpoint,
 } from '@components/plugin-wrapper/hooks/query-tools-line-list'
+import { getAdaptedVisualization as getAdaptedVisualizationForPT } from '@components/plugin-wrapper/hooks/query-tools-pivot-table'
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { useConfig, useDataEngine } from '@dhis2/app-runtime'
@@ -45,7 +46,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 transformVisualizationForAnalyticsRequest(currentVis)
 
             const { adaptedVisualization, headers, parameters } =
-                getAdaptedVisualization(visualization)
+                getAdaptedVisualizationForLL(visualization)
 
             let req = new analyticsEngine.request()
                 .withPath(
@@ -172,7 +173,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 transformVisualizationForAnalyticsRequest(currentVis)
 
             const { adaptedVisualization, parameters } =
-                getAdaptedVisualization(visualization)
+                getAdaptedVisualizationForPT(visualization)
 
             let req = new analyticsEngine.request()
                 .withPath(
