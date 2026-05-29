@@ -1256,26 +1256,6 @@ describe('convertLayoutForVisType', () => {
         })
     })
 
-    it('discards dimensions without metadata, converts the rest', () => {
-        const result = convertLayoutForVisType({
-            layout: {
-                columns: ['known', 'unknown'],
-                rows: [],
-                filters: [],
-            },
-            targetVisType: 'PIVOT_TABLE',
-            getDimension: makeGetDimension({
-                known: makeDim({
-                    dimensionId: 'known',
-                    dimensionType: 'DATA_ELEMENT',
-                    valueType: 'NUMBER',
-                }),
-            }),
-        })
-        expect(result.discardedDimensionIds).toEqual(['unknown'])
-        expect(result.newLayout.columns).toEqual(['known'])
-    })
-
     it('handles a mixed discard + move + keep across all axes in one call', () => {
         const result = convertLayoutForVisType({
             layout: {

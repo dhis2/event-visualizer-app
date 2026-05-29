@@ -325,8 +325,9 @@ export const convertLayoutForVisType = ({
         for (const dimensionId of layout[sourceAxis]) {
             const dim = getDimension(dimensionId)
             if (!dim) {
-                discardedDimensionIds.push(dimensionId)
-                continue
+                throw new Error(
+                    `No metadata found for dimension "${dimensionId}" — cannot convert layout for visualization type "${targetVisType}"`
+                )
             }
             if (isDimensionFullyInvalidForVisType(dim, targetVisType)) {
                 discardedDimensionIds.push(dimensionId)
