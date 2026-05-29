@@ -4,8 +4,8 @@ import type {
     CollisionDetection,
     DroppableContainer,
 } from '@dnd-kit/core'
+import { isAxisContainerData } from './dnd-data'
 import type { AxisContainerDroppableData } from './types'
-import { isAxisContainerData } from './use-on-drag-end'
 
 /**
  * Calculates the intersection ratio (IoU - Intersection over Union) between two rectangles.

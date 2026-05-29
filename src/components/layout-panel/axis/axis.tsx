@@ -1,8 +1,5 @@
-import type {
-    AxisContainerDroppableData,
-    AxisSortableData,
-    SidebarSortableData,
-} from '@components/app-wrapper/drag-and-drop-provider/types'
+import { getActiveDragData } from '@components/app-wrapper/drag-and-drop-provider/dnd-data'
+import type { AxisContainerDroppableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import { useLayoutDimensions } from '@components/layout-panel/use-layout-dimensions'
 import { useDndContext, useDroppable } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
@@ -34,13 +31,10 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
     )
 
     const { active } = useDndContext()
-    const disabled = useMemo(() => {
-        const data = active?.data.current as
-            | SidebarSortableData
-            | AxisSortableData
-            | undefined
-        return data?.allowedTargetAxis?.[axisId] === false
-    }, [active, axisId])
+    const disabled = useMemo(
+        () => getActiveDragData(active)?.allowedTargetAxis?.[axisId] === false,
+        [active, axisId]
+    )
 
     const { setNodeRef, isOver } = useDroppable({
         id: axisId,

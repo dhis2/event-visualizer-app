@@ -1,4 +1,3 @@
-import type { SortableData } from '@dnd-kit/sortable'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     clearMultiSelection,
@@ -10,37 +9,14 @@ import {
     moveVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice'
 import { useCallback } from 'react'
-import type {
-    AxisContainerDroppableData,
-    AxisSortableData,
-    LayoutDragEndEvent,
-    SidebarSortableData,
-} from './types'
+import {
+    isAxisContainerData,
+    isAxisSortableData,
+    isSidebarSortableData,
+} from './dnd-data'
+import type { LayoutDragEndEvent } from './types'
 
 type OnDragEndFn = (event: LayoutDragEndEvent) => void
-
-const isDraggedItemFromAxis = (
-    input: object
-): input is AxisSortableData & SortableData =>
-    'sortable' in input &&
-    'dimensionId' in input &&
-    'overlayItemProps' in input &&
-    'axis' in input &&
-    'insertAfter' in input
-
-const isSidebarSortableData = (
-    input: object
-): input is SidebarSortableData & SortableData =>
-    'dimensionId' in input &&
-    'overlayItemProps' in input &&
-    'populateMetadata' in input
-
-export const isAxisContainerData = (
-    input: object | undefined
-): input is AxisContainerDroppableData =>
-    typeof input !== 'undefined' &&
-    'isAxisContainer' in input &&
-    input.isAxisContainer === true
 
 export const useOnDragEnd = (): OnDragEndFn => {
     const dispatch = useAppDispatch()
@@ -65,7 +41,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 ? false
                 : overItemData.insertAfter
 
-            if (isDraggedItemFromAxis(draggedItemData)) {
+            if (isAxisSortableData(draggedItemData)) {
                 // Move between axis
                 dispatch(
                     moveVisUiConfigLayoutDimension({

@@ -1,7 +1,5 @@
-import type {
-    AxisSortableData,
-    SidebarSortableData,
-} from '@components/app-wrapper/drag-and-drop-provider/types'
+import { getActiveDragData } from '@components/app-wrapper/drag-and-drop-provider/dnd-data'
+import type { AxisSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import type { DraggableSyntheticListeners } from '@dnd-kit/core'
 import { useDndContext } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
@@ -60,13 +58,10 @@ export const useChipDnd = ({
     )
 
     const { active } = useDndContext()
-    const disabledForActiveDrag = useMemo(() => {
-        const data = active?.data.current as
-            | SidebarSortableData
-            | AxisSortableData
-            | undefined
-        return data?.allowedTargetAxis?.[axisId] === false
-    }, [active, axisId])
+    const disabledForActiveDrag = useMemo(
+        () => getActiveDragData(active)?.allowedTargetAxis?.[axisId] === false,
+        [active, axisId]
+    )
 
     const sortable = useSortable({
         id: dimension.id,
