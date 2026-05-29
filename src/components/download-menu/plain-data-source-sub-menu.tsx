@@ -13,7 +13,7 @@ type PlainDataSourceSubMenuProps = {
 
 export const PlainDataSourceSubMenu: FC<PlainDataSourceSubMenuProps> = ({
     download,
-    hoverable,
+    hoverable = false,
     format,
     label,
     ...menuItemProps
@@ -29,15 +29,21 @@ export const PlainDataSourceSubMenu: FC<PlainDataSourceSubMenuProps> = ({
             />
             <MenuItemComponent
                 label={i18n.t('ID')}
-                onClick={() => download('plain', format, 'UID')}
+                onClick={() =>
+                    download({ type: 'plain', format, idScheme: 'UID' })
+                }
             />
             <MenuItemComponent
                 label={i18n.t('Code')}
-                onClick={() => download('plain', format, 'CODE')}
+                onClick={() =>
+                    download({ type: 'plain', format, idScheme: 'CODE' })
+                }
             />
             <MenuItemComponent
                 label={i18n.t('Name')}
-                onClick={() => download('plain', format, 'NAME')}
+                onClick={() =>
+                    download({ type: 'plain', format, idScheme: 'NAME' })
+                }
             />
         </MenuItemComponent>
     )
