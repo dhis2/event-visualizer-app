@@ -84,6 +84,9 @@ export const computeLineEndMatch = ({
     let minDeltaY = Infinity
 
     for (const container of droppableContainers) {
+        if (container.disabled) {
+            continue
+        }
         const data = container.data.current
         const rect = container.rect.current
 
@@ -165,6 +168,9 @@ export const collisionDetector: CollisionDetection = ({
     let maxItemIntersectionRatio = 0
 
     for (const droppableContainer of droppableContainers) {
+        if (droppableContainer.disabled) {
+            continue
+        }
         const intersectionRatio = getIntersectionRatio(
             droppableContainer.rect.current,
             draggedItemRect
