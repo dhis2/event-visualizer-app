@@ -34,7 +34,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
     const currentUser = useCurrentUser()
 
     const downloadForLL: DownloadFn = useCallback(
-        (type, format, idScheme) => {
+        ({ type, format, idScheme }) => {
             if (isVisualizationEmpty(currentVis)) {
                 return
             }
@@ -161,7 +161,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
     )
 
     const downloadForPT: DownloadFn = useCallback(
-        (type, format, idScheme) => {
+        ({ type, format, idScheme, path }) => {
             if (isVisualizationEmpty(currentVis)) {
                 return
             }
@@ -176,18 +176,17 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
 
             let req = new analyticsEngine.request()
                 .withPath(
-                    `${getAnalyticsEndpoint(visualization.outputType)}/aggregate`
+                    path ??
+                        `${getAnalyticsEndpoint(visualization.outputType)}/aggregate`
                 )
                 .withFormat(format)
                 .withDisplayProperty(currentUser.settings.displayProperty)
-                .withProgram(
+
+            if (!path) {
+                req = req.withProgram(
                     getSingleProgramFromVisualization(visualization).id
                 )
-
-            // TODO: not in CurrentVisualization
-            //            if (visualization.programStatus) {
-            //                req = req.withProgramStatus(visualization.programStatus)
-            //            }
+            }
 
             if (visualization.sortOrder) {
                 req = req.withSortOrder(
@@ -239,13 +238,20 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                     break
                 case 'plain':
                     req = req
-                        // Perhaps the 2nd arg `passFilterAsDimension` should be false for the advanced submenu?
                         // XXX: here we don't get all dimensions since the ones without a condition are skipped
-                        .fromVisualization(adaptedVisualization, true)
+                        .fromVisualization(
+                            adaptedVisualization,
+                            // XXX: in DV we only pass true when path is dataValueSet, in LL always, we don't have the advanced menu there
+                            path ? path === 'dataValueSet' : true
+                        )
                         .withParameters({
                             ...parameters,
                             paging: false,
                         })
+
+                    // TODO: showHierarchy:
+                    // withShowHierarchy this is equivalent to the withParameters above
+                    // withHierarchyMeta this won't be added with just withParameters
 
                     // fix option set option names
                     if (idScheme === 'NAME') {
