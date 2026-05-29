@@ -33,10 +33,10 @@ describe('debug-mode', () => {
             expect(isDebugMode()).toBe(false)
         })
 
-        it("returns 'error' when NODE_ENV=test", async () => {
+        it("returns 'silent' when NODE_ENV=test", async () => {
             vi.stubEnv('NODE_ENV', 'test')
             const { getLogLevel, isDebugMode } = await importDebugMode()
-            expect(getLogLevel()).toBe('error')
+            expect(getLogLevel()).toBe('silent')
             expect(isDebugMode()).toBe(false)
         })
     })

@@ -45,7 +45,13 @@ const computeLogLevel = (): LogLevel => {
     if (envOverride) {
         return envOverride
     }
-    return process.env.NODE_ENV === 'development' ? 'info' : 'error'
+    if (process.env.NODE_ENV === 'development') {
+        return 'info'
+    }
+    if (process.env.NODE_ENV === 'test') {
+        return 'silent'
+    }
+    return 'error'
 }
 
 const level: LogLevel = computeLogLevel()

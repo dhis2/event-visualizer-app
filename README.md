@@ -456,7 +456,8 @@ A few conventions to note:
 The app's debug tooling (verbose logging via [`loglevel`](https://github.com/pimterry/loglevel), Redux DevTools, and the metadata-store `window` globals) is gated behind a single log level. Defaults:
 
 - `pnpm start` (`NODE_ENV=development`): level `info` — logger output is visible, Redux DevTools attaches, `window.getMetadataStore()` is exposed.
-- Production builds (Netlify previews, installed instances) and tests: level `error` — only real errors emit; devtools are silent.
+- Production builds (Netlify previews, installed instances): level `error` — only real errors emit; devtools are silent.
+- Tests (`NODE_ENV=test`): level `silent` — no logger output, no devtools. Tests routinely exercise error paths, so emitting error logs by default would clutter the output.
 
 To override the default in any environment, set `EVENT_VISUALIZER_LOG_LEVEL` to one of `trace`, `debug`, `info`, `warn`, `error`, or `silent`. The boolean tools (Redux DevTools, metadata-store globals) are enabled at `trace`/`debug`/`info` and disabled at `warn`/`error`/`silent`.
 
