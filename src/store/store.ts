@@ -1,4 +1,5 @@
 import { api } from '@api/api'
+import { isDebugMode } from '@modules/debug-mode'
 import { getDefaultOptions } from '@modules/options'
 import { configureStore } from '@reduxjs/toolkit'
 import type { AppCachedData, DataEngine, MetadataStore } from '@types'
@@ -45,6 +46,7 @@ export const createStore = (
                 .prepend(listenerMiddleware.middleware)
                 .concat(api.middleware),
         preloadedState: getPreloadedState(appCachedData),
+        devTools: isDebugMode(),
     })
 
 export type AppStore = ReturnType<typeof createStore>

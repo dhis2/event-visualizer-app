@@ -1,6 +1,7 @@
 import { LineList } from '@components/line-list'
 import type { LineListAnalyticsData } from '@components/line-list'
 import type { DataSortFn, PaginateFn } from '@components/line-list/types'
+import { logger } from '@modules/logger'
 import { transformVisualizationForAnalyticsRequest } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -127,7 +128,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
             isInDashboard={isInDashboard}
             isInModal={isInModal}
             onColumnHeaderClick={(dimensionId) => {
-                console.log(
+                logger.debug(
                     `Show dimension modal for dimension ID ${dimensionId}`
                 )
             }}

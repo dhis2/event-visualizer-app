@@ -1,6 +1,7 @@
 import { Analytics, transformEventAggregateResponse } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
+import { logger } from '@modules/logger'
 import { getSingleProgramFromVisualization } from '@modules/visualization'
 import type {
     CurrentUser,
@@ -136,13 +137,13 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                     relativePeriodDate,
                 })
 
-                console.log('PT analytics response', analyticsResponse)
+                logger.debug('PT analytics response', analyticsResponse)
 
                 // response for PT needs to be transformed
                 const analyticsData =
                     transformEventAggregateResponse(analyticsResponse)
 
-                console.log('analytics data', analyticsData)
+                logger.debug('analytics data', analyticsData)
                 setState({
                     data: analyticsData,
                     error: undefined,
@@ -151,7 +152,7 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
 
                 onResponseReceived(analyticsResponse.metaData.items)
             } catch (error) {
-                console.log('PT fetch error', error)
+                logger.debug('PT fetch error', error)
                 setState({
                     data: null,
                     error,

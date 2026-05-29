@@ -1,3 +1,4 @@
+import { logger } from '@modules/logger'
 import {
     currentVisSlice,
     initialState as currentVisSliceInitialState,
@@ -141,7 +142,7 @@ describe('<LayoutPanel />', () => {
             },
         })
 
-        console.log(layoutPanelMockOptions)
+        logger.debug(layoutPanelMockOptions)
 
         cy.mount(
             <MockAppWrapper {...layoutPanelMockOptions}>

@@ -1,4 +1,5 @@
 import { useRtkQuery } from '@hooks'
+import { logger } from '@modules/logger'
 import type { MeDto, PickWithFieldFilters } from '@types'
 
 const fieldsFilter = ['id', 'name', 'email', 'settings'] as const
@@ -18,12 +19,12 @@ export const UserProfileExample = () => {
 
     if (isLoading) {
         // Both `error` and `data` will be undefined here
-        console.log(data, error)
+        logger.debug(data, error)
         return <div>Loading user profile...</div>
     }
     if (isError) {
         // `error` will be of type EngineError and `data` will is possibly undefined
-        console.log(data, error)
+        logger.debug(data, error)
         return <div>Error loading profile: {error.message}</div>
     }
 

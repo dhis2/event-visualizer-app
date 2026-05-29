@@ -6,6 +6,7 @@ import {
 import { useAlert } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import { useAppDispatch, useAppSelector } from '@hooks'
+import { logger } from '@modules/logger'
 import { isVisualizationPersistable } from '@modules/validation'
 import {
     getSaveableVisualization,
@@ -83,7 +84,7 @@ export const useToolbarActions = () => {
 
     const onError = useCallback(
         (error) => {
-            console.error(error)
+            logger.error(error)
             let message = error.message || i18n.t('An unknown error occurred.')
 
             switch (error.errorCode) {

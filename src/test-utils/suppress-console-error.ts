@@ -1,3 +1,5 @@
+/* eslint-disable no-console -- this utility intentionally wraps console.error
+   to suppress specific error messages emitted during tests */
 export const suppressConsoleError = (
     messageToMatch: string,
     fn: () => Promise<void>
