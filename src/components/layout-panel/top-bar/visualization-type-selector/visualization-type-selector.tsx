@@ -11,15 +11,19 @@ import {
     IconVisualizationLinelist16,
     IconVisualizationPivotTable16,
 } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector } from '@hooks'
+import { useAppDispatch, useAppSelector, useMetadataStore } from '@hooks'
+import { convertLayoutForVisType } from '@modules/layout'
 import {
+    setVisUiConfigLayout,
     setVisUiConfigVisualizationType,
+    getVisUiConfigLayout,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
-import type { VisualizationType } from '@types'
+import type { Layout, VisualizationType } from '@types'
 import cx from 'classnames'
 import type { FC, ReactNode } from 'react'
 import { useState, useRef } from 'react'
+import { ConversionConfirmationModal } from './conversion-confirmation-modal'
 import classes from './styles/visualization-type-selector.module.css'
 
 const visTypeIcons: Record<VisualizationType, ReactNode> = {
@@ -54,25 +58,58 @@ export const ListItem: FC<ListItemProps> = ({
     )
 }
 
+type PendingConversion = {
+    targetVisType: VisualizationType
+    newLayout: Layout
+    discardedNames: string[]
+}
+
 export const VisualizationTypeSelector: FC = () => {
     const dispatch = useAppDispatch()
+    const metadataStore = useMetadataStore()
 
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
+    const layout = useAppSelector(getVisUiConfigLayout)
 
     const [listIsOpen, setListIsOpen] = useState(false)
+    const [pendingConversion, setPendingConversion] =
+        useState<PendingConversion | null>(null)
 
     const toggleList = () => setListIsOpen(!listIsOpen)
 
-    const onItemClick = () => {
-        console.log('TBD run clearing on the store if needed')
+    const applyChange = (
+        targetVisType: VisualizationType,
+        newLayout: Layout
+    ) => {
+        dispatch(setVisUiConfigLayout(newLayout))
+        dispatch(setVisUiConfigVisualizationType(targetVisType))
     }
 
-    const handleListItemClick =
-        (visualizationType: VisualizationType) => () => {
-            dispatch(setVisUiConfigVisualizationType(visualizationType))
-            onItemClick()
-            toggleList()
+    const handleListItemClick = (nextVisType: VisualizationType) => () => {
+        if (nextVisType === visualizationType) {
+            setListIsOpen(false)
+            return
         }
+        const { newLayout, discardedDimensionIds } = convertLayoutForVisType({
+            layout,
+            targetVisType: nextVisType,
+            getDimension: (id) => metadataStore.getDimensionMetadataItem(id),
+        })
+        if (discardedDimensionIds.length === 0) {
+            applyChange(nextVisType, newLayout)
+            setListIsOpen(false)
+            return
+        }
+        const discardedNames = discardedDimensionIds.map(
+            (id) => metadataStore.getDimensionMetadataItem(id)?.name ?? id
+        )
+        setPendingConversion({
+            targetVisType: nextVisType,
+            newLayout,
+            discardedNames,
+        })
+        setListIsOpen(false)
+    }
 
     const buttonRef = useRef<HTMLDivElement>(null)
 
@@ -152,6 +189,20 @@ export const VisualizationTypeSelector: FC = () => {
                         </div>
                     </Popper>
                 </Layer>
+            )}
+            {pendingConversion && (
+                <ConversionConfirmationModal
+                    targetVisType={pendingConversion.targetVisType}
+                    discardedDimensionNames={pendingConversion.discardedNames}
+                    onConfirm={() => {
+                        applyChange(
+                            pendingConversion.targetVisType,
+                            pendingConversion.newLayout
+                        )
+                        setPendingConversion(null)
+                    }}
+                    onCancel={() => setPendingConversion(null)}
+                />
             )}
         </>
     )
