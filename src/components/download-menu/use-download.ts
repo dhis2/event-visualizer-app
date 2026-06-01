@@ -55,6 +55,10 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 .withFormat(format)
                 .withDisplayProperty(currentUser.settings.displayProperty)
 
+            if (visualization.showHierarchy) {
+                req = req.withHierarchyMeta()
+            }
+
             // TEI can use multiple programs
             if (visualization.outputType !== 'TRACKED_ENTITY_INSTANCE') {
                 req = req
@@ -86,12 +90,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 case 'table':
                     req = req
                         .fromVisualization(adaptedVisualization)
-                        .withTableLayout()
-                        .withColumns(
-                            visualization.columns
-                                ?.map((column) => column.dimension)
-                                .join(';')
-                        )
                         .withParameters({
                             ...parameters,
                             headers,
@@ -174,20 +172,28 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         getSingleProgramFromVisualization(visualization).id
                     )
                 }
+
+                if (visualization.showHierarchy) {
+                    req = req.withHierarchyMeta()
+                }
+
                 if (visualization.sortOrder) {
                     req = req.withSortOrder(
                         visualization.sortOrder === 1 ? 'ASC' : 'DESC'
                     )
                 }
+
                 if (visualization.topLimit) {
                     req = req.withLimit(visualization.topLimit)
                 }
+
                 // add custom value and aggregationType
                 if (visualization.value && visualization.aggregationType) {
                     req = req
                         .withValue(visualization.value.id)
                         .withAggregationType(visualization.aggregationType)
                 }
+
                 if (
                     relativePeriodDate &&
                     isVisualizationWithTimeDimension(visualization)
@@ -223,20 +229,15 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                     break
                 case 'plain':
                     req = req
-                        // XXX: here we don't get all dimensions since the ones without a condition are skipped
                         .fromVisualization(
                             adaptedVisualization,
-                            // XXX: in DV we only pass true when path is dataValueSet, in LL always, we don't have the advanced menu there
+                            // in DV we only pass true when path is dataValueSet, in LL we always pass true as we don't have the advanced menu there
                             path ? path === 'dataValueSet' : true
                         )
                         .withParameters({
                             ...parameters,
                             paging: false,
                         })
-
-                    // TODO: showHierarchy:
-                    // withShowHierarchy this is equivalent to the withParameters above
-                    // withHierarchyMeta this won't be added with just withParameters
 
                     // fix option set option names
                     req =
