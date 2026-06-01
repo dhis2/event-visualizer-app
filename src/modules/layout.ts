@@ -199,12 +199,13 @@ const COLUMNS_AND_ROWS: ReadonlySet<Axis> = Object.freeze(
     new Set<Axis>(['columns', 'rows'])
 ) as ReadonlySet<Axis>
 
-/* Aggregatable dimensions are those that can serve as a column/row axis in
- * a pivot table: their value space is either a numeric scalar (which the
- * analytics engine can sum/average) or a controlled categorical vocabulary
- * (status enums, categories, COGS, OUGS, program indicators). Anything else
- * — per-record OUs, dates, free text, coordinates, user identifiers —
- * yields one bucket per record and isn't useful as a pivot axis. */
+/* Aggregatable dimensions can serve as a column/row axis in a pivot table:
+ * their values fall into a bounded set of buckets the analytics engine groups
+ * by. That covers numeric scalars (summed/averaged), controlled categorical
+ * vocabularies (status enums, categories, COGS, OUGS, program indicators),
+ * org units (grouped by the OU hierarchy), and time (grouped into periods).
+ * Free per-record values — free text, coordinates, user identifiers — yield
+ * one bucket per record and aren't useful as a pivot axis. */
 const ALWAYS_AGGREGATABLE_DIMENSION_TYPES: ReadonlySet<
     DimensionMetadataItem['dimensionType']
 > = new Set([
@@ -213,6 +214,8 @@ const ALWAYS_AGGREGATABLE_DIMENSION_TYPES: ReadonlySet<
     'CATEGORY',
     'CATEGORY_OPTION_GROUP_SET',
     'ORGANISATION_UNIT_GROUP_SET',
+    'ORGANISATION_UNIT',
+    'PERIOD',
 ])
 
 export const isDimensionAggregatable = (
