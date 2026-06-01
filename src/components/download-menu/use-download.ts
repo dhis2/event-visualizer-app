@@ -207,17 +207,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 case 'table':
                     req = req
                         .fromVisualization(adaptedVisualization)
-                        .withTableLayout()
-                        .withColumns(
-                            visualization.columns
-                                ?.map((column) => column.dimension)
-                                .join(';')
-                        )
-                        .withRows(
-                            visualization.rows
-                                ?.map((row) => row.dimension)
-                                .join(';')
-                        )
                         .withParameters({
                             ...parameters,
                             dataIdScheme: 'NAME',
