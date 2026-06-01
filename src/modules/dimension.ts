@@ -28,7 +28,7 @@ export const outputTypeTimeDimensionMap: Record<OutputType, DimensionId> = {
  * concrete time-dimension id the app uses internally. Used when
  * materialising a legacy `pe` dimension into a proper time dimension. */
 export const timeFieldTimeDimensionMap: Record<string, DimensionId> = {
-    COMPLETED_DATE: 'completedDate',
+    COMPLETED_DATE: 'completed',
     CREATED: 'created',
     ENROLLMENT_DATE: 'enrollmentDate',
     EVENT_DATE: 'eventDate',
@@ -180,25 +180,9 @@ type TimeDimension = {
     nameProperty: string
 }
 export const getTimeDimensions = (): Record<
-    Exclude<TimeDimensionId, 'created' | 'lastUpdated'>,
+    Exclude<TimeDimensionId, 'lastUpdated'>,
     TimeDimension
 > => ({
-    completedDate: {
-        id: 'completedDate',
-        dimensionType: 'PERIOD',
-        defaultName: i18n.t('Completed date'),
-        nameParentProperty: 'stage',
-        nameProperty: 'displayCompletedDateLabel',
-        formatType: 'DATE',
-    },
-    createdDate: {
-        id: 'createdDate',
-        dimensionType: 'PERIOD',
-        defaultName: i18n.t('Created date'),
-        nameParentProperty: 'stage',
-        nameProperty: 'displayCreatedDateLabel',
-        formatType: 'DATE',
-    },
     eventDate: {
         id: 'eventDate',
         dimensionType: 'PERIOD',
@@ -221,14 +205,6 @@ export const getTimeDimensions = (): Record<
         defaultName: i18n.t('Incident date'),
         nameParentProperty: 'program',
         nameProperty: 'displayIncidentDateLabel',
-        formatType: 'DATE',
-    },
-    lastUpdatedOn: {
-        id: 'lastUpdatedOn',
-        dimensionType: 'PERIOD',
-        defaultName: i18n.t('Last updated on'),
-        nameParentProperty: 'stage',
-        nameProperty: 'displayLastUpdatedOnLabel',
         formatType: 'DATE',
     },
     scheduledDate: {
