@@ -62,14 +62,10 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         getSingleProgramFromVisualization(visualization).id
                     )
                     .withOutputType(visualization.outputType)
-            }
-
-            if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {
-                const trackedEntityTypeId = visualization.trackedEntityType?.id
-
-                if (trackedEntityTypeId) {
-                    req = req.withTrackedEntityType(trackedEntityTypeId)
-                }
+            } else if (visualization.trackedEntityType?.id) {
+                req = req.withTrackedEntityType(
+                    visualization.trackedEntityType.id
+                )
             }
 
             if (
@@ -80,18 +76,10 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
             }
 
             const sorting = visualization.sorting?.[0]
-
-            if (sorting) {
-                switch (sorting.direction) {
-                    case 'ASC': {
-                        req = req.withAsc(sorting.dimension)
-                        break
-                    }
-                    case 'DESC': {
-                        req = req.withDesc(sorting.dimension)
-                        break
-                    }
-                }
+            if (sorting?.direction === 'ASC') {
+                req = req.withAsc(sorting.dimension)
+            } else if (sorting?.direction === 'DESC') {
+                req = req.withDesc(sorting.dimension)
             }
 
             switch (type) {
@@ -125,13 +113,10 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         })
 
                     // fix option set option names
-                    if (idScheme === 'NAME') {
-                        req = req.withParameters({
-                            dataIdScheme: idScheme,
-                        })
-                    } else {
-                        req = req.withOutputIdScheme(idScheme)
-                    }
+                    req =
+                        idScheme === 'NAME'
+                            ? req.withParameters({ dataIdScheme: idScheme })
+                            : req.withOutputIdScheme(idScheme)
 
                     target = ['csv', 'xsl', 'xslx'].includes(format)
                         ? '_top'
@@ -141,7 +126,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
 
             const url = new URL(
                 `${config.baseUrl}/api/${config.apiVersion}/${req.buildUrl()}`,
-                `${window.location.origin}${window.location.pathname}`
+                `${globalThis.location.origin}${globalThis.location.pathname}`
             )
 
             Object.entries(req.buildQuery()).forEach(([key, value]) =>
@@ -183,35 +168,34 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 .withFormat(format)
                 .withDisplayProperty(currentUser.settings.displayProperty)
 
-            if (!path) {
-                req = req.withProgram(
-                    getSingleProgramFromVisualization(visualization).id
-                )
+            const applyBaseOptions = () => {
+                if (!path) {
+                    req = req.withProgram(
+                        getSingleProgramFromVisualization(visualization).id
+                    )
+                }
+                if (visualization.sortOrder) {
+                    req = req.withSortOrder(
+                        visualization.sortOrder === 1 ? 'ASC' : 'DESC'
+                    )
+                }
+                if (visualization.topLimit) {
+                    req = req.withLimit(visualization.topLimit)
+                }
+                // add custom value and aggregationType
+                if (visualization.value && visualization.aggregationType) {
+                    req = req
+                        .withValue(visualization.value.id)
+                        .withAggregationType(visualization.aggregationType)
+                }
+                if (
+                    relativePeriodDate &&
+                    isVisualizationWithTimeDimension(visualization)
+                ) {
+                    req = req.withRelativePeriodDate(relativePeriodDate)
+                }
             }
-
-            if (visualization.sortOrder) {
-                req = req.withSortOrder(
-                    visualization.sortOrder === 1 ? 'ASC' : 'DESC'
-                )
-            }
-
-            if (visualization.topLimit) {
-                req = req.withLimit(visualization.topLimit)
-            }
-
-            // add custom value and aggregationType
-            if (visualization.value && visualization.aggregationType) {
-                req = req
-                    .withValue(visualization.value.id)
-                    .withAggregationType(visualization.aggregationType)
-            }
-
-            if (
-                relativePeriodDate &&
-                isVisualizationWithTimeDimension(visualization)
-            ) {
-                req = req.withRelativePeriodDate(relativePeriodDate)
-            }
+            applyBaseOptions()
 
             switch (type) {
                 case 'table':
@@ -255,13 +239,10 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                     // withHierarchyMeta this won't be added with just withParameters
 
                     // fix option set option names
-                    if (idScheme === 'NAME') {
-                        req = req.withParameters({
-                            dataIdScheme: idScheme,
-                        })
-                    } else {
-                        req = req.withOutputIdScheme(idScheme)
-                    }
+                    req =
+                        idScheme === 'NAME'
+                            ? req.withParameters({ dataIdScheme: idScheme })
+                            : req.withOutputIdScheme(idScheme)
 
                     target = ['csv', 'xsl', 'xslx'].includes(format)
                         ? '_top'
@@ -271,7 +252,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
 
             const url = new URL(
                 `${config.baseUrl}/api/${config.apiVersion}/${req.buildUrl()}`,
-                `${window.location.origin}${window.location.pathname}`
+                `${globalThis.location.origin}${globalThis.location.pathname}`
             )
 
             Object.entries(req.buildQuery()).forEach(([key, value]) =>
