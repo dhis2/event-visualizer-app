@@ -21,10 +21,6 @@
     opacity: 0.5;
 }
 
-.container.invalid * {
-    cursor: not-allowed;
-}
-
 .container.columns {
     grid-area: columns;
 }
