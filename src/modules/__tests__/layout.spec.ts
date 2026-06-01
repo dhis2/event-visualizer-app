@@ -959,6 +959,10 @@ describe('isDimensionAggregatable', () => {
             ['CATEGORY_OPTION_GROUP_SET', undefined],
             ['CATEGORY_OPTION_GROUP_SET', 'TEXT'],
             ['ORGANISATION_UNIT_GROUP_SET', 'TEXT'],
+            ['ORGANISATION_UNIT', 'ORGANISATION_UNIT'],
+            ['ORGANISATION_UNIT', undefined],
+            ['PERIOD', 'DATE'],
+            ['PERIOD', 'DATETIME'],
         ] as const)(
             'treats %s (valueType=%s) as aggregatable',
             (dimensionType, valueType) => {
@@ -972,13 +976,7 @@ describe('isDimensionAggregatable', () => {
     })
 
     describe('per-record dimension types are non-aggregatable', () => {
-        it.each([
-            ['ORGANISATION_UNIT', 'ORGANISATION_UNIT'],
-            ['ORGANISATION_UNIT', undefined],
-            ['PERIOD', 'DATE'],
-            ['PERIOD', 'DATETIME'],
-            ['USER', undefined],
-        ] as const)(
+        it.each([['USER', undefined]] as const)(
             'treats %s (valueType=%s) as non-aggregatable',
             (dimensionType, valueType) => {
                 expect(
