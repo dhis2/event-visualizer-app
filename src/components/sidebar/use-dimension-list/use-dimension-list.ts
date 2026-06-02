@@ -1,6 +1,7 @@
 import { api } from '@api/api'
 import { parseEngineError, type EngineError } from '@api/parse-engine-error'
 import { useAppDispatch, useAppSelector, useStableCallback } from '@hooks'
+import { logger } from '@modules/logger'
 import {
     addDimensionListLoadingState,
     getFilter,
@@ -109,7 +110,7 @@ export const useDimensionList = ({
              * remount when the data source changes so this cannot really be called
              * during a fetch. And the internal logic in this hook should not allow,
              * this function to be called when the hook is not in async mode */
-            console.error(
+            logger.error(
                 'performFetch was called during a fetch or for a fixed dimensions list, this should not happen.'
             )
             return

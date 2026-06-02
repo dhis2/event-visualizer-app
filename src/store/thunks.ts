@@ -6,6 +6,7 @@ import {
     collectProgramDimensions,
     resolveTeiFields,
 } from '@modules/layout'
+import { logger } from '@modules/logger'
 import { getEnabledOptions } from '@modules/options'
 import {
     getVisualizationUiConfig,
@@ -94,7 +95,7 @@ export const tLoadSavedVisualization = createAsyncThunk<
                         },
                         data: {},
                     })
-                    .catch((error) => console.error(error))
+                    .catch((error) => logger.error(error))
             }
         } else if (error) {
             dispatch(setLoadError(error))
