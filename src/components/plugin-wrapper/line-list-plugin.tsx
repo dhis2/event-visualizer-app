@@ -32,7 +32,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     onResponseReceived,
 }) => {
     const [fetchAnalyticsData, { data, isFetching }] =
-        useLineListAnalyticsData(visualization)
+        useLineListAnalyticsData()
 
     // null indicates no custom sorting has been applied
     // undefined cannot be used because that is a valid value to indicate "remove sorting"

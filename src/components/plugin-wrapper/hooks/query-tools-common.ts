@@ -12,15 +12,6 @@ const analyticsApiEndpointMap: Record<OutputType, string> = {
 export const getAnalyticsEndpoint = (outputType: OutputType): string =>
     analyticsApiEndpointMap[outputType]
 
-export const computeLayoutKey = (visualization: CurrentVisualization): string =>
-    `${visualization.outputType}|${[
-        ...visualization.columns,
-        ...visualization.rows,
-        ...visualization.filters,
-    ]
-        .map((d) => d.dimension)
-        .join('|')}`
-
 // NOTE: visualization here already has the disabled options removed
 export const getRequestOptions = (visualization: CurrentVisualization) => {
     const options = Object.entries(ANALYTICS_OPTIONS).reduce(
