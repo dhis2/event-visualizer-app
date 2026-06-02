@@ -1,9 +1,8 @@
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import { Center, CircularLoader } from '@dhis2/ui'
-import {
-    isCurrentVisualizationPersisted,
-    isVisualizationEmpty,
-} from '@modules/visualization'
+import { useAppSelector } from '@hooks'
+import { isVisualizationEmpty } from '@modules/visualization'
+import { getCurrentVisLayoutKey } from '@store/current-vis-slice'
 import type {
     CurrentUser,
     CurrentVisualization,
@@ -45,6 +44,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     onDataSorted,
     onResponsesReceived: onResponsesReceivedCb,
 }) => {
+    const layoutKey = useAppSelector(getCurrentVisLayoutKey)
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
     const onLLResponseReceived = useCallback<OnLLAnalyticsResponseReceivedCb>(
@@ -87,11 +87,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
             )}
             {visualization.type === 'LINE_LIST' && (
                 <LineListPlugin
-                    key={
-                        isCurrentVisualizationPersisted(visualization)
-                            ? visualization.id
-                            : 'new'
-                    }
+                    key={layoutKey}
                     displayProperty={displayProperty}
                     visualization={visualization}
                     filters={filters}
@@ -103,7 +99,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
             )}
             {visualization.type === 'PIVOT_TABLE' && (
                 <PivotTablePlugin
-                    key={`${isCurrentVisualizationPersisted(visualization) ? visualization.id : 'new'}-${visualization.outputType}`}
+                    key={layoutKey}
                     displayProperty={displayProperty}
                     visualization={visualization}
                     filters={filters}

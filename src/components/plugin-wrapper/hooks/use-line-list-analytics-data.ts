@@ -27,8 +27,8 @@ import type {
     MetadataInputItem,
     UserOrgUnitMetadataItem,
 } from '@types'
-import { useCallback, useMemo, useState } from 'react'
-import { computeLayoutKey, getAnalyticsEndpoint } from './query-tools-common'
+import { useCallback, useState } from 'react'
+import { getAnalyticsEndpoint } from './query-tools-common'
 import { getAdaptedVisualization } from './query-tools-line-list'
 
 const lookupOptionSetOptionMetadata = (optionSetId, code, metaDataItems) => {
@@ -316,9 +316,7 @@ type AnalyticsDataState = {
 }
 type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
 
-const useLineListAnalyticsData = (
-    visualization: CurrentVisualization
-): UseAnalyticsDataResult => {
+const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const dataEngine = useDataEngine()
     const metadataStore = useMetadataStore()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
@@ -328,17 +326,6 @@ const useLineListAnalyticsData = (
         error: undefined,
         data: null,
     })
-
-    const layoutKey = useMemo(
-        () => computeLayoutKey(visualization),
-        [visualization]
-    )
-
-    const [prevLayoutKey, setPrevLayoutKey] = useState(layoutKey)
-    if (prevLayoutKey !== layoutKey) {
-        setPrevLayoutKey(layoutKey)
-        setState({ isFetching: false, error: undefined, data: null })
-    }
 
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
