@@ -385,12 +385,6 @@ describe('MetadataStore', () => {
               "programStageId": "Zj7UnCAulEk",
               "valueType": "INTEGER_POSITIVE",
             },
-            "completedDate": {
-              "dimensionId": "completedDate",
-              "dimensionType": "PERIOD",
-              "id": "completedDate",
-              "name": "Completed date",
-            },
             "created": {
               "dimensionId": "created",
               "dimensionType": "PERIOD",
@@ -403,12 +397,6 @@ describe('MetadataStore', () => {
               "dimensionType": "USER",
               "id": "createdBy",
               "name": "Created by",
-            },
-            "createdDate": {
-              "dimensionId": "createdDate",
-              "dimensionType": "PERIOD",
-              "id": "createdDate",
-              "name": "Created date",
             },
             "eBAyeGv0exc": {
               "displayIncidentDate": false,
@@ -467,12 +455,6 @@ describe('MetadataStore', () => {
               "dimensionType": "USER",
               "id": "lastUpdatedBy",
               "name": "Last updated by",
-            },
-            "lastUpdatedOn": {
-              "dimensionId": "lastUpdatedOn",
-              "dimensionType": "PERIOD",
-              "id": "lastUpdatedOn",
-              "name": "Last updated on",
             },
             "pe": {
               "dimensionId": "pe",
@@ -533,8 +515,8 @@ describe('MetadataStore', () => {
 
         // Length grows and decreases
         expect(snapshot0Keys.size).toBe(43)
-        expect(snapshot1Keys.size).toBe(78)
-        expect(snapshot2Keys.size).toBe(64)
+        expect(snapshot1Keys.size).toBe(75)
+        expect(snapshot2Keys.size).toBe(61)
 
         // Initial metadata is always included
         expect(snapshot0Keys.isSubsetOf(snapshot1Keys)).toBe(true)
@@ -580,11 +562,8 @@ describe('MetadataStore', () => {
             )
         ).toMatchInlineSnapshot(`
           [
-            "completedDate",
-            "createdDate",
             "enrollmentDate",
             "incidentDate",
-            "lastUpdatedOn",
             "scheduledDate",
             "lastUpdated",
             "createdBy",

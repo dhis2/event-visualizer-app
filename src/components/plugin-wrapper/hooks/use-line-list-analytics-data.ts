@@ -14,6 +14,7 @@ import {
     getDimensionSuffixes,
     type SuffixInput,
 } from '@modules/dimension-suffix'
+import { logger } from '@modules/logger'
 import { isValueTypeNumeric } from '@modules/value-type'
 import {
     analyticsHeaderToCanonicalDimensionId,
@@ -87,7 +88,7 @@ const fetchAnalyticsDataForLL = async ({
     const { adaptedVisualization, headers, parameters } =
         getAdaptedVisualization(visualization)
 
-    console.log('adaptedVisualization', adaptedVisualization)
+    logger.debug('adaptedVisualization', adaptedVisualization)
 
     let req = new analyticsEngine.request()
         .fromVisualization(adaptedVisualization)
@@ -136,7 +137,7 @@ const fetchAnalyticsDataForLL = async ({
                 break
         }
     }
-    console.log('LL req', req)
+    logger.debug('LL req', req)
     const analyticsApiEndpoint = getAnalyticsEndpoint(visualization.outputType)
 
     const rawResponse =
@@ -350,7 +351,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     : { dimension: undefined, direction: undefined }
 
             try {
-                console.log('in fetch analytics data try')
+                logger.debug('in fetch analytics data try')
                 const analyticsResponse = await fetchAnalyticsDataForLL({
                     analyticsEngine,
                     page,
@@ -434,7 +435,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
 
                 onResponseReceived(analyticsResponse.metaData.items, headers)
             } catch (error) {
-                console.log('fetch LL data error', error)
+                logger.debug('fetch LL data error', error)
                 setState({
                     data: null,
                     error,
