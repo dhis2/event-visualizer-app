@@ -43,13 +43,16 @@
 }
 
 .suffix.edited {
-    color: var(--colors-grey800);
-    padding: 2px 4px;
-    border-radius: 3px;
-    background-color: var(--colors-grey200);
-    margin-block-start: -1px;
+    color: var(--colors-grey600);
+    margin-block-start: 2px;
+    margin-inline-start: 4px;
     font-size: 11px;
     letter-spacing: -0.2px;
     font-family: monospace;
     line-height: normal;
+}
+
+.suffix.edited::before {
+    content: '·';
+    margin-inline-end: 4px;
 }
