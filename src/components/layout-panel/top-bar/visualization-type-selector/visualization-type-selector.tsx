@@ -12,6 +12,7 @@ import {
     IconVisualizationPivotTable16,
 } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
+import { logger } from '@modules/logger'
 import {
     setVisUiConfigVisualizationType,
     getVisUiConfigVisualizationType,
@@ -64,7 +65,7 @@ export const VisualizationTypeSelector: FC = () => {
     const toggleList = () => setListIsOpen(!listIsOpen)
 
     const onItemClick = () => {
-        console.log('TBD run clearing on the store if needed')
+        logger.debug('TBD run clearing on the store if needed')
     }
 
     const handleListItemClick =

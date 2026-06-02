@@ -1,4 +1,5 @@
 import type { Query, Mutation } from '@dhis2/app-service-data'
+import { logger } from '@modules/logger'
 import type { BaseQueryFn, BaseQueryApi } from '@reduxjs/toolkit/query'
 import type {
     AppCachedData,
@@ -53,7 +54,7 @@ export const customBaseQuery: CustomBaseQueryFn = async (
             return { data: queryResult ?? {} }
         }
     } catch (error: unknown) {
-        console.error(error)
+        logger.error(error)
         return { error: parseEngineError(error) }
     }
 }
