@@ -8,8 +8,8 @@ import type {
     MetadataInputItem,
     UserOrgUnitMetadataItem,
 } from '@types'
-import { useCallback, useState } from 'react'
-import { getAnalyticsEndpoint } from './query-tools-common'
+import { useCallback, useMemo, useState } from 'react'
+import { computeLayoutKey, getAnalyticsEndpoint } from './query-tools-common'
 import { getAdaptedVisualization } from './query-tools-pivot-table'
 
 export const fetchAnalyticsDataForPT = async ({
@@ -110,7 +110,7 @@ type AnalyticsDataState = {
 type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
 
 const usePivotTableAnalyticsData = (
-    layoutKey: string
+    visualization: CurrentVisualization
 ): UseAnalyticsDataResult => {
     const dataEngine = useDataEngine()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
@@ -120,6 +120,11 @@ const usePivotTableAnalyticsData = (
         error: undefined,
         data: null,
     })
+
+    const layoutKey = useMemo(
+        () => computeLayoutKey(visualization),
+        [visualization]
+    )
 
     const [prevLayoutKey, setPrevLayoutKey] = useState(layoutKey)
     if (prevLayoutKey !== layoutKey) {
