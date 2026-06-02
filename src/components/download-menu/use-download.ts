@@ -262,7 +262,6 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
         ]
     )
 
-    // XXX: should the transformed visualization be passed here?
     const isDownloadEnabled =
         isCurrentVisualizationNew(currentVis) ||
         isCurrentVisualizationPersisted(currentVis)
