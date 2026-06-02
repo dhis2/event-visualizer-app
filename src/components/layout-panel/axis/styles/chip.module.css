@@ -42,6 +42,14 @@
     color: var(--colors-grey900);
 }
 
+.chipEmpty .content button {
+    background-color: var(--colors-grey100);
+}
+
+.chipEmpty .content button:hover {
+    background-color: var(--colors-grey200);
+}
+
 .chipEmpty .secondary {
     color: var(--colors-grey600);
 }
