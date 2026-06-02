@@ -63,6 +63,13 @@
     padding-inline-end: 4px;
 }
 
+/* The drag overlay tracks the cursor, so it's the element under the pointer
+ * for the whole drag. Override the inner item's cursor so it reads grabbing. */
+.container.dragOverlay,
+.container.dragOverlay * {
+    cursor: grabbing;
+}
+
 .container.disabled {
     cursor: not-allowed;
     opacity: 0.5;

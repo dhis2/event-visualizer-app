@@ -44,6 +44,13 @@
     min-block-size: 20px;
     opacity: 0.9;
 }
+
+/* The drag overlay tracks the cursor, so it's the element under the pointer
+ * for the whole drag. Override the inner cursor so it reads grabbing. */
+.chip.dragging,
+.chip.dragging * {
+    cursor: grabbing;
+}
 .showBlank .content {
     visibility: hidden;
     min-inline-size: 100px;
