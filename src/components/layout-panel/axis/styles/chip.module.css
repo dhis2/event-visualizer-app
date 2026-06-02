@@ -38,26 +38,6 @@
     border-color: var(--colors-grey400);
 }
 
-.chipEmpty .chipBase {
-    color: var(--colors-grey900);
-}
-
-.chipEmpty .content button {
-    background-color: var(--colors-grey100);
-}
-
-.chipEmpty .content button:hover {
-    background-color: var(--colors-grey200);
-}
-
-.chipEmpty .secondary {
-    color: var(--colors-grey600);
-}
-
-.chipEmpty .suffix {
-    background: #eff1f3;
-    color: var(--colors-grey900);
-}
 .dragging {
     margin: 0;
     align-items: center;
