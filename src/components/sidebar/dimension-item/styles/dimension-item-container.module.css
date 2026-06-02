@@ -37,9 +37,10 @@
     background-color: #bbe2e0;
 }
 
-.container.dragging {
+.container.dragging:active {
     background-color: var(--colors-grey100);
     border-color: var(--colors-grey400);
+    opacity: 0.9;
 }
 
 .container.multiSelected,
