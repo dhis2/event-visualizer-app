@@ -68,10 +68,10 @@ export const DimensionCard: FC<DimensionCardProps> = ({
 
     return (
         <>
-            {noticeText && <CardDisabledNotice message={noticeText} />}
             <div
                 className={cx(classes.container, {
                     [classes.isDisabled]: isVisuallyDisabled,
+                    [classes.hasNotice]: !!noticeText,
                 })}
                 data-test="dimension-card"
             >
@@ -98,6 +98,7 @@ export const DimensionCard: FC<DimensionCardProps> = ({
                     </ContainingCardDisabledContext.Provider>
                 </div>
             </div>
+            {noticeText && <CardDisabledNotice message={noticeText} />}
         </>
     )
 }
