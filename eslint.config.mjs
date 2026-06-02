@@ -40,6 +40,7 @@ export default defineConfig([
             'react-hooks/use-memo': 'off',
             'react-hooks/globals': 'off',
             'import/no-default-export': 'error',
+            'no-console': 'error',
             'no-restricted-imports': [
                 'error',
                 {
