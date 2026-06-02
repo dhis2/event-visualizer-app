@@ -16,10 +16,8 @@ export const YOUR_DIMENSION_TYPES = asStringLiteralSubsetArray<DimensionType>()(
 
 export const DIMENSION_IDS = [
     'completed',
-    'completedDate',
     'created',
     'createdBy',
-    'createdDate',
     'enrollmentDate',
     'enrollmentOu',
     'eventDate',
@@ -27,7 +25,6 @@ export const DIMENSION_IDS = [
     'incidentDate',
     'lastUpdated',
     'lastUpdatedBy',
-    'lastUpdatedOn',
     'ou',
     'programStatus',
     'scheduledDate',
@@ -36,12 +33,9 @@ export const DIMENSION_IDS = [
 export const DIMENSION_ID_ORGUNIT: DimensionId = 'ou'
 
 export const TIME_DIMENSION_IDS = [
-    'completedDate', // XXX: is this a thing? or should it be completed
-    'createdDate', // XXX: same for this one
     'enrollmentDate',
     'eventDate',
     'incidentDate',
     'lastUpdated',
-    'lastUpdatedOn',
     'scheduledDate',
 ] as const
