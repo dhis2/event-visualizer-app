@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-05-28T13:09:23.445Z\n"
-"PO-Revision-Date: 2026-05-28T13:09:23.445Z\n"
+"POT-Creation-Date: 2026-06-02T06:56:16.657Z\n"
+"PO-Revision-Date: 2026-06-02T06:56:16.658Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -380,14 +380,23 @@ msgstr ""
 "This line list may show data that was not available when the interpretation "
 "was written."
 
+msgid "Not available offline"
+msgstr "Not available offline"
+
+msgid "Go to previous page"
+msgstr "Go to previous page"
+
+msgid "Go to next page"
+msgstr "Go to next page"
+
+msgid "Rows {{- firstItem}}-{{- lastItem}}"
+msgstr "Rows {{- firstItem}}-{{- lastItem}}"
+
 msgid "Rows per page"
 msgstr "Rows per page"
 
-msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
-msgstr "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
-
-msgid "Not available offline"
-msgstr "Not available offline"
+msgid "Sort items"
+msgstr "Sort items"
 
 msgid "most recent"
 msgstr "most recent"

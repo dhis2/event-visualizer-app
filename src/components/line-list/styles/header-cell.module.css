@@ -1,26 +1,48 @@
+.headerCell {
+    box-sizing: border-box;
+    font-weight: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: var(--table-header-bg);
+    border: 1px solid var(--table-border-color);
+    border-width: 1px 0 1px 1px;
+}
+
 :global(table.font-size-large) .headerCell {
-    font-size: 14px;
-    line-height: 15px;
+    font-size: 13px;
+    line-height: 13px;
 }
 .headerCell,
 :global(table.font-size-normal) .headerCell {
-    font-size: 12px;
-    line-height: 13px;
+    font-size: 11px;
+    line-height: 11px;
 }
 :global(table.font-size-small) .headerCell {
-    font-size: 11px;
-    line-height: 12px;
+    font-size: 10px;
+    line-height: 10px;
 }
 
 :global(table.size-comfortable) .headerCell {
-    padding: 8px 4px 6px 8px;
+    padding: 7px;
 }
 .headerCell,
 :global(table.size-normal) .headerCell {
-    padding: 4px 4px 2px 6px;
+    padding: 5px;
 }
 :global(table.size-compact) .headerCell {
-    padding: 3px 2px 1px 6px;
+    padding: 4px;
+}
+
+.inner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.label {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dimensionModalHandler {

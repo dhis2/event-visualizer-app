@@ -1,76 +1,73 @@
-import { createContext, useContext, useCallback, useState } from 'react'
-import type { FC, ReactNode } from 'react'
-import { useDebounceCallback } from 'usehooks-ts'
+import cx from 'classnames'
+import {
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+    type FC,
+    type ReactNode,
+} from 'react'
 import classes from './styles/scroll-box.module.css'
 
-const ScrollBoxContext = createContext<number | null>(null)
-
-/* The entries array only contains the entries which have resized, so this
- * could be the container, the content, or both. */
-const readClientWidthFromEntries = (entries: ResizeObserverEntry[]): number => {
-    let contentNode: Element | null = null
-    for (const entry of entries) {
-        if (entry.target.classList.contains(classes.container)) {
-            // Found container node, just return its clientWidth
-            return entry.target.clientWidth
-        } else if (entry.target.classList.contains(classes.content)) {
-            contentNode = entry.target
-        }
-    }
-    if (typeof contentNode?.parentElement?.clientWidth !== 'number') {
-        throw new Error('Could not read clientWidth from scrollbox container')
-    }
-
-    return contentNode.parentElement.clientWidth
-}
+const SCROLL_EPSILON = 1
 
 export const ScrollBox: FC<{ children?: ReactNode }> = ({ children }) => {
-    const [width, setWidth] = useState(0)
-    const debouncedSetWidth = useDebounceCallback(setWidth, 80)
-    const [resizeObserver] = useState(
-        () =>
-            new ResizeObserver((entries) => {
-                debouncedSetWidth(readClientWidthFromEntries(entries))
-            })
-    )
-    const containerCallbackRef = useCallback(
-        (node: HTMLDivElement | null) => {
-            if (node === null) {
-                // Callback ref is called with null when the component unmounts
-                resizeObserver.disconnect()
-            } else {
-                // Callback ref is called once with populated node when the component mounts
-                resizeObserver.observe(node)
-                if (node.firstElementChild) {
-                    // Observer the content to cover the edge case when scrollbar shows/hides
-                    resizeObserver.observe(node.firstElementChild)
-                }
-            }
-        },
-        [resizeObserver]
-    )
+    const containerRef = useRef<HTMLDivElement>(null)
+    const contentRef = useRef<HTMLDivElement>(null)
+    const [canScrollDown, setCanScrollDown] = useState(false)
+
+    const updateScrollHints = useCallback(() => {
+        const container = containerRef.current
+        if (!container) {
+            return
+        }
+        const hasContentBelow =
+            container.scrollTop + container.clientHeight <
+            container.scrollHeight - SCROLL_EPSILON
+        setCanScrollDown((current) =>
+            current === hasContentBelow ? current : hasContentBelow
+        )
+    }, [])
+
+    useEffect(() => {
+        const container = containerRef.current
+        if (!container) {
+            return
+        }
+        updateScrollHints()
+
+        const resizeObserver = new ResizeObserver(updateScrollHints)
+        resizeObserver.observe(container)
+        if (contentRef.current) {
+            resizeObserver.observe(contentRef.current)
+        }
+        return () => {
+            resizeObserver.disconnect()
+        }
+    }, [updateScrollHints])
 
     return (
-        <ScrollBoxContext.Provider value={width}>
+        <div className={classes.wrapper}>
             <div
-                ref={containerCallbackRef}
+                ref={containerRef}
                 className={classes.container}
+                onScroll={updateScrollHints}
                 data-test="scroll-box-container"
             >
-                <div className={classes.content} data-test="scroll-box-content">
+                <div
+                    ref={contentRef}
+                    className={classes.content}
+                    data-test="scroll-box-content"
+                >
                     {children}
                 </div>
             </div>
-        </ScrollBoxContext.Provider>
+            <div
+                aria-hidden="true"
+                className={cx(classes.scrollFade, {
+                    [classes.scrollFadeVisible]: canScrollDown,
+                })}
+            />
+        </div>
     )
-}
-
-// Hooks for consuming dimensions
-export const useScrollBoxWidth = (): number => {
-    const width = useContext(ScrollBoxContext)
-    if (width === null) {
-        throw new Error('useScrollboxWidth must be used within a ScrollBox')
-    }
-
-    return width
 }

@@ -199,7 +199,7 @@ describe(
                 cy.get('@firstCell').should('not.be.visible')
             })
 
-            it('pagination is sticky in both directions', () => {
+            it('pagination sits below the scroll area and does not scroll with the table', () => {
                 cy.mount(
                     <TestContainer>
                         <LineList
@@ -215,39 +215,43 @@ describe(
                     </TestContainer>
                 )
 
-                // Scroll both vertically and horizontally
-                cy.getByDataTest('scroll-box-container').scrollTo(300, 200, {
-                    duration: 0,
-                })
+                cy.getByDataTest('sticky-pagination-container').then(
+                    ($before) => {
+                        const before = $before[0].getBoundingClientRect()
 
-                // Check that sticky-pagination-container is positioned correctly
-                cy.getByDataTest('sticky-pagination-container').should(
-                    ($pagination) => {
-                        const paginationRect =
-                            $pagination[0].getBoundingClientRect()
-                        const scrollBox = document.querySelector(
-                            '[data-test="scroll-box-container"]'
+                        // Scroll the table in both directions
+                        cy.getByDataTest('scroll-box-container').scrollTo(
+                            300,
+                            200,
+                            { duration: 0 }
                         )
 
-                        expect(scrollBox).to.have.property(
-                            'getBoundingClientRect'
-                        )
-                        const scrollBoxRect = scrollBox!.getBoundingClientRect()
-                        const BORDER_WIDTH = 1
+                        cy.getByDataTest('sticky-pagination-container').should(
+                            ($after) => {
+                                const after = $after[0].getBoundingClientRect()
 
-                        // Bottom-left and bottom-right should match (accounting for scrollbars)
-                        expect(paginationRect.left).to.equal(
-                            scrollBoxRect.left + BORDER_WIDTH
-                        )
-                        expect(paginationRect.right).to.equal(
-                            scrollBoxRect.left +
-                                (scrollBox?.clientWidth ?? 0) +
-                                BORDER_WIDTH
-                        ) // Allow for vertical scrollbar
-                        expect(paginationRect.bottom).to.equal(
-                            scrollBoxRect.top +
-                                (scrollBox?.clientHeight ?? 0) +
-                                BORDER_WIDTH
+                                // The pagination lives outside the scroll container,
+                                // so scrolling the table must not move it
+                                expect(after.top).to.equal(before.top)
+                                expect(after.left).to.equal(before.left)
+
+                                const scrollBox = document.querySelector(
+                                    '[data-test="scroll-box-container"]'
+                                )
+                                const scrollBoxRect =
+                                    scrollBox!.getBoundingClientRect()
+
+                                // It sits directly beneath the scroll area and spans its width
+                                expect(Math.round(after.top)).to.equal(
+                                    Math.round(scrollBoxRect.bottom)
+                                )
+                                expect(Math.round(after.left)).to.equal(
+                                    Math.round(scrollBoxRect.left)
+                                )
+                                expect(Math.round(after.right)).to.equal(
+                                    Math.round(scrollBoxRect.right)
+                                )
+                            }
                         )
                     }
                 )
@@ -279,13 +283,15 @@ describe(
                     expect(scrollBox).to.have.property('getBoundingClientRect')
                     const scrollBoxRect = scrollBox!.getBoundingClientRect()
 
-                    expect(overlayRect.left).to.equal(scrollBoxRect.left + 1)
-                    expect(overlayRect.top).to.equal(scrollBoxRect.top + 1)
+                    // The scroll box no longer has a border, so the overlay aligns
+                    // flush with the scroll box (no 1px offset)
+                    expect(overlayRect.left).to.equal(scrollBoxRect.left)
+                    expect(overlayRect.top).to.equal(scrollBoxRect.top)
                     expect(overlayRect.right).to.equal(
-                        scrollBoxRect.left + (scrollBox?.clientWidth ?? 0) + 1
+                        scrollBoxRect.left + (scrollBox?.clientWidth ?? 0)
                     )
                     expect(overlayRect.bottom).to.equal(
-                        scrollBoxRect.top + (scrollBox?.clientHeight ?? 0) + 1
+                        scrollBoxRect.top + (scrollBox?.clientHeight ?? 0)
                     )
                 })
             }

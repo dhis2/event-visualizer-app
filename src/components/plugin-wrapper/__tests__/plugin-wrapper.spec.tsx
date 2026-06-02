@@ -22,6 +22,10 @@ describe('PluginWrapper', () => {
     const eventVisualization2Id = 'waPjzoJyIQ9'
     const mockOnDataSorted = vi.fn()
     const mockOnResponsesReceived = vi.fn()
+    type RecordedAnalyticsQuery = {
+        params: { page?: number | string; pageSize?: number | string }
+    }
+    let analyticsQueries: RecordedAnalyticsQuery[] = []
     /* The analytics handler is deferred so each test can hold the response
      * in flight long enough to assert the in-flight UI (spinner shown), then
      * call `releaseAll()` to let the response arrive and assert the settled
@@ -32,11 +36,12 @@ describe('PluginWrapper', () => {
     const deferredAnalytics = createDeferredQuery()
     const mockOptions = {
         queryData: {
-            analytics: deferredAnalytics.defer((_, query) =>
-                query.params.dimension.includes('qrur9Dvnyt5:GE:5:LE:10')
+            analytics: deferredAnalytics.defer((_, query) => {
+                analyticsQueries.push(query)
+                return query.params.dimension.includes('qrur9Dvnyt5:GE:5:LE:10')
                     ? analyticsResponse1
                     : analyticsResponse2
-            ),
+            }),
             // mock the POST to dataStatistics done in the eventVisualization endpoint
             dataStatistics: {},
             eventVisualizations: async (_, query) => {
@@ -137,6 +142,7 @@ describe('PluginWrapper', () => {
     beforeEach(() => {
         vi.clearAllMocks()
         deferredAnalytics.reset()
+        analyticsQueries = []
     })
 
     it('should render the loading spinner while loading and switching visualizations', async () => {
@@ -212,7 +218,7 @@ describe('PluginWrapper', () => {
         await loadFirstVisualization(store)
 
         // simulate pagination
-        await user.click(screen.getByRole('button', { name: 'Next' }))
+        await user.click(screen.getByRole('button', { name: /next/i }))
 
         // Visualisation loading state remains false and current vis remains the same
         await waitFor(() => {
@@ -242,6 +248,35 @@ describe('PluginWrapper', () => {
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
             expect(mockOnResponsesReceived).toBeCalledTimes(2)
+        })
+    })
+
+    it('preserves the chosen page size when navigating to another page', async () => {
+        const user = userEvent.setup()
+        const { store } = await renderWithAppWrapper(
+            <TestComponent />,
+            mockOptions
+        )
+
+        await loadFirstVisualization(store)
+
+        // choose a non-default page size
+        await user.click(screen.getByRole('button', { name: /rows per page/i }))
+        await user.click(await screen.findByRole('menuitem', { name: '50' }))
+
+        await deferredAnalytics.releaseAll()
+        await waitFor(() => {
+            expect(Number(analyticsQueries.at(-1)?.params.pageSize)).toBe(50)
+        })
+
+        // navigating to another page must keep the chosen page size, not reset it
+        await user.click(
+            screen.getByRole('button', { name: /go to next page/i })
+        )
+
+        await deferredAnalytics.releaseAll()
+        await waitFor(() => {
+            expect(Number(analyticsQueries.at(-1)?.params.pageSize)).toBe(50)
         })
     })
 
