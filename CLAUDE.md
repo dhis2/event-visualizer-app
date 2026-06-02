@@ -109,6 +109,13 @@ pnpm generate-types # Regenerate DHIS2 API types from OpenAPI specs
 
 ## Code Conventions
 
+### Communicating with the user
+
+- Write plainly. Short sentences, common words, no filler.
+- Explain things the way you would to a colleague, not in dense prose.
+- No hedging or clever phrasing that has to be re-read to parse.
+- Prefer a few clear lines over a wall of text.
+
 ### Code Style
 
 - **Self-documenting code over comments**: Prefer well-named intermediate variables and
