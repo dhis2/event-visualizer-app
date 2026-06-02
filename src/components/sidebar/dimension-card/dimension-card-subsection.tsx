@@ -31,11 +31,10 @@ export const DimensionsCardSubsection: FC<DimensionsCardSubsectionProps> = ({
                 type="button"
                 className={cx(classes.header, {
                     [classes.collapsed]: isCollapsed,
+                    [classes.disabled]: isDisabled,
                 })}
                 onClick={handleToggle}
                 aria-expanded={!isCollapsed}
-                disabled={isDisabled}
-                tabIndex={isDisabled ? -1 : 0}
                 data-test="dimension-card-subsection-header"
             >
                 {<CollapseIcon isCollapsed={isCollapsed} />}

@@ -7,7 +7,11 @@
 }
 .container.isDisabled {
     border-color: var(--colors-grey300);
-    background-color: var(--colors-grey050);
+    background-color: color-mix(
+        in srgb,
+        var(--colors-white) 50%,
+        transparent 50%
+    );
 }
 .container:not(.isDisabled):hover {
     border-color: #b7c4d2;
