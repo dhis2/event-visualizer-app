@@ -29,6 +29,7 @@ const setupNodeEvents = async (
                 'code' in error &&
                 error.code === 'ENOENT'
             ) {
+                // eslint-disable-next-line no-console
                 console.log('Video already deleted')
             } else {
                 throw error
