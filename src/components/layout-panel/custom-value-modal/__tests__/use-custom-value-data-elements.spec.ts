@@ -146,6 +146,42 @@ describe('useCustomValueDataElements', () => {
         expect(result.current.filteredByStageName).toBeUndefined()
     })
 
+    it('sorts data elements alphabetically by name regardless of API order', async () => {
+        const outOfOrderResponse = {
+            dimensions: [
+                {
+                    id: 's2.de2',
+                    name: 'DE 2',
+                    aggregationType: 'AVERAGE',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+                {
+                    id: 's1.de1',
+                    name: 'DE 1',
+                    aggregationType: 'SUM',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+            ],
+        }
+        const { result } = await renderHookWithAppWrapper(
+            () => useCustomValueDataElements(),
+            {
+                ...buildMockOptions({ columns: ['p1.enrollmentDate'] }),
+                queryData: {
+                    [ANALYTICS_RESOURCE]: outOfOrderResponse,
+                },
+            }
+        )
+
+        await waitFor(() => {
+            expect(result.current.dataElements).toBeDefined()
+        })
+
+        expect(
+            result.current.dataElements?.map((dataElement) => dataElement.name)
+        ).toEqual(['DE 1', 'DE 2'])
+    })
+
     it('omits stageName when the layout has no program stage and the program has only one stage', async () => {
         const singleStage = {
             id: 'sX',

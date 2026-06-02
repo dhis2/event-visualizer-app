@@ -100,25 +100,32 @@ export const useCustomValueDataElements = () => {
             return undefined
         }
 
+        const byName = (a: { name: string }, b: { name: string }) =>
+            a.name.localeCompare(b.name)
+
         if (layoutStageId) {
-            return data.dimensions.filter(
-                (dim) => getStageIdFromDimensionId(dim.id) === layoutStageId
-            )
+            return data.dimensions
+                .filter(
+                    (dim) => getStageIdFromDimensionId(dim.id) === layoutStageId
+                )
+                .sort(byName)
         }
 
-        return data.dimensions.map((dim) => {
-            const stageId = getStageIdFromDimensionId(dim.id)
-            if (!stageId || !programHasMultipleStages) {
-                return dim
-            }
-            const stage = metadataStore.getProgramStageMetadataItem(stageId)
-            if (!stage) {
-                throw new Error(
-                    `Could not find stage with ID "${stageId}" in the metadata store`
-                )
-            }
-            return { ...dim, stageName: stage.name }
-        })
+        return data.dimensions
+            .map((dim) => {
+                const stageId = getStageIdFromDimensionId(dim.id)
+                if (!stageId || !programHasMultipleStages) {
+                    return dim
+                }
+                const stage = metadataStore.getProgramStageMetadataItem(stageId)
+                if (!stage) {
+                    throw new Error(
+                        `Could not find stage with ID "${stageId}" in the metadata store`
+                    )
+                }
+                return { ...dim, stageName: stage.name }
+            })
+            .sort(byName)
     }, [data, layoutStageId, metadataStore, programHasMultipleStages])
 
     return {
