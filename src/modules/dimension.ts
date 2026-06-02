@@ -30,6 +30,7 @@ export const outputTypeTimeDimensionMap: Record<OutputType, DimensionId> = {
 export const timeFieldTimeDimensionMap: Record<string, DimensionId> = {
     COMPLETED_DATE: 'completed',
     CREATED: 'created',
+    CREATED_DATE: 'created',
     ENROLLMENT_DATE: 'enrollmentDate',
     EVENT_DATE: 'eventDate',
     INCIDENT_DATE: 'incidentDate',
