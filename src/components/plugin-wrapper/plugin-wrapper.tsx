@@ -2,11 +2,12 @@ import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import { Center, CircularLoader } from '@dhis2/ui'
 import { useAppSelector } from '@hooks'
 import { isVisualizationEmpty } from '@modules/visualization'
-import { getCurrentVisLayoutKey } from '@store/current-vis-slice'
+import { createSelector } from '@reduxjs/toolkit'
 import type {
     CurrentUser,
     CurrentVisualization,
     EmptyVisualization,
+    RootState,
     Sorting,
 } from '@types'
 import type { FC } from 'react'
@@ -19,6 +20,21 @@ import type { OnAnalyticsResponseReceivedCb as OnPTAnalyticsResponseReceivedCb }
 import { LineListPlugin } from './line-list-plugin'
 import { PivotTablePlugin } from './pivot-table-plugin'
 import classes from './styles/plugin-wrapper.module.css'
+
+const getCurrentVisLayoutKey = createSelector(
+    (state: RootState) => state.currentVis.outputType,
+    (state: RootState) => state.currentVis.columns,
+    (state: RootState) => state.currentVis.rows,
+    (state: RootState) => state.currentVis.filters,
+    // eslint-disable-next-line max-params
+    (outputType, columns, rows, filters) =>
+        [
+            outputType ?? '',
+            ...[...(columns ?? []), ...(rows ?? []), ...(filters ?? [])].map(
+                (d) => d.dimension
+            ),
+        ].join('|')
+)
 
 type PluginWrapperProps = {
     displayProperty: CurrentUser['settings']['displayProperty']

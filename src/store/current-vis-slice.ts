@@ -3,7 +3,7 @@ import {
     isVisualizationEmpty,
 } from '@modules/visualization'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { createSelector, createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import type {
     CurrentVisualization,
     EmptyVisualization,
@@ -54,14 +54,3 @@ export const currentVisSlice = createSlice({
 export const { clearCurrentVis, setCurrentVis, setCurrentVisNameDescription } =
     currentVisSlice.actions
 export const { getCurrentVis, getCurrentVisId } = currentVisSlice.selectors
-
-export const getCurrentVisLayoutKey = createSelector(getCurrentVis, (vis) =>
-    [
-        vis.outputType ?? '',
-        ...[
-            ...(vis.columns ?? []),
-            ...(vis.rows ?? []),
-            ...(vis.filters ?? []),
-        ].map((d) => d.dimension),
-    ].join('|')
-)
