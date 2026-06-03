@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-01T14:14:08.533Z\n"
-"PO-Revision-Date: 2026-06-01T14:14:08.533Z\n"
+"POT-Creation-Date: 2026-06-03T10:27:30.306Z\n"
+"PO-Revision-Date: 2026-06-03T10:27:30.307Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -23,24 +23,11 @@ msgstr "Remove"
 msgid "Repeated events"
 msgstr "Repeated events"
 
-msgid "Conditions"
-msgstr "Conditions"
+msgid "Data"
+msgstr "Data"
 
 msgid "Only available for repeatable stages"
 msgstr "Only available for repeatable stages"
-
-msgid "Show items that meet the following conditions for this data item:"
-msgstr "Show items that meet the following conditions for this data item:"
-
-msgid "This dimension can't be filtered. All values will be shown."
-msgstr "This dimension can't be filtered. All values will be shown."
-
-msgid ""
-"No conditions yet, so all values will be included. Add a condition to "
-"filter results."
-msgstr ""
-"No conditions yet, so all values will be included. Add a condition to "
-"filter results."
 
 msgid "Preset options can't be combined with other conditions"
 msgstr "Preset options can't be combined with other conditions"
@@ -50,6 +37,9 @@ msgstr "Add another condition"
 
 msgid "Add a condition"
 msgstr "Add a condition"
+
+msgid "This dimension can't be filtered. All values will be shown."
+msgstr "This dimension can't be filtered. All values will be shown."
 
 msgid "and"
 msgstr "and"
@@ -102,8 +92,14 @@ msgstr "Choose from presets"
 msgid "Define start - end dates"
 msgstr "Define start - end dates"
 
-msgid "Show items where the status is:"
-msgstr "Show items where the status is:"
+msgid "Value filtering"
+msgstr "Value filtering"
+
+msgid "Show all"
+msgstr "Show all"
+
+msgid "Filter"
+msgstr "Filter"
 
 msgid "No items selected"
 msgstr "No items selected"
@@ -620,9 +616,6 @@ msgstr "Categories"
 msgid "Category option group sets"
 msgstr "Category option group sets"
 
-msgid "Filter"
-msgstr "Filter"
-
 msgid ""
 "These dimensions belong to a different tracked entity type than the one "
 "used in the layout ({{- tetName}}). Remove the existing dimensions to use "
@@ -1070,9 +1063,6 @@ msgstr "Period"
 
 msgid "Organisation unit"
 msgstr "Organisation unit"
-
-msgid "Data"
-msgstr "Data"
 
 msgid "Style"
 msgstr "Style"

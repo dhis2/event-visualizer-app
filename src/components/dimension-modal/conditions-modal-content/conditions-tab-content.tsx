@@ -1,5 +1,7 @@
+import { ShowAllFilterRadio } from '@components/dimension-modal/show-all-filter-radio/show-all-filter-radio'
+import { useFilterRadioMode } from '@components/dimension-modal/show-all-filter-radio/use-filter-radio-mode'
 import i18n from '@dhis2/d2-i18n'
-import { Button, IconInfo16, Tooltip } from '@dhis2/ui'
+import { Button, Tooltip } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     OPERATOR_IN,
@@ -19,6 +21,7 @@ import {
     useCallback,
     useContext,
     useMemo,
+    useRef,
     useState,
 } from 'react'
 import { Conditions } from './conditions'
@@ -146,6 +149,26 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         [dimension.id, dispatch]
     )
 
+    const hasPersistedFilter: boolean = Boolean(
+        conditions.condition?.length || conditions.legendSet
+    )
+    const legendSetStashRef = useRef<string | undefined>(conditions.legendSet)
+
+    const onEnterShowAll = useCallback(() => {
+        legendSetStashRef.current = conditions.legendSet
+        storeConditions([], undefined)
+    }, [conditions.legendSet, storeConditions])
+
+    const onEnterFilter = useCallback(() => {
+        storeConditions(conditionsList, legendSetStashRef.current)
+    }, [conditionsList, storeConditions])
+
+    const { mode, onModeChange } = useFilterRadioMode({
+        hasPersistedFilter,
+        onEnterShowAll,
+        onEnterFilter,
+    })
+
     const addCondition = (): void => {
         setConditionsList((prev) => [...prev, EMPTY_CONDITION])
     }
@@ -214,74 +237,63 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
 
     return (
         <ConditionsProvider.Provider value={providerValue}>
-            <div>
-                {isSupported ? (
-                    <p className={classes.paragraph}>
-                        {i18n.t(
-                            'Show items that meet the following conditions for this data item:',
-                            { nsSeparator: '^^' }
-                        )}
-                    </p>
-                ) : (
-                    <p className={classes.paragraph}>
-                        {i18n.t(
-                            "This dimension can't be filtered. All values will be shown."
-                        )}
-                    </p>
-                )}
-            </div>
-            {isSupported && (
-                <div className={classes.mainSection}>
-                    {!conditionsList.length &&
-                    !conditions.legendSet &&
-                    !isSingleCondition ? (
-                        <p className={classes.paragraph}>
-                            <span className={classes.infoIcon}>
-                                <IconInfo16 />
-                            </span>
-                            {i18n.t(
-                                'No conditions yet, so all values will be included. Add a condition to filter results.'
-                            )}
-                        </p>
-                    ) : (
+            {isSupported ? (
+                <ShowAllFilterRadio
+                    mode={mode}
+                    onModeChange={onModeChange}
+                    dataTest={`conditions-${dimension.id}-filter-radio`}
+                >
+                    <div className={classes.mainSection}>
                         <Conditions />
-                    )}
-                    {!isSingleCondition && (
-                        <Tooltip
-                            content={i18n.t(
-                                "Preset options can't be combined with other conditions"
-                            )}
-                            placement="bottom"
-                            closeDelay={200}
-                        >
-                            {({ onMouseOver, onMouseOut, ref }) => (
-                                <span
-                                    ref={ref}
-                                    onMouseOver={(event) =>
-                                        disableAddButton && onMouseOver(event)
-                                    }
-                                    onMouseOut={(event) =>
-                                        disableAddButton && onMouseOut(event)
-                                    }
-                                    className={classes.tooltipReference}
-                                >
-                                    <Button
-                                        type="button"
-                                        small
-                                        onClick={addCondition}
-                                        className={classes.addConditionButton}
-                                        disabled={disableAddButton}
-                                        dataTest="button-add-condition"
+                        {!isSingleCondition && (
+                            <Tooltip
+                                content={i18n.t(
+                                    "Preset options can't be combined with other conditions"
+                                )}
+                                placement="bottom"
+                                closeDelay={200}
+                            >
+                                {({ onMouseOver, onMouseOut, ref }) => (
+                                    <span
+                                        ref={ref}
+                                        onMouseOver={(event) =>
+                                            disableAddButton &&
+                                            onMouseOver(event)
+                                        }
+                                        onMouseOut={(event) =>
+                                            disableAddButton &&
+                                            onMouseOut(event)
+                                        }
+                                        className={classes.tooltipReference}
                                     >
-                                        {conditionsList.length
-                                            ? i18n.t('Add another condition')
-                                            : i18n.t('Add a condition')}
-                                    </Button>
-                                </span>
-                            )}
-                        </Tooltip>
+                                        <Button
+                                            type="button"
+                                            small
+                                            onClick={addCondition}
+                                            className={
+                                                classes.addConditionButton
+                                            }
+                                            disabled={disableAddButton}
+                                            dataTest="button-add-condition"
+                                        >
+                                            {conditionsList.length
+                                                ? i18n.t(
+                                                      'Add another condition'
+                                                  )
+                                                : i18n.t('Add a condition')}
+                                        </Button>
+                                    </span>
+                                )}
+                            </Tooltip>
+                        )}
+                    </div>
+                </ShowAllFilterRadio>
+            ) : (
+                <p className={classes.paragraph}>
+                    {i18n.t(
+                        "This dimension can't be filtered. All values will be shown."
                     )}
-                </div>
+                </p>
             )}
         </ConditionsProvider.Provider>
     )
