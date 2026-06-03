@@ -324,11 +324,9 @@ describe('<Chip />', () => {
             const expectedSuffixColor = win.getComputedStyle(probe).color
             probe.remove()
 
-            cy.contains('· Baby Postnatal').should(
-                'have.css',
-                'color',
-                expectedSuffixColor
-            )
+            cy.getByDataTest('chip-suffix')
+                .should('contain.text', '· Baby Postnatal')
+                .and('have.css', 'color', expectedSuffixColor)
         })
     })
 
