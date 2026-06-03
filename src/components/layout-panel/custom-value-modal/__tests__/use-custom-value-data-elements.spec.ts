@@ -4,7 +4,11 @@ import {
     type VisUiConfigState,
     type CustomValueObject,
 } from '@store/vis-ui-config-slice'
-import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
+import {
+    renderHookWithAppWrapper,
+    type MockOptions,
+} from '@test-utils/app-wrapper'
+import { createDeferredQuery } from '@test-utils/deferred-query'
 import { waitFor } from '@testing-library/react'
 import type { RootState } from '@types'
 import deepmerge from 'deepmerge'
@@ -334,12 +338,29 @@ describe('useCustomValueDataElements', () => {
     })
 
     it('returns undefined dataElements while loading', async () => {
+        /* Hold the dimensions request in flight so the loading assertion is
+         * deterministic. Without this, the query can resolve during the
+         * wrapper's internal store wait, flipping isLoading to false before
+         * the assertion under full-suite load. */
+        const deferredDimensions = createDeferredQuery()
         const { result } = await renderHookWithAppWrapper(
             () => useCustomValueDataElements(),
-            buildMockOptions({ columns: ['p1.enrollmentDate'] })
+            {
+                ...buildMockOptions({ columns: ['p1.enrollmentDate'] }),
+                queryData: {
+                    [ANALYTICS_RESOURCE]: deferredDimensions.defer(
+                        () => analyticsResponse
+                    ),
+                } as MockOptions['queryData'],
+            }
         )
 
         expect(result.current.isLoading).toBe(true)
         expect(result.current.dataElements).toBeUndefined()
+
+        await deferredDimensions.releaseAll()
+        await waitFor(() => {
+            expect(result.current.dataElements).toBeDefined()
+        })
     })
 })
