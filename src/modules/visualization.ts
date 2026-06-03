@@ -597,6 +597,7 @@ const LEGACY_DIMENSION_ID_RENAMES: Record<string, DimensionId> = {
  * - Rename old dimension IDs (`createdDate`/`completedDate`/`lastUpdatedOn`)
  *   to their canonical form
  * - Convert legacy `orgUnitField` into an `ou` filter
+ * - Convert top-level `programStatus` into a `programStatus` filter dimension
  * - Drop `timeField` when it holds a known backend enum value (e.g.
  *   `EVENT_DATE`) — the corresponding "which column" information is now
  *   encoded in the concrete time dimension produced above, so leaving
@@ -642,19 +643,28 @@ export const normalizeApiSavedVisualization = (
     // re-saving in canonical format would then break older apps still reading
     // the original shape, so block the in-place save path. Seed it from the
     // top-level legacy signals (explicit flag, old event-visualizer
-    // program/programStage, legacy `orgUnitField`); the per-dimension pass and
-    // the `timeField` drop below flip it too.
+    // program/programStage, legacy `orgUnitField`/`programStatus` that get
+    // converted to filter dimensions); the per-dimension pass and the
+    // `timeField` drop below flip it too.
     let legacy =
         Boolean(apiVisLegacy) ||
         Boolean(program || programStage) ||
-        Boolean(orgUnitField)
+        Boolean(orgUnitField) ||
+        Boolean(programStatus)
 
-    // Single pass per dimension:
-    //   - propagate top-level program/programStage onto dimensions that
-    //     don't carry them (old event-visualizer shape)
-    //   - convert a legacy `pe` dimension into the concrete time dimension
-    //     (legacy line-listing shape)
-    //   - rename old dimension IDs to their canonical form
+    /* Single pass per dimension, in order:
+     *   - convert a legacy `pe` dimension into the concrete time dimension
+     *     (legacy line-listing shape)
+     *   - rename old dimension IDs to their canonical form
+     *   - propagate top-level program/programStage onto dimensions that
+     *     don't carry them (old event-visualizer shape), but only where it
+     *     makes semantic sense — the rename runs first so meta dims renamed
+     *     from a legacy ID (e.g. `createdDate` → `created`) are recognised
+     *     as context-free here:
+     *       · meta dims, contextless dim types, program indicators and
+     *         tracked entity attributes don't carry program/stage context
+     *       · enrollment-scoped IDs are tied to the program, not a stage,
+     *         so they get program only, never programStage */
     const normalizeDimensions = (dims: DimensionArray): DimensionArray =>
         dims.map((dim) => {
             let out = dim
@@ -671,6 +681,12 @@ export const normalizeApiSavedVisualization = (
                     }
                     legacy = true
                 }
+            }
+
+            const renamedDimension = LEGACY_DIMENSION_ID_RENAMES[out.dimension]
+            if (renamedDimension) {
+                out = { ...out, dimension: renamedDimension }
+                legacy = true
             }
 
             const skipBothRefs =
@@ -691,12 +707,6 @@ export const normalizeApiSavedVisualization = (
             }
             if (!skipStageRef && stageRef && !out.programStage) {
                 out = { ...out, programStage: stageRef }
-            }
-
-            const renamedDimension = LEGACY_DIMENSION_ID_RENAMES[out.dimension]
-            if (renamedDimension) {
-                out = { ...out, dimension: renamedDimension }
-                legacy = true
             }
 
             return out
