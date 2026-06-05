@@ -36,7 +36,9 @@ describe('StatusDimensionModalContent — Show all / Filter', () => {
     it('defaults a freshly-added status dimension to "Show all"', () => {
         setup()
 
-        expect(screen.getByRole('radio', { name: 'Show all' })).toBeChecked()
+        expect(
+            screen.getByRole('radio', { name: 'Show all values' })
+        ).toBeChecked()
         expect(screen.getByRole('radio', { name: 'Filter' })).not.toBeChecked()
         expect(
             screen.queryByRole('checkbox', { name: 'Active' })
@@ -54,7 +56,7 @@ describe('StatusDimensionModalContent — Show all / Filter', () => {
         const user = userEvent.setup()
         const store = setup({ eventStatus: ['ACTIVE'] })
 
-        await user.click(screen.getByRole('radio', { name: 'Show all' }))
+        await user.click(screen.getByRole('radio', { name: 'Show all values' }))
 
         expect(
             getVisUiConfigItemsByDimension(store.getState(), 'eventStatus')

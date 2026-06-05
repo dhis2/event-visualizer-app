@@ -28,21 +28,19 @@ export const useFilterRadioMode = ({
 
     const onModeChange = useCallback(
         (nextMode: FilterRadioMode) => {
-            setMode((currentMode) => {
-                if (nextMode === currentMode) {
-                    return currentMode
-                }
+            if (nextMode === mode) {
+                return
+            }
 
-                if (nextMode === 'SHOW_ALL') {
-                    onEnterShowAll()
-                } else {
-                    onEnterFilter()
-                }
+            if (nextMode === 'SHOW_ALL') {
+                onEnterShowAll()
+            } else {
+                onEnterFilter()
+            }
 
-                return nextMode
-            })
+            setMode(nextMode)
         },
-        [onEnterShowAll, onEnterFilter]
+        [mode, onEnterShowAll, onEnterFilter]
     )
 
     return { mode, onModeChange }

@@ -9,7 +9,7 @@ describe('ShowAllFilterRadio', () => {
 
         expect(screen.getByText('Value filtering')).toBeInTheDocument()
         expect(
-            screen.getByRole('radio', { name: 'Show all' })
+            screen.getByRole('radio', { name: 'Show all values' })
         ).toBeInTheDocument()
         expect(
             screen.getByRole('radio', { name: 'Filter' })
@@ -24,7 +24,9 @@ describe('ShowAllFilterRadio', () => {
         )
 
         expect(screen.queryByText('revealed filter ui')).not.toBeInTheDocument()
-        expect(screen.getByRole('radio', { name: 'Show all' })).toBeChecked()
+        expect(
+            screen.getByRole('radio', { name: 'Show all values' })
+        ).toBeChecked()
 
         rerender(
             <ShowAllFilterRadio mode="FILTER" onModeChange={vi.fn()}>
@@ -49,5 +51,22 @@ describe('ShowAllFilterRadio', () => {
         await user.click(screen.getByRole('radio', { name: 'Filter' }))
 
         expect(onModeChange).toHaveBeenCalledWith('FILTER')
+        expect(onModeChange).toHaveBeenCalledTimes(1)
+    })
+
+    it('selects an option when its card surface (label) is clicked, only once', async () => {
+        const user = userEvent.setup()
+        const onModeChange = vi.fn()
+
+        render(
+            <ShowAllFilterRadio mode="SHOW_ALL" onModeChange={onModeChange}>
+                <div>revealed filter ui</div>
+            </ShowAllFilterRadio>
+        )
+
+        await user.click(screen.getByText('Filter'))
+
+        expect(onModeChange).toHaveBeenCalledWith('FILTER')
+        expect(onModeChange).toHaveBeenCalledTimes(1)
     })
 })

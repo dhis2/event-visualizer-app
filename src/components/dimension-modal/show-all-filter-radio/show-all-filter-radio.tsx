@@ -1,9 +1,48 @@
 import i18n from '@dhis2/d2-i18n'
 import { FieldSet, Legend, Radio } from '@dhis2/ui'
+import cx from 'classnames'
 import { type FC, type PropsWithChildren } from 'react'
 import classes from './styles/show-all-filter-radio.module.css'
 
 export type FilterRadioMode = 'SHOW_ALL' | 'FILTER'
+
+type RadioCardProps = PropsWithChildren<{
+    selected: boolean
+    label: string
+    value: FilterRadioMode
+    name: string
+    dataTest: string
+    onSelect: () => void
+}>
+
+const RadioCard: FC<RadioCardProps> = ({
+    selected,
+    label,
+    value,
+    name,
+    dataTest,
+    onSelect,
+    children,
+}) => (
+    <div
+        className={cx(classes.card, { [classes.cardSelected]: selected })}
+        data-test={dataTest}
+    >
+        <Radio
+            name={name}
+            label={label}
+            value={value}
+            checked={selected}
+            onChange={onSelect}
+            dense
+            className={classes.cardRadio}
+            dataTest={`${dataTest}-radio`}
+        />
+        {selected && children ? (
+            <div className={classes.revealed}>{children}</div>
+        ) : null}
+    </div>
+)
 
 type ShowAllFilterRadioProps = PropsWithChildren<{
     mode: FilterRadioMode
@@ -23,28 +62,25 @@ export const ShowAllFilterRadio: FC<ShowAllFilterRadioProps> = ({
                 {i18n.t('Value filtering')}
             </span>
         </Legend>
-        <div className={classes.radios}>
-            <Radio
-                name={dataTest}
-                label={i18n.t('Show all')}
+        <div className={classes.cards}>
+            <RadioCard
+                selected={mode === 'SHOW_ALL'}
+                label={i18n.t('Show all values')}
                 value="SHOW_ALL"
-                checked={mode === 'SHOW_ALL'}
-                onChange={() => onModeChange('SHOW_ALL')}
-                dense
-                dataTest={`${dataTest}-show-all`}
-            />
-            <Radio
                 name={dataTest}
+                dataTest={`${dataTest}-show-all`}
+                onSelect={() => onModeChange('SHOW_ALL')}
+            />
+            <RadioCard
+                selected={mode === 'FILTER'}
                 label={i18n.t('Filter')}
                 value="FILTER"
-                checked={mode === 'FILTER'}
-                onChange={() => onModeChange('FILTER')}
-                dense
+                name={dataTest}
                 dataTest={`${dataTest}-filter`}
-            />
+                onSelect={() => onModeChange('FILTER')}
+            >
+                {children}
+            </RadioCard>
         </div>
-        {mode === 'FILTER' && (
-            <div className={classes.revealed}>{children}</div>
-        )}
     </FieldSet>
 )

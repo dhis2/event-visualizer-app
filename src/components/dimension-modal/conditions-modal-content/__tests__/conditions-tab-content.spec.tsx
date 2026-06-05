@@ -47,7 +47,9 @@ describe('ConditionsTabContent — Show all / Filter', () => {
     it('defaults to "Show all" when no filter is persisted', () => {
         setup()
 
-        expect(screen.getByRole('radio', { name: 'Show all' })).toBeChecked()
+        expect(
+            screen.getByRole('radio', { name: 'Show all values' })
+        ).toBeChecked()
         expect(screen.queryByTestId('conditions-ui')).not.toBeInTheDocument()
     })
 
@@ -69,7 +71,7 @@ describe('ConditionsTabContent — Show all / Filter', () => {
         const user = userEvent.setup()
         const store = setup({ de1: { condition: 'LIKE:foo' } })
 
-        await user.click(screen.getByRole('radio', { name: 'Show all' }))
+        await user.click(screen.getByRole('radio', { name: 'Show all values' }))
 
         expect(
             getVisUiConfigConditionsByDimension(store.getState(), 'de1')
