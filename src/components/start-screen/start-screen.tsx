@@ -19,26 +19,6 @@ export const StartScreen: FC = () => {
         <div className={classes.outer}>
             <div className={classes.inner}>
                 <div>
-                    <div className={classes.section}>
-                        <h3 className={classes.title}>
-                            {i18n.t('Getting started')}
-                        </h3>
-                        <ul className={classes.guide}>
-                            <li className={classes.guideItem}>
-                                {i18n.t(
-                                    'All dimensions that you can use to build visualizations are shown in the sections in the left sidebar.'
-                                )}
-                            </li>
-                            <li className={classes.guideItem}>
-                                {i18n.t('Add dimensions to the layout above.')}
-                            </li>
-                            <li className={classes.guideItem}>
-                                {i18n.t(
-                                    'Click a dimension to add or remove conditions.'
-                                )}
-                            </li>
-                        </ul>
-                    </div>
                     {Boolean(data?.length) && (
                         <div className={classes.section}>
                             <h3 className={classes.title}>
