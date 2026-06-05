@@ -22,11 +22,11 @@
     background-color: var(--colors-white);
 }
 
-.card:not(.cardSelected):hover {
+.card:not(.cardSelected):not(.cardDisabled):hover {
     border-color: var(--colors-grey400);
 }
 
-.card:not(.cardSelected):active {
+.card:not(.cardSelected):not(.cardDisabled):active {
     border-color: var(--colors-grey400);
     background-color: var(--colors-grey100);
 }
@@ -34,6 +34,19 @@
 .cardSelected {
     border-color: var(--colors-grey400);
     background-color: var(--colors-grey050);
+}
+
+.cardDisabled .cardRadio {
+    cursor: not-allowed;
+}
+
+.cardHelp {
+    margin: 0;
+    padding-inline: var(--spacers-dp32) var(--spacers-dp8);
+    padding-block-end: var(--spacers-dp12);
+    font-size: 13px;
+    line-height: 16px;
+    color: var(--colors-grey600);
 }
 
 /* The radio's root element is a <label>, so making it fill the card (padding

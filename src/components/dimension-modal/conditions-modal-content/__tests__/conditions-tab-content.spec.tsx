@@ -27,8 +27,17 @@ const textDimension: DimensionMetadataItem = {
     valueType: 'TEXT',
 }
 
+const unfilterableDimension: DimensionMetadataItem = {
+    id: 'de2',
+    dimensionId: 'de2',
+    dimensionType: 'DATA_ELEMENT',
+    name: 'My file element',
+    valueType: 'FILE_RESOURCE',
+}
+
 const setup = (
-    conditionsByDimension: Record<string, ConditionsObject | undefined> = {}
+    conditionsByDimension: Record<string, ConditionsObject | undefined> = {},
+    dimension: DimensionMetadataItem = textDimension
 ) => {
     const store = setupStore(
         { visUiConfig: visUiConfigSlice.reducer },
@@ -36,7 +45,7 @@ const setup = (
     )
 
     renderWithReduxStoreProvider(
-        <ConditionsTabContent dimension={textDimension} />,
+        <ConditionsTabContent dimension={dimension} />,
         store
     )
 
@@ -86,5 +95,18 @@ describe('ConditionsTabContent — Show all / Filter', () => {
                 .condition
         ).toBe('LIKE:foo')
         expect(screen.getByTestId('conditions-ui')).toBeInTheDocument()
+    })
+
+    it('shows a disabled "Filter" with help text for an unfilterable dimension', () => {
+        setup({}, unfilterableDimension)
+
+        expect(
+            screen.getByRole('radio', { name: 'Show all values' })
+        ).toBeChecked()
+        expect(screen.getByRole('radio', { name: 'Filter' })).toBeDisabled()
+        expect(
+            screen.getByText('File type dimensions cannot be filtered.')
+        ).toBeInTheDocument()
+        expect(screen.queryByTestId('conditions-ui')).not.toBeInTheDocument()
     })
 })

@@ -69,4 +69,23 @@ describe('ShowAllFilterRadio', () => {
         expect(onModeChange).toHaveBeenCalledWith('FILTER')
         expect(onModeChange).toHaveBeenCalledTimes(1)
     })
+
+    it('disables "Filter" and shows a help subline when filtering is unavailable', () => {
+        render(
+            <ShowAllFilterRadio
+                mode="SHOW_ALL"
+                onModeChange={vi.fn()}
+                filterDisabled
+                filterDisabledHelp="This dimension cannot be filtered."
+            />
+        )
+
+        expect(
+            screen.getByRole('radio', { name: 'Show all values' })
+        ).toBeChecked()
+        expect(screen.getByRole('radio', { name: 'Filter' })).toBeDisabled()
+        expect(
+            screen.getByText('This dimension cannot be filtered.')
+        ).toBeInTheDocument()
+    })
 })

@@ -13,6 +13,8 @@ type RadioCardProps = PropsWithChildren<{
     name: string
     dataTest: string
     onSelect: () => void
+    disabled?: boolean
+    helpText?: string
 }>
 
 const RadioCard: FC<RadioCardProps> = ({
@@ -22,10 +24,15 @@ const RadioCard: FC<RadioCardProps> = ({
     name,
     dataTest,
     onSelect,
+    disabled = false,
+    helpText,
     children,
 }) => (
     <div
-        className={cx(classes.card, { [classes.cardSelected]: selected })}
+        className={cx(classes.card, {
+            [classes.cardSelected]: selected,
+            [classes.cardDisabled]: disabled,
+        })}
         data-test={dataTest}
     >
         <Radio
@@ -34,10 +41,12 @@ const RadioCard: FC<RadioCardProps> = ({
             value={value}
             checked={selected}
             onChange={onSelect}
+            disabled={disabled}
             dense
             className={classes.cardRadio}
             dataTest={`${dataTest}-radio`}
         />
+        {helpText ? <p className={classes.cardHelp}>{helpText}</p> : null}
         {selected && children ? (
             <div className={classes.revealed}>{children}</div>
         ) : null}
@@ -48,12 +57,16 @@ type ShowAllFilterRadioProps = PropsWithChildren<{
     mode: FilterRadioMode
     onModeChange: (mode: FilterRadioMode) => void
     dataTest?: string
+    filterDisabled?: boolean
+    filterDisabledHelp?: string
 }>
 
 export const ShowAllFilterRadio: FC<ShowAllFilterRadioProps> = ({
     mode,
     onModeChange,
     dataTest = 'show-all-filter-radio',
+    filterDisabled = false,
+    filterDisabledHelp,
     children,
 }) => (
     <FieldSet>
@@ -78,6 +91,8 @@ export const ShowAllFilterRadio: FC<ShowAllFilterRadioProps> = ({
                 name={dataTest}
                 dataTest={`${dataTest}-filter`}
                 onSelect={() => onModeChange('FILTER')}
+                disabled={filterDisabled}
+                helpText={filterDisabled ? filterDisabledHelp : undefined}
             >
                 {children}
             </RadioCard>

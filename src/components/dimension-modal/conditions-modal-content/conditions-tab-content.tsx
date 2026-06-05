@@ -1,5 +1,6 @@
 import { ShowAllFilterRadio } from '@components/dimension-modal/show-all-filter-radio/show-all-filter-radio'
 import { useFilterRadioMode } from '@components/dimension-modal/show-all-filter-radio/use-filter-radio-mode'
+import { valueTypeDisplayNames } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import { Button, Tooltip } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
@@ -235,6 +236,12 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         removeCondition,
     ])
 
+    const filterDisabledHelp = valueType
+        ? i18n.t('{{valueType}} type dimensions cannot be filtered.', {
+              valueType: valueTypeDisplayNames[valueType],
+          })
+        : i18n.t('This dimension cannot be filtered.')
+
     return (
         <ConditionsProvider.Provider value={providerValue}>
             {isSupported ? (
@@ -289,11 +296,15 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                     </div>
                 </ShowAllFilterRadio>
             ) : (
-                <p className={classes.paragraph}>
-                    {i18n.t(
-                        "This dimension can't be filtered. All values will be shown."
-                    )}
-                </p>
+                <ShowAllFilterRadio
+                    mode="SHOW_ALL"
+                    onModeChange={() => {
+                        /* unfilterable dimensions are always "Show all" */
+                    }}
+                    dataTest={`conditions-${dimension.id}-filter-radio`}
+                    filterDisabled
+                    filterDisabledHelp={filterDisabledHelp}
+                />
             )}
         </ConditionsProvider.Provider>
     )
