@@ -16,6 +16,7 @@ import {
     setVisUiConfigConditionsByDimension,
 } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem, ValueType } from '@types'
+import cx from 'classnames'
 import {
     type FC,
     createContext,
@@ -271,7 +272,13 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                                             disableAddButton &&
                                             onMouseOut(event)
                                         }
-                                        className={classes.tooltipReference}
+                                        className={cx(
+                                            classes.tooltipReference,
+                                            {
+                                                [classes.tooltipReferenceFirst]:
+                                                    !conditionsList.length,
+                                            }
+                                        )}
                                     >
                                         <Button
                                             type="button"

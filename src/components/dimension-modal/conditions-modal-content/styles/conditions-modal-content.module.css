@@ -13,6 +13,10 @@
     margin-block-start: var(--spacers-dp16);
 }
 
+.tooltipReferenceFirst {
+    margin-block-start: 0;
+}
+
 .tooltipReference > .addConditionButton:disabled {
     pointer-events: none;
 }
