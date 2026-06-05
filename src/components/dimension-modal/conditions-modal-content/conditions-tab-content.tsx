@@ -256,7 +256,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                         {!isSingleCondition && (
                             <Tooltip
                                 content={i18n.t(
-                                    "Preset options can't be combined with other conditions"
+                                    "Preset options can't be combined with other filters"
                                 )}
                                 placement="bottom"
                                 closeDelay={200}
@@ -291,10 +291,8 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                                             dataTest="button-add-condition"
                                         >
                                             {conditionsList.length
-                                                ? i18n.t(
-                                                      'Add another condition'
-                                                  )
-                                                : i18n.t('Add a condition')}
+                                                ? i18n.t('Add another filter')
+                                                : i18n.t('Add a filter')}
                                         </Button>
                                     </span>
                                 )}
