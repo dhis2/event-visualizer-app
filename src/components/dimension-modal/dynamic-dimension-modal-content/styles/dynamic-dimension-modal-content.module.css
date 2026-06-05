@@ -22,9 +22,7 @@
 }
 
 .mainSection {
-    background: var(--colors-grey050);
-    border: 1px solid var(--colors-grey200);
-    margin: 0 0 var(--spacers-dp8);
-    padding: var(--spacers-dp8) var(--spacers-dp8) var(--spacers-dp16);
+    margin-block-end: var(--spacers-dp4);
+    margin-inline-start: var(--spacers-dp8);
     overflow: auto;
 }

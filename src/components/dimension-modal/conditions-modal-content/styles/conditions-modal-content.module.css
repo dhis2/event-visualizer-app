@@ -53,6 +53,6 @@
 
 .mainSection {
     margin-block-end: var(--spacers-dp4);
-    padding-block-start: var(--spacers-dp8);
+    margin-inline-start: var(--spacers-dp8);
     overflow: auto;
 }
