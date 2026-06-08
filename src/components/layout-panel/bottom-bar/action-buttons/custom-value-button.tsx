@@ -1,7 +1,7 @@
 import { CustomValueModal } from '@components/layout-panel/custom-value-modal'
 import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
-import { IconSettings16, IconSync16, Tooltip } from '@dhis2/ui'
+import { IconSettings16, Tooltip } from '@dhis2/ui'
 import {
     useAppDispatch,
     useAppSelector,
@@ -23,7 +23,9 @@ import {
     type ReactElement,
 } from 'react'
 import classes from './styles/action-buttons.module.css'
+import { UpdateSyncIcon } from './update-sync-icon'
 import { useActionButton } from './use-action-button'
+import { useActionSpin } from './use-action-spin'
 
 const DEFAULT_TOOLTIP_OPEN_DELAY = 500
 
@@ -62,6 +64,7 @@ export const CustomValueButton: FC = () => {
         'CUSTOM_VALUE'
     )
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const { syncIconRef, triggerSpin } = useActionSpin(action)
     const isButtonReady = Boolean(
         customValue?.id && customValue?.aggregationType
     )
@@ -115,13 +118,14 @@ export const CustomValueButton: FC = () => {
 
     const onUpdateClick = useCallback(() => {
         if (customValue) {
+            triggerSpin()
             dispatch(setVisUiConfigLastActiveButton('CUSTOM_VALUE'))
             dispatch(setVisUiConfigOutputType('EVENT'))
             dispatch(tUpdateCurrentVisFromVisUiConfig())
         } else {
             setIsModalOpen(true)
         }
-    }, [customValue, dispatch])
+    }, [customValue, dispatch, triggerSpin])
     const onConfigureClick = useCallback(() => {
         setIsModalOpen((curr) => !curr)
     }, [])
@@ -146,7 +150,9 @@ export const CustomValueButton: FC = () => {
                                 [classes.splitStart]: isButtonReady,
                             })}
                         >
-                            {action === 'update' && <IconSync16 />}
+                            {action === 'update' && (
+                                <UpdateSyncIcon ref={syncIconRef} />
+                            )}
                             {label}
                         </button>
                     </WithTooltip>

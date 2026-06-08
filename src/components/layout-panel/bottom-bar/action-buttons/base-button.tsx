@@ -1,4 +1,4 @@
-import { IconSync16, Tooltip } from '@dhis2/ui'
+import { Tooltip } from '@dhis2/ui'
 import { useAppDispatch } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
@@ -10,6 +10,8 @@ import type { OutputType } from '@types'
 import cx from 'classnames'
 import { type FC } from 'react'
 import classes from './styles/action-buttons.module.css'
+import { UpdateSyncIcon } from './update-sync-icon'
+import { useActionSpin } from './use-action-spin'
 
 export type ButtonAction = 'create' | 'switch' | 'update'
 
@@ -31,8 +33,10 @@ const BaseButton: FC<BaseButtonProps> = ({
     type,
 }) => {
     const dispatch = useAppDispatch()
+    const { syncIconRef, triggerSpin } = useActionSpin(action)
 
     const onClick = () => {
+        triggerSpin()
         if (lastActiveButton !== undefined) {
             dispatch(setVisUiConfigLastActiveButton(lastActiveButton))
         }
@@ -51,7 +55,7 @@ const BaseButton: FC<BaseButtonProps> = ({
             })}
             {...tooltipProps}
         >
-            {action === 'update' && <IconSync16 />}
+            {action === 'update' && <UpdateSyncIcon ref={syncIconRef} />}
             {label}
         </button>
     )
