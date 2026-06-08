@@ -10,7 +10,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { LayoutDragEndEvent } from '../types'
 import { useOnDragEnd } from '../use-on-drag-end'
 
-// Mock the hooks
 vi.mock('@hooks', () => ({
     useAppDispatch: vi.fn(),
     useAppSelector: vi.fn(),
@@ -28,6 +27,8 @@ vi.mock('@store/vis-ui-config-slice', () => ({
     moveVisUiConfigLayoutDimension: vi.fn(),
 }))
 
+const ALL_AXES_ALLOWED = { columns: true, rows: true, filters: true }
+
 describe('useOnDragEnd', () => {
     const mockDispatch = vi.fn()
     const mockAddMetadata = vi.fn()
@@ -42,14 +43,12 @@ describe('useOnDragEnd', () => {
 
     it('should do nothing if event.active.data.current is missing', () => {
         const { result } = renderHook(() => useOnDragEnd())
-        const onDragEnd = result.current
-
         const event = {
             active: { data: { current: null } },
             over: null,
         } as unknown as LayoutDragEndEvent
 
-        onDragEnd(event)
+        result.current(event)
 
         expect(mockDispatch).not.toHaveBeenCalled()
         expect(mockAddMetadata).not.toHaveBeenCalled()
@@ -57,36 +56,30 @@ describe('useOnDragEnd', () => {
 
     it('should do nothing if event.over is missing', () => {
         const { result } = renderHook(() => useOnDragEnd())
-        const onDragEnd = result.current
-
         const event = {
             active: { data: { current: { dimensionId: 'test' } } },
             over: null,
         } as unknown as LayoutDragEndEvent
 
-        onDragEnd(event)
+        result.current(event)
 
         expect(mockDispatch).not.toHaveBeenCalled()
     })
 
     it('should do nothing if event.over.data.current.axis is missing', () => {
         const { result } = renderHook(() => useOnDragEnd())
-        const onDragEnd = result.current
-
         const event = {
             active: { data: { current: { dimensionId: 'test' } } },
             over: { data: { current: {} } },
         } as unknown as LayoutDragEndEvent
 
-        onDragEnd(event)
+        result.current(event)
 
         expect(mockDispatch).not.toHaveBeenCalled()
     })
 
     it('should dispatch addVisUiConfigLayoutDimension for sidebar drag to empty axis', () => {
         const { result } = renderHook(() => useOnDragEnd())
-        const onDragEnd = result.current
-
         const populateMetadata = vi.fn()
         const event = {
             active: {
@@ -95,6 +88,7 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'test',
                         overlayItemProps: {},
                         populateMetadata,
+                        allowedTargetAxis: ALL_AXES_ALLOWED,
                     },
                 },
             },
@@ -109,7 +103,7 @@ describe('useOnDragEnd', () => {
             },
         } as unknown as LayoutDragEndEvent
 
-        onDragEnd(event)
+        result.current(event)
 
         expect(mockDispatch).toHaveBeenCalledWith(
             addVisUiConfigLayoutDimension({
@@ -123,8 +117,6 @@ describe('useOnDragEnd', () => {
 
     it('should dispatch moveVisUiConfigLayoutDimension for axis to axis move', () => {
         const { result } = renderHook(() => useOnDragEnd())
-        const onDragEnd = result.current
-
         const event = {
             active: {
                 data: {
@@ -134,6 +126,7 @@ describe('useOnDragEnd', () => {
                         sortable: { index: 1 },
                         overlayItemProps: {},
                         insertAfter: false,
+                        allowedTargetAxis: ALL_AXES_ALLOWED,
                     },
                 },
             },
@@ -148,7 +141,7 @@ describe('useOnDragEnd', () => {
             },
         } as unknown as LayoutDragEndEvent
 
-        onDragEnd(event)
+        result.current(event)
 
         expect(mockDispatch).toHaveBeenCalledWith(
             moveVisUiConfigLayoutDimension({
@@ -165,8 +158,6 @@ describe('useOnDragEnd', () => {
     it('should dispatch addVisUiConfigLayoutDimensions for multi-select drag', () => {
         vi.mocked(useAppSelector).mockReturnValue(['dim1', 'dim2', 'dim3'])
         const { result } = renderHook(() => useOnDragEnd())
-        const onDragEnd = result.current
-
         const populateMetadata = vi.fn()
         const event = {
             active: {
@@ -175,6 +166,7 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'dim2',
                         overlayItemProps: {},
                         populateMetadata,
+                        allowedTargetAxis: ALL_AXES_ALLOWED,
                     },
                 },
             },
@@ -189,7 +181,7 @@ describe('useOnDragEnd', () => {
             },
         } as unknown as LayoutDragEndEvent
 
-        onDragEnd(event)
+        result.current(event)
 
         expect(populateMetadata).not.toHaveBeenCalled()
         expect(mockDispatch).toHaveBeenCalledWith(
@@ -206,8 +198,6 @@ describe('useOnDragEnd', () => {
     it('should use single add when dragged item is not in multi-selection', () => {
         vi.mocked(useAppSelector).mockReturnValue(['dim1', 'dim2'])
         const { result } = renderHook(() => useOnDragEnd())
-        const onDragEnd = result.current
-
         const populateMetadata = vi.fn()
         const event = {
             active: {
@@ -216,6 +206,7 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'dim3',
                         overlayItemProps: {},
                         populateMetadata,
+                        allowedTargetAxis: ALL_AXES_ALLOWED,
                     },
                 },
             },
@@ -230,7 +221,7 @@ describe('useOnDragEnd', () => {
             },
         } as unknown as LayoutDragEndEvent
 
-        onDragEnd(event)
+        result.current(event)
 
         expect(populateMetadata).toHaveBeenCalled()
         expect(mockDispatch).toHaveBeenCalledWith(
@@ -246,8 +237,6 @@ describe('useOnDragEnd', () => {
 
     it('should clear multi-selection after any sidebar drop', () => {
         const { result } = renderHook(() => useOnDragEnd())
-        const onDragEnd = result.current
-
         const populateMetadata = vi.fn()
         const event = {
             active: {
@@ -256,6 +245,7 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'test',
                         overlayItemProps: {},
                         populateMetadata,
+                        allowedTargetAxis: ALL_AXES_ALLOWED,
                     },
                 },
             },
@@ -270,15 +260,13 @@ describe('useOnDragEnd', () => {
             },
         } as unknown as LayoutDragEndEvent
 
-        onDragEnd(event)
+        result.current(event)
 
         expect(mockDispatch).toHaveBeenCalledWith(clearMultiSelection())
     })
 
     it('should forward sortable index for insert-before operations without adjustment', () => {
         const { result } = renderHook(() => useOnDragEnd())
-        const onDragEnd = result.current
-
         const event = {
             active: {
                 data: {
@@ -288,6 +276,7 @@ describe('useOnDragEnd', () => {
                         sortable: { index: 1 },
                         overlayItemProps: {},
                         insertAfter: false,
+                        allowedTargetAxis: ALL_AXES_ALLOWED,
                     },
                 },
             },
@@ -302,7 +291,7 @@ describe('useOnDragEnd', () => {
             },
         } as unknown as LayoutDragEndEvent
 
-        onDragEnd(event)
+        result.current(event)
 
         expect(mockDispatch).toHaveBeenCalledWith(
             moveVisUiConfigLayoutDimension({

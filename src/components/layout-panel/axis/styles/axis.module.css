@@ -5,6 +5,22 @@
     background-color: var(--colors-white);
 }
 
+.container.invalid .content {
+    border-radius: 5px;
+    background-color: var(--colors-grey050);
+    background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 4px,
+        var(--colors-grey300) 5px,
+        transparent 6px
+    );
+}
+
+.container.invalid .label {
+    opacity: 0.5;
+}
+
 .container.columns {
     grid-area: columns;
 }
