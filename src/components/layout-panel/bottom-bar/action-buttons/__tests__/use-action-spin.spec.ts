@@ -7,10 +7,15 @@ import type { ButtonAction } from '../base-button'
 import type { UpdateSyncIconHandle } from '../update-sync-icon'
 import { useActionSpin } from '../use-action-spin'
 
-const renderForAction = (action: ButtonAction) => {
+/* The action is held in a closure so a single store dispatch can drive one
+ * re-render that sees both the new action and the bumped tick — mirroring the
+ * real flow, where one update thunk changes the derived action and the tick
+ * together. */
+const renderActionSpin = (initialAction: ButtonAction) => {
     const store = setupStore({ ui: uiSlice.reducer })
+    const actionHolder = { current: initialAction }
     const { result } = renderHookWithReduxStoreProvider(
-        () => useActionSpin(action),
+        () => useActionSpin(actionHolder.current),
         store
     )
     const play = vi.fn()
@@ -18,12 +23,16 @@ const renderForAction = (action: ButtonAction) => {
         current: UpdateSyncIconHandle | null
     }
     ref.current = { play }
-    return { store, play }
+
+    const setAction = (action: ButtonAction) => {
+        actionHolder.current = action
+    }
+    return { store, play, setAction }
 }
 
 describe('useActionSpin', () => {
-    it('spins when the visualization updates while on the update action', () => {
-        const { store, play } = renderForAction('update')
+    it('spins when an update happens while on the update action', () => {
+        const { store, play } = renderActionSpin('update')
 
         act(() => {
             store.dispatch(bumpUiUpdateAnimation())
@@ -33,7 +42,7 @@ describe('useActionSpin', () => {
     })
 
     it('does not spin when the button is not the update button', () => {
-        const { store, play } = renderForAction('switch')
+        const { store, play } = renderActionSpin('switch')
 
         act(() => {
             store.dispatch(bumpUiUpdateAnimation())
@@ -43,7 +52,29 @@ describe('useActionSpin', () => {
     })
 
     it('does not spin without an update (initial render / load)', () => {
-        const { play } = renderForAction('update')
+        const { play } = renderActionSpin('update')
+
+        expect(play).not.toHaveBeenCalled()
+    })
+
+    it('spins when switching to the update button', () => {
+        const { store, play, setAction } = renderActionSpin('switch')
+
+        act(() => {
+            setAction('update')
+            store.dispatch(bumpUiUpdateAnimation())
+        })
+
+        expect(play).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not spin on the first create click (create -> update)', () => {
+        const { store, play, setAction } = renderActionSpin('create')
+
+        act(() => {
+            setAction('update')
+            store.dispatch(bumpUiUpdateAnimation())
+        })
 
         expect(play).not.toHaveBeenCalled()
     })
