@@ -37,3 +37,5 @@ publicHoistPattern:
   - 'post-robot'
   - 'styled-jsx'
   - '@dhis2/pwa'
+patchedDependencies:
+  '@cypress/browserify-preprocessor@3.0.2': patches/@cypress__browserify-preprocessor@3.0.2.patch

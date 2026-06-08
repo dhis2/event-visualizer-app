@@ -1,0 +1,16 @@
+diff --git a/lib/simple_tsify.js b/lib/simple_tsify.js
+index d80b0b27b7e91249a10b2e895cc5698d0c7fc9b7..5cb99d439b875268bb8dbd1563344178562b0d60 100644
+--- a/lib/simple_tsify.js
++++ b/lib/simple_tsify.js
+@@ -38,6 +38,11 @@ module.exports = function (fileName, opts) {
+             fileName,
+             compilerOptions: {
+               esModuleInterop: true,
++              // TypeScript 6.0 changed the default module from CommonJS to an
++              // ESM target when 'module'/'target' are unspecified. Browserify
++              // cannot consume ESM (insert-module-globals throws on import/export),
++              // so pin CommonJS to keep the bundle parseable.
++              module: ts.ModuleKind.CommonJS,
+               // inline the source maps into the file
+               // https://github.com/cypress-io/cypress-browserify-preprocessor/issues/48
+               inlineSourceMap: true,
