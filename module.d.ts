@@ -3,3 +3,5 @@ declare module '*.module.css' {
     // eslint-disable-next-line import/no-default-export
     export default classes
 }
+
+declare module '*.css' {}

@@ -15,7 +15,7 @@
 
 // Import commands.js using ES2015 syntax:
 import 'cypress-real-events'
-import './commands.ts'
+import './commands'
 
 Cypress.on('uncaught:exception', (err) => {
     // This prevents a benign error:
