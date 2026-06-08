@@ -68,34 +68,38 @@ export const ShowAllFilterRadio: FC<ShowAllFilterRadioProps> = ({
     filterDisabled = false,
     filterDisabledHelp,
     children,
-}) => (
-    <FieldSet>
-        <Legend>
-            <span className={classes.visuallyHidden}>
-                {i18n.t('Value filtering')}
-            </span>
-        </Legend>
-        <div className={classes.cards}>
-            <RadioCard
-                selected={mode === 'SHOW_ALL'}
-                label={i18n.t('Show all values')}
-                value="SHOW_ALL"
-                name={dataTest}
-                dataTest={`${dataTest}-show-all`}
-                onSelect={() => onModeChange('SHOW_ALL')}
-            />
-            <RadioCard
-                selected={mode === 'FILTER'}
-                label={i18n.t('Filter')}
-                value="FILTER"
-                name={dataTest}
-                dataTest={`${dataTest}-filter`}
-                onSelect={() => onModeChange('FILTER')}
-                disabled={filterDisabled}
-                helpText={filterDisabled ? filterDisabledHelp : undefined}
-            >
-                {children}
-            </RadioCard>
-        </div>
-    </FieldSet>
-)
+}) => {
+    const radioGroupName = `${dataTest}-mode`
+
+    return (
+        <FieldSet>
+            <Legend>
+                <span className={classes.visuallyHidden}>
+                    {i18n.t('Value filtering')}
+                </span>
+            </Legend>
+            <div className={classes.cards}>
+                <RadioCard
+                    selected={mode === 'SHOW_ALL'}
+                    label={i18n.t('Show all values')}
+                    value="SHOW_ALL"
+                    name={radioGroupName}
+                    dataTest={`${dataTest}-show-all`}
+                    onSelect={() => onModeChange('SHOW_ALL')}
+                />
+                <RadioCard
+                    selected={mode === 'FILTER'}
+                    label={i18n.t('Filter')}
+                    value="FILTER"
+                    name={radioGroupName}
+                    dataTest={`${dataTest}-filter`}
+                    onSelect={() => onModeChange('FILTER')}
+                    disabled={filterDisabled}
+                    helpText={filterDisabled ? filterDisabledHelp : undefined}
+                >
+                    {children}
+                </RadioCard>
+            </div>
+        </FieldSet>
+    )
+}
