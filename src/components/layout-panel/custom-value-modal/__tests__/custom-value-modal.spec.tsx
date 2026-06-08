@@ -5,6 +5,7 @@ import {
     getVisUiConfigLastActiveButton,
 } from '@store/vis-ui-config-slice'
 import { renderWithAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
+import { createDeferredQuery } from '@test-utils/deferred-query'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { RootState } from '@types'
@@ -105,12 +106,21 @@ const buildMockOptions = (
 
 describe('CustomValueModal', () => {
     it('shows the loading indicator before data elements load', async () => {
+        const deferred = createDeferredQuery()
         await renderWithAppWrapper(
             <CustomValueModal onClose={() => {}} />,
-            buildMockOptions(['s1.de1'])
+            buildMockOptions(['s1.de1'], {
+                [ANALYTICS_RESOURCE]: deferred.defer(() => dimensionsResponse),
+            } as unknown as MockOptions['queryData'])
         )
 
         expect(screen.getByText('Loading data')).toBeInTheDocument()
+
+        await deferred.releaseAll()
+
+        await waitFor(() => {
+            expect(screen.queryByText('Loading data')).not.toBeInTheDocument()
+        })
     })
 
     it('renders the data elements after the query resolves', async () => {
