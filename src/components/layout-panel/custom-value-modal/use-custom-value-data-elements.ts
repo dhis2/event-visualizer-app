@@ -32,6 +32,9 @@ const getStageIdFromDimensionId = (id: string | undefined): string | null => {
     return idParts.length === 2 ? idParts[0] : null
 }
 
+const compareByName = (a: DataElementDimension, b: DataElementDimension) =>
+    a.name.localeCompare(b.name)
+
 export const useCustomValueDataElements = () => {
     const {
         settings: { displayNameProperty },
@@ -101,24 +104,28 @@ export const useCustomValueDataElements = () => {
         }
 
         if (layoutStageId) {
-            return data.dimensions.filter(
-                (dim) => getStageIdFromDimensionId(dim.id) === layoutStageId
-            )
+            return data.dimensions
+                .filter(
+                    (dim) => getStageIdFromDimensionId(dim.id) === layoutStageId
+                )
+                .sort(compareByName)
         }
 
-        return data.dimensions.map((dim) => {
-            const stageId = getStageIdFromDimensionId(dim.id)
-            if (!stageId || !programHasMultipleStages) {
-                return dim
-            }
-            const stage = metadataStore.getProgramStageMetadataItem(stageId)
-            if (!stage) {
-                throw new Error(
-                    `Could not find stage with ID "${stageId}" in the metadata store`
-                )
-            }
-            return { ...dim, stageName: stage.name }
-        })
+        return data.dimensions
+            .map((dim) => {
+                const stageId = getStageIdFromDimensionId(dim.id)
+                if (!stageId || !programHasMultipleStages) {
+                    return dim
+                }
+                const stage = metadataStore.getProgramStageMetadataItem(stageId)
+                if (!stage) {
+                    throw new Error(
+                        `Could not find stage with ID "${stageId}" in the metadata store`
+                    )
+                }
+                return { ...dim, stageName: stage.name }
+            })
+            .sort(compareByName)
     }, [data, layoutStageId, metadataStore, programHasMultipleStages])
 
     return {

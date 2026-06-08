@@ -28,12 +28,13 @@ const DragOverlayItem: FC<
                     chipClasses.dragging,
                     classes.overlay,
                     {
-                        [chipClasses.chipEmpty]:
-                            !!data.overlayItemProps.itemsText,
+                        [chipClasses.chipEmpty]: data.overlayItemProps.isEmpty,
                     }
                 )}
             >
-                <ChipBase {...data.overlayItemProps} isDragging />
+                <div className={chipClasses.content}>
+                    <ChipBase {...data.overlayItemProps} isDragging />
+                </div>
             </div>
         )
     }

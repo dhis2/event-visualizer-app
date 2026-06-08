@@ -69,6 +69,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
         dimension,
         formatValueOptions: { digitGroupSeparator },
     })
+    const isEmpty = axisId === 'filters' && items.length === 0 && !hasConditions
     const chipItemsText = useMemo(
         () =>
             getChipItemsText({
@@ -85,9 +86,10 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
             dimensionName: dimension.name,
             suffix: dimension.suffix,
             itemsText: chipItemsText,
+            isEmpty,
             onClick: openDimensionModal,
         }),
-        [dimension, chipItemsText, openDimensionModal]
+        [dimension, chipItemsText, isEmpty, openDimensionModal]
     )
 
     const {
@@ -111,10 +113,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
         >
             <div
                 className={cx(classes.chip, {
-                    [classes.chipEmpty]:
-                        axisId === 'filters' &&
-                        items.length === 0 &&
-                        !hasConditions,
+                    [classes.chipEmpty]: isEmpty,
                     [classes.active]: isDragging,
                     [classes.showBlank]: !dimension.name,
                 })}

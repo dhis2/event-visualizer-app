@@ -14,7 +14,7 @@
 .cell {
     display: flex;
     min-inline-size: 0;
-    align-items: center;
+    align-items: baseline;
     background-color: var(--colors-white);
     padding: 6px;
     border-radius: 5px;
@@ -22,10 +22,11 @@
 
 .title {
     font-size: 13px;
-    line-height: 1;
+    line-height: 1.2;
     font-weight: 500;
     color: var(--colors-grey800);
     min-inline-size: 0;
+    margin-block-start: 2px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -43,13 +44,16 @@
 }
 
 .suffix.edited {
-    color: var(--colors-grey800);
-    padding: 2px 4px;
-    border-radius: 3px;
-    background-color: var(--colors-grey200);
-    margin-block-start: -1px;
+    color: var(--colors-grey600);
+    margin-block-start: 2px;
+    margin-inline-start: 4px;
     font-size: 11px;
     letter-spacing: -0.2px;
     font-family: monospace;
     line-height: normal;
+}
+
+.suffix.edited::before {
+    content: '·';
+    margin-inline-end: 4px;
 }
