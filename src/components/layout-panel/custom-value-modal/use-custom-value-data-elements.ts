@@ -32,6 +32,9 @@ const getStageIdFromDimensionId = (id: string | undefined): string | null => {
     return idParts.length === 2 ? idParts[0] : null
 }
 
+const compareByName = (a: DataElementDimension, b: DataElementDimension) =>
+    a.name.localeCompare(b.name)
+
 export const useCustomValueDataElements = () => {
     const {
         settings: { displayNameProperty },
@@ -100,15 +103,12 @@ export const useCustomValueDataElements = () => {
             return undefined
         }
 
-        const byName = (a: { name: string }, b: { name: string }) =>
-            a.name.localeCompare(b.name)
-
         if (layoutStageId) {
             return data.dimensions
                 .filter(
                     (dim) => getStageIdFromDimensionId(dim.id) === layoutStageId
                 )
-                .sort(byName)
+                .sort(compareByName)
         }
 
         return data.dimensions
@@ -125,7 +125,7 @@ export const useCustomValueDataElements = () => {
                 }
                 return { ...dim, stageName: stage.name }
             })
-            .sort(byName)
+            .sort(compareByName)
     }, [data, layoutStageId, metadataStore, programHasMultipleStages])
 
     return {
