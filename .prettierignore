@@ -6,6 +6,7 @@
 # so we need to add them here too
 node_modules
 .d2
+.claude
 src/locales/*
 build
 src/types/dhis2-openapi-schemas
