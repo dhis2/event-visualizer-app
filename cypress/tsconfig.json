@@ -8,6 +8,7 @@
         "esModuleInterop": true,
         "module": "es2015",
         "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
         "types": ["cypress", "node"],
         "noEmit": true
     },
