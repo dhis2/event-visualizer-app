@@ -4,7 +4,7 @@
     min-block-size: 29px;
     display: flex;
     align-items: center;
-    background-color: var(--colors-white);
+    background-color: transparent;
     border-radius: 4px 4px 0 0;
     padding: 10px 6px 10px 4px;
     cursor: pointer;
@@ -20,7 +20,7 @@
     background-color: var(--colors-grey100);
 }
 .container.disabled:hover {
-    background-color: var(--colors-grey300);
+    background-color: var(--colors-grey100);
 }
 .container:focus {
     outline: 3px solid var(--theme-focus);
@@ -38,7 +38,7 @@
     font-size: 13px;
     line-height: 16px;
     font-weight: 500;
-    color: var(--colors-grey700);
+    color: var(--colors-grey800);
 }
 
 .count {
