@@ -260,9 +260,7 @@ describe('<LayoutPanel />', () => {
         cy.getByDataTest('update-buttons')
             .findByDataTestLike('update-button-')
             .then(($buttons) => {
-                const order = [...$buttons].map((el) =>
-                    el.getAttribute('data-test')
-                )
+                const order = [...$buttons].map((el) => el.dataset.test)
                 expect(order).to.deep.equal([
                     'update-button-tracked-entity',
                     'update-button-enrollment',
@@ -292,9 +290,7 @@ describe('<LayoutPanel />', () => {
         cy.getByDataTest('update-buttons')
             .findByDataTestLike('update-button-')
             .then(($buttons) => {
-                const order = [...$buttons].map((el) =>
-                    el.getAttribute('data-test')
-                )
+                const order = [...$buttons].map((el) => el.dataset.test)
                 expect(order).to.deep.equal([
                     'update-button-enrollment',
                     'update-button-event',
