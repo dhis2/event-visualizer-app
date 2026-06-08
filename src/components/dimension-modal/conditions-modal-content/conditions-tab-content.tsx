@@ -151,6 +151,11 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         [dimension.id, dispatch]
     )
 
+    /* The condition-shaped counterpart to useItemsFilterRadioMode: the same
+     * "Show all" clears / "Filter" restores stash, but a condition's filter is
+     * the local conditionsList plus a legendSet rather than an id list, so it
+     * can't use that hook. conditionsList already survives the toggle as
+     * component state; only the legendSet needs an explicit stash. */
     const hasPersistedFilter: boolean = Boolean(
         conditions.condition?.length || conditions.legendSet
     )

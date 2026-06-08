@@ -10,7 +10,11 @@ import { useFilterRadioMode } from './use-filter-radio-mode'
 /* Shared "Show all"/"Filter" wiring for the selection-based dimensions
  * (dynamic dims and status), whose filter is a list of item ids. The built
  * selection is stashed locally on switch to "Show all" so switching back to
- * "Filter" restores it; only "Update" commits whatever is in the store. */
+ * "Filter" restores it; only "Update" commits whatever is in the store.
+ *
+ * Condition-based dimensions can't use this hook — their filter is a condition
+ * string plus a legendSet rather than an id list — so they wire the same
+ * stash/restore behaviour inline in conditions-tab-content.tsx. */
 export const useItemsFilterRadioMode = (dimension: DimensionMetadataItem) => {
     const dispatch = useAppDispatch()
     const items = useAppSelector((state) =>
