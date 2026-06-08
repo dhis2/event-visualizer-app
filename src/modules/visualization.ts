@@ -21,9 +21,12 @@ import type {
 import deepEqual from 'deep-equal'
 import { getConditionsFromVisualization } from './conditions'
 import {
+    CONTEXTLESS_DIMENSION_TYPES,
+    ENROLLMENT_SCOPED_DIMENSION_IDS,
     getCompoundDimensionId,
     isTimeDimensionId,
     KNOWN_TIME_FIELD_VALUES,
+    META_DIMENSION_IDS,
     outputTypeTimeDimensionMap,
     timeFieldTimeDimensionMap,
     toAppLocalDimensions,
@@ -51,12 +54,9 @@ export const headersMap: Record<DimensionId, string> = {
     programStatus: 'programstatus',
     eventStatus: 'eventstatus',
     completed: 'completed',
-    completedDate: 'completeddate',
     created: 'created',
     createdBy: 'createdbydisplayname',
-    createdDate: 'createddate',
     lastUpdatedBy: 'lastupdatedbydisplayname',
-    lastUpdatedOn: 'lastupdatedon', // XXX: needed here? is this used also in LL?
     eventDate: 'eventdate',
     enrollmentDate: 'enrollmentdate',
     enrollmentOu: 'enrollmentouname',
@@ -84,11 +84,16 @@ export const getHeadersMap = (
     return map
 }
 
-const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
-    'enrollmentOu',
-    'enrollmentDate',
-    'incidentDate',
-    'programStatus',
+/* Dimension types whose values are not bound to any program or stage —
+ * program indicators and tracked entity attributes are owned by a program
+ * in the metadata model but their analytics IDs are plain (never carry
+ * program/stage prefixes). Combined with CONTEXTLESS_DIMENSION_TYPES (eg.
+ * organisation unit group sets), this is the set we must never decorate
+ * with the legacy top-level program/programStage refs. */
+const NO_CONTEXT_DIMENSION_TYPES: ReadonlySet<string> = new Set([
+    'PROGRAM_INDICATOR',
+    'PROGRAM_ATTRIBUTE',
+    ...CONTEXTLESS_DIMENSION_TYPES,
 ])
 
 /* Static reverse of headersMap. The ENR `enrollmentOu → ouname` override
@@ -569,17 +574,30 @@ export const getSingleProgramStageFromVisualization = (
     return stages[0]
 }
 
+/* Old dimension IDs (created by the legacy event-visualizer / Event Reports
+ * app) mapped onto the canonical IDs this app and the backend analytics API
+ * use. `createdDate` is a genuine persisted alias of `created`; the other two
+ * are normalised defensively (the backend never persists them). */
+const LEGACY_DIMENSION_ID_RENAMES: Record<string, DimensionId> = {
+    createdDate: 'created',
+    completedDate: 'completed',
+    lastUpdatedOn: 'lastUpdated',
+}
+
 /**
  * Legacy → canonical normalisation for saved visualizations received from the
- * eventVisualizations API. Converts either of the two legacy shapes (old
- * line-listing `legacy: true`, and old event-visualizer top-level
- * program/programStage) into the canonical shape this app persists.
+ * eventVisualizations API. Converts the legacy shapes (old line-listing
+ * `legacy: true`, old event-visualizer top-level program/programStage, and old
+ * dimension IDs) into the canonical shape this app persists.
  *
  * Scope:
  * - Propagate top-level program/programStage onto individual dimensions
  * - Ensure `programDimensions` includes the top-level program
  * - Convert legacy `pe` dimension into the proper time dimension
+ * - Rename old dimension IDs (`createdDate`/`completedDate`/`lastUpdatedOn`)
+ *   to their canonical form
  * - Convert legacy `orgUnitField` into an `ou` filter
+ * - Convert top-level `programStatus` into a `programStatus` filter dimension
  * - Drop `timeField` when it holds a known backend enum value (e.g.
  *   `EVENT_DATE`) — the corresponding "which column" information is now
  *   encoded in the concrete time dimension produced above, so leaving
@@ -587,12 +605,13 @@ export const getSingleProgramStageFromVisualization = (
  *   data-element / attribute UID, since that's still a live analytics
  *   parameter
  * - Drop top-level `program` and `programStage`
- * - Mark output as `legacy: true` when either legacy shape was detected, so
- *   the vis cannot be overwritten in place — only "Save as" is allowed.
- *   Overwriting would silently persist in the canonical format, breaking
- *   older apps that still read the legacy shape.
+ * - Mark output as `legacy: true` whenever any of the above upgraded the
+ *   persisted shape, so the vis cannot be overwritten in place — only "Save
+ *   as" is allowed. Overwriting would silently persist in the canonical
+ *   format, breaking older apps that still read the legacy shape.
  *
- * Out of scope (handled downstream):
+ * Out of scope (handled downstream — these run on every load, not just legacy
+ * visualizations, so they do not imply the `legacy` flag):
  * - `completedOnly` → `eventStatus=COMPLETED` filter (not legacy-only)
  * - `PROGRAM_DATA_ELEMENT` → `DATA_ELEMENT` (wire → app shape)
  * - `dy`/`latitude`/`longitude` stripping (wire → app shape)
@@ -605,7 +624,8 @@ export const normalizeApiSavedVisualization = (
         programStage,
         orgUnitField,
         timeField,
-        legacy,
+        legacy: apiVisLegacy,
+        programStatus,
         columns = [],
         rows = [],
         filters = [],
@@ -619,21 +639,35 @@ export const normalizeApiSavedVisualization = (
     const stageRef = programStage ? { id: programStage.id } : undefined
     const outputType = rest.outputType as OutputType | undefined
 
-    // Single pass per dimension:
-    //   - propagate top-level program/programStage onto dimensions that
-    //     don't carry them (old event-visualizer shape)
-    //   - convert a legacy `pe` dimension into the concrete time dimension
-    //     (legacy line-listing shape)
+    // The vis is legacy whenever anything here upgrades the persisted shape:
+    // re-saving in canonical format would then break older apps still reading
+    // the original shape, so block the in-place save path. Seed it from the
+    // top-level legacy signals (explicit flag, old event-visualizer
+    // program/programStage, legacy `orgUnitField`/`programStatus` that get
+    // converted to filter dimensions); the per-dimension pass and the
+    // `timeField` drop below flip it too.
+    let legacy =
+        Boolean(apiVisLegacy) ||
+        Boolean(program || programStage) ||
+        Boolean(orgUnitField) ||
+        Boolean(programStatus)
+
+    /* Single pass per dimension, in order:
+     *   - convert a legacy `pe` dimension into the concrete time dimension
+     *     (legacy line-listing shape)
+     *   - rename old dimension IDs to their canonical form
+     *   - propagate top-level program/programStage onto dimensions that
+     *     don't carry them (old event-visualizer shape), but only where it
+     *     makes semantic sense — the rename runs first so meta dims renamed
+     *     from a legacy ID (e.g. `createdDate` → `created`) are recognised
+     *     as context-free here:
+     *       · meta dims, contextless dim types, program indicators and
+     *         tracked entity attributes don't carry program/stage context
+     *       · enrollment-scoped IDs are tied to the program, not a stage,
+     *         so they get program only, never programStage */
     const normalizeDimensions = (dims: DimensionArray): DimensionArray =>
         dims.map((dim) => {
             let out = dim
-
-            if (programRef && !out.program) {
-                out = { ...out, program: programRef }
-            }
-            if (stageRef && !out.programStage) {
-                out = { ...out, programStage: stageRef }
-            }
 
             if (out.dimension === 'pe') {
                 const targetDim =
@@ -645,15 +679,48 @@ export const normalizeApiSavedVisualization = (
                         dimension: targetDim,
                         dimensionType: 'PERIOD',
                     }
+                    legacy = true
                 }
+            }
+
+            const renamedDimension = LEGACY_DIMENSION_ID_RENAMES[out.dimension]
+            if (renamedDimension) {
+                out = { ...out, dimension: renamedDimension }
+                legacy = true
+            }
+
+            const skipBothRefs =
+                META_DIMENSION_IDS.has(out.dimension) ||
+                (typeof out.dimensionType === 'string' &&
+                    NO_CONTEXT_DIMENSION_TYPES.has(out.dimensionType))
+
+            if (skipBothRefs) {
+                return out
+            }
+
+            const skipStageRef = ENROLLMENT_SCOPED_DIMENSION_IDS.has(
+                out.dimension
+            )
+
+            if (programRef && !out.program) {
+                out = { ...out, program: programRef }
+            }
+            if (!skipStageRef && stageRef && !out.programStage) {
+                out = { ...out, programStage: stageRef }
             }
 
             return out
         })
 
-    const rawFilters = orgUnitField
-        ? [...filters, { dimension: 'ou', items: [{ id: orgUnitField }] }]
-        : filters
+    const rawFilters = [
+        ...filters,
+        ...(orgUnitField
+            ? [{ dimension: 'ou', items: [{ id: orgUnitField }] }]
+            : []),
+        ...(programStatus
+            ? [{ dimension: 'programStatus', items: [{ id: programStatus }] }]
+            : []),
+    ]
 
     const normalizedColumns = normalizeDimensions(columns)
     const normalizedRows = normalizeDimensions(rows)
@@ -667,15 +734,12 @@ export const normalizeApiSavedVisualization = (
     // `timeField` holding a known backend enum value has been materialised
     // into a concrete time dimension above; keep it only when it holds a
     // data-element / attribute UID (non-legacy usage that the analytics
-    // request still needs).
+    // request still needs). Dropping a known-enum `timeField` is an upgrade.
     const preserveTimeField =
         typeof timeField === 'string' && !KNOWN_TIME_FIELD_VALUES.has(timeField)
-
-    // Detect either legacy shape — shape-1 carried an explicit `legacy: true`
-    // flag; shape-2 didn't, but having top-level program/programStage is the
-    // tell. In both cases, re-saving in canonical format would break older
-    // apps still reading the legacy shape, so block the save path.
-    const markLegacy = Boolean(legacy || program || programStage)
+    if (typeof timeField === 'string' && !preserveTimeField) {
+        legacy = true
+    }
 
     return {
         ...rest,
@@ -684,7 +748,7 @@ export const normalizeApiSavedVisualization = (
         filters: normalizedFilters,
         programDimensions: normalizedProgramDimensions,
         ...(preserveTimeField ? { timeField } : {}),
-        ...(markLegacy ? { legacy: true } : {}),
+        ...(legacy ? { legacy: true } : {}),
         ...(sortOrder !== 0 && { sortOrder }),
         ...(topLimit !== 0 && { topLimit }),
     } as SavedVisualization

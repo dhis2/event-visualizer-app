@@ -1,6 +1,7 @@
 import { Analytics, transformEventAggregateResponse } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
+import { logger } from '@modules/logger'
 import { getSingleProgramFromVisualization } from '@modules/visualization'
 import type {
     CurrentUser,
@@ -40,8 +41,14 @@ export const fetchAnalyticsDataForPT = async ({
         req = req.withDisplayProperty(displayProperty.toUpperCase())
     }
 
-    if (visualization.programStatus) {
-        req = req.withProgramStatus(visualization.programStatus)
+    if (visualization.sortOrder) {
+        req = req.withSortOrder(
+            visualization.sortOrder === '1' ? 'ASC' : 'DESC'
+        )
+    }
+
+    if (visualization.topLimit) {
+        req = req.withLimit(visualization.topLimit)
     }
 
     // add custom value and aggregationType
@@ -136,13 +143,13 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                     relativePeriodDate,
                 })
 
-                console.log('PT analytics response', analyticsResponse)
+                logger.debug('PT analytics response', analyticsResponse)
 
                 // response for PT needs to be transformed
                 const analyticsData =
                     transformEventAggregateResponse(analyticsResponse)
 
-                console.log('analytics data', analyticsData)
+                logger.debug('analytics data', analyticsData)
                 setState({
                     data: analyticsData,
                     error: undefined,
@@ -151,7 +158,7 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
 
                 onResponseReceived(analyticsResponse.metaData.items)
             } catch (error) {
-                console.log('PT fetch error', error)
+                logger.debug('PT fetch error', error)
                 setState({
                     data: null,
                     error,

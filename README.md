@@ -450,3 +450,37 @@ A few conventions to note:
 
 - `visualizationId` will always be populated in the store; the value `new` signifies that no saved AO is selected.
 - A blank URL `/` and `/new` are treated equally, so accessing the app at `#/` will not redirect to `#/new`.
+
+### Debug Mode
+
+The app's debug tooling (verbose logging via [`loglevel`](https://github.com/pimterry/loglevel), Redux DevTools, and the metadata-store `window` globals) is gated behind a single log level. Defaults:
+
+- `pnpm start` (`NODE_ENV=development`): level `info` — logger output is visible, Redux DevTools attaches, `window.getMetadataStore()` is exposed.
+- Production builds (Netlify previews, installed instances): level `error` — only real errors emit; devtools are silent.
+- Tests (`NODE_ENV=test`): level `silent` — no logger output, no devtools. Tests routinely exercise error paths, so emitting error logs by default would clutter the output.
+
+To override the default in any environment, set `EVENT_VISUALIZER_LOG_LEVEL` to one of `trace`, `debug`, `info`, `warn`, `error`, or `silent`. The boolean tools (Redux DevTools, metadata-store globals) are enabled at `trace`/`debug`/`info` and disabled at `warn`/`error`/`silent`.
+
+**In the browser** (e.g. on a Netlify preview or an installed instance), set the `localStorage` key and reload:
+
+```js
+localStorage.setItem('EVENT_VISUALIZER_LOG_LEVEL', 'debug')
+// then reload the page
+```
+
+**In a test run** (or any Node-side invocation), use the environment variable:
+
+```bash
+EVENT_VISUALIZER_LOG_LEVEL=debug pnpm test
+```
+
+If both are set, `localStorage` wins over the env var.
+
+In app code, log via the shared logger instead of `console.*` (the `no-console` ESLint rule enforces this):
+
+```ts
+import { logger } from '@modules/logger'
+
+logger.debug('LL req', req)
+logger.error(error)
+```

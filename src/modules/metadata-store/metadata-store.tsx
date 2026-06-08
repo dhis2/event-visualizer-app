@@ -1,4 +1,5 @@
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
+import { isDebugMode } from '@modules/debug-mode'
 import {
     isMetadataInputItem,
     isProgramMetadataItem,
@@ -71,10 +72,7 @@ export class MetadataStore {
     ) {
         this.addInitialMetadataItems(initialMetadataItems, rootOrgUnits)
 
-        if (
-            process.env.NODE_ENV === 'development' ||
-            process.env.NODE_ENV === 'test'
-        ) {
+        if (isDebugMode()) {
             window.getMetadataStore = () => Object.fromEntries(this.metadata)
             window.getMetadataStoreItem = (key: string) =>
                 this.getMetadataItem(key)

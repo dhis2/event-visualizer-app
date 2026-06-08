@@ -1,8 +1,5 @@
-import type { AxisSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import { IconButton } from '@components/shared/icon-button'
 import { Layer, Popper, Tooltip, IconMore16 } from '@dhis2/ui'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
 import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
@@ -19,6 +16,7 @@ import { DropInsertMarker } from './drop-insert-marker'
 import { getChipItemsText } from './get-chip-items-text'
 import classes from './styles/chip.module.css'
 import { TooltipContent } from './tooltip-content'
+import { useChipDnd } from './use-chip-dnd'
 
 export type LayoutDimension = {
     id: string
@@ -71,6 +69,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
         dimension,
         formatValueOptions: { digitGroupSeparator },
     })
+    const isEmpty = axisId === 'filters' && items.length === 0 && !hasConditions
     const chipItemsText = useMemo(
         () =>
             getChipItemsText({
@@ -87,50 +86,21 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
             dimensionName: dimension.name,
             suffix: dimension.suffix,
             itemsText: chipItemsText,
+            isEmpty,
             onClick: openDimensionModal,
         }),
-        [dimension, chipItemsText, openDimensionModal]
+        [dimension, chipItemsText, isEmpty, openDimensionModal]
     )
-    const droppableData = useMemo<AxisSortableData>(
-        () => ({
-            dimensionId: dimension.id,
-            axis: axisId,
-            overlayItemProps: chipBaseProps,
-            insertAfter,
-        }),
-        [axisId, dimension, chipBaseProps, insertAfter]
-    )
-    const sortable = useSortable({
-        id: dimension.id,
-        data: droppableData,
-    })
+
     const {
-        attributes,
-        isDragging,
-        isOver,
-        isSorting,
-        listeners,
+        sortable,
         setNodeRef,
-        transform,
-        transition,
-    } = sortable
-    const style = useMemo(
-        () =>
-            transform
-                ? {
-                      transform: isSorting
-                          ? undefined
-                          : CSS.Translate.toString({
-                                x: transform.x,
-                                y: transform.y,
-                                scaleX: 1,
-                                scaleY: 1,
-                            }),
-                      transition,
-                  }
-                : undefined,
-        [transform, isSorting, transition]
-    )
+        attributes,
+        listeners,
+        isOver,
+        isDragging,
+        style,
+    } = useChipDnd({ dimension, axisId, chipBaseProps, insertAfter })
 
     return (
         <div
@@ -143,10 +113,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
         >
             <div
                 className={cx(classes.chip, {
-                    [classes.chipEmpty]:
-                        axisId === 'filters' &&
-                        items.length === 0 &&
-                        !hasConditions,
+                    [classes.chipEmpty]: isEmpty,
                     [classes.active]: isDragging,
                     [classes.showBlank]: !dimension.name,
                 })}
@@ -198,7 +165,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                     <Layer onBackdropClick={toggleChipMenu}>
                         <Popper reference={buttonRef} placement="bottom-start">
                             <ChipMenu
-                                dimensionId={dimension.id}
+                                dimension={dimension}
                                 axisId={axisId}
                                 onClose={toggleChipMenu}
                             />

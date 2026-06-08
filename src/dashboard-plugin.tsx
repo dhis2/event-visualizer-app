@@ -9,6 +9,7 @@ import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { useDataQuery } from '@dhis2/app-runtime'
+import { logger } from '@modules/logger'
 import {
     normalizeApiSavedVisualization,
     toCurrentVis,
@@ -30,8 +31,8 @@ type DashboardPluginProps = {
 }
 
 const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
-    console.log('DashboardPlugin props', props)
-    console.log('vis id', props.visualization.id)
+    logger.debug('DashboardPlugin props', props)
+    logger.debug('vis id', props.visualization.id)
 
     const metadataStore = useMetadataStore()
 
@@ -91,11 +92,11 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     // TODO: handle errors
     if (error) {
         // `error` will be of type EngineError and `data` will is possibly undefined
-        console.log('ERROR!', data, error)
+        logger.debug('ERROR!', data, error)
         return <div>Error loading event visualization: {error.message}</div>
     }
 
-    console.log(
+    logger.debug(
         'dp currentVisualization',
         currentVisualization,
         'loading',

@@ -36,6 +36,6 @@ export const CustomValueOption: FC<CustomValueOptionProps> = ({
             )}
         </svg>
         <span className={classes.label}>{label}</span>
-        {stageName && <span className={classes.stageChip}>{stageName}</span>}
+        {stageName && <span className={classes.stageLabel}>{stageName}</span>}
     </button>
 )

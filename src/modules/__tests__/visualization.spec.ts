@@ -1,5 +1,9 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
-import type { CurrentVisualization, SavedVisualization } from '@types'
+import type {
+    ApiSavedVisualization,
+    CurrentVisualization,
+    SavedVisualization,
+} from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     analyticsHeaderToCanonicalDimensionId,
@@ -7,6 +11,7 @@ import {
     getAnalyticsRequestHeaderName,
     getSaveableVisualization,
     getVisualizationUiConfig,
+    normalizeApiSavedVisualization,
 } from '../visualization'
 
 const testCases = {
@@ -683,5 +688,120 @@ describe('getAnalyticsRequestHeaderName', () => {
                 visualization: buildVis({ showHierarchy: true }),
             })
         ).toBe(`${SID}.ounamehierarchy`)
+    })
+})
+
+describe('normalizeApiSavedVisualization', () => {
+    const buildApiVis = (
+        overrides: Partial<ApiSavedVisualization> = {}
+    ): ApiSavedVisualization =>
+        ({
+            type: 'LINE_LIST',
+            outputType: 'EVENT',
+            columns: [],
+            rows: [],
+            filters: [],
+            programDimensions: [],
+            ...overrides,
+        }) as unknown as ApiSavedVisualization
+
+    const dimensionsOf = (vis: SavedVisualization): string[] =>
+        [
+            ...(vis.columns ?? []),
+            ...(vis.rows ?? []),
+            ...(vis.filters ?? []),
+        ].map((dim) => dim.dimension)
+
+    it.each([
+        ['createdDate', 'created'],
+        ['completedDate', 'completed'],
+        ['lastUpdatedOn', 'lastUpdated'],
+    ])('renames %s to %s and marks the vis legacy', (oldId, newId) => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                columns: [
+                    { dimension: oldId, dimensionType: 'PERIOD' },
+                ] as ApiSavedVisualization['columns'],
+            })
+        )
+
+        expect(dimensionsOf(result)).toContain(newId)
+        expect(dimensionsOf(result)).not.toContain(oldId)
+        expect(result.legacy).toBe(true)
+    })
+
+    it('leaves a canonical vis untouched and does not mark it legacy', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                columns: [
+                    {
+                        dimension: 'created',
+                        dimensionType: 'PERIOD',
+                        programStage: { id: SID },
+                    },
+                ] as ApiSavedVisualization['columns'],
+            })
+        )
+
+        expect(dimensionsOf(result)).toEqual(['created'])
+        expect(result.legacy).toBeUndefined()
+    })
+
+    it('marks legacy when top-level program/programStage is present', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                program: { id: PID },
+                programStage: { id: SID },
+                columns: [
+                    { dimension: UID, dimensionType: 'DATA_ELEMENT' },
+                ] as ApiSavedVisualization['columns'],
+            } as Partial<ApiSavedVisualization>)
+        )
+
+        expect(result.legacy).toBe(true)
+    })
+
+    it('marks legacy when a `pe` dimension is converted to a time dimension', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                outputType: 'EVENT',
+                columns: [
+                    { dimension: 'pe', dimensionType: 'PERIOD' },
+                ] as ApiSavedVisualization['columns'],
+            })
+        )
+
+        expect(dimensionsOf(result)).toContain('eventDate')
+        expect(result.legacy).toBe(true)
+    })
+
+    it('marks legacy when an `orgUnitField` is converted to an ou filter', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                orgUnitField: 'someOuField',
+            } as Partial<ApiSavedVisualization>)
+        )
+
+        expect(dimensionsOf(result)).toContain('ou')
+        expect(result.legacy).toBe(true)
+    })
+
+    it('marks legacy when a top-level `programStatus` is converted to a filter', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                programStatus: 'COMPLETED',
+            } as Partial<ApiSavedVisualization>)
+        )
+
+        expect(dimensionsOf(result)).toContain('programStatus')
+        expect(result.legacy).toBe(true)
+    })
+
+    it('honours an explicit incoming legacy flag', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ legacy: true } as Partial<ApiSavedVisualization>)
+        )
+
+        expect(result.legacy).toBe(true)
     })
 })

@@ -1,3 +1,4 @@
+import { logger } from '@modules/logger'
 import {
     currentVisSlice,
     initialState as currentVisSliceInitialState,
@@ -141,7 +142,7 @@ describe('<LayoutPanel />', () => {
             },
         })
 
-        console.log(layoutPanelMockOptions)
+        logger.debug(layoutPanelMockOptions)
 
         cy.mount(
             <MockAppWrapper {...layoutPanelMockOptions}>
@@ -236,5 +237,65 @@ describe('<LayoutPanel />', () => {
 
         // Check that the update buttons are present
         cy.getByDataTest('update-buttons').should('be.visible')
+    })
+
+    it('renders the LINE_LIST update buttons in the order tracked entity, enrollment, event', () => {
+        const layoutPanelMockOptions = createMockOptions({
+            dimensionSelection: {
+                ...mockOptions.partialStore?.preloadedState.dimensionSelection,
+                dataSourceId: 'test-id',
+            },
+            visUiConfig: {
+                ...mockOptions.partialStore?.preloadedState.visUiConfig,
+                visualizationType: 'LINE_LIST',
+            },
+        })
+
+        cy.mount(
+            <MockAppWrapper {...layoutPanelMockOptions}>
+                <LayoutPanel />
+            </MockAppWrapper>
+        )
+
+        cy.getByDataTest('update-buttons')
+            .findByDataTestLike('update-button-')
+            .then(($buttons) => {
+                const order = [...$buttons].map((el) => el.dataset.test)
+                expect(order).to.deep.equal([
+                    'update-button-tracked-entity',
+                    'update-button-enrollment',
+                    'update-button-event',
+                ])
+            })
+    })
+
+    it('renders the PIVOT_TABLE update buttons in the order enrollment, event, custom value', () => {
+        const layoutPanelMockOptions = createMockOptions({
+            dimensionSelection: {
+                ...mockOptions.partialStore?.preloadedState.dimensionSelection,
+                dataSourceId: 'test-id',
+            },
+            visUiConfig: {
+                ...mockOptions.partialStore?.preloadedState.visUiConfig,
+                visualizationType: 'PIVOT_TABLE',
+            },
+        })
+
+        cy.mount(
+            <MockAppWrapper {...layoutPanelMockOptions}>
+                <LayoutPanel />
+            </MockAppWrapper>
+        )
+
+        cy.getByDataTest('update-buttons')
+            .findByDataTestLike('update-button-')
+            .then(($buttons) => {
+                const order = [...$buttons].map((el) => el.dataset.test)
+                expect(order).to.deep.equal([
+                    'update-button-enrollment',
+                    'update-button-event',
+                    'update-button-custom-value',
+                ])
+            })
     })
 })

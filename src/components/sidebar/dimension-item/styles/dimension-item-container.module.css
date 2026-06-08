@@ -37,9 +37,10 @@
     background-color: #bbe2e0;
 }
 
-.container.dragging {
+.container.dragging:active {
     background-color: var(--colors-grey100);
     border-color: var(--colors-grey400);
+    opacity: 0.9;
 }
 
 .container.multiSelected,
@@ -61,6 +62,13 @@
     inline-size: fit-content;
     max-inline-size: 100%;
     padding-inline-end: 4px;
+}
+
+/* The drag overlay tracks the cursor, so it's the element under the pointer
+ * for the whole drag. Override the inner item's cursor so it reads grabbing. */
+.container.dragOverlay,
+.container.dragOverlay * {
+    cursor: grabbing;
 }
 
 .container.disabled {

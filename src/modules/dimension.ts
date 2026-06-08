@@ -28,8 +28,9 @@ export const outputTypeTimeDimensionMap: Record<OutputType, DimensionId> = {
  * concrete time-dimension id the app uses internally. Used when
  * materialising a legacy `pe` dimension into a proper time dimension. */
 export const timeFieldTimeDimensionMap: Record<string, DimensionId> = {
-    COMPLETED_DATE: 'completedDate',
+    COMPLETED_DATE: 'completed',
     CREATED: 'created',
+    CREATED_DATE: 'created',
     ENROLLMENT_DATE: 'enrollmentDate',
     EVENT_DATE: 'eventDate',
     INCIDENT_DATE: 'incidentDate',
@@ -180,25 +181,9 @@ type TimeDimension = {
     nameProperty: string
 }
 export const getTimeDimensions = (): Record<
-    Exclude<TimeDimensionId, 'created' | 'lastUpdated'>,
+    Exclude<TimeDimensionId, 'lastUpdated'>,
     TimeDimension
 > => ({
-    completedDate: {
-        id: 'completedDate',
-        dimensionType: 'PERIOD',
-        defaultName: i18n.t('Completed date'),
-        nameParentProperty: 'stage',
-        nameProperty: 'displayCompletedDateLabel',
-        formatType: 'DATE',
-    },
-    createdDate: {
-        id: 'createdDate',
-        dimensionType: 'PERIOD',
-        defaultName: i18n.t('Created date'),
-        nameParentProperty: 'stage',
-        nameProperty: 'displayCreatedDateLabel',
-        formatType: 'DATE',
-    },
     eventDate: {
         id: 'eventDate',
         dimensionType: 'PERIOD',
@@ -221,14 +206,6 @@ export const getTimeDimensions = (): Record<
         defaultName: i18n.t('Incident date'),
         nameParentProperty: 'program',
         nameProperty: 'displayIncidentDateLabel',
-        formatType: 'DATE',
-    },
-    lastUpdatedOn: {
-        id: 'lastUpdatedOn',
-        dimensionType: 'PERIOD',
-        defaultName: i18n.t('Last updated on'),
-        nameParentProperty: 'stage',
-        nameProperty: 'displayLastUpdatedOnLabel',
         formatType: 'DATE',
     },
     scheduledDate: {
@@ -309,7 +286,7 @@ export const META_DIMENSION_IDS = new Set(
  * drop those fields at the API → app-local boundary so that downstream code
  * (compound ID, save round-trip) treats them as the contextless dimensions
  * they actually are. */
-const CONTEXTLESS_DIMENSION_TYPES: ReadonlySet<string> = new Set([
+export const CONTEXTLESS_DIMENSION_TYPES: ReadonlySet<string> = new Set([
     'ORGANISATION_UNIT_GROUP_SET',
 ])
 
@@ -372,7 +349,7 @@ export const toEventVisualizationDimensionId = ({
 /* Dimension IDs that are always enrollment-scoped (prefixed with programId,
  * never stageId). Legacy visualizations propagate programStage onto all
  * dimensions, but these IDs are inherently tied to the program, not a stage. */
-const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
+export const ENROLLMENT_SCOPED_DIMENSION_IDS: ReadonlySet<string> = new Set([
     'enrollmentOu',
     'enrollmentDate',
     'incidentDate',

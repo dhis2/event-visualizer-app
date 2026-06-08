@@ -1,4 +1,5 @@
 import { FetchError } from '@dhis2/app-runtime'
+import { logger } from '@modules/logger'
 
 export const ENGINE_ERROR_TYPES = [
     'network',
@@ -104,12 +105,8 @@ export const parseEngineError = (error: unknown): EngineError => {
                           : 'An unexpected runtime error occurred',
               }
 
-    // Ensure non-network errors are logged to the console in dev mode
-    if (
-        process.env.NODE_ENV === 'development' &&
-        (parsedError.type === 'unknown' || parsedError.type === 'runtime')
-    ) {
-        console.error(error)
+    if (parsedError.type === 'unknown' || parsedError.type === 'runtime') {
+        logger.error(error)
     }
 
     return parsedError

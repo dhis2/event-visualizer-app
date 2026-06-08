@@ -101,8 +101,10 @@ export const excludeByVersionTags = (
 ) => {
     const excludedTags = getExcludedTags(config.env.dhis2InstanceVersion)
 
+    /* eslint-disable no-console -- Cypress startup diagnostic */
     console.log('instanceVersion', config.env.dhis2InstanceVersion)
     console.log('tags to exclude from testing', excludedTags)
+    /* eslint-enable no-console */
 
     config.env.CYPRESS_EXCLUDE_TAGS = excludedTags.join(',')
 

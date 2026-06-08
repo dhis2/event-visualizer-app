@@ -2,7 +2,6 @@ import i18n from '@dhis2/d2-i18n'
 import {
     IconChevronDown16,
     IconChevronUp16,
-    IconDimensionEventDataItem16,
     IconErrorFilled24,
     theme,
 } from '@dhis2/ui'
@@ -57,7 +56,6 @@ export const DataSourceSelectCombobox: FC<DataSourceSelectComboboxProps> = ({
                         [classes.empty]: !dataSourceMetadata,
                     })}
                 >
-                    {!!dataSourceMetadata && <IconDimensionEventDataItem16 />}
                     <span className={classes.ellipsis}>
                         {dataSourceMetadata?.name ??
                             i18n.t('Choose a data source')}
