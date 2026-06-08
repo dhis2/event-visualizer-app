@@ -1,6 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import { toEventVisualizationDimensionId } from '@modules/dimension'
 import { parseUiRepetitions } from '@modules/repetitions'
+import { isDimensionFullyInvalidForVisType } from '@modules/validation'
 import { isValueTypeNumeric } from '@modules/value-type'
 import {
     selectLayoutAllDimensionIds,
@@ -270,6 +271,85 @@ export const getAllowedTargetAxis = (
         }
     }
     return allowed
+}
+
+export type LayoutConversionResult = {
+    newLayout: Layout
+    discardedDimensionIds: string[]
+}
+
+const CONVERSION_AXIS_FALLBACK_ORDER: ReadonlyArray<Axis> = [
+    'columns',
+    'rows',
+    'filters',
+]
+
+const pickAxisForConversion = (
+    dim: DimensionMetadataItem,
+    preferredAxis: Axis,
+    targetVisType: VisualizationType
+): Axis => {
+    if (!isAxisInvalidForDimension(dim, preferredAxis, targetVisType)) {
+        return preferredAxis
+    }
+    const invalid = getInvalidAxesForDimension(dim, targetVisType)
+    const candidates = CONVERSION_AXIS_FALLBACK_ORDER.filter(
+        (axis) => !(targetVisType === 'LINE_LIST' && axis === 'rows')
+    )
+    const fallback = candidates.find((axis) => !invalid.has(axis))
+    /* `filters` is never in the invalid set under current rules, so this
+     * branch always finds an axis. Default to filters as a final safety net. */
+    return fallback ?? 'filters'
+}
+
+export const convertLayoutForVisType = ({
+    layout,
+    targetVisType,
+    getDimension,
+}: {
+    layout: Layout
+    targetVisType: VisualizationType
+    getDimension: (id: string) => DimensionMetadataItem | undefined
+}): LayoutConversionResult => {
+    const newLayout: Layout = { columns: [], rows: [], filters: [] }
+    const discardedDimensionIds: string[] = []
+
+    /* Process filters first so a user's existing filter ordering is preserved
+     * and any dimensions migrating to filters (e.g. non-aggregatable dims
+     * moving out of PT cols/rows) are appended after them. Columns precedes
+     * rows so that on PT -> LL the merged columns reads as cols ++ rows. */
+    const sourceAxesInOrder: ReadonlyArray<Axis> = [
+        'filters',
+        'columns',
+        'rows',
+    ]
+
+    for (const sourceAxis of sourceAxesInOrder) {
+        for (const dimensionId of layout[sourceAxis]) {
+            const dim = getDimension(dimensionId)
+            if (!dim) {
+                throw new Error(
+                    `No metadata found for dimension "${dimensionId}" — cannot convert layout for visualization type "${targetVisType}"`
+                )
+            }
+            if (isDimensionFullyInvalidForVisType(dim, targetVisType)) {
+                discardedDimensionIds.push(dimensionId)
+                continue
+            }
+            const preferredAxis: Axis =
+                targetVisType === 'LINE_LIST' && sourceAxis === 'rows'
+                    ? 'columns'
+                    : sourceAxis
+            const targetAxis = pickAxisForConversion(
+                dim,
+                preferredAxis,
+                targetVisType
+            )
+            newLayout[targetAxis].push(dimensionId)
+        }
+    }
+
+    return { newLayout, discardedDimensionIds }
 }
 
 export const resolveTeiFields = (
