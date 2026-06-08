@@ -122,9 +122,13 @@ pnpm generate-types # Regenerate DHIS2 API types from OpenAPI specs
   small helpers over explanatory comments. If a block needs a comment to explain what it
   does, first ask whether extracting a named variable or function would make the comment
   unnecessary.
-- **When to comment**: Only for (a) domain/business context that can't be inferred from the
-  code, or (b) code that is genuinely hard to comprehend on its own. Never write a comment
-  that restates what the next line does.
+- **When to comment**: Before writing any comment (file-level, function-level, or inline),
+  name which category it falls in:
+  (a) domain/business context that can't be inferred from the code, or
+  (b) code that is genuinely hard to comprehend on its own.
+  If you can't pin it to (a) or (b), don't write it. Default position is no comment.
+  Never write a comment that restates what the next line does, and never write prose
+  that simply summarises a file's or function's purpose — the name and types do that.
 - **Never include time-bound information**: No references to previous implementations,
   refactor history, future plans, removed alternatives, or comparisons to other helpers that
   may move/disappear. Comments describe what's there and why — not how the code evolved.

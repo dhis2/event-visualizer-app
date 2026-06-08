@@ -13,18 +13,9 @@ import {
 } from '@store/dimensions-selection-slice'
 import cx from 'classnames'
 import { useState, type FC } from 'react'
+import { isAxisSortableData, isSidebarSortableData } from './dnd-data'
 import classes from './styles/dimension-drag-overlay.module.css'
-import type {
-    AxisSortableData,
-    DraggedItemEventData,
-    SidebarSortableData,
-} from './types'
-
-const isAxisSortableData = (data: object): data is AxisSortableData =>
-    'axis' in data
-
-const isSidebarSortableData = (data: object): data is SidebarSortableData =>
-    'populateMetadata' in data
+import type { DraggedItemEventData } from './types'
 
 const DragOverlayItem: FC<
     DraggedItemEventData & { multiSelectCount: number }

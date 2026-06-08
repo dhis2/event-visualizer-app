@@ -1,6 +1,12 @@
 import { DIMENSION_ID_ORGUNIT } from '@constants/dimensions'
 import { AXIS, dimensionIsValid, layoutGetDimension } from '@dhis2/analytics'
-import type { CurrentVisualization, EmptyVisualization } from '@types'
+import type {
+    CurrentVisualization,
+    DimensionMetadataItem,
+    DimensionType,
+    EmptyVisualization,
+    VisualizationType,
+} from '@types'
 import { isVisualizationEmpty } from './visualization'
 
 const getProgramDimensionsCount = (
@@ -119,3 +125,38 @@ export const isVisualizationPersistable = (
     visualization.outputType === 'TRACKED_ENTITY_INSTANCE'
         ? visualizationHasTrackedEntityTypeId(visualization)
         : visualizationHasProgramId(visualization)
+
+/* Per-dimension validity by visualization type. Used by the sidebar to
+ * disable cards and individual chips, and by the conversion strategy to
+ * decide which dimensions to discard when switching vis types. */
+
+export const isDimensionTypeFullyInvalidForVisType = (
+    dimensionType: DimensionType,
+    visType: VisualizationType
+): boolean => {
+    if (visType === 'LINE_LIST') {
+        return false
+    }
+    return dimensionType === 'PROGRAM_INDICATOR'
+}
+
+export const isDimensionFullyInvalidForVisType = (
+    dim: Partial<
+        Pick<
+            DimensionMetadataItem,
+            'dimensionType' | 'dimensionId' | 'trackedEntityTypeId'
+        >
+    >,
+    visType: VisualizationType
+): boolean => {
+    if (visType === 'LINE_LIST') {
+        return false
+    }
+    if (
+        dim.dimensionType &&
+        isDimensionTypeFullyInvalidForVisType(dim.dimensionType, visType)
+    ) {
+        return true
+    }
+    return dim.dimensionId === 'enrollmentOu' && !!dim.trackedEntityTypeId
+}

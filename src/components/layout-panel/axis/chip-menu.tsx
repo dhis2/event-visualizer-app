@@ -1,7 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import { FlyoutMenu, MenuDivider, MenuItem } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
-import { getAxisName } from '@modules/layout'
+import { isAxisInvalidForDimension, getAxisName } from '@modules/layout'
 import {
     removeVisUiConfigLayoutDimensionFromAxis,
     getVisUiConfigVisualizationType,
@@ -13,17 +13,14 @@ import type { LayoutDimension } from './chip'
 
 type ChipMenuProps = {
     axisId: Axis
-    dimensionId: LayoutDimension['id']
+    dimension: LayoutDimension
     onClose: () => void
 }
 const AXIS_IDS: Axis[] = ['columns', 'rows', 'filters']
 
-export const ChipMenu: FC<ChipMenuProps> = ({
-    axisId,
-    dimensionId,
-    onClose,
-}) => {
+export const ChipMenu: FC<ChipMenuProps> = ({ axisId, dimension, onClose }) => {
     const dataTest = 'chip-menu'
+    const dimensionId = dimension.id
 
     const dispatch = useAppDispatch()
     const visType = useAppSelector(getVisUiConfigVisualizationType)
@@ -67,9 +64,10 @@ export const ChipMenu: FC<ChipMenuProps> = ({
             AXIS_IDS.filter(
                 (axis) =>
                     axis !== axisId &&
-                    !(axis === 'rows' && visType === 'LINE_LIST')
+                    !(axis === 'rows' && visType === 'LINE_LIST') &&
+                    !isAxisInvalidForDimension(dimension, axis, visType)
             ),
-        [visType, axisId]
+        [visType, axisId, dimension]
     )
 
     return (

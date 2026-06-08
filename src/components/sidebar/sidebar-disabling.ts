@@ -6,6 +6,10 @@ import {
     isDataSourceProgramWithoutRegistration,
     isDataSourceTrackedEntityType,
 } from '@modules/data-source'
+import {
+    isDimensionFullyInvalidForVisType,
+    isDimensionTypeFullyInvalidForVisType,
+} from '@modules/validation'
 import { createSelector } from '@reduxjs/toolkit'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 import {
@@ -77,7 +81,12 @@ const stateForProgramWithRegistration = ({
             },
         }
     }
-    if (visualizationType !== 'LINE_LIST') {
+    if (
+        isDimensionTypeFullyInvalidForVisType(
+            'PROGRAM_INDICATOR',
+            visualizationType
+        )
+    ) {
         return {
             disabledCards: new Set(['enrollment-program-indicators']),
             disabledMessage: {
@@ -93,7 +102,12 @@ const stateForProgramWithoutRegistration = (
     visualizationType: VisualizationType
 ): SidebarDisablingState => {
     /* Event programs have no TET, so the different-TET rule never fires. */
-    if (visualizationType !== 'LINE_LIST') {
+    if (
+        isDimensionTypeFullyInvalidForVisType(
+            'PROGRAM_INDICATOR',
+            visualizationType
+        )
+    ) {
         return {
             disabledCards: new Set(['event-program-indicators']),
             disabledMessage: {
@@ -219,14 +233,11 @@ const getCustomValueDimensionMessage = ({
     )
 }
 
-const getRegistrationOuVisTypeMessage = ({
+const getInvalidForVisTypeMessage = ({
     dimension,
     visualizationType,
 }: DimensionDisablingInput): string | null => {
-    const isTetRegistrationOu =
-        dimension.dimensionId === 'enrollmentOu' &&
-        !!dimension.trackedEntityTypeId
-    if (!isTetRegistrationOu || visualizationType === 'LINE_LIST') {
+    if (!isDimensionFullyInvalidForVisType(dimension, visualizationType)) {
         return null
     }
     return i18n.t('Not valid with {{visType}}', {
@@ -235,14 +246,13 @@ const getRegistrationOuVisTypeMessage = ({
 }
 
 /* Item-level disable rules. The two reasons are orthogonal (a dim is either
- * the custom-value target or it is the TET registration OU outside line list,
- * never both), so order does not matter operationally — custom-value is
- * checked first because it is the most common reason in practice. */
+ * the custom-value target or it is invalid for the current vis type, never
+ * both), so order does not matter operationally — custom-value is checked
+ * first because it is the most common reason in practice. */
 export const getDimensionDisabledMessageByLayout = (
     input: DimensionDisablingInput
 ): string | null =>
-    getCustomValueDimensionMessage(input) ??
-    getRegistrationOuVisTypeMessage(input)
+    getCustomValueDimensionMessage(input) ?? getInvalidForVisTypeMessage(input)
 
 export const useDimensionDisabledText = (
     dimension: DimensionMetadataItem
