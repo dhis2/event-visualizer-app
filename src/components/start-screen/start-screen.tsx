@@ -16,7 +16,7 @@ export const StartScreen: FC = () => {
     })
 
     return (
-        <div className={classes.outer}>
+        <div className={classes.outer} data-test="start-screen">
             <div className={classes.inner}>
                 {Boolean(data?.length) && (
                     <div className={classes.section}>
