@@ -64,7 +64,7 @@ export const CustomValueButton: FC = () => {
         'CUSTOM_VALUE'
     )
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const { syncIconRef, triggerSpin } = useActionSpin(action)
+    const { syncIconRef } = useActionSpin(action)
     const isButtonReady = Boolean(
         customValue?.id && customValue?.aggregationType
     )
@@ -118,14 +118,13 @@ export const CustomValueButton: FC = () => {
 
     const onUpdateClick = useCallback(() => {
         if (customValue) {
-            triggerSpin()
             dispatch(setVisUiConfigLastActiveButton('CUSTOM_VALUE'))
             dispatch(setVisUiConfigOutputType('EVENT'))
             dispatch(tUpdateCurrentVisFromVisUiConfig())
         } else {
             setIsModalOpen(true)
         }
-    }, [customValue, dispatch, triggerSpin])
+    }, [customValue, dispatch])
     const onConfigureClick = useCallback(() => {
         setIsModalOpen((curr) => !curr)
     }, [])

@@ -17,6 +17,7 @@ export interface UiState {
     isSidebarVisible: boolean
     sidebarWidth: number
     savedPanelVisibility: PanelVisibility | null
+    updateAnimationTick: number
 }
 
 export const initialState: UiState = {
@@ -27,6 +28,7 @@ export const initialState: UiState = {
     isSidebarVisible: true,
     sidebarWidth: getSidebarWidthFromLocalStorage(),
     savedPanelVisibility: null,
+    updateAnimationTick: 0,
 }
 
 const panelKeys: (keyof PanelVisibility)[] = [
@@ -66,6 +68,9 @@ export const uiSlice = createSlice({
     initialState,
     reducers: {
         clearUi: () => initialState,
+        bumpUiUpdateAnimation: (state) => {
+            state.updateAnimationTick += 1
+        },
         setUiSidebarWidth: (state, action: PayloadAction<number>) => {
             state.sidebarWidth = action.payload
         },
@@ -104,6 +109,7 @@ export const uiSlice = createSlice({
     },
     selectors: {
         getUiActiveDimensionModal: (state) => state.activeDimensionModal,
+        getUiUpdateAnimationTick: (state) => state.updateAnimationTick,
         getUiDetailsPanelVisible: (state) => state.isDetailsPanelVisible,
         getUiLayoutPanelExpanded: (state) => state.isLayoutPanelExpanded,
         getUiLayoutPanelVisible: (state) => state.isLayoutPanelVisible,
@@ -118,6 +124,7 @@ export const uiSlice = createSlice({
 
 export const {
     clearUi,
+    bumpUiUpdateAnimation,
     setUiSidebarWidth,
     resetUiSidebarWidth,
     setUiActiveDimensionModal,
@@ -129,6 +136,7 @@ export const {
 } = uiSlice.actions
 export const {
     getUiActiveDimensionModal,
+    getUiUpdateAnimationTick,
     getUiDetailsPanelVisible,
     getUiLayoutPanelExpanded,
     getUiLayoutPanelVisible,

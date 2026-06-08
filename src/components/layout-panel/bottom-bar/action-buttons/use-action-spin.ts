@@ -1,32 +1,35 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useAppSelector } from '@hooks'
+import { getUiUpdateAnimationTick } from '@store/ui-slice'
+import { useEffect, useRef } from 'react'
 import type { ButtonAction } from './base-button'
 import type { UpdateSyncIconHandle } from './update-sync-icon'
 
-/* The icon only shows on the "update" button. So clicking a "switch" or
- * "create" button has nothing to spin yet: we spin right away if the icon is
- * already there, otherwise we wait until the button turns into "update".
- * We only spin in response to a click, not just because the button became
- * "update" on its own (for example, when loading a saved visualization). */
+/* Spins the icon whenever the visualization is updated from the UI config.
+ *
+ * Every update path — the layout buttons and the modals' Update buttons — goes
+ * through tUpdateCurrentVisFromVisUiConfig, which bumps a tick on each run. The
+ * active 'update' button is the only one whose icon is mounted, so it is the
+ * only one that spins. Loading a saved visualization uses a different thunk and
+ * leaves the tick untouched, so loading never spins.
+ *
+ * The first 'create' click is exempt: there the icon appears for the very first
+ * time, and spinning it as it pops in looks off — so a create -> update
+ * transition is skipped while switch -> update and repeat updates still spin. */
 export const useActionSpin = (action: ButtonAction) => {
     const syncIconRef = useRef<UpdateSyncIconHandle>(null)
-    const hasPendingSpin = useRef(false)
-    const actionRef = useRef(action)
-    actionRef.current = action
-
-    const triggerSpin = useCallback(() => {
-        if (actionRef.current === 'update') {
-            syncIconRef.current?.play()
-        } else {
-            hasPendingSpin.current = true
-        }
-    }, [])
+    const updateTick = useAppSelector(getUiUpdateAnimationTick)
+    const lastTick = useRef(updateTick)
+    const previousAction = useRef(action)
 
     useEffect(() => {
-        if (action === 'update' && hasPendingSpin.current) {
-            hasPendingSpin.current = false
+        const didUpdate = updateTick !== lastTick.current
+        const wasCreating = previousAction.current === 'create'
+        lastTick.current = updateTick
+        previousAction.current = action
+        if (didUpdate && action === 'update' && !wasCreating) {
             syncIconRef.current?.play()
         }
-    }, [action])
+    }, [updateTick, action])
 
-    return { syncIconRef, triggerSpin }
+    return { syncIconRef }
 }

@@ -33,10 +33,9 @@ const BaseButton: FC<BaseButtonProps> = ({
     type,
 }) => {
     const dispatch = useAppDispatch()
-    const { syncIconRef, triggerSpin } = useActionSpin(action)
+    const { syncIconRef } = useActionSpin(action)
 
     const onClick = () => {
-        triggerSpin()
         if (lastActiveButton !== undefined) {
             dispatch(setVisUiConfigLastActiveButton(lastActiveButton))
         }
