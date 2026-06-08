@@ -24,12 +24,18 @@ export const BottomBar: FC = () => {
         >
             {dataSourceId && !isVisualizationLoading && (
                 <div className={classes.container} data-test="update-buttons">
-                    <EventButton />
-                    <EnrollmentButton />
                     {visualizationType === 'PIVOT_TABLE' ? (
-                        <CustomValueButton />
+                        <>
+                            <EnrollmentButton />
+                            <EventButton />
+                            <CustomValueButton />
+                        </>
                     ) : (
-                        <TrackedEntityInstanceButton />
+                        <>
+                            <TrackedEntityInstanceButton />
+                            <EnrollmentButton />
+                            <EventButton />
+                        </>
                     )}
                 </div>
             )}

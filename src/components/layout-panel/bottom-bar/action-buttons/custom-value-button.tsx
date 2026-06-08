@@ -139,6 +139,7 @@ export const CustomValueButton: FC = () => {
                             type="button"
                             onClick={onUpdateClick}
                             disabled={isUpdateDisabled}
+                            data-test="update-button-custom-value"
                             className={cx(classes.button, {
                                 [classes.disabled]: isUpdateDisabled,
                                 [classes.update]:

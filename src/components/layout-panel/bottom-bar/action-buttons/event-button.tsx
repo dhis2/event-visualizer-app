@@ -58,6 +58,7 @@ export const EventButton: FC = () => {
     return (
         <BaseButtonWithConditionalTooltip
             action={action}
+            dataTest="update-button-event"
             disabled={Boolean(tooltipConfig)}
             label={
                 buttonLabelLookup[action][
