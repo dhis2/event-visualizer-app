@@ -18,42 +18,36 @@ export const StartScreen: FC = () => {
     return (
         <div className={classes.outer}>
             <div className={classes.inner}>
-                <div>
-                    {Boolean(data?.length) && (
-                        <div className={classes.section}>
-                            <h3 className={classes.title}>
-                                {i18n.t(
-                                    'Your most viewed event visualizations'
-                                )}
-                            </h3>
-                            {data?.map((vis) => (
-                                <p
-                                    key={vis.id}
-                                    className={classes.visualization}
-                                    onClick={() =>
-                                        dispatch(
-                                            setNavigationState({
-                                                visualizationId: vis.id,
-                                            })
-                                        )
-                                    }
-                                    data-test={
-                                        'start-screen-most-viewed-list-item'
-                                    }
-                                >
-                                    <span className={classes.visIcon}>
-                                        <VisTypeIcon
-                                            type={vis.type}
-                                            useSmall
-                                            color={colors.grey600}
-                                        />
-                                    </span>
-                                    <span>{vis.name}</span>
-                                </p>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                {Boolean(data?.length) && (
+                    <div className={classes.section}>
+                        <h3 className={classes.title}>
+                            {i18n.t('Your most viewed event visualizations')}
+                        </h3>
+                        {data?.map((vis) => (
+                            <p
+                                key={vis.id}
+                                className={classes.visualization}
+                                onClick={() =>
+                                    dispatch(
+                                        setNavigationState({
+                                            visualizationId: vis.id,
+                                        })
+                                    )
+                                }
+                                data-test={'start-screen-most-viewed-list-item'}
+                            >
+                                <span className={classes.visIcon}>
+                                    <VisTypeIcon
+                                        type={vis.type}
+                                        useSmall
+                                        color={colors.grey600}
+                                    />
+                                </span>
+                                <span>{vis.name}</span>
+                            </p>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     )
