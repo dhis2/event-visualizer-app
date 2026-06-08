@@ -1,15 +1,16 @@
 import {
-    getAdaptedVisualization,
+    getAdaptedVisualization as getAdaptedVisualizationForLL,
     getAnalyticsEndpoint,
 } from '@components/plugin-wrapper/hooks/query-tools-line-list'
+import { getAdaptedVisualization as getAdaptedVisualizationForPT } from '@components/plugin-wrapper/hooks/query-tools-pivot-table'
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { useConfig, useDataEngine } from '@dhis2/app-runtime'
 import { useAppSelector, useCurrentUser } from '@hooks'
-import { isVisualizationValid } from '@modules/validation'
 import {
     getSingleProgramFromVisualization,
-    getSingleProgramStageFromVisualization,
+    isCurrentVisualizationNew,
+    isCurrentVisualizationPersisted,
     isVisualizationEmpty,
     isVisualizationWithTimeDimension,
     transformVisualizationForAnalyticsRequest,
@@ -34,7 +35,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
     const currentUser = useCurrentUser()
 
     const downloadForLL: DownloadFn = useCallback(
-        (type, format, idScheme) => {
+        ({ type, format, idScheme }) => {
             if (isVisualizationEmpty(currentVis)) {
                 return
             }
@@ -45,7 +46,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 transformVisualizationForAnalyticsRequest(currentVis)
 
             const { adaptedVisualization, headers, parameters } =
-                getAdaptedVisualization(visualization)
+                getAdaptedVisualizationForLL(visualization)
 
             let req = new analyticsEngine.request()
                 .withPath(
@@ -54,6 +55,10 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                 .withFormat(format)
                 .withDisplayProperty(currentUser.settings.displayProperty)
 
+            if (visualization.showHierarchy) {
+                req = req.withHierarchyMeta()
+            }
+
             // TEI can use multiple programs
             if (visualization.outputType !== 'TRACKED_ENTITY_INSTANCE') {
                 req = req
@@ -61,18 +66,9 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         getSingleProgramFromVisualization(visualization).id
                     )
                     .withOutputType(visualization.outputType)
-            }
-
-            if (visualization.outputType === 'EVENT') {
-                req = req.withStage(
-                    getSingleProgramStageFromVisualization(visualization).id
-                )
-            }
-
-            if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {
-                // can use multiple programs, so we cannot pass program here
+            } else if (visualization.trackedEntityType?.id) {
                 req = req.withTrackedEntityType(
-                    visualization.trackedEntityType?.id
+                    visualization.trackedEntityType.id
                 )
             }
 
@@ -84,30 +80,16 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
             }
 
             const sorting = visualization.sorting?.[0]
-
-            if (sorting) {
-                switch (sorting.direction) {
-                    case 'ASC': {
-                        req = req.withAsc(sorting.dimension)
-                        break
-                    }
-                    case 'DESC': {
-                        req = req.withDesc(sorting.dimension)
-                        break
-                    }
-                }
+            if (sorting?.direction === 'ASC') {
+                req = req.withAsc(sorting.dimension)
+            } else if (sorting?.direction === 'DESC') {
+                req = req.withDesc(sorting.dimension)
             }
 
             switch (type) {
                 case 'table':
                     req = req
                         .fromVisualization(adaptedVisualization)
-                        .withTableLayout()
-                        .withColumns(
-                            visualization.columns
-                                ?.map((column) => column.dimension)
-                                .join(';')
-                        )
                         .withParameters({
                             ...parameters,
                             headers,
@@ -129,13 +111,10 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         })
 
                     // fix option set option names
-                    if (idScheme === 'NAME') {
-                        req = req.withParameters({
-                            dataIdScheme: idScheme,
-                        })
-                    } else {
-                        req = req.withOutputIdScheme(idScheme)
-                    }
+                    req =
+                        idScheme === 'NAME'
+                            ? req.withParameters({ dataIdScheme: idScheme })
+                            : req.withOutputIdScheme(idScheme)
 
                     target = ['csv', 'xsl', 'xslx'].includes(format)
                         ? '_top'
@@ -145,7 +124,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
 
             const url = new URL(
                 `${config.baseUrl}/api/${config.apiVersion}/${req.buildUrl()}`,
-                `${window.location.origin}${window.location.pathname}`
+                `${globalThis.location.origin}${globalThis.location.pathname}`
             )
 
             Object.entries(req.buildQuery()).forEach(([key, value]) =>
@@ -165,12 +144,132 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
         ]
     )
 
-    // XXX: should the transformed visualization be passed here?
-    const isDownloadEnabled = isVisualizationValid(currentVis)
+    const downloadForPT: DownloadFn = useCallback(
+        ({ type, format, idScheme, path }) => {
+            if (isVisualizationEmpty(currentVis)) {
+                return
+            }
+
+            let target = '_top'
+
+            const visualization =
+                transformVisualizationForAnalyticsRequest(currentVis)
+
+            const { adaptedVisualization, parameters } =
+                getAdaptedVisualizationForPT(visualization)
+
+            let req = new analyticsEngine.request()
+                .withPath(
+                    path ??
+                        `${getAnalyticsEndpoint(visualization.outputType)}/aggregate`
+                )
+                .withFormat(format)
+                .withDisplayProperty(currentUser.settings.displayProperty)
+
+            const applyBaseOptions = () => {
+                if (!path) {
+                    req = req.withProgram(
+                        getSingleProgramFromVisualization(visualization).id
+                    )
+                }
+
+                if (visualization.showHierarchy) {
+                    req = req.withHierarchyMeta()
+                }
+
+                if (visualization.sortOrder) {
+                    req = req.withSortOrder(
+                        visualization.sortOrder === 1 ? 'ASC' : 'DESC'
+                    )
+                }
+
+                if (visualization.topLimit) {
+                    req = req.withLimit(visualization.topLimit)
+                }
+
+                // add custom value and aggregationType
+                if (visualization.value && visualization.aggregationType) {
+                    req = req
+                        .withValue(visualization.value.id)
+                        .withAggregationType(visualization.aggregationType)
+                }
+
+                if (
+                    relativePeriodDate &&
+                    isVisualizationWithTimeDimension(visualization)
+                ) {
+                    req = req.withRelativePeriodDate(relativePeriodDate)
+                }
+            }
+            applyBaseOptions()
+
+            switch (type) {
+                case 'table':
+                    req = req
+                        .fromVisualization(adaptedVisualization)
+                        .withParameters({
+                            ...parameters,
+                            dataIdScheme: 'NAME',
+                            paging: false,
+                        })
+
+                    target = format === 'html+css' ? '_blank' : '_top'
+
+                    break
+                case 'plain':
+                    req = req
+                        .fromVisualization(
+                            adaptedVisualization,
+                            // in DV we only pass true when path is dataValueSet, in LL we always pass true as we don't have the advanced menu there
+                            path ? path === 'dataValueSet' : true
+                        )
+                        .withParameters({
+                            ...parameters,
+                            paging: false,
+                        })
+
+                    // fix option set option names
+                    req =
+                        idScheme === 'NAME'
+                            ? req.withParameters({ dataIdScheme: idScheme })
+                            : req.withOutputIdScheme(idScheme)
+
+                    target = ['csv', 'xsl', 'xslx'].includes(format)
+                        ? '_top'
+                        : '_blank'
+                    break
+            }
+
+            const url = new URL(
+                `${config.baseUrl}/api/${config.apiVersion}/${req.buildUrl()}`,
+                `${globalThis.location.origin}${globalThis.location.pathname}`
+            )
+
+            Object.entries(req.buildQuery()).forEach(([key, value]) =>
+                // TODO: buildQuery return value should be typed to avoid the need of the String casting
+                url.searchParams.append(key, String(value))
+            )
+
+            window.open(url, target)
+        },
+        [
+            analyticsEngine,
+            config.baseUrl,
+            config.apiVersion,
+            currentVis,
+            currentUser.settings,
+            relativePeriodDate,
+        ]
+    )
+
+    const isDownloadEnabled =
+        isCurrentVisualizationNew(currentVis) ||
+        isCurrentVisualizationPersisted(currentVis)
 
     return {
         isDownloadDisabled: !isDownloadEnabled,
-        download: downloadForLL,
+        download:
+            currentVis.type === 'PIVOT_TABLE' ? downloadForPT : downloadForLL,
     }
 }
 
