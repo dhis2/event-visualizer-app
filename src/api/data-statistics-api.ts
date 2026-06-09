@@ -15,6 +15,8 @@ type MostViewedRecord = FavoriteRecord & {
     type: EventVisualizationType
 }
 
+const MOST_VIEWED_VISUALIZATIONS_LIMIT = 10
+
 export const dataStatisticsApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getMostViewed: builder.query<MostViewedRecord[], void>({
@@ -31,7 +33,7 @@ export const dataStatisticsApi = api.injectEndpoints({
                             resource: 'dataStatistics/favorites',
                             params: {
                                 eventType: 'EVENT_VISUALIZATION_VIEW',
-                                pageSize: 6,
+                                pageSize: MOST_VIEWED_VISUALIZATIONS_LIMIT,
                                 ...(username ? { username } : {}),
                             },
                         },
