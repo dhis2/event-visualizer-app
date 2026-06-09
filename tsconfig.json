@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
         "noEmit": true,
         "skipLibCheck": true,
         "allowJs": true,
@@ -10,6 +9,7 @@
         "target": "ESNext",
         "module": "esnext",
         "moduleResolution": "bundler",
+        "strict": false,
         "strictNullChecks": true,
         "types": [
             "@testing-library/jest-dom",
@@ -18,20 +18,20 @@
             "cypress-real-events"
         ],
         "paths": {
-            "@dhis2/analytics": ["src/types/analytics/index.d.ts"],
+            "@dhis2/analytics": ["./src/types/analytics/index.d.ts"],
             // Use this as the definitive source for type imports, mainly to prevent
             // a suggestion overload from all the generated types
-            "@types": ["src/types/index"],
+            "@types": ["./src/types/index"],
             // For top level dirs with an index file we should treat that index file as a public API
-            "@hooks": ["src/hooks/index"],
+            "@hooks": ["./src/hooks/index"],
             // In top level dirs without an index file we can access nested folders
-            "@api/*": ["src/api/*"],
-            "@assets/*": ["src/assets/*"],
-            "@components/*": ["src/components/*"],
-            "@constants/*": ["src/constants/*"],
-            "@modules/*": ["src/modules/*"],
-            "@store/*": ["src/store/*"],
-            "@test-utils/*": ["src/test-utils/*"]
+            "@api/*": ["./src/api/*"],
+            "@assets/*": ["./src/assets/*"],
+            "@components/*": ["./src/components/*"],
+            "@constants/*": ["./src/constants/*"],
+            "@modules/*": ["./src/modules/*"],
+            "@store/*": ["./src/store/*"],
+            "@test-utils/*": ["./src/test-utils/*"]
         },
         "plugins": [
             {
