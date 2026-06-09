@@ -1,11 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import {
-    Button,
-    IconDelete16,
-    Input,
-    SingleSelectField,
-    SingleSelectOption,
-} from '@dhis2/ui'
+import { Input, SingleSelectField, SingleSelectOption } from '@dhis2/ui'
 import {
     NULL_VALUE,
     UI_TIME_DIVIDER,
@@ -13,6 +7,7 @@ import {
     getDateOperators,
 } from '@modules/conditions'
 import { type ComponentProps, type FC } from 'react'
+import { ConditionRemoveButton } from './condition-remove-button'
 import classes from './styles/condition.module.css'
 import { useValueInputFocus } from './use-value-input-focus'
 
@@ -86,16 +81,7 @@ const BaseCondition: FC<
                     dense
                 />
             )}
-            <Button
-                type="button"
-                small
-                secondary
-                icon={<IconDelete16 />}
-                onClick={onRemove}
-                aria-label={i18n.t('Remove')}
-                className={classes.removeButton}
-                dataTest="condition-remove-button"
-            />
+            <ConditionRemoveButton onClick={onRemove} />
         </div>
     )
 }

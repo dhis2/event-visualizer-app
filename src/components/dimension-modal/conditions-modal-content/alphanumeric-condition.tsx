@@ -1,8 +1,6 @@
 import i18n from '@dhis2/d2-i18n'
 import {
-    Button,
     Checkbox,
-    IconDelete16,
     Input,
     SingleSelectField,
     SingleSelectOption,
@@ -19,6 +17,7 @@ import {
     type QueryOperator,
 } from '@modules/conditions'
 import { useCallback, useMemo, type FC } from 'react'
+import { ConditionRemoveButton } from './condition-remove-button'
 import classes from './styles/condition.module.css'
 import { useValueInputFocus } from './use-value-input-focus'
 
@@ -127,16 +126,7 @@ const BaseCondition: FC<
                         dataTest="condition-case-sensitive-checkbox"
                     />
                 )}
-            <Button
-                type="button"
-                small
-                secondary
-                icon={<IconDelete16 />}
-                onClick={onRemove}
-                aria-label={i18n.t('Remove')}
-                className={classes.removeButton}
-                dataTest="condition-remove-button"
-            />
+            <ConditionRemoveButton onClick={onRemove} />
         </div>
     )
 }

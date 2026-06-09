@@ -1,9 +1,8 @@
+import { ConditionRemoveButton } from '@components/dimension-modal/conditions-modal-content/condition-remove-button'
 import classes from '@components/dimension-modal/conditions-modal-content/styles/condition.module.css'
 import { useValueInputFocus } from '@components/dimension-modal/conditions-modal-content/use-value-input-focus'
 import i18n from '@dhis2/d2-i18n'
 import {
-    Button,
-    IconDelete16,
     Input,
     MenuDivider,
     MultiSelect,
@@ -294,16 +293,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                     )}
                 </>
             )}
-            <Button
-                type="button"
-                small
-                secondary
-                icon={<IconDelete16 />}
-                onClick={onRemove}
-                aria-label={i18n.t('Remove')}
-                className={classes.removeButton}
-                dataTest="condition-remove-button"
-            />
+            <ConditionRemoveButton onClick={onRemove} />
         </div>
     )
 }
