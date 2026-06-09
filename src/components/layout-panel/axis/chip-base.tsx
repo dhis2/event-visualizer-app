@@ -11,6 +11,7 @@ export interface ChipBaseProps {
     dimensionName: string
     itemsText: string
     suffix?: string
+    isEmpty?: boolean
     isDragging?: boolean
     onClick: () => void
 }
@@ -20,12 +21,16 @@ export const ChipBase: React.FC<ChipBaseProps> = ({
     dimensionName,
     itemsText,
     suffix,
+    isEmpty,
     isDragging,
     onClick,
 }) => (
     <button
         type="button"
-        className={cx(classes.chipBase, { [classes.dragging]: isDragging })}
+        className={cx(classes.chipBase, {
+            [classes.empty]: isEmpty,
+            [classes.dragging]: isDragging,
+        })}
         onClick={onClick}
     >
         {dimensionType && (
@@ -36,7 +41,10 @@ export const ChipBase: React.FC<ChipBaseProps> = ({
         <span className={classes.label}>
             <span className={classes.primary}>{dimensionName}</span>
             {suffix && (
-                <span className={classes.secondary}>{`· ${suffix}`}</span>
+                <span
+                    className={classes.secondary}
+                    data-test="chip-suffix"
+                >{`· ${suffix}`}</span>
             )}
         </span>
         <span className={classes.items} data-test="chip-items">

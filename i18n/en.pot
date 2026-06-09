@@ -11,8 +11,8 @@ msgstr ""
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
 
-msgid "Choose a condition type"
-msgstr "Choose a condition type"
+msgid "Choose a filter type"
+msgstr "Choose a filter type"
 
 msgid "Case sensitive"
 msgstr "Case sensitive"
@@ -23,33 +23,26 @@ msgstr "Remove"
 msgid "Repeated events"
 msgstr "Repeated events"
 
-msgid "Conditions"
-msgstr "Conditions"
+msgid "Data"
+msgstr "Data"
 
 msgid "Only available for repeatable stages"
 msgstr "Only available for repeatable stages"
 
-msgid "Show items that meet the following conditions for this data item:"
-msgstr "Show items that meet the following conditions for this data item:"
+msgid "{{valueType}} type dimensions cannot be filtered."
+msgstr "{{valueType}} type dimensions cannot be filtered."
 
-msgid "This dimension can't be filtered. All values will be shown."
-msgstr "This dimension can't be filtered. All values will be shown."
+msgid "This dimension cannot be filtered."
+msgstr "This dimension cannot be filtered."
 
-msgid ""
-"No conditions yet, so all values will be included. Add a condition to "
-"filter results."
-msgstr ""
-"No conditions yet, so all values will be included. Add a condition to "
-"filter results."
+msgid "Preset options can't be combined with other filters"
+msgstr "Preset options can't be combined with other filters"
 
-msgid "Preset options can't be combined with other conditions"
-msgstr "Preset options can't be combined with other conditions"
+msgid "Add another filter"
+msgstr "Add another filter"
 
-msgid "Add another condition"
-msgstr "Add another condition"
-
-msgid "Add a condition"
-msgstr "Add a condition"
+msgid "Add a filter"
+msgstr "Add a filter"
 
 msgid "and"
 msgstr "and"
@@ -102,8 +95,14 @@ msgstr "Choose from presets"
 msgid "Define start - end dates"
 msgstr "Define start - end dates"
 
-msgid "Show items where the status is:"
-msgstr "Show items where the status is:"
+msgid "Value filtering"
+msgstr "Value filtering"
+
+msgid "Show all values"
+msgstr "Show all values"
+
+msgid "Filter"
+msgstr "Filter"
 
 msgid "No items selected"
 msgstr "No items selected"
@@ -123,6 +122,24 @@ msgstr "Nothing found for \"{{- searchTerm}}\""
 msgid "No options"
 msgstr "No options"
 
+msgid "Data value set"
+msgstr "Data value set"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "XML"
+msgstr "XML"
+
+msgid "Other formats"
+msgstr "Other formats"
+
+msgid "JRXML"
+msgstr "JRXML"
+
+msgid "Raw data SQL"
+msgstr "Raw data SQL"
+
 msgid "HTML"
 msgstr "HTML"
 
@@ -132,17 +149,14 @@ msgstr "HTML+CSS (.html+css)"
 msgid "Plain data source"
 msgstr "Plain data source"
 
-msgid "JSON"
-msgstr "JSON"
-
-msgid "XML"
-msgstr "XML"
-
 msgid "Microsoft Excel"
 msgstr "Microsoft Excel"
 
 msgid "CSV"
 msgstr "CSV"
+
+msgid "Advanced"
+msgstr "Advanced"
 
 msgid "Download data from this date"
 msgstr "Download data from this date"
@@ -354,6 +368,15 @@ msgstr "Table options"
 
 msgid "Chart options"
 msgstr "Chart options"
+
+msgid "Convert to {{- visType}}"
+msgstr "Convert to {{- visType}}"
+
+msgid "{{- names}} will be removed. Are you sure?"
+msgstr "{{- names}} will be removed. Are you sure?"
+
+msgid "Convert"
+msgstr "Convert"
 
 msgid "Individual data view"
 msgstr "Individual data view"
@@ -620,9 +643,6 @@ msgstr "Categories"
 msgid "Category option group sets"
 msgstr "Category option group sets"
 
-msgid "Filter"
-msgstr "Filter"
-
 msgid ""
 "These dimensions belong to a different tracked entity type than the one "
 "used in the layout ({{- tetName}}). Remove the existing dimensions to use "
@@ -632,12 +652,8 @@ msgstr ""
 "used in the layout ({{- tetName}}). Remove the existing dimensions to use "
 "these."
 
-msgid ""
-"Program indicators are not valid with {{visType}}. Switch to Line list to "
-"use them."
-msgstr ""
-"Program indicators are not valid with {{visType}}. Switch to Line list to "
-"use them."
+msgid "Cannot be used with {{visType}}."
+msgstr "Cannot be used with {{visType}}."
 
 msgid ""
 "This dimension is used as the custom value. Remove the custom value to use "
@@ -1061,9 +1077,6 @@ msgstr "Period"
 
 msgid "Organisation unit"
 msgstr "Organisation unit"
-
-msgid "Data"
-msgstr "Data"
 
 msgid "Style"
 msgstr "Style"

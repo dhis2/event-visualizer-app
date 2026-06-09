@@ -82,7 +82,7 @@ const BaseCondition: FC<
         <div className={classes.container} data-test="alphanumeric-condition">
             <SingleSelectField
                 selected={operator}
-                placeholder={i18n.t('Choose a condition type')}
+                placeholder={i18n.t('Choose a filter type')}
                 dense
                 onChange={({ selected }) => setOperator(selected)}
                 className={classes.operatorSelect}

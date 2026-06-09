@@ -13,9 +13,9 @@ export const CardsProgramWithRegistration: FC<
     CardsProgramWithRegistrationProps
 > = ({ program }) => (
     <>
+        <CardTrackedEntityType program={program} />
         <CardEnrollment program={program} />
         <CardEvent program={program} />
-        <CardTrackedEntityType program={program} />
         <CardProgramIndicators program={program} />
     </>
 )
