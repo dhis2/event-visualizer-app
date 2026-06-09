@@ -1,0 +1,64 @@
+.visuallyHidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacers-dp8);
+}
+
+.card {
+    border: 1px solid var(--colors-grey300);
+    border-radius: 5px;
+    background-color: var(--colors-white);
+}
+
+.card:not(.cardSelected):not(.cardDisabled):hover {
+    border-color: var(--colors-grey400);
+}
+
+.card:not(.cardSelected):not(.cardDisabled):active {
+    border-color: var(--colors-grey400);
+    background-color: var(--colors-grey100);
+}
+
+.cardSelected {
+    border-color: var(--colors-grey400);
+    background-color: var(--colors-grey050);
+}
+
+.cardDisabled .cardRadio {
+    cursor: not-allowed;
+}
+
+.cardHelp {
+    margin: 0;
+    padding-inline: var(--spacers-dp32) var(--spacers-dp8);
+    padding-block-end: var(--spacers-dp12);
+    font-size: 13px;
+    line-height: 16px;
+    color: var(--colors-grey600);
+}
+
+/* The radio's root element is a <label>, so making it fill the card (padding
+ * lives here, not on .card) turns the whole card into a native click target —
+ * no onClick handler needed. The revealed filter UI is a sibling, outside the
+ * label, so interacting with it never toggles the radio. */
+.cardRadio {
+    padding: var(--spacers-dp12) var(--spacers-dp8);
+    cursor: pointer;
+}
+
+.revealed {
+    margin-inline: var(--spacers-dp24) var(--spacers-dp12);
+    margin-block-end: var(--spacers-dp12);
+}

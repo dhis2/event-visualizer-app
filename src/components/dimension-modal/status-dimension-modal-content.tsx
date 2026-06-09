@@ -1,4 +1,5 @@
-import i18n from '@dhis2/d2-i18n'
+import { ShowAllFilterRadio } from '@components/dimension-modal/show-all-filter-radio/show-all-filter-radio'
+import { useItemsFilterRadioMode } from '@components/dimension-modal/show-all-filter-radio/use-items-filter-radio-mode'
 import { Checkbox } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getStatusNames } from '@modules/status'
@@ -31,6 +32,8 @@ export const StatusDimensionModalContent: FC<
     const selectedIds = useAppSelector((state) =>
         getVisUiConfigPlainItemIdsByDimension(state, dimension?.id)
     )
+
+    const { mode, onModeChange } = useItemsFilterRadioMode(dimension)
 
     const statuses = useMemo(() => {
         // XXX: for programStatus the id should be prefixed with program/stage
@@ -71,12 +74,11 @@ export const StatusDimensionModalContent: FC<
     )
 
     return (
-        <>
-            <p className={classes.paragraph}>
-                {i18n.t('Show items where the status is:', {
-                    nsSeparator: '^^',
-                })}
-            </p>
+        <ShowAllFilterRadio
+            mode={mode}
+            onModeChange={onModeChange}
+            dataTest={`${dataTest}-filter-radio`}
+        >
             <div>
                 {statuses.map(({ id, name }) => (
                     <Checkbox
@@ -96,6 +98,6 @@ export const StatusDimensionModalContent: FC<
                     />
                 ))}
             </div>
-        </>
+        </ShowAllFilterRadio>
     )
 }

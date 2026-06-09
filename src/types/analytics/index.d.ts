@@ -82,6 +82,8 @@ declare module '@dhis2/analytics' {
         Record<EventVisualizationType | VisualizationType, string>
     >
 
+    export const valueTypeDisplayNames: Record<ValueType, string>
+
     export const AXIS: {
         defaultValue: undefined[]
         isValid: (axis: DimensionArray) => boolean
