@@ -15,38 +15,25 @@
 }
 .title {
     font-weight: 500;
-    font-size: 17px;
+    font-size: 16px;
     margin-block-start: 0;
+    margin-block-end: var(--spacers-dp12);
     line-height: 22px;
     color: var(--colors-grey800);
 }
 .section {
     text-align: start;
     background: var(--colors-white);
-    padding: var(--spacers-dp16);
+    padding: var(--spacers-dp16) var(--spacers-dp24);
     margin-block-end: var(--spacers-dp24);
     border-radius: 5px;
     border: 1px solid var(--colors-grey400);
-}
-.guide {
-    line-height: 18px;
-    letter-spacing: 0.1px;
-    list-style: circle;
-    list-style-position: outside;
-    margin: 0 0 0 var(--spacers-dp12);
-    padding: 0 0 0 var(--spacers-dp12);
-}
-.guideItem {
-    font-size: 14px;
-    line-height: 18px;
-    letter-spacing: 0.1px;
-    margin-block-end: var(--spacers-dp12);
 }
 .visualization {
     display: flex;
     align-items: center;
     margin: 0 0 var(--spacers-dp4) 0;
-    padding: var(--spacers-dp4) 0 var(--spacers-dp4) var(--spacers-dp12);
+    padding: var(--spacers-dp4);
     letter-spacing: 0.1px;
     line-height: 16px;
     cursor: pointer;

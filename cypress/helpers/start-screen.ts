@@ -4,4 +4,4 @@ export const goToStartPage = () => {
 }
 
 export const expectStartScreenToBeVisible = () =>
-    cy.contains('Getting started').should('be.visible')
+    cy.getByDataTest('start-screen').should('exist')
