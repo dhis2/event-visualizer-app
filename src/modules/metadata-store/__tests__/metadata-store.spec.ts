@@ -747,6 +747,71 @@ describe('MetadataStore', () => {
             })
             expect(snapshot.LFsZ8v5v7rq).toBeUndefined()
         })
+
+        it('types a dimension from its dimensionItemType so a later lookup does not throw', () => {
+            /* The analytics response carries the type under `dimensionItemType`,
+             * not `dimensionType`. Without adopting it, the stored item is not a
+             * valid dimension and a subsequent getDimensionMetadataItem throws,
+             * blanking the line list on the next render. */
+            const analyticsItems = {
+                Rv8WM2mTuS5: {
+                    uid: 'Rv8WM2mTuS5',
+                    name: 'Age (Years)',
+                    dimensionItemType: 'PROGRAM_ATTRIBUTE',
+                    valueType: 'NUMBER',
+                },
+            } as unknown as Parameters<
+                MetadataStore['addAnalyticsResponseMetadata']
+            >[0]
+            const headers = [
+                {
+                    name: 'Rv8WM2mTuS5',
+                    dimensionId: 'Rv8WM2mTuS5',
+                    column: 'Age (Years)',
+                    valueType: 'NUMBER',
+                    type: 'java.lang.Double',
+                    hidden: false,
+                    meta: false,
+                    legendSet: { id: '', name: '', legends: [] },
+                } as unknown as LineListAnalyticsDataHeader,
+            ]
+
+            metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
+
+            expect(() =>
+                metadataStore.getDimensionMetadataItem('Rv8WM2mTuS5')
+            ).not.toThrow()
+            expect(
+                metadataStore.getDimensionMetadataItem('Rv8WM2mTuS5')
+                    ?.dimensionType
+            ).toBe('PROGRAM_ATTRIBUTE')
+        })
+
+        it('does not adopt dimensionItemType for non-dimension items (e.g. PERIOD)', () => {
+            /* metaData.items also contains value-level items (periods, options,
+             * org units) carrying a dimensionItemType. Those must not be turned
+             * into dimensions. */
+            const analyticsItems = {
+                '202507': {
+                    uid: '202507',
+                    name: 'July 2025',
+                    dimensionItemType: 'PERIOD',
+                    valueType: 'TEXT',
+                },
+            } as unknown as Parameters<
+                MetadataStore['addAnalyticsResponseMetadata']
+            >[0]
+
+            metadataStore.addAnalyticsResponseMetadata(analyticsItems, [])
+
+            const snapshot = metadataStore.getMetadataSnapshot()
+            expect(snapshot['202507']).toEqual({
+                id: '202507',
+                name: 'July 2025',
+                dimensionItemType: 'PERIOD',
+                valueType: undefined,
+            })
+        })
     })
 })
 
