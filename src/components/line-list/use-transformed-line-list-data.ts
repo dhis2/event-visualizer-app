@@ -15,12 +15,14 @@ import { useMemo } from 'react'
 const isStageOffsetInteger = (stageOffset: unknown): stageOffset is number =>
     Number.isInteger(stageOffset)
 
-const getHeaderDisplayText = (header: LineListAnalyticsDataHeader) => {
-    const { column, stageOffset } = header
+export const getHeaderDisplayText = (header: LineListAnalyticsDataHeader) => {
+    const { column, stageOffset, dimensionSuffix } = header
 
     if (!column) {
         return ''
     }
+
+    const label = dimensionSuffix ? `${column} · ${dimensionSuffix}` : column
 
     if (isStageOffsetInteger(stageOffset)) {
         let repetitionSuffix
@@ -39,10 +41,10 @@ const getHeaderDisplayText = (header: LineListAnalyticsDataHeader) => {
             })
         }
 
-        return `${column} (${repetitionSuffix})`
+        return `${label} (${repetitionSuffix})`
     }
 
-    return column
+    return label
 }
 
 const NOT_DEFINED_VALUE = 'ND'

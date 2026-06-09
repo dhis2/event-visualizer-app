@@ -35,6 +35,8 @@ export type LineListAnalyticsDataHeader = GridHeader & {
      * reused by downstream consumers so the wire-to-canonical translation
      * happens exactly once per response. */
     dimensionId: string
+    /* Stage/program disambiguation suffix, combined with `column` at render. */
+    dimensionSuffix?: string
 }
 export type LineListAnalyticsData = {
     headers: Array<LineListAnalyticsDataHeader>

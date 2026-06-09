@@ -4,7 +4,7 @@ describe('bootstrapped app', () => {
     })
 
     it('shows the landing page', () => {
-        cy.contains('Getting started').should('be.visible')
+        cy.getByDataTest('start-screen').should('exist')
     })
 
     it('can open the profile menu', () => {

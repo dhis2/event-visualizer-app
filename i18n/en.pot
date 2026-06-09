@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-08T14:34:40.650Z\n"
-"PO-Revision-Date: 2026-06-08T14:34:40.650Z\n"
+"POT-Creation-Date: 2026-06-09T12:01:10.007Z\n"
+"PO-Revision-Date: 2026-06-09T12:01:10.007Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -665,6 +665,13 @@ msgstr ""
 msgid "Not valid with {{visType}}"
 msgstr "Not valid with {{visType}}"
 
+msgid ""
+"Choose a data source above to see its dimensions, periods, and organisation "
+"units."
+msgstr ""
+"Choose a data source above to see its dimensions, periods, and organisation "
+"units."
+
 msgid "Expand all cards"
 msgstr "Expand all cards"
 
@@ -679,22 +686,6 @@ msgstr "Search"
 
 msgid "Clear search"
 msgstr "Clear search"
-
-msgid "Getting started"
-msgstr "Getting started"
-
-msgid ""
-"All dimensions that you can use to build visualizations are shown in the "
-"sections in the left sidebar."
-msgstr ""
-"All dimensions that you can use to build visualizations are shown in the "
-"sections in the left sidebar."
-
-msgid "Add dimensions to the layout above."
-msgstr "Add dimensions to the layout above."
-
-msgid "Click a dimension to add or remove filters."
-msgstr "Click a dimension to add or remove filters."
 
 msgid "Your most viewed event visualizations"
 msgstr "Your most viewed event visualizations"

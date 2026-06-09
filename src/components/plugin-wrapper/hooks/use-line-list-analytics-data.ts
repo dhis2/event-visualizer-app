@@ -178,7 +178,7 @@ const fetchLegendSets = async ({ legendSetIds, dataEngine }) => {
     return legendSets
 }
 
-const extractHeaders = (
+export const extractHeaders = (
     analyticsResponse,
     visualization: CurrentVisualization,
     metadataStore: UseMetadataStoreReturnValue
@@ -217,12 +217,8 @@ const extractHeaders = (
         (id) => metadata[id]?.name
     )
 
-    const labelById = new Map<string, string>(
-        canonicalIds.map((id) => {
-            const name = metadata[id]?.name ?? id
-            const suffix = suffixes[id]
-            return [id, suffix ? `${name} · ${suffix}` : name]
-        })
+    const nameById = new Map<string, string>(
+        canonicalIds.map((id) => [id, metadata[id]?.name ?? id])
     )
 
     return analyticsResponse.headers.map(
@@ -230,7 +226,8 @@ const extractHeaders = (
             ...header,
             index,
             dimensionId: canonicalIds[index],
-            column: labelById.get(canonicalIds[index]) ?? header.column,
+            column: nameById.get(canonicalIds[index]) ?? header.column,
+            dimensionSuffix: suffixes[canonicalIds[index]],
         })
     )
 }
@@ -435,7 +432,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
 
                 onResponseReceived(analyticsResponse.metaData.items, headers)
             } catch (error) {
-                logger.debug('fetch LL data error', error)
+                logger.error('fetch LL data error', error)
                 setState({
                     data: null,
                     error,
