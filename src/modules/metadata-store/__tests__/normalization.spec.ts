@@ -301,6 +301,20 @@ describe('normalizeMetadataInputItem — dimensionId assignment', () => {
         expect(result).not.toHaveProperty('optionSet')
     })
 
+    it('resolves a plain optionSet id string to optionSetId on a dimension item', () => {
+        const input: MetadataInputItem = {
+            id: 'de1',
+            name: 'A data element',
+            dimensionType: 'DATA_ELEMENT',
+            optionSet: 'os1',
+        }
+
+        const result = normalizeMetadataInputItem(input, emptyMap)
+
+        expect(result).toMatchObject({ optionSetId: 'os1' })
+        expect(result).not.toHaveProperty('optionSet')
+    })
+
     it('collapses a legendSet object to legendSetId on a dimension item', () => {
         const input: MetadataInputItem = {
             id: 'de1',

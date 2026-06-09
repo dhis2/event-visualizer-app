@@ -69,10 +69,11 @@ export const normalizeMetadataInputItem = (
         }
     }
 
-    /* optionSet/legendSet arrive from the API as { id, name } objects. The
-     * store keeps only the id reference (optionSetId/legendSetId), matching
-     * how programId/programStageId are stored, so pull the objects out of the
-     * spread and resolve them to ids below. */
+    /* optionSet/legendSet arrive as an { id, name } object from the
+     * eventVisualizations API but as a plain id string from the analytics
+     * dimensions endpoint. The store keeps only the id reference
+     * (optionSetId/legendSetId), matching how programId/programStageId are
+     * stored, so pull them out of the spread and resolve them to ids below. */
     const { name, displayName, optionSet, legendSet, ...rest } = item
     delete rest.id
     delete rest.uid
@@ -119,10 +120,15 @@ export const normalizeMetadataInputItem = (
     return resolvedItem
 }
 
-const extractReferenceId = (reference: unknown): string | undefined =>
-    isObject(reference) && isPopulatedString(reference.id)
-        ? reference.id
-        : undefined
+const extractReferenceId = (reference: unknown): string | undefined => {
+    if (isPopulatedString(reference)) {
+        return reference
+    }
+    if (isObject(reference) && isPopulatedString(reference.id)) {
+        return reference.id
+    }
+    return undefined
+}
 
 /**
  * Returns the set of canonical (normalized) IDs that a metadata input map
