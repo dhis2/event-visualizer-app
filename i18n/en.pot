@@ -38,8 +38,8 @@ msgstr "This dimension cannot be filtered."
 msgid "Preset options can't be combined with other filters"
 msgstr "Preset options can't be combined with other filters"
 
-msgid "Add a filter"
-msgstr "Add a filter"
+msgid "Add filter"
+msgstr "Add filter"
 
 msgid "and"
 msgstr "and"

@@ -292,7 +292,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                                             disabled={disableAddButton}
                                             dataTest="button-add-condition"
                                         >
-                                            {i18n.t('Add a filter')}
+                                            {i18n.t('Add filter')}
                                         </Button>
                                     </span>
                                 )}

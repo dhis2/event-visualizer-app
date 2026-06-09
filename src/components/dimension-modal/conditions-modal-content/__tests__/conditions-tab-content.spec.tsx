@@ -75,12 +75,12 @@ describe('ConditionsTabContent — Show all / Filter', () => {
         expect(screen.getAllByTestId('alphanumeric-condition')).toHaveLength(1)
     })
 
-    it('uses a single static "Add a filter" label regardless of condition count', () => {
+    it('uses a single static "Add filter" label regardless of condition count', () => {
         setup({ de1: { condition: 'LIKE:foo:LIKE:bar' } })
 
         expect(screen.getAllByTestId('alphanumeric-condition')).toHaveLength(2)
         expect(
-            screen.getByRole('button', { name: 'Add a filter' })
+            screen.getByRole('button', { name: 'Add filter' })
         ).toBeInTheDocument()
         expect(
             screen.queryByRole('button', { name: 'Add another filter' })
