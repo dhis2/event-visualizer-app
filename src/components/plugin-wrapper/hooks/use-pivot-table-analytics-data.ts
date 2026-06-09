@@ -158,7 +158,7 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
 
                 onResponseReceived(analyticsResponse.metaData.items)
             } catch (error) {
-                logger.debug('PT fetch error', error)
+                logger.error('PT fetch error', error)
                 setState({
                     data: null,
                     error,
