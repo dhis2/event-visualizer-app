@@ -1,9 +1,20 @@
 type DownloadType = 'table' | 'plain'
-export type FileFormat = 'html+css' | 'csv' | 'xls' | 'xlsx' | 'json' | 'xml'
+export type FileFormat =
+    | 'csv'
+    | 'html+css'
+    | 'jrxml'
+    | 'json'
+    | 'xls'
+    | 'xlsx'
+    | 'xml'
+    | 'sql'
 type IdScheme = 'UID' | 'CODE' | 'NAME'
 
-export type DownloadFn = (
-    type: DownloadType,
-    format: FileFormat,
+type DownloadFnArgs = {
+    type: DownloadType
+    format: FileFormat
     idScheme?: IdScheme
-) => void
+    path?: string
+}
+
+export type DownloadFn = (args: DownloadFnArgs) => void

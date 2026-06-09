@@ -38,6 +38,7 @@ export const TrackedEntityInstanceButton: FC = () => {
     return (
         <BaseButtonWithConditionalTooltip
             action={action}
+            dataTest="update-button-tracked-entity"
             disabled={Boolean(tooltipConfig)}
             label={buttonLabelLookup[action]['list']}
             tooltipConfig={tooltipConfig}

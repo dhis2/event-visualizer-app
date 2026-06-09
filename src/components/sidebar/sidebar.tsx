@@ -58,6 +58,7 @@ export const Sidebar: FC = () => {
                     <div
                         onScroll={handleScroll}
                         className={classes.dimensionCardsContainer}
+                        data-dnd-auto-scroll="disabled"
                     >
                         {isDataSourceProgramWithRegistration(
                             dataSourceMetadataItem

@@ -1,0 +1,30 @@
+.notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    /* Cancels the card list's row gap so the notice sits flush against the
+     * bottom of the card it belongs to. */
+    margin-block-start: -8px;
+    padding-block: 6px;
+    padding-inline: 8px;
+    background-color: transparent;
+    border: 1px solid var(--colors-grey300);
+    border-block-start: none;
+    border-end-start-radius: 5px;
+    border-end-end-radius: 5px;
+}
+
+.icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    margin-block-start: 0px;
+}
+.icon svg {
+    color: var(--colors-grey500);
+}
+
+.message {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--colors-grey600);
+}

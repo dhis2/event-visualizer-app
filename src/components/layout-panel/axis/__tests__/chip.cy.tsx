@@ -294,6 +294,42 @@ describe('<Chip />', () => {
         assertTooltipContent(['None selected'])
     })
 
+    it('renders an empty filter chip with a muted suffix', () => {
+        const dimension: LayoutDimension = {
+            id: 'ZzYYXq4fJie.X8zyunlgUfM',
+            name: 'MCH Infant Feeding',
+            dimensionType: 'DATA_ELEMENT',
+            valueType: 'TEXT',
+            optionSet: 'x31y45jvIQL',
+            dimensionId: 'X8zyunlgUfM',
+            programStageId: 'ZzYYXq4fJie',
+            suffix: 'Baby Postnatal',
+        }
+
+        const appWrapperProps = createMockOptions({
+            itemsByDimension: {},
+            conditionsByDimension: {},
+        })
+
+        cy.mount(
+            <MockAppWrapper {...appWrapperProps}>
+                <Chip dimension={dimension} axisId="filters" />
+            </MockAppWrapper>
+        )
+
+        cy.window().then((win) => {
+            const probe = win.document.createElement('span')
+            probe.style.color = 'var(--colors-grey600)'
+            win.document.body.appendChild(probe)
+            const expectedSuffixColor = win.getComputedStyle(probe).color
+            probe.remove()
+
+            cy.getByDataTest('chip-suffix')
+                .should('contain.text', '· Baby Postnatal')
+                .and('have.css', 'color', expectedSuffixColor)
+        })
+    })
+
     it('renders a chip in filters that has items', () => {
         const activeStatus = 'ACTIVE'
         const completedStatus = 'COMPLETED'

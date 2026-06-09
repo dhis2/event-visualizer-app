@@ -1,12 +1,10 @@
-import type { SidebarSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import { IconButton } from '@components/shared/icon-button'
 import { useIsContainingCardDisabled } from '@components/sidebar/dimension-card'
 import { useDimensionDisabledText } from '@components/sidebar/sidebar-disabling'
 import { useIsDimensionInLayout } from '@components/sidebar/use-is-dimension-in-layout'
 import { IconAdd16, IconSubtract16, Tooltip } from '@dhis2/ui'
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
 import { useAddMetadata, useAppDispatch, useAppSelector } from '@hooks'
+import { getAllowedTargetAxis } from '@modules/layout'
 import {
     clearMultiSelection,
     isDimensionMultiSelected,
@@ -15,13 +13,15 @@ import {
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
     addVisUiConfigLayoutDimension,
+    getVisUiConfigVisualizationType,
     removeVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice'
-import type { DimensionMetadataItem, Program, ProgramStage } from '@types'
-import { useCallback, type FC } from 'react'
+import type { Axis, DimensionMetadataItem, Program, ProgramStage } from '@types'
+import { useCallback, useMemo, type FC } from 'react'
 import { DimensionItem } from './dimension-item'
 import { DimensionItemContainer } from './dimension-item-container'
 import styles from './styles/draggable-dimension-item.module.css'
+import { useDimensionItemDnd } from './use-dimension-item-dnd'
 
 interface DraggableDimensionItemProps {
     dimension: DimensionMetadataItem
@@ -55,8 +55,13 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
     const multiSelected = useAppSelector((state) =>
         isDimensionMultiSelected(state, dimension.id)
     )
+    const visType = useAppSelector(getVisUiConfigVisualizationType)
     const isContainingCardDisabled = useIsContainingCardDisabled()
     const cardOrItemDisabled = isContainingCardDisabled || disabled
+    const selfAllowedTargetAxis = useMemo(
+        () => getAllowedTargetAxis([dimension], visType),
+        [dimension, visType]
+    )
 
     const populateMetadata = useCallback(() => {
         // Adding the program also stores its stages and TET.
@@ -91,59 +96,37 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
             )
         } else {
             populateMetadata()
+            const defaultAxis: Axis = selfAllowedTargetAxis.columns
+                ? 'columns'
+                : 'filters'
             dispatch(
                 addVisUiConfigLayoutDimension({
-                    axis: 'columns',
+                    axis: defaultAxis,
                     dimensionId: dimension.id,
                 })
             )
         }
-    }, [dimension.id, populateMetadata, dispatch, selected])
-
-    const droppableData: SidebarSortableData = {
-        dimensionId: dimension.id,
-        overlayItemProps: {
-            dimensionType: dimension.dimensionType,
-            dimensionName: dimension.name,
-            itemsText: '',
-            onClick: () => undefined,
-        },
+    }, [
+        dimension.id,
         populateMetadata,
-    }
+        dispatch,
+        selected,
+        selfAllowedTargetAxis,
+    ])
 
-    const {
-        attributes,
-        isDragging,
-        listeners,
-        isSorting,
-        setNodeRef,
-        transform,
-        transition,
-    } = useSortable({
-        id: `sidebar-${dimension.id}`,
-        disabled: cardOrItemDisabled || selected,
-        data: droppableData,
-    })
+    const { setNodeRef, attributes, listeners, isDragging, style } =
+        useDimensionItemDnd({
+            dimension,
+            populateMetadata,
+            selfAllowedTargetAxis,
+            disabled: cardOrItemDisabled || selected,
+        })
 
     /* Tooltip's MutableRefObject<HTMLElement> targets a wider element
      * type than the container's HTMLDivElement ref slot. */
     const ref = tooltipProps
         ? (tooltipProps.ref as React.Ref<HTMLDivElement>)
         : setNodeRef
-
-    const style = transform
-        ? {
-              transform: isSorting
-                  ? undefined
-                  : CSS.Translate.toString({
-                        x: transform.x,
-                        y: transform.y,
-                        scaleX: 1,
-                        scaleY: 1,
-                    }),
-              transition,
-          }
-        : undefined
 
     return (
         <DimensionItemContainer

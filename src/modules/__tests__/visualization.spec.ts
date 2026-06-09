@@ -786,6 +786,17 @@ describe('normalizeApiSavedVisualization', () => {
         expect(result.legacy).toBe(true)
     })
 
+    it('marks legacy when a top-level `programStatus` is converted to a filter', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                programStatus: 'COMPLETED',
+            } as Partial<ApiSavedVisualization>)
+        )
+
+        expect(dimensionsOf(result)).toContain('programStatus')
+        expect(result.legacy).toBe(true)
+    })
+
     it('honours an explicit incoming legacy flag', () => {
         const result = normalizeApiSavedVisualization(
             buildApiVis({ legacy: true } as Partial<ApiSavedVisualization>)
