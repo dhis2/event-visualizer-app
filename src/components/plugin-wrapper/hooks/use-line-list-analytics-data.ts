@@ -432,7 +432,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
 
                 onResponseReceived(analyticsResponse.metaData.items, headers)
             } catch (error) {
-                logger.debug('fetch LL data error', error)
+                logger.error('fetch LL data error', error)
                 setState({
                     data: null,
                     error,
