@@ -62,6 +62,33 @@ describe('ConditionsTabContent — Show all / Filter', () => {
         expect(screen.queryByTestId('conditions-ui')).not.toBeInTheDocument()
     })
 
+    it('seeds one editable condition row immediately when switching to Filter', async () => {
+        const user = userEvent.setup()
+        setup()
+
+        await user.click(screen.getByRole('radio', { name: 'Filter' }))
+
+        expect(screen.getByTestId('conditions-ui')).toBeInTheDocument()
+        expect(
+            screen.getByRole('button', { name: 'Add another filter' })
+        ).toBeInTheDocument()
+        expect(
+            screen.queryByRole('button', { name: 'Add a filter' })
+        ).not.toBeInTheDocument()
+    })
+
+    it('persists no condition when Filter is selected but left empty', async () => {
+        const user = userEvent.setup()
+        const store = setup()
+
+        await user.click(screen.getByRole('radio', { name: 'Filter' }))
+
+        expect(
+            getVisUiConfigConditionsByDimension(store.getState(), 'de1')
+                .condition
+        ).toBeUndefined()
+    })
+
     it('opens on "Filter" when a condition string is persisted', () => {
         setup({ de1: { condition: 'LIKE:foo' } })
 

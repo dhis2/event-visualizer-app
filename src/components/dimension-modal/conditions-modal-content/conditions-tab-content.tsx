@@ -124,9 +124,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
     const [conditionsList, setConditionsList] = useState<string[]>(
         conditions.condition?.length
             ? parseConditionsStringToArray(conditions.condition)
-            : isSingleCondition || conditions.legendSet
-              ? [EMPTY_CONDITION]
-              : []
+            : [EMPTY_CONDITION]
     )
 
     const disableAddButton: boolean =
