@@ -1,3 +1,5 @@
+import { ShowAllFilterRadio } from '@components/dimension-modal/show-all-filter-radio/show-all-filter-radio'
+import { useItemsFilterRadioMode } from '@components/dimension-modal/show-all-filter-radio/use-items-filter-radio-mode'
 import {
     TRANSFER_HEIGHT,
     TRANSFER_OPTIONS_WIDTH,
@@ -8,7 +10,6 @@ import { TransferLeftHeader } from '@components/dimension-modal/transfer/transfe
 import { TransferRightHeader } from '@components/dimension-modal/transfer/transfer-right-header'
 import { TransferSourceEmptyPlaceholder } from '@components/dimension-modal/transfer/transfer-source-empty-placeholder'
 import { useInfiniteTransferOptions } from '@components/dimension-modal/transfer/use-infinite-transfer-options'
-import i18n from '@dhis2/d2-i18n'
 import { Transfer, TransferOption } from '@dhis2/ui'
 import {
     useAddMetadata,
@@ -35,6 +36,7 @@ export const DynamicDimensionModalContent: FC<
     const dispatch = useAppDispatch()
     const addMetadata = useAddMetadata()
     const dataTest = `dynamic-dimension-${dimension.id}`
+    const { mode, onModeChange } = useItemsFilterRadioMode(dimension)
     const selectedIds = useAppSelector((state) =>
         getVisUiConfigPlainItemIdsByDimension(state, dimension?.id)
     )
@@ -96,12 +98,11 @@ export const DynamicDimensionModalContent: FC<
     )
 
     return (
-        <>
-            <p className={classes.paragraph}>
-                {i18n.t(
-                    'Show items that meet the following conditions for this data item:'
-                )}
-            </p>
+        <ShowAllFilterRadio
+            mode={mode}
+            onModeChange={onModeChange}
+            dataTest={`${dataTest}-filter-radio`}
+        >
             <div className={classes.mainSection}>
                 <Transfer
                     onChange={updateDynamicDimensionItems}
@@ -140,6 +141,6 @@ export const DynamicDimensionModalContent: FC<
                     dataTest={`${dataTest}-transfer`}
                 />
             </div>
-        </>
+        </ShowAllFilterRadio>
     )
 }

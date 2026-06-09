@@ -181,7 +181,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
         <div className={classes.container}>
             <SingleSelectField
                 selected={operator}
-                placeholder={i18n.t('Choose a condition type')}
+                placeholder={i18n.t('Choose a filter type')}
                 dense
                 onChange={({ selected }) => setOperator(selected)}
                 className={classes.operatorSelect}
