@@ -4,6 +4,7 @@ import {
     getVisUiConfigConditionsByDimension,
     type ConditionsObject,
 } from '@store/vis-ui-config-slice'
+import { renderWithAppWrapper } from '@test-utils/app-wrapper'
 import { renderWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
 import { setupStore } from '@test-utils/setup-store'
 import { screen, waitFor } from '@testing-library/react'
@@ -26,6 +27,14 @@ const unfilterableDimension: DimensionMetadataItem = {
     dimensionType: 'DATA_ELEMENT',
     name: 'My file element',
     valueType: 'FILE_RESOURCE',
+}
+
+const numericDimension: DimensionMetadataItem = {
+    id: 'numeric-de',
+    dimensionId: 'numeric-de',
+    dimensionType: 'DATA_ELEMENT',
+    name: 'My numeric element',
+    valueType: 'NUMBER',
 }
 
 const setup = (
@@ -140,6 +149,49 @@ describe('ConditionsTabContent — Show all / Filter', () => {
         expect(
             screen.queryByTestId('alphanumeric-condition')
         ).not.toBeInTheDocument()
+    })
+
+    it('collapses selected legend chips to a count', async () => {
+        await renderWithAppWrapper(
+            <ConditionsTabContent dimension={numericDimension} />,
+            {
+                metadata: {
+                    LEGEND_SET_1: {
+                        id: 'LEGEND_SET_1',
+                        name: 'Weight legends',
+                        legends: [
+                            {
+                                id: 'LEGEND_1',
+                                name: 'Low',
+                                startValue: 0,
+                                endValue: 10,
+                            },
+                            {
+                                id: 'LEGEND_2',
+                                name: 'High',
+                                startValue: 11,
+                                endValue: 20,
+                            },
+                        ],
+                    },
+                },
+                partialStore: {
+                    preloadedState: {
+                        visUiConfig: {
+                            ...initialState,
+                            conditionsByDimension: {
+                                [numericDimension.id]: {
+                                    condition: 'IN:LEGEND_1;LEGEND_2',
+                                    legendSet: 'LEGEND_SET_1',
+                                },
+                            },
+                        },
+                    },
+                },
+            }
+        )
+
+        expect(screen.getByText('2 selected')).toBeInTheDocument()
     })
 })
 

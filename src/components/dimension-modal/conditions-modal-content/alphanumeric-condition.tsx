@@ -49,6 +49,8 @@ const BaseCondition: FC<
 
     const { valueInputId, focusValueInput } = useValueInputFocus()
 
+    const hasValueInput = Boolean(operator && !operator.includes(NULL_VALUE))
+
     const setOperator = useCallback(
         (input) => {
             if (input.includes(NULL_VALUE)) {
@@ -103,7 +105,7 @@ const BaseCondition: FC<
                     )
                 )}
             </SingleSelectField>
-            {operator && !operator.includes(NULL_VALUE) && (
+            {hasValueInput && (
                 <Input
                     name={valueInputId}
                     value={value}

@@ -6,7 +6,7 @@ import {
     IconDelete16,
     Input,
     MenuDivider,
-    MultiSelectField,
+    MultiSelect,
     MultiSelectOption,
     SingleSelectField,
     SingleSelectOption,
@@ -257,36 +257,40 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                             ))}
                     </SingleSelectField>
                     {selectedLegendSetId && (
-                        <MultiSelectField
-                            selected={
-                                Array.isArray(availableLegendSets) &&
-                                availableLegendSets.length &&
-                                value.length
-                                    ? value.split(';')
-                                    : []
-                            }
-                            onChange={({ selected }) =>
-                                setValue(
-                                    selected.join(';'),
-                                    selectedLegendSetId
-                                )
-                            }
-                            onFocus={onLegendSetLegendsDropdownFocus}
-                            loading={isLoadingLegendSet || isFetchingLegendSet}
-                            placeholder={i18n.t('Choose legends')}
-                            loadingText={i18n.t('Loading legends')}
-                            className={classes.legendSelect}
-                            dense
-                        >
-                            {Array.isArray(availableLegendSetLegends) &&
-                                availableLegendSetLegends.map((legend) => (
-                                    <MultiSelectOption
-                                        key={legend.id}
-                                        value={legend.id}
-                                        label={legend.name}
-                                    />
-                                ))}
-                        </MultiSelectField>
+                        <div className={classes.legendSelect}>
+                            <MultiSelect
+                                collapseSelectionAfter={0}
+                                selected={
+                                    Array.isArray(availableLegendSets) &&
+                                    availableLegendSets.length &&
+                                    value.length
+                                        ? value.split(';')
+                                        : []
+                                }
+                                onChange={({ selected }) =>
+                                    setValue(
+                                        selected.join(';'),
+                                        selectedLegendSetId
+                                    )
+                                }
+                                onFocus={onLegendSetLegendsDropdownFocus}
+                                loading={
+                                    isLoadingLegendSet || isFetchingLegendSet
+                                }
+                                placeholder={i18n.t('Choose legends')}
+                                loadingText={i18n.t('Loading legends')}
+                                dense
+                            >
+                                {Array.isArray(availableLegendSetLegends) &&
+                                    availableLegendSetLegends.map((legend) => (
+                                        <MultiSelectOption
+                                            key={legend.id}
+                                            value={legend.id}
+                                            label={legend.name}
+                                        />
+                                    ))}
+                            </MultiSelect>
+                        </div>
                     )}
                 </>
             )}
