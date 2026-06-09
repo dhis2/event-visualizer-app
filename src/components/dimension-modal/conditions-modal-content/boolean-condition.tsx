@@ -6,6 +6,7 @@ import {
     FALSE_VALUE,
     getBooleanValues,
 } from '@modules/conditions.js'
+import cx from 'classnames'
 import { type FC } from 'react'
 import classes from './styles/condition.module.css'
 
@@ -35,7 +36,7 @@ export const BaseCondition: FC<
     }
 
     return (
-        <div className={classes.container}>
+        <div className={cx(classes.container, classes.checkboxContainer)}>
             <Checkbox
                 checked={values.includes(TRUE_VALUE)}
                 label={booleanValues[TRUE_VALUE]}

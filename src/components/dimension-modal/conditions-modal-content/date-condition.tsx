@@ -1,5 +1,11 @@
 import i18n from '@dhis2/d2-i18n'
-import { SingleSelectField, SingleSelectOption, Button, Input } from '@dhis2/ui'
+import {
+    Button,
+    IconDelete16,
+    Input,
+    SingleSelectField,
+    SingleSelectOption,
+} from '@dhis2/ui'
 import {
     NULL_VALUE,
     UI_TIME_DIVIDER,
@@ -79,11 +85,12 @@ const BaseCondition: FC<
                 type="button"
                 small
                 secondary
+                icon={<IconDelete16 />}
                 onClick={onRemove}
+                aria-label={i18n.t('Remove')}
                 className={classes.removeButton}
-            >
-                {i18n.t('Remove')}
-            </Button>
+                dataTest="condition-remove-button"
+            />
         </div>
     )
 }

@@ -10,7 +10,6 @@
 .tooltipReference {
     display: inline-flex;
     cursor: not-allowed;
-    margin-block-start: var(--spacers-dp16);
 }
 
 .tooltipReferenceFirst {

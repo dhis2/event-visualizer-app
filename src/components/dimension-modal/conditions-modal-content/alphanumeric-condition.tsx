@@ -2,6 +2,7 @@ import i18n from '@dhis2/d2-i18n'
 import {
     Button,
     Checkbox,
+    IconDelete16,
     Input,
     SingleSelectField,
     SingleSelectOption,
@@ -108,6 +109,7 @@ const BaseCondition: FC<
                 />
             )}
             {allowCaseSensitive &&
+                operator &&
                 ![OPERATOR_EMPTY, OPERATOR_NOT_EMPTY].includes(operator) && (
                     <Checkbox
                         checked={isCaseSensitive}
@@ -122,11 +124,12 @@ const BaseCondition: FC<
                 type="button"
                 small
                 secondary
+                icon={<IconDelete16 />}
                 onClick={onRemove}
+                aria-label={i18n.t('Remove')}
                 className={classes.removeButton}
-            >
-                {i18n.t('Remove')}
-            </Button>
+                dataTest="condition-remove-button"
+            />
         </div>
     )
 }
