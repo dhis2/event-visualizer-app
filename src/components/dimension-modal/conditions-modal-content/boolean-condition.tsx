@@ -44,7 +44,6 @@ export const BaseCondition: FC<
                     onCheckboxChange(TRUE_VALUE, checked)
                 }
                 dense
-                className={classes.checkboxOption}
             />
             {showFalseOption && (
                 <Checkbox
@@ -54,7 +53,6 @@ export const BaseCondition: FC<
                         onCheckboxChange(FALSE_VALUE, checked)
                     }
                     dense
-                    className={classes.checkboxOption}
                 />
             )}
             <Checkbox
@@ -64,7 +62,6 @@ export const BaseCondition: FC<
                     onCheckboxChange(NULL_VALUE, checked)
                 }
                 dense
-                className={classes.checkboxOption}
             />
         </div>
     )
