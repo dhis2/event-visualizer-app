@@ -61,6 +61,7 @@ export type DimensionMetadataItem = Omit<
     | 'dimensionType' // Omit to make required and customise
     | 'dimensionItemType' // Omit to customise
     | 'options' // Omit because it does not reflect reality
+    | 'optionSet' // Omit to rename to optionSetId
     | 'legendSet' // Omit to rename to legendSetId
 > & {
     id: string // we use id not uid. This is the compound ID

@@ -287,6 +287,46 @@ describe('normalizeMetadataInputItem — dimensionId assignment', () => {
         expect(result).not.toHaveProperty('programStageId')
     })
 
+    it('collapses an optionSet object to optionSetId on a dimension item', () => {
+        const input: MetadataInputItem = {
+            id: 'de1',
+            name: 'A data element',
+            dimensionType: 'DATA_ELEMENT',
+            optionSet: { id: 'os1', name: 'My option set' },
+        }
+
+        const result = normalizeMetadataInputItem(input, emptyMap)
+
+        expect(result).toMatchObject({ optionSetId: 'os1' })
+        expect(result).not.toHaveProperty('optionSet')
+    })
+
+    it('collapses a legendSet object to legendSetId on a dimension item', () => {
+        const input: MetadataInputItem = {
+            id: 'de1',
+            name: 'A data element',
+            dimensionType: 'DATA_ELEMENT',
+            legendSet: { id: 'ls1', name: 'My legend set' },
+        }
+
+        const result = normalizeMetadataInputItem(input, emptyMap)
+
+        expect(result).toMatchObject({ legendSetId: 'ls1' })
+        expect(result).not.toHaveProperty('legendSet')
+    })
+
+    it('does not collapse optionSet/legendSet objects on non-dimension items', () => {
+        const input: MetadataInputItem = {
+            id: 'option-set-id',
+            name: 'Option Set',
+            options: [{ id: 'opt1', name: 'Option 1' }],
+        }
+
+        const result = normalizeMetadataInputItem(input, emptyMap)
+
+        expect(result).not.toHaveProperty('optionSetId')
+    })
+
     it('does not set dimensionId for a non-dimension plain item (e.g. period shortcut)', () => {
         // A plain item that is NOT a DimensionMetadataItem (no dimensionType)
         const input: MetadataInputItem = {
