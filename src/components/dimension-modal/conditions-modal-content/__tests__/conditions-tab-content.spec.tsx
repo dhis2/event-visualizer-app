@@ -6,7 +6,7 @@ import {
 } from '@store/vis-ui-config-slice'
 import { renderWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
 import { setupStore } from '@test-utils/setup-store'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { DimensionMetadataItem } from '@types'
 import { describe, it, expect } from 'vitest'
@@ -140,5 +140,24 @@ describe('ConditionsTabContent — Show all / Filter', () => {
         expect(
             screen.queryByTestId('alphanumeric-condition')
         ).not.toBeInTheDocument()
+    })
+})
+
+describe('ConditionsTabContent — value input focus', () => {
+    it('focuses the value input after an operator is chosen', async () => {
+        const user = userEvent.setup()
+        setup()
+
+        await user.click(screen.getByRole('radio', { name: 'Filter' }))
+        await user.click(screen.getByText('Choose a filter type'))
+        await user.click(screen.getByText('contains'))
+
+        await waitFor(() => expect(screen.getByRole('textbox')).toHaveFocus())
+    })
+
+    it('does not steal focus when a condition is restored with an operator', () => {
+        setup({ de1: { condition: 'LIKE:foo' } })
+
+        expect(screen.getByDisplayValue('foo')).not.toHaveFocus()
     })
 })

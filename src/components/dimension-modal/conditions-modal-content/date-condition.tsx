@@ -12,8 +12,9 @@ import {
     API_TIME_DIVIDER,
     getDateOperators,
 } from '@modules/conditions'
-import type { ComponentProps, FC } from 'react'
+import { type ComponentProps, type FC } from 'react'
 import classes from './styles/condition.module.css'
+import { useValueInputFocus } from './use-value-input-focus'
 
 type BaseConditionProps = {
     condition: string
@@ -37,11 +38,14 @@ const BaseCondition: FC<
         value = parts[1]
     }
 
+    const { valueInputId, focusValueInput } = useValueInputFocus()
+
     const setOperator = (input) => {
         if (input.includes(NULL_VALUE)) {
             onChange(`${input}`)
         } else {
             onChange(`${input}:${value || ''}`)
+            focusValueInput()
         }
     }
 
@@ -73,6 +77,7 @@ const BaseCondition: FC<
             </SingleSelectField>
             {operator && !operator.includes(NULL_VALUE) && (
                 <Input
+                    name={valueInputId}
                     value={value?.replaceAll(API_TIME_DIVIDER, UI_TIME_DIVIDER)}
                     type={type}
                     onChange={({ value }) => setValue(value)}

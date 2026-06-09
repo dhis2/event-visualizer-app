@@ -20,6 +20,7 @@ import {
 } from '@modules/conditions'
 import { useCallback, useMemo, type FC } from 'react'
 import classes from './styles/condition.module.css'
+import { useValueInputFocus } from './use-value-input-focus'
 
 type ConditionProps = {
     condition: string
@@ -46,6 +47,8 @@ const BaseCondition: FC<
         }
     }, [condition])
 
+    const { valueInputId, focusValueInput } = useValueInputFocus()
+
     const setOperator = useCallback(
         (input) => {
             if (input.includes(NULL_VALUE)) {
@@ -56,9 +59,10 @@ const BaseCondition: FC<
                         value || ''
                     }`
                 )
+                focusValueInput()
             }
         },
-        [isCaseSensitive, onChange, value]
+        [focusValueInput, isCaseSensitive, onChange, value]
     )
 
     const setValue = useCallback(
@@ -101,6 +105,7 @@ const BaseCondition: FC<
             </SingleSelectField>
             {operator && !operator.includes(NULL_VALUE) && (
                 <Input
+                    name={valueInputId}
                     value={value}
                     type="text"
                     onChange={({ value }) => setValue(value)}

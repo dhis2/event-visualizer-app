@@ -1,4 +1,5 @@
 import classes from '@components/dimension-modal/conditions-modal-content/styles/condition.module.css'
+import { useValueInputFocus } from '@components/dimension-modal/conditions-modal-content/use-value-input-focus'
 import i18n from '@dhis2/d2-i18n'
 import {
     Button,
@@ -132,6 +133,8 @@ export const NumericCondition: FC<NumericConditionProps> = ({
         }
     }, [dimension.id, legendSet, addMetadata])
 
+    const { valueInputId, focusValueInput } = useValueInputFocus()
+
     const setOperator = useCallback(
         (input: string) => {
             if (input.includes(NULL_VALUE)) {
@@ -144,11 +147,13 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                 // we also clear the internal selectedLegendSetId
                 onChange(`${input}:`)
                 setSelectedLegendSetId(undefined)
+                focusValueInput()
             } else {
                 onChange(`${input}:${value || ''}`)
+                focusValueInput()
             }
         },
-        [onChange, operator, selectedLegendSetId, value]
+        [focusValueInput, onChange, operator, selectedLegendSetId, value]
     )
 
     const setValue = useCallback(
@@ -208,6 +213,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                 !operator.includes(NULL_VALUE) &&
                 operator !== OPERATOR_IN && (
                     <Input
+                        name={valueInputId}
                         value={value}
                         type="number"
                         onChange={({ value }) =>
