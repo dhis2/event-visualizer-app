@@ -2,6 +2,7 @@ import { SIDEBAR_DEFAULT_WIDTH } from '@components/sidebar/constants'
 import { getSidebarWidthFromLocalStorage } from '@components/sidebar/local-storage'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
+import type { OutputType } from '@types'
 
 interface PanelVisibility {
     isDetailsPanelVisible: boolean
@@ -17,7 +18,7 @@ export interface UiState {
     isSidebarVisible: boolean
     sidebarWidth: number
     savedPanelVisibility: PanelVisibility | null
-    updateAnimationTick: number
+    updateAnimationShowingFor: OutputType | null
 }
 
 export const initialState: UiState = {
@@ -28,7 +29,7 @@ export const initialState: UiState = {
     isSidebarVisible: true,
     sidebarWidth: getSidebarWidthFromLocalStorage(),
     savedPanelVisibility: null,
-    updateAnimationTick: 0,
+    updateAnimationShowingFor: null,
 }
 
 const panelKeys: (keyof PanelVisibility)[] = [
@@ -68,8 +69,11 @@ export const uiSlice = createSlice({
     initialState,
     reducers: {
         clearUi: () => initialState,
-        bumpUiUpdateAnimation: (state) => {
-            state.updateAnimationTick += 1
+        setUiUpdateAnimationShowingFor: (
+            state,
+            action: PayloadAction<OutputType | null>
+        ) => {
+            state.updateAnimationShowingFor = action.payload
         },
         setUiSidebarWidth: (state, action: PayloadAction<number>) => {
             state.sidebarWidth = action.payload
@@ -109,7 +113,8 @@ export const uiSlice = createSlice({
     },
     selectors: {
         getUiActiveDimensionModal: (state) => state.activeDimensionModal,
-        getUiUpdateAnimationTick: (state) => state.updateAnimationTick,
+        getUiUpdateAnimationShowingFor: (state) =>
+            state.updateAnimationShowingFor,
         getUiDetailsPanelVisible: (state) => state.isDetailsPanelVisible,
         getUiLayoutPanelExpanded: (state) => state.isLayoutPanelExpanded,
         getUiLayoutPanelVisible: (state) => state.isLayoutPanelVisible,
@@ -124,7 +129,7 @@ export const uiSlice = createSlice({
 
 export const {
     clearUi,
-    bumpUiUpdateAnimation,
+    setUiUpdateAnimationShowingFor,
     setUiSidebarWidth,
     resetUiSidebarWidth,
     setUiActiveDimensionModal,
@@ -136,7 +141,7 @@ export const {
 } = uiSlice.actions
 export const {
     getUiActiveDimensionModal,
-    getUiUpdateAnimationTick,
+    getUiUpdateAnimationShowingFor,
     getUiDetailsPanelVisible,
     getUiLayoutPanelExpanded,
     getUiLayoutPanelVisible,

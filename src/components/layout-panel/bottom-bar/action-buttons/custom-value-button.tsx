@@ -25,7 +25,7 @@ import {
 import classes from './styles/action-buttons.module.css'
 import { UpdateSyncIcon } from './update-sync-icon'
 import { useActionButton } from './use-action-button'
-import { useActionSpin } from './use-action-spin'
+import { useUpdateAnimation } from './use-update-animation'
 
 const DEFAULT_TOOLTIP_OPEN_DELAY = 500
 
@@ -64,7 +64,7 @@ export const CustomValueButton: FC = () => {
         'CUSTOM_VALUE'
     )
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const { syncIconRef } = useActionSpin(action)
+    const { isAnimating } = useUpdateAnimation('EVENT')
     const isButtonReady = Boolean(
         customValue?.id && customValue?.aggregationType
     )
@@ -150,7 +150,7 @@ export const CustomValueButton: FC = () => {
                             })}
                         >
                             {action === 'update' && (
-                                <UpdateSyncIcon ref={syncIconRef} />
+                                <UpdateSyncIcon isAnimating={isAnimating} />
                             )}
                             {label}
                         </button>

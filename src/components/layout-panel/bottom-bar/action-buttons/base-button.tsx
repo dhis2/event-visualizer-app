@@ -11,7 +11,7 @@ import cx from 'classnames'
 import { type FC } from 'react'
 import classes from './styles/action-buttons.module.css'
 import { UpdateSyncIcon } from './update-sync-icon'
-import { useActionSpin } from './use-action-spin'
+import { useUpdateAnimation } from './use-update-animation'
 
 export type ButtonAction = 'create' | 'switch' | 'update'
 
@@ -33,7 +33,7 @@ const BaseButton: FC<BaseButtonProps> = ({
     type,
 }) => {
     const dispatch = useAppDispatch()
-    const { syncIconRef } = useActionSpin(action)
+    const { isAnimating } = useUpdateAnimation(type)
 
     const onClick = () => {
         if (lastActiveButton !== undefined) {
@@ -54,7 +54,9 @@ const BaseButton: FC<BaseButtonProps> = ({
             })}
             {...tooltipProps}
         >
-            {action === 'update' && <UpdateSyncIcon ref={syncIconRef} />}
+            {action === 'update' && (
+                <UpdateSyncIcon isAnimating={isAnimating} />
+            )}
             {label}
         </button>
     )

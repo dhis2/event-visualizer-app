@@ -21,7 +21,7 @@ import { setDataSourceId } from './dimensions-selection-slice'
 import { setIsVisualizationLoading, setLoadError } from './loader-slice'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
 import type { RootState } from './store'
-import { bumpUiUpdateAnimation, clearUi } from './ui-slice'
+import { clearUi, setUiUpdateAnimationShowingFor } from './ui-slice'
 import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
 
 type AppAsyncThunkConfig = {
@@ -151,5 +151,9 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
         }
 
         dispatch(setCurrentVis(updatedCurrentVis))
-        dispatch(bumpUiUpdateAnimation())
+        dispatch(
+            setUiUpdateAnimationShowingFor(
+                isVisualizationEmpty(currentVis) ? null : visUiConfig.outputType
+            )
+        )
     }
