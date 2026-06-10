@@ -14,6 +14,7 @@ export const ConditionRemoveButton: FC<ConditionRemoveButtonProps> = ({
         {({ ref, onBlur, onFocus, onMouseOver, onMouseOut }) => (
             <span
                 ref={ref}
+                role="tooltip"
                 className={classes.removeButtonWrapper}
                 onBlur={onBlur}
                 onFocus={onFocus}

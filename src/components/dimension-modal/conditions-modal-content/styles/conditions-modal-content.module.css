@@ -2,7 +2,7 @@
     display: block;
     font-family:
         'ui-monospace', 'SFMono-Regular', 'SF Mono', 'Menlo', 'Monaco',
-        'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', 'monospace';
+        'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace;
     font-size: 11px;
     line-height: 11px;
     text-transform: uppercase;
