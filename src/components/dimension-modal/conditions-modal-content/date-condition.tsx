@@ -1,13 +1,15 @@
 import i18n from '@dhis2/d2-i18n'
-import { SingleSelectField, SingleSelectOption, Button, Input } from '@dhis2/ui'
+import { Input, SingleSelectField, SingleSelectOption } from '@dhis2/ui'
 import {
     NULL_VALUE,
     UI_TIME_DIVIDER,
     API_TIME_DIVIDER,
     getDateOperators,
 } from '@modules/conditions'
-import type { ComponentProps, FC } from 'react'
+import { type ComponentProps, type FC } from 'react'
+import { ConditionRemoveButton } from './condition-remove-button'
 import classes from './styles/condition.module.css'
+import { useValueInputFocus } from './use-value-input-focus'
 
 type BaseConditionProps = {
     condition: string
@@ -31,11 +33,14 @@ const BaseCondition: FC<
         value = parts[1]
     }
 
+    const { valueInputId, focusValueInput } = useValueInputFocus()
+
     const setOperator = (input) => {
         if (input.includes(NULL_VALUE)) {
             onChange(`${input}`)
         } else {
             onChange(`${input}:${value || ''}`)
+            focusValueInput()
         }
     }
 
@@ -67,6 +72,7 @@ const BaseCondition: FC<
             </SingleSelectField>
             {operator && !operator.includes(NULL_VALUE) && (
                 <Input
+                    name={valueInputId}
                     value={value?.replaceAll(API_TIME_DIVIDER, UI_TIME_DIVIDER)}
                     type={type}
                     onChange={({ value }) => setValue(value)}
@@ -75,15 +81,7 @@ const BaseCondition: FC<
                     dense
                 />
             )}
-            <Button
-                type="button"
-                small
-                secondary
-                onClick={onRemove}
-                className={classes.removeButton}
-            >
-                {i18n.t('Remove')}
-            </Button>
+            <ConditionRemoveButton onClick={onRemove} />
         </div>
     )
 }

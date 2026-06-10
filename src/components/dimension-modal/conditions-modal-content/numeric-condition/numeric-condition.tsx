@@ -1,13 +1,14 @@
+import { ConditionRemoveButton } from '@components/dimension-modal/conditions-modal-content/condition-remove-button'
 import classes from '@components/dimension-modal/conditions-modal-content/styles/condition.module.css'
+import { useValueInputFocus } from '@components/dimension-modal/conditions-modal-content/use-value-input-focus'
 import i18n from '@dhis2/d2-i18n'
 import {
+    Input,
+    MenuDivider,
+    MultiSelect,
+    MultiSelectOption,
     SingleSelectField,
     SingleSelectOption,
-    Button,
-    Input,
-    MultiSelectField,
-    MultiSelectOption,
-    MenuDivider,
 } from '@dhis2/ui'
 import { useAddMetadata, useLegendSetMetadataItem } from '@hooks'
 import {
@@ -131,6 +132,8 @@ export const NumericCondition: FC<NumericConditionProps> = ({
         }
     }, [dimension.id, legendSet, addMetadata])
 
+    const { valueInputId, focusValueInput } = useValueInputFocus()
+
     const setOperator = useCallback(
         (input: string) => {
             if (input.includes(NULL_VALUE)) {
@@ -143,11 +146,13 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                 // we also clear the internal selectedLegendSetId
                 onChange(`${input}:`)
                 setSelectedLegendSetId(undefined)
+                focusValueInput()
             } else {
                 onChange(`${input}:${value || ''}`)
+                focusValueInput()
             }
         },
-        [onChange, operator, selectedLegendSetId, value]
+        [focusValueInput, onChange, operator, selectedLegendSetId, value]
     )
 
     const setValue = useCallback(
@@ -207,6 +212,7 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                 !operator.includes(NULL_VALUE) &&
                 operator !== OPERATOR_IN && (
                     <Input
+                        name={valueInputId}
                         value={value}
                         type="number"
                         onChange={({ value }) =>
@@ -250,48 +256,44 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                             ))}
                     </SingleSelectField>
                     {selectedLegendSetId && (
-                        <MultiSelectField
-                            selected={
-                                Array.isArray(availableLegendSets) &&
-                                availableLegendSets.length &&
-                                value.length
-                                    ? value.split(';')
-                                    : []
-                            }
-                            onChange={({ selected }) =>
-                                setValue(
-                                    selected.join(';'),
-                                    selectedLegendSetId
-                                )
-                            }
-                            onFocus={onLegendSetLegendsDropdownFocus}
-                            loading={isLoadingLegendSet || isFetchingLegendSet}
-                            placeholder={i18n.t('Choose legends')}
-                            loadingText={i18n.t('Loading legends')}
-                            className={classes.legendSelect}
-                            dense
-                        >
-                            {Array.isArray(availableLegendSetLegends) &&
-                                availableLegendSetLegends.map((legend) => (
-                                    <MultiSelectOption
-                                        key={legend.id}
-                                        value={legend.id}
-                                        label={legend.name}
-                                    />
-                                ))}
-                        </MultiSelectField>
+                        <div className={classes.legendSelect}>
+                            <MultiSelect
+                                collapseSelectionAfter={0}
+                                selected={
+                                    Array.isArray(availableLegendSets) &&
+                                    availableLegendSets.length &&
+                                    value.length
+                                        ? value.split(';')
+                                        : []
+                                }
+                                onChange={({ selected }) =>
+                                    setValue(
+                                        selected.join(';'),
+                                        selectedLegendSetId
+                                    )
+                                }
+                                onFocus={onLegendSetLegendsDropdownFocus}
+                                loading={
+                                    isLoadingLegendSet || isFetchingLegendSet
+                                }
+                                placeholder={i18n.t('Choose legends')}
+                                loadingText={i18n.t('Loading legends')}
+                                dense
+                            >
+                                {Array.isArray(availableLegendSetLegends) &&
+                                    availableLegendSetLegends.map((legend) => (
+                                        <MultiSelectOption
+                                            key={legend.id}
+                                            value={legend.id}
+                                            label={legend.name}
+                                        />
+                                    ))}
+                            </MultiSelect>
+                        </div>
                     )}
                 </>
             )}
-            <Button
-                type="button"
-                small
-                secondary
-                onClick={onRemove}
-                className={classes.removeButton}
-            >
-                {i18n.t('Remove')}
-            </Button>
+            <ConditionRemoveButton onClick={onRemove} />
         </div>
     )
 }
