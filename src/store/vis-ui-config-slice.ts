@@ -25,8 +25,6 @@ export type CustomValueObject = {
     aggregationType: AggregationType
 }
 
-export type LastActiveButton = 'EVENT' | 'CUSTOM_VALUE'
-
 export type RepetitionsObject = {
     mostRecent: number
     oldest: number
@@ -49,7 +47,6 @@ export interface VisUiConfigState {
     itemsByDimension: Record<string, string[]>
     conditionsByDimension: Record<string, ConditionsObject | undefined>
     customValue?: CustomValueObject
-    lastActiveButton?: LastActiveButton
     repetitionsByDimension: Record<string, RepetitionsObject | undefined>
     options: EventVisualizationOptions
 }
@@ -193,12 +190,6 @@ export const visUiConfigSlice = createSlice({
             action: PayloadAction<CustomValueObject>
         ) => {
             state.customValue = action.payload
-        },
-        setVisUiConfigLastActiveButton: (
-            state,
-            action: PayloadAction<LastActiveButton>
-        ) => {
-            state.lastActiveButton = action.payload
         },
         setVisUiConfigRepetitionsByDimension: (
             state,
@@ -361,7 +352,6 @@ export const visUiConfigSlice = createSlice({
         getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
             state.conditionsByDimension[dimensionId] || EMPTY_CONDITIONS_OBJECT,
         getVisUiConfigCustomValue: (state) => state.customValue,
-        getVisUiConfigLastActiveButton: (state) => state.lastActiveButton,
         getVisUiConfigRepetitionsByDimension: (state, dimensionId: string) =>
             state.repetitionsByDimension[dimensionId] ||
             DEFAULT_REPETITIONS_OBJECT,
@@ -393,7 +383,6 @@ export const {
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
     setVisUiConfigCustomValue,
-    setVisUiConfigLastActiveButton,
     setVisUiConfigRepetitionsByDimension,
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
@@ -410,7 +399,6 @@ export const {
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
     getVisUiConfigCustomValue,
-    getVisUiConfigLastActiveButton,
     getVisUiConfigRepetitionsByDimension,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigLayoutIsEmpty,

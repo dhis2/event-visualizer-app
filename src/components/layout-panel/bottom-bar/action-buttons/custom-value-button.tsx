@@ -11,7 +11,6 @@ import {
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
     getVisUiConfigCustomValue,
-    setVisUiConfigLastActiveButton,
     setVisUiConfigOutputType,
 } from '@store/vis-ui-config-slice'
 import cx from 'classnames'
@@ -115,9 +114,8 @@ export const CustomValueButton: FC = () => {
 
     const onUpdateClick = useCallback(() => {
         if (customValue) {
-            dispatch(setVisUiConfigLastActiveButton('CUSTOM_VALUE'))
             dispatch(setVisUiConfigOutputType('EVENT'))
-            dispatch(tUpdateCurrentVisFromVisUiConfig())
+            dispatch(tUpdateCurrentVisFromVisUiConfig(true))
         } else {
             setIsModalOpen(true)
         }

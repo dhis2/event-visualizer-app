@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-10T06:40:30.936Z\n"
-"PO-Revision-Date: 2026-06-10T06:40:30.936Z\n"
+"POT-Creation-Date: 2026-06-10T14:25:39.903Z\n"
+"PO-Revision-Date: 2026-06-10T14:25:39.903Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -317,6 +317,9 @@ msgstr "Configure custom value"
 msgid "Choose the numeric data element to show in table cells."
 msgstr "Choose the numeric data element to show in table cells."
 
+msgid "Search data items"
+msgstr "Search data items"
+
 msgid "Loading data"
 msgstr "Loading data"
 
@@ -337,6 +340,9 @@ msgstr "This stage does not have any numeric data elements available."
 
 msgid "This program does not have any numeric data elements available."
 msgstr "This program does not have any numeric data elements available."
+
+msgid "No data elements match \"{{- searchTerm}}\""
+msgstr "No data elements match \"{{- searchTerm}}\""
 
 msgid "Aggregation"
 msgstr "Aggregation"

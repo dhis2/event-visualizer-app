@@ -1,8 +1,7 @@
+import { getCurrentVis } from '@store/current-vis-slice'
 import {
-    visUiConfigSlice,
     initialState as visUiConfigInitialState,
     getVisUiConfigCustomValue,
-    getVisUiConfigLastActiveButton,
 } from '@store/vis-ui-config-slice'
 import { renderWithAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 import { createDeferredQuery } from '@test-utils/deferred-query'
@@ -91,7 +90,6 @@ const buildMockOptions = (
     metadata,
     queryData: queryDataOverride,
     partialStore: {
-        reducer: { visUiConfig: visUiConfigSlice.reducer },
         preloadedState: deepmerge(initialPreloadedState, {
             visUiConfig: {
                 layout: {
@@ -215,7 +213,7 @@ describe('CustomValueModal', () => {
         })
     })
 
-    it('keeps the Update button disabled until a data element is picked, then dispatches and closes on click', async () => {
+    it('keeps the Update button disabled until a data element is picked, then applies and closes on click', async () => {
         const onClose = vi.fn()
         const user = userEvent.setup()
         const { store } = await renderWithAppWrapper(
@@ -240,8 +238,34 @@ describe('CustomValueModal', () => {
             aggregationType: 'SUM',
             id: 's1.de1',
         })
-        expect(getVisUiConfigLastActiveButton(store.getState())).toBe(
-            'CUSTOM_VALUE'
+        expect(getCurrentVis(store.getState()).value).toEqual({ id: 's1.de1' })
+    })
+
+    it('filters the data element list by the search term', async () => {
+        const user = userEvent.setup()
+        await renderWithAppWrapper(
+            <CustomValueModal onClose={() => {}} />,
+            buildMockOptions(['s1.de1'])
         )
+
+        await waitFor(() => {
+            expect(screen.getByText('Weight in kg')).toBeInTheDocument()
+            expect(screen.getByText('Height in cm')).toBeInTheDocument()
+        })
+
+        await user.type(
+            screen.getByPlaceholderText('Search data items'),
+            'height'
+        )
+
+        expect(screen.queryByText('Weight in kg')).not.toBeInTheDocument()
+        expect(screen.getByText('Height in cm')).toBeInTheDocument()
+
+        await user.clear(screen.getByPlaceholderText('Search data items'))
+        await user.type(screen.getByPlaceholderText('Search data items'), 'zzz')
+
+        expect(
+            screen.getByText('No data elements match "zzz"')
+        ).toBeInTheDocument()
     })
 })
