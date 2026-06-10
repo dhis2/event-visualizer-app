@@ -1,3 +1,5 @@
-.verticalCheckbox {
-    padding-block-start: var(--spacers-dp8);
+.checkboxContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacers-dp8);
 }

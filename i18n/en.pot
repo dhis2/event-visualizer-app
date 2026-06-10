@@ -5,8 +5,13 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
+<<<<<<< chore/switch-between-custom-value-and-event-list
 "POT-Creation-Date: 2026-06-10T07:32:11.618Z\n"
 "PO-Revision-Date: 2026-06-10T07:32:11.618Z\n"
+=======
+"POT-Creation-Date: 2026-06-10T06:40:30.936Z\n"
+"PO-Revision-Date: 2026-06-10T06:40:30.936Z\n"
+>>>>>>> master
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -17,8 +22,8 @@ msgstr "Choose a filter type"
 msgid "Case sensitive"
 msgstr "Case sensitive"
 
-msgid "Remove"
-msgstr "Remove"
+msgid "Delete filter"
+msgstr "Delete filter"
 
 msgid "Repeated events"
 msgstr "Repeated events"
@@ -38,11 +43,8 @@ msgstr "This dimension cannot be filtered."
 msgid "Preset options can't be combined with other filters"
 msgstr "Preset options can't be combined with other filters"
 
-msgid "Add another filter"
-msgstr "Add another filter"
-
-msgid "Add a filter"
-msgstr "Add a filter"
+msgid "Add filter"
+msgstr "Add filter"
 
 msgid "and"
 msgstr "and"
@@ -181,6 +183,9 @@ msgstr "Resize axes panel"
 
 msgid "Move to {{- axisName}}"
 msgstr "Move to {{- axisName}}"
+
+msgid "Remove"
+msgstr "Remove"
 
 msgid "all"
 msgstr "all"

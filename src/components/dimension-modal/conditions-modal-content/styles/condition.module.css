@@ -1,51 +1,142 @@
 .container {
-    display: flex;
+    display: inline-flex;
     align-items: flex-start;
+    max-block-size: 32px;
+    overflow: hidden;
+}
+
+.container:has(.textInput, .phoneNumberInput, .letterInput, .legendSelect) {
+    display: flex;
+    inline-size: 100%;
+}
+
+.container:not(.checkboxContainer):hover {
+    box-shadow:
+        0 1px 5px rgba(12, 12, 12, 0.05),
+        0 0 40px rgba(12, 12, 12, 0.015);
+    border-radius: 3px;
+}
+
+.container:last-child {
+    margin-block-end: var(--spacers-dp12);
 }
 
 .caseSensitiveCheckbox {
-    margin-inline-end: var(--spacers-dp4);
+    flex-shrink: 0;
+    block-size: 32px;
+    padding: 0 var(--spacers-dp4);
+    background-color: var(--colors-white);
+    border-block-start: 1px solid var(--colors-grey500);
+    border-block-end: 1px solid var(--colors-grey500);
 }
 
-.checkboxOption {
-    margin-inline-end: var(--spacers-dp16);
+.checkboxContainer {
+    flex-direction: column;
+    gap: var(--spacers-dp8);
+    max-block-size: none;
+    overflow: visible;
+}
+
+.operatorSelect {
+    flex: 0 0 auto;
+    max-inline-size: 240px;
+}
+
+.operatorSelect :global(.root) {
+    border-radius: 3px 0 0 3px !important;
+    border-inline-end: none !important;
 }
 
 .legendSelect,
 .textInput {
-    flex: 2 1 auto;
-    margin-inline-end: var(--spacers-dp4);
+    flex: 1 1 0;
+    min-inline-size: 0;
+}
+
+.textInput :global(input) {
+    border-radius: 0 !important;
+}
+
+.legendSelect :global(.root) {
+    border-radius: 0 !important;
+    border-inline-end: none !important;
 }
 
 .legendSetSelect {
-    flex: 0 1 auto;
-    margin-inline-end: var(--spacers-dp4);
-}
-
-.removeButton {
     flex: 0 0 auto;
-    margin-inline-start: var(--spacers-dp4);
 }
 
-.operatorSelect {
-    flex: 0 1 auto;
-    min-inline-size: 204px;
-    margin-inline-end: var(--spacers-dp4);
+.legendSetSelect :global(.root) {
+    border-radius: 0 !important;
+    border-inline-end: none !important;
 }
 
 .dateInput,
 .numericInput {
     flex: 0 1 auto;
-    min-inline-size: 150px;
-    margin-inline-end: var(--spacers-dp4);
+    min-inline-size: 120px;
+    inline-size: fit-content !important;
+}
+
+.dateInput :global(input),
+.numericInput :global(input) {
+    min-inline-size: 120px !important;
+    inline-size: fit-content !important;
+    border-radius: 0 !important;
+    border-inline-end: none !important;
 }
 
 .phoneNumberInput {
+    flex: 1 1 0;
     min-inline-size: 200px;
-    margin-inline-end: var(--spacers-dp4);
+}
+
+.phoneNumberInput :global(input) {
+    border-radius: 0 !important;
 }
 
 .letterInput {
+    flex: 1 1 0;
     min-inline-size: 100px;
-    margin-inline-end: var(--spacers-dp4);
+}
+
+.letterInput :global(input) {
+    border-radius: 0 !important;
+}
+
+.removeButtonWrapper {
+    display: inline-flex;
+    flex: 0 0 auto;
+}
+
+.removeButton {
+    flex: 0 0 auto;
+    margin-inline-start: 0;
+    inline-size: 24px !important;
+    block-size: 32px !important;
+    padding: 0 !important;
+    border: 1px solid var(--colors-grey500) !important;
+    border-radius: 0 3px 3px 0 !important;
+    background: transparent !important;
+    color: var(--colors-grey600) !important;
+}
+
+.removeButton :global(.button-icon) {
+    margin-inline-end: 0 !important;
+}
+
+.removeButton:hover,
+.removeButton:active {
+    background-color: var(--colors-red050) !important;
+    color: var(--colors-red700) !important;
+    border-color: var(--colors-red800) !important;
+}
+
+.removeButton:focus {
+    outline: 3px solid var(--theme-focus) !important;
+    outline-offset: -3px;
+}
+
+.removeButton:focus:not(:focus-visible) {
+    outline: none !important;
 }
