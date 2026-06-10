@@ -101,7 +101,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                 })
             )
             dispatch(setVisUiConfigOutputType('EVENT'))
-            dispatch(tUpdateCurrentVisFromVisUiConfig('CUSTOM_VALUE'))
+            dispatch(tUpdateCurrentVisFromVisUiConfig(true))
         }
 
         onClose()

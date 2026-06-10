@@ -35,14 +35,15 @@ const metadata = {
 const customValue = { id: 's1.de1', aggregationType: 'AVERAGE' as const }
 
 const buildMockOptions = (
-    currentVisOverride: Partial<CurrentVisualization>
+    currentVisOverride: Partial<CurrentVisualization>,
+    outputType = 'EVENT'
 ): MockOptions => ({
     metadata,
     partialStore: {
         preloadedState: deepmerge(
             {
                 visUiConfig: deepmerge(visUiConfigInitialState, {
-                    outputType: 'EVENT',
+                    outputType,
                     visualizationType: 'PIVOT_TABLE',
                     layout: { columns: ['s1.de1'] },
                     customValue,
@@ -74,7 +75,7 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
             buildMockOptions(customValueVis)
         )
 
-        store.dispatch(tUpdateCurrentVisFromVisUiConfig('EVENT'))
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig(false))
 
         expect(getCurrentVis(store.getState()).value).toBeUndefined()
         // The remembered selection survives the switch to the event table
@@ -87,14 +88,14 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
             buildMockOptions(eventVis)
         )
 
-        store.dispatch(tUpdateCurrentVisFromVisUiConfig('CUSTOM_VALUE'))
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig(true))
 
         const currentVis = getCurrentVis(store.getState())
         expect(currentVis.value).toEqual({ id: 's1.de1' })
         expect(currentVis.aggregationType).toBe('AVERAGE')
     })
 
-    it('preserves the current mode when no variant is passed', async () => {
+    it('preserves the current mode when withCustomValue is not passed', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
             buildMockOptions(customValueVis)
@@ -103,5 +104,19 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
         expect(getCurrentVis(store.getState()).value).toEqual({ id: 's1.de1' })
+    })
+
+    it('drops the value for a non-EVENT output type even when withCustomValue is true', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            buildMockOptions(customValueVis, 'ENROLLMENT')
+        )
+
+        // Even explicitly asking for a custom value must not add one when
+        // the output type is not EVENT.
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig(true))
+
+        expect(getCurrentVis(store.getState()).value).toBeUndefined()
+        expect(store.getState().visUiConfig.customValue).toEqual(customValue)
     })
 })

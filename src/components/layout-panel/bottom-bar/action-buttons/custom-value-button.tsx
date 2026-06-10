@@ -115,7 +115,7 @@ export const CustomValueButton: FC = () => {
     const onUpdateClick = useCallback(() => {
         if (customValue) {
             dispatch(setVisUiConfigOutputType('EVENT'))
-            dispatch(tUpdateCurrentVisFromVisUiConfig('CUSTOM_VALUE'))
+            dispatch(tUpdateCurrentVisFromVisUiConfig(true))
         } else {
             setIsModalOpen(true)
         }

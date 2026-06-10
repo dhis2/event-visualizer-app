@@ -40,8 +40,6 @@ type AppThunk = () => (
     extra: ThunkExtraArg
 ) => void
 
-export type EventOutputTypeVariant = 'EVENT' | 'CUSTOM_VALUE'
-
 export const tClearVisualization: AppThunk = () => (dispatch) => {
     dispatch(clearUi())
     dispatch(clearSavedVis())
@@ -106,8 +104,48 @@ export const tLoadSavedVisualization = createAsyncThunk<
     }
 )
 
+const shouldShowCustomValue = (
+    state: RootState,
+    withCustomValue?: boolean
+): boolean => {
+    // Only EVENT output can carry a custom value
+    if (state.visUiConfig.outputType !== 'EVENT') {
+        return false
+    }
+    if (withCustomValue !== undefined) {
+        return withCustomValue // explicit request: add or strip
+    }
+    return Boolean(state.currentVis.value?.id) // preserve what the current vis shows
+}
+
+const resolveCustomValueFields = (
+    state: RootState,
+    withCustomValue?: boolean
+) => {
+    // Always include the `value` key: setCurrentVis merges into the previous
+    // currentVis, so omitting it would leave a stale value behind.
+    if (!shouldShowCustomValue(state, withCustomValue)) {
+        return { value: undefined }
+    }
+
+    const { customValue } = state.visUiConfig
+
+    if (!customValue) {
+        throw new Error(
+            'shouldShowCustomValue is true but visUiConfig.customValue is missing'
+        )
+    }
+    return {
+        value: { id: customValue.id },
+        aggregationType: customValue.aggregationType,
+    }
+}
+
+/* `withCustomValue` overrides whether the rebuilt vis carries the custom
+ * value: true forces it on, false strips it; omit it to preserve the
+ * current vis. */
 export const tUpdateCurrentVisFromVisUiConfig =
-    (variant?: EventOutputTypeVariant) =>
+    (withCustomValue?: boolean) =>
     (
         dispatch: AppDispatch,
         getState: () => RootState,
@@ -116,17 +154,6 @@ export const tUpdateCurrentVisFromVisUiConfig =
         const state = getState()
         const { currentVis, visUiConfig } = state
         const { metadataStore } = extra
-        const { customValue } = visUiConfig
-
-        const resolvedVariant: EventOutputTypeVariant =
-            variant ?? (currentVis.value?.id ? 'CUSTOM_VALUE' : 'EVENT')
-        const customValueFields =
-            resolvedVariant === 'CUSTOM_VALUE' && customValue
-                ? {
-                      value: { id: customValue.id },
-                      aggregationType: customValue.aggregationType,
-                  }
-                : { value: undefined }
 
         // Build fresh from visUiConfig so stale currentVis fields can't leak
         // through. Carry over only id and sorting from the previous currentVis.
@@ -163,7 +190,7 @@ export const tUpdateCurrentVisFromVisUiConfig =
             ),
             ...getEnabledOptions(visUiConfig.options),
             ...resolveTeiFields(visUiConfig, metadataStore),
-            ...customValueFields,
+            ...resolveCustomValueFields(state, withCustomValue),
         }
 
         dispatch(setCurrentVis(updatedCurrentVis))

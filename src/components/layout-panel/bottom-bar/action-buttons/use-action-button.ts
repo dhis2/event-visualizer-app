@@ -9,7 +9,6 @@ import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
 import { isDimensionInLayout, resolveProgramIds } from '@modules/layout'
 import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
-import type { EventOutputTypeVariant } from '@store/thunks'
 import {
     getVisUiConfigLayout,
     getVisUiConfigLayoutAllDimensionIds,
@@ -20,6 +19,10 @@ import {
 import type { OutputType, Program } from '@types'
 import { useMemo } from 'react'
 import type { ButtonAction } from './base-button'
+
+/* The two table kinds that share the EVENT output type: a plain event table
+ * and a custom value table. Used to label the EVENT/custom-value buttons. */
+export type EventOutputTypeVariant = 'EVENT' | 'CUSTOM_VALUE'
 
 type TooltipConfig = { content: string; openDelay?: number } | undefined
 
