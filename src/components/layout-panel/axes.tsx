@@ -84,6 +84,14 @@ export const Axes: FC = () => {
         [visualizationType]
     )
 
+    /* Signature of the layout's chips per axis. Changes when a dimension is
+     * added, removed, or moved between axes — the cases that change the content
+     * height and so require the panel to re-fit. */
+    const contentKey = useMemo(
+        () => [columns.join(','), rows.join(','), filters.join(',')].join('|'),
+        [columns, rows, filters]
+    )
+
     const {
         containerRef,
         eventHandlers,
@@ -96,6 +104,7 @@ export const Axes: FC = () => {
         storageKey: AXES_HEIGHT_STORAGE_KEY,
         min: minHeight,
         collapseThreshold: AXES_COLLAPSE_THRESHOLD,
+        contentKey,
         max: maxHeight,
     })
 
