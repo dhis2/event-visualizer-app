@@ -5,13 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-<<<<<<< chore/switch-between-custom-value-and-event-list
-"POT-Creation-Date: 2026-06-10T07:32:11.618Z\n"
-"PO-Revision-Date: 2026-06-10T07:32:11.618Z\n"
-=======
-"POT-Creation-Date: 2026-06-10T06:40:30.936Z\n"
-"PO-Revision-Date: 2026-06-10T06:40:30.936Z\n"
->>>>>>> master
+"POT-Creation-Date: 2026-06-10T14:25:39.903Z\n"
+"PO-Revision-Date: 2026-06-10T14:25:39.903Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"

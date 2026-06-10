@@ -104,7 +104,7 @@ export const tLoadSavedVisualization = createAsyncThunk<
     }
 )
 
-const shouldShowCustomValue = (
+const shouldPopulateCustomValueFields = (
     state: RootState,
     withCustomValue?: boolean
 ): boolean => {
@@ -124,7 +124,7 @@ const resolveCustomValueFields = (
 ) => {
     // Always include the `value` key: setCurrentVis merges into the previous
     // currentVis, so omitting it would leave a stale value behind.
-    if (!shouldShowCustomValue(state, withCustomValue)) {
+    if (!shouldPopulateCustomValueFields(state, withCustomValue)) {
         return { value: undefined }
     }
 
@@ -132,7 +132,7 @@ const resolveCustomValueFields = (
 
     if (!customValue) {
         throw new Error(
-            'shouldShowCustomValue is true but visUiConfig.customValue is missing'
+            'shouldPopulateCustomValueFields is true but visUiConfig.customValue is missing'
         )
     }
     return {
