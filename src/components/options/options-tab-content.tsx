@@ -1,10 +1,10 @@
-import type { VisualizationType } from '@types'
-import type { FC } from 'react'
 import type {
+    VisualizationType,
     OptionsTabKey,
     OptionsTabKeyLineList,
     OptionsTabKeyPivotTable,
-} from 'src/types/options'
+} from '@types'
+import type { FC } from 'react'
 import { LineListDataTab } from './tabs/line-list-data-tab'
 import { LineListLegendTab } from './tabs/line-list-legend-tab'
 import { LineListStyleTab } from './tabs/line-list-style-tab'

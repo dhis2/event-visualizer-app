@@ -92,7 +92,7 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     // TODO: handle errors
     if (error) {
         // `error` will be of type EngineError and `data` will is possibly undefined
-        logger.debug('ERROR!', data, error)
+        logger.error('ERROR!', data, error)
         return <div>Error loading event visualization: {error.message}</div>
     }
 

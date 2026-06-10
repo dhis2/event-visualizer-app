@@ -1,14 +1,11 @@
 import fs from 'node:fs'
 import { defineConfig } from 'cypress'
-import { excludeByVersionTags } from './cypress/plugins/exclude-by-version-tags'
 import viteConfig from './vite-cypress.config'
 
 const setupNodeEvents = async (
     on: Cypress.PluginEvents,
     config: Cypress.PluginConfigOptions
 ) => {
-    excludeByVersionTags(on, config)
-
     // Delete videos for passing tests
     on('after:spec', (_, results) => {
         try {
