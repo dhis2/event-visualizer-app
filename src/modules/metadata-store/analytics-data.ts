@@ -1,7 +1,38 @@
 import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
+import {
+    PROGRAM_DIMENSION_TYPES,
+    YOUR_DIMENSION_TYPES,
+} from '@constants/dimensions'
 import { isMetadataInputItem } from '@modules/metadata'
 import { isObject, isPopulatedString } from '@modules/validation'
-import type { AnalyticsResponseMetadataItems, MetadataInput } from '@types'
+import type {
+    AnalyticsResponseMetadataItems,
+    DimensionType,
+    MetadataInput,
+} from '@types'
+
+/* The analytics response reports an item's type under `dimensionItemType`,
+ * whose value space overlaps with but is broader than the app's DimensionType:
+ * it also covers value-level items (PERIOD, options, org units). We adopt it as
+ * `dimensionType` only for the item types the app treats as layout dimensions,
+ * so non-dimension items are never mistyped. The backend's PROGRAM_DATA_ELEMENT
+ * is the app's DATA_ELEMENT. */
+const DIMENSION_TYPE_BY_ITEM_TYPE: Record<string, DimensionType> = {
+    PROGRAM_DATA_ELEMENT: 'DATA_ELEMENT',
+    ...Object.fromEntries(
+        [...PROGRAM_DIMENSION_TYPES, ...YOUR_DIMENSION_TYPES].map((type) => [
+            type,
+            type,
+        ])
+    ),
+}
+
+const resolveDimensionType = (
+    dimensionItemType: unknown
+): DimensionType | undefined =>
+    isPopulatedString(dimensionItemType)
+        ? DIMENSION_TYPE_BY_ITEM_TYPE[dimensionItemType]
+        : undefined
 
 const hasName = (value: unknown): boolean =>
     isObject(value) &&
@@ -35,18 +66,22 @@ const extractItemsMetadata = (
             return acc
         }
 
+        const dimensionType = resolveDimensionType(value?.dimensionItemType)
+
+        const normalizedItem = { ...value }
+
         /* Skip valueType from analytics response data as this is wrong in many cases.
          * In this way we keep the original valueType from the visualization's metadata which is correct
          * and avoid issues with the conditions modal which relies on valueType to render the correct content */
         if (isPopulatedString(value?.valueType)) {
-            acc[key] = {
-                ...value,
-                valueType: undefined,
-            }
-            return acc
+            normalizedItem.valueType = undefined
         }
 
-        acc[key] = value
+        if (dimensionType) {
+            normalizedItem.dimensionType = dimensionType
+        }
+
+        acc[key] = normalizedItem
         return acc
     }, {})
 

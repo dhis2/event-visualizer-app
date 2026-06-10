@@ -16,7 +16,7 @@ export default defineConfig([
 
     { extends: [dhis2ReactConfig] },
 
-    globalIgnores(['.vite/**/*', 'scripts/**/*']),
+    globalIgnores(['.vite/**/*', 'scripts/**/*', '.claude/**']),
 
     // TypeScript-specific custom rules (scoped to files the base config processes)
     {

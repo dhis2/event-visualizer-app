@@ -15,6 +15,7 @@ import { CardsProgramWithoutRegistration } from './cards-program-without-registr
 import { CardsTrackedEntityType } from './cards-tracked-entity-type/cards-tracked-entity-type'
 import { DataSourceSelect } from './data-source-select/data-source-select'
 import { FilterDropdownButton } from './filter-dropdown-button'
+import { SidebarEmptyState } from './sidebar-empty-state'
 import classes from './styles/sidebar.module.css'
 import { ToggleCollapseAllButton } from './toggle-collapse-all-button'
 import { UnifiedSearchInput } from './unified-search-input'
@@ -42,6 +43,7 @@ export const Sidebar: FC = () => {
             style={{ inlineSize: width }}
         >
             <DataSourceSelect />
+            {!dataSourceId && <SidebarEmptyState />}
             {!!dataSourceMetadataItem && (
                 <>
                     <div
@@ -58,6 +60,7 @@ export const Sidebar: FC = () => {
                     <div
                         onScroll={handleScroll}
                         className={classes.dimensionCardsContainer}
+                        data-dnd-auto-scroll="disabled"
                     >
                         {isDataSourceProgramWithRegistration(
                             dataSourceMetadataItem

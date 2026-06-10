@@ -38,23 +38,18 @@
     border-color: var(--colors-grey400);
 }
 
-.chipEmpty .chipBase {
-    color: var(--colors-grey900);
-}
-
-.chipEmpty .secondary {
-    color: var(--colors-grey600);
-}
-
-.chipEmpty .suffix {
-    background: #eff1f3;
-    color: var(--colors-grey900);
-}
 .dragging {
     margin: 0;
     align-items: center;
     min-block-size: 20px;
     opacity: 0.9;
+}
+
+/* The drag overlay tracks the cursor, so it's the element under the pointer
+ * for the whole drag. Override the inner cursor so it reads grabbing. */
+.chip.dragging,
+.chip.dragging * {
+    cursor: grabbing;
 }
 .showBlank .content {
     visibility: hidden;

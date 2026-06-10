@@ -17,6 +17,7 @@ export type ButtonAction = 'create' | 'switch' | 'update'
 
 export type BaseButtonProps = {
     action: ButtonAction
+    dataTest?: string
     disabled?: boolean
     label: string
     lastActiveButton?: LastActiveButton
@@ -26,6 +27,7 @@ export type BaseButtonProps = {
 
 const BaseButton: FC<BaseButtonProps> = ({
     action,
+    dataTest,
     disabled = false,
     label,
     lastActiveButton,
@@ -48,6 +50,7 @@ const BaseButton: FC<BaseButtonProps> = ({
             type="button"
             onClick={onClick}
             disabled={disabled}
+            data-test={dataTest}
             className={cx(classes.button, {
                 [classes.disabled]: disabled,
                 [classes.update]: action === 'update',

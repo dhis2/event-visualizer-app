@@ -8,7 +8,6 @@
     block-size: calc(100% - 8px);
     border: 1px solid var(--colors-grey400);
     border-radius: 5px;
-    padding-block-end: 4px;
     background-color: var(--colors-grey100);
     overflow: hidden;
 }
@@ -61,6 +60,7 @@
     gap: 8px;
     padding-block-start: 8px;
     padding-inline: 4px;
+    padding-block-end: 4px;
     margin-inline-end: 2px;
     transition: scrollbar-color 0.18s ease;
 }

@@ -16,64 +16,38 @@ export const StartScreen: FC = () => {
     })
 
     return (
-        <div className={classes.outer}>
+        <div className={classes.outer} data-test="start-screen">
             <div className={classes.inner}>
-                <div>
+                {Boolean(data?.length) && (
                     <div className={classes.section}>
                         <h3 className={classes.title}>
-                            {i18n.t('Getting started')}
+                            {i18n.t('Your most viewed event visualizations')}
                         </h3>
-                        <ul className={classes.guide}>
-                            <li className={classes.guideItem}>
-                                {i18n.t(
-                                    'All dimensions that you can use to build visualizations are shown in the sections in the left sidebar.'
-                                )}
-                            </li>
-                            <li className={classes.guideItem}>
-                                {i18n.t('Add dimensions to the layout above.')}
-                            </li>
-                            <li className={classes.guideItem}>
-                                {i18n.t(
-                                    'Click a dimension to add or remove conditions.'
-                                )}
-                            </li>
-                        </ul>
+                        {data?.map((vis) => (
+                            <p
+                                key={vis.id}
+                                className={classes.visualization}
+                                onClick={() =>
+                                    dispatch(
+                                        setNavigationState({
+                                            visualizationId: vis.id,
+                                        })
+                                    )
+                                }
+                                data-test={'start-screen-most-viewed-list-item'}
+                            >
+                                <span className={classes.visIcon}>
+                                    <VisTypeIcon
+                                        type={vis.type}
+                                        useSmall
+                                        color={colors.grey600}
+                                    />
+                                </span>
+                                <span>{vis.name}</span>
+                            </p>
+                        ))}
                     </div>
-                    {Boolean(data?.length) && (
-                        <div className={classes.section}>
-                            <h3 className={classes.title}>
-                                {i18n.t(
-                                    'Your most viewed event visualizations'
-                                )}
-                            </h3>
-                            {data?.map((vis) => (
-                                <p
-                                    key={vis.id}
-                                    className={classes.visualization}
-                                    onClick={() =>
-                                        dispatch(
-                                            setNavigationState({
-                                                visualizationId: vis.id,
-                                            })
-                                        )
-                                    }
-                                    data-test={
-                                        'start-screen-most-viewed-list-item'
-                                    }
-                                >
-                                    <span className={classes.visIcon}>
-                                        <VisTypeIcon
-                                            type={vis.type}
-                                            useSmall
-                                            color={colors.grey600}
-                                        />
-                                    </span>
-                                    <span>{vis.name}</span>
-                                </p>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                )}
             </div>
         </div>
     )

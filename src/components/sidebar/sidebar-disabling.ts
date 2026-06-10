@@ -48,10 +48,9 @@ const differentTetMessage = (tetName: string): string =>
 const programIndicatorsVisTypeMessage = (
     visualizationType: VisualizationType
 ): string =>
-    i18n.t(
-        'Program indicators are not valid with {{visType}}. Switch to Line list to use them.',
-        { visType: visTypeDisplayNames[visualizationType] }
-    )
+    i18n.t('Cannot be used with {{visType}}.', {
+        visType: visTypeDisplayNames[visualizationType],
+    })
 
 /* The three data-source branches below directly express which cards a
  * particular data source's invalid-layout states disable and which card

@@ -23,7 +23,7 @@ export default defineConfig({
     test: {
         setupFiles: './vitest.setup.ts',
         environment: 'jsdom',
-        exclude: [...configDefaults.exclude, '**/.d2/**'],
+        exclude: [...configDefaults.exclude, '**/.d2/**', '**/.claude/**'],
         onConsoleLog(log, type) {
             // Suppress Highcharts warnings
             if (

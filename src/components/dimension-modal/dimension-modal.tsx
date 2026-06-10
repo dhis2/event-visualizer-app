@@ -108,7 +108,13 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
                 dataTest={`${dataTest}-content`}
                 className={classes.modalContent}
             >
-                <DimensionModalContent dimension={dimension} />
+                {/* Key on the dimension id so switching dimensions remounts
+                    the content, resetting state that is derived once on mount
+                    (e.g. the Show all / Filter radio mode). */}
+                <DimensionModalContent
+                    key={dimension.id}
+                    dimension={dimension}
+                />
             </ModalContent>
             <ModalActions dataTest={`${dataTest}-actions`}>
                 <ButtonStrip>

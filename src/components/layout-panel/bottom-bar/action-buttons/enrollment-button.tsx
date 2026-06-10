@@ -57,6 +57,7 @@ export const EnrollmentButton: FC = () => {
     return (
         <BaseButtonWithConditionalTooltip
             action={action}
+            dataTest="update-button-enrollment"
             disabled={Boolean(tooltipConfig)}
             label={
                 buttonLabelLookup[action][

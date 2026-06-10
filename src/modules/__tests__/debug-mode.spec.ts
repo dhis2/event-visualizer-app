@@ -19,10 +19,10 @@ describe('debug-mode', () => {
     })
 
     describe('default (no localStorage override)', () => {
-        it("returns 'info' when NODE_ENV=development", async () => {
+        it("returns 'debug' when NODE_ENV=development", async () => {
             vi.stubEnv('NODE_ENV', 'development')
             const { getLogLevel, isDebugMode } = await importDebugMode()
-            expect(getLogLevel()).toBe('info')
+            expect(getLogLevel()).toBe('debug')
             expect(isDebugMode()).toBe(true)
         })
 
@@ -70,11 +70,11 @@ describe('debug-mode', () => {
     })
 
     describe('invalid localStorage values fall back to env default', () => {
-        it("unknown string in development → 'info'", async () => {
+        it("unknown string in development → 'debug'", async () => {
             vi.stubEnv('NODE_ENV', 'development')
             localStorage.setItem(LOG_LEVEL_KEY, 'banana')
             const { getLogLevel } = await importDebugMode()
-            expect(getLogLevel()).toBe('info')
+            expect(getLogLevel()).toBe('debug')
         })
 
         it("unknown string in production → 'error'", async () => {

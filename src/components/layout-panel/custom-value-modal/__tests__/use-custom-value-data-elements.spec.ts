@@ -4,7 +4,11 @@ import {
     type VisUiConfigState,
     type CustomValueObject,
 } from '@store/vis-ui-config-slice'
-import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
+import {
+    renderHookWithAppWrapper,
+    type MockOptions,
+} from '@test-utils/app-wrapper'
+import { createDeferredQuery } from '@test-utils/deferred-query'
 import { waitFor } from '@testing-library/react'
 import type { RootState } from '@types'
 import deepmerge from 'deepmerge'
@@ -144,6 +148,42 @@ describe('useCustomValueDataElements', () => {
             },
         ])
         expect(result.current.filteredByStageName).toBeUndefined()
+    })
+
+    it('sorts data elements alphabetically by name regardless of API order', async () => {
+        const outOfOrderResponse = {
+            dimensions: [
+                {
+                    id: 's2.de2',
+                    name: 'DE 2',
+                    aggregationType: 'AVERAGE',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+                {
+                    id: 's1.de1',
+                    name: 'DE 1',
+                    aggregationType: 'SUM',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+            ],
+        }
+        const { result } = await renderHookWithAppWrapper(
+            () => useCustomValueDataElements(),
+            {
+                ...buildMockOptions({ columns: ['p1.enrollmentDate'] }),
+                queryData: {
+                    [ANALYTICS_RESOURCE]: outOfOrderResponse,
+                },
+            }
+        )
+
+        await waitFor(() => {
+            expect(result.current.dataElements).toBeDefined()
+        })
+
+        expect(
+            result.current.dataElements?.map((dataElement) => dataElement.name)
+        ).toEqual(['DE 1', 'DE 2'])
     })
 
     it('omits stageName when the layout has no program stage and the program has only one stage', async () => {
@@ -298,12 +338,29 @@ describe('useCustomValueDataElements', () => {
     })
 
     it('returns undefined dataElements while loading', async () => {
+        /* Hold the dimensions request in flight so the loading assertion is
+         * deterministic. Without this, the query can resolve during the
+         * wrapper's internal store wait, flipping isLoading to false before
+         * the assertion under full-suite load. */
+        const deferredDimensions = createDeferredQuery()
         const { result } = await renderHookWithAppWrapper(
             () => useCustomValueDataElements(),
-            buildMockOptions({ columns: ['p1.enrollmentDate'] })
+            {
+                ...buildMockOptions({ columns: ['p1.enrollmentDate'] }),
+                queryData: {
+                    [ANALYTICS_RESOURCE]: deferredDimensions.defer(
+                        () => analyticsResponse
+                    ),
+                } as MockOptions['queryData'],
+            }
         )
 
         expect(result.current.isLoading).toBe(true)
         expect(result.current.dataElements).toBeUndefined()
+
+        await deferredDimensions.releaseAll()
+        await waitFor(() => {
+            expect(result.current.dataElements).toBeDefined()
+        })
     })
 })

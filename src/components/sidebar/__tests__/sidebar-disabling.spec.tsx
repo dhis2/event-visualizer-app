@@ -293,7 +293,7 @@ describe('useCardDisabledNoticeText', () => {
             })
         )
         expect(result.current.enrollment).toBeUndefined()
-        expect(result.current.pi).toMatch(/Program indicators/)
+        expect(result.current.pi).toMatch(/Cannot be used with Pivot table/)
     })
 
     it('returns undefined for non-sidebar card ids (metadata, other)', async () => {
@@ -405,7 +405,7 @@ describe('useCardDisabledNoticeText', () => {
                 },
             })
         )
-        expect(result.current).toMatch(/Program indicators/)
+        expect(result.current).toMatch(/Cannot be used with Pivot table/)
     })
 })
 

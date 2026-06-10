@@ -16,6 +16,15 @@
     background: #cdeae8;
 }
 
+.chipBase.empty {
+    background-color: var(--colors-grey100);
+    color: var(--colors-grey900);
+}
+
+.chipBase.empty:hover {
+    background-color: var(--colors-grey200);
+}
+
 .label {
     white-space: nowrap;
     display: flex;
@@ -41,6 +50,10 @@
     white-space: nowrap;
 }
 
+.empty .secondary {
+    color: var(--colors-grey600);
+}
+
 .items {
     white-space: nowrap;
     flex-shrink: 0;
@@ -54,8 +67,9 @@
     padding: 2px 2px 1px 2px;
 }
 
-.dragging .items {
-    background-color: var(--colors-grey300);
+.empty .items {
+    background: #eff1f3;
+    color: var(--colors-grey900);
 }
 
 .items:empty {
