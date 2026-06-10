@@ -125,7 +125,7 @@ const resolveCustomValueFields = (
     // Always include the `value` key: setCurrentVis merges into the previous
     // currentVis, so omitting it would leave a stale value behind.
     if (!shouldPopulateCustomValueFields(state, withCustomValue)) {
-        return { value: undefined }
+        return { value: undefined, aggregationType: undefined }
     }
 
     const { customValue } = state.visUiConfig
