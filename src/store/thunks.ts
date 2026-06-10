@@ -40,6 +40,8 @@ type AppThunk = () => (
     extra: ThunkExtraArg
 ) => void
 
+export type EventOutputTypeVariant = 'EVENT' | 'CUSTOM_VALUE'
+
 export const tClearVisualization: AppThunk = () => (dispatch) => {
     dispatch(clearUi())
     dispatch(clearSavedVis())
@@ -104,15 +106,32 @@ export const tLoadSavedVisualization = createAsyncThunk<
     }
 )
 
-export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
-    () => (dispatch, getState, extra) => {
+export const tUpdateCurrentVisFromVisUiConfig =
+    (variant?: EventOutputTypeVariant) =>
+    (
+        dispatch: AppDispatch,
+        getState: () => RootState,
+        extra: ThunkExtraArg
+    ) => {
         const state = getState()
         const { currentVis, visUiConfig } = state
         const { metadataStore } = extra
         const { customValue } = visUiConfig
 
+        const resolvedVariant: EventOutputTypeVariant =
+            variant ?? (currentVis.value?.id ? 'CUSTOM_VALUE' : 'EVENT')
+        const customValueFields =
+            resolvedVariant === 'CUSTOM_VALUE' && customValue
+                ? {
+                      value: { id: customValue.id },
+                      aggregationType: customValue.aggregationType,
+                  }
+                : { value: undefined }
+
         // Build fresh from visUiConfig so stale currentVis fields can't leak
         // through. Carry over only id and sorting from the previous currentVis.
+        // The custom value fields go after the options spread so the value's
+        // own aggregation type wins over the options default.
         const updatedCurrentVis: CurrentVisualization = {
             id: isCurrentVisualizationPersisted(currentVis)
                 ? currentVis.id
@@ -142,12 +161,9 @@ export const tUpdateCurrentVisFromVisUiConfig: AppThunk =
                 visUiConfig,
                 metadataStore
             ),
-            value: customValue ? { id: customValue.id } : undefined,
-            aggregationType:
-                customValue?.aggregationType ??
-                visUiConfig.options.aggregationType,
             ...getEnabledOptions(visUiConfig.options),
             ...resolveTeiFields(visUiConfig, metadataStore),
+            ...customValueFields,
         }
 
         dispatch(setCurrentVis(updatedCurrentVis))

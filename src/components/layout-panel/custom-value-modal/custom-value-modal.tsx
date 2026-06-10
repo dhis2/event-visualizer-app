@@ -7,6 +7,7 @@ import {
     Button,
     ButtonStrip,
     CircularLoader,
+    InputField,
     Modal,
     ModalActions,
     ModalContent,
@@ -21,13 +22,14 @@ import {
     useMetadataItem,
     useMetadataStore,
 } from '@hooks'
+import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
     getVisUiConfigCustomValue,
     setVisUiConfigCustomValue,
-    setVisUiConfigLastActiveButton,
+    setVisUiConfigOutputType,
 } from '@store/vis-ui-config-slice'
 import type { AggregationType } from '@types'
-import { type FC, useCallback, useState } from 'react'
+import { type FC, useCallback, useMemo, useState } from 'react'
 import { CustomValueOption } from './custom-value-option'
 import { StageNotice } from './stage-notice'
 import classes from './styles/custom-value-modal.module.css'
@@ -52,6 +54,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     const [dataElement, setDataElement] = useState<
         CustomValueDataElement | undefined
     >(undefined)
+    const [searchTerm, setSearchTerm] = useState('')
 
     const {
         dataElements,
@@ -61,6 +64,16 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
         filteredByStageName,
         customValueStageMismatch,
     } = useCustomValueDataElements()
+
+    const visibleDataElements = useMemo(() => {
+        const term = searchTerm.trim().toLocaleLowerCase()
+        if (!term) {
+            return dataElements
+        }
+        return dataElements?.filter((dataElement) =>
+            dataElement.name.toLocaleLowerCase().includes(term)
+        )
+    }, [dataElements, searchTerm])
 
     const onAggregationTypeChange = useCallback(
         ({ selected }) => setAggregationType(selected),
@@ -78,7 +91,6 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
 
     const onUpdate = useCallback(() => {
         if (dataElement) {
-            dispatch(setVisUiConfigLastActiveButton('CUSTOM_VALUE'))
             dispatch(
                 setVisUiConfigCustomValue({
                     aggregationType:
@@ -88,6 +100,8 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                     id: dataElement.id,
                 })
             )
+            dispatch(setVisUiConfigOutputType('EVENT'))
+            dispatch(tUpdateCurrentVisFromVisUiConfig('CUSTOM_VALUE'))
         }
 
         onClose()
@@ -107,6 +121,19 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                     customValueStageMismatch={customValueStageMismatch}
                     customValueDataElementName={customValueMetadata?.name}
                 />
+                {!isLoading && !isError && dataElements?.length !== 0 && (
+                    <div className={classes.search}>
+                        <InputField
+                            value={searchTerm}
+                            onChange={({ value }) => setSearchTerm(value ?? '')}
+                            placeholder={i18n.t('Search data items')}
+                            dataTest="custom-value-modal-search-field"
+                            dense
+                            initialFocus
+                            type="search"
+                        />
+                    </div>
+                )}
                 <div className={classes.listContainer}>
                     {isLoading && (
                         <div className={classes.listLoading}>
@@ -149,7 +176,18 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                     )}
                     {!isLoading &&
                         !isError &&
-                        dataElements?.map((dataElement) => (
+                        dataElements?.length !== 0 &&
+                        visibleDataElements?.length === 0 && (
+                            <div className={classes.noMatches}>
+                                {i18n.t(
+                                    'No data elements match "{{- searchTerm}}"',
+                                    { searchTerm }
+                                )}
+                            </div>
+                        )}
+                    {!isLoading &&
+                        !isError &&
+                        visibleDataElements?.map((dataElement) => (
                             <CustomValueOption
                                 key={dataElement.id}
                                 label={dataElement.name}
