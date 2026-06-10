@@ -4,20 +4,14 @@ import {
     getVisUiConfigConditionsByDimension,
     type ConditionsObject,
 } from '@store/vis-ui-config-slice'
+import { renderWithAppWrapper } from '@test-utils/app-wrapper'
 import { renderWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
 import { setupStore } from '@test-utils/setup-store'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { DimensionMetadataItem } from '@types'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { ConditionsTabContent } from '../conditions-tab-content'
-
-/* The filter UI itself is exercised elsewhere and needs metadata context;
- * here we only assert the radio's derived state and toggle behaviour, so the
- * value-type switch is stubbed. */
-vi.mock('../conditions', () => ({
-    Conditions: () => <div data-test="conditions-ui">conditions ui</div>,
-}))
 
 const textDimension: DimensionMetadataItem = {
     id: 'de1',
@@ -33,6 +27,14 @@ const unfilterableDimension: DimensionMetadataItem = {
     dimensionType: 'DATA_ELEMENT',
     name: 'My file element',
     valueType: 'FILE_RESOURCE',
+}
+
+const numericDimension: DimensionMetadataItem = {
+    id: 'numeric-de',
+    dimensionId: 'numeric-de',
+    dimensionType: 'DATA_ELEMENT',
+    name: 'My numeric element',
+    valueType: 'NUMBER',
 }
 
 const setup = (
@@ -59,21 +61,56 @@ describe('ConditionsTabContent — Show all / Filter', () => {
         expect(
             screen.getByRole('radio', { name: 'Show all values' })
         ).toBeChecked()
-        expect(screen.queryByTestId('conditions-ui')).not.toBeInTheDocument()
+        expect(
+            screen.queryByTestId('alphanumeric-condition')
+        ).not.toBeInTheDocument()
+    })
+
+    it('seeds one editable condition row immediately when switching to Filter', async () => {
+        const user = userEvent.setup()
+        setup()
+
+        await user.click(screen.getByRole('radio', { name: 'Filter' }))
+
+        expect(screen.getAllByTestId('alphanumeric-condition')).toHaveLength(1)
+    })
+
+    it('uses a single static "Add filter" label regardless of condition count', () => {
+        setup({ de1: { condition: 'LIKE:foo:LIKE:bar' } })
+
+        expect(screen.getAllByTestId('alphanumeric-condition')).toHaveLength(2)
+        expect(
+            screen.getByRole('button', { name: 'Add filter' })
+        ).toBeInTheDocument()
+        expect(
+            screen.queryByRole('button', { name: 'Add another filter' })
+        ).not.toBeInTheDocument()
+    })
+
+    it('persists no condition when Filter is selected but left empty', async () => {
+        const user = userEvent.setup()
+        const store = setup()
+
+        await user.click(screen.getByRole('radio', { name: 'Filter' }))
+
+        expect(
+            getVisUiConfigConditionsByDimension(store.getState(), 'de1')
+                .condition
+        ).toBeUndefined()
     })
 
     it('opens on "Filter" when a condition string is persisted', () => {
         setup({ de1: { condition: 'LIKE:foo' } })
 
         expect(screen.getByRole('radio', { name: 'Filter' })).toBeChecked()
-        expect(screen.getByTestId('conditions-ui')).toBeInTheDocument()
+        expect(screen.getByTestId('alphanumeric-condition')).toBeInTheDocument()
     })
 
     it('opens on "Filter" when only a legendSet is persisted', () => {
         setup({ de1: { legendSet: 'LEGEND_SET_1' } })
 
         expect(screen.getByRole('radio', { name: 'Filter' })).toBeChecked()
-        expect(screen.getByTestId('conditions-ui')).toBeInTheDocument()
+        expect(screen.getByTestId('alphanumeric-condition')).toBeInTheDocument()
     })
 
     it('discards the condition on save under "Show all" but restores it on toggle back', async () => {
@@ -86,7 +123,9 @@ describe('ConditionsTabContent — Show all / Filter', () => {
             getVisUiConfigConditionsByDimension(store.getState(), 'de1')
                 .condition
         ).toBeUndefined()
-        expect(screen.queryByTestId('conditions-ui')).not.toBeInTheDocument()
+        expect(
+            screen.queryByTestId('alphanumeric-condition')
+        ).not.toBeInTheDocument()
 
         await user.click(screen.getByRole('radio', { name: 'Filter' }))
 
@@ -94,7 +133,7 @@ describe('ConditionsTabContent — Show all / Filter', () => {
             getVisUiConfigConditionsByDimension(store.getState(), 'de1')
                 .condition
         ).toBe('LIKE:foo')
-        expect(screen.getByTestId('conditions-ui')).toBeInTheDocument()
+        expect(screen.getByTestId('alphanumeric-condition')).toBeInTheDocument()
     })
 
     it('shows a disabled "Filter" with help text for an unfilterable dimension', () => {
@@ -107,6 +146,70 @@ describe('ConditionsTabContent — Show all / Filter', () => {
         expect(
             screen.getByText('File type dimensions cannot be filtered.')
         ).toBeInTheDocument()
-        expect(screen.queryByTestId('conditions-ui')).not.toBeInTheDocument()
+        expect(
+            screen.queryByTestId('alphanumeric-condition')
+        ).not.toBeInTheDocument()
+    })
+
+    it('collapses selected legend chips to a count', async () => {
+        await renderWithAppWrapper(
+            <ConditionsTabContent dimension={numericDimension} />,
+            {
+                metadata: {
+                    LEGEND_SET_1: {
+                        id: 'LEGEND_SET_1',
+                        name: 'Weight legends',
+                        legends: [
+                            {
+                                id: 'LEGEND_1',
+                                name: 'Low',
+                                startValue: 0,
+                                endValue: 10,
+                            },
+                            {
+                                id: 'LEGEND_2',
+                                name: 'High',
+                                startValue: 11,
+                                endValue: 20,
+                            },
+                        ],
+                    },
+                },
+                partialStore: {
+                    preloadedState: {
+                        visUiConfig: {
+                            ...initialState,
+                            conditionsByDimension: {
+                                [numericDimension.id]: {
+                                    condition: 'IN:LEGEND_1;LEGEND_2',
+                                    legendSet: 'LEGEND_SET_1',
+                                },
+                            },
+                        },
+                    },
+                },
+            }
+        )
+
+        expect(screen.getByText('2 selected')).toBeInTheDocument()
+    })
+})
+
+describe('ConditionsTabContent — value input focus', () => {
+    it('focuses the value input after an operator is chosen', async () => {
+        const user = userEvent.setup()
+        setup()
+
+        await user.click(screen.getByRole('radio', { name: 'Filter' }))
+        await user.click(screen.getByText('Choose a filter type'))
+        await user.click(screen.getByText('contains'))
+
+        await waitFor(() => expect(screen.getByRole('textbox')).toHaveFocus())
+    })
+
+    it('does not steal focus when a condition is restored with an operator', () => {
+        setup({ de1: { condition: 'LIKE:foo' } })
+
+        expect(screen.getByDisplayValue('foo')).not.toHaveFocus()
     })
 })

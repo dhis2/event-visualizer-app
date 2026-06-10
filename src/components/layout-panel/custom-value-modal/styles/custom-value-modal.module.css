@@ -10,6 +10,10 @@
     font-size: 14px;
 }
 
+.search {
+    margin-block-end: var(--spacers-dp8);
+}
+
 .listContainer {
     flex: 1;
     overflow-y: auto;
@@ -28,6 +32,19 @@
     min-block-size: 200px;
     color: var(--colors-grey700);
     font-size: 14px;
+}
+
+.noMatches {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    block-size: 100%;
+    min-block-size: 200px;
+    padding: var(--spacers-dp16);
+    color: var(--colors-grey600);
+    font-size: 14px;
+    font-style: italic;
+    text-align: center;
 }
 
 .aggregationSelect {

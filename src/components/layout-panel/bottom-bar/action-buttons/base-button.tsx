@@ -1,11 +1,7 @@
 import { Tooltip } from '@dhis2/ui'
 import { useAppDispatch } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
-import {
-    setVisUiConfigLastActiveButton,
-    setVisUiConfigOutputType,
-} from '@store/vis-ui-config-slice'
-import type { LastActiveButton } from '@store/vis-ui-config-slice'
+import { setVisUiConfigOutputType } from '@store/vis-ui-config-slice'
 import type { OutputType } from '@types'
 import cx from 'classnames'
 import { type FC } from 'react'
@@ -20,7 +16,6 @@ export type BaseButtonProps = {
     dataTest?: string
     disabled?: boolean
     label: string
-    lastActiveButton?: LastActiveButton
     tooltipProps?: object
     type: OutputType
 }
@@ -30,7 +25,6 @@ const BaseButton: FC<BaseButtonProps> = ({
     dataTest,
     disabled = false,
     label,
-    lastActiveButton,
     tooltipProps,
     type,
 }) => {
@@ -38,11 +32,8 @@ const BaseButton: FC<BaseButtonProps> = ({
     const { isAnimating } = useUpdateAnimation(type)
 
     const onClick = () => {
-        if (lastActiveButton !== undefined) {
-            dispatch(setVisUiConfigLastActiveButton(lastActiveButton))
-        }
         dispatch(setVisUiConfigOutputType(type))
-        dispatch(tUpdateCurrentVisFromVisUiConfig())
+        dispatch(tUpdateCurrentVisFromVisUiConfig(false))
     }
 
     return (

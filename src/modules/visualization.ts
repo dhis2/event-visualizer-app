@@ -2,7 +2,6 @@ import { getRequestOptions } from '@components/plugin-wrapper/hooks/query-tools-
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { layoutGetAllDimensions } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import type { LastActiveButton } from '@store/vis-ui-config-slice'
 import type {
     ApiSavedVisualization,
     DimensionArray,
@@ -510,10 +509,6 @@ export const getVisualizationUiConfig = (
     const tetId = vis.trackedEntityType?.id
     const toDimId = (dim: DimensionArray[number]) =>
         getCompoundDimensionId(dim, outputType, tetId)
-    let lastActiveButton: LastActiveButton | undefined
-    if (outputType === 'EVENT') {
-        lastActiveButton = vis.value?.id ? 'CUSTOM_VALUE' : 'EVENT'
-    }
 
     return {
         visualizationType: vis.type,
@@ -545,7 +540,6 @@ export const getVisualizationUiConfig = (
                 aggregationType: vis.aggregationType || 'DEFAULT',
             },
         }),
-        lastActiveButton,
     }
 }
 

@@ -79,7 +79,7 @@ export const StatusDimensionModalContent: FC<
             onModeChange={onModeChange}
             dataTest={`${dataTest}-filter-radio`}
         >
-            <div>
+            <div className={classes.checkboxContainer}>
                 {statuses.map(({ id, name }) => (
                     <Checkbox
                         key={id}
@@ -93,7 +93,6 @@ export const StatusDimensionModalContent: FC<
                             })
                         }
                         dense
-                        className={classes.verticalCheckbox}
                         dataTest={dataTest}
                     />
                 ))}

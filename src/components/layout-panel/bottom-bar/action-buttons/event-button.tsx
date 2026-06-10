@@ -65,7 +65,6 @@ export const EventButton: FC = () => {
                     visualizationType === 'PIVOT_TABLE' ? 'table' : 'list'
                 ]
             }
-            lastActiveButton="EVENT"
             tooltipConfig={tooltipConfig}
             type="EVENT"
         />

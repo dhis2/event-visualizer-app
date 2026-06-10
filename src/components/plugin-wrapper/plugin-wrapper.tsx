@@ -26,10 +26,14 @@ const getCurrentVisLayoutKey = createSelector(
     (state: RootState) => state.currentVis.columns,
     (state: RootState) => state.currentVis.rows,
     (state: RootState) => state.currentVis.filters,
+    (state: RootState) => state.currentVis.value?.id,
+    (state: RootState) => state.currentVis.aggregationType,
     // eslint-disable-next-line max-params
-    (outputType, columns, rows, filters) =>
+    (outputType, columns, rows, filters, valueId, aggregationType) =>
         [
             outputType ?? '',
+            valueId ?? '',
+            aggregationType ?? '',
             ...[...(columns ?? []), ...(rows ?? []), ...(filters ?? [])].map(
                 (d) => d.dimension
             ),
