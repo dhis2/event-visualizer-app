@@ -5,6 +5,7 @@ type Orientation = 'horizontal' | 'vertical'
 interface UseResizeHandleProps {
     max: number
     min: number
+    collapseThreshold: number
     orientation: Orientation
     storageKey: string
 }
@@ -12,15 +13,16 @@ interface UseResizeHandleProps {
 export const useResizeHandle = ({
     max,
     min,
+    collapseThreshold,
     orientation,
     storageKey,
 }: UseResizeHandleProps) => {
     const [size, setSize] = useState<number | null>(null)
     const [isDragging, setIsDragging] = useState<boolean>(false)
     const [minReached, setMinReached] = useState<boolean>(false)
-    const containerEdgePosRef = useRef<number>(0)
     const containerMaxSizeRef = useRef<number>(max)
     const preDragSizeRef = useRef<number | null>(null)
+    const dragStartPosRef = useRef<number | null>(null)
     const sizeRef = useRef<number | null>(size)
     const storedSizeRef = useRef<number | null>(
         (() => {
@@ -38,12 +40,6 @@ export const useResizeHandle = ({
     const containerRef = useCallback(
         (node: HTMLDivElement | null) => {
             if (node !== null) {
-                // Store the container edge position to avoid calculating it on each pointer move
-                containerEdgePosRef.current =
-                    orientation === 'horizontal'
-                        ? node.getBoundingClientRect().top
-                        : node.getBoundingClientRect().left
-
                 const containerSize =
                     orientation === 'horizontal'
                         ? node.scrollHeight
@@ -53,8 +49,16 @@ export const useResizeHandle = ({
 
                 containerMaxSizeRef.current = containerMaxSize
 
+                /* The min always wins: a stored size (possibly saved under a
+                 * different visType) must never shrink the panel below the
+                 * height needed to show every axis of the current visType. */
                 if (storedSizeRef.current) {
-                    setSize(Math.min(storedSizeRef.current, containerMaxSize))
+                    setSize(
+                        Math.max(
+                            min,
+                            Math.min(storedSizeRef.current, containerMaxSize)
+                        )
+                    )
                 } else {
                     setSize(Math.max(containerMaxSize, min))
                 }
@@ -75,20 +79,25 @@ export const useResizeHandle = ({
     }, [])
 
     // Start dragging
-    const onPointerDown = useCallback((event: React.PointerEvent) => {
-        event.preventDefault()
+    const onPointerDown = useCallback(
+        (event: React.PointerEvent) => {
+            event.preventDefault()
 
-        preDragSizeRef.current = sizeRef.current
+            preDragSizeRef.current = sizeRef.current
+            dragStartPosRef.current =
+                orientation === 'horizontal' ? event.clientY : event.clientX
 
-        // This is important since the ResizeHandle presence might be toggled by minReached.
-        // When ResizeHandle is available again and this it's draggable, we must avoid that minReached
-        // triggers the logic in the consumer again whenever the hook updates.
-        setMinReached(false)
+            // This is important since the ResizeHandle presence might be toggled by minReached.
+            // When ResizeHandle is available again and this it's draggable, we must avoid that minReached
+            // triggers the logic in the consumer again whenever the hook updates.
+            setMinReached(false)
 
-        event.currentTarget.setPointerCapture(event.pointerId)
+            event.currentTarget.setPointerCapture(event.pointerId)
 
-        setIsDragging(true)
-    }, [])
+            setIsDragging(true)
+        },
+        [orientation]
+    )
 
     // Move the drag handle
     const onPointerMove = useCallback(
@@ -97,18 +106,26 @@ export const useResizeHandle = ({
                 return
             }
 
-            if (!containerEdgePosRef.current) {
-                return
-            }
-
             const size = sizeRef.current
 
-            const newSize =
-                (orientation === 'horizontal' ? event.clientY : event.clientX) -
-                containerEdgePosRef.current
+            /* Size is derived from the pointer's displacement since the grab,
+             * not its absolute position. This keeps the drag direction honest:
+             * dragging down can never produce a size smaller than the pre-drag
+             * size, so the min-reached collapse only fires on a genuine upward
+             * drag past the min. */
+            const pointerPos =
+                orientation === 'horizontal' ? event.clientY : event.clientX
+            const delta = pointerPos - (dragStartPosRef.current ?? pointerPos)
+            const newSize = (preDragSizeRef.current ?? size ?? min) + delta
 
-            // Trigger minReached only when shrinking the container
-            if (newSize < min && size && size >= min) {
+            /* The panel can be dragged below the visType min (cutting into the
+             * axes, which then scroll) all the way down to the collapse
+             * threshold; only crossing that threshold collapses it. */
+            if (
+                newSize < collapseThreshold &&
+                size &&
+                size >= collapseThreshold
+            ) {
                 setSize(preDragSizeRef.current)
 
                 setMinReached(true)
@@ -116,13 +133,13 @@ export const useResizeHandle = ({
             } else {
                 setSize(
                     Math.max(
-                        min,
+                        collapseThreshold,
                         Math.min(newSize, containerMaxSizeRef.current)
                     )
                 )
             }
         },
-        [min, orientation]
+        [collapseThreshold, min, orientation]
     )
 
     // Stop dragging
