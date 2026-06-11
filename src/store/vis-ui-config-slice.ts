@@ -11,6 +11,7 @@ import type {
     EventVisualizationOptions,
     Layout,
     OutputType,
+    RelativePeriodEnum,
     VisualizationType,
 } from '@types'
 import { setUiActiveDimensionModal } from './ui-slice'
@@ -49,6 +50,9 @@ export interface VisUiConfigState {
     customValue?: CustomValueObject
     repetitionsByDimension: Record<string, RepetitionsObject | undefined>
     options: EventVisualizationOptions
+    /* Mirror of appCachedData.systemSettings.relativePeriod, in state so
+     * reducers can use it as the default for period dimensions. */
+    defaultRelativePeriod?: RelativePeriodEnum
 }
 
 export const initialState: VisUiConfigState = {
@@ -104,7 +108,10 @@ const seedDefaultItemsIfAbsent = (
     if (compoundId in state.itemsByDimension) {
         return
     }
-    const defaults = getDefaultItemsForDimension(compoundId)
+    const defaults = getDefaultItemsForDimension(
+        compoundId,
+        state.defaultRelativePeriod
+    )
     if (defaults) {
         state.itemsByDimension[compoundId] = defaults
     }
@@ -128,7 +135,10 @@ export const visUiConfigSlice = createSlice({
     name: 'visUiConfig',
     initialState,
     reducers: {
-        clearVisUiConfig: () => initialState,
+        clearVisUiConfig: (state) => ({
+            ...initialState,
+            defaultRelativePeriod: state.defaultRelativePeriod,
+        }),
         setVisUiConfig: (
             state,
             action: PayloadAction<Partial<VisUiConfigState>>

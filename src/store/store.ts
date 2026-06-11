@@ -18,6 +18,7 @@ export const getPreloadedState = (appCachedData: AppCachedData) => ({
         options: getDefaultOptions(
             appCachedData.systemSettings.digitGroupSeparator
         ),
+        defaultRelativePeriod: appCachedData.systemSettings.relativePeriod,
     },
 })
 
