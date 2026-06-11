@@ -60,10 +60,7 @@ export const getDefaultItemsForDimension = (
     if (plainId === 'ou' || plainId === 'enrollmentOu') {
         return [USER_ORGUNIT]
     }
-    if (
-        defaultRelativePeriod &&
-        (TIME_DIMENSION_IDS as readonly string[]).includes(plainId)
-    ) {
+    if (defaultRelativePeriod && isTimeDimensionId(plainId)) {
         return [defaultRelativePeriod]
     }
     return undefined
