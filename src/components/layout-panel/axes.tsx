@@ -53,6 +53,15 @@ const LoadingSkeletons: FC = () => (
 
 const AXES_HEIGHT_STORAGE_KEY = 'dhis2.event-visualizer.axesHeight'
 
+/* Height that keeps a single axis row (label + min content area + padding)
+ * fully visible. LINE_LIST stacks one such row (columns/filters); PIVOT_TABLE
+ * stacks two (columns over rows), so its min is twice as tall. */
+const AXIS_ROW_MIN_HEIGHT = 58
+
+/* Height below which dragging collapses the panel. Lower than the visType min
+ * so the panel can be shrunk past its default height before collapsing. */
+const AXES_COLLAPSE_THRESHOLD = 24
+
 export const Axes: FC = () => {
     const dispatch = useAppDispatch()
     const dataSourceId = useAppSelector(getDataSourceId)
@@ -67,6 +76,22 @@ export const Axes: FC = () => {
         [height]
     )
 
+    const minHeight = useMemo(
+        () =>
+            visualizationType === 'LINE_LIST'
+                ? AXIS_ROW_MIN_HEIGHT
+                : AXIS_ROW_MIN_HEIGHT * 2,
+        [visualizationType]
+    )
+
+    /* Signature of the layout's chips per axis. Changes when a dimension is
+     * added, removed, or moved between axes — the cases that change the content
+     * height and so require the panel to re-fit. */
+    const contentKey = useMemo(
+        () => [columns.join(','), rows.join(','), filters.join(',')].join('|'),
+        [columns, rows, filters]
+    )
+
     const {
         containerRef,
         eventHandlers,
@@ -77,7 +102,9 @@ export const Axes: FC = () => {
     } = useResizeHandle({
         orientation: 'horizontal',
         storageKey: AXES_HEIGHT_STORAGE_KEY,
-        min: 56,
+        min: minHeight,
+        collapseThreshold: AXES_COLLAPSE_THRESHOLD,
+        contentKey,
         max: maxHeight,
     })
 
