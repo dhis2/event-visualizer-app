@@ -94,6 +94,14 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
         }
     }, [isVisualizationLoading])
 
+    useEffect(() => {
+        // layoutKey changes remount the plugin (it is its key), which discards
+        // the table and re-fetches analytics. Reset hasAnalyticsData so the
+        // spinner shows over the blank canvas until the new response arrives —
+        // these layout switches never set isVisualizationLoading.
+        setHasAnalyticsData(false)
+    }, [layoutKey])
+
     if (isVisualizationEmpty(visualization)) {
         return null
     }
