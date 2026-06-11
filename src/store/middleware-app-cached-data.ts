@@ -6,7 +6,7 @@ type AppCachedDataMeta = { appCachedData: AppCachedData }
 
 /* Stamps the session's appCachedData onto every action's meta, making it
  * reachable from reducers (which cannot see the thunk extraArgument). Read it
- * back with getAppCachedData. */
+ * back with getAppCachedDataFromAction. */
 export const createAppCachedDataMiddleware =
     (appCachedData: AppCachedData): Middleware =>
     () =>
@@ -20,7 +20,7 @@ export const createAppCachedDataMiddleware =
         return next({ ...action, meta })
     }
 
-export const getAppCachedData = (
+export const getAppCachedDataFromAction = (
     action: { meta?: Partial<AppCachedDataMeta> } | UnknownAction
 ): AppCachedData | undefined =>
     (action as { meta?: Partial<AppCachedDataMeta> }).meta?.appCachedData

@@ -3,7 +3,7 @@ import type { AppCachedData } from '@types'
 import { describe, it, expect, vi } from 'vitest'
 import {
     createAppCachedDataMiddleware,
-    getAppCachedData,
+    getAppCachedDataFromAction,
 } from '../middleware-app-cached-data'
 
 const appCachedData = {
@@ -22,7 +22,7 @@ describe('createAppCachedDataMiddleware', () => {
     it('stamps appCachedData onto a plain action meta', () => {
         const { next } = runMiddleware({ type: 'test/action' })
         const stamped = next.mock.calls[0][0] as UnknownAction
-        expect(getAppCachedData(stamped)).toBe(appCachedData)
+        expect(getAppCachedDataFromAction(stamped)).toBe(appCachedData)
     })
 
     it('preserves existing meta', () => {
@@ -45,8 +45,10 @@ describe('createAppCachedDataMiddleware', () => {
     })
 })
 
-describe('getAppCachedData', () => {
+describe('getAppCachedDataFromAction', () => {
     it('returns undefined when meta is absent', () => {
-        expect(getAppCachedData({ type: 'test/action' })).toBeUndefined()
+        expect(
+            getAppCachedDataFromAction({ type: 'test/action' })
+        ).toBeUndefined()
     })
 })

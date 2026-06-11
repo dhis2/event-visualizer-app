@@ -13,7 +13,7 @@ import type {
     OutputType,
     VisualizationType,
 } from '@types'
-import { getAppCachedData } from './middleware-app-cached-data'
+import { getAppCachedDataFromAction } from './middleware-app-cached-data'
 import { setUiActiveDimensionModal } from './ui-slice'
 
 export type ConditionsObject = {
@@ -106,7 +106,7 @@ const seedDefaultItemsIfAbsent = (
     if (compoundId in state.itemsByDimension) {
         return
     }
-    const appCachedData = getAppCachedData(action)
+    const appCachedData = getAppCachedDataFromAction(action)
     const defaults = getDefaultItemsForDimension(
         compoundId,
         appCachedData?.systemSettings.relativePeriod
