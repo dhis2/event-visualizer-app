@@ -1137,4 +1137,80 @@ describe('useActionButton for Custom value button', () => {
             content: 'Not valid with multiple program stages',
         })
     })
+
+    it('returns "update" for: PT, EVENT output, custom value active (currentVis has a value)', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT', 'CUSTOM_VALUE'),
+            createStoreWithPreloadedState({
+                currentVis: {
+                    outputType: 'EVENT',
+                    type: 'PIVOT_TABLE',
+                    value: { id: metadata['p2.p2s1.d1'].id },
+                },
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [metadata['p2.p2s1.d1'].id],
+                    },
+                    outputType: 'EVENT',
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        expect(result.current.action).toEqual('update')
+    })
+})
+
+describe('useActionButton for Event button in PIVOT_TABLE custom value mode', () => {
+    it('returns "switch" when a custom value is active (currentVis has a value)', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT', 'EVENT'),
+            createStoreWithPreloadedState({
+                currentVis: {
+                    outputType: 'EVENT',
+                    type: 'PIVOT_TABLE',
+                    value: { id: metadata['p2.p2s1.d1'].id },
+                },
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [metadata['p2.p2s1.d1'].id],
+                    },
+                    outputType: 'EVENT',
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        expect(result.current.action).toEqual('switch')
+    })
+
+    it('returns "update" when no custom value is active (currentVis has no value)', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT', 'EVENT'),
+            createStoreWithPreloadedState({
+                currentVis: {
+                    outputType: 'EVENT',
+                    type: 'PIVOT_TABLE',
+                },
+                dimensionSelection: {
+                    dataSourceId: metadata.p2.id,
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [metadata['p2.p2s1.d1'].id],
+                    },
+                    outputType: 'EVENT',
+                    visualizationType: 'PIVOT_TABLE',
+                },
+            })
+        )
+
+        expect(result.current.action).toEqual('update')
+    })
 })

@@ -207,7 +207,6 @@ const testCases = {
                 filters: [],
             },
             outputType: 'EVENT',
-            lastActiveButton: 'EVENT',
         },
     },
     lineListTrackedEntity: {

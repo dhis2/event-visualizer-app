@@ -1,6 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
 import {
-    Button,
     Checkbox,
     Input,
     SingleSelectField,
@@ -18,7 +17,9 @@ import {
     type QueryOperator,
 } from '@modules/conditions'
 import { useCallback, useMemo, type FC } from 'react'
+import { ConditionRemoveButton } from './condition-remove-button'
 import classes from './styles/condition.module.css'
+import { useValueInputFocus } from './use-value-input-focus'
 
 type ConditionProps = {
     condition: string
@@ -45,6 +46,10 @@ const BaseCondition: FC<
         }
     }, [condition])
 
+    const { valueInputId, focusValueInput } = useValueInputFocus()
+
+    const hasValueInput = Boolean(operator && !operator.includes(NULL_VALUE))
+
     const setOperator = useCallback(
         (input) => {
             if (input.includes(NULL_VALUE)) {
@@ -55,9 +60,10 @@ const BaseCondition: FC<
                         value || ''
                     }`
                 )
+                focusValueInput()
             }
         },
-        [isCaseSensitive, onChange, value]
+        [focusValueInput, isCaseSensitive, onChange, value]
     )
 
     const setValue = useCallback(
@@ -98,8 +104,9 @@ const BaseCondition: FC<
                     )
                 )}
             </SingleSelectField>
-            {operator && !operator.includes(NULL_VALUE) && (
+            {hasValueInput && (
                 <Input
+                    name={valueInputId}
                     value={value}
                     type="text"
                     onChange={({ value }) => setValue(value)}
@@ -108,6 +115,7 @@ const BaseCondition: FC<
                 />
             )}
             {allowCaseSensitive &&
+                operator &&
                 ![OPERATOR_EMPTY, OPERATOR_NOT_EMPTY].includes(operator) && (
                     <Checkbox
                         checked={isCaseSensitive}
@@ -118,15 +126,7 @@ const BaseCondition: FC<
                         dataTest="condition-case-sensitive-checkbox"
                     />
                 )}
-            <Button
-                type="button"
-                small
-                secondary
-                onClick={onRemove}
-                className={classes.removeButton}
-            >
-                {i18n.t('Remove')}
-            </Button>
+            <ConditionRemoveButton onClick={onRemove} />
         </div>
     )
 }

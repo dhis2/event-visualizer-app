@@ -10,17 +10,19 @@ import { isDimensionInLayout, resolveProgramIds } from '@modules/layout'
 import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis } from '@store/current-vis-slice'
 import {
-    getVisUiConfigLastActiveButton,
     getVisUiConfigLayout,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigLayoutIsEmpty,
     getVisUiConfigOutputType,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
-import type { LastActiveButton } from '@store/vis-ui-config-slice'
 import type { OutputType, Program } from '@types'
 import { useMemo } from 'react'
 import type { ButtonAction } from './base-button'
+
+/* The two table kinds that share the EVENT output type: a plain event table
+ * and a custom value table. Used to label the EVENT/custom-value buttons. */
+export type EventOutputTypeVariant = 'EVENT' | 'CUSTOM_VALUE'
 
 type TooltipConfig = { content: string; openDelay?: number } | undefined
 
@@ -189,12 +191,11 @@ const getTrackedEntityInstanceTooltipContent = ({
 
 export const useActionButton = (
     buttonType: OutputType,
-    buttonVariant?: LastActiveButton
+    buttonVariant?: EventOutputTypeVariant
 ) => {
     const currentVis = useAppSelector(getCurrentVis)
     const tetId = useTetId()
     const programStageIds = useProgramStageIds()
-    const lastActiveButton = useAppSelector(getVisUiConfigLastActiveButton)
     const layout = useAppSelector(getVisUiConfigLayout)
     const layoutDimensionIds = useAppSelector(
         getVisUiConfigLayoutAllDimensionIds
@@ -232,20 +233,17 @@ export const useActionButton = (
                 buttonType === 'EVENT' &&
                 buttonVariant !== undefined
             ) {
-                return lastActiveButton === buttonVariant ? 'update' : 'switch'
+                const hasCustomValue = Boolean(currentVis.value?.id)
+                const activeVariant: EventOutputTypeVariant = hasCustomValue
+                    ? 'CUSTOM_VALUE'
+                    : 'EVENT'
+                return activeVariant === buttonVariant ? 'update' : 'switch'
             }
             return 'update'
         } else {
             return 'switch'
         }
-    }, [
-        buttonType,
-        buttonVariant,
-        currentVis,
-        lastActiveButton,
-        outputType,
-        visualizationType,
-    ])
+    }, [buttonType, buttonVariant, currentVis, outputType, visualizationType])
 
     const hasCategoryInLayout: boolean = useMemo(
         () =>
