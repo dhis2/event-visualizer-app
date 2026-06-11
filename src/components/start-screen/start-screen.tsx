@@ -21,7 +21,7 @@ export const StartScreen: FC = () => {
                 {Boolean(data?.length) && (
                     <div className={classes.section}>
                         <h3 className={classes.title}>
-                            {i18n.t('Your most viewed event visualizations')}
+                            {i18n.t('Your most viewed visualizations')}
                         </h3>
                         {data?.map((vis) => (
                             <p

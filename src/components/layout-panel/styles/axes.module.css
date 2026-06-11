@@ -19,6 +19,7 @@
     block-size: 100%;
     max-block-size: 20vh;
     overflow-y: auto;
+    scrollbar-gutter: stable;
 }
 
 .axisContainer.lineList {
