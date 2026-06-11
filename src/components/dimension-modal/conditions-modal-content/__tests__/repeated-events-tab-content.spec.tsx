@@ -82,14 +82,28 @@ describe('RepeatedEventsTabContent', () => {
         expect(screen.getByTestId('most-recent-decrement')).toBeDisabled()
     })
 
-    it('exposes each stepper as a group labelled by its heading', () => {
+    it('gives each stepper button a descriptive accessible name', () => {
         setup()
 
         expect(
-            screen.getByRole('group', { name: 'Oldest events' })
+            screen.getByRole('button', {
+                name: 'Show fewer of the oldest events',
+            })
         ).toBeInTheDocument()
         expect(
-            screen.getByRole('group', { name: 'Most recent events' })
+            screen.getByRole('button', {
+                name: 'Show more of the oldest events',
+            })
+        ).toBeInTheDocument()
+        expect(
+            screen.getByRole('button', {
+                name: 'Show fewer of the most recent events',
+            })
+        ).toBeInTheDocument()
+        expect(
+            screen.getByRole('button', {
+                name: 'Show more of the most recent events',
+            })
         ).toBeInTheDocument()
     })
 

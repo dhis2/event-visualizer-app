@@ -42,12 +42,8 @@ const RepetitionStepper: FC<RepetitionStepperProps> = ({
         className={classes.repeatableCard}
         data-active={value > 0}
         data-test={`${dataTest}-card`}
-        role="group"
-        aria-labelledby={`${dataTest}-label`}
     >
-        <span id={`${dataTest}-label`} className={classes.repeatableCardHeader}>
-            {label}
-        </span>
+        <span className={classes.repeatableCardHeader}>{label}</span>
         <div className={classes.repeatableStepper}>
             <Button
                 secondary
