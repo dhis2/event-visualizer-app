@@ -202,6 +202,59 @@ describe('PluginWrapper', () => {
         })
     })
 
+    it('should render the loading spinner when switching to a different layout without a visualization (re)load', async () => {
+        const { store } = await renderWithAppWrapper(
+            <TestComponent />,
+            mockOptions
+        )
+
+        await loadFirstVisualization(store)
+
+        /* Mimic a "Switch to ..." action: the currentVis is rebuilt with a
+         * different layout (which remounts the plugin) but isVisualizationLoading
+         * is never set, exactly like tUpdateCurrentVisFromVisUiConfig does. */
+        act(() => {
+            const currentVis = store.getState().currentVis
+            if (isVisualizationEmpty(currentVis)) {
+                throw new Error('expected a loaded visualization')
+            }
+            store.dispatch(
+                setCurrentVis({
+                    ...currentVis,
+                    columns: [...currentVis.columns].reverse(),
+                })
+            )
+        })
+
+        // Loading state stays false because no visualization is being (re)loaded
+        await waitFor(() => {
+            expect(store.getState().loader.isVisualizationLoading).toBe(false)
+        })
+
+        // Table is removed from the DOM and the spinner is showing
+        await waitFor(() => {
+            expect(
+                screen.getByTestId('dhis2-uicore-circularloader')
+            ).toBeInTheDocument()
+            expect(
+                screen.queryByTestId('line-list-data-table')
+            ).not.toBeInTheDocument()
+        })
+
+        await deferredAnalytics.releaseAll()
+
+        // When analytics data comes in, the loader is removed and the table shows
+        await waitFor(() => {
+            expect(
+                screen.getByTestId('line-list-data-table')
+            ).toBeInTheDocument()
+            expect(
+                screen.queryByTestId('dhis2-uicore-circularloader')
+            ).not.toBeInTheDocument()
+            expect(mockOnResponsesReceived).toBeCalledTimes(2)
+        })
+    })
+
     it('should render the table and the loading spinner when paginating', async () => {
         const user = userEvent.setup()
         const { store } = await renderWithAppWrapper(
