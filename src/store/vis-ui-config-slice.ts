@@ -4,7 +4,7 @@ import {
     getDefaultItemsForDimension,
 } from '@modules/dimension'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import type { PayloadAction, UnknownAction } from '@reduxjs/toolkit'
 import type {
     AggregationType,
     Axis,
@@ -13,6 +13,7 @@ import type {
     OutputType,
     VisualizationType,
 } from '@types'
+import { getAppCachedDataFromAction } from './middleware-app-cached-data'
 import { setUiActiveDimensionModal } from './ui-slice'
 
 export type ConditionsObject = {
@@ -99,12 +100,17 @@ export const selectLayoutAllDimensionIds = createSelector(
  * modal does not get re-seeded on the next open. */
 const seedDefaultItemsIfAbsent = (
     state: VisUiConfigState,
-    compoundId: string
+    compoundId: string,
+    action: UnknownAction
 ) => {
     if (compoundId in state.itemsByDimension) {
         return
     }
-    const defaults = getDefaultItemsForDimension(compoundId)
+    const appCachedData = getAppCachedDataFromAction(action)
+    const defaults = getDefaultItemsForDimension(
+        compoundId,
+        appCachedData?.systemSettings.relativePeriod
+    )
     if (defaults) {
         state.itemsByDimension[compoundId] = defaults
     }
@@ -231,7 +237,7 @@ export const visUiConfigSlice = createSlice({
                 0,
                 dimensionId
             )
-            seedDefaultItemsIfAbsent(state, dimensionId)
+            seedDefaultItemsIfAbsent(state, dimensionId, action)
         },
         addVisUiConfigLayoutDimensions: (
             state,
@@ -259,7 +265,7 @@ export const visUiConfigSlice = createSlice({
                 ...dimensionIds
             )
             for (const dimensionId of dimensionIds) {
-                seedDefaultItemsIfAbsent(state, dimensionId)
+                seedDefaultItemsIfAbsent(state, dimensionId, action)
             }
         },
         moveVisUiConfigLayoutDimension: (
@@ -337,7 +343,7 @@ export const visUiConfigSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(setUiActiveDimensionModal, (state, action) => {
             if (action.payload !== null) {
-                seedDefaultItemsIfAbsent(state, action.payload)
+                seedDefaultItemsIfAbsent(state, action.payload, action)
             }
         })
     },

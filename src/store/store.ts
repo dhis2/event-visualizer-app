@@ -6,11 +6,22 @@ import type { AppCachedData, DataEngine, MetadataStore } from '@types'
 import { currentVisSlice } from './current-vis-slice'
 import { dimensionSelectionSlice } from './dimensions-selection-slice'
 import { loaderSlice } from './loader-slice'
+import { createAppCachedDataMiddleware } from './middleware-app-cached-data'
 import { listenerMiddleware } from './middleware-listener'
 import { navigationSlice } from './navigation-slice'
 import { savedVisSlice } from './saved-vis-slice'
 import { uiSlice } from './ui-slice'
 import { visUiConfigSlice } from './vis-ui-config-slice'
+
+/* appCachedDataMiddleware stamps appCachedData onto every action; skip
+ * serializing it on each dispatch. meta.arg and meta.baseQueryMeta are RTK
+ * Query's own defaults, restored here because providing ignoredActionPaths
+ * replaces them. */
+export const IGNORED_SERIALIZABLE_ACTION_PATHS = [
+    'meta.arg',
+    'meta.baseQueryMeta',
+    'meta.appCachedData',
+]
 
 export const getPreloadedState = (appCachedData: AppCachedData) => ({
     visUiConfig: {
@@ -42,8 +53,14 @@ export const createStore = (
                 thunk: {
                     extraArgument: { engine, metadataStore, appCachedData },
                 },
+                serializableCheck: {
+                    ignoredActionPaths: IGNORED_SERIALIZABLE_ACTION_PATHS,
+                },
             })
-                .prepend(listenerMiddleware.middleware)
+                .prepend(
+                    createAppCachedDataMiddleware(appCachedData),
+                    listenerMiddleware.middleware
+                )
                 .concat(api.middleware),
         preloadedState: getPreloadedState(appCachedData),
         devTools: isDebugMode(),

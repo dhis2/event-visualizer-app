@@ -12,6 +12,7 @@ const {
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
+    clearVisUiConfig,
 } = visUiConfigSlice.actions
 
 type RootState = { visUiConfig: VisUiConfigState }
@@ -488,5 +489,53 @@ describe('getVisUiConfigPlainItemIdsByDimension', () => {
             'stage1.dim1'
         )
         expect(first).toBe(second)
+    })
+})
+
+type AddDimensionAction = ReturnType<typeof addVisUiConfigLayoutDimension>
+
+const withRelativePeriod = (
+    action: AddDimensionAction,
+    relativePeriod: string
+): AddDimensionAction =>
+    ({
+        ...action,
+        meta: { appCachedData: { systemSettings: { relativePeriod } } },
+    }) as AddDimensionAction
+
+describe('seeding default items from the relative period in action meta', () => {
+    it('seeds a time dimension with the default relative period', () => {
+        const action = withRelativePeriod(
+            addVisUiConfigLayoutDimension({
+                axis: 'columns',
+                dimensionId: 'stage1.eventDate',
+            }),
+            'LAST_12_MONTHS'
+        )
+        const result = visUiConfigSlice.reducer(initialState, action)
+        expect(result.itemsByDimension['stage1.eventDate']).toEqual([
+            'LAST_12_MONTHS',
+        ])
+    })
+
+    it('does not seed a time dimension when meta carries no relative period', () => {
+        const action = addVisUiConfigLayoutDimension({
+            axis: 'columns',
+            dimensionId: 'stage1.eventDate',
+        })
+        const result = visUiConfigSlice.reducer(initialState, action)
+        expect(result.itemsByDimension).not.toHaveProperty('stage1.eventDate')
+    })
+})
+
+describe('clearVisUiConfig', () => {
+    it('resets items and layout to the initial state', () => {
+        const state = {
+            ...initialState,
+            itemsByDimension: { 'stage1.eventDate': ['LAST_12_MONTHS'] },
+            layout: { columns: ['stage1.eventDate'], filters: [], rows: [] },
+        }
+        const result = visUiConfigSlice.reducer(state, clearVisUiConfig())
+        expect(result).toEqual(initialState)
     })
 })
