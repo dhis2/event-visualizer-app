@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-10T14:25:39.903Z\n"
-"PO-Revision-Date: 2026-06-10T14:25:39.903Z\n"
+"POT-Creation-Date: 2026-06-11T08:36:04.474Z\n"
+"PO-Revision-Date: 2026-06-11T08:36:04.475Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -62,14 +62,26 @@ msgstr "Choose legends"
 msgid "Loading legends"
 msgstr "Loading legends"
 
-msgid "From stages with repeatable events, show values for this data element from:"
-msgstr "From stages with repeatable events, show values for this data element from:"
+msgid "From stages with repeatable events, show values from:"
+msgstr "From stages with repeatable events, show values from:"
 
-msgid "Most recent events:"
-msgstr "Most recent events:"
+msgid "Oldest events"
+msgstr "Oldest events"
 
-msgid "Oldest events:"
-msgstr "Oldest events:"
+msgid "Show fewer of the oldest events"
+msgstr "Show fewer of the oldest events"
+
+msgid "Show more of the oldest events"
+msgstr "Show more of the oldest events"
+
+msgid "Most recent events"
+msgstr "Most recent events"
+
+msgid "Show fewer of the most recent events"
+msgstr "Show fewer of the most recent events"
+
+msgid "Show more of the most recent events"
+msgstr "Show more of the most recent events"
 
 msgid "Hide"
 msgstr "Hide"
