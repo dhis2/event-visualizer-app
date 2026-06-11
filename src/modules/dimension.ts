@@ -12,6 +12,7 @@ import type {
     OutputType,
     Program,
     ProgramStage,
+    RelativePeriodEnum,
     TimeDimensionId,
     ValueType,
     VisualizationType,
@@ -52,11 +53,15 @@ export const extractPlainDimensionId = (compoundId?: string | null): string =>
     (compoundId ?? '').split('.').pop()!
 
 export const getDefaultItemsForDimension = (
-    dimensionId: string
+    dimensionId: string,
+    defaultRelativePeriod?: RelativePeriodEnum
 ): string[] | undefined => {
     const plainId = extractPlainDimensionId(dimensionId)
     if (plainId === 'ou' || plainId === 'enrollmentOu') {
         return [USER_ORGUNIT]
+    }
+    if (defaultRelativePeriod && isTimeDimensionId(plainId)) {
+        return [defaultRelativePeriod]
     }
     return undefined
 }

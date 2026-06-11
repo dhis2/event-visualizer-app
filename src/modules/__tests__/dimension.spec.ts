@@ -13,6 +13,7 @@ import {
     toEventVisualizationDimensionId,
     getCompoundDimensionId,
     getTrackedEntityTypeFixedDimensions,
+    getDefaultItemsForDimension,
 } from '../dimension'
 
 describe('getCreatedDimension', () => {
@@ -679,5 +680,35 @@ describe('getTrackedEntityTypeFixedDimensions', () => {
         })
 
         expect(fixedDimensions[0].id).toBe('custom-tet.enrollmentOu')
+    })
+})
+
+describe('getDefaultItemsForDimension', () => {
+    it('defaults org unit dimensions to the current user org unit', () => {
+        expect(getDefaultItemsForDimension('stage1.ou')).toEqual([
+            'USER_ORGUNIT',
+        ])
+        expect(getDefaultItemsForDimension('program1.enrollmentOu')).toEqual([
+            'USER_ORGUNIT',
+        ])
+    })
+
+    it('defaults time dimensions to the provided relative period', () => {
+        expect(
+            getDefaultItemsForDimension('stage1.eventDate', 'LAST_12_MONTHS')
+        ).toEqual(['LAST_12_MONTHS'])
+        expect(
+            getDefaultItemsForDimension('program1.enrollmentDate', 'THIS_YEAR')
+        ).toEqual(['THIS_YEAR'])
+    })
+
+    it('returns no default for a time dimension when no relative period is given', () => {
+        expect(getDefaultItemsForDimension('stage1.eventDate')).toBeUndefined()
+    })
+
+    it('returns no default for non-org-unit, non-time dimensions', () => {
+        expect(
+            getDefaultItemsForDimension('stage1.dataElement1', 'LAST_12_MONTHS')
+        ).toBeUndefined()
     })
 })
