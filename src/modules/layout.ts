@@ -235,6 +235,12 @@ export const getInvalidAxesForDimension = (
     dim: Partial<Pick<DimensionMetadataItem, 'dimensionType' | 'valueType'>>,
     visType: VisualizationType
 ): ReadonlySet<Axis> => {
+    /* TEMPORARY: the dimension-disabling mechanism is being reworked, so for
+     * now no axis is ever invalid. This is the single chokepoint feeding drag,
+     * chip submenus, the add-to-layout button, and vis-type conversion. Remove
+     * this early return to restore the aggregatability rules below. */
+    return EMPTY_AXIS_SET
+
     if (visType === 'PIVOT_TABLE' && !isDimensionAggregatable(dim)) {
         return COLUMNS_AND_ROWS
     }
