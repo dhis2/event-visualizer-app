@@ -131,21 +131,19 @@ export const useResizeHandle = ({
              * grab, so adding chips (which the cached size at mount can't see)
              * lets the panel be dragged taller. The content carries its own
              * trailing drop-row buffer in CSS. */
-            const contentSize = node
-                ? horizontal
-                    ? node.scrollHeight
-                    : node.scrollWidth
-                : max
+            let contentSize = max
+            if (node) {
+                contentSize = horizontal ? node.scrollHeight : node.scrollWidth
+            }
             dragMaxRef.current = Math.min(contentSize, max)
 
             /* When the panel has no explicit size (after a double-click reset)
              * fall back to its rendered size so the drag starts smoothly
              * instead of jumping to the min. */
-            const renderedSize = node
-                ? horizontal
-                    ? node.clientHeight
-                    : node.clientWidth
-                : null
+            let renderedSize: number | null = null
+            if (node) {
+                renderedSize = horizontal ? node.clientHeight : node.clientWidth
+            }
             preDragSizeRef.current = sizeRef.current ?? renderedSize
             dragStartPosRef.current = horizontal ? event.clientY : event.clientX
 
