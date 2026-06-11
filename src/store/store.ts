@@ -6,16 +6,17 @@ import type { AppCachedData, DataEngine, MetadataStore } from '@types'
 import { currentVisSlice } from './current-vis-slice'
 import { dimensionSelectionSlice } from './dimensions-selection-slice'
 import { loaderSlice } from './loader-slice'
-import { createAppConfigMiddleware } from './middleware-app-config'
+import { createAppCachedDataMiddleware } from './middleware-app-cached-data'
 import { listenerMiddleware } from './middleware-listener'
 import { navigationSlice } from './navigation-slice'
 import { savedVisSlice } from './saved-vis-slice'
 import { uiSlice } from './ui-slice'
 import { visUiConfigSlice } from './vis-ui-config-slice'
 
-/* appConfigMiddleware stamps appCachedData onto every action; skip serializing
- * it on each dispatch. meta.arg and meta.baseQueryMeta are RTK Query's own
- * defaults, restored here because providing ignoredActionPaths replaces them. */
+/* appCachedDataMiddleware stamps appCachedData onto every action; skip
+ * serializing it on each dispatch. meta.arg and meta.baseQueryMeta are RTK
+ * Query's own defaults, restored here because providing ignoredActionPaths
+ * replaces them. */
 export const IGNORED_SERIALIZABLE_ACTION_PATHS = [
     'meta.arg',
     'meta.baseQueryMeta',
@@ -57,7 +58,7 @@ export const createStore = (
                 },
             })
                 .prepend(
-                    createAppConfigMiddleware(appCachedData),
+                    createAppCachedDataMiddleware(appCachedData),
                     listenerMiddleware.middleware
                 )
                 .concat(api.middleware),

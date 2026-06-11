@@ -13,7 +13,7 @@ import type {
     OutputType,
     VisualizationType,
 } from '@types'
-import { getAppCachedData } from './middleware-app-config'
+import { getAppCachedData } from './middleware-app-cached-data'
 import { setUiActiveDimensionModal } from './ui-slice'
 
 export type ConditionsObject = {

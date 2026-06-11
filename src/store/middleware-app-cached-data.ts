@@ -2,12 +2,12 @@ import { isAction } from '@reduxjs/toolkit'
 import type { Middleware, UnknownAction } from '@reduxjs/toolkit'
 import type { AppCachedData } from '@types'
 
-type AppConfigMeta = { appCachedData: AppCachedData }
+type AppCachedDataMeta = { appCachedData: AppCachedData }
 
 /* Stamps the session's appCachedData onto every action's meta, making it
  * reachable from reducers (which cannot see the thunk extraArgument). Read it
  * back with getAppCachedData. */
-export const createAppConfigMiddleware =
+export const createAppCachedDataMiddleware =
     (appCachedData: AppCachedData): Middleware =>
     () =>
     (next) =>
@@ -16,11 +16,11 @@ export const createAppConfigMiddleware =
             return next(action)
         }
         const existingMeta = (action as { meta?: object }).meta
-        const meta: AppConfigMeta = { ...existingMeta, appCachedData }
+        const meta: AppCachedDataMeta = { ...existingMeta, appCachedData }
         return next({ ...action, meta })
     }
 
 export const getAppCachedData = (
-    action: { meta?: Partial<AppConfigMeta> } | UnknownAction
+    action: { meta?: Partial<AppCachedDataMeta> } | UnknownAction
 ): AppCachedData | undefined =>
-    (action as { meta?: Partial<AppConfigMeta> }).meta?.appCachedData
+    (action as { meta?: Partial<AppCachedDataMeta> }).meta?.appCachedData

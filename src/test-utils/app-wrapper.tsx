@@ -14,7 +14,7 @@ import type { ReducersMapObject } from '@reduxjs/toolkit'
 import { currentVisSlice } from '@store/current-vis-slice'
 import { dimensionSelectionSlice } from '@store/dimensions-selection-slice'
 import { loaderSlice } from '@store/loader-slice'
-import { createAppConfigMiddleware } from '@store/middleware-app-config'
+import { createAppCachedDataMiddleware } from '@store/middleware-app-cached-data'
 import { listenerMiddleware } from '@store/middleware-listener'
 import { navigationSlice } from '@store/navigation-slice'
 import { savedVisSlice } from '@store/saved-vis-slice'
@@ -134,7 +134,7 @@ const createPartialStore = ({
                 },
             })
                 .prepend(
-                    createAppConfigMiddleware(appCachedData),
+                    createAppCachedDataMiddleware(appCachedData),
                     listenerMiddleware.middleware
                 )
                 .concat(api.middleware),

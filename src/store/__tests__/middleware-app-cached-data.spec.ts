@@ -2,9 +2,9 @@ import type { UnknownAction } from '@reduxjs/toolkit'
 import type { AppCachedData } from '@types'
 import { describe, it, expect, vi } from 'vitest'
 import {
-    createAppConfigMiddleware,
+    createAppCachedDataMiddleware,
     getAppCachedData,
-} from '../middleware-app-config'
+} from '../middleware-app-cached-data'
 
 const appCachedData = {
     systemSettings: { relativePeriod: 'LAST_12_MONTHS' },
@@ -12,13 +12,13 @@ const appCachedData = {
 
 const runMiddleware = (action: unknown) => {
     const next = vi.fn((a: unknown) => a)
-    const dispatched = createAppConfigMiddleware(appCachedData)({} as never)(
-        next
-    )(action)
+    const dispatched = createAppCachedDataMiddleware(appCachedData)(
+        {} as never
+    )(next)(action)
     return { next, dispatched }
 }
 
-describe('createAppConfigMiddleware', () => {
+describe('createAppCachedDataMiddleware', () => {
     it('stamps appCachedData onto a plain action meta', () => {
         const { next } = runMiddleware({ type: 'test/action' })
         const stamped = next.mock.calls[0][0] as UnknownAction
