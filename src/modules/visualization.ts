@@ -2,6 +2,7 @@ import { getRequestOptions } from '@components/plugin-wrapper/hooks/query-tools-
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { layoutGetAllDimensions } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
+import { REPETITION_INDEX_PATTERN } from '@modules/metadata-store/dimension'
 import type {
     ApiSavedVisualization,
     DimensionArray,
@@ -118,7 +119,11 @@ export const analyticsHeaderToCanonicalDimensionId = (
 
     const lastDotIndex = headerName.lastIndexOf('.')
     const prefix =
-        lastDotIndex === -1 ? undefined : headerName.slice(0, lastDotIndex)
+        lastDotIndex === -1
+            ? undefined
+            : headerName
+                  .slice(0, lastDotIndex)
+                  .replace(REPETITION_INDEX_PATTERN, '')
     const wireDim =
         lastDotIndex === -1 ? headerName : headerName.slice(lastDotIndex + 1)
 
