@@ -492,23 +492,33 @@ describe('getVisUiConfigPlainItemIdsByDimension', () => {
     })
 })
 
-describe('seeding default items from defaultRelativePeriod', () => {
+type AddDimensionAction = ReturnType<typeof addVisUiConfigLayoutDimension>
+
+const withRelativePeriod = (
+    action: AddDimensionAction,
+    relativePeriod: string
+): AddDimensionAction =>
+    ({
+        ...action,
+        meta: { appCachedData: { systemSettings: { relativePeriod } } },
+    }) as AddDimensionAction
+
+describe('seeding default items from the relative period in action meta', () => {
     it('seeds a time dimension with the default relative period', () => {
-        const state = {
-            ...initialState,
-            defaultRelativePeriod: 'LAST_12_MONTHS' as const,
-        }
-        const action = addVisUiConfigLayoutDimension({
-            axis: 'columns',
-            dimensionId: 'stage1.eventDate',
-        })
-        const result = visUiConfigSlice.reducer(state, action)
+        const action = withRelativePeriod(
+            addVisUiConfigLayoutDimension({
+                axis: 'columns',
+                dimensionId: 'stage1.eventDate',
+            }),
+            'LAST_12_MONTHS'
+        )
+        const result = visUiConfigSlice.reducer(initialState, action)
         expect(result.itemsByDimension['stage1.eventDate']).toEqual([
             'LAST_12_MONTHS',
         ])
     })
 
-    it('does not seed a time dimension when no default relative period is set', () => {
+    it('does not seed a time dimension when meta carries no relative period', () => {
         const action = addVisUiConfigLayoutDimension({
             axis: 'columns',
             dimensionId: 'stage1.eventDate',
@@ -519,16 +529,13 @@ describe('seeding default items from defaultRelativePeriod', () => {
 })
 
 describe('clearVisUiConfig', () => {
-    it('resets the config but preserves defaultRelativePeriod', () => {
+    it('resets items and layout to the initial state', () => {
         const state = {
             ...initialState,
-            defaultRelativePeriod: 'LAST_12_MONTHS' as const,
             itemsByDimension: { 'stage1.eventDate': ['LAST_12_MONTHS'] },
             layout: { columns: ['stage1.eventDate'], filters: [], rows: [] },
         }
         const result = visUiConfigSlice.reducer(state, clearVisUiConfig())
-        expect(result.defaultRelativePeriod).toBe('LAST_12_MONTHS')
-        expect(result.itemsByDimension).toEqual({})
-        expect(result.layout).toEqual(initialState.layout)
+        expect(result).toEqual(initialState)
     })
 })

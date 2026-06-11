@@ -4,16 +4,16 @@ import {
     getDefaultItemsForDimension,
 } from '@modules/dimension'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import type { PayloadAction, UnknownAction } from '@reduxjs/toolkit'
 import type {
     AggregationType,
     Axis,
     EventVisualizationOptions,
     Layout,
     OutputType,
-    RelativePeriodEnum,
     VisualizationType,
 } from '@types'
+import { getAppCachedData } from './middleware-app-config'
 import { setUiActiveDimensionModal } from './ui-slice'
 
 export type ConditionsObject = {
@@ -50,9 +50,6 @@ export interface VisUiConfigState {
     customValue?: CustomValueObject
     repetitionsByDimension: Record<string, RepetitionsObject | undefined>
     options: EventVisualizationOptions
-    /* Mirror of appCachedData.systemSettings.relativePeriod, in state so
-     * reducers can use it as the default for period dimensions. */
-    defaultRelativePeriod?: RelativePeriodEnum
 }
 
 export const initialState: VisUiConfigState = {
@@ -103,14 +100,16 @@ export const selectLayoutAllDimensionIds = createSelector(
  * modal does not get re-seeded on the next open. */
 const seedDefaultItemsIfAbsent = (
     state: VisUiConfigState,
-    compoundId: string
+    compoundId: string,
+    action: UnknownAction
 ) => {
     if (compoundId in state.itemsByDimension) {
         return
     }
+    const appCachedData = getAppCachedData(action)
     const defaults = getDefaultItemsForDimension(
         compoundId,
-        state.defaultRelativePeriod
+        appCachedData?.systemSettings.relativePeriod
     )
     if (defaults) {
         state.itemsByDimension[compoundId] = defaults
@@ -135,10 +134,7 @@ export const visUiConfigSlice = createSlice({
     name: 'visUiConfig',
     initialState,
     reducers: {
-        clearVisUiConfig: (state) => ({
-            ...initialState,
-            defaultRelativePeriod: state.defaultRelativePeriod,
-        }),
+        clearVisUiConfig: () => initialState,
         setVisUiConfig: (
             state,
             action: PayloadAction<Partial<VisUiConfigState>>
@@ -241,7 +237,7 @@ export const visUiConfigSlice = createSlice({
                 0,
                 dimensionId
             )
-            seedDefaultItemsIfAbsent(state, dimensionId)
+            seedDefaultItemsIfAbsent(state, dimensionId, action)
         },
         addVisUiConfigLayoutDimensions: (
             state,
@@ -269,7 +265,7 @@ export const visUiConfigSlice = createSlice({
                 ...dimensionIds
             )
             for (const dimensionId of dimensionIds) {
-                seedDefaultItemsIfAbsent(state, dimensionId)
+                seedDefaultItemsIfAbsent(state, dimensionId, action)
             }
         },
         moveVisUiConfigLayoutDimension: (
@@ -347,7 +343,7 @@ export const visUiConfigSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(setUiActiveDimensionModal, (state, action) => {
             if (action.payload !== null) {
-                seedDefaultItemsIfAbsent(state, action.payload)
+                seedDefaultItemsIfAbsent(state, action.payload, action)
             }
         })
     },

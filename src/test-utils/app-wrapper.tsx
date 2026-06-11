@@ -14,10 +14,12 @@ import type { ReducersMapObject } from '@reduxjs/toolkit'
 import { currentVisSlice } from '@store/current-vis-slice'
 import { dimensionSelectionSlice } from '@store/dimensions-selection-slice'
 import { loaderSlice } from '@store/loader-slice'
+import { createAppConfigMiddleware } from '@store/middleware-app-config'
 import { listenerMiddleware } from '@store/middleware-listener'
 import { navigationSlice } from '@store/navigation-slice'
 import { savedVisSlice } from '@store/saved-vis-slice'
 import {
+    IGNORED_SERIALIZABLE_ACTION_PATHS,
     createStore as createDefaultStore,
     getPreloadedState as getDefaultPreloadedState,
 } from '@store/store'
@@ -127,8 +129,14 @@ const createPartialStore = ({
                 thunk: {
                     extraArgument: { engine, metadataStore, appCachedData },
                 },
+                serializableCheck: {
+                    ignoredActionPaths: IGNORED_SERIALIZABLE_ACTION_PATHS,
+                },
             })
-                .prepend(listenerMiddleware.middleware)
+                .prepend(
+                    createAppConfigMiddleware(appCachedData),
+                    listenerMiddleware.middleware
+                )
                 .concat(api.middleware),
     })
 }
