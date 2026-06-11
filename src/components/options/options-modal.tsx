@@ -11,6 +11,8 @@ import {
 } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getOptionsTabsForVisType } from '@modules/options'
+import { isVisualizationEmpty } from '@modules/visualization'
+import { getCurrentVis } from '@store/current-vis-slice'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import type { OptionsTabKey } from '@types'
@@ -27,6 +29,7 @@ export const OptionsModal: FC<OptionsModalProps> = ({ onClose }) => {
     const dispatch = useAppDispatch()
 
     const visType = useAppSelector(getVisUiConfigVisualizationType)
+    const currentVis = useAppSelector(getCurrentVis)
 
     const [activeTabKey, setActiveTabKey] = useState<OptionsTabKey>('data')
 
@@ -82,6 +85,7 @@ export const OptionsModal: FC<OptionsModalProps> = ({ onClose }) => {
                         form={FORM_ID}
                         type="submit"
                         primary
+                        disabled={isVisualizationEmpty(currentVis)}
                     >
                         {i18n.t('Update')}
                     </Button>
