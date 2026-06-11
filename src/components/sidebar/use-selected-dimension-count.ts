@@ -15,7 +15,10 @@ export const useSelectedDimensionCount = (
     )
     const selectedDimensions = useMetadataItems(selectedDimensionIds)
     const filteredSelectedDimensions = useMemo(
-        () => Object.values(selectedDimensions).filter(matchFn),
+        () =>
+            (
+                Object.values(selectedDimensions) as DimensionMetadataItem[]
+            ).filter(matchFn),
         [selectedDimensions, matchFn]
     )
 

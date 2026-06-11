@@ -1,4 +1,5 @@
 import { useRtkMutation } from '@hooks'
+import type { ChangeEvent } from 'react'
 import { useState, useCallback } from 'react'
 
 export const DashboardExample = () => {
@@ -8,7 +9,7 @@ export const DashboardExample = () => {
         useRtkMutation()
 
     // Handle input change
-    const handleNameChange = useCallback((e) => {
+    const handleNameChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setDashboardName(e.target.value)
     }, [])
 

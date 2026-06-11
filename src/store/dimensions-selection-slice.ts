@@ -118,10 +118,12 @@ export const dimensionSelectionSlice = createSlice({
                 return
             }
             const areAllCollapsed = dimensionCardCollapsedStatesKeys.every(
-                (key) => state.dimensionCardCollapsedStates[key]
+                (key) =>
+                    state.dimensionCardCollapsedStates[key as DimensionCardKey]
             )
             dimensionCardCollapsedStatesKeys.forEach((key) => {
-                state.dimensionCardCollapsedStates[key] = !areAllCollapsed
+                state.dimensionCardCollapsedStates[key as DimensionCardKey] =
+                    !areAllCollapsed
             })
         },
         toggleDimensionCardIsCollapsed: (

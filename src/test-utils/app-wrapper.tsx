@@ -10,7 +10,7 @@ import { CustomDataProvider, useDataEngine } from '@dhis2/app-runtime'
 import { CssVariables } from '@dhis2/ui'
 import { useMetadataStore } from '@hooks'
 import { configureStore } from '@reduxjs/toolkit'
-import type { ReducersMapObject } from '@reduxjs/toolkit'
+import type { ReducersMapObject, UnknownAction } from '@reduxjs/toolkit'
 import { currentVisSlice } from '@store/current-vis-slice'
 import { dimensionSelectionSlice } from '@store/dimensions-selection-slice'
 import { loaderSlice } from '@store/loader-slice'
@@ -113,11 +113,15 @@ const createPartialStore = ({
     appCachedData,
 }: CreatePartialStoreParams) => {
     return configureStore({
+        /* configureStore infers the PreloadedState generic as Partial<RootState>
+         * from `preloadedState`, so the reducer map's PreloadedState must match.
+         * ReducersMapObject's default PreloadedState is the full RootState, which
+         * trips strict reducer-variance checks — pin it to Partial<RootState>. */
         reducer: {
             [api.reducerPath]: api.reducer,
             dimensionSelection: dimensionSelectionSlice.reducer,
             ...(partialStore.reducer ?? fullAppReducer),
-        } as ReducersMapObject<RootState>,
+        } as ReducersMapObject<RootState, UnknownAction, Partial<RootState>>,
         preloadedState: partialStore.reducer
             ? partialStore.preloadedState
             : deepmerge(

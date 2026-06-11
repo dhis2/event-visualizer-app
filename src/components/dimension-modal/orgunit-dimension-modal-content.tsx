@@ -37,20 +37,25 @@ export const OrgUnitDimensionModalContent: FC<
     )
 
     const updateOrgUnitDimensionItems = useCallback(
-        ({ items }) => {
-            const { uiItems, metadata } = items.reduce(
+        ({ items }: { items: OrgUnit[] }) => {
+            const { uiItems, metadata } = items.reduce<{
+                uiItems: string[]
+                metadata: Record<string, OrgUnit>
+            }>(
                 (acc, item) => {
-                    acc.uiItems.push(item.id)
+                    const itemId = item.id as string
 
-                    const ouUid = ouIdHelper.removePrefix(item.id)
+                    acc.uiItems.push(itemId)
 
-                    const ouMetadata = {
+                    const ouUid = ouIdHelper.removePrefix(itemId)
+
+                    const ouMetadata: OrgUnit = {
                         id: ouUid,
                         name: item.name,
                     }
 
                     if (item.path) {
-                        ouMetadata['path'] = item.path
+                        ouMetadata.path = item.path
                     }
 
                     acc.metadata[ouUid] = ouMetadata

@@ -3,7 +3,7 @@ import type { FC } from 'react'
 
 type PeriodDimensionOnSelectPayload = {
     dimensionId: string
-    items: string[]
+    items: { id: string; name?: string }[]
 }
 
 type PeriodDimensionProps = {

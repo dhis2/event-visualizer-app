@@ -350,7 +350,7 @@ export const getBooleanConditionTexts = (
     conditionsList: string[]
 ): string[] => {
     const values = parseCondition(conditionsList[0]) ?? []
-    return values.map((value) => getBooleanValues()[value])
+    return values.map((value) => getBooleanValues()[value as BooleanValue])
 }
 
 export const getOrgUnitConditionMetadataIds = (
@@ -405,7 +405,7 @@ export const getOperatorConditionTexts = (
             value = value.replaceAll(API_DATETIME_DIVIDER, UI_DATETIME_DIVIDER)
         }
 
-        const operatorName = operators[operator]
+        const operatorName = operators[operator as keyof typeof operators]
 
         if (typeof operatorName === 'string' && operatorName.length > 0) {
             const capitalCaseOperatorName =

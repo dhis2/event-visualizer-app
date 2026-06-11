@@ -51,7 +51,7 @@ const BaseCondition: FC<
     const hasValueInput = Boolean(operator && !operator.includes(NULL_VALUE))
 
     const setOperator = useCallback(
-        (input) => {
+        (input: QueryOperator) => {
             if (input.includes(NULL_VALUE)) {
                 onChange(`${input}`)
             } else {
@@ -67,7 +67,7 @@ const BaseCondition: FC<
     )
 
     const setValue = useCallback(
-        (input) => {
+        (input?: string) => {
             onChange(
                 `${addCaseSensitivePrefix(operator, isCaseSensitive)}:${
                     input || ''
@@ -78,7 +78,7 @@ const BaseCondition: FC<
     )
 
     const toggleCaseSensitive = useCallback(
-        (cs) => {
+        (cs: boolean) => {
             onChange(`${addCaseSensitivePrefix(operator, cs)}:${value || ''}`)
         },
         [onChange, operator, value]
@@ -90,7 +90,9 @@ const BaseCondition: FC<
                 selected={operator}
                 placeholder={i18n.t('Choose a filter type')}
                 dense
-                onChange={({ selected }) => setOperator(selected)}
+                onChange={({ selected }) =>
+                    setOperator(selected as QueryOperator)
+                }
                 className={classes.operatorSelect}
             >
                 {Object.entries(getAlphaNumericOperators()).map(

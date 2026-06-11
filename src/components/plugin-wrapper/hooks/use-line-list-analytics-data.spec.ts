@@ -21,7 +21,7 @@ const analyticsResponse = {
             s2: { name: 'Baby Postnatal' },
         },
     },
-}
+} as unknown as Parameters<typeof extractHeaders>[0]
 
 const buildMetadataStore = (
     scheduledDateName: string
@@ -74,7 +74,7 @@ describe('extractHeaders', () => {
             analyticsResponse.metaData
                 .items as unknown as AnalyticsResponseMetadataItems,
             firstHeaders
-        )
+        ) as Record<string, { name?: string }>
 
         expect(metadataAfterUpdate['s1.scheduledDate'].name).toBe(
             'Scheduled date'

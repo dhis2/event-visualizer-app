@@ -16,7 +16,7 @@ type HeaderCellProps = LineListHeader & {
 
 type UiSortDirection = 'asc' | 'desc' | 'default'
 type HandleSortIconClickPayload = {
-    name: string
+    name?: string
     direction: UiSortDirection
 }
 
@@ -48,7 +48,7 @@ export const HeaderCell: FC<HeaderCellProps> = ({
                 uiSortDirection === 'asc' || uiSortDirection === 'desc'
                     ? (uiSortDirection.toUpperCase() as SortDirection)
                     : undefined
-            onDataSort({ dimension: name, direction })
+            onDataSort({ dimension: name!, direction })
         },
         [onDataSort]
     )
