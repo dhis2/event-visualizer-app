@@ -4,6 +4,7 @@ import {
     uiSlice,
     initialState,
     clearUi,
+    setUiUpdateAnimationShowingFor,
     toggleUiDetailsPanelVisible,
     toggleUiSidebarVisible,
     toggleUiLayoutPanelVisible,
@@ -12,6 +13,7 @@ import {
     getUiSidebarVisible,
     getUiLayoutPanelVisible,
     getUiDetailsPanelVisible,
+    getUiUpdateAnimationShowingFor,
 } from '../ui-slice'
 
 type RootState = {
@@ -233,6 +235,31 @@ describe('uiSlice', () => {
         })
     })
 
+    describe('setUiUpdateAnimationShowingFor', () => {
+        it('records the output type whose update button should animate', () => {
+            const state = reducer(
+                initialState,
+                setUiUpdateAnimationShowingFor('EVENT')
+            )
+
+            expect(state.updateAnimationShowingFor).toBe('EVENT')
+        })
+
+        it('clears the flag when set to null', () => {
+            const prevState: UiState = {
+                ...initialState,
+                updateAnimationShowingFor: 'ENROLLMENT',
+            }
+
+            const state = reducer(
+                prevState,
+                setUiUpdateAnimationShowingFor(null)
+            )
+
+            expect(state.updateAnimationShowingFor).toBeNull()
+        })
+    })
+
     describe('selectors', () => {
         it('getUiShowExpandedVisualizationCanvas returns true when all panels hidden', () => {
             const rootState = createRootState({
@@ -264,6 +291,14 @@ describe('uiSlice', () => {
             expect(getUiSidebarVisible(rootState)).toBe(true)
             expect(getUiLayoutPanelVisible(rootState)).toBe(false)
             expect(getUiDetailsPanelVisible(rootState)).toBe(true)
+        })
+
+        it('getUiUpdateAnimationShowingFor returns the stored output type', () => {
+            const rootState = createRootState({
+                updateAnimationShowingFor: 'EVENT',
+            })
+
+            expect(getUiUpdateAnimationShowingFor(rootState)).toBe('EVENT')
         })
     })
 })
