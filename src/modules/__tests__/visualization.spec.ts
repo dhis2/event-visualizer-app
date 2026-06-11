@@ -481,6 +481,21 @@ describe('analyticsHeaderToCanonicalDimensionId', () => {
         ).toBe(`${SID}.eventDate`)
     })
 
+    it('strips the repetition index from a repeated stage prefix', () => {
+        expect(
+            analyticsHeaderToCanonicalDimensionId(
+                `${SID}[-1].${UID}`,
+                buildVis()
+            )
+        ).toBe(`${SID}.${UID}`)
+        expect(
+            analyticsHeaderToCanonicalDimensionId(
+                `${SID}[0].${UID}`,
+                buildVis()
+            )
+        ).toBe(`${SID}.${UID}`)
+    })
+
     it('rewrites bare `ou` to `tetId.enrollmentOu` in TE', () => {
         const vis = buildVis({
             outputType: 'TRACKED_ENTITY_INSTANCE',
