@@ -113,10 +113,8 @@ const createPartialStore = ({
     appCachedData,
 }: CreatePartialStoreParams) => {
     return configureStore({
-        /* configureStore infers the PreloadedState generic as Partial<RootState>
-         * from `preloadedState`, so the reducer map's PreloadedState must match.
-         * ReducersMapObject's default PreloadedState is the full RootState, which
-         * trips strict reducer-variance checks — pin it to Partial<RootState>. */
+        // PreloadedState pinned to Partial<RootState> to match what
+        // configureStore infers from `preloadedState` under strict mode.
         reducer: {
             [api.reducerPath]: api.reducer,
             dimensionSelection: dimensionSelectionSlice.reducer,
