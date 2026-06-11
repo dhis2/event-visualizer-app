@@ -1,7 +1,7 @@
 import { CustomValueModal } from '@components/layout-panel/custom-value-modal'
 import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
-import { IconSettings16, IconSync16, Tooltip } from '@dhis2/ui'
+import { IconSettings16, Tooltip } from '@dhis2/ui'
 import {
     useAppDispatch,
     useAppSelector,
@@ -22,7 +22,9 @@ import {
     type ReactElement,
 } from 'react'
 import classes from './styles/action-buttons.module.css'
+import { UpdateSyncIcon } from './update-sync-icon'
 import { useActionButton } from './use-action-button'
+import { useUpdateAnimation } from './use-update-animation'
 
 const DEFAULT_TOOLTIP_OPEN_DELAY = 500
 
@@ -61,6 +63,7 @@ export const CustomValueButton: FC = () => {
         'CUSTOM_VALUE'
     )
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const { isAnimating } = useUpdateAnimation('EVENT')
     const isButtonReady = Boolean(
         customValue?.id && customValue?.aggregationType
     )
@@ -145,7 +148,9 @@ export const CustomValueButton: FC = () => {
                                 [classes.splitStart]: isButtonReady,
                             })}
                         >
-                            {action === 'update' && <IconSync16 />}
+                            {action === 'update' && (
+                                <UpdateSyncIcon isAnimating={isAnimating} />
+                            )}
                             {label}
                         </button>
                     </WithTooltip>

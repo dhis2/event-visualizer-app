@@ -1,4 +1,4 @@
-import { IconSync16, Tooltip } from '@dhis2/ui'
+import { Tooltip } from '@dhis2/ui'
 import { useAppDispatch } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { setVisUiConfigOutputType } from '@store/vis-ui-config-slice'
@@ -6,6 +6,8 @@ import type { OutputType } from '@types'
 import cx from 'classnames'
 import { type FC } from 'react'
 import classes from './styles/action-buttons.module.css'
+import { UpdateSyncIcon } from './update-sync-icon'
+import { useUpdateAnimation } from './use-update-animation'
 
 export type ButtonAction = 'create' | 'switch' | 'update'
 
@@ -27,6 +29,7 @@ const BaseButton: FC<BaseButtonProps> = ({
     type,
 }) => {
     const dispatch = useAppDispatch()
+    const { isAnimating } = useUpdateAnimation(type)
 
     const onClick = () => {
         dispatch(setVisUiConfigOutputType(type))
@@ -45,7 +48,9 @@ const BaseButton: FC<BaseButtonProps> = ({
             })}
             {...tooltipProps}
         >
-            {action === 'update' && <IconSync16 />}
+            {action === 'update' && (
+                <UpdateSyncIcon isAnimating={isAnimating} />
+            )}
             {label}
         </button>
     )
