@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { Input } from '@dhis2/ui'
+import { Button, IconAdd24, IconSubtract24 } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     DEFAULT_REPETITIONS_OBJECT,
@@ -14,6 +14,63 @@ type RepeatedEventsTabContentProps = {
     dimensionId: string
 }
 
+const MIN_TOTAL_EVENTS = 1
+
+const getMinCount = (otherCount: number) =>
+    Math.max(0, MIN_TOTAL_EVENTS - otherCount)
+
+type RepetitionStepperProps = {
+    label: string
+    value: number
+    minValue: number
+    decrementLabel: string
+    incrementLabel: string
+    onChange: (value: number) => void
+    dataTest: string
+}
+
+const RepetitionStepper: FC<RepetitionStepperProps> = ({
+    label,
+    value,
+    minValue,
+    decrementLabel,
+    incrementLabel,
+    onChange,
+    dataTest,
+}) => (
+    <div
+        className={classes.repeatableCard}
+        data-active={value > 0}
+        data-test={`${dataTest}-card`}
+    >
+        <span className={classes.repeatableCardHeader}>{label}</span>
+        <div className={classes.repeatableStepper}>
+            <Button
+                secondary
+                icon={<IconSubtract24 />}
+                onClick={() => onChange(value - 1)}
+                disabled={value <= minValue}
+                aria-label={decrementLabel}
+                dataTest={`${dataTest}-decrement`}
+            />
+            <span
+                className={classes.repeatableValue}
+                data-test={`${dataTest}-value`}
+                aria-live="polite"
+            >
+                {value}
+            </span>
+            <Button
+                secondary
+                icon={<IconAdd24 />}
+                onClick={() => onChange(value + 1)}
+                aria-label={incrementLabel}
+                dataTest={`${dataTest}-increment`}
+            />
+        </div>
+    </div>
+)
+
 export const RepeatedEventsTabContent: FC<RepeatedEventsTabContentProps> = ({
     dimensionId,
 }) => {
@@ -22,11 +79,6 @@ export const RepeatedEventsTabContent: FC<RepeatedEventsTabContentProps> = ({
     const { mostRecent, oldest } = useAppSelector((state) =>
         getVisUiConfigRepetitionsByDimension(state, dimensionId)
     )
-
-    const parseInput = useCallback((value) => {
-        const parsedValue = parseInt(value, 10)
-        return parsedValue > 0 ? parsedValue : 0
-    }, [])
 
     const updateRepetitions = useCallback(
         (repetitions: RepetitionsObject) => {
@@ -37,7 +89,6 @@ export const RepeatedEventsTabContent: FC<RepeatedEventsTabContentProps> = ({
                 repetitions.mostRecent === defaultMostRecent &&
                 repetitions.oldest === defaultOldest
             ) {
-                // Remove repetitions configuration when the selection matches the default
                 dispatch(setVisUiConfigRepetitionsByDimension({ dimensionId }))
             } else {
                 dispatch(
@@ -51,57 +102,49 @@ export const RepeatedEventsTabContent: FC<RepeatedEventsTabContentProps> = ({
         [dimensionId, dispatch]
     )
 
-    const onMostRecentChange = useCallback(
-        (value) => updateRepetitions({ mostRecent: parseInput(value), oldest }),
-        [oldest, parseInput, updateRepetitions]
+    const onOldestChange = useCallback(
+        (oldestValue: number) =>
+            updateRepetitions({ mostRecent, oldest: oldestValue }),
+        [mostRecent, updateRepetitions]
     )
 
-    const onOldestChange = useCallback(
-        (value) => updateRepetitions({ mostRecent, oldest: parseInput(value) }),
-        [mostRecent, parseInput, updateRepetitions]
+    const onMostRecentChange = useCallback(
+        (mostRecentValue: number) =>
+            updateRepetitions({ mostRecent: mostRecentValue, oldest }),
+        [oldest, updateRepetitions]
     )
 
     return (
         <div>
-            <p className={classes.paragraph}>
+            <p className={classes.repeatableIntro}>
                 {i18n.t(
-                    'From stages with repeatable events, show values for this data element from:',
+                    'From stages with repeatable events, show values from:',
                     { nsSeparator: '^^' }
                 )}
             </p>
-            <div>
-                <div className={classes.repeatableWrapper}>
-                    <p className={classes.paragraph}>
-                        {i18n.t('Most recent events:', {
-                            nsSeparator: '^^',
-                        })}
-                    </p>
-                    <Input
-                        type="number"
-                        dense
-                        className={classes.repeatableInput}
-                        value={mostRecent.toString()}
-                        onChange={({ value }) => onMostRecentChange(value)}
-                        min="0"
-                        dataTest="most-recent-input"
-                    />
-                </div>
-                <div className={classes.repeatableWrapper}>
-                    <p className={classes.paragraph}>
-                        {i18n.t('Oldest events:', {
-                            nsSeparator: '^^',
-                        })}
-                    </p>
-                    <Input
-                        type="number"
-                        dense
-                        className={classes.repeatableInput}
-                        value={oldest.toString()}
-                        onChange={({ value }) => onOldestChange(value)}
-                        min="0"
-                        dataTest="oldest-input"
-                    />
-                </div>
+            <div className={classes.repeatableCards}>
+                <RepetitionStepper
+                    label={i18n.t('Oldest events')}
+                    value={oldest}
+                    minValue={getMinCount(mostRecent)}
+                    decrementLabel={i18n.t('Show fewer of the oldest events')}
+                    incrementLabel={i18n.t('Show more of the oldest events')}
+                    onChange={onOldestChange}
+                    dataTest="oldest"
+                />
+                <RepetitionStepper
+                    label={i18n.t('Most recent events')}
+                    value={mostRecent}
+                    minValue={getMinCount(oldest)}
+                    decrementLabel={i18n.t(
+                        'Show fewer of the most recent events'
+                    )}
+                    incrementLabel={i18n.t(
+                        'Show more of the most recent events'
+                    )}
+                    onChange={onMostRecentChange}
+                    dataTest="most-recent"
+                />
             </div>
         </div>
     )
