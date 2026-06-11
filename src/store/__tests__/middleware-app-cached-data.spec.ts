@@ -11,10 +11,10 @@ const appCachedData = {
 } as unknown as AppCachedData
 
 const runMiddleware = (action: unknown) => {
+    const storeApi = { dispatch: vi.fn(), getState: vi.fn() }
     const next = vi.fn((a: unknown) => a)
-    const dispatched = createAppCachedDataMiddleware(appCachedData)(
-        {} as never
-    )(next)(action)
+    const dispatched =
+        createAppCachedDataMiddleware(appCachedData)(storeApi)(next)(action)
     return { next, dispatched }
 }
 
