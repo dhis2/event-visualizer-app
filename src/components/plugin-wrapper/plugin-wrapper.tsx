@@ -95,10 +95,8 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     }, [isVisualizationLoading])
 
     useEffect(() => {
-        // layoutKey changes remount the plugin (it is its key), which discards
-        // the table and re-fetches analytics. Reset hasAnalyticsData so the
-        // spinner shows over the blank canvas until the new response arrives —
-        // these layout switches never set isVisualizationLoading.
+        /* The visualization type specific plugin component remount when the layoutKey
+         * changes so this means the local state in this wrapper also needs to reset */
         setHasAnalyticsData(false)
     }, [layoutKey])
 
