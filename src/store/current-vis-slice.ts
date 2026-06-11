@@ -48,19 +48,9 @@ export const currentVisSlice = createSlice({
         getCurrentVis: (state) => state,
         getCurrentVisId: (state) =>
             isCurrentVisualizationPersisted(state) ? state.id : null,
-        getIsCurrentVisCustomValueList: (state) =>
-            Boolean(
-                state.type === 'PIVOT_TABLE' &&
-                state.outputType === 'EVENT' &&
-                state.value?.id
-            ),
     },
 })
 
 export const { clearCurrentVis, setCurrentVis, setCurrentVisNameDescription } =
     currentVisSlice.actions
-export const {
-    getCurrentVis,
-    getCurrentVisId,
-    getIsCurrentVisCustomValueList,
-} = currentVisSlice.selectors
+export const { getCurrentVis, getCurrentVisId } = currentVisSlice.selectors

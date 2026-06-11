@@ -63,7 +63,7 @@ export const CustomValueButton: FC = () => {
         'CUSTOM_VALUE'
     )
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const { isAnimating } = useUpdateAnimation('EVENT', true)
+    const { isAnimating } = useUpdateAnimation('EVENT')
     const isButtonReady = Boolean(
         customValue?.id && customValue?.aggregationType
     )
