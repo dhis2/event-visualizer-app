@@ -1,0 +1,39 @@
+.bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    inline-size: 100%;
+    white-space: nowrap;
+}
+
+.pageControls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.page {
+    min-inline-size: 16px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--colors-grey900);
+}
+
+.summary {
+    color: var(--colors-grey700);
+    font-size: 13px;
+}
+
+.menuAnchor {
+    margin-inline-start: auto;
+    position: relative;
+    display: inline-flex;
+}
+
+.menu {
+    position: absolute;
+    inset-block-end: calc(100% + 4px);
+    inset-inline-end: 0;
+    z-index: 20;
+}

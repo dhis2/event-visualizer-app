@@ -1,26 +1,45 @@
+.cell {
+    box-sizing: border-box;
+    font-weight: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: start;
+    background-color: var(--table-value-bg);
+    border: 1px solid var(--table-border-color);
+    border-width: 0 0 1px 1px;
+}
+
+tr:hover .cell {
+    background-color: var(--table-row-hover-bg);
+}
+
+tr:hover .cell:hover {
+    background-color: var(--table-value-hover-bg);
+}
+
 :global(table.font-size-large) .cell {
-    font-size: 14px;
-    line-height: 15px;
+    font-size: 13px;
+    line-height: 13px;
 }
 .cell,
 :global(table.font-size-normal) .cell {
-    font-size: 12px;
-    line-height: 13px;
+    font-size: 11px;
+    line-height: 11px;
 }
 :global(table.font-size-small) .cell {
-    font-size: 11px;
-    line-height: 12px;
+    font-size: 10px;
+    line-height: 10px;
 }
 
 :global(table.size-comfortable) .cell {
-    padding: 10px 8px 8px;
+    padding: 7px;
 }
 .cell,
 :global(table.size-normal) .cell {
-    padding: 7px 6px 5px;
+    padding: 5px;
 }
 :global(table.size-compact) .cell {
-    padding: 6px 6px 4px;
+    padding: 4px;
 }
 
 .emptyCell::after {

@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { DataTableCell, Tooltip } from '@dhis2/ui'
+import { Tooltip } from '@dhis2/ui'
 import cx from 'classnames'
 import type { FC } from 'react'
 import classes from './styles/body-cell.module.css'
@@ -17,19 +17,15 @@ const BodyCell: FC<BodyCellProps & { tooltipProps?: object }> = ({
     textColor,
     tooltipProps,
 }) => (
-    <DataTableCell
+    <td
         {...tooltipProps}
-        className={cx(
-            classes.cell,
-            {
-                [classes.emptyCell]: !value,
-                [classes.nowrap]: shouldNotWrap,
-                [classes.undefinedCell]: isUndefined,
-            },
-            'bordered'
-        )}
-        backgroundColor={backgroundColor}
-        dataTest="table-cell"
+        className={cx(classes.cell, {
+            [classes.emptyCell]: !value,
+            [classes.nowrap]: shouldNotWrap,
+            [classes.undefinedCell]: isUndefined,
+        })}
+        style={backgroundColor ? { backgroundColor } : undefined}
+        data-test="table-cell"
     >
         <div style={textColor ? { color: textColor } : undefined}>
             {isUrl ? (
@@ -40,7 +36,7 @@ const BodyCell: FC<BodyCellProps & { tooltipProps?: object }> = ({
                 formattedValue
             )}
         </div>
-    </DataTableCell>
+    </td>
 )
 
 const BodyCellWithConditionalTooltip: FC<BodyCellProps> = (props) => {

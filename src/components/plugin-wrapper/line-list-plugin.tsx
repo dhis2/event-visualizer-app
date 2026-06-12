@@ -4,7 +4,7 @@ import type { DataSortFn, PaginateFn } from '@components/line-list/types'
 import { logger } from '@modules/logger'
 import { transformVisualizationForAnalyticsRequest } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { FC } from 'react'
 import {
     useLineListAnalyticsData,
@@ -39,6 +39,11 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     // undefined cannot be used because that is a valid value to indicate "remove sorting"
     const [sorting, setSorting] = useState<InternalSorting | null>(null)
 
+    /* The chosen page size is a view preference, not part of the visualization.
+     * Remember it so page navigation and sort/filter refetches keep it instead
+     * of falling back to the fetch default. */
+    const pageSizeRef = useRef<number | undefined>(undefined)
+
     // Recompute eventVisualization whenever either visualization or the internal sorting change
     // App context: when sorting, the visualization change (currentVis changes in the store)
     // Interpretation modal context: when sorting, the internal sorting changes
@@ -58,6 +63,9 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
 
     const onPaginate = useCallback<PaginateFn>(
         ({ page, pageSize }) => {
+            if (pageSize !== undefined) {
+                pageSizeRef.current = pageSize
+            }
             fetchAnalyticsData({
                 visualization:
                     transformVisualizationForAnalyticsRequest(
@@ -67,7 +75,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
                 displayProperty,
                 onResponseReceived,
                 page,
-                pageSize,
+                pageSize: pageSizeRef.current,
             })
         },
         [
@@ -105,6 +113,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
             filters,
             displayProperty,
             onResponseReceived,
+            pageSize: pageSizeRef.current,
         })
     }, [
         displayProperty,

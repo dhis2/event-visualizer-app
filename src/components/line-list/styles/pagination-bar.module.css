@@ -1,0 +1,10 @@
+.bar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    inline-size: 100%;
+    padding: var(--spacers-dp4);
+    background-color: var(--colors-white);
+    border-block-start: 1px solid var(--colors-grey400);
+}

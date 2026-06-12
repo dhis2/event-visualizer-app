@@ -1,8 +1,8 @@
 import i18n from '@dhis2/d2-i18n'
-import { DataTableColumnHeader } from '@dhis2/ui'
 import type { SortDirection } from '@types'
 import cx from 'classnames'
 import { useCallback, useMemo, type FC } from 'react'
+import { Sorter, type UiSortDirection } from './sorter'
 import classes from './styles/header-cell.module.css'
 import type { ColumnHeaderClickFn, DataSortFn, LineListHeader } from './types'
 
@@ -14,8 +14,7 @@ type HeaderCellProps = LineListHeader & {
     sortField?: string
 }
 
-type UiSortDirection = 'asc' | 'desc' | 'default'
-type HandleSortIconClickPayload = {
+type SortIconClickPayload = {
     name: string
     direction: UiSortDirection
 }
@@ -30,7 +29,7 @@ export const HeaderCell: FC<HeaderCellProps> = ({
     sortDirection,
     sortField,
 }) => {
-    const headerSortDirection = useMemo((): UiSortDirection | undefined => {
+    const uiSortDirection = useMemo((): UiSortDirection | undefined => {
         if (isDisconnected) {
             return undefined
         } else if (
@@ -43,7 +42,7 @@ export const HeaderCell: FC<HeaderCellProps> = ({
         }
     }, [name, isDisconnected, sortDirection, sortField])
     const handleSortIconClick = useCallback(
-        ({ name, direction: uiSortDirection }: HandleSortIconClickPayload) => {
+        ({ name, direction: uiSortDirection }: SortIconClickPayload) => {
             const direction =
                 uiSortDirection === 'asc' || uiSortDirection === 'desc'
                     ? (uiSortDirection.toUpperCase() as SortDirection)
@@ -54,36 +53,35 @@ export const HeaderCell: FC<HeaderCellProps> = ({
     )
 
     return (
-        <DataTableColumnHeader
-            className={cx(classes.headerCell, 'bordered')}
-            key={name}
-            name={name}
-            onSortIconClick={isDisconnected ? undefined : handleSortIconClick}
-            sortDirection={headerSortDirection}
-            sortIconTitle={
-                isDisconnected
-                    ? undefined
-                    : i18n.t('Sort by "{{- column}}" and update', {
-                          column: displayText,
-                      })
-            }
-            dataTest="data-table-header"
+        <th
+            scope="col"
+            className={classes.headerCell}
+            data-test="data-table-header"
         >
-            <span
-                className={cx(
-                    classes.headerCell,
-                    classes.dimensionModalHandler
+            <div className={classes.inner}>
+                <span
+                    className={cx(classes.label, classes.dimensionModalHandler)}
+                    onClick={
+                        onColumnHeaderClick
+                            ? () => {
+                                  onColumnHeaderClick(dimensionId)
+                              }
+                            : undefined
+                    }
+                >
+                    {displayText}
+                </span>
+                {uiSortDirection !== undefined && (
+                    <Sorter
+                        name={name}
+                        sortDirection={uiSortDirection}
+                        title={i18n.t('Sort by "{{- column}}" and update', {
+                            column: displayText,
+                        })}
+                        onClick={handleSortIconClick}
+                    />
                 )}
-                onClick={
-                    onColumnHeaderClick
-                        ? () => {
-                              onColumnHeaderClick(dimensionId)
-                          }
-                        : undefined
-                }
-            >
-                {displayText}
-            </span>
-        </DataTableColumnHeader>
+            </div>
+        </th>
     )
 }

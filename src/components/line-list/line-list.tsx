@@ -1,11 +1,4 @@
 import { useDhis2ConnectionStatus } from '@dhis2/app-runtime'
-import {
-    DataTable,
-    DataTableBody,
-    DataTableFoot,
-    DataTableHead,
-    DataTableRow,
-} from '@dhis2/ui'
 import type { CurrentVisualization } from '@types'
 import cx from 'classnames'
 import {
@@ -20,8 +13,8 @@ import { FetchOverlay } from './fetch-overlay'
 import { HeaderCell } from './header-cell'
 import { LegendKey } from './legend-key'
 import { NoTimeDimensionWarning } from './no-time-dimension-warning'
+import { PaginationBar } from './pagination-bar'
 import { ScrollBox } from './scroll-box'
-import { StickyPagination } from './sticky-pagination'
 import classes from './styles/line-list.module.css'
 import type {
     ColumnHeaderClickFn,
@@ -108,11 +101,6 @@ const LineListInternal: FC<LineListProps> = ({
                 return 'font-size-normal'
         }
     }, [visualization.fontSize])
-    const colSpan = useMemo(
-        () => Math.max(analyticsData.headers.length, 1),
-        [analyticsData.headers.length]
-    )
-
     const sorting: DataSortPayload = useMemo(
         () =>
             visualization.sorting?.length
@@ -138,21 +126,20 @@ const LineListInternal: FC<LineListProps> = ({
             >
                 <ScrollBox>
                     {isFetching && <FetchOverlay />}
-                    <DataTable
-                        width="auto"
+                    <table
                         className={cx(
                             classes.dataTable,
                             fontSizeClass,
                             sizeClass,
                             'push-analytics-linelist-table'
                         )}
-                        dataTest="line-list-data-table"
+                        data-test="line-list-data-table"
                     >
-                        <DataTableHead
-                            dataTest="line-list-data-table-head"
+                        <thead
+                            data-test="line-list-data-table-head"
                             className={classes.fixedHead}
                         >
-                            <DataTableRow dataTest="line-list-data-table-head-row">
+                            <tr data-test="line-list-data-table-head-row">
                                 {headers.map((header) => (
                                     <HeaderCell
                                         key={header.name}
@@ -166,42 +153,34 @@ const LineListInternal: FC<LineListProps> = ({
                                         sortDirection={sorting?.direction}
                                     />
                                 ))}
-                            </DataTableRow>
-                        </DataTableHead>
-                        <DataTableBody
-                            dataTest="line-list-data-table-body"
+                            </tr>
+                        </thead>
+                        <tbody
+                            data-test="line-list-data-table-body"
                             className={cx({
                                 [classes.fetching]: isFetching,
                             })}
                         >
                             {rows.map((row, rowIndex) => (
-                                <DataTableRow
-                                    key={rowIndex}
-                                    dataTest="table-row"
-                                >
-                                    {row.map((row, columnIndex) => (
+                                <tr key={rowIndex} data-test="table-row">
+                                    {row.map((cell, columnIndex) => (
                                         <BodyCell
                                             key={`${rowIndex}-${columnIndex}`}
-                                            {...row}
+                                            {...cell}
                                         />
                                     ))}
-                                </DataTableRow>
+                                </tr>
                             ))}
-                        </DataTableBody>
-                        <DataTableFoot className={classes.fixedFoot}>
-                            <DataTableRow>
-                                <StickyPagination
-                                    {...pager}
-                                    isDisconnected={isDisconnected}
-                                    isFetching={isFetching}
-                                    colSpan={colSpan}
-                                    onPaginate={onPaginate}
-                                    pageLength={rows.length}
-                                />
-                            </DataTableRow>
-                        </DataTableFoot>
-                    </DataTable>
+                        </tbody>
+                    </table>
                 </ScrollBox>
+                <PaginationBar
+                    {...pager}
+                    isDisconnected={isDisconnected}
+                    isFetching={isFetching}
+                    onPaginate={onPaginate}
+                    pageLength={rows.length}
+                />
             </div>
             <div className={classes.endColumn} data-test="end-column">
                 <LegendKey
