@@ -36,7 +36,9 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
 
     const selectedOptionsLookup = useMemo(
         () =>
-            optionSetMetadata?.options.reduce((lookupMap, { code, name }) => {
+            optionSetMetadata?.options.reduce<
+                Record<string, { value: string; label: string }>
+            >((lookupMap, { code, name }) => {
                 lookupMap[code] = {
                     value: code,
                     label: name,
@@ -61,16 +63,19 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
 
     const data = rawData as FetchResult['items']
 
-    const setValues = (selected) => {
-        const optionsMetadata = selected.reduce((options, selectedId) => {
-            const option = data?.find(({ code }) => code === selectedId)
+    const setValues = (selected: string[]) => {
+        const optionsMetadata = selected.reduce<FetchResult['items']>(
+            (options, selectedId) => {
+                const option = data?.find(({ code }) => code === selectedId)
 
-            if (option) {
-                options.push(option)
-            }
+                if (option) {
+                    options.push(option)
+                }
 
-            return options
-        }, [])
+                return options
+            },
+            []
+        )
 
         // add each single option
         // this is to keep the metadata store consistent, as the single options are also added when loading a visualization
@@ -112,7 +117,7 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
             leftHeader={
                 <TransferLeftHeader
                     searchTerm={searchTerm}
-                    setSearchTerm={setSearchTerm}
+                    setSearchTerm={(value) => setSearchTerm(value ?? '')}
                     dataTest={`${dataTest}-left-header`}
                 />
             }

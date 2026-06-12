@@ -76,7 +76,8 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     }, [dataElements, searchTerm])
 
     const onAggregationTypeChange = useCallback(
-        ({ selected }) => setAggregationType(selected),
+        ({ selected }: { selected: string }) =>
+            setAggregationType(selected as AggregationType),
         []
     )
 

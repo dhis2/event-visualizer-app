@@ -16,7 +16,7 @@ export const CheckboxBaseOption: FC<CheckboxBaseOptionProps> = ({
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 
-    const onChange = (value) => setValue(value)
+    const onChange = (value: Parameters<typeof setValue>[0]) => setValue(value)
 
     return (
         <div>

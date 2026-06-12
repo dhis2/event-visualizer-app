@@ -6,6 +6,7 @@ import { REPETITION_INDEX_PATTERN } from '@modules/metadata-store/dimension'
 import type {
     ApiSavedVisualization,
     DimensionArray,
+    DimensionRecord,
     CurrentVisualization,
     DimensionId,
     EmptyVisualization,
@@ -225,7 +226,7 @@ export const getAnalyticsRequestHeaderName = ({
 }): string => {
     const { outputType } = visualization
     const map = getHeadersMap(visualization)
-    const wireDim = map[dimensionId] ?? dimensionId
+    const wireDim = map[dimensionId as DimensionId] ?? dimensionId
 
     if (programStageId) {
         return `${programStageId}.${wireDim}`
@@ -372,7 +373,7 @@ const removeDimensionPropertiesBeforeSaving = (
         const propsToRemove = ['dimensionType', 'valueType']
 
         propsToRemove.forEach((prop) => {
-            delete dimension[prop]
+            delete dimension[prop as keyof DimensionRecord]
         })
 
         return dimension
@@ -386,7 +387,9 @@ const getDimensionIdFromHeaderName = (
     const headersMap = getHeadersMap(
         getRequestOptions(visualization) as unknown as CurrentVisualization
     )
-    return Object.keys(headersMap).find((key) => headersMap[key] === headerName)
+    return Object.keys(headersMap).find(
+        (key) => headersMap[key as DimensionId] === headerName
+    )
 }
 
 export const getSaveableVisualization = (

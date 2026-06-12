@@ -58,7 +58,15 @@ export const StatusDimensionModalContent: FC<
     }, [dimension.id, statusNames])
 
     const updateStatusDimensionItems = useCallback(
-        ({ selectedIds, itemId, checked }) => {
+        ({
+            selectedIds,
+            itemId,
+            checked,
+        }: {
+            selectedIds: string[]
+            itemId: string
+            checked: boolean
+        }) => {
             const uiItems = checked
                 ? [...new Set([...selectedIds, itemId])]
                 : selectedIds.filter((id) => id !== itemId)

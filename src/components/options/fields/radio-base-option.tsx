@@ -14,7 +14,7 @@ export const RadioBaseOption: FC<RadioBaseOptionProps> = ({
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 
-    const onChange = (value) => setValue(value)
+    const onChange = (value: Parameters<typeof setValue>[0]) => setValue(value)
 
     return (
         <Field name={option.name}>

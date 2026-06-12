@@ -70,7 +70,7 @@ export function smartMergeWithChangeDetection(
         // Check if this property actually changed
         if (finalValue !== existingValue) {
             hasChanges = true
-            mergedItem[key] = finalValue
+            ;(mergedItem as Record<string, unknown>)[key] = finalValue
         }
     }
 

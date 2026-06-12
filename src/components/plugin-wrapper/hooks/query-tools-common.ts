@@ -14,20 +14,21 @@ export const getAnalyticsEndpoint = (outputType: OutputType): string =>
 
 // NOTE: visualization here already has the disabled options removed
 export const getRequestOptions = (visualization: CurrentVisualization) => {
-    const options = Object.entries(ANALYTICS_OPTIONS).reduce(
-        (obj, [option, defaultValue]) => {
-            // only add parameter if value !== default
-            if (
-                visualization[option] !== undefined &&
-                visualization[option] !== defaultValue
-            ) {
-                obj[option] = visualization[option]
-            }
+    const visualizationOptions = visualization as Record<string, unknown>
 
-            return obj
-        },
-        {} as ParameterRecord
-    )
+    const options = Object.entries(ANALYTICS_OPTIONS).reduce<
+        Record<string, unknown>
+    >((obj, [option, defaultValue]) => {
+        // only add parameter if value !== default
+        if (
+            visualizationOptions[option] !== undefined &&
+            visualizationOptions[option] !== defaultValue
+        ) {
+            obj[option] = visualizationOptions[option]
+        }
+
+        return obj
+    }, {})
 
     return options
 }

@@ -28,7 +28,7 @@ const ConditionDivider: FC<{ total: number; index: number }> = ({
 type ConditionComponentProps = {
     condition: string
     onChange: (value: string) => void
-    onRemove?: (index: number) => void
+    onRemove: () => void
 }
 
 const ConditionsList: FC<{

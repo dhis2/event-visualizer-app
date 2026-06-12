@@ -25,6 +25,7 @@ import type {
     CurrentUser,
     CurrentVisualization,
     DimensionMetadataItem,
+    GridHeader,
     MetadataInputItem,
     UserOrgUnitMetadataItem,
 } from '@types'
@@ -32,25 +33,67 @@ import { useCallback, useState } from 'react'
 import { getAnalyticsEndpoint } from './query-tools-common'
 import { getAdaptedVisualization } from './query-tools-line-list'
 
-const lookupOptionSetOptionMetadata = (optionSetId, code, metaDataItems) => {
-    const optionSetMetaData = metaDataItems?.[optionSetId]
+type OptionSetMetaDataItem = MetadataInputItem & {
+    options: Array<{ code?: string; uid?: string }>
+}
+
+type IndexedLineListAnalyticsDataHeader = LineListAnalyticsDataHeader & {
+    index: number
+}
+
+type RowContext = Record<
+    string,
+    Record<string, { valueStatus?: string } | undefined> | undefined
+>
+
+type LineListAnalyticsResponse = {
+    headers: Array<GridHeader>
+    rows: string[][]
+    rowContext?: RowContext
+    metaData: {
+        items: AnalyticsResponseMetadataItems
+        pager?: LineListAnalyticsData['pager']
+    }
+}
+
+const lookupOptionSetOptionMetadata = (
+    optionSetId: string,
+    code: string,
+    metaDataItems: AnalyticsResponseMetadataItems
+) => {
+    const optionSetMetaData = metaDataItems?.[optionSetId] as
+        | OptionSetMetaDataItem
+        | undefined
 
     if (optionSetMetaData) {
         const optionId = optionSetMetaData.options.find(
             (option) => option.code === code
         )?.uid
 
-        return metaDataItems[optionId]
+        return optionId ? metaDataItems[optionId] : undefined
     }
 
     return undefined
 }
 const NOT_DEFINED_VALUE = 'ND'
 
-export const cellIsUndefined = (rowContext = {}, rowIndex, columnIndex) =>
-    (rowContext[rowIndex] || {})[columnIndex]?.valueStatus === NOT_DEFINED_VALUE
+export const cellIsUndefined = (
+    rowContext: RowContext | undefined,
+    rowIndex: number,
+    columnIndex: number
+) => rowContext?.[rowIndex]?.[columnIndex]?.valueStatus === NOT_DEFINED_VALUE
 
-const formatRowValue = ({ rowValue, header, metaDataItems, isUndefined }) => {
+const formatRowValue = ({
+    rowValue,
+    header,
+    metaDataItems,
+    isUndefined,
+}: {
+    rowValue: string
+    header: LineListAnalyticsDataHeader
+    metaDataItems: AnalyticsResponseMetadataItems
+    isUndefined: boolean
+}) => {
     if (!rowValue) {
         return rowValue
     }
@@ -58,7 +101,11 @@ const formatRowValue = ({ rowValue, header, metaDataItems, isUndefined }) => {
     switch (header.valueType) {
         case 'BOOLEAN':
         case 'TRUE_ONLY':
-            return !isUndefined ? getBooleanValues()[rowValue] : ''
+            return isUndefined
+                ? ''
+                : getBooleanValues()[
+                      rowValue as keyof ReturnType<typeof getBooleanValues>
+                  ]
         default: {
             if (header.optionSet) {
                 return (
@@ -146,26 +193,40 @@ const fetchAnalyticsDataForLL = async ({
     return rawResponse
 }
 
+type HeaderLegendSet = NonNullable<LineListAnalyticsDataHeader['legendSet']>
+
 const legendSetsQuery = {
     resource: 'legendSets',
-    params: ({ ids }) => ({
+    params: (variables: Record<string, unknown>) => ({
         fields: 'id,displayName~rename(name),legends[id,displayName~rename(name),startValue,endValue,color]',
-        filter: `id:in:[${ids.join(',')}]`,
+        filter: `id:in:[${(variables.ids as string[]).join(',')}]`,
     }),
 }
 
-const apiFetchLegendSetsByIds = async ({ dataEngine, ids }) => {
-    const legendSetsData = await dataEngine.query(
+const apiFetchLegendSetsByIds = async ({
+    dataEngine,
+    ids,
+}: {
+    dataEngine: ReturnType<typeof useDataEngine>
+    ids: string[]
+}): Promise<HeaderLegendSet[]> => {
+    const legendSetsData = (await dataEngine.query(
         { legendSets: legendSetsQuery },
         {
             variables: { ids },
         }
-    )
+    )) as { legendSets: { legendSets: HeaderLegendSet[] } }
 
     return legendSetsData.legendSets.legendSets
 }
 
-const fetchLegendSets = async ({ legendSetIds, dataEngine }) => {
+const fetchLegendSets = async ({
+    legendSetIds,
+    dataEngine,
+}: {
+    legendSetIds: string[]
+    dataEngine: ReturnType<typeof useDataEngine>
+}): Promise<HeaderLegendSet[]> => {
     if (!legendSetIds.length) {
         return []
     }
@@ -179,12 +240,12 @@ const fetchLegendSets = async ({ legendSetIds, dataEngine }) => {
 }
 
 export const extractHeaders = (
-    analyticsResponse,
+    analyticsResponse: LineListAnalyticsResponse,
     visualization: CurrentVisualization,
     metadataStore: UseMetadataStoreReturnValue
-): Array<LineListAnalyticsDataHeader> => {
+): Array<IndexedLineListAnalyticsDataHeader> => {
     const canonicalIds: string[] = analyticsResponse.headers.map(
-        (header: LineListAnalyticsDataHeader) =>
+        (header: GridHeader) =>
             analyticsHeaderToCanonicalDimensionId(
                 header.name ?? '',
                 visualization
@@ -222,17 +283,21 @@ export const extractHeaders = (
     )
 
     return analyticsResponse.headers.map(
-        (header: LineListAnalyticsDataHeader, index: number) => ({
-            ...header,
-            index,
-            dimensionId: canonicalIds[index],
-            column: nameById.get(canonicalIds[index]) ?? header.column,
-            dimensionSuffix: suffixes[canonicalIds[index]],
-        })
+        (header: GridHeader, index: number) =>
+            ({
+                ...header,
+                index,
+                dimensionId: canonicalIds[index],
+                column: nameById.get(canonicalIds[index]) ?? header.column,
+                dimensionSuffix: suffixes[canonicalIds[index]],
+            }) as unknown as IndexedLineListAnalyticsDataHeader
     )
 }
 
-const extractRows = (analyticsResponse, headers) => {
+const extractRows = (
+    analyticsResponse: LineListAnalyticsResponse,
+    headers: Array<IndexedLineListAnalyticsDataHeader>
+) => {
     type FilteredRow = string[]
 
     const filteredRows: FilteredRow[] = []
@@ -409,13 +474,16 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                                     header.legendSet = legendSets[0]
                                     break
                                 case 'BY_DATA_ITEM': {
-                                    header.legendSet = legendSets.find(
+                                    const matchingLegendSet = legendSets.find(
                                         (legendSet) =>
                                             legendSet.id ===
                                             headerLegendSetIdByDimensionId[
                                                 header.dimensionId
                                             ]
                                     )
+                                    if (matchingLegendSet) {
+                                        header.legendSet = matchingLegendSet
+                                    }
                                     break
                                 }
                             }
@@ -435,7 +503,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 logger.error('fetch LL data error', error)
                 setState({
                     data: null,
-                    error,
+                    error: error as FetchError,
                     isFetching: false,
                 })
             }

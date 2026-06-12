@@ -233,8 +233,12 @@ export const getTimeDimensionName = (
     }
     const name =
         dimension.nameParentProperty === 'program'
-            ? program[dimension.nameProperty]
-            : stage?.[dimension.nameProperty]
+            ? (program[dimension.nameProperty as keyof Program] as
+                  | string
+                  | undefined)
+            : (stage?.[dimension.nameProperty as keyof ProgramStage] as
+                  | string
+                  | undefined)
 
     return name || dimension.defaultName
 }

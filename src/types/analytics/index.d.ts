@@ -78,8 +78,9 @@ declare module '@dhis2/analytics' {
     // Primitives
     export const ouIdHelper: OuIdHelper
 
-    export const visTypeDisplayNames: Array<
-        Record<EventVisualizationType | VisualizationType, string>
+    export const visTypeDisplayNames: Record<
+        EventVisualizationType | VisualizationType,
+        string
     >
 
     export const valueTypeDisplayNames: Record<ValueType, string>

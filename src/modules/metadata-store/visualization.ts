@@ -42,7 +42,7 @@ const getDefaultDynamicTimeDimensionsMetadata = (
             name: getTimeDimensionName(dimension, program, stage),
         }
         return acc
-    }, {})
+    }, {} as MetadataInputMap)
 
 export const extractTrackedEntityTypeMetadata = (
     visualization: SavedVisualization
@@ -79,16 +79,18 @@ export const extractDimensionMetadata = (
     const dimensionMetadata = Object.entries(
         DIMENSION_METADATA_PROP_MAP
     ).reduce((metaData, [listName, dimensionName]) => {
-        const dimensionList = visualization[listName] || []
+        const dimensionList =
+            visualization[listName as keyof SavedVisualization] || []
 
-        dimensionList.forEach((dimensionWrapper: object) => {
-            const dimension: DimensionMetadataItem =
-                dimensionWrapper[dimensionName]
+        ;(dimensionList as object[]).forEach((dimensionWrapper: object) => {
+            const dimension = (dimensionWrapper as Record<string, unknown>)[
+                dimensionName
+            ] as DimensionMetadataItem
             metaData[dimension.id] = dimension
         })
 
         return metaData
-    }, {})
+    }, {} as MetadataInputMap)
     return dimensionMetadata
 }
 
@@ -107,9 +109,9 @@ const addPathToOrganisationUnitMetadataItems = (
 ) => {
     if (parentGraphMap) {
         for (const [key, path] of Object.entries(parentGraphMap)) {
-            const organisationUnitMetadaInputItem = metadataInput[
-                key
-            ] as OrganisationUnitMetadataItem
+            const organisationUnitMetadaInputItem = (
+                metadataInput as MetadataInputMap
+            )[key] as OrganisationUnitMetadataItem
 
             if (organisationUnitMetadaInputItem) {
                 organisationUnitMetadaInputItem.path = `/${path}/${key}`
@@ -167,7 +169,7 @@ export const supplementDimensionMetadata = (
                         prefixedId,
                         dimension.dimensionType!
                     ),
-                }
+                } as MetadataInputItem
             )
 
             if (dimension.optionSet?.id) {
@@ -206,7 +208,7 @@ export const supplementDimensionMetadata = (
 
             return metadata
         },
-        {}
+        {} as MetadataInputMap
     )
 
     return deepmerge(metadataInput, additionalDimensionMetadata)

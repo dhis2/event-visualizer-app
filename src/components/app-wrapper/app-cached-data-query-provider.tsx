@@ -140,7 +140,9 @@ export const AppCachedDataQueryProvider: FC<{ children: ReactNode }> = ({
 }) => (
     <CachedDataQueryProvider
         query={query}
-        dataTransformation={providerDataTransformation}
+        dataTransformation={
+            providerDataTransformation as (data: unknown) => unknown
+        }
     >
         {children}
     </CachedDataQueryProvider>

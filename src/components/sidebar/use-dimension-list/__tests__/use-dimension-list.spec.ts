@@ -57,7 +57,12 @@ vi.mock('@api/api', () => {
             internalActions: {},
             util: {},
             reducer: vi.fn((state = {}) => state),
-            middleware: vi.fn(() => (next) => (action) => next(action)),
+            middleware: vi.fn(
+                () =>
+                    (next: (action: unknown) => unknown) =>
+                    (action: unknown) =>
+                        next(action)
+            ),
             usePrefetch: vi.fn(),
             useQueryQuery: vi.fn(),
             useLazyQueryQuery: vi.fn(),
