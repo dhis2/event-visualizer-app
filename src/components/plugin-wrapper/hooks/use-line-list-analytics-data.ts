@@ -78,11 +78,10 @@ const lookupOptionSetOptionMetadata = (
 const NOT_DEFINED_VALUE = 'ND'
 
 export const cellIsUndefined = (
-    rowContext: RowContext = {},
+    rowContext: RowContext | undefined,
     rowIndex: number,
     columnIndex: number
-) =>
-    (rowContext[rowIndex] || {})[columnIndex]?.valueStatus === NOT_DEFINED_VALUE
+) => rowContext?.[rowIndex]?.[columnIndex]?.valueStatus === NOT_DEFINED_VALUE
 
 const formatRowValue = ({
     rowValue,
@@ -102,11 +101,11 @@ const formatRowValue = ({
     switch (header.valueType) {
         case 'BOOLEAN':
         case 'TRUE_ONLY':
-            return !isUndefined
-                ? getBooleanValues()[
+            return isUndefined
+                ? ''
+                : getBooleanValues()[
                       rowValue as keyof ReturnType<typeof getBooleanValues>
                   ]
-                : ''
         default: {
             if (header.optionSet) {
                 return (
@@ -475,13 +474,16 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                                     header.legendSet = legendSets[0]
                                     break
                                 case 'BY_DATA_ITEM': {
-                                    header.legendSet = legendSets.find(
+                                    const matchingLegendSet = legendSets.find(
                                         (legendSet) =>
                                             legendSet.id ===
                                             headerLegendSetIdByDimensionId[
                                                 header.dimensionId
                                             ]
-                                    ) as HeaderLegendSet
+                                    )
+                                    if (matchingLegendSet) {
+                                        header.legendSet = matchingLegendSet
+                                    }
                                     break
                                 }
                             }

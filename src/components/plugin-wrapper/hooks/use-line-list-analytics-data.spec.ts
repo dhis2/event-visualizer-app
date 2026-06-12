@@ -1,10 +1,6 @@
 import type { UseMetadataStoreReturnValue } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import { extractMetadataFromAnalyticsResponse } from '@modules/metadata-store/analytics-data'
-import type {
-    AnalyticsResponseMetadataItems,
-    CurrentVisualization,
-    DimensionMetadataItem,
-} from '@types'
+import type { CurrentVisualization, DimensionMetadataItem } from '@types'
 import { describe, it, expect } from 'vitest'
 import { extractHeaders } from './use-line-list-analytics-data'
 
@@ -71,8 +67,7 @@ describe('extractHeaders', () => {
         )
 
         const metadataAfterUpdate = extractMetadataFromAnalyticsResponse(
-            analyticsResponse.metaData
-                .items as unknown as AnalyticsResponseMetadataItems,
+            analyticsResponse.metaData.items,
             firstHeaders
         ) as Record<string, { name?: string }>
 
