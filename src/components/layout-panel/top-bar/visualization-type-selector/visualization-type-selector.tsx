@@ -10,6 +10,10 @@ import {
     IconChevronDown16,
     IconVisualizationLinelist16,
     IconVisualizationPivotTable16,
+    IconVisualizationColumn16,
+    IconVisualizationBar16,
+    IconVisualizationLine16,
+    IconVisualizationArea16,
 } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector, useMetadataStore } from '@hooks'
 import { convertLayoutForVisType } from '@modules/layout'
@@ -30,6 +34,15 @@ const visTypeIcons: Record<VisualizationType, ReactNode> = {
     LINE_LIST: <IconVisualizationLinelist16 />,
     PIVOT_TABLE: <IconVisualizationPivotTable16 />,
 }
+
+/* Demo-only: aggregate chart types shown as unselectable "Coming soon" teasers
+ * for the plenary demo. Remove along with the rest of the demo features. */
+const COMING_SOON_VIS_TYPES: Array<{ label: string; icon: ReactNode }> = [
+    { label: i18n.t('Column'), icon: <IconVisualizationColumn16 /> },
+    { label: i18n.t('Bar'), icon: <IconVisualizationBar16 /> },
+    { label: i18n.t('Line'), icon: <IconVisualizationLine16 /> },
+    { label: i18n.t('Area'), icon: <IconVisualizationArea16 /> },
+]
 
 type ListItemProps = {
     visType: VisualizationType
@@ -57,6 +70,20 @@ export const ListItem: FC<ListItemProps> = ({
         </button>
     )
 }
+
+const ComingSoonListItem: FC<{ label: string; icon: ReactNode }> = ({
+    label,
+    icon,
+}) => (
+    <div
+        className={cx(classes.gridItem, classes.comingSoon)}
+        aria-disabled="true"
+    >
+        <span className={classes.comingSoonBadge}>{i18n.t('Coming soon')}</span>
+        {icon}
+        <span className={classes.gridItemLabel}>{label}</span>
+    </div>
+)
 
 type PendingConversion = {
     targetVisType: VisualizationType
@@ -181,6 +208,15 @@ export const VisualizationTypeSelector: FC = () => {
                                                 onClick={handleListItemClick(
                                                     visType
                                                 )}
+                                            />
+                                        )
+                                    )}
+                                    {COMING_SOON_VIS_TYPES.map(
+                                        ({ label, icon }) => (
+                                            <ComingSoonListItem
+                                                key={label}
+                                                label={label}
+                                                icon={icon}
                                             />
                                         )
                                     )}

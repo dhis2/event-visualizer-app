@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-11T13:07:17.360Z\n"
-"PO-Revision-Date: 2026-06-11T13:07:17.361Z\n"
+"POT-Creation-Date: 2026-06-12T08:32:24.847Z\n"
+"PO-Revision-Date: 2026-06-12T08:32:24.847Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -395,6 +395,21 @@ msgstr "{{- names}} will be removed. Are you sure?"
 
 msgid "Convert"
 msgstr "Convert"
+
+msgid "Column"
+msgstr "Column"
+
+msgid "Bar"
+msgstr "Bar"
+
+msgid "Line"
+msgstr "Line"
+
+msgid "Area"
+msgstr "Area"
+
+msgid "Coming soon"
+msgstr "Coming soon"
 
 msgid "Individual data view"
 msgstr "Individual data view"
