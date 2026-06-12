@@ -337,6 +337,133 @@ describe('useCustomValueDataElements', () => {
         expect(result.current.customValueStageMismatch).toBe(false)
     })
 
+    it('lists data elements (by name) first, then program attributes (by name), and gives attributes no stageName', async () => {
+        const responseWithAttributes = {
+            dimensions: [
+                {
+                    id: 'attrZ',
+                    name: 'Attribute Z',
+                    aggregationType: 'SUM',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                },
+                {
+                    id: 's2.de2',
+                    name: 'DE 2',
+                    aggregationType: 'AVERAGE',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+                {
+                    id: 'attrA',
+                    name: 'Attribute A',
+                    aggregationType: 'SUM',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                },
+                {
+                    id: 's1.de1',
+                    name: 'DE 1',
+                    aggregationType: 'SUM',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+            ],
+        }
+        const { result } = await renderHookWithAppWrapper(
+            () => useCustomValueDataElements(),
+            {
+                ...buildMockOptions({ columns: ['p1.enrollmentDate'] }),
+                queryData: {
+                    [ANALYTICS_RESOURCE]: responseWithAttributes,
+                },
+            }
+        )
+
+        await waitFor(() => {
+            expect(result.current.dataElements).toBeDefined()
+        })
+
+        expect(result.current.dataElements).toEqual([
+            {
+                id: 's1.de1',
+                name: 'DE 1',
+                aggregationType: 'SUM',
+                dimensionType: 'DATA_ELEMENT',
+                stageName: 'Stage 1',
+            },
+            {
+                id: 's2.de2',
+                name: 'DE 2',
+                aggregationType: 'AVERAGE',
+                dimensionType: 'DATA_ELEMENT',
+                stageName: 'Stage 2',
+            },
+            {
+                id: 'attrA',
+                name: 'Attribute A',
+                aggregationType: 'SUM',
+                dimensionType: 'PROGRAM_ATTRIBUTE',
+            },
+            {
+                id: 'attrZ',
+                name: 'Attribute Z',
+                aggregationType: 'SUM',
+                dimensionType: 'PROGRAM_ATTRIBUTE',
+            },
+        ])
+    })
+
+    it('keeps program attributes in the list when the layout is filtered to a single stage', async () => {
+        const responseWithAttributes = {
+            dimensions: [
+                {
+                    id: 's1.de1',
+                    name: 'DE 1',
+                    aggregationType: 'SUM',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+                {
+                    id: 's2.de2',
+                    name: 'DE 2',
+                    aggregationType: 'AVERAGE',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+                {
+                    id: 'attrA',
+                    name: 'Attribute A',
+                    aggregationType: 'SUM',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                },
+            ],
+        }
+        const { result } = await renderHookWithAppWrapper(
+            () => useCustomValueDataElements(),
+            {
+                ...buildMockOptions({ columns: ['s1.de1'] }),
+                queryData: {
+                    [ANALYTICS_RESOURCE]: responseWithAttributes,
+                },
+            }
+        )
+
+        await waitFor(() => {
+            expect(result.current.dataElements).toBeDefined()
+        })
+
+        expect(result.current.dataElements).toEqual([
+            {
+                id: 's1.de1',
+                name: 'DE 1',
+                aggregationType: 'SUM',
+                dimensionType: 'DATA_ELEMENT',
+            },
+            {
+                id: 'attrA',
+                name: 'Attribute A',
+                aggregationType: 'SUM',
+                dimensionType: 'PROGRAM_ATTRIBUTE',
+            },
+        ])
+        expect(result.current.filteredByStageName).toBe('Stage 1')
+    })
+
     it('returns undefined dataElements while loading', async () => {
         /* Hold the dimensions request in flight so the loading assertion is
          * deterministic. Without this, the query can resolve during the
