@@ -12,15 +12,17 @@ import type { AggregationType } from '@types'
 import { useMemo } from 'react'
 
 /* Shape returned by /api/analytics/events/query/dimensions.
- * The `id` is a compound `stageId.deUid` qualifier. */
-type DataElementDimension = {
+ * For data elements the `id` is a compound `stageId.deUid` qualifier.
+ * Program attributes are program-scoped, not stage-scoped, so their `id`
+ * is the plain globally-unique attribute id with no stage prefix. */
+type DataItemDimension = {
     id: string
     name: string
     aggregationType: AggregationType
-    dimensionType: 'DATA_ELEMENT'
+    dimensionType: 'DATA_ELEMENT' | 'PROGRAM_ATTRIBUTE'
 }
 
-export type CustomValueDataElement = DataElementDimension & {
+export type CustomValueDataElement = DataItemDimension & {
     stageName?: string
 }
 
@@ -32,8 +34,17 @@ const getStageIdFromDimensionId = (id: string | undefined): string | null => {
     return idParts.length === 2 ? idParts[0] : null
 }
 
-const compareByName = (a: DataElementDimension, b: DataElementDimension) =>
-    a.name.localeCompare(b.name)
+const compareDataElementsThenAttributesByName = (
+    a: DataItemDimension,
+    b: DataItemDimension
+) => {
+    const aIsAttribute = a.dimensionType === 'PROGRAM_ATTRIBUTE'
+    const bIsAttribute = b.dimensionType === 'PROGRAM_ATTRIBUTE'
+    if (aIsAttribute !== bIsAttribute) {
+        return aIsAttribute ? 1 : -1
+    }
+    return a.name.localeCompare(b.name)
+}
 
 export const useCustomValueDataElements = () => {
     const {
@@ -76,14 +87,14 @@ export const useCustomValueDataElements = () => {
     }
 
     const { data, ...queryResult } = useRtkQuery<{
-        dimensions: DataElementDimension[]
+        dimensions: DataItemDimension[]
     }>({
         resource: 'analytics/enrollments/aggregate/dimensions',
         params: {
             programId,
             fields: `id,${displayNameProperty}~rename(name),aggregationType,dimensionType`,
             filter: [
-                'dimensionType:eq:DATA_ELEMENT',
+                'dimensionType:in:[DATA_ELEMENT,PROGRAM_ATTRIBUTE]',
                 `valueType:in:[${NUMERIC_VALUE_TYPES.join(',')}]`,
             ],
             paging: false,
@@ -106,9 +117,11 @@ export const useCustomValueDataElements = () => {
         if (layoutStageId) {
             return data.dimensions
                 .filter(
-                    (dim) => getStageIdFromDimensionId(dim.id) === layoutStageId
+                    (dim) =>
+                        dim.dimensionType === 'PROGRAM_ATTRIBUTE' ||
+                        getStageIdFromDimensionId(dim.id) === layoutStageId
                 )
-                .sort(compareByName)
+                .sort(compareDataElementsThenAttributesByName)
         }
 
         return data.dimensions
@@ -125,7 +138,7 @@ export const useCustomValueDataElements = () => {
                 }
                 return { ...dim, stageName: stage.name }
             })
-            .sort(compareByName)
+            .sort(compareDataElementsThenAttributesByName)
     }, [data, layoutStageId, metadataStore, programHasMultipleStages])
 
     return {
