@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { CurrentVisualization } from '@types'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -124,7 +124,7 @@ describe('LineList', () => {
                 { onPaginate }
             )
 
-            const nextButton = screen.getByRole('button', { name: 'Next' })
+            const nextButton = screen.getByRole('button', { name: /next/i })
             await user.click(nextButton)
 
             expect(onPaginate).toHaveBeenCalledWith({ page: 2 })
@@ -149,18 +149,12 @@ describe('LineList', () => {
                 { onPaginate }
             )
 
-            // Find the page size select dropdown
-            const pageSizeSelect = screen.getByTestId(
-                'dhis2-uicore-select-input'
-            )
+            const pageSizeButton = screen.getByRole('button', {
+                name: /rows per page/i,
+            })
+            await user.click(pageSizeButton)
 
-            // Click to open the dropdown
-            await user.click(pageSizeSelect)
-
-            // Find and click on the "50" option within the options container
-            const option50 = within(
-                screen.getByTestId('dhis2-uicore-select-menu-menuwrapper')
-            ).getByText('50')
+            const option50 = await screen.findByRole('menuitem', { name: '50' })
             await user.click(option50)
 
             expect(onPaginate).toHaveBeenCalledWith({ page: 1, pageSize: 50 })
@@ -173,17 +167,20 @@ describe('LineList', () => {
                 { onPaginate }
             )
 
-            // Verify the correct page size is displayed (default 100 from fixture)
-            expect(screen.getByText('100')).toBeInTheDocument()
-            expect(screen.getByText(/rows per page/i)).toBeInTheDocument()
+            expect(
+                screen.getByRole('button', { name: /rows per page/i })
+            ).toBeInTheDocument()
+            expect(
+                screen.getByTestId('line-list-pagination-page')
+            ).toHaveTextContent('1')
 
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
+            const prevButton = screen.getByRole('button', { name: /previous/i })
+            const nextButton = screen.getByRole('button', { name: /next/i })
 
             expect(prevButton).toBeDisabled()
             expect(nextButton).not.toBeDisabled()
 
-            expect(screen.getByText(/page 1, row 1-100/i)).toBeInTheDocument()
+            expect(screen.getByText(/rows 1-100/i)).toBeInTheDocument()
         })
 
         it('shows correct pagination state for first page', () => {
@@ -202,11 +199,12 @@ describe('LineList', () => {
                 { onPaginate }
             )
 
-            expect(screen.getByText(/page 1/i)).toBeInTheDocument()
-            expect(screen.getByText('100')).toBeInTheDocument()
+            expect(
+                screen.getByTestId('line-list-pagination-page')
+            ).toHaveTextContent('1')
 
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
+            const prevButton = screen.getByRole('button', { name: /previous/i })
+            const nextButton = screen.getByRole('button', { name: /next/i })
 
             expect(prevButton).toBeDisabled()
             expect(nextButton).not.toBeDisabled()
@@ -228,12 +226,13 @@ describe('LineList', () => {
                 { onPaginate }
             )
 
-            expect(screen.getByText(/page 2/i)).toBeInTheDocument()
-            expect(screen.getByText('100')).toBeInTheDocument()
-            expect(screen.getByText(/row 101-200/i)).toBeInTheDocument()
+            expect(
+                screen.getByTestId('line-list-pagination-page')
+            ).toHaveTextContent('2')
+            expect(screen.getByText(/rows 101-200/i)).toBeInTheDocument()
 
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
+            const prevButton = screen.getByRole('button', { name: /previous/i })
+            const nextButton = screen.getByRole('button', { name: /next/i })
 
             expect(prevButton).not.toBeDisabled()
             expect(nextButton).not.toBeDisabled()
@@ -255,12 +254,13 @@ describe('LineList', () => {
                 { onPaginate }
             )
 
-            expect(screen.getByText(/page 3/i)).toBeInTheDocument()
-            expect(screen.getByText('100')).toBeInTheDocument()
-            expect(screen.getByText(/row 201-300/i)).toBeInTheDocument()
+            expect(
+                screen.getByTestId('line-list-pagination-page')
+            ).toHaveTextContent('3')
+            expect(screen.getByText(/rows 201-300/i)).toBeInTheDocument()
 
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
+            const prevButton = screen.getByRole('button', { name: /previous/i })
+            const nextButton = screen.getByRole('button', { name: /next/i })
 
             expect(prevButton).not.toBeDisabled()
             expect(nextButton).toBeDisabled()
@@ -282,11 +282,12 @@ describe('LineList', () => {
                 { onPaginate }
             )
 
-            expect(screen.getByText(/page 1/i)).toBeInTheDocument()
-            expect(screen.getByText('100')).toBeInTheDocument()
+            expect(
+                screen.getByTestId('line-list-pagination-page')
+            ).toHaveTextContent('1')
 
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
+            const prevButton = screen.getByRole('button', { name: /previous/i })
+            const nextButton = screen.getByRole('button', { name: /next/i })
 
             expect(prevButton).toBeDisabled()
             expect(nextButton).toBeDisabled()
@@ -499,11 +500,10 @@ describe('LineList', () => {
             expect(secondCell).toBeInTheDocument()
             expect(innerDiv).toBeInTheDocument()
 
-            // For FILL style, expect background color on cell and default text color on inner div
+            // FILL style fills the cell background and leaves the text color to inherit
             const cellStyle = window.getComputedStyle(secondCell!)
-            const divStyle = window.getComputedStyle(innerDiv!)
             expect(cellStyle.backgroundColor).toBe('rgb(33, 113, 181)')
-            expect(divStyle.color).toBe('rgb(33, 41, 52)')
+            expect((innerDiv as HTMLElement).style.color).toBe('')
         })
 
         it('applies text color when legend style is TEXT', () => {
@@ -529,10 +529,9 @@ describe('LineList', () => {
             expect(secondCell).toBeInTheDocument()
             expect(innerDiv).toBeInTheDocument()
 
-            // For TEXT style, expect background color on cell and text color on inner div
-            const cellStyle = window.getComputedStyle(secondCell!)
+            // TEXT style colors the text and leaves the cell background to the stylesheet default
             const divStyle = window.getComputedStyle(innerDiv!)
-            expect(cellStyle.backgroundColor).toBe('rgb(255, 255, 255)')
+            expect((secondCell as HTMLElement).style.backgroundColor).toBe('')
             expect(divStyle.color).toBe('rgb(33, 113, 181)')
         })
     })
@@ -640,19 +639,15 @@ describe('LineList', () => {
                 }
             )
 
-            const prevButton = screen.getByRole('button', { name: 'Previous' })
-            const nextButton = screen.getByRole('button', { name: 'Next' })
-            const pageSizeSelect = screen.getByTestId(
-                'dhis2-uicore-select-input'
-            )
+            const prevButton = screen.getByRole('button', { name: /previous/i })
+            const nextButton = screen.getByRole('button', { name: /next/i })
+            const pageSizeButton = screen.getByRole('button', {
+                name: /rows per page/i,
+            })
 
             expect(prevButton).toBeDisabled()
             expect(nextButton).toBeDisabled()
-            expect(pageSizeSelect).toHaveClass('disabled')
-
-            // Page size should show current value but be non-interactive
-            expect(screen.getByText('100')).toBeInTheDocument()
-            expect(screen.getByText('Rows per page')).toBeInTheDocument()
+            expect(pageSizeButton).toBeDisabled()
         })
 
         it('shows tooltip on hover when pagination is disabled due to disconnection', async () => {

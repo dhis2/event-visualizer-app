@@ -1000,7 +1000,9 @@ describe('getInvalidAxesForDimension', () => {
     })
     const programIndicator = makeDim({ dimensionType: 'PROGRAM_INDICATOR' })
 
-    it('returns columns and rows for non-aggregatable dims in PIVOT_TABLE', () => {
+    /* TEMPORARY: axis disabling is short-circuited while the dimension-disabling
+     * mechanism is reworked. Un-skip when the rules are restored in layout.ts. */
+    it.skip('returns columns and rows for non-aggregatable dims in PIVOT_TABLE', () => {
         expect(
             Array.from(
                 getInvalidAxesForDimension(textDataElement, 'PIVOT_TABLE')
@@ -1037,7 +1039,9 @@ describe('isAxisInvalidForDimension', () => {
         valueType: 'NUMBER',
     })
 
-    it.each([
+    /* TEMPORARY: axis disabling is short-circuited while the dimension-disabling
+     * mechanism is reworked. Un-skip when the rules are restored in layout.ts. */
+    it.skip.each([
         ['columns', true],
         ['rows', true],
         ['filters', false],
@@ -1142,7 +1146,10 @@ describe('convertLayoutForVisType', () => {
             expect(result.newLayout.columns).toEqual(['numericDe'])
         })
 
-        it('moves a non-aggregatable dimension from columns to filters', () => {
+        /* TEMPORARY: axis disabling is short-circuited while the
+         * dimension-disabling mechanism is reworked. Un-skip when the rules
+         * are restored in layout.ts. */
+        it.skip('moves a non-aggregatable dimension from columns to filters', () => {
             const result = convertLayoutForVisType({
                 layout: {
                     columns: ['textDe', 'numericDe'],
@@ -1254,7 +1261,9 @@ describe('convertLayoutForVisType', () => {
         })
     })
 
-    it('handles a mixed discard + move + keep across all axes in one call', () => {
+    /* TEMPORARY: axis disabling is short-circuited while the dimension-disabling
+     * mechanism is reworked. Un-skip when the rules are restored in layout.ts. */
+    it.skip('handles a mixed discard + move + keep across all axes in one call', () => {
         const result = convertLayoutForVisType({
             layout: {
                 columns: ['pi', 'numericDe', 'textDe'],

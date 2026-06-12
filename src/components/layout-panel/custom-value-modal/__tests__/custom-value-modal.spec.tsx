@@ -265,7 +265,7 @@ describe('CustomValueModal', () => {
         await user.type(screen.getByPlaceholderText('Search data items'), 'zzz')
 
         expect(
-            screen.getByText('No data elements match "zzz"')
+            screen.getByText('No data items match "zzz"')
         ).toBeInTheDocument()
     })
 })

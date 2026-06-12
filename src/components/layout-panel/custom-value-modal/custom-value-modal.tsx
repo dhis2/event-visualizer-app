@@ -35,12 +35,24 @@ import { StageNotice } from './stage-notice'
 import classes from './styles/custom-value-modal.module.css'
 import {
     useCustomValueDataElements,
-    type CustomValueDataElement,
+    type CustomValueItem,
 } from './use-custom-value-data-elements'
 
 type CustomValueModalProps = {
     onClose: () => void
 }
+
+/* Many tracked entity attributes (and some data elements) carry a metadata
+ * aggregation type of NONE, which renders every custom value cell as 0. Fall
+ * back to AVERAGE so "Use item default" produces a meaningful value. */
+const FALLBACK_AGGREGATION_TYPE: AggregationType = 'AVERAGE'
+
+const resolveDefaultAggregationType = (
+    item: CustomValueItem
+): AggregationType =>
+    item.aggregationType && item.aggregationType !== 'NONE'
+        ? item.aggregationType
+        : FALLBACK_AGGREGATION_TYPE
 
 export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     const dispatch = useAppDispatch()
@@ -51,9 +63,9 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
         customValue?.aggregationType ?? 'DEFAULT'
     )
     const [dataElementId, setDataElementId] = useState(customValue?.id)
-    const [dataElement, setDataElement] = useState<
-        CustomValueDataElement | undefined
-    >(undefined)
+    const [dataElement, setDataElement] = useState<CustomValueItem | undefined>(
+        undefined
+    )
     const [searchTerm, setSearchTerm] = useState('')
 
     const {
@@ -81,7 +93,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     )
 
     const onDataElementChange = useCallback(
-        (dataElement: CustomValueDataElement) => {
+        (dataElement: CustomValueItem) => {
             setDataElementId(dataElement.id)
             setDataElement(dataElement)
             metadataStore.addMetadata(dataElement)
@@ -90,14 +102,16 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     )
 
     const onUpdate = useCallback(() => {
-        if (dataElement) {
+        const item =
+            dataElement ?? dataElements?.find((d) => d.id === dataElementId)
+        if (item) {
             dispatch(
                 setVisUiConfigCustomValue({
                     aggregationType:
                         aggregationType === 'DEFAULT'
-                            ? dataElement.aggregationType
+                            ? resolveDefaultAggregationType(item)
                             : aggregationType,
-                    id: dataElement.id,
+                    id: item.id,
                 })
             )
             dispatch(setVisUiConfigOutputType('EVENT'))
@@ -105,7 +119,14 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
         }
 
         onClose()
-    }, [dispatch, aggregationType, dataElement, onClose])
+    }, [
+        dispatch,
+        aggregationType,
+        dataElement,
+        dataElements,
+        dataElementId,
+        onClose,
+    ])
 
     return (
         <Modal onClose={onClose} position="top" large>
@@ -113,7 +134,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
             <ModalContent className={classes.content}>
                 <p className={classes.description}>
                     {i18n.t(
-                        'Choose the numeric data element to show in table cells.'
+                        'Choose the numeric data item to show in table cells.'
                     )}
                 </p>
                 <StageNotice
@@ -167,10 +188,10 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                         >
                             {filteredByStageName
                                 ? i18n.t(
-                                      'This stage does not have any numeric data elements available.'
+                                      'This stage does not have any numeric data items available.'
                                   )
                                 : i18n.t(
-                                      'This program does not have any numeric data elements available.'
+                                      'This program does not have any numeric data items available.'
                                   )}
                         </NoticeBox>
                     )}
@@ -180,7 +201,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                         visibleDataElements?.length === 0 && (
                             <div className={classes.noMatches}>
                                 {i18n.t(
-                                    'No data elements match "{{- searchTerm}}"',
+                                    'No data items match "{{- searchTerm}}"',
                                     { searchTerm }
                                 )}
                             </div>
@@ -224,7 +245,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                         type="button"
                         primary
                         onClick={onUpdate}
-                        disabled={!dataElement}
+                        disabled={!dataElementId}
                     >
                         {i18n.t('Update')}
                     </Button>

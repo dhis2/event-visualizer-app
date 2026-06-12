@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-11T13:07:17.360Z\n"
-"PO-Revision-Date: 2026-06-11T13:07:17.361Z\n"
+"POT-Creation-Date: 2026-06-12T09:54:25.549Z\n"
+"PO-Revision-Date: 2026-06-12T09:54:25.549Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -326,8 +326,8 @@ msgstr "Nothing selected. Add items to the layout to get started."
 msgid "Configure custom value"
 msgstr "Configure custom value"
 
-msgid "Choose the numeric data element to show in table cells."
-msgstr "Choose the numeric data element to show in table cells."
+msgid "Choose the numeric data item to show in table cells."
+msgstr "Choose the numeric data item to show in table cells."
 
 msgid "Search data items"
 msgstr "Search data items"
@@ -347,14 +347,14 @@ msgstr "No numeric data items in stage \"{{- stageName}}\""
 msgid "No numeric data items in this program"
 msgstr "No numeric data items in this program"
 
-msgid "This stage does not have any numeric data elements available."
-msgstr "This stage does not have any numeric data elements available."
+msgid "This stage does not have any numeric data items available."
+msgstr "This stage does not have any numeric data items available."
 
-msgid "This program does not have any numeric data elements available."
-msgstr "This program does not have any numeric data elements available."
+msgid "This program does not have any numeric data items available."
+msgstr "This program does not have any numeric data items available."
 
-msgid "No data elements match \"{{- searchTerm}}\""
-msgstr "No data elements match \"{{- searchTerm}}\""
+msgid "No data items match \"{{- searchTerm}}\""
+msgstr "No data items match \"{{- searchTerm}}\""
 
 msgid "Aggregation"
 msgstr "Aggregation"
@@ -396,6 +396,21 @@ msgstr "{{- names}} will be removed. Are you sure?"
 msgid "Convert"
 msgstr "Convert"
 
+msgid "Column"
+msgstr "Column"
+
+msgid "Bar"
+msgstr "Bar"
+
+msgid "Line"
+msgstr "Line"
+
+msgid "Area"
+msgstr "Area"
+
+msgid "Coming soon"
+msgstr "Coming soon"
+
 msgid "Individual data view"
 msgstr "Individual data view"
 
@@ -421,14 +436,23 @@ msgstr ""
 "This line list may show data that was not available when the interpretation "
 "was written."
 
+msgid "Not available offline"
+msgstr "Not available offline"
+
+msgid "Go to previous page"
+msgstr "Go to previous page"
+
+msgid "Go to next page"
+msgstr "Go to next page"
+
+msgid "Rows {{- firstItem}}-{{- lastItem}}"
+msgstr "Rows {{- firstItem}}-{{- lastItem}}"
+
 msgid "Rows per page"
 msgstr "Rows per page"
 
-msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
-msgstr "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
-
-msgid "Not available offline"
-msgstr "Not available offline"
+msgid "Sort items"
+msgstr "Sort items"
 
 msgid "most recent"
 msgstr "most recent"
@@ -814,8 +838,8 @@ msgstr "Unsaved visualization"
 msgid "Edited"
 msgstr "Edited"
 
-msgid "Use data element default"
-msgstr "Use data element default"
+msgid "Use item default"
+msgstr "Use item default"
 
 msgid "Sum"
 msgstr "Sum"
