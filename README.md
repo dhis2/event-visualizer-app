@@ -93,6 +93,41 @@ gh auth login
 /reload-plugins
 ```
 
+### AI sandboxes (opt-in)
+
+Two optional, isolated AI workspaces built on [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) (`sbx`). They are fully opt-in — if you do not install `sbx`, nothing here affects you.
+
+**One-time setup:**
+
+```bash
+brew install sbx
+./scripts/sbx.sh setup   # Docker login, network policy, Anthropic credential
+```
+
+**Mount sandbox — hands-on, live files** (`pnpm sbx:mount`)
+
+The agent edits your live working tree (changes show up in your editor immediately) and can run tests/build inside the sandbox, with no permission prompts but a constrained network. You review diffs and commit on the host. A dev server the agent starts is published to `http://localhost:3000`.
+
+> **node_modules note:** the repo is bind-mounted, so `node_modules` is shared with the host. Most of it is plain JavaScript that runs anywhere — only the handful of packages with **compiled native binaries** (`esbuild`/`vite`, `vitest`, `cypress`) are platform-specific. When the agent runs `pnpm install` in the sandbox, those binaries get rebuilt for Linux. Pure-JS tooling on the host — your editor, ESLint, Prettier, `tsc` — keeps working regardless. Only the native tools (`vite` dev-server, `vitest`, `cypress`) need a `pnpm install` to swap back to macOS binaries before you run them **natively on your host** (fast — your pnpm store is warm).
+
+**Clone sandbox — autonomous** (`pnpm sbx:clone`)
+
+The agent works on a private, isolated clone: it branches, runs tests, and commits on its own. Your host `node_modules` is never touched. Retrieve its work:
+
+```bash
+git fetch sandbox-event-visualizer-app-clone
+git log sandbox-event-visualizer-app-clone/<branch>
+```
+
+**Other commands:**
+
+```bash
+./scripts/sbx.sh reset-clone   # wipe the clone back to a clean checkout
+./scripts/sbx.sh purge         # remove both sandboxes
+```
+
+Not all host MCP servers are available inside a sandbox — only project-level configuration in the repo is picked up.
+
 ### Development Workflow
 
 1. **Create a feature branch** from `main`
