@@ -260,7 +260,9 @@ cmd_purge() {
 cmd_setup() {
     require_sbx
     sbx login
-    sbx policy set-default balanced
+    if ! sbx policy set-default balanced 2>/dev/null; then
+        echo "Network policy already set — keeping it. (To change: sbx policy reset, then re-run setup.)"
+    fi
     echo "Store your Anthropic credential (read from your input; never written to the repo):"
     sbx secret set -g anthropic
     printf 'Configure an optional context7 API key (higher rate limits)? [y/N] '
