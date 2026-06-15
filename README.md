@@ -123,6 +123,8 @@ git log sandbox-event-visualizer-app-clone/<branch>
 
 > **First run provisions the sandbox** (installs pnpm, the `typescript-lsp` and `context7` plugins, and opens network access for the `grep`/`context7` MCPs and the DHIS2 dev instance). That first `pnpm sbx:mount`/`sbx:clone` takes a minute longer; later runs reuse it.
 
+Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount -- --continue` or `pnpm sbx:clone -- --model opus`.
+
 **Other commands:**
 
 ```bash

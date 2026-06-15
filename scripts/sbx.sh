@@ -201,7 +201,8 @@ cmd_mount() {
     local note="${BASE_NOTE}"$'\n\n'"${MOUNT_NOTE}"
     sbx run "$MOUNT_NAME" -- \
         --dangerously-skip-permissions \
-        --append-system-prompt "$note"
+        --append-system-prompt "$note" \
+        "$@"
 }
 
 cmd_clone() {
@@ -215,7 +216,8 @@ cmd_clone() {
     local note="${BASE_NOTE}"$'\n\n'"${CLONE_NOTE}"
     sbx run "$CLONE_NAME" -- \
         --dangerously-skip-permissions \
-        --append-system-prompt "$note"
+        --append-system-prompt "$note" \
+        "$@"
     echo
     echo "Retrieve the clone's commits on the host with:"
     echo "  git fetch sandbox-${CLONE_NAME}"
@@ -267,8 +269,8 @@ cmd_setup() {
 }
 
 case "${1:-}" in
-    mount)       cmd_mount ;;
-    clone)       cmd_clone ;;
+    mount)       cmd_mount "${@:2}" ;;
+    clone)       cmd_clone "${@:2}" ;;
     reset-clone) cmd_reset_clone ;;
     purge)       cmd_purge ;;
     setup)       cmd_setup ;;
