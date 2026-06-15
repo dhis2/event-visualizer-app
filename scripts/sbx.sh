@@ -217,7 +217,7 @@ link_host_dirs() {
         echo "Linking session history + memory (two-way) into '$name'..."
         sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude/projects"; ln -sfn "$1" "$HOME/.claude/projects/$(basename "$1")"' _ "$sdir" >/dev/null 2>&1 || true
     fi
-    if [ -d "$idir" ]; then
+    if [ "${SBX_NO_IDE:-}" != "1" ] && [ -d "$idir" ]; then
         echo "Linking live editor locks into '$name'..."
         sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude"; rm -rf "$HOME/.claude/ide"; ln -sfn "$1" "$HOME/.claude/ide"' _ "$idir" >/dev/null 2>&1 || true
     fi
@@ -231,7 +231,7 @@ cmd_mount() {
         echo "Creating mount sandbox '$MOUNT_NAME'..."
         local extra=()
         if [ -d "$(session_dir)" ]; then extra+=("$(session_dir)"); fi
-        if [ -d "$(ide_dir)" ]; then extra+=("$(ide_dir)"); fi
+        if [ "${SBX_NO_IDE:-}" != "1" ] && [ -d "$(ide_dir)" ]; then extra+=("$(ide_dir)"); fi
         sbx create claude "$REPO_ROOT" ${extra[@]+"${extra[@]}"} --name "$MOUNT_NAME"
         sbx ports "$MOUNT_NAME" --publish "${DEV_PORT}:${DEV_PORT}" || true
         provision_sandbox "$MOUNT_NAME"
