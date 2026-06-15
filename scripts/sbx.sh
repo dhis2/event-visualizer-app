@@ -192,7 +192,6 @@ ide_link() {
 
 carry_session() {
     local name="$1"
-    [ "${SBX_CARRY_SESSION:-}" = "1" ] || return 0
     local proj src
     proj="$(printf '%s' "$REPO_ROOT" | sed 's#/#-#g')"
     src="$HOME/.claude/projects/$proj"

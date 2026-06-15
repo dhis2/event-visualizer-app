@@ -125,7 +125,7 @@ git log sandbox-event-visualizer-app-clone/<branch>
 
 Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount -- --continue` or `pnpm sbx:clone -- --model opus`.
 
-To continue a host conversation inside the mount sandbox, set `SBX_CARRY_SESSION=1` — it copies _this project's_ transcripts and memory into the sandbox so `--continue`/`--resume` find them: `SBX_CARRY_SESSION=1 pnpm sbx:mount -- --continue`.
+`pnpm sbx:mount` automatically copies _this project's_ transcripts and memory into the sandbox, so `pnpm sbx:mount -- --continue` (or `--resume`) picks up your host conversation.
 
 **Other commands:**
 
