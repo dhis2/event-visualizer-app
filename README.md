@@ -110,6 +110,8 @@ The agent edits your live working tree (changes show up in your editor immediate
 
 > **node_modules note:** the repo is bind-mounted, so `node_modules` is shared with the host. Most of it is plain JavaScript that runs anywhere — only the handful of packages with **compiled native binaries** (`esbuild`/`vite`, `vitest`, `cypress`) are platform-specific. When the agent runs `pnpm install` in the sandbox, those binaries get rebuilt for Linux. Pure-JS tooling on the host — your editor, ESLint, Prettier, `tsc` — keeps working regardless. Only the native tools (`vite` dev-server, `vitest`, `cypress`) need a `pnpm install` to swap back to macOS binaries before you run them **natively on your host** (fast — your pnpm store is warm).
 
+> **Editor integration (Neovim):** if Neovim is running with [`coder/claudecode.nvim`](https://github.com/coder/claudecode.nvim) open on this repo, `pnpm sbx:mount` auto-links it — it copies the editor's lock file into the sandbox, opens a **port-scoped** path to the editor's WebSocket, and starts a small forwarder. In the session, run `/ide` to connect (diffs open in Neovim, selection and diagnostics flow). It re-links on each mount (the editor's port rotates per session), so re-run `pnpm sbx:mount` if you restart Neovim. Only that single editor port is opened — not general host access. Set `SBX_NO_IDE=1` to disable.
+
 **Clone sandbox — autonomous** (`pnpm sbx:clone`)
 
 The agent works on a private, isolated clone: it branches, runs tests, and commits on its own. Your host `node_modules` is never touched. Retrieve its work:

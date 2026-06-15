@@ -67,6 +67,69 @@ Work autonomously: create a feature branch, run `pnpm test` and `pnpm lint`, and
 A read-only copy of the host repo is mounted at /run/sandbox/source. Pull host updates with `git pull /run/sandbox/source <branch>`. The human retrieves your commits from the host via this sandbox's git remote.
 EOF
 
+read -r -d '' IDE_FORWARDER_PY <<'PYEOF' || true
+import sys, os, socket, threading
+from urllib.parse import urlparse
+
+# Forward sandbox 127.0.0.1:<port> to the host editor's loopback WS at the same
+# port. The sandbox reaches the host only through its egress proxy, so tunnel via
+# HTTP CONNECT to host.docker.internal (which the proxy maps to the host loopback).
+port = int(sys.argv[1])
+proxy_url = (os.environ.get("https_proxy") or os.environ.get("HTTPS_PROXY")
+             or "http://gateway.docker.internal:3128")
+parsed = urlparse(proxy_url)
+proxy_host = parsed.hostname or "gateway.docker.internal"
+proxy_port = parsed.port or 3128
+target = "host.docker.internal:%d" % port
+
+def connect_upstream():
+    s = socket.create_connection((proxy_host, proxy_port), timeout=10)
+    s.sendall(("CONNECT %s HTTP/1.1\r\nHost: %s\r\n\r\n" % (target, target)).encode())
+    header = b""
+    while b"\r\n\r\n" not in header:
+        chunk = s.recv(1)
+        if not chunk:
+            s.close()
+            return None
+        header += chunk
+    if b" 200 " not in header.split(b"\r\n", 1)[0]:
+        s.close()
+        return None
+    return s
+
+def pipe(src, dst):
+    try:
+        while True:
+            data = src.recv(65536)
+            if not data:
+                break
+            dst.sendall(data)
+    except OSError:
+        pass
+    finally:
+        for s in (src, dst):
+            try:
+                s.close()
+            except OSError:
+                pass
+
+def handle(client):
+    upstream = connect_upstream()
+    if upstream is None:
+        client.close()
+        return
+    threading.Thread(target=pipe, args=(client, upstream), daemon=True).start()
+    threading.Thread(target=pipe, args=(upstream, client), daemon=True).start()
+
+listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+listener.bind(("127.0.0.1", port))
+listener.listen(64)
+while True:
+    conn, _ = listener.accept()
+    threading.Thread(target=handle, args=(conn,), daemon=True).start()
+PYEOF
+
 maybe_inject_dhis2_creds() {
     local name="$1"
     [ -f "$REPO_ROOT/cypress.env.json" ] || return 0
@@ -83,6 +146,49 @@ maybe_inject_dhis2_creds() {
     esac
 }
 
+host_ide_lock() {
+    node -e '
+        const fs = require("fs"), os = require("os"), path = require("path");
+        const dir = path.join(os.homedir(), ".claude", "ide");
+        let best = null;
+        try {
+            for (const f of fs.readdirSync(dir)) {
+                if (!f.endsWith(".lock")) continue;
+                const fp = path.join(dir, f);
+                let o;
+                try { o = JSON.parse(fs.readFileSync(fp, "utf8")); } catch (e) { continue; }
+                if (!(o.workspaceFolders || []).includes(process.argv[1])) continue;
+                const mt = fs.statSync(fp).mtimeMs;
+                if (!best || mt > best.mt) best = { port: path.basename(f, ".lock"), fp, mt };
+            }
+        } catch (e) {}
+        if (best) process.stdout.write(best.port + " " + best.fp);
+    ' "$REPO_ROOT"
+}
+
+ide_link() {
+    local name="$1"
+    [ "${SBX_NO_IDE:-}" = "1" ] && return 0
+    local info port lock fwd
+    info="$(host_ide_lock)" || true
+    if [ -z "$info" ]; then
+        echo "No host editor detected for this repo — skipping IDE link."
+        return 0
+    fi
+    port="${info%% *}"
+    lock="${info#* }"
+    echo "Linking host editor (Neovim, WS port $port)..."
+    sbx policy allow network --sandbox "$name" "localhost:${port},host.docker.internal" >/dev/null
+    sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude/ide"'
+    sbx cp "$lock" "${name}:/home/agent/.claude/ide/${port}.lock"
+    fwd="$(mktemp)"
+    printf '%s' "$IDE_FORWARDER_PY" > "$fwd"
+    sbx cp "$fwd" "${name}:/tmp/sbx-ide-forward.py"
+    rm -f "$fwd"
+    sbx exec -d "$name" python3 /tmp/sbx-ide-forward.py "$port" >/dev/null 2>&1 || true
+    echo "Editor link ready — run /ide in the session to connect to Neovim."
+}
+
 cmd_mount() {
     require_sbx
     if ! sandbox_exists "$MOUNT_NAME"; then
@@ -91,6 +197,7 @@ cmd_mount() {
         sbx ports "$MOUNT_NAME" --publish "${DEV_PORT}:${DEV_PORT}" || true
         provision_sandbox "$MOUNT_NAME"
     fi
+    ide_link "$MOUNT_NAME"
     local note="${BASE_NOTE}"$'\n\n'"${MOUNT_NOTE}"
     sbx run "$MOUNT_NAME" -- \
         --dangerously-skip-permissions \
