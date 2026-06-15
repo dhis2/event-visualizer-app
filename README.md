@@ -121,6 +121,8 @@ git fetch sandbox-event-visualizer-app-clone
 git log sandbox-event-visualizer-app-clone/<branch>
 ```
 
+Unlike the mount, the clone gets a **one-way copy** of this project's memory at create (no sessions, no settings — it stays isolated). Re-push the latest host memory with `./scripts/sbx.sh sync-clone`.
+
 > **First run provisions the sandbox** (installs pnpm, the `typescript-lsp`, `context7`, and `superpowers` plugins, and opens network access for the `grep`/`context7` MCPs and the DHIS2 dev instance). That first `pnpm sbx:mount`/`sbx:clone` takes a minute longer; later runs reuse it.
 
 Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount -- --continue` or `pnpm sbx:clone -- --model opus`.
@@ -130,6 +132,7 @@ Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount 
 **Other commands:**
 
 ```bash
+./scripts/sbx.sh sync-clone    # re-copy this project's memory into the clone (host -> clone)
 ./scripts/sbx.sh reset-clone   # wipe the clone back to a clean checkout
 ./scripts/sbx.sh purge         # remove both sandboxes
 ```

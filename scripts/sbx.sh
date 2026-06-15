@@ -228,12 +228,25 @@ cmd_mount() {
         "$@"
 }
 
+# One-way copy of this project's memory into a sandbox (no sessions, no settings).
+# Used for the isolated clone; re-run on demand via "sync-clone".
+copy_memory() {
+    local name="$1" projdir memsrc
+    projdir="$(basename "$(session_dir)")"
+    memsrc="$(session_dir)/memory"
+    [ -d "$memsrc" ] || { echo "No project memory to copy into '$name'."; return 0; }
+    echo "Copying project memory into '$name'..."
+    sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude/projects/$1"' _ "$projdir"
+    sbx cp "$memsrc" "${name}:/home/agent/.claude/projects/${projdir}/"
+}
+
 cmd_clone() {
     require_sbx
     if ! sandbox_exists "$CLONE_NAME"; then
         echo "Creating clone sandbox '$CLONE_NAME'..."
         sbx create --clone claude "$REPO_ROOT" --name "$CLONE_NAME"
         provision_sandbox "$CLONE_NAME"
+        copy_memory "$CLONE_NAME"
         maybe_inject_dhis2_creds "$CLONE_NAME"
     fi
     local note="${BASE_NOTE}"$'\n\n'"${CLONE_NOTE}"
@@ -245,6 +258,15 @@ cmd_clone() {
     echo "Retrieve the clone's commits on the host with:"
     echo "  git fetch sandbox-${CLONE_NAME}"
     echo "  git log sandbox-${CLONE_NAME}/<branch>"
+}
+
+cmd_sync_clone() {
+    require_sbx
+    if ! sandbox_exists "$CLONE_NAME"; then
+        echo "No clone sandbox '$CLONE_NAME' — run 'pnpm sbx:clone' first." >&2
+        exit 1
+    fi
+    copy_memory "$CLONE_NAME"
 }
 
 cmd_reset_clone() {
@@ -301,11 +323,12 @@ cmd_setup() {
 case "${1:-}" in
     mount)       cmd_mount "${@:2}" ;;
     clone)       cmd_clone "${@:2}" ;;
+    sync-clone)  cmd_sync_clone ;;
     reset-clone) cmd_reset_clone ;;
     purge)       cmd_purge ;;
     setup)       cmd_setup ;;
     *)
-        echo "Usage: scripts/sbx.sh {mount|clone|reset-clone|purge|setup}" >&2
+        echo "Usage: scripts/sbx.sh {mount|clone|sync-clone|reset-clone|purge|setup}" >&2
         exit 1
         ;;
 esac
