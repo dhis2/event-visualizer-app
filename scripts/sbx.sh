@@ -207,6 +207,8 @@ link_session() {
 
 cmd_mount() {
     require_sbx
+    # pnpm forwards its "--" separator through to us; drop it so it doesn't reach Claude.
+    if [ "${1:-}" = "--" ]; then shift; fi
     if ! sandbox_exists "$MOUNT_NAME"; then
         echo "Creating mount sandbox '$MOUNT_NAME'..."
         local history
@@ -242,6 +244,8 @@ copy_memory() {
 
 cmd_clone() {
     require_sbx
+    # pnpm forwards its "--" separator through to us; drop it so it doesn't reach Claude.
+    if [ "${1:-}" = "--" ]; then shift; fi
     if ! sandbox_exists "$CLONE_NAME"; then
         echo "Creating clone sandbox '$CLONE_NAME'..."
         sbx create --clone claude "$REPO_ROOT" --name "$CLONE_NAME"
