@@ -190,6 +190,21 @@ ide_link() {
     echo "Editor link ready — run /ide in the session to connect to Neovim."
 }
 
+carry_session() {
+    local name="$1"
+    [ "${SBX_CARRY_SESSION:-}" = "1" ] || return 0
+    local proj src
+    proj="$(printf '%s' "$REPO_ROOT" | sed 's#/#-#g')"
+    src="$HOME/.claude/projects/$proj"
+    if [ ! -d "$src" ]; then
+        echo "No host session history for this project — nothing to carry."
+        return 0
+    fi
+    echo "Carrying this project's session history + memory into '$name'..."
+    sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude/projects"'
+    sbx cp "$src" "${name}:/home/agent/.claude/projects/"
+}
+
 cmd_mount() {
     require_sbx
     if ! sandbox_exists "$MOUNT_NAME"; then
@@ -199,6 +214,7 @@ cmd_mount() {
         provision_sandbox "$MOUNT_NAME"
     fi
     ide_link "$MOUNT_NAME"
+    carry_session "$MOUNT_NAME"
     local note="${BASE_NOTE}"$'\n\n'"${MOUNT_NOTE}"
     sbx run "$MOUNT_NAME" -- \
         --dangerously-skip-permissions \
