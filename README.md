@@ -125,7 +125,7 @@ git log sandbox-event-visualizer-app-clone/<branch>
 
 Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount -- --continue` or `pnpm sbx:clone -- --model opus`.
 
-`pnpm sbx:mount` automatically copies _this project's_ transcripts and memory into the sandbox, so `pnpm sbx:mount -- --continue` (or `--resume`) picks up your host conversation.
+`pnpm sbx:mount` mounts _this project's_ Claude history + memory (`~/.claude/projects/<repo>`) into the sandbox **read-write**, so `pnpm sbx:mount -- --continue` (or `--resume`) picks up your host conversation and work done in the sandbox flows back to the host. (Only this project's dir is shared — no credentials or other projects. Don't run host Claude and the sandbox on this project simultaneously; they'd write the same files.)
 
 **Other commands:**
 

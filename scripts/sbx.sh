@@ -190,30 +190,37 @@ ide_link() {
     echo "Editor link ready — run /ide in the session to connect to Neovim."
 }
 
-carry_session() {
-    local name="$1"
-    local proj src
-    proj="$(printf '%s' "$REPO_ROOT" | sed 's#/#-#g')"
-    src="$HOME/.claude/projects/$proj"
-    if [ ! -d "$src" ]; then
-        echo "No host session history for this project — nothing to carry."
-        return 0
-    fi
-    echo "Carrying this project's session history + memory into '$name'..."
-    sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude/projects"'
-    sbx cp "$src" "${name}:/home/agent/.claude/projects/"
+session_dir() {
+    printf '%s/.claude/projects/%s' "$HOME" "$(printf '%s' "$REPO_ROOT" | sed 's#/#-#g')"
+}
+
+# Symlink the (RW-mounted) host history dir into the sandbox home, where Claude
+# looks for it — the host and sandbox homes differ, so a direct mount lands at
+# the wrong path. Two-way: the sandbox's session + memory write back to the host.
+link_session() {
+    local name="$1" src
+    src="$(session_dir)"
+    [ -d "$src" ] || return 0
+    echo "Linking this project's session history + memory (two-way) into '$name'..."
+    sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude/projects"; ln -sfn "$1" "$HOME/.claude/projects/$(basename "$1")"' _ "$src"
 }
 
 cmd_mount() {
     require_sbx
     if ! sandbox_exists "$MOUNT_NAME"; then
         echo "Creating mount sandbox '$MOUNT_NAME'..."
-        sbx create claude "$REPO_ROOT" --name "$MOUNT_NAME"
+        local history
+        history="$(session_dir)"
+        if [ -d "$history" ]; then
+            sbx create claude "$REPO_ROOT" "$history" --name "$MOUNT_NAME"
+        else
+            sbx create claude "$REPO_ROOT" --name "$MOUNT_NAME"
+        fi
         sbx ports "$MOUNT_NAME" --publish "${DEV_PORT}:${DEV_PORT}" || true
         provision_sandbox "$MOUNT_NAME"
+        link_session "$MOUNT_NAME"
     fi
     ide_link "$MOUNT_NAME"
-    carry_session "$MOUNT_NAME"
     local note="${BASE_NOTE}"$'\n\n'"${MOUNT_NOTE}"
     sbx run "$MOUNT_NAME" -- \
         --dangerously-skip-permissions \
