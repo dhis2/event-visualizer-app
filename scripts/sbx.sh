@@ -45,6 +45,7 @@ provision_sandbox() {
         claude plugin marketplace add "$2" >/dev/null
         claude plugin install typescript-lsp@claude-plugins-official >/dev/null
         claude plugin install context7@claude-plugins-official >/dev/null
+        claude plugin install superpowers@claude-plugins-official >/dev/null
     ' _ "$PNPM_VERSION" "$MARKETPLACE"
 }
 

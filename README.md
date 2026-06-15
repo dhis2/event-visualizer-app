@@ -121,7 +121,7 @@ git fetch sandbox-event-visualizer-app-clone
 git log sandbox-event-visualizer-app-clone/<branch>
 ```
 
-> **First run provisions the sandbox** (installs pnpm, the `typescript-lsp` and `context7` plugins, and opens network access for the `grep`/`context7` MCPs and the DHIS2 dev instance). That first `pnpm sbx:mount`/`sbx:clone` takes a minute longer; later runs reuse it.
+> **First run provisions the sandbox** (installs pnpm, the `typescript-lsp`, `context7`, and `superpowers` plugins, and opens network access for the `grep`/`context7` MCPs and the DHIS2 dev instance). That first `pnpm sbx:mount`/`sbx:clone` takes a minute longer; later runs reuse it.
 
 Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount -- --continue` or `pnpm sbx:clone -- --model opus`.
 
@@ -132,7 +132,7 @@ Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount 
 ./scripts/sbx.sh purge         # remove both sandboxes
 ```
 
-**Tooling inside the sandbox:** the `typescript-lsp` and `context7` plugins, the `grep` MCP, and the prettier/eslint format hook all work. Only project-level config (committed `.claude/`) is picked up — user-level MCP servers are not. **GitHub auth (`gh`) is deliberately not available inside sandboxes** — the agent has no push/PR power, so a misbehaving session can't touch your repos; do GitHub operations on the host.
+**Tooling inside the sandbox:** the `typescript-lsp`, `context7`, and `superpowers` plugins, the `grep` MCP, and the prettier/eslint format hook all work. Only project-level config (committed `.claude/`) is picked up — user-level MCP servers are not. **GitHub auth (`gh`) is deliberately not available inside sandboxes** — the agent has no push/PR power, so a misbehaving session can't touch your repos; do GitHub operations on the host.
 
 **Browser automation** is not yet available in-sandbox: the image (Ubuntu 26.04 arm64) has no installable Chrome, and Playwright does not yet support that OS. Once it does, enable it with:
 
