@@ -263,8 +263,13 @@ cmd_setup() {
     if ! sbx policy set-default balanced 2>/dev/null; then
         echo "Network policy already set — keeping it. (To change: sbx policy reset, then re-run setup.)"
     fi
-    echo "Store your Anthropic credential (read from your input; never written to the repo):"
-    sbx secret set -g anthropic
+    printf 'Store an Anthropic API key? Subscription users skip this and sign in via OAuth on first mount. [y/N] '
+    local areply
+    read -r areply || areply=""
+    case "$areply" in
+        [yY]*) sbx secret set -g anthropic ;;
+        *) echo "Skipping — Claude will prompt for interactive OAuth login on first 'pnpm sbx:mount'." ;;
+    esac
     printf 'Configure an optional context7 API key (higher rate limits)? [y/N] '
     local reply
     read -r reply || reply=""
