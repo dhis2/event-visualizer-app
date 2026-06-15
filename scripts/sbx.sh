@@ -6,6 +6,8 @@ PROJECT="$(basename "$REPO_ROOT")"
 MOUNT_NAME="${PROJECT}-mount"
 CLONE_NAME="${PROJECT}-clone"
 DEV_PORT=3000
+MARKETPLACE="anthropics/claude-plugins-official"
+PNPM_VERSION="$(node -p "require('$REPO_ROOT/package.json').packageManager.split('@')[1].split('+')[0]" 2>/dev/null || echo latest)"
 
 require_sbx() {
     if ! command -v sbx >/dev/null 2>&1; then
@@ -22,6 +24,28 @@ default_branch() {
     local branch
     branch="$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's@^origin/@@')"
     echo "${branch:-master}"
+}
+
+dhis2_host() {
+    node -e "try{const u=require('$REPO_ROOT/cypress.env.json').dhis2BaseUrl;process.stdout.write(u?new URL(u).host:'')}catch(e){}" 2>/dev/null
+}
+
+provision_sandbox() {
+    local name="$1"
+    local hosts="mcp.grep.app,context7.com,*.context7.com"
+    local dhis
+    dhis="$(dhis2_host)"
+    [ -n "$dhis" ] && hosts="${hosts},${dhis}"
+    echo "Configuring network policy for '$name'..."
+    sbx policy allow network --sandbox "$name" "$hosts" >/dev/null
+    echo "Provisioning '$name' (pnpm + plugins; first run only, takes a minute)..."
+    sbx exec "$name" bash -lc '
+        set -e
+        sudo npm i -g "pnpm@$1" >/dev/null 2>&1
+        claude plugin marketplace add "$2" >/dev/null
+        claude plugin install typescript-lsp@claude-plugins-official >/dev/null
+        claude plugin install context7@claude-plugins-official >/dev/null
+    ' _ "$PNPM_VERSION" "$MARKETPLACE"
 }
 
 read -r -d '' BASE_NOTE <<'EOF' || true
@@ -43,12 +67,29 @@ Work autonomously: create a feature branch, run `pnpm test` and `pnpm lint`, and
 A read-only copy of the host repo is mounted at /run/sandbox/source. Pull host updates with `git pull /run/sandbox/source <branch>`. The human retrieves your commits from the host via this sandbox's git remote.
 EOF
 
+maybe_inject_dhis2_creds() {
+    local name="$1"
+    [ -f "$REPO_ROOT/cypress.env.json" ] || return 0
+    printf 'Inject cypress.env.json (DHIS2 test creds) into the clone for e2e? [y/N] '
+    local reply
+    read -r reply || reply=""
+    case "$reply" in
+        [yY]*)
+            # The clone is checked out at the host path ($REPO_ROOT) inside the container.
+            sbx cp "$REPO_ROOT/cypress.env.json" "${name}:${REPO_ROOT}/cypress.env.json"
+            echo "Copied cypress.env.json into the clone."
+            ;;
+        *) echo "Skipped DHIS2 creds." ;;
+    esac
+}
+
 cmd_mount() {
     require_sbx
     if ! sandbox_exists "$MOUNT_NAME"; then
         echo "Creating mount sandbox '$MOUNT_NAME'..."
         sbx create claude "$REPO_ROOT" --name "$MOUNT_NAME"
         sbx ports "$MOUNT_NAME" --publish "${DEV_PORT}:${DEV_PORT}" || true
+        provision_sandbox "$MOUNT_NAME"
     fi
     local note="${BASE_NOTE}"$'\n\n'"${MOUNT_NOTE}"
     sbx run "$MOUNT_NAME" -- \
@@ -61,6 +102,8 @@ cmd_clone() {
     if ! sandbox_exists "$CLONE_NAME"; then
         echo "Creating clone sandbox '$CLONE_NAME'..."
         sbx create --clone claude "$REPO_ROOT" --name "$CLONE_NAME"
+        provision_sandbox "$CLONE_NAME"
+        maybe_inject_dhis2_creds "$CLONE_NAME"
     fi
     local note="${BASE_NOTE}"$'\n\n'"${CLONE_NOTE}"
     sbx run "$CLONE_NAME" -- \
@@ -94,6 +137,25 @@ cmd_setup() {
     sbx policy set-default balanced
     echo "Store your Anthropic credential (read from your input; never written to the repo):"
     sbx secret set -g anthropic
+    printf 'Configure an optional context7 API key (higher rate limits)? [y/N] '
+    local reply
+    read -r reply || reply=""
+    case "$reply" in
+        [yY]*)
+            printf 'context7 API key: '
+            local key
+            read -rs key || key=""
+            echo
+            if [ -n "$key" ]; then
+                sbx secret set-custom -g --host context7.com --env CONTEXT7_API_KEY --value "$key"
+                echo "context7 key stored (proxy-injected; never exposed inside the sandbox)."
+            else
+                echo "No key entered — skipping."
+            fi
+            ;;
+        *) echo "Skipped context7 key (works keyless at a lower rate limit)." ;;
+    esac
+    echo "GitHub auth is intentionally NOT configured for sandboxes (security)."
     echo "Setup complete. Run 'pnpm sbx:mount' or 'pnpm sbx:clone'."
 }
 

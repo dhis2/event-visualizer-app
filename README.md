@@ -119,6 +119,8 @@ git fetch sandbox-event-visualizer-app-clone
 git log sandbox-event-visualizer-app-clone/<branch>
 ```
 
+> **First run provisions the sandbox** (installs pnpm, the `typescript-lsp` and `context7` plugins, and opens network access for the `grep`/`context7` MCPs and the DHIS2 dev instance). That first `pnpm sbx:mount`/`sbx:clone` takes a minute longer; later runs reuse it.
+
 **Other commands:**
 
 ```bash
@@ -126,7 +128,19 @@ git log sandbox-event-visualizer-app-clone/<branch>
 ./scripts/sbx.sh purge         # remove both sandboxes
 ```
 
-Not all host MCP servers are available inside a sandbox — only project-level configuration in the repo is picked up.
+**Tooling inside the sandbox:** the `typescript-lsp` and `context7` plugins, the `grep` MCP, and the prettier/eslint format hook all work. Only project-level config (committed `.claude/`) is picked up — user-level MCP servers are not. **GitHub auth (`gh`) is deliberately not available inside sandboxes** — the agent has no push/PR power, so a misbehaving session can't touch your repos; do GitHub operations on the host.
+
+**Browser automation** is not yet available in-sandbox: the image (Ubuntu 26.04 arm64) has no installable Chrome, and Playwright does not yet support that OS. Once it does, enable it with:
+
+```bash
+./scripts/sbx.sh clone   # or mount
+# then, inside the sandbox:
+npx playwright install chromium
+claude plugin install chrome-devtools-mcp@claude-plugins-official
+# point chrome-devtools-mcp at the installed binary via --executablePath
+```
+
+For now, inspect the running app from your host browser against the published `:3000`.
 
 ### Development Workflow
 
