@@ -147,62 +147,79 @@ maybe_inject_dhis2_creds() {
     esac
 }
 
-host_ide_lock() {
-    node -e '
-        const fs = require("fs"), os = require("os"), path = require("path");
-        const dir = path.join(os.homedir(), ".claude", "ide");
-        let best = null;
+# Ports of live (reachable) editor locks whose workspace is this repo. Reads the
+# host lock dir directly; only returns ports something is actually listening on,
+# so stale locks (dead Neovim sessions) are skipped.
+live_ide_ports() {
+    local d ports port
+    d="$(ide_dir)"
+    [ -d "$d" ] || return 0
+    ports="$(node -e '
+        const fs = require("fs"), path = require("path");
+        const dir = process.argv[1], repo = process.argv[2], out = [];
         try {
             for (const f of fs.readdirSync(dir)) {
                 if (!f.endsWith(".lock")) continue;
-                const fp = path.join(dir, f);
                 let o;
-                try { o = JSON.parse(fs.readFileSync(fp, "utf8")); } catch (e) { continue; }
-                if (!(o.workspaceFolders || []).includes(process.argv[1])) continue;
-                const mt = fs.statSync(fp).mtimeMs;
-                if (!best || mt > best.mt) best = { port: path.basename(f, ".lock"), fp, mt };
+                try { o = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")); } catch (e) { continue; }
+                if ((o.workspaceFolders || []).includes(repo)) out.push(path.basename(f, ".lock"));
             }
         } catch (e) {}
-        if (best) process.stdout.write(best.port + " " + best.fp);
-    ' "$REPO_ROOT"
+        process.stdout.write(out.join(" "));
+    ' "$d" "$REPO_ROOT")"
+    for port in $ports; do
+        nc -z 127.0.0.1 "$port" 2>/dev/null && echo "$port"
+    done
 }
 
+# Bridge each live editor port (sandbox loopback -> host) so /ide can reach Neovim.
+# The lock dir itself is mounted live (see cmd_mount), so /ide always sees the
+# current locks; here we just open + forward the ports. Scoped to this repo; re-run
+# mount if you (re)start Neovim, since a new port needs a new host-side allow rule.
 ide_link() {
     local name="$1"
     [ "${SBX_NO_IDE:-}" = "1" ] && return 0
-    local info port lock fwd
-    info="$(host_ide_lock)" || true
-    if [ -z "$info" ]; then
-        echo "No host editor detected for this repo — skipping IDE link."
+    local ports port fwd
+    ports="$(live_ide_ports)"
+    if [ -z "$ports" ]; then
+        echo "No live editor for this repo — start Neovim (claudecode.nvim) and re-run to use /ide."
         return 0
     fi
-    port="${info%% *}"
-    lock="${info#* }"
-    echo "Linking host editor (Neovim, WS port $port)..."
-    sbx policy allow network --sandbox "$name" "localhost:${port},host.docker.internal" >/dev/null
-    sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude/ide"'
-    sbx cp "$lock" "${name}:/home/agent/.claude/ide/${port}.lock"
     fwd="$(mktemp)"
     printf '%s' "$IDE_FORWARDER_PY" > "$fwd"
-    sbx cp "$fwd" "${name}:/tmp/sbx-ide-forward.py"
+    sbx cp "$fwd" "${name}:/tmp/sbx-ide-forward.py" >/dev/null 2>&1 || true
     rm -f "$fwd"
-    sbx exec -d "$name" python3 /tmp/sbx-ide-forward.py "$port" >/dev/null 2>&1 || true
-    echo "Editor link ready — run /ide in the session to connect to Neovim."
+    for port in $ports; do
+        sbx policy allow network --sandbox "$name" "localhost:${port},host.docker.internal" >/dev/null 2>&1 || true
+        sbx exec -d "$name" python3 /tmp/sbx-ide-forward.py "$port" >/dev/null 2>&1 || true
+        echo "  Linked host editor on port $port."
+    done
+    echo "Editor link ready — run /ide in the session."
 }
 
 session_dir() {
     printf '%s/.claude/projects/%s' "$HOME" "$(printf '%s' "$REPO_ROOT" | sed 's#/#-#g')"
 }
 
-# Symlink the (RW-mounted) host history dir into the sandbox home, where Claude
-# looks for it — the host and sandbox homes differ, so a direct mount lands at
-# the wrong path. Two-way: the sandbox's session + memory write back to the host.
-link_session() {
-    local name="$1" src
-    src="$(session_dir)"
-    [ -d "$src" ] || return 0
-    echo "Linking this project's session history + memory (two-way) into '$name'..."
-    sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude/projects"; ln -sfn "$1" "$HOME/.claude/projects/$(basename "$1")"' _ "$src"
+ide_dir() {
+    printf '%s/.claude/ide' "$HOME"
+}
+
+# Symlink the RW-mounted host dirs (session history + memory, and editor locks) into
+# the sandbox home, where Claude looks for them — host and sandbox homes differ, so a
+# direct mount lands at the wrong path. Both are live/two-way via the mount.
+link_host_dirs() {
+    local name="$1" sdir idir
+    sdir="$(session_dir)"
+    idir="$(ide_dir)"
+    if [ -d "$sdir" ]; then
+        echo "Linking session history + memory (two-way) into '$name'..."
+        sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude/projects"; ln -sfn "$1" "$HOME/.claude/projects/$(basename "$1")"' _ "$sdir" >/dev/null 2>&1 || true
+    fi
+    if [ -d "$idir" ]; then
+        echo "Linking live editor locks into '$name'..."
+        sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude"; rm -rf "$HOME/.claude/ide"; ln -sfn "$1" "$HOME/.claude/ide"' _ "$idir" >/dev/null 2>&1 || true
+    fi
 }
 
 cmd_mount() {
@@ -211,16 +228,13 @@ cmd_mount() {
     if [ "${1:-}" = "--" ]; then shift; fi
     if ! sandbox_exists "$MOUNT_NAME"; then
         echo "Creating mount sandbox '$MOUNT_NAME'..."
-        local history
-        history="$(session_dir)"
-        if [ -d "$history" ]; then
-            sbx create claude "$REPO_ROOT" "$history" --name "$MOUNT_NAME"
-        else
-            sbx create claude "$REPO_ROOT" --name "$MOUNT_NAME"
-        fi
+        local extra=()
+        if [ -d "$(session_dir)" ]; then extra+=("$(session_dir)"); fi
+        if [ -d "$(ide_dir)" ]; then extra+=("$(ide_dir)"); fi
+        sbx create claude "$REPO_ROOT" ${extra[@]+"${extra[@]}"} --name "$MOUNT_NAME"
         sbx ports "$MOUNT_NAME" --publish "${DEV_PORT}:${DEV_PORT}" || true
         provision_sandbox "$MOUNT_NAME"
-        link_session "$MOUNT_NAME"
+        link_host_dirs "$MOUNT_NAME"
     fi
     ide_link "$MOUNT_NAME"
     local note="${BASE_NOTE}"$'\n\n'"${MOUNT_NOTE}"
