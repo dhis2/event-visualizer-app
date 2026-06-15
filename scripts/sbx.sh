@@ -187,6 +187,7 @@ ide_link() {
     fi
     fwd="$(mktemp)"
     printf '%s' "$IDE_FORWARDER_PY" > "$fwd"
+    chmod 644 "$fwd"   # sbx cp preserves host uid/mode; make it readable by the sandbox's agent user
     sbx cp "$fwd" "${name}:/tmp/sbx-ide-forward.py" >/dev/null 2>&1 || true
     rm -f "$fwd"
     for port in $ports; do
