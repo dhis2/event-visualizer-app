@@ -147,6 +147,36 @@ maybe_inject_dhis2_creds() {
     esac
 }
 
+# Run a command, killing it and returning 124 if it exceeds <secs>. Output suppressed.
+# macOS has no `timeout`, so this is a portable stand-in.
+run_with_timeout() {
+    local secs="$1"; shift
+    "$@" >/dev/null 2>&1 &
+    local pid=$! i=0
+    while kill -0 "$pid" 2>/dev/null; do
+        if [ "$i" -ge "$secs" ]; then
+            kill -TERM "$pid" 2>/dev/null
+            wait "$pid" 2>/dev/null
+            return 124
+        fi
+        sleep 1
+        i=$((i + 1))
+    done
+    wait "$pid" 2>/dev/null
+}
+
+# Retry a command up to <attempts> times, each bounded by <secs>. Returns 0 on the
+# first success, 1 if all attempts fail or time out. Never hangs.
+retry() {
+    local attempts="$1" secs="$2"; shift 2
+    local n=1
+    while [ "$n" -le "$attempts" ]; do
+        if run_with_timeout "$secs" "$@"; then return 0; fi
+        n=$((n + 1))
+    done
+    return 1
+}
+
 # Ports of live (reachable) editor locks whose workspace is this repo. Reads the
 # host lock dir directly; only returns ports something is actually listening on,
 # so stale locks (dead Neovim sessions) are skipped.
@@ -172,30 +202,41 @@ live_ide_ports() {
     done
 }
 
-# Bridge each live editor port (sandbox loopback -> host) so /ide can reach Neovim.
-# The lock dir itself is mounted live (see cmd_mount), so /ide always sees the
-# current locks; here we just open + forward the ports. Scoped to this repo; re-run
-# mount if you (re)start Neovim, since a new port needs a new host-side allow rule.
+# Editor integration for /ide. Symlinks the (mounted) host lock dir into the sandbox
+# home so /ide sees live locks, then for each live Neovim port for this repo opens a
+# scoped network rule and starts a loopback->host forwarder. Every step is bounded +
+# retried; on failure it prints a notice and continues — it never hangs or errors, so
+# a flaky sbx call can't block the mount. Re-run mount if you (re)start Neovim.
 ide_link() {
-    local name="$1"
-    [ "${SBX_NO_IDE:-}" = "1" ] && return 0
-    local ports port fwd
+    local name="$1" ports port fwd
+    if [ -d "$(ide_dir)" ]; then
+        if ! retry 2 12 sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude"; rm -rf "$HOME/.claude/ide"; ln -sfn "$1" "$HOME/.claude/ide"' _ "$(ide_dir)"; then
+            echo "⚠ Editor integration: couldn't link the lock dir (sbx not responding) — /ide won't connect. Sandbox is otherwise fine."
+            return 0
+        fi
+    fi
     ports="$(live_ide_ports)"
     if [ -z "$ports" ]; then
-        echo "No live editor for this repo — start Neovim (claudecode.nvim) and re-run to use /ide."
+        echo "Editor integration: no live Neovim for this repo — /ide will be empty (start Neovim, then re-run mount)."
         return 0
     fi
     fwd="$(mktemp)"
     printf '%s' "$IDE_FORWARDER_PY" > "$fwd"
     chmod 644 "$fwd"   # sbx cp preserves host uid/mode; make it readable by the sandbox's agent user
-    sbx cp "$fwd" "${name}:/tmp/sbx-ide-forward.py" >/dev/null 2>&1 || true
+    if ! retry 2 12 sbx cp "$fwd" "${name}:/tmp/sbx-ide-forward.py"; then
+        rm -f "$fwd"
+        echo "⚠ Editor integration: couldn't copy the forwarder (sbx not responding) — /ide won't connect."
+        return 0
+    fi
     rm -f "$fwd"
     for port in $ports; do
-        sbx policy allow network --sandbox "$name" "localhost:${port},host.docker.internal" >/dev/null 2>&1 || true
-        sbx exec -d "$name" python3 /tmp/sbx-ide-forward.py "$port" >/dev/null 2>&1 || true
-        echo "  Linked host editor on port $port."
+        retry 2 12 sbx policy allow network --sandbox "$name" "localhost:${port},host.docker.internal" || true
+        if retry 2 12 sbx exec -d "$name" python3 /tmp/sbx-ide-forward.py "$port"; then
+            echo "  Linked host editor on port $port — run /ide in the session."
+        else
+            echo "  ⚠ Editor integration: couldn't start the forwarder for port $port."
+        fi
     done
-    echo "Editor link ready — run /ide in the session."
 }
 
 session_dir() {
@@ -206,20 +247,17 @@ ide_dir() {
     printf '%s/.claude/ide' "$HOME"
 }
 
-# Symlink the RW-mounted host dirs (session history + memory, and editor locks) into
-# the sandbox home, where Claude looks for them — host and sandbox homes differ, so a
-# direct mount lands at the wrong path. Both are live/two-way via the mount.
+# Symlink the RW-mounted host session dir (history + memory) into the sandbox home,
+# where Claude looks for it — host and sandbox homes differ. Bounded + retried; the
+# editor lock dir is linked separately in ide_link.
 link_host_dirs() {
-    local name="$1" sdir idir
+    local name="$1" sdir
     sdir="$(session_dir)"
-    idir="$(ide_dir)"
-    if [ -d "$sdir" ]; then
-        echo "Linking session history + memory (two-way) into '$name'..."
-        sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude/projects"; ln -sfn "$1" "$HOME/.claude/projects/$(basename "$1")"' _ "$sdir" >/dev/null 2>&1 || true
-    fi
-    if [ "${SBX_NO_IDE:-}" != "1" ] && [ -d "$idir" ]; then
-        echo "Linking live editor locks into '$name'..."
-        sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude"; rm -rf "$HOME/.claude/ide"; ln -sfn "$1" "$HOME/.claude/ide"' _ "$idir" >/dev/null 2>&1 || true
+    [ -d "$sdir" ] || return 0
+    if retry 2 12 sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude/projects"; ln -sfn "$1" "$HOME/.claude/projects/$(basename "$1")"' _ "$sdir"; then
+        echo "Linked session history + memory (two-way)."
+    else
+        echo "⚠ Couldn't link session history (sbx not responding) — continuing without it."
     fi
 }
 
@@ -231,7 +269,7 @@ cmd_mount() {
         echo "Creating mount sandbox '$MOUNT_NAME'..."
         local extra=()
         if [ -d "$(session_dir)" ]; then extra+=("$(session_dir)"); fi
-        if [ "${SBX_NO_IDE:-}" != "1" ] && [ -d "$(ide_dir)" ]; then extra+=("$(ide_dir)"); fi
+        if [ -d "$(ide_dir)" ]; then extra+=("$(ide_dir)"); fi
         sbx create claude "$REPO_ROOT" ${extra[@]+"${extra[@]}"} --name "$MOUNT_NAME"
         sbx ports "$MOUNT_NAME" --publish "${DEV_PORT}:${DEV_PORT}" || true
         provision_sandbox "$MOUNT_NAME"
