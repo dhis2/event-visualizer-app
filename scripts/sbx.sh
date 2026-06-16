@@ -269,7 +269,9 @@ cmd_mount() {
         echo "Creating mount sandbox '$MOUNT_NAME'..."
         local extra=()
         if [ -d "$(session_dir)" ]; then extra+=("$(session_dir)"); fi
-        if [ -d "$(ide_dir)" ]; then extra+=("$(ide_dir)"); fi
+        # Editor-lock dir is mounted READ-ONLY: the sandbox only reads locks to discover
+        # Neovim; a RW mount let the sandbox's failed connect delete the host's lock.
+        if [ -d "$(ide_dir)" ]; then extra+=("$(ide_dir):ro"); fi
         sbx create claude "$REPO_ROOT" ${extra[@]+"${extra[@]}"} --name "$MOUNT_NAME"
         sbx ports "$MOUNT_NAME" --publish "${DEV_PORT}:${DEV_PORT}" || true
         provision_sandbox "$MOUNT_NAME"
