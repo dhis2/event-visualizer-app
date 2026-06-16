@@ -6,10 +6,7 @@ import { transformVisualizationForAnalyticsRequest } from '@modules/visualizatio
 import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FC } from 'react'
-import {
-    useLineListAnalyticsData,
-    type OnAnalyticsResponseReceivedCb,
-} from './hooks/use-line-list-analytics-data'
+import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
 
 type InternalSorting = Sorting | undefined
 
@@ -20,7 +17,7 @@ type LineListPluginProps = {
     isInDashboard: boolean
     isInModal: boolean
     onDataSorted?: (sorting: InternalSorting) => void
-    onResponseReceived: OnAnalyticsResponseReceivedCb
+    onDataAvailable: () => void
 }
 
 export const LineListPlugin: FC<LineListPluginProps> = ({
@@ -30,7 +27,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     isInDashboard,
     isInModal,
     onDataSorted,
-    onResponseReceived,
+    onDataAvailable,
 }) => {
     const [fetchAnalyticsData, { data, isFetching }] =
         useLineListAnalyticsData()
@@ -65,7 +62,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
                     ),
                 filters,
                 displayProperty,
-                onResponseReceived,
+                onDataAvailable,
                 page,
                 pageSize,
             })
@@ -74,7 +71,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
             displayProperty,
             filters,
             eventVisualization,
-            onResponseReceived,
+            onDataAvailable,
             fetchAnalyticsData,
         ]
     )
@@ -104,13 +101,13 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
                 transformVisualizationForAnalyticsRequest(eventVisualization),
             filters,
             displayProperty,
-            onResponseReceived,
+            onDataAvailable,
         })
     }, [
         displayProperty,
         filters,
         eventVisualization,
-        onResponseReceived,
+        onDataAvailable,
         fetchAnalyticsData,
     ])
 

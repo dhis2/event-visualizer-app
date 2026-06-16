@@ -1,4 +1,3 @@
-import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import { Center, CircularLoader } from '@dhis2/ui'
 import { useAppSelector } from '@hooks'
 import { isVisualizationEmpty } from '@modules/visualization'
@@ -12,11 +11,6 @@ import type {
 } from '@types'
 import type { FC } from 'react'
 import { useCallback, useEffect, useState } from 'react'
-import type {
-    AnalyticsResponseMetadataItems,
-    OnAnalyticsResponseReceivedCb as OnLLAnalyticsResponseReceivedCb,
-} from './hooks/use-line-list-analytics-data'
-import type { OnAnalyticsResponseReceivedCb as OnPTAnalyticsResponseReceivedCb } from './hooks/use-pivot-table-analytics-data'
 import { LineListPlugin } from './line-list-plugin'
 import { PivotTablePlugin } from './pivot-table-plugin'
 import classes from './styles/plugin-wrapper.module.css'
@@ -48,10 +42,6 @@ type PluginWrapperProps = {
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     isVisualizationLoading?: boolean
     onDataSorted?: (sorting: Sorting | undefined) => void
-    onResponsesReceived?: (
-        items: AnalyticsResponseMetadataItems,
-        headers?: Array<LineListAnalyticsDataHeader>
-    ) => void
 }
 
 export const PluginWrapper: FC<PluginWrapperProps> = ({
@@ -62,33 +52,18 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     isInModal = false,
     isVisualizationLoading = false,
     onDataSorted,
-    onResponsesReceived: onResponsesReceivedCb,
 }) => {
     const layoutKey = useAppSelector(getCurrentVisLayoutKey)
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
-    const onLLResponseReceived = useCallback<OnLLAnalyticsResponseReceivedCb>(
-        (items, headers) => {
-            setHasAnalyticsData(true)
-
-            onResponsesReceivedCb?.(items, headers)
-        },
-        [onResponsesReceivedCb]
-    )
-
-    const onPTResponseReceived = useCallback<OnPTAnalyticsResponseReceivedCb>(
-        (items) => {
-            setHasAnalyticsData(true)
-
-            onResponsesReceivedCb?.(items)
-        },
-        [onResponsesReceivedCb]
-    )
+    const onDataAvailable = useCallback(() => {
+        setHasAnalyticsData(true)
+    }, [])
 
     useEffect(() => {
         if (isVisualizationLoading === true) {
             // Reset hasAnalyticsData when a new visualization is fetched as we know it will need to re-fetch analytics.
-            // This allows the spinner to show until the analytics response is available and the onResponseReceived above
+            // This allows the spinner to show until the analytics response is available and onDataAvailable
             // changes hasAnalyticsData to true.
             setHasAnalyticsData(false)
         }
@@ -120,7 +95,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     isInDashboard={isInDashboard}
                     isInModal={isInModal}
                     onDataSorted={onDataSorted}
-                    onResponseReceived={onLLResponseReceived}
+                    onDataAvailable={onDataAvailable}
                 />
             )}
             {visualization.type === 'PIVOT_TABLE' && (
@@ -131,7 +106,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     filters={filters}
                     isInDashboard={isInDashboard}
                     isInModal={isInModal}
-                    onResponseReceived={onPTResponseReceived}
+                    onDataAvailable={onDataAvailable}
                 />
             )}
         </div>

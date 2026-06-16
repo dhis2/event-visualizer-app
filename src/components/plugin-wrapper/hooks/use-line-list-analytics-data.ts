@@ -25,8 +25,6 @@ import type {
     CurrentUser,
     CurrentVisualization,
     DimensionMetadataItem,
-    MetadataInputItem,
-    UserOrgUnitMetadataItem,
 } from '@types'
 import { useCallback, useState } from 'react'
 import { getAnalyticsEndpoint } from './query-tools-common'
@@ -283,19 +281,6 @@ const extractRows = (analyticsResponse, headers) => {
     return filteredRows
 }
 
-export type AnalyticsResponseMetadataItems = Record<
-    string,
-    MetadataInputItem
-> & {
-    USER_ORG_UNIT?: UserOrgUnitMetadataItem
-}
-
-export type AnalyticsResponseMetadataDimensions = Record<string, string[]>
-export type OnAnalyticsResponseReceivedCb = (
-    items: AnalyticsResponseMetadataItems,
-    headers: Array<LineListAnalyticsDataHeader>
-) => void
-
 type FetchAnalyticsDataForLLParams = {
     analyticsEngine: ReturnType<typeof Analytics.getAnalytics>
     visualization: CurrentVisualization
@@ -313,7 +298,7 @@ type FetchAnalyticsDataParams = {
     displayProperty: CurrentUser['settings']['displayProperty']
     pageSize?: number
     page?: number
-    onResponseReceived: OnAnalyticsResponseReceivedCb
+    onDataAvailable: () => void
 }
 type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
 type AnalyticsDataState = {
@@ -341,7 +326,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             displayProperty,
             pageSize = 100,
             page = 1,
-            onResponseReceived,
+            onDataAvailable,
         }) => {
             setState((prevState) => ({
                 ...prevState,
@@ -439,7 +424,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     isFetching: false,
                 })
 
-                onResponseReceived(analyticsResponse.metaData.items, headers)
+                onDataAvailable()
             } catch (error) {
                 logger.error('fetch LL data error', error)
                 setState({

@@ -1,10 +1,5 @@
 import type { UseMetadataStoreReturnValue } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import { extractMetadataFromAnalyticsResponse } from '@modules/metadata-store/analytics-data'
-import type {
-    AnalyticsResponseMetadataItems,
-    CurrentVisualization,
-    DimensionMetadataItem,
-} from '@types'
+import type { CurrentVisualization, DimensionMetadataItem } from '@types'
 import { describe, it, expect } from 'vitest'
 import { extractHeaders, formatRowValue } from './use-line-list-analytics-data'
 
@@ -61,35 +56,6 @@ describe('extractHeaders', () => {
             column: 'Scheduled date',
             dimensionSuffix: 'Baby Postnatal',
         })
-    })
-
-    it('does not accumulate the stage suffix across repeated updates', () => {
-        const firstHeaders = extractHeaders(
-            analyticsResponse,
-            visualization,
-            buildMetadataStore('Scheduled date')
-        )
-
-        const metadataAfterUpdate = extractMetadataFromAnalyticsResponse(
-            analyticsResponse.metaData
-                .items as unknown as AnalyticsResponseMetadataItems,
-            firstHeaders
-        )
-
-        expect(metadataAfterUpdate['s1.scheduledDate'].name).toBe(
-            'Scheduled date'
-        )
-
-        const storedName = metadataAfterUpdate['s1.scheduledDate']
-            .name as string
-        const secondHeaders = extractHeaders(
-            analyticsResponse,
-            visualization,
-            buildMetadataStore(storedName)
-        )
-
-        expect(secondHeaders[0].column).toBe('Scheduled date')
-        expect(secondHeaders[0].dimensionSuffix).toBe('Birth')
     })
 })
 

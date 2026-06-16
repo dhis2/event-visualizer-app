@@ -1,4 +1,3 @@
-import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import { isDebugMode } from '@modules/debug-mode'
 import {
     isMetadataInputItem,
@@ -17,7 +16,6 @@ import type {
     Subscriber,
     MetadataInput,
     InitialMetadataItems,
-    AnalyticsResponseMetadataItems,
     AppCachedData,
     SavedVisualization,
     MetadataMap,
@@ -29,7 +27,6 @@ import type {
     UserOrgUnitMetadataItem,
     DimensionMetadataItem,
 } from '@types'
-import { extractMetadataFromAnalyticsResponse } from './analytics-data'
 import { isCompoundDimensionId, resolveId } from './dimension'
 import { smartMergeWithChangeDetection } from './merge-utils'
 import {
@@ -114,13 +111,6 @@ export class MetadataStore {
             this.metadata.delete(id)
             this.notifySubscriber(id)
         }
-    }
-
-    addAnalyticsResponseMetadata(
-        items: AnalyticsResponseMetadataItems,
-        headers: Array<LineListAnalyticsDataHeader>
-    ) {
-        this.addMetadata(extractMetadataFromAnalyticsResponse(items, headers))
     }
 
     getMetadataItem(id: string): MetadataItem | undefined {

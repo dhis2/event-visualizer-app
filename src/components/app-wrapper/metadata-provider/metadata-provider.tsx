@@ -250,7 +250,6 @@ export type UseMetadataStoreReturnValue = Pick<
     | 'getUserOrgUnitMetadataItem'
     | 'getDimensionMetadataItem'
     | 'addMetadata'
-    | 'addAnalyticsResponseMetadata'
     | 'setVisualizationMetadata'
 >
 export const useMetadataStore = (): UseMetadataStoreReturnValue => {
@@ -273,8 +272,6 @@ export const useMetadataStore = (): UseMetadataStoreReturnValue => {
         getDimensionMetadataItem:
             metadataStore.getDimensionMetadataItem.bind(metadataStore),
         addMetadata: metadataStore.addMetadata.bind(metadataStore),
-        addAnalyticsResponseMetadata:
-            metadataStore.addAnalyticsResponseMetadata.bind(metadataStore),
         setVisualizationMetadata:
             metadataStore.setVisualizationMetadata.bind(metadataStore),
     }))

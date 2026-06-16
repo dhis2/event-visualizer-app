@@ -5,10 +5,7 @@ import {
 } from '@modules/visualization'
 import type { CurrentUser, CurrentVisualization, DimensionArray } from '@types'
 import { type FC, useEffect, useMemo } from 'react'
-import {
-    usePivotTableAnalyticsData,
-    type OnAnalyticsResponseReceivedCb,
-} from './hooks/use-pivot-table-analytics-data'
+import { usePivotTableAnalyticsData } from './hooks/use-pivot-table-analytics-data'
 
 const formatVisualizationForPivotTableEngine = (
     visualization: CurrentVisualization
@@ -39,14 +36,14 @@ type PivotTablePluginProps = {
     filters?: Record<string, unknown> // TODO: verify this type
     isInDashboard: boolean
     isInModal: boolean
-    onResponseReceived: OnAnalyticsResponseReceivedCb
+    onDataAvailable: () => void
 }
 
 export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
     displayProperty,
     visualization,
     filters,
-    onResponseReceived,
+    onDataAvailable,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isInDashboard,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -71,13 +68,13 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
                 transformVisualizationForAnalyticsRequest(visualization),
             filters,
             displayProperty,
-            onResponseReceived,
+            onDataAvailable,
         })
     }, [
         displayProperty,
         filters,
         visualization,
-        onResponseReceived,
+        onDataAvailable,
         fetchAnalyticsData,
     ])
 

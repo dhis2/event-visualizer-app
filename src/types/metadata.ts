@@ -137,4 +137,3 @@ export type InitialMetadataItems = Record<
     string,
     string | MetadataInputItem | Partial<DimensionMetadataItem>
 >
-export type AnalyticsResponseMetadataItems = Record<string, MetadataInputItem>
