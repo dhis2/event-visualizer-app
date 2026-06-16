@@ -19,6 +19,7 @@
         "cy:comp:run": "cypress run --component --browser chrome headless",
         "sbx:mount": "./scripts/sbx.sh mount",
         "sbx:clone": "./scripts/sbx.sh clone",
+        "sbx:refresh-deps": "./scripts/sbx.sh refresh-deps",
         "sonar": "pnpm exec @sonar/scan -Dsonar.branch.name=$(git rev-parse --abbrev-ref HEAD)",
         "postinstall": "./scripts/postinstall.sh"
     },

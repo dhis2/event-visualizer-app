@@ -108,7 +108,9 @@ brew install sbx
 
 The agent edits your live working tree (changes show up in your editor immediately) and can run tests/build inside the sandbox, with no permission prompts but a constrained network. You review diffs and commit on the host. A dev server the agent starts is published to `http://localhost:3000`.
 
-> **node_modules note:** the repo is bind-mounted, so `node_modules` is shared with the host. Most of it is plain JavaScript that runs anywhere — only the handful of packages with **compiled native binaries** (`esbuild`/`vite`, `vitest`, `cypress`) are platform-specific. When the agent runs `pnpm install` in the sandbox, those binaries get rebuilt for Linux. Pure-JS tooling on the host — your editor, ESLint, Prettier, `tsc` — keeps working regardless. Only the native tools (`vite` dev-server, `vitest`, `cypress`) need a `pnpm install` to swap back to macOS binaries before you run them **natively on your host** (fast — your pnpm store is warm).
+> **node_modules note:** `pnpm-workspace.yaml` declares `supportedArchitectures` for both macOS and Linux arm64, so a single host `pnpm install` lays down the native binaries (`esbuild`/`vite`, `vitest`/rolldown, `rollup`) for **both** platforms. The same `node_modules` therefore runs natively on your host _and_ inside the Linux sandbox — no in-sandbox `pnpm install`, no swapping binaries back. (Don't run `pnpm install` in the sandbox: it isn't needed and the network policy blocks the Cypress binary download, so it would fail.)
+>
+> The repo is bind-mounted, and reading `node_modules` (76k tiny files) over the macOS↔Linux file-sharing layer is ~5× slower for tests/build — module resolution and jsdom setup are dominated by per-file syscall latency. So on each mount, `pnpm sbx:mount` overlays `node_modules` with a copy on the sandbox's **native filesystem** (`sudo mount --bind`, container-local — your host `node_modules` is never touched). The copy is a snapshot taken on first mount (~2 min), reused while fresh, and rebuilt automatically when `pnpm-lock.yaml` changes. If you change dependencies on the host while the sandbox is up, refresh it without re-mounting via `./scripts/sbx.sh refresh-deps`. Like the editor link, it's best-effort and time-bounded — if it can't apply, tests still run (just slowly) off the bind mount.
 
 > **Editor integration (Neovim):** the sandbox mounts your live editor-lock dir (`~/.claude/ide`), so it always sees the current [`coder/claudecode.nvim`](https://github.com/coder/claudecode.nvim) lock. If Neovim is running on this repo when you mount, `pnpm sbx:mount` opens a **port-scoped** path to the editor's WebSocket and starts a forwarder for it; run `/ide` in the session to connect (diffs, selection, diagnostics). Only this repo's editor port is opened — not general host access. Re-run `pnpm sbx:mount` if you start/restart Neovim after mounting (a new port needs a fresh allow rule). The whole editor-link is best-effort: every step is time-bounded and retried, so if `sbx` is unresponsive it prints a notice and the sandbox still comes up — it never blocks the mount.
 
@@ -132,6 +134,7 @@ Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount 
 **Other commands:**
 
 ```bash
+./scripts/sbx.sh refresh-deps  # rebuild the mount's native node_modules cache from the host install
 ./scripts/sbx.sh sync-clone    # re-copy this project's memory into the clone (host -> clone)
 ./scripts/sbx.sh reset-clone   # wipe the clone back to a clean checkout
 ./scripts/sbx.sh purge         # remove both sandboxes

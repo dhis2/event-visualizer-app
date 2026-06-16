@@ -57,7 +57,7 @@ EOF
 
 read -r -d '' MOUNT_NOTE <<'EOF' || true
 These are the human's LIVE working files, bind-mounted from the host; your edits appear immediately in their editor.
-You may install dependencies and run tests/build here. node_modules becomes Linux-built, which is expected.
+Dependencies are already installed: the host install includes the Linux binaries, and node_modules is overlaid with a fast native-filesystem copy. DO NOT run `pnpm install` — it is not needed, and the network policy blocks the Cypress binary download so the install would fail. Run tests/build directly (`pnpm test`, `pnpm lint`, `pnpm start`).
 DO NOT branch or commit — the human reviews your diffs and commits on the host.
 A dev server you start (e.g. `pnpm start`) is reachable from the host at http://localhost:3000.
 EOF
@@ -255,6 +255,44 @@ ide_link() {
     sleep 3
 }
 
+# Exit 0 if the native node_modules snapshot exists and is no older than the
+# lockfile (so it can be reused without a fresh copy), nonzero otherwise. Bounded.
+snapshot_fresh() {
+    run_with_timeout 12 sbx exec "$1" bash -lc '
+        nm=/home/agent/nm
+        [ -d "$nm" ] && [ ! "$1/pnpm-lock.yaml" -nt "$nm" ]
+    ' _ "$REPO_ROOT"
+}
+
+# Overlay the bind-mounted node_modules with a copy on the sandbox's native fs.
+# The bind mount makes test/build I/O ~5x slower — every module-resolution stat pays
+# virtualization latency, and vitest cold-loads the whole graph (incl. jsdom) per file.
+# The copy is a snapshot, rebuilt when pnpm-lock.yaml changes (or via "refresh-deps").
+# Container-local (sudo mount --bind) — the host node_modules is never touched. The
+# sudo mount does not survive a sandbox restart, so this re-applies on every mount;
+# the copy itself is reused when fresh. Best-effort + bounded: on failure tests still
+# run, just slowly off the bind mount.
+native_node_modules() {
+    local name="$1"
+    if run_with_timeout 12 sbx exec "$name" mountpoint -q "$REPO_ROOT/node_modules"; then
+        return 0
+    fi
+    if ! snapshot_fresh "$name"; then
+        echo "Building native node_modules cache (faster tests; ~2 min, first mount or after dep changes)..."
+        if ! run_with_timeout 360 sbx exec "$name" bash -lc '
+            rm -rf /home/agent/nm && cp -a "$1/node_modules" /home/agent/nm && touch /home/agent/nm
+        ' _ "$REPO_ROOT"; then
+            echo "⚠ Couldn't build the native node_modules cache — tests will run (slowly) off the bind mount."
+            return 0
+        fi
+    fi
+    if run_with_timeout 30 sbx exec "$name" sudo mount --bind /home/agent/nm "$REPO_ROOT/node_modules"; then
+        echo "Native node_modules active — test/build I/O much faster (host node_modules untouched)."
+    else
+        echo "⚠ Couldn't overlay native node_modules — tests will run (slowly) off the bind mount."
+    fi
+}
+
 session_dir() {
     printf '%s/.claude/projects/%s' "$HOME" "$(printf '%s' "$REPO_ROOT" | sed 's#/#-#g')"
 }
@@ -294,6 +332,7 @@ cmd_mount() {
         link_host_dirs "$MOUNT_NAME"
     fi
     ide_link "$MOUNT_NAME"
+    native_node_modules "$MOUNT_NAME"
     local note="${BASE_NOTE}"$'\n\n'"${MOUNT_NOTE}"
     sbx run "$MOUNT_NAME" -- \
         --dangerously-skip-permissions \
@@ -355,6 +394,24 @@ cmd_reset_clone() {
     sbx exec "$CLONE_NAME" bash -lc "git reset --hard origin/${branch} && git clean -fdx"
 }
 
+# Rebuild the mount's native node_modules snapshot from the current host install.
+# Use after changing dependencies on the host while the sandbox is running; a fresh
+# mount picks up lockfile changes automatically, this avoids the re-mount cycle.
+cmd_refresh_deps() {
+    require_sbx
+    if ! sandbox_exists "$MOUNT_NAME"; then
+        echo "No mount sandbox '$MOUNT_NAME' — run 'pnpm sbx:mount' first." >&2
+        exit 1
+    fi
+    echo "Rebuilding native node_modules cache from the host install..."
+    sbx exec "$MOUNT_NAME" bash -lc '
+        sudo umount "$1/node_modules" 2>/dev/null || sudo umount -l "$1/node_modules" 2>/dev/null || true
+        rm -rf /home/agent/nm && cp -a "$1/node_modules" /home/agent/nm && touch /home/agent/nm
+        sudo mount --bind /home/agent/nm "$1/node_modules"
+        echo "Refreshed."
+    ' _ "$REPO_ROOT"
+}
+
 cmd_purge() {
     require_sbx
     sbx rm --force "$MOUNT_NAME" "$CLONE_NAME" || true
@@ -396,14 +453,15 @@ cmd_setup() {
 }
 
 case "${1:-}" in
-    mount)       cmd_mount "${@:2}" ;;
-    clone)       cmd_clone "${@:2}" ;;
-    sync-clone)  cmd_sync_clone ;;
-    reset-clone) cmd_reset_clone ;;
-    purge)       cmd_purge ;;
-    setup)       cmd_setup ;;
+    mount)        cmd_mount "${@:2}" ;;
+    clone)        cmd_clone "${@:2}" ;;
+    sync-clone)   cmd_sync_clone ;;
+    reset-clone)  cmd_reset_clone ;;
+    refresh-deps) cmd_refresh_deps ;;
+    purge)        cmd_purge ;;
+    setup)        cmd_setup ;;
     *)
-        echo "Usage: scripts/sbx.sh {mount|clone|sync-clone|reset-clone|purge|setup}" >&2
+        echo "Usage: scripts/sbx.sh {mount|clone|sync-clone|reset-clone|refresh-deps|purge|setup}" >&2
         exit 1
         ;;
 esac
