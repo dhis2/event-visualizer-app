@@ -1,5 +1,8 @@
 # DHIS2 Platform
 node_modules
+# Project-local pnpm store created when installing inside an sbx sandbox
+# (node_modules on the bind mount, global store on another filesystem)
+.pnpm-store
 .d2
 src/locales/*
 build

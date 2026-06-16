@@ -1,6 +1,15 @@
 # Force a single postcss instance across the dep tree. Stylelint's custom syntax
 # (postcss-styled-jsx via @dhis2/cli-style) and stylelint itself must share the
 # same postcss, otherwise documents parsed by one are unintelligible to the other.
+supportedArchitectures:
+  os:
+    - current
+    - linux
+  cpu:
+    - arm64
+  libc:
+    - current
+    - glibc
 overrides:
   postcss: ^8.5.15
 allowBuilds:
