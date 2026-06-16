@@ -620,16 +620,15 @@ describe('MetadataStore', () => {
             getInitialMetadata(),
             rootOrgUnits
         )
-        metadataStore.setVisualizationMetadata(
+        const visualization =
             inpatientVisitVisualization as unknown as SavedVisualization
-        )
+
+        metadataStore.setVisualizationMetadata(visualization)
         expect(metadataStore.getMetadataItem('Zj7UnCAulEk.ou')?.name).toBe(
             'Event org. unit'
         )
 
-        metadataStore.setVisualizationMetadata(
-            inpatientVisitVisualization as unknown as SavedVisualization
-        )
+        metadataStore.setVisualizationMetadata(visualization)
         expect(metadataStore.getMetadataItem('Zj7UnCAulEk.ou')?.name).toBe(
             'Event org. unit'
         )
