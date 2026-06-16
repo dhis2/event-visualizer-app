@@ -298,7 +298,7 @@ type FetchAnalyticsDataParams = {
     displayProperty: CurrentUser['settings']['displayProperty']
     pageSize?: number
     page?: number
-    onDataAvailable: () => void
+    onResponseReceived: () => void
 }
 type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
 type AnalyticsDataState = {
@@ -326,7 +326,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             displayProperty,
             pageSize = 100,
             page = 1,
-            onDataAvailable,
+            onResponseReceived,
         }) => {
             setState((prevState) => ({
                 ...prevState,
@@ -424,7 +424,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     isFetching: false,
                 })
 
-                onDataAvailable()
+                onResponseReceived()
             } catch (error) {
                 logger.error('fetch LL data error', error)
                 setState({

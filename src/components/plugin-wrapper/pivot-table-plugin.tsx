@@ -36,14 +36,14 @@ type PivotTablePluginProps = {
     filters?: Record<string, unknown> // TODO: verify this type
     isInDashboard: boolean
     isInModal: boolean
-    onDataAvailable: () => void
+    onResponseReceived: () => void
 }
 
 export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
     displayProperty,
     visualization,
     filters,
-    onDataAvailable,
+    onResponseReceived,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isInDashboard,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -68,13 +68,13 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
                 transformVisualizationForAnalyticsRequest(visualization),
             filters,
             displayProperty,
-            onDataAvailable,
+            onResponseReceived,
         })
     }, [
         displayProperty,
         filters,
         visualization,
-        onDataAvailable,
+        onResponseReceived,
         fetchAnalyticsData,
     ])
 

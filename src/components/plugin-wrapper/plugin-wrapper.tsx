@@ -56,14 +56,14 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     const layoutKey = useAppSelector(getCurrentVisLayoutKey)
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
-    const onDataAvailable = useCallback(() => {
+    const onResponseReceived = useCallback(() => {
         setHasAnalyticsData(true)
     }, [])
 
     useEffect(() => {
         if (isVisualizationLoading === true) {
             // Reset hasAnalyticsData when a new visualization is fetched as we know it will need to re-fetch analytics.
-            // This allows the spinner to show until the analytics response is available and onDataAvailable
+            // This allows the spinner to show until the analytics response is available and onResponseReceived
             // changes hasAnalyticsData to true.
             setHasAnalyticsData(false)
         }
@@ -95,7 +95,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     isInDashboard={isInDashboard}
                     isInModal={isInModal}
                     onDataSorted={onDataSorted}
-                    onDataAvailable={onDataAvailable}
+                    onResponseReceived={onResponseReceived}
                 />
             )}
             {visualization.type === 'PIVOT_TABLE' && (
@@ -106,7 +106,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     filters={filters}
                     isInDashboard={isInDashboard}
                     isInModal={isInModal}
-                    onDataAvailable={onDataAvailable}
+                    onResponseReceived={onResponseReceived}
                 />
             )}
         </div>

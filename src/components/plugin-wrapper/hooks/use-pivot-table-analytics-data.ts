@@ -81,7 +81,7 @@ type FetchAnalyticsDataForPTParams = {
     visualization: CurrentVisualization
     filters?: Record<string, unknown>
     displayProperty: CurrentUser['settings']['displayProperty']
-    onDataAvailable: () => void
+    onResponseReceived: () => void
 }
 type FetchAnalyticsDataFn = (
     params: FetchAnalyticsDataForPTParams
@@ -108,7 +108,7 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
             visualization,
             filters,
             displayProperty,
-            onDataAvailable,
+            onResponseReceived,
         }) => {
             setState((prevState) => ({
                 ...prevState,
@@ -139,7 +139,7 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                     isFetching: false,
                 })
 
-                onDataAvailable()
+                onResponseReceived()
             } catch (error) {
                 logger.error('PT fetch error', error)
                 setState({

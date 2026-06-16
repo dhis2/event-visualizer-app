@@ -17,7 +17,7 @@ type LineListPluginProps = {
     isInDashboard: boolean
     isInModal: boolean
     onDataSorted?: (sorting: InternalSorting) => void
-    onDataAvailable: () => void
+    onResponseReceived: () => void
 }
 
 export const LineListPlugin: FC<LineListPluginProps> = ({
@@ -27,7 +27,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     isInDashboard,
     isInModal,
     onDataSorted,
-    onDataAvailable,
+    onResponseReceived,
 }) => {
     const [fetchAnalyticsData, { data, isFetching }] =
         useLineListAnalyticsData()
@@ -62,7 +62,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
                     ),
                 filters,
                 displayProperty,
-                onDataAvailable,
+                onResponseReceived,
                 page,
                 pageSize,
             })
@@ -71,7 +71,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
             displayProperty,
             filters,
             eventVisualization,
-            onDataAvailable,
+            onResponseReceived,
             fetchAnalyticsData,
         ]
     )
@@ -101,13 +101,13 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
                 transformVisualizationForAnalyticsRequest(eventVisualization),
             filters,
             displayProperty,
-            onDataAvailable,
+            onResponseReceived,
         })
     }, [
         displayProperty,
         filters,
         eventVisualization,
-        onDataAvailable,
+        onResponseReceived,
         fetchAnalyticsData,
     ])
 
