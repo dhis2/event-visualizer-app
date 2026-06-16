@@ -46,6 +46,10 @@ provision_sandbox() {
         claude plugin install typescript-lsp@claude-plugins-official >/dev/null
         claude plugin install context7@claude-plugins-official >/dev/null
         claude plugin install superpowers@claude-plugins-official >/dev/null
+        # The network policy blocks the Cypress binary CDN, and Cypress cannot run here
+        # anyway (no browser), so skip its download in every `pnpm install`. profile.d is
+        # sourced by login shells; this image ships no ~/.bashrc/~/.profile that would work.
+        echo "export CYPRESS_INSTALL_BINARY=0" | sudo tee /etc/profile.d/cypress-skip.sh >/dev/null
     ' _ "$PNPM_VERSION" "$MARKETPLACE"
 }
 
@@ -65,6 +69,7 @@ EOF
 read -r -d '' CLONE_NOTE <<'EOF' || true
 This OVERRIDES the project CLAUDE.md "do not commit" rule. That rule protects the human's live working tree and does not apply here — you are on a private, isolated clone of the repository.
 Work autonomously: create a feature branch, run `pnpm test` and `pnpm lint`, and commit your progress as you go. Do not push to forge remotes (origin/upstream).
+Dependencies are already installed. CYPRESS_INSTALL_BINARY=0 is set system-wide so reinstalls skip the Cypress binary (its CDN is blocked, and Cypress cannot run here — no browser). If a reinstall ever fails on the Cypress download, prefix the command: `CYPRESS_INSTALL_BINARY=0 pnpm install`.
 A read-only copy of the host repo is mounted at /run/sandbox/source. Pull host updates with `git pull /run/sandbox/source <branch>`. The human retrieves your commits from the host via this sandbox's git remote.
 EOF
 
@@ -360,6 +365,9 @@ cmd_clone() {
         echo "Creating clone sandbox '$CLONE_NAME'..."
         sbx create --clone claude "$REPO_ROOT" --name "$CLONE_NAME"
         provision_sandbox "$CLONE_NAME"
+        echo "Installing dependencies in the clone (generate-types hits the DHIS2 instance; Cypress binary skipped)..."
+        sbx exec "$CLONE_NAME" bash -lc 'cd "$1" && CYPRESS_INSTALL_BINARY=0 pnpm install' _ "$REPO_ROOT" \
+            || echo "⚠ Dependency install failed — the agent can retry with: CYPRESS_INSTALL_BINARY=0 pnpm install"
         copy_memory "$CLONE_NAME"
         maybe_inject_dhis2_creds "$CLONE_NAME"
     fi

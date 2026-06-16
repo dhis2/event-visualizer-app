@@ -116,7 +116,7 @@ The agent edits your live working tree (changes show up in your editor immediate
 
 **Clone sandbox — autonomous** (`pnpm sbx:clone`)
 
-The agent works on a private, isolated clone: it branches, runs tests, and commits on its own. Your host `node_modules` is never touched. Retrieve its work:
+The agent works on a private, isolated clone: it branches, runs tests, and commits on its own. Your host `node_modules` is never touched — the clone runs its own `pnpm install` on the container's native filesystem (so tests are fast, no overlay needed). Retrieve its work:
 
 ```bash
 git fetch sandbox-event-visualizer-app-clone
@@ -126,6 +126,8 @@ git log sandbox-event-visualizer-app-clone/<branch>
 Unlike the mount, the clone gets a **one-way copy** of this project's memory at create (no sessions, no settings — it stays isolated). Re-push the latest host memory with `./scripts/sbx.sh sync-clone`.
 
 > **First run provisions the sandbox** (installs pnpm, the `typescript-lsp`, `context7`, and `superpowers` plugins, and opens network access for the `grep`/`context7` MCPs and the DHIS2 dev instance). That first `pnpm sbx:mount`/`sbx:clone` takes a minute longer; later runs reuse it.
+>
+> The clone additionally runs `pnpm install` at create. Two things are worth knowing: its `postinstall` runs `generate-types`, which fetches the OpenAPI spec from the DHIS2 dev instance (the provisioned network rule allows it); and `CYPRESS_INSTALL_BINARY=0` is exported so the install skips the Cypress binary — its CDN is blocked by the network policy and Cypress can't run in the sandbox anyway (no browser).
 
 Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount -- --continue` or `pnpm sbx:clone -- --model opus`.
 
