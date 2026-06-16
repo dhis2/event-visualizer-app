@@ -239,7 +239,7 @@ ide_link() {
     for port in $ports; do
         retry 2 12 sbx policy allow network --sandbox "$name" "localhost:${port},host.docker.internal" || true
         if retry 2 12 sbx exec -d "$name" python3 /tmp/sbx-ide-forward.py "$port"; then
-            echo "  Linked host editor on port $port — run /ide in the session."
+            echo "  Host editor linked on port $port. If Claude doesn't auto-connect, run /ide in the session to connect."
         else
             echo "  ⚠ Editor integration: couldn't start the forwarder for port $port."
         fi
