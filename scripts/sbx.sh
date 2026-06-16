@@ -215,7 +215,7 @@ live_ide_ports() {
 # retried; on failure it prints a notice and continues — it never hangs or errors, so
 # a flaky sbx call can't block the mount. Re-run mount if you (re)start Neovim.
 ide_link() {
-    local name="$1" ports port fwd
+    local name="$1" ports port fwd up
     if [ -d "$(ide_dir)" ]; then
         if ! retry 2 12 sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude"; rm -rf "$HOME/.claude/ide"; ln -sfn "$1" "$HOME/.claude/ide"' _ "$(ide_dir)"; then
             ide_msg "⚠ Editor integration: couldn't link the lock dir (sbx not responding) — /ide won't connect. Sandbox is otherwise fine."
@@ -238,10 +238,18 @@ ide_link() {
     rm -f "$fwd"
     for port in $ports; do
         retry 2 12 sbx policy allow network --sandbox "$name" "localhost:${port},host.docker.internal" || true
-        if retry 2 12 sbx exec -d "$name" python3 /tmp/sbx-ide-forward.py "$port"; then
+        # `sbx exec -d` can report a nonzero exit even when it starts the process, so don't
+        # trust its exit code — start it, then verify the forwarder is actually listening.
+        retry 2 12 sbx exec -d "$name" python3 /tmp/sbx-ide-forward.py "$port" || true
+        up=""
+        for _ in 1 2 3; do
+            if run_with_timeout 8 sbx exec "$name" bash -lc 'exec 3<>/dev/tcp/127.0.0.1/'"$port"; then up=1; break; fi
+            sleep 1
+        done
+        if [ -n "$up" ]; then
             echo "  Host editor linked on port $port. If Claude doesn't auto-connect, run /ide in the session to connect."
         else
-            echo "  ⚠ Editor integration: couldn't start the forwarder for port $port."
+            echo "  ⚠ Editor integration: forwarder for port $port isn't listening — /ide won't connect."
         fi
     done
     sleep 3
