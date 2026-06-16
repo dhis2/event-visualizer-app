@@ -177,6 +177,13 @@ retry() {
     return 1
 }
 
+# Print an editor-integration message and pause so it's readable — Claude's TUI clears
+# the terminal as soon as it starts, which otherwise hides these notices.
+ide_msg() {
+    echo "$1"
+    sleep 3
+}
+
 # Ports of live (reachable) editor locks whose workspace is this repo. Reads the
 # host lock dir directly; only returns ports something is actually listening on,
 # so stale locks (dead Neovim sessions) are skipped.
@@ -211,13 +218,13 @@ ide_link() {
     local name="$1" ports port fwd
     if [ -d "$(ide_dir)" ]; then
         if ! retry 2 12 sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude"; rm -rf "$HOME/.claude/ide"; ln -sfn "$1" "$HOME/.claude/ide"' _ "$(ide_dir)"; then
-            echo "⚠ Editor integration: couldn't link the lock dir (sbx not responding) — /ide won't connect. Sandbox is otherwise fine."
+            ide_msg "⚠ Editor integration: couldn't link the lock dir (sbx not responding) — /ide won't connect. Sandbox is otherwise fine."
             return 0
         fi
     fi
     ports="$(live_ide_ports)"
     if [ -z "$ports" ]; then
-        echo "Editor integration: no live Neovim for this repo — /ide will be empty (start Neovim, then re-run mount)."
+        ide_msg "Editor integration: no live Neovim for this repo — /ide will be empty (start Neovim, then re-run mount)."
         return 0
     fi
     fwd="$(mktemp)"
@@ -225,7 +232,7 @@ ide_link() {
     chmod 644 "$fwd"   # sbx cp preserves host uid/mode; make it readable by the sandbox's agent user
     if ! retry 2 12 sbx cp "$fwd" "${name}:/tmp/sbx-ide-forward.py"; then
         rm -f "$fwd"
-        echo "⚠ Editor integration: couldn't copy the forwarder (sbx not responding) — /ide won't connect."
+        ide_msg "⚠ Editor integration: couldn't copy the forwarder (sbx not responding) — /ide won't connect."
         return 0
     fi
     rm -f "$fwd"
@@ -237,6 +244,7 @@ ide_link() {
             echo "  ⚠ Editor integration: couldn't start the forwarder for port $port."
         fi
     done
+    sleep 3
 }
 
 session_dir() {
