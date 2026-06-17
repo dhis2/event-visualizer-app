@@ -69,11 +69,9 @@ export const OrgUnitCondition: FC<OrgUnitConditionProps> = ({
                     metadata: Record<string, Partial<OrgUnit> & { id: string }>
                 }>(
                     (acc, item) => {
-                        const itemId = item.id as string
+                        acc.itemIds.push(item.id)
 
-                        acc.itemIds.push(itemId)
-
-                        const ouUid = ouIdHelper.removePrefix(itemId)
+                        const ouUid = ouIdHelper.removePrefix(item.id)
 
                         const ouMetadata: Partial<OrgUnit> & { id: string } = {
                             id: ouUid,

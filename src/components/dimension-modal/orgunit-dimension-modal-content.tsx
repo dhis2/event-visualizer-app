@@ -43,11 +43,9 @@ export const OrgUnitDimensionModalContent: FC<
                 metadata: Record<string, OrgUnit>
             }>(
                 (acc, item) => {
-                    const itemId = item.id as string
+                    acc.uiItems.push(item.id)
 
-                    acc.uiItems.push(itemId)
-
-                    const ouUid = ouIdHelper.removePrefix(itemId)
+                    const ouUid = ouIdHelper.removePrefix(item.id)
 
                     const ouMetadata: OrgUnit = {
                         id: ouUid,
