@@ -105,7 +105,7 @@ export const formatRowValue = ({
         case 'TRUE_ONLY':
             return isUndefined ? '' : formatBooleanValue(rowValue)
         default: {
-            const optionSetId = header.optionSet
+            const { optionSet: optionSetId } = header
             if (optionSetId) {
                 return rowValue
                     .split(',')
