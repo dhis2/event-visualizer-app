@@ -8,11 +8,10 @@ export const getStatusNames = (): Record<Status, string> => ({
     SCHEDULE: i18n.t('Scheduled'),
 })
 
-const isStatus = (value: string): value is Status =>
+export const isStatus = (value: string): value is Status =>
     value === 'ACTIVE' ||
     value === 'CANCELLED' ||
     value === 'COMPLETED' ||
     value === 'SCHEDULE'
 
-export const getStatusName = (value: string): string =>
-    isStatus(value) ? getStatusNames()[value] : value
+export const getStatusName = (value: Status): string => getStatusNames()[value]

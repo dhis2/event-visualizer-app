@@ -6,7 +6,7 @@ import type {
 import { getColorByValueFromLegendSet, formatValue } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import { extractPlainDimensionId } from '@modules/dimension'
-import { getStatusName } from '@modules/status'
+import { getStatusName, isStatus } from '@modules/status'
 import { headersMap } from '@modules/visualization'
 import type { CurrentVisualization, LegendSet, ValueType } from '@types'
 import moment from 'moment'
@@ -87,7 +87,7 @@ const getFormattedCellValue = ({
         dimensionId &&
         [headersMap.eventStatus, headersMap.programStatus].includes(dimensionId)
     ) {
-        return getStatusName(value)
+        return isStatus(value) ? getStatusName(value) : value
     }
 
     let valueType = header.valueType
