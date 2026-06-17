@@ -113,8 +113,6 @@ const createPartialStore = ({
     appCachedData,
 }: CreatePartialStoreParams) => {
     return configureStore({
-        // PreloadedState pinned to Partial<RootState> to match what
-        // configureStore infers from `preloadedState` under strict mode.
         reducer: {
             [api.reducerPath]: api.reducer,
             dimensionSelection: dimensionSelectionSlice.reducer,

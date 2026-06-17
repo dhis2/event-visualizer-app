@@ -7,8 +7,6 @@ export const setupStore = (
     preloadedState?: Partial<RootState>
 ) => {
     return configureStore({
-        // PreloadedState pinned to Partial<RootState> to match what
-        // configureStore infers from `preloadedState` under strict mode.
         reducer: reducer as ReducersMapObject<
             RootState,
             UnknownAction,
