@@ -9,7 +9,7 @@ import type {
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
-import { getBooleanValues } from '@modules/conditions'
+import { formatBooleanValue } from '@modules/conditions'
 import {
     getDimensionSuffixes,
     type SuffixInput,
@@ -101,11 +101,7 @@ export const formatRowValue = ({
     switch (header.valueType) {
         case 'BOOLEAN':
         case 'TRUE_ONLY':
-            return isUndefined
-                ? ''
-                : getBooleanValues()[
-                      rowValue as keyof ReturnType<typeof getBooleanValues>
-                  ]
+            return isUndefined ? '' : formatBooleanValue(rowValue)
         default: {
             const optionSetId = header.optionSet
             if (optionSetId) {
