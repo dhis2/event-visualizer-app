@@ -30,7 +30,7 @@ export const fetchAnalyticsDataForPT = async ({
         getAdaptedVisualization(visualization)
 
     // TODO: figure out what to do for the DE time dimensions
-    const timeField = (visualization as { timeField?: string }).timeField
+    const { timeField } = visualization
 
     const program = getSingleProgramFromVisualization(visualization)
 
