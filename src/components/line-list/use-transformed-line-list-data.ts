@@ -70,6 +70,30 @@ const cellValueShouldNotWrap = (header: LineListAnalyticsDataHeader) =>
     NON_WRAPPING_VALUE_TYPES_LOOKUP.has(header.valueType) && !header.optionSet
 
 const DATE_VALUE_TYPES: ValueType[] = ['DATE', 'DATETIME']
+const TIME_DIMENSION_HEADER_NAMES = [
+    headersMap.eventDate,
+    headersMap.enrollmentDate,
+    headersMap.incidentDate,
+    headersMap.scheduledDate,
+]
+const STATUS_HEADER_NAMES = [headersMap.eventStatus, headersMap.programStatus]
+
+/* Time dimensions (event/enrollment/incident/scheduledDate) are typed as
+ * DATETIME on the backend but should render as plain date (DHIS2-17855).
+ * lastUpdated keeps its DATETIME format. */
+const formatDateLikeValue = (
+    value: string,
+    header: LineListAnalyticsDataHeader
+): string => {
+    const isTimeDimension =
+        header.name !== undefined &&
+        TIME_DIMENSION_HEADER_NAMES.includes(header.name)
+    const includeTime =
+        !isTimeDimension &&
+        (header.name === headersMap.lastUpdated ||
+            header.valueType === 'DATETIME')
+    return moment(value).format(includeTime ? 'yyyy-MM-DD HH:mm' : 'yyyy-MM-DD')
+}
 
 const getFormattedCellValue = ({
     value,
@@ -83,52 +107,28 @@ const getFormattedCellValue = ({
     // header.name might be prefixed with programStage.id
     const dimensionId = extractPlainDimensionId(header.name)
 
-    if (
-        dimensionId &&
-        [headersMap.eventStatus, headersMap.programStatus].includes(dimensionId)
-    ) {
+    if (dimensionId && STATUS_HEADER_NAMES.includes(dimensionId)) {
         return isStatus(value) ? getStatusName(value) : value
     }
 
-    let valueType = header.valueType
-
-    if (DATE_VALUE_TYPES.includes(valueType)) {
-        if (
-            header.name &&
-            [
-                headersMap.eventDate,
-                headersMap.enrollmentDate,
-                headersMap.incidentDate,
-                headersMap.scheduledDate,
-            ].includes(header.name)
-        ) {
-            // override valueType for time dimensions to format the value as date (DHIS2-17855)
-            valueType = 'DATE'
-        }
-
-        return (
-            value &&
-            moment(value).format(
-                header.name === headersMap.lastUpdated ||
-                    valueType === 'DATETIME'
-                    ? 'yyyy-MM-DD HH:mm'
-                    : 'yyyy-MM-DD'
-            )
-        )
-    } else if (valueType === 'AGE') {
-        return value && moment(value).format('yyyy-MM-DD')
-    } else {
-        return formatValue(
-            value,
-            valueType || 'TEXT',
-            header.optionSet
-                ? {}
-                : {
-                      digitGroupSeparator: visualization.digitGroupSeparator,
-                      skipRounding: false,
-                  }
-        )
+    if (DATE_VALUE_TYPES.includes(header.valueType)) {
+        return value && formatDateLikeValue(value, header)
     }
+
+    if (header.valueType === 'AGE') {
+        return value && moment(value).format('yyyy-MM-DD')
+    }
+
+    return formatValue(
+        value,
+        header.valueType || 'TEXT',
+        header.optionSet
+            ? {}
+            : {
+                  digitGroupSeparator: visualization.digitGroupSeparator,
+                  skipRounding: false,
+              }
+    )
 }
 
 /* TODO: Figure out what the reasoning is behind this and refactor,
