@@ -288,14 +288,18 @@ export const extractHeaders = (
     )
 
     return analyticsResponse.headers.map(
-        (header: GridHeader, index: number) =>
-            ({
-                ...header,
-                index,
-                dimensionId: canonicalIds[index],
-                column: nameById.get(canonicalIds[index]) ?? header.column,
-                dimensionSuffix: suffixes[canonicalIds[index]],
-            }) as unknown as IndexedLineListAnalyticsDataHeader
+        (header, index): IndexedLineListAnalyticsDataHeader => ({
+            ...header,
+            /* GridHeader.legendSet is the wire legend set ID (string). The
+             * hydrated legend set object is populated later in
+             * useLineListAnalyticsData; drop the wire ID here so the field's
+             * shape matches LineListAnalyticsDataHeader. */
+            legendSet: undefined,
+            index,
+            dimensionId: canonicalIds[index],
+            column: nameById.get(canonicalIds[index]) ?? header.column,
+            dimensionSuffix: suffixes[canonicalIds[index]],
+        })
     )
 }
 

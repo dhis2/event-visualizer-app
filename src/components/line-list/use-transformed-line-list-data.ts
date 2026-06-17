@@ -137,8 +137,8 @@ const extractLegendSets = (
     headers: LineListAnalyticsDataHeader[]
 ): LegendSet[] => {
     const allLegendSets = headers
-        .filter((header) => header.legendSet)
         .map((header) => header.legendSet)
+        .filter((legendSet) => legendSet !== undefined)
     return allLegendSets.filter(
         (e, index) =>
             allLegendSets.findIndex((a) => a.id === e.id) === index &&

@@ -29,8 +29,11 @@ export type LineListData = {
 
 export type CellData = string
 type Row = Array<CellData>
-export type LineListAnalyticsDataHeader = GridHeader & {
-    legendSet: Pick<LegendSet, 'id' | 'name' | 'legends'>
+export type LineListAnalyticsDataHeader = Omit<GridHeader, 'legendSet'> & {
+    /* Populated later in useLineListAnalyticsData based on legend strategy;
+     * not every header carries one (e.g. non-numeric columns, or visualizations
+     * without a legend). */
+    legendSet?: Pick<LegendSet, 'id' | 'name' | 'legends'>
     /* Canonical store ID for this column, computed in extractHeaders and
      * reused by downstream consumers so the wire-to-canonical translation
      * happens exactly once per response. */
