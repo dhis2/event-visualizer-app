@@ -154,11 +154,11 @@ export const getBooleanValues = (): Record<BooleanValue, string> => ({
     NV: i18n.t('Not answered'),
 })
 
-const isBooleanValue = (value: string): value is BooleanValue =>
+export const isBooleanValue = (value: string): value is BooleanValue =>
     value === '1' || value === '0' || value === 'NV'
 
-export const formatBooleanValue = (value: string): string =>
-    isBooleanValue(value) ? getBooleanValues()[value] : value
+export const formatBooleanValue = (value: BooleanValue): string =>
+    getBooleanValues()[value]
 
 export const API_TIME_DIVIDER = '.'
 export const UI_TIME_DIVIDER = ':'
@@ -356,7 +356,9 @@ export const getBooleanConditionTexts = (
     conditionsList: string[]
 ): string[] => {
     const values = parseCondition(conditionsList[0]) ?? []
-    return values.map(formatBooleanValue)
+    return values.map((value) =>
+        isBooleanValue(value) ? formatBooleanValue(value) : value
+    )
 }
 
 export const getOrgUnitConditionMetadataIds = (
