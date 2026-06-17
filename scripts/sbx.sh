@@ -72,9 +72,10 @@ EOF
 
 read -r -d '' CLONE_NOTE <<'EOF' || true
 This OVERRIDES the project CLAUDE.md "do not commit" rule. That rule protects the human's live working tree and does not apply here — you are on a private, isolated clone of the repository.
-Work autonomously: create a feature branch, run `pnpm test` and `pnpm lint`, and commit your progress as you go. Do not push to forge remotes (origin/upstream).
+Work autonomously: create a clearly-named feature branch, run `pnpm test` and `pnpm lint`, and commit your progress to it as you go.
+How your work reaches the human: this sandbox publishes its repository back to the host over a git remote (a read-only git daemon), and the human fetches your branch from it to review. So COMMIT to your feature branch — that is all that is needed. Do NOT push: forge remotes (origin/upstream) are off-limits, and the sandbox's own remote is read-only (the human pulls; you do not push).
 Dependencies are already installed, including the Cypress binary (the e2e CDN is allow-listed).
-A read-only copy of the host repo is mounted at /run/sandbox/source. Pull host updates with `git pull /run/sandbox/source <branch>`. The human retrieves your commits from the host via this sandbox's git remote.
+A read-only copy of the host repo is mounted at /run/sandbox/source; pull host updates with `git pull /run/sandbox/source <branch>`.
 EOF
 
 read -r -d '' IDE_FORWARDER_PY <<'PYEOF' || true

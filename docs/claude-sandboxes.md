@@ -23,12 +23,29 @@ The agent edits your live working tree (changes show up in your editor immediate
 
 ## Clone sandbox — autonomous (`pnpm sbx:clone`)
 
-The agent works on a private, isolated clone: it branches, runs tests, and commits on its own. Your host `node_modules` is never touched — the clone runs its own `pnpm install` on the container's native filesystem (so tests are fast, no overlay needed). Retrieve its work:
+The agent works on a private, isolated clone: it branches, runs tests, and commits on its own. Your host `node_modules` is never touched — the clone runs its own `pnpm install` on the container's native filesystem (so tests are fast, no overlay needed).
 
-```bash
-git fetch sandbox-event-visualizer-app-clone
-git log sandbox-event-visualizer-app-clone/<branch>
-```
+### Reviewing the clone's work
+
+The agent commits to a feature branch **inside** the clone — it does not push anywhere. To get its work onto your host for review:
+
+1. `pnpm sbx:clone` wires up a host git remote, `sandbox-event-visualizer-app-clone`, pointing at the clone's git daemon. It is re-wired on every run (the daemon's published port changes), so fetch while the sandbox is running.
+2. Fetch and inspect the agent's branch:
+
+    ```bash
+    git fetch sandbox-event-visualizer-app-clone
+    git branch -r | grep sandbox-event-visualizer-app-clone        # list its branches
+    git log --oneline sandbox-event-visualizer-app-clone/<branch>
+    git diff master...sandbox-event-visualizer-app-clone/<branch>
+    ```
+
+3. Check it out locally to review or build on:
+
+    ```bash
+    git checkout -b review/<branch> sandbox-event-visualizer-app-clone/<branch>
+    ```
+
+4. Integrate what you want (merge, cherry-pick, or open a PR) — or just discard the branch. The remote is **fetch-only** (the sandbox serves it read-only): you pull from it, never push to it.
 
 Unlike the mount, the clone gets a **one-way copy** of this project's memory at create (no sessions, no settings — it stays isolated). Re-push the latest host memory with `./scripts/sbx.sh sync-clone`.
 
