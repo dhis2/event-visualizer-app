@@ -382,12 +382,10 @@ const removeDimensionPropertiesBeforeSaving = (
 const getDimensionIdFromHeaderName = (
     headerName: string,
     visualization: CurrentVisualization
-) => {
-    const headersMap = getHeadersMap(visualization)
-    return Object.keys(headersMap).find(
-        (key) => headersMap[key as DimensionId] === headerName
-    )
-}
+) =>
+    Object.entries(getHeadersMap(visualization)).find(
+        ([, value]) => value === headerName
+    )?.[0]
 
 export const getSaveableVisualization = (
     vis: SavedVisualization
