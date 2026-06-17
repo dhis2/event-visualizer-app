@@ -1,4 +1,3 @@
-import { getRequestOptions } from '@components/plugin-wrapper/hooks/query-tools-common'
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { layoutGetAllDimensions } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
@@ -384,9 +383,7 @@ const getDimensionIdFromHeaderName = (
     headerName: string,
     visualization: CurrentVisualization
 ) => {
-    const headersMap = getHeadersMap(
-        getRequestOptions(visualization) as unknown as CurrentVisualization
-    )
+    const headersMap = getHeadersMap(visualization)
     return Object.keys(headersMap).find(
         (key) => headersMap[key as DimensionId] === headerName
     )
