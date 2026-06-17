@@ -32,7 +32,10 @@ dhis2_host() {
 
 provision_sandbox() {
     local name="$1"
-    local hosts="mcp.grep.app,context7.com,*.context7.com"
+    # download/cdn.cypress.io: reachable so Cypress can be installed on demand (the default
+    # install still skips it via CYPRESS_INSTALL_BINARY=0; see below). dhis2.org + *.dhis2.org:
+    # general DHIS2 access (docs, play/test instances) beyond the specific cypress.env host.
+    local hosts="mcp.grep.app,context7.com,*.context7.com,download.cypress.io,cdn.cypress.io,dhis2.org,*.dhis2.org"
     local dhis
     dhis="$(dhis2_host)"
     [ -n "$dhis" ] && hosts="${hosts},${dhis}"
@@ -46,10 +49,10 @@ provision_sandbox() {
         claude plugin install typescript-lsp@claude-plugins-official >/dev/null
         claude plugin install context7@claude-plugins-official >/dev/null
         claude plugin install superpowers@claude-plugins-official >/dev/null
-        # The network policy blocks the Cypress binary CDN, and Cypress cannot run here
-        # anyway (no browser), so skip its download in every `pnpm install`. profile.d is
-        # sourced by login shells; this image ships no ~/.bashrc/~/.profile that would work.
-        echo "export CYPRESS_INSTALL_BINARY=0" | sudo tee /etc/profile.d/cypress-skip.sh >/dev/null
+        # Cypress/Electron e2e needs GTK + X libs to actually run (the binary itself installs
+        # from the allow-listed CDN during pnpm install). Best-effort; wait out startup apt lock.
+        for _ in $(seq 1 30); do sudo fuser /var/lib/apt/lists/lock /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || break; sleep 2; done
+        sudo apt-get install -y libgtk-3-0t64 libgtk2.0-0t64 libgbm1 libnotify4 libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb >/dev/null 2>&1 || true
     ' _ "$PNPM_VERSION" "$MARKETPLACE"
 }
 
@@ -64,12 +67,13 @@ These are the human's LIVE working files, bind-mounted from the host; your edits
 Dependencies are already installed: the host install includes the Linux binaries, and node_modules is overlaid with a fast native-filesystem copy. DO NOT run `pnpm install` — it is not needed, and the network policy blocks the Cypress binary download so the install would fail. Run tests/build directly (`pnpm test`, `pnpm lint`, `pnpm start`).
 DO NOT branch or commit — the human reviews your diffs and commits on the host.
 A dev server you start (e.g. `pnpm start`) is reachable from the host at http://localhost:3000.
+Browser automation is available: the chrome-devtools tools drive an in-sandbox headless Chrome. Use them to load and inspect your running app — start the dev server, then navigate to http://localhost:3000.
 EOF
 
 read -r -d '' CLONE_NOTE <<'EOF' || true
 This OVERRIDES the project CLAUDE.md "do not commit" rule. That rule protects the human's live working tree and does not apply here — you are on a private, isolated clone of the repository.
 Work autonomously: create a feature branch, run `pnpm test` and `pnpm lint`, and commit your progress as you go. Do not push to forge remotes (origin/upstream).
-Dependencies are already installed. CYPRESS_INSTALL_BINARY=0 is set system-wide so reinstalls skip the Cypress binary (its CDN is blocked, and Cypress cannot run here — no browser). If a reinstall ever fails on the Cypress download, prefix the command: `CYPRESS_INSTALL_BINARY=0 pnpm install`.
+Dependencies are already installed, including the Cypress binary (the e2e CDN is allow-listed).
 A read-only copy of the host repo is mounted at /run/sandbox/source. Pull host updates with `git pull /run/sandbox/source <branch>`. The human retrieves your commits from the host via this sandbox's git remote.
 EOF
 
@@ -298,6 +302,33 @@ native_node_modules() {
     fi
 }
 
+# Install a headless Chromium and register a sandbox-local chrome-devtools MCP server that
+# drives it. arm64 has no distro Chrome package (and Google ships no arm64 deb), so Playwright
+# — the only source of an arm64 build — provides the binary; chrome-devtools-mcp attaches via
+# --executablePath and launches it headless. Registered at USER scope so the shared committed
+# config (which drives the host's own Chrome) is untouched, and the chrome-devtools plugin is
+# inactive in the sandbox anyway (provision installs only the three it needs). Bounded +
+# best-effort: on failure the browser tools are simply absent; the rest of the sandbox is fine.
+setup_browser() {
+    local name="$1"
+    echo "Installing headless Chromium for browser automation (first mount only, ~2 min)..."
+    sbx policy allow network --sandbox "$name" "cdn.playwright.dev,*.playwright.dev,playwright.download.prss.microsoft.com,*.prss.microsoft.com" >/dev/null 2>&1 || true
+    if sbx exec "$name" bash -lc '
+        set -e
+        npx -y playwright@latest install chromium >/dev/null 2>&1
+        # install-deps uses apt; wait out any startup apt still holding the lock.
+        for _ in $(seq 1 30); do sudo fuser /var/lib/apt/lists/lock /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || break; sleep 2; done
+        sudo npx -y playwright@latest install-deps chromium >/dev/null 2>&1
+        bin=$(find "$HOME/.cache/ms-playwright"/chromium-*/chrome-linux -type f -name chrome | head -1)
+        [ -n "$bin" ]
+        claude mcp add -s user chrome-devtools -- npx -y chrome-devtools-mcp@latest --executablePath "$bin" --headless --chromeArg=--no-sandbox --usageStatistics=false >/dev/null
+    '; then
+        echo "Browser automation ready — the chrome-devtools tools drive an in-sandbox headless Chrome."
+    else
+        echo "⚠ Browser automation setup failed — chrome-devtools tools will be unavailable (sandbox otherwise fine)."
+    fi
+}
+
 session_dir() {
     printf '%s/.claude/projects/%s' "$HOME" "$(printf '%s' "$REPO_ROOT" | sed 's#/#-#g')"
 }
@@ -335,6 +366,7 @@ cmd_mount() {
         sbx ports "$MOUNT_NAME" --publish "${DEV_PORT}:${DEV_PORT}" || true
         provision_sandbox "$MOUNT_NAME"
         link_host_dirs "$MOUNT_NAME"
+        setup_browser "$MOUNT_NAME"
     fi
     ide_link "$MOUNT_NAME"
     native_node_modules "$MOUNT_NAME"
@@ -365,9 +397,9 @@ cmd_clone() {
         echo "Creating clone sandbox '$CLONE_NAME'..."
         sbx create --clone claude "$REPO_ROOT" --name "$CLONE_NAME"
         provision_sandbox "$CLONE_NAME"
-        echo "Installing dependencies in the clone (generate-types hits the DHIS2 instance; Cypress binary skipped)..."
-        sbx exec "$CLONE_NAME" bash -lc 'cd "$1" && CYPRESS_INSTALL_BINARY=0 pnpm install' _ "$REPO_ROOT" \
-            || echo "⚠ Dependency install failed — the agent can retry with: CYPRESS_INSTALL_BINARY=0 pnpm install"
+        echo "Installing dependencies in the clone (generate-types hits the DHIS2 instance; includes the Cypress binary)..."
+        sbx exec "$CLONE_NAME" bash -lc 'cd "$1" && pnpm install' _ "$REPO_ROOT" \
+            || echo "⚠ Dependency install failed — the agent can retry with: pnpm install"
         copy_memory "$CLONE_NAME"
         maybe_inject_dhis2_creds "$CLONE_NAME"
     fi

@@ -125,9 +125,9 @@ git log sandbox-event-visualizer-app-clone/<branch>
 
 Unlike the mount, the clone gets a **one-way copy** of this project's memory at create (no sessions, no settings — it stays isolated). Re-push the latest host memory with `./scripts/sbx.sh sync-clone`.
 
-> **First run provisions the sandbox** (installs pnpm, the `typescript-lsp`, `context7`, and `superpowers` plugins, and opens network access for the `grep`/`context7` MCPs and the DHIS2 dev instance). That first `pnpm sbx:mount`/`sbx:clone` takes a minute longer; later runs reuse it.
+> **First run provisions the sandbox** (installs pnpm, the `typescript-lsp`, `context7`, and `superpowers` plugins, and opens network access for the `grep`/`context7` MCPs, `dhis2.org`/`*.dhis2.org`, and the Cypress binary CDN). That first `pnpm sbx:mount`/`sbx:clone` takes a minute longer; later runs reuse it.
 >
-> The clone additionally runs `pnpm install` at create. Two things are worth knowing: its `postinstall` runs `generate-types`, which fetches the OpenAPI spec from the DHIS2 dev instance (the provisioned network rule allows it); and `CYPRESS_INSTALL_BINARY=0` is exported so the install skips the Cypress binary — its CDN is blocked by the network policy and Cypress can't run in the sandbox anyway (no browser).
+> The clone additionally runs `pnpm install` at create. Its `postinstall` runs `generate-types`, which fetches the OpenAPI spec from the DHIS2 dev instance (the provisioned network rule allows it), and the install pulls the Cypress binary too (its CDN is allow-listed).
 
 Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount -- --continue` or `pnpm sbx:clone -- --model opus`.
 
@@ -144,17 +144,7 @@ Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount 
 
 **Tooling inside the sandbox:** the `typescript-lsp`, `context7`, and `superpowers` plugins, the `grep` MCP, and the prettier/eslint format hook all work. Only project-level config (committed `.claude/`) is picked up — user-level MCP servers are not. **GitHub auth (`gh`) is deliberately not available inside sandboxes** — the agent has no push/PR power, so a misbehaving session can't touch your repos; do GitHub operations on the host.
 
-**Browser automation** is not yet available in-sandbox: the image (Ubuntu 26.04 arm64) has no installable Chrome, and Playwright does not yet support that OS. Once it does, enable it with:
-
-```bash
-./scripts/sbx.sh clone   # or mount
-# then, inside the sandbox:
-npx playwright install chromium
-claude plugin install chrome-devtools-mcp@claude-plugins-official
-# point chrome-devtools-mcp at the installed binary via --executablePath
-```
-
-For now, inspect the running app from your host browser against the published `:3000`.
+**Browser automation** works in the **mount** sandbox: `pnpm sbx:mount` installs a headless Chromium (via Playwright — the only source of an arm64 build; the image has no distro/Google Chrome for arm64) and registers a sandbox-local `chrome-devtools` MCP server pointed at it (`--executablePath … --headless --chromeArg=--no-sandbox`). The agent drives it with the `chrome-devtools` tools — start the dev server and have it navigate to `http://localhost:3000` to load and inspect the running app. It's a fully in-sandbox, isolated headless Chrome (no bridge to your host browser), registered at user scope so your committed config — which drives your _host_ Chrome — is untouched. First mount adds ~2 min for the Chromium download; the clone doesn't set this up.
 
 ### Development Workflow
 
