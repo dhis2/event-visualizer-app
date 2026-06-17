@@ -45,7 +45,9 @@ export const HeaderCell: FC<HeaderCellProps> = ({
     const handleSortIconClick = useCallback(
         ({ name, direction: uiSortDirection }: HandleSortIconClickPayload) => {
             if (!name) {
-                return
+                throw new Error(
+                    'HeaderCell sort handler fired without a column name'
+                )
             }
             const direction =
                 uiSortDirection === 'asc' || uiSortDirection === 'desc'
