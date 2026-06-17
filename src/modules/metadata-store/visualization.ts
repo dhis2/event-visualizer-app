@@ -15,22 +15,35 @@ import type {
     MetadataInputItem,
     MetadataInputMap,
     OrganisationUnitMetadataItem,
-    DimensionMetadataItem,
     Program,
     ProgramStage,
     SavedVisualization,
 } from '@types'
 import deepmerge from 'deepmerge'
 
-const DIMENSION_METADATA_PROP_MAP = {
-    dataElementDimensions: 'dataElement',
-    attributeDimensions: 'attribute',
-    programIndicatorDimensions: 'programIndicator',
-    categoryDimensions: 'category',
-    categoryOptionGroupSetDimensions: 'categoryOptionGroupSet',
-    organisationUnitGroupSetDimensions: 'organisationUnitGroupSet',
-    dataElementGroupSetDimensions: 'dataElementGroupSet',
-}
+type DimensionMetadataExtractor = (
+    visualization: SavedVisualization
+) => Array<{ id: string; name: string }>
+
+const dimensionMetadataExtractors: DimensionMetadataExtractor[] = [
+    (vis) => (vis.dataElementDimensions ?? []).map((w) => w.dataElement),
+    (vis) => (vis.attributeDimensions ?? []).map((w) => w.attribute),
+    (vis) =>
+        (vis.programIndicatorDimensions ?? []).map((w) => w.programIndicator),
+    (vis) => (vis.categoryDimensions ?? []).map((w) => w.category),
+    (vis) =>
+        (vis.categoryOptionGroupSetDimensions ?? []).map(
+            (w) => w.categoryOptionGroupSet
+        ),
+    (vis) =>
+        (vis.organisationUnitGroupSetDimensions ?? []).map(
+            (w) => w.organisationUnitGroupSet
+        ),
+    (vis) =>
+        (vis.dataElementGroupSetDimensions ?? []).map(
+            (w) => w.dataElementGroupSet
+        ),
+]
 const getDefaultDynamicTimeDimensionsMetadata = (
     program?: Program,
     stage?: ProgramStage
@@ -79,21 +92,12 @@ export const extractProgramDimensionsMetadata = (
 export const extractDimensionMetadata = (
     visualization: SavedVisualization
 ): MetadataInputMap => {
-    const dimensionMetadata = Object.entries(
-        DIMENSION_METADATA_PROP_MAP
-    ).reduce<MetadataInputMap>((metaData, [listName, dimensionName]) => {
-        const dimensionList =
-            visualization[listName as keyof SavedVisualization] || []
-
-        ;(dimensionList as object[]).forEach((dimensionWrapper: object) => {
-            const dimension = (dimensionWrapper as Record<string, unknown>)[
-                dimensionName
-            ] as DimensionMetadataItem
-            metaData[dimension.id] = dimension
-        })
-
-        return metaData
-    }, {})
+    const dimensionMetadata: MetadataInputMap = {}
+    for (const extract of dimensionMetadataExtractors) {
+        for (const item of extract(visualization)) {
+            dimensionMetadata[item.id] = item
+        }
+    }
     return dimensionMetadata
 }
 
