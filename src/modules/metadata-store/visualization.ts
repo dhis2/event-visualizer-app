@@ -35,14 +35,17 @@ const getDefaultDynamicTimeDimensionsMetadata = (
     program?: Program,
     stage?: ProgramStage
 ): MetadataInputMap =>
-    Object.values(getTimeDimensions()).reduce((acc, dimension) => {
-        acc[dimension.id] = {
-            id: dimension.id,
-            dimensionType: dimension.dimensionType,
-            name: getTimeDimensionName(dimension, program, stage),
-        }
-        return acc
-    }, {} as MetadataInputMap)
+    Object.values(getTimeDimensions()).reduce<MetadataInputMap>(
+        (acc, dimension) => {
+            acc[dimension.id] = {
+                id: dimension.id,
+                dimensionType: dimension.dimensionType,
+                name: getTimeDimensionName(dimension, program, stage),
+            }
+            return acc
+        },
+        {}
+    )
 
 export const extractTrackedEntityTypeMetadata = (
     visualization: SavedVisualization
@@ -78,7 +81,7 @@ export const extractDimensionMetadata = (
 ): MetadataInputMap => {
     const dimensionMetadata = Object.entries(
         DIMENSION_METADATA_PROP_MAP
-    ).reduce((metaData, [listName, dimensionName]) => {
+    ).reduce<MetadataInputMap>((metaData, [listName, dimensionName]) => {
         const dimensionList =
             visualization[listName as keyof SavedVisualization] || []
 
@@ -90,7 +93,7 @@ export const extractDimensionMetadata = (
         })
 
         return metaData
-    }, {} as MetadataInputMap)
+    }, {})
     return dimensionMetadata
 }
 
@@ -133,7 +136,7 @@ export const supplementDimensionMetadata = (
             .filter(Boolean)
     )
 
-    const additionalDimensionMetadata = dimensions.reduce(
+    const additionalDimensionMetadata = dimensions.reduce<MetadataInputMap>(
         (metadata, dimension) => {
             const collectedItem = metadataInput[dimension.dimension]
 
@@ -148,9 +151,9 @@ export const supplementDimensionMetadata = (
                 tetId
             )
 
-            const item: MetadataInputItem = Object.entries(
+            const item = Object.entries(
                 collectedItem
-            ).reduce(
+            ).reduce<MetadataInputItem>(
                 (acc, [key, value]) => {
                     if (
                         key !== 'uid' &&
@@ -169,7 +172,7 @@ export const supplementDimensionMetadata = (
                         prefixedId,
                         dimension.dimensionType!
                     ),
-                } as MetadataInputItem
+                }
             )
 
             if (dimension.optionSet?.id) {
@@ -208,7 +211,7 @@ export const supplementDimensionMetadata = (
 
             return metadata
         },
-        {} as MetadataInputMap
+        {}
     )
 
     return deepmerge(metadataInput, additionalDimensionMetadata)
