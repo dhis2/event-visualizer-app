@@ -136,9 +136,14 @@ const getFormattedCellValue = ({
 const extractLegendSets = (
     headers: LineListAnalyticsDataHeader[]
 ): LegendSet[] => {
-    const allLegendSets = headers
-        .map((header) => header.legendSet)
-        .filter((legendSet) => legendSet !== undefined)
+    const allLegendSets = headers.reduce<
+        NonNullable<LineListAnalyticsDataHeader['legendSet']>[]
+    >((acc, header) => {
+        if (header.legendSet) {
+            acc.push(header.legendSet)
+        }
+        return acc
+    }, [])
     return allLegendSets.filter(
         (e, index) =>
             allLegendSets.findIndex((a) => a.id === e.id) === index &&
