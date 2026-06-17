@@ -275,8 +275,10 @@ snapshot_fresh() {
 }
 
 # Overlay the bind-mounted node_modules with a copy on the sandbox's native fs.
-# The bind mount makes test/build I/O ~5x slower — every module-resolution stat pays
-# virtualization latency, and vitest cold-loads the whole graph (incl. jsdom) per file.
+# Only needed on macOS: the macOS↔Linux file-sharing layer makes the bind mount ~5x slower
+# for test/build I/O (every module-resolution stat pays virtualization latency, and vitest
+# cold-loads the whole graph incl. jsdom per file). On a Linux host the bind mount is already
+# native-speed, so this is skipped there and the live bind mount is used directly.
 # The copy is a snapshot, rebuilt when pnpm-lock.yaml changes (or via "refresh-deps").
 # Container-local (sudo mount --bind) — the host node_modules is never touched. The
 # sudo mount does not survive a sandbox restart, so this re-applies on every mount;
@@ -284,6 +286,7 @@ snapshot_fresh() {
 # run, just slowly off the bind mount.
 native_node_modules() {
     local name="$1"
+    [ "$(uname)" = "Darwin" ] || return 0
     if run_with_timeout 12 sbx exec "$name" mountpoint -q "$REPO_ROOT/node_modules"; then
         return 0
     fi

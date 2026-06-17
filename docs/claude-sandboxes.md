@@ -2,7 +2,7 @@
 
 Two optional, isolated AI workspaces built on [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) (`sbx`). They are fully opt-in — if you do not install `sbx`, nothing here affects you.
 
-> **Requirements / portability:** built and tested on **macOS with Apple Silicon (arm64)**. The sandbox image is arm64, and the performance tuning (the `node_modules` overlay) targets the macOS↔Linux file-sharing layer. Other host architectures (e.g. Intel macs) or OSes may need adjustment — notably the arm64 binaries added by `supportedArchitectures`. Because the whole feature is opt-in, none of this affects anyone who doesn't run `sbx`.
+> **Highly experimental.** The design _should_ work on macOS, Linux, and Windows (via WSL) hosts, and with any IDE that integrates with Claude Code — but it has only been **tested on a macOS / Apple Silicon (arm64) host with Neovim**. The `node_modules` overlay is a macOS-only perf workaround (skipped on Linux, where bind mounts are already fast), and `supportedArchitectures` installs the current host's binaries plus the container's. Intel Macs are not supported. Because the whole feature is opt-in, none of this affects anyone who doesn't run `sbx`. Expect rough edges off the tested path; reports/fixes welcome.
 
 ## One-time setup
 

@@ -95,7 +95,7 @@ gh auth login
 
 ### AI sandboxes (opt-in)
 
-Two optional, isolated AI workspaces built on [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) (`sbx`) — a hands-on **mount** (your live working tree) and an autonomous **clone**. Fully opt-in: if you do not install `sbx`, nothing here affects you.
+Two optional, **experimental**, isolated AI workspaces built on [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) (`sbx`) — a hands-on **mount** (your live working tree) and an autonomous **clone**. Fully opt-in: if you do not install `sbx`, nothing here affects you. (Tested on macOS/arm64 + Neovim; see the guide for portability.)
 
 With the `sbx` CLI installed and set up (see the guide), launch one with:
 
