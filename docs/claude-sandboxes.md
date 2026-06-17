@@ -24,6 +24,8 @@ The agent edits your live working tree (changes show up in your editor immediate
 
 > **Browser automation** works in the mount sandbox: `pnpm sbx:mount` installs a headless Chromium (via Playwright — the only source of an arm64 build; the image has no distro/Google Chrome for arm64) and registers a sandbox-local `chrome-devtools` MCP server pointed at it (`--executablePath … --headless --chromeArg=--no-sandbox`). The agent drives it with the `chrome-devtools` tools — start the dev server and have it navigate to `http://localhost:3000` to load and inspect the running app. It's a fully in-sandbox, isolated headless Chrome (no bridge to your host browser), registered at user scope so your committed config — which drives your _host_ Chrome — is untouched. First mount adds ~2 min for the Chromium download; the clone doesn't set this up.
 
+> **SonarQube skill:** if you have `SONAR_TOKEN` exported on the host when you create the mount, `pnpm sbx:mount` writes it into the sandbox and allows `sonarcloud.io`, so the `sonarqube-fix` skill (`pnpm sonar`) works inside the mount. Note this is the one host credential that lives _inside_ the sandbox (sbx's proxy-injected secrets don't reach the agent without a recreate). It's set at create time — recreate the mount to pick up a rotated token.
+
 ## Clone sandbox — autonomous (`pnpm sbx:clone`)
 
 The agent works on a private, isolated clone: it branches, runs tests, and commits on its own. Your host `node_modules` is never touched — the clone runs its own `pnpm install` on the container's native filesystem (so tests are fast, no overlay needed).
