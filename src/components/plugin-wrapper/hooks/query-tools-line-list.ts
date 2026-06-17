@@ -64,7 +64,7 @@ export const getAdaptedVisualization = (
         outputType: OutputType
     }
     headers: (string | string[])[]
-    parameters: object
+    parameters: Record<string, unknown>
 } => {
     const parameters = getRequestOptions(visualization)
 

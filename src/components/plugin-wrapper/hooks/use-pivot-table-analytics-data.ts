@@ -39,7 +39,7 @@ export const fetchAnalyticsDataForPT = async ({
         .withProgram(program.id)
         .withParameters({
             totalPages: false,
-            ...(parameters as Record<string, unknown>),
+            ...parameters,
             ...(timeField ? { timeField } : {}),
         })
 
