@@ -48,9 +48,7 @@ export const fetchAnalyticsDataForPT = async ({
     }
 
     if (visualization.sortOrder) {
-        req = req.withSortOrder(
-            (visualization.sortOrder as unknown) === '1' ? 'ASC' : 'DESC'
-        )
+        req = req.withSortOrder(visualization.sortOrder === 1 ? 'ASC' : 'DESC')
     }
 
     if (visualization.topLimit) {
