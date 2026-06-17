@@ -83,7 +83,7 @@ export const cellIsUndefined = (
     columnIndex: number
 ) => rowContext?.[rowIndex]?.[columnIndex]?.valueStatus === NOT_DEFINED_VALUE
 
-const formatRowValue = ({
+export const formatRowValue = ({
     rowValue,
     header,
     metaDataItems,
@@ -107,14 +107,19 @@ const formatRowValue = ({
                       rowValue as keyof ReturnType<typeof getBooleanValues>
                   ]
         default: {
-            if (header.optionSet) {
-                return (
-                    lookupOptionSetOptionMetadata(
-                        header.optionSet,
-                        rowValue,
-                        metaDataItems
-                    )?.name || rowValue
-                )
+            const optionSetId = header.optionSet
+            if (optionSetId) {
+                return rowValue
+                    .split(',')
+                    .map(
+                        (code) =>
+                            lookupOptionSetOptionMetadata(
+                                optionSetId,
+                                code,
+                                metaDataItems
+                            )?.name || code
+                    )
+                    .join(', ')
             }
 
             return metaDataItems[rowValue]?.name || rowValue

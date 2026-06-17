@@ -81,11 +81,21 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
         // this is to keep the metadata store consistent, as the single options are also added when loading a visualization
         addMetadata(optionsMetadata)
 
-        // update options in the optionSet metadata used for the lookup of the correct
-        // name from code (options for different option sets have the same code)
+        // add the optionSet so option labels can be looked up by code
+        // (codes are not unique across option sets)
+        const optionSetName =
+            data?.[0]?.optionSet?.name ?? optionSetMetadata?.name
+
+        if (!optionSetName) {
+            throw new Error(
+                `Could not resolve a name for option set "${optionSetId}"`
+            )
+        }
+
         addMetadata({
             ...(optionSetMetadata ?? {}),
             id: optionSetId,
+            name: optionSetName,
             options: optionsMetadata,
         })
 

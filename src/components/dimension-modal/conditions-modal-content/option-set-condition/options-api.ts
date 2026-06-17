@@ -9,7 +9,12 @@ export type FetchOptionsByOptionSetQueryArgs = {
 }
 
 export type FetchResult = {
-    items: { code: string; id: string; name: string }[]
+    items: {
+        code: string
+        id: string
+        name: string
+        optionSet?: { id: string; name: string }
+    }[]
     nextPage: number | null
 }
 
@@ -39,7 +44,7 @@ export const optionsApi = api.injectEndpoints({
                         options: {
                             resource: 'options',
                             params: {
-                                fields: `code,${nameProp}~rename(name),id`,
+                                fields: `code,${nameProp}~rename(name),id,optionSet[id,${nameProp}~rename(name)]`,
                                 filter: filters,
                                 paging: true,
                                 page,
