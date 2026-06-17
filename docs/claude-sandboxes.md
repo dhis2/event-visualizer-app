@@ -2,10 +2,13 @@
 
 Two optional, isolated AI workspaces built on [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) (`sbx`). They are fully opt-in — if you do not install `sbx`, nothing here affects you.
 
+> **Requirements / portability:** built and tested on **macOS with Apple Silicon (arm64)**. The sandbox image is arm64, and the performance tuning (the `node_modules` overlay) targets the macOS↔Linux file-sharing layer. Other host architectures (e.g. Intel macs) or OSes may need adjustment — notably the arm64 binaries added by `supportedArchitectures`. Because the whole feature is opt-in, none of this affects anyone who doesn't run `sbx`.
+
 ## One-time setup
 
+Install the `sbx` CLI — on macOS via Homebrew (`brew install sbx`); see the [Docker Sandboxes docs](https://docs.docker.com/ai/sandboxes/) for other platforms. Then:
+
 ```bash
-brew install sbx
 ./scripts/sbx.sh setup   # Docker login, network policy, Anthropic credential
 ```
 
