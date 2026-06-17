@@ -6,9 +6,9 @@ import type {
 import { getColorByValueFromLegendSet, formatValue } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import { extractPlainDimensionId } from '@modules/dimension'
-import { getStatusNames } from '@modules/status'
+import { getStatusName } from '@modules/status'
 import { headersMap } from '@modules/visualization'
-import type { CurrentVisualization, LegendSet, Status, ValueType } from '@types'
+import type { CurrentVisualization, LegendSet, ValueType } from '@types'
 import moment from 'moment'
 import { useMemo } from 'react'
 
@@ -87,7 +87,7 @@ const getFormattedCellValue = ({
         dimensionId &&
         [headersMap.eventStatus, headersMap.programStatus].includes(dimensionId)
     ) {
-        return getStatusNames()[value as Status] ?? value
+        return getStatusName(value)
     }
 
     let valueType = header.valueType

@@ -7,3 +7,12 @@ export const getStatusNames = (): Record<Status, string> => ({
     COMPLETED: i18n.t('Completed'),
     SCHEDULE: i18n.t('Scheduled'),
 })
+
+const isStatus = (value: string): value is Status =>
+    value === 'ACTIVE' ||
+    value === 'CANCELLED' ||
+    value === 'COMPLETED' ||
+    value === 'SCHEDULE'
+
+export const getStatusName = (value: string): string =>
+    isStatus(value) ? getStatusNames()[value] : value
