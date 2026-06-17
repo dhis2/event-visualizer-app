@@ -20,11 +20,6 @@ function isComplexFieldValue(value: unknown): boolean {
     return typeof value === 'object' && value !== null
 }
 
-/* MetadataItem is a discriminated union of named subtypes; merging
- * generically requires bypassing keyof restrictions. Treat both sides as
- * open records in this one place rather than scattering casts. */
-type DynamicRecord = Record<string, unknown>
-
 export function smartMergeWithChangeDetection(
     existing: MetadataItem | undefined,
     newItem: NormalizedMetadataInputItem
@@ -39,12 +34,11 @@ export function smartMergeWithChangeDetection(
     }
 
     let hasChanges = false
-    const existingRecord = existing as DynamicRecord
-    const mergedItem = { ...existing } as DynamicRecord
+    const mergedItem: MetadataItem = { ...existing }
 
     // Check each property in the new item
     for (const [key, newValue] of Object.entries(newItem)) {
-        const existingValue = existingRecord[key]
+        const existingValue = (existing as Record<string, unknown>)[key]
 
         let finalValue: unknown
 
@@ -76,9 +70,9 @@ export function smartMergeWithChangeDetection(
         // Check if this property actually changed
         if (finalValue !== existingValue) {
             hasChanges = true
-            mergedItem[key] = finalValue
+            ;(mergedItem as Record<string, unknown>)[key] = finalValue
         }
     }
 
-    return { hasChanges, mergedItem: mergedItem as MetadataItem }
+    return { hasChanges, mergedItem }
 }
