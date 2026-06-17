@@ -83,17 +83,19 @@ export const cellIsUndefined = (
     columnIndex: number
 ) => rowContext?.[rowIndex]?.[columnIndex]?.valueStatus === NOT_DEFINED_VALUE
 
+type FormatRowValueArgs = {
+    rowValue: string
+    header: LineListAnalyticsDataHeader
+    metaDataItems: AnalyticsResponseMetadataItems
+    isUndefined: boolean
+}
+
 export const formatRowValue = ({
     rowValue,
     header,
     metaDataItems,
     isUndefined,
-}: {
-    rowValue: string
-    header: LineListAnalyticsDataHeader
-    metaDataItems: AnalyticsResponseMetadataItems
-    isUndefined: boolean
-}) => {
+}: FormatRowValueArgs) => {
     if (!rowValue) {
         return rowValue
     }
