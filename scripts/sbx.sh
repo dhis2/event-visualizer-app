@@ -158,18 +158,19 @@ maybe_inject_dhis2_creds() {
 }
 
 # Run a command, killing it and returning 124 if it exceeds <secs>. Output suppressed.
-# macOS has no `timeout`, so this is a portable stand-in.
+# macOS has no `timeout`, so this is a portable stand-in. Polls at 0.2s so a fast command
+# returns promptly (a 1s poll added ~1s of latency to every bounded call).
 run_with_timeout() {
     local secs="$1"; shift
     "$@" >/dev/null 2>&1 &
-    local pid=$! i=0
+    local pid=$! i=0 max=$((secs * 5))
     while kill -0 "$pid" 2>/dev/null; do
-        if [ "$i" -ge "$secs" ]; then
+        if [ "$i" -ge "$max" ]; then
             kill -TERM "$pid" 2>/dev/null
             wait "$pid" 2>/dev/null
             return 124
         fi
-        sleep 1
+        sleep 0.2
         i=$((i + 1))
     done
     wait "$pid" 2>/dev/null
@@ -225,55 +226,39 @@ live_ide_ports() {
 # retried; on failure it prints a notice and continues — it never hangs or errors, so
 # a flaky sbx call can't block the mount. Re-run mount if you (re)start Neovim.
 ide_link() {
-    local name="$1" ports port fwd up
-    if [ -d "$(ide_dir)" ]; then
-        if ! retry 2 12 sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude"; rm -rf "$HOME/.claude/ide"; ln -sfn "$1" "$HOME/.claude/ide"' _ "$(ide_dir)"; then
-            ide_msg "⚠ Editor integration: couldn't link the lock dir (sbx not responding) — /ide won't connect. Sandbox is otherwise fine."
-            return 0
-        fi
-    fi
+    local name="$1" ports port fwd_b64
     ports="$(live_ide_ports)"
     if [ -z "$ports" ]; then
+        # No live editor — still link the lock dir so /ide works if one starts mid-session.
+        [ -d "$(ide_dir)" ] && retry 2 12 sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude"; rm -rf "$HOME/.claude/ide"; ln -sfn "$1" "$HOME/.claude/ide"' _ "$(ide_dir)"
         ide_msg "Editor integration: no live Neovim for this repo — /ide will be empty (start Neovim, then re-run mount)."
         return 0
     fi
-    fwd="$(mktemp)"
-    printf '%s' "$IDE_FORWARDER_PY" > "$fwd"
-    chmod 644 "$fwd"   # sbx cp preserves host uid/mode; make it readable by the sandbox's agent user
-    if ! retry 2 12 sbx cp "$fwd" "${name}:/tmp/sbx-ide-forward.py"; then
-        rm -f "$fwd"
-        ide_msg "⚠ Editor integration: couldn't copy the forwarder (sbx not responding) — /ide won't connect."
+    # One round-trip: symlink the lock dir AND write the forwarder. The forwarder is written
+    # in-sandbox (base64) rather than `sbx cp`'d, so it is owned by the agent and readable —
+    # no chmod dance, one fewer round-trip.
+    fwd_b64="$(printf '%s' "$IDE_FORWARDER_PY" | base64 | tr -d '\n')"
+    if ! retry 2 12 sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude"; rm -rf "$HOME/.claude/ide"; ln -sfn "$1" "$HOME/.claude/ide"; printf "%s" "$2" | base64 -d > /home/agent/sbx-ide-forward.py' _ "$(ide_dir)" "$fwd_b64"; then
+        ide_msg "⚠ Editor integration: couldn't reach the sandbox — /ide won't connect. Sandbox is otherwise fine."
         return 0
     fi
-    rm -f "$fwd"
     for port in $ports; do
         retry 2 12 sbx policy allow network --sandbox "$name" "localhost:${port},host.docker.internal" || true
-        # `sbx exec -d` can report a nonzero exit even when it starts the process, so don't
-        # trust its exit code — start it, then verify the forwarder is actually listening.
-        retry 2 12 sbx exec -d "$name" python3 /tmp/sbx-ide-forward.py "$port" || true
-        up=""
-        for _ in 1 2 3; do
-            if run_with_timeout 8 sbx exec "$name" bash -lc 'exec 3<>/dev/tcp/127.0.0.1/'"$port"; then up=1; break; fi
-            sleep 1
-        done
-        if [ -n "$up" ]; then
+        # `sbx exec -d` starts the detached forwarder within ~1-2s but then blocks ~30s+ on its
+        # own inspect (and ignores TERM, so run_with_timeout can't cap it) before exiting. Fire
+        # it and DON'T wait — the orphaned client finishes its inspect harmlessly in the
+        # background while the verify below confirms the forwarder is actually listening.
+        ( sbx exec -d "$name" python3 /home/agent/sbx-ide-forward.py "$port" >/dev/null 2>&1 & )
+        if run_with_timeout 12 sbx exec "$name" bash -lc 'for _ in $(seq 1 20); do exec 3<>/dev/tcp/127.0.0.1/'"$port"' 2>/dev/null && exit 0; sleep 0.3; done; exit 1'; then
             echo "  Host editor linked on port $port. If Claude doesn't auto-connect, run /ide in the session to connect."
         else
             echo "  ⚠ Editor integration: forwarder for port $port isn't listening — /ide won't connect."
         fi
     done
-    sleep 3
+    sleep 3   # keep: let the connection-outcome message stay readable before Claude's TUI clears it
 }
 
 # Exit 0 if the native node_modules snapshot exists and is no older than the
-# lockfile (so it can be reused without a fresh copy), nonzero otherwise. Bounded.
-snapshot_fresh() {
-    run_with_timeout 12 sbx exec "$1" bash -lc '
-        nm=/home/agent/nm
-        [ -d "$nm" ] && [ ! "$1/pnpm-lock.yaml" -nt "$nm" ]
-    ' _ "$REPO_ROOT"
-}
-
 # Overlay the bind-mounted node_modules with a copy on the sandbox's native fs.
 # Only needed on macOS: the macOS↔Linux file-sharing layer makes the bind mount ~5x slower
 # for test/build I/O (every module-resolution stat pays virtualization latency, and vitest
@@ -281,28 +266,25 @@ snapshot_fresh() {
 # native-speed, so this is skipped there and the live bind mount is used directly.
 # The copy is a snapshot, rebuilt when pnpm-lock.yaml changes (or via "refresh-deps").
 # Container-local (sudo mount --bind) — the host node_modules is never touched. The
-# sudo mount does not survive a sandbox restart, so this re-applies on every mount;
-# the copy itself is reused when fresh. Best-effort + bounded: on failure tests still
-# run, just slowly off the bind mount.
+# sudo mount does not survive a sandbox restart, so this re-applies on every mount; on a
+# restart the snapshot is reused, so it is just a remount. The whole decision (already
+# mounted? snapshot fresh? copy + mount) runs in one round-trip. Best-effort + bounded:
+# on failure tests still run, just slowly off the bind mount.
 native_node_modules() {
     local name="$1"
     [ "$(uname)" = "Darwin" ] || return 0
-    if run_with_timeout 12 sbx exec "$name" mountpoint -q "$REPO_ROOT/node_modules"; then
-        return 0
-    fi
-    if ! snapshot_fresh "$name"; then
-        echo "Building native node_modules cache (faster tests; ~2 min, first mount or after dep changes)..."
-        if ! run_with_timeout 360 sbx exec "$name" bash -lc '
-            rm -rf /home/agent/nm && cp -a "$1/node_modules" /home/agent/nm && touch /home/agent/nm
-        ' _ "$REPO_ROOT"; then
-            echo "⚠ Couldn't build the native node_modules cache — tests will run (slowly) off the bind mount."
-            return 0
+    if run_with_timeout 360 sbx exec "$name" bash -lc '
+        set -e
+        repo="$1"; nm=/home/agent/nm
+        if mountpoint -q "$repo/node_modules"; then exit 0; fi
+        if [ ! -d "$nm" ] || [ "$repo/pnpm-lock.yaml" -nt "$nm" ]; then
+            rm -rf "$nm" && cp -a "$repo/node_modules" "$nm" && touch "$nm"
         fi
-    fi
-    if run_with_timeout 30 sbx exec "$name" sudo mount --bind /home/agent/nm "$REPO_ROOT/node_modules"; then
-        echo "Native node_modules active — test/build I/O much faster (host node_modules untouched)."
+        sudo mount --bind "$nm" "$repo/node_modules"
+    ' _ "$REPO_ROOT"; then
+        echo "Native node_modules overlay active (host node_modules untouched)."
     else
-        echo "⚠ Couldn't overlay native node_modules — tests will run (slowly) off the bind mount."
+        echo "⚠ Couldn't set up the native node_modules overlay — tests run (slowly) off the bind mount."
     fi
 }
 
