@@ -242,11 +242,76 @@ const fetchLegendSets = async ({
     return legendSets
 }
 
-export const extractHeaders = (
+type ResolveLegendSetArgs = {
+    dimensionId: string
+    valueType: GridHeader['valueType']
+    legend: CurrentVisualization['legend']
+    metadataStore: UseMetadataStoreReturnValue
+    legendSets: HeaderLegendSet[]
+}
+
+const resolveLegendSet = ({
+    dimensionId,
+    valueType,
+    legend,
+    metadataStore,
+    legendSets,
+}: ResolveLegendSetArgs): HeaderLegendSet | undefined => {
+    if (!legendSets.length || !isValueTypeNumeric(valueType)) {
+        return undefined
+    }
+    if (legend?.strategy === 'FIXED') {
+        return legendSets[0]
+    }
+    if (legend?.strategy === 'BY_DATA_ITEM') {
+        const item = metadataStore.getDimensionMetadataItem(dimensionId)
+        if (!item?.legendSetId) {
+            return undefined
+        }
+        return legendSets.find((legendSet) => legendSet.id === item.legendSetId)
+    }
+    return undefined
+}
+
+export const collectLegendSetIdsToFetch = (
     analyticsResponse: LineListAnalyticsResponse,
     visualization: CurrentVisualization,
     metadataStore: UseMetadataStoreReturnValue
-): Array<IndexedLineListAnalyticsDataHeader> => {
+): string[] => {
+    const { legend } = visualization
+    if (legend?.strategy === 'FIXED') {
+        return legend.set?.id ? [legend.set.id] : []
+    }
+    if (legend?.strategy === 'BY_DATA_ITEM') {
+        const ids: string[] = []
+        for (const header of analyticsResponse.headers) {
+            const dimensionId = analyticsHeaderToCanonicalDimensionId(
+                header.name ?? '',
+                visualization
+            )
+            const item = metadataStore.getDimensionMetadataItem(dimensionId)
+            if (item?.legendSetId) {
+                ids.push(item.legendSetId)
+            }
+        }
+        return ids
+    }
+    return []
+}
+
+type BuildHeadersArgs = {
+    analyticsResponse: LineListAnalyticsResponse
+    visualization: CurrentVisualization
+    metadataStore: UseMetadataStoreReturnValue
+    legendSets?: HeaderLegendSet[]
+}
+
+export const buildHeaders = ({
+    analyticsResponse,
+    visualization,
+    metadataStore,
+    legendSets = [],
+}: BuildHeadersArgs): Array<IndexedLineListAnalyticsDataHeader> => {
     const canonicalIds: string[] = analyticsResponse.headers.map(
         (header: GridHeader) =>
             analyticsHeaderToCanonicalDimensionId(
@@ -286,18 +351,23 @@ export const extractHeaders = (
     )
 
     return analyticsResponse.headers.map(
-        (header, index): IndexedLineListAnalyticsDataHeader => ({
-            ...header,
-            /* GridHeader.legendSet is the wire legend set ID (string). The
-             * hydrated legend set object is populated later in
-             * useLineListAnalyticsData; drop the wire ID here so the field's
-             * shape matches LineListAnalyticsDataHeader. */
-            legendSet: undefined,
-            index,
-            dimensionId: canonicalIds[index],
-            column: nameById.get(canonicalIds[index]) ?? header.column,
-            dimensionSuffix: suffixes[canonicalIds[index]],
-        })
+        (header, index): IndexedLineListAnalyticsDataHeader => {
+            const dimensionId = canonicalIds[index]
+            return {
+                ...header,
+                legendSet: resolveLegendSet({
+                    dimensionId,
+                    valueType: header.valueType,
+                    legend: visualization.legend,
+                    metadataStore,
+                    legendSets,
+                }),
+                index,
+                dimensionId,
+                column: nameById.get(dimensionId) ?? header.column,
+                dimensionSuffix: suffixes[dimensionId],
+            }
+        }
     )
 }
 
@@ -432,70 +502,26 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     displayProperty,
                 })
 
-                const headers = extractHeaders(
+                const legendSetIds = collectLegendSetIdsToFetch(
                     analyticsResponse,
                     visualization,
                     metadataStore
                 )
-
-                const rows = extractRows(analyticsResponse, headers)
-                const { rowContext } = analyticsResponse
-                const pager = analyticsResponse.metaData.pager
-
-                const headerLegendSetIdByDimensionId: Record<string, string> =
-                    {}
-                for (const header of headers) {
-                    const item = metadataStore.getDimensionMetadataItem(
-                        header.dimensionId
-                    )
-                    if (item?.legendSetId) {
-                        headerLegendSetIdByDimensionId[header.dimensionId] =
-                            item.legendSetId
-                    }
-                }
-
-                const legendSetIds: string[] = []
-                if (
-                    visualization.legend?.strategy === 'FIXED' &&
-                    visualization.legend.set?.id
-                ) {
-                    legendSetIds.push(visualization.legend.set.id)
-                } else if (visualization.legend?.strategy === 'BY_DATA_ITEM') {
-                    legendSetIds.push(
-                        ...Object.values(headerLegendSetIdByDimensionId)
-                    )
-                }
                 const legendSets = await fetchLegendSets({
                     legendSetIds,
                     dataEngine,
                 })
 
-                if (legendSets.length) {
-                    headers
-                        .filter((header) =>
-                            isValueTypeNumeric(header.valueType)
-                        )
-                        .forEach((header) => {
-                            switch (visualization.legend?.strategy) {
-                                case 'FIXED':
-                                    header.legendSet = legendSets[0]
-                                    break
-                                case 'BY_DATA_ITEM': {
-                                    const matchingLegendSet = legendSets.find(
-                                        (legendSet) =>
-                                            legendSet.id ===
-                                            headerLegendSetIdByDimensionId[
-                                                header.dimensionId
-                                            ]
-                                    )
-                                    if (matchingLegendSet) {
-                                        header.legendSet = matchingLegendSet
-                                    }
-                                    break
-                                }
-                            }
-                        })
-                }
+                const headers = buildHeaders({
+                    analyticsResponse,
+                    visualization,
+                    metadataStore,
+                    legendSets,
+                })
+
+                const rows = extractRows(analyticsResponse, headers)
+                const { rowContext } = analyticsResponse
+                const pager = analyticsResponse.metaData.pager
 
                 const analyticsData = { headers, rows, pager, rowContext }
 

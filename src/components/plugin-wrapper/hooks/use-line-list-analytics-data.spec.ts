@@ -2,7 +2,7 @@ import type { UseMetadataStoreReturnValue } from '@components/app-wrapper/metada
 import { extractMetadataFromAnalyticsResponse } from '@modules/metadata-store/analytics-data'
 import type { CurrentVisualization, DimensionMetadataItem } from '@types'
 import { describe, it, expect } from 'vitest'
-import { extractHeaders, formatRowValue } from './use-line-list-analytics-data'
+import { buildHeaders, formatRowValue } from './use-line-list-analytics-data'
 
 const visualization = {
     outputType: 'EVENT',
@@ -17,7 +17,11 @@ const analyticsResponse = {
             s2: { name: 'Baby Postnatal' },
         },
     },
-} as unknown as Parameters<typeof extractHeaders>[0]
+}
+
+const analyticsResponseTyped = analyticsResponse as unknown as Parameters<
+    typeof buildHeaders
+>[0]['analyticsResponse']
 
 const buildMetadataStore = (
     scheduledDateName: string
@@ -39,13 +43,13 @@ const buildMetadataStore = (
     } as unknown as UseMetadataStoreReturnValue
 }
 
-describe('extractHeaders', () => {
+describe('buildHeaders', () => {
     it('keeps the base name in column and exposes the stage suffix separately', () => {
-        const headers = extractHeaders(
-            analyticsResponse,
+        const headers = buildHeaders({
+            analyticsResponse: analyticsResponseTyped,
             visualization,
-            buildMetadataStore('Scheduled date')
-        )
+            metadataStore: buildMetadataStore('Scheduled date'),
+        })
 
         expect(headers[0]).toMatchObject({
             dimensionId: 's1.scheduledDate',
@@ -60,14 +64,14 @@ describe('extractHeaders', () => {
     })
 
     it('does not accumulate the stage suffix across repeated updates', () => {
-        const firstHeaders = extractHeaders(
-            analyticsResponse,
+        const firstHeaders = buildHeaders({
+            analyticsResponse: analyticsResponseTyped,
             visualization,
-            buildMetadataStore('Scheduled date')
-        )
+            metadataStore: buildMetadataStore('Scheduled date'),
+        })
 
         const metadataAfterUpdate = extractMetadataFromAnalyticsResponse(
-            analyticsResponse.metaData.items,
+            analyticsResponseTyped.metaData.items,
             firstHeaders
         ) as Record<string, { name?: string }>
 
@@ -77,11 +81,11 @@ describe('extractHeaders', () => {
 
         const storedName = metadataAfterUpdate['s1.scheduledDate']
             .name as string
-        const secondHeaders = extractHeaders(
-            analyticsResponse,
+        const secondHeaders = buildHeaders({
+            analyticsResponse: analyticsResponseTyped,
             visualization,
-            buildMetadataStore(storedName)
-        )
+            metadataStore: buildMetadataStore(storedName),
+        })
 
         expect(secondHeaders[0].column).toBe('Scheduled date')
         expect(secondHeaders[0].dimensionSuffix).toBe('Birth')
