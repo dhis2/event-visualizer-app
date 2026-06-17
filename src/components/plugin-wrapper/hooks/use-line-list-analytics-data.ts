@@ -50,7 +50,12 @@ const NOT_DEFINED_VALUE = 'ND'
 export const cellIsUndefined = (rowContext = {}, rowIndex, columnIndex) =>
     (rowContext[rowIndex] || {})[columnIndex]?.valueStatus === NOT_DEFINED_VALUE
 
-const formatRowValue = ({ rowValue, header, metaDataItems, isUndefined }) => {
+export const formatRowValue = ({
+    rowValue,
+    header,
+    metaDataItems,
+    isUndefined,
+}) => {
     if (!rowValue) {
         return rowValue
     }
@@ -61,13 +66,17 @@ const formatRowValue = ({ rowValue, header, metaDataItems, isUndefined }) => {
             return !isUndefined ? getBooleanValues()[rowValue] : ''
         default: {
             if (header.optionSet) {
-                return (
-                    lookupOptionSetOptionMetadata(
-                        header.optionSet,
-                        rowValue,
-                        metaDataItems
-                    )?.name || rowValue
-                )
+                return rowValue
+                    .split(',')
+                    .map(
+                        (code) =>
+                            lookupOptionSetOptionMetadata(
+                                header.optionSet,
+                                code,
+                                metaDataItems
+                            )?.name || code
+                    )
+                    .join(', ')
             }
 
             return metaDataItems[rowValue]?.name || rowValue

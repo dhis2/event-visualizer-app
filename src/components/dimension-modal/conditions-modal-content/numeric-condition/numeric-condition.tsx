@@ -132,6 +132,12 @@ export const NumericCondition: FC<NumericConditionProps> = ({
         }
     }, [dimension.id, legendSet, addMetadata])
 
+    useEffect(() => {
+        if (selectedLegendSetId && !legendSet) {
+            fetchLegendSet(selectedLegendSetId)
+        }
+    }, [selectedLegendSetId, legendSet, fetchLegendSet])
+
     const { valueInputId, focusValueInput } = useValueInputFocus()
 
     const setOperator = useCallback(
@@ -175,12 +181,6 @@ export const NumericCondition: FC<NumericConditionProps> = ({
             })
         }
     }, [fetchLegendSets, dimension.id, dimension.dimensionType, legendSets])
-
-    const onLegendSetLegendsDropdownFocus = useCallback(() => {
-        if (!legendSet && selectedLegendSetId) {
-            fetchLegendSet(selectedLegendSetId)
-        }
-    }, [fetchLegendSet, selectedLegendSetId, legendSet])
 
     return (
         <div className={classes.container}>
@@ -272,7 +272,6 @@ export const NumericCondition: FC<NumericConditionProps> = ({
                                         selectedLegendSetId
                                     )
                                 }
-                                onFocus={onLegendSetLegendsDropdownFocus}
                                 loading={
                                     isLoadingLegendSet || isFetchingLegendSet
                                 }

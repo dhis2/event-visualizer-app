@@ -61,26 +61,39 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
 
     const data = rawData as FetchResult['items']
 
-    const setValues = (selected) => {
-        const optionsMetadata = selected.reduce((options, selectedId) => {
-            const option = data?.find(({ code }) => code === selectedId)
+    const setValues = (selected: string[]) => {
+        const optionsMetadata = selected.reduce<FetchResult['items']>(
+            (options, selectedId) => {
+                const option = data?.find(({ code }) => code === selectedId)
 
-            if (option) {
-                options.push(option)
-            }
+                if (option) {
+                    options.push(option)
+                }
 
-            return options
-        }, [])
+                return options
+            },
+            []
+        )
 
         // add each single option
         // this is to keep the metadata store consistent, as the single options are also added when loading a visualization
         addMetadata(optionsMetadata)
 
-        // update options in the optionSet metadata used for the lookup of the correct
-        // name from code (options for different option sets have the same code)
+        // add the optionSet so option labels can be looked up by code
+        // (codes are not unique across option sets)
+        const optionSetName =
+            data?.[0]?.optionSet?.name ?? optionSetMetadata?.name
+
+        if (!optionSetName) {
+            throw new Error(
+                `Could not resolve a name for option set "${optionSetId}"`
+            )
+        }
+
         addMetadata({
             ...(optionSetMetadata ?? {}),
             id: optionSetId,
+            name: optionSetName,
             options: optionsMetadata,
         })
 
