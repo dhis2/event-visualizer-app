@@ -1,5 +1,5 @@
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
-import type { EngineError } from '@api/parse-engine-error'
+import { parseEngineError, type EngineError } from '@api/parse-engine-error'
 import {
     preparePayloadForSave,
     preparePayloadForSaveAs,
@@ -203,7 +203,7 @@ export const useToolbarActions = () => {
                 })
             )
         } else if (error) {
-            onError(error as EngineError)
+            onError(parseEngineError(error))
         }
     }, [dispatch, currentVis, onError])
 
@@ -234,7 +234,7 @@ export const useToolbarActions = () => {
                 // Navigate to the new visualization
                 dispatch(setNavigationState({ visualizationId: data }))
             } else if (error) {
-                onError(error as EngineError)
+                onError(parseEngineError(error))
             }
         },
         [dispatch, currentVis, onError]
