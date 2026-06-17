@@ -19,13 +19,11 @@ export const SelectBaseOption: FC<SelectBaseOptionProps> = ({
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 
-    const onChange = (value: Parameters<typeof setValue>[0]) => setValue(value)
-
     return (
         <div>
             <SingleSelectField
                 {...rest}
-                onChange={({ selected }) => onChange(selected)}
+                onChange={({ selected }) => setValue(selected)}
                 // Cast to String because values might be numeric but the UI component only accepts string | undefined
                 selected={
                     value !== undefined && value !== null

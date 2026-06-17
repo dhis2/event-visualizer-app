@@ -16,8 +16,6 @@ export const CheckboxBaseOption: FC<CheckboxBaseOptionProps> = ({
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 
-    const onChange = (value: Parameters<typeof setValue>[0]) => setValue(value)
-
     return (
         <div>
             <CheckboxField
@@ -25,7 +23,7 @@ export const CheckboxBaseOption: FC<CheckboxBaseOptionProps> = ({
                 checked={(inverted ? !value : value) as boolean}
                 name={option.name}
                 onChange={({ checked }) =>
-                    onChange(inverted ? !checked : checked)
+                    setValue(inverted ? !checked : checked)
                 }
                 dense
                 dataTest={dataTest}

@@ -15,13 +15,11 @@ export const TextBaseOption: FC<TextBaseOptionProps> = ({
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 
-    const onChange = (value: Parameters<typeof setValue>[0]) => setValue(value)
-
     return (
         <div>
             <InputField
                 {...rest}
-                onChange={({ value }) => onChange(value)}
+                onChange={({ value }) => setValue(value)}
                 name={option.name}
                 // Cast to String because value might be numeric but the UI component only accepts string | undefined
                 value={

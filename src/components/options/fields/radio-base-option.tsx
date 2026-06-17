@@ -14,8 +14,6 @@ export const RadioBaseOption: FC<RadioBaseOptionProps> = ({
 }) => {
     const [value, setValue] = useOptionsField(option.name)
 
-    const onChange = (value: Parameters<typeof setValue>[0]) => setValue(value)
-
     return (
         <Field name={option.name}>
             {option.items.map(({ id, label }) => (
@@ -26,7 +24,7 @@ export const RadioBaseOption: FC<RadioBaseOptionProps> = ({
                     label={label}
                     value={id}
                     checked={value === id}
-                    onChange={({ value }) => onChange(value)}
+                    onChange={({ value }) => setValue(value)}
                     dense
                     dataTest={`${dataTest}-option-${id}`}
                 />
