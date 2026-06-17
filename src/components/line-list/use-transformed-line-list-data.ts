@@ -70,13 +70,16 @@ const cellValueShouldNotWrap = (header: LineListAnalyticsDataHeader) =>
     NON_WRAPPING_VALUE_TYPES_LOOKUP.has(header.valueType) && !header.optionSet
 
 const DATE_VALUE_TYPES: ValueType[] = ['DATE', 'DATETIME']
-const TIME_DIMENSION_HEADER_NAMES = [
+const TIME_DIMENSION_HEADER_NAMES = new Set([
     headersMap.eventDate,
     headersMap.enrollmentDate,
     headersMap.incidentDate,
     headersMap.scheduledDate,
-]
-const STATUS_HEADER_NAMES = [headersMap.eventStatus, headersMap.programStatus]
+])
+const STATUS_HEADER_NAMES = new Set([
+    headersMap.eventStatus,
+    headersMap.programStatus,
+])
 
 /* Time dimensions (event/enrollment/incident/scheduledDate) are typed as
  * DATETIME on the backend but should render as plain date (DHIS2-17855).
@@ -87,7 +90,7 @@ const formatDateLikeValue = (
 ): string => {
     const isTimeDimension =
         header.name !== undefined &&
-        TIME_DIMENSION_HEADER_NAMES.includes(header.name)
+        TIME_DIMENSION_HEADER_NAMES.has(header.name)
     const includeTime =
         !isTimeDimension &&
         (header.name === headersMap.lastUpdated ||
@@ -107,7 +110,7 @@ const getFormattedCellValue = ({
     // header.name might be prefixed with programStage.id
     const dimensionId = extractPlainDimensionId(header.name)
 
-    if (dimensionId && STATUS_HEADER_NAMES.includes(dimensionId)) {
+    if (dimensionId && STATUS_HEADER_NAMES.has(dimensionId)) {
         return isStatus(value) ? getStatusName(value) : value
     }
 
