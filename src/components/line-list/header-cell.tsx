@@ -44,11 +44,14 @@ export const HeaderCell: FC<HeaderCellProps> = ({
     }, [name, isDisconnected, sortDirection, sortField])
     const handleSortIconClick = useCallback(
         ({ name, direction: uiSortDirection }: HandleSortIconClickPayload) => {
+            if (!name) {
+                return
+            }
             const direction =
                 uiSortDirection === 'asc' || uiSortDirection === 'desc'
                     ? (uiSortDirection.toUpperCase() as SortDirection)
                     : undefined
-            onDataSort({ dimension: name!, direction })
+            onDataSort({ dimension: name, direction })
         },
         [onDataSort]
     )
