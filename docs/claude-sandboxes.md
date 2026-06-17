@@ -1,0 +1,56 @@
+# Claude AI sandboxes (opt-in)
+
+Two optional, isolated AI workspaces built on [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) (`sbx`). They are fully opt-in — if you do not install `sbx`, nothing here affects you.
+
+## One-time setup
+
+```bash
+brew install sbx
+./scripts/sbx.sh setup   # Docker login, network policy, Anthropic credential
+```
+
+## Mount sandbox — hands-on, live files (`pnpm sbx:mount`)
+
+The agent edits your live working tree (changes show up in your editor immediately) and can run tests/build inside the sandbox, with no permission prompts but a constrained network. You review diffs and commit on the host. A dev server the agent starts is published to `http://localhost:3000`.
+
+> **node_modules note:** `pnpm-workspace.yaml` declares `supportedArchitectures` for both macOS and Linux arm64, so a single host `pnpm install` lays down the native binaries (`esbuild`/`vite`, `vitest`/rolldown, `rollup`) for **both** platforms. The same `node_modules` therefore runs natively on your host _and_ inside the Linux sandbox — no in-sandbox `pnpm install`, no swapping binaries back. (Don't run `pnpm install` in the mount: it isn't needed — dependencies come from the host.)
+>
+> The repo is bind-mounted, and reading `node_modules` (76k tiny files) over the macOS↔Linux file-sharing layer is ~5× slower for tests/build — module resolution and jsdom setup are dominated by per-file syscall latency. So on each mount, `pnpm sbx:mount` overlays `node_modules` with a copy on the sandbox's **native filesystem** (`sudo mount --bind`, container-local — your host `node_modules` is never touched). The copy is a snapshot taken on first mount (~2 min), reused while fresh, and rebuilt automatically when `pnpm-lock.yaml` changes. If you change dependencies on the host while the sandbox is up, refresh it without re-mounting via `./scripts/sbx.sh refresh-deps`. Like the editor link, it's best-effort and time-bounded — if it can't apply, tests still run (just slowly) off the bind mount.
+
+> **Editor integration (Neovim):** the sandbox mounts your live editor-lock dir (`~/.claude/ide`), so it always sees the current [`coder/claudecode.nvim`](https://github.com/coder/claudecode.nvim) lock. If Neovim is running on this repo when you mount, `pnpm sbx:mount` opens a **port-scoped** path to the editor's WebSocket and starts a forwarder for it; run `/ide` in the session to connect (diffs, selection, diagnostics). Only this repo's editor port is opened — not general host access. Re-run `pnpm sbx:mount` if you start/restart Neovim after mounting (a new port needs a fresh allow rule). The whole editor-link is best-effort: every step is time-bounded and retried, so if `sbx` is unresponsive it prints a notice and the sandbox still comes up — it never blocks the mount.
+
+> **Browser automation** works in the mount sandbox: `pnpm sbx:mount` installs a headless Chromium (via Playwright — the only source of an arm64 build; the image has no distro/Google Chrome for arm64) and registers a sandbox-local `chrome-devtools` MCP server pointed at it (`--executablePath … --headless --chromeArg=--no-sandbox`). The agent drives it with the `chrome-devtools` tools — start the dev server and have it navigate to `http://localhost:3000` to load and inspect the running app. It's a fully in-sandbox, isolated headless Chrome (no bridge to your host browser), registered at user scope so your committed config — which drives your _host_ Chrome — is untouched. First mount adds ~2 min for the Chromium download; the clone doesn't set this up.
+
+## Clone sandbox — autonomous (`pnpm sbx:clone`)
+
+The agent works on a private, isolated clone: it branches, runs tests, and commits on its own. Your host `node_modules` is never touched — the clone runs its own `pnpm install` on the container's native filesystem (so tests are fast, no overlay needed). Retrieve its work:
+
+```bash
+git fetch sandbox-event-visualizer-app-clone
+git log sandbox-event-visualizer-app-clone/<branch>
+```
+
+Unlike the mount, the clone gets a **one-way copy** of this project's memory at create (no sessions, no settings — it stays isolated). Re-push the latest host memory with `./scripts/sbx.sh sync-clone`.
+
+> The clone runs `pnpm install` at create. Its `postinstall` runs `generate-types`, which fetches the OpenAPI spec from the DHIS2 dev instance (the provisioned network rule allows it), and the install pulls the Cypress binary too (its CDN is allow-listed), with the Electron/GTK system libs provisioned so `cypress` can actually run.
+
+## Provisioning and forwarding
+
+> **First run provisions the sandbox** (installs pnpm, the `typescript-lsp`, `context7`, and `superpowers` plugins, and opens network access for the `grep`/`context7` MCPs, `dhis2.org`/`*.dhis2.org`, and the Cypress binary CDN). That first `pnpm sbx:mount`/`sbx:clone` takes a minute longer; later runs reuse it.
+
+Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount -- --continue` or `pnpm sbx:clone -- --model opus`.
+
+`pnpm sbx:mount` mounts _this project's_ Claude history + memory (`~/.claude/projects/<repo>`) into the sandbox **read-write**, so `pnpm sbx:mount -- --continue` (or `--resume`) picks up your host conversation and work done in the sandbox flows back to the host. (Only this project's dir is shared — no credentials or other projects. Don't run host Claude and the sandbox on this project simultaneously; they'd write the same files.)
+
+## Other commands
+
+```bash
+./scripts/sbx.sh refresh-deps  # rebuild the mount's native node_modules cache from the host install
+./scripts/sbx.sh sync-clone    # re-copy this project's memory into the clone (host -> clone)
+./scripts/sbx.sh reset-clone   # wipe the clone back to a clean checkout
+./scripts/sbx.sh purge         # remove both sandboxes
+```
+
+## Tooling and constraints
+
+**Tooling inside the sandbox:** the `typescript-lsp`, `context7`, and `superpowers` plugins, the `grep` MCP, and the prettier/eslint format hook all work. Only project-level config (committed `.claude/`) is picked up — your _host_ user-level MCP servers are not propagated in. **GitHub auth (`gh`) is deliberately not available inside sandboxes** — the agent has no push/PR power, so a misbehaving session can't touch your repos; do GitHub operations on the host.
