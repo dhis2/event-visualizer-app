@@ -29,13 +29,8 @@ export const fetchAnalyticsDataForPT = async ({
     const { adaptedVisualization, parameters } =
         getAdaptedVisualization(visualization)
 
-    const mutableParameters = parameters as Record<string, unknown>
-
     // TODO: figure out what to do for the DE time dimensions
     const timeField = (visualization as { timeField?: string }).timeField
-    if (timeField) {
-        mutableParameters['timeField'] = timeField
-    }
 
     const program = getSingleProgramFromVisualization(visualization)
 
@@ -44,7 +39,8 @@ export const fetchAnalyticsDataForPT = async ({
         .withProgram(program.id)
         .withParameters({
             totalPages: false,
-            ...parameters,
+            ...(parameters as Record<string, unknown>),
+            ...(timeField ? { timeField } : {}),
         })
 
     if (displayProperty) {
