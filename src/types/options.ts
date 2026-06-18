@@ -60,6 +60,7 @@ export type EventVisualizationOptions = Partial<
         | 'sortOrder'
         | 'subtitle'
         | 'targetLineValue'
+        | 'timeField'
         | 'title'
         | 'topLimit'
         // | 'approvalLevel'

@@ -176,15 +176,23 @@ export const isTimeDimensionId = (
 ): dimensionId is TimeDimensionId =>
     (TIME_DIMENSION_IDS as readonly string[]).includes(dimensionId)
 
-type NameParentProperty = 'program' | 'stage'
-type TimeDimension = {
+type TimeDimensionBase = {
     id: TimeDimensionId
     dimensionType: DimensionType
     formatType: ValueType
     defaultName: string
-    nameParentProperty: NameParentProperty
-    nameProperty: string
 }
+type TimeDimension =
+    | (TimeDimensionBase & {
+          nameParentProperty: 'program'
+          nameProperty:
+              | 'displayEnrollmentDateLabel'
+              | 'displayIncidentDateLabel'
+      })
+    | (TimeDimensionBase & {
+          nameParentProperty: 'stage'
+          nameProperty: 'displayExecutionDateLabel' | 'displayDueDateLabel'
+      })
 export const getTimeDimensions = (): Record<
     Exclude<TimeDimensionId, 'lastUpdated'>,
     TimeDimension
@@ -228,7 +236,7 @@ export const getTimeDimensionName = (
     program?: Program,
     stage?: ProgramStage
 ): string => {
-    if (!dimension.nameParentProperty || !program) {
+    if (!program) {
         return dimension.defaultName
     }
     const name =

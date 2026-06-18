@@ -58,7 +58,7 @@ const EventVisualizer: FC = () => {
     )
 
     const onDataSorted = useCallback(
-        (sorting: Sorting) => {
+        (sorting: Sorting | undefined) => {
             if (isVisualizationEmpty(currentVis)) {
                 throw new Error(
                     'onDataSorted called with an empty visualization'
@@ -77,7 +77,7 @@ const EventVisualizer: FC = () => {
     const onResponsesReceived = useCallback(
         (
             analyticsMetadata: AnalyticsResponseMetadataItems,
-            headers: Array<LineListAnalyticsDataHeader>
+            headers?: Array<LineListAnalyticsDataHeader>
         ) => {
             addAnalyticsResponseMetadata(analyticsMetadata, headers)
         },

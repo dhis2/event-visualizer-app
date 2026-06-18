@@ -43,7 +43,9 @@ export const DynamicDimensionModalContent: FC<
     const selectedIdsMetadata = useMetadataItems(selectedIds)
     const selectedOptionsLookup = useMemo(
         () =>
-            selectedIds.reduce((lookupMap, id) => {
+            selectedIds.reduce<
+                Record<string, { value: string; label: string }>
+            >((lookupMap, id) => {
                 const metadata = selectedIdsMetadata[id]
 
                 lookupMap[id] = {
@@ -68,10 +70,17 @@ export const DynamicDimensionModalContent: FC<
 
     const data = rawData as FetchResult['items']
 
-    const updateDynamicDimensionItems = ({ selected }) => {
+    const updateDynamicDimensionItems = ({
+        selected,
+    }: {
+        selected: string[]
+    }) => {
         const { uiItems, metadata } = data
             .filter((item) => selected.includes(item.id))
-            .reduce(
+            .reduce<{
+                uiItems: string[]
+                metadata: Record<string, FetchResult['items'][number]>
+            }>(
                 (acc, item) => {
                     acc.uiItems.push(item.id)
 
@@ -79,7 +88,7 @@ export const DynamicDimensionModalContent: FC<
 
                     return acc
                 },
-                { uiItems: [] as string[], metadata: {} }
+                { uiItems: [], metadata: {} }
             )
 
         addMetadata(metadata)
@@ -123,7 +132,9 @@ export const DynamicDimensionModalContent: FC<
                     leftHeader={
                         <TransferLeftHeader
                             searchTerm={searchTerm}
-                            setSearchTerm={setSearchTerm}
+                            setSearchTerm={(value) =>
+                                setSearchTerm(value ?? '')
+                            }
                             dataTest={`${dataTest}-left-header`}
                         />
                     }

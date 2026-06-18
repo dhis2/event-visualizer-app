@@ -186,14 +186,6 @@ describe('getTimeDimensionName', () => {
         expect(getTimeDimensionName(dimension)).toBe('Event date')
     })
 
-    it('returns default name when no nameParentProperty', () => {
-        const dimension = {
-            ...getTimeDimensions().eventDate,
-            nameParentProperty: undefined as unknown as 'program' | 'stage',
-        }
-        expect(getTimeDimensionName(dimension, mockProgram)).toBe('Event date')
-    })
-
     it('returns program name for program parent property', () => {
         const dimension = getTimeDimensions().enrollmentDate
         expect(getTimeDimensionName(dimension, mockProgram)).toBe(

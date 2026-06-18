@@ -23,7 +23,8 @@ const BaseCondition: FC<
         max?: ComponentProps<typeof Input>['max']
     }
 > = ({ condition, onChange, onRemove, type, max }) => {
-    let operator, value
+    let operator: string | undefined
+    let value: string | undefined
 
     if (condition.includes(NULL_VALUE)) {
         operator = condition
@@ -35,7 +36,7 @@ const BaseCondition: FC<
 
     const { valueInputId, focusValueInput } = useValueInputFocus()
 
-    const setOperator = (input) => {
+    const setOperator = (input: string) => {
         if (input.includes(NULL_VALUE)) {
             onChange(`${input}`)
         } else {
@@ -44,7 +45,7 @@ const BaseCondition: FC<
         }
     }
 
-    const setValue = (input) => {
+    const setValue = (input?: string) => {
         onChange(
             `${operator}:${
                 input?.replaceAll(UI_TIME_DIVIDER, API_TIME_DIVIDER) || ''

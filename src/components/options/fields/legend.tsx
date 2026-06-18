@@ -16,7 +16,8 @@ export const Legend: FC = () => {
     const [value, setValue] = useOptionsField('legend')
 
     const onChange = useCallback(
-        ({ checked }) => setValue(checked ? DEFAULT_LEGEND_OPTION : undefined),
+        ({ checked }: { checked: boolean }) =>
+            setValue(checked ? DEFAULT_LEGEND_OPTION : undefined),
         [setValue]
     )
 

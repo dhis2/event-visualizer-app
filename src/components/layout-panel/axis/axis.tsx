@@ -15,7 +15,7 @@ type AxisProps = {
     axisId: AxisTD
     dimensionIds?: string[]
 }
-const EMPTY_ARRAY = []
+const EMPTY_ARRAY: string[] = []
 
 export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
     const dimensions = useLayoutDimensions({

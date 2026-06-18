@@ -36,7 +36,9 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
 
     const selectedOptionsLookup = useMemo(
         () =>
-            optionSetMetadata?.options.reduce((lookupMap, { code, name }) => {
+            optionSetMetadata?.options.reduce<
+                Record<string, { value: string; label: string }>
+            >((lookupMap, { code, name }) => {
                 lookupMap[code] = {
                     value: code,
                     label: name,
@@ -125,7 +127,7 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
             leftHeader={
                 <TransferLeftHeader
                     searchTerm={searchTerm}
-                    setSearchTerm={setSearchTerm}
+                    setSearchTerm={(value) => setSearchTerm(value ?? '')}
                     dataTest={`${dataTest}-left-header`}
                 />
             }

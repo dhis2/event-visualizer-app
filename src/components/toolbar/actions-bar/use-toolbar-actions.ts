@@ -1,4 +1,5 @@
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
+import type { EngineError } from '@api/parse-engine-error'
 import {
     preparePayloadForSave,
     preparePayloadForSaveAs,
@@ -83,7 +84,7 @@ export const useToolbarActions = () => {
     }, [dispatch, savedVis.name, showAlert])
 
     const onError = useCallback(
-        (error) => {
+        (error: EngineError) => {
             logger.error(error)
             let message = error.message || i18n.t('An unknown error occurred.')
 
@@ -138,7 +139,13 @@ export const useToolbarActions = () => {
     // Existing visualization
     // the visualization is updated with only name and/or description from the rename dialog
     const onRename = useCallback(
-        async ({ name, description }) => {
+        async ({
+            name,
+            description,
+        }: {
+            name?: string
+            description?: string
+        }) => {
             const { data, error } = await dispatch(
                 eventVisualizationsApi.endpoints.renameVisualization.initiate({
                     name,
@@ -196,7 +203,7 @@ export const useToolbarActions = () => {
                 })
             )
         } else if (error) {
-            onError(error)
+            onError(error as EngineError)
         }
     }, [dispatch, currentVis, onError])
 
@@ -227,7 +234,7 @@ export const useToolbarActions = () => {
                 // Navigate to the new visualization
                 dispatch(setNavigationState({ visualizationId: data }))
             } else if (error) {
-                onError(error)
+                onError(error as EngineError)
             }
         },
         [dispatch, currentVis, onError]

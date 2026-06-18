@@ -34,7 +34,7 @@ export function smartMergeWithChangeDetection(
     }
 
     let hasChanges = false
-    const mergedItem: MetadataItem = { ...existing }
+    const mergedItem: Record<string, unknown> = { ...existing }
 
     // Check each property in the new item
     for (const [key, newValue] of Object.entries(newItem)) {
@@ -74,5 +74,5 @@ export function smartMergeWithChangeDetection(
         }
     }
 
-    return { hasChanges, mergedItem }
+    return { hasChanges, mergedItem: mergedItem as MetadataItem }
 }

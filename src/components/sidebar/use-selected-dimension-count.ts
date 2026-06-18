@@ -1,4 +1,4 @@
-import { useAppSelector, useMetadataItems } from '@hooks'
+import { useAppSelector, useDimensionMetadataItems } from '@hooks'
 import { getVisUiConfigLayoutAllDimensionIds } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
 import { useMemo } from 'react'
@@ -13,7 +13,7 @@ export const useSelectedDimensionCount = (
     const selectedDimensionIds = useAppSelector(
         getVisUiConfigLayoutAllDimensionIds
     )
-    const selectedDimensions = useMetadataItems(selectedDimensionIds)
+    const selectedDimensions = useDimensionMetadataItems(selectedDimensionIds)
     const filteredSelectedDimensions = useMemo(
         () => Object.values(selectedDimensions).filter(matchFn),
         [selectedDimensions, matchFn]

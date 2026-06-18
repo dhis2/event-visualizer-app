@@ -42,11 +42,11 @@ const StartEndDate: FC<StartEndDateProps> = ({
         setValue(startDate && endDate ? `${startDate}_${endDate}` : '')
     }, [startDate, endDate, setValue])
 
-    const onStartDateChange = ({ value }) => {
-        setStartDate(value)
+    const onStartDateChange = ({ value }: { value?: string }) => {
+        setStartDate(value ?? '')
     }
-    const onEndDateChange = ({ value }) => {
-        setEndDate(value)
+    const onEndDateChange = ({ value }: { value?: string }) => {
+        setEndDate(value ?? '')
     }
 
     return (
@@ -132,8 +132,13 @@ export const PeriodDimensionModalContent: FC<
             : OPTION_PRESETS
     )
 
-    const updatePeriodDimensionItems = (items) => {
-        const { uiItems, metadata } = items.reduce(
+    const updatePeriodDimensionItems = (
+        items: Array<{ id: string; name?: string }>
+    ) => {
+        const { uiItems, metadata } = items.reduce<{
+            uiItems: string[]
+            metadata: Record<string, { id: string; name?: string }>
+        }>(
             (acc, item) => {
                 acc.uiItems.push(item.id)
 
@@ -159,7 +164,7 @@ export const PeriodDimensionModalContent: FC<
         )
     }
 
-    const onSegmentedControlChange = ({ value }) => {
+    const onSegmentedControlChange = ({ value }: { value: string }) => {
         if (value !== entryMethod) {
             setEntryMethod(value)
             updatePeriodDimensionItems([])

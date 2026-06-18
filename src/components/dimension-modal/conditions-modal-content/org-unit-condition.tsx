@@ -60,23 +60,26 @@ export const OrgUnitCondition: FC<OrgUnitConditionProps> = ({
     )
 
     const onSelect = useCallback(
-        ({ items }) => {
+        ({ items }: { items: Array<OrgUnit & { displayName?: string }> }) => {
             if (items.length === 0) {
                 onChange('')
             } else {
-                const { itemIds, metadata } = items.reduce(
+                const { itemIds, metadata } = items.reduce<{
+                    itemIds: string[]
+                    metadata: Record<string, Partial<OrgUnit> & { id: string }>
+                }>(
                     (acc, item) => {
                         acc.itemIds.push(item.id)
 
                         const ouUid = ouIdHelper.removePrefix(item.id)
 
-                        const ouMetadata = {
+                        const ouMetadata: Partial<OrgUnit> & { id: string } = {
                             id: ouUid,
                             name: item.name || item.displayName, // XXX: is this needed?
                         }
 
                         if (item.path) {
-                            ouMetadata['path'] = item.path
+                            ouMetadata.path = item.path
                         }
 
                         // XXX: check if this processing of path is needed for metadata
