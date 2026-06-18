@@ -30,6 +30,8 @@ The agent edits your live working tree (changes show up in your editor immediate
 
 The agent works on a private, isolated clone: it branches, runs tests, and commits on its own. Your host `node_modules` is never touched — the clone runs its own `pnpm install` on the container's native filesystem (so tests are fast, no overlay needed).
 
+The clone can **fetch/pull from GitHub** (`pnpm sbx:clone` points `origin` at HTTPS, so the public repo needs no credentials) — e.g. `git fetch origin master` to branch off the latest master without depending on your local checkout. It **cannot push** (no push credentials, by design). So you can spin up the clone from any branch and just tell the agent to branch off current `origin/master`.
+
 ### Reviewing the clone's work
 
 The agent commits to a feature branch **inside** the clone — it does not push anywhere. To get its work onto your host for review:

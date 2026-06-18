@@ -73,9 +73,10 @@ EOF
 read -r -d '' CLONE_NOTE <<'EOF' || true
 This OVERRIDES the project CLAUDE.md "do not commit" rule. That rule protects the human's live working tree and does not apply here — you are on a private, isolated clone of the repository.
 Work autonomously: create a clearly-named feature branch, run `pnpm test` and `pnpm lint`, and commit your progress to it as you go.
-How your work reaches the human: this sandbox publishes its repository back to the host over a git remote (a read-only git daemon), and the human fetches your branch from it to review. So COMMIT to your feature branch — that is all that is needed. Do NOT push: forge remotes (origin/upstream) are off-limits, and the sandbox's own remote is read-only (the human pulls; you do not push).
+Git reads are fine: you CAN `git fetch`/`git pull` from `origin` (GitHub, public repo, no credentials) — e.g. `git fetch origin master` to branch off the latest master. You must NOT push: pushing to forge remotes is off-limits (and there are no push credentials).
+How your work reaches the human: this sandbox also publishes its repository back to the host over a read-only git remote, and the human fetches your branch from it to review — so committing to your feature branch is all that is needed.
 Dependencies are already installed, including the Cypress binary (the e2e CDN is allow-listed).
-A read-only copy of the host repo is mounted at /run/sandbox/source; pull host updates with `git pull /run/sandbox/source <branch>`.
+A read-only copy of the host's working tree is also at /run/sandbox/source for any UNPUSHED local changes; pull them with `git pull /run/sandbox/source <branch>`.
 EOF
 
 read -r -d '' IDE_FORWARDER_PY <<'PYEOF' || true
@@ -399,6 +400,10 @@ cmd_clone() {
     if ! sandbox_exists "$CLONE_NAME"; then
         echo "Creating clone sandbox '$CLONE_NAME'..."
         sbx create --clone claude "$REPO_ROOT" --name "$CLONE_NAME"
+        # The clone inherits the host's SSH origin, which needs a key the sandbox doesn't have.
+        # Point it at HTTPS so the agent can fetch/pull the (public) repo with no credentials —
+        # e.g. to branch off the latest master. Pushing still fails (no creds), which is intended.
+        sbx exec "$CLONE_NAME" bash -lc 'cd "$1" && git remote set-url origin "$(git remote get-url origin | sed -E "s#git@github.com:#https://github.com/#")"' _ "$REPO_ROOT" || true
         provision_sandbox "$CLONE_NAME"
         echo "Installing dependencies in the clone (generate-types hits the DHIS2 instance; includes the Cypress binary)..."
         sbx exec "$CLONE_NAME" bash -lc 'cd "$1" && pnpm install' _ "$REPO_ROOT" \
