@@ -154,6 +154,12 @@ export const getBooleanValues = (): Record<BooleanValue, string> => ({
     NV: i18n.t('Not answered'),
 })
 
+export const isBooleanValue = (value: string): value is BooleanValue =>
+    value === '1' || value === '0' || value === 'NV'
+
+export const formatBooleanValue = (value: BooleanValue): string =>
+    getBooleanValues()[value]
+
 export const API_TIME_DIVIDER = '.'
 export const UI_TIME_DIVIDER = ':'
 export const API_DATETIME_DIVIDER = 'T'
@@ -350,7 +356,9 @@ export const getBooleanConditionTexts = (
     conditionsList: string[]
 ): string[] => {
     const values = parseCondition(conditionsList[0]) ?? []
-    return values.map((value) => getBooleanValues()[value])
+    return values.map((value) =>
+        isBooleanValue(value) ? formatBooleanValue(value) : value
+    )
 }
 
 export const getOrgUnitConditionMetadataIds = (
@@ -405,7 +413,7 @@ export const getOperatorConditionTexts = (
             value = value.replaceAll(API_DATETIME_DIVIDER, UI_DATETIME_DIVIDER)
         }
 
-        const operatorName = operators[operator]
+        const operatorName = operators[operator as keyof typeof operators]
 
         if (typeof operatorName === 'string' && operatorName.length > 0) {
             const capitalCaseOperatorName =

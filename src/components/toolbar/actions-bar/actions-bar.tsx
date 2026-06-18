@@ -74,7 +74,7 @@ const ActionsBarDialog: FC<ActionsBarDialogProps> = ({
         onDelete()
     }
 
-    const onDeleteError = (error) => onError(parseEngineError(error))
+    const onDeleteError = (error: unknown) => onError(parseEngineError(error))
 
     switch (currentDialog) {
         case 'rename':

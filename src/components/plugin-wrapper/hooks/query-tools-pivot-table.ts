@@ -33,7 +33,7 @@ export const getAdaptedVisualization = (
     adaptedVisualization: Record<Axis, object[]> & {
         outputType: OutputType
     }
-    parameters: object
+    parameters: Record<string, unknown>
 } => {
     const parameters = getRequestOptions(visualization)
 

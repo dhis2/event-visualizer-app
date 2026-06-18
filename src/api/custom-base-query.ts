@@ -36,11 +36,8 @@ const isMutation = (args: EngineArgs): args is Mutation =>
 const isSingleQuery = (args: EngineArgs): args is SingleQuery =>
     !isMutation(args) && typeof (args as SingleQuery).resource === 'string'
 
-export const customBaseQuery: CustomBaseQueryFn = async (
-    args: EngineArgs,
-    api: BaseQueryApiWithExtraArg
-) => {
-    const { engine } = api.extra
+export const customBaseQuery: CustomBaseQueryFn = async (args, api) => {
+    const { engine } = api.extra as ThunkExtraArg
 
     try {
         if (isMutation(args)) {

@@ -16,7 +16,7 @@ export const Limit: FC = () => {
     )
 
     const onChange = useCallback(
-        ({ checked }) => {
+        ({ checked }: { checked: boolean }) => {
             setSortOrder(checked ? -1 : undefined)
             setTopLimit(checked ? 10 : undefined)
         },

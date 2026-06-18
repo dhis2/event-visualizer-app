@@ -22,7 +22,7 @@ export const BaseCondition: FC<
     const values = parts[1] || ''
     const booleanValues = getBooleanValues()
 
-    const onCheckboxChange = (input, checked) => {
+    const onCheckboxChange = (input: string, checked: boolean) => {
         const currentValues = values.length ? values.split(';') : []
         if (checked) {
             setValues([...currentValues, input].join(';'))
@@ -31,7 +31,7 @@ export const BaseCondition: FC<
         }
     }
 
-    const setValues = (input) => {
+    const setValues = (input: string) => {
         onChange(`${OPERATOR_IN}:${input || ''}`)
     }
 

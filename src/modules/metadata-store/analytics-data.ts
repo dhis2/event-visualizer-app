@@ -9,6 +9,7 @@ import type {
     AnalyticsResponseMetadataItems,
     DimensionType,
     MetadataInput,
+    MetadataInputMap,
 } from '@types'
 
 /* The analytics response reports an item's type under `dimensionItemType`,
@@ -83,7 +84,7 @@ const extractItemsMetadata = (
 
         acc[key] = normalizedItem
         return acc
-    }, {})
+    }, {} as MetadataInputMap)
 
 const updateNamesFromHeaders = (
     headers: Array<LineListAnalyticsDataHeader>,
@@ -112,7 +113,7 @@ const updateNamesFromHeaders = (
         }
 
         return acc
-    }, metdataFromItems)
+    }, metdataFromItems as MetadataInputMap)
 
 export const extractMetadataFromAnalyticsResponse = (
     items: AnalyticsResponseMetadataItems,

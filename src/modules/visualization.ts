@@ -1,4 +1,3 @@
-import { getRequestOptions } from '@components/plugin-wrapper/hooks/query-tools-common'
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { layoutGetAllDimensions } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
@@ -6,6 +5,7 @@ import { REPETITION_INDEX_PATTERN } from '@modules/metadata-store/dimension'
 import type {
     ApiSavedVisualization,
     DimensionArray,
+    DimensionRecord,
     CurrentVisualization,
     DimensionId,
     EmptyVisualization,
@@ -225,7 +225,7 @@ export const getAnalyticsRequestHeaderName = ({
 }): string => {
     const { outputType } = visualization
     const map = getHeadersMap(visualization)
-    const wireDim = map[dimensionId] ?? dimensionId
+    const wireDim = map[dimensionId as DimensionId] ?? dimensionId
 
     if (programStageId) {
         return `${programStageId}.${wireDim}`
@@ -372,7 +372,7 @@ const removeDimensionPropertiesBeforeSaving = (
         const propsToRemove = ['dimensionType', 'valueType']
 
         propsToRemove.forEach((prop) => {
-            delete dimension[prop]
+            delete dimension[prop as keyof DimensionRecord]
         })
 
         return dimension
@@ -382,12 +382,10 @@ const removeDimensionPropertiesBeforeSaving = (
 const getDimensionIdFromHeaderName = (
     headerName: string,
     visualization: CurrentVisualization
-) => {
-    const headersMap = getHeadersMap(
-        getRequestOptions(visualization) as unknown as CurrentVisualization
-    )
-    return Object.keys(headersMap).find((key) => headersMap[key] === headerName)
-}
+) =>
+    Object.entries(getHeadersMap(visualization)).find(
+        ([, value]) => value === headerName
+    )?.[0]
 
 export const getSaveableVisualization = (
     vis: SavedVisualization

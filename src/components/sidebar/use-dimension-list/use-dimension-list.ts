@@ -46,7 +46,7 @@ export type UseDimensionListResult = {
     isDisabledByFilter: boolean
 }
 
-const DEFAULT_FIXED_DIMENSIONS = []
+const DEFAULT_FIXED_DIMENSIONS: DimensionMetadataItem[] = []
 
 export const useDimensionList = ({
     dimensionListKey,

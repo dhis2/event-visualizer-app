@@ -26,6 +26,7 @@ export type {
     Sorting,
     ValueType,
 } from './dhis2-openapi-schemas'
+export type { DeepPartial } from './deep-partial'
 export type { PickWithFieldFilters } from './pick-with-field-filters'
 
 /* The SingleQuery type is a simpler, but for our use-case functionally

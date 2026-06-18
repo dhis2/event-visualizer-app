@@ -15,34 +15,50 @@ import type {
     MetadataInputItem,
     MetadataInputMap,
     OrganisationUnitMetadataItem,
-    DimensionMetadataItem,
     Program,
     ProgramStage,
     SavedVisualization,
 } from '@types'
 import deepmerge from 'deepmerge'
 
-const DIMENSION_METADATA_PROP_MAP = {
-    dataElementDimensions: 'dataElement',
-    attributeDimensions: 'attribute',
-    programIndicatorDimensions: 'programIndicator',
-    categoryDimensions: 'category',
-    categoryOptionGroupSetDimensions: 'categoryOptionGroupSet',
-    organisationUnitGroupSetDimensions: 'organisationUnitGroupSet',
-    dataElementGroupSetDimensions: 'dataElementGroupSet',
-}
+type DimensionMetadataExtractor = (
+    visualization: SavedVisualization
+) => Array<{ id: string; name: string }>
+
+const dimensionMetadataExtractors: DimensionMetadataExtractor[] = [
+    (vis) => (vis.dataElementDimensions ?? []).map((w) => w.dataElement),
+    (vis) => (vis.attributeDimensions ?? []).map((w) => w.attribute),
+    (vis) =>
+        (vis.programIndicatorDimensions ?? []).map((w) => w.programIndicator),
+    (vis) => (vis.categoryDimensions ?? []).map((w) => w.category),
+    (vis) =>
+        (vis.categoryOptionGroupSetDimensions ?? []).map(
+            (w) => w.categoryOptionGroupSet
+        ),
+    (vis) =>
+        (vis.organisationUnitGroupSetDimensions ?? []).map(
+            (w) => w.organisationUnitGroupSet
+        ),
+    (vis) =>
+        (vis.dataElementGroupSetDimensions ?? []).map(
+            (w) => w.dataElementGroupSet
+        ),
+]
 const getDefaultDynamicTimeDimensionsMetadata = (
     program?: Program,
     stage?: ProgramStage
 ): MetadataInputMap =>
-    Object.values(getTimeDimensions()).reduce((acc, dimension) => {
-        acc[dimension.id] = {
-            id: dimension.id,
-            dimensionType: dimension.dimensionType,
-            name: getTimeDimensionName(dimension, program, stage),
-        }
-        return acc
-    }, {})
+    Object.values(getTimeDimensions()).reduce<MetadataInputMap>(
+        (acc, dimension) => {
+            acc[dimension.id] = {
+                id: dimension.id,
+                dimensionType: dimension.dimensionType,
+                name: getTimeDimensionName(dimension, program, stage),
+            }
+            return acc
+        },
+        {}
+    )
 
 export const extractTrackedEntityTypeMetadata = (
     visualization: SavedVisualization
@@ -76,19 +92,12 @@ export const extractProgramDimensionsMetadata = (
 export const extractDimensionMetadata = (
     visualization: SavedVisualization
 ): MetadataInputMap => {
-    const dimensionMetadata = Object.entries(
-        DIMENSION_METADATA_PROP_MAP
-    ).reduce((metaData, [listName, dimensionName]) => {
-        const dimensionList = visualization[listName] || []
-
-        dimensionList.forEach((dimensionWrapper: object) => {
-            const dimension: DimensionMetadataItem =
-                dimensionWrapper[dimensionName]
-            metaData[dimension.id] = dimension
-        })
-
-        return metaData
-    }, {})
+    const dimensionMetadata: MetadataInputMap = {}
+    for (const extract of dimensionMetadataExtractors) {
+        for (const item of extract(visualization)) {
+            dimensionMetadata[item.id] = item
+        }
+    }
     return dimensionMetadata
 }
 
@@ -107,9 +116,9 @@ const addPathToOrganisationUnitMetadataItems = (
 ) => {
     if (parentGraphMap) {
         for (const [key, path] of Object.entries(parentGraphMap)) {
-            const organisationUnitMetadaInputItem = metadataInput[
-                key
-            ] as OrganisationUnitMetadataItem
+            const organisationUnitMetadaInputItem = (
+                metadataInput as MetadataInputMap
+            )[key] as OrganisationUnitMetadataItem
 
             if (organisationUnitMetadaInputItem) {
                 organisationUnitMetadaInputItem.path = `/${path}/${key}`
@@ -131,7 +140,7 @@ export const supplementDimensionMetadata = (
             .filter(Boolean)
     )
 
-    const additionalDimensionMetadata = dimensions.reduce(
+    const additionalDimensionMetadata = dimensions.reduce<MetadataInputMap>(
         (metadata, dimension) => {
             const collectedItem = metadataInput[dimension.dimension]
 
@@ -146,9 +155,9 @@ export const supplementDimensionMetadata = (
                 tetId
             )
 
-            const item: MetadataInputItem = Object.entries(
+            const item = Object.entries(
                 collectedItem
-            ).reduce(
+            ).reduce<MetadataInputItem>(
                 (acc, [key, value]) => {
                     if (
                         key !== 'uid' &&

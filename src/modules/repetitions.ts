@@ -16,19 +16,24 @@ export const getRepetitionsFromVisualisation = (
 ): Record<string, RepetitionsObject> =>
     layoutGetAllDimensions(vis)
         .filter((d) => d.repetition)
-        .reduce((obj, d) => {
-            obj[
-                getCompoundDimensionId(
-                    d,
-                    vis.outputType,
-                    vis.trackedEntityType?.id
-                )
-            ] = parseSavedRepetitions(d.repetition?.indexes)
+        .reduce(
+            (obj, d) => {
+                obj[
+                    getCompoundDimensionId(
+                        d,
+                        vis.outputType,
+                        vis.trackedEntityType?.id
+                    )
+                ] = parseSavedRepetitions(d.repetition?.indexes)
 
-            return obj
-        }, {})
+                return obj
+            },
+            {} as Record<string, RepetitionsObject>
+        )
 
-export const parseSavedRepetitions = (repetitions): RepetitionsObject => {
+export const parseSavedRepetitions = (
+    repetitions: unknown
+): RepetitionsObject => {
     if (
         !(
             Array.isArray(repetitions) &&
