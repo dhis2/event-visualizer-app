@@ -1,8 +1,14 @@
 import { LineList } from '@components/line-list'
 import type { LineListAnalyticsData } from '@components/line-list'
-import type { DataSortFn, PaginateFn } from '@components/line-list/types'
+import type {
+    ColumnHeaderClickFn,
+    DataSortFn,
+    PaginateFn,
+} from '@components/line-list/types'
+import { useAppDispatch } from '@hooks'
 import { logger } from '@modules/logger'
 import { transformVisualizationForAnalyticsRequest } from '@modules/visualization'
+import { setUiActiveDimensionModal } from '@store/ui-slice'
 import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FC } from 'react'
@@ -32,6 +38,8 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     onDataSorted,
     onResponseReceived,
 }) => {
+    const dispatch = useAppDispatch()
+
     const [fetchAnalyticsData, { data, isFetching }] =
         useLineListAnalyticsData()
 
@@ -55,6 +63,15 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
             sorting: newSorting,
         } as CurrentVisualization
     }, [visualization, sorting])
+
+    const onColumnHeaderClick = useCallback<ColumnHeaderClickFn>(
+        (dimensionId) => {
+            logger.debug(`Show dimension modal for dimension ID ${dimensionId}`)
+
+            dispatch(setUiActiveDimensionModal(dimensionId))
+        },
+        [dispatch]
+    )
 
     const onPaginate = useCallback<PaginateFn>(
         ({ page, pageSize }) => {
@@ -127,11 +144,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
             isFetching={isFetching}
             isInDashboard={isInDashboard}
             isInModal={isInModal}
-            onColumnHeaderClick={(dimensionId) => {
-                logger.debug(
-                    `Show dimension modal for dimension ID ${dimensionId}`
-                )
-            }}
+            onColumnHeaderClick={onColumnHeaderClick}
         />
     )
 }
