@@ -313,9 +313,7 @@ describe('PluginWrapper', () => {
         // Visualisation loading state remains false but the current vis gets updated
         await waitFor(() => {
             expect(store.getState().loader.isVisualizationLoading).toBe(false)
-            expect(store.getState().currentVis === currentVisSnapshot).toBe(
-                false
-            )
+            expect(store.getState().currentVis).not.toBe(currentVisSnapshot)
         })
 
         // Table kept in the DOM and the spinner is showing
