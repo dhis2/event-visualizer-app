@@ -5,6 +5,7 @@
 # after adding this ignore file prettier started checking the gitignored files
 # so we need to add them here too
 node_modules
+.pnpm-store
 .d2
 .claude
 src/locales/*
