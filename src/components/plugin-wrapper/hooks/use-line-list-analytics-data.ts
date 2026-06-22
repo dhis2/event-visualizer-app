@@ -428,12 +428,6 @@ export type AnalyticsResponseMetadataItems = Record<
     USER_ORG_UNIT?: UserOrgUnitMetadataItem
 }
 
-export type AnalyticsResponseMetadataDimensions = Record<string, string[]>
-export type OnAnalyticsResponseReceivedCb = (
-    items: AnalyticsResponseMetadataItems,
-    headers: Array<LineListAnalyticsDataHeader>
-) => void
-
 type FetchAnalyticsDataForLLParams = {
     analyticsEngine: ReturnType<typeof Analytics.getAnalytics>
     visualization: CurrentVisualization
@@ -451,7 +445,7 @@ type FetchAnalyticsDataParams = {
     displayProperty: CurrentUser['settings']['displayProperty']
     pageSize?: number
     page?: number
-    onResponseReceived: OnAnalyticsResponseReceivedCb
+    onResponseReceived: () => void
 }
 type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
 type AnalyticsDataState = {
@@ -536,7 +530,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     isFetching: false,
                 })
 
-                onResponseReceived(analyticsResponse.metaData.items, headers)
+                onResponseReceived()
             } catch (error) {
                 logger.error('fetch LL data error', error)
                 setState({

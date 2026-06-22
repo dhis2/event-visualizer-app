@@ -21,7 +21,6 @@ describe('PluginWrapper', () => {
     const eventVisualization1Id = 'TIuOzZ0ID0V'
     const eventVisualization2Id = 'waPjzoJyIQ9'
     const mockOnDataSorted = vi.fn()
-    const mockOnResponsesReceived = vi.fn()
     /* The analytics handler is deferred so each test can hold the response
      * in flight long enough to assert the in-flight UI (spinner shown), then
      * call `releaseAll()` to let the response arrive and assert the settled
@@ -73,7 +72,6 @@ describe('PluginWrapper', () => {
                 visualization={currentVis}
                 displayProperty={currentUser.settings.displayProperty}
                 onDataSorted={mockOnDataSorted}
-                onResponsesReceived={mockOnResponsesReceived}
             />
         )
     }
@@ -130,7 +128,6 @@ describe('PluginWrapper', () => {
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
-            expect(mockOnResponsesReceived).toBeCalledTimes(1)
         })
     }
 
@@ -198,7 +195,6 @@ describe('PluginWrapper', () => {
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
-            expect(mockOnResponsesReceived).toBeCalledTimes(2)
         })
     })
 
@@ -251,7 +247,6 @@ describe('PluginWrapper', () => {
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
-            expect(mockOnResponsesReceived).toBeCalledTimes(2)
         })
     })
 
@@ -294,7 +289,6 @@ describe('PluginWrapper', () => {
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
-            expect(mockOnResponsesReceived).toBeCalledTimes(2)
         })
     })
 
@@ -319,9 +313,7 @@ describe('PluginWrapper', () => {
         // Visualisation loading state remains false but the current vis gets updated
         await waitFor(() => {
             expect(store.getState().loader.isVisualizationLoading).toBe(false)
-            expect(store.getState().currentVis === currentVisSnapshot).toBe(
-                false
-            )
+            expect(store.getState().currentVis).not.toBe(currentVisSnapshot)
         })
 
         // Table kept in the DOM and the spinner is showing
@@ -344,7 +336,6 @@ describe('PluginWrapper', () => {
             expect(
                 screen.queryByTestId('dhis2-uicore-circularloader')
             ).not.toBeInTheDocument()
-            expect(mockOnResponsesReceived).toBeCalledTimes(2)
             expect(mockOnDataSorted).toBeCalledTimes(1)
         })
     })

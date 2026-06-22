@@ -1,4 +1,3 @@
-import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
 import type { AppCachedData, SavedVisualization, MetadataItem } from '@types'
 import { expect, describe, it, beforeEach, vi } from 'vitest'
 import inpatientCasesVisualization from '../__fixtures__/visualization-inpatient-cases-last-quarter-case.json'
@@ -612,206 +611,27 @@ describe('MetadataStore', () => {
         expect(metadataStore.getMetadataItem(id)).toHaveProperty('path', path)
     })
 
-    describe('addAnalyticsResponseMetadata', () => {
-        let metadataStore: TestMetadataStore
+    it('preserves the program-stage-specific org-unit label across visualization reloads', () => {
+        /* The backend's analytics response carries the generic field name
+         * "Organisation unit" keyed by the compound stage-OU id; the program's
+         * displayOrgUnitLabel (or the i18n fallback "Event org. unit") must win
+         * and survive a re-fetch of the same visualization. */
+        const metadataStore = new TestMetadataStore(
+            getInitialMetadata(),
+            rootOrgUnits
+        )
+        const visualization =
+            inpatientVisitVisualization as unknown as SavedVisualization
 
-        beforeEach(() => {
-            metadataStore = new TestMetadataStore(
-                getInitialMetadata(),
-                rootOrgUnits
-            )
-            metadataStore.setVisualizationMetadata(
-                inpatientVisitVisualization as unknown as SavedVisualization
-            )
-        })
+        metadataStore.setVisualizationMetadata(visualization)
+        expect(metadataStore.getMetadataItem('Zj7UnCAulEk.ou')?.name).toBe(
+            'Event org. unit'
+        )
 
-        it('adds metadata items with nested IDs correctly', () => {
-            const analyticsItems = {
-                'Zj7UnCAulEk.someDataElement': {
-                    uid: 'originalUid',
-                    name: 'Nested Data Element',
-                    valueType: 'TEXT',
-                },
-            }
-            const headers: Array<LineListAnalyticsDataHeader> = []
-
-            metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
-
-            const snapshot = metadataStore.getMetadataSnapshot()
-            expect(snapshot['Zj7UnCAulEk.someDataElement']).toEqual({
-                id: 'Zj7UnCAulEk.someDataElement',
-                name: 'Nested Data Element',
-                valueType: undefined,
-            })
-        })
-
-        it('adds regular metadata items correctly', () => {
-            const analyticsItems = {
-                regularItem: {
-                    uid: 'regularItem',
-                    name: 'Regular Item',
-                    valueType: 'NUMBER',
-                },
-            }
-            const headers: Array<LineListAnalyticsDataHeader> = []
-
-            metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
-
-            const snapshot = metadataStore.getMetadataSnapshot()
-            expect(snapshot.regularItem).toEqual({
-                id: 'regularItem',
-                name: 'Regular Item',
-                valueType: undefined,
-            })
-        })
-
-        it('updates metadata names from headers', () => {
-            const analyticsItems = {
-                ou: {
-                    uid: 'ou',
-                    name: 'Organisation Unit',
-                    valueType: 'TEXT',
-                },
-            }
-            const headers = [
-                {
-                    name: 'ouname',
-                    dimensionId: 'ou',
-                    column: 'Organisation Unit UPDATED',
-                    valueType: 'TEXT',
-                    type: 'java.lang.String',
-                    hidden: false,
-                    meta: true,
-                    legendSet: { id: '', name: '', legends: [] },
-                } as unknown as LineListAnalyticsDataHeader,
-            ]
-
-            metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
-
-            const snapshot = metadataStore.getMetadataSnapshot()
-            expect(snapshot.ou).toEqual({
-                id: 'ou',
-                name: 'Organisation Unit UPDATED',
-            })
-        })
-
-        it('creates new metadata items from headers when not present', () => {
-            const analyticsItems = {}
-            const headers: Array<LineListAnalyticsDataHeader> = [
-                {
-                    name: 'eventdate',
-                    dimensionId: 'eventDate',
-                    column: 'Report date',
-                    valueType: 'DATETIME',
-                    type: 'java.time.LocalDateTime',
-                    hidden: false,
-                    meta: true,
-                    legendSet: { id: '', name: '', legends: [] },
-                } as unknown as LineListAnalyticsDataHeader,
-            ]
-
-            metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
-
-            const snapshot = metadataStore.getMetadataSnapshot()
-            expect(snapshot.eventDate).toEqual({
-                id: 'eventDate',
-                name: 'Report date',
-            })
-        })
-
-        it('skips nameless entries (e.g. the dimension itself) and still adds the named ones', () => {
-            /* The analytics response includes one entry per ID referenced by the
-             * query, including the dimension itself (e.g. an option set or
-             * category) as an empty object. extractItemsMetadata must drop those
-             * so they don't reach the store layer. */
-            const analyticsItems = {
-                optionA: { name: 'Option A' },
-                LFsZ8v5v7rq: {},
-                optionB: { name: 'Option B' },
-            } as unknown as Parameters<
-                MetadataStore['addAnalyticsResponseMetadata']
-            >[0]
-
-            metadataStore.addAnalyticsResponseMetadata(analyticsItems, [])
-
-            const snapshot = metadataStore.getMetadataSnapshot()
-            expect(snapshot.optionA).toEqual({
-                id: 'optionA',
-                name: 'Option A',
-                valueType: undefined,
-            })
-            expect(snapshot.optionB).toEqual({
-                id: 'optionB',
-                name: 'Option B',
-                valueType: undefined,
-            })
-            expect(snapshot.LFsZ8v5v7rq).toBeUndefined()
-        })
-
-        it('types a dimension from its dimensionItemType so a later lookup does not throw', () => {
-            /* The analytics response carries the type under `dimensionItemType`,
-             * not `dimensionType`. Without adopting it, the stored item is not a
-             * valid dimension and a subsequent getDimensionMetadataItem throws,
-             * blanking the line list on the next render. */
-            const analyticsItems = {
-                Rv8WM2mTuS5: {
-                    uid: 'Rv8WM2mTuS5',
-                    name: 'Age (Years)',
-                    dimensionItemType: 'PROGRAM_ATTRIBUTE',
-                    valueType: 'NUMBER',
-                },
-            } as unknown as Parameters<
-                MetadataStore['addAnalyticsResponseMetadata']
-            >[0]
-            const headers = [
-                {
-                    name: 'Rv8WM2mTuS5',
-                    dimensionId: 'Rv8WM2mTuS5',
-                    column: 'Age (Years)',
-                    valueType: 'NUMBER',
-                    type: 'java.lang.Double',
-                    hidden: false,
-                    meta: false,
-                    legendSet: { id: '', name: '', legends: [] },
-                } as unknown as LineListAnalyticsDataHeader,
-            ]
-
-            metadataStore.addAnalyticsResponseMetadata(analyticsItems, headers)
-
-            expect(() =>
-                metadataStore.getDimensionMetadataItem('Rv8WM2mTuS5')
-            ).not.toThrow()
-            expect(
-                metadataStore.getDimensionMetadataItem('Rv8WM2mTuS5')
-                    ?.dimensionType
-            ).toBe('PROGRAM_ATTRIBUTE')
-        })
-
-        it('does not adopt dimensionItemType for non-dimension items (e.g. PERIOD)', () => {
-            /* metaData.items also contains value-level items (periods, options,
-             * org units) carrying a dimensionItemType. Those must not be turned
-             * into dimensions. */
-            const analyticsItems = {
-                '202507': {
-                    uid: '202507',
-                    name: 'July 2025',
-                    dimensionItemType: 'PERIOD',
-                    valueType: 'TEXT',
-                },
-            } as unknown as Parameters<
-                MetadataStore['addAnalyticsResponseMetadata']
-            >[0]
-
-            metadataStore.addAnalyticsResponseMetadata(analyticsItems, [])
-
-            const snapshot = metadataStore.getMetadataSnapshot()
-            expect(snapshot['202507']).toEqual({
-                id: '202507',
-                name: 'July 2025',
-                dimensionItemType: 'PERIOD',
-                valueType: undefined,
-            })
-        })
+        metadataStore.setVisualizationMetadata(visualization)
+        expect(metadataStore.getMetadataItem('Zj7UnCAulEk.ou')?.name).toBe(
+            'Event org. unit'
+        )
     })
 })
 
