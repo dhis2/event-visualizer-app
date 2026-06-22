@@ -93,6 +93,19 @@ gh auth login
 /reload-plugins
 ```
 
+### AI sandboxes (opt-in)
+
+Two optional, **experimental**, isolated AI workspaces built on [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) (`sbx`) — a hands-on **mount** (your live working tree) and an autonomous **clone**. Fully opt-in: if you do not install `sbx`, nothing here affects you. (Tested on macOS/arm64 + Neovim; see the guide for portability.)
+
+With the `sbx` CLI installed and set up (see the guide), launch one with:
+
+```bash
+pnpm sbx:mount            # hands-on, edits your live files
+pnpm sbx:clone            # autonomous, isolated clone
+```
+
+See **[docs/claude-sandboxes.md](docs/claude-sandboxes.md)** for installation and setup, mount vs clone, the `node_modules` overlay, Neovim integration, browser automation, and the full workflow.
+
 ### Development Workflow
 
 1. **Create a feature branch** from `main`
