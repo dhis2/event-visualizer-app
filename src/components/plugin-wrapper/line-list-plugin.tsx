@@ -12,10 +12,7 @@ import { setUiActiveDimensionModal } from '@store/ui-slice'
 import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FC } from 'react'
-import {
-    useLineListAnalyticsData,
-    type OnAnalyticsResponseReceivedCb,
-} from './hooks/use-line-list-analytics-data'
+import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
 
 type InternalSorting = Sorting | undefined
 
@@ -26,7 +23,7 @@ type LineListPluginProps = {
     isInDashboard: boolean
     isInModal: boolean
     onDataSorted?: (sorting: InternalSorting) => void
-    onResponseReceived: OnAnalyticsResponseReceivedCb
+    onResponseReceived: () => void
 }
 
 export const LineListPlugin: FC<LineListPluginProps> = ({

@@ -13,19 +13,12 @@ import {
 } from '@components/grid'
 import { InterpretationModal } from '@components/interpretation-modal/interpretation-modal'
 import { LayoutPanel } from '@components/layout-panel/layout-panel'
-import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import type { AnalyticsResponseMetadataItems } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { Sidebar } from '@components/sidebar/sidebar'
 import { StartScreen } from '@components/start-screen/start-screen'
 import { Toolbar } from '@components/toolbar/toolbar'
 import { CssVariables } from '@dhis2/ui'
-import {
-    useAppDispatch,
-    useAppSelector,
-    useCurrentUser,
-    useMetadataStore,
-} from '@hooks'
+import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
 import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
 import {
@@ -44,7 +37,6 @@ import './styles/app.module.css'
 
 const EventVisualizer: FC = () => {
     useLoadVisualizationOnMount()
-    const { addAnalyticsResponseMetadata } = useMetadataStore()
     const dispatch = useAppDispatch()
     const currentUser = useCurrentUser()
     const currentVis = useAppSelector(getCurrentVis)
@@ -74,16 +66,6 @@ const EventVisualizer: FC = () => {
         [currentVis, dispatch]
     )
 
-    const onResponsesReceived = useCallback(
-        (
-            analyticsMetadata: AnalyticsResponseMetadataItems,
-            headers?: Array<LineListAnalyticsDataHeader>
-        ) => {
-            addAnalyticsResponseMetadata(analyticsMetadata, headers)
-        },
-        [addAnalyticsResponseMetadata]
-    )
-
     const onDimensionModalClose = useCallback(
         () => dispatch(setUiActiveDimensionModal(null)),
         [dispatch]
@@ -103,7 +85,6 @@ const EventVisualizer: FC = () => {
                         visualization={currentVis}
                         displayProperty={currentUser.settings.displayProperty}
                         onDataSorted={onDataSorted}
-                        onResponsesReceived={onResponsesReceived}
                     />
                 </ErrorBoundary>
                 <InterpretationModal />

@@ -3,12 +3,7 @@ import { Analytics, transformEventAggregateResponse } from '@dhis2/analytics'
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
 import { logger } from '@modules/logger'
 import { getSingleProgramFromVisualization } from '@modules/visualization'
-import type {
-    CurrentUser,
-    CurrentVisualization,
-    MetadataInputItem,
-    UserOrgUnitMetadataItem,
-} from '@types'
+import type { CurrentUser, CurrentVisualization } from '@types'
 import { useCallback, useState } from 'react'
 import { getAnalyticsEndpoint } from './query-tools-common'
 import { getAdaptedVisualization } from './query-tools-pivot-table'
@@ -86,23 +81,11 @@ export type PivotTableAnalyticsData = {
     }
 }
 
-export type AnalyticsResponseMetadataItems = Record<
-    string,
-    MetadataInputItem
-> & {
-    USER_ORG_UNIT?: UserOrgUnitMetadataItem
-}
-
-export type AnalyticsResponseMetadataDimensions = Record<string, string[]>
-export type OnAnalyticsResponseReceivedCb = (
-    items: AnalyticsResponseMetadataItems
-) => void
-
 type FetchAnalyticsDataForPTParams = {
     visualization: CurrentVisualization
     filters?: Record<string, unknown>
     displayProperty: CurrentUser['settings']['displayProperty']
-    onResponseReceived: OnAnalyticsResponseReceivedCb
+    onResponseReceived: () => void
 }
 type FetchAnalyticsDataFn = (
     params: FetchAnalyticsDataForPTParams
@@ -160,7 +143,7 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                     isFetching: false,
                 })
 
-                onResponseReceived(analyticsResponse.metaData.items)
+                onResponseReceived()
             } catch (error) {
                 logger.error('PT fetch error', error)
                 setState({

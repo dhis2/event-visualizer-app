@@ -3,8 +3,6 @@ import {
     PluginMetadataProvider,
     useMetadataStore,
 } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import type { LineListAnalyticsDataHeader } from '@components/line-list/types'
-import type { AnalyticsResponseMetadataItems } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
@@ -21,7 +19,7 @@ import type {
     EmptyVisualization,
     SavedVisualization,
 } from '@types'
-import { useCallback, useEffect, useMemo, type FC } from 'react'
+import { useEffect, useMemo, type FC } from 'react'
 import './locales/index.js'
 
 type DashboardPluginProps = {
@@ -76,19 +74,6 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
         [savedVisualization]
     )
 
-    const onResponsesReceived = useCallback(
-        (
-            analyticsMetadata: AnalyticsResponseMetadataItems,
-            headers?: Array<LineListAnalyticsDataHeader>
-        ) => {
-            metadataStore.addAnalyticsResponseMetadata(
-                analyticsMetadata,
-                headers ?? []
-            )
-        },
-        [metadataStore]
-    )
-
     // TODO: handle errors
     if (error) {
         // `error` will be of type EngineError and `data` will is possibly undefined
@@ -111,7 +96,6 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
                     filters={pluginProps.filters}
                     visualization={currentVisualization}
                     isVisualizationLoading={loading}
-                    onResponsesReceived={onResponsesReceived}
                 />
             )}
         </DashboardPluginWrapper>
