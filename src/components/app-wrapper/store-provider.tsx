@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-restricted-imports
-import { useDataEngine } from '@dhis2/app-service-data'
+import { useDataEngine } from '@dhis2/app-runtime'
 import { createStore } from '@store/store'
 import { useState } from 'react'
 import type { FC, ReactNode } from 'react'
