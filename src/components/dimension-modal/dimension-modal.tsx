@@ -1,4 +1,5 @@
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
+import { useLayoutDimensions } from '@components/layout-panel/use-layout-dimensions'
 import i18n from '@dhis2/d2-i18n'
 import {
     Modal,
@@ -12,13 +13,15 @@ import {
     useAppDispatch,
     useAppSelector,
     useDimensionMetadataItem,
-    useProgramStageMetadataItem,
 } from '@hooks'
 import { isDimensionInLayout } from '@modules/layout'
 import { isDimensionMetadataItem } from '@modules/metadata'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getUiActiveDimensionModal } from '@store/ui-slice'
-import { getVisUiConfigLayout } from '@store/vis-ui-config-slice'
+import {
+    getVisUiConfigLayout,
+    getVisUiConfigLayoutAllDimensionIds,
+} from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
 import { AddToLayoutButton } from './add-to-layout-button'
@@ -61,6 +64,9 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
 
     const dispatch = useAppDispatch()
     const layout = useAppSelector(getVisUiConfigLayout)
+    const layoutDimensionIds = useAppSelector(
+        getVisUiConfigLayoutAllDimensionIds
+    )
     const dimensionId = useAppSelector(
         getUiActiveDimensionModal
     ) as LayoutDimension['id']
@@ -68,26 +74,24 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
 
     const isInLayout = isDimensionInLayout(layout, dimensionId)
 
-    const stage = useProgramStageMetadataItem(dimension?.programStageId)
-
-    // XXX: this logic might need to include more dimension types
-    // for example per-stage ou and period dimensions
-    const modalTitle = useMemo(
+    const suffixDimensionIds = useMemo(
         () =>
-            stage?.name &&
-            dimension?.dimensionType &&
-            ![
-                'ORGANISATION_UNIT',
-                'STATUS',
-                'PERIOD',
-                'CATEGORY',
-                'CATEGORY_OPTION_GROUP_SET',
-                'ORGANISATION_UNIT_GROUP_SET',
-            ].includes(dimension.dimensionType)
-                ? `${dimension.name} - ${stage.name}`
-                : dimension?.name,
-        [dimension?.dimensionType, dimension?.name, stage?.name]
+            layoutDimensionIds.includes(dimensionId)
+                ? layoutDimensionIds
+                : [...layoutDimensionIds, dimensionId],
+        [layoutDimensionIds, dimensionId]
     )
+    const layoutDimensions = useLayoutDimensions({
+        dimensionIds: suffixDimensionIds,
+    })
+    const suffix = useMemo(
+        () => layoutDimensions.find(({ id }) => id === dimensionId)?.suffix,
+        [layoutDimensions, dimensionId]
+    )
+
+    const modalTitle = suffix
+        ? `${dimension?.name} · ${suffix}`
+        : dimension?.name
 
     const onUpdate = useCallback(() => {
         dispatch(tUpdateCurrentVisFromVisUiConfig())
