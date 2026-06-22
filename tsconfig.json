@@ -9,8 +9,6 @@
         "target": "ESNext",
         "module": "esnext",
         "moduleResolution": "bundler",
-        "strict": false,
-        "strictNullChecks": true,
         "types": [
             "@testing-library/jest-dom",
             "cypress",

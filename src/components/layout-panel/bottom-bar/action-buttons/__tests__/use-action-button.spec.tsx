@@ -11,7 +11,7 @@ import {
     initialState as visUiConfigInitialState,
 } from '@store/vis-ui-config-slice'
 import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
-import type { RootState } from '@types'
+import type { DeepPartial, RootState } from '@types'
 import deepmerge from 'deepmerge'
 import { describe, it, expect } from 'vitest'
 import { useActionButton } from '../use-action-button'
@@ -138,7 +138,7 @@ const initialPreloadedState: Partial<RootState> = {
     visUiConfig: visUiConfigInitialState,
 }
 
-const createStoreWithPreloadedState = (overrides) => ({
+const createStoreWithPreloadedState = (overrides: DeepPartial<RootState>) => ({
     metadata,
     partialStore: {
         reducer: {

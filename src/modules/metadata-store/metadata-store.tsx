@@ -118,13 +118,16 @@ export class MetadataStore {
     }
 
     getMetadataItems(ids: string[]): Record<string, MetadataItem> {
-        return ids.reduce((metadataStoreItems, id) => {
-            const item = this.getMetadataItem(id)
-            if (item) {
-                metadataStoreItems[id] = item
-            }
-            return metadataStoreItems
-        }, {})
+        return ids.reduce(
+            (metadataStoreItems, id) => {
+                const item = this.getMetadataItem(id)
+                if (item) {
+                    metadataStoreItems[id] = item
+                }
+                return metadataStoreItems
+            },
+            {} as Record<string, MetadataItem>
+        )
     }
 
     getProgramMetadataItem(id: string): Program | undefined {

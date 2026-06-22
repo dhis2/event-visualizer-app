@@ -98,10 +98,10 @@ const providerDataTransformation = ({
     rootOrgUnits,
     orgUnitLevels,
 }: AppCachedData): TransformedAppCachedData => {
-    const displayNameProperty =
+    const displayNameProperty: DisplayNameProperty =
         currentUser.settings?.keyAnalysisDisplayProperty === 'name'
             ? 'displayName'
-            : ('displayShortName' as 'displayName' | 'displayShortName')
+            : 'displayShortName'
     const transformedCurrentUser = {
         ...currentUser,
         settings: {
@@ -138,7 +138,7 @@ const providerDataTransformation = ({
 export const AppCachedDataQueryProvider: FC<{ children: ReactNode }> = ({
     children,
 }) => (
-    <CachedDataQueryProvider
+    <CachedDataQueryProvider<AppCachedData, TransformedAppCachedData>
         query={query}
         dataTransformation={providerDataTransformation}
     >

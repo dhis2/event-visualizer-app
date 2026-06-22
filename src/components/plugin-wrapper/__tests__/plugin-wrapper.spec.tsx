@@ -38,7 +38,7 @@ describe('PluginWrapper', () => {
             ),
             // mock the POST to dataStatistics done in the eventVisualization endpoint
             dataStatistics: {},
-            eventVisualizations: async (_, query) => {
+            eventVisualizations: async (_: unknown, query: { id?: string }) => {
                 if (query.id === eventVisualization1Id) {
                     return eventVisualization1
                 } else if (query.id === eventVisualization2Id) {

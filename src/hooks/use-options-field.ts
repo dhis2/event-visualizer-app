@@ -6,6 +6,8 @@ import {
 import type { EventVisualizationOptions } from '@types'
 import { useCallback, useMemo } from 'react'
 
+type OptionValue = EventVisualizationOptions[keyof EventVisualizationOptions]
+
 export function useOptionsField<K extends keyof EventVisualizationOptions>(
     key: K
 ) {
@@ -14,7 +16,7 @@ export function useOptionsField<K extends keyof EventVisualizationOptions>(
         getVisUiConfigOption(state, key)
     ) as EventVisualizationOptions[K]
     const setValue = useCallback(
-        (value: EventVisualizationOptions[K]) => {
+        (value: OptionValue) => {
             dispatch(setVisUiConfigOption({ key, value }))
         },
         [key, dispatch]

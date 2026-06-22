@@ -229,6 +229,21 @@ export const useMetadataItems = (
     return result
 }
 
+export const useDimensionMetadataItems = (
+    metadataIds: string[]
+): Record<string, DimensionMetadataItem> => {
+    const items = useMetadataItems(metadataIds)
+    return useMemo(() => {
+        const result: Record<string, DimensionMetadataItem> = {}
+        for (const [id, item] of Object.entries(items)) {
+            if (isDimensionMetadataItem(item)) {
+                result[id] = item
+            }
+        }
+        return result
+    }, [items])
+}
+
 export const useAddMetadata = (): MetadataStore['addMetadata'] => {
     const metadataStore = useContext(MetadataContext)!
 

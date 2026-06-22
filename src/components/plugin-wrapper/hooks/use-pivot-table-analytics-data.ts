@@ -8,19 +8,24 @@ import { useCallback, useState } from 'react'
 import { getAnalyticsEndpoint } from './query-tools-common'
 import { getAdaptedVisualization } from './query-tools-pivot-table'
 
+type FetchAnalyticsDataForPTInternalParams = {
+    analyticsEngine: ReturnType<typeof Analytics.getAnalytics>
+    displayProperty: CurrentUser['settings']['displayProperty']
+    visualization: CurrentVisualization
+    relativePeriodDate: unknown
+}
+
 export const fetchAnalyticsDataForPT = async ({
     analyticsEngine,
     displayProperty,
     visualization,
     relativePeriodDate,
-}) => {
+}: FetchAnalyticsDataForPTInternalParams) => {
     const { adaptedVisualization, parameters } =
         getAdaptedVisualization(visualization)
 
     // TODO: figure out what to do for the DE time dimensions
-    if (visualization.timeField) {
-        parameters['timeField'] = visualization.timeField
-    }
+    const { timeField } = visualization
 
     const program = getSingleProgramFromVisualization(visualization)
 
@@ -30,6 +35,7 @@ export const fetchAnalyticsDataForPT = async ({
         .withParameters({
             totalPages: false,
             ...parameters,
+            ...(timeField ? { timeField } : {}),
         })
 
     if (displayProperty) {
@@ -37,9 +43,7 @@ export const fetchAnalyticsDataForPT = async ({
     }
 
     if (visualization.sortOrder) {
-        req = req.withSortOrder(
-            visualization.sortOrder === '1' ? 'ASC' : 'DESC'
-        )
+        req = req.withSortOrder(visualization.sortOrder === 1 ? 'ASC' : 'DESC')
     }
 
     if (visualization.topLimit) {
@@ -144,7 +148,7 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                 logger.error('PT fetch error', error)
                 setState({
                     data: null,
-                    error,
+                    error: error as FetchError,
                     isFetching: false,
                 })
             }

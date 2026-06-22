@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-11T13:07:17.360Z\n"
-"PO-Revision-Date: 2026-06-11T13:07:17.361Z\n"
+"POT-Creation-Date: 2026-06-18T13:33:23.949Z\n"
+"PO-Revision-Date: 2026-06-18T13:33:23.951Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -1120,3 +1120,11 @@ msgstr ""
 
 msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
 msgstr "View data and indicators in a manipulatable table. (adjust for EVER)"
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "Event Visualizer"
+
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr "Event visualizer app and plugin"

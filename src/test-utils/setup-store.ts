@@ -1,4 +1,4 @@
-import type { ReducersMapObject } from '@reduxjs/toolkit'
+import type { ReducersMapObject, UnknownAction } from '@reduxjs/toolkit'
 import { configureStore } from '@reduxjs/toolkit'
 import type { RootState } from '@types'
 
@@ -7,7 +7,11 @@ export const setupStore = (
     preloadedState?: Partial<RootState>
 ) => {
     return configureStore({
-        reducer: reducer as ReducersMapObject<RootState>,
+        reducer: reducer as ReducersMapObject<
+            RootState,
+            UnknownAction,
+            Partial<RootState>
+        >,
         preloadedState,
     })
 }

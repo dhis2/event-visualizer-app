@@ -16,7 +16,7 @@ type HeaderCellProps = LineListHeader & {
 
 type UiSortDirection = 'asc' | 'desc' | 'default'
 type HandleSortIconClickPayload = {
-    name: string
+    name?: string
     direction: UiSortDirection
 }
 
@@ -44,6 +44,11 @@ export const HeaderCell: FC<HeaderCellProps> = ({
     }, [name, isDisconnected, sortDirection, sortField])
     const handleSortIconClick = useCallback(
         ({ name, direction: uiSortDirection }: HandleSortIconClickPayload) => {
+            if (!name) {
+                throw new Error(
+                    'HeaderCell sort handler fired without a column name'
+                )
+            }
             const direction =
                 uiSortDirection === 'asc' || uiSortDirection === 'desc'
                     ? (uiSortDirection.toUpperCase() as SortDirection)

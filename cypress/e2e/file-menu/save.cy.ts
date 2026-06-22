@@ -108,6 +108,11 @@ describe('save and save as', () => {
 
             cy.wait('@get-eventVis-after-save-as').then(
                 ({ response, request }) => {
+                    if (!response) {
+                        throw new Error(
+                            'Expected an intercepted response for the saved visualization'
+                        )
+                    }
                     expect(response.body).to.have.property('subscribers')
                     expect(response.body.subscribers).to.deep.equal([])
                     expect(request.url).not.to.match(

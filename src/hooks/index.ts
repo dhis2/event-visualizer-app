@@ -25,6 +25,7 @@ export {
     useOrganisationUnitMetadataItem,
     useUserOrgUnitMetadataItem,
     useDimensionMetadataItem,
+    useDimensionMetadataItems,
 } from '@components/app-wrapper/metadata-provider/metadata-provider'
 
 /* Note that useRtkQuery and useRtkLazyQuery accept both a complex query object

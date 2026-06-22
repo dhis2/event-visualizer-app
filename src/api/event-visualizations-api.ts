@@ -23,6 +23,7 @@ import type {
     VisualizationNameDescription,
     CurrentVisualization,
     DataEngine,
+    MetadataInputMap,
 } from '@types'
 
 export const getVisualizationQueryFields = (
@@ -106,8 +107,8 @@ export const eventVisualizationsApi = api.injectEndpoints({
 
                     metadataStore.setVisualizationMetadata(visualization)
 
-                    const optionSetsMetadata = {}
-                    const legendSetsMetadata = {}
+                    const optionSetsMetadata: MetadataInputMap = {}
+                    const legendSetsMetadata: MetadataInputMap = {}
 
                     const dimensions = [
                         ...(visualization.columns || []),
