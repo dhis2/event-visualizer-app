@@ -6,6 +6,11 @@ import { CardTrackedEntityType } from '../card-tracked-entity-type'
 
 const mockUseDimensionList = vi.fn()
 const mockUseSelectedDimensionCount = vi.fn()
+const mockUseCurrentUser = vi.fn()
+
+vi.mock('@hooks', () => ({
+    useCurrentUser: () => mockUseCurrentUser(),
+}))
 
 vi.mock('@components/sidebar/use-dimension-list', () => ({
     useDimensionList: (...args: unknown[]) => mockUseDimensionList(...args),
@@ -65,6 +70,9 @@ describe('CardTrackedEntityType', () => {
         vi.clearAllMocks()
         mockUseDimensionList.mockReturnValue(defaultListResult)
         mockUseSelectedDimensionCount.mockReturnValue(0)
+        mockUseCurrentUser.mockReturnValue({
+            settings: { displayNameProperty: 'displayName' as const },
+        })
     })
 
     it('renders with title containing the tracked entity type name', () => {
@@ -118,6 +126,32 @@ describe('CardTrackedEntityType', () => {
         }
         expect(call.baseQuery.resource).toBe('trackedEntityTypes')
         expect(call.baseQuery.id).toBe('tet1')
+    })
+
+    it('uses the displayNameProperty from user settings for the name field', () => {
+        mockUseCurrentUser.mockReturnValue({
+            settings: { displayNameProperty: 'displayShortName' as const },
+        })
+
+        render(
+            <CardTrackedEntityType
+                trackedEntityType={createTrackedEntityType()}
+            />
+        )
+
+        const call = mockUseDimensionList.mock.calls[0][0] as {
+            baseQuery: { params: { fields: string[] } }
+        }
+        expect(call.baseQuery.params.fields).toContain(
+            'displayShortName~rename(name)'
+        )
+        expect(
+            call.baseQuery.params.fields.some((field) =>
+                field.includes(
+                    'trackedEntityAttribute[id,displayShortName~rename(name)'
+                )
+            )
+        ).toBe(true)
     })
 
     it('passes selectedCount from useSelectedDimensionCount', () => {

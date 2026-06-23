@@ -206,6 +206,7 @@ type HeaderLegendSet = NonNullable<LineListAnalyticsDataHeader['legendSet']>
 const legendSetsQuery = {
     resource: 'legendSets',
     params: (variables: Record<string, unknown>) => ({
+        // legend sets and legends have no shortName, so the name always comes from displayName
         fields: 'id,displayName~rename(name),legends[id,displayName~rename(name),startValue,endValue,color]',
         filter: `id:in:[${(variables.ids as string[]).join(',')}]`,
     }),

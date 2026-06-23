@@ -13,10 +13,7 @@ export const legendSetsApi = api.injectEndpoints({
     endpoints: (builder) => ({
         getLegendSet: builder.query<LegendSetMetadataItem, string>({
             async queryFn(id, apiArg: BaseQueryApiWithExtraArg) {
-                const { appCachedData, engine, metadataStore } = apiArg.extra
-
-                const nameProp =
-                    appCachedData.currentUser.settings.displayNameProperty
+                const { engine, metadataStore } = apiArg.extra
 
                 try {
                     const legendSetsResponse = await engine.query({
@@ -24,10 +21,11 @@ export const legendSetsApi = api.injectEndpoints({
                             resource: 'legendSets',
                             id,
                             params: {
+                                // legend sets and legends have no shortName, so the name always comes from displayName
                                 fields: [
                                     'id',
-                                    `${nameProp}~rename(name)`,
-                                    `legends[id,${nameProp}~rename(name),startValue,endValue]`,
+                                    'displayName~rename(name)',
+                                    'legends[id,displayName~rename(name),startValue,endValue]',
                                 ],
                                 paging: 'false',
                             },
@@ -54,9 +52,7 @@ export const legendSetsApi = api.injectEndpoints({
                 { dimensionType, dimensionId },
                 apiArg: BaseQueryApiWithExtraArg
             ) {
-                const { appCachedData, engine, metadataStore } = apiArg.extra
-                const nameProp =
-                    appCachedData.currentUser.settings.displayNameProperty
+                const { engine, metadataStore } = apiArg.extra
 
                 let query
 
@@ -64,6 +60,7 @@ export const legendSetsApi = api.injectEndpoints({
                     metadataStore.getDimensionMetadataItem(dimensionId)
                         ?.dimensionId ?? extractPlainDimensionId(dimensionId)
 
+                // legend sets have no shortName, so the name always comes from displayName
                 try {
                     switch (dimensionType) {
                         case 'DATA_ELEMENT':
@@ -71,7 +68,7 @@ export const legendSetsApi = api.injectEndpoints({
                                 resource: 'dataElements',
                                 id,
                                 params: {
-                                    fields: `legendSets[id,${nameProp}~rename(name)]`,
+                                    fields: `legendSets[id,displayName~rename(name)]`,
                                 },
                             }
                             break
@@ -80,7 +77,7 @@ export const legendSetsApi = api.injectEndpoints({
                                 resource: 'trackedEntityAttributes',
                                 id,
                                 params: {
-                                    fields: `legendSets[id,${nameProp}~rename(name)]`,
+                                    fields: `legendSets[id,displayName~rename(name)]`,
                                 },
                             }
                             break
@@ -89,7 +86,7 @@ export const legendSetsApi = api.injectEndpoints({
                                 resource: 'programIndicators',
                                 id,
                                 params: {
-                                    fields: `legendSets[id,${nameProp}~rename(name)]`,
+                                    fields: `legendSets[id,displayName~rename(name)]`,
                                 },
                             }
                             break

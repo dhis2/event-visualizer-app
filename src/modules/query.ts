@@ -1,22 +1,20 @@
 import type { CurrentUser } from '@types'
 
-/**
- * Get program stage fields with dynamic name property
+/*
+ * Program stages have no shortName, so their name always comes from
+ * displayName regardless of the user's display property setting.
  */
-export const getProgramStageFields = (
-    displayNameProp: CurrentUser['settings']['displayNameProperty']
-): string =>
-    [
-        'id',
-        `${displayNameProp}~rename(name)`,
-        'displayExecutionDateLabel',
-        'displayDueDateLabel',
-        'displayProgramStageLabel',
-        'displayEventLabel',
-        'repeatable',
-        'hideDueDate',
-        'program[id]',
-    ].join(',')
+export const programStageFields = [
+    'id',
+    'displayName~rename(name)',
+    'displayExecutionDateLabel',
+    'displayDueDateLabel',
+    'displayProgramStageLabel',
+    'displayEventLabel',
+    'repeatable',
+    'hideDueDate',
+    'program[id]',
+].join(',')
 
 /**
  * Get program fields with dynamic name property
@@ -39,7 +37,7 @@ export const getProgramFields = (
         'displayTrackedEntityAttributeLabel',
         'enrollmentDateLabel',
         'incidentDateLabel',
-        `programStages[${getProgramStageFields(displayNameProp)}]`,
+        `programStages[${programStageFields}]`,
         `trackedEntityType[id,${displayNameProp}~rename(name)]`,
     ].join(',')
 
@@ -50,21 +48,19 @@ export const getTrackedEntityTypeFields = (
     displayNameProp: CurrentUser['settings']['displayNameProperty']
 ): string => ['id', `${displayNameProp}~rename(name)`].join(',')
 
-/**
- * Get dimension fields with dynamic name property for optionSet and legendSet
+/*
+ * Option sets and legend sets have no shortName, so their names always come
+ * from displayName regardless of the user's display property setting.
  */
-export const getDimensionFields = (
-    displayNameProp: CurrentUser['settings']['displayNameProperty']
-): string =>
-    [
-        'dimension',
-        'dimensionType',
-        'filter',
-        'program[id]',
-        'programStage[id]',
-        `optionSet[id,${displayNameProp}~rename(name)]`,
-        'valueType',
-        `legendSet[id,${displayNameProp}~rename(name)]`,
-        'repetition',
-        'items[dimensionItem~rename(id)]',
-    ].join(',')
+export const dimensionFields = [
+    'dimension',
+    'dimensionType',
+    'filter',
+    'program[id]',
+    'programStage[id]',
+    'optionSet[id,displayName~rename(name)]',
+    'valueType',
+    'legendSet[id,displayName~rename(name)]',
+    'repetition',
+    'items[dimensionItem~rename(id)]',
+].join(',')
