@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-24T11:12:54.958Z\n"
-"PO-Revision-Date: 2026-06-24T11:12:54.958Z\n"
+"POT-Creation-Date: 2026-06-24T13:47:36.125Z\n"
+"PO-Revision-Date: 2026-06-24T13:47:36.126Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -44,14 +44,20 @@ msgstr "Add filter"
 msgid "and"
 msgstr "and"
 
-msgid "Display"
-msgstr "Display"
+msgid "Grouping"
+msgstr "Grouping"
 
-msgid "Exact values"
-msgstr "Exact values"
+msgid "None"
+msgstr "None"
 
-msgid "Group into ranges"
-msgstr "Group into ranges"
+msgid "is one of preset options"
+msgstr "is one of preset options"
+
+msgid "Choose ranges"
+msgstr "Choose ranges"
+
+msgid "Loading ranges"
+msgstr "Loading ranges"
 
 msgid "From stages with repeatable events, show values from:"
 msgstr "From stages with repeatable events, show values from:"
@@ -457,9 +463,6 @@ msgstr "Accumulate cell values along rows"
 msgid "Digit group separator"
 msgstr "Digit group separator"
 
-msgid "None"
-msgstr "None"
-
 msgid "Space"
 msgstr "Space"
 
@@ -561,6 +564,9 @@ msgstr "Add a title"
 
 msgid "Options"
 msgstr "Options"
+
+msgid "Display"
+msgstr "Display"
 
 msgid "Totals"
 msgstr "Totals"

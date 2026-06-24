@@ -8,7 +8,7 @@ import {
     parseConditionsArrayToString,
     parseConditionsStringToArray,
 } from '@modules/conditions'
-import { getDisplayMode } from '@modules/display-mode'
+import { usePrototypeGroupingDefaultOnOpen } from '@modules/prototype-default-grouping'
 import { isValueTypeNumeric } from '@modules/value-type'
 import {
     type ConditionsObject,
@@ -24,9 +24,8 @@ import {
     useMemo,
     useState,
 } from 'react'
-import { BandFilter } from './band-filter/band-filter'
 import { Conditions } from './conditions'
-import { DisplayModeSection } from './display-mode-section/display-mode-section'
+import { GroupingSelect } from './grouping-select/grouping-select'
 import classes from './styles/conditions-modal-content.module.css'
 import { useDimensionLegendSets } from './use-dimension-legend-sets'
 
@@ -125,8 +124,17 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
     const { legendSets, legendSetCount, defaultLegendSetId } =
         useDimensionLegendSets(dimension, canHaveLegendSets)
 
-    const displayMode = getDisplayMode(conditions)
-    const showDisplaySection = canHaveLegendSets && legendSetCount >= 1
+    // PROTOTYPE ONLY
+    usePrototypeGroupingDefaultOnOpen({
+        dimensionId: dimension.id,
+        canHaveLegendSets,
+        defaultLegendSetId,
+    })
+
+    const showGroupingSelect = canHaveLegendSets && legendSetCount >= 1
+    /* When grouped, the only filter is a single "is one of preset options" band
+     * selection, so adding further operator conditions is disabled. */
+    const disableAddButton = Boolean(conditions.legendSet)
 
     const [conditionsList, setConditionsList] = useState<string[]>(
         conditions.condition?.length
@@ -151,25 +159,19 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         [dimension.id, dispatch]
     )
 
-    /* The Filter axis tracks the band/operator condition only; the legendSet
-     * belongs to the Display axis and persists across the Show all/Filter
-     * toggle. conditionsList is local state so it survives that toggle on its
+    /* The Filter (Show all/Filter) toggles the operator/band condition only;
+     * the grouping legendSet is set by the Grouping select and persists across
+     * the toggle. conditionsList is local state so it survives the toggle on its
      * own — only the persisted condition needs restoring. */
     const hasPersistedFilter: boolean = Boolean(conditions.condition?.length)
 
     const onEnterShowAll = useCallback(() => {
-        storeConditions(
-            [],
-            displayMode === 'GROUP' ? conditions.legendSet : undefined
-        )
-    }, [displayMode, conditions.legendSet, storeConditions])
+        storeConditions([], conditions.legendSet)
+    }, [conditions.legendSet, storeConditions])
 
     const onEnterFilter = useCallback(() => {
-        storeConditions(
-            conditionsList,
-            displayMode === 'GROUP' ? conditions.legendSet : undefined
-        )
-    }, [conditionsList, displayMode, conditions.legendSet, storeConditions])
+        storeConditions(conditionsList, conditions.legendSet)
+    }, [conditionsList, conditions.legendSet, storeConditions])
 
     const { mode, onModeChange, resetMode } = useFilterRadioMode({
         hasPersistedFilter,
@@ -177,24 +179,17 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         onEnterFilter,
     })
 
-    /* Switching the Display axis rewrites the conditions wholesale and snaps
-     * the Filter back to "Show all" — the operator/band payloads don't convert,
-     * so a stashed filter from the other mode would read as phantom state. */
-    const onDisplayModeChange = useCallback(
+    /* Changing the Grouping select rewrites the conditions wholesale: it sets
+     * (or clears) the legendSet and nukes any operator/band condition, snapping
+     * the Filter back to "Show all" — the operator and band payloads don't
+     * convert, so a leftover filter would read as phantom state. */
+    const onGroupingChange = useCallback(
         (next: ConditionsObject) => {
             setConditionsList([EMPTY_CONDITION])
             storeConditions([], next.legendSet)
             resetMode('SHOW_ALL')
         },
         [storeConditions, resetMode]
-    )
-
-    const onBandConditionChange = useCallback(
-        (condition: string) => {
-            setConditionsList([condition])
-            storeConditions([condition], conditions.legendSet)
-        },
-        [conditions.legendSet, storeConditions]
     )
 
     const addCondition = (): void => {
@@ -263,12 +258,11 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
 
     return (
         <ConditionsProvider.Provider value={providerValue}>
-            {showDisplaySection && defaultLegendSetId && (
-                <DisplayModeSection
+            {showGroupingSelect && (
+                <GroupingSelect
                     conditions={conditions}
                     legendSets={legendSets}
-                    defaultLegendSetId={defaultLegendSetId}
-                    onChange={onDisplayModeChange}
+                    onChange={onGroupingChange}
                 />
             )}
             {isSupported ? (
@@ -276,29 +270,22 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                     mode={mode}
                     onModeChange={onModeChange}
                     dataTest={`conditions-${dimension.id}-filter-radio`}
-                    heading={showDisplaySection ? i18n.t('Filter') : undefined}
+                    heading={showGroupingSelect ? i18n.t('Filter') : undefined}
                 >
-                    {displayMode === 'GROUP' && conditions.legendSet ? (
-                        <BandFilter
-                            legendSetId={conditions.legendSet}
-                            condition={conditions.condition ?? ''}
-                            onChange={onBandConditionChange}
-                        />
-                    ) : (
-                        <div className={classes.mainSection}>
-                            <Conditions />
-                            {!isSingleCondition && (
-                                <Button
-                                    type="button"
-                                    small
-                                    onClick={addCondition}
-                                    dataTest="button-add-condition"
-                                >
-                                    {i18n.t('Add filter')}
-                                </Button>
-                            )}
-                        </div>
-                    )}
+                    <div className={classes.mainSection}>
+                        <Conditions />
+                        {!isSingleCondition && (
+                            <Button
+                                type="button"
+                                small
+                                onClick={addCondition}
+                                disabled={disableAddButton}
+                                dataTest="button-add-condition"
+                            >
+                                {i18n.t('Add filter')}
+                            </Button>
+                        )}
+                    </div>
                 </ShowAllFilterRadio>
             ) : (
                 <ShowAllFilterRadio

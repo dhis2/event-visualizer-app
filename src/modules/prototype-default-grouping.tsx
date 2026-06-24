@@ -18,10 +18,16 @@
  */
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { Checkbox } from '@dhis2/ui'
-import { setVisUiConfigConditionsByDimension } from '@store/vis-ui-config-slice'
+import { useAppDispatch, useAppSelector } from '@hooks'
+import {
+    getVisUiConfigLayout,
+    getVisUiConfigVisualizationType,
+    setVisUiConfigConditionsByDimension,
+} from '@store/vis-ui-config-slice'
 import type { AppDispatch, DimensionMetadataItem, RootState } from '@types'
-import { useState, type CSSProperties, type FC } from 'react'
+import { useEffect, useState, type CSSProperties, type FC } from 'react'
 import { enterGroupMode } from './display-mode'
+import { isDimensionInLayout } from './layout'
 import { isValueTypeNumeric } from './value-type'
 
 const STORAGE_KEY = 'EVENT_VISUALIZER_PROTOTYPE_DEFAULT_GROUPING'
@@ -160,6 +166,62 @@ export const tSeedPrototypeGroupingOnAdd =
 
         void Promise.all(dimensionIds.map(seedDimension))
     }
+
+/* Previews the add-time default inside the dimension modal: when the prototype
+ * is on, the visualization is a pivot, and an eligible dimension is still in the
+ * sidebar (not yet in the layout) with no conditions, seed grouping on open so
+ * the Display section shows "Group into ranges" preselected — matching what
+ * tSeedPrototypeGroupingOnAdd produces on add (whose presence check then skips
+ * it). Waits for the default legend set, which the modal fetches on open. */
+export const usePrototypeGroupingDefaultOnOpen = ({
+    dimensionId,
+    canHaveLegendSets,
+    defaultLegendSetId,
+}: {
+    dimensionId: string
+    canHaveLegendSets: boolean
+    defaultLegendSetId: string | undefined
+}): void => {
+    const dispatch = useAppDispatch()
+    const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
+    const layout = useAppSelector(getVisUiConfigLayout)
+    const isInLayout = isDimensionInLayout(layout, dimensionId)
+    const hasConditionsEntry = useAppSelector(
+        (state: RootState) =>
+            dimensionId in state.visUiConfig.conditionsByDimension
+    )
+
+    useEffect(() => {
+        if (
+            !isPrototypeDefaultGroupingEnabled() ||
+            visualizationType !== 'PIVOT_TABLE' ||
+            isInLayout ||
+            hasConditionsEntry ||
+            !canHaveLegendSets ||
+            !defaultLegendSetId
+        ) {
+            return
+        }
+
+        const { legendSet, condition } = enterGroupMode(defaultLegendSetId)
+
+        dispatch(
+            setVisUiConfigConditionsByDimension({
+                dimensionId,
+                conditions: condition,
+                legendSet,
+            })
+        )
+    }, [
+        dispatch,
+        dimensionId,
+        visualizationType,
+        isInLayout,
+        hasConditionsEntry,
+        canHaveLegendSets,
+        defaultLegendSetId,
+    ])
+}
 
 const toggleStyle: CSSProperties = {
     position: 'fixed',

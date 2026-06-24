@@ -49,15 +49,28 @@ const ConditionsList: FC<{
 }
 
 const NumericConditionsList: FC = () => {
-    const { conditionsList, dimension, removeCondition, setCondition } =
-        useConditions()
+    const {
+        conditionsList,
+        conditions,
+        dimension,
+        removeCondition,
+        setCondition,
+    } = useConditions()
 
-    return conditionsList.map((condition, index) => (
+    // when grouped with no band selection yet, still render one row so the
+    // preset-options multi-select is reachable
+    const rows =
+        conditionsList.length || !conditions.legendSet ? conditionsList : ['']
+
+    return rows.map((condition, index) => (
         <div key={index}>
             <NumericCondition
                 dimension={dimension}
                 condition={condition}
-                onChange={(value) => setCondition(index, value)}
+                legendSetId={conditions.legendSet}
+                onChange={(value) =>
+                    setCondition(index, value, conditions.legendSet)
+                }
                 onRemove={() => removeCondition(index)}
             />
             <ConditionDivider total={conditionsList.length} index={index} />

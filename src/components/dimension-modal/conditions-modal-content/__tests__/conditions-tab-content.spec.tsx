@@ -159,7 +159,7 @@ describe('ConditionsTabContent — Show all / Filter', () => {
         ).not.toBeInTheDocument()
     })
 
-    it('keeps the Filter legend hidden when there is no Display section', async () => {
+    it('keeps the Filter legend hidden when there is no Grouping select', async () => {
         await renderTab()
 
         expect(
@@ -168,68 +168,30 @@ describe('ConditionsTabContent — Show all / Filter', () => {
     })
 })
 
-describe('ConditionsTabContent — Display axis', () => {
-    it('renders a Display section above the Filter for a numeric dim with legend sets', async () => {
+describe('ConditionsTabContent — Grouping select', () => {
+    it('renders horizontal Grouping radios (defaulting to None) for a numeric dim with legend sets', async () => {
         await renderTab({}, numericDimension, numericQueryData)
 
-        const exactRadio = await screen.findByRole('radio', {
-            name: 'Exact values',
-        })
-        const groupRadio = screen.getByRole('radio', {
-            name: 'Group into ranges',
-        })
-        const showAllRadio = screen.getByRole('radio', {
-            name: 'Show all values',
-        })
-
-        expect(exactRadio).toBeInTheDocument()
-        expect(groupRadio).toBeInTheDocument()
-        // Display radios precede the Filter radios in the DOM
+        expect(await screen.findByRole('radio', { name: 'None' })).toBeChecked()
         expect(
-            exactRadio.compareDocumentPosition(showAllRadio) &
-                Node.DOCUMENT_POSITION_FOLLOWING
-        ).toBeTruthy()
+            screen.getByRole('radio', { name: 'Weight legends' })
+        ).toBeInTheDocument()
+        expect(
+            screen.getByRole('radio', { name: 'Age legends' })
+        ).toBeInTheDocument()
     })
 
-    it('pairs the Display section with a visible "Filter" heading', async () => {
-        await renderTab({}, numericDimension, numericQueryData)
-
-        expect(
-            await screen.findByTestId(
-                'conditions-numeric-de-filter-radio-heading'
-            )
-        ).toHaveTextContent('Filter')
-    })
-
-    it('does not render the Display section when the dimension has no legend sets', async () => {
+    it('does not render the Grouping radios when the dimension has no legend sets', async () => {
         await renderTab({}, numericDimension, {
             dataElements: { legendSets: [] },
         })
 
-        // the Filter radio is always present; wait for it before asserting absence
         await screen.findByRole('radio', { name: 'Show all values' })
 
-        expect(
-            screen.queryByRole('radio', { name: 'Group into ranges' })
-        ).not.toBeInTheDocument()
+        expect(screen.queryByTestId('grouping-select')).not.toBeInTheDocument()
     })
 
-    it('opens grouped with the Filter on "Show all" when only a legendSet is persisted', async () => {
-        await renderTab(
-            { 'numeric-de': { legendSet: 'LEGEND_SET_1' } },
-            numericDimension,
-            numericQueryData
-        )
-
-        expect(
-            await screen.findByRole('radio', { name: 'Group into ranges' })
-        ).toBeChecked()
-        expect(
-            screen.getByRole('radio', { name: 'Show all values' })
-        ).toBeChecked()
-    })
-
-    it('keeps the legendSet when toggling the Filter Show all/Filter in group mode', async () => {
+    it('groups the dimension when a legend set radio is chosen, keeping the Filter on Show all', async () => {
         const user = userEvent.setup()
         const { store } = await renderTab(
             {},
@@ -238,25 +200,19 @@ describe('ConditionsTabContent — Display axis', () => {
         )
 
         await user.click(
-            await screen.findByRole('radio', { name: 'Group into ranges' })
+            await screen.findByRole('radio', { name: 'Weight legends' })
         )
 
-        const grouped = () =>
+        expect(
             getVisUiConfigConditionsByDimension(store.getState(), 'numeric-de')
-
-        expect(grouped().legendSet).toBe('LEGEND_SET_1')
+                .legendSet
+        ).toBe('LEGEND_SET_1')
         expect(
             screen.getByRole('radio', { name: 'Show all values' })
         ).toBeChecked()
-
-        await user.click(screen.getByRole('radio', { name: 'Filter' }))
-        await user.click(screen.getByRole('radio', { name: 'Show all values' }))
-
-        expect(grouped().legendSet).toBe('LEGEND_SET_1')
-        expect(grouped().condition).toBeFalsy()
     })
 
-    it('drops the legendSet when switching the Display back to exact values', async () => {
+    it('clears grouping when the None radio is chosen', async () => {
         const user = userEvent.setup()
         const { store } = await renderTab(
             { 'numeric-de': { legendSet: 'LEGEND_SET_1' } },
@@ -264,9 +220,7 @@ describe('ConditionsTabContent — Display axis', () => {
             numericQueryData
         )
 
-        await user.click(
-            await screen.findByRole('radio', { name: 'Exact values' })
-        )
+        await user.click(await screen.findByRole('radio', { name: 'None' }))
 
         expect(
             getVisUiConfigConditionsByDimension(store.getState(), 'numeric-de')
@@ -274,48 +228,52 @@ describe('ConditionsTabContent — Display axis', () => {
         ).toBeUndefined()
     })
 
-    it('shows the band Transfer (not operator rows) in group mode with a filter', async () => {
-        await renderTab(
-            {
-                'numeric-de': {
-                    legendSet: 'LEGEND_SET_1',
-                    condition: 'IN:LEGEND_1',
-                },
-            },
+    it('nukes existing operator conditions when grouping is switched on', async () => {
+        const user = userEvent.setup()
+        const { store } = await renderTab(
+            { 'numeric-de': { condition: 'GT:5' } },
             numericDimension,
             numericQueryData
         )
 
-        expect(
-            await screen.findByTestId('band-filter-transfer')
-        ).toBeInTheDocument()
-        expect(
-            screen.queryByText('Choose a filter type')
-        ).not.toBeInTheDocument()
-        expect(
-            screen.queryByRole('button', { name: 'Add filter' })
-        ).not.toBeInTheDocument()
+        await user.click(
+            await screen.findByRole('radio', { name: 'Weight legends' })
+        )
+
+        const conditions = getVisUiConfigConditionsByDimension(
+            store.getState(),
+            'numeric-de'
+        )
+        expect(conditions.legendSet).toBe('LEGEND_SET_1')
+        expect(conditions.condition).toBeFalsy()
     })
 })
 
-describe('ConditionsTabContent — numeric operator filter (exact)', () => {
-    it('offers no preset-options or legend-set entry in the operator select', async () => {
+describe('ConditionsTabContent — numeric filter operators', () => {
+    it('filters by preset ranges when grouped', async () => {
         const user = userEvent.setup()
-        await renderTab({}, numericDimension, numericQueryData)
+        const { store } = await renderTab(
+            { 'numeric-de': { legendSet: 'LEGEND_SET_1' } },
+            numericDimension,
+            numericQueryData
+        )
 
         await user.click(await screen.findByRole('radio', { name: 'Filter' }))
-        await user.click(screen.getByText('Choose a filter type'))
+        // grouped → the preset-options band multi-select shows by default
+        await user.click(await screen.findByText('Choose ranges'))
+        await user.click(await screen.findByText('Low'))
 
-        expect(screen.getByText('greater than (>)')).toBeInTheDocument()
-        expect(
-            screen.queryByText('is one of preset options')
-        ).not.toBeInTheDocument()
-        expect(
-            screen.queryByText('Choose a legend set')
-        ).not.toBeInTheDocument()
+        await waitFor(() =>
+            expect(
+                getVisUiConfigConditionsByDimension(
+                    store.getState(),
+                    'numeric-de'
+                ).condition
+            ).toBe('IN:LEGEND_1')
+        )
     })
 
-    it('persists an operator + value condition', async () => {
+    it('uses comparison operators when not grouped, with the preset operator disabled', async () => {
         const user = userEvent.setup()
         const { store } = await renderTab(
             {},
@@ -325,6 +283,10 @@ describe('ConditionsTabContent — numeric operator filter (exact)', () => {
 
         await user.click(await screen.findByRole('radio', { name: 'Filter' }))
         await user.click(screen.getByText('Choose a filter type'))
+
+        // the preset operator is listed but disabled when not grouped
+        expect(screen.getByText('is one of preset options')).toBeInTheDocument()
+
         await user.click(screen.getByText('greater than (>)'))
         await user.type(screen.getByRole('spinbutton'), '5')
 
