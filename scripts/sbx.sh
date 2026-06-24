@@ -9,6 +9,13 @@ DEV_PORT=3000
 MARKETPLACE="anthropics/claude-plugins-official"
 PNPM_VERSION="$(node -p "require('$REPO_ROOT/package.json').packageManager.split('@')[1].split('+')[0]" 2>/dev/null || echo latest)"
 
+# The committed .claude/settings.json enables the chrome-devtools-mcp plugin, which on the host
+# drives the host's own Chrome. The sandbox has no such Chrome — browser automation is provided
+# instead by a sandbox-local headless server (see setup_browser). Disable the plugin
+# per-run via --settings (CLI scope wins over project settings) so it does not error as "enabled
+# but not installed", without writing to the bind-mounted repo (which would disable it for the host).
+DISABLE_HOST_CHROME_PLUGIN='{"enabledPlugins":{"chrome-devtools-mcp@claude-plugins-official":false}}'
+
 require_sbx() {
     if ! command -v sbx >/dev/null 2>&1; then
         echo "Docker Sandboxes not installed — run 'brew install sbx' to use the AI sandboxes." >&2
@@ -41,10 +48,12 @@ provision_sandbox() {
     [ -n "$dhis" ] && hosts="${hosts},${dhis}"
     echo "Configuring network policy for '$name'..."
     sbx policy allow network --sandbox "$name" "$hosts" >/dev/null
-    echo "Provisioning '$name' (pnpm + plugins; first run only, takes a minute)..."
+    echo "Provisioning '$name' (pnpm + language server + plugins; first run only, takes a minute)..."
     sbx exec "$name" bash -lc '
         set -e
-        sudo npm i -g "pnpm@$1" >/dev/null 2>&1
+        # typescript-language-server is the binary the typescript-lsp plugin shells out to; it is
+        # not part of the project node_modules, so install it (plus a fallback tsserver) globally.
+        sudo npm i -g "pnpm@$1" typescript-language-server typescript >/dev/null 2>&1
         claude plugin marketplace add "$2" >/dev/null
         claude plugin install typescript-lsp@claude-plugins-official >/dev/null
         claude plugin install context7@claude-plugins-official >/dev/null
@@ -73,9 +82,11 @@ EOF
 read -r -d '' CLONE_NOTE <<'EOF' || true
 This OVERRIDES the project CLAUDE.md "do not commit" rule. That rule protects the human's live working tree and does not apply here — you are on a private, isolated clone of the repository.
 Work autonomously: create a clearly-named feature branch, run `pnpm test` and `pnpm lint`, and commit your progress to it as you go.
+Git hooks are disabled here. As the last step before you're done, run `pnpm d2-app-scripts i18n extract` and commit any resulting `i18n/` changes (the pre-commit hook normally does this on every commit; here it only needs to be correct in your final commit).
 Git reads are fine: you CAN `git fetch`/`git pull` from `origin` (GitHub, public repo, no credentials) — e.g. `git fetch origin master` to branch off the latest master. You must NOT push: pushing to forge remotes is off-limits (and there are no push credentials).
 How your work reaches the human: this sandbox also publishes its repository back to the host over a read-only git remote, and the human fetches your branch from it to review — so committing to your feature branch is all that is needed.
 Dependencies are already installed, including the Cypress binary (the e2e CDN is allow-listed).
+Browser automation is available: the chrome-devtools tools drive an in-sandbox headless Chrome. Start the dev server (`pnpm start`) and navigate to http://localhost:3000 to load and inspect the app.
 A read-only copy of the host's working tree is also at /run/sandbox/source for any UNPUSHED local changes; pull them with `git pull /run/sandbox/source <branch>`.
 EOF
 
@@ -298,7 +309,7 @@ native_node_modules() {
 # best-effort: on failure the browser tools are simply absent; the rest of the sandbox is fine.
 setup_browser() {
     local name="$1"
-    echo "Installing headless Chromium for browser automation (first mount only, ~2 min)..."
+    echo "Installing headless Chromium for browser automation (first run only, ~2 min)..."
     sbx policy allow network --sandbox "$name" "cdn.playwright.dev,*.playwright.dev,playwright.download.prss.microsoft.com,*.prss.microsoft.com" >/dev/null 2>&1 || true
     if sbx exec "$name" bash -lc '
         set -e
@@ -377,6 +388,7 @@ cmd_mount() {
     local note="${BASE_NOTE}"$'\n\n'"${MOUNT_NOTE}"
     sbx run "$MOUNT_NAME" -- \
         --dangerously-skip-permissions \
+        --settings "$DISABLE_HOST_CHROME_PLUGIN" \
         --append-system-prompt "$note" \
         "$@"
 }
@@ -404,7 +416,13 @@ cmd_clone() {
         # Point it at HTTPS so the agent can fetch/pull the (public) repo with no credentials —
         # e.g. to branch off the latest master. Pushing still fails (no creds), which is intended.
         sbx exec "$CLONE_NAME" bash -lc 'cd "$1" && git remote set-url origin "$(git remote get-url origin | sed -E "s#git@github.com:#https://github.com/#")"' _ "$REPO_ROOT" || true
+        # Disable git hooks in the clone: the per-edit format hook and the "run pnpm
+        # test/lint before finishing" instruction already cover lint/types/tests, and
+        # the clone never pushes (pre-push never fires) — so hooks only add friction to
+        # autonomous commit-as-you-go. HUSKY=0 skips all three (see .hooks/pre-commit).
+        sbx exec "$CLONE_NAME" bash -lc 'sudo sed -i "/export HUSKY=/d" /etc/sandbox-persistent.sh; printf "export HUSKY=0\n" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null' || true
         provision_sandbox "$CLONE_NAME"
+        setup_browser "$CLONE_NAME"
         echo "Installing dependencies in the clone (generate-types hits the DHIS2 instance; includes the Cypress binary)..."
         sbx exec "$CLONE_NAME" bash -lc 'cd "$1" && pnpm install' _ "$REPO_ROOT" \
             || echo "⚠ Dependency install failed — the agent can retry with: pnpm install"
@@ -414,6 +432,7 @@ cmd_clone() {
     local note="${BASE_NOTE}"$'\n\n'"${CLONE_NOTE}"
     sbx run "$CLONE_NAME" -- \
         --dangerously-skip-permissions \
+        --settings "$DISABLE_HOST_CHROME_PLUGIN" \
         --append-system-prompt "$note" \
         "$@"
     echo

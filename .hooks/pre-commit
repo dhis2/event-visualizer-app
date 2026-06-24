@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Unlike pre-push and commit-msg, this hook doesn't source _/husky.sh, so honor
+# HUSKY=0 directly — the sandbox clone sets it to skip hooks (see scripts/sbx.sh).
+if [ "$HUSKY" = "0" ]; then
+    exit 0
+fi
+
 pnpm d2-app-scripts i18n extract
 git add i18n
 
