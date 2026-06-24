@@ -90,8 +90,8 @@
     background: var(--colors-grey100);
     cursor: pointer;
     transition: all 0.15s ease;
-    min-inline-size: 88px;
-    inline-size: 88px;
+    min-inline-size: 108px;
+    inline-size: 108px;
 }
 
 .gridItem:hover:not(.disabled) {
@@ -132,4 +132,47 @@
 
 .gridItem.disabled .gridItemLabel {
     color: var(--colors-grey500);
+}
+
+/* prototype: "default vis type" home marker */
+.gridItemWrap {
+    position: relative;
+    inline-size: 108px;
+}
+
+.homeMarker {
+    position: absolute;
+    inset-block-start: 2px;
+    inset-inline-end: 2px;
+    display: flex;
+    border-radius: 4px;
+    color: var(--colors-grey600);
+    opacity: 0;
+    transition: opacity 0.12s ease;
+}
+
+.homeMarker.isDefault {
+    opacity: 1;
+    color: var(--colors-grey800);
+}
+
+.gridItemWrap:hover .homeMarker:not(.isDefault) {
+    opacity: 0.4;
+}
+
+.gridItemWrap:hover .homeMarker:not(.isDefault):hover {
+    opacity: 1;
+    background-color: var(--colors-grey300);
+}
+
+.homeMarkerButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
 }

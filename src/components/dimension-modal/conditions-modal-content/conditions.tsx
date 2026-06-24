@@ -49,34 +49,16 @@ const ConditionsList: FC<{
 }
 
 const NumericConditionsList: FC = () => {
-    const {
-        conditionsList,
-        conditions,
-        dimension,
-        removeCondition,
-        setCondition,
-    } = useConditions()
+    const { conditionsList, dimension, removeCondition, setCondition } =
+        useConditions()
 
-    return (
-        conditionsList.length
-            ? conditionsList
-            : conditions.legendSet
-              ? // show the condition component also when no conditions are present but a legendSet is selected
-                ['']
-              : []
-    )?.map((condition, index) => (
+    return conditionsList.map((condition, index) => (
         <div key={index}>
             <NumericCondition
                 dimension={dimension}
                 condition={condition}
-                onChange={(value, legendSet) =>
-                    setCondition(index, value, legendSet)
-                }
+                onChange={(value) => setCondition(index, value)}
                 onRemove={() => removeCondition(index)}
-                numberOfConditions={
-                    conditionsList.length || (conditions.legendSet ? 1 : 0)
-                }
-                legendSetId={conditions.legendSet}
             />
             <ConditionDivider total={conditionsList.length} index={index} />
         </div>

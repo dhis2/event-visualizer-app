@@ -5,6 +5,7 @@ import { useIsDimensionInLayout } from '@components/sidebar/use-is-dimension-in-
 import { IconAdd16, IconSubtract16, Tooltip } from '@dhis2/ui'
 import { useAddMetadata, useAppDispatch, useAppSelector } from '@hooks'
 import { getAllowedTargetAxis } from '@modules/layout'
+import { tSeedPrototypeGroupingOnAdd } from '@modules/prototype-default-grouping'
 import {
     clearMultiSelection,
     isDimensionMultiSelected,
@@ -105,6 +106,8 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
                     dimensionId: dimension.id,
                 })
             )
+            // PROTOTYPE ONLY
+            dispatch(tSeedPrototypeGroupingOnAdd([dimension.id]))
         }
     }, [
         dimension.id,

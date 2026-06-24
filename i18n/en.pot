@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-18T13:33:23.949Z\n"
-"PO-Revision-Date: 2026-06-18T13:33:23.951Z\n"
+"POT-Creation-Date: 2026-06-24T11:12:54.958Z\n"
+"PO-Revision-Date: 2026-06-24T11:12:54.958Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -35,8 +35,8 @@ msgstr "{{valueType}} type dimensions cannot be filtered."
 msgid "This dimension cannot be filtered."
 msgstr "This dimension cannot be filtered."
 
-msgid "Preset options can't be combined with other filters"
-msgstr "Preset options can't be combined with other filters"
+msgid "Filter"
+msgstr "Filter"
 
 msgid "Add filter"
 msgstr "Add filter"
@@ -44,23 +44,14 @@ msgstr "Add filter"
 msgid "and"
 msgstr "and"
 
-msgid "is one of preset options"
-msgstr "is one of preset options"
+msgid "Display"
+msgstr "Display"
 
-msgid "Choose a legend set"
-msgstr "Choose a legend set"
+msgid "Exact values"
+msgstr "Exact values"
 
-msgid "Loading legend sets"
-msgstr "Loading legend sets"
-
-msgid "No preset option sets for this data item"
-msgstr "No preset option sets for this data item"
-
-msgid "Choose legends"
-msgstr "Choose legends"
-
-msgid "Loading legends"
-msgstr "Loading legends"
+msgid "Group into ranges"
+msgstr "Group into ranges"
 
 msgid "From stages with repeatable events, show values from:"
 msgstr "From stages with repeatable events, show values from:"
@@ -109,9 +100,6 @@ msgstr "Value filtering"
 
 msgid "Show all values"
 msgstr "Show all values"
-
-msgid "Filter"
-msgstr "Filter"
 
 msgid "No items selected"
 msgstr "No items selected"
@@ -188,6 +176,9 @@ msgstr "An error occurred"
 msgid "Resize axes panel"
 msgstr "Resize axes panel"
 
+msgid "Grouped into ranges"
+msgstr "Grouped into ranges"
+
 msgid "Move to {{- axisName}}"
 msgstr "Move to {{- axisName}}"
 
@@ -208,6 +199,9 @@ msgstr "Program: {{- programName}}"
 
 msgid "Program stage: {{- stageName}}"
 msgstr "Program stage: {{- stageName}}"
+
+msgid "Ranges: {{- legendSetName}}"
+msgstr "Ranges: {{- legendSetName}}"
 
 msgid "Levels"
 msgstr "Levels"
@@ -396,6 +390,12 @@ msgstr "{{- names}} will be removed. Are you sure?"
 msgid "Convert"
 msgstr "Convert"
 
+msgid "Current default"
+msgstr "Current default"
+
+msgid "Set as default"
+msgstr "Set as default"
+
 msgid "Individual data view"
 msgstr "Individual data view"
 
@@ -520,6 +520,9 @@ msgstr "Legend"
 msgid "Select from legends"
 msgstr "Select from legends"
 
+msgid "Loading legends"
+msgstr "Loading legends"
+
 msgid "Limit"
 msgstr "Limit"
 
@@ -558,9 +561,6 @@ msgstr "Add a title"
 
 msgid "Options"
 msgstr "Options"
-
-msgid "Display"
-msgstr "Display"
 
 msgid "Totals"
 msgstr "Totals"
@@ -1120,11 +1120,3 @@ msgstr ""
 
 msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
 msgstr "View data and indicators in a manipulatable table. (adjust for EVER)"
-
-msgctxt "Application title"
-msgid "__MANIFEST_APP_TITLE"
-msgstr "Event Visualizer"
-
-msgctxt "Application description"
-msgid "__MANIFEST_APP_DESCRIPTION"
-msgstr "Event visualizer app and plugin"

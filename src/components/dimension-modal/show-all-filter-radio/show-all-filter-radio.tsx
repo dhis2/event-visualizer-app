@@ -1,57 +1,13 @@
+import {
+    RadioCard,
+    RadioCardGroup,
+} from '@components/dimension-modal/radio-card/radio-card'
 import i18n from '@dhis2/d2-i18n'
-import { FieldSet, Legend, Radio } from '@dhis2/ui'
-import cx from 'classnames'
+import { FieldSet, Legend } from '@dhis2/ui'
 import { type FC, type PropsWithChildren } from 'react'
 import classes from './styles/show-all-filter-radio.module.css'
 
 export type FilterRadioMode = 'SHOW_ALL' | 'FILTER'
-
-type RadioCardProps = PropsWithChildren<{
-    selected: boolean
-    label: string
-    value: FilterRadioMode
-    name: string
-    dataTest: string
-    onSelect: () => void
-    disabled?: boolean
-    helpText?: string
-}>
-
-const RadioCard: FC<RadioCardProps> = ({
-    selected,
-    label,
-    value,
-    name,
-    dataTest,
-    onSelect,
-    disabled = false,
-    helpText,
-    children,
-}) => (
-    <div
-        className={cx(classes.card, {
-            [classes.cardSelected]: selected,
-            [classes.cardDisabled]: disabled,
-        })}
-        data-test={dataTest}
-    >
-        <Radio
-            name={name}
-            label={label}
-            value={value}
-            checked={selected}
-            onChange={onSelect}
-            disabled={disabled}
-            dense
-            className={classes.cardRadio}
-            dataTest={`${dataTest}-radio`}
-        />
-        {helpText ? <p className={classes.cardHelp}>{helpText}</p> : null}
-        {selected && children ? (
-            <div className={classes.revealed}>{children}</div>
-        ) : null}
-    </div>
-)
 
 type ShowAllFilterRadioProps = PropsWithChildren<{
     mode: FilterRadioMode
@@ -59,6 +15,10 @@ type ShowAllFilterRadioProps = PropsWithChildren<{
     dataTest?: string
     filterDisabled?: boolean
     filterDisabledHelp?: string
+    /* A visible section heading for the fieldset legend. When omitted the
+     * legend stays visually hidden — used to pair this with a sibling Display
+     * section, where both axes need matching headings. */
+    heading?: string
 }>
 
 export const ShowAllFilterRadio: FC<ShowAllFilterRadioProps> = ({
@@ -67,6 +27,7 @@ export const ShowAllFilterRadio: FC<ShowAllFilterRadioProps> = ({
     dataTest = 'show-all-filter-radio',
     filterDisabled = false,
     filterDisabledHelp,
+    heading,
     children,
 }) => {
     const radioGroupName = `${dataTest}-mode`
@@ -74,11 +35,20 @@ export const ShowAllFilterRadio: FC<ShowAllFilterRadioProps> = ({
     return (
         <FieldSet>
             <Legend>
-                <span className={classes.visuallyHidden}>
-                    {i18n.t('Value filtering')}
-                </span>
+                {heading ? (
+                    <span
+                        className={classes.heading}
+                        data-test={`${dataTest}-heading`}
+                    >
+                        {heading}
+                    </span>
+                ) : (
+                    <span className={classes.visuallyHidden}>
+                        {i18n.t('Value filtering')}
+                    </span>
+                )}
             </Legend>
-            <div className={classes.cards}>
+            <RadioCardGroup>
                 <RadioCard
                     selected={mode === 'SHOW_ALL'}
                     label={i18n.t('Show all values')}
@@ -99,7 +69,7 @@ export const ShowAllFilterRadio: FC<ShowAllFilterRadioProps> = ({
                 >
                     {children}
                 </RadioCard>
-            </div>
+            </RadioCardGroup>
         </FieldSet>
     )
 }

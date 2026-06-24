@@ -173,8 +173,9 @@ export const eventVisualizationsApi = api.injectEndpoints({
                             }
                         }
 
-                        // This is to ensure that we have the required metadata to display the selected legendSet and legends in the conditions modal
-                        // (NumericCondition component)
+                        // Ensures the metadata needed to display a grouped dimension's
+                        // legend set and selected bands is present: the layout chip text
+                        // and the dimension modal's band filter both resolve names from it.
                         if (dimension.legendSet?.id) {
                             const legendSetId = dimension.legendSet.id
 

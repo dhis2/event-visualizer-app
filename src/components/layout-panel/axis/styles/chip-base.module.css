@@ -76,6 +76,14 @@
     display: none;
 }
 
+.groupedIcon {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-inline-start: 4px;
+    line-height: 0;
+}
+
 .leftIcon {
     margin-inline-end: 4px;
     line-height: 0;

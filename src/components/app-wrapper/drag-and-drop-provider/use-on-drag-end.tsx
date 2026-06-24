@@ -1,4 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@hooks'
+import { tSeedPrototypeGroupingOnAdd } from '@modules/prototype-default-grouping'
 import {
     clearMultiSelection,
     getMultiSelectedDimensionIds,
@@ -68,6 +69,8 @@ export const useOnDragEnd = (): OnDragEndFn => {
                             insertAfter,
                         })
                     )
+                    // PROTOTYPE ONLY
+                    dispatch(tSeedPrototypeGroupingOnAdd(multiSelectedIds))
                 } else {
                     // Single add from sidebar
                     draggedItemData.populateMetadata()
@@ -78,6 +81,12 @@ export const useOnDragEnd = (): OnDragEndFn => {
                             insertIndex: targetIndex,
                             insertAfter,
                         })
+                    )
+                    // PROTOTYPE ONLY
+                    dispatch(
+                        tSeedPrototypeGroupingOnAdd([
+                            draggedItemData.dimensionId,
+                        ])
                     )
                 }
                 dispatch(clearMultiSelection())

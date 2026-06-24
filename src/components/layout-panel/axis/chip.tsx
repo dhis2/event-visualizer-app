@@ -1,6 +1,7 @@
 import { IconButton } from '@components/shared/icon-button'
 import { Layer, Popper, Tooltip, IconMore16 } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
+import { getDisplayMode } from '@modules/display-mode'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
     getVisUiConfigItemsByDimension,
@@ -64,6 +65,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
             Boolean(conditions?.legendSet),
         [conditions]
     )
+    const isGroupedIntoRanges = getDisplayMode(conditions) === 'GROUP'
     const conditionsTexts = useConditionsTexts({
         conditions,
         dimension,
@@ -87,9 +89,16 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
             suffix: dimension.suffix,
             itemsText: chipItemsText,
             isEmpty,
+            isGroupedIntoRanges,
             onClick: openDimensionModal,
         }),
-        [dimension, chipItemsText, isEmpty, openDimensionModal]
+        [
+            dimension,
+            chipItemsText,
+            isEmpty,
+            isGroupedIntoRanges,
+            openDimensionModal,
+        ]
     )
 
     const {
@@ -124,6 +133,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                         content={
                             <TooltipContent
                                 dimension={dimension}
+                                conditions={conditions}
                                 conditionsTexts={conditionsTexts}
                                 axisId={axisId}
                             />

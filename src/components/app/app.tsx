@@ -19,6 +19,7 @@ import { StartScreen } from '@components/start-screen/start-screen'
 import { Toolbar } from '@components/toolbar/toolbar'
 import { CssVariables } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
+import { PrototypeDefaultGroupingToggle } from '@modules/prototype-default-grouping'
 import { isVisualizationEmpty } from '@modules/visualization'
 import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
 import {
@@ -115,6 +116,8 @@ const EventVisualizer: FC = () => {
                 <DetailsPanel />
             </GridEndColumn>
             <CssVariables colors spacers theme elevations />
+            {/* PROTOTYPE ONLY */}
+            <PrototypeDefaultGroupingToggle />
         </GridContainer>
     )
 }

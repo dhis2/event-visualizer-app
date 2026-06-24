@@ -5,6 +5,7 @@ import { SplitButton, FlyoutMenu, MenuItem, Button } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector, useMetadataItem } from '@hooks'
 import { getInvalidAxesForDimension } from '@modules/layout'
 import { getAxisName } from '@modules/layout.js'
+import { tSeedPrototypeGroupingOnAdd } from '@modules/prototype-default-grouping'
 import { getUiActiveDimensionModal } from '@store/ui-slice.js'
 import {
     addVisUiConfigLayoutDimension,
@@ -46,6 +47,8 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
             dispatch(
                 addVisUiConfigLayoutDimension({ axis: axisId, dimensionId })
             )
+            // PROTOTYPE ONLY
+            dispatch(tSeedPrototypeGroupingOnAdd([dimensionId]))
 
             onClick()
         },

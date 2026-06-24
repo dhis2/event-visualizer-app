@@ -7,6 +7,7 @@ import i18n from '@dhis2/d2-i18n'
 import {
     Popper,
     Layer,
+    Tooltip,
     IconChevronDown16,
     IconVisualizationLinelist16,
     IconVisualizationPivotTable16,
@@ -31,30 +32,78 @@ const visTypeIcons: Record<VisualizationType, ReactNode> = {
     PIVOT_TABLE: <IconVisualizationPivotTable16 />,
 }
 
+const HomeIcon: FC = () => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="currentColor"
+        aria-hidden="true"
+    >
+        <path
+            fillRule="evenodd"
+            d="M13 9.414V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V9.414l1-1V13h2v-3a1 1 0 0 1 1-1h2l.103.005A1 1 0 0 1 10 10v3h2V8.414l1 1ZM7 13h2v-3H7v3Z"
+            clipRule="evenodd"
+        />
+        <path d="M8.048 2.002a1.002 1.002 0 0 1 .659.291l6 6L14 9 8 3 2 9l-.707-.707 6-6 .076-.068a.994.994 0 0 1 .679-.223ZM13 5.172l-1-1V2h1v3.172Z" />
+    </svg>
+)
+
 type ListItemProps = {
     visType: VisualizationType
     isSelected: boolean
+    isDefault: boolean
     onClick: () => void
+    onSetDefault: () => void
 }
 
 export const ListItem: FC<ListItemProps> = ({
     visType,
     isSelected,
+    isDefault,
     onClick,
+    onSetDefault,
 }) => {
+    const homeLabel = isDefault
+        ? i18n.t('Current default')
+        : i18n.t('Set as default')
     return (
-        <button
-            className={cx(classes.gridItem, {
-                [classes.active]: isSelected,
-            })}
-            onClick={onClick}
-            type="button"
-        >
-            {visTypeIcons[visType]}
-            <span className={classes.gridItemLabel}>
-                {visTypeDisplayNames[visType]}
-            </span>
-        </button>
+        <div className={classes.gridItemWrap}>
+            <button
+                className={cx(classes.gridItem, {
+                    [classes.active]: isSelected,
+                })}
+                onClick={onClick}
+                type="button"
+            >
+                {visTypeIcons[visType]}
+                <span className={classes.gridItemLabel}>
+                    {visTypeDisplayNames[visType]}
+                </span>
+            </button>
+            <Tooltip content={homeLabel} closeDelay={0}>
+                {({ onMouseOver, onMouseOut, ref }) => (
+                    <span
+                        ref={ref}
+                        className={cx(classes.homeMarker, {
+                            [classes.isDefault]: isDefault,
+                        })}
+                    >
+                        <button
+                            className={classes.homeMarkerButton}
+                            onClick={onSetDefault}
+                            onMouseOver={onMouseOver}
+                            onMouseOut={onMouseOut}
+                            type="button"
+                            aria-label={homeLabel}
+                        >
+                            <HomeIcon />
+                        </button>
+                    </span>
+                )}
+            </Tooltip>
+        </div>
     )
 }
 
@@ -74,6 +123,9 @@ export const VisualizationTypeSelector: FC = () => {
     const [listIsOpen, setListIsOpen] = useState(false)
     const [pendingConversion, setPendingConversion] =
         useState<PendingConversion | null>(null)
+    /* prototype: local-only "default vis type" marker */
+    const [defaultVisType, setDefaultVisType] =
+        useState<VisualizationType>(visualizationType)
 
     const toggleList = () => setListIsOpen(!listIsOpen)
 
@@ -156,9 +208,15 @@ export const VisualizationTypeSelector: FC = () => {
                                                     visType ===
                                                     visualizationType
                                                 }
+                                                isDefault={
+                                                    visType === defaultVisType
+                                                }
                                                 onClick={handleListItemClick(
                                                     visType
                                                 )}
+                                                onSetDefault={() =>
+                                                    setDefaultVisType(visType)
+                                                }
                                             />
                                         )
                                     )}
@@ -178,9 +236,15 @@ export const VisualizationTypeSelector: FC = () => {
                                                     visType ===
                                                     visualizationType
                                                 }
+                                                isDefault={
+                                                    visType === defaultVisType
+                                                }
                                                 onClick={handleListItemClick(
                                                     visType
                                                 )}
+                                                onSetDefault={() =>
+                                                    setDefaultVisType(visType)
+                                                }
                                             />
                                         )
                                     )}

@@ -1,4 +1,6 @@
 import i18n from '@dhis2/d2-i18n'
+import { useMetadataItem } from '@hooks'
+import type { ConditionsObject } from '@store/vis-ui-config-slice'
 import type { DimensionType } from '@types'
 import { type FC } from 'react'
 import type { LayoutDimension } from './chip'
@@ -23,6 +25,7 @@ const NO_FALLBACK_DIMENSION_TYPES: ReadonlySet<DimensionType> = new Set([
 
 type TooltipContentProps = {
     dimension: LayoutDimension
+    conditions: ConditionsObject
     conditionsTexts: string[]
     axisId: string
 }
@@ -59,16 +62,28 @@ const ItemsList: FC<ItemsListProps> = ({ itemDisplayNames, dimensionId }) => {
 
 export const TooltipContent: FC<TooltipContentProps> = ({
     dimension,
+    conditions,
     conditionsTexts,
     axisId,
 }) => {
     const { programName, stageName, itemDisplayNames } =
         useTooltipContentData(dimension)
 
+    const isGroupedIntoRanges = Boolean(conditions.legendSet)
+    const legendSetName =
+        useMetadataItem(conditions.legendSet)?.name ?? conditions.legendSet
+
     const dimensionType = dimension.dimensionType
     const isItemBased =
         !!dimensionType && ITEM_BASED_DIMENSION_TYPES.has(dimensionType)
-    const itemsList = isItemBased ? itemDisplayNames : conditionsTexts
+    /* In group mode with no band filter, conditionsTexts holds the legend-set
+     * name — already shown on the "Ranges:" line below — so don't list it
+     * again; only show band names when a band filter is set. */
+    const itemsList = isItemBased
+        ? itemDisplayNames
+        : isGroupedIntoRanges && !conditions.condition
+          ? []
+          : conditionsTexts
     const showStage = dimensionType === 'DATA_ELEMENT'
     const emptyShowsNoneSelected =
         axisId === 'filters' ||
@@ -95,12 +110,20 @@ export const TooltipContent: FC<TooltipContentProps> = ({
                     })}
                 </li>
             )}
+            {isGroupedIntoRanges && legendSetName && (
+                <li className={styles.item}>
+                    {i18n.t('Ranges: {{- legendSetName}}', {
+                        legendSetName,
+                        nsSeparator: '^^',
+                    })}
+                </li>
+            )}
             {itemsList.length > 0 ? (
                 <ItemsList
                     itemDisplayNames={itemsList}
                     dimensionId={dimension.id}
                 />
-            ) : (
+            ) : isGroupedIntoRanges ? null : (
                 <li className={styles.item}>{emptyStateMessage}</li>
             )}
         </ul>

@@ -105,10 +105,24 @@ export const legendSetsApi = api.injectEndpoints({
                         legendSets?: { legendSets: LegendSetMetadataItem[] }
                     }
 
-                    return {
-                        data: legendSetsResponse?.legendSets
-                            ?.legendSets as LegendSetMetadataItem[],
+                    const legendSets = legendSetsResponse?.legendSets
+                        ?.legendSets as LegendSetMetadataItem[]
+
+                    /* Cache id+name in the metadata store so a grouped
+                     * dimension's legend-set name resolves in the layout chip /
+                     * tooltip even before the bands are fetched. `legends: []`
+                     * keeps it a valid legend set; the smart merge never lets
+                     * this overwrite a fuller set fetched by getLegendSet. */
+                    if (Array.isArray(legendSets)) {
+                        metadataStore.addMetadata(
+                            legendSets.map((legendSet) => ({
+                                ...legendSet,
+                                legends: legendSet.legends ?? [],
+                            }))
+                        )
                     }
+
+                    return { data: legendSets }
                 } catch (error) {
                     return { error: parseEngineError(error) }
                 }

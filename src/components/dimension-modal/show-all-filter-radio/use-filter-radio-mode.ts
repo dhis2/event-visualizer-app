@@ -10,6 +10,10 @@ type UseFilterRadioModeParams = {
 type UseFilterRadioModeResult = {
     mode: FilterRadioMode
     onModeChange: (mode: FilterRadioMode) => void
+    /* Force the mode without running the enter handlers. For callers that have
+     * already rewritten the underlying filter state themselves (e.g. a Display
+     * axis switch that resets the Filter to "Show all"). */
+    resetMode: (mode: FilterRadioMode) => void
 }
 
 /* "Show all"/"Filter" is a pure view over existing filter state. The mode is
@@ -43,5 +47,5 @@ export const useFilterRadioMode = ({
         [mode, onEnterShowAll, onEnterFilter]
     )
 
-    return { mode, onModeChange }
+    return { mode, onModeChange, resetMode: setMode }
 }

@@ -1,4 +1,6 @@
+import { IconGroupedRanges } from '@assets/icon-grouped-ranges'
 import { DimensionTypeIcon } from '@components/shared/dimension-type-icon'
+import i18n from '@dhis2/d2-i18n'
 import cx from 'classnames'
 import type React from 'react'
 import type { LayoutDimension } from './chip'
@@ -13,6 +15,7 @@ export interface ChipBaseProps {
     suffix?: string
     isEmpty?: boolean
     isDragging?: boolean
+    isGroupedIntoRanges?: boolean
     onClick: () => void
 }
 
@@ -23,6 +26,7 @@ export const ChipBase: React.FC<ChipBaseProps> = ({
     suffix,
     isEmpty,
     isDragging,
+    isGroupedIntoRanges,
     onClick,
 }) => (
     <button
@@ -50,5 +54,15 @@ export const ChipBase: React.FC<ChipBaseProps> = ({
         <span className={classes.items} data-test="chip-items">
             {itemsText}
         </span>
+        {isGroupedIntoRanges && (
+            <span
+                className={classes.groupedIcon}
+                role="img"
+                aria-label={i18n.t('Grouped into ranges')}
+                data-test="layout-chip-grouped-icon"
+            >
+                <IconGroupedRanges />
+            </span>
+        )}
     </button>
 )

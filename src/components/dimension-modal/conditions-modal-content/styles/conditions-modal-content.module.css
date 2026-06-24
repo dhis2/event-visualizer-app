@@ -11,19 +11,6 @@
     padding: var(--spacers-dp8) var(--spacers-dp4);
 }
 
-.tooltipReference {
-    display: inline-flex;
-    cursor: not-allowed;
-}
-
-.tooltipReferenceFirst {
-    margin-block-start: 0;
-}
-
-.tooltipReference > .addConditionButton:disabled {
-    pointer-events: none;
-}
-
 .tabBar {
     margin-block-end: var(--spacers-dp16);
 }

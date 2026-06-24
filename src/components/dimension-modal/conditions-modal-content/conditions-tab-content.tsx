@@ -2,13 +2,13 @@ import { ShowAllFilterRadio } from '@components/dimension-modal/show-all-filter-
 import { useFilterRadioMode } from '@components/dimension-modal/show-all-filter-radio/use-filter-radio-mode'
 import { valueTypeDisplayNames } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import { Button, Tooltip } from '@dhis2/ui'
+import { Button } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
-    OPERATOR_IN,
     parseConditionsArrayToString,
     parseConditionsStringToArray,
 } from '@modules/conditions'
+import { getDisplayMode } from '@modules/display-mode'
 import { isValueTypeNumeric } from '@modules/value-type'
 import {
     type ConditionsObject,
@@ -16,18 +16,19 @@ import {
     setVisUiConfigConditionsByDimension,
 } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem, ValueType } from '@types'
-import cx from 'classnames'
 import {
     type FC,
     createContext,
     useCallback,
     useContext,
     useMemo,
-    useRef,
     useState,
 } from 'react'
+import { BandFilter } from './band-filter/band-filter'
 import { Conditions } from './conditions'
+import { DisplayModeSection } from './display-mode-section/display-mode-section'
 import classes from './styles/conditions-modal-content.module.css'
+import { useDimensionLegendSets } from './use-dimension-legend-sets'
 
 const EMPTY_CONDITION = ''
 
@@ -121,16 +122,17 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         isProgramIndicator || (valueType && isValueTypeNumeric(valueType))
     )
 
+    const { legendSets, legendSetCount, defaultLegendSetId } =
+        useDimensionLegendSets(dimension, canHaveLegendSets)
+
+    const displayMode = getDisplayMode(conditions)
+    const showDisplaySection = canHaveLegendSets && legendSetCount >= 1
+
     const [conditionsList, setConditionsList] = useState<string[]>(
         conditions.condition?.length
             ? parseConditionsStringToArray(conditions.condition)
             : [EMPTY_CONDITION]
     )
-
-    const disableAddButton: boolean =
-        canHaveLegendSets &&
-        (conditionsList.some((condition) => condition.includes(OPERATOR_IN)) ||
-            Boolean(conditions.legendSet))
 
     const storeConditions = useCallback(
         (conditionsList: string[], legendSet?: string) =>
@@ -149,29 +151,51 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         [dimension.id, dispatch]
     )
 
-    const hasPersistedFilter: boolean = Boolean(
-        conditions.condition?.length || conditions.legendSet
-    )
-    /* conditionsList is local state, so it survives the "Show all"/"Filter"
-     * toggle on its own. The legendSet lives in the persisted conditions, which
-     * "Show all" clears, so it's the only piece that needs stashing to restore
-     * when switching back to "Filter". */
-    const legendSetStashRef = useRef<string | undefined>(conditions.legendSet)
+    /* The Filter axis tracks the band/operator condition only; the legendSet
+     * belongs to the Display axis and persists across the Show all/Filter
+     * toggle. conditionsList is local state so it survives that toggle on its
+     * own — only the persisted condition needs restoring. */
+    const hasPersistedFilter: boolean = Boolean(conditions.condition?.length)
 
     const onEnterShowAll = useCallback(() => {
-        legendSetStashRef.current = conditions.legendSet
-        storeConditions([], undefined)
-    }, [conditions.legendSet, storeConditions])
+        storeConditions(
+            [],
+            displayMode === 'GROUP' ? conditions.legendSet : undefined
+        )
+    }, [displayMode, conditions.legendSet, storeConditions])
 
     const onEnterFilter = useCallback(() => {
-        storeConditions(conditionsList, legendSetStashRef.current)
-    }, [conditionsList, storeConditions])
+        storeConditions(
+            conditionsList,
+            displayMode === 'GROUP' ? conditions.legendSet : undefined
+        )
+    }, [conditionsList, displayMode, conditions.legendSet, storeConditions])
 
-    const { mode, onModeChange } = useFilterRadioMode({
+    const { mode, onModeChange, resetMode } = useFilterRadioMode({
         hasPersistedFilter,
         onEnterShowAll,
         onEnterFilter,
     })
+
+    /* Switching the Display axis rewrites the conditions wholesale and snaps
+     * the Filter back to "Show all" — the operator/band payloads don't convert,
+     * so a stashed filter from the other mode would read as phantom state. */
+    const onDisplayModeChange = useCallback(
+        (next: ConditionsObject) => {
+            setConditionsList([EMPTY_CONDITION])
+            storeConditions([], next.legendSet)
+            resetMode('SHOW_ALL')
+        },
+        [storeConditions, resetMode]
+    )
+
+    const onBandConditionChange = useCallback(
+        (condition: string) => {
+            setConditionsList([condition])
+            storeConditions([condition], conditions.legendSet)
+        },
+        [conditions.legendSet, storeConditions]
+    )
 
     const addCondition = (): void => {
         setConditionsList((prev) => [...prev, EMPTY_CONDITION])
@@ -186,15 +210,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                     (_, index) => index !== conditionIndex
                 )
 
-                const hasInOperator = updatedConditionsList.some((condition) =>
-                    condition.includes(OPERATOR_IN)
-                )
-
-                const nextLegendSet = hasInOperator
-                    ? conditions.legendSet
-                    : undefined
-
-                storeConditions(updatedConditionsList, nextLegendSet)
+                storeConditions(updatedConditionsList, conditions.legendSet)
 
                 return updatedConditionsList
             }),
@@ -247,58 +263,42 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
 
     return (
         <ConditionsProvider.Provider value={providerValue}>
+            {showDisplaySection && defaultLegendSetId && (
+                <DisplayModeSection
+                    conditions={conditions}
+                    legendSets={legendSets}
+                    defaultLegendSetId={defaultLegendSetId}
+                    onChange={onDisplayModeChange}
+                />
+            )}
             {isSupported ? (
                 <ShowAllFilterRadio
                     mode={mode}
                     onModeChange={onModeChange}
                     dataTest={`conditions-${dimension.id}-filter-radio`}
+                    heading={showDisplaySection ? i18n.t('Filter') : undefined}
                 >
-                    <div className={classes.mainSection}>
-                        <Conditions />
-                        {!isSingleCondition && (
-                            <Tooltip
-                                content={i18n.t(
-                                    "Preset options can't be combined with other filters"
-                                )}
-                                placement="bottom"
-                                closeDelay={200}
-                            >
-                                {({ onMouseOver, onMouseOut, ref }) => (
-                                    <span
-                                        ref={ref}
-                                        onMouseOver={(event) =>
-                                            disableAddButton &&
-                                            onMouseOver(event)
-                                        }
-                                        onMouseOut={(event) =>
-                                            disableAddButton &&
-                                            onMouseOut(event)
-                                        }
-                                        className={cx(
-                                            classes.tooltipReference,
-                                            {
-                                                [classes.tooltipReferenceFirst]:
-                                                    !conditionsList.length,
-                                            }
-                                        )}
-                                    >
-                                        <Button
-                                            type="button"
-                                            small
-                                            onClick={addCondition}
-                                            className={
-                                                classes.addConditionButton
-                                            }
-                                            disabled={disableAddButton}
-                                            dataTest="button-add-condition"
-                                        >
-                                            {i18n.t('Add filter')}
-                                        </Button>
-                                    </span>
-                                )}
-                            </Tooltip>
-                        )}
-                    </div>
+                    {displayMode === 'GROUP' && conditions.legendSet ? (
+                        <BandFilter
+                            legendSetId={conditions.legendSet}
+                            condition={conditions.condition ?? ''}
+                            onChange={onBandConditionChange}
+                        />
+                    ) : (
+                        <div className={classes.mainSection}>
+                            <Conditions />
+                            {!isSingleCondition && (
+                                <Button
+                                    type="button"
+                                    small
+                                    onClick={addCondition}
+                                    dataTest="button-add-condition"
+                                >
+                                    {i18n.t('Add filter')}
+                                </Button>
+                            )}
+                        </div>
+                    )}
                 </ShowAllFilterRadio>
             ) : (
                 <ShowAllFilterRadio
