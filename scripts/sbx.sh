@@ -9,12 +9,6 @@ DEV_PORT=3000
 MARKETPLACE="anthropics/claude-plugins-official"
 PNPM_VERSION="$(node -p "require('$REPO_ROOT/package.json').packageManager.split('@')[1].split('+')[0]" 2>/dev/null || echo latest)"
 
-# The committed .claude/settings.json enables the chrome-devtools-mcp plugin, which on the host
-# drives the host's own Chrome. The sandbox has no such Chrome — browser automation is provided
-# instead by a sandbox-local headless server (see setup_browser). Disable the plugin
-# per-run via --settings (CLI scope wins over project settings) so it does not error as "enabled
-# but not installed", without writing to the bind-mounted repo (which would disable it for the host).
-DISABLE_HOST_CHROME_PLUGIN='{"enabledPlugins":{"chrome-devtools-mcp@claude-plugins-official":false}}'
 
 require_sbx() {
     if ! command -v sbx >/dev/null 2>&1; then
@@ -58,6 +52,17 @@ provision_sandbox() {
         claude plugin install typescript-lsp@claude-plugins-official >/dev/null
         claude plugin install context7@claude-plugins-official >/dev/null
         claude plugin install superpowers@claude-plugins-official >/dev/null
+        # The project settings enable chrome-devtools-mcp for host use, but sandboxes get
+        # browser automation via a user-scoped MCP server (see setup_browser) — the plugin
+        # would conflict and error in /doctor. Disable it at user scope so it wins over the
+        # project setting without touching the committed settings file.
+        node -e "
+            const fs = require(\"fs\"), p = process.env.HOME + \"/.claude/settings.json\";
+            let s = {}; try { s = JSON.parse(fs.readFileSync(p, \"utf8\")); } catch(e) {}
+            s.enabledPlugins = s.enabledPlugins || {};
+            s.enabledPlugins[\"chrome-devtools-mcp@claude-plugins-official\"] = false;
+            fs.writeFileSync(p, JSON.stringify(s, null, 4) + \"\n\");
+        "
         # Cypress/Electron e2e needs GTK + X libs to actually run (the binary itself installs
         # from the allow-listed CDN during pnpm install). Best-effort; wait out startup apt lock.
         for _ in $(seq 1 30); do sudo fuser /var/lib/apt/lists/lock /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || break; sleep 2; done
@@ -388,7 +393,6 @@ cmd_mount() {
     local note="${BASE_NOTE}"$'\n\n'"${MOUNT_NOTE}"
     sbx run "$MOUNT_NAME" -- \
         --dangerously-skip-permissions \
-        --settings "$DISABLE_HOST_CHROME_PLUGIN" \
         --append-system-prompt "$note" \
         "$@"
 }
@@ -432,7 +436,6 @@ cmd_clone() {
     local note="${BASE_NOTE}"$'\n\n'"${CLONE_NOTE}"
     sbx run "$CLONE_NAME" -- \
         --dangerously-skip-permissions \
-        --settings "$DISABLE_HOST_CHROME_PLUGIN" \
         --append-system-prompt "$note" \
         "$@"
     echo
