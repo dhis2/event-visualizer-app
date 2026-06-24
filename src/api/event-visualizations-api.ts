@@ -4,10 +4,10 @@ import { parseEngineError } from '@api/parse-engine-error'
 import { preparePayloadForSave } from '@dhis2/analytics'
 import { parseCondition } from '@modules/conditions'
 import {
-    getDimensionFields,
+    dimensionFields,
     getProgramFields,
-    getProgramStageFields,
     getTrackedEntityTypeFields,
+    programStageFields,
 } from '@modules/query'
 import {
     getDimensionMetadataFields,
@@ -30,12 +30,12 @@ export const getVisualizationQueryFields = (
     displayNameProp: CurrentUser['settings']['displayNameProperty']
 ): string[] => [
     '*',
-    `columns[${getDimensionFields(displayNameProp)}]`,
-    `rows[${getDimensionFields(displayNameProp)}]`,
-    `filters[${getDimensionFields(displayNameProp)}]`,
+    `columns[${dimensionFields}]`,
+    `rows[${dimensionFields}]`,
+    `filters[${dimensionFields}]`,
     `value[id,${displayNameProp}~rename(name),aggregationType]`,
     `program[${getProgramFields(displayNameProp)}]`,
-    `programStage[${getProgramStageFields(displayNameProp)}]`,
+    `programStage[${programStageFields}]`,
     `programDimensions[${getProgramFields(displayNameProp)}]`,
     'access',
     'href',
@@ -140,7 +140,8 @@ export const eventVisualizationsApi = api.injectEndpoints({
                                     options: {
                                         resource: 'options',
                                         params: {
-                                            fields: `id,code,${displayNameProperty}~rename(name)`,
+                                            // options have no shortName, so the name always comes from displayName
+                                            fields: `id,code,displayName~rename(name)`,
                                             filter: [
                                                 `optionSet.id:eq:${optionSetId}`,
                                                 `code:in:[${conditions.join(
@@ -198,7 +199,8 @@ export const eventVisualizationsApi = api.injectEndpoints({
                                     legends: {
                                         resource: `legendSets/${legendSetId}/legends/gist`,
                                         params: {
-                                            fields: `id,${displayNameProperty}~rename(name)`,
+                                            // legends have no shortName, so the name always comes from displayName
+                                            fields: `id,displayName~rename(name)`,
                                             filter: `id:in:[${conditions.join(
                                                 ','
                                             )}]`,

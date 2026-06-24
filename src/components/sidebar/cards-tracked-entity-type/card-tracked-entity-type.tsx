@@ -9,6 +9,7 @@ import {
     type UseSelectedDimensionCountMatchFn,
 } from '@components/sidebar/use-selected-dimension-count'
 import i18n from '@dhis2/d2-i18n'
+import { useCurrentUser } from '@hooks'
 import { getTrackedEntityTypeFixedDimensions } from '@modules/dimension'
 import { isObject, isPopulatedString } from '@modules/validation'
 import type {
@@ -75,6 +76,9 @@ const transformTrackedEntityTypeAttributes = (
 export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
     trackedEntityType,
 }) => {
+    const {
+        settings: { displayNameProperty },
+    } = useCurrentUser()
     const title = i18n.t('{{- name}} registration', {
         name: trackedEntityType.name,
     })
@@ -93,12 +97,12 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
             params: {
                 fields: [
                     'id',
-                    'displayName~rename(name)',
-                    'trackedEntityTypeAttributes[trackedEntityAttribute[id,displayName~rename(name),valueType,optionSet]]',
+                    `${displayNameProperty}~rename(name)`,
+                    `trackedEntityTypeAttributes[trackedEntityAttribute[id,${displayNameProperty}~rename(name),valueType,optionSet]]`,
                 ],
             },
         }),
-        [trackedEntityType.id]
+        [trackedEntityType.id, displayNameProperty]
     )
     const transformer = useCallback<Transformer>(
         (data) =>

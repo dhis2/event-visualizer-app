@@ -28,10 +28,7 @@ export const optionsApi = api.injectEndpoints({
                 { id, searchTerm, page = 1 },
                 apiArg: BaseQueryApiWithExtraArg
             ) {
-                const { appCachedData, engine } = apiArg.extra
-
-                const nameProp =
-                    appCachedData.currentUser.settings.displayNameProperty
+                const { engine } = apiArg.extra
 
                 const filters = [`optionSet.id:eq:${id}`]
 
@@ -44,7 +41,8 @@ export const optionsApi = api.injectEndpoints({
                         options: {
                             resource: 'options',
                             params: {
-                                fields: `code,${nameProp}~rename(name),id,optionSet[id,${nameProp}~rename(name)]`,
+                                // options and option sets have no shortName, so the name always comes from displayName
+                                fields: `code,displayName~rename(name),id,optionSet[id,displayName~rename(name)]`,
                                 filter: filters,
                                 paging: true,
                                 page,
