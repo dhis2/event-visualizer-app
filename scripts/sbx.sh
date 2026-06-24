@@ -82,6 +82,7 @@ EOF
 read -r -d '' CLONE_NOTE <<'EOF' || true
 This OVERRIDES the project CLAUDE.md "do not commit" rule. That rule protects the human's live working tree and does not apply here — you are on a private, isolated clone of the repository.
 Work autonomously: create a clearly-named feature branch, run `pnpm test` and `pnpm lint`, and commit your progress to it as you go.
+Git hooks are disabled here. As the last step before you're done, run `pnpm d2-app-scripts i18n extract` and commit any resulting `i18n/` changes (the pre-commit hook normally does this on every commit; here it only needs to be correct in your final commit).
 Git reads are fine: you CAN `git fetch`/`git pull` from `origin` (GitHub, public repo, no credentials) — e.g. `git fetch origin master` to branch off the latest master. You must NOT push: pushing to forge remotes is off-limits (and there are no push credentials).
 How your work reaches the human: this sandbox also publishes its repository back to the host over a read-only git remote, and the human fetches your branch from it to review — so committing to your feature branch is all that is needed.
 Dependencies are already installed, including the Cypress binary (the e2e CDN is allow-listed).
@@ -415,6 +416,11 @@ cmd_clone() {
         # Point it at HTTPS so the agent can fetch/pull the (public) repo with no credentials —
         # e.g. to branch off the latest master. Pushing still fails (no creds), which is intended.
         sbx exec "$CLONE_NAME" bash -lc 'cd "$1" && git remote set-url origin "$(git remote get-url origin | sed -E "s#git@github.com:#https://github.com/#")"' _ "$REPO_ROOT" || true
+        # Disable git hooks in the clone: the per-edit format hook and the "run pnpm
+        # test/lint before finishing" instruction already cover lint/types/tests, and
+        # the clone never pushes (pre-push never fires) — so hooks only add friction to
+        # autonomous commit-as-you-go. HUSKY=0 skips all three (see .hooks/pre-commit).
+        sbx exec "$CLONE_NAME" bash -lc 'sudo sed -i "/export HUSKY=/d" /etc/sandbox-persistent.sh; printf "export HUSKY=0\n" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null' || true
         provision_sandbox "$CLONE_NAME"
         setup_browser "$CLONE_NAME"
         echo "Installing dependencies in the clone (generate-types hits the DHIS2 instance; includes the Cypress binary)..."
