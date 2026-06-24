@@ -52,17 +52,6 @@ provision_sandbox() {
         claude plugin install typescript-lsp@claude-plugins-official >/dev/null
         claude plugin install context7@claude-plugins-official >/dev/null
         claude plugin install superpowers@claude-plugins-official >/dev/null
-        # The project settings enable chrome-devtools-mcp for host use, but sandboxes get
-        # browser automation via a user-scoped MCP server (see setup_browser) — the plugin
-        # would conflict and error in /doctor. Disable it at user scope so it wins over the
-        # project setting without touching the committed settings file.
-        node -e "
-            const fs = require(\"fs\"), p = process.env.HOME + \"/.claude/settings.json\";
-            let s = {}; try { s = JSON.parse(fs.readFileSync(p, \"utf8\")); } catch(e) {}
-            s.enabledPlugins = s.enabledPlugins || {};
-            s.enabledPlugins[\"chrome-devtools-mcp@claude-plugins-official\"] = false;
-            fs.writeFileSync(p, JSON.stringify(s, null, 4) + \"\n\");
-        "
         # Cypress/Electron e2e needs GTK + X libs to actually run (the binary itself installs
         # from the allow-listed CDN during pnpm install). Best-effort; wait out startup apt lock.
         for _ in $(seq 1 30); do sudo fuser /var/lib/apt/lists/lock /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || break; sleep 2; done
@@ -82,6 +71,7 @@ Dependencies are already installed: the host install includes the Linux binaries
 DO NOT branch or commit — the human reviews your diffs and commits on the host.
 A dev server you start (e.g. `pnpm start`) is reachable from the host at http://localhost:3000.
 Browser automation is available: the chrome-devtools tools drive an in-sandbox headless Chrome. Use them to load and inspect your running app — start the dev server, then navigate to http://localhost:3000.
+The `chrome-devtools-mcp` plugin shows an "enabled in project settings but not installed" warning in /doctor here — that is EXPECTED and harmless. Do NOT install or enable it (it needs a Chrome the sandbox can't provide); the in-sandbox server above already gives you the chrome-devtools tools.
 EOF
 
 read -r -d '' CLONE_NOTE <<'EOF' || true
@@ -92,6 +82,7 @@ Git reads are fine: you CAN `git fetch`/`git pull` from `origin` (GitHub, public
 How your work reaches the human: this sandbox also publishes its repository back to the host over a read-only git remote, and the human fetches your branch from it to review — so committing to your feature branch is all that is needed.
 Dependencies are already installed, including the Cypress binary (the e2e CDN is allow-listed).
 Browser automation is available: the chrome-devtools tools drive an in-sandbox headless Chrome. Start the dev server (`pnpm start`) and navigate to http://localhost:3000 to load and inspect the app.
+The `chrome-devtools-mcp` plugin shows an "enabled in project settings but not installed" warning in /doctor here — that is EXPECTED and harmless. Do NOT install or enable it (it needs a Chrome the sandbox can't provide); the in-sandbox server above already gives you the chrome-devtools tools.
 A read-only copy of the host's working tree is also at /run/sandbox/source for any UNPUSHED local changes; pull them with `git pull /run/sandbox/source <branch>`.
 EOF
 
