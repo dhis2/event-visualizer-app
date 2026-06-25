@@ -1,5 +1,6 @@
 import type { SidebarSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import { getDimensionLayoutBlockedMessage } from '@components/sidebar/sidebar-disabling'
+import i18n from '@dhis2/d2-i18n'
 import type { DraggableSyntheticListeners } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -30,8 +31,9 @@ type UseDimensionItemDndReturn = {
     style: CSSProperties | undefined
 }
 
-const MULTI_SELECT_ALL_BLOCKED_MESSAGE =
+const MULTI_SELECT_ALL_BLOCKED_MESSAGE = i18n.t(
     'None of the selected dimensions can be added to this layout.'
+)
 
 export const useDimensionItemDnd = ({
     dimension,
