@@ -1,6 +1,6 @@
 import type { DimensionMetadataItem } from '@types'
 import { describe, it, expect } from 'vitest'
-import { getDimensionDisabledMessageByLayout } from '../sidebar-disabling'
+import { getDimensionLayoutBlockedMessage } from '../sidebar-disabling'
 
 const makeDim = (
     overrides: Partial<DimensionMetadataItem>
@@ -12,24 +12,22 @@ const makeDim = (
     ...overrides,
 })
 
-describe('getDimensionDisabledMessageByLayout — custom-value rule (Case C)', () => {
+describe('getDimensionLayoutBlockedMessage — custom-value rule (Case C)', () => {
     it('disables the dim whose compound id matches the custom value id', () => {
         const dim = makeDim({ id: 'stage1.de1' })
         expect(
-            getDimensionDisabledMessageByLayout({
+            getDimensionLayoutBlockedMessage({
                 dimension: dim,
                 visualizationType: 'PIVOT_TABLE',
                 customValueId: 'stage1.de1',
             })
-        ).toBe(
-            'This dimension is used as the custom value. Remove the custom value to use it in the layout.'
-        )
+        ).toBe('Already used as custom value.')
     })
 
     it('does not disable a different stage-instance of the same DE', () => {
         const dimStageB = makeDim({ id: 'stageB.de1' })
         expect(
-            getDimensionDisabledMessageByLayout({
+            getDimensionLayoutBlockedMessage({
                 dimension: dimStageB,
                 visualizationType: 'PIVOT_TABLE',
                 customValueId: 'stageA.de1',
@@ -40,7 +38,7 @@ describe('getDimensionDisabledMessageByLayout — custom-value rule (Case C)', (
     it('leaves non-matching dims enabled', () => {
         const dim = makeDim({ id: 'stage1.de2' })
         expect(
-            getDimensionDisabledMessageByLayout({
+            getDimensionLayoutBlockedMessage({
                 dimension: dim,
                 visualizationType: 'PIVOT_TABLE',
                 customValueId: 'stage1.de1',
@@ -51,7 +49,7 @@ describe('getDimensionDisabledMessageByLayout — custom-value rule (Case C)', (
     it('does not fire when no custom value is set', () => {
         const dim = makeDim({ id: 'stage1.de1' })
         expect(
-            getDimensionDisabledMessageByLayout({
+            getDimensionLayoutBlockedMessage({
                 dimension: dim,
                 visualizationType: 'PIVOT_TABLE',
                 customValueId: null,
@@ -60,7 +58,7 @@ describe('getDimensionDisabledMessageByLayout — custom-value rule (Case C)', (
     })
 })
 
-describe('getDimensionDisabledMessageByLayout — registration OU rule (Case B)', () => {
+describe('getDimensionLayoutBlockedMessage — registration OU rule (Case B)', () => {
     const registrationOuDim = makeDim({
         id: 'tetA.enrollmentOu',
         dimensionId: 'enrollmentOu',
@@ -68,19 +66,19 @@ describe('getDimensionDisabledMessageByLayout — registration OU rule (Case B)'
         trackedEntityTypeId: 'tetA',
     })
 
-    it('disables the TET registration OU item when vis is PIVOT_TABLE', () => {
+    it('blocks the TET registration OU item when vis is PIVOT_TABLE', () => {
         expect(
-            getDimensionDisabledMessageByLayout({
+            getDimensionLayoutBlockedMessage({
                 dimension: registrationOuDim,
                 visualizationType: 'PIVOT_TABLE',
                 customValueId: null,
             })
-        ).toBe('Not valid with Pivot table')
+        ).toBe('Not supported in a Pivot table.')
     })
 
     it('does not disable the TET registration OU item when vis is LINE_LIST', () => {
         expect(
-            getDimensionDisabledMessageByLayout({
+            getDimensionLayoutBlockedMessage({
                 dimension: registrationOuDim,
                 visualizationType: 'LINE_LIST',
                 customValueId: null,
@@ -96,7 +94,7 @@ describe('getDimensionDisabledMessageByLayout — registration OU rule (Case B)'
             programId: 'progA',
         })
         expect(
-            getDimensionDisabledMessageByLayout({
+            getDimensionLayoutBlockedMessage({
                 dimension: programEnrollmentOu,
                 visualizationType: 'PIVOT_TABLE',
                 customValueId: null,
@@ -113,7 +111,7 @@ describe('getDimensionDisabledMessageByLayout — registration OU rule (Case B)'
             programStageId: 'stage1',
         })
         expect(
-            getDimensionDisabledMessageByLayout({
+            getDimensionLayoutBlockedMessage({
                 dimension: stageOu,
                 visualizationType: 'PIVOT_TABLE',
                 customValueId: null,
@@ -122,7 +120,7 @@ describe('getDimensionDisabledMessageByLayout — registration OU rule (Case B)'
     })
 })
 
-describe('getDimensionDisabledMessageByLayout — both rules', () => {
+describe('getDimensionLayoutBlockedMessage — both rules', () => {
     it('returns the custom-value message when both rules could fire (TET registration OU is the custom value)', () => {
         const dim = makeDim({
             id: 'tetA.enrollmentOu',
@@ -130,7 +128,7 @@ describe('getDimensionDisabledMessageByLayout — both rules', () => {
             dimensionType: 'ORGANISATION_UNIT',
             trackedEntityTypeId: 'tetA',
         })
-        const result = getDimensionDisabledMessageByLayout({
+        const result = getDimensionLayoutBlockedMessage({
             dimension: dim,
             visualizationType: 'PIVOT_TABLE',
             customValueId: 'tetA.enrollmentOu',

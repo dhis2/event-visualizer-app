@@ -1,6 +1,6 @@
 import { IconButton } from '@components/shared/icon-button'
 import { useIsContainingCardDisabled } from '@components/sidebar/dimension-card'
-import { useDimensionDisabledText } from '@components/sidebar/sidebar-disabling'
+import { useDimensionLayoutBlockedMessage } from '@components/sidebar/sidebar-disabling'
 import { useIsDimensionInLayout } from '@components/sidebar/use-is-dimension-in-layout'
 import { IconAdd16, IconSubtract16, Tooltip } from '@dhis2/ui'
 import { useAddMetadata, useAppDispatch, useAppSelector } from '@hooks'
@@ -165,7 +165,9 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
 export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = (
     props
 ) => {
-    const layoutDisabledMessage = useDimensionDisabledText(props.dimension)
+    const layoutDisabledMessage = useDimensionLayoutBlockedMessage(
+        props.dimension
+    )
     if (layoutDisabledMessage) {
         return (
             <Tooltip

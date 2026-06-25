@@ -6,10 +6,7 @@ import {
     isDataSourceProgramWithoutRegistration,
     isDataSourceTrackedEntityType,
 } from '@modules/data-source'
-import {
-    isDimensionFullyInvalidForVisType,
-    isDimensionTypeFullyInvalidForVisType,
-} from '@modules/validation'
+import { isDimensionFullyInvalidForVisType } from '@modules/validation'
 import { createSelector } from '@reduxjs/toolkit'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 import {
@@ -45,13 +42,6 @@ const differentTetMessage = (tetName: string): string =>
         { tetName }
     )
 
-const programIndicatorsVisTypeMessage = (
-    visualizationType: VisualizationType
-): string =>
-    i18n.t('Cannot be used with {{visType}}.', {
-        visType: visTypeDisplayNames[visualizationType],
-    })
-
 /* The three data-source branches below directly express which cards a
  * particular data source's invalid-layout states disable and which card
  * carries the explanatory notice. Each branch returns the complete
@@ -59,11 +49,9 @@ const programIndicatorsVisTypeMessage = (
  * cross-card dedup pass. */
 
 const stateForProgramWithRegistration = ({
-    visualizationType,
     dataSourceTetId,
     layoutTet,
 }: {
-    visualizationType: VisualizationType
     dataSourceTetId: string
     layoutTet: MetadataItem | null
 }): SidebarDisablingState => {
@@ -81,43 +69,11 @@ const stateForProgramWithRegistration = ({
             },
         }
     }
-    if (
-        isDimensionTypeFullyInvalidForVisType(
-            'PROGRAM_INDICATOR',
-            visualizationType
-        )
-    ) {
-        return {
-            disabledCards: new Set(['enrollment-program-indicators']),
-            disabledMessage: {
-                cardKey: 'enrollment-program-indicators',
-                text: programIndicatorsVisTypeMessage(visualizationType),
-            },
-        }
-    }
     return EMPTY_SIDEBAR_DISABLING_STATE
 }
 
-const stateForProgramWithoutRegistration = (
-    visualizationType: VisualizationType
-): SidebarDisablingState => {
-    /* Event programs have no TET, so the different-TET rule never fires. */
-    if (
-        isDimensionTypeFullyInvalidForVisType(
-            'PROGRAM_INDICATOR',
-            visualizationType
-        )
-    ) {
-        return {
-            disabledCards: new Set(['event-program-indicators']),
-            disabledMessage: {
-                cardKey: 'event-program-indicators',
-                text: programIndicatorsVisTypeMessage(visualizationType),
-            },
-        }
-    }
-    return EMPTY_SIDEBAR_DISABLING_STATE
-}
+const stateForProgramWithoutRegistration = (): SidebarDisablingState =>
+    EMPTY_SIDEBAR_DISABLING_STATE
 
 const stateForTrackedEntityType = ({
     dataSourceTetId,
@@ -154,19 +110,18 @@ const selectLayoutTetArg = (
 
 export const selectSidebarDisablingState = createSelector(
     [getVisUiConfigVisualizationType, selectDataSourceArg, selectLayoutTetArg],
-    (visualizationType, dataSource, layoutTet): SidebarDisablingState => {
+    (_visualizationType, dataSource, layoutTet): SidebarDisablingState => {
         if (!dataSource) {
             return EMPTY_SIDEBAR_DISABLING_STATE
         }
         if (isDataSourceProgramWithRegistration(dataSource)) {
             return stateForProgramWithRegistration({
-                visualizationType,
                 dataSourceTetId: dataSource.trackedEntityType.id,
                 layoutTet,
             })
         }
         if (isDataSourceProgramWithoutRegistration(dataSource)) {
-            return stateForProgramWithoutRegistration(visualizationType)
+            return stateForProgramWithoutRegistration()
         }
         if (isDataSourceTrackedEntityType(dataSource)) {
             return stateForTrackedEntityType({
@@ -212,7 +167,7 @@ export const useCardDisabledNoticeText = (
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Dimension-level (item) disabling
+// Dimension-level layout-blocked messages
 // ─────────────────────────────────────────────────────────────────────────────
 
 type DimensionDisablingInput = {
@@ -228,9 +183,7 @@ const getCustomValueDimensionMessage = ({
     if (!customValueId || dimension.id !== customValueId) {
         return null
     }
-    return i18n.t(
-        'This dimension is used as the custom value. Remove the custom value to use it in the layout.'
-    )
+    return i18n.t('Already used as custom value.')
 }
 
 const getInvalidForVisTypeMessage = ({
@@ -240,30 +193,28 @@ const getInvalidForVisTypeMessage = ({
     if (!isDimensionFullyInvalidForVisType(dimension, visualizationType)) {
         return null
     }
-    return i18n.t('Not valid with {{visType}}', {
+    return i18n.t('Not supported in a {{visType}}.', {
         visType: visTypeDisplayNames[visualizationType],
     })
 }
 
-/* Item-level disable rules. The two reasons are orthogonal (a dim is either
+/* Layout-blocked rules. The two reasons are orthogonal (a dim is either
  * the custom-value target or it is invalid for the current vis type, never
  * both), so order does not matter operationally — custom-value is checked
  * first because it is the most common reason in practice. */
-export const getDimensionDisabledMessageByLayout = (
+export const getDimensionLayoutBlockedMessage = (
     input: DimensionDisablingInput
 ): string | null =>
     getCustomValueDimensionMessage(input) ?? getInvalidForVisTypeMessage(input)
 
-export const useDimensionDisabledText = (
+export const useDimensionLayoutBlockedMessage = (
     dimension: DimensionMetadataItem
-): string | undefined => {
+): string | null => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const customValue = useAppSelector(getVisUiConfigCustomValue)
-    return (
-        getDimensionDisabledMessageByLayout({
-            dimension,
-            visualizationType,
-            customValueId: customValue?.id ?? null,
-        }) ?? undefined
-    )
+    return getDimensionLayoutBlockedMessage({
+        dimension,
+        visualizationType,
+        customValueId: customValue?.id ?? null,
+    })
 }
