@@ -132,9 +132,6 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
     })
 
     const showGroupingSelect = canHaveLegendSets && legendSetCount >= 1
-    /* When grouped, the only filter is a single "is one of preset options" band
-     * selection, so adding further operator conditions is disabled. */
-    const disableAddButton = Boolean(conditions.legendSet)
 
     const [conditionsList, setConditionsList] = useState<string[]>(
         conditions.condition?.length
@@ -270,16 +267,22 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                     mode={mode}
                     onModeChange={onModeChange}
                     dataTest={`conditions-${dimension.id}-filter-radio`}
-                    heading={showGroupingSelect ? i18n.t('Filter') : undefined}
+                    heading={
+                        showGroupingSelect ? i18n.t('Filtering') : undefined
+                    }
+                    showAllLabel={
+                        conditions.legendSet
+                            ? i18n.t('Show all groups')
+                            : undefined
+                    }
                 >
                     <div className={classes.mainSection}>
                         <Conditions />
-                        {!isSingleCondition && (
+                        {!isSingleCondition && !conditions.legendSet && (
                             <Button
                                 type="button"
                                 small
                                 onClick={addCondition}
-                                disabled={disableAddButton}
                                 dataTest="button-add-condition"
                             >
                                 {i18n.t('Add filter')}

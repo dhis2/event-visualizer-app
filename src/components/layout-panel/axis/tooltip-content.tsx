@@ -112,7 +112,7 @@ export const TooltipContent: FC<TooltipContentProps> = ({
             )}
             {isGroupedIntoRanges && legendSetName && (
                 <li className={styles.item}>
-                    {i18n.t('Ranges: {{- legendSetName}}', {
+                    {i18n.t('Groups: {{- legendSetName}}', {
                         legendSetName,
                         nsSeparator: '^^',
                     })}

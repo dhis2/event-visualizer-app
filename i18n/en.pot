@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-24T13:47:36.125Z\n"
-"PO-Revision-Date: 2026-06-24T13:47:36.126Z\n"
+"POT-Creation-Date: 2026-06-25T07:49:29.376Z\n"
+"PO-Revision-Date: 2026-06-25T07:49:29.376Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -35,8 +35,11 @@ msgstr "{{valueType}} type dimensions cannot be filtered."
 msgid "This dimension cannot be filtered."
 msgstr "This dimension cannot be filtered."
 
-msgid "Filter"
-msgstr "Filter"
+msgid "Filtering"
+msgstr "Filtering"
+
+msgid "Show all groups"
+msgstr "Show all groups"
 
 msgid "Add filter"
 msgstr "Add filter"
@@ -47,17 +50,20 @@ msgstr "and"
 msgid "Grouping"
 msgstr "Grouping"
 
-msgid "None"
-msgstr "None"
+msgid "No grouping"
+msgstr "No grouping"
 
-msgid "is one of preset options"
-msgstr "is one of preset options"
+msgid "Show each value individually"
+msgstr "Show each value individually"
 
-msgid "Choose ranges"
-msgstr "Choose ranges"
+msgid "Available groups"
+msgstr "Available groups"
 
-msgid "Loading ranges"
-msgstr "Loading ranges"
+msgid "Filter groups"
+msgstr "Filter groups"
+
+msgid "Selected groups"
+msgstr "Selected groups"
 
 msgid "From stages with repeatable events, show values from:"
 msgstr "From stages with repeatable events, show values from:"
@@ -106,6 +112,9 @@ msgstr "Value filtering"
 
 msgid "Show all values"
 msgstr "Show all values"
+
+msgid "Filter"
+msgstr "Filter"
 
 msgid "No items selected"
 msgstr "No items selected"
@@ -182,8 +191,8 @@ msgstr "An error occurred"
 msgid "Resize axes panel"
 msgstr "Resize axes panel"
 
-msgid "Grouped into ranges"
-msgstr "Grouped into ranges"
+msgid "Grouped"
+msgstr "Grouped"
 
 msgid "Move to {{- axisName}}"
 msgstr "Move to {{- axisName}}"
@@ -206,8 +215,8 @@ msgstr "Program: {{- programName}}"
 msgid "Program stage: {{- stageName}}"
 msgstr "Program stage: {{- stageName}}"
 
-msgid "Ranges: {{- legendSetName}}"
-msgstr "Ranges: {{- legendSetName}}"
+msgid "Groups: {{- legendSetName}}"
+msgstr "Groups: {{- legendSetName}}"
 
 msgid "Levels"
 msgstr "Levels"
@@ -462,6 +471,9 @@ msgstr "Accumulate cell values along rows"
 
 msgid "Digit group separator"
 msgstr "Digit group separator"
+
+msgid "None"
+msgstr "None"
 
 msgid "Space"
 msgstr "Space"

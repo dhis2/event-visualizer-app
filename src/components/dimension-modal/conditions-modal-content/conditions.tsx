@@ -12,6 +12,7 @@ import {
     DateTimeCondition,
     TimeCondition,
 } from './date-condition'
+import { LegendBandTransfer } from './numeric-condition/legend-band-transfer'
 import { NumericCondition } from './numeric-condition/numeric-condition'
 import { OptionSetCondition } from './option-set-condition/option-set-condition'
 import { OrgUnitCondition } from './org-unit-condition'
@@ -49,28 +50,15 @@ const ConditionsList: FC<{
 }
 
 const NumericConditionsList: FC = () => {
-    const {
-        conditionsList,
-        conditions,
-        dimension,
-        removeCondition,
-        setCondition,
-    } = useConditions()
+    const { conditionsList, dimension, removeCondition, setCondition } =
+        useConditions()
 
-    // when grouped with no band selection yet, still render one row so the
-    // preset-options multi-select is reachable
-    const rows =
-        conditionsList.length || !conditions.legendSet ? conditionsList : ['']
-
-    return rows.map((condition, index) => (
+    return conditionsList.map((condition, index) => (
         <div key={index}>
             <NumericCondition
                 dimension={dimension}
                 condition={condition}
-                legendSetId={conditions.legendSet}
-                onChange={(value) =>
-                    setCondition(index, value, conditions.legendSet)
-                }
+                onChange={(value) => setCondition(index, value)}
                 onRemove={() => removeCondition(index)}
             />
             <ConditionDivider total={conditionsList.length} index={index} />
@@ -81,6 +69,7 @@ const NumericConditionsList: FC = () => {
 export const Conditions: FC = () => {
     const {
         dimension,
+        conditions,
         conditionsList,
         valueType,
         isOptionSetCondition,
@@ -94,6 +83,18 @@ export const Conditions: FC = () => {
                 condition={conditionsList[0]}
                 optionSetId={dimension.optionSetId!}
                 onChange={(value) => setCondition(0, value)}
+            />
+        )
+    }
+
+    if (conditions.legendSet) {
+        return (
+            <LegendBandTransfer
+                legendSetId={conditions.legendSet}
+                condition={conditionsList[0] ?? ''}
+                onChange={(value) =>
+                    setCondition(0, value, conditions.legendSet)
+                }
             />
         )
     }

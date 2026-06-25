@@ -58,6 +58,8 @@ export const legendSetsApi = api.injectEndpoints({
                 const nameProp =
                     appCachedData.currentUser.settings.displayNameProperty
 
+                const legendSetsFields = `legendSets[id,${nameProp}~rename(name),legends[id,${nameProp}~rename(name),startValue,endValue]]`
+
                 let query
 
                 const id =
@@ -70,27 +72,21 @@ export const legendSetsApi = api.injectEndpoints({
                             query = {
                                 resource: 'dataElements',
                                 id,
-                                params: {
-                                    fields: `legendSets[id,${nameProp}~rename(name)]`,
-                                },
+                                params: { fields: legendSetsFields },
                             }
                             break
                         case 'PROGRAM_ATTRIBUTE':
                             query = {
                                 resource: 'trackedEntityAttributes',
                                 id,
-                                params: {
-                                    fields: `legendSets[id,${nameProp}~rename(name)]`,
-                                },
+                                params: { fields: legendSetsFields },
                             }
                             break
                         case 'PROGRAM_INDICATOR':
                             query = {
                                 resource: 'programIndicators',
                                 id,
-                                params: {
-                                    fields: `legendSets[id,${nameProp}~rename(name)]`,
-                                },
+                                params: { fields: legendSetsFields },
                             }
                             break
                         default:
@@ -108,11 +104,10 @@ export const legendSetsApi = api.injectEndpoints({
                     const legendSets = legendSetsResponse?.legendSets
                         ?.legendSets as LegendSetMetadataItem[]
 
-                    /* Cache id+name in the metadata store so a grouped
+                    /* Cache the sets in the metadata store so a grouped
                      * dimension's legend-set name resolves in the layout chip /
-                     * tooltip even before the bands are fetched. `legends: []`
-                     * keeps it a valid legend set; the smart merge never lets
-                     * this overwrite a fuller set fetched by getLegendSet. */
+                     * tooltip. `legends: []` guards the rare set that returns no
+                     * bands so it stays a valid legend set. */
                     if (Array.isArray(legendSets)) {
                         metadataStore.addMetadata(
                             legendSets.map((legendSet) => ({

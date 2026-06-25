@@ -12,7 +12,57 @@
 }
 
 .options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--spacers-dp8);
+}
+
+/* `.card` is applied to the DHIS2 Radio's own <label>, which sets
+ * align-items:center and a row layout through styled-jsx (specificity 0,1,1);
+ * scoping these overrides under .options lifts them above it without
+ * !important. The radio icon stays in the first column and the title/subtitle
+ * stack beside it. */
+.options .card {
+    align-items: flex-start;
+    column-gap: 0;
+    box-sizing: border-box;
+    padding: var(--spacers-dp8) var(--spacers-dp8);
+    border: 1px solid var(--colors-grey300);
+    border-radius: 5px;
+    background-color: var(--colors-white);
+    cursor: pointer;
+}
+
+.options .card:not(:has(input:checked)):hover {
+    border-color: var(--colors-grey400);
+}
+
+.options .card:not(:has(input:checked)):active {
+    border-color: var(--colors-grey400);
+    background-color: var(--colors-grey100);
+}
+
+.options .card:has(input:checked) {
+    border-color: var(--colors-grey400);
+    background-color: var(--colors-grey050);
+}
+
+.cardText {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--spacers-dp8) var(--spacers-dp16);
+    min-inline-size: 0;
+    flex-direction: column;
+    row-gap: var(--spacers-dp4);
+}
+
+.cardTitle {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--colors-grey900);
+}
+
+.cardSubtitle {
+    font-size: 12px;
+    line-height: 15px;
+    color: var(--colors-grey600);
 }

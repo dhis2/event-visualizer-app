@@ -19,6 +19,10 @@ type ShowAllFilterRadioProps = PropsWithChildren<{
      * legend stays visually hidden — used to pair this with a sibling Display
      * section, where both axes need matching headings. */
     heading?: string
+    /* Label for the "show all" option. Defaults to "Show all values"; the
+     * grouped Conditions tab passes "Show all groups" since the unfiltered
+     * output is the legend-set bands, not the discrete values. */
+    showAllLabel?: string
 }>
 
 export const ShowAllFilterRadio: FC<ShowAllFilterRadioProps> = ({
@@ -28,6 +32,7 @@ export const ShowAllFilterRadio: FC<ShowAllFilterRadioProps> = ({
     filterDisabled = false,
     filterDisabledHelp,
     heading,
+    showAllLabel,
     children,
 }) => {
     const radioGroupName = `${dataTest}-mode`
@@ -51,7 +56,7 @@ export const ShowAllFilterRadio: FC<ShowAllFilterRadioProps> = ({
             <RadioCardGroup>
                 <RadioCard
                     selected={mode === 'SHOW_ALL'}
-                    label={i18n.t('Show all values')}
+                    label={showAllLabel ?? i18n.t('Show all values')}
                     value="SHOW_ALL"
                     name={radioGroupName}
                     dataTest={`${dataTest}-show-all`}

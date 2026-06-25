@@ -45,7 +45,7 @@ describe('Chip — grouped-into-ranges icon', () => {
 
         const icon = screen.getByTestId('layout-chip-grouped-icon')
         expect(icon).toBeInTheDocument()
-        expect(icon).toHaveAccessibleName('Grouped into ranges')
+        expect(icon).toHaveAccessibleName('Grouped')
     })
 
     it('still shows the icon when grouped and band-filtered', async () => {

@@ -58,7 +58,7 @@ export const ChipBase: React.FC<ChipBaseProps> = ({
             <span
                 className={classes.groupedIcon}
                 role="img"
-                aria-label={i18n.t('Grouped into ranges')}
+                aria-label={i18n.t('Grouped')}
                 data-test="layout-chip-grouped-icon"
             >
                 <IconGroupedRanges />

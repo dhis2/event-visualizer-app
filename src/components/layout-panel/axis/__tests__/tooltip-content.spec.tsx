@@ -36,7 +36,7 @@ describe('TooltipContent — grouped into ranges', () => {
         await renderTooltip({ legendSet: 'ls1' }, ['Age 10y intervals'])
 
         expect(
-            screen.getByText('Ranges: Age 10y intervals')
+            screen.getByText('Groups: Age 10y intervals')
         ).toBeInTheDocument()
     })
 
@@ -54,7 +54,7 @@ describe('TooltipContent — grouped into ranges', () => {
         ])
 
         expect(
-            screen.getByText('Ranges: Age 10y intervals')
+            screen.getByText('Groups: Age 10y intervals')
         ).toBeInTheDocument()
         expect(screen.getByText('Low')).toBeInTheDocument()
         expect(screen.getByText('High')).toBeInTheDocument()
