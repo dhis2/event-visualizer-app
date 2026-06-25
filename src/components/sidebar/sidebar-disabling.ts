@@ -193,9 +193,14 @@ const getInvalidForVisTypeMessage = ({
     if (!isDimensionFullyInvalidForVisType(dimension, visualizationType)) {
         return null
     }
-    return i18n.t('Not supported in a {{visType}}.', {
-        visType: visTypeDisplayNames[visualizationType],
-    })
+    const visType = visTypeDisplayNames[visualizationType]
+    /* Case A (Program Indicator) and Case B (registration OU) are both caught
+     * by isDimensionFullyInvalidForVisType, but carry different messages per
+     * the spec. */
+    if (dimension.dimensionType === 'PROGRAM_INDICATOR') {
+        return i18n.t('Cannot be used in a {{visType}}.', { visType })
+    }
+    return i18n.t('Not supported in a {{visType}}.', { visType })
 }
 
 /* Layout-blocked rules. The two reasons are orthogonal (a dim is either
