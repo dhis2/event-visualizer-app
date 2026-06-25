@@ -10,10 +10,24 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { LayoutDragEndEvent } from '../types'
 import { useOnDragEnd } from '../use-on-drag-end'
 
+vi.mock('@dhis2/app-runtime', () => ({
+    useAlert: vi.fn(() => ({ show: vi.fn() })),
+}))
+
+vi.mock('@components/sidebar/sidebar-disabling', () => ({
+    getDimensionLayoutBlockedMessage: vi.fn(() => null),
+}))
+
+const mockStoreGetState = vi.fn(() => ({}))
+
 vi.mock('@hooks', () => ({
     useAppDispatch: vi.fn(),
     useAppSelector: vi.fn(),
     useAddMetadata: vi.fn(),
+    useAppStore: vi.fn(() => ({ getState: mockStoreGetState })),
+    useMetadataStore: vi.fn(() => ({
+        getMetadataItem: vi.fn(() => undefined),
+    })),
 }))
 
 vi.mock('@store/dimensions-selection-slice', () => ({
@@ -25,6 +39,8 @@ vi.mock('@store/vis-ui-config-slice', () => ({
     addVisUiConfigLayoutDimension: vi.fn(),
     addVisUiConfigLayoutDimensions: vi.fn(),
     moveVisUiConfigLayoutDimension: vi.fn(),
+    getVisUiConfigVisualizationType: vi.fn(),
+    getVisUiConfigCustomValue: vi.fn(),
 }))
 
 describe('useOnDragEnd', () => {
