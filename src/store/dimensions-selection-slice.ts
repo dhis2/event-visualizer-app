@@ -139,6 +139,14 @@ export const dimensionSelectionSlice = createSlice({
             }
             state.dimensionCardCollapsedStates[action.payload] = !collapsedState
         },
+        setDimensionCardCollapsed: (
+            state,
+            action: PayloadAction<DimensionCardKey>
+        ) => {
+            if (action.payload in state.dimensionCardCollapsedStates) {
+                state.dimensionCardCollapsedStates[action.payload] = true
+            }
+        },
         setDimensionListLoadStart: (
             state,
             action: PayloadAction<DimensionListKey>
@@ -286,6 +294,7 @@ export const {
     addDimensionListLoadingState,
     toggleAllDimensionCardsIsCollapsed,
     toggleDimensionCardIsCollapsed,
+    setDimensionCardCollapsed,
     setDimensionListLoadStart,
     setDimensionListLoadError,
     setDimensionListLoadSuccess,
