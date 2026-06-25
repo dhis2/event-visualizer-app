@@ -31,9 +31,8 @@ type UseDimensionItemDndReturn = {
     style: CSSProperties | undefined
 }
 
-const MULTI_SELECT_ALL_BLOCKED_MESSAGE = i18n.t(
-    'None of the selected dimensions can be added to this layout.'
-)
+const getMultiSelectAllBlockedMessage = () =>
+    i18n.t('None of the selected dimensions can be added to this layout.')
 
 export const useDimensionItemDnd = ({
     dimension,
@@ -81,7 +80,7 @@ export const useDimensionItemDnd = ({
 
     const resolvedLayoutBlockedMessage = multiSelecting
         ? multiSelectBlocked
-            ? MULTI_SELECT_ALL_BLOCKED_MESSAGE
+            ? getMultiSelectAllBlockedMessage()
             : undefined
         : (layoutBlockedMessage ?? undefined)
 
