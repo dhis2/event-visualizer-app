@@ -1,4 +1,7 @@
-import { CustomValueModal } from '@components/layout-panel/custom-value-modal'
+import {
+    CustomValueModal,
+    getStageIdFromDimensionId,
+} from '@components/layout-panel/custom-value-modal'
 import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
 import { IconSettings16, Tooltip } from '@dhis2/ui'
@@ -68,10 +71,11 @@ export const CustomValueButton: FC = () => {
         customValue?.id && customValue?.aggregationType
     )
     const layoutStageId = programStageIds[0] ?? null
+    const customValueStageId = getStageIdFromDimensionId(customValue?.id)
     const hasStageMismatch = Boolean(
-        customValue?.id &&
         layoutStageId &&
-        customValue.id.split('.')[0] !== layoutStageId
+        customValueStageId &&
+        customValueStageId !== layoutStageId
     )
     const isFullyDisabled = Boolean(actionTooltipConfig)
     const isUpdateDisabled = isFullyDisabled || hasStageMismatch
@@ -80,17 +84,12 @@ export const CustomValueButton: FC = () => {
             return actionTooltipConfig.content
         }
         if (customValue && !hasStageMismatch) {
-            return i18n.t(
-                'Using: {{- dataElementName}} ({{- aggregationType}})',
-                {
-                    dataElementName: customValueMetadata?.name,
-                    aggregationType:
-                        aggregationTypeDisplayNames[
-                            customValue.aggregationType
-                        ],
-                    nsSeparator: '^^',
-                }
-            )
+            return i18n.t('Using: {{- itemName}} ({{- aggregationType}})', {
+                itemName: customValueMetadata?.name,
+                aggregationType:
+                    aggregationTypeDisplayNames[customValue.aggregationType],
+                nsSeparator: '^^',
+            })
         }
         return undefined
     })()

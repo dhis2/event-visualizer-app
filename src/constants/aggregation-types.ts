@@ -26,7 +26,7 @@ export const AGGREGATION_TYPES: AggregationType[] = [
 ] as const
 
 export const aggregationTypeDisplayNames: Record<AggregationType, string> = {
-    DEFAULT: i18n.t('Use data element default'),
+    DEFAULT: i18n.t('Use item default'),
     SUM: i18n.t('Sum'),
     AVERAGE: i18n.t('Average'),
     AVERAGE_SUM_ORG_UNIT: i18n.t('Average (sum in org unit hierarchy)'),

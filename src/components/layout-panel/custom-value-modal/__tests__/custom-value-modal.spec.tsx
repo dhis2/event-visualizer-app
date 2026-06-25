@@ -103,7 +103,7 @@ const buildMockOptions = (
 })
 
 describe('CustomValueModal', () => {
-    it('shows the loading indicator before data elements load', async () => {
+    it('shows the loading indicator before data items load', async () => {
         const deferred = createDeferredQuery()
         await renderWithAppWrapper(
             <CustomValueModal onClose={() => {}} />,
@@ -121,7 +121,7 @@ describe('CustomValueModal', () => {
         })
     })
 
-    it('renders the data elements after the query resolves', async () => {
+    it('renders the data items after the query resolves', async () => {
         await renderWithAppWrapper(
             <CustomValueModal onClose={() => {}} />,
             buildMockOptions(['s1.de1'])
@@ -142,7 +142,7 @@ describe('CustomValueModal', () => {
         await waitFor(() => {
             expect(
                 screen.getByText(
-                    'Showing data elements from "Stage 1", the stage used in the layout'
+                    'Showing data items from "Stage 1", the stage used in the layout'
                 )
             ).toBeInTheDocument()
         })
@@ -160,7 +160,7 @@ describe('CustomValueModal', () => {
         await waitFor(() => {
             expect(
                 screen.getByText(
-                    /Some DE.*different stage than the dimensions in the layout.*Stage 1/
+                    /Some DE.*different stage than the dimensions in the layout.*Choose another item/
                 )
             ).toBeInTheDocument()
         })
@@ -179,11 +179,11 @@ describe('CustomValueModal', () => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
         })
         expect(
-            screen.queryByText(/Showing data elements from/)
+            screen.queryByText(/Showing data items from/)
         ).not.toBeInTheDocument()
     })
 
-    it('renders the stage-scoped empty-state notice when no data elements are returned and the layout has a stage', async () => {
+    it('renders the stage-scoped empty-state notice when no data items are returned and the layout has a stage', async () => {
         await renderWithAppWrapper(
             <CustomValueModal onClose={() => {}} />,
             buildMockOptions(['s1.de1'], {
@@ -198,7 +198,7 @@ describe('CustomValueModal', () => {
         })
     })
 
-    it('renders the program-scoped empty-state notice when no data elements are returned and the layout has no stage', async () => {
+    it('renders the program-scoped empty-state notice when no data items are returned and the layout has no stage', async () => {
         await renderWithAppWrapper(
             <CustomValueModal onClose={() => {}} />,
             buildMockOptions(['p1.enrollmentDate'], {
@@ -213,7 +213,7 @@ describe('CustomValueModal', () => {
         })
     })
 
-    it('keeps the Update button disabled until a data element is picked, then applies and closes on click', async () => {
+    it('keeps the Update button disabled until a data item is picked, then applies and closes on click', async () => {
         const onClose = vi.fn()
         const user = userEvent.setup()
         const { store } = await renderWithAppWrapper(
@@ -241,7 +241,7 @@ describe('CustomValueModal', () => {
         expect(getCurrentVis(store.getState()).value).toEqual({ id: 's1.de1' })
     })
 
-    it('filters the data element list by the search term', async () => {
+    it('filters the data item list by the search term', async () => {
         const user = userEvent.setup()
         await renderWithAppWrapper(
             <CustomValueModal onClose={() => {}} />,
@@ -265,7 +265,120 @@ describe('CustomValueModal', () => {
         await user.type(screen.getByPlaceholderText('Search data items'), 'zzz')
 
         expect(
-            screen.getByText('No data elements match "zzz"')
+            screen.getByText('No data items match "zzz"')
         ).toBeInTheDocument()
+    })
+
+    it('falls back to AVERAGE when applying an item whose default aggregation type is NONE', async () => {
+        const onClose = vi.fn()
+        const user = userEvent.setup()
+        const { store } = await renderWithAppWrapper(
+            <CustomValueModal onClose={onClose} />,
+            buildMockOptions(['s1.de1'], {
+                [ANALYTICS_RESOURCE]: {
+                    dimensions: [
+                        {
+                            id: 'attr1',
+                            name: 'Gender score',
+                            aggregationType: 'NONE',
+                            dimensionType: 'PROGRAM_ATTRIBUTE',
+                        },
+                    ],
+                },
+            })
+        )
+
+        await waitFor(() => {
+            expect(screen.getByText('Gender score')).toBeInTheDocument()
+        })
+
+        await user.click(screen.getByText('Gender score'))
+        await user.click(screen.getByRole('button', { name: 'Update' }))
+
+        expect(getVisUiConfigCustomValue(store.getState())).toEqual({
+            aggregationType: 'AVERAGE',
+            id: 'attr1',
+        })
+    })
+
+    it('disables "Use item default" and selects Average when the item default is NONE', async () => {
+        const user = userEvent.setup()
+        await renderWithAppWrapper(
+            <CustomValueModal onClose={() => {}} />,
+            buildMockOptions(['s1.de1'], {
+                [ANALYTICS_RESOURCE]: {
+                    dimensions: [
+                        {
+                            id: 'attr1',
+                            name: 'Gender score',
+                            aggregationType: 'NONE',
+                            dimensionType: 'PROGRAM_ATTRIBUTE',
+                        },
+                        {
+                            id: 's1.de1',
+                            name: 'Weight in kg',
+                            aggregationType: 'SUM',
+                            dimensionType: 'DATA_ELEMENT',
+                        },
+                    ],
+                },
+            })
+        )
+
+        await waitFor(() => {
+            expect(screen.getByText('Gender score')).toBeInTheDocument()
+        })
+
+        // An aggregatable item keeps "Use item default" as the selection
+        await user.click(screen.getByText('Weight in kg'))
+        expect(screen.getByText('Use item default')).toBeInTheDocument()
+
+        // A NONE item switches the selection to Average instead
+        await user.click(screen.getByText('Gender score'))
+        expect(screen.getByText('Average')).toBeInTheDocument()
+
+        // ...and "Use item default" is disabled in the dropdown
+        await user.click(screen.getByText('Average'))
+        expect(
+            screen
+                .getByText('Use item default')
+                .closest('[data-test="dhis2-uicore-singleselectoption"]')
+        ).toHaveClass('disabled')
+    })
+
+    it('reverts to "Use item default" when switching from a NONE item back to an aggregatable one', async () => {
+        const user = userEvent.setup()
+        await renderWithAppWrapper(
+            <CustomValueModal onClose={() => {}} />,
+            buildMockOptions(['s1.de1'], {
+                [ANALYTICS_RESOURCE]: {
+                    dimensions: [
+                        {
+                            id: 'attr1',
+                            name: 'Gender score',
+                            aggregationType: 'NONE',
+                            dimensionType: 'PROGRAM_ATTRIBUTE',
+                        },
+                        {
+                            id: 's1.de1',
+                            name: 'Weight in kg',
+                            aggregationType: 'SUM',
+                            dimensionType: 'DATA_ELEMENT',
+                        },
+                    ],
+                },
+            })
+        )
+
+        await waitFor(() => {
+            expect(screen.getByText('Gender score')).toBeInTheDocument()
+        })
+
+        await user.click(screen.getByText('Gender score'))
+        expect(screen.getByText('Average')).toBeInTheDocument()
+
+        await user.click(screen.getByText('Weight in kg'))
+        expect(screen.getByText('Use item default')).toBeInTheDocument()
+        expect(screen.queryByText('Average')).not.toBeInTheDocument()
     })
 })
