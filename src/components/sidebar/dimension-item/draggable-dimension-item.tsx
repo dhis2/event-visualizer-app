@@ -2,7 +2,7 @@ import { IconButton } from '@components/shared/icon-button'
 import { useIsContainingCardDisabled } from '@components/sidebar/dimension-card'
 import { useDimensionLayoutBlockedMessage } from '@components/sidebar/sidebar-disabling'
 import { useIsDimensionInLayout } from '@components/sidebar/use-is-dimension-in-layout'
-import { IconAdd16, IconSubtract16, Tooltip } from '@dhis2/ui'
+import { IconAdd16, IconSubtract16 } from '@dhis2/ui'
 import { useAddMetadata, useAppDispatch, useAppSelector } from '@hooks'
 import {
     clearMultiSelection,
@@ -28,17 +28,8 @@ interface DraggableDimensionItemProps {
     disabled?: boolean
 }
 
-type TooltipRenderProps = {
-    onBlur: React.FocusEventHandler<HTMLElement>
-    onFocus: React.FocusEventHandler<HTMLElement>
-    onMouseOver: React.MouseEventHandler<HTMLElement>
-    onMouseOut: React.MouseEventHandler<HTMLElement>
-    ref: React.MutableRefObject<HTMLElement>
-}
-
 type DraggableDimensionItemBodyProps = DraggableDimensionItemProps & {
-    tooltipProps?: TooltipRenderProps
-    layoutBlockedMessage?: string | null
+    layoutBlockedMessage: string | null
 }
 
 const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
@@ -46,8 +37,7 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
     program,
     programStage,
     disabled = false,
-    tooltipProps,
-    layoutBlockedMessage = null,
+    layoutBlockedMessage,
 }) => {
     const dispatch = useAppDispatch()
     const addMetadata = useAddMetadata()
@@ -109,22 +99,12 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
             layoutBlockedMessage,
         })
 
-    /* Tooltip's MutableRefObject<HTMLElement> targets a wider element
-     * type than the container's HTMLDivElement ref slot. */
-    const ref = tooltipProps
-        ? (tooltipProps.ref as React.Ref<HTMLDivElement>)
-        : setNodeRef
-
     return (
         <DimensionItemContainer
-            ref={ref}
+            ref={setNodeRef}
             style={style}
             {...attributes}
             {...listeners}
-            onBlur={tooltipProps?.onBlur}
-            onFocus={tooltipProps?.onFocus}
-            onMouseOver={tooltipProps?.onMouseOver}
-            onMouseOut={tooltipProps?.onMouseOut}
             aria-roledescription="draggable item"
             selected={selected}
             multiSelected={multiSelected}
@@ -139,27 +119,29 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
                     disabled={cardOrItemDisabled}
                     onClick={handleClick}
                 />
-                {!cardOrItemDisabled && !multiSelected && (
-                    <div className={styles.iconButtonWrapper}>
-                        <IconButton
-                            onClick={(e) => {
-                                e.stopPropagation()
-                                handleAddRemove()
-                            }}
-                            dataTest={
-                                selected
-                                    ? `subtract-button-${dimension.id}`
-                                    : `add-button-${dimension.id}`
-                            }
-                        >
-                            {selected ? (
-                                <IconSubtract16 />
-                            ) : (
-                                <IconAdd16 color="var(--colors-grey600)" />
-                            )}
-                        </IconButton>
-                    </div>
-                )}
+                {!cardOrItemDisabled &&
+                    !multiSelected &&
+                    !layoutBlockedMessage && (
+                        <div className={styles.iconButtonWrapper}>
+                            <IconButton
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleAddRemove()
+                                }}
+                                dataTest={
+                                    selected
+                                        ? `subtract-button-${dimension.id}`
+                                        : `add-button-${dimension.id}`
+                                }
+                            >
+                                {selected ? (
+                                    <IconSubtract16 />
+                                ) : (
+                                    <IconAdd16 color="var(--colors-grey600)" />
+                                )}
+                            </IconButton>
+                        </div>
+                    )}
             </div>
         </DimensionItemContainer>
     )
@@ -168,26 +150,13 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
 export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = (
     props
 ) => {
-    const layoutDisabledMessage = useDimensionLayoutBlockedMessage(
+    const layoutBlockedMessage = useDimensionLayoutBlockedMessage(
         props.dimension
     )
-    if (layoutDisabledMessage) {
-        return (
-            <Tooltip
-                content={layoutDisabledMessage}
-                openDelay={1000}
-                closeDelay={0}
-            >
-                {(tooltipProps: TooltipRenderProps) => (
-                    <DraggableDimensionItemBody
-                        {...props}
-                        disabled
-                        layoutBlockedMessage={layoutDisabledMessage}
-                        tooltipProps={tooltipProps}
-                    />
-                )}
-            </Tooltip>
-        )
-    }
-    return <DraggableDimensionItemBody {...props} layoutBlockedMessage={null} />
+    return (
+        <DraggableDimensionItemBody
+            {...props}
+            layoutBlockedMessage={layoutBlockedMessage}
+        />
+    )
 }
