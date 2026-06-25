@@ -89,7 +89,9 @@ export const useOnDragEnd = (): OnDragEndFn => {
                     const validIds = multiSelectedIds.filter((id) => {
                         const dim = metadataStore.getMetadataItem(id)
                         if (!dim) {
-                            return true
+                            throw new Error(
+                                `Dimension "${id}" is in multi-selection but has no metadata entry`
+                            )
                         }
                         return !getDimensionLayoutBlockedMessage({
                             dimension: dim as DimensionMetadataItem,

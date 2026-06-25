@@ -1,4 +1,9 @@
-import { useAppDispatch, useAppSelector, useAddMetadata } from '@hooks'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useAddMetadata,
+    useMetadataStore,
+} from '@hooks'
 import { clearMultiSelection } from '@store/dimensions-selection-slice'
 import {
     addVisUiConfigLayoutDimension,
@@ -171,6 +176,12 @@ describe('useOnDragEnd', () => {
 
     it('should dispatch addVisUiConfigLayoutDimensions for multi-select drag', () => {
         vi.mocked(useAppSelector).mockReturnValue(['dim1', 'dim2', 'dim3'])
+        vi.mocked(useMetadataStore).mockReturnValue({
+            getMetadataItem: vi.fn((id: string) => ({
+                id,
+                dimensionType: 'DATA_ELEMENT',
+            })),
+        } as unknown as ReturnType<typeof useMetadataStore>)
         const { result } = renderHook(() => useOnDragEnd())
         const populateMetadata = vi.fn()
         const event = {
