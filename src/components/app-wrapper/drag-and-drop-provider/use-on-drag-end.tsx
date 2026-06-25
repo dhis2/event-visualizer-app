@@ -75,7 +75,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
         ({ list, visTypeName }: { list: string; visTypeName: string }) =>
             i18n.t(
                 'The following dimensions cannot be used in a {{visTypeName}} and were skipped: {{list}}.',
-                { list, visTypeName }
+                { list, visTypeName, nsSeparator: '^^' }
             ),
         // Message can be quite long so give the user 10 seconds to read it
         { duration: 10000 }
