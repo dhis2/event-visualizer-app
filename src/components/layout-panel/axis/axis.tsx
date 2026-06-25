@@ -32,8 +32,8 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
 
     const { active } = useDndContext()
     const disabled = useMemo(
-        () => getActiveDragData(active)?.allowedTargetAxis?.[axisId] === false,
-        [active, axisId]
+        () => getActiveDragData(active)?.isLayoutBlocked ?? false,
+        [active]
     )
 
     const { setNodeRef, isOver } = useDroppable({
@@ -49,7 +49,6 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
                     [classes.columns]: axisId === 'columns',
                     [classes.rows]: axisId === 'rows',
                     [classes.filters]: axisId === 'filters',
-                    [classes.invalid]: disabled,
                 })}
                 data-test={`axis-${axisId}`}
                 aria-disabled={disabled || undefined}

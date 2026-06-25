@@ -4,7 +4,6 @@ import { useDimensionDisabledText } from '@components/sidebar/sidebar-disabling'
 import { useIsDimensionInLayout } from '@components/sidebar/use-is-dimension-in-layout'
 import { IconAdd16, IconSubtract16, Tooltip } from '@dhis2/ui'
 import { useAddMetadata, useAppDispatch, useAppSelector } from '@hooks'
-import { getAllowedTargetAxis } from '@modules/layout'
 import {
     clearMultiSelection,
     isDimensionMultiSelected,
@@ -13,11 +12,10 @@ import {
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
     addVisUiConfigLayoutDimension,
-    getVisUiConfigVisualizationType,
     removeVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice'
 import type { Axis, DimensionMetadataItem, Program, ProgramStage } from '@types'
-import { useCallback, useMemo, type FC } from 'react'
+import { useCallback, type FC } from 'react'
 import { DimensionItem } from './dimension-item'
 import { DimensionItemContainer } from './dimension-item-container'
 import styles from './styles/draggable-dimension-item.module.css'
@@ -55,13 +53,8 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
     const multiSelected = useAppSelector((state) =>
         isDimensionMultiSelected(state, dimension.id)
     )
-    const visType = useAppSelector(getVisUiConfigVisualizationType)
     const isContainingCardDisabled = useIsContainingCardDisabled()
     const cardOrItemDisabled = isContainingCardDisabled || disabled
-    const selfAllowedTargetAxis = useMemo(
-        () => getAllowedTargetAxis([dimension], visType),
-        [dimension, visType]
-    )
 
     const populateMetadata = useCallback(() => {
         // Adding the program also stores its stages and TET.
@@ -96,9 +89,7 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
             )
         } else {
             populateMetadata()
-            const defaultAxis: Axis = selfAllowedTargetAxis.columns
-                ? 'columns'
-                : 'filters'
+            const defaultAxis: Axis = 'columns'
             dispatch(
                 addVisUiConfigLayoutDimension({
                     axis: defaultAxis,
@@ -106,19 +97,12 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
                 })
             )
         }
-    }, [
-        dimension.id,
-        populateMetadata,
-        dispatch,
-        selected,
-        selfAllowedTargetAxis,
-    ])
+    }, [dimension.id, populateMetadata, dispatch, selected])
 
     const { setNodeRef, attributes, listeners, isDragging, style } =
         useDimensionItemDnd({
             dimension,
             populateMetadata,
-            selfAllowedTargetAxis,
             disabled: cardOrItemDisabled || selected,
         })
 

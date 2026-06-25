@@ -2,17 +2,12 @@ import type { SidebarSortableData } from '@components/app-wrapper/drag-and-drop-
 import type { DraggableSyntheticListeners } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useAppSelector, useMetadataStore } from '@hooks'
-import { getAllowedTargetAxis } from '@modules/layout'
-import { getMultiSelectedDimensionIds } from '@store/dimensions-selection-slice'
-import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
-import type { Axis, DimensionMetadataItem } from '@types'
+import type { DimensionMetadataItem } from '@types'
 import { useMemo, type CSSProperties } from 'react'
 
 type UseDimensionItemDndArgs = {
     dimension: DimensionMetadataItem
     populateMetadata: () => void
-    selfAllowedTargetAxis: Record<Axis, boolean>
     disabled: boolean
 }
 
@@ -27,35 +22,8 @@ type UseDimensionItemDndReturn = {
 export const useDimensionItemDnd = ({
     dimension,
     populateMetadata,
-    selfAllowedTargetAxis,
     disabled,
 }: UseDimensionItemDndArgs): UseDimensionItemDndReturn => {
-    const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
-    const metadataStore = useMetadataStore()
-    const visType = useAppSelector(getVisUiConfigVisualizationType)
-
-    const dragAllowedTargetAxis = useMemo<Record<Axis, boolean>>(() => {
-        if (!multiSelectedIds.includes(dimension.id)) {
-            return selfAllowedTargetAxis
-        }
-        const dimsInDrag = multiSelectedIds
-            .map((id) =>
-                id === dimension.id
-                    ? dimension
-                    : (metadataStore.getMetadataItem(id) as
-                          | DimensionMetadataItem
-                          | undefined)
-            )
-            .filter((d): d is DimensionMetadataItem => d !== undefined)
-        return getAllowedTargetAxis(dimsInDrag, visType)
-    }, [
-        multiSelectedIds,
-        dimension,
-        metadataStore,
-        visType,
-        selfAllowedTargetAxis,
-    ])
-
     const droppableData = useMemo<SidebarSortableData>(
         () => ({
             dimensionId: dimension.id,
@@ -66,9 +34,9 @@ export const useDimensionItemDnd = ({
                 onClick: () => undefined,
             },
             populateMetadata,
-            allowedTargetAxis: dragAllowedTargetAxis,
+            isLayoutBlocked: false,
         }),
-        [dimension, populateMetadata, dragAllowedTargetAxis]
+        [dimension, populateMetadata]
     )
 
     const {

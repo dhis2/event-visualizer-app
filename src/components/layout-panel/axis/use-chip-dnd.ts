@@ -4,9 +4,6 @@ import type { DraggableSyntheticListeners } from '@dnd-kit/core'
 import { useDndContext } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useAppSelector } from '@hooks'
-import { getAllowedTargetAxis } from '@modules/layout'
-import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import type { Axis } from '@types'
 import { useMemo, type CSSProperties } from 'react'
 import type { LayoutDimension } from './chip'
@@ -35,26 +32,21 @@ export const useChipDnd = ({
     chipBaseProps,
     insertAfter,
 }: UseChipDndArgs): UseChipDndReturn => {
-    const visType = useAppSelector(getVisUiConfigVisualizationType)
-    const allowedTargetAxis = useMemo(
-        () => getAllowedTargetAxis([dimension], visType),
-        [dimension, visType]
-    )
     const droppableData = useMemo<AxisSortableData>(
         () => ({
             dimensionId: dimension.id,
             axis: axisId,
             overlayItemProps: chipBaseProps,
             insertAfter,
-            allowedTargetAxis,
+            isLayoutBlocked: false,
         }),
-        [axisId, dimension, chipBaseProps, insertAfter, allowedTargetAxis]
+        [axisId, dimension, chipBaseProps, insertAfter]
     )
 
     const { active } = useDndContext()
     const disabledForActiveDrag = useMemo(
-        () => getActiveDragData(active)?.allowedTargetAxis?.[axisId] === false,
-        [active, axisId]
+        () => getActiveDragData(active)?.isLayoutBlocked ?? false,
+        [active]
     )
 
     const sortable = useSortable({

@@ -1,7 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import { FlyoutMenu, MenuDivider, MenuItem } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
-import { isAxisInvalidForDimension, getAxisName } from '@modules/layout'
+import { getAxisName } from '@modules/layout'
 import {
     removeVisUiConfigLayoutDimensionFromAxis,
     getVisUiConfigVisualizationType,
@@ -64,10 +64,9 @@ export const ChipMenu: FC<ChipMenuProps> = ({ axisId, dimension, onClose }) => {
             AXIS_IDS.filter(
                 (axis) =>
                     axis !== axisId &&
-                    !(axis === 'rows' && visType === 'LINE_LIST') &&
-                    !isAxisInvalidForDimension(dimension, axis, visType)
+                    !(axis === 'rows' && visType === 'LINE_LIST')
             ),
-        [visType, axisId, dimension]
+        [visType, axisId]
     )
 
     return (
