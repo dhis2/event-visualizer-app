@@ -78,10 +78,12 @@ export const useDimensionItemDnd = ({
         ? multiSelectBlocked
         : layoutBlockedMessage !== null
 
+    const multiSelectBlockedMessage = multiSelectBlocked
+        ? getMultiSelectAllBlockedMessage()
+        : undefined
+
     const resolvedLayoutBlockedMessage = multiSelecting
-        ? multiSelectBlocked
-            ? getMultiSelectAllBlockedMessage()
-            : undefined
+        ? multiSelectBlockedMessage
         : (layoutBlockedMessage ?? undefined)
 
     const droppableData = useMemo<SidebarSortableData>(

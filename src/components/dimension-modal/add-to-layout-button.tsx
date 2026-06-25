@@ -59,10 +59,12 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
     if (layoutBlockedMessage) {
         return (
             <Tooltip content={layoutBlockedMessage}>
-                {({ onMouseOver, onMouseOut, ref }) => (
+                {({ onMouseOver, onMouseOut, onFocus, onBlur, ref }) => (
                     <span
                         onMouseOver={onMouseOver}
                         onMouseOut={onMouseOut}
+                        onFocus={onFocus}
+                        onBlur={onBlur}
                         ref={ref}
                     >
                         <Button disabled dataTest={dataTest}>

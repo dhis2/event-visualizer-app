@@ -31,6 +31,43 @@ import type { LayoutDragEndEvent } from './types'
 
 type OnDragEndFn = (event: LayoutDragEndEvent) => void
 
+type PartitionMultiSelectedDimensionsArgs = {
+    ids: string[]
+    metadataStore: ReturnType<typeof useMetadataStore>
+    visualizationType: ReturnType<typeof getVisUiConfigVisualizationType>
+    customValueId: string | null
+}
+
+const partitionMultiSelectedDimensions = ({
+    ids,
+    metadataStore,
+    visualizationType,
+    customValueId,
+}: PartitionMultiSelectedDimensionsArgs): {
+    validIds: string[]
+    skippedNames: string[]
+} => {
+    const skippedNames: string[] = []
+    const validIds = ids.filter((id) => {
+        const dim = metadataStore.getMetadataItem(id)
+        if (!dim) {
+            throw new Error(
+                `Dimension "${id}" is in multi-selection but has no metadata entry`
+            )
+        }
+        const blocked = !!getDimensionLayoutBlockedMessage({
+            dimension: dim as DimensionMetadataItem,
+            visualizationType,
+            customValueId,
+        })
+        if (blocked) {
+            skippedNames.push(dim.name)
+        }
+        return !blocked
+    })
+    return { validIds, skippedNames }
+}
+
 export const useOnDragEnd = (): OnDragEndFn => {
     const dispatch = useAppDispatch()
     const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
@@ -89,24 +126,13 @@ export const useOnDragEnd = (): OnDragEndFn => {
                     const customValue = getVisUiConfigCustomValue(storeState)
 
                     // Batch add from sidebar (metadata already populated eagerly)
-                    const skippedNames: string[] = []
-                    const validIds = multiSelectedIds.filter((id) => {
-                        const dim = metadataStore.getMetadataItem(id)
-                        if (!dim) {
-                            throw new Error(
-                                `Dimension "${id}" is in multi-selection but has no metadata entry`
-                            )
-                        }
-                        const blocked = !!getDimensionLayoutBlockedMessage({
-                            dimension: dim as DimensionMetadataItem,
+                    const { validIds, skippedNames } =
+                        partitionMultiSelectedDimensions({
+                            ids: multiSelectedIds,
+                            metadataStore,
                             visualizationType: visType,
                             customValueId: customValue?.id ?? null,
                         })
-                        if (blocked) {
-                            skippedNames.push(dim.name)
-                        }
-                        return !blocked
-                    })
 
                     if (validIds.length > 0) {
                         dispatch(
