@@ -30,7 +30,9 @@ vi.mock('@hooks', () => ({
     useAppSelector: vi.fn(),
     useAddMetadata: vi.fn(),
     useAppStore: vi.fn(() => ({ getState: mockStoreGetState })),
-    useCurrentUser: vi.fn(() => ({ settings: { uiLocale: 'en' } })),
+    useListFormatter: vi.fn(() => ({
+        format: (list: string[]) => list.join(', '),
+    })),
     useMetadataStore: vi.fn(() => ({
         getMetadataItem: vi.fn(() => undefined),
     })),

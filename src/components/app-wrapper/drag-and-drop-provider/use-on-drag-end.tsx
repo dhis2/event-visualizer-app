@@ -6,7 +6,7 @@ import {
     useAppDispatch,
     useAppSelector,
     useAppStore,
-    useCurrentUser,
+    useListFormatter,
     useMetadataStore,
 } from '@hooks'
 import {
@@ -44,9 +44,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
     )
     const metadataStore = useMetadataStore()
     const store = useAppStore()
-    const {
-        settings: { uiLocale },
-    } = useCurrentUser()
+    const listFormatter = useListFormatter({ type: 'conjunction' })
     return useCallback(
         (event: LayoutDragEndEvent) => {
             // Only allow dropping if event data is present and dropping onto an axis
@@ -121,12 +119,8 @@ export const useOnDragEnd = (): OnDragEndFn => {
                     }
 
                     if (skippedNames.length > 0) {
-                        const list = new Intl.ListFormat(
-                            uiLocale.replace('_', '-'),
-                            { type: 'conjunction' }
-                        ).format(skippedNames)
                         showAlert({
-                            list,
+                            list: listFormatter.format(skippedNames),
                             visTypeName: visTypeDisplayNames[visType],
                         })
                     }
@@ -147,6 +141,13 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 throw new Error('Dropped an unexpected item')
             }
         },
-        [dispatch, multiSelectedIds, metadataStore, store, showAlert, uiLocale]
+        [
+            dispatch,
+            multiSelectedIds,
+            metadataStore,
+            store,
+            showAlert,
+            listFormatter,
+        ]
     )
 }
