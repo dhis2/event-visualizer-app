@@ -27,8 +27,6 @@ vi.mock('@store/vis-ui-config-slice', () => ({
     moveVisUiConfigLayoutDimension: vi.fn(),
 }))
 
-const ALL_AXES_ALLOWED = { columns: true, rows: true, filters: true }
-
 describe('useOnDragEnd', () => {
     const mockDispatch = vi.fn()
     const mockAddMetadata = vi.fn()
@@ -88,7 +86,7 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'test',
                         overlayItemProps: {},
                         populateMetadata,
-                        allowedTargetAxis: ALL_AXES_ALLOWED,
+                        isLayoutBlocked: false,
                     },
                 },
             },
@@ -126,7 +124,7 @@ describe('useOnDragEnd', () => {
                         sortable: { index: 1 },
                         overlayItemProps: {},
                         insertAfter: false,
-                        allowedTargetAxis: ALL_AXES_ALLOWED,
+                        isLayoutBlocked: false,
                     },
                 },
             },
@@ -166,7 +164,7 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'dim2',
                         overlayItemProps: {},
                         populateMetadata,
-                        allowedTargetAxis: ALL_AXES_ALLOWED,
+                        isLayoutBlocked: false,
                     },
                 },
             },
@@ -206,7 +204,7 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'dim3',
                         overlayItemProps: {},
                         populateMetadata,
-                        allowedTargetAxis: ALL_AXES_ALLOWED,
+                        isLayoutBlocked: false,
                     },
                 },
             },
@@ -245,7 +243,7 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'test',
                         overlayItemProps: {},
                         populateMetadata,
-                        allowedTargetAxis: ALL_AXES_ALLOWED,
+                        isLayoutBlocked: false,
                     },
                 },
             },
@@ -276,7 +274,7 @@ describe('useOnDragEnd', () => {
                         sortable: { index: 1 },
                         overlayItemProps: {},
                         insertAfter: false,
-                        allowedTargetAxis: ALL_AXES_ALLOWED,
+                        isLayoutBlocked: false,
                     },
                 },
             },
