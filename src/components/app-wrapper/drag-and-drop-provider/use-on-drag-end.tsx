@@ -6,6 +6,7 @@ import {
     useAppDispatch,
     useAppSelector,
     useAppStore,
+    useCurrentUser,
     useMetadataStore,
 } from '@hooks'
 import {
@@ -34,15 +35,18 @@ export const useOnDragEnd = (): OnDragEndFn => {
     const dispatch = useAppDispatch()
     const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
     const { show: showAlert } = useAlert(
-        ({ count, visTypeName }: { count: number; visTypeName: string }) =>
+        ({ list, visTypeName }: { list: string; visTypeName: string }) =>
             i18n.t(
-                '{{count}} dimension(s) were skipped because they cannot be used in a {{visTypeName}}.',
-                { count, visTypeName }
+                'The following dimensions cannot be used in a {{visTypeName}} and were skipped: {{list}}.',
+                { list, visTypeName }
             ),
         { type: 'info', duration: 2000 }
     )
     const metadataStore = useMetadataStore()
     const store = useAppStore()
+    const {
+        settings: { uiLocale },
+    } = useCurrentUser()
     return useCallback(
         (event: LayoutDragEndEvent) => {
             // Only allow dropping if event data is present and dropping onto an axis
@@ -86,6 +90,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
                     const customValue = getVisUiConfigCustomValue(storeState)
 
                     // Batch add from sidebar (metadata already populated eagerly)
+                    const skippedNames: string[] = []
                     const validIds = multiSelectedIds.filter((id) => {
                         const dim = metadataStore.getMetadataItem(id)
                         if (!dim) {
@@ -93,14 +98,16 @@ export const useOnDragEnd = (): OnDragEndFn => {
                                 `Dimension "${id}" is in multi-selection but has no metadata entry`
                             )
                         }
-                        return !getDimensionLayoutBlockedMessage({
+                        const blocked = !!getDimensionLayoutBlockedMessage({
                             dimension: dim as DimensionMetadataItem,
                             visualizationType: visType,
                             customValueId: customValue?.id ?? null,
                         })
+                        if (blocked) {
+                            skippedNames.push(dim.name)
+                        }
+                        return !blocked
                     })
-                    const skippedCount =
-                        multiSelectedIds.length - validIds.length
 
                     if (validIds.length > 0) {
                         dispatch(
@@ -113,9 +120,13 @@ export const useOnDragEnd = (): OnDragEndFn => {
                         )
                     }
 
-                    if (skippedCount > 0) {
+                    if (skippedNames.length > 0) {
+                        const list = new Intl.ListFormat(
+                            uiLocale.replace('_', '-'),
+                            { type: 'conjunction' }
+                        ).format(skippedNames)
                         showAlert({
-                            count: skippedCount,
+                            list,
                             visTypeName: visTypeDisplayNames[visType],
                         })
                     }
@@ -136,6 +147,6 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 throw new Error('Dropped an unexpected item')
             }
         },
-        [dispatch, multiSelectedIds, metadataStore, store, showAlert]
+        [dispatch, multiSelectedIds, metadataStore, store, showAlert, uiLocale]
     )
 }
