@@ -640,6 +640,9 @@ msgstr "Load more"
 msgid "Loading more..."
 msgstr "Loading more..."
 
+msgid "None of the selected dimensions can be added to this layout."
+msgstr "None of the selected dimensions can be added to this layout."
+
 msgid "Org units"
 msgstr "Org units"
 
@@ -670,18 +673,14 @@ msgstr ""
 "used in the layout ({{- tetName}}). Remove the existing dimensions to use "
 "these."
 
-msgid "Cannot be used with {{visType}}."
-msgstr "Cannot be used with {{visType}}."
+msgid "Already used as custom value."
+msgstr "Already used as custom value."
 
-msgid ""
-"This dimension is used as the custom value. Remove the custom value to use "
-"it in the layout."
-msgstr ""
-"This dimension is used as the custom value. Remove the custom value to use "
-"it in the layout."
+msgid "Cannot be used in a {{visType}}."
+msgstr "Cannot be used in a {{visType}}."
 
-msgid "Not valid with {{visType}}"
-msgstr "Not valid with {{visType}}"
+msgid "Not supported in a {{visType}}."
+msgstr "Not supported in a {{visType}}."
 
 msgid ""
 "Choose a data source above to see its dimensions, periods, and organisation "
