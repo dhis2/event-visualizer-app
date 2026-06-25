@@ -38,6 +38,7 @@ type TooltipRenderProps = {
 
 type DraggableDimensionItemBodyProps = DraggableDimensionItemProps & {
     tooltipProps?: TooltipRenderProps
+    layoutBlockedMessage?: string | null
 }
 
 const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
@@ -46,6 +47,7 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
     programStage,
     disabled = false,
     tooltipProps,
+    layoutBlockedMessage = null,
 }) => {
     const dispatch = useAppDispatch()
     const addMetadata = useAddMetadata()
@@ -104,6 +106,7 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
             dimension,
             populateMetadata,
             disabled: cardOrItemDisabled || selected,
+            layoutBlockedMessage,
         })
 
     /* Tooltip's MutableRefObject<HTMLElement> targets a wider element
@@ -179,11 +182,12 @@ export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = (
                     <DraggableDimensionItemBody
                         {...props}
                         disabled
+                        layoutBlockedMessage={layoutDisabledMessage}
                         tooltipProps={tooltipProps}
                     />
                 )}
             </Tooltip>
         )
     }
-    return <DraggableDimensionItemBody {...props} />
+    return <DraggableDimensionItemBody {...props} layoutBlockedMessage={null} />
 }
