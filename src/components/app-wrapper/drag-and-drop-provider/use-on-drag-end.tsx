@@ -115,58 +115,61 @@ export const useOnDragEnd = (): OnDragEndFn => {
                         insertAfter,
                     })
                 )
-            } else if (isSidebarSortableData(draggedItemData)) {
-                const isMultiSelectDrag =
-                    multiSelectedIds.length >= 1 &&
-                    multiSelectedIds.includes(draggedItemData.dimensionId)
+                return
+            }
 
-                if (isMultiSelectDrag) {
-                    const storeState = store.getState()
-                    const visType = getVisUiConfigVisualizationType(storeState)
-                    const customValue = getVisUiConfigCustomValue(storeState)
+            if (!isSidebarSortableData(draggedItemData)) {
+                throw new Error('Dropped an unexpected item')
+            }
 
-                    // Batch add from sidebar (metadata already populated eagerly)
-                    const { validIds, skippedNames } =
-                        partitionMultiSelectedDimensions({
-                            ids: multiSelectedIds,
-                            metadataStore,
-                            visualizationType: visType,
-                            customValueId: customValue?.id ?? null,
-                        })
+            const isMultiSelectDrag =
+                multiSelectedIds.length >= 1 &&
+                multiSelectedIds.includes(draggedItemData.dimensionId)
 
-                    if (validIds.length > 0) {
-                        dispatch(
-                            addVisUiConfigLayoutDimensions({
-                                axis: overItemData.axis,
-                                dimensionIds: validIds,
-                                insertIndex: targetIndex,
-                                insertAfter,
-                            })
-                        )
-                    }
+            if (isMultiSelectDrag) {
+                const storeState = store.getState()
+                const visType = getVisUiConfigVisualizationType(storeState)
+                const customValue = getVisUiConfigCustomValue(storeState)
 
-                    if (skippedNames.length > 0) {
-                        showAlert({
-                            list: listFormatter.format(skippedNames),
-                            visTypeName: visTypeDisplayNames[visType],
-                        })
-                    }
-                } else {
-                    // Single add from sidebar
-                    draggedItemData.populateMetadata()
+                // Batch add from sidebar (metadata already populated eagerly)
+                const { validIds, skippedNames } =
+                    partitionMultiSelectedDimensions({
+                        ids: multiSelectedIds,
+                        metadataStore,
+                        visualizationType: visType,
+                        customValueId: customValue?.id ?? null,
+                    })
+
+                if (validIds.length > 0) {
                     dispatch(
-                        addVisUiConfigLayoutDimension({
+                        addVisUiConfigLayoutDimensions({
                             axis: overItemData.axis,
-                            dimensionId: draggedItemData.dimensionId,
+                            dimensionIds: validIds,
                             insertIndex: targetIndex,
                             insertAfter,
                         })
                     )
                 }
-                dispatch(clearMultiSelection())
+
+                if (skippedNames.length > 0) {
+                    showAlert({
+                        list: listFormatter.format(skippedNames),
+                        visTypeName: visTypeDisplayNames[visType],
+                    })
+                }
             } else {
-                throw new Error('Dropped an unexpected item')
+                // Single add from sidebar
+                draggedItemData.populateMetadata()
+                dispatch(
+                    addVisUiConfigLayoutDimension({
+                        axis: overItemData.axis,
+                        dimensionId: draggedItemData.dimensionId,
+                        insertIndex: targetIndex,
+                        insertAfter,
+                    })
+                )
             }
+            dispatch(clearMultiSelection())
         },
         [
             dispatch,
