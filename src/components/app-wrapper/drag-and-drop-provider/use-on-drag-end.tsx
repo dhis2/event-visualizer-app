@@ -40,7 +40,8 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 'The following dimensions cannot be used in a {{visTypeName}} and were skipped: {{list}}.',
                 { list, visTypeName }
             ),
-        { type: 'info', duration: 2000 }
+        // Message can be quite long so give the user 10 seconds to read it
+        { duration: 10000 }
     )
     const metadataStore = useMetadataStore()
     const store = useAppStore()
