@@ -6,13 +6,13 @@ import classes from './styles/stage-notice.module.css'
 type StageNoticeProps = {
     filteredByStageName: string | undefined
     customValueStageMismatch: boolean
-    customValueDataElementName?: string
+    customValueItemName?: string
 }
 
 export const StageNotice: FC<StageNoticeProps> = ({
     filteredByStageName,
     customValueStageMismatch,
-    customValueDataElementName,
+    customValueItemName,
 }) => {
     if (!filteredByStageName) {
         return null
@@ -23,10 +23,9 @@ export const StageNotice: FC<StageNoticeProps> = ({
             {customValueStageMismatch ? (
                 <NoticeBox warning dense>
                     {i18n.t(
-                        '"{{- dataElementName}}" is from a different stage than the dimensions in the layout. Choose a data element from stage "{{- stageName}}".',
+                        '"{{- itemName}}" is from a different stage than the dimensions in the layout. Choose another item.',
                         {
-                            dataElementName: customValueDataElementName ?? '',
-                            stageName: filteredByStageName,
+                            itemName: customValueItemName ?? '',
                         }
                     )}
                 </NoticeBox>
@@ -34,7 +33,7 @@ export const StageNotice: FC<StageNoticeProps> = ({
                 <NoticeBox
                     dense
                     title={i18n.t(
-                        'Showing data elements from "{{- stageName}}", the stage used in the layout',
+                        'Showing data items from "{{- stageName}}", the stage used in the layout',
                         { stageName: filteredByStageName }
                     )}
                 />

@@ -13,7 +13,7 @@ import { waitFor } from '@testing-library/react'
 import type { RootState } from '@types'
 import deepmerge from 'deepmerge'
 import { describe, it, expect } from 'vitest'
-import { useCustomValueDataElements } from '../use-custom-value-data-elements'
+import { useCustomValueItems } from '../use-custom-value-items'
 
 const ANALYTICS_RESOURCE = 'analytics/enrollments/aggregate/dimensions'
 
@@ -37,6 +37,7 @@ const metadata = {
         name: 'Program 1',
         programType: 'WITH_REGISTRATION',
         programStages: [stage1, stage2],
+        trackedEntityType: { id: 'tet1', name: 'Person' },
     },
     p2: {
         id: 'p2',
@@ -120,18 +121,18 @@ const buildMockOptions = (
  * as uncaught exceptions rather than rejected promises, which requires an
  * error-boundary wrapper to assert cleanly. Those states are upstream-gated
  * by `useActionButton` — that's the appropriate test surface. */
-describe('useCustomValueDataElements', () => {
+describe('useCustomValueItems', () => {
     it('attaches stageName when the layout has no program stage and dimensions span multiple stages', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useCustomValueDataElements(),
+            () => useCustomValueItems(),
             buildMockOptions({ columns: ['p1.enrollmentDate'] })
         )
 
         await waitFor(() => {
-            expect(result.current.dataElements).toBeDefined()
+            expect(result.current.items).toBeDefined()
         })
 
-        expect(result.current.dataElements).toEqual([
+        expect(result.current.items).toEqual([
             {
                 id: 's1.de1',
                 name: 'DE 1',
@@ -150,7 +151,7 @@ describe('useCustomValueDataElements', () => {
         expect(result.current.filteredByStageName).toBeUndefined()
     })
 
-    it('sorts data elements alphabetically by name regardless of API order', async () => {
+    it('sorts data items alphabetically by name regardless of API order', async () => {
         const outOfOrderResponse = {
             dimensions: [
                 {
@@ -168,7 +169,7 @@ describe('useCustomValueDataElements', () => {
             ],
         }
         const { result } = await renderHookWithAppWrapper(
-            () => useCustomValueDataElements(),
+            () => useCustomValueItems(),
             {
                 ...buildMockOptions({ columns: ['p1.enrollmentDate'] }),
                 queryData: {
@@ -178,12 +179,13 @@ describe('useCustomValueDataElements', () => {
         )
 
         await waitFor(() => {
-            expect(result.current.dataElements).toBeDefined()
+            expect(result.current.items).toBeDefined()
         })
 
-        expect(
-            result.current.dataElements?.map((dataElement) => dataElement.name)
-        ).toEqual(['DE 1', 'DE 2'])
+        expect(result.current.items?.map((item) => item.name)).toEqual([
+            'DE 1',
+            'DE 2',
+        ])
     })
 
     it('omits stageName when the layout has no program stage and the program has only one stage', async () => {
@@ -238,7 +240,7 @@ describe('useCustomValueDataElements', () => {
             ],
         }
         const { result } = await renderHookWithAppWrapper(
-            () => useCustomValueDataElements(),
+            () => useCustomValueItems(),
             {
                 ...buildMockOptions({ columns: ['pSingle.enrollmentDate'] }),
                 metadata: singleStageMetadata,
@@ -249,10 +251,10 @@ describe('useCustomValueDataElements', () => {
         )
 
         await waitFor(() => {
-            expect(result.current.dataElements).toBeDefined()
+            expect(result.current.items).toBeDefined()
         })
 
-        expect(result.current.dataElements).toEqual([
+        expect(result.current.items).toEqual([
             {
                 id: 'sX.de1',
                 name: 'DE 1',
@@ -270,15 +272,15 @@ describe('useCustomValueDataElements', () => {
 
     it('filters by stage and exposes the layout stage name when one stage is in the layout', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useCustomValueDataElements(),
+            () => useCustomValueItems(),
             buildMockOptions({ columns: ['s1.de1'] })
         )
 
         await waitFor(() => {
-            expect(result.current.dataElements).toBeDefined()
+            expect(result.current.items).toBeDefined()
         })
 
-        expect(result.current.dataElements).toEqual([
+        expect(result.current.items).toEqual([
             {
                 id: 's1.de1',
                 name: 'DE 1',
@@ -291,7 +293,7 @@ describe('useCustomValueDataElements', () => {
 
     it('flags customValueStageMismatch when the custom value stage differs from the layout stage', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useCustomValueDataElements(),
+            () => useCustomValueItems(),
             buildMockOptions(
                 { columns: ['s1.de1'] },
                 { id: 's2.de2', aggregationType: 'SUM' }
@@ -299,7 +301,7 @@ describe('useCustomValueDataElements', () => {
         )
 
         await waitFor(() => {
-            expect(result.current.dataElements).toBeDefined()
+            expect(result.current.items).toBeDefined()
         })
 
         expect(result.current.customValueStageMismatch).toBe(true)
@@ -307,7 +309,7 @@ describe('useCustomValueDataElements', () => {
 
     it('does not flag a mismatch when the custom value stage matches the layout stage', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useCustomValueDataElements(),
+            () => useCustomValueItems(),
             buildMockOptions(
                 { columns: ['s1.de1'] },
                 { id: 's1.de1', aggregationType: 'SUM' }
@@ -315,7 +317,7 @@ describe('useCustomValueDataElements', () => {
         )
 
         await waitFor(() => {
-            expect(result.current.dataElements).toBeDefined()
+            expect(result.current.items).toBeDefined()
         })
 
         expect(result.current.customValueStageMismatch).toBe(false)
@@ -323,7 +325,7 @@ describe('useCustomValueDataElements', () => {
 
     it('does not flag a mismatch when there is no layout stage', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useCustomValueDataElements(),
+            () => useCustomValueItems(),
             buildMockOptions(
                 { columns: ['p1.enrollmentDate'] },
                 { id: 's1.de1', aggregationType: 'SUM' }
@@ -331,20 +333,123 @@ describe('useCustomValueDataElements', () => {
         )
 
         await waitFor(() => {
-            expect(result.current.dataElements).toBeDefined()
+            expect(result.current.items).toBeDefined()
         })
 
         expect(result.current.customValueStageMismatch).toBe(false)
     })
 
-    it('returns undefined dataElements while loading', async () => {
+    it('includes program attributes and labels them with the tracked entity type name when no stage is in the layout', async () => {
+        const responseWithAttribute = {
+            dimensions: [
+                {
+                    id: 's1.de1',
+                    name: 'DE 1',
+                    aggregationType: 'SUM',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+                {
+                    id: 'attr1',
+                    name: 'Age',
+                    aggregationType: 'NONE',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                },
+            ],
+        }
+        const { result } = await renderHookWithAppWrapper(
+            () => useCustomValueItems(),
+            {
+                ...buildMockOptions({ columns: ['p1.enrollmentDate'] }),
+                queryData: {
+                    [ANALYTICS_RESOURCE]: responseWithAttribute,
+                },
+            }
+        )
+
+        await waitFor(() => {
+            expect(result.current.items).toBeDefined()
+        })
+
+        expect(result.current.items).toEqual([
+            {
+                id: 'attr1',
+                name: 'Age',
+                aggregationType: 'NONE',
+                dimensionType: 'PROGRAM_ATTRIBUTE',
+                stageName: 'Person',
+            },
+            {
+                id: 's1.de1',
+                name: 'DE 1',
+                aggregationType: 'SUM',
+                dimensionType: 'DATA_ELEMENT',
+                stageName: 'Stage 1',
+            },
+        ])
+    })
+
+    it('keeps program attributes but filters out other stages when one stage is in the layout', async () => {
+        const responseWithAttribute = {
+            dimensions: [
+                {
+                    id: 's1.de1',
+                    name: 'DE 1',
+                    aggregationType: 'SUM',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+                {
+                    id: 's2.de2',
+                    name: 'DE 2',
+                    aggregationType: 'AVERAGE',
+                    dimensionType: 'DATA_ELEMENT',
+                },
+                {
+                    id: 'attr1',
+                    name: 'Age',
+                    aggregationType: 'NONE',
+                    dimensionType: 'PROGRAM_ATTRIBUTE',
+                },
+            ],
+        }
+        const { result } = await renderHookWithAppWrapper(
+            () => useCustomValueItems(),
+            {
+                ...buildMockOptions({ columns: ['s1.de1'] }),
+                queryData: {
+                    [ANALYTICS_RESOURCE]: responseWithAttribute,
+                },
+            }
+        )
+
+        await waitFor(() => {
+            expect(result.current.items).toBeDefined()
+        })
+
+        expect(result.current.items).toEqual([
+            {
+                id: 'attr1',
+                name: 'Age',
+                aggregationType: 'NONE',
+                dimensionType: 'PROGRAM_ATTRIBUTE',
+                stageName: 'Person',
+            },
+            {
+                id: 's1.de1',
+                name: 'DE 1',
+                aggregationType: 'SUM',
+                dimensionType: 'DATA_ELEMENT',
+            },
+        ])
+    })
+
+    it('returns undefined items while loading', async () => {
         /* Hold the dimensions request in flight so the loading assertion is
          * deterministic. Without this, the query can resolve during the
          * wrapper's internal store wait, flipping isLoading to false before
          * the assertion under full-suite load. */
         const deferredDimensions = createDeferredQuery()
         const { result } = await renderHookWithAppWrapper(
-            () => useCustomValueDataElements(),
+            () => useCustomValueItems(),
             {
                 ...buildMockOptions({ columns: ['p1.enrollmentDate'] }),
                 queryData: {
@@ -356,11 +461,11 @@ describe('useCustomValueDataElements', () => {
         )
 
         expect(result.current.isLoading).toBe(true)
-        expect(result.current.dataElements).toBeUndefined()
+        expect(result.current.items).toBeUndefined()
 
         await deferredDimensions.releaseAll()
         await waitFor(() => {
-            expect(result.current.dataElements).toBeDefined()
+            expect(result.current.items).toBeDefined()
         })
     })
 })
