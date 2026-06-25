@@ -324,14 +324,15 @@ setup_browser() {
 }
 
 # Wire the host's SonarCloud token so the sonarqube-fix skill (`pnpm sonar`) works in the mount.
-# Only runs if the host has SONAR_TOKEN exported. Allows the Sonar host and writes the token to
+# Only runs if the host has SONAR_TOKEN exported. Allows the Sonar hosts (api.sonarcloud.io serves
+# the scanner's JRE + analysis-engine provisioning, separate from sonarcloud.io) and writes the token to
 # the sandbox's persistent env file (sourced by login shells). NOTE: this is the one host
 # credential that lives inside the sandbox — sbx's proxy-injected secrets don't reach the agent
 # unless set before create, so there's no token-stays-out path without a recreate. Mount only.
 setup_sonar() {
     local name="$1"
     [ -n "${SONAR_TOKEN:-}" ] || return 0
-    sbx policy allow network --sandbox "$name" "sonarcloud.io" >/dev/null 2>&1 || true
+    sbx policy allow network --sandbox "$name" "sonarcloud.io,api.sonarcloud.io" >/dev/null 2>&1 || true
     if sbx exec "$name" bash -lc 'sudo sed -i "/SONAR_TOKEN/d" /etc/sandbox-persistent.sh; printf "export SONAR_TOKEN=%s\n" "$1" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null' _ "$SONAR_TOKEN"; then
         echo "SonarCloud token wired — the sonarqube-fix skill works in the mount."
     else
