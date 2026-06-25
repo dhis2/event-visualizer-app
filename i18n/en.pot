@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-25T12:39:53.157Z\n"
-"PO-Revision-Date: 2026-06-25T12:39:53.157Z\n"
+"POT-Creation-Date: 2026-06-25T13:40:18.060Z\n"
+"PO-Revision-Date: 2026-06-25T13:40:18.060Z\n"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -678,9 +678,6 @@ msgstr "Already used as custom value."
 
 msgid "Cannot be used in a {{visType}}."
 msgstr "Cannot be used in a {{visType}}."
-
-msgid "Not supported in a {{visType}}."
-msgstr "Not supported in a {{visType}}."
 
 msgid ""
 "Choose a data source above to see its dimensions, periods, and organisation "

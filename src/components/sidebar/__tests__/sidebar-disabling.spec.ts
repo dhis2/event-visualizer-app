@@ -73,7 +73,7 @@ describe('getDimensionLayoutBlockedMessage — registration OU rule (Case B)', (
                 visualizationType: 'PIVOT_TABLE',
                 customValueId: null,
             })
-        ).toBe('Not supported in a Pivot table.')
+        ).toBe('Cannot be used in a Pivot table.')
     })
 
     it('does not disable the TET registration OU item when vis is LINE_LIST', () => {

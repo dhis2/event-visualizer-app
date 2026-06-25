@@ -109,8 +109,8 @@ const selectLayoutTetArg = (
 ): MetadataItem | null => layoutTet
 
 export const selectSidebarDisablingState = createSelector(
-    [getVisUiConfigVisualizationType, selectDataSourceArg, selectLayoutTetArg],
-    (_visualizationType, dataSource, layoutTet): SidebarDisablingState => {
+    [selectDataSourceArg, selectLayoutTetArg],
+    (dataSource, layoutTet): SidebarDisablingState => {
         if (!dataSource) {
             return EMPTY_SIDEBAR_DISABLING_STATE
         }
@@ -176,41 +176,21 @@ type DimensionDisablingInput = {
     customValueId: string | null
 }
 
-const getCustomValueDimensionMessage = ({
-    dimension,
-    customValueId,
-}: DimensionDisablingInput): string | null => {
-    if (!customValueId || dimension.id !== customValueId) {
-        return null
-    }
-    return i18n.t('Already used as custom value.')
-}
-
-const getInvalidForVisTypeMessage = ({
+export const getDimensionLayoutBlockedMessage = ({
     dimension,
     visualizationType,
+    customValueId,
 }: DimensionDisablingInput): string | null => {
-    if (!isDimensionFullyInvalidForVisType(dimension, visualizationType)) {
-        return null
+    if (customValueId && dimension.id === customValueId) {
+        return i18n.t('Already used as custom value.')
     }
-    const visType = visTypeDisplayNames[visualizationType]
-    /* Case A (Program Indicator) and Case B (registration OU) are both caught
-     * by isDimensionFullyInvalidForVisType, but carry different messages per
-     * the spec. */
-    if (dimension.dimensionType === 'PROGRAM_INDICATOR') {
-        return i18n.t('Cannot be used in a {{visType}}.', { visType })
+    if (isDimensionFullyInvalidForVisType(dimension, visualizationType)) {
+        return i18n.t('Cannot be used in a {{visType}}.', {
+            visType: visTypeDisplayNames[visualizationType],
+        })
     }
-    return i18n.t('Not supported in a {{visType}}.', { visType })
+    return null
 }
-
-/* Layout-blocked rules. The two reasons are orthogonal (a dim is either
- * the custom-value target or it is invalid for the current vis type, never
- * both), so order does not matter operationally — custom-value is checked
- * first because it is the most common reason in practice. */
-export const getDimensionLayoutBlockedMessage = (
-    input: DimensionDisablingInput
-): string | null =>
-    getCustomValueDimensionMessage(input) ?? getInvalidForVisTypeMessage(input)
 
 export const useDimensionLayoutBlockedMessage = (
     dimension: DimensionMetadataItem | undefined

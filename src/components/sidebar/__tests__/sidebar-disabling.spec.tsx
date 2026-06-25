@@ -475,6 +475,6 @@ describe('useDimensionLayoutBlockedMessage', () => {
                 },
             })
         )
-        expect(result.current).toMatch(/Not supported in a Pivot table/)
+        expect(result.current).toMatch(/Cannot be used in a Pivot table/)
     })
 })
