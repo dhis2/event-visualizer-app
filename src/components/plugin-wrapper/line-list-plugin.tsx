@@ -128,6 +128,9 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         fetchAnalyticsData,
     ])
 
+    logger.debug('LL eventVisualization', eventVisualization)
+    logger.debug('LL analytics data', data)
+
     if (!data) {
         return null
     }
