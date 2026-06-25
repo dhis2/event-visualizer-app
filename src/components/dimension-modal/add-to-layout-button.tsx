@@ -1,8 +1,13 @@
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
+import { useDimensionLayoutBlockedMessage } from '@components/sidebar/sidebar-disabling'
 import { getAvailableAxes } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import { SplitButton, FlyoutMenu, MenuItem, Button } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector } from '@hooks'
+import { Button, FlyoutMenu, MenuItem, SplitButton, Tooltip } from '@dhis2/ui'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useDimensionMetadataItem,
+} from '@hooks'
 import { getAxisName } from '@modules/layout.js'
 import { getUiActiveDimensionModal } from '@store/ui-slice.js'
 import {
@@ -27,6 +32,8 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
         getUiActiveDimensionModal
     ) as LayoutDimension['id']
     const visType = useAppSelector(getVisUiConfigVisualizationType)
+    const dimension = useDimensionMetadataItem(dimensionId)
+    const layoutBlockedMessage = useDimensionLayoutBlockedMessage(dimension)
 
     const availableAxes = useMemo(() => getAvailableAxes(visType), [visType])
 
@@ -48,6 +55,24 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
             }),
         []
     )
+
+    if (layoutBlockedMessage) {
+        return (
+            <Tooltip content={layoutBlockedMessage}>
+                {({ onMouseOver, onMouseOut, ref }) => (
+                    <span
+                        onMouseOver={onMouseOver}
+                        onMouseOut={onMouseOut}
+                        ref={ref}
+                    >
+                        <Button disabled dataTest={dataTest}>
+                            {getButtonLabel(availableAxes[0])}
+                        </Button>
+                    </span>
+                )}
+            </Tooltip>
+        )
+    }
 
     return availableAxes.length > 1 ? (
         <SplitButton

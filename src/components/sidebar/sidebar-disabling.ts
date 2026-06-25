@@ -213,10 +213,13 @@ export const getDimensionLayoutBlockedMessage = (
     getCustomValueDimensionMessage(input) ?? getInvalidForVisTypeMessage(input)
 
 export const useDimensionLayoutBlockedMessage = (
-    dimension: DimensionMetadataItem
+    dimension: DimensionMetadataItem | undefined
 ): string | null => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const customValue = useAppSelector(getVisUiConfigCustomValue)
+    if (!dimension) {
+        return null
+    }
     return getDimensionLayoutBlockedMessage({
         dimension,
         visualizationType,
