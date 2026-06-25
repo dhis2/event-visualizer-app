@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import { importAliases } from './vitest.config'
+import { importAliases } from './import-aliases'
 
 const viteConfig = defineConfig(async (configEnv) => {
     const { mode } = configEnv

@@ -80,3 +80,5 @@ Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount 
 ## Tooling and constraints
 
 **Tooling inside the sandbox:** the `typescript-lsp`, `context7`, and `superpowers` plugins, the `grep` MCP, and the prettier/eslint format hook all work. Only project-level config (committed `.claude/`) is picked up — your _host_ user-level MCP servers are not propagated in. **GitHub auth (`gh`) is deliberately not available inside sandboxes** — the agent has no push/PR power, so a misbehaving session can't touch your repos; do GitHub operations on the host.
+
+`/doctor` shows the `chrome-devtools-mcp` plugin as "enabled in project settings but not installed" — this is **expected**: the plugin is enabled for host use (it drives the host's Chrome), can't be disabled sandbox-locally (it's enabled at project scope = the committed file), and isn't installed in the sandbox, so it loads no tools and the warning is harmless. Browser automation comes from the sandbox-local `chrome-devtools` server (see above). This goes away once Google ships Chrome for arm64 Linux and the sandbox can install it.

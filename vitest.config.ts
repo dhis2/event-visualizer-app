@@ -1,19 +1,7 @@
-import path from 'node:path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { configDefaults } from 'vitest/config'
-
-export const importAliases = {
-    '@types': path.resolve(__dirname, 'src/types/index.ts'),
-    '@hooks': path.resolve(__dirname, 'src/hooks/index.ts'),
-    '@api': path.resolve(__dirname, 'src/api'),
-    '@assets': path.resolve(__dirname, 'src/assets'),
-    '@components': path.resolve(__dirname, 'src/components'),
-    '@constants': path.resolve(__dirname, 'src/constants'),
-    '@modules': path.resolve(__dirname, 'src/modules'),
-    '@store': path.resolve(__dirname, 'src/store'),
-    '@test-utils': path.resolve(__dirname, 'src/test-utils'),
-}
+import { importAliases } from './import-aliases'
 
 // https://vitejs.dev/config/
 
