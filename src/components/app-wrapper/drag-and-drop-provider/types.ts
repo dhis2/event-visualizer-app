@@ -7,7 +7,8 @@ export type SidebarSortableData = {
     dimensionId: string
     overlayItemProps: ChipBaseProps
     populateMetadata: () => void
-    allowedTargetAxis: Record<Axis, boolean>
+    isLayoutBlocked: boolean
+    layoutBlockedMessage?: string
 }
 
 export type AxisSortableData = {
@@ -15,7 +16,8 @@ export type AxisSortableData = {
     axis: Axis
     overlayItemProps: ChipBaseProps
     insertAfter: boolean
-    allowedTargetAxis: Record<Axis, boolean>
+    isLayoutBlocked: boolean
+    layoutBlockedMessage?: string
 }
 
 export type AxisContainerDroppableData = {

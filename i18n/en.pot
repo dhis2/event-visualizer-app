@@ -5,8 +5,11 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-25T12:39:53.157Z\n"
-"PO-Revision-Date: 2026-06-25T12:39:53.157Z\n"
+"POT-Creation-Date: 2026-06-26T08:33:32.300Z\n"
+"PO-Revision-Date: 2026-06-26T08:33:32.300Z\n"
+
+msgid "Some dimensions cannot be used in a {{visTypeName}}: {{list}}."
+msgstr "Some dimensions cannot be used in a {{visTypeName}}: {{list}}."
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -640,6 +643,9 @@ msgstr "Load more"
 msgid "Loading more..."
 msgstr "Loading more..."
 
+msgid "None of the selected dimensions can be added to this layout."
+msgstr "None of the selected dimensions can be added to this layout."
+
 msgid "Org units"
 msgstr "Org units"
 
@@ -670,18 +676,11 @@ msgstr ""
 "used in the layout ({{- tetName}}). Remove the existing dimensions to use "
 "these."
 
-msgid "Cannot be used with {{visType}}."
-msgstr "Cannot be used with {{visType}}."
+msgid "Already used as custom value."
+msgstr "Already used as custom value."
 
-msgid ""
-"This dimension is used as the custom value. Remove the custom value to use "
-"it in the layout."
-msgstr ""
-"This dimension is used as the custom value. Remove the custom value to use "
-"it in the layout."
-
-msgid "Not valid with {{visType}}"
-msgstr "Not valid with {{visType}}"
+msgid "Cannot be used in a {{visType}}."
+msgstr "Cannot be used in a {{visType}}."
 
 msgid ""
 "Choose a data source above to see its dimensions, periods, and organisation "

@@ -1,21 +1,16 @@
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
 import type {
-    Axis,
     DimensionMetadataItem,
     Layout,
     MetadataItem,
     MetadataStore,
     Program,
-    VisualizationType,
 } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     buildAxis,
     collectProgramDimensions,
     convertLayoutForVisType,
-    getInvalidAxesForDimension,
-    isAxisInvalidForDimension,
-    isDimensionAggregatable,
     resolveTeiFields,
     resolveTetId,
 } from '../layout'
@@ -870,207 +865,6 @@ describe('collectProgramDimensions', () => {
     })
 })
 
-describe('isDimensionAggregatable', () => {
-    describe('DATA_ELEMENT', () => {
-        it.each([
-            'NUMBER',
-            'INTEGER',
-            'INTEGER_POSITIVE',
-            'INTEGER_NEGATIVE',
-            'INTEGER_ZERO_OR_POSITIVE',
-            'PERCENTAGE',
-            'UNIT_INTERVAL',
-            'BOOLEAN',
-            'TRUE_ONLY',
-        ] as const)('is aggregatable when valueType is %s', (valueType) => {
-            expect(
-                isDimensionAggregatable(
-                    makeDim({ dimensionType: 'DATA_ELEMENT', valueType })
-                )
-            ).toBe(true)
-        })
-
-        it.each([
-            'TEXT',
-            'LONG_TEXT',
-            'MULTI_TEXT',
-            'LETTER',
-            'PHONE_NUMBER',
-            'EMAIL',
-            'DATE',
-            'DATETIME',
-            'TIME',
-            'COORDINATE',
-            'FILE_RESOURCE',
-            'IMAGE',
-            'GEOJSON',
-            'URL',
-            'AGE',
-            'ORGANISATION_UNIT',
-            'USERNAME',
-        ] as const)('is non-aggregatable when valueType is %s', (valueType) => {
-            expect(
-                isDimensionAggregatable(
-                    makeDim({ dimensionType: 'DATA_ELEMENT', valueType })
-                )
-            ).toBe(false)
-        })
-
-        it('is non-aggregatable when valueType is missing', () => {
-            expect(
-                isDimensionAggregatable(
-                    makeDim({ dimensionType: 'DATA_ELEMENT' })
-                )
-            ).toBe(false)
-        })
-    })
-
-    describe('PROGRAM_ATTRIBUTE', () => {
-        it('is aggregatable when numeric', () => {
-            expect(
-                isDimensionAggregatable(
-                    makeDim({
-                        dimensionType: 'PROGRAM_ATTRIBUTE',
-                        valueType: 'NUMBER',
-                    })
-                )
-            ).toBe(true)
-        })
-
-        it('is non-aggregatable when text', () => {
-            expect(
-                isDimensionAggregatable(
-                    makeDim({
-                        dimensionType: 'PROGRAM_ATTRIBUTE',
-                        valueType: 'TEXT',
-                    })
-                )
-            ).toBe(false)
-        })
-    })
-
-    describe('categorical dimension types are always aggregatable', () => {
-        it.each([
-            ['PROGRAM_INDICATOR', undefined],
-            ['PROGRAM_INDICATOR', 'NUMBER'],
-            ['STATUS', 'TEXT'],
-            ['CATEGORY', undefined],
-            ['CATEGORY', 'TEXT'],
-            ['CATEGORY_OPTION_GROUP_SET', undefined],
-            ['CATEGORY_OPTION_GROUP_SET', 'TEXT'],
-            ['ORGANISATION_UNIT_GROUP_SET', 'TEXT'],
-            ['ORGANISATION_UNIT', 'ORGANISATION_UNIT'],
-            ['ORGANISATION_UNIT', undefined],
-            ['PERIOD', 'DATE'],
-            ['PERIOD', 'DATETIME'],
-        ] as const)(
-            'treats %s (valueType=%s) as aggregatable',
-            (dimensionType, valueType) => {
-                expect(
-                    isDimensionAggregatable(
-                        makeDim({ dimensionType, valueType })
-                    )
-                ).toBe(true)
-            }
-        )
-    })
-
-    describe('per-record dimension types are non-aggregatable', () => {
-        it.each([['USER', undefined]] as const)(
-            'treats %s (valueType=%s) as non-aggregatable',
-            (dimensionType, valueType) => {
-                expect(
-                    isDimensionAggregatable(
-                        makeDim({ dimensionType, valueType })
-                    )
-                ).toBe(false)
-            }
-        )
-    })
-})
-
-describe('getInvalidAxesForDimension', () => {
-    const textDataElement = makeDim({
-        dimensionType: 'DATA_ELEMENT',
-        valueType: 'TEXT',
-    })
-    const numberDataElement = makeDim({
-        dimensionType: 'DATA_ELEMENT',
-        valueType: 'NUMBER',
-    })
-    const programIndicator = makeDim({ dimensionType: 'PROGRAM_INDICATOR' })
-
-    it('returns columns and rows for non-aggregatable dims in PIVOT_TABLE', () => {
-        expect(
-            Array.from(
-                getInvalidAxesForDimension(textDataElement, 'PIVOT_TABLE')
-            ).sort((a, b) => a.localeCompare(b))
-        ).toEqual(['columns', 'rows'])
-    })
-
-    it('returns empty set for aggregatable dims in PIVOT_TABLE', () => {
-        expect(
-            getInvalidAxesForDimension(numberDataElement, 'PIVOT_TABLE').size
-        ).toBe(0)
-        expect(
-            getInvalidAxesForDimension(programIndicator, 'PIVOT_TABLE').size
-        ).toBe(0)
-    })
-
-    it.each(['LINE_LIST'] as const satisfies VisualizationType[])(
-        'returns empty set for non-aggregatable dims in %s',
-        (visType) => {
-            expect(
-                getInvalidAxesForDimension(textDataElement, visType).size
-            ).toBe(0)
-        }
-    )
-})
-
-describe('isAxisInvalidForDimension', () => {
-    const textDataElement = makeDim({
-        dimensionType: 'DATA_ELEMENT',
-        valueType: 'TEXT',
-    })
-    const numberDataElement = makeDim({
-        dimensionType: 'DATA_ELEMENT',
-        valueType: 'NUMBER',
-    })
-
-    it.each([
-        ['columns', true],
-        ['rows', true],
-        ['filters', false],
-    ] as const satisfies Array<[Axis, boolean]>)(
-        'returns %s for non-aggregatable + PIVOT_TABLE + %s axis',
-        (axis, expected) => {
-            expect(
-                isAxisInvalidForDimension(textDataElement, axis, 'PIVOT_TABLE')
-            ).toBe(expected)
-        }
-    )
-
-    it('returns false for aggregatable dim on any axis in PIVOT_TABLE', () => {
-        for (const axis of ['columns', 'rows', 'filters'] as const) {
-            expect(
-                isAxisInvalidForDimension(
-                    numberDataElement,
-                    axis,
-                    'PIVOT_TABLE'
-                )
-            ).toBe(false)
-        }
-    })
-
-    it('returns false in LINE_LIST regardless of dim', () => {
-        for (const axis of ['columns', 'rows', 'filters'] as const) {
-            expect(
-                isAxisInvalidForDimension(textDataElement, axis, 'LINE_LIST')
-            ).toBe(false)
-        }
-    })
-})
-
 describe('convertLayoutForVisType', () => {
     const makeGetDimension =
         (records: Record<string, DimensionMetadataItem>) =>
@@ -1142,7 +936,7 @@ describe('convertLayoutForVisType', () => {
             expect(result.newLayout.columns).toEqual(['numericDe'])
         })
 
-        it('moves a non-aggregatable dimension from columns to filters', () => {
+        it('keeps all non-PI dimensions in their original axes', () => {
             const result = convertLayoutForVisType({
                 layout: {
                     columns: ['textDe', 'numericDe'],
@@ -1164,8 +958,8 @@ describe('convertLayoutForVisType', () => {
                 }),
             })
             expect(result.discardedDimensionIds).toEqual([])
-            expect(result.newLayout.columns).toEqual(['numericDe'])
-            expect(result.newLayout.filters).toEqual(['textDe'])
+            expect(result.newLayout.columns).toEqual(['textDe', 'numericDe'])
+            expect(result.newLayout.filters).toEqual([])
         })
 
         it('keeps aggregatable dimensions in columns', () => {
@@ -1285,8 +1079,8 @@ describe('convertLayoutForVisType', () => {
             }),
         })
         expect(result.discardedDimensionIds).toEqual(['pi'])
-        expect(result.newLayout.columns).toEqual(['numericDe'])
-        expect(result.newLayout.filters).toEqual(['filterDim', 'textDe'])
+        expect(result.newLayout.columns).toEqual(['numericDe', 'textDe'])
+        expect(result.newLayout.filters).toEqual(['filterDim'])
         expect(result.newLayout.rows).toEqual([])
     })
 })

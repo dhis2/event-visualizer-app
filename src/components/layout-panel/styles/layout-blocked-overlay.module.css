@@ -1,0 +1,30 @@
+.layoutBlockedOverlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 4px,
+        var(--colors-grey300) 5px,
+        transparent 6px
+    );
+    background-color: color-mix(
+        in srgb,
+        var(--colors-grey100),
+        transparent 30%
+    );
+    backdrop-filter: blur(0.5px);
+    pointer-events: auto;
+}
+.layoutBlockedMessage {
+    padding: var(--spacers-dp4);
+    background: color-mix(in srgb, var(--colors-grey050) 80%, transparent);
+    color: var(--colors-grey700);
+    font-size: 12px;
+    font-weight: 400;
+    text-align: center;
+}

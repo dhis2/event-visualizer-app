@@ -1,4 +1,9 @@
-import { useAppDispatch, useAppSelector, useAddMetadata } from '@hooks'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useAddMetadata,
+    useMetadataStore,
+} from '@hooks'
 import { clearMultiSelection } from '@store/dimensions-selection-slice'
 import {
     addVisUiConfigLayoutDimension,
@@ -10,10 +15,27 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { LayoutDragEndEvent } from '../types'
 import { useOnDragEnd } from '../use-on-drag-end'
 
+vi.mock('@dhis2/app-runtime', () => ({
+    useAlert: vi.fn(() => ({ show: vi.fn() })),
+}))
+
+vi.mock('@components/sidebar/sidebar-disabling', () => ({
+    getDimensionLayoutBlockedMessage: vi.fn(() => null),
+}))
+
+const mockStoreGetState = vi.fn(() => ({}))
+
 vi.mock('@hooks', () => ({
     useAppDispatch: vi.fn(),
     useAppSelector: vi.fn(),
     useAddMetadata: vi.fn(),
+    useAppStore: vi.fn(() => ({ getState: mockStoreGetState })),
+    useListFormatter: vi.fn(() => ({
+        format: (list: string[]) => list.join(', '),
+    })),
+    useMetadataStore: vi.fn(() => ({
+        getMetadataItem: vi.fn(() => undefined),
+    })),
 }))
 
 vi.mock('@store/dimensions-selection-slice', () => ({
@@ -25,9 +47,9 @@ vi.mock('@store/vis-ui-config-slice', () => ({
     addVisUiConfigLayoutDimension: vi.fn(),
     addVisUiConfigLayoutDimensions: vi.fn(),
     moveVisUiConfigLayoutDimension: vi.fn(),
+    getVisUiConfigVisualizationType: vi.fn(),
+    getVisUiConfigCustomValue: vi.fn(),
 }))
-
-const ALL_AXES_ALLOWED = { columns: true, rows: true, filters: true }
 
 describe('useOnDragEnd', () => {
     const mockDispatch = vi.fn()
@@ -88,7 +110,7 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'test',
                         overlayItemProps: {},
                         populateMetadata,
-                        allowedTargetAxis: ALL_AXES_ALLOWED,
+                        isLayoutBlocked: false,
                     },
                 },
             },
@@ -126,7 +148,7 @@ describe('useOnDragEnd', () => {
                         sortable: { index: 1 },
                         overlayItemProps: {},
                         insertAfter: false,
-                        allowedTargetAxis: ALL_AXES_ALLOWED,
+                        isLayoutBlocked: false,
                     },
                 },
             },
@@ -157,6 +179,12 @@ describe('useOnDragEnd', () => {
 
     it('should dispatch addVisUiConfigLayoutDimensions for multi-select drag', () => {
         vi.mocked(useAppSelector).mockReturnValue(['dim1', 'dim2', 'dim3'])
+        vi.mocked(useMetadataStore).mockReturnValue({
+            getMetadataItem: vi.fn((id: string) => ({
+                id,
+                dimensionType: 'DATA_ELEMENT',
+            })),
+        } as unknown as ReturnType<typeof useMetadataStore>)
         const { result } = renderHook(() => useOnDragEnd())
         const populateMetadata = vi.fn()
         const event = {
@@ -166,7 +194,7 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'dim2',
                         overlayItemProps: {},
                         populateMetadata,
-                        allowedTargetAxis: ALL_AXES_ALLOWED,
+                        isLayoutBlocked: false,
                     },
                 },
             },
@@ -206,7 +234,7 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'dim3',
                         overlayItemProps: {},
                         populateMetadata,
-                        allowedTargetAxis: ALL_AXES_ALLOWED,
+                        isLayoutBlocked: false,
                     },
                 },
             },
@@ -245,7 +273,7 @@ describe('useOnDragEnd', () => {
                         dimensionId: 'test',
                         overlayItemProps: {},
                         populateMetadata,
-                        allowedTargetAxis: ALL_AXES_ALLOWED,
+                        isLayoutBlocked: false,
                     },
                 },
             },
@@ -276,7 +304,7 @@ describe('useOnDragEnd', () => {
                         sortable: { index: 1 },
                         overlayItemProps: {},
                         insertAfter: false,
-                        allowedTargetAxis: ALL_AXES_ALLOWED,
+                        isLayoutBlocked: false,
                     },
                 },
             },

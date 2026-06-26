@@ -1,19 +1,26 @@
 import type { SidebarSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
+import { getDimensionLayoutBlockedMessage } from '@components/sidebar/sidebar-disabling'
+import i18n from '@dhis2/d2-i18n'
 import type { DraggableSyntheticListeners } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useAppSelector, useMetadataStore } from '@hooks'
-import { getAllowedTargetAxis } from '@modules/layout'
-import { getMultiSelectedDimensionIds } from '@store/dimensions-selection-slice'
-import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
-import type { Axis, DimensionMetadataItem } from '@types'
+import {
+    getMultiSelectedDimensionIds,
+    isMultiSelecting,
+} from '@store/dimensions-selection-slice'
+import {
+    getVisUiConfigCustomValue,
+    getVisUiConfigVisualizationType,
+} from '@store/vis-ui-config-slice'
+import type { DimensionMetadataItem } from '@types'
 import { useMemo, type CSSProperties } from 'react'
 
 type UseDimensionItemDndArgs = {
     dimension: DimensionMetadataItem
     populateMetadata: () => void
-    selfAllowedTargetAxis: Record<Axis, boolean>
     disabled: boolean
+    layoutBlockedMessage: string | null
 }
 
 type UseDimensionItemDndReturn = {
@@ -24,37 +31,60 @@ type UseDimensionItemDndReturn = {
     style: CSSProperties | undefined
 }
 
+const getMultiSelectAllBlockedMessage = () =>
+    i18n.t('None of the selected dimensions can be added to this layout.')
+
 export const useDimensionItemDnd = ({
     dimension,
     populateMetadata,
-    selfAllowedTargetAxis,
     disabled,
+    layoutBlockedMessage,
 }: UseDimensionItemDndArgs): UseDimensionItemDndReturn => {
-    const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
     const metadataStore = useMetadataStore()
-    const visType = useAppSelector(getVisUiConfigVisualizationType)
+    const multiSelecting = useAppSelector(isMultiSelecting)
+    const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
+    const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
+    const customValue = useAppSelector(getVisUiConfigCustomValue)
+    const customValueId = customValue?.id ?? null
 
-    const dragAllowedTargetAxis = useMemo<Record<Axis, boolean>>(() => {
-        if (!multiSelectedIds.includes(dimension.id)) {
-            return selfAllowedTargetAxis
+    const multiSelectBlocked = useMemo(() => {
+        if (!multiSelecting || multiSelectedIds.length === 0) {
+            return false
         }
-        const dimsInDrag = multiSelectedIds
-            .map((id) =>
-                id === dimension.id
-                    ? dimension
-                    : (metadataStore.getMetadataItem(id) as
-                          | DimensionMetadataItem
-                          | undefined)
+        return multiSelectedIds.every((id) => {
+            const dim = metadataStore.getMetadataItem(id) as
+                | DimensionMetadataItem
+                | undefined
+            if (!dim) {
+                return false
+            }
+            return (
+                getDimensionLayoutBlockedMessage({
+                    dimension: dim,
+                    visualizationType,
+                    customValueId,
+                }) !== null
             )
-            .filter((d): d is DimensionMetadataItem => d !== undefined)
-        return getAllowedTargetAxis(dimsInDrag, visType)
+        })
     }, [
+        multiSelecting,
         multiSelectedIds,
-        dimension,
         metadataStore,
-        visType,
-        selfAllowedTargetAxis,
+        visualizationType,
+        customValueId,
     ])
+
+    const resolvedIsLayoutBlocked = multiSelecting
+        ? multiSelectBlocked
+        : layoutBlockedMessage !== null
+
+    const multiSelectBlockedMessage = multiSelectBlocked
+        ? getMultiSelectAllBlockedMessage()
+        : undefined
+
+    const resolvedLayoutBlockedMessage = multiSelecting
+        ? multiSelectBlockedMessage
+        : (layoutBlockedMessage ?? undefined)
 
     const droppableData = useMemo<SidebarSortableData>(
         () => ({
@@ -66,9 +96,15 @@ export const useDimensionItemDnd = ({
                 onClick: () => undefined,
             },
             populateMetadata,
-            allowedTargetAxis: dragAllowedTargetAxis,
+            isLayoutBlocked: resolvedIsLayoutBlocked,
+            layoutBlockedMessage: resolvedLayoutBlockedMessage,
         }),
-        [dimension, populateMetadata, dragAllowedTargetAxis]
+        [
+            dimension,
+            populateMetadata,
+            resolvedIsLayoutBlocked,
+            resolvedLayoutBlockedMessage,
+        ]
     )
 
     const {

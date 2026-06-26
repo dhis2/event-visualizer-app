@@ -3,10 +3,12 @@
 }
 
 .container {
+    position: relative;
     animation: fadeIn 0.4s ease-out forwards;
 }
 
 .axisContainer {
+    position: relative;
     display: grid;
     grid-template-columns: 2fr 1fr;
     grid-template-areas:

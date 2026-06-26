@@ -1,10 +1,9 @@
 import { IconButton } from '@components/shared/icon-button'
 import { useIsContainingCardDisabled } from '@components/sidebar/dimension-card'
-import { useDimensionDisabledText } from '@components/sidebar/sidebar-disabling'
+import { useDimensionLayoutBlockedMessage } from '@components/sidebar/sidebar-disabling'
 import { useIsDimensionInLayout } from '@components/sidebar/use-is-dimension-in-layout'
-import { IconAdd16, IconSubtract16, Tooltip } from '@dhis2/ui'
+import { IconAdd16, IconSubtract16 } from '@dhis2/ui'
 import { useAddMetadata, useAppDispatch, useAppSelector } from '@hooks'
-import { getAllowedTargetAxis } from '@modules/layout'
 import {
     clearMultiSelection,
     isDimensionMultiSelected,
@@ -13,11 +12,10 @@ import {
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
     addVisUiConfigLayoutDimension,
-    getVisUiConfigVisualizationType,
     removeVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice'
 import type { Axis, DimensionMetadataItem, Program, ProgramStage } from '@types'
-import { useCallback, useMemo, type FC } from 'react'
+import { useCallback, type FC } from 'react'
 import { DimensionItem } from './dimension-item'
 import { DimensionItemContainer } from './dimension-item-container'
 import styles from './styles/draggable-dimension-item.module.css'
@@ -30,16 +28,8 @@ interface DraggableDimensionItemProps {
     disabled?: boolean
 }
 
-type TooltipRenderProps = {
-    onBlur: React.FocusEventHandler<HTMLElement>
-    onFocus: React.FocusEventHandler<HTMLElement>
-    onMouseOver: React.MouseEventHandler<HTMLElement>
-    onMouseOut: React.MouseEventHandler<HTMLElement>
-    ref: React.MutableRefObject<HTMLElement>
-}
-
 type DraggableDimensionItemBodyProps = DraggableDimensionItemProps & {
-    tooltipProps?: TooltipRenderProps
+    layoutBlockedMessage: string | null
 }
 
 const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
@@ -47,7 +37,7 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
     program,
     programStage,
     disabled = false,
-    tooltipProps,
+    layoutBlockedMessage,
 }) => {
     const dispatch = useAppDispatch()
     const addMetadata = useAddMetadata()
@@ -55,13 +45,8 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
     const multiSelected = useAppSelector((state) =>
         isDimensionMultiSelected(state, dimension.id)
     )
-    const visType = useAppSelector(getVisUiConfigVisualizationType)
     const isContainingCardDisabled = useIsContainingCardDisabled()
     const cardOrItemDisabled = isContainingCardDisabled || disabled
-    const selfAllowedTargetAxis = useMemo(
-        () => getAllowedTargetAxis([dimension], visType),
-        [dimension, visType]
-    )
 
     const populateMetadata = useCallback(() => {
         // Adding the program also stores its stages and TET.
@@ -96,9 +81,7 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
             )
         } else {
             populateMetadata()
-            const defaultAxis: Axis = selfAllowedTargetAxis.columns
-                ? 'columns'
-                : 'filters'
+            const defaultAxis: Axis = 'columns'
             dispatch(
                 addVisUiConfigLayoutDimension({
                     axis: defaultAxis,
@@ -106,38 +89,22 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
                 })
             )
         }
-    }, [
-        dimension.id,
-        populateMetadata,
-        dispatch,
-        selected,
-        selfAllowedTargetAxis,
-    ])
+    }, [dimension.id, populateMetadata, dispatch, selected])
 
     const { setNodeRef, attributes, listeners, isDragging, style } =
         useDimensionItemDnd({
             dimension,
             populateMetadata,
-            selfAllowedTargetAxis,
             disabled: cardOrItemDisabled || selected,
+            layoutBlockedMessage,
         })
-
-    /* Tooltip's MutableRefObject<HTMLElement> targets a wider element
-     * type than the container's HTMLDivElement ref slot. */
-    const ref = tooltipProps
-        ? (tooltipProps.ref as React.Ref<HTMLDivElement>)
-        : setNodeRef
 
     return (
         <DimensionItemContainer
-            ref={ref}
+            ref={setNodeRef}
             style={style}
             {...attributes}
             {...listeners}
-            onBlur={tooltipProps?.onBlur}
-            onFocus={tooltipProps?.onFocus}
-            onMouseOver={tooltipProps?.onMouseOver}
-            onMouseOut={tooltipProps?.onMouseOut}
             aria-roledescription="draggable item"
             selected={selected}
             multiSelected={multiSelected}
@@ -152,27 +119,29 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
                     disabled={cardOrItemDisabled}
                     onClick={handleClick}
                 />
-                {!cardOrItemDisabled && !multiSelected && (
-                    <div className={styles.iconButtonWrapper}>
-                        <IconButton
-                            onClick={(e) => {
-                                e.stopPropagation()
-                                handleAddRemove()
-                            }}
-                            dataTest={
-                                selected
-                                    ? `subtract-button-${dimension.id}`
-                                    : `add-button-${dimension.id}`
-                            }
-                        >
-                            {selected ? (
-                                <IconSubtract16 />
-                            ) : (
-                                <IconAdd16 color="var(--colors-grey600)" />
-                            )}
-                        </IconButton>
-                    </div>
-                )}
+                {!cardOrItemDisabled &&
+                    !multiSelected &&
+                    !layoutBlockedMessage && (
+                        <div className={styles.iconButtonWrapper}>
+                            <IconButton
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleAddRemove()
+                                }}
+                                dataTest={
+                                    selected
+                                        ? `subtract-button-${dimension.id}`
+                                        : `add-button-${dimension.id}`
+                                }
+                            >
+                                {selected ? (
+                                    <IconSubtract16 />
+                                ) : (
+                                    <IconAdd16 color="var(--colors-grey600)" />
+                                )}
+                            </IconButton>
+                        </div>
+                    )}
             </div>
         </DimensionItemContainer>
     )
@@ -181,23 +150,13 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
 export const DraggableDimensionItem: FC<DraggableDimensionItemProps> = (
     props
 ) => {
-    const layoutDisabledMessage = useDimensionDisabledText(props.dimension)
-    if (layoutDisabledMessage) {
-        return (
-            <Tooltip
-                content={layoutDisabledMessage}
-                openDelay={1000}
-                closeDelay={0}
-            >
-                {(tooltipProps: TooltipRenderProps) => (
-                    <DraggableDimensionItemBody
-                        {...props}
-                        disabled
-                        tooltipProps={tooltipProps}
-                    />
-                )}
-            </Tooltip>
-        )
-    }
-    return <DraggableDimensionItemBody {...props} />
+    const layoutBlockedMessage = useDimensionLayoutBlockedMessage(
+        props.dimension
+    )
+    return (
+        <DraggableDimensionItemBody
+            {...props}
+            layoutBlockedMessage={layoutBlockedMessage}
+        />
+    )
 }

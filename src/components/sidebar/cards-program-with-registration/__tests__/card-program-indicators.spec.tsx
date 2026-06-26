@@ -11,6 +11,16 @@ vi.mock('@hooks', () => ({
     useCurrentUser: () => ({
         settings: { displayNameProperty: 'displayName' },
     }),
+    useAppDispatch: () => vi.fn(),
+    useAppSelector: () => 'LINE_LIST',
+}))
+
+vi.mock('@store/dimensions-selection-slice', () => ({
+    setDimensionCardCollapsed: vi.fn(),
+}))
+
+vi.mock('@store/vis-ui-config-slice', () => ({
+    getVisUiConfigVisualizationType: vi.fn(),
 }))
 
 vi.mock('@components/sidebar/use-dimension-list', () => ({

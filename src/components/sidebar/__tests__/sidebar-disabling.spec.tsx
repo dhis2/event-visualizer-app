@@ -16,7 +16,7 @@ import deepmerge from 'deepmerge'
 import { describe, expect, it } from 'vitest'
 import {
     useCardDisabledNoticeText,
-    useDimensionDisabledText,
+    useDimensionLayoutBlockedMessage,
     useIsCardDisabledByLayout,
 } from '../sidebar-disabling'
 
@@ -101,7 +101,7 @@ describe('useIsCardDisabledByLayout', () => {
         })
     })
 
-    it('returns true for the PI card when vis is PIVOT_TABLE', async () => {
+    it('does not card-disable the PI card when vis is PIVOT_TABLE (blocking moves to layout boundary)', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => ({
                 enrollment: useIsCardDisabledByLayout('enrollment'),
@@ -122,7 +122,7 @@ describe('useIsCardDisabledByLayout', () => {
             })
         )
         expect(result.current.enrollment).toBe(false)
-        expect(result.current.pi).toBe(true)
+        expect(result.current.pi).toBe(false)
     })
 
     it('returns true for every program-scoped card when layout TET differs', async () => {
@@ -272,7 +272,7 @@ describe('useCardDisabledNoticeText', () => {
         expect(result.current.pi).toBeUndefined()
     })
 
-    it('returns the message on the PI card only when vis is PIVOT_TABLE (same TET)', async () => {
+    it('returns no card notice text for the PI card when vis is PIVOT_TABLE (blocking moves to layout boundary)', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => ({
                 enrollment: useCardDisabledNoticeText('enrollment'),
@@ -293,7 +293,7 @@ describe('useCardDisabledNoticeText', () => {
             })
         )
         expect(result.current.enrollment).toBeUndefined()
-        expect(result.current.pi).toMatch(/Cannot be used with Pivot table/)
+        expect(result.current.pi).toBeUndefined()
     })
 
     it('returns undefined for non-sidebar card ids (metadata, other)', async () => {
@@ -388,7 +388,7 @@ describe('useCardDisabledNoticeText', () => {
         expect(result.current).toMatch(/Household/)
     })
 
-    it('returns the vis-type message on the event-program PI card in pivot mode', async () => {
+    it('returns no card notice text on the event-program PI card in pivot mode (blocking moves to layout boundary)', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useCardDisabledNoticeText('event-program-indicators'),
             buildOptions({
@@ -405,7 +405,7 @@ describe('useCardDisabledNoticeText', () => {
                 },
             })
         )
-        expect(result.current).toMatch(/Cannot be used with Pivot table/)
+        expect(result.current).toBeUndefined()
     })
 })
 
@@ -420,11 +420,11 @@ const makeDim = (
         ...overrides,
     }) as DimensionMetadataItem
 
-describe('useDimensionDisabledText', () => {
-    it('returns undefined when no rule applies', async () => {
+describe('useDimensionLayoutBlockedMessage', () => {
+    it('returns null when no rule applies', async () => {
         const dim = makeDim({ id: 'stage1.de1', dimensionId: 'de1' })
         const { result } = await renderHookWithAppWrapper(
-            () => useDimensionDisabledText(dim),
+            () => useDimensionLayoutBlockedMessage(dim),
             buildOptions({
                 state: {
                     visUiConfig: {
@@ -434,13 +434,13 @@ describe('useDimensionDisabledText', () => {
                 },
             })
         )
-        expect(result.current).toBeUndefined()
+        expect(result.current).toBeNull()
     })
 
     it('returns the custom-value message when the dim matches the configured custom value id', async () => {
         const dim = makeDim({ id: 'stage1.de1', dimensionId: 'de1' })
         const { result } = await renderHookWithAppWrapper(
-            () => useDimensionDisabledText(dim),
+            () => useDimensionLayoutBlockedMessage(dim),
             buildOptions({
                 state: {
                     visUiConfig: {
@@ -465,7 +465,7 @@ describe('useDimensionDisabledText', () => {
             trackedEntityTypeId: 'tetA',
         })
         const { result } = await renderHookWithAppWrapper(
-            () => useDimensionDisabledText(dim),
+            () => useDimensionLayoutBlockedMessage(dim),
             buildOptions({
                 state: {
                     visUiConfig: {
@@ -475,6 +475,6 @@ describe('useDimensionDisabledText', () => {
                 },
             })
         )
-        expect(result.current).toMatch(/Not valid with Pivot table/)
+        expect(result.current).toMatch(/Cannot be used in a Pivot table/)
     })
 })

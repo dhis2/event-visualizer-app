@@ -1,6 +1,8 @@
+import { getActiveDragData } from '@components/app-wrapper/drag-and-drop-provider/dnd-data'
 import { SkeletonChip } from '@components/shared/skeleton-chip'
 import i18n from '@dhis2/d2-i18n'
 import { IconMore16, colors } from '@dhis2/ui'
+import { useDndContext } from '@dnd-kit/core'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
@@ -16,6 +18,7 @@ import cx from 'classnames'
 import { useEffect, useMemo, type FC } from 'react'
 import { useWindowSize } from 'usehooks-ts'
 import { Axis } from './axis/axis'
+import { LayoutBlockedOverlay } from './layout-blocked-overlay'
 import { ResizeHandle } from './resize-handle'
 import classes from './styles/axes.module.css'
 import { useResizeHandle } from './use-resize-handle'
@@ -70,6 +73,8 @@ export const Axes: FC = () => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const { columns, filters, rows } = useAppSelector(getVisUiConfigLayout)
     const { height } = useWindowSize()
+    const { active } = useDndContext()
+    const activeDragData = getActiveDragData(active)
 
     const maxHeight = useMemo(
         () => height * 0.2, // fallback to 20vh
@@ -156,6 +161,13 @@ export const Axes: FC = () => {
                         ariaLabel={i18n.t('Resize axes panel')}
                         {...eventHandlers}
                     />
+                    {active &&
+                        activeDragData?.isLayoutBlocked &&
+                        activeDragData.layoutBlockedMessage && (
+                            <LayoutBlockedOverlay
+                                message={activeDragData.layoutBlockedMessage}
+                            />
+                        )}
                 </div>
             )}
         </div>
