@@ -1,4 +1,5 @@
 import { PivotTable } from '@dhis2/analytics'
+import { logger } from '@modules/logger'
 import {
     getAnalyticsRequestHeaderName,
     transformVisualizationForAnalyticsRequest,
@@ -77,6 +78,9 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
         onResponseReceived,
         fetchAnalyticsData,
     ])
+
+    logger.debug('PT eventVisualization', eventVisualization)
+    logger.debug('PT analytics data', data)
 
     if (!data) {
         return null

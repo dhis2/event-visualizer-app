@@ -192,7 +192,7 @@ const fetchAnalyticsDataForLL = async ({
                 break
         }
     }
-    logger.debug('LL req', req)
+
     const analyticsApiEndpoint = getAnalyticsEndpoint(visualization.outputType)
 
     const rawResponse =
@@ -490,7 +490,6 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     : { dimension: undefined, direction: undefined }
 
             try {
-                logger.debug('in fetch analytics data try')
                 const analyticsResponse = await fetchAnalyticsDataForLL({
                     analyticsEngine,
                     page,

@@ -24,6 +24,8 @@ export const fetchAnalyticsDataForPT = async ({
     const { adaptedVisualization, parameters } =
         getAdaptedVisualization(visualization)
 
+    logger.debug('adaptedVisualization', adaptedVisualization)
+
     // TODO: figure out what to do for the DE time dimensions
     const { timeField } = visualization
 
@@ -136,7 +138,6 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                 const analyticsData =
                     transformEventAggregateResponse(analyticsResponse)
 
-                logger.debug('analytics data', analyticsData)
                 setState({
                     data: analyticsData,
                     error: undefined,
