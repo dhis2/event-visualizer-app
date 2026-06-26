@@ -3,6 +3,7 @@
 }
 
 .container {
+    position: relative;
     animation: fadeIn 0.4s ease-out forwards;
 }
 

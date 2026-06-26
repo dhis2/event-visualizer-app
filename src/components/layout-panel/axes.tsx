@@ -154,15 +154,6 @@ export const Axes: FC = () => {
                             <Axis axisId="rows" dimensionIds={rows} />
                         )}
                         <Axis axisId="filters" dimensionIds={filters} />
-                        {active &&
-                            activeDragData?.isLayoutBlocked &&
-                            activeDragData.layoutBlockedMessage && (
-                                <LayoutBlockedOverlay
-                                    message={
-                                        activeDragData.layoutBlockedMessage
-                                    }
-                                />
-                            )}
                     </div>
                     <ResizeHandle
                         isDragging={isDragging}
@@ -170,6 +161,13 @@ export const Axes: FC = () => {
                         ariaLabel={i18n.t('Resize axes panel')}
                         {...eventHandlers}
                     />
+                    {active &&
+                        activeDragData?.isLayoutBlocked &&
+                        activeDragData.layoutBlockedMessage && (
+                            <LayoutBlockedOverlay
+                                message={activeDragData.layoutBlockedMessage}
+                            />
+                        )}
                 </div>
             )}
         </div>
