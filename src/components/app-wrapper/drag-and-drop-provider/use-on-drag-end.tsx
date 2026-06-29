@@ -1,6 +1,5 @@
 import {
     getDimensionBlockReason,
-    resolveCrossTetMismatch,
     type DimensionBlockReason,
 } from '@components/sidebar/sidebar-disabling'
 import { visTypeDisplayNames } from '@dhis2/analytics'
@@ -13,7 +12,7 @@ import {
     useListFormatter,
     useMetadataStore,
 } from '@hooks'
-import { resolveDimensionTetId } from '@modules/layout'
+import { resolveDimensionTetId, resolveTetId } from '@modules/layout'
 import {
     clearMultiSelection,
     getMultiSelectedDimensionIds,
@@ -23,9 +22,9 @@ import {
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
     getVisUiConfigCustomValue,
+    getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
-import type { DimensionMetadataItem } from '@types'
 import { useCallback } from 'react'
 import {
     isAxisContainerData,
@@ -65,21 +64,18 @@ const partitionMultiSelectedDimensions = ({
         crossTet: [],
     }
     const validIds = ids.filter((id) => {
-        const dim = metadataStore.getMetadataItem(id)
+        const dim = metadataStore.getDimensionMetadataItem(id)
         if (!dim) {
             throw new Error(
                 `Dimension "${id}" is in multi-selection but has no metadata entry`
             )
         }
         const reason = getDimensionBlockReason({
-            dimension: dim as DimensionMetadataItem,
+            dimension: dim,
             visualizationType,
             customValueId,
             layoutTetId,
-            dimensionTetId: resolveDimensionTetId(
-                dim as DimensionMetadataItem,
-                metadataStore
-            ),
+            dimensionTetId: resolveDimensionTetId(dim, metadataStore),
         })
         if (reason) {
             skippedByReason[reason].push(dim.name)
@@ -137,7 +133,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
             visualizationType: ReturnType<
                 typeof getVisUiConfigVisualizationType
             >,
-            layoutTetName: string
+            layoutTetId: string | null
         ) => {
             if (skippedByReason.visType.length > 0) {
                 showVisTypeAlert({
@@ -148,7 +144,10 @@ export const useOnDragEnd = (): OnDragEndFn => {
             if (skippedByReason.crossTet.length > 0) {
                 showCrossTetAlert({
                     list: listFormatter.format(skippedByReason.crossTet),
-                    layoutTetName,
+                    layoutTetName: layoutTetId
+                        ? (metadataStore.getMetadataItem(layoutTetId)?.name ??
+                          '')
+                        : '',
                 })
             }
             if (skippedByReason.customValue.length > 0) {
@@ -156,6 +155,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
             }
         },
         [
+            metadataStore,
             listFormatter,
             showVisTypeAlert,
             showCrossTetAlert,
@@ -205,8 +205,8 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 const storeState = store.getState()
                 const visType = getVisUiConfigVisualizationType(storeState)
                 const customValue = getVisUiConfigCustomValue(storeState)
-                const crossTetMismatch = resolveCrossTetMismatch(
-                    storeState,
+                const layoutTetId = resolveTetId(
+                    getVisUiConfigLayoutAllDimensionIds(storeState),
                     metadataStore
                 )
 
@@ -217,7 +217,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
                         metadataStore,
                         visualizationType: visType,
                         customValueId: customValue?.id ?? null,
-                        layoutTetId: crossTetMismatch?.layoutTetId ?? null,
+                        layoutTetId,
                     })
 
                 if (validIds.length > 0) {
@@ -234,7 +234,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 showSkippedDimensionAlerts(
                     skippedByReason,
                     visType,
-                    crossTetMismatch?.layoutTetName ?? ''
+                    layoutTetId
                 )
             } else {
                 // Single add from sidebar

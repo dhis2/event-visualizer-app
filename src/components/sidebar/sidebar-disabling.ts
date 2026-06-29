@@ -11,7 +11,7 @@ import {
     isDataSourceProgramWithRegistration,
     isDataSourceTrackedEntityType,
 } from '@modules/data-source'
-import { resolveDimensionTetId, resolveTetId } from '@modules/layout'
+import { resolveDimensionTetId } from '@modules/layout'
 import {
     isDimensionCrossTet,
     isDimensionFullyInvalidForVisType,
@@ -22,15 +22,12 @@ import {
 } from '@store/dimensions-selection-slice'
 import {
     getVisUiConfigCustomValue,
-    getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
 import type {
     DimensionCardKey,
     DimensionMetadataItem,
     MetadataItem,
-    MetadataStore,
-    RootState,
     VisualizationType,
 } from '@types'
 import { useEffect } from 'react'
@@ -109,34 +106,6 @@ export const getCrossTetMessage = (
         '{{- dataSourceTetName}} dimensions cannot be combined with {{- layoutTetName}} dimensions already in the layout.',
         { dataSourceTetName, layoutTetName }
     )
-
-/* State-based resolver for non-hook call sites (e.g. the drag-end callback).
- * Returns the TET names + layout TET id when the current data source's TET
- * differs from the layout's TET, else null. */
-export const resolveCrossTetMismatch = (
-    state: RootState,
-    metadataStore: MetadataStore
-): CrossTetMismatch | null => {
-    const dataSourceId = getDataSourceId(state)
-    const dataSourceTet = dataSourceId
-        ? getDataSourceTet(metadataStore.getMetadataItem(dataSourceId))
-        : null
-    if (!dataSourceTet) {
-        return null
-    }
-    const layoutTetId = resolveTetId(
-        getVisUiConfigLayoutAllDimensionIds(state),
-        metadataStore
-    )
-    if (!layoutTetId || layoutTetId === dataSourceTet.id) {
-        return null
-    }
-    return {
-        dataSourceTetName: dataSourceTet.name,
-        layoutTetName: metadataStore.getMetadataItem(layoutTetId)?.name ?? '',
-        layoutTetId,
-    }
-}
 
 export const useCrossTetMismatch = (): CrossTetMismatch | null => {
     const dataSourceId = useAppSelector(getDataSourceId)
