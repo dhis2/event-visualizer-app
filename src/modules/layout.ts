@@ -203,7 +203,7 @@ export const resolveTetId = (
     return null
 }
 
-export type LayoutConversionResult = {
+type LayoutConversionResult = {
     newLayout: Layout
     discardedDimensionIds: string[]
 }
