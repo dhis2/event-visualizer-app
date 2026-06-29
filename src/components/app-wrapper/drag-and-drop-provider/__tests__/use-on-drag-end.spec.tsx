@@ -20,7 +20,8 @@ vi.mock('@dhis2/app-runtime', () => ({
 }))
 
 vi.mock('@components/sidebar/sidebar-disabling', () => ({
-    getDimensionLayoutBlockedMessage: vi.fn(() => null),
+    getDimensionBlockReason: vi.fn(() => null),
+    resolveCrossTetMismatch: vi.fn(() => null),
 }))
 
 const mockStoreGetState = vi.fn(() => ({}))

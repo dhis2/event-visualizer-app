@@ -76,3 +76,11 @@ export const isDimensionFullyInvalidForVisType = (
     }
     return dim.dimensionId === 'enrollmentOu' && !!dim.trackedEntityTypeId
 }
+
+export const isDimensionCrossTet = (
+    dimensionTetId: string | null,
+    layoutTetId: string | null
+): boolean =>
+    layoutTetId !== null &&
+    dimensionTetId !== null &&
+    dimensionTetId !== layoutTetId

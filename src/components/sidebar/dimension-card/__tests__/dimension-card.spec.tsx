@@ -23,8 +23,7 @@ vi.mock('@store/dimensions-selection-slice', () => ({
 }))
 
 vi.mock('@components/sidebar/sidebar-disabling', () => ({
-    useIsCardDisabledByLayout: () => false,
-    useCardDisabledNoticeText: () => undefined,
+    useSyncAutoCollapse: () => undefined,
 }))
 
 describe('DimensionCard', () => {

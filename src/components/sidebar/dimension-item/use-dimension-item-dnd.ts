@@ -1,10 +1,15 @@
 import type { SidebarSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
-import { getDimensionLayoutBlockedMessage } from '@components/sidebar/sidebar-disabling'
+import {
+    getCrossTetMessage,
+    getDimensionLayoutBlockedMessage,
+    useCrossTetMismatch,
+} from '@components/sidebar/sidebar-disabling'
 import i18n from '@dhis2/d2-i18n'
 import type { DraggableSyntheticListeners } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useAppSelector, useMetadataStore } from '@hooks'
+import { useAppSelector, useMetadataStore, useTetId } from '@hooks'
+import { resolveDimensionTetId } from '@modules/layout'
 import {
     getMultiSelectedDimensionIds,
     isMultiSelecting,
@@ -46,6 +51,14 @@ export const useDimensionItemDnd = ({
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const customValue = useAppSelector(getVisUiConfigCustomValue)
     const customValueId = customValue?.id ?? null
+    const layoutTetId = useTetId()
+    const crossTetMismatch = useCrossTetMismatch()
+    const crossTetMessage = crossTetMismatch
+        ? getCrossTetMessage(
+              crossTetMismatch.dataSourceTetName,
+              crossTetMismatch.layoutTetName
+          )
+        : ''
 
     const multiSelectBlocked = useMemo(() => {
         if (!multiSelecting || multiSelectedIds.length === 0) {
@@ -63,6 +76,9 @@ export const useDimensionItemDnd = ({
                     dimension: dim,
                     visualizationType,
                     customValueId,
+                    layoutTetId,
+                    dimensionTetId: resolveDimensionTetId(dim, metadataStore),
+                    crossTetMessage,
                 }) !== null
             )
         })
@@ -72,6 +88,8 @@ export const useDimensionItemDnd = ({
         metadataStore,
         visualizationType,
         customValueId,
+        layoutTetId,
+        crossTetMessage,
     ])
 
     const resolvedIsLayoutBlocked = multiSelecting

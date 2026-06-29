@@ -1,11 +1,34 @@
 import type { DimensionMetadataItem } from '@types'
 import { expect, describe, it } from 'vitest'
 import {
+    isDimensionCrossTet,
     isDimensionFullyInvalidForVisType,
     isDimensionTypeFullyInvalidForVisType,
     isObject,
     isPopulatedString,
 } from '../validation'
+
+describe('isDimensionCrossTet', () => {
+    it('returns true when both TET ids are set and differ', () => {
+        expect(isDimensionCrossTet('tetB', 'tetA')).toBe(true)
+    })
+
+    it('returns false when the TET ids match', () => {
+        expect(isDimensionCrossTet('tetA', 'tetA')).toBe(false)
+    })
+
+    it('returns false when the dimension has no TET (generic dim)', () => {
+        expect(isDimensionCrossTet(null, 'tetA')).toBe(false)
+    })
+
+    it('returns false when the layout has no TET yet', () => {
+        expect(isDimensionCrossTet('tetB', null)).toBe(false)
+    })
+
+    it('returns false when both are null', () => {
+        expect(isDimensionCrossTet(null, null)).toBe(false)
+    })
+})
 
 describe('type-guards', () => {
     describe('isObject', () => {

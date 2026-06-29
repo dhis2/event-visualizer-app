@@ -1,4 +1,8 @@
-import { getDimensionLayoutBlockedMessage } from '@components/sidebar/sidebar-disabling'
+import {
+    getDimensionBlockReason,
+    resolveCrossTetMismatch,
+    type DimensionBlockReason,
+} from '@components/sidebar/sidebar-disabling'
 import { visTypeDisplayNames } from '@dhis2/analytics'
 import { useAlert } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
@@ -9,6 +13,7 @@ import {
     useListFormatter,
     useMetadataStore,
 } from '@hooks'
+import { resolveDimensionTetId } from '@modules/layout'
 import {
     clearMultiSelection,
     getMultiSelectedDimensionIds,
@@ -31,11 +36,17 @@ import type { LayoutDragEndEvent } from './types'
 
 type OnDragEndFn = (event: LayoutDragEndEvent) => void
 
+/* Skipped-dimension alerts can be long, so give the user 10 seconds to read. */
+const SKIPPED_DIMENSIONS_ALERT_OPTIONS = { duration: 10000 }
+
+type SkippedByReason = Record<DimensionBlockReason, string[]>
+
 type PartitionMultiSelectedDimensionsArgs = {
     ids: string[]
     metadataStore: ReturnType<typeof useMetadataStore>
     visualizationType: ReturnType<typeof getVisUiConfigVisualizationType>
     customValueId: string | null
+    layoutTetId: string | null
 }
 
 const partitionMultiSelectedDimensions = ({
@@ -43,11 +54,16 @@ const partitionMultiSelectedDimensions = ({
     metadataStore,
     visualizationType,
     customValueId,
+    layoutTetId,
 }: PartitionMultiSelectedDimensionsArgs): {
     validIds: string[]
-    skippedNames: string[]
+    skippedByReason: SkippedByReason
 } => {
-    const skippedNames: string[] = []
+    const skippedByReason: SkippedByReason = {
+        customValue: [],
+        visType: [],
+        crossTet: [],
+    }
     const validIds = ids.filter((id) => {
         const dim = metadataStore.getMetadataItem(id)
         if (!dim) {
@@ -55,34 +71,51 @@ const partitionMultiSelectedDimensions = ({
                 `Dimension "${id}" is in multi-selection but has no metadata entry`
             )
         }
-        const blocked = !!getDimensionLayoutBlockedMessage({
+        const reason = getDimensionBlockReason({
             dimension: dim as DimensionMetadataItem,
             visualizationType,
             customValueId,
+            layoutTetId,
+            dimensionTetId: resolveDimensionTetId(
+                dim as DimensionMetadataItem,
+                metadataStore
+            ),
         })
-        if (blocked) {
-            skippedNames.push(dim.name)
+        if (reason) {
+            skippedByReason[reason].push(dim.name)
+            return false
         }
-        return !blocked
+        return true
     })
-    return { validIds, skippedNames }
+    return { validIds, skippedByReason }
 }
 
 export const useOnDragEnd = (): OnDragEndFn => {
     const dispatch = useAppDispatch()
     const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
-    const { show: showAlert } = useAlert(
+    const { show: showVisTypeAlert } = useAlert(
         ({ list, visTypeName }: { list: string; visTypeName: string }) =>
             i18n.t(
-                'Some dimensions cannot be used in a {{visTypeName}}: {{list}}.',
-                {
-                    list,
-                    visTypeName,
-                    nsSeparator: '^^',
-                }
+                'Some dimensions were not added because they cannot be used in a {{visTypeName}}: {{list}}.',
+                { list, visTypeName, nsSeparator: '^^' }
             ),
-        // Message can be quite long so give the user 10 seconds to read it
-        { duration: 10000 }
+        SKIPPED_DIMENSIONS_ALERT_OPTIONS
+    )
+    const { show: showCrossTetAlert } = useAlert(
+        ({ list, layoutTetName }: { list: string; layoutTetName: string }) =>
+            i18n.t(
+                'Some dimensions were not added because they cannot be combined with {{- layoutTetName}} dimensions: {{list}}.',
+                { list, layoutTetName, nsSeparator: '^^' }
+            ),
+        SKIPPED_DIMENSIONS_ALERT_OPTIONS
+    )
+    const { show: showCustomValueAlert } = useAlert(
+        ({ name }: { name: string }) =>
+            i18n.t(
+                '{{- name}} was not added because it is already used as the custom value.',
+                { name, nsSeparator: '^^' }
+            ),
+        SKIPPED_DIMENSIONS_ALERT_OPTIONS
     )
     const metadataStore = useMetadataStore()
     const store = useAppStore()
@@ -134,14 +167,19 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 const storeState = store.getState()
                 const visType = getVisUiConfigVisualizationType(storeState)
                 const customValue = getVisUiConfigCustomValue(storeState)
+                const crossTetMismatch = resolveCrossTetMismatch(
+                    storeState,
+                    metadataStore
+                )
 
                 // Batch add from sidebar (metadata already populated eagerly)
-                const { validIds, skippedNames } =
+                const { validIds, skippedByReason } =
                     partitionMultiSelectedDimensions({
                         ids: multiSelectedIds,
                         metadataStore,
                         visualizationType: visType,
                         customValueId: customValue?.id ?? null,
+                        layoutTetId: crossTetMismatch?.layoutTetId ?? null,
                     })
 
                 if (validIds.length > 0) {
@@ -155,10 +193,21 @@ export const useOnDragEnd = (): OnDragEndFn => {
                     )
                 }
 
-                if (skippedNames.length > 0) {
-                    showAlert({
-                        list: listFormatter.format(skippedNames),
+                if (skippedByReason.visType.length > 0) {
+                    showVisTypeAlert({
+                        list: listFormatter.format(skippedByReason.visType),
                         visTypeName: visTypeDisplayNames[visType],
+                    })
+                }
+                if (skippedByReason.crossTet.length > 0) {
+                    showCrossTetAlert({
+                        list: listFormatter.format(skippedByReason.crossTet),
+                        layoutTetName: crossTetMismatch?.layoutTetName ?? '',
+                    })
+                }
+                if (skippedByReason.customValue.length > 0) {
+                    showCustomValueAlert({
+                        name: skippedByReason.customValue[0],
                     })
                 }
             } else {
@@ -180,7 +229,9 @@ export const useOnDragEnd = (): OnDragEndFn => {
             multiSelectedIds,
             metadataStore,
             store,
-            showAlert,
+            showVisTypeAlert,
+            showCrossTetAlert,
+            showCustomValueAlert,
             listFormatter,
         ]
     )

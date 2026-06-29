@@ -11,6 +11,7 @@ import {
     buildAxis,
     collectProgramDimensions,
     convertLayoutForVisType,
+    resolveDimensionTetId,
     resolveTeiFields,
     resolveTetId,
 } from '../layout'
@@ -764,6 +765,52 @@ describe('resolveTetId', () => {
         expect(() => resolveTetId(['ghost'], store)).toThrow(
             'No metadata found for dimension "ghost" in the layout'
         )
+    })
+})
+
+describe('resolveDimensionTetId', () => {
+    const trackerProgramA = {
+        id: 'progA',
+        trackedEntityType: { id: 'tetA', name: 'Person' },
+    } as unknown as Program
+    const eventProgram = { id: 'progB' } as unknown as Program
+
+    it('returns trackedEntityTypeId directly when the dim carries it', () => {
+        const dim = makeDim({
+            id: 'tetA.enrollmentOu',
+            dimensionId: 'enrollmentOu',
+            trackedEntityTypeId: 'tetA',
+        })
+        expect(resolveDimensionTetId(dim, makeStore({}))).toBe('tetA')
+    })
+
+    it('walks programId → program.trackedEntityType when no direct TET id', () => {
+        const dim = makeDim({
+            id: 'stage1.de1',
+            dimensionId: 'de1',
+            programId: 'progA',
+        })
+        const store = makeStore({ programs: { progA: trackerProgramA } })
+        expect(resolveDimensionTetId(dim, store)).toBe('tetA')
+    })
+
+    it('returns null for a program with no TET (event program)', () => {
+        const dim = makeDim({
+            id: 'evtStage.ou',
+            dimensionId: 'ou',
+            programId: 'progB',
+        })
+        const store = makeStore({ programs: { progB: eventProgram } })
+        expect(resolveDimensionTetId(dim, store)).toBeNull()
+    })
+
+    it('returns null for a generic dim (no TET id, no programId)', () => {
+        const dim = makeDim({
+            id: 'pe',
+            dimensionId: 'pe',
+            dimensionType: 'PERIOD',
+        })
+        expect(resolveDimensionTetId(dim, makeStore({}))).toBeNull()
     })
 })
 

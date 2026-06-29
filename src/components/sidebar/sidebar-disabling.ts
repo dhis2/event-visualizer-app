@@ -1,195 +1,251 @@
 import { visTypeDisplayNames } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
-import { useAppSelector, useMetadataItem, useTetId } from '@hooks'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useMetadataItem,
+    useMetadataStore,
+    useTetId,
+} from '@hooks'
 import {
     isDataSourceProgramWithRegistration,
-    isDataSourceProgramWithoutRegistration,
     isDataSourceTrackedEntityType,
 } from '@modules/data-source'
-import { isDimensionFullyInvalidForVisType } from '@modules/validation'
-import { createSelector } from '@reduxjs/toolkit'
-import { getDataSourceId } from '@store/dimensions-selection-slice'
+import { resolveDimensionTetId, resolveTetId } from '@modules/layout'
+import {
+    isDimensionCrossTet,
+    isDimensionFullyInvalidForVisType,
+} from '@modules/validation'
+import {
+    getDataSourceId,
+    setDimensionCardCollapsed,
+} from '@store/dimensions-selection-slice'
 import {
     getVisUiConfigCustomValue,
+    getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
 import type {
-    DataSource,
     DimensionCardKey,
     DimensionMetadataItem,
     MetadataItem,
+    MetadataStore,
     RootState,
     VisualizationType,
 } from '@types'
+import { useEffect } from 'react'
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Card-level disabling
+// Cross tracked-entity-type detection
 // ─────────────────────────────────────────────────────────────────────────────
 
-type SidebarDisablingState = {
-    disabledCards: Set<DimensionCardKey>
-    disabledMessage?: { cardKey: DimensionCardKey; text: string }
+/* Dimensions from different tracked entity types cannot coexist in one layout.
+ * When the current data source's TET differs from the TET already established
+ * by the layout, that data source's program/TET dimensions are blocked at the
+ * item level (see getDimensionLayoutBlockedMessage) and their cards collapse. */
+
+type CrossTetMismatch = {
+    dataSourceTetName: string
+    layoutTetName: string
+    layoutTetId: string
 }
 
-const EMPTY_SIDEBAR_DISABLING_STATE: SidebarDisablingState = Object.freeze({
-    disabledCards: new Set<DimensionCardKey>(),
-    disabledMessage: undefined,
-})
-
-const differentTetMessage = (tetName: string): string =>
-    i18n.t(
-        'These dimensions belong to a different tracked entity type than the one used in the layout ({{- tetName}}). Remove the existing dimensions to use these.',
-        { tetName }
+const EMPTY_CROSS_TET_CARDS: ReadonlySet<DimensionCardKey> = Object.freeze(
+    new Set<DimensionCardKey>()
+)
+const PROGRAM_WITH_REGISTRATION_CROSS_TET_CARDS: ReadonlySet<DimensionCardKey> =
+    Object.freeze(
+        new Set<DimensionCardKey>([
+            'program-tracked-entity-type',
+            'enrollment',
+            'event-with-registration',
+            'enrollment-program-indicators',
+        ])
     )
+const TRACKED_ENTITY_TYPE_CROSS_TET_CARDS: ReadonlySet<DimensionCardKey> =
+    Object.freeze(new Set<DimensionCardKey>(['tracked-entity-type']))
 
-/* The three data-source branches below directly express which cards a
- * particular data source's invalid-layout states disable and which card
- * carries the explanatory notice. Each branch returns the complete
- * SidebarDisablingState for that data source — no per-card iteration, no
- * cross-card dedup pass. */
-
-const stateForProgramWithRegistration = ({
-    dataSourceTetId,
-    layoutTet,
-}: {
-    dataSourceTetId: string
-    layoutTet: MetadataItem | null
-}): SidebarDisablingState => {
-    if (layoutTet && layoutTet.id !== dataSourceTetId) {
-        return {
-            disabledCards: new Set([
-                'enrollment',
-                'event-with-registration',
-                'program-tracked-entity-type',
-                'enrollment-program-indicators',
-            ]),
-            disabledMessage: {
-                cardKey: 'enrollment',
-                text: differentTetMessage(layoutTet.name),
-            },
-        }
-    }
-    return EMPTY_SIDEBAR_DISABLING_STATE
-}
-
-const stateForProgramWithoutRegistration = (): SidebarDisablingState =>
-    EMPTY_SIDEBAR_DISABLING_STATE
-
-const stateForTrackedEntityType = ({
-    dataSourceTetId,
-    layoutTet,
-}: {
-    dataSourceTetId: string
-    layoutTet: MetadataItem | null
-}): SidebarDisablingState => {
-    /* The standalone Registration card itself stays usable in pivot mode —
-     * the registration OU is handled at the item level. The only card-level
-     * disable is when the layout already targets a different TET. */
-    if (layoutTet && layoutTet.id !== dataSourceTetId) {
-        return {
-            disabledCards: new Set(['tracked-entity-type']),
-            disabledMessage: {
-                cardKey: 'tracked-entity-type',
-                text: differentTetMessage(layoutTet.name),
-            },
-        }
-    }
-    return EMPTY_SIDEBAR_DISABLING_STATE
-}
-
-const selectDataSourceArg = (
-    _state: RootState,
-    dataSource: DataSource | null
-): DataSource | null => dataSource
-
-const selectLayoutTetArg = (
-    _state: RootState,
-    _dataSource: DataSource | null,
-    layoutTet: MetadataItem | null
-): MetadataItem | null => layoutTet
-
-export const selectSidebarDisablingState = createSelector(
-    [selectDataSourceArg, selectLayoutTetArg],
-    (dataSource, layoutTet): SidebarDisablingState => {
-        if (!dataSource) {
-            return EMPTY_SIDEBAR_DISABLING_STATE
-        }
-        if (isDataSourceProgramWithRegistration(dataSource)) {
-            return stateForProgramWithRegistration({
-                dataSourceTetId: dataSource.trackedEntityType.id,
-                layoutTet,
-            })
-        }
-        if (isDataSourceProgramWithoutRegistration(dataSource)) {
-            return stateForProgramWithoutRegistration()
-        }
-        if (isDataSourceTrackedEntityType(dataSource)) {
-            return stateForTrackedEntityType({
-                dataSourceTetId: dataSource.id,
-                layoutTet,
-            })
-        }
-        return EMPTY_SIDEBAR_DISABLING_STATE
-    }
+/* Program-indicator cards are only usable in LINE_LIST; outside it they
+ * auto-collapse (their items are also blocked at the item level). */
+const PROGRAM_INDICATOR_CARDS: ReadonlySet<DimensionCardKey> = Object.freeze(
+    new Set<DimensionCardKey>([
+        'enrollment-program-indicators',
+        'event-program-indicators',
+    ])
 )
 
-const useSidebarDisablingState = (): SidebarDisablingState => {
+const getDataSourceTet = (
+    dataSource: MetadataItem | undefined
+): { id: string; name: string } | null => {
+    if (isDataSourceProgramWithRegistration(dataSource)) {
+        return {
+            id: dataSource.trackedEntityType.id,
+            name: dataSource.trackedEntityType.name,
+        }
+    }
+    if (isDataSourceTrackedEntityType(dataSource)) {
+        return { id: dataSource.id, name: dataSource.name }
+    }
+    return null
+}
+
+const getCrossTetAffectedCards = (
+    dataSource: MetadataItem | undefined
+): ReadonlySet<DimensionCardKey> => {
+    if (isDataSourceProgramWithRegistration(dataSource)) {
+        return PROGRAM_WITH_REGISTRATION_CROSS_TET_CARDS
+    }
+    if (isDataSourceTrackedEntityType(dataSource)) {
+        return TRACKED_ENTITY_TYPE_CROSS_TET_CARDS
+    }
+    return EMPTY_CROSS_TET_CARDS
+}
+
+export const getCrossTetMessage = (
+    dataSourceTetName: string,
+    layoutTetName: string
+): string =>
+    i18n.t(
+        '{{- dataSourceTetName}} dimensions cannot be combined with {{- layoutTetName}} dimensions already in the layout.',
+        { dataSourceTetName, layoutTetName }
+    )
+
+/* State-based resolver for non-hook call sites (e.g. the drag-end callback).
+ * Returns the TET names + layout TET id when the current data source's TET
+ * differs from the layout's TET, else null. */
+export const resolveCrossTetMismatch = (
+    state: RootState,
+    metadataStore: MetadataStore
+): CrossTetMismatch | null => {
+    const dataSourceId = getDataSourceId(state)
+    const dataSourceTet = dataSourceId
+        ? getDataSourceTet(metadataStore.getMetadataItem(dataSourceId))
+        : null
+    if (!dataSourceTet) {
+        return null
+    }
+    const layoutTetId = resolveTetId(
+        getVisUiConfigLayoutAllDimensionIds(state),
+        metadataStore
+    )
+    if (!layoutTetId || layoutTetId === dataSourceTet.id) {
+        return null
+    }
+    return {
+        dataSourceTetName: dataSourceTet.name,
+        layoutTetName: metadataStore.getMetadataItem(layoutTetId)?.name ?? '',
+        layoutTetId,
+    }
+}
+
+export const useCrossTetMismatch = (): CrossTetMismatch | null => {
     const dataSourceId = useAppSelector(getDataSourceId)
-    const dataSource = useMetadataItem(dataSourceId) as DataSource | undefined
+    const dataSource = useMetadataItem(dataSourceId)
+    const dataSourceTet = getDataSourceTet(dataSource)
     const layoutTetId = useTetId()
     const layoutTet = useMetadataItem(layoutTetId)
-    if (layoutTetId && !layoutTet) {
-        throw new Error(`Could not find TET with ID "${layoutTetId}"`)
+    if (!dataSourceTet || !layoutTet || dataSourceTet.id === layoutTet.id) {
+        return null
     }
-    return useAppSelector((state) =>
-        selectSidebarDisablingState(
-            state,
-            dataSource ?? null,
-            layoutTet ?? null
-        )
+    return {
+        dataSourceTetName: dataSourceTet.name,
+        layoutTetName: layoutTet.name,
+        layoutTetId: layoutTet.id,
+    }
+}
+
+export const useIsCardCrossTetBlocked = (cardId: DimensionCardKey): boolean => {
+    const dataSourceId = useAppSelector(getDataSourceId)
+    const dataSource = useMetadataItem(dataSourceId)
+    const mismatch = useCrossTetMismatch()
+    return !!mismatch && getCrossTetAffectedCards(dataSource).has(cardId)
+}
+
+const useIsCardCollapsedByVisType = (cardId: DimensionCardKey): boolean => {
+    const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
+    return (
+        PROGRAM_INDICATOR_CARDS.has(cardId) && visualizationType !== 'LINE_LIST'
     )
 }
 
-export const useIsCardDisabledByLayout = (
-    cardId: DimensionCardKey
-): boolean => {
-    const { disabledCards } = useSidebarDisablingState()
-    return disabledCards.has(cardId)
+const useShouldAutoCollapseCard = (cardId: DimensionCardKey): boolean => {
+    const isCrossTetBlocked = useIsCardCrossTetBlocked(cardId)
+    const isCollapsedByVisType = useIsCardCollapsedByVisType(cardId)
+    return isCrossTetBlocked || isCollapsedByVisType
 }
 
-export const useCardDisabledNoticeText = (
-    cardId: DimensionCardKey
-): string | undefined => {
-    const { disabledMessage } = useSidebarDisablingState()
-    return disabledMessage?.cardKey === cardId
-        ? disabledMessage.text
-        : undefined
+/* Syncs a card's collapsed state to whether it is auto-collapsible: collapses
+ * when a reason (cross-TET conflict, or program indicators outside line list)
+ * becomes active, and re-expands when all reasons clear. The effect only runs
+ * on those transitions, so a manual toggle in between is left untouched. */
+export const useSyncAutoCollapse = (cardId: DimensionCardKey): void => {
+    const dispatch = useAppDispatch()
+    const shouldAutoCollapse = useShouldAutoCollapseCard(cardId)
+    useEffect(() => {
+        dispatch(
+            setDimensionCardCollapsed({
+                cardKey: cardId,
+                collapsed: shouldAutoCollapse,
+            })
+        )
+    }, [shouldAutoCollapse, cardId, dispatch])
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Dimension-level layout-blocked messages
 // ─────────────────────────────────────────────────────────────────────────────
 
-type DimensionDisablingInput = {
+export type DimensionBlockReason = 'customValue' | 'visType' | 'crossTet'
+
+type DimensionBlockReasonInput = {
     dimension: DimensionMetadataItem
     visualizationType: VisualizationType
     customValueId: string | null
+    layoutTetId: string | null
+    dimensionTetId: string | null
 }
 
-export const getDimensionLayoutBlockedMessage = ({
+/* Single source of truth for whether — and why — a dimension is blocked from
+ * the layout, in precedence order. Both the item-level message and the
+ * batch-add grouping derive from this. */
+export const getDimensionBlockReason = ({
     dimension,
     visualizationType,
     customValueId,
-}: DimensionDisablingInput): string | null => {
+    layoutTetId,
+    dimensionTetId,
+}: DimensionBlockReasonInput): DimensionBlockReason | null => {
     if (customValueId && dimension.id === customValueId) {
-        return i18n.t('Already used as custom value.')
+        return 'customValue'
     }
     if (isDimensionFullyInvalidForVisType(dimension, visualizationType)) {
-        return i18n.t('Cannot be used in a {{visType}}.', {
-            visType: visTypeDisplayNames[visualizationType],
-        })
+        return 'visType'
+    }
+    if (isDimensionCrossTet(dimensionTetId, layoutTetId)) {
+        return 'crossTet'
     }
     return null
+}
+
+type DimensionDisablingInput = DimensionBlockReasonInput & {
+    crossTetMessage: string
+}
+
+export const getDimensionLayoutBlockedMessage = (
+    input: DimensionDisablingInput
+): string | null => {
+    switch (getDimensionBlockReason(input)) {
+        case 'customValue':
+            return i18n.t('Already used as custom value.')
+        case 'visType':
+            return i18n.t('Cannot be used in a {{visType}}.', {
+                visType: visTypeDisplayNames[input.visualizationType],
+            })
+        case 'crossTet':
+            return input.crossTetMessage
+        default:
+            return null
+    }
 }
 
 export const useDimensionLayoutBlockedMessage = (
@@ -197,6 +253,9 @@ export const useDimensionLayoutBlockedMessage = (
 ): string | null => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const customValue = useAppSelector(getVisUiConfigCustomValue)
+    const metadataStore = useMetadataStore()
+    const layoutTetId = useTetId()
+    const mismatch = useCrossTetMismatch()
     if (!dimension) {
         return null
     }
@@ -204,5 +263,13 @@ export const useDimensionLayoutBlockedMessage = (
         dimension,
         visualizationType,
         customValueId: customValue?.id ?? null,
+        layoutTetId,
+        dimensionTetId: resolveDimensionTetId(dimension, metadataStore),
+        crossTetMessage: mismatch
+            ? getCrossTetMessage(
+                  mismatch.dataSourceTetName,
+                  mismatch.layoutTetName
+              )
+            : '',
     })
 }

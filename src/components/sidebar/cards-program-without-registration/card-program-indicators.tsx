@@ -9,11 +9,9 @@ import {
     type UseSelectedDimensionCountMatchFn,
 } from '@components/sidebar/use-selected-dimension-count'
 import i18n from '@dhis2/d2-i18n'
-import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
-import { setDimensionCardCollapsed } from '@store/dimensions-selection-slice'
-import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
+import { useCurrentUser } from '@hooks'
 import type { Program } from '@types'
-import { useCallback, useEffect, useMemo, type FC } from 'react'
+import { useCallback, useMemo, type FC } from 'react'
 
 type CardProgramIndicatorsProps = {
     program: Program
@@ -24,17 +22,10 @@ const CARD_AND_LIST_KEY = 'event-program-indicators'
 export const CardProgramIndicators: FC<CardProgramIndicatorsProps> = ({
     program,
 }) => {
-    const dispatch = useAppDispatch()
-    const visType = useAppSelector(getVisUiConfigVisualizationType)
     const {
         settings: { displayNameProperty },
     } = useCurrentUser()
 
-    useEffect(() => {
-        if (visType !== 'LINE_LIST') {
-            dispatch(setDimensionCardCollapsed(CARD_AND_LIST_KEY))
-        }
-    }, [visType, dispatch])
     const baseQuery = useMemo(
         () => getEventProgramIndicatorQuery(program.id, displayNameProperty),
         [program.id, displayNameProperty]
