@@ -30,38 +30,48 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
         [axisId]
     )
 
-    const { active } = useDndContext()
+    const { active, over } = useDndContext()
     const disabled = useMemo(
         () => getActiveDragData(active)?.isLayoutBlocked ?? false,
         [active]
     )
 
-    const { setNodeRef, isOver } = useDroppable({
+    const { setNodeRef } = useDroppable({
         id: axisId,
         data: axisContainerData,
         disabled,
     })
 
+    /* The collision detector resolves a drop over a populated axis to one of its
+     * chips, not to the axis container, so the container's own `isOver` only
+     * fires on an empty axis. Read the active drop target's axis instead — both
+     * chip sortables and the axis container carry it — so the whole axis
+     * highlights whether the drop lands on a chip or the empty area. */
+    const overData = over?.data.current
+    const isActiveDropTarget =
+        overData !== undefined && 'axis' in overData && overData.axis === axisId
+
     return (
         <SortableContext id={axisId} items={dimensionIds}>
             <div
+                ref={setNodeRef}
                 className={cx(classes.container, {
                     [classes.columns]: axisId === 'columns',
                     [classes.rows]: axisId === 'rows',
                     [classes.filters]: axisId === 'filters',
+                    [classes.activeDropTarget]: isActiveDropTarget,
                 })}
                 data-test={`axis-${axisId}`}
                 aria-disabled={disabled || undefined}
             >
                 <div className={classes.label}>{getAxisName(axisId)}</div>
                 <div
-                    ref={setNodeRef}
                     className={classes.content}
                     data-test={`axis-content-${axisId}`}
                 >
                     {dimensions.length === 0 ? (
                         <div className={classes.emptyAxisInsertMarkerAnchor}>
-                            {isOver && (
+                            {isActiveDropTarget && (
                                 <span className={insertMarkerClasses.marker} />
                             )}
                         </div>
