@@ -269,6 +269,97 @@ describe('<LayoutPanel />', () => {
             })
     })
 
+    /* Storage key the axes resize hook reads/writes (private to axes.tsx). A
+     * stored value is treated as a user-defined height. */
+    const AXES_HEIGHT_STORAGE_KEY = 'dhis2.event-visualizer.axesHeight'
+
+    const pivotOptions = (layout: {
+        columns: string[]
+        rows: string[]
+        filters: string[]
+    }) =>
+        createMockOptions({
+            dimensionSelection: {
+                ...mockOptions.partialStore?.preloadedState.dimensionSelection,
+                dataSourceId: 'test-id',
+            },
+            visUiConfig: {
+                ...visUiConfigInitialState,
+                visualizationType: 'PIVOT_TABLE',
+                outputType: 'EVENT',
+                layout,
+                itemsByDimension: { ou: ['orgUnit1'] },
+            },
+        })
+
+    const getAxisRowTracks = () =>
+        cy.get('[class*="axisContainer"]').then(($el) => {
+            const tracks = getComputedStyle($el[0])
+                .gridTemplateRows.split(' ')
+                .map(parseFloat)
+
+            expect(tracks, 'two row tracks').to.have.length(2)
+
+            return tracks
+        })
+
+    it('PIVOT_TABLE sizes columns and rows to their own content in content-height mode', () => {
+        localStorage.removeItem(AXES_HEIGHT_STORAGE_KEY)
+        cy.viewport(420, 700)
+
+        cy.mount(
+            <MockAppWrapper
+                {...pivotOptions({
+                    columns: [
+                        'ou',
+                        'mchInfantFeeding',
+                        'mchNutrition',
+                        'ageAtVisit',
+                        'genderId',
+                    ],
+                    rows: [],
+                    filters: [],
+                })}
+            >
+                <LayoutPanel />
+            </MockAppWrapper>
+        )
+
+        cy.getByDataTest('axis-columns').should('be.visible')
+
+        // The chip-heavy columns axis is taller than the empty rows axis — the
+        // rows track is not dragged up to match (the equal-height bug).
+        getAxisRowTracks().then(([columnsTrack, rowsTrack]) => {
+            expect(columnsTrack).to.be.greaterThan(rowsTrack + 20)
+        })
+    })
+
+    it('PIVOT_TABLE mirrors columns and rows when a user-defined height exceeds the content', () => {
+        localStorage.setItem(AXES_HEIGHT_STORAGE_KEY, '600')
+        cy.viewport(1000, 800)
+
+        cy.mount(
+            <MockAppWrapper
+                {...pivotOptions({
+                    columns: ['ou', 'mchInfantFeeding'],
+                    rows: ['genderId'],
+                    filters: [],
+                })}
+            >
+                <LayoutPanel />
+            </MockAppWrapper>
+        )
+
+        cy.getByDataTest('axis-columns').should('be.visible')
+
+        // The stored 600px height far exceeds the content, so the extra space is
+        // shared equally: the two row tracks are the same height.
+        getAxisRowTracks().then(([columnsTrack, rowsTrack]) => {
+            expect(columnsTrack).to.be.greaterThan(100)
+            expect(Math.abs(columnsTrack - rowsTrack)).to.be.lessThan(2)
+        })
+    })
+
     it('renders the PIVOT_TABLE update buttons in the order enrollment, event, custom value', () => {
         const layoutPanelMockOptions = createMockOptions({
             dimensionSelection: {

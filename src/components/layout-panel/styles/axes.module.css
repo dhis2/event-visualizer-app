@@ -14,7 +14,12 @@
     grid-template-areas:
         'columns filters'
         'rows filters';
-    grid-template-rows: minmax(min-content, 1fr) minmax(min-content, 1fr);
+    /* No applied height yet (size is null): the grid height is indefinite while
+     * the panel is being measured. Auto rows report each axis's own content
+     * height; `fr` rows here would size every track up to the tallest and
+     * inflate the measurement. Once a height is applied, `.fixedHeight` takes
+     * over (see below). */
+    grid-template-rows: auto auto;
     gap: 1px;
     border-color: var(--colors-grey300);
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.03);
@@ -24,6 +29,17 @@
     scrollbar-gutter: stable;
 }
 
+/* With a definite height applied, columns and rows share it equally: each floors
+ * at its own content (via the implicit min-content minimum, so nothing clips and
+ * overflow scrolls), and any extra space is mirrored 50/50. At exactly the
+ * content height this resolves back to the two content heights. */
+.axisContainer.fixedHeight {
+    grid-template-rows: 1fr 1fr;
+}
+
+/* LINE_LIST has a single row, so it never equalizes — one filling track works in
+ * both the measuring and applied states. Declared after `.fixedHeight` so it
+ * wins the row template when both classes are present. */
 .axisContainer.lineList {
     grid-template-areas: 'columns filters';
     grid-template-rows: minmax(min-content, 1fr);

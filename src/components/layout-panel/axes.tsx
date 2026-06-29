@@ -161,6 +161,7 @@ export const Axes: FC = () => {
                         className={cx(classes.axisContainer, {
                             [classes.lineList]:
                                 visualizationType === 'LINE_LIST',
+                            [classes.fixedHeight]: size !== null,
                         })}
                         ref={containerRef}
                     >
