@@ -182,38 +182,11 @@ describe('useResizeHandle', () => {
         expect(result.current.minReached).toBe(true)
     })
 
-    it('can be expanded past the content height it had at mount time', () => {
+    it('can be dragged past the content height, up to the max', () => {
         const target = createTarget()
         const { result } = renderResizeHandle({ min: 58, max: 300 })
 
-        // Mounts short (few chips).
-        const node = createNode(58)
-        act(() => {
-            result.current.containerRef(node)
-        })
-
-        // Chips are added: the live content grows, but containerRef is NOT
-        // called again (the bug was the cap staying stuck at the mount value).
-        ;(node as unknown as { scrollHeight: number }).scrollHeight = 220
-
-        act(() => {
-            result.current.eventHandlers.onPointerDown(
-                createPointerEvent(58, target)
-            )
-        })
-        act(() => {
-            result.current.eventHandlers.onPointerMove(
-                createPointerEvent(400, target)
-            )
-        })
-
-        expect(result.current.size).toBe(220)
-    })
-
-    it('stops dragging at the live content height', () => {
-        const target = createTarget()
-        const { result } = renderResizeHandle({ min: 58, max: 300 })
-
+        // Mounts short (few chips); the content height is 120.
         act(() => {
             result.current.containerRef(createNode(120))
         })
@@ -222,13 +195,29 @@ describe('useResizeHandle', () => {
                 createPointerEvent(120, target)
             )
         })
+        // Drag well past the content height: the panel keeps growing instead of
+        // stopping at the content, capped only by the max.
         act(() => {
             result.current.eventHandlers.onPointerMove(
                 createPointerEvent(400, target)
             )
         })
 
-        expect(result.current.size).toBe(120)
+        expect(result.current.size).toBe(300)
+    })
+
+    it('honors a stored size taller than the content height', () => {
+        localStorage.setItem(STORAGE_KEY, '250')
+
+        const { result } = renderResizeHandle({ min: 58, max: 300 })
+
+        // Content only needs 100, but the stored size is the user's choice and
+        // is not shrunk back down to the content height.
+        act(() => {
+            result.current.containerRef(createNode(100))
+        })
+
+        expect(result.current.size).toBe(250)
     })
 
     it('never drags taller than the max even with a large content', () => {
@@ -288,6 +277,28 @@ describe('useResizeHandle', () => {
         expect(result.current.size).toBe(60)
     })
 
+    it('resetToContentHeight discards the stored size and refits to content', () => {
+        localStorage.setItem(STORAGE_KEY, '250')
+
+        const { result } = renderResizeHandle({ min: 58, max: 300 })
+
+        const node = createNode(120)
+        act(() => {
+            result.current.containerRef(node)
+        })
+        // Honors the stored height initially.
+        expect(result.current.size).toBe(250)
+
+        act(() => {
+            result.current.resetToContentHeight()
+        })
+
+        // The user's stored height is cleared and the panel refits to the live
+        // content height. This is also the double-click handle behavior.
+        expect(localStorage.getItem(STORAGE_KEY)).toBeNull()
+        expect(result.current.size).toBe(120)
+    })
+
     it('re-fits to the new content when the layout changes', () => {
         const { result, rerender } = renderResizeHandle({
             min: 56,
@@ -327,6 +338,30 @@ describe('useResizeHandle', () => {
         rerender({ contentKey: 'b' })
 
         expect(result.current.size).toBe(90)
+    })
+
+    it('does not re-fit when the layout changes if the user has set a height', () => {
+        localStorage.setItem(STORAGE_KEY, '250')
+
+        const { result, rerender } = renderResizeHandle({
+            min: 56,
+            max: 300,
+            contentKey: 'a',
+        })
+
+        const node = createNode(100)
+        act(() => {
+            result.current.containerRef(node)
+        })
+        // Honors the user's stored height, not the content height.
+        expect(result.current.size).toBe(250)
+
+        // A chip is added: the live content grows, but the user-defined height
+        // holds and the content scrolls within it.
+        ;(node as unknown as { scrollHeight: number }).scrollHeight = 200
+        rerender({ contentKey: 'b' })
+
+        expect(result.current.size).toBe(250)
     })
 
     it('persists the size to local storage on pointer up', () => {

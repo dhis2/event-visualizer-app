@@ -9,9 +9,11 @@ import {
     toggleUiSidebarVisible,
     toggleUiLayoutPanelVisible,
     toggleUiShowExpandedVisualizationCanvas,
+    resetUiLayoutPanelHeightCounter,
     getUiShowExpandedVisualizationCanvas,
     getUiSidebarVisible,
     getUiLayoutPanelVisible,
+    getUiLayoutPanelHeightResetCounter,
     getUiDetailsPanelVisible,
     getUiUpdateAnimationShowingFor,
 } from '../ui-slice'
@@ -235,6 +237,29 @@ describe('uiSlice', () => {
         })
     })
 
+    describe('resetUiLayoutPanelHeightCounter', () => {
+        it('increments the counter without touching other state', () => {
+            const state = reducer(
+                initialState,
+                resetUiLayoutPanelHeightCounter()
+            )
+
+            expect(state.layoutPanelHeightResetCounter).toBe(1)
+            expect({
+                ...state,
+                layoutPanelHeightResetCounter:
+                    initialState.layoutPanelHeightResetCounter,
+            }).toEqual(initialState)
+        })
+
+        it('increments on each dispatch so repeat resets are distinct', () => {
+            let state = reducer(initialState, resetUiLayoutPanelHeightCounter())
+            state = reducer(state, resetUiLayoutPanelHeightCounter())
+
+            expect(state.layoutPanelHeightResetCounter).toBe(2)
+        })
+    })
+
     describe('setUiUpdateAnimationShowingFor', () => {
         it('records the output type whose update button should animate', () => {
             const state = reducer(
@@ -291,6 +316,14 @@ describe('uiSlice', () => {
             expect(getUiSidebarVisible(rootState)).toBe(true)
             expect(getUiLayoutPanelVisible(rootState)).toBe(false)
             expect(getUiDetailsPanelVisible(rootState)).toBe(true)
+        })
+
+        it('getUiLayoutPanelHeightResetCounter returns the counter value', () => {
+            const rootState = createRootState({
+                layoutPanelHeightResetCounter: 3,
+            })
+
+            expect(getUiLayoutPanelHeightResetCounter(rootState)).toBe(3)
         })
 
         it('getUiUpdateAnimationShowingFor returns the stored output type', () => {
