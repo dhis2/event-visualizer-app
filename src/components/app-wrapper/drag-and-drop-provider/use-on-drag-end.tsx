@@ -32,7 +32,7 @@ import {
     isAxisSortableData,
     isSidebarSortableData,
 } from './dnd-data'
-import type { LayoutDragEndEvent } from './types'
+import type { LayoutDragEndEvent, OverItemEventData } from './types'
 
 type OnDragEndFn = (event: LayoutDragEndEvent) => void
 
@@ -90,6 +90,16 @@ const partitionMultiSelectedDimensions = ({
     return { validIds, skippedByReason }
 }
 
+const getDropTarget = (
+    overItemData: OverItemEventData
+): { targetIndex: number; insertAfter: boolean } =>
+    isAxisContainerData(overItemData)
+        ? { targetIndex: 0, insertAfter: false }
+        : {
+              targetIndex: overItemData.sortable.index,
+              insertAfter: overItemData.insertAfter,
+          }
+
 export const useOnDragEnd = (): OnDragEndFn => {
     const dispatch = useAppDispatch()
     const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
@@ -120,6 +130,39 @@ export const useOnDragEnd = (): OnDragEndFn => {
     const metadataStore = useMetadataStore()
     const store = useAppStore()
     const listFormatter = useListFormatter({ type: 'conjunction' })
+
+    const showSkippedDimensionAlerts = useCallback(
+        (
+            skippedByReason: SkippedByReason,
+            visualizationType: ReturnType<
+                typeof getVisUiConfigVisualizationType
+            >,
+            layoutTetName: string
+        ) => {
+            if (skippedByReason.visType.length > 0) {
+                showVisTypeAlert({
+                    list: listFormatter.format(skippedByReason.visType),
+                    visTypeName: visTypeDisplayNames[visualizationType],
+                })
+            }
+            if (skippedByReason.crossTet.length > 0) {
+                showCrossTetAlert({
+                    list: listFormatter.format(skippedByReason.crossTet),
+                    layoutTetName,
+                })
+            }
+            if (skippedByReason.customValue.length > 0) {
+                showCustomValueAlert({ name: skippedByReason.customValue[0] })
+            }
+        },
+        [
+            listFormatter,
+            showVisTypeAlert,
+            showCrossTetAlert,
+            showCustomValueAlert,
+        ]
+    )
+
     return useCallback(
         (event: LayoutDragEndEvent) => {
             // Only allow dropping if event data is present and dropping onto an axis
@@ -133,12 +176,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
 
             const draggedItemData = event.active.data.current
             const overItemData = event.over.data.current
-            const targetIndex = isAxisContainerData(overItemData)
-                ? 0
-                : overItemData.sortable.index
-            const insertAfter = isAxisContainerData(overItemData)
-                ? false
-                : overItemData.insertAfter
+            const { targetIndex, insertAfter } = getDropTarget(overItemData)
 
             if (isAxisSortableData(draggedItemData)) {
                 // Move between axis
@@ -193,23 +231,11 @@ export const useOnDragEnd = (): OnDragEndFn => {
                     )
                 }
 
-                if (skippedByReason.visType.length > 0) {
-                    showVisTypeAlert({
-                        list: listFormatter.format(skippedByReason.visType),
-                        visTypeName: visTypeDisplayNames[visType],
-                    })
-                }
-                if (skippedByReason.crossTet.length > 0) {
-                    showCrossTetAlert({
-                        list: listFormatter.format(skippedByReason.crossTet),
-                        layoutTetName: crossTetMismatch?.layoutTetName ?? '',
-                    })
-                }
-                if (skippedByReason.customValue.length > 0) {
-                    showCustomValueAlert({
-                        name: skippedByReason.customValue[0],
-                    })
-                }
+                showSkippedDimensionAlerts(
+                    skippedByReason,
+                    visType,
+                    crossTetMismatch?.layoutTetName ?? ''
+                )
             } else {
                 // Single add from sidebar
                 draggedItemData.populateMetadata()
@@ -229,10 +255,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
             multiSelectedIds,
             metadataStore,
             store,
-            showVisTypeAlert,
-            showCrossTetAlert,
-            showCustomValueAlert,
-            listFormatter,
+            showSkippedDimensionAlerts,
         ]
     )
 }
