@@ -16,6 +16,7 @@ export interface UiState {
     isLayoutPanelExpanded: boolean
     isLayoutPanelVisible: boolean
     isSidebarVisible: boolean
+    layoutPanelHeightResetCounter: number
     sidebarWidth: number
     savedPanelVisibility: PanelVisibility | null
     updateAnimationShowingFor: OutputType | null
@@ -27,6 +28,7 @@ export const initialState: UiState = {
     isLayoutPanelExpanded: true,
     isLayoutPanelVisible: true,
     isSidebarVisible: true,
+    layoutPanelHeightResetCounter: 0,
     sidebarWidth: getSidebarWidthFromLocalStorage(),
     savedPanelVisibility: null,
     updateAnimationShowingFor: null,
@@ -98,6 +100,12 @@ export const uiSlice = createSlice({
         toggleUiLayoutPanelExpanded: (state) => {
             state.isLayoutPanelExpanded = !state.isLayoutPanelExpanded
         },
+        /* Bumps a nonce that the layout panel observes to refit its height to
+         * the content. It carries no height value of its own — the actual fit
+         * is measured from the DOM in the panel's resize hook. */
+        resetUiLayoutPanelHeightCounter: (state) => {
+            state.layoutPanelHeightResetCounter += 1
+        },
         toggleUiLayoutPanelVisible: (state) => {
             state.isLayoutPanelVisible = !state.isLayoutPanelVisible
             state.savedPanelVisibility = null
@@ -117,6 +125,8 @@ export const uiSlice = createSlice({
             state.updateAnimationShowingFor,
         getUiDetailsPanelVisible: (state) => state.isDetailsPanelVisible,
         getUiLayoutPanelExpanded: (state) => state.isLayoutPanelExpanded,
+        getUiLayoutPanelHeightResetCounter: (state) =>
+            state.layoutPanelHeightResetCounter,
         getUiLayoutPanelVisible: (state) => state.isLayoutPanelVisible,
         getUiSidebarVisible: (state) => state.isSidebarVisible,
         getUiSidebarWidth: (state) => state.sidebarWidth,
@@ -135,6 +145,7 @@ export const {
     setUiActiveDimensionModal,
     toggleUiDetailsPanelVisible,
     toggleUiLayoutPanelExpanded,
+    resetUiLayoutPanelHeightCounter,
     toggleUiLayoutPanelVisible,
     toggleUiSidebarVisible,
     toggleUiShowExpandedVisualizationCanvas,
@@ -144,6 +155,7 @@ export const {
     getUiUpdateAnimationShowingFor,
     getUiDetailsPanelVisible,
     getUiLayoutPanelExpanded,
+    getUiLayoutPanelHeightResetCounter,
     getUiLayoutPanelVisible,
     getUiSidebarVisible,
     getUiSidebarWidth,

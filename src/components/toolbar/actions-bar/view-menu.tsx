@@ -10,9 +10,11 @@ import { getCurrentVisId } from '@store/current-vis-slice'
 import {
     getUiSidebarWidth,
     resetUiSidebarWidth,
+    getUiLayoutPanelExpanded,
     getUiLayoutPanelVisible,
     getUiSidebarVisible,
     getUiDetailsPanelVisible,
+    resetUiLayoutPanelHeightCounter,
     toggleUiDetailsPanelVisible,
     toggleUiLayoutPanelVisible,
     toggleUiSidebarVisible,
@@ -26,6 +28,7 @@ export const ViewMenu: FC = () => {
 
     const isSidebarVisible = useAppSelector(getUiSidebarVisible)
     const isLayoutPanelVisible = useAppSelector(getUiLayoutPanelVisible)
+    const isLayoutPanelExpanded = useAppSelector(getUiLayoutPanelExpanded)
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
     const sidebarWidth = useAppSelector(getUiSidebarWidth)
     const id = useAppSelector(getCurrentVisId)
@@ -40,6 +43,10 @@ export const ViewMenu: FC = () => {
 
     const resetSidebarWidth = useCallback(() => {
         dispatch(resetUiSidebarWidth())
+    }, [dispatch])
+
+    const resizeLayoutToFit = useCallback(() => {
+        dispatch(resetUiLayoutPanelHeightCounter())
     }, [dispatch])
 
     const toggleDetailsPanelVisible = useCallback(() => {
@@ -65,6 +72,11 @@ export const ViewMenu: FC = () => {
                 <HoverMenuListItem
                     label={toggleLayoutPanelText}
                     onClick={toggleLayoutPanelVisible}
+                />
+                <HoverMenuListItem
+                    label={i18n.t('Resize layout to fit')}
+                    onClick={resizeLayoutToFit}
+                    disabled={!isLayoutPanelVisible || !isLayoutPanelExpanded}
                 />
                 <HoverMenuListItem
                     label={toggleSidebarText}
