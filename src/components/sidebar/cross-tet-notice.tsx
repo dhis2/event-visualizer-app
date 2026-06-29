@@ -1,8 +1,6 @@
-import {
-    getCrossTetMessage,
-    useCrossTetMismatch,
-} from '@components/sidebar/sidebar-disabling'
 import { NoticeBox } from '@dhis2/ui'
+import { useCrossTetMismatch } from '@hooks'
+import { getCrossTetMessage } from '@modules/dimension'
 import type { FC } from 'react'
 
 export const CrossTetNotice: FC = () => {

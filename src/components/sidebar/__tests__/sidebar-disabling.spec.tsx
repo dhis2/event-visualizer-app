@@ -1,4 +1,8 @@
-import { useAppSelector } from '@hooks'
+import {
+    useAppSelector,
+    useCrossTetMismatch,
+    useDimensionLayoutBlockedMessage,
+} from '@hooks'
 import {
     initialState as dimensionSelectionInitialState,
     dimensionSelectionSlice,
@@ -18,8 +22,6 @@ import type {
 import deepmerge from 'deepmerge'
 import { describe, expect, it } from 'vitest'
 import {
-    useCrossTetMismatch,
-    useDimensionLayoutBlockedMessage,
     useIsCardCrossTetBlocked,
     useSyncAutoCollapse,
 } from '../sidebar-disabling'

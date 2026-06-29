@@ -1,8 +1,12 @@
 import { IconButton } from '@components/shared/icon-button'
-import { useDimensionLayoutBlockedMessage } from '@components/sidebar/sidebar-disabling'
 import { useIsDimensionInLayout } from '@components/sidebar/use-is-dimension-in-layout'
 import { IconAdd16, IconSubtract16 } from '@dhis2/ui'
-import { useAddMetadata, useAppDispatch, useAppSelector } from '@hooks'
+import {
+    useAddMetadata,
+    useAppDispatch,
+    useAppSelector,
+    useDimensionLayoutBlockedMessage,
+} from '@hooks'
 import {
     clearMultiSelection,
     isDimensionMultiSelected,

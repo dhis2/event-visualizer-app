@@ -1,7 +1,3 @@
-import {
-    getDimensionBlockReason,
-    type DimensionBlockReason,
-} from '@components/sidebar/sidebar-disabling'
 import { visTypeDisplayNames } from '@dhis2/analytics'
 import { useAlert } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
@@ -12,6 +8,10 @@ import {
     useListFormatter,
     useMetadataStore,
 } from '@hooks'
+import {
+    getDimensionBlockReason,
+    type DimensionBlockReason,
+} from '@modules/dimension'
 import { resolveDimensionTetId, resolveTetId } from '@modules/layout'
 import {
     clearMultiSelection,

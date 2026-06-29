@@ -1,14 +1,18 @@
 import type { SidebarSortableData } from '@components/app-wrapper/drag-and-drop-provider/types'
-import {
-    getCrossTetMessage,
-    getDimensionLayoutBlockedMessage,
-    useCrossTetMismatch,
-} from '@components/sidebar/sidebar-disabling'
 import i18n from '@dhis2/d2-i18n'
 import type { DraggableSyntheticListeners } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useAppSelector, useMetadataStore, useTetId } from '@hooks'
+import {
+    useAppSelector,
+    useCrossTetMismatch,
+    useMetadataStore,
+    useTetId,
+} from '@hooks'
+import {
+    getCrossTetMessage,
+    getDimensionLayoutBlockedMessage,
+} from '@modules/dimension'
 import { resolveDimensionTetId } from '@modules/layout'
 import {
     getMultiSelectedDimensionIds,

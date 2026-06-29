@@ -1,11 +1,11 @@
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
-import { useDimensionLayoutBlockedMessage } from '@components/sidebar/sidebar-disabling'
 import { getAvailableAxes } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import { Button, FlyoutMenu, MenuItem, SplitButton, Tooltip } from '@dhis2/ui'
 import {
     useAppDispatch,
     useAppSelector,
+    useDimensionLayoutBlockedMessage,
     useDimensionMetadataItem,
 } from '@hooks'
 import { getAxisName } from '@modules/layout.js'

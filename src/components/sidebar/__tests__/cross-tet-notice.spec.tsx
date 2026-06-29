@@ -1,10 +1,13 @@
-import { useCrossTetMismatch } from '@components/sidebar/sidebar-disabling'
+import { useCrossTetMismatch } from '@hooks'
 import { render, screen } from '@testing-library/react'
 import { describe, it, expect, vi } from 'vitest'
 import { CrossTetNotice } from '../cross-tet-notice'
 
-vi.mock('@components/sidebar/sidebar-disabling', () => ({
+vi.mock('@hooks', () => ({
     useCrossTetMismatch: vi.fn(),
+}))
+
+vi.mock('@modules/dimension', () => ({
     getCrossTetMessage: (dataSourceTetName: string, layoutTetName: string) =>
         `${dataSourceTetName} dimensions cannot be combined with ${layoutTetName} dimensions already in the layout.`,
 }))
