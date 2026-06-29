@@ -8,7 +8,6 @@ interface DimensionItemProps {
     name: string
     dimensionType: DimensionType
     selected?: boolean
-    disabled?: boolean
     onClick?: (event: React.MouseEvent) => void
 }
 
@@ -16,7 +15,6 @@ export const DimensionItem: FC<DimensionItemProps> = ({
     name,
     dimensionType,
     selected,
-    disabled,
     onClick,
 }) => (
     <button
@@ -24,7 +22,6 @@ export const DimensionItem: FC<DimensionItemProps> = ({
         className={cx(styles.dimensionItem, {
             [styles.selected]: selected,
         })}
-        disabled={disabled}
         onClick={onClick}
         data-test="dimension-item"
     >

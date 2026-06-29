@@ -1,5 +1,4 @@
 import { IconButton } from '@components/shared/icon-button'
-import { useIsContainingCardDisabled } from '@components/sidebar/dimension-card'
 import { useDimensionLayoutBlockedMessage } from '@components/sidebar/sidebar-disabling'
 import { useIsDimensionInLayout } from '@components/sidebar/use-is-dimension-in-layout'
 import { IconAdd16, IconSubtract16 } from '@dhis2/ui'
@@ -25,7 +24,6 @@ interface DraggableDimensionItemProps {
     dimension: DimensionMetadataItem
     program?: Program
     programStage?: ProgramStage
-    disabled?: boolean
 }
 
 type DraggableDimensionItemBodyProps = DraggableDimensionItemProps & {
@@ -36,7 +34,6 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
     dimension,
     program,
     programStage,
-    disabled = false,
     layoutBlockedMessage,
 }) => {
     const dispatch = useAppDispatch()
@@ -45,8 +42,6 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
     const multiSelected = useAppSelector((state) =>
         isDimensionMultiSelected(state, dimension.id)
     )
-    const isContainingCardDisabled = useIsContainingCardDisabled()
-    const cardOrItemDisabled = isContainingCardDisabled || disabled
 
     const populateMetadata = useCallback(() => {
         // Adding the program also stores its stages and TET.
@@ -95,7 +90,7 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
         useDimensionItemDnd({
             dimension,
             populateMetadata,
-            disabled: cardOrItemDisabled || selected,
+            disabled: selected,
             layoutBlockedMessage,
         })
 
@@ -108,7 +103,6 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
             aria-roledescription="draggable item"
             selected={selected}
             multiSelected={multiSelected}
-            disabled={cardOrItemDisabled}
             isDragging={isDragging}
         >
             <div className={styles.content}>
@@ -116,32 +110,29 @@ const DraggableDimensionItemBody: FC<DraggableDimensionItemBodyProps> = ({
                     name={dimension.name}
                     dimensionType={dimension.dimensionType}
                     selected={selected}
-                    disabled={cardOrItemDisabled}
                     onClick={handleClick}
                 />
-                {!cardOrItemDisabled &&
-                    !multiSelected &&
-                    !layoutBlockedMessage && (
-                        <div className={styles.iconButtonWrapper}>
-                            <IconButton
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleAddRemove()
-                                }}
-                                dataTest={
-                                    selected
-                                        ? `subtract-button-${dimension.id}`
-                                        : `add-button-${dimension.id}`
-                                }
-                            >
-                                {selected ? (
-                                    <IconSubtract16 />
-                                ) : (
-                                    <IconAdd16 color="var(--colors-grey600)" />
-                                )}
-                            </IconButton>
-                        </div>
-                    )}
+                {!multiSelected && !layoutBlockedMessage && (
+                    <div className={styles.iconButtonWrapper}>
+                        <IconButton
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                handleAddRemove()
+                            }}
+                            dataTest={
+                                selected
+                                    ? `subtract-button-${dimension.id}`
+                                    : `add-button-${dimension.id}`
+                            }
+                        >
+                            {selected ? (
+                                <IconSubtract16 />
+                            ) : (
+                                <IconAdd16 color="var(--colors-grey600)" />
+                            )}
+                        </IconButton>
+                    </div>
+                )}
             </div>
         </DimensionItemContainer>
     )

@@ -31,7 +31,7 @@ describe('<DraggableDimensionItem />', () => {
         cy.contains('Test Dimension').should('be.visible')
     })
 
-    it('displays an add button while hovering when not selected and not disabled', () => {
+    it('displays an add button while hovering when not selected', () => {
         cy.mount(
             <TestWrapper>
                 <DraggableDimensionItem dimension={testDimension} />
@@ -50,29 +50,5 @@ describe('<DraggableDimensionItem />', () => {
 
         cy.get('body').realHover({ position: 'bottomLeft' })
         cy.getByDataTest('add-button-test-dimension').should('not.be.visible')
-    })
-
-    it('does not have a menu button when disabled', () => {
-        cy.mount(
-            <TestWrapper>
-                <DraggableDimensionItem dimension={testDimension} disabled />
-            </TestWrapper>
-        )
-
-        cy.getByDataTest('add-button-test-dimension').should('not.exist')
-        cy.getByDataTest('subtract-button-test-dimension').should('not.exist')
-    })
-
-    it('has cursor not-allowed when disabled', () => {
-        cy.mount(
-            <TestWrapper>
-                <DraggableDimensionItem dimension={testDimension} disabled />
-            </TestWrapper>
-        )
-
-        cy.getByDataTest('dimension-item')
-            .parent()
-            .parent()
-            .should('have.css', 'cursor', 'not-allowed')
     })
 })
