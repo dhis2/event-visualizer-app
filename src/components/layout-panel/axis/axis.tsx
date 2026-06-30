@@ -69,21 +69,19 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
                     className={classes.content}
                     data-test={`axis-content-${axisId}`}
                 >
-                    {dimensions.length === 0 ? (
+                    {dimensions.length === 0 && isActiveDropTarget && (
                         <div className={classes.emptyAxisInsertMarkerAnchor}>
-                            {isActiveDropTarget && (
-                                <span className={insertMarkerClasses.marker} />
-                            )}
+                            <span className={insertMarkerClasses.marker} />
                         </div>
-                    ) : (
+                    )}
+                    {dimensions.length > 0 &&
                         dimensions.map((dimension) => (
                             <Chip
                                 key={dimension.id}
                                 dimension={dimension}
                                 axisId={axisId}
                             />
-                        ))
-                    )}
+                        ))}
                 </div>
             </div>
         </SortableContext>
