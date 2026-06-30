@@ -11,16 +11,16 @@ import {
     loaderSlice,
     initialState as loaderSliceInitialState,
 } from '@store/loader-slice'
-import { uiSlice, initialState as uiSliceInitialState } from '@store/ui-slice'
+import {
+    uiSlice,
+    initialState as uiSliceInitialState,
+    type LayoutPanelHeight,
+} from '@store/ui-slice'
 import {
     visUiConfigSlice,
     initialState as visUiConfigInitialState,
 } from '@store/vis-ui-config-slice'
 import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
-import {
-    LAYOUT_PANEL_HEIGHT_AUTO_FIT,
-    type LayoutPanelHeight,
-} from '../constants'
 import { LayoutPanel } from '../layout-panel'
 
 const mockOptions: MockOptions = {
@@ -279,7 +279,7 @@ describe('<LayoutPanel />', () => {
             rows: string[]
             filters: string[]
         },
-        layoutPanelHeight: LayoutPanelHeight = LAYOUT_PANEL_HEIGHT_AUTO_FIT
+        layoutPanelHeight: LayoutPanelHeight = 'AUTO_FIT'
     ) =>
         createMockOptions({
             dimensionSelection: {
@@ -333,8 +333,8 @@ describe('<LayoutPanel />', () => {
 
         cy.getByDataTest('axis-columns').should('be.visible')
 
-        // The chip-heavy columns axis is taller than the empty rows axis — the
-        // rows track is not dragged up to match (the equal-height bug).
+        // In content mode each axis keeps its own height: the chip-heavy columns
+        // axis is taller than the empty rows axis, which stays short.
         getAxisRowTracks().then(([columnsTrack, rowsTrack]) => {
             expect(columnsTrack).to.be.greaterThan(rowsTrack + 20)
         })

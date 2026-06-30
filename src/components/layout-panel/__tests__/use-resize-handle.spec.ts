@@ -1,12 +1,8 @@
-import { uiSlice } from '@store/ui-slice'
+import { uiSlice, type LayoutPanelHeight } from '@store/ui-slice'
 import { renderHookWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
 import { setupStore } from '@test-utils/setup-store'
 import { act } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import {
-    LAYOUT_PANEL_HEIGHT_AUTO_FIT,
-    type LayoutPanelHeight,
-} from '../constants'
 import { setLayoutPanelHeightToLocalStorage } from '../local-storage'
 import { useResizeHandle } from '../use-resize-handle'
 
@@ -61,8 +57,7 @@ const renderResizeHandle = (
         {
             [uiSlice.name]: {
                 ...uiSlice.getInitialState(),
-                layoutPanelHeight:
-                    overrides.layoutPanelHeight ?? LAYOUT_PANEL_HEIGHT_AUTO_FIT,
+                layoutPanelHeight: overrides.layoutPanelHeight ?? 'AUTO_FIT',
             },
         }
     )
@@ -334,11 +329,9 @@ describe('useResizeHandle', () => {
         // The user-set height is cleared (AUTO_FIT in the store and localStorage)
         // and the panel refits to the live content. This is also the double-click
         // handle behavior.
-        expect(store.getState().ui.layoutPanelHeight).toBe(
-            LAYOUT_PANEL_HEIGHT_AUTO_FIT
-        )
+        expect(store.getState().ui.layoutPanelHeight).toBe('AUTO_FIT')
         expect(setLayoutPanelHeightToLocalStorage).toHaveBeenCalledWith(
-            LAYOUT_PANEL_HEIGHT_AUTO_FIT
+            'AUTO_FIT'
         )
         expect(result.current.size).toBe(120)
     })

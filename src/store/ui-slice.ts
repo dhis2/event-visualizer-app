@@ -1,10 +1,12 @@
-import type { LayoutPanelHeight } from '@components/layout-panel/constants'
 import { getLayoutPanelHeightFromLocalStorage } from '@components/layout-panel/local-storage'
 import { SIDEBAR_DEFAULT_WIDTH } from '@components/sidebar/constants'
 import { getSidebarWidthFromLocalStorage } from '@components/sidebar/local-storage'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 import type { OutputType } from '@types'
+
+/* A user-set height in px, or 'AUTO_FIT' to fit the content. */
+export type LayoutPanelHeight = number | 'AUTO_FIT'
 
 interface PanelVisibility {
     isDetailsPanelVisible: boolean

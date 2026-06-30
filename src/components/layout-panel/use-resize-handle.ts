@@ -1,7 +1,6 @@
-import { useAppDispatch, useAppSelector } from '@hooks'
+import { useAppDispatch, useAppSelector, useAppStore } from '@hooks'
 import { getUiLayoutPanelHeight, setUiLayoutPanelHeight } from '@store/ui-slice'
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
-import { LAYOUT_PANEL_HEIGHT_AUTO_FIT } from './constants'
 import { setLayoutPanelHeightToLocalStorage } from './local-storage'
 
 type Orientation = 'horizontal' | 'vertical'
@@ -22,6 +21,7 @@ export const useResizeHandle = ({
     orientation,
 }: UseResizeHandleProps) => {
     const dispatch = useAppDispatch()
+    const store = useAppStore()
     const storeHeight = useAppSelector(getUiLayoutPanelHeight)
 
     const [size, setSize] = useState<number | null>(null)
@@ -33,12 +33,8 @@ export const useResizeHandle = ({
     const sizeRef = useRef<number | null>(size)
     const contentKeyRef = useRef<string>(contentKey)
     const refitPendingRef = useRef<boolean>(false)
-    /* Redux owns the user-set height. Mirror it into a ref so the callbacks
-     * below read the latest value without being re-created on every change. */
-    const storeHeightRef = useRef(storeHeight)
 
     sizeRef.current = size
-    storeHeightRef.current = storeHeight
 
     /* On node attach, apply the user-set height — clamped to the visType min and
      * the max, where the min always wins so a height saved under a shorter
@@ -52,9 +48,9 @@ export const useResizeHandle = ({
                 return
             }
 
-            const userHeight = storeHeightRef.current
+            const userHeight = getUiLayoutPanelHeight(store.getState())
 
-            if (userHeight !== LAYOUT_PANEL_HEIGHT_AUTO_FIT) {
+            if (userHeight !== 'AUTO_FIT') {
                 setSize(Math.max(min, Math.min(userHeight, max)))
 
                 return
@@ -67,7 +63,7 @@ export const useResizeHandle = ({
 
             setSize(Math.max(min, Math.min(containerSize, max)))
         },
-        [max, min, orientation]
+        [max, min, orientation, store]
     )
 
     // Callback for resetting the size, it's returned by the hook.
@@ -95,13 +91,13 @@ export const useResizeHandle = ({
 
         contentKeyRef.current = contentKey
 
-        if (storeHeightRef.current !== LAYOUT_PANEL_HEIGHT_AUTO_FIT) {
+        if (getUiLayoutPanelHeight(store.getState()) !== 'AUTO_FIT') {
             return
         }
 
         refitPendingRef.current = true
         setSize(null)
-    }, [contentKey])
+    }, [contentKey, store])
 
     useLayoutEffect(() => {
         if (!refitPendingRef.current || size !== null) {
@@ -128,10 +124,7 @@ export const useResizeHandle = ({
      * is unmounted; a numeric user height is applied on node attach and during
      * the drag, so it needs no reaction here. */
     useLayoutEffect(() => {
-        if (
-            storeHeight === LAYOUT_PANEL_HEIGHT_AUTO_FIT &&
-            nodeRef.current !== null
-        ) {
+        if (storeHeight === 'AUTO_FIT' && nodeRef.current !== null) {
             refitPendingRef.current = true
             resetSize()
         }
@@ -230,8 +223,8 @@ export const useResizeHandle = ({
      * (the refit itself runs in the reaction effect above, shared with the View
      * menu's "Resize layout to fit"). Bound to the resize handle's double-click. */
     const resetToContentHeight = useCallback(() => {
-        dispatch(setUiLayoutPanelHeight(LAYOUT_PANEL_HEIGHT_AUTO_FIT))
-        setLayoutPanelHeightToLocalStorage(LAYOUT_PANEL_HEIGHT_AUTO_FIT)
+        dispatch(setUiLayoutPanelHeight('AUTO_FIT'))
+        setLayoutPanelHeightToLocalStorage('AUTO_FIT')
     }, [dispatch])
 
     return {

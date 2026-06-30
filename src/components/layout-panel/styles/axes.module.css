@@ -14,11 +14,11 @@
     grid-template-areas:
         'columns filters'
         'rows filters';
-    /* No applied height yet (size is null): the grid height is indefinite while
-     * the panel is being measured. Auto rows report each axis's own content
-     * height; `fr` rows here would size every track up to the tallest and
-     * inflate the measurement. Once a height is applied, `.fixedHeight` takes
-     * over (see below). */
+    /* Auto rows while the panel height is indefinite (no applied height): each
+     * axis takes its own content height, which is what the panel measures to
+     * fit. `fr` rows can't size this state — in an indefinite-height grid an
+     * `fr` track grows every row to the tallest row's content. `.fixedHeight`
+     * applies once a height is set. */
     grid-template-rows: auto auto;
     gap: 1px;
     border-color: var(--colors-grey300);

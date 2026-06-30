@@ -1,4 +1,3 @@
-import { LAYOUT_PANEL_HEIGHT_AUTO_FIT } from '@components/layout-panel/constants'
 import { SIDEBAR_DEFAULT_WIDTH } from '@components/sidebar/constants'
 import {
     HoverMenuDropdown,
@@ -47,7 +46,7 @@ export const ViewMenu: FC = () => {
     }, [dispatch])
 
     const resizeLayoutToFit = useCallback(() => {
-        dispatch(setUiLayoutPanelHeight(LAYOUT_PANEL_HEIGHT_AUTO_FIT))
+        dispatch(setUiLayoutPanelHeight('AUTO_FIT'))
     }, [dispatch])
 
     const toggleDetailsPanelVisible = useCallback(() => {
@@ -77,9 +76,7 @@ export const ViewMenu: FC = () => {
                 <HoverMenuListItem
                     label={i18n.t('Resize layout to fit')}
                     onClick={resizeLayoutToFit}
-                    disabled={
-                        layoutPanelHeight === LAYOUT_PANEL_HEIGHT_AUTO_FIT
-                    }
+                    disabled={layoutPanelHeight === 'AUTO_FIT'}
                 />
                 <HoverMenuListItem
                     label={toggleSidebarText}
