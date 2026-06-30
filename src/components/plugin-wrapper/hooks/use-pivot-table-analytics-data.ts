@@ -4,9 +4,13 @@ import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
 import { logger } from '@modules/logger'
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import type { CurrentUser, CurrentVisualization } from '@types'
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { getAnalyticsEndpoint } from './query-tools-common'
-import { getAdaptedVisualization } from './query-tools-pivot-table'
+import {
+    getAdaptedVisualization,
+    getBaseRequestIdentity,
+    getCustomValueRequestParams,
+} from './query-tools-pivot-table'
 
 type FetchAnalyticsDataForPTInternalParams = {
     analyticsEngine: ReturnType<typeof Analytics.getAnalytics>
@@ -53,10 +57,11 @@ export const fetchAnalyticsDataForPT = async ({
     }
 
     // add custom value and aggregationType
-    if (visualization.value && visualization.aggregationType) {
+    const customValueParams = getCustomValueRequestParams(visualization)
+    if (customValueParams) {
         req = req
-            .withValue(visualization.value.id)
-            .withAggregationType(visualization.aggregationType)
+            .withValue(customValueParams.value)
+            .withAggregationType(customValueParams.aggregationType)
     }
 
     if (relativePeriodDate) {
@@ -109,6 +114,8 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
         data: null,
     })
 
+    const inFlightSignatureRef = useRef<string | null>(null)
+
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
             visualization,
@@ -116,6 +123,20 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
             displayProperty,
             onResponseReceived,
         }) => {
+            const runtime = {
+                filters: filters ?? null,
+                displayProperty,
+            }
+            const requestSignature = JSON.stringify({
+                ...getBaseRequestIdentity(visualization),
+                ...runtime,
+            })
+
+            if (inFlightSignatureRef.current === requestSignature) {
+                return
+            }
+            inFlightSignatureRef.current = requestSignature
+
             setState((prevState) => ({
                 ...prevState,
                 isFetching: true,
@@ -152,6 +173,10 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                     error: error as FetchError,
                     isFetching: false,
                 })
+            } finally {
+                if (inFlightSignatureRef.current === requestSignature) {
+                    inFlightSignatureRef.current = null
+                }
             }
         },
         [analyticsEngine]

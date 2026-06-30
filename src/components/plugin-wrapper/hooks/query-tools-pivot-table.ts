@@ -51,3 +51,30 @@ export const getAdaptedVisualization = (
         parameters,
     }
 }
+
+/* Custom value is only sent when both value and aggregationType are set. Shared
+ * by the request builder and the identity so they can't disagree. */
+export const getCustomValueRequestParams = (
+    visualization: CurrentVisualization
+) =>
+    visualization.value && visualization.aggregationType
+        ? {
+              value: visualization.value.id,
+              aggregationType: visualization.aggregationType,
+          }
+        : undefined
+
+/* Like the line-list version, but pivot has no interactive sorting or paging,
+ * so sortOrder, topLimit, timeField and the custom value belong to the identity
+ * rather than the runtime layer. */
+export const getBaseRequestIdentity = (
+    visualization: CurrentVisualization
+) => ({
+    ...getAdaptedVisualization(visualization),
+    programIds: (visualization.programDimensions ?? []).map((p) => p.id),
+    trackedEntityTypeId: visualization.trackedEntityType?.id,
+    timeField: visualization.timeField,
+    sortOrder: visualization.sortOrder,
+    topLimit: visualization.topLimit,
+    ...getCustomValueRequestParams(visualization),
+})

@@ -27,9 +27,12 @@ import type {
     MetadataInputItem,
     UserOrgUnitMetadataItem,
 } from '@types'
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { getAnalyticsEndpoint } from './query-tools-common'
-import { getAdaptedVisualization } from './query-tools-line-list'
+import {
+    getAdaptedVisualization,
+    getBaseRequestIdentity,
+} from './query-tools-line-list'
 
 type OptionSetMetaDataItem = MetadataInputItem & {
     options: Array<{ code?: string; uid?: string }>
@@ -465,6 +468,8 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
         data: null,
     })
 
+    const inFlightSignatureRef = useRef<string | null>(null)
+
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
             visualization,
@@ -474,6 +479,23 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             page = 1,
             onResponseReceived,
         }) => {
+            const runtime = {
+                sorting: visualization.sorting ?? null,
+                page,
+                pageSize,
+                filters: filters ?? null,
+                displayProperty,
+            }
+            const requestSignature = JSON.stringify({
+                ...getBaseRequestIdentity(visualization),
+                ...runtime,
+            })
+
+            if (inFlightSignatureRef.current === requestSignature) {
+                return
+            }
+            inFlightSignatureRef.current = requestSignature
+
             setState((prevState) => ({
                 ...prevState,
                 isFetching: true,
@@ -536,6 +558,10 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     error: error as FetchError,
                     isFetching: false,
                 })
+            } finally {
+                if (inFlightSignatureRef.current === requestSignature) {
+                    inFlightSignatureRef.current = null
+                }
             }
         },
         [analyticsEngine, dataEngine, metadataStore]

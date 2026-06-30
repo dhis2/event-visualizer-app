@@ -1,5 +1,6 @@
 import { Center, CircularLoader } from '@dhis2/ui'
 import { useAppSelector } from '@hooks'
+import { assertNever } from '@modules/utils/guards'
 import { isVisualizationEmpty } from '@modules/visualization/state'
 import { createSelector } from '@reduxjs/toolkit'
 import type {
@@ -11,27 +12,32 @@ import type {
 } from '@types'
 import type { FC } from 'react'
 import { useCallback, useEffect, useState } from 'react'
+import { getBaseRequestIdentity as getLineListBaseRequestIdentity } from './hooks/query-tools-line-list'
+import { getBaseRequestIdentity as getPivotTableBaseRequestIdentity } from './hooks/query-tools-pivot-table'
 import { LineListPlugin } from './line-list-plugin'
 import { PivotTablePlugin } from './pivot-table-plugin'
 import classes from './styles/plugin-wrapper.module.css'
 
-const getCurrentVisLayoutKey = createSelector(
-    (state: RootState) => state.currentVis.outputType,
-    (state: RootState) => state.currentVis.columns,
-    (state: RootState) => state.currentVis.rows,
-    (state: RootState) => state.currentVis.filters,
-    (state: RootState) => state.currentVis.value?.id,
-    (state: RootState) => state.currentVis.aggregationType,
-    // eslint-disable-next-line max-params
-    (outputType, columns, rows, filters, valueId, aggregationType) =>
-        [
-            outputType ?? '',
-            valueId ?? '',
-            aggregationType ?? '',
-            ...[...(columns ?? []), ...(rows ?? []), ...(filters ?? [])].map(
-                (d) => d.dimension
-            ),
-        ].join('|')
+const getBaseRequestIdentity = (currentVis: CurrentVisualization) => {
+    switch (currentVis.type) {
+        case 'LINE_LIST':
+            return getLineListBaseRequestIdentity(currentVis)
+        case 'PIVOT_TABLE':
+            return getPivotTableBaseRequestIdentity(currentVis)
+        default:
+            return assertNever(currentVis.type)
+    }
+}
+
+/* The plugin's React key: it remounts (clearing the canvas, resetting sort and
+ * page) when the base request identity changes. Sorting and paging aren't in
+ * it, so they refetch in place instead of remounting. */
+const getCurrentVisRequestKey = createSelector(
+    (state: RootState) => state.currentVis,
+    (currentVis) =>
+        isVisualizationEmpty(currentVis)
+            ? ''
+            : JSON.stringify(getBaseRequestIdentity(currentVis))
 )
 
 type PluginWrapperProps = {
@@ -53,7 +59,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     isVisualizationLoading = false,
     onDataSorted,
 }) => {
-    const layoutKey = useAppSelector(getCurrentVisLayoutKey)
+    const requestKey = useAppSelector(getCurrentVisRequestKey)
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
     const onResponseReceived = useCallback(() => {
@@ -70,10 +76,10 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     }, [isVisualizationLoading])
 
     useEffect(() => {
-        /* The visualization type specific plugin component remount when the layoutKey
-         * changes so this means the local state in this wrapper also needs to reset */
+        /* The plugin remounts when requestKey changes, so reset this wrapper's
+         * local state too */
         setHasAnalyticsData(false)
-    }, [layoutKey])
+    }, [requestKey])
 
     if (isVisualizationEmpty(visualization)) {
         return null
@@ -88,7 +94,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
             )}
             {visualization.type === 'LINE_LIST' && (
                 <LineListPlugin
-                    key={layoutKey}
+                    key={requestKey}
                     displayProperty={displayProperty}
                     visualization={visualization}
                     filters={filters}
@@ -100,7 +106,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
             )}
             {visualization.type === 'PIVOT_TABLE' && (
                 <PivotTablePlugin
-                    key={layoutKey}
+                    key={requestKey}
                     displayProperty={displayProperty}
                     visualization={visualization}
                     filters={filters}
