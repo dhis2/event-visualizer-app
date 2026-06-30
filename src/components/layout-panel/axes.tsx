@@ -8,7 +8,6 @@ import { getDataSourceId } from '@store/dimensions-selection-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import {
     getUiLayoutPanelExpanded,
-    getUiLayoutPanelHeightResetCounter,
     toggleUiLayoutPanelExpanded,
 } from '@store/ui-slice'
 import {
@@ -16,7 +15,7 @@ import {
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
 import cx from 'classnames'
-import { useEffect, useMemo, useRef, type FC } from 'react'
+import { useEffect, useMemo, type FC } from 'react'
 import { useWindowSize } from 'usehooks-ts'
 import { Axis } from './axis/axis'
 import { LayoutBlockedOverlay } from './layout-blocked-overlay'
@@ -55,8 +54,6 @@ const LoadingSkeletons: FC = () => (
     </div>
 )
 
-const AXES_HEIGHT_STORAGE_KEY = 'dhis2.event-visualizer.axesHeight'
-
 /* Height that keeps a single axis row (label + min content area + padding)
  * fully visible. LINE_LIST stacks one such row (columns/filters); PIVOT_TABLE
  * stacks two (columns over rows), so its min is twice as tall. */
@@ -73,9 +70,6 @@ export const Axes: FC = () => {
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const { columns, filters, rows } = useAppSelector(getVisUiConfigLayout)
-    const heightResetCounter = useAppSelector(
-        getUiLayoutPanelHeightResetCounter
-    )
     const { height } = useWindowSize()
     const { active } = useDndContext()
     const activeDragData = getActiveDragData(active)
@@ -107,11 +101,9 @@ export const Axes: FC = () => {
         isDragging,
         minReached,
         resetSize,
-        resetToContentHeight,
         size,
     } = useResizeHandle({
         orientation: 'horizontal',
-        storageKey: AXES_HEIGHT_STORAGE_KEY,
         min: minHeight,
         collapseThreshold: AXES_COLLAPSE_THRESHOLD,
         contentKey,
@@ -129,16 +121,6 @@ export const Axes: FC = () => {
             resetSize()
         }
     }, [isVisualizationLoading, resetSize])
-
-    /* "Resize layout to fit" in the View menu bumps a counter; refit to content
-     * on each change. The ref guards against firing on mount. */
-    const prevHeightResetCounterRef = useRef(heightResetCounter)
-    useEffect(() => {
-        if (heightResetCounter !== prevHeightResetCounterRef.current) {
-            prevHeightResetCounterRef.current = heightResetCounter
-            resetToContentHeight()
-        }
-    }, [heightResetCounter, resetToContentHeight])
 
     if (isVisualizationLoading) {
         return <LoadingSkeletons />

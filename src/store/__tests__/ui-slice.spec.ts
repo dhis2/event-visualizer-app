@@ -9,11 +9,11 @@ import {
     toggleUiSidebarVisible,
     toggleUiLayoutPanelVisible,
     toggleUiShowExpandedVisualizationCanvas,
-    resetUiLayoutPanelHeightCounter,
+    setUiLayoutPanelHeight,
     getUiShowExpandedVisualizationCanvas,
     getUiSidebarVisible,
     getUiLayoutPanelVisible,
-    getUiLayoutPanelHeightResetCounter,
+    getUiLayoutPanelHeight,
     getUiDetailsPanelVisible,
     getUiUpdateAnimationShowingFor,
 } from '../ui-slice'
@@ -237,26 +237,25 @@ describe('uiSlice', () => {
         })
     })
 
-    describe('resetUiLayoutPanelHeightCounter', () => {
-        it('increments the counter without touching other state', () => {
-            const state = reducer(
-                initialState,
-                resetUiLayoutPanelHeightCounter()
-            )
+    describe('setUiLayoutPanelHeight', () => {
+        it('stores a user-set numeric height', () => {
+            const state = reducer(initialState, setUiLayoutPanelHeight(420))
 
-            expect(state.layoutPanelHeightResetCounter).toBe(1)
-            expect({
-                ...state,
-                layoutPanelHeightResetCounter:
-                    initialState.layoutPanelHeightResetCounter,
-            }).toEqual(initialState)
+            expect(state.layoutPanelHeight).toBe(420)
         })
 
-        it('increments on each dispatch so repeat resets are distinct', () => {
-            let state = reducer(initialState, resetUiLayoutPanelHeightCounter())
-            state = reducer(state, resetUiLayoutPanelHeightCounter())
+        it('stores the AUTO_FIT sentinel for "fit to content"', () => {
+            const withHeight: UiState = {
+                ...initialState,
+                layoutPanelHeight: 420,
+            }
 
-            expect(state.layoutPanelHeightResetCounter).toBe(2)
+            const state = reducer(
+                withHeight,
+                setUiLayoutPanelHeight('AUTO_FIT')
+            )
+
+            expect(state.layoutPanelHeight).toBe('AUTO_FIT')
         })
     })
 
@@ -318,12 +317,16 @@ describe('uiSlice', () => {
             expect(getUiDetailsPanelVisible(rootState)).toBe(true)
         })
 
-        it('getUiLayoutPanelHeightResetCounter returns the counter value', () => {
-            const rootState = createRootState({
-                layoutPanelHeightResetCounter: 3,
-            })
+        it('getUiLayoutPanelHeight returns a stored numeric height', () => {
+            const rootState = createRootState({ layoutPanelHeight: 360 })
 
-            expect(getUiLayoutPanelHeightResetCounter(rootState)).toBe(3)
+            expect(getUiLayoutPanelHeight(rootState)).toBe(360)
+        })
+
+        it('getUiLayoutPanelHeight returns the AUTO_FIT sentinel', () => {
+            const rootState = createRootState({ layoutPanelHeight: 'AUTO_FIT' })
+
+            expect(getUiLayoutPanelHeight(rootState)).toBe('AUTO_FIT')
         })
 
         it('getUiUpdateAnimationShowingFor returns the stored output type', () => {

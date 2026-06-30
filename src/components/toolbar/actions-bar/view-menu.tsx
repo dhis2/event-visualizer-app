@@ -1,3 +1,4 @@
+import { LAYOUT_PANEL_HEIGHT_AUTO_FIT } from '@components/layout-panel/constants'
 import { SIDEBAR_DEFAULT_WIDTH } from '@components/sidebar/constants'
 import {
     HoverMenuDropdown,
@@ -10,11 +11,11 @@ import { getCurrentVisId } from '@store/current-vis-slice'
 import {
     getUiSidebarWidth,
     resetUiSidebarWidth,
-    getUiLayoutPanelExpanded,
+    getUiLayoutPanelHeight,
     getUiLayoutPanelVisible,
     getUiSidebarVisible,
     getUiDetailsPanelVisible,
-    resetUiLayoutPanelHeightCounter,
+    setUiLayoutPanelHeight,
     toggleUiDetailsPanelVisible,
     toggleUiLayoutPanelVisible,
     toggleUiSidebarVisible,
@@ -28,7 +29,7 @@ export const ViewMenu: FC = () => {
 
     const isSidebarVisible = useAppSelector(getUiSidebarVisible)
     const isLayoutPanelVisible = useAppSelector(getUiLayoutPanelVisible)
-    const isLayoutPanelExpanded = useAppSelector(getUiLayoutPanelExpanded)
+    const layoutPanelHeight = useAppSelector(getUiLayoutPanelHeight)
     const isDetailsPanelVisible = useAppSelector(getUiDetailsPanelVisible)
     const sidebarWidth = useAppSelector(getUiSidebarWidth)
     const id = useAppSelector(getCurrentVisId)
@@ -46,7 +47,7 @@ export const ViewMenu: FC = () => {
     }, [dispatch])
 
     const resizeLayoutToFit = useCallback(() => {
-        dispatch(resetUiLayoutPanelHeightCounter())
+        dispatch(setUiLayoutPanelHeight(LAYOUT_PANEL_HEIGHT_AUTO_FIT))
     }, [dispatch])
 
     const toggleDetailsPanelVisible = useCallback(() => {
@@ -76,7 +77,9 @@ export const ViewMenu: FC = () => {
                 <HoverMenuListItem
                     label={i18n.t('Resize layout to fit')}
                     onClick={resizeLayoutToFit}
-                    disabled={!isLayoutPanelVisible || !isLayoutPanelExpanded}
+                    disabled={
+                        layoutPanelHeight === LAYOUT_PANEL_HEIGHT_AUTO_FIT
+                    }
                 />
                 <HoverMenuListItem
                     label={toggleSidebarText}

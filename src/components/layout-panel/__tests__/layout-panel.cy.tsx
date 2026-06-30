@@ -17,6 +17,10 @@ import {
     initialState as visUiConfigInitialState,
 } from '@store/vis-ui-config-slice'
 import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
+import {
+    LAYOUT_PANEL_HEIGHT_AUTO_FIT,
+    type LayoutPanelHeight,
+} from '../constants'
 import { LayoutPanel } from '../layout-panel'
 
 const mockOptions: MockOptions = {
@@ -269,19 +273,22 @@ describe('<LayoutPanel />', () => {
             })
     })
 
-    /* Storage key the axes resize hook reads/writes (private to axes.tsx). A
-     * stored value is treated as a user-defined height. */
-    const AXES_HEIGHT_STORAGE_KEY = 'dhis2.event-visualizer.axesHeight'
-
-    const pivotOptions = (layout: {
-        columns: string[]
-        rows: string[]
-        filters: string[]
-    }) =>
+    const pivotOptions = (
+        layout: {
+            columns: string[]
+            rows: string[]
+            filters: string[]
+        },
+        layoutPanelHeight: LayoutPanelHeight = LAYOUT_PANEL_HEIGHT_AUTO_FIT
+    ) =>
         createMockOptions({
             dimensionSelection: {
                 ...mockOptions.partialStore?.preloadedState.dimensionSelection,
                 dataSourceId: 'test-id',
+            },
+            ui: {
+                ...uiSliceInitialState,
+                layoutPanelHeight,
             },
             visUiConfig: {
                 ...visUiConfigInitialState,
@@ -304,7 +311,6 @@ describe('<LayoutPanel />', () => {
         })
 
     it('PIVOT_TABLE sizes columns and rows to their own content in content-height mode', () => {
-        localStorage.removeItem(AXES_HEIGHT_STORAGE_KEY)
         cy.viewport(420, 700)
 
         cy.mount(
@@ -335,16 +341,18 @@ describe('<LayoutPanel />', () => {
     })
 
     it('PIVOT_TABLE mirrors columns and rows when a user-defined height exceeds the content', () => {
-        localStorage.setItem(AXES_HEIGHT_STORAGE_KEY, '600')
         cy.viewport(1000, 800)
 
         cy.mount(
             <MockAppWrapper
-                {...pivotOptions({
-                    columns: ['ou', 'mchInfantFeeding'],
-                    rows: ['genderId'],
-                    filters: [],
-                })}
+                {...pivotOptions(
+                    {
+                        columns: ['ou', 'mchInfantFeeding'],
+                        rows: ['genderId'],
+                        filters: [],
+                    },
+                    600
+                )}
             >
                 <LayoutPanel />
             </MockAppWrapper>
@@ -352,8 +360,8 @@ describe('<LayoutPanel />', () => {
 
         cy.getByDataTest('axis-columns').should('be.visible')
 
-        // The stored 600px height far exceeds the content, so the extra space is
-        // shared equally: the two row tracks are the same height.
+        // The user-set 600px height far exceeds the content, so the extra space
+        // is shared equally: the two row tracks are the same height.
         getAxisRowTracks().then(([columnsTrack, rowsTrack]) => {
             expect(columnsTrack).to.be.greaterThan(100)
             expect(Math.abs(columnsTrack - rowsTrack)).to.be.lessThan(2)
