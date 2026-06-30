@@ -1,8 +1,12 @@
+import { getLayoutPanelHeightFromLocalStorage } from '@components/layout-panel/local-storage'
 import { SIDEBAR_DEFAULT_WIDTH } from '@components/sidebar/constants'
 import { getSidebarWidthFromLocalStorage } from '@components/sidebar/local-storage'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 import type { OutputType } from '@types'
+
+/* A user-set height in px, or 'AUTO_FIT' to fit the content. */
+export type LayoutPanelHeight = number | 'AUTO_FIT'
 
 interface PanelVisibility {
     isDetailsPanelVisible: boolean
@@ -16,6 +20,7 @@ export interface UiState {
     isLayoutPanelExpanded: boolean
     isLayoutPanelVisible: boolean
     isSidebarVisible: boolean
+    layoutPanelHeight: LayoutPanelHeight
     sidebarWidth: number
     savedPanelVisibility: PanelVisibility | null
     updateAnimationShowingFor: OutputType | null
@@ -27,6 +32,7 @@ export const initialState: UiState = {
     isLayoutPanelExpanded: true,
     isLayoutPanelVisible: true,
     isSidebarVisible: true,
+    layoutPanelHeight: getLayoutPanelHeightFromLocalStorage(),
     sidebarWidth: getSidebarWidthFromLocalStorage(),
     savedPanelVisibility: null,
     updateAnimationShowingFor: null,
@@ -98,6 +104,12 @@ export const uiSlice = createSlice({
         toggleUiLayoutPanelExpanded: (state) => {
             state.isLayoutPanelExpanded = !state.isLayoutPanelExpanded
         },
+        setUiLayoutPanelHeight: (
+            state,
+            action: PayloadAction<LayoutPanelHeight>
+        ) => {
+            state.layoutPanelHeight = action.payload
+        },
         toggleUiLayoutPanelVisible: (state) => {
             state.isLayoutPanelVisible = !state.isLayoutPanelVisible
             state.savedPanelVisibility = null
@@ -117,6 +129,7 @@ export const uiSlice = createSlice({
             state.updateAnimationShowingFor,
         getUiDetailsPanelVisible: (state) => state.isDetailsPanelVisible,
         getUiLayoutPanelExpanded: (state) => state.isLayoutPanelExpanded,
+        getUiLayoutPanelHeight: (state) => state.layoutPanelHeight,
         getUiLayoutPanelVisible: (state) => state.isLayoutPanelVisible,
         getUiSidebarVisible: (state) => state.isSidebarVisible,
         getUiSidebarWidth: (state) => state.sidebarWidth,
@@ -135,6 +148,7 @@ export const {
     setUiActiveDimensionModal,
     toggleUiDetailsPanelVisible,
     toggleUiLayoutPanelExpanded,
+    setUiLayoutPanelHeight,
     toggleUiLayoutPanelVisible,
     toggleUiSidebarVisible,
     toggleUiShowExpandedVisualizationCanvas,
@@ -144,6 +158,7 @@ export const {
     getUiUpdateAnimationShowingFor,
     getUiDetailsPanelVisible,
     getUiLayoutPanelExpanded,
+    getUiLayoutPanelHeight,
     getUiLayoutPanelVisible,
     getUiSidebarVisible,
     getUiSidebarWidth,

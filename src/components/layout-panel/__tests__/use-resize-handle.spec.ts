@@ -1,6 +1,15 @@
-import { act, renderHook } from '@testing-library/react'
+import { uiSlice, type LayoutPanelHeight } from '@store/ui-slice'
+import { renderHookWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
+import { setupStore } from '@test-utils/setup-store'
+import { act } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { setLayoutPanelHeightToLocalStorage } from '../local-storage'
 import { useResizeHandle } from '../use-resize-handle'
+
+vi.mock('../local-storage', () => ({
+    getLayoutPanelHeightFromLocalStorage: vi.fn(() => 'AUTO_FIT'),
+    setLayoutPanelHeightToLocalStorage: vi.fn(),
+}))
 
 type FakeTarget = {
     setPointerCapture: ReturnType<typeof vi.fn>
@@ -32,38 +41,59 @@ const createNode = (scrollHeight: number, clientHeight = scrollHeight) =>
         clientWidth: 0,
     }) as unknown as HTMLDivElement
 
-const STORAGE_KEY = 'test.axesHeight'
-
+/* The user-set height now lives in the Redux UI slice (`layoutPanelHeight`),
+ * not localStorage; seed it via the store. */
 const renderResizeHandle = (
     overrides: {
         min?: number
         max?: number
         collapseThreshold?: number
         contentKey?: string
+        layoutPanelHeight?: LayoutPanelHeight
     } = {}
-) =>
-    renderHook(
-        (props: { contentKey: string }) =>
-            useResizeHandle({
-                orientation: 'horizontal',
-                storageKey: STORAGE_KEY,
-                min: overrides.min ?? 56,
-                collapseThreshold: overrides.collapseThreshold ?? 24,
-                contentKey: props.contentKey,
-                max: overrides.max ?? 300,
-            }),
-        { initialProps: { contentKey: overrides.contentKey ?? 'a' } }
+) => {
+    const store = setupStore(
+        { [uiSlice.name]: uiSlice.reducer },
+        {
+            [uiSlice.name]: {
+                ...uiSlice.getInitialState(),
+                layoutPanelHeight: overrides.layoutPanelHeight ?? 'AUTO_FIT',
+            },
+        }
     )
 
+    const contentKeyRef = { current: overrides.contentKey ?? 'a' }
+
+    const utils = renderHookWithReduxStoreProvider(
+        () =>
+            useResizeHandle({
+                orientation: 'horizontal',
+                min: overrides.min ?? 56,
+                collapseThreshold: overrides.collapseThreshold ?? 24,
+                contentKey: contentKeyRef.current,
+                max: overrides.max ?? 300,
+            }),
+        store
+    )
+
+    const setContentKey = (contentKey: string) => {
+        contentKeyRef.current = contentKey
+        utils.rerender()
+    }
+
+    return { ...utils, setContentKey }
+}
+
 afterEach(() => {
-    localStorage.clear()
+    vi.clearAllMocks()
 })
 
 describe('useResizeHandle', () => {
     it('lifts a stored size that is below the min up to the min', () => {
-        localStorage.setItem(STORAGE_KEY, '30')
-
-        const { result } = renderResizeHandle({ min: 116 })
+        const { result } = renderResizeHandle({
+            min: 116,
+            layoutPanelHeight: 30,
+        })
 
         act(() => {
             result.current.containerRef(createNode(200))
@@ -182,38 +212,11 @@ describe('useResizeHandle', () => {
         expect(result.current.minReached).toBe(true)
     })
 
-    it('can be expanded past the content height it had at mount time', () => {
+    it('can be dragged past the content height, up to the max', () => {
         const target = createTarget()
         const { result } = renderResizeHandle({ min: 58, max: 300 })
 
-        // Mounts short (few chips).
-        const node = createNode(58)
-        act(() => {
-            result.current.containerRef(node)
-        })
-
-        // Chips are added: the live content grows, but containerRef is NOT
-        // called again (the bug was the cap staying stuck at the mount value).
-        ;(node as unknown as { scrollHeight: number }).scrollHeight = 220
-
-        act(() => {
-            result.current.eventHandlers.onPointerDown(
-                createPointerEvent(58, target)
-            )
-        })
-        act(() => {
-            result.current.eventHandlers.onPointerMove(
-                createPointerEvent(400, target)
-            )
-        })
-
-        expect(result.current.size).toBe(220)
-    })
-
-    it('stops dragging at the live content height', () => {
-        const target = createTarget()
-        const { result } = renderResizeHandle({ min: 58, max: 300 })
-
+        // Mounts short (few chips); the content height is 120.
         act(() => {
             result.current.containerRef(createNode(120))
         })
@@ -222,13 +225,31 @@ describe('useResizeHandle', () => {
                 createPointerEvent(120, target)
             )
         })
+        // Drag well past the content height: the panel keeps growing instead of
+        // stopping at the content, capped only by the max.
         act(() => {
             result.current.eventHandlers.onPointerMove(
                 createPointerEvent(400, target)
             )
         })
 
-        expect(result.current.size).toBe(120)
+        expect(result.current.size).toBe(300)
+    })
+
+    it('honors a user-set height taller than the content height', () => {
+        const { result } = renderResizeHandle({
+            min: 58,
+            max: 300,
+            layoutPanelHeight: 250,
+        })
+
+        // Content only needs 100, but the user-set height is their choice and is
+        // not shrunk back down to the content height.
+        act(() => {
+            result.current.containerRef(createNode(100))
+        })
+
+        expect(result.current.size).toBe(250)
     })
 
     it('never drags taller than the max even with a large content', () => {
@@ -288,8 +309,55 @@ describe('useResizeHandle', () => {
         expect(result.current.size).toBe(60)
     })
 
+    it('resetToContentHeight publishes AUTO_FIT and refits to content', () => {
+        const { result, store } = renderResizeHandle({
+            min: 58,
+            max: 300,
+            layoutPanelHeight: 250,
+        })
+
+        act(() => {
+            result.current.containerRef(createNode(120))
+        })
+        // Honors the user-set height initially.
+        expect(result.current.size).toBe(250)
+
+        act(() => {
+            result.current.resetToContentHeight()
+        })
+
+        // The user-set height is cleared (AUTO_FIT in the store and localStorage)
+        // and the panel refits to the live content. This is also the double-click
+        // handle behavior.
+        expect(store.getState().ui.layoutPanelHeight).toBe('AUTO_FIT')
+        expect(setLayoutPanelHeightToLocalStorage).toHaveBeenCalledWith(
+            'AUTO_FIT'
+        )
+        expect(result.current.size).toBe(120)
+    })
+
+    it('refits when AUTO_FIT is published from elsewhere (View menu)', () => {
+        const { result, store } = renderResizeHandle({
+            min: 58,
+            max: 300,
+            layoutPanelHeight: 250,
+        })
+
+        act(() => {
+            result.current.containerRef(createNode(120))
+        })
+        expect(result.current.size).toBe(250)
+
+        // The View menu dispatches AUTO_FIT directly (not via the hook).
+        act(() => {
+            store.dispatch(uiSlice.actions.setUiLayoutPanelHeight('AUTO_FIT'))
+        })
+
+        expect(result.current.size).toBe(120)
+    })
+
     it('re-fits to the new content when the layout changes', () => {
-        const { result, rerender } = renderResizeHandle({
+        const { result, setContentKey } = renderResizeHandle({
             min: 56,
             max: 300,
             contentKey: 'a',
@@ -303,13 +371,15 @@ describe('useResizeHandle', () => {
 
         // A chip is added: the live content grows to 200.
         ;(node as unknown as { scrollHeight: number }).scrollHeight = 200
-        rerender({ contentKey: 'b' })
+        act(() => {
+            setContentKey('b')
+        })
 
         expect(result.current.size).toBe(200)
     })
 
     it('re-fits smaller when the layout shrinks', () => {
-        const { result, rerender } = renderResizeHandle({
+        const { result, setContentKey } = renderResizeHandle({
             min: 56,
             max: 300,
             contentKey: 'a',
@@ -324,14 +394,41 @@ describe('useResizeHandle', () => {
         // Chips are removed: the live content shrinks to 90. The re-fit measures
         // the auto content, so the stale larger size does not skew it.
         ;(node as unknown as { scrollHeight: number }).scrollHeight = 90
-        rerender({ contentKey: 'b' })
+        act(() => {
+            setContentKey('b')
+        })
 
         expect(result.current.size).toBe(90)
     })
 
-    it('persists the size to local storage on pointer up', () => {
+    it('does not re-fit when the layout changes if the user has set a height', () => {
+        const { result, setContentKey } = renderResizeHandle({
+            min: 56,
+            max: 300,
+            contentKey: 'a',
+            layoutPanelHeight: 250,
+        })
+
+        const node = createNode(100)
+        act(() => {
+            result.current.containerRef(node)
+        })
+        // Honors the user-set height, not the content height.
+        expect(result.current.size).toBe(250)
+
+        // A chip is added: the live content grows, but the user-set height holds
+        // and the content scrolls within it.
+        ;(node as unknown as { scrollHeight: number }).scrollHeight = 200
+        act(() => {
+            setContentKey('b')
+        })
+
+        expect(result.current.size).toBe(250)
+    })
+
+    it('persists the size to the store and localStorage on pointer up', () => {
         const target = createTarget()
-        const { result } = renderResizeHandle({ min: 56, max: 300 })
+        const { result, store } = renderResizeHandle({ min: 56, max: 300 })
 
         // Initial size is the content height (200).
         act(() => {
@@ -343,6 +440,7 @@ describe('useResizeHandle', () => {
             )
         })
 
-        expect(localStorage.getItem(STORAGE_KEY)).toBe('200')
+        expect(store.getState().ui.layoutPanelHeight).toBe(200)
+        expect(setLayoutPanelHeightToLocalStorage).toHaveBeenCalledWith(200)
     })
 })

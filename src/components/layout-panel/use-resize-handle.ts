@@ -1,4 +1,7 @@
+import { useAppDispatch, useAppSelector, useAppStore } from '@hooks'
+import { getUiLayoutPanelHeight, setUiLayoutPanelHeight } from '@store/ui-slice'
 import { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { setLayoutPanelHeightToLocalStorage } from './local-storage'
 
 type Orientation = 'horizontal' | 'vertical'
 
@@ -8,7 +11,6 @@ interface UseResizeHandleProps {
     collapseThreshold: number
     contentKey: string
     orientation: Orientation
-    storageKey: string
 }
 
 export const useResizeHandle = ({
@@ -17,61 +19,51 @@ export const useResizeHandle = ({
     collapseThreshold,
     contentKey,
     orientation,
-    storageKey,
 }: UseResizeHandleProps) => {
+    const dispatch = useAppDispatch()
+    const store = useAppStore()
+    const storeHeight = useAppSelector(getUiLayoutPanelHeight)
+
     const [size, setSize] = useState<number | null>(null)
     const [isDragging, setIsDragging] = useState<boolean>(false)
     const [minReached, setMinReached] = useState<boolean>(false)
     const nodeRef = useRef<HTMLDivElement | null>(null)
-    const dragMaxRef = useRef<number>(max)
     const preDragSizeRef = useRef<number | null>(null)
     const dragStartPosRef = useRef<number | null>(null)
     const sizeRef = useRef<number | null>(size)
     const contentKeyRef = useRef<string>(contentKey)
     const refitPendingRef = useRef<boolean>(false)
-    const storedSizeRef = useRef<number | null>(
-        (() => {
-            const storedSize = localStorage.getItem(storageKey)
 
-            return storedSize ? Number(storedSize) : null
-        })()
-    )
-
-    // Sync the ref with the size value
     sizeRef.current = size
 
-    // Container ref callback
-    // Computes the effective max size, based on the container, max and stored size
+    /* On node attach, apply the user-set height — clamped to the visType min and
+     * the max, where the min always wins so a height saved under a shorter
+     * visType can't hide an axis of the current one. With no user-set height
+     * (AUTO_FIT) fit to the content, capped at the max — then it scrolls. */
     const containerRef = useCallback(
         (node: HTMLDivElement | null) => {
             nodeRef.current = node
 
-            if (node !== null) {
-                const containerSize =
-                    orientation === 'horizontal'
-                        ? node.scrollHeight
-                        : node.scrollWidth
-
-                /* Fit to the content (which carries its own trailing drop-row
-                 * buffer in CSS), capped at the max — then it scrolls. */
-                const containerMaxSize = Math.min(containerSize, max)
-
-                /* The min always wins: a stored size (possibly saved under a
-                 * different visType) must never shrink the panel below the
-                 * height needed to show every axis of the current visType. */
-                if (storedSizeRef.current) {
-                    setSize(
-                        Math.max(
-                            min,
-                            Math.min(storedSizeRef.current, containerMaxSize)
-                        )
-                    )
-                } else {
-                    setSize(Math.max(containerMaxSize, min))
-                }
+            if (node === null) {
+                return
             }
+
+            const userHeight = getUiLayoutPanelHeight(store.getState())
+
+            if (userHeight !== 'AUTO_FIT') {
+                setSize(Math.max(min, Math.min(userHeight, max)))
+
+                return
+            }
+
+            const containerSize =
+                orientation === 'horizontal'
+                    ? node.scrollHeight
+                    : node.scrollWidth
+
+            setSize(Math.max(min, Math.min(containerSize, max)))
         },
-        [max, min, orientation]
+        [max, min, orientation, store]
     )
 
     // Callback for resetting the size, it's returned by the hook.
@@ -85,20 +77,27 @@ export const useResizeHandle = ({
         setMinReached(false)
     }, [])
 
-    /* Re-fit the panel to the content whenever the layout changes, so it tracks
-     * the chips (and the trailing drop-row buffer they carry in CSS) as they are
-     * added or removed. The size is first dropped to `null` (auto) so the live
-     * content can be measured without the current fixed height skewing it; the
-     * next effect applies the fitted size once the auto layout has committed. */
+    /* Auto-fit the panel to the content when the layout changes, so it tracks
+     * the chips as they are added or removed. This only applies while the user
+     * has not set a height of their own: once they resize the panel, that
+     * explicit height wins and the content scrolls within it instead of resizing
+     * the panel. The size is first dropped to `null` (auto) so the live content
+     * can be measured without the current fixed height skewing it; the next
+     * effect applies the fitted size once the auto layout has committed. */
     useLayoutEffect(() => {
         if (contentKeyRef.current === contentKey) {
             return
         }
 
         contentKeyRef.current = contentKey
+
+        if (getUiLayoutPanelHeight(store.getState()) !== 'AUTO_FIT') {
+            return
+        }
+
         refitPendingRef.current = true
         setSize(null)
-    }, [contentKey])
+    }, [contentKey, store])
 
     useLayoutEffect(() => {
         if (!refitPendingRef.current || size !== null) {
@@ -119,6 +118,18 @@ export const useResizeHandle = ({
         setSize(Math.max(min, Math.min(contentSize, max)))
     }, [size, min, max, orientation])
 
+    /* React to AUTO_FIT being published to the store — by "Resize layout to fit"
+     * in the View menu, or by this hook's own reset — and re-fit to the content.
+     * Guarded on a mounted node so it can't leave a refit pending while the panel
+     * is unmounted; a numeric user height is applied on node attach and during
+     * the drag, so it needs no reaction here. */
+    useLayoutEffect(() => {
+        if (storeHeight === 'AUTO_FIT' && nodeRef.current !== null) {
+            refitPendingRef.current = true
+            resetSize()
+        }
+    }, [storeHeight, resetSize])
+
     // Start dragging
     const onPointerDown = useCallback(
         (event: React.PointerEvent) => {
@@ -126,16 +137,6 @@ export const useResizeHandle = ({
 
             const node = nodeRef.current
             const horizontal = orientation === 'horizontal'
-
-            /* The drag ceiling is recomputed from the live content on every
-             * grab, so adding chips (which the cached size at mount can't see)
-             * lets the panel be dragged taller. The content carries its own
-             * trailing drop-row buffer in CSS. */
-            let contentSize = max
-            if (node) {
-                contentSize = horizontal ? node.scrollHeight : node.scrollWidth
-            }
-            dragMaxRef.current = Math.min(contentSize, max)
 
             /* When the panel has no explicit size (after a double-click reset)
              * fall back to its rendered size so the drag starts smoothly
@@ -156,7 +157,7 @@ export const useResizeHandle = ({
 
             setIsDragging(true)
         },
-        [max, orientation]
+        [orientation]
     )
 
     // Move the drag handle
@@ -191,15 +192,10 @@ export const useResizeHandle = ({
                 setMinReached(true)
                 setIsDragging(false)
             } else {
-                setSize(
-                    Math.max(
-                        collapseThreshold,
-                        Math.min(newSize, dragMaxRef.current)
-                    )
-                )
+                setSize(Math.max(collapseThreshold, Math.min(newSize, max)))
             }
         },
-        [collapseThreshold, min, orientation]
+        [collapseThreshold, max, min, orientation]
     )
 
     // Stop dragging
@@ -212,48 +208,37 @@ export const useResizeHandle = ({
             }
 
             if (size) {
-                try {
-                    storedSizeRef.current = +size.toFixed()
+                const height = Math.round(size)
 
-                    localStorage.setItem(storageKey, size.toFixed())
-                } catch {
-                    // ignore
-                }
+                dispatch(setUiLayoutPanelHeight(height))
+                setLayoutPanelHeightToLocalStorage(height)
             }
 
             setIsDragging(false)
         },
-        [storageKey]
+        [dispatch]
     )
 
-    // Reset
-    const onDoubleClick = useCallback(() => {
-        try {
-            localStorage.removeItem(storageKey)
-        } catch {
-            // ignore
-        }
-
-        storedSizeRef.current = null
-
-        /* Re-fit to the content so a double-click reset matches the auto-fit
-         * height applied elsewhere. */
-        refitPendingRef.current = true
-
-        resetSize()
-    }, [resetSize, storageKey])
+    /* Discard the user's height and re-fit to the content by publishing AUTO_FIT
+     * (the refit itself runs in the reaction effect above, shared with the View
+     * menu's "Resize layout to fit"). Bound to the resize handle's double-click. */
+    const resetToContentHeight = useCallback(() => {
+        dispatch(setUiLayoutPanelHeight('AUTO_FIT'))
+        setLayoutPanelHeightToLocalStorage('AUTO_FIT')
+    }, [dispatch])
 
     return {
         containerRef,
         size,
         resetSize,
+        resetToContentHeight,
         isDragging,
         minReached,
         eventHandlers: {
             onPointerDown,
             onPointerMove,
             onPointerUp,
-            onDoubleClick,
+            onDoubleClick: resetToContentHeight,
         },
     }
 }

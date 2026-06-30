@@ -788,6 +788,9 @@ msgstr "Show interpretations and details"
 msgid "View"
 msgstr "View"
 
+msgid "Resize layout to fit"
+msgstr "Resize layout to fit"
+
 msgid "Reset dimensions sidebar width"
 msgstr "Reset dimensions sidebar width"
 
