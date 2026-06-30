@@ -42,9 +42,8 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
         disabled,
     })
 
-    /* The collision detector resolves a drop over a populated axis to one of its
-     * chips, not to the axis container, so the container's own `isOver` only
-     * fires on an empty axis. Read the active drop target's axis instead — both
+    /*
+     * Read the active drop target's axis — both
      * chip sortables and the axis container carry it — so the whole axis
      * highlights whether the drop lands on a chip or the empty area. */
     const overData = over?.data.current
