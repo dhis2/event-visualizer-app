@@ -9,9 +9,11 @@ import {
     toggleUiSidebarVisible,
     toggleUiLayoutPanelVisible,
     toggleUiShowExpandedVisualizationCanvas,
+    setUiLayoutPanelHeight,
     getUiShowExpandedVisualizationCanvas,
     getUiSidebarVisible,
     getUiLayoutPanelVisible,
+    getUiLayoutPanelHeight,
     getUiDetailsPanelVisible,
     getUiUpdateAnimationShowingFor,
 } from '../ui-slice'
@@ -235,6 +237,28 @@ describe('uiSlice', () => {
         })
     })
 
+    describe('setUiLayoutPanelHeight', () => {
+        it('stores a user-set numeric height', () => {
+            const state = reducer(initialState, setUiLayoutPanelHeight(420))
+
+            expect(state.layoutPanelHeight).toBe(420)
+        })
+
+        it('stores the AUTO_FIT sentinel for "fit to content"', () => {
+            const withHeight: UiState = {
+                ...initialState,
+                layoutPanelHeight: 420,
+            }
+
+            const state = reducer(
+                withHeight,
+                setUiLayoutPanelHeight('AUTO_FIT')
+            )
+
+            expect(state.layoutPanelHeight).toBe('AUTO_FIT')
+        })
+    })
+
     describe('setUiUpdateAnimationShowingFor', () => {
         it('records the output type whose update button should animate', () => {
             const state = reducer(
@@ -291,6 +315,18 @@ describe('uiSlice', () => {
             expect(getUiSidebarVisible(rootState)).toBe(true)
             expect(getUiLayoutPanelVisible(rootState)).toBe(false)
             expect(getUiDetailsPanelVisible(rootState)).toBe(true)
+        })
+
+        it('getUiLayoutPanelHeight returns a stored numeric height', () => {
+            const rootState = createRootState({ layoutPanelHeight: 360 })
+
+            expect(getUiLayoutPanelHeight(rootState)).toBe(360)
+        })
+
+        it('getUiLayoutPanelHeight returns the AUTO_FIT sentinel', () => {
+            const rootState = createRootState({ layoutPanelHeight: 'AUTO_FIT' })
+
+            expect(getUiLayoutPanelHeight(rootState)).toBe('AUTO_FIT')
         })
 
         it('getUiUpdateAnimationShowingFor returns the stored output type', () => {

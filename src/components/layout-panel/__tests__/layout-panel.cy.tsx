@@ -11,7 +11,11 @@ import {
     loaderSlice,
     initialState as loaderSliceInitialState,
 } from '@store/loader-slice'
-import { uiSlice, initialState as uiSliceInitialState } from '@store/ui-slice'
+import {
+    uiSlice,
+    initialState as uiSliceInitialState,
+    type LayoutPanelHeight,
+} from '@store/ui-slice'
 import {
     visUiConfigSlice,
     initialState as visUiConfigInitialState,
@@ -267,6 +271,101 @@ describe('<LayoutPanel />', () => {
                     'update-button-event',
                 ])
             })
+    })
+
+    const pivotOptions = (
+        layout: {
+            columns: string[]
+            rows: string[]
+            filters: string[]
+        },
+        layoutPanelHeight: LayoutPanelHeight = 'AUTO_FIT'
+    ) =>
+        createMockOptions({
+            dimensionSelection: {
+                ...mockOptions.partialStore?.preloadedState.dimensionSelection,
+                dataSourceId: 'test-id',
+            },
+            ui: {
+                ...uiSliceInitialState,
+                layoutPanelHeight,
+            },
+            visUiConfig: {
+                ...visUiConfigInitialState,
+                visualizationType: 'PIVOT_TABLE',
+                outputType: 'EVENT',
+                layout,
+                itemsByDimension: { ou: ['orgUnit1'] },
+            },
+        })
+
+    const getAxisRowTracks = () =>
+        cy.get('[class*="axisContainer"]').then(($el) => {
+            const tracks = getComputedStyle($el[0])
+                .gridTemplateRows.split(' ')
+                .map(parseFloat)
+
+            expect(tracks, 'two row tracks').to.have.length(2)
+
+            return tracks
+        })
+
+    it('PIVOT_TABLE sizes columns and rows to their own content in content-height mode', () => {
+        cy.viewport(420, 700)
+
+        cy.mount(
+            <MockAppWrapper
+                {...pivotOptions({
+                    columns: [
+                        'ou',
+                        'mchInfantFeeding',
+                        'mchNutrition',
+                        'ageAtVisit',
+                        'genderId',
+                    ],
+                    rows: [],
+                    filters: [],
+                })}
+            >
+                <LayoutPanel />
+            </MockAppWrapper>
+        )
+
+        cy.getByDataTest('axis-columns').should('be.visible')
+
+        // In content mode each axis keeps its own height: the chip-heavy columns
+        // axis is taller than the empty rows axis, which stays short.
+        getAxisRowTracks().then(([columnsTrack, rowsTrack]) => {
+            expect(columnsTrack).to.be.greaterThan(rowsTrack + 20)
+        })
+    })
+
+    it('PIVOT_TABLE mirrors columns and rows when a user-defined height exceeds the content', () => {
+        cy.viewport(1000, 800)
+
+        cy.mount(
+            <MockAppWrapper
+                {...pivotOptions(
+                    {
+                        columns: ['ou', 'mchInfantFeeding'],
+                        rows: ['genderId'],
+                        filters: [],
+                    },
+                    600
+                )}
+            >
+                <LayoutPanel />
+            </MockAppWrapper>
+        )
+
+        cy.getByDataTest('axis-columns').should('be.visible')
+
+        // The user-set 600px height far exceeds the content, so the extra space
+        // is shared equally: the two row tracks are the same height.
+        getAxisRowTracks().then(([columnsTrack, rowsTrack]) => {
+            expect(columnsTrack).to.be.greaterThan(100)
+            expect(Math.abs(columnsTrack - rowsTrack)).to.be.lessThan(2)
+        })
     })
 
     it('renders the PIVOT_TABLE update buttons in the order enrollment, event, custom value', () => {

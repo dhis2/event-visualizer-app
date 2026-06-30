@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-26T08:33:32.300Z\n"
-"PO-Revision-Date: 2026-06-26T08:33:32.300Z\n"
+"POT-Creation-Date: 2026-06-29T08:16:30.297Z\n"
+"PO-Revision-Date: 2026-06-29T08:16:30.299Z\n"
 
 msgid "Some dimensions cannot be used in a {{visTypeName}}: {{list}}."
 msgstr "Some dimensions cannot be used in a {{visTypeName}}: {{list}}."
@@ -788,6 +788,9 @@ msgstr "Show interpretations and details"
 
 msgid "View"
 msgstr "View"
+
+msgid "Resize layout to fit"
+msgstr "Resize layout to fit"
 
 msgid "Reset dimensions sidebar width"
 msgstr "Reset dimensions sidebar width"

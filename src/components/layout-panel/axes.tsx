@@ -54,8 +54,6 @@ const LoadingSkeletons: FC = () => (
     </div>
 )
 
-const AXES_HEIGHT_STORAGE_KEY = 'dhis2.event-visualizer.axesHeight'
-
 /* Height that keeps a single axis row (label + min content area + padding)
  * fully visible. LINE_LIST stacks one such row (columns/filters); PIVOT_TABLE
  * stacks two (columns over rows), so its min is twice as tall. */
@@ -77,7 +75,7 @@ export const Axes: FC = () => {
     const activeDragData = getActiveDragData(active)
 
     const maxHeight = useMemo(
-        () => height * 0.2, // fallback to 20vh
+        () => height * 0.8, // fallback to 80vh
         [height]
     )
 
@@ -106,7 +104,6 @@ export const Axes: FC = () => {
         size,
     } = useResizeHandle({
         orientation: 'horizontal',
-        storageKey: AXES_HEIGHT_STORAGE_KEY,
         min: minHeight,
         collapseThreshold: AXES_COLLAPSE_THRESHOLD,
         contentKey,
@@ -146,6 +143,7 @@ export const Axes: FC = () => {
                         className={cx(classes.axisContainer, {
                             [classes.lineList]:
                                 visualizationType === 'LINE_LIST',
+                            [classes.fixedHeight]: size !== null,
                         })}
                         ref={containerRef}
                     >
