@@ -20,7 +20,7 @@ vi.mock('@dhis2/app-runtime', () => ({
 }))
 
 vi.mock('@components/sidebar/sidebar-disabling', () => ({
-    getDimensionLayoutBlockedMessage: vi.fn(() => null),
+    getDimensionBlockReason: vi.fn(() => null),
 }))
 
 const mockStoreGetState = vi.fn(() => ({}))
@@ -34,7 +34,7 @@ vi.mock('@hooks', () => ({
         format: (list: string[]) => list.join(', '),
     })),
     useMetadataStore: vi.fn(() => ({
-        getMetadataItem: vi.fn(() => undefined),
+        getDimensionMetadataItem: vi.fn(() => undefined),
     })),
 }))
 
@@ -49,6 +49,7 @@ vi.mock('@store/vis-ui-config-slice', () => ({
     moveVisUiConfigLayoutDimension: vi.fn(),
     getVisUiConfigVisualizationType: vi.fn(),
     getVisUiConfigCustomValue: vi.fn(),
+    getVisUiConfigLayoutAllDimensionIds: vi.fn(() => []),
 }))
 
 describe('useOnDragEnd', () => {
@@ -180,7 +181,7 @@ describe('useOnDragEnd', () => {
     it('should dispatch addVisUiConfigLayoutDimensions for multi-select drag', () => {
         vi.mocked(useAppSelector).mockReturnValue(['dim1', 'dim2', 'dim3'])
         vi.mocked(useMetadataStore).mockReturnValue({
-            getMetadataItem: vi.fn((id: string) => ({
+            getDimensionMetadataItem: vi.fn((id: string) => ({
                 id,
                 dimensionType: 'DATA_ELEMENT',
             })),

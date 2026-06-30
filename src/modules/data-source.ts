@@ -25,6 +25,23 @@ export const isDataSourceTrackedEntityType = (
 ): dataSource is MetadataItem =>
     !isProgramMetadataItem(dataSource) && isMetadataItem(dataSource)
 
+/* The tracked entity type a data source belongs to: a tracker program's own
+ * TET, or the TET data source itself. Event programs have no TET → null. */
+export const getDataSourceTet = (
+    dataSource: MetadataItem | undefined
+): { id: string; name: string } | null => {
+    if (isDataSourceProgramWithRegistration(dataSource)) {
+        return {
+            id: dataSource.trackedEntityType.id,
+            name: dataSource.trackedEntityType.name,
+        }
+    }
+    if (isDataSourceTrackedEntityType(dataSource)) {
+        return { id: dataSource.id, name: dataSource.name }
+    }
+    return null
+}
+
 export const extractDataSourceIdFromVisualization = (
     visualization: CurrentVisualization
 ): string => {

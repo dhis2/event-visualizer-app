@@ -1,7 +1,12 @@
 import { TIME_DIMENSION_IDS } from '@constants/dimensions'
 import { USER_ORGUNIT } from '@constants/org-units'
+import { visTypeDisplayNames } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import { getDefaultOrgUnitMetadata } from '@modules/metadata'
+import {
+    isDimensionCrossTet,
+    isDimensionFullyInvalidForVisType,
+} from '@modules/validation'
 import type {
     CurrentVisualization,
     DimensionArray,
@@ -522,3 +527,69 @@ export const getTrackedEntityTypeFixedDimensions = (trackedEntityType: {
         valueType: 'ORGANISATION_UNIT',
     },
 ]
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Layout-blocking: whether — and why — a dimension cannot be placed in the layout
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type DimensionBlockReason = 'customValue' | 'visType' | 'crossTet'
+
+type DimensionBlockReasonInput = {
+    dimension: DimensionMetadataItem
+    visualizationType: VisualizationType
+    customValueId: string | null
+    layoutTetId: string | null
+    dimensionTetId: string | null
+}
+
+/* Single source of truth for whether — and why — a dimension is blocked from
+ * the layout, in precedence order. Both the item-level message and the
+ * batch-add grouping derive from this. */
+export const getDimensionBlockReason = ({
+    dimension,
+    visualizationType,
+    customValueId,
+    layoutTetId,
+    dimensionTetId,
+}: DimensionBlockReasonInput): DimensionBlockReason | null => {
+    if (customValueId && dimension.id === customValueId) {
+        return 'customValue'
+    }
+    if (isDimensionFullyInvalidForVisType(dimension, visualizationType)) {
+        return 'visType'
+    }
+    if (isDimensionCrossTet(dimensionTetId, layoutTetId)) {
+        return 'crossTet'
+    }
+    return null
+}
+
+export const getCrossTetMessage = (
+    dataSourceTetName: string,
+    layoutTetName: string
+): string =>
+    i18n.t(
+        '{{- dataSourceTetName}} dimensions cannot be combined with {{- layoutTetName}} dimensions already in the layout.',
+        { dataSourceTetName, layoutTetName }
+    )
+
+type DimensionDisablingInput = DimensionBlockReasonInput & {
+    crossTetMessage: string
+}
+
+export const getDimensionLayoutBlockedMessage = (
+    input: DimensionDisablingInput
+): string | null => {
+    switch (getDimensionBlockReason(input)) {
+        case 'customValue':
+            return i18n.t('Already used as custom value.')
+        case 'visType':
+            return i18n.t('Cannot be used in a {{visType}}.', {
+                visType: visTypeDisplayNames[input.visualizationType],
+            })
+        case 'crossTet':
+            return input.crossTetMessage
+        default:
+            return null
+    }
+}

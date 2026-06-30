@@ -5,7 +5,6 @@ import styles from './styles/dimension-item-container.module.css'
 interface DimensionItemContainerProps extends ComponentPropsWithoutRef<'div'> {
     selected?: boolean
     multiSelected?: boolean
-    disabled?: boolean
     isDragging?: boolean
     isDragOverlay?: boolean
 }
@@ -18,7 +17,6 @@ export const DimensionItemContainer = forwardRef<
         {
             selected,
             multiSelected,
-            disabled,
             isDragging,
             isDragOverlay,
             className,
@@ -34,7 +32,6 @@ export const DimensionItemContainer = forwardRef<
                 {
                     [styles.selected]: selected,
                     [styles.multiSelected]: multiSelected,
-                    [styles.disabled]: disabled,
                     [styles.dragging]: isDragging,
                     [styles.dragOverlay]: isDragOverlay,
                 },

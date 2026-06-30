@@ -13,6 +13,7 @@ import { CardOther } from './card-other'
 import { CardsProgramWithRegistration } from './cards-program-with-registration/cards-program-with-registration'
 import { CardsProgramWithoutRegistration } from './cards-program-without-registration/cards-program-without-registration'
 import { CardsTrackedEntityType } from './cards-tracked-entity-type/cards-tracked-entity-type'
+import { CrossTetNotice } from './cross-tet-notice'
 import { DataSourceSelect } from './data-source-select/data-source-select'
 import { FilterDropdownButton } from './filter-dropdown-button'
 import { SidebarEmptyState } from './sidebar-empty-state'
@@ -62,6 +63,7 @@ export const Sidebar: FC = () => {
                         className={classes.dimensionCardsContainer}
                         data-dnd-auto-scroll="disabled"
                     >
+                        <CrossTetNotice />
                         {isDataSourceProgramWithRegistration(
                             dataSourceMetadataItem
                         ) && (

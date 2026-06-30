@@ -6,9 +6,8 @@ import {
 } from '@store/dimensions-selection-slice'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { type FC } from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { DimensionCard, useIsContainingCardDisabled } from '../dimension-card'
+import { DimensionCard } from '../dimension-card'
 
 vi.mock('@hooks', () => ({
     useAppDispatch: vi.fn(),
@@ -23,8 +22,7 @@ vi.mock('@store/dimensions-selection-slice', () => ({
 }))
 
 vi.mock('@components/sidebar/sidebar-disabling', () => ({
-    useIsCardDisabledByLayout: () => false,
-    useCardDisabledNoticeText: () => undefined,
+    useSyncAutoCollapse: () => undefined,
 }))
 
 describe('DimensionCard', () => {
@@ -216,50 +214,5 @@ describe('DimensionCard', () => {
 
         const header = screen.getByTestId('dimension-card-header')
         expect(header).not.toBeDisabled()
-    })
-
-    it('propagates the disabled state to children via context', () => {
-        const ContextProbe: FC = () => {
-            const isDisabled = useIsContainingCardDisabled()
-            return (
-                <span data-test="card-disabled-probe">
-                    {String(isDisabled)}
-                </span>
-            )
-        }
-
-        const { rerender } = render(
-            <DimensionCard dimensionCardKey="metadata" title="Metadata">
-                <ContextProbe />
-            </DimensionCard>
-        )
-        expect(screen.getByTestId('card-disabled-probe')).toHaveTextContent(
-            'false'
-        )
-
-        rerender(
-            <DimensionCard
-                dimensionCardKey="metadata"
-                title="Metadata"
-                isDisabledByFilter
-            >
-                <ContextProbe />
-            </DimensionCard>
-        )
-        expect(screen.getByTestId('card-disabled-probe')).toHaveTextContent(
-            'true'
-        )
-    })
-})
-
-describe('useIsContainingCardDisabled', () => {
-    it('returns false when called outside a DimensionCard', () => {
-        const Probe: FC = () => (
-            <span data-test="probe">
-                {String(useIsContainingCardDisabled())}
-            </span>
-        )
-        render(<Probe />)
-        expect(screen.getByTestId('probe')).toHaveTextContent('false')
     })
 })

@@ -1,6 +1,12 @@
 import {
+    useAppSelector,
+    useCrossTetMismatch,
+    useDimensionLayoutBlockedMessage,
+} from '@hooks'
+import {
     initialState as dimensionSelectionInitialState,
     dimensionSelectionSlice,
+    isDimensionCardCollapsed,
 } from '@store/dimensions-selection-slice'
 import {
     initialState as visUiConfigInitialState,
@@ -8,6 +14,7 @@ import {
 } from '@store/vis-ui-config-slice'
 import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 import type {
+    DimensionCardKey,
     DimensionMetadataItem,
     InitialMetadataItems,
     RootState,
@@ -15,9 +22,8 @@ import type {
 import deepmerge from 'deepmerge'
 import { describe, expect, it } from 'vitest'
 import {
-    useCardDisabledNoticeText,
-    useDimensionLayoutBlockedMessage,
-    useIsCardDisabledByLayout,
+    useIsCardCrossTetBlocked,
+    useSyncAutoCollapse,
 } from '../sidebar-disabling'
 
 const trackerProgramMetadata = {
@@ -48,6 +54,24 @@ const differentTetDimMetadata: InitialMetadataItems = {
     },
 }
 
+/* A program-scope dim resolving to the data source's own TET (tetA), used to
+ * exercise the "TETs match" path. */
+const sameTetDimMetadata: InitialMetadataItems = {
+    'progA.de1': {
+        id: 'progA.de1',
+        dimensionId: 'de1',
+        name: 'Data element 1',
+        dimensionType: 'DATA_ELEMENT',
+        programId: 'progA',
+    },
+}
+
+const layoutWith = (dimensionId: string) => ({
+    columns: [dimensionId],
+    rows: [],
+    filters: [],
+})
+
 const initialPreloadedState: Partial<RootState> = {
     dimensionSelection: dimensionSelectionInitialState,
     visUiConfig: visUiConfigInitialState,
@@ -70,69 +94,21 @@ const buildOptions = ({
     },
 })
 
-describe('useIsCardDisabledByLayout', () => {
-    it('returns false for all program-scoped cards when LL + matching TET', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => ({
-                enrollment: useIsCardDisabledByLayout('enrollment'),
-                event: useIsCardDisabledByLayout('event-with-registration'),
-                tet: useIsCardDisabledByLayout('program-tracked-entity-type'),
-                pi: useIsCardDisabledByLayout('enrollment-program-indicators'),
-            }),
-            buildOptions({
-                metadata: trackerProgramMetadata,
-                state: {
-                    dimensionSelection: {
-                        ...dimensionSelectionInitialState,
-                        dataSourceId: 'progA',
-                    },
-                    visUiConfig: {
-                        ...visUiConfigInitialState,
-                        visualizationType: 'LINE_LIST',
-                    },
-                },
-            })
-        )
-        expect(result.current).toEqual({
-            enrollment: false,
-            event: false,
-            tet: false,
-            pi: false,
-        })
-    })
+const makeDim = (
+    overrides: Partial<DimensionMetadataItem>
+): DimensionMetadataItem =>
+    ({
+        id: overrides.id ?? 'fallback.id',
+        dimensionId: overrides.dimensionId ?? 'fallback',
+        name: overrides.name ?? 'Fallback',
+        dimensionType: overrides.dimensionType ?? 'DATA_ELEMENT',
+        ...overrides,
+    }) as DimensionMetadataItem
 
-    it('does not card-disable the PI card when vis is PIVOT_TABLE (blocking moves to layout boundary)', async () => {
+describe('useCrossTetMismatch', () => {
+    it('returns the TET names when the data source TET differs from the layout TET', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => ({
-                enrollment: useIsCardDisabledByLayout('enrollment'),
-                pi: useIsCardDisabledByLayout('enrollment-program-indicators'),
-            }),
-            buildOptions({
-                metadata: trackerProgramMetadata,
-                state: {
-                    dimensionSelection: {
-                        ...dimensionSelectionInitialState,
-                        dataSourceId: 'progA',
-                    },
-                    visUiConfig: {
-                        ...visUiConfigInitialState,
-                        visualizationType: 'PIVOT_TABLE',
-                    },
-                },
-            })
-        )
-        expect(result.current.enrollment).toBe(false)
-        expect(result.current.pi).toBe(false)
-    })
-
-    it('returns true for every program-scoped card when layout TET differs', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => ({
-                enrollment: useIsCardDisabledByLayout('enrollment'),
-                event: useIsCardDisabledByLayout('event-with-registration'),
-                tet: useIsCardDisabledByLayout('program-tracked-entity-type'),
-                pi: useIsCardDisabledByLayout('enrollment-program-indicators'),
-            }),
+            () => useCrossTetMismatch(),
             buildOptions({
                 metadata: {
                     ...trackerProgramMetadata,
@@ -145,30 +121,44 @@ describe('useIsCardDisabledByLayout', () => {
                     },
                     visUiConfig: {
                         ...visUiConfigInitialState,
-                        visualizationType: 'LINE_LIST',
-                        layout: {
-                            columns: ['tetB.enrollmentOu'],
-                            rows: [],
-                            filters: [],
-                        },
+                        layout: layoutWith('tetB.enrollmentOu'),
                     },
                 },
             })
         )
         expect(result.current).toEqual({
-            enrollment: true,
-            event: true,
-            tet: true,
-            pi: true,
+            dataSourceTetName: 'Person',
+            layoutTetName: 'Household',
+            layoutTetId: 'tetB',
         })
     })
 
-    it('returns false for event-program cards (no TET on data source) regardless of layout', async () => {
+    it('returns null when the data source TET matches the layout TET', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => ({
-                event: useIsCardDisabledByLayout('event-without-registration'),
-                pi: useIsCardDisabledByLayout('event-program-indicators'),
-            }),
+            () => useCrossTetMismatch(),
+            buildOptions({
+                metadata: {
+                    ...trackerProgramMetadata,
+                    ...sameTetDimMetadata,
+                },
+                state: {
+                    dimensionSelection: {
+                        ...dimensionSelectionInitialState,
+                        dataSourceId: 'progA',
+                    },
+                    visUiConfig: {
+                        ...visUiConfigInitialState,
+                        layout: layoutWith('progA.de1'),
+                    },
+                },
+            })
+        )
+        expect(result.current).toBeNull()
+    })
+
+    it('returns null for an event-program data source (no TET)', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useCrossTetMismatch(),
             buildOptions({
                 metadata: {
                     ...eventProgramMetadata,
@@ -181,68 +171,25 @@ describe('useIsCardDisabledByLayout', () => {
                     },
                     visUiConfig: {
                         ...visUiConfigInitialState,
-                        visualizationType: 'LINE_LIST',
-                        layout: {
-                            columns: ['tetB.enrollmentOu'],
-                            rows: [],
-                            filters: [],
-                        },
+                        layout: layoutWith('tetB.enrollmentOu'),
                     },
                 },
             })
         )
-        expect(result.current.event).toBe(false)
-        expect(result.current.pi).toBe(false)
-    })
-
-    it('returns false when no data source is selected', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => useIsCardDisabledByLayout('enrollment'),
-            buildOptions({
-                state: {
-                    visUiConfig: {
-                        ...visUiConfigInitialState,
-                        visualizationType: 'PIVOT_TABLE',
-                    },
-                },
-            })
-        )
-        expect(result.current).toBe(false)
-    })
-
-    it('returns false for non-sidebar card ids (metadata, other)', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => ({
-                metadata: useIsCardDisabledByLayout('metadata'),
-                other: useIsCardDisabledByLayout('other'),
-            }),
-            buildOptions({
-                metadata: trackerProgramMetadata,
-                state: {
-                    dimensionSelection: {
-                        ...dimensionSelectionInitialState,
-                        dataSourceId: 'progA',
-                    },
-                    visUiConfig: {
-                        ...visUiConfigInitialState,
-                        visualizationType: 'PIVOT_TABLE',
-                    },
-                },
-            })
-        )
-        expect(result.current.metadata).toBe(false)
-        expect(result.current.other).toBe(false)
+        expect(result.current).toBeNull()
     })
 })
 
-describe('useCardDisabledNoticeText', () => {
-    it('returns the message only for the first disabled card in iteration order', async () => {
+describe('useIsCardCrossTetBlocked', () => {
+    it('blocks every program-scoped card on TET mismatch, but not generic cards', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => ({
-                enrollment: useCardDisabledNoticeText('enrollment'),
-                event: useCardDisabledNoticeText('event-with-registration'),
-                tet: useCardDisabledNoticeText('program-tracked-entity-type'),
-                pi: useCardDisabledNoticeText('enrollment-program-indicators'),
+                tet: useIsCardCrossTetBlocked('program-tracked-entity-type'),
+                enrollment: useIsCardCrossTetBlocked('enrollment'),
+                event: useIsCardCrossTetBlocked('event-with-registration'),
+                pi: useIsCardCrossTetBlocked('enrollment-program-indicators'),
+                metadata: useIsCardCrossTetBlocked('metadata'),
+                other: useIsCardCrossTetBlocked('other'),
             }),
             buildOptions({
                 metadata: {
@@ -256,113 +203,24 @@ describe('useCardDisabledNoticeText', () => {
                     },
                     visUiConfig: {
                         ...visUiConfigInitialState,
-                        visualizationType: 'LINE_LIST',
-                        layout: {
-                            columns: ['tetB.enrollmentOu'],
-                            rows: [],
-                            filters: [],
-                        },
+                        layout: layoutWith('tetB.enrollmentOu'),
                     },
                 },
             })
         )
-        expect(result.current.enrollment).toMatch(/Household/)
-        expect(result.current.event).toBeUndefined()
-        expect(result.current.tet).toBeUndefined()
-        expect(result.current.pi).toBeUndefined()
+        expect(result.current).toEqual({
+            tet: true,
+            enrollment: true,
+            event: true,
+            pi: true,
+            metadata: false,
+            other: false,
+        })
     })
 
-    it('returns no card notice text for the PI card when vis is PIVOT_TABLE (blocking moves to layout boundary)', async () => {
+    it('blocks only the tracked-entity-type card for a TET data source', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => ({
-                enrollment: useCardDisabledNoticeText('enrollment'),
-                pi: useCardDisabledNoticeText('enrollment-program-indicators'),
-            }),
-            buildOptions({
-                metadata: trackerProgramMetadata,
-                state: {
-                    dimensionSelection: {
-                        ...dimensionSelectionInitialState,
-                        dataSourceId: 'progA',
-                    },
-                    visUiConfig: {
-                        ...visUiConfigInitialState,
-                        visualizationType: 'PIVOT_TABLE',
-                    },
-                },
-            })
-        )
-        expect(result.current.enrollment).toBeUndefined()
-        expect(result.current.pi).toBeUndefined()
-    })
-
-    it('returns undefined for non-sidebar card ids (metadata, other)', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => ({
-                metadata: useCardDisabledNoticeText('metadata'),
-                other: useCardDisabledNoticeText('other'),
-            }),
-            buildOptions({
-                metadata: trackerProgramMetadata,
-                state: {
-                    dimensionSelection: {
-                        ...dimensionSelectionInitialState,
-                        dataSourceId: 'progA',
-                    },
-                    visUiConfig: {
-                        ...visUiConfigInitialState,
-                        visualizationType: 'PIVOT_TABLE',
-                    },
-                },
-            })
-        )
-        expect(result.current.metadata).toBeUndefined()
-        expect(result.current.other).toBeUndefined()
-    })
-
-    it('different-TET wins over vis-type when both could fire in a with-registration suite', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => ({
-                enrollment: useCardDisabledNoticeText('enrollment'),
-                pi: useCardDisabledNoticeText('enrollment-program-indicators'),
-                enrollmentDisabled: useIsCardDisabledByLayout('enrollment'),
-                piDisabled: useIsCardDisabledByLayout(
-                    'enrollment-program-indicators'
-                ),
-            }),
-            buildOptions({
-                metadata: {
-                    ...trackerProgramMetadata,
-                    ...differentTetDimMetadata,
-                },
-                state: {
-                    dimensionSelection: {
-                        ...dimensionSelectionInitialState,
-                        dataSourceId: 'progA',
-                    },
-                    visUiConfig: {
-                        ...visUiConfigInitialState,
-                        visualizationType: 'PIVOT_TABLE',
-                        layout: {
-                            columns: ['tetB.enrollmentOu'],
-                            rows: [],
-                            filters: [],
-                        },
-                    },
-                },
-            })
-        )
-        // notice is the different-TET one, hosted by enrollment (not PI)
-        expect(result.current.enrollment).toMatch(/Household/)
-        expect(result.current.pi).toBeUndefined()
-        // both cards are dimmed
-        expect(result.current.enrollmentDisabled).toBe(true)
-        expect(result.current.piDisabled).toBe(true)
-    })
-
-    it('returns the different-TET message on the standalone TET card', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => useCardDisabledNoticeText('tracked-entity-type'),
+            () => useIsCardCrossTetBlocked('tracked-entity-type'),
             buildOptions({
                 metadata: {
                     tetA: { id: 'tetA', name: 'Person' },
@@ -375,28 +233,110 @@ describe('useCardDisabledNoticeText', () => {
                     },
                     visUiConfig: {
                         ...visUiConfigInitialState,
-                        visualizationType: 'LINE_LIST',
-                        layout: {
-                            columns: ['tetB.enrollmentOu'],
-                            rows: [],
-                            filters: [],
-                        },
+                        layout: layoutWith('tetB.enrollmentOu'),
                     },
                 },
             })
         )
-        expect(result.current).toMatch(/Household/)
+        expect(result.current).toBe(true)
     })
 
-    it('returns no card notice text on the event-program PI card in pivot mode (blocking moves to layout boundary)', async () => {
+    it('returns false when the TETs match', async () => {
         const { result } = await renderHookWithAppWrapper(
-            () => useCardDisabledNoticeText('event-program-indicators'),
+            () => useIsCardCrossTetBlocked('enrollment'),
             buildOptions({
-                metadata: eventProgramMetadata,
+                metadata: {
+                    ...trackerProgramMetadata,
+                    ...sameTetDimMetadata,
+                },
                 state: {
                     dimensionSelection: {
                         ...dimensionSelectionInitialState,
-                        dataSourceId: 'evtA',
+                        dataSourceId: 'progA',
+                    },
+                    visUiConfig: {
+                        ...visUiConfigInitialState,
+                        layout: layoutWith('progA.de1'),
+                    },
+                },
+            })
+        )
+        expect(result.current).toBe(false)
+    })
+})
+
+describe('useSyncAutoCollapse', () => {
+    const renderSync = (cardKey: DimensionCardKey, options: unknown) =>
+        renderHookWithAppWrapper(
+            () => {
+                useSyncAutoCollapse(cardKey)
+                return useAppSelector((state) =>
+                    isDimensionCardCollapsed(state, cardKey)
+                )
+            },
+            options as Parameters<typeof renderHookWithAppWrapper>[1]
+        )
+
+    it('collapses an affected card on TET mismatch', async () => {
+        const { result } = await renderSync(
+            'enrollment',
+            buildOptions({
+                metadata: {
+                    ...trackerProgramMetadata,
+                    ...differentTetDimMetadata,
+                },
+                state: {
+                    dimensionSelection: {
+                        ...dimensionSelectionInitialState,
+                        dataSourceId: 'progA',
+                        dimensionCardCollapsedStates: { enrollment: false },
+                    },
+                    visUiConfig: {
+                        ...visUiConfigInitialState,
+                        layout: layoutWith('tetB.enrollmentOu'),
+                    },
+                },
+            })
+        )
+        expect(result.current).toBe(true)
+    })
+
+    it('re-expands a collapsed card once it has no reason to stay collapsed', async () => {
+        const { result } = await renderSync(
+            'enrollment',
+            buildOptions({
+                metadata: {
+                    ...trackerProgramMetadata,
+                    ...sameTetDimMetadata,
+                },
+                state: {
+                    dimensionSelection: {
+                        ...dimensionSelectionInitialState,
+                        dataSourceId: 'progA',
+                        dimensionCardCollapsedStates: { enrollment: true },
+                    },
+                    visUiConfig: {
+                        ...visUiConfigInitialState,
+                        layout: layoutWith('progA.de1'),
+                    },
+                },
+            })
+        )
+        expect(result.current).toBe(false)
+    })
+
+    it('collapses a program-indicators card outside line list', async () => {
+        const { result } = await renderSync(
+            'enrollment-program-indicators',
+            buildOptions({
+                metadata: trackerProgramMetadata,
+                state: {
+                    dimensionSelection: {
+                        ...dimensionSelectionInitialState,
+                        dataSourceId: 'progA',
+                        dimensionCardCollapsedStates: {
+                            'enrollment-program-indicators': false,
+                        },
                     },
                     visUiConfig: {
                         ...visUiConfigInitialState,
@@ -405,20 +345,32 @@ describe('useCardDisabledNoticeText', () => {
                 },
             })
         )
-        expect(result.current).toBeUndefined()
+        expect(result.current).toBe(true)
+    })
+
+    it('leaves a program-indicators card expanded in line list', async () => {
+        const { result } = await renderSync(
+            'enrollment-program-indicators',
+            buildOptions({
+                metadata: trackerProgramMetadata,
+                state: {
+                    dimensionSelection: {
+                        ...dimensionSelectionInitialState,
+                        dataSourceId: 'progA',
+                        dimensionCardCollapsedStates: {
+                            'enrollment-program-indicators': false,
+                        },
+                    },
+                    visUiConfig: {
+                        ...visUiConfigInitialState,
+                        visualizationType: 'LINE_LIST',
+                    },
+                },
+            })
+        )
+        expect(result.current).toBe(false)
     })
 })
-
-const makeDim = (
-    overrides: Partial<DimensionMetadataItem>
-): DimensionMetadataItem =>
-    ({
-        id: overrides.id ?? 'fallback.id',
-        dimensionId: overrides.dimensionId ?? 'fallback',
-        name: overrides.name ?? 'Fallback',
-        dimensionType: overrides.dimensionType ?? 'DATA_ELEMENT',
-        ...overrides,
-    }) as DimensionMetadataItem
 
 describe('useDimensionLayoutBlockedMessage', () => {
     it('returns null when no rule applies', async () => {
@@ -476,5 +428,34 @@ describe('useDimensionLayoutBlockedMessage', () => {
             })
         )
         expect(result.current).toMatch(/Cannot be used in a Pivot table/)
+    })
+
+    it('returns the cross-TET message when the dim TET differs from the layout TET', async () => {
+        const dim = makeDim({
+            id: 'progA.de1',
+            dimensionId: 'de1',
+            programId: 'progA',
+        })
+        const { result } = await renderHookWithAppWrapper(
+            () => useDimensionLayoutBlockedMessage(dim),
+            buildOptions({
+                metadata: {
+                    ...trackerProgramMetadata,
+                    ...differentTetDimMetadata,
+                },
+                state: {
+                    dimensionSelection: {
+                        ...dimensionSelectionInitialState,
+                        dataSourceId: 'progA',
+                    },
+                    visUiConfig: {
+                        ...visUiConfigInitialState,
+                        visualizationType: 'LINE_LIST',
+                        layout: layoutWith('tetB.enrollmentOu'),
+                    },
+                },
+            })
+        )
+        expect(result.current).toMatch(/cannot be combined with/)
     })
 })

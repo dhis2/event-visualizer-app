@@ -162,14 +162,31 @@ export const resolveProgramStageIds = (
     return Array.from(programStageIds)
 }
 
-/* Any TET-bound layout dim can establish the layout's TET context:
- * TET-registration dims carry trackedEntityTypeId directly; any dim with a
- * programId resolves through the program's trackedEntityType (or none, for
- * event programs). Returns the first TET id found in layout iteration order.
- * Layouts that mix dims from multiple TETs are an invalid state surfaced by
- * the action buttons (which count TETs separately); this helper does not
- * police that — it just hands back the primary TET for callers that only need
- * a single id (TET metadata lookup, card-level "different TET" rule). */
+/* A dimension's TET: TET-registration dims carry trackedEntityTypeId
+ * directly; any dim with a programId resolves through the program's
+ * trackedEntityType. Generic dims (period, org unit, metadata) have neither
+ * and resolve to null. */
+export const resolveDimensionTetId = (
+    dim: DimensionMetadataItem,
+    metadataStore: MetadataStore
+): string | null => {
+    if (dim.trackedEntityTypeId) {
+        return dim.trackedEntityTypeId
+    }
+    if (dim.programId) {
+        return (
+            metadataStore.getProgramMetadataItem(dim.programId)
+                ?.trackedEntityType?.id ?? null
+        )
+    }
+    return null
+}
+
+/* Returns the first TET id found in layout iteration order. Layouts that mix
+ * dims from multiple TETs are an invalid state surfaced by the action buttons
+ * (which count TETs separately); this helper does not police that — it just
+ * hands back the primary TET for callers that only need a single id (TET
+ * metadata lookup, cross-TET detection). */
 export const resolveTetId = (
     dimensionIds: string[],
     metadataStore: MetadataStore
@@ -178,21 +195,15 @@ export const resolveTetId = (
         dimensionIds,
         metadataStore
     )) {
-        if (dim.trackedEntityTypeId) {
-            return dim.trackedEntityTypeId
-        }
-        if (dim.programId) {
-            const tetId = metadataStore.getProgramMetadataItem(dim.programId)
-                ?.trackedEntityType?.id
-            if (tetId) {
-                return tetId
-            }
+        const tetId = resolveDimensionTetId(dim, metadataStore)
+        if (tetId) {
+            return tetId
         }
     }
     return null
 }
 
-export type LayoutConversionResult = {
+type LayoutConversionResult = {
     newLayout: Layout
     discardedDimensionIds: string[]
 }

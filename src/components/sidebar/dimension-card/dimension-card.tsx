@@ -1,7 +1,4 @@
-import {
-    useCardDisabledNoticeText,
-    useIsCardDisabledByLayout,
-} from '@components/sidebar/sidebar-disabling'
+import { useSyncAutoCollapse } from '@components/sidebar/sidebar-disabling'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
     addDimensionCardCollapsedState,
@@ -11,24 +8,9 @@ import {
 } from '@store/dimensions-selection-slice'
 import type { DimensionCardKey } from '@types'
 import cx from 'classnames'
-import {
-    createContext,
-    useCallback,
-    useContext,
-    useEffect,
-    type ReactNode,
-    type FC,
-} from 'react'
-import { CardDisabledNotice } from './card-disabled-notice'
+import { useCallback, useEffect, type ReactNode, type FC } from 'react'
 import { DimensionCardHeader } from './dimension-card-header'
 import classes from './styles/dimension-card.module.css'
-
-/* Descendants are passed in as `children`, so they can't receive the
- * disabled state via props — they read it through this context. */
-const ContainingCardDisabledContext = createContext<boolean>(false)
-
-export const useIsContainingCardDisabled = (): boolean =>
-    useContext(ContainingCardDisabledContext)
 
 type DimensionCardProps = {
     dimensionCardKey: DimensionCardKey
@@ -51,9 +33,6 @@ export const DimensionCard: FC<DimensionCardProps> = ({
     const isCollapsed = useAppSelector((state) =>
         isDimensionCardCollapsed(state, dimensionCardKey)
     )
-    const isDisabledByLayout = useIsCardDisabledByLayout(dimensionCardKey)
-    const noticeText = useCardDisabledNoticeText(dimensionCardKey)
-    const isVisuallyDisabled = isDisabledByFilter || isDisabledByLayout
 
     const handleToggle = useCallback(() => {
         dispatch(toggleDimensionCardIsCollapsed(dimensionCardKey))
@@ -66,39 +45,35 @@ export const DimensionCard: FC<DimensionCardProps> = ({
         }
     }, [dispatch, dimensionCardKey])
 
-    return (
-        <>
-            <div
-                className={cx(classes.container, {
-                    [classes.isDisabled]: isVisuallyDisabled,
-                    [classes.hasNotice]: !!noticeText,
-                })}
-                data-test="dimension-card"
-            >
-                <DimensionCardHeader
-                    selectedCount={selectedCount}
-                    isCollapsed={isCollapsed}
-                    onToggle={handleToggle}
-                    isDisabled={isVisuallyDisabled}
-                >
-                    {title}
-                </DimensionCardHeader>
+    /* Declared after the register effect above so that, on mount, the card is
+     * registered before this syncs its auto-collapsed state. */
+    useSyncAutoCollapse(dimensionCardKey)
 
-                <div
-                    className={cx(classes.content, {
-                        [classes.collapsed]: isCollapsed,
-                        [classes.withSubSections]: withSubSections,
-                    })}
-                    data-test="dimension-card-content"
-                >
-                    <ContainingCardDisabledContext.Provider
-                        value={isVisuallyDisabled}
-                    >
-                        {children}
-                    </ContainingCardDisabledContext.Provider>
-                </div>
+    return (
+        <div
+            className={cx(classes.container, {
+                [classes.isDisabled]: isDisabledByFilter,
+            })}
+            data-test="dimension-card"
+        >
+            <DimensionCardHeader
+                selectedCount={selectedCount}
+                isCollapsed={isCollapsed}
+                onToggle={handleToggle}
+                isDisabled={isDisabledByFilter}
+            >
+                {title}
+            </DimensionCardHeader>
+
+            <div
+                className={cx(classes.content, {
+                    [classes.collapsed]: isCollapsed,
+                    [classes.withSubSections]: withSubSections,
+                })}
+                data-test="dimension-card-content"
+            >
+                {children}
             </div>
-            {noticeText && <CardDisabledNotice message={noticeText} />}
-        </>
+        </div>
     )
 }

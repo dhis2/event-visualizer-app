@@ -13,10 +13,6 @@
     inline-size: 100%;
 }
 
-.dimensionItem:disabled {
-    cursor: not-allowed;
-}
-
 .selected {
     fill: var(--colors-teal800);
 }
