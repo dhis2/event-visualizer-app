@@ -1,7 +1,7 @@
 import {
     isCurrentVisualizationPersisted,
     isVisualizationEmpty,
-} from '@modules/visualization'
+} from '@modules/visualization/state'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 import type {

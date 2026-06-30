@@ -13,7 +13,7 @@ import {
     isCurrentVisualizationPersisted,
     isVisualizationEmpty,
     toCurrentVis,
-} from '@modules/visualization'
+} from '@modules/visualization/state'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import type { AppDispatch, CurrentVisualization } from '@types'
 import { clearCurrentVis, setCurrentVis } from './current-vis-slice'

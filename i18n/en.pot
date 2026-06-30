@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-06-29T14:27:46.075Z\n"
-"PO-Revision-Date: 2026-06-29T14:27:46.075Z\n"
+"POT-Creation-Date: 2026-06-30T04:22:42.079Z\n"
+"PO-Revision-Date: 2026-06-30T04:22:42.081Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -932,6 +932,19 @@ msgstr "No"
 msgid "Not answered"
 msgstr "Not answered"
 
+msgid ""
+"{{- dataSourceTetName}} dimensions cannot be combined with {{- "
+"layoutTetName}} dimensions already in the layout."
+msgstr ""
+"{{- dataSourceTetName}} dimensions cannot be combined with {{- "
+"layoutTetName}} dimensions already in the layout."
+
+msgid "Already used as custom value."
+msgstr "Already used as custom value."
+
+msgid "Cannot be used in a {{visType}}."
+msgstr "Cannot be used in a {{visType}}."
+
 msgid "Created on"
 msgstr "Created on"
 
@@ -947,20 +960,14 @@ msgstr "Created by"
 msgid "Completed on"
 msgstr "Completed on"
 
+msgid "Event org. unit"
+msgstr "Event org. unit"
+
 msgid "Event date"
 msgstr "Event date"
 
-msgid "Enrollment date"
-msgstr "Enrollment date"
-
-msgid "Incident date"
-msgstr "Incident date"
-
 msgid "Scheduled date"
 msgstr "Scheduled date"
-
-msgid "Event org. unit"
-msgstr "Event org. unit"
 
 msgid "Event status"
 msgstr "Event status"
@@ -971,24 +978,17 @@ msgstr "Enrollment org. unit"
 msgid "Date of enrollment"
 msgstr "Date of enrollment"
 
+msgid "Incident date"
+msgstr "Incident date"
+
 msgid "Enrollment status"
 msgstr "Enrollment status"
 
 msgid "Registration org. unit"
 msgstr "Registration org. unit"
 
-msgid ""
-"{{- dataSourceTetName}} dimensions cannot be combined with {{- "
-"layoutTetName}} dimensions already in the layout."
-msgstr ""
-"{{- dataSourceTetName}} dimensions cannot be combined with {{- "
-"layoutTetName}} dimensions already in the layout."
-
-msgid "Already used as custom value."
-msgstr "Already used as custom value."
-
-msgid "Cannot be used in a {{visType}}."
-msgstr "Cannot be used in a {{visType}}."
+msgid "Enrollment date"
+msgstr "Enrollment date"
 
 msgid "Columns"
 msgstr "Columns"

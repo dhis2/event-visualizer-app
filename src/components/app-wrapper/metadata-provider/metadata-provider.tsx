@@ -1,4 +1,5 @@
 import { useRootOrgUnits } from '@components/app-wrapper/app-cached-data-query-provider'
+import { getInitialMetadata } from '@modules/metadata/initial-metadata'
 import {
     isProgramMetadataItem,
     isProgramStageMetadataItem,
@@ -7,11 +8,10 @@ import {
     isOrganisationUnitMetadataItem,
     isUserOrgUnitMetadataItem,
     isDimensionMetadataItem,
-} from '@modules/metadata'
-import { getInitialMetadata } from '@modules/metadata-store/initial-metadata'
-import { MetadataStore } from '@modules/metadata-store/metadata-store'
-import { assertTypedMetadataItem } from '@modules/metadata-store/typed-metadata-item'
-import { isPopulatedString } from '@modules/validation'
+} from '@modules/metadata/item-guards'
+import { MetadataStore } from '@modules/metadata/store'
+import { assertTypedMetadataItem } from '@modules/metadata/typed-metadata-item'
+import { isPopulatedString } from '@modules/utils/guards'
 import type {
     InitialMetadataItems,
     MetadataItem,

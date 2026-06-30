@@ -1,7 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import { Tooltip } from '@dhis2/ui'
 import { useAppSelector } from '@hooks'
-import { getVisualizationState } from '@modules/visualization'
+import { getVisualizationState } from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import { getSavedVis } from '@store/saved-vis-slice'

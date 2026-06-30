@@ -1,4 +1,5 @@
 import { isDebugMode } from '@modules/debug-mode'
+import { isCompoundDimensionId, resolveId } from '@modules/dimension/ids'
 import {
     isMetadataInputItem,
     isProgramMetadataItem,
@@ -8,8 +9,8 @@ import {
     isOrganisationUnitMetadataItem,
     isUserOrgUnitMetadataItem,
     isDimensionMetadataItem,
-} from '@modules/metadata'
-import { isObject, isPopulatedString } from '@modules/validation'
+} from '@modules/metadata/item-guards'
+import { isObject, isPopulatedString } from '@modules/utils/guards'
 import type {
     MetadataInputItem,
     MetadataItem,
@@ -27,7 +28,6 @@ import type {
     UserOrgUnitMetadataItem,
     DimensionMetadataItem,
 } from '@types'
-import { isCompoundDimensionId, resolveId } from './dimension'
 import { smartMergeWithChangeDetection } from './merge-utils'
 import {
     getCanonicalKeysForInput,

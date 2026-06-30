@@ -1,12 +1,15 @@
+import {
+    isMetadataItem,
+    isProgramMetadataItem,
+} from '@modules/metadata/item-guards'
+import { isPopulatedString } from '@modules/utils/guards'
+import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import type {
     CurrentVisualization,
     DataSourceProgramWithoutRegistration,
     DataSourceProgramWithRegistration,
     MetadataItem,
 } from '@types'
-import { isMetadataItem, isProgramMetadataItem } from './metadata'
-import { isPopulatedString } from './validation'
-import { getSingleProgramFromVisualization } from './visualization'
 
 export const isDataSourceProgramWithRegistration = (
     dataSource: unknown

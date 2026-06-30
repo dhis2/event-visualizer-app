@@ -1,7 +1,7 @@
 import { api } from '@api/api'
 import type { BaseQueryApiWithExtraArg } from '@api/custom-base-query'
 import { parseEngineError } from '@api/parse-engine-error'
-import { extractPlainDimensionId } from '@modules/dimension'
+import { extractPlainDimensionId } from '@modules/dimension/ids'
 import type { DimensionType, LegendSetMetadataItem } from '@types'
 
 type GetLegendSetsByDimensionQueryArgs = {

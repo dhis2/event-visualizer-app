@@ -11,7 +11,7 @@ import {
 import {
     getDimensionBlockReason,
     type DimensionBlockReason,
-} from '@modules/dimension'
+} from '@modules/dimension/blocking'
 import { resolveDimensionTetId, resolveTetId } from '@modules/layout'
 import {
     clearMultiSelection,

@@ -8,7 +8,8 @@ import {
     type UseSelectedDimensionCountMatchFn,
 } from '@components/sidebar/use-selected-dimension-count'
 import i18n from '@dhis2/d2-i18n'
-import { getFixedMetaDimensions, META_DIMENSION_IDS } from '@modules/dimension'
+import { getFixedMetaDimensions } from '@modules/dimension/fixed'
+import { META_DIMENSION_IDS } from '@modules/dimension/ids'
 import { useMemo, type FC } from 'react'
 
 const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = (dimension) =>

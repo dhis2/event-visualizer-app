@@ -10,8 +10,8 @@ import {
 } from '@components/sidebar/use-selected-dimension-count'
 import i18n from '@dhis2/d2-i18n'
 import { useCurrentUser } from '@hooks'
-import { getTrackedEntityTypeFixedDimensions } from '@modules/dimension'
-import { isObject, isPopulatedString } from '@modules/validation'
+import { getTrackedEntityTypeFixedDimensions } from '@modules/dimension/fixed'
+import { isObject, isPopulatedString } from '@modules/utils/guards'
 import type {
     DimensionMetadataItem,
     MetadataItem,

@@ -8,7 +8,7 @@ import {
     type UseSelectedDimensionCountMatchFn,
 } from '@components/sidebar/use-selected-dimension-count'
 import i18n from '@dhis2/d2-i18n'
-import { getEnrollmentFixedDimensions } from '@modules/dimension'
+import { getEnrollmentFixedDimensions } from '@modules/dimension/fixed'
 import type { DataSourceProgramWithRegistration, DimensionType } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
 

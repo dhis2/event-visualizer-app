@@ -1,5 +1,5 @@
 import type { EngineError } from '@api/parse-engine-error'
-import { isObject } from '@modules/validation'
+import { isObject } from '@modules/utils/guards'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type {

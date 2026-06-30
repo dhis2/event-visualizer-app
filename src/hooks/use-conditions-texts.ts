@@ -13,7 +13,7 @@ import {
     getOrgUnitConditionMetadataIds,
     getOperatorConditionTexts,
 } from '@modules/conditions'
-import { isOptionSetMetadataItem } from '@modules/metadata'
+import { isOptionSetMetadataItem } from '@modules/metadata/item-guards'
 import type { SavedVisualization } from '@types'
 import { useMemo } from 'react'
 

@@ -117,7 +117,7 @@ See **[docs/claude-sandboxes.md](docs/claude-sandboxes.md)** for installation an
 
 ### Code Organisation
 
-You should organize your code by feature and not by filetype.
+Organise code by feature/domain, not by filetype. Within `src/modules`, a helper lives in the domain of what it **produces**, not the domains it reads from (a function that reads a visualization but returns dimensions belongs with the dimension helpers). Code that isn't owned by any one domain — generic, cross-cutting utilities — goes in `modules/utils`; keep that bar high so it stays a small set of genuine utilities rather than a catch-all for anything awkward to place. When a domain outgrows a single file it becomes a folder of sibling files, and you import the specific file you need (`@modules/<domain>/<file>`). Avoid `index.ts` barrels — [Vite advises against them](https://vite.dev/guide/performance#avoid-barrel-files) because importing a single API forces every re-exported module (and its side effects) to be loaded. Treat all of this as a guideline, not an absolute — the occasional helper won't have a clean "output" domain.
 
 ### TypeScript Types
 

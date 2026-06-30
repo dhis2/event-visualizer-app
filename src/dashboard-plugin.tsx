@@ -11,7 +11,7 @@ import { logger } from '@modules/logger'
 import {
     normalizeApiSavedVisualization,
     toCurrentVis,
-} from '@modules/visualization'
+} from '@modules/visualization/state'
 import type {
     ApiSavedVisualization,
     CurrentUser,

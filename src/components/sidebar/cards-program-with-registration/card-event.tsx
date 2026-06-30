@@ -8,7 +8,7 @@ import {
 } from '@components/sidebar/use-selected-dimension-count'
 import i18n from '@dhis2/d2-i18n'
 import { useAppSelector, useCurrentUser } from '@hooks'
-import { isPopulatedString } from '@modules/validation'
+import { isPopulatedString } from '@modules/utils/guards'
 import { getFilter } from '@store/dimensions-selection-slice'
 import type { DataSourceProgramWithRegistration, DimensionType } from '@types'
 import { type FC, useCallback, useMemo } from 'react'

@@ -1,8 +1,6 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
-import {
-    extractPlainDimensionId,
-    getDefaultItemsForDimension,
-} from '@modules/dimension'
+import { getDefaultItemsForDimension } from '@modules/dimension/default-items'
+import { extractPlainDimensionId } from '@modules/dimension/ids'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction, UnknownAction } from '@reduxjs/toolkit'
 import type {

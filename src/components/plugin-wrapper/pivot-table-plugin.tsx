@@ -1,9 +1,9 @@
 import { PivotTable } from '@dhis2/analytics'
-import { logger } from '@modules/logger'
 import {
     getAnalyticsRequestHeaderName,
     transformVisualizationForAnalyticsRequest,
-} from '@modules/visualization'
+} from '@modules/analytics-request'
+import { logger } from '@modules/logger'
 import type { CurrentUser, CurrentVisualization, DimensionArray } from '@types'
 import { type FC, useEffect, useMemo } from 'react'
 import { usePivotTableAnalyticsData } from './hooks/use-pivot-table-analytics-data'

@@ -10,10 +10,10 @@ import {
     programStageFields,
 } from '@modules/query'
 import {
-    getDimensionMetadataFields,
     getSaveableVisualization,
     normalizeApiSavedVisualization,
-} from '@modules/visualization'
+} from '@modules/visualization/state'
+import { getDimensionMetadataFields } from '@modules/visualization/vis-type'
 import type {
     ApiSavedVisualization,
     CurrentUser,

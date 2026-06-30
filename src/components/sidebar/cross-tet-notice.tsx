@@ -1,6 +1,6 @@
 import { NoticeBox } from '@dhis2/ui'
 import { useCrossTetMismatch } from '@hooks'
-import { getCrossTetMessage } from '@modules/dimension'
+import { getCrossTetMessage } from '@modules/dimension/blocking'
 import type { FC } from 'react'
 
 export const CrossTetNotice: FC = () => {

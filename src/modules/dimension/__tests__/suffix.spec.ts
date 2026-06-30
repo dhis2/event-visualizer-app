@@ -1,5 +1,8 @@
+import {
+    getDimensionSuffixes,
+    type SuffixInput,
+} from '@modules/dimension/suffix'
 import { describe, it, expect } from 'vitest'
-import { getDimensionSuffixes, type SuffixInput } from '../dimension-suffix'
 
 const buildGetName =
     (names: Record<string, string>): ((id: string) => string | undefined) =>

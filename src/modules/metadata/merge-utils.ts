@@ -1,4 +1,4 @@
-import { isMetadataItem } from '@modules/metadata'
+import { isMetadataItem } from '@modules/metadata/item-guards'
 import type { MetadataItem, NormalizedMetadataInputItem } from '@types'
 import deepEqual from 'deep-equal'
 

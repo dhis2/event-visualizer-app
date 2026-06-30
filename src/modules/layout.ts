@@ -1,7 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
-import { toEventVisualizationDimensionId } from '@modules/dimension'
+import { isDimensionFullyInvalidForVisType } from '@modules/dimension/blocking'
+import { toEventVisualizationDimensionId } from '@modules/dimension/translation'
 import { parseUiRepetitions } from '@modules/repetitions'
-import { isDimensionFullyInvalidForVisType } from '@modules/validation'
 import {
     selectLayoutAllDimensionIds,
     type VisUiConfigState,
