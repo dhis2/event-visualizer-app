@@ -29,7 +29,7 @@ export const getHeadersMap = (
 ): Record<DimensionId, string> => {
     const { outputType, showHierarchy, type } = visualization
 
-    const map = Object.assign({}, headersMap)
+    const map = { ...headersMap }
 
     if (type === 'PIVOT_TABLE') {
         map['ou'] = 'ou'

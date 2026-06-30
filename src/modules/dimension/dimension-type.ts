@@ -1,7 +1,7 @@
-import type { DimensionId, DimensionType } from '@types'
+import type { DimensionType } from '@types'
 
 export const getUiDimensionType = (
-    dimensionId: DimensionId | string,
+    dimensionId: string,
     dimensionType: DimensionType | 'PROGRAM_DATA_ELEMENT'
 ): DimensionType => {
     if (dimensionType === 'PROGRAM_DATA_ELEMENT') {

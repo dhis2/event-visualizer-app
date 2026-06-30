@@ -128,7 +128,7 @@ const removeDimensionPropertiesBeforeSaving = (
     axis: DimensionArray
 ): DimensionArray => {
     return axis.map((dim) => {
-        const dimension = Object.assign({}, dim)
+        const dimension = { ...dim }
         const propsToRemove = ['dimensionType', 'valueType']
 
         propsToRemove.forEach((prop) => {
@@ -150,7 +150,7 @@ const getDimensionIdFromHeaderName = (
 export const getSaveableVisualization = (
     vis: SavedVisualization
 ): SavedVisualization => {
-    const visualization = Object.assign({}, vis)
+    const visualization = { ...vis }
 
     visualization.columns = removeDimensionPropertiesBeforeSaving(
         visualization.columns

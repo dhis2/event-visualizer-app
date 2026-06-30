@@ -25,7 +25,7 @@ export const parseCompoundDimensionId = (
         : undefined
     const ids = processedInput.split('.')
 
-    if (!isPopulatedString(ids[ids.length - 1])) {
+    if (!isPopulatedString(ids.at(-1))) {
         throw new Error(`No valid dimension ID found in "${compoundId}"`)
     }
 
