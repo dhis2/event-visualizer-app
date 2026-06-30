@@ -104,10 +104,6 @@ export const uiSlice = createSlice({
         toggleUiLayoutPanelExpanded: (state) => {
             state.isLayoutPanelExpanded = !state.isLayoutPanelExpanded
         },
-        /* The user-set layout panel height, or AUTO_FIT for "no user-set height,
-         * fit to content". AUTO_FIT is how "Resize layout to fit" (and the
-         * resize handle's double-click) ask the panel to re-fit — the panel
-         * measures the content itself, since the fit height is DOM-computed. */
         setUiLayoutPanelHeight: (
             state,
             action: PayloadAction<LayoutPanelHeight>
