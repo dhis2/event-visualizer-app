@@ -57,6 +57,17 @@ provision_sandbox() {
         for _ in $(seq 1 30); do sudo fuser /var/lib/apt/lists/lock /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || break; sleep 2; done
         sudo apt-get install -y libgtk-3-0t64 libgtk2.0-0t64 libgbm1 libnotify4 libnss3 libxss1 libasound2t64 libxtst6 xauth xvfb >/dev/null 2>&1 || true
     ' _ "$PNPM_VERSION" "$MARKETPLACE"
+    sbx exec "$name" bash -lc '
+      f="/home/agent/.claude.json"
+      node -e "
+          const fs=require(\"fs\"),p=\"$1\",f=\"$f\";
+          let c={};try{c=JSON.parse(fs.readFileSync(f,\"utf8\"))}catch(e){}
+          c.projects=c.projects||{};c.projects[p]=c.projects[p]||{};
+          c.projects[p].hasTrustDialogAccepted=true;
+          fs.writeFileSync(f,JSON.stringify(c,null,2));
+      "
+    ' _ "$REPO_ROOT"
+
 }
 
 read -r -d '' BASE_NOTE <<'EOF' || true
@@ -419,6 +430,7 @@ cmd_clone() {
         sbx exec "$CLONE_NAME" bash -lc 'sudo sed -i "/export HUSKY=/d" /etc/sandbox-persistent.sh; printf "export HUSKY=0\n" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null' || true
         provision_sandbox "$CLONE_NAME"
         setup_browser "$CLONE_NAME"
+        setup_sonar "$CLONE_NAME"
         echo "Installing dependencies in the clone (generate-types hits the DHIS2 instance; includes the Cypress binary)..."
         sbx exec "$CLONE_NAME" bash -lc 'cd "$1" && pnpm install' _ "$REPO_ROOT" \
             || echo "⚠ Dependency install failed — the agent can retry with: pnpm install"
