@@ -4,13 +4,14 @@ import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
 import { logger } from '@modules/logger'
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import type { CurrentUser, CurrentVisualization } from '@types'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { getAnalyticsEndpoint } from './query-tools-common'
 import {
     getAdaptedVisualization,
     getBaseRequestIdentity,
     getCustomValueRequestParams,
 } from './query-tools-pivot-table'
+import { useInFlightDedup } from './use-in-flight-dedup'
 
 type FetchAnalyticsDataForPTInternalParams = {
     analyticsEngine: ReturnType<typeof Analytics.getAnalytics>
@@ -114,7 +115,7 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
         data: null,
     })
 
-    const inFlightSignatureRef = useRef<string | null>(null)
+    const { reserve, release } = useInFlightDedup()
 
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
@@ -129,10 +130,9 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                 displayProperty,
             })
 
-            if (inFlightSignatureRef.current === requestSignature) {
+            if (!reserve(requestSignature)) {
                 return
             }
-            inFlightSignatureRef.current = requestSignature
 
             setState((prevState) => ({
                 ...prevState,
@@ -171,12 +171,10 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                     isFetching: false,
                 })
             } finally {
-                if (inFlightSignatureRef.current === requestSignature) {
-                    inFlightSignatureRef.current = null
-                }
+                release(requestSignature)
             }
         },
-        [analyticsEngine]
+        [analyticsEngine, reserve, release]
     )
 
     return [fetchAnalyticsData, state]
