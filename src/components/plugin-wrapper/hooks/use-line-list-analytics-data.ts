@@ -479,16 +479,13 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             page = 1,
             onResponseReceived,
         }) => {
-            const runtime = {
+            const requestSignature = JSON.stringify({
+                ...getBaseRequestIdentity(visualization),
                 sorting: visualization.sorting ?? null,
                 page,
                 pageSize,
                 filters: filters ?? null,
                 displayProperty,
-            }
-            const requestSignature = JSON.stringify({
-                ...getBaseRequestIdentity(visualization),
-                ...runtime,
             })
 
             if (inFlightSignatureRef.current === requestSignature) {

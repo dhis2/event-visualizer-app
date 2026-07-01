@@ -123,13 +123,10 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
             displayProperty,
             onResponseReceived,
         }) => {
-            const runtime = {
-                filters: filters ?? null,
-                displayProperty,
-            }
             const requestSignature = JSON.stringify({
                 ...getBaseRequestIdentity(visualization),
-                ...runtime,
+                filters: filters ?? null,
+                displayProperty,
             })
 
             if (inFlightSignatureRef.current === requestSignature) {

@@ -102,8 +102,8 @@ export const getAdaptedVisualization = (
     }
 }
 
-/* The request as the visualization defines it, excluding the per-fetch runtime
- * layer (paging, interactive sorting, relativePeriodDate, displayProperty). */
+/* The request as the visualization defines it, excluding sorting, paging,
+ * relativePeriodDate and displayProperty (these refetch without a remount). */
 export const getBaseRequestIdentity = (
     visualization: CurrentVisualization
 ) => ({

@@ -65,8 +65,8 @@ export const getCustomValueRequestParams = (
         : undefined
 
 /* Like the line-list version, but pivot has no interactive sorting or paging,
- * so sortOrder, topLimit, timeField and the custom value belong to the identity
- * rather than the runtime layer. */
+ * so sortOrder, topLimit, timeField and the custom value are part of the
+ * identity rather than excluded from it. */
 export const getBaseRequestIdentity = (
     visualization: CurrentVisualization
 ) => ({
