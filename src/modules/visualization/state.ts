@@ -1,302 +1,62 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { layoutGetAllDimensions } from '@dhis2/analytics'
-import i18n from '@dhis2/d2-i18n'
-import { REPETITION_INDEX_PATTERN } from '@modules/metadata-store/dimension'
-import type {
-    ApiSavedVisualization,
-    DimensionArray,
-    DimensionRecord,
-    CurrentVisualization,
-    DimensionId,
-    EmptyVisualization,
-    EventVisualizationOptions,
-    OutputType,
-    Program,
-    ProgramStage,
-    SavedVisualization,
-    VisualizationType,
-    VisualizationState,
-    SortDirection,
-} from '@types'
-import deepEqual from 'deep-equal'
-import { getConditionsFromVisualization } from './conditions'
+import { getHeadersMap } from '@modules/analytics-request'
+import { getConditionsFromVisualization } from '@modules/conditions'
 import {
     CONTEXTLESS_DIMENSION_TYPES,
     ENROLLMENT_SCOPED_DIMENSION_IDS,
     getCompoundDimensionId,
+    META_DIMENSION_IDS,
+    WIRE_ONLY_DIMENSIONS,
+} from '@modules/dimension/ids'
+import {
     isTimeDimensionId,
     KNOWN_TIME_FIELD_VALUES,
-    META_DIMENSION_IDS,
     outputTypeTimeDimensionMap,
     timeFieldTimeDimensionMap,
-    toAppLocalDimensions,
-    transformDimensions,
-    WIRE_ONLY_DIMENSIONS,
-} from './dimension'
-import { getRepetitionsFromVisualisation } from './repetitions'
+} from '@modules/dimension/time'
+import { toAppLocalDimensions } from '@modules/dimension/translation'
+import { getRepetitionsFromVisualisation } from '@modules/repetitions'
+import type {
+    ApiSavedVisualization,
+    CurrentVisualization,
+    DimensionArray,
+    DimensionId,
+    DimensionRecord,
+    EmptyVisualization,
+    EventVisualizationOptions,
+    OutputType,
+    SavedVisualization,
+    SortDirection,
+    VisualizationState,
+} from '@types'
+import deepEqual from 'deep-equal'
 
-// TODO: adjust the descriptions
-// See: https://dhis2.atlassian.net/browse/DHIS2-19961
-export const getVisTypeDescriptions = (): Record<
-    VisualizationType,
-    string
-> => ({
-    LINE_LIST: i18n.t(
-        'Track or compare changes over time. Recommend period as category. (adjust for EVER)'
-    ),
-    PIVOT_TABLE: i18n.t(
-        'View data and indicators in a manipulatable table. (adjust for EVER)'
-    ),
-})
-
-export const headersMap: Record<DimensionId, string> = {
-    ou: 'ouname',
-    programStatus: 'programstatus',
-    eventStatus: 'eventstatus',
-    completed: 'completed',
-    created: 'created',
-    createdBy: 'createdbydisplayname',
-    lastUpdatedBy: 'lastupdatedbydisplayname',
-    eventDate: 'eventdate',
-    enrollmentDate: 'enrollmentdate',
-    enrollmentOu: 'enrollmentouname',
-    incidentDate: 'incidentdate',
-    scheduledDate: 'scheduleddate',
-    lastUpdated: 'lastupdated',
+const getProgramDimensionsCount = (
+    visualization: CurrentVisualization | EmptyVisualization
+): number => {
+    if (!('programDimensions' in visualization)) {
+        return 0
+    }
+    return visualization.programDimensions?.length ?? 0
 }
 
-export const getHeadersMap = (
-    visualization: CurrentVisualization
-): Record<DimensionId, string> => {
-    const { outputType, showHierarchy, type } = visualization
+const visualizationHasProgramId = (
+    visualization: CurrentVisualization | EmptyVisualization
+): boolean => getProgramDimensionsCount(visualization) > 0
 
-    const map = Object.assign({}, headersMap)
+const visualizationHasTrackedEntityTypeId = (
+    visualization: CurrentVisualization | EmptyVisualization
+): boolean => Boolean(visualization?.trackedEntityType?.id)
 
-    if (type === 'PIVOT_TABLE') {
-        map['ou'] = 'ou'
-        map['enrollmentOu'] = outputType === 'EVENT' ? 'enrollmentou' : 'ou'
-    } else if (showHierarchy) {
-        map['ou'] = 'ounamehierarchy'
-    } else if (outputType === 'ENROLLMENT') {
-        map['enrollmentOu'] = 'ouname'
-    }
-
-    return map
-}
-
-/* Dimension types whose values are not bound to any program or stage —
- * program indicators and tracked entity attributes are owned by a program
- * in the metadata model but their analytics IDs are plain (never carry
- * program/stage prefixes). Combined with CONTEXTLESS_DIMENSION_TYPES (eg.
- * organisation unit group sets), this is the set we must never decorate
- * with the legacy top-level program/programStage refs. */
-const NO_CONTEXT_DIMENSION_TYPES: ReadonlySet<string> = new Set([
-    'PROGRAM_INDICATOR',
-    'PROGRAM_ATTRIBUTE',
-    ...CONTEXTLESS_DIMENSION_TYPES,
-])
-
-/* Static reverse of headersMap. The ENR `enrollmentOu → ouname` override
- * is not reversed here — bare `ouname` is ambiguous (stage event OU vs
- * enrollment OU) and is disambiguated by prefix presence + outputType. */
-const reversedHeadersMap: Record<string, string> = {
-    ...Object.entries(headersMap).reduce<Record<string, string>>(
-        (acc, [appLocal, wire]) => {
-            acc[wire] = appLocal
-            return acc
-        },
-        {}
-    ),
-    ounamehierarchy: 'ou',
-}
-
-/* Wire response header → canonical app-local dimension ID (store key). */
-export const analyticsHeaderToCanonicalDimensionId = (
-    headerName: string,
-    visualization: CurrentVisualization
-): string => {
-    const { outputType } = visualization
-
-    const lastDotIndex = headerName.lastIndexOf('.')
-    const prefix =
-        lastDotIndex === -1
-            ? undefined
-            : headerName
-                  .slice(0, lastDotIndex)
-                  .replace(REPETITION_INDEX_PATTERN, '')
-    const wireDim =
-        lastDotIndex === -1 ? headerName : headerName.slice(lastDotIndex + 1)
-
-    const appLocalDim = reversedHeadersMap[wireDim] ?? wireDim
-
-    if (prefix) {
-        return `${prefix}.${appLocalDim}`
-    }
-
-    if (outputType === 'TRACKED_ENTITY_INSTANCE') {
-        const tetId = visualization.trackedEntityType?.id
-        if (tetId && appLocalDim === 'ou') {
-            return `${tetId}.enrollmentOu`
-        }
-        return appLocalDim
-    }
-
-    const programId = visualization.programDimensions?.[0]?.id
-
-    if (outputType === 'ENROLLMENT' && appLocalDim === 'ou' && programId) {
-        return `${programId}.enrollmentOu`
-    }
-
-    if (ENROLLMENT_SCOPED_DIMENSION_IDS.has(appLocalDim) && programId) {
-        return `${programId}.${appLocalDim}`
-    }
-
-    return appLocalDim
-}
-
-/* Built-in dimension IDs sent in the analytics request `dimension=` param
- * as SCREAMING_SNAKE_CASE. Everything else (UIDs, `ou`) goes verbatim. */
-const SCREAMING_SNAKE_REQUEST_DIMENSION_IDS: ReadonlySet<string> = new Set([
-    'eventDate',
-    'scheduledDate',
-    'eventStatus',
-    'enrollmentOu',
-    'enrollmentDate',
-    'incidentDate',
-    'programStatus',
-    'lastUpdated',
-    'created',
-    'completed',
-])
-
-const toRequestDimensionWireName = (dimensionId: string): string =>
-    SCREAMING_SNAKE_REQUEST_DIMENSION_IDS.has(dimensionId)
-        ? dimensionId.replaceAll(/[A-Z]/g, (c) => `_${c}`).toUpperCase()
-        : dimensionId
-
-type DimensionContext = {
-    dimensionId: string
-    programId?: string
-    programStageId?: string
-    trackedEntityTypeId?: string
-}
-
-/* Canonical dimension → analytics request `?dimension=` wire string. */
-export const getAnalyticsRequestDimensionName = ({
-    dimensionId,
-    programId,
-    programStageId,
-    trackedEntityTypeId,
-    outputType,
-}: DimensionContext & { outputType: OutputType }): string => {
-    if (programStageId) {
-        return `${programStageId}.${toRequestDimensionWireName(dimensionId)}`
-    }
-
-    if (trackedEntityTypeId && !programId) {
-        if (dimensionId === 'enrollmentOu') {
-            return 'ou'
-        }
-        return toRequestDimensionWireName(dimensionId)
-    }
-
-    if (programId && outputType === 'TRACKED_ENTITY_INSTANCE') {
-        return `${programId}.${toRequestDimensionWireName(dimensionId)}`
-    }
-
-    if (outputType === 'ENROLLMENT' && dimensionId === 'enrollmentOu') {
-        return 'ou'
-    }
-
-    return toRequestDimensionWireName(dimensionId)
-}
-
-/* Canonical dimension → analytics request `?headers=` wire string, which
- * the engine echoes back as the response header `name`. Same prefix rules
- * as getAnalyticsRequestDimensionName; dim name comes from getHeadersMap. */
-export const getAnalyticsRequestHeaderName = ({
-    dimensionId,
-    programId,
-    programStageId,
-    trackedEntityTypeId,
-    visualization,
-}: DimensionContext & {
-    visualization: CurrentVisualization
-}): string => {
-    const { outputType } = visualization
-    const map = getHeadersMap(visualization)
-    const wireDim = map[dimensionId as DimensionId] ?? dimensionId
-
-    if (programStageId) {
-        return `${programStageId}.${wireDim}`
-    }
-
-    if (trackedEntityTypeId && !programId) {
-        if (dimensionId === 'enrollmentOu') {
-            return 'ouname'
-        }
-        return wireDim
-    }
-
-    if (programId && outputType === 'TRACKED_ENTITY_INSTANCE') {
-        return `${programId}.${wireDim}`
-    }
-
-    return wireDim
-}
-
-/**
- * Transforms a canonical CurrentVisualization into the shape needed for
- * analytics requests and rendering. Applies wire-to-app dimension transforms
- * (PROGRAM_DATA_ELEMENT → DATA_ELEMENT, strip dy/latitude/longitude) and
- * converts the completedOnly option into an eventStatus filter.
- *
- * Legacy normalisation (pe → time dim, orgUnitField, timeField, top-level
- * program/programStage) is NOT this function's concern — that's handled
- * upstream by normalizeApiSavedVisualization at load time.
- */
-export const transformVisualizationForAnalyticsRequest = (
-    visualization: CurrentVisualization
-): CurrentVisualization => {
-    const columns = toAppLocalDimensions(
-        transformDimensions(visualization.columns ?? [])
-    )
-    const rows = toAppLocalDimensions(
-        transformDimensions(visualization.rows ?? [])
-    )
-    const filters = toAppLocalDimensions(
-        transformDimensions(visualization.filters ?? [])
-    )
-
-    if (visualization.completedOnly && visualization.outputType === 'EVENT') {
-        filters.push({
-            dimension: 'eventStatus',
-            items: [{ id: 'COMPLETED' }],
-        })
-    }
-
-    return {
-        ...visualization,
-        columns,
-        rows,
-        filters,
-    }
-}
-
-export const dimensionMetadataPropMap: Record<string, string> = {
-    dataElementDimensions: 'dataElement',
-    attributeDimensions: 'attribute',
-    programIndicatorDimensions: 'programIndicator',
-    categoryDimensions: 'category',
-    categoryOptionGroupSetDimensions: 'categoryOptionGroupSet',
-    organisationUnitGroupSetDimensions: 'organisationUnitGroupSet',
-    dataElementGroupSetDimensions: 'dataElementGroupSet',
-}
-
-export const getDimensionMetadataFields = (): Array<string> =>
-    Object.entries(dimensionMetadataPropMap).map(
-        ([listName, objectName]) => `${listName}[${objectName}[id,name]]`
-    )
+// Shape check: does the visualization carry the minimum fields required for
+// the API to accept a save payload (POST or PUT)
+export const isVisualizationPersistable = (
+    visualization: CurrentVisualization | EmptyVisualization
+): boolean =>
+    visualization.outputType === 'TRACKED_ENTITY_INSTANCE'
+        ? visualizationHasTrackedEntityTypeId(visualization)
+        : visualizationHasProgramId(visualization)
 
 export const isVisualizationWithTimeDimension = (vis: CurrentVisualization) =>
     layoutGetAllDimensions(vis).some(
@@ -368,7 +128,7 @@ const removeDimensionPropertiesBeforeSaving = (
     axis: DimensionArray
 ): DimensionArray => {
     return axis.map((dim) => {
-        const dimension = Object.assign({}, dim)
+        const dimension = { ...dim }
         const propsToRemove = ['dimensionType', 'valueType']
 
         propsToRemove.forEach((prop) => {
@@ -390,7 +150,7 @@ const getDimensionIdFromHeaderName = (
 export const getSaveableVisualization = (
     vis: SavedVisualization
 ): SavedVisualization => {
-    const visualization = Object.assign({}, vis)
+    const visualization = { ...vis }
 
     visualization.columns = removeDimensionPropertiesBeforeSaving(
         visualization.columns
@@ -546,30 +306,17 @@ export const getVisualizationUiConfig = (
     }
 }
 
-export const getSingleProgramFromVisualization = (
-    visualization: CurrentVisualization
-): Program => {
-    const programs = visualization.programDimensions ?? []
-    if (programs.length !== 1) {
-        throw new Error(
-            `Expected exactly one program in programDimensions, found ${programs.length}`
-        )
-    }
-    return programs[0]
-}
-
-export const getSingleProgramStageFromVisualization = (
-    visualization: CurrentVisualization
-): ProgramStage => {
-    const program = getSingleProgramFromVisualization(visualization)
-    const stages = program.programStages ?? []
-    if (stages.length !== 1) {
-        throw new Error(
-            `Expected exactly one stage on program ${program.id}, found ${stages.length}`
-        )
-    }
-    return stages[0]
-}
+/* Dimension types whose values are not bound to any program or stage —
+ * program indicators and tracked entity attributes are owned by a program
+ * in the metadata model but their analytics IDs are plain (never carry
+ * program/stage prefixes). Combined with CONTEXTLESS_DIMENSION_TYPES (eg.
+ * organisation unit group sets), this is the set we must never decorate
+ * with the legacy top-level program/programStage refs. */
+const NO_CONTEXT_DIMENSION_TYPES: ReadonlySet<string> = new Set([
+    'PROGRAM_INDICATOR',
+    'PROGRAM_ATTRIBUTE',
+    ...CONTEXTLESS_DIMENSION_TYPES,
+])
 
 /* Old dimension IDs (created by the legacy event-visualizer / Event Reports
  * app) mapped onto the canonical IDs this app and the backend analytics API

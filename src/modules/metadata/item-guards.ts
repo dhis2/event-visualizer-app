@@ -1,18 +1,15 @@
-import i18n from '@dhis2/d2-i18n'
+import { isObject, isPopulatedString } from '@modules/utils/guards'
 import type {
-    DimensionId,
-    OutputType,
-    Program,
-    ProgramStage,
+    DimensionMetadataItem,
+    LegendSetMetadataItem,
+    MetadataInputItem,
+    MetadataItem,
     OptionSetMetadataItem,
     OrganisationUnitMetadataItem,
-    MetadataItem,
-    LegendSetMetadataItem,
+    Program,
+    ProgramStage,
     UserOrgUnitMetadataItem,
-    MetadataInputItem,
-    DimensionMetadataItem,
 } from '@types'
-import { isObject, isPopulatedString } from './validation'
 
 export const isMetadataInputItem = (
     input: unknown
@@ -138,20 +135,3 @@ export const isMetadataItem = (input: unknown): input is MetadataItem =>
     'name' in input &&
     isPopulatedString(input.id) &&
     isPopulatedString(input.name)
-
-export const getDefaultOrgUnitMetadata = (
-    outputType?: OutputType
-): Partial<Record<DimensionId, DimensionMetadataItem>> => ({
-    ou: {
-        id: 'ou',
-        dimensionId: 'ou',
-        dimensionType: 'ORGANISATION_UNIT',
-        name: getDefaultOrgUnitLabel(outputType),
-        valueType: 'ORGANISATION_UNIT',
-    },
-})
-
-export const getDefaultOrgUnitLabel = (outputType?: OutputType): string =>
-    outputType === 'TRACKED_ENTITY_INSTANCE'
-        ? i18n.t('Registration org. unit')
-        : i18n.t('Organisation unit')

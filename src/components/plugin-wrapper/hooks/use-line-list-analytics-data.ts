@@ -9,18 +9,16 @@ import type {
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
+import { analyticsHeaderToCanonicalDimensionId } from '@modules/analytics-request'
 import { formatBooleanValue, isBooleanValue } from '@modules/conditions'
 import {
     getDimensionSuffixes,
     type SuffixInput,
-} from '@modules/dimension-suffix'
+} from '@modules/dimension/suffix'
 import { logger } from '@modules/logger'
 import { isValueTypeNumeric } from '@modules/value-type'
-import {
-    analyticsHeaderToCanonicalDimensionId,
-    getSingleProgramFromVisualization,
-    isVisualizationWithTimeDimension,
-} from '@modules/visualization'
+import { getSingleProgramFromVisualization } from '@modules/visualization/program'
+import { isVisualizationWithTimeDimension } from '@modules/visualization/state'
 import type {
     CurrentUser,
     CurrentVisualization,

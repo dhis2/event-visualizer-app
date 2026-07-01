@@ -7,7 +7,7 @@ import {
 import {
     getCrossTetMessage,
     getDimensionLayoutBlockedMessage,
-} from '@modules/dimension'
+} from '@modules/dimension/blocking'
 import { resolveDimensionTetId } from '@modules/layout'
 import {
     getVisUiConfigCustomValue,

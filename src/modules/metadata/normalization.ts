@@ -1,19 +1,16 @@
+import { isCompoundDimensionId, resolveId } from '@modules/dimension/ids'
 import {
     isDimensionMetadataItem,
     isProgramMetadataItem,
-} from '@modules/metadata'
-import { isObject, isPopulatedString } from '@modules/validation'
+} from '@modules/metadata/item-guards'
+import { isObject, isPopulatedString } from '@modules/utils/guards'
 import type {
     MetadataInputItem,
     MetadataInputMap,
     NormalizedMetadataInputItem,
     MetadataMap,
 } from '@types'
-import {
-    extractDimensionContextFromCompoundId,
-    isCompoundDimensionId,
-    resolveId,
-} from './dimension'
+import { extractDimensionContextFromCompoundId } from './dimension-context'
 
 /**
  * Returns a Program's stages and TET as input items. Children without a name

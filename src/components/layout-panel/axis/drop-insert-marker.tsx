@@ -1,6 +1,6 @@
 import { useDndMonitor, type Active, type ClientRect } from '@dnd-kit/core'
 import type { useSortable } from '@dnd-kit/sortable'
-import { isObject } from '@modules/validation'
+import { isObject } from '@modules/utils/guards'
 import type { Axis } from '@types'
 import cx from 'classnames'
 import { useState, type FC } from 'react'

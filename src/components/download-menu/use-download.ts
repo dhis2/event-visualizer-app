@@ -7,14 +7,14 @@ import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { useConfig, useDataEngine } from '@dhis2/app-runtime'
 import { useAppSelector, useCurrentUser } from '@hooks'
+import { transformVisualizationForAnalyticsRequest } from '@modules/analytics-request'
+import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import {
-    getSingleProgramFromVisualization,
     isCurrentVisualizationNew,
     isCurrentVisualizationPersisted,
     isVisualizationEmpty,
     isVisualizationWithTimeDimension,
-    transformVisualizationForAnalyticsRequest,
-} from '@modules/visualization'
+} from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { useCallback, useState } from 'react'
 import type { DownloadFn } from './types'

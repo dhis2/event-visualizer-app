@@ -1,5 +1,5 @@
-import { isDimensionMetadataItem } from '@modules/metadata'
-import { isObject } from '@modules/validation'
+import { isDimensionMetadataItem } from '@modules/metadata/item-guards'
+import { isObject } from '@modules/utils/guards'
 import type { DimensionMetadataItem } from '@types'
 
 export type Transformer = (data: unknown) => {

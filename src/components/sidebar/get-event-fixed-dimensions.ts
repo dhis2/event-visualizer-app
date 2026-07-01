@@ -18,4 +18,4 @@ export type StageFixedDimension = Omit<
     dimensionType: EventWithRegistrationFixedDimensionType
 }
 
-export { getStageFixedDimensions as getEventFixedDimensions } from '@modules/dimension'
+export { getStageFixedDimensions as getEventFixedDimensions } from '@modules/dimension/fixed'

@@ -14,7 +14,7 @@ import {
     useAppSelector,
     useMetadataItems,
 } from '@hooks'
-import { getStartEndDate, isStartEndDate } from '@modules/dates'
+import { getStartEndDate, isStartEndDate } from '@modules/utils/dates'
 import {
     getVisUiConfigPlainItemIdsByDimension,
     setVisUiConfigItemsByDimension,

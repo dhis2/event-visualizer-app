@@ -1,4 +1,5 @@
 import { isDebugMode } from '@modules/debug-mode'
+import { isCompoundDimensionId, resolveId } from '@modules/dimension/ids'
 import {
     isMetadataInputItem,
     isProgramMetadataItem,
@@ -8,8 +9,8 @@ import {
     isOrganisationUnitMetadataItem,
     isUserOrgUnitMetadataItem,
     isDimensionMetadataItem,
-} from '@modules/metadata'
-import { isObject, isPopulatedString } from '@modules/validation'
+} from '@modules/metadata/item-guards'
+import { isObject, isPopulatedString } from '@modules/utils/guards'
 import type {
     MetadataInputItem,
     MetadataItem,
@@ -27,7 +28,6 @@ import type {
     UserOrgUnitMetadataItem,
     DimensionMetadataItem,
 } from '@types'
-import { isCompoundDimensionId, resolveId } from './dimension'
 import { smartMergeWithChangeDetection } from './merge-utils'
 import {
     getCanonicalKeysForInput,
@@ -39,15 +39,13 @@ import { assertTypedMetadataItem } from './typed-metadata-item'
 import { extractMetadataFromVisualization } from './visualization'
 
 declare global {
-    interface Window {
-        getMetadataStore: () => Record<string, MetadataItem>
-        getMetadataStoreItem: (key: string) => MetadataItem | undefined
-        getMetadataStoreItems: (
-            keys: string[]
-        ) => ReturnType<MetadataStore['getMetadataItems']>
-        findMetadataStoreItem: (token: string) => MetadataItem | undefined
-        filterMetadataStoreItems: (token: string) => MetadataItem[]
-    }
+    var getMetadataStore: () => Record<string, MetadataItem>
+    var getMetadataStoreItem: (key: string) => MetadataItem | undefined
+    var getMetadataStoreItems: (
+        keys: string[]
+    ) => ReturnType<MetadataStore['getMetadataItems']>
+    var findMetadataStoreItem: (token: string) => MetadataItem | undefined
+    var filterMetadataStoreItems: (token: string) => MetadataItem[]
 }
 
 const noop = () => {}
@@ -58,7 +56,7 @@ const isItemMatch = (item: MetadataItem, token: string) =>
 
 export class MetadataStore {
     private readonly metadata: MetadataMap = new Map()
-    private subscribers = new Map<string, Set<Subscriber>>()
+    private readonly subscribers = new Map<string, Set<Subscriber>>()
     private readonly initialMetadataIds = new Set<string>()
 
     constructor(
@@ -70,16 +68,17 @@ export class MetadataStore {
         this.addInitialMetadataItems(initialMetadataItems, rootOrgUnits)
 
         if (isDebugMode()) {
-            window.getMetadataStore = () => Object.fromEntries(this.metadata)
-            window.getMetadataStoreItem = (key: string) =>
+            globalThis.getMetadataStore = () =>
+                Object.fromEntries(this.metadata)
+            globalThis.getMetadataStoreItem = (key: string) =>
                 this.getMetadataItem(key)
-            window.getMetadataStoreItems = (keys: string[]) =>
+            globalThis.getMetadataStoreItems = (keys: string[]) =>
                 this.getMetadataItems(keys)
-            window.findMetadataStoreItem = (token: string) =>
+            globalThis.findMetadataStoreItem = (token: string) =>
                 Array.from(this.metadata.values()).find((item) =>
                     isItemMatch(item, token)
                 )
-            window.filterMetadataStoreItems = (token: string) =>
+            globalThis.filterMetadataStoreItems = (token: string) =>
                 Array.from(this.metadata.values()).filter((item) =>
                     isItemMatch(item, token)
                 )

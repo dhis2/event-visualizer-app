@@ -11,7 +11,7 @@ import {
 } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getOptionsTabsForVisType } from '@modules/options'
-import { isVisualizationEmpty } from '@modules/visualization'
+import { isVisualizationEmpty } from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'

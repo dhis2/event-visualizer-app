@@ -8,13 +8,13 @@ import { useAlert } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { logger } from '@modules/logger'
-import { isVisualizationPersistable } from '@modules/validation'
 import {
     getSaveableVisualization,
     getVisualizationState,
     isCurrentVisualizationPersisted,
     isVisualizationEmpty,
-} from '@modules/visualization'
+    isVisualizationPersistable,
+} from '@modules/visualization/state'
 import {
     getCurrentVis,
     setCurrentVisNameDescription,

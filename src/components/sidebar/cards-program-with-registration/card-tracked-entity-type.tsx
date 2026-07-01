@@ -12,7 +12,7 @@ import {
 } from '@components/sidebar/use-selected-dimension-count'
 import i18n from '@dhis2/d2-i18n'
 import { useCurrentUser } from '@hooks'
-import { getTrackedEntityTypeFixedDimensions } from '@modules/dimension'
+import { getTrackedEntityTypeFixedDimensions } from '@modules/dimension/fixed'
 import type { DataSourceProgramWithRegistration } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
 

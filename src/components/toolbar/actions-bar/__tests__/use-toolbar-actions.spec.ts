@@ -1,4 +1,4 @@
-import { toCurrentVis } from '@modules/visualization'
+import { toCurrentVis } from '@modules/visualization/state'
 import { currentVisSlice } from '@store/current-vis-slice'
 import { savedVisSlice } from '@store/saved-vis-slice'
 import { renderHookWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'

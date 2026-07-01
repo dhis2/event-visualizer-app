@@ -1,7 +1,7 @@
 import {
     isDimensionMetadataItem,
     isOrganisationUnitMetadataItem,
-} from '@modules/metadata'
+} from '@modules/metadata/item-guards'
 import type {
     DimensionMetadataItem,
     OrganisationUnitMetadataItem,

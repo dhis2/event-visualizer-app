@@ -1,6 +1,6 @@
 import { Center, CircularLoader } from '@dhis2/ui'
 import { useAppSelector } from '@hooks'
-import { isVisualizationEmpty } from '@modules/visualization'
+import { isVisualizationEmpty } from '@modules/visualization/state'
 import { createSelector } from '@reduxjs/toolkit'
 import type {
     CurrentUser,

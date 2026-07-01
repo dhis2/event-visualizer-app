@@ -1,15 +1,19 @@
+import { getUiDimensionType } from '@modules/dimension/dimension-type'
 import {
-    combineAllDimensionsFromVisualization,
-    getCompoundDimensionId,
     getEnrollmentFixedDimensions,
     getMainDimensions,
     getStageFixedDimensions,
+    getTrackedEntityTypeFixedDimensions,
+} from '@modules/dimension/fixed'
+import { getCompoundDimensionId } from '@modules/dimension/ids'
+import {
     getTimeDimensionName,
     getTimeDimensions,
-    getTrackedEntityTypeFixedDimensions,
-    getUiDimensionType,
+} from '@modules/dimension/time'
+import {
+    combineAllDimensionsFromVisualization,
     toAppLocalDimensions,
-} from '@modules/dimension'
+} from '@modules/dimension/translation'
 import type {
     MetadataInput,
     MetadataInputItem,

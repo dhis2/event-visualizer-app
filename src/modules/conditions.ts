@@ -1,16 +1,14 @@
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { formatValue, ouIdHelper } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
+import { getCompoundDimensionId } from '@modules/dimension/ids'
+import { combineAllDimensionsFromVisualization } from '@modules/dimension/translation'
 import type {
     CurrentVisualization,
     OutputType,
     SavedVisualization,
     ValueType,
 } from '@types'
-import {
-    combineAllDimensionsFromVisualization,
-    getCompoundDimensionId,
-} from './dimension'
 
 type Conditions = {
     condition?: string | string[]

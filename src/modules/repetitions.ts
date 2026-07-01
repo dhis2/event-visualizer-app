@@ -1,11 +1,11 @@
 import { layoutGetAllDimensions } from '@dhis2/analytics'
+import { getCompoundDimensionId } from '@modules/dimension/ids'
+import { isObject } from '@modules/utils/guards'
 import {
     DEFAULT_REPETITIONS_OBJECT,
     type RepetitionsObject,
 } from '@store/vis-ui-config-slice'
 import type { CurrentVisualization, DimensionRecord } from '@types'
-import { getCompoundDimensionId } from './dimension'
-import { isObject } from './validation'
 
 type SavedRepetitions = NonNullable<DimensionRecord['repetition']>['indexes']
 

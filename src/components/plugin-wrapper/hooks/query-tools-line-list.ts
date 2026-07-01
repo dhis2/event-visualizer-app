@@ -1,8 +1,8 @@
-import { WIRE_ONLY_DIMENSIONS } from '@modules/dimension'
 import {
     getAnalyticsRequestDimensionName,
     getAnalyticsRequestHeaderName,
-} from '@modules/visualization'
+} from '@modules/analytics-request'
+import { WIRE_ONLY_DIMENSIONS } from '@modules/dimension/ids'
 import type {
     Axis,
     CurrentVisualization,

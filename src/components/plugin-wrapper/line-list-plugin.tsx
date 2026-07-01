@@ -6,8 +6,8 @@ import type {
     PaginateFn,
 } from '@components/line-list/types'
 import { useAppDispatch } from '@hooks'
+import { transformVisualizationForAnalyticsRequest } from '@modules/analytics-request'
 import { logger } from '@modules/logger'
-import { transformVisualizationForAnalyticsRequest } from '@modules/visualization'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
 import { useCallback, useEffect, useMemo, useState } from 'react'

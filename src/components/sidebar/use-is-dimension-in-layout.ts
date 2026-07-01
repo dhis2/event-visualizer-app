@@ -1,5 +1,5 @@
 import { useAppSelector } from '@hooks'
-import { resolveId } from '@modules/metadata-store/dimension'
+import { resolveId } from '@modules/dimension/ids'
 import { createSelector } from '@reduxjs/toolkit'
 import { getVisUiConfigLayoutAllDimensionIds } from '@store/vis-ui-config-slice'
 

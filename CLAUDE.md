@@ -73,6 +73,18 @@ i18n/                  # Internationalization files
 types/                 # Additional auto-generated DHIS2 API types
 ```
 
+### Where helpers live in `src/modules`
+
+A helper lives in the domain of what it **produces**, not the domains it reads from (a function
+that reads a visualization but returns dimensions belongs with the dimension helpers). Code not
+owned by any one domain — generic, cross-cutting utilities — goes in `modules/utils`; keep that
+bar high so it stays a small set of genuine utilities, not a catch-all for anything awkward to
+place. A domain that outgrows a single file becomes a folder of sibling files; import the specific
+file you need (`@modules/<domain>/<file>`). Avoid `index.ts` barrels — Vite's performance guide
+advises against them, since importing one API forces every re-exported module (and its side
+effects) to load. This is a guideline, not an absolute — the occasional helper won't have a clean
+"output" domain.
+
 ## Development Workflow
 
 ### Running the App
@@ -509,7 +521,7 @@ as-is because they are semantically tied to the program (enrollment scope), not 
 ### Fixed dimensions
 
 Fixed dimensions are the structural dimensions that exist for every program/stage (org units,
-dates, statuses). They are built by shared helpers in `src/modules/dimension.ts`
+dates, statuses). They are built by shared helpers in `src/modules/dimension/fixed.ts`
 (`getStageFixedDimensions`, `getEnrollmentFixedDimensions`, `getTrackedEntityTypeFixedDimensions`)
 and consumed by both the sidebar cards and the metadata provider.
 
@@ -534,7 +546,7 @@ Non-fixed dimensions use compound or plain IDs depending on their type:
 - **Metadata dims** (`lastUpdated`, `createdBy`, `lastUpdatedBy`, `created`, `completed`)
   → plain `dimensionId`
 
-`getCompoundDimensionId` in `src/modules/dimension.ts` constructs the canonical app-local
+`getCompoundDimensionId` in `src/modules/dimension/ids.ts` constructs the canonical app-local
 compound ID from a `DimensionRecord`. It applies these rules in order:
 
 1. `PROGRAM_INDICATOR` / `PROGRAM_ATTRIBUTE` → always plain `dimensionId`

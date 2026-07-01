@@ -4,7 +4,7 @@ import {
     OPTIONS_TAB_KEYS_PIVOT_TABLE,
 } from '@constants/options'
 import i18n from '@dhis2/d2-i18n'
-import { isPopulatedString } from '@modules/validation'
+import { isPopulatedString } from '@modules/utils/guards'
 import type {
     VisualizationType,
     EventVisualizationOptions,

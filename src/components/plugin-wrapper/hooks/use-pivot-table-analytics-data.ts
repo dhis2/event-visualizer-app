@@ -2,7 +2,7 @@ import { Analytics, transformEventAggregateResponse } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
 import { logger } from '@modules/logger'
-import { getSingleProgramFromVisualization } from '@modules/visualization'
+import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import type { CurrentUser, CurrentVisualization } from '@types'
 import { useCallback, useState } from 'react'
 import { getAnalyticsEndpoint } from './query-tools-common'

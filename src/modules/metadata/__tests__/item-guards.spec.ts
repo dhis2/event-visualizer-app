@@ -1,4 +1,3 @@
-import { expect, describe, it } from 'vitest'
 import {
     isMetadataInputItem,
     isProgramMetadataItem,
@@ -8,7 +7,8 @@ import {
     isOrganisationUnitMetadataItem,
     isUserOrgUnitMetadataItem,
     isMetadataItem,
-} from '../metadata'
+} from '@modules/metadata/item-guards'
+import { expect, describe, it } from 'vitest'
 
 describe('type-guards', () => {
     describe('isMetadataInputItem', () => {

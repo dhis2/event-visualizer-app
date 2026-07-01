@@ -1,12 +1,12 @@
 import { ouIdHelper } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import { useMetadataItems, useAppSelector } from '@hooks'
+import { extractPlainDimensionId } from '@modules/dimension/ids'
+import { isProgramMetadataItem } from '@modules/metadata/item-guards'
 import {
     isStartEndDate,
     useLocalizedStartEndDateFormatter,
-} from '@modules/dates'
-import { extractPlainDimensionId } from '@modules/dimension'
-import { isProgramMetadataItem } from '@modules/metadata'
+} from '@modules/utils/dates'
 import { getVisUiConfigItemsByDimension } from '@store/vis-ui-config-slice'
 import { useMemo } from 'react'
 import type { LayoutDimension } from './chip'

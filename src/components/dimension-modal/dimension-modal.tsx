@@ -15,7 +15,7 @@ import {
     useDimensionMetadataItem,
 } from '@hooks'
 import { isDimensionInLayout } from '@modules/layout'
-import { isDimensionMetadataItem } from '@modules/metadata'
+import { isDimensionMetadataItem } from '@modules/metadata/item-guards'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getUiActiveDimensionModal } from '@store/ui-slice'
 import {

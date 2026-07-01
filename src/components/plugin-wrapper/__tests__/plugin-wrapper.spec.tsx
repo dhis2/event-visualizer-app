@@ -1,5 +1,5 @@
 import { useCurrentUser, useAppSelector, useAppDispatch } from '@hooks'
-import { isVisualizationEmpty } from '@modules/visualization'
+import { isVisualizationEmpty } from '@modules/visualization/state'
 import type { Store } from '@reduxjs/toolkit'
 import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'

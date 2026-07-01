@@ -1,5 +1,5 @@
 import i18n from '@dhis2/d2-i18n'
-import { getCreatedDimension } from '@modules/dimension'
+import { getCreatedDimension } from '@modules/dimension/fixed'
 import { getStatusNames } from '@modules/status'
 import type { InitialMetadataItems, UserOrgUnit, RelativePeriod } from '@types'
 

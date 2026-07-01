@@ -12,8 +12,10 @@ import {
 } from '@dhis2/analytics'
 import { SharingDialog } from '@dhis2/ui'
 import { useAppSelector, useCurrentUser } from '@hooks'
-import { isVisualizationPersistable } from '@modules/validation'
-import { isCurrentVisualizationPersisted } from '@modules/visualization'
+import {
+    isCurrentVisualizationPersisted,
+    isVisualizationPersistable,
+} from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import type { SavedVisualization } from '@types'

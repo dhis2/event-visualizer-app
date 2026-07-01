@@ -1,7 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import { Button, IconSave16 } from '@dhis2/ui'
 import { useAppSelector } from '@hooks'
-import { isCurrentVisualizationPersisted } from '@modules/visualization'
+import { isCurrentVisualizationPersisted } from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { type FC } from 'react'
 import classes from './styles/button.module.css'

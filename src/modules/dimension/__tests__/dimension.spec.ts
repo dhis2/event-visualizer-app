@@ -1,3 +1,34 @@
+import {
+    getDimensionBlockReason,
+    getDimensionLayoutBlockedMessage,
+    isDimensionCrossTet,
+    isDimensionFullyInvalidForVisType,
+    isDimensionTypeFullyInvalidForVisType,
+} from '@modules/dimension/blocking'
+import { getDefaultItemsForDimension } from '@modules/dimension/default-items'
+import {
+    getCreatedDimension,
+    getFixedMetaDimensions,
+    getMainDimensions,
+    getTrackedEntityTypeFixedDimensions,
+} from '@modules/dimension/fixed'
+import {
+    META_DIMENSION_IDS,
+    getCompoundDimensionId,
+    isCompoundDimensionId,
+    parseCompoundDimensionId,
+    resolveId,
+} from '@modules/dimension/ids'
+import {
+    isTimeDimensionId,
+    getTimeDimensions,
+    getTimeDimensionName,
+} from '@modules/dimension/time'
+import {
+    transformDimensions,
+    toAppLocalDimensions,
+    toEventVisualizationDimensionId,
+} from '@modules/dimension/translation'
 import type {
     DimensionArray,
     DimensionMetadataItem,
@@ -5,23 +36,6 @@ import type {
     ProgramStage,
 } from '@types'
 import { describe, it, expect } from 'vitest'
-import {
-    getCreatedDimension,
-    getDimensionBlockReason,
-    getDimensionLayoutBlockedMessage,
-    getFixedMetaDimensions,
-    META_DIMENSION_IDS,
-    getMainDimensions,
-    transformDimensions,
-    isTimeDimensionId,
-    getTimeDimensions,
-    getTimeDimensionName,
-    toAppLocalDimensions,
-    toEventVisualizationDimensionId,
-    getCompoundDimensionId,
-    getTrackedEntityTypeFixedDimensions,
-    getDefaultItemsForDimension,
-} from '../dimension'
 
 describe('getCreatedDimension', () => {
     it('returns the created dimension object', () => {
@@ -981,5 +995,326 @@ describe('getDimensionLayoutBlockedMessage — rule precedence', () => {
                 crossTetMessage,
             })
         ).toBe('Cannot be used in a Pivot table.')
+    })
+})
+
+describe('isDimensionCrossTet', () => {
+    it('returns true when both TET ids are set and differ', () => {
+        expect(isDimensionCrossTet('tetB', 'tetA')).toBe(true)
+    })
+
+    it('returns false when the TET ids match', () => {
+        expect(isDimensionCrossTet('tetA', 'tetA')).toBe(false)
+    })
+
+    it('returns false when the dimension has no TET (generic dim)', () => {
+        expect(isDimensionCrossTet(null, 'tetA')).toBe(false)
+    })
+
+    it('returns false when the layout has no TET yet', () => {
+        expect(isDimensionCrossTet('tetB', null)).toBe(false)
+    })
+
+    it('returns false when both are null', () => {
+        expect(isDimensionCrossTet(null, null)).toBe(false)
+    })
+})
+
+describe('isDimensionTypeFullyInvalidForVisType', () => {
+    it('marks PROGRAM_INDICATOR invalid for PIVOT_TABLE', () => {
+        expect(
+            isDimensionTypeFullyInvalidForVisType(
+                'PROGRAM_INDICATOR',
+                'PIVOT_TABLE'
+            )
+        ).toBe(true)
+    })
+
+    it('marks PROGRAM_INDICATOR valid for LINE_LIST', () => {
+        expect(
+            isDimensionTypeFullyInvalidForVisType(
+                'PROGRAM_INDICATOR',
+                'LINE_LIST'
+            )
+        ).toBe(false)
+    })
+
+    it('marks DATA_ELEMENT valid for PIVOT_TABLE', () => {
+        expect(
+            isDimensionTypeFullyInvalidForVisType('DATA_ELEMENT', 'PIVOT_TABLE')
+        ).toBe(false)
+    })
+
+    it('marks CATEGORY valid for PIVOT_TABLE', () => {
+        expect(
+            isDimensionTypeFullyInvalidForVisType('CATEGORY', 'PIVOT_TABLE')
+        ).toBe(false)
+    })
+})
+
+describe('isDimensionFullyInvalidForVisType', () => {
+    const makeDim = (
+        overrides: Partial<DimensionMetadataItem> = {}
+    ): Partial<DimensionMetadataItem> => ({
+        dimensionType: 'DATA_ELEMENT',
+        dimensionId: 'someDimId',
+        ...overrides,
+    })
+
+    it('returns false for any dimension when target is LINE_LIST', () => {
+        expect(
+            isDimensionFullyInvalidForVisType(
+                makeDim({ dimensionType: 'PROGRAM_INDICATOR' }),
+                'LINE_LIST'
+            )
+        ).toBe(false)
+        expect(
+            isDimensionFullyInvalidForVisType(
+                makeDim({
+                    dimensionId: 'enrollmentOu',
+                    trackedEntityTypeId: 'tetId',
+                }),
+                'LINE_LIST'
+            )
+        ).toBe(false)
+    })
+
+    it('marks PROGRAM_INDICATOR invalid for PIVOT_TABLE', () => {
+        expect(
+            isDimensionFullyInvalidForVisType(
+                makeDim({ dimensionType: 'PROGRAM_INDICATOR' }),
+                'PIVOT_TABLE'
+            )
+        ).toBe(true)
+    })
+
+    it('marks TET registration OU invalid for PIVOT_TABLE', () => {
+        expect(
+            isDimensionFullyInvalidForVisType(
+                makeDim({
+                    dimensionId: 'enrollmentOu',
+                    trackedEntityTypeId: 'tetId',
+                }),
+                'PIVOT_TABLE'
+            )
+        ).toBe(true)
+    })
+
+    it('marks program-scope enrollmentOu (no TET) valid for PIVOT_TABLE', () => {
+        expect(
+            isDimensionFullyInvalidForVisType(
+                makeDim({ dimensionId: 'enrollmentOu' }),
+                'PIVOT_TABLE'
+            )
+        ).toBe(false)
+    })
+
+    it('marks an ordinary numeric DATA_ELEMENT valid for PIVOT_TABLE', () => {
+        expect(
+            isDimensionFullyInvalidForVisType(
+                makeDim({ dimensionType: 'DATA_ELEMENT' }),
+                'PIVOT_TABLE'
+            )
+        ).toBe(false)
+    })
+})
+
+describe('parseCompoundDimensionId', () => {
+    describe('valid inputs', () => {
+        it('parses a single dimension ID', () => {
+            const result = parseCompoundDimensionId('dimensionId')
+            expect(result).toEqual({
+                ids: ['dimensionId'],
+                repetitionIndex: undefined,
+            })
+        })
+
+        it('parses program/stage ID and dimension ID', () => {
+            const result = parseCompoundDimensionId(
+                'programOrStageId.dimensionId'
+            )
+            expect(result).toEqual({
+                ids: ['programOrStageId', 'dimensionId'],
+                repetitionIndex: undefined,
+            })
+        })
+
+        it('parses program ID, stage ID, and dimension ID', () => {
+            const result = parseCompoundDimensionId(
+                'programId.stageId.dimensionId'
+            )
+            expect(result).toEqual({
+                ids: ['programId', 'stageId', 'dimensionId'],
+                repetitionIndex: undefined,
+            })
+        })
+
+        it('parses program/stage ID with repetition index and dimension ID', () => {
+            const result = parseCompoundDimensionId(
+                'programOrStageId[0].dimensionId'
+            )
+            expect(result).toEqual({
+                ids: ['programOrStageId', 'dimensionId'],
+                repetitionIndex: 0,
+            })
+        })
+
+        it('parses program/stage ID with different repetition index and dimension ID', () => {
+            const result = parseCompoundDimensionId(
+                'programOrStageId[1].dimensionId'
+            )
+            expect(result).toEqual({
+                ids: ['programOrStageId', 'dimensionId'],
+                repetitionIndex: 1,
+            })
+        })
+
+        it('parses program ID, stage ID with repetition index, and dimension ID', () => {
+            const result = parseCompoundDimensionId(
+                'programId.stageId[2].dimensionId'
+            )
+            expect(result).toEqual({
+                ids: ['programId', 'stageId', 'dimensionId'],
+                repetitionIndex: 2,
+            })
+        })
+
+        it('parses multi-digit repetition index', () => {
+            const result = parseCompoundDimensionId(
+                'programOrStageId[123].dimensionId'
+            )
+            expect(result).toEqual({
+                ids: ['programOrStageId', 'dimensionId'],
+                repetitionIndex: 123,
+            })
+        })
+    })
+
+    describe('invalid inputs', () => {
+        it('throws error for empty string', () => {
+            expect(() => parseCompoundDimensionId('')).toThrow(
+                'Dimension ID input is not a populated string'
+            )
+        })
+
+        it('throws error for only repetition index without dimension', () => {
+            expect(() => parseCompoundDimensionId('[1]')).toThrow(
+                'No valid dimension ID found in "[1]"'
+            )
+        })
+
+        it('throws error for empty dimension after dot', () => {
+            expect(() => parseCompoundDimensionId('programId.')).toThrow(
+                'No valid dimension ID found in "programId."'
+            )
+        })
+
+        it('throws error for empty dimension with repetition index', () => {
+            expect(() => parseCompoundDimensionId('programId.[0]')).toThrow(
+                'No valid dimension ID found in "programId.[0]"'
+            )
+        })
+
+        it('throws error for double dots', () => {
+            expect(() =>
+                parseCompoundDimensionId('programId..dimensionId')
+            ).toThrow(
+                'Invalid dimension ID format: empty ID found in "programId..dimensionId"'
+            )
+        })
+
+        it('throws error for leading dot', () => {
+            expect(() => parseCompoundDimensionId('.dimensionId')).toThrow(
+                'Invalid dimension ID format: empty ID found in ".dimensionId"'
+            )
+        })
+
+        it('throws error for more than 3 IDs', () => {
+            expect(() => parseCompoundDimensionId('a.b.c.d')).toThrow(
+                'Invalid dimension ID format: expected at most 3 IDs, got 4'
+            )
+        })
+    })
+
+    describe('repetition index values', () => {
+        it('handles repetition index of zero', () => {
+            const result = parseCompoundDimensionId(
+                'programOrStageId[0].dimensionId'
+            )
+            expect(result.repetitionIndex).toBe(0)
+        })
+
+        it('handles negative repetition index', () => {
+            const result = parseCompoundDimensionId(
+                'programOrStageId[-1].dimensionId'
+            )
+            expect(result).toEqual({
+                ids: ['programOrStageId', 'dimensionId'],
+                repetitionIndex: -1,
+            })
+        })
+
+        it('extracts repetition index from anywhere in the string', () => {
+            const result = parseCompoundDimensionId(
+                'programOrStageId[0].dimensionId'
+            )
+            expect(result).toEqual({
+                ids: ['programOrStageId', 'dimensionId'],
+                repetitionIndex: 0,
+            })
+        })
+    })
+})
+
+describe('isCompoundDimensionId', () => {
+    it('returns true for a dotted string', () => {
+        expect(isCompoundDimensionId('stage.dimension')).toBe(true)
+    })
+
+    it('returns true for a three-part compound key', () => {
+        expect(isCompoundDimensionId('program.stage.dimension')).toBe(true)
+    })
+
+    it('returns false for a plain string without dots', () => {
+        expect(isCompoundDimensionId('dimensionId')).toBe(false)
+    })
+
+    it('returns false for an empty string', () => {
+        expect(isCompoundDimensionId('')).toBe(false)
+    })
+
+    it('returns false for null', () => {
+        expect(isCompoundDimensionId(null)).toBe(false)
+    })
+
+    it('returns false for undefined', () => {
+        expect(isCompoundDimensionId(undefined)).toBe(false)
+    })
+
+    it('returns false for a number', () => {
+        expect(isCompoundDimensionId(42)).toBe(false)
+    })
+})
+
+describe('resolveId', () => {
+    it('returns a plain key unchanged', () => {
+        expect(resolveId('dimensionId')).toBe('dimensionId')
+    })
+
+    it('returns a 2-segment key unchanged (already canonical)', () => {
+        expect(resolveId('stageId.dimId')).toBe('stageId.dimId')
+    })
+
+    it('drops the first segment of a 3-segment key', () => {
+        expect(resolveId('programId.stageId.dimId')).toBe('stageId.dimId')
+    })
+
+    it('handles a 3-segment key with a repetition index on the stage segment', () => {
+        // [n] contains no dots, so the segment count is still 3
+        expect(resolveId('programId.stageId[0].dimId')).toBe('stageId[0].dimId')
+    })
+
+    it('handles a 2-segment key with a repetition index', () => {
+        expect(resolveId('stageId[1].dimId')).toBe('stageId[1].dimId')
     })
 })

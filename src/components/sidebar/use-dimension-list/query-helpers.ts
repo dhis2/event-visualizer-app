@@ -1,4 +1,4 @@
-import { isObject, isPopulatedString } from '@modules/validation'
+import { isObject, isPopulatedString } from '@modules/utils/guards'
 import type { CurrentUser, SingleQuery } from '@types'
 
 export type SingleQueryWithFilterParam = Omit<SingleQuery, 'params'> & {

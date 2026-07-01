@@ -3,7 +3,7 @@ import { useMetadataItems } from '@hooks'
 import {
     getDimensionSuffixes,
     type SuffixInput,
-} from '@modules/dimension-suffix'
+} from '@modules/dimension/suffix'
 import type { DimensionMetadataItem } from '@types'
 import { useMemo } from 'react'
 

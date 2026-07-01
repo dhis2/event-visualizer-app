@@ -7,7 +7,7 @@ import {
 } from '@hooks'
 import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
 import { isDimensionInLayout, resolveProgramIds } from '@modules/layout'
-import { isVisualizationEmpty } from '@modules/visualization'
+import { isVisualizationEmpty } from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
 import {
     getVisUiConfigLayout,
