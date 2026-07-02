@@ -6,7 +6,12 @@ import { getSingleProgramFromVisualization } from '@modules/visualization/progra
 import type { CurrentUser, CurrentVisualization } from '@types'
 import { useCallback, useState } from 'react'
 import { getAnalyticsEndpoint } from './query-tools-common'
-import { getAdaptedVisualization } from './query-tools-pivot-table'
+import {
+    getAdaptedVisualization,
+    getBaseRequestIdentity,
+    getCustomValueRequestParams,
+} from './query-tools-pivot-table'
+import { useInFlightDedup } from './use-in-flight-dedup'
 
 type FetchAnalyticsDataForPTInternalParams = {
     analyticsEngine: ReturnType<typeof Analytics.getAnalytics>
@@ -53,10 +58,11 @@ export const fetchAnalyticsDataForPT = async ({
     }
 
     // add custom value and aggregationType
-    if (visualization.value && visualization.aggregationType) {
+    const customValueParams = getCustomValueRequestParams(visualization)
+    if (customValueParams) {
         req = req
-            .withValue(visualization.value.id)
-            .withAggregationType(visualization.aggregationType)
+            .withValue(customValueParams.value)
+            .withAggregationType(customValueParams.aggregationType)
     }
 
     if (relativePeriodDate) {
@@ -109,6 +115,8 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
         data: null,
     })
 
+    const { reserve, release } = useInFlightDedup()
+
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
             visualization,
@@ -116,6 +124,16 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
             displayProperty,
             onResponseReceived,
         }) => {
+            const requestSignature = JSON.stringify({
+                ...getBaseRequestIdentity(visualization),
+                filters: filters ?? null,
+                displayProperty,
+            })
+
+            if (!reserve(requestSignature)) {
+                return
+            }
+
             setState((prevState) => ({
                 ...prevState,
                 isFetching: true,
@@ -152,9 +170,11 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                     error: error as FetchError,
                     isFetching: false,
                 })
+            } finally {
+                release(requestSignature)
             }
         },
-        [analyticsEngine]
+        [analyticsEngine, reserve, release]
     )
 
     return [fetchAnalyticsData, state]

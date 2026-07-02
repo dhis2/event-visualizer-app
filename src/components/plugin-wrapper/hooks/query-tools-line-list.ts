@@ -102,6 +102,16 @@ export const getAdaptedVisualization = (
     }
 }
 
+/* The request as the visualization defines it, excluding sorting, paging,
+ * relativePeriodDate and displayProperty (these refetch without a remount). */
+export const getBaseRequestIdentity = (
+    visualization: CurrentVisualization
+) => ({
+    ...getAdaptedVisualization(visualization),
+    programIds: (visualization.programDimensions ?? []).map((p) => p.id),
+    trackedEntityTypeId: visualization.trackedEntityType?.id,
+})
+
 const analyticsApiEndpointMap: Record<OutputType, string> = {
     ENROLLMENT: 'enrollments',
     EVENT: 'events',

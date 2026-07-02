@@ -29,7 +29,11 @@ import type {
 } from '@types'
 import { useCallback, useState } from 'react'
 import { getAnalyticsEndpoint } from './query-tools-common'
-import { getAdaptedVisualization } from './query-tools-line-list'
+import {
+    getAdaptedVisualization,
+    getBaseRequestIdentity,
+} from './query-tools-line-list'
+import { useInFlightDedup } from './use-in-flight-dedup'
 
 type OptionSetMetaDataItem = MetadataInputItem & {
     options: Array<{ code?: string; uid?: string }>
@@ -464,6 +468,8 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
         data: null,
     })
 
+    const { reserve, release } = useInFlightDedup()
+
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
             visualization,
@@ -473,6 +479,19 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             page = 1,
             onResponseReceived,
         }) => {
+            const requestSignature = JSON.stringify({
+                ...getBaseRequestIdentity(visualization),
+                sorting: visualization.sorting ?? null,
+                page,
+                pageSize,
+                filters: filters ?? null,
+                displayProperty,
+            })
+
+            if (!reserve(requestSignature)) {
+                return
+            }
+
             setState((prevState) => ({
                 ...prevState,
                 isFetching: true,
@@ -535,9 +554,11 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     error: error as FetchError,
                     isFetching: false,
                 })
+            } finally {
+                release(requestSignature)
             }
         },
-        [analyticsEngine, dataEngine, metadataStore]
+        [analyticsEngine, dataEngine, metadataStore, reserve, release]
     )
 
     return [fetchAnalyticsData, state]
