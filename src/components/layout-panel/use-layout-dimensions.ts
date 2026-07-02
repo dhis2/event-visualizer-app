@@ -20,8 +20,7 @@ export const useLayoutDimensions = ({
         const ids = new Set<string>()
         for (const id of dimensionIds) {
             const item = dimensionMetadataItems[id] as
-                | Partial<DimensionMetadataItem>
-                | undefined
+                Partial<DimensionMetadataItem> | undefined
             if (item?.programId) {
                 ids.add(item.programId)
             }
@@ -37,8 +36,7 @@ export const useLayoutDimensions = ({
     return useMemo(() => {
         const dimensions: LayoutDimension[] = dimensionIds.map((id) => {
             const metadataItem = dimensionMetadataItems[id] as
-                | Partial<DimensionMetadataItem>
-                | undefined
+                Partial<DimensionMetadataItem> | undefined
             if (!metadataItem) {
                 throw new Error(`missing metadata for dimension ${id}`)
             }

@@ -29,8 +29,7 @@ export type DraggedItemEventData = (SidebarSortableData | AxisSortableData) &
     SortableData
 
 export type OverItemEventData =
-    | (AxisSortableData & SortableData)
-    | AxisContainerDroppableData
+    (AxisSortableData & SortableData) | AxisContainerDroppableData
 
 export interface LayoutDragEndEvent extends DragEndEvent {
     active: Omit<Active, 'data'> & {

@@ -34,12 +34,10 @@ export const getRepetitionsFromVisualisation = (
 export const parseSavedRepetitions = (
     repetitions: unknown
 ): RepetitionsObject => {
-    if (
-        !(
-            Array.isArray(repetitions) &&
-            repetitions.every((i) => Number.isFinite(i))
-        )
-    ) {
+    if (!(
+        Array.isArray(repetitions) &&
+        repetitions.every((i) => Number.isFinite(i))
+    )) {
         throw new Error('parseSavedRepetitions: Invalid input')
     }
 
@@ -54,15 +52,13 @@ export const parseSavedRepetitions = (
 export const parseUiRepetitions = (
     repetitions: RepetitionsObject
 ): SavedRepetitions => {
-    if (
-        !(
-            isObject(repetitions) &&
-            Number.isFinite(repetitions.mostRecent) &&
-            repetitions.mostRecent >= 0 &&
-            Number.isFinite(repetitions.oldest) &&
-            repetitions.oldest >= 0
-        )
-    ) {
+    if (!(
+        isObject(repetitions) &&
+        Number.isFinite(repetitions.mostRecent) &&
+        repetitions.mostRecent >= 0 &&
+        Number.isFinite(repetitions.oldest) &&
+        repetitions.oldest >= 0
+    )) {
         throw new Error('parseUiRepetitions: Invalid input')
     }
 

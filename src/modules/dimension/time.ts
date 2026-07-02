@@ -57,8 +57,7 @@ type TimeDimension =
     | (TimeDimensionBase & {
           nameParentProperty: 'program'
           nameProperty:
-              | 'displayEnrollmentDateLabel'
-              | 'displayIncidentDateLabel'
+              'displayEnrollmentDateLabel' | 'displayIncidentDateLabel'
       })
     | (TimeDimensionBase & {
           nameParentProperty: 'stage'
