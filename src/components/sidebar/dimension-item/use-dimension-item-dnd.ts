@@ -6,8 +6,8 @@ import { CSS } from '@dnd-kit/utilities'
 import {
     useAppSelector,
     useCrossTetMismatch,
+    useLayoutContext,
     useMetadataStore,
-    useTetId,
 } from '@hooks'
 import {
     getCrossTetMessage,
@@ -55,7 +55,7 @@ export const useDimensionItemDnd = ({
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const customValue = useAppSelector(getVisUiConfigCustomValue)
     const customValueId = customValue?.id ?? null
-    const layoutTetId = useTetId()
+    const { tetId: layoutTetId } = useLayoutContext()
     const crossTetMismatch = useCrossTetMismatch()
     const crossTetMessage = crossTetMismatch
         ? getCrossTetMessage(

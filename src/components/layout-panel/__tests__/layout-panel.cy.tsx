@@ -243,6 +243,81 @@ describe('<LayoutPanel />', () => {
         cy.getByDataTest('update-buttons').should('be.visible')
     })
 
+    it('suffixes chips using the whole layout, not just their own axis', () => {
+        const crossAxisMetadata = {
+            p1: {
+                id: 'p1',
+                name: 'Program1',
+                programType: 'WITH_REGISTRATION',
+            },
+            p1s1: {
+                id: 'p1s1',
+                name: 'P1 Stage1',
+                repeatable: false,
+                hideDueDate: false,
+                program: { id: 'p1' },
+            },
+            p1s2: {
+                id: 'p1s2',
+                name: 'P1 Stage2',
+                repeatable: false,
+                hideDueDate: false,
+                program: { id: 'p1' },
+            },
+            'p1s1.weight': {
+                id: 'p1s1.weight',
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+                valueType: 'NUMBER',
+            },
+            'p1s2.weight': {
+                id: 'p1s2.weight',
+                name: 'Weight',
+                dimensionType: 'DATA_ELEMENT',
+                valueType: 'NUMBER',
+            },
+        }
+
+        const layoutPanelMockOptions = createMockOptions(
+            {
+                dimensionSelection: {
+                    ...mockOptions.partialStore?.preloadedState
+                        .dimensionSelection,
+                    dataSourceId: 'test-id',
+                },
+                visUiConfig: {
+                    ...visUiConfigInitialState,
+                    visualizationType: 'LINE_LIST',
+                    outputType: 'EVENT',
+                    layout: {
+                        columns: ['p1s1.weight'],
+                        rows: [],
+                        filters: ['p1s2.weight'],
+                    },
+                },
+            },
+            crossAxisMetadata
+        )
+
+        cy.mount(
+            <MockAppWrapper {...layoutPanelMockOptions}>
+                <LayoutPanel />
+            </MockAppWrapper>
+        )
+
+        // Both dimensions are named "Weight" but sit in different axes. On its
+        // own, each axis has just one stage, so a per-axis check would add no
+        // suffix. Looking at the whole layout shows both stages, so both chips
+        // get one.
+        cy.getByDataTest('axis-columns')
+            .findByDataTest('chip-suffix')
+            .should('have.text', '· P1 Stage1')
+
+        cy.getByDataTest('axis-filters')
+            .findByDataTest('chip-suffix')
+            .should('have.text', '· P1 Stage2')
+    })
+
     it('renders the LINE_LIST update buttons in the order tracked entity, enrollment, event', () => {
         const layoutPanelMockOptions = createMockOptions({
             dimensionSelection: {

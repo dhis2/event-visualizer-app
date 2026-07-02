@@ -12,9 +12,10 @@ import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
 import { analyticsHeaderToCanonicalDimensionId } from '@modules/analytics-request'
 import { formatBooleanValue, isBooleanValue } from '@modules/conditions'
 import {
-    getDimensionSuffixes,
-    type SuffixInput,
+    buildSuffixContext,
+    getDimensionSuffix,
 } from '@modules/dimension/suffix'
+import { resolveLayoutContext } from '@modules/layout'
 import { logger } from '@modules/logger'
 import { isValueTypeNumeric } from '@modules/value-type'
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
@@ -337,21 +338,18 @@ export const buildHeaders = ({
 
     const metadata = { ...analyticsResponse.metaData.items, ...storeMetadata }
 
-    const suffixInputs: SuffixInput[] = canonicalIds.map((id) => {
-        const storeItem = storeMetadata[id]
-        return {
-            id,
-            dimensionType: storeItem?.dimensionType,
-            programId: storeItem?.programId,
-            programStageId: storeItem?.programStageId,
-            trackedEntityTypeId: storeItem?.trackedEntityTypeId,
-        }
-    })
-
-    const suffixes = getDimensionSuffixes(
-        suffixInputs,
-        (id) => metadata[id]?.name
+    /* Only the headers with dimension metadata in the store; other headers
+     * (e.g. value columns) have none and resolveLayoutContext would throw. */
+    const { programIds, programStageIds } = resolveLayoutContext(
+        Object.keys(storeMetadata),
+        metadataStore
     )
+    const suffixContext = buildSuffixContext({
+        programs: Object.values(metadataStore.getMetadataItems(programIds)),
+        programStages: Object.values(
+            metadataStore.getMetadataItems(programStageIds)
+        ),
+    })
 
     const nameById = new Map<string, string>(
         canonicalIds.map((id) => [id, metadata[id]?.name ?? id])
@@ -372,7 +370,12 @@ export const buildHeaders = ({
                 index,
                 dimensionId,
                 column: nameById.get(dimensionId) ?? header.column,
-                dimensionSuffix: suffixes[dimensionId],
+                dimensionSuffix: storeMetadata[dimensionId]
+                    ? getDimensionSuffix(
+                          storeMetadata[dimensionId],
+                          suffixContext
+                      )
+                    : undefined,
             }
         }
     )
