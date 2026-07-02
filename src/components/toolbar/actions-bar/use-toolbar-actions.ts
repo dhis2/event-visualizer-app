@@ -189,6 +189,11 @@ export const useToolbarActions = () => {
                     visualization: getSaveableVisualization(
                         currentVis as SavedVisualization
                     ),
+                    // name/description are metadata owned by savedVis (edited
+                    // via the rename dialog); currentVis never carries them, so
+                    // source them here to avoid falling back to a default name.
+                    name: savedVis.name,
+                    description: savedVis.description,
                 })
             )
         )

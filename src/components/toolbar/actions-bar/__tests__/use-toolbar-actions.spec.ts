@@ -1,19 +1,25 @@
+import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { toCurrentVis } from '@modules/visualization/state'
 import { currentVisSlice } from '@store/current-vis-slice'
 import { savedVisSlice } from '@store/saved-vis-slice'
 import { renderHookWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
 import { setupStore } from '@test-utils/setup-store'
+import { act } from '@testing-library/react'
 import type {
     CurrentVisualization,
     EmptyVisualization,
     Program,
     SavedVisualization,
 } from '@types'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { useToolbarActions } from '../use-toolbar-actions'
 
 vi.mock('@dhis2/app-runtime', () => ({
     useAlert: vi.fn(() => ({ show: vi.fn() })),
+}))
+
+vi.mock('@store/thunks', () => ({
+    tLoadSavedVisualization: vi.fn(() => ({ type: 'test/noop' })),
 }))
 
 const makeProgram = (id: string): Program =>
@@ -277,6 +283,62 @@ describe('useToolbarActions', () => {
             }
             const { result } = renderToolbarActions({ currentVis, savedVis })
             expect(result.current.isSaveAsEnabled).toBe(true)
+        })
+    })
+
+    describe('onSave', () => {
+        afterEach(() => {
+            vi.restoreAllMocks()
+        })
+
+        const spyOnUpdateInitiate = () =>
+            vi
+                .spyOn(
+                    eventVisualizationsApi.endpoints.updateVisualization,
+                    'initiate'
+                )
+                .mockReturnValue((() =>
+                    Promise.resolve({
+                        data: 'vis-1',
+                    })) as unknown as ReturnType<
+                    typeof eventVisualizationsApi.endpoints.updateVisualization.initiate
+                >)
+
+        // toCurrentVis strips name/description, mirroring a freshly loaded vis
+        // that was never renamed in this session — so the name/description used
+        // for the save can only come from savedVis.
+        it('saves with the name from savedVis when currentVis carries no name', async () => {
+            const savedVis = makeSavedVis({ name: 'My line list' })
+            const currentVis = toCurrentVis(savedVis)
+            const initiateSpy = spyOnUpdateInitiate()
+
+            const { result } = renderToolbarActions({ currentVis, savedVis })
+
+            await act(async () => {
+                await result.current.onSave()
+            })
+
+            expect(initiateSpy).toHaveBeenCalledTimes(1)
+            const payload = initiateSpy.mock.calls[0][0] as SavedVisualization
+            expect(payload.name).toBe('My line list')
+        })
+
+        it('passes the description from savedVis', async () => {
+            const savedVis = makeSavedVis({
+                name: 'My line list',
+                description: 'A helpful description',
+            } as Partial<SavedVisualization>)
+            const currentVis = toCurrentVis(savedVis)
+            const initiateSpy = spyOnUpdateInitiate()
+
+            const { result } = renderToolbarActions({ currentVis, savedVis })
+
+            await act(async () => {
+                await result.current.onSave()
+            })
+
+            const payload = initiateSpy.mock.calls[0][0] as SavedVisualization
+            expect(payload.description).toBe('A helpful description')
         })
     })
 })
