@@ -1,118 +1,89 @@
-import type { DimensionType } from '@types'
+import type { DimensionMetadataItem, MetadataItem } from '@types'
 
-export type SuffixInput = {
-    id: string
-    dimensionType?: DimensionType
-    programId?: string
-    programStageId?: string
-    trackedEntityTypeId?: string
-}
-
-export type GetName = (id: string) => string | undefined
-
-const isTrackedEntityScoped = (dim: SuffixInput): boolean =>
-    !!dim.trackedEntityTypeId
-
-type SuffixContext = {
+export type SuffixContext = {
     programCount: number
     stageCount: number
-    stageIdsByStageName: Map<string, Set<string>>
-    getName: GetName
+    collidingStageIds: ReadonlySet<string>
+    programNameById: ReadonlyMap<string, string>
+    stageNameById: ReadonlyMap<string, string>
 }
 
-const getStageScopedSuffix = (
-    dim: SuffixInput,
+/* Pass the programs and program stages the layout holds. */
+export const buildSuffixContext = ({
+    programs,
+    programStages,
+}: {
+    programs: readonly MetadataItem[]
+    programStages: readonly MetadataItem[]
+}): SuffixContext => {
+    const programNameById = new Map<string, string>()
+    const stageNameById = new Map<string, string>()
+    const stageIdsByName = new Map<string, Set<string>>()
+    const collidingStageIds = new Set<string>()
+
+    for (const program of programs) {
+        programNameById.set(program.id, program.name)
+    }
+
+    for (const stage of programStages) {
+        stageNameById.set(stage.id, stage.name)
+        const ids = stageIdsByName.get(stage.name) ?? new Set<string>()
+        ids.add(stage.id)
+        stageIdsByName.set(stage.name, ids)
+    }
+
+    for (const ids of stageIdsByName.values()) {
+        if (ids.size > 1) {
+            for (const id of ids) {
+                collidingStageIds.add(id)
+            }
+        }
+    }
+
+    return {
+        programCount: programs.length,
+        stageCount: programStages.length,
+        collidingStageIds,
+        programNameById,
+        stageNameById,
+    }
+}
+
+const getStageSuffix = (
     stageId: string,
-    ctx: SuffixContext
+    programId: string | undefined,
+    context: SuffixContext
 ): string | undefined => {
-    if (ctx.stageCount <= 1) {
-        return ctx.programCount > 1 && dim.programId
-            ? ctx.getName(dim.programId)
+    if (context.stageCount <= 1) {
+        return context.programCount > 1 && programId
+            ? context.programNameById.get(programId)
             : undefined
     }
 
-    const stageName = ctx.getName(stageId)
-    if (!stageName) {
-        return undefined
-    }
+    const stageName = context.stageNameById.get(stageId)
 
-    const collidingStageIds = ctx.stageIdsByStageName.get(stageName)
-    const hasStageNameCollision =
-        !!collidingStageIds && collidingStageIds.size > 1
-    if (hasStageNameCollision && dim.programId) {
-        const programName = ctx.getName(dim.programId)
-        if (programName) {
-            return `${programName}, ${stageName}`
-        }
+    if (context.collidingStageIds.has(stageId) && programId) {
+        const programName = context.programNameById.get(programId)
+        return `${programName}, ${stageName}`
     }
     return stageName
 }
 
-const computeSuffix = (
-    dim: SuffixInput,
-    ctx: SuffixContext
+export const getDimensionSuffix = (
+    dimension: DimensionMetadataItem,
+    context: SuffixContext
 ): string | undefined => {
-    if (isTrackedEntityScoped(dim)) {
-        return undefined
+    if (dimension.programStageId) {
+        return getStageSuffix(
+            dimension.programStageId,
+            dimension.programId,
+            context
+        )
     }
-
-    if (dim.programStageId) {
-        return getStageScopedSuffix(dim, dim.programStageId, ctx)
+    if (dimension.programId) {
+        return context.programCount > 1
+            ? context.programNameById.get(dimension.programId)
+            : undefined
     }
-
-    if (dim.programId) {
-        return ctx.programCount > 1 ? ctx.getName(dim.programId) : undefined
-    }
-
     return undefined
-}
-
-export const getDimensionSuffixes = (
-    dimensions: SuffixInput[],
-    getName: GetName
-): Record<string, string | undefined> => {
-    const programIds = new Set<string>()
-    const stageIds = new Set<string>()
-    for (const dim of dimensions) {
-        if (dim.programId) {
-            programIds.add(dim.programId)
-        }
-        if (dim.programStageId) {
-            stageIds.add(dim.programStageId)
-        }
-    }
-    const programCount = programIds.size
-    const stageCount = stageIds.size
-
-    const stageIdsByStageName = new Map<string, Set<string>>()
-    if (stageCount > 1) {
-        for (const dim of dimensions) {
-            if (!dim.programStageId || isTrackedEntityScoped(dim)) {
-                continue
-            }
-            const stageName = getName(dim.programStageId)
-            if (!stageName) {
-                continue
-            }
-            const ids =
-                stageIdsByStageName.get(stageName) ??
-                stageIdsByStageName
-                    .set(stageName, new Set<string>())
-                    .get(stageName)!
-            ids.add(dim.programStageId)
-        }
-    }
-
-    const ctx: SuffixContext = {
-        programCount,
-        stageCount,
-        stageIdsByStageName,
-        getName,
-    }
-
-    const result: Record<string, string | undefined> = {}
-    for (const dim of dimensions) {
-        result[dim.id] = computeSuffix(dim, ctx)
-    }
-    return result
 }
