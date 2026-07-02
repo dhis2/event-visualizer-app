@@ -46,6 +46,20 @@ The current git branch is used to detect the relevant PR automatically. If you'r
         Which PR would you like to fix SonarQube issues for?
         ```
 
+    **No `gh` auth (e.g. sandboxes)?** `gh` refuses to run tokenless, but public repos allow unauthenticated reads via the GitHub REST API. Substitute:
+
+        ```bash
+        # PR number for the current branch:
+        curl -s "https://api.github.com/repos/<org>/<repo>/pulls?state=open&head=<org>:<branch>" \
+          | jq -r '.[0].number'
+        # List open PRs to choose from:
+        curl -s "https://api.github.com/repos/<org>/<repo>/pulls?state=open&per_page=20" \
+          | jq -r '.[] | "PR #\(.number): \(.title) [\(.head.ref)]"'
+        ```
+      
+      Unauthenticated calls are capped at 60/hour — ample for this workflow.
+
+
 4. **Store for use in later steps:**
     - Organization (e.g. `dhis2`)
     - Repository (e.g. `event-visualizer-app`)
@@ -242,6 +256,7 @@ User: /sonarqube-fix
 
 - Verify `gh` is installed and authenticated (`gh auth status`)
 - Test by running `gh pr list` directly
+- **`gh` not authenticated (sandboxes)**: not needed for public repos — use the unauthenticated `curl` GitHub REST API calls from Step 1. All read-only PR lookups work anonymously.
 
 ## Resources
 
