@@ -189,9 +189,7 @@ export const getSaveableVisualization = (
 
 export const isVisualizationEmpty = (
     visualization:
-        | CurrentVisualization
-        | SavedVisualization
-        | EmptyVisualization
+        CurrentVisualization | SavedVisualization | EmptyVisualization
 ): visualization is EmptyVisualization =>
     Object.keys(visualization).length === 0
 
@@ -202,9 +200,7 @@ export const isVisualizationEmpty = (
 // without resorting to overloads.
 const isPopulatedVisualization = (
     visualization:
-        | CurrentVisualization
-        | SavedVisualization
-        | EmptyVisualization
+        CurrentVisualization | SavedVisualization | EmptyVisualization
 ): visualization is SavedVisualization | CurrentVisualization => {
     const candidate = visualization as Partial<CurrentVisualization>
     return (

@@ -56,8 +56,7 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     // and the plugin consumes the CurrentVisualization-shaped subset.
     const savedVisualization = useMemo(() => {
         const apiVis = data?.eventVisualization as
-            | ApiSavedVisualization
-            | undefined
+            ApiSavedVisualization | undefined
         return apiVis ? normalizeApiSavedVisualization(apiVis) : undefined
     }, [data])
 

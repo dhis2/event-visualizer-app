@@ -34,9 +34,7 @@ type FetchErrorAction = {
 }
 
 type DimensionListAction =
-    | FetchStartAction
-    | FetchSuccessAction
-    | FetchErrorAction
+    FetchStartAction | FetchSuccessAction | FetchErrorAction
 
 const initialDimensionListState: ListFetchState = {
     isUninitialized: true,

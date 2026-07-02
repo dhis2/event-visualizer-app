@@ -60,8 +60,7 @@ const lookupOptionSetOptionMetadata = (
     metaDataItems: AnalyticsResponseMetadataItems
 ) => {
     const optionSetMetaData = metaDataItems?.[optionSetId] as
-        | OptionSetMetaDataItem
-        | undefined
+        OptionSetMetaDataItem | undefined
 
     if (optionSetMetaData) {
         const optionId = optionSetMetaData.options.find(

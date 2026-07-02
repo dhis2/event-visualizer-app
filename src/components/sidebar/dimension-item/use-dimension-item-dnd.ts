@@ -70,8 +70,7 @@ export const useDimensionItemDnd = ({
         }
         return multiSelectedIds.every((id) => {
             const dim = metadataStore.getMetadataItem(id) as
-                | DimensionMetadataItem
-                | undefined
+                DimensionMetadataItem | undefined
             if (!dim) {
                 return false
             }

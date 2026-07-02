@@ -33,10 +33,7 @@ export type MetadataInputMap = Record<
     MetadataInputItem | PartialMetadataInputItem
 >
 export type MetadataInput =
-    | MetadataInputItem
-    | MetadataInputItem[]
-    | StringMap
-    | MetadataInputMap
+    MetadataInputItem | MetadataInputItem[] | StringMap | MetadataInputMap
 
 /**********************************
  **** Phase 3: normalized item ****
