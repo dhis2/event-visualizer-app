@@ -18,6 +18,7 @@ import {
 import { BodyCell } from './body-cell'
 import { FetchOverlay } from './fetch-overlay'
 import { HeaderCell } from './header-cell'
+import { HeadingRow } from './heading-row'
 import { LegendKey } from './legend-key'
 import { NoTimeDimensionWarning } from './no-time-dimension-warning'
 import { ScrollBox } from './scroll-box'
@@ -152,6 +153,18 @@ const LineListInternal: FC<LineListProps> = ({
                             dataTest="line-list-data-table-head"
                             className={classes.fixedHead}
                         >
+                            {visualization.title && (
+                                <HeadingRow
+                                    text={visualization.title}
+                                    colSpan={colSpan}
+                                />
+                            )}
+                            {visualization.subtitle && (
+                                <HeadingRow
+                                    text={visualization.subtitle}
+                                    colSpan={colSpan}
+                                />
+                            )}
                             <DataTableRow dataTest="line-list-data-table-head-row">
                                 {headers.map((header) => (
                                     <HeaderCell
