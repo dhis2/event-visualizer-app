@@ -1,5 +1,6 @@
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { useDimensionSuffix } from '@components/layout-panel/use-layout-dimensions'
+import { UpdateButton } from '@components/shared/update-button'
 import i18n from '@dhis2/d2-i18n'
 import {
     Modal,
@@ -112,14 +113,10 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
                         {i18n.t('Hide')}
                     </Button>
                     {isInLayout ? (
-                        <Button
-                            type="button"
-                            primary
+                        <UpdateButton
                             onClick={onUpdate}
                             dataTest={`${dataTest}-action-confirm`}
-                        >
-                            {i18n.t('Update')}
-                        </Button>
+                        />
                     ) : (
                         <AddToLayoutButton
                             onClick={onClose}

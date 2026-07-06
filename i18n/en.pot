@@ -103,9 +103,6 @@ msgstr "Show more of the most recent events"
 msgid "Hide"
 msgstr "Hide"
 
-msgid "Update"
-msgstr "Update"
-
 msgid "Start and end dates are inclusive and will be included in the outputs."
 msgstr "Start and end dates are inclusive and will be included in the outputs."
 
@@ -379,6 +376,12 @@ msgstr "Aggregation"
 msgid "Cancel"
 msgstr "Cancel"
 
+msgid "Update"
+msgstr "Update"
+
+msgid "Select a value before updating"
+msgstr "Select a value before updating"
+
 msgid ""
 "\"{{- itemName}}\" is from a different stage than the dimensions in the "
 "layout. Choose another item."
@@ -602,6 +605,9 @@ msgstr "Table subtitle"
 
 msgid "Labels"
 msgstr "Labels"
+
+msgid "Create a {{- visType}} before updating"
+msgstr "Create a {{- visType}} before updating"
 
 msgid "Metadata"
 msgstr "Metadata"

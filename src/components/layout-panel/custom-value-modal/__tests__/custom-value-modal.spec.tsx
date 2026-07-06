@@ -225,10 +225,11 @@ describe('CustomValueModal', () => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
         })
 
-        const updateButton = screen.getByRole('button', { name: 'Update' })
-        expect(updateButton).toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Update' })).toBeDisabled()
 
         await user.click(screen.getByText('Weight in kg'))
+
+        const updateButton = screen.getByRole('button', { name: 'Update' })
         expect(updateButton).toBeEnabled()
 
         await user.click(updateButton)
