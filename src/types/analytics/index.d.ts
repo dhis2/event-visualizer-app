@@ -169,6 +169,10 @@ declare module '@dhis2/analytics' {
         description?: string
     }) => SavedVisualization
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    export const transformEventAggregateResponse: (any) => any
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    export const transformEventAggregateResponse: (
+        response: any,
+        options?: { hideNaData?: boolean }
+    ) => any
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 }
