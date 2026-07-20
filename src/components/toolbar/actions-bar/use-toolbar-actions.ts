@@ -210,7 +210,7 @@ export const useToolbarActions = () => {
         } else if (error) {
             onError(error as EngineError)
         }
-    }, [dispatch, currentVis, onError])
+    }, [dispatch, currentVis, savedVis, onError])
 
     // New visualization
     // it can be a copy of an existing one, but a new id is returned
