@@ -2,9 +2,8 @@ import { NUMERIC_VALUE_TYPES } from '@constants/value-types'
 import {
     useAppSelector,
     useCurrentUser,
+    useLayoutContext,
     useMetadataStore,
-    useProgramIds,
-    useProgramStageIds,
     useRtkQuery,
 } from '@hooks'
 import { getVisUiConfigCustomValue } from '@store/vis-ui-config-slice'
@@ -42,8 +41,7 @@ export const useCustomValueItems = () => {
         settings: { displayNameProperty },
     } = useCurrentUser()
     const metadataStore = useMetadataStore()
-    const programIds = useProgramIds()
-    const programStageIds = useProgramStageIds()
+    const { programIds, programStageIds } = useLayoutContext()
     const customValue = useAppSelector(getVisUiConfigCustomValue)
 
     if (programIds.length !== 1) {

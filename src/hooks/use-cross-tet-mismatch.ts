@@ -1,4 +1,4 @@
-import { useAppSelector, useMetadataItem, useTetId } from '@hooks'
+import { useAppSelector, useLayoutContext, useMetadataItem } from '@hooks'
 import { getDataSourceTet } from '@modules/data-source'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 
@@ -15,7 +15,7 @@ export const useCrossTetMismatch = (): CrossTetMismatch | null => {
     const dataSourceId = useAppSelector(getDataSourceId)
     const dataSource = useMetadataItem(dataSourceId)
     const dataSourceTet = getDataSourceTet(dataSource)
-    const layoutTetId = useTetId()
+    const { tetId: layoutTetId } = useLayoutContext()
     const layoutTet = useMetadataItem(layoutTetId)
     if (!dataSourceTet || !layoutTet || dataSourceTet.id === layoutTet.id) {
         return null

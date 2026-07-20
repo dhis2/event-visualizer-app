@@ -12,8 +12,8 @@ import {
     collectProgramDimensions,
     convertLayoutForVisType,
     resolveDimensionTetId,
+    resolveLayoutContext,
     resolveTeiFields,
-    resolveTetId,
 } from '../layout'
 
 const makeDim = (
@@ -594,7 +594,7 @@ describe('resolveTeiFields', () => {
     })
 })
 
-describe('resolveTetId', () => {
+describe('resolveLayoutContext', () => {
     const trackerProgramA = {
         id: 'progA',
         trackedEntityType: { id: 'tetA', name: 'Person' },
@@ -656,12 +656,32 @@ describe('resolveTetId', () => {
         programId: 'progC',
     } as DimensionMetadataItem
 
-    it('returns trackedEntityTypeId directly when an ou dim carries it', () => {
+    it('collects distinct program and stage ids from the layout', () => {
+        const store = makeStore({
+            dims: {
+                'stage1.ou': stageOuDim,
+                'stage1.de1': dataElementInTrackerProgramDim,
+                'progA.enrollmentOu': enrollmentOuDim,
+            },
+            programs: { progA: trackerProgramA },
+        })
+
+        const context = resolveLayoutContext(
+            ['stage1.ou', 'stage1.de1', 'progA.enrollmentOu'],
+            store
+        )
+        expect(context.programIds).toEqual(['progA'])
+        expect(context.programStageIds).toEqual(['stage1'])
+    })
+
+    it('returns tetId directly when an ou dim carries it', () => {
         const store = makeStore({
             dims: { 'tetA.enrollmentOu': tetOuDim },
         })
 
-        expect(resolveTetId(['tetA.enrollmentOu'], store)).toBe('tetA')
+        expect(resolveLayoutContext(['tetA.enrollmentOu'], store).tetId).toBe(
+            'tetA'
+        )
     })
 
     it('walks programId → program.trackedEntityType for enrollment ou', () => {
@@ -670,7 +690,9 @@ describe('resolveTetId', () => {
             programs: { progA: trackerProgramA },
         })
 
-        expect(resolveTetId(['progA.enrollmentOu'], store)).toBe('tetA')
+        expect(resolveLayoutContext(['progA.enrollmentOu'], store).tetId).toBe(
+            'tetA'
+        )
     })
 
     it('walks programId → program.trackedEntityType for stage ou', () => {
@@ -679,15 +701,15 @@ describe('resolveTetId', () => {
             programs: { progA: trackerProgramA },
         })
 
-        expect(resolveTetId(['stage1.ou'], store)).toBe('tetA')
+        expect(resolveLayoutContext(['stage1.ou'], store).tetId).toBe('tetA')
     })
 
-    it('returns trackedEntityTypeId directly when a TEA dim carries it (no OU in layout)', () => {
+    it('returns tetId directly when a TEA dim carries it (no OU in layout)', () => {
         const store = makeStore({
             dims: { tea1: teaWithTetDim },
         })
 
-        expect(resolveTetId(['tea1'], store)).toBe('tetA')
+        expect(resolveLayoutContext(['tea1'], store).tetId).toBe('tetA')
     })
 
     it('walks programId for a non-OU dim (data element in tracker program)', () => {
@@ -696,7 +718,7 @@ describe('resolveTetId', () => {
             programs: { progA: trackerProgramA },
         })
 
-        expect(resolveTetId(['stage1.de1'], store)).toBe('tetA')
+        expect(resolveLayoutContext(['stage1.de1'], store).tetId).toBe('tetA')
     })
 
     it('returns the single TET when multiple dims all reference the same TET', () => {
@@ -709,9 +731,10 @@ describe('resolveTetId', () => {
             programs: { progA: trackerProgramA },
         })
 
-        expect(resolveTetId(['stage1.ou', 'tea1', 'stage1.de1'], store)).toBe(
-            'tetA'
-        )
+        expect(
+            resolveLayoutContext(['stage1.ou', 'tea1', 'stage1.de1'], store)
+                .tetId
+        ).toBe('tetA')
     })
 
     it('ignores dims without TET context (event-program stage ou) when another dim provides TET', () => {
@@ -723,29 +746,31 @@ describe('resolveTetId', () => {
             programs: { progB: eventProgram },
         })
 
-        expect(resolveTetId(['evtStage.ou', 'tea1'], store)).toBe('tetA')
+        expect(resolveLayoutContext(['evtStage.ou', 'tea1'], store).tetId).toBe(
+            'tetA'
+        )
     })
 
-    it('returns null for event-program-only layout (program has no TET)', () => {
+    it('returns null tetId for event-program-only layout (program has no TET)', () => {
         const store = makeStore({
             dims: { 'evtStage.ou': eventProgramOuDim },
             programs: { progB: eventProgram },
         })
 
-        expect(resolveTetId(['evtStage.ou'], store)).toBeNull()
+        expect(resolveLayoutContext(['evtStage.ou'], store).tetId).toBeNull()
     })
 
-    it('returns null when no layout dim carries TET context', () => {
+    it('returns null tetId when no layout dim carries TET context', () => {
         const store = makeStore({
             dims: { tea1: contextlessTeaDim },
         })
 
-        expect(resolveTetId(['tea1'], store)).toBeNull()
+        expect(resolveLayoutContext(['tea1'], store).tetId).toBeNull()
     })
 
     it('returns the first TET in layout order when dims reference different TETs', () => {
         /* Multi-TET layouts are an invalid state that the action buttons
-         * surface separately via tetCountInLayout; resolveTetId picks the
+         * surface separately via tetCountInLayout; the context picks the
          * first TET id so callers can still render a single-TET context. */
         const store = makeStore({
             dims: {
@@ -755,14 +780,14 @@ describe('resolveTetId', () => {
             programs: { progC: trackerProgramC },
         })
 
-        expect(resolveTetId(['tea1', 'pi1'], store)).toBe('tetA')
-        expect(resolveTetId(['pi1', 'tea1'], store)).toBe('tetB')
+        expect(resolveLayoutContext(['tea1', 'pi1'], store).tetId).toBe('tetA')
+        expect(resolveLayoutContext(['pi1', 'tea1'], store).tetId).toBe('tetB')
     })
 
     it('throws when a layout dim is missing from the metadata store', () => {
         const store = makeStore({})
 
-        expect(() => resolveTetId(['ghost'], store)).toThrow(
+        expect(() => resolveLayoutContext(['ghost'], store)).toThrow(
             'No metadata found for dimension "ghost" in the layout'
         )
     })
