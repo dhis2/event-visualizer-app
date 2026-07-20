@@ -153,8 +153,10 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                 logger.debug('PT analytics response', analyticsResponse)
 
                 // response for PT needs to be transformed
-                const analyticsData =
-                    transformEventAggregateResponse(analyticsResponse)
+                const analyticsData = transformEventAggregateResponse(
+                    analyticsResponse,
+                    { hideNaData: visualization.hideNaData }
+                )
 
                 setState({
                     data: analyticsData,
