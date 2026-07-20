@@ -10,17 +10,16 @@ import {
     getUiLayoutPanelExpanded,
     toggleUiLayoutPanelExpanded,
 } from '@store/ui-slice'
-import {
-    getVisUiConfigLayout,
-    getVisUiConfigVisualizationType,
-} from '@store/vis-ui-config-slice'
+import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import cx from 'classnames'
 import { useEffect, useMemo, type FC } from 'react'
 import { useWindowSize } from 'usehooks-ts'
 import { Axis } from './axis/axis'
+import type { LayoutDimension } from './axis/chip'
 import { LayoutBlockedOverlay } from './layout-blocked-overlay'
 import { ResizeHandle } from './resize-handle'
 import classes from './styles/axes.module.css'
+import { useLayoutDimensions } from './use-layout-dimensions'
 import { useResizeHandle } from './use-resize-handle'
 
 const ExpandLayoutPanelButton: FC = () => {
@@ -63,13 +62,19 @@ const AXIS_ROW_MIN_HEIGHT = 58
  * so the panel can be shrunk past its default height before collapsing. */
 const AXES_COLLAPSE_THRESHOLD = 24
 
+const toIdsString = (dims: LayoutDimension[]): string =>
+    dims.map((dim) => dim.id).join(',')
+
 export const Axes: FC = () => {
     const dispatch = useAppDispatch()
     const dataSourceId = useAppSelector(getDataSourceId)
     const isLayoutPanelExpanded = useAppSelector(getUiLayoutPanelExpanded)
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
-    const { columns, filters, rows } = useAppSelector(getVisUiConfigLayout)
+
+    /* Grouped per axis, with suffixes worked out across the whole layout. */
+    const { columns, rows, filters } = useLayoutDimensions()
+
     const { height } = useWindowSize()
     const { active } = useDndContext()
     const activeDragData = getActiveDragData(active)
@@ -90,10 +95,13 @@ export const Axes: FC = () => {
     /* Signature of the layout's chips per axis. Changes when a dimension is
      * added, removed, or moved between axes — the cases that change the content
      * height and so require the panel to re-fit. */
-    const contentKey = useMemo(
-        () => [columns.join(','), rows.join(','), filters.join(',')].join('|'),
-        [columns, rows, filters]
-    )
+    const contentKey = useMemo(() => {
+        return [
+            toIdsString(columns),
+            toIdsString(rows),
+            toIdsString(filters),
+        ].join('|')
+    }, [columns, rows, filters])
 
     const {
         containerRef,
@@ -147,11 +155,11 @@ export const Axes: FC = () => {
                         })}
                         ref={containerRef}
                     >
-                        <Axis axisId="columns" dimensionIds={columns} />
+                        <Axis axisId="columns" dimensions={columns} />
                         {visualizationType !== 'LINE_LIST' && (
-                            <Axis axisId="rows" dimensionIds={rows} />
+                            <Axis axisId="rows" dimensions={rows} />
                         )}
-                        <Axis axisId="filters" dimensionIds={filters} />
+                        <Axis axisId="filters" dimensions={filters} />
                     </div>
                     <ResizeHandle
                         isDragging={isDragging}

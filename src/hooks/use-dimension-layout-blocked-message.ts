@@ -1,8 +1,8 @@
 import {
     useAppSelector,
     useCrossTetMismatch,
+    useLayoutContext,
     useMetadataStore,
-    useTetId,
 } from '@hooks'
 import {
     getCrossTetMessage,
@@ -21,7 +21,7 @@ export const useDimensionLayoutBlockedMessage = (
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const customValue = useAppSelector(getVisUiConfigCustomValue)
     const metadataStore = useMetadataStore()
-    const layoutTetId = useTetId()
+    const { tetId: layoutTetId } = useLayoutContext()
     const mismatch = useCrossTetMismatch()
     if (!dimension) {
         return null
