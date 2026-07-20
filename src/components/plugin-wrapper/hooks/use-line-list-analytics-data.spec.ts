@@ -11,10 +11,7 @@ const visualization = {
 const analyticsResponse = {
     headers: [{ name: 's1.scheduledDate' }, { name: 's2.scheduledDate' }],
     metaData: {
-        items: {
-            s1: { name: 'Birth' },
-            s2: { name: 'Baby Postnatal' },
-        },
+        items: {},
     },
 }
 
@@ -25,7 +22,7 @@ const analyticsResponseTyped = analyticsResponse as unknown as Parameters<
 const buildMetadataStore = (
     scheduledDateName: string
 ): UseMetadataStoreReturnValue => {
-    const items: Record<string, Partial<DimensionMetadataItem>> = {
+    const dimensionItems: Record<string, Partial<DimensionMetadataItem>> = {
         's1.scheduledDate': {
             name: scheduledDateName,
             programId: 'p1',
@@ -37,8 +34,21 @@ const buildMetadataStore = (
             programStageId: 's2',
         },
     }
+    /* Program and stage names come from the store, populated by
+     * setVisualizationMetadata in both the app and the plugin. */
+    const items: Record<string, { id: string; name: string }> = {
+        p1: { id: 'p1', name: 'Antenatal care' },
+        s1: { id: 's1', name: 'Birth' },
+        s2: { id: 's2', name: 'Baby Postnatal' },
+    }
     return {
-        getDimensionMetadataItem: (id: string) => items[id],
+        getDimensionMetadataItem: (id: string) => dimensionItems[id],
+        getMetadataItem: (id: string) => items[id],
+        getMetadataItems: (ids: string[]) =>
+            Object.fromEntries(
+                ids.filter((id) => items[id]).map((id) => [id, items[id]])
+            ),
+        getProgramMetadataItem: (id: string) => items[id],
     } as unknown as UseMetadataStoreReturnValue
 }
 

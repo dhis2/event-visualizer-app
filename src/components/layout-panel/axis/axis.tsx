@@ -1,26 +1,26 @@
 import { getActiveDragData } from '@components/app-wrapper/drag-and-drop-provider/dnd-data'
 import type { AxisContainerDroppableData } from '@components/app-wrapper/drag-and-drop-provider/types'
-import { useLayoutDimensions } from '@components/layout-panel/use-layout-dimensions'
 import { useDndContext, useDroppable } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
 import { getAxisName } from '@modules/layout'
 import type { Axis as AxisTD } from '@types'
 import cx from 'classnames'
 import { type FC, useMemo } from 'react'
-import { Chip } from './chip'
+import { Chip, type LayoutDimension } from './chip'
 import classes from './styles/axis.module.css'
 import insertMarkerClasses from './styles/drop-insert-marker.module.css'
 
 type AxisProps = {
     axisId: AxisTD
-    dimensionIds?: string[]
+    dimensions?: LayoutDimension[]
 }
-const EMPTY_ARRAY: string[] = []
+const EMPTY_ARRAY: LayoutDimension[] = []
 
-export const Axis: FC<AxisProps> = ({ axisId, dimensionIds = EMPTY_ARRAY }) => {
-    const dimensions = useLayoutDimensions({
-        dimensionIds: dimensionIds,
-    })
+export const Axis: FC<AxisProps> = ({ axisId, dimensions = EMPTY_ARRAY }) => {
+    const dimensionIds = useMemo(
+        () => dimensions.map((dimension) => dimension.id),
+        [dimensions]
+    )
 
     const axisContainerData = useMemo<AxisContainerDroppableData>(
         () => ({

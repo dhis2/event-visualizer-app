@@ -8,8 +8,8 @@ import { IconSettings16, Tooltip } from '@dhis2/ui'
 import {
     useAppDispatch,
     useAppSelector,
+    useLayoutContext,
     useMetadataItem,
-    useProgramStageIds,
 } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
@@ -59,7 +59,7 @@ const WithTooltip: FC<WithTooltipProps> = ({
 export const CustomValueButton: FC = () => {
     const dispatch = useAppDispatch()
     const customValue = useAppSelector(getVisUiConfigCustomValue)
-    const programStageIds = useProgramStageIds()
+    const { programStageIds } = useLayoutContext()
     const customValueMetadata = useMetadataItem(customValue?.id)
     const { action, tooltipConfig: actionTooltipConfig } = useActionButton(
         'EVENT',

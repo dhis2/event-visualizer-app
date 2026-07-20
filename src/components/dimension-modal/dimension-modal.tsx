@@ -1,5 +1,5 @@
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
-import { useLayoutDimensions } from '@components/layout-panel/use-layout-dimensions'
+import { useDimensionSuffix } from '@components/layout-panel/use-layout-dimensions'
 import i18n from '@dhis2/d2-i18n'
 import {
     Modal,
@@ -18,12 +18,9 @@ import { isDimensionInLayout } from '@modules/layout'
 import { isDimensionMetadataItem } from '@modules/metadata/item-guards'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getUiActiveDimensionModal } from '@store/ui-slice'
-import {
-    getVisUiConfigLayout,
-    getVisUiConfigLayoutAllDimensionIds,
-} from '@store/vis-ui-config-slice'
+import { getVisUiConfigLayout } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
-import { useCallback, useMemo, type FC } from 'react'
+import { useCallback, type FC } from 'react'
 import { AddToLayoutButton } from './add-to-layout-button'
 import { ConditionsModalContent } from './conditions-modal-content/conditions-modal-content'
 import { DynamicDimensionModalContent } from './dynamic-dimension-modal-content/dynamic-dimension-modal-content'
@@ -64,9 +61,6 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
 
     const dispatch = useAppDispatch()
     const layout = useAppSelector(getVisUiConfigLayout)
-    const layoutDimensionIds = useAppSelector(
-        getVisUiConfigLayoutAllDimensionIds
-    )
     const dimensionId = useAppSelector(
         getUiActiveDimensionModal
     ) as LayoutDimension['id']
@@ -74,20 +68,7 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
 
     const isInLayout = isDimensionInLayout(layout, dimensionId)
 
-    const suffixDimensionIds = useMemo(
-        () =>
-            layoutDimensionIds.includes(dimensionId)
-                ? layoutDimensionIds
-                : [...layoutDimensionIds, dimensionId],
-        [layoutDimensionIds, dimensionId]
-    )
-    const layoutDimensions = useLayoutDimensions({
-        dimensionIds: suffixDimensionIds,
-    })
-    const suffix = useMemo(
-        () => layoutDimensions.find(({ id }) => id === dimensionId)?.suffix,
-        [layoutDimensions, dimensionId]
-    )
+    const suffix = useDimensionSuffix(dimensionId)
 
     const modalTitle = suffix
         ? `${dimension?.name} · ${suffix}`
