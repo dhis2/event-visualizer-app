@@ -1,6 +1,13 @@
+import {
+    initialState as visUiConfigInitialState,
+    visUiConfigSlice,
+} from '@store/vis-ui-config-slice'
 import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 import { describe, it, expect } from 'vitest'
-import { useLayoutDimensions } from '../use-layout-dimensions'
+import {
+    useDimensionSuffix,
+    useDimensionsWithSuffixes,
+} from '../use-layout-dimensions'
 
 const baseMetadata = {
     p1: {
@@ -36,7 +43,7 @@ const baseMetadata = {
     },
 }
 
-describe('useLayoutDimensions', () => {
+describe('useDimensionsWithSuffixes', () => {
     describe('LayoutDimension shape', () => {
         it('populates id, name, dimensionId, programId, programStageId, dimensionType, optionSet, valueType from store metadata', async () => {
             const metadata = {
@@ -50,14 +57,11 @@ describe('useLayoutDimensions', () => {
                 },
             }
             const { result } = await renderHookWithAppWrapper(
-                () =>
-                    useLayoutDimensions({
-                        dimensionIds: ['p1s1.d1'],
-                    }),
+                () => useDimensionsWithSuffixes(['p1s1.d1']),
                 { metadata }
             )
-            expect(result.current).toEqual([
-                {
+            expect(result.current).toEqual({
+                'p1s1.d1': {
                     id: 'p1s1.d1',
                     name: 'Dimension1',
                     dimensionId: 'd1',
@@ -68,7 +72,7 @@ describe('useLayoutDimensions', () => {
                     valueType: 'TEXT',
                     suffix: undefined,
                 },
-            ])
+            })
         })
 
         it('exposes programId/programStageId enriched by the store from a 3-segment compound ID', async () => {
@@ -82,13 +86,10 @@ describe('useLayoutDimensions', () => {
                 },
             }
             const { result } = await renderHookWithAppWrapper(
-                () =>
-                    useLayoutDimensions({
-                        dimensionIds: ['p1.p1s1.d1'],
-                    }),
+                () => useDimensionsWithSuffixes(['p1.p1s1.d1']),
                 { metadata }
             )
-            const [dim] = result.current
+            const dim = result.current['p1.p1s1.d1']
             expect(dim.dimensionId).toBe('d1')
             expect(dim.programId).toBe('p1')
             expect(dim.programStageId).toBe('p1s1')
@@ -130,24 +131,18 @@ describe('useLayoutDimensions', () => {
 
         it('returns no suffix when layout has only one program and one stage', async () => {
             const { result } = await renderHookWithAppWrapper(
-                () =>
-                    useLayoutDimensions({
-                        dimensionIds: ['p1s1.d1'],
-                    }),
+                () => useDimensionsWithSuffixes(['p1s1.d1']),
                 { metadata: dimMetadata }
             )
-            expect(result.current[0].suffix).toBeUndefined()
+            expect(result.current['p1s1.d1'].suffix).toBeUndefined()
         })
 
         it('applies stage-name suffix when layout has multiple stages from one program', async () => {
             const { result } = await renderHookWithAppWrapper(
-                () =>
-                    useLayoutDimensions({
-                        dimensionIds: ['p1s1.d1', 'p1s2.d2'],
-                    }),
+                () => useDimensionsWithSuffixes(['p1s1.d1', 'p1s2.d2']),
                 { metadata: dimMetadata }
             )
-            expect(result.current.map((d) => d.suffix)).toEqual([
+            expect(Object.values(result.current).map((d) => d.suffix)).toEqual([
                 'P1 Stage1',
                 'P1 Stage2',
             ])
@@ -156,12 +151,10 @@ describe('useLayoutDimensions', () => {
         it('applies program-name suffix to a stage-bound dim when layout has multiple programs but only one stage', async () => {
             const { result } = await renderHookWithAppWrapper(
                 () =>
-                    useLayoutDimensions({
-                        dimensionIds: ['p1s1.d1', 'p2.enrollmentDate'],
-                    }),
+                    useDimensionsWithSuffixes(['p1s1.d1', 'p2.enrollmentDate']),
                 { metadata: dimMetadata }
             )
-            expect(result.current.map((d) => d.suffix)).toEqual([
+            expect(Object.values(result.current).map((d) => d.suffix)).toEqual([
                 'Program1',
                 'Program2',
             ])
@@ -179,13 +172,10 @@ describe('useLayoutDimensions', () => {
                 },
             }
             const { result } = await renderHookWithAppWrapper(
-                () =>
-                    useLayoutDimensions({
-                        dimensionIds: ['p1s1.d1', 'p2s1.d1'],
-                    }),
+                () => useDimensionsWithSuffixes(['p1s1.d1', 'p2s1.d1']),
                 { metadata }
             )
-            expect(result.current.map((d) => d.suffix)).toEqual([
+            expect(Object.values(result.current).map((d) => d.suffix)).toEqual([
                 'Program1, P1 Stage1',
                 'Program2, P1 Stage1',
             ])
@@ -206,16 +196,14 @@ describe('useLayoutDimensions', () => {
             }
             const { result } = await renderHookWithAppWrapper(
                 () =>
-                    useLayoutDimensions({
-                        dimensionIds: [
-                            'tet1.enrollmentOu',
-                            'p1.enrollmentDate',
-                            'p2.enrollmentDate',
-                        ],
-                    }),
+                    useDimensionsWithSuffixes([
+                        'tet1.enrollmentOu',
+                        'p1.enrollmentDate',
+                        'p2.enrollmentDate',
+                    ]),
                 { metadata }
             )
-            expect(result.current.map((d) => d.suffix)).toEqual([
+            expect(Object.values(result.current).map((d) => d.suffix)).toEqual([
                 undefined,
                 'Program1',
                 'Program2',
@@ -233,15 +221,74 @@ describe('useLayoutDimensions', () => {
             }
             const { result } = await renderHookWithAppWrapper(
                 () =>
-                    useLayoutDimensions({
-                        dimensionIds: ['p1s1.d1', 'p1s2.d2', 'lastUpdated'],
-                    }),
+                    useDimensionsWithSuffixes([
+                        'p1s1.d1',
+                        'p1s2.d2',
+                        'lastUpdated',
+                    ]),
                 { metadata }
             )
-            const lastUpdated = result.current.find(
-                (d) => d.id === 'lastUpdated'
-            )
-            expect(lastUpdated?.suffix).toBeUndefined()
+            expect(result.current['lastUpdated'].suffix).toBeUndefined()
         })
+    })
+})
+
+describe('useDimensionSuffix', () => {
+    const dimMetadata = {
+        ...baseMetadata,
+        'p1s1.d1': {
+            id: 'p1s1.d1',
+            name: 'Weight',
+            dimensionType: 'DATA_ELEMENT',
+            valueType: 'NUMBER',
+        },
+        'p1s2.d2': {
+            id: 'p1s2.d2',
+            name: 'Weight',
+            dimensionType: 'DATA_ELEMENT',
+            valueType: 'NUMBER',
+        },
+    }
+
+    const withLayout = (layout: {
+        columns: string[]
+        rows: string[]
+        filters: string[]
+    }) => ({
+        metadata: dimMetadata,
+        partialStore: {
+            reducer: { visUiConfig: visUiConfigSlice.reducer },
+            preloadedState: {
+                visUiConfig: { ...visUiConfigInitialState, layout },
+            },
+        },
+    })
+
+    it('suffixes a dimension against the whole layout, across axes', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useDimensionSuffix('p1s1.d1'),
+            withLayout({
+                columns: ['p1s1.d1'],
+                rows: [],
+                filters: ['p1s2.d2'],
+            })
+        )
+        expect(result.current).toBe('P1 Stage1')
+    })
+
+    it('adds a dimension not yet in the layout to the comparison set', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useDimensionSuffix('p1s2.d2'),
+            withLayout({ columns: ['p1s1.d1'], rows: [], filters: [] })
+        )
+        expect(result.current).toBe('P1 Stage2')
+    })
+
+    it('returns no suffix when nothing else shares the stage or program', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useDimensionSuffix('p1s1.d1'),
+            withLayout({ columns: ['p1s1.d1'], rows: [], filters: [] })
+        )
+        expect(result.current).toBeUndefined()
     })
 })
