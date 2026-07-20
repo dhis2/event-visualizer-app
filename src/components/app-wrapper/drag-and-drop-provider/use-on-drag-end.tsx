@@ -12,7 +12,7 @@ import {
     getDimensionBlockReason,
     type DimensionBlockReason,
 } from '@modules/dimension/blocking'
-import { resolveDimensionTetId, resolveTetId } from '@modules/layout'
+import { resolveDimensionTetId, resolveLayoutContext } from '@modules/layout'
 import {
     clearMultiSelection,
     getMultiSelectedDimensionIds,
@@ -205,7 +205,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 const storeState = store.getState()
                 const visType = getVisUiConfigVisualizationType(storeState)
                 const customValue = getVisUiConfigCustomValue(storeState)
-                const layoutTetId = resolveTetId(
+                const { tetId: layoutTetId } = resolveLayoutContext(
                     getVisUiConfigLayoutAllDimensionIds(storeState),
                     metadataStore
                 )

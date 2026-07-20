@@ -1,0 +1,8 @@
+.headingCell :global(.top) {
+    justify-content: center;
+}
+
+.heading {
+    text-align: center;
+    font-weight: bold;
+}

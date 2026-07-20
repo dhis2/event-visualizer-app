@@ -133,35 +133,6 @@ type TeiFields = {
     attributeDimensions: CurrentVisualization['attributeDimensions']
 }
 
-export const resolveProgramIds = (
-    dimensionIds: string[],
-    metadataStore: MetadataStore
-): string[] => {
-    const programIds = new Set<string>()
-    for (const id of dimensionIds) {
-        const programId = metadataStore.getDimensionMetadataItem(id)?.programId
-        if (programId) {
-            programIds.add(programId)
-        }
-    }
-    return Array.from(programIds)
-}
-
-export const resolveProgramStageIds = (
-    dimensionIds: string[],
-    metadataStore: MetadataStore
-): string[] => {
-    const programStageIds = new Set<string>()
-    for (const id of dimensionIds) {
-        const programStageId =
-            metadataStore.getDimensionMetadataItem(id)?.programStageId
-        if (programStageId) {
-            programStageIds.add(programStageId)
-        }
-    }
-    return Array.from(programStageIds)
-}
-
 /* A dimension's TET: TET-registration dims carry trackedEntityTypeId
  * directly; any dim with a programId resolves through the program's
  * trackedEntityType. Generic dims (period, org unit, metadata) have neither
@@ -182,25 +153,45 @@ export const resolveDimensionTetId = (
     return null
 }
 
-/* Returns the first TET id found in layout iteration order. Layouts that mix
- * dims from multiple TETs are an invalid state surfaced by the action buttons
- * (which count TETs separately); this helper does not police that — it just
- * hands back the primary TET for callers that only need a single id (TET
- * metadata lookup, cross-TET detection). */
-export const resolveTetId = (
+export type LayoutContext = {
+    programIds: string[]
+    programStageIds: string[]
+    tetId: string | null
+}
+
+/* The programs, program stages and tracked entity type the layout's dimensions
+ * reference. tetId is the first one found in iteration order; layouts that mix
+ * multiple TETs are an invalid state surfaced elsewhere (the action buttons
+ * count TETs separately). Throws if a dimension id has no metadata in the
+ * store, so callers must pass ids known to be present. */
+export const resolveLayoutContext = (
     dimensionIds: string[],
     metadataStore: MetadataStore
-): string | null => {
+): LayoutContext => {
+    const programIds = new Set<string>()
+    const programStageIds = new Set<string>()
+    let tetId: string | null = null
+
     for (const dim of getLayoutDimensionMetadataItems(
         dimensionIds,
         metadataStore
     )) {
-        const tetId = resolveDimensionTetId(dim, metadataStore)
-        if (tetId) {
-            return tetId
+        if (dim.programId) {
+            programIds.add(dim.programId)
+        }
+        if (dim.programStageId) {
+            programStageIds.add(dim.programStageId)
+        }
+        if (!tetId) {
+            tetId = resolveDimensionTetId(dim, metadataStore)
         }
     }
-    return null
+
+    return {
+        programIds: Array.from(programIds),
+        programStageIds: Array.from(programStageIds),
+        tetId,
+    }
 }
 
 type LayoutConversionResult = {
@@ -273,7 +264,7 @@ export const resolveTeiFields = (
               }))
             : undefined
 
-    const tetId = resolveTetId(dimensionIds, metadataStore)
+    const { tetId } = resolveLayoutContext(dimensionIds, metadataStore)
 
     if (!tetId) {
         if (outputType === 'TRACKED_ENTITY_INSTANCE') {

@@ -1,27 +1,30 @@
 import { visUiConfigSlice, initialState } from '@store/vis-ui-config-slice'
 import { MockAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 import { Axis } from '../axis'
+import type { LayoutDimension } from '../chip'
+
+const gender: LayoutDimension = {
+    id: 'genderId',
+    dimensionId: 'genderId',
+    name: 'Gender',
+    dimensionType: 'PROGRAM_ATTRIBUTE',
+    valueType: 'TEXT',
+}
+const mchInfantFeeding: LayoutDimension = {
+    id: 'mchInfantFeeding',
+    dimensionId: 'mchInfantFeeding',
+    name: 'MCH Infant Feeding',
+    dimensionType: 'DATA_ELEMENT',
+    valueType: 'TEXT',
+}
+const orgUnit: LayoutDimension = {
+    id: 'ou',
+    dimensionId: 'ou',
+    name: 'Organisation unit',
+    dimensionType: 'ORGANISATION_UNIT',
+}
 
 const mockOptions: MockOptions = {
-    metadata: {
-        genderId: {
-            uid: 'genderId',
-            name: 'Gender',
-            dimensionType: 'PROGRAM_ATTRIBUTE',
-            valueType: 'TEXT',
-        },
-        mchInfantFeeding: {
-            uid: 'mchInfantFeeding',
-            name: 'MCH Infant Feeding',
-            dimensionType: 'DATA_ELEMENT',
-            valueType: 'TEXT',
-        },
-        ou: {
-            uid: 'ou',
-            name: 'Organisation unit',
-            dimensionType: 'ORGANISATION_UNIT',
-        },
-    },
     partialStore: {
         reducer: { visUiConfig: visUiConfigSlice.reducer },
         preloadedState: {
@@ -54,7 +57,7 @@ describe('<Axis />', () => {
     it('renders start axis with columns with dimensions', () => {
         cy.mount(
             <MockAppWrapper {...mockOptions}>
-                <Axis axisId="columns" dimensionIds={['ou', 'genderId']} />
+                <Axis axisId="columns" dimensions={[orgUnit, gender]} />
             </MockAppWrapper>
         )
 
@@ -87,7 +90,7 @@ describe('<Axis />', () => {
             <MockAppWrapper {...mockOptions}>
                 <Axis
                     axisId="filters"
-                    dimensionIds={['ou', 'mchInfantFeeding']}
+                    dimensions={[orgUnit, mchInfantFeeding]}
                 />
             </MockAppWrapper>
         )
@@ -103,7 +106,7 @@ describe('<Axis />', () => {
     it('handles empty dimenssionIds array', () => {
         cy.mount(
             <MockAppWrapper {...mockOptions}>
-                <Axis axisId="columns" dimensionIds={[]} />
+                <Axis axisId="columns" dimensions={[]} />
             </MockAppWrapper>
         )
 

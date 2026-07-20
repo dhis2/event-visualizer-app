@@ -1,12 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
-import {
-    useAppSelector,
-    useMetadataStore,
-    useProgramStageIds,
-    useTetId,
-} from '@hooks'
+import { useAppSelector, useLayoutContext, useMetadataStore } from '@hooks'
 import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
-import { isDimensionInLayout, resolveProgramIds } from '@modules/layout'
+import { isDimensionInLayout } from '@modules/layout'
 import { isVisualizationEmpty } from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
 import {
@@ -194,8 +189,7 @@ export const useActionButton = (
     buttonVariant?: EventOutputTypeVariant
 ) => {
     const currentVis = useAppSelector(getCurrentVis)
-    const tetId = useTetId()
-    const programStageIds = useProgramStageIds()
+    const { tetId, programStageIds, programIds } = useLayoutContext()
     const layout = useAppSelector(getVisUiConfigLayout)
     const layoutDimensionIds = useAppSelector(
         getVisUiConfigLayoutAllDimensionIds
@@ -205,17 +199,12 @@ export const useActionButton = (
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
 
-    const programIdsInLayout = useMemo(
-        () => resolveProgramIds(layoutDimensionIds, metadataStore),
-        [layoutDimensionIds, metadataStore]
-    )
-
     const firstProgramMetadata = useMemo(
         () =>
-            programIdsInLayout[0]
-                ? metadataStore.getProgramMetadataItem(programIdsInLayout[0])
+            programIds[0]
+                ? metadataStore.getProgramMetadataItem(programIds[0])
                 : undefined,
-        [programIdsInLayout, metadataStore]
+        [programIds, metadataStore]
     )
 
     const tetMetadata = useMemo(
@@ -270,7 +259,7 @@ export const useActionButton = (
         [layoutDimensionIds]
     )
 
-    const programCountInLayout = programIdsInLayout.length
+    const programCountInLayout = programIds.length
 
     const tetCountInLayout = useMemo(() => {
         const tetIds = new Set<string>()
