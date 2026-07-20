@@ -94,6 +94,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                             ...parameters,
                             headers,
                             dataIdScheme: 'NAME',
+                            outputIdScheme: 'NAME',
                             paging: false,
                         })
 
@@ -109,12 +110,12 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                             headers,
                             paging: false,
                         })
+                        .withOutputIdScheme(idScheme)
 
                     // fix option set option names
-                    req =
-                        idScheme === 'NAME'
-                            ? req.withParameters({ dataIdScheme: idScheme })
-                            : req.withOutputIdScheme(idScheme)
+                    if (idScheme === 'NAME') {
+                        req = req.withParameters({ dataIdScheme: idScheme })
+                    }
 
                     target = ['csv', 'xsl', 'xslx'].includes(format)
                         ? '_top'
@@ -210,6 +211,7 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                         .withParameters({
                             ...parameters,
                             dataIdScheme: 'NAME',
+                            outputIdScheme: 'NAME',
                             paging: false,
                         })
 
@@ -227,12 +229,12 @@ const useDownload: (relativePeriodDate?: string) => UseDownloadResult = (
                             ...parameters,
                             paging: false,
                         })
+                        .withOutputIdScheme(idScheme)
 
                     // fix option set option names
-                    req =
-                        idScheme === 'NAME'
-                            ? req.withParameters({ dataIdScheme: idScheme })
-                            : req.withOutputIdScheme(idScheme)
+                    if (idScheme === 'NAME') {
+                        req = req.withParameters({ dataIdScheme: idScheme })
+                    }
 
                     target = ['csv', 'xsl', 'xslx'].includes(format)
                         ? '_top'
