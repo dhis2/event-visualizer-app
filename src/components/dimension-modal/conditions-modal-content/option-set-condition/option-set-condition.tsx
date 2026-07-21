@@ -11,6 +11,7 @@ import { useInfiniteTransferOptions } from '@components/dimension-modal/transfer
 import { Transfer, TransferOption } from '@dhis2/ui'
 import { useAddMetadata, useOptionSetMetadataItem } from '@hooks'
 import { OPERATOR_IN } from '@modules/conditions'
+import { logger } from '@modules/logger'
 import { type FC, useMemo } from 'react'
 import { type FetchResult, optionsApi } from './options-api'
 
@@ -18,6 +19,25 @@ type OptionSetConditionProps = {
     condition: string
     optionSetId: string
     onChange: (condition: string) => void
+}
+
+type Option = FetchResult['items'][number]
+type OptionsByCode = Record<string, Option>
+
+const indexOptionsByCode = (options: Option[] = []): OptionsByCode =>
+    options.reduce<OptionsByCode>((byCode, option) => {
+        byCode[option.code] = option
+        return byCode
+    }, {})
+
+const toSelectedOptionsLookup = (
+    optionsByCode: OptionsByCode
+): Record<string, { value: string; label: string }> => {
+    const lookup: Record<string, { value: string; label: string }> = {}
+    for (const { code, name } of Object.values(optionsByCode)) {
+        lookup[code] = { value: code, label: name }
+    }
+    return lookup
 }
 
 export const OptionSetCondition: FC<OptionSetConditionProps> = ({
@@ -34,19 +54,14 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
 
     const optionSetMetadata = useOptionSetMetadataItem(optionSetId)
 
-    const selectedOptionsLookup = useMemo(
-        () =>
-            optionSetMetadata?.options.reduce<
-                Record<string, { value: string; label: string }>
-            >((lookupMap, { code, name }) => {
-                lookupMap[code] = {
-                    value: code,
-                    label: name,
-                }
-
-                return lookupMap
-            }, {}),
+    const storedOptionsByCode = useMemo(
+        () => indexOptionsByCode(optionSetMetadata?.options),
         [optionSetMetadata]
+    )
+
+    const selectedOptionsLookup = useMemo(
+        () => toSelectedOptionsLookup(storedOptionsByCode),
+        [storedOptionsByCode]
     )
 
     const [fetchOptionsFn, queryState] =
@@ -68,20 +83,26 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
          * the current search term. Resolve the selected options from the already
          * stored options as well, so selections made under an earlier search term
          * are not lost when a new one is added under a narrowed list. */
-        const optionsByCode: Record<string, FetchResult['items'][number]> = {}
-        optionSetMetadata?.options.forEach((option) => {
-            optionsByCode[option.code] = option as FetchResult['items'][number]
-        })
-        data.forEach((option) => {
-            optionsByCode[option.code] = option
-        })
+        const allOptionsByCode: OptionsByCode = {
+            ...storedOptionsByCode,
+            ...indexOptionsByCode(data),
+        }
 
         const optionsMetadata = selected.reduce<FetchResult['items']>(
             (options, selectedId) => {
-                const option = optionsByCode[selectedId]
+                const option = allOptionsByCode[selectedId]
 
                 if (option) {
                     options.push(option)
+                } else {
+                    /* A selected code has no resolvable option when its option
+                     * was deleted on the server: it is neither in the stored
+                     * metadata nor returned by the options query. The code stays
+                     * in the condition (see onChange below); only its label is
+                     * unavailable. */
+                    logger.error(
+                        `Could not resolve option "${selectedId}" in option set "${optionSetId}"`
+                    )
                 }
 
                 return options

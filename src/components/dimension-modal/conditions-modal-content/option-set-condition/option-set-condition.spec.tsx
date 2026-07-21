@@ -1,5 +1,6 @@
 import { renderWithAppWrapper } from '@test-utils/app-wrapper'
 import { screen, waitFor, fireEvent } from '@testing-library/react'
+import type { InitialMetadataItems } from '@types'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { OptionSetCondition } from './option-set-condition'
 
@@ -53,9 +54,13 @@ const rightOptionNames = () =>
     optionNamesIn('option-set-transfer-pickedoptions')
 
 const renderCondition = async (
-    resolver: ReturnType<typeof createOptionsResolver>
+    resolver: ReturnType<typeof createOptionsResolver>,
+    {
+        initialCondition = 'IN:',
+        metadata,
+    }: { initialCondition?: string; metadata?: InitialMetadataItems } = {}
 ) => {
-    let condition = 'IN:'
+    let condition = initialCondition
     const onChange = vi.fn((value: string) => {
         condition = value
     })
@@ -65,7 +70,7 @@ const renderCondition = async (
             optionSetId={OPTION_SET_ID}
             onChange={onChange}
         />,
-        { queryData: { options: resolver } }
+        { queryData: { options: resolver }, metadata }
     )
     const rerenderWithLatestCondition = () =>
         view.rerender(
@@ -110,24 +115,37 @@ describe('OptionSetCondition', () => {
         await waitFor(() => expect(leftOptionNames()).toEqual(['Discharged']))
     })
 
-    it('keeps a selected option on the right even when the search excludes it', async () => {
+    it('keeps a previously-selected option when adding another from a filtered list', async () => {
+        /* Reopening a saved condition: the earlier selection ("Absconded") is
+         * already in the store and in the condition, but not in the list once
+         * it is filtered out. Adding a second option must not drop the first. */
         const { rerenderWithLatestCondition, onChange } = await renderCondition(
-            createOptionsResolver()
+            createOptionsResolver(),
+            {
+                initialCondition: 'IN:ABS',
+                metadata: {
+                    [OPTION_SET_ID]: {
+                        id: OPTION_SET_ID,
+                        name: 'Mode of discharge',
+                        options: [ALL_OPTIONS[0]],
+                    },
+                },
+            }
         )
-
-        await waitFor(() => expect(leftOptionNames()).toHaveLength(4))
-
-        selectOption('Absconded')
-        await waitFor(() => expect(onChange).toHaveBeenCalled())
-        rerenderWithLatestCondition()
 
         await waitFor(() => expect(rightOptionNames()).toEqual(['Absconded']))
 
-        // "Absconded" does not match "ch" — it must stay on the right regardless
-        search('ch')
+        search('disch')
         await new Promise((resolve) => setTimeout(resolve, 700))
-
         await waitFor(() => expect(leftOptionNames()).toEqual(['Discharged']))
-        expect(rightOptionNames()).toEqual(['Absconded'])
+
+        selectOption('Discharged')
+        await waitFor(() => expect(onChange).toHaveBeenCalledWith('IN:ABS;DIS'))
+        rerenderWithLatestCondition()
+
+        /* Asserted synchronously: the option is dropped the moment it is added.
+         * A `waitFor` would mask the bug — a late unfiltered re-fetch repopulates
+         * the source list and the Transfer would re-derive the missing label. */
+        expect(rightOptionNames()).toEqual(['Absconded', 'Discharged'])
     })
 })
