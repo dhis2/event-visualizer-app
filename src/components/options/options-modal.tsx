@@ -1,3 +1,4 @@
+import { UpdateButton } from '@components/shared/update-button'
 import i18n from '@dhis2/d2-i18n'
 import {
     Button,
@@ -11,8 +12,6 @@ import {
 } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getOptionsTabsForVisType } from '@modules/options'
-import { isVisualizationEmpty } from '@modules/visualization/state'
-import { getCurrentVis } from '@store/current-vis-slice'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import type { OptionsTabKey } from '@types'
@@ -29,7 +28,6 @@ export const OptionsModal: FC<OptionsModalProps> = ({ onClose }) => {
     const dispatch = useAppDispatch()
 
     const visType = useAppSelector(getVisUiConfigVisualizationType)
-    const currentVis = useAppSelector(getCurrentVis)
 
     const [activeTabKey, setActiveTabKey] = useState<OptionsTabKey>('data')
 
@@ -80,15 +78,11 @@ export const OptionsModal: FC<OptionsModalProps> = ({ onClose }) => {
                     >
                         {i18n.t('Hide')}
                     </Button>
-                    <Button
+                    <UpdateButton
                         dataTest={'options-modal-action-confirm'}
                         form={FORM_ID}
                         type="submit"
-                        primary
-                        disabled={isVisualizationEmpty(currentVis)}
-                    >
-                        {i18n.t('Update')}
-                    </Button>
+                    />
                 </ButtonStrip>
             </ModalActions>
         </Modal>
