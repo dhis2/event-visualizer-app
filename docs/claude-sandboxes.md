@@ -107,4 +107,6 @@ Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount 
 
 The `typescript-lsp`, `context7`, and `superpowers` plugins, the `grep` MCP, the `playwright-cli` browser tool, and the prettier/eslint format hook all work inside the sandbox. Only project-level config (committed `.claude/`) is picked up — your _host_ user-level MCP servers are not propagated in. `gh` is read-only (see above), so a misbehaving session can't push or open PRs.
 
-After editing anything in `.sbx/` (Dockerfile or instructions), run `./scripts/sbx.sh rebuild`, then recreate the sandboxes (`./scripts/sbx.sh purge`, then mount/clone) to pick up the new image.
+Outbound network uses the `balanced` default-deny egress policy plus a shared allowlist in [`.sbx/network-allowlist.txt`](../.sbx/network-allowlist.txt) (one host/pattern per line; this repo's DHIS2 instance host is added automatically). Edit that file to grant the sandbox access to another host, then recreate the sandbox. The restriction is defense-in-depth against data exfiltration — a session can read the repo, credentials, and memory, so limiting where it can send them matters.
+
+Only the `.sbx/Dockerfile` is baked into the image — after changing it, run `./scripts/sbx.sh rebuild`. The instructions (`.sbx/*.md`), the allowlist, and the forwarder are read at runtime, so changes to them need no rebuild. Either way, recreate the sandbox (`./scripts/sbx.sh purge`, then mount/clone) to pick up the changes.

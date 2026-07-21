@@ -44,13 +44,11 @@ dhis2_host() {
     node -e "try{const u=require('$REPO_ROOT/cypress.env.json').dhis2BaseUrl;process.stdout.write(u?new URL(u).host:'')}catch(e){}" 2>/dev/null
 }
 
-# Hosts the sandbox is allowed to reach. Chromium is baked into the image, so no
-# playwright CDN is needed at runtime. GitHub + Sonar are read-only from the sandbox.
+# Hosts the sandbox is allowed to reach: the shared allowlist in .sbx/network-allowlist.txt
+# plus this repo's DHIS2 instance host (from cypress.env.json) added at runtime.
 allowed_hosts() {
-    local hosts="mcp.grep.app,context7.com,*.context7.com,download.cypress.io,cdn.cypress.io"
-    hosts="${hosts},dhis2.org,*.dhis2.org,api.github.com,github.com,codeload.github.com"
-    hosts="${hosts},sonarcloud.io,api.sonarcloud.io"
-    local dhis
+    local hosts dhis
+    hosts="$(grep -vE '^[[:space:]]*(#|$)' "$SBX_DIR/network-allowlist.txt" | paste -sd, -)"
     dhis="$(dhis2_host)"
     [ -n "$dhis" ] && hosts="${hosts},${dhis}"
     echo "$hosts"
