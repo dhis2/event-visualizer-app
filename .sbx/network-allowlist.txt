@@ -1,6 +1,9 @@
-# Hosts the AI sandboxes are allowed to reach (added to the Docker Sandboxes "balanced"
-# default-deny egress policy). One host or wildcard pattern per line; blank lines and
-# lines starting with # are ignored. Shared across developers via the repo.
+# Extra hosts the AI sandboxes may reach, added ON TOP of the Docker Sandboxes "balanced"
+# default-deny egress policy. The balanced baseline already allows the common development
+# ecosystem — npm/yarn, GitHub, PyPI, crates, Maven, Docker registries, apt, nodejs.org,
+# SonarCloud, api.anthropic.com, and more — so this file lists only what the baseline does
+# NOT cover. One host or wildcard pattern per line; blank lines and lines starting with #
+# are ignored. Shared across developers via the repo.
 #
 # The DHIS2 instance host from cypress.env.json is added automatically at runtime, so it
 # does not need to be listed here. Chromium is baked into the image, so no Playwright CDN
@@ -18,12 +21,3 @@ cdn.cypress.io
 # DHIS2 — docs, play/test instances, and API access
 dhis2.org
 *.dhis2.org
-
-# GitHub — read-only reads via gh / git over HTTPS
-api.github.com
-github.com
-codeload.github.com
-
-# SonarCloud — the sonarqube-fix skill
-sonarcloud.io
-api.sonarcloud.io
