@@ -15,6 +15,7 @@ import {
     NoticeBox,
     SingleSelectField,
     SingleSelectOption,
+    Tooltip,
 } from '@dhis2/ui'
 import {
     useAppDispatch,
@@ -251,14 +252,35 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                     <Button type="button" secondary onClick={onClose}>
                         {i18n.t('Cancel')}
                     </Button>
-                    <Button
-                        type="button"
-                        primary
-                        onClick={onUpdate}
-                        disabled={!selectedItemId}
-                    >
-                        {i18n.t('Update')}
-                    </Button>
+                    {selectedItemId ? (
+                        <Button type="button" primary onClick={onUpdate}>
+                            {i18n.t('Update')}
+                        </Button>
+                    ) : (
+                        <Tooltip
+                            content={i18n.t('Select a value before updating')}
+                        >
+                            {({
+                                onMouseOver,
+                                onMouseOut,
+                                onFocus,
+                                onBlur,
+                                ref,
+                            }) => (
+                                <span
+                                    onMouseOver={onMouseOver}
+                                    onMouseOut={onMouseOut}
+                                    onFocus={onFocus}
+                                    onBlur={onBlur}
+                                    ref={ref}
+                                >
+                                    <Button type="button" primary disabled>
+                                        {i18n.t('Update')}
+                                    </Button>
+                                </span>
+                            )}
+                        </Tooltip>
+                    )}
                 </ButtonStrip>
             </ModalActions>
         </Modal>
