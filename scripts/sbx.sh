@@ -304,32 +304,37 @@ ide_link() {
     sleep 3   # keep: let the connection-outcome message stay readable before Claude's TUI clears it
 }
 
-# Overlay the bind-mounted node_modules with a container-local copy and install the
-# Linux-native dependencies into it. Only needed on macOS: the host's node_modules holds
-# macOS-native binaries the Linux sandbox can't run, so it's shadowed by a container-local
-# dir the host never sees. On a Linux host the bind-mounted node_modules is already the
-# right OS/arch, so this is skipped and the live bind mount is used directly. The overlay
-# is re-applied on every mount (a sudo bind mount doesn't survive a restart); the install
-# runs only when the overlay is empty or the lockfile changed.
+# Overlay node_modules with a container-local copy and install dependencies into it. This
+# is the isolation boundary: everything the agent installs lands in /home/agent/nm inside
+# the sandbox and never touches the host node_modules. It is MANDATORY — on failure the
+# caller aborts the mount rather than falling back to the host-backed node_modules, so a
+# session never runs where an install could reach the host. A guarded remount is also
+# written to the sandbox's persistent startup so the overlay self-heals across restarts and
+# raw `sbx run` reconnects. The install runs only when the overlay is empty or the lockfile
+# changed; on re-attach it is just a fast remount.
 node_modules_overlay() {
     local name="$1"
-    [ "$(uname)" = "Darwin" ] || return 0
     echo "Setting up container-local node_modules and installing dependencies (first run only, a few minutes)..."
     if sbx exec "$name" bash -lc '
         set -e
         repo="$1"; nm=/home/agent/nm
-        mkdir -p "$nm"
-        if ! mountpoint -q "$repo/node_modules"; then
-            mkdir -p "$repo/node_modules"
-            sudo mount --bind "$nm" "$repo/node_modules"
-        fi
+        mkdir -p "$nm" "$repo/node_modules"
+        mountpoint -q "$repo/node_modules" || sudo mount --bind "$nm" "$repo/node_modules"
+        mountpoint -q "$repo/node_modules"   # verify the overlay is really in place
+        # Self-heal: re-apply the overlay from the persistent startup if it is ever lost.
+        sudo sed -i "\#sbx-nm-overlay#d" /etc/sandbox-persistent.sh 2>/dev/null || true
+        printf "mountpoint -q %q || sudo mount --bind %q %q  # sbx-nm-overlay\n" \
+            "$repo/node_modules" "$nm" "$repo/node_modules" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null
         if [ ! -e "$nm/.installed" ] || [ "$repo/pnpm-lock.yaml" -nt "$nm/.installed" ]; then
             cd "$repo" && HUSKY=0 pnpm install && touch "$nm/.installed"
         fi
     ' _ "$REPO_ROOT"; then
         echo "Dependencies installed in a container-local node_modules (host node_modules untouched)."
     else
-        echo "⚠ Couldn't set up node_modules — the agent can retry with: pnpm install"
+        echo "✗ Could not establish the container-local node_modules overlay — aborting the mount." >&2
+        echo "  The sandbox will NOT run against your host node_modules. Check that the sandbox is" >&2
+        echo "  running and that 'sudo mount --bind' is permitted on this image flavor." >&2
+        return 1
     fi
 }
 
@@ -386,7 +391,9 @@ cmd_mount() {
         link_host_dirs "$MOUNT_NAME"
     fi
     ide_link "$MOUNT_NAME"
-    node_modules_overlay "$MOUNT_NAME"
+    # Mandatory isolation boundary: if the container-local node_modules overlay can't be
+    # established, abort rather than launch Claude against the host-backed node_modules.
+    node_modules_overlay "$MOUNT_NAME" || exit 1
     local note
     note="$(compose_note mount.md)"
     sbx run "$MOUNT_NAME" -- \
@@ -481,6 +488,13 @@ cmd_rebuild() {
     echo "Image rebuilt. Recreate sandboxes ('pnpm sbx:purge' then mount/clone) to pick it up."
 }
 
+# True if a stored secret already uses the given service name or custom env var.
+# Lets setup be re-run safely: existing secrets are kept, only missing ones are added
+# (re-adding a global custom secret with the same env would otherwise be a duplicate).
+secret_exists() {
+    sbx secret ls 2>/dev/null | grep -qw "$1"
+}
+
 cmd_setup() {
     require_sbx
     require_docker
@@ -491,26 +505,34 @@ cmd_setup() {
 
     build_image
 
-    printf 'Store an Anthropic API key? Subscription users skip this and sign in via OAuth on first mount. [y/N] '
-    local areply
-    read -r areply || areply=""
-    case "$areply" in
-        [yY]*) sbx secret set -g anthropic ;;
-        *) echo "Skipping — Claude will prompt for interactive OAuth login on first 'pnpm sbx:mount'." ;;
-    esac
+    if secret_exists anthropic; then
+        echo "Anthropic credential already configured — keeping it."
+    else
+        printf 'Store an Anthropic API key? Subscription users skip this and sign in via OAuth on first mount. [y/N] '
+        local areply
+        read -r areply || areply=""
+        case "$areply" in
+            [yY]*) sbx secret set -g anthropic ;;
+            *) echo "Skipping — Claude will prompt for interactive OAuth login on first 'pnpm sbx:mount'." ;;
+        esac
+    fi
 
     # GitHub read-only token (required). Injected as a placeholder GH_TOKEN; the proxy swaps
     # in the real token on outbound GitHub requests, so it never enters the sandbox. A
     # read-only fine-grained PAT means gh works for reads and writes fail server-side.
-    local pat
-    pat="$(read_secret 'GitHub read-only fine-grained PAT (required; see docs/claude-sandboxes.md): ')"
-    if [ -z "$pat" ]; then
-        echo "No PAT entered. A read-only PAT is required — see docs/claude-sandboxes.md, then re-run setup." >&2
-        exit 1
+    if secret_exists GH_TOKEN; then
+        echo "GitHub token already configured — keeping it. (To replace: 'sbx secret rm -g --placeholder <placeholder>' from 'sbx secret ls', then re-run setup.)"
+    else
+        local pat
+        pat="$(read_secret 'GitHub read-only fine-grained PAT (required; see docs/claude-sandboxes.md): ')"
+        if [ -z "$pat" ]; then
+            echo "No PAT entered. A read-only PAT is required — see docs/claude-sandboxes.md, then re-run setup." >&2
+            exit 1
+        fi
+        sbx secret set-custom -g --host api.github.com --host github.com --host codeload.github.com \
+            --env GH_TOKEN --placeholder 'ghp_{rand}' --value "$pat"
+        echo "GitHub token stored (read-only; proxy-injected, never exposed inside the sandbox)."
     fi
-    sbx secret set-custom -g --host api.github.com --host github.com --host codeload.github.com \
-        --env GH_TOKEN --placeholder 'ghp_{rand}' --value "$pat"
-    echo "GitHub token stored (read-only; proxy-injected, never exposed inside the sandbox)."
 
     # Signing key (required). Verified here; wired into each clone at creation.
     if [ ! -f "$SIGNING_KEY" ] || [ ! -f "${SIGNING_KEY}.pub" ]; then
@@ -521,26 +543,33 @@ cmd_setup() {
     fi
     echo "Signing key found at '$SIGNING_KEY'."
 
-    printf 'Configure an optional context7 API key (higher rate limits)? [y/N] '
-    local reply
-    read -r reply || reply=""
-    case "$reply" in
-        [yY]*)
-            local key
-            key="$(read_secret 'context7 API key: ')"
-            if [ -n "$key" ]; then
-                sbx secret set-custom -g --host context7.com --env CONTEXT7_API_KEY --value "$key"
-                echo "context7 key stored (proxy-injected; never exposed inside the sandbox)."
-            else
-                echo "No key entered — skipping."
-            fi
-            ;;
-        *) echo "Skipped context7 key (works keyless at a lower rate limit)." ;;
-    esac
+    # context7 (optional): higher rate limits. Proxy-injected placeholder, never in the sandbox.
+    if secret_exists CONTEXT7_API_KEY; then
+        echo "context7 key already configured — keeping it."
+    else
+        printf 'Configure an optional context7 API key (higher rate limits)? [y/N] '
+        local reply
+        read -r reply || reply=""
+        case "$reply" in
+            [yY]*)
+                local key
+                key="$(read_secret 'context7 API key: ')"
+                if [ -n "$key" ]; then
+                    sbx secret set-custom -g --host context7.com --env CONTEXT7_API_KEY --value "$key"
+                    echo "context7 key stored (proxy-injected; never exposed inside the sandbox)."
+                else
+                    echo "No key entered — skipping."
+                fi
+                ;;
+            *) echo "Skipped context7 key (works keyless at a lower rate limit)." ;;
+        esac
+    fi
 
     # SonarCloud token (optional): public DHIS2 projects read anonymously; a token only
     # raises limits. Proxy-injected as a placeholder, never exposed inside the sandbox.
-    if [ -n "${SONAR_TOKEN:-}" ]; then
+    if secret_exists SONAR_TOKEN; then
+        echo "SonarCloud token already configured — keeping it."
+    elif [ -n "${SONAR_TOKEN:-}" ]; then
         sbx secret set-custom -g --host sonarcloud.io --host api.sonarcloud.io \
             --env SONAR_TOKEN --placeholder 'sqp_{rand}' --value "$SONAR_TOKEN"
         echo "SonarCloud token stored from the host SONAR_TOKEN (proxy-injected)."
