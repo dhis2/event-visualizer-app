@@ -26,9 +26,7 @@ ssh-keygen -t ed25519 -f ~/.ssh/sbx_signing -C "sbx signing"
 
 Then add the **public** key (`~/.ssh/sbx_signing.pub`) to GitHub → SSH and GPG keys → New SSH key → **Key type: Signing Key** (not Authentication). Override the path with `SBX_SIGNING_KEY` if you keep it elsewhere.
 
-**4. (Host browser testing) enable claude-in-chrome.** For driving the running app from your _host_ Claude, use the built-in **claude-in-chrome** browser in the Claude desktop app. Terminal-only `claude` users won't have it and can add a browser tool at user scope instead. (Inside the sandboxes, browser automation is provided by `playwright-cli` — no setup needed.)
-
-**5. Run setup:**
+**4. Run setup:**
 
 ```bash
 ./scripts/sbx.sh setup
@@ -42,7 +40,7 @@ The agent edits your live working tree (changes show up in your editor immediate
 
 > **node_modules isolation:** on every mount the script overlays `node_modules` with a container-local directory (`sudo mount --bind` of `/home/agent/nm` over the repo's `node_modules`) and runs `pnpm install` into it — so everything the agent installs stays inside the sandbox and your host `node_modules` is never touched. This is **mandatory**: if the overlay can't be established the mount **aborts** rather than falling back to the host-backed `node_modules`. The install runs on first mount (a few minutes; reused while the lockfile is unchanged), and a guarded remount in the sandbox's startup re-applies the overlay if the sandbox ever restarts. Changed dependencies while the sandbox is up? `./scripts/sbx.sh refresh-deps`.
 
-> **Editor integration (Neovim):** the sandbox mounts your live editor-lock dir (`~/.claude/ide`), so it always sees the current [`coder/claudecode.nvim`](https://github.com/coder/claudecode.nvim) lock. If Neovim is running on this repo when you mount, `pnpm sbx:mount` opens a **port-scoped** path to the editor's WebSocket and starts a forwarder for it; run `/ide` in the session to connect (diffs, selection, diagnostics). Only this repo's editor port is opened — not general host access. Re-run `pnpm sbx:mount` if you start/restart Neovim after mounting. The whole editor-link is best-effort: every step is time-bounded and retried, so if `sbx` is unresponsive it prints a notice and the sandbox still comes up — it never blocks the mount. (Mount only.)
+> **Editor integration (mount only):** the sandbox mounts your live editor-lock dir (`~/.claude/ide`) **read-only** — it sees your editor's current Claude Code lock but can't disturb it, so it never interferes with your host editor. The mechanism is the editor-agnostic Claude Code IDE-lock protocol, so in principle it works with any editor that integrates with Claude Code — Neovim via [`coder/claudecode.nvim`](https://github.com/coder/claudecode.nvim), VS Code, JetBrains — though it has only been **tested with Neovim**. If your editor is running on this repo when you mount, `pnpm sbx:mount` opens a **port-scoped** path to its WebSocket and starts a forwarder; run `/ide` in the session to connect (diffs, selection, diagnostics). Only this repo's editor port is opened — not general host access. Re-run `pnpm sbx:mount` if you start/restart the editor after mounting. The whole editor-link is best-effort: every step is time-bounded and retried, so if `sbx` is unresponsive it prints a notice and the sandbox still comes up — it never blocks the mount. Clone mode has no editor integration by design (it's autonomous).
 
 ## Clone sandbox — autonomous (`pnpm sbx:clone`)
 
@@ -88,7 +86,7 @@ Both sandboxes use the **Playwright agent CLI** (`playwright-cli`), baked into t
 
 ## SonarQube skill
 
-Public DHIS2 projects are readable on SonarCloud anonymously, so the `sonarqube-fix` skill (`pnpm sonar`) works in the sandbox without a token. If you export `SONAR_TOKEN` on the host before `setup`, it is stored as a proxy-injected placeholder (never exposed inside the sandbox) for higher limits.
+The `sonarqube-fix` skill (`pnpm sonar`) depends on `SONAR_TOKEN` the same way it does on the host. If you export `SONAR_TOKEN` on the host before `setup`, it's stored as a proxy-injected placeholder (never exposed inside the sandbox) so the skill works in the sandbox just as it would on your host.
 
 ## Other commands
 

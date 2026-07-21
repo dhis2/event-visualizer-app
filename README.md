@@ -85,10 +85,12 @@ npm install -g typescript-language-server
 # Install: https://cli.github.com/
 gh auth login
 
-# 3. Browser automation for testing the running app — use the built-in claude-in-chrome
-# browser (Claude desktop app / the Claude Chrome extension):
+# 3. Browser automation for testing the running app — claude-in-chrome. It works in BOTH the
+# terminal and desktop Claude Code, but you must set it up: install the Claude browser
+# extension and connect it to Claude Code.
 # https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn
-# (Terminal-only claude users can add a browser tool at user scope instead.)
+# Once connected, Claude can drive your browser to load http://localhost:3000.
+# (This is host-only; the AI sandboxes use playwright-cli instead — no setup needed.)
 
 # 4. Inside Claude Code, install and activate plugins
 /plugin install typescript-lsp@claude-plugins-official

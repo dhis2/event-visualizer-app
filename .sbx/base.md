@@ -2,6 +2,8 @@ You are running inside an isolated Docker Sandboxes microVM with its own filesys
 
 You have passwordless sudo. Install OS packages with `sudo apt-get install ...` — they persist for the sandbox's lifetime. Install home-directory or user-level tools WITHOUT sudo, or they install under /root/ and will not be on your PATH.
 
+Project dependencies live in a container-local `node_modules` that is isolated from the host — anything installed here stays inside the sandbox and never touches the host, so `pnpm install` is always safe to run. Dependencies are set up when the sandbox is created; if the sandbox has been running for a while or the lockfile has changed, run `pnpm install` to refresh them to the current lockfile.
+
 Outbound network is restricted by a "balanced" policy. Permission prompts are skipped because of this isolation, not because the environment is unconditionally safe — still avoid destructive or data-exfiltrating actions.
 
 GitHub access is READ-ONLY. `gh` is authenticated with a read-only token, so you can read repositories, pull requests, issues, and workflow runs (`gh pr list`, `gh pr view`, `gh api ...`, or `curl https://api.github.com/...`). You CANNOT create, edit, or merge PRs/issues, and you cannot push — those requests fail server-side by design. Read freely; don't attempt writes.

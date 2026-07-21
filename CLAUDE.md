@@ -316,7 +316,7 @@ describe('useMyUtilityHook', () => {
 - **Internationalization**: Use DHIS2 i18n utilities for all user-facing strings
 - **Testing environments**: Test against DHIS2 instances (development and production)
 - **Authentication**: Handle DHIS2 authentication and authorization properly
-- **Browser testing**: On the host, drive the running app with the built-in **claude-in-chrome** browser (Claude desktop app); in the AI sandboxes, use the `playwright-cli` tool instead (see [docs/claude-sandboxes.md](docs/claude-sandboxes.md)). Read `cypress.env.json` (gitignored) for the DHIS2 server URL and login credentials. The dev server on `localhost:3000` shows a login form requiring Server, Username, and Password
+- **Browser testing**: On the host, drive the running app with **claude-in-chrome** (works in both terminal and desktop Claude Code; the developer sets it up via the Claude browser extension — see README). If you need browser automation on the host and it isn't connected, ask the human to set it up. In the AI sandboxes, use the `playwright-cli` tool instead (see [docs/claude-sandboxes.md](docs/claude-sandboxes.md)). Read `cypress.env.json` (gitignored) for the DHIS2 server URL and login credentials. The dev server on `localhost:3000` shows a login form requiring Server, Username, and Password
 - **Deployment**: App can be deployed as both a standalone app and a plugin
 
 ## Understanding the DHIS2 Web API
@@ -411,7 +411,7 @@ The following are enabled for this project via `.claude/settings.json`:
 
 - **Grep by Vercel** (`grep_*`): Fast code search across GitHub repositories. **Usage**: Trigger-based only — add `use the grep tool` to your prompts when you want cross-repo search.
 
-**Browser automation**: On the host, use the built-in **claude-in-chrome** browser (Claude desktop app). Terminal-only `claude` users can add a browser tool at user scope. In the AI sandboxes, browser automation is provided by the baked-in `playwright-cli` (see [docs/claude-sandboxes.md](docs/claude-sandboxes.md)).
+**Browser automation**: On the host, use **claude-in-chrome** (terminal or desktop Claude Code; requires the developer to install and connect the Claude browser extension — see README). If you need to drive the browser on the host and it isn't set up, you may ask the human to set it up for you. In the AI sandboxes, browser automation is provided by the baked-in `playwright-cli` (see [docs/claude-sandboxes.md](docs/claude-sandboxes.md)).
 
 **GitHub**: Use the `gh` CLI via Bash for all GitHub operations (issues, PRs, code search, actions). Requires the [GitHub CLI](https://cli.github.com/) to be installed and authenticated (`gh auth login`). In the AI sandboxes `gh` is authenticated read-only (writes fail by design).
 

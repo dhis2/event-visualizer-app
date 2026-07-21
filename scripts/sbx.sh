@@ -112,66 +112,6 @@ compose_note() {
     cat "$SBX_DIR/$1"
 }
 
-read -r -d '' IDE_FORWARDER_JS <<'JSEOF' || true
-const net = require('net')
-
-// Forward sandbox 127.0.0.1:<port> to the host editor's loopback WS at the same
-// port. The sandbox reaches the host only through its egress proxy, so tunnel via
-// HTTP CONNECT to host.docker.internal (which the proxy maps to the host loopback).
-const port = parseInt(process.argv[2], 10)
-const proxyUrl =
-    process.env.https_proxy || process.env.HTTPS_PROXY || 'http://gateway.docker.internal:3128'
-const proxy = new URL(proxyUrl)
-const proxyHost = proxy.hostname || 'gateway.docker.internal'
-const proxyPort = parseInt(proxy.port, 10) || 3128
-const target = `host.docker.internal:${port}`
-
-function handle(client) {
-    const upstream = net.connect(proxyPort, proxyHost)
-    let header = Buffer.alloc(0)
-    let tunneled = false
-
-    const onHeader = (chunk) => {
-        header = Buffer.concat([header, chunk])
-        const end = header.indexOf('\r\n\r\n')
-        if (end === -1) return
-        const status = header.slice(0, header.indexOf('\r\n')).toString()
-        if (!status.includes(' 200 ')) {
-            client.destroy()
-            upstream.destroy()
-            return
-        }
-        tunneled = true
-        upstream.removeListener('data', onHeader)
-        const rest = header.slice(end + 4) // bytes after the CONNECT response are tunnel data
-        if (rest.length) client.write(rest)
-        client.pipe(upstream)
-        upstream.pipe(client)
-    }
-
-    upstream.on('connect', () => {
-        upstream.write(`CONNECT ${target} HTTP/1.1\r\nHost: ${target}\r\n\r\n`)
-        upstream.on('data', onHeader)
-    })
-    const cleanup = () => {
-        client.destroy()
-        upstream.destroy()
-    }
-    client.on('error', cleanup)
-    upstream.on('error', cleanup)
-    client.on('close', () => {
-        if (!tunneled) upstream.destroy()
-    })
-}
-
-const server = net.createServer(handle)
-server.on('error', (e) => {
-    process.stderr.write(String(e) + '\n')
-    process.exit(1)
-})
-server.listen(port, '127.0.0.1')
-JSEOF
-
 maybe_inject_dhis2_creds() {
     local name="$1"
     [ -f "$REPO_ROOT/cypress.env.json" ] || return 0
@@ -284,7 +224,7 @@ ide_link() {
         ide_msg "Editor integration: no live Neovim for this repo — /ide will be empty (start Neovim, then re-run mount)."
         return 0
     fi
-    fwd_b64="$(printf '%s' "$IDE_FORWARDER_JS" | base64 | tr -d '\n')"
+    fwd_b64="$(base64 < "$SBX_DIR/ide-forward.js" | tr -d '\n')"
     if ! retry 2 12 sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude"; rm -rf "$HOME/.claude/ide"; ln -sfn "$1" "$HOME/.claude/ide"; printf "%s" "$2" | base64 -d > /home/agent/sbx-ide-forward.js' _ "$(ide_dir)" "$fwd_b64"; then
         ide_msg "⚠ Editor integration: couldn't reach the sandbox — /ide won't connect. Sandbox is otherwise fine."
         return 0
