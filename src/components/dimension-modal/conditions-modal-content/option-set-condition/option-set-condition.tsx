@@ -11,7 +11,7 @@ import { useInfiniteTransferOptions } from '@components/dimension-modal/transfer
 import { Transfer, TransferOption } from '@dhis2/ui'
 import { useAddMetadata, useOptionSetMetadataItem } from '@hooks'
 import { OPERATOR_IN } from '@modules/conditions'
-import { type FC, useEffect, useMemo, useState } from 'react'
+import { type FC, useMemo } from 'react'
 import { type FetchResult, optionsApi } from './options-api'
 
 type OptionSetConditionProps = {
@@ -34,6 +34,21 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
 
     const optionSetMetadata = useOptionSetMetadataItem(optionSetId)
 
+    const selectedOptionsLookup = useMemo(
+        () =>
+            optionSetMetadata?.options.reduce<
+                Record<string, { value: string; label: string }>
+            >((lookupMap, { code, name }) => {
+                lookupMap[code] = {
+                    value: code,
+                    label: name,
+                }
+
+                return lookupMap
+            }, {}),
+        [optionSetMetadata]
+    )
+
     const [fetchOptionsFn, queryState] =
         optionsApi.useLazyFetchOptionsByOptionSetQuery()
 
@@ -48,52 +63,22 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
 
     const data = rawData as FetchResult['items']
 
-    /* The left-side search re-fetches, so `data` only ever holds the options
-     * matching the current search term. Accumulate every option seen (from the
-     * persisted metadata and each fetched page) so the right side keeps showing
-     * all selected options regardless of what is currently searched. */
-    const [knownOptionsByCode, setKnownOptionsByCode] = useState<
-        Record<string, FetchResult['items'][number]>
-    >({})
-
-    useEffect(() => {
-        setKnownOptionsByCode((previous) => {
-            const next = { ...previous }
-            let hasChanges = false
-
-            const rememberOption = (option: { code: string; name: string }) => {
-                if (option.code && !next[option.code]) {
-                    next[option.code] = option as FetchResult['items'][number]
-                    hasChanges = true
-                }
-            }
-
-            optionSetMetadata?.options.forEach(rememberOption)
-            data.forEach(rememberOption)
-
-            return hasChanges ? next : previous
-        })
-    }, [optionSetMetadata, data])
-
-    const selectedOptionsLookup = useMemo(
-        () =>
-            Object.values(knownOptionsByCode).reduce<
-                Record<string, { value: string; label: string }>
-            >((lookupMap, { code, name }) => {
-                lookupMap[code] = {
-                    value: code,
-                    label: name,
-                }
-
-                return lookupMap
-            }, {}),
-        [knownOptionsByCode]
-    )
-
     const setValues = (selected: string[]) => {
+        /* The left-side search re-fetches, so `data` only holds options matching
+         * the current search term. Resolve the selected options from the already
+         * stored options as well, so selections made under an earlier search term
+         * are not lost when a new one is added under a narrowed list. */
+        const optionsByCode: Record<string, FetchResult['items'][number]> = {}
+        optionSetMetadata?.options.forEach((option) => {
+            optionsByCode[option.code] = option as FetchResult['items'][number]
+        })
+        data.forEach((option) => {
+            optionsByCode[option.code] = option
+        })
+
         const optionsMetadata = selected.reduce<FetchResult['items']>(
             (options, selectedId) => {
-                const option = knownOptionsByCode[selectedId]
+                const option = optionsByCode[selectedId]
 
                 if (option) {
                     options.push(option)
