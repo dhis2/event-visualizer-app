@@ -1,0 +1,23 @@
+# Extra hosts the AI sandboxes may reach, added ON TOP of the Docker Sandboxes "balanced"
+# default-deny egress policy. The balanced baseline already allows the common development
+# ecosystem — npm/yarn, GitHub, PyPI, crates, Maven, Docker registries, apt, nodejs.org,
+# SonarCloud, api.anthropic.com, and more — so this file lists only what the baseline does
+# NOT cover. One host or wildcard pattern per line; blank lines and lines starting with #
+# are ignored. Shared across developers via the repo.
+#
+# The DHIS2 instance host from cypress.env.json is added automatically at runtime, so it
+# does not need to be listed here. Chromium is baked into the image, so no Playwright CDN
+# is needed at runtime.
+
+# MCP servers (grep, context7)
+mcp.grep.app
+context7.com
+*.context7.com
+
+# Cypress binary CDN (e2e install)
+download.cypress.io
+cdn.cypress.io
+
+# DHIS2 — docs, play/test instances, and API access
+dhis2.org
+*.dhis2.org

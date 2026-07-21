@@ -2,37 +2,53 @@
 
 Two optional, isolated AI workspaces built on [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) (`sbx`). They are fully opt-in — if you do not install `sbx`, nothing here affects you.
 
-> **Highly experimental.** The design _should_ work on macOS, Linux, and Windows (via WSL) hosts, and with any IDE that integrates with Claude Code — but it has only been **tested on a macOS / Apple Silicon (arm64) host with Neovim**. The `node_modules` overlay is a macOS-only perf workaround (skipped on Linux, where bind mounts are already fast), and `supportedArchitectures` installs the current host's binaries plus the container's. Intel Macs are not supported. Because the whole feature is opt-in, none of this affects anyone who doesn't run `sbx`. Expect rough edges off the tested path; reports/fixes welcome.
+> **Highly experimental.** The design _should_ work on macOS, Linux, and Windows (via WSL) hosts, and with any IDE that integrates with Claude Code — but it has only been **tested on a macOS / Apple Silicon (arm64) host with Neovim**. Intel Macs are not supported. Because the whole feature is opt-in, none of this affects anyone who doesn't run `sbx`. Expect rough edges off the tested path; reports/fixes welcome.
+
+## How it works
+
+Provisioning lives in a **custom image** ([`.sbx/Dockerfile`](../.sbx/Dockerfile)) that extends the official `docker/sandbox-templates:claude-code-docker` template. It bakes in everything that doesn't depend on the repo lockfile: `pnpm`, the TypeScript language server, the `playwright-cli` browser tool with a headless Chromium, and the `typescript-lsp` / `context7` / `superpowers` Claude plugins. A thin runtime script ([`scripts/sbx.sh`](../scripts/sbx.sh)) handles only what must happen live: creating the sandbox, wiring the network policy and secrets, installing the repo's dependencies, and (for the clone) commit signing.
+
+The `docker`-flavored template is used rather than the `minimal` one because mount mode overlays `node_modules` with a container-local copy via a privileged bind mount (`CAP_SYS_ADMIN`), and only this flavor is granted that capability — so a dependency the agent installs stays inside the sandbox and never reaches the host.
+
+The agent's instructions are the markdown files in [`.sbx/`](../.sbx) (`base.md` plus `mount.md` or `clone.md`), concatenated and passed via `--append-system-prompt`.
 
 ## One-time setup
 
-Install the `sbx` CLI — on macOS via Homebrew (`brew install sbx`); see the [Docker Sandboxes docs](https://docs.docker.com/ai/sandboxes/) for other platforms. Then:
+**1. Install the `sbx` CLI** — on macOS via Homebrew (`brew install sbx`); see the [Docker Sandboxes docs](https://docs.docker.com/ai/sandboxes/) for other platforms. Docker is also required (the image is built with `docker build`).
+
+**2. Create a read-only GitHub token (required).** In GitHub → Settings → Developer settings → **Fine-grained tokens**, create a token with Resource owner = your account and Repository access = **"Public repositories (read-only)"** (no extra permissions needed). This lets `gh` read PRs/issues/repos inside the sandbox at the higher authenticated rate limit; writes fail server-side because the token is read-only. The token is stored via the `sbx` proxy and **never enters the sandbox** — the sandbox only sees a placeholder.
+
+**3. Create a dedicated SSH signing key (required).** This signs the clone's commits. It is a **signing-only** key — it grants no push or auth ability:
 
 ```bash
-./scripts/sbx.sh setup   # Docker login, network policy, Anthropic credential
+ssh-keygen -t ed25519 -f ~/.ssh/sbx_signing -C "sbx signing"
 ```
+
+Then add the **public** key (`~/.ssh/sbx_signing.pub`) to GitHub → SSH and GPG keys → New SSH key → **Key type: Signing Key** (not Authentication). Override the path with `SBX_SIGNING_KEY` if you keep it elsewhere.
+
+**4. Run setup:**
+
+```bash
+./scripts/sbx.sh setup
+```
+
+This logs in to Docker, sets the default network policy, **builds the sandbox image**, and stores your secrets: the required GitHub PAT, an optional Anthropic key (subscription users sign in via OAuth on first mount instead), an optional `context7` key, and — if `SONAR_TOKEN` is exported on the host — a SonarCloud token. Setup fails with guidance if the PAT or signing key is missing.
 
 ## Mount sandbox — hands-on, live files (`pnpm sbx:mount`)
 
 The agent edits your live working tree (changes show up in your editor immediately) and can run tests/build inside the sandbox, with no permission prompts but a constrained network. You review diffs and commit on the host. A dev server the agent starts is published to `http://localhost:3000`.
 
-> **node_modules note:** `pnpm-workspace.yaml` declares `supportedArchitectures` for both macOS and Linux arm64, so a single host `pnpm install` lays down the native binaries (`esbuild`/`vite`, `vitest`/rolldown, `rollup`) for **both** platforms. The same `node_modules` therefore runs natively on your host _and_ inside the Linux sandbox — no in-sandbox `pnpm install`, no swapping binaries back. (Don't run `pnpm install` in the mount: it isn't needed — dependencies come from the host.)
->
-> The repo is bind-mounted, and reading `node_modules` (76k tiny files) over the macOS↔Linux file-sharing layer is ~5× slower for tests/build — module resolution and jsdom setup are dominated by per-file syscall latency. So on each mount, `pnpm sbx:mount` overlays `node_modules` with a copy on the sandbox's **native filesystem** (`sudo mount --bind`, container-local — your host `node_modules` is never touched). The copy is a snapshot taken on first mount (~2 min), reused while fresh, and rebuilt automatically when `pnpm-lock.yaml` changes. If you change dependencies on the host while the sandbox is up, refresh it without re-mounting via `./scripts/sbx.sh refresh-deps`. Like the editor link, it's best-effort and time-bounded — if it can't apply, tests still run (just slowly) off the bind mount.
+> **node_modules isolation:** on every mount the script overlays `node_modules` with a container-local directory (`sudo mount --bind` of `/home/agent/nm` over the repo's `node_modules`) and runs `pnpm install` into it — so everything the agent installs stays inside the sandbox and your host `node_modules` is never touched. This is **mandatory**: if the overlay can't be established the mount **aborts** rather than falling back to the host-backed `node_modules`. The install runs on first mount (a few minutes; reused while the lockfile is unchanged), and a guarded remount in the sandbox's startup re-applies the overlay if the sandbox ever restarts. Changed dependencies while the sandbox is up? `./scripts/sbx.sh refresh-deps`.
 
-> **Editor integration (Neovim):** the sandbox mounts your live editor-lock dir (`~/.claude/ide`), so it always sees the current [`coder/claudecode.nvim`](https://github.com/coder/claudecode.nvim) lock. If Neovim is running on this repo when you mount, `pnpm sbx:mount` opens a **port-scoped** path to the editor's WebSocket and starts a forwarder for it; run `/ide` in the session to connect (diffs, selection, diagnostics). Only this repo's editor port is opened — not general host access. Re-run `pnpm sbx:mount` if you start/restart Neovim after mounting (a new port needs a fresh allow rule). The whole editor-link is best-effort: every step is time-bounded and retried, so if `sbx` is unresponsive it prints a notice and the sandbox still comes up — it never blocks the mount.
-
-> **Browser automation** works in the mount sandbox: `pnpm sbx:mount` installs a headless Chromium (via Playwright — the only source of an arm64 build; the image has no distro/Google Chrome for arm64) and registers a sandbox-local `chrome-devtools` MCP server pointed at it (`--executablePath … --headless --chromeArg=--no-sandbox`). The agent drives it with the `chrome-devtools` tools — start the dev server and have it navigate to `http://localhost:3000` to load and inspect the running app. It's a fully in-sandbox, isolated headless Chrome (no bridge to your host browser), registered at user scope so your committed config — which drives your _host_ Chrome — is untouched. First mount adds ~2 min for the Chromium download; the clone doesn't set this up.
-
-> **SonarQube skill:** if you have `SONAR_TOKEN` exported on the host when you create the mount, `pnpm sbx:mount` writes it into the sandbox and allows `sonarcloud.io`, so the `sonarqube-fix` skill (`pnpm sonar`) works inside the mount. Note this is the one host credential that lives _inside_ the sandbox (sbx's proxy-injected secrets don't reach the agent without a recreate). It's set at create time — recreate the mount to pick up a rotated token.
+> **Editor integration (mount only):** the sandbox mounts your live editor-lock dir (`~/.claude/ide`) **read-only** — it sees your editor's current Claude Code lock but can't disturb it, so it never interferes with your host editor. The mechanism is the editor-agnostic Claude Code IDE-lock protocol, so in principle it works with any editor that integrates with Claude Code — Neovim via [`coder/claudecode.nvim`](https://github.com/coder/claudecode.nvim), VS Code, JetBrains — though it has only been **tested with Neovim**. If your editor is running on this repo when you mount, `pnpm sbx:mount` opens a **port-scoped** path to its WebSocket and starts a forwarder; run `/ide` in the session to connect (diffs, selection, diagnostics). Only this repo's editor port is opened — not general host access. Re-run `pnpm sbx:mount` if you start/restart the editor after mounting. The whole editor-link is best-effort: every step is time-bounded and retried, so if `sbx` is unresponsive it prints a notice and the sandbox still comes up — it never blocks the mount. Clone mode has no editor integration by design (it's autonomous).
 
 ## Clone sandbox — autonomous (`pnpm sbx:clone`)
 
-The agent works on a private, isolated clone: it branches, runs tests, and commits on its own. Your host `node_modules` is never touched — the clone runs its own `pnpm install` on the container's native filesystem (so tests are fast, no overlay needed).
+The agent works on a private, isolated clone: it branches, runs tests, and commits on its own. Its commits are **signed** with the dedicated SSH signing key. Your host `node_modules` is never touched — the clone runs its own `pnpm install`.
 
 Git hooks are disabled in the clone (`HUSKY=0`): the per-edit format hook plus the agent's "run `pnpm test`/`pnpm lint` before finishing" instruction already cover lint/types/tests, and the clone never pushes — so the hooks would only gate autonomous commit-as-you-go. The agent is told to run `pnpm d2-app-scripts i18n extract` as its last step, the one thing the pre-commit hook does that nothing else covers.
 
-The clone can **fetch/pull from GitHub** (`pnpm sbx:clone` points `origin` at HTTPS, so the public repo needs no credentials) — e.g. `git fetch origin master` to branch off the latest master without depending on your local checkout. It **cannot push** (no push credentials, by design). So you can spin up the clone from any branch and just tell the agent to branch off current `origin/master`.
+The clone can **fetch/pull from GitHub** (`pnpm sbx:clone` points `origin` at HTTPS, so the public repo needs no credentials) — e.g. `git fetch origin master` to branch off the latest master. It **cannot push** (no push credentials, by design).
 
 ### Reviewing the clone's work
 
@@ -44,7 +60,7 @@ The agent commits to a feature branch **inside** the clone — it does not push 
     ```bash
     git fetch sandbox-event-visualizer-app-clone
     git branch -r | grep sandbox-event-visualizer-app-clone        # list its branches
-    git log --oneline sandbox-event-visualizer-app-clone/<branch>
+    git log --show-signature sandbox-event-visualizer-app-clone/<branch>
     git diff master...sandbox-event-visualizer-app-clone/<branch>
     ```
 
@@ -58,27 +74,39 @@ The agent commits to a feature branch **inside** the clone — it does not push 
 
 Unlike the mount, the clone gets a **one-way copy** of this project's memory at create (no sessions, no settings — it stays isolated). Re-push the latest host memory with `./scripts/sbx.sh sync-clone`.
 
-> The clone runs `pnpm install` at create. Its `postinstall` runs `generate-types`, which fetches the OpenAPI spec from the DHIS2 dev instance (the provisioned network rule allows it), and the install pulls the Cypress binary too (its CDN is allow-listed), with the Electron/GTK system libs provisioned so `cypress` can actually run.
+> The clone runs `pnpm install` at create. Its `postinstall` runs `generate-types`, which fetches the OpenAPI spec from the DHIS2 dev instance (the provisioned network rule allows it), and the install pulls the Cypress binary too (its CDN is allow-listed), with the Electron/GTK system libs baked into the image so `cypress` can actually run.
 
-## Provisioning and forwarding
+## Browser automation
 
-> **First run provisions the sandbox** (installs pnpm, the `typescript-lsp`, `context7`, and `superpowers` plugins, and opens network access for the `grep`/`context7` MCPs, `dhis2.org`/`*.dhis2.org`, and the Cypress binary CDN). That first `pnpm sbx:mount`/`sbx:clone` takes a minute longer; later runs reuse it.
+Both sandboxes use the **Playwright agent CLI** (`playwright-cli`), baked into the image along with a matching headless Chromium (no runtime download). The agent drives it with commands like `playwright-cli open http://localhost:3000`, `playwright-cli snapshot`, `click`, `fill`, and `screenshot`; the installed Playwright skill documents common flows. Start the dev server first, then point it at `http://localhost:3000`. There is no `chrome-devtools` MCP in the sandbox.
 
-Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount -- --continue` or `pnpm sbx:clone -- --model opus`.
+## GitHub (read-only)
 
-`pnpm sbx:mount` mounts _this project's_ Claude history + memory (`~/.claude/projects/<repo>`) into the sandbox **read-write**, so `pnpm sbx:mount -- --continue` (or `--resume`) picks up your host conversation and work done in the sandbox flows back to the host. (Only this project's dir is shared — no credentials or other projects. Don't run host Claude and the sandbox on this project simultaneously; they'd write the same files.)
+`gh` works inside the sandbox for reads (`gh pr list`, `gh pr view`, `gh api …`) at the authenticated rate limit, using the read-only PAT from setup. The token is injected by the `sbx` proxy on outbound GitHub requests and never enters the sandbox — the sandbox environment only holds a placeholder. Writes (creating/merging PRs, pushing) fail server-side because the token is read-only.
+
+## SonarQube skill
+
+The `sonarqube-fix` skill (`pnpm sonar`) depends on `SONAR_TOKEN` the same way it does on the host. If you export `SONAR_TOKEN` on the host before `setup`, it's stored as a proxy-injected placeholder (never exposed inside the sandbox) so the skill works in the sandbox just as it would on your host.
 
 ## Other commands
 
 ```bash
-./scripts/sbx.sh refresh-deps  # rebuild the mount's native node_modules cache from the host install
+./scripts/sbx.sh setup         # one-time: build image, set default policy, store secrets
+./scripts/sbx.sh rebuild       # rebuild + reload the image after editing .sbx/ (secrets untouched)
+./scripts/sbx.sh refresh-deps  # reinstall the mount's container-local node_modules
 ./scripts/sbx.sh sync-clone    # re-copy this project's memory into the clone (host -> clone)
 ./scripts/sbx.sh reset-clone   # wipe the clone back to a clean checkout
 ./scripts/sbx.sh purge         # remove both sandboxes
 ```
 
+Extra Claude flags are forwarded — pass them after `--`, e.g. `pnpm sbx:mount -- --continue` or `pnpm sbx:clone -- --model opus`.
+
+`pnpm sbx:mount` mounts _this project's_ Claude history + memory (`~/.claude/projects/<repo>`) into the sandbox **read-write**, so `pnpm sbx:mount -- --continue` (or `--resume`) picks up your host conversation and work done in the sandbox flows back. (Only this project's dir is shared — no credentials or other projects. Don't run host Claude and the sandbox on this project simultaneously; they'd write the same files.)
+
 ## Tooling and constraints
 
-**Tooling inside the sandbox:** the `typescript-lsp`, `context7`, and `superpowers` plugins, the `grep` MCP, and the prettier/eslint format hook all work. Only project-level config (committed `.claude/`) is picked up — your _host_ user-level MCP servers are not propagated in. **GitHub auth (`gh`) is deliberately not available inside sandboxes** — the agent has no push/PR power, so a misbehaving session can't touch your repos; do GitHub operations on the host.
+The `typescript-lsp`, `context7`, and `superpowers` plugins, the `grep` MCP, the `playwright-cli` browser tool, and the prettier/eslint format hook all work inside the sandbox. Only project-level config (committed `.claude/`) is picked up — your _host_ user-level MCP servers are not propagated in. `gh` is read-only (see above), so a misbehaving session can't push or open PRs.
 
-`/doctor` shows the `chrome-devtools-mcp` plugin as "enabled in project settings but not installed" — this is **expected**: the plugin is enabled for host use (it drives the host's Chrome), can't be disabled sandbox-locally (it's enabled at project scope = the committed file), and isn't installed in the sandbox, so it loads no tools and the warning is harmless. Browser automation comes from the sandbox-local `chrome-devtools` server (see above). This goes away once Google ships Chrome for arm64 Linux and the sandbox can install it.
+Outbound network uses the `balanced` default-deny egress policy plus a shared allowlist in [`.sbx/network-allowlist.txt`](../.sbx/network-allowlist.txt) (one host/pattern per line; this repo's DHIS2 instance host is added automatically). Edit that file to grant the sandbox access to another host, then recreate the sandbox. The restriction is defense-in-depth against data exfiltration — a session can read the repo, credentials, and memory, so limiting where it can send them matters.
+
+Only the `.sbx/Dockerfile` is baked into the image — after changing it, run `./scripts/sbx.sh rebuild`. The instructions (`.sbx/*.md`), the allowlist, and the forwarder are read at runtime, so changes to them need no rebuild. Either way, recreate the sandbox (`./scripts/sbx.sh purge`, then mount/clone) to pick up the changes.

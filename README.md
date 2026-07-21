@@ -85,8 +85,12 @@ npm install -g typescript-language-server
 # Install: https://cli.github.com/
 gh auth login
 
-# 3. Chrome extension — enables browser automation for testing the running app
-# Install from: https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn
+# 3. Browser automation for testing the running app — claude-in-chrome. It works in BOTH the
+# terminal and desktop Claude Code, but you must set it up: install the Claude browser
+# extension and connect it to Claude Code.
+# https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn
+# Once connected, Claude can drive your browser to load http://localhost:3000.
+# (This is host-only; the AI sandboxes use playwright-cli instead — no setup needed.)
 
 # 4. Inside Claude Code, install and activate plugins
 /plugin install typescript-lsp@claude-plugins-official
@@ -97,7 +101,7 @@ gh auth login
 
 Two optional, **experimental**, isolated AI workspaces built on [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) (`sbx`) — a hands-on **mount** (your live working tree) and an autonomous **clone**. Fully opt-in: if you do not install `sbx`, nothing here affects you. (Tested on macOS/arm64 + Neovim; see the guide for portability.)
 
-With the `sbx` CLI installed and set up (see the guide), launch one with:
+One-time setup needs the `sbx` CLI, a read-only GitHub token, and a dedicated SSH signing key (all covered in the guide). With that done, launch one with:
 
 ```bash
 pnpm sbx:mount            # hands-on, edits your live files
