@@ -4,7 +4,7 @@ You have passwordless sudo. Install OS packages with `sudo apt-get install ...` 
 
 Project dependencies live in a container-local `node_modules` that is isolated from the host — anything installed here stays inside the sandbox and never touches the host, so `pnpm install` is always safe to run. Dependencies are set up when the sandbox is created; if the sandbox has been running for a while or the lockfile has changed, run `pnpm install` to refresh them to the current lockfile.
 
-Outbound network is restricted by a "balanced" policy. Permission prompts are skipped because of this isolation, not because the environment is unconditionally safe — still avoid destructive or data-exfiltrating actions.
+Outbound network is restricted by a "balanced" policy. Permission prompts are skipped because of this isolation, not because the environment is unconditionally safe — still avoid destructive or data-exfiltrating actions. If you can't reach a resource you legitimately need, don't try to work around the restriction — ask the human to allow it, and give them these two steps: (1) apply it to this running sandbox immediately, no restart needed, by running on the host `sbx policy allow network --sandbox <name> <host>` (the sandbox name is shown by `sbx ls`); and (2) add the host to `.sbx/network-allowlist.txt` so it persists for future sandboxes.
 
 GitHub access is READ-ONLY. `gh` is authenticated with a read-only token, so you can read repositories, pull requests, issues, and workflow runs (`gh pr list`, `gh pr view`, `gh api ...`, or `curl https://api.github.com/...`). You CANNOT create, edit, or merge PRs/issues, and you cannot push — those requests fail server-side by design. Read freely; don't attempt writes.
 
