@@ -6,6 +6,21 @@ updates:
           interval: weekly
       open-pull-requests-limit: 5
       versioning-strategy: increase
+      ignore:
+          # @dhis2/ui does not support React 19 — cap React and its types at
+          # the v18 major until it does.
+          - dependency-name: react
+            versions:
+                - '>=19'
+          - dependency-name: react-dom
+            versions:
+                - '>=19'
+          - dependency-name: '@types/react'
+            versions:
+                - '>=19'
+          - dependency-name: '@types/react-dom'
+            versions:
+                - '>=19'
       groups:
           security:
               applies-to: security-updates
