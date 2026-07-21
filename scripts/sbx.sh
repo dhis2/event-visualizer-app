@@ -357,10 +357,14 @@ setup_signing() {
     local name="$1" gname gmail
     gname="$(git config user.name || true)"
     gmail="$(git config user.email || true)"
+    # sbx cp does not create parent dirs, and the image has no ~/.ssh — create it first.
+    sbx exec "$name" bash -lc 'mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"'
     sbx cp "$SIGNING_KEY" "${name}:/home/agent/.ssh/sbx_signing"
     sbx cp "${SIGNING_KEY}.pub" "${name}:/home/agent/.ssh/sbx_signing.pub"
     sbx exec "$name" bash -lc '
         set -e
+        # sbx cp preserves the host uid, so the agent cannot read the 0600 key — take ownership.
+        sudo chown "$(id -un):$(id -gn)" "$HOME/.ssh/sbx_signing" "$HOME/.ssh/sbx_signing.pub"
         chmod 700 "$HOME/.ssh"; chmod 600 "$HOME/.ssh/sbx_signing"; chmod 644 "$HOME/.ssh/sbx_signing.pub"
         git config --global gpg.format ssh
         git config --global user.signingkey "$HOME/.ssh/sbx_signing.pub"
