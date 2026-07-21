@@ -46,7 +46,7 @@ The current git branch is used to detect the relevant PR automatically. If you'r
         Which PR would you like to fix SonarQube issues for?
         ```
 
-    **No `gh` auth (e.g. sandboxes)?** `gh` refuses to run tokenless, but public repos allow unauthenticated reads via the GitHub REST API. Substitute:
+    **No `gh` auth?** In the AI sandboxes `gh` is authenticated read-only, so `gh pr list` etc. work. Otherwise, public repos allow unauthenticated reads via the GitHub REST API — substitute:
 
         ```bash
         # PR number for the current branch:
@@ -256,7 +256,7 @@ User: /sonarqube-fix
 
 - Verify `gh` is installed and authenticated (`gh auth status`)
 - Test by running `gh pr list` directly
-- **`gh` not authenticated (sandboxes)**: not needed for public repos — use the unauthenticated `curl` GitHub REST API calls from Step 1. All read-only PR lookups work anonymously.
+- **`gh` not authenticated**: the AI sandboxes authenticate `gh` read-only, so PR lookups work there. Elsewhere without auth, use the unauthenticated `curl` GitHub REST API calls from Step 1 — all read-only PR lookups work anonymously on public repos.
 
 ## Resources
 
