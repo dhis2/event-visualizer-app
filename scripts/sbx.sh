@@ -207,6 +207,9 @@ live_ide_ports() {
     for port in $ports; do
         nc -z 127.0.0.1 "$port" 2>/dev/null && echo "$port"
     done
+    # Always succeed: this is a reachability probe, and finding nothing reachable (all
+    # locks stale) is normal — a non-zero exit here would abort the mount under `set -e`.
+    return 0
 }
 
 # Editor integration for /ide (mount only). Symlinks the (mounted) host lock dir into
@@ -218,8 +221,8 @@ ide_link() {
     local name="$1" ports port fwd_b64
     ports="$(live_ide_ports)"
     if [ -z "$ports" ]; then
-        [ -d "$(ide_dir)" ] && retry 2 12 sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude"; rm -rf "$HOME/.claude/ide"; ln -sfn "$1" "$HOME/.claude/ide"' _ "$(ide_dir)"
-        ide_msg "Editor integration: no live Neovim for this repo — /ide will be empty (start Neovim, then re-run mount)."
+        [ -d "$(ide_dir)" ] && { retry 2 12 sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude"; rm -rf "$HOME/.claude/ide"; ln -sfn "$1" "$HOME/.claude/ide"' _ "$(ide_dir)" || true; }
+        ide_msg "Editor integration: no live editor for this repo — /ide will be empty (start your editor, then re-run mount)."
         return 0
     fi
     fwd_b64="$(base64 < "$SBX_DIR/ide-forward.js" | tr -d '\n')"
@@ -332,7 +335,8 @@ cmd_mount() {
         accept_trust "$MOUNT_NAME"
         link_host_dirs "$MOUNT_NAME"
     fi
-    ide_link "$MOUNT_NAME"
+    # Editor integration is best-effort and must never block the mount.
+    ide_link "$MOUNT_NAME" || true
     # Mandatory isolation boundary: if the container-local node_modules overlay can't be
     # established, abort rather than launch Claude against the host-backed node_modules.
     node_modules_overlay "$MOUNT_NAME" || exit 1
