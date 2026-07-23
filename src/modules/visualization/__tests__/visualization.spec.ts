@@ -1,10 +1,18 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
+import { getDefaultOptions, getEnabledOptions } from '@modules/options'
 import {
     getSaveableVisualization,
+    getVisualizationState,
     getVisualizationUiConfig,
     normalizeApiSavedVisualization,
+    toCurrentVis,
 } from '@modules/visualization/state'
-import type { ApiSavedVisualization, SavedVisualization } from '@types'
+import type {
+    ApiSavedVisualization,
+    CurrentVisualization,
+    EventVisualizationOptions,
+    SavedVisualization,
+} from '@types'
 import { describe, it, expect } from 'vitest'
 
 const PID = 'pid'
@@ -565,5 +573,115 @@ describe('normalizeApiSavedVisualization', () => {
         )
 
         expect(result.legacy).toBe(true)
+    })
+})
+
+describe('getVisualizationState treats default-valued options as unchanged', () => {
+    const OPTION_KEYS = Object.keys(DEFAULT_OPTIONS)
+
+    /* The API returns most options at their default value (all booleans,
+     * density, font size, separator), so a freshly loaded vis is not sparse —
+     * this mirrors that. */
+    const apiDefaultOptions: Partial<EventVisualizationOptions> = {
+        showData: false,
+        colTotals: false,
+        rowTotals: false,
+        colSubTotals: false,
+        rowSubTotals: false,
+        cumulativeValues: false,
+        completedOnly: false,
+        skipRounding: false,
+        hideEmptyRows: false,
+        hideTitle: false,
+        hideSubtitle: false,
+        showHierarchy: false,
+        showDimensionLabels: false,
+        noSpaceBetweenColumns: false,
+        percentStackedValues: false,
+        hideNaData: false,
+        displayDensity: 'NORMAL',
+        fontSize: 'NORMAL',
+        digitGroupSeparator: 'SPACE',
+    }
+
+    const buildApiVis = (
+        options: Partial<EventVisualizationOptions> = apiDefaultOptions
+    ): ApiSavedVisualization =>
+        ({
+            type: 'LINE_LIST',
+            outputType: 'EVENT',
+            columns: [],
+            rows: [],
+            filters: [],
+            programDimensions: [],
+            ...options,
+        }) as unknown as ApiSavedVisualization
+
+    /* Mirror how tUpdateCurrentVisFromVisUiConfig rebuilds currentVis: build a
+     * full visUiConfig, then spread its (unstripped) options onto the saved-vis
+     * baseline. Dimensions are empty, so any diff can only come from options.
+     * `instanceDefaults` stands in for the systemSetting-seeded base options. */
+    const rebuildCurrentVis = (
+        savedVis: SavedVisualization,
+        instanceDefaults: EventVisualizationOptions = DEFAULT_OPTIONS
+    ): CurrentVisualization => {
+        const baseline = toCurrentVis(savedVis)
+        const visUiConfig = getVisualizationUiConfig(baseline, instanceDefaults)
+        const nonOptionFields = { ...baseline } as Record<string, unknown>
+        for (const key of OPTION_KEYS) {
+            delete nonOptionFields[key]
+        }
+        return {
+            ...nonOptionFields,
+            ...getEnabledOptions(visUiConfig.options),
+        } as CurrentVisualization
+    }
+
+    it('stays SAVED for a freshly loaded vis carrying default-valued options', () => {
+        const savedVis = normalizeApiSavedVisualization(buildApiVis())
+
+        const currentVis = rebuildCurrentVis(savedVis)
+
+        expect(getVisualizationState(savedVis, currentVis)).toBe('SAVED')
+    })
+
+    it('stays SAVED when a non-default option is set', () => {
+        const savedVis = normalizeApiSavedVisualization(
+            buildApiVis({
+                ...apiDefaultOptions,
+                showData: true,
+                displayDensity: 'COMFORTABLE',
+            })
+        )
+
+        const currentVis = rebuildCurrentVis(savedVis)
+
+        expect(getVisualizationState(savedVis, currentVis)).toBe('SAVED')
+    })
+
+    it('stays SAVED when the instance separator changed after the vis was saved', () => {
+        const savedVis = normalizeApiSavedVisualization(
+            buildApiVis({ ...apiDefaultOptions, digitGroupSeparator: 'COMMA' })
+        )
+        expect(savedVis.digitGroupSeparator).toBe('COMMA')
+
+        const currentVis = rebuildCurrentVis(
+            savedVis,
+            getDefaultOptions('SPACE')
+        )
+
+        expect(currentVis.digitGroupSeparator).toBe('COMMA')
+        expect(getVisualizationState(savedVis, currentVis)).toBe('SAVED')
+    })
+
+    it('is DIRTY when a real option changes', () => {
+        const savedVis = normalizeApiSavedVisualization(buildApiVis())
+
+        const currentVis = {
+            ...rebuildCurrentVis(savedVis),
+            showData: true,
+        }
+
+        expect(getVisualizationState(savedVis, currentVis)).toBe('DIRTY')
     })
 })

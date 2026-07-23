@@ -16,6 +16,7 @@ import {
     timeFieldTimeDimensionMap,
 } from '@modules/dimension/time'
 import { toAppLocalDimensions } from '@modules/dimension/translation'
+import { getNonDefaultOptions } from '@modules/options'
 import { getRepetitionsFromVisualisation } from '@modules/repetitions'
 import type {
     ApiSavedVisualization,
@@ -109,6 +110,26 @@ export const toCurrentVis = (
     return result as CurrentVisualization
 }
 
+/* A loaded savedVis and the currentVis rebuilt from it are not byte-identical
+ * on options: the API returns most options at their default value, while the
+ * rebuilt currentVis carries a different default set (some absent, some as
+ * explicit undefined). Those differences are not real edits, so before
+ * comparing we drop every option that is at its default or unset — a default
+ * value and an absent option then compare equal. Non-option fields are left
+ * untouched. */
+const stripDefaultOptions = (
+    vis: CurrentVisualization
+): CurrentVisualization => {
+    const nonDefaultOptions = getNonDefaultOptions(vis)
+    const visClone = { ...vis }
+    for (const key of OPTION_KEYS) {
+        if (!(key in nonDefaultOptions)) {
+            delete visClone[key]
+        }
+    }
+    return visClone as CurrentVisualization
+}
+
 export const getVisualizationState = (
     savedVis: SavedVisualization | EmptyVisualization,
     currentVis: CurrentVisualization | EmptyVisualization
@@ -117,7 +138,12 @@ export const getVisualizationState = (
         return isVisualizationEmpty(currentVis) ? 'EMPTY' : 'UNSAVED'
     } else if (isVisualizationEmpty(currentVis)) {
         return 'DIRTY'
-    } else if (deepEqual(toCurrentVis(savedVis), currentVis)) {
+    } else if (
+        deepEqual(
+            stripDefaultOptions(toCurrentVis(savedVis)),
+            stripDefaultOptions(currentVis)
+        )
+    ) {
         return 'SAVED'
     } else {
         return 'DIRTY'
@@ -245,13 +271,13 @@ const OPTION_KEYS = Object.keys(DEFAULT_OPTIONS) as Array<
 const extractOptions = (
     vis: CurrentVisualization
 ): Partial<EventVisualizationOptions> => {
-    const extracted: Partial<EventVisualizationOptions> = {}
+    const extracted: Record<string, unknown> = {}
     for (const key of OPTION_KEYS) {
         if (vis[key] !== undefined) {
-            ;(extracted as Record<string, unknown>)[key] = vis[key]
+            extracted[key] = vis[key]
         }
     }
-    return extracted
+    return extracted as Partial<EventVisualizationOptions>
 }
 
 export const getVisualizationUiConfig = (
