@@ -15,10 +15,7 @@ import {
     isVisualizationEmpty,
     isVisualizationPersistable,
 } from '@modules/visualization/state'
-import {
-    getCurrentVis,
-    setCurrentVisNameDescription,
-} from '@store/current-vis-slice'
+import { getCurrentVis } from '@store/current-vis-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import { getSavedVis, setSavedVisNameDescription } from '@store/saved-vis-slice'
 import { tLoadSavedVisualization } from '@store/thunks'
@@ -154,8 +151,9 @@ export const useToolbarActions = () => {
             )
 
             if (data) {
-                // Update current and visualization with edited name/description
-                dispatch(setCurrentVisNameDescription(data))
+                /* Only the saved vis carries name/description; currentVis must
+                 * not, or it would differ from toCurrentVis(savedVis) and read
+                 * as edited. */
                 dispatch(setSavedVisNameDescription(data))
 
                 showAlert({
