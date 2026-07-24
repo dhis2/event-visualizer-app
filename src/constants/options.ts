@@ -16,17 +16,26 @@ export const DEFAULT_OPTIONS: EventVisualizationOptions = {
     colTotals: false,
     completedOnly: false,
     cumulativeValues: false,
-    // Populated from user settings in the preloadedState
+    /* A visualization has no fixed default separator: a new vis seeds its
+     * value from the `digitGroupSeparator` system setting (see
+     * getDefaultOptions, applied to the preloaded store state). Left undefined
+     * here so getNonDefaultOptions never treats a concrete separator as a
+     * default — a saved vis always keeps its own value. */
     digitGroupSeparator: undefined,
     displayDensity: 'NORMAL',
     fontSize: 'NORMAL',
-    //    hideEmptyColumns: false,
+    /* A supported eventVisualizations API option, but not implemented in this
+     * app yet (only "hide empty rows" is). Kept commented out here and in the
+     * EventVisualizationOptions type; uncomment in both to wire it up. */
+    // hideEmptyColumns: false,
     hideNaData: false,
     hideEmptyRowItems: 'NONE',
     hideEmptyRows: false,
     hideSubtitle: false,
     hideTitle: false,
-    // Populate with default legend object
+    /* undefined means "no legend" — the default (the legend checkbox is off).
+     * DEFAULT_LEGEND_OPTION is not the default here: it is the initial config
+     * seeded when the user turns the legend on (see the Legend options field). */
     legend: undefined,
     noSpaceBetweenColumns: false,
     percentStackedValues: false,

@@ -14,6 +14,7 @@ import type {
     AppCachedData,
     EventVisualizationOptionFieldName,
 } from '@types'
+import deepEqual from 'deep-equal'
 
 export const getOptionsTabsDisplayNames = (): Record<
     OptionsTabKey,
@@ -77,6 +78,25 @@ export const getEnabledOptions = (
         result[key] = undefined
     }
     return result
+}
+
+/* Returns only the options that differ from the defaults: an option is dropped
+ * when it is unset or equal to its default value. Used to compare two
+ * visualizations while treating a default-valued option and an absent option
+ * as the same. */
+export const getNonDefaultOptions = (
+    options: EventVisualizationOptions
+): EventVisualizationOptions => {
+    const result: Record<string, unknown> = {}
+    for (const key of Object.keys(
+        DEFAULT_OPTIONS
+    ) as EventVisualizationOptionFieldName[]) {
+        const value = options[key]
+        if (value !== undefined && !deepEqual(value, DEFAULT_OPTIONS[key])) {
+            result[key] = value
+        }
+    }
+    return result as EventVisualizationOptions
 }
 
 export const isPopulatedLegendOption = (
