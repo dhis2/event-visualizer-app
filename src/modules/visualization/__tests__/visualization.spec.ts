@@ -574,6 +574,62 @@ describe('normalizeApiSavedVisualization', () => {
 
         expect(result.legacy).toBe(true)
     })
+
+    it('upgrades a legacy EVENT+LINE_LIST enrollment `ou` to `enrollmentOu`', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                type: 'LINE_LIST',
+                outputType: 'EVENT',
+                columns: [
+                    {
+                        dimension: 'ou',
+                        dimensionType: 'ORGANISATION_UNIT',
+                        program: { id: PID },
+                    },
+                ] as ApiSavedVisualization['columns'],
+            })
+        )
+
+        expect(dimensionsOf(result)).toEqual(['enrollmentOu'])
+        expect(result.legacy).toBe(true)
+    })
+
+    it('leaves ENROLLMENT enrollment `ou` as `ou`', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                type: 'LINE_LIST',
+                outputType: 'ENROLLMENT',
+                columns: [
+                    {
+                        dimension: 'ou',
+                        dimensionType: 'ORGANISATION_UNIT',
+                        program: { id: PID },
+                    },
+                ] as ApiSavedVisualization['columns'],
+            })
+        )
+
+        expect(dimensionsOf(result)).toEqual(['ou'])
+    })
+
+    it('leaves the stage event `ou` (with programStage) as `ou`', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                type: 'LINE_LIST',
+                outputType: 'EVENT',
+                columns: [
+                    {
+                        dimension: 'ou',
+                        dimensionType: 'ORGANISATION_UNIT',
+                        program: { id: PID },
+                        programStage: { id: SID },
+                    },
+                ] as ApiSavedVisualization['columns'],
+            })
+        )
+
+        expect(dimensionsOf(result)).toEqual(['ou'])
+    })
 })
 
 describe('getVisualizationState treats default-valued options as unchanged', () => {
@@ -681,6 +737,58 @@ describe('getVisualizationState treats default-valued options as unchanged', () 
             ...rebuildCurrentVis(savedVis),
             showData: true,
         }
+
+        expect(getVisualizationState(savedVis, currentVis)).toBe('DIRTY')
+    })
+})
+
+describe('getVisualizationState ignores non-persisted dimension props', () => {
+    const base = {
+        type: 'LINE_LIST',
+        outputType: 'EVENT',
+        rows: [],
+        filters: [],
+    }
+
+    it('is SAVED when dims differ only by dimensionType/valueType', () => {
+        const savedVis = {
+            ...base,
+            columns: [
+                {
+                    dimension: 'de1',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    program: { id: 'p1' },
+                    programStage: { id: 's1' },
+                },
+            ],
+        } as unknown as SavedVisualization
+        const currentVis = {
+            ...base,
+            columns: [
+                {
+                    dimension: 'de1',
+                    dimensionType: 'DATA_ELEMENT',
+                    valueType: 'TEXT',
+                    program: { id: 'p1' },
+                    programStage: { id: 's1' },
+                },
+            ],
+        } as unknown as CurrentVisualization
+
+        expect(getVisualizationState(savedVis, currentVis)).toBe('SAVED')
+    })
+
+    it('is DIRTY when the dimension itself changes', () => {
+        const savedVis = {
+            ...base,
+            columns: [
+                { dimension: 'de1', dimensionType: 'PROGRAM_DATA_ELEMENT' },
+            ],
+        } as unknown as SavedVisualization
+        const currentVis = {
+            ...base,
+            columns: [{ dimension: 'de2', dimensionType: 'DATA_ELEMENT' }],
+        } as unknown as CurrentVisualization
 
         expect(getVisualizationState(savedVis, currentVis)).toBe('DIRTY')
     })

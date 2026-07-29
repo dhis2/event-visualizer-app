@@ -1,3 +1,4 @@
+import { AXES } from '@constants/axis'
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { layoutGetAllDimensions } from '@dhis2/analytics'
 import { getHeadersMap } from '@modules/analytics-request'
@@ -15,7 +16,10 @@ import {
     outputTypeTimeDimensionMap,
     timeFieldTimeDimensionMap,
 } from '@modules/dimension/time'
-import { toAppLocalDimensions } from '@modules/dimension/translation'
+import {
+    toAppLocalDimensions,
+    toEventVisualizationDimensionId,
+} from '@modules/dimension/translation'
 import { getNonDefaultOptions } from '@modules/options'
 import { getRepetitionsFromVisualisation } from '@modules/repetitions'
 import type {
@@ -30,6 +34,7 @@ import type {
     SavedVisualization,
     SortDirection,
     VisualizationState,
+    VisualizationType,
 } from '@types'
 import deepEqual from 'deep-equal'
 
@@ -110,24 +115,73 @@ export const toCurrentVis = (
     return result as CurrentVisualization
 }
 
-/* A loaded savedVis and the currentVis rebuilt from it are not byte-identical
- * on options: the API returns most options at their default value, while the
- * rebuilt currentVis carries a different default set (some absent, some as
- * explicit undefined). Those differences are not real edits, so before
- * comparing we drop every option that is at its default or unset — a default
- * value and an absent option then compare equal. Non-option fields are left
- * untouched. */
-const stripDefaultOptions = (
-    vis: CurrentVisualization
-): CurrentVisualization => {
-    const nonDefaultOptions = getNonDefaultOptions(vis)
-    const visClone = { ...vis }
-    for (const key of OPTION_KEYS) {
-        if (!(key in nonDefaultOptions)) {
-            delete visClone[key]
+/* Fields derived from the layout (and its programs): they duplicate what the
+ * axes already encode, and the rebuilt currentVis resolves them while a saved
+ * vis may omit them — so they're not real edits and are ignored when comparing. */
+const DERIVED_LAYOUT_FIELDS: ReadonlySet<string> = new Set([
+    'trackedEntityType',
+    'attributeDimensions',
+    'programDimensions',
+])
+
+const DIMENSION_AXES = new Set<string>(AXES)
+
+/* An axis in the form used for change detection: drop the dimension props that
+ * aren't persisted (dimensionType, valueType — also removed on save; the API
+ * returns e.g. PROGRAM_DATA_ELEMENT while the rebuilt currentVis carries the
+ * app-local DATA_ELEMENT) and treat an empty items array as absent, so
+ * representation-only differences don't read as edits. */
+const comparableAxis = (axis: DimensionArray = []): DimensionArray =>
+    removeDimensionPropertiesBeforeSaving(axis).map((dim) => {
+        if (Array.isArray(dim.items) && dim.items.length === 0) {
+            const withoutItems = { ...dim }
+            delete withoutItems.items
+            return withoutItems
+        }
+        return dim
+    })
+
+/* Decide whether the current vis matches the saved one, field by field.
+ * Options compare with default ≡ absent (getNonDefaultOptions); the dimension
+ * axes compare via comparableAxis; derived layout fields are ignored; every
+ * other field is a plain deepEqual, so anything new is compared by default.
+ * Iterating the union of keys keeps an explicit `undefined` (which the rebuild
+ * emits, e.g. value) equal to an absent key. */
+const areVisualizationsEquivalent = (
+    savedVis: CurrentVisualization,
+    currentVis: CurrentVisualization
+): boolean => {
+    if (
+        !deepEqual(
+            getNonDefaultOptions(savedVis),
+            getNonDefaultOptions(currentVis)
+        )
+    ) {
+        return false
+    }
+    const saved = savedVis as Record<string, unknown>
+    const current = currentVis as Record<string, unknown>
+    const keys = new Set([...Object.keys(saved), ...Object.keys(current)])
+    for (const key of keys) {
+        if (key in DEFAULT_OPTIONS || DERIVED_LAYOUT_FIELDS.has(key)) {
+            continue
+        }
+        if (DIMENSION_AXES.has(key)) {
+            if (
+                !deepEqual(
+                    comparableAxis(saved[key] as DimensionArray),
+                    comparableAxis(current[key] as DimensionArray)
+                )
+            ) {
+                return false
+            }
+            continue
+        }
+        if (!deepEqual(saved[key], current[key])) {
+            return false
         }
     }
-    return visClone as CurrentVisualization
+    return true
 }
 
 export const getVisualizationState = (
@@ -139,10 +193,7 @@ export const getVisualizationState = (
     } else if (isVisualizationEmpty(currentVis)) {
         return 'DIRTY'
     } else if (
-        deepEqual(
-            stripDefaultOptions(toCurrentVis(savedVis)),
-            stripDefaultOptions(currentVis)
-        )
+        areVisualizationsEquivalent(toCurrentVis(savedVis), currentVis)
     ) {
         return 'SAVED'
     } else {
@@ -473,6 +524,30 @@ export const normalizeApiSavedVisualization = (
             }
             if (!skipStageRef && stageRef && !out.programStage) {
                 out = { ...out, programStage: stageRef }
+            }
+
+            /* Legacy vis stored the enrollment org unit as bare `ou`; this app
+             * writes `enrollmentOu` where the wire form needs it (EVENT/TEI
+             * LINE_LIST). Upgrade to the current canonical form using the same
+             * rule the save path applies — a no-op for ENROLLMENT/PIVOT (where
+             * `ou` is canonical) and for the stage event OU (which carries a
+             * programStage). */
+            if (
+                outputType &&
+                out.dimension === 'ou' &&
+                out.program?.id &&
+                !out.programStage
+            ) {
+                const canonicalOu = toEventVisualizationDimensionId({
+                    dimensionId: 'enrollmentOu',
+                    programId: out.program.id,
+                    outputType,
+                    visualizationType: rest.type as VisualizationType,
+                })
+                if (canonicalOu !== out.dimension) {
+                    out = { ...out, dimension: canonicalOu }
+                    legacy = true
+                }
             }
 
             return out

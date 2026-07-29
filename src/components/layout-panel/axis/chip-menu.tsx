@@ -1,3 +1,4 @@
+import { AXES } from '@constants/axis'
 import i18n from '@dhis2/d2-i18n'
 import { FlyoutMenu, MenuDivider, MenuItem } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
@@ -16,7 +17,6 @@ type ChipMenuProps = {
     dimension: LayoutDimension
     onClose: () => void
 }
-const AXIS_IDS: Axis[] = ['columns', 'rows', 'filters']
 
 export const ChipMenu: FC<ChipMenuProps> = ({ axisId, dimension, onClose }) => {
     const dataTest = 'chip-menu'
@@ -61,7 +61,7 @@ export const ChipMenu: FC<ChipMenuProps> = ({ axisId, dimension, onClose }) => {
 
     const applicableAxisIds = useMemo<Axis[]>(
         () =>
-            AXIS_IDS.filter(
+            AXES.filter(
                 (axis) =>
                     axis !== axisId &&
                     !(axis === 'rows' && visType === 'LINE_LIST')
