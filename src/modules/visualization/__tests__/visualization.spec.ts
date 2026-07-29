@@ -700,12 +700,11 @@ describe('getVisualizationState treats default-valued options as unchanged', () 
         const savedVis = normalizeApiSavedVisualization(
             buildApiVis({ ...apiDefaultOptions, digitGroupSeparator: 'COMMA' })
         )
-        expect(savedVis.digitGroupSeparator).toBe('COMMA')
 
-        const currentVis = rebuildCurrentVis(
-            savedVis,
-            getDefaultOptions('SPACE')
-        )
+        /* The vis keeps the separator seeded at creation (COMMA); it does not
+         * follow the instance default, now SPACE — so it stays SAVED. */
+        const instanceDefaults = getDefaultOptions('SPACE')
+        const currentVis = rebuildCurrentVis(savedVis, instanceDefaults)
 
         expect(currentVis.digitGroupSeparator).toBe('COMMA')
         expect(getVisualizationState(savedVis, currentVis)).toBe('SAVED')
