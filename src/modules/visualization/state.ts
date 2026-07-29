@@ -55,8 +55,7 @@ const visualizationHasTrackedEntityTypeId = (
     visualization: CurrentVisualization | EmptyVisualization
 ): boolean => Boolean(visualization?.trackedEntityType?.id)
 
-// Shape check: does the visualization carry the minimum fields required for
-// the API to accept a save payload (POST or PUT)
+// True when the vis has the minimum fields the API needs to accept a save.
 export const isVisualizationPersistable = (
     visualization: CurrentVisualization | EmptyVisualization
 ): boolean =>
@@ -72,9 +71,8 @@ export const isVisualizationWithTimeDimension = (vis: CurrentVisualization) =>
             items.length > 0
     )
 
-// Keys on CurrentVisualization that are NOT part of EventVisualizationOptions.
-// Combined with the option keys (derived from DEFAULT_OPTIONS below) this
-// gives the full set of CurrentVisualization keys at runtime.
+// CurrentVisualization keys that aren't options. With the option keys (from
+// DEFAULT_OPTIONS) they make up every CurrentVisualization key at runtime.
 const CURRENT_VIS_NON_OPTION_KEYS: ReadonlyArray<
     Exclude<keyof CurrentVisualization, keyof EventVisualizationOptions>
 > = [
@@ -97,11 +95,9 @@ const CURRENT_VIS_KEYS: ReadonlyArray<keyof CurrentVisualization> = [
 ]
 
 /**
- * Extracts the CurrentVisualization-shaped subset of a SavedVisualization.
- * Used to compare a saved visualization to the current (edited) one —
- * the current vis is already in CurrentVisualization shape, but the saved
- * vis carries extra fields (access, createdBy, …) that we don't care about
- * when determining whether there are unsaved changes.
+ * The CurrentVisualization-shaped subset of a SavedVisualization, for
+ * comparing saved against current. A saved vis also carries fields like
+ * access and createdBy that don't matter for detecting unsaved changes.
  */
 export const toCurrentVis = (
     savedVis: SavedVisualization
@@ -115,9 +111,9 @@ export const toCurrentVis = (
     return result as CurrentVisualization
 }
 
-/* Fields derived from the layout (and its programs): they duplicate what the
- * axes already encode, and the rebuilt currentVis resolves them while a saved
- * vis may omit them — so they're not real edits and are ignored when comparing. */
+/* Derived from the layout, so the axes already encode them. The rebuilt
+ * currentVis fills them in while a saved vis may not, so a difference here
+ * isn't a real edit — ignore them when comparing. */
 const DERIVED_LAYOUT_FIELDS: ReadonlySet<string> = new Set([
     'trackedEntityType',
     'attributeDimensions',
@@ -126,11 +122,10 @@ const DERIVED_LAYOUT_FIELDS: ReadonlySet<string> = new Set([
 
 const DIMENSION_AXES = new Set<string>(AXES)
 
-/* An axis in the form used for change detection: drop the dimension props that
- * aren't persisted (dimensionType, valueType — also removed on save; the API
- * returns e.g. PROGRAM_DATA_ELEMENT while the rebuilt currentVis carries the
- * app-local DATA_ELEMENT) and treat an empty items array as absent, so
- * representation-only differences don't read as edits. */
+/* An axis prepared for comparison: drop the props that aren't persisted
+ * (dimensionType, valueType — the API sends PROGRAM_DATA_ELEMENT where the
+ * rebuilt vis has DATA_ELEMENT) and treat an empty items array as absent, so
+ * unpersisted differences don't read as edits. */
 const comparableAxis = (axis: DimensionArray = []): DimensionArray =>
     removeDimensionPropertiesBeforeSaving(axis).map((dim) => {
         if (Array.isArray(dim.items) && dim.items.length === 0) {
@@ -141,12 +136,12 @@ const comparableAxis = (axis: DimensionArray = []): DimensionArray =>
         return dim
     })
 
-/* Decide whether the current vis matches the saved one, field by field.
- * Options compare with default ≡ absent (getNonDefaultOptions); the dimension
- * axes compare via comparableAxis; derived layout fields are ignored; every
- * other field is a plain deepEqual, so anything new is compared by default.
- * Iterating the union of keys keeps an explicit `undefined` (which the rebuild
- * emits, e.g. value) equal to an absent key. */
+/* Compare current against saved field by field. Options treat default and
+ * absent as equal (getNonDefaultOptions); axes go through comparableAxis;
+ * derived layout fields are skipped; every other field is a plain deepEqual,
+ * so new fields are still compared. Iterating the union of keys keeps an
+ * explicit `undefined` (which the rebuild emits, e.g. value) equal to an
+ * absent key. */
 const areVisualizationsEquivalent = (
     savedVis: CurrentVisualization,
     currentVis: CurrentVisualization
@@ -259,7 +254,7 @@ export const getSaveableVisualization = (
         ...visualization,
         sorting,
     }
-    // Remove legacy flag when saving — a legacy-loaded vis is re-saved in the new format.
+    // Drop the legacy flag: a legacy vis is re-saved in the new format.
     delete result.legacy
     return result as SavedVisualization
 }
@@ -270,11 +265,9 @@ export const isVisualizationEmpty = (
 ): visualization is EmptyVisualization =>
     Object.keys(visualization).length === 0
 
-// Structural check for the minimal fields shared by CurrentVisualization and
-// SavedVisualization. Declaring the return as the union lets TypeScript
-// narrow each slice input to its specific member (Empty is excluded either
-// way), so we get useful narrowing in both currentVis and savedVis contexts
-// without resorting to overloads.
+// Checks the minimal fields shared by CurrentVisualization and
+// SavedVisualization. Returning the union type lets callers narrow to either
+// one (Empty is ruled out either way) without overloads.
 const isPopulatedVisualization = (
     visualization:
         CurrentVisualization | SavedVisualization | EmptyVisualization
@@ -293,9 +286,8 @@ export const isSavedVisualization = (
 ): visualization is SavedVisualization =>
     isPopulatedVisualization(visualization) &&
     typeof visualization.id === 'string' &&
-    // `access` is SavedVisualization-only: CurrentVisualization doesn't carry
-    // it, so its presence distinguishes a full saved vis from a persisted
-    // currentVis that merely has an id.
+    // `access` exists only on SavedVisualization, so its presence tells a full
+    // saved vis apart from a persisted currentVis that just has an id.
     'access' in visualization
 
 export const isCurrentVisualizationPersisted = (
@@ -379,22 +371,21 @@ export const getVisualizationUiConfig = (
     }
 }
 
-/* Dimension types whose values are not bound to any program or stage —
- * program indicators and tracked entity attributes are owned by a program
- * in the metadata model but their analytics IDs are plain (never carry
- * program/stage prefixes). Combined with CONTEXTLESS_DIMENSION_TYPES (eg.
- * organisation unit group sets), this is the set we must never decorate
- * with the legacy top-level program/programStage refs. */
+/* Dimension types that never take a program or stage prefix. Program
+ * indicators and attributes belong to a program in the model, but their
+ * analytics IDs are plain. With CONTEXTLESS_DIMENSION_TYPES (e.g. org unit
+ * group sets), this is the set we never tag with the legacy top-level
+ * program/programStage refs. */
 const NO_CONTEXT_DIMENSION_TYPES: ReadonlySet<string> = new Set([
     'PROGRAM_INDICATOR',
     'PROGRAM_ATTRIBUTE',
     ...CONTEXTLESS_DIMENSION_TYPES,
 ])
 
-/* Old dimension IDs (created by the legacy event-visualizer / Event Reports
- * app) mapped onto the canonical IDs this app and the backend analytics API
- * use. `createdDate` is a genuine persisted alias of `created`; the other two
- * are normalised defensively (the backend never persists them). */
+/* Old dimension IDs (from the legacy event-visualizer / Event Reports app)
+ * mapped to the canonical IDs this app and the analytics API use. `createdDate`
+ * is a real persisted alias of `created`; the other two are handled defensively
+ * (the backend never persists them). */
 const LEGACY_DIMENSION_ID_RENAMES: Record<string, DimensionId> = {
     createdDate: 'created',
     completedDate: 'completed',
@@ -402,34 +393,28 @@ const LEGACY_DIMENSION_ID_RENAMES: Record<string, DimensionId> = {
 }
 
 /**
- * Legacy → canonical normalisation for saved visualizations received from the
- * eventVisualizations API. Converts the legacy shapes (old line-listing
- * `legacy: true`, old event-visualizer top-level program/programStage, and old
- * dimension IDs) into the canonical shape this app persists.
+ * Normalises a saved visualization from the eventVisualizations API into the
+ * canonical shape this app persists, upgrading legacy shapes (old line-listing
+ * `legacy: true`, old event-visualizer top-level program/programStage, old
+ * dimension IDs).
  *
- * Scope:
- * - Propagate top-level program/programStage onto individual dimensions
- * - Ensure `programDimensions` includes the top-level program
- * - Convert legacy `pe` dimension into the proper time dimension
- * - Rename old dimension IDs (`createdDate`/`completedDate`/`lastUpdatedOn`)
- *   to their canonical form
- * - Convert legacy `orgUnitField` into an `ou` filter
- * - Convert top-level `programStatus` into a `programStatus` filter dimension
- * - Drop `timeField` when it holds a known backend enum value (e.g.
- *   `EVENT_DATE`) — the corresponding "which column" information is now
- *   encoded in the concrete time dimension produced above, so leaving
- *   `timeField` would duplicate it. Preserve `timeField` when it holds a
- *   data-element / attribute UID, since that's still a live analytics
- *   parameter
- * - Drop top-level `program` and `programStage`
- * - Mark output as `legacy: true` whenever any of the above upgraded the
- *   persisted shape, so the vis cannot be overwritten in place — only "Save
- *   as" is allowed. Overwriting would silently persist in the canonical
- *   format, breaking older apps that still read the legacy shape.
+ * Does:
+ * - propagate top-level program/programStage onto individual dimensions
+ * - add the top-level program to `programDimensions`
+ * - convert legacy `pe` into the concrete time dimension
+ * - rename old dimension IDs (`createdDate`/`completedDate`/`lastUpdatedOn`)
+ * - convert `orgUnitField` into an `ou` filter
+ * - convert top-level `programStatus` into a `programStatus` filter
+ * - drop `timeField` when it holds a known backend enum (e.g. `EVENT_DATE`);
+ *   the time dimension above already encodes it. Keep it when it holds a
+ *   data-element/attribute UID (still a live analytics parameter)
+ * - drop top-level `program` and `programStage`
+ * - set `legacy: true` whenever any of the above changed the shape, so the vis
+ *   can't be overwritten in place (only "Save as"). Overwriting would persist
+ *   the canonical format and break older apps that read the legacy shape.
  *
- * Out of scope (handled downstream — these run on every load, not just legacy
- * visualizations, so they do not imply the `legacy` flag):
- * - `completedOnly` → `eventStatus=COMPLETED` filter (not legacy-only)
+ * Not here (run on every load, so they don't imply `legacy`):
+ * - `completedOnly` → `eventStatus=COMPLETED` filter
  * - `PROGRAM_DATA_ELEMENT` → `DATA_ELEMENT` (wire → app shape)
  * - `dy`/`latitude`/`longitude` stripping (wire → app shape)
  */
@@ -456,32 +441,28 @@ export const normalizeApiSavedVisualization = (
     const stageRef = programStage ? { id: programStage.id } : undefined
     const outputType = rest.outputType as OutputType | undefined
 
-    // The vis is legacy whenever anything here upgrades the persisted shape:
-    // re-saving in canonical format would then break older apps still reading
-    // the original shape, so block the in-place save path. Seed it from the
-    // top-level legacy signals (explicit flag, old event-visualizer
-    // program/programStage, legacy `orgUnitField`/`programStatus` that get
-    // converted to filter dimensions); the per-dimension pass and the
-    // `timeField` drop below flip it too.
+    // Legacy when anything here changes the persisted shape, since re-saving in
+    // canonical format would break older apps that read the original shape — so
+    // block the in-place save. Seed from the top-level signals (explicit flag,
+    // old program/programStage, `orgUnitField`/`programStatus` turned into
+    // filters); the per-dimension pass and `timeField` drop below also set it.
     let legacy =
         Boolean(apiVisLegacy) ||
         Boolean(program || programStage) ||
         Boolean(orgUnitField) ||
         Boolean(programStatus)
 
-    /* Single pass per dimension, in order:
+    /* One pass per dimension, in order:
      *   - convert a legacy `pe` dimension into the concrete time dimension
-     *     (legacy line-listing shape)
-     *   - rename old dimension IDs to their canonical form
-     *   - propagate top-level program/programStage onto dimensions that
-     *     don't carry them (old event-visualizer shape), but only where it
-     *     makes semantic sense — the rename runs first so meta dims renamed
-     *     from a legacy ID (e.g. `createdDate` → `created`) are recognised
-     *     as context-free here:
-     *       · meta dims, contextless dim types, program indicators and
-     *         tracked entity attributes don't carry program/stage context
-     *       · enrollment-scoped IDs are tied to the program, not a stage,
-     *         so they get program only, never programStage */
+     *   - rename old dimension IDs to canonical form
+     *   - propagate top-level program/programStage onto dimensions missing
+     *     them, but only where it fits. Rename runs first so a meta dim renamed
+     *     from a legacy ID (e.g. `createdDate` → `created`) is seen as
+     *     context-free:
+     *       · meta dims, contextless types, program indicators and attributes
+     *         take no program/stage context
+     *       · enrollment-scoped IDs belong to the program, not a stage, so
+     *         they get program only */
     const normalizeDimensions = (dims: DimensionArray): DimensionArray =>
         dims.map((dim) => {
             let out = dim
@@ -526,12 +507,11 @@ export const normalizeApiSavedVisualization = (
                 out = { ...out, programStage: stageRef }
             }
 
-            /* Legacy vis stored the enrollment org unit as bare `ou`; this app
-             * writes `enrollmentOu` where the wire form needs it (EVENT/TEI
-             * LINE_LIST). Upgrade to the current canonical form using the same
-             * rule the save path applies — a no-op for ENROLLMENT/PIVOT (where
-             * `ou` is canonical) and for the stage event OU (which carries a
-             * programStage). */
+            /* A legacy vis stored the enrollment org unit as bare `ou`; this
+             * app uses `enrollmentOu` where the wire form needs it (EVENT/TEI
+             * LINE_LIST). Upgrade with the same rule the save path uses — a
+             * no-op for ENROLLMENT/PIVOT (where `ou` is canonical) and for the
+             * stage event OU (which has a programStage). */
             if (
                 outputType &&
                 out.dimension === 'ou' &&
@@ -572,10 +552,10 @@ export const normalizeApiSavedVisualization = (
             ? [...programDimensions, program]
             : programDimensions
 
-    // `timeField` holding a known backend enum value has been materialised
-    // into a concrete time dimension above; keep it only when it holds a
-    // data-element / attribute UID (non-legacy usage that the analytics
-    // request still needs). Dropping a known-enum `timeField` is an upgrade.
+    // A `timeField` holding a known backend enum is already captured by the
+    // time dimension built above; keep it only when it holds a
+    // data-element/attribute UID (still needed by the analytics request).
+    // Dropping a known-enum one is an upgrade.
     const preserveTimeField =
         typeof timeField === 'string' && !KNOWN_TIME_FIELD_VALUES.has(timeField)
     if (typeof timeField === 'string' && !preserveTimeField) {

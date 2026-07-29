@@ -635,28 +635,11 @@ describe('normalizeApiSavedVisualization', () => {
 })
 
 describe('getVisualizationState treats default-valued options as unchanged', () => {
-    /* The API returns most options at their default value (all booleans,
-     * density, font size, separator), so a freshly loaded vis is not sparse —
-     * this mirrors that. */
+    /* The API sends real option values, not a sparse object. digitGroupSeparator
+     * is the case that matters: the API sends a value where our default is
+     * undefined, and the two must still compare as equal. */
     const apiDefaultOptions: Partial<EventVisualizationOptions> = {
-        showData: false,
-        colTotals: false,
-        rowTotals: false,
-        colSubTotals: false,
-        rowSubTotals: false,
-        cumulativeValues: false,
-        completedOnly: false,
-        skipRounding: false,
-        hideEmptyRows: false,
-        hideTitle: false,
-        hideSubtitle: false,
-        showHierarchy: false,
-        showDimensionLabels: false,
-        noSpaceBetweenColumns: false,
-        percentStackedValues: false,
-        hideNaData: false,
-        displayDensity: 'NORMAL',
-        fontSize: 'NORMAL',
+        ...DEFAULT_OPTIONS,
         digitGroupSeparator: 'SPACE',
     }
 
