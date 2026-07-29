@@ -15,14 +15,22 @@ import {
     toCurrentVis,
 } from '@modules/visualization/state'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import type { AppDispatch, CurrentVisualization } from '@types'
-import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
+import type { AppDispatch, CurrentVisualization, MetadataStore } from '@types'
+import {
+    clearCurrentVis,
+    setCurrentVis,
+    type CurrentVisState,
+} from './current-vis-slice'
 import { setDataSourceId } from './dimensions-selection-slice'
 import { setIsVisualizationLoading, setLoadError } from './loader-slice'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
 import type { RootState } from './store'
 import { clearUi, setUiUpdateAnimationShowingFor } from './ui-slice'
-import { clearVisUiConfig, setVisUiConfig } from './vis-ui-config-slice'
+import {
+    clearVisUiConfig,
+    setVisUiConfig,
+    type VisUiConfigState,
+} from './vis-ui-config-slice'
 
 type AppAsyncThunkConfig = {
     state: RootState
@@ -105,30 +113,38 @@ export const tLoadSavedVisualization = createAsyncThunk<
 )
 
 const shouldPopulateCustomValueFields = (
-    state: RootState,
+    currentVis: CurrentVisState,
+    visUiConfig: VisUiConfigState,
     withCustomValue?: boolean
 ): boolean => {
     // Only EVENT output can carry a custom value
-    if (state.visUiConfig.outputType !== 'EVENT') {
+    if (visUiConfig.outputType !== 'EVENT') {
         return false
     }
     if (withCustomValue !== undefined) {
         return withCustomValue // explicit request: add or strip
     }
-    return Boolean(state.currentVis.value?.id) // preserve what the current vis shows
+    return Boolean(currentVis.value?.id) // preserve what the current vis shows
 }
 
 const resolveCustomValueFields = (
-    state: RootState,
+    currentVis: CurrentVisState,
+    visUiConfig: VisUiConfigState,
     withCustomValue?: boolean
 ) => {
     // Always include the `value` key: setCurrentVis merges into the previous
     // currentVis, so omitting it would leave a stale value behind.
-    if (!shouldPopulateCustomValueFields(state, withCustomValue)) {
+    if (
+        !shouldPopulateCustomValueFields(
+            currentVis,
+            visUiConfig,
+            withCustomValue
+        )
+    ) {
         return { value: undefined, aggregationType: undefined }
     }
 
-    const { customValue } = state.visUiConfig
+    const { customValue } = visUiConfig
 
     if (!customValue) {
         throw new Error(
@@ -141,9 +157,44 @@ const resolveCustomValueFields = (
     }
 }
 
-/* `withCustomValue` overrides whether the rebuilt vis carries the custom
- * value: true forces it on, false strips it; omit it to preserve the
- * current vis. */
+/* Rebuild a currentVis fresh from visUiConfig so stale currentVis fields can't
+ * leak through. Carries over only id and sorting from the previous currentVis.
+ * The custom value fields go after the options spread so the value's own
+ * aggregation type wins over the options default. `withCustomValue` overrides
+ * whether the result carries the custom value: true forces it on, false strips
+ * it; omit it to preserve the previous currentVis. */
+export const buildCurrentVisFromVisUiConfig = ({
+    previousCurrentVis,
+    visUiConfig,
+    metadataStore,
+    withCustomValue,
+}: {
+    previousCurrentVis: CurrentVisState
+    visUiConfig: VisUiConfigState
+    metadataStore: MetadataStore
+    withCustomValue?: boolean
+}): CurrentVisualization => ({
+    id: isCurrentVisualizationPersisted(previousCurrentVis)
+        ? previousCurrentVis.id
+        : undefined,
+    sorting: isVisualizationEmpty(previousCurrentVis)
+        ? undefined
+        : previousCurrentVis.sorting,
+    type: visUiConfig.visualizationType,
+    outputType: visUiConfig.outputType,
+    columns: buildAxis(visUiConfig.layout.columns, visUiConfig, metadataStore),
+    rows: buildAxis(visUiConfig.layout.rows, visUiConfig, metadataStore),
+    filters: buildAxis(visUiConfig.layout.filters, visUiConfig, metadataStore),
+    programDimensions: collectProgramDimensions(visUiConfig, metadataStore),
+    ...getEnabledOptions(visUiConfig.options),
+    ...resolveTeiFields(visUiConfig, metadataStore),
+    ...resolveCustomValueFields(
+        previousCurrentVis,
+        visUiConfig,
+        withCustomValue
+    ),
+})
+
 export const tUpdateCurrentVisFromVisUiConfig =
     (withCustomValue?: boolean) =>
     (
@@ -151,49 +202,18 @@ export const tUpdateCurrentVisFromVisUiConfig =
         getState: () => RootState,
         extra: ThunkExtraArg
     ) => {
-        const state = getState()
-        const { currentVis, visUiConfig } = state
-        const { metadataStore } = extra
+        const { currentVis, visUiConfig } = getState()
 
-        // Build fresh from visUiConfig so stale currentVis fields can't leak
-        // through. Carry over only id and sorting from the previous currentVis.
-        // The custom value fields go after the options spread so the value's
-        // own aggregation type wins over the options default.
-        const updatedCurrentVis: CurrentVisualization = {
-            id: isCurrentVisualizationPersisted(currentVis)
-                ? currentVis.id
-                : undefined,
-            sorting: isVisualizationEmpty(currentVis)
-                ? undefined
-                : currentVis.sorting,
-            type: visUiConfig.visualizationType,
-            // output type
-            outputType: visUiConfig.outputType,
-            columns: buildAxis(
-                visUiConfig.layout.columns,
-                visUiConfig,
-                metadataStore
-            ),
-            rows: buildAxis(
-                visUiConfig.layout.rows,
-                visUiConfig,
-                metadataStore
-            ),
-            filters: buildAxis(
-                visUiConfig.layout.filters,
-                visUiConfig,
-                metadataStore
-            ),
-            programDimensions: collectProgramDimensions(
-                visUiConfig,
-                metadataStore
-            ),
-            ...getEnabledOptions(visUiConfig.options),
-            ...resolveTeiFields(visUiConfig, metadataStore),
-            ...resolveCustomValueFields(state, withCustomValue),
-        }
-
-        dispatch(setCurrentVis(updatedCurrentVis))
+        dispatch(
+            setCurrentVis(
+                buildCurrentVisFromVisUiConfig({
+                    previousCurrentVis: currentVis,
+                    visUiConfig,
+                    metadataStore: extra.metadataStore,
+                    withCustomValue,
+                })
+            )
+        )
         dispatch(
             setUiUpdateAnimationShowingFor(
                 isVisualizationEmpty(currentVis) ? null : visUiConfig.outputType

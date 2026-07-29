@@ -151,9 +151,6 @@ export const useToolbarActions = () => {
             )
 
             if (data) {
-                /* Only the saved vis carries name/description; currentVis must
-                 * not, or it would differ from toCurrentVis(savedVis) and read
-                 * as edited. */
                 dispatch(setSavedVisNameDescription(data))
 
                 showAlert({
@@ -187,9 +184,8 @@ export const useToolbarActions = () => {
                     visualization: getSaveableVisualization(
                         currentVis as SavedVisualization
                     ),
-                    // name/description are metadata owned by savedVis (edited
-                    // via the rename dialog); currentVis never carries them, so
-                    // source them here to avoid falling back to a default name.
+                    // name/description are stripped from currentVis, so read
+                    // them from savedVis
                     name: savedVis.name,
                     description: savedVis.description,
                 })

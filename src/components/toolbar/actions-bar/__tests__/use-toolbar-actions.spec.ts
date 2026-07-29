@@ -304,10 +304,9 @@ describe('useToolbarActions', () => {
                     typeof eventVisualizationsApi.endpoints.updateVisualization.initiate
                 >)
 
-        // toCurrentVis strips name/description, mirroring a freshly loaded vis
-        // that was never renamed in this session — so the name/description used
-        // for the save can only come from savedVis.
-        it('saves with the name from savedVis when currentVis carries no name', async () => {
+        /* name and description live only on savedVis — currentVis never
+         * carries them, so a save always takes them from savedVis. */
+        it('saves with the name from savedVis', async () => {
             const savedVis = makeSavedVis({ name: 'My line list' })
             const currentVis = toCurrentVis(savedVis)
             const initiateSpy = spyOnUpdateInitiate()

@@ -1,5 +1,6 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
-import { getDefaultOptions, getEnabledOptions } from '@modules/options'
+import { MetadataStore } from '@modules/metadata/store'
+import { getDefaultOptions } from '@modules/options'
 import {
     getSaveableVisualization,
     getVisualizationState,
@@ -7,6 +8,7 @@ import {
     normalizeApiSavedVisualization,
     toCurrentVis,
 } from '@modules/visualization/state'
+import { buildCurrentVisFromVisUiConfig } from '@store/thunks'
 import type {
     ApiSavedVisualization,
     CurrentVisualization,
@@ -633,8 +635,6 @@ describe('normalizeApiSavedVisualization', () => {
 })
 
 describe('getVisualizationState treats default-valued options as unchanged', () => {
-    const OPTION_KEYS = Object.keys(DEFAULT_OPTIONS)
-
     /* The API returns most options at their default value (all booleans,
      * density, font size, separator), so a freshly loaded vis is not sparse —
      * this mirrors that. */
@@ -673,24 +673,22 @@ describe('getVisualizationState treats default-valued options as unchanged', () 
             ...options,
         }) as unknown as ApiSavedVisualization
 
-    /* Mirror how tUpdateCurrentVisFromVisUiConfig rebuilds currentVis: build a
-     * full visUiConfig, then spread its (unstripped) options onto the saved-vis
-     * baseline. Dimensions are empty, so any diff can only come from options.
-     * `instanceDefaults` stands in for the systemSetting-seeded base options. */
+    /* Rebuild currentVis the way the app does: derive a visUiConfig from the
+     * loaded vis, then run the real buildCurrentVisFromVisUiConfig (the same
+     * function the update thunk uses) so this test can't drift from the app.
+     * Dimensions are empty, so an empty metadata store suffices and any diff
+     * can only come from options. `instanceDefaults` stands in for the
+     * systemSetting-seeded base options. */
     const rebuildCurrentVis = (
         savedVis: SavedVisualization,
         instanceDefaults: EventVisualizationOptions = DEFAULT_OPTIONS
     ): CurrentVisualization => {
         const baseline = toCurrentVis(savedVis)
-        const visUiConfig = getVisualizationUiConfig(baseline, instanceDefaults)
-        const nonOptionFields = { ...baseline } as Record<string, unknown>
-        for (const key of OPTION_KEYS) {
-            delete nonOptionFields[key]
-        }
-        return {
-            ...nonOptionFields,
-            ...getEnabledOptions(visUiConfig.options),
-        } as CurrentVisualization
+        return buildCurrentVisFromVisUiConfig({
+            previousCurrentVis: baseline,
+            visUiConfig: getVisualizationUiConfig(baseline, instanceDefaults),
+            metadataStore: new MetadataStore({}),
+        })
     }
 
     it('stays SAVED for a freshly loaded vis carrying default-valued options', () => {
