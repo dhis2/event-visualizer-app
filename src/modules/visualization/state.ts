@@ -115,9 +115,12 @@ export const toCurrentVis = (
     return result as CurrentVisualization
 }
 
-/* Derived from the layout, so the axes already encode them. The rebuilt
- * currentVis fills them in while a saved vis may not, so a difference here
- * isn't a real edit — ignore them when comparing. */
+/* Derived from the layout: any real change is already caught by comparing the
+ * axes, so comparing these adds nothing. And the two array fields
+ * (programDimensions, attributeDimensions) can differ in order between a loaded
+ * savedVis and a rebuilt currentVis — the app rebuilds them from the layout,
+ * the backend returns its own order — which a direct compare would misread as
+ * an edit. */
 const DERIVED_LAYOUT_FIELDS: ReadonlySet<string> = new Set([
     'trackedEntityType',
     'attributeDimensions',
