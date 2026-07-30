@@ -5,7 +5,6 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 PROJECT="$(basename "$REPO_ROOT")"
 MOUNT_NAME="${PROJECT}-mount"
 CLONE_NAME="${PROJECT}-clone"
-DEV_PORT=3000
 IMAGE_TAG="${PROJECT}-sbx:latest"
 SBX_DIR="$REPO_ROOT/.sbx"
 PNPM_VERSION="$(node -p "require('$REPO_ROOT/package.json').packageManager.split('@')[1].split('+')[0]" 2>/dev/null || echo latest)"
@@ -330,7 +329,6 @@ cmd_mount() {
         # Neovim; a RW mount let the sandbox's failed connect delete the host's lock.
         if [ -d "$(ide_dir)" ]; then extra+=("$(ide_dir):ro"); fi
         sbx create -t "$IMAGE_TAG" claude "$REPO_ROOT" ${extra[@]+"${extra[@]}"} --name "$MOUNT_NAME"
-        sbx ports "$MOUNT_NAME" --publish "${DEV_PORT}:${DEV_PORT}" || true
         configure_policy "$MOUNT_NAME"
         accept_trust "$MOUNT_NAME"
         link_host_dirs "$MOUNT_NAME"

@@ -36,7 +36,7 @@ This logs in to Docker, sets the default network policy, **builds the sandbox im
 
 ## Mount sandbox — hands-on, live files (`pnpm sbx:mount`)
 
-The agent edits your live working tree (changes show up in your editor immediately) and can run tests/build inside the sandbox, with no permission prompts but a constrained network. You review diffs and commit on the host. A dev server the agent starts is published to `http://localhost:3000`.
+The agent edits your live working tree (changes show up in your editor immediately) and can run tests/build inside the sandbox, with no permission prompts but a constrained network. You review diffs and commit on the host. The agent's dev server stays inside the sandbox (it drives it there with `playwright-cli`); to view the app yourself, run `pnpm start` on the host against the same live files.
 
 > **node_modules isolation:** on every mount the script overlays `node_modules` with a container-local directory (`sudo mount --bind` of `/home/agent/nm` over the repo's `node_modules`) and runs `pnpm install` into it — so everything the agent installs stays inside the sandbox and your host `node_modules` is never touched. This is **mandatory**: if the overlay can't be established the mount **aborts** rather than falling back to the host-backed `node_modules`. The install runs on first mount (a few minutes; reused while the lockfile is unchanged), and a guarded remount in the sandbox's startup re-applies the overlay if the sandbox ever restarts. Changed dependencies while the sandbox is up? `./scripts/sbx.sh refresh-deps`.
 
