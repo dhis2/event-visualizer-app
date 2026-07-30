@@ -140,47 +140,45 @@ const comparableAxis = (axis: DimensionArray = []): DimensionArray =>
         return dim
     })
 
-/* Compare current against saved field by field. Options treat default and
- * absent as equal (getNonDefaultOptions); axes go through comparableAxis;
- * derived layout fields are skipped; every other field is a plain deepEqual,
- * so new fields are still compared. */
-const isFieldEquivalent = (
-    key: string,
-    saved: Record<string, unknown>,
-    current: Record<string, unknown>
-): boolean => {
-    if (key in DEFAULT_OPTIONS || DERIVED_LAYOUT_FIELDS.has(key)) {
-        /* Options are compared as a group above (getNonDefaultOptions); derived
-         * layout fields are ignored. Neither is compared per-field here. */
-        return true
-    } else if (DIMENSION_AXES.has(key)) {
-        return deepEqual(
-            comparableAxis(saved[key] as DimensionArray),
-            comparableAxis(current[key] as DimensionArray)
-        )
-    } else {
-        return deepEqual(saved[key], current[key])
-    }
-}
-
 const areVisualizationsEquivalent = (
     savedVis: CurrentVisualization,
     currentVis: CurrentVisualization
 ): boolean => {
-    if (
-        !deepEqual(
-            getNonDefaultOptions(savedVis),
-            getNonDefaultOptions(currentVis)
-        )
-    ) {
-        return false
-    }
+    const savedNonDefaultOptions = getNonDefaultOptions(savedVis) as Record<
+        string,
+        unknown
+    >
+    const currentNonDefaultOptions = getNonDefaultOptions(currentVis) as Record<
+        string,
+        unknown
+    >
     const saved = savedVis as Record<string, unknown>
     const current = currentVis as Record<string, unknown>
     // currentVis always carries the full key set, so its keys cover every
     // field a saved vis could differ on.
     for (const key of Object.keys(current)) {
-        if (!isFieldEquivalent(key, saved, current)) {
+        if (key in DEFAULT_OPTIONS) {
+            if (
+                !deepEqual(
+                    savedNonDefaultOptions[key],
+                    currentNonDefaultOptions[key]
+                )
+            ) {
+                return false
+            }
+        } else if (DIMENSION_AXES.has(key)) {
+            if (
+                !deepEqual(
+                    comparableAxis(saved[key] as DimensionArray),
+                    comparableAxis(current[key] as DimensionArray)
+                )
+            ) {
+                return false
+            }
+        } else if (
+            !DERIVED_LAYOUT_FIELDS.has(key) &&
+            !deepEqual(saved[key], current[key])
+        ) {
             return false
         }
     }
