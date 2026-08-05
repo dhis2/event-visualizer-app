@@ -1,0 +1,1154 @@
+# Translators:
+# Andres Miguel Rubio, 2026
+# Jiří Podhorecký <jirka.p@volny.cz>, 2026
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"PO-Revision-Date: 2026-07-23 07:34+0000\n"
+"Last-Translator: Jiří Podhorecký <jirka.p@volny.cz>, 2026\n"
+"Language-Team: Czech (https://app.transifex.com/hisp-uio/teams/100509/cs/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: cs\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
+
+msgid ""
+"Some dimensions were not added because they cannot be used in a "
+"{{visTypeName}}: {{list}}."
+msgstr ""
+
+msgid ""
+"Some dimensions were not added because they cannot be combined with {{- "
+"layoutTetName}} dimensions: {{list}}."
+msgstr ""
+
+msgid ""
+"{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Add to {{- axisName}}"
+msgstr ""
+
+msgid "Choose a filter type"
+msgstr ""
+
+msgid "Case sensitive"
+msgstr "Citlivý na velká písmena"
+
+msgid "Delete filter"
+msgstr "Odstranit filtr"
+
+msgid "Repeated events"
+msgstr "Opakované události"
+
+msgid "Data"
+msgstr "Data"
+
+msgid "Only available for repeatable stages"
+msgstr "K dispozici pouze pro opakovatelné fáze"
+
+msgid "{{valueType}} type dimensions cannot be filtered."
+msgstr ""
+
+msgid "This dimension cannot be filtered."
+msgstr ""
+
+msgid "Preset options can't be combined with other filters"
+msgstr ""
+
+msgid "Add filter"
+msgstr "Přidat filtr"
+
+msgid "and"
+msgstr "a"
+
+msgid "is one of preset options"
+msgstr "je jednou z přednastavených možností"
+
+msgid "Choose a legend set"
+msgstr ""
+
+msgid "Loading legend sets"
+msgstr ""
+
+msgid "No preset option sets for this data item"
+msgstr ""
+"Pro tuto datovou položku nejsou nastaveny žádné přednastavené možnosti"
+
+msgid "Choose legends"
+msgstr ""
+
+msgid "Loading legends"
+msgstr "Načítání legend"
+
+msgid "From stages with repeatable events, show values from:"
+msgstr ""
+
+msgid "Oldest events"
+msgstr ""
+
+msgid "Show fewer of the oldest events"
+msgstr ""
+
+msgid "Show more of the oldest events"
+msgstr ""
+
+msgid "Most recent events"
+msgstr ""
+
+msgid "Show fewer of the most recent events"
+msgstr ""
+
+msgid "Show more of the most recent events"
+msgstr ""
+
+msgid "Hide"
+msgstr "Skrýt"
+
+msgid "Start and end dates are inclusive and will be included in the outputs."
+msgstr "Data zahájení a ukončení jsou včetně a budou zahrnuta ve výstupech."
+
+msgid "Start date"
+msgstr "Datum začátku"
+
+msgid "End date"
+msgstr "Datum ukončení"
+
+msgid "Choose from presets"
+msgstr "Vyberte si z předvoleb"
+
+msgid "Define start - end dates"
+msgstr "Definujte počáteční a koncová data"
+
+msgid "Value filtering"
+msgstr ""
+
+msgid "Show all values"
+msgstr ""
+
+msgid "Filter"
+msgstr "Filtr"
+
+msgid "No items selected"
+msgstr "Nevybrány žádné položky"
+
+msgid "Available options"
+msgstr "Dostupné možnosti"
+
+msgid "Filter options"
+msgstr "Možnosti filtru"
+
+msgid "Selected options"
+msgstr "Vybrané možnosti"
+
+msgid "Nothing found for \"{{- searchTerm}}\""
+msgstr "Pro dotaz „{{- searchTerm}}“ nebylo nic nalezeno"
+
+msgid "No options"
+msgstr "Žádné možnosti"
+
+msgid "Data value set"
+msgstr "Sada datových hodnot"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "XML"
+msgstr "XML"
+
+msgid "Other formats"
+msgstr "Jiné formáty"
+
+msgid "JRXML"
+msgstr "JRXML"
+
+msgid "Raw data SQL"
+msgstr "Nezpracovaná data SQL"
+
+msgid "HTML"
+msgstr "HTML"
+
+msgid "HTML+CSS (.html+css)"
+msgstr "HTML+CSS (.html+css)"
+
+msgid "Plain data source"
+msgstr "Prostý zdroj dat"
+
+msgid "Microsoft Excel"
+msgstr "Microsoft Excel"
+
+msgid "CSV"
+msgstr "CSV"
+
+msgid "Advanced"
+msgstr "Pokročilý"
+
+msgid "Download data from this date"
+msgstr "Stáhnout data od tohoto data"
+
+msgid "Metadata ID scheme"
+msgstr "Schéma metadata ID"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Code"
+msgstr "Kód"
+
+msgid "Name"
+msgstr "název"
+
+msgid "An error occurred"
+msgstr "Vyskytla se chyba"
+
+msgid "Resize axes panel"
+msgstr ""
+
+msgid "Move to {{- axisName}}"
+msgstr ""
+
+msgid "Remove"
+msgstr "Odstranit"
+
+msgid "all"
+msgstr "vše"
+
+msgid "None selected"
+msgstr "Není vybrán žádný"
+
+msgid "Showing all values for this dimension"
+msgstr "Zobrazují se všechny hodnoty pro tuto dimenzi"
+
+msgid "Program: {{- programName}}"
+msgstr "Program: {{- programName}}"
+
+msgid "Program stage: {{- stageName}}"
+msgstr "Fáze programu: {{- stageName}}"
+
+msgid "Levels"
+msgstr "Úrovně"
+
+msgid "Groups"
+msgstr "Skupiny"
+
+msgid "Using: {{- itemName}} ({{- aggregationType}})"
+msgstr ""
+
+msgid "Custom value is from a different stage than dimensions in the layout"
+msgstr ""
+
+msgid "Update custom value"
+msgstr ""
+
+msgid "Create custom value table"
+msgstr ""
+
+msgid "Switch to custom value table"
+msgstr ""
+
+msgid "Update custom value table"
+msgstr ""
+
+msgid "Enrollment"
+msgstr "Zápis"
+
+msgid "Create {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Create {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Event"
+msgstr "Událost"
+
+msgid "Create {{- eventLabel}} list"
+msgstr ""
+
+msgid "Create {{- eventLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} table"
+msgstr ""
+
+msgid "Update {{- eventLabel}} list"
+msgstr ""
+
+msgid "Update {{- eventLabel}} table"
+msgstr ""
+
+msgid "tracked entity"
+msgstr "trasovaná entita"
+
+msgid "Create {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Switch to {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Update {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Not valid with registration org. unit"
+msgstr ""
+
+msgid "Not valid with categories or category option group sets"
+msgstr ""
+
+msgid "Not valid with categories"
+msgstr ""
+
+msgid "Not valid with category option group sets"
+msgstr ""
+
+msgid "Not valid without a program"
+msgstr ""
+
+msgid "Not valid with multiple programs"
+msgstr ""
+
+msgid "Not valid with multiple program stages"
+msgstr ""
+
+msgid "Not valid with event programs"
+msgstr ""
+
+msgid "Not valid with Completed on"
+msgstr ""
+
+msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid with program indicators"
+msgstr ""
+
+msgid "Nothing selected. Add items to the layout to get started."
+msgstr ""
+
+msgid "Configure custom value"
+msgstr ""
+
+msgid "Choose the numeric data item to show in table cells."
+msgstr ""
+
+msgid "Search data items"
+msgstr ""
+
+msgid "Loading data"
+msgstr "Načítání dat"
+
+msgid "Error loading data"
+msgstr "Chyba při načítání dat"
+
+msgid "Failed to load data items"
+msgstr ""
+
+msgid "No numeric data items in stage \"{{- stageName}}\""
+msgstr ""
+
+msgid "No numeric data items in this program"
+msgstr ""
+
+msgid "This stage does not have any numeric data items available."
+msgstr ""
+
+msgid "This program does not have any numeric data items available."
+msgstr ""
+
+msgid "No data items match \"{{- searchTerm}}\""
+msgstr ""
+
+msgid "Aggregation"
+msgstr "Agregace"
+
+msgid "Cancel"
+msgstr "Zrušit"
+
+msgid "Update"
+msgstr "Aktualizovat"
+
+msgid "Select a value before updating"
+msgstr ""
+
+msgid ""
+"\"{{- itemName}}\" is from a different stage than the dimensions in the "
+"layout. Choose another item."
+msgstr ""
+
+msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
+msgstr ""
+
+msgid "Collapse layout"
+msgstr ""
+
+msgid "Expand layout"
+msgstr ""
+
+msgid "List options"
+msgstr ""
+
+msgid "Table options"
+msgstr "Možnosti tabulky"
+
+msgid "Chart options"
+msgstr "Možnosti grafu"
+
+msgid "Convert to {{- visType}}"
+msgstr ""
+
+msgid "{{- names}} will be removed. Are you sure?"
+msgstr ""
+
+msgid "Convert"
+msgstr ""
+
+msgid "Individual data view"
+msgstr ""
+
+msgid "Aggregated view"
+msgstr ""
+
+msgid "No event"
+msgstr "Žádná událost"
+
+msgid "Sort by \"{{- column}}\" and update"
+msgstr ""
+
+msgid "Hide legend key"
+msgstr ""
+
+msgid "Show legend key"
+msgstr "Zobrazit klíč legendy"
+
+msgid ""
+"This line list may show data that was not available when the interpretation "
+"was written."
+msgstr ""
+"V tomto seznamu řádků mohou být uvedeny údaje, které v době psaní výkladu "
+"nebyly k dispozici."
+
+msgid "Rows per page"
+msgstr "Řádků na stránku"
+
+msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
+msgstr ""
+
+msgid "Not available offline"
+msgstr "Není k dispozici offline"
+
+msgid "most recent"
+msgstr "nejnovější"
+
+msgid "oldest"
+msgstr "nejstarší"
+
+msgid "oldest {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "most recent {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "Column sub-totals"
+msgstr "Mezisoučty sloupců"
+
+msgid "Column totals"
+msgstr "Součty sloupců"
+
+msgid "Cumulative values"
+msgstr "Kumulativní hodnoty"
+
+msgid "Accumulate cell values along rows"
+msgstr "Kumulovat hodnoty buněk podél řádků"
+
+msgid "Digit group separator"
+msgstr "Oddělovač skupin číslic"
+
+msgid "None"
+msgstr "Žádný"
+
+msgid "Space"
+msgstr "Mezera"
+
+msgid "Comma"
+msgstr "Čárka"
+
+msgid "Display density"
+msgstr "Hustota zobrazení"
+
+msgid "Comfortable"
+msgstr "Komfortní"
+
+msgid "Normal"
+msgstr "Normální"
+
+msgid "Compact"
+msgstr "Kompaktní"
+
+msgid "Font size"
+msgstr "Velikost písma"
+
+msgid "Large"
+msgstr "Velký"
+
+msgid "Small"
+msgstr "Malý"
+
+msgid "Hide empty rows"
+msgstr "Skrýt prázdné řádky"
+
+msgid "Hide N/A data"
+msgstr ""
+
+msgid "Use a legend for table cell colors"
+msgstr "Pro barvy buněk tabulky použijte legendu"
+
+msgid "Use pre-defined legend per data item"
+msgstr "Použijte předdefinovanou legendu na datovou položku"
+
+msgid "Choose a single legend for the entire visualization"
+msgstr "Vyberte jednu legendu pro celou vizualizaci"
+
+msgid "Legend type"
+msgstr "Typ legendy"
+
+msgid "Legend changes background color"
+msgstr "Legenda mění barvu pozadí"
+
+msgid "Legend changes text color"
+msgstr "Legenda mění barvu textu"
+
+msgid "Legend style"
+msgstr "Styl Legendy"
+
+msgid "Legend"
+msgstr "Legenda"
+
+msgid "Select from legends"
+msgstr "Vybrat si z legend"
+
+msgid "Limit"
+msgstr "Omezení"
+
+msgid "Sort order"
+msgstr "Pořadí řazení"
+
+msgid "Low to high"
+msgstr "Od nízkého po vysoký"
+
+msgid "High to low"
+msgstr "Od nejvyšší k nejnižší"
+
+msgid "Top limit"
+msgstr "Horní limit"
+
+msgid "Row sub-totals"
+msgstr "Mezisoučty řádků"
+
+msgid "Row totals"
+msgstr "Součty řádků"
+
+msgid "Dimension labels"
+msgstr "Štítky dimenzí"
+
+msgid "Display organisation unit hierarchy"
+msgstr "Zobrazit hierarchii organizačních jednotek"
+
+msgid "Skip rounding"
+msgstr "Přeskočit zaokrouhlování"
+
+msgid "Add a subtitle"
+msgstr "Přidat podtitul"
+
+msgid "Add a title"
+msgstr "Přidat název"
+
+msgid "Options"
+msgstr "Možnosti"
+
+msgid "Display"
+msgstr "Zobrazit"
+
+msgid "Line list title"
+msgstr ""
+
+msgid "Line list subtitle"
+msgstr ""
+
+msgid "Totals"
+msgstr "Součty"
+
+msgid "Totals are not supported when using cumulative values"
+msgstr "Při použití kumulativních hodnot nejsou podporovány součty."
+
+msgid "Empty data"
+msgstr "Prázdná data"
+
+msgid "Table title"
+msgstr "Název tabulky"
+
+msgid "Table subtitle"
+msgstr "Podtitul tabulky"
+
+msgid "Labels"
+msgstr "Štítky"
+
+msgid "Create a {{- visType}} before updating"
+msgstr ""
+
+msgid "Metadata"
+msgstr "Metadata"
+
+msgid "Other"
+msgstr "jiný"
+
+msgid "Enrollment data"
+msgstr "Údaje o zápisu"
+
+msgid "Event data"
+msgstr "Data události"
+
+msgid "Program indicators"
+msgstr "Indikátory programu"
+
+msgid "{{- name}} registration"
+msgstr ""
+
+msgid "Choose a data source"
+msgstr ""
+
+msgid "No data sources available"
+msgstr ""
+
+msgid "Programs"
+msgstr "Programy"
+
+msgid "Show more"
+msgstr "Zobrazit více"
+
+msgid "Analyze without a program"
+msgstr ""
+
+msgid "Loading options"
+msgstr "Možnosti načítání"
+
+msgid "Failed to load data sources."
+msgstr ""
+
+msgid "Filter data sources"
+msgstr ""
+
+msgid "There was a problem and this data could not be loaded"
+msgstr ""
+
+msgid "There was problem loading more data"
+msgstr ""
+
+msgid "No data found"
+msgstr "Nenalezena žádná data"
+
+msgid "No results"
+msgstr "Žádné výsledky"
+
+msgid "Load more"
+msgstr ""
+
+msgid "Loading more..."
+msgstr ""
+
+msgid "None of the selected dimensions can be added to this layout."
+msgstr ""
+
+msgid "Org units"
+msgstr "Organizační jednotky"
+
+msgid "Periods"
+msgstr "Období"
+
+msgid "Statuses"
+msgstr ""
+
+msgid "Data elements"
+msgstr "Datové prvky"
+
+msgid "Program attributes"
+msgstr ""
+
+msgid "Categories"
+msgstr "Kategorie"
+
+msgid "Category option group sets"
+msgstr "Sady skupin možností kategorií"
+
+msgid ""
+"Choose a data source above to see its dimensions, periods, and organisation "
+"units."
+msgstr ""
+
+msgid "Expand all cards"
+msgstr ""
+
+msgid "Collapse all cards"
+msgstr ""
+
+msgid "Something went wrong while searching."
+msgstr ""
+
+msgid "Search"
+msgstr "Hledat"
+
+msgid "Clear search"
+msgstr "Vymazat hledání"
+
+msgid "Your most viewed visualizations"
+msgstr ""
+
+msgid "Download"
+msgstr "Stáhnout"
+
+msgid "File"
+msgstr "Soubor"
+
+msgid "New"
+msgstr "Nový"
+
+msgid "Open…"
+msgstr "Otevřít…"
+
+msgid "Save"
+msgstr "Uložit"
+
+msgid "Save…"
+msgstr "Uložit…"
+
+msgid "Save as…"
+msgstr "Uložit jako…"
+
+msgid "Rename…"
+msgstr "Přejmenovat…"
+
+msgid "Translate…"
+msgstr "Přeložit…"
+
+msgid "Share…"
+msgstr "Sdílet…"
+
+msgid "Get link…"
+msgstr "Získat odkaz ..."
+
+msgid "Delete"
+msgstr "Vymazat"
+
+msgid "Open"
+msgstr "Otevřít"
+
+msgid "\"{{- deletedObject}}\" successfully deleted."
+msgstr "\"{{- deletedObject}}\" byl úspěšně odstraněn."
+
+msgid "An unknown error occurred."
+msgstr "Nastala neznámá chyba."
+
+msgid ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+msgstr ""
+
+msgid "You don't have sufficient permissions."
+msgstr ""
+
+msgid "Rename successful"
+msgstr "Přejmenování bylo úspěšné"
+
+msgid "Rename failed"
+msgstr "Přejmenování selhalo"
+
+msgid "Hide layout"
+msgstr "Skrýt rozvržení"
+
+msgid "Show layout"
+msgstr "Zobrazit rozvržení"
+
+msgid "Hide dimensions sidebar"
+msgstr "Skrýt postranní panel dimenzí"
+
+msgid "Show dimensions sidebar"
+msgstr "Zobrazit postranní panel dimenzí"
+
+msgid "Hide interpretations and details"
+msgstr "Skrýt interpretace a podrobnosti"
+
+msgid "Show interpretations and details"
+msgstr "Zobrazit interpretace a podrobnosti"
+
+msgid "View"
+msgstr "Zobrazit"
+
+msgid "Resize layout to fit"
+msgstr ""
+
+msgid "Reset dimensions sidebar width"
+msgstr ""
+
+msgid "Show panels"
+msgstr "Zobrazit panely"
+
+msgid "Expand visualization and hide panels"
+msgstr "Rozbalit vizualizaci a skrýt panely"
+
+msgid "Hide details panel"
+msgstr ""
+
+msgid "Show details panel"
+msgstr ""
+
+msgid "Loading visualization"
+msgstr ""
+
+msgid "Unsaved visualization"
+msgstr "Neuložená vizualizace"
+
+msgid "Edited"
+msgstr "Upraveno"
+
+msgid "Use item default"
+msgstr ""
+
+msgid "Sum"
+msgstr "Součet"
+
+msgid "Average"
+msgstr "Průměr"
+
+msgid "Average (sum in org unit hierarchy)"
+msgstr "Průměr (součet v hierarchii organizačních jednotek)"
+
+msgid "Last value (sum in org unit hierarchy)"
+msgstr "Poslední hodnota (součet v hierarchii org. jednotek)"
+
+msgid "Last value (average in org unit hierarchy)"
+msgstr "Poslední hodnota (průměr v hierarchii organizačních jednotek)"
+
+msgid "Last value in period (last value in org unit hierarchy)"
+msgstr ""
+"Poslední hodnota v období (poslední hodnota v hierarchii organizačních "
+"jednotek)"
+
+msgid "Last value in period (sum in org unit hierarchy)"
+msgstr "Poslední hodnota v období (součet v hierarchii org. jednotek)"
+
+msgid "Last value in period (average in org unit hierarchy)"
+msgstr ""
+"Poslední hodnota v období (průměr v hierarchii organizačních jednotek)"
+
+msgid "First value (sum in org unit hierarchy)"
+msgstr "První hodnota (součet v hierarchii organizačních jednotek)"
+
+msgid "First value (average in org unit hierarchy)"
+msgstr "První hodnota (průměr v hierarchii organizačních jednotek)"
+
+msgid "First value in period (first value in org unit hierarchy)"
+msgstr ""
+
+msgid "Count"
+msgstr "Počet"
+
+msgid "Standard deviation"
+msgstr "Standardní odchylka"
+
+msgid "Variance"
+msgstr "Rozptyl"
+
+msgid "Min"
+msgstr "Min"
+
+msgid "Max"
+msgstr "Max"
+
+msgid "Min value (sum in org unit hierarchy)"
+msgstr "Minimální hodnota (součet v hierarchii organizačních jednotek)"
+
+msgid "Max value (sum in org unit hierarchy)"
+msgstr "Maximální hodnota (součet v hierarchii organizačních jednotek)"
+
+msgid "Custom"
+msgstr "Vlastní"
+
+msgid "equal to (=)"
+msgstr "rovno (=)"
+
+msgid "greater than (>)"
+msgstr "větší než (>)"
+
+msgid "greater than or equal to (≥)"
+msgstr "větší nebo rovno (≥)"
+
+msgid "less than (<)"
+msgstr "menší než (<)"
+
+msgid "less than or equal to (≤)"
+msgstr "menší nebo rovno (≤)"
+
+msgid "not equal to (≠)"
+msgstr "nerovná se (≠)"
+
+msgid "is empty / null"
+msgstr "je prázdný / null"
+
+msgid "is not empty / not null"
+msgstr "není prázdné / není null"
+
+msgid "exactly"
+msgstr "přesně"
+
+msgid "is not"
+msgstr "není"
+
+msgid "contains"
+msgstr "obsahuje"
+
+msgid "does not contain"
+msgstr "neobsahuje"
+
+msgid "after"
+msgstr "po"
+
+msgid "after or including"
+msgstr "po nebo včetně"
+
+msgid "before"
+msgstr "před"
+
+msgid "before or including"
+msgstr "před nebo včetně"
+
+msgid "Yes"
+msgstr "Ano"
+
+msgid "No"
+msgstr "Ne"
+
+msgid "Not answered"
+msgstr "Nezodpovězeno"
+
+msgid ""
+"{{- dataSourceTetName}} dimensions cannot be combined with {{- "
+"layoutTetName}} dimensions already in the layout."
+msgstr ""
+
+msgid "Already used as custom value."
+msgstr ""
+
+msgid "Cannot be used in a {{visType}}."
+msgstr ""
+
+msgid "Created on"
+msgstr ""
+
+msgid "Last updated on"
+msgstr "Naposledy aktualizováno dne"
+
+msgid "Last updated by"
+msgstr "Naposledy aktualizováno uživatelem"
+
+msgid "Created by"
+msgstr "Vytvořil"
+
+msgid "Completed on"
+msgstr ""
+
+msgid "Event org. unit"
+msgstr ""
+
+msgid "Event date"
+msgstr "Datum události"
+
+msgid "Scheduled date"
+msgstr "Plánované datum"
+
+msgid "Event status"
+msgstr "Stav události"
+
+msgid "Enrollment org. unit"
+msgstr ""
+
+msgid "Date of enrollment"
+msgstr "Datum zápisu"
+
+msgid "Incident date"
+msgstr "Datum incidentu"
+
+msgid "Enrollment status"
+msgstr "Stav zápisu"
+
+msgid "Registration org. unit"
+msgstr "Registrace organizační jednotky"
+
+msgid "Enrollment date"
+msgstr "Datum zápisu"
+
+msgid "Columns"
+msgstr "Sloupce"
+
+msgid "Rows"
+msgstr "Řádky"
+
+msgid "User organisation unit"
+msgstr "Organizační jednotka uživatele"
+
+msgid "User sub-units"
+msgstr "Podjednotky uživatele"
+
+msgid "User sub-x2-units"
+msgstr "Jednotky 2. řádu uživatele"
+
+msgid "Today"
+msgstr "Dnes"
+
+msgid "Yesterday"
+msgstr "Včera"
+
+msgid "Last 3 days"
+msgstr "Poslední 3 dny"
+
+msgid "Last 7 days"
+msgstr "Posledních 7 dní"
+
+msgid "Last 14 days"
+msgstr "Posledních 14 dní"
+
+msgid "This week"
+msgstr "Tento týden"
+
+msgid "Last week"
+msgstr "Minulý týden"
+
+msgid "Last 4 weeks"
+msgstr "Poslední 4 týdny"
+
+msgid "Last 12 weeks"
+msgstr "Posledních 12 týdnů"
+
+msgid "Last 52 weeks"
+msgstr "Posledních 52 týdnů"
+
+msgid "Weeks this year"
+msgstr "Týdny tohoto roku"
+
+msgid "This month"
+msgstr "Tento měsíc"
+
+msgid "Last month"
+msgstr "Minulý měsíc"
+
+msgid "Last 3 months"
+msgstr "Poslední 3 měsíce"
+
+msgid "Last 6 months"
+msgstr "Posledních 6 měsíců"
+
+msgid "Last 12 months"
+msgstr "Posledních 12 měsíců"
+
+msgid "Months this year"
+msgstr "Měsíce tohoto roku"
+
+msgid "This bimonth"
+msgstr "Tento dvouměsíc"
+
+msgid "Last bimonth"
+msgstr "Poslední dvouměsíční"
+
+msgid "Last 6 bimonths"
+msgstr "Posledních 6 dvouměsíců"
+
+msgid "Bimonths this year"
+msgstr "Dvouměsíční tento rok"
+
+msgid "This quarter"
+msgstr "Toto čtvrtletí"
+
+msgid "Last quarter"
+msgstr "Poslední čtvrtletí"
+
+msgid "Last 4 quarters"
+msgstr "Poslední 4 čtvrtletí "
+
+msgid "Quarters this year"
+msgstr "Čtvrtletí tohoto roku"
+
+msgid "This six-month"
+msgstr "Těchto šest měsíců"
+
+msgid "Last six-month"
+msgstr "Poslední půlrok"
+
+msgid "Last 2 six-months"
+msgstr "Poslední 2 šestiměsíce"
+
+msgid "This financial year"
+msgstr "Tento finanční rok"
+
+msgid "Last financial year"
+msgstr "Poslední finanční rok"
+
+msgid "Last 5 financial years"
+msgstr "Posledních 5 finančních roků"
+
+msgid "This year"
+msgstr "Tento rok"
+
+msgid "Last year"
+msgstr "Poslední rok"
+
+msgid "Period"
+msgstr "Období"
+
+msgid "Organisation unit"
+msgstr "Organizační jednotka"
+
+msgid "Style"
+msgstr "Styl"
+
+msgid "Active"
+msgstr "Aktivní"
+
+msgid "Cancelled"
+msgstr "Zrušeno"
+
+msgid "Completed"
+msgstr "Dokončeno"
+
+msgid "Scheduled"
+msgstr "Naplánováno"
+
+msgid ""
+"Track or compare changes over time. Recommend period as category. (adjust "
+"for EVER)"
+msgstr ""
+
+msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
+msgstr ""
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "Vizualizér událostí"
+
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr ""

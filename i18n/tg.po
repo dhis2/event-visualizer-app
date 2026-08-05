@@ -1,0 +1,1148 @@
+# Translators:
+# Viktor Varland <viktor@dhis2.org>, 2026
+# Philip Larsen Donnelly, 2026
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"PO-Revision-Date: 2026-07-23 07:34+0000\n"
+"Last-Translator: Philip Larsen Donnelly, 2026\n"
+"Language-Team: Tajik (https://app.transifex.com/hisp-uio/teams/100509/tg/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: tg\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid ""
+"Some dimensions were not added because they cannot be used in a "
+"{{visTypeName}}: {{list}}."
+msgstr ""
+
+msgid ""
+"Some dimensions were not added because they cannot be combined with {{- "
+"layoutTetName}} dimensions: {{list}}."
+msgstr ""
+
+msgid ""
+"{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Add to {{- axisName}}"
+msgstr ""
+
+msgid "Choose a filter type"
+msgstr ""
+
+msgid "Case sensitive"
+msgstr ""
+
+msgid "Delete filter"
+msgstr ""
+
+msgid "Repeated events"
+msgstr ""
+
+msgid "Data"
+msgstr "Иттилоот"
+
+msgid "Only available for repeatable stages"
+msgstr ""
+
+msgid "{{valueType}} type dimensions cannot be filtered."
+msgstr ""
+
+msgid "This dimension cannot be filtered."
+msgstr ""
+
+msgid "Preset options can't be combined with other filters"
+msgstr ""
+
+msgid "Add filter"
+msgstr ""
+
+msgid "and"
+msgstr ""
+
+msgid "is one of preset options"
+msgstr ""
+
+msgid "Choose a legend set"
+msgstr ""
+
+msgid "Loading legend sets"
+msgstr ""
+
+msgid "No preset option sets for this data item"
+msgstr ""
+
+msgid "Choose legends"
+msgstr ""
+
+msgid "Loading legends"
+msgstr ""
+
+msgid "From stages with repeatable events, show values from:"
+msgstr ""
+
+msgid "Oldest events"
+msgstr ""
+
+msgid "Show fewer of the oldest events"
+msgstr ""
+
+msgid "Show more of the oldest events"
+msgstr ""
+
+msgid "Most recent events"
+msgstr ""
+
+msgid "Show fewer of the most recent events"
+msgstr ""
+
+msgid "Show more of the most recent events"
+msgstr ""
+
+msgid "Hide"
+msgstr "Пинҳон кардан"
+
+msgid "Start and end dates are inclusive and will be included in the outputs."
+msgstr ""
+
+msgid "Start date"
+msgstr "Санаи оғоз"
+
+msgid "End date"
+msgstr "Санаи анҷом"
+
+msgid "Choose from presets"
+msgstr ""
+
+msgid "Define start - end dates"
+msgstr ""
+
+msgid "Value filtering"
+msgstr ""
+
+msgid "Show all values"
+msgstr ""
+
+msgid "Filter"
+msgstr "Филтр"
+
+msgid "No items selected"
+msgstr ""
+
+msgid "Available options"
+msgstr ""
+
+msgid "Filter options"
+msgstr ""
+
+msgid "Selected options"
+msgstr ""
+
+msgid "Nothing found for \"{{- searchTerm}}\""
+msgstr ""
+
+msgid "No options"
+msgstr ""
+
+msgid "Data value set"
+msgstr ""
+
+msgid "JSON"
+msgstr ""
+
+msgid "XML"
+msgstr ""
+
+msgid "Other formats"
+msgstr ""
+
+msgid "JRXML"
+msgstr ""
+
+msgid "Raw data SQL"
+msgstr ""
+
+msgid "HTML"
+msgstr ""
+
+msgid "HTML+CSS (.html+css)"
+msgstr ""
+
+msgid "Plain data source"
+msgstr "Маъхази иттилооти оддӣ"
+
+msgid "Microsoft Excel"
+msgstr ""
+
+msgid "CSV"
+msgstr ""
+
+msgid "Advanced"
+msgstr ""
+
+msgid "Download data from this date"
+msgstr ""
+
+msgid "Metadata ID scheme"
+msgstr ""
+
+msgid "ID"
+msgstr "Идентификатор"
+
+msgid "Code"
+msgstr "Рамз"
+
+msgid "Name"
+msgstr "Ном"
+
+msgid "An error occurred"
+msgstr ""
+
+msgid "Resize axes panel"
+msgstr ""
+
+msgid "Move to {{- axisName}}"
+msgstr ""
+
+msgid "Remove"
+msgstr "Тоза кардан"
+
+msgid "all"
+msgstr ""
+
+msgid "None selected"
+msgstr ""
+
+msgid "Showing all values for this dimension"
+msgstr ""
+
+msgid "Program: {{- programName}}"
+msgstr ""
+
+msgid "Program stage: {{- stageName}}"
+msgstr ""
+
+msgid "Levels"
+msgstr ""
+
+msgid "Groups"
+msgstr "Гурӯҳҳо"
+
+msgid "Using: {{- itemName}} ({{- aggregationType}})"
+msgstr ""
+
+msgid "Custom value is from a different stage than dimensions in the layout"
+msgstr ""
+
+msgid "Update custom value"
+msgstr ""
+
+msgid "Create custom value table"
+msgstr ""
+
+msgid "Switch to custom value table"
+msgstr ""
+
+msgid "Update custom value table"
+msgstr ""
+
+msgid "Enrollment"
+msgstr ""
+
+msgid "Create {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Create {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Event"
+msgstr ""
+
+msgid "Create {{- eventLabel}} list"
+msgstr ""
+
+msgid "Create {{- eventLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} table"
+msgstr ""
+
+msgid "Update {{- eventLabel}} list"
+msgstr ""
+
+msgid "Update {{- eventLabel}} table"
+msgstr ""
+
+msgid "tracked entity"
+msgstr ""
+
+msgid "Create {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Switch to {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Update {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Not valid with registration org. unit"
+msgstr ""
+
+msgid "Not valid with categories or category option group sets"
+msgstr ""
+
+msgid "Not valid with categories"
+msgstr ""
+
+msgid "Not valid with category option group sets"
+msgstr ""
+
+msgid "Not valid without a program"
+msgstr ""
+
+msgid "Not valid with multiple programs"
+msgstr ""
+
+msgid "Not valid with multiple program stages"
+msgstr ""
+
+msgid "Not valid with event programs"
+msgstr ""
+
+msgid "Not valid with Completed on"
+msgstr ""
+
+msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid with program indicators"
+msgstr ""
+
+msgid "Nothing selected. Add items to the layout to get started."
+msgstr ""
+
+msgid "Configure custom value"
+msgstr ""
+
+msgid "Choose the numeric data item to show in table cells."
+msgstr ""
+
+msgid "Search data items"
+msgstr ""
+
+msgid "Loading data"
+msgstr ""
+
+msgid "Error loading data"
+msgstr ""
+
+msgid "Failed to load data items"
+msgstr ""
+
+msgid "No numeric data items in stage \"{{- stageName}}\""
+msgstr ""
+
+msgid "No numeric data items in this program"
+msgstr ""
+
+msgid "This stage does not have any numeric data items available."
+msgstr ""
+
+msgid "This program does not have any numeric data items available."
+msgstr ""
+
+msgid "No data items match \"{{- searchTerm}}\""
+msgstr ""
+
+msgid "Aggregation"
+msgstr ""
+
+msgid "Cancel"
+msgstr "Бекор кардан"
+
+msgid "Update"
+msgstr "Навсозӣ"
+
+msgid "Select a value before updating"
+msgstr ""
+
+msgid ""
+"\"{{- itemName}}\" is from a different stage than the dimensions in the "
+"layout. Choose another item."
+msgstr ""
+
+msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
+msgstr ""
+
+msgid "Collapse layout"
+msgstr ""
+
+msgid "Expand layout"
+msgstr ""
+
+msgid "List options"
+msgstr ""
+
+msgid "Table options"
+msgstr "Имконои ҷадвал"
+
+msgid "Chart options"
+msgstr "Диаграмма Имконот"
+
+msgid "Convert to {{- visType}}"
+msgstr ""
+
+msgid "{{- names}} will be removed. Are you sure?"
+msgstr ""
+
+msgid "Convert"
+msgstr ""
+
+msgid "Individual data view"
+msgstr ""
+
+msgid "Aggregated view"
+msgstr ""
+
+msgid "No event"
+msgstr ""
+
+msgid "Sort by \"{{- column}}\" and update"
+msgstr ""
+
+msgid "Hide legend key"
+msgstr ""
+
+msgid "Show legend key"
+msgstr ""
+
+msgid ""
+"This line list may show data that was not available when the interpretation "
+"was written."
+msgstr ""
+
+msgid "Rows per page"
+msgstr ""
+
+msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
+msgstr ""
+
+msgid "Not available offline"
+msgstr ""
+
+msgid "most recent"
+msgstr ""
+
+msgid "oldest"
+msgstr ""
+
+msgid "oldest {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "most recent {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "Column sub-totals"
+msgstr ""
+
+msgid "Column totals"
+msgstr ""
+
+msgid "Cumulative values"
+msgstr ""
+
+msgid "Accumulate cell values along rows"
+msgstr ""
+
+msgid "Digit group separator"
+msgstr "Ҷудокунандаи гурӯҳи рақамҳо"
+
+msgid "None"
+msgstr "Ягонто"
+
+msgid "Space"
+msgstr ""
+
+msgid "Comma"
+msgstr ""
+
+msgid "Display density"
+msgstr "Зичии намоиш"
+
+msgid "Comfortable"
+msgstr "Роҳат"
+
+msgid "Normal"
+msgstr "Муқаррарӣ"
+
+msgid "Compact"
+msgstr "Муъҷаз"
+
+msgid "Font size"
+msgstr "Андозаи шрифт"
+
+msgid "Large"
+msgstr "Калон"
+
+msgid "Small"
+msgstr "Хурд"
+
+msgid "Hide empty rows"
+msgstr "Пинҳон кардани сатрҳои холӣ"
+
+msgid "Hide N/A data"
+msgstr ""
+
+msgid "Use a legend for table cell colors"
+msgstr ""
+
+msgid "Use pre-defined legend per data item"
+msgstr ""
+
+msgid "Choose a single legend for the entire visualization"
+msgstr ""
+
+msgid "Legend type"
+msgstr "Навъи аломатҳои шартӣ"
+
+msgid "Legend changes background color"
+msgstr ""
+
+msgid "Legend changes text color"
+msgstr ""
+
+msgid "Legend style"
+msgstr ""
+
+msgid "Legend"
+msgstr "Маҷмӯи аломатҳои шартӣ"
+
+msgid "Select from legends"
+msgstr ""
+
+msgid "Limit"
+msgstr ""
+
+msgid "Sort order"
+msgstr "Тартиби ҷудокунӣ"
+
+msgid "Low to high"
+msgstr "Аз хурд ба калон"
+
+msgid "High to low"
+msgstr "Аз калон ба хурд"
+
+msgid "Top limit"
+msgstr "Ҳудуди болоӣ"
+
+msgid "Row sub-totals"
+msgstr ""
+
+msgid "Row totals"
+msgstr ""
+
+msgid "Dimension labels"
+msgstr ""
+
+msgid "Display organisation unit hierarchy"
+msgstr ""
+
+msgid "Skip rounding"
+msgstr ""
+
+msgid "Add a subtitle"
+msgstr ""
+
+msgid "Add a title"
+msgstr ""
+
+msgid "Options"
+msgstr "Имконот"
+
+msgid "Display"
+msgstr "Намоиш додан"
+
+msgid "Line list title"
+msgstr ""
+
+msgid "Line list subtitle"
+msgstr ""
+
+msgid "Totals"
+msgstr "Ҳамагӣ"
+
+msgid "Totals are not supported when using cumulative values"
+msgstr ""
+
+msgid "Empty data"
+msgstr ""
+
+msgid "Table title"
+msgstr ""
+
+msgid "Table subtitle"
+msgstr ""
+
+msgid "Labels"
+msgstr ""
+
+msgid "Create a {{- visType}} before updating"
+msgstr ""
+
+msgid "Metadata"
+msgstr ""
+
+msgid "Other"
+msgstr "Дигар"
+
+msgid "Enrollment data"
+msgstr ""
+
+msgid "Event data"
+msgstr ""
+
+msgid "Program indicators"
+msgstr ""
+
+msgid "{{- name}} registration"
+msgstr ""
+
+msgid "Choose a data source"
+msgstr ""
+
+msgid "No data sources available"
+msgstr ""
+
+msgid "Programs"
+msgstr "Барномаҳо"
+
+msgid "Show more"
+msgstr ""
+
+msgid "Analyze without a program"
+msgstr ""
+
+msgid "Loading options"
+msgstr ""
+
+msgid "Failed to load data sources."
+msgstr ""
+
+msgid "Filter data sources"
+msgstr ""
+
+msgid "There was a problem and this data could not be loaded"
+msgstr ""
+
+msgid "There was problem loading more data"
+msgstr ""
+
+msgid "No data found"
+msgstr "Ягон иттилоот ёфт нашуд"
+
+msgid "No results"
+msgstr ""
+
+msgid "Load more"
+msgstr ""
+
+msgid "Loading more..."
+msgstr ""
+
+msgid "None of the selected dimensions can be added to this layout."
+msgstr ""
+
+msgid "Org units"
+msgstr "воҳидҳои сохторӣ"
+
+msgid "Periods"
+msgstr "Давраҳо"
+
+msgid "Statuses"
+msgstr ""
+
+msgid "Data elements"
+msgstr "Унсурҳои иттилоот"
+
+msgid "Program attributes"
+msgstr ""
+
+msgid "Categories"
+msgstr "Категорияҳо"
+
+msgid "Category option group sets"
+msgstr ""
+
+msgid ""
+"Choose a data source above to see its dimensions, periods, and organisation "
+"units."
+msgstr ""
+
+msgid "Expand all cards"
+msgstr ""
+
+msgid "Collapse all cards"
+msgstr ""
+
+msgid "Something went wrong while searching."
+msgstr ""
+
+msgid "Search"
+msgstr "Ҷустуҷӯ"
+
+msgid "Clear search"
+msgstr ""
+
+msgid "Your most viewed visualizations"
+msgstr ""
+
+msgid "Download"
+msgstr "Боргирӣ"
+
+msgid "File"
+msgstr "Файл"
+
+msgid "New"
+msgstr "Нав"
+
+msgid "Open…"
+msgstr ""
+
+msgid "Save"
+msgstr "Захира кардан"
+
+msgid "Save…"
+msgstr ""
+
+msgid "Save as…"
+msgstr ""
+
+msgid "Rename…"
+msgstr ""
+
+msgid "Translate…"
+msgstr ""
+
+msgid "Share…"
+msgstr ""
+
+msgid "Get link…"
+msgstr ""
+
+msgid "Delete"
+msgstr "Нест кардан"
+
+msgid "Open"
+msgstr ""
+
+msgid "\"{{- deletedObject}}\" successfully deleted."
+msgstr ""
+
+msgid "An unknown error occurred."
+msgstr ""
+
+msgid ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+msgstr ""
+
+msgid "You don't have sufficient permissions."
+msgstr ""
+
+msgid "Rename successful"
+msgstr ""
+
+msgid "Rename failed"
+msgstr ""
+
+msgid "Hide layout"
+msgstr ""
+
+msgid "Show layout"
+msgstr ""
+
+msgid "Hide dimensions sidebar"
+msgstr ""
+
+msgid "Show dimensions sidebar"
+msgstr ""
+
+msgid "Hide interpretations and details"
+msgstr ""
+
+msgid "Show interpretations and details"
+msgstr ""
+
+msgid "View"
+msgstr "Намоиш додан"
+
+msgid "Resize layout to fit"
+msgstr ""
+
+msgid "Reset dimensions sidebar width"
+msgstr ""
+
+msgid "Show panels"
+msgstr ""
+
+msgid "Expand visualization and hide panels"
+msgstr ""
+
+msgid "Hide details panel"
+msgstr ""
+
+msgid "Show details panel"
+msgstr ""
+
+msgid "Loading visualization"
+msgstr ""
+
+msgid "Unsaved visualization"
+msgstr ""
+
+msgid "Edited"
+msgstr ""
+
+msgid "Use item default"
+msgstr ""
+
+msgid "Sum"
+msgstr "Ҷамъ"
+
+msgid "Average"
+msgstr "Миёна"
+
+msgid "Average (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value (average in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value in period (last value in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value in period (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value in period (average in org unit hierarchy)"
+msgstr ""
+
+msgid "First value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "First value (average in org unit hierarchy)"
+msgstr ""
+
+msgid "First value in period (first value in org unit hierarchy)"
+msgstr ""
+
+msgid "Count"
+msgstr "Шумора"
+
+msgid "Standard deviation"
+msgstr ""
+
+msgid "Variance"
+msgstr ""
+
+msgid "Min"
+msgstr "Мин"
+
+msgid "Max"
+msgstr "Макс"
+
+msgid "Min value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Max value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
+msgid "equal to (=)"
+msgstr ""
+
+msgid "greater than (>)"
+msgstr ""
+
+msgid "greater than or equal to (≥)"
+msgstr ""
+
+msgid "less than (<)"
+msgstr ""
+
+msgid "less than or equal to (≤)"
+msgstr ""
+
+msgid "not equal to (≠)"
+msgstr ""
+
+msgid "is empty / null"
+msgstr ""
+
+msgid "is not empty / not null"
+msgstr ""
+
+msgid "exactly"
+msgstr ""
+
+msgid "is not"
+msgstr ""
+
+msgid "contains"
+msgstr ""
+
+msgid "does not contain"
+msgstr ""
+
+msgid "after"
+msgstr ""
+
+msgid "after or including"
+msgstr ""
+
+msgid "before"
+msgstr ""
+
+msgid "before or including"
+msgstr ""
+
+msgid "Yes"
+msgstr "Ҳа"
+
+msgid "No"
+msgstr "Не"
+
+msgid "Not answered"
+msgstr ""
+
+msgid ""
+"{{- dataSourceTetName}} dimensions cannot be combined with {{- "
+"layoutTetName}} dimensions already in the layout."
+msgstr ""
+
+msgid "Already used as custom value."
+msgstr ""
+
+msgid "Cannot be used in a {{visType}}."
+msgstr ""
+
+msgid "Created on"
+msgstr ""
+
+msgid "Last updated on"
+msgstr ""
+
+msgid "Last updated by"
+msgstr ""
+
+msgid "Created by"
+msgstr ""
+
+msgid "Completed on"
+msgstr ""
+
+msgid "Event org. unit"
+msgstr ""
+
+msgid "Event date"
+msgstr ""
+
+msgid "Scheduled date"
+msgstr ""
+
+msgid "Event status"
+msgstr ""
+
+msgid "Enrollment org. unit"
+msgstr ""
+
+msgid "Date of enrollment"
+msgstr "Санаи номнавис"
+
+msgid "Incident date"
+msgstr ""
+
+msgid "Enrollment status"
+msgstr ""
+
+msgid "Registration org. unit"
+msgstr ""
+
+msgid "Enrollment date"
+msgstr "Санаи номнавис"
+
+msgid "Columns"
+msgstr ""
+
+msgid "Rows"
+msgstr ""
+
+msgid "User organisation unit"
+msgstr ""
+
+msgid "User sub-units"
+msgstr ""
+
+msgid "User sub-x2-units"
+msgstr ""
+
+msgid "Today"
+msgstr "Имрӯз"
+
+msgid "Yesterday"
+msgstr "Дирӯз"
+
+msgid "Last 3 days"
+msgstr ""
+
+msgid "Last 7 days"
+msgstr "7 рӯзи охир"
+
+msgid "Last 14 days"
+msgstr ""
+
+msgid "This week"
+msgstr ""
+
+msgid "Last week"
+msgstr "Ҳафтаи гузашта"
+
+msgid "Last 4 weeks"
+msgstr "4 ҳафтаи охир"
+
+msgid "Last 12 weeks"
+msgstr "12 ҳафтаи охир"
+
+msgid "Last 52 weeks"
+msgstr ""
+
+msgid "Weeks this year"
+msgstr ""
+
+msgid "This month"
+msgstr ""
+
+msgid "Last month"
+msgstr "Моҳи гузашта"
+
+msgid "Last 3 months"
+msgstr "3 моҳи охир"
+
+msgid "Last 6 months"
+msgstr "6 моҳи охир"
+
+msgid "Last 12 months"
+msgstr "12 моҳи охир"
+
+msgid "Months this year"
+msgstr "Моҳҳо дар ин сол"
+
+msgid "This bimonth"
+msgstr ""
+
+msgid "Last bimonth"
+msgstr ""
+
+msgid "Last 6 bimonths"
+msgstr ""
+
+msgid "Bimonths this year"
+msgstr ""
+
+msgid "This quarter"
+msgstr ""
+
+msgid "Last quarter"
+msgstr "Семоҳаи охир"
+
+msgid "Last 4 quarters"
+msgstr "4 семоҳаи охир"
+
+msgid "Quarters this year"
+msgstr "Семоҳаҳои ин сол"
+
+msgid "This six-month"
+msgstr ""
+
+msgid "Last six-month"
+msgstr "Шашмоҳаи охир"
+
+msgid "Last 2 six-months"
+msgstr "2 шашмоҳаи охир"
+
+msgid "This financial year"
+msgstr ""
+
+msgid "Last financial year"
+msgstr "Соли молиявии гузашта"
+
+msgid "Last 5 financial years"
+msgstr "5 соли молиявии гузашта"
+
+msgid "This year"
+msgstr "Имсол"
+
+msgid "Last year"
+msgstr "Соли гузашта"
+
+msgid "Period"
+msgstr "Давра"
+
+msgid "Organisation unit"
+msgstr "Воҳиди сохторӣ"
+
+msgid "Style"
+msgstr "Услуб"
+
+msgid "Active"
+msgstr "Фаъол"
+
+msgid "Cancelled"
+msgstr ""
+
+msgid "Completed"
+msgstr "Анҷомёфта"
+
+msgid "Scheduled"
+msgstr ""
+
+msgid ""
+"Track or compare changes over time. Recommend period as category. (adjust "
+"for EVER)"
+msgstr ""
+
+msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
+msgstr ""
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr ""
+
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr ""
