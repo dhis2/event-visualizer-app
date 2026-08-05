@@ -13,6 +13,7 @@ ls:
         .json: kebab-case
 
 ignore:
+    - src/locales
     - src/types/dhis2-openapi-schemas
     - cypress/screenshots
     - cypress/downloads
