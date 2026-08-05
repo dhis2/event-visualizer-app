@@ -1,0 +1,1154 @@
+# Translators:
+# Andres Miguel Rubio, 2026
+# Mai Nguyen <thanhmai.jica@gmail.com>, 2026
+# Viktor Varland <viktor@dhis2.org>, 2026
+# Em Le <em.hispvietnam@gmail.com>, 2026
+# Thuy Nguyen <thuynguyen@hispvietnam.org>, 2026
+# Philip Larsen Donnelly, 2026
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"PO-Revision-Date: 2026-07-23 07:34+0000\n"
+"Last-Translator: Philip Larsen Donnelly, 2026\n"
+"Language-Team: Vietnamese (https://app.transifex.com/hisp-uio/teams/100509/vi/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: vi\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid ""
+"Some dimensions were not added because they cannot be used in a "
+"{{visTypeName}}: {{list}}."
+msgstr ""
+
+msgid ""
+"Some dimensions were not added because they cannot be combined with {{- "
+"layoutTetName}} dimensions: {{list}}."
+msgstr ""
+
+msgid ""
+"{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Add to {{- axisName}}"
+msgstr ""
+
+msgid "Choose a filter type"
+msgstr ""
+
+msgid "Case sensitive"
+msgstr "Phân biệt chữ hoa chữ thường"
+
+msgid "Delete filter"
+msgstr ""
+
+msgid "Repeated events"
+msgstr "Sự kiện được lặp lại"
+
+msgid "Data"
+msgstr "Dữ liệu"
+
+msgid "Only available for repeatable stages"
+msgstr "Chỉ dành cho các giai đoạn lặp lại"
+
+msgid "{{valueType}} type dimensions cannot be filtered."
+msgstr ""
+
+msgid "This dimension cannot be filtered."
+msgstr ""
+
+msgid "Preset options can't be combined with other filters"
+msgstr ""
+
+msgid "Add filter"
+msgstr "Thêm bộ lọc"
+
+msgid "and"
+msgstr "và"
+
+msgid "is one of preset options"
+msgstr "là một trong những tùy chọn cài đặt sẵn"
+
+msgid "Choose a legend set"
+msgstr ""
+
+msgid "Loading legend sets"
+msgstr ""
+
+msgid "No preset option sets for this data item"
+msgstr "Không có bộ tùy chọn cài đặt sẵn nào cho mục dữ liệu này"
+
+msgid "Choose legends"
+msgstr ""
+
+msgid "Loading legends"
+msgstr "Tải các chú giải"
+
+msgid "From stages with repeatable events, show values from:"
+msgstr ""
+
+msgid "Oldest events"
+msgstr ""
+
+msgid "Show fewer of the oldest events"
+msgstr ""
+
+msgid "Show more of the oldest events"
+msgstr ""
+
+msgid "Most recent events"
+msgstr ""
+
+msgid "Show fewer of the most recent events"
+msgstr ""
+
+msgid "Show more of the most recent events"
+msgstr ""
+
+msgid "Hide"
+msgstr "Ẩn"
+
+msgid "Start and end dates are inclusive and will be included in the outputs."
+msgstr "Ngày bắt đầu và ngày kết thúc sẽ được bao gồm và đưa vào kết quả."
+
+msgid "Start date"
+msgstr "Ngày bắt đầu"
+
+msgid "End date"
+msgstr "Ngày kết thúc"
+
+msgid "Choose from presets"
+msgstr "Chọn từ các cài đặt trước"
+
+msgid "Define start - end dates"
+msgstr "Xác định ngày bắt đầu - kết thúc"
+
+msgid "Value filtering"
+msgstr ""
+
+msgid "Show all values"
+msgstr ""
+
+msgid "Filter"
+msgstr "Bộ lọc"
+
+msgid "No items selected"
+msgstr "Không có mục nào được chọn"
+
+msgid "Available options"
+msgstr "Tùy chọn hiện có"
+
+msgid "Filter options"
+msgstr "Tùy Chọn Bộ Lọc"
+
+msgid "Selected options"
+msgstr "Các tùy chọn đã chọn"
+
+msgid "Nothing found for \"{{- searchTerm}}\""
+msgstr "Không tìm thấy gì cho {{- searchTerm}}"
+
+msgid "No options"
+msgstr "Không có tùy chọn"
+
+msgid "Data value set"
+msgstr "Bộ giá trị dữ liệu"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "XML"
+msgstr "XML"
+
+msgid "Other formats"
+msgstr "Định dạng khác"
+
+msgid "JRXML"
+msgstr "JRXML"
+
+msgid "Raw data SQL"
+msgstr "Dữ liệu thô SQL"
+
+msgid "HTML"
+msgstr "HTML"
+
+msgid "HTML+CSS (.html+css)"
+msgstr "HTML+CSS (.html+css)"
+
+msgid "Plain data source"
+msgstr "Nguồn dữ liệu thuần túy"
+
+msgid "Microsoft Excel"
+msgstr "Microsoft Excel"
+
+msgid "CSV"
+msgstr "CSV"
+
+msgid "Advanced"
+msgstr "Nâng cao"
+
+msgid "Download data from this date"
+msgstr "Tải dữ liệu từ ngày này"
+
+msgid "Metadata ID scheme"
+msgstr "Lược đồ ID siêu dữ liệu"
+
+msgid "ID"
+msgstr "Định danh (ID)"
+
+msgid "Code"
+msgstr "Mã"
+
+msgid "Name"
+msgstr "Tên"
+
+msgid "An error occurred"
+msgstr ""
+
+msgid "Resize axes panel"
+msgstr ""
+
+msgid "Move to {{- axisName}}"
+msgstr ""
+
+msgid "Remove"
+msgstr "Bỏ ra"
+
+msgid "all"
+msgstr "tất cả"
+
+msgid "None selected"
+msgstr "Chưa lựa chọn"
+
+msgid "Showing all values for this dimension"
+msgstr "Hiển thị tất cả dữ liệu cho chiều này"
+
+msgid "Program: {{- programName}}"
+msgstr "Chương trình: {{- programName}}"
+
+msgid "Program stage: {{- stageName}}"
+msgstr "Giai đoạn chương trình: {{- stageName}}"
+
+msgid "Levels"
+msgstr "Các cấp độ"
+
+msgid "Groups"
+msgstr "Nhóm"
+
+msgid "Using: {{- itemName}} ({{- aggregationType}})"
+msgstr ""
+
+msgid "Custom value is from a different stage than dimensions in the layout"
+msgstr ""
+
+msgid "Update custom value"
+msgstr ""
+
+msgid "Create custom value table"
+msgstr ""
+
+msgid "Switch to custom value table"
+msgstr ""
+
+msgid "Update custom value table"
+msgstr ""
+
+msgid "Enrollment"
+msgstr "Đăng ký"
+
+msgid "Create {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Create {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Event"
+msgstr "Sự Kiện"
+
+msgid "Create {{- eventLabel}} list"
+msgstr ""
+
+msgid "Create {{- eventLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} table"
+msgstr ""
+
+msgid "Update {{- eventLabel}} list"
+msgstr ""
+
+msgid "Update {{- eventLabel}} table"
+msgstr ""
+
+msgid "tracked entity"
+msgstr "cá thể"
+
+msgid "Create {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Switch to {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Update {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Not valid with registration org. unit"
+msgstr ""
+
+msgid "Not valid with categories or category option group sets"
+msgstr ""
+
+msgid "Not valid with categories"
+msgstr ""
+
+msgid "Not valid with category option group sets"
+msgstr ""
+
+msgid "Not valid without a program"
+msgstr ""
+
+msgid "Not valid with multiple programs"
+msgstr ""
+
+msgid "Not valid with multiple program stages"
+msgstr ""
+
+msgid "Not valid with event programs"
+msgstr ""
+
+msgid "Not valid with Completed on"
+msgstr ""
+
+msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid with program indicators"
+msgstr ""
+
+msgid "Nothing selected. Add items to the layout to get started."
+msgstr ""
+
+msgid "Configure custom value"
+msgstr ""
+
+msgid "Choose the numeric data item to show in table cells."
+msgstr ""
+
+msgid "Search data items"
+msgstr ""
+
+msgid "Loading data"
+msgstr "Đang tải dữ liệu"
+
+msgid "Error loading data"
+msgstr ""
+
+msgid "Failed to load data items"
+msgstr ""
+
+msgid "No numeric data items in stage \"{{- stageName}}\""
+msgstr ""
+
+msgid "No numeric data items in this program"
+msgstr ""
+
+msgid "This stage does not have any numeric data items available."
+msgstr ""
+
+msgid "This program does not have any numeric data items available."
+msgstr ""
+
+msgid "No data items match \"{{- searchTerm}}\""
+msgstr ""
+
+msgid "Aggregation"
+msgstr "Tổng hợp"
+
+msgid "Cancel"
+msgstr "Hủy"
+
+msgid "Update"
+msgstr "Cập nhật"
+
+msgid "Select a value before updating"
+msgstr ""
+
+msgid ""
+"\"{{- itemName}}\" is from a different stage than the dimensions in the "
+"layout. Choose another item."
+msgstr ""
+
+msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
+msgstr ""
+
+msgid "Collapse layout"
+msgstr ""
+
+msgid "Expand layout"
+msgstr ""
+
+msgid "List options"
+msgstr ""
+
+msgid "Table options"
+msgstr "Tùy chỉnh"
+
+msgid "Chart options"
+msgstr "Tùy chọn biểu đồ"
+
+msgid "Convert to {{- visType}}"
+msgstr ""
+
+msgid "{{- names}} will be removed. Are you sure?"
+msgstr ""
+
+msgid "Convert"
+msgstr ""
+
+msgid "Individual data view"
+msgstr ""
+
+msgid "Aggregated view"
+msgstr ""
+
+msgid "No event"
+msgstr "Không có sự kiện"
+
+msgid "Sort by \"{{- column}}\" and update"
+msgstr ""
+
+msgid "Hide legend key"
+msgstr ""
+
+msgid "Show legend key"
+msgstr "Hiển thị khóa chú giải"
+
+msgid ""
+"This line list may show data that was not available when the interpretation "
+"was written."
+msgstr ""
+"Danh sách dòng này có thể hiển thị dữ liệu không có sẵn khi bản giải thích "
+"được viết."
+
+msgid "Rows per page"
+msgstr "Số dòng mỗi trang"
+
+msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
+msgstr ""
+
+msgid "Not available offline"
+msgstr "Không có cho ngoại tuyến"
+
+msgid "most recent"
+msgstr "mới nhất"
+
+msgid "oldest"
+msgstr "cũ nhất"
+
+msgid "oldest {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "most recent {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "Column sub-totals"
+msgstr "Tổng phụ cột"
+
+msgid "Column totals"
+msgstr ""
+
+msgid "Cumulative values"
+msgstr "Các giá trị tích lũy"
+
+msgid "Accumulate cell values along rows"
+msgstr "Tích lũy giá trị ô dọc theo các hàng"
+
+msgid "Digit group separator"
+msgstr "Tách nhóm các con số"
+
+msgid "None"
+msgstr "Không"
+
+msgid "Space"
+msgstr "Khoảng trắng"
+
+msgid "Comma"
+msgstr "Dấu phẩy"
+
+msgid "Display density"
+msgstr "Mật độ hiển thị"
+
+msgid "Comfortable"
+msgstr "Thoải mái"
+
+msgid "Normal"
+msgstr "Thường"
+
+msgid "Compact"
+msgstr "Gọn"
+
+msgid "Font size"
+msgstr "Cỡ chữ"
+
+msgid "Large"
+msgstr "Lớn"
+
+msgid "Small"
+msgstr "Nhỏ"
+
+msgid "Hide empty rows"
+msgstr "Ẩn dòng rỗng"
+
+msgid "Hide N/A data"
+msgstr ""
+
+msgid "Use a legend for table cell colors"
+msgstr "Sử dụng chú giải cho màu ô bảng"
+
+msgid "Use pre-defined legend per data item"
+msgstr "Sử dụng chú giải được xác định trước cho mỗi mục dữ liệu"
+
+msgid "Choose a single legend for the entire visualization"
+msgstr "Chọn một chú giải duy nhất cho toàn bộ hình ảnh"
+
+msgid "Legend type"
+msgstr "Loại Chú giải"
+
+msgid "Legend changes background color"
+msgstr "Chú giải thay đổi màu nền"
+
+msgid "Legend changes text color"
+msgstr "Chú giải thay đổi màu chữ"
+
+msgid "Legend style"
+msgstr "Kiểu chú giải"
+
+msgid "Legend"
+msgstr "Chú giải"
+
+msgid "Select from legends"
+msgstr "Chọn từ các chú giải"
+
+msgid "Limit"
+msgstr "Giới hạn"
+
+msgid "Sort order"
+msgstr "Sắp xếp theo thứ tự"
+
+msgid "Low to high"
+msgstr "Thấp lên cao"
+
+msgid "High to low"
+msgstr "Cao xuống thấp"
+
+msgid "Top limit"
+msgstr "Giới hạn trên"
+
+msgid "Row sub-totals"
+msgstr "Tổng phụ dòng"
+
+msgid "Row totals"
+msgstr "Tổng dòng"
+
+msgid "Dimension labels"
+msgstr "Nhãn chiều dữ liệu"
+
+msgid "Display organisation unit hierarchy"
+msgstr "Hiển thị cây đơn vị"
+
+msgid "Skip rounding"
+msgstr "Không làm tròn"
+
+msgid "Add a subtitle"
+msgstr "Thêm tiêu đề phụ"
+
+msgid "Add a title"
+msgstr "Thêm tiêu đề"
+
+msgid "Options"
+msgstr "Tùy chọn"
+
+msgid "Display"
+msgstr "Hiển thị"
+
+msgid "Line list title"
+msgstr ""
+
+msgid "Line list subtitle"
+msgstr ""
+
+msgid "Totals"
+msgstr "Tổng"
+
+msgid "Totals are not supported when using cumulative values"
+msgstr "Tổng số không được hỗ trợ khi sử dụng giá trị tích lũy"
+
+msgid "Empty data"
+msgstr "Dữ liệu trống"
+
+msgid "Table title"
+msgstr "Tiêu đề bảng"
+
+msgid "Table subtitle"
+msgstr "Tiêu đề phụ của bảng"
+
+msgid "Labels"
+msgstr "Nhãn"
+
+msgid "Create a {{- visType}} before updating"
+msgstr ""
+
+msgid "Metadata"
+msgstr "Siêu dữ liệu"
+
+msgid "Other"
+msgstr "Khác"
+
+msgid "Enrollment data"
+msgstr "Dữ liệu đăng ký"
+
+msgid "Event data"
+msgstr "Dữ liệu sự kiện"
+
+msgid "Program indicators"
+msgstr "Chỉ Số Chương Trình"
+
+msgid "{{- name}} registration"
+msgstr ""
+
+msgid "Choose a data source"
+msgstr ""
+
+msgid "No data sources available"
+msgstr ""
+
+msgid "Programs"
+msgstr "Chương trình"
+
+msgid "Show more"
+msgstr "Hiện thêm"
+
+msgid "Analyze without a program"
+msgstr ""
+
+msgid "Loading options"
+msgstr ""
+
+msgid "Failed to load data sources."
+msgstr ""
+
+msgid "Filter data sources"
+msgstr ""
+
+msgid "There was a problem and this data could not be loaded"
+msgstr ""
+
+msgid "There was problem loading more data"
+msgstr ""
+
+msgid "No data found"
+msgstr "Không tìm thấy dữ liệu"
+
+msgid "No results"
+msgstr "Không có kết quả"
+
+msgid "Load more"
+msgstr ""
+
+msgid "Loading more..."
+msgstr ""
+
+msgid "None of the selected dimensions can be added to this layout."
+msgstr ""
+
+msgid "Org units"
+msgstr "Đơn vị"
+
+msgid "Periods"
+msgstr "Thời điểm"
+
+msgid "Statuses"
+msgstr ""
+
+msgid "Data elements"
+msgstr "Phần tử dữ liệu"
+
+msgid "Program attributes"
+msgstr ""
+
+msgid "Categories"
+msgstr "Phân loại"
+
+msgid "Category option group sets"
+msgstr ""
+
+msgid ""
+"Choose a data source above to see its dimensions, periods, and organisation "
+"units."
+msgstr ""
+
+msgid "Expand all cards"
+msgstr ""
+
+msgid "Collapse all cards"
+msgstr ""
+
+msgid "Something went wrong while searching."
+msgstr ""
+
+msgid "Search"
+msgstr "Tìm kiếm"
+
+msgid "Clear search"
+msgstr "Bỏ tìm kiếm"
+
+msgid "Your most viewed visualizations"
+msgstr ""
+
+msgid "Download"
+msgstr "Tải về"
+
+msgid "File"
+msgstr "Tập tin"
+
+msgid "New"
+msgstr "Mới"
+
+msgid "Open…"
+msgstr "Mở..."
+
+msgid "Save"
+msgstr "Lưu"
+
+msgid "Save…"
+msgstr "Lưu..."
+
+msgid "Save as…"
+msgstr "Lưu dưới dạng…"
+
+msgid "Rename…"
+msgstr "Đổi tên..."
+
+msgid "Translate…"
+msgstr "Dịch..."
+
+msgid "Share…"
+msgstr "Chia sẻ..."
+
+msgid "Get link…"
+msgstr "Lấy đường dẫn liên kết..."
+
+msgid "Delete"
+msgstr "Xóa"
+
+msgid "Open"
+msgstr "Mở"
+
+msgid "\"{{- deletedObject}}\" successfully deleted."
+msgstr "{{- deletedObject}}đã xóa thành công"
+
+msgid "An unknown error occurred."
+msgstr "Một lỗi không xác định đã xuất hiện."
+
+msgid ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+msgstr ""
+
+msgid "You don't have sufficient permissions."
+msgstr ""
+
+msgid "Rename successful"
+msgstr "Đổi tên thành công"
+
+msgid "Rename failed"
+msgstr "Đổi tên thất bại"
+
+msgid "Hide layout"
+msgstr "Ẩn bố cục"
+
+msgid "Show layout"
+msgstr "Hiển thị bố cục"
+
+msgid "Hide dimensions sidebar"
+msgstr "Ẩn thanh các chiều"
+
+msgid "Show dimensions sidebar"
+msgstr "Hiển thị thanh các chiều"
+
+msgid "Hide interpretations and details"
+msgstr "Ẩn các diễn giải và chi tiết"
+
+msgid "Show interpretations and details"
+msgstr "Hiện các diễn giải và chi tiết"
+
+msgid "View"
+msgstr "Xem"
+
+msgid "Resize layout to fit"
+msgstr ""
+
+msgid "Reset dimensions sidebar width"
+msgstr ""
+
+msgid "Show panels"
+msgstr "Hiển thị bảng điều khiển"
+
+msgid "Expand visualization and hide panels"
+msgstr "Mở rộng hình ảnh và ẩn bảng điều khiển"
+
+msgid "Hide details panel"
+msgstr ""
+
+msgid "Show details panel"
+msgstr ""
+
+msgid "Loading visualization"
+msgstr ""
+
+msgid "Unsaved visualization"
+msgstr "Không lưu mô hình trực quan hóa"
+
+msgid "Edited"
+msgstr "Chỉnh sửa"
+
+msgid "Use item default"
+msgstr ""
+
+msgid "Sum"
+msgstr "Tổng"
+
+msgid "Average"
+msgstr "Trung bình"
+
+msgid "Average (sum in org unit hierarchy)"
+msgstr "Trung bình (tổng số theo cây đơn vị)"
+
+msgid "Last value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value (average in org unit hierarchy)"
+msgstr "Giá trị cuối (trung bình theo cây đơn vị)"
+
+msgid "Last value in period (last value in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value in period (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value in period (average in org unit hierarchy)"
+msgstr ""
+
+msgid "First value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "First value (average in org unit hierarchy)"
+msgstr ""
+
+msgid "First value in period (first value in org unit hierarchy)"
+msgstr ""
+
+msgid "Count"
+msgstr "Đếm"
+
+msgid "Standard deviation"
+msgstr "Độ lệch chuẩn"
+
+msgid "Variance"
+msgstr "Phương sai"
+
+msgid "Min"
+msgstr "Nhỏ nhất"
+
+msgid "Max"
+msgstr "Lớn nhất"
+
+msgid "Min value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Max value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Custom"
+msgstr "Tùy chỉnh"
+
+msgid "equal to (=)"
+msgstr "bằng (=)"
+
+msgid "greater than (>)"
+msgstr "lớn hơn (>)"
+
+msgid "greater than or equal to (≥)"
+msgstr "lớn hơn hoặc bằng (≥)"
+
+msgid "less than (<)"
+msgstr "bé hơn (<)"
+
+msgid "less than or equal to (≤)"
+msgstr "bé hơn hoặc bằng (≤)"
+
+msgid "not equal to (≠)"
+msgstr "không bằng (≠)"
+
+msgid "is empty / null"
+msgstr "rỗng / không có giá trị"
+
+msgid "is not empty / not null"
+msgstr "không rỗng / có giá trị"
+
+msgid "exactly"
+msgstr "chính xác"
+
+msgid "is not"
+msgstr "không phải"
+
+msgid "contains"
+msgstr "chứa chuỗi"
+
+msgid "does not contain"
+msgstr "không chứa"
+
+msgid "after"
+msgstr "sau"
+
+msgid "after or including"
+msgstr "sau hoặc bao gồm"
+
+msgid "before"
+msgstr "trước"
+
+msgid "before or including"
+msgstr "trước hoặc bao gồm"
+
+msgid "Yes"
+msgstr "Có"
+
+msgid "No"
+msgstr "Không"
+
+msgid "Not answered"
+msgstr "Không trả lời"
+
+msgid ""
+"{{- dataSourceTetName}} dimensions cannot be combined with {{- "
+"layoutTetName}} dimensions already in the layout."
+msgstr ""
+
+msgid "Already used as custom value."
+msgstr ""
+
+msgid "Cannot be used in a {{visType}}."
+msgstr ""
+
+msgid "Created on"
+msgstr ""
+
+msgid "Last updated on"
+msgstr "Cập nhật lần cuối vào lúc"
+
+msgid "Last updated by"
+msgstr "Cập nhật lần cuối bởi"
+
+msgid "Created by"
+msgstr "Được tạo bởi"
+
+msgid "Completed on"
+msgstr ""
+
+msgid "Event org. unit"
+msgstr ""
+
+msgid "Event date"
+msgstr "Ngày sự kiện"
+
+msgid "Scheduled date"
+msgstr "Ngày đã hẹn"
+
+msgid "Event status"
+msgstr "Trạng thái sự kiện"
+
+msgid "Enrollment org. unit"
+msgstr ""
+
+msgid "Date of enrollment"
+msgstr "Ngày đăng ký"
+
+msgid "Incident date"
+msgstr "Ngày xảy ra"
+
+msgid "Enrollment status"
+msgstr "Trạng thái đăng ký"
+
+msgid "Registration org. unit"
+msgstr "Đơn vị đăng ký"
+
+msgid "Enrollment date"
+msgstr "Ngày đăng ký vào chương trình"
+
+msgid "Columns"
+msgstr "Cột"
+
+msgid "Rows"
+msgstr "Dòng"
+
+msgid "User organisation unit"
+msgstr "Đơn vị người dùng"
+
+msgid "User sub-units"
+msgstr "Đơn vị con của người dùng"
+
+msgid "User sub-x2-units"
+msgstr "Đơn vị con cấp 2 của người dùng"
+
+msgid "Today"
+msgstr "Hôm nay"
+
+msgid "Yesterday"
+msgstr "Hôm qua"
+
+msgid "Last 3 days"
+msgstr "3 Ngày trước"
+
+msgid "Last 7 days"
+msgstr "7 Ngày trước"
+
+msgid "Last 14 days"
+msgstr "14 Ngày trước"
+
+msgid "This week"
+msgstr "Tuần này"
+
+msgid "Last week"
+msgstr "Tuần trước"
+
+msgid "Last 4 weeks"
+msgstr "4 Tuần trước"
+
+msgid "Last 12 weeks"
+msgstr "12 Tuần trước"
+
+msgid "Last 52 weeks"
+msgstr "52 Tuần trước"
+
+msgid "Weeks this year"
+msgstr "Các Tuần trong năm nay"
+
+msgid "This month"
+msgstr "Tháng này"
+
+msgid "Last month"
+msgstr "Tháng trước"
+
+msgid "Last 3 months"
+msgstr "3 Tháng trước"
+
+msgid "Last 6 months"
+msgstr "6 Tháng trước"
+
+msgid "Last 12 months"
+msgstr "12 Tháng trước"
+
+msgid "Months this year"
+msgstr "Các Tháng trong năm nay"
+
+msgid "This bimonth"
+msgstr "2-Tháng này"
+
+msgid "Last bimonth"
+msgstr "2-Tháng trước"
+
+msgid "Last 6 bimonths"
+msgstr "6 kỳ 2 tháng trước"
+
+msgid "Bimonths this year"
+msgstr "Các 2-Tháng trong năm này"
+
+msgid "This quarter"
+msgstr "Quý này"
+
+msgid "Last quarter"
+msgstr "Quý trước"
+
+msgid "Last 4 quarters"
+msgstr "4 Quý trước"
+
+msgid "Quarters this year"
+msgstr "Các Quý trong năm nay"
+
+msgid "This six-month"
+msgstr "Định kỳ 6 tháng này"
+
+msgid "Last six-month"
+msgstr "Định kỳ 6 tháng trước"
+
+msgid "Last 2 six-months"
+msgstr "2 kỳ sáu tháng - trước"
+
+msgid "This financial year"
+msgstr "Năm Tài Chính này"
+
+msgid "Last financial year"
+msgstr "Năm Tài Chính trước"
+
+msgid "Last 5 financial years"
+msgstr "5 Năm Tài Chính trước"
+
+msgid "This year"
+msgstr "Năm nay"
+
+msgid "Last year"
+msgstr "Năm trước"
+
+msgid "Period"
+msgstr "Thời điểm"
+
+msgid "Organisation unit"
+msgstr "Đơn vị"
+
+msgid "Style"
+msgstr "Kiểu dáng"
+
+msgid "Active"
+msgstr "Đang hoạt động"
+
+msgid "Cancelled"
+msgstr "Đã hủy"
+
+msgid "Completed"
+msgstr "Đã hoàn tất"
+
+msgid "Scheduled"
+msgstr "Đã lên lịch"
+
+msgid ""
+"Track or compare changes over time. Recommend period as category. (adjust "
+"for EVER)"
+msgstr ""
+
+msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
+msgstr ""
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "Biểu đồ Sự kiện"
+
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr ""
