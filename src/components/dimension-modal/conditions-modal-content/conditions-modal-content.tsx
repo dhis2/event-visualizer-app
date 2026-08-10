@@ -3,7 +3,13 @@ import { Tooltip, TabBar, Tab } from '@dhis2/ui'
 import { useAppSelector, useProgramStageMetadataItem } from '@hooks'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice.js'
 import type { DimensionMetadataItem } from '@types'
-import { forwardRef, useState, type FC, type ReactNode, type Ref } from 'react'
+import {
+    forwardRef,
+    useState,
+    type FC,
+    type MutableRefObject,
+    type ReactNode,
+} from 'react'
 import { ConditionsTabContent } from './conditions-tab-content'
 import { RepeatedEventsTabContent } from './repeated-events-tab-content'
 import classes from './styles/conditions-modal-content.module.css'
@@ -11,45 +17,40 @@ import classes from './styles/conditions-modal-content.module.css'
 const TAB_CONDITIONS = 'CONDITIONS'
 const TAB_REPEATABLE_EVENTS = 'REPEATABLE_EVENTS'
 
-const assignRef = <T,>(ref: Ref<T>, node: T | null): void => {
-    if (typeof ref === 'function') {
-        ref(node)
-    } else if (ref) {
-        ;(ref as { current: T | null }).current = node
-    }
-}
-
-/*
- * TabBar injects a ref into each direct child and calls .focus() on it for
- * keyboard navigation, so a child must resolve to a DOM node. Tooltip is not a
- * forwardRef component, so it can't be that child directly. This wrapper is the
- * direct child instead: it forwards TabBar's ref onto the same <span> the
- * tooltip anchors to, and that span (not the disabled tab) receives the hover
- * that opens the tooltip.
- */
-const RepeatableEventsTabTooltip = forwardRef<
+/* TabBar injects a ref into each direct child, so we must use a component
+ * that accepts a ref. The Tooltip renderProps params also expose a ref
+ * that needs to be attached to the returned element. So we need to attach
+ * two refs to one node. Both refs are object refs (TabBar's via createRef,
+ * Tooltip's via useRef), but their declared types are wider, so we narrow
+ * them to assign the span node. */
+const TooltipWithForwardRef = forwardRef<
     HTMLSpanElement,
     { children: ReactNode }
->(function RepeatableEventsTabTooltip({ children }, tabBarRef) {
+>(function RepeatableEventsTabTooltip({ children }, ref) {
+    const tabBarRef = ref as MutableRefObject<HTMLSpanElement | null>
     return (
         <Tooltip
             placement="bottom"
             content={i18n.t('Only available for repeatable stages')}
             dataTest="repeatable-events-tooltip"
         >
-            {({ onMouseOver, onMouseOut, ref: tooltipRef }) => (
-                <span
-                    ref={(node) => {
-                        assignRef(tabBarRef, node)
-                        assignRef(tooltipRef, node)
-                    }}
-                    onMouseOver={onMouseOver}
-                    onMouseOut={onMouseOut}
-                    className={classes.tooltipReference}
-                >
-                    {children}
-                </span>
-            )}
+            {({ onMouseOver, onMouseOut, ref }) => {
+                const tooltipRef =
+                    ref as MutableRefObject<HTMLSpanElement | null>
+                return (
+                    <span
+                        ref={(node) => {
+                            tabBarRef.current = node
+                            tooltipRef.current = node
+                        }}
+                        onMouseOver={onMouseOver}
+                        onMouseOut={onMouseOut}
+                        className={classes.tooltipReference}
+                    >
+                        {children}
+                    </span>
+                )
+            }}
         </Tooltip>
     )
 })
@@ -94,9 +95,9 @@ export const ConditionsModalContent: FC<ConditionsModalContentProps> = ({
                         {i18n.t('Data')}
                     </Tab>
                     {disableRepeatableTab ? (
-                        <RepeatableEventsTabTooltip key={TAB_REPEATABLE_EVENTS}>
+                        <TooltipWithForwardRef key={TAB_REPEATABLE_EVENTS}>
                             {repeatableTab}
-                        </RepeatableEventsTabTooltip>
+                        </TooltipWithForwardRef>
                     ) : (
                         repeatableTab
                     )}
