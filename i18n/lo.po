@@ -1,0 +1,1155 @@
+# Translators:
+# Phouthasinh PHEUAYSITHIPHONE, 2026
+# Andres Miguel Rubio, 2026
+# Thuy Nguyen <thuynguyen@hispvietnam.org>, 2026
+# Namwan Chanthavisouk, 2026
+# Em Le <em.hispvietnam@gmail.com>, 2026
+# Saysamone Sibounma, 2026
+# Viktor Varland <viktor@dhis2.org>, 2026
+# Philip Larsen Donnelly, 2026
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"PO-Revision-Date: 2026-07-23 07:34+0000\n"
+"Last-Translator: Philip Larsen Donnelly, 2026\n"
+"Language-Team: Lao (https://app.transifex.com/hisp-uio/teams/100509/lo/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: lo\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid ""
+"Some dimensions were not added because they cannot be used in a "
+"{{visTypeName}}: {{list}}."
+msgstr ""
+
+msgid ""
+"Some dimensions were not added because they cannot be combined with {{- "
+"layoutTetName}} dimensions: {{list}}."
+msgstr ""
+
+msgid ""
+"{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Add to {{- axisName}}"
+msgstr ""
+
+msgid "Choose a filter type"
+msgstr ""
+
+msgid "Case sensitive"
+msgstr "ກໍລະນີທີ່ລະອຽດອ່ອນ"
+
+msgid "Delete filter"
+msgstr ""
+
+msgid "Repeated events"
+msgstr "ເຫດການຊ້ຳໆ"
+
+msgid "Data"
+msgstr "ຂໍ້ມູນ"
+
+msgid "Only available for repeatable stages"
+msgstr "ໃຊ້ໄດ້ກັບຂັ້ນທີ່ສາມາດເຮັດຊ້ຳໄດ້ເທົ່ານັ້ນ"
+
+msgid "{{valueType}} type dimensions cannot be filtered."
+msgstr ""
+
+msgid "This dimension cannot be filtered."
+msgstr ""
+
+msgid "Preset options can't be combined with other filters"
+msgstr ""
+
+msgid "Add filter"
+msgstr "ເພີ່ມຕົວກອງ"
+
+msgid "and"
+msgstr "ແລະ"
+
+msgid "is one of preset options"
+msgstr "ເປັນ​ຫນຶ່ງ​ໃນ​ຕົວເລືອກ​ທີ່​ຕັ້ງ​ໄວ້​ກ່ອນ​"
+
+msgid "Choose a legend set"
+msgstr ""
+
+msgid "Loading legend sets"
+msgstr ""
+
+msgid "No preset option sets for this data item"
+msgstr "ບໍ່ມີຕົວເລືອກທີ່ຕັ້ງໄວ້ລ່ວງໜ້າສຳລັບລາຍການຂໍ້ມູນນີ້"
+
+msgid "Choose legends"
+msgstr ""
+
+msgid "Loading legends"
+msgstr "ກຳລັງໂຫຼດຄຳອະທິບາຍ"
+
+msgid "From stages with repeatable events, show values from:"
+msgstr ""
+
+msgid "Oldest events"
+msgstr ""
+
+msgid "Show fewer of the oldest events"
+msgstr ""
+
+msgid "Show more of the oldest events"
+msgstr ""
+
+msgid "Most recent events"
+msgstr ""
+
+msgid "Show fewer of the most recent events"
+msgstr ""
+
+msgid "Show more of the most recent events"
+msgstr ""
+
+msgid "Hide"
+msgstr "ເຊື່ອງ"
+
+msgid "Start and end dates are inclusive and will be included in the outputs."
+msgstr ""
+"ວັນທີເລີ່ມຕົ້ນແລະສິ້ນສຸດແມ່ນໄດ້ລວມເຂົ້າກັນ ແລະ ຈະຖືກລວມເຂົ້າໃນຜົນໄດ້ຮັບ."
+
+msgid "Start date"
+msgstr "ວັນທີເລີ່ມຕົ້ນ"
+
+msgid "End date"
+msgstr "ວັນທີສຸດທ້າຍ"
+
+msgid "Choose from presets"
+msgstr "ເລືອກຈາກການຕັ້ງຄ່າກ່ອນໜ້າ"
+
+msgid "Define start - end dates"
+msgstr "ກໍານົດວັນທີເລີ່ມຕົ້ນ - ສິ້ນສຸດ"
+
+msgid "Value filtering"
+msgstr ""
+
+msgid "Show all values"
+msgstr ""
+
+msgid "Filter"
+msgstr "ຕົວກອງ"
+
+msgid "No items selected"
+msgstr "ບໍ່ມີລາຍການທີ່ຖືກເລືອກ"
+
+msgid "Available options"
+msgstr "ຕົວເລືອກທີ່ມີຢູ່"
+
+msgid "Filter options"
+msgstr "ຕົວເລືອກການກອງ"
+
+msgid "Selected options"
+msgstr "ຕົວເລືອກທີ່ຖືກເລືອກ"
+
+msgid "Nothing found for \"{{- searchTerm}}\""
+msgstr "ບໍ່ພົບຫຍັງສຳລັບ \"{{- searchTerm}}\""
+
+msgid "No options"
+msgstr "ບໍ່ມີຕົວເລືອກ"
+
+msgid "Data value set"
+msgstr "ການຕັ້ງຄ່າຂໍ້ມູນ"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "XML"
+msgstr "XML"
+
+msgid "Other formats"
+msgstr "ຮູບແບບອື່ນ"
+
+msgid "JRXML"
+msgstr "JRXML"
+
+msgid "Raw data SQL"
+msgstr "ຂໍ້ມູນດິບ SQL"
+
+msgid "HTML"
+msgstr "HTML"
+
+msgid "HTML+CSS (.html+css)"
+msgstr "HTML+CSS (.html+css)"
+
+msgid "Plain data source"
+msgstr "ແຫຼ່ງຂໍ້ມູນພື້ນຖານ"
+
+msgid "Microsoft Excel"
+msgstr "Microsoft Excel"
+
+msgid "CSV"
+msgstr "CSV"
+
+msgid "Advanced"
+msgstr "ການຕັ້ງຄ່າຂັ້ນສູງ"
+
+msgid "Download data from this date"
+msgstr "ດາວໂຫຼດຂໍ້ມູນຈາກວັນທີນີ້"
+
+msgid "Metadata ID scheme"
+msgstr "ໂຄງສ້າງຂອງລະຫັດແບບເມຕ້າດາຕ້າ"
+
+msgid "ID"
+msgstr "ລະຫັດ ID"
+
+msgid "Code"
+msgstr "ລະຫັດ"
+
+msgid "Name"
+msgstr "ຊື່"
+
+msgid "An error occurred"
+msgstr ""
+
+msgid "Resize axes panel"
+msgstr ""
+
+msgid "Move to {{- axisName}}"
+msgstr ""
+
+msgid "Remove"
+msgstr "ລຶບອອກ"
+
+msgid "all"
+msgstr "ທັງໝົດ"
+
+msgid "None selected"
+msgstr "ຍັງບໍ່ໄດ້ເລືອກ"
+
+msgid "Showing all values for this dimension"
+msgstr "ສະແດງຄ່າທັງໝົດໃນຂອບເຂດນີ"
+
+msgid "Program: {{- programName}}"
+msgstr "ໂປຣແກລມ: {{- programName}}"
+
+msgid "Program stage: {{- stageName}}"
+msgstr "ຂັ້ນຕອນໂປແກລມ: {{- stageName}}"
+
+msgid "Levels"
+msgstr "ຂັ້ນ"
+
+msgid "Groups"
+msgstr "ກຸ່ມ"
+
+msgid "Using: {{- itemName}} ({{- aggregationType}})"
+msgstr ""
+
+msgid "Custom value is from a different stage than dimensions in the layout"
+msgstr ""
+
+msgid "Update custom value"
+msgstr ""
+
+msgid "Create custom value table"
+msgstr ""
+
+msgid "Switch to custom value table"
+msgstr ""
+
+msgid "Update custom value table"
+msgstr ""
+
+msgid "Enrollment"
+msgstr "ການລົງທະບຽນ"
+
+msgid "Create {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Create {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Event"
+msgstr "ເຫດການ"
+
+msgid "Create {{- eventLabel}} list"
+msgstr ""
+
+msgid "Create {{- eventLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} table"
+msgstr ""
+
+msgid "Update {{- eventLabel}} list"
+msgstr ""
+
+msgid "Update {{- eventLabel}} table"
+msgstr ""
+
+msgid "tracked entity"
+msgstr "ຕິດຕາມຕົວຢ່າງ"
+
+msgid "Create {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Switch to {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Update {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Not valid with registration org. unit"
+msgstr ""
+
+msgid "Not valid with categories or category option group sets"
+msgstr ""
+
+msgid "Not valid with categories"
+msgstr ""
+
+msgid "Not valid with category option group sets"
+msgstr ""
+
+msgid "Not valid without a program"
+msgstr ""
+
+msgid "Not valid with multiple programs"
+msgstr ""
+
+msgid "Not valid with multiple program stages"
+msgstr ""
+
+msgid "Not valid with event programs"
+msgstr ""
+
+msgid "Not valid with Completed on"
+msgstr ""
+
+msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid with program indicators"
+msgstr ""
+
+msgid "Nothing selected. Add items to the layout to get started."
+msgstr ""
+
+msgid "Configure custom value"
+msgstr ""
+
+msgid "Choose the numeric data item to show in table cells."
+msgstr ""
+
+msgid "Search data items"
+msgstr ""
+
+msgid "Loading data"
+msgstr "ກຳລັງໂຫຼດຂໍ້ມູນ"
+
+msgid "Error loading data"
+msgstr ""
+
+msgid "Failed to load data items"
+msgstr ""
+
+msgid "No numeric data items in stage \"{{- stageName}}\""
+msgstr ""
+
+msgid "No numeric data items in this program"
+msgstr ""
+
+msgid "This stage does not have any numeric data items available."
+msgstr ""
+
+msgid "This program does not have any numeric data items available."
+msgstr ""
+
+msgid "No data items match \"{{- searchTerm}}\""
+msgstr ""
+
+msgid "Aggregation"
+msgstr "ການສັງລວມ"
+
+msgid "Cancel"
+msgstr "ຍົກເລີກ"
+
+msgid "Update"
+msgstr "ປັບປຸງ"
+
+msgid "Select a value before updating"
+msgstr ""
+
+msgid ""
+"\"{{- itemName}}\" is from a different stage than the dimensions in the "
+"layout. Choose another item."
+msgstr ""
+
+msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
+msgstr ""
+
+msgid "Collapse layout"
+msgstr ""
+
+msgid "Expand layout"
+msgstr ""
+
+msgid "List options"
+msgstr ""
+
+msgid "Table options"
+msgstr "ປັບປ່ຽນຮູບແບບຕາຕະລາງ"
+
+msgid "Chart options"
+msgstr "ທາງເລືອກຂອງເສັ້ນສະແດງ"
+
+msgid "Convert to {{- visType}}"
+msgstr ""
+
+msgid "{{- names}} will be removed. Are you sure?"
+msgstr ""
+
+msgid "Convert"
+msgstr ""
+
+msgid "Individual data view"
+msgstr ""
+
+msgid "Aggregated view"
+msgstr ""
+
+msgid "No event"
+msgstr "ບໍ່ມີເຫດການ"
+
+msgid "Sort by \"{{- column}}\" and update"
+msgstr ""
+
+msgid "Hide legend key"
+msgstr ""
+
+msgid "Show legend key"
+msgstr "ສະແດງຄຳອະທິບາຍຫຼັກ"
+
+msgid ""
+"This line list may show data that was not available when the interpretation "
+"was written."
+msgstr "ບັນຊີລາຍຊື່ນີ້ອາດຈະສະແດງຂໍ້ມູນທີ່ບໍ່ສາມາດໃຊ້ໄດ້ເມື່ອການຊີ້ແຈງ."
+
+msgid "Rows per page"
+msgstr "ແຖວຕໍ່ຫນ້າເຈ້ຍ"
+
+msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
+msgstr ""
+
+msgid "Not available offline"
+msgstr "ບໍ່ສາມາດໃຊ້ງານໄດ້ໃນໂໝດອອບລາຍ"
+
+msgid "most recent"
+msgstr "ລ່າສຸດ"
+
+msgid "oldest"
+msgstr "ເກົ່າສຸດ"
+
+msgid "oldest {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "most recent {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "Column sub-totals"
+msgstr "ຖັນຍ່ອຍທັງໝົດ"
+
+msgid "Column totals"
+msgstr ""
+
+msgid "Cumulative values"
+msgstr "ຄ່າສະສົມ"
+
+msgid "Accumulate cell values along rows"
+msgstr "ສະສົມຄ່າເຊລຕາມແຖວ"
+
+msgid "Digit group separator"
+msgstr "ແຍກຕົວເລກເປັນກຸ່ມ"
+
+msgid "None"
+msgstr "ບໍ່ແມນ"
+
+msgid "Space"
+msgstr "ຍະຫວ່າງ"
+
+msgid "Comma"
+msgstr "ຈຸດ"
+
+msgid "Display density"
+msgstr "ສະແດງຄວາມໜາແໜ້ນ"
+
+msgid "Comfortable"
+msgstr "ຂະໜາດພໍດີງາມ"
+
+msgid "Normal"
+msgstr "ປົກກະຕິ"
+
+msgid "Compact"
+msgstr "ໜາແໜ້ນ"
+
+msgid "Font size"
+msgstr "ຂະຫນາດຕົວອັກສອນ"
+
+msgid "Large"
+msgstr "ໃຫຍ່"
+
+msgid "Small"
+msgstr "ນ້ອຍ"
+
+msgid "Hide empty rows"
+msgstr "ເຊື່ອງແຖວທີ່ເປົ່າຫວ່າງ"
+
+msgid "Hide N/A data"
+msgstr ""
+
+msgid "Use a legend for table cell colors"
+msgstr "ໃຊ້ຄຳອະທິບາຍສຳລັບສີຂອງຕາຕະລາງ"
+
+msgid "Use pre-defined legend per data item"
+msgstr "ໃຊ້ຄຳອະທິບາຍທີ່ໄດ້ກຳນົດລ່ວງໜ້າຕໍ່ລາຍການຂໍ້ມູນ"
+
+msgid "Choose a single legend for the entire visualization"
+msgstr "ເລືອກຄຳອະທິບາຍດຽວສຳລັບການສ້າງພາບດ້ວຍຂໍ້ມູນທັງໝົດ"
+
+msgid "Legend type"
+msgstr "ປະເພດຄຳອະທິບາຍ"
+
+msgid "Legend changes background color"
+msgstr "ຄຳອະທິບາຍປ່ຽນສີພື້ນຫຼັງ"
+
+msgid "Legend changes text color"
+msgstr "ຄຳອະທິບາຍປ່ຽນສີຕົວໜັງສື"
+
+msgid "Legend style"
+msgstr "ຫວ່າງຂໍ້ມູນ"
+
+msgid "Legend"
+msgstr "ຫວ່າງຂໍ້ມູນ"
+
+msgid "Select from legends"
+msgstr "ເລືອກຈາກຄຳອະທິບາຍ"
+
+msgid "Limit"
+msgstr "ຂອບເຂດ"
+
+msgid "Sort order"
+msgstr "ລຽງລຳດັບ"
+
+msgid "Low to high"
+msgstr "ຕ່ຳຫາສູງ"
+
+msgid "High to low"
+msgstr "ສູງຫາຕ່ຳ"
+
+msgid "Top limit"
+msgstr "ຂໍ້​ຈຳ​ກັດ​ສູງ​ສຸດ"
+
+msgid "Row sub-totals"
+msgstr "ແຖວຍ່ອຍທັງໝົດ"
+
+msgid "Row totals"
+msgstr "ແຖວທັງໝົດ"
+
+msgid "Dimension labels"
+msgstr "ແຜງຂອບເຂດ"
+
+msgid "Display organisation unit hierarchy"
+msgstr "ສະແດງຫົວໜ່ວຍການຈັດຕັ້ງຕາມລຳດັບ"
+
+msgid "Skip rounding"
+msgstr "ບໍ່ປັດຕົວເລກ"
+
+msgid "Add a subtitle"
+msgstr "ເພີ່ມຫົວຂໍ້ຍ່ອຍ"
+
+msgid "Add a title"
+msgstr "ເພີ່ມຫົວຂໍ໊"
+
+msgid "Options"
+msgstr "ຕົວເລືອກ"
+
+msgid "Display"
+msgstr "ສະແດງ"
+
+msgid "Line list title"
+msgstr ""
+
+msgid "Line list subtitle"
+msgstr ""
+
+msgid "Totals"
+msgstr "ລວມທັງໝົດ"
+
+msgid "Totals are not supported when using cumulative values"
+msgstr "ບໍ່ຮອງຮັບຈຳນວນທັງໝົດເມື່ອໃຊ້ຄ່າສະສົມ"
+
+msgid "Empty data"
+msgstr "ບໍ່ມີຂໍ້ມູນ"
+
+msgid "Table title"
+msgstr "ຊື່ຂອງຕາຕະລາງ"
+
+msgid "Table subtitle"
+msgstr "ຫົວຂໍ້ຍ່ອຍຂອງຕາຕະລາງ"
+
+msgid "Labels"
+msgstr "ປ້າຍກຳກັບ"
+
+msgid "Create a {{- visType}} before updating"
+msgstr ""
+
+msgid "Metadata"
+msgstr "ໂຄງຮ່າງຖານຂໍ້ມູນ"
+
+msgid "Other"
+msgstr "ອື່ນໆ"
+
+msgid "Enrollment data"
+msgstr "ຂໍ້ມູນການລົງທະບຽນ"
+
+msgid "Event data"
+msgstr "ຂໍ້ມູນເຫດການ"
+
+msgid "Program indicators"
+msgstr "ຕົວຊີ້ວັດສະເພາະວຽກຂອງຂະແໜງ"
+
+msgid "{{- name}} registration"
+msgstr ""
+
+msgid "Choose a data source"
+msgstr ""
+
+msgid "No data sources available"
+msgstr ""
+
+msgid "Programs"
+msgstr "ສາຍງານ"
+
+msgid "Show more"
+msgstr "ສະແດງໃຫ້ເຫັນຫຼາຍຂຶ້ນ"
+
+msgid "Analyze without a program"
+msgstr ""
+
+msgid "Loading options"
+msgstr "ໂຫຼດຕົວເລືອກ"
+
+msgid "Failed to load data sources."
+msgstr ""
+
+msgid "Filter data sources"
+msgstr ""
+
+msgid "There was a problem and this data could not be loaded"
+msgstr ""
+
+msgid "There was problem loading more data"
+msgstr ""
+
+msgid "No data found"
+msgstr "ບໍ່ພົບຂໍ້ມູນ"
+
+msgid "No results"
+msgstr "ບໍ່ມີຜົນຮັບ"
+
+msgid "Load more"
+msgstr ""
+
+msgid "Loading more..."
+msgstr ""
+
+msgid "None of the selected dimensions can be added to this layout."
+msgstr ""
+
+msgid "Org units"
+msgstr "​ຫົວ​ໜ່ວຍ​ການ​ຈັດ​ຕັ້ງ"
+
+msgid "Periods"
+msgstr "ຊ່ວງເວລາ"
+
+msgid "Statuses"
+msgstr ""
+
+msgid "Data elements"
+msgstr "ອົງປະກອບຂໍ້ມູນ"
+
+msgid "Program attributes"
+msgstr ""
+
+msgid "Categories"
+msgstr "ປະເພດ"
+
+msgid "Category option group sets"
+msgstr ""
+
+msgid ""
+"Choose a data source above to see its dimensions, periods, and organisation "
+"units."
+msgstr ""
+
+msgid "Expand all cards"
+msgstr ""
+
+msgid "Collapse all cards"
+msgstr ""
+
+msgid "Something went wrong while searching."
+msgstr ""
+
+msgid "Search"
+msgstr "ຄົ້ນຫາ"
+
+msgid "Clear search"
+msgstr ""
+
+msgid "Your most viewed visualizations"
+msgstr ""
+
+msgid "Download"
+msgstr "ດາວໂຫຼດ"
+
+msgid "File"
+msgstr "ເອກະສານ"
+
+msgid "New"
+msgstr "ໃໝ່"
+
+msgid "Open…"
+msgstr "ເປີດ..."
+
+msgid "Save"
+msgstr "ບັນທຶກ"
+
+msgid "Save…"
+msgstr "ບັນທຶກ..."
+
+msgid "Save as…"
+msgstr "ບັນທຶກເປັນ..."
+
+msgid "Rename…"
+msgstr "ປ່ຽນຊື່..."
+
+msgid "Translate…"
+msgstr "ແປ..."
+
+msgid "Share…"
+msgstr "ແບ່ງປັນ..."
+
+msgid "Get link…"
+msgstr "ເອົາລິ້ງ..."
+
+msgid "Delete"
+msgstr "ລຶບ"
+
+msgid "Open"
+msgstr "ເປີດ"
+
+msgid "\"{{- deletedObject}}\" successfully deleted."
+msgstr "\"{{- deletedObject}}\" ລົບສຳເລັດ."
+
+msgid "An unknown error occurred."
+msgstr ""
+
+msgid ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+msgstr ""
+
+msgid "You don't have sufficient permissions."
+msgstr ""
+
+msgid "Rename successful"
+msgstr "ປ່ຽນຊື່ສຳເລັດແລ້ວ"
+
+msgid "Rename failed"
+msgstr "ປ່ຽນຊື່ບໍ່ສຳເລັດ"
+
+msgid "Hide layout"
+msgstr "ເຊື່ອງການຈັດຕຳແໜ່ງຂໍ້ມູນໃນຕາຕະລາງ"
+
+msgid "Show layout"
+msgstr "ສະແດງການຈັດຕຳແໜ່ງຂໍ້ມູນໃນຕາຕະລາງ"
+
+msgid "Hide dimensions sidebar"
+msgstr "ເຊື່ອງແຖບດ້ານຂ້າງ"
+
+msgid "Show dimensions sidebar"
+msgstr "ສະແດງແຖບດ້ານຂ້າງ"
+
+msgid "Hide interpretations and details"
+msgstr "ເຊື່ອງການຊີ້ແຈງ ແລະ ລາຍລະອຽດ"
+
+msgid "Show interpretations and details"
+msgstr "ສະແດງການຊີ້ແຈງ ແລະ ລາຍລະອຽດ"
+
+msgid "View"
+msgstr "ເບິ່ງ"
+
+msgid "Resize layout to fit"
+msgstr ""
+
+msgid "Reset dimensions sidebar width"
+msgstr ""
+
+msgid "Show panels"
+msgstr "ສະແດງແຜງ"
+
+msgid "Expand visualization and hide panels"
+msgstr "ຂະຫຍາຍການສ້າງຮູບພາບດ້ວຍຂໍ້ມູນ ແລະ ເຊື່ອງແຜງ"
+
+msgid "Hide details panel"
+msgstr ""
+
+msgid "Show details panel"
+msgstr ""
+
+msgid "Loading visualization"
+msgstr ""
+
+msgid "Unsaved visualization"
+msgstr "ການສ້າງຮູບພາບດ້ວຍຂໍ້ມູນທີ່ຍັງບໍ່ບັນທຶກ"
+
+msgid "Edited"
+msgstr "ແກ້ໄຂ"
+
+msgid "Use item default"
+msgstr ""
+
+msgid "Sum"
+msgstr "ຜົນບວກ"
+
+msgid "Average"
+msgstr "ສະເລ່ຍ"
+
+msgid "Average (sum in org unit hierarchy)"
+msgstr "ຄ່າສະເລ່ຍ (ສັງລວມໃນໂຄງຮ່າງການຈັດຕັ້ງ)"
+
+msgid "Last value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value (average in org unit hierarchy)"
+msgstr "ມູນຄ່າສຸດທ້າຍ (ຄ່າສະເລ່ຍໃນໂຄງຮ່າງການຈັດຕັ້ງ)"
+
+msgid "Last value in period (last value in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value in period (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value in period (average in org unit hierarchy)"
+msgstr ""
+
+msgid "First value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "First value (average in org unit hierarchy)"
+msgstr ""
+
+msgid "First value in period (first value in org unit hierarchy)"
+msgstr ""
+
+msgid "Count"
+msgstr "ນັບ"
+
+msgid "Standard deviation"
+msgstr "ມາດຕະຖານການແບ່ງ"
+
+msgid "Variance"
+msgstr "ຄວາມແຕກຕ່າງ"
+
+msgid "Min"
+msgstr "ຄ່ານ້ອຍສຸດ"
+
+msgid "Max"
+msgstr "ຄ່າສູງສຸດ"
+
+msgid "Min value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Max value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Custom"
+msgstr "ກຳນົດເອງ"
+
+msgid "equal to (=)"
+msgstr "ເທົ່າກັບ (=)"
+
+msgid "greater than (>)"
+msgstr "ໃຫຍ່ກວ່າ (>)"
+
+msgid "greater than or equal to (≥)"
+msgstr "ໃຫຍ່ກວ່າ ຫຼື ເທົ່າກັບ (≥)"
+
+msgid "less than (<)"
+msgstr "ນ້ອຍກ່ວາ (<)"
+
+msgid "less than or equal to (≤)"
+msgstr "ນ້ອຍກວ່າ ຫຼື ເທົ່າກັບ (≤)"
+
+msgid "not equal to (≠)"
+msgstr "ບໍ່ເທົ່າກັບ (≠)"
+
+msgid "is empty / null"
+msgstr "ຫວ່າງເປົ່າ"
+
+msgid "is not empty / not null"
+msgstr "ບໍ່ຫວ່າງເປົ່າ"
+
+msgid "exactly"
+msgstr "ຢ່າງແນ່ນອນ"
+
+msgid "is not"
+msgstr "ບໍ່ແມ່ນ"
+
+msgid "contains"
+msgstr "ລະບຸດ້ວຍ"
+
+msgid "does not contain"
+msgstr "ບໍ່ໄດ້ລະບຸດ້ວຍ"
+
+msgid "after"
+msgstr "ຫຼັງຈາກ"
+
+msgid "after or including"
+msgstr "ຫຼັງຈາກ ຫຼື ລວມ"
+
+msgid "before"
+msgstr "ກ່ອນ"
+
+msgid "before or including"
+msgstr "ກ່ອນ ຫຼື ລວມ"
+
+msgid "Yes"
+msgstr "ແມ່ນ"
+
+msgid "No"
+msgstr "ບໍ່ແມ່ນ"
+
+msgid "Not answered"
+msgstr "ບໍ່ມີຄຳຕອບ"
+
+msgid ""
+"{{- dataSourceTetName}} dimensions cannot be combined with {{- "
+"layoutTetName}} dimensions already in the layout."
+msgstr ""
+
+msgid "Already used as custom value."
+msgstr ""
+
+msgid "Cannot be used in a {{visType}}."
+msgstr ""
+
+msgid "Created on"
+msgstr ""
+
+msgid "Last updated on"
+msgstr "ອັບເດດຫຼ້າສຸດເມື່ອ"
+
+msgid "Last updated by"
+msgstr "ອັບເດດຫຼ້າສຸດໂດຍ"
+
+msgid "Created by"
+msgstr "ສ້າງໂດຍ"
+
+msgid "Completed on"
+msgstr ""
+
+msgid "Event org. unit"
+msgstr ""
+
+msgid "Event date"
+msgstr "ວັນທີເຫດການ"
+
+msgid "Scheduled date"
+msgstr "ກຳນົດວັນທີ"
+
+msgid "Event status"
+msgstr "ສະຖານະຂອງເຫດການ"
+
+msgid "Enrollment org. unit"
+msgstr ""
+
+msgid "Date of enrollment"
+msgstr "ວັນທີ່ລົງທະບຽນ"
+
+msgid "Incident date"
+msgstr "ວັນທີເດືອນປີທີ່ເຫດການເກີດຂື້ນ"
+
+msgid "Enrollment status"
+msgstr "ສະຖານະການລົງທະບຽນ"
+
+msgid "Registration org. unit"
+msgstr "ລົງທະບຽນຫົວໜ່ວຍການຈັດຕັ້ງ"
+
+msgid "Enrollment date"
+msgstr "ວັນທີ່ລົງທະບຽນ"
+
+msgid "Columns"
+msgstr "ຖັນ"
+
+msgid "Rows"
+msgstr "ແຖວ"
+
+msgid "User organisation unit"
+msgstr "ຫົວໜ່ວຍການຈັດຕັ້ງຂອງຜູ້ໃຊ້"
+
+msgid "User sub-units"
+msgstr "ຫົວໜ່ວຍຍ່ອຍຂອງຜູ້ໃຊ້"
+
+msgid "User sub-x2-units"
+msgstr "ຫົວໜ່ວຍຍ່ອຍຂັ້ນ2ຂອງທ່ານ"
+
+msgid "Today"
+msgstr "ມື້ນີ້"
+
+msgid "Yesterday"
+msgstr "ມື້ວານນີ"
+
+msgid "Last 3 days"
+msgstr "3 ມື້ຜ່ານມາ"
+
+msgid "Last 7 days"
+msgstr "7 ມື້ຜ່ານມາ"
+
+msgid "Last 14 days"
+msgstr "14 ມື້ຜ່ານມາ"
+
+msgid "This week"
+msgstr "ທິດນີ້"
+
+msgid "Last week"
+msgstr "ອາທິດທີ່ຜ່ານມາ"
+
+msgid "Last 4 weeks"
+msgstr "4 ອາທິດຍ້ອນຫຼັງ"
+
+msgid "Last 12 weeks"
+msgstr "12 ອາທິດຍ້ອນຫຼັງ"
+
+msgid "Last 52 weeks"
+msgstr "52 ອາທິດຜ່ານມາ"
+
+msgid "Weeks this year"
+msgstr "ອາທິດຂອງປີນີ້"
+
+msgid "This month"
+msgstr "ເດືອນນີ້"
+
+msgid "Last month"
+msgstr "ເດືອນຜ່ານມາ"
+
+msgid "Last 3 months"
+msgstr "3 ເດືອນຍ້ອນຫຼັງ"
+
+msgid "Last 6 months"
+msgstr "6 ເດືອນຜ່ານມາ"
+
+msgid "Last 12 months"
+msgstr "12 ເດືອນຍ້ອນຫຼັງ"
+
+msgid "Months this year"
+msgstr "​ເດືອນ​ໃນ​ປີ"
+
+msgid "This bimonth"
+msgstr "ສອງເດືອນນີ້"
+
+msgid "Last bimonth"
+msgstr "ສອງເດືອນຜ່ານມາ"
+
+msgid "Last 6 bimonths"
+msgstr "6 ເດືອນສຸດທ້າຍ"
+
+msgid "Bimonths this year"
+msgstr "ສອງເດືອນ ຂອງປີນີ້"
+
+msgid "This quarter"
+msgstr "ໄຕມາດນີ້"
+
+msgid "Last quarter"
+msgstr "ໄຕມາດຜ່ານມາ"
+
+msgid "Last 4 quarters"
+msgstr "4 ໄຕມາດຍ້ອນຫຼັງ"
+
+msgid "Quarters this year"
+msgstr "​ໄຕຼມາດ​ໃນ​ປີ"
+
+msgid "This six-month"
+msgstr "6 ເດືອນນີ້"
+
+msgid "Last six-month"
+msgstr "6 ເດືອນຜ່ານມາ"
+
+msgid "Last 2 six-months"
+msgstr "ລວມ 6 ເດືອນ 2 ຄັ້ງທີ່ຜ່ານມາ"
+
+msgid "This financial year"
+msgstr "ສົກປີງົບປະມານຂອງປິນີ້"
+
+msgid "Last financial year"
+msgstr "​ສົກ​ປີ​ງົບ​ປະ​ມານ​ປີ​ກາຍ"
+
+msgid "Last 5 financial years"
+msgstr "​ສົກ​ປິ​ງົບ​ປະ​ມານ 5ປີ​ຜ່ານ​ມາ"
+
+msgid "This year"
+msgstr "ປີນີ້"
+
+msgid "Last year"
+msgstr "ປີກາຍ"
+
+msgid "Period"
+msgstr "ຊ່ວງເວລາ"
+
+msgid "Organisation unit"
+msgstr "​ຫົວ​ໜ່ວຍ​ການ​ຈັດ​ຕັ້ງ"
+
+msgid "Style"
+msgstr "ຮູບແບບ"
+
+msgid "Active"
+msgstr "ເປີດໃຊ້ງານ"
+
+msgid "Cancelled"
+msgstr "ຍົກເລີກແລ້ວ"
+
+msgid "Completed"
+msgstr "ສໍາເລັດແລ້ວ"
+
+msgid "Scheduled"
+msgstr "ຕາມເວລາທີ່ກໍານົດ"
+
+msgid ""
+"Track or compare changes over time. Recommend period as category. (adjust "
+"for EVER)"
+msgstr ""
+
+msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
+msgstr ""
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "​ສະ​ພາບ​ກ່ຽວ​ກັບ​ການ​ສະ​ແດງ​ຮູບ​ພາບ"
+
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr ""

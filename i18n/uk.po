@@ -1,0 +1,1156 @@
+# Translators:
+# Mykhailo Siusko <m.siusko@redcross.org.ua>, 2026
+# Andres Miguel Rubio, 2026
+# Yury Rogachev <yury@dhis2.org>, 2026
+# Wanda <wanda@frontlineaids.org>, 2026
+# Nadiia <semchuk@aph.org.ua>, 2026
+# Éva Tamási, 2026
+# Viktor Varland <viktor@dhis2.org>, 2026
+# Philip Larsen Donnelly, 2026
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"PO-Revision-Date: 2026-07-23 07:34+0000\n"
+"Last-Translator: Philip Larsen Donnelly, 2026\n"
+"Language-Team: Ukrainian (https://app.transifex.com/hisp-uio/teams/100509/uk/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: uk\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n % 10 == 1 && n % 100 != 11 ? 0 : n % 1 == 0 && n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? 1 : n % 1 == 0 && (n % 10 ==0 || (n % 10 >=5 && n % 10 <=9) || (n % 100 >=11 && n % 100 <=14 )) ? 2: 3);\n"
+
+msgid ""
+"Some dimensions were not added because they cannot be used in a "
+"{{visTypeName}}: {{list}}."
+msgstr ""
+
+msgid ""
+"Some dimensions were not added because they cannot be combined with {{- "
+"layoutTetName}} dimensions: {{list}}."
+msgstr ""
+
+msgid ""
+"{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Add to {{- axisName}}"
+msgstr ""
+
+msgid "Choose a filter type"
+msgstr ""
+
+msgid "Case sensitive"
+msgstr ""
+
+msgid "Delete filter"
+msgstr ""
+
+msgid "Repeated events"
+msgstr ""
+
+msgid "Data"
+msgstr "Дані"
+
+msgid "Only available for repeatable stages"
+msgstr ""
+
+msgid "{{valueType}} type dimensions cannot be filtered."
+msgstr ""
+
+msgid "This dimension cannot be filtered."
+msgstr ""
+
+msgid "Preset options can't be combined with other filters"
+msgstr ""
+
+msgid "Add filter"
+msgstr "Додати фільтр"
+
+msgid "and"
+msgstr ""
+
+msgid "is one of preset options"
+msgstr ""
+
+msgid "Choose a legend set"
+msgstr ""
+
+msgid "Loading legend sets"
+msgstr ""
+
+msgid "No preset option sets for this data item"
+msgstr ""
+
+msgid "Choose legends"
+msgstr ""
+
+msgid "Loading legends"
+msgstr "Завантаження умовних позначень"
+
+msgid "From stages with repeatable events, show values from:"
+msgstr ""
+
+msgid "Oldest events"
+msgstr ""
+
+msgid "Show fewer of the oldest events"
+msgstr ""
+
+msgid "Show more of the oldest events"
+msgstr ""
+
+msgid "Most recent events"
+msgstr ""
+
+msgid "Show fewer of the most recent events"
+msgstr ""
+
+msgid "Show more of the most recent events"
+msgstr ""
+
+msgid "Hide"
+msgstr "Приховати"
+
+msgid "Start and end dates are inclusive and will be included in the outputs."
+msgstr ""
+
+msgid "Start date"
+msgstr "Початкова дата"
+
+msgid "End date"
+msgstr "Кінцева дата"
+
+msgid "Choose from presets"
+msgstr ""
+
+msgid "Define start - end dates"
+msgstr ""
+
+msgid "Value filtering"
+msgstr ""
+
+msgid "Show all values"
+msgstr ""
+
+msgid "Filter"
+msgstr "Фільтр"
+
+msgid "No items selected"
+msgstr ""
+
+msgid "Available options"
+msgstr ""
+
+msgid "Filter options"
+msgstr "Параметри фільтру"
+
+msgid "Selected options"
+msgstr ""
+
+msgid "Nothing found for \"{{- searchTerm}}\""
+msgstr ""
+
+msgid "No options"
+msgstr "Немає параметрів"
+
+msgid "Data value set"
+msgstr "Набір значень даних"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "XML"
+msgstr "XML"
+
+msgid "Other formats"
+msgstr "Інші формати"
+
+msgid "JRXML"
+msgstr "JRXML"
+
+msgid "Raw data SQL"
+msgstr "Необроблені дані SQL"
+
+msgid "HTML"
+msgstr ""
+
+msgid "HTML+CSS (.html+css)"
+msgstr ""
+
+msgid "Plain data source"
+msgstr "Джерело простих даних"
+
+msgid "Microsoft Excel"
+msgstr "Microsoft Excel"
+
+msgid "CSV"
+msgstr "CSV"
+
+msgid "Advanced"
+msgstr "Розширені"
+
+msgid "Download data from this date"
+msgstr "Завантажити дані з цієї дати"
+
+msgid "Metadata ID scheme"
+msgstr "Схема ідентифікатора метаданих"
+
+msgid "ID"
+msgstr "ID (ідентифікатор)"
+
+msgid "Code"
+msgstr "Код"
+
+msgid "Name"
+msgstr "Ім'я"
+
+msgid "An error occurred"
+msgstr ""
+
+msgid "Resize axes panel"
+msgstr ""
+
+msgid "Move to {{- axisName}}"
+msgstr ""
+
+msgid "Remove"
+msgstr "Видалити"
+
+msgid "all"
+msgstr ""
+
+msgid "None selected"
+msgstr "Немає вибраного"
+
+msgid "Showing all values for this dimension"
+msgstr ""
+
+msgid "Program: {{- programName}}"
+msgstr ""
+
+msgid "Program stage: {{- stageName}}"
+msgstr ""
+
+msgid "Levels"
+msgstr "Рівні"
+
+msgid "Groups"
+msgstr "Групи"
+
+msgid "Using: {{- itemName}} ({{- aggregationType}})"
+msgstr ""
+
+msgid "Custom value is from a different stage than dimensions in the layout"
+msgstr ""
+
+msgid "Update custom value"
+msgstr ""
+
+msgid "Create custom value table"
+msgstr ""
+
+msgid "Switch to custom value table"
+msgstr ""
+
+msgid "Update custom value table"
+msgstr ""
+
+msgid "Enrollment"
+msgstr "Реєстрація"
+
+msgid "Create {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Create {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Event"
+msgstr "Випадок"
+
+msgid "Create {{- eventLabel}} list"
+msgstr ""
+
+msgid "Create {{- eventLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} table"
+msgstr ""
+
+msgid "Update {{- eventLabel}} list"
+msgstr ""
+
+msgid "Update {{- eventLabel}} table"
+msgstr ""
+
+msgid "tracked entity"
+msgstr ""
+
+msgid "Create {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Switch to {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Update {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Not valid with registration org. unit"
+msgstr ""
+
+msgid "Not valid with categories or category option group sets"
+msgstr ""
+
+msgid "Not valid with categories"
+msgstr ""
+
+msgid "Not valid with category option group sets"
+msgstr ""
+
+msgid "Not valid without a program"
+msgstr ""
+
+msgid "Not valid with multiple programs"
+msgstr ""
+
+msgid "Not valid with multiple program stages"
+msgstr ""
+
+msgid "Not valid with event programs"
+msgstr ""
+
+msgid "Not valid with Completed on"
+msgstr ""
+
+msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid with program indicators"
+msgstr ""
+
+msgid "Nothing selected. Add items to the layout to get started."
+msgstr ""
+
+msgid "Configure custom value"
+msgstr ""
+
+msgid "Choose the numeric data item to show in table cells."
+msgstr ""
+
+msgid "Search data items"
+msgstr ""
+
+msgid "Loading data"
+msgstr ""
+
+msgid "Error loading data"
+msgstr ""
+
+msgid "Failed to load data items"
+msgstr ""
+
+msgid "No numeric data items in stage \"{{- stageName}}\""
+msgstr ""
+
+msgid "No numeric data items in this program"
+msgstr ""
+
+msgid "This stage does not have any numeric data items available."
+msgstr ""
+
+msgid "This program does not have any numeric data items available."
+msgstr ""
+
+msgid "No data items match \"{{- searchTerm}}\""
+msgstr ""
+
+msgid "Aggregation"
+msgstr "Агрегація"
+
+msgid "Cancel"
+msgstr "Скасувати"
+
+msgid "Update"
+msgstr "Оновити"
+
+msgid "Select a value before updating"
+msgstr ""
+
+msgid ""
+"\"{{- itemName}}\" is from a different stage than the dimensions in the "
+"layout. Choose another item."
+msgstr ""
+
+msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
+msgstr ""
+
+msgid "Collapse layout"
+msgstr ""
+
+msgid "Expand layout"
+msgstr ""
+
+msgid "List options"
+msgstr ""
+
+msgid "Table options"
+msgstr "Опції таблиці"
+
+msgid "Chart options"
+msgstr "Параметри діаграми"
+
+msgid "Convert to {{- visType}}"
+msgstr ""
+
+msgid "{{- names}} will be removed. Are you sure?"
+msgstr ""
+
+msgid "Convert"
+msgstr ""
+
+msgid "Individual data view"
+msgstr ""
+
+msgid "Aggregated view"
+msgstr ""
+
+msgid "No event"
+msgstr ""
+
+msgid "Sort by \"{{- column}}\" and update"
+msgstr ""
+
+msgid "Hide legend key"
+msgstr ""
+
+msgid "Show legend key"
+msgstr "Показати ключ умовних позначень"
+
+msgid ""
+"This line list may show data that was not available when the interpretation "
+"was written."
+msgstr ""
+
+msgid "Rows per page"
+msgstr "Рядків на сторінку"
+
+msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
+msgstr ""
+
+msgid "Not available offline"
+msgstr "Недоступно в автономному режимі"
+
+msgid "most recent"
+msgstr ""
+
+msgid "oldest"
+msgstr ""
+
+msgid "oldest {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "most recent {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "Column sub-totals"
+msgstr "Проміжні підсумки стовпців"
+
+msgid "Column totals"
+msgstr ""
+
+msgid "Cumulative values"
+msgstr "Сукупні значення"
+
+msgid "Accumulate cell values along rows"
+msgstr ""
+
+msgid "Digit group separator"
+msgstr "Роздільник груп цифр"
+
+msgid "None"
+msgstr "Немає"
+
+msgid "Space"
+msgstr "Пробіл"
+
+msgid "Comma"
+msgstr "Кома"
+
+msgid "Display density"
+msgstr "Показати щільність"
+
+msgid "Comfortable"
+msgstr "Зручний"
+
+msgid "Normal"
+msgstr "Нормальний"
+
+msgid "Compact"
+msgstr "Компактний"
+
+msgid "Font size"
+msgstr "Розмір шрифту"
+
+msgid "Large"
+msgstr "Великий"
+
+msgid "Small"
+msgstr "Маленький"
+
+msgid "Hide empty rows"
+msgstr "Сховати порожні рядки"
+
+msgid "Hide N/A data"
+msgstr ""
+
+msgid "Use a legend for table cell colors"
+msgstr ""
+
+msgid "Use pre-defined legend per data item"
+msgstr ""
+"Використовувати попередньо визначені умовні позначення для кожного елемента "
+"даних"
+
+msgid "Choose a single legend for the entire visualization"
+msgstr ""
+
+msgid "Legend type"
+msgstr "Тип умовних позначень"
+
+msgid "Legend changes background color"
+msgstr "Умовні позначення змінюють колір тла"
+
+msgid "Legend changes text color"
+msgstr "Умовні позначення змінюють колір тексту"
+
+msgid "Legend style"
+msgstr "Стиль умовних позначень"
+
+msgid "Legend"
+msgstr "Умовні позначення"
+
+msgid "Select from legends"
+msgstr "Вибрати з умовних позначень"
+
+msgid "Limit"
+msgstr "Обмеження"
+
+msgid "Sort order"
+msgstr "Порядок сортування"
+
+msgid "Low to high"
+msgstr "Від низьких до високих"
+
+msgid "High to low"
+msgstr "Від високих до низьких"
+
+msgid "Top limit"
+msgstr "Верхня межа"
+
+msgid "Row sub-totals"
+msgstr "Проміжні підсумки рядків"
+
+msgid "Row totals"
+msgstr "Підсумки рядків"
+
+msgid "Dimension labels"
+msgstr "Мітки вимірів"
+
+msgid "Display organisation unit hierarchy"
+msgstr "Відображати ієрархію організаційних підрозділів"
+
+msgid "Skip rounding"
+msgstr "Пропустити округлення"
+
+msgid "Add a subtitle"
+msgstr "Додати підзаголовок"
+
+msgid "Add a title"
+msgstr "Додати заголовок"
+
+msgid "Options"
+msgstr "Опції"
+
+msgid "Display"
+msgstr "Відображення"
+
+msgid "Line list title"
+msgstr ""
+
+msgid "Line list subtitle"
+msgstr ""
+
+msgid "Totals"
+msgstr "Підсумки"
+
+msgid "Totals are not supported when using cumulative values"
+msgstr ""
+
+msgid "Empty data"
+msgstr "Порожні дані"
+
+msgid "Table title"
+msgstr "Назва таблиці"
+
+msgid "Table subtitle"
+msgstr "Підзаголовок таблиці"
+
+msgid "Labels"
+msgstr "Мітки"
+
+msgid "Create a {{- visType}} before updating"
+msgstr ""
+
+msgid "Metadata"
+msgstr "Метадані"
+
+msgid "Other"
+msgstr "Інше"
+
+msgid "Enrollment data"
+msgstr "Дані реєстрації"
+
+msgid "Event data"
+msgstr "Дані про подію"
+
+msgid "Program indicators"
+msgstr "Програмні показники"
+
+msgid "{{- name}} registration"
+msgstr ""
+
+msgid "Choose a data source"
+msgstr ""
+
+msgid "No data sources available"
+msgstr ""
+
+msgid "Programs"
+msgstr "Програми"
+
+msgid "Show more"
+msgstr "Показати більше"
+
+msgid "Analyze without a program"
+msgstr ""
+
+msgid "Loading options"
+msgstr "Параметри завантаження"
+
+msgid "Failed to load data sources."
+msgstr ""
+
+msgid "Filter data sources"
+msgstr ""
+
+msgid "There was a problem and this data could not be loaded"
+msgstr ""
+
+msgid "There was problem loading more data"
+msgstr ""
+
+msgid "No data found"
+msgstr "Даних не знайдено"
+
+msgid "No results"
+msgstr "Немає результатів"
+
+msgid "Load more"
+msgstr ""
+
+msgid "Loading more..."
+msgstr ""
+
+msgid "None of the selected dimensions can be added to this layout."
+msgstr ""
+
+msgid "Org units"
+msgstr ""
+
+msgid "Periods"
+msgstr "Періоди"
+
+msgid "Statuses"
+msgstr ""
+
+msgid "Data elements"
+msgstr "Елементи даних"
+
+msgid "Program attributes"
+msgstr ""
+
+msgid "Categories"
+msgstr "Категорії"
+
+msgid "Category option group sets"
+msgstr ""
+
+msgid ""
+"Choose a data source above to see its dimensions, periods, and organisation "
+"units."
+msgstr ""
+
+msgid "Expand all cards"
+msgstr ""
+
+msgid "Collapse all cards"
+msgstr ""
+
+msgid "Something went wrong while searching."
+msgstr ""
+
+msgid "Search"
+msgstr "Пошук"
+
+msgid "Clear search"
+msgstr "Очистити пошук"
+
+msgid "Your most viewed visualizations"
+msgstr ""
+
+msgid "Download"
+msgstr "Завантажити"
+
+msgid "File"
+msgstr "Файл"
+
+msgid "New"
+msgstr "Новий"
+
+msgid "Open…"
+msgstr ""
+
+msgid "Save"
+msgstr "Зберегти"
+
+msgid "Save…"
+msgstr ""
+
+msgid "Save as…"
+msgstr ""
+
+msgid "Rename…"
+msgstr ""
+
+msgid "Translate…"
+msgstr ""
+
+msgid "Share…"
+msgstr ""
+
+msgid "Get link…"
+msgstr ""
+
+msgid "Delete"
+msgstr "Видалити"
+
+msgid "Open"
+msgstr "Відкрити"
+
+msgid "\"{{- deletedObject}}\" successfully deleted."
+msgstr ""
+
+msgid "An unknown error occurred."
+msgstr ""
+
+msgid ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+msgstr ""
+
+msgid "You don't have sufficient permissions."
+msgstr ""
+
+msgid "Rename successful"
+msgstr "Перейменування успішно виконано"
+
+msgid "Rename failed"
+msgstr ""
+
+msgid "Hide layout"
+msgstr ""
+
+msgid "Show layout"
+msgstr ""
+
+msgid "Hide dimensions sidebar"
+msgstr ""
+
+msgid "Show dimensions sidebar"
+msgstr ""
+
+msgid "Hide interpretations and details"
+msgstr "Приховати інтерпретації та подробиці"
+
+msgid "Show interpretations and details"
+msgstr "Показати інтерпретації та подробиці"
+
+msgid "View"
+msgstr "Переглянути"
+
+msgid "Resize layout to fit"
+msgstr ""
+
+msgid "Reset dimensions sidebar width"
+msgstr ""
+
+msgid "Show panels"
+msgstr ""
+
+msgid "Expand visualization and hide panels"
+msgstr ""
+
+msgid "Hide details panel"
+msgstr ""
+
+msgid "Show details panel"
+msgstr ""
+
+msgid "Loading visualization"
+msgstr ""
+
+msgid "Unsaved visualization"
+msgstr "Незбережена візуалізація"
+
+msgid "Edited"
+msgstr "Відредаговано"
+
+msgid "Use item default"
+msgstr ""
+
+msgid "Sum"
+msgstr "Сума"
+
+msgid "Average"
+msgstr "Середнє значення"
+
+msgid "Average (sum in org unit hierarchy)"
+msgstr "Середнє (сума в ієрархії організаційних підрозділів)"
+
+msgid "Last value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value (average in org unit hierarchy)"
+msgstr "Останнє значення (середнє в ієрархії організаційних підрозділів)"
+
+msgid "Last value in period (last value in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value in period (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value in period (average in org unit hierarchy)"
+msgstr ""
+
+msgid "First value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "First value (average in org unit hierarchy)"
+msgstr ""
+
+msgid "First value in period (first value in org unit hierarchy)"
+msgstr ""
+
+msgid "Count"
+msgstr "Підрахунок"
+
+msgid "Standard deviation"
+msgstr "Стандартне відхилення"
+
+msgid "Variance"
+msgstr "Коливання (варіативність)"
+
+msgid "Min"
+msgstr "Мін"
+
+msgid "Max"
+msgstr "Макс"
+
+msgid "Min value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Max value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Custom"
+msgstr "Налаштовуваний користувачем"
+
+msgid "equal to (=)"
+msgstr ""
+
+msgid "greater than (>)"
+msgstr ""
+
+msgid "greater than or equal to (≥)"
+msgstr ""
+
+msgid "less than (<)"
+msgstr ""
+
+msgid "less than or equal to (≤)"
+msgstr ""
+
+msgid "not equal to (≠)"
+msgstr ""
+
+msgid "is empty / null"
+msgstr ""
+
+msgid "is not empty / not null"
+msgstr ""
+
+msgid "exactly"
+msgstr ""
+
+msgid "is not"
+msgstr ""
+
+msgid "contains"
+msgstr ""
+
+msgid "does not contain"
+msgstr ""
+
+msgid "after"
+msgstr ""
+
+msgid "after or including"
+msgstr ""
+
+msgid "before"
+msgstr ""
+
+msgid "before or including"
+msgstr ""
+
+msgid "Yes"
+msgstr "Так"
+
+msgid "No"
+msgstr "Ні"
+
+msgid "Not answered"
+msgstr ""
+
+msgid ""
+"{{- dataSourceTetName}} dimensions cannot be combined with {{- "
+"layoutTetName}} dimensions already in the layout."
+msgstr ""
+
+msgid "Already used as custom value."
+msgstr ""
+
+msgid "Cannot be used in a {{visType}}."
+msgstr ""
+
+msgid "Created on"
+msgstr ""
+
+msgid "Last updated on"
+msgstr ""
+
+msgid "Last updated by"
+msgstr ""
+
+msgid "Created by"
+msgstr "Автор"
+
+msgid "Completed on"
+msgstr ""
+
+msgid "Event org. unit"
+msgstr ""
+
+msgid "Event date"
+msgstr "Дата випадку"
+
+msgid "Scheduled date"
+msgstr " Дата нагадування"
+
+msgid "Event status"
+msgstr "Статус випадку"
+
+msgid "Enrollment org. unit"
+msgstr ""
+
+msgid "Date of enrollment"
+msgstr ""
+
+msgid "Incident date"
+msgstr "Дата інциденту"
+
+msgid "Enrollment status"
+msgstr "Статус реєстрації"
+
+msgid "Registration org. unit"
+msgstr ""
+
+msgid "Enrollment date"
+msgstr "Дата реєстрації"
+
+msgid "Columns"
+msgstr ""
+
+msgid "Rows"
+msgstr ""
+
+msgid "User organisation unit"
+msgstr "Організаційний підрозділ користувачів"
+
+msgid "User sub-units"
+msgstr "Одиниці підрозділів користувачів"
+
+msgid "User sub-x2-units"
+msgstr "Підрозділи користувачів 2-го рівня"
+
+msgid "Today"
+msgstr "Сьогодні"
+
+msgid "Yesterday"
+msgstr "Вчора"
+
+msgid "Last 3 days"
+msgstr "Минулі 3 дні"
+
+msgid "Last 7 days"
+msgstr "Минулі 7 днів"
+
+msgid "Last 14 days"
+msgstr "Минулі 14 днів"
+
+msgid "This week"
+msgstr "Поточний тиждень"
+
+msgid "Last week"
+msgstr "Минулий тиждень"
+
+msgid "Last 4 weeks"
+msgstr "Минулі 4 тижні"
+
+msgid "Last 12 weeks"
+msgstr "Минулі 12 тижнів"
+
+msgid "Last 52 weeks"
+msgstr "Останні 52 тижні"
+
+msgid "Weeks this year"
+msgstr "Тижні поточного року"
+
+msgid "This month"
+msgstr "Поточний місяць"
+
+msgid "Last month"
+msgstr "Минулий місяць"
+
+msgid "Last 3 months"
+msgstr "Минулі 3 місяці"
+
+msgid "Last 6 months"
+msgstr "Останні 6 місяців"
+
+msgid "Last 12 months"
+msgstr "Минулі 12 місяців"
+
+msgid "Months this year"
+msgstr "Місяці поточного року"
+
+msgid "This bimonth"
+msgstr "Поточний двомісячний період"
+
+msgid "Last bimonth"
+msgstr "Попередній двомісячний період"
+
+msgid "Last 6 bimonths"
+msgstr "Останні 6 двомісячних періодів"
+
+msgid "Bimonths this year"
+msgstr "Двомісячні періоди поточного року"
+
+msgid "This quarter"
+msgstr "Поточний квартал"
+
+msgid "Last quarter"
+msgstr "Минулий квартал"
+
+msgid "Last 4 quarters"
+msgstr "Останні 4 квартали"
+
+msgid "Quarters this year"
+msgstr "Квартали поточного року"
+
+msgid "This six-month"
+msgstr "Поточне півріччя"
+
+msgid "Last six-month"
+msgstr "Останні шість місяців"
+
+msgid "Last 2 six-months"
+msgstr "Останні 2 півріччя"
+
+msgid "This financial year"
+msgstr "Поточний фінансовий рік"
+
+msgid "Last financial year"
+msgstr "Минулий фінансовий рік"
+
+msgid "Last 5 financial years"
+msgstr "Останні 5 фінансових років"
+
+msgid "This year"
+msgstr "Поточний рік"
+
+msgid "Last year"
+msgstr "Минулий рік"
+
+msgid "Period"
+msgstr "Період"
+
+msgid "Organisation unit"
+msgstr "Організаційний підрозділ"
+
+msgid "Style"
+msgstr "Стиль"
+
+msgid "Active"
+msgstr "Активно"
+
+msgid "Cancelled"
+msgstr "Скасовано"
+
+msgid "Completed"
+msgstr "Завершено"
+
+msgid "Scheduled"
+msgstr "Заплановано"
+
+msgid ""
+"Track or compare changes over time. Recommend period as category. (adjust "
+"for EVER)"
+msgstr ""
+
+msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
+msgstr ""
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "Візуалізатор подій"
+
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr ""

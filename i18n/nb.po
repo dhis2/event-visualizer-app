@@ -1,0 +1,1154 @@
+# Translators:
+# Jan Henrik Øverland, 2026
+# Andres Miguel Rubio, 2026
+# Martin <martin@moid.se>, 2026
+# Caroline Hesthagen Holen <caroline@devotta.no>, 2026
+# Karoline Tufte Lien <karoline@dhis2.org>, 2026
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"PO-Revision-Date: 2026-07-23 07:34+0000\n"
+"Last-Translator: Karoline Tufte Lien <karoline@dhis2.org>, 2026\n"
+"Language-Team: Norwegian Bokmål (https://app.transifex.com/hisp-uio/teams/100509/nb/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: nb\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid ""
+"Some dimensions were not added because they cannot be used in a "
+"{{visTypeName}}: {{list}}."
+msgstr ""
+
+msgid ""
+"Some dimensions were not added because they cannot be combined with {{- "
+"layoutTetName}} dimensions: {{list}}."
+msgstr ""
+
+msgid ""
+"{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Add to {{- axisName}}"
+msgstr ""
+
+msgid "Choose a filter type"
+msgstr ""
+
+msgid "Case sensitive"
+msgstr "Versalsensitiv"
+
+msgid "Delete filter"
+msgstr "Slett filter"
+
+msgid "Repeated events"
+msgstr "Gjentatte hendelser"
+
+msgid "Data"
+msgstr "Data"
+
+msgid "Only available for repeatable stages"
+msgstr "Kun tilgjengelig for repeterbare faser"
+
+msgid "{{valueType}} type dimensions cannot be filtered."
+msgstr ""
+
+msgid "This dimension cannot be filtered."
+msgstr ""
+
+msgid "Preset options can't be combined with other filters"
+msgstr ""
+
+msgid "Add filter"
+msgstr "Legg til filter"
+
+msgid "and"
+msgstr "og"
+
+msgid "is one of preset options"
+msgstr "er et av forvalgte alternativer"
+
+msgid "Choose a legend set"
+msgstr ""
+
+msgid "Loading legend sets"
+msgstr ""
+
+msgid "No preset option sets for this data item"
+msgstr "Ingen forvalgte alternativsett for dette datapunktet"
+
+msgid "Choose legends"
+msgstr ""
+
+msgid "Loading legends"
+msgstr "Laster tegnforklaringer"
+
+msgid "From stages with repeatable events, show values from:"
+msgstr ""
+
+msgid "Oldest events"
+msgstr ""
+
+msgid "Show fewer of the oldest events"
+msgstr ""
+
+msgid "Show more of the oldest events"
+msgstr ""
+
+msgid "Most recent events"
+msgstr ""
+
+msgid "Show fewer of the most recent events"
+msgstr ""
+
+msgid "Show more of the most recent events"
+msgstr ""
+
+msgid "Hide"
+msgstr "Skjul"
+
+msgid "Start and end dates are inclusive and will be included in the outputs."
+msgstr ""
+"Start- og sluttdatoer er inklusive og vil bli inkludert i resultatene."
+
+msgid "Start date"
+msgstr "Startdato"
+
+msgid "End date"
+msgstr "Sluttdato"
+
+msgid "Choose from presets"
+msgstr "Velg blant forvalg"
+
+msgid "Define start - end dates"
+msgstr "Definer start - sluttdatoer"
+
+msgid "Value filtering"
+msgstr ""
+
+msgid "Show all values"
+msgstr ""
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "No items selected"
+msgstr "Ingen elementer er valgt"
+
+msgid "Available options"
+msgstr "Tilgjengelige alternativer"
+
+msgid "Filter options"
+msgstr "Filteralternativ"
+
+msgid "Selected options"
+msgstr "Valgte alternativer"
+
+msgid "Nothing found for \"{{- searchTerm}}\""
+msgstr "Ingenting funnet for \"{{- searchTerm}}\""
+
+msgid "No options"
+msgstr "Ingen alternativer"
+
+msgid "Data value set"
+msgstr "Dataverdisett"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "XML"
+msgstr "XML"
+
+msgid "Other formats"
+msgstr "Andre formater"
+
+msgid "JRXML"
+msgstr "JRXML"
+
+msgid "Raw data SQL"
+msgstr "Rådata SQL"
+
+msgid "HTML"
+msgstr "HTML"
+
+msgid "HTML+CSS (.html+css)"
+msgstr "HTML+CSS (.html+css)"
+
+msgid "Plain data source"
+msgstr "Ren datakilde"
+
+msgid "Microsoft Excel"
+msgstr "Microsoft Excel"
+
+msgid "CSV"
+msgstr "CSV"
+
+msgid "Advanced"
+msgstr "Avansert"
+
+msgid "Download data from this date"
+msgstr "Last ned data fra denne datoen"
+
+msgid "Metadata ID scheme"
+msgstr "Metadata-ID-ordning"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Code"
+msgstr "Kode"
+
+msgid "Name"
+msgstr "Navn"
+
+msgid "An error occurred"
+msgstr ""
+
+msgid "Resize axes panel"
+msgstr ""
+
+msgid "Move to {{- axisName}}"
+msgstr ""
+
+msgid "Remove"
+msgstr "Fjern"
+
+msgid "all"
+msgstr "alle"
+
+msgid "None selected"
+msgstr "Ingen valgt"
+
+msgid "Showing all values for this dimension"
+msgstr "Viser alle verdiene for denne dimensjonen"
+
+msgid "Program: {{- programName}}"
+msgstr "Program: {{- programName}}"
+
+msgid "Program stage: {{- stageName}}"
+msgstr "Programfase: {{- stageName}}"
+
+msgid "Levels"
+msgstr "Nivå"
+
+msgid "Groups"
+msgstr "Grupper"
+
+msgid "Using: {{- itemName}} ({{- aggregationType}})"
+msgstr ""
+
+msgid "Custom value is from a different stage than dimensions in the layout"
+msgstr ""
+
+msgid "Update custom value"
+msgstr ""
+
+msgid "Create custom value table"
+msgstr ""
+
+msgid "Switch to custom value table"
+msgstr ""
+
+msgid "Update custom value table"
+msgstr ""
+
+msgid "Enrollment"
+msgstr "Registrering"
+
+msgid "Create {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Create {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Event"
+msgstr "Hendelse"
+
+msgid "Create {{- eventLabel}} list"
+msgstr ""
+
+msgid "Create {{- eventLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} table"
+msgstr ""
+
+msgid "Update {{- eventLabel}} list"
+msgstr ""
+
+msgid "Update {{- eventLabel}} table"
+msgstr ""
+
+msgid "tracked entity"
+msgstr "sporet enhet"
+
+msgid "Create {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Switch to {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Update {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Not valid with registration org. unit"
+msgstr ""
+
+msgid "Not valid with categories or category option group sets"
+msgstr ""
+
+msgid "Not valid with categories"
+msgstr ""
+
+msgid "Not valid with category option group sets"
+msgstr ""
+
+msgid "Not valid without a program"
+msgstr ""
+
+msgid "Not valid with multiple programs"
+msgstr ""
+
+msgid "Not valid with multiple program stages"
+msgstr ""
+
+msgid "Not valid with event programs"
+msgstr ""
+
+msgid "Not valid with Completed on"
+msgstr ""
+
+msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid with program indicators"
+msgstr ""
+
+msgid "Nothing selected. Add items to the layout to get started."
+msgstr ""
+
+msgid "Configure custom value"
+msgstr ""
+
+msgid "Choose the numeric data item to show in table cells."
+msgstr ""
+
+msgid "Search data items"
+msgstr ""
+
+msgid "Loading data"
+msgstr ""
+
+msgid "Error loading data"
+msgstr ""
+
+msgid "Failed to load data items"
+msgstr ""
+
+msgid "No numeric data items in stage \"{{- stageName}}\""
+msgstr ""
+
+msgid "No numeric data items in this program"
+msgstr ""
+
+msgid "This stage does not have any numeric data items available."
+msgstr ""
+
+msgid "This program does not have any numeric data items available."
+msgstr ""
+
+msgid "No data items match \"{{- searchTerm}}\""
+msgstr ""
+
+msgid "Aggregation"
+msgstr "Aggregering"
+
+msgid "Cancel"
+msgstr "Avbryt"
+
+msgid "Update"
+msgstr "Oppdater"
+
+msgid "Select a value before updating"
+msgstr ""
+
+msgid ""
+"\"{{- itemName}}\" is from a different stage than the dimensions in the "
+"layout. Choose another item."
+msgstr ""
+
+msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
+msgstr ""
+
+msgid "Collapse layout"
+msgstr ""
+
+msgid "Expand layout"
+msgstr ""
+
+msgid "List options"
+msgstr ""
+
+msgid "Table options"
+msgstr "Tabellalternativer"
+
+msgid "Chart options"
+msgstr "Diagramalternativer"
+
+msgid "Convert to {{- visType}}"
+msgstr ""
+
+msgid "{{- names}} will be removed. Are you sure?"
+msgstr ""
+
+msgid "Convert"
+msgstr ""
+
+msgid "Individual data view"
+msgstr ""
+
+msgid "Aggregated view"
+msgstr ""
+
+msgid "No event"
+msgstr "Ingen hendelse"
+
+msgid "Sort by \"{{- column}}\" and update"
+msgstr ""
+
+msgid "Hide legend key"
+msgstr ""
+
+msgid "Show legend key"
+msgstr "Vis tegnforklaring"
+
+msgid ""
+"This line list may show data that was not available when the interpretation "
+"was written."
+msgstr ""
+"Denne linjelisten kan vise data som ikke var tilgjengelig da tolkningen ble "
+"skrevet."
+
+msgid "Rows per page"
+msgstr "Rader per side"
+
+msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
+msgstr ""
+
+msgid "Not available offline"
+msgstr "Ikke tilgjengelig i frakoblet modus"
+
+msgid "most recent"
+msgstr "siste"
+
+msgid "oldest"
+msgstr "eldste"
+
+msgid "oldest {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "most recent {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "Column sub-totals"
+msgstr "Kolonnedelsummer"
+
+msgid "Column totals"
+msgstr ""
+
+msgid "Cumulative values"
+msgstr "Kumulative verdier"
+
+msgid "Accumulate cell values along rows"
+msgstr ""
+
+msgid "Digit group separator"
+msgstr "Siffergruppeseparator"
+
+msgid "None"
+msgstr "Ingen"
+
+msgid "Space"
+msgstr "Mellomrom"
+
+msgid "Comma"
+msgstr "Komma"
+
+msgid "Display density"
+msgstr "Visningstetthet"
+
+msgid "Comfortable"
+msgstr "Komfortabel"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Compact"
+msgstr "Kompakt"
+
+msgid "Font size"
+msgstr "Skriftstørrelse"
+
+msgid "Large"
+msgstr "Stor"
+
+msgid "Small"
+msgstr "Liten"
+
+msgid "Hide empty rows"
+msgstr "Skjul tomme rader"
+
+msgid "Hide N/A data"
+msgstr ""
+
+msgid "Use a legend for table cell colors"
+msgstr "Bruk en tegnforklaring for tabellcellefarger"
+
+msgid "Use pre-defined legend per data item"
+msgstr "Bruk forhåndsdefinert tegnforklaring per datapunkt"
+
+msgid "Choose a single legend for the entire visualization"
+msgstr "Velg en enkelt tegnforklaring for hele visualiseringen"
+
+msgid "Legend type"
+msgstr "Tegnforklaringtype"
+
+msgid "Legend changes background color"
+msgstr "Tegnforklaring endrer bakgrunnsfarge"
+
+msgid "Legend changes text color"
+msgstr "Tegnforklaring endrer tekstfarge"
+
+msgid "Legend style"
+msgstr "Tegnforklaringstil"
+
+msgid "Legend"
+msgstr "Tegnforklaring"
+
+msgid "Select from legends"
+msgstr "Velg fra tegnforklaringer"
+
+msgid "Limit"
+msgstr "Grense"
+
+msgid "Sort order"
+msgstr "Sorteringsrekkefølge"
+
+msgid "Low to high"
+msgstr "Lav til høy"
+
+msgid "High to low"
+msgstr "Høy til lav"
+
+msgid "Top limit"
+msgstr "Toppgrense"
+
+msgid "Row sub-totals"
+msgstr "Raddelsummer"
+
+msgid "Row totals"
+msgstr "Radsummer"
+
+msgid "Dimension labels"
+msgstr "Dimensjonsetiketter"
+
+msgid "Display organisation unit hierarchy"
+msgstr "Vis organisasjonsenhethierarki"
+
+msgid "Skip rounding"
+msgstr "Ingen avrunding"
+
+msgid "Add a subtitle"
+msgstr "Legg til en undertittel"
+
+msgid "Add a title"
+msgstr "Legg til en tittel"
+
+msgid "Options"
+msgstr "Alternativ"
+
+msgid "Display"
+msgstr "Vis"
+
+msgid "Line list title"
+msgstr ""
+
+msgid "Line list subtitle"
+msgstr ""
+
+msgid "Totals"
+msgstr "Totalsummer"
+
+msgid "Totals are not supported when using cumulative values"
+msgstr ""
+
+msgid "Empty data"
+msgstr "Tomme data"
+
+msgid "Table title"
+msgstr "Tabelltittel"
+
+msgid "Table subtitle"
+msgstr "Tabellundertittel"
+
+msgid "Labels"
+msgstr "Etiketter"
+
+msgid "Create a {{- visType}} before updating"
+msgstr ""
+
+msgid "Metadata"
+msgstr "Metadata"
+
+msgid "Other"
+msgstr "Annet"
+
+msgid "Enrollment data"
+msgstr "Registreringsdata"
+
+msgid "Event data"
+msgstr "Hendelsesdata"
+
+msgid "Program indicators"
+msgstr "Programindikatorer"
+
+msgid "{{- name}} registration"
+msgstr ""
+
+msgid "Choose a data source"
+msgstr ""
+
+msgid "No data sources available"
+msgstr ""
+
+msgid "Programs"
+msgstr "Programmer"
+
+msgid "Show more"
+msgstr "Vis mer"
+
+msgid "Analyze without a program"
+msgstr ""
+
+msgid "Loading options"
+msgstr "Laster alternativer"
+
+msgid "Failed to load data sources."
+msgstr ""
+
+msgid "Filter data sources"
+msgstr ""
+
+msgid "There was a problem and this data could not be loaded"
+msgstr ""
+
+msgid "There was problem loading more data"
+msgstr ""
+
+msgid "No data found"
+msgstr "Ingen data funnet"
+
+msgid "No results"
+msgstr "Ingen resultater"
+
+msgid "Load more"
+msgstr ""
+
+msgid "Loading more..."
+msgstr ""
+
+msgid "None of the selected dimensions can be added to this layout."
+msgstr ""
+
+msgid "Org units"
+msgstr "Org enhet"
+
+msgid "Periods"
+msgstr "Perioder"
+
+msgid "Statuses"
+msgstr ""
+
+msgid "Data elements"
+msgstr "Dataelementer"
+
+msgid "Program attributes"
+msgstr ""
+
+msgid "Categories"
+msgstr "Kategorier"
+
+msgid "Category option group sets"
+msgstr "Kategorialternativ gruppesett"
+
+msgid ""
+"Choose a data source above to see its dimensions, periods, and organisation "
+"units."
+msgstr ""
+
+msgid "Expand all cards"
+msgstr ""
+
+msgid "Collapse all cards"
+msgstr ""
+
+msgid "Something went wrong while searching."
+msgstr ""
+
+msgid "Search"
+msgstr "Søk"
+
+msgid "Clear search"
+msgstr ""
+
+msgid "Your most viewed visualizations"
+msgstr ""
+
+msgid "Download"
+msgstr "Last ned"
+
+msgid "File"
+msgstr "Fil"
+
+msgid "New"
+msgstr "Ny"
+
+msgid "Open…"
+msgstr "Åpne..."
+
+msgid "Save"
+msgstr "Lagre"
+
+msgid "Save…"
+msgstr "Lagre..."
+
+msgid "Save as…"
+msgstr "Lagre som..."
+
+msgid "Rename…"
+msgstr "Gi nytt navn..."
+
+msgid "Translate…"
+msgstr "Oversette..."
+
+msgid "Share…"
+msgstr "Dele..."
+
+msgid "Get link…"
+msgstr "Få lenke…"
+
+msgid "Delete"
+msgstr "Slett"
+
+msgid "Open"
+msgstr "Åpne"
+
+msgid "\"{{- deletedObject}}\" successfully deleted."
+msgstr "\"{{- deletedObject}}\" ble slettet."
+
+msgid "An unknown error occurred."
+msgstr ""
+
+msgid ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+msgstr ""
+
+msgid "You don't have sufficient permissions."
+msgstr ""
+
+msgid "Rename successful"
+msgstr "Navneendring vellykket"
+
+msgid "Rename failed"
+msgstr ""
+
+msgid "Hide layout"
+msgstr "Skjul oppsett"
+
+msgid "Show layout"
+msgstr "Vis oppsett"
+
+msgid "Hide dimensions sidebar"
+msgstr "Skjul dimensjonssidefeltet"
+
+msgid "Show dimensions sidebar"
+msgstr "Vis dimensjonssidefeltet"
+
+msgid "Hide interpretations and details"
+msgstr "Skjul tolkninger og detaljer"
+
+msgid "Show interpretations and details"
+msgstr "Vis tolkninger og detaljer"
+
+msgid "View"
+msgstr "Vis"
+
+msgid "Resize layout to fit"
+msgstr ""
+
+msgid "Reset dimensions sidebar width"
+msgstr ""
+
+msgid "Show panels"
+msgstr "Vis paneler"
+
+msgid "Expand visualization and hide panels"
+msgstr "Utvid visualisering og skjul paneler"
+
+msgid "Hide details panel"
+msgstr ""
+
+msgid "Show details panel"
+msgstr ""
+
+msgid "Loading visualization"
+msgstr ""
+
+msgid "Unsaved visualization"
+msgstr "Ikke lagret visualisering"
+
+msgid "Edited"
+msgstr "Redigert"
+
+msgid "Use item default"
+msgstr ""
+
+msgid "Sum"
+msgstr "Sum"
+
+msgid "Average"
+msgstr "Gjennomsnitt"
+
+msgid "Average (sum in org unit hierarchy)"
+msgstr "Gjennomsnitt (sum i org enhetshierarki)"
+
+msgid "Last value (sum in org unit hierarchy)"
+msgstr "Siste verdi (sum i org enhetshierarki)"
+
+msgid "Last value (average in org unit hierarchy)"
+msgstr "Siste verdi (gjennomsnitt i org enhetshierarki)"
+
+msgid "Last value in period (last value in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value in period (sum in org unit hierarchy)"
+msgstr "Siste verdi i periode (sum i org enhetshierarki)"
+
+msgid "Last value in period (average in org unit hierarchy)"
+msgstr "Siste verdi i periode (gjennomsnitt i org enhetshierarki)"
+
+msgid "First value (sum in org unit hierarchy)"
+msgstr "Første verdi  (sum i org enhetshierarki)"
+
+msgid "First value (average in org unit hierarchy)"
+msgstr ""
+
+msgid "First value in period (first value in org unit hierarchy)"
+msgstr ""
+
+msgid "Count"
+msgstr "Antall"
+
+msgid "Standard deviation"
+msgstr "Standardavvik"
+
+msgid "Variance"
+msgstr "Varians"
+
+msgid "Min"
+msgstr "Min"
+
+msgid "Max"
+msgstr "Max"
+
+msgid "Min value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Max value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Custom"
+msgstr "Tilpasset"
+
+msgid "equal to (=)"
+msgstr "lik (=)"
+
+msgid "greater than (>)"
+msgstr "større enn (>)"
+
+msgid "greater than or equal to (≥)"
+msgstr "større enn eller lik (≥)"
+
+msgid "less than (<)"
+msgstr "mindre enn (<)"
+
+msgid "less than or equal to (≤)"
+msgstr "mindre enn eller lik (≤)"
+
+msgid "not equal to (≠)"
+msgstr "ikke lik (≠)"
+
+msgid "is empty / null"
+msgstr "er tom / null"
+
+msgid "is not empty / not null"
+msgstr "er ikke tom / ikke null"
+
+msgid "exactly"
+msgstr "nøyaktig"
+
+msgid "is not"
+msgstr "er ikke"
+
+msgid "contains"
+msgstr "inneholder"
+
+msgid "does not contain"
+msgstr "inneholder ikke"
+
+msgid "after"
+msgstr "etter"
+
+msgid "after or including"
+msgstr "etter eller inkludert"
+
+msgid "before"
+msgstr "før"
+
+msgid "before or including"
+msgstr "før eller inkludert"
+
+msgid "Yes"
+msgstr "Ja"
+
+msgid "No"
+msgstr "Nei"
+
+msgid "Not answered"
+msgstr "Ikke besvart"
+
+msgid ""
+"{{- dataSourceTetName}} dimensions cannot be combined with {{- "
+"layoutTetName}} dimensions already in the layout."
+msgstr ""
+
+msgid "Already used as custom value."
+msgstr ""
+
+msgid "Cannot be used in a {{visType}}."
+msgstr ""
+
+msgid "Created on"
+msgstr ""
+
+msgid "Last updated on"
+msgstr "Sist oppdatert den"
+
+msgid "Last updated by"
+msgstr "Sist oppdatert av"
+
+msgid "Created by"
+msgstr "Opprettet av"
+
+msgid "Completed on"
+msgstr ""
+
+msgid "Event org. unit"
+msgstr ""
+
+msgid "Event date"
+msgstr "Hendelsesdato"
+
+msgid "Scheduled date"
+msgstr "Planlagt dato"
+
+msgid "Event status"
+msgstr "Hendelsesstatus"
+
+msgid "Enrollment org. unit"
+msgstr ""
+
+msgid "Date of enrollment"
+msgstr "Dato for registrering"
+
+msgid "Incident date"
+msgstr "Forekomstdato"
+
+msgid "Enrollment status"
+msgstr "Registreringsstatus"
+
+msgid "Registration org. unit"
+msgstr "Registrering org. enhet"
+
+msgid "Enrollment date"
+msgstr "Registreringsdato"
+
+msgid "Columns"
+msgstr "Kolonner"
+
+msgid "Rows"
+msgstr "Rader"
+
+msgid "User organisation unit"
+msgstr "Brukerorganisasjonsenhet"
+
+msgid "User sub-units"
+msgstr "Underenheter"
+
+msgid "User sub-x2-units"
+msgstr "Under-x2-enheter"
+
+msgid "Today"
+msgstr "I dag"
+
+msgid "Yesterday"
+msgstr "I går"
+
+msgid "Last 3 days"
+msgstr "Siste 3 dager"
+
+msgid "Last 7 days"
+msgstr "Siste 7 dager"
+
+msgid "Last 14 days"
+msgstr "Siste 14 dager"
+
+msgid "This week"
+msgstr "Denne uken"
+
+msgid "Last week"
+msgstr "Forrige uke"
+
+msgid "Last 4 weeks"
+msgstr "Siste 4 uker"
+
+msgid "Last 12 weeks"
+msgstr "Siste 12 uker"
+
+msgid "Last 52 weeks"
+msgstr "Siste 52 uker"
+
+msgid "Weeks this year"
+msgstr "Uker inneværende år"
+
+msgid "This month"
+msgstr "Denne måneden"
+
+msgid "Last month"
+msgstr "Forrige måned"
+
+msgid "Last 3 months"
+msgstr "Siste 3 måneder"
+
+msgid "Last 6 months"
+msgstr "Siste 6 måneder"
+
+msgid "Last 12 months"
+msgstr "Siste 12 måneder"
+
+msgid "Months this year"
+msgstr "Måneder i år"
+
+msgid "This bimonth"
+msgstr "Denne tomåned"
+
+msgid "Last bimonth"
+msgstr "Siste tomåned"
+
+msgid "Last 6 bimonths"
+msgstr "Siste 6 tomåneder"
+
+msgid "Bimonths this year"
+msgstr "Tomåneder inneværende år"
+
+msgid "This quarter"
+msgstr "Dette kvartalet"
+
+msgid "Last quarter"
+msgstr "Siste kvartal"
+
+msgid "Last 4 quarters"
+msgstr "Siste 4 kvartaler"
+
+msgid "Quarters this year"
+msgstr "Kvartaler i år"
+
+msgid "This six-month"
+msgstr "Dette halvåret"
+
+msgid "Last six-month"
+msgstr "Siste halvår"
+
+msgid "Last 2 six-months"
+msgstr "Siste 2 halvår"
+
+msgid "This financial year"
+msgstr "Dette regnskapsåret"
+
+msgid "Last financial year"
+msgstr "Siste regnskapsår"
+
+msgid "Last 5 financial years"
+msgstr "Siste 5 regnskapsår"
+
+msgid "This year"
+msgstr "Dette året"
+
+msgid "Last year"
+msgstr "Forrige år"
+
+msgid "Period"
+msgstr "Periode"
+
+msgid "Organisation unit"
+msgstr "Organisasjonsenhet"
+
+msgid "Style"
+msgstr "Stil"
+
+msgid "Active"
+msgstr "Aktiv"
+
+msgid "Cancelled"
+msgstr "Kansellert"
+
+msgid "Completed"
+msgstr "Fullført"
+
+msgid "Scheduled"
+msgstr "Planlagt"
+
+msgid ""
+"Track or compare changes over time. Recommend period as category. (adjust "
+"for EVER)"
+msgstr ""
+
+msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
+msgstr ""
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "Hendelsesvisualizer"
+
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr ""

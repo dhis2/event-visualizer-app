@@ -1,0 +1,1150 @@
+# Translators:
+# Andres Miguel Rubio, 2026
+# Philip Larsen Donnelly, 2026
+# 晓东 林 <13981924470@126.com>, 2026
+# easylin <lin_xd@126.com>, 2026
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"PO-Revision-Date: 2026-07-23 07:34+0000\n"
+"Last-Translator: easylin <lin_xd@126.com>, 2026\n"
+"Language-Team: Chinese (China) (https://app.transifex.com/hisp-uio/teams/100509/zh_CN/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: zh_CN\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid ""
+"Some dimensions were not added because they cannot be used in a "
+"{{visTypeName}}: {{list}}."
+msgstr ""
+
+msgid ""
+"Some dimensions were not added because they cannot be combined with {{- "
+"layoutTetName}} dimensions: {{list}}."
+msgstr ""
+
+msgid ""
+"{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Add to {{- axisName}}"
+msgstr ""
+
+msgid "Choose a filter type"
+msgstr ""
+
+msgid "Case sensitive"
+msgstr ""
+
+msgid "Delete filter"
+msgstr ""
+
+msgid "Repeated events"
+msgstr ""
+
+msgid "Data"
+msgstr "数据"
+
+msgid "Only available for repeatable stages"
+msgstr ""
+
+msgid "{{valueType}} type dimensions cannot be filtered."
+msgstr ""
+
+msgid "This dimension cannot be filtered."
+msgstr ""
+
+msgid "Preset options can't be combined with other filters"
+msgstr ""
+
+msgid "Add filter"
+msgstr "添加过滤器"
+
+msgid "and"
+msgstr ""
+
+msgid "is one of preset options"
+msgstr ""
+
+msgid "Choose a legend set"
+msgstr ""
+
+msgid "Loading legend sets"
+msgstr ""
+
+msgid "No preset option sets for this data item"
+msgstr ""
+
+msgid "Choose legends"
+msgstr ""
+
+msgid "Loading legends"
+msgstr "载入图例"
+
+msgid "From stages with repeatable events, show values from:"
+msgstr ""
+
+msgid "Oldest events"
+msgstr ""
+
+msgid "Show fewer of the oldest events"
+msgstr ""
+
+msgid "Show more of the oldest events"
+msgstr ""
+
+msgid "Most recent events"
+msgstr ""
+
+msgid "Show fewer of the most recent events"
+msgstr ""
+
+msgid "Show more of the most recent events"
+msgstr ""
+
+msgid "Hide"
+msgstr "隐藏"
+
+msgid "Start and end dates are inclusive and will be included in the outputs."
+msgstr ""
+
+msgid "Start date"
+msgstr "开始日期"
+
+msgid "End date"
+msgstr "结束日期"
+
+msgid "Choose from presets"
+msgstr ""
+
+msgid "Define start - end dates"
+msgstr ""
+
+msgid "Value filtering"
+msgstr ""
+
+msgid "Show all values"
+msgstr ""
+
+msgid "Filter"
+msgstr "过滤器"
+
+msgid "No items selected"
+msgstr ""
+
+msgid "Available options"
+msgstr "可用选项"
+
+msgid "Filter options"
+msgstr "过滤选项"
+
+msgid "Selected options"
+msgstr ""
+
+msgid "Nothing found for \"{{- searchTerm}}\""
+msgstr ""
+
+msgid "No options"
+msgstr "没有选择"
+
+msgid "Data value set"
+msgstr "数据值集"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "XML"
+msgstr "XML"
+
+msgid "Other formats"
+msgstr "其它格式"
+
+msgid "JRXML"
+msgstr "JRXML"
+
+msgid "Raw data SQL"
+msgstr "原生数据SQL"
+
+msgid "HTML"
+msgstr "HTML"
+
+msgid "HTML+CSS (.html+css)"
+msgstr ""
+
+msgid "Plain data source"
+msgstr "普通数据源"
+
+msgid "Microsoft Excel"
+msgstr "微软Excel"
+
+msgid "CSV"
+msgstr "CSV"
+
+msgid "Advanced"
+msgstr "高级"
+
+msgid "Download data from this date"
+msgstr "从该日期下载数据"
+
+msgid "Metadata ID scheme"
+msgstr "元数据ID方案"
+
+msgid "ID"
+msgstr "ID"
+
+msgid "Code"
+msgstr "代码"
+
+msgid "Name"
+msgstr "名称"
+
+msgid "An error occurred"
+msgstr ""
+
+msgid "Resize axes panel"
+msgstr ""
+
+msgid "Move to {{- axisName}}"
+msgstr ""
+
+msgid "Remove"
+msgstr "移除"
+
+msgid "all"
+msgstr "全部"
+
+msgid "None selected"
+msgstr "没有选择"
+
+msgid "Showing all values for this dimension"
+msgstr ""
+
+msgid "Program: {{- programName}}"
+msgstr ""
+
+msgid "Program stage: {{- stageName}}"
+msgstr ""
+
+msgid "Levels"
+msgstr "等级"
+
+msgid "Groups"
+msgstr "组"
+
+msgid "Using: {{- itemName}} ({{- aggregationType}})"
+msgstr ""
+
+msgid "Custom value is from a different stage than dimensions in the layout"
+msgstr ""
+
+msgid "Update custom value"
+msgstr ""
+
+msgid "Create custom value table"
+msgstr ""
+
+msgid "Switch to custom value table"
+msgstr ""
+
+msgid "Update custom value table"
+msgstr ""
+
+msgid "Enrollment"
+msgstr "报名登记"
+
+msgid "Create {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Create {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Event"
+msgstr "事件"
+
+msgid "Create {{- eventLabel}} list"
+msgstr ""
+
+msgid "Create {{- eventLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} table"
+msgstr ""
+
+msgid "Update {{- eventLabel}} list"
+msgstr ""
+
+msgid "Update {{- eventLabel}} table"
+msgstr ""
+
+msgid "tracked entity"
+msgstr ""
+
+msgid "Create {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Switch to {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Update {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Not valid with registration org. unit"
+msgstr ""
+
+msgid "Not valid with categories or category option group sets"
+msgstr ""
+
+msgid "Not valid with categories"
+msgstr ""
+
+msgid "Not valid with category option group sets"
+msgstr ""
+
+msgid "Not valid without a program"
+msgstr ""
+
+msgid "Not valid with multiple programs"
+msgstr ""
+
+msgid "Not valid with multiple program stages"
+msgstr ""
+
+msgid "Not valid with event programs"
+msgstr ""
+
+msgid "Not valid with Completed on"
+msgstr ""
+
+msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid with program indicators"
+msgstr ""
+
+msgid "Nothing selected. Add items to the layout to get started."
+msgstr ""
+
+msgid "Configure custom value"
+msgstr ""
+
+msgid "Choose the numeric data item to show in table cells."
+msgstr ""
+
+msgid "Search data items"
+msgstr ""
+
+msgid "Loading data"
+msgstr ""
+
+msgid "Error loading data"
+msgstr ""
+
+msgid "Failed to load data items"
+msgstr ""
+
+msgid "No numeric data items in stage \"{{- stageName}}\""
+msgstr ""
+
+msgid "No numeric data items in this program"
+msgstr ""
+
+msgid "This stage does not have any numeric data items available."
+msgstr ""
+
+msgid "This program does not have any numeric data items available."
+msgstr ""
+
+msgid "No data items match \"{{- searchTerm}}\""
+msgstr ""
+
+msgid "Aggregation"
+msgstr ""
+
+msgid "Cancel"
+msgstr "取消"
+
+msgid "Update"
+msgstr "更新"
+
+msgid "Select a value before updating"
+msgstr ""
+
+msgid ""
+"\"{{- itemName}}\" is from a different stage than the dimensions in the "
+"layout. Choose another item."
+msgstr ""
+
+msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
+msgstr ""
+
+msgid "Collapse layout"
+msgstr ""
+
+msgid "Expand layout"
+msgstr ""
+
+msgid "List options"
+msgstr ""
+
+msgid "Table options"
+msgstr "表选项"
+
+msgid "Chart options"
+msgstr ""
+
+msgid "Convert to {{- visType}}"
+msgstr ""
+
+msgid "{{- names}} will be removed. Are you sure?"
+msgstr ""
+
+msgid "Convert"
+msgstr ""
+
+msgid "Individual data view"
+msgstr ""
+
+msgid "Aggregated view"
+msgstr ""
+
+msgid "No event"
+msgstr "无事件"
+
+msgid "Sort by \"{{- column}}\" and update"
+msgstr ""
+
+msgid "Hide legend key"
+msgstr ""
+
+msgid "Show legend key"
+msgstr "显示图例键值"
+
+msgid ""
+"This line list may show data that was not available when the interpretation "
+"was written."
+msgstr "该行列表可能会显示编写解释时不可用的数据。"
+
+msgid "Rows per page"
+msgstr "行每页"
+
+msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
+msgstr ""
+
+msgid "Not available offline"
+msgstr "离线不可用"
+
+msgid "most recent"
+msgstr ""
+
+msgid "oldest"
+msgstr ""
+
+msgid "oldest {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "most recent {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "Column sub-totals"
+msgstr "列小计"
+
+msgid "Column totals"
+msgstr ""
+
+msgid "Cumulative values"
+msgstr "汇总值"
+
+msgid "Accumulate cell values along rows"
+msgstr "沿行累积单元格的值"
+
+msgid "Digit group separator"
+msgstr "数字分隔符"
+
+msgid "None"
+msgstr "没有"
+
+msgid "Space"
+msgstr "空格"
+
+msgid "Comma"
+msgstr "逗号"
+
+msgid "Display density"
+msgstr "显示稀密度"
+
+msgid "Comfortable"
+msgstr "舒适"
+
+msgid "Normal"
+msgstr "适度"
+
+msgid "Compact"
+msgstr "紧凑"
+
+msgid "Font size"
+msgstr "字体大小"
+
+msgid "Large"
+msgstr "较大"
+
+msgid "Small"
+msgstr "小"
+
+msgid "Hide empty rows"
+msgstr "隐藏空行"
+
+msgid "Hide N/A data"
+msgstr ""
+
+msgid "Use a legend for table cell colors"
+msgstr ""
+
+msgid "Use pre-defined legend per data item"
+msgstr "每个数据项使用预定义的图例"
+
+msgid "Choose a single legend for the entire visualization"
+msgstr ""
+
+msgid "Legend type"
+msgstr "图例类型"
+
+msgid "Legend changes background color"
+msgstr "图例改变背景色"
+
+msgid "Legend changes text color"
+msgstr "图例改变文本颜色"
+
+msgid "Legend style"
+msgstr "图例风格"
+
+msgid "Legend"
+msgstr "图例"
+
+msgid "Select from legends"
+msgstr "从图例选择"
+
+msgid "Limit"
+msgstr ""
+
+msgid "Sort order"
+msgstr "排序"
+
+msgid "Low to high"
+msgstr "从低到高"
+
+msgid "High to low"
+msgstr "由高到低"
+
+msgid "Top limit"
+msgstr "最高限度"
+
+msgid "Row sub-totals"
+msgstr "行小计"
+
+msgid "Row totals"
+msgstr "行合计"
+
+msgid "Dimension labels"
+msgstr "维度标签"
+
+msgid "Display organisation unit hierarchy"
+msgstr "显示机构层次"
+
+msgid "Skip rounding"
+msgstr "跳过舍入"
+
+msgid "Add a subtitle"
+msgstr "添加子标题"
+
+msgid "Add a title"
+msgstr "添加标题"
+
+msgid "Options"
+msgstr "选项"
+
+msgid "Display"
+msgstr "显示"
+
+msgid "Line list title"
+msgstr ""
+
+msgid "Line list subtitle"
+msgstr ""
+
+msgid "Totals"
+msgstr "总共"
+
+msgid "Totals are not supported when using cumulative values"
+msgstr "使用累积值时不支持总计"
+
+msgid "Empty data"
+msgstr "空数据"
+
+msgid "Table title"
+msgstr "表标题"
+
+msgid "Table subtitle"
+msgstr "表子标题"
+
+msgid "Labels"
+msgstr "标签"
+
+msgid "Create a {{- visType}} before updating"
+msgstr ""
+
+msgid "Metadata"
+msgstr "元数据"
+
+msgid "Other"
+msgstr "其它"
+
+msgid "Enrollment data"
+msgstr "注册数据"
+
+msgid "Event data"
+msgstr "事件数据"
+
+msgid "Program indicators"
+msgstr "项目指标"
+
+msgid "{{- name}} registration"
+msgstr ""
+
+msgid "Choose a data source"
+msgstr ""
+
+msgid "No data sources available"
+msgstr ""
+
+msgid "Programs"
+msgstr "项目"
+
+msgid "Show more"
+msgstr "显示更多"
+
+msgid "Analyze without a program"
+msgstr ""
+
+msgid "Loading options"
+msgstr ""
+
+msgid "Failed to load data sources."
+msgstr ""
+
+msgid "Filter data sources"
+msgstr ""
+
+msgid "There was a problem and this data could not be loaded"
+msgstr ""
+
+msgid "There was problem loading more data"
+msgstr ""
+
+msgid "No data found"
+msgstr "没有数据被找到"
+
+msgid "No results"
+msgstr "无结果"
+
+msgid "Load more"
+msgstr ""
+
+msgid "Loading more..."
+msgstr ""
+
+msgid "None of the selected dimensions can be added to this layout."
+msgstr ""
+
+msgid "Org units"
+msgstr ""
+
+msgid "Periods"
+msgstr "周期"
+
+msgid "Statuses"
+msgstr ""
+
+msgid "Data elements"
+msgstr "数据元"
+
+msgid "Program attributes"
+msgstr ""
+
+msgid "Categories"
+msgstr "分类"
+
+msgid "Category option group sets"
+msgstr "分类选项组集"
+
+msgid ""
+"Choose a data source above to see its dimensions, periods, and organisation "
+"units."
+msgstr ""
+
+msgid "Expand all cards"
+msgstr ""
+
+msgid "Collapse all cards"
+msgstr ""
+
+msgid "Something went wrong while searching."
+msgstr ""
+
+msgid "Search"
+msgstr "搜索"
+
+msgid "Clear search"
+msgstr "清除搜索"
+
+msgid "Your most viewed visualizations"
+msgstr ""
+
+msgid "Download"
+msgstr "下载"
+
+msgid "File"
+msgstr "文件"
+
+msgid "New"
+msgstr "新建"
+
+msgid "Open…"
+msgstr ""
+
+msgid "Save"
+msgstr "保存"
+
+msgid "Save…"
+msgstr ""
+
+msgid "Save as…"
+msgstr ""
+
+msgid "Rename…"
+msgstr ""
+
+msgid "Translate…"
+msgstr ""
+
+msgid "Share…"
+msgstr ""
+
+msgid "Get link…"
+msgstr ""
+
+msgid "Delete"
+msgstr "删除"
+
+msgid "Open"
+msgstr "打开"
+
+msgid "\"{{- deletedObject}}\" successfully deleted."
+msgstr "“{{- deletedObject}}”已成功删除。"
+
+msgid "An unknown error occurred."
+msgstr "出现未知错误。"
+
+msgid ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+msgstr ""
+
+msgid "You don't have sufficient permissions."
+msgstr ""
+
+msgid "Rename successful"
+msgstr "重命名成功"
+
+msgid "Rename failed"
+msgstr "重命名失败"
+
+msgid "Hide layout"
+msgstr ""
+
+msgid "Show layout"
+msgstr ""
+
+msgid "Hide dimensions sidebar"
+msgstr ""
+
+msgid "Show dimensions sidebar"
+msgstr ""
+
+msgid "Hide interpretations and details"
+msgstr ""
+
+msgid "Show interpretations and details"
+msgstr ""
+
+msgid "View"
+msgstr "查看"
+
+msgid "Resize layout to fit"
+msgstr ""
+
+msgid "Reset dimensions sidebar width"
+msgstr ""
+
+msgid "Show panels"
+msgstr ""
+
+msgid "Expand visualization and hide panels"
+msgstr ""
+
+msgid "Hide details panel"
+msgstr ""
+
+msgid "Show details panel"
+msgstr ""
+
+msgid "Loading visualization"
+msgstr ""
+
+msgid "Unsaved visualization"
+msgstr "没有保存可视化"
+
+msgid "Edited"
+msgstr "编辑"
+
+msgid "Use item default"
+msgstr ""
+
+msgid "Sum"
+msgstr "求和"
+
+msgid "Average"
+msgstr "平均"
+
+msgid "Average (sum in org unit hierarchy)"
+msgstr "平均 (按机构体系结构求和)"
+
+msgid "Last value (sum in org unit hierarchy)"
+msgstr "最近值(按机构体系合计)"
+
+msgid "Last value (average in org unit hierarchy)"
+msgstr "最近值(按机构体系平均)"
+
+msgid "Last value in period (last value in org unit hierarchy)"
+msgstr "期间内的最后一个值（组织部门层次结构中的最后一个值）"
+
+msgid "Last value in period (sum in org unit hierarchy)"
+msgstr "期间中的最后一个值（机构层次结构中的总和）"
+
+msgid "Last value in period (average in org unit hierarchy)"
+msgstr "期间中的最后一个值（机构层次结构中的平均值）"
+
+msgid "First value (sum in org unit hierarchy)"
+msgstr "第一个值（机构层次结构中的总和）"
+
+msgid "First value (average in org unit hierarchy)"
+msgstr "第一个值（组织单位层次结构中的平均值）"
+
+msgid "First value in period (first value in org unit hierarchy)"
+msgstr ""
+
+msgid "Count"
+msgstr "计数"
+
+msgid "Standard deviation"
+msgstr "标准差"
+
+msgid "Variance"
+msgstr "方差"
+
+msgid "Min"
+msgstr "最小"
+
+msgid "Max"
+msgstr "最大值"
+
+msgid "Min value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Max value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Custom"
+msgstr "定制"
+
+msgid "equal to (=)"
+msgstr ""
+
+msgid "greater than (>)"
+msgstr ""
+
+msgid "greater than or equal to (≥)"
+msgstr ""
+
+msgid "less than (<)"
+msgstr ""
+
+msgid "less than or equal to (≤)"
+msgstr ""
+
+msgid "not equal to (≠)"
+msgstr ""
+
+msgid "is empty / null"
+msgstr ""
+
+msgid "is not empty / not null"
+msgstr ""
+
+msgid "exactly"
+msgstr ""
+
+msgid "is not"
+msgstr ""
+
+msgid "contains"
+msgstr ""
+
+msgid "does not contain"
+msgstr ""
+
+msgid "after"
+msgstr "后"
+
+msgid "after or including"
+msgstr ""
+
+msgid "before"
+msgstr "前"
+
+msgid "before or including"
+msgstr ""
+
+msgid "Yes"
+msgstr "是"
+
+msgid "No"
+msgstr "否"
+
+msgid "Not answered"
+msgstr ""
+
+msgid ""
+"{{- dataSourceTetName}} dimensions cannot be combined with {{- "
+"layoutTetName}} dimensions already in the layout."
+msgstr ""
+
+msgid "Already used as custom value."
+msgstr ""
+
+msgid "Cannot be used in a {{visType}}."
+msgstr ""
+
+msgid "Created on"
+msgstr ""
+
+msgid "Last updated on"
+msgstr ""
+
+msgid "Last updated by"
+msgstr "最近更新者"
+
+msgid "Created by"
+msgstr "创建自"
+
+msgid "Completed on"
+msgstr ""
+
+msgid "Event org. unit"
+msgstr ""
+
+msgid "Event date"
+msgstr "事故日期"
+
+msgid "Scheduled date"
+msgstr "调度日期"
+
+msgid "Event status"
+msgstr "事件状态"
+
+msgid "Enrollment org. unit"
+msgstr ""
+
+msgid "Date of enrollment"
+msgstr "登记日期"
+
+msgid "Incident date"
+msgstr "事件发生日期"
+
+msgid "Enrollment status"
+msgstr "报名登记状态"
+
+msgid "Registration org. unit"
+msgstr ""
+
+msgid "Enrollment date"
+msgstr "登记日期"
+
+msgid "Columns"
+msgstr ""
+
+msgid "Rows"
+msgstr ""
+
+msgid "User organisation unit"
+msgstr "用户所在机构"
+
+msgid "User sub-units"
+msgstr "我的下属机构"
+
+msgid "User sub-x2-units"
+msgstr "该用户2级下属机构"
+
+msgid "Today"
+msgstr "今天"
+
+msgid "Yesterday"
+msgstr "昨天"
+
+msgid "Last 3 days"
+msgstr "最近3天"
+
+msgid "Last 7 days"
+msgstr "最近7天"
+
+msgid "Last 14 days"
+msgstr "最近14天"
+
+msgid "This week"
+msgstr "本年"
+
+msgid "Last week"
+msgstr "上周"
+
+msgid "Last 4 weeks"
+msgstr "最近4周"
+
+msgid "Last 12 weeks"
+msgstr "最近12周"
+
+msgid "Last 52 weeks"
+msgstr "最近52周"
+
+msgid "Weeks this year"
+msgstr "今年的星期"
+
+msgid "This month"
+msgstr "本月"
+
+msgid "Last month"
+msgstr "上月"
+
+msgid "Last 3 months"
+msgstr "最近3个月"
+
+msgid "Last 6 months"
+msgstr "最近6个月"
+
+msgid "Last 12 months"
+msgstr "最近12月"
+
+msgid "Months this year"
+msgstr "今年的月份"
+
+msgid "This bimonth"
+msgstr "本俩月"
+
+msgid "Last bimonth"
+msgstr "最近俩月"
+
+msgid "Last 6 bimonths"
+msgstr "最近6个俩月"
+
+msgid "Bimonths this year"
+msgstr "今年的俩月"
+
+msgid "This quarter"
+msgstr "本季度"
+
+msgid "Last quarter"
+msgstr "最近一季"
+
+msgid "Last 4 quarters"
+msgstr "最近4个季度"
+
+msgid "Quarters this year"
+msgstr "今年的季度"
+
+msgid "This six-month"
+msgstr "本六个月"
+
+msgid "Last six-month"
+msgstr "最近六个月"
+
+msgid "Last 2 six-months"
+msgstr "最近2个半年"
+
+msgid "This financial year"
+msgstr "本财年"
+
+msgid "Last financial year"
+msgstr "上一财政年"
+
+msgid "Last 5 financial years"
+msgstr "最近5个财政年"
+
+msgid "This year"
+msgstr "今年"
+
+msgid "Last year"
+msgstr "去年"
+
+msgid "Period"
+msgstr "期间"
+
+msgid "Organisation unit"
+msgstr "组织机构"
+
+msgid "Style"
+msgstr "风格"
+
+msgid "Active"
+msgstr "活跃的"
+
+msgid "Cancelled"
+msgstr "已取消"
+
+msgid "Completed"
+msgstr "完成"
+
+msgid "Scheduled"
+msgstr "已经调度"
+
+msgid ""
+"Track or compare changes over time. Recommend period as category. (adjust "
+"for EVER)"
+msgstr ""
+
+msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
+msgstr ""
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "事件可视化"
+
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr ""

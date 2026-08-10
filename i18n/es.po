@@ -1,0 +1,1169 @@
+# Translators:
+# Manuel Silva <manuel@dhis2.org>, 2026
+# Pablo Pajuelo Cabezas <pablo@dhis2.org>, 2026
+# Carlos Tejo Alonso, 2026
+# Alison Andrade <aandrade@ippfwhr.org>, 2026
+# Gabriela Rodriguez <grodriguezcoronado@gmail.com>, 2026
+# Bruno Raimbault, 2026
+# Marta Vila <marta@dhis2.org>, 2026
+# Milagros Rodríguez, 2026
+# Sergio Valenzuela <sergio.valenzuela@ehas.org>, 2026
+# Andres Miguel Rubio, 2026
+# Pablo Del Médico, 2026
+# Enzo Nicolas Rossi <enzo@dhis2.org>, 2026
+# ericbp <ericbarredap@gmail.com>, 2026
+# Prabhjot Singh, 2026
+# Janeth Cruz, 2026
+# Philip Larsen Donnelly, 2026
+# Viktor Varland <viktor@dhis2.org>, 2026
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"PO-Revision-Date: 2026-07-23 07:34+0000\n"
+"Last-Translator: Viktor Varland <viktor@dhis2.org>, 2026\n"
+"Language-Team: Spanish (https://app.transifex.com/hisp-uio/teams/100509/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
+
+msgid ""
+"Some dimensions were not added because they cannot be used in a "
+"{{visTypeName}}: {{list}}."
+msgstr ""
+
+msgid ""
+"Some dimensions were not added because they cannot be combined with {{- "
+"layoutTetName}} dimensions: {{list}}."
+msgstr ""
+
+msgid ""
+"{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Add to {{- axisName}}"
+msgstr ""
+
+msgid "Choose a filter type"
+msgstr ""
+
+msgid "Case sensitive"
+msgstr "Distingue mayúsculas y minúsculas"
+
+msgid "Delete filter"
+msgstr ""
+
+msgid "Repeated events"
+msgstr "Eventos repetidos"
+
+msgid "Data"
+msgstr "Datos"
+
+msgid "Only available for repeatable stages"
+msgstr "Solo disponible para etapas repetibles"
+
+msgid "{{valueType}} type dimensions cannot be filtered."
+msgstr ""
+
+msgid "This dimension cannot be filtered."
+msgstr ""
+
+msgid "Preset options can't be combined with other filters"
+msgstr ""
+
+msgid "Add filter"
+msgstr "Añadir filtro"
+
+msgid "and"
+msgstr "y"
+
+msgid "is one of preset options"
+msgstr "es una de las opciones preestablecidas"
+
+msgid "Choose a legend set"
+msgstr ""
+
+msgid "Loading legend sets"
+msgstr ""
+
+msgid "No preset option sets for this data item"
+msgstr ""
+"No hay conjuntos de opciones preestablecidas para este elemento de datos"
+
+msgid "Choose legends"
+msgstr ""
+
+msgid "Loading legends"
+msgstr "Cargando leyendas"
+
+msgid "From stages with repeatable events, show values from:"
+msgstr ""
+
+msgid "Oldest events"
+msgstr ""
+
+msgid "Show fewer of the oldest events"
+msgstr ""
+
+msgid "Show more of the oldest events"
+msgstr ""
+
+msgid "Most recent events"
+msgstr ""
+
+msgid "Show fewer of the most recent events"
+msgstr ""
+
+msgid "Show more of the most recent events"
+msgstr ""
+
+msgid "Hide"
+msgstr "Ocultar"
+
+msgid "Start and end dates are inclusive and will be included in the outputs."
+msgstr ""
+"Las fechas de inicio y finalización son inclusivas y se incluirán en los "
+"resultados."
+
+msgid "Start date"
+msgstr "Fecha inicial"
+
+msgid "End date"
+msgstr "Fecha final"
+
+msgid "Choose from presets"
+msgstr "Elija entre ajustes preestablecidos"
+
+msgid "Define start - end dates"
+msgstr "Definir fechas de inicio - finalización"
+
+msgid "Value filtering"
+msgstr ""
+
+msgid "Show all values"
+msgstr ""
+
+msgid "Filter"
+msgstr "filtro"
+
+msgid "No items selected"
+msgstr "No hay elementos seleccionados"
+
+msgid "Available options"
+msgstr "Opciones Disponibles"
+
+msgid "Filter options"
+msgstr "Opciones de filtro"
+
+msgid "Selected options"
+msgstr "Opciones seleccionadas"
+
+msgid "Nothing found for \"{{- searchTerm}}\""
+msgstr "No se encontró nada para \"{{- searchTerm}}\""
+
+msgid "No options"
+msgstr "Sin opciones"
+
+msgid "Data value set"
+msgstr "Valor de los datos"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "XML"
+msgstr "XML"
+
+msgid "Other formats"
+msgstr "Otros formatos"
+
+msgid "JRXML"
+msgstr "JRXML"
+
+msgid "Raw data SQL"
+msgstr "Datos brutos SQL"
+
+msgid "HTML"
+msgstr "HTML"
+
+msgid "HTML+CSS (.html+css)"
+msgstr "HTML+CSS (.html+css)"
+
+msgid "Plain data source"
+msgstr "Fuente de datos sin formato"
+
+msgid "Microsoft Excel"
+msgstr "Microsoft Excel"
+
+msgid "CSV"
+msgstr "CSV"
+
+msgid "Advanced"
+msgstr "Avanzado"
+
+msgid "Download data from this date"
+msgstr "Descargar datos a partir de esta fecha"
+
+msgid "Metadata ID scheme"
+msgstr "Esquema ID de metadatos"
+
+msgid "ID"
+msgstr "Identificador"
+
+msgid "Code"
+msgstr "Código"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "An error occurred"
+msgstr ""
+
+msgid "Resize axes panel"
+msgstr ""
+
+msgid "Move to {{- axisName}}"
+msgstr ""
+
+msgid "Remove"
+msgstr "Eliminar"
+
+msgid "all"
+msgstr "todo"
+
+msgid "None selected"
+msgstr "Ninguno seleccionado"
+
+msgid "Showing all values for this dimension"
+msgstr "Mostrando todos los valores para esta dimensión"
+
+msgid "Program: {{- programName}}"
+msgstr "Programa: {{- programName}}"
+
+msgid "Program stage: {{- stageName}}"
+msgstr "Etapa del programa: {{- stageName}}"
+
+msgid "Levels"
+msgstr "Niveles"
+
+msgid "Groups"
+msgstr "Grupos"
+
+msgid "Using: {{- itemName}} ({{- aggregationType}})"
+msgstr ""
+
+msgid "Custom value is from a different stage than dimensions in the layout"
+msgstr ""
+
+msgid "Update custom value"
+msgstr ""
+
+msgid "Create custom value table"
+msgstr ""
+
+msgid "Switch to custom value table"
+msgstr ""
+
+msgid "Update custom value table"
+msgstr ""
+
+msgid "Enrollment"
+msgstr "Registro"
+
+msgid "Create {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Create {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} list"
+msgstr ""
+
+msgid "Update {{- enrollmentLabel}} table"
+msgstr ""
+
+msgid "Event"
+msgstr "Evento"
+
+msgid "Create {{- eventLabel}} list"
+msgstr ""
+
+msgid "Create {{- eventLabel}} table"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} list"
+msgstr ""
+
+msgid "Switch to {{- eventLabel}} table"
+msgstr ""
+
+msgid "Update {{- eventLabel}} list"
+msgstr ""
+
+msgid "Update {{- eventLabel}} table"
+msgstr ""
+
+msgid "tracked entity"
+msgstr "entidad registrada"
+
+msgid "Create {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Switch to {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Update {{- trackedEntityTypeName}} list"
+msgstr ""
+
+msgid "Not valid with registration org. unit"
+msgstr ""
+
+msgid "Not valid with categories or category option group sets"
+msgstr ""
+
+msgid "Not valid with categories"
+msgstr ""
+
+msgid "Not valid with category option group sets"
+msgstr ""
+
+msgid "Not valid without a program"
+msgstr ""
+
+msgid "Not valid with multiple programs"
+msgstr ""
+
+msgid "Not valid with multiple program stages"
+msgstr ""
+
+msgid "Not valid with event programs"
+msgstr ""
+
+msgid "Not valid with Completed on"
+msgstr ""
+
+msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid with program indicators"
+msgstr ""
+
+msgid "Nothing selected. Add items to the layout to get started."
+msgstr ""
+
+msgid "Configure custom value"
+msgstr ""
+
+msgid "Choose the numeric data item to show in table cells."
+msgstr ""
+
+msgid "Search data items"
+msgstr ""
+
+msgid "Loading data"
+msgstr "Cargando datos"
+
+msgid "Error loading data"
+msgstr ""
+
+msgid "Failed to load data items"
+msgstr ""
+
+msgid "No numeric data items in stage \"{{- stageName}}\""
+msgstr ""
+
+msgid "No numeric data items in this program"
+msgstr ""
+
+msgid "This stage does not have any numeric data items available."
+msgstr ""
+
+msgid "This program does not have any numeric data items available."
+msgstr ""
+
+msgid "No data items match \"{{- searchTerm}}\""
+msgstr ""
+
+msgid "Aggregation"
+msgstr "Agregación"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Update"
+msgstr "Actualizar"
+
+msgid "Select a value before updating"
+msgstr ""
+
+msgid ""
+"\"{{- itemName}}\" is from a different stage than the dimensions in the "
+"layout. Choose another item."
+msgstr ""
+
+msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
+msgstr ""
+
+msgid "Collapse layout"
+msgstr ""
+
+msgid "Expand layout"
+msgstr ""
+
+msgid "List options"
+msgstr ""
+
+msgid "Table options"
+msgstr "Opciones de tabla"
+
+msgid "Chart options"
+msgstr "Opciones del gráfico"
+
+msgid "Convert to {{- visType}}"
+msgstr ""
+
+msgid "{{- names}} will be removed. Are you sure?"
+msgstr ""
+
+msgid "Convert"
+msgstr ""
+
+msgid "Individual data view"
+msgstr ""
+
+msgid "Aggregated view"
+msgstr ""
+
+msgid "No event"
+msgstr "Sin evento"
+
+msgid "Sort by \"{{- column}}\" and update"
+msgstr ""
+
+msgid "Hide legend key"
+msgstr ""
+
+msgid "Show legend key"
+msgstr "Mostrar clave de leyenda"
+
+msgid ""
+"This line list may show data that was not available when the interpretation "
+"was written."
+msgstr ""
+"Esta lista de líneas puede mostrar datos que no estaban disponibles cuando "
+"se escribió la interpretación."
+
+msgid "Rows per page"
+msgstr "Filas por página"
+
+msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
+msgstr ""
+
+msgid "Not available offline"
+msgstr "No disponible sin conexión"
+
+msgid "most recent"
+msgstr "más reciente"
+
+msgid "oldest"
+msgstr "más antiguo"
+
+msgid "oldest {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "most recent {{- repeatEventIndex}}"
+msgstr ""
+
+msgid "Column sub-totals"
+msgstr "Subtotales de columna"
+
+msgid "Column totals"
+msgstr ""
+
+msgid "Cumulative values"
+msgstr "Valores acumulativos"
+
+msgid "Accumulate cell values along rows"
+msgstr "Acumular valores de celdas a lo largo de las filas"
+
+msgid "Digit group separator"
+msgstr "Separador de grupos de dígitos"
+
+msgid "None"
+msgstr "Ninguno"
+
+msgid "Space"
+msgstr "Espacio"
+
+msgid "Comma"
+msgstr "Coma"
+
+msgid "Display density"
+msgstr "Mostrar densidad"
+
+msgid "Comfortable"
+msgstr "Confortable"
+
+msgid "Normal"
+msgstr "Normal"
+
+msgid "Compact"
+msgstr "Compacto"
+
+msgid "Font size"
+msgstr "Tamaño de fuente"
+
+msgid "Large"
+msgstr "Grande"
+
+msgid "Small"
+msgstr "Pequeña"
+
+msgid "Hide empty rows"
+msgstr "Ocultar filas vacías"
+
+msgid "Hide N/A data"
+msgstr ""
+
+msgid "Use a legend for table cell colors"
+msgstr "Usar una leyenda para los colores de las celdas de la tabla"
+
+msgid "Use pre-defined legend per data item"
+msgstr "Utilizar leyenda predefinida por elemento de datos"
+
+msgid "Choose a single legend for the entire visualization"
+msgstr "Elija una sola leyenda para toda la visualización"
+
+msgid "Legend type"
+msgstr "Tipo de leyenda"
+
+msgid "Legend changes background color"
+msgstr "La leyenda cambia el color de fondo"
+
+msgid "Legend changes text color"
+msgstr "La leyenda cambia el color del texto"
+
+msgid "Legend style"
+msgstr "Estilo de la leyenda"
+
+msgid "Legend"
+msgstr "Set de leyendas"
+
+msgid "Select from legends"
+msgstr "Seleccionar de las leyendas"
+
+msgid "Limit"
+msgstr "Límite"
+
+msgid "Sort order"
+msgstr "Criterio de ordenación"
+
+msgid "Low to high"
+msgstr "Menor a mayor"
+
+msgid "High to low"
+msgstr "Mayor a menor"
+
+msgid "Top limit"
+msgstr "Limite superior"
+
+msgid "Row sub-totals"
+msgstr "Subtotales de fila"
+
+msgid "Row totals"
+msgstr "Totales de fila"
+
+msgid "Dimension labels"
+msgstr "Etiquetas de dimensión"
+
+msgid "Display organisation unit hierarchy"
+msgstr "Mostrar jerarquía de unidades organizativas"
+
+msgid "Skip rounding"
+msgstr "Evitar redondeo"
+
+msgid "Add a subtitle"
+msgstr "Añadir un subtítulo"
+
+msgid "Add a title"
+msgstr "Añadir un título"
+
+msgid "Options"
+msgstr "Opciones"
+
+msgid "Display"
+msgstr "Mostrar"
+
+msgid "Line list title"
+msgstr ""
+
+msgid "Line list subtitle"
+msgstr ""
+
+msgid "Totals"
+msgstr "Totales"
+
+msgid "Totals are not supported when using cumulative values"
+msgstr ""
+"Los totales no son compatibles cuando se utilizan valores acumulativos."
+
+msgid "Empty data"
+msgstr "Datos vacíos"
+
+msgid "Table title"
+msgstr "Título de la tabla"
+
+msgid "Table subtitle"
+msgstr "Subtítulo de la tabla"
+
+msgid "Labels"
+msgstr "Etiquetas"
+
+msgid "Create a {{- visType}} before updating"
+msgstr ""
+
+msgid "Metadata"
+msgstr "Metadatos"
+
+msgid "Other"
+msgstr "Otro"
+
+msgid "Enrollment data"
+msgstr "Datos de registro"
+
+msgid "Event data"
+msgstr "Datos del evento"
+
+msgid "Program indicators"
+msgstr "Indicadores de programa"
+
+msgid "{{- name}} registration"
+msgstr ""
+
+msgid "Choose a data source"
+msgstr ""
+
+msgid "No data sources available"
+msgstr ""
+
+msgid "Programs"
+msgstr "Programas"
+
+msgid "Show more"
+msgstr "Mostrar más"
+
+msgid "Analyze without a program"
+msgstr ""
+
+msgid "Loading options"
+msgstr "Cargando las opciones"
+
+msgid "Failed to load data sources."
+msgstr ""
+
+msgid "Filter data sources"
+msgstr ""
+
+msgid "There was a problem and this data could not be loaded"
+msgstr ""
+
+msgid "There was problem loading more data"
+msgstr ""
+
+msgid "No data found"
+msgstr "Datos no encontrados"
+
+msgid "No results"
+msgstr "No hay resultados"
+
+msgid "Load more"
+msgstr ""
+
+msgid "Loading more..."
+msgstr ""
+
+msgid "None of the selected dimensions can be added to this layout."
+msgstr ""
+
+msgid "Org units"
+msgstr "Unidades organizativas"
+
+msgid "Periods"
+msgstr "Periodos"
+
+msgid "Statuses"
+msgstr ""
+
+msgid "Data elements"
+msgstr "Elementos de datos"
+
+msgid "Program attributes"
+msgstr ""
+
+msgid "Categories"
+msgstr "Categorías"
+
+msgid "Category option group sets"
+msgstr ""
+
+msgid ""
+"Choose a data source above to see its dimensions, periods, and organisation "
+"units."
+msgstr ""
+
+msgid "Expand all cards"
+msgstr ""
+
+msgid "Collapse all cards"
+msgstr ""
+
+msgid "Something went wrong while searching."
+msgstr ""
+
+msgid "Search"
+msgstr "Buscar"
+
+msgid "Clear search"
+msgstr "Borrar búsqueda"
+
+msgid "Your most viewed visualizations"
+msgstr ""
+
+msgid "Download"
+msgstr "Descargar"
+
+msgid "File"
+msgstr "Archivo"
+
+msgid "New"
+msgstr "Nuevo"
+
+msgid "Open…"
+msgstr "Abrir…"
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "Save…"
+msgstr "Guardar…"
+
+msgid "Save as…"
+msgstr "Guardar como…"
+
+msgid "Rename…"
+msgstr "Renombrar…"
+
+msgid "Translate…"
+msgstr "Traducir…"
+
+msgid "Share…"
+msgstr "Compartir…"
+
+msgid "Get link…"
+msgstr "Obtener enlace…"
+
+msgid "Delete"
+msgstr "Eliminar"
+
+msgid "Open"
+msgstr "Abierto"
+
+msgid "\"{{- deletedObject}}\" successfully deleted."
+msgstr "\"{{- deletedObject}}\" se eliminó con éxito."
+
+msgid "An unknown error occurred."
+msgstr "Se ha producido un error desconocido."
+
+msgid ""
+"This visualization can't be deleted because it is used on one or more "
+"dashboards."
+msgstr ""
+
+msgid "You don't have sufficient permissions."
+msgstr ""
+
+msgid "Rename successful"
+msgstr "Nombre actualizado"
+
+msgid "Rename failed"
+msgstr "Error al renombrar"
+
+msgid "Hide layout"
+msgstr "Ocultar diseño"
+
+msgid "Show layout"
+msgstr "Mostrar diseño"
+
+msgid "Hide dimensions sidebar"
+msgstr "Ocultar barra lateral de dimensiones"
+
+msgid "Show dimensions sidebar"
+msgstr "Mostrar barra lateral de dimensiones"
+
+msgid "Hide interpretations and details"
+msgstr "Ocultar interpretaciones y detalles"
+
+msgid "Show interpretations and details"
+msgstr "Mostrar interpretaciones y detalles"
+
+msgid "View"
+msgstr "Ver"
+
+msgid "Resize layout to fit"
+msgstr ""
+
+msgid "Reset dimensions sidebar width"
+msgstr ""
+
+msgid "Show panels"
+msgstr "Mostrar paneles"
+
+msgid "Expand visualization and hide panels"
+msgstr "Expandir visualización y ocultar paneles"
+
+msgid "Hide details panel"
+msgstr ""
+
+msgid "Show details panel"
+msgstr ""
+
+msgid "Loading visualization"
+msgstr ""
+
+msgid "Unsaved visualization"
+msgstr "Visualización no guardada"
+
+msgid "Edited"
+msgstr "Editado"
+
+msgid "Use item default"
+msgstr ""
+
+msgid "Sum"
+msgstr "Suma"
+
+msgid "Average"
+msgstr "Promedio"
+
+msgid "Average (sum in org unit hierarchy)"
+msgstr "Media (suma en la jerarquía de unidades organizativas)"
+
+msgid "Last value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value (average in org unit hierarchy)"
+msgstr "Último valor (media en la jerarquía de unidades organizativas)"
+
+msgid "Last value in period (last value in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value in period (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Last value in period (average in org unit hierarchy)"
+msgstr ""
+
+msgid "First value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "First value (average in org unit hierarchy)"
+msgstr ""
+
+msgid "First value in period (first value in org unit hierarchy)"
+msgstr ""
+
+msgid "Count"
+msgstr "Conteo"
+
+msgid "Standard deviation"
+msgstr "Desviación estándar"
+
+msgid "Variance"
+msgstr "Varianza"
+
+msgid "Min"
+msgstr "Mín"
+
+msgid "Max"
+msgstr "Máx"
+
+msgid "Min value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Max value (sum in org unit hierarchy)"
+msgstr ""
+
+msgid "Custom"
+msgstr "Personalizado"
+
+msgid "equal to (=)"
+msgstr "igual a (=)"
+
+msgid "greater than (>)"
+msgstr "mayor que (>)"
+
+msgid "greater than or equal to (≥)"
+msgstr "mayor o igual que (≥)"
+
+msgid "less than (<)"
+msgstr "menos que (<)"
+
+msgid "less than or equal to (≤)"
+msgstr "menor o igual que (≤)"
+
+msgid "not equal to (≠)"
+msgstr "no igual a (≠)"
+
+msgid "is empty / null"
+msgstr "está vacío / nulo"
+
+msgid "is not empty / not null"
+msgstr "no está vacío / no es nulo"
+
+msgid "exactly"
+msgstr "exactamente"
+
+msgid "is not"
+msgstr "no es"
+
+msgid "contains"
+msgstr "contiene"
+
+msgid "does not contain"
+msgstr "no contiene"
+
+msgid "after"
+msgstr "después"
+
+msgid "after or including"
+msgstr "después o incluyendo"
+
+msgid "before"
+msgstr "antes"
+
+msgid "before or including"
+msgstr "antes o incluso"
+
+msgid "Yes"
+msgstr "Sí"
+
+msgid "No"
+msgstr "No"
+
+msgid "Not answered"
+msgstr "No contestado"
+
+msgid ""
+"{{- dataSourceTetName}} dimensions cannot be combined with {{- "
+"layoutTetName}} dimensions already in the layout."
+msgstr ""
+
+msgid "Already used as custom value."
+msgstr ""
+
+msgid "Cannot be used in a {{visType}}."
+msgstr ""
+
+msgid "Created on"
+msgstr ""
+
+msgid "Last updated on"
+msgstr "Ultima actualización en"
+
+msgid "Last updated by"
+msgstr "Última actualización hecha por"
+
+msgid "Created by"
+msgstr "Creado por"
+
+msgid "Completed on"
+msgstr ""
+
+msgid "Event org. unit"
+msgstr ""
+
+msgid "Event date"
+msgstr "Fecha de evento"
+
+msgid "Scheduled date"
+msgstr "Fecha planificada"
+
+msgid "Event status"
+msgstr "Estado del evento"
+
+msgid "Enrollment org. unit"
+msgstr ""
+
+msgid "Date of enrollment"
+msgstr "Fecha de inscripción"
+
+msgid "Incident date"
+msgstr "Fecha del incidente"
+
+msgid "Enrollment status"
+msgstr "Estado de la inscripción"
+
+msgid "Registration org. unit"
+msgstr "Registro unidad org."
+
+msgid "Enrollment date"
+msgstr "Fecha de inscripción"
+
+msgid "Columns"
+msgstr "Columnas"
+
+msgid "Rows"
+msgstr "Filas"
+
+msgid "User organisation unit"
+msgstr "Unidad organizativa del usuario"
+
+msgid "User sub-units"
+msgstr "Subunidades de usuario"
+
+msgid "User sub-x2-units"
+msgstr "Sub-unidades de usuario -x2"
+
+msgid "Today"
+msgstr "Hoy"
+
+msgid "Yesterday"
+msgstr "Ayer"
+
+msgid "Last 3 days"
+msgstr "Últimos 3 días"
+
+msgid "Last 7 days"
+msgstr "Últimos 7 diass"
+
+msgid "Last 14 days"
+msgstr "Últimos 14 días"
+
+msgid "This week"
+msgstr "Esta semana"
+
+msgid "Last week"
+msgstr "Última semana"
+
+msgid "Last 4 weeks"
+msgstr "Últimas 4 semanas"
+
+msgid "Last 12 weeks"
+msgstr "Últimas 12 semanas"
+
+msgid "Last 52 weeks"
+msgstr "Últimas 52 semanas"
+
+msgid "Weeks this year"
+msgstr "Semanas de este año"
+
+msgid "This month"
+msgstr "Este mes"
+
+msgid "Last month"
+msgstr "Mes anterior"
+
+msgid "Last 3 months"
+msgstr "Últimos 3 meses"
+
+msgid "Last 6 months"
+msgstr "Últimos 6 meses"
+
+msgid "Last 12 months"
+msgstr "Ultimos 12 meses"
+
+msgid "Months this year"
+msgstr "Meses este año"
+
+msgid "This bimonth"
+msgstr "Este bimestre"
+
+msgid "Last bimonth"
+msgstr "Último bimestre"
+
+msgid "Last 6 bimonths"
+msgstr "Últimos 6 bimestres"
+
+msgid "Bimonths this year"
+msgstr "Bimestres de este año"
+
+msgid "This quarter"
+msgstr "Este trimestre"
+
+msgid "Last quarter"
+msgstr "El trimestre pasado"
+
+msgid "Last 4 quarters"
+msgstr "Últimos 4 trimestres"
+
+msgid "Quarters this year"
+msgstr "Trimestres de este año"
+
+msgid "This six-month"
+msgstr "Este semestre"
+
+msgid "Last six-month"
+msgstr "Último semestre"
+
+msgid "Last 2 six-months"
+msgstr "Últimos 2 semestres"
+
+msgid "This financial year"
+msgstr "Este año fiscal"
+
+msgid "Last financial year"
+msgstr "Último ejercicio financiero"
+
+msgid "Last 5 financial years"
+msgstr "Últimos 5 ejercicios financieros"
+
+msgid "This year"
+msgstr "Este año"
+
+msgid "Last year"
+msgstr "El año pasado"
+
+msgid "Period"
+msgstr "Periodo"
+
+msgid "Organisation unit"
+msgstr "Unidad organizativa"
+
+msgid "Style"
+msgstr "Estilo"
+
+msgid "Active"
+msgstr "Activo"
+
+msgid "Cancelled"
+msgstr "Cancelar"
+
+msgid "Completed"
+msgstr "Completado"
+
+msgid "Scheduled"
+msgstr "Planificado"
+
+msgid ""
+"Track or compare changes over time. Recommend period as category. (adjust "
+"for EVER)"
+msgstr ""
+
+msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
+msgstr ""
+
+msgctxt "Application title"
+msgid "__MANIFEST_APP_TITLE"
+msgstr "Visualizador de eventos"
+
+msgctxt "Application description"
+msgid "__MANIFEST_APP_DESCRIPTION"
+msgstr ""
