@@ -19,7 +19,7 @@ export const DEFAULT_OPTIONS: EventVisualizationOptions = {
     /* A visualization has no fixed default separator: a new vis seeds its
      * value from the `digitGroupSeparator` system setting (see
      * getDefaultOptions, applied to the preloaded store state). Left undefined
-     * here so getNonDefaultOptions never treats a concrete separator as a
+     * here so change detection never treats a concrete separator as a
      * default — a saved vis always keeps its own value. */
     digitGroupSeparator: undefined,
     displayDensity: 'NORMAL',

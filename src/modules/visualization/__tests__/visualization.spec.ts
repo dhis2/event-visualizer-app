@@ -5,6 +5,7 @@ import {
     getSaveableVisualization,
     getVisualizationState,
     getVisualizationUiConfig,
+    isDefaultOptionValue,
     normalizeApiSavedVisualization,
     toCurrentVis,
 } from '@modules/visualization/state'
@@ -771,5 +772,37 @@ describe('getVisualizationState ignores non-persisted dimension props', () => {
         } as unknown as CurrentVisualization
 
         expect(getVisualizationState(savedVis, currentVis)).toBe('DIRTY')
+    })
+})
+
+describe('isDefaultOptionValue', () => {
+    it('treats absent (undefined) as default', () => {
+        expect(isDefaultOptionValue('showData', undefined)).toBe(true)
+    })
+
+    it('treats a value equal to the default as default', () => {
+        // DEFAULT_OPTIONS.showData is false
+        expect(isDefaultOptionValue('showData', false)).toBe(true)
+    })
+
+    it('treats a value differing from the default as non-default', () => {
+        expect(isDefaultOptionValue('showData', true)).toBe(false)
+    })
+
+    it('treats any concrete digitGroupSeparator as non-default (its default is undefined)', () => {
+        expect(isDefaultOptionValue('digitGroupSeparator', undefined)).toBe(
+            true
+        )
+        expect(isDefaultOptionValue('digitGroupSeparator', 'SPACE')).toBe(false)
+    })
+
+    it('treats a populated legend as non-default (default legend is undefined)', () => {
+        expect(
+            isDefaultOptionValue('legend', {
+                showKey: false,
+                strategy: 'BY_DATA_ITEM',
+                style: 'FILL',
+            })
+        ).toBe(false)
     })
 })

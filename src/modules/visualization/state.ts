@@ -20,7 +20,6 @@ import {
     toAppLocalDimensions,
     toEventVisualizationDimensionId,
 } from '@modules/dimension/translation'
-import { getNonDefaultOptions } from '@modules/options'
 import { getRepetitionsFromVisualisation } from '@modules/repetitions'
 import type {
     ApiSavedVisualization,
@@ -129,6 +128,12 @@ const DERIVED_LAYOUT_FIELDS: ReadonlySet<string> = new Set([
 
 const DIMENSION_AXES = new Set<string>(AXES)
 
+/* A default-valued option and an absent one mean the same thing, so both count
+ * as "at default" when comparing. */
+export const isDefaultOptionValue = (key: string, value: unknown): boolean =>
+    value === undefined ||
+    deepEqual(value, (DEFAULT_OPTIONS as Record<string, unknown>)[key])
+
 /* An axis prepared for comparison: drop the props that aren't persisted
  * (dimensionType, valueType — the API sends PROGRAM_DATA_ELEMENT where the
  * rebuilt vis has DATA_ELEMENT) and treat an empty items array as absent, so
@@ -147,26 +152,16 @@ const areVisualizationsEquivalent = (
     savedVis: CurrentVisualization,
     currentVis: CurrentVisualization
 ): boolean => {
-    const savedNonDefaultOptions = getNonDefaultOptions(savedVis) as Record<
-        string,
-        unknown
-    >
-    const currentNonDefaultOptions = getNonDefaultOptions(currentVis) as Record<
-        string,
-        unknown
-    >
     const saved = savedVis as Record<string, unknown>
     const current = currentVis as Record<string, unknown>
     // currentVis always carries the full key set, so its keys cover every
     // field a saved vis could differ on.
     for (const key of Object.keys(current)) {
         if (key in DEFAULT_OPTIONS) {
-            if (
-                !deepEqual(
-                    savedNonDefaultOptions[key],
-                    currentNonDefaultOptions[key]
-                )
-            ) {
+            const bothAtDefault =
+                isDefaultOptionValue(key, saved[key]) &&
+                isDefaultOptionValue(key, current[key])
+            if (!bothAtDefault && !deepEqual(saved[key], current[key])) {
                 return false
             }
         } else if (DIMENSION_AXES.has(key)) {
