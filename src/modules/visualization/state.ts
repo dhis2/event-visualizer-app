@@ -1,3 +1,4 @@
+import { AXES } from '@constants/axis'
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { layoutGetAllDimensions } from '@dhis2/analytics'
 import { getHeadersMap } from '@modules/analytics-request'
@@ -15,7 +16,10 @@ import {
     outputTypeTimeDimensionMap,
     timeFieldTimeDimensionMap,
 } from '@modules/dimension/time'
-import { toAppLocalDimensions } from '@modules/dimension/translation'
+import {
+    toAppLocalDimensions,
+    toEventVisualizationDimensionId,
+} from '@modules/dimension/translation'
 import { getRepetitionsFromVisualisation } from '@modules/repetitions'
 import type {
     ApiSavedVisualization,
@@ -29,6 +33,7 @@ import type {
     SavedVisualization,
     SortDirection,
     VisualizationState,
+    VisualizationType,
 } from '@types'
 import deepEqual from 'deep-equal'
 
@@ -109,6 +114,75 @@ export const toCurrentVis = (
     return result as CurrentVisualization
 }
 
+/* Derived from the layout: any real change is already caught by comparing the
+ * axes, so comparing these adds nothing. And the two array fields
+ * (programDimensions, attributeDimensions) can differ in order between a loaded
+ * savedVis and a rebuilt currentVis — the app rebuilds them from the layout,
+ * the backend returns its own order — which a direct compare would misread as
+ * an edit. */
+const DERIVED_LAYOUT_FIELDS: ReadonlySet<string> = new Set([
+    'trackedEntityType',
+    'attributeDimensions',
+    'programDimensions',
+])
+
+const DIMENSION_AXES = new Set<string>(AXES)
+
+/* A default-valued option and an absent one mean the same thing, so both count
+ * as "at default" when comparing. */
+export const isDefaultOptionValue = (key: string, value: unknown): boolean =>
+    value === undefined ||
+    deepEqual(value, (DEFAULT_OPTIONS as Record<string, unknown>)[key])
+
+/* An axis prepared for comparison: drop the props that aren't persisted
+ * (dimensionType, valueType — the API sends PROGRAM_DATA_ELEMENT where the
+ * rebuilt vis has DATA_ELEMENT) and treat an empty items array as absent, so
+ * unpersisted differences don't read as edits. */
+const comparableAxis = (axis: DimensionArray = []): DimensionArray =>
+    removeDimensionPropertiesBeforeSaving(axis).map((dim) => {
+        if (Array.isArray(dim.items) && dim.items.length === 0) {
+            const withoutItems = { ...dim }
+            delete withoutItems.items
+            return withoutItems
+        }
+        return dim
+    })
+
+const areVisualizationsEquivalent = (
+    savedVis: CurrentVisualization,
+    currentVis: CurrentVisualization
+): boolean => {
+    const saved = savedVis as Record<string, unknown>
+    const current = currentVis as Record<string, unknown>
+    // currentVis always carries the full key set, so its keys cover every
+    // field a saved vis could differ on.
+    for (const key of Object.keys(current)) {
+        if (key in DEFAULT_OPTIONS) {
+            const bothAtDefault =
+                isDefaultOptionValue(key, saved[key]) &&
+                isDefaultOptionValue(key, current[key])
+            if (!bothAtDefault && !deepEqual(saved[key], current[key])) {
+                return false
+            }
+        } else if (DIMENSION_AXES.has(key)) {
+            if (
+                !deepEqual(
+                    comparableAxis(saved[key] as DimensionArray),
+                    comparableAxis(current[key] as DimensionArray)
+                )
+            ) {
+                return false
+            }
+        } else if (
+            !DERIVED_LAYOUT_FIELDS.has(key) &&
+            !deepEqual(saved[key], current[key])
+        ) {
+            return false
+        }
+    }
+    return true
+}
+
 export const getVisualizationState = (
     savedVis: SavedVisualization | EmptyVisualization,
     currentVis: CurrentVisualization | EmptyVisualization
@@ -117,7 +191,9 @@ export const getVisualizationState = (
         return isVisualizationEmpty(currentVis) ? 'EMPTY' : 'UNSAVED'
     } else if (isVisualizationEmpty(currentVis)) {
         return 'DIRTY'
-    } else if (deepEqual(toCurrentVis(savedVis), currentVis)) {
+    } else if (
+        areVisualizationsEquivalent(toCurrentVis(savedVis), currentVis)
+    ) {
         return 'SAVED'
     } else {
         return 'DIRTY'
@@ -245,13 +321,13 @@ const OPTION_KEYS = Object.keys(DEFAULT_OPTIONS) as Array<
 const extractOptions = (
     vis: CurrentVisualization
 ): Partial<EventVisualizationOptions> => {
-    const extracted: Partial<EventVisualizationOptions> = {}
+    const extracted: Record<string, unknown> = {}
     for (const key of OPTION_KEYS) {
         if (vis[key] !== undefined) {
-            ;(extracted as Record<string, unknown>)[key] = vis[key]
+            extracted[key] = vis[key]
         }
     }
-    return extracted
+    return extracted as Partial<EventVisualizationOptions>
 }
 
 export const getVisualizationUiConfig = (
@@ -324,6 +400,130 @@ const LEGACY_DIMENSION_ID_RENAMES: Record<string, DimensionId> = {
     lastUpdatedOn: 'lastUpdated',
 }
 
+/* The top-level source context the per-dimension steps read while normalising.
+ * It is not part of the output vis — the legacy top-level program/programStage
+ * and timeField are consumed here and dropped from the result. */
+type LegacyDimensionContext = {
+    outputType: OutputType | undefined
+    visualizationType: VisualizationType
+    timeField: string | undefined
+    programRef: { id: string } | undefined
+    stageRef: { id: string } | undefined
+}
+
+// Legacy line-listing stored the period as a bare `pe`; turn it into the
+// concrete time dimension the app uses.
+const materializeLegacyPeDimension = (
+    dim: DimensionRecord,
+    context: LegacyDimensionContext,
+    vis: SavedVisualization
+): DimensionRecord => {
+    if (dim.dimension !== 'pe') {
+        return dim
+    }
+    const targetDim =
+        (context.timeField && timeFieldTimeDimensionMap[context.timeField]) ||
+        (context.outputType && outputTypeTimeDimensionMap[context.outputType])
+    if (!targetDim) {
+        return dim
+    }
+    vis.legacy = true
+    return { ...dim, dimension: targetDim, dimensionType: 'PERIOD' }
+}
+
+const renameLegacyDimensionId = (
+    dim: DimensionRecord,
+    vis: SavedVisualization
+): DimensionRecord => {
+    const renamed = LEGACY_DIMENSION_ID_RENAMES[dim.dimension]
+    if (!renamed) {
+        return dim
+    }
+    vis.legacy = true
+    return { ...dim, dimension: renamed }
+}
+
+// Meta dims, contextless dim types, program indicators and tracked entity
+// attributes don't carry program/stage context.
+const dimensionTakesNoProgramContext = (dim: DimensionRecord): boolean =>
+    META_DIMENSION_IDS.has(dim.dimension) ||
+    (typeof dim.dimensionType === 'string' &&
+        NO_CONTEXT_DIMENSION_TYPES.has(dim.dimensionType))
+
+// Propagate the old event-visualizer top-level program/programStage onto a
+// dimension that doesn't carry them. Enrollment-scoped IDs are tied to the
+// program, not a stage, so they get program only. This doesn't flip `legacy`:
+// the top-level program/programStage presence already seeded it.
+const applyProgramStageContext = (
+    dim: DimensionRecord,
+    { programRef, stageRef }: LegacyDimensionContext
+): DimensionRecord => {
+    let out = dim
+    if (programRef && !out.program) {
+        out = { ...out, program: programRef }
+    }
+    const skipStageRef = ENROLLMENT_SCOPED_DIMENSION_IDS.has(out.dimension)
+    if (!skipStageRef && stageRef && !out.programStage) {
+        out = { ...out, programStage: stageRef }
+    }
+    return out
+}
+
+// A legacy vis stored the enrollment org unit as bare `ou`; this app uses
+// `enrollmentOu` where the wire form needs it (EVENT/TEI LINE_LIST). Upgrade
+// with the same rule the save path uses — a no-op for ENROLLMENT/PIVOT (where
+// `ou` is canonical) and for the stage event OU (which has a programStage).
+const upgradeLegacyEnrollmentOu = (
+    dim: DimensionRecord,
+    context: LegacyDimensionContext,
+    vis: SavedVisualization
+): DimensionRecord => {
+    if (
+        !context.outputType ||
+        dim.dimension !== 'ou' ||
+        !dim.program?.id ||
+        dim.programStage
+    ) {
+        return dim
+    }
+    const canonicalOu = toEventVisualizationDimensionId({
+        dimensionId: 'enrollmentOu',
+        programId: dim.program.id,
+        outputType: context.outputType,
+        visualizationType: context.visualizationType,
+    })
+    if (canonicalOu === dim.dimension) {
+        return dim
+    }
+    vis.legacy = true
+    return { ...dim, dimension: canonicalOu }
+}
+
+/* Normalise one dimension, in order: materialise a legacy `pe`, rename old IDs,
+ * then — unless the dim takes no program/stage context — propagate top-level
+ * program/programStage and upgrade a legacy enrollment `ou`. The rename runs
+ * before the context check so a meta dim renamed from a legacy ID (e.g.
+ * `createdDate` → `created`) is recognised as context-free. Steps flip
+ * `vis.legacy` as they upgrade the shape. */
+const normalizeLegacyDimension = (
+    dim: DimensionRecord,
+    context: LegacyDimensionContext,
+    vis: SavedVisualization
+): DimensionRecord => {
+    const renamed = renameLegacyDimensionId(
+        materializeLegacyPeDimension(dim, context, vis),
+        vis
+    )
+    if (dimensionTakesNoProgramContext(renamed)) {
+        return renamed
+    }
+    return upgradeLegacyEnrollmentOu(
+        applyProgramStageContext(renamed, context),
+        context,
+        vis
+    )
+}
+
 /**
  * Legacy → canonical normalisation for saved visualizations received from the
  * eventVisualizations API. Converts the legacy shapes (old line-listing
@@ -364,93 +564,30 @@ export const normalizeApiSavedVisualization = (
         programStage,
         orgUnitField,
         timeField,
-        legacy: apiVisLegacy,
+        legacy,
         programStatus,
         columns = [],
         rows = [],
         filters = [],
-        programDimensions = [],
         sortOrder,
         topLimit,
         ...rest
     } = apiVis
+    const normalizedVis = rest as SavedVisualization
+    const context: LegacyDimensionContext = {
+        outputType: rest.outputType as OutputType | undefined,
+        visualizationType: rest.type as VisualizationType,
+        timeField,
+        programRef: program ? { id: program.id } : undefined,
+        stageRef: programStage ? { id: programStage.id } : undefined,
+    }
 
-    const programRef = program ? { id: program.id } : undefined
-    const stageRef = programStage ? { id: programStage.id } : undefined
-    const outputType = rest.outputType as OutputType | undefined
-
-    // The vis is legacy whenever anything here upgrades the persisted shape:
-    // re-saving in canonical format would then break older apps still reading
-    // the original shape, so block the in-place save path. Seed it from the
-    // top-level legacy signals (explicit flag, old event-visualizer
-    // program/programStage, legacy `orgUnitField`/`programStatus` that get
-    // converted to filter dimensions); the per-dimension pass and the
-    // `timeField` drop below flip it too.
-    let legacy =
-        Boolean(apiVisLegacy) ||
-        Boolean(program || programStage) ||
-        Boolean(orgUnitField) ||
-        Boolean(programStatus)
-
-    /* Single pass per dimension, in order:
-     *   - convert a legacy `pe` dimension into the concrete time dimension
-     *     (legacy line-listing shape)
-     *   - rename old dimension IDs to their canonical form
-     *   - propagate top-level program/programStage onto dimensions that
-     *     don't carry them (old event-visualizer shape), but only where it
-     *     makes semantic sense — the rename runs first so meta dims renamed
-     *     from a legacy ID (e.g. `createdDate` → `created`) are recognised
-     *     as context-free here:
-     *       · meta dims, contextless dim types, program indicators and
-     *         tracked entity attributes don't carry program/stage context
-     *       · enrollment-scoped IDs are tied to the program, not a stage,
-     *         so they get program only, never programStage */
-    const normalizeDimensions = (dims: DimensionArray): DimensionArray =>
-        dims.map((dim) => {
-            let out = dim
-
-            if (out.dimension === 'pe') {
-                const targetDim =
-                    (timeField && timeFieldTimeDimensionMap[timeField]) ||
-                    (outputType && outputTypeTimeDimensionMap[outputType])
-                if (targetDim) {
-                    out = {
-                        ...out,
-                        dimension: targetDim,
-                        dimensionType: 'PERIOD',
-                    }
-                    legacy = true
-                }
-            }
-
-            const renamedDimension = LEGACY_DIMENSION_ID_RENAMES[out.dimension]
-            if (renamedDimension) {
-                out = { ...out, dimension: renamedDimension }
-                legacy = true
-            }
-
-            const skipBothRefs =
-                META_DIMENSION_IDS.has(out.dimension) ||
-                (typeof out.dimensionType === 'string' &&
-                    NO_CONTEXT_DIMENSION_TYPES.has(out.dimensionType))
-
-            if (skipBothRefs) {
-                return out
-            }
-
-            const skipStageRef = ENROLLMENT_SCOPED_DIMENSION_IDS.has(
-                out.dimension
-            )
-
-            if (programRef && !out.program) {
-                out = { ...out, program: programRef }
-            }
-            if (!skipStageRef && stageRef && !out.programStage) {
-                out = { ...out, programStage: stageRef }
-            }
-
-            return out
-        })
+    // Legacy when a top-level signal is present, or a step below upgrades the
+    // shape. A legacy vis can't be saved in place — that would rewrite it in
+    // the canonical format and break older apps that read the original.
+    if (legacy || program || programStage || orgUnitField || programStatus) {
+        normalizedVis.legacy = true
+    }
 
     const rawFilters = [
         ...filters,
@@ -462,14 +599,25 @@ export const normalizeApiSavedVisualization = (
             : []),
     ]
 
-    const normalizedColumns = normalizeDimensions(columns)
-    const normalizedRows = normalizeDimensions(rows)
-    const normalizedFilters = normalizeDimensions(rawFilters)
+    normalizedVis.columns = columns.map((dim) =>
+        normalizeLegacyDimension(dim, context, normalizedVis)
+    )
+    normalizedVis.rows = rows.map((dim) =>
+        normalizeLegacyDimension(dim, context, normalizedVis)
+    )
+    normalizedVis.filters = rawFilters.map((dim) =>
+        normalizeLegacyDimension(dim, context, normalizedVis)
+    )
 
-    const normalizedProgramDimensions =
-        program && !programDimensions.some((p) => p.id === program.id)
-            ? [...programDimensions, program]
-            : programDimensions
+    if (
+        program &&
+        !normalizedVis.programDimensions?.some((p) => p.id === program.id)
+    ) {
+        normalizedVis.programDimensions = [
+            ...(normalizedVis.programDimensions ?? []),
+            program,
+        ]
+    }
 
     // `timeField` holding a known backend enum value has been materialised
     // into a concrete time dimension above; keep it only when it holds a
@@ -477,19 +625,18 @@ export const normalizeApiSavedVisualization = (
     // request still needs). Dropping a known-enum `timeField` is an upgrade.
     const preserveTimeField =
         typeof timeField === 'string' && !KNOWN_TIME_FIELD_VALUES.has(timeField)
-    if (typeof timeField === 'string' && !preserveTimeField) {
-        legacy = true
+    if (preserveTimeField) {
+        normalizedVis.timeField = timeField
+    } else if (typeof timeField === 'string') {
+        normalizedVis.legacy = true
     }
 
-    return {
-        ...rest,
-        columns: normalizedColumns,
-        rows: normalizedRows,
-        filters: normalizedFilters,
-        programDimensions: normalizedProgramDimensions,
-        ...(preserveTimeField ? { timeField } : {}),
-        ...(legacy ? { legacy: true } : {}),
-        ...(sortOrder !== 0 && { sortOrder }),
-        ...(topLimit !== 0 && { topLimit }),
-    } as SavedVisualization
+    if (sortOrder !== 0) {
+        normalizedVis.sortOrder = sortOrder
+    }
+    if (topLimit !== 0) {
+        normalizedVis.topLimit = topLimit
+    }
+
+    return normalizedVis
 }

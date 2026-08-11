@@ -1,3 +1,4 @@
+import { AXES } from '@constants/axis'
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { getDefaultItemsForDimension } from '@modules/dimension/default-items'
 import { extractPlainDimensionId } from '@modules/dimension/ids'
@@ -327,8 +328,7 @@ export const visUiConfigSlice = createSlice({
             action: PayloadAction<{ dimensionId: string }>
         ) => {
             const { dimensionId } = action.payload
-            const axes = ['columns', 'rows', 'filters'] as const
-            for (const axis of axes) {
+            for (const axis of AXES) {
                 const index = state.layout[axis].indexOf(dimensionId)
                 if (index !== -1) {
                     state.layout[axis].splice(index, 1)
