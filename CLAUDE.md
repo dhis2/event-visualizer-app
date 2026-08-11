@@ -424,7 +424,7 @@ The following are enabled for this project via `.claude/settings.json`:
 
 ### Git Hooks
 
-The project has `lint-staged` configured in `package.json` for pre-commit checks (ESLint, Prettier, Stylelint). Husky is a dependency but is not currently installed — run `npx husky install` to enable git pre-commit hooks.
+The project has `lint-staged` configured in `package.json` for pre-commit checks (ESLint, Prettier, Stylelint). Git hooks live in the tracked `.hooks/` directory; `scripts/postinstall.sh` wires them up by pointing `core.hooksPath` at it.
 
 ### Commit Guidelines
 

@@ -2,7 +2,7 @@ This OVERRIDES the project CLAUDE.md "do not commit" rule. That rule protects th
 
 Work autonomously: create a correctly-scoped branch named `scope/task` (e.g. `fix/broken-legend`, `feat/csv-export`, `refactor/dimension-hooks`), run `pnpm test` and `pnpm lint`, and commit your progress to it as you go. Your commits are signed automatically (an SSH signing key is configured), so no signing setup is needed on your part.
 
-Git hooks are disabled here. As the last step before you're done, run `pnpm d2-app-scripts i18n extract` and commit any resulting `i18n/` changes (the pre-commit hook normally does this on every commit; here it only needs to be correct in your final commit).
+The pre-commit hook is skipped here, so as the last step before you're done, run `pnpm d2-app-scripts i18n extract` and commit any resulting `i18n/` changes (the pre-commit hook normally does this on every commit; here it only needs to be correct in your final commit). The commit-msg hook still runs, so each commit message must pass the project's commitlint config.
 
 Git reads are fine: you CAN `git fetch`/`git pull` from `origin` (GitHub, public repo, no credentials) — e.g. `git fetch origin master` to branch off the latest master. You must NOT push: pushing to forge remotes is off-limits (there are no push credentials, and the GitHub token is read-only).
 
