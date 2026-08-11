@@ -47,7 +47,7 @@ See the section about [deploying](https://platform.dhis2.nu/#/scripts/deploy) fo
 
 ### `pnpm lint` / `pnpm format`
 
-These commands use `d2-style` to lint the code, but `pnpm format` also attempts to fix/format the violations it finds.
+These commands run ESLint, Stylelint and Prettier (plus a TypeScript and ls-lint check in `pnpm lint`). `pnpm format` also attempts to fix/format the violations it finds.
 
 ### `pnpm cy:open` / `pnpm cy:run`
 

@@ -1,7 +1,9 @@
 #!/bin/sh
 
-# Unlike pre-push and commit-msg, this hook doesn't source _/husky.sh, so honor
-# HUSKY=0 directly — the sandbox clone sets it to skip hooks (see scripts/sbx.sh).
+# The sandbox clone sets HUSKY=0 (see scripts/sbx.sh): it verifies lint/types/tests
+# itself and runs i18n extract as a final step, so this hook is redundant there.
+# commit-msg and pre-push don't honor it — the clone commits (so it should still be
+# commit-linted) but never pushes. Humans skip a hook with `git commit --no-verify`.
 if [ "$HUSKY" = "0" ]; then
     exit 0
 fi
