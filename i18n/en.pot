@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
-"PO-Revision-Date: 2026-07-03T12:42:31.331Z\n"
+"POT-Creation-Date: 2026-08-04T13:38:19.672Z\n"
+"PO-Revision-Date: 2026-08-04T13:38:19.673Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -37,14 +37,14 @@ msgstr "Case sensitive"
 msgid "Delete filter"
 msgstr "Delete filter"
 
+msgid "Only available for repeatable stages"
+msgstr "Only available for repeatable stages"
+
 msgid "Repeated events"
 msgstr "Repeated events"
 
 msgid "Data"
 msgstr "Data"
-
-msgid "Only available for repeatable stages"
-msgstr "Only available for repeatable stages"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr "{{valueType}} type dimensions cannot be filtered."
