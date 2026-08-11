@@ -1,876 +1,871 @@
+# Translators:
+# Valeriu Plesca <vplesca@gmail.com>, 2026
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"PO-Revision-Date: 2026-07-23 07:34+0000\n"
+"Last-Translator: Valeriu Plesca <vplesca@gmail.com>, 2026\n"
+"Language-Team: Romanian (https://app.transifex.com/hisp-uio/teams/100509/ro/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-04T13:38:19.672Z\n"
-"PO-Revision-Date: 2026-08-04T13:38:19.673Z\n"
+"Language: ro\n"
+"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
 "{{visTypeName}}: {{list}}."
 msgstr ""
-"Some dimensions were not added because they cannot be used in a "
-"{{visTypeName}}: {{list}}."
 
 msgid ""
 "Some dimensions were not added because they cannot be combined with {{- "
 "layoutTetName}} dimensions: {{list}}."
 msgstr ""
-"Some dimensions were not added because they cannot be combined with {{- "
-"layoutTetName}} dimensions: {{list}}."
 
-msgid "{{- name}} was not added because it is already used as the custom value."
-msgstr "{{- name}} was not added because it is already used as the custom value."
+msgid ""
+"{{- name}} was not added because it is already used as the custom value."
+msgstr ""
 
 msgid "Add to {{- axisName}}"
-msgstr "Add to {{- axisName}}"
+msgstr ""
 
 msgid "Choose a filter type"
-msgstr "Choose a filter type"
+msgstr ""
 
 msgid "Case sensitive"
-msgstr "Case sensitive"
+msgstr ""
 
 msgid "Delete filter"
-msgstr "Delete filter"
-
-msgid "Only available for repeatable stages"
-msgstr "Only available for repeatable stages"
+msgstr ""
 
 msgid "Repeated events"
-msgstr "Repeated events"
+msgstr ""
 
 msgid "Data"
-msgstr "Data"
+msgstr ""
+
+msgid "Only available for repeatable stages"
+msgstr ""
 
 msgid "{{valueType}} type dimensions cannot be filtered."
-msgstr "{{valueType}} type dimensions cannot be filtered."
+msgstr ""
 
 msgid "This dimension cannot be filtered."
-msgstr "This dimension cannot be filtered."
+msgstr ""
 
 msgid "Preset options can't be combined with other filters"
-msgstr "Preset options can't be combined with other filters"
+msgstr ""
 
 msgid "Add filter"
-msgstr "Add filter"
+msgstr ""
 
 msgid "and"
-msgstr "and"
+msgstr ""
 
 msgid "is one of preset options"
-msgstr "is one of preset options"
+msgstr ""
 
 msgid "Choose a legend set"
-msgstr "Choose a legend set"
+msgstr ""
 
 msgid "Loading legend sets"
-msgstr "Loading legend sets"
+msgstr ""
 
 msgid "No preset option sets for this data item"
-msgstr "No preset option sets for this data item"
+msgstr ""
 
 msgid "Choose legends"
-msgstr "Choose legends"
+msgstr ""
 
 msgid "Loading legends"
-msgstr "Loading legends"
+msgstr ""
 
 msgid "From stages with repeatable events, show values from:"
-msgstr "From stages with repeatable events, show values from:"
+msgstr ""
 
 msgid "Oldest events"
-msgstr "Oldest events"
+msgstr ""
 
 msgid "Show fewer of the oldest events"
-msgstr "Show fewer of the oldest events"
+msgstr ""
 
 msgid "Show more of the oldest events"
-msgstr "Show more of the oldest events"
+msgstr ""
 
 msgid "Most recent events"
-msgstr "Most recent events"
+msgstr ""
 
 msgid "Show fewer of the most recent events"
-msgstr "Show fewer of the most recent events"
+msgstr ""
 
 msgid "Show more of the most recent events"
-msgstr "Show more of the most recent events"
+msgstr ""
 
 msgid "Hide"
-msgstr "Hide"
+msgstr ""
 
 msgid "Start and end dates are inclusive and will be included in the outputs."
-msgstr "Start and end dates are inclusive and will be included in the outputs."
+msgstr ""
 
 msgid "Start date"
-msgstr "Start date"
+msgstr "Data de început"
 
 msgid "End date"
-msgstr "End date"
+msgstr "Data de sfîrșit"
 
 msgid "Choose from presets"
-msgstr "Choose from presets"
+msgstr ""
 
 msgid "Define start - end dates"
-msgstr "Define start - end dates"
+msgstr ""
 
 msgid "Value filtering"
-msgstr "Value filtering"
+msgstr ""
 
 msgid "Show all values"
-msgstr "Show all values"
+msgstr ""
 
 msgid "Filter"
-msgstr "Filter"
+msgstr ""
 
 msgid "No items selected"
-msgstr "No items selected"
+msgstr ""
 
 msgid "Available options"
-msgstr "Available options"
+msgstr ""
 
 msgid "Filter options"
-msgstr "Filter options"
+msgstr ""
 
 msgid "Selected options"
-msgstr "Selected options"
+msgstr ""
 
 msgid "Nothing found for \"{{- searchTerm}}\""
-msgstr "Nothing found for \"{{- searchTerm}}\""
+msgstr ""
 
 msgid "No options"
-msgstr "No options"
+msgstr ""
 
 msgid "Data value set"
-msgstr "Data value set"
+msgstr ""
 
 msgid "JSON"
-msgstr "JSON"
+msgstr ""
 
 msgid "XML"
-msgstr "XML"
+msgstr ""
 
 msgid "Other formats"
-msgstr "Other formats"
+msgstr ""
 
 msgid "JRXML"
-msgstr "JRXML"
+msgstr ""
 
 msgid "Raw data SQL"
-msgstr "Raw data SQL"
+msgstr ""
 
 msgid "HTML"
-msgstr "HTML"
+msgstr ""
 
 msgid "HTML+CSS (.html+css)"
-msgstr "HTML+CSS (.html+css)"
+msgstr ""
 
 msgid "Plain data source"
-msgstr "Plain data source"
+msgstr ""
 
 msgid "Microsoft Excel"
-msgstr "Microsoft Excel"
+msgstr ""
 
 msgid "CSV"
-msgstr "CSV"
+msgstr ""
 
 msgid "Advanced"
-msgstr "Advanced"
+msgstr ""
 
 msgid "Download data from this date"
-msgstr "Download data from this date"
+msgstr ""
 
 msgid "Metadata ID scheme"
-msgstr "Metadata ID scheme"
+msgstr ""
 
 msgid "ID"
-msgstr "ID"
+msgstr ""
 
 msgid "Code"
-msgstr "Code"
+msgstr ""
 
 msgid "Name"
-msgstr "Name"
+msgstr ""
 
 msgid "An error occurred"
-msgstr "An error occurred"
+msgstr ""
 
 msgid "Resize axes panel"
-msgstr "Resize axes panel"
+msgstr ""
 
 msgid "Move to {{- axisName}}"
-msgstr "Move to {{- axisName}}"
+msgstr ""
 
 msgid "Remove"
-msgstr "Remove"
+msgstr ""
 
 msgid "all"
-msgstr "all"
+msgstr ""
 
 msgid "None selected"
-msgstr "None selected"
+msgstr ""
 
 msgid "Showing all values for this dimension"
-msgstr "Showing all values for this dimension"
+msgstr ""
 
 msgid "Program: {{- programName}}"
-msgstr "Program: {{- programName}}"
+msgstr ""
 
 msgid "Program stage: {{- stageName}}"
-msgstr "Program stage: {{- stageName}}"
+msgstr ""
 
 msgid "Levels"
-msgstr "Levels"
+msgstr ""
 
 msgid "Groups"
-msgstr "Groups"
+msgstr "Grupuri"
 
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
-msgstr "Using: {{- itemName}} ({{- aggregationType}})"
+msgstr ""
 
 msgid "Custom value is from a different stage than dimensions in the layout"
-msgstr "Custom value is from a different stage than dimensions in the layout"
+msgstr ""
 
 msgid "Update custom value"
-msgstr "Update custom value"
+msgstr ""
 
 msgid "Create custom value table"
-msgstr "Create custom value table"
+msgstr ""
 
 msgid "Switch to custom value table"
-msgstr "Switch to custom value table"
+msgstr ""
 
 msgid "Update custom value table"
-msgstr "Update custom value table"
+msgstr ""
 
 msgid "Enrollment"
-msgstr "Enrollment"
+msgstr "Înrolare"
 
 msgid "Create {{- enrollmentLabel}} list"
-msgstr "Create {{- enrollmentLabel}} list"
+msgstr ""
 
 msgid "Create {{- enrollmentLabel}} table"
-msgstr "Create {{- enrollmentLabel}} table"
+msgstr ""
 
 msgid "Switch to {{- enrollmentLabel}} list"
-msgstr "Switch to {{- enrollmentLabel}} list"
+msgstr ""
 
 msgid "Switch to {{- enrollmentLabel}} table"
-msgstr "Switch to {{- enrollmentLabel}} table"
+msgstr ""
 
 msgid "Update {{- enrollmentLabel}} list"
-msgstr "Update {{- enrollmentLabel}} list"
+msgstr ""
 
 msgid "Update {{- enrollmentLabel}} table"
-msgstr "Update {{- enrollmentLabel}} table"
+msgstr ""
 
 msgid "Event"
-msgstr "Event"
+msgstr ""
 
 msgid "Create {{- eventLabel}} list"
-msgstr "Create {{- eventLabel}} list"
+msgstr ""
 
 msgid "Create {{- eventLabel}} table"
-msgstr "Create {{- eventLabel}} table"
+msgstr ""
 
 msgid "Switch to {{- eventLabel}} list"
-msgstr "Switch to {{- eventLabel}} list"
+msgstr ""
 
 msgid "Switch to {{- eventLabel}} table"
-msgstr "Switch to {{- eventLabel}} table"
+msgstr ""
 
 msgid "Update {{- eventLabel}} list"
-msgstr "Update {{- eventLabel}} list"
+msgstr ""
 
 msgid "Update {{- eventLabel}} table"
-msgstr "Update {{- eventLabel}} table"
+msgstr ""
 
 msgid "tracked entity"
-msgstr "tracked entity"
+msgstr ""
 
 msgid "Create {{- trackedEntityTypeName}} list"
-msgstr "Create {{- trackedEntityTypeName}} list"
+msgstr ""
 
 msgid "Switch to {{- trackedEntityTypeName}} list"
-msgstr "Switch to {{- trackedEntityTypeName}} list"
+msgstr ""
 
 msgid "Update {{- trackedEntityTypeName}} list"
-msgstr "Update {{- trackedEntityTypeName}} list"
+msgstr ""
 
 msgid "Not valid with registration org. unit"
-msgstr "Not valid with registration org. unit"
+msgstr ""
 
 msgid "Not valid with categories or category option group sets"
-msgstr "Not valid with categories or category option group sets"
+msgstr ""
 
 msgid "Not valid with categories"
-msgstr "Not valid with categories"
+msgstr ""
 
 msgid "Not valid with category option group sets"
-msgstr "Not valid with category option group sets"
+msgstr ""
 
 msgid "Not valid without a program"
-msgstr "Not valid without a program"
+msgstr ""
 
 msgid "Not valid with multiple programs"
-msgstr "Not valid with multiple programs"
+msgstr ""
 
 msgid "Not valid with multiple program stages"
-msgstr "Not valid with multiple program stages"
+msgstr ""
 
 msgid "Not valid with event programs"
-msgstr "Not valid with event programs"
+msgstr ""
 
 msgid "Not valid with Completed on"
-msgstr "Not valid with Completed on"
+msgstr ""
 
 msgid "Not valid with multiple tracked entity types"
-msgstr "Not valid with multiple tracked entity types"
+msgstr ""
 
 msgid "Not valid with program indicators"
-msgstr "Not valid with program indicators"
+msgstr ""
 
 msgid "Nothing selected. Add items to the layout to get started."
-msgstr "Nothing selected. Add items to the layout to get started."
+msgstr ""
 
 msgid "Configure custom value"
-msgstr "Configure custom value"
+msgstr ""
 
 msgid "Choose the numeric data item to show in table cells."
-msgstr "Choose the numeric data item to show in table cells."
+msgstr ""
 
 msgid "Search data items"
-msgstr "Search data items"
+msgstr ""
 
 msgid "Loading data"
-msgstr "Loading data"
+msgstr ""
 
 msgid "Error loading data"
-msgstr "Error loading data"
+msgstr ""
 
 msgid "Failed to load data items"
-msgstr "Failed to load data items"
+msgstr ""
 
 msgid "No numeric data items in stage \"{{- stageName}}\""
-msgstr "No numeric data items in stage \"{{- stageName}}\""
+msgstr ""
 
 msgid "No numeric data items in this program"
-msgstr "No numeric data items in this program"
+msgstr ""
 
 msgid "This stage does not have any numeric data items available."
-msgstr "This stage does not have any numeric data items available."
+msgstr ""
 
 msgid "This program does not have any numeric data items available."
-msgstr "This program does not have any numeric data items available."
+msgstr ""
 
 msgid "No data items match \"{{- searchTerm}}\""
-msgstr "No data items match \"{{- searchTerm}}\""
+msgstr ""
 
 msgid "Aggregation"
-msgstr "Aggregation"
+msgstr ""
 
 msgid "Cancel"
-msgstr "Cancel"
+msgstr "Anulare"
 
 msgid "Update"
-msgstr "Update"
+msgstr "Actualizare"
 
 msgid "Select a value before updating"
-msgstr "Select a value before updating"
+msgstr ""
 
 msgid ""
 "\"{{- itemName}}\" is from a different stage than the dimensions in the "
 "layout. Choose another item."
 msgstr ""
-"\"{{- itemName}}\" is from a different stage than the dimensions in the "
-"layout. Choose another item."
 
 msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
-msgstr "Showing data items from \"{{- stageName}}\", the stage used in the layout"
+msgstr ""
 
 msgid "Collapse layout"
-msgstr "Collapse layout"
+msgstr ""
 
 msgid "Expand layout"
-msgstr "Expand layout"
+msgstr ""
 
 msgid "List options"
-msgstr "List options"
+msgstr ""
 
 msgid "Table options"
-msgstr "Table options"
+msgstr ""
 
 msgid "Chart options"
-msgstr "Chart options"
+msgstr ""
 
 msgid "Convert to {{- visType}}"
-msgstr "Convert to {{- visType}}"
+msgstr ""
 
 msgid "{{- names}} will be removed. Are you sure?"
-msgstr "{{- names}} will be removed. Are you sure?"
+msgstr ""
 
 msgid "Convert"
-msgstr "Convert"
+msgstr ""
 
 msgid "Individual data view"
-msgstr "Individual data view"
+msgstr ""
 
 msgid "Aggregated view"
-msgstr "Aggregated view"
+msgstr ""
 
 msgid "No event"
-msgstr "No event"
+msgstr ""
 
 msgid "Sort by \"{{- column}}\" and update"
-msgstr "Sort by \"{{- column}}\" and update"
+msgstr ""
 
 msgid "Hide legend key"
-msgstr "Hide legend key"
+msgstr ""
 
 msgid "Show legend key"
-msgstr "Show legend key"
+msgstr ""
 
 msgid ""
 "This line list may show data that was not available when the interpretation "
 "was written."
 msgstr ""
-"This line list may show data that was not available when the interpretation "
-"was written."
 
 msgid "Rows per page"
-msgstr "Rows per page"
+msgstr "Rânduri pe pagină"
 
 msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
-msgstr "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
+msgstr ""
 
 msgid "Not available offline"
-msgstr "Not available offline"
+msgstr ""
 
 msgid "most recent"
-msgstr "most recent"
+msgstr ""
 
 msgid "oldest"
-msgstr "oldest"
+msgstr ""
 
 msgid "oldest {{- repeatEventIndex}}"
-msgstr "oldest {{- repeatEventIndex}}"
+msgstr ""
 
 msgid "most recent {{- repeatEventIndex}}"
-msgstr "most recent {{- repeatEventIndex}}"
+msgstr ""
 
 msgid "Column sub-totals"
-msgstr "Column sub-totals"
+msgstr ""
 
 msgid "Column totals"
-msgstr "Column totals"
+msgstr ""
 
 msgid "Cumulative values"
-msgstr "Cumulative values"
+msgstr ""
 
 msgid "Accumulate cell values along rows"
-msgstr "Accumulate cell values along rows"
+msgstr ""
 
 msgid "Digit group separator"
-msgstr "Digit group separator"
+msgstr ""
 
 msgid "None"
-msgstr "None"
+msgstr ""
 
 msgid "Space"
-msgstr "Space"
+msgstr ""
 
 msgid "Comma"
-msgstr "Comma"
+msgstr ""
 
 msgid "Display density"
-msgstr "Display density"
+msgstr ""
 
 msgid "Comfortable"
-msgstr "Comfortable"
+msgstr ""
 
 msgid "Normal"
-msgstr "Normal"
+msgstr ""
 
 msgid "Compact"
-msgstr "Compact"
+msgstr ""
 
 msgid "Font size"
-msgstr "Font size"
+msgstr ""
 
 msgid "Large"
-msgstr "Large"
+msgstr ""
 
 msgid "Small"
-msgstr "Small"
+msgstr ""
 
 msgid "Hide empty rows"
-msgstr "Hide empty rows"
+msgstr ""
 
 msgid "Hide N/A data"
-msgstr "Hide N/A data"
+msgstr ""
 
 msgid "Use a legend for table cell colors"
-msgstr "Use a legend for table cell colors"
+msgstr ""
 
 msgid "Use pre-defined legend per data item"
-msgstr "Use pre-defined legend per data item"
+msgstr ""
 
 msgid "Choose a single legend for the entire visualization"
-msgstr "Choose a single legend for the entire visualization"
+msgstr ""
 
 msgid "Legend type"
-msgstr "Legend type"
+msgstr ""
 
 msgid "Legend changes background color"
-msgstr "Legend changes background color"
+msgstr ""
 
 msgid "Legend changes text color"
-msgstr "Legend changes text color"
+msgstr ""
 
 msgid "Legend style"
-msgstr "Legend style"
+msgstr ""
 
 msgid "Legend"
-msgstr "Legend"
+msgstr ""
 
 msgid "Select from legends"
-msgstr "Select from legends"
+msgstr ""
 
 msgid "Limit"
-msgstr "Limit"
+msgstr ""
 
 msgid "Sort order"
-msgstr "Sort order"
+msgstr "Ordinea sortării"
 
 msgid "Low to high"
-msgstr "Low to high"
+msgstr "De la mic spre mare"
 
 msgid "High to low"
-msgstr "High to low"
+msgstr "De la mare spre mic"
 
 msgid "Top limit"
-msgstr "Top limit"
+msgstr "Limită superioară"
 
 msgid "Row sub-totals"
-msgstr "Row sub-totals"
+msgstr ""
 
 msgid "Row totals"
-msgstr "Row totals"
+msgstr ""
 
 msgid "Dimension labels"
-msgstr "Dimension labels"
+msgstr ""
 
 msgid "Display organisation unit hierarchy"
-msgstr "Display organisation unit hierarchy"
+msgstr ""
 
 msgid "Skip rounding"
-msgstr "Skip rounding"
+msgstr ""
 
 msgid "Add a subtitle"
-msgstr "Add a subtitle"
+msgstr ""
 
 msgid "Add a title"
-msgstr "Add a title"
+msgstr ""
 
 msgid "Options"
-msgstr "Options"
+msgstr ""
 
 msgid "Display"
-msgstr "Display"
+msgstr "Afişare"
 
 msgid "Line list title"
-msgstr "Line list title"
+msgstr ""
 
 msgid "Line list subtitle"
-msgstr "Line list subtitle"
+msgstr ""
 
 msgid "Totals"
-msgstr "Totals"
+msgstr ""
 
 msgid "Totals are not supported when using cumulative values"
-msgstr "Totals are not supported when using cumulative values"
+msgstr ""
 
 msgid "Empty data"
-msgstr "Empty data"
+msgstr ""
 
 msgid "Table title"
-msgstr "Table title"
+msgstr ""
 
 msgid "Table subtitle"
-msgstr "Table subtitle"
+msgstr ""
 
 msgid "Labels"
-msgstr "Labels"
+msgstr ""
 
 msgid "Create a {{- visType}} before updating"
-msgstr "Create a {{- visType}} before updating"
+msgstr ""
 
 msgid "Metadata"
-msgstr "Metadata"
+msgstr ""
 
 msgid "Other"
-msgstr "Other"
+msgstr ""
 
 msgid "Enrollment data"
-msgstr "Enrollment data"
+msgstr ""
 
 msgid "Event data"
-msgstr "Event data"
+msgstr ""
 
 msgid "Program indicators"
-msgstr "Program indicators"
+msgstr ""
 
 msgid "{{- name}} registration"
-msgstr "{{- name}} registration"
+msgstr ""
 
 msgid "Choose a data source"
-msgstr "Choose a data source"
+msgstr ""
 
 msgid "No data sources available"
-msgstr "No data sources available"
+msgstr ""
 
 msgid "Programs"
-msgstr "Programs"
+msgstr ""
 
 msgid "Show more"
-msgstr "Show more"
+msgstr ""
 
 msgid "Analyze without a program"
-msgstr "Analyze without a program"
+msgstr ""
 
 msgid "Loading options"
-msgstr "Loading options"
+msgstr ""
 
 msgid "Failed to load data sources."
-msgstr "Failed to load data sources."
+msgstr ""
 
 msgid "Filter data sources"
-msgstr "Filter data sources"
+msgstr ""
 
 msgid "There was a problem and this data could not be loaded"
-msgstr "There was a problem and this data could not be loaded"
+msgstr ""
 
 msgid "There was problem loading more data"
-msgstr "There was problem loading more data"
+msgstr ""
 
 msgid "No data found"
-msgstr "No data found"
+msgstr ""
 
 msgid "No results"
-msgstr "No results"
+msgstr "Nu există rezultate"
 
 msgid "Load more"
-msgstr "Load more"
+msgstr ""
 
 msgid "Loading more..."
-msgstr "Loading more..."
+msgstr ""
 
 msgid "None of the selected dimensions can be added to this layout."
-msgstr "None of the selected dimensions can be added to this layout."
+msgstr ""
 
 msgid "Org units"
-msgstr "Org units"
+msgstr "Unități organizaționale"
 
 msgid "Periods"
-msgstr "Periods"
+msgstr "Perioade"
 
 msgid "Statuses"
-msgstr "Statuses"
+msgstr ""
 
 msgid "Data elements"
-msgstr "Data elements"
+msgstr "Elemente de date"
 
 msgid "Program attributes"
-msgstr "Program attributes"
+msgstr ""
 
 msgid "Categories"
-msgstr "Categories"
+msgstr ""
 
 msgid "Category option group sets"
-msgstr "Category option group sets"
+msgstr ""
 
 msgid ""
 "Choose a data source above to see its dimensions, periods, and organisation "
 "units."
 msgstr ""
-"Choose a data source above to see its dimensions, periods, and organisation "
-"units."
 
 msgid "Expand all cards"
-msgstr "Expand all cards"
+msgstr ""
 
 msgid "Collapse all cards"
-msgstr "Collapse all cards"
+msgstr ""
 
 msgid "Something went wrong while searching."
-msgstr "Something went wrong while searching."
+msgstr ""
 
 msgid "Search"
-msgstr "Search"
+msgstr "Căutare"
 
 msgid "Clear search"
-msgstr "Clear search"
+msgstr ""
 
 msgid "Your most viewed visualizations"
-msgstr "Your most viewed visualizations"
+msgstr ""
 
 msgid "Download"
-msgstr "Download"
+msgstr ""
 
 msgid "File"
-msgstr "File"
+msgstr "Fişier"
 
 msgid "New"
-msgstr "New"
+msgstr "Nou"
 
 msgid "Open…"
-msgstr "Open…"
+msgstr ""
 
 msgid "Save"
-msgstr "Save"
+msgstr "salva"
 
 msgid "Save…"
-msgstr "Save…"
+msgstr ""
 
 msgid "Save as…"
-msgstr "Save as…"
+msgstr ""
 
 msgid "Rename…"
-msgstr "Rename…"
+msgstr ""
 
 msgid "Translate…"
-msgstr "Translate…"
+msgstr ""
 
 msgid "Share…"
-msgstr "Share…"
+msgstr ""
 
 msgid "Get link…"
-msgstr "Get link…"
+msgstr ""
 
 msgid "Delete"
-msgstr "Delete"
+msgstr "Lichidare"
 
 msgid "Open"
-msgstr "Open"
+msgstr ""
 
 msgid "\"{{- deletedObject}}\" successfully deleted."
-msgstr "\"{{- deletedObject}}\" successfully deleted."
+msgstr ""
 
 msgid "An unknown error occurred."
-msgstr "An unknown error occurred."
+msgstr ""
 
 msgid ""
 "This visualization can't be deleted because it is used on one or more "
 "dashboards."
 msgstr ""
-"This visualization can't be deleted because it is used on one or more "
-"dashboards."
 
 msgid "You don't have sufficient permissions."
-msgstr "You don't have sufficient permissions."
+msgstr ""
 
 msgid "Rename successful"
-msgstr "Rename successful"
+msgstr ""
 
 msgid "Rename failed"
-msgstr "Rename failed"
+msgstr ""
 
 msgid "Hide layout"
-msgstr "Hide layout"
+msgstr ""
 
 msgid "Show layout"
-msgstr "Show layout"
+msgstr ""
 
 msgid "Hide dimensions sidebar"
-msgstr "Hide dimensions sidebar"
+msgstr ""
 
 msgid "Show dimensions sidebar"
-msgstr "Show dimensions sidebar"
+msgstr ""
 
 msgid "Hide interpretations and details"
-msgstr "Hide interpretations and details"
+msgstr ""
 
 msgid "Show interpretations and details"
-msgstr "Show interpretations and details"
+msgstr ""
 
 msgid "View"
-msgstr "View"
+msgstr "Vizionare"
 
 msgid "Resize layout to fit"
-msgstr "Resize layout to fit"
+msgstr ""
 
 msgid "Reset dimensions sidebar width"
-msgstr "Reset dimensions sidebar width"
+msgstr ""
 
 msgid "Show panels"
-msgstr "Show panels"
+msgstr ""
 
 msgid "Expand visualization and hide panels"
-msgstr "Expand visualization and hide panels"
+msgstr ""
 
 msgid "Hide details panel"
-msgstr "Hide details panel"
+msgstr ""
 
 msgid "Show details panel"
-msgstr "Show details panel"
+msgstr ""
 
 msgid "Loading visualization"
-msgstr "Loading visualization"
+msgstr ""
 
 msgid "Unsaved visualization"
-msgstr "Unsaved visualization"
+msgstr ""
 
 msgid "Edited"
-msgstr "Edited"
+msgstr ""
 
 msgid "Use item default"
-msgstr "Use item default"
+msgstr ""
 
 msgid "Sum"
-msgstr "Sum"
+msgstr ""
 
 msgid "Average"
-msgstr "Average"
+msgstr ""
 
 msgid "Average (sum in org unit hierarchy)"
-msgstr "Average (sum in org unit hierarchy)"
+msgstr ""
 
 msgid "Last value (sum in org unit hierarchy)"
-msgstr "Last value (sum in org unit hierarchy)"
+msgstr ""
 
 msgid "Last value (average in org unit hierarchy)"
-msgstr "Last value (average in org unit hierarchy)"
+msgstr ""
 
 msgid "Last value in period (last value in org unit hierarchy)"
-msgstr "Last value in period (last value in org unit hierarchy)"
+msgstr ""
 
 msgid "Last value in period (sum in org unit hierarchy)"
-msgstr "Last value in period (sum in org unit hierarchy)"
+msgstr ""
 
 msgid "Last value in period (average in org unit hierarchy)"
-msgstr "Last value in period (average in org unit hierarchy)"
+msgstr ""
 
 msgid "First value (sum in org unit hierarchy)"
-msgstr "First value (sum in org unit hierarchy)"
+msgstr ""
 
 msgid "First value (average in org unit hierarchy)"
-msgstr "First value (average in org unit hierarchy)"
+msgstr ""
 
 msgid "First value in period (first value in org unit hierarchy)"
-msgstr "First value in period (first value in org unit hierarchy)"
+msgstr ""
 
 msgid "Count"
-msgstr "Count"
+msgstr ""
 
 msgid "Standard deviation"
-msgstr "Standard deviation"
+msgstr ""
 
 msgid "Variance"
-msgstr "Variance"
+msgstr ""
 
 msgid "Min"
 msgstr "Min"
@@ -879,278 +874,274 @@ msgid "Max"
 msgstr "Max"
 
 msgid "Min value (sum in org unit hierarchy)"
-msgstr "Min value (sum in org unit hierarchy)"
+msgstr ""
 
 msgid "Max value (sum in org unit hierarchy)"
-msgstr "Max value (sum in org unit hierarchy)"
+msgstr ""
 
 msgid "Custom"
-msgstr "Custom"
+msgstr ""
 
 msgid "equal to (=)"
-msgstr "equal to (=)"
+msgstr ""
 
 msgid "greater than (>)"
-msgstr "greater than (>)"
+msgstr ""
 
 msgid "greater than or equal to (≥)"
-msgstr "greater than or equal to (≥)"
+msgstr ""
 
 msgid "less than (<)"
-msgstr "less than (<)"
+msgstr ""
 
 msgid "less than or equal to (≤)"
-msgstr "less than or equal to (≤)"
+msgstr ""
 
 msgid "not equal to (≠)"
-msgstr "not equal to (≠)"
+msgstr ""
 
 msgid "is empty / null"
-msgstr "is empty / null"
+msgstr ""
 
 msgid "is not empty / not null"
-msgstr "is not empty / not null"
+msgstr ""
 
 msgid "exactly"
-msgstr "exactly"
+msgstr ""
 
 msgid "is not"
-msgstr "is not"
+msgstr ""
 
 msgid "contains"
-msgstr "contains"
+msgstr ""
 
 msgid "does not contain"
-msgstr "does not contain"
+msgstr ""
 
 msgid "after"
-msgstr "after"
+msgstr "după"
 
 msgid "after or including"
-msgstr "after or including"
+msgstr ""
 
 msgid "before"
-msgstr "before"
+msgstr "pînă la"
 
 msgid "before or including"
-msgstr "before or including"
+msgstr ""
 
 msgid "Yes"
-msgstr "Yes"
+msgstr "Da"
 
 msgid "No"
-msgstr "No"
+msgstr "Nu"
 
 msgid "Not answered"
-msgstr "Not answered"
+msgstr ""
 
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
 msgstr ""
-"{{- dataSourceTetName}} dimensions cannot be combined with {{- "
-"layoutTetName}} dimensions already in the layout."
 
 msgid "Already used as custom value."
-msgstr "Already used as custom value."
+msgstr ""
 
 msgid "Cannot be used in a {{visType}}."
-msgstr "Cannot be used in a {{visType}}."
+msgstr ""
 
 msgid "Created on"
-msgstr "Created on"
+msgstr ""
 
 msgid "Last updated on"
-msgstr "Last updated on"
+msgstr ""
 
 msgid "Last updated by"
-msgstr "Last updated by"
+msgstr ""
 
 msgid "Created by"
-msgstr "Created by"
+msgstr ""
 
 msgid "Completed on"
-msgstr "Completed on"
+msgstr ""
 
 msgid "Event org. unit"
-msgstr "Event org. unit"
+msgstr ""
 
 msgid "Event date"
-msgstr "Event date"
+msgstr ""
 
 msgid "Scheduled date"
-msgstr "Scheduled date"
+msgstr ""
 
 msgid "Event status"
-msgstr "Event status"
+msgstr ""
 
 msgid "Enrollment org. unit"
-msgstr "Enrollment org. unit"
+msgstr ""
 
 msgid "Date of enrollment"
-msgstr "Date of enrollment"
+msgstr "Data înrolării"
 
 msgid "Incident date"
-msgstr "Incident date"
+msgstr "Data incidentului"
 
 msgid "Enrollment status"
-msgstr "Enrollment status"
+msgstr "Starea înrolării"
 
 msgid "Registration org. unit"
-msgstr "Registration org. unit"
+msgstr ""
 
 msgid "Enrollment date"
-msgstr "Enrollment date"
+msgstr "Data înrolării"
 
 msgid "Columns"
-msgstr "Columns"
+msgstr ""
 
 msgid "Rows"
-msgstr "Rows"
+msgstr ""
 
 msgid "User organisation unit"
-msgstr "User organisation unit"
+msgstr ""
 
 msgid "User sub-units"
-msgstr "User sub-units"
+msgstr ""
 
 msgid "User sub-x2-units"
-msgstr "User sub-x2-units"
+msgstr ""
 
 msgid "Today"
-msgstr "Today"
+msgstr "Astăzi"
 
 msgid "Yesterday"
-msgstr "Yesterday"
+msgstr "Ieri"
 
 msgid "Last 3 days"
-msgstr "Last 3 days"
+msgstr "Ultimele 3 zile"
 
 msgid "Last 7 days"
-msgstr "Last 7 days"
+msgstr "Ultimele 7 zile"
 
 msgid "Last 14 days"
-msgstr "Last 14 days"
+msgstr "Ultimele 14 zile"
 
 msgid "This week"
-msgstr "This week"
+msgstr "Săptămâna aceasta"
 
 msgid "Last week"
-msgstr "Last week"
+msgstr "Săptămâna trecută"
 
 msgid "Last 4 weeks"
-msgstr "Last 4 weeks"
+msgstr "Ultimele 4 săptămâni"
 
 msgid "Last 12 weeks"
-msgstr "Last 12 weeks"
+msgstr "Ultimele 12 săptămâni"
 
 msgid "Last 52 weeks"
-msgstr "Last 52 weeks"
+msgstr "Ultimele 52 de săptămâni"
 
 msgid "Weeks this year"
-msgstr "Weeks this year"
+msgstr "Săptămâni în anul curent"
 
 msgid "This month"
-msgstr "This month"
+msgstr "Luna aceasta"
 
 msgid "Last month"
-msgstr "Last month"
+msgstr "Luna trecută"
 
 msgid "Last 3 months"
-msgstr "Last 3 months"
+msgstr "Ultimele 3 luni"
 
 msgid "Last 6 months"
-msgstr "Last 6 months"
+msgstr "Ultimele 6 luni"
 
 msgid "Last 12 months"
-msgstr "Last 12 months"
+msgstr "Ultimele 12 luni"
 
 msgid "Months this year"
-msgstr "Months this year"
+msgstr "Luni în anul curent"
 
 msgid "This bimonth"
-msgstr "This bimonth"
+msgstr ""
 
 msgid "Last bimonth"
-msgstr "Last bimonth"
+msgstr ""
 
 msgid "Last 6 bimonths"
-msgstr "Last 6 bimonths"
+msgstr ""
 
 msgid "Bimonths this year"
-msgstr "Bimonths this year"
+msgstr ""
 
 msgid "This quarter"
-msgstr "This quarter"
+msgstr ""
 
 msgid "Last quarter"
-msgstr "Last quarter"
+msgstr "Ultimul trimestru"
 
 msgid "Last 4 quarters"
-msgstr "Last 4 quarters"
+msgstr "Ultimele 4 trimestre"
 
 msgid "Quarters this year"
-msgstr "Quarters this year"
+msgstr "Trimestre în anul curent"
 
 msgid "This six-month"
-msgstr "This six-month"
+msgstr ""
 
 msgid "Last six-month"
-msgstr "Last six-month"
+msgstr "Ultimele șase luni"
 
 msgid "Last 2 six-months"
-msgstr "Last 2 six-months"
+msgstr "Ultimele 2 șase luni"
 
 msgid "This financial year"
-msgstr "This financial year"
+msgstr ""
 
 msgid "Last financial year"
-msgstr "Last financial year"
+msgstr "Ultimul an financiar"
 
 msgid "Last 5 financial years"
-msgstr "Last 5 financial years"
+msgstr "Ultimii 5 ani financiari"
 
 msgid "This year"
-msgstr "This year"
+msgstr ""
 
 msgid "Last year"
-msgstr "Last year"
+msgstr "Anul trecut"
 
 msgid "Period"
-msgstr "Period"
+msgstr ""
 
 msgid "Organisation unit"
-msgstr "Organisation unit"
+msgstr "Unitate organizațională"
 
 msgid "Style"
-msgstr "Style"
+msgstr ""
 
 msgid "Active"
-msgstr "Active"
+msgstr "Activ"
 
 msgid "Cancelled"
-msgstr "Cancelled"
+msgstr "Anulat"
 
 msgid "Completed"
-msgstr "Completed"
+msgstr "Complet"
 
 msgid "Scheduled"
-msgstr "Scheduled"
+msgstr ""
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
 "for EVER)"
 msgstr ""
-"Track or compare changes over time. Recommend period as category. (adjust "
-"for EVER)"
 
 msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
-msgstr "View data and indicators in a manipulatable table. (adjust for EVER)"
+msgstr ""
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"
-msgstr "Event Visualizer"
+msgstr ""
 
 msgctxt "Application description"
 msgid "__MANIFEST_APP_DESCRIPTION"
-msgstr "Event visualizer app and plugin"
+msgstr ""
