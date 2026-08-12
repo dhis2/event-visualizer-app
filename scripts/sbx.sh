@@ -287,13 +287,12 @@ ide_link() {
     sleep 3   # keep: let the connection-outcome message stay readable before Claude's TUI clears it
 }
 
-# Overlay node_modules with a container-local copy and install dependencies into it. This
-# is the isolation boundary: everything the agent installs lands in /home/agent/nm inside
-# the sandbox and never touches the host node_modules. It is MANDATORY — on failure the
-# caller aborts the mount rather than falling back to the host-backed node_modules, so a
-# session never runs where an install could reach the host. A guarded remount is also
-# written to the sandbox's persistent startup so the overlay self-heals across restarts and
-# raw `sbx run` reconnects. The install runs only when the overlay is empty or the lockfile
+# Overlay node_modules with a container-local copy and install dependencies into it. This is
+# both the perf path and an isolation boundary: everything the agent installs lands in
+# /home/agent/nm on the sandbox's native filesystem — reading node_modules over the host file
+# share is much slower for tests/builds — and never touches the host node_modules. It is
+# MANDATORY — on failure the caller aborts the mount rather than falling back to the
+# host-backed node_modules. The install runs only when the overlay is empty or the lockfile
 # changed; on re-attach it is just a fast remount.
 node_modules_overlay() {
     local name="$1"
@@ -304,10 +303,10 @@ node_modules_overlay() {
         mkdir -p "$nm" "$repo/node_modules"
         mountpoint -q "$repo/node_modules" || sudo mount --bind "$nm" "$repo/node_modules"
         mountpoint -q "$repo/node_modules"   # verify the overlay is really in place
-        # Self-heal: re-apply the overlay from the persistent startup if it is ever lost.
+        # Strip any stale per-command remount line (older sandboxes wrote one here). The
+        # overlay is re-established by re-running the mount, or after a host pnpm install by
+        # the host postinstall calling `remount`.
         sudo sed -i "\#sbx-nm-overlay#d" /etc/sandbox-persistent.sh 2>/dev/null || true
-        printf "mountpoint -q %q || sudo mount --bind %q %q  # sbx-nm-overlay\n" \
-            "$repo/node_modules" "$nm" "$repo/node_modules" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null
         if [ ! -e "$nm/.installed" ] || [ "$repo/pnpm-lock.yaml" -nt "$nm/.installed" ]; then
             cd "$repo" && pnpm install && touch "$nm/.installed"
         fi
@@ -378,6 +377,14 @@ cmd_mount() {
         accept_trust "$MOUNT_NAME"
         link_host_dirs "$MOUNT_NAME"
         link_plans_dir "$MOUNT_NAME"
+    fi
+    # A host `pnpm install` that recreates node_modules under the overlay poisons the
+    # sandbox's working directory, so `sbx exec` can no longer enter it. A container restart
+    # clears it: if the sandbox is unresponsive, stop it here and the steps below auto-start
+    # it fresh. This makes re-running `pnpm sbx:mount` the one-step recovery.
+    if sandbox_exists "$MOUNT_NAME" && ! sbx exec "$MOUNT_NAME" true >/dev/null 2>&1; then
+        echo "Mount sandbox is unresponsive (a host 'pnpm install' likely disrupted it) — restarting it..."
+        sbx stop "$MOUNT_NAME" >/dev/null 2>&1 || true
     fi
     # Editor integration is best-effort and must never block the mount.
     ide_link "$MOUNT_NAME" || true
