@@ -76,6 +76,12 @@ Unlike the mount, the clone gets a **one-way copy** of this project's memory at 
 
 > The clone runs `pnpm install` at create. Its `postinstall` runs `generate-types`, which fetches the OpenAPI spec from the DHIS2 dev instance (the provisioned network rule allows it), and the install pulls the Cypress binary too (its CDN is allow-listed), with the Electron/GTK system libs baked into the image so `cypress` can actually run.
 
+## Planning and reviewing plans
+
+Prefer the **superpowers** skills for planning (`superpowers:brainstorming` → `superpowers:writing-plans`) — name the skill in your prompt to trigger it reliably. Superpowers writes its spec/plan into `docs/superpowers/` **in the repo**, so the mount surfaces them in your editor live and the clone commits them for `git fetch` review. Remove those files before opening the PR unless you want to keep them.
+
+Native plan mode is fine for quick, scoped checks, but it saves plan files to `~/.claude/plans` **inside the VM**, which is otherwise invisible on the host. So each sandbox symlinks that dir onto a per-sandbox host directory, `~/.claude/sbx-plans/<sandbox-name>/`, bind-mounted in at create — open that folder on the host to read native plan files as the agent writes them. It's keyed by sandbox name, so a mount and a clone running at once never clash.
+
 ## Browser automation
 
 Both sandboxes use the **Playwright agent CLI** (`playwright-cli`), baked into the image along with a matching headless Chromium (no runtime download). The agent drives it with commands like `playwright-cli open http://localhost:3000`, `playwright-cli snapshot`, `click`, `fill`, and `screenshot`; the installed Playwright skill documents common flows. Start the dev server first, then point it at `http://localhost:3000`. There is no `chrome-devtools` MCP in the sandbox.
