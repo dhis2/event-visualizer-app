@@ -74,6 +74,27 @@ accept_trust() {
     ' _ "$REPO_ROOT"
 }
 
+# sbx auto-injects its own proxy-managed GH_TOKEN placeholder (gho_sbxproxymanaged…) that
+# shadows the custom read-only-PAT secret's placeholder in the sandbox environment. gh then
+# receives a token with no swap rule, so every authenticated GitHub API call returns 401
+# (git-over-HTTPS still works — it uses a separate credential path). Read the configured
+# placeholder from the stored secret and export it in the persistent startup so it overrides
+# the built-in one; the proxy swaps it for the real read-only PAT on outbound GitHub
+# requests, restoring authenticated gh reads. Idempotent — safe to re-run on every mount.
+wire_github_token() {
+    local name="$1" placeholder
+    placeholder="$(sbx secret ls 2>/dev/null | grep -w GH_TOKEN | grep -oE 'ghp_[[:alnum:]]+' | head -1)"
+    if [ -z "$placeholder" ]; then
+        echo "⚠ No custom GH_TOKEN secret found — gh stays unauthenticated. Run './scripts/sbx.sh setup' to add a read-only PAT."
+        return 0
+    fi
+    sbx exec "$name" bash -lc '
+        sudo sed -i "\#sbx-gh-token#d" /etc/sandbox-persistent.sh 2>/dev/null || true
+        printf "export GH_TOKEN=%q  # sbx-gh-token\n" "$1" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null
+    ' _ "$placeholder"
+    echo "Wired the read-only GitHub token for '$name' (gh reads authenticated; writes blocked server-side)."
+}
+
 # Build the custom sandbox image and load it into the sbx runtime. The sbx runtime has
 # its own image store, so bridge the host docker image across via save + template load.
 build_image() {
@@ -360,6 +381,9 @@ cmd_mount() {
     fi
     # Editor integration is best-effort and must never block the mount.
     ide_link "$MOUNT_NAME" || true
+    # Override sbx's built-in GH_TOKEN placeholder with the custom read-only secret's
+    # placeholder so authenticated gh reads work (see wire_github_token).
+    wire_github_token "$MOUNT_NAME"
     # Mandatory isolation boundary: if the container-local node_modules overlay can't be
     # established, abort rather than launch Claude against the host-backed node_modules.
     node_modules_overlay "$MOUNT_NAME" || exit 1
@@ -399,6 +423,9 @@ cmd_clone() {
         copy_memory "$CLONE_NAME"
         maybe_inject_dhis2_creds "$CLONE_NAME"
     fi
+    # Override sbx's built-in GH_TOKEN placeholder with the custom read-only secret's
+    # placeholder so authenticated gh reads work (see wire_github_token).
+    wire_github_token "$CLONE_NAME"
     local note
     note="$(compose_note clone.md)"
     sbx run "$CLONE_NAME" -- \
