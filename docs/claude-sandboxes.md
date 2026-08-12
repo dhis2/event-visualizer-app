@@ -46,7 +46,7 @@ The agent edits your live working tree (changes show up in your editor immediate
 
 The agent works on a private, isolated clone: it branches, runs tests, and commits on its own. Its commits are **signed** with the dedicated SSH signing key. Your host `node_modules` is never touched — the clone runs its own `pnpm install`.
 
-Git hooks are disabled in the clone (`HUSKY=0`): the per-edit format hook plus the agent's "run `pnpm test`/`pnpm lint` before finishing" instruction already cover lint/types/tests, and the clone never pushes — so the hooks would only gate autonomous commit-as-you-go. The agent is told to run `pnpm d2-app-scripts i18n extract` as its last step, the one thing the pre-commit hook does that nothing else covers.
+The clone skips the pre-commit hook (`RUN_PRE_COMMIT_HOOK=0`): the per-edit format hook plus the agent's "run `pnpm test`/`pnpm lint` before finishing" instruction already cover lint/types/tests. The commit-msg hook still runs — the agent doesn't otherwise validate messages against the project's commitlint config — and pre-push never fires since the clone can't push. The agent is told to run `pnpm d2-app-scripts i18n extract` as its last step, the one thing the pre-commit hook does that nothing else covers.
 
 The clone can **fetch/pull from GitHub** (`pnpm sbx:clone` points `origin` at HTTPS, so the public repo needs no credentials) — e.g. `git fetch origin master` to branch off the latest master. It **cannot push** (no push credentials, by design).
 

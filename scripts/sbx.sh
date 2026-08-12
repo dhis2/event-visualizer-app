@@ -288,7 +288,7 @@ node_modules_overlay() {
         printf "mountpoint -q %q || sudo mount --bind %q %q  # sbx-nm-overlay\n" \
             "$repo/node_modules" "$nm" "$repo/node_modules" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null
         if [ ! -e "$nm/.installed" ] || [ "$repo/pnpm-lock.yaml" -nt "$nm/.installed" ]; then
-            cd "$repo" && HUSKY=0 pnpm install && touch "$nm/.installed"
+            cd "$repo" && pnpm install && touch "$nm/.installed"
         fi
     ' _ "$REPO_ROOT"; then
         echo "Dependencies installed in a container-local node_modules (host node_modules untouched)."
@@ -384,10 +384,11 @@ cmd_clone() {
         # Point it at HTTPS so the agent can fetch/pull the (public) repo with no credentials.
         # Pushing still fails (no push creds), which is intended.
         sbx exec "$CLONE_NAME" bash -lc 'cd "$1" && git remote set-url origin "$(git remote get-url origin | sed -E "s#git@github.com:#https://github.com/#")"' _ "$REPO_ROOT" || true
-        # Disable git hooks in the clone: the per-edit format hook and the "run pnpm
-        # test/lint before finishing" instruction already cover lint/types/tests, and the
-        # clone never pushes (pre-push never fires). HUSKY=0 skips all three (.hooks/pre-commit).
-        sbx exec "$CLONE_NAME" bash -lc 'sudo sed -i "/export HUSKY=/d" /etc/sandbox-persistent.sh; printf "export HUSKY=0\n" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null' || true
+        # Skip the pre-commit hook in the clone: the per-edit format hook and the "run
+        # pnpm test/lint before finishing" instruction already cover lint/types/tests.
+        # commit-msg still runs (lints commit messages) and pre-push never fires (the
+        # clone never pushes). RUN_PRE_COMMIT_HOOK=0 is read by .hooks/pre-commit.
+        sbx exec "$CLONE_NAME" bash -lc 'sudo sed -i "/export RUN_PRE_COMMIT_HOOK=/d" /etc/sandbox-persistent.sh; printf "export RUN_PRE_COMMIT_HOOK=0\n" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null' || true
         configure_policy "$CLONE_NAME"
         accept_trust "$CLONE_NAME"
         link_plans_dir "$CLONE_NAME"
@@ -443,7 +444,7 @@ cmd_refresh_deps() {
         set -e
         repo="$1"; nm=/home/agent/nm
         mountpoint -q "$repo/node_modules" || { mkdir -p "$nm" "$repo/node_modules"; sudo mount --bind "$nm" "$repo/node_modules"; }
-        cd "$repo" && HUSKY=0 pnpm install && touch "$nm/.installed"
+        cd "$repo" && pnpm install && touch "$nm/.installed"
         echo "Refreshed."
     ' _ "$REPO_ROOT"
 }

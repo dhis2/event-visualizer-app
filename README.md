@@ -16,7 +16,7 @@ In the project directory, you can run:
 This will install the required dependencies and on the first `postinstall` it will do the following:
 
 1. Generate TypesScript types from the DHIS2 Core OpenAPI specs and store them in `./types/dhis2-openapi-schemas/`
-2. Install Husky hooks to run on `pre-commit`, `pre-push` and `commit-msg`
+2. Point git's `core.hooksPath` at the tracked `.hooks/` directory, whose hooks run on `pre-commit`, `pre-push` and `commit-msg`
 3. Copy `cypress.env.template.json` to `cypress.env.json` so that the Cypress E2E suite can run successfully
 
 ### `pnpm start`
@@ -47,7 +47,7 @@ See the section about [deploying](https://platform.dhis2.nu/#/scripts/deploy) fo
 
 ### `pnpm lint` / `pnpm format`
 
-These commands use `d2-style` to lint the code, but `pnpm format` also attempts to fix/format the violations it finds.
+These commands run ESLint, Stylelint and Prettier (plus a TypeScript and ls-lint check in `pnpm lint`). `pnpm format` also attempts to fix/format the violations it finds.
 
 ### `pnpm cy:open` / `pnpm cy:run`
 

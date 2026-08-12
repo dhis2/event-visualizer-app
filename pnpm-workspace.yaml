@@ -1,11 +1,5 @@
-# Force a single postcss instance across the dep tree. Stylelint's custom syntax
-# (postcss-styled-jsx via @dhis2/cli-style) and stylelint itself must share the
-# same postcss, otherwise documents parsed by one are unintelligible to the other.
-overrides:
-  postcss: ^8.5.15
 allowBuilds:
   '@dhis2/cli-helpers-engine': true
-  '@dhis2/cli-style': true
   '@parcel/watcher': true
   core-js: true
   core-js-pure: true
@@ -18,7 +12,6 @@ minimumReleaseAgeExclude:
   - '@dhis2-ui/*'
 onlyBuiltDependencies:
   - '@dhis2/cli-helpers-engine'
-  - '@dhis2/cli-style'
   - '@parcel/watcher'
   - core-js
   - core-js-pure

@@ -1,12 +1,6 @@
 #!/bin/bash
 set -e
 
-if [ ! -f .hooks/_/husky.sh ]; then
-    pnpm d2-style install
-fi
-
-# d2-style install only re-points core.hooksPath when the husky shim is missing, but a
-# sandbox clone can reset hooksPath while leaving the shim in place — so ensure it here.
 if [ "$(git config --get core.hooksPath)" != ".hooks" ]; then
     git config core.hooksPath .hooks
 fi
