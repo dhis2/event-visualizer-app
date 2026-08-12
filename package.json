@@ -34,7 +34,7 @@
         "@dhis2/cypress-commands": "^10.1.2",
         "@eslint/compat": "^2.1.0",
         "@ls-lint/ls-lint": "^2.3.1",
-        "@sonar/scan": "^4.3.8",
+        "@sonar/scan": "^5.0.0",
         "@testing-library/dom": "^10.4.0",
         "@testing-library/jest-dom": "^6.9.1",
         "@testing-library/react": "^16.3.2",
