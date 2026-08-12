@@ -46,7 +46,7 @@ The agent edits your live working tree (changes show up in your editor immediate
 
 The agent works on a private, isolated clone: it branches, runs tests, and commits on its own. Its commits are **signed** with the dedicated SSH signing key. Your host `node_modules` is never touched — the clone runs its own `pnpm install`.
 
-Git hooks are disabled in the clone (`HUSKY=0`): the per-edit format hook plus the agent's "run `pnpm test`/`pnpm lint` before finishing" instruction already cover lint/types/tests, and the clone never pushes — so the hooks would only gate autonomous commit-as-you-go. The agent is told to run `pnpm d2-app-scripts i18n extract` as its last step, the one thing the pre-commit hook does that nothing else covers.
+The clone skips the pre-commit hook (`RUN_PRE_COMMIT_HOOK=0`): the per-edit format hook plus the agent's "run `pnpm test`/`pnpm lint` before finishing" instruction already cover lint/types/tests. The commit-msg hook still runs — the agent doesn't otherwise validate messages against the project's commitlint config — and pre-push never fires since the clone can't push. The agent is told to run `pnpm d2-app-scripts i18n extract` as its last step, the one thing the pre-commit hook does that nothing else covers.
 
 The clone can **fetch/pull from GitHub** (`pnpm sbx:clone` points `origin` at HTTPS, so the public repo needs no credentials) — e.g. `git fetch origin master` to branch off the latest master. It **cannot push** (no push credentials, by design).
 
@@ -75,6 +75,12 @@ The agent commits to a feature branch **inside** the clone — it does not push 
 Unlike the mount, the clone gets a **one-way copy** of this project's memory at create (no sessions, no settings — it stays isolated). Re-push the latest host memory with `./scripts/sbx.sh sync-clone`.
 
 > The clone runs `pnpm install` at create. Its `postinstall` runs `generate-types`, which fetches the OpenAPI spec from the DHIS2 dev instance (the provisioned network rule allows it), and the install pulls the Cypress binary too (its CDN is allow-listed), with the Electron/GTK system libs baked into the image so `cypress` can actually run.
+
+## Planning and reviewing plans
+
+Prefer the **superpowers** skills for planning (`superpowers:brainstorming` → `superpowers:writing-plans`) — name the skill in your prompt to trigger it reliably. Superpowers writes its spec/plan into `docs/superpowers/` **in the repo**, so the mount surfaces them in your editor live and the clone commits them for `git fetch` review. Remove those files before opening the PR unless you want to keep them.
+
+Native plan mode is fine for quick, scoped checks, but it saves plan files to `~/.claude/plans` **inside the VM**, which is otherwise invisible on the host. So each sandbox symlinks that dir onto a per-sandbox host directory, `~/.claude/sbx-plans/<sandbox-name>/`, bind-mounted in at create — open that folder on the host to read native plan files as the agent writes them. It's keyed by sandbox name, so a mount and a clone running at once never clash.
 
 ## Browser automation
 
