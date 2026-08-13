@@ -6,12 +6,12 @@ import {
     LetterCondition,
 } from './alphanumeric-condition'
 import { BooleanCondition, TrueOnlyCondition } from './boolean-condition'
+import { useConditions } from './conditions-context'
 import {
     DateCondition,
     DateTimeCondition,
     TimeCondition,
 } from './date-condition'
-import { useConditions } from './filtering-section'
 import { LegendSetCondition } from './legend-set-condition/legend-set-condition'
 import { NumericCondition } from './numeric-condition/numeric-condition'
 import { OptionSetCondition } from './option-set-condition/option-set-condition'

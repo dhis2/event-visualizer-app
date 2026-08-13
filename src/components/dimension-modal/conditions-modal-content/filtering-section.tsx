@@ -9,20 +9,16 @@ import {
     parseConditionsStringToArray,
 } from '@modules/conditions'
 import {
-    type ConditionsObject,
     getVisUiConfigConditionsByDimension,
     setVisUiConfigConditionsByDimension,
 } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem, ValueType } from '@types'
-import {
-    type FC,
-    createContext,
-    useCallback,
-    useContext,
-    useMemo,
-    useState,
-} from 'react'
+import { type FC, useCallback, useMemo, useState } from 'react'
 import { Conditions } from './conditions'
+import {
+    ConditionsContext,
+    type ConditionsContextValue,
+} from './conditions-context'
 import classes from './styles/conditions-modal-content.module.css'
 
 const EMPTY_CONDITION = ''
@@ -56,35 +52,6 @@ const SUPPORTED_TYPES: ValueType[] = [
     'DATETIME',
     'ORGANISATION_UNIT',
 ]
-
-type ConditionsProviderValue = {
-    dimension: DimensionMetadataItem
-    conditions: ConditionsObject
-    conditionsList: string[]
-    valueType?: ValueType
-    isLegendSetCondition: boolean
-    isOptionSetCondition: boolean
-    isProgramIndicator: boolean
-    isSupported: boolean
-    setCondition: (conditionIndex: number, value: string) => void
-    removeCondition: (conditionIndex: number) => void
-}
-
-const ConditionsProvider = createContext<ConditionsProviderValue | undefined>(
-    undefined
-)
-
-export const useConditions = (): ConditionsProviderValue => {
-    const context = useContext(ConditionsProvider)
-
-    if (!context) {
-        throw new Error(
-            'useConditions must be used inside ConditionsModalContent'
-        )
-    }
-
-    return context
-}
 
 type FilteringSectionProps = {
     dimension: DimensionMetadataItem
@@ -161,7 +128,7 @@ export const FilteringSection: FC<FilteringSectionProps> = ({
     }
 
     const removeCondition = useCallback<
-        ConditionsProviderValue['removeCondition']
+        ConditionsContextValue['removeCondition']
     >(
         (conditionIndex) =>
             setConditionsList((prev) => {
@@ -176,7 +143,7 @@ export const FilteringSection: FC<FilteringSectionProps> = ({
         [storeConditions]
     )
 
-    const setCondition = useCallback<ConditionsProviderValue['setCondition']>(
+    const setCondition = useCallback<ConditionsContextValue['setCondition']>(
         (conditionIndex, value) =>
             setConditionsList((prev) => {
                 const updatedConditionsList = prev.map((condition, index) =>
@@ -190,7 +157,7 @@ export const FilteringSection: FC<FilteringSectionProps> = ({
         [storeConditions]
     )
 
-    const providerValue: ConditionsProviderValue = useMemo(() => {
+    const contextValue: ConditionsContextValue = useMemo(() => {
         return {
             dimension,
             conditions,
@@ -228,7 +195,7 @@ export const FilteringSection: FC<FilteringSectionProps> = ({
         : undefined
 
     return (
-        <ConditionsProvider.Provider value={providerValue}>
+        <ConditionsContext.Provider value={contextValue}>
             {isSupported ? (
                 <ShowAllFilterRadio
                     mode={mode}
@@ -263,6 +230,6 @@ export const FilteringSection: FC<FilteringSectionProps> = ({
                     filterDisabledHelp={filterDisabledHelp}
                 />
             )}
-        </ConditionsProvider.Provider>
+        </ConditionsContext.Provider>
     )
 }
