@@ -23,8 +23,6 @@ const getLegendsPreview = (
         .join(', ')
     const remainingCount = legends.length - MAX_PREVIEW_LEGENDS
 
-    /* `remainingCount` is deliberately not passed as `count`: that would make
-     * i18next treat the key as plural, and the string extractor drops those. */
     return remainingCount > 0
         ? i18n.t('{{- legends}} and {{- remainingCount}} more', {
               legends: preview,
