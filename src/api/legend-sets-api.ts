@@ -19,11 +19,6 @@ const resourceByDimensionType: Partial<Record<DimensionType, string>> = {
     PROGRAM_INDICATOR: 'programIndicators',
 }
 
-/* Legend sets and legends have no shortName, so their names always come from
- * displayName regardless of the user's display property setting. */
-const legendSetsField =
-    'legendSets[id,displayName~rename(name),legends[id,displayName~rename(name),startValue,endValue]]'
-
 /* Legends describe contiguous bands but come back in arbitrary order, so band
  * order is restored here rather than in each place that lists them. */
 const sortLegendsByBand = (
@@ -62,7 +57,13 @@ export const legendSetsApi = api.injectEndpoints({
                         legendSets: {
                             resource,
                             id,
-                            params: { fields: legendSetsField },
+                            params: {
+                                /* Legend sets and legends have no shortName, so
+                                 * their names always come from displayName
+                                 * regardless of the user's display property
+                                 * setting. */
+                                fields: 'legendSets[id,displayName~rename(name),legends[id,displayName~rename(name),startValue,endValue]]',
+                            },
                         },
                     })) as {
                         legendSets?: { legendSets?: LegendSetMetadataItem[] }
