@@ -13,11 +13,7 @@ import {
     getVisUiConfigConditionsByDimension,
     setVisUiConfigConditionsByDimension,
 } from '@store/vis-ui-config-slice'
-import type {
-    DimensionMetadataItem,
-    LegendSetMetadataItem,
-    ValueType,
-} from '@types'
+import type { DimensionMetadataItem, ValueType } from '@types'
 import {
     type FC,
     createContext,
@@ -27,7 +23,6 @@ import {
     useState,
 } from 'react'
 import { Conditions } from './conditions'
-import { LegendCondition } from './legend-condition/legend-condition'
 import classes from './styles/conditions-modal-content.module.css'
 
 const EMPTY_CONDITION = ''
@@ -67,6 +62,7 @@ type ConditionsProviderValue = {
     conditions: ConditionsObject
     conditionsList: string[]
     valueType?: ValueType
+    isLegendSetCondition: boolean
     isOptionSetCondition: boolean
     isProgramIndicator: boolean
     isSupported: boolean
@@ -92,17 +88,11 @@ export const useConditions = (): ConditionsProviderValue => {
 
 type FilterSectionProps = {
     dimension: DimensionMetadataItem
-    /* Legends of the selected legend set. Undefined while they are still being
-     * fetched, so it cannot stand in for "is this dimension grouped". */
-    groupingLegends?: LegendSetMetadataItem['legends']
     showHeading: boolean
 }
 
-const NO_LEGENDS: LegendSetMetadataItem['legends'] = []
-
 export const FilterSection: FC<FilterSectionProps> = ({
     dimension,
-    groupingLegends,
     showHeading,
 }) => {
     const dispatch = useAppDispatch()
@@ -111,13 +101,13 @@ export const FilterSection: FC<FilterSectionProps> = ({
         getVisUiConfigConditionsByDimension(state, dimension?.id)
     )
 
-    const isGrouped = Boolean(conditions.legendSet)
     const valueType = dimension.valueType
     const isProgramIndicator: boolean =
         dimension.dimensionType === 'PROGRAM_INDICATOR'
+    const isLegendSetCondition: boolean = Boolean(conditions.legendSet)
     const isOptionSetCondition: boolean = Boolean(dimension.optionSetId)
     const isSingleCondition: boolean = Boolean(
-        isGrouped ||
+        isLegendSetCondition ||
         isOptionSetCondition ||
         (valueType && SINGLETON_TYPES.includes(valueType))
     )
@@ -205,6 +195,7 @@ export const FilterSection: FC<FilterSectionProps> = ({
             dimension,
             conditions,
             conditionsList,
+            isLegendSetCondition,
             isOptionSetCondition,
             isProgramIndicator,
             isSupported,
@@ -216,6 +207,7 @@ export const FilterSection: FC<FilterSectionProps> = ({
         dimension,
         conditions,
         conditionsList,
+        isLegendSetCondition,
         isOptionSetCondition,
         isProgramIndicator,
         isSupported,
@@ -231,7 +223,9 @@ export const FilterSection: FC<FilterSectionProps> = ({
         : i18n.t('This dimension cannot be filtered.')
 
     const heading = showHeading ? i18n.t('Filtering') : undefined
-    const showAllLabel = isGrouped ? i18n.t('Show all groups') : undefined
+    const showAllLabel = isLegendSetCondition
+        ? i18n.t('Show all groups')
+        : undefined
 
     return (
         <ConditionsProvider.Provider value={providerValue}>
@@ -244,15 +238,7 @@ export const FilterSection: FC<FilterSectionProps> = ({
                     dataTest={`conditions-${dimension.id}-filter-radio`}
                 >
                     <div className={classes.mainSection}>
-                        {isGrouped ? (
-                            <LegendCondition
-                                condition={conditionsList[0] ?? EMPTY_CONDITION}
-                                legends={groupingLegends ?? NO_LEGENDS}
-                                onChange={(value) => setCondition(0, value)}
-                            />
-                        ) : (
-                            <Conditions />
-                        )}
+                        <Conditions />
                         {!isSingleCondition && (
                             <Button
                                 type="button"

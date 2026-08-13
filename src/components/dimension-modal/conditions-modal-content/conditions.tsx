@@ -12,6 +12,7 @@ import {
     TimeCondition,
 } from './date-condition'
 import { useConditions } from './filter-section'
+import { LegendSetCondition } from './legend-set-condition/legend-set-condition'
 import { NumericCondition } from './numeric-condition/numeric-condition'
 import { OptionSetCondition } from './option-set-condition/option-set-condition'
 import { OrgUnitCondition } from './org-unit-condition'
@@ -68,12 +69,25 @@ const NumericConditionsList: FC = () => {
 export const Conditions: FC = () => {
     const {
         dimension,
+        conditions,
         conditionsList,
         valueType,
+        isLegendSetCondition,
         isOptionSetCondition,
         isProgramIndicator,
         setCondition,
     } = useConditions()
+
+    if (isLegendSetCondition) {
+        return (
+            <LegendSetCondition
+                condition={conditionsList[0]}
+                dimension={dimension}
+                legendSetId={conditions.legendSet!}
+                onChange={(value) => setCondition(0, value)}
+            />
+        )
+    }
 
     if (isOptionSetCondition) {
         return (

@@ -20,9 +20,6 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
     )
 
     const canBeGrouped = legendSets.length > 0
-    const selectedLegendSet = legendSets.find(
-        (legendSet) => legendSet.id === selectedLegendSetId
-    )
 
     return (
         <div className={classes.tabContent}>
@@ -37,7 +34,6 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
             <FilterSection
                 key={selectedLegendSetId ?? 'ungrouped'}
                 dimension={dimension}
-                groupingLegends={selectedLegendSet?.legends}
                 showHeading={canBeGrouped}
             />
         </div>

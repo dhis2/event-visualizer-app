@@ -1,3 +1,4 @@
+import { useDimensionLegendSets } from '@components/dimension-modal/grouping-radio/use-dimension-legend-sets'
 import {
     TRANSFER_HEIGHT,
     TRANSFER_OPTIONS_WIDTH,
@@ -10,32 +11,40 @@ import { TransferSourceEmptyPlaceholder } from '@components/dimension-modal/tran
 import i18n from '@dhis2/d2-i18n'
 import { Transfer, TransferOption } from '@dhis2/ui'
 import { OPERATOR_IN, parseCondition } from '@modules/conditions'
-import type { LegendSetMetadataItem } from '@types'
+import type { DimensionMetadataItem } from '@types'
 import { type FC, useMemo, useState } from 'react'
 
-type LegendConditionProps = {
+type LegendSetConditionProps = {
     condition: string
-    legends: LegendSetMetadataItem['legends']
+    dimension: DimensionMetadataItem
+    legendSetId: string
     onChange: (condition: string) => void
 }
 
-export const LegendCondition: FC<LegendConditionProps> = ({
+export const LegendSetCondition: FC<LegendSetConditionProps> = ({
     condition,
-    legends,
+    dimension,
+    legendSetId,
     onChange,
 }) => {
-    const dataTest = 'legend'
+    const dataTest = 'legend-set'
     const [searchTerm, setSearchTerm] = useState('')
+
+    /* Shares its cache entry with the grouping section's lookup, so resolving
+     * the legends here costs no extra request. */
+    const { legendSets, isLoading } = useDimensionLegendSets(dimension)
 
     const selectedIds = useMemo(
         () => (condition ? (parseCondition(condition) ?? []) : []),
         [condition]
     )
 
-    const options = useMemo(
-        () => legends.map(({ id, name }) => ({ value: id, label: name })),
-        [legends]
-    )
+    const options = useMemo(() => {
+        const legends =
+            legendSets.find(({ id }) => id === legendSetId)?.legends ?? []
+
+        return legends.map(({ id, name }) => ({ value: id, label: name }))
+    }, [legendSets, legendSetId])
 
     /* All legends are already in memory, so the source list is filtered here
      * rather than by refetching. */
@@ -64,9 +73,11 @@ export const LegendCondition: FC<LegendConditionProps> = ({
             selected={selectedIds}
             selectedOptionsLookup={selectedOptionsLookup}
             options={visibleOptions}
+            loading={isLoading}
+            loadingPicked={isLoading}
             sourceEmptyPlaceholder={
                 <TransferSourceEmptyPlaceholder
-                    loading={false}
+                    loading={isLoading}
                     searchTerm={searchTerm}
                     options={visibleOptions}
                     dataTest={`${dataTest}-empty-source`}
