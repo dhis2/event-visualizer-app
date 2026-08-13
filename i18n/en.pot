@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-12T11:45:08.012Z\n"
-"PO-Revision-Date: 2026-08-12T11:45:08.013Z\n"
+"POT-Creation-Date: 2026-08-13T18:13:55.581Z\n"
+"PO-Revision-Date: 2026-08-13T18:13:55.582Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -198,19 +198,6 @@ msgstr "Code"
 
 msgid "Name"
 msgstr "Name"
-
-msgid "Something went wrong"
-msgstr "Something went wrong"
-
-msgid ""
-"The application is in an unexpected state. Please reload the page to "
-"continue."
-msgstr ""
-"The application is in an unexpected state. Please reload the page to "
-"continue."
-
-msgid "Reload"
-msgstr "Reload"
 
 msgid "Resize axes panel"
 msgstr "Resize axes panel"
@@ -1030,6 +1017,9 @@ msgstr "You don't have access to one or more of the chosen organisation units."
 
 msgid "You don't have access to event analytics. Contact a system administrator."
 msgstr "You don't have access to event analytics. Contact a system administrator."
+
+msgid "Something went wrong"
+msgstr "Something went wrong"
 
 msgid "There's a problem with at least one selected indicator."
 msgstr "There's a problem with at least one selected indicator."
