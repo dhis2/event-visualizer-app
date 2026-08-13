@@ -72,6 +72,11 @@ type SetConditionsByDimensionPayload = {
     legendSet?: string
 }
 
+type SetGroupingByDimensionPayload = {
+    dimensionId: string
+    legendSet?: string
+}
+
 type SetItemsByDimensionPayload = {
     dimensionId: string // dimensionId, including uids
     itemIds: string[] // list of item ids
@@ -187,6 +192,20 @@ export const visUiConfigSlice = createSlice({
                     conditions?.length || legendSet
                         ? { condition: conditions, legendSet }
                         : undefined,
+            }
+        },
+        /* Grouping and filtering share the conditions entry, but a filter only
+         * makes sense against the values the current grouping produces, so
+         * changing the grouping always drops the filter with it. */
+        setVisUiConfigGroupingByDimension: (
+            state,
+            action: PayloadAction<SetGroupingByDimensionPayload>
+        ) => {
+            const { dimensionId, legendSet } = action.payload
+
+            state.conditionsByDimension = {
+                ...state.conditionsByDimension,
+                [dimensionId]: legendSet ? { legendSet } : undefined,
             }
         },
         setVisUiConfigCustomValue: (
@@ -386,6 +405,7 @@ export const {
     setVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
+    setVisUiConfigGroupingByDimension,
     setVisUiConfigCustomValue,
     setVisUiConfigRepetitionsByDimension,
     addVisUiConfigLayoutDimension,

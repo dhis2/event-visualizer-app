@@ -10,6 +10,8 @@ import { createAppCachedDataMiddleware } from './middleware-app-cached-data'
 import { listenerMiddleware } from './middleware-listener'
 import { navigationSlice } from './navigation-slice'
 import { savedVisSlice } from './saved-vis-slice'
+/* Registers the listener that applies the default grouping selection */
+import './seed-default-grouping'
 import { uiSlice } from './ui-slice'
 import { visUiConfigSlice } from './vis-ui-config-slice'
 
