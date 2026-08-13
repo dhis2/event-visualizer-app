@@ -33,12 +33,12 @@ const getLegendsPreview = (
         : preview
 }
 
-type GroupingRadioProps = {
+type GroupingSectionProps = {
     dimensionId: string
     legendSets: LegendSetMetadataItem[]
 }
 
-export const GroupingRadio: FC<GroupingRadioProps> = ({
+export const GroupingSection: FC<GroupingSectionProps> = ({
     dimensionId,
     legendSets,
 }) => {

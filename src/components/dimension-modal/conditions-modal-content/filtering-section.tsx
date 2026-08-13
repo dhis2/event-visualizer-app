@@ -86,12 +86,12 @@ export const useConditions = (): ConditionsProviderValue => {
     return context
 }
 
-type FilterSectionProps = {
+type FilteringSectionProps = {
     dimension: DimensionMetadataItem
     showHeading: boolean
 }
 
-export const FilterSection: FC<FilterSectionProps> = ({
+export const FilteringSection: FC<FilteringSectionProps> = ({
     dimension,
     showHeading,
 }) => {

@@ -1,4 +1,4 @@
-import { useDimensionLegendSets } from '@components/dimension-modal/grouping-radio/use-dimension-legend-sets'
+import { useDimensionLegendSets } from '@components/dimension-modal/conditions-modal-content/use-dimension-legend-sets'
 import { useMetadataItem } from '@hooks'
 import { renderWithAppWrapper } from '@test-utils/app-wrapper'
 import { screen } from '@testing-library/react'

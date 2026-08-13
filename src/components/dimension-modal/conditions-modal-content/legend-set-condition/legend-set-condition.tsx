@@ -1,4 +1,4 @@
-import { useDimensionLegendSets } from '@components/dimension-modal/grouping-radio/use-dimension-legend-sets'
+import { useDimensionLegendSets } from '@components/dimension-modal/conditions-modal-content/use-dimension-legend-sets'
 import {
     TRANSFER_HEIGHT,
     TRANSFER_OPTIONS_WIDTH,

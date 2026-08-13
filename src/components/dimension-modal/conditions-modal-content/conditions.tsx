@@ -11,7 +11,7 @@ import {
     DateTimeCondition,
     TimeCondition,
 } from './date-condition'
-import { useConditions } from './filter-section'
+import { useConditions } from './filtering-section'
 import { LegendSetCondition } from './legend-set-condition/legend-set-condition'
 import { NumericCondition } from './numeric-condition/numeric-condition'
 import { OptionSetCondition } from './option-set-condition/option-set-condition'
