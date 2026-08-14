@@ -88,8 +88,6 @@ export const FilteringSection: FC<FilteringSectionProps> = ({
             : [EMPTY_CONDITION]
     )
 
-    /* The legend set is owned by the grouping section, so it is passed straight
-     * back through every conditions update. */
     const storeConditions = useCallback(
         (conditionsList: string[]) =>
             dispatch(
@@ -101,10 +99,9 @@ export const FilteringSection: FC<FilteringSectionProps> = ({
                                 condition.length && condition.slice(-1) !== ':'
                         )
                     ),
-                    legendSet: conditions.legendSet,
                 })
             ),
-        [dimension.id, dispatch, conditions.legendSet]
+        [dimension.id, dispatch]
     )
 
     const onEnterShowAll = useCallback(

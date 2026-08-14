@@ -69,7 +69,6 @@ export const initialState: VisUiConfigState = {
 type SetConditionsByDimensionPayload = {
     dimensionId: string
     conditions?: string
-    legendSet?: string
 }
 
 type SetGroupingByDimensionPayload = {
@@ -184,7 +183,10 @@ export const visUiConfigSlice = createSlice({
             state,
             action: PayloadAction<SetConditionsByDimensionPayload>
         ) => {
-            const { dimensionId, conditions, legendSet } = action.payload
+            const { dimensionId, conditions } = action.payload
+            /* The grouping owns the legend set, so it is carried over rather
+             * than taken from the payload. */
+            const { legendSet } = state.conditionsByDimension[dimensionId] ?? {}
 
             state.conditionsByDimension = {
                 ...state.conditionsByDimension,

@@ -67,9 +67,6 @@ export const RadioCard: FC<RadioCardProps> = ({
 type RadioCardGroupProps = PropsWithChildren<{
     legend: string
     hideLegend?: boolean
-    /* Cards side by side instead of stacked. Suits a set of short, mutually
-     * exclusive labels; a card that reveals controls when selected should stay
-     * stacked so the revealed area has full width. */
     horizontal?: boolean
 }>
 
