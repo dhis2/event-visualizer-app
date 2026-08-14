@@ -638,9 +638,9 @@ reference them.
 | `legendSetId`     | ID reference to the legend set (if applicable)                                                 |
 | `legendSetIds`    | IDs of every legend set assigned to the data item, i.e. the grouping options available         |
 
-## Grouping values into legend bands
+## Grouping values by legend
 
-A numeric data item that has legend sets assigned can be grouped into bands. The chosen legend set
+A numeric data item that has legend sets assigned can be grouped by legend. The chosen legend set
 is stored as `legendSet` on the dimension's `conditionsByDimension` entry, and reaches the analytics
 API as a `-<legendSetId>` suffix on the dimension (`stageId.dimId-legendSetId`), which
 `@dhis2/analytics` builds from `DimensionRecord.legendSet`. Response values then come back as legend

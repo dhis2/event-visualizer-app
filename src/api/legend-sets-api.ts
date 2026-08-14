@@ -19,9 +19,9 @@ const resourceByDimensionType: Partial<Record<DimensionType, string>> = {
     PROGRAM_INDICATOR: 'programIndicators',
 }
 
-/* Legends describe contiguous bands but come back in arbitrary order, so band
- * order is restored here rather than in each place that lists them. */
-const sortLegendsByBand = (
+/* Legends are contiguous value ranges, but come back in arbitrary order. They
+ * are sorted once here rather than everywhere the groups are listed. */
+const sortLegendsByStartValue = (
     legendSet: LegendSetMetadataItem
 ): LegendSetMetadataItem => ({
     ...legendSet,
@@ -71,7 +71,7 @@ export const legendSetsApi = api.injectEndpoints({
 
                     const legendSets = (
                         response.legendSets?.legendSets ?? []
-                    ).map(sortLegendsByBand)
+                    ).map(sortLegendsByStartValue)
 
                     if (legendSets.length) {
                         const metadataInput: MetadataInputMap = {}

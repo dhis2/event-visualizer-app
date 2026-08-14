@@ -43,7 +43,7 @@ const Probe: FC = () => {
 }
 
 describe('getLegendSetsByDimension', () => {
-    it('stores each legend set and legend, in band order', async () => {
+    it('stores each legend set and legend, in group order', async () => {
         await renderWithAppWrapper(<Probe />, {
             metadata: { [numericDimension.id]: numericDimension },
             queryData: { dataElements: async () => ({ legendSets }) },
