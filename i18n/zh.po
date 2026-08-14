@@ -1,17 +1,17 @@
 # Translators:
 # Andres Miguel Rubio, 2026
 # Transifex Bot <>, 2026
-# easylin <lin_xd@126.com>, 2026
 # Philip Larsen Donnelly, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
 # 晓东 林 <13981924470@126.com>, 2026
+# easylin <lin_xd@126.com>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: 晓东 林 <13981924470@126.com>, 2026\n"
+"Last-Translator: easylin <lin_xd@126.com>, 2026\n"
 "Language-Team: Chinese (https://app.transifex.com/hisp-uio/teams/100509/zh/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -22,22 +22,22 @@ msgstr ""
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
 "{{visTypeName}}: {{list}}."
-msgstr ""
+msgstr "某些维度未被添加，因为它们无法在{{visTypeName}} 中使用：{{list}} 。"
 
 msgid ""
 "Some dimensions were not added because they cannot be combined with {{- "
 "layoutTetName}} dimensions: {{list}}."
-msgstr ""
+msgstr "某些维度未被添加，因为它们无法与{{- layoutTetName}} 的维度结合使用：{{list}} 。"
 
 msgid ""
 "{{- name}} was not added because it is already used as the custom value."
-msgstr ""
+msgstr "{{- name}} 未添加，因为它已被用作自定义值。"
 
 msgid "Add to {{- axisName}}"
-msgstr ""
+msgstr "添加到{{- axisName}}"
 
 msgid "Choose a filter type"
-msgstr ""
+msgstr "选择过滤器类型"
 
 msgid "Case sensitive"
 msgstr "区分大小写"
@@ -55,13 +55,13 @@ msgid "Only available for repeatable stages"
 msgstr "仅适用于可重复阶段"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
-msgstr ""
+msgstr "{{valueType}} 无法对类型尺寸进行筛选。"
 
 msgid "This dimension cannot be filtered."
-msgstr ""
+msgstr "此维度无法进行筛选。"
 
 msgid "Preset options can't be combined with other filters"
-msgstr ""
+msgstr "预设选项不能与其他滤镜结合使用"
 
 msgid "Add filter"
 msgstr "添加过滤器"
@@ -73,40 +73,40 @@ msgid "is one of preset options"
 msgstr "是预设选项之一"
 
 msgid "Choose a legend set"
-msgstr ""
+msgstr "选择一组图例"
 
 msgid "Loading legend sets"
-msgstr ""
+msgstr "加载图例集"
 
 msgid "No preset option sets for this data item"
 msgstr "此数据项没有预设选项集"
 
 msgid "Choose legends"
-msgstr ""
+msgstr "选择图例"
 
 msgid "Loading legends"
 msgstr "载入图例"
 
 msgid "From stages with repeatable events, show values from:"
-msgstr ""
+msgstr "对于包含可重复事件的阶段，显示以下数据："
 
 msgid "Oldest events"
-msgstr ""
+msgstr "最早的活动"
 
 msgid "Show fewer of the oldest events"
-msgstr ""
+msgstr "显示较早的事件较少一些"
 
 msgid "Show more of the oldest events"
-msgstr ""
+msgstr "显示更多最早的活动"
 
 msgid "Most recent events"
-msgstr ""
+msgstr "最新动态"
 
 msgid "Show fewer of the most recent events"
-msgstr ""
+msgstr "显示较少的最新事件"
 
 msgid "Show more of the most recent events"
-msgstr ""
+msgstr "显示更多最新活动"
 
 msgid "Hide"
 msgstr "隐藏"
@@ -127,10 +127,10 @@ msgid "Define start - end dates"
 msgstr "定义开始 - 结束日期"
 
 msgid "Value filtering"
-msgstr ""
+msgstr "值过滤"
 
 msgid "Show all values"
-msgstr ""
+msgstr "显示所有值"
 
 msgid "Filter"
 msgstr "过滤器"
@@ -208,10 +208,10 @@ msgid "An error occurred"
 msgstr "发生了一个错误"
 
 msgid "Resize axes panel"
-msgstr ""
+msgstr "调整坐标轴大小面板"
 
 msgid "Move to {{- axisName}}"
-msgstr ""
+msgstr "转到{{- axisName}}"
 
 msgid "Remove"
 msgstr "移除"
@@ -238,145 +238,145 @@ msgid "Groups"
 msgstr "组"
 
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
-msgstr ""
+msgstr "使用：{{- itemName}} （{{- aggregationType}} ）"
 
 msgid "Custom value is from a different stage than dimensions in the layout"
-msgstr ""
+msgstr "自定义值与布局中的维度来自不同的阶段"
 
 msgid "Update custom value"
-msgstr ""
+msgstr "更新自定义值"
 
 msgid "Create custom value table"
-msgstr ""
+msgstr "创建自定义值表"
 
 msgid "Switch to custom value table"
-msgstr ""
+msgstr "切换到自定义值表"
 
 msgid "Update custom value table"
-msgstr ""
+msgstr "更新自定义值表"
 
 msgid "Enrollment"
 msgstr "报名登记"
 
 msgid "Create {{- enrollmentLabel}} list"
-msgstr ""
+msgstr "创建{{- enrollmentLabel}} 列表"
 
 msgid "Create {{- enrollmentLabel}} table"
-msgstr ""
+msgstr "创建{{- enrollmentLabel}} 表"
 
 msgid "Switch to {{- enrollmentLabel}} list"
-msgstr ""
+msgstr "切换到{{- enrollmentLabel}} 列表"
 
 msgid "Switch to {{- enrollmentLabel}} table"
-msgstr ""
+msgstr "切换到{{- enrollmentLabel}} 表"
 
 msgid "Update {{- enrollmentLabel}} list"
-msgstr ""
+msgstr "更新{{- enrollmentLabel}} 列表"
 
 msgid "Update {{- enrollmentLabel}} table"
-msgstr ""
+msgstr "更新{{- enrollmentLabel}} 表"
 
 msgid "Event"
 msgstr "事件"
 
 msgid "Create {{- eventLabel}} list"
-msgstr ""
+msgstr "创建{{- eventLabel}} 列表"
 
 msgid "Create {{- eventLabel}} table"
-msgstr ""
+msgstr "创建{{- eventLabel}} 表"
 
 msgid "Switch to {{- eventLabel}} list"
-msgstr ""
+msgstr "切换到{{- eventLabel}} 列表"
 
 msgid "Switch to {{- eventLabel}} table"
-msgstr ""
+msgstr "切换到{{- eventLabel}} 表"
 
 msgid "Update {{- eventLabel}} list"
-msgstr ""
+msgstr "更新{{- eventLabel}} 列表"
 
 msgid "Update {{- eventLabel}} table"
-msgstr ""
+msgstr "更新{{- eventLabel}} 表"
 
 msgid "tracked entity"
 msgstr "跟踪实体"
 
 msgid "Create {{- trackedEntityTypeName}} list"
-msgstr ""
+msgstr "创建{{- trackedEntityTypeName}} 列表"
 
 msgid "Switch to {{- trackedEntityTypeName}} list"
-msgstr ""
+msgstr "切换到{{- trackedEntityTypeName}} 列表"
 
 msgid "Update {{- trackedEntityTypeName}} list"
-msgstr ""
+msgstr "更新{{- trackedEntityTypeName}} 列表"
 
 msgid "Not valid with registration org. unit"
-msgstr ""
+msgstr "不适用于注册组织单位"
 
 msgid "Not valid with categories or category option group sets"
-msgstr ""
+msgstr "不适用于分类或分类选项组集"
 
 msgid "Not valid with categories"
-msgstr ""
+msgstr "不适用于各类别"
 
 msgid "Not valid with category option group sets"
-msgstr ""
+msgstr "不适用于类别选项组集"
 
 msgid "Not valid without a program"
-msgstr ""
+msgstr "若无节目单，则无效"
 
 msgid "Not valid with multiple programs"
-msgstr ""
+msgstr "不可与多个项目同时使用"
 
 msgid "Not valid with multiple program stages"
-msgstr ""
+msgstr "不适用于包含多个程序阶段的情况"
 
 msgid "Not valid with event programs"
-msgstr ""
+msgstr "不适用于活动项目"
 
 msgid "Not valid with Completed on"
-msgstr ""
+msgstr "不适用于“已完成于”的情况"
 
 msgid "Not valid with multiple tracked entity types"
-msgstr ""
+msgstr "不适用于多个受追踪的实体类型"
 
 msgid "Not valid with program indicators"
-msgstr ""
+msgstr "不适用于项目指标"
 
 msgid "Nothing selected. Add items to the layout to get started."
-msgstr ""
+msgstr "尚未选择任何内容。请将项目添加到布局中以开始操作。"
 
 msgid "Configure custom value"
-msgstr ""
+msgstr "配置自定义值"
 
 msgid "Choose the numeric data item to show in table cells."
-msgstr ""
+msgstr "选择要在表格单元格中显示的数值数据项。"
 
 msgid "Search data items"
-msgstr ""
+msgstr "搜索数据项"
 
 msgid "Loading data"
 msgstr "加载数据中"
 
 msgid "Error loading data"
-msgstr ""
+msgstr "加载数据时出错"
 
 msgid "Failed to load data items"
-msgstr ""
+msgstr "无法加载数据项"
 
 msgid "No numeric data items in stage \"{{- stageName}}\""
-msgstr ""
+msgstr "阶段“{{- stageName}} ”中没有数值数据项"
 
 msgid "No numeric data items in this program"
-msgstr ""
+msgstr "该程序中没有数值数据项"
 
 msgid "This stage does not have any numeric data items available."
-msgstr ""
+msgstr "该阶段没有可用的数值数据项。"
 
 msgid "This program does not have any numeric data items available."
-msgstr ""
+msgstr "该程序中没有可用的数值数据项。"
 
 msgid "No data items match \"{{- searchTerm}}\""
-msgstr ""
+msgstr "没有数据项与“{{- searchTerm}} ”匹配"
 
 msgid "Aggregation"
 msgstr "汇总"
@@ -388,24 +388,24 @@ msgid "Update"
 msgstr "更新"
 
 msgid "Select a value before updating"
-msgstr ""
+msgstr "更新前请先选择一个值"
 
 msgid ""
 "\"{{- itemName}}\" is from a different stage than the dimensions in the "
 "layout. Choose another item."
-msgstr ""
+msgstr "“{{- itemName}} ” 所属的舞台与布局中的维度不同。请选择另一个项目。"
 
 msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
-msgstr ""
+msgstr "显示来自“{{- stageName}} ”的数据项，该数据源是布局中使用的数据源"
 
 msgid "Collapse layout"
-msgstr ""
+msgstr "折叠布局"
 
 msgid "Expand layout"
-msgstr ""
+msgstr "展开布局"
 
 msgid "List options"
-msgstr ""
+msgstr "列表选项"
 
 msgid "Table options"
 msgstr "表选项"
@@ -414,28 +414,28 @@ msgid "Chart options"
 msgstr "图表选项"
 
 msgid "Convert to {{- visType}}"
-msgstr ""
+msgstr "转换为{{- visType}}"
 
 msgid "{{- names}} will be removed. Are you sure?"
-msgstr ""
+msgstr "{{- names}} 将被删除。您确定吗？"
 
 msgid "Convert"
-msgstr ""
+msgstr "转换"
 
 msgid "Individual data view"
-msgstr ""
+msgstr "单条数据视图"
 
 msgid "Aggregated view"
-msgstr ""
+msgstr "汇总视图"
 
 msgid "No event"
 msgstr "无事件"
 
 msgid "Sort by \"{{- column}}\" and update"
-msgstr ""
+msgstr "按“{{- column}} ”排序并更新"
 
 msgid "Hide legend key"
-msgstr ""
+msgstr "隐藏图例键"
 
 msgid "Show legend key"
 msgstr "显示图例键值"
@@ -449,7 +449,7 @@ msgid "Rows per page"
 msgstr "行每页"
 
 msgid "Page {{- page}}, row {{- firstItem}}-{{- lastItem}}"
-msgstr ""
+msgstr "第{{- page}} 页，第{{- firstItem}} 行 -{{- lastItem}}"
 
 msgid "Not available offline"
 msgstr "离线不可用"
@@ -461,16 +461,16 @@ msgid "oldest"
 msgstr "最老的"
 
 msgid "oldest {{- repeatEventIndex}}"
-msgstr ""
+msgstr "最年长的{{- repeatEventIndex}}"
 
 msgid "most recent {{- repeatEventIndex}}"
-msgstr ""
+msgstr "最新{{- repeatEventIndex}}"
 
 msgid "Column sub-totals"
 msgstr "列小计"
 
 msgid "Column totals"
-msgstr ""
+msgstr "列合计"
 
 msgid "Cumulative values"
 msgstr "汇总值"
@@ -515,7 +515,7 @@ msgid "Hide empty rows"
 msgstr "隐藏空行"
 
 msgid "Hide N/A data"
-msgstr ""
+msgstr "隐藏“不适用”数据"
 
 msgid "Use a legend for table cell colors"
 msgstr "为表格单元格颜色使用图例"
@@ -587,10 +587,10 @@ msgid "Display"
 msgstr "显示"
 
 msgid "Line list title"
-msgstr ""
+msgstr "行列表标题"
 
 msgid "Line list subtitle"
-msgstr ""
+msgstr "行列表副标题"
 
 msgid "Totals"
 msgstr "总共"
@@ -611,7 +611,7 @@ msgid "Labels"
 msgstr "标签"
 
 msgid "Create a {{- visType}} before updating"
-msgstr ""
+msgstr "在更新之前创建一个{{- visType}} "
 
 msgid "Metadata"
 msgstr "元数据"
@@ -629,13 +629,13 @@ msgid "Program indicators"
 msgstr "项目指标"
 
 msgid "{{- name}} registration"
-msgstr ""
+msgstr "{{- name}} 注册"
 
 msgid "Choose a data source"
-msgstr ""
+msgstr "选择数据源"
 
 msgid "No data sources available"
-msgstr ""
+msgstr "没有可用数据源"
 
 msgid "Programs"
 msgstr "项目"
@@ -644,22 +644,22 @@ msgid "Show more"
 msgstr "显示更多"
 
 msgid "Analyze without a program"
-msgstr ""
+msgstr "不使用程序进行分析"
 
 msgid "Loading options"
 msgstr "加载选项"
 
 msgid "Failed to load data sources."
-msgstr ""
+msgstr "无法加载数据源。"
 
 msgid "Filter data sources"
-msgstr ""
+msgstr "筛选数据源"
 
 msgid "There was a problem and this data could not be loaded"
-msgstr ""
+msgstr "出现了一个问题，无法加载此数据"
 
 msgid "There was problem loading more data"
-msgstr ""
+msgstr "加载更多数据时出现问题"
 
 msgid "No data found"
 msgstr "没有发现数据"
@@ -668,13 +668,13 @@ msgid "No results"
 msgstr "无结果"
 
 msgid "Load more"
-msgstr ""
+msgstr "加载更多"
 
 msgid "Loading more..."
-msgstr ""
+msgstr "正在加载更多内容..."
 
 msgid "None of the selected dimensions can be added to this layout."
-msgstr ""
+msgstr "所选的维度均无法添加到此布局中。"
 
 msgid "Org units"
 msgstr "组织机构"
@@ -683,13 +683,13 @@ msgid "Periods"
 msgstr "期间"
 
 msgid "Statuses"
-msgstr ""
+msgstr "状态"
 
 msgid "Data elements"
 msgstr "数据元"
 
 msgid "Program attributes"
-msgstr ""
+msgstr "程序属性"
 
 msgid "Categories"
 msgstr "分类"
@@ -700,16 +700,16 @@ msgstr "分类选项组集"
 msgid ""
 "Choose a data source above to see its dimensions, periods, and organisation "
 "units."
-msgstr ""
+msgstr "请从上方选择一个数据源，以查看其维度、时间段和组织单位。"
 
 msgid "Expand all cards"
-msgstr ""
+msgstr "展开所有卡片"
 
 msgid "Collapse all cards"
-msgstr ""
+msgstr "折叠所有卡片"
 
 msgid "Something went wrong while searching."
-msgstr ""
+msgstr "搜索过程中出现了一些问题。"
 
 msgid "Search"
 msgstr "搜索"
@@ -718,7 +718,7 @@ msgid "Clear search"
 msgstr "清除搜索"
 
 msgid "Your most viewed visualizations"
-msgstr ""
+msgstr "您浏览量最高的可视化图表"
 
 msgid "Download"
 msgstr "下载"
@@ -768,10 +768,10 @@ msgstr "出现未知错误。"
 msgid ""
 "This visualization can't be deleted because it is used on one or more "
 "dashboards."
-msgstr ""
+msgstr "无法删除此可视化，因为它被一个或多个仪表板所使用。"
 
 msgid "You don't have sufficient permissions."
-msgstr ""
+msgstr "您没有足够的权限。"
 
 msgid "Rename successful"
 msgstr "重命名成功"
@@ -801,10 +801,10 @@ msgid "View"
 msgstr "查看"
 
 msgid "Resize layout to fit"
-msgstr ""
+msgstr "调整布局大小以适应屏幕"
 
 msgid "Reset dimensions sidebar width"
-msgstr ""
+msgstr "重置侧边栏宽度"
 
 msgid "Show panels"
 msgstr "显示面板"
@@ -813,13 +813,13 @@ msgid "Expand visualization and hide panels"
 msgstr "展开可视化并隐藏面板"
 
 msgid "Hide details panel"
-msgstr ""
+msgstr "隐藏详细信息面板"
 
 msgid "Show details panel"
-msgstr ""
+msgstr "显示详细信息面板"
 
 msgid "Loading visualization"
-msgstr ""
+msgstr "加载可视化"
 
 msgid "Unsaved visualization"
 msgstr "没有保存可视化"
@@ -828,7 +828,7 @@ msgid "Edited"
 msgstr "编辑"
 
 msgid "Use item default"
-msgstr ""
+msgstr "使用项目默认值"
 
 msgid "Sum"
 msgstr "求和"
@@ -861,7 +861,7 @@ msgid "First value (average in org unit hierarchy)"
 msgstr "第一个值（组织机构体系结构中的平均值）"
 
 msgid "First value in period (first value in org unit hierarchy)"
-msgstr ""
+msgstr "该期间的首个值（组织单位层级中的首个值）"
 
 msgid "Count"
 msgstr "计数"
@@ -947,16 +947,16 @@ msgstr "没有回答"
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
-msgstr ""
+msgstr "{{- dataSourceTetName}} 这些尺寸无法与布局中已有的{{- layoutTetName}} 尺寸结合使用。"
 
 msgid "Already used as custom value."
-msgstr ""
+msgstr "已用作自定义值。"
 
 msgid "Cannot be used in a {{visType}}."
-msgstr ""
+msgstr "不能在{{visType}} 中使用。"
 
 msgid "Created on"
-msgstr ""
+msgstr "创建于"
 
 msgid "Last updated on"
 msgstr "最后更新时间"
@@ -968,10 +968,10 @@ msgid "Created by"
 msgstr "创建人"
 
 msgid "Completed on"
-msgstr ""
+msgstr "完成于"
 
 msgid "Event org. unit"
-msgstr ""
+msgstr "活动组织单位"
 
 msgid "Event date"
 msgstr "事件日期"
@@ -983,7 +983,7 @@ msgid "Event status"
 msgstr "事件状态"
 
 msgid "Enrollment org. unit"
-msgstr ""
+msgstr "招生组织单位"
 
 msgid "Date of enrollment"
 msgstr "注册日期"
@@ -1138,10 +1138,10 @@ msgstr "已经调度"
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
 "for EVER)"
-msgstr ""
+msgstr "跟踪或比较随时间推移的变化。建议将“时间段”作为分类。（根据EVER进行调整）"
 
 msgid "View data and indicators in a manipulatable table. (adjust for EVER)"
-msgstr ""
+msgstr "在可交互表格中查看数据和指标。（按“EVER”调整）"
 
 msgctxt "Application title"
 msgid "__MANIFEST_APP_TITLE"
@@ -1149,4 +1149,4 @@ msgstr "事件可视化"
 
 msgctxt "Application description"
 msgid "__MANIFEST_APP_DESCRIPTION"
-msgstr ""
+msgstr "事件可视化应用和插件"

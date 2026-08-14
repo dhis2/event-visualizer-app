@@ -247,4 +247,4 @@ User: /sonarqube-fix
 
 - SonarQube API docs: https://sonarcloud.io/web_api
 - SonarQube rules: https://rules.sonarsource.com/
-- DHIS2 code style: project follows `@dhis2/cli-style` conventions
+- DHIS2 code style: project follows `@dhis2/config-eslint` / `@dhis2/config-prettier` conventions

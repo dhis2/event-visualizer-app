@@ -12,7 +12,7 @@ This is a DHIS2 Event Visualizer application built with React, TypeScript, Vite,
 - **UI Components**: DHIS2 UI (@dhis2/ui), DND Kit for drag-and-drop
 - **Testing**: Vitest (unit tests) + Cypress (component & E2E tests)
 - **Styling**: CSS modules with TypeScript plugin, styled components
-- **Linting/Formatting**: ESLint, Prettier, Stylelint via `@dhis2/cli-style`
+- **Linting/Formatting**: ESLint (`@dhis2/config-eslint`), Prettier (`@dhis2/config-prettier`), Stylelint
 - **i18n**: DHIS2 i18n utilities for internationalization
 
 ### Project Stage
@@ -393,9 +393,10 @@ inline floods context. The subagent can extract the API contract and return a co
 - `vite.config.ts` / `vite-extensions.config.mts` - Vite build configuration
 - `cypress.config.ts` - Cypress E2E configuration
 - `cypress.env.json` - Cypress environment (gitignored, see template)
-- `.eslintrc.js` - ESLint rules (extends `@dhis2/cli-style`)
-- `.prettierrc.js` - Prettier formatting rules (DHIS2 config)
-- `.stylelintrc.js` - Stylelint CSS/SCSS rules
+- `eslint.config.mjs` - ESLint rules (extends `@dhis2/config-eslint`)
+- `.prettierrc.mjs` - Prettier formatting rules (re-exports `@dhis2/config-prettier`)
+- `.stylelintrc.js` - Stylelint CSS/SCSS rules (self-contained)
+- `commitlint.config.mjs` - Commitlint rules (extends `@commitlint/config-conventional`)
 - `d2.config.js` - DHIS2 app configuration
 
 ## Plugins and MCP Servers
@@ -423,7 +424,7 @@ The following are enabled for this project via `.claude/settings.json`:
 
 ### Git Hooks
 
-The project has `lint-staged` configured in `package.json` for pre-commit checks (ESLint, Prettier, Stylelint). Husky is a dependency but is not currently installed — run `npx husky install` to enable git pre-commit hooks.
+The project has `lint-staged` configured in `package.json` for pre-commit checks (ESLint, Prettier, Stylelint). Git hooks live in the tracked `.hooks/` directory; `scripts/postinstall.sh` wires them up by pointing `core.hooksPath` at it.
 
 ### Commit Guidelines
 

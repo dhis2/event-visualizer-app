@@ -15,10 +15,7 @@ import {
     isVisualizationEmpty,
     isVisualizationPersistable,
 } from '@modules/visualization/state'
-import {
-    getCurrentVis,
-    setCurrentVisNameDescription,
-} from '@store/current-vis-slice'
+import { getCurrentVis } from '@store/current-vis-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import { getSavedVis, setSavedVisNameDescription } from '@store/saved-vis-slice'
 import { tLoadSavedVisualization } from '@store/thunks'
@@ -154,8 +151,6 @@ export const useToolbarActions = () => {
             )
 
             if (data) {
-                // Update current and visualization with edited name/description
-                dispatch(setCurrentVisNameDescription(data))
                 dispatch(setSavedVisNameDescription(data))
 
                 showAlert({
@@ -189,6 +184,10 @@ export const useToolbarActions = () => {
                     visualization: getSaveableVisualization(
                         currentVis as SavedVisualization
                     ),
+                    // name/description are stripped from currentVis, so read
+                    // them from savedVis
+                    name: savedVis.name,
+                    description: savedVis.description,
                 })
             )
         )
@@ -205,7 +204,7 @@ export const useToolbarActions = () => {
         } else if (error) {
             onError(error as EngineError)
         }
-    }, [dispatch, currentVis, onError])
+    }, [dispatch, currentVis, savedVis, onError])
 
     // New visualization
     // it can be a copy of an existing one, but a new id is returned

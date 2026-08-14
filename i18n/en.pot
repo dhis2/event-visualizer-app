@@ -37,6 +37,9 @@ msgstr "Case sensitive"
 msgid "Delete filter"
 msgstr "Delete filter"
 
+msgid "Only available for repeatable stages"
+msgstr "Only available for repeatable stages"
+
 msgid "Repeated events"
 msgstr "Repeated events"
 

@@ -1,10 +1,21 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
+import { MetadataStore } from '@modules/metadata/store'
+import { getDefaultOptions } from '@modules/options'
 import {
     getSaveableVisualization,
+    getVisualizationState,
     getVisualizationUiConfig,
+    isDefaultOptionValue,
     normalizeApiSavedVisualization,
+    toCurrentVis,
 } from '@modules/visualization/state'
-import type { ApiSavedVisualization, SavedVisualization } from '@types'
+import { buildCurrentVisFromVisUiConfig } from '@store/thunks'
+import type {
+    ApiSavedVisualization,
+    CurrentVisualization,
+    EventVisualizationOptions,
+    SavedVisualization,
+} from '@types'
 import { describe, it, expect } from 'vitest'
 
 const PID = 'pid'
@@ -565,5 +576,233 @@ describe('normalizeApiSavedVisualization', () => {
         )
 
         expect(result.legacy).toBe(true)
+    })
+
+    it('upgrades a legacy EVENT+LINE_LIST enrollment `ou` to `enrollmentOu`', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                type: 'LINE_LIST',
+                outputType: 'EVENT',
+                columns: [
+                    {
+                        dimension: 'ou',
+                        dimensionType: 'ORGANISATION_UNIT',
+                        program: { id: PID },
+                    },
+                ] as ApiSavedVisualization['columns'],
+            })
+        )
+
+        expect(dimensionsOf(result)).toEqual(['enrollmentOu'])
+        expect(result.legacy).toBe(true)
+    })
+
+    it('leaves ENROLLMENT enrollment `ou` as `ou`', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                type: 'LINE_LIST',
+                outputType: 'ENROLLMENT',
+                columns: [
+                    {
+                        dimension: 'ou',
+                        dimensionType: 'ORGANISATION_UNIT',
+                        program: { id: PID },
+                    },
+                ] as ApiSavedVisualization['columns'],
+            })
+        )
+
+        expect(dimensionsOf(result)).toEqual(['ou'])
+    })
+
+    it('leaves the stage event `ou` (with programStage) as `ou`', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                type: 'LINE_LIST',
+                outputType: 'EVENT',
+                columns: [
+                    {
+                        dimension: 'ou',
+                        dimensionType: 'ORGANISATION_UNIT',
+                        program: { id: PID },
+                        programStage: { id: SID },
+                    },
+                ] as ApiSavedVisualization['columns'],
+            })
+        )
+
+        expect(dimensionsOf(result)).toEqual(['ou'])
+    })
+})
+
+describe('getVisualizationState treats default-valued options as unchanged', () => {
+    /* The API sends real option values, not a sparse object. digitGroupSeparator
+     * is the case that matters: the API sends a value where our default is
+     * undefined, and the two must still compare as equal. */
+    const apiDefaultOptions: Partial<EventVisualizationOptions> = {
+        ...DEFAULT_OPTIONS,
+        digitGroupSeparator: 'SPACE',
+    }
+
+    const buildApiVis = (
+        options: Partial<EventVisualizationOptions> = apiDefaultOptions
+    ): ApiSavedVisualization =>
+        ({
+            type: 'LINE_LIST',
+            outputType: 'EVENT',
+            columns: [],
+            rows: [],
+            filters: [],
+            programDimensions: [],
+            ...options,
+        }) as unknown as ApiSavedVisualization
+
+    /* Rebuild currentVis the way the app does: derive a visUiConfig from the
+     * loaded vis, then run the real buildCurrentVisFromVisUiConfig (the same
+     * function the update thunk uses) so this test can't drift from the app.
+     * Dimensions are empty, so an empty metadata store suffices and any diff
+     * can only come from options. `instanceDefaults` stands in for the
+     * systemSetting-seeded base options. */
+    const rebuildCurrentVis = (
+        savedVis: SavedVisualization,
+        instanceDefaults: EventVisualizationOptions = DEFAULT_OPTIONS
+    ): CurrentVisualization => {
+        const baseline = toCurrentVis(savedVis)
+        return buildCurrentVisFromVisUiConfig({
+            previousCurrentVis: baseline,
+            visUiConfig: getVisualizationUiConfig(baseline, instanceDefaults),
+            metadataStore: new MetadataStore({}),
+        })
+    }
+
+    it('stays SAVED for a freshly loaded vis carrying default-valued options', () => {
+        const savedVis = normalizeApiSavedVisualization(buildApiVis())
+
+        const currentVis = rebuildCurrentVis(savedVis)
+
+        expect(getVisualizationState(savedVis, currentVis)).toBe('SAVED')
+    })
+
+    it('stays SAVED when a non-default option is set', () => {
+        const savedVis = normalizeApiSavedVisualization(
+            buildApiVis({
+                ...apiDefaultOptions,
+                showData: true,
+                displayDensity: 'COMFORTABLE',
+            })
+        )
+
+        const currentVis = rebuildCurrentVis(savedVis)
+
+        expect(getVisualizationState(savedVis, currentVis)).toBe('SAVED')
+    })
+
+    it('stays SAVED when the instance separator changed after the vis was saved', () => {
+        const savedVis = normalizeApiSavedVisualization(
+            buildApiVis({ ...apiDefaultOptions, digitGroupSeparator: 'COMMA' })
+        )
+
+        /* The vis keeps the separator seeded at creation (COMMA); it does not
+         * follow the instance default, now SPACE — so it stays SAVED. */
+        const instanceDefaults = getDefaultOptions('SPACE')
+        const currentVis = rebuildCurrentVis(savedVis, instanceDefaults)
+
+        expect(currentVis.digitGroupSeparator).toBe('COMMA')
+        expect(getVisualizationState(savedVis, currentVis)).toBe('SAVED')
+    })
+
+    it('is DIRTY when a real option changes', () => {
+        const savedVis = normalizeApiSavedVisualization(buildApiVis())
+
+        const currentVis = {
+            ...rebuildCurrentVis(savedVis),
+            showData: true,
+        }
+
+        expect(getVisualizationState(savedVis, currentVis)).toBe('DIRTY')
+    })
+})
+
+describe('getVisualizationState ignores non-persisted dimension props', () => {
+    const base = {
+        type: 'LINE_LIST',
+        outputType: 'EVENT',
+        rows: [],
+        filters: [],
+    }
+
+    it('is SAVED when dims differ only by dimensionType/valueType', () => {
+        const savedVis = {
+            ...base,
+            columns: [
+                {
+                    dimension: 'de1',
+                    dimensionType: 'PROGRAM_DATA_ELEMENT',
+                    program: { id: 'p1' },
+                    programStage: { id: 's1' },
+                },
+            ],
+        } as unknown as SavedVisualization
+        const currentVis = {
+            ...base,
+            columns: [
+                {
+                    dimension: 'de1',
+                    dimensionType: 'DATA_ELEMENT',
+                    valueType: 'TEXT',
+                    program: { id: 'p1' },
+                    programStage: { id: 's1' },
+                },
+            ],
+        } as unknown as CurrentVisualization
+
+        expect(getVisualizationState(savedVis, currentVis)).toBe('SAVED')
+    })
+
+    it('is DIRTY when the dimension itself changes', () => {
+        const savedVis = {
+            ...base,
+            columns: [
+                { dimension: 'de1', dimensionType: 'PROGRAM_DATA_ELEMENT' },
+            ],
+        } as unknown as SavedVisualization
+        const currentVis = {
+            ...base,
+            columns: [{ dimension: 'de2', dimensionType: 'DATA_ELEMENT' }],
+        } as unknown as CurrentVisualization
+
+        expect(getVisualizationState(savedVis, currentVis)).toBe('DIRTY')
+    })
+})
+
+describe('isDefaultOptionValue', () => {
+    it('treats absent (undefined) as default', () => {
+        expect(isDefaultOptionValue('showData', undefined)).toBe(true)
+    })
+
+    it('treats a value equal to the default as default', () => {
+        // DEFAULT_OPTIONS.showData is false
+        expect(isDefaultOptionValue('showData', false)).toBe(true)
+    })
+
+    it('treats a value differing from the default as non-default', () => {
+        expect(isDefaultOptionValue('showData', true)).toBe(false)
+    })
+
+    it('treats any concrete digitGroupSeparator as non-default (its default is undefined)', () => {
+        expect(isDefaultOptionValue('digitGroupSeparator', undefined)).toBe(
+            true
+        )
+        expect(isDefaultOptionValue('digitGroupSeparator', 'SPACE')).toBe(false)
+    })
+
+    it('treats a populated legend as non-default (default legend is undefined)', () => {
+        expect(
+            isDefaultOptionValue('legend', {
+                showKey: false,
+                strategy: 'BY_DATA_ITEM',
+                style: 'FILL',
+            })
+        ).toBe(false)
     })
 })

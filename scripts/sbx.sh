@@ -74,6 +74,27 @@ accept_trust() {
     ' _ "$REPO_ROOT"
 }
 
+# sbx auto-injects its own proxy-managed GH_TOKEN placeholder (gho_sbxproxymanaged…) that
+# shadows the custom read-only-PAT secret's placeholder in the sandbox environment. gh then
+# receives a token with no swap rule, so every authenticated GitHub API call returns 401
+# (git-over-HTTPS still works — it uses a separate credential path). Read the configured
+# placeholder from the stored secret and export it in the persistent startup so it overrides
+# the built-in one; the proxy swaps it for the real read-only PAT on outbound GitHub
+# requests, restoring authenticated gh reads. Idempotent — safe to re-run on every mount.
+wire_github_token() {
+    local name="$1" placeholder
+    placeholder="$(sbx secret ls 2>/dev/null | grep -w GH_TOKEN | grep -oE 'ghp_[[:alnum:]]+' | head -1)"
+    if [ -z "$placeholder" ]; then
+        echo "⚠ No custom GH_TOKEN secret found — gh stays unauthenticated. Run './scripts/sbx.sh setup' to add a read-only PAT."
+        return 0
+    fi
+    sbx exec "$name" bash -lc '
+        sudo sed -i "\#sbx-gh-token#d" /etc/sandbox-persistent.sh 2>/dev/null || true
+        printf "export GH_TOKEN=%q  # sbx-gh-token\n" "$1" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null
+    ' _ "$placeholder"
+    echo "Wired the read-only GitHub token for '$name' (gh reads authenticated; writes blocked server-side)."
+}
+
 # Build the custom sandbox image and load it into the sbx runtime. The sbx runtime has
 # its own image store, so bridge the host docker image across via save + template load.
 build_image() {
@@ -170,6 +191,12 @@ ide_dir() {
     printf '%s/.claude/ide' "$HOME"
 }
 
+# Per-sandbox host directory that backs the sandbox's native plan-mode dir. Keyed by
+# sandbox name so a mount and a clone running at once write plans to separate folders.
+plans_host_dir() {
+    printf '%s/.claude/sbx-plans/%s' "$HOME" "$1"
+}
+
 # Symlink the RW-mounted host session dir (history + memory) into the sandbox home,
 # where Claude looks for it — host and sandbox homes differ. Bounded + retried.
 link_host_dirs() {
@@ -180,6 +207,22 @@ link_host_dirs() {
         echo "Linked session history + memory (two-way)."
     else
         echo "⚠ Couldn't link session history (sbx not responding) — continuing without it."
+    fi
+}
+
+# Symlink the sandbox's native plan-mode dir (~/.claude/plans) onto the bind-mounted
+# per-sandbox host dir, so plan files Claude writes in native plan mode are readable in the
+# host editor. Bounded + retried; on failure it prints a notice and continues. The host dir
+# is passed to `sbx create`, so the mount is part of the sandbox spec and survives restarts;
+# the symlink lives in the persistent container FS. (Superpowers plans need none of this —
+# they land in the repo tree, which the mount surfaces and the clone commits.)
+link_plans_dir() {
+    local name="$1" pdir
+    pdir="$(plans_host_dir "$name")"
+    if retry 2 12 sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude"; rm -rf "$HOME/.claude/plans"; ln -sfn "$1" "$HOME/.claude/plans"' _ "$pdir"; then
+        echo "Linked native plan-mode dir to host: $pdir"
+    else
+        echo "⚠ Couldn't link the plan-mode dir (sbx not responding) — native plans will stay in the VM."
     fi
 }
 
@@ -266,7 +309,7 @@ node_modules_overlay() {
         printf "mountpoint -q %q || sudo mount --bind %q %q  # sbx-nm-overlay\n" \
             "$repo/node_modules" "$nm" "$repo/node_modules" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null
         if [ ! -e "$nm/.installed" ] || [ "$repo/pnpm-lock.yaml" -nt "$nm/.installed" ]; then
-            cd "$repo" && HUSKY=0 pnpm install && touch "$nm/.installed"
+            cd "$repo" && pnpm install && touch "$nm/.installed"
         fi
     ' _ "$REPO_ROOT"; then
         echo "Dependencies installed in a container-local node_modules (host node_modules untouched)."
@@ -328,13 +371,19 @@ cmd_mount() {
         # Editor-lock dir is mounted READ-ONLY: the sandbox only reads locks to discover
         # Neovim; a RW mount let the sandbox's failed connect delete the host's lock.
         if [ -d "$(ide_dir)" ]; then extra+=("$(ide_dir):ro"); fi
+        mkdir -p "$(plans_host_dir "$MOUNT_NAME")"
+        extra+=("$(plans_host_dir "$MOUNT_NAME")")
         sbx create -t "$IMAGE_TAG" claude "$REPO_ROOT" ${extra[@]+"${extra[@]}"} --name "$MOUNT_NAME"
         configure_policy "$MOUNT_NAME"
         accept_trust "$MOUNT_NAME"
         link_host_dirs "$MOUNT_NAME"
+        link_plans_dir "$MOUNT_NAME"
     fi
     # Editor integration is best-effort and must never block the mount.
     ide_link "$MOUNT_NAME" || true
+    # Override sbx's built-in GH_TOKEN placeholder with the custom read-only secret's
+    # placeholder so authenticated gh reads work (see wire_github_token).
+    wire_github_token "$MOUNT_NAME"
     # Mandatory isolation boundary: if the container-local node_modules overlay can't be
     # established, abort rather than launch Claude against the host-backed node_modules.
     node_modules_overlay "$MOUNT_NAME" || exit 1
@@ -353,17 +402,20 @@ cmd_clone() {
     if ! sandbox_exists "$CLONE_NAME"; then
         ensure_image
         echo "Creating clone sandbox '$CLONE_NAME'..."
-        sbx create --clone -t "$IMAGE_TAG" claude "$REPO_ROOT" --name "$CLONE_NAME"
+        mkdir -p "$(plans_host_dir "$CLONE_NAME")"
+        sbx create --clone -t "$IMAGE_TAG" claude "$REPO_ROOT" "$(plans_host_dir "$CLONE_NAME")" --name "$CLONE_NAME"
         # The clone inherits the host's SSH origin, which needs a key the sandbox lacks.
         # Point it at HTTPS so the agent can fetch/pull the (public) repo with no credentials.
         # Pushing still fails (no push creds), which is intended.
         sbx exec "$CLONE_NAME" bash -lc 'cd "$1" && git remote set-url origin "$(git remote get-url origin | sed -E "s#git@github.com:#https://github.com/#")"' _ "$REPO_ROOT" || true
-        # Disable git hooks in the clone: the per-edit format hook and the "run pnpm
-        # test/lint before finishing" instruction already cover lint/types/tests, and the
-        # clone never pushes (pre-push never fires). HUSKY=0 skips all three (.hooks/pre-commit).
-        sbx exec "$CLONE_NAME" bash -lc 'sudo sed -i "/export HUSKY=/d" /etc/sandbox-persistent.sh; printf "export HUSKY=0\n" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null' || true
+        # Skip the pre-commit hook in the clone: the per-edit format hook and the "run
+        # pnpm test/lint before finishing" instruction already cover lint/types/tests.
+        # commit-msg still runs (lints commit messages) and pre-push never fires (the
+        # clone never pushes). RUN_PRE_COMMIT_HOOK=0 is read by .hooks/pre-commit.
+        sbx exec "$CLONE_NAME" bash -lc 'sudo sed -i "/export RUN_PRE_COMMIT_HOOK=/d" /etc/sandbox-persistent.sh; printf "export RUN_PRE_COMMIT_HOOK=0\n" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null' || true
         configure_policy "$CLONE_NAME"
         accept_trust "$CLONE_NAME"
+        link_plans_dir "$CLONE_NAME"
         setup_signing "$CLONE_NAME"
         echo "Installing dependencies in the clone (generate-types hits the DHIS2 instance; includes the Cypress binary)..."
         sbx exec "$CLONE_NAME" bash -lc 'cd "$1" && pnpm install' _ "$REPO_ROOT" \
@@ -371,6 +423,9 @@ cmd_clone() {
         copy_memory "$CLONE_NAME"
         maybe_inject_dhis2_creds "$CLONE_NAME"
     fi
+    # Override sbx's built-in GH_TOKEN placeholder with the custom read-only secret's
+    # placeholder so authenticated gh reads work (see wire_github_token).
+    wire_github_token "$CLONE_NAME"
     local note
     note="$(compose_note clone.md)"
     sbx run "$CLONE_NAME" -- \
@@ -416,7 +471,7 @@ cmd_refresh_deps() {
         set -e
         repo="$1"; nm=/home/agent/nm
         mountpoint -q "$repo/node_modules" || { mkdir -p "$nm" "$repo/node_modules"; sudo mount --bind "$nm" "$repo/node_modules"; }
-        cd "$repo" && HUSKY=0 pnpm install && touch "$nm/.installed"
+        cd "$repo" && pnpm install && touch "$nm/.installed"
         echo "Refreshed."
     ' _ "$REPO_ROOT"
 }
