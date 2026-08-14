@@ -14,7 +14,11 @@ import {
 
 /* A line list defaults to no grouping, which is the absence of state, so only
  * pivot tables need a default applied. Keyed off presence rather than value so
- * an explicit "No grouping" choice is never overwritten by the default. */
+ * an explicit "No grouping" choice is never overwritten by the default.
+ *
+ * A thunk rather than the listener effect itself because the listener
+ * middleware is created without an extra argument, so only a thunk can reach
+ * the metadata store. */
 const tSeedDefaultGrouping =
     (dimensionIds: string[]) =>
     async (
