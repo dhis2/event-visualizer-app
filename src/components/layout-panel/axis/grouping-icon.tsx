@@ -1,7 +1,5 @@
 import { type FC } from 'react'
 
-/* Fill is currentColor, as DHIS2's own chip icons do it, so the colour lives
- * with the chip styles rather than in the markup. */
 export const GroupingIcon: FC = () => (
     <svg
         width="16"
