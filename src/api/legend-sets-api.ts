@@ -95,9 +95,7 @@ export const legendSetsApi = api.injectEndpoints({
                             metadataInput[dimensionId] = {
                                 id: dimensionId,
                                 dimensionType,
-                                legendSets: legendSets.map(({ id }) => ({
-                                    id,
-                                })),
+                                legendSetIds: legendSets.map(({ id }) => id),
                             }
                         }
 
