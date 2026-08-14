@@ -159,7 +159,7 @@ describe('ConditionsTabContent — Show all / Filter', () => {
         expect(
             screen.getByRole('radio', { name: 'Show all values' })
         ).toBeChecked()
-        expect(screen.getByRole('radio', { name: 'Filter' })).toBeDisabled()
+        expect(screen.getByRole('radio', { name: /^Filter/ })).toBeDisabled()
         expect(
             screen.getByText('File type dimensions cannot be filtered.')
         ).toBeInTheDocument()
@@ -210,10 +210,10 @@ describe('ConditionsTabContent — grouping', () => {
         )
 
         expect(
-            await screen.findByRole('radio', { name: 'No grouping' })
+            await screen.findByRole('radio', { name: /^No grouping/ })
         ).toBeChecked()
         expect(
-            screen.getByRole('radio', { name: 'Weight legends' })
+            screen.getByRole('radio', { name: /^Weight legends/ })
         ).toBeInTheDocument()
         expect(screen.getByText('Low, High')).toBeInTheDocument()
         expect(
@@ -258,7 +258,7 @@ describe('ConditionsTabContent — grouping', () => {
         )
 
         await user.click(
-            await screen.findByRole('radio', { name: 'Weight legends' })
+            await screen.findByRole('radio', { name: /^Weight legends/ })
         )
 
         expect(
@@ -285,7 +285,7 @@ describe('ConditionsTabContent — grouping', () => {
         )
 
         expect(
-            await screen.findByRole('radio', { name: 'Weight legends' })
+            await screen.findByRole('radio', { name: /^Weight legends/ })
         ).toBeChecked()
         expect(
             screen.getByRole('radio', { name: 'Show all groups' })
@@ -306,7 +306,7 @@ describe('ConditionsTabContent — grouping', () => {
         )
 
         await user.click(
-            await screen.findByRole('radio', { name: 'Age legends' })
+            await screen.findByRole('radio', { name: /^Age legends/ })
         )
 
         const conditions = getVisUiConfigConditionsByDimension(
@@ -334,7 +334,7 @@ describe('ConditionsTabContent — grouping', () => {
         )
 
         await user.click(
-            await screen.findByRole('radio', { name: 'No grouping' })
+            await screen.findByRole('radio', { name: /^No grouping/ })
         )
 
         expect(

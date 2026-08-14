@@ -36,26 +36,19 @@ export const RadioCard: FC<RadioCardProps> = ({
             [classes.cardDisabled]: disabled,
             [classes.cardEmphasized]: emphasized,
         })}
-        /* The radio's own <label> covers the title but not the help text or the
-         * revealed controls. Selecting from the help text too keeps the whole
-         * card surface live, matching the pointer cursor it carries. */
-        onClick={(event) => {
-            const target = event.target as HTMLElement
-
-            if (
-                !disabled &&
-                !target.closest('label') &&
-                !target.closest(`.${classes.revealed}`)
-            ) {
-                onSelect()
-            }
-        }}
         data-test={dataTest}
     >
         <div className={classes.cardContent}>
             <Radio
                 name={name}
-                label={<span className={classes.cardTitle}>{label}</span>}
+                label={
+                    <span className={classes.cardLabelContent}>
+                        <span className={classes.cardTitle}>{label}</span>
+                        {helpText ? (
+                            <p className={classes.cardHelp}>{helpText}</p>
+                        ) : null}
+                    </span>
+                }
                 value={value}
                 checked={selected}
                 onChange={onSelect}
@@ -64,7 +57,6 @@ export const RadioCard: FC<RadioCardProps> = ({
                 className={classes.cardRadio}
                 dataTest={`${dataTest}-radio`}
             />
-            {helpText ? <p className={classes.cardHelp}>{helpText}</p> : null}
         </div>
         {selected && children ? (
             <div className={classes.revealed}>{children}</div>

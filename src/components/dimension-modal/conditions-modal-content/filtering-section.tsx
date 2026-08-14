@@ -23,14 +23,14 @@ import classes from './styles/conditions-modal-content.module.css'
 
 const EMPTY_CONDITION = ''
 
-const SINGLETON_TYPES: ValueType[] = [
+const SINGLETON_TYPES: Set<ValueType> = new Set([
     'BOOLEAN',
     'TRUE_ONLY',
     'ORGANISATION_UNIT',
-]
+])
 
 // List of supported types for conditions
-const SUPPORTED_TYPES: ValueType[] = [
+const SUPPORTED_TYPES: Set<ValueType> = new Set([
     'NUMBER',
     'UNIT_INTERVAL',
     'PERCENTAGE',
@@ -51,7 +51,7 @@ const SUPPORTED_TYPES: ValueType[] = [
     'TIME',
     'DATETIME',
     'ORGANISATION_UNIT',
-]
+])
 
 type FilteringSectionProps = {
     dimension: DimensionMetadataItem
@@ -76,10 +76,10 @@ export const FilteringSection: FC<FilteringSectionProps> = ({
     const isSingleCondition: boolean = Boolean(
         isLegendSetCondition ||
         isOptionSetCondition ||
-        (valueType && SINGLETON_TYPES.includes(valueType))
+        (valueType && SINGLETON_TYPES.has(valueType))
     )
     const isSupported: boolean = Boolean(
-        isProgramIndicator || (valueType && SUPPORTED_TYPES.includes(valueType))
+        isProgramIndicator || (valueType && SUPPORTED_TYPES.has(valueType))
     )
 
     const [conditionsList, setConditionsList] = useState<string[]>(
@@ -96,7 +96,7 @@ export const FilteringSection: FC<FilteringSectionProps> = ({
                     conditions: parseConditionsArrayToString(
                         conditionsList.filter(
                             (condition) =>
-                                condition.length && condition.slice(-1) !== ':'
+                                condition.length && !condition.endsWith(':')
                         )
                     ),
                 })
