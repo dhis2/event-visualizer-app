@@ -88,6 +88,7 @@ export const LegendSetCondition: FC<LegendSetConditionProps> = ({
                     searchTerm={searchTerm}
                     setSearchTerm={(value) => setSearchTerm(value ?? '')}
                     title={i18n.t('Available groups')}
+                    placeholder={i18n.t('Filter groups')}
                     dataTest={`${dataTest}-left-header`}
                 />
             }

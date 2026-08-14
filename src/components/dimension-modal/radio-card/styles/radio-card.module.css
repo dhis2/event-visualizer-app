@@ -13,10 +13,10 @@
 .heading {
     display: block;
     margin-block-end: var(--spacers-dp8);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
-    line-height: 16px;
-    color: var(--colors-grey800);
+    line-height: 19px;
+    color: var(--colors-grey900);
 }
 
 .cards {
@@ -26,13 +26,9 @@
 }
 
 .cardsRow {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: stretch;
-}
-
-.cardsRow > * {
-    flex: 1 1 180px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--spacers-dp8);
 }
 
 .card {
@@ -68,6 +64,34 @@
     font-size: 13px;
     line-height: 16px;
     color: var(--colors-grey600);
+}
+
+/* An emphasized card owns its padding on the content column, so the title and
+ * its help text can sit a single gap apart. */
+.cardEmphasized .cardContent {
+    display: flex;
+    min-inline-size: 0;
+    flex-direction: column;
+    row-gap: var(--spacers-dp4);
+    padding: var(--spacers-dp8);
+}
+
+.cardEmphasized .cardRadio {
+    padding: 0;
+}
+
+.cardEmphasized .cardTitle {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--colors-grey900);
+}
+
+.cardEmphasized .cardHelp {
+    padding: 0;
+    padding-inline-start: var(--spacers-dp24);
+    font-size: 12px;
+    line-height: 15px;
 }
 
 /* The radio's root element is a <label>, so making it fill the card (padding

@@ -68,6 +68,7 @@ export const GroupingSection: FC<GroupingSectionProps> = ({
                     label={legendSet.name}
                     value={legendSet.id}
                     name={dataTest}
+                    emphasized
                     dataTest={`${dataTest}-${legendSet.id}`}
                     helpText={getLegendsPreview(legendSet.legends)}
                     onSelect={() => selectLegendSet(legendSet.id)}
@@ -78,6 +79,7 @@ export const GroupingSection: FC<GroupingSectionProps> = ({
                 label={i18n.t('No grouping')}
                 value={NO_GROUPING_VALUE}
                 name={dataTest}
+                emphasized
                 dataTest={`${dataTest}-none`}
                 helpText={i18n.t('Show each value individually')}
                 onSelect={() => selectLegendSet(undefined)}

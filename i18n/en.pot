@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-13T10:47:57.281Z\n"
-"PO-Revision-Date: 2026-08-13T10:47:57.281Z\n"
+"POT-Creation-Date: 2026-08-14T13:16:29.755Z\n"
+"PO-Revision-Date: 2026-08-14T13:16:29.755Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -78,6 +78,9 @@ msgstr "Show each value individually"
 
 msgid "Available groups"
 msgstr "Available groups"
+
+msgid "Filter groups"
+msgstr "Filter groups"
 
 msgid "Selected groups"
 msgstr "Selected groups"

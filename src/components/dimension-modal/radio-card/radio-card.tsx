@@ -12,6 +12,10 @@ type RadioCardProps = PropsWithChildren<{
     onSelect: () => void
     disabled?: boolean
     helpText?: string
+    /* Gives the label the weight of a title and pairs it more tightly with its
+     * help text. For cards whose help text is part of the choice rather than an
+     * aside about it. */
+    emphasized?: boolean
 }>
 
 export const RadioCard: FC<RadioCardProps> = ({
@@ -23,12 +27,14 @@ export const RadioCard: FC<RadioCardProps> = ({
     onSelect,
     disabled = false,
     helpText,
+    emphasized = false,
     children,
 }) => (
     <div
         className={cx(classes.card, {
             [classes.cardSelected]: selected,
             [classes.cardDisabled]: disabled,
+            [classes.cardEmphasized]: emphasized,
         })}
         /* The radio's own <label> covers the title but not the help text or the
          * revealed controls. Selecting from the help text too keeps the whole
@@ -46,18 +52,20 @@ export const RadioCard: FC<RadioCardProps> = ({
         }}
         data-test={dataTest}
     >
-        <Radio
-            name={name}
-            label={label}
-            value={value}
-            checked={selected}
-            onChange={onSelect}
-            disabled={disabled}
-            dense
-            className={classes.cardRadio}
-            dataTest={`${dataTest}-radio`}
-        />
-        {helpText ? <p className={classes.cardHelp}>{helpText}</p> : null}
+        <div className={classes.cardContent}>
+            <Radio
+                name={name}
+                label={<span className={classes.cardTitle}>{label}</span>}
+                value={value}
+                checked={selected}
+                onChange={onSelect}
+                disabled={disabled}
+                dense
+                className={classes.cardRadio}
+                dataTest={`${dataTest}-radio`}
+            />
+            {helpText ? <p className={classes.cardHelp}>{helpText}</p> : null}
+        </div>
         {selected && children ? (
             <div className={classes.revealed}>{children}</div>
         ) : null}
