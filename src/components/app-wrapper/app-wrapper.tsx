@@ -5,25 +5,20 @@ import { InterpretationsProvider } from './interpretations-provider'
 import { AppMetadataProvider } from './metadata-provider/metadata-provider'
 import { StoreProvider } from './store-provider'
 import { StoreToLocationSyncer } from './store-to-location-syncer'
-import { useUncaughtErrorAlert } from './use-uncaught-error-alert'
 // eslint-disable-next-line no-restricted-imports
 import '../../locales/index.js'
 
-export const AppWrapper: FC<{ children: ReactNode }> = ({ children }) => {
-    useUncaughtErrorAlert()
-
-    return (
-        <AppCachedDataQueryProvider>
-            <AppMetadataProvider>
-                <StoreProvider>
-                    <StoreToLocationSyncer />
-                    <DndContextProvider>
-                        <InterpretationsProvider>
-                            {children}
-                        </InterpretationsProvider>
-                    </DndContextProvider>
-                </StoreProvider>
-            </AppMetadataProvider>
-        </AppCachedDataQueryProvider>
-    )
-}
+export const AppWrapper: FC<{ children: ReactNode }> = ({ children }) => (
+    <AppCachedDataQueryProvider>
+        <AppMetadataProvider>
+            <StoreProvider>
+                <StoreToLocationSyncer />
+                <DndContextProvider>
+                    <InterpretationsProvider>
+                        {children}
+                    </InterpretationsProvider>
+                </DndContextProvider>
+            </StoreProvider>
+        </AppMetadataProvider>
+    </AppCachedDataQueryProvider>
+)

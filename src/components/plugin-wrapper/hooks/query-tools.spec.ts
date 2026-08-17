@@ -21,10 +21,14 @@ const basePivotTable = {
     programDimensions: [{ id: 'p1' }],
 } as unknown as CurrentVisualization
 
-const lineListKey = (vis: CurrentVisualization) =>
-    JSON.stringify(getLineListBaseRequestIdentity(vis))
-const pivotTableKey = (vis: CurrentVisualization) =>
-    JSON.stringify(getPivotTableBaseRequestIdentity(vis))
+const lineListKey = (
+    vis: CurrentVisualization,
+    filters?: Record<string, unknown>
+) => JSON.stringify(getLineListBaseRequestIdentity(vis, filters))
+const pivotTableKey = (
+    vis: CurrentVisualization,
+    filters?: Record<string, unknown>
+) => JSON.stringify(getPivotTableBaseRequestIdentity(vis, filters))
 
 describe('getRequestStructure (line list)', () => {
     it('changes when the selected items of a dimension change', () => {
@@ -54,6 +58,14 @@ describe('getRequestStructure (line list)', () => {
         } as unknown as CurrentVisualization
 
         expect(lineListKey(next)).not.toBe(lineListKey(baseLineList))
+    })
+
+    it('changes when the applied filters change', () => {
+        expect(
+            lineListKey(baseLineList, { relativePeriodDate: '2024-01-01' })
+        ).not.toBe(
+            lineListKey(baseLineList, { relativePeriodDate: '2024-06-01' })
+        )
     })
 
     it('does not change when only the sorting changes', () => {
@@ -92,6 +104,14 @@ describe('getRequestStructure (pivot table)', () => {
         } as unknown as CurrentVisualization
 
         expect(pivotTableKey(next)).not.toBe(pivotTableKey(basePivotTable))
+    })
+
+    it('changes when the applied filters change', () => {
+        expect(
+            pivotTableKey(basePivotTable, { relativePeriodDate: '2024-01-01' })
+        ).not.toBe(
+            pivotTableKey(basePivotTable, { relativePeriodDate: '2024-06-01' })
+        )
     })
 
     it('includes the custom value only when both value and aggregationType are set', () => {

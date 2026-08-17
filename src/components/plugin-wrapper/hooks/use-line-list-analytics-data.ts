@@ -8,13 +8,15 @@ import type {
 } from '@components/line-list/types.js'
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
-import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
+import { useDataEngine } from '@dhis2/app-runtime'
 import { analyticsHeaderToCanonicalDimensionId } from '@modules/analytics-request'
 import { formatBooleanValue, isBooleanValue } from '@modules/conditions'
 import {
     buildSuffixContext,
     getDimensionSuffix,
 } from '@modules/dimension/suffix'
+import { EmptyResponseError } from '@modules/error/empty-response-error'
+import { isAbortError } from '@modules/error/is-abort-error'
 import { resolveLayoutContext } from '@modules/layout'
 import { logger } from '@modules/logger'
 import { isValueTypeNumeric } from '@modules/value-type'
@@ -29,6 +31,7 @@ import type {
     UserOrgUnitMetadataItem,
 } from '@types'
 import { useCallback, useState } from 'react'
+import { useErrorBoundary } from 'react-error-boundary'
 import { getAnalyticsEndpoint } from './query-tools-common'
 import {
     getAdaptedVisualization,
@@ -455,7 +458,6 @@ type FetchAnalyticsDataParams = {
 type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
 type AnalyticsDataState = {
     isFetching: boolean
-    error?: FetchError
     data: LineListAnalyticsData | null
 }
 type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
@@ -464,10 +466,10 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const dataEngine = useDataEngine()
     const metadataStore = useMetadataStore()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
+    const { showBoundary } = useErrorBoundary()
 
     const [state, setState] = useState<AnalyticsDataState>({
         isFetching: false,
-        error: undefined,
         data: null,
     })
 
@@ -483,11 +485,10 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             onResponseReceived,
         }) => {
             const requestSignature = JSON.stringify({
-                ...getBaseRequestIdentity(visualization),
+                ...getBaseRequestIdentity(visualization, filters),
                 sorting: visualization.sorting ?? null,
                 page,
                 pageSize,
-                filters: filters ?? null,
                 displayProperty,
             })
 
@@ -498,7 +499,6 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
             setState((prevState) => ({
                 ...prevState,
                 isFetching: true,
-                error: undefined,
             }))
 
             const relativePeriodDate = filters?.relativePeriodDate
@@ -519,6 +519,10 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     visualization,
                     displayProperty,
                 })
+
+                if (analyticsResponse.rows.length === 0) {
+                    throw new EmptyResponseError()
+                }
 
                 const legendSetIds = collectLegendSetIdsToFetch(
                     analyticsResponse,
@@ -545,23 +549,32 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
 
                 setState({
                     data: analyticsData,
-                    error: undefined,
                     isFetching: false,
                 })
 
                 onResponseReceived()
             } catch (error) {
                 logger.error('fetch LL data error', error)
-                setState({
-                    data: null,
-                    error: error as FetchError,
-                    isFetching: false,
-                })
+                if (isAbortError(error)) {
+                    setState((prevState) => ({
+                        data: prevState.data,
+                        isFetching: false,
+                    }))
+                } else {
+                    showBoundary(error)
+                }
             } finally {
                 release(requestSignature)
             }
         },
-        [analyticsEngine, dataEngine, metadataStore, reserve, release]
+        [
+            analyticsEngine,
+            dataEngine,
+            metadataStore,
+            reserve,
+            release,
+            showBoundary,
+        ]
     )
 
     return [fetchAnalyticsData, state]

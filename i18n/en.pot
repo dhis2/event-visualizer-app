@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-14T13:16:29.755Z\n"
-"PO-Revision-Date: 2026-08-14T13:16:29.755Z\n"
+"POT-Creation-Date: 2026-08-13T18:13:55.581Z\n"
+"PO-Revision-Date: 2026-08-13T18:13:55.582Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -24,6 +24,9 @@ msgstr ""
 
 msgid "{{- name}} was not added because it is already used as the custom value."
 msgstr "{{- name}} was not added because it is already used as the custom value."
+
+msgid "Retry"
+msgstr "Retry"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -204,9 +207,6 @@ msgstr "Code"
 
 msgid "Name"
 msgstr "Name"
-
-msgid "An error occurred"
-msgstr "An error occurred"
 
 msgid "Resize axes panel"
 msgstr "Resize axes panel"
@@ -1016,6 +1016,51 @@ msgstr "Registration org. unit"
 
 msgid "Enrollment date"
 msgstr "Enrollment date"
+
+msgid "Restricted access"
+msgstr "Restricted access"
+
+msgid ""
+"You don't have access to the data in this visualization. Contact a system "
+"administrator."
+msgstr ""
+"You don't have access to the data in this visualization. Contact a system "
+"administrator."
+
+msgid "You don't have access to one or more of the chosen organisation units."
+msgstr "You don't have access to one or more of the chosen organisation units."
+
+msgid "You don't have access to event analytics. Contact a system administrator."
+msgstr "You don't have access to event analytics. Contact a system administrator."
+
+msgid "Something went wrong"
+msgstr "Something went wrong"
+
+msgid "There's a problem with at least one selected indicator."
+msgstr "There's a problem with at least one selected indicator."
+
+msgid ""
+"There's a problem with the generated analytics. Contact a system "
+"administrator."
+msgstr ""
+"There's a problem with the generated analytics. Contact a system "
+"administrator."
+
+msgid "There's a syntax problem with the analytics request."
+msgstr "There's a syntax problem with the analytics request."
+
+msgid "No data"
+msgstr "No data"
+
+msgid ""
+"The selected dimensions didn't return any data. There may be no data, or "
+"you may not have access to it."
+msgstr ""
+"The selected dimensions didn't return any data. There may be no data, or "
+"you may not have access to it."
+
+msgid "There was a problem getting the data from the server."
+msgstr "There was a problem getting the data from the server."
 
 msgid "Columns"
 msgstr "Columns"
