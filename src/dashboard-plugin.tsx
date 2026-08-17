@@ -1,4 +1,5 @@
 import { getVisualizationQueryFields } from '@api/event-visualizations-api'
+import { parseEngineError } from '@api/parse-engine-error'
 import {
     PluginMetadataProvider,
     useMetadataStore,
@@ -35,7 +36,7 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     const metadataStore = useMetadataStore()
 
     // fetch the visualization
-    const { data, error, loading } = useDataQuery({
+    const { data, error, loading, refetch } = useDataQuery({
         eventVisualization: {
             resource: 'eventVisualizations',
             id: props.visualization.id, // TODO: this should be just passed as visualizationId
@@ -73,12 +74,7 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
         [savedVisualization]
     )
 
-    // TODO: handle errors
-    if (error) {
-        // `error` will be of type EngineError and `data` will is possibly undefined
-        logger.error('ERROR!', data, error)
-        return <div>Error loading event visualization: {error.message}</div>
-    }
+    const visualizationLoadError = error ? parseEngineError(error) : undefined
 
     logger.debug(
         'dp currentVisualization',
@@ -94,6 +90,8 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
                     displayProperty={pluginProps.displayProperty}
                     filters={pluginProps.filters}
                     visualization={currentVisualization}
+                    visualizationLoadError={visualizationLoadError}
+                    onRetryLoad={() => void refetch()}
                     isVisualizationLoading={loading}
                 />
             )}

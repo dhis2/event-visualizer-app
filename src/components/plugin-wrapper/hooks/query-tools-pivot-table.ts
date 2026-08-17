@@ -68,7 +68,8 @@ export const getCustomValueRequestParams = (
  * so sortOrder, topLimit, timeField and the custom value are part of the
  * identity rather than excluded from it. */
 export const getBaseRequestIdentity = (
-    visualization: CurrentVisualization
+    visualization: CurrentVisualization,
+    filters?: Record<string, unknown>
 ) => ({
     ...getAdaptedVisualization(visualization),
     programIds: (visualization.programDimensions ?? []).map((p) => p.id),
@@ -77,4 +78,5 @@ export const getBaseRequestIdentity = (
     sortOrder: visualization.sortOrder,
     topLimit: visualization.topLimit,
     ...getCustomValueRequestParams(visualization),
+    filters: filters ?? null,
 })

@@ -22,7 +22,10 @@ import {
     type CurrentVisState,
 } from './current-vis-slice'
 import { setDataSourceId } from './dimensions-selection-slice'
-import { setIsVisualizationLoading, setLoadError } from './loader-slice'
+import {
+    setIsVisualizationLoading,
+    setVisualizationLoadError,
+} from './loader-slice'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
 import type { RootState } from './store'
 import { clearUi, setUiUpdateAnimationShowingFor } from './ui-slice'
@@ -76,37 +79,45 @@ export const tLoadSavedVisualization = createAsyncThunk<
             })
         )
         if (data) {
-            const currentVis = toCurrentVis(data)
-            const selectedDataSourceId =
-                extractDataSourceIdFromVisualization(currentVis)
-            const currentOptions = getState().visUiConfig.options
+            try {
+                const currentVis = toCurrentVis(data)
+                const selectedDataSourceId =
+                    extractDataSourceIdFromVisualization(currentVis)
+                const currentOptions = getState().visUiConfig.options
 
-            dispatch(setSavedVis(data))
-            dispatch(setDataSourceId(selectedDataSourceId))
-            dispatch(
-                setVisUiConfig(
-                    getVisualizationUiConfig(currentVis, currentOptions)
+                dispatch(setSavedVis(data))
+                dispatch(setDataSourceId(selectedDataSourceId))
+                dispatch(
+                    setVisUiConfig(
+                        getVisualizationUiConfig(currentVis, currentOptions)
+                    )
                 )
-            )
-            dispatch(setCurrentVis(currentVis))
-            dispatch(setIsVisualizationLoading(false))
+                dispatch(setCurrentVis(currentVis))
+                dispatch(setIsVisualizationLoading(false))
 
-            if (updateStatistics) {
-                // update most viewed statistics
-                extra.engine
-                    .mutate({
-                        resource: 'dataStatistics',
-                        type: 'create',
-                        params: {
-                            eventType: 'EVENT_VISUALIZATION_VIEW',
-                            favorite: id,
-                        },
-                        data: {},
-                    })
-                    .catch((error) => logger.error(error))
+                if (updateStatistics) {
+                    // update most viewed statistics
+                    extra.engine
+                        .mutate({
+                            resource: 'dataStatistics',
+                            type: 'create',
+                            params: {
+                                eventType: 'EVENT_VISUALIZATION_VIEW',
+                                favorite: id,
+                            },
+                            data: {},
+                        })
+                        .catch((error) => logger.error(error))
+                }
+            } catch (processingError) {
+                /* A failure turning the fetched visualization into current-vis
+                 * state is a bug, not a fetch error; parseEngineError tags it
+                 * 'runtime', so it surfaces as fatal. */
+                dispatch(setVisualizationLoadError(processingError))
+                dispatch(setIsVisualizationLoading(false))
             }
         } else if (error) {
-            dispatch(setLoadError(error))
+            dispatch(setVisualizationLoadError(error))
             dispatch(setIsVisualizationLoading(false))
         }
     }
