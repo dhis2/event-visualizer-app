@@ -12,16 +12,16 @@
 # Yao Selom SAKA (HISP WCA) <ysaka@hispwca.org>, 2026
 # Gabriela Rodriguez <grodriguezcoronado@gmail.com>, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
-# Esther Tokouli, 2026
 # Cyrille Kabrane, 2026
 # Philip Larsen Donnelly, 2026
+# Esther Tokouli, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"POT-Creation-Date: 2026-08-04T13:38:19.672Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Philip Larsen Donnelly, 2026\n"
+"Last-Translator: Esther Tokouli, 2026\n"
 "Language-Team: French (https://app.transifex.com/hisp-uio/teams/100509/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -55,14 +55,14 @@ msgstr "Respecter les majuscules et les minuscules"
 msgid "Delete filter"
 msgstr ""
 
+msgid "Only available for repeatable stages"
+msgstr "Disponible uniquement pour les étapes répétables"
+
 msgid "Repeated events"
 msgstr "Événements répétés"
 
 msgid "Data"
 msgstr "Données"
-
-msgid "Only available for repeatable stages"
-msgstr "Disponible uniquement pour les étapes répétables"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -863,6 +863,8 @@ msgstr ""
 
 msgid "Last value in period (last value in org unit hierarchy)"
 msgstr ""
+"Dernière valeur en période (dernière valeur dans la hiérarchie des unités "
+"d'organisations)"
 
 msgid "Last value in period (sum in org unit hierarchy)"
 msgstr ""
@@ -896,10 +898,10 @@ msgid "Max"
 msgstr "Max"
 
 msgid "Min value (sum in org unit hierarchy)"
-msgstr ""
+msgstr "Valeur minimale (somme dans la hiérarchie des unités d'organisation)"
 
 msgid "Max value (sum in org unit hierarchy)"
-msgstr ""
+msgstr "Valeur maximale (somme dans la hiérarchie des unités d'organisation)"
 
 msgid "Custom"
 msgstr "Personnalisé"
