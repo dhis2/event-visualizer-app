@@ -4,15 +4,10 @@ import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import { useMemo, type FC } from 'react'
 import { BaseButtonWithConditionalTooltip } from './base-button'
 import { useActionButton } from './use-action-button'
-import { useValueFooter } from './use-value-footer'
 
 export const TrackedEntityInstanceButton: FC = () => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const { action, tooltipConfig } = useActionButton('TRACKED_ENTITY_INSTANCE')
-    const { valueFooter, valueModal } = useValueFooter({
-        outputType: 'TRACKED_ENTITY_INSTANCE',
-        action,
-    })
     const { tetId } = useLayoutContext()
     const tetMetadata = useMetadataItem(tetId)
 
@@ -52,21 +47,17 @@ export const TrackedEntityInstanceButton: FC = () => {
     )
 
     return (
-        <>
-            <BaseButtonWithConditionalTooltip
-                action={action}
-                dataTest="update-button-tracked-entity"
-                disabled={Boolean(tooltipConfig)}
-                label={
-                    buttonLabelLookup[action][
-                        visualizationType === 'PIVOT_TABLE' ? 'table' : 'list'
-                    ]
-                }
-                tooltipConfig={tooltipConfig}
-                type="TRACKED_ENTITY_INSTANCE"
-                valueFooter={valueFooter}
-            />
-            {valueModal}
-        </>
+        <BaseButtonWithConditionalTooltip
+            action={action}
+            dataTest="update-button-tracked-entity"
+            disabled={Boolean(tooltipConfig)}
+            label={
+                buttonLabelLookup[action][
+                    visualizationType === 'PIVOT_TABLE' ? 'table' : 'list'
+                ]
+            }
+            tooltipConfig={tooltipConfig}
+            type="TRACKED_ENTITY_INSTANCE"
+        />
     )
 }

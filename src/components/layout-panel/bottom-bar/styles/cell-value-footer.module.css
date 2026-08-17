@@ -1,0 +1,50 @@
+.footer {
+    display: flex;
+    /* Allows the flex item to shrink below its content's natural width, so
+     * the label ellipsizes instead of forcing the row to wrap or overflow. */
+    min-inline-size: 0;
+    align-items: center;
+    gap: 5px;
+    /* Pushed to the far end of the button row */
+    margin-inline-start: auto;
+    min-block-size: 28px;
+    padding: 0 6px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: none;
+    font-size: 13px;
+    line-height: 1;
+    color: var(--colors-grey700);
+}
+
+.footer.clickable {
+    cursor: pointer;
+}
+
+.footer.clickable:hover {
+    border-color: var(--colors-grey400);
+    background-color: var(--colors-grey100);
+    color: var(--colors-grey900);
+}
+
+.footer.clickable:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+
+.footer.clickable:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.footer svg {
+    flex-shrink: 0;
+    color: var(--colors-grey500);
+}
+
+.label {
+    overflow: hidden;
+    min-inline-size: 0;
+    text-align: end;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
