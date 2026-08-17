@@ -10,6 +10,7 @@ import {
     GridStartColumn,
     GridTopRow,
 } from '@components/grid'
+import { InterpretationModal } from '@components/interpretation-modal/interpretation-modal'
 import { LayoutPanel } from '@components/layout-panel/layout-panel'
 import { Sidebar } from '@components/sidebar/sidebar'
 import { Toolbar } from '@components/toolbar/toolbar'
@@ -53,6 +54,7 @@ const EventVisualizer: FC = () => {
             <GridEndColumn>
                 <DetailsPanel />
             </GridEndColumn>
+            <InterpretationModal />
             <CssVariables colors spacers theme elevations />
         </GridContainer>
     )

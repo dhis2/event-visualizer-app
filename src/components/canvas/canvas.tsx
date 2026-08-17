@@ -1,4 +1,3 @@
-import { InterpretationModal } from '@components/interpretation-modal/interpretation-modal'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
@@ -54,16 +53,13 @@ export const Canvas: FC = () => {
     }
 
     return (
-        <>
-            <PluginWrapper
-                isVisualizationLoading={isVisualizationLoading}
-                visualization={currentVis}
-                visualizationLoadError={visualizationLoadError ?? undefined}
-                onRetryLoad={onRetryLoad}
-                displayProperty={currentUser.settings.displayProperty}
-                onDataSorted={onDataSorted}
-            />
-            <InterpretationModal />
-        </>
+        <PluginWrapper
+            isVisualizationLoading={isVisualizationLoading}
+            visualization={currentVis}
+            visualizationLoadError={visualizationLoadError ?? undefined}
+            onRetryLoad={onRetryLoad}
+            displayProperty={currentUser.settings.displayProperty}
+            onDataSorted={onDataSorted}
+        />
     )
 }
