@@ -73,7 +73,22 @@
 .button.splitEnd {
     border-start-start-radius: 0;
     border-end-start-radius: 0;
-    border-inline-start: 1px solid rgba(0, 0, 0, 0.1);
+    border-inline-start: 1px solid
+        color-mix(in srgb, var(--colors-blue800), transparent 75%);
+    padding-inline: 4px;
+}
+
+.valueLabel {
+    max-inline-size: 200px;
+    overflow: hidden;
+    font-family:
+        ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
+        monospace;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    font-weight: 400;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* Lets the tooltip's pointer handlers attach to a wrapper around the button

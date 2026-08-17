@@ -1,57 +1,10 @@
+import { RadioCard, RadioCards } from '@components/shared/radio-card/radio-card'
 import i18n from '@dhis2/d2-i18n'
-import { FieldSet, Legend, Radio } from '@dhis2/ui'
-import cx from 'classnames'
+import { FieldSet, Legend } from '@dhis2/ui'
 import { type FC, type PropsWithChildren } from 'react'
 import classes from './styles/show-all-filter-radio.module.css'
 
 export type FilterRadioMode = 'SHOW_ALL' | 'FILTER'
-
-type RadioCardProps = PropsWithChildren<{
-    selected: boolean
-    label: string
-    value: FilterRadioMode
-    name: string
-    dataTest: string
-    onSelect: () => void
-    disabled?: boolean
-    helpText?: string
-}>
-
-const RadioCard: FC<RadioCardProps> = ({
-    selected,
-    label,
-    value,
-    name,
-    dataTest,
-    onSelect,
-    disabled = false,
-    helpText,
-    children,
-}) => (
-    <div
-        className={cx(classes.card, {
-            [classes.cardSelected]: selected,
-            [classes.cardDisabled]: disabled,
-        })}
-        data-test={dataTest}
-    >
-        <Radio
-            name={name}
-            label={label}
-            value={value}
-            checked={selected}
-            onChange={onSelect}
-            disabled={disabled}
-            dense
-            className={classes.cardRadio}
-            dataTest={`${dataTest}-radio`}
-        />
-        {helpText ? <p className={classes.cardHelp}>{helpText}</p> : null}
-        {selected && children ? (
-            <div className={classes.revealed}>{children}</div>
-        ) : null}
-    </div>
-)
 
 type ShowAllFilterRadioProps = PropsWithChildren<{
     mode: FilterRadioMode
@@ -78,7 +31,7 @@ export const ShowAllFilterRadio: FC<ShowAllFilterRadioProps> = ({
                     {i18n.t('Value filtering')}
                 </span>
             </Legend>
-            <div className={classes.cards}>
+            <RadioCards>
                 <RadioCard
                     selected={mode === 'SHOW_ALL'}
                     label={i18n.t('Show all values')}
@@ -99,7 +52,7 @@ export const ShowAllFilterRadio: FC<ShowAllFilterRadioProps> = ({
                 >
                     {children}
                 </RadioCard>
-            </div>
+            </RadioCards>
         </FieldSet>
     )
 }

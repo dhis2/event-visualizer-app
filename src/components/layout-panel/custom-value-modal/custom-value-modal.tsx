@@ -1,3 +1,4 @@
+import { RadioCard, RadioCards } from '@components/shared/radio-card/radio-card'
 import {
     AGGREGATION_TYPES,
     aggregationTypeDisplayNames,
@@ -25,11 +26,12 @@ import {
 } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
-    getVisUiConfigCustomValue,
+    clearVisUiConfigCustomValue,
+    getVisUiConfigCustomValueByOutputType,
     setVisUiConfigCustomValue,
     setVisUiConfigOutputType,
 } from '@store/vis-ui-config-slice'
-import type { AggregationType } from '@types'
+import type { AggregationType, OutputType } from '@types'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import { CustomValueOption } from './custom-value-option'
 import { StageNotice } from './stage-notice'
@@ -39,7 +41,10 @@ import {
     type CustomValueItem,
 } from './use-custom-value-items'
 
+type CellValueMode = 'COUNT' | 'CUSTOM'
+
 type CustomValueModalProps = {
+    outputType: OutputType
     onClose: () => void
 }
 
@@ -50,11 +55,19 @@ type CustomValueModalProps = {
  * instead. */
 const FALLBACK_AGGREGATION_TYPE_FOR_NONE: AggregationType = 'AVERAGE'
 
-export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
+export const CustomValueModal: FC<CustomValueModalProps> = ({
+    outputType,
+    onClose,
+}) => {
     const dispatch = useAppDispatch()
     const metadataStore = useMetadataStore()
-    const customValue = useAppSelector(getVisUiConfigCustomValue)
+    const customValue = useAppSelector(getVisUiConfigCustomValueByOutputType)[
+        outputType
+    ]
     const customValueMetadata = useMetadataItem(customValue?.id)
+    const [mode, setMode] = useState<CellValueMode>(
+        customValue ? 'CUSTOM' : 'COUNT'
+    )
     const [aggregationType, setAggregationType] = useState<AggregationType>(
         customValue?.aggregationType ?? 'DEFAULT'
     )
@@ -113,7 +126,9 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
         }, [aggregationType, items, selectedItemId])
 
     const onUpdate = useCallback(() => {
-        if (selectedItem) {
+        if (mode === 'COUNT') {
+            dispatch(clearVisUiConfigCustomValue(outputType))
+        } else if (selectedItem) {
             const itemDefaultAggregationType =
                 selectedItem.aggregationType === 'NONE'
                     ? FALLBACK_AGGREGATION_TYPE_FOR_NONE
@@ -124,135 +139,170 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                     : aggregationType
             dispatch(
                 setVisUiConfigCustomValue({
-                    aggregationType: resolvedAggregationType,
-                    id: selectedItem.id,
+                    outputType,
+                    customValue: {
+                        aggregationType: resolvedAggregationType,
+                        id: selectedItem.id,
+                    },
                 })
             )
-            dispatch(setVisUiConfigOutputType('EVENT'))
-            dispatch(tUpdateCurrentVisFromVisUiConfig(true))
         }
 
+        dispatch(setVisUiConfigOutputType(outputType))
+        dispatch(tUpdateCurrentVisFromVisUiConfig())
         onClose()
-    }, [dispatch, aggregationType, selectedItem, onClose])
+    }, [dispatch, aggregationType, mode, outputType, selectedItem, onClose])
+
+    const countHelpText =
+        outputType === 'TRACKED_ENTITY_INSTANCE'
+            ? i18n.t('Each cell shows the number of tracked entities.')
+            : i18n.t('Each cell shows the number of events.')
+
+    const canUpdate = mode === 'COUNT' || Boolean(selectedItemId)
 
     return (
         <Modal onClose={onClose} position="top" large>
-            <ModalTitle>{i18n.t('Configure custom value')}</ModalTitle>
+            <ModalTitle>{i18n.t('Cell value')}</ModalTitle>
             <ModalContent className={classes.content}>
-                <p className={classes.description}>
-                    {i18n.t(
-                        'Choose the numeric data item to show in table cells.'
-                    )}
-                </p>
-                <StageNotice
-                    filteredByStageName={filteredByStageName}
-                    customValueStageMismatch={customValueStageMismatch}
-                    customValueItemName={customValueMetadata?.name}
-                />
-                {!isLoading && !isError && items?.length !== 0 && (
-                    <div className={classes.search}>
-                        <InputField
-                            value={searchTerm}
-                            onChange={({ value }) => setSearchTerm(value ?? '')}
-                            placeholder={i18n.t('Search data items')}
-                            dataTest="custom-value-modal-search-field"
-                            dense
-                            initialFocus
-                            type="search"
+                <RadioCards>
+                    <RadioCard
+                        selected={mode === 'COUNT'}
+                        label={i18n.t('Count')}
+                        value="COUNT"
+                        name="cell-value-mode"
+                        dataTest="cell-value-count"
+                        onSelect={() => setMode('COUNT')}
+                        helpText={countHelpText}
+                    />
+                    <RadioCard
+                        selected={mode === 'CUSTOM'}
+                        label={i18n.t('Custom value')}
+                        value="CUSTOM"
+                        name="cell-value-mode"
+                        dataTest="cell-value-custom"
+                        onSelect={() => setMode('CUSTOM')}
+                        helpText={i18n.t(
+                            "Each cell shows a data item's value instead — for example, a total or average."
+                        )}
+                    >
+                        <StageNotice
+                            filteredByStageName={filteredByStageName}
+                            customValueStageMismatch={customValueStageMismatch}
+                            customValueItemName={customValueMetadata?.name}
                         />
-                    </div>
-                )}
-                <div className={classes.listContainer}>
-                    {isLoading && (
-                        <div className={classes.listLoading}>
-                            <CircularLoader extrasmall />
-                            <span>{i18n.t('Loading data')}</span>
-                        </div>
-                    )}
-                    {isError && (
-                        <NoticeBox
-                            error
-                            dense
-                            title={i18n.t('Error loading data')}
-                        >
-                            {error?.message ||
-                                i18n.t('Failed to load data items')}
-                        </NoticeBox>
-                    )}
-                    {!isLoading && !isError && items?.length === 0 && (
-                        <NoticeBox
-                            dense
-                            title={
-                                filteredByStageName
-                                    ? i18n.t(
-                                          'No numeric data items in stage "{{- stageName}}"',
-                                          { stageName: filteredByStageName }
-                                      )
-                                    : i18n.t(
-                                          'No numeric data items in this program'
-                                      )
-                            }
-                        >
-                            {filteredByStageName
-                                ? i18n.t(
-                                      'This stage does not have any numeric data items available.'
-                                  )
-                                : i18n.t(
-                                      'This program does not have any numeric data items available.'
-                                  )}
-                        </NoticeBox>
-                    )}
-                    {!isLoading &&
-                        !isError &&
-                        items?.length !== 0 &&
-                        visibleItems?.length === 0 && (
-                            <div className={classes.noMatches}>
-                                {i18n.t(
-                                    'No data items match "{{- searchTerm}}"',
-                                    { searchTerm }
-                                )}
+                        {!isLoading && !isError && items?.length !== 0 && (
+                            <div className={classes.search}>
+                                <InputField
+                                    value={searchTerm}
+                                    onChange={({ value }) =>
+                                        setSearchTerm(value ?? '')
+                                    }
+                                    placeholder={i18n.t('Search data items')}
+                                    dataTest="custom-value-modal-search-field"
+                                    dense
+                                    initialFocus
+                                    type="search"
+                                />
                             </div>
                         )}
-                    {!isLoading &&
-                        !isError &&
-                        visibleItems?.map((item) => (
-                            <CustomValueOption
-                                key={item.id}
-                                label={item.name}
-                                value={item.id}
-                                active={selectedItemId === item.id}
-                                stageName={item.stageName}
-                                onClick={() => onItemChange(item)}
-                            />
-                        ))}
-                </div>
-                <div className={classes.aggregationSelect}>
-                    <SingleSelectField
-                        label={i18n.t('Aggregation')}
-                        onChange={onAggregationTypeChange}
-                        selected={selectedAggregationType}
-                        dense
-                    >
-                        {AGGREGATION_TYPES.map((value) => (
-                            <SingleSelectOption
-                                key={value}
-                                value={value}
-                                label={aggregationTypeDisplayNames[value]}
-                                disabled={
-                                    value === 'DEFAULT' &&
-                                    selectedItemDefaultIsNone
-                                }
-                            />
-                        ))}
-                    </SingleSelectField>
-                </div>
+                        <div className={classes.listContainer}>
+                            {isLoading && (
+                                <div className={classes.listLoading}>
+                                    <CircularLoader extrasmall />
+                                    <span>{i18n.t('Loading data')}</span>
+                                </div>
+                            )}
+                            {isError && (
+                                <NoticeBox
+                                    error
+                                    dense
+                                    title={i18n.t('Error loading data')}
+                                >
+                                    {error?.message ||
+                                        i18n.t('Failed to load data items')}
+                                </NoticeBox>
+                            )}
+                            {!isLoading && !isError && items?.length === 0 && (
+                                <NoticeBox
+                                    dense
+                                    title={
+                                        filteredByStageName
+                                            ? i18n.t(
+                                                  'No numeric data items in stage "{{- stageName}}"',
+                                                  {
+                                                      stageName:
+                                                          filteredByStageName,
+                                                  }
+                                              )
+                                            : i18n.t(
+                                                  'No numeric data items in this program'
+                                              )
+                                    }
+                                >
+                                    {filteredByStageName
+                                        ? i18n.t(
+                                              'This stage does not have any numeric data items available.'
+                                          )
+                                        : i18n.t(
+                                              'This program does not have any numeric data items available.'
+                                          )}
+                                </NoticeBox>
+                            )}
+                            {!isLoading &&
+                                !isError &&
+                                items?.length !== 0 &&
+                                visibleItems?.length === 0 && (
+                                    <div className={classes.noMatches}>
+                                        {i18n.t(
+                                            'No data items match "{{- searchTerm}}"',
+                                            { searchTerm }
+                                        )}
+                                    </div>
+                                )}
+                            {!isLoading &&
+                                !isError &&
+                                visibleItems?.map((item) => (
+                                    <CustomValueOption
+                                        key={item.id}
+                                        label={item.name}
+                                        value={item.id}
+                                        active={selectedItemId === item.id}
+                                        stageName={item.stageName}
+                                        onClick={() => onItemChange(item)}
+                                    />
+                                ))}
+                        </div>
+                        <div className={classes.aggregationSelect}>
+                            <SingleSelectField
+                                label={i18n.t('Aggregation')}
+                                onChange={onAggregationTypeChange}
+                                selected={selectedAggregationType}
+                                dense
+                            >
+                                {AGGREGATION_TYPES.map((value) => (
+                                    <SingleSelectOption
+                                        key={value}
+                                        value={value}
+                                        label={
+                                            aggregationTypeDisplayNames[value]
+                                        }
+                                        disabled={
+                                            value === 'DEFAULT' &&
+                                            selectedItemDefaultIsNone
+                                        }
+                                    />
+                                ))}
+                            </SingleSelectField>
+                        </div>
+                    </RadioCard>
+                </RadioCards>
             </ModalContent>
             <ModalActions>
                 <ButtonStrip>
                     <Button type="button" secondary onClick={onClose}>
                         {i18n.t('Cancel')}
                     </Button>
-                    {selectedItemId ? (
+                    {canUpdate ? (
                         <Button type="button" primary onClick={onUpdate}>
                             {i18n.t('Update')}
                         </Button>

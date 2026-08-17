@@ -1,6 +1,7 @@
 import { Analytics, transformEventAggregateResponse } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
+import i18n from '@dhis2/d2-i18n'
 import { logger } from '@modules/logger'
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import type { CurrentUser, CurrentVisualization } from '@types'
@@ -26,6 +27,16 @@ export const fetchAnalyticsDataForPT = async ({
     visualization,
     relativePeriodDate,
 }: FetchAnalyticsDataForPTInternalParams) => {
+    /* The backend serves /analytics/trackedEntities/aggregate, but the
+     * analytics engine exposes no getAggregate for it and the request below is
+     * built around a single program. Fail with a message rather than let
+     * getSingleProgramFromVisualization throw and blank the visualization. */
+    if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {
+        throw new Error(
+            i18n.t('Tracked entity tables are not available in this prototype.')
+        )
+    }
+
     const { adaptedVisualization, parameters } =
         getAdaptedVisualization(visualization)
 

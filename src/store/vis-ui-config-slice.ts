@@ -46,7 +46,7 @@ export interface VisUiConfigState {
     layout: Layout
     itemsByDimension: Record<string, string[]>
     conditionsByDimension: Record<string, ConditionsObject | undefined>
-    customValue?: CustomValueObject
+    customValueByOutputType: Partial<Record<OutputType, CustomValueObject>>
     repetitionsByDimension: Record<string, RepetitionsObject | undefined>
     options: EventVisualizationOptions
 }
@@ -64,6 +64,7 @@ export const initialState: VisUiConfigState = {
     },
     itemsByDimension: {},
     conditionsByDimension: {},
+    customValueByOutputType: {},
     repetitionsByDimension: {},
 }
 
@@ -76,6 +77,11 @@ type SetConditionsByDimensionPayload = {
 type SetItemsByDimensionPayload = {
     dimensionId: string // dimensionId, including uids
     itemIds: string[] // list of item ids
+}
+
+type SetCustomValuePayload = {
+    outputType: OutputType
+    customValue: CustomValueObject
 }
 
 type SetOptionPayload = {
@@ -192,9 +198,21 @@ export const visUiConfigSlice = createSlice({
         },
         setVisUiConfigCustomValue: (
             state,
-            action: PayloadAction<CustomValueObject>
+            action: PayloadAction<SetCustomValuePayload>
         ) => {
-            state.customValue = action.payload
+            state.customValueByOutputType = {
+                ...state.customValueByOutputType,
+                [action.payload.outputType]: action.payload.customValue,
+            }
+        },
+        clearVisUiConfigCustomValue: (
+            state,
+            action: PayloadAction<OutputType>
+        ) => {
+            state.customValueByOutputType = {
+                ...state.customValueByOutputType,
+                [action.payload]: undefined,
+            }
         },
         setVisUiConfigRepetitionsByDimension: (
             state,
@@ -355,7 +373,12 @@ export const visUiConfigSlice = createSlice({
             state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
         getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
             state.conditionsByDimension[dimensionId] || EMPTY_CONDITIONS_OBJECT,
-        getVisUiConfigCustomValue: (state) => state.customValue,
+        /* The cell value in play right now. Each output type remembers its own,
+         * so switching output type and back restores the previous choice. */
+        getVisUiConfigCustomValue: (state) =>
+            state.customValueByOutputType[state.outputType],
+        getVisUiConfigCustomValueByOutputType: (state) =>
+            state.customValueByOutputType,
         getVisUiConfigRepetitionsByDimension: (state, dimensionId: string) =>
             state.repetitionsByDimension[dimensionId] ||
             DEFAULT_REPETITIONS_OBJECT,
@@ -387,6 +410,7 @@ export const {
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
     setVisUiConfigCustomValue,
+    clearVisUiConfigCustomValue,
     setVisUiConfigRepetitionsByDimension,
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
@@ -403,6 +427,7 @@ export const {
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
     getVisUiConfigCustomValue,
+    getVisUiConfigCustomValueByOutputType,
     getVisUiConfigRepetitionsByDimension,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigLayoutIsEmpty,

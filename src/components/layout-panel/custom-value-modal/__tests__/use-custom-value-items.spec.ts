@@ -110,17 +110,14 @@ const buildMockOptions = (
                     ...visUiConfigInitialState.layout,
                     ...layoutOverride,
                 },
-                customValue,
+                customValueByOutputType: customValue
+                    ? { [visUiConfigInitialState.outputType]: customValue }
+                    : {},
             },
         }),
     },
 })
 
-/* The hook's three precondition throws (0 / >1 programs, >1 stages) are not
- * exercised here. They fire from inside React render so RTL surfaces them
- * as uncaught exceptions rather than rejected promises, which requires an
- * error-boundary wrapper to assert cleanly. Those states are upstream-gated
- * by `useActionButton` — that's the appropriate test surface. */
 describe('useCustomValueItems', () => {
     it('attaches stageName when the layout has no program stage and dimensions span multiple stages', async () => {
         const { result } = await renderHookWithAppWrapper(

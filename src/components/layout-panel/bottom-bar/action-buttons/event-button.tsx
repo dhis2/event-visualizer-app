@@ -6,11 +6,16 @@ import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import { useMemo, type FC } from 'react'
 import { BaseButtonWithConditionalTooltip } from './base-button'
 import { useActionButton } from './use-action-button'
+import { useValueFooter } from './use-value-footer'
 
 export const EventButton: FC = () => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
 
-    const { action, tooltipConfig } = useActionButton('EVENT', 'EVENT')
+    const { action, tooltipConfig } = useActionButton('EVENT')
+    const { valueFooter, valueModal } = useValueFooter({
+        outputType: 'EVENT',
+        action,
+    })
     const { programIds } = useLayoutContext()
     const programMetadata = useProgramMetadataItem(programIds[0])
 
@@ -56,17 +61,21 @@ export const EventButton: FC = () => {
     )
 
     return (
-        <BaseButtonWithConditionalTooltip
-            action={action}
-            dataTest="update-button-event"
-            disabled={Boolean(tooltipConfig)}
-            label={
-                buttonLabelLookup[action][
-                    visualizationType === 'PIVOT_TABLE' ? 'table' : 'list'
-                ]
-            }
-            tooltipConfig={tooltipConfig}
-            type="EVENT"
-        />
+        <>
+            <BaseButtonWithConditionalTooltip
+                action={action}
+                dataTest="update-button-event"
+                disabled={Boolean(tooltipConfig)}
+                label={
+                    buttonLabelLookup[action][
+                        visualizationType === 'PIVOT_TABLE' ? 'table' : 'list'
+                    ]
+                }
+                tooltipConfig={tooltipConfig}
+                type="EVENT"
+                valueFooter={valueFooter}
+            />
+            {valueModal}
+        </>
     )
 }

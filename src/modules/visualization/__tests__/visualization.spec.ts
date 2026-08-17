@@ -344,7 +344,11 @@ describe('getVisualizationUiConfig', () => {
             const result = getVisualizationUiConfig(
                 input as unknown as SavedVisualization
             )
-            expect(result).toEqual({ ...expected, options: DEFAULT_OPTIONS })
+            expect(result).toEqual({
+                customValueByOutputType: {},
+                ...expected,
+                options: DEFAULT_OPTIONS,
+            })
         }
     )
 

@@ -398,9 +398,11 @@ describe('useDimensionLayoutBlockedMessage', () => {
                     visUiConfig: {
                         ...visUiConfigInitialState,
                         visualizationType: 'PIVOT_TABLE',
-                        customValue: {
-                            id: 'stage1.de1',
-                            aggregationType: 'SUM',
+                        customValueByOutputType: {
+                            EVENT: {
+                                id: 'stage1.de1',
+                                aggregationType: 'SUM',
+                            },
                         },
                     },
                 },

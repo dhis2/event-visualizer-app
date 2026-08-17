@@ -44,30 +44,18 @@ export const useCustomValueItems = () => {
     const { programIds, programStageIds } = useLayoutContext()
     const customValue = useAppSelector(getVisUiConfigCustomValue)
 
-    if (programIds.length !== 1) {
-        throw new Error(
-            `useCustomValueItems requires exactly one program in the layout, got ${programIds.length}`
-        )
-    }
-    if (programStageIds.length > 1) {
-        throw new Error(
-            `useCustomValueItems requires at most one program stage in the layout, got ${programStageIds.length}`
-        )
-    }
-
+    /* A tracked entity layout can span several programs, or none. Rather than
+     * refusing to open, fall back to the first program's numeric items and
+     * skip stage filtering when the stage is ambiguous. */
     const programId = programIds[0]
-    const layoutStageId = programStageIds[0] ?? null
+    const layoutStageId =
+        programStageIds.length === 1 ? programStageIds[0] : null
 
     let filteredByStageName: string | undefined
     let customValueStageMismatch = false
     if (layoutStageId) {
-        const stage = metadataStore.getProgramStageMetadataItem(layoutStageId)
-        if (!stage) {
-            throw new Error(
-                `Could not find stage with ID "${layoutStageId}" in the metadata store`
-            )
-        }
-        filteredByStageName = stage.name
+        filteredByStageName =
+            metadataStore.getProgramStageMetadataItem(layoutStageId)?.name
 
         const customValueStageId = getStageIdFromDimensionId(customValue?.id)
         customValueStageMismatch = Boolean(
@@ -90,14 +78,11 @@ export const useCustomValueItems = () => {
         },
     })
 
-    const program = metadataStore.getProgramMetadataItem(programId)
-    if (!program) {
-        throw new Error(
-            `Could not find program with ID "${programId}" in the metadata store`
-        )
-    }
-    const programHasMultipleStages = (program.programStages?.length ?? 0) > 1
-    const tetName = program.trackedEntityType?.name
+    const program = programId
+        ? metadataStore.getProgramMetadataItem(programId)
+        : undefined
+    const programHasMultipleStages = (program?.programStages?.length ?? 0) > 1
+    const tetName = program?.trackedEntityType?.name
 
     const items = useMemo<CustomValueItem[] | undefined>(() => {
         if (!data) {
@@ -128,13 +113,9 @@ export const useCustomValueItems = () => {
                 if (!stageId || !programHasMultipleStages) {
                     return dim
                 }
-                const stage = metadataStore.getProgramStageMetadataItem(stageId)
-                if (!stage) {
-                    throw new Error(
-                        `Could not find stage with ID "${stageId}" in the metadata store`
-                    )
-                }
-                return { ...dim, stageName: stage.name }
+                const stageName =
+                    metadataStore.getProgramStageMetadataItem(stageId)?.name
+                return stageName ? { ...dim, stageName } : dim
             })
             .sort(compareByName)
     }, [data, layoutStageId, metadataStore, programHasMultipleStages, tetName])

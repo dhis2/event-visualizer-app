@@ -96,17 +96,32 @@ const buildMockOptions = (
                     ...visUiConfigInitialState.layout,
                     columns: layoutColumns,
                 },
-                customValue,
+                customValueByOutputType: customValue
+                    ? { EVENT: customValue }
+                    : {},
             },
         }),
     },
 })
 
+/* The dialog hides the data item list behind its Custom value radio, so the
+ * tests below select that mode before asserting on the list. */
+const renderInCustomValueMode = async (
+    options: ReturnType<typeof buildMockOptions>,
+    onClose: () => void = () => {}
+) => {
+    const view = await renderWithAppWrapper(
+        <CustomValueModal outputType="EVENT" onClose={onClose} />,
+        options
+    )
+    await userEvent.click(screen.getByRole('radio', { name: 'Custom value' }))
+    return view
+}
+
 describe('CustomValueModal', () => {
     it('shows the loading indicator before data items load', async () => {
         const deferred = createDeferredQuery()
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
+        await renderInCustomValueMode(
             buildMockOptions(['s1.de1'], {
                 [ANALYTICS_RESOURCE]: deferred.defer(() => dimensionsResponse),
             } as unknown as MockOptions['queryData'])
@@ -122,10 +137,7 @@ describe('CustomValueModal', () => {
     })
 
     it('renders the data items after the query resolves', async () => {
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
-            buildMockOptions(['s1.de1'])
-        )
+        await renderInCustomValueMode(buildMockOptions(['s1.de1']))
 
         await waitFor(() => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
@@ -134,10 +146,7 @@ describe('CustomValueModal', () => {
     })
 
     it('shows the stage-filter notice when the layout has a program stage', async () => {
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
-            buildMockOptions(['s1.de1'])
-        )
+        await renderInCustomValueMode(buildMockOptions(['s1.de1']))
 
         await waitFor(() => {
             expect(
@@ -149,8 +158,7 @@ describe('CustomValueModal', () => {
     })
 
     it('shows the warning notice when the current custom value is from a different stage', async () => {
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
+        await renderInCustomValueMode(
             buildMockOptions(['s1.de1'], undefined, {
                 id: 's2.someDe',
                 aggregationType: 'SUM',
@@ -170,10 +178,7 @@ describe('CustomValueModal', () => {
     })
 
     it('omits the stage-filter notice when the layout has no program stage', async () => {
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
-            buildMockOptions(['p1.enrollmentDate'])
-        )
+        await renderInCustomValueMode(buildMockOptions(['p1.enrollmentDate']))
 
         await waitFor(() => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
@@ -184,8 +189,7 @@ describe('CustomValueModal', () => {
     })
 
     it('renders the stage-scoped empty-state notice when no data items are returned and the layout has a stage', async () => {
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
+        await renderInCustomValueMode(
             buildMockOptions(['s1.de1'], {
                 [ANALYTICS_RESOURCE]: { dimensions: [] },
             })
@@ -199,8 +203,7 @@ describe('CustomValueModal', () => {
     })
 
     it('renders the program-scoped empty-state notice when no data items are returned and the layout has no stage', async () => {
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
+        await renderInCustomValueMode(
             buildMockOptions(['p1.enrollmentDate'], {
                 [ANALYTICS_RESOURCE]: { dimensions: [] },
             })
@@ -216,9 +219,9 @@ describe('CustomValueModal', () => {
     it('keeps the Update button disabled until a data item is picked, then applies and closes on click', async () => {
         const onClose = vi.fn()
         const user = userEvent.setup()
-        const { store } = await renderWithAppWrapper(
-            <CustomValueModal onClose={onClose} />,
-            buildMockOptions(['s1.de1'])
+        const { store } = await renderInCustomValueMode(
+            buildMockOptions(['s1.de1']),
+            onClose
         )
 
         await waitFor(() => {
@@ -244,10 +247,7 @@ describe('CustomValueModal', () => {
 
     it('filters the data item list by the search term', async () => {
         const user = userEvent.setup()
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
-            buildMockOptions(['s1.de1'])
-        )
+        await renderInCustomValueMode(buildMockOptions(['s1.de1']))
 
         await waitFor(() => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
@@ -273,8 +273,7 @@ describe('CustomValueModal', () => {
     it('falls back to AVERAGE when applying an item whose default aggregation type is NONE', async () => {
         const onClose = vi.fn()
         const user = userEvent.setup()
-        const { store } = await renderWithAppWrapper(
-            <CustomValueModal onClose={onClose} />,
+        const { store } = await renderInCustomValueMode(
             buildMockOptions(['s1.de1'], {
                 [ANALYTICS_RESOURCE]: {
                     dimensions: [
@@ -286,7 +285,8 @@ describe('CustomValueModal', () => {
                         },
                     ],
                 },
-            })
+            }),
+            onClose
         )
 
         await waitFor(() => {
@@ -304,8 +304,7 @@ describe('CustomValueModal', () => {
 
     it('disables "Use item default" and selects Average when the item default is NONE', async () => {
         const user = userEvent.setup()
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
+        await renderInCustomValueMode(
             buildMockOptions(['s1.de1'], {
                 [ANALYTICS_RESOURCE]: {
                     dimensions: [
@@ -349,8 +348,7 @@ describe('CustomValueModal', () => {
 
     it('reverts to "Use item default" when switching from a NONE item back to an aggregatable one', async () => {
         const user = userEvent.setup()
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
+        await renderInCustomValueMode(
             buildMockOptions(['s1.de1'], {
                 [ANALYTICS_RESOURCE]: {
                     dimensions: [

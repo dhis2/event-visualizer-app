@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-04T13:38:19.672Z\n"
-"PO-Revision-Date: 2026-08-04T13:38:19.673Z\n"
+"POT-Creation-Date: 2026-08-17T08:31:39.631Z\n"
+"PO-Revision-Date: 2026-08-17T08:31:39.632Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -229,24 +229,6 @@ msgstr "Levels"
 msgid "Groups"
 msgstr "Groups"
 
-msgid "Using: {{- itemName}} ({{- aggregationType}})"
-msgstr "Using: {{- itemName}} ({{- aggregationType}})"
-
-msgid "Custom value is from a different stage than dimensions in the layout"
-msgstr "Custom value is from a different stage than dimensions in the layout"
-
-msgid "Update custom value"
-msgstr "Update custom value"
-
-msgid "Create custom value table"
-msgstr "Create custom value table"
-
-msgid "Switch to custom value table"
-msgstr "Switch to custom value table"
-
-msgid "Update custom value table"
-msgstr "Update custom value table"
-
 msgid "Enrollment"
 msgstr "Enrollment"
 
@@ -295,11 +277,20 @@ msgstr "tracked entity"
 msgid "Create {{- trackedEntityTypeName}} list"
 msgstr "Create {{- trackedEntityTypeName}} list"
 
+msgid "Create {{- trackedEntityTypeName}} table"
+msgstr "Create {{- trackedEntityTypeName}} table"
+
 msgid "Switch to {{- trackedEntityTypeName}} list"
 msgstr "Switch to {{- trackedEntityTypeName}} list"
 
+msgid "Switch to {{- trackedEntityTypeName}} table"
+msgstr "Switch to {{- trackedEntityTypeName}} table"
+
 msgid "Update {{- trackedEntityTypeName}} list"
 msgstr "Update {{- trackedEntityTypeName}} list"
+
+msgid "Update {{- trackedEntityTypeName}} table"
+msgstr "Update {{- trackedEntityTypeName}} table"
 
 msgid "Not valid with registration org. unit"
 msgstr "Not valid with registration org. unit"
@@ -337,11 +328,39 @@ msgstr "Not valid with program indicators"
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr "Nothing selected. Add items to the layout to get started."
 
-msgid "Configure custom value"
-msgstr "Configure custom value"
+msgid "This value is from a different stage than the dimensions in the layout"
+msgstr "This value is from a different stage than the dimensions in the layout"
 
-msgid "Choose the numeric data item to show in table cells."
-msgstr "Choose the numeric data item to show in table cells."
+msgid "Aggregation: {{- aggregationType}}"
+msgstr "Aggregation: {{- aggregationType}}"
+
+msgid "Change the value shown in each cell"
+msgstr "Change the value shown in each cell"
+
+msgid "count"
+msgstr "count"
+
+msgid "Each cell shows the number of tracked entities."
+msgstr "Each cell shows the number of tracked entities."
+
+msgid "Each cell shows the number of events."
+msgstr "Each cell shows the number of events."
+
+msgid "Cell value"
+msgstr "Cell value"
+
+msgid "Count"
+msgstr "Count"
+
+msgid "Custom value"
+msgstr "Custom value"
+
+msgid ""
+"Each cell shows a data item's value instead — for example, a total or "
+"average."
+msgstr ""
+"Each cell shows a data item's value instead — for example, a total or "
+"average."
 
 msgid "Search data items"
 msgstr "Search data items"
@@ -606,6 +625,9 @@ msgstr "Table subtitle"
 msgid "Labels"
 msgstr "Labels"
 
+msgid "Tracked entity tables are not available in this prototype."
+msgstr "Tracked entity tables are not available in this prototype."
+
 msgid "Create a {{- visType}} before updating"
 msgstr "Create a {{- visType}} before updating"
 
@@ -862,9 +884,6 @@ msgstr "First value (average in org unit hierarchy)"
 
 msgid "First value in period (first value in org unit hierarchy)"
 msgstr "First value in period (first value in org unit hierarchy)"
-
-msgid "Count"
-msgstr "Count"
 
 msgid "Standard deviation"
 msgstr "Standard deviation"

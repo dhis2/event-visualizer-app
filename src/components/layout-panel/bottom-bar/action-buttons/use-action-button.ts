@@ -15,10 +15,6 @@ import type { OutputType, Program } from '@types'
 import { useMemo } from 'react'
 import type { ButtonAction } from './base-button'
 
-/* The two table kinds that share the EVENT output type: a plain event table
- * and a custom value table. Used to label the EVENT/custom-value buttons. */
-export type EventOutputTypeVariant = 'EVENT' | 'CUSTOM_VALUE'
-
 type TooltipConfig = { content: string; openDelay?: number } | undefined
 
 const getRegistrationOuTooltipContent = (): TooltipConfig => ({
@@ -184,10 +180,7 @@ const getTrackedEntityInstanceTooltipContent = ({
     })
 }
 
-export const useActionButton = (
-    buttonType: OutputType,
-    buttonVariant?: EventOutputTypeVariant
-) => {
+export const useActionButton = (buttonType: OutputType) => {
     const currentVis = useAppSelector(getCurrentVis)
     const { tetId, programStageIds, programIds } = useLayoutContext()
     const layout = useAppSelector(getVisUiConfigLayout)
@@ -213,26 +206,11 @@ export const useActionButton = (
     )
 
     const action = useMemo((): ButtonAction => {
-        // Empty visualization
         if (isVisualizationEmpty(currentVis)) {
             return 'create'
-        } else if (outputType === buttonType) {
-            if (
-                visualizationType === 'PIVOT_TABLE' &&
-                buttonType === 'EVENT' &&
-                buttonVariant !== undefined
-            ) {
-                const hasCustomValue = Boolean(currentVis.value?.id)
-                const activeVariant: EventOutputTypeVariant = hasCustomValue
-                    ? 'CUSTOM_VALUE'
-                    : 'EVENT'
-                return activeVariant === buttonVariant ? 'update' : 'switch'
-            }
-            return 'update'
-        } else {
-            return 'switch'
         }
-    }, [buttonType, buttonVariant, currentVis, outputType, visualizationType])
+        return outputType === buttonType ? 'update' : 'switch'
+    }, [buttonType, currentVis, outputType])
 
     const hasCategoryInLayout: boolean = useMemo(
         () =>
