@@ -58,8 +58,22 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     onRetryLoad,
     onDataSorted,
 }) => {
+    /* Only relativePeriodDate ever reaches the analytics request; ou, pe and
+     * yourDimensions are dashboard filters this app doesn't apply (see
+     * FiltersNotAppliedNotice). Narrowing to it here, rather than passing the
+     * raw filters prop through, keeps its reference stable across changes to
+     * those other fields, so it doesn't needlessly retrigger the plugins'
+     * fetch effects below. */
+    const appliedFilters = useMemo<HostFilters | undefined>(
+        () =>
+            filters?.relativePeriodDate
+                ? { relativePeriodDate: filters.relativePeriodDate }
+                : undefined,
+        [filters?.relativePeriodDate]
+    )
+
     /* Remount key for the canvas: changing it clears errors and resets sort and
-     * page. It's the base request identity (visualization + dashboard filters),
+     * page. It's the base request identity (visualization + applied filters),
      * so a filter change remounts; sort/page aren't in it and refetch in place.
      * Prop-derived so it also works in the store-less dashboard plugin. */
     const requestKey = useMemo(
@@ -67,9 +81,9 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
             isVisualizationEmpty(visualization)
                 ? ''
                 : JSON.stringify(
-                      getBaseRequestIdentity(visualization, filters)
+                      getBaseRequestIdentity(visualization, appliedFilters)
                   ),
-        [visualization, filters]
+        [visualization, appliedFilters]
     )
 
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
@@ -130,7 +144,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     <LineListPlugin
                         displayProperty={displayProperty}
                         visualization={visualization}
-                        filters={filters}
+                        filters={appliedFilters}
                         isInDashboard={isInDashboard}
                         isInModal={isInModal}
                         onDataSorted={onDataSorted}
@@ -141,7 +155,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     <PivotTablePlugin
                         displayProperty={displayProperty}
                         visualization={visualization}
-                        filters={filters}
+                        filters={appliedFilters}
                         isInDashboard={isInDashboard}
                         isInModal={isInModal}
                         onResponseReceived={onResponseReceived}

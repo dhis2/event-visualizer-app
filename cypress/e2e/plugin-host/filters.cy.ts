@@ -33,17 +33,16 @@ describe('plugin host filters', () => {
         })
     })
 
-    it('remounts the canvas when an org unit filter changes', () => {
-        cy.intercept({ method: 'GET', url: '**/analytics/events/query/**' }).as(
-            'analytics'
-        )
-
+    it('does not remount the canvas when an org unit filter changes, since it is not applied', () => {
         cy.getByDataTest('plugin-host-org-unit-select').select('O6uvpzGd5pu')
 
-        /* A refetch proves the filter change reached the plugin and remounted
-         * the canvas; the request identity includes the filters. */
-        cy.wait('@analytics')
-        pluginBody().find('table', { timeout: 30000 }).should('be.visible')
+        /* ou is excluded from the request identity, so this no longer remounts
+         * the canvas: the table stays up throughout and the loading spinner a
+         * remount would show never appears. */
+        pluginBody().find('table').should('be.visible')
+        pluginBody()
+            .find('[data-test="dhis2-uicore-circularloader"]')
+            .should('not.exist')
     })
 
     it('warns that an org unit filter was not applied, and can be dismissed', () => {

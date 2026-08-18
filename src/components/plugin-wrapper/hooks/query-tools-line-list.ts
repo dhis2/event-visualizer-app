@@ -103,9 +103,12 @@ export const getAdaptedVisualization = (
     }
 }
 
-/* The identity of the request's dataset: the visualization plus the applied
- * filters, excluding sorting, paging and displayProperty (those refetch without
- * a remount). */
+/* The identity of the request's dataset: the visualization plus
+ * relativePeriodDate, excluding sorting, paging and displayProperty (those
+ * refetch without a remount). relativePeriodDate is the only field of
+ * HostFilters that reaches the request; ou, pe and yourDimensions are not
+ * applied, so they're left out of the identity to avoid an unnecessary
+ * remount and refetch when only those change. */
 export const getBaseRequestIdentity = (
     visualization: CurrentVisualization,
     filters?: HostFilters
@@ -113,7 +116,7 @@ export const getBaseRequestIdentity = (
     ...getAdaptedVisualization(visualization),
     programIds: (visualization.programDimensions ?? []).map((p) => p.id),
     trackedEntityTypeId: visualization.trackedEntityType?.id,
-    filters: filters ?? null,
+    relativePeriodDate: filters?.relativePeriodDate ?? null,
 })
 
 const analyticsApiEndpointMap: Record<OutputType, string> = {

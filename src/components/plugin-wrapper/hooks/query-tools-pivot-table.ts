@@ -67,7 +67,10 @@ export const getCustomValueRequestParams = (
 
 /* Like the line-list version, but pivot has no interactive sorting or paging,
  * so sortOrder, topLimit, timeField and the custom value are part of the
- * identity rather than excluded from it. */
+ * identity rather than excluded from it. relativePeriodDate is the only field
+ * of HostFilters that reaches the request; ou, pe and yourDimensions are not
+ * applied, so they're left out of the identity to avoid an unnecessary
+ * remount and refetch when only those change. */
 export const getBaseRequestIdentity = (
     visualization: CurrentVisualization,
     filters?: HostFilters
@@ -79,5 +82,5 @@ export const getBaseRequestIdentity = (
     sortOrder: visualization.sortOrder,
     topLimit: visualization.topLimit,
     ...getCustomValueRequestParams(visualization),
-    filters: filters ?? null,
+    relativePeriodDate: filters?.relativePeriodDate ?? null,
 })

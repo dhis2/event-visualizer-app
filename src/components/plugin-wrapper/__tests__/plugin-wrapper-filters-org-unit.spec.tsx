@@ -47,8 +47,8 @@ const OrgUnitHarness = () => {
     )
 }
 
-describe('PluginWrapper filter remount (org unit)', () => {
-    it('remounts the canvas when a dashboard org unit filter changes', async () => {
+describe('PluginWrapper filters that are not applied (org unit)', () => {
+    it('does not remount or refetch when only the org unit filter changes, since it is not applied', async () => {
         const user = userEvent.setup()
         const deferred = createDeferredQuery()
         const options = {
@@ -85,20 +85,16 @@ describe('PluginWrapper filter remount (org unit)', () => {
         await user.click(
             screen.getByRole('button', { name: 'change org unit' })
         )
-        await waitFor(() => {
-            expect(
-                screen.getByTestId('dhis2-uicore-circularloader')
-            ).toBeInTheDocument()
-            expect(
-                screen.queryByTestId('line-list-data-table')
-            ).not.toBeInTheDocument()
-        })
 
-        await deferred.releaseAll()
-        await waitFor(() => {
-            expect(
-                screen.getByTestId('line-list-data-table')
-            ).toBeInTheDocument()
-        })
+        // No remount: the table stays up and no spinner appears, since ou is
+        // not part of the request identity.
+        expect(screen.getByTestId('line-list-data-table')).toBeInTheDocument()
+        expect(
+            screen.queryByTestId('dhis2-uicore-circularloader')
+        ).not.toBeInTheDocument()
+
+        // No refetch either: ou is not applied, so it never reaches the
+        // analytics request in the first place.
+        expect(deferred.pendingCount()).toBe(0)
     })
 })
