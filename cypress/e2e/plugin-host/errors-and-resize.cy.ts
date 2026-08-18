@@ -42,8 +42,26 @@ describe('plugin host errors and resizing', () => {
             })
     })
 
+    it('shows the canvas error when the analytics request itself fails', () => {
+        /* A real visualization id, so the eventVisualizations fetch succeeds
+         * and the failure is forced on the analytics request instead — the
+         * other place a plugin's data fetch can fail. */
+        cy.intercept(
+            { method: 'GET', url: '**/analytics/events/query/**' },
+            { statusCode: 500, body: { message: 'forced by test' } }
+        )
+
+        cy.getByDataTest('plugin-host-visualization-id-input').type(
+            'TIuOzZ0ID0V'
+        )
+
+        pluginBody()
+            .contains('Something went wrong', { timeout: 30000 })
+            .should('be.visible')
+    })
+
     it('honours the height the host passes and scrolls taller content', () => {
-        cy.getByDataTest('plugin-host-visualization-select').select(
+        cy.getByDataTest('plugin-host-visualization-id-input').type(
             'TIuOzZ0ID0V'
         )
         pluginBody().find('table', { timeout: 30000 }).should('be.visible')

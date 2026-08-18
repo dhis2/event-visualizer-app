@@ -515,9 +515,16 @@ dashboard around the real plugin iframe:
 Step 2 is optional — the host page shows the same login form. Either way one
 login is enough, because both pages share an origin.
 
-Pick a visualization, then change the filter controls and watch the iframe
-re-render. Only `relativePeriodDate` currently changes the analytics request;
-the org unit, period and dimension filters reach the plugin and are ignored.
+Paste a visualization id into the input to render it. Some ids to try:
+
+- `TIuOzZ0ID0V` — LINE_LIST, 7 columns
+- `PRVegIpABeb` — LINE_LIST, 21 columns
+- `R4wAb2yMLik` — LINE_LIST
+- `aDrb9UMVxt0` — PIVOT_TABLE
+
+Check the filter toggle to see what a dashboard filter does today: nothing
+reaches the analytics request, so the plugin just shows a notice that filters
+are not applied.
 
 To see the props the host sent, run this once in the browser console:
 

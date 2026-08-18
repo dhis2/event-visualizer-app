@@ -1,10 +1,7 @@
 import { Plugin as UntypedPlugin } from '@dhis2/app-runtime/experimental'
 import { NoticeBox } from '@dhis2/ui'
 import type { HostFilters } from '@types'
-import { useCallback, useMemo, useState, type FC } from 'react'
-import { buildHostFilters, type FilterSelection } from './build-filters'
-import { FilterControls } from './filter-controls'
-import { VISUALIZATIONS } from './fixtures'
+import { useCallback, useState, type FC } from 'react'
 
 /* `Plugin`'s shipped type only names its own layout props (pluginSource,
  * height, width, ...) and forwards everything else to the iframe at
@@ -30,13 +27,15 @@ type HostPluginProps = {
 
 const Plugin: FC<HostPluginProps> = UntypedPlugin
 
+/* Not a real org unit: nothing downstream resolves this id, since the plugin
+ * only checks whether a dashboard filter is present, never its value. */
+const UNAPPLIED_FILTERS: HostFilters = { ou: [{ id: 'plugin-host-test' }] }
+
 export const HostPage: FC = () => {
-    const [visualizationId, setVisualizationId] = useState<string>('')
-    const [pastedId, setPastedId] = useState('')
+    const [visualizationId, setVisualizationId] = useState('')
     const [error, setError] = useState<Error | undefined>()
-    const [selection, setSelection] = useState<FilterSelection>({})
-    const filters = useMemo(() => buildHostFilters(selection), [selection])
-    const activeVisualizationId = pastedId.trim() || visualizationId
+    const [filtersOn, setFiltersOn] = useState(false)
+    const trimmedVisualizationId = visualizationId.trim()
 
     const onError = useCallback((pluginError: Error) => {
         setError(pluginError)
@@ -48,71 +47,43 @@ export const HostPage: FC = () => {
                 Plugin host (dev only)
             </h1>
 
-            <div data-test="plugin-host-controls" style={{ maxWidth: 420 }}>
-                <label
-                    htmlFor="plugin-host-visualization-select"
-                    style={{ display: 'block', marginBottom: 4 }}
-                >
-                    Visualization
-                </label>
-                {/* A native <select>, not a DHIS2 UI SingleSelectField: the
-                 * DHIS2 UI widget renders a div-based listbox with no
-                 * underlying <select>, which Cypress's cy.select() requires. */}
-                <select
-                    id="plugin-host-visualization-select"
-                    data-test="plugin-host-visualization-select"
-                    value={visualizationId}
-                    onChange={(event) => {
-                        setError(undefined)
-                        setVisualizationId(event.target.value)
-                    }}
-                >
-                    <option value="" disabled>
-                        Select a visualization
-                    </option>
-                    {VISUALIZATIONS.map(({ id, label, type }) => (
-                        <option key={id} value={id}>
-                            {`${label} (${type})`}
-                        </option>
-                    ))}
-                </select>
-
-                <label
-                    htmlFor="plugin-host-visualization-id-input"
-                    style={{ display: 'block', margin: '8px 0 4px' }}
-                >
-                    Or paste a visualization id (overrides the selection above;
-                    clear it to use the dropdown again)
-                </label>
-                {/* A native <input>, not a DHIS2 UI InputField: see the note
-                 * on the <select> above, cy.type() needs an underlying
-                 * <input>. Typing here overrides the select above it. */}
-                <div style={{ display: 'flex', gap: 4 }}>
+            <div style={{ display: 'grid', gap: 12, maxWidth: 420 }}>
+                <div>
+                    <label
+                        htmlFor="plugin-host-visualization-id-input"
+                        style={{ display: 'block', marginBottom: 4 }}
+                    >
+                        Visualization id
+                    </label>
+                    {/* A native <input>, not a DHIS2 UI InputField: the DHIS2
+                     * UI widget renders without an underlying <input>, which
+                     * cy.type() requires. */}
                     <input
                         id="plugin-host-visualization-id-input"
                         data-test="plugin-host-visualization-id-input"
                         type="text"
-                        value={pastedId}
+                        value={visualizationId}
                         onChange={(event) => {
                             setError(undefined)
-                            setPastedId(event.target.value)
+                            setVisualizationId(event.target.value)
                         }}
-                        style={{ flex: 1 }}
+                        style={{ width: '100%' }}
                     />
-                    <button
-                        type="button"
-                        data-test="plugin-host-visualization-id-clear"
-                        onClick={() => {
-                            setError(undefined)
-                            setPastedId('')
-                        }}
-                    >
-                        Clear
-                    </button>
                 </div>
-            </div>
 
-            <FilterControls selection={selection} onChange={setSelection} />
+                <label
+                    style={{ display: 'flex', alignItems: 'center', gap: 8 }}
+                >
+                    <input
+                        type="checkbox"
+                        data-test="plugin-host-filter-toggle"
+                        checked={filtersOn}
+                        onChange={(event) => setFiltersOn(event.target.checked)}
+                    />
+                    Apply a dashboard filter (never reaches the request; only
+                    shows the &quot;not applied&quot; notice)
+                </label>
+            </div>
 
             {error && (
                 <NoticeBox error title="The plugin reported an error">
@@ -120,7 +91,7 @@ export const HostPage: FC = () => {
                 </NoticeBox>
             )}
 
-            {activeVisualizationId && (
+            {trimmedVisualizationId && (
                 <div
                     data-test="plugin-host-iframe-wrap"
                     style={{ border: '1px solid #d5dde5', minHeight: 400 }}
@@ -128,12 +99,12 @@ export const HostPage: FC = () => {
                     <Plugin
                         pluginSource="/plugin.html"
                         height={400}
-                        visualization={{ id: activeVisualizationId }}
+                        visualization={{ id: trimmedVisualizationId }}
                         displayProperty="name"
                         forDashboard
                         isVisualizationLoaded
-                        cacheId={`plugin-host-${activeVisualizationId}`}
-                        filters={filters}
+                        cacheId={`plugin-host-${trimmedVisualizationId}`}
+                        filters={filtersOn ? UNAPPLIED_FILTERS : undefined}
                         onError={onError}
                     />
                 </div>

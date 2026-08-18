@@ -6,7 +6,7 @@ describe('plugin host', () => {
     })
 
     it('renders a line list inside the plugin iframe', () => {
-        cy.getByDataTest('plugin-host-visualization-select').select(
+        cy.getByDataTest('plugin-host-visualization-id-input').type(
             'TIuOzZ0ID0V'
         )
 
@@ -14,15 +14,15 @@ describe('plugin host', () => {
     })
 
     it('renders a pivot table inside the plugin iframe', () => {
-        cy.getByDataTest('plugin-host-visualization-select').select(
+        cy.getByDataTest('plugin-host-visualization-id-input').type(
             'aDrb9UMVxt0'
         )
 
         pluginBody().find('table', { timeout: 30000 }).should('be.visible')
     })
 
-    it('swaps the rendered visualization when the selection changes', () => {
-        cy.getByDataTest('plugin-host-visualization-select').select(
+    it('swaps the rendered visualization when the id changes', () => {
+        cy.getByDataTest('plugin-host-visualization-id-input').type(
             'TIuOzZ0ID0V'
         )
         pluginBody().find('table', { timeout: 30000 }).should('be.visible')
@@ -31,9 +31,9 @@ describe('plugin host', () => {
             .find('table thead th')
             .its('length')
             .then((firstColumnCount) => {
-                cy.getByDataTest('plugin-host-visualization-select').select(
-                    'PRVegIpABeb'
-                )
+                cy.getByDataTest('plugin-host-visualization-id-input')
+                    .clear()
+                    .type('PRVegIpABeb')
 
                 /* Column count, not header text: it doesn't depend on
                  * translations or label edits, and it's a stable proxy for
