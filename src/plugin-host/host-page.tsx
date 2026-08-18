@@ -32,9 +32,11 @@ const Plugin: FC<HostPluginProps> = UntypedPlugin
 
 export const HostPage: FC = () => {
     const [visualizationId, setVisualizationId] = useState<string>('')
+    const [pastedId, setPastedId] = useState('')
     const [error, setError] = useState<Error | undefined>()
     const [selection, setSelection] = useState<FilterSelection>({})
     const filters = useMemo(() => buildHostFilters(selection), [selection])
+    const activeVisualizationId = pastedId.trim() || visualizationId
 
     const onError = useCallback((pluginError: Error) => {
         setError(pluginError)
@@ -74,6 +76,26 @@ export const HostPage: FC = () => {
                         </option>
                     ))}
                 </select>
+
+                <label
+                    htmlFor="plugin-host-visualization-id-input"
+                    style={{ display: 'block', margin: '8px 0 4px' }}
+                >
+                    Or paste a visualization id
+                </label>
+                {/* A native <input>, not a DHIS2 UI InputField: see the note
+                 * on the <select> above, cy.type() needs an underlying
+                 * <input>. Typing here overrides the select above it. */}
+                <input
+                    id="plugin-host-visualization-id-input"
+                    data-test="plugin-host-visualization-id-input"
+                    type="text"
+                    value={pastedId}
+                    onChange={(event) => {
+                        setError(undefined)
+                        setPastedId(event.target.value)
+                    }}
+                />
             </div>
 
             <FilterControls selection={selection} onChange={setSelection} />
@@ -84,7 +106,7 @@ export const HostPage: FC = () => {
                 </NoticeBox>
             )}
 
-            {visualizationId && (
+            {activeVisualizationId && (
                 <div
                     data-test="plugin-host-iframe-wrap"
                     style={{ border: '1px solid #d5dde5', minHeight: 400 }}
@@ -92,11 +114,11 @@ export const HostPage: FC = () => {
                     <Plugin
                         pluginSource="/plugin.html"
                         height={400}
-                        visualization={{ id: visualizationId }}
+                        visualization={{ id: activeVisualizationId }}
                         displayProperty="name"
                         forDashboard
                         isVisualizationLoaded
-                        cacheId={`plugin-host-${visualizationId}`}
+                        cacheId={`plugin-host-${activeVisualizationId}`}
                         filters={filters}
                         onError={onError}
                     />
