@@ -529,5 +529,8 @@ The iframe is same-origin, so devtools breakpoints inside plugin code work and
 the React tree shows both host and plugin.
 
 Opening http://localhost:3000/plugin.html directly gives the plugin with no
-host. It will not render a visualization, because it waits for props from a
-parent window that isn't there.
+host. It throws while waiting for props from a parent window that isn't there
+(`No handler found for post message: getPropsFromParent`, then a `TypeError`
+reading `id` of `undefined`) and shows a "There was a problem loading this
+plugin" error screen. That's expected and harmless — it just means there's no
+dashboard sending it props. Use plugin-host.html above to see it rendered.
