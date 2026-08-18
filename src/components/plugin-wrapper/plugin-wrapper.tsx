@@ -14,6 +14,7 @@ import type {
 import type { FC } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { FiltersNotAppliedNotice } from './filters-not-applied-notice'
 import { getBaseRequestIdentity as getLineListBaseRequestIdentity } from './hooks/query-tools-line-list'
 import { getBaseRequestIdentity as getPivotTableBaseRequestIdentity } from './hooks/query-tools-pivot-table'
 import { LineListPlugin } from './line-list-plugin'
@@ -124,6 +125,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                         <CircularLoader />
                     </Center>
                 )}
+                <FiltersNotAppliedNotice filters={filters} />
                 {visualization.type === 'LINE_LIST' && (
                     <LineListPlugin
                         displayProperty={displayProperty}

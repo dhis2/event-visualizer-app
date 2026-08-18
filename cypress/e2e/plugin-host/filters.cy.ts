@@ -45,4 +45,31 @@ describe('plugin host filters', () => {
         cy.wait('@analytics')
         pluginBody().find('table', { timeout: 30000 }).should('be.visible')
     })
+
+    it('warns that an org unit filter was not applied, and can be dismissed', () => {
+        cy.getByDataTest('plugin-host-org-unit-select').select('O6uvpzGd5pu')
+
+        pluginBody()
+            .find('[data-test="filters-not-applied-notice"]', {
+                timeout: 30000,
+            })
+            .should('be.visible')
+
+        pluginBody().findByDataTest('filters-not-applied-dismiss').click()
+
+        pluginBody()
+            .findByDataTest('filters-not-applied-notice')
+            .should('not.exist')
+    })
+
+    it('does not warn when only relativePeriodDate is set', () => {
+        /* 2026-01-01 keeps the fixture's "this year" events (all dated in
+         * 2026) in range, so the table renders instead of a no-data notice. */
+        cy.getByDataTest('plugin-host-relative-period-date').type('2026-01-01')
+
+        pluginBody().find('table', { timeout: 30000 }).should('be.visible')
+        pluginBody()
+            .findByDataTest('filters-not-applied-notice')
+            .should('not.exist')
+    })
 })
