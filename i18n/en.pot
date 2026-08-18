@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-17T10:22:02.439Z\n"
-"PO-Revision-Date: 2026-08-17T10:22:02.440Z\n"
+"POT-Creation-Date: 2026-08-18T07:21:01.801Z\n"
+"PO-Revision-Date: 2026-08-18T07:21:01.801Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -21,9 +21,6 @@ msgid ""
 msgstr ""
 "Some dimensions were not added because they cannot be combined with {{- "
 "layoutTetName}} dimensions: {{list}}."
-
-msgid "{{- name}} was not added because it is already used as the custom value."
-msgstr "{{- name}} was not added because it is already used as the custom value."
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -328,14 +325,20 @@ msgstr "Not valid with program indicators"
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr "Nothing selected. Add items to the layout to get started."
 
-msgid "Tracked entity"
-msgstr "Tracked entity"
+msgid "enrollment"
+msgstr "enrollment"
 
-msgid "{{- countedThing}} count"
-msgstr "{{- countedThing}} count"
+msgid "event"
+msgstr "event"
+
+msgid "One row for each {{- countedThing}}"
+msgstr "One row for each {{- countedThing}}"
 
 msgid "Cells show {{- valueDescription}}"
 msgstr "Cells show {{- valueDescription}}"
+
+msgid "{{- countedThing}} count"
+msgstr "{{- countedThing}} count"
 
 msgid "Each cell shows the number of tracked entities."
 msgstr "Each cell shows the number of tracked entities."
@@ -966,9 +969,6 @@ msgid ""
 msgstr ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
-
-msgid "Already used as custom value."
-msgstr "Already used as custom value."
 
 msgid "Cannot be used in a {{visType}}."
 msgstr "Cannot be used in a {{visType}}."

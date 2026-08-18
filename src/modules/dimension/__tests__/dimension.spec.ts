@@ -743,7 +743,6 @@ const getMessage = (
 ): string | null =>
     getDimensionLayoutBlockedMessage({
         visualizationType: 'PIVOT_TABLE',
-        customValueId: null,
         layoutTetId: null,
         dimensionTetId: null,
         crossTetMessage: '',
@@ -755,19 +754,12 @@ type ReasonArgs = Parameters<typeof getDimensionBlockReason>[0]
 const getReason = (args: Partial<ReasonArgs> & Pick<ReasonArgs, 'dimension'>) =>
     getDimensionBlockReason({
         visualizationType: 'PIVOT_TABLE',
-        customValueId: null,
         layoutTetId: null,
         dimensionTetId: null,
         ...args,
     })
 
 describe('getDimensionBlockReason', () => {
-    it('returns customValue when the dim is the custom value', () => {
-        expect(
-            getReason({ dimension: makeDim({ id: 'x' }), customValueId: 'x' })
-        ).toBe('customValue')
-    })
-
     it('returns visType for a program indicator outside line list', () => {
         expect(
             getReason({
@@ -795,18 +787,7 @@ describe('getDimensionBlockReason', () => {
         ).toBeNull()
     })
 
-    it('prefers customValue, then visType, over crossTet', () => {
-        expect(
-            getReason({
-                dimension: makeDim({
-                    id: 'pi',
-                    dimensionType: 'PROGRAM_INDICATOR',
-                }),
-                customValueId: 'pi',
-                dimensionTetId: 'tetB',
-                layoutTetId: 'tetA',
-            })
-        ).toBe('customValue')
+    it('prefers visType over crossTet', () => {
         expect(
             getReason({
                 dimension: makeDim({ dimensionType: 'PROGRAM_INDICATOR' }),
@@ -814,44 +795,6 @@ describe('getDimensionBlockReason', () => {
                 layoutTetId: 'tetA',
             })
         ).toBe('visType')
-    })
-})
-
-describe('getDimensionLayoutBlockedMessage — custom-value rule (Case C)', () => {
-    it('disables the dim whose compound id matches the custom value id', () => {
-        expect(
-            getMessage({
-                dimension: makeDim({ id: 'stage1.de1' }),
-                customValueId: 'stage1.de1',
-            })
-        ).toBe('Already used as custom value.')
-    })
-
-    it('does not disable a different stage-instance of the same DE', () => {
-        expect(
-            getMessage({
-                dimension: makeDim({ id: 'stageB.de1' }),
-                customValueId: 'stageA.de1',
-            })
-        ).toBeNull()
-    })
-
-    it('leaves non-matching dims enabled', () => {
-        expect(
-            getMessage({
-                dimension: makeDim({ id: 'stage1.de2' }),
-                customValueId: 'stage1.de1',
-            })
-        ).toBeNull()
-    })
-
-    it('does not fire when no custom value is set', () => {
-        expect(
-            getMessage({
-                dimension: makeDim({ id: 'stage1.de1' }),
-                customValueId: null,
-            })
-        ).toBeNull()
     })
 })
 
@@ -964,23 +907,6 @@ describe('getDimensionLayoutBlockedMessage — cross-TET rule (Case D)', () => {
 
 describe('getDimensionLayoutBlockedMessage — rule precedence', () => {
     const crossTetMessage = 'cross-tet message'
-
-    it('returns the custom-value message when it could fire alongside cross-TET', () => {
-        expect(
-            getMessage({
-                dimension: makeDim({
-                    id: 'tetA.enrollmentOu',
-                    dimensionId: 'enrollmentOu',
-                    dimensionType: 'ORGANISATION_UNIT',
-                    trackedEntityTypeId: 'tetA',
-                }),
-                customValueId: 'tetA.enrollmentOu',
-                dimensionTetId: 'tetB',
-                layoutTetId: 'tetA',
-                crossTetMessage,
-            })
-        ).toContain('custom value')
-    })
 
     it('returns the vis-type message when it could fire alongside cross-TET', () => {
         expect(

@@ -34,6 +34,23 @@ const CellIcon: FC = () => (
     </svg>
 )
 
+const EditIcon: FC = () => (
+    <svg
+        className={classes.editIcon}
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="currentColor"
+    >
+        <path
+            fillRule="evenodd"
+            clipRule="evenodd"
+            d="M10 2.293a1 1 0 0 1 1.414 0l2.293 2.293a1 1 0 0 1 0 1.414l-7 7H11v1H2v-3.707l8-8Zm-7 8.414V13h2.293l5.5-5.5L8.5 5.207l-5.5 5.5ZM9.207 4.5 11.5 6.793l1.5-1.5L10.707 3l-1.5 1.5Z"
+        />
+        <path d="M14 14h-2v-1h2v1Z" />
+    </svg>
+)
+
 export const CellValueFooter: FC = () => {
     const currentVis = useAppSelector(getCurrentVis)
     const outputType = useAppSelector(getVisUiConfigOutputType)
@@ -46,10 +63,7 @@ export const CellValueFooter: FC = () => {
     const metadataStore = useMetadataStore()
     const [isModalOpen, setIsModalOpen] = useState(false)
 
-    if (
-        visualizationType !== 'PIVOT_TABLE' ||
-        isVisualizationEmpty(currentVis)
-    ) {
+    if (isVisualizationEmpty(currentVis)) {
         return null
     }
 
@@ -63,38 +77,45 @@ export const CellValueFooter: FC = () => {
     const countedThing = (() => {
         switch (outputType) {
             case 'TRACKED_ENTITY_INSTANCE':
-                return trackedEntityName ?? i18n.t('Tracked entity')
+                return trackedEntityName ?? i18n.t('tracked entity')
             case 'ENROLLMENT':
                 return isDataSourceProgramWithRegistration(program)
-                    ? (program.displayEnrollmentLabel ?? i18n.t('Enrollment'))
-                    : i18n.t('Enrollment')
+                    ? (program.displayEnrollmentLabel ?? i18n.t('enrollment'))
+                    : i18n.t('enrollment')
             default:
                 return isDataSourceProgramWithRegistration(program)
-                    ? (program.displayEventLabel ?? i18n.t('Event'))
-                    : i18n.t('Event')
+                    ? (program.displayEventLabel ?? i18n.t('event'))
+                    : i18n.t('event')
         }
     })()
 
-    const valueDescription = customValue
-        ? `${customValueMetadata?.name} ${aggregationTypeDisplayNames[
-              customValue.aggregationType
-          ].toLocaleLowerCase()}`
-        : i18n.t('{{- countedThing}} count', {
+    const isLineList = visualizationType === 'LINE_LIST'
+
+    const label = isLineList
+        ? i18n.t('One row for each {{- countedThing}}', {
               countedThing,
               nsSeparator: '^^',
           })
+        : i18n.t('Cells show {{- valueDescription}}', {
+              valueDescription: customValue
+                  ? `${customValueMetadata?.name} ${aggregationTypeDisplayNames[
+                        customValue.aggregationType
+                    ].toLocaleLowerCase()}`
+                  : i18n.t('{{- countedThing}} count', {
+                        countedThing,
+                        nsSeparator: '^^',
+                    }),
+              nsSeparator: '^^',
+          })
 
-    const label = i18n.t('Cells show {{- valueDescription}}', {
-        valueDescription,
-        nsSeparator: '^^',
-    })
-
-    const isClickable = CHANGEABLE_OUTPUT_TYPES.includes(outputType)
+    const isClickable =
+        !isLineList && CHANGEABLE_OUTPUT_TYPES.includes(outputType)
 
     const content = (
         <>
             <CellIcon />
             <span className={classes.label}>{label}</span>
+            {isClickable && <EditIcon />}
         </>
     )
 

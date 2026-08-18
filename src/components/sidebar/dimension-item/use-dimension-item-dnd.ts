@@ -18,10 +18,7 @@ import {
     getMultiSelectedDimensionIds,
     isMultiSelecting,
 } from '@store/dimensions-selection-slice'
-import {
-    getVisUiConfigCustomValue,
-    getVisUiConfigVisualizationType,
-} from '@store/vis-ui-config-slice'
+import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
 import { useMemo, type CSSProperties } from 'react'
 
@@ -53,8 +50,6 @@ export const useDimensionItemDnd = ({
     const multiSelecting = useAppSelector(isMultiSelecting)
     const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
-    const customValue = useAppSelector(getVisUiConfigCustomValue)
-    const customValueId = customValue?.id ?? null
     const { tetId: layoutTetId } = useLayoutContext()
     const crossTetMismatch = useCrossTetMismatch()
     const crossTetMessage = crossTetMismatch
@@ -78,7 +73,6 @@ export const useDimensionItemDnd = ({
                 getDimensionLayoutBlockedMessage({
                     dimension: dim,
                     visualizationType,
-                    customValueId,
                     layoutTetId,
                     dimensionTetId: resolveDimensionTetId(dim, metadataStore),
                     crossTetMessage,
@@ -90,7 +84,6 @@ export const useDimensionItemDnd = ({
         multiSelectedIds,
         metadataStore,
         visualizationType,
-        customValueId,
         layoutTetId,
         crossTetMessage,
     ])
