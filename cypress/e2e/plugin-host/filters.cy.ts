@@ -1,5 +1,7 @@
 import { pluginBody } from '../../support/plugin-host'
 
+const currentYear = new Date().getFullYear()
+
 describe('plugin host filters', () => {
     beforeEach(() => {
         cy.visit('/plugin-host.html')
@@ -62,9 +64,11 @@ describe('plugin host filters', () => {
     })
 
     it('does not warn when only relativePeriodDate is set', () => {
-        /* 2026-01-01 keeps the fixture's "this year" events (all dated in
-         * 2026) in range, so the table renders instead of a no-data notice. */
-        cy.getByDataTest('plugin-host-relative-period-date').type('2026-01-01')
+        /* January 1st of the current year keeps the fixture's "this year"
+         * events in range, so the table renders instead of a no-data notice. */
+        cy.getByDataTest('plugin-host-relative-period-date').type(
+            `${currentYear}-01-01`
+        )
 
         pluginBody().find('table', { timeout: 30000 }).should('be.visible')
         pluginBody()

@@ -68,6 +68,20 @@ describe('getRequestStructure (line list)', () => {
         )
     })
 
+    it('does not change for filters that are never applied (ou, pe, yourDimensions)', () => {
+        expect(lineListKey(baseLineList, { ou: [{ id: 'ou1' }] })).toBe(
+            lineListKey(baseLineList)
+        )
+        expect(lineListKey(baseLineList, { pe: [{ id: 'LAST_YEAR' }] })).toBe(
+            lineListKey(baseLineList)
+        )
+        expect(
+            lineListKey(baseLineList, {
+                yourDimensions: { d1: [{ id: 'x' }] },
+            })
+        ).toBe(lineListKey(baseLineList))
+    })
+
     it('does not change when only the sorting changes', () => {
         const next = {
             ...baseLineList,
@@ -112,6 +126,20 @@ describe('getRequestStructure (pivot table)', () => {
         ).not.toBe(
             pivotTableKey(basePivotTable, { relativePeriodDate: '2024-06-01' })
         )
+    })
+
+    it('does not change for filters that are never applied (ou, pe, yourDimensions)', () => {
+        expect(pivotTableKey(basePivotTable, { ou: [{ id: 'ou1' }] })).toBe(
+            pivotTableKey(basePivotTable)
+        )
+        expect(
+            pivotTableKey(basePivotTable, { pe: [{ id: 'LAST_YEAR' }] })
+        ).toBe(pivotTableKey(basePivotTable))
+        expect(
+            pivotTableKey(basePivotTable, {
+                yourDimensions: { d1: [{ id: 'x' }] },
+            })
+        ).toBe(pivotTableKey(basePivotTable))
     })
 
     it('includes the custom value only when both value and aggregationType are set', () => {

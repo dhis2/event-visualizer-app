@@ -139,7 +139,10 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                         <CircularLoader />
                     </Center>
                 )}
-                <FiltersNotAppliedNotice filters={filters} />
+                <FiltersNotAppliedNotice
+                    filters={filters}
+                    isLoading={isVisualizationLoading || !hasAnalyticsData}
+                />
                 {visualization.type === 'LINE_LIST' && (
                     <LineListPlugin
                         displayProperty={displayProperty}

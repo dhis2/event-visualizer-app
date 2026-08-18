@@ -40,6 +40,12 @@ describe('hasUnappliedFilters', () => {
         expect(hasUnappliedFilters({ ou: [], pe: [] })).toBe(false)
         expect(hasUnappliedFilters({ yourDimensions: {} })).toBe(false)
     })
+
+    it('is false when a your-dimension key is present but its array is empty', () => {
+        expect(
+            hasUnappliedFilters({ yourDimensions: { uIuxlbV1vRT: [] } })
+        ).toBe(false)
+    })
 })
 
 describe('FiltersNotAppliedNotice', () => {
@@ -74,5 +80,41 @@ describe('FiltersNotAppliedNotice', () => {
         rerender(<FiltersNotAppliedNotice filters={{ ou: [{ id: 'y' }] }} />)
 
         expect(screen.getByRole('button')).toBeInTheDocument()
+    })
+
+    it('announces itself to screen readers via a live region', () => {
+        render(<FiltersNotAppliedNotice filters={{ ou: [{ id: 'x' }] }} />)
+
+        expect(screen.getByRole('status')).toHaveTextContent(
+            'Filters are not applied to line list and pivot table dashboard items'
+        )
+    })
+
+    it('renders nothing while loading, even with an unapplied filter', () => {
+        const { container } = render(
+            <FiltersNotAppliedNotice
+                filters={{ ou: [{ id: 'x' }] }}
+                isLoading
+            />
+        )
+        expect(container).toBeEmptyDOMElement()
+    })
+
+    it('reappears once loading finishes, if the filter is still unapplied', () => {
+        const { rerender } = render(
+            <FiltersNotAppliedNotice
+                filters={{ ou: [{ id: 'x' }] }}
+                isLoading
+            />
+        )
+        expect(screen.queryByRole('status')).not.toBeInTheDocument()
+
+        rerender(
+            <FiltersNotAppliedNotice
+                filters={{ ou: [{ id: 'x' }] }}
+                isLoading={false}
+            />
+        )
+        expect(screen.getByRole('status')).toBeInTheDocument()
     })
 })
