@@ -9,7 +9,12 @@ import { useAppDispatch } from '@hooks'
 import { transformVisualizationForAnalyticsRequest } from '@modules/analytics-request'
 import { logger } from '@modules/logger'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
-import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
+import type {
+    CurrentUser,
+    CurrentVisualization,
+    HostFilters,
+    Sorting,
+} from '@types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FC } from 'react'
 import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
@@ -19,7 +24,7 @@ type InternalSorting = Sorting | undefined
 type LineListPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
-    filters?: Record<string, unknown>
+    filters?: HostFilters
     isInDashboard: boolean
     isInModal: boolean
     onDataSorted?: (sorting: InternalSorting) => void

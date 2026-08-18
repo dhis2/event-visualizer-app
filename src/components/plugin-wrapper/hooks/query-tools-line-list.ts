@@ -8,6 +8,7 @@ import type {
     CurrentVisualization,
     DimensionArray,
     DimensionRecord,
+    HostFilters,
     OutputType,
 } from '@types'
 import { getRequestOptions } from './query-tools-common'
@@ -107,7 +108,7 @@ export const getAdaptedVisualization = (
  * a remount). */
 export const getBaseRequestIdentity = (
     visualization: CurrentVisualization,
-    filters?: Record<string, unknown>
+    filters?: HostFilters
 ) => ({
     ...getAdaptedVisualization(visualization),
     programIds: (visualization.programDimensions ?? []).map((p) => p.id),

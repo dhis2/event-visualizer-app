@@ -5,7 +5,7 @@ import { EmptyResponseError } from '@modules/error/empty-response-error'
 import { isAbortError } from '@modules/error/is-abort-error'
 import { logger } from '@modules/logger'
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
-import type { CurrentUser, CurrentVisualization } from '@types'
+import type { CurrentUser, CurrentVisualization, HostFilters } from '@types'
 import { useCallback, useState } from 'react'
 import { useErrorBoundary } from 'react-error-boundary'
 import { getAnalyticsEndpoint } from './query-tools-common'
@@ -94,7 +94,7 @@ export type PivotTableAnalyticsData = {
 
 type FetchAnalyticsDataForPTParams = {
     visualization: CurrentVisualization
-    filters?: Record<string, unknown>
+    filters?: HostFilters
     displayProperty: CurrentUser['settings']['displayProperty']
     onResponseReceived: () => void
 }

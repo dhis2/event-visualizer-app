@@ -8,6 +8,7 @@ import type {
     CurrentUser,
     CurrentVisualization,
     EmptyVisualization,
+    HostFilters,
     Sorting,
 } from '@types'
 import type { FC } from 'react'
@@ -21,7 +22,7 @@ import classes from './styles/plugin-wrapper.module.css'
 
 const getBaseRequestIdentity = (
     currentVis: CurrentVisualization,
-    filters?: Record<string, unknown>
+    filters?: HostFilters
 ) => {
     switch (currentVis.type) {
         case 'LINE_LIST':
@@ -36,7 +37,7 @@ const getBaseRequestIdentity = (
 type PluginWrapperProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization | EmptyVisualization
-    filters?: Record<'relativePeriodDate', string> // TODO: check what dashboard passes here
+    filters?: HostFilters
     isInDashboard?: boolean
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     isVisualizationLoading?: boolean

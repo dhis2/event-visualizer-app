@@ -4,6 +4,7 @@ import type {
     Axis,
     CurrentVisualization,
     DimensionArray,
+    HostFilters,
     OutputType,
 } from '@types'
 import { getRequestOptions } from './query-tools-common'
@@ -69,7 +70,7 @@ export const getCustomValueRequestParams = (
  * identity rather than excluded from it. */
 export const getBaseRequestIdentity = (
     visualization: CurrentVisualization,
-    filters?: Record<string, unknown>
+    filters?: HostFilters
 ) => ({
     ...getAdaptedVisualization(visualization),
     programIds: (visualization.programDimensions ?? []).map((p) => p.id),

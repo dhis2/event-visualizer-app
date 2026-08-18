@@ -18,6 +18,7 @@ import type {
     CurrentUser,
     CurrentVisualization,
     EmptyVisualization,
+    HostFilters,
     SavedVisualization,
 } from '@types'
 import { useEffect, useMemo, type FC } from 'react'
@@ -26,7 +27,7 @@ import './locales/index.js'
 type DashboardPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: SavedVisualization
-    filters?: Record<string, string>
+    filters?: HostFilters
 }
 
 const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
