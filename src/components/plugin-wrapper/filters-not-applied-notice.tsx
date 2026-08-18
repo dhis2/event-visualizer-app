@@ -53,9 +53,7 @@ export const FiltersNotAppliedNotice: FC<FiltersNotAppliedNoticeProps> = ({
             >
                 <IconInfo24 color={colors.grey500} />
                 <span>
-                    {i18n.t(
-                        'Filters are not applied to line list and pivot table dashboard items'
-                    )}
+                    {i18n.t('Filters are not applied to Event visualizations')}
                 </span>
                 <Button
                     secondary
@@ -63,7 +61,7 @@ export const FiltersNotAppliedNotice: FC<FiltersNotAppliedNoticeProps> = ({
                     dataTest="filters-not-applied-dismiss"
                     onClick={() => setDismissedFiltersKey(filtersKey)}
                 >
-                    {i18n.t('Dismiss')}
+                    {i18n.t('Show without filters')}
                 </Button>
             </div>
         </Cover>

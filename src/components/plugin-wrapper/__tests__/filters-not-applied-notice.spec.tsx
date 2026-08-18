@@ -86,7 +86,7 @@ describe('FiltersNotAppliedNotice', () => {
         render(<FiltersNotAppliedNotice filters={{ ou: [{ id: 'x' }] }} />)
 
         expect(screen.getByRole('status')).toHaveTextContent(
-            'Filters are not applied to line list and pivot table dashboard items'
+            'Filters are not applied to Event visualizations'
         )
     })
 
