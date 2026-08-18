@@ -501,3 +501,33 @@ import { logger } from '@modules/logger'
 logger.debug('LL req', req)
 logger.error(error)
 ```
+
+### Simulating the dashboard plugin
+
+The app is also a dashboard plugin. To test that path without installing a
+bundle into an instance, `pnpm start` serves a dev-only page that imitates a
+dashboard around the real plugin iframe:
+
+1. `pnpm start`
+2. Log in at http://localhost:3000/
+3. Open http://localhost:3000/plugin-host.html
+
+Step 2 is optional — the host page shows the same login form. Either way one
+login is enough, because both pages share an origin.
+
+Pick a visualization, then change the filter controls and watch the iframe
+re-render. Only `relativePeriodDate` currently changes the analytics request;
+the org unit, period and dimension filters reach the plugin and are ignored.
+
+To see the props the host sent, run this once in the browser console:
+
+```js
+localStorage.EVENT_VISUALIZER_LOG_LEVEL = 'debug'
+```
+
+The iframe is same-origin, so devtools breakpoints inside plugin code work and
+the React tree shows both host and plugin.
+
+Opening http://localhost:3000/plugin.html directly gives the plugin with no
+host. It will not render a visualization, because it waits for props from a
+parent window that isn't there.

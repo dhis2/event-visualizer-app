@@ -1,6 +1,9 @@
 import { Plugin as UntypedPlugin } from '@dhis2/app-runtime/experimental'
 import { NoticeBox } from '@dhis2/ui'
-import { useCallback, useState, type FC } from 'react'
+import type { HostFilters } from '@types'
+import { useCallback, useMemo, useState, type FC } from 'react'
+import { buildHostFilters, type FilterSelection } from './build-filters'
+import { FilterControls } from './filter-controls'
 import { VISUALIZATIONS } from './fixtures'
 
 /* `Plugin`'s shipped type only names its own layout props (pluginSource,
@@ -21,6 +24,7 @@ type HostPluginProps = {
     forDashboard: boolean
     isVisualizationLoaded: boolean
     cacheId: string
+    filters?: HostFilters
     onError: (error: Error) => void
 }
 
@@ -29,6 +33,8 @@ const Plugin: FC<HostPluginProps> = UntypedPlugin
 export const HostPage: FC = () => {
     const [visualizationId, setVisualizationId] = useState<string>('')
     const [error, setError] = useState<Error | undefined>()
+    const [selection, setSelection] = useState<FilterSelection>({})
+    const filters = useMemo(() => buildHostFilters(selection), [selection])
 
     const onError = useCallback((pluginError: Error) => {
         setError(pluginError)
@@ -70,6 +76,8 @@ export const HostPage: FC = () => {
                 </select>
             </div>
 
+            <FilterControls selection={selection} onChange={setSelection} />
+
             {error && (
                 <NoticeBox error title="The plugin reported an error">
                     {error.message}
@@ -89,6 +97,7 @@ export const HostPage: FC = () => {
                         forDashboard
                         isVisualizationLoaded
                         cacheId={`plugin-host-${visualizationId}`}
+                        filters={filters}
                         onError={onError}
                     />
                 </div>
