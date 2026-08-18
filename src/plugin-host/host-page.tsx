@@ -81,21 +81,35 @@ export const HostPage: FC = () => {
                     htmlFor="plugin-host-visualization-id-input"
                     style={{ display: 'block', margin: '8px 0 4px' }}
                 >
-                    Or paste a visualization id
+                    Or paste a visualization id (overrides the selection above;
+                    clear it to use the dropdown again)
                 </label>
                 {/* A native <input>, not a DHIS2 UI InputField: see the note
                  * on the <select> above, cy.type() needs an underlying
                  * <input>. Typing here overrides the select above it. */}
-                <input
-                    id="plugin-host-visualization-id-input"
-                    data-test="plugin-host-visualization-id-input"
-                    type="text"
-                    value={pastedId}
-                    onChange={(event) => {
-                        setError(undefined)
-                        setPastedId(event.target.value)
-                    }}
-                />
+                <div style={{ display: 'flex', gap: 4 }}>
+                    <input
+                        id="plugin-host-visualization-id-input"
+                        data-test="plugin-host-visualization-id-input"
+                        type="text"
+                        value={pastedId}
+                        onChange={(event) => {
+                            setError(undefined)
+                            setPastedId(event.target.value)
+                        }}
+                        style={{ flex: 1 }}
+                    />
+                    <button
+                        type="button"
+                        data-test="plugin-host-visualization-id-clear"
+                        onClick={() => {
+                            setError(undefined)
+                            setPastedId('')
+                        }}
+                    >
+                        Clear
+                    </button>
+                </div>
             </div>
 
             <FilterControls selection={selection} onChange={setSelection} />

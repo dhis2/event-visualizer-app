@@ -10,6 +10,15 @@ describe('plugin host errors and resizing', () => {
     })
 
     it('shows the canvas error with a working retry for an unknown visualization', () => {
+        /* A bad id fails at the eventVisualizations fetch, not the analytics
+         * one. Counting these requests, rather than re-checking the error
+         * text, is what proves Retry does something: the error text alone is
+         * already true before the click, so a decorative button that does
+         * nothing would still pass a text-only assertion. */
+        cy.intercept({ method: 'GET', url: '**/eventVisualizations/**' }).as(
+            'vis'
+        )
+
         cy.getByDataTest('plugin-host-visualization-id-input').type(
             'notARealId1'
         )
@@ -21,14 +30,16 @@ describe('plugin host errors and resizing', () => {
         pluginBody()
             .contains('button', 'Retry', { timeout: 30000 })
             .should('be.visible')
-            .click()
 
-        /* Retry remounts the canvas and refetches; the id is still unknown so
-         * the same error reappears rather than the page getting stuck blank
-         * or throwing past the error boundary. */
-        pluginBody()
-            .contains('Something went wrong', { timeout: 30000 })
-            .should('be.visible')
+        cy.get('@vis.all')
+            .its('length')
+            .then((requestCountBeforeRetry) => {
+                pluginBody().contains('button', 'Retry').click()
+
+                cy.get('@vis.all')
+                    .its('length')
+                    .should('be.greaterThan', requestCountBeforeRetry)
+            })
     })
 
     it('honours the height the host passes and scrolls taller content', () => {
