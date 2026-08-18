@@ -11,7 +11,13 @@ export default defineConfig({
     test: {
         setupFiles: './vitest.setup.ts',
         environment: 'jsdom',
-        exclude: [...configDefaults.exclude, '**/.d2/**', '**/.claude/**'],
+        exclude: [
+            ...configDefaults.exclude,
+            '**/.d2/**',
+            '**/.claude/**',
+            // Third-party sources fetched for reference by `npx opensrc`
+            '**/opensrc/**',
+        ],
         onConsoleLog(log, type) {
             // Suppress Highcharts warnings
             if (

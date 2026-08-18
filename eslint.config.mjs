@@ -55,6 +55,8 @@ export default defineConfig([
                         },
                         {
                             group: [
+                                '**/plugin-host',
+                                './plugin-host',
                                 '**/plugin-host/**',
                                 './plugin-host/**',
                                 '**/dashboard-plugin',

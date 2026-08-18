@@ -43,6 +43,7 @@
         "*.d.ts",
         "*.cjs",
         ".*.cjs",
+        "*.mts",
         "vitest.*.ts",
         ".eslintrc.js",
         ".stylelintrc.js",
