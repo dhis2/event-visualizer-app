@@ -1,13 +1,13 @@
 import { getVisualizationQueryFields } from '@api/event-visualizations-api'
-import { parseEngineError } from '@api/parse-engine-error'
+import { AppCachedDataQueryProvider } from '@components/app-wrapper/app-cached-data-query-provider'
 import {
     PluginMetadataProvider,
     useMetadataStore,
 } from '@components/app-wrapper/metadata-provider/metadata-provider'
+import { StoreProvider } from '@components/app-wrapper/store-provider'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
-// eslint-disable-next-line no-restricted-imports
-import { useDataQuery } from '@dhis2/app-runtime'
+import { useRtkQuery } from '@hooks'
 import { logger } from '@modules/logger'
 import {
     normalizeApiSavedVisualization,
@@ -36,8 +36,14 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
 
     const metadataStore = useMetadataStore()
 
-    // fetch the visualization
-    const { data, error, loading, refetch } = useDataQuery({
+    /* useRtkQuery (not useDataQuery) because its arg is a plain value RTK
+     * Query re-keys its cache on. useDataQuery freezes its query definition
+     * on first render, so a later change to props.visualization.id would be
+     * silently ignored and the plugin would keep showing the first
+     * visualization. */
+    const { data, error, isLoading, refetch } = useRtkQuery<{
+        eventVisualization: ApiSavedVisualization
+    }>({
         eventVisualization: {
             resource: 'eventVisualizations',
             id: props.visualization.id, // TODO: this should be just passed as visualizationId
@@ -57,8 +63,7 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     // raw API response once; the metadata store consumes the SavedVisualization
     // and the plugin consumes the CurrentVisualization-shaped subset.
     const savedVisualization = useMemo(() => {
-        const apiVis = data?.eventVisualization as
-            ApiSavedVisualization | undefined
+        const apiVis = data?.eventVisualization
         return apiVis ? normalizeApiSavedVisualization(apiVis) : undefined
     }, [data])
 
@@ -75,13 +80,11 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
         [savedVisualization]
     )
 
-    const visualizationLoadError = error ? parseEngineError(error) : undefined
-
     logger.debug(
         'dp currentVisualization',
         currentVisualization,
-        'loading',
-        loading
+        'isLoading',
+        isLoading
     )
 
     return (
@@ -91,9 +94,9 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
                     displayProperty={pluginProps.displayProperty}
                     filters={pluginProps.filters}
                     visualization={currentVisualization}
-                    visualizationLoadError={visualizationLoadError}
+                    visualizationLoadError={error}
                     onRetryLoad={() => void refetch()}
-                    isVisualizationLoading={loading}
+                    isVisualizationLoading={isLoading}
                 />
             )}
         </DashboardPluginWrapper>
@@ -101,9 +104,13 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
 }
 
 const DashboardPlugin: FC<DashboardPluginProps> = (props) => (
-    <PluginMetadataProvider>
-        <DashboardPluginContent {...props} />
-    </PluginMetadataProvider>
+    <AppCachedDataQueryProvider>
+        <PluginMetadataProvider>
+            <StoreProvider>
+                <DashboardPluginContent {...props} />
+            </StoreProvider>
+        </PluginMetadataProvider>
+    </AppCachedDataQueryProvider>
 )
 
 // eslint-disable-next-line import/no-default-export
