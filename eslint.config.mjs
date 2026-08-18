@@ -54,6 +54,16 @@ export default defineConfig([
                                 "Import DHIS2 Core schema-types from '@types' instead of directly from generated files.",
                         },
                         {
+                            group: [
+                                '**/plugin-host/**',
+                                './plugin-host/**',
+                                '**/dashboard-plugin',
+                                './dashboard-plugin',
+                            ],
+                            message:
+                                'Entry points and the dev-only plugin host must not be imported by app code — it would pull them into the app bundle.',
+                        },
+                        {
                             group: ['../*'],
                             message:
                                 "Relative parent imports are not allowed. Use path aliases (e.g. '@hooks', '@components') instead.",
