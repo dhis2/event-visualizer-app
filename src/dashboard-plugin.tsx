@@ -97,6 +97,7 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
                     visualizationLoadError={error}
                     onRetryLoad={() => void refetch()}
                     isVisualizationLoading={isLoading}
+                    isInDashboard
                 />
             )}
         </DashboardPluginWrapper>

@@ -1,7 +1,9 @@
+import type * as PluginWrapperModule from '@components/plugin-wrapper/plugin-wrapper'
 import { renderWithAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 import { screen, waitFor } from '@testing-library/react'
 import type { SavedVisualization } from '@types'
-import { describe, it, expect } from 'vitest'
+import type { ComponentProps } from 'react'
+import { describe, it, expect, vi } from 'vitest'
 import analyticsResponse1 from '../components/plugin-wrapper/__fixtures__/analytics-response-1.json'
 import analyticsResponse2 from '../components/plugin-wrapper/__fixtures__/analytics-response-2.json'
 import eventVisualization1 from '../components/plugin-wrapper/__fixtures__/inpatient-cases-5-to-15-years-this-year.json'
@@ -38,6 +40,25 @@ const mockOptions = {
     } as unknown,
 } as MockOptions
 
+/* Wraps the real PluginWrapper so its isInDashboard prop is observable in
+ * the DOM, without stubbing it out (the other tests in this file need it to
+ * actually render the line list). */
+vi.mock('@components/plugin-wrapper/plugin-wrapper', async (importOriginal) => {
+    const actual = await importOriginal<typeof PluginWrapperModule>()
+    const PluginWrapper = ({
+        isInDashboard,
+        ...rest
+    }: ComponentProps<typeof actual.PluginWrapper>) => (
+        <div
+            data-test="plugin-wrapper-probe"
+            data-is-in-dashboard={String(isInDashboard)}
+        >
+            <actual.PluginWrapper isInDashboard={isInDashboard} {...rest} />
+        </div>
+    )
+    return { ...actual, PluginWrapper }
+})
+
 describe('DashboardPlugin', () => {
     it('fetches its own visualization from an id and renders it', async () => {
         await renderWithAppWrapper(
@@ -53,6 +74,11 @@ describe('DashboardPlugin', () => {
                 screen.getByTestId('line-list-data-table')
             ).toBeInTheDocument()
         })
+
+        expect(screen.getByTestId('plugin-wrapper-probe')).toHaveAttribute(
+            'data-is-in-dashboard',
+            'true'
+        )
     })
 
     it('accepts dashboard filters without failing to render', async () => {
