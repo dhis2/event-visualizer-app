@@ -1,7 +1,7 @@
 import { Plugin as UntypedPlugin } from '@dhis2/app-runtime/experimental'
 import { NoticeBox } from '@dhis2/ui'
 import type { HostFilters } from '@types'
-import { useCallback, useState, type FC } from 'react'
+import { useCallback, useMemo, useState, type FC } from 'react'
 
 /* `Plugin`'s shipped type only names its own layout props (pluginSource,
  * height, width, ...) and forwards everything else to the iframe at
@@ -40,6 +40,22 @@ export const HostPage: FC = () => {
     const onError = useCallback((pluginError: Error) => {
         setError(pluginError)
     }, [])
+
+    /* Plugin (@dhis2/app-service-plugin) re-notifies the iframe whenever any
+     * of these props changes identity, so a fresh object literal here would
+     * resend on every host render and re-trigger the plugin's fetch. */
+    const pluginProps = useMemo(
+        () => ({
+            visualization: { id: trimmedVisualizationId },
+            displayProperty: 'name',
+            forDashboard: true,
+            isVisualizationLoaded: true,
+            cacheId: `plugin-host-${trimmedVisualizationId}`,
+            filters: filtersOn ? UNAPPLIED_FILTERS : undefined,
+            onError,
+        }),
+        [trimmedVisualizationId, filtersOn, onError]
+    )
 
     return (
         <div style={{ padding: 16, display: 'grid', gap: 16 }}>
@@ -99,13 +115,7 @@ export const HostPage: FC = () => {
                     <Plugin
                         pluginSource="/plugin.html"
                         height={400}
-                        visualization={{ id: trimmedVisualizationId }}
-                        displayProperty="name"
-                        forDashboard
-                        isVisualizationLoaded
-                        cacheId={`plugin-host-${trimmedVisualizationId}`}
-                        filters={filtersOn ? UNAPPLIED_FILTERS : undefined}
-                        onError={onError}
+                        {...pluginProps}
                     />
                 </div>
             )}
