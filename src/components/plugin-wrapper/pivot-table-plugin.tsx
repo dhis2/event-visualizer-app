@@ -4,7 +4,12 @@ import {
     transformVisualizationForAnalyticsRequest,
 } from '@modules/analytics-request'
 import { logger } from '@modules/logger'
-import type { CurrentUser, CurrentVisualization, DimensionArray } from '@types'
+import type {
+    CurrentUser,
+    CurrentVisualization,
+    DimensionArray,
+    HostFilters,
+} from '@types'
 import { type FC, useEffect, useMemo } from 'react'
 import { usePivotTableAnalyticsData } from './hooks/use-pivot-table-analytics-data'
 
@@ -34,7 +39,7 @@ const formatVisualizationForPivotTableEngine = (
 type PivotTablePluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
-    filters?: Record<string, unknown> // TODO: verify this type
+    filters?: HostFilters
     isInDashboard: boolean
     isInModal: boolean
     onResponseReceived: () => void

@@ -17,6 +17,7 @@
         ],
         "paths": {
             "@dhis2/analytics": ["./src/types/analytics/index.d.ts"],
+            "@dhis2/app-adapter": ["./src/types/app-adapter/index.d.ts"],
             // Use this as the definitive source for type imports, mainly to prevent
             // a suggestion overload from all the generated types
             "@types": ["./src/types/index"],
@@ -43,6 +44,7 @@
         "*.d.ts",
         "*.cjs",
         ".*.cjs",
+        "*.mts",
         "vitest.*.ts",
         ".eslintrc.js",
         ".stylelintrc.js",

@@ -501,3 +501,43 @@ import { logger } from '@modules/logger'
 logger.debug('LL req', req)
 logger.error(error)
 ```
+
+### Simulating the dashboard plugin
+
+The app is also a dashboard plugin. To test that path without installing a
+bundle into an instance, `pnpm start` serves a dev-only page that imitates a
+dashboard around the real plugin iframe:
+
+1. `pnpm start`
+2. Log in at http://localhost:3000/
+3. Open http://localhost:3000/plugin-host.html
+
+Step 2 is optional — the host page shows the same login form. Either way one
+login is enough, because both pages share an origin.
+
+Paste a visualization id into the input to render it. Some ids to try:
+
+- `TIuOzZ0ID0V` — LINE_LIST, 7 columns
+- `PRVegIpABeb` — LINE_LIST, 21 columns
+- `R4wAb2yMLik` — LINE_LIST
+- `aDrb9UMVxt0` — PIVOT_TABLE
+
+Check the filter toggle to see what a dashboard filter does today: nothing
+reaches the analytics request, so the plugin just shows a notice that filters
+are not applied.
+
+To see the props the host sent, run this once in the browser console:
+
+```js
+localStorage.EVENT_VISUALIZER_LOG_LEVEL = 'debug'
+```
+
+The iframe is same-origin, so devtools breakpoints inside plugin code work and
+the React tree shows both host and plugin.
+
+Opening http://localhost:3000/plugin.html directly gives the plugin with no
+host. It throws while waiting for props from a parent window that isn't there
+(`No handler found for post message: getPropsFromParent`, then a `TypeError`
+reading `id` of `undefined`) and shows a "There was a problem loading this
+plugin" error screen. That's expected and harmless — it just means there's no
+dashboard sending it props. Use plugin-host.html above to see it rendered.

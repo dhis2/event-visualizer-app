@@ -27,6 +27,7 @@ import type {
     CurrentVisualization,
     DimensionMetadataItem,
     GridHeader,
+    HostFilters,
     MetadataInputItem,
     UserOrgUnitMetadataItem,
 } from '@types'
@@ -449,7 +450,7 @@ type FetchAnalyticsDataForLLParams = {
 
 type FetchAnalyticsDataParams = {
     visualization: CurrentVisualization
-    filters?: Record<string, unknown>
+    filters?: HostFilters
     displayProperty: CurrentUser['settings']['displayProperty']
     pageSize?: number
     page?: number
