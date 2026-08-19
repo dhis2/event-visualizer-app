@@ -8,18 +8,26 @@ import {
     getVisUiConfigConditionsByDimension,
     setVisUiConfigGroupingByDimension,
 } from '@store/vis-ui-config-slice'
-import type { LegendSetMetadataItem } from '@types'
+import type { DimensionMetadataItem, LegendSetMetadataItem } from '@types'
 import { type FC, useCallback } from 'react'
+import { FilteringSection } from './filtering-section'
 
 const NO_GROUPING_VALUE = 'NO_GROUPING'
 const MAX_PREVIEW_LEGENDS = 3
+const RANGE_NAME = /^\s*(-?\d+(?:\.\d+)?)\s*[-–—]\s*(-?\d+(?:\.\d+)?)\s*$/
+
+const formatLegendName = (name: string): string => {
+    const range = name.match(RANGE_NAME)
+
+    return range ? `${range[1]}–${range[2]}` : name
+}
 
 const getLegendsPreview = (
     legends: LegendSetMetadataItem['legends']
 ): string => {
     const preview = legends
         .slice(0, MAX_PREVIEW_LEGENDS)
-        .map((legend) => legend.name)
+        .map((legend) => formatLegendName(legend.name))
         .join(', ')
     const remainingCount = legends.length - MAX_PREVIEW_LEGENDS
 
@@ -32,15 +40,16 @@ const getLegendsPreview = (
 }
 
 type GroupingSectionProps = {
-    dimensionId: string
+    dimension: DimensionMetadataItem
     legendSets: LegendSetMetadataItem[]
 }
 
 export const GroupingSection: FC<GroupingSectionProps> = ({
-    dimensionId,
+    dimension,
     legendSets,
 }) => {
     const dispatch = useAppDispatch()
+    const dimensionId = dimension.id
     const { legendSet: selectedLegendSetId } = useAppSelector((state) =>
         getVisUiConfigConditionsByDimension(state, dimensionId)
     )
@@ -60,19 +69,24 @@ export const GroupingSection: FC<GroupingSectionProps> = ({
     )
 
     return (
-        <RadioCardGroup legend={i18n.t('Grouping')} horizontal>
+        <RadioCardGroup legend={i18n.t('Grouping')} hideLegend>
             {legendSets.map((legendSet) => (
                 <RadioCard
                     key={legendSet.id}
                     selected={selectedLegendSetId === legendSet.id}
-                    label={legendSet.name}
+                    label={i18n.t('{{- name}} grouping', {
+                        name: legendSet.name,
+                    })}
                     value={legendSet.id}
                     name={dataTest}
                     emphasized
+                    flushReveal
                     dataTest={`${dataTest}-${legendSet.id}`}
                     helpText={getLegendsPreview(legendSet.legends)}
                     onSelect={() => selectLegendSet(legendSet.id)}
-                />
+                >
+                    <FilteringSection dimension={dimension} nested />
+                </RadioCard>
             ))}
             <RadioCard
                 selected={!selectedLegendSetId}
@@ -80,10 +94,13 @@ export const GroupingSection: FC<GroupingSectionProps> = ({
                 value={NO_GROUPING_VALUE}
                 name={dataTest}
                 emphasized
+                flushReveal
                 dataTest={`${dataTest}-none`}
                 helpText={i18n.t('Show each value individually')}
                 onSelect={() => selectLegendSet(undefined)}
-            />
+            >
+                <FilteringSection dimension={dimension} nested />
+            </RadioCard>
         </RadioCardGroup>
     )
 }

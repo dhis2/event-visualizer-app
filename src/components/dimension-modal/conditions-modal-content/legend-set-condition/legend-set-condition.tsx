@@ -1,6 +1,6 @@
 import { useDimensionLegendSets } from '@components/dimension-modal/conditions-modal-content/use-dimension-legend-sets'
 import {
-    TRANSFER_HEIGHT,
+    TRANSFER_HEIGHT_NESTED,
     TRANSFER_OPTIONS_WIDTH,
     TRANSFER_SELECTED_WIDTH,
 } from '@components/dimension-modal/transfer/transfer'
@@ -13,6 +13,7 @@ import { Transfer, TransferOption } from '@dhis2/ui'
 import { OPERATOR_IN, parseCondition } from '@modules/conditions'
 import type { DimensionMetadataItem } from '@types'
 import { type FC, useMemo, useState } from 'react'
+import classes from './legend-set-condition.module.css'
 
 type LegendSetConditionProps = {
     condition: string
@@ -66,47 +67,49 @@ export const LegendSetCondition: FC<LegendSetConditionProps> = ({
     )
 
     return (
-        <Transfer
-            onChange={({ selected }) =>
-                onChange(`${OPERATOR_IN}:${selected.join(';')}`)
-            }
-            selected={selectedIds}
-            selectedOptionsLookup={selectedOptionsLookup}
-            options={visibleOptions}
-            loading={isLoading}
-            loadingPicked={isLoading}
-            sourceEmptyPlaceholder={
-                <TransferSourceEmptyPlaceholder
-                    loading={isLoading}
-                    searchTerm={searchTerm}
-                    options={visibleOptions}
-                    dataTest={`${dataTest}-empty-source`}
-                />
-            }
-            leftHeader={
-                <TransferLeftHeader
-                    searchTerm={searchTerm}
-                    setSearchTerm={(value) => setSearchTerm(value ?? '')}
-                    title={i18n.t('Available groups')}
-                    placeholder={i18n.t('Filter groups')}
-                    dataTest={`${dataTest}-left-header`}
-                />
-            }
-            height={TRANSFER_HEIGHT}
-            optionsWidth={TRANSFER_OPTIONS_WIDTH}
-            selectedWidth={TRANSFER_SELECTED_WIDTH}
-            selectedEmptyComponent={<TransferEmptySelection />}
-            enableOrderChange
-            rightHeader={
-                <TransferRightHeader title={i18n.t('Selected groups')} />
-            }
-            renderOption={(props) => (
-                <TransferOption
-                    {...props}
-                    dataTest={`${dataTest}-transfer-option`}
-                />
-            )}
-            dataTest={`${dataTest}-transfer`}
-        />
+        <div className={classes.transfer}>
+            <Transfer
+                onChange={({ selected }) =>
+                    onChange(`${OPERATOR_IN}:${selected.join(';')}`)
+                }
+                selected={selectedIds}
+                selectedOptionsLookup={selectedOptionsLookup}
+                options={visibleOptions}
+                loading={isLoading}
+                loadingPicked={isLoading}
+                sourceEmptyPlaceholder={
+                    <TransferSourceEmptyPlaceholder
+                        loading={isLoading}
+                        searchTerm={searchTerm}
+                        options={visibleOptions}
+                        dataTest={`${dataTest}-empty-source`}
+                    />
+                }
+                leftHeader={
+                    <TransferLeftHeader
+                        searchTerm={searchTerm}
+                        setSearchTerm={(value) => setSearchTerm(value ?? '')}
+                        title={i18n.t('Available groups')}
+                        placeholder={i18n.t('Filter groups')}
+                        dataTest={`${dataTest}-left-header`}
+                    />
+                }
+                height={TRANSFER_HEIGHT_NESTED}
+                optionsWidth={TRANSFER_OPTIONS_WIDTH}
+                selectedWidth={TRANSFER_SELECTED_WIDTH}
+                selectedEmptyComponent={<TransferEmptySelection />}
+                enableOrderChange
+                rightHeader={
+                    <TransferRightHeader title={i18n.t('Selected groups')} />
+                }
+                renderOption={(props) => (
+                    <TransferOption
+                        {...props}
+                        dataTest={`${dataTest}-transfer-option`}
+                    />
+                )}
+                dataTest={`${dataTest}-transfer`}
+            />
+        </div>
     )
 }

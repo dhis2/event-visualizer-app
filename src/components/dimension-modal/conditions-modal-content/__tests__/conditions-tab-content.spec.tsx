@@ -198,6 +198,11 @@ describe('ConditionsTabContent — grouping', () => {
         expect(
             within(grouping)
                 .getAllByRole('radio')
+                .filter(
+                    (radio) =>
+                        radio.getAttribute('name') ===
+                        `grouping-${numericDimension.id}`
+                )
                 .map((radio) => radio.getAttribute('value'))
         ).toEqual(['LEGEND_SET_1', 'LEGEND_SET_2', 'NO_GROUPING'])
     })
@@ -217,7 +222,7 @@ describe('ConditionsTabContent — grouping', () => {
         ).toBeInTheDocument()
         expect(screen.getByText('Low, High')).toBeInTheDocument()
         expect(
-            screen.getByText('0 - 10, 10 - 20, 20 - 30 and 1 more')
+            screen.getByText('0–10, 10–20, 20–30 and 1 more')
         ).toBeInTheDocument()
     })
 
@@ -239,14 +244,22 @@ describe('ConditionsTabContent — grouping', () => {
         ).toBe('LEGEND_SET_1')
     })
 
-    it('shows the "Filtering" heading only when grouping is available', async () => {
+    it('nests show-all / filter inside the selected grouping, with no Filtering heading', async () => {
         await renderTabContent(
             {},
             numericDimension,
             dataElementsWithLegendSets([weightLegendSet])
         )
 
-        expect(await screen.findByText('Filtering')).toBeInTheDocument()
+        const grouping = await screen.findByRole('group', { name: 'Grouping' })
+
+        expect(screen.queryByText('Filtering')).not.toBeInTheDocument()
+        expect(
+            within(grouping).getByRole('radio', { name: 'Show all values' })
+        ).toBeInTheDocument()
+        expect(
+            within(grouping).getByRole('radio', { name: 'Filter' })
+        ).toBeInTheDocument()
     })
 
     it('renames the show all option and filters by group once grouped', async () => {

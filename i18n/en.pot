@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-13T18:13:55.581Z\n"
-"PO-Revision-Date: 2026-08-13T18:13:55.582Z\n"
+"POT-Creation-Date: 2026-08-19T13:00:39.599Z\n"
+"PO-Revision-Date: 2026-08-19T13:00:39.599Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -49,9 +49,6 @@ msgstr "Repeated events"
 msgid "Data"
 msgstr "Data"
 
-msgid "Only available for repeatable stages"
-msgstr "Only available for repeatable stages"
-
 msgid "and"
 msgstr "and"
 
@@ -60,9 +57,6 @@ msgstr "{{valueType}} type dimensions cannot be filtered."
 
 msgid "This dimension cannot be filtered."
 msgstr "This dimension cannot be filtered."
-
-msgid "Filtering"
-msgstr "Filtering"
 
 msgid "Show all groups"
 msgstr "Show all groups"
@@ -75,6 +69,9 @@ msgstr "{{- legends}} and {{- remainingCount}} more"
 
 msgid "Grouping"
 msgstr "Grouping"
+
+msgid "{{- name}} grouping"
+msgstr "{{- name}} grouping"
 
 msgid "No grouping"
 msgstr "No grouping"
@@ -130,11 +127,11 @@ msgstr "Choose from presets"
 msgid "Define start - end dates"
 msgstr "Define start - end dates"
 
-msgid "Value filtering"
-msgstr "Value filtering"
-
 msgid "Show all values"
 msgstr "Show all values"
+
+msgid "Value filtering"
+msgstr "Value filtering"
 
 msgid "Filter"
 msgstr "Filter"

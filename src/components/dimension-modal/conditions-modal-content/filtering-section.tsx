@@ -55,12 +55,15 @@ const SUPPORTED_TYPES: Set<ValueType> = new Set([
 
 type FilteringSectionProps = {
     dimension: DimensionMetadataItem
-    showHeading: boolean
+    /* Rendered inside a grouping container card rather than standalone. The
+     * parent card supplies the context, so the Show all / Filter pair is laid
+     * out compactly and its own heading stays hidden. */
+    nested?: boolean
 }
 
 export const FilteringSection: FC<FilteringSectionProps> = ({
     dimension,
-    showHeading,
+    nested = false,
 }) => {
     const dispatch = useAppDispatch()
 
@@ -186,7 +189,6 @@ export const FilteringSection: FC<FilteringSectionProps> = ({
           })
         : i18n.t('This dimension cannot be filtered.')
 
-    const heading = showHeading ? i18n.t('Filtering') : undefined
     const showAllLabel = isLegendSetCondition
         ? i18n.t('Show all groups')
         : undefined
@@ -197,11 +199,15 @@ export const FilteringSection: FC<FilteringSectionProps> = ({
                 <ShowAllFilterRadio
                     mode={mode}
                     onModeChange={onModeChange}
-                    heading={heading}
+                    nested={nested}
                     showAllLabel={showAllLabel}
                     dataTest={`conditions-${dimension.id}-filter-radio`}
                 >
-                    <div className={classes.mainSection}>
+                    <div
+                        className={
+                            nested ? classes.nestedSection : classes.mainSection
+                        }
+                    >
                         <Conditions />
                         {!isSingleCondition && (
                             <Button
@@ -221,7 +227,7 @@ export const FilteringSection: FC<FilteringSectionProps> = ({
                     onModeChange={() => {
                         /* unfilterable dimensions are always "Show all" */
                     }}
-                    heading={heading}
+                    nested={nested}
                     dataTest={`conditions-${dimension.id}-filter-radio`}
                     filterDisabled
                     filterDisabledHelp={filterDisabledHelp}

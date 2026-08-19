@@ -1,5 +1,3 @@
-import { useAppSelector } from '@hooks'
-import { getVisUiConfigConditionsByDimension } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
 import { type FC } from 'react'
 import { FilteringSection } from './filtering-section'
@@ -15,27 +13,19 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
     dimension,
 }) => {
     const { legendSets } = useDimensionLegendSets(dimension)
-    const { legendSet: selectedLegendSetId } = useAppSelector((state) =>
-        getVisUiConfigConditionsByDimension(state, dimension.id)
-    )
 
     const canBeGrouped = legendSets.length > 0
 
     return (
         <div className={classes.tabContent}>
-            {canBeGrouped && (
+            {canBeGrouped ? (
                 <GroupingSection
-                    dimensionId={dimension.id}
+                    dimension={dimension}
                     legendSets={legendSets}
                 />
+            ) : (
+                <FilteringSection dimension={dimension} />
             )}
-            {/* Keyed on the grouping value so a change remounts the filter,
-                clearing out filter state left from the previous grouping. */}
-            <FilteringSection
-                key={selectedLegendSetId ?? 'ungrouped'}
-                dimension={dimension}
-                showHeading={canBeGrouped}
-            />
         </div>
     )
 }

@@ -1,0 +1,11 @@
+.nested {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+}
+
+.nested :global(fieldset) {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-inline-size: 0;
+}

@@ -1,4 +1,5 @@
 .modalContent {
     display: flex;
     flex-direction: column;
+    min-inline-size: 0;
 }

@@ -12,10 +12,10 @@ type RadioCardProps = PropsWithChildren<{
     onSelect: () => void
     disabled?: boolean
     helpText?: string
-    /* Gives the label the weight of a title and pairs it more tightly with its
-     * help text. For cards whose help text is part of the choice rather than an
-     * aside about it. */
+    /* Title-weight label with help text as a trailing phrase. */
     emphasized?: boolean
+    /* Reveals children flush to the container content width. */
+    flushReveal?: boolean
 }>
 
 export const RadioCard: FC<RadioCardProps> = ({
@@ -28,6 +28,7 @@ export const RadioCard: FC<RadioCardProps> = ({
     disabled = false,
     helpText,
     emphasized = false,
+    flushReveal = false,
     children,
 }) => (
     <div
@@ -45,7 +46,7 @@ export const RadioCard: FC<RadioCardProps> = ({
                     <span className={classes.cardLabelContent}>
                         <span className={classes.cardTitle}>{label}</span>
                         {helpText ? (
-                            <p className={classes.cardHelp}>{helpText}</p>
+                            <span className={classes.cardHelp}>{helpText}</span>
                         ) : null}
                     </span>
                 }
@@ -59,7 +60,13 @@ export const RadioCard: FC<RadioCardProps> = ({
             />
         </div>
         {selected && children ? (
-            <div className={classes.revealed}>{children}</div>
+            <div
+                className={
+                    flushReveal ? classes.revealedFlush : classes.revealed
+                }
+            >
+                {children}
+            </div>
         ) : null}
     </div>
 )

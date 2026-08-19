@@ -25,6 +25,10 @@
     gap: var(--spacers-dp8);
 }
 
+.cards:has(> .cardEmphasized) {
+    gap: var(--spacers-dp4);
+}
+
 .cardsRow {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -32,6 +36,8 @@
 }
 
 .card {
+    inline-size: 100%;
+    min-inline-size: 0;
     border: 1px solid var(--colors-grey300);
     border-radius: 5px;
     background-color: var(--colors-white);
@@ -52,6 +58,20 @@
     background-color: var(--colors-grey050);
 }
 
+/* Grouping containers keep a white surface so nested Show all / Filter cards
+ * can carry the selected fill instead. */
+.cardEmphasized {
+    border: none;
+}
+
+.cardEmphasized.cardSelected {
+    background-color: var(--colors-white);
+}
+
+.card.cardEmphasized:not(.cardDisabled):active {
+    background-color: var(--colors-white);
+}
+
 .cardDisabled,
 .cardDisabled .cardRadio {
     cursor: not-allowed;
@@ -65,6 +85,7 @@
 }
 
 .cardHelp {
+    display: block;
     margin: 0;
     padding-inline-end: var(--spacers-dp8);
     padding-block-start: var(--spacers-dp4);
@@ -73,31 +94,49 @@
     color: var(--colors-grey600);
 }
 
-/* An emphasized card owns its padding on the content column, so the title and
- * its help text can sit a single gap apart. */
-.cardEmphasized .cardContent {
+/* Grouping cards: title, then bands as a trailing phrase.
+ * Child combinators keep these from leaking into nested Show all / Filter. */
+.cardEmphasized > .cardContent {
     display: flex;
     min-inline-size: 0;
     flex-direction: column;
-    row-gap: var(--spacers-dp4);
     padding: var(--spacers-dp8);
+    padding-block: var(--spacers-dp8);
 }
 
-.cardEmphasized .cardRadio {
+.cardEmphasized > .cardContent .cardRadio {
     padding: 0;
+    align-items: center;
+    inline-size: 100%;
 }
 
-.cardEmphasized .cardTitle {
-    font-size: 14px;
+.cardEmphasized > .cardContent .cardLabelContent {
+    display: inline;
+}
+
+.cardEmphasized > .cardContent .cardTitle {
+    font-size: 15px;
     font-weight: 500;
-    line-height: 16px;
+    line-height: 20px;
     color: var(--colors-grey900);
 }
 
-.cardEmphasized .cardHelp {
+.cardEmphasized
+    > .cardContent
+    .cardLabelContent:has(.cardHelp)
+    .cardTitle::after {
+    content: ': ';
+}
+
+.cardEmphasized > .cardContent .cardHelp {
+    display: inline;
+    margin: 0;
     padding: 0;
-    font-size: 12px;
-    line-height: 15px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--colors-grey600);
+    font-variant-numeric: tabular-nums;
 }
 
 /* The radio's root element is a <label>, and its label content now includes
@@ -116,4 +155,19 @@
     margin-inline: var(--spacers-dp24) var(--spacers-dp12);
     margin-block-end: var(--spacers-dp12);
     cursor: auto;
+}
+
+.revealedFlush {
+    margin: 0;
+    padding: var(--spacers-dp8);
+    padding-block-start: var(--spacers-dp4);
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    cursor: auto;
+}
+
+/* Grouping containers indent nested Show all / Filter; the Filter card's own
+ * flush reveal stays tight so the transfer can fit the modal. */
+.cardEmphasized > .revealedFlush {
+    padding-inline-start: var(--spacers-dp32);
 }
