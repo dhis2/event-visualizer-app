@@ -1,6 +1,6 @@
-import { pluginBody } from '../../support/plugin-host'
+import { pluginBody } from '../../support/dashboard-plugin'
 
-describe('plugin host filters', () => {
+describe('dashboard plugin filters', () => {
     beforeEach(() => {
         cy.visit('/plugin-host.html')
         cy.getByDataTest('plugin-host-visualization-id-input').type(

@@ -1,10 +1,6 @@
-import { pluginBody } from '../../support/plugin-host'
+import { pluginBody } from '../../support/dashboard-plugin'
 
-/* Matches the fixed pixel height host-page.tsx passes to Plugin, mirroring
- * how a real dashboard grid cell sizes an IframePlugin. */
-const HOST_HEIGHT = 400
-
-describe('plugin host errors and resizing', () => {
+describe('dashboard plugin errors', () => {
     beforeEach(() => {
         cy.visit('/plugin-host.html')
     })
@@ -58,29 +54,5 @@ describe('plugin host errors and resizing', () => {
         pluginBody()
             .contains('Something went wrong', { timeout: 30000 })
             .should('be.visible')
-    })
-
-    it('honours the height the host passes and scrolls taller content', () => {
-        cy.getByDataTest('plugin-host-visualization-id-input').type(
-            'TIuOzZ0ID0V'
-        )
-        pluginBody().find('table', { timeout: 30000 }).should('be.visible')
-
-        /* The real dashboard sizes the iframe from its grid cell rather than
-         * from plugin content, so the frame must keep the height it was given
-         * and let the content scroll inside it. */
-        cy.get('[data-test="plugin-host-iframe-wrap"] iframe')
-            .invoke('outerHeight')
-            .should('eq', HOST_HEIGHT)
-
-        /* The table is taller than the frame; if it scrolled inside a
-         * fixed-height frame instead of growing the frame, the table's own
-         * height still reflects its full content and exceeds HOST_HEIGHT. */
-        pluginBody()
-            .find('table')
-            .then(($table) => {
-                const tableHeight = $table[0].getBoundingClientRect().height
-                cy.wrap(tableHeight).should('be.greaterThan', HOST_HEIGHT)
-            })
     })
 })

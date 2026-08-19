@@ -1,6 +1,6 @@
-import { pluginBody } from '../../support/plugin-host'
+import { pluginBody } from '../../support/dashboard-plugin'
 
-describe('plugin host', () => {
+describe('dashboard plugin rendering', () => {
     beforeEach(() => {
         cy.visit('/plugin-host.html')
     })
