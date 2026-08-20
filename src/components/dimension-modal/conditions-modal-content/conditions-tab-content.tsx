@@ -2,6 +2,7 @@ import { useAppSelector } from '@hooks'
 import { getVisUiConfigConditionsByDimension } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
 import { type FC } from 'react'
+import { ConditionsProvider } from './conditions-provider'
 import { FilteringSection } from './filtering-section'
 import { GroupingSection } from './grouping-section'
 import classes from './styles/conditions-modal-content.module.css'
@@ -29,13 +30,14 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                     legendSets={legendSets}
                 />
             )}
-            {/* Keyed on the grouping value so a change remounts the filter,
+            {/* Keyed on the grouping value so a change remounts the provider,
                 clearing out filter state left from the previous grouping. */}
-            <FilteringSection
+            <ConditionsProvider
                 key={selectedLegendSetId ?? 'ungrouped'}
                 dimension={dimension}
-                showHeading={canBeGrouped}
-            />
+            >
+                <FilteringSection showHeading={canBeGrouped} />
+            </ConditionsProvider>
         </div>
     )
 }
