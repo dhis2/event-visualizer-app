@@ -26,7 +26,6 @@
     block-size: 100%;
     max-block-size: 80vh;
     overflow-y: auto;
-    scrollbar-gutter: stable;
 }
 
 /* With a definite height applied, columns and rows share it equally: each floors
