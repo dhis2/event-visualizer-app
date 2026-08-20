@@ -6,7 +6,7 @@ import {
     LetterCondition,
 } from './alphanumeric-condition'
 import { BooleanCondition, TrueOnlyCondition } from './boolean-condition'
-import { useConditions } from './conditions-context'
+import { useConditions } from './conditions-provider'
 import {
     DateCondition,
     DateTimeCondition,
