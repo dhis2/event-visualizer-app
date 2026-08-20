@@ -1,6 +1,11 @@
 import { IconButton } from '@components/shared/icon-button'
 import { Layer, Popper, Tooltip, IconMore16 } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useConditionsTexts,
+    useLegendSetMetadataItem,
+} from '@hooks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
     getVisUiConfigItemsByDimension,
@@ -50,6 +55,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
     const items = useAppSelector((state) =>
         getVisUiConfigItemsByDimension(state, dimension.id)
     )
+    const legendSet = useLegendSetMetadataItem(conditions?.legendSet)
     const buttonRef = useRef<HTMLDivElement>(null)
     const [menuIsOpen, setMenuIsOpen] = useState(false)
     const toggleChipMenu = useCallback(() => {
@@ -86,10 +92,17 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
             dimensionName: dimension.name,
             suffix: dimension.suffix,
             itemsText: chipItemsText,
+            isGrouped: Boolean(conditions?.legendSet),
             isEmpty,
             onClick: openDimensionModal,
         }),
-        [dimension, chipItemsText, isEmpty, openDimensionModal]
+        [
+            dimension,
+            chipItemsText,
+            conditions?.legendSet,
+            isEmpty,
+            openDimensionModal,
+        ]
     )
 
     const {
@@ -125,6 +138,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                             <TooltipContent
                                 dimension={dimension}
                                 conditionsTexts={conditionsTexts}
+                                groupingName={legendSet?.name}
                                 axisId={axisId}
                             />
                         }

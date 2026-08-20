@@ -80,3 +80,13 @@
     margin-inline-end: 4px;
     line-height: 0;
 }
+
+/* A shade lighter than the chip's own teal900 text, per the icon design. Only
+ * ever drawn on a teal chip: a grouped dimension always has a legend set, which
+ * counts as a condition, so it never renders as the empty grey variant. */
+.groupingIcon {
+    flex-shrink: 0;
+    margin-inline-start: 4px;
+    line-height: 0;
+    color: var(--colors-teal800);
+}

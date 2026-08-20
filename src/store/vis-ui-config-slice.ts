@@ -70,6 +70,10 @@ export const initialState: VisUiConfigState = {
 type SetConditionsByDimensionPayload = {
     dimensionId: string
     conditions?: string
+}
+
+type SetGroupingByDimensionPayload = {
+    dimensionId: string
     legendSet?: string
 }
 
@@ -180,7 +184,10 @@ export const visUiConfigSlice = createSlice({
             state,
             action: PayloadAction<SetConditionsByDimensionPayload>
         ) => {
-            const { dimensionId, conditions, legendSet } = action.payload
+            const { dimensionId, conditions } = action.payload
+            /* The grouping owns the legend set, so it is carried over rather
+             * than taken from the payload. */
+            const { legendSet } = state.conditionsByDimension[dimensionId] ?? {}
 
             state.conditionsByDimension = {
                 ...state.conditionsByDimension,
@@ -188,6 +195,20 @@ export const visUiConfigSlice = createSlice({
                     conditions?.length || legendSet
                         ? { condition: conditions, legendSet }
                         : undefined,
+            }
+        },
+        /* Grouping and filtering share the conditions entry, but a filter only
+         * makes sense against the values the current grouping produces, so
+         * changing the grouping always drops the filter with it. */
+        setVisUiConfigGroupingByDimension: (
+            state,
+            action: PayloadAction<SetGroupingByDimensionPayload>
+        ) => {
+            const { dimensionId, legendSet } = action.payload
+
+            state.conditionsByDimension = {
+                ...state.conditionsByDimension,
+                [dimensionId]: legendSet ? { legendSet } : undefined,
             }
         },
         setVisUiConfigCustomValue: (
@@ -386,6 +407,7 @@ export const {
     setVisUiConfigOutputType,
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
+    setVisUiConfigGroupingByDimension,
     setVisUiConfigCustomValue,
     setVisUiConfigRepetitionsByDimension,
     addVisUiConfigLayoutDimension,

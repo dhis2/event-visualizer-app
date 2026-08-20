@@ -12,6 +12,8 @@ const {
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
+    setVisUiConfigConditionsByDimension,
+    setVisUiConfigGroupingByDimension,
     clearVisUiConfig,
 } = visUiConfigSlice.actions
 
@@ -525,6 +527,83 @@ describe('seeding default items from the relative period in action meta', () => 
         })
         const result = visUiConfigSlice.reducer(initialState, action)
         expect(result.itemsByDimension).not.toHaveProperty('stage1.eventDate')
+    })
+})
+
+describe('grouping and filtering share one conditions entry', () => {
+    const dimensionId = 'stage1.de1'
+    const grouped: VisUiConfigState = {
+        ...initialState,
+        conditionsByDimension: {
+            [dimensionId]: { condition: 'IN:LEGEND_1', legendSet: 'LS_1' },
+        },
+    }
+
+    it('keeps the grouping when the filter changes', () => {
+        const result = visUiConfigSlice.reducer(
+            grouped,
+            setVisUiConfigConditionsByDimension({
+                dimensionId,
+                conditions: 'IN:LEGEND_2',
+            })
+        )
+
+        expect(result.conditionsByDimension[dimensionId]).toEqual({
+            condition: 'IN:LEGEND_2',
+            legendSet: 'LS_1',
+        })
+    })
+
+    it('keeps the grouping when the filter is cleared', () => {
+        const result = visUiConfigSlice.reducer(
+            grouped,
+            setVisUiConfigConditionsByDimension({ dimensionId, conditions: '' })
+        )
+
+        expect(result.conditionsByDimension[dimensionId]).toEqual({
+            condition: '',
+            legendSet: 'LS_1',
+        })
+    })
+
+    it('drops the filter when the grouping changes', () => {
+        const result = visUiConfigSlice.reducer(
+            grouped,
+            setVisUiConfigGroupingByDimension({
+                dimensionId,
+                legendSet: 'LS_2',
+            })
+        )
+
+        expect(result.conditionsByDimension[dimensionId]).toEqual({
+            legendSet: 'LS_2',
+        })
+    })
+
+    it('drops the filter when the grouping is removed', () => {
+        const result = visUiConfigSlice.reducer(
+            grouped,
+            setVisUiConfigGroupingByDimension({ dimensionId })
+        )
+
+        expect(result.conditionsByDimension[dimensionId]).toBeUndefined()
+        /* The key stays so the default grouping is not seeded again over an
+         * explicit "No grouping". */
+        expect(dimensionId in result.conditionsByDimension).toBe(true)
+    })
+
+    it('clears the entry when an ungrouped filter is cleared', () => {
+        const filteredOnly: VisUiConfigState = {
+            ...initialState,
+            conditionsByDimension: { [dimensionId]: { condition: 'EQ:5' } },
+        }
+
+        const result = visUiConfigSlice.reducer(
+            filteredOnly,
+            setVisUiConfigConditionsByDimension({ dimensionId, conditions: '' })
+        )
+
+        expect(result.conditionsByDimension[dimensionId]).toBeUndefined()
     })
 })
 

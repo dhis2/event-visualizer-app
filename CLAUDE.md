@@ -637,6 +637,25 @@ reference them.
 | `repetitionIndex` | Repetition index extracted from `[n]` suffix                                                   |
 | `optionSetId`     | ID reference to the option set (if applicable)                                                 |
 | `legendSetId`     | ID reference to the legend set (if applicable)                                                 |
+| `legendSetIds`    | IDs of every legend set assigned to the data item, i.e. the grouping options available         |
+
+## Grouping values by legend
+
+A numeric data item that has legend sets assigned can be grouped by legend. The chosen legend set
+is stored as `legendSet` on the dimension's `conditionsByDimension` entry, and reaches the analytics
+API as a `-<legendSetId>` suffix on the dimension (`stageId.dimId-legendSetId`), which
+`@dhis2/analytics` builds from `DimensionRecord.legendSet`. Response values then come back as legend
+IDs, named via `metaData.items`.
+
+- **Availability**: the sidebar's `analytics/*/query/dimensions` endpoint does not return
+  `legendSets`, so they are fetched per data item from `dataElements`/`trackedEntityAttributes`/
+  `programIndicators` (`@api/legend-sets-api`) and cached in the metadata store as `legendSetIds`.
+- **Defaults**: pivot tables default to the first legend set, line lists to no grouping (the absence
+  of state). Seeded by the listener in `@store/seed-default-grouping` when a dimension is added to
+  the layout or its modal is opened, keyed off presence so an explicit choice is never overwritten.
+- **Filtering**: grouping and filtering share the conditions entry, so
+  `setVisUiConfigGroupingByDimension` drops the filter whenever the grouping changes. A grouped
+  dimension filters by legend (`IN:legendId;legendId`) through a transfer instead of by raw value.
 
 ## Testing & Linting Workflow for AI Agents
 
