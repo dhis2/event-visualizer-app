@@ -17,6 +17,20 @@
     gap: var(--spacers-dp16);
 }
 
+.filteringFadeWrap {
+    position: relative;
+}
+
+.filteringFadeClone {
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 0;
+    inline-size: 100%;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 160ms ease;
+}
+
 .tabBar {
     margin-block-end: var(--spacers-dp16);
 }
