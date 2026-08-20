@@ -23,7 +23,7 @@ import {
     getVisUiConfigLayout,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
-import type { Layout, VisualizationType } from '@types'
+import type { EventVisualizationType, Layout, VisualizationType } from '@types'
 import cx from 'classnames'
 import type { FC, ReactNode } from 'react'
 import { useState, useRef } from 'react'
@@ -35,12 +35,21 @@ const visTypeIcons: Record<VisualizationType, ReactNode> = {
     PIVOT_TABLE: <IconVisualizationPivotTable16 />,
 }
 
-const COMING_SOON_VIS_TYPES: Array<{ label: string; icon: ReactNode }> = [
-    { label: i18n.t('Column'), icon: <IconVisualizationColumn16 /> },
-    { label: i18n.t('Bar'), icon: <IconVisualizationBar16 /> },
-    { label: i18n.t('Line'), icon: <IconVisualizationLine16 /> },
-    { label: i18n.t('Area'), icon: <IconVisualizationArea16 /> },
-]
+const COMING_SOON_VIS_TYPES = [
+    'COLUMN',
+    'BAR',
+    'LINE',
+    'AREA',
+] as const satisfies ReadonlyArray<EventVisualizationType>
+
+type ComingSoonVisType = (typeof COMING_SOON_VIS_TYPES)[number]
+
+const comingSoonVisTypeIcons: Record<ComingSoonVisType, ReactNode> = {
+    COLUMN: <IconVisualizationColumn16 />,
+    BAR: <IconVisualizationBar16 />,
+    LINE: <IconVisualizationLine16 />,
+    AREA: <IconVisualizationArea16 />,
+}
 
 type ListItemProps = {
     visType: VisualizationType
@@ -69,17 +78,18 @@ export const ListItem: FC<ListItemProps> = ({
     )
 }
 
-const ComingSoonListItem: FC<{ label: string; icon: ReactNode }> = ({
-    label,
-    icon,
+const ComingSoonListItem: FC<{ visType: ComingSoonVisType }> = ({
+    visType,
 }) => (
     <div
         className={cx(classes.gridItem, classes.comingSoon)}
         aria-disabled="true"
     >
         <span className={classes.comingSoonBadge}>{i18n.t('Coming soon')}</span>
-        {icon}
-        <span className={classes.gridItemLabel}>{label}</span>
+        {comingSoonVisTypeIcons[visType]}
+        <span className={classes.gridItemLabel}>
+            {visTypeDisplayNames[visType]}
+        </span>
     </div>
 )
 
@@ -209,15 +219,12 @@ export const VisualizationTypeSelector: FC = () => {
                                             />
                                         )
                                     )}
-                                    {COMING_SOON_VIS_TYPES.map(
-                                        ({ label, icon }) => (
-                                            <ComingSoonListItem
-                                                key={label}
-                                                label={label}
-                                                icon={icon}
-                                            />
-                                        )
-                                    )}
+                                    {COMING_SOON_VIS_TYPES.map((visType) => (
+                                        <ComingSoonListItem
+                                            key={visType}
+                                            visType={visType}
+                                        />
+                                    ))}
                                 </div>
                             </div>
                         </div>
