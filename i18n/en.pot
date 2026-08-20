@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-13T18:13:55.581Z\n"
-"PO-Revision-Date: 2026-08-13T18:13:55.582Z\n"
+"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
+"PO-Revision-Date: 2026-08-20T09:13:16.339Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -415,6 +415,9 @@ msgstr "{{- names}} will be removed. Are you sure?"
 
 msgid "Convert"
 msgstr "Convert"
+
+msgid "Coming soon"
+msgstr "Coming soon"
 
 msgid "Individual data view"
 msgstr "Individual data view"
