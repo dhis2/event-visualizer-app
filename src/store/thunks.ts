@@ -15,12 +15,7 @@ import {
     toCurrentVis,
 } from '@modules/visualization/state'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import type {
-    AppDispatch,
-    CurrentVisualization,
-    MetadataStore,
-    OutputType,
-} from '@types'
+import type { AppDispatch, CurrentVisualization, MetadataStore } from '@types'
 import {
     clearCurrentVis,
     setCurrentVis,
@@ -117,19 +112,9 @@ export const tLoadSavedVisualization = createAsyncThunk<
     }
 )
 
-/* Output types whose cells hold an aggregate, and so can carry a custom value
- * instead of a plain count. */
-const CUSTOM_VALUE_OUTPUT_TYPES: OutputType[] = [
-    'EVENT',
-    'TRACKED_ENTITY_INSTANCE',
-]
-
-const resolveCustomValueFields = (visUiConfig: VisUiConfigState) => {
-    const { outputType, customValueByOutputType } = visUiConfig
-    const customValue = CUSTOM_VALUE_OUTPUT_TYPES.includes(outputType)
-        ? customValueByOutputType[outputType]
-        : undefined
-
+/* One custom value spans every output type: the same item shows in the cells
+ * of an event, enrollment or tracked entity table. */
+const resolveCustomValueFields = ({ customValue }: VisUiConfigState) => {
     /* Always include the `value` key: setCurrentVis merges into the previous
      * currentVis, so omitting it would leave a stale value behind. */
     if (!customValue) {

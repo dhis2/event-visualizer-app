@@ -96,9 +96,7 @@ const buildMockOptions = (
                     ...visUiConfigInitialState.layout,
                     columns: layoutColumns,
                 },
-                customValueByOutputType: customValue
-                    ? { EVENT: customValue }
-                    : {},
+                customValue,
             },
         }),
     },
@@ -111,7 +109,7 @@ const renderInCustomValueMode = async (
     onClose: () => void = () => {}
 ) => {
     const view = await renderWithAppWrapper(
-        <CustomValueModal outputType="EVENT" onClose={onClose} />,
+        <CustomValueModal onClose={onClose} />,
         options
     )
     await userEvent.click(screen.getByRole('radio', { name: 'Custom value' }))
@@ -145,38 +143,6 @@ describe('CustomValueModal', () => {
         })
     })
 
-    it('shows the stage-filter notice when the layout has a program stage', async () => {
-        await renderInCustomValueMode(buildMockOptions(['s1.de1']))
-
-        await waitFor(() => {
-            expect(
-                screen.getByText(
-                    'Showing data items from "Stage 1", the stage used in the layout'
-                )
-            ).toBeInTheDocument()
-        })
-    })
-
-    it('shows the warning notice when the current custom value is from a different stage', async () => {
-        await renderInCustomValueMode(
-            buildMockOptions(['s1.de1'], undefined, {
-                id: 's2.someDe',
-                aggregationType: 'SUM',
-            })
-        )
-
-        await waitFor(() => {
-            expect(
-                screen.getByText(
-                    /Some DE.*different stage than the dimensions in the layout.*Choose another item/
-                )
-            ).toBeInTheDocument()
-        })
-        expect(
-            screen.queryByText(/the stage used in the layout$/)
-        ).not.toBeInTheDocument()
-    })
-
     it('omits the stage-filter notice when the layout has no program stage', async () => {
         await renderInCustomValueMode(buildMockOptions(['p1.enrollmentDate']))
 
@@ -186,20 +152,6 @@ describe('CustomValueModal', () => {
         expect(
             screen.queryByText(/Showing data items from/)
         ).not.toBeInTheDocument()
-    })
-
-    it('renders the stage-scoped empty-state notice when no data items are returned and the layout has a stage', async () => {
-        await renderInCustomValueMode(
-            buildMockOptions(['s1.de1'], {
-                [ANALYTICS_RESOURCE]: { dimensions: [] },
-            })
-        )
-
-        await waitFor(() => {
-            expect(
-                screen.getByText('No numeric data items in stage "Stage 1"')
-            ).toBeInTheDocument()
-        })
     })
 
     it('renders the program-scoped empty-state notice when no data items are returned and the layout has no stage', async () => {

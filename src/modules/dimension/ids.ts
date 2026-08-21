@@ -64,6 +64,15 @@ export const resolveId = (id: string): string => {
 export const extractPlainDimensionId = (compoundId?: string | null): string =>
     (compoundId ?? '').split('.').pop()!
 
+/* The stage segment of a canonical `stageId.dimensionId` pair, or null when the
+ * id carries no stage (a plain id, e.g. a tracked entity attribute). */
+export const extractStageDimensionIdPrefix = (
+    compoundId?: string | null
+): string | null => {
+    const parts = (compoundId ?? '').split('.')
+    return parts.length === 2 ? parts[0] : null
+}
+
 /* Dimensions that exist only in the wire format (legacy event chart shape)
  * and have no meaning in the app-local layer. */
 export const WIRE_ONLY_DIMENSIONS: ReadonlySet<string> = new Set([

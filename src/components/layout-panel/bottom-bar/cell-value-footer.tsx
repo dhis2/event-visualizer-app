@@ -11,17 +11,13 @@ import { isDataSourceProgramWithRegistration } from '@modules/data-source'
 import { isVisualizationEmpty } from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
 import {
-    getVisUiConfigCustomValueByOutputType,
+    getVisUiConfigCustomValue,
     getVisUiConfigOutputType,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
 import cx from 'classnames'
 import { useState, type FC } from 'react'
 import classes from './styles/cell-value-footer.module.css'
-
-/* Output types whose cells hold an aggregate, and so can show something other
- * than a plain count. */
-const CHANGEABLE_OUTPUT_TYPES = ['EVENT', 'TRACKED_ENTITY_INSTANCE']
 
 const CellIcon: FC = () => (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -55,9 +51,7 @@ export const CellValueFooter: FC = () => {
     const currentVis = useAppSelector(getCurrentVis)
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
-    const customValue = useAppSelector(getVisUiConfigCustomValueByOutputType)[
-        outputType
-    ]
+    const customValue = useAppSelector(getVisUiConfigCustomValue)
     const customValueMetadata = useMetadataItem(customValue?.id)
     const { programIds, tetId } = useLayoutContext()
     const metadataStore = useMetadataStore()
@@ -108,8 +102,7 @@ export const CellValueFooter: FC = () => {
               nsSeparator: '^^',
           })
 
-    const isClickable =
-        !isLineList && CHANGEABLE_OUTPUT_TYPES.includes(outputType)
+    const isClickable = !isLineList
 
     const content = (
         <>
@@ -124,7 +117,9 @@ export const CellValueFooter: FC = () => {
             {isClickable ? (
                 <button
                     type="button"
-                    className={cx(classes.footer, classes.clickable)}
+                    className={cx(classes.footer, classes.clickable, {
+                        [classes.custom]: Boolean(customValue),
+                    })}
                     onClick={() => setIsModalOpen(true)}
                 >
                     {content}
@@ -133,10 +128,7 @@ export const CellValueFooter: FC = () => {
                 <div className={classes.footer}>{content}</div>
             )}
             {isModalOpen && (
-                <CustomValueModal
-                    outputType={outputType}
-                    onClose={() => setIsModalOpen(false)}
-                />
+                <CustomValueModal onClose={() => setIsModalOpen(false)} />
             )}
         </>
     )

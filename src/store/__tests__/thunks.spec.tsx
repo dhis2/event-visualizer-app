@@ -45,11 +45,11 @@ const customValue: CustomValueObject = {
 const buildMockOptions = ({
     currentVisOverride,
     outputType = 'EVENT',
-    customValueByOutputType = {},
+    customValue: configuredCustomValue,
 }: {
     currentVisOverride: Partial<CurrentVisualization>
     outputType?: OutputType
-    customValueByOutputType?: Partial<Record<OutputType, CustomValueObject>>
+    customValue?: CustomValueObject
 }): MockOptions => ({
     metadata,
     partialStore: {
@@ -59,7 +59,7 @@ const buildMockOptions = ({
                     outputType,
                     visualizationType: 'PIVOT_TABLE',
                     layout: { columns: ['s1.de1'] },
-                    customValueByOutputType,
+                    customValue: configuredCustomValue,
                 }),
             } as Partial<RootState>,
             { currentVis: currentVisOverride } as Partial<RootState>
@@ -82,7 +82,7 @@ const eventVis: Partial<CurrentVisualization> = {
 }
 
 describe('tUpdateCurrentVisFromVisUiConfig', () => {
-    it('clears the value when no cell value is remembered for the output type', async () => {
+    it('clears the value when no cell value is set', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
             buildMockOptions({ currentVisOverride: customValueVis })
@@ -93,12 +93,12 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         expect(getCurrentVis(store.getState()).value).toBeUndefined()
     })
 
-    it('applies the remembered cell value for the active output type', async () => {
+    it('applies the cell value', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
             buildMockOptions({
                 currentVisOverride: eventVis,
-                customValueByOutputType: { EVENT: customValue },
+                customValue,
             })
         )
 
@@ -109,15 +109,13 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         expect(currentVis.aggregationType).toBe('AVERAGE')
     })
 
-    it('applies a remembered cell value for TRACKED_ENTITY_INSTANCE', async () => {
+    it('applies the cell value for TRACKED_ENTITY_INSTANCE', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
             buildMockOptions({
                 currentVisOverride: eventVis,
                 outputType: 'TRACKED_ENTITY_INSTANCE',
-                customValueByOutputType: {
-                    TRACKED_ENTITY_INSTANCE: customValue,
-                },
+                customValue,
             })
         )
 
@@ -126,21 +124,18 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         expect(getCurrentVis(store.getState()).value).toEqual({ id: 's1.de1' })
     })
 
-    it('ignores another output type’s remembered cell value, but keeps it in the store', async () => {
+    it('applies the cell value for ENROLLMENT', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
             buildMockOptions({
-                currentVisOverride: customValueVis,
+                currentVisOverride: eventVis,
                 outputType: 'ENROLLMENT',
-                customValueByOutputType: { EVENT: customValue },
+                customValue,
             })
         )
 
         store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
-        expect(getCurrentVis(store.getState()).value).toBeUndefined()
-        expect(
-            store.getState().visUiConfig.customValueByOutputType.EVENT
-        ).toEqual(customValue)
+        expect(getCurrentVis(store.getState()).value).toEqual({ id: 's1.de1' })
     })
 })

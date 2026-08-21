@@ -369,14 +369,12 @@ export const getVisualizationUiConfig = (
         conditionsByDimension: getConditionsFromVisualization(vis, outputType),
         repetitionsByDimension: getRepetitionsFromVisualisation(vis),
         options: { ...baseOptions, ...extractOptions(vis) },
-        customValueByOutputType: vis.value?.id
+        customValue: vis.value?.id
             ? {
-                  [outputType]: {
-                      id: vis.value.id,
-                      aggregationType: vis.aggregationType || 'DEFAULT',
-                  },
+                  id: vis.value.id,
+                  aggregationType: vis.aggregationType || 'DEFAULT',
               }
-            : {},
+            : undefined,
     }
 }
 

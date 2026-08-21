@@ -2,7 +2,6 @@ import {
     visUiConfigSlice,
     initialState as visUiConfigInitialState,
     type VisUiConfigState,
-    type CustomValueObject,
 } from '@store/vis-ui-config-slice'
 import {
     renderHookWithAppWrapper,
@@ -95,8 +94,7 @@ const initialPreloadedState: Partial<RootState> = {
 }
 
 const buildMockOptions = (
-    layoutOverride: Partial<VisUiConfigState['layout']>,
-    customValue?: CustomValueObject
+    layoutOverride: Partial<VisUiConfigState['layout']>
 ) => ({
     metadata,
     queryData: {
@@ -110,16 +108,13 @@ const buildMockOptions = (
                     ...visUiConfigInitialState.layout,
                     ...layoutOverride,
                 },
-                customValueByOutputType: customValue
-                    ? { [visUiConfigInitialState.outputType]: customValue }
-                    : {},
             },
         }),
     },
 })
 
 describe('useCustomValueItems', () => {
-    it('attaches stageName when the layout has no program stage and dimensions span multiple stages', async () => {
+    it('attaches stageName when dimensions span multiple stages', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useCustomValueItems(),
             buildMockOptions({ columns: ['p1.enrollmentDate'] })
@@ -145,7 +140,6 @@ describe('useCustomValueItems', () => {
                 stageName: 'Stage 2',
             },
         ])
-        expect(result.current.filteredByStageName).toBeUndefined()
     })
 
     it('sorts data items alphabetically by name regardless of API order', async () => {
@@ -185,7 +179,7 @@ describe('useCustomValueItems', () => {
         ])
     })
 
-    it('omits stageName when the layout has no program stage and the program has only one stage', async () => {
+    it('omits stageName when the program has only one stage', async () => {
         const singleStage = {
             id: 'sX',
             name: 'Stage X',
@@ -267,7 +261,7 @@ describe('useCustomValueItems', () => {
         ])
     })
 
-    it('filters by stage and exposes the layout stage name when one stage is in the layout', async () => {
+    it('keeps items from other stages when one stage is in the layout', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useCustomValueItems(),
             buildMockOptions({ columns: ['s1.de1'] })
@@ -283,60 +277,19 @@ describe('useCustomValueItems', () => {
                 name: 'DE 1',
                 aggregationType: 'SUM',
                 dimensionType: 'DATA_ELEMENT',
+                stageName: 'Stage 1',
+            },
+            {
+                id: 's2.de2',
+                name: 'DE 2',
+                aggregationType: 'AVERAGE',
+                dimensionType: 'DATA_ELEMENT',
+                stageName: 'Stage 2',
             },
         ])
-        expect(result.current.filteredByStageName).toBe('Stage 1')
     })
 
-    it('flags customValueStageMismatch when the custom value stage differs from the layout stage', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => useCustomValueItems(),
-            buildMockOptions(
-                { columns: ['s1.de1'] },
-                { id: 's2.de2', aggregationType: 'SUM' }
-            )
-        )
-
-        await waitFor(() => {
-            expect(result.current.items).toBeDefined()
-        })
-
-        expect(result.current.customValueStageMismatch).toBe(true)
-    })
-
-    it('does not flag a mismatch when the custom value stage matches the layout stage', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => useCustomValueItems(),
-            buildMockOptions(
-                { columns: ['s1.de1'] },
-                { id: 's1.de1', aggregationType: 'SUM' }
-            )
-        )
-
-        await waitFor(() => {
-            expect(result.current.items).toBeDefined()
-        })
-
-        expect(result.current.customValueStageMismatch).toBe(false)
-    })
-
-    it('does not flag a mismatch when there is no layout stage', async () => {
-        const { result } = await renderHookWithAppWrapper(
-            () => useCustomValueItems(),
-            buildMockOptions(
-                { columns: ['p1.enrollmentDate'] },
-                { id: 's1.de1', aggregationType: 'SUM' }
-            )
-        )
-
-        await waitFor(() => {
-            expect(result.current.items).toBeDefined()
-        })
-
-        expect(result.current.customValueStageMismatch).toBe(false)
-    })
-
-    it('includes program attributes and labels them with the tracked entity type name when no stage is in the layout', async () => {
+    it('includes program attributes and labels them with the tracked entity type name', async () => {
         const responseWithAttribute = {
             dimensions: [
                 {
@@ -385,7 +338,7 @@ describe('useCustomValueItems', () => {
         ])
     })
 
-    it('keeps program attributes but filters out other stages when one stage is in the layout', async () => {
+    it('keeps program attributes alongside every stage when one stage is in the layout', async () => {
         const responseWithAttribute = {
             dimensions: [
                 {
@@ -435,6 +388,14 @@ describe('useCustomValueItems', () => {
                 name: 'DE 1',
                 aggregationType: 'SUM',
                 dimensionType: 'DATA_ELEMENT',
+                stageName: 'Stage 1',
+            },
+            {
+                id: 's2.de2',
+                name: 'DE 2',
+                aggregationType: 'AVERAGE',
+                dimensionType: 'DATA_ELEMENT',
+                stageName: 'Stage 2',
             },
         ])
     })

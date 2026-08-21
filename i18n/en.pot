@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-18T07:21:01.801Z\n"
-"PO-Revision-Date: 2026-08-18T07:21:01.801Z\n"
+"POT-Creation-Date: 2026-08-21T08:04:53.944Z\n"
+"PO-Revision-Date: 2026-08-21T08:04:53.944Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -310,6 +310,9 @@ msgstr "Not valid with multiple programs"
 msgid "Not valid with multiple program stages"
 msgstr "Not valid with multiple program stages"
 
+msgid "Not valid with a cell value from a different program stage"
+msgstr "Not valid with a cell value from a different program stage"
+
 msgid "Not valid with event programs"
 msgstr "Not valid with event programs"
 
@@ -340,27 +343,28 @@ msgstr "Cells show {{- valueDescription}}"
 msgid "{{- countedThing}} count"
 msgstr "{{- countedThing}} count"
 
-msgid "Each cell shows the number of tracked entities."
-msgstr "Each cell shows the number of tracked entities."
-
-msgid "Each cell shows the number of events."
-msgstr "Each cell shows the number of events."
-
 msgid "Cell value"
 msgstr "Cell value"
 
 msgid "Count"
 msgstr "Count"
 
+msgid ""
+"Each cell shows a count of the events, enrollments or tracked entities the "
+"table is built from."
+msgstr ""
+"Each cell shows a count of the events, enrollments or tracked entities the "
+"table is built from."
+
 msgid "Custom value"
 msgstr "Custom value"
 
 msgid ""
 "Each cell shows a data item's value instead — for example, a total or "
-"average."
+"average. Used for every output type."
 msgstr ""
 "Each cell shows a data item's value instead — for example, a total or "
-"average."
+"average. Used for every output type."
 
 msgid "Search data items"
 msgstr "Search data items"
@@ -374,14 +378,8 @@ msgstr "Error loading data"
 msgid "Failed to load data items"
 msgstr "Failed to load data items"
 
-msgid "No numeric data items in stage \"{{- stageName}}\""
-msgstr "No numeric data items in stage \"{{- stageName}}\""
-
 msgid "No numeric data items in this program"
 msgstr "No numeric data items in this program"
-
-msgid "This stage does not have any numeric data items available."
-msgstr "This stage does not have any numeric data items available."
 
 msgid "This program does not have any numeric data items available."
 msgstr "This program does not have any numeric data items available."
@@ -400,16 +398,6 @@ msgstr "Update"
 
 msgid "Select a value before updating"
 msgstr "Select a value before updating"
-
-msgid ""
-"\"{{- itemName}}\" is from a different stage than the dimensions in the "
-"layout. Choose another item."
-msgstr ""
-"\"{{- itemName}}\" is from a different stage than the dimensions in the "
-"layout. Choose another item."
-
-msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
-msgstr "Showing data items from \"{{- stageName}}\", the stage used in the layout"
 
 msgid "Collapse layout"
 msgstr "Collapse layout"

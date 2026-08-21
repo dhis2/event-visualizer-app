@@ -1,10 +1,12 @@
 import i18n from '@dhis2/d2-i18n'
 import { useAppSelector, useLayoutContext, useMetadataStore } from '@hooks'
 import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
+import { extractStageDimensionIdPrefix } from '@modules/dimension/ids'
 import { isDimensionInLayout } from '@modules/layout'
 import { isVisualizationEmpty } from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
 import {
+    getVisUiConfigCustomValue,
     getVisUiConfigLayout,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigLayoutIsEmpty,
@@ -50,6 +52,7 @@ type EventTooltipContentParams = {
     hasNoProgramInLayout: boolean
     hasMultipleProgramsInLayout: boolean
     hasMultipleProgramStagesInLayout: boolean
+    hasCrossStageCustomValue: boolean
     isRegistrationOuInLayout: boolean
     visualizationType: string
 }
@@ -58,6 +61,7 @@ const getEventTooltipContent = ({
     hasNoProgramInLayout,
     hasMultipleProgramsInLayout,
     hasMultipleProgramStagesInLayout,
+    hasCrossStageCustomValue,
     isRegistrationOuInLayout,
     visualizationType,
 }: EventTooltipContentParams): TooltipConfig => {
@@ -79,6 +83,14 @@ const getEventTooltipContent = ({
 
     if (hasMultipleProgramStagesInLayout) {
         return { content: i18n.t('Not valid with multiple program stages') }
+    }
+
+    if (hasCrossStageCustomValue) {
+        return {
+            content: i18n.t(
+                'Not valid with a cell value from a different program stage'
+            ),
+        }
     }
 
     return undefined
@@ -191,6 +203,7 @@ export const useActionButton = (buttonType: OutputType) => {
     const metadataStore = useMetadataStore()
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
+    const customValue = useAppSelector(getVisUiConfigCustomValue)
 
     const firstProgramMetadata = useMemo(
         () =>
@@ -262,6 +275,23 @@ export const useActionButton = (buttonType: OutputType) => {
 
     const hasMultipleProgramStagesInLayout: boolean = programStageIds.length > 1
 
+    /* An event row belongs to one stage, so it cannot carry a cell value taken
+     * from another stage. Enrollment and tracked entity rows span stages, so
+     * the same cell value is fine there. */
+    const hasCrossStageCustomValue: boolean = useMemo(() => {
+        if (visualizationType !== 'PIVOT_TABLE' || !customValue) {
+            return false
+        }
+        const customValueStageId = extractStageDimensionIdPrefix(customValue.id)
+        const layoutStageId =
+            programStageIds.length === 1 ? programStageIds[0] : null
+        return Boolean(
+            customValueStageId &&
+            layoutStageId &&
+            customValueStageId !== layoutStageId
+        )
+    }, [customValue, programStageIds, visualizationType])
+
     const hasProgramIndicatorsInLayout: boolean = useMemo(
         () =>
             layoutDimensionIds.some(
@@ -296,6 +326,7 @@ export const useActionButton = (buttonType: OutputType) => {
                     hasNoProgramInLayout,
                     hasMultipleProgramsInLayout,
                     hasMultipleProgramStagesInLayout,
+                    hasCrossStageCustomValue,
                     isRegistrationOuInLayout,
                     visualizationType,
                 })
@@ -327,6 +358,7 @@ export const useActionButton = (buttonType: OutputType) => {
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
         hasCompletedOnInLayout,
+        hasCrossStageCustomValue,
         hasNoProgramInLayout,
         hasMultipleProgramsInLayout,
         hasMultipleProgramStagesInLayout,

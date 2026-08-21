@@ -1,12 +1,11 @@
 import { NUMERIC_VALUE_TYPES } from '@constants/value-types'
 import {
-    useAppSelector,
     useCurrentUser,
     useLayoutContext,
     useMetadataStore,
     useRtkQuery,
 } from '@hooks'
-import { getVisUiConfigCustomValue } from '@store/vis-ui-config-slice'
+import { extractStageDimensionIdPrefix } from '@modules/dimension/ids'
 import type { AggregationType } from '@types'
 import { useMemo } from 'react'
 
@@ -23,45 +22,22 @@ export type CustomValueItem = CustomValueDimension & {
     stageName?: string
 }
 
-export const getStageIdFromDimensionId = (
-    id: string | undefined
-): string | null => {
-    if (!id) {
-        return null
-    }
-    const idParts = id.split('.')
-    return idParts.length === 2 ? idParts[0] : null
-}
-
 const compareByName = (a: CustomValueDimension, b: CustomValueDimension) =>
     a.name.localeCompare(b.name)
 
+/* Every numeric item in the program, whatever stage it belongs to: the cell
+ * value applies across output types, so a stage the current layout doesn't use
+ * is still a legitimate choice for an enrollment or tracked entity table. */
 export const useCustomValueItems = () => {
     const {
         settings: { displayNameProperty },
     } = useCurrentUser()
     const metadataStore = useMetadataStore()
-    const { programIds, programStageIds } = useLayoutContext()
-    const customValue = useAppSelector(getVisUiConfigCustomValue)
+    const { programIds } = useLayoutContext()
 
     /* A tracked entity layout can span several programs, or none. Rather than
-     * refusing to open, fall back to the first program's numeric items and
-     * skip stage filtering when the stage is ambiguous. */
+     * refusing to open, fall back to the first program's numeric items. */
     const programId = programIds[0]
-    const layoutStageId =
-        programStageIds.length === 1 ? programStageIds[0] : null
-
-    let filteredByStageName: string | undefined
-    let customValueStageMismatch = false
-    if (layoutStageId) {
-        filteredByStageName =
-            metadataStore.getProgramStageMetadataItem(layoutStageId)?.name
-
-        const customValueStageId = getStageIdFromDimensionId(customValue?.id)
-        customValueStageMismatch = Boolean(
-            customValueStageId && customValueStageId !== layoutStageId
-        )
-    }
 
     const { data, ...queryResult } = useRtkQuery<{
         dimensions: CustomValueDimension[]
@@ -89,27 +65,12 @@ export const useCustomValueItems = () => {
             return undefined
         }
 
-        if (layoutStageId) {
-            return data.dimensions
-                .filter(
-                    (dim) =>
-                        dim.dimensionType === 'PROGRAM_ATTRIBUTE' ||
-                        getStageIdFromDimensionId(dim.id) === layoutStageId
-                )
-                .map((dim) =>
-                    dim.dimensionType === 'PROGRAM_ATTRIBUTE' && tetName
-                        ? { ...dim, stageName: tetName }
-                        : dim
-                )
-                .sort(compareByName)
-        }
-
         return data.dimensions
             .map((dim) => {
                 if (dim.dimensionType === 'PROGRAM_ATTRIBUTE') {
                     return tetName ? { ...dim, stageName: tetName } : dim
                 }
-                const stageId = getStageIdFromDimensionId(dim.id)
+                const stageId = extractStageDimensionIdPrefix(dim.id)
                 if (!stageId || !programHasMultipleStages) {
                     return dim
                 }
@@ -118,12 +79,7 @@ export const useCustomValueItems = () => {
                 return stageName ? { ...dim, stageName } : dim
             })
             .sort(compareByName)
-    }, [data, layoutStageId, metadataStore, programHasMultipleStages, tetName])
+    }, [data, metadataStore, programHasMultipleStages, tetName])
 
-    return {
-        ...queryResult,
-        items,
-        filteredByStageName,
-        customValueStageMismatch,
-    }
+    return { ...queryResult, items }
 }

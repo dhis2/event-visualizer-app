@@ -18,23 +18,16 @@ import {
     SingleSelectOption,
     Tooltip,
 } from '@dhis2/ui'
-import {
-    useAppDispatch,
-    useAppSelector,
-    useMetadataItem,
-    useMetadataStore,
-} from '@hooks'
+import { useAppDispatch, useAppSelector, useMetadataStore } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
     clearVisUiConfigCustomValue,
-    getVisUiConfigCustomValueByOutputType,
+    getVisUiConfigCustomValue,
     setVisUiConfigCustomValue,
-    setVisUiConfigOutputType,
 } from '@store/vis-ui-config-slice'
-import type { AggregationType, OutputType } from '@types'
+import type { AggregationType } from '@types'
 import { type FC, useCallback, useMemo, useState } from 'react'
 import { CustomValueOption } from './custom-value-option'
-import { StageNotice } from './stage-notice'
 import classes from './styles/custom-value-modal.module.css'
 import {
     useCustomValueItems,
@@ -44,7 +37,6 @@ import {
 type CellValueMode = 'COUNT' | 'CUSTOM'
 
 type CustomValueModalProps = {
-    outputType: OutputType
     onClose: () => void
 }
 
@@ -55,16 +47,10 @@ type CustomValueModalProps = {
  * instead. */
 const FALLBACK_AGGREGATION_TYPE_FOR_NONE: AggregationType = 'AVERAGE'
 
-export const CustomValueModal: FC<CustomValueModalProps> = ({
-    outputType,
-    onClose,
-}) => {
+export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     const dispatch = useAppDispatch()
     const metadataStore = useMetadataStore()
-    const customValue = useAppSelector(getVisUiConfigCustomValueByOutputType)[
-        outputType
-    ]
-    const customValueMetadata = useMetadataItem(customValue?.id)
+    const customValue = useAppSelector(getVisUiConfigCustomValue)
     const [mode, setMode] = useState<CellValueMode>(
         customValue ? 'CUSTOM' : 'COUNT'
     )
@@ -74,14 +60,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({
     const [selectedItemId, setSelectedItemId] = useState(customValue?.id)
     const [searchTerm, setSearchTerm] = useState('')
 
-    const {
-        items,
-        isLoading,
-        isError,
-        error,
-        filteredByStageName,
-        customValueStageMismatch,
-    } = useCustomValueItems()
+    const { items, isLoading, isError, error } = useCustomValueItems()
 
     const visibleItems = useMemo(() => {
         const term = searchTerm.trim().toLocaleLowerCase()
@@ -127,7 +106,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({
 
     const onUpdate = useCallback(() => {
         if (mode === 'COUNT') {
-            dispatch(clearVisUiConfigCustomValue(outputType))
+            dispatch(clearVisUiConfigCustomValue())
         } else if (selectedItem) {
             const itemDefaultAggregationType =
                 selectedItem.aggregationType === 'NONE'
@@ -139,24 +118,15 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({
                     : aggregationType
             dispatch(
                 setVisUiConfigCustomValue({
-                    outputType,
-                    customValue: {
-                        aggregationType: resolvedAggregationType,
-                        id: selectedItem.id,
-                    },
+                    aggregationType: resolvedAggregationType,
+                    id: selectedItem.id,
                 })
             )
         }
 
-        dispatch(setVisUiConfigOutputType(outputType))
         dispatch(tUpdateCurrentVisFromVisUiConfig())
         onClose()
-    }, [dispatch, aggregationType, mode, outputType, selectedItem, onClose])
-
-    const countHelpText =
-        outputType === 'TRACKED_ENTITY_INSTANCE'
-            ? i18n.t('Each cell shows the number of tracked entities.')
-            : i18n.t('Each cell shows the number of events.')
+    }, [dispatch, aggregationType, mode, selectedItem, onClose])
 
     const canUpdate = mode === 'COUNT' || Boolean(selectedItemId)
 
@@ -172,7 +142,9 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({
                         name="cell-value-mode"
                         dataTest="cell-value-count"
                         onSelect={() => setMode('COUNT')}
-                        helpText={countHelpText}
+                        helpText={i18n.t(
+                            'Each cell shows a count of the events, enrollments or tracked entities the table is built from.'
+                        )}
                     />
                     <RadioCard
                         selected={mode === 'CUSTOM'}
@@ -182,14 +154,9 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({
                         dataTest="cell-value-custom"
                         onSelect={() => setMode('CUSTOM')}
                         helpText={i18n.t(
-                            "Each cell shows a data item's value instead — for example, a total or average."
+                            "Each cell shows a data item's value instead — for example, a total or average. Used for every output type."
                         )}
                     >
-                        <StageNotice
-                            filteredByStageName={filteredByStageName}
-                            customValueStageMismatch={customValueStageMismatch}
-                            customValueItemName={customValueMetadata?.name}
-                        />
                         {!isLoading && !isError && items?.length !== 0 && (
                             <div className={classes.search}>
                                 <InputField
@@ -225,27 +192,13 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({
                             {!isLoading && !isError && items?.length === 0 && (
                                 <NoticeBox
                                     dense
-                                    title={
-                                        filteredByStageName
-                                            ? i18n.t(
-                                                  'No numeric data items in stage "{{- stageName}}"',
-                                                  {
-                                                      stageName:
-                                                          filteredByStageName,
-                                                  }
-                                              )
-                                            : i18n.t(
-                                                  'No numeric data items in this program'
-                                              )
-                                    }
+                                    title={i18n.t(
+                                        'No numeric data items in this program'
+                                    )}
                                 >
-                                    {filteredByStageName
-                                        ? i18n.t(
-                                              'This stage does not have any numeric data items available.'
-                                          )
-                                        : i18n.t(
-                                              'This program does not have any numeric data items available.'
-                                          )}
+                                    {i18n.t(
+                                        'This program does not have any numeric data items available.'
+                                    )}
                                 </NoticeBox>
                             )}
                             {!isLoading &&

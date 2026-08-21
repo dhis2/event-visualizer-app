@@ -57,3 +57,23 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+/* A cell value other than the default count is worth noticing, but the output
+ * type buttons next to it are the primary action — so this stays grey and only
+ * gains an outline and weight. */
+.footer.custom {
+    border-color: var(--colors-grey400);
+    background-color: var(--colors-grey100);
+    font-weight: 500;
+    color: var(--colors-grey900);
+}
+
+.footer.custom svg,
+.footer.custom .editIcon {
+    color: var(--colors-grey700);
+}
+
+.footer.clickable.custom:hover {
+    border-color: var(--colors-grey500);
+    background-color: var(--colors-grey200);
+}

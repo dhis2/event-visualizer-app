@@ -46,7 +46,7 @@ export interface VisUiConfigState {
     layout: Layout
     itemsByDimension: Record<string, string[]>
     conditionsByDimension: Record<string, ConditionsObject | undefined>
-    customValueByOutputType: Partial<Record<OutputType, CustomValueObject>>
+    customValue?: CustomValueObject
     repetitionsByDimension: Record<string, RepetitionsObject | undefined>
     options: EventVisualizationOptions
 }
@@ -64,7 +64,7 @@ export const initialState: VisUiConfigState = {
     },
     itemsByDimension: {},
     conditionsByDimension: {},
-    customValueByOutputType: {},
+    customValue: undefined,
     repetitionsByDimension: {},
 }
 
@@ -77,11 +77,6 @@ type SetConditionsByDimensionPayload = {
 type SetItemsByDimensionPayload = {
     dimensionId: string // dimensionId, including uids
     itemIds: string[] // list of item ids
-}
-
-type SetCustomValuePayload = {
-    outputType: OutputType
-    customValue: CustomValueObject
 }
 
 type SetOptionPayload = {
@@ -127,13 +122,8 @@ const clearCustomValueIfNowInLayout = (
     state: VisUiConfigState,
     dimensionIds: string[]
 ) => {
-    for (const outputType of Object.keys(
-        state.customValueByOutputType
-    ) as OutputType[]) {
-        const customValueId = state.customValueByOutputType[outputType]?.id
-        if (customValueId && dimensionIds.includes(customValueId)) {
-            state.customValueByOutputType[outputType] = undefined
-        }
+    if (state.customValue && dimensionIds.includes(state.customValue.id)) {
+        state.customValue = undefined
     }
 }
 
@@ -214,21 +204,12 @@ export const visUiConfigSlice = createSlice({
         },
         setVisUiConfigCustomValue: (
             state,
-            action: PayloadAction<SetCustomValuePayload>
+            action: PayloadAction<CustomValueObject>
         ) => {
-            state.customValueByOutputType = {
-                ...state.customValueByOutputType,
-                [action.payload.outputType]: action.payload.customValue,
-            }
+            state.customValue = action.payload
         },
-        clearVisUiConfigCustomValue: (
-            state,
-            action: PayloadAction<OutputType>
-        ) => {
-            state.customValueByOutputType = {
-                ...state.customValueByOutputType,
-                [action.payload]: undefined,
-            }
+        clearVisUiConfigCustomValue: (state) => {
+            state.customValue = undefined
         },
         setVisUiConfigRepetitionsByDimension: (
             state,
@@ -391,12 +372,10 @@ export const visUiConfigSlice = createSlice({
             state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
         getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
             state.conditionsByDimension[dimensionId] || EMPTY_CONDITIONS_OBJECT,
-        /* The cell value in play right now. Each output type remembers its own,
-         * so switching output type and back restores the previous choice. */
-        getVisUiConfigCustomValue: (state) =>
-            state.customValueByOutputType[state.outputType],
-        getVisUiConfigCustomValueByOutputType: (state) =>
-            state.customValueByOutputType,
+        /* One cell value for the whole visualization: it carries across every
+         * output type, so an event table and an enrollment table built from the
+         * same layout show the same item. */
+        getVisUiConfigCustomValue: (state) => state.customValue,
         getVisUiConfigRepetitionsByDimension: (state, dimensionId: string) =>
             state.repetitionsByDimension[dimensionId] ||
             DEFAULT_REPETITIONS_OBJECT,
@@ -445,7 +424,6 @@ export const {
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
     getVisUiConfigCustomValue,
-    getVisUiConfigCustomValueByOutputType,
     getVisUiConfigRepetitionsByDimension,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigLayoutIsEmpty,

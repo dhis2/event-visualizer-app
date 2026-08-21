@@ -345,7 +345,7 @@ describe('getVisualizationUiConfig', () => {
                 input as unknown as SavedVisualization
             )
             expect(result).toEqual({
-                customValueByOutputType: {},
+                customValue: undefined,
                 ...expected,
                 options: DEFAULT_OPTIONS,
             })

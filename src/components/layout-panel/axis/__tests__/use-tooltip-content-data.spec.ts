@@ -27,7 +27,7 @@ const createVisUiConfigState = (
     },
     itemsByDimension: {},
     conditionsByDimension: {},
-    customValueByOutputType: {},
+    customValue: undefined,
     repetitionsByDimension: {},
     options: {},
     ...overrides,
