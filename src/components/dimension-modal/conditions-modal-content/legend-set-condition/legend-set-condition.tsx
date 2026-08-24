@@ -39,12 +39,16 @@ export const LegendSetCondition: FC<LegendSetConditionProps> = ({
         [condition]
     )
 
-    const options = useMemo(() => {
-        const legends =
-            legendSets.find(({ id }) => id === legendSetId)?.legends ?? []
-
-        return legends.map(({ id, name }) => ({ value: id, label: name }))
-    }, [legendSets, legendSetId])
+    const options = useMemo(
+        () =>
+            legendSets
+                .find(({ id }) => id === legendSetId)
+                ?.legends?.map(({ id, name }) => ({
+                    value: id,
+                    label: name,
+                })) ?? [],
+        [legendSets, legendSetId]
+    )
 
     /* All legends are already in memory, so the source list is filtered here
      * rather than by refetching. */

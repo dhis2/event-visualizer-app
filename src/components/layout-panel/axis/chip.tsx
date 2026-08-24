@@ -92,17 +92,11 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
             dimensionName: dimension.name,
             suffix: dimension.suffix,
             itemsText: chipItemsText,
-            isGrouped: Boolean(conditions?.legendSet),
+            isGrouped: Boolean(legendSet),
             isEmpty,
             onClick: openDimensionModal,
         }),
-        [
-            dimension,
-            chipItemsText,
-            conditions?.legendSet,
-            isEmpty,
-            openDimensionModal,
-        ]
+        [dimension, chipItemsText, legendSet, isEmpty, openDimensionModal]
     )
 
     const {
