@@ -221,21 +221,26 @@ export const convertLayoutForVisType = ({
         }
     }
 
-    const convertedLayout: Layout = { columns: [], rows: [], filters: [] }
-    const invalidDimensionIds: string[] = []
-
-    for (const id of layout.filters) {
+    const getDimensionOrThrow = (id: string): DimensionMetadataItem => {
         const dimension = getDimension(id)
         if (!dimension) {
             throw new Error(
                 `No metadata found for dimension "${id}" — cannot convert layout to a pivot table`
             )
         }
+        return dimension
+    }
+
+    const convertedLayout: Layout = { columns: [], rows: [], filters: [] }
+    const invalidDimensionIds: string[] = []
+
+    for (const id of layout.filters) {
+        const dimension = getDimensionOrThrow(id)
         if (isDimensionFullyInvalidForVisType(dimension, targetVisType)) {
             invalidDimensionIds.push(id)
-            continue
+        } else {
+            convertedLayout.filters.push(id)
         }
-        convertedLayout.filters.push(id)
     }
 
     /* A pivot table aggregates, so a line list's flat column list cannot carry
@@ -243,25 +248,20 @@ export const convertLayoutForVisType = ({
      * is a line list, which has no rows, so its columns are all that is left
      * to redistribute. */
     for (const id of layout.columns) {
-        const dimension = getDimension(id)
-        if (!dimension) {
-            throw new Error(
-                `No metadata found for dimension "${id}" — cannot convert layout to a pivot table`
-            )
-        }
+        const dimension = getDimensionOrThrow(id)
         if (isDimensionFullyInvalidForVisType(dimension, targetVisType)) {
             invalidDimensionIds.push(id)
-            continue
-        }
-        switch (dimension.dimensionType) {
-            case 'ORGANISATION_UNIT':
-                convertedLayout.columns.push(id)
-                break
-            case 'PERIOD':
-                convertedLayout.rows.push(id)
-                break
-            default:
-                convertedLayout.filters.push(id)
+        } else {
+            switch (dimension.dimensionType) {
+                case 'ORGANISATION_UNIT':
+                    convertedLayout.columns.push(id)
+                    break
+                case 'PERIOD':
+                    convertedLayout.rows.push(id)
+                    break
+                default:
+                    convertedLayout.filters.push(id)
+            }
         }
     }
 
