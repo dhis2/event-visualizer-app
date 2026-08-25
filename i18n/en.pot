@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-18T13:32:02.308Z\n"
-"PO-Revision-Date: 2026-08-18T13:32:02.308Z\n"
+"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
+"PO-Revision-Date: 2026-08-20T09:13:16.339Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -49,38 +49,47 @@ msgstr "Repeated events"
 msgid "Data"
 msgstr "Data"
 
+msgid "Only available for repeatable stages"
+msgstr "Only available for repeatable stages"
+
+msgid "and"
+msgstr "and"
+
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr "{{valueType}} type dimensions cannot be filtered."
 
 msgid "This dimension cannot be filtered."
 msgstr "This dimension cannot be filtered."
 
-msgid "Preset options can't be combined with other filters"
-msgstr "Preset options can't be combined with other filters"
+msgid "Filtering"
+msgstr "Filtering"
+
+msgid "Show all groups"
+msgstr "Show all groups"
 
 msgid "Add filter"
 msgstr "Add filter"
 
-msgid "and"
-msgstr "and"
+msgid "{{- legends}} and {{- remainingCount}} more"
+msgstr "{{- legends}} and {{- remainingCount}} more"
 
-msgid "is one of preset options"
-msgstr "is one of preset options"
+msgid "Grouping"
+msgstr "Grouping"
 
-msgid "Choose a legend set"
-msgstr "Choose a legend set"
+msgid "No grouping"
+msgstr "No grouping"
 
-msgid "Loading legend sets"
-msgstr "Loading legend sets"
+msgid "Show each value individually"
+msgstr "Show each value individually"
 
-msgid "No preset option sets for this data item"
-msgstr "No preset option sets for this data item"
+msgid "Available groups"
+msgstr "Available groups"
 
-msgid "Choose legends"
-msgstr "Choose legends"
+msgid "Filter groups"
+msgstr "Filter groups"
 
-msgid "Loading legends"
-msgstr "Loading legends"
+msgid "Selected groups"
+msgstr "Selected groups"
 
 msgid "From stages with repeatable events, show values from:"
 msgstr "From stages with repeatable events, show values from:"
@@ -222,6 +231,9 @@ msgstr "Program: {{- programName}}"
 
 msgid "Program stage: {{- stageName}}"
 msgstr "Program stage: {{- stageName}}"
+
+msgid "Grouping: {{- groupingName}}"
+msgstr "Grouping: {{- groupingName}}"
 
 msgid "Levels"
 msgstr "Levels"
@@ -416,6 +428,9 @@ msgstr "{{- names}} will be removed. Are you sure?"
 msgid "Convert"
 msgstr "Convert"
 
+msgid "Coming soon"
+msgstr "Coming soon"
+
 msgid "Individual data view"
 msgstr "Individual data view"
 
@@ -539,6 +554,9 @@ msgstr "Legend"
 
 msgid "Select from legends"
 msgstr "Select from legends"
+
+msgid "Loading legends"
+msgstr "Loading legends"
 
 msgid "Limit"
 msgstr "Limit"

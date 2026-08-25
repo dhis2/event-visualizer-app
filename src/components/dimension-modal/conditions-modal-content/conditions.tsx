@@ -6,12 +6,13 @@ import {
     LetterCondition,
 } from './alphanumeric-condition'
 import { BooleanCondition, TrueOnlyCondition } from './boolean-condition'
-import { useConditions } from './conditions-tab-content'
+import { useConditions } from './conditions-provider'
 import {
     DateCondition,
     DateTimeCondition,
     TimeCondition,
 } from './date-condition'
+import { LegendSetCondition } from './legend-set-condition/legend-set-condition'
 import { NumericCondition } from './numeric-condition/numeric-condition'
 import { OptionSetCondition } from './option-set-condition/option-set-condition'
 import { OrgUnitCondition } from './org-unit-condition'
@@ -49,34 +50,16 @@ const ConditionsList: FC<{
 }
 
 const NumericConditionsList: FC = () => {
-    const {
-        conditionsList,
-        conditions,
-        dimension,
-        removeCondition,
-        setCondition,
-    } = useConditions()
+    const { conditionsList, dimension, removeCondition, setCondition } =
+        useConditions()
 
-    return (
-        conditionsList.length
-            ? conditionsList
-            : conditions.legendSet
-              ? // show the condition component also when no conditions are present but a legendSet is selected
-                ['']
-              : []
-    )?.map((condition, index) => (
+    return conditionsList.map((condition, index) => (
         <div key={index}>
             <NumericCondition
                 dimension={dimension}
                 condition={condition}
-                onChange={(value, legendSet) =>
-                    setCondition(index, value, legendSet)
-                }
+                onChange={(value) => setCondition(index, value)}
                 onRemove={() => removeCondition(index)}
-                numberOfConditions={
-                    conditionsList.length || (conditions.legendSet ? 1 : 0)
-                }
-                legendSetId={conditions.legendSet}
             />
             <ConditionDivider total={conditionsList.length} index={index} />
         </div>
@@ -86,12 +69,25 @@ const NumericConditionsList: FC = () => {
 export const Conditions: FC = () => {
     const {
         dimension,
+        conditions,
         conditionsList,
         valueType,
+        isLegendSetCondition,
         isOptionSetCondition,
         isProgramIndicator,
         setCondition,
     } = useConditions()
+
+    if (isLegendSetCondition) {
+        return (
+            <LegendSetCondition
+                condition={conditionsList[0]}
+                dimension={dimension}
+                legendSetId={conditions.legendSet!}
+                onChange={(value) => setCondition(0, value)}
+            />
+        )
+    }
 
     if (isOptionSetCondition) {
         return (

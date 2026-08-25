@@ -10,6 +10,10 @@
     block-size: 29px;
 }
 
+.bottomBar.empty {
+    border-block-start-color: transparent;
+}
+
 .container {
     display: flex;
     align-items: center;
