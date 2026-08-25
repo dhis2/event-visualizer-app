@@ -21,6 +21,3 @@ cdn.cypress.io
 # DHIS2 — docs, play/test instances, and API access
 dhis2.org
 *.dhis2.org
-
-# IM-hosted DHIS2 test instances (e.g. e2e.im.dhis2.org, dev.im.dhis2.org)
-*.im.dhis2.org
