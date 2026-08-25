@@ -19,13 +19,9 @@ describe('dashboard plugin errors', () => {
             'notARealId1'
         )
 
-        pluginBody()
-            .contains('Something went wrong', { timeout: 30000 })
-            .should('be.visible')
+        pluginBody().contains('Something went wrong').should('be.visible')
 
-        pluginBody()
-            .contains('button', 'Retry', { timeout: 30000 })
-            .should('be.visible')
+        pluginBody().contains('button', 'Retry').should('be.visible')
 
         cy.get('@vis.all')
             .its('length')
@@ -51,8 +47,6 @@ describe('dashboard plugin errors', () => {
             'TIuOzZ0ID0V'
         )
 
-        pluginBody()
-            .contains('Something went wrong', { timeout: 30000 })
-            .should('be.visible')
+        pluginBody().contains('Something went wrong').should('be.visible')
     })
 })
