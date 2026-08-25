@@ -33,7 +33,8 @@ describe('getLegendSetConditionMetadataIds', () => {
             conditionsList
         )
 
-        expect(actual).toEqual(['legendSetId1'])
+        // grouping alone filters nothing, so there are no groups to name
+        expect(actual).toEqual([])
     })
 
     test('Legend set chosen with legends selected', () => {

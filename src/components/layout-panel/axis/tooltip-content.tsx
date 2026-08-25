@@ -24,6 +24,7 @@ const NO_FALLBACK_DIMENSION_TYPES: ReadonlySet<DimensionType> = new Set([
 type TooltipContentProps = {
     dimension: LayoutDimension
     conditionsTexts: string[]
+    groupingName?: string
     axisId: string
 }
 
@@ -60,6 +61,7 @@ const ItemsList: FC<ItemsListProps> = ({ itemDisplayNames, dimensionId }) => {
 export const TooltipContent: FC<TooltipContentProps> = ({
     dimension,
     conditionsTexts,
+    groupingName,
     axisId,
 }) => {
     const { programName, stageName, itemDisplayNames } =
@@ -91,6 +93,14 @@ export const TooltipContent: FC<TooltipContentProps> = ({
                 <li className={styles.item}>
                     {i18n.t('Program stage: {{- stageName}}', {
                         stageName,
+                        nsSeparator: '^^',
+                    })}
+                </li>
+            )}
+            {groupingName && (
+                <li className={styles.item}>
+                    {i18n.t('Grouping: {{- groupingName}}', {
+                        groupingName,
                         nsSeparator: '^^',
                     })}
                 </li>

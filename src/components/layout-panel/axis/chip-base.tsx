@@ -2,6 +2,7 @@ import { DimensionTypeIcon } from '@components/shared/dimension-type-icon'
 import cx from 'classnames'
 import type React from 'react'
 import type { LayoutDimension } from './chip'
+import { GroupingIcon } from './grouping-icon'
 import classes from './styles/chip-base.module.css'
 
 // Presentational component used by dnd - do not add redux or dnd functionality
@@ -11,6 +12,7 @@ export interface ChipBaseProps {
     dimensionName: string
     itemsText: string
     suffix?: string
+    isGrouped?: boolean
     isEmpty?: boolean
     isDragging?: boolean
     onClick: () => void
@@ -21,6 +23,7 @@ export const ChipBase: React.FC<ChipBaseProps> = ({
     dimensionName,
     itemsText,
     suffix,
+    isGrouped,
     isEmpty,
     isDragging,
     onClick,
@@ -50,5 +53,10 @@ export const ChipBase: React.FC<ChipBaseProps> = ({
         <span className={classes.items} data-test="chip-items">
             {itemsText}
         </span>
+        {isGrouped && (
+            <span className={classes.groupingIcon} data-test="chip-grouping">
+                <GroupingIcon />
+            </span>
+        )}
     </button>
 )
