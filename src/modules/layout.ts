@@ -199,6 +199,19 @@ type LayoutConversionResult = {
     invalidDimensionIds: string[]
 }
 
+const getDimensionOrThrow = (
+    id: string,
+    getDimension: (id: string) => DimensionMetadataItem | undefined
+): DimensionMetadataItem => {
+    const dimension = getDimension(id)
+    if (!dimension) {
+        throw new Error(
+            `No metadata found for dimension "${id}" — cannot convert layout to a pivot table`
+        )
+    }
+    return dimension
+}
+
 export const convertLayoutForVisType = ({
     layout,
     targetVisType,
@@ -221,21 +234,11 @@ export const convertLayoutForVisType = ({
         }
     }
 
-    const getDimensionOrThrow = (id: string): DimensionMetadataItem => {
-        const dimension = getDimension(id)
-        if (!dimension) {
-            throw new Error(
-                `No metadata found for dimension "${id}" — cannot convert layout to a pivot table`
-            )
-        }
-        return dimension
-    }
-
     const convertedLayout: Layout = { columns: [], rows: [], filters: [] }
     const invalidDimensionIds: string[] = []
 
     for (const id of layout.filters) {
-        const dimension = getDimensionOrThrow(id)
+        const dimension = getDimensionOrThrow(id, getDimension)
         if (isDimensionFullyInvalidForVisType(dimension, targetVisType)) {
             invalidDimensionIds.push(id)
         } else {
@@ -243,12 +246,8 @@ export const convertLayoutForVisType = ({
         }
     }
 
-    /* A pivot table aggregates, so a line list's flat column list cannot carry
-     * over as-is: only org unit and period dimensions can be axes. The source
-     * is a line list, which has no rows, so its columns are all that is left
-     * to redistribute. */
     for (const id of layout.columns) {
-        const dimension = getDimensionOrThrow(id)
+        const dimension = getDimensionOrThrow(id, getDimension)
         if (isDimensionFullyInvalidForVisType(dimension, targetVisType)) {
             invalidDimensionIds.push(id)
         } else {
@@ -265,6 +264,8 @@ export const convertLayoutForVisType = ({
         }
     }
 
+    /* A line list has no rows in the layout, so there is no need to iterate
+     * layout.rows. */
     return { convertedLayout, invalidDimensionIds }
 }
 
