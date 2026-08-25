@@ -23,13 +23,19 @@ import classes from './styles/plugin-wrapper.module.css'
 
 const getBaseRequestIdentity = (
     currentVis: CurrentVisualization,
-    filters?: HostFilters
+    relativePeriodDate?: string
 ) => {
     switch (currentVis.type) {
         case 'LINE_LIST':
-            return getLineListBaseRequestIdentity(currentVis, filters)
+            return getLineListBaseRequestIdentity(
+                currentVis,
+                relativePeriodDate
+            )
         case 'PIVOT_TABLE':
-            return getPivotTableBaseRequestIdentity(currentVis, filters)
+            return getPivotTableBaseRequestIdentity(
+                currentVis,
+                relativePeriodDate
+            )
         default:
             return assertNever(currentVis.type)
     }
@@ -58,32 +64,24 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     onRetryLoad,
     onDataSorted,
 }) => {
-    /* Only relativePeriodDate ever reaches the analytics request; ou, pe and
-     * yourDimensions are dashboard filters this app doesn't apply (see
-     * FiltersNotAppliedNotice). Narrowing to it here, rather than passing the
-     * raw filters prop through, keeps its reference stable across changes to
-     * those other fields, so it doesn't needlessly retrigger the plugins'
-     * fetch effects below. */
-    const appliedFilters = useMemo<HostFilters | undefined>(
-        () =>
-            filters?.relativePeriodDate
-                ? { relativePeriodDate: filters.relativePeriodDate }
-                : undefined,
-        [filters?.relativePeriodDate]
-    )
+    /* relativePeriodDate is the only filter this app applies; ou, pe and
+     * yourDimensions are dashboard filters it ignores (see
+     * FiltersNotAppliedNotice). It's a request parameter, so it feeds both the
+     * request identity below and the plugins' fetch. */
+    const relativePeriodDate = filters?.relativePeriodDate
 
     /* Remount key for the canvas: changing it clears errors and resets sort and
-     * page. It's the base request identity (visualization + applied filters),
-     * so a filter change remounts; sort/page aren't in it and refetch in place.
+     * page. It's the base request identity (visualization + relativePeriodDate),
+     * so a period change remounts; sort/page aren't in it and refetch in place.
      * Prop-derived so it also works in the store-less dashboard plugin. */
     const requestKey = useMemo(
         () =>
             isVisualizationEmpty(visualization)
                 ? ''
                 : JSON.stringify(
-                      getBaseRequestIdentity(visualization, appliedFilters)
+                      getBaseRequestIdentity(visualization, relativePeriodDate)
                   ),
-        [visualization, appliedFilters]
+        [visualization, relativePeriodDate]
     )
 
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
@@ -147,7 +145,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     <LineListPlugin
                         displayProperty={displayProperty}
                         visualization={visualization}
-                        filters={appliedFilters}
+                        relativePeriodDate={relativePeriodDate}
                         isInDashboard={isInDashboard}
                         isInModal={isInModal}
                         onDataSorted={onDataSorted}
@@ -158,7 +156,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     <PivotTablePlugin
                         displayProperty={displayProperty}
                         visualization={visualization}
-                        filters={appliedFilters}
+                        relativePeriodDate={relativePeriodDate}
                         isInDashboard={isInDashboard}
                         isInModal={isInModal}
                         onResponseReceived={onResponseReceived}

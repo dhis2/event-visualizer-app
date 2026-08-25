@@ -10,10 +10,6 @@ describe('hasUnappliedFilters', () => {
     it('is false when nothing needs a warning', () => {
         expect(hasUnappliedFilters(undefined)).toBe(false)
         expect(hasUnappliedFilters({})).toBe(false)
-        // relativePeriodDate is applied, so it must not warn
-        expect(hasUnappliedFilters({ relativePeriodDate: '2024-01-01' })).toBe(
-            false
-        )
         // present keys with no selected items carry nothing to apply
         expect(hasUnappliedFilters({ ou: [] })).toBe(false)
         expect(
@@ -34,12 +30,8 @@ describe('hasUnappliedFilters', () => {
 })
 
 describe('FiltersNotAppliedNotice', () => {
-    it('renders nothing when every filter is applied', () => {
-        const { container } = render(
-            <FiltersNotAppliedNotice
-                filters={{ relativePeriodDate: '2024-01-01' }}
-            />
-        )
+    it('renders nothing when there is no unapplied filter', () => {
+        const { container } = render(<FiltersNotAppliedNotice filters={{}} />)
         expect(container).toBeEmptyDOMElement()
     })
 

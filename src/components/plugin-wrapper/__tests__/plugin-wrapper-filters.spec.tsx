@@ -43,7 +43,7 @@ const TestHarness = () => {
 }
 
 describe('PluginWrapper filter remount', () => {
-    it('remounts the canvas (resetting page & sort) when a dashboard filter changes', async () => {
+    it('remounts the canvas (resetting page & sort) when relativePeriodDate changes', async () => {
         const user = userEvent.setup()
         const deferred = createDeferredQuery()
         const options = {

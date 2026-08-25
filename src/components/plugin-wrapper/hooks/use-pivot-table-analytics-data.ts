@@ -5,7 +5,7 @@ import { EmptyResponseError } from '@modules/error/empty-response-error'
 import { isAbortError } from '@modules/error/is-abort-error'
 import { logger } from '@modules/logger'
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
-import type { CurrentUser, CurrentVisualization, HostFilters } from '@types'
+import type { CurrentUser, CurrentVisualization } from '@types'
 import { useCallback, useState } from 'react'
 import { useErrorBoundary } from 'react-error-boundary'
 import { getAnalyticsEndpoint } from './query-tools-common'
@@ -94,7 +94,7 @@ export type PivotTableAnalyticsData = {
 
 type FetchAnalyticsDataForPTParams = {
     visualization: CurrentVisualization
-    filters?: HostFilters
+    relativePeriodDate?: string
     displayProperty: CurrentUser['settings']['displayProperty']
     onResponseReceived: () => void
 }
@@ -122,12 +122,12 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
             visualization,
-            filters,
+            relativePeriodDate,
             displayProperty,
             onResponseReceived,
         }) => {
             const requestSignature = JSON.stringify({
-                ...getBaseRequestIdentity(visualization, filters),
+                ...getBaseRequestIdentity(visualization, relativePeriodDate),
                 displayProperty,
             })
 
@@ -139,8 +139,6 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                 ...prevState,
                 isFetching: true,
             }))
-
-            const relativePeriodDate = filters?.relativePeriodDate
 
             try {
                 const analyticsResponse = await fetchAnalyticsDataForPT({

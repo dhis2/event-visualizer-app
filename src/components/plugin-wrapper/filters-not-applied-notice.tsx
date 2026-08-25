@@ -1,11 +1,11 @@
 import i18n from '@dhis2/d2-i18n'
 import { Button, Cover, IconInfo24, colors } from '@dhis2/ui'
-import type { HostFilters } from '@types'
+import type { DashboardFilters } from '@types'
 import type { FC } from 'react'
 import { useState } from 'react'
 import classes from './styles/filters-not-applied-notice.module.css'
 
-export const hasUnappliedFilters = (filters?: HostFilters): boolean =>
+export const hasUnappliedFilters = (filters?: DashboardFilters): boolean =>
     Boolean(
         filters?.ou?.length ||
         filters?.pe?.length ||
@@ -15,7 +15,7 @@ export const hasUnappliedFilters = (filters?: HostFilters): boolean =>
     )
 
 type FiltersNotAppliedNoticeProps = {
-    filters?: HostFilters
+    filters?: DashboardFilters
     /* While the canvas is showing its own loading spinner, the notice's
      * near-opaque Cover would sit on top of it and hide it. Suppressing the
      * notice here (rather than unmounting it from the parent) keeps its

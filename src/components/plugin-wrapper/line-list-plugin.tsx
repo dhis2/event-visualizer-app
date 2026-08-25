@@ -9,12 +9,7 @@ import { useAppDispatch } from '@hooks'
 import { transformVisualizationForAnalyticsRequest } from '@modules/analytics-request'
 import { logger } from '@modules/logger'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
-import type {
-    CurrentUser,
-    CurrentVisualization,
-    HostFilters,
-    Sorting,
-} from '@types'
+import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FC } from 'react'
 import { useLineListAnalyticsData } from './hooks/use-line-list-analytics-data'
@@ -24,7 +19,7 @@ type InternalSorting = Sorting | undefined
 type LineListPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
-    filters?: HostFilters
+    relativePeriodDate?: string
     isInDashboard: boolean
     isInModal: boolean
     onDataSorted?: (sorting: InternalSorting) => void
@@ -34,7 +29,7 @@ type LineListPluginProps = {
 export const LineListPlugin: FC<LineListPluginProps> = ({
     displayProperty,
     visualization,
-    filters,
+    relativePeriodDate,
     isInDashboard,
     isInModal,
     onDataSorted,
@@ -82,7 +77,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
                     transformVisualizationForAnalyticsRequest(
                         eventVisualization
                     ),
-                filters,
+                relativePeriodDate,
                 displayProperty,
                 onResponseReceived,
                 page,
@@ -91,7 +86,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         },
         [
             displayProperty,
-            filters,
+            relativePeriodDate,
             eventVisualization,
             onResponseReceived,
             fetchAnalyticsData,
@@ -121,13 +116,13 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         fetchAnalyticsData({
             visualization:
                 transformVisualizationForAnalyticsRequest(eventVisualization),
-            filters,
+            relativePeriodDate,
             displayProperty,
             onResponseReceived,
         })
     }, [
         displayProperty,
-        filters,
+        relativePeriodDate,
         eventVisualization,
         onResponseReceived,
         fetchAnalyticsData,

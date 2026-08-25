@@ -10,7 +10,7 @@ type InterpretationModalFilters = {
  * behave differently against event analytics: `ou` always applies, while `pe`
  * conflicts with stage-specific date dimensions. `yourDimensions` is keyed by
  * dimension uid as listed by /api/dimensions, and never holds `ou` or `pe`. */
-type DashboardFilters = {
+export type DashboardFilters = {
     ou?: FilterItem[]
     pe?: FilterItem[]
     yourDimensions?: Record<string, FilterItem[]>

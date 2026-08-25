@@ -4,12 +4,7 @@ import {
     transformVisualizationForAnalyticsRequest,
 } from '@modules/analytics-request'
 import { logger } from '@modules/logger'
-import type {
-    CurrentUser,
-    CurrentVisualization,
-    DimensionArray,
-    HostFilters,
-} from '@types'
+import type { CurrentUser, CurrentVisualization, DimensionArray } from '@types'
 import { type FC, useEffect, useMemo } from 'react'
 import { usePivotTableAnalyticsData } from './hooks/use-pivot-table-analytics-data'
 
@@ -39,7 +34,7 @@ const formatVisualizationForPivotTableEngine = (
 type PivotTablePluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
-    filters?: HostFilters
+    relativePeriodDate?: string
     isInDashboard: boolean
     isInModal: boolean
     onResponseReceived: () => void
@@ -48,7 +43,7 @@ type PivotTablePluginProps = {
 export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
     displayProperty,
     visualization,
-    filters,
+    relativePeriodDate,
     onResponseReceived,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isInDashboard,
@@ -72,13 +67,13 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
         fetchAnalyticsData({
             visualization:
                 transformVisualizationForAnalyticsRequest(visualization),
-            filters,
+            relativePeriodDate,
             displayProperty,
             onResponseReceived,
         })
     }, [
         displayProperty,
-        filters,
+        relativePeriodDate,
         visualization,
         onResponseReceived,
         fetchAnalyticsData,
