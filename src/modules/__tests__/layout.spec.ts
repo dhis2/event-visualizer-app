@@ -979,9 +979,9 @@ describe('convertLayoutForVisType', () => {
                 }),
             })
             expect(result.discardedDimensionIds).toEqual(['pi'])
-            expect(result.newLayout.columns).toEqual(['numericDe'])
+            expect(result.newLayout.columns).toEqual([])
             expect(result.newLayout.rows).toEqual([])
-            expect(result.newLayout.filters).toEqual([])
+            expect(result.newLayout.filters).toEqual(['numericDe'])
         })
 
         it('discards the TET registration OU in columns', () => {
@@ -1005,36 +1005,40 @@ describe('convertLayoutForVisType', () => {
                 }),
             })
             expect(result.discardedDimensionIds).toEqual(['tetId.enrollmentOu'])
-            expect(result.newLayout.columns).toEqual(['numericDe'])
+            expect(result.newLayout.filters).toEqual(['numericDe'])
         })
 
-        it('keeps all non-PI dimensions in their original axes', () => {
+        it('routes columns by dimension type: org unit to columns, period to rows, the rest to filters', () => {
             const result = convertLayoutForVisType({
                 layout: {
-                    columns: ['textDe', 'numericDe'],
+                    columns: ['stageId.ou', 'stageId.eventDate', 'textDe'],
                     rows: [],
                     filters: [],
                 },
                 targetVisType: 'PIVOT_TABLE',
                 getDimension: makeGetDimension({
+                    'stageId.ou': makeDim({
+                        dimensionId: 'ou',
+                        dimensionType: 'ORGANISATION_UNIT',
+                    }),
+                    'stageId.eventDate': makeDim({
+                        dimensionId: 'eventDate',
+                        dimensionType: 'PERIOD',
+                    }),
                     textDe: makeDim({
                         dimensionId: 'textDe',
                         dimensionType: 'DATA_ELEMENT',
                         valueType: 'TEXT',
                     }),
-                    numericDe: makeDim({
-                        dimensionId: 'numericDe',
-                        dimensionType: 'DATA_ELEMENT',
-                        valueType: 'NUMBER',
-                    }),
                 }),
             })
             expect(result.discardedDimensionIds).toEqual([])
-            expect(result.newLayout.columns).toEqual(['textDe', 'numericDe'])
-            expect(result.newLayout.filters).toEqual([])
+            expect(result.newLayout.columns).toEqual(['stageId.ou'])
+            expect(result.newLayout.rows).toEqual(['stageId.eventDate'])
+            expect(result.newLayout.filters).toEqual(['textDe'])
         })
 
-        it('keeps aggregatable dimensions in columns', () => {
+        it('moves aggregatable dimensions in columns to filters', () => {
             const result = convertLayoutForVisType({
                 layout: {
                     columns: ['numericDe', 'category'],
@@ -1055,7 +1059,77 @@ describe('convertLayoutForVisType', () => {
                 }),
             })
             expect(result.discardedDimensionIds).toEqual([])
-            expect(result.newLayout.columns).toEqual(['numericDe', 'category'])
+            expect(result.newLayout.columns).toEqual([])
+            expect(result.newLayout.rows).toEqual([])
+            expect(result.newLayout.filters).toEqual(['numericDe', 'category'])
+        })
+
+        it('appends demoted columns after the pre-existing filters', () => {
+            const result = convertLayoutForVisType({
+                layout: {
+                    columns: ['textDe'],
+                    rows: [],
+                    filters: ['filterDim'],
+                },
+                targetVisType: 'PIVOT_TABLE',
+                getDimension: makeGetDimension({
+                    textDe: makeDim({
+                        dimensionId: 'textDe',
+                        dimensionType: 'DATA_ELEMENT',
+                        valueType: 'TEXT',
+                    }),
+                    filterDim: makeDim({
+                        dimensionId: 'filterDim',
+                        dimensionType: 'DATA_ELEMENT',
+                        valueType: 'TEXT',
+                    }),
+                }),
+            })
+            expect(result.newLayout.filters).toEqual(['filterDim', 'textDe'])
+        })
+
+        it('preserves source order among multiple org unit and period dimensions', () => {
+            const result = convertLayoutForVisType({
+                layout: {
+                    columns: [
+                        'programId.enrollmentOu',
+                        'stageId.eventDate',
+                        'stageId.ou',
+                        'programId.enrollmentDate',
+                    ],
+                    rows: [],
+                    filters: [],
+                },
+                targetVisType: 'PIVOT_TABLE',
+                getDimension: makeGetDimension({
+                    'programId.enrollmentOu': makeDim({
+                        dimensionId: 'enrollmentOu',
+                        dimensionType: 'ORGANISATION_UNIT',
+                        programId: 'programId',
+                    }),
+                    'stageId.eventDate': makeDim({
+                        dimensionId: 'eventDate',
+                        dimensionType: 'PERIOD',
+                    }),
+                    'stageId.ou': makeDim({
+                        dimensionId: 'ou',
+                        dimensionType: 'ORGANISATION_UNIT',
+                    }),
+                    'programId.enrollmentDate': makeDim({
+                        dimensionId: 'enrollmentDate',
+                        dimensionType: 'PERIOD',
+                    }),
+                }),
+            })
+            expect(result.newLayout.columns).toEqual([
+                'programId.enrollmentOu',
+                'stageId.ou',
+            ])
+            expect(result.newLayout.rows).toEqual([
+                'stageId.eventDate',
+                'programId.enrollmentDate',
+            ])
+            expect(result.newLayout.filters).toEqual([])
         })
     })
 
@@ -1123,7 +1197,13 @@ describe('convertLayoutForVisType', () => {
     it('handles a mixed discard + move + keep across all axes in one call', () => {
         const result = convertLayoutForVisType({
             layout: {
-                columns: ['pi', 'numericDe', 'textDe'],
+                columns: [
+                    'pi',
+                    'stageId.ou',
+                    'stageId.eventDate',
+                    'numericDe',
+                    'textDe',
+                ],
                 rows: [],
                 filters: ['filterDim'],
             },
@@ -1132,6 +1212,14 @@ describe('convertLayoutForVisType', () => {
                 pi: makeDim({
                     dimensionId: 'pi',
                     dimensionType: 'PROGRAM_INDICATOR',
+                }),
+                'stageId.ou': makeDim({
+                    dimensionId: 'ou',
+                    dimensionType: 'ORGANISATION_UNIT',
+                }),
+                'stageId.eventDate': makeDim({
+                    dimensionId: 'eventDate',
+                    dimensionType: 'PERIOD',
                 }),
                 numericDe: makeDim({
                     dimensionId: 'numericDe',
@@ -1151,8 +1239,12 @@ describe('convertLayoutForVisType', () => {
             }),
         })
         expect(result.discardedDimensionIds).toEqual(['pi'])
-        expect(result.newLayout.columns).toEqual(['numericDe', 'textDe'])
-        expect(result.newLayout.filters).toEqual(['filterDim'])
-        expect(result.newLayout.rows).toEqual([])
+        expect(result.newLayout.columns).toEqual(['stageId.ou'])
+        expect(result.newLayout.rows).toEqual(['stageId.eventDate'])
+        expect(result.newLayout.filters).toEqual([
+            'filterDim',
+            'numericDe',
+            'textDe',
+        ])
     })
 })
