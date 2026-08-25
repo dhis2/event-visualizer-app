@@ -189,6 +189,38 @@ export class MetadataStore {
         )
     }
 
+    getMetadataItemOrThrow(id: string): MetadataItem {
+        const item = this.getMetadataItem(id)
+        if (!item) {
+            throw new Error(`No metadata item found for id "${id}"`)
+        }
+        return item
+    }
+
+    getProgramMetadataItemOrThrow(id: string): Program {
+        const program = this.getProgramMetadataItem(id)
+        if (!program) {
+            throw new Error(`No program found for id "${id}"`)
+        }
+        return program
+    }
+
+    getProgramStageMetadataItemOrThrow(id: string): ProgramStage {
+        const stage = this.getProgramStageMetadataItem(id)
+        if (!stage) {
+            throw new Error(`No program stage found for id "${id}"`)
+        }
+        return stage
+    }
+
+    getDimensionMetadataItemOrThrow(id: string): DimensionMetadataItem {
+        const dimension = this.getDimensionMetadataItem(id)
+        if (!dimension) {
+            throw new Error(`No dimension found for id "${id}"`)
+        }
+        return dimension
+    }
+
     subscribe(id: string | null | undefined, cb: Subscriber) {
         if (!isPopulatedString(id)) {
             return noop

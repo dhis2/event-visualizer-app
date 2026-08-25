@@ -64,12 +64,7 @@ const partitionMultiSelectedDimensions = ({
         crossTet: [],
     }
     const validIds = ids.filter((id) => {
-        const dim = metadataStore.getDimensionMetadataItem(id)
-        if (!dim) {
-            throw new Error(
-                `Dimension "${id}" is in multi-selection but has no metadata entry`
-            )
-        }
+        const dim = metadataStore.getDimensionMetadataItemOrThrow(id)
         const reason = getDimensionBlockReason({
             dimension: dim,
             visualizationType,

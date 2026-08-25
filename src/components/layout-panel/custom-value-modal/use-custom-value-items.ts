@@ -61,13 +61,8 @@ export const useCustomValueItems = () => {
     let filteredByStageName: string | undefined
     let customValueStageMismatch = false
     if (layoutStageId) {
-        const stage = metadataStore.getProgramStageMetadataItem(layoutStageId)
-        if (!stage) {
-            throw new Error(
-                `Could not find stage with ID "${layoutStageId}" in the metadata store`
-            )
-        }
-        filteredByStageName = stage.name
+        filteredByStageName =
+            metadataStore.getProgramStageMetadataItemOrThrow(layoutStageId).name
 
         const customValueStageId = getStageIdFromDimensionId(customValue?.id)
         customValueStageMismatch = Boolean(
@@ -90,12 +85,7 @@ export const useCustomValueItems = () => {
         },
     })
 
-    const program = metadataStore.getProgramMetadataItem(programId)
-    if (!program) {
-        throw new Error(
-            `Could not find program with ID "${programId}" in the metadata store`
-        )
-    }
+    const program = metadataStore.getProgramMetadataItemOrThrow(programId)
     const programHasMultipleStages = (program.programStages?.length ?? 0) > 1
     const tetName = program.trackedEntityType?.name
 
@@ -128,12 +118,8 @@ export const useCustomValueItems = () => {
                 if (!stageId || !programHasMultipleStages) {
                     return dim
                 }
-                const stage = metadataStore.getProgramStageMetadataItem(stageId)
-                if (!stage) {
-                    throw new Error(
-                        `Could not find stage with ID "${stageId}" in the metadata store`
-                    )
-                }
+                const stage =
+                    metadataStore.getProgramStageMetadataItemOrThrow(stageId)
                 return { ...dim, stageName: stage.name }
             })
             .sort(compareByName)
