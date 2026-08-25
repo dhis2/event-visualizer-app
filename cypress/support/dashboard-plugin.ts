@@ -3,7 +3,7 @@
  * iframe before it has booted. */
 export const pluginBody = () =>
     cy
-        .get('[data-test="plugin-host-iframe-wrap"] iframe', { timeout: 30000 })
+        .get('[data-test="plugin-host-iframe-wrap"] iframe')
         .its('0.contentDocument.body')
         .should('not.be.empty')
         .then(cy.wrap)

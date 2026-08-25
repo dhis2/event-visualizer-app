@@ -6,7 +6,7 @@ describe('dashboard plugin filters', () => {
         cy.getByDataTest('plugin-host-visualization-id-input').type(
             'TIuOzZ0ID0V'
         )
-        pluginBody().find('table', { timeout: 30000 }).should('be.visible')
+        pluginBody().find('table').should('be.visible')
     })
 
     it('does not remount the canvas when the filter toggle is checked, since it is not applied', () => {
@@ -25,9 +25,7 @@ describe('dashboard plugin filters', () => {
         cy.getByDataTest('plugin-host-filter-toggle').check()
 
         pluginBody()
-            .find('[data-test="filters-not-applied-notice"]', {
-                timeout: 30000,
-            })
+            .find('[data-test="filters-not-applied-notice"]')
             .should('be.visible')
 
         pluginBody().findByDataTest('filters-not-applied-dismiss').click()

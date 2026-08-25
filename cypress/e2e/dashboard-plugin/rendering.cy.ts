@@ -10,7 +10,7 @@ describe('dashboard plugin rendering', () => {
             'TIuOzZ0ID0V'
         )
 
-        pluginBody().find('table', { timeout: 30000 }).should('be.visible')
+        pluginBody().find('table').should('be.visible')
     })
 
     it('renders a pivot table inside the plugin iframe', () => {
@@ -18,14 +18,14 @@ describe('dashboard plugin rendering', () => {
             'aDrb9UMVxt0'
         )
 
-        pluginBody().find('table', { timeout: 30000 }).should('be.visible')
+        pluginBody().find('table').should('be.visible')
     })
 
     it('swaps the rendered visualization when the id changes', () => {
         cy.getByDataTest('plugin-host-visualization-id-input').type(
             'TIuOzZ0ID0V'
         )
-        pluginBody().find('table', { timeout: 30000 }).should('be.visible')
+        pluginBody().find('table').should('be.visible')
 
         pluginBody()
             .find('table thead th')
@@ -44,7 +44,7 @@ describe('dashboard plugin rendering', () => {
                  * the swap silently no-opped and kept showing the first
                  * visualization. */
                 pluginBody()
-                    .find('table thead th', { timeout: 30000 })
+                    .find('table thead th')
                     .its('length')
                     .should('not.equal', firstColumnCount)
             })
