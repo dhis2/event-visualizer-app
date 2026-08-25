@@ -952,8 +952,8 @@ describe('convertLayoutForVisType', () => {
             getDimension: makeGetDimension({}),
         })
         expect(result).toEqual({
-            newLayout: emptyLayout(),
-            discardedDimensionIds: [],
+            convertedLayout: emptyLayout(),
+            invalidDimensionIds: [],
         })
     })
 
@@ -978,10 +978,10 @@ describe('convertLayoutForVisType', () => {
                     }),
                 }),
             })
-            expect(result.discardedDimensionIds).toEqual(['pi'])
-            expect(result.newLayout.columns).toEqual([])
-            expect(result.newLayout.rows).toEqual([])
-            expect(result.newLayout.filters).toEqual(['numericDe'])
+            expect(result.invalidDimensionIds).toEqual(['pi'])
+            expect(result.convertedLayout.columns).toEqual([])
+            expect(result.convertedLayout.rows).toEqual([])
+            expect(result.convertedLayout.filters).toEqual(['numericDe'])
         })
 
         it('discards the TET registration OU in columns', () => {
@@ -1004,8 +1004,8 @@ describe('convertLayoutForVisType', () => {
                     }),
                 }),
             })
-            expect(result.discardedDimensionIds).toEqual(['tetId.enrollmentOu'])
-            expect(result.newLayout.filters).toEqual(['numericDe'])
+            expect(result.invalidDimensionIds).toEqual(['tetId.enrollmentOu'])
+            expect(result.convertedLayout.filters).toEqual(['numericDe'])
         })
 
         it('routes columns by dimension type: org unit to columns, period to rows, the rest to filters', () => {
@@ -1032,10 +1032,10 @@ describe('convertLayoutForVisType', () => {
                     }),
                 }),
             })
-            expect(result.discardedDimensionIds).toEqual([])
-            expect(result.newLayout.columns).toEqual(['stageId.ou'])
-            expect(result.newLayout.rows).toEqual(['stageId.eventDate'])
-            expect(result.newLayout.filters).toEqual(['textDe'])
+            expect(result.invalidDimensionIds).toEqual([])
+            expect(result.convertedLayout.columns).toEqual(['stageId.ou'])
+            expect(result.convertedLayout.rows).toEqual(['stageId.eventDate'])
+            expect(result.convertedLayout.filters).toEqual(['textDe'])
         })
 
         it('moves aggregatable dimensions in columns to filters', () => {
@@ -1058,10 +1058,42 @@ describe('convertLayoutForVisType', () => {
                     }),
                 }),
             })
-            expect(result.discardedDimensionIds).toEqual([])
-            expect(result.newLayout.columns).toEqual([])
-            expect(result.newLayout.rows).toEqual([])
-            expect(result.newLayout.filters).toEqual(['numericDe', 'category'])
+            expect(result.invalidDimensionIds).toEqual([])
+            expect(result.convertedLayout.columns).toEqual([])
+            expect(result.convertedLayout.rows).toEqual([])
+            expect(result.convertedLayout.filters).toEqual([
+                'numericDe',
+                'category',
+            ])
+        })
+
+        it('discards a program indicator sitting in filters', () => {
+            const result = convertLayoutForVisType({
+                layout: {
+                    columns: ['stageId.ou'],
+                    rows: [],
+                    filters: ['pi', 'filterDim'],
+                },
+                targetVisType: 'PIVOT_TABLE',
+                getDimension: makeGetDimension({
+                    'stageId.ou': makeDim({
+                        dimensionId: 'ou',
+                        dimensionType: 'ORGANISATION_UNIT',
+                    }),
+                    pi: makeDim({
+                        dimensionId: 'pi',
+                        dimensionType: 'PROGRAM_INDICATOR',
+                    }),
+                    filterDim: makeDim({
+                        dimensionId: 'filterDim',
+                        dimensionType: 'DATA_ELEMENT',
+                        valueType: 'TEXT',
+                    }),
+                }),
+            })
+            expect(result.invalidDimensionIds).toEqual(['pi'])
+            expect(result.convertedLayout.filters).toEqual(['filterDim'])
+            expect(result.convertedLayout.columns).toEqual(['stageId.ou'])
         })
 
         it('appends demoted columns after the pre-existing filters', () => {
@@ -1085,7 +1117,10 @@ describe('convertLayoutForVisType', () => {
                     }),
                 }),
             })
-            expect(result.newLayout.filters).toEqual(['filterDim', 'textDe'])
+            expect(result.convertedLayout.filters).toEqual([
+                'filterDim',
+                'textDe',
+            ])
         })
 
         it('preserves source order among multiple org unit and period dimensions', () => {
@@ -1121,15 +1156,15 @@ describe('convertLayoutForVisType', () => {
                     }),
                 }),
             })
-            expect(result.newLayout.columns).toEqual([
+            expect(result.convertedLayout.columns).toEqual([
                 'programId.enrollmentOu',
                 'stageId.ou',
             ])
-            expect(result.newLayout.rows).toEqual([
+            expect(result.convertedLayout.rows).toEqual([
                 'stageId.eventDate',
                 'programId.enrollmentDate',
             ])
-            expect(result.newLayout.filters).toEqual([])
+            expect(result.convertedLayout.filters).toEqual([])
         })
     })
 
@@ -1164,14 +1199,14 @@ describe('convertLayoutForVisType', () => {
                     }),
                 }),
             })
-            expect(result.discardedDimensionIds).toEqual([])
-            expect(result.newLayout.columns).toEqual([
+            expect(result.invalidDimensionIds).toEqual([])
+            expect(result.convertedLayout.columns).toEqual([
                 'colDim',
                 'rowDim1',
                 'rowDim2',
             ])
-            expect(result.newLayout.rows).toEqual([])
-            expect(result.newLayout.filters).toEqual(['filterDim'])
+            expect(result.convertedLayout.rows).toEqual([])
+            expect(result.convertedLayout.filters).toEqual(['filterDim'])
         })
 
         it('keeps program indicators (valid for LINE_LIST) when going PT -> LL', () => {
@@ -1189,8 +1224,8 @@ describe('convertLayoutForVisType', () => {
                     }),
                 }),
             })
-            expect(result.discardedDimensionIds).toEqual([])
-            expect(result.newLayout.columns).toEqual(['pi'])
+            expect(result.invalidDimensionIds).toEqual([])
+            expect(result.convertedLayout.columns).toEqual(['pi'])
         })
     })
 
@@ -1238,10 +1273,10 @@ describe('convertLayoutForVisType', () => {
                 }),
             }),
         })
-        expect(result.discardedDimensionIds).toEqual(['pi'])
-        expect(result.newLayout.columns).toEqual(['stageId.ou'])
-        expect(result.newLayout.rows).toEqual(['stageId.eventDate'])
-        expect(result.newLayout.filters).toEqual([
+        expect(result.invalidDimensionIds).toEqual(['pi'])
+        expect(result.convertedLayout.columns).toEqual(['stageId.ou'])
+        expect(result.convertedLayout.rows).toEqual(['stageId.eventDate'])
+        expect(result.convertedLayout.filters).toEqual([
             'filterDim',
             'numericDe',
             'textDe',
