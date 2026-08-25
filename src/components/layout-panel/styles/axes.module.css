@@ -47,18 +47,28 @@
     align-items: center;
     justify-content: center;
     padding: 2px;
+    border: none;
     box-shadow:
         inset 0 4px 8px -6px rgba(40, 60, 85, 0.05),
         inset 0 -4px 8px -6px rgba(40, 60, 85, 0.05);
     background-color: var(--colors-white);
+    color: var(--colors-grey600);
     cursor: pointer;
-    transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
 }
 
 .expandButton:hover {
-    background-color: var(--colors-grey100);
+    background-color: var(--colors-grey50);
+    color: var(--colors-grey900);
+    box-shadow: inset 0 0 0 1px var(--colors-grey400);
+}
+
+.expandButton:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+
+.expandButton:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .loadingSkeletons {
