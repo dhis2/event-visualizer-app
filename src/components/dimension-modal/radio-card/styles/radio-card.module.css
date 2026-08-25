@@ -1,0 +1,119 @@
+.visuallyHidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.heading {
+    display: block;
+    margin-block-end: var(--spacers-dp8);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 19px;
+    color: var(--colors-grey900);
+}
+
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacers-dp8);
+}
+
+.cardsRow {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--spacers-dp8);
+}
+
+.card {
+    border: 1px solid var(--colors-grey300);
+    border-radius: 5px;
+    background-color: var(--colors-white);
+    cursor: pointer;
+}
+
+.card:not(.cardSelected):not(.cardDisabled):hover {
+    border-color: var(--colors-grey400);
+}
+
+.card:not(.cardSelected):not(.cardDisabled):active {
+    border-color: var(--colors-grey400);
+    background-color: var(--colors-grey100);
+}
+
+.cardSelected {
+    border-color: var(--colors-grey400);
+    background-color: var(--colors-grey050);
+}
+
+.cardDisabled,
+.cardDisabled .cardRadio {
+    cursor: not-allowed;
+}
+
+.cardLabelContent {
+    display: flex;
+    min-inline-size: 0;
+    flex-direction: column;
+    inline-size: 100%;
+}
+
+.cardHelp {
+    margin: 0;
+    padding-inline-end: var(--spacers-dp8);
+    padding-block-start: var(--spacers-dp4);
+    font-size: 13px;
+    line-height: 16px;
+    color: var(--colors-grey600);
+}
+
+/* An emphasized card owns its padding on the content column, so the title and
+ * its help text can sit a single gap apart. */
+.cardEmphasized .cardContent {
+    display: flex;
+    min-inline-size: 0;
+    flex-direction: column;
+    row-gap: var(--spacers-dp4);
+    padding: var(--spacers-dp8);
+}
+
+.cardEmphasized .cardRadio {
+    padding: 0;
+}
+
+.cardEmphasized .cardTitle {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--colors-grey900);
+}
+
+.cardEmphasized .cardHelp {
+    padding: 0;
+    font-size: 12px;
+    line-height: 15px;
+}
+
+/* The radio's root element is a <label>, and its label content now includes
+ * the help text alongside the title, so making it fill the card (padding
+ * lives here, not on .card) turns the whole card into a native click target —
+ * no onClick handler needed. The revealed UI is a sibling, outside the label,
+ * so interacting with it never toggles the radio. Icon aligns to the top of
+ * the label content since it can span two lines (title + help text). */
+.cardRadio {
+    align-items: flex-start;
+    padding: var(--spacers-dp12) var(--spacers-dp8);
+    cursor: pointer;
+}
+
+.revealed {
+    margin-inline: var(--spacers-dp24) var(--spacers-dp12);
+    margin-block-end: var(--spacers-dp12);
+    cursor: auto;
+}

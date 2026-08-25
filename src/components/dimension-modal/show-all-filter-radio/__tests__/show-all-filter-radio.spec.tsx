@@ -83,7 +83,7 @@ describe('ShowAllFilterRadio', () => {
         expect(
             screen.getByRole('radio', { name: 'Show all values' })
         ).toBeChecked()
-        expect(screen.getByRole('radio', { name: 'Filter' })).toBeDisabled()
+        expect(screen.getByRole('radio', { name: /^Filter/ })).toBeDisabled()
         expect(
             screen.getByText('This dimension cannot be filtered.')
         ).toBeInTheDocument()
