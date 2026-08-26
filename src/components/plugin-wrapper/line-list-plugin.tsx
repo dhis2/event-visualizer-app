@@ -20,11 +20,9 @@ type LineListPluginProps = {
     relativePeriodDate?: string
     isInDashboard: boolean
     isInModal: boolean
-    /* Only the app canvas provides this (bound to a store dispatch); the
-     * dashboard plugin and interpretation modal are read-only, so their column
-     * headers are not clickable. Keeping the store dependency in the caller is
-     * what lets the plugin run without a Redux Provider (see CLAUDE.md >
-     * plugin providers). */
+    /* Only the app canvas provides this (a store dispatch); the plugin and
+     * modal don't, so the plugin needs no store. See CLAUDE.md > plugin
+     * providers. */
     onColumnHeaderClick?: ColumnHeaderClickFn
     onDataSorted?: (sorting: InternalSorting) => void
     onResponseReceived: () => void

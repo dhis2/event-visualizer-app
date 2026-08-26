@@ -6,9 +6,8 @@ import {
 } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
-/* useDataQuery, not the app's RTK-query hooks: the plugin must not carry the
- * app store (see CLAUDE.md > plugin providers), and useDataQuery runs on the
- * app-adapter's data provider instead. */
+/* useDataQuery, not the RTK-query hooks: the plugin carries no app store (see
+ * CLAUDE.md > plugin providers). */
 // eslint-disable-next-line no-restricted-imports
 import { useDataQuery } from '@dhis2/app-runtime'
 import { logger } from '@modules/logger'
@@ -39,9 +38,8 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
 
     const metadataStore = useMetadataStore()
 
-    /* useDataQuery freezes its query on first render, so a change to
-     * props.visualization.id is only picked up because DashboardPlugin
-     * remounts this component on id change (see the key below). */
+    /* useDataQuery freezes its query on first render; DashboardPlugin remounts
+     * on id change (the key below) so a new id refetches. */
     const { data, error, loading, refetch } = useDataQuery({
         eventVisualization: {
             resource: 'eventVisualizations',

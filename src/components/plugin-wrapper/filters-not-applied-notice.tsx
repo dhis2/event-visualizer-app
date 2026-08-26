@@ -16,11 +16,8 @@ export const hasUnappliedFilters = (filters?: DashboardFilters): boolean =>
 
 type FiltersNotAppliedNoticeProps = {
     filters?: DashboardFilters
-    /* While the canvas is showing its own loading spinner, the notice's
-     * near-opaque Cover would sit on top of it and hide it. Suppressing the
-     * notice here (rather than unmounting it from the parent) keeps its
-     * dismissal state intact, so it reappears afterwards only if the filter
-     * is still unapplied and wasn't already dismissed for that filter. */
+    /* Hidden while loading so its opaque Cover doesn't hide the canvas spinner.
+     * Suppressed here rather than unmounted, so a dismissal survives the load. */
     isLoading?: boolean
 }
 
@@ -28,9 +25,8 @@ export const FiltersNotAppliedNotice: FC<FiltersNotAppliedNoticeProps> = ({
     filters,
     isLoading = false,
 }) => {
-    /* Keying the dismissal off the filters themselves (rather than an effect)
-     * means a filter change simply no longer matches the dismissed key, so
-     * the notice reappears without any extra state to keep in sync. */
+    /* Dismissal is keyed on the filters, so a filter change no longer matches
+     * and the notice reappears — no effect needed. */
     const filtersKey = JSON.stringify(filters ?? null)
     const [dismissedFiltersKey, setDismissedFiltersKey] = useState<
         string | null

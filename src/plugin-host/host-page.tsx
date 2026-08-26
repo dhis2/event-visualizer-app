@@ -3,18 +3,12 @@ import { NoticeBox } from '@dhis2/ui'
 import type { HostFilters } from '@types'
 import { useCallback, useMemo, useState, type FC } from 'react'
 
-/* `Plugin`'s shipped type only names its own layout props (pluginSource,
- * height, width, ...) and forwards everything else to the iframe at
- * runtime through an untyped rest parameter. This re-types it for the
- * specific extra props this host sends, mirroring what dashboard-app's
- * IframePlugin sends its embedded plugins. */
+/* Plugin's shipped type only lists its own layout props and forwards the rest
+ * untyped. Re-typed here for the extra props this host sends. */
 type HostPluginProps = {
     pluginSource: string
-    /* A fixed pixel height, like a real dashboard grid cell. Without it,
-     * Plugin falls back to content-driven sizing: it waits for the plugin's
-     * own content to report a height, but PivotTable renders into a
-     * percentage-height container that never resolves without a definite
-     * ancestor height, so it stays 0x0. */
+    /* Fixed height like a real dashboard grid cell. Without it PivotTable
+     * renders into an unresolved percentage-height container and stays 0x0. */
     height: number
     visualization: { id: string }
     displayProperty: string
@@ -27,8 +21,8 @@ type HostPluginProps = {
 
 const Plugin: FC<HostPluginProps> = UntypedPlugin
 
-/* Not a real org unit: nothing downstream resolves this id, since the plugin
- * only checks whether a dashboard filter is present, never its value. */
+/* Not a real org unit — the plugin only checks that a filter is present, never
+ * its value. */
 const UNAPPLIED_FILTERS: HostFilters = { ou: [{ id: 'plugin-host-test' }] }
 
 export const HostPage: FC = () => {
@@ -41,9 +35,8 @@ export const HostPage: FC = () => {
         setError(pluginError)
     }, [])
 
-    /* Plugin (@dhis2/app-service-plugin) re-notifies the iframe whenever any
-     * of these props changes identity, so a fresh object literal here would
-     * resend on every host render and re-trigger the plugin's fetch. */
+    /* Plugin re-notifies the iframe when any prop changes identity, so memoize
+     * to avoid resending (and refetching) on every host render. */
     const pluginProps = useMemo(
         () => ({
             visualization: { id: trimmedVisualizationId },
@@ -71,9 +64,8 @@ export const HostPage: FC = () => {
                     >
                         Visualization id
                     </label>
-                    {/* A native <input>, not a DHIS2 UI InputField: the DHIS2
-                     * UI widget renders without an underlying <input>, which
-                     * cy.type() requires. */}
+                    {/* Native <input>, not DHIS2 UI's InputField: cy.type()
+                     * needs a real <input>, which that widget doesn't render. */}
                     <input
                         id="plugin-host-visualization-id-input"
                         data-test="plugin-host-visualization-id-input"

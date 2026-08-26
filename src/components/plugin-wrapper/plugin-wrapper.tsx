@@ -67,16 +67,14 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     onColumnHeaderClick,
     onDataSorted,
 }) => {
-    /* relativePeriodDate is the only filter this app applies; ou, pe and
-     * yourDimensions are dashboard filters it ignores (see
-     * FiltersNotAppliedNotice). It's a request parameter, so it feeds both the
-     * request identity below and the plugins' fetch. */
+    /* relativePeriodDate is the only applied filter (ou/pe/yourDimensions are
+     * ignored — see FiltersNotAppliedNotice), so it feeds the request identity
+     * and the fetch. */
     const relativePeriodDate = filters?.relativePeriodDate
 
-    /* Remount key for the canvas: changing it clears errors and resets sort and
-     * page. It's the base request identity (visualization + relativePeriodDate),
-     * so a period change remounts; sort/page aren't in it and refetch in place.
-     * Prop-derived so it also works in the store-less dashboard plugin. */
+    /* Canvas remount key: changing it clears errors and resets sort and page.
+     * It's the request identity (visualization + relativePeriodDate), so a
+     * period change remounts while sort/page refetch in place. */
     const requestKey = useMemo(
         () =>
             isVisualizationEmpty(visualization)

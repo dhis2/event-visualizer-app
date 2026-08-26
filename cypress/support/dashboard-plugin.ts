@@ -1,6 +1,5 @@
-/* The plugin renders inside an iframe served from the same origin, so its
- * document is reachable. Waiting for a non-empty body avoids querying the
- * iframe before it has booted. */
+/* Same-origin iframe, so its document is reachable; wait for a non-empty body
+ * so we don't query before it has booted. */
 export const pluginBody = () =>
     cy
         .get('[data-test="plugin-host-iframe-wrap"] iframe')

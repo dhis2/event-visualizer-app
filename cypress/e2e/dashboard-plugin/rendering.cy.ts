@@ -35,14 +35,10 @@ describe('dashboard plugin rendering', () => {
                     .clear()
                     .type('PRVegIpABeb')
 
-                /* Column count, not header text: it doesn't depend on
-                 * translations or label edits, and it's a stable proxy for
-                 * "the plugin re-rendered with the new props" since both
-                 * fixtures are LINE_LIST and only their column sets differ
-                 * (7 vs 21 columns, confirmed against the API). A test that
-                 * only checks the table is visible again would pass even if
-                 * the swap silently no-opped and kept showing the first
-                 * visualization. */
+                /* Assert the column count changes (7 vs 21 between these
+                 * fixtures), not just that a table exists — a silent no-op swap
+                 * would still show a table. Count, not header text, so it
+                 * survives translations. */
                 pluginBody()
                     .find('table thead th')
                     .its('length')

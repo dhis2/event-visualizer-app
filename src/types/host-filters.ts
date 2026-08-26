@@ -6,10 +6,9 @@ type InterpretationModalFilters = {
     relativePeriodDate?: string
 }
 
-/* What a dashboard narrows an item by. `ou` and `pe` are named because they
- * behave differently against event analytics: `ou` always applies, while `pe`
- * conflicts with stage-specific date dimensions. `yourDimensions` is keyed by
- * dimension uid as listed by /api/dimensions, and never holds `ou` or `pe`. */
+/* What a dashboard narrows an item by. `ou` and `pe` are separate named fields
+ * because analytics treats them differently (`pe` conflicts with stage date
+ * dimensions); `yourDimensions` is keyed by dimension uid. */
 export type DashboardFilters = {
     ou?: FilterItem[]
     pe?: FilterItem[]

@@ -6,10 +6,9 @@ import { importAliases } from './import-aliases'
 const HOST_PAGE_ROUTE = '/plugin-host.html'
 const HOST_PAGE_DIR = 'src/plugin-host'
 
-/* The DHIS2 app shell runs Vite with `root` set to `.d2/shell`, so a page kept
- * in `src` is outside the served root and needs serving by hand. The entry
- * module is referenced through `/@fs` for the same reason. Dev only: the page
- * is never added to `build.rollupOptions.input`, so it cannot be built. */
+/* Vite's `root` is `.d2/shell`, so a page kept in `src` is outside it and must
+ * be served by hand, with its entry referenced via `/@fs`. Dev only: never
+ * added to `build.rollupOptions.input`, so it cannot be built. */
 const servePluginHost = (): Plugin => ({
     name: 'event-visualizer:serve-plugin-host',
     apply: 'serve',

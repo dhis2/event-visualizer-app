@@ -6,11 +6,10 @@ describe('dashboard plugin errors', () => {
     })
 
     it('shows the canvas error with a working retry for an unknown visualization', () => {
-        /* A bad id fails at the eventVisualizations fetch, not the analytics
-         * one. Counting these requests, rather than re-checking the error
-         * text, is what proves Retry does something: the error text alone is
-         * already true before the click, so a decorative button that does
-         * nothing would still pass a text-only assertion. */
+        /* Assert Retry refetches (the request count grows), not just that the
+         * error text is still shown — that's already true before the click, so
+         * a dead button would pass. A bad id fails at the eventVisualizations
+         * fetch, so count those. */
         cy.intercept({ method: 'GET', url: '**/eventVisualizations/**' }).as(
             'vis'
         )
@@ -35,9 +34,8 @@ describe('dashboard plugin errors', () => {
     })
 
     it('shows the canvas error when the analytics request itself fails', () => {
-        /* A real visualization id, so the eventVisualizations fetch succeeds
-         * and the failure is forced on the analytics request instead — the
-         * other place a plugin's data fetch can fail. */
+        /* Valid id, so the failure lands on the analytics request — the other
+         * place the fetch can fail. */
         cy.intercept(
             { method: 'GET', url: '**/analytics/events/query/**' },
             { statusCode: 500, body: { message: 'forced by test' } }

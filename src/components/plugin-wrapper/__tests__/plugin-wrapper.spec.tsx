@@ -31,10 +31,8 @@ describe('PluginWrapper', () => {
     const deferredAnalytics = createDeferredQuery()
     const mockOptions = {
         queryData: {
-            /* Dimension strings are stage-prefixed (e.g.
-             * "Zj7UnCAulEk.qrur9Dvnyt5:GE:5:LE:10"), so matching visualization
-             * 1's request needs a substring check, not an exact-element
-             * `.includes`. */
+            /* Dimension strings are stage-prefixed, so match with a substring
+             * check, not an exact array `.includes`. */
             analytics: deferredAnalytics.defer(
                 (_: unknown, query: { params: { dimension: string[] } }) =>
                     query.params.dimension.some((dimension) =>

@@ -10,10 +10,9 @@ import analyticsResponse1 from '../__fixtures__/analytics-response-1.json'
 import eventVisualization1 from '../__fixtures__/inpatient-cases-5-to-15-years-this-year.json'
 import { PluginWrapper } from '../plugin-wrapper'
 
-/* Own file, same reason as the other plugin-wrapper-filters specs: @dhis2/analytics'
- * Analytics.getAnalytics() is a hard singleton keyed on the first dataEngine
- * it ever sees, so a second test in the same file would route its analytics
- * requests through the first test's (already-torn-down) mock provider. */
+/* Own file: @dhis2/analytics' Analytics.getAnalytics() is a singleton keyed on
+ * the first dataEngine it sees, so a second analytics test here would use the
+ * first's torn-down mock. */
 
 const eventVisualization1Id = 'TIuOzZ0ID0V'
 
