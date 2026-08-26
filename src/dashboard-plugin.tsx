@@ -38,8 +38,8 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
 
     const metadataStore = useMetadataStore()
 
-    /* A dashboard item is bound to a fixed visualization id, so this fetches
-     * once per mount; useDataQuery freezing its query is not a concern. */
+    /* A dashboard item is bound to a fixed visualization id, so we only fetch
+     * on mount. */
     const { data, error, loading, refetch } = useDataQuery({
         eventVisualization: {
             resource: 'eventVisualizations',
@@ -78,6 +78,11 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
         [savedVisualization]
     )
 
+    const visualizationLoadError = useMemo(
+        () => (error ? parseEngineError(error) : undefined),
+        [error]
+    )
+
     logger.debug(
         'dp currentVisualization',
         currentVisualization,
@@ -92,9 +97,7 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
                     displayProperty={pluginProps.displayProperty}
                     filters={pluginProps.filters}
                     visualization={currentVisualization}
-                    visualizationLoadError={
-                        error ? parseEngineError(error) : undefined
-                    }
+                    visualizationLoadError={visualizationLoadError}
                     onRetryLoad={() => void refetch()}
                     isVisualizationLoading={loading}
                     isInDashboard
