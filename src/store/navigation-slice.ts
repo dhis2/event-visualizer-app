@@ -1,8 +1,6 @@
 import { getNavigationStateFromLocation } from '@modules/history'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
-import { startAppListening } from './middleware-listener'
-import { tClearVisualization, tLoadSavedVisualization } from './thunks'
 
 export interface NavigationState {
     visualizationId: string | 'new'
@@ -40,31 +38,3 @@ export const navigationSlice = createSlice({
 export const { setNavigationState, setNavigationInterpretationId } =
     navigationSlice.actions
 export const { getNavigationInterpretationId } = navigationSlice.selectors
-
-startAppListening({
-    actionCreator: setNavigationState,
-    effect: async (action, { dispatch, getOriginalState }) => {
-        const originalState = getOriginalState()
-        const originalVisualizationId = originalState.navigation.visualizationId
-        const newVisualizationId = action.payload.visualizationId
-
-        /* Since the InterpretationsModal loads its own visualization plugin
-         * we are only interested in visualizationId changes in this
-         * listener middleware */
-        if (originalVisualizationId !== newVisualizationId) {
-            // always clear the "old" visualization to keep consistency between the URL address, metadata store and Redux store
-            dispatch(tClearVisualization())
-
-            if (newVisualizationId !== 'new') {
-                dispatch(
-                    tLoadSavedVisualization({
-                        id: newVisualizationId,
-                        updateStatistics: true,
-                    })
-                )
-            }
-        } else if (newVisualizationId === 'new') {
-            dispatch(tClearVisualization())
-        }
-    },
-})

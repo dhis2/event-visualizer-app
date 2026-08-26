@@ -195,8 +195,21 @@ export const resolveLayoutContext = (
 }
 
 type LayoutConversionResult = {
-    newLayout: Layout
-    discardedDimensionIds: string[]
+    convertedLayout: Layout
+    invalidDimensionIds: string[]
+}
+
+const getDimensionOrThrow = (
+    id: string,
+    getDimension: (id: string) => DimensionMetadataItem | undefined
+): DimensionMetadataItem => {
+    const dimension = getDimension(id)
+    if (!dimension) {
+        throw new Error(
+            `No metadata found for dimension "${id}" — cannot convert layout to a pivot table`
+        )
+    }
+    return dimension
 }
 
 export const convertLayoutForVisType = ({
@@ -208,39 +221,52 @@ export const convertLayoutForVisType = ({
     targetVisType: VisualizationType
     getDimension: (id: string) => DimensionMetadataItem | undefined
 }): LayoutConversionResult => {
-    const newLayout: Layout = { columns: [], rows: [], filters: [] }
-    const discardedDimensionIds: string[] = []
-
-    /* Process filters first so a user's existing filter ordering is preserved.
-     * Columns precedes rows so that on PT -> LL the merged columns reads as
-     * cols ++ rows. */
-    const sourceAxesInOrder: ReadonlyArray<Axis> = [
-        'filters',
-        'columns',
-        'rows',
-    ]
-
-    for (const sourceAxis of sourceAxesInOrder) {
-        for (const dimensionId of layout[sourceAxis]) {
-            const dim = getDimension(dimensionId)
-            if (!dim) {
-                throw new Error(
-                    `No metadata found for dimension "${dimensionId}" — cannot convert layout for visualization type "${targetVisType}"`
-                )
-            }
-            if (isDimensionFullyInvalidForVisType(dim, targetVisType)) {
-                discardedDimensionIds.push(dimensionId)
-                continue
-            }
-            const targetAxis: Axis =
-                targetVisType === 'LINE_LIST' && sourceAxis === 'rows'
-                    ? 'columns'
-                    : sourceAxis
-            newLayout[targetAxis].push(dimensionId)
+    /* A line list has no rows axis and accepts every dimension a pivot table
+     * can hold, so the rows merge into the columns and nothing is dropped. */
+    if (targetVisType === 'LINE_LIST') {
+        return {
+            convertedLayout: {
+                columns: [...layout.columns, ...layout.rows],
+                rows: [],
+                filters: [...layout.filters],
+            },
+            invalidDimensionIds: [],
         }
     }
 
-    return { newLayout, discardedDimensionIds }
+    const convertedLayout: Layout = { columns: [], rows: [], filters: [] }
+    const invalidDimensionIds: string[] = []
+
+    for (const id of layout.filters) {
+        const dimension = getDimensionOrThrow(id, getDimension)
+        if (isDimensionFullyInvalidForVisType(dimension, targetVisType)) {
+            invalidDimensionIds.push(id)
+        } else {
+            convertedLayout.filters.push(id)
+        }
+    }
+
+    for (const id of layout.columns) {
+        const dimension = getDimensionOrThrow(id, getDimension)
+        if (isDimensionFullyInvalidForVisType(dimension, targetVisType)) {
+            invalidDimensionIds.push(id)
+        } else {
+            switch (dimension.dimensionType) {
+                case 'ORGANISATION_UNIT':
+                    convertedLayout.columns.push(id)
+                    break
+                case 'PERIOD':
+                    convertedLayout.rows.push(id)
+                    break
+                default:
+                    convertedLayout.filters.push(id)
+            }
+        }
+    }
+
+    /* A line list has no rows in the layout, so there is no need to iterate
+     * layout.rows. */
+    return { convertedLayout, invalidDimensionIds }
 }
 
 export const resolveTeiFields = (
