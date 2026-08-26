@@ -104,7 +104,11 @@ export const HostPage: FC = () => {
                     data-test="plugin-host-iframe-wrap"
                     style={{ border: '1px solid #d5dde5', minHeight: 400 }}
                 >
+                    {/* Keyed on the id so changing it remounts the iframe,
+                     * modelling how a real dashboard gives each item its own
+                     * iframe bound to a fixed visualization. */}
                     <Plugin
+                        key={trimmedVisualizationId}
                         pluginSource="/plugin.html"
                         height={400}
                         {...pluginProps}

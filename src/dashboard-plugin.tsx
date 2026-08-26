@@ -38,8 +38,8 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
 
     const metadataStore = useMetadataStore()
 
-    /* useDataQuery freezes its query on first render; DashboardPlugin remounts
-     * on id change (the key below) so a new id refetches. */
+    /* A dashboard item is bound to a fixed visualization id, so this fetches
+     * once per mount; useDataQuery freezing its query is not a concern. */
     const { data, error, loading, refetch } = useDataQuery({
         eventVisualization: {
             resource: 'eventVisualizations',
@@ -106,8 +106,7 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
 
 const DashboardPlugin: FC<DashboardPluginProps> = (props) => (
     <PluginMetadataProvider>
-        {/* key remounts on id change so useDataQuery refetches (see above) */}
-        <DashboardPluginContent key={props.visualization.id} {...props} />
+        <DashboardPluginContent {...props} />
     </PluginMetadataProvider>
 )
 
