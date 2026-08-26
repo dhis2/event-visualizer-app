@@ -8,6 +8,7 @@ import {
     getVisualizationLoadError,
 } from '@store/loader-slice'
 import { tLoadSavedVisualization } from '@store/thunks'
+import { setUiActiveDimensionModal } from '@store/ui-slice'
 import type { Sorting } from '@types'
 import { useCallback, type FC } from 'react'
 
@@ -44,6 +45,13 @@ export const Canvas: FC = () => {
         [currentVis, dispatch]
     )
 
+    const onColumnHeaderClick = useCallback(
+        (dimensionId: string) => {
+            dispatch(setUiActiveDimensionModal(dimensionId))
+        },
+        [dispatch]
+    )
+
     if (
         isVisualizationEmpty(currentVis) &&
         !isVisualizationLoading &&
@@ -59,6 +67,7 @@ export const Canvas: FC = () => {
             visualizationLoadError={visualizationLoadError ?? undefined}
             onRetryLoad={onRetryLoad}
             displayProperty={currentUser.settings.displayProperty}
+            onColumnHeaderClick={onColumnHeaderClick}
             onDataSorted={onDataSorted}
         />
     )

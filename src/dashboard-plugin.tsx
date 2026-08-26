@@ -1,13 +1,16 @@
 import { getVisualizationQueryFields } from '@api/event-visualizations-api'
-import { AppCachedDataQueryProvider } from '@components/app-wrapper/app-cached-data-query-provider'
+import { parseEngineError } from '@api/parse-engine-error'
 import {
     PluginMetadataProvider,
     useMetadataStore,
 } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import { StoreProvider } from '@components/app-wrapper/store-provider'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
-import { useRtkQuery } from '@hooks'
+/* useDataQuery, not the app's RTK-query hooks: the plugin must not carry the
+ * app store (see CLAUDE.md > plugin providers), and useDataQuery runs on the
+ * app-adapter's data provider instead. */
+// eslint-disable-next-line no-restricted-imports
+import { useDataQuery } from '@dhis2/app-runtime'
 import { logger } from '@modules/logger'
 import {
     normalizeApiSavedVisualization,
@@ -36,14 +39,10 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
 
     const metadataStore = useMetadataStore()
 
-    /* useRtkQuery (not useDataQuery) because its arg is a plain value RTK
-     * Query re-keys its cache on. useDataQuery freezes its query definition
-     * on first render, so a later change to props.visualization.id would be
-     * silently ignored and the plugin would keep showing the first
-     * visualization. */
-    const { data, error, isLoading, refetch } = useRtkQuery<{
-        eventVisualization: ApiSavedVisualization
-    }>({
+    /* useDataQuery freezes its query on first render, so a change to
+     * props.visualization.id is only picked up because DashboardPlugin
+     * remounts this component on id change (see the key below). */
+    const { data, error, loading, refetch } = useDataQuery({
         eventVisualization: {
             resource: 'eventVisualizations',
             id: props.visualization.id, // TODO: this should be just passed as visualizationId
@@ -63,7 +62,8 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     // raw API response once; the metadata store consumes the SavedVisualization
     // and the plugin consumes the CurrentVisualization-shaped subset.
     const savedVisualization = useMemo(() => {
-        const apiVis = data?.eventVisualization
+        const apiVis = data?.eventVisualization as
+            ApiSavedVisualization | undefined
         return apiVis ? normalizeApiSavedVisualization(apiVis) : undefined
     }, [data])
 
@@ -83,8 +83,8 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     logger.debug(
         'dp currentVisualization',
         currentVisualization,
-        'isLoading',
-        isLoading
+        'loading',
+        loading
     )
 
     return (
@@ -94,9 +94,11 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
                     displayProperty={pluginProps.displayProperty}
                     filters={pluginProps.filters}
                     visualization={currentVisualization}
-                    visualizationLoadError={error}
+                    visualizationLoadError={
+                        error ? parseEngineError(error) : undefined
+                    }
                     onRetryLoad={() => void refetch()}
-                    isVisualizationLoading={isLoading}
+                    isVisualizationLoading={loading}
                     isInDashboard
                 />
             )}
@@ -105,13 +107,10 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
 }
 
 const DashboardPlugin: FC<DashboardPluginProps> = (props) => (
-    <AppCachedDataQueryProvider>
-        <PluginMetadataProvider>
-            <StoreProvider>
-                <DashboardPluginContent {...props} />
-            </StoreProvider>
-        </PluginMetadataProvider>
-    </AppCachedDataQueryProvider>
+    <PluginMetadataProvider>
+        {/* key remounts on id change so useDataQuery refetches (see above) */}
+        <DashboardPluginContent key={props.visualization.id} {...props} />
+    </PluginMetadataProvider>
 )
 
 // eslint-disable-next-line import/no-default-export

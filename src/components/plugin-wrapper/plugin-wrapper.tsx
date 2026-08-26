@@ -1,6 +1,7 @@
 import type { EngineError } from '@api/parse-engine-error'
 import { CanvasError } from '@components/canvas-error/canvas-error'
 import { CanvasErrorFallback } from '@components/canvas-error/canvas-error-fallback'
+import type { ColumnHeaderClickFn } from '@components/line-list/types'
 import { Center, CircularLoader } from '@dhis2/ui'
 import { assertNever } from '@modules/utils/guards'
 import { isVisualizationEmpty } from '@modules/visualization/state'
@@ -50,6 +51,7 @@ type PluginWrapperProps = {
     isVisualizationLoading?: boolean
     visualizationLoadError?: EngineError
     onRetryLoad?: () => void
+    onColumnHeaderClick?: ColumnHeaderClickFn
     onDataSorted?: (sorting: Sorting | undefined) => void
 }
 
@@ -62,6 +64,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     isVisualizationLoading = false,
     visualizationLoadError,
     onRetryLoad,
+    onColumnHeaderClick,
     onDataSorted,
 }) => {
     /* relativePeriodDate is the only filter this app applies; ou, pe and
@@ -148,6 +151,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                         relativePeriodDate={relativePeriodDate}
                         isInDashboard={isInDashboard}
                         isInModal={isInModal}
+                        onColumnHeaderClick={onColumnHeaderClick}
                         onDataSorted={onDataSorted}
                         onResponseReceived={onResponseReceived}
                     />

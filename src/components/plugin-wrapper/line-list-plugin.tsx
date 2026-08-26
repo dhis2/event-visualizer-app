@@ -5,10 +5,8 @@ import type {
     DataSortFn,
     PaginateFn,
 } from '@components/line-list/types'
-import { useAppDispatch } from '@hooks'
 import { transformVisualizationForAnalyticsRequest } from '@modules/analytics-request'
 import { logger } from '@modules/logger'
-import { setUiActiveDimensionModal } from '@store/ui-slice'
 import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FC } from 'react'
@@ -22,6 +20,12 @@ type LineListPluginProps = {
     relativePeriodDate?: string
     isInDashboard: boolean
     isInModal: boolean
+    /* Only the app canvas provides this (bound to a store dispatch); the
+     * dashboard plugin and interpretation modal are read-only, so their column
+     * headers are not clickable. Keeping the store dependency in the caller is
+     * what lets the plugin run without a Redux Provider (see CLAUDE.md >
+     * plugin providers). */
+    onColumnHeaderClick?: ColumnHeaderClickFn
     onDataSorted?: (sorting: InternalSorting) => void
     onResponseReceived: () => void
 }
@@ -32,11 +36,10 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     relativePeriodDate,
     isInDashboard,
     isInModal,
+    onColumnHeaderClick,
     onDataSorted,
     onResponseReceived,
 }) => {
-    const dispatch = useAppDispatch()
-
     const [fetchAnalyticsData, { data, isFetching }] =
         useLineListAnalyticsData()
 
@@ -60,15 +63,6 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
             sorting: newSorting,
         } as CurrentVisualization
     }, [visualization, sorting])
-
-    const onColumnHeaderClick = useCallback<ColumnHeaderClickFn>(
-        (dimensionId) => {
-            logger.debug(`Show dimension modal for dimension ID ${dimensionId}`)
-
-            dispatch(setUiActiveDimensionModal(dimensionId))
-        },
-        [dispatch]
-    )
 
     const onPaginate = useCallback<PaginateFn>(
         ({ page, pageSize }) => {
