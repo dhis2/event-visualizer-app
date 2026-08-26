@@ -1162,4 +1162,72 @@ describe('MetadataStore — TEA enrichment with trackedEntityTypeId', () => {
         expect(snapshot['teaFirst']).toBeDefined()
         expect(snapshot['teaFirst']).not.toHaveProperty('trackedEntityTypeId')
     })
+
+    it('TEI vis stores an org unit for every scope: registration, enrollment and stage', () => {
+        const store = new TestMetadataStore({}, [])
+
+        const orgUnitColumn = (
+            qualifiers: Record<string, { id: string }>,
+            dimension = 'ou'
+        ) => ({
+            dimension,
+            dimensionType: 'ORGANISATION_UNIT',
+            items: [{ id: 'USER_ORGUNIT' }],
+            ...qualifiers,
+        })
+
+        const vis = {
+            outputType: 'TRACKED_ENTITY_INSTANCE',
+            type: 'LINE_LIST',
+            trackedEntityType: { id: 'tetA', name: 'Person' },
+            programDimensions: [
+                {
+                    id: 'progA',
+                    name: 'Child Programme',
+                    programType: 'WITH_REGISTRATION',
+                    trackedEntityType: { id: 'tetA', name: 'Person' },
+                    programStages: [
+                        { id: 'stageA', name: 'Birth' },
+                        { id: 'stageB', name: 'Baby Postnatal' },
+                    ],
+                },
+            ],
+            columns: [
+                orgUnitColumn({}),
+                orgUnitColumn({ program: { id: 'progA' } }, 'enrollmentOu'),
+                orgUnitColumn({
+                    program: { id: 'progA' },
+                    programStage: { id: 'stageA' },
+                }),
+                orgUnitColumn({
+                    program: { id: 'progA' },
+                    programStage: { id: 'stageB' },
+                }),
+            ],
+            rows: [],
+            filters: [],
+            metaData: {},
+        } as unknown as SavedVisualization
+
+        store.setVisualizationMetadata(vis)
+
+        expect(store.getMetadataItem('tetA.enrollmentOu')).toMatchObject({
+            dimensionId: 'enrollmentOu',
+            trackedEntityTypeId: 'tetA',
+        })
+        expect(store.getMetadataItem('progA.enrollmentOu')).toMatchObject({
+            dimensionId: 'enrollmentOu',
+            programId: 'progA',
+        })
+        expect(store.getMetadataItem('progA.stageA.ou')).toMatchObject({
+            dimensionId: 'ou',
+            programId: 'progA',
+            programStageId: 'stageA',
+        })
+        expect(store.getMetadataItem('progA.stageB.ou')).toMatchObject({
+            dimensionId: 'ou',
+            programId: 'progA',
+            programStageId: 'stageB',
+        })
+    })
 })
