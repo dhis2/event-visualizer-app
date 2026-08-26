@@ -1,6 +1,6 @@
 import { Plugin as UntypedPlugin } from '@dhis2/app-runtime/experimental'
 import { NoticeBox } from '@dhis2/ui'
-import type { HostFilters } from '@types'
+import type { PluginFilters } from '@types'
 import { useCallback, useMemo, useState, type FC } from 'react'
 
 /* Plugin's shipped type only lists its own layout props and forwards the rest
@@ -15,7 +15,7 @@ type HostPluginProps = {
     forDashboard: boolean
     isVisualizationLoaded: boolean
     cacheId: string
-    filters?: HostFilters
+    filters?: PluginFilters
     onError: (error: Error) => void
 }
 
@@ -23,7 +23,7 @@ const Plugin: FC<HostPluginProps> = UntypedPlugin
 
 /* Not a real org unit — the plugin only checks that a filter is present, never
  * its value. */
-const UNAPPLIED_FILTERS: HostFilters = { ou: [{ id: 'plugin-host-test' }] }
+const UNAPPLIED_FILTERS: PluginFilters = { ou: [{ id: 'plugin-host-test' }] }
 
 export const HostPage: FC = () => {
     const [visualizationId, setVisualizationId] = useState('')

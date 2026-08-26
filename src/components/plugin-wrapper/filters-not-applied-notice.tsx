@@ -1,21 +1,17 @@
 import i18n from '@dhis2/d2-i18n'
 import { Button, Cover, IconInfo24, colors } from '@dhis2/ui'
-import type { DashboardFilters } from '@types'
+import type { PluginFilters } from '@types'
 import type { FC } from 'react'
 import { useState } from 'react'
 import classes from './styles/filters-not-applied-notice.module.css'
 
-export const hasUnappliedFilters = (filters?: DashboardFilters): boolean =>
-    Boolean(
-        filters?.ou?.length ||
-        filters?.pe?.length ||
-        Object.values(filters?.yourDimensions ?? {}).some(
-            (items) => items.length
-        )
-    )
+/* relativePeriodDate is applied; any other key is a dashboard filter this app
+ * ignores, so its presence is what the notice warns about. */
+export const hasUnappliedFilters = (filters?: PluginFilters): boolean =>
+    Object.keys(filters ?? {}).some((key) => key !== 'relativePeriodDate')
 
 type FiltersNotAppliedNoticeProps = {
-    filters?: DashboardFilters
+    filters?: PluginFilters
     /* Hidden while loading so its opaque Cover doesn't hide the canvas spinner.
      * Suppressed here rather than unmounted, so a dismissal survives the load. */
     isLoading?: boolean

@@ -9,7 +9,7 @@ import type {
     CurrentUser,
     CurrentVisualization,
     EmptyVisualization,
-    HostFilters,
+    PluginFilters,
     Sorting,
 } from '@types'
 import type { FC } from 'react'
@@ -45,7 +45,7 @@ const getBaseRequestIdentity = (
 type PluginWrapperProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization | EmptyVisualization
-    filters?: HostFilters
+    filters?: PluginFilters
     isInDashboard?: boolean
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     isVisualizationLoading?: boolean

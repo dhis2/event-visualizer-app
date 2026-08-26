@@ -27,7 +27,7 @@ export type {
     ValueType,
 } from './dhis2-openapi-schemas'
 export type { DeepPartial } from './deep-partial'
-export type { DashboardFilters, FilterItem, HostFilters } from './host-filters'
+export type { PluginFilters } from './plugin-filters'
 export type { PickWithFieldFilters } from './pick-with-field-filters'
 
 /* The SingleQuery type is a simpler, but for our use-case functionally
