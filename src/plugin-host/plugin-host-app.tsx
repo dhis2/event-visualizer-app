@@ -1,13 +1,12 @@
 import { Plugin as UntypedPlugin } from '@dhis2/app-runtime/experimental'
 import type { PluginFilters } from '@types'
-import { useMemo, useState, type FC } from 'react'
+import { useState, type FC } from 'react'
 
-/* Plugin's shipped type only lists its own layout props and forwards the rest
- * untyped. Re-typed here for the extra props this host sends. */
+/* Plugin types only its own layout props and forwards the rest as `any`, so
+ * re-type it for the props this host sends. */
 type HostPluginProps = {
     pluginSource: string
-    /* Fixed height like a real dashboard grid cell. Without it PivotTable
-     * renders into an unresolved percentage-height container and stays 0x0. */
+    /* Without a fixed height a PivotTable renders 0×0; a dashboard cell gives one. */
     height: number
     visualization: { id: string }
     displayProperty: string
@@ -19,28 +18,13 @@ type HostPluginProps = {
 
 const Plugin: FC<HostPluginProps> = UntypedPlugin
 
-/* Not a real org unit — the plugin only checks that a filter is present, never
- * its value. */
+/* The plugin only checks that a filter is present, never its value. */
 const UNAPPLIED_FILTERS: PluginFilters = { ou: [{ id: 'plugin-host-test' }] }
 
 export const PluginHostApp: FC = () => {
     const [visualizationId, setVisualizationId] = useState('')
     const [filtersOn, setFiltersOn] = useState(false)
     const trimmedVisualizationId = visualizationId.trim()
-
-    /* Plugin re-notifies the iframe when any prop changes identity, so memoize
-     * to avoid resending (and refetching) on every host render. */
-    const pluginProps = useMemo(
-        () => ({
-            visualization: { id: trimmedVisualizationId },
-            displayProperty: 'name',
-            forDashboard: true,
-            isVisualizationLoaded: true,
-            cacheId: `plugin-host-${trimmedVisualizationId}`,
-            filters: filtersOn ? UNAPPLIED_FILTERS : undefined,
-        }),
-        [trimmedVisualizationId, filtersOn]
-    )
 
     return (
         <div style={{ padding: 16, display: 'grid', gap: 16 }}>
@@ -56,8 +40,7 @@ export const PluginHostApp: FC = () => {
                     >
                         Visualization id
                     </label>
-                    {/* Native <input>, not DHIS2 UI's InputField: cy.type()
-                     * needs a real <input>, which that widget doesn't render. */}
+                    {/* Native input, not DHIS2 InputField: cy.type() needs a real <input>. */}
                     <input
                         id="plugin-host-visualization-id-input"
                         data-test="plugin-host-visualization-id-input"
@@ -89,14 +72,17 @@ export const PluginHostApp: FC = () => {
                     data-test="plugin-host-iframe-wrap"
                     style={{ border: '1px solid #d5dde5', minHeight: 400 }}
                 >
-                    {/* Keyed on the id so changing it remounts the iframe,
-                     * modelling how a real dashboard gives each item its own
-                     * iframe bound to a fixed visualization. */}
+                    {/* Key by id so each visualization gets a fresh iframe, like a dashboard item. */}
                     <Plugin
                         key={trimmedVisualizationId}
                         pluginSource="/plugin.html"
                         height={400}
-                        {...pluginProps}
+                        visualization={{ id: trimmedVisualizationId }}
+                        displayProperty="name"
+                        forDashboard
+                        isVisualizationLoaded
+                        cacheId={`plugin-host-${trimmedVisualizationId}`}
+                        filters={filtersOn ? UNAPPLIED_FILTERS : undefined}
                     />
                 </div>
             )}
