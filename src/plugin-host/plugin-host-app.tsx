@@ -1,7 +1,6 @@
 import { Plugin as UntypedPlugin } from '@dhis2/app-runtime/experimental'
-import { NoticeBox } from '@dhis2/ui'
 import type { PluginFilters } from '@types'
-import { useCallback, useMemo, useState, type FC } from 'react'
+import { useMemo, useState, type FC } from 'react'
 
 /* Plugin's shipped type only lists its own layout props and forwards the rest
  * untyped. Re-typed here for the extra props this host sends. */
@@ -16,7 +15,6 @@ type HostPluginProps = {
     isVisualizationLoaded: boolean
     cacheId: string
     filters?: PluginFilters
-    onError: (error: Error) => void
 }
 
 const Plugin: FC<HostPluginProps> = UntypedPlugin
@@ -25,15 +23,10 @@ const Plugin: FC<HostPluginProps> = UntypedPlugin
  * its value. */
 const UNAPPLIED_FILTERS: PluginFilters = { ou: [{ id: 'plugin-host-test' }] }
 
-export const HostPage: FC = () => {
+export const PluginHostApp: FC = () => {
     const [visualizationId, setVisualizationId] = useState('')
-    const [error, setError] = useState<Error | undefined>()
     const [filtersOn, setFiltersOn] = useState(false)
     const trimmedVisualizationId = visualizationId.trim()
-
-    const onError = useCallback((pluginError: Error) => {
-        setError(pluginError)
-    }, [])
 
     /* Plugin re-notifies the iframe when any prop changes identity, so memoize
      * to avoid resending (and refetching) on every host render. */
@@ -45,9 +38,8 @@ export const HostPage: FC = () => {
             isVisualizationLoaded: true,
             cacheId: `plugin-host-${trimmedVisualizationId}`,
             filters: filtersOn ? UNAPPLIED_FILTERS : undefined,
-            onError,
         }),
-        [trimmedVisualizationId, filtersOn, onError]
+        [trimmedVisualizationId, filtersOn]
     )
 
     return (
@@ -71,10 +63,9 @@ export const HostPage: FC = () => {
                         data-test="plugin-host-visualization-id-input"
                         type="text"
                         value={visualizationId}
-                        onChange={(event) => {
-                            setError(undefined)
+                        onChange={(event) =>
                             setVisualizationId(event.target.value)
-                        }}
+                        }
                         style={{ width: '100%' }}
                     />
                 </div>
@@ -92,12 +83,6 @@ export const HostPage: FC = () => {
                     shows the &quot;not applied&quot; notice)
                 </label>
             </div>
-
-            {error && (
-                <NoticeBox error title="The plugin reported an error">
-                    {error.message}
-                </NoticeBox>
-            )}
 
             {trimmedVisualizationId && (
                 <div

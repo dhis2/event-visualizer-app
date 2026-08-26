@@ -1,7 +1,7 @@
 import AppAdapter from '@dhis2/app-adapter'
 import { CssReset } from '@dhis2/ui'
 import { createRoot } from 'react-dom/client'
-import { HostPage } from './host-page'
+import { PluginHostApp } from './plugin-host-app'
 
 const container = document.getElementById('dhis2-app-root')
 
@@ -15,7 +15,7 @@ if (container) {
                 appVersion={process.env.DHIS2_APP_VERSION as string}
                 url={process.env.DHIS2_BASE_URL as string}
             >
-                <HostPage />
+                <PluginHostApp />
             </AppAdapter>
         </>
     )
