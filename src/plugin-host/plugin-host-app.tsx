@@ -62,15 +62,22 @@ export const PluginHostApp: FC = () => {
                         checked={filtersOn}
                         onChange={(event) => setFiltersOn(event.target.checked)}
                     />
-                    Apply a dashboard filter (never reaches the request; only
-                    shows the &quot;not applied&quot; notice)
+                    <span>
+                        Apply a dashboard filter (never reaches the request;
+                        only shows the &quot;not applied&quot; notice)
+                    </span>
                 </label>
             </div>
 
             {trimmedVisualizationId && (
                 <div
                     data-test="plugin-host-iframe-wrap"
-                    style={{ border: '1px solid #d5dde5', minHeight: 400 }}
+                    style={{
+                        border: '1px solid #d5dde5',
+                        minHeight: 400,
+                        width: 800,
+                        maxWidth: '100%',
+                    }}
                 >
                     {/* Key by id so each visualization gets a fresh iframe, like a dashboard item. */}
                     <Plugin
