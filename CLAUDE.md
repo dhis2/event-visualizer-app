@@ -50,6 +50,37 @@ This is a DHIS2 "App Shell App" with a special build structure:
 3. AppShell provides DHIS2-specific contexts and runtime
 4. Generated types provide TypeScript definitions for DHIS2 API
 
+### Provider boundary: app vs plugin
+
+The app (`src/app.ts`) and the dashboard plugin (`src/dashboard-plugin.tsx`) are
+two entry points with deliberately different provider stacks.
+
+- The **app** mounts a wide range of providers in the app-wrapper — the Redux
+  store, `AppCachedDataQueryProvider`, the metadata store, and more.
+- The **plugin** mounts only the **plugin-side metadata store provider**
+  (`PluginMetadataProvider`). It must not mount the Redux store
+  (`StoreProvider`) or `AppCachedDataQueryProvider` — those pull the app's
+  cached-data query (`me`, `systemSettings`, org units, org unit levels) into
+  every plugin instance on a dashboard.
+
+**The rule:** `PluginWrapper` and everything below it in the component tree may
+depend only on the metadata store provider plus the providers supplied by the
+DHIS2 app-shell / app-adapter (the data engine and `useDataQuery`, config,
+alerts, etc.). It must not touch the app's Redux store — no `useAppSelector`,
+`useAppDispatch`, or RTK-query hooks (`useRtkQuery`) — and not
+`AppCachedDataQueryProvider`.
+
+Consequences that follow from this:
+
+- Fetch inside the plugin path with app-runtime's `useDataQuery` / `useDataEngine`
+  (provided by the app-adapter), never the RTK-query hooks (which live in the
+  store).
+- Editor-only actions that need the store (e.g. opening the dimension modal on a
+  column-header click) are injected as callbacks by the app, not dispatched from
+  inside a shared component. A shared component in the plugin path takes such a
+  handler as an optional prop; the app canvas provides it, the plugin and the
+  interpretation modal do not.
+
 ## Project Structure
 
 ```
