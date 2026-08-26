@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Jiří Podhorecký <jirka.p@volny.cz>, 2026\n"
 "Language-Team: Czech (https://app.transifex.com/hisp-uio/teams/100509/cs/)\n"
@@ -29,6 +29,9 @@ msgid ""
 "{{- name}} was not added because it is already used as the custom value."
 msgstr ""
 
+msgid "Retry"
+msgstr "Opakovat"
+
 msgid "Add to {{- axisName}}"
 msgstr ""
 
@@ -41,14 +44,14 @@ msgstr "Citlivý na velká písmena"
 msgid "Delete filter"
 msgstr "Odstranit filtr"
 
+msgid "Only available for repeatable stages"
+msgstr "K dispozici pouze pro opakovatelné fáze"
+
 msgid "Repeated events"
 msgstr "Opakované události"
 
 msgid "Data"
 msgstr "Data"
-
-msgid "Only available for repeatable stages"
-msgstr "K dispozici pouze pro opakovatelné fáze"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -200,9 +203,6 @@ msgstr "Kód"
 
 msgid "Name"
 msgstr "název"
-
-msgid "An error occurred"
-msgstr "Vyskytla se chyba"
 
 msgid "Resize axes panel"
 msgstr ""
@@ -417,6 +417,9 @@ msgid "{{- names}} will be removed. Are you sure?"
 msgstr ""
 
 msgid "Convert"
+msgstr ""
+
+msgid "Coming soon"
 msgstr ""
 
 msgid "Individual data view"
@@ -1001,6 +1004,46 @@ msgstr "Registrace organizační jednotky"
 
 msgid "Enrollment date"
 msgstr "Datum zápisu"
+
+msgid "Restricted access"
+msgstr "Omezený přístup"
+
+msgid ""
+"You don't have access to the data in this visualization. Contact a system "
+"administrator."
+msgstr ""
+
+msgid "You don't have access to one or more of the chosen organisation units."
+msgstr ""
+
+msgid ""
+"You don't have access to event analytics. Contact a system administrator."
+msgstr ""
+
+msgid "Something went wrong"
+msgstr ""
+
+msgid "There's a problem with at least one selected indicator."
+msgstr ""
+
+msgid ""
+"There's a problem with the generated analytics. Contact a system "
+"administrator."
+msgstr ""
+
+msgid "There's a syntax problem with the analytics request."
+msgstr "V požadavku na analýzu je problém se syntaxí."
+
+msgid "No data"
+msgstr "Nejsou data"
+
+msgid ""
+"The selected dimensions didn't return any data. There may be no data, or you"
+" may not have access to it."
+msgstr ""
+
+msgid "There was a problem getting the data from the server."
+msgstr "Při načítání dat ze serveru došlo k problému."
 
 msgid "Columns"
 msgstr "Sloupce"
