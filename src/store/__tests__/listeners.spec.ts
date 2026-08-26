@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
+import { registerAppListeners } from '@store/listeners'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { listenerMiddleware } from '../middleware-listener'
 import { navigationSlice, setNavigationState } from '../navigation-slice'
@@ -10,6 +11,7 @@ vi.mock('../thunks', () => ({
     tLoadSavedVisualization: vi.fn(() => ({
         type: 'mock/tLoadSavedVisualization',
     })),
+    tSeedDefaultGrouping: vi.fn(() => ({ type: 'mock/tSeedDefaultGrouping' })),
 }))
 
 const createStore = (visualizationId: NavigationState['visualizationId']) =>
@@ -24,6 +26,8 @@ const createStore = (visualizationId: NavigationState['visualizationId']) =>
 
 describe('navigationSlice listener', () => {
     beforeEach(() => {
+        listenerMiddleware.clearListeners()
+        registerAppListeners()
         vi.mocked(tClearVisualization).mockClear()
         vi.mocked(tLoadSavedVisualization).mockClear()
     })

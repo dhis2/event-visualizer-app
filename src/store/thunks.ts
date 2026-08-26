@@ -1,6 +1,8 @@
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
+import { legendSetsApi } from '@api/legend-sets-api'
 import { extractDataSourceIdFromVisualization } from '@modules/data-source'
+import { canDimensionHaveLegendSets } from '@modules/dimension/grouping'
 import {
     buildAxis,
     collectProgramDimensions,
@@ -15,7 +17,12 @@ import {
     toCurrentVis,
 } from '@modules/visualization/state'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import type { AppDispatch, CurrentVisualization, MetadataStore } from '@types'
+import type {
+    AppDispatch,
+    CurrentVisualization,
+    MetadataStore,
+    RootState,
+} from '@types'
 import {
     clearCurrentVis,
     setCurrentVis,
@@ -27,11 +34,11 @@ import {
     setVisualizationLoadError,
 } from './loader-slice'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
-import type { RootState } from './store'
 import { clearUi, setUiUpdateAnimationShowingFor } from './ui-slice'
 import {
     clearVisUiConfig,
     setVisUiConfig,
+    setVisUiConfigGroupingByDimension,
     type VisUiConfigState,
 } from './vis-ui-config-slice'
 
@@ -229,5 +236,78 @@ export const tUpdateCurrentVisFromVisUiConfig =
             setUiUpdateAnimationShowingFor(
                 isVisualizationEmpty(currentVis) ? null : visUiConfig.outputType
             )
+        )
+    }
+
+/* A line list defaults to no grouping, which is the absence of state, so only
+ * pivot tables need a default applied. Keyed off presence rather than value so
+ * an explicit "No grouping" choice is never overwritten by the default.
+ *
+ * A thunk rather than the listener effect itself because the listener
+ * middleware is created without an extra argument, so only a thunk can reach
+ * the metadata store. */
+export const tSeedDefaultGrouping =
+    (dimensionIds: string[]) =>
+    async (
+        dispatch: AppDispatch,
+        getState: () => RootState,
+        extra: ThunkExtraArg
+    ) => {
+        if (getState().visUiConfig.visualizationType !== 'PIVOT_TABLE') {
+            return
+        }
+
+        const seedable = dimensionIds.filter((dimensionId) => {
+            if (dimensionId in getState().visUiConfig.conditionsByDimension) {
+                return false
+            }
+            const dimension =
+                extra.metadataStore.getDimensionMetadataItem(dimensionId)
+
+            return Boolean(dimension && canDimensionHaveLegendSets(dimension))
+        })
+
+        await Promise.all(
+            seedable.map(async (dimensionId) => {
+                const dimensionType =
+                    extra.metadataStore.getDimensionMetadataItem(
+                        dimensionId
+                    )?.dimensionType
+
+                if (!dimensionType) {
+                    return
+                }
+
+                try {
+                    const legendSets = await dispatch(
+                        legendSetsApi.endpoints.getLegendSetsByDimension.initiate(
+                            { dimensionId, dimensionType }
+                        )
+                    ).unwrap()
+
+                    const defaultLegendSet = legendSets[0]
+
+                    /* Re-checked because the user can pick a grouping while
+                     * the legend sets are still being fetched. */
+                    const isStillUnset = !(
+                        dimensionId in
+                        getState().visUiConfig.conditionsByDimension
+                    )
+
+                    if (defaultLegendSet && isStillUnset) {
+                        dispatch(
+                            setVisUiConfigGroupingByDimension({
+                                dimensionId,
+                                legendSet: defaultLegendSet.id,
+                            })
+                        )
+                    }
+                } catch (error) {
+                    logger.error(
+                        `Could not resolve legend sets for dimension "${dimensionId}"`,
+                        error
+                    )
+                }
+            })
         )
     }
