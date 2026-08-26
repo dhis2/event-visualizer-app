@@ -20,9 +20,6 @@ type LineListPluginProps = {
     relativePeriodDate?: string
     isInDashboard: boolean
     isInModal: boolean
-    /* Only the app canvas provides this (a store dispatch); the plugin and
-     * modal don't, so the plugin needs no store. See CLAUDE.md > plugin
-     * providers. */
     onColumnHeaderClick?: ColumnHeaderClickFn
     onDataSorted?: (sorting: InternalSorting) => void
     onResponseReceived: () => void
