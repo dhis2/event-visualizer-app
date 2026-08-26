@@ -38,6 +38,19 @@ describe('FiltersNotAppliedNotice', () => {
         )
     })
 
+    it('is suppressed while loading, then reappears (its opaque Cover must not hide the spinner)', () => {
+        const { rerender } = render(
+            <FiltersNotAppliedNotice
+                isLoading
+                filters={{ ou: [{ id: 'x' }] }}
+            />
+        )
+        expect(screen.queryByRole('status')).not.toBeInTheDocument()
+
+        rerender(<FiltersNotAppliedNotice filters={{ ou: [{ id: 'x' }] }} />)
+        expect(screen.getByRole('status')).toBeInTheDocument()
+    })
+
     it('stays dismissed after the filters change (dismissal is sticky)', async () => {
         const user = userEvent.setup()
         const { rerender } = render(
