@@ -12,8 +12,8 @@ export const hasUnappliedFilters = (filters?: PluginFilters): boolean =>
 
 type FiltersNotAppliedNoticeProps = {
     filters?: PluginFilters
-    /* Hidden while loading so its opaque Cover doesn't hide the canvas spinner.
-     * Suppressed here rather than unmounted, so a dismissal survives the load. */
+    /* Hide while loading — the notice's Cover is opaque and would hide the
+     * spinner. Via this flag, not by unmounting, so a dismissal survives. */
     isLoading?: boolean
 }
 
@@ -21,18 +21,9 @@ export const FiltersNotAppliedNotice: FC<FiltersNotAppliedNoticeProps> = ({
     filters,
     isLoading = false,
 }) => {
-    /* Dismissal is keyed on the filters, so a filter change no longer matches
-     * and the notice reappears — no effect needed. */
-    const filtersKey = JSON.stringify(filters ?? null)
-    const [dismissedFiltersKey, setDismissedFiltersKey] = useState<
-        string | null
-    >(null)
+    const [dismissed, setDismissed] = useState(false)
 
-    if (
-        isLoading ||
-        !hasUnappliedFilters(filters) ||
-        dismissedFiltersKey === filtersKey
-    ) {
+    if (isLoading || !hasUnappliedFilters(filters) || dismissed) {
         return null
     }
 
@@ -51,7 +42,7 @@ export const FiltersNotAppliedNotice: FC<FiltersNotAppliedNoticeProps> = ({
                     secondary
                     small
                     dataTest="filters-not-applied-dismiss"
-                    onClick={() => setDismissedFiltersKey(filtersKey)}
+                    onClick={() => setDismissed(true)}
                 >
                     {i18n.t('Show without filters')}
                 </Button>

@@ -38,7 +38,7 @@ describe('FiltersNotAppliedNotice', () => {
         )
     })
 
-    it('reappears when the filters change after a dismissal', async () => {
+    it('stays dismissed after the filters change (dismissal is sticky)', async () => {
         const user = userEvent.setup()
         const { rerender } = render(
             <FiltersNotAppliedNotice filters={{ ou: [{ id: 'x' }] }} />
@@ -49,6 +49,6 @@ describe('FiltersNotAppliedNotice', () => {
 
         rerender(<FiltersNotAppliedNotice filters={{ ou: [{ id: 'y' }] }} />)
 
-        expect(screen.getByRole('status')).toBeInTheDocument()
+        expect(screen.queryByRole('status')).not.toBeInTheDocument()
     })
 })
