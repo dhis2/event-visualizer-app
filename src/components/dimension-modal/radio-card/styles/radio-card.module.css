@@ -100,16 +100,13 @@
     line-height: 15px;
 }
 
-/* The radio's root element is a <label>, and its label content now includes
- * the help text alongside the title, so making it fill the card (padding
- * lives here, not on .card) turns the whole card into a native click target —
- * no onClick handler needed. The revealed UI is a sibling, outside the label,
- * so interacting with it never toggles the radio. Icon aligns to the top of
- * the label content since it can span two lines (title + help text). */
 .cardRadio {
-    align-items: flex-start;
     padding: var(--spacers-dp12) var(--spacers-dp8);
     cursor: pointer;
+}
+
+.cardContent .cardRadio {
+    align-items: flex-start;
 }
 
 .revealed {
