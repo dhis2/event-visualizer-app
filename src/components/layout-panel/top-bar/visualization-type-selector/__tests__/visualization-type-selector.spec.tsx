@@ -86,9 +86,9 @@ describe('VisualizationTypeSelector', () => {
             'PIVOT_TABLE'
         )
         expect(getVisUiConfigLayout(store.getState())).toEqual({
-            columns: ['numericDe'],
+            columns: [],
             rows: [],
-            filters: [],
+            filters: ['numericDe'],
         })
     })
 
@@ -137,9 +137,9 @@ describe('VisualizationTypeSelector', () => {
             'PIVOT_TABLE'
         )
         expect(getVisUiConfigLayout(store.getState())).toEqual({
-            columns: ['numericDe'],
+            columns: [],
             rows: [],
-            filters: [],
+            filters: ['numericDe'],
         })
     })
 
