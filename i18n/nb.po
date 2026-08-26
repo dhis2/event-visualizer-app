@@ -1,14 +1,14 @@
 # Translators:
 # Jan Henrik Øverland, 2026
+# Caroline Hesthagen Holen <caroline@devotta.no>, 2026
 # Andres Miguel Rubio, 2026
 # Martin <martin@moid.se>, 2026
-# Caroline Hesthagen Holen <caroline@devotta.no>, 2026
 # Karoline Tufte Lien <karoline@dhis2.org>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Karoline Tufte Lien <karoline@dhis2.org>, 2026\n"
 "Language-Team: Norwegian Bokmål (https://app.transifex.com/hisp-uio/teams/100509/nb/)\n"
@@ -32,6 +32,9 @@ msgid ""
 "{{- name}} was not added because it is already used as the custom value."
 msgstr ""
 
+msgid "Retry"
+msgstr ""
+
 msgid "Add to {{- axisName}}"
 msgstr ""
 
@@ -44,14 +47,14 @@ msgstr "Versalsensitiv"
 msgid "Delete filter"
 msgstr "Slett filter"
 
+msgid "Only available for repeatable stages"
+msgstr "Kun tilgjengelig for repeterbare faser"
+
 msgid "Repeated events"
 msgstr "Gjentatte hendelser"
 
 msgid "Data"
 msgstr "Data"
-
-msgid "Only available for repeatable stages"
-msgstr "Kun tilgjengelig for repeterbare faser"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -203,9 +206,6 @@ msgstr "Kode"
 
 msgid "Name"
 msgstr "Navn"
-
-msgid "An error occurred"
-msgstr ""
 
 msgid "Resize axes panel"
 msgstr ""
@@ -420,6 +420,9 @@ msgid "{{- names}} will be removed. Are you sure?"
 msgstr ""
 
 msgid "Convert"
+msgstr ""
+
+msgid "Coming soon"
 msgstr ""
 
 msgid "Individual data view"
@@ -1001,6 +1004,48 @@ msgstr "Registrering org. enhet"
 
 msgid "Enrollment date"
 msgstr "Registreringsdato"
+
+msgid "Restricted access"
+msgstr "Begrenset tilgang"
+
+msgid ""
+"You don't have access to the data in this visualization. Contact a system "
+"administrator."
+msgstr ""
+
+msgid "You don't have access to one or more of the chosen organisation units."
+msgstr ""
+
+msgid ""
+"You don't have access to event analytics. Contact a system administrator."
+msgstr ""
+
+msgid "Something went wrong"
+msgstr "Noe gikk galt"
+
+msgid "There's a problem with at least one selected indicator."
+msgstr ""
+
+msgid ""
+"There's a problem with the generated analytics. Contact a system "
+"administrator."
+msgstr ""
+"Det er et problem med den genererte analysen. Kontakt en "
+"systemadministrator."
+
+msgid "There's a syntax problem with the analytics request."
+msgstr "Det er et syntaksproblem med analyseforespørselen."
+
+msgid "No data"
+msgstr "Ingen data"
+
+msgid ""
+"The selected dimensions didn't return any data. There may be no data, or you"
+" may not have access to it."
+msgstr ""
+
+msgid "There was a problem getting the data from the server."
+msgstr "Det oppstod et problem med å hente dataene fra serveren."
 
 msgid "Columns"
 msgstr "Kolonner"
