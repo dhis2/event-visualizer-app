@@ -40,12 +40,7 @@ export const buildAxis = (
     metadataStore: MetadataStore
 ): DimensionArray =>
     dimensionIds.map((id) => {
-        const dim = metadataStore.getDimensionMetadataItem(id)
-        if (!dim) {
-            throw new Error(
-                `No metadata found for dimension "${id}" — cannot decompose compound ID for API`
-            )
-        }
+        const dim = metadataStore.getDimensionMetadataItemOrThrow(id)
         const itemIds = visUiConfig.itemsByDimension[id]
         const conditions = visUiConfig.conditionsByDimension[id]
         const repetitions = visUiConfig.repetitionsByDimension[id]
@@ -93,15 +88,7 @@ const getLayoutDimensionMetadataItems = (
     dimensionIds: string[],
     metadataStore: MetadataStore
 ): DimensionMetadataItem[] =>
-    dimensionIds.map((id) => {
-        const dim = metadataStore.getDimensionMetadataItem(id)
-        if (!dim) {
-            throw new Error(
-                `No metadata found for dimension "${id}" in the layout`
-            )
-        }
-        return dim
-    })
+    dimensionIds.map((id) => metadataStore.getDimensionMetadataItemOrThrow(id))
 
 export const collectProgramDimensions = (
     visUiConfig: VisUiConfigState,
@@ -117,13 +104,10 @@ export const collectProgramDimensions = (
         if (!programId || programsById.has(programId)) {
             continue
         }
-        const program = metadataStore.getProgramMetadataItem(programId)
-        if (!program) {
-            throw new Error(
-                `Program "${programId}" referenced by dimension "${dim.id}" but not found in the metadata store`
-            )
-        }
-        programsById.set(programId, program)
+        programsById.set(
+            programId,
+            metadataStore.getProgramMetadataItemOrThrow(programId)
+        )
     }
     return Array.from(programsById.values())
 }
@@ -199,19 +183,6 @@ type LayoutConversionResult = {
     invalidDimensionIds: string[]
 }
 
-const getDimensionOrThrow = (
-    id: string,
-    getDimension: (id: string) => DimensionMetadataItem | undefined
-): DimensionMetadataItem => {
-    const dimension = getDimension(id)
-    if (!dimension) {
-        throw new Error(
-            `No metadata found for dimension "${id}" — cannot convert layout to a pivot table`
-        )
-    }
-    return dimension
-}
-
 export const convertLayoutForVisType = ({
     layout,
     targetVisType,
@@ -219,7 +190,7 @@ export const convertLayoutForVisType = ({
 }: {
     layout: Layout
     targetVisType: VisualizationType
-    getDimension: (id: string) => DimensionMetadataItem | undefined
+    getDimension: (id: string) => DimensionMetadataItem
 }): LayoutConversionResult => {
     /* A line list has no rows axis and accepts every dimension a pivot table
      * can hold, so the rows merge into the columns and nothing is dropped. */
@@ -238,7 +209,7 @@ export const convertLayoutForVisType = ({
     const invalidDimensionIds: string[] = []
 
     for (const id of layout.filters) {
-        const dimension = getDimensionOrThrow(id, getDimension)
+        const dimension = getDimension(id)
         if (isDimensionFullyInvalidForVisType(dimension, targetVisType)) {
             invalidDimensionIds.push(id)
         } else {
@@ -247,7 +218,7 @@ export const convertLayoutForVisType = ({
     }
 
     for (const id of layout.columns) {
-        const dimension = getDimensionOrThrow(id, getDimension)
+        const dimension = getDimension(id)
         if (isDimensionFullyInvalidForVisType(dimension, targetVisType)) {
             invalidDimensionIds.push(id)
         } else {
@@ -301,12 +272,7 @@ export const resolveTeiFields = (
         return { trackedEntityType: undefined, attributeDimensions }
     }
 
-    const tet = metadataStore.getMetadataItem(tetId)
-    if (!tet) {
-        throw new Error(
-            `Tracked entity type "${tetId}" referenced but not found in the metadata store`
-        )
-    }
+    const tet = metadataStore.getMetadataItemOrThrow(tetId)
     return {
         trackedEntityType: { id: tet.id, name: tet.name },
         attributeDimensions,
