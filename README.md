@@ -504,9 +504,9 @@ logger.error(error)
 
 ### Simulating the dashboard plugin
 
-The app is also a dashboard plugin. With `pnpm start` running, open
-http://localhost:3000/plugin-host.html and log in — a dev-only page that runs
-the real plugin in an iframe the way a dashboard would.
+The dev server serves both the app and the dashboard plugin. With `pnpm start` running, open
+http://localhost:3000/plugin-host.html and log in to see a dev-only page that runs
+the real dashboard plugin in an iframe the way a dashboard would.
 
 Paste a visualization id to render it. The filter toggle sends a dashboard
 filter to the plugin; since the plugin applies none, it only shows the "filters
