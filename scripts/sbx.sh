@@ -333,6 +333,14 @@ node_modules_overlay() {
         if [ ! -e "$nm/.installed" ] || [ "$repo/pnpm-lock.yaml" -nt "$nm/.installed" ]; then
             cd "$repo" && pnpm install && touch "$nm/.installed"
         fi
+        # src/locales is generated from i18n/*.po and gitignored, so a fresh sandbox has
+        # none and `pnpm lint` fails on the locale imports until start or build has run
+        # once. Generate it up front. Non-fatal: missing translations must never abort the
+        # mount, and the `set -e` above would otherwise make it do exactly that. No
+        # apostrophes in here: this whole block is a single-quoted argument to bash -lc.
+        if [ ! -e "$repo/src/locales/index.js" ]; then
+            (cd "$repo" && pnpm exec d2-app-scripts i18n generate) || true
+        fi
     ' _ "$REPO_ROOT"; then
         echo "Dependencies installed in a container-local node_modules (host node_modules untouched)."
     else
