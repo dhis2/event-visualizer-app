@@ -174,6 +174,13 @@ export const useOnDragEnd = (): OnDragEndFn => {
             const { targetIndex, insertAfter } = getDropTarget(overItemData)
 
             if (isAxisSortableData(draggedItemData)) {
+                const isDropInPlace =
+                    !isAxisContainerData(overItemData) &&
+                    overItemData.dimensionId === draggedItemData.dimensionId
+                if (isDropInPlace) {
+                    return
+                }
+
                 // Move between axis
                 dispatch(
                     moveVisUiConfigLayoutDimension({

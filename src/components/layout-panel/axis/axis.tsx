@@ -1,4 +1,3 @@
-import { getActiveDragData } from '@components/app-wrapper/drag-and-drop-provider/dnd-data'
 import type { AxisContainerDroppableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import { useDndContext, useDroppable } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
@@ -30,16 +29,11 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensions = EMPTY_ARRAY }) => {
         [axisId]
     )
 
-    const { active, over } = useDndContext()
-    const disabled = useMemo(
-        () => getActiveDragData(active)?.isLayoutBlocked ?? false,
-        [active]
-    )
+    const { over } = useDndContext()
 
     const { setNodeRef } = useDroppable({
         id: axisId,
         data: axisContainerData,
-        disabled,
     })
 
     /*
@@ -61,7 +55,6 @@ export const Axis: FC<AxisProps> = ({ axisId, dimensions = EMPTY_ARRAY }) => {
                     [classes.activeDropTarget]: isActiveDropTarget,
                 })}
                 data-test={`axis-${axisId}`}
-                aria-disabled={disabled || undefined}
             >
                 <div className={classes.label}>{getAxisName(axisId)}</div>
                 <div

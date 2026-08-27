@@ -178,6 +178,38 @@ describe('useOnDragEnd', () => {
         )
     })
 
+    it('should do nothing when a chip is dropped back on its own slot', () => {
+        const { result } = renderHook(() => useOnDragEnd())
+        const event = {
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 'test',
+                        axis: 'rows',
+                        sortable: { index: 1 },
+                        overlayItemProps: {},
+                        insertAfter: false,
+                        isLayoutBlocked: false,
+                    },
+                },
+            },
+            over: {
+                data: {
+                    current: {
+                        dimensionId: 'test',
+                        axis: 'rows',
+                        sortable: { index: 1 },
+                        insertAfter: false,
+                    },
+                },
+            },
+        } as unknown as LayoutDragEndEvent
+
+        result.current(event)
+
+        expect(mockDispatch).not.toHaveBeenCalled()
+    })
+
     it('should dispatch addVisUiConfigLayoutDimensions for multi-select drag', () => {
         vi.mocked(useAppSelector).mockReturnValue(['dim1', 'dim2', 'dim3'])
         vi.mocked(useMetadataStore).mockReturnValue(
