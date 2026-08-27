@@ -10,6 +10,7 @@ import {
 } from '@modules/layout'
 import { logger } from '@modules/logger'
 import { getEnabledOptions } from '@modules/options'
+import { setLastUsedVisualizationTypeToLocalStorage } from '@modules/visualization/local-storage'
 import {
     getVisualizationUiConfig,
     isCurrentVisualizationPersisted,
@@ -221,6 +222,12 @@ export const tUpdateCurrentVisFromVisUiConfig =
         extra: ThunkExtraArg
     ) => {
         const { currentVis, visUiConfig } = getState()
+
+        /* Applying the config is the user committing to the vis type, which
+         * loading a saved visualization is not. */
+        setLastUsedVisualizationTypeToLocalStorage(
+            visUiConfig.visualizationType
+        )
 
         dispatch(
             setCurrentVis(

@@ -1,3 +1,4 @@
+import { getLastUsedVisualizationTypeFromLocalStorage } from '@modules/visualization/local-storage'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { initialState as visUiConfigInitialState } from '@store/vis-ui-config-slice'
@@ -69,6 +70,19 @@ const eventVis: Partial<CurrentVisualization> = {
 }
 
 describe('tUpdateCurrentVisFromVisUiConfig', () => {
+    it('stores the applied visualization type as the last used one', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            buildMockOptions(eventVis)
+        )
+
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
+
+        expect(getLastUsedVisualizationTypeFromLocalStorage()).toBe(
+            'PIVOT_TABLE'
+        )
+    })
+
     it('clears the value when rebuilding in EVENT mode, keeping customValue remembered', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,

@@ -1,6 +1,9 @@
 import { api } from '@api/api'
+import { getLayoutPanelHeightFromLocalStorage } from '@components/layout-panel/local-storage'
+import { getSidebarWidthFromLocalStorage } from '@components/sidebar/local-storage'
 import { isDebugMode } from '@modules/debug-mode'
 import { getDefaultOptions } from '@modules/options'
+import { getLastUsedVisualizationTypeFromLocalStorage } from '@modules/visualization/local-storage'
 import { configureStore } from '@reduxjs/toolkit'
 import type { AppCachedData, DataEngine, MetadataStore } from '@types'
 import { currentVisSlice } from './current-vis-slice'
@@ -26,14 +29,33 @@ export const IGNORED_SERIALIZABLE_ACTION_PATHS = [
     'meta.appCachedData',
 ]
 
-export const getPreloadedState = (appCachedData: AppCachedData) => ({
-    visUiConfig: {
-        ...visUiConfigSlice.getInitialState(),
-        options: getDefaultOptions(
-            appCachedData.systemSettings.digitGroupSeparator
-        ),
-    },
-})
+/* Preferences the user carries between sessions live in localStorage; they are
+ * read here rather than in the slices so each store starts from what is stored
+ * now, not from what was stored when the module was first evaluated. */
+export const getPreloadedState = (appCachedData: AppCachedData) => {
+    const initialUi = uiSlice.getInitialState()
+    const initialVisUiConfig = visUiConfigSlice.getInitialState()
+
+    return {
+        ui: {
+            ...initialUi,
+            layoutPanelHeight:
+                getLayoutPanelHeightFromLocalStorage() ??
+                initialUi.layoutPanelHeight,
+            sidebarWidth:
+                getSidebarWidthFromLocalStorage() ?? initialUi.sidebarWidth,
+        },
+        visUiConfig: {
+            ...initialVisUiConfig,
+            visualizationType:
+                getLastUsedVisualizationTypeFromLocalStorage() ??
+                initialVisUiConfig.visualizationType,
+            options: getDefaultOptions(
+                appCachedData.systemSettings.digitGroupSeparator
+            ),
+        },
+    }
+}
 
 export const createStore = (
     engine: DataEngine,

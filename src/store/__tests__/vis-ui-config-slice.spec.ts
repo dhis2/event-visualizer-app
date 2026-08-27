@@ -617,4 +617,18 @@ describe('clearVisUiConfig', () => {
         const result = visUiConfigSlice.reducer(state, clearVisUiConfig())
         expect(result).toEqual(initialState)
     })
+
+    it('keeps the current visualization type', () => {
+        const state = {
+            ...initialState,
+            visualizationType: 'PIVOT_TABLE' as const,
+            layout: { columns: ['stage1.eventDate'], filters: [], rows: [] },
+        }
+        const result = visUiConfigSlice.reducer(state, clearVisUiConfig())
+
+        expect(result).toEqual({
+            ...initialState,
+            visualizationType: 'PIVOT_TABLE',
+        })
+    })
 })

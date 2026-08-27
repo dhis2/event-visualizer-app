@@ -8,10 +8,7 @@ import {
     SIDEBAR_MAX_OFFSET,
     SIDEBAR_MIN_WIDTH,
 } from './constants'
-import {
-    getSidebarWidthFromLocalStorage,
-    setSidebarWidthToLocalStorage,
-} from './local-storage'
+import { setSidebarWidthToLocalStorage } from './local-storage'
 
 const computeMaxWidth = () => window.innerWidth - SIDEBAR_MAX_OFFSET
 
@@ -19,7 +16,11 @@ const clampWidth = (width: number) =>
     Math.max(SIDEBAR_MIN_WIDTH, Math.min(width, computeMaxWidth()))
 
 export const useResizableSidebar = () => {
-    const [width, setWidth] = useState(getSidebarWidthFromLocalStorage)
+    /* The stored width reaches the hook through the store, which is seeded
+     * from localStorage. Dragging is tracked locally so a pointer move does
+     * not dispatch on every frame; the store is caught up on a debounce. */
+    const storeWidth = useAppSelector(getUiSidebarWidth)
+    const [width, setWidth] = useState(() => clampWidth(storeWidth))
     const [isDragging, setIsDragging] = useState(false)
     const dispatch = useAppDispatch()
     const containerRef = useRef<HTMLDivElement>(null)
@@ -71,7 +72,6 @@ export const useResizableSidebar = () => {
     }, [width, syncToStore])
 
     // Respond to reset via View menu
-    const storeWidth = useAppSelector(getUiSidebarWidth)
     useEffect(() => {
         if (storeWidth === SIDEBAR_DEFAULT_WIDTH) {
             setWidth(SIDEBAR_DEFAULT_WIDTH)

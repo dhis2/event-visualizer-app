@@ -1,17 +1,22 @@
-import {
-    SIDEBAR_DEFAULT_WIDTH,
-    SIDEBAR_MAX_OFFSET,
-    SIDEBAR_MIN_WIDTH,
-    SIDEBAR_STORAGE_KEY,
-} from './constants'
+import { SIDEBAR_STORAGE_KEY } from './constants'
 
-export const getSidebarWidthFromLocalStorage = (): number => {
-    const stored = globalThis.localStorage.getItem(SIDEBAR_STORAGE_KEY)
-    const width =
-        stored === null ? SIDEBAR_DEFAULT_WIDTH : Number.parseInt(stored)
-    const maxWidth = globalThis.innerWidth - SIDEBAR_MAX_OFFSET
+/* Undefined when nothing usable is stored, so the caller applies its own
+ * default. The value is returned unclamped: the viewport it has to fit is the
+ * caller's concern, not the storage layer's. */
+export const getSidebarWidthFromLocalStorage = (): number | undefined => {
+    try {
+        const stored = globalThis.localStorage.getItem(SIDEBAR_STORAGE_KEY)
 
-    return Math.max(SIDEBAR_MIN_WIDTH, Math.min(width, maxWidth))
+        if (stored === null) {
+            return undefined
+        }
+
+        const width = Number.parseInt(stored)
+
+        return Number.isFinite(width) ? width : undefined
+    } catch {
+        return undefined
+    }
 }
 
 export const setSidebarWidthToLocalStorage = (width: number): void => {
