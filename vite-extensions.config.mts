@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import { defineConfig, type Plugin } from 'vite'
-import { importAliases } from './import-aliases'
+import { importAliases } from './import-aliases.mjs'
 
 const HOST_PAGE_ROUTE = '/plugin-host.html'
 const HOST_PAGE_DIR = 'src/plugin-host'

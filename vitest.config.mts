@@ -1,7 +1,7 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { configDefaults } from 'vitest/config'
-import { importAliases } from './import-aliases'
+import { importAliases } from './import-aliases.mjs'
 
 // https://vitejs.dev/config/
 
