@@ -10,7 +10,9 @@ import {
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
 } from '@store/vis-ui-config-slice'
+import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import { renderHook } from '@testing-library/react'
+import type { DimensionMetadataItem } from '@types'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { LayoutDragEndEvent } from '../types'
 import { useOnDragEnd } from '../use-on-drag-end'
@@ -33,9 +35,7 @@ vi.mock('@hooks', () => ({
     useListFormatter: vi.fn(() => ({
         format: (list: string[]) => list.join(', '),
     })),
-    useMetadataStore: vi.fn(() => ({
-        getDimensionMetadataItem: vi.fn(() => undefined),
-    })),
+    useMetadataStore: vi.fn(() => createMetadataStoreStub()),
 }))
 
 vi.mock('@store/dimensions-selection-slice', () => ({
@@ -180,12 +180,16 @@ describe('useOnDragEnd', () => {
 
     it('should dispatch addVisUiConfigLayoutDimensions for multi-select drag', () => {
         vi.mocked(useAppSelector).mockReturnValue(['dim1', 'dim2', 'dim3'])
-        vi.mocked(useMetadataStore).mockReturnValue({
-            getDimensionMetadataItem: vi.fn((id: string) => ({
-                id,
-                dimensionType: 'DATA_ELEMENT',
-            })),
-        } as unknown as ReturnType<typeof useMetadataStore>)
+        vi.mocked(useMetadataStore).mockReturnValue(
+            createMetadataStoreStub({
+                dimensions: Object.fromEntries(
+                    ['dim1', 'dim2', 'dim3'].map((id) => [
+                        id,
+                        { id, dimensionType: 'DATA_ELEMENT' },
+                    ])
+                ) as Record<string, DimensionMetadataItem>,
+            })
+        )
         const { result } = renderHook(() => useOnDragEnd())
         const populateMetadata = vi.fn()
         const event = {

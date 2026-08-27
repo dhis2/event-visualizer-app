@@ -129,8 +129,7 @@ export const VisualizationTypeSelector: FC = () => {
             convertLayoutForVisType({
                 layout,
                 targetVisType: nextVisType,
-                getDimension: (id) =>
-                    metadataStore.getDimensionMetadataItem(id),
+                getDimension: metadataStore.getDimensionMetadataItemOrThrow,
             })
         if (invalidDimensionIds.length === 0) {
             applyChange(nextVisType, convertedLayout)

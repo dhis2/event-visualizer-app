@@ -1,4 +1,5 @@
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
+import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import type {
     DimensionMetadataItem,
     Layout,
@@ -339,9 +340,7 @@ describe('buildAxis', () => {
                 input as unknown as VisUiConfigState,
                 store
             )
-        ).toThrow(
-            'No metadata found for dimension "unknown.dim" — cannot decompose compound ID for API'
-        )
+        ).toThrow('No dimension found for id "unknown.dim"')
     })
 })
 
@@ -354,11 +353,11 @@ const makeStore = ({
     metadata?: Record<string, { id: string; name: string }>
     programs?: Record<string, Program>
 }): MetadataStore =>
-    ({
-        getDimensionMetadataItem: (id: string) => dims[id],
-        getMetadataItem: (id: string) => metadata[id] as MetadataItem,
-        getProgramMetadataItem: (id: string) => programs[id],
-    }) as unknown as MetadataStore
+    createMetadataStoreStub({
+        dimensions: dims,
+        items: metadata as Record<string, MetadataItem>,
+        programs,
+    })
 
 const layout = (ids: string[]): VisUiConfigState['layout'] => ({
     columns: ids,
@@ -580,7 +579,7 @@ describe('resolveTeiFields', () => {
         })
 
         expect(() => resolveTeiFields(state, store)).toThrow(
-            'Tracked entity type "tetA" referenced but not found in the metadata store'
+            'No metadata item found for id "tetA"'
         )
     })
 
@@ -589,7 +588,7 @@ describe('resolveTeiFields', () => {
         const store = makeStore({})
 
         expect(() => resolveTeiFields(state, store)).toThrow(
-            'No metadata found for dimension "ghost" in the layout'
+            'No dimension found for id "ghost"'
         )
     })
 })
@@ -788,7 +787,7 @@ describe('resolveLayoutContext', () => {
         const store = makeStore({})
 
         expect(() => resolveLayoutContext(['ghost'], store)).toThrow(
-            'No metadata found for dimension "ghost" in the layout'
+            'No dimension found for id "ghost"'
         )
     })
 })
@@ -923,7 +922,7 @@ describe('collectProgramDimensions', () => {
         })
 
         expect(() => collectProgramDimensions(state, store)).toThrow(
-            'Program "pMissing" referenced by dimension "stage1.de1" but not found in the metadata store'
+            'No program found for id "pMissing"'
         )
     })
 
@@ -932,16 +931,17 @@ describe('collectProgramDimensions', () => {
         const store = makeStore({})
 
         expect(() => collectProgramDimensions(state, store)).toThrow(
-            'No metadata found for dimension "ghost" in the layout'
+            'No dimension found for id "ghost"'
         )
     })
 })
 
 describe('convertLayoutForVisType', () => {
-    const makeGetDimension =
-        (records: Record<string, DimensionMetadataItem>) =>
-        (id: string): DimensionMetadataItem | undefined =>
-            records[id]
+    const makeGetDimension = (
+        records: Record<string, DimensionMetadataItem>
+    ): ((id: string) => DimensionMetadataItem) =>
+        createMetadataStoreStub({ dimensions: records })
+            .getDimensionMetadataItemOrThrow
 
     const emptyLayout = (): Layout => ({ columns: [], rows: [], filters: [] })
 
