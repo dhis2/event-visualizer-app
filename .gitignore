@@ -19,3 +19,6 @@ cypress/downloads
 .scannerwork
 opensrc
 docs/superpowers
+
+# playwright-cli session artifacts (AI sandboxes)
+.playwright-cli

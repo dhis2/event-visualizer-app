@@ -1,6 +1,7 @@
 import type { EngineError } from '@api/parse-engine-error'
 import { CanvasError } from '@components/canvas-error/canvas-error'
 import { CanvasErrorFallback } from '@components/canvas-error/canvas-error-fallback'
+import type { ColumnHeaderClickFn } from '@components/line-list/types'
 import { Center, CircularLoader } from '@dhis2/ui'
 import { assertNever } from '@modules/utils/guards'
 import { isVisualizationEmpty } from '@modules/visualization/state'
@@ -8,11 +9,13 @@ import type {
     CurrentUser,
     CurrentVisualization,
     EmptyVisualization,
+    PluginFilters,
     Sorting,
 } from '@types'
 import type { FC } from 'react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { FiltersNotAppliedNotice } from './filters-not-applied-notice'
 import { getBaseRequestIdentity as getLineListBaseRequestIdentity } from './hooks/query-tools-line-list'
 import { getBaseRequestIdentity as getPivotTableBaseRequestIdentity } from './hooks/query-tools-pivot-table'
 import { LineListPlugin } from './line-list-plugin'
@@ -21,13 +24,19 @@ import classes from './styles/plugin-wrapper.module.css'
 
 const getBaseRequestIdentity = (
     currentVis: CurrentVisualization,
-    filters?: Record<string, unknown>
+    relativePeriodDate?: string
 ) => {
     switch (currentVis.type) {
         case 'LINE_LIST':
-            return getLineListBaseRequestIdentity(currentVis, filters)
+            return getLineListBaseRequestIdentity(
+                currentVis,
+                relativePeriodDate
+            )
         case 'PIVOT_TABLE':
-            return getPivotTableBaseRequestIdentity(currentVis, filters)
+            return getPivotTableBaseRequestIdentity(
+                currentVis,
+                relativePeriodDate
+            )
         default:
             return assertNever(currentVis.type)
     }
@@ -36,12 +45,13 @@ const getBaseRequestIdentity = (
 type PluginWrapperProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization | EmptyVisualization
-    filters?: Record<'relativePeriodDate', string> // TODO: check what dashboard passes here
+    filters?: PluginFilters
     isInDashboard?: boolean
     isInModal?: boolean // passed when viewing an intepretation via the InterpretationModal from analytics
     isVisualizationLoading?: boolean
     visualizationLoadError?: EngineError
     onRetryLoad?: () => void
+    onColumnHeaderClick?: ColumnHeaderClickFn
     onDataSorted?: (sorting: Sorting | undefined) => void
 }
 
@@ -54,20 +64,25 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     isVisualizationLoading = false,
     visualizationLoadError,
     onRetryLoad,
+    onColumnHeaderClick,
     onDataSorted,
 }) => {
-    /* Remount key for the canvas: changing it clears errors and resets sort and
-     * page. It's the base request identity (visualization + dashboard filters),
-     * so a filter change remounts; sort/page aren't in it and refetch in place.
-     * Prop-derived so it also works in the store-less dashboard plugin. */
+    /* relativePeriodDate is the only applied filter (ou/pe/yourDimensions are
+     * ignored — see FiltersNotAppliedNotice), so it feeds the request identity
+     * and the fetch. */
+    const relativePeriodDate = filters?.relativePeriodDate
+
+    /* Canvas remount key: changing it clears errors and resets sort and page.
+     * It's the request identity (visualization + relativePeriodDate), so a
+     * period change remounts while sort/page refetch in place. */
     const requestKey = useMemo(
         () =>
             isVisualizationEmpty(visualization)
                 ? ''
                 : JSON.stringify(
-                      getBaseRequestIdentity(visualization, filters)
+                      getBaseRequestIdentity(visualization, relativePeriodDate)
                   ),
-        [visualization, filters]
+        [visualization, relativePeriodDate]
     )
 
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
@@ -123,13 +138,18 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                         <CircularLoader />
                     </Center>
                 )}
+                <FiltersNotAppliedNotice
+                    filters={filters}
+                    isLoading={isVisualizationLoading || !hasAnalyticsData}
+                />
                 {visualization.type === 'LINE_LIST' && (
                     <LineListPlugin
                         displayProperty={displayProperty}
                         visualization={visualization}
-                        filters={filters}
+                        relativePeriodDate={relativePeriodDate}
                         isInDashboard={isInDashboard}
                         isInModal={isInModal}
+                        onColumnHeaderClick={onColumnHeaderClick}
                         onDataSorted={onDataSorted}
                         onResponseReceived={onResponseReceived}
                     />
@@ -138,7 +158,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     <PivotTablePlugin
                         displayProperty={displayProperty}
                         visualization={visualization}
-                        filters={filters}
+                        relativePeriodDate={relativePeriodDate}
                         isInDashboard={isInDashboard}
                         isInModal={isInModal}
                         onResponseReceived={onResponseReceived}

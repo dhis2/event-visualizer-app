@@ -449,7 +449,7 @@ type FetchAnalyticsDataForLLParams = {
 
 type FetchAnalyticsDataParams = {
     visualization: CurrentVisualization
-    filters?: Record<string, unknown>
+    relativePeriodDate?: string
     displayProperty: CurrentUser['settings']['displayProperty']
     pageSize?: number
     page?: number
@@ -478,14 +478,14 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
             visualization,
-            filters,
+            relativePeriodDate,
             displayProperty,
             pageSize = 100,
             page = 1,
             onResponseReceived,
         }) => {
             const requestSignature = JSON.stringify({
-                ...getBaseRequestIdentity(visualization, filters),
+                ...getBaseRequestIdentity(visualization, relativePeriodDate),
                 sorting: visualization.sorting ?? null,
                 page,
                 pageSize,
@@ -500,8 +500,6 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 ...prevState,
                 isFetching: true,
             }))
-
-            const relativePeriodDate = filters?.relativePeriodDate
 
             const { dimension: sortField, direction: sortDirection } =
                 visualization.sorting?.length

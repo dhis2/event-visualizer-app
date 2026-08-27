@@ -31,10 +31,15 @@ describe('PluginWrapper', () => {
     const deferredAnalytics = createDeferredQuery()
     const mockOptions = {
         queryData: {
-            analytics: deferredAnalytics.defer((_, query) =>
-                query.params.dimension.includes('qrur9Dvnyt5:GE:5:LE:10')
-                    ? analyticsResponse1
-                    : analyticsResponse2
+            /* Dimension strings are stage-prefixed, so match with a substring
+             * check, not an exact array `.includes`. */
+            analytics: deferredAnalytics.defer(
+                (_: unknown, query: { params: { dimension: string[] } }) =>
+                    query.params.dimension.some((dimension) =>
+                        dimension.includes('qrur9Dvnyt5:GE:5:LE:10')
+                    )
+                        ? analyticsResponse1
+                        : analyticsResponse2
             ),
             // mock the POST to dataStatistics done in the eventVisualization endpoint
             dataStatistics: {},

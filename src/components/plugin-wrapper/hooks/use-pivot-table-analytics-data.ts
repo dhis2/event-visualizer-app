@@ -94,7 +94,7 @@ export type PivotTableAnalyticsData = {
 
 type FetchAnalyticsDataForPTParams = {
     visualization: CurrentVisualization
-    filters?: Record<string, unknown>
+    relativePeriodDate?: string
     displayProperty: CurrentUser['settings']['displayProperty']
     onResponseReceived: () => void
 }
@@ -122,12 +122,12 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
             visualization,
-            filters,
+            relativePeriodDate,
             displayProperty,
             onResponseReceived,
         }) => {
             const requestSignature = JSON.stringify({
-                ...getBaseRequestIdentity(visualization, filters),
+                ...getBaseRequestIdentity(visualization, relativePeriodDate),
                 displayProperty,
             })
 
@@ -139,8 +139,6 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                 ...prevState,
                 isFetching: true,
             }))
-
-            const relativePeriodDate = filters?.relativePeriodDate
 
             try {
                 const analyticsResponse = await fetchAnalyticsDataForPT({

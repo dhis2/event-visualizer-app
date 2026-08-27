@@ -34,7 +34,7 @@ const formatVisualizationForPivotTableEngine = (
 type PivotTablePluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
-    filters?: Record<string, unknown> // TODO: verify this type
+    relativePeriodDate?: string
     isInDashboard: boolean
     isInModal: boolean
     onResponseReceived: () => void
@@ -43,7 +43,7 @@ type PivotTablePluginProps = {
 export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
     displayProperty,
     visualization,
-    filters,
+    relativePeriodDate,
     onResponseReceived,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isInDashboard,
@@ -67,13 +67,13 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
         fetchAnalyticsData({
             visualization:
                 transformVisualizationForAnalyticsRequest(visualization),
-            filters,
+            relativePeriodDate,
             displayProperty,
             onResponseReceived,
         })
     }, [
         displayProperty,
-        filters,
+        relativePeriodDate,
         visualization,
         onResponseReceived,
         fetchAnalyticsData,

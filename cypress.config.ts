@@ -81,6 +81,7 @@ module.exports = defineConfig({
         dhis2DatatestPrefix: 'dhis2-eventvisualizer',
     },
     component: {
+        specPattern: 'src/**/*.cy.tsx',
         devServer: {
             framework: 'react',
             bundler: 'vite',

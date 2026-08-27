@@ -624,6 +624,12 @@ msgstr "Table subtitle"
 msgid "Labels"
 msgstr "Labels"
 
+msgid "Filters are not applied to Event visualizations"
+msgstr "Filters are not applied to Event visualizations"
+
+msgid "Show without filters"
+msgstr "Show without filters"
+
 msgid "Create a {{- visType}} before updating"
 msgstr "Create a {{- visType}} before updating"
 

@@ -21,14 +21,12 @@ const basePivotTable = {
     programDimensions: [{ id: 'p1' }],
 } as unknown as CurrentVisualization
 
-const lineListKey = (
-    vis: CurrentVisualization,
-    filters?: Record<string, unknown>
-) => JSON.stringify(getLineListBaseRequestIdentity(vis, filters))
+const lineListKey = (vis: CurrentVisualization, relativePeriodDate?: string) =>
+    JSON.stringify(getLineListBaseRequestIdentity(vis, relativePeriodDate))
 const pivotTableKey = (
     vis: CurrentVisualization,
-    filters?: Record<string, unknown>
-) => JSON.stringify(getPivotTableBaseRequestIdentity(vis, filters))
+    relativePeriodDate?: string
+) => JSON.stringify(getPivotTableBaseRequestIdentity(vis, relativePeriodDate))
 
 describe('getRequestStructure (line list)', () => {
     it('changes when the selected items of a dimension change', () => {
@@ -60,11 +58,9 @@ describe('getRequestStructure (line list)', () => {
         expect(lineListKey(next)).not.toBe(lineListKey(baseLineList))
     })
 
-    it('changes when the applied filters change', () => {
-        expect(
-            lineListKey(baseLineList, { relativePeriodDate: '2024-01-01' })
-        ).not.toBe(
-            lineListKey(baseLineList, { relativePeriodDate: '2024-06-01' })
+    it('changes when relativePeriodDate changes', () => {
+        expect(lineListKey(baseLineList, '2024-01-01')).not.toBe(
+            lineListKey(baseLineList, '2024-06-01')
         )
     })
 
@@ -106,11 +102,9 @@ describe('getRequestStructure (pivot table)', () => {
         expect(pivotTableKey(next)).not.toBe(pivotTableKey(basePivotTable))
     })
 
-    it('changes when the applied filters change', () => {
-        expect(
-            pivotTableKey(basePivotTable, { relativePeriodDate: '2024-01-01' })
-        ).not.toBe(
-            pivotTableKey(basePivotTable, { relativePeriodDate: '2024-06-01' })
+    it('changes when relativePeriodDate changes', () => {
+        expect(pivotTableKey(basePivotTable, '2024-01-01')).not.toBe(
+            pivotTableKey(basePivotTable, '2024-06-01')
         )
     })
 

@@ -1,0 +1,5 @@
+.d2
+build
+# Third-party sources fetched for reference by `npx opensrc`; they carry their
+# own stylelint config, which stylelint would try to resolve and fail on.
+opensrc

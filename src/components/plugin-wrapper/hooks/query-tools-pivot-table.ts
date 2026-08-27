@@ -69,7 +69,7 @@ export const getCustomValueRequestParams = (
  * identity rather than excluded from it. */
 export const getBaseRequestIdentity = (
     visualization: CurrentVisualization,
-    filters?: Record<string, unknown>
+    relativePeriodDate?: string
 ) => ({
     ...getAdaptedVisualization(visualization),
     programIds: (visualization.programDimensions ?? []).map((p) => p.id),
@@ -78,5 +78,5 @@ export const getBaseRequestIdentity = (
     sortOrder: visualization.sortOrder,
     topLimit: visualization.topLimit,
     ...getCustomValueRequestParams(visualization),
-    filters: filters ?? null,
+    relativePeriodDate: relativePeriodDate ?? null,
 })

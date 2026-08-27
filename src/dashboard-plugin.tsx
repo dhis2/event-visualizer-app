@@ -6,6 +6,8 @@ import {
 } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { DashboardPluginWrapper } from '@dhis2/analytics'
+/* useDataQuery, not the RTK-query hooks: the plugin carries no app store (see
+ * CLAUDE.md > plugin providers). */
 // eslint-disable-next-line no-restricted-imports
 import { useDataQuery } from '@dhis2/app-runtime'
 import { logger } from '@modules/logger'
@@ -18,6 +20,7 @@ import type {
     CurrentUser,
     CurrentVisualization,
     EmptyVisualization,
+    PluginFilters,
     SavedVisualization,
 } from '@types'
 import { useEffect, useMemo, type FC } from 'react'
@@ -26,7 +29,7 @@ import './locales/index.js'
 type DashboardPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: SavedVisualization
-    filters?: Record<string, string>
+    filters?: PluginFilters
 }
 
 const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
@@ -35,7 +38,8 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
 
     const metadataStore = useMetadataStore()
 
-    // fetch the visualization
+    /* A dashboard item is bound to a fixed visualization id, so we only fetch
+     * on mount. */
     const { data, error, loading, refetch } = useDataQuery({
         eventVisualization: {
             resource: 'eventVisualizations',
@@ -74,7 +78,10 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
         [savedVisualization]
     )
 
-    const visualizationLoadError = error ? parseEngineError(error) : undefined
+    const visualizationLoadError = useMemo(
+        () => (error ? parseEngineError(error) : undefined),
+        [error]
+    )
 
     logger.debug(
         'dp currentVisualization',
@@ -93,6 +100,7 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
                     visualizationLoadError={visualizationLoadError}
                     onRetryLoad={() => void refetch()}
                     isVisualizationLoading={loading}
+                    isInDashboard
                 />
             )}
         </DashboardPluginWrapper>
