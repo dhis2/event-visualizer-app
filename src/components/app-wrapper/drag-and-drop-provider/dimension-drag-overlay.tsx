@@ -4,7 +4,8 @@ import {
     DimensionItem,
     DimensionItemContainer,
 } from '@components/sidebar/dimension-item'
-import { DragOverlay, useDndMonitor } from '@dnd-kit/core'
+import { IconDelete16 } from '@dhis2/ui'
+import { DragOverlay, useDndContext, useDndMonitor } from '@dnd-kit/core'
 import { snapCenterToCursor } from '@dnd-kit/modifiers'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
@@ -13,13 +14,17 @@ import {
 } from '@store/dimensions-selection-slice'
 import cx from 'classnames'
 import { useState, type FC } from 'react'
-import { isAxisSortableData, isSidebarSortableData } from './dnd-data'
+import {
+    isAxisSortableData,
+    isOverAxis,
+    isSidebarSortableData,
+} from './dnd-data'
 import classes from './styles/dimension-drag-overlay.module.css'
 import type { DraggedItemEventData } from './types'
 
 const DragOverlayItem: FC<
-    DraggedItemEventData & { multiSelectCount: number }
-> = ({ multiSelectCount, ...data }) => {
+    DraggedItemEventData & { multiSelectCount: number; willRemove: boolean }
+> = ({ multiSelectCount, willRemove, ...data }) => {
     if (isAxisSortableData(data)) {
         return (
             <div
@@ -29,12 +34,21 @@ const DragOverlayItem: FC<
                     classes.overlay,
                     {
                         [chipClasses.chipEmpty]: data.overlayItemProps.isEmpty,
+                        [classes.willRemove]: willRemove,
                     }
                 )}
             >
                 <div className={chipClasses.content}>
                     <ChipBase {...data.overlayItemProps} isDragging />
                 </div>
+                {willRemove && (
+                    <span
+                        className={classes.removeBadge}
+                        data-test="chip-remove-indicator"
+                    >
+                        <IconDelete16 color="#ffffff" />
+                    </span>
+                )}
             </div>
         )
     }
@@ -59,6 +73,7 @@ const DragOverlayItem: FC<
 export const DimensionDragOverlay: FC = () => {
     const dispatch = useAppDispatch()
     const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
+    const { over } = useDndContext()
     const [draggedDimensionData, setDraggedDimensionData] =
         useState<DraggedItemEventData | null>(null)
     useDndMonitor({
@@ -88,12 +103,18 @@ export const DimensionDragOverlay: FC = () => {
             ? multiSelectedIds.length
             : 0
 
+    const willRemove =
+        draggedDimensionData !== null &&
+        isAxisSortableData(draggedDimensionData) &&
+        !isOverAxis(over?.data.current)
+
     return (
         <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>
             {draggedDimensionData ? (
                 <DragOverlayItem
                     {...draggedDimensionData}
                     multiSelectCount={multiSelectCount}
+                    willRemove={willRemove}
                 />
             ) : null}
         </DragOverlay>

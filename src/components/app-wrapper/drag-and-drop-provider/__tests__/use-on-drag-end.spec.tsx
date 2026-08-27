@@ -9,6 +9,7 @@ import {
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
+    removeVisUiConfigLayoutDimensionFromAxis,
 } from '@store/vis-ui-config-slice'
 import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import { renderHook } from '@testing-library/react'
@@ -47,6 +48,7 @@ vi.mock('@store/vis-ui-config-slice', () => ({
     addVisUiConfigLayoutDimension: vi.fn(),
     addVisUiConfigLayoutDimensions: vi.fn(),
     moveVisUiConfigLayoutDimension: vi.fn(),
+    removeVisUiConfigLayoutDimensionFromAxis: vi.fn(),
     getVisUiConfigVisualizationType: vi.fn(),
     getVisUiConfigCustomValue: vi.fn(),
     getVisUiConfigLayoutAllDimensionIds: vi.fn(() => []),
@@ -203,6 +205,90 @@ describe('useOnDragEnd', () => {
                     },
                 },
             },
+        } as unknown as LayoutDragEndEvent
+
+        result.current(event)
+
+        expect(mockDispatch).not.toHaveBeenCalled()
+    })
+
+    it('removes a chip that is dropped outside any axis', () => {
+        const { result } = renderHook(() => useOnDragEnd())
+        const event = {
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 'test',
+                        axis: 'rows',
+                        sortable: { index: 1 },
+                        overlayItemProps: {},
+                        insertAfter: false,
+                        isLayoutBlocked: false,
+                    },
+                },
+            },
+            over: null,
+        } as unknown as LayoutDragEndEvent
+
+        result.current(event)
+
+        expect(mockDispatch).toHaveBeenCalledWith(
+            removeVisUiConfigLayoutDimensionFromAxis({
+                axis: 'rows',
+                dimensionId: 'test',
+            })
+        )
+    })
+
+    it('removes a chip that is dropped over a non-axis target', () => {
+        const { result } = renderHook(() => useOnDragEnd())
+        const event = {
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 'test',
+                        axis: 'columns',
+                        sortable: { index: 0 },
+                        overlayItemProps: {},
+                        insertAfter: false,
+                        isLayoutBlocked: false,
+                    },
+                },
+            },
+            over: {
+                data: {
+                    current: {
+                        dimensionId: 'sidebar-dim',
+                        overlayItemProps: {},
+                        populateMetadata: vi.fn(),
+                    },
+                },
+            },
+        } as unknown as LayoutDragEndEvent
+
+        result.current(event)
+
+        expect(mockDispatch).toHaveBeenCalledWith(
+            removeVisUiConfigLayoutDimensionFromAxis({
+                axis: 'columns',
+                dimensionId: 'test',
+            })
+        )
+    })
+
+    it('does not remove anything when a sidebar item is dropped outside any axis', () => {
+        const { result } = renderHook(() => useOnDragEnd())
+        const event = {
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 'test',
+                        overlayItemProps: {},
+                        populateMetadata: vi.fn(),
+                    },
+                },
+            },
+            over: null,
         } as unknown as LayoutDragEndEvent
 
         result.current(event)

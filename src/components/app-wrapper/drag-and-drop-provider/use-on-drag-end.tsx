@@ -21,6 +21,7 @@ import {
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
+    removeVisUiConfigLayoutDimensionFromAxis,
     getVisUiConfigCustomValue,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigVisualizationType,
@@ -29,6 +30,7 @@ import { useCallback } from 'react'
 import {
     isAxisContainerData,
     isAxisSortableData,
+    isOverAxis,
     isSidebarSortableData,
 } from './dnd-data'
 import type { LayoutDragEndEvent, OverItemEventData } from './types'
@@ -160,17 +162,27 @@ export const useOnDragEnd = (): OnDragEndFn => {
 
     return useCallback(
         (event: LayoutDragEndEvent) => {
-            // Only allow dropping if event data is present and dropping onto an axis
-            if (
-                !event.active.data.current ||
-                !event.over ||
-                !event.over.data.current?.axis
-            ) {
+            const draggedItemData = event.active.data.current
+            if (!draggedItemData) {
                 return
             }
 
-            const draggedItemData = event.active.data.current
-            const overItemData = event.over.data.current
+            const overItemData = event.over?.data.current
+
+            if (!isOverAxis(overItemData)) {
+                // Remove layout dimension when dropped ouside axes
+                if (isAxisSortableData(draggedItemData)) {
+                    dispatch(
+                        removeVisUiConfigLayoutDimensionFromAxis({
+                            axis: draggedItemData.axis,
+                            dimensionId: draggedItemData.dimensionId,
+                        })
+                    )
+                }
+                // Ignore other items dropped outside of axes
+                return
+            }
+
             const { targetIndex, insertAfter } = getDropTarget(overItemData)
 
             if (isAxisSortableData(draggedItemData)) {

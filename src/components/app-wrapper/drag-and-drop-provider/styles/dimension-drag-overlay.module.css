@@ -4,6 +4,25 @@
     inline-size: fit-content;
 }
 
+.overlay.willRemove {
+    border-color: var(--colors-red700);
+}
+
+.removeBadge {
+    position: absolute;
+    inset-block-start: -8px;
+    inset-inline-end: -8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 20px;
+    block-size: 20px;
+    border-radius: 50%;
+    background-color: var(--colors-red700);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+}
+
 .countBadge {
     position: absolute;
     inset-block-start: -8px;
