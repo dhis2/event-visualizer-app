@@ -1,5 +1,6 @@
 import { FetchError } from '@dhis2/app-runtime'
 import { EmptyResponseError } from '@modules/error/empty-response-error'
+import { suppressWindowError } from '@test-utils/suppress-window-error'
 import { render, screen } from '@testing-library/react'
 import { Component, type PropsWithChildren } from 'react'
 import { describe, it, expect, vi } from 'vitest'
@@ -38,16 +39,19 @@ describe('CanvasErrorFallback', () => {
         expect(screen.getByText('No data')).toBeInTheDocument()
     })
 
-    it('re-throws anything that is not a canvas error', () => {
-        render(
-            <CatchAll>
-                <CanvasErrorFallback
-                    error={new Error('boom')}
-                    resetErrorBoundary={vi.fn()}
-                />
-            </CatchAll>
-        )
+    it(
+        're-throws anything that is not a canvas error',
+        suppressWindowError('boom', () => {
+            render(
+                <CatchAll>
+                    <CanvasErrorFallback
+                        error={new Error('boom')}
+                        resetErrorBoundary={vi.fn()}
+                    />
+                </CatchAll>
+            )
 
-        expect(screen.getByText('bubbled')).toBeInTheDocument()
-    })
+            expect(screen.getByText('bubbled')).toBeInTheDocument()
+        })
+    )
 })

@@ -1,6 +1,6 @@
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
-import { importAliases } from './import-aliases'
+import { importAliases } from './import-aliases.mjs'
 
 // This config is used for Cypress component testing
 

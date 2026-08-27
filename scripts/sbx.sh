@@ -74,6 +74,29 @@ accept_trust() {
     ' _ "$REPO_ROOT"
 }
 
+# `sbx create` writes a CLAUDE.md one level above the repo, fronted by an auto-detected
+# per-language stub that tells the agent to use npm/yarn — this repo is pnpm-only. Its
+# sandbox sections are already covered, more accurately and repo-specifically, by
+# `.sbx/base.md` (injected via --append-system-prompt) and this repo's own CLAUDE.md.
+#
+# Exclude the file from memory loading rather than editing it: sbx owns it and rewrites it
+# on every create, so any in-place edit is both fragile and undone by the next sandbox.
+# `claudeMdExcludes` takes absolute paths or picomatch globs and applies to User, Project,
+# and Local memory sources. Tracked upstream as docker/sbx-releases#204 and #122.
+exclude_generated_memory() {
+    local name="$1"
+    sbx exec "$name" bash -lc '
+        f="/home/agent/.claude/settings.json"
+        node -e "
+            const fs=require(\"fs\"),p=\"$1\",f=\"$f\";
+            let c={};try{c=JSON.parse(fs.readFileSync(f,\"utf8\"))}catch(e){}
+            const ex=new Set(c.claudeMdExcludes||[]);ex.add(p);
+            c.claudeMdExcludes=[...ex].sort();
+            fs.writeFileSync(f,JSON.stringify(c,null,2));
+        "
+    ' _ "$(dirname "$REPO_ROOT")/CLAUDE.md"
+}
+
 # sbx auto-injects its own proxy-managed GH_TOKEN placeholder (gho_sbxproxymanaged…) that
 # shadows the custom read-only-PAT secret's placeholder in the sandbox environment. gh then
 # receives a token with no swap rule, so every authenticated GitHub API call returns 401
@@ -310,6 +333,14 @@ node_modules_overlay() {
         if [ ! -e "$nm/.installed" ] || [ "$repo/pnpm-lock.yaml" -nt "$nm/.installed" ]; then
             cd "$repo" && pnpm install && touch "$nm/.installed"
         fi
+        # src/locales is generated from i18n/*.po and gitignored, so a fresh sandbox has
+        # none and `pnpm lint` fails on the locale imports until start or build has run
+        # once. Generate it up front. Non-fatal: missing translations must never abort the
+        # mount, and the `set -e` above would otherwise make it do exactly that. No
+        # apostrophes in here: this whole block is a single-quoted argument to bash -lc.
+        if [ ! -e "$repo/src/locales/index.js" ]; then
+            (cd "$repo" && pnpm exec d2-app-scripts i18n generate) || true
+        fi
     ' _ "$REPO_ROOT"; then
         echo "Dependencies installed in a container-local node_modules (host node_modules untouched)."
     else
@@ -330,6 +361,11 @@ copy_memory() {
     echo "Copying project memory into '$name'..."
     sbx exec "$name" bash -lc 'mkdir -p "$HOME/.claude/projects/$1"' _ "$projdir"
     sbx cp "$memsrc" "${name}:/home/agent/.claude/projects/${projdir}/"
+    # `sbx cp` preserves the host's uid/gid (501:20 on macOS), but the sandbox runs as
+    # agent (1000), so the agent can read its own memories and not write them. Safe here
+    # because the clone's copy is private to the sandbox — never do this in mount mode,
+    # where the same directory is the host's own files.
+    sbx exec "$name" bash -lc 'sudo chown -R agent:agent "$HOME/.claude/projects/$1"' _ "$projdir" || true
 }
 
 # Configure signed commits in the clone using the dedicated (signing-only) SSH key.
@@ -375,6 +411,7 @@ cmd_mount() {
         sbx create -t "$IMAGE_TAG" claude "$REPO_ROOT" ${extra[@]+"${extra[@]}"} --name "$MOUNT_NAME"
         configure_policy "$MOUNT_NAME"
         accept_trust "$MOUNT_NAME"
+        exclude_generated_memory "$MOUNT_NAME"
         link_host_dirs "$MOUNT_NAME"
         link_plans_dir "$MOUNT_NAME"
     fi
@@ -385,6 +422,12 @@ cmd_mount() {
     if sandbox_exists "$MOUNT_NAME" && ! sbx exec "$MOUNT_NAME" true >/dev/null 2>&1; then
         echo "Mount sandbox is unresponsive (a host 'pnpm install' likely disrupted it) — restarting it..."
         sbx stop "$MOUNT_NAME" >/dev/null 2>&1 || true
+        # `sbx exec` auto-starts a stopped sandbox, but the steps below run immediately and
+        # node_modules_overlay aborts the mount if its exec fails. Without this wait, a slow
+        # restart turns the recovery path into the failure it is meant to fix.
+        echo "Waiting for the sandbox to come back up..."
+        retry 10 6 sbx exec "$MOUNT_NAME" true \
+            || echo "⚠ Sandbox slow to restart — continuing; a failure below may just be that."
     fi
     # Editor integration is best-effort and must never block the mount.
     ide_link "$MOUNT_NAME" || true
@@ -422,6 +465,7 @@ cmd_clone() {
         sbx exec "$CLONE_NAME" bash -lc 'sudo sed -i "/export RUN_PRE_COMMIT_HOOK=/d" /etc/sandbox-persistent.sh; printf "export RUN_PRE_COMMIT_HOOK=0\n" | sudo tee -a /etc/sandbox-persistent.sh >/dev/null' || true
         configure_policy "$CLONE_NAME"
         accept_trust "$CLONE_NAME"
+        exclude_generated_memory "$CLONE_NAME"
         link_plans_dir "$CLONE_NAME"
         setup_signing "$CLONE_NAME"
         echo "Installing dependencies in the clone (generate-types hits the DHIS2 instance; includes the Cypress binary)..."
