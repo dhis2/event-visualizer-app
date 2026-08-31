@@ -6,13 +6,9 @@ export const AXES_HEIGHT_STORAGE_KEY = 'dhis2.event-visualizer.axesHeight'
  * denotes — so it is the stored state, not a fallback the caller supplies. */
 export const getLayoutPanelHeightFromLocalStorage = (): LayoutPanelHeight => {
     try {
-        const stored = globalThis.localStorage.getItem(AXES_HEIGHT_STORAGE_KEY)
-
-        if (stored === null) {
-            return 'AUTO_FIT'
-        }
-
-        const height = Number.parseInt(stored)
+        const height = Number.parseInt(
+            globalThis.localStorage.getItem(AXES_HEIGHT_STORAGE_KEY) ?? ''
+        )
 
         return Number.isFinite(height) ? height : 'AUTO_FIT'
     } catch {
