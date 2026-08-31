@@ -1,3 +1,8 @@
+import {
+    readLocalStorage,
+    removeLocalStorage,
+    writeLocalStorage,
+} from '@modules/utils/local-storage'
 import type { LayoutPanelHeight } from '@store/ui-slice'
 
 export const AXES_HEIGHT_STORAGE_KEY = 'dhis2.event-visualizer.axesHeight'
@@ -5,30 +10,19 @@ export const AXES_HEIGHT_STORAGE_KEY = 'dhis2.event-visualizer.axesHeight'
 /* An absent key means the panel fits its content, which is what 'AUTO_FIT'
  * denotes — so it is the stored state, not a fallback the caller supplies. */
 export const getLayoutPanelHeightFromLocalStorage = (): LayoutPanelHeight => {
-    try {
-        const height = Number.parseInt(
-            globalThis.localStorage.getItem(AXES_HEIGHT_STORAGE_KEY) ?? ''
-        )
+    const height = Number.parseInt(
+        readLocalStorage(AXES_HEIGHT_STORAGE_KEY) ?? ''
+    )
 
-        return Number.isFinite(height) ? height : 'AUTO_FIT'
-    } catch {
-        return 'AUTO_FIT'
-    }
+    return Number.isFinite(height) ? height : 'AUTO_FIT'
 }
 
 export const setLayoutPanelHeightToLocalStorage = (
     height: LayoutPanelHeight
 ): void => {
-    try {
-        if (height === 'AUTO_FIT') {
-            globalThis.localStorage.removeItem(AXES_HEIGHT_STORAGE_KEY)
-        } else {
-            globalThis.localStorage.setItem(
-                AXES_HEIGHT_STORAGE_KEY,
-                String(Math.round(height))
-            )
-        }
-    } catch {
-        // ignore
+    if (height === 'AUTO_FIT') {
+        removeLocalStorage(AXES_HEIGHT_STORAGE_KEY)
+    } else {
+        writeLocalStorage(AXES_HEIGHT_STORAGE_KEY, String(Math.round(height)))
     }
 }

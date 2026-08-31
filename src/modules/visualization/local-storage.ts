@@ -1,4 +1,8 @@
 import { VISUALIZATION_TYPE_SET } from '@constants/visualization-types'
+import {
+    readLocalStorage,
+    writeLocalStorage,
+} from '@modules/utils/local-storage'
 import type { VisualizationType } from '@types'
 
 export const LAST_USED_TYPE_STORAGE_KEY = 'dhis2.event-visualizer.lastUsedType'
@@ -12,26 +16,13 @@ const isVisualizationType = (
  * default rather than this module duplicating it. */
 export const getLastUsedVisualizationTypeFromLocalStorage = ():
     VisualizationType | undefined => {
-    try {
-        const stored = globalThis.localStorage.getItem(
-            LAST_USED_TYPE_STORAGE_KEY
-        )
+    const stored = readLocalStorage(LAST_USED_TYPE_STORAGE_KEY)
 
-        return isVisualizationType(stored) ? stored : undefined
-    } catch {
-        return undefined
-    }
+    return isVisualizationType(stored) ? stored : undefined
 }
 
 export const setLastUsedVisualizationTypeToLocalStorage = (
     visualizationType: VisualizationType
 ): void => {
-    try {
-        globalThis.localStorage.setItem(
-            LAST_USED_TYPE_STORAGE_KEY,
-            visualizationType
-        )
-    } catch {
-        // ignore
-    }
+    writeLocalStorage(LAST_USED_TYPE_STORAGE_KEY, visualizationType)
 }
