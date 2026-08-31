@@ -1,13 +1,13 @@
 # Translators:
-# Andres Miguel Rubio, 2026
 # Philip Larsen Donnelly, 2026
+# Andres Miguel Rubio, 2026
 # 晓东 林 <13981924470@126.com>, 2026
 # easylin <lin_xd@126.com>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: easylin <lin_xd@126.com>, 2026\n"
 "Language-Team: Chinese (China) (https://app.transifex.com/hisp-uio/teams/100509/zh_CN/)\n"
@@ -31,6 +31,9 @@ msgid ""
 "{{- name}} was not added because it is already used as the custom value."
 msgstr ""
 
+msgid "Retry"
+msgstr "重试"
+
 msgid "Add to {{- axisName}}"
 msgstr ""
 
@@ -43,14 +46,14 @@ msgstr ""
 msgid "Delete filter"
 msgstr ""
 
+msgid "Only available for repeatable stages"
+msgstr ""
+
 msgid "Repeated events"
 msgstr ""
 
 msgid "Data"
 msgstr "数据"
-
-msgid "Only available for repeatable stages"
-msgstr ""
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -201,9 +204,6 @@ msgstr "代码"
 
 msgid "Name"
 msgstr "名称"
-
-msgid "An error occurred"
-msgstr ""
 
 msgid "Resize axes panel"
 msgstr ""
@@ -418,6 +418,9 @@ msgid "{{- names}} will be removed. Are you sure?"
 msgstr ""
 
 msgid "Convert"
+msgstr ""
+
+msgid "Coming soon"
 msgstr ""
 
 msgid "Individual data view"
@@ -997,6 +1000,46 @@ msgstr ""
 
 msgid "Enrollment date"
 msgstr "登记日期"
+
+msgid "Restricted access"
+msgstr "禁止访问"
+
+msgid ""
+"You don't have access to the data in this visualization. Contact a system "
+"administrator."
+msgstr ""
+
+msgid "You don't have access to one or more of the chosen organisation units."
+msgstr "您无法访问一个或多个选定的组织机构。"
+
+msgid ""
+"You don't have access to event analytics. Contact a system administrator."
+msgstr ""
+
+msgid "Something went wrong"
+msgstr "出问题了"
+
+msgid "There's a problem with at least one selected indicator."
+msgstr ""
+
+msgid ""
+"There's a problem with the generated analytics. Contact a system "
+"administrator."
+msgstr "生成的分析存在问题。联系系统管理员。"
+
+msgid "There's a syntax problem with the analytics request."
+msgstr "分析请求存在语法问题。"
+
+msgid "No data"
+msgstr "无数据"
+
+msgid ""
+"The selected dimensions didn't return any data. There may be no data, or you"
+" may not have access to it."
+msgstr ""
+
+msgid "There was a problem getting the data from the server."
+msgstr "从服务器获取数据有问题"
 
 msgid "Columns"
 msgstr ""
