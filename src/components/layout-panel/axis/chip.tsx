@@ -27,7 +27,7 @@ export type LayoutDimension = {
     id: string
     dimensionId: string
     name: string
-    dimensionType?: DimensionType
+    dimensionType: DimensionType
     dimensionItemType?: DimensionType
     optionSet?: string
     programId?: string

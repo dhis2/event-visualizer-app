@@ -52,7 +52,7 @@ const DragOverlayItem: FC<
             </div>
         )
     }
-    if (data.overlayItemProps.dimensionType) {
+    if (isSidebarSortableData(data)) {
         return (
             <DimensionItemContainer isDragOverlay>
                 <DimensionItem

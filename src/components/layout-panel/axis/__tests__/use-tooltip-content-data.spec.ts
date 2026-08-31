@@ -12,6 +12,7 @@ import { useTooltipContentData } from '../use-tooltip-content-data'
 const baseDimension: LayoutDimension = {
     id: 'dx',
     dimensionId: 'dx',
+    dimensionType: 'DATA_ELEMENT',
     name: 'Data',
 }
 
@@ -111,6 +112,7 @@ describe('useTooltipContentData', () => {
             const programDimension: LayoutDimension = {
                 id: 'programUid.stageUid.dimensionUid',
                 dimensionId: 'dimensionUid',
+                dimensionType: 'DATA_ELEMENT',
                 programId: 'programUid',
                 programStageId: 'stageUid',
                 name: 'Program',

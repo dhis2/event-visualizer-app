@@ -103,15 +103,13 @@ export const useDimensionsWithSuffixes = (
                     id,
                     name: metadataItem.name || id,
                     dimensionId: metadataItem.dimensionId ?? id,
+                    dimensionType: metadataItem.dimensionType,
                     programStageId: metadataItem.programStageId,
                     programId: metadataItem.programId,
                     trackedEntityTypeId: metadataItem.trackedEntityTypeId,
                     suffix: getDimensionSuffix(metadataItem, context),
                 }
 
-                if (metadataItem.dimensionType) {
-                    dimension.dimensionType = metadataItem.dimensionType
-                }
                 if (metadataItem.optionSetId) {
                     dimension.optionSet = metadataItem.optionSetId
                 }
