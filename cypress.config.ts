@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import { defineConfig } from 'cypress'
-import viteConfig from './vite-cypress.config'
+import viteConfig from './vite-cypress.config.mjs'
 
 const setupNodeEvents = async (
     on: Cypress.PluginEvents,
