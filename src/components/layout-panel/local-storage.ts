@@ -1,22 +1,22 @@
 import type { LayoutPanelHeight } from '@store/ui-slice'
 
-const AXES_HEIGHT_STORAGE_KEY = 'dhis2.event-visualizer.axesHeight'
+export const AXES_HEIGHT_STORAGE_KEY = 'dhis2.event-visualizer.axesHeight'
 
-/* Undefined when no user-set height is stored, so the caller applies its own
- * default. */
-export const getLayoutPanelHeightFromLocalStorage = (): number | undefined => {
+/* An absent key means the panel fits its content, which is what 'AUTO_FIT'
+ * denotes — so it is the stored state, not a fallback the caller supplies. */
+export const getLayoutPanelHeightFromLocalStorage = (): LayoutPanelHeight => {
     try {
         const stored = globalThis.localStorage.getItem(AXES_HEIGHT_STORAGE_KEY)
 
         if (stored === null) {
-            return undefined
+            return 'AUTO_FIT'
         }
 
         const height = Number.parseInt(stored)
 
-        return Number.isFinite(height) ? height : undefined
+        return Number.isFinite(height) ? height : 'AUTO_FIT'
     } catch {
-        return undefined
+        return 'AUTO_FIT'
     }
 }
 

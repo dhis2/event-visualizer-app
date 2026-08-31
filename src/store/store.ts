@@ -39,9 +39,7 @@ export const getPreloadedState = (appCachedData: AppCachedData) => {
     return {
         ui: {
             ...initialUi,
-            layoutPanelHeight:
-                getLayoutPanelHeightFromLocalStorage() ??
-                initialUi.layoutPanelHeight,
+            layoutPanelHeight: getLayoutPanelHeightFromLocalStorage(),
             sidebarWidth:
                 getSidebarWidthFromLocalStorage() ?? initialUi.sidebarWidth,
         },
