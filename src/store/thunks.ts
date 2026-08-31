@@ -223,8 +223,7 @@ export const tUpdateCurrentVisFromVisUiConfig =
     ) => {
         const { currentVis, visUiConfig } = getState()
 
-        /* Applying the config is the user committing to the vis type, which
-         * loading a saved visualization is not. */
+        // Applying the config commits to the vis type; loading one does not.
         setLastUsedVisualizationTypeToLocalStorage(
             visUiConfig.visualizationType
         )

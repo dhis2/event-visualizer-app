@@ -29,9 +29,8 @@ export const IGNORED_SERIALIZABLE_ACTION_PATHS = [
     'meta.appCachedData',
 ]
 
-/* Preferences the user carries between sessions live in localStorage; they are
- * read here rather than in the slices so each store starts from what is stored
- * now, not from what was stored when the module was first evaluated. */
+/* Read here rather than in the slices so each store picks up what is stored
+ * now, not what was there when the module was first evaluated. */
 export const getPreloadedState = (appCachedData: AppCachedData) => {
     const initialUi = uiSlice.getInitialState()
     const initialVisUiConfig = visUiConfigSlice.getInitialState()

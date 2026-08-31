@@ -46,8 +46,6 @@ const ResizableTestHarness: React.FC = () => {
     )
 }
 
-/* The stored width reaches the hook through the UI slice, not localStorage,
- * so a starting width is seeded via the store. */
 const createStore = (sidebarWidth: number = SIDEBAR_DEFAULT_WIDTH) =>
     setupStore(
         { [uiSlice.name]: uiSlice.reducer },

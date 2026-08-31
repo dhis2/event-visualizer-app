@@ -12,8 +12,6 @@ const isVisualizationType = (
 ): value is VisualizationType =>
     value !== null && VISUALIZATION_TYPE_SET.has(value)
 
-/* Undefined when nothing usable is stored, so the caller applies its own
- * default rather than this module duplicating it. */
 export const getLastUsedVisualizationTypeFromLocalStorage = ():
     VisualizationType | undefined => {
     const stored = readLocalStorage(LAST_USED_TYPE_STORAGE_KEY)

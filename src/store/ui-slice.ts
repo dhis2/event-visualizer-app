@@ -72,8 +72,7 @@ export const uiSlice = createSlice({
     name: 'ui',
     initialState,
     reducers: {
-        /* Panel geometry is a workspace preference that outlives the
-         * visualization being edited, so it survives the clear. */
+        // Panel geometry is a workspace preference, not part of the vis.
         clearUi: (state) => ({
             ...initialState,
             layoutPanelHeight: state.layoutPanelHeight,

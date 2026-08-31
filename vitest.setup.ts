@@ -17,8 +17,8 @@ global.CSS.supports = () => true
 // Add ResizeObserver polyfill
 global.ResizeObserver = ResizeObserver
 
-/* Store creation reads persisted UI preferences from localStorage, so a test
- * that changes one would otherwise leak into the tests after it. */
+/* Store creation reads preferences from localStorage, so one test's change
+ * would otherwise leak into the next. */
 beforeEach(() => {
     globalThis.localStorage.clear()
 })
