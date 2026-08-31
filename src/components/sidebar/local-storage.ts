@@ -5,13 +5,9 @@ import { SIDEBAR_STORAGE_KEY } from './constants'
  * caller's concern, not the storage layer's. */
 export const getSidebarWidthFromLocalStorage = (): number | undefined => {
     try {
-        const stored = globalThis.localStorage.getItem(SIDEBAR_STORAGE_KEY)
-
-        if (stored === null) {
-            return undefined
-        }
-
-        const width = Number.parseInt(stored)
+        const width = Number.parseInt(
+            globalThis.localStorage.getItem(SIDEBAR_STORAGE_KEY) ?? ''
+        )
 
         return Number.isFinite(width) ? width : undefined
     } catch {
