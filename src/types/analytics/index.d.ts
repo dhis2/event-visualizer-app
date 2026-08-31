@@ -172,7 +172,10 @@ declare module '@dhis2/analytics' {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     export const transformEventAggregateResponse: (
         response: any,
-        options?: { hideNaData?: boolean }
+        options?: {
+            hideNaData?: boolean
+            metaDataItemNames?: Record<string, string>
+        }
     ) => any
     /* eslint-enable @typescript-eslint/no-explicit-any */
 }
