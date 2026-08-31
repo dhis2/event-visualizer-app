@@ -11,6 +11,9 @@ export default defineConfig({
     test: {
         setupFiles: './vitest.setup.ts',
         environment: 'jsdom',
+        clearMocks: true,
+        unstubEnvs: true,
+        unstubGlobals: true,
         exclude: [
             ...configDefaults.exclude,
             '**/.d2/**',

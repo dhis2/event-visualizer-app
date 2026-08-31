@@ -158,6 +158,12 @@ effects) to load. This is a guideline, not an absolute — the occasional helper
 - **Testing Library**: Use `@testing-library/react` for component testing
 - **Coverage**: Write tests for utilities and complex logic
 - **Mocking**: Mock DHIS2 API calls appropriately
+- **Resets**: Don't hand-write a `beforeEach` to undo mocks or stubs. `clearMocks`,
+  `unstubEnvs` and `unstubGlobals` are on in `vitest.config.mts`, so call history and
+  `vi.stubEnv`/`vi.stubGlobal` are already reset before every test. Resets that Vitest has
+  no flag for — clearing `localStorage`, restoring real timers — belong in
+  `vitest.setup.ts` if they apply everywhere, or in the spec if they don't. Clearing
+  _within_ a single test is still explicit.
 
 #### Component Tests (Cypress)
 
