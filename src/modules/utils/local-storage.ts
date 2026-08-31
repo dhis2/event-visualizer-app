@@ -1,5 +1,6 @@
-/* Every access is guarded because localStorage throws when the browser blocks
- * site data for the origin. A forgotten preference beats a broken app. */
+/* localStorage throws when the browser blocks site data for the origin. These
+ * reads run during app startup, so an unguarded throw would stop the app from
+ * loading rather than just losing the stored preference. */
 
 export const readLocalStorage = (key: string): string | null => {
     try {
