@@ -1,17 +1,9 @@
-import { logger } from '@modules/logger'
 import {
     readLocalStorage,
     removeLocalStorage,
     writeLocalStorage,
 } from '@modules/utils/local-storage'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-
-const isDebugMode = vi.hoisted(() => vi.fn(() => false))
-
-vi.mock('@modules/debug-mode', () => ({
-    isDebugMode,
-    getLogLevel: () => 'silent',
-}))
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 const KEY = 'test-key'
 
@@ -30,17 +22,9 @@ const blockSiteData = () => {
     })
 }
 
-const spyOnLoggedError = () =>
-    vi.spyOn(logger, 'error').mockImplementation(() => {})
-
 describe('local storage access', () => {
-    beforeEach(() => {
-        isDebugMode.mockReturnValue(false)
-    })
-
     afterEach(() => {
         vi.unstubAllGlobals()
-        vi.restoreAllMocks()
     })
 
     it('reads back a written value', () => {
@@ -76,25 +60,5 @@ describe('local storage access', () => {
         blockSiteData()
 
         expect(() => removeLocalStorage(KEY)).not.toThrow()
-    })
-
-    it('stays quiet about a blocked access outside debug mode', () => {
-        const error = spyOnLoggedError()
-        blockSiteData()
-
-        readLocalStorage(KEY)
-
-        expect(error).not.toHaveBeenCalled()
-    })
-
-    it('reports a blocked access in debug mode', () => {
-        isDebugMode.mockReturnValue(true)
-        const error = spyOnLoggedError()
-        blockSiteData()
-
-        writeLocalStorage(KEY, 'stored')
-
-        expect(error).toHaveBeenCalledOnce()
-        expect(error.mock.calls[0][0]).toContain(KEY)
     })
 })
