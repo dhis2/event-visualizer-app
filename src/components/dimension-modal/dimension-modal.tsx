@@ -1,6 +1,5 @@
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
 import { useDimensionSuffix } from '@components/layout-panel/use-layout-dimensions'
-import { UpdateButton } from '@components/shared/update-button'
 import i18n from '@dhis2/d2-i18n'
 import {
     Modal,
@@ -10,18 +9,13 @@ import {
     ModalTitle,
     Button,
 } from '@dhis2/ui'
-import {
-    useAppDispatch,
-    useAppSelector,
-    useDimensionMetadataItem,
-} from '@hooks'
+import { useAppSelector, useDimensionMetadataItem } from '@hooks'
 import { isDimensionInLayout } from '@modules/layout'
 import { isDimensionMetadataItem } from '@modules/metadata/item-guards'
-import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getUiActiveDimensionModal } from '@store/ui-slice'
 import { getVisUiConfigLayout } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
-import { useCallback, type FC } from 'react'
+import type { FC } from 'react'
 import { AddToLayoutButton } from './add-to-layout-button'
 import { ConditionsModalContent } from './conditions-modal-content/conditions-modal-content'
 import { DynamicDimensionModalContent } from './dynamic-dimension-modal-content/dynamic-dimension-modal-content'
@@ -60,7 +54,6 @@ type DimensionModalProps = {
 export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
     const dataTest = 'dimension-modal'
 
-    const dispatch = useAppDispatch()
     const layout = useAppSelector(getVisUiConfigLayout)
     const dimensionId = useAppSelector(
         getUiActiveDimensionModal
@@ -74,12 +67,6 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
     const modalTitle = suffix
         ? `${dimension?.name} · ${suffix}`
         : dimension?.name
-
-    const onUpdate = useCallback(() => {
-        dispatch(tUpdateCurrentVisFromVisUiConfig())
-
-        onClose()
-    }, [dispatch, onClose])
 
     if (!isDimensionMetadataItem(dimension)) {
         throw new Error(
@@ -106,18 +93,14 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
                 <ButtonStrip>
                     <Button
                         type="button"
-                        secondary
+                        primary={isInLayout}
+                        secondary={!isInLayout}
                         onClick={onClose}
-                        dataTest={`${dataTest}-action-cancel`}
+                        dataTest={`${dataTest}-action-hide`}
                     >
                         {i18n.t('Hide')}
                     </Button>
-                    {isInLayout ? (
-                        <UpdateButton
-                            onClick={onUpdate}
-                            dataTest={`${dataTest}-action-confirm`}
-                        />
-                    ) : (
+                    {!isInLayout && (
                         <AddToLayoutButton
                             onClick={onClose}
                             dataTest={`${dataTest}-action-confirm`}
