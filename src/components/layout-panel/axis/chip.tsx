@@ -13,9 +13,9 @@ import {
     getVisUiConfigOption,
 } from '@store/vis-ui-config-slice'
 import type { Axis, DimensionType, SavedVisualization, ValueType } from '@types'
-import cx from 'classnames'
 import { useCallback, useMemo, useRef, useState, type FC } from 'react'
 import { ChipBase, type ChipBaseProps } from './chip-base'
+import { ChipContainer, ChipContent } from './chip-container'
 import { ChipMenu } from './chip-menu'
 import { DropInsertMarker } from './drop-insert-marker'
 import { getChipItemsText } from './get-chip-items-text'
@@ -27,7 +27,7 @@ export type LayoutDimension = {
     id: string
     dimensionId: string
     name: string
-    dimensionType?: DimensionType
+    dimensionType: DimensionType
     dimensionItemType?: DimensionType
     optionSet?: string
     programId?: string
@@ -118,15 +118,13 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
             style={style}
             data-test={`layout-dimension-dnd-${dimension.id}`}
         >
-            <div
-                className={cx(classes.chip, {
-                    [classes.chipEmpty]: isEmpty,
-                    [classes.active]: isDragging,
-                    [classes.showBlank]: !dimension.name,
-                })}
+            <ChipContainer
+                isEmpty={isEmpty}
+                isDragging={isDragging}
+                showBlank={!dimension.name}
                 data-test="layout-dimension-chip"
             >
-                <div className={classes.content}>
+                <ChipContent>
                     <Tooltip
                         content={
                             <TooltipContent
@@ -159,7 +157,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                             </span>
                         )}
                     </Tooltip>
-                </div>
+                </ChipContent>
                 <div ref={buttonRef}>
                     <IconButton
                         onClick={toggleChipMenu}
@@ -180,7 +178,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                         </Popper>
                     </Layer>
                 )}
-            </div>
+            </ChipContainer>
             {isOver && !isDragging && (
                 <DropInsertMarker
                     sortable={sortable}
