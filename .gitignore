@@ -24,3 +24,6 @@ docs/superpowers
 
 # playwright-cli session artifacts (AI sandboxes)
 .playwright-cli
+
+# superpowers SDD scratch workspace
+.superpowers
