@@ -1,10 +1,14 @@
 import { ChipBase } from '@components/layout-panel/axis/chip-base'
-import chipClasses from '@components/layout-panel/axis/styles/chip.module.css'
+import {
+    ChipContainer,
+    ChipContent,
+} from '@components/layout-panel/axis/chip-container'
 import {
     DimensionItem,
     DimensionItemContainer,
 } from '@components/sidebar/dimension-item'
-import { DragOverlay, useDndMonitor } from '@dnd-kit/core'
+import { IconDelete16 } from '@dhis2/ui'
+import { DragOverlay, useDndContext, useDndMonitor } from '@dnd-kit/core'
 import { snapCenterToCursor } from '@dnd-kit/modifiers'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
@@ -12,48 +16,90 @@ import {
     getMultiSelectedDimensionIds,
 } from '@store/dimensions-selection-slice'
 import cx from 'classnames'
-import { useState, type FC } from 'react'
-import { isAxisSortableData, isSidebarSortableData } from './dnd-data'
+import { useState, type FC, type ReactNode } from 'react'
+import {
+    isAxisSortableData,
+    isOverAxis,
+    isSidebarSortableData,
+} from './dnd-data'
 import classes from './styles/dimension-drag-overlay.module.css'
 import type { DraggedItemEventData } from './types'
 
-const DragOverlayItem: FC<
-    DraggedItemEventData & { multiSelectCount: number }
-> = ({ multiSelectCount, ...data }) => {
-    if (isAxisSortableData(data)) {
+const DragOverlayBadge: FC<{
+    willRemove?: boolean
+    multiSelectCount?: number
+}> = ({ willRemove, multiSelectCount }) => {
+    if (willRemove) {
         return (
-            <div
-                className={cx(
-                    chipClasses.chip,
-                    chipClasses.dragging,
-                    classes.overlay,
-                    {
-                        [chipClasses.chipEmpty]: data.overlayItemProps.isEmpty,
-                    }
-                )}
+            <span
+                className={classes.removeBadge}
+                data-test="chip-remove-indicator"
             >
-                <div className={chipClasses.content}>
-                    <ChipBase {...data.overlayItemProps} isDragging />
-                </div>
-            </div>
+                <IconDelete16 color="#ffffff" />
+            </span>
         )
+    } else if (typeof multiSelectCount === 'number' && multiSelectCount >= 2) {
+        return <span className={classes.countBadge}>{multiSelectCount}</span>
+    } else {
+        return null
     }
-    if (data.overlayItemProps.dimensionType) {
+}
+
+const DragOverlayFrame: FC<{
+    willRemove?: boolean
+    multiSelectCount?: number
+    children: ReactNode
+}> = ({ willRemove, multiSelectCount, children }) => (
+    <div className={classes.dragOverlay}>
+        <div
+            className={cx(classes.dragOverlayBox, {
+                [classes.willRemove]: willRemove,
+            })}
+        >
+            {children}
+        </div>
+        <DragOverlayBadge
+            willRemove={willRemove}
+            multiSelectCount={multiSelectCount}
+        />
+    </div>
+)
+
+const DragOverlayItem: FC<DraggedItemEventData> = (data) => {
+    const { over } = useDndContext()
+    const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
+
+    if (isAxisSortableData(data)) {
+        const willRemove = !isOverAxis(over?.data.current)
         return (
-            <DimensionItemContainer isDragOverlay>
-                <DimensionItem
-                    name={data.overlayItemProps.dimensionName}
-                    dimensionType={data.overlayItemProps.dimensionType}
-                />
-                {multiSelectCount >= 2 && (
-                    <span className={classes.countBadge}>
-                        {multiSelectCount}
-                    </span>
-                )}
-            </DimensionItemContainer>
+            <DragOverlayFrame willRemove={willRemove}>
+                <ChipContainer
+                    isEmpty={data.overlayItemProps.isEmpty}
+                    className={classes.clone}
+                >
+                    <ChipContent>
+                        <ChipBase {...data.overlayItemProps} isDragging />
+                    </ChipContent>
+                </ChipContainer>
+            </DragOverlayFrame>
         )
+    } else if (isSidebarSortableData(data)) {
+        const multiSelectCount = multiSelectedIds.includes(data.dimensionId)
+            ? multiSelectedIds.length
+            : 0
+        return (
+            <DragOverlayFrame multiSelectCount={multiSelectCount}>
+                <DimensionItemContainer>
+                    <DimensionItem
+                        name={data.overlayItemProps.dimensionName}
+                        dimensionType={data.overlayItemProps.dimensionType}
+                    />
+                </DimensionItemContainer>
+            </DragOverlayFrame>
+        )
+    } else {
+        return null
     }
-    return null
 }
 
 export const DimensionDragOverlay: FC = () => {
@@ -81,20 +127,10 @@ export const DimensionDragOverlay: FC = () => {
         },
     })
 
-    const multiSelectCount =
-        draggedDimensionData &&
-        isSidebarSortableData(draggedDimensionData) &&
-        multiSelectedIds.includes(draggedDimensionData.dimensionId)
-            ? multiSelectedIds.length
-            : 0
-
     return (
         <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>
             {draggedDimensionData ? (
-                <DragOverlayItem
-                    {...draggedDimensionData}
-                    multiSelectCount={multiSelectCount}
-                />
+                <DragOverlayItem {...draggedDimensionData} />
             ) : null}
         </DragOverlay>
     )

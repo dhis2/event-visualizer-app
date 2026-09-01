@@ -491,6 +491,7 @@ describe('collision-detector', () => {
 
             const active = {
                 id: 'dragged',
+                data: { current: {} },
             } as any
 
             const collisions = collisionDetector({
@@ -511,6 +512,7 @@ describe('collision-detector', () => {
 
             const active = {
                 id: 'dragged',
+                data: { current: {} },
             } as any
 
             const collisions = collisionDetector({
@@ -542,6 +544,7 @@ describe('collision-detector', () => {
 
             const active = {
                 id: 'dragged',
+                data: { current: {} },
             } as any
 
             const collisions = collisionDetector({
@@ -557,6 +560,7 @@ describe('collision-detector', () => {
         it('should return empty array when no pointer coordinates', () => {
             const active = {
                 id: 'dragged',
+                data: { current: {} },
             } as any
 
             const collisions = collisionDetector({
@@ -568,7 +572,7 @@ describe('collision-detector', () => {
             expect(collisions).toHaveLength(0)
         })
 
-        it('should exclude the active container from collisions', () => {
+        it('keeps the active container as a collision so `over` stays populated over its own slot', () => {
             const chip1 = createMockChipContainer({
                 id: 'chip1',
                 rect: createMockRect({
@@ -583,6 +587,7 @@ describe('collision-detector', () => {
 
             const active = {
                 id: 'chip1', // Same as container
+                data: { current: {} },
             } as any
 
             const collisions = collisionDetector({
@@ -591,7 +596,8 @@ describe('collision-detector', () => {
                 droppableContainers: [chip1],
             } as any)
 
-            expect(collisions).toHaveLength(0)
+            expect(collisions).toHaveLength(1)
+            expect(collisions[0].id).toBe('chip1')
         })
 
         it('should prioritize chip collisions over axis container collisions', () => {
@@ -613,6 +619,7 @@ describe('collision-detector', () => {
 
             const active = {
                 id: 'dragged',
+                data: { current: {} },
             } as any
 
             const collisions = collisionDetector({
@@ -625,129 +632,16 @@ describe('collision-detector', () => {
             expect(collisions[0].id).toBe('chip')
         })
 
-        it('skips a disabled axis container even if the pointer is directly over it', () => {
-            const disabledAxis = {
-                ...createMockAxisContainer(
-                    'columns',
-                    createMockRect({
-                        top: 0,
-                        left: 0,
-                        width: 400,
-                        height: 100,
-                    })
-                ),
-                disabled: true,
-            }
-
-            const active = {
-                id: 'dragged',
-            } as any
-
-            const collisions = collisionDetector({
-                active,
-                pointerCoordinates: { x: 50, y: 20 },
-                droppableContainers: [disabledAxis],
-            } as any)
-
-            expect(collisions).toHaveLength(0)
-        })
-
-        it('skips a disabled chip even if the pointer is directly over it', () => {
-            const disabledChip = {
-                ...createMockChipContainer({
-                    id: 'chip-disabled',
-                    rect: createMockRect({
-                        top: 10,
-                        left: 15,
-                        width: 80,
-                        height: 20,
-                    }),
-                    axis: 'columns',
-                    index: 0,
-                }),
-                disabled: true,
-            }
-
-            const active = {
-                id: 'dragged',
-            } as any
-
-            const collisions = collisionDetector({
-                active,
-                pointerCoordinates: { x: 50, y: 20 },
-                droppableContainers: [disabledChip],
-            } as any)
-
-            expect(collisions).toHaveLength(0)
-        })
-
-        it('falls back to a non-disabled axis when the disabled one would have won by overlap', () => {
-            /* Both axes overlap the pointer rect. The disabled one has the
-             * higher intersection ratio (it fully contains the pointer), but
-             * the collision detector must pick the enabled one. */
-            const disabledColumns = {
-                ...createMockAxisContainer(
-                    'columns',
-                    createMockRect({
-                        top: 0,
-                        left: 0,
-                        width: 100,
-                        height: 100,
-                    })
-                ),
-                disabled: true,
-            }
-            const enabledFilters = createMockAxisContainer(
-                'filters',
-                createMockRect({
-                    top: 0,
-                    left: 0,
-                    width: 400,
-                    height: 100,
-                })
-            )
-
-            const active = {
-                id: 'dragged',
-            } as any
-
-            const collisions = collisionDetector({
-                active,
-                pointerCoordinates: { x: 50, y: 50 },
-                droppableContainers: [disabledColumns, enabledFilters],
-            } as any)
-
-            expect(collisions).toHaveLength(1)
-            expect(collisions[0].id).toBe('filters')
-        })
-
-        it('uses computeLineEndMatch from an enabled axis even when the disabled-axis pointer overlap would dominate', () => {
-            const disabledColumnsAxis = {
-                ...createMockAxisContainer(
-                    'columns',
-                    createMockRect({
-                        top: 0,
-                        left: 0,
-                        width: 100,
-                        height: 50,
-                    })
-                ),
-                disabled: true,
-            }
-            const enabledRowsAxis = createMockAxisContainer(
+        it('returns no collisions when the active drag is layout-blocked', () => {
+            const axisContainer = createMockAxisContainer(
                 'rows',
-                createMockRect({
-                    top: 0,
-                    left: 0,
-                    width: 400,
-                    height: 100,
-                })
+                createMockRect({ top: 0, left: 0, width: 400, height: 100 })
             )
-            const rowsChip = createMockChipContainer({
-                id: 'rows-chip',
+            const chip = createMockChipContainer({
+                id: 'chip',
                 rect: createMockRect({
                     top: 10,
-                    left: 200,
+                    left: 10,
                     width: 80,
                     height: 20,
                 }),
@@ -757,20 +651,16 @@ describe('collision-detector', () => {
 
             const active = {
                 id: 'dragged',
+                data: { current: { isLayoutBlocked: true } },
             } as any
 
             const collisions = collisionDetector({
                 active,
                 pointerCoordinates: { x: 50, y: 20 },
-                droppableContainers: [
-                    disabledColumnsAxis,
-                    enabledRowsAxis,
-                    rowsChip,
-                ],
+                droppableContainers: [axisContainer, chip],
             } as any)
 
-            expect(collisions).toHaveLength(1)
-            expect(collisions[0].id).toBe('rows-chip')
+            expect(collisions).toHaveLength(0)
         })
     })
 })

@@ -66,6 +66,7 @@ const DefaultWrapper = ({ children }: WrapperProps) =>
 const baseDimension: LayoutDimension = {
     id: 'dimId',
     dimensionId: 'dimId',
+    dimensionType: 'DATA_ELEMENT',
     name: 'Test dimension',
 }
 

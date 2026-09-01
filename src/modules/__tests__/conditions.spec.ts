@@ -69,6 +69,7 @@ describe('getOptionSetConditionMetadataIds', () => {
         const dimension: LayoutDimension = {
             id: 'dummy-id',
             dimensionId: 'dummy-dimension-id',
+            dimensionType: 'DATA_ELEMENT',
             name: 'Dummy dimension',
             optionSet: 'optionsetId',
             valueType: 'NUMBER',
@@ -99,6 +100,7 @@ describe('getOrgUnitConditionMetadataIds', () => {
         const dimension: LayoutDimension = {
             id: 'dummy-id',
             dimensionId: 'dummy-dimension-id',
+            dimensionType: 'DATA_ELEMENT',
             name: 'Dummy dimension',
             valueType: 'ORGANISATION_UNIT',
         }
@@ -125,6 +127,7 @@ describe('getBooleanConditionTexts', () => {
         const dimension: LayoutDimension = {
             id: 'dummy-id',
             dimensionId: 'dummy-dimension-id',
+            dimensionType: 'DATA_ELEMENT',
             name: 'Dummy dimension',
             valueType: 'BOOLEAN',
         }
@@ -148,6 +151,7 @@ describe('getBooleanConditionTexts', () => {
         const dimension: LayoutDimension = {
             id: 'dummy-id',
             dimensionId: 'dummy-dimension-id',
+            dimensionType: 'DATA_ELEMENT',
             name: 'Dummy dimension',
             valueType: 'TRUE_ONLY',
         }
@@ -165,6 +169,7 @@ describe('getOperatorConditionTexts', () => {
     const dummyDimension: LayoutDimension = {
         id: 'dummy-id',
         dimensionId: 'dummy-dimension-id',
+        dimensionType: 'DATA_ELEMENT',
         name: 'Dummy dimension',
     }
 
@@ -635,6 +640,7 @@ describe('texts extraction discriminators', () => {
         const dimension: LayoutDimension = {
             id: 'dummy-id',
             dimensionId: 'dummy-dimension-id',
+            dimensionType: 'DATA_ELEMENT',
             name: 'Dummy dimension',
             optionSet: 'optionsetId',
             valueType: 'TEXT',
@@ -679,6 +685,7 @@ describe('texts extraction discriminators', () => {
         const booleanDimension: LayoutDimension = {
             id: 'dummy-id',
             dimensionId: 'dummy-dimension-id',
+            dimensionType: 'DATA_ELEMENT',
             name: 'Dummy dimension',
             valueType: 'BOOLEAN',
         }
@@ -732,6 +739,7 @@ describe('texts extraction discriminators', () => {
         const orgUnitDimension: LayoutDimension = {
             id: 'dummy-id',
             dimensionId: 'dummy-dimension-id',
+            dimensionType: 'DATA_ELEMENT',
             name: 'Dummy dimension',
             valueType: 'ORGANISATION_UNIT',
         }
@@ -786,6 +794,7 @@ describe('texts extraction discriminators', () => {
         const baseDimension: LayoutDimension = {
             id: 'dummy-id',
             dimensionId: 'dummy-dimension-id',
+            dimensionType: 'DATA_ELEMENT',
             name: 'Dummy dimension',
         }
 
