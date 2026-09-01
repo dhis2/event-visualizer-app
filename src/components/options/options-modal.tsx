@@ -1,4 +1,3 @@
-import { UpdateButton } from '@components/shared/update-button'
 import i18n from '@dhis2/d2-i18n'
 import {
     Button,
@@ -10,12 +9,11 @@ import {
     Tab,
     TabBar,
 } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector } from '@hooks'
+import { useAppSelector } from '@hooks'
 import { getOptionsTabsForVisType } from '@modules/options'
-import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import type { OptionsTabKey } from '@types'
-import { useCallback, useMemo, useState, type FC } from 'react'
+import { useMemo, useState, type FC } from 'react'
 import { OptionsTabContent } from './options-tab-content'
 
 const FORM_ID = 'options-modal-form'
@@ -25,8 +23,6 @@ type OptionsModalProps = {
 }
 
 export const OptionsModal: FC<OptionsModalProps> = ({ onClose }) => {
-    const dispatch = useAppDispatch()
-
     const visType = useAppSelector(getVisUiConfigVisualizationType)
 
     const [activeTabKey, setActiveTabKey] = useState<OptionsTabKey>('data')
@@ -35,11 +31,6 @@ export const OptionsModal: FC<OptionsModalProps> = ({ onClose }) => {
         () => getOptionsTabsForVisType(visType),
         [visType]
     )
-
-    const updateVisualizationAndClose = useCallback(() => {
-        dispatch(tUpdateCurrentVisFromVisUiConfig())
-        onClose()
-    }, [onClose, dispatch])
 
     return (
         <Modal
@@ -61,7 +52,7 @@ export const OptionsModal: FC<OptionsModalProps> = ({ onClose }) => {
                         </Tab>
                     ))}
                 </TabBar>
-                <form onSubmit={updateVisualizationAndClose} id={FORM_ID}>
+                <form onSubmit={onClose} id={FORM_ID}>
                     <OptionsTabContent
                         tabKey={activeTabKey}
                         visType={visType}
@@ -71,18 +62,13 @@ export const OptionsModal: FC<OptionsModalProps> = ({ onClose }) => {
             <ModalActions dataTest={'options-modal-actions'}>
                 <ButtonStrip>
                     <Button
-                        type="button"
-                        secondary
-                        onClick={onClose}
-                        dataTest={'options-modal-action-cancel'}
+                        primary
+                        type="submit"
+                        form={FORM_ID}
+                        dataTest={'options-modal-action-hide'}
                     >
                         {i18n.t('Hide')}
                     </Button>
-                    <UpdateButton
-                        dataTest={'options-modal-action-confirm'}
-                        form={FORM_ID}
-                        type="submit"
-                    />
                 </ButtonStrip>
             </ModalActions>
         </Modal>
