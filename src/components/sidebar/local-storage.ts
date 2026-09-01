@@ -1,26 +1,15 @@
 import {
-    SIDEBAR_DEFAULT_WIDTH,
-    SIDEBAR_MAX_OFFSET,
-    SIDEBAR_MIN_WIDTH,
-    SIDEBAR_STORAGE_KEY,
-} from './constants'
+    readLocalStorage,
+    writeLocalStorage,
+} from '@modules/utils/local-storage'
+import { SIDEBAR_STORAGE_KEY } from './constants'
 
-export const getSidebarWidthFromLocalStorage = (): number => {
-    const stored = globalThis.localStorage.getItem(SIDEBAR_STORAGE_KEY)
-    const width =
-        stored === null ? SIDEBAR_DEFAULT_WIDTH : Number.parseInt(stored)
-    const maxWidth = globalThis.innerWidth - SIDEBAR_MAX_OFFSET
+export const getSidebarWidthFromLocalStorage = (): number | undefined => {
+    const width = Number.parseInt(readLocalStorage(SIDEBAR_STORAGE_KEY) ?? '')
 
-    return Math.max(SIDEBAR_MIN_WIDTH, Math.min(width, maxWidth))
+    return Number.isFinite(width) ? width : undefined
 }
 
 export const setSidebarWidthToLocalStorage = (width: number): void => {
-    try {
-        globalThis.localStorage.setItem(
-            SIDEBAR_STORAGE_KEY,
-            String(Math.round(width))
-        )
-    } catch {
-        // ignore
-    }
+    writeLocalStorage(SIDEBAR_STORAGE_KEY, String(Math.round(width)))
 }

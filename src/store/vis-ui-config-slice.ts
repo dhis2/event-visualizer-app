@@ -137,7 +137,11 @@ export const visUiConfigSlice = createSlice({
     name: 'visUiConfig',
     initialState,
     reducers: {
-        clearVisUiConfig: () => initialState,
+        // A new visualization keeps the vis type the user last worked with.
+        clearVisUiConfig: (state) => ({
+            ...initialState,
+            visualizationType: state.visualizationType,
+        }),
         setVisUiConfig: (
             state,
             action: PayloadAction<Partial<VisUiConfigState>>

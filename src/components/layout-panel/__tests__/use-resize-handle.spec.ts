@@ -7,7 +7,6 @@ import { setLayoutPanelHeightToLocalStorage } from '../local-storage'
 import { useResizeHandle } from '../use-resize-handle'
 
 vi.mock('../local-storage', () => ({
-    getLayoutPanelHeightFromLocalStorage: vi.fn(() => 'AUTO_FIT'),
     setLayoutPanelHeightToLocalStorage: vi.fn(),
 }))
 

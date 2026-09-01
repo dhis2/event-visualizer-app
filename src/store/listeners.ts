@@ -1,3 +1,4 @@
+import { setLastUsedVisualizationTypeToLocalStorage } from '@modules/visualization/local-storage'
 import { isAnyOf } from '@reduxjs/toolkit'
 import { startAppListening } from './middleware-listener'
 import { setNavigationState } from './navigation-slice'
@@ -10,6 +11,7 @@ import { setUiActiveDimensionModal } from './ui-slice'
 import {
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
+    setVisUiConfigVisualizationType,
 } from './vis-ui-config-slice'
 
 export const registerAppListeners = () => {
@@ -39,6 +41,13 @@ export const registerAppListeners = () => {
             } else if (newVisualizationId === 'new') {
                 dispatch(tClearVisualization())
             }
+        },
+    })
+
+    startAppListening({
+        actionCreator: setVisUiConfigVisualizationType,
+        effect: (action) => {
+            setLastUsedVisualizationTypeToLocalStorage(action.payload)
         },
     })
 
