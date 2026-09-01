@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-28T12:57:22.711Z\n"
-"PO-Revision-Date: 2026-08-28T12:57:22.717Z\n"
+"POT-Creation-Date: 2026-09-01T14:21:26.564Z\n"
+"PO-Revision-Date: 2026-09-01T14:21:26.564Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -24,6 +24,9 @@ msgstr ""
 
 msgid "{{- name}} was not added because it is already used as the custom value."
 msgstr "{{- name}} was not added because it is already used as the custom value."
+
+msgid "Unapplied changes"
+msgstr "Unapplied changes"
 
 msgid "Retry"
 msgstr "Retry"
