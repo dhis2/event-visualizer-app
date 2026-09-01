@@ -527,7 +527,7 @@ it('shows the new empty state', { tags: ['@skip-43'] }, () => {})
 it('shows the temporary warning', { tags: ['@skip-43', '@skip-45'] }, () => {})
 ```
 
-Filtering is done by [@cypress/grep](https://github.com/cypress-io/cypress/tree/develop/npm/grep). The version under test comes from `dhis2InstanceVersion` in `cypress.env.json` (`API_VERSION` on CI), and `cypress/plugins/select-by-version-tags.ts` turns it into the tag filter `-@skip-<version>`, where the leading `-` is grep's "not" operator. A value of `dev` resolves to the version after the three supported releases, i.e. `minDHIS2Version` in `d2.config.js` plus 3.
+Filtering is done by [@cypress/grep](https://github.com/cypress-io/cypress/tree/develop/npm/grep). The version under test comes from `dhis2InstanceVersion` in `cypress.env.json` (`API_VERSION` on CI), and `cypress/plugins/select-by-version-tags.ts` turns it into the tag filter `-@skip-<version>`, where the leading `-` is grep's "not" operator.
 
 Because each test run targets a single backend, the filter is always one negation. Should a single run ever need to exclude two versions, the negations must be AND-joined (`-@skip-43+-@skip-45`) — in grep syntax a space is an OR, which would exclude only the tests carrying _both_ tags.
 

@@ -21,18 +21,9 @@ const MIN_DHIS2_VERSION = extractMinorVersion(
     String(d2config.minDHIS2Version ?? '')
 )
 
-/* DHIS2 supports the three most recent releases, so the development branch is
- * always one version ahead of those: minimum supported + 3. */
-const DEV_VERSION = MIN_DHIS2_VERSION + 3
-
-const getInstanceMinorVersion = (instanceVersion: string | number): number =>
-    String(instanceVersion).toLowerCase() === 'dev'
-        ? DEV_VERSION
-        : extractMinorVersion(String(instanceVersion))
-
 export const selectByVersionTags = (config: Cypress.PluginConfigOptions) => {
-    const instanceVersion = getInstanceMinorVersion(
-        config.env.dhis2InstanceVersion
+    const instanceVersion = extractMinorVersion(
+        String(config.env.dhis2InstanceVersion)
     )
 
     if (Number.isNaN(instanceVersion)) {
@@ -52,7 +43,6 @@ export const selectByVersionTags = (config: Cypress.PluginConfigOptions) => {
         grepTags: `-@skip-${instanceVersion}`,
         // Excluded tests are left out of the results instead of reported as pending
         grepOmitFiltered: true,
-        grepFilterSpecs: true,
     }
 
     cypressGrepPlugin(config)
