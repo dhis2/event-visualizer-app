@@ -1,5 +1,6 @@
 import { AXES } from '@constants/axis'
 import { DEFAULT_OPTIONS } from '@constants/options'
+import { removeDimensionPropertiesBeforeSaving } from '@modules/dimension/translation'
 import type {
     CurrentVisualization,
     DimensionArray,
@@ -10,7 +11,6 @@ import type {
 } from '@types'
 import deepEqual from 'deep-equal'
 import { isVisualizationEmpty } from './guards'
-import { removeDimensionPropertiesBeforeSaving } from './save'
 
 // Keys on CurrentVisualization that are NOT part of EventVisualizationOptions.
 // Combined with the option keys (derived from DEFAULT_OPTIONS below) this

@@ -1,26 +1,10 @@
 import { getHeadersMap } from '@modules/analytics-request'
+import { removeDimensionPropertiesBeforeSaving } from '@modules/dimension/translation'
 import type {
     CurrentVisualization,
-    DimensionArray,
-    DimensionRecord,
     SavedVisualization,
     SortDirection,
 } from '@types'
-
-export const removeDimensionPropertiesBeforeSaving = (
-    axis: DimensionArray
-): DimensionArray => {
-    return axis.map((dim) => {
-        const dimension = { ...dim }
-        const propsToRemove = ['dimensionType', 'valueType']
-
-        propsToRemove.forEach((prop) => {
-            delete dimension[prop as keyof DimensionRecord]
-        })
-
-        return dimension
-    })
-}
 
 const getDimensionIdFromHeaderName = (
     headerName: string,
