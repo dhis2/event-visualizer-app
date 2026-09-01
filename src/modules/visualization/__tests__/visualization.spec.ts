@@ -5,10 +5,10 @@ import { normalizeApiSavedVisualization } from '@modules/visualization/normalize
 import { getSaveableVisualization } from '@modules/visualization/save'
 import {
     getVisualizationState,
-    getVisualizationUiConfig,
     isDefaultOptionValue,
     toCurrentVis,
 } from '@modules/visualization/state'
+import { getVisualizationUiConfig } from '@modules/visualization/ui-config'
 import { buildCurrentVisFromVisUiConfig } from '@store/thunks'
 import type {
     ApiSavedVisualization,

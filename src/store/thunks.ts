@@ -15,10 +15,8 @@ import {
     isVisualizationEmpty,
 } from '@modules/visualization/guards'
 import { setLastUsedVisualizationTypeToLocalStorage } from '@modules/visualization/local-storage'
-import {
-    getVisualizationUiConfig,
-    toCurrentVis,
-} from '@modules/visualization/state'
+import { toCurrentVis } from '@modules/visualization/state'
+import { getVisualizationUiConfig } from '@modules/visualization/ui-config'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import type {
     AppDispatch,
