@@ -1,6 +1,7 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { MetadataStore } from '@modules/metadata/store'
 import { getDefaultOptions } from '@modules/options'
+import { buildCurrentVisFromVisUiConfig } from '@modules/visualization/build'
 import { normalizeApiSavedVisualization } from '@modules/visualization/normalize-legacy'
 import { getSaveableVisualization } from '@modules/visualization/save'
 import {
@@ -9,7 +10,6 @@ import {
     toCurrentVis,
 } from '@modules/visualization/state'
 import { getVisualizationUiConfig } from '@modules/visualization/ui-config'
-import { buildCurrentVisFromVisUiConfig } from '@store/thunks'
 import type {
     ApiSavedVisualization,
     CurrentVisualization,
