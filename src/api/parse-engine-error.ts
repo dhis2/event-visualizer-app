@@ -36,6 +36,11 @@ export type EngineError = {
     errorReports?: Array<ErrorReport>
 }
 
+export const isEngineError = (error: unknown): error is EngineError =>
+    typeof error === 'object' &&
+    error !== null &&
+    ENGINE_ERROR_TYPES.includes((error as EngineError).type)
+
 const cleanErrorReport = (errorReport: ResponseErrorReport): ErrorReport => {
     return {
         errorCode: errorReport.errorCode,

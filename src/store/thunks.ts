@@ -1,6 +1,7 @@
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { legendSetsApi } from '@api/legend-sets-api'
+import { isEngineError, parseEngineError } from '@api/parse-engine-error'
 import { extractDataSourceIdFromVisualization } from '@modules/data-source'
 import { canDimensionHaveLegendSets } from '@modules/dimension/grouping'
 import {
@@ -121,11 +122,20 @@ export const tLoadSavedVisualization = createAsyncThunk<
                 /* A failure turning the fetched visualization into current-vis
                  * state is a bug, not a fetch error; parseEngineError tags it
                  * 'runtime', so it surfaces as fatal. */
-                dispatch(setVisualizationLoadError(processingError))
+                dispatch(
+                    setVisualizationLoadError(parseEngineError(processingError))
+                )
                 dispatch(setIsVisualizationLoading(false))
             }
         } else if (error) {
-            dispatch(setVisualizationLoadError(error))
+            /* The base query already parsed anything that came off the wire;
+             * only RTK's own serialized errors still need it. Parsing twice
+             * would flatten a fetch failure into a fatal 'runtime' error. */
+            dispatch(
+                setVisualizationLoadError(
+                    isEngineError(error) ? error : parseEngineError(error)
+                )
+            )
             dispatch(setIsVisualizationLoading(false))
         }
     }
