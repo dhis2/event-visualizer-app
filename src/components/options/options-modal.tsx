@@ -13,7 +13,7 @@ import { useAppSelector } from '@hooks'
 import { getOptionsTabsForVisType } from '@modules/options'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import type { OptionsTabKey } from '@types'
-import { useMemo, useState, type FC } from 'react'
+import { useCallback, useMemo, useState, type FC, type FormEvent } from 'react'
 import { OptionsTabContent } from './options-tab-content'
 
 const FORM_ID = 'options-modal-form'
@@ -30,6 +30,14 @@ export const OptionsModal: FC<OptionsModalProps> = ({ onClose }) => {
     const optionsTabs = useMemo(
         () => getOptionsTabsForVisType(visType),
         [visType]
+    )
+
+    const onSubmit = useCallback(
+        (event: FormEvent) => {
+            event.preventDefault()
+            onClose()
+        },
+        [onClose]
     )
 
     return (
@@ -52,7 +60,7 @@ export const OptionsModal: FC<OptionsModalProps> = ({ onClose }) => {
                         </Tab>
                     ))}
                 </TabBar>
-                <form onSubmit={onClose} id={FORM_ID}>
+                <form onSubmit={onSubmit} id={FORM_ID}>
                     <OptionsTabContent
                         tabKey={activeTabKey}
                         visType={visType}
