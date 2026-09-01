@@ -1,36 +1,13 @@
 import { renderWithAppWrapper } from '@test-utils/app-wrapper'
 import { screen } from '@testing-library/react'
-import type { CurrentVisualization, Layout, RootState } from '@types'
+import type { Layout, RootState } from '@types'
 import { describe, it, expect } from 'vitest'
+import {
+    DIMENSION_ID,
+    metadata,
+    populatedVis,
+} from '../__fixtures__/unapplied-changes'
 import { UnappliedChangesNotice } from '../unapplied-changes-notice'
-
-const STAGE_ID = 'stage1'
-const DIMENSION_ID = `${STAGE_ID}.de1`
-
-const metadata = {
-    [STAGE_ID]: { id: STAGE_ID, name: 'Stage 1' },
-    [DIMENSION_ID]: {
-        id: DIMENSION_ID,
-        name: 'Data element 1',
-        dimensionId: 'de1',
-        programStageId: STAGE_ID,
-        dimensionType: 'DATA_ELEMENT',
-        valueType: 'TEXT',
-    },
-}
-
-/* digitGroupSeparator is seeded onto the default store's visUiConfig from the
- * mocked system settings (src/test-utils/__fixtures__/system-settings.json),
- * so a currentVis that matches the default ui config must carry the same
- * value. */
-const populatedVis = {
-    type: 'LINE_LIST',
-    outputType: 'EVENT',
-    digitGroupSeparator: 'SPACE',
-    columns: [],
-    rows: [],
-    filters: [],
-} as unknown as CurrentVisualization
 
 const layoutWithDimension = {
     columns: [DIMENSION_ID],

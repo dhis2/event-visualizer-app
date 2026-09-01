@@ -2,37 +2,14 @@ import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { addVisUiConfigLayoutDimension } from '@store/vis-ui-config-slice'
 import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 import { act } from '@testing-library/react'
-import type { CurrentVisualization, RootState } from '@types'
+import type { RootState } from '@types'
 import { describe, it, expect } from 'vitest'
+import {
+    DIMENSION_ID,
+    metadata,
+    populatedVis,
+} from '../__fixtures__/unapplied-changes'
 import { useHasUnappliedChanges } from '../use-has-unapplied-changes'
-
-const STAGE_ID = 'stage1'
-const DIMENSION_ID = `${STAGE_ID}.de1`
-
-const metadata = {
-    [STAGE_ID]: { id: STAGE_ID, name: 'Stage 1' },
-    [DIMENSION_ID]: {
-        id: DIMENSION_ID,
-        name: 'Data element 1',
-        dimensionId: 'de1',
-        programStageId: STAGE_ID,
-        dimensionType: 'DATA_ELEMENT',
-        valueType: 'TEXT',
-    },
-}
-
-/* digitGroupSeparator is seeded onto the default store's visUiConfig from the
- * mocked system settings (src/test-utils/__fixtures__/system-settings.json),
- * so a currentVis that matches the default ui config must carry the same
- * value. */
-const populatedVis = {
-    type: 'LINE_LIST',
-    outputType: 'EVENT',
-    digitGroupSeparator: 'SPACE',
-    columns: [],
-    rows: [],
-    filters: [],
-} as unknown as CurrentVisualization
 
 const renderHookWithVis = (currentVis: Partial<RootState>['currentVis']) =>
     renderHookWithAppWrapper(useHasUnappliedChanges, {
