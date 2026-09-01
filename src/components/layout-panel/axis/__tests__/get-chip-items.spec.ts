@@ -130,16 +130,19 @@ describe('getChipItemsText', () => {
     })
 
     describe('when axisId is "filters"', () => {
-        it('returns empty string when no conditions or items', () => {
-            const result = getChipItemsText({
-                dimension: { dimensionType: 'DATA_ELEMENT' },
-                conditionsLength: undefined,
-                itemsLength: undefined,
-                axisId: 'filters',
-            })
+        it.each(['DATA_ELEMENT', 'ORGANISATION_UNIT', 'PERIOD'] as const)(
+            'returns empty string for %s with no conditions or items',
+            (dimensionType) => {
+                const result = getChipItemsText({
+                    dimension: { dimensionType },
+                    conditionsLength: undefined,
+                    itemsLength: undefined,
+                    axisId: 'filters',
+                })
 
-            expect(result).toBe('')
-        })
+                expect(result).toBe('')
+            }
+        )
 
         it('returns condition count for TRUE_ONLY valueType with 1 condition', () => {
             const result = getChipItemsText({
@@ -206,28 +209,6 @@ describe('getChipItemsText', () => {
             })
 
             expect(result).toBe('5')
-        })
-
-        it('returns empty string for non-TE organisation units with no itemsLength', () => {
-            const result = getChipItemsText({
-                dimension: { dimensionType: 'ORGANISATION_UNIT' },
-                conditionsLength: undefined,
-                itemsLength: undefined,
-                axisId: 'filters',
-            })
-
-            expect(result).toBe('')
-        })
-
-        it('returns empty string for period dimensions with no itemsLength', () => {
-            const result = getChipItemsText({
-                dimension: { dimensionType: 'PERIOD' },
-                conditionsLength: undefined,
-                itemsLength: undefined,
-                axisId: 'filters',
-            })
-
-            expect(result).toBe('')
         })
     })
 })
