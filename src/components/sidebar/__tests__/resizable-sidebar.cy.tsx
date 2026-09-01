@@ -3,11 +3,7 @@ import { uiSlice } from '@store/ui-slice'
 import { setupStore } from '@test-utils/setup-store'
 import type React from 'react'
 import { Provider } from 'react-redux'
-import {
-    SIDEBAR_DEFAULT_WIDTH,
-    SIDEBAR_MIN_WIDTH,
-    SIDEBAR_STORAGE_KEY,
-} from '../constants'
+import { SIDEBAR_DEFAULT_WIDTH, SIDEBAR_MIN_WIDTH } from '../constants'
 import { useResizableSidebar } from '../use-resizable-sidebar'
 
 const ResizableTestHarness: React.FC = () => {
@@ -50,14 +46,18 @@ const ResizableTestHarness: React.FC = () => {
     )
 }
 
-const createStore = () =>
+const createStore = (sidebarWidth: number = SIDEBAR_DEFAULT_WIDTH) =>
     setupStore(
         { [uiSlice.name]: uiSlice.reducer },
-        { [uiSlice.name]: uiSlice.getInitialState() }
+        {
+            [uiSlice.name]: {
+                ...uiSlice.getInitialState(),
+                sidebarWidth,
+            },
+        }
     )
 
 const mountHarness = () => {
-    localStorage.removeItem(SIDEBAR_STORAGE_KEY)
     const store = createStore()
     cy.mount(
         <Provider store={store}>
@@ -72,10 +72,6 @@ describe(
     'Resizable sidebar drag behavior',
     { viewportWidth: 1280, viewportHeight: 800 },
     () => {
-        beforeEach(() => {
-            localStorage.removeItem(SIDEBAR_STORAGE_KEY)
-        })
-
         it('renders at default width', () => {
             mountHarness()
 
@@ -177,8 +173,7 @@ describe(
         })
 
         it('resets to default width on double-click', () => {
-            localStorage.setItem(SIDEBAR_STORAGE_KEY, '600')
-            const store = createStore()
+            const store = createStore(600)
             cy.mount(
                 <Provider store={store}>
                     <CssVariables colors spacers theme />

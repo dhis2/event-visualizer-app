@@ -1,3 +1,4 @@
+import { getLastUsedVisualizationTypeFromLocalStorage } from '@modules/visualization/local-storage'
 import { configureStore } from '@reduxjs/toolkit'
 import { registerAppListeners } from '@store/listeners'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -5,6 +6,10 @@ import { listenerMiddleware } from '../middleware-listener'
 import { navigationSlice, setNavigationState } from '../navigation-slice'
 import type { NavigationState } from '../navigation-slice'
 import { tClearVisualization, tLoadSavedVisualization } from '../thunks'
+import {
+    setVisUiConfigVisualizationType,
+    visUiConfigSlice,
+} from '../vis-ui-config-slice'
 
 vi.mock('../thunks', () => ({
     tClearVisualization: vi.fn(() => ({ type: 'mock/tClearVisualization' })),
@@ -73,5 +78,27 @@ describe('navigationSlice listener', () => {
 
         expect(tClearVisualization).not.toHaveBeenCalled()
         expect(tLoadSavedVisualization).not.toHaveBeenCalled()
+    })
+})
+
+describe('visUiConfig visualization type listener', () => {
+    beforeEach(() => {
+        listenerMiddleware.clearListeners()
+        registerAppListeners()
+    })
+
+    it('stores the chosen visualization type as the last used one', async () => {
+        const store = configureStore({
+            reducer: { visUiConfig: visUiConfigSlice.reducer },
+            middleware: (getDefaultMiddleware) =>
+                getDefaultMiddleware().prepend(listenerMiddleware.middleware),
+        })
+
+        store.dispatch(setVisUiConfigVisualizationType('PIVOT_TABLE'))
+        await Promise.resolve()
+
+        expect(getLastUsedVisualizationTypeFromLocalStorage()).toBe(
+            'PIVOT_TABLE'
+        )
     })
 })

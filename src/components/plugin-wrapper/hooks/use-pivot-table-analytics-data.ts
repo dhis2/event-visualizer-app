@@ -1,3 +1,4 @@
+import { useMetadataStore } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import { Analytics, transformEventAggregateResponse } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { useDataEngine } from '@dhis2/app-runtime'
@@ -13,6 +14,7 @@ import {
     getAdaptedVisualization,
     getBaseRequestIdentity,
     getCustomValueRequestParams,
+    getLayoutDimensionMetadataNames,
 } from './query-tools-pivot-table'
 import { useInFlightDedup } from './use-in-flight-dedup'
 
@@ -109,6 +111,7 @@ type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
 
 const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
     const dataEngine = useDataEngine()
+    const metadataStore = useMetadataStore()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
     const { showBoundary } = useErrorBoundary()
 
@@ -157,7 +160,13 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                 // response for PT needs to be transformed
                 const analyticsData = transformEventAggregateResponse(
                     analyticsResponse,
-                    { hideNaData: visualization.hideNaData }
+                    {
+                        hideNaData: visualization.hideNaData,
+                        metaDataItemNames: getLayoutDimensionMetadataNames(
+                            visualization,
+                            metadataStore
+                        ),
+                    }
                 )
 
                 setState({
@@ -180,7 +189,7 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
                 release(requestSignature)
             }
         },
-        [analyticsEngine, reserve, release, showBoundary]
+        [analyticsEngine, metadataStore, reserve, release, showBoundary]
     )
 
     return [fetchAnalyticsData, state]

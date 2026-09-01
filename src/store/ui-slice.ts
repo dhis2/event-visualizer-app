@@ -1,6 +1,4 @@
-import { getLayoutPanelHeightFromLocalStorage } from '@components/layout-panel/local-storage'
 import { SIDEBAR_DEFAULT_WIDTH } from '@components/sidebar/constants'
-import { getSidebarWidthFromLocalStorage } from '@components/sidebar/local-storage'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 import type { OutputType } from '@types'
@@ -32,8 +30,8 @@ export const initialState: UiState = {
     isLayoutPanelExpanded: true,
     isLayoutPanelVisible: true,
     isSidebarVisible: true,
-    layoutPanelHeight: getLayoutPanelHeightFromLocalStorage(),
-    sidebarWidth: getSidebarWidthFromLocalStorage(),
+    layoutPanelHeight: 'AUTO_FIT',
+    sidebarWidth: SIDEBAR_DEFAULT_WIDTH,
     savedPanelVisibility: null,
     updateAnimationShowingFor: null,
 }
@@ -74,7 +72,12 @@ export const uiSlice = createSlice({
     name: 'ui',
     initialState,
     reducers: {
-        clearUi: () => initialState,
+        // Panel geometry is a workspace preference, not part of the vis.
+        clearUi: (state) => ({
+            ...initialState,
+            layoutPanelHeight: state.layoutPanelHeight,
+            sidebarWidth: state.sidebarWidth,
+        }),
         setUiUpdateAnimationShowingFor: (
             state,
             action: PayloadAction<OutputType | null>
