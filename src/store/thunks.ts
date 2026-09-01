@@ -10,11 +10,13 @@ import {
 } from '@modules/layout'
 import { logger } from '@modules/logger'
 import { getEnabledOptions } from '@modules/options'
+import {
+    isCurrentVisualizationPersisted,
+    isVisualizationEmpty,
+} from '@modules/visualization/guards'
 import { setLastUsedVisualizationTypeToLocalStorage } from '@modules/visualization/local-storage'
 import {
     getVisualizationUiConfig,
-    isCurrentVisualizationPersisted,
-    isVisualizationEmpty,
     toCurrentVis,
 } from '@modules/visualization/state'
 import { createAsyncThunk } from '@reduxjs/toolkit'

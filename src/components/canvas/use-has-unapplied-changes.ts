@@ -1,8 +1,6 @@
 import { useAppSelector, useMetadataStore } from '@hooks'
-import {
-    areVisualizationsEquivalent,
-    isVisualizationEmpty,
-} from '@modules/visualization/state'
+import { isVisualizationEmpty } from '@modules/visualization/guards'
+import { areVisualizationsEquivalent } from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { buildCurrentVisFromVisUiConfig } from '@store/thunks'
 import { useMemo } from 'react'

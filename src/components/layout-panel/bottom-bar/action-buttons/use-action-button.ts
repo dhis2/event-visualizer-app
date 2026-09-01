@@ -2,7 +2,7 @@ import i18n from '@dhis2/d2-i18n'
 import { useAppSelector, useLayoutContext, useMetadataStore } from '@hooks'
 import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
 import { isDimensionInLayout } from '@modules/layout'
-import { isVisualizationEmpty } from '@modules/visualization/state'
+import { isVisualizationEmpty } from '@modules/visualization/guards'
 import { getCurrentVis } from '@store/current-vis-slice'
 import {
     getVisUiConfigLayout,
