@@ -2,8 +2,8 @@ import { DEFAULT_OPTIONS } from '@constants/options'
 import { MetadataStore } from '@modules/metadata/store'
 import { getDefaultOptions } from '@modules/options'
 import { normalizeApiSavedVisualization } from '@modules/visualization/normalize-legacy'
+import { getSaveableVisualization } from '@modules/visualization/save'
 import {
-    getSaveableVisualization,
     getVisualizationState,
     getVisualizationUiConfig,
     isDefaultOptionValue,

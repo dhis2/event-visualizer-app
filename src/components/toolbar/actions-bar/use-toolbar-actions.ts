@@ -13,10 +13,8 @@ import {
     isVisualizationEmpty,
     isVisualizationPersistable,
 } from '@modules/visualization/guards'
-import {
-    getSaveableVisualization,
-    getVisualizationState,
-} from '@modules/visualization/state'
+import { getSaveableVisualization } from '@modules/visualization/save'
+import { getVisualizationState } from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import { getSavedVis, setSavedVisNameDescription } from '@store/saved-vis-slice'
