@@ -1,5 +1,8 @@
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
-import { addVisUiConfigLayoutDimension } from '@store/vis-ui-config-slice'
+import {
+    addVisUiConfigLayoutDimension,
+    initialState as visUiConfigInitialState,
+} from '@store/vis-ui-config-slice'
 import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 import { act } from '@testing-library/react'
 import type { RootState } from '@types'
@@ -11,10 +14,18 @@ import {
 } from '../__fixtures__/unapplied-changes'
 import { useHasUnappliedChanges } from '../use-has-unapplied-changes'
 
-const renderHookWithVis = (currentVis: Partial<RootState>['currentVis']) =>
+const renderHookWithVis = (
+    currentVis: Partial<RootState>['currentVis'],
+    visUiConfig?: Partial<RootState>['visUiConfig']
+) =>
     renderHookWithAppWrapper(useHasUnappliedChanges, {
         metadata,
-        partialStore: { preloadedState: { currentVis } },
+        partialStore: {
+            preloadedState: {
+                currentVis,
+                ...(visUiConfig && { visUiConfig }),
+            },
+        },
     })
 
 describe('useHasUnappliedChanges', () => {
@@ -26,6 +37,21 @@ describe('useHasUnappliedChanges', () => {
 
     it('is false for a visualization whose ui config matches it', async () => {
         const { result } = await renderHookWithVis(populatedVis)
+
+        expect(result.current).toBe(false)
+    })
+
+    /* The builder cannot produce a TRACKED_ENTITY_INSTANCE visualization from
+     * an empty layout: no dimension is left to resolve the tracked entity type
+     * from. The canvas renders in that state, so the hook has to survive it. */
+    it('is false when the ui config cannot be built into a visualization', async () => {
+        const { result } = await renderHookWithVis(
+            { ...populatedVis, outputType: 'TRACKED_ENTITY_INSTANCE' },
+            {
+                ...visUiConfigInitialState,
+                outputType: 'TRACKED_ENTITY_INSTANCE',
+            }
+        )
 
         expect(result.current).toBe(false)
     })

@@ -75,31 +75,61 @@ export const isDefaultOptionValue = (key: string, value: unknown): boolean =>
     value === undefined ||
     deepEqual(value, (DEFAULT_OPTIONS as Record<string, unknown>)[key])
 
-/* An axis prepared for comparison: drop the props that aren't persisted
- * (dimensionType, valueType — the API sends PROGRAM_DATA_ELEMENT where the
- * rebuilt vis has DATA_ELEMENT) and treat an empty items array as absent, so
- * unpersisted differences don't read as edits. */
+/* An axis prepared for comparison. Two kinds of difference are not edits:
+ * props that aren't persisted (dimensionType, valueType — the API sends
+ * PROGRAM_DATA_ELEMENT where the rebuilt vis has DATA_ELEMENT) and nested
+ * objects the API returns richer than the app can rebuild from visUiConfig
+ * (option sets and legend sets carry their name; a repetition carries the
+ * dimension, axis and program context the backend derives from the owning
+ * dimension). An empty items array counts as absent. */
 const comparableAxis = (axis: DimensionArray = []): DimensionArray =>
     removeDimensionPropertiesBeforeSaving(axis).map((dim) => {
-        if (Array.isArray(dim.items) && dim.items.length === 0) {
-            const withoutItems = { ...dim }
-            delete withoutItems.items
-            return withoutItems
+        const comparableDim = { ...dim }
+        if (Array.isArray(comparableDim.items) && !comparableDim.items.length) {
+            delete comparableDim.items
         }
-        return dim
+        if (comparableDim.optionSet) {
+            comparableDim.optionSet = { id: comparableDim.optionSet.id }
+        }
+        if (comparableDim.legendSet) {
+            comparableDim.legendSet = { id: comparableDim.legendSet.id }
+        }
+        if (comparableDim.repetition) {
+            comparableDim.repetition = {
+                indexes: comparableDim.repetition.indexes,
+            }
+        }
+        return comparableDim
     })
+
+/* The custom value is applied in one step by its own modal, so it can never
+ * hold a change that is waiting to be applied — `value` and the
+ * `aggregationType` that belongs to it are ignored when comparing the current
+ * vis to the one visUiConfig would produce. A changed custom value *is* an
+ * unsaved change, so the saved-vs-current comparison keeps them. */
+export const CUSTOM_VALUE_FIELDS: ReadonlySet<string> = new Set([
+    'value',
+    'aggregationType',
+])
+
+type ComparisonOptions = {
+    ignoredKeys?: ReadonlySet<string>
+}
 
 /* Compares a saved vis to the current one, and the current one to the vis that
  * visUiConfig would produce. `visualizationB` must carry the full
  * CurrentVisualization key set, because its keys drive the comparison. */
 export const areVisualizationsEquivalent = (
     visualizationA: CurrentVisualization,
-    visualizationB: CurrentVisualization
+    visualizationB: CurrentVisualization,
+    { ignoredKeys }: ComparisonOptions = {}
 ): boolean => {
     const a = visualizationA as Record<string, unknown>
     const b = visualizationB as Record<string, unknown>
     for (const key of Object.keys(b)) {
-        if (key in DEFAULT_OPTIONS) {
+        if (ignoredKeys?.has(key)) {
+            continue
+        } else if (key in DEFAULT_OPTIONS) {
             const bothAtDefault =
                 isDefaultOptionValue(key, a[key]) &&
                 isDefaultOptionValue(key, b[key])

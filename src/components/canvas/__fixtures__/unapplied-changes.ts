@@ -18,7 +18,8 @@ export const metadata = {
 /* digitGroupSeparator is seeded onto the default store's visUiConfig from the
  * mocked system settings (src/test-utils/__fixtures__/system-settings.json),
  * so a currentVis that matches the default ui config must carry the same
- * value. */
+ * value. The real load path is not affected: the API always returns a
+ * digitGroupSeparator, so both sides agree there. */
 export const populatedVis = {
     type: 'LINE_LIST',
     outputType: 'EVENT',
