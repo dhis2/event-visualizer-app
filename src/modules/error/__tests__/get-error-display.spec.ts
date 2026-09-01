@@ -36,6 +36,24 @@ describe('getErrorDisplay', () => {
         expect(display.retryable).toBe(false)
     })
 
+    it('prefers the primary errorCode over the errorCodes list', () => {
+        const display = getErrorDisplay(
+            engineError({ errorCode: 'E7120', errorCodes: ['E7132'] })
+        )
+
+        expect(display.description).toContain('organisation units')
+    })
+
+    it('prefers a known backend code over the access error type', () => {
+        /* An access rejection carries its own code, and that code says more
+         * than the generic restricted-access copy. */
+        const display = getErrorDisplay(
+            engineError({ type: 'access', errorCode: 'E7120' })
+        )
+
+        expect(display.description).toContain('organisation units')
+    })
+
     it('maps an access error without a code to restricted access', () => {
         const display = getErrorDisplay(engineError({ type: 'access' }))
 
