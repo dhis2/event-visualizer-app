@@ -148,34 +148,35 @@ const comparableAxis = (axis: DimensionArray = []): DimensionArray =>
         return dim
     })
 
-const areVisualizationsEquivalent = (
-    savedVis: CurrentVisualization,
-    currentVis: CurrentVisualization
+/* Compares a saved vis to the current one, and the current one to the vis that
+ * visUiConfig would produce. `visualizationB` must carry the full
+ * CurrentVisualization key set, because its keys drive the comparison. */
+export const areVisualizationsEquivalent = (
+    visualizationA: CurrentVisualization,
+    visualizationB: CurrentVisualization
 ): boolean => {
-    const saved = savedVis as Record<string, unknown>
-    const current = currentVis as Record<string, unknown>
-    // currentVis always carries the full key set, so its keys cover every
-    // field a saved vis could differ on.
-    for (const key of Object.keys(current)) {
+    const a = visualizationA as Record<string, unknown>
+    const b = visualizationB as Record<string, unknown>
+    for (const key of Object.keys(b)) {
         if (key in DEFAULT_OPTIONS) {
             const bothAtDefault =
-                isDefaultOptionValue(key, saved[key]) &&
-                isDefaultOptionValue(key, current[key])
-            if (!bothAtDefault && !deepEqual(saved[key], current[key])) {
+                isDefaultOptionValue(key, a[key]) &&
+                isDefaultOptionValue(key, b[key])
+            if (!bothAtDefault && !deepEqual(a[key], b[key])) {
                 return false
             }
         } else if (DIMENSION_AXES.has(key)) {
             if (
                 !deepEqual(
-                    comparableAxis(saved[key] as DimensionArray),
-                    comparableAxis(current[key] as DimensionArray)
+                    comparableAxis(a[key] as DimensionArray),
+                    comparableAxis(b[key] as DimensionArray)
                 )
             ) {
                 return false
             }
         } else if (
             !DERIVED_LAYOUT_FIELDS.has(key) &&
-            !deepEqual(saved[key], current[key])
+            !deepEqual(a[key], b[key])
         ) {
             return false
         }
