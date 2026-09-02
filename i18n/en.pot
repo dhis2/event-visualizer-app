@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-02T13:48:53.069Z\n"
-"PO-Revision-Date: 2026-09-02T13:48:53.069Z\n"
+"POT-Creation-Date: 2026-09-02T14:14:51.291Z\n"
+"PO-Revision-Date: 2026-09-02T14:14:51.291Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -235,24 +235,6 @@ msgstr "Levels"
 msgid "Groups"
 msgstr "Groups"
 
-msgid "Using: {{- itemName}} ({{- aggregationType}})"
-msgstr "Using: {{- itemName}} ({{- aggregationType}})"
-
-msgid "Custom value is from a different stage than dimensions in the layout"
-msgstr "Custom value is from a different stage than dimensions in the layout"
-
-msgid "Update custom value"
-msgstr "Update custom value"
-
-msgid "Create custom value table"
-msgstr "Create custom value table"
-
-msgid "Switch to custom value table"
-msgstr "Switch to custom value table"
-
-msgid "Update custom value table"
-msgstr "Update custom value table"
-
 msgid "Create {{- enrollmentLabel}} list"
 msgstr "Create {{- enrollmentLabel}} list"
 
@@ -333,6 +315,12 @@ msgstr "Not valid with program indicators"
 
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr "Nothing selected. Add items to the layout to get started."
+
+msgid "Cells show {{- valueName}}"
+msgstr "Cells show {{- valueName}}"
+
+msgid "Cells show {{- outputTypeLabel}} count"
+msgstr "Cells show {{- outputTypeLabel}} count"
 
 msgid "One row for each {{- outputTypeLabel}}"
 msgstr "One row for each {{- outputTypeLabel}}"

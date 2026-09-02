@@ -1,0 +1,59 @@
+.button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacers-dp4);
+    padding-block: 6px;
+    padding-inline: var(--spacers-dp8);
+    border: 1px solid transparent;
+    border-inline-start-color: var(--colors-grey300);
+    border-radius: 3px;
+    background-color: var(--colors-white);
+    color: var(--colors-grey700);
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+}
+
+.button:hover {
+    border-color: var(--colors-grey400);
+    background-color: var(--colors-grey100);
+    color: var(--colors-grey900);
+}
+
+.button:active {
+    background-color: var(--colors-grey300);
+}
+
+.button:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+
+.button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.button svg {
+    flex-shrink: 0;
+    color: var(--colors-grey500);
+}
+
+.button svg:last-child {
+    margin-inline-start: var(--spacers-dp4);
+}
+
+.button.disabled,
+.button.disabled:hover {
+    border-color: transparent;
+    border-inline-start-color: var(--colors-grey300);
+    background-color: var(--colors-white);
+    color: var(--colors-grey500);
+    cursor: not-allowed;
+}
+
+.tooltipWrapper {
+    display: flex;
+    align-items: center;
+}
