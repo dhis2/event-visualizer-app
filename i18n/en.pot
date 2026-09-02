@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-28T12:57:22.711Z\n"
-"PO-Revision-Date: 2026-08-28T12:57:22.717Z\n"
+"POT-Creation-Date: 2026-09-02T13:36:59.215Z\n"
+"PO-Revision-Date: 2026-09-02T13:36:59.215Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -342,6 +342,9 @@ msgstr "Not valid with program indicators"
 
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr "Nothing selected. Add items to the layout to get started."
+
+msgid "One row for each {{- outputTypeLabel}}"
+msgstr "One row for each {{- outputTypeLabel}}"
 
 msgid "Configure custom value"
 msgstr "Configure custom value"

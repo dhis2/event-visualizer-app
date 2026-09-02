@@ -8,6 +8,7 @@ import { CustomValueButton } from './action-buttons/custom-value-button'
 import { EnrollmentButton } from './action-buttons/enrollment-button'
 import { EventButton } from './action-buttons/event-button'
 import { TrackedEntityInstanceButton } from './action-buttons/tracked-entity-instance-button'
+import { RowGranularityLabel } from './row-granularity-label/row-granularity-label'
 import classes from './styles/bottom-bar.module.css'
 
 export const BottomBar: FC = () => {
@@ -35,6 +36,9 @@ export const BottomBar: FC = () => {
                             <TrackedEntityInstanceButton />
                             <EnrollmentButton />
                             <EventButton />
+                            {visualizationType === 'LINE_LIST' && (
+                                <RowGranularityLabel />
+                            )}
                         </>
                     )}
                 </div>
