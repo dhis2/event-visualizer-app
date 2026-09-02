@@ -1,7 +1,5 @@
-import { useProgramMetadataItem } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import i18n from '@dhis2/d2-i18n'
-import { useAppSelector, useLayoutContext } from '@hooks'
-import { isDataSourceProgramWithRegistration } from '@modules/data-source'
+import { useAppSelector, useOutputTypeLabel } from '@hooks'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import { useMemo, type FC } from 'react'
 import { BaseButtonWithConditionalTooltip } from './base-button'
@@ -11,19 +9,7 @@ export const EventButton: FC = () => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
 
     const { action, tooltipConfig } = useActionButton('EVENT', 'EVENT')
-    const { programIds } = useLayoutContext()
-    const programMetadata = useProgramMetadataItem(programIds[0])
-
-    const eventLabel = useMemo(() => {
-        if (
-            isDataSourceProgramWithRegistration(programMetadata) &&
-            programMetadata.displayEventLabel
-        ) {
-            return programMetadata.displayEventLabel
-        }
-
-        return i18n.t('Event')
-    }, [programMetadata])
+    const eventLabel = useOutputTypeLabel('EVENT')
 
     const buttonLabelLookup = useMemo(
         () => ({

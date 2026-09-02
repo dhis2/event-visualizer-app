@@ -253,9 +253,6 @@ msgstr "Switch to custom value table"
 msgid "Update custom value table"
 msgstr "Update custom value table"
 
-msgid "Enrollment"
-msgstr "Enrollment"
-
 msgid "Create {{- enrollmentLabel}} list"
 msgstr "Create {{- enrollmentLabel}} list"
 
@@ -274,9 +271,6 @@ msgstr "Update {{- enrollmentLabel}} list"
 msgid "Update {{- enrollmentLabel}} table"
 msgstr "Update {{- enrollmentLabel}} table"
 
-msgid "Event"
-msgstr "Event"
-
 msgid "Create {{- eventLabel}} list"
 msgstr "Create {{- eventLabel}} list"
 
@@ -294,9 +288,6 @@ msgstr "Update {{- eventLabel}} list"
 
 msgid "Update {{- eventLabel}} table"
 msgstr "Update {{- eventLabel}} table"
-
-msgid "tracked entity"
-msgstr "tracked entity"
 
 msgid "Create {{- trackedEntityTypeName}} list"
 msgstr "Create {{- trackedEntityTypeName}} list"
@@ -651,6 +642,9 @@ msgstr "Program indicators"
 msgid "{{- name}} registration"
 msgstr "{{- name}} registration"
 
+msgid "Event"
+msgstr "Event"
+
 msgid "Choose a data source"
 msgstr "Choose a data source"
 
@@ -910,6 +904,12 @@ msgstr "Max value (sum in org unit hierarchy)"
 
 msgid "Custom"
 msgstr "Custom"
+
+msgid "Enrollment"
+msgstr "Enrollment"
+
+msgid "tracked entity"
+msgstr "tracked entity"
 
 msgid "equal to (=)"
 msgstr "equal to (=)"
