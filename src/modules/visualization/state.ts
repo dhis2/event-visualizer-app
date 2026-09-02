@@ -102,33 +102,31 @@ const comparableAxis = (axis: DimensionArray = []): DimensionArray =>
         return comparableDim
     })
 
-/* The custom value is applied in one step by its own modal, so it can never
- * hold a change that is waiting to be applied — `value` and the
- * `aggregationType` that belongs to it are ignored when comparing the current
- * vis to the one visUiConfig would produce. A changed custom value *is* an
- * unsaved change, so the saved-vs-current comparison keeps them. */
-export const CUSTOM_VALUE_FIELDS: ReadonlySet<string> = new Set([
-    'value',
-    'aggregationType',
-])
+/* Top-level metadata refs the API returns with a display name (and, for the
+ * custom value, its aggregation type) where visUiConfig can only rebuild the
+ * id. Compared by id, for the same reason comparableAxis reduces optionSet and
+ * legendSet. */
+const ID_REF_FIELDS: ReadonlySet<string> = new Set(['value'])
 
-type ComparisonOptions = {
-    ignoredKeys?: ReadonlySet<string>
-}
+const comparableIdRef = (ref: unknown): unknown =>
+    ref && typeof ref === 'object' && 'id' in ref
+        ? { id: (ref as { id: string }).id }
+        : ref
 
 /* Compares a saved vis to the current one, and the current one to the vis that
  * visUiConfig would produce. `visualizationB` must carry the full
  * CurrentVisualization key set, because its keys drive the comparison. */
 export const areVisualizationsEquivalent = (
     visualizationA: CurrentVisualization,
-    visualizationB: CurrentVisualization,
-    { ignoredKeys }: ComparisonOptions = {}
+    visualizationB: CurrentVisualization
 ): boolean => {
     const a = visualizationA as Record<string, unknown>
     const b = visualizationB as Record<string, unknown>
     for (const key of Object.keys(b)) {
-        if (ignoredKeys?.has(key)) {
-            continue
+        if (ID_REF_FIELDS.has(key)) {
+            if (!deepEqual(comparableIdRef(a[key]), comparableIdRef(b[key]))) {
+                return false
+            }
         } else if (key in DEFAULT_OPTIONS) {
             const bothAtDefault =
                 isDefaultOptionValue(key, a[key]) &&
