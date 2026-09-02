@@ -8,7 +8,7 @@ import { useActionButton } from './use-action-button'
 export const EventButton: FC = () => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
 
-    const { action, tooltipConfig } = useActionButton('EVENT', 'EVENT')
+    const { action, tooltipConfig } = useActionButton('EVENT')
     const eventLabel = useOutputTypeLabel('EVENT')
 
     const buttonLabelLookup = useMemo(

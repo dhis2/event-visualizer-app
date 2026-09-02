@@ -4,10 +4,10 @@ import { getIsVisualizationLoading } from '@store/loader-slice'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import cx from 'classnames'
 import { type FC } from 'react'
-import { CustomValueButton } from './action-buttons/custom-value-button'
 import { EnrollmentButton } from './action-buttons/enrollment-button'
 import { EventButton } from './action-buttons/event-button'
 import { TrackedEntityInstanceButton } from './action-buttons/tracked-entity-instance-button'
+import { CellValueButton } from './cell-value-button/cell-value-button'
 import { RowGranularityLabel } from './row-granularity-label/row-granularity-label'
 import classes from './styles/bottom-bar.module.css'
 
@@ -29,7 +29,7 @@ export const BottomBar: FC = () => {
                         <>
                             <EnrollmentButton />
                             <EventButton />
-                            <CustomValueButton />
+                            <CellValueButton />
                         </>
                     ) : (
                         <>
