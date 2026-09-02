@@ -114,8 +114,6 @@ const ERROR_SCREENS: ErrorScreen[] = [
     },
 ]
 
-const canvasError = () => cy.getByDataTest('canvas-error')
-
 const Harness: FC<PropsWithChildren> = ({ children }) => (
     <>
         <CssVariables colors spacers theme />
@@ -133,10 +131,10 @@ describe('<CanvasError />', () => {
                     </Harness>
                 )
 
-                canvasError().should('be.visible')
-                canvasError().should('contain.text', title)
-                canvasError().should('contain.text', description)
-                canvasError()
+                cy.getByDataTest('canvas-error')
+                    .should('be.visible')
+                    .and('contain.text', title)
+                    .and('contain.text', description)
                     .findByDataTest(`canvas-error-icon-${icon}`)
                     .should('be.visible')
 
@@ -160,6 +158,9 @@ describe('<CanvasError />', () => {
             </Harness>
         )
 
-        canvasError().should('have.length', ERROR_SCREENS.length)
+        cy.getByDataTest('canvas-error').should(
+            'have.length',
+            ERROR_SCREENS.length
+        )
     })
 })
