@@ -15,7 +15,7 @@ describe('getErrorDisplay', () => {
 
         expect(display.title).toBe('No data')
         expect(display.retryable).toBe(false)
-        expect(display.severity).toBe('info')
+        expect(display.icon).toBe('emptyBox')
     })
 
     it('maps a known backend error code to its message, non-retryable', () => {
@@ -24,7 +24,7 @@ describe('getErrorDisplay', () => {
         expect(display.title).toBe('Restricted access')
         expect(display.description).toContain('organisation units')
         expect(display.retryable).toBe(false)
-        expect(display.severity).toBe('error')
+        expect(display.icon).toBe('data')
     })
 
     it('picks the first known code from the errorCodes list', () => {
@@ -66,6 +66,6 @@ describe('getErrorDisplay', () => {
 
         expect(display.title).toBe('Something went wrong')
         expect(display.retryable).toBe(true)
-        expect(display.severity).toBe('error')
+        expect(display.icon).toBe('generic')
     })
 })

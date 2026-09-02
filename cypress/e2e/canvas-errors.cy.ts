@@ -1,11 +1,13 @@
 const LINE_LIST_ID = 'TIuOzZ0ID0V'
 
 const visualizationRequest = `**/eventVisualizations/${LINE_LIST_ID}*`
-const analyticsRequest = '**/analytics/events/query/**'
+/* Matched on a program UID: the sidebar loads its dimensions from
+ * analytics/events/query/dimensions, and only the data request should fail. */
+const analyticsRequest = /\/analytics\/events\/query\/[A-Za-z0-9]{11}(\?|$)/
 
-/* The canvas error is a NoticeBox; the app-shell crash screen is not. Scoping
- * to it keeps "Something went wrong" from matching either screen. */
-const canvasError = () => cy.getByDataTest('dhis2-uicore-noticebox')
+/* Scoping to the canvas error's own container keeps "Something went wrong" from
+ * matching the app-shell crash screen, which uses the same words. */
+const canvasError = () => cy.getByDataTest('canvas-error')
 
 /* React rethrows to the window even when an error boundary handles it, so every
  * error this suite provokes reaches Cypress as an uncaught exception. Ignore
