@@ -45,8 +45,7 @@ describe('getErrorDisplay', () => {
     })
 
     it('prefers a known backend code over the access error type', () => {
-        /* An access rejection carries its own code, and that code says more
-         * than the generic restricted-access copy. */
+        /* The code says more than the generic restricted-access copy. */
         const display = getErrorDisplay(
             engineError({ type: 'access', errorCode: 'E7120' })
         )

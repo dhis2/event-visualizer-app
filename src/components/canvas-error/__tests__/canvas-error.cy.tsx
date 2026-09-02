@@ -5,10 +5,9 @@ import type { CanvasErrorIcon } from '@modules/error/icons'
 import type { FC, PropsWithChildren } from 'react'
 import { CanvasError } from '../canvas-error'
 
-/* Every canvas error screen, mounted for real so the rendered copy, the
- * illustration and the Retry button can be inspected by eye in the Cypress
- * runner as well as asserted. The mapping logic behind these screens is covered
- * by get-error-display.spec.ts. */
+/* Every canvas error screen, mounted for real so the copy, the illustration
+ * and the Retry button can be inspected by eye in the Cypress runner as well as
+ * asserted. The mapping behind them is covered by get-error-display.spec.ts. */
 
 const engineError = (partial: Partial<EngineError>): EngineError => ({
     type: 'unknown',

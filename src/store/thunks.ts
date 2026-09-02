@@ -128,9 +128,9 @@ export const tLoadSavedVisualization = createAsyncThunk<
                 dispatch(setIsVisualizationLoading(false))
             }
         } else if (error) {
-            /* The base query already parsed anything that came off the wire;
-             * only RTK's own serialized errors still need it. Parsing twice
-             * would flatten a fetch failure into a fatal 'runtime' error. */
+            /* The base query parses anything that came off the wire; only
+             * RTK's own serialized errors still need it. Parsing twice flattens
+             * a fetch failure into a fatal 'runtime' error. */
             dispatch(
                 setVisualizationLoadError(
                     isEngineError(error) ? error : parseEngineError(error)

@@ -142,9 +142,9 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
 
 describe('tLoadSavedVisualization', () => {
     it('keeps a failed fetch as a fetch error instead of a runtime one', async () => {
-        /* PluginWrapper treats a 'runtime' load error as fatal and rethrows it
-         * to the app-shell crash screen, so a fetch failure that arrives tagged
-         * that way costs the user the retryable canvas error. */
+        /* PluginWrapper rethrows a 'runtime' load error to the app-shell crash
+         * screen, so a fetch failure tagged that way costs the user the
+         * retryable canvas error. */
         const { store } = await renderHookWithAppWrapper(() => null, {
             queryData: {
                 eventVisualizations: () => {

@@ -1,4 +1,3 @@
-/* Which of the three error illustrations a canvas error screen shows.
- * 'emptyBox' means nothing came back, 'data' points at the data or the access
+/* 'emptyBox' means nothing came back, 'data' points at the data or the access
  * to it, 'generic' is everything else. */
 export type CanvasErrorIcon = 'emptyBox' | 'data' | 'generic'

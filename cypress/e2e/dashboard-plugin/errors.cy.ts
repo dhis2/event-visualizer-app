@@ -2,12 +2,9 @@ import { pluginBody } from '../../support/dashboard-plugin'
 
 const LINE_LIST_ID = 'TIuOzZ0ID0V'
 
-/* The error screens themselves are covered once, against the app, in
- * canvas-errors.cy.ts. What only the plugin can show is its own wiring: it
- * fetches and retries through useDataQuery instead of the app's store, and a
- * processing failure lands on the plugin boundary rather than the app-shell
- * crash screen. Errors thrown inside the plugin iframe don't reach the test
- * runner, so unlike the app spec this one needs no uncaught-exception guard. */
+/* Only what is specific to the plugin: it fetches and retries through
+ * useDataQuery rather than the app's store, and a processing failure lands on
+ * the plugin boundary. The screens themselves live in canvas-errors.cy.ts. */
 
 describe('dashboard plugin errors', () => {
     beforeEach(() => {
@@ -15,10 +12,9 @@ describe('dashboard plugin errors', () => {
     })
 
     it('refetches the visualization when Retry is clicked', () => {
-        /* Assert the request count grows, not just that the error text is still
-         * shown — that's already true before the click, so a dead button would
-         * pass. A bad id fails at the eventVisualizations fetch, so count
-         * those. */
+        /* Count eventVisualizations requests, where a bad id fails: the error
+         * text is already there before the click, so a dead button would pass
+         * an assertion on it. */
         cy.intercept({ method: 'GET', url: '**/eventVisualizations/**' }).as(
             'vis'
         )
@@ -45,9 +41,8 @@ describe('dashboard plugin errors', () => {
             { method: 'GET', url: `**/eventVisualizations/${LINE_LIST_ID}*` },
             (req) => {
                 req.continue((res) => {
-                    /* Removing the program leaves the layout dimensions with no
-                     * context to resolve against, which throws while the plugin
-                     * renders. */
+                    /* Without the program the layout dimensions have no
+                     * context to resolve against, which throws during render. */
                     delete res.body.program
                     res.body.programDimensions = []
                 })

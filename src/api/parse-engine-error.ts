@@ -36,9 +36,8 @@ export type EngineError = {
     errorReports?: Array<ErrorReport>
 }
 
-/* Whether a value has already been through parseEngineError. A FetchError
- * carries an engine error type too, so the Error check is what separates a
- * parsed result from a raw error that still needs flattening. */
+/* A FetchError carries an engine error type too, so the Error check is what
+ * separates a parsed result from a raw one. */
 export const isEngineError = (error: unknown): error is EngineError =>
     typeof error === 'object' &&
     error !== null &&
