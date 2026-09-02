@@ -130,6 +130,12 @@ const metadata = {
         dimensionType: 'PERIOD',
         valueType: 'DATE',
     },
+    lastUpdated: {
+        id: 'lastUpdated',
+        name: 'Last updated on',
+        dimensionType: 'PERIOD',
+        valueType: 'DATE',
+    },
 }
 
 const initialPreloadedState: Partial<RootState> = {
@@ -291,7 +297,7 @@ describe('useActionButton for Event button', () => {
                 },
                 visUiConfig: {
                     layout: {
-                        columns: [metadata['tei1.a1'].id],
+                        columns: [metadata.lastUpdated.id],
                     },
                     visualizationType: 'LINE_LIST',
                 },
@@ -475,7 +481,7 @@ describe('useActionButton for Enrollment button', () => {
                 },
                 visUiConfig: {
                     layout: {
-                        columns: [metadata['tei1.a1'].id],
+                        columns: [metadata.lastUpdated.id],
                     },
                     visualizationType: 'LINE_LIST',
                 },
@@ -672,6 +678,32 @@ describe('useActionButton for Enrollment button', () => {
 })
 
 describe('useActionButton for Tracked entity instance button', () => {
+    /* A layout of only context-free dimensions resolves no tracked entity type,
+     * so the builder cannot produce this output type. The button must be
+     * disabled: clicking it would throw. */
+    it('returns correct result for: LL, layout with no tracked entity type', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('TRACKED_ENTITY_INSTANCE'),
+            createStoreWithPreloadedState({
+                currentVis: {
+                    outputType: 'TRACKED_ENTITY_INSTANCE',
+                    type: 'LINE_LIST',
+                },
+                visUiConfig: {
+                    layout: {
+                        columns: [metadata.lastUpdated.id],
+                    },
+                    outputType: 'TRACKED_ENTITY_INSTANCE',
+                    visualizationType: 'LINE_LIST',
+                },
+            })
+        )
+
+        expect(result.current.tooltipConfig).toEqual({
+            content: 'Not valid without a tracked entity type',
+        })
+    })
+
     it('returns correct result for: LL, currentVis with outputType !== TRACKED_ENTITY_INSTANCE', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('TRACKED_ENTITY_INSTANCE'),
