@@ -137,7 +137,6 @@ describe('PluginWrapper', () => {
     }
 
     beforeEach(() => {
-        vi.clearAllMocks()
         deferredAnalytics.reset()
     })
 

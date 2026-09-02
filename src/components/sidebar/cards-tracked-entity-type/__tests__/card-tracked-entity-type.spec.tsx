@@ -67,7 +67,6 @@ const createTrackedEntityType = (overrides: Partial<MetadataItem> = {}) =>
 
 describe('CardTrackedEntityType', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
         mockUseDimensionList.mockReturnValue(defaultListResult)
         mockUseSelectedDimensionCount.mockReturnValue(0)
         mockUseCurrentUser.mockReturnValue({

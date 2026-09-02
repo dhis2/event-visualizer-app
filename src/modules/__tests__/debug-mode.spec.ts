@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 const LOG_LEVEL_KEY = 'EVENT_VISUALIZER_LOG_LEVEL'
 
@@ -8,16 +8,6 @@ const importDebugMode = async () => {
 }
 
 describe('debug-mode', () => {
-    beforeEach(() => {
-        localStorage.clear()
-        vi.unstubAllEnvs()
-    })
-
-    afterEach(() => {
-        localStorage.clear()
-        vi.unstubAllEnvs()
-    })
-
     describe('default (no localStorage override)', () => {
         it("returns 'debug' when NODE_ENV=development", async () => {
             vi.stubEnv('NODE_ENV', 'development')

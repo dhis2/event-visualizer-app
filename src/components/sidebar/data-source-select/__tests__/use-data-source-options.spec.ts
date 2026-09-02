@@ -49,7 +49,6 @@ describe('useDataSourceOptions', () => {
     }
 
     beforeEach(() => {
-        vi.clearAllMocks()
         // Reset to default
         mockUseCurrentUser.mockReturnValue({
             name: 'Test User',

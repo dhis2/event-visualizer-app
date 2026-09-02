@@ -5,7 +5,7 @@ import {
 } from '@store/vis-ui-config-slice'
 import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 import { act } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import type { LayoutDimension } from '../chip'
 import { useTooltipContentData } from '../use-tooltip-content-data'
 
@@ -34,10 +34,6 @@ const createVisUiConfigState = (
 })
 
 describe('useTooltipContentData', () => {
-    beforeEach(() => {
-        vi.clearAllMocks()
-    })
-
     describe('basic functionality', () => {
         it('returns empty data for dimension with no items', async () => {
             const { result } = await renderHookWithAppWrapper(
