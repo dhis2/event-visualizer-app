@@ -40,7 +40,7 @@ export const getErrorDisplay = (
     if (error instanceof EmptyResponseError) {
         return {
             icon: 'emptyBox',
-            title: i18n.t('No data'),
+            title: i18n.t('No data available'),
             description: i18n.t(
                 "The selected dimensions didn't return any data. There may be no data, or you may not have access to it."
             ),

@@ -45,7 +45,7 @@ describe('canvas errors', () => {
         cy.contains('button', 'Retry').should('not.exist')
     })
 
-    it('shows the "No data" screen for an analytics response with no rows', () => {
+    it('shows the "No data available" screen for an analytics response with no rows', () => {
         cy.intercept(
             { method: 'GET', url: analyticsRequest },
             { statusCode: 200, body: { headers: [], rows: [], metaData: {} } }
@@ -55,7 +55,7 @@ describe('canvas errors', () => {
 
         cy.visit(`/#/${LINE_LIST_ID}`)
 
-        canvasError().should('contain.text', 'No data')
+        canvasError().should('contain.text', 'No data available')
         cy.contains('button', 'Retry').should('not.exist')
     })
 

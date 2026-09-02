@@ -10,10 +10,10 @@ const engineError = (partial: Partial<EngineError>): EngineError => ({
 })
 
 describe('getErrorDisplay', () => {
-    it('maps an empty response to a non-retryable "No data" info screen', () => {
+    it('maps an empty response to a non-retryable "No data available" screen', () => {
         const display = getErrorDisplay(new EmptyResponseError())
 
-        expect(display.title).toBe('No data')
+        expect(display.title).toBe('No data available')
         expect(display.retryable).toBe(false)
         expect(display.icon).toBe('emptyBox')
     })

@@ -32,7 +32,7 @@ const ERROR_SCREENS: ErrorScreen[] = [
     {
         label: 'empty response',
         error: new EmptyResponseError(),
-        title: 'No data',
+        title: 'No data available',
         description:
             "The selected dimensions didn't return any data. There may be no data, or you may not have access to it.",
         icon: 'emptyBox',
