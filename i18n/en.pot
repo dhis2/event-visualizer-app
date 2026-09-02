@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-01T14:43:55.397Z\n"
-"PO-Revision-Date: 2026-09-01T14:43:55.397Z\n"
+"POT-Creation-Date: 2026-09-02T10:12:31.629Z\n"
+"PO-Revision-Date: 2026-09-02T10:12:31.629Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -24,9 +24,6 @@ msgstr ""
 
 msgid "{{- name}} was not added because it is already used as the custom value."
 msgstr "{{- name}} was not added because it is already used as the custom value."
-
-msgid "Unapplied changes"
-msgstr "Unapplied changes"
 
 msgid "Retry"
 msgstr "Retry"
@@ -345,6 +342,9 @@ msgstr "Not valid with program indicators"
 
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr "Nothing selected. Add items to the layout to get started."
+
+msgid "Unapplied changes"
+msgstr "Unapplied changes"
 
 msgid "Configure custom value"
 msgstr "Configure custom value"

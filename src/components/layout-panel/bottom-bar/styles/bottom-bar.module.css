@@ -22,6 +22,21 @@
     animation: fadeIn 0.4s ease-out forwards;
 }
 
+/* Matches the "Edited" suffix in the title bar, so the two states the user can
+ * be in read as the same kind of note. */
+.unappliedChanges {
+    color: var(--colors-grey600);
+    font-size: 11px;
+    letter-spacing: -0.2px;
+    font-family: monospace;
+    line-height: normal;
+}
+
+.unappliedChanges::before {
+    content: '·';
+    margin-inline-end: 4px;
+}
+
 @keyframes fadeIn {
     0% {
         opacity: 0;

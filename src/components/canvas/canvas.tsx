@@ -11,8 +11,6 @@ import { tLoadSavedVisualization } from '@store/thunks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import type { Sorting } from '@types'
 import { useCallback, type FC } from 'react'
-import classes from './styles/canvas.module.css'
-import { UnappliedChangesNotice } from './unapplied-changes-notice'
 
 export const Canvas: FC = () => {
     const dispatch = useAppDispatch()
@@ -63,17 +61,14 @@ export const Canvas: FC = () => {
     }
 
     return (
-        <div className={classes.container} data-test="canvas">
-            <UnappliedChangesNotice />
-            <PluginWrapper
-                isVisualizationLoading={isVisualizationLoading}
-                visualization={currentVis}
-                visualizationLoadError={visualizationLoadError ?? undefined}
-                onRetryLoad={onRetryLoad}
-                displayProperty={currentUser.settings.displayProperty}
-                onColumnHeaderClick={onColumnHeaderClick}
-                onDataSorted={onDataSorted}
-            />
-        </div>
+        <PluginWrapper
+            isVisualizationLoading={isVisualizationLoading}
+            visualization={currentVis}
+            visualizationLoadError={visualizationLoadError ?? undefined}
+            onRetryLoad={onRetryLoad}
+            displayProperty={currentUser.settings.displayProperty}
+            onColumnHeaderClick={onColumnHeaderClick}
+            onDataSorted={onDataSorted}
+        />
     )
 }
