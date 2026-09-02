@@ -511,3 +511,28 @@ the real dashboard plugin in an iframe the way a dashboard would.
 Paste a visualization id to render it. The filter toggle sends a dashboard
 filter to the plugin; since the plugin applies none, it only shows the "filters
 not applied" notice.
+
+### Version-specific e2e tests
+
+Most e2e tests should pass against every supported DHIS2 version, so tagging is exclusion-based: an untagged test runs against all versions, and a `@skip-<minor version>` tag names a version the test is **excluded on** — not a version it targets.
+
+```ts
+// runs against every version
+it('shows the landing page', () => {})
+
+// runs against every version except 2.43, i.e. 2.44 and up
+it('shows the new empty state', { tags: ['@skip-43'] }, () => {})
+
+// runs against 2.44 only
+it('shows the temporary warning', { tags: ['@skip-43', '@skip-45'] }, () => {})
+```
+
+Filtering is done by [@cypress/grep](https://github.com/cypress-io/cypress/tree/develop/npm/grep). The version under test comes from `dhis2InstanceVersion` in `cypress.env.json` (`API_VERSION` on CI), and `cypress/plugins/select-by-version-tags.ts` turns it into the tag filter `-@skip-<version>`, where the leading `-` is grep's "not" operator.
+
+Because each test run targets a single backend, the filter is always one negation. Should a single run ever need to exclude two versions, the negations must be AND-joined (`-@skip-43+-@skip-45`) — in grep syntax a space is an OR, which would exclude only the tests carrying _both_ tags.
+
+Three things to be aware of:
+
+- A test for a feature added in a given version should be tagged for the versions **below** it, so it keeps running against every version released later. Tagging the version the feature arrived in would exclude it from exactly the runs that matter.
+- A tag pins a single version, so a test that must stop running above some version needs a tag for each new release. Forgetting one means the test runs where it shouldn't and fails, which is at least visible in the run.
+- Excluded tests are omitted from the results rather than reported as pending, so they do not show up in the run summary at all. A tag on a `describe` applies to the tests inside it, but only at run time: a spec in which every test is excluded is still loaded and then reports zero tests. That is harmless — it counts as a passing spec — but the spec still appears in the run.
