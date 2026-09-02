@@ -343,6 +343,9 @@ msgstr "Not valid with program indicators"
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr "Nothing selected. Add items to the layout to get started."
 
+msgid "One row for each {{- outputTypeLabel}}"
+msgstr "One row for each {{- outputTypeLabel}}"
+
 msgid "Configure custom value"
 msgstr "Configure custom value"
 
