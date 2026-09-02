@@ -93,17 +93,15 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
                 <ButtonStrip>
                     <Button
                         type="button"
-                        primary={isInLayout}
-                        secondary={!isInLayout}
                         onClick={onClose}
-                        dataTest={`${dataTest}-action-hide`}
+                        dataTest={`${dataTest}-action-done`}
                     >
-                        {i18n.t('Hide')}
+                        {i18n.t('Done')}
                     </Button>
                     {!isInLayout && (
                         <AddToLayoutButton
                             onClick={onClose}
-                            dataTest={`${dataTest}-action-confirm`}
+                            dataTest={`${dataTest}-action-add-to-layout`}
                         />
                     )}
                 </ButtonStrip>

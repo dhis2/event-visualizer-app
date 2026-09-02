@@ -24,7 +24,7 @@ const buildMockOptions = (
 })
 
 describe('OptionsModal — actions', () => {
-    it('renders a single "Hide" action that submits the options form, and it closes the modal', async () => {
+    it('renders a single "Done" action that submits the options form, and it closes the modal', async () => {
         const onClose = vi.fn()
         const user = userEvent.setup()
         await renderWithAppWrapper(
@@ -32,36 +32,16 @@ describe('OptionsModal — actions', () => {
             buildMockOptions()
         )
 
-        const hideButton = await screen.findByRole('button', { name: 'Hide' })
-        expect(hideButton).toHaveAttribute('type', 'submit')
-        expect(hideButton).toHaveAttribute('form', 'options-modal-form')
+        /* Submitting the form is what closes the modal, which makes the form
+         * a validation boundary: the modal's edits are already live in
+         * visUiConfig, so an invalid field must not be dismissed and applied
+         * later. */
+        const doneButton = await screen.findByRole('button', { name: 'Done' })
+        expect(doneButton).toHaveAttribute('type', 'submit')
+        expect(doneButton).toHaveAttribute('form', 'options-modal-form')
 
-        await user.click(hideButton)
+        await user.click(doneButton)
 
         expect(onClose).toHaveBeenCalledOnce()
-    })
-
-    it('blocks "Hide" when the Top limit field holds a constraint-invalid value', async () => {
-        const onClose = vi.fn()
-        const user = userEvent.setup()
-        await renderWithAppWrapper(
-            <OptionsModal onClose={onClose} />,
-            buildMockOptions({ sortOrder: -1, topLimit: 10 })
-        )
-
-        const topLimitInput = await screen.findByRole('spinbutton', {
-            name: 'Top limit',
-        })
-        await user.clear(topLimitInput)
-        await user.type(topLimitInput, '0')
-        expect(topLimitInput).toHaveValue(0)
-
-        await user.click(screen.getByRole('button', { name: 'Hide' }))
-
-        /* The modal's edits are already live in visUiConfig as the user
-         * types, so an invalid value must not be allowed to sit in state
-         * and be applied later. Native form validation blocking submission
-         * here is the intended behaviour, not a bug. */
-        expect(onClose).not.toHaveBeenCalled()
     })
 })

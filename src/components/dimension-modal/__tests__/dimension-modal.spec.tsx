@@ -36,7 +36,7 @@ const buildMockOptions = (isInLayout: boolean): MockOptions => ({
 })
 
 describe('DimensionModal — actions', () => {
-    it('shows a single primary Hide button when the dimension is in the layout, and it closes the modal', async () => {
+    it('shows Done as the only action when the dimension is in the layout, and it closes the modal', async () => {
         const onClose = vi.fn()
         const user = userEvent.setup()
         await renderWithAppWrapper(
@@ -44,18 +44,17 @@ describe('DimensionModal — actions', () => {
             buildMockOptions(true)
         )
 
-        const hideButton = await screen.findByRole('button', { name: 'Hide' })
-        expect(hideButton).toHaveClass('primary')
+        const doneButton = await screen.findByRole('button', { name: 'Done' })
         expect(
             screen.queryByRole('button', { name: /^Add to/ })
         ).not.toBeInTheDocument()
 
-        await user.click(hideButton)
+        await user.click(doneButton)
 
         expect(onClose).toHaveBeenCalledOnce()
     })
 
-    it('shows a secondary Hide button alongside "Add to ..." when the dimension is not in the layout, and Hide closes the modal', async () => {
+    it('shows Done alongside "Add to ..." when the dimension is not in the layout, and Done closes the modal', async () => {
         const onClose = vi.fn()
         const user = userEvent.setup()
         await renderWithAppWrapper(
@@ -63,13 +62,12 @@ describe('DimensionModal — actions', () => {
             buildMockOptions(false)
         )
 
-        const hideButton = await screen.findByRole('button', { name: 'Hide' })
-        expect(hideButton).toHaveClass('secondary')
+        const doneButton = await screen.findByRole('button', { name: 'Done' })
         expect(
             screen.getByRole('button', { name: /^Add to/ })
         ).toBeInTheDocument()
 
-        await user.click(hideButton)
+        await user.click(doneButton)
 
         expect(onClose).toHaveBeenCalledOnce()
     })

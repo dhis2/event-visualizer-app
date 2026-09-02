@@ -70,12 +70,11 @@ export const OptionsModal: FC<OptionsModalProps> = ({ onClose }) => {
             <ModalActions dataTest={'options-modal-actions'}>
                 <ButtonStrip>
                     <Button
-                        primary
                         type="submit"
                         form={FORM_ID}
-                        dataTest={'options-modal-action-hide'}
+                        dataTest={'options-modal-action-done'}
                     >
-                        {i18n.t('Hide')}
+                        {i18n.t('Done')}
                     </Button>
                 </ButtonStrip>
             </ModalActions>
