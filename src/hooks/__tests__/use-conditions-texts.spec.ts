@@ -95,7 +95,6 @@ const setupDefaultMocks = () => {
 }
 
 beforeEach(() => {
-    vi.clearAllMocks()
     setupDefaultMocks()
 })
 

@@ -3,7 +3,7 @@ import {
     removeLocalStorage,
     writeLocalStorage,
 } from '@modules/utils/local-storage'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 const KEY = 'test-key'
 
@@ -23,10 +23,6 @@ const blockSiteData = () => {
 }
 
 describe('local storage access', () => {
-    afterEach(() => {
-        vi.unstubAllGlobals()
-    })
-
     it('reads back a written value', () => {
         writeLocalStorage(KEY, 'stored')
 
