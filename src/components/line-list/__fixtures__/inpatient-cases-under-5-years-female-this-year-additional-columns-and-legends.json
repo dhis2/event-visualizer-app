@@ -1,9 +1,8 @@
 {
     "visualization": {
-        "metaData": {},
-        "name": "Inpatient: Cases under 5 years female this year additional columns and legends",
-        "created": "2025-09-10T11:24:31.716",
-        "lastUpdated": "2025-09-10T11:24:31.716",
+        "name": "Inpatient: Cases under 5 years female this year (case) additional columns and legends",
+        "created": "2014-04-22T17:05:22.902",
+        "lastUpdated": "2014-04-22T17:05:22.902",
         "translations": [],
         "createdBy": {
             "id": "xE7jOejl9FI",
@@ -12,26 +11,18 @@
             "displayName": "John Traore",
             "username": "admin"
         },
-        "favorites": [],
-        "lastUpdatedBy": {
-            "id": "xE7jOejl9FI",
-            "code": null,
-            "name": "John Traore",
-            "displayName": "John Traore",
-            "username": "admin"
-        },
         "sharing": {
             "owner": "xE7jOejl9FI",
-            "external": false,
             "users": {},
             "userGroups": {},
-            "public": "--------"
+            "public": "rw------"
         },
-        "regressionType": "NONE",
         "displayDensity": "NORMAL",
         "fontSize": "NORMAL",
+        "rawPeriods": ["THIS_YEAR"],
         "hideEmptyRows": false,
         "showHierarchy": false,
+        "completedOnly": false,
         "skipRounding": false,
         "dataDimensionItems": [],
         "dataElementGroupSetDimensions": [],
@@ -40,12 +31,6 @@
         "categoryOptionGroupSetDimensions": [],
         "attributeDimensions": [],
         "dataElementDimensions": [
-            {
-                "dataElement": {
-                    "name": "Weight in kg",
-                    "id": "vV9UWAZohSf"
-                }
-            },
             {
                 "dataElement": {
                     "name": "Admission Date",
@@ -81,61 +66,11 @@
                     "name": "Mode of Discharge",
                     "id": "fWIAEtYVEGk"
                 }
-            },
-            {
-                "dataElement": {
-                    "name": "Diagnosis (ICD-10)",
-                    "id": "K6uUAvq500H"
-                }
-            },
-            {
-                "dataElement": {
-                    "name": "Admission Date",
-                    "id": "eMyVanycQSC"
-                }
             }
         ],
-        "programIndicatorDimensions": [
-            {
-                "programIndicator": {
-                    "name": "BMI",
-                    "id": "x7PaHGvgWY2"
-                }
-            },
-            {
-                "programIndicator": {
-                    "name": "BMI female under 5 y",
-                    "id": "hlPt8H4bUOQ"
-                }
-            },
-            {
-                "programIndicator": {
-                    "name": "Inpatient bed days",
-                    "id": "b8hd33dWjR6"
-                }
-            },
-            {
-                "programIndicator": {
-                    "name": "Inpatient cases under 5 y",
-                    "id": "vDdRoZYybP2"
-                }
-            },
-            {
-                "programIndicator": {
-                    "name": "Average height of girls at 5 years old",
-                    "id": "gWxh7DiRmG7"
-                }
-            },
-            {
-                "programIndicator": {
-                    "name": "Average weight of women",
-                    "id": "ReQEl5V3z6p"
-                }
-            }
-        ],
+        "programIndicatorDimensions": [],
         "subscribers": [],
         "digitGroupSeparator": "SPACE",
-        "hideEmptyRowItems": "NONE",
         "hideLegend": false,
         "noSpaceBetweenColumns": false,
         "cumulativeValues": false,
@@ -158,6 +93,9 @@
                 "id": "eBAyeGv0exc",
                 "programStages": [
                     {
+                        "program": {
+                            "id": "eBAyeGv0exc"
+                        },
                         "hideDueDate": false,
                         "displayExecutionDateLabel": "Report date",
                         "id": "Zj7UnCAulEk",
@@ -168,51 +106,76 @@
                 "name": "Inpatient morbidity and mortality"
             }
         ],
-        "simpleDimensions": [
-            {
-                "parent": "COLUMN",
-                "dimension": "eventDate",
-                "values": ["THIS_YEAR"]
-            },
-            {
-                "parent": "COLUMN",
-                "dimension": "ou",
-                "values": ["ImspTQPwCqd"]
-            }
-        ],
         "outputType": "EVENT",
         "collapseDataDimensions": false,
         "hideNaData": false,
+        "hideEmptyColumns": false,
+        "fixColumnHeaders": false,
+        "fixRowHeaders": false,
         "dataType": "EVENTS",
         "parentGraphMap": {
             "ImspTQPwCqd": ""
         },
-        "favorite": false,
-        "displayName": "Inpatient: Cases under 5 years female this year additional columns and legends",
+        "displayName": "Inpatient: Cases under 5 years female this year (case)",
         "access": {
             "manage": true,
-            "externalize": true,
             "write": true,
             "read": true,
             "update": true,
             "delete": true
         },
-        "href": "https://test.e2e.dhis2.org/anly-41/api/41/eventVisualizations/jH2qePoAnHU",
+        "href": "https://e2e.im.dhis2.org/analytics-dev/api/eventVisualizations/pLJAnM1rHex",
         "subscribed": false,
-        "displayFormName": "Inpatient: Cases under 5 years female this year additional columns and legends",
-        "id": "jH2qePoAnHU",
+        "favorite": false,
+        "metaData": {
+            "ImspTQPwCqd": {
+                "uid": "ImspTQPwCqd",
+                "code": "OU_525",
+                "name": "Sierra Leone"
+            },
+            "eMyVanycQSC": {
+                "uid": "eMyVanycQSC",
+                "code": "DE_3000005",
+                "name": "Admission Date"
+            },
+            "oZg33kd9taw": {
+                "uid": "oZg33kd9taw",
+                "code": "DE_3000004",
+                "name": "Gender"
+            },
+            "fWIAEtYVEGk": {
+                "uid": "fWIAEtYVEGk",
+                "code": "DE_3000009",
+                "name": "Mode of Discharge"
+            },
+            "qrur9Dvnyt5": {
+                "uid": "qrur9Dvnyt5",
+                "code": "DE_3000003",
+                "name": "Age in years"
+            },
+            "K6uUAvq500H": {
+                "uid": "K6uUAvq500H",
+                "code": "DE_3000010",
+                "name": "Diagnosis (ICD-10)"
+            },
+            "msodh3rEMJa": {
+                "uid": "msodh3rEMJa",
+                "code": "DE_3000006",
+                "name": "Discharge Date"
+            }
+        },
+        "displayFormName": "Inpatient: Cases under 5 years female this year (case)",
+        "id": "pLJAnM1rHex",
         "attributeValues": [],
+        "sorting": [],
         "legend": {
-            "showKey": true,
-            "style": "FILL",
             "set": {
-                "displayName": "Weight in kg",
                 "id": "OrkEzxZEH4X"
             },
-            "strategy": "BY_DATA_ITEM"
+            "strategy": "BY_DATA_ITEM",
+            "style": "FILL",
+            "showKey": true
         },
-        "sorting": [],
-        "repetitions": [],
         "legacy": true,
         "columns": [
             {
@@ -231,16 +194,16 @@
                 }
             },
             {
-                "dimensionType": "DATA_ELEMENT",
+                "dimension": "vV9UWAZohSf",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
+                "valueType": "INTEGER_POSITIVE",
                 "items": [],
-                "programStage": {
-                    "id": "Zj7UnCAulEk"
-                },
                 "program": {
                     "id": "eBAyeGv0exc"
                 },
-                "valueType": "INTEGER_POSITIVE",
-                "dimension": "vV9UWAZohSf"
+                "programStage": {
+                    "id": "Zj7UnCAulEk"
+                }
             },
             {
                 "dimensionType": "ORGANISATION_UNIT",
@@ -258,10 +221,10 @@
                 }
             },
             {
-                "dimensionType": "DATA_ELEMENT",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "items": [],
-                "valueType": "DATE",
                 "dimension": "eMyVanycQSC",
+                "valueType": "DATE",
                 "program": {
                     "id": "eBAyeGv0exc"
                 },
@@ -270,11 +233,11 @@
                 }
             },
             {
-                "dimensionType": "DATA_ELEMENT",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "items": [],
                 "filter": "LE:5",
-                "valueType": "INTEGER",
                 "dimension": "qrur9Dvnyt5",
+                "valueType": "INTEGER",
                 "program": {
                     "id": "eBAyeGv0exc"
                 },
@@ -283,13 +246,14 @@
                 }
             },
             {
-                "dimensionType": "DATA_ELEMENT",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "items": [],
+                "dimension": "K6uUAvq500H",
                 "valueType": "TEXT",
                 "optionSet": {
-                    "id": "eUZ79clX7y1"
+                    "id": "eUZ79clX7y1",
+                    "name": "Diagnosis ICD10"
                 },
-                "dimension": "K6uUAvq500H",
                 "program": {
                     "id": "eBAyeGv0exc"
                 },
@@ -298,10 +262,10 @@
                 }
             },
             {
-                "dimensionType": "DATA_ELEMENT",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "items": [],
-                "valueType": "DATE",
                 "dimension": "msodh3rEMJa",
+                "valueType": "DATE",
                 "program": {
                     "id": "eBAyeGv0exc"
                 },
@@ -310,14 +274,15 @@
                 }
             },
             {
-                "dimensionType": "DATA_ELEMENT",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "items": [],
                 "filter": "IN:Female",
-                "valueType": "TEXT",
-                "optionSet": {
-                    "id": "pC3N9N77UmT"
-                },
                 "dimension": "oZg33kd9taw",
+                "valueType": "TEXT",
+                "optionSet": {
+                    "id": "pC3N9N77UmT",
+                    "name": "Gender"
+                },
                 "program": {
                     "id": "eBAyeGv0exc"
                 },
@@ -326,13 +291,14 @@
                 }
             },
             {
-                "dimensionType": "DATA_ELEMENT",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "items": [],
-                "valueType": "TEXT",
-                "optionSet": {
-                    "id": "iDFPKpFTiVw"
-                },
                 "dimension": "fWIAEtYVEGk",
+                "valueType": "TEXT",
+                "optionSet": {
+                    "id": "iDFPKpFTiVw",
+                    "name": "Mode of discharge"
+                },
                 "program": {
                     "id": "eBAyeGv0exc"
                 },
@@ -341,61 +307,62 @@
                 }
             },
             {
+                "dimension": "x7PaHGvgWY2",
                 "dimensionType": "PROGRAM_INDICATOR",
-                "items": [],
-                "dimension": "x7PaHGvgWY2"
+                "items": []
             },
             {
+                "dimension": "hlPt8H4bUOQ",
                 "dimensionType": "PROGRAM_INDICATOR",
-                "items": [],
-                "dimension": "hlPt8H4bUOQ"
+                "items": []
             },
             {
+                "dimension": "b8hd33dWjR6",
                 "dimensionType": "PROGRAM_INDICATOR",
-                "items": [],
-                "dimension": "b8hd33dWjR6"
+                "items": []
             },
             {
+                "dimension": "vDdRoZYybP2",
                 "dimensionType": "PROGRAM_INDICATOR",
-                "items": [],
-                "dimension": "vDdRoZYybP2"
+                "items": []
             },
             {
+                "dimension": "gWxh7DiRmG7",
                 "dimensionType": "PROGRAM_INDICATOR",
-                "items": [],
-                "dimension": "gWxh7DiRmG7"
+                "items": []
             },
             {
-                "dimensionType": "DATA_ELEMENT",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "items": [],
-                "programStage": {
-                    "id": "Zj7UnCAulEk"
-                },
-                "program": {
-                    "id": "eBAyeGv0exc"
-                },
+                "dimension": "K6uUAvq500H",
                 "valueType": "TEXT",
                 "optionSet": {
-                    "id": "eUZ79clX7y1"
-                },
-                "dimension": "K6uUAvq500H"
-            },
-            {
-                "dimensionType": "DATA_ELEMENT",
-                "items": [],
-                "programStage": {
-                    "id": "Zj7UnCAulEk"
+                    "id": "eUZ79clX7y1",
+                    "name": "Diagnosis ICD10"
                 },
                 "program": {
                     "id": "eBAyeGv0exc"
                 },
-                "valueType": "DATE",
-                "dimension": "eMyVanycQSC"
+                "programStage": {
+                    "id": "Zj7UnCAulEk"
+                }
             },
             {
-                "dimensionType": "PROGRAM_INDICATOR",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "items": [],
-                "dimension": "ReQEl5V3z6p"
+                "dimension": "eMyVanycQSC",
+                "valueType": "DATE",
+                "program": {
+                    "id": "eBAyeGv0exc"
+                },
+                "programStage": {
+                    "id": "Zj7UnCAulEk"
+                }
+            },
+            {
+                "dimension": "ReQEl5V3z6p",
+                "dimensionType": "PROGRAM_INDICATOR",
+                "items": []
             }
         ],
         "rows": [],

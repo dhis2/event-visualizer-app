@@ -1,75 +1,38 @@
 {
     "visualization": {
-        "metaData": {
-            "sWoqcoByYmD": {
-                "uid": "sWoqcoByYmD",
-                "code": "STA_SMO",
-                "name": "WHOMCH Smoking"
-            }
-        },
         "name": "No time dimension",
-        "created": "2025-09-11T10:48:22.018",
-        "lastUpdated": "2025-09-11T10:48:22.018",
-        "translations": [],
-        "createdBy": {
-            "id": "xE7jOejl9FI",
-            "code": null,
-            "name": "John Traore",
-            "displayName": "John Traore",
-            "username": "admin"
-        },
-        "favorites": [],
-        "lastUpdatedBy": {
-            "id": "xE7jOejl9FI",
-            "code": null,
-            "name": "John Traore",
-            "displayName": "John Traore",
-            "username": "admin"
-        },
-        "sharing": {
-            "owner": "xE7jOejl9FI",
-            "external": false,
-            "users": {},
-            "userGroups": {},
-            "public": "--------"
-        },
-        "regressionType": "NONE",
-        "displayDensity": "NORMAL",
-        "fontSize": "NORMAL",
-        "hideEmptyRows": false,
-        "showHierarchy": false,
-        "skipRounding": false,
-        "dataDimensionItems": [],
-        "dataElementGroupSetDimensions": [],
-        "organisationUnitGroupSetDimensions": [],
-        "categoryDimensions": [],
-        "categoryOptionGroupSetDimensions": [],
-        "attributeDimensions": [],
-        "dataElementDimensions": [
+        "type": "LINE_LIST",
+        "outputType": "EVENT",
+        "metaData": {},
+        "legacy": true,
+        "columns": [
             {
-                "dataElement": {
-                    "name": "WHOMCH Smoking",
-                    "id": "sWoqcoByYmD"
+                "dimension": "ou",
+                "items": [
+                    {
+                        "id": "USER_ORGUNIT"
+                    }
+                ],
+                "program": {
+                    "id": "lxAQ7Zs9VYR"
+                },
+                "programStage": {
+                    "id": "dBwrot7S420"
+                }
+            },
+            {
+                "dimension": "sWoqcoByYmD",
+                "items": [],
+                "program": {
+                    "id": "lxAQ7Zs9VYR"
+                },
+                "programStage": {
+                    "id": "dBwrot7S420"
                 }
             }
         ],
-        "programIndicatorDimensions": [],
-        "subscribers": [],
-        "digitGroupSeparator": "SPACE",
-        "hideEmptyRowItems": "NONE",
-        "hideLegend": false,
-        "noSpaceBetweenColumns": false,
-        "cumulativeValues": false,
-        "percentStackedValues": false,
-        "showData": false,
-        "colTotals": false,
-        "rowTotals": false,
-        "rowSubTotals": false,
-        "colSubTotals": false,
-        "hideTitle": false,
-        "hideSubtitle": false,
-        "showDimensionLabels": false,
-        "type": "LINE_LIST",
+        "rows": [],
+        "filters": [],
         "programDimensions": [
             {
                 "enrollmentDateLabel": "Enrollment Date",
@@ -81,6 +44,9 @@
                 "id": "lxAQ7Zs9VYR",
                 "programStages": [
                     {
+                        "program": {
+                            "id": "lxAQ7Zs9VYR"
+                        },
                         "hideDueDate": false,
                         "displayExecutionDateLabel": "Visit date",
                         "id": "dBwrot7S420",
@@ -90,70 +56,7 @@
                 ],
                 "name": "Antenatal care visit"
             }
-        ],
-        "simpleDimensions": [
-            {
-                "parent": "COLUMN",
-                "dimension": "ou",
-                "values": ["USER_ORGUNIT"]
-            }
-        ],
-        "outputType": "EVENT",
-        "collapseDataDimensions": false,
-        "hideNaData": false,
-        "parentGraphMap": {},
-        "displayName": "No time dimension",
-        "access": {
-            "manage": true,
-            "externalize": true,
-            "write": true,
-            "read": true,
-            "update": true,
-            "delete": true
-        },
-        "favorite": false,
-        "href": "https://test.e2e.dhis2.org/anly-42/api/42/eventVisualizations/asXsjGqmVr8",
-        "subscribed": false,
-        "displayFormName": "No time dimension",
-        "id": "asXsjGqmVr8",
-        "attributeValues": [],
-        "legend": {
-            "showKey": false
-        },
-        "sorting": [],
-        "repetitions": [],
-        "legacy": true,
-        "columns": [
-            {
-                "dimensionType": "ORGANISATION_UNIT",
-                "items": [
-                    {
-                        "id": "USER_ORGUNIT"
-                    }
-                ],
-                "dimension": "ou",
-                "program": {
-                    "id": "lxAQ7Zs9VYR"
-                },
-                "programStage": {
-                    "id": "dBwrot7S420"
-                }
-            },
-            {
-                "dimensionType": "DATA_ELEMENT",
-                "items": [],
-                "programStage": {
-                    "id": "dBwrot7S420"
-                },
-                "program": {
-                    "id": "lxAQ7Zs9VYR"
-                },
-                "dimension": "sWoqcoByYmD",
-                "valueType": "BOOLEAN"
-            }
-        ],
-        "rows": [],
-        "filters": []
+        ]
     },
     "response": {
         "headers": [
