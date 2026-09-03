@@ -325,9 +325,6 @@ msgstr "Cells show {{- outputTypeLabel}} count"
 msgid "One row for each {{- outputTypeLabel}}"
 msgstr "One row for each {{- outputTypeLabel}}"
 
-msgid "Configure table cells"
-msgstr "Configure table cells"
-
 msgid "Cell value"
 msgstr "Cell value"
 
