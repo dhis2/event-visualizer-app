@@ -192,10 +192,10 @@ export const transformHeaders = ({
 
 const NOT_DEFINED_VALUE = 'ND'
 const isValueUndefined = (
-    rowContext: LineListRowContext = {},
+    rowContext: LineListRowContext | undefined,
     rowIndex: number,
     columnIndex: number
-) => rowContext[rowIndex]?.[columnIndex]?.valueStatus === NOT_DEFINED_VALUE
+) => rowContext?.[rowIndex]?.[columnIndex]?.valueStatus === NOT_DEFINED_VALUE
 
 const NON_WRAPPING_VALUE_TYPES_LOOKUP = new Set<ValueType>([
     'NUMBER',
