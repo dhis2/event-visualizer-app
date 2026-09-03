@@ -1,12 +1,5 @@
 import { NUMERIC_VALUE_TYPES } from '@constants/value-types'
-import {
-    useAppSelector,
-    useCurrentUser,
-    useLayoutContext,
-    useMetadataStore,
-    useRtkQuery,
-} from '@hooks'
-import { getVisUiConfigCustomValue } from '@store/vis-ui-config-slice'
+import { useCurrentUser, useMetadataStore, useRtkQuery } from '@hooks'
 import type { AggregationType } from '@types'
 import { useMemo } from 'react'
 
@@ -23,12 +16,7 @@ export type CustomValueItem = CustomValueDimension & {
     stageName?: string
 }
 
-export const getStageIdFromDimensionId = (
-    id: string | undefined
-): string | null => {
-    if (!id) {
-        return null
-    }
+const getStageIdFromDimensionId = (id: string): string | null => {
     const idParts = id.split('.')
     return idParts.length === 2 ? idParts[0] : null
 }
@@ -36,39 +24,11 @@ export const getStageIdFromDimensionId = (
 const compareByName = (a: CustomValueDimension, b: CustomValueDimension) =>
     a.name.localeCompare(b.name)
 
-export const useCustomValueItems = () => {
+export const useCellValueItems = (programId: string) => {
     const {
         settings: { displayNameProperty },
     } = useCurrentUser()
     const metadataStore = useMetadataStore()
-    const { programIds, programStageIds } = useLayoutContext()
-    const customValue = useAppSelector(getVisUiConfigCustomValue)
-
-    if (programIds.length !== 1) {
-        throw new Error(
-            `useCustomValueItems requires exactly one program in the layout, got ${programIds.length}`
-        )
-    }
-    if (programStageIds.length > 1) {
-        throw new Error(
-            `useCustomValueItems requires at most one program stage in the layout, got ${programStageIds.length}`
-        )
-    }
-
-    const programId = programIds[0]
-    const layoutStageId = programStageIds[0] ?? null
-
-    let filteredByStageName: string | undefined
-    let customValueStageMismatch = false
-    if (layoutStageId) {
-        filteredByStageName =
-            metadataStore.getProgramStageMetadataItemOrThrow(layoutStageId).name
-
-        const customValueStageId = getStageIdFromDimensionId(customValue?.id)
-        customValueStageMismatch = Boolean(
-            customValueStageId && customValueStageId !== layoutStageId
-        )
-    }
 
     const { data, ...queryResult } = useRtkQuery<{
         dimensions: CustomValueDimension[]
@@ -94,21 +54,6 @@ export const useCustomValueItems = () => {
             return undefined
         }
 
-        if (layoutStageId) {
-            return data.dimensions
-                .filter(
-                    (dim) =>
-                        dim.dimensionType === 'PROGRAM_ATTRIBUTE' ||
-                        getStageIdFromDimensionId(dim.id) === layoutStageId
-                )
-                .map((dim) =>
-                    dim.dimensionType === 'PROGRAM_ATTRIBUTE' && tetName
-                        ? { ...dim, stageName: tetName }
-                        : dim
-                )
-                .sort(compareByName)
-        }
-
         return data.dimensions
             .map((dim) => {
                 if (dim.dimensionType === 'PROGRAM_ATTRIBUTE') {
@@ -123,12 +68,7 @@ export const useCustomValueItems = () => {
                 return { ...dim, stageName: stage.name }
             })
             .sort(compareByName)
-    }, [data, layoutStageId, metadataStore, programHasMultipleStages, tetName])
+    }, [data, metadataStore, programHasMultipleStages, tetName])
 
-    return {
-        ...queryResult,
-        items,
-        filteredByStageName,
-        customValueStageMismatch,
-    }
+    return { ...queryResult, items }
 }
