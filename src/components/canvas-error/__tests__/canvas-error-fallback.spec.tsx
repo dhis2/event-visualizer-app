@@ -28,7 +28,7 @@ describe('CanvasErrorFallback', () => {
         expect(screen.getByText('Something went wrong')).toBeInTheDocument()
     })
 
-    it('renders the "No data" screen for an EmptyResponseError', () => {
+    it('renders the "No data available" screen for an EmptyResponseError', () => {
         render(
             <CanvasErrorFallback
                 error={new EmptyResponseError()}
@@ -36,7 +36,7 @@ describe('CanvasErrorFallback', () => {
             />
         )
 
-        expect(screen.getByText('No data')).toBeInTheDocument()
+        expect(screen.getByText('No data available')).toBeInTheDocument()
     })
 
     it(
