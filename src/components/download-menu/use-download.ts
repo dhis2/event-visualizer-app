@@ -8,13 +8,13 @@ import { Analytics } from '@dhis2/analytics'
 import { useConfig, useDataEngine } from '@dhis2/app-runtime'
 import { useAppSelector, useCurrentUser } from '@hooks'
 import { transformVisualizationForAnalyticsRequest } from '@modules/analytics-request'
-import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import {
     isCurrentVisualizationNew,
     isCurrentVisualizationPersisted,
     isVisualizationEmpty,
     isVisualizationWithTimeDimension,
-} from '@modules/visualization/state'
+} from '@modules/visualization/guards'
+import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { useCallback, useState } from 'react'
 import type { DownloadFn } from './types'
