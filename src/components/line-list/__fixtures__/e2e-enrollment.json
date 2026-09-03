@@ -11,7 +11,6 @@
             "displayName": "Tom Wakiki",
             "username": "system"
         },
-        "favorites": [],
         "lastUpdatedBy": {
             "id": "GOLswS44mh8",
             "code": null,
@@ -21,7 +20,6 @@
         },
         "sharing": {
             "owner": "GOLswS44mh8",
-            "external": false,
             "users": {
                 "Z7mGnIfGgqL": {
                     "displayName": "Thor Odinsson",
@@ -45,10 +43,9 @@
         "regressionType": "NONE",
         "displayDensity": "NORMAL",
         "fontSize": "NORMAL",
-        "sortOrder": 0,
-        "topLimit": 0,
         "hideEmptyRows": false,
         "showHierarchy": false,
+        "completedOnly": false,
         "skipRounding": false,
         "dataDimensionItems": [],
         "dataElementGroupSetDimensions": [],
@@ -74,30 +71,36 @@
         "hideSubtitle": false,
         "showDimensionLabels": false,
         "type": "LINE_LIST",
-        "program": {
-            "programType": "WITH_REGISTRATION",
-            "displayIncidentDate": true,
-            "displayEnrollmentDateLabel": "Enrollment date (e2e)",
-            "displayIncidentDateLabel": "Incident date (e2e)",
-            "id": "J1QQtmzqhJz",
-            "programStages": [
-                {
-                    "id": "jfuXZB3A1ko",
-                    "repeatable": true,
-                    "name": "Stage 1 - Repeatable"
-                }
-            ],
-            "name": "E2E program"
-        },
-        "programStage": {
-            "hideDueDate": false,
-            "displayExecutionDateLabel": "Event date (e2e)",
-            "displayDueDateLabel": "Scheduled date (e2e)",
-            "id": "jfuXZB3A1ko",
-            "repeatable": true,
-            "name": "Stage 1 - Repeatable"
-        },
-        "programDimensions": [],
+        "favorites": [],
+        "programDimensions": [
+            {
+                "enrollmentDateLabel": "Enrollment date (e2e)",
+                "incidentDateLabel": "Incident date (e2e)",
+                "programType": "WITH_REGISTRATION",
+                "displayIncidentDate": true,
+                "trackedEntityType": {
+                    "id": "nEenWmSyUEp",
+                    "name": "Person"
+                },
+                "displayEnrollmentDateLabel": "Enrollment date (e2e)",
+                "displayIncidentDateLabel": "Incident date (e2e)",
+                "id": "J1QQtmzqhJz",
+                "programStages": [
+                    {
+                        "program": {
+                            "id": "J1QQtmzqhJz"
+                        },
+                        "hideDueDate": false,
+                        "displayExecutionDateLabel": "Event date (e2e)",
+                        "displayDueDateLabel": "Scheduled date (e2e)",
+                        "id": "jfuXZB3A1ko",
+                        "repeatable": true,
+                        "name": "Stage 1 - Repeatable"
+                    }
+                ],
+                "name": "E2E program"
+            }
+        ],
         "simpleDimensions": [
             {
                 "parent": "COLUMN",
@@ -108,9 +111,28 @@
         "outputType": "ENROLLMENT",
         "collapseDataDimensions": false,
         "hideNaData": false,
-        "legacy": false,
-        "filters": [],
+        "hideEmptyColumns": false,
+        "fixColumnHeaders": false,
+        "fixRowHeaders": false,
         "parentGraphMap": {},
+        "displayName": "E2E: Enrollment",
+        "access": {
+            "manage": true,
+            "write": true,
+            "read": true,
+            "update": true,
+            "delete": true
+        },
+        "href": "https://e2e.im.dhis2.org/analytics-dev/api/eventVisualizations/AFjkDs7acBh",
+        "subscribed": false,
+        "favorite": false,
+        "metaData": {},
+        "displayFormName": "E2E: Enrollment",
+        "id": "AFjkDs7acBh",
+        "attributeValues": [],
+        "sorting": [],
+        "repetitions": [],
+        "legacy": true,
         "columns": [
             {
                 "dimensionType": "ORGANISATION_UNIT",
@@ -119,7 +141,13 @@
                         "id": "USER_ORGUNIT"
                     }
                 ],
-                "dimension": "ou"
+                "dimension": "ou",
+                "program": {
+                    "id": "J1QQtmzqhJz"
+                },
+                "programStage": {
+                    "id": "jfuXZB3A1ko"
+                }
             },
             {
                 "dimensionType": "PERIOD",
@@ -131,60 +159,155 @@
                         "id": "LAST_5_YEARS"
                     }
                 ],
-                "dimension": "enrollmentDate"
+                "dimension": "enrollmentDate",
+                "program": {
+                    "id": "J1QQtmzqhJz"
+                }
             }
         ],
         "rows": [],
-        "favorite": false,
-        "displayName": "E2E: Enrollment",
-        "access": {
-            "manage": true,
-            "externalize": true,
-            "write": true,
-            "read": true,
-            "update": true,
-            "delete": true
-        },
-        "href": "https://test.e2e.dhis2.org/anly-41/api/41/eventVisualizations/AFjkDs7acBh",
-        "subscribed": false,
-        "displayFormName": "E2E: Enrollment",
-        "id": "AFjkDs7acBh",
-        "attributeValues": [],
-        "sorting": [],
-        "repetitions": []
+        "filters": []
     },
-    "responses": {
+    "response": {
         "headers": [
             {
-                "name": "ouname",
-                "dimensionId": "ou",
-                "column": "Organisation unit",
+                "name": "jfuXZB3A1ko.ouname",
+                "column": "Organisation unit name",
                 "valueType": "TEXT",
                 "type": "java.lang.String",
                 "hidden": false,
-                "meta": true,
-                "index": 0
+                "meta": true
             },
             {
                 "name": "enrollmentdate",
-                "dimensionId": "enrollmentDate",
                 "column": "Enrollment date (e2e)",
                 "valueType": "DATETIME",
                 "type": "java.time.LocalDateTime",
                 "hidden": false,
-                "meta": true,
-                "index": 1
+                "meta": true
             }
         ],
-        "rows": [
-            ["Ngelehun CHC", "2025-01-18 00:00:00.0"],
-            ["Njandama MCHP", "2024-12-10 00:00:00.0"]
-        ],
-        "pager": {
-            "page": 1,
-            "pageSize": 100,
-            "isLastPage": true
+        "metaData": {
+            "pager": {
+                "page": 1,
+                "pageSize": 100,
+                "isLastPage": true
+            },
+            "items": {
+                "2021": {
+                    "uid": "2021",
+                    "code": "2021",
+                    "name": "2021",
+                    "dimensionItemType": "PERIOD",
+                    "valueType": "TEXT",
+                    "totalAggregationType": "SUM",
+                    "startDate": "2021-01-01T00:00:00.000",
+                    "endDate": "2021-12-31T00:00:00.000"
+                },
+                "2022": {
+                    "uid": "2022",
+                    "code": "2022",
+                    "name": "2022",
+                    "dimensionItemType": "PERIOD",
+                    "valueType": "TEXT",
+                    "totalAggregationType": "SUM",
+                    "startDate": "2022-01-01T00:00:00.000",
+                    "endDate": "2022-12-31T00:00:00.000"
+                },
+                "2023": {
+                    "uid": "2023",
+                    "code": "2023",
+                    "name": "2023",
+                    "dimensionItemType": "PERIOD",
+                    "valueType": "TEXT",
+                    "totalAggregationType": "SUM",
+                    "startDate": "2023-01-01T00:00:00.000",
+                    "endDate": "2023-12-31T00:00:00.000"
+                },
+                "2024": {
+                    "uid": "2024",
+                    "code": "2024",
+                    "name": "2024",
+                    "dimensionItemType": "PERIOD",
+                    "valueType": "TEXT",
+                    "totalAggregationType": "SUM",
+                    "startDate": "2024-01-01T00:00:00.000",
+                    "endDate": "2024-12-31T00:00:00.000"
+                },
+                "2025": {
+                    "uid": "2025",
+                    "code": "2025",
+                    "name": "2025",
+                    "dimensionItemType": "PERIOD",
+                    "valueType": "TEXT",
+                    "totalAggregationType": "SUM",
+                    "startDate": "2025-01-01T00:00:00.000",
+                    "endDate": "2025-12-31T00:00:00.000"
+                },
+                "2026": {
+                    "uid": "2026",
+                    "code": "2026",
+                    "name": "2026",
+                    "dimensionItemType": "PERIOD",
+                    "valueType": "TEXT",
+                    "totalAggregationType": "SUM",
+                    "startDate": "2026-01-01T00:00:00.000",
+                    "endDate": "2026-12-31T00:00:00.000"
+                },
+                "jfuXZB3A1ko": {
+                    "uid": "jfuXZB3A1ko",
+                    "name": "Stage 1 - Repeatable"
+                },
+                "USER_ORGUNIT": {
+                    "organisationUnits": ["ImspTQPwCqd"]
+                },
+                "jfuXZB3A1ko.ou": {
+                    "name": "Organisation unit"
+                },
+                "THIS_YEAR": {
+                    "name": "This year"
+                },
+                "LAST_5_YEARS": {
+                    "name": "Last 5 years"
+                },
+                "J1QQtmzqhJz": {
+                    "uid": "J1QQtmzqhJz",
+                    "name": "E2E program"
+                },
+                "ImspTQPwCqd": {
+                    "uid": "ImspTQPwCqd",
+                    "code": "OU_525",
+                    "name": "Sierra Leone"
+                },
+                "pe": {
+                    "uid": "pe",
+                    "dimensionType": "PERIOD"
+                },
+                "enrollmentdate": {
+                    "name": "Enrollment date (e2e)"
+                }
+            },
+            "dimensions": {
+                "pe": [],
+                "enrollmentdate": [
+                    "2026",
+                    "2021",
+                    "2022",
+                    "2023",
+                    "2024",
+                    "2025"
+                ],
+                "jfuXZB3A1ko.ou": ["ImspTQPwCqd"]
+            }
         },
-        "rowContext": {}
-    }
+        "rowContext": {},
+        "width": 2,
+        "rows": [
+            ["Njandama MCHP", "2025-12-10 00:00:00.0"],
+            ["Baoma Station CHP", "2026-01-18 00:00:00.0"]
+        ],
+        "height": 2,
+        "headerWidth": 2
+    },
+    "legendSets": []
 }

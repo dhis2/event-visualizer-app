@@ -1,3 +1,8 @@
+import type { LineListAnalyticsData } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
+import {
+    createLineListFixtureMetadataStore,
+    deriveLineListAnalyticsData,
+} from '@test-utils/line-list-fixtures'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { CurrentVisualization } from '@types'
@@ -6,12 +11,24 @@ import simpleLineList from '../__fixtures__/e2e-enrollment.json'
 import largeLineListWithLegend from '../__fixtures__/inpatient-cases-under-5-years-female-this-year-additional-columns-and-legends.json'
 import noTimeDimension from '../__fixtures__/no-time-dimension.json'
 import { LineList } from '../line-list'
-import type { LineListAnalyticsData } from '../types'
+
+const simpleLineListData = deriveLineListAnalyticsData(simpleLineList)
+const largeLineListWithLegendData = deriveLineListAnalyticsData(
+    largeLineListWithLegend
+)
+const noTimeDimensionData = deriveLineListAnalyticsData(noTimeDimension)
 
 // Mock the DHIS2 connection status hook
 const mockUseDhis2ConnectionStatus = vi.hoisted(() => vi.fn())
 vi.mock('@dhis2/app-runtime', () => ({
     useDhis2ConnectionStatus: mockUseDhis2ConnectionStatus,
+}))
+
+/* The transformation hook reads the metadata store; seed it from the fixture
+ * visualizations the way the app does when loading one. */
+const mockUseMetadataStore = vi.hoisted(() => vi.fn())
+vi.mock('@components/app-wrapper/metadata-provider/metadata-provider', () => ({
+    useMetadataStore: mockUseMetadataStore,
 }))
 
 // Helper function to render LineList with default props
@@ -35,13 +52,19 @@ const renderLineList = (
 
 describe('LineList', () => {
     beforeEach(() => {
-        mockUseDhis2ConnectionStatus.mockClear()
         mockUseDhis2ConnectionStatus.mockReturnValue({ isDisconnected: false })
+        mockUseMetadataStore.mockReturnValue(
+            createLineListFixtureMetadataStore([
+                simpleLineList,
+                largeLineListWithLegend,
+                noTimeDimension,
+            ])
+        )
     })
     describe('Snapshot test', () => {
         it('renders large table with legend set correctly', () => {
             const { container } = renderLineList(
-                largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                largeLineListWithLegendData,
                 largeLineListWithLegend.visualization as unknown as CurrentVisualization
             )
             expect(container).toMatchSnapshot()
@@ -61,19 +84,19 @@ describe('LineList', () => {
             const user = userEvent.setup()
 
             renderLineList(
-                simpleLineList.responses as unknown as LineListAnalyticsData,
+                simpleLineListData,
                 simpleLineList.visualization as unknown as CurrentVisualization,
                 { onDataSort, onColumnHeaderClick }
             )
 
-            // Find the first column header (ouname)
+            // Find the first column header (the event org unit)
             const sortButton = screen.getByRole('button', {
-                name: /sort by.*organisation unit/i,
+                name: /sort by.*event org\. unit/i,
             })
             await user.click(sortButton)
 
             expect(onDataSort).toHaveBeenCalledWith({
-                dimension: 'ouname',
+                dimension: 'jfuXZB3A1ko.ouname',
                 direction: 'ASC',
             })
         })
@@ -82,16 +105,16 @@ describe('LineList', () => {
             const user = userEvent.setup()
 
             renderLineList(
-                simpleLineList.responses as unknown as LineListAnalyticsData,
+                simpleLineListData,
                 simpleLineList.visualization as unknown as CurrentVisualization,
                 { onDataSort, onColumnHeaderClick }
             )
 
             // Find the column header text (not the sort button)
-            const headerText = screen.getByText('Organisation unit')
+            const headerText = screen.getByText('Event org. unit')
             await user.click(headerText)
 
-            expect(onColumnHeaderClick).toHaveBeenCalledWith('ou')
+            expect(onColumnHeaderClick).toHaveBeenCalledWith('jfuXZB3A1ko.ou')
         })
 
         /* More in-depth tests reg. sort directions etc are found in
@@ -110,7 +133,7 @@ describe('LineList', () => {
 
             // Create data with multiple pages
             const multiPageData = {
-                ...largeLineListWithLegend.responses,
+                ...largeLineListWithLegendData,
                 pager: {
                     page: 1,
                     pageSize: 100,
@@ -119,7 +142,7 @@ describe('LineList', () => {
             }
 
             renderLineList(
-                multiPageData as unknown as LineListAnalyticsData,
+                multiPageData,
                 largeLineListWithLegend.visualization as unknown as CurrentVisualization,
                 { onPaginate }
             )
@@ -135,7 +158,7 @@ describe('LineList', () => {
 
             // Create data with multiple pages to ensure pagination is active
             const multiPageData = {
-                ...largeLineListWithLegend.responses,
+                ...largeLineListWithLegendData,
                 pager: {
                     page: 1,
                     pageSize: 100,
@@ -144,7 +167,7 @@ describe('LineList', () => {
             }
 
             renderLineList(
-                multiPageData as unknown as LineListAnalyticsData,
+                multiPageData,
                 largeLineListWithLegend.visualization as unknown as CurrentVisualization,
                 { onPaginate }
             )
@@ -168,7 +191,7 @@ describe('LineList', () => {
 
         it('displays pagination information correctly', async () => {
             renderLineList(
-                largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                largeLineListWithLegendData,
                 largeLineListWithLegend.visualization as unknown as CurrentVisualization,
                 { onPaginate }
             )
@@ -188,7 +211,7 @@ describe('LineList', () => {
 
         it('shows correct pagination state for first page', () => {
             const firstPageData = {
-                ...simpleLineList.responses,
+                ...simpleLineListData,
                 pager: {
                     page: 1,
                     pageSize: 100,
@@ -197,7 +220,7 @@ describe('LineList', () => {
             }
 
             renderLineList(
-                firstPageData as unknown as LineListAnalyticsData,
+                firstPageData,
                 simpleLineList.visualization as unknown as CurrentVisualization,
                 { onPaginate }
             )
@@ -214,7 +237,7 @@ describe('LineList', () => {
 
         it('shows correct pagination state for middle page', () => {
             const middlePageData = {
-                ...largeLineListWithLegend.responses,
+                ...largeLineListWithLegendData,
                 pager: {
                     page: 2,
                     pageSize: 100,
@@ -223,7 +246,7 @@ describe('LineList', () => {
             }
 
             renderLineList(
-                middlePageData as unknown as LineListAnalyticsData,
+                middlePageData,
                 largeLineListWithLegend.visualization as unknown as CurrentVisualization,
                 { onPaginate }
             )
@@ -241,7 +264,7 @@ describe('LineList', () => {
 
         it('shows correct pagination state for last page', () => {
             const lastPageData = {
-                ...largeLineListWithLegend.responses,
+                ...largeLineListWithLegendData,
                 pager: {
                     page: 3,
                     pageSize: 100,
@@ -250,7 +273,7 @@ describe('LineList', () => {
             }
 
             renderLineList(
-                lastPageData as unknown as LineListAnalyticsData,
+                lastPageData,
                 largeLineListWithLegend.visualization as unknown as CurrentVisualization,
                 { onPaginate }
             )
@@ -268,7 +291,7 @@ describe('LineList', () => {
 
         it('shows correct pagination state for single page', () => {
             const singlePageData = {
-                ...simpleLineList.responses,
+                ...simpleLineListData,
                 pager: {
                     page: 1,
                     pageSize: 100,
@@ -277,7 +300,7 @@ describe('LineList', () => {
             }
 
             renderLineList(
-                singlePageData as unknown as LineListAnalyticsData,
+                singlePageData,
                 simpleLineList.visualization as unknown as CurrentVisualization,
                 { onPaginate }
             )
@@ -296,16 +319,8 @@ describe('LineList', () => {
     describe('Legend visibility', () => {
         describe('Base case', () => {
             it('does not show legend when no legend sets are present', () => {
-                const noLegendData = {
-                    ...simpleLineList.responses,
-                    headers: simpleLineList.responses.headers.map((header) => ({
-                        ...header,
-                        legendSet: undefined,
-                    })),
-                }
-
                 renderLineList(
-                    noLegendData as unknown as LineListAnalyticsData,
+                    simpleLineListData,
                     simpleLineList.visualization as unknown as CurrentVisualization
                 )
 
@@ -326,7 +341,7 @@ describe('LineList', () => {
                 }
 
                 renderLineList(
-                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                    largeLineListWithLegendData,
                     visualization as unknown as CurrentVisualization,
                     { isInDashboard: false }
                 )
@@ -350,7 +365,7 @@ describe('LineList', () => {
                 }
 
                 renderLineList(
-                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                    largeLineListWithLegendData,
                     visualization as unknown as CurrentVisualization,
                     { isInDashboard: false }
                 )
@@ -376,7 +391,7 @@ describe('LineList', () => {
                 }
 
                 renderLineList(
-                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                    largeLineListWithLegendData,
                     visualization as unknown as CurrentVisualization,
                     { isInDashboard: true }
                 )
@@ -401,7 +416,7 @@ describe('LineList', () => {
                 }
 
                 renderLineList(
-                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                    largeLineListWithLegendData,
                     visualization as unknown as CurrentVisualization,
                     { isInDashboard: true }
                 )
@@ -428,7 +443,7 @@ describe('LineList', () => {
                 }
 
                 renderLineList(
-                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                    largeLineListWithLegendData,
                     visualization as unknown as CurrentVisualization,
                     { isInDashboard: true }
                 )
@@ -460,7 +475,7 @@ describe('LineList', () => {
                 }
 
                 renderLineList(
-                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                    largeLineListWithLegendData,
                     visualization as unknown as CurrentVisualization,
                     { isInDashboard: true }
                 )
@@ -486,7 +501,7 @@ describe('LineList', () => {
     describe('Data cell styles with legend', () => {
         it('applies background color when legend style is FILL', () => {
             renderLineList(
-                largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                largeLineListWithLegendData,
                 largeLineListWithLegend.visualization as unknown as CurrentVisualization
             )
 
@@ -502,7 +517,7 @@ describe('LineList', () => {
             // For FILL style, expect background color on cell and default text color on inner div
             const cellStyle = window.getComputedStyle(secondCell!)
             const divStyle = window.getComputedStyle(innerDiv!)
-            expect(cellStyle.backgroundColor).toBe('rgb(33, 113, 181)')
+            expect(cellStyle.backgroundColor).toBe('rgb(158, 202, 225)')
             expect(divStyle.color).toBe('rgb(33, 41, 52)')
         })
 
@@ -516,7 +531,7 @@ describe('LineList', () => {
             }
 
             renderLineList(
-                largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
+                largeLineListWithLegendData,
                 visualization as unknown as CurrentVisualization
             )
 
@@ -533,14 +548,14 @@ describe('LineList', () => {
             const cellStyle = window.getComputedStyle(secondCell!)
             const divStyle = window.getComputedStyle(innerDiv!)
             expect(cellStyle.backgroundColor).toBe('rgb(255, 255, 255)')
-            expect(divStyle.color).toBe('rgb(33, 113, 181)')
+            expect(divStyle.color).toBe('rgb(158, 202, 225)')
         })
     })
 
     describe('NoTimeDimension warning', () => {
         it('shows warning when isInModal is true and no time dimension present', () => {
             renderLineList(
-                noTimeDimension.responses as unknown as LineListAnalyticsData,
+                noTimeDimensionData,
                 noTimeDimension.visualization as unknown as CurrentVisualization,
                 { isInModal: true }
             )
@@ -554,7 +569,7 @@ describe('LineList', () => {
 
         it('does not show warning when isInModal is false', () => {
             renderLineList(
-                noTimeDimension.responses as unknown as LineListAnalyticsData,
+                noTimeDimensionData,
                 noTimeDimension.visualization as unknown as CurrentVisualization,
                 { isInModal: false }
             )
@@ -568,7 +583,7 @@ describe('LineList', () => {
 
         it('does not show warning when isInModal is true but time dimension is present', () => {
             renderLineList(
-                simpleLineList.responses as unknown as LineListAnalyticsData,
+                simpleLineListData,
                 simpleLineList.visualization as unknown as CurrentVisualization,
                 { isInModal: true }
             )
@@ -590,7 +605,7 @@ describe('LineList', () => {
             })
 
             renderLineList(
-                simpleLineList.responses as unknown as LineListAnalyticsData,
+                simpleLineListData,
                 simpleLineList.visualization as unknown as CurrentVisualization,
                 {
                     onDataSort: vi.fn(),
@@ -606,7 +621,7 @@ describe('LineList', () => {
 
             // Column headers should still be present
             expect(
-                screen.getByRole('columnheader', { name: 'Organisation unit' })
+                screen.getByRole('columnheader', { name: 'Event org. unit' })
             ).toBeInTheDocument()
             expect(
                 screen.getByRole('columnheader', {
@@ -624,7 +639,7 @@ describe('LineList', () => {
 
             // Create modified analytics data with more items to test pagination
             const paginatedData = {
-                ...simpleLineList.responses,
+                ...simpleLineListData,
                 paging: {
                     page: 1,
                     pageSize: 100,
@@ -633,7 +648,7 @@ describe('LineList', () => {
             }
 
             renderLineList(
-                paginatedData as unknown as LineListAnalyticsData,
+                paginatedData,
                 simpleLineList.visualization as unknown as CurrentVisualization,
                 {
                     onPaginate: vi.fn(),
@@ -666,7 +681,7 @@ describe('LineList', () => {
 
             // Create modified analytics data with more items to test pagination
             const paginatedData = {
-                ...simpleLineList.responses,
+                ...simpleLineListData,
                 paging: {
                     page: 1,
                     pageSize: 100,
@@ -675,7 +690,7 @@ describe('LineList', () => {
             }
 
             renderLineList(
-                paginatedData as unknown as LineListAnalyticsData,
+                paginatedData,
                 simpleLineList.visualization as unknown as CurrentVisualization,
                 {
                     onPaginate: vi.fn(),
@@ -713,7 +728,7 @@ describe('LineList', () => {
             const onPaginate = vi.fn()
 
             const { rerender } = renderLineList(
-                simpleLineList.responses as unknown as LineListAnalyticsData,
+                simpleLineListData,
                 simpleLineList.visualization as unknown as CurrentVisualization,
                 {
                     onDataSort,
@@ -733,9 +748,7 @@ describe('LineList', () => {
 
             rerender(
                 <LineList
-                    analyticsData={
-                        simpleLineList.responses as unknown as LineListAnalyticsData
-                    }
+                    analyticsData={simpleLineListData}
                     visualization={
                         simpleLineList.visualization as unknown as CurrentVisualization
                     }
@@ -748,7 +761,7 @@ describe('LineList', () => {
             )
 
             const sortButton = screen.getByRole('button', {
-                name: /sort by.*organisation unit/i,
+                name: /sort by.*event org\. unit/i,
             })
             expect(sortButton).toBeInTheDocument()
 

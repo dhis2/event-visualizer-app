@@ -1,8 +1,8 @@
 {
     "visualization": {
-        "name": "Inpatient: Cases under 5 years female this year additional columns and legends",
-        "created": "2025-09-10T11:24:31.716",
-        "lastUpdated": "2025-09-10T11:24:31.716",
+        "name": "Inpatient: Cases under 5 years female this year (case) additional columns and legends",
+        "created": "2014-04-22T17:05:22.902",
+        "lastUpdated": "2014-04-22T17:05:22.902",
         "translations": [],
         "createdBy": {
             "id": "xE7jOejl9FI",
@@ -11,28 +11,18 @@
             "displayName": "John Traore",
             "username": "admin"
         },
-        "favorites": [],
-        "lastUpdatedBy": {
-            "id": "xE7jOejl9FI",
-            "code": null,
-            "name": "John Traore",
-            "displayName": "John Traore",
-            "username": "admin"
-        },
         "sharing": {
             "owner": "xE7jOejl9FI",
-            "external": false,
             "users": {},
             "userGroups": {},
-            "public": "--------"
+            "public": "rw------"
         },
-        "regressionType": "NONE",
         "displayDensity": "NORMAL",
         "fontSize": "NORMAL",
-        "sortOrder": 0,
-        "topLimit": 0,
+        "rawPeriods": ["THIS_YEAR"],
         "hideEmptyRows": false,
         "showHierarchy": false,
+        "completedOnly": false,
         "skipRounding": false,
         "dataDimensionItems": [],
         "dataElementGroupSetDimensions": [],
@@ -41,12 +31,6 @@
         "categoryOptionGroupSetDimensions": [],
         "attributeDimensions": [],
         "dataElementDimensions": [
-            {
-                "dataElement": {
-                    "name": "Weight in kg",
-                    "id": "vV9UWAZohSf"
-                }
-            },
             {
                 "dataElement": {
                     "name": "Admission Date",
@@ -82,61 +66,11 @@
                     "name": "Mode of Discharge",
                     "id": "fWIAEtYVEGk"
                 }
-            },
-            {
-                "dataElement": {
-                    "name": "Diagnosis (ICD-10)",
-                    "id": "K6uUAvq500H"
-                }
-            },
-            {
-                "dataElement": {
-                    "name": "Admission Date",
-                    "id": "eMyVanycQSC"
-                }
             }
         ],
-        "programIndicatorDimensions": [
-            {
-                "programIndicator": {
-                    "name": "BMI",
-                    "id": "x7PaHGvgWY2"
-                }
-            },
-            {
-                "programIndicator": {
-                    "name": "BMI female under 5 y",
-                    "id": "hlPt8H4bUOQ"
-                }
-            },
-            {
-                "programIndicator": {
-                    "name": "Inpatient bed days",
-                    "id": "b8hd33dWjR6"
-                }
-            },
-            {
-                "programIndicator": {
-                    "name": "Inpatient cases under 5 y",
-                    "id": "vDdRoZYybP2"
-                }
-            },
-            {
-                "programIndicator": {
-                    "name": "Average height of girls at 5 years old",
-                    "id": "gWxh7DiRmG7"
-                }
-            },
-            {
-                "programIndicator": {
-                    "name": "Average weight of women",
-                    "id": "ReQEl5V3z6p"
-                }
-            }
-        ],
+        "programIndicatorDimensions": [],
         "subscribers": [],
         "digitGroupSeparator": "SPACE",
-        "hideEmptyRowItems": "NONE",
         "hideLegend": false,
         "noSpaceBetweenColumns": false,
         "cumulativeValues": false,
@@ -150,27 +84,6 @@
         "hideSubtitle": false,
         "showDimensionLabels": false,
         "type": "LINE_LIST",
-        "program": {
-            "programType": "WITHOUT_REGISTRATION",
-            "displayIncidentDate": false,
-            "displayIncidentDateLabel": "Date of Discharge",
-            "id": "eBAyeGv0exc",
-            "programStages": [
-                {
-                    "id": "Zj7UnCAulEk",
-                    "repeatable": false,
-                    "name": "Inpatient morbidity and mortality"
-                }
-            ],
-            "name": "Inpatient morbidity and mortality"
-        },
-        "programStage": {
-            "hideDueDate": false,
-            "displayExecutionDateLabel": "Report date",
-            "id": "Zj7UnCAulEk",
-            "repeatable": false,
-            "name": "Inpatient morbidity and mortality"
-        },
         "programDimensions": [
             {
                 "incidentDateLabel": "Date of Discharge",
@@ -180,6 +93,9 @@
                 "id": "eBAyeGv0exc",
                 "programStages": [
                     {
+                        "program": {
+                            "id": "eBAyeGv0exc"
+                        },
                         "hideDueDate": false,
                         "displayExecutionDateLabel": "Report date",
                         "id": "Zj7UnCAulEk",
@@ -190,27 +106,77 @@
                 "name": "Inpatient morbidity and mortality"
             }
         ],
-        "simpleDimensions": [
-            {
-                "parent": "COLUMN",
-                "dimension": "eventDate",
-                "values": ["THIS_YEAR"]
-            },
-            {
-                "parent": "COLUMN",
-                "dimension": "ou",
-                "values": ["ImspTQPwCqd"]
-            }
-        ],
         "outputType": "EVENT",
         "collapseDataDimensions": false,
         "hideNaData": false,
-        "legacy": false,
+        "hideEmptyColumns": false,
+        "fixColumnHeaders": false,
+        "fixRowHeaders": false,
         "dataType": "EVENTS",
-        "filters": [],
         "parentGraphMap": {
             "ImspTQPwCqd": ""
         },
+        "displayName": "Inpatient: Cases under 5 years female this year (case)",
+        "access": {
+            "manage": true,
+            "write": true,
+            "read": true,
+            "update": true,
+            "delete": true
+        },
+        "href": "https://e2e.im.dhis2.org/analytics-dev/api/eventVisualizations/pLJAnM1rHex",
+        "subscribed": false,
+        "favorite": false,
+        "metaData": {
+            "ImspTQPwCqd": {
+                "uid": "ImspTQPwCqd",
+                "code": "OU_525",
+                "name": "Sierra Leone"
+            },
+            "eMyVanycQSC": {
+                "uid": "eMyVanycQSC",
+                "code": "DE_3000005",
+                "name": "Admission Date"
+            },
+            "oZg33kd9taw": {
+                "uid": "oZg33kd9taw",
+                "code": "DE_3000004",
+                "name": "Gender"
+            },
+            "fWIAEtYVEGk": {
+                "uid": "fWIAEtYVEGk",
+                "code": "DE_3000009",
+                "name": "Mode of Discharge"
+            },
+            "qrur9Dvnyt5": {
+                "uid": "qrur9Dvnyt5",
+                "code": "DE_3000003",
+                "name": "Age in years"
+            },
+            "K6uUAvq500H": {
+                "uid": "K6uUAvq500H",
+                "code": "DE_3000010",
+                "name": "Diagnosis (ICD-10)"
+            },
+            "msodh3rEMJa": {
+                "uid": "msodh3rEMJa",
+                "code": "DE_3000006",
+                "name": "Discharge Date"
+            }
+        },
+        "displayFormName": "Inpatient: Cases under 5 years female this year (case)",
+        "id": "pLJAnM1rHex",
+        "attributeValues": [],
+        "sorting": [],
+        "legend": {
+            "set": {
+                "id": "OrkEzxZEH4X"
+            },
+            "strategy": "BY_DATA_ITEM",
+            "style": "FILL",
+            "showKey": true
+        },
+        "legacy": true,
         "columns": [
             {
                 "dimensionType": "PERIOD",
@@ -219,19 +185,25 @@
                         "id": "THIS_YEAR"
                     }
                 ],
-                "dimension": "eventDate"
-            },
-            {
-                "dimensionType": "DATA_ELEMENT",
-                "items": [],
-                "programStage": {
-                    "id": "Zj7UnCAulEk"
-                },
+                "dimension": "eventDate",
                 "program": {
                     "id": "eBAyeGv0exc"
                 },
+                "programStage": {
+                    "id": "Zj7UnCAulEk"
+                }
+            },
+            {
+                "dimension": "vV9UWAZohSf",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "valueType": "INTEGER_POSITIVE",
-                "dimension": "vV9UWAZohSf"
+                "items": [],
+                "program": {
+                    "id": "eBAyeGv0exc"
+                },
+                "programStage": {
+                    "id": "Zj7UnCAulEk"
+                }
             },
             {
                 "dimensionType": "ORGANISATION_UNIT",
@@ -240,151 +212,191 @@
                         "id": "ImspTQPwCqd"
                     }
                 ],
-                "dimension": "ou"
+                "dimension": "ou",
+                "program": {
+                    "id": "eBAyeGv0exc"
+                },
+                "programStage": {
+                    "id": "Zj7UnCAulEk"
+                }
             },
             {
-                "dimensionType": "DATA_ELEMENT",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "items": [],
+                "dimension": "eMyVanycQSC",
                 "valueType": "DATE",
-                "dimension": "eMyVanycQSC"
+                "program": {
+                    "id": "eBAyeGv0exc"
+                },
+                "programStage": {
+                    "id": "Zj7UnCAulEk"
+                }
             },
             {
-                "dimensionType": "DATA_ELEMENT",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "items": [],
                 "filter": "LE:5",
+                "dimension": "qrur9Dvnyt5",
                 "valueType": "INTEGER",
-                "dimension": "qrur9Dvnyt5"
+                "program": {
+                    "id": "eBAyeGv0exc"
+                },
+                "programStage": {
+                    "id": "Zj7UnCAulEk"
+                }
             },
             {
-                "dimensionType": "DATA_ELEMENT",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "items": [],
+                "dimension": "K6uUAvq500H",
                 "valueType": "TEXT",
                 "optionSet": {
-                    "id": "eUZ79clX7y1"
+                    "id": "eUZ79clX7y1",
+                    "name": "Diagnosis ICD10"
                 },
-                "dimension": "K6uUAvq500H"
+                "program": {
+                    "id": "eBAyeGv0exc"
+                },
+                "programStage": {
+                    "id": "Zj7UnCAulEk"
+                }
             },
             {
-                "dimensionType": "DATA_ELEMENT",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "items": [],
+                "dimension": "msodh3rEMJa",
                 "valueType": "DATE",
-                "dimension": "msodh3rEMJa"
+                "program": {
+                    "id": "eBAyeGv0exc"
+                },
+                "programStage": {
+                    "id": "Zj7UnCAulEk"
+                }
             },
             {
-                "dimensionType": "DATA_ELEMENT",
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
                 "items": [],
                 "filter": "IN:Female",
+                "dimension": "oZg33kd9taw",
                 "valueType": "TEXT",
                 "optionSet": {
-                    "id": "pC3N9N77UmT"
-                },
-                "dimension": "oZg33kd9taw"
-            },
-            {
-                "dimensionType": "DATA_ELEMENT",
-                "items": [],
-                "valueType": "TEXT",
-                "optionSet": {
-                    "id": "iDFPKpFTiVw"
-                },
-                "dimension": "fWIAEtYVEGk"
-            },
-            {
-                "dimensionType": "PROGRAM_INDICATOR",
-                "items": [],
-                "dimension": "x7PaHGvgWY2"
-            },
-            {
-                "dimensionType": "PROGRAM_INDICATOR",
-                "items": [],
-                "dimension": "hlPt8H4bUOQ"
-            },
-            {
-                "dimensionType": "PROGRAM_INDICATOR",
-                "items": [],
-                "dimension": "b8hd33dWjR6"
-            },
-            {
-                "dimensionType": "PROGRAM_INDICATOR",
-                "items": [],
-                "dimension": "vDdRoZYybP2"
-            },
-            {
-                "dimensionType": "PROGRAM_INDICATOR",
-                "items": [],
-                "dimension": "gWxh7DiRmG7"
-            },
-            {
-                "dimensionType": "DATA_ELEMENT",
-                "items": [],
-                "programStage": {
-                    "id": "Zj7UnCAulEk"
+                    "id": "pC3N9N77UmT",
+                    "name": "Gender"
                 },
                 "program": {
                     "id": "eBAyeGv0exc"
                 },
-                "valueType": "TEXT",
-                "optionSet": {
-                    "id": "eUZ79clX7y1"
-                },
-                "dimension": "K6uUAvq500H"
-            },
-            {
-                "dimensionType": "DATA_ELEMENT",
-                "items": [],
                 "programStage": {
                     "id": "Zj7UnCAulEk"
+                }
+            },
+            {
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
+                "items": [],
+                "dimension": "fWIAEtYVEGk",
+                "valueType": "TEXT",
+                "optionSet": {
+                    "id": "iDFPKpFTiVw",
+                    "name": "Mode of discharge"
                 },
                 "program": {
                     "id": "eBAyeGv0exc"
                 },
+                "programStage": {
+                    "id": "Zj7UnCAulEk"
+                }
+            },
+            {
+                "dimension": "x7PaHGvgWY2",
+                "dimensionType": "PROGRAM_INDICATOR",
+                "items": []
+            },
+            {
+                "dimension": "hlPt8H4bUOQ",
+                "dimensionType": "PROGRAM_INDICATOR",
+                "items": []
+            },
+            {
+                "dimension": "b8hd33dWjR6",
+                "dimensionType": "PROGRAM_INDICATOR",
+                "items": []
+            },
+            {
+                "dimension": "vDdRoZYybP2",
+                "dimensionType": "PROGRAM_INDICATOR",
+                "items": []
+            },
+            {
+                "dimension": "gWxh7DiRmG7",
+                "dimensionType": "PROGRAM_INDICATOR",
+                "items": []
+            },
+            {
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
+                "items": [],
+                "dimension": "K6uUAvq500H",
+                "valueType": "TEXT",
+                "optionSet": {
+                    "id": "eUZ79clX7y1",
+                    "name": "Diagnosis ICD10"
+                },
+                "program": {
+                    "id": "eBAyeGv0exc"
+                },
+                "programStage": {
+                    "id": "Zj7UnCAulEk"
+                }
+            },
+            {
+                "dimensionType": "PROGRAM_DATA_ELEMENT",
+                "items": [],
+                "dimension": "eMyVanycQSC",
                 "valueType": "DATE",
-                "dimension": "eMyVanycQSC"
+                "program": {
+                    "id": "eBAyeGv0exc"
+                },
+                "programStage": {
+                    "id": "Zj7UnCAulEk"
+                }
             },
             {
+                "dimension": "ReQEl5V3z6p",
                 "dimensionType": "PROGRAM_INDICATOR",
-                "items": [],
-                "dimension": "ReQEl5V3z6p"
+                "items": []
             }
         ],
         "rows": [],
-        "favorite": false,
-        "displayName": "Inpatient: Cases under 5 years female this year additional columns and legends",
-        "access": {
-            "manage": true,
-            "externalize": true,
-            "write": true,
-            "read": true,
-            "update": true,
-            "delete": true
-        },
-        "href": "https://test.e2e.dhis2.org/anly-41/api/41/eventVisualizations/jH2qePoAnHU",
-        "subscribed": false,
-        "displayFormName": "Inpatient: Cases under 5 years female this year additional columns and legends",
-        "id": "jH2qePoAnHU",
-        "attributeValues": [],
-        "legend": {
-            "showKey": true,
-            "style": "FILL",
-            "set": {
-                "displayName": "Weight in kg",
-                "id": "OrkEzxZEH4X"
-            },
-            "strategy": "BY_DATA_ITEM"
-        },
-        "sorting": [],
-        "repetitions": []
+        "filters": []
     },
-    "responses": {
+    "metadata": {
+        "Zj7UnCAulEk.vV9UWAZohSf": {
+            "id": "Zj7UnCAulEk.vV9UWAZohSf",
+            "dimensionId": "vV9UWAZohSf",
+            "name": "Weight in kg",
+            "dimensionType": "DATA_ELEMENT",
+            "valueType": "INTEGER_POSITIVE",
+            "programStageId": "Zj7UnCAulEk",
+            "legendSetId": "OrkEzxZEH4X"
+        },
+        "Zj7UnCAulEk.qrur9Dvnyt5": {
+            "id": "Zj7UnCAulEk.qrur9Dvnyt5",
+            "dimensionId": "qrur9Dvnyt5",
+            "name": "Age in years",
+            "dimensionType": "DATA_ELEMENT",
+            "valueType": "INTEGER",
+            "programStageId": "Zj7UnCAulEk",
+            "legendSetId": "Yf6UHoPkdS6"
+        }
+    },
+    "response": {
         "headers": [
             {
-                "name": "eventdate",
+                "name": "Zj7UnCAulEk.eventdate",
                 "column": "Report date",
-                "valueType": "DATETIME",
-                "type": "java.time.LocalDateTime",
+                "valueType": "DATE",
+                "type": "java.time.LocalDate",
                 "hidden": false,
-                "meta": true,
-                "index": 0
+                "meta": true
             },
             {
                 "name": "Zj7UnCAulEk.vV9UWAZohSf",
@@ -392,264 +404,31 @@
                 "valueType": "INTEGER_POSITIVE",
                 "type": "java.lang.Integer",
                 "hidden": false,
-                "meta": true,
-                "index": 1,
-                "legendSet": {
-                    "legends": [
-                        {
-                            "startValue": 0,
-                            "endValue": 20,
-                            "color": "#f7fbff",
-                            "id": "NxQrJ3icPkE",
-                            "name": "0 - 20"
-                        },
-                        {
-                            "startValue": 20,
-                            "endValue": 40,
-                            "color": "#deebf7",
-                            "id": "b9UzeWaSs2u",
-                            "name": "20 - 40"
-                        },
-                        {
-                            "startValue": 40,
-                            "endValue": 50,
-                            "color": "#c6dbef",
-                            "id": "AD5jueZTZSK",
-                            "name": "40 - 50"
-                        },
-                        {
-                            "startValue": 50,
-                            "endValue": 60,
-                            "color": "#9ecae1",
-                            "id": "Sjp6IB3gthI",
-                            "name": "50 - 60"
-                        },
-                        {
-                            "startValue": 60,
-                            "endValue": 70,
-                            "color": "#6baed6",
-                            "id": "GDFw7T4aFGz",
-                            "name": "60 - 70"
-                        },
-                        {
-                            "startValue": 70,
-                            "endValue": 80,
-                            "color": "#4292c6",
-                            "id": "xVezsaEXU3k",
-                            "name": "70 - 80"
-                        },
-                        {
-                            "startValue": 80,
-                            "endValue": 90,
-                            "color": "#2171b5",
-                            "id": "lnccUWrmqL0",
-                            "name": "80 - 90"
-                        },
-                        {
-                            "startValue": 90,
-                            "endValue": 100,
-                            "color": "#08519c",
-                            "id": "XKEvGfAkh3R",
-                            "name": "90 - 100"
-                        },
-                        {
-                            "startValue": 100,
-                            "endValue": 200,
-                            "color": "#08306b",
-                            "id": "f3prvzpfniC",
-                            "name": "100+"
-                        }
-                    ],
-                    "id": "OrkEzxZEH4X",
-                    "name": "Weight in kg"
-                }
+                "meta": true
             },
             {
-                "name": "ouname",
-                "column": "Organisation unit",
+                "name": "Zj7UnCAulEk.ouname",
+                "column": "Organisation unit name",
                 "valueType": "TEXT",
                 "type": "java.lang.String",
                 "hidden": false,
-                "meta": true,
-                "index": 2
+                "meta": true
             },
             {
-                "name": "eMyVanycQSC",
+                "name": "Zj7UnCAulEk.eMyVanycQSC",
                 "column": "Admission Date",
                 "valueType": "DATE",
                 "type": "java.time.LocalDate",
                 "hidden": false,
-                "meta": true,
-                "index": 3
+                "meta": true
             },
             {
-                "name": "qrur9Dvnyt5",
+                "name": "Zj7UnCAulEk.qrur9Dvnyt5",
                 "column": "Age in years",
                 "valueType": "INTEGER",
                 "type": "java.lang.Integer",
                 "hidden": false,
-                "meta": true,
-                "index": 4,
-                "legendSet": {
-                    "legends": [
-                        {
-                            "startValue": 0,
-                            "endValue": 10,
-                            "color": "#FFFFFF",
-                            "id": "pZzk1L4Blf1",
-                            "name": "0 - 10"
-                        },
-                        {
-                            "startValue": 10,
-                            "endValue": 20,
-                            "color": "#ffffe5",
-                            "id": "OyVUzWsX8UF",
-                            "name": "10 - 20"
-                        },
-                        {
-                            "startValue": 20,
-                            "endValue": 30,
-                            "color": "#f7fcb9",
-                            "id": "TvM2MQgD7Jd",
-                            "name": "20 - 30"
-                        },
-                        {
-                            "startValue": 30,
-                            "endValue": 40,
-                            "color": "#d9f0a3",
-                            "id": "ZUUGJnvX40X",
-                            "name": "30 - 40"
-                        },
-                        {
-                            "startValue": 40,
-                            "endValue": 50,
-                            "color": "#addd8e",
-                            "id": "CpP5yzbgfHo",
-                            "name": "40 - 50"
-                        },
-                        {
-                            "startValue": 50,
-                            "endValue": 60,
-                            "color": "#78c679",
-                            "id": "cbPqyIAFw9u",
-                            "name": "50 - 60"
-                        },
-                        {
-                            "startValue": 60,
-                            "endValue": 70,
-                            "color": "#41ab5d",
-                            "id": "Tq4NYCn9eNH",
-                            "name": "60 - 70"
-                        },
-                        {
-                            "startValue": 70,
-                            "endValue": 80,
-                            "color": "#238443",
-                            "id": "b7MCpzqJaR2",
-                            "name": "70 - 80"
-                        },
-                        {
-                            "startValue": 80,
-                            "endValue": 90,
-                            "color": "#006837",
-                            "id": "puI3YpLJ3fC",
-                            "name": "80 - 90"
-                        },
-                        {
-                            "startValue": 90,
-                            "endValue": 100,
-                            "color": "#004529",
-                            "id": "scvmgP9F9rn",
-                            "name": "90 - 100"
-                        }
-                    ],
-                    "id": "Yf6UHoPkdS6",
-                    "name": "Age 10y interval"
-                }
-            },
-            {
-                "name": "K6uUAvq500H",
-                "column": "Diagnosis (ICD-10)",
-                "valueType": "TEXT",
-                "type": "java.lang.String",
-                "hidden": false,
-                "meta": true,
-                "optionSet": "eUZ79clX7y1",
-                "index": 5
-            },
-            {
-                "name": "msodh3rEMJa",
-                "column": "Discharge Date",
-                "valueType": "DATE",
-                "type": "java.time.LocalDate",
-                "hidden": false,
-                "meta": true,
-                "index": 6
-            },
-            {
-                "name": "oZg33kd9taw",
-                "column": "Gender",
-                "valueType": "TEXT",
-                "type": "java.lang.String",
-                "hidden": false,
-                "meta": true,
-                "optionSet": "pC3N9N77UmT",
-                "index": 7
-            },
-            {
-                "name": "fWIAEtYVEGk",
-                "column": "Mode of Discharge",
-                "valueType": "TEXT",
-                "type": "java.lang.String",
-                "hidden": false,
-                "meta": true,
-                "optionSet": "iDFPKpFTiVw",
-                "index": 8
-            },
-            {
-                "name": "x7PaHGvgWY2",
-                "column": "BMI",
-                "valueType": "NUMBER",
-                "type": "java.lang.Double",
-                "hidden": false,
-                "meta": true,
-                "index": 9
-            },
-            {
-                "name": "hlPt8H4bUOQ",
-                "column": "BMI female under 5 y",
-                "valueType": "NUMBER",
-                "type": "java.lang.Double",
-                "hidden": false,
-                "meta": true,
-                "index": 10
-            },
-            {
-                "name": "b8hd33dWjR6",
-                "column": "Inpatient bed days",
-                "valueType": "NUMBER",
-                "type": "java.lang.Double",
-                "hidden": false,
-                "meta": true,
-                "index": 11
-            },
-            {
-                "name": "vDdRoZYybP2",
-                "column": "Inpatient cases under 5 y",
-                "valueType": "NUMBER",
-                "type": "java.lang.Double",
-                "hidden": false,
-                "meta": true,
-                "index": 12
-            },
-            {
-                "name": "gWxh7DiRmG7",
-                "column": "Average height of girls at 5 years old",
-                "valueType": "NUMBER",
-                "type": "java.lang.Double",
-                "hidden": false,
-                "meta": true,
-                "index": 13
+                "meta": true
             },
             {
                 "name": "Zj7UnCAulEk.K6uUAvq500H",
@@ -658,17 +437,73 @@
                 "type": "java.lang.String",
                 "hidden": false,
                 "meta": true,
-                "optionSet": "eUZ79clX7y1",
-                "index": 14
+                "optionSet": "eUZ79clX7y1"
             },
             {
-                "name": "Zj7UnCAulEk.eMyVanycQSC",
-                "column": "Admission Date",
+                "name": "Zj7UnCAulEk.msodh3rEMJa",
+                "column": "Discharge Date",
                 "valueType": "DATE",
                 "type": "java.time.LocalDate",
                 "hidden": false,
+                "meta": true
+            },
+            {
+                "name": "Zj7UnCAulEk.oZg33kd9taw",
+                "column": "Gender",
+                "valueType": "TEXT",
+                "type": "java.lang.String",
+                "hidden": false,
                 "meta": true,
-                "index": 15
+                "optionSet": "pC3N9N77UmT"
+            },
+            {
+                "name": "Zj7UnCAulEk.fWIAEtYVEGk",
+                "column": "Mode of Discharge",
+                "valueType": "TEXT",
+                "type": "java.lang.String",
+                "hidden": false,
+                "meta": true,
+                "optionSet": "iDFPKpFTiVw"
+            },
+            {
+                "name": "x7PaHGvgWY2",
+                "column": "BMI",
+                "valueType": "NUMBER",
+                "type": "java.lang.Double",
+                "hidden": false,
+                "meta": true
+            },
+            {
+                "name": "hlPt8H4bUOQ",
+                "column": "BMI female under 5 y",
+                "valueType": "NUMBER",
+                "type": "java.lang.Double",
+                "hidden": false,
+                "meta": true
+            },
+            {
+                "name": "b8hd33dWjR6",
+                "column": "Inpatient bed days",
+                "valueType": "NUMBER",
+                "type": "java.lang.Double",
+                "hidden": false,
+                "meta": true
+            },
+            {
+                "name": "vDdRoZYybP2",
+                "column": "Inpatient cases under 5 y",
+                "valueType": "NUMBER",
+                "type": "java.lang.Double",
+                "hidden": false,
+                "meta": true
+            },
+            {
+                "name": "gWxh7DiRmG7",
+                "column": "Average height of girls at 5 years old",
+                "valueType": "NUMBER",
+                "type": "java.lang.Double",
+                "hidden": false,
+                "meta": true
             },
             {
                 "name": "ReQEl5V3z6p",
@@ -676,1917 +511,3180 @@
                 "valueType": "NUMBER",
                 "type": "java.lang.Double",
                 "hidden": false,
-                "meta": true,
-                "index": 16
+                "meta": true
             }
         ],
+        "metaData": {
+            "pager": {
+                "page": 1,
+                "pageSize": 100,
+                "isLastPage": false
+            },
+            "items": {
+                "2026": {
+                    "uid": "2026",
+                    "code": "2026",
+                    "name": "2026",
+                    "dimensionItemType": "PERIOD",
+                    "valueType": "TEXT",
+                    "totalAggregationType": "SUM",
+                    "startDate": "2026-01-01T00:00:00.000",
+                    "endDate": "2026-12-31T00:00:00.000"
+                },
+                "kvGi6yFJWhR": {
+                    "uid": "kvGi6yFJWhR",
+                    "code": "K221",
+                    "name": "K221 Ulcer of oesophagus"
+                },
+                "qrur9Dvnyt5": {
+                    "uid": "qrur9Dvnyt5",
+                    "code": "DE_3000003",
+                    "name": "Age in years",
+                    "description": "Age of person in years.",
+                    "legendSet": "Yf6UHoPkdS6",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "NUMBER",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "SrFu4F2qwCw": {
+                    "uid": "SrFu4F2qwCw",
+                    "code": "B374",
+                    "name": "B374 Candidiasis of other urogenital sites"
+                },
+                "gj2fKKyp8OH": {
+                    "uid": "gj2fKKyp8OH",
+                    "code": "MODDIED",
+                    "name": "Died"
+                },
+                "Zj7UnCAulEk.msodh3rEMJa": {
+                    "uid": "msodh3rEMJa",
+                    "code": "DE_3000006",
+                    "name": "Discharge Date",
+                    "description": "Date of discharge of patient.",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "DATE",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "syPAJAlKvXN": {
+                    "uid": "syPAJAlKvXN",
+                    "code": "V530",
+                    "name": "V530 Occupant of pick-up truck or van injured in collision with car, pick-up truck or van, driver, nontraffic accident"
+                },
+                "Zj7UnCAulEk.eventdate": {
+                    "name": "Report date"
+                },
+                "qOVo5PZNvKU": {
+                    "uid": "qOVo5PZNvKU",
+                    "code": "O41",
+                    "name": "O41 Other disorders of amniotic fluid and membranes"
+                },
+                "p7aYknGe7pk": {
+                    "uid": "p7aYknGe7pk",
+                    "code": "T924",
+                    "name": "T924 Sequelae of injury of nerve of upper limb"
+                },
+                "vepINo5FwN4": {
+                    "uid": "vepINo5FwN4",
+                    "code": "W609",
+                    "name": "W609 Contact with plant thorns and spines and sharp leaves, unspecified place"
+                },
+                "Fhbf4aKpZmZ": {
+                    "uid": "Fhbf4aKpZmZ",
+                    "code": "MODABSC",
+                    "name": "Absconded"
+                },
+                "CwKI0E8Yuxy": {
+                    "uid": "CwKI0E8Yuxy",
+                    "code": "Q771",
+                    "name": "Q771 Thanatophoric short stature"
+                },
+                "AjCrsJ8RZ3r": {
+                    "uid": "AjCrsJ8RZ3r",
+                    "code": "W117",
+                    "name": "W117 Fall on and from ladder, farm"
+                },
+                "AoudxAW1nPw": {
+                    "uid": "AoudxAW1nPw",
+                    "code": "C343",
+                    "name": "C343 Lower lobe, bronchus or lung"
+                },
+                "O7WbNKgORCw": {
+                    "uid": "O7WbNKgORCw",
+                    "code": "L519",
+                    "name": "L519 Erythema multiforme, unspecified"
+                },
+                "gWxh7DiRmG7": {
+                    "uid": "gWxh7DiRmG7",
+                    "name": "Average height of girls at 5 years old",
+                    "dimensionItemType": "PROGRAM_INDICATOR",
+                    "valueType": "NUMBER",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "o3Avwj5oNHc": {
+                    "uid": "o3Avwj5oNHc",
+                    "code": "T611",
+                    "name": "T611 Scombroid fish poisoning"
+                },
+                "S3keTNMLY6u": {
+                    "uid": "S3keTNMLY6u",
+                    "code": "G442",
+                    "name": "G442 Tension-type headache"
+                },
+                "vogjvk3xroZ": {
+                    "uid": "vogjvk3xroZ",
+                    "code": "M862",
+                    "name": "M862 Subacute osteomyelitis"
+                },
+                "asV4IvE6f5j": {
+                    "uid": "asV4IvE6f5j",
+                    "code": "O410",
+                    "name": "O410 Oligohydramnios"
+                },
+                "aatinEAIAQC": {
+                    "uid": "aatinEAIAQC",
+                    "code": "S064",
+                    "name": "S064 Epidural haemorrhage"
+                },
+                "bsgaoL01YZj": {
+                    "uid": "bsgaoL01YZj",
+                    "code": "W915",
+                    "name": "W915 Exposure to unspecified type of radiation, trade and service area"
+                },
+                "OzAHPruYtZY": {
+                    "uid": "OzAHPruYtZY",
+                    "code": "N072",
+                    "name": "N072 Hereditary nephropathy, NEC, diffuse membranous glomerulonephritis"
+                },
+                "oeYDN89AEHI": {
+                    "uid": "oeYDN89AEHI",
+                    "code": "T320",
+                    "name": "T320 Corrosions involving less than 10% of body surface"
+                },
+                "mHEd4Cdc6eV": {
+                    "uid": "mHEd4Cdc6eV",
+                    "code": "M051",
+                    "name": "M051 Rheumatoid lung disease"
+                },
+                "buia3I6Srae": {
+                    "uid": "buia3I6Srae",
+                    "code": "O35",
+                    "name": "O35 Maternal care for known or suspected fetal abnormality and damage"
+                },
+                "oOPmyt9oIS4": {
+                    "uid": "oOPmyt9oIS4",
+                    "code": "P500",
+                    "name": "P500 Fetal blood loss from vasa praevia"
+                },
+                "Zj7UnCAulEk.fWIAEtYVEGk": {
+                    "uid": "fWIAEtYVEGk",
+                    "code": "DE_3000009",
+                    "name": "Mode of Discharge",
+                    "description": "How the patient was discharged.",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "TEXT",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "eBAyeGv0exc": {
+                    "uid": "eBAyeGv0exc",
+                    "name": "Inpatient morbidity and mortality"
+                },
+                "QHEMW7ytigv": {
+                    "uid": "QHEMW7ytigv",
+                    "code": "R942",
+                    "name": "R942 Abnormal results of pulmonary function studies"
+                },
+                "eUZ79clX7y1": {
+                    "uid": "eUZ79clX7y1",
+                    "name": "Diagnosis ICD10",
+                    "options": [
+                        {
+                            "uid": "DRAWlNTj9IZ",
+                            "code": "A050"
+                        },
+                        {
+                            "uid": "iDUNN0HZ87u",
+                            "code": "A403"
+                        },
+                        {
+                            "uid": "eo6ZbOotPyQ",
+                            "code": "A63"
+                        },
+                        {
+                            "uid": "O1Z4F3rXkWh",
+                            "code": "A839"
+                        },
+                        {
+                            "uid": "skmHyfavNLY",
+                            "code": "B22"
+                        },
+                        {
+                            "uid": "SrFu4F2qwCw",
+                            "code": "B374"
+                        },
+                        {
+                            "uid": "q3DRcsUPrkY",
+                            "code": "B427"
+                        },
+                        {
+                            "uid": "M1LpWiqNnyj",
+                            "code": "B589"
+                        },
+                        {
+                            "uid": "VDhJSrzjGlK",
+                            "code": "B853"
+                        },
+                        {
+                            "uid": "AoudxAW1nPw",
+                            "code": "C343"
+                        },
+                        {
+                            "uid": "IxNZGfGjSJz",
+                            "code": "D643"
+                        },
+                        {
+                            "uid": "PXGnr9K9L2g",
+                            "code": "E233"
+                        },
+                        {
+                            "uid": "bwArbTAxrhJ",
+                            "code": "F410"
+                        },
+                        {
+                            "uid": "KLwF3XcxLg3",
+                            "code": "F42"
+                        },
+                        {
+                            "uid": "YyGW9k1lZIp",
+                            "code": "F444"
+                        },
+                        {
+                            "uid": "lEjI5yuALnE",
+                            "code": "G052"
+                        },
+                        {
+                            "uid": "JABdEO6lMFI",
+                            "code": "G26"
+                        },
+                        {
+                            "uid": "S3keTNMLY6u",
+                            "code": "G442"
+                        },
+                        {
+                            "uid": "loOEeorbJrr",
+                            "code": "G92"
+                        },
+                        {
+                            "uid": "Kp1HqsTvnKf",
+                            "code": "H044"
+                        },
+                        {
+                            "uid": "eWxtHPXbXaT",
+                            "code": "H250"
+                        },
+                        {
+                            "uid": "CNBrK1qky7z",
+                            "code": "H570"
+                        },
+                        {
+                            "uid": "XcbVfDtQcUX",
+                            "code": "H580"
+                        },
+                        {
+                            "uid": "yK9RhHSLtZc",
+                            "code": "I85"
+                        },
+                        {
+                            "uid": "aesZdcTGvoy",
+                            "code": "J633"
+                        },
+                        {
+                            "uid": "xh4yeyPrX9z",
+                            "code": "J635"
+                        },
+                        {
+                            "uid": "eyDt0c3knVp",
+                            "code": "J704"
+                        },
+                        {
+                            "uid": "kvGi6yFJWhR",
+                            "code": "K221"
+                        },
+                        {
+                            "uid": "s0rtGwVRNbQ",
+                            "code": "L100"
+                        },
+                        {
+                            "uid": "UfLFXwsGXCY",
+                            "code": "L102"
+                        },
+                        {
+                            "uid": "JLsyMZEX7D5",
+                            "code": "L279"
+                        },
+                        {
+                            "uid": "uDHNK02Q5QX",
+                            "code": "L281"
+                        },
+                        {
+                            "uid": "O7WbNKgORCw",
+                            "code": "L519"
+                        },
+                        {
+                            "uid": "ytBlr3FDL29",
+                            "code": "L638"
+                        },
+                        {
+                            "uid": "WJI6lXxCVuK",
+                            "code": "L639"
+                        },
+                        {
+                            "uid": "AD0TE5nBEjv",
+                            "code": "L662"
+                        },
+                        {
+                            "uid": "pzttvEMw0y9",
+                            "code": "L817"
+                        },
+                        {
+                            "uid": "oN7nnMZ6uyo",
+                            "code": "L892"
+                        },
+                        {
+                            "uid": "MjBl4VeWSSX",
+                            "code": "L981"
+                        },
+                        {
+                            "uid": "mHEd4Cdc6eV",
+                            "code": "M051"
+                        },
+                        {
+                            "uid": "sYrPxpogHMm",
+                            "code": "M13"
+                        },
+                        {
+                            "uid": "LtlDyJjfLog",
+                            "code": "M238"
+                        },
+                        {
+                            "uid": "ATSZ5GvOyUW",
+                            "code": "M519"
+                        },
+                        {
+                            "uid": "b2xQ7I7m2St",
+                            "code": "M542"
+                        },
+                        {
+                            "uid": "vupKIdKNEbh",
+                            "code": "M792"
+                        },
+                        {
+                            "uid": "vogjvk3xroZ",
+                            "code": "M862"
+                        },
+                        {
+                            "uid": "y8dhx0pZF1u",
+                            "code": "M918"
+                        },
+                        {
+                            "uid": "OzAHPruYtZY",
+                            "code": "N072"
+                        },
+                        {
+                            "uid": "kjE63Rk2KKN",
+                            "code": "N17"
+                        },
+                        {
+                            "uid": "EoMvxUwRA5b",
+                            "code": "N871"
+                        },
+                        {
+                            "uid": "ygGqxqUTPxE",
+                            "code": "N97"
+                        },
+                        {
+                            "uid": "bWgVhKdigV9",
+                            "code": "O03"
+                        },
+                        {
+                            "uid": "OaC3HlrAcV3",
+                            "code": "O055"
+                        },
+                        {
+                            "uid": "cIvP3PS8d3m",
+                            "code": "O290"
+                        },
+                        {
+                            "uid": "IAmbhFbY9Bj",
+                            "code": "O31"
+                        },
+                        {
+                            "uid": "buia3I6Srae",
+                            "code": "O35"
+                        },
+                        {
+                            "uid": "sMxnU0mABtk",
+                            "code": "O360"
+                        },
+                        {
+                            "uid": "qOVo5PZNvKU",
+                            "code": "O41"
+                        },
+                        {
+                            "uid": "asV4IvE6f5j",
+                            "code": "O410"
+                        },
+                        {
+                            "uid": "AJQPocTGBla",
+                            "code": "O718"
+                        },
+                        {
+                            "uid": "wKm7lPvsk2V",
+                            "code": "O870"
+                        },
+                        {
+                            "uid": "zmmuoOmfAuG",
+                            "code": "O986"
+                        },
+                        {
+                            "uid": "oOPmyt9oIS4",
+                            "code": "P500"
+                        },
+                        {
+                            "uid": "VORni7kXgfa",
+                            "code": "P509"
+                        },
+                        {
+                            "uid": "ZQeH5NDNLiB",
+                            "code": "P510"
+                        },
+                        {
+                            "uid": "Op3YlZbDUZz",
+                            "code": "P59"
+                        },
+                        {
+                            "uid": "wTr05JZifbI",
+                            "code": "Q051"
+                        },
+                        {
+                            "uid": "vnQw8aCZwyU",
+                            "code": "Q058"
+                        },
+                        {
+                            "uid": "FhAFUrV7lJx",
+                            "code": "Q078"
+                        },
+                        {
+                            "uid": "riLak2tdxXv",
+                            "code": "Q769"
+                        },
+                        {
+                            "uid": "CwKI0E8Yuxy",
+                            "code": "Q771"
+                        },
+                        {
+                            "uid": "dubs9xNIN3R",
+                            "code": "R57"
+                        },
+                        {
+                            "uid": "E9Sw1QJSRGs",
+                            "code": "R636"
+                        },
+                        {
+                            "uid": "QHEMW7ytigv",
+                            "code": "R942"
+                        },
+                        {
+                            "uid": "aatinEAIAQC",
+                            "code": "S064"
+                        },
+                        {
+                            "uid": "OFbxRDyYfCm",
+                            "code": "S89"
+                        },
+                        {
+                            "uid": "aB3g0MaaMME",
+                            "code": "T065"
+                        },
+                        {
+                            "uid": "CdhtrxfVjs2",
+                            "code": "T268"
+                        },
+                        {
+                            "uid": "QuB0muHPyXI",
+                            "code": "T297"
+                        },
+                        {
+                            "uid": "oeYDN89AEHI",
+                            "code": "T320"
+                        },
+                        {
+                            "uid": "wptzI7BMHWG",
+                            "code": "T478"
+                        },
+                        {
+                            "uid": "byETWIe9XEA",
+                            "code": "T567"
+                        },
+                        {
+                            "uid": "o3Avwj5oNHc",
+                            "code": "T611"
+                        },
+                        {
+                            "uid": "fGq8X61q5VP",
+                            "code": "T862"
+                        },
+                        {
+                            "uid": "p7aYknGe7pk",
+                            "code": "T924"
+                        },
+                        {
+                            "uid": "GD5g4PS5knO",
+                            "code": "T941"
+                        },
+                        {
+                            "uid": "G5U36Uuz8qL",
+                            "code": "V133"
+                        },
+                        {
+                            "uid": "syPAJAlKvXN",
+                            "code": "V530"
+                        },
+                        {
+                            "uid": "VDpjBDpV07X",
+                            "code": "V621"
+                        },
+                        {
+                            "uid": "CsJMTKJoQr4",
+                            "code": "V888"
+                        },
+                        {
+                            "uid": "xhYOETZv410",
+                            "code": "W107"
+                        },
+                        {
+                            "uid": "AjCrsJ8RZ3r",
+                            "code": "W117"
+                        },
+                        {
+                            "uid": "LQ2asxnlKsq",
+                            "code": "W452"
+                        },
+                        {
+                            "uid": "NKMTmHSOl1z",
+                            "code": "W468"
+                        },
+                        {
+                            "uid": "fGuZ4Tvtvva",
+                            "code": "W51"
+                        },
+                        {
+                            "uid": "vepINo5FwN4",
+                            "code": "W609"
+                        },
+                        {
+                            "uid": "tNmaQ2O2jg1",
+                            "code": "W699"
+                        },
+                        {
+                            "uid": "rVIHkkDXcYH",
+                            "code": "W847"
+                        },
+                        {
+                            "uid": "bsgaoL01YZj",
+                            "code": "W915"
+                        },
+                        {
+                            "uid": "diKOc9nUHrR",
+                            "code": "X300"
+                        }
+                    ]
+                },
+                "pC3N9N77UmT": {
+                    "uid": "pC3N9N77UmT",
+                    "name": "Gender",
+                    "options": [
+                        {
+                            "uid": "Mnp3oXrpAbK",
+                            "code": "Female"
+                        }
+                    ]
+                },
+                "VDpjBDpV07X": {
+                    "uid": "VDpjBDpV07X",
+                    "code": "V621",
+                    "name": "V621 Occupant of heavy transport vehicle injured in collision with two- or three-wheeled motor vehicle, passenger, nontraffic accident"
+                },
+                "AJQPocTGBla": {
+                    "uid": "AJQPocTGBla",
+                    "code": "O718",
+                    "name": "O718 Other specified obstetric trauma"
+                },
+                "QuB0muHPyXI": {
+                    "uid": "QuB0muHPyXI",
+                    "code": "T297",
+                    "name": "T297 Corrosions of multiple regions, at least one corrosion of third degree mentioned"
+                },
+                "loOEeorbJrr": {
+                    "uid": "loOEeorbJrr",
+                    "code": "G92",
+                    "name": "G92 Toxic encephalopathy"
+                },
+                "s0rtGwVRNbQ": {
+                    "uid": "s0rtGwVRNbQ",
+                    "code": "L100",
+                    "name": "L100 Pemphigus vulgaris"
+                },
+                "fGuZ4Tvtvva": {
+                    "uid": "fGuZ4Tvtvva",
+                    "code": "W51",
+                    "name": "W51 Striking against or bumped into by another person"
+                },
+                "Zj7UnCAulEk.oZg33kd9taw": {
+                    "uid": "oZg33kd9taw",
+                    "code": "DE_3000004",
+                    "name": "Gender",
+                    "description": "Gender of patient.",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "TEXT",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "PXGnr9K9L2g": {
+                    "uid": "PXGnr9K9L2g",
+                    "code": "E233",
+                    "name": "E233 Hypothalamic dysfunction, NEC"
+                },
+                "b8hd33dWjR6": {
+                    "uid": "b8hd33dWjR6",
+                    "name": "Inpatient bed days",
+                    "description": "Inpatient days",
+                    "dimensionItemType": "PROGRAM_INDICATOR",
+                    "valueType": "NUMBER",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "dubs9xNIN3R": {
+                    "uid": "dubs9xNIN3R",
+                    "code": "R57",
+                    "name": "R57 Shock, NEC"
+                },
+                "fWIAEtYVEGk": {
+                    "uid": "fWIAEtYVEGk",
+                    "code": "DE_3000009",
+                    "name": "Mode of Discharge",
+                    "description": "How the patient was discharged.",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "TEXT",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "WJI6lXxCVuK": {
+                    "uid": "WJI6lXxCVuK",
+                    "code": "L639",
+                    "name": "L639 Alopecia areata, unspecified"
+                },
+                "riLak2tdxXv": {
+                    "uid": "riLak2tdxXv",
+                    "code": "Q769",
+                    "name": "Q769 Congenital malformation of bony thorax, unspecified"
+                },
+                "IxNZGfGjSJz": {
+                    "uid": "IxNZGfGjSJz",
+                    "code": "D643",
+                    "name": "D643 Other sideroblastic anaemias"
+                },
+                "CsJMTKJoQr4": {
+                    "uid": "CsJMTKJoQr4",
+                    "code": "V888",
+                    "name": "V888 Person injured in other specified noncollision transport accidents involving motor vehicle, nontraffic"
+                },
+                "tNmaQ2O2jg1": {
+                    "uid": "tNmaQ2O2jg1",
+                    "code": "W699",
+                    "name": "W699 Drowning and submersion while in natural water, unspecified place"
+                },
+                "OFbxRDyYfCm": {
+                    "uid": "OFbxRDyYfCm",
+                    "code": "S89",
+                    "name": "S89 Other and unspecified injuries of lower leg"
+                },
+                "aB3g0MaaMME": {
+                    "uid": "aB3g0MaaMME",
+                    "code": "T065",
+                    "name": "T065 Injuries of intrathoracic organs with intra-abdominal and pelvic organs"
+                },
+                "Zj7UnCAulEk.qrur9Dvnyt5": {
+                    "uid": "qrur9Dvnyt5",
+                    "code": "DE_3000003",
+                    "name": "Age in years",
+                    "description": "Age of person in years.",
+                    "legendSet": "Yf6UHoPkdS6",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "NUMBER",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "oZg33kd9taw": {
+                    "uid": "oZg33kd9taw",
+                    "code": "DE_3000004",
+                    "name": "Gender",
+                    "description": "Gender of patient.",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "TEXT",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "byETWIe9XEA": {
+                    "uid": "byETWIe9XEA",
+                    "code": "T567",
+                    "name": "T567 Beryllium and its compounds"
+                },
+                "M1LpWiqNnyj": {
+                    "uid": "M1LpWiqNnyj",
+                    "code": "B589",
+                    "name": "B589 Toxoplasmosis, unspecified"
+                },
+                "JLsyMZEX7D5": {
+                    "uid": "JLsyMZEX7D5",
+                    "code": "L279",
+                    "name": "L279 Dermatitis due to unspecified substance taken internally"
+                },
+                "yeod5tOXpkP": {
+                    "uid": "yeod5tOXpkP",
+                    "code": "MODDISCH",
+                    "name": "Discharged"
+                },
+                "xhYOETZv410": {
+                    "uid": "xhYOETZv410",
+                    "code": "W107",
+                    "name": "W107 Fall on and from stairs and steps, farm"
+                },
+                "xh4yeyPrX9z": {
+                    "uid": "xh4yeyPrX9z",
+                    "code": "J635",
+                    "name": "J635 Stannosis"
+                },
+                "EoMvxUwRA5b": {
+                    "uid": "EoMvxUwRA5b",
+                    "code": "N871",
+                    "name": "N871 Moderate cervical dysplasia"
+                },
+                "cIvP3PS8d3m": {
+                    "uid": "cIvP3PS8d3m",
+                    "code": "O290",
+                    "name": "O290 Pulmonary complications of anaesthesia during pregnancy"
+                },
+                "eo6ZbOotPyQ": {
+                    "uid": "eo6ZbOotPyQ",
+                    "code": "A63",
+                    "name": "A63 Other predominantly sexually transmitted diseases, NEC"
+                },
+                "aesZdcTGvoy": {
+                    "uid": "aesZdcTGvoy",
+                    "code": "J633",
+                    "name": "J633 Graphite fibrosis (of lung)"
+                },
+                "iDFPKpFTiVw": {
+                    "uid": "iDFPKpFTiVw",
+                    "name": "Mode of discharge",
+                    "options": [
+                        {
+                            "uid": "yeod5tOXpkP",
+                            "code": "MODDISCH"
+                        },
+                        {
+                            "uid": "gj2fKKyp8OH",
+                            "code": "MODDIED"
+                        },
+                        {
+                            "uid": "fShHdgT7XGb",
+                            "code": "MODTRANS"
+                        },
+                        {
+                            "uid": "Fhbf4aKpZmZ",
+                            "code": "MODABSC"
+                        }
+                    ]
+                },
+                "Zj7UnCAulEk": {
+                    "uid": "Zj7UnCAulEk",
+                    "name": "Inpatient morbidity and mortality",
+                    "description": "Anonymous and ICD-10 coded inpatient data"
+                },
+                "rVIHkkDXcYH": {
+                    "uid": "rVIHkkDXcYH",
+                    "code": "W847",
+                    "name": "W847 Unspecified threat to breathing, farm"
+                },
+                "O1Z4F3rXkWh": {
+                    "uid": "O1Z4F3rXkWh",
+                    "code": "A839",
+                    "name": "A839 Mosquito-borne viral encephalitis, unspecified"
+                },
+                "CdhtrxfVjs2": {
+                    "uid": "CdhtrxfVjs2",
+                    "code": "T268",
+                    "name": "T268 Corrosion of other parts of eye and adnexa"
+                },
+                "q3DRcsUPrkY": {
+                    "uid": "q3DRcsUPrkY",
+                    "code": "B427",
+                    "name": "B427 Disseminated sporotrichosis"
+                },
+                "bwArbTAxrhJ": {
+                    "uid": "bwArbTAxrhJ",
+                    "code": "F410",
+                    "name": "F410 Panic disorder [episodic paroxysmal anxiety]"
+                },
+                "iDUNN0HZ87u": {
+                    "uid": "iDUNN0HZ87u",
+                    "code": "A403",
+                    "name": "A403 Septicaemia due to Streptococcus pneumoniae"
+                },
+                "vnQw8aCZwyU": {
+                    "uid": "vnQw8aCZwyU",
+                    "code": "Q058",
+                    "name": "Q058 Sacral spina bifida without hydrocephalus"
+                },
+                "CNBrK1qky7z": {
+                    "uid": "CNBrK1qky7z",
+                    "code": "H570",
+                    "name": "H570 Anomalies of pupillary function"
+                },
+                "Zj7UnCAulEk.ou": {
+                    "name": "Organisation unit"
+                },
+                "Mnp3oXrpAbK": {
+                    "uid": "Mnp3oXrpAbK",
+                    "code": "Female",
+                    "name": "Female"
+                },
+                "diKOc9nUHrR": {
+                    "uid": "diKOc9nUHrR",
+                    "code": "X300",
+                    "name": "X300 Exposure to excessive natural heat, home"
+                },
+                "XcbVfDtQcUX": {
+                    "uid": "XcbVfDtQcUX",
+                    "code": "H580",
+                    "name": "H580 Anomalies of pupillary function in diseases classified elsewhere"
+                },
+                "sYrPxpogHMm": {
+                    "uid": "sYrPxpogHMm",
+                    "code": "M13",
+                    "name": "M13 Other arthritis"
+                },
+                "wptzI7BMHWG": {
+                    "uid": "wptzI7BMHWG",
+                    "code": "T478",
+                    "name": "T478 Other agents primarily affecting the gastrointestinal system"
+                },
+                "kjE63Rk2KKN": {
+                    "uid": "kjE63Rk2KKN",
+                    "code": "N17",
+                    "name": "N17 Acute renal failure"
+                },
+                "AD0TE5nBEjv": {
+                    "uid": "AD0TE5nBEjv",
+                    "code": "L662",
+                    "name": "L662 Folliculitis decalvans"
+                },
+                "skmHyfavNLY": {
+                    "uid": "skmHyfavNLY",
+                    "code": "B22",
+                    "name": "B22 Human immunodeficiency virus [HIV] disease resulting in other specified diseases"
+                },
+                "ygGqxqUTPxE": {
+                    "uid": "ygGqxqUTPxE",
+                    "code": "N97",
+                    "name": "N97 Female infertility"
+                },
+                "FhAFUrV7lJx": {
+                    "uid": "FhAFUrV7lJx",
+                    "code": "Q078",
+                    "name": "Q078 Other specified congenital malformations of nervous system"
+                },
+                "OaC3HlrAcV3": {
+                    "uid": "OaC3HlrAcV3",
+                    "code": "O055",
+                    "name": "O055 Other abortion, complete or unspecified, complicated by genital tract and pelvic infection"
+                },
+                "LQ2asxnlKsq": {
+                    "uid": "LQ2asxnlKsq",
+                    "code": "W452",
+                    "name": "W452 Foreign body or object entering through skin, school, other institution and public administrative area"
+                },
+                "ZQeH5NDNLiB": {
+                    "uid": "ZQeH5NDNLiB",
+                    "code": "P510",
+                    "name": "P510 Massive umbilical haemorrhage of newborn"
+                },
+                "eyDt0c3knVp": {
+                    "uid": "eyDt0c3knVp",
+                    "code": "J704",
+                    "name": "J704 Drug-induced interstitial lung disorders, unspecified"
+                },
+                "bWgVhKdigV9": {
+                    "uid": "bWgVhKdigV9",
+                    "code": "O03",
+                    "name": "O03 Spontaneous abortion"
+                },
+                "wKm7lPvsk2V": {
+                    "uid": "wKm7lPvsk2V",
+                    "code": "O870",
+                    "name": "O870 Superficial thrombophlebitis in the puerperium"
+                },
+                "E9Sw1QJSRGs": {
+                    "uid": "E9Sw1QJSRGs",
+                    "code": "R636",
+                    "name": "R636 Insufficient intake of food and water due to self neglect"
+                },
+                "y8dhx0pZF1u": {
+                    "uid": "y8dhx0pZF1u",
+                    "code": "M918",
+                    "name": "M918 Other juvenile osteochondrosis of hip and pelvis"
+                },
+                "hlPt8H4bUOQ": {
+                    "uid": "hlPt8H4bUOQ",
+                    "name": "BMI female under 5 y",
+                    "dimensionItemType": "PROGRAM_INDICATOR",
+                    "valueType": "NUMBER",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "ytBlr3FDL29": {
+                    "uid": "ytBlr3FDL29",
+                    "code": "L638",
+                    "name": "L638 Other alopecia areata"
+                },
+                "uDHNK02Q5QX": {
+                    "uid": "uDHNK02Q5QX",
+                    "code": "L281",
+                    "name": "L281 Prurigo nodularis"
+                },
+                "KLwF3XcxLg3": {
+                    "uid": "KLwF3XcxLg3",
+                    "code": "F42",
+                    "name": "F42 Obsessive-compulsive disorder"
+                },
+                "fGq8X61q5VP": {
+                    "uid": "fGq8X61q5VP",
+                    "code": "T862",
+                    "name": "T862 Heart transplant failure and rejection"
+                },
+                "yK9RhHSLtZc": {
+                    "uid": "yK9RhHSLtZc",
+                    "code": "I85",
+                    "name": "I85 Oesophageal varices"
+                },
+                "UfLFXwsGXCY": {
+                    "uid": "UfLFXwsGXCY",
+                    "code": "L102",
+                    "name": "L102 Pemphigus foliaceus"
+                },
+                "ImspTQPwCqd": {
+                    "uid": "ImspTQPwCqd",
+                    "code": "OU_525",
+                    "name": "Sierra Leone"
+                },
+                "VORni7kXgfa": {
+                    "uid": "VORni7kXgfa",
+                    "code": "P509",
+                    "name": "P509 Fetal blood loss, unspecified"
+                },
+                "vDdRoZYybP2": {
+                    "uid": "vDdRoZYybP2",
+                    "name": "Inpatient cases under 5 y",
+                    "dimensionItemType": "PROGRAM_INDICATOR",
+                    "valueType": "NUMBER",
+                    "aggregationType": "COUNT",
+                    "totalAggregationType": "SUM"
+                },
+                "JABdEO6lMFI": {
+                    "uid": "JABdEO6lMFI",
+                    "code": "G26",
+                    "name": "G26 Extrapyramidal and movement disorders in diseases classified elsewhere"
+                },
+                "VDhJSrzjGlK": {
+                    "uid": "VDhJSrzjGlK",
+                    "code": "B853",
+                    "name": "B853 Phthiriasis"
+                },
+                "x7PaHGvgWY2": {
+                    "uid": "x7PaHGvgWY2",
+                    "code": "BMI",
+                    "name": "BMI",
+                    "description": "Body Mass Index. Weight in kg / height in m square.",
+                    "dimensionItemType": "PROGRAM_INDICATOR",
+                    "valueType": "NUMBER",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "DRAWlNTj9IZ": {
+                    "uid": "DRAWlNTj9IZ",
+                    "code": "A050",
+                    "name": "A050 Foodborne staphylococcal intoxication"
+                },
+                "b2xQ7I7m2St": {
+                    "uid": "b2xQ7I7m2St",
+                    "code": "M542",
+                    "name": "M542 Cervicalgia"
+                },
+                "sMxnU0mABtk": {
+                    "uid": "sMxnU0mABtk",
+                    "code": "O360",
+                    "name": "O360 Maternal care for rhesus isoimmunization"
+                },
+                "YyGW9k1lZIp": {
+                    "uid": "YyGW9k1lZIp",
+                    "code": "F444",
+                    "name": "F444 Dissociative motor disorders"
+                },
+                "lEjI5yuALnE": {
+                    "uid": "lEjI5yuALnE",
+                    "code": "G052",
+                    "name": "G052 Encephalitis, myelitis and encephalomyelitis in other infectious and parasitic diseases classified elsewhere"
+                },
+                "eWxtHPXbXaT": {
+                    "uid": "eWxtHPXbXaT",
+                    "code": "H250",
+                    "name": "H250 Senile incipient cataract"
+                },
+                "zmmuoOmfAuG": {
+                    "uid": "zmmuoOmfAuG",
+                    "code": "O986",
+                    "name": "O986 Protozoal diseases complicating pregnancy, childbirth and the puerperium"
+                },
+                "wTr05JZifbI": {
+                    "uid": "wTr05JZifbI",
+                    "code": "Q051",
+                    "name": "Q051 Thoracic spina bifida with hydrocephalus"
+                },
+                "msodh3rEMJa": {
+                    "uid": "msodh3rEMJa",
+                    "code": "DE_3000006",
+                    "name": "Discharge Date",
+                    "description": "Date of discharge of patient.",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "DATE",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "G5U36Uuz8qL": {
+                    "uid": "G5U36Uuz8qL",
+                    "code": "V133",
+                    "name": "V133 Pedal cyclist injured in collision with car, pick-up truck or van, while boarding or alighting"
+                },
+                "IAmbhFbY9Bj": {
+                    "uid": "IAmbhFbY9Bj",
+                    "code": "O31",
+                    "name": "O31 Complications specific to multiple gestation"
+                },
+                "Zj7UnCAulEk.vV9UWAZohSf": {
+                    "uid": "vV9UWAZohSf",
+                    "code": "DE_240795",
+                    "name": "Weight in kg",
+                    "legendSet": "OrkEzxZEH4X",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "NUMBER",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "Zj7UnCAulEk.eMyVanycQSC": {
+                    "uid": "eMyVanycQSC",
+                    "code": "DE_3000005",
+                    "name": "Admission Date",
+                    "description": "Date of Admission of patient.",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "DATE",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "pzttvEMw0y9": {
+                    "uid": "pzttvEMw0y9",
+                    "code": "L817",
+                    "name": "L817 Pigmented purpuric dermatosis"
+                },
+                "vupKIdKNEbh": {
+                    "uid": "vupKIdKNEbh",
+                    "code": "M792",
+                    "name": "M792 Neuralgia and neuritis, unspecified"
+                },
+                "Op3YlZbDUZz": {
+                    "uid": "Op3YlZbDUZz",
+                    "code": "P59",
+                    "name": "P59 Neonatal jaundice from other and unspecified causes"
+                },
+                "vV9UWAZohSf": {
+                    "uid": "vV9UWAZohSf",
+                    "code": "DE_240795",
+                    "name": "Weight in kg",
+                    "legendSet": "OrkEzxZEH4X",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "NUMBER",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "Kp1HqsTvnKf": {
+                    "uid": "Kp1HqsTvnKf",
+                    "code": "H044",
+                    "name": "H044 Chronic inflammation of lacrimal passages"
+                },
+                "ATSZ5GvOyUW": {
+                    "uid": "ATSZ5GvOyUW",
+                    "code": "M519",
+                    "name": "M519 Intervertebral disc disorder, unspecified"
+                },
+                "MjBl4VeWSSX": {
+                    "uid": "MjBl4VeWSSX",
+                    "code": "L981",
+                    "name": "L981 Factitial dermatitis"
+                },
+                "K6uUAvq500H": {
+                    "uid": "K6uUAvq500H",
+                    "code": "DE_3000010",
+                    "name": "Diagnosis (ICD-10)",
+                    "description": "ICD-10 coded diagnosis.",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "TEXT",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "LtlDyJjfLog": {
+                    "uid": "LtlDyJjfLog",
+                    "code": "M238",
+                    "name": "M238 Other internal derangements of knee"
+                },
+                "eMyVanycQSC": {
+                    "uid": "eMyVanycQSC",
+                    "code": "DE_3000005",
+                    "name": "Admission Date",
+                    "description": "Date of Admission of patient.",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "DATE",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "GD5g4PS5knO": {
+                    "uid": "GD5g4PS5knO",
+                    "code": "T941",
+                    "name": "T941 Sequelae of injuries, not specified by body region"
+                },
+                "oN7nnMZ6uyo": {
+                    "uid": "oN7nnMZ6uyo",
+                    "code": "L892",
+                    "name": "L892 Stage III decubitus ulcer and pressure area"
+                },
+                "Zj7UnCAulEk.K6uUAvq500H": {
+                    "uid": "K6uUAvq500H",
+                    "code": "DE_3000010",
+                    "name": "Diagnosis (ICD-10)",
+                    "description": "ICD-10 coded diagnosis.",
+                    "dimensionItemType": "DATA_ELEMENT",
+                    "valueType": "TEXT",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                },
+                "fShHdgT7XGb": {
+                    "uid": "fShHdgT7XGb",
+                    "code": "MODTRANS",
+                    "name": "Transferred"
+                },
+                "NKMTmHSOl1z": {
+                    "uid": "NKMTmHSOl1z",
+                    "code": "W468",
+                    "name": "W468 Contact with hypodermic needle, other specified places"
+                },
+                "ReQEl5V3z6p": {
+                    "uid": "ReQEl5V3z6p",
+                    "name": "Average weight of women",
+                    "dimensionItemType": "PROGRAM_INDICATOR",
+                    "valueType": "NUMBER",
+                    "aggregationType": "AVERAGE",
+                    "totalAggregationType": "SUM"
+                }
+            },
+            "dimensions": {
+                "Zj7UnCAulEk.ou": ["ImspTQPwCqd"],
+                "hlPt8H4bUOQ": [],
+                "Zj7UnCAulEk.oZg33kd9taw": ["Mnp3oXrpAbK"],
+                "Zj7UnCAulEk.vV9UWAZohSf": [],
+                "Zj7UnCAulEk.eMyVanycQSC": [],
+                "b8hd33dWjR6": [],
+                "Zj7UnCAulEk.msodh3rEMJa": [],
+                "gWxh7DiRmG7": [],
+                "Zj7UnCAulEk.fWIAEtYVEGk": [
+                    "yeod5tOXpkP",
+                    "gj2fKKyp8OH",
+                    "fShHdgT7XGb",
+                    "Fhbf4aKpZmZ"
+                ],
+                "vDdRoZYybP2": [],
+                "pe": [],
+                "Zj7UnCAulEk.qrur9Dvnyt5": [],
+                "x7PaHGvgWY2": [],
+                "Zj7UnCAulEk.K6uUAvq500H": [
+                    "DRAWlNTj9IZ",
+                    "iDUNN0HZ87u",
+                    "eo6ZbOotPyQ",
+                    "O1Z4F3rXkWh",
+                    "skmHyfavNLY",
+                    "SrFu4F2qwCw",
+                    "q3DRcsUPrkY",
+                    "M1LpWiqNnyj",
+                    "VDhJSrzjGlK",
+                    "AoudxAW1nPw",
+                    "IxNZGfGjSJz",
+                    "PXGnr9K9L2g",
+                    "bwArbTAxrhJ",
+                    "KLwF3XcxLg3",
+                    "YyGW9k1lZIp",
+                    "lEjI5yuALnE",
+                    "JABdEO6lMFI",
+                    "S3keTNMLY6u",
+                    "loOEeorbJrr",
+                    "Kp1HqsTvnKf",
+                    "eWxtHPXbXaT",
+                    "CNBrK1qky7z",
+                    "XcbVfDtQcUX",
+                    "yK9RhHSLtZc",
+                    "aesZdcTGvoy",
+                    "xh4yeyPrX9z",
+                    "eyDt0c3knVp",
+                    "kvGi6yFJWhR",
+                    "s0rtGwVRNbQ",
+                    "UfLFXwsGXCY",
+                    "JLsyMZEX7D5",
+                    "uDHNK02Q5QX",
+                    "O7WbNKgORCw",
+                    "ytBlr3FDL29",
+                    "WJI6lXxCVuK",
+                    "AD0TE5nBEjv",
+                    "pzttvEMw0y9",
+                    "oN7nnMZ6uyo",
+                    "MjBl4VeWSSX",
+                    "mHEd4Cdc6eV",
+                    "sYrPxpogHMm",
+                    "LtlDyJjfLog",
+                    "ATSZ5GvOyUW",
+                    "b2xQ7I7m2St",
+                    "vupKIdKNEbh",
+                    "vogjvk3xroZ",
+                    "y8dhx0pZF1u",
+                    "OzAHPruYtZY",
+                    "kjE63Rk2KKN",
+                    "EoMvxUwRA5b",
+                    "ygGqxqUTPxE",
+                    "bWgVhKdigV9",
+                    "OaC3HlrAcV3",
+                    "cIvP3PS8d3m",
+                    "IAmbhFbY9Bj",
+                    "buia3I6Srae",
+                    "sMxnU0mABtk",
+                    "qOVo5PZNvKU",
+                    "asV4IvE6f5j",
+                    "AJQPocTGBla",
+                    "wKm7lPvsk2V",
+                    "zmmuoOmfAuG",
+                    "oOPmyt9oIS4",
+                    "VORni7kXgfa",
+                    "ZQeH5NDNLiB",
+                    "Op3YlZbDUZz",
+                    "wTr05JZifbI",
+                    "vnQw8aCZwyU",
+                    "FhAFUrV7lJx",
+                    "riLak2tdxXv",
+                    "CwKI0E8Yuxy",
+                    "dubs9xNIN3R",
+                    "E9Sw1QJSRGs",
+                    "QHEMW7ytigv",
+                    "aatinEAIAQC",
+                    "OFbxRDyYfCm",
+                    "aB3g0MaaMME",
+                    "CdhtrxfVjs2",
+                    "QuB0muHPyXI",
+                    "oeYDN89AEHI",
+                    "wptzI7BMHWG",
+                    "byETWIe9XEA",
+                    "o3Avwj5oNHc",
+                    "fGq8X61q5VP",
+                    "p7aYknGe7pk",
+                    "GD5g4PS5knO",
+                    "G5U36Uuz8qL",
+                    "syPAJAlKvXN",
+                    "VDpjBDpV07X",
+                    "CsJMTKJoQr4",
+                    "xhYOETZv410",
+                    "AjCrsJ8RZ3r",
+                    "LQ2asxnlKsq",
+                    "NKMTmHSOl1z",
+                    "fGuZ4Tvtvva",
+                    "vepINo5FwN4",
+                    "tNmaQ2O2jg1",
+                    "rVIHkkDXcYH",
+                    "bsgaoL01YZj",
+                    "diKOc9nUHrR"
+                ],
+                "Zj7UnCAulEk.eventdate": ["2026"],
+                "ReQEl5V3z6p": []
+            }
+        },
+        "rowContext": {},
+        "width": 15,
         "rows": [
             [
-                "2025-08-23 00:00:00.0",
-                "84",
-                "Rokel (Masimera) MCHP",
-                "2020-08-09 00:00:00.0",
-                "5",
-                "I791 Aortitis in diseases classified elsewhere",
-                "2020-08-23 00:00:00.0",
-                "Female",
-                "Died",
-                "42.25",
-                "42.25",
-                "14",
-                "1",
-                "141",
-                "I791 Aortitis in diseases classified elsewhere",
-                "2020-08-09 00:00:00.0",
-                "84"
-            ],
-            [
-                "2025-10-03 00:00:00.0",
-                "69",
-                "Rokonta CHC",
-                "2020-09-19 00:00:00.0",
-                "3",
-                "Q700 Fused fingers",
-                "2020-10-03 00:00:00.0",
-                "Female",
-                "Absconded",
-                "35.71",
-                "35.71",
-                "14",
-                "1",
-                "",
-                "Q700 Fused fingers",
-                "2020-09-19 00:00:00.0",
-                "69"
-            ],
-            [
-                "2025-06-17 00:00:00.0",
-                "78",
-                "Grafton MCHP",
-                "2020-06-03 00:00:00.0",
-                "4",
-                "M962 Postradiation kyphosis",
-                "2020-06-17 00:00:00.0",
-                "Female",
-                "Died",
-                "24.34",
-                "24.34",
-                "14",
-                "1",
-                "",
-                "M962 Postradiation kyphosis",
-                "2020-06-03 00:00:00.0",
-                "78"
-            ],
-            [
-                "2025-05-14 00:00:00.0",
-                "62",
-                "Manjama Shellmingo CHC",
-                "2020-04-30 00:00:00.0",
-                "0",
-                "Q270 Congenital absence and hypoplasia of umbilical artery",
-                "2020-05-14 00:00:00.0",
-                "Female",
-                "Transferred",
-                "83.83",
-                "83.83",
-                "14",
-                "1",
-                "",
-                "Q270 Congenital absence and hypoplasia of umbilical artery",
-                "2020-04-30 00:00:00.0",
-                "62"
-            ],
-            [
-                "2025-08-30 00:00:00.0",
-                "39",
-                "Sinkunia CHC",
-                "2020-08-16 00:00:00.0",
-                "4",
-                "A072 Cryptosporidiosis",
-                "2020-08-30 00:00:00.0",
-                "Female",
-                "Absconded",
-                "28.49",
-                "28.49",
-                "14",
-                "1",
-                "",
-                "A072 Cryptosporidiosis",
-                "2020-08-16 00:00:00.0",
-                "39"
-            ],
-            [
-                "2025-06-13 00:00:00.0",
-                "30",
-                "Kissy Health Centre",
-                "2020-05-30 00:00:00.0",
+                "2026-12-04 00:00:00.0",
+                "50",
+                "Mabang CHC",
+                "2021-11-20 00:00:00.0",
                 "2",
-                "M94 Other disorders of cartilage",
-                "2020-06-13 00:00:00.0",
+                "J633",
+                "2021-12-04 00:00:00.0",
                 "Female",
-                "Discharged",
-                "154.96",
-                "154.96",
+                "MODDISCH",
+                "60.38",
+                "60.38",
                 "14",
                 "1",
                 "",
-                "M94 Other disorders of cartilage",
-                "2020-05-30 00:00:00.0",
-                "30"
+                "50"
             ],
             [
-                "2025-12-14 00:00:00.0",
-                "24",
-                "Lawana MCHP",
-                "2020-11-30 00:00:00.0",
-                "4",
-                "V940 Other and unspecified water transport accidents, merchant ship",
-                "2020-12-14 00:00:00.0",
-                "Female",
-                "Absconded",
-                "76.53",
-                "76.53",
-                "14",
-                "1",
-                "",
-                "V940 Other and unspecified water transport accidents, merchant ship",
-                "2020-11-30 00:00:00.0",
-                "24"
-            ],
-            [
-                "2025-11-11 00:00:00.0",
-                "49",
-                "Malema (Yawei) CHP",
-                "2020-10-28 00:00:00.0",
-                "4",
-                "B427 Disseminated sporotrichosis",
-                "2020-11-11 00:00:00.0",
-                "Female",
-                "Transferred",
-                "37.05",
-                "37.05",
-                "14",
-                "1",
-                "",
-                "B427 Disseminated sporotrichosis",
-                "2020-10-28 00:00:00.0",
-                "49"
-            ],
-            [
-                "2025-07-01 00:00:00.0",
-                "38",
-                "Kagbanthama CHP",
-                "2020-06-17 00:00:00.0",
-                "2",
-                "K024 Odontoclasia",
-                "2020-07-01 00:00:00.0",
-                "Female",
-                "Transferred",
-                "17.59",
-                "17.59",
-                "14",
-                "1",
-                "",
-                "K024 Odontoclasia",
-                "2020-06-17 00:00:00.0",
-                "38"
-            ],
-            [
-                "2025-08-04 00:00:00.0",
-                "21",
-                "Magbeni MCHP",
-                "2020-07-21 00:00:00.0",
-                "5",
-                "C863 Subcutaneous panniculitis-like T-cell lymphoma",
-                "2020-08-04 00:00:00.0",
-                "Female",
-                "Died",
-                "11.03",
-                "11.03",
-                "14",
-                "1",
-                "138",
-                "C863 Subcutaneous panniculitis-like T-cell lymphoma",
-                "2020-07-21 00:00:00.0",
-                "21"
-            ],
-            [
-                "2025-06-18 00:00:00.0",
-                "26",
-                "Ngogbebu MCHP",
-                "2020-06-04 00:00:00.0",
-                "0",
-                "J44 Other chronic obstructive pulmonary disease",
-                "2020-06-18 00:00:00.0",
-                "Female",
-                "Transferred",
-                "21.88",
-                "21.88",
-                "14",
-                "1",
-                "",
-                "J44 Other chronic obstructive pulmonary disease",
-                "2020-06-04 00:00:00.0",
-                "26"
-            ],
-            [
-                "2025-08-05 00:00:00.0",
-                "68",
-                "Masory MCHP",
-                "2020-07-22 00:00:00.0",
-                "3",
-                "K055 Other periodontal diseases",
-                "2020-08-05 00:00:00.0",
-                "Female",
-                "Died",
-                "251.48",
-                "251.48",
-                "14",
-                "1",
-                "",
-                "K055 Other periodontal diseases",
-                "2020-07-22 00:00:00.0",
-                "68"
-            ],
-            [
-                "2025-02-04 00:00:00.0",
-                "75",
-                "Gbamgbama CHC",
-                "2020-01-21 00:00:00.0",
-                "2",
-                "R633 Feeding difficulties and mismanagement",
-                "2020-02-04 00:00:00.0",
-                "Female",
-                "Transferred",
-                "25.65",
-                "25.65",
-                "14",
-                "1",
-                "",
-                "R633 Feeding difficulties and mismanagement",
-                "2020-01-21 00:00:00.0",
-                "75"
-            ],
-            [
-                "2025-11-15 00:00:00.0",
-                "31",
-                "Mano CHC",
-                "2020-11-01 00:00:00.0",
-                "0",
-                "V819 Occupant of railway train or railway vehicle injured in unspecified railway accident",
-                "2020-11-15 00:00:00.0",
-                "Female",
-                "Discharged",
-                "10.73",
-                "10.73",
-                "14",
-                "1",
-                "",
-                "V819 Occupant of railway train or railway vehicle injured in unspecified railway accident",
-                "2020-11-01 00:00:00.0",
-                "31"
-            ],
-            [
-                "2025-10-23 00:00:00.0",
-                "79",
-                "Baiama CHP",
-                "2020-10-09 00:00:00.0",
-                "0",
-                "G14 Postpolio syndrome",
-                "2020-10-23 00:00:00.0",
-                "Female",
-                "Died",
-                "32.05",
-                "32.05",
-                "14",
-                "1",
-                "",
-                "G14 Postpolio syndrome",
-                "2020-10-09 00:00:00.0",
-                "79"
-            ],
-            [
-                "2025-12-24 00:00:00.0",
-                "72",
-                "Sembehun (Gaura) MCHP",
-                "2020-12-10 00:00:00.0",
-                "1",
-                "R455 Hostility",
-                "2020-12-24 00:00:00.0",
-                "Female",
-                "Died",
-                "85.07",
-                "85.07",
-                "14",
-                "1",
-                "",
-                "R455 Hostility",
-                "2020-12-10 00:00:00.0",
-                "72"
-            ],
-            [
-                "2025-03-22 00:00:00.0",
+                "2026-12-13 00:00:00.0",
                 "20",
-                "Sellah Kafta MCHP",
-                "2020-03-08 00:00:00.0",
-                "3",
-                "K460 Unspecified abdominal hernia with obstruction, without gangrene",
-                "2020-03-22 00:00:00.0",
+                "John Thorpe MCHP",
+                "2021-11-29 00:00:00.0",
+                "4",
+                "W699",
+                "2021-12-13 00:00:00.0",
                 "Female",
-                "Discharged",
-                "32.87",
-                "32.87",
+                "MODABSC",
+                "20.82",
+                "20.82",
                 "14",
                 "1",
                 "",
-                "K460 Unspecified abdominal hernia with obstruction, without gangrene",
-                "2020-03-08 00:00:00.0",
                 "20"
             ],
             [
-                "2025-11-13 00:00:00.0",
-                "47",
-                "Suen CHP",
-                "2020-10-30 00:00:00.0",
-                "1",
-                "S54 Injury of nerves at forearm level",
-                "2020-11-13 00:00:00.0",
-                "Female",
-                "Died",
-                "161.18",
-                "161.18",
-                "14",
-                "1",
-                "",
-                "S54 Injury of nerves at forearm level",
-                "2020-10-30 00:00:00.0",
-                "47"
-            ],
-            [
-                "2025-06-01 00:00:00.0",
-                "28",
-                "Mandema CHP",
-                "2020-05-18 00:00:00.0",
-                "4",
-                "S651 Injury of radial artery at wrist and hand level",
-                "2020-06-01 00:00:00.0",
-                "Female",
-                "Discharged",
-                "32.37",
-                "32.37",
-                "14",
-                "1",
-                "",
-                "S651 Injury of radial artery at wrist and hand level",
-                "2020-05-18 00:00:00.0",
-                "28"
-            ],
-            [
-                "2025-06-09 00:00:00.0",
-                "35",
-                "Gbongboma MCHP",
-                "2020-05-26 00:00:00.0",
-                "1",
-                "R498 Other and unspecified voice disturbances",
-                "2020-06-09 00:00:00.0",
-                "Female",
-                "Transferred",
-                "145.77",
-                "145.77",
-                "14",
-                "1",
-                "",
-                "R498 Other and unspecified voice disturbances",
-                "2020-05-26 00:00:00.0",
-                "35"
-            ],
-            [
-                "2025-01-01 00:00:00.0",
-                "83",
-                "Malema (Yawei) CHP",
-                "2019-12-18 00:00:00.0",
-                "1",
-                "O658 Obstructed labour due to other maternal pelvic abnormalities",
-                "2020-01-01 00:00:00.0",
-                "Female",
-                "Transferred",
-                "27.1",
-                "27.1",
-                "14",
-                "1",
-                "",
-                "O658 Obstructed labour due to other maternal pelvic abnormalities",
-                "2019-12-18 00:00:00.0",
-                "83"
-            ],
-            [
-                "2025-01-29 00:00:00.0",
-                "41",
-                "Kawengha MCHP",
-                "2020-01-15 00:00:00.0",
-                "3",
-                "O834 Destructive operation for delivery",
-                "2020-01-29 00:00:00.0",
-                "Female",
-                "Discharged",
-                "97.04",
-                "97.04",
-                "14",
-                "1",
-                "",
-                "O834 Destructive operation for delivery",
-                "2020-01-15 00:00:00.0",
-                "41"
-            ],
-            [
-                "2025-12-03 00:00:00.0",
-                "80",
-                "Durukoro MCHP",
-                "2020-11-19 00:00:00.0",
-                "3",
-                "Q828 Other specified congenital malformations of skin",
-                "2020-12-03 00:00:00.0",
-                "Female",
-                "Absconded",
-                "90.54",
-                "90.54",
-                "14",
-                "1",
-                "",
-                "Q828 Other specified congenital malformations of skin",
-                "2020-11-19 00:00:00.0",
-                "80"
-            ],
-            [
-                "2025-12-11 00:00:00.0",
-                "52",
-                "Bapuya MCHP",
-                "2020-11-27 00:00:00.0",
-                "5",
-                "P294 Transient myocardial ischaemia of newborn",
-                "2020-12-11 00:00:00.0",
-                "Female",
-                "Discharged",
-                "43.77",
-                "43.77",
-                "14",
-                "1",
-                "109",
-                "P294 Transient myocardial ischaemia of newborn",
-                "2020-11-27 00:00:00.0",
-                "52"
-            ],
-            [
-                "2025-05-27 00:00:00.0",
-                "29",
-                "Niagorehun MCHP",
-                "2020-05-13 00:00:00.0",
-                "2",
-                "L899 Decubitus ulcer and pressure area, unspecified",
-                "2020-05-27 00:00:00.0",
-                "Female",
-                "Died",
-                "9.15",
-                "9.15",
-                "14",
-                "1",
-                "",
-                "L899 Decubitus ulcer and pressure area, unspecified",
-                "2020-05-13 00:00:00.0",
-                "29"
-            ],
-            [
-                "2025-12-04 00:00:00.0",
-                "50",
-                "Komba Yendeh CHP",
-                "2020-11-20 00:00:00.0",
-                "0",
-                "F454 Persistent somatoform pain disorder",
-                "2020-12-04 00:00:00.0",
-                "Female",
-                "Died",
-                "42.87",
-                "42.87",
-                "14",
-                "1",
-                "",
-                "F454 Persistent somatoform pain disorder",
-                "2020-11-20 00:00:00.0",
-                "50"
-            ],
-            [
-                "2025-04-04 00:00:00.0",
-                "66",
-                "Falaba MCHP",
-                "2020-03-21 00:00:00.0",
-                "2",
-                "W752 Accidental suffocation and strangulation in bed, school, other institution and public administrative area",
-                "2020-04-04 00:00:00.0",
-                "Female",
-                "Discharged",
-                "105.75",
-                "105.75",
-                "14",
-                "1",
-                "",
-                "W752 Accidental suffocation and strangulation in bed, school, other institution and public administrative area",
-                "2020-03-21 00:00:00.0",
-                "66"
-            ],
-            [
-                "2025-04-14 00:00:00.0",
-                "38",
-                "Gbalan Thallan MCHP",
-                "2020-03-31 00:00:00.0",
-                "2",
-                "D33 Benign neoplasm of brain and other parts of central nervous system",
-                "2020-04-14 00:00:00.0",
-                "Female",
-                "Died",
-                "196.28",
-                "196.28",
-                "14",
-                "1",
-                "",
-                "D33 Benign neoplasm of brain and other parts of central nervous system",
-                "2020-03-31 00:00:00.0",
-                "38"
-            ],
-            [
-                "2025-12-12 00:00:00.0",
-                "72",
-                "Kantia CHP",
-                "2020-11-28 00:00:00.0",
-                "3",
-                "W738 Other specified drowning and submersion, other specified places",
-                "2020-12-12 00:00:00.0",
-                "Female",
-                "Transferred",
-                "131.48",
-                "131.48",
-                "14",
-                "1",
-                "",
-                "W738 Other specified drowning and submersion, other specified places",
-                "2020-11-28 00:00:00.0",
-                "72"
-            ],
-            [
-                "2025-07-25 00:00:00.0",
-                "70",
-                "Gandorhun (Gbane) CHC",
-                "2020-07-11 00:00:00.0",
-                "0",
-                "G442 Tension-type headache",
-                "2020-07-25 00:00:00.0",
-                "Female",
-                "Discharged",
-                "75.95",
-                "75.95",
-                "14",
-                "1",
-                "",
-                "G442 Tension-type headache",
-                "2020-07-11 00:00:00.0",
-                "70"
-            ],
-            [
-                "2025-06-10 00:00:00.0",
-                "16",
-                "Dodo CHC",
-                "2020-05-27 00:00:00.0",
-                "3",
-                "H600 Abscess of external ear",
-                "2020-06-10 00:00:00.0",
-                "Female",
-                "Transferred",
-                "13.72",
-                "13.72",
-                "14",
-                "1",
-                "",
-                "H600 Abscess of external ear",
-                "2020-05-27 00:00:00.0",
-                "16"
-            ],
-            [
-                "2025-08-23 00:00:00.0",
-                "34",
-                "Arab Clinic",
-                "2020-08-09 00:00:00.0",
-                "5",
-                "O055 Other abortion, complete or unspecified, complicated by genital tract and pelvic infection",
-                "2020-08-23 00:00:00.0",
-                "Female",
-                "Died",
-                "47.06",
-                "47.06",
-                "14",
-                "1",
-                "85",
-                "O055 Other abortion, complete or unspecified, complicated by genital tract and pelvic infection",
-                "2020-08-09 00:00:00.0",
-                "34"
-            ],
-            [
-                "2025-02-13 00:00:00.0",
-                "43",
-                "Yabaima CHP",
-                "2020-01-30 00:00:00.0",
-                "5",
-                "V746 Bus occupant injured in collision with heavy transport vehicle or bus, passenger, traffic accident",
-                "2020-02-13 00:00:00.0",
-                "Female",
-                "Transferred",
-                "16.8",
-                "16.8",
-                "14",
-                "1",
-                "160",
-                "V746 Bus occupant injured in collision with heavy transport vehicle or bus, passenger, traffic accident",
-                "2020-01-30 00:00:00.0",
-                "43"
-            ],
-            [
-                "2025-11-29 00:00:00.0",
-                "23",
-                "Bambuibu Tommy MCHP",
-                "2020-11-15 00:00:00.0",
-                "1",
-                "P006 Fetus and newborn affected by surgical procedure on mother",
-                "2020-11-29 00:00:00.0",
-                "Female",
-                "Died",
-                "12.08",
-                "12.08",
-                "14",
-                "1",
-                "",
-                "P006 Fetus and newborn affected by surgical procedure on mother",
-                "2020-11-15 00:00:00.0",
-                "23"
-            ],
-            [
-                "2025-04-16 00:00:00.0",
-                "36",
-                "Juba M I Room",
-                "2020-04-02 00:00:00.0",
-                "1",
-                "T065 Injuries of intrathoracic organs with intra-abdominal and pelvic organs",
-                "2020-04-16 00:00:00.0",
-                "Female",
-                "Died",
-                "32.04",
-                "32.04",
-                "14",
-                "1",
-                "",
-                "T065 Injuries of intrathoracic organs with intra-abdominal and pelvic organs",
-                "2020-04-02 00:00:00.0",
-                "36"
-            ],
-            [
-                "2025-08-26 00:00:00.0",
-                "67",
-                "Bomie MCHP",
-                "2020-08-12 00:00:00.0",
-                "3",
-                "C103 Posterior wall of oropharynx",
-                "2020-08-26 00:00:00.0",
-                "Female",
-                "Transferred",
-                "42.2",
-                "42.2",
-                "14",
-                "1",
-                "",
-                "C103 Posterior wall of oropharynx",
-                "2020-08-12 00:00:00.0",
-                "67"
-            ],
-            [
-                "2025-01-15 00:00:00.0",
-                "23",
-                "Masory MCHP",
-                "2020-01-01 00:00:00.0",
-                "0",
-                "T060 Injuries of brain and cranial nerves with injuries of nerves and spinal cord at neck level",
-                "2020-01-15 00:00:00.0",
-                "Female",
-                "Absconded",
-                "7.96",
-                "7.96",
-                "14",
-                "1",
-                "",
-                "T060 Injuries of brain and cranial nerves with injuries of nerves and spinal cord at neck level",
-                "2020-01-01 00:00:00.0",
-                "23"
-            ],
-            [
-                "2025-04-11 00:00:00.0",
-                "72",
-                "Sindadu MCHP",
-                "2020-03-28 00:00:00.0",
-                "0",
-                "R590 Localized enlarged lymph nodes",
-                "2020-04-11 00:00:00.0",
-                "Female",
-                "Died",
-                "26.13",
-                "26.13",
-                "14",
-                "1",
-                "",
-                "R590 Localized enlarged lymph nodes",
-                "2020-03-28 00:00:00.0",
-                "72"
-            ],
-            [
-                "2025-08-30 00:00:00.0",
-                "50",
-                "Samai Town MCHP",
-                "2020-08-16 00:00:00.0",
-                "1",
-                "W937 Exposure to excessive cold of man-made origin, farm",
-                "2020-08-30 00:00:00.0",
-                "Female",
-                "Discharged",
-                "14.61",
-                "14.61",
-                "14",
-                "1",
-                "",
-                "W937 Exposure to excessive cold of man-made origin, farm",
-                "2020-08-16 00:00:00.0",
-                "50"
-            ],
-            [
-                "2025-10-11 00:00:00.0",
-                "75",
-                "Gbangba MCHP",
-                "2020-09-27 00:00:00.0",
-                "0",
-                "W04 Fall while being carried or supported by other persons",
-                "2020-10-11 00:00:00.0",
-                "Female",
-                "Discharged",
-                "230.84",
-                "230.84",
-                "14",
-                "1",
-                "",
-                "W04 Fall while being carried or supported by other persons",
-                "2020-09-27 00:00:00.0",
-                "75"
-            ],
-            [
-                "2025-11-29 00:00:00.0",
-                "35",
-                "Salima MCHP",
-                "2020-11-15 00:00:00.0",
-                "5",
-                "K50 Crohn's disease [regional enteritis]",
-                "2020-11-29 00:00:00.0",
-                "Female",
-                "Discharged",
-                "48.44",
-                "48.44",
-                "14",
-                "1",
-                "85",
-                "K50 Crohn's disease [regional enteritis]",
-                "2020-11-15 00:00:00.0",
-                "35"
-            ],
-            [
-                "2025-01-16 00:00:00.0",
-                "40",
-                "Kpandebu CHP",
-                "2020-01-02 00:00:00.0",
-                "3",
-                "E871 Hypo-osmolality and hyponatraemia",
-                "2020-01-16 00:00:00.0",
-                "Female",
-                "Died",
-                "114.91",
-                "114.91",
-                "14",
-                "1",
-                "",
-                "E871 Hypo-osmolality and hyponatraemia",
-                "2020-01-02 00:00:00.0",
-                "40"
-            ],
-            [
-                "2025-12-24 00:00:00.0",
-                "62",
-                "Gbamgbama CHC",
-                "2020-12-10 00:00:00.0",
-                "1",
-                "D269 Uterus, unspecified",
-                "2020-12-24 00:00:00.0",
-                "Female",
-                "Discharged",
-                "29.09",
-                "29.09",
-                "14",
-                "1",
-                "",
-                "D269 Uterus, unspecified",
-                "2020-12-10 00:00:00.0",
-                "62"
-            ],
-            [
-                "2025-02-20 00:00:00.0",
-                "68",
-                "Makona MCHP",
-                "2020-02-06 00:00:00.0",
-                "1",
-                "M491 Brucella spondylitis",
-                "2020-02-20 00:00:00.0",
-                "Female",
-                "Transferred",
-                "36.76",
-                "36.76",
-                "14",
-                "1",
-                "",
-                "M491 Brucella spondylitis",
-                "2020-02-06 00:00:00.0",
-                "68"
-            ],
-            [
-                "2025-04-26 00:00:00.0",
-                "28",
-                "Masabong Pil MCHP",
-                "2020-04-12 00:00:00.0",
-                "2",
-                "D816 Major histocompatibility complex class I deficiency",
-                "2020-04-26 00:00:00.0",
-                "Female",
-                "Died",
-                "57.14",
-                "57.14",
-                "14",
-                "1",
-                "",
-                "D816 Major histocompatibility complex class I deficiency",
-                "2020-04-12 00:00:00.0",
-                "28"
-            ],
-            [
-                "2025-03-02 00:00:00.0",
-                "15",
-                "Grassfield CHC",
-                "2020-02-16 00:00:00.0",
-                "5",
-                "E15 Nondiabetic hypoglycaemic coma",
-                "2020-03-02 00:00:00.0",
-                "Female",
-                "Died",
-                "12.63",
-                "12.63",
-                "15",
-                "1",
-                "109",
-                "E15 Nondiabetic hypoglycaemic coma",
-                "2020-02-16 00:00:00.0",
-                "15"
-            ],
-            [
-                "2025-11-30 00:00:00.0",
-                "60",
-                "Sumbaria MCHP",
-                "2020-11-16 00:00:00.0",
-                "0",
-                "C75 Malignant neoplasm of other endocrine glands and related structures",
-                "2020-11-30 00:00:00.0",
-                "Female",
-                "Transferred",
-                "21.26",
-                "21.26",
-                "14",
-                "1",
-                "",
-                "C75 Malignant neoplasm of other endocrine glands and related structures",
-                "2020-11-16 00:00:00.0",
-                "60"
-            ],
-            [
-                "2025-01-13 00:00:00.0",
-                "52",
-                "Sandia (Kissi Tongi) CHP",
-                "2019-12-30 00:00:00.0",
-                "0",
-                "L52 Erythema nodosum",
-                "2020-01-13 00:00:00.0",
-                "Female",
-                "Absconded",
-                "16.23",
-                "16.23",
-                "14",
-                "1",
-                "",
-                "L52 Erythema nodosum",
-                "2019-12-30 00:00:00.0",
-                "52"
-            ],
-            [
-                "2025-03-02 00:00:00.0",
-                "30",
-                "Venima CHP",
-                "2020-02-16 00:00:00.0",
-                "5",
-                "W295 Contact with other powered hand tools and household machinery, trade and service area",
-                "2020-03-02 00:00:00.0",
-                "Female",
-                "Absconded",
-                "14.67",
-                "14.67",
-                "15",
-                "1",
-                "143",
-                "W295 Contact with other powered hand tools and household machinery, trade and service area",
-                "2020-02-16 00:00:00.0",
-                "30"
-            ],
-            [
-                "2025-12-23 00:00:00.0",
-                "34",
-                "Largo CHC",
-                "2020-12-09 00:00:00.0",
-                "1",
-                "K072 Anomalies of dental arch relationship",
-                "2020-12-23 00:00:00.0",
-                "Female",
-                "Discharged",
-                "160.68",
-                "160.68",
-                "14",
-                "1",
-                "",
-                "K072 Anomalies of dental arch relationship",
-                "2020-12-09 00:00:00.0",
-                "34"
-            ],
-            [
-                "2025-08-10 00:00:00.0",
-                "57",
-                "Mabureh CHP",
-                "2020-07-27 00:00:00.0",
-                "4",
-                "V775 Bus occupant injured in collision with fixed or stationary object, driver, traffic accident",
-                "2020-08-10 00:00:00.0",
-                "Female",
-                "Transferred",
-                "27.87",
-                "27.87",
-                "14",
-                "1",
-                "",
-                "V775 Bus occupant injured in collision with fixed or stationary object, driver, traffic accident",
-                "2020-07-27 00:00:00.0",
-                "57"
-            ],
-            [
-                "2025-10-13 00:00:00.0",
-                "72",
-                "Kambawama MCHP",
-                "2020-09-29 00:00:00.0",
-                "5",
-                "N943 Premenstrual tension syndrome",
-                "2020-10-13 00:00:00.0",
-                "Female",
-                "Died",
-                "276.82",
-                "276.82",
-                "14",
-                "1",
-                "51",
-                "N943 Premenstrual tension syndrome",
-                "2020-09-29 00:00:00.0",
-                "72"
-            ],
-            [
-                "2025-03-27 00:00:00.0",
-                "42",
-                "Tagrin CHC",
-                "2020-03-13 00:00:00.0",
-                "2",
-                "V590 Driver injured in collision with other and unspecified motor vehicles in nontraffic accident",
-                "2020-03-27 00:00:00.0",
-                "Female",
-                "Discharged",
-                "40.37",
-                "40.37",
-                "14",
-                "1",
-                "",
-                "V590 Driver injured in collision with other and unspecified motor vehicles in nontraffic accident",
-                "2020-03-13 00:00:00.0",
-                "42"
-            ],
-            [
-                "2025-04-26 00:00:00.0",
-                "15",
-                "Kukuna CHP",
-                "2020-04-12 00:00:00.0",
-                "4",
-                "R961 Death occurring less than 24 hours from onset of symptoms, not otherwise explained",
-                "2020-04-26 00:00:00.0",
-                "Female",
-                "Discharged",
-                "7.44",
-                "7.44",
-                "14",
-                "1",
-                "",
-                "R961 Death occurring less than 24 hours from onset of symptoms, not otherwise explained",
-                "2020-04-12 00:00:00.0",
-                "15"
-            ],
-            [
-                "2025-06-25 00:00:00.0",
-                "73",
-                "Mabayo MCHP",
-                "2020-06-11 00:00:00.0",
-                "5",
-                "S146 Injury of other and unspecified nerves of neck",
-                "2020-06-25 00:00:00.0",
-                "Female",
-                "Transferred",
-                "196.18",
-                "196.18",
-                "14",
-                "1",
-                "61",
-                "S146 Injury of other and unspecified nerves of neck",
-                "2020-06-11 00:00:00.0",
-                "73"
-            ],
-            [
-                "2025-07-03 00:00:00.0",
-                "75",
-                "Bomotoke CHC",
-                "2020-06-19 00:00:00.0",
-                "2",
-                "H368 Other retinal disorders in diseases classified elsewhere",
-                "2020-07-03 00:00:00.0",
-                "Female",
-                "Transferred",
-                "370.37",
-                "370.37",
-                "14",
-                "1",
-                "",
-                "H368 Other retinal disorders in diseases classified elsewhere",
-                "2020-06-19 00:00:00.0",
-                "75"
-            ],
-            [
-                "2025-12-15 00:00:00.0",
-                "55",
-                "kamba mamudia",
-                "2020-12-01 00:00:00.0",
-                "4",
-                "W838 Other specified threats to breathing, other specified places",
-                "2020-12-15 00:00:00.0",
-                "Female",
-                "Absconded",
-                "58.45",
-                "58.45",
-                "14",
-                "1",
-                "",
-                "W838 Other specified threats to breathing, other specified places",
-                "2020-12-01 00:00:00.0",
-                "55"
-            ],
-            [
-                "2025-06-16 00:00:00.0",
-                "81",
-                "Saama (Lower Bamabara) CHP",
-                "2020-06-02 00:00:00.0",
-                "0",
-                "B551 Cutaneous leishmaniasis",
-                "2020-06-16 00:00:00.0",
-                "Female",
-                "Died",
-                "36",
-                "36",
-                "14",
-                "1",
-                "",
-                "B551 Cutaneous leishmaniasis",
-                "2020-06-02 00:00:00.0",
-                "81"
-            ],
-            [
-                "2025-07-09 00:00:00.0",
-                "18",
-                "Mobai CHC",
-                "2020-06-25 00:00:00.0",
-                "1",
-                "X090 Exposure to unspecified smoke, fire and flames, home",
-                "2020-07-09 00:00:00.0",
-                "Female",
-                "Absconded",
-                "7.3",
-                "7.3",
-                "14",
-                "1",
-                "",
-                "X090 Exposure to unspecified smoke, fire and flames, home",
-                "2020-06-25 00:00:00.0",
-                "18"
-            ],
-            [
-                "2025-05-23 00:00:00.0",
-                "44",
-                "Konjo CHP",
-                "2020-05-09 00:00:00.0",
-                "3",
-                "D813 Adenosine deaminase [ADA] deficiency",
-                "2020-05-23 00:00:00.0",
-                "Female",
-                "Absconded",
-                "32.7",
-                "32.7",
-                "14",
-                "1",
-                "",
-                "D813 Adenosine deaminase [ADA] deficiency",
-                "2020-05-09 00:00:00.0",
-                "44"
-            ],
-            [
-                "2025-01-20 00:00:00.0",
-                "54",
-                "Mayakie MCHP",
-                "2020-01-06 00:00:00.0",
-                "0",
-                "W669 Drowning and submersion following fall into bath-tub, unspecified place",
-                "2020-01-20 00:00:00.0",
-                "Female",
-                "Discharged",
-                "178.51",
-                "178.51",
-                "14",
-                "1",
-                "",
-                "W669 Drowning and submersion following fall into bath-tub, unspecified place",
-                "2020-01-06 00:00:00.0",
-                "54"
-            ],
-            [
-                "2025-08-19 00:00:00.0",
-                "18",
-                "Hastings Health Centre",
-                "2020-08-05 00:00:00.0",
-                "2",
-                "S63 Dislocation, sprain and strain of joints and ligaments at wrist and hand level",
-                "2020-08-19 00:00:00.0",
-                "Female",
-                "Transferred",
-                "57.4",
-                "57.4",
-                "14",
-                "1",
-                "",
-                "S63 Dislocation, sprain and strain of joints and ligaments at wrist and hand level",
-                "2020-08-05 00:00:00.0",
-                "18"
-            ],
-            [
-                "2025-01-24 00:00:00.0",
-                "79",
-                "Kroo Bay CHC",
-                "2020-01-10 00:00:00.0",
-                "1",
-                "T375 Antiviral drugs",
-                "2020-01-24 00:00:00.0",
-                "Female",
-                "Discharged",
-                "29.37",
-                "29.37",
-                "14",
-                "1",
-                "",
-                "T375 Antiviral drugs",
-                "2020-01-10 00:00:00.0",
-                "79"
-            ],
-            [
-                "2025-11-29 00:00:00.0",
-                "23",
-                "PMO Clinetown",
-                "2020-11-15 00:00:00.0",
-                "3",
-                "H406 Glaucoma secondary to drugs",
-                "2020-11-29 00:00:00.0",
-                "Female",
-                "Died",
-                "9.1",
-                "9.1",
-                "14",
-                "1",
-                "",
-                "H406 Glaucoma secondary to drugs",
-                "2020-11-15 00:00:00.0",
-                "23"
-            ],
-            [
-                "2025-10-12 00:00:00.0",
-                "28",
-                "Barmoi CHP",
-                "2020-09-28 00:00:00.0",
-                "4",
-                "W558 Bitten or struck by other mammals, other specified places",
-                "2020-10-12 00:00:00.0",
-                "Female",
-                "Transferred",
-                "68.36",
-                "68.36",
-                "14",
-                "1",
-                "",
-                "W558 Bitten or struck by other mammals, other specified places",
-                "2020-09-28 00:00:00.0",
-                "28"
-            ],
-            [
-                "2025-04-04 00:00:00.0",
-                "78",
-                "Ngelehun MCHP",
-                "2020-03-21 00:00:00.0",
-                "5",
-                "Q911 Trisomy 18, mosaicism (mitotic nondisjunction)",
-                "2020-04-04 00:00:00.0",
-                "Female",
-                "Died",
-                "82.9",
-                "82.9",
-                "14",
-                "1",
-                "97",
-                "Q911 Trisomy 18, mosaicism (mitotic nondisjunction)",
-                "2020-03-21 00:00:00.0",
-                "78"
-            ],
-            [
-                "2025-08-05 00:00:00.0",
-                "58",
-                "Magbaesa MCHP",
-                "2020-07-22 00:00:00.0",
-                "3",
-                "P230 Congenital pneumonia due to viral agent",
-                "2020-08-05 00:00:00.0",
-                "Female",
-                "Absconded",
-                "22.38",
-                "22.38",
-                "14",
-                "1",
-                "",
-                "P230 Congenital pneumonia due to viral agent",
-                "2020-07-22 00:00:00.0",
-                "58"
-            ],
-            [
-                "2025-03-28 00:00:00.0",
-                "25",
-                "Kalangba CHC",
-                "2020-03-14 00:00:00.0",
-                "5",
-                "M468 Other specified inflammatory spondylopathies",
-                "2020-03-28 00:00:00.0",
-                "Female",
-                "Absconded",
-                "69.44",
-                "69.44",
-                "14",
-                "1",
-                "60",
-                "M468 Other specified inflammatory spondylopathies",
-                "2020-03-14 00:00:00.0",
-                "25"
-            ],
-            [
-                "2025-03-15 00:00:00.0",
-                "80",
-                "Mamanso Sanka CHP",
-                "2020-03-01 00:00:00.0",
-                "3",
-                "O290 Pulmonary complications of anaesthesia during pregnancy",
-                "2020-03-15 00:00:00.0",
-                "Female",
-                "Absconded",
-                "24.97",
-                "24.97",
-                "14",
-                "1",
-                "",
-                "O290 Pulmonary complications of anaesthesia during pregnancy",
-                "2020-03-01 00:00:00.0",
-                "80"
-            ],
-            [
-                "2025-08-18 00:00:00.0",
+                "2026-01-27 00:00:00.0",
                 "27",
-                "Fodaya MCHP",
-                "2020-08-04 00:00:00.0",
-                "2",
-                "Q010 Frontal encephalocele",
-                "2020-08-18 00:00:00.0",
+                "Mano Yorgbo MCHP",
+                "2021-01-13 00:00:00.0",
+                "0",
+                "O31",
+                "2021-01-27 00:00:00.0",
                 "Female",
-                "Discharged",
-                "34.09",
-                "34.09",
+                "MODDIED",
+                "43.26",
+                "43.26",
                 "14",
                 "1",
                 "",
-                "Q010 Frontal encephalocele",
-                "2020-08-04 00:00:00.0",
                 "27"
             ],
             [
-                "2025-09-07 00:00:00.0",
-                "55",
-                "Yalieboya CHP",
-                "2020-08-24 00:00:00.0",
-                "4",
-                "C164 Pylorus",
-                "2020-09-07 00:00:00.0",
-                "Female",
-                "Discharged",
-                "175.38",
-                "175.38",
-                "14",
-                "1",
-                "",
-                "C164 Pylorus",
-                "2020-08-24 00:00:00.0",
-                "55"
-            ],
-            [
-                "2025-08-05 00:00:00.0",
-                "19",
-                "Kalainkay MCHP",
-                "2020-07-22 00:00:00.0",
-                "1",
-                "A96 Arenaviral haemorrhagic fever",
-                "2020-08-05 00:00:00.0",
-                "Female",
-                "Transferred",
-                "89.79",
-                "89.79",
-                "14",
-                "1",
-                "",
-                "A96 Arenaviral haemorrhagic fever",
-                "2020-07-22 00:00:00.0",
-                "19"
-            ],
-            [
-                "2025-06-15 00:00:00.0",
-                "39",
-                "Koidu Under Five Clinic",
-                "2020-06-01 00:00:00.0",
-                "0",
-                "I082 Disorders of both aortic and tricuspid valves",
-                "2020-06-15 00:00:00.0",
-                "Female",
-                "Died",
-                "92.31",
-                "92.31",
-                "14",
-                "1",
-                "",
-                "I082 Disorders of both aortic and tricuspid valves",
-                "2020-06-01 00:00:00.0",
-                "39"
-            ],
-            [
-                "2025-06-13 00:00:00.0",
-                "27",
-                "Futa CHC",
-                "2020-05-30 00:00:00.0",
-                "0",
-                "S28 Crushing injury of thorax and traumatic amputation of part of thorax",
-                "2020-06-13 00:00:00.0",
-                "Female",
-                "Discharged",
-                "10.42",
-                "10.42",
-                "14",
-                "1",
-                "",
-                "S28 Crushing injury of thorax and traumatic amputation of part of thorax",
-                "2020-05-30 00:00:00.0",
-                "27"
-            ],
-            [
-                "2025-02-03 00:00:00.0",
-                "76",
-                "Mokassie MCHP",
-                "2020-01-20 00:00:00.0",
-                "2",
-                "F949 Childhood disorder of social functioning, unspecified",
-                "2020-02-03 00:00:00.0",
-                "Female",
-                "Transferred",
-                "98.14",
-                "98.14",
-                "14",
-                "1",
-                "",
-                "F949 Childhood disorder of social functioning, unspecified",
-                "2020-01-20 00:00:00.0",
-                "76"
-            ],
-            [
-                "2025-01-20 00:00:00.0",
-                "56",
-                "Gondama MCHP",
-                "2020-01-06 00:00:00.0",
-                "4",
-                "Q051 Thoracic spina bifida with hydrocephalus",
-                "2020-01-20 00:00:00.0",
-                "Female",
-                "Absconded",
-                "59.52",
-                "59.52",
-                "14",
-                "1",
-                "",
-                "Q051 Thoracic spina bifida with hydrocephalus",
-                "2020-01-06 00:00:00.0",
-                "56"
-            ],
-            [
-                "2025-07-26 00:00:00.0",
-                "23",
-                "Taninahun (Malen) CHP",
-                "2020-07-12 00:00:00.0",
-                "1",
-                "D569 Thalassaemia, unspecified",
-                "2020-07-26 00:00:00.0",
-                "Female",
-                "Died",
-                "22.55",
-                "22.55",
-                "14",
-                "1",
-                "",
-                "D569 Thalassaemia, unspecified",
-                "2020-07-12 00:00:00.0",
-                "23"
-            ],
-            [
-                "2025-07-12 00:00:00.0",
-                "36",
-                "Mabai MCHP",
-                "2020-06-28 00:00:00.0",
-                "0",
-                "V522 Occupant of pick-up truck or van injured in collision with two- or three-wheeled motor vehicle, person on outside of vehicle, nontraffic accident",
-                "2020-07-12 00:00:00.0",
-                "Female",
-                "Transferred",
-                "73.47",
-                "73.47",
-                "14",
-                "1",
-                "",
-                "V522 Occupant of pick-up truck or van injured in collision with two- or three-wheeled motor vehicle, person on outside of vehicle, nontraffic accident",
-                "2020-06-28 00:00:00.0",
-                "36"
-            ],
-            [
-                "2025-05-21 00:00:00.0",
-                "42",
-                "Masumbrie MCHP",
-                "2020-05-07 00:00:00.0",
-                "3",
-                "R260 Ataxic gait",
-                "2020-05-21 00:00:00.0",
-                "Female",
-                "Discharged",
-                "161.48",
-                "161.48",
-                "14",
-                "1",
-                "",
-                "R260 Ataxic gait",
-                "2020-05-07 00:00:00.0",
-                "42"
-            ],
-            [
-                "2025-08-31 00:00:00.0",
-                "70",
-                "Marie Stopes Clinic (Abedeen R)",
-                "2020-08-17 00:00:00.0",
-                "5",
-                "M495 Collapsed vertebra in diseases classified elsewhere",
-                "2020-08-31 00:00:00.0",
-                "Female",
-                "Absconded",
-                "82.7",
-                "82.7",
-                "14",
-                "1",
-                "92",
-                "M495 Collapsed vertebra in diseases classified elsewhere",
-                "2020-08-17 00:00:00.0",
-                "70"
-            ],
-            [
-                "2025-04-17 00:00:00.0",
-                "56",
-                "Koakoyima CHC",
-                "2020-04-03 00:00:00.0",
-                "1",
-                "H728 Other perforations of tympanic membrane",
-                "2020-04-17 00:00:00.0",
-                "Female",
-                "Transferred",
-                "32.63",
-                "32.63",
-                "14",
-                "1",
-                "",
-                "H728 Other perforations of tympanic membrane",
-                "2020-04-03 00:00:00.0",
-                "56"
-            ],
-            [
-                "2025-04-06 00:00:00.0",
-                "34",
-                "Levuma CHP",
-                "2020-03-23 00:00:00.0",
-                "1",
-                "S53 Dislocation, sprain and strain of joints and ligaments of elbow",
-                "2020-04-06 00:00:00.0",
-                "Female",
-                "Died",
-                "88.45",
-                "88.45",
-                "14",
-                "1",
-                "",
-                "S53 Dislocation, sprain and strain of joints and ligaments of elbow",
-                "2020-03-23 00:00:00.0",
-                "34"
-            ],
-            [
-                "2025-08-30 00:00:00.0",
-                "28",
-                "Bucksal Clinic",
-                "2020-08-16 00:00:00.0",
-                "2",
-                "T495 Ophthalmological drugs and preparations",
-                "2020-08-30 00:00:00.0",
-                "Female",
-                "Discharged",
-                "92.56",
-                "92.56",
-                "14",
-                "1",
-                "",
-                "T495 Ophthalmological drugs and preparations",
-                "2020-08-16 00:00:00.0",
-                "28"
-            ],
-            [
-                "2025-12-15 00:00:00.0",
-                "76",
-                "Yara MCHP",
-                "2020-12-01 00:00:00.0",
-                "2",
-                "K000 Anodontia",
-                "2020-12-15 00:00:00.0",
-                "Female",
-                "Transferred",
-                "30.44",
-                "30.44",
-                "14",
-                "1",
-                "",
-                "K000 Anodontia",
-                "2020-12-01 00:00:00.0",
-                "76"
-            ],
-            [
-                "2025-10-10 00:00:00.0",
-                "40",
-                "Mbundorbu MCHP",
-                "2020-09-26 00:00:00.0",
-                "0",
-                "B66 Other fluke infections",
-                "2020-10-10 00:00:00.0",
-                "Female",
-                "Transferred",
-                "33.06",
-                "33.06",
-                "14",
-                "1",
-                "",
-                "B66 Other fluke infections",
-                "2020-09-26 00:00:00.0",
-                "40"
-            ],
-            [
-                "2025-06-21 00:00:00.0",
-                "74",
-                "Gbaama MCHP",
-                "2020-06-07 00:00:00.0",
-                "5",
-                "V584 Occupant of pick-up truck or van injured in noncollision transport accident, while boarding or alighting",
-                "2020-06-21 00:00:00.0",
-                "Female",
-                "Transferred",
-                "43.12",
-                "43.12",
-                "14",
-                "1",
-                "131",
-                "V584 Occupant of pick-up truck or van injured in noncollision transport accident, while boarding or alighting",
-                "2020-06-07 00:00:00.0",
-                "74"
-            ],
-            [
-                "2025-07-24 00:00:00.0",
-                "22",
-                "Lakka/Ogoo Farm CHC",
-                "2020-07-10 00:00:00.0",
-                "0",
-                "R780 Finding of alcohol in blood",
-                "2020-07-24 00:00:00.0",
-                "Female",
-                "Absconded",
-                "43.64",
-                "43.64",
-                "14",
-                "1",
-                "",
-                "R780 Finding of alcohol in blood",
-                "2020-07-10 00:00:00.0",
-                "22"
-            ],
-            [
-                "2025-07-28 00:00:00.0",
-                "41",
-                "Agape CHP",
-                "2020-07-14 00:00:00.0",
-                "2",
-                "W678 Drowning and submersion while in swimming-pool, other specified places",
-                "2020-07-28 00:00:00.0",
-                "Female",
-                "Absconded",
-                "232.43",
-                "232.43",
-                "14",
-                "1",
-                "",
-                "W678 Drowning and submersion while in swimming-pool, other specified places",
-                "2020-07-14 00:00:00.0",
-                "41"
-            ],
-            [
-                "2025-02-24 00:00:00.0",
+                "2026-12-10 00:00:00.0",
                 "69",
-                "Semewebu MCHP",
-                "2020-02-10 00:00:00.0",
-                "0",
-                "V294 Driver injured in collision with other and unspecified motor vehicles in traffic accident",
-                "2020-02-24 00:00:00.0",
+                "Mendekelema CHP",
+                "2021-11-26 00:00:00.0",
+                "4",
+                "F444",
+                "2021-12-10 00:00:00.0",
                 "Female",
-                "Discharged",
-                "40.21",
-                "40.21",
+                "MODABSC",
+                "100.16",
+                "100.16",
                 "14",
                 "1",
                 "",
-                "V294 Driver injured in collision with other and unspecified motor vehicles in traffic accident",
-                "2020-02-10 00:00:00.0",
                 "69"
             ],
             [
-                "2025-09-09 00:00:00.0",
-                "66",
-                "SLRCS (Bo) Clinic",
-                "2020-08-26 00:00:00.0",
-                "0",
-                "E850 Non-neuropathic heredofamilial amyloidosis",
-                "2020-09-09 00:00:00.0",
-                "Female",
-                "Discharged",
-                "33.2",
-                "33.2",
-                "14",
-                "1",
-                "",
-                "E850 Non-neuropathic heredofamilial amyloidosis",
-                "2020-08-26 00:00:00.0",
-                "66"
-            ],
-            [
-                "2025-06-28 00:00:00.0",
-                "33",
-                "MCH Static/U5",
-                "2020-06-14 00:00:00.0",
-                "1",
-                "X234 Contact with hornets, wasps and bees, street and highway",
-                "2020-06-28 00:00:00.0",
-                "Female",
-                "Discharged",
-                "33.67",
-                "33.67",
-                "14",
-                "1",
-                "",
-                "X234 Contact with hornets, wasps and bees, street and highway",
-                "2020-06-14 00:00:00.0",
-                "33"
-            ],
-            [
-                "2025-01-04 00:00:00.0",
-                "32",
-                "Mandema CHP",
-                "2019-12-21 00:00:00.0",
+                "2026-08-23 00:00:00.0",
+                "34",
+                "Arab Clinic",
+                "2021-08-09 00:00:00.0",
                 "5",
-                "C799 Secondary malignant neoplasm, unspecified site",
-                "2020-01-04 00:00:00.0",
+                "O055",
+                "2021-08-23 00:00:00.0",
                 "Female",
-                "Absconded",
-                "91.93",
-                "91.93",
+                "MODDIED",
+                "47.06",
+                "47.06",
                 "14",
                 "1",
+                "85",
+                "34"
+            ],
+            [
+                "2026-08-06 00:00:00.0",
+                "64",
+                "Tefeya CHP",
+                "2021-07-23 00:00:00.0",
+                "2",
+                "M238",
+                "2021-08-06 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "77.29",
+                "77.29",
+                "14",
+                "1",
+                "",
+                "64"
+            ],
+            [
+                "2026-04-19 00:00:00.0",
+                "24",
+                "Nagbena CHP",
+                "2021-04-05 00:00:00.0",
+                "5",
+                "W117",
+                "2021-04-19 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "17.53",
+                "17.53",
+                "14",
+                "1",
+                "117",
+                "24"
+            ],
+            [
+                "2026-06-13 00:00:00.0",
                 "59",
-                "C799 Secondary malignant neoplasm, unspecified site",
-                "2019-12-21 00:00:00.0",
-                "32"
-            ],
-            [
-                "2025-05-25 00:00:00.0",
-                "63",
-                "Masabong Pil MCHP",
-                "2020-05-11 00:00:00.0",
-                "3",
-                "N61 Inflammatory disorders of breast",
-                "2020-05-25 00:00:00.0",
+                "Salima MCHP",
+                "2021-05-30 00:00:00.0",
+                "2",
+                "N871",
+                "2021-06-13 00:00:00.0",
                 "Female",
-                "Discharged",
-                "340.72",
-                "340.72",
+                "MODDISCH",
+                "72.84",
+                "72.84",
                 "14",
                 "1",
                 "",
-                "N61 Inflammatory disorders of breast",
-                "2020-05-11 00:00:00.0",
-                "63"
+                "59"
             ],
             [
-                "2025-03-28 00:00:00.0",
-                "47",
-                "Manack MCHP",
-                "2020-03-14 00:00:00.0",
-                "1",
-                "N369 Urethral disorder, unspecified",
-                "2020-03-28 00:00:00.0",
+                "2026-10-06 00:00:00.0",
+                "65",
+                "Mangay Loko MCHP",
+                "2021-09-22 00:00:00.0",
+                "4",
+                "T611",
+                "2021-10-06 00:00:00.0",
                 "Female",
-                "Transferred",
-                "30.57",
-                "30.57",
+                "MODDISCH",
+                "186.73",
+                "186.73",
                 "14",
                 "1",
                 "",
-                "N369 Urethral disorder, unspecified",
-                "2020-03-14 00:00:00.0",
-                "47"
+                "65"
             ],
             [
-                "2025-09-04 00:00:00.0",
-                "52",
-                "Stella Maries Clinic",
-                "2020-08-21 00:00:00.0",
-                "5",
-                "B46 Zygomycosis",
-                "2020-09-04 00:00:00.0",
-                "Female",
-                "Died",
-                "31.74",
-                "31.74",
-                "14",
-                "1",
-                "128",
-                "B46 Zygomycosis",
-                "2020-08-21 00:00:00.0",
-                "52"
-            ],
-            [
-                "2025-03-03 00:00:00.0",
-                "72",
-                "Tawahun MCHP",
-                "2020-02-17 00:00:00.0",
-                "3",
-                "R856 Abnormal findings in specimens from digestive organs and abdominal cavity, abnormal cytological findings",
-                "2020-03-03 00:00:00.0",
-                "Female",
-                "Transferred",
-                "20.81",
-                "20.81",
-                "15",
-                "1",
-                "",
-                "R856 Abnormal findings in specimens from digestive organs and abdominal cavity, abnormal cytological findings",
-                "2020-02-17 00:00:00.0",
-                "72"
-            ],
-            [
-                "2025-07-17 00:00:00.0",
+                "2026-09-20 00:00:00.0",
                 "79",
-                "Mathinkalol MCHP",
-                "2020-07-03 00:00:00.0",
-                "5",
-                "B450 Pulmonary cryptococcosis",
-                "2020-07-17 00:00:00.0",
+                "Lawana MCHP",
+                "2021-09-06 00:00:00.0",
+                "1",
+                "L662",
+                "2021-09-20 00:00:00.0",
                 "Female",
-                "Discharged",
-                "199.04",
-                "199.04",
+                "MODDISCH",
+                "77.44",
+                "77.44",
                 "14",
                 "1",
-                "63",
-                "B450 Pulmonary cryptococcosis",
-                "2020-07-03 00:00:00.0",
+                "",
                 "79"
             ],
             [
-                "2025-10-20 00:00:00.0",
-                "62",
-                "Lungi Town MCHP",
-                "2020-10-06 00:00:00.0",
-                "3",
-                "M204 Other hammer toe(s) (acquired)",
-                "2020-10-20 00:00:00.0",
+                "2026-04-13 00:00:00.0",
+                "71",
+                "Mapailleh MCHP",
+                "2021-03-30 00:00:00.0",
+                "0",
+                "T924",
+                "2021-04-13 00:00:00.0",
                 "Female",
-                "Transferred",
-                "172.22",
-                "172.22",
+                "MODABSC",
+                "243.48",
+                "243.48",
                 "14",
                 "1",
                 "",
-                "M204 Other hammer toe(s) (acquired)",
-                "2020-10-06 00:00:00.0",
-                "62"
-            ],
-            [
-                "2025-05-09 00:00:00.0",
-                "71",
-                "Yankasa MCHP",
-                "2020-04-25 00:00:00.0",
-                "5",
-                "H919 Hearing loss, unspecified",
-                "2020-05-09 00:00:00.0",
-                "Female",
-                "Discharged",
-                "45.44",
-                "45.44",
-                "14",
-                "1",
-                "125",
-                "H919 Hearing loss, unspecified",
-                "2020-04-25 00:00:00.0",
                 "71"
             ],
             [
-                "2025-04-01 00:00:00.0",
-                "22",
-                "Topan CHP",
-                "2020-03-18 00:00:00.0",
+                "2026-05-27 00:00:00.0",
+                "24",
+                "Makump Bana MCHP",
+                "2021-05-13 00:00:00.0",
                 "0",
-                "Q04 Other congenital malformations of brain",
-                "2020-04-01 00:00:00.0",
+                "G92",
+                "2021-05-27 00:00:00.0",
                 "Female",
-                "Transferred",
-                "6.36",
-                "6.36",
+                "MODTRANS",
+                "8.4",
+                "8.4",
                 "14",
                 "1",
                 "",
-                "Q04 Other congenital malformations of brain",
-                "2020-03-18 00:00:00.0",
+                "24"
+            ],
+            [
+                "2026-04-16 00:00:00.0",
+                "36",
+                "Juba M I Room",
+                "2021-04-02 00:00:00.0",
+                "1",
+                "T065",
+                "2021-04-16 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "32.04",
+                "32.04",
+                "14",
+                "1",
+                "",
+                "36"
+            ],
+            [
+                "2026-04-04 00:00:00.0",
+                "84",
+                "Kasongha MCHP",
+                "2021-03-21 00:00:00.0",
+                "1",
+                "H570",
+                "2021-04-04 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "241.31",
+                "241.31",
+                "14",
+                "1",
+                "",
+                "84"
+            ],
+            [
+                "2026-08-06 00:00:00.0",
+                "36",
+                "Sumbuya Bessima CHP",
+                "2021-07-23 00:00:00.0",
+                "3",
+                "W452",
+                "2021-08-06 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "114.8",
+                "114.8",
+                "14",
+                "1",
+                "",
+                "36"
+            ],
+            [
+                "2026-05-02 00:00:00.0",
+                "19",
+                "Mapillah MCHP",
+                "2021-04-18 00:00:00.0",
+                "5",
+                "D643",
+                "2021-05-02 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "5.38",
+                "5.38",
+                "14",
+                "1",
+                "188",
+                "19"
+            ],
+            [
+                "2026-11-11 00:00:00.0",
+                "49",
+                "Malema (Yawei) CHP",
+                "2021-10-28 00:00:00.0",
+                "4",
+                "B427",
+                "2021-11-11 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "37.05",
+                "37.05",
+                "14",
+                "1",
+                "",
+                "49"
+            ],
+            [
+                "2026-05-10 00:00:00.0",
+                "24",
+                "Kainkordu CHC",
+                "2021-04-26 00:00:00.0",
+                "5",
+                "J704",
+                "2021-05-10 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "10.39",
+                "10.39",
+                "14",
+                "1",
+                "152",
+                "24"
+            ],
+            [
+                "2026-01-10 00:00:00.0",
+                "58",
+                "Kpetema MCHP",
+                "2020-12-27 00:00:00.0",
+                "4",
+                "X300",
+                "2021-01-10 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "49.73",
+                "49.73",
+                "14",
+                "1",
+                "",
+                "58"
+            ],
+            [
+                "2026-05-06 00:00:00.0",
+                "22",
+                "Gondama (Nimikoro) MCHP",
+                "2021-04-22 00:00:00.0",
+                "4",
+                "H044",
+                "2021-05-06 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "33.53",
+                "33.53",
+                "14",
+                "1",
+                "",
                 "22"
+            ],
+            [
+                "2026-03-30 00:00:00.0",
+                "44",
+                "Moyeamoh CHP",
+                "2021-03-16 00:00:00.0",
+                "5",
+                "M918",
+                "2021-03-30 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "16.97",
+                "16.97",
+                "14",
+                "1",
+                "161",
+                "44"
+            ],
+            [
+                "2026-04-21 00:00:00.0",
+                "70",
+                "Moyowa MCHP",
+                "2021-04-07 00:00:00.0",
+                "5",
+                "V133",
+                "2021-04-21 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "25.4",
+                "25.4",
+                "14",
+                "1",
+                "166",
+                "70"
+            ],
+            [
+                "2026-07-24 00:00:00.0",
+                "59",
+                "Massam MCHP",
+                "2021-07-10 00:00:00.0",
+                "5",
+                "O986",
+                "2021-07-24 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "18.21",
+                "18.21",
+                "14",
+                "1",
+                "180",
+                "59"
+            ],
+            [
+                "2026-04-21 00:00:00.0",
+                "62",
+                "Mansundu (Sandor) MCHP",
+                "2021-04-07 00:00:00.0",
+                "3",
+                "P500",
+                "2021-04-21 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "20.24",
+                "20.24",
+                "14",
+                "1",
+                "",
+                "62"
+            ],
+            [
+                "2026-06-21 00:00:00.0",
+                "79",
+                "Benkia MCHP",
+                "2021-06-07 00:00:00.0",
+                "3",
+                "M051",
+                "2021-06-21 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "270.92",
+                "270.92",
+                "14",
+                "1",
+                "",
+                "79"
+            ],
+            [
+                "2026-10-19 00:00:00.0",
+                "62",
+                "Kagboray MCHP",
+                "2021-10-05 00:00:00.0",
+                "5",
+                "G052",
+                "2021-10-19 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "67.27",
+                "67.27",
+                "14",
+                "1",
+                "96",
+                "62"
+            ],
+            [
+                "2026-10-29 00:00:00.0",
+                "22",
+                "Pendembu CHC",
+                "2021-10-15 00:00:00.0",
+                "1",
+                "A839",
+                "2021-10-29 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "21.15",
+                "21.15",
+                "14",
+                "1",
+                "",
+                "22"
+            ],
+            [
+                "2026-01-20 00:00:00.0",
+                "56",
+                "Gondama MCHP",
+                "2021-01-06 00:00:00.0",
+                "4",
+                "Q051",
+                "2021-01-20 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "59.52",
+                "59.52",
+                "14",
+                "1",
+                "",
+                "56"
+            ],
+            [
+                "2026-05-28 00:00:00.0",
+                "39",
+                "Funyehun MCHP",
+                "2021-05-14 00:00:00.0",
+                "0",
+                "N17",
+                "2021-05-28 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "65.78",
+                "65.78",
+                "14",
+                "1",
+                "",
+                "39"
+            ],
+            [
+                "2026-11-09 00:00:00.0",
+                "53",
+                "Pepel CHP",
+                "2021-10-26 00:00:00.0",
+                "4",
+                "N97",
+                "2021-11-09 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "25.92",
+                "25.92",
+                "14",
+                "1",
+                "",
+                "53"
+            ],
+            [
+                "2026-07-27 00:00:00.0",
+                "81",
+                "Samaia MCHP",
+                "2021-07-13 00:00:00.0",
+                "0",
+                "W107",
+                "2021-07-27 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "65.74",
+                "65.74",
+                "14",
+                "1",
+                "",
+                "81"
+            ],
+            [
+                "2026-10-06 00:00:00.0",
+                "48",
+                "Holy Mary Clinic",
+                "2021-09-22 00:00:00.0",
+                "1",
+                "G26",
+                "2021-10-06 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "18.99",
+                "18.99",
+                "14",
+                "1",
+                "",
+                "48"
+            ],
+            [
+                "2026-12-13 00:00:00.0",
+                "30",
+                "Kpuabu MCHP",
+                "2021-11-29 00:00:00.0",
+                "1",
+                "R942",
+                "2021-12-13 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "63.01",
+                "63.01",
+                "14",
+                "1",
+                "",
+                "30"
+            ],
+            [
+                "2026-01-18 00:00:00.0",
+                "59",
+                "Bangambaya MCHP",
+                "2021-01-04 00:00:00.0",
+                "2",
+                "O03",
+                "2021-01-18 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "59",
+                "59",
+                "14",
+                "1",
+                "",
+                "59"
+            ],
+            [
+                "2026-05-11 00:00:00.0",
+                "54",
+                "Modia MCHP",
+                "2021-04-27 00:00:00.0",
+                "5",
+                "T941",
+                "2021-05-11 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "51.9",
+                "51.9",
+                "14",
+                "1",
+                "102",
+                "54"
+            ],
+            [
+                "2026-05-12 00:00:00.0",
+                "82",
+                "Suen CHP",
+                "2021-04-28 00:00:00.0",
+                "2",
+                "W609",
+                "2021-05-12 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "63.1",
+                "63.1",
+                "14",
+                "1",
+                "",
+                "82"
+            ],
+            [
+                "2026-03-13 00:00:00.0",
+                "41",
+                "Mathen MCHP",
+                "2021-02-27 00:00:00.0",
+                "5",
+                "Q769",
+                "2021-03-13 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "35.81",
+                "35.81",
+                "14",
+                "1",
+                "107",
+                "41"
+            ],
+            [
+                "2026-03-21 00:00:00.0",
+                "18",
+                "Panderu MCHP",
+                "2021-03-07 00:00:00.0",
+                "1",
+                "O41",
+                "2021-03-21 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "41.32",
+                "41.32",
+                "14",
+                "1",
+                "",
+                "18"
+            ],
+            [
+                "2026-11-02 00:00:00.0",
+                "68",
+                "Kindoyal Hospital",
+                "2021-10-19 00:00:00.0",
+                "1",
+                "L892",
+                "2021-11-02 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "19.45",
+                "19.45",
+                "14",
+                "1",
+                "",
+                "68"
+            ],
+            [
+                "2026-12-12 00:00:00.0",
+                "73",
+                "Madina Loko CHP",
+                "2021-11-28 00:00:00.0",
+                "5",
+                "O410",
+                "2021-12-12 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "63.76",
+                "63.76",
+                "14",
+                "1",
+                "107",
+                "73"
+            ],
+            [
+                "2026-12-21 00:00:00.0",
+                "75",
+                "Worreh MCHP",
+                "2021-12-07 00:00:00.0",
+                "1",
+                "Q078",
+                "2021-12-21 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "59.79",
+                "59.79",
+                "14",
+                "1",
+                "",
+                "75"
+            ],
+            [
+                "2026-07-31 00:00:00.0",
+                "30",
+                "Govt. Hosp. Bonthe",
+                "2021-07-17 00:00:00.0",
+                "0",
+                "R636",
+                "2021-07-31 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "92.34",
+                "92.34",
+                "14",
+                "1",
+                "",
+                "30"
+            ],
+            [
+                "2026-12-22 00:00:00.0",
+                "57",
+                "Koidu Under Five Clinic",
+                "2021-12-08 00:00:00.0",
+                "2",
+                "B22",
+                "2021-12-22 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "65.9",
+                "65.9",
+                "14",
+                "1",
+                "",
+                "57"
+            ],
+            [
+                "2026-04-16 00:00:00.0",
+                "39",
+                "Newton CHC",
+                "2021-04-02 00:00:00.0",
+                "1",
+                "F410",
+                "2021-04-16 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "34.06",
+                "34.06",
+                "14",
+                "1",
+                "",
+                "39"
+            ],
+            [
+                "2026-05-02 00:00:00.0",
+                "70",
+                "Pejewa CHC",
+                "2021-04-18 00:00:00.0",
+                "5",
+                "A403",
+                "2021-05-02 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "31.96",
+                "31.96",
+                "14",
+                "1",
+                "148",
+                "70"
+            ],
+            [
+                "2026-06-03 00:00:00.0",
+                "42",
+                "Gambia CHP",
+                "2021-05-20 00:00:00.0",
+                "5",
+                "L279",
+                "2021-06-03 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "15.06",
+                "15.06",
+                "14",
+                "1",
+                "167",
+                "42"
+            ],
+            [
+                "2026-10-05 00:00:00.0",
+                "57",
+                "Mosanda CHP",
+                "2021-09-21 00:00:00.0",
+                "1",
+                "J635",
+                "2021-10-05 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "247.4",
+                "247.4",
+                "14",
+                "1",
+                "",
+                "57"
+            ],
+            [
+                "2026-01-30 00:00:00.0",
+                "68",
+                "Kychom CHC",
+                "2021-01-16 00:00:00.0",
+                "5",
+                "V621",
+                "2021-01-30 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "25.28",
+                "25.28",
+                "14",
+                "1",
+                "164",
+                "68"
+            ],
+            [
+                "2026-03-22 00:00:00.0",
+                "32",
+                "Kayima CHC",
+                "2021-03-08 00:00:00.0",
+                "3",
+                "T297",
+                "2021-03-22 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "42.28",
+                "42.28",
+                "14",
+                "1",
+                "",
+                "32"
+            ],
+            [
+                "2026-04-27 00:00:00.0",
+                "60",
+                "Yengema CHC",
+                "2021-04-13 00:00:00.0",
+                "0",
+                "M542",
+                "2021-04-27 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "75.75",
+                "75.75",
+                "14",
+                "1",
+                "",
+                "60"
+            ],
+            [
+                "2026-10-10 00:00:00.0",
+                "81",
+                "Tei CHP",
+                "2021-09-26 00:00:00.0",
+                "1",
+                "P509",
+                "2021-10-10 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "117.58",
+                "117.58",
+                "14",
+                "1",
+                "",
+                "81"
+            ],
+            [
+                "2026-11-20 00:00:00.0",
+                "69",
+                "Torma Bum CHP",
+                "2021-11-06 00:00:00.0",
+                "4",
+                "T567",
+                "2021-11-20 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "326.09",
+                "326.09",
+                "14",
+                "1",
+                "",
+                "69"
+            ],
+            [
+                "2026-09-26 00:00:00.0",
+                "30",
+                "Fogbo CHP",
+                "2021-09-12 00:00:00.0",
+                "1",
+                "F42",
+                "2021-09-26 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "124.95",
+                "124.95",
+                "14",
+                "1",
+                "",
+                "30"
+            ],
+            [
+                "2026-03-25 00:00:00.0",
+                "76",
+                "Magbeni MCHP",
+                "2021-03-11 00:00:00.0",
+                "2",
+                "A050",
+                "2021-03-25 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "50.23",
+                "50.23",
+                "14",
+                "1",
+                "",
+                "76"
+            ],
+            [
+                "2026-04-08 00:00:00.0",
+                "64",
+                "Momajo MCHP",
+                "2021-03-25 00:00:00.0",
+                "5",
+                "L102",
+                "2021-04-08 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "31.74",
+                "31.74",
+                "14",
+                "1",
+                "142",
+                "64"
+            ],
+            [
+                "2026-01-13 00:00:00.0",
+                "40",
+                "Mokobo MCHP",
+                "2020-12-30 00:00:00.0",
+                "1",
+                "M862",
+                "2021-01-13 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "132.23",
+                "132.23",
+                "14",
+                "1",
+                "",
+                "40"
+            ],
+            [
+                "2026-06-12 00:00:00.0",
+                "49",
+                "Sawuria CHP",
+                "2021-05-29 00:00:00.0",
+                "0",
+                "E233",
+                "2021-06-12 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "17.78",
+                "17.78",
+                "14",
+                "1",
+                "",
+                "49"
+            ],
+            [
+                "2026-01-09 00:00:00.0",
+                "17",
+                "Bendu (Yawei) CHP",
+                "2020-12-26 00:00:00.0",
+                "5",
+                "O35",
+                "2021-01-09 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "7.76",
+                "7.76",
+                "14",
+                "1",
+                "148",
+                "17"
+            ],
+            [
+                "2026-06-17 00:00:00.0",
+                "68",
+                "Jojoima CHC",
+                "2021-06-03 00:00:00.0",
+                "5",
+                "S89",
+                "2021-06-17 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "26.56",
+                "26.56",
+                "14",
+                "1",
+                "160",
+                "68"
+            ],
+            [
+                "2026-10-14 00:00:00.0",
+                "84",
+                "Massabendu CHP",
+                "2021-09-30 00:00:00.0",
+                "1",
+                "W468",
+                "2021-10-14 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "29.76",
+                "29.76",
+                "14",
+                "1",
+                "",
+                "84"
+            ],
+            [
+                "2026-07-31 00:00:00.0",
+                "73",
+                "Kombilie MCHP",
+                "2021-07-17 00:00:00.0",
+                "4",
+                "N072",
+                "2021-07-31 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "51.55",
+                "51.55",
+                "14",
+                "1",
+                "",
+                "73"
+            ],
+            [
+                "2026-03-16 00:00:00.0",
+                "27",
+                "Karlu CHC",
+                "2021-03-02 00:00:00.0",
+                "0",
+                "O360",
+                "2021-03-16 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "33.33",
+                "33.33",
+                "14",
+                "1",
+                "",
+                "27"
+            ],
+            [
+                "2026-09-11 00:00:00.0",
+                "37",
+                "Kania (Masungbala) MCHP",
+                "2021-08-28 00:00:00.0",
+                "1",
+                "O870",
+                "2021-09-11 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "42.78",
+                "42.78",
+                "14",
+                "1",
+                "",
+                "37"
+            ],
+            [
+                "2026-02-22 00:00:00.0",
+                "63",
+                "Manowa CHC",
+                "2021-02-08 00:00:00.0",
+                "1",
+                "L100",
+                "2021-02-22 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "175",
+                "175",
+                "14",
+                "1",
+                "",
+                "63"
+            ],
+            [
+                "2026-08-26 00:00:00.0",
+                "54",
+                "Kathanta Bana MCHP",
+                "2021-08-12 00:00:00.0",
+                "0",
+                "B853",
+                "2021-08-26 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "31.47",
+                "31.47",
+                "14",
+                "1",
+                "",
+                "54"
+            ],
+            [
+                "2026-08-25 00:00:00.0",
+                "59",
+                "Gbo-Kakajama 2 MCHP",
+                "2021-08-11 00:00:00.0",
+                "2",
+                "L981",
+                "2021-08-25 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "46.21",
+                "46.21",
+                "14",
+                "1",
+                "",
+                "59"
+            ],
+            [
+                "2026-05-14 00:00:00.0",
+                "27",
+                "Sembehun MCHP",
+                "2021-04-30 00:00:00.0",
+                "0",
+                "S064",
+                "2021-05-14 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "19.39",
+                "19.39",
+                "14",
+                "1",
+                "",
+                "27"
+            ],
+            [
+                "2026-07-22 00:00:00.0",
+                "55",
+                "Deima MCHP",
+                "2021-07-08 00:00:00.0",
+                "2",
+                "L639",
+                "2021-07-22 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "45.45",
+                "45.45",
+                "14",
+                "1",
+                "",
+                "55"
+            ],
+            [
+                "2026-09-29 00:00:00.0",
+                "58",
+                "Maforay (B. Sebora) MCHP",
+                "2021-09-15 00:00:00.0",
+                "3",
+                "O290",
+                "2021-09-29 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "40.96",
+                "40.96",
+                "14",
+                "1",
+                "",
+                "58"
+            ],
+            [
+                "2026-04-02 00:00:00.0",
+                "83",
+                "Gendema MCHP",
+                "2021-03-19 00:00:00.0",
+                "1",
+                "T268",
+                "2021-04-02 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "40.59",
+                "40.59",
+                "14",
+                "1",
+                "",
+                "83"
+            ],
+            [
+                "2026-09-29 00:00:00.0",
+                "66",
+                "Tonkomba MCHP",
+                "2021-09-15 00:00:00.0",
+                "0",
+                "I85",
+                "2021-09-29 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "26.44",
+                "26.44",
+                "14",
+                "1",
+                "",
+                "66"
+            ],
+            [
+                "2026-03-14 00:00:00.0",
+                "60",
+                "Rapha Clinic",
+                "2021-02-28 00:00:00.0",
+                "1",
+                "H580",
+                "2021-03-14 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "29.34",
+                "29.34",
+                "14",
+                "1",
+                "",
+                "60"
+            ],
+            [
+                "2026-01-20 00:00:00.0",
+                "66",
+                "Timbo CHP",
+                "2021-01-06 00:00:00.0",
+                "3",
+                "B589",
+                "2021-01-20 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "356.95",
+                "356.95",
+                "14",
+                "1",
+                "",
+                "66"
+            ],
+            [
+                "2026-01-09 00:00:00.0",
+                "65",
+                "Mondema CHC",
+                "2020-12-26 00:00:00.0",
+                "5",
+                "B374",
+                "2021-01-09 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "186.73",
+                "186.73",
+                "14",
+                "1",
+                "59",
+                "65"
+            ],
+            [
+                "2026-06-20 00:00:00.0",
+                "45",
+                "Bumpetoke CHP",
+                "2021-06-06 00:00:00.0",
+                "4",
+                "T320",
+                "2021-06-20 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "120.94",
+                "120.94",
+                "14",
+                "1",
+                "",
+                "45"
+            ],
+            [
+                "2026-05-27 00:00:00.0",
+                "73",
+                "Foindu (Lower Bamabara) CHC",
+                "2021-05-13 00:00:00.0",
+                "4",
+                "V888",
+                "2021-05-27 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "116.97",
+                "116.97",
+                "14",
+                "1",
+                "",
+                "73"
+            ],
+            [
+                "2026-01-17 00:00:00.0",
+                "48",
+                "Fatibra CHP",
+                "2021-01-03 00:00:00.0",
+                "2",
+                "K221",
+                "2021-01-17 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "20.5",
+                "20.5",
+                "14",
+                "1",
+                "",
+                "48"
+            ],
+            [
+                "2026-04-10 00:00:00.0",
+                "76",
+                "Kolisokor MCHP",
+                "2021-03-27 00:00:00.0",
+                "0",
+                "Q771",
+                "2021-04-10 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "56.48",
+                "56.48",
+                "14",
+                "1",
+                "",
+                "76"
+            ],
+            [
+                "2026-06-06 00:00:00.0",
+                "18",
+                "Kundorma CHP",
+                "2021-05-23 00:00:00.0",
+                "2",
+                "T478",
+                "2021-06-06 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "19.13",
+                "19.13",
+                "14",
+                "1",
+                "",
+                "18"
+            ],
+            [
+                "2026-11-01 00:00:00.0",
+                "41",
+                "Komba Yendeh CHP",
+                "2021-10-18 00:00:00.0",
+                "4",
+                "P59",
+                "2021-11-01 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "18.47",
+                "18.47",
+                "14",
+                "1",
+                "",
+                "41"
+            ],
+            [
+                "2026-11-03 00:00:00.0",
+                "54",
+                "Gbo-Kakajama 2 MCHP",
+                "2021-10-20 00:00:00.0",
+                "3",
+                "L638",
+                "2021-11-03 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "27.95",
+                "27.95",
+                "14",
+                "1",
+                "",
+                "54"
+            ],
+            [
+                "2026-07-25 00:00:00.0",
+                "70",
+                "Gandorhun (Gbane) CHC",
+                "2021-07-11 00:00:00.0",
+                "0",
+                "G442",
+                "2021-07-25 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "75.95",
+                "75.95",
+                "14",
+                "1",
+                "",
+                "70"
+            ],
+            [
+                "2026-04-13 00:00:00.0",
+                "46",
+                "Magbaingba MCHP",
+                "2021-03-30 00:00:00.0",
+                "0",
+                "M13",
+                "2021-04-13 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "19.4",
+                "19.4",
+                "14",
+                "1",
+                "",
+                "46"
+            ],
+            [
+                "2026-06-28 00:00:00.0",
+                "48",
+                "Makonthanday MCHP",
+                "2021-06-14 00:00:00.0",
+                "2",
+                "L519",
+                "2021-06-28 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "25.2",
+                "25.2",
+                "14",
+                "1",
+                "",
+                "48"
+            ],
+            [
+                "2026-10-13 00:00:00.0",
+                "29",
+                "Makeni-Lol MCHP",
+                "2021-09-29 00:00:00.0",
+                "5",
+                "W51",
+                "2021-10-13 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "35.8",
+                "35.8",
+                "14",
+                "1",
+                "90",
+                "29"
+            ],
+            [
+                "2026-12-12 00:00:00.0",
+                "53",
+                "Kabati CHP",
+                "2021-11-28 00:00:00.0",
+                "4",
+                "A63",
+                "2021-12-12 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "37.43",
+                "37.43",
+                "14",
+                "1",
+                "",
+                "53"
+            ],
+            [
+                "2026-10-07 00:00:00.0",
+                "33",
+                "Dodo Kortuma CHP",
+                "2021-09-23 00:00:00.0",
+                "0",
+                "L281",
+                "2021-10-07 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "67.35",
+                "67.35",
+                "14",
+                "1",
+                "",
+                "33"
+            ],
+            [
+                "2026-04-24 00:00:00.0",
+                "74",
+                "Sam Lean's MCHP",
+                "2021-04-10 00:00:00.0",
+                "0",
+                "W915",
+                "2021-04-24 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "32.89",
+                "32.89",
+                "14",
+                "1",
+                "",
+                "74"
+            ],
+            [
+                "2026-10-28 00:00:00.0",
+                "78",
+                "Massaba MCHP",
+                "2021-10-14 00:00:00.0",
+                "3",
+                "H250",
+                "2021-10-28 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "50.73",
+                "50.73",
+                "14",
+                "1",
+                "",
+                "78"
+            ],
+            [
+                "2026-04-02 00:00:00.0",
+                "23",
+                "Waiima (Kori) MCHP",
+                "2021-03-19 00:00:00.0",
+                "4",
+                "R57",
+                "2021-04-02 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "17.39",
+                "17.39",
+                "14",
+                "1",
+                "",
+                "23"
+            ],
+            [
+                "2026-02-03 00:00:00.0",
+                "38",
+                "UBC Under 5",
+                "2021-01-20 00:00:00.0",
+                "0",
+                "T862",
+                "2021-02-03 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "13.79",
+                "13.79",
+                "14",
+                "1",
+                "",
+                "38"
+            ],
+            [
+                "2026-05-17 00:00:00.0",
+                "48",
+                "Maron MCHP",
+                "2021-05-03 00:00:00.0",
+                "2",
+                "M519",
+                "2021-05-17 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "103.81",
+                "103.81",
+                "14",
+                "1",
+                "",
+                "48"
+            ],
+            [
+                "2026-04-21 00:00:00.0",
+                "67",
+                "Tombodu CHC",
+                "2021-04-07 00:00:00.0",
+                "1",
+                "C343",
+                "2021-04-21 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "102.12",
+                "102.12",
+                "14",
+                "1",
+                "",
+                "67"
+            ],
+            [
+                "2026-08-24 00:00:00.0",
+                "47",
+                "Banana Island MCHP",
+                "2021-08-10 00:00:00.0",
+                "3",
+                "P510",
+                "2021-08-24 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "30.57",
+                "30.57",
+                "14",
+                "1",
+                "",
+                "47"
+            ],
+            [
+                "2026-01-21 00:00:00.0",
+                "60",
+                "Bundulai MCHP",
+                "2021-01-07 00:00:00.0",
+                "1",
+                "L817",
+                "2021-01-21 00:00:00.0",
+                "Female",
+                "MODDIED",
+                "22.86",
+                "22.86",
+                "14",
+                "1",
+                "",
+                "60"
+            ],
+            [
+                "2026-01-12 00:00:00.0",
+                "72",
+                "Niayahun CHP",
+                "2020-12-29 00:00:00.0",
+                "0",
+                "V530",
+                "2021-01-12 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "48.37",
+                "48.37",
+                "14",
+                "1",
+                "",
+                "72"
+            ],
+            [
+                "2026-11-13 00:00:00.0",
+                "62",
+                "Kpandebu MCHP",
+                "2021-10-30 00:00:00.0",
+                "0",
+                "W847",
+                "2021-11-13 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "138.12",
+                "138.12",
+                "14",
+                "1",
+                "",
+                "62"
+            ],
+            [
+                "2026-08-01 00:00:00.0",
+                "21",
+                "Kaponkie MCHP",
+                "2021-07-18 00:00:00.0",
+                "3",
+                "M792",
+                "2021-08-01 00:00:00.0",
+                "Female",
+                "MODTRANS",
+                "52.91",
+                "52.91",
+                "14",
+                "1",
+                "",
+                "21"
+            ],
+            [
+                "2026-07-16 00:00:00.0",
+                "34",
+                "Ninkikoro MCHP",
+                "2021-07-02 00:00:00.0",
+                "4",
+                "O718",
+                "2021-07-16 00:00:00.0",
+                "Female",
+                "MODDISCH",
+                "10.49",
+                "10.49",
+                "14",
+                "1",
+                "",
+                "34"
+            ],
+            [
+                "2026-01-30 00:00:00.0",
+                "46",
+                "Konjo (Dama) CHP",
+                "2021-01-16 00:00:00.0",
+                "3",
+                "Q058",
+                "2021-01-30 00:00:00.0",
+                "Female",
+                "MODABSC",
+                "26",
+                "26",
+                "14",
+                "1",
+                "",
+                "46"
             ]
         ],
-        "pager": {
-            "page": 1,
-            "pageSize": 100,
-            "isLastPage": false
+        "height": 100,
+        "headerWidth": 15
+    },
+    "legendSets": [
+        {
+            "legends": [
+                {
+                    "startValue": 30,
+                    "endValue": 40,
+                    "color": "#d9f0a3",
+                    "id": "ZUUGJnvX40X",
+                    "name": "30 - 40"
+                },
+                {
+                    "startValue": 40,
+                    "endValue": 50,
+                    "color": "#addd8e",
+                    "id": "CpP5yzbgfHo",
+                    "name": "40 - 50"
+                },
+                {
+                    "startValue": 50,
+                    "endValue": 60,
+                    "color": "#78c679",
+                    "id": "cbPqyIAFw9u",
+                    "name": "50 - 60"
+                },
+                {
+                    "startValue": 60,
+                    "endValue": 70,
+                    "color": "#41ab5d",
+                    "id": "Tq4NYCn9eNH",
+                    "name": "60 - 70"
+                },
+                {
+                    "startValue": 90,
+                    "endValue": 100,
+                    "color": "#004529",
+                    "id": "scvmgP9F9rn",
+                    "name": "90 - 100"
+                },
+                {
+                    "startValue": 10,
+                    "endValue": 20,
+                    "color": "#ffffe5",
+                    "id": "OyVUzWsX8UF",
+                    "name": "10 - 20"
+                },
+                {
+                    "startValue": 70,
+                    "endValue": 80,
+                    "color": "#238443",
+                    "id": "b7MCpzqJaR2",
+                    "name": "70 - 80"
+                },
+                {
+                    "startValue": 0,
+                    "endValue": 10,
+                    "color": "#FFFFFF",
+                    "id": "pZzk1L4Blf1",
+                    "name": "0 - 10"
+                },
+                {
+                    "startValue": 80,
+                    "endValue": 90,
+                    "color": "#006837",
+                    "id": "puI3YpLJ3fC",
+                    "name": "80 - 90"
+                },
+                {
+                    "startValue": 20,
+                    "endValue": 30,
+                    "color": "#f7fcb9",
+                    "id": "TvM2MQgD7Jd",
+                    "name": "20 - 30"
+                }
+            ],
+            "id": "Yf6UHoPkdS6",
+            "name": "Age 10y interval"
         },
-        "rowContext": {}
-    }
+        {
+            "legends": [
+                {
+                    "startValue": 60,
+                    "endValue": 70,
+                    "color": "#6baed6",
+                    "id": "GDFw7T4aFGz",
+                    "name": "60 - 70"
+                },
+                {
+                    "startValue": 70,
+                    "endValue": 80,
+                    "color": "#4292c6",
+                    "id": "xVezsaEXU3k",
+                    "name": "70 - 80"
+                },
+                {
+                    "startValue": 0,
+                    "endValue": 20,
+                    "color": "#f7fbff",
+                    "id": "NxQrJ3icPkE",
+                    "name": "0 - 20"
+                },
+                {
+                    "startValue": 20,
+                    "endValue": 40,
+                    "color": "#deebf7",
+                    "id": "b9UzeWaSs2u",
+                    "name": "20 - 40"
+                },
+                {
+                    "startValue": 50,
+                    "endValue": 60,
+                    "color": "#9ecae1",
+                    "id": "Sjp6IB3gthI",
+                    "name": "50 - 60"
+                },
+                {
+                    "startValue": 40,
+                    "endValue": 50,
+                    "color": "#c6dbef",
+                    "id": "AD5jueZTZSK",
+                    "name": "40 - 50"
+                },
+                {
+                    "startValue": 90,
+                    "endValue": 100,
+                    "color": "#08519c",
+                    "id": "XKEvGfAkh3R",
+                    "name": "90 - 100"
+                },
+                {
+                    "startValue": 80,
+                    "endValue": 90,
+                    "color": "#2171b5",
+                    "id": "lnccUWrmqL0",
+                    "name": "80 - 90"
+                },
+                {
+                    "startValue": 100,
+                    "endValue": 200,
+                    "color": "#08306b",
+                    "id": "f3prvzpfniC",
+                    "name": "100+"
+                }
+            ],
+            "id": "OrkEzxZEH4X",
+            "name": "Weight in kg"
+        }
+    ]
 }

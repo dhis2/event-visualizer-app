@@ -14,6 +14,7 @@ import { assertTypedMetadataItem } from '@modules/metadata/typed-metadata-item'
 import { isPopulatedString } from '@modules/utils/guards'
 import type {
     InitialMetadataItems,
+    MetadataInput,
     MetadataItem,
     Program,
     ProgramStage,
@@ -22,6 +23,7 @@ import type {
     OrganisationUnitMetadataItem,
     UserOrgUnitMetadataItem,
     DimensionMetadataItem,
+    SavedVisualization,
 } from '@types'
 import {
     createContext,
@@ -66,20 +68,27 @@ export const PluginMetadataProvider: FC<{ children: ReactNode }> = ({
     )
 }
 
-/* Test-side provider: seeds the store with mock metadata. Pulls rootOrgUnits
+/* Test-side provider: seeds the store with mock metadata and/or a
+ * visualization (the way loading one does at runtime). Pulls rootOrgUnits
  * from AppCachedDataQueryProvider, which the test-utils wrapper sets up. */
 export const MockMetadataProvider: FC<{
     children: ReactNode
     mockMetadata?: InitialMetadataItems
-}> = ({ children, mockMetadata }) => {
+    visualization?: SavedVisualization
+}> = ({ children, mockMetadata, visualization }) => {
     const rootOrgUnits = useRootOrgUnits()
-    const [metadataStore] = useState(
-        () =>
-            new MetadataStore(
-                { ...getInitialMetadata(), ...mockMetadata },
-                rootOrgUnits
-            )
-    )
+    const [metadataStore] = useState(() => {
+        const store = new MetadataStore(getInitialMetadata(), rootOrgUnits)
+        /* The visualization first: compound-ID items in mockMetadata need
+         * their program/stage context in the store. */
+        if (visualization) {
+            store.setVisualizationMetadata(visualization)
+        }
+        if (mockMetadata) {
+            store.addMetadata(mockMetadata as MetadataInput)
+        }
+        return store
+    })
     return (
         <MetadataContext.Provider value={metadataStore}>
             {children}
