@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-28T12:57:22.711Z\n"
-"PO-Revision-Date: 2026-08-28T12:57:22.717Z\n"
+"POT-Creation-Date: 2026-09-02T14:42:01.147Z\n"
+"PO-Revision-Date: 2026-09-02T14:42:01.147Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -106,8 +106,8 @@ msgstr "Show fewer of the most recent events"
 msgid "Show more of the most recent events"
 msgstr "Show more of the most recent events"
 
-msgid "Hide"
-msgstr "Hide"
+msgid "Done"
+msgstr "Done"
 
 msgid "Start and end dates are inclusive and will be included in the outputs."
 msgstr "Start and end dates are inclusive and will be included in the outputs."
@@ -307,6 +307,9 @@ msgstr "Switch to {{- trackedEntityTypeName}} list"
 msgid "Update {{- trackedEntityTypeName}} list"
 msgstr "Update {{- trackedEntityTypeName}} list"
 
+msgid "Unapplied changes"
+msgstr "Unapplied changes"
+
 msgid "Not valid with registration org. unit"
 msgstr "Not valid with registration org. unit"
 
@@ -336,6 +339,9 @@ msgstr "Not valid with Completed on"
 
 msgid "Not valid with multiple tracked entity types"
 msgstr "Not valid with multiple tracked entity types"
+
+msgid "Not valid without a tracked entity type"
+msgstr "Not valid without a tracked entity type"
 
 msgid "Not valid with program indicators"
 msgstr "Not valid with program indicators"
@@ -623,9 +629,6 @@ msgstr "Filters are not applied to Event visualizations"
 
 msgid "Show without filters"
 msgstr "Show without filters"
-
-msgid "Create a {{- visType}} before updating"
-msgstr "Create a {{- visType}} before updating"
 
 msgid "Metadata"
 msgstr "Metadata"

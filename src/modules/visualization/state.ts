@@ -134,53 +134,81 @@ export const isDefaultOptionValue = (key: string, value: unknown): boolean =>
     value === undefined ||
     deepEqual(value, (DEFAULT_OPTIONS as Record<string, unknown>)[key])
 
-/* An axis prepared for comparison: drop the props that aren't persisted
- * (dimensionType, valueType — the API sends PROGRAM_DATA_ELEMENT where the
- * rebuilt vis has DATA_ELEMENT) and treat an empty items array as absent, so
- * unpersisted differences don't read as edits. */
+/* An axis prepared for comparison. Two kinds of difference are not edits:
+ * props that aren't persisted (dimensionType, valueType — the API sends
+ * PROGRAM_DATA_ELEMENT where the rebuilt vis has DATA_ELEMENT) and nested
+ * objects the API returns richer than the app can rebuild from visUiConfig
+ * (option sets and legend sets carry their name; a repetition carries the
+ * dimension, axis and program context the backend derives from the owning
+ * dimension). An empty items array counts as absent. */
 const comparableAxis = (axis: DimensionArray = []): DimensionArray =>
     removeDimensionPropertiesBeforeSaving(axis).map((dim) => {
-        if (Array.isArray(dim.items) && dim.items.length === 0) {
-            const withoutItems = { ...dim }
-            delete withoutItems.items
-            return withoutItems
+        const comparableDim = { ...dim }
+        if (Array.isArray(comparableDim.items) && !comparableDim.items.length) {
+            delete comparableDim.items
         }
-        return dim
+        if (comparableDim.optionSet) {
+            comparableDim.optionSet = { id: comparableDim.optionSet.id }
+        }
+        if (comparableDim.legendSet) {
+            comparableDim.legendSet = { id: comparableDim.legendSet.id }
+        }
+        if (comparableDim.repetition) {
+            comparableDim.repetition = {
+                indexes: comparableDim.repetition.indexes,
+            }
+        }
+        return comparableDim
     })
 
-const areVisualizationsEquivalent = (
-    savedVis: CurrentVisualization,
-    currentVis: CurrentVisualization
-): boolean => {
-    const saved = savedVis as Record<string, unknown>
-    const current = currentVis as Record<string, unknown>
-    // currentVis always carries the full key set, so its keys cover every
-    // field a saved vis could differ on.
-    for (const key of Object.keys(current)) {
-        if (key in DEFAULT_OPTIONS) {
-            const bothAtDefault =
-                isDefaultOptionValue(key, saved[key]) &&
-                isDefaultOptionValue(key, current[key])
-            if (!bothAtDefault && !deepEqual(saved[key], current[key])) {
-                return false
-            }
-        } else if (DIMENSION_AXES.has(key)) {
-            if (
-                !deepEqual(
-                    comparableAxis(saved[key] as DimensionArray),
-                    comparableAxis(current[key] as DimensionArray)
-                )
-            ) {
-                return false
-            }
-        } else if (
-            !DERIVED_LAYOUT_FIELDS.has(key) &&
-            !deepEqual(saved[key], current[key])
-        ) {
-            return false
-        }
+/* Top-level metadata refs the API returns with a display name (and, for the
+ * custom value, its aggregation type) where visUiConfig can only rebuild the
+ * id. Compared by id, for the same reason comparableAxis reduces optionSet and
+ * legendSet. */
+const ID_REF_FIELDS: ReadonlySet<string> = new Set(['value'])
+
+const comparableIdRef = (ref: unknown): unknown =>
+    ref && typeof ref === 'object' && 'id' in ref
+        ? { id: (ref as { id: string }).id }
+        : ref
+
+/* How one field of two visualizations compares. Each kind of field has its own
+ * notion of equivalence: a metadata ref by id, an option with an absent value
+ * counting as its default, an axis after normalisation, and the layout-derived
+ * fields not at all. */
+const isFieldEquivalent = (key: string, a: unknown, b: unknown): boolean => {
+    if (ID_REF_FIELDS.has(key)) {
+        return deepEqual(comparableIdRef(a), comparableIdRef(b))
     }
-    return true
+
+    if (key in DEFAULT_OPTIONS) {
+        const bothAtDefault =
+            isDefaultOptionValue(key, a) && isDefaultOptionValue(key, b)
+
+        return bothAtDefault || deepEqual(a, b)
+    }
+
+    if (DIMENSION_AXES.has(key)) {
+        return deepEqual(
+            comparableAxis(a as DimensionArray),
+            comparableAxis(b as DimensionArray)
+        )
+    }
+
+    return DERIVED_LAYOUT_FIELDS.has(key) || deepEqual(a, b)
+}
+
+/* Compares a saved vis to the current one, and the current one to the vis that
+ * visUiConfig would produce. `visualizationB` must carry the full
+ * CurrentVisualization key set, because its keys drive the comparison. */
+export const areVisualizationsEquivalent = (
+    visualizationA: CurrentVisualization | EmptyVisualization,
+    visualizationB: CurrentVisualization
+): boolean => {
+    const a = visualizationA as Record<string, unknown>
+    const b = visualizationB as Record<string, unknown>
+
+    return Object.keys(b).every((key) => isFieldEquivalent(key, a[key], b[key]))
 }
 
 export const getVisualizationState = (
@@ -545,6 +573,7 @@ const normalizeLegacyDimension = (
  *   data-element / attribute UID, since that's still a live analytics
  *   parameter
  * - Drop top-level `program` and `programStage`
+ * - Drop the wire-only `dy`/`latitude`/`longitude` dimensions
  * - Mark output as `legacy: true` whenever any of the above upgraded the
  *   persisted shape, so the vis cannot be overwritten in place — only "Save
  *   as" is allowed. Overwriting would silently persist in the canonical
@@ -554,7 +583,6 @@ const normalizeLegacyDimension = (
  * visualizations, so they do not imply the `legacy` flag):
  * - `completedOnly` → `eventStatus=COMPLETED` filter (not legacy-only)
  * - `PROGRAM_DATA_ELEMENT` → `DATA_ELEMENT` (wire → app shape)
- * - `dy`/`latitude`/`longitude` stripping (wire → app shape)
  */
 export const normalizeApiSavedVisualization = (
     apiVis: ApiSavedVisualization
@@ -599,13 +627,27 @@ export const normalizeApiSavedVisualization = (
             : []),
     ]
 
-    normalizedVis.columns = columns.map((dim) =>
+    /* Wire-only dimensions mark where a legacy Event Report put its value
+     * column; the app expresses that with the custom value fields instead, and
+     * carries no layout position for them. Dropping them changes the persisted
+     * shape, so it flips `legacy` like every other upgrade here. */
+    const dropWireOnlyDimensions = (dims: DimensionRecord[]) => {
+        const kept = dims.filter(
+            (dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension)
+        )
+        if (kept.length !== dims.length) {
+            normalizedVis.legacy = true
+        }
+        return kept
+    }
+
+    normalizedVis.columns = dropWireOnlyDimensions(columns).map((dim) =>
         normalizeLegacyDimension(dim, context, normalizedVis)
     )
-    normalizedVis.rows = rows.map((dim) =>
+    normalizedVis.rows = dropWireOnlyDimensions(rows).map((dim) =>
         normalizeLegacyDimension(dim, context, normalizedVis)
     )
-    normalizedVis.filters = rawFilters.map((dim) =>
+    normalizedVis.filters = dropWireOnlyDimensions(rawFilters).map((dim) =>
         normalizeLegacyDimension(dim, context, normalizedVis)
     )
 
