@@ -10,15 +10,11 @@ import {
     ModalActions,
     ModalContent,
     ModalTitle,
-    Tooltip,
 } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector, useLayoutContext } from '@hooks'
-import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
     clearVisUiConfigCustomValue,
     getVisUiConfigCustomValue,
-    setVisUiConfigCustomValue,
-    type CustomValueObject,
 } from '@store/vis-ui-config-slice'
 import { type FC, useCallback, useState } from 'react'
 import { CustomValueItemPicker } from './custom-value-item-picker'
@@ -28,33 +24,24 @@ type CellValueModalProps = {
     onClose: () => void
 }
 
+/* Which card is expanded is the modal's own business: the store only knows
+ * whether a custom value is set, which is not yet true while the user is
+ * picking one. */
 type CellValueMode = 'COUNT' | 'CUSTOM_VALUE'
 
 export const CellValueModal: FC<CellValueModalProps> = ({ onClose }) => {
     const dispatch = useAppDispatch()
     const { programIds } = useLayoutContext()
-    const storedCustomValue = useAppSelector(getVisUiConfigCustomValue)
+    const customValue = useAppSelector(getVisUiConfigCustomValue)
     const [mode, setMode] = useState<CellValueMode>(
-        storedCustomValue ? 'CUSTOM_VALUE' : 'COUNT'
+        customValue ? 'CUSTOM_VALUE' : 'COUNT'
     )
-    const [customValue, setCustomValue] = useState<
-        CustomValueObject | undefined
-    >(storedCustomValue)
 
-    const onSelectCount = useCallback(() => setMode('COUNT'), [])
+    const onSelectCount = useCallback(() => {
+        setMode('COUNT')
+        dispatch(clearVisUiConfigCustomValue())
+    }, [dispatch])
     const onSelectCustomValue = useCallback(() => setMode('CUSTOM_VALUE'), [])
-
-    const onUpdate = useCallback(() => {
-        if (mode === 'COUNT') {
-            dispatch(clearVisUiConfigCustomValue())
-        } else if (customValue) {
-            dispatch(setVisUiConfigCustomValue(customValue))
-        }
-        dispatch(tUpdateCurrentVisFromVisUiConfig())
-        onClose()
-    }, [customValue, dispatch, mode, onClose])
-
-    const isUpdateDisabled = mode === 'CUSTOM_VALUE' && !customValue
 
     return (
         <Modal
@@ -90,36 +77,19 @@ export const CellValueModal: FC<CellValueModalProps> = ({ onClose }) => {
                         dataTest="cell-value-mode-custom-value"
                         emphasized
                     >
-                        <CustomValueItemPicker
-                            programId={programIds[0]}
-                            initialCustomValue={storedCustomValue}
-                            onChange={setCustomValue}
-                        />
+                        <CustomValueItemPicker programId={programIds[0]} />
                     </RadioCard>
                 </RadioCardGroup>
             </ModalContent>
             <ModalActions>
                 <ButtonStrip>
-                    <Button type="button" secondary onClick={onClose}>
-                        {i18n.t('Cancel')}
+                    <Button
+                        type="button"
+                        onClick={onClose}
+                        dataTest="cell-value-modal-action-done"
+                    >
+                        {i18n.t('Done')}
                     </Button>
-                    {isUpdateDisabled ? (
-                        <Tooltip
-                            content={i18n.t('Select a value before updating')}
-                        >
-                            {(tooltipProps: object) => (
-                                <span {...tooltipProps}>
-                                    <Button type="button" primary disabled>
-                                        {i18n.t('Update')}
-                                    </Button>
-                                </span>
-                            )}
-                        </Tooltip>
-                    ) : (
-                        <Button type="button" primary onClick={onUpdate}>
-                            {i18n.t('Update')}
-                        </Button>
-                    )}
                 </ButtonStrip>
             </ModalActions>
         </Modal>

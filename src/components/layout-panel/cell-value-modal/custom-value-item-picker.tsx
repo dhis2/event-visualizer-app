@@ -10,13 +10,16 @@ import {
     SingleSelectField,
     SingleSelectOption,
 } from '@dhis2/ui'
-import { useMetadataStore, useStableCallback } from '@hooks'
-import type { CustomValueObject } from '@store/vis-ui-config-slice'
+import { useAppDispatch, useAppSelector, useMetadataStore } from '@hooks'
+import {
+    getVisUiConfigCustomValue,
+    setVisUiConfigCustomValue,
+} from '@store/vis-ui-config-slice'
 import type { AggregationType } from '@types'
-import { useEffect, useMemo, useState, type FC } from 'react'
+import { useMemo, useState, type FC } from 'react'
 import { CustomValueOption } from './custom-value-option'
 import classes from './styles/custom-value-item-picker.module.css'
-import { useCellValueItems } from './use-cell-value-items'
+import { useCellValueItems, type CustomValueItem } from './use-cell-value-items'
 
 /* An item whose metadata aggregation type is NONE cannot be aggregated: the
  * analytics API returns 0 for every cell. Many tracked entity attributes (and
@@ -25,24 +28,27 @@ import { useCellValueItems } from './use-cell-value-items'
  * instead. */
 const FALLBACK_AGGREGATION_TYPE_FOR_NONE: AggregationType = 'AVERAGE'
 
-type CustomValueItemPickerProps = {
-    programId: string
-    initialCustomValue: CustomValueObject | undefined
-    /* Reports the choice ready to be stored — with the item's own aggregation
-     * type already resolved — or undefined while no item is selected. */
-    onChange: (customValue: CustomValueObject | undefined) => void
+const resolveAggregationType = (
+    aggregationType: AggregationType,
+    item: CustomValueItem
+): AggregationType => {
+    if (aggregationType !== 'DEFAULT') {
+        return aggregationType
+    }
+    return item.aggregationType === 'NONE'
+        ? FALLBACK_AGGREGATION_TYPE_FOR_NONE
+        : item.aggregationType
 }
 
-export const CustomValueItemPicker: FC<CustomValueItemPickerProps> = ({
+export const CustomValueItemPicker: FC<{ programId: string }> = ({
     programId,
-    initialCustomValue,
-    onChange,
 }) => {
+    const dispatch = useAppDispatch()
     const metadataStore = useMetadataStore()
+    const customValue = useAppSelector(getVisUiConfigCustomValue)
     const [searchTerm, setSearchTerm] = useState('')
-    const [selectedItemId, setSelectedItemId] = useState(initialCustomValue?.id)
     const [aggregationType, setAggregationType] = useState<AggregationType>(
-        initialCustomValue?.aggregationType ?? 'DEFAULT'
+        customValue?.aggregationType ?? 'DEFAULT'
     )
     const { items, isLoading, isError, error } = useCellValueItems(programId)
 
@@ -56,40 +62,38 @@ export const CustomValueItemPicker: FC<CustomValueItemPickerProps> = ({
         )
     }, [items, searchTerm])
 
-    const { selectedItemDefaultIsNone, selectedAggregationType, customValue } =
-        useMemo(() => {
-            const selectedItem = items?.find(
-                (item) => item.id === selectedItemId
-            )
-            const selectedItemDefaultIsNone =
-                selectedItem?.aggregationType === 'NONE'
-            const itemDefaultAggregationType = selectedItemDefaultIsNone
-                ? FALLBACK_AGGREGATION_TYPE_FOR_NONE
-                : selectedItem?.aggregationType
-            return {
-                selectedItemDefaultIsNone,
-                selectedAggregationType:
-                    aggregationType === 'DEFAULT' && selectedItemDefaultIsNone
-                        ? FALLBACK_AGGREGATION_TYPE_FOR_NONE
-                        : aggregationType,
-                customValue: selectedItem
-                    ? {
-                          id: selectedItem.id,
-                          aggregationType:
-                              aggregationType === 'DEFAULT'
-                                  ? (itemDefaultAggregationType as AggregationType)
-                                  : aggregationType,
-                      }
-                    : undefined,
-            }
-        }, [aggregationType, items, selectedItemId])
+    const selectedItem = items?.find((item) => item.id === customValue?.id)
+    const selectedItemDefaultIsNone = selectedItem?.aggregationType === 'NONE'
+    const selectedAggregationType =
+        aggregationType === 'DEFAULT' && selectedItemDefaultIsNone
+            ? FALLBACK_AGGREGATION_TYPE_FOR_NONE
+            : aggregationType
 
-    /* The choice is only resolvable once the items are loaded, so it is
-     * reported up rather than derived by the parent from the click alone. */
-    const reportChange = useStableCallback(onChange)
-    useEffect(() => {
-        reportChange(customValue)
-    }, [customValue, reportChange])
+    const onItemClick = (item: CustomValueItem) => {
+        metadataStore.addMetadata(item)
+        dispatch(
+            setVisUiConfigCustomValue({
+                id: item.id,
+                aggregationType: resolveAggregationType(aggregationType, item),
+            })
+        )
+    }
+
+    const onAggregationTypeChange = ({ selected }: { selected: string }) => {
+        const nextAggregationType = selected as AggregationType
+        setAggregationType(nextAggregationType)
+        if (selectedItem) {
+            dispatch(
+                setVisUiConfigCustomValue({
+                    id: selectedItem.id,
+                    aggregationType: resolveAggregationType(
+                        nextAggregationType,
+                        selectedItem
+                    ),
+                })
+            )
+        }
+    }
 
     return (
         <>
@@ -145,21 +149,16 @@ export const CustomValueItemPicker: FC<CustomValueItemPickerProps> = ({
                             key={item.id}
                             label={item.name}
                             value={item.id}
-                            active={selectedItemId === item.id}
+                            active={customValue?.id === item.id}
                             stageName={item.stageName}
-                            onClick={() => {
-                                metadataStore.addMetadata(item)
-                                setSelectedItemId(item.id)
-                            }}
+                            onClick={() => onItemClick(item)}
                         />
                     ))}
             </div>
             <div className={classes.aggregationSelect}>
                 <SingleSelectField
                     label={i18n.t('Aggregation')}
-                    onChange={({ selected }: { selected: string }) =>
-                        setAggregationType(selected as AggregationType)
-                    }
+                    onChange={onAggregationTypeChange}
                     selected={selectedAggregationType}
                     dense
                 >

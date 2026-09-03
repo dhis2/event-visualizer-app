@@ -348,14 +348,8 @@ msgstr ""
 "Each cell shows a data item's value instead — for example, a total or "
 "average. Used for every output type."
 
-msgid "Cancel"
-msgstr "Cancel"
-
-msgid "Select a value before updating"
-msgstr "Select a value before updating"
-
-msgid "Update"
-msgstr "Update"
+msgid "Done"
+msgstr "Done"
 
 msgid "Search data items"
 msgstr "Search data items"
@@ -401,6 +395,9 @@ msgstr "Convert to {{- visType}}"
 
 msgid "{{- names}} will be removed. Are you sure?"
 msgstr "{{- names}} will be removed. Are you sure?"
+
+msgid "Cancel"
+msgstr "Cancel"
 
 msgid "Convert"
 msgstr "Convert"
@@ -612,6 +609,9 @@ msgstr "Show without filters"
 
 msgid "Create a {{- visType}} before updating"
 msgstr "Create a {{- visType}} before updating"
+
+msgid "Update"
+msgstr "Update"
 
 msgid "Metadata"
 msgstr "Metadata"
