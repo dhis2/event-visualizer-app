@@ -768,6 +768,16 @@ describe('getDimensionBlockReason', () => {
         ).toBe('customValue')
     })
 
+    it('ignores the custom value in a line list, which never shows one', () => {
+        expect(
+            getReason({
+                dimension: makeDim({ id: 'x' }),
+                customValueId: 'x',
+                visualizationType: 'LINE_LIST',
+            })
+        ).toBeNull()
+    })
+
     it('returns visType for a program indicator outside line list', () => {
         expect(
             getReason({
