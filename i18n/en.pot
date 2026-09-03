@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-02T14:14:51.291Z\n"
-"PO-Revision-Date: 2026-09-02T14:14:51.291Z\n"
+"POT-Creation-Date: 2026-09-03T07:30:46.814Z\n"
+"PO-Revision-Date: 2026-09-03T07:30:46.814Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -325,11 +325,40 @@ msgstr "Cells show {{- outputTypeLabel}} count"
 msgid "One row for each {{- outputTypeLabel}}"
 msgstr "One row for each {{- outputTypeLabel}}"
 
-msgid "Configure custom value"
-msgstr "Configure custom value"
+msgid "Configure table cells"
+msgstr "Configure table cells"
 
-msgid "Choose the numeric data item to show in table cells."
-msgstr "Choose the numeric data item to show in table cells."
+msgid "Cell value"
+msgstr "Cell value"
+
+msgid "Count"
+msgstr "Count"
+
+msgid ""
+"Each cell shows a count of the events, enrollments or tracked entities the "
+"table is built from."
+msgstr ""
+"Each cell shows a count of the events, enrollments or tracked entities the "
+"table is built from."
+
+msgid "Custom value"
+msgstr "Custom value"
+
+msgid ""
+"Each cell shows a data item's value instead — for example, a total or "
+"average. Used for every output type."
+msgstr ""
+"Each cell shows a data item's value instead — for example, a total or "
+"average. Used for every output type."
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Select a value before updating"
+msgstr "Select a value before updating"
+
+msgid "Update"
+msgstr "Update"
 
 msgid "Search data items"
 msgstr "Search data items"
@@ -343,14 +372,8 @@ msgstr "Error loading data"
 msgid "Failed to load data items"
 msgstr "Failed to load data items"
 
-msgid "No numeric data items in stage \"{{- stageName}}\""
-msgstr "No numeric data items in stage \"{{- stageName}}\""
-
 msgid "No numeric data items in this program"
 msgstr "No numeric data items in this program"
-
-msgid "This stage does not have any numeric data items available."
-msgstr "This stage does not have any numeric data items available."
 
 msgid "This program does not have any numeric data items available."
 msgstr "This program does not have any numeric data items available."
@@ -360,25 +383,6 @@ msgstr "No data items match \"{{- searchTerm}}\""
 
 msgid "Aggregation"
 msgstr "Aggregation"
-
-msgid "Cancel"
-msgstr "Cancel"
-
-msgid "Update"
-msgstr "Update"
-
-msgid "Select a value before updating"
-msgstr "Select a value before updating"
-
-msgid ""
-"\"{{- itemName}}\" is from a different stage than the dimensions in the "
-"layout. Choose another item."
-msgstr ""
-"\"{{- itemName}}\" is from a different stage than the dimensions in the "
-"layout. Choose another item."
-
-msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
-msgstr "Showing data items from \"{{- stageName}}\", the stage used in the layout"
 
 msgid "Collapse layout"
 msgstr "Collapse layout"
@@ -865,9 +869,6 @@ msgstr "First value (average in org unit hierarchy)"
 
 msgid "First value in period (first value in org unit hierarchy)"
 msgstr "First value in period (first value in org unit hierarchy)"
-
-msgid "Count"
-msgstr "Count"
 
 msgid "Standard deviation"
 msgstr "Standard deviation"

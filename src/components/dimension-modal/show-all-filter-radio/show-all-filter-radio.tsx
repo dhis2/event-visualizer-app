@@ -1,7 +1,7 @@
 import {
     RadioCard,
     RadioCardGroup,
-} from '@components/dimension-modal/radio-card/radio-card'
+} from '@components/shared/radio-card/radio-card'
 import i18n from '@dhis2/d2-i18n'
 import { type FC, type PropsWithChildren } from 'react'
 
