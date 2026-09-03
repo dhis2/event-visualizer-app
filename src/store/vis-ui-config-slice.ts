@@ -224,6 +224,9 @@ export const visUiConfigSlice = createSlice({
         ) => {
             state.customValue = action.payload
         },
+        clearVisUiConfigCustomValue: (state) => {
+            delete state.customValue
+        },
         setVisUiConfigRepetitionsByDimension: (
             state,
             action: PayloadAction<SetRepetitionsByDimensionPayload>
@@ -416,6 +419,7 @@ export const {
     setVisUiConfigConditionsByDimension,
     setVisUiConfigGroupingByDimension,
     setVisUiConfigCustomValue,
+    clearVisUiConfigCustomValue,
     setVisUiConfigRepetitionsByDimension,
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
