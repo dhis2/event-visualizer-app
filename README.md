@@ -511,20 +511,3 @@ the real dashboard plugin in an iframe the way a dashboard would.
 Paste a visualization id to render it. The filter toggle sends a dashboard
 filter to the plugin; since the plugin applies none, it only shows the "filters
 not applied" notice.
-
-### Inspecting the error screens
-
-The canvas error screens are hard to trigger by hand, so the tests double as a
-way to look at them.
-
-Every screen — "No data", each backend error code, restricted access and the
-generic retryable failure — is mounted in
-`src/components/canvas-error/__tests__/canvas-error.cy.tsx`. Run
-`pnpm cy:comp:open`, pick that spec, and click through the tests to see them one
-at a time; the last test renders all of them stacked for comparison.
-
-The screens in context, plus the two crash screens, are in
-`cypress/e2e/canvas-errors.cy.ts` and
-`cypress/e2e/dashboard-plugin/errors.cy.ts`. Run `pnpm cy:open` and pick a spec
-to watch each one happen in the real app. Every failure is forced with
-`cy.intercept`, so no special server state is needed.
