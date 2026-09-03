@@ -139,7 +139,7 @@ describe('CellValueButton', () => {
 
         await waitFor(() => {
             expect(
-                screen.getByText('Configure custom value')
+                screen.getByRole('heading', { name: 'Cell value' })
             ).toBeInTheDocument()
         })
     })

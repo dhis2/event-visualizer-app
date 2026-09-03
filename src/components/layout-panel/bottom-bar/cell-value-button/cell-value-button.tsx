@@ -1,5 +1,5 @@
 import { IconTableRows } from '@components/layout-panel/bottom-bar/icon-table-rows'
-import { CustomValueModal } from '@components/layout-panel/custom-value-modal'
+import { CellValueModal } from '@components/layout-panel/cell-value-modal'
 import i18n from '@dhis2/d2-i18n'
 import { IconEdit16, Tooltip } from '@dhis2/ui'
 import {
@@ -88,7 +88,7 @@ export const CellValueButton: FC = () => {
             ) : (
                 button
             )}
-            {isModalOpen && <CustomValueModal onClose={onModalClose} />}
+            {isModalOpen && <CellValueModal onClose={onModalClose} />}
         </>
     )
 }
