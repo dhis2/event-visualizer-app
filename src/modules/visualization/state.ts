@@ -172,6 +172,32 @@ const comparableIdRef = (ref: unknown): unknown =>
         ? { id: (ref as { id: string }).id }
         : ref
 
+/* How one field of two visualizations compares. Each kind of field has its own
+ * notion of equivalence: a metadata ref by id, an option with an absent value
+ * counting as its default, an axis after normalisation, and the layout-derived
+ * fields not at all. */
+const isFieldEquivalent = (key: string, a: unknown, b: unknown): boolean => {
+    if (ID_REF_FIELDS.has(key)) {
+        return deepEqual(comparableIdRef(a), comparableIdRef(b))
+    }
+
+    if (key in DEFAULT_OPTIONS) {
+        const bothAtDefault =
+            isDefaultOptionValue(key, a) && isDefaultOptionValue(key, b)
+
+        return bothAtDefault || deepEqual(a, b)
+    }
+
+    if (DIMENSION_AXES.has(key)) {
+        return deepEqual(
+            comparableAxis(a as DimensionArray),
+            comparableAxis(b as DimensionArray)
+        )
+    }
+
+    return DERIVED_LAYOUT_FIELDS.has(key) || deepEqual(a, b)
+}
+
 /* Compares a saved vis to the current one, and the current one to the vis that
  * visUiConfig would produce. `visualizationB` must carry the full
  * CurrentVisualization key set, because its keys drive the comparison. */
@@ -181,35 +207,8 @@ export const areVisualizationsEquivalent = (
 ): boolean => {
     const a = visualizationA as Record<string, unknown>
     const b = visualizationB as Record<string, unknown>
-    for (const key of Object.keys(b)) {
-        if (ID_REF_FIELDS.has(key)) {
-            if (!deepEqual(comparableIdRef(a[key]), comparableIdRef(b[key]))) {
-                return false
-            }
-        } else if (key in DEFAULT_OPTIONS) {
-            const bothAtDefault =
-                isDefaultOptionValue(key, a[key]) &&
-                isDefaultOptionValue(key, b[key])
-            if (!bothAtDefault && !deepEqual(a[key], b[key])) {
-                return false
-            }
-        } else if (DIMENSION_AXES.has(key)) {
-            if (
-                !deepEqual(
-                    comparableAxis(a[key] as DimensionArray),
-                    comparableAxis(b[key] as DimensionArray)
-                )
-            ) {
-                return false
-            }
-        } else if (
-            !DERIVED_LAYOUT_FIELDS.has(key) &&
-            !deepEqual(a[key], b[key])
-        ) {
-            return false
-        }
-    }
-    return true
+
+    return Object.keys(b).every((key) => isFieldEquivalent(key, a[key], b[key]))
 }
 
 export const getVisualizationState = (
