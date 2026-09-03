@@ -51,7 +51,6 @@ const defaultListResult: UseDimensionListResult = {
 
 describe('CardOther', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
         mockUseDimensionList.mockReturnValue(defaultListResult)
         mockUseSelectedDimensionCount.mockReturnValue(0)
     })

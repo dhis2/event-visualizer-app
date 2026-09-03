@@ -54,7 +54,6 @@ const defaultListResult: UseDimensionListResult = {
 
 describe('CardMetadata', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
         mockUseDimensionList.mockReturnValue(defaultListResult)
         mockUseSelectedDimensionCount.mockReturnValue(0)
     })

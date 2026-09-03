@@ -91,8 +91,6 @@ describe('useDimensionList - Fake Timers with Real Redux Store', () => {
         // Enable fake timers
         vi.useFakeTimers()
 
-        // Reset mock state
-        vi.clearAllMocks()
         mockApiResponse = null
         mockApiError = null
         mockApiDelay = 10
