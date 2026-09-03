@@ -1,8 +1,8 @@
 import type { EngineError } from '@api/parse-engine-error'
 import i18n from '@dhis2/d2-i18n'
+import type { CanvasErrorIcon } from './canvas-error-icon'
 import { EmptyResponseError } from './empty-response-error'
 import { getBackendErrorCodeDisplay } from './error-codes'
-import type { CanvasErrorIcon } from './icons'
 
 export type CanvasErrorDisplay = {
     icon: CanvasErrorIcon

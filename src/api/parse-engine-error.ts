@@ -36,8 +36,9 @@ export type EngineError = {
     errorReports?: Array<ErrorReport>
 }
 
-/* A FetchError carries an engine error type too, so the Error check is what
- * separates a parsed result from a raw one. */
+/* A parsed error is a plain object; the raw errors it is built from are Error
+ * instances. A FetchError carries an engine error type too, so excluding Error
+ * instances is what tells the two apart. */
 export const isEngineError = (error: unknown): error is EngineError =>
     typeof error === 'object' &&
     error !== null &&
