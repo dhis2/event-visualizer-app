@@ -1,4 +1,6 @@
 import { useAppSelector } from '@hooks'
+import { isVisualizationEmpty } from '@modules/visualization/state'
+import { getCurrentVis } from '@store/current-vis-slice'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
@@ -15,6 +17,8 @@ export const BottomBar: FC = () => {
     const dataSourceId = useAppSelector(getDataSourceId)
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
+    const currentVis = useAppSelector(getCurrentVis)
+    const hasVisualizationInCanvas = !isVisualizationEmpty(currentVis)
 
     return (
         <div
@@ -29,16 +33,17 @@ export const BottomBar: FC = () => {
                         <>
                             <EnrollmentButton />
                             <EventButton />
-                            <CellValueButton />
+                            {hasVisualizationInCanvas && <CellValueButton />}
                         </>
                     ) : (
                         <>
                             <TrackedEntityInstanceButton />
                             <EnrollmentButton />
                             <EventButton />
-                            {visualizationType === 'LINE_LIST' && (
-                                <RowGranularityLabel />
-                            )}
+                            {hasVisualizationInCanvas &&
+                                visualizationType === 'LINE_LIST' && (
+                                    <RowGranularityLabel />
+                                )}
                         </>
                     )}
                 </div>
