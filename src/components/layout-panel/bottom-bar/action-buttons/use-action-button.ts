@@ -1,6 +1,6 @@
 import { getOutputTypeTooltipConfig } from '@components/layout-panel/bottom-bar/output-type-validity'
 import { useAppSelector, useLayoutContext, useMetadataStore } from '@hooks'
-import { isVisualizationEmpty } from '@modules/visualization/state'
+import { isVisualizationEmpty } from '@modules/visualization/guards'
 import { getCurrentVis } from '@store/current-vis-slice'
 import {
     getVisUiConfigOutputType,
