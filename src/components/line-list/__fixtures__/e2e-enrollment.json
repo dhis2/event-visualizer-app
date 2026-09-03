@@ -153,11 +153,10 @@
         "sorting": [],
         "repetitions": []
     },
-    "analyticsData": {
+    "response": {
         "headers": [
             {
                 "name": "ouname",
-                "dimensionId": "ou",
                 "column": "Organisation unit",
                 "valueType": "TEXT",
                 "type": "java.lang.String",
@@ -166,7 +165,6 @@
             },
             {
                 "name": "enrollmentdate",
-                "dimensionId": "enrollmentDate",
                 "column": "Enrollment date (e2e)",
                 "valueType": "DATETIME",
                 "type": "java.time.LocalDateTime",
@@ -179,19 +177,21 @@
             ["Njandama MCHP", "2024-12-10 00:00:00.0"]
         ],
         "rowContext": {},
-        "pager": {
-            "page": 1,
-            "pageSize": 100,
-            "isLastPage": true
-        },
-        "metaDataItems": {
-            "ou": {
-                "name": "Organisation unit"
+        "metaData": {
+            "items": {
+                "ou": {
+                    "name": "Organisation unit"
+                },
+                "enrollmentDate": {
+                    "name": "Enrollment date (e2e)"
+                }
             },
-            "enrollmentDate": {
-                "name": "Enrollment date (e2e)"
+            "pager": {
+                "page": 1,
+                "pageSize": 100,
+                "isLastPage": true
             }
-        },
-        "legendSets": []
-    }
+        }
+    },
+    "legendSets": []
 }

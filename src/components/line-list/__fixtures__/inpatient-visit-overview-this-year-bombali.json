@@ -245,7 +245,7 @@
         "attributeValues": [],
         "sorting": []
     },
-    "analyticsData": {
+    "response": {
         "headers": [
             {
                 "name": "eventdate",
@@ -253,8 +253,7 @@
                 "valueType": "DATETIME",
                 "type": "java.time.LocalDateTime",
                 "hidden": false,
-                "meta": true,
-                "dimensionId": "eventDate"
+                "meta": true
             },
             {
                 "name": "ouname",
@@ -262,8 +261,7 @@
                 "valueType": "TEXT",
                 "type": "java.lang.String",
                 "hidden": false,
-                "meta": true,
-                "dimensionId": "ou"
+                "meta": true
             },
             {
                 "name": "tUdBD1JDxpn",
@@ -271,8 +269,7 @@
                 "valueType": "NUMBER",
                 "type": "java.lang.Double",
                 "hidden": false,
-                "meta": true,
-                "dimensionId": "tUdBD1JDxpn"
+                "meta": true
             },
             {
                 "name": "gWxh7DiRmG7",
@@ -280,8 +277,7 @@
                 "valueType": "NUMBER",
                 "type": "java.lang.Double",
                 "hidden": false,
-                "meta": true,
-                "dimensionId": "gWxh7DiRmG7"
+                "meta": true
             },
             {
                 "name": "x7PaHGvgWY2",
@@ -289,8 +285,7 @@
                 "valueType": "NUMBER",
                 "type": "java.lang.Double",
                 "hidden": false,
-                "meta": true,
-                "dimensionId": "x7PaHGvgWY2"
+                "meta": true
             },
             {
                 "name": "hlPt8H4bUOQ",
@@ -298,8 +293,7 @@
                 "valueType": "NUMBER",
                 "type": "java.lang.Double",
                 "hidden": false,
-                "meta": true,
-                "dimensionId": "hlPt8H4bUOQ"
+                "meta": true
             },
             {
                 "name": "Y7hKDSuqEtH",
@@ -307,8 +301,7 @@
                 "valueType": "NUMBER",
                 "type": "java.lang.Double",
                 "hidden": false,
-                "meta": true,
-                "dimensionId": "Y7hKDSuqEtH"
+                "meta": true
             },
             {
                 "name": "oZg33kd9taw",
@@ -317,8 +310,7 @@
                 "type": "java.lang.String",
                 "hidden": false,
                 "meta": true,
-                "optionSet": "pC3N9N77UmT",
-                "dimensionId": "oZg33kd9taw"
+                "optionSet": "pC3N9N77UmT"
             },
             {
                 "name": "GieVkTxp4HH",
@@ -327,8 +319,7 @@
                 "type": "java.lang.String",
                 "hidden": false,
                 "meta": true,
-                "legendSet": "TBxGTceyzwy",
-                "dimensionId": "GieVkTxp4HH"
+                "legendSet": "TBxGTceyzwy"
             },
             {
                 "name": "HS8QXAJtuKV",
@@ -336,8 +327,7 @@
                 "valueType": "NUMBER",
                 "type": "java.lang.Double",
                 "hidden": false,
-                "meta": true,
-                "dimensionId": "HS8QXAJtuKV"
+                "meta": true
             },
             {
                 "name": "vV9UWAZohSf",
@@ -346,8 +336,7 @@
                 "type": "java.lang.String",
                 "hidden": false,
                 "meta": true,
-                "legendSet": "OrkEzxZEH4X",
-                "dimensionId": "vV9UWAZohSf"
+                "legendSet": "OrkEzxZEH4X"
             }
         ],
         "rows": [
@@ -1653,105 +1642,107 @@
             ]
         ],
         "rowContext": {},
-        "pager": {
-            "page": 1,
-            "pageSize": 100,
-            "isLastPage": false
-        },
-        "metaDataItems": {
-            "eventDate": {
-                "name": "Report date"
+        "metaData": {
+            "items": {
+                "eventDate": {
+                    "name": "Report date"
+                },
+                "ou": {
+                    "name": "Organisation unit"
+                },
+                "tUdBD1JDxpn": {
+                    "name": "Average age of deaths"
+                },
+                "gWxh7DiRmG7": {
+                    "name": "Average height of girls at 5 years old"
+                },
+                "x7PaHGvgWY2": {
+                    "name": "BMI"
+                },
+                "hlPt8H4bUOQ": {
+                    "name": "BMI female under 5 y"
+                },
+                "Y7hKDSuqEtH": {
+                    "name": "BMI male under 5 y"
+                },
+                "oZg33kd9taw": {
+                    "name": "Gender"
+                },
+                "GieVkTxp4HH": {
+                    "name": "Height in cm"
+                },
+                "HS8QXAJtuKV": {
+                    "name": "Inpatient bed days average"
+                },
+                "vV9UWAZohSf": {
+                    "name": "Weight in kg"
+                },
+                "pC3N9N77UmT": {
+                    "options": [
+                        {
+                            "code": "Female",
+                            "uid": "O966b882f11"
+                        },
+                        {
+                            "code": "Male",
+                            "uid": "O0d92e2481d"
+                        }
+                    ]
+                },
+                "O966b882f11": {
+                    "code": "Female",
+                    "name": "Female"
+                },
+                "L688f417900": {
+                    "name": "120 - 140"
+                },
+                "L54b18702e2": {
+                    "name": "60 - 70"
+                },
+                "O0d92e2481d": {
+                    "code": "Male",
+                    "name": "Male"
+                },
+                "L2a24d5c400": {
+                    "name": "0 - 100"
+                },
+                "L06e80fb166": {
+                    "name": "20 - 40"
+                },
+                "Le9c15b7cba": {
+                    "name": "140 - 160"
+                },
+                "Lb856c6ff5c": {
+                    "name": "50 - 60"
+                },
+                "L3858d768c4": {
+                    "name": "80 - 90"
+                },
+                "Ldbff00d7ff": {
+                    "name": "160 - 180"
+                },
+                "Ld8f42f68c4": {
+                    "name": "70 - 80"
+                },
+                "L8b693b0a98": {
+                    "name": "40 - 50"
+                },
+                "L96708f787d": {
+                    "name": "0 - 20"
+                },
+                "L7b308bfd8a": {
+                    "name": "100 - 120"
+                },
+                "L8f0821df01": {
+                    "name": "180 - 200"
+                }
             },
-            "ou": {
-                "name": "Organisation unit"
-            },
-            "tUdBD1JDxpn": {
-                "name": "Average age of deaths"
-            },
-            "gWxh7DiRmG7": {
-                "name": "Average height of girls at 5 years old"
-            },
-            "x7PaHGvgWY2": {
-                "name": "BMI"
-            },
-            "hlPt8H4bUOQ": {
-                "name": "BMI female under 5 y"
-            },
-            "Y7hKDSuqEtH": {
-                "name": "BMI male under 5 y"
-            },
-            "oZg33kd9taw": {
-                "name": "Gender"
-            },
-            "GieVkTxp4HH": {
-                "name": "Height in cm"
-            },
-            "HS8QXAJtuKV": {
-                "name": "Inpatient bed days average"
-            },
-            "vV9UWAZohSf": {
-                "name": "Weight in kg"
-            },
-            "pC3N9N77UmT": {
-                "options": [
-                    {
-                        "code": "Female",
-                        "uid": "O966b882f11"
-                    },
-                    {
-                        "code": "Male",
-                        "uid": "O0d92e2481d"
-                    }
-                ]
-            },
-            "O966b882f11": {
-                "code": "Female",
-                "name": "Female"
-            },
-            "L688f417900": {
-                "name": "120 - 140"
-            },
-            "L54b18702e2": {
-                "name": "60 - 70"
-            },
-            "O0d92e2481d": {
-                "code": "Male",
-                "name": "Male"
-            },
-            "L2a24d5c400": {
-                "name": "0 - 100"
-            },
-            "L06e80fb166": {
-                "name": "20 - 40"
-            },
-            "Le9c15b7cba": {
-                "name": "140 - 160"
-            },
-            "Lb856c6ff5c": {
-                "name": "50 - 60"
-            },
-            "L3858d768c4": {
-                "name": "80 - 90"
-            },
-            "Ldbff00d7ff": {
-                "name": "160 - 180"
-            },
-            "Ld8f42f68c4": {
-                "name": "70 - 80"
-            },
-            "L8b693b0a98": {
-                "name": "40 - 50"
-            },
-            "L96708f787d": {
-                "name": "0 - 20"
-            },
-            "L7b308bfd8a": {
-                "name": "100 - 120"
-            },
-            "L8f0821df01": {
-                "name": "180 - 200"
+            "pager": {
+                "page": 1,
+                "pageSize": 100,
+                "isLastPage": false
             }
-        },
-        "legendSets": []
-    }
+        }
+    },
+    "legendSets": []
 }

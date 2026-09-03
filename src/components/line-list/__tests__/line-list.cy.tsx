@@ -1,11 +1,17 @@
-import type { LineListAnalyticsData } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { MockAppWrapper } from '@test-utils/app-wrapper'
+import { deriveLineListAnalyticsData } from '@test-utils/line-list-fixtures'
 import type { CurrentVisualization, InitialMetadataItems } from '@types'
 import type { FC, ReactNode } from 'react'
 import simpleLineList from '../__fixtures__/e2e-enrollment.json'
 import largeLineListWithLegend from '../__fixtures__/inpatient-cases-under-5-years-female-this-year-additional-columns-and-legends.json'
 import inpatientVisit from '../__fixtures__/inpatient-visit-overview-this-year-bombali.json'
 import { LineList } from '../line-list'
+
+const simpleLineListData = deriveLineListAnalyticsData(simpleLineList)
+const largeLineListWithLegendData = deriveLineListAnalyticsData(
+    largeLineListWithLegend
+)
+const inpatientVisitData = deriveLineListAnalyticsData(inpatientVisit)
 
 /* The transformation hook reads the metadata store; seed it with the
  * dimension items the legend fixture needs to resolve its legend sets. */
@@ -33,9 +39,7 @@ describe(
                 cy.mount(
                     <TestContainer>
                         <LineList
-                            analyticsData={
-                                simpleLineList.analyticsData as unknown as LineListAnalyticsData
-                            }
+                            analyticsData={simpleLineListData}
                             onDataSort={cy.stub()}
                             onPaginate={cy.stub()}
                             visualization={
@@ -56,9 +60,7 @@ describe(
                 cy.mount(
                     <TestContainer>
                         <LineList
-                            analyticsData={
-                                inpatientVisit.analyticsData as unknown as LineListAnalyticsData
-                            }
+                            analyticsData={inpatientVisitData}
                             onDataSort={cy.stub()}
                             onPaginate={cy.stub()}
                             visualization={
@@ -83,9 +85,7 @@ describe(
                 cy.mount(
                     <TestContainer>
                         <LineList
-                            analyticsData={
-                                largeLineListWithLegend.analyticsData as unknown as LineListAnalyticsData
-                            }
+                            analyticsData={largeLineListWithLegendData}
                             onDataSort={cy.stub()}
                             onPaginate={cy.stub()}
                             visualization={
@@ -110,9 +110,7 @@ describe(
                 cy.mount(
                     <TestContainer>
                         <LineList
-                            analyticsData={
-                                largeLineListWithLegend.analyticsData as unknown as LineListAnalyticsData
-                            }
+                            analyticsData={largeLineListWithLegendData}
                             onDataSort={cy.stub()}
                             onPaginate={cy.stub()}
                             visualization={
@@ -140,9 +138,7 @@ describe(
                 cy.mount(
                     <TestContainer>
                         <LineList
-                            analyticsData={
-                                largeLineListWithLegend.analyticsData as unknown as LineListAnalyticsData
-                            }
+                            analyticsData={largeLineListWithLegendData}
                             onDataSort={cy.stub()}
                             onPaginate={cy.stub()}
                             visualization={
@@ -172,9 +168,7 @@ describe(
                 cy.mount(
                     <TestContainer>
                         <LineList
-                            analyticsData={
-                                largeLineListWithLegend.analyticsData as unknown as LineListAnalyticsData
-                            }
+                            analyticsData={largeLineListWithLegendData}
                             onDataSort={cy.stub()}
                             onPaginate={cy.stub()}
                             visualization={
@@ -210,9 +204,7 @@ describe(
                 cy.mount(
                     <TestContainer>
                         <LineList
-                            analyticsData={
-                                largeLineListWithLegend.analyticsData as unknown as LineListAnalyticsData
-                            }
+                            analyticsData={largeLineListWithLegendData}
                             onDataSort={cy.stub()}
                             onPaginate={cy.stub()}
                             visualization={
@@ -302,9 +294,7 @@ describe(
                     <TestContainer>
                         <LineList
                             isFetching
-                            analyticsData={
-                                largeLineListWithLegend.analyticsData as unknown as LineListAnalyticsData
-                            }
+                            analyticsData={largeLineListWithLegendData}
                             onDataSort={cy.stub()}
                             onPaginate={cy.stub()}
                             visualization={
@@ -328,9 +318,7 @@ describe(
                     <TestContainer>
                         <LineList
                             isFetching
-                            analyticsData={
-                                simpleLineList.analyticsData as unknown as LineListAnalyticsData
-                            }
+                            analyticsData={simpleLineListData}
                             onDataSort={cy.stub()}
                             onPaginate={cy.stub()}
                             visualization={

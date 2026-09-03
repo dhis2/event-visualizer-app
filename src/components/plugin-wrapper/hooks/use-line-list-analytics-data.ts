@@ -60,7 +60,7 @@ export type LineListAnalyticsData = {
     legendSets: LineListLegendSet[]
 }
 
-type LineListAnalyticsResponse = {
+export type LineListAnalyticsResponse = {
     headers: Array<GridHeader>
     rows: string[][]
     rowContext?: LineListRowContext
@@ -210,17 +210,28 @@ export const collectLegendSetIdsToFetch = (
     return []
 }
 
-const appendDimensionIds = (
-    headers: Array<GridHeader>,
+export const toLineListAnalyticsData = ({
+    response,
+    visualization,
+    legendSets = [],
+}: {
+    response: LineListAnalyticsResponse
     visualization: CurrentVisualization
-): Array<LineListAnalyticsDataHeader> =>
-    headers.map((header) => ({
+    legendSets?: LineListLegendSet[]
+}): LineListAnalyticsData => ({
+    headers: response.headers.map((header) => ({
         ...header,
         dimensionId: analyticsHeaderToCanonicalDimensionId(
             header.name ?? '',
             visualization
         ),
-    }))
+    })),
+    rows: response.rows,
+    rowContext: response.rowContext,
+    pager: response.metaData.pager,
+    metaDataItems: response.metaData.items,
+    legendSets,
+})
 
 type FetchAnalyticsDataForLLParams = {
     analyticsEngine: ReturnType<typeof Analytics.getAnalytics>
@@ -308,13 +319,13 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     throw new EmptyResponseError()
                 }
 
-                const headers = appendDimensionIds(
-                    analyticsResponse.headers,
-                    visualization
-                )
+                const dataWithoutLegendSets = toLineListAnalyticsData({
+                    response: analyticsResponse,
+                    visualization,
+                })
 
                 const legendSetIds = collectLegendSetIdsToFetch(
-                    headers,
+                    dataWithoutLegendSets.headers,
                     visualization,
                     metadataStore
                 )
@@ -324,11 +335,7 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                 })
 
                 const analyticsData: LineListAnalyticsData = {
-                    headers,
-                    rows: analyticsResponse.rows,
-                    rowContext: analyticsResponse.rowContext,
-                    pager: analyticsResponse.metaData.pager,
-                    metaDataItems: analyticsResponse.metaData.items,
+                    ...dataWithoutLegendSets,
                     legendSets,
                 }
 

@@ -173,7 +173,7 @@
         "sorting": [],
         "repetitions": []
     },
-    "analyticsData": {
+    "response": {
         "headers": [
             {
                 "name": "ouname",
@@ -181,8 +181,7 @@
                 "valueType": "TEXT",
                 "type": "java.lang.String",
                 "hidden": false,
-                "meta": true,
-                "dimensionId": "ou"
+                "meta": true
             },
             {
                 "name": "dBwrot7S420.sWoqcoByYmD",
@@ -190,8 +189,7 @@
                 "valueType": "BOOLEAN",
                 "type": "java.lang.Boolean",
                 "hidden": false,
-                "meta": true,
-                "dimensionId": "dBwrot7S420.sWoqcoByYmD"
+                "meta": true
             }
         ],
         "rows": [
@@ -200,19 +198,21 @@
             ["Ngelehun CHC", "0"]
         ],
         "rowContext": {},
-        "pager": {
-            "page": 1,
-            "pageSize": 100,
-            "isLastPage": true
-        },
-        "metaDataItems": {
-            "ou": {
-                "name": "Organisation unit"
+        "metaData": {
+            "items": {
+                "ou": {
+                    "name": "Organisation unit"
+                },
+                "dBwrot7S420.sWoqcoByYmD": {
+                    "name": "WHOMCH Smoking"
+                }
             },
-            "dBwrot7S420.sWoqcoByYmD": {
-                "name": "WHOMCH Smoking"
+            "pager": {
+                "page": 1,
+                "pageSize": 100,
+                "isLastPage": true
             }
-        },
-        "legendSets": []
-    }
+        }
+    },
+    "legendSets": []
 }
