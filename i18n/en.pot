@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-28T12:57:22.711Z\n"
-"PO-Revision-Date: 2026-08-28T12:57:22.717Z\n"
+"POT-Creation-Date: 2026-09-03T12:41:18.322Z\n"
+"PO-Revision-Date: 2026-09-03T12:41:18.322Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -566,6 +566,9 @@ msgstr "High to low"
 
 msgid "Top limit"
 msgstr "Top limit"
+
+msgid "Enter a whole number of 1 or higher"
+msgstr "Enter a whole number of 1 or higher"
 
 msgid "Row sub-totals"
 msgstr "Row sub-totals"
