@@ -14,6 +14,7 @@ import {
     getVisUiConfigCustomValue,
     getVisUiConfigOutputType,
 } from '@store/vis-ui-config-slice'
+import cx from 'classnames'
 import { useCallback, useState, type FC } from 'react'
 import classes from './styles/cell-value-button.module.css'
 
@@ -31,9 +32,10 @@ export const CellValueButton: FC = () => {
     const onClick = useCallback(() => setIsModalOpen(true), [])
     const onModalClose = useCallback(() => setIsModalOpen(false), [])
 
-    const label = customValueMetadata?.name
+    const customValueName = customValueMetadata?.name
+    const label = customValueName
         ? i18n.t('Cells show {{- valueName}}', {
-              valueName: customValueMetadata.name,
+              valueName: customValueName,
               nsSeparator: '^^',
           })
         : i18n.t('Cells show {{- outputTypeLabel}} count', {
@@ -49,7 +51,9 @@ export const CellValueButton: FC = () => {
                     onClick={onClick}
                     disabled={Boolean(tooltipConfig)}
                     data-test="cell-value-button"
-                    className={classes.button}
+                    className={cx(classes.button, {
+                        [classes.hasCustomValue]: Boolean(customValueName),
+                    })}
                 >
                     <IconTableRows />
                     {label}
