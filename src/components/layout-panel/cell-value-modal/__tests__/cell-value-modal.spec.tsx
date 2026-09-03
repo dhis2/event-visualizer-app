@@ -109,7 +109,7 @@ const selectCustomValueMode = async (user: UserEvent) => {
 }
 
 describe('CellValueModal', () => {
-    it('starts in Count mode with the item picker hidden, and can be updated straight away', async () => {
+    it('starts in Count mode with the item picker hidden', async () => {
         const onClose = vi.fn()
         const user = userEvent.setup()
         const { store } = await renderWithAppWrapper(
@@ -122,10 +122,7 @@ describe('CellValueModal', () => {
             screen.queryByPlaceholderText('Search data items')
         ).not.toBeInTheDocument()
 
-        const updateButton = screen.getByRole('button', { name: 'Update' })
-        expect(updateButton).toBeEnabled()
-
-        await user.click(updateButton)
+        await user.click(screen.getByRole('button', { name: 'Done' }))
 
         expect(onClose).toHaveBeenCalledOnce()
         expect(getVisUiConfigCustomValue(store.getState())).toBeUndefined()
@@ -159,10 +156,8 @@ describe('CellValueModal', () => {
         )
 
         await user.click(screen.getByRole('radio', { name: /Count/ }))
-        await user.click(screen.getByRole('button', { name: 'Update' }))
 
         expect(getVisUiConfigCustomValue(store.getState())).toBeUndefined()
-        expect(getCurrentVis(store.getState()).value).toBeUndefined()
     })
 
     it('shows the loading indicator before data items load', async () => {
@@ -216,7 +211,7 @@ describe('CellValueModal', () => {
         })
     })
 
-    it('keeps the Update button disabled until a data item is picked, then applies and closes on click', async () => {
+    it('stores the data item as soon as it is picked, and Done only closes', async () => {
         const onClose = vi.fn()
         const user = userEvent.setup()
         const { store } = await renderWithAppWrapper(
@@ -230,21 +225,19 @@ describe('CellValueModal', () => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
         })
 
-        expect(screen.getByRole('button', { name: 'Update' })).toBeDisabled()
-
         await user.click(screen.getByText('Weight in kg'))
 
-        const updateButton = screen.getByRole('button', { name: 'Update' })
-        expect(updateButton).toBeEnabled()
-
-        await user.click(updateButton)
-
-        expect(onClose).toHaveBeenCalledOnce()
         expect(getVisUiConfigCustomValue(store.getState())).toEqual({
             aggregationType: 'SUM',
             id: 's1.de1',
         })
-        expect(getCurrentVis(store.getState()).value).toEqual({ id: 's1.de1' })
+        /* Applying it to the canvas is the update button's job, exactly as for
+         * a layout change. */
+        expect(getCurrentVis(store.getState()).value).toBeUndefined()
+
+        await user.click(screen.getByRole('button', { name: 'Done' }))
+
+        expect(onClose).toHaveBeenCalledOnce()
     })
 
     it('filters the data item list by the search term', async () => {
@@ -277,7 +270,7 @@ describe('CellValueModal', () => {
         ).toBeInTheDocument()
     })
 
-    it('falls back to AVERAGE when applying an item whose default aggregation type is NONE', async () => {
+    it('falls back to AVERAGE for an item whose default aggregation type is NONE', async () => {
         const onClose = vi.fn()
         const user = userEvent.setup()
         const { store } = await renderWithAppWrapper(
@@ -303,7 +296,6 @@ describe('CellValueModal', () => {
         })
 
         await user.click(screen.getByText('Gender score'))
-        await user.click(screen.getByRole('button', { name: 'Update' }))
 
         expect(getVisUiConfigCustomValue(store.getState())).toEqual({
             aggregationType: 'AVERAGE',

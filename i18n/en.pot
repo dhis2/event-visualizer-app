@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-03T07:39:36.209Z\n"
-"PO-Revision-Date: 2026-09-03T07:39:36.209Z\n"
+"POT-Creation-Date: 2026-09-03T13:35:19.408Z\n"
+"PO-Revision-Date: 2026-09-03T13:35:19.408Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -348,14 +348,8 @@ msgstr ""
 "Each cell shows a data item's value instead — for example, a total or "
 "average. Used for every output type."
 
-msgid "Cancel"
-msgstr "Cancel"
-
-msgid "Select a value before updating"
-msgstr "Select a value before updating"
-
-msgid "Update"
-msgstr "Update"
+msgid "Done"
+msgstr "Done"
 
 msgid "Search data items"
 msgstr "Search data items"
@@ -401,6 +395,9 @@ msgstr "Convert to {{- visType}}"
 
 msgid "{{- names}} will be removed. Are you sure?"
 msgstr "{{- names}} will be removed. Are you sure?"
+
+msgid "Cancel"
+msgstr "Cancel"
 
 msgid "Convert"
 msgstr "Convert"
@@ -609,6 +606,9 @@ msgstr "Show without filters"
 
 msgid "Create a {{- visType}} before updating"
 msgstr "Create a {{- visType}} before updating"
+
+msgid "Update"
+msgstr "Update"
 
 msgid "Metadata"
 msgstr "Metadata"
