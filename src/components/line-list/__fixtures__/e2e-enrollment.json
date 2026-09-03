@@ -153,7 +153,7 @@
         "sorting": [],
         "repetitions": []
     },
-    "responses": {
+    "analyticsData": {
         "headers": [
             {
                 "name": "ouname",
@@ -162,8 +162,7 @@
                 "valueType": "TEXT",
                 "type": "java.lang.String",
                 "hidden": false,
-                "meta": true,
-                "index": 0
+                "meta": true
             },
             {
                 "name": "enrollmentdate",
@@ -172,19 +171,27 @@
                 "valueType": "DATETIME",
                 "type": "java.time.LocalDateTime",
                 "hidden": false,
-                "meta": true,
-                "index": 1
+                "meta": true
             }
         ],
         "rows": [
             ["Ngelehun CHC", "2025-01-18 00:00:00.0"],
             ["Njandama MCHP", "2024-12-10 00:00:00.0"]
         ],
+        "rowContext": {},
         "pager": {
             "page": 1,
             "pageSize": 100,
             "isLastPage": true
         },
-        "rowContext": {}
+        "metaDataItems": {
+            "ou": {
+                "name": "Organisation unit"
+            },
+            "enrollmentDate": {
+                "name": "Enrollment date (e2e)"
+            }
+        },
+        "legendSets": []
     }
 }

@@ -1,177 +1,81 @@
 import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
-import type {
-    CurrentVisualization,
-    DimensionMetadataItem,
-    MetadataItem,
-    MetadataStore,
-    Program,
-} from '@types'
+import type { CurrentVisualization, DimensionMetadataItem } from '@types'
 import { describe, it, expect } from 'vitest'
-import { buildHeaders, formatRowValue } from './use-line-list-analytics-data'
+import {
+    collectLegendSetIdsToFetch,
+    type LineListAnalyticsDataHeader,
+} from './use-line-list-analytics-data'
 
-const visualization = {
-    outputType: 'EVENT',
-    programDimensions: [{ id: 'p1' }],
-} as unknown as CurrentVisualization
+const headers = [
+    { name: 'ouname', dimensionId: 'ou', valueType: 'TEXT' },
+    { name: 's1.weight', dimensionId: 's1.weight', valueType: 'NUMBER' },
+    { name: 's1.height', dimensionId: 's1.height', valueType: 'NUMBER' },
+] as LineListAnalyticsDataHeader[]
 
-const analyticsResponse = {
-    headers: [{ name: 's1.scheduledDate' }, { name: 's2.scheduledDate' }],
-    metaData: {
-        items: {},
-    },
-}
+const buildVisualization = (legend: unknown): CurrentVisualization =>
+    ({ outputType: 'EVENT', legend }) as unknown as CurrentVisualization
 
-const analyticsResponseTyped = analyticsResponse as unknown as Parameters<
-    typeof buildHeaders
->[0]['analyticsResponse']
-
-const buildMetadataStore = (scheduledDateName: string): MetadataStore => {
-    const dimensionItems: Record<string, Partial<DimensionMetadataItem>> = {
-        's1.scheduledDate': {
-            name: scheduledDateName,
-            programId: 'p1',
-            programStageId: 's1',
-        },
-        's2.scheduledDate': {
-            name: scheduledDateName,
-            programId: 'p1',
-            programStageId: 's2',
-        },
-    }
-    /* Program and stage names come from the store, populated by
-     * setVisualizationMetadata in both the app and the plugin. */
-    const items: Record<string, { id: string; name: string }> = {
-        p1: { id: 'p1', name: 'Antenatal care' },
-        s1: { id: 's1', name: 'Birth' },
-        s2: { id: 's2', name: 'Baby Postnatal' },
-    }
-    return createMetadataStoreStub({
-        dimensions: dimensionItems as Record<string, DimensionMetadataItem>,
-        items: items as Record<string, MetadataItem>,
-        programs: items as unknown as Record<string, Program>,
+describe('collectLegendSetIdsToFetch', () => {
+    it('returns the configured set for the FIXED strategy', () => {
+        expect(
+            collectLegendSetIdsToFetch(
+                headers,
+                buildVisualization({ strategy: 'FIXED', set: { id: 'ls1' } }),
+                createMetadataStoreStub()
+            )
+        ).toEqual(['ls1'])
     })
-}
 
-describe('buildHeaders', () => {
-    it('keeps the base name in column and exposes the stage suffix separately', () => {
-        const headers = buildHeaders({
-            analyticsResponse: analyticsResponseTyped,
-            visualization,
-            metadataStore: buildMetadataStore('Scheduled date'),
+    it('returns nothing for the FIXED strategy without a configured set', () => {
+        expect(
+            collectLegendSetIdsToFetch(
+                headers,
+                buildVisualization({ strategy: 'FIXED' }),
+                createMetadataStoreStub()
+            )
+        ).toEqual([])
+    })
+
+    it('returns the per-column sets from the metadata store for the BY_DATA_ITEM strategy', () => {
+        const metadataStore = createMetadataStoreStub({
+            dimensions: {
+                's1.weight': { legendSetId: 'ls1' },
+                's1.height': { legendSetId: 'ls2' },
+            } as unknown as Record<string, DimensionMetadataItem>,
         })
 
-        expect(headers[0]).toMatchObject({
-            dimensionId: 's1.scheduledDate',
-            column: 'Scheduled date',
-            dimensionSuffix: 'Birth',
+        expect(
+            collectLegendSetIdsToFetch(
+                headers,
+                buildVisualization({ strategy: 'BY_DATA_ITEM' }),
+                metadataStore
+            )
+        ).toEqual(['ls1', 'ls2'])
+    })
+
+    it('skips columns without a legend set for the BY_DATA_ITEM strategy', () => {
+        const metadataStore = createMetadataStoreStub({
+            dimensions: {
+                's1.weight': { legendSetId: 'ls1' },
+            } as unknown as Record<string, DimensionMetadataItem>,
         })
-        expect(headers[1]).toMatchObject({
-            dimensionId: 's2.scheduledDate',
-            column: 'Scheduled date',
-            dimensionSuffix: 'Baby Postnatal',
-        })
-    })
-})
-
-describe('formatRowValue', () => {
-    type FormatRowValueParams = Parameters<typeof formatRowValue>[0]
-    type FormatRowValueHeader = FormatRowValueParams['header']
-    type FormatRowValueMetaDataItems = FormatRowValueParams['metaDataItems']
-
-    const optionSetMetaData = {
-        os1: {
-            options: [
-                { code: 'A', uid: 'optA' },
-                { code: 'B', uid: 'optB' },
-                { code: 'C', uid: 'optC' },
-            ],
-        },
-        optA: { name: 'Apple' },
-        optB: { name: 'Banana' },
-        optC: { name: 'Cherry' },
-    } as unknown as FormatRowValueMetaDataItems
-
-    const optionSetHeader = {
-        valueType: 'TEXT',
-        optionSet: 'os1',
-    } as unknown as FormatRowValueHeader
-
-    it('resolves an option set value to its option name', () => {
-        expect(
-            formatRowValue({
-                rowValue: 'A',
-                header: optionSetHeader,
-                metaDataItems: optionSetMetaData,
-                isUndefined: false,
-            })
-        ).toBe('Apple')
-    })
-
-    it('resolves each code of a multi-text value and joins the option names', () => {
-        expect(
-            formatRowValue({
-                rowValue: 'A,B,C',
-                header: optionSetHeader,
-                metaDataItems: optionSetMetaData,
-                isUndefined: false,
-            })
-        ).toBe('Apple, Banana, Cherry')
-    })
-
-    /* The analytics API can omit metadata for some option codes (the option's
-     * uid entry or its presence in the option set's options array). The missing
-     * codes must fall back to the raw code instead of breaking the whole value. */
-    it('falls back to the raw code for multi-text codes missing from the metadata', () => {
-        const metaDataItemsMissingOption = {
-            os1: {
-                options: [
-                    { code: 'A', uid: 'optA' },
-                    { code: 'C', uid: 'optC' },
-                ],
-            },
-            optA: { name: 'Apple' },
-            optC: { name: 'Cherry' },
-        } as unknown as FormatRowValueMetaDataItems
 
         expect(
-            formatRowValue({
-                rowValue: 'A,B,C',
-                header: optionSetHeader,
-                metaDataItems: metaDataItemsMissingOption,
-                isUndefined: false,
-            })
-        ).toBe('Apple, B, Cherry')
+            collectLegendSetIdsToFetch(
+                headers,
+                buildVisualization({ strategy: 'BY_DATA_ITEM' }),
+                metadataStore
+            )
+        ).toEqual(['ls1'])
     })
 
-    it('falls back to the raw code when the option uid entry is missing', () => {
-        const metaDataItemsMissingName = {
-            os1: {
-                options: [
-                    { code: 'A', uid: 'optA' },
-                    { code: 'B', uid: 'optB' },
-                ],
-            },
-            optA: { name: 'Apple' },
-        } as unknown as FormatRowValueMetaDataItems
-
+    it('returns nothing when the visualization has no legend', () => {
         expect(
-            formatRowValue({
-                rowValue: 'A,B',
-                header: optionSetHeader,
-                metaDataItems: metaDataItemsMissingName,
-                isUndefined: false,
-            })
-        ).toBe('Apple, B')
-    })
-
-    it('falls back to every raw code when the option set metadata is absent', () => {
-        expect(
-            formatRowValue({
-                rowValue: 'A,B',
-                header: optionSetHeader,
-                metaDataItems: {},
-                isUndefined: false,
-            })
-        ).toBe('A, B')
+            collectLegendSetIdsToFetch(
+                headers,
+                buildVisualization(undefined),
+                createMetadataStoreStub()
+            )
+        ).toEqual([])
     })
 })
