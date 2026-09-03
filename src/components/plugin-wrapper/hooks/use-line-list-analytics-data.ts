@@ -2,31 +2,21 @@ import {
     useMetadataStore,
     type UseMetadataStoreReturnValue,
 } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import type {
-    LineListAnalyticsData,
-    LineListAnalyticsDataHeader,
-} from '@components/line-list/types.js'
+import type { LineListPager } from '@components/line-list/types'
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { useDataEngine } from '@dhis2/app-runtime'
 import { analyticsHeaderToCanonicalDimensionId } from '@modules/analytics-request'
-import { formatBooleanValue, isBooleanValue } from '@modules/conditions'
-import {
-    buildSuffixContext,
-    getDimensionSuffix,
-} from '@modules/dimension/suffix'
 import { EmptyResponseError } from '@modules/error/empty-response-error'
 import { isAbortError } from '@modules/error/is-abort-error'
-import { resolveLayoutContext } from '@modules/layout'
 import { logger } from '@modules/logger'
-import { isValueTypeNumeric } from '@modules/value-type'
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import { isVisualizationWithTimeDimension } from '@modules/visualization/state'
 import type {
     CurrentUser,
     CurrentVisualization,
-    DimensionMetadataItem,
     GridHeader,
+    LegendSet,
     MetadataInputItem,
     UserOrgUnitMetadataItem,
 } from '@types'
@@ -39,99 +29,44 @@ import {
 } from './query-tools-line-list'
 import { useInFlightDedup } from './use-in-flight-dedup'
 
-type OptionSetMetaDataItem = MetadataInputItem & {
-    options: Array<{ code?: string; uid?: string }>
+export type AnalyticsResponseMetadataItems = Record<
+    string,
+    MetadataInputItem
+> & {
+    USER_ORG_UNIT?: UserOrgUnitMetadataItem
 }
 
-type IndexedLineListAnalyticsDataHeader = LineListAnalyticsDataHeader & {
-    index: number
-}
-
-type RowContext = Record<
+export type LineListRowContext = Record<
     string,
     Record<string, { valueStatus?: string } | undefined> | undefined
 >
 
+export type LineListLegendSet = Pick<LegendSet, 'id' | 'name' | 'legends'>
+
+export type LineListAnalyticsDataHeader = GridHeader & {
+    /* Canonical store ID for this column, computed once here so the
+     * wire-to-canonical translation happens exactly once per response. */
+    dimensionId: string
+}
+
+export type LineListAnalyticsData = {
+    headers: Array<LineListAnalyticsDataHeader>
+    rows: string[][]
+    rowContext?: LineListRowContext
+    pager: LineListPager
+    metaDataItems: AnalyticsResponseMetadataItems
+    /* The legend sets the visualization's legend strategy refers to,
+     * fetched here so the transformation stays synchronous. */
+    legendSets: LineListLegendSet[]
+}
+
 type LineListAnalyticsResponse = {
     headers: Array<GridHeader>
     rows: string[][]
-    rowContext?: RowContext
+    rowContext?: LineListRowContext
     metaData: {
         items: AnalyticsResponseMetadataItems
-        pager?: LineListAnalyticsData['pager']
-    }
-}
-
-const lookupOptionSetOptionMetadata = (
-    optionSetId: string,
-    code: string,
-    metaDataItems: AnalyticsResponseMetadataItems
-) => {
-    const optionSetMetaData = metaDataItems?.[optionSetId] as
-        OptionSetMetaDataItem | undefined
-
-    if (optionSetMetaData) {
-        const optionId = optionSetMetaData.options.find(
-            (option) => option.code === code
-        )?.uid
-
-        return optionId ? metaDataItems[optionId] : undefined
-    }
-
-    return undefined
-}
-const NOT_DEFINED_VALUE = 'ND'
-
-export const cellIsUndefined = (
-    rowContext: RowContext | undefined,
-    rowIndex: number,
-    columnIndex: number
-) => rowContext?.[rowIndex]?.[columnIndex]?.valueStatus === NOT_DEFINED_VALUE
-
-type FormatRowValueArgs = {
-    rowValue: string
-    header: LineListAnalyticsDataHeader
-    metaDataItems: AnalyticsResponseMetadataItems
-    isUndefined: boolean
-}
-
-export const formatRowValue = ({
-    rowValue,
-    header,
-    metaDataItems,
-    isUndefined,
-}: FormatRowValueArgs) => {
-    if (!rowValue) {
-        return rowValue
-    }
-
-    switch (header.valueType) {
-        case 'BOOLEAN':
-        case 'TRUE_ONLY':
-            if (isUndefined) {
-                return ''
-            }
-            return isBooleanValue(rowValue)
-                ? formatBooleanValue(rowValue)
-                : rowValue
-        default: {
-            const { optionSet: optionSetId } = header
-            if (optionSetId) {
-                return rowValue
-                    .split(',')
-                    .map(
-                        (code) =>
-                            lookupOptionSetOptionMetadata(
-                                optionSetId,
-                                code,
-                                metaDataItems
-                            )?.name || code
-                    )
-                    .join(', ')
-            }
-
-            return metaDataItems[rowValue]?.name || rowValue
-        }
+        pager: LineListPager
     }
 }
 
@@ -144,7 +79,7 @@ const fetchAnalyticsDataForLL = async ({
     sortField,
     sortDirection,
     displayProperty,
-}: FetchAnalyticsDataForLLParams) => {
+}: FetchAnalyticsDataForLLParams): Promise<LineListAnalyticsResponse> => {
     const { adaptedVisualization, headers, parameters } =
         getAdaptedVisualization(visualization)
 
@@ -206,8 +141,6 @@ const fetchAnalyticsDataForLL = async ({
     return rawResponse
 }
 
-type HeaderLegendSet = NonNullable<LineListAnalyticsDataHeader['legendSet']>
-
 const legendSetsQuery = {
     resource: 'legendSets',
     params: (variables: Record<string, unknown>) => ({
@@ -223,13 +156,13 @@ const apiFetchLegendSetsByIds = async ({
 }: {
     dataEngine: ReturnType<typeof useDataEngine>
     ids: string[]
-}): Promise<HeaderLegendSet[]> => {
+}): Promise<LineListLegendSet[]> => {
     const legendSetsData = (await dataEngine.query(
         { legendSets: legendSetsQuery },
         {
             variables: { ids },
         }
-    )) as { legendSets: { legendSets: HeaderLegendSet[] } }
+    )) as { legendSets: { legendSets: LineListLegendSet[] } }
 
     return legendSetsData.legendSets.legendSets
 }
@@ -240,7 +173,7 @@ const fetchLegendSets = async ({
 }: {
     legendSetIds: string[]
     dataEngine: ReturnType<typeof useDataEngine>
-}): Promise<HeaderLegendSet[]> => {
+}): Promise<LineListLegendSet[]> => {
     if (!legendSetIds.length) {
         return []
     }
@@ -253,39 +186,8 @@ const fetchLegendSets = async ({
     return legendSets
 }
 
-type ResolveLegendSetArgs = {
-    dimensionId: string
-    valueType: GridHeader['valueType']
-    legend: CurrentVisualization['legend']
-    metadataStore: UseMetadataStoreReturnValue
-    legendSets: HeaderLegendSet[]
-}
-
-const resolveLegendSet = ({
-    dimensionId,
-    valueType,
-    legend,
-    metadataStore,
-    legendSets,
-}: ResolveLegendSetArgs): HeaderLegendSet | undefined => {
-    if (!legendSets.length || !isValueTypeNumeric(valueType)) {
-        return undefined
-    }
-    if (legend?.strategy === 'FIXED') {
-        return legendSets[0]
-    }
-    if (legend?.strategy === 'BY_DATA_ITEM') {
-        const item = metadataStore.getDimensionMetadataItem(dimensionId)
-        if (!item?.legendSetId) {
-            return undefined
-        }
-        return legendSets.find((legendSet) => legendSet.id === item.legendSetId)
-    }
-    return undefined
-}
-
 export const collectLegendSetIdsToFetch = (
-    analyticsResponse: LineListAnalyticsResponse,
+    headers: Array<LineListAnalyticsDataHeader>,
     visualization: CurrentVisualization,
     metadataStore: UseMetadataStoreReturnValue
 ): string[] => {
@@ -295,12 +197,10 @@ export const collectLegendSetIdsToFetch = (
     }
     if (legend?.strategy === 'BY_DATA_ITEM') {
         const ids: string[] = []
-        for (const header of analyticsResponse.headers) {
-            const dimensionId = analyticsHeaderToCanonicalDimensionId(
-                header.name ?? '',
-                visualization
+        for (const header of headers) {
+            const item = metadataStore.getDimensionMetadataItem(
+                header.dimensionId
             )
-            const item = metadataStore.getDimensionMetadataItem(dimensionId)
             if (item?.legendSetId) {
                 ids.push(item.legendSetId)
             }
@@ -310,131 +210,17 @@ export const collectLegendSetIdsToFetch = (
     return []
 }
 
-type BuildHeadersArgs = {
-    analyticsResponse: LineListAnalyticsResponse
+const appendDimensionIds = (
+    headers: Array<GridHeader>,
     visualization: CurrentVisualization
-    metadataStore: UseMetadataStoreReturnValue
-    legendSets?: HeaderLegendSet[]
-}
-
-export const buildHeaders = ({
-    analyticsResponse,
-    visualization,
-    metadataStore,
-    legendSets = [],
-}: BuildHeadersArgs): Array<IndexedLineListAnalyticsDataHeader> => {
-    const canonicalIds: string[] = analyticsResponse.headers.map(
-        (header: GridHeader) =>
-            analyticsHeaderToCanonicalDimensionId(
-                header.name ?? '',
-                visualization
-            )
-    )
-
-    const storeMetadata: Record<string, DimensionMetadataItem> = {}
-    for (const id of canonicalIds) {
-        const item = metadataStore.getDimensionMetadataItem(id)
-        if (item) {
-            storeMetadata[id] = item
-        }
-    }
-
-    const metadata = { ...analyticsResponse.metaData.items, ...storeMetadata }
-
-    /* Only the headers with dimension metadata in the store; other headers
-     * (e.g. value columns) have none and resolveLayoutContext would throw. */
-    const { programIds, programStageIds } = resolveLayoutContext(
-        Object.keys(storeMetadata),
-        metadataStore
-    )
-    const suffixContext = buildSuffixContext({
-        programs: Object.values(metadataStore.getMetadataItems(programIds)),
-        programStages: Object.values(
-            metadataStore.getMetadataItems(programStageIds)
+): Array<LineListAnalyticsDataHeader> =>
+    headers.map((header) => ({
+        ...header,
+        dimensionId: analyticsHeaderToCanonicalDimensionId(
+            header.name ?? '',
+            visualization
         ),
-    })
-
-    const nameById = new Map<string, string>(
-        canonicalIds.map((id) => [id, metadata[id]?.name ?? id])
-    )
-
-    return analyticsResponse.headers.map(
-        (header, index): IndexedLineListAnalyticsDataHeader => {
-            const dimensionId = canonicalIds[index]
-            return {
-                ...header,
-                legendSet: resolveLegendSet({
-                    dimensionId,
-                    valueType: header.valueType,
-                    legend: visualization.legend,
-                    metadataStore,
-                    legendSets,
-                }),
-                index,
-                dimensionId,
-                column: nameById.get(dimensionId) ?? header.column,
-                dimensionSuffix: storeMetadata[dimensionId]
-                    ? getDimensionSuffix(
-                          storeMetadata[dimensionId],
-                          suffixContext
-                      )
-                    : undefined,
-            }
-        }
-    )
-}
-
-const extractRows = (
-    analyticsResponse: LineListAnalyticsResponse,
-    headers: Array<IndexedLineListAnalyticsDataHeader>
-) => {
-    type FilteredRow = string[]
-
-    const filteredRows: FilteredRow[] = []
-
-    for (
-        let rowIndex = 0, rowsCount = analyticsResponse.rows.length;
-        rowIndex < rowsCount;
-        rowIndex++
-    ) {
-        const row = analyticsResponse.rows[rowIndex]
-
-        const filteredRow: FilteredRow = []
-
-        for (
-            let headerIndex = 0, headersCount = headers.length;
-            headerIndex < headersCount;
-            headerIndex++
-        ) {
-            const header = headers[headerIndex]
-            const rowValue = row[header.index]
-
-            filteredRow.push(
-                formatRowValue({
-                    rowValue,
-                    header,
-                    metaDataItems: analyticsResponse.metaData.items,
-                    isUndefined: cellIsUndefined(
-                        analyticsResponse.rowContext,
-                        rowIndex,
-                        headerIndex
-                    ),
-                })
-            )
-        }
-
-        filteredRows.push(filteredRow)
-    }
-
-    return filteredRows
-}
-
-export type AnalyticsResponseMetadataItems = Record<
-    string,
-    MetadataInputItem
-> & {
-    USER_ORG_UNIT?: UserOrgUnitMetadataItem
-}
+    }))
 
 type FetchAnalyticsDataForLLParams = {
     analyticsEngine: ReturnType<typeof Analytics.getAnalytics>
@@ -522,8 +308,13 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     throw new EmptyResponseError()
                 }
 
+                const headers = appendDimensionIds(
+                    analyticsResponse.headers,
+                    visualization
+                )
+
                 const legendSetIds = collectLegendSetIdsToFetch(
-                    analyticsResponse,
+                    headers,
                     visualization,
                     metadataStore
                 )
@@ -532,18 +323,14 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
                     dataEngine,
                 })
 
-                const headers = buildHeaders({
-                    analyticsResponse,
-                    visualization,
-                    metadataStore,
+                const analyticsData: LineListAnalyticsData = {
+                    headers,
+                    rows: analyticsResponse.rows,
+                    rowContext: analyticsResponse.rowContext,
+                    pager: analyticsResponse.metaData.pager,
+                    metaDataItems: analyticsResponse.metaData.items,
                     legendSets,
-                })
-
-                const rows = extractRows(analyticsResponse, headers)
-                const { rowContext } = analyticsResponse
-                const pager = analyticsResponse.metaData.pager
-
-                const analyticsData = { headers, rows, pager, rowContext }
+                }
 
                 setState({
                     data: analyticsData,
