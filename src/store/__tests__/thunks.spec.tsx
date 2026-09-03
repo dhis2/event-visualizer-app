@@ -1,7 +1,11 @@
 import { getLastUsedVisualizationTypeFromLocalStorage } from '@modules/visualization/local-storage'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
-import { initialState as visUiConfigInitialState } from '@store/vis-ui-config-slice'
+import {
+    clearVisUiConfigCustomValue,
+    initialState as visUiConfigInitialState,
+    setVisUiConfigVisualizationType,
+} from '@store/vis-ui-config-slice'
 import {
     renderHookWithAppWrapper,
     type MockOptions,
@@ -83,52 +87,54 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         )
     })
 
-    it('clears the value when rebuilding in EVENT mode, keeping customValue remembered', async () => {
-        const { store } = await renderHookWithAppWrapper(
-            () => null,
-            buildMockOptions(customValueVis)
-        )
-
-        store.dispatch(tUpdateCurrentVisFromVisUiConfig(false))
-
-        expect(getCurrentVis(store.getState()).value).toBeUndefined()
-        // The remembered selection survives the switch to the event table
-        expect(store.getState().visUiConfig.customValue).toEqual(customValue)
-    })
-
-    it('restores the value from the remembered customValue when rebuilding in CUSTOM_VALUE mode', async () => {
+    it('applies the remembered customValue to a pivot table', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
             buildMockOptions(eventVis)
         )
 
-        store.dispatch(tUpdateCurrentVisFromVisUiConfig(true))
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
         const currentVis = getCurrentVis(store.getState())
         expect(currentVis.value).toEqual({ id: 's1.de1' })
         expect(currentVis.aggregationType).toBe('AVERAGE')
     })
 
-    it('preserves the current mode when withCustomValue is not passed', async () => {
-        const { store } = await renderHookWithAppWrapper(
-            () => null,
-            buildMockOptions(customValueVis)
-        )
-
-        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
-
-        expect(getCurrentVis(store.getState()).value).toEqual({ id: 's1.de1' })
-    })
-
-    it('drops the value for a non-EVENT output type even when withCustomValue is true', async () => {
+    it('applies the customValue for any output type', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
             buildMockOptions(customValueVis, 'ENROLLMENT')
         )
 
-        // Even explicitly asking for a custom value must not add one when
-        // the output type is not EVENT.
-        store.dispatch(tUpdateCurrentVisFromVisUiConfig(true))
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
+
+        const currentVis = getCurrentVis(store.getState())
+        expect(currentVis.value).toEqual({ id: 's1.de1' })
+        expect(currentVis.aggregationType).toBe('AVERAGE')
+    })
+
+    it('strips the value once the customValue is cleared', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            buildMockOptions(customValueVis)
+        )
+
+        store.dispatch(clearVisUiConfigCustomValue())
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
+
+        const currentVis = getCurrentVis(store.getState())
+        expect(currentVis.value).toBeUndefined()
+        expect(currentVis.aggregationType).toBeUndefined()
+    })
+
+    it('leaves the customValue out of a line list, keeping it remembered', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            buildMockOptions(customValueVis)
+        )
+
+        store.dispatch(setVisUiConfigVisualizationType('LINE_LIST'))
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
         expect(getCurrentVis(store.getState()).value).toBeUndefined()
         expect(store.getState().visUiConfig.customValue).toEqual(customValue)
