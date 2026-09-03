@@ -1,7 +1,7 @@
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
-import { isVisualizationEmpty } from '@modules/visualization/state'
+import { isVisualizationEmpty } from '@modules/visualization/guards'
 import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
 import {
     getIsVisualizationLoading,

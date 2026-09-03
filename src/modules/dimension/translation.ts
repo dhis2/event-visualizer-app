@@ -6,6 +6,7 @@ import {
 import type {
     CurrentVisualization,
     DimensionArray,
+    DimensionRecord,
     OutputType,
     VisualizationType,
 } from '@types'
@@ -26,6 +27,21 @@ export const transformDimensions = (
             }
             return dimensionObj
         })
+
+export const removeDimensionPropertiesBeforeSaving = (
+    axis: DimensionArray
+): DimensionArray => {
+    return axis.map((dim) => {
+        const dimension = { ...dim }
+        const propsToRemove = ['dimensionType', 'valueType']
+
+        propsToRemove.forEach((prop) => {
+            delete dimension[prop as keyof DimensionRecord]
+        })
+
+        return dimension
+    })
+}
 
 export const combineAllDimensionsFromVisualization = (
     visualization: CurrentVisualization
