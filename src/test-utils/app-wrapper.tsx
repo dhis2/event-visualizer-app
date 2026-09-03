@@ -33,6 +33,7 @@ import type {
     MetadataStore,
     AppStore,
     InitialMetadataItems,
+    SavedVisualization,
 } from '@types'
 import deepmerge from 'deepmerge'
 import {
@@ -68,6 +69,11 @@ export type MockOptions = {
      * analytics data will automatically populate the metadata store.
      */
     metadata?: InitialMetadataItems
+    /**
+     * Seeds the metadata store the way loading this visualization does at
+     * runtime (via setVisualizationMetadata).
+     */
+    visualization?: SavedVisualization
     /**
      * Partial Redux store configuration for testing with custom state.
      * When provided, creates a store with the specified reducer and preloaded state.
@@ -201,13 +207,17 @@ const MockAppWrapperCore: FC<{
     children: ReactNode | ((store: PartialOrDefaultStore) => ReactNode)
     queryData?: QueryData
     metadata?: InitialMetadataItems
+    visualization?: SavedVisualization
     partialStore?: MockOptions['partialStore']
-}> = ({ children, queryData, metadata, partialStore }) => {
+}> = ({ children, queryData, metadata, visualization, partialStore }) => {
     return (
         <CustomDataProvider data={{ ...defaultAppCachedData, ...queryData }}>
             <CssVariables colors spacers theme elevations />
             <AppCachedDataQueryProvider>
-                <MockMetadataProvider mockMetadata={metadata}>
+                <MockMetadataProvider
+                    mockMetadata={metadata}
+                    visualization={visualization}
+                >
                     <MockStoreAndDndProvider partialStore={partialStore}>
                         {children}
                     </MockStoreAndDndProvider>
@@ -249,12 +259,14 @@ export const MockAppWrapper = ({
     children,
     queryData,
     metadata,
+    visualization,
     partialStore,
 }: MockOptions & { children: ReactNode }) => {
     return (
         <MockAppWrapperCore
             queryData={queryData}
             metadata={metadata}
+            visualization={visualization}
             partialStore={partialStore}
         >
             {children}

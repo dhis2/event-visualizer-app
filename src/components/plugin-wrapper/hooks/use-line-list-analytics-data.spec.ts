@@ -28,8 +28,11 @@ describe('toLineListAnalyticsData', () => {
                 dimensionId,
             }))
         ).toEqual([
-            { name: 'ouname', dimensionId: 'ou' },
-            { name: 'enrollmentdate', dimensionId: 'enrollmentDate' },
+            { name: 'jfuXZB3A1ko.ouname', dimensionId: 'jfuXZB3A1ko.ou' },
+            {
+                name: 'enrollmentdate',
+                dimensionId: 'J1QQtmzqhJz.enrollmentDate',
+            },
         ])
         expect(analyticsData.rows).toBe(response.rows)
         expect(analyticsData.pager).toBe(response.metaData.pager)
@@ -51,10 +54,9 @@ describe('toLineListAnalyticsData', () => {
             (header) => header.name === 'Zj7UnCAulEk.vV9UWAZohSf'
         )
         expect(weightHeader?.dimensionId).toBe('Zj7UnCAulEk.vV9UWAZohSf')
-        expect(analyticsData.legendSets.map(({ id }) => id)).toEqual([
-            'OrkEzxZEH4X',
-            'Yf6UHoPkdS6',
-        ])
+        expect(analyticsData.legendSets.map(({ id }) => id).toSorted()).toEqual(
+            ['OrkEzxZEH4X', 'Yf6UHoPkdS6']
+        )
     })
 })
 

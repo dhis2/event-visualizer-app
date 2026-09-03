@@ -1,6 +1,13 @@
 import { MockAppWrapper } from '@test-utils/app-wrapper'
-import { deriveLineListAnalyticsData } from '@test-utils/line-list-fixtures'
-import type { CurrentVisualization, InitialMetadataItems } from '@types'
+import {
+    deriveLineListAnalyticsData,
+    type LineListFixture,
+} from '@test-utils/line-list-fixtures'
+import type {
+    CurrentVisualization,
+    InitialMetadataItems,
+    SavedVisualization,
+} from '@types'
 import type { FC, ReactNode } from 'react'
 import simpleLineList from '../__fixtures__/e2e-enrollment.json'
 import largeLineListWithLegend from '../__fixtures__/inpatient-cases-under-5-years-female-this-year-additional-columns-and-legends.json'
@@ -13,14 +20,16 @@ const largeLineListWithLegendData = deriveLineListAnalyticsData(
 )
 const inpatientVisitData = deriveLineListAnalyticsData(inpatientVisit)
 
-/* The transformation hook reads the metadata store; seed it with the
- * dimension items the legend fixture needs to resolve its legend sets. */
-const TestContainer: FC<{ children: ReactNode }> = ({ children }) => (
+/* The transformation hook reads the metadata store; seed it from the fixture
+ * the way the app does when loading its visualization. */
+const TestContainer: FC<{ children: ReactNode; fixture: LineListFixture }> = ({
+    children,
+    fixture,
+}) => (
     <div style={{ width: '100vw', height: '100vh' }}>
         <MockAppWrapper
-            metadata={
-                largeLineListWithLegend.metadata as unknown as InitialMetadataItems
-            }
+            visualization={fixture.visualization as SavedVisualization}
+            metadata={fixture.metadata as InitialMetadataItems}
         >
             {children}
         </MockAppWrapper>
@@ -37,7 +46,7 @@ describe(
         describe('Scrolling behavior', () => {
             it('small table gets no scrollbars', () => {
                 cy.mount(
-                    <TestContainer>
+                    <TestContainer fixture={simpleLineList}>
                         <LineList
                             analyticsData={simpleLineListData}
                             onDataSort={cy.stub()}
@@ -58,7 +67,7 @@ describe(
 
             it('tall but not too wide table gets vertical scrollbar', () => {
                 cy.mount(
-                    <TestContainer>
+                    <TestContainer fixture={inpatientVisit}>
                         <LineList
                             analyticsData={inpatientVisitData}
                             onDataSort={cy.stub()}
@@ -83,7 +92,7 @@ describe(
 
             it('large table gets two scrollbars', () => {
                 cy.mount(
-                    <TestContainer>
+                    <TestContainer fixture={largeLineListWithLegend}>
                         <LineList
                             analyticsData={largeLineListWithLegendData}
                             onDataSort={cy.stub()}
@@ -108,7 +117,7 @@ describe(
 
             it('large table with legend key also has a scrollbar on the legend-key area', () => {
                 cy.mount(
-                    <TestContainer>
+                    <TestContainer fixture={largeLineListWithLegend}>
                         <LineList
                             analyticsData={largeLineListWithLegendData}
                             onDataSort={cy.stub()}
@@ -136,7 +145,7 @@ describe(
 
             it('table header cells are sticky when scrolling down but scroll when scrolling sideways', () => {
                 cy.mount(
-                    <TestContainer>
+                    <TestContainer fixture={largeLineListWithLegend}>
                         <LineList
                             analyticsData={largeLineListWithLegendData}
                             onDataSort={cy.stub()}
@@ -166,7 +175,7 @@ describe(
 
             it('table data cells scroll in both directions', () => {
                 cy.mount(
-                    <TestContainer>
+                    <TestContainer fixture={largeLineListWithLegend}>
                         <LineList
                             analyticsData={largeLineListWithLegendData}
                             onDataSort={cy.stub()}
@@ -202,7 +211,7 @@ describe(
 
             it('pagination is sticky in both directions', () => {
                 cy.mount(
-                    <TestContainer>
+                    <TestContainer fixture={largeLineListWithLegend}>
                         <LineList
                             analyticsData={largeLineListWithLegendData}
                             onDataSort={cy.stub()}
@@ -291,7 +300,7 @@ describe(
 
             it('when isFetching is true, the table gets an overlay but the legend key does not', () => {
                 cy.mount(
-                    <TestContainer>
+                    <TestContainer fixture={largeLineListWithLegend}>
                         <LineList
                             isFetching
                             analyticsData={largeLineListWithLegendData}
@@ -315,7 +324,7 @@ describe(
 
             it('when isFetching is true on a small table, the overlay covers only the scroll container', () => {
                 cy.mount(
-                    <TestContainer>
+                    <TestContainer fixture={simpleLineList}>
                         <LineList
                             isFetching
                             analyticsData={simpleLineListData}

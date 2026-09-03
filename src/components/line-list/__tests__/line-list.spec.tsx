@@ -1,9 +1,11 @@
 import type { LineListAnalyticsData } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
-import { deriveLineListAnalyticsData } from '@test-utils/line-list-fixtures'
-import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
+import {
+    createLineListFixtureMetadataStore,
+    deriveLineListAnalyticsData,
+} from '@test-utils/line-list-fixtures'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import type { CurrentVisualization, DimensionMetadataItem } from '@types'
+import type { CurrentVisualization } from '@types'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import simpleLineList from '../__fixtures__/e2e-enrollment.json'
 import largeLineListWithLegend from '../__fixtures__/inpatient-cases-under-5-years-female-this-year-additional-columns-and-legends.json'
@@ -22,8 +24,8 @@ vi.mock('@dhis2/app-runtime', () => ({
     useDhis2ConnectionStatus: mockUseDhis2ConnectionStatus,
 }))
 
-/* The transformation hook reads the metadata store; seed it with the
- * dimension items the legend fixture needs to resolve its legend sets. */
+/* The transformation hook reads the metadata store; seed it from the fixture
+ * visualizations the way the app does when loading one. */
 const mockUseMetadataStore = vi.hoisted(() => vi.fn())
 vi.mock('@components/app-wrapper/metadata-provider/metadata-provider', () => ({
     useMetadataStore: mockUseMetadataStore,
@@ -52,13 +54,11 @@ describe('LineList', () => {
     beforeEach(() => {
         mockUseDhis2ConnectionStatus.mockReturnValue({ isDisconnected: false })
         mockUseMetadataStore.mockReturnValue(
-            createMetadataStoreStub({
-                dimensions:
-                    largeLineListWithLegend.metadata as unknown as Record<
-                        string,
-                        DimensionMetadataItem
-                    >,
-            })
+            createLineListFixtureMetadataStore([
+                simpleLineList,
+                largeLineListWithLegend,
+                noTimeDimension,
+            ])
         )
     })
     describe('Snapshot test', () => {
@@ -89,14 +89,14 @@ describe('LineList', () => {
                 { onDataSort, onColumnHeaderClick }
             )
 
-            // Find the first column header (ouname)
+            // Find the first column header (the event org unit)
             const sortButton = screen.getByRole('button', {
-                name: /sort by.*organisation unit/i,
+                name: /sort by.*event org\. unit/i,
             })
             await user.click(sortButton)
 
             expect(onDataSort).toHaveBeenCalledWith({
-                dimension: 'ouname',
+                dimension: 'jfuXZB3A1ko.ouname',
                 direction: 'ASC',
             })
         })
@@ -111,10 +111,10 @@ describe('LineList', () => {
             )
 
             // Find the column header text (not the sort button)
-            const headerText = screen.getByText('Organisation unit')
+            const headerText = screen.getByText('Event org. unit')
             await user.click(headerText)
 
-            expect(onColumnHeaderClick).toHaveBeenCalledWith('ou')
+            expect(onColumnHeaderClick).toHaveBeenCalledWith('jfuXZB3A1ko.ou')
         })
 
         /* More in-depth tests reg. sort directions etc are found in
@@ -517,7 +517,7 @@ describe('LineList', () => {
             // For FILL style, expect background color on cell and default text color on inner div
             const cellStyle = window.getComputedStyle(secondCell!)
             const divStyle = window.getComputedStyle(innerDiv!)
-            expect(cellStyle.backgroundColor).toBe('rgb(33, 113, 181)')
+            expect(cellStyle.backgroundColor).toBe('rgb(158, 202, 225)')
             expect(divStyle.color).toBe('rgb(33, 41, 52)')
         })
 
@@ -548,7 +548,7 @@ describe('LineList', () => {
             const cellStyle = window.getComputedStyle(secondCell!)
             const divStyle = window.getComputedStyle(innerDiv!)
             expect(cellStyle.backgroundColor).toBe('rgb(255, 255, 255)')
-            expect(divStyle.color).toBe('rgb(33, 113, 181)')
+            expect(divStyle.color).toBe('rgb(158, 202, 225)')
         })
     })
 
@@ -621,7 +621,7 @@ describe('LineList', () => {
 
             // Column headers should still be present
             expect(
-                screen.getByRole('columnheader', { name: 'Organisation unit' })
+                screen.getByRole('columnheader', { name: 'Event org. unit' })
             ).toBeInTheDocument()
             expect(
                 screen.getByRole('columnheader', {
@@ -761,7 +761,7 @@ describe('LineList', () => {
             )
 
             const sortButton = screen.getByRole('button', {
-                name: /sort by.*organisation unit/i,
+                name: /sort by.*event org\. unit/i,
             })
             expect(sortButton).toBeInTheDocument()
 
