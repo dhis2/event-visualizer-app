@@ -16,13 +16,13 @@
     user-select: none;
 }
 
-.button:hover {
+.button:hover:not(:disabled) {
     border-color: var(--colors-grey400);
     background-color: var(--colors-grey100);
     color: var(--colors-grey900);
 }
 
-.button:active {
+.button:active:not(:disabled) {
     background-color: var(--colors-grey300);
 }
 
@@ -44,10 +44,22 @@
     margin-inline-start: var(--spacers-dp4);
 }
 
+.button.hasCustomValue {
+    border-color: var(--colors-grey400);
+    background-color: var(--colors-grey100);
+    color: var(--colors-grey900);
+    font-weight: 500;
+}
+
+.button.hasCustomValue:hover:not(:disabled) {
+    border-color: var(--colors-grey500);
+}
+
 .button:disabled {
     border-color: transparent;
     border-inline-start-color: var(--colors-grey300);
     background-color: var(--colors-white);
     color: var(--colors-grey500);
     cursor: not-allowed;
+    font-weight: 400;
 }
