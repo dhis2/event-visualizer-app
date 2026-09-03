@@ -44,16 +44,10 @@
     margin-inline-start: var(--spacers-dp4);
 }
 
-.button.disabled,
-.button.disabled:hover {
+.button:disabled {
     border-color: transparent;
     border-inline-start-color: var(--colors-grey300);
     background-color: var(--colors-white);
     color: var(--colors-grey500);
     cursor: not-allowed;
-}
-
-.tooltipWrapper {
-    display: flex;
-    align-items: center;
 }

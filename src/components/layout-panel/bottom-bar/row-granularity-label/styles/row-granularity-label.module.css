@@ -14,3 +14,8 @@
 .label svg {
     color: var(--colors-grey500);
 }
+
+.label.unavailable,
+.label.unavailable svg {
+    color: var(--colors-grey500);
+}

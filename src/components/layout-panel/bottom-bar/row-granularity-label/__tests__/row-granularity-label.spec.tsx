@@ -1,6 +1,7 @@
 import { initialState as visUiConfigInitialState } from '@store/vis-ui-config-slice'
 import { renderWithAppWrapper } from '@test-utils/app-wrapper'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import type { OutputType, RootState } from '@types'
 import { describe, it, expect } from 'vitest'
 import { RowGranularityLabel } from '../row-granularity-label'
@@ -109,6 +110,51 @@ describe('RowGranularityLabel', () => {
         )
 
         expect(screen.getByText('One row for each Event')).toBeInTheDocument()
+    })
+
+    it('mutes the label and explains why for an event list spanning programs', async () => {
+        await renderWithAppWrapper(
+            <RowGranularityLabel />,
+            buildMockOptions('EVENT', ['s1.de1', 's2.de1'])
+        )
+
+        expect(screen.getByText('One row for each Visit')).toBeInTheDocument()
+
+        await userEvent.hover(screen.getByText('One row for each Visit'))
+
+        await waitFor(() => {
+            expect(
+                screen.getByText('Not valid with multiple programs')
+            ).toBeInTheDocument()
+        })
+    })
+
+    it('explains why for an event list without a program', async () => {
+        await renderWithAppWrapper(
+            <RowGranularityLabel />,
+            buildMockOptions('EVENT', ['tet1.enrollmentOu'])
+        )
+
+        await userEvent.hover(screen.getByText('One row for each Event'))
+
+        await waitFor(() => {
+            expect(
+                screen.getByText('Not valid without a program')
+            ).toBeInTheDocument()
+        })
+    })
+
+    it('leaves a tracked entity list alone when the layout spans programs', async () => {
+        await renderWithAppWrapper(
+            <RowGranularityLabel />,
+            buildMockOptions('TRACKED_ENTITY_INSTANCE', ['s1.de1', 's2.de1'])
+        )
+
+        await userEvent.hover(screen.getByText('One row for each Person'))
+
+        expect(
+            screen.queryByText('Not valid with multiple programs')
+        ).not.toBeInTheDocument()
     })
 
     it('renders no button, so it cannot be clicked', async () => {

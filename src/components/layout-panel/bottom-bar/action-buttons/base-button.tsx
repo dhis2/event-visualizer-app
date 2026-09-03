@@ -1,3 +1,4 @@
+import { type TooltipConfig } from '@components/layout-panel/bottom-bar/with-tooltip'
 import { Tooltip } from '@dhis2/ui'
 import { useAppDispatch } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
@@ -57,9 +58,7 @@ const BaseButton: FC<BaseButtonProps> = ({
 }
 
 export const BaseButtonWithConditionalTooltip: FC<
-    BaseButtonProps & {
-        tooltipConfig?: { content: string; openDelay?: number }
-    }
+    BaseButtonProps & { tooltipConfig?: TooltipConfig }
 > = ({ tooltipConfig, ...props }) => {
     if (tooltipConfig) {
         const { content, openDelay = 500 } = tooltipConfig
