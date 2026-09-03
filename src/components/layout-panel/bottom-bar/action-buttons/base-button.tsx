@@ -33,7 +33,7 @@ const BaseButton: FC<BaseButtonProps> = ({
 
     const onClick = () => {
         dispatch(setVisUiConfigOutputType(type))
-        dispatch(tUpdateCurrentVisFromVisUiConfig(false))
+        dispatch(tUpdateCurrentVisFromVisUiConfig())
     }
 
     return (
