@@ -1,5 +1,6 @@
 import { FetchError } from '@dhis2/app-runtime'
 import { EmptyResponseError } from '@modules/error/empty-response-error'
+import { PrototypeUnsupportedError } from '@modules/error/prototype-unsupported-error'
 import { suppressWindowError } from '@test-utils/suppress-window-error'
 import { render, screen } from '@testing-library/react'
 import { Component, type PropsWithChildren } from 'react'
@@ -37,6 +38,18 @@ describe('CanvasErrorFallback', () => {
         )
 
         expect(screen.getByText('No data')).toBeInTheDocument()
+    })
+
+    it('renders the prototype notice for a PrototypeUnsupportedError', () => {
+        render(
+            <CanvasErrorFallback
+                error={new PrototypeUnsupportedError('Not built yet.')}
+                resetErrorBoundary={vi.fn()}
+            />
+        )
+
+        expect(screen.getByText('Not in this prototype')).toBeInTheDocument()
+        expect(screen.getByText('Not built yet.')).toBeInTheDocument()
     })
 
     it(

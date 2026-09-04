@@ -2,6 +2,7 @@ import type { EngineError } from '@api/parse-engine-error'
 import i18n from '@dhis2/d2-i18n'
 import { EmptyResponseError } from './empty-response-error'
 import { getBackendErrorCodeDisplay } from './error-codes'
+import { PrototypeUnsupportedError } from './prototype-unsupported-error'
 
 export type CanvasErrorDisplay = {
     title: string
@@ -34,8 +35,17 @@ const findKnownBackendErrorDisplay = (error: EngineError) => {
  * response, a known backend error code, restricted access, or a generic server
  * problem. `retryable` drives whether CanvasError shows a Retry button. */
 export const getErrorDisplay = (
-    error: EngineError | EmptyResponseError
+    error: EngineError | EmptyResponseError | PrototypeUnsupportedError
 ): CanvasErrorDisplay => {
+    if (error instanceof PrototypeUnsupportedError) {
+        return {
+            title: i18n.t('Not in this prototype'),
+            description: error.message,
+            retryable: false,
+            severity: 'info',
+        }
+    }
+
     if (error instanceof EmptyResponseError) {
         return {
             title: i18n.t('No data'),

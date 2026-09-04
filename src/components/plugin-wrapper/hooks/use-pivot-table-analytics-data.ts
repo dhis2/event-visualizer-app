@@ -5,6 +5,7 @@ import { useDataEngine } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import { EmptyResponseError } from '@modules/error/empty-response-error'
 import { isAbortError } from '@modules/error/is-abort-error'
+import { PrototypeUnsupportedError } from '@modules/error/prototype-unsupported-error'
 import { logger } from '@modules/logger'
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import type { CurrentUser, CurrentVisualization } from '@types'
@@ -37,7 +38,7 @@ export const fetchAnalyticsDataForPT = async ({
      * built around a single program. Fail with a message rather than let
      * getSingleProgramFromVisualization throw and blank the visualization. */
     if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {
-        throw new Error(
+        throw new PrototypeUnsupportedError(
             i18n.t('Tracked entity tables are not available in this prototype.')
         )
     }

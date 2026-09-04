@@ -6,7 +6,6 @@ import { type FC } from 'react'
 import { EnrollmentButton } from './action-buttons/enrollment-button'
 import { EventButton } from './action-buttons/event-button'
 import { TrackedEntityInstanceButton } from './action-buttons/tracked-entity-instance-button'
-import { CellValueFooter } from './cell-value-footer'
 import classes from './styles/bottom-bar.module.css'
 
 export const BottomBar: FC = () => {
@@ -25,7 +24,6 @@ export const BottomBar: FC = () => {
                     <TrackedEntityInstanceButton />
                     <EnrollmentButton />
                     <EventButton />
-                    <CellValueFooter />
                 </div>
             )}
         </div>

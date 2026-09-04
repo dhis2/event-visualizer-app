@@ -1,11 +1,13 @@
 import { NUMERIC_VALUE_TYPES } from '@constants/value-types'
 import {
+    useAppSelector,
     useCurrentUser,
     useLayoutContext,
     useMetadataStore,
     useRtkQuery,
 } from '@hooks'
 import { extractStageDimensionIdPrefix } from '@modules/dimension/ids'
+import { getDataSourceId } from '@store/dimensions-selection-slice'
 import type { AggregationType } from '@types'
 import { useMemo } from 'react'
 
@@ -34,10 +36,17 @@ export const useCustomValueItems = () => {
     } = useCurrentUser()
     const metadataStore = useMetadataStore()
     const { programIds } = useLayoutContext()
+    const dataSourceId = useAppSelector(getDataSourceId)
 
     /* A tracked entity layout can span several programs, or none. Rather than
-     * refusing to open, fall back to the first program's numeric items. */
-    const programId = programIds[0]
+     * refusing to open, fall back to the first program's numeric items — and,
+     * for a layout that holds no program at all (before the first update), to
+     * the selected data source when that is itself a program. */
+    const programId =
+        programIds[0] ??
+        (dataSourceId && metadataStore.getProgramMetadataItem(dataSourceId)
+            ? dataSourceId
+            : undefined)
 
     const { data, ...queryResult } = useRtkQuery<{
         dimensions: CustomValueDimension[]

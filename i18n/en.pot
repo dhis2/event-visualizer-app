@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-04T06:42:24.862Z\n"
-"PO-Revision-Date: 2026-09-04T06:42:24.862Z\n"
+"POT-Creation-Date: 2026-09-04T07:28:32.371Z\n"
+"PO-Revision-Date: 2026-09-04T07:28:32.371Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -334,21 +334,6 @@ msgstr "Not valid with program indicators"
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr "Nothing selected. Add items to the layout to get started."
 
-msgid "enrollment"
-msgstr "enrollment"
-
-msgid "event"
-msgstr "event"
-
-msgid "One row for each {{- countedThing}}"
-msgstr "One row for each {{- countedThing}}"
-
-msgid "Cells show {{- valueDescription}}"
-msgstr "Cells show {{- valueDescription}}"
-
-msgid "{{- countedThing}} count"
-msgstr "{{- countedThing}} count"
-
 msgid "Cell value"
 msgstr "Cell value"
 
@@ -437,6 +422,24 @@ msgstr "Individual data view"
 
 msgid "Aggregated view"
 msgstr "Aggregated view"
+
+msgid "enrollment"
+msgstr "enrollment"
+
+msgid "event"
+msgstr "event"
+
+msgid "Rows"
+msgstr "Rows"
+
+msgid "One {{- countedThing}} per row"
+msgstr "One {{- countedThing}} per row"
+
+msgid "{{- countedThing}} count"
+msgstr "{{- countedThing}} count"
+
+msgid "Value"
+msgstr "Value"
 
 msgid "No event"
 msgstr "No event"
@@ -1056,6 +1059,9 @@ msgstr ""
 msgid "There's a syntax problem with the analytics request."
 msgstr "There's a syntax problem with the analytics request."
 
+msgid "Not in this prototype"
+msgstr "Not in this prototype"
+
 msgid "No data"
 msgstr "No data"
 
@@ -1071,9 +1077,6 @@ msgstr "There was a problem getting the data from the server."
 
 msgid "Columns"
 msgstr "Columns"
-
-msgid "Rows"
-msgstr "Rows"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"

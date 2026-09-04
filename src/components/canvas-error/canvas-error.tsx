@@ -3,11 +3,12 @@ import i18n from '@dhis2/d2-i18n'
 import { Button, NoticeBox } from '@dhis2/ui'
 import type { EmptyResponseError } from '@modules/error/empty-response-error'
 import { getErrorDisplay } from '@modules/error/get-error-display'
+import type { PrototypeUnsupportedError } from '@modules/error/prototype-unsupported-error'
 import type { FC } from 'react'
 import classes from './styles/canvas-error.module.css'
 
 type CanvasErrorProps = {
-    error: EngineError | EmptyResponseError
+    error: EngineError | EmptyResponseError | PrototypeUnsupportedError
     onRetry?: () => void
 }
 

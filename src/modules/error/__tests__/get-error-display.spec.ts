@@ -2,6 +2,7 @@ import type { EngineError } from '@api/parse-engine-error'
 import { describe, it, expect } from 'vitest'
 import { EmptyResponseError } from '../empty-response-error'
 import { getErrorDisplay } from '../get-error-display'
+import { PrototypeUnsupportedError } from '../prototype-unsupported-error'
 
 const engineError = (partial: Partial<EngineError>): EngineError => ({
     type: 'unknown',
@@ -14,6 +15,17 @@ describe('getErrorDisplay', () => {
         const display = getErrorDisplay(new EmptyResponseError())
 
         expect(display.title).toBe('No data')
+        expect(display.retryable).toBe(false)
+        expect(display.severity).toBe('info')
+    })
+
+    it('maps an unsupported prototype feature to a non-retryable info screen', () => {
+        const display = getErrorDisplay(
+            new PrototypeUnsupportedError('Tables are not available.')
+        )
+
+        expect(display.title).toBe('Not in this prototype')
+        expect(display.description).toBe('Tables are not available.')
         expect(display.retryable).toBe(false)
         expect(display.severity).toBe('info')
     })

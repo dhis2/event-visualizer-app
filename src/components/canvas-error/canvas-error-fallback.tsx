@@ -1,6 +1,7 @@
 import { parseEngineError } from '@api/parse-engine-error'
 import { FetchError } from '@dhis2/app-runtime'
 import { EmptyResponseError } from '@modules/error/empty-response-error'
+import { PrototypeUnsupportedError } from '@modules/error/prototype-unsupported-error'
 import type { FC } from 'react'
 import type { FallbackProps } from 'react-error-boundary'
 import { CanvasError } from './canvas-error'
@@ -13,6 +14,10 @@ export const CanvasErrorFallback: FC<FallbackProps> = ({
     error,
     resetErrorBoundary,
 }) => {
+    if (error instanceof PrototypeUnsupportedError) {
+        return <CanvasError error={error} />
+    }
+
     if (error instanceof EmptyResponseError) {
         return <CanvasError error={error} onRetry={resetErrorBoundary} />
     }

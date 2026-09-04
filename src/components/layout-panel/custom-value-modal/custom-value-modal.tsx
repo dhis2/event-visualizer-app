@@ -26,6 +26,7 @@ import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
     clearVisUiConfigCustomValue,
     getVisUiConfigCustomValue,
+    getVisUiConfigLayoutIsEmpty,
     setVisUiConfigCustomValue,
 } from '@store/vis-ui-config-slice'
 import type { AggregationType } from '@types'
@@ -54,6 +55,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
     const dispatch = useAppDispatch()
     const metadataStore = useMetadataStore()
     const customValue = useAppSelector(getVisUiConfigCustomValue)
+    const isLayoutEmpty = useAppSelector(getVisUiConfigLayoutIsEmpty)
     const [mode, setMode] = useState<CellValueMode>(
         customValue ? 'CUSTOM' : 'COUNT'
     )
@@ -127,9 +129,13 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
             )
         }
 
-        dispatch(tUpdateCurrentVisFromVisUiConfig())
+        /* An empty layout has nothing to visualize — the choice is kept in the
+         * UI config and applied when the table is created. */
+        if (!isLayoutEmpty) {
+            dispatch(tUpdateCurrentVisFromVisUiConfig())
+        }
         onClose()
-    }, [dispatch, aggregationType, mode, selectedItem, onClose])
+    }, [dispatch, aggregationType, isLayoutEmpty, mode, selectedItem, onClose])
 
     const canUpdate = mode === 'COUNT' || Boolean(selectedItemId)
 

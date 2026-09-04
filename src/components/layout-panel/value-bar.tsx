@@ -10,6 +10,8 @@ import {
 import { isDataSourceProgramWithRegistration } from '@modules/data-source'
 import { isVisualizationEmpty } from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
+import { getDataSourceId } from '@store/dimensions-selection-slice'
+import { getIsVisualizationLoading } from '@store/loader-slice'
 import {
     getVisUiConfigCustomValue,
     getVisUiConfigOutputType,
@@ -17,18 +19,7 @@ import {
 } from '@store/vis-ui-config-slice'
 import cx from 'classnames'
 import { useState, type FC } from 'react'
-import classes from './styles/cell-value-footer.module.css'
-
-const CellIcon: FC = () => (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-        <path d="M5 6H3v1h2V6Zm1 0h2v1H6V6ZM5 9H3v1h2V9Zm1 0h2v1H6V9Zm-1 3H3v1h2v-1Zm1 0h2v1H6v-1Zm7-6H9v1h4V6ZM9 9h4v1H9V9Zm4 3H9v1h4v-1Z" />
-        <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H2Zm0 3V2h12v2H2Zm0 1h12v9H2V5Z"
-        />
-    </svg>
-)
+import classes from './styles/value-bar.module.css'
 
 const EditIcon: FC = () => (
     <svg
@@ -37,6 +28,7 @@ const EditIcon: FC = () => (
         height="16"
         viewBox="0 0 16 16"
         fill="currentColor"
+        aria-hidden="true"
     >
         <path
             fillRule="evenodd"
@@ -47,8 +39,10 @@ const EditIcon: FC = () => (
     </svg>
 )
 
-export const CellValueFooter: FC = () => {
+export const ValueBar: FC = () => {
     const currentVis = useAppSelector(getCurrentVis)
+    const dataSourceId = useAppSelector(getDataSourceId)
+    const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const customValue = useAppSelector(getVisUiConfigCustomValue)
@@ -57,9 +51,13 @@ export const CellValueFooter: FC = () => {
     const metadataStore = useMetadataStore()
     const [isModalOpen, setIsModalOpen] = useState(false)
 
-    if (isVisualizationEmpty(currentVis)) {
+    if (!dataSourceId || isVisualizationLoading) {
         return null
     }
+
+    /* Before the first update there is no visualization to describe, so the
+     * bar names the cell value without naming what is counted. */
+    const hasVisualization = !isVisualizationEmpty(currentVis)
 
     const program = programIds[0]
         ? metadataStore.getProgramMetadataItem(programIds[0])
@@ -85,48 +83,45 @@ export const CellValueFooter: FC = () => {
 
     const isLineList = visualizationType === 'LINE_LIST'
 
-    const label = isLineList
-        ? i18n.t('One row for each {{- countedThing}}', {
-              countedThing,
-              nsSeparator: '^^',
-          })
-        : i18n.t('Cells show {{- valueDescription}}', {
-              valueDescription: customValue
-                  ? `${customValueMetadata?.name} ${aggregationTypeDisplayNames[
-                        customValue.aggregationType
-                    ].toLocaleLowerCase()}`
-                  : i18n.t('{{- countedThing}} count', {
+    if (isLineList) {
+        return (
+            <div className={classes.bar} data-test="value-bar">
+                <span className={classes.label}>{i18n.t('Rows')}</span>
+                <span className={classes.value}>
+                    {i18n.t('One {{- countedThing}} per row', {
                         countedThing,
                         nsSeparator: '^^',
-                    }),
-              nsSeparator: '^^',
-          })
+                    })}
+                </span>
+            </div>
+        )
+    }
 
-    const isClickable = !isLineList
-
-    const content = (
-        <>
-            <CellIcon />
-            <span className={classes.label}>{label}</span>
-            {isClickable && <EditIcon />}
-        </>
-    )
+    const valueDescription = customValue
+        ? `${customValueMetadata?.name} ${aggregationTypeDisplayNames[
+              customValue.aggregationType
+          ].toLocaleLowerCase()}`
+        : hasVisualization
+          ? i18n.t('{{- countedThing}} count', {
+                countedThing,
+                nsSeparator: '^^',
+            })
+          : i18n.t('Count')
 
     return (
         <>
-            {isClickable ? (
-                <button
-                    type="button"
-                    className={cx(classes.footer, classes.clickable, {
-                        [classes.custom]: Boolean(customValue),
-                    })}
-                    onClick={() => setIsModalOpen(true)}
-                >
-                    {content}
-                </button>
-            ) : (
-                <div className={classes.footer}>{content}</div>
-            )}
+            <button
+                type="button"
+                className={cx(classes.bar, classes.clickable, {
+                    [classes.custom]: Boolean(customValue),
+                })}
+                onClick={() => setIsModalOpen(true)}
+                data-test="value-bar"
+            >
+                <span className={classes.label}>{i18n.t('Value')}</span>
+                <span className={classes.value}>{valueDescription}</span>
+                <EditIcon />
+            </button>
             {isModalOpen && (
                 <CustomValueModal onClose={() => setIsModalOpen(false)} />
             )}
