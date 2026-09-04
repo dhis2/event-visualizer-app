@@ -21,6 +21,7 @@ import {
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
+    removeVisUiConfigLayoutDimensionFromAxis,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
@@ -28,6 +29,7 @@ import { useCallback } from 'react'
 import {
     isAxisContainerData,
     isAxisSortableData,
+    isOverAxis,
     isSidebarSortableData,
 } from './dnd-data'
 import type { LayoutDragEndEvent, OverItemEventData } from './types'
@@ -60,12 +62,7 @@ const partitionMultiSelectedDimensions = ({
         crossTet: [],
     }
     const validIds = ids.filter((id) => {
-        const dim = metadataStore.getDimensionMetadataItem(id)
-        if (!dim) {
-            throw new Error(
-                `Dimension "${id}" is in multi-selection but has no metadata entry`
-            )
-        }
+        const dim = metadataStore.getDimensionMetadataItemOrThrow(id)
         const reason = getDimensionBlockReason({
             dimension: dim,
             visualizationType,
@@ -143,20 +140,37 @@ export const useOnDragEnd = (): OnDragEndFn => {
 
     return useCallback(
         (event: LayoutDragEndEvent) => {
-            // Only allow dropping if event data is present and dropping onto an axis
-            if (
-                !event.active.data.current ||
-                !event.over ||
-                !event.over.data.current?.axis
-            ) {
+            const draggedItemData = event.active.data.current
+            if (!draggedItemData) {
                 return
             }
 
-            const draggedItemData = event.active.data.current
-            const overItemData = event.over.data.current
+            const overItemData = event.over?.data.current
+
+            if (!isOverAxis(overItemData)) {
+                // Remove layout dimension when dropped ouside axes
+                if (isAxisSortableData(draggedItemData)) {
+                    dispatch(
+                        removeVisUiConfigLayoutDimensionFromAxis({
+                            axis: draggedItemData.axis,
+                            dimensionId: draggedItemData.dimensionId,
+                        })
+                    )
+                }
+                // Ignore other items dropped outside of axes
+                return
+            }
+
             const { targetIndex, insertAfter } = getDropTarget(overItemData)
 
             if (isAxisSortableData(draggedItemData)) {
+                const isDropInPlace =
+                    !isAxisContainerData(overItemData) &&
+                    overItemData.dimensionId === draggedItemData.dimensionId
+                if (isDropInPlace) {
+                    return
+                }
+
                 // Move between axis
                 dispatch(
                     moveVisUiConfigLayoutDimension({

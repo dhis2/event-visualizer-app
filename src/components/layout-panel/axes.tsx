@@ -1,7 +1,7 @@
 import { getActiveDragData } from '@components/app-wrapper/drag-and-drop-provider/dnd-data'
 import { SkeletonChip } from '@components/shared/skeleton-chip'
 import i18n from '@dhis2/d2-i18n'
-import { IconMore16, colors } from '@dhis2/ui'
+import { IconMore16 } from '@dhis2/ui'
 import { useDndContext } from '@dnd-kit/core'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
@@ -36,7 +36,7 @@ const ExpandLayoutPanelButton: FC = () => {
                 }
             }}
         >
-            <IconMore16 color={colors.grey800} />
+            <IconMore16 color="currentColor" />
         </button>
     )
 }

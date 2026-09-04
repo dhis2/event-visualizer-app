@@ -8,9 +8,7 @@
     align-items: center;
 }
 
-.container:not(.dragging):not(.selected):not(.multiSelected):not(
-        .dragOverlay
-    ):hover {
+.container:not(.dragging):not(.selected):not(.multiSelected):hover {
     background-color: var(--colors-grey100);
     border-color: var(--colors-grey400);
     color: #8a949f;
@@ -52,21 +50,4 @@
 .container.multiSelected:hover {
     background-color: #bbdefb;
     border-color: #64b5f6;
-}
-
-.container.dragOverlay {
-    position: relative;
-    background: white;
-    border-color: var(--colors-blue600);
-    border-width: 2px;
-    inline-size: fit-content;
-    max-inline-size: 100%;
-    padding-inline-end: 4px;
-}
-
-/* The drag overlay tracks the cursor, so it's the element under the pointer
- * for the whole drag. Override the inner item's cursor so it reads grabbing. */
-.container.dragOverlay,
-.container.dragOverlay * {
-    cursor: grabbing;
 }

@@ -4,7 +4,7 @@ import type {
     CollisionDetection,
     DroppableContainer,
 } from '@dnd-kit/core'
-import { isAxisContainerData } from './dnd-data'
+import { getActiveDragData, isAxisContainerData } from './dnd-data'
 import type { AxisContainerDroppableData } from './types'
 
 /**
@@ -84,9 +84,6 @@ export const computeLineEndMatch = ({
     let minDeltaY = Infinity
 
     for (const container of droppableContainers) {
-        if (container.disabled) {
-            continue
-        }
         const data = container.data.current
         const rect = container.rect.current
 
@@ -146,6 +143,13 @@ export const collisionDetector: CollisionDetection = ({
 }) => {
     const collisions: Collision[] = []
 
+    /*
+     * A layout-blocked drag — a sidebar dimension that cannot go in the
+     * current layout — has no valid drop target anywhere. */
+    if (getActiveDragData(active)?.isLayoutBlocked) {
+        return collisions
+    }
+
     if (!pointerCoordinates) {
         return collisions
     }
@@ -168,9 +172,6 @@ export const collisionDetector: CollisionDetection = ({
     let maxItemIntersectionRatio = 0
 
     for (const droppableContainer of droppableContainers) {
-        if (droppableContainer.disabled) {
-            continue
-        }
         const intersectionRatio = getIntersectionRatio(
             droppableContainer.rect.current,
             draggedItemRect
@@ -196,13 +197,7 @@ export const collisionDetector: CollisionDetection = ({
         }
     }
 
-    if (
-        hoveredItemDroppableContainer &&
-        hoveredItemDroppableContainer.id === active.id
-    ) {
-        return collisions
-    }
-
+    // The hoveredItemDroppableContainer can be the item's own slot
     if (hoveredItemDroppableContainer) {
         collisions.push(hoveredItemDroppableContainer)
     } else if (

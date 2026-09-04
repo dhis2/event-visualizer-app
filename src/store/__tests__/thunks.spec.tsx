@@ -1,3 +1,4 @@
+import { getLastUsedVisualizationTypeFromLocalStorage } from '@modules/visualization/local-storage'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
@@ -82,6 +83,19 @@ const eventVis: Partial<CurrentVisualization> = {
 }
 
 describe('tUpdateCurrentVisFromVisUiConfig', () => {
+    it('stores the applied visualization type as the last used one', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            buildMockOptions({ currentVisOverride: eventVis })
+        )
+
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
+
+        expect(getLastUsedVisualizationTypeFromLocalStorage()).toBe(
+            'PIVOT_TABLE'
+        )
+    })
+
     it('clears the value when no cell value is set', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,

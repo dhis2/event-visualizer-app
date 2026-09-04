@@ -10,10 +10,6 @@ export const PROGRAM_DIMENSION_TYPES =
         'PROGRAM_INDICATOR',
     ] as const)
 
-export const YOUR_DIMENSION_TYPES = asStringLiteralSubsetArray<DimensionType>()(
-    ['ORGANISATION_UNIT_GROUP_SET'] as const
-)
-
 export const DIMENSION_IDS = [
     'completed',
     'created',

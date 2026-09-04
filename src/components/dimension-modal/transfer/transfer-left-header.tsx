@@ -7,21 +7,25 @@ type TransferLeftHeaderProps = {
     dataTest: string
     searchTerm?: string
     setSearchTerm: (searchTerm?: string) => void
+    title?: string
+    placeholder?: string
 }
 
 export const TransferLeftHeader: FC<TransferLeftHeaderProps> = ({
     searchTerm,
     setSearchTerm,
     dataTest,
+    title,
+    placeholder,
 }) => (
     <div className={classes.transferLeftHeader}>
         <p className={classes.transferLeftTitle}>
-            {i18n.t('Available options')}
+            {title ?? i18n.t('Available options')}
         </p>
         <InputField
             value={searchTerm}
             onChange={({ value }) => setSearchTerm(value)}
-            placeholder={i18n.t('Filter options')}
+            placeholder={placeholder ?? i18n.t('Filter options')}
             dataTest={`${dataTest}-filter-input-field`}
             dense
             initialFocus

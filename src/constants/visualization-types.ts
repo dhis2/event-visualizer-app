@@ -13,3 +13,8 @@ export const VISUALIZATION_TYPES = [
     ...INDIVIDUAL_VISUALIZATION_TYPES,
     ...AGGREGATED_VISUALIZATION_TYPES,
 ]
+
+// Plain strings, so an arbitrary string can be tested for membership.
+export const VISUALIZATION_TYPE_SET: ReadonlySet<string> = new Set(
+    VISUALIZATION_TYPES
+)

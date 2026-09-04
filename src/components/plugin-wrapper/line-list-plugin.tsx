@@ -5,10 +5,8 @@ import type {
     DataSortFn,
     PaginateFn,
 } from '@components/line-list/types'
-import { useAppDispatch } from '@hooks'
 import { transformVisualizationForAnalyticsRequest } from '@modules/analytics-request'
 import { logger } from '@modules/logger'
-import { setUiActiveDimensionModal } from '@store/ui-slice'
 import type { CurrentUser, CurrentVisualization, Sorting } from '@types'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { FC } from 'react'
@@ -19,9 +17,10 @@ type InternalSorting = Sorting | undefined
 type LineListPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
     visualization: CurrentVisualization
-    filters?: Record<string, unknown>
+    relativePeriodDate?: string
     isInDashboard: boolean
     isInModal: boolean
+    onColumnHeaderClick?: ColumnHeaderClickFn
     onDataSorted?: (sorting: InternalSorting) => void
     onResponseReceived: () => void
 }
@@ -29,14 +28,13 @@ type LineListPluginProps = {
 export const LineListPlugin: FC<LineListPluginProps> = ({
     displayProperty,
     visualization,
-    filters,
+    relativePeriodDate,
     isInDashboard,
     isInModal,
+    onColumnHeaderClick,
     onDataSorted,
     onResponseReceived,
 }) => {
-    const dispatch = useAppDispatch()
-
     const [fetchAnalyticsData, { data, isFetching }] =
         useLineListAnalyticsData()
 
@@ -61,15 +59,6 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         } as CurrentVisualization
     }, [visualization, sorting])
 
-    const onColumnHeaderClick = useCallback<ColumnHeaderClickFn>(
-        (dimensionId) => {
-            logger.debug(`Show dimension modal for dimension ID ${dimensionId}`)
-
-            dispatch(setUiActiveDimensionModal(dimensionId))
-        },
-        [dispatch]
-    )
-
     const onPaginate = useCallback<PaginateFn>(
         ({ page, pageSize }) => {
             fetchAnalyticsData({
@@ -77,7 +66,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
                     transformVisualizationForAnalyticsRequest(
                         eventVisualization
                     ),
-                filters,
+                relativePeriodDate,
                 displayProperty,
                 onResponseReceived,
                 page,
@@ -86,7 +75,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         },
         [
             displayProperty,
-            filters,
+            relativePeriodDate,
             eventVisualization,
             onResponseReceived,
             fetchAnalyticsData,
@@ -116,13 +105,13 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
         fetchAnalyticsData({
             visualization:
                 transformVisualizationForAnalyticsRequest(eventVisualization),
-            filters,
+            relativePeriodDate,
             displayProperty,
             onResponseReceived,
         })
     }, [
         displayProperty,
-        filters,
+        relativePeriodDate,
         eventVisualization,
         onResponseReceived,
         fetchAnalyticsData,

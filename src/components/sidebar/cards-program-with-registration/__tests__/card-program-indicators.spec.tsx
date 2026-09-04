@@ -61,7 +61,6 @@ const createProgram = (): Program =>
 
 describe('CardProgramIndicators (enrollment)', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
         mockUseDimensionList.mockReturnValue(defaultListResult)
         mockUseSelectedDimensionCount.mockReturnValue(0)
     })

@@ -1,16 +1,21 @@
+import { useMetadataStore } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import { Analytics, transformEventAggregateResponse } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
-import { type FetchError, useDataEngine } from '@dhis2/app-runtime'
+import { useDataEngine } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
+import { EmptyResponseError } from '@modules/error/empty-response-error'
+import { isAbortError } from '@modules/error/is-abort-error'
 import { logger } from '@modules/logger'
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
 import type { CurrentUser, CurrentVisualization } from '@types'
 import { useCallback, useState } from 'react'
+import { useErrorBoundary } from 'react-error-boundary'
 import { getAnalyticsEndpoint } from './query-tools-common'
 import {
     getAdaptedVisualization,
     getBaseRequestIdentity,
     getCustomValueRequestParams,
+    getLayoutDimensionMetadataNames,
 } from './query-tools-pivot-table'
 import { useInFlightDedup } from './use-in-flight-dedup'
 
@@ -102,7 +107,7 @@ export type PivotTableAnalyticsData = {
 
 type FetchAnalyticsDataForPTParams = {
     visualization: CurrentVisualization
-    filters?: Record<string, unknown>
+    relativePeriodDate?: string
     displayProperty: CurrentUser['settings']['displayProperty']
     onResponseReceived: () => void
 }
@@ -111,18 +116,18 @@ type FetchAnalyticsDataFn = (
 ) => Promise<void>
 type AnalyticsDataState = {
     isFetching: boolean
-    error?: FetchError
     data: PivotTableAnalyticsData | null
 }
 type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
 
 const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
     const dataEngine = useDataEngine()
+    const metadataStore = useMetadataStore()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
+    const { showBoundary } = useErrorBoundary()
 
     const [state, setState] = useState<AnalyticsDataState>({
         isFetching: false,
-        error: undefined,
         data: null,
     })
 
@@ -131,13 +136,12 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
     const fetchAnalyticsData: FetchAnalyticsDataFn = useCallback(
         async ({
             visualization,
-            filters,
+            relativePeriodDate,
             displayProperty,
             onResponseReceived,
         }) => {
             const requestSignature = JSON.stringify({
-                ...getBaseRequestIdentity(visualization),
-                filters: filters ?? null,
+                ...getBaseRequestIdentity(visualization, relativePeriodDate),
                 displayProperty,
             })
 
@@ -148,10 +152,7 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
             setState((prevState) => ({
                 ...prevState,
                 isFetching: true,
-                error: undefined,
             }))
-
-            const relativePeriodDate = filters?.relativePeriodDate
 
             try {
                 const analyticsResponse = await fetchAnalyticsDataForPT({
@@ -163,31 +164,43 @@ const usePivotTableAnalyticsData = (): UseAnalyticsDataResult => {
 
                 logger.debug('PT analytics response', analyticsResponse)
 
+                if (analyticsResponse.rows.length === 0) {
+                    throw new EmptyResponseError()
+                }
+
                 // response for PT needs to be transformed
                 const analyticsData = transformEventAggregateResponse(
                     analyticsResponse,
-                    { hideNaData: visualization.hideNaData }
+                    {
+                        hideNaData: visualization.hideNaData,
+                        metaDataItemNames: getLayoutDimensionMetadataNames(
+                            visualization,
+                            metadataStore
+                        ),
+                    }
                 )
 
                 setState({
                     data: analyticsData,
-                    error: undefined,
                     isFetching: false,
                 })
 
                 onResponseReceived()
             } catch (error) {
                 logger.error('PT fetch error', error)
-                setState({
-                    data: null,
-                    error: error as FetchError,
-                    isFetching: false,
-                })
+                if (isAbortError(error)) {
+                    setState((prevState) => ({
+                        data: prevState.data,
+                        isFetching: false,
+                    }))
+                } else {
+                    showBoundary(error)
+                }
             } finally {
                 release(requestSignature)
             }
         },
-        [analyticsEngine, reserve, release]
+        [analyticsEngine, metadataStore, reserve, release, showBoundary]
     )
 
     return [fetchAnalyticsData, state]

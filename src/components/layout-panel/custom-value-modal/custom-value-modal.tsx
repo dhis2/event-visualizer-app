@@ -1,4 +1,7 @@
-import { RadioCard, RadioCards } from '@components/shared/radio-card/radio-card'
+import {
+    RadioCard,
+    RadioCardGroup,
+} from '@components/dimension-modal/radio-card/radio-card'
 import {
     AGGREGATION_TYPES,
     aggregationTypeDisplayNames,
@@ -134,7 +137,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
         <Modal onClose={onClose} position="top" large>
             <ModalTitle>{i18n.t('Cell value')}</ModalTitle>
             <ModalContent className={classes.content}>
-                <RadioCards>
+                <RadioCardGroup legend={i18n.t('Cell value')} hideLegend>
                     <RadioCard
                         selected={mode === 'COUNT'}
                         label={i18n.t('Count')}
@@ -248,7 +251,7 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                             </SingleSelectField>
                         </div>
                     </RadioCard>
-                </RadioCards>
+                </RadioCardGroup>
             </ModalContent>
             <ModalActions>
                 <ButtonStrip>

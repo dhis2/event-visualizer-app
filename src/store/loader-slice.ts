@@ -3,12 +3,12 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 
 export interface LoaderState {
-    loadError: EngineError | null
+    visualizationLoadError: EngineError | null
     isVisualizationLoading: boolean
 }
 
 export const initialState: LoaderState = {
-    loadError: null,
+    visualizationLoadError: null,
     isVisualizationLoading: false,
 }
 
@@ -19,27 +19,31 @@ export const loaderSlice = createSlice({
         setIsVisualizationLoading: (state, action: PayloadAction<boolean>) => {
             state.isVisualizationLoading = action.payload
             if (action.payload) {
-                state.loadError = null
+                state.visualizationLoadError = null
             }
         },
-        setLoadError: {
+        setVisualizationLoadError: {
             reducer: (state, action: PayloadAction<EngineError>) => {
-                state.loadError = action.payload
+                state.visualizationLoadError = action.payload
             },
             prepare: (error: unknown) => ({
                 payload: parseEngineError(error),
             }),
         },
-        clearLoadError: (state) => {
-            state.loadError = initialState.loadError
+        clearVisualizationLoadError: (state) => {
+            state.visualizationLoadError = initialState.visualizationLoadError
         },
     },
     selectors: {
         getIsVisualizationLoading: (state) => state.isVisualizationLoading,
-        getLoadError: (state) => state.loadError,
+        getVisualizationLoadError: (state) => state.visualizationLoadError,
     },
 })
 
-export const { setIsVisualizationLoading, setLoadError, clearLoadError } =
-    loaderSlice.actions
-export const { getIsVisualizationLoading, getLoadError } = loaderSlice.selectors
+export const {
+    setIsVisualizationLoading,
+    setVisualizationLoadError,
+    clearVisualizationLoadError,
+} = loaderSlice.actions
+export const { getIsVisualizationLoading, getVisualizationLoadError } =
+    loaderSlice.selectors

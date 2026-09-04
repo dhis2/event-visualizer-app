@@ -1,5 +1,11 @@
-import type { UseMetadataStoreReturnValue } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import type { CurrentVisualization, DimensionMetadataItem } from '@types'
+import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
+import type {
+    CurrentVisualization,
+    DimensionMetadataItem,
+    MetadataItem,
+    MetadataStore,
+    Program,
+} from '@types'
 import { describe, it, expect } from 'vitest'
 import { buildHeaders, formatRowValue } from './use-line-list-analytics-data'
 
@@ -19,9 +25,7 @@ const analyticsResponseTyped = analyticsResponse as unknown as Parameters<
     typeof buildHeaders
 >[0]['analyticsResponse']
 
-const buildMetadataStore = (
-    scheduledDateName: string
-): UseMetadataStoreReturnValue => {
+const buildMetadataStore = (scheduledDateName: string): MetadataStore => {
     const dimensionItems: Record<string, Partial<DimensionMetadataItem>> = {
         's1.scheduledDate': {
             name: scheduledDateName,
@@ -41,15 +45,11 @@ const buildMetadataStore = (
         s1: { id: 's1', name: 'Birth' },
         s2: { id: 's2', name: 'Baby Postnatal' },
     }
-    return {
-        getDimensionMetadataItem: (id: string) => dimensionItems[id],
-        getMetadataItem: (id: string) => items[id],
-        getMetadataItems: (ids: string[]) =>
-            Object.fromEntries(
-                ids.filter((id) => items[id]).map((id) => [id, items[id]])
-            ),
-        getProgramMetadataItem: (id: string) => items[id],
-    } as unknown as UseMetadataStoreReturnValue
+    return createMetadataStoreStub({
+        dimensions: dimensionItems as Record<string, DimensionMetadataItem>,
+        items: items as Record<string, MetadataItem>,
+        programs: items as unknown as Record<string, Program>,
+    })
 }
 
 describe('buildHeaders', () => {

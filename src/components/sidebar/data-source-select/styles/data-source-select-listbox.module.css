@@ -30,6 +30,7 @@
     font-size: 13px;
     cursor: pointer;
     color: var(--colors-grey600);
+    text-decoration: underline;
 }
 .showMoreButton:focus {
     outline: 3px solid var(--theme-focus);

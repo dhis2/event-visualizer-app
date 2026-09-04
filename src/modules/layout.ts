@@ -40,12 +40,7 @@ export const buildAxis = (
     metadataStore: MetadataStore
 ): DimensionArray =>
     dimensionIds.map((id) => {
-        const dim = metadataStore.getDimensionMetadataItem(id)
-        if (!dim) {
-            throw new Error(
-                `No metadata found for dimension "${id}" — cannot decompose compound ID for API`
-            )
-        }
+        const dim = metadataStore.getDimensionMetadataItemOrThrow(id)
         const itemIds = visUiConfig.itemsByDimension[id]
         const conditions = visUiConfig.conditionsByDimension[id]
         const repetitions = visUiConfig.repetitionsByDimension[id]
@@ -93,15 +88,7 @@ const getLayoutDimensionMetadataItems = (
     dimensionIds: string[],
     metadataStore: MetadataStore
 ): DimensionMetadataItem[] =>
-    dimensionIds.map((id) => {
-        const dim = metadataStore.getDimensionMetadataItem(id)
-        if (!dim) {
-            throw new Error(
-                `No metadata found for dimension "${id}" in the layout`
-            )
-        }
-        return dim
-    })
+    dimensionIds.map((id) => metadataStore.getDimensionMetadataItemOrThrow(id))
 
 export const collectProgramDimensions = (
     visUiConfig: VisUiConfigState,
@@ -117,13 +104,10 @@ export const collectProgramDimensions = (
         if (!programId || programsById.has(programId)) {
             continue
         }
-        const program = metadataStore.getProgramMetadataItem(programId)
-        if (!program) {
-            throw new Error(
-                `Program "${programId}" referenced by dimension "${dim.id}" but not found in the metadata store`
-            )
-        }
-        programsById.set(programId, program)
+        programsById.set(
+            programId,
+            metadataStore.getProgramMetadataItemOrThrow(programId)
+        )
     }
     return Array.from(programsById.values())
 }
@@ -195,8 +179,8 @@ export const resolveLayoutContext = (
 }
 
 type LayoutConversionResult = {
-    newLayout: Layout
-    discardedDimensionIds: string[]
+    convertedLayout: Layout
+    invalidDimensionIds: string[]
 }
 
 export const convertLayoutForVisType = ({
@@ -206,41 +190,54 @@ export const convertLayoutForVisType = ({
 }: {
     layout: Layout
     targetVisType: VisualizationType
-    getDimension: (id: string) => DimensionMetadataItem | undefined
+    getDimension: (id: string) => DimensionMetadataItem
 }): LayoutConversionResult => {
-    const newLayout: Layout = { columns: [], rows: [], filters: [] }
-    const discardedDimensionIds: string[] = []
-
-    /* Process filters first so a user's existing filter ordering is preserved.
-     * Columns precedes rows so that on PT -> LL the merged columns reads as
-     * cols ++ rows. */
-    const sourceAxesInOrder: ReadonlyArray<Axis> = [
-        'filters',
-        'columns',
-        'rows',
-    ]
-
-    for (const sourceAxis of sourceAxesInOrder) {
-        for (const dimensionId of layout[sourceAxis]) {
-            const dim = getDimension(dimensionId)
-            if (!dim) {
-                throw new Error(
-                    `No metadata found for dimension "${dimensionId}" — cannot convert layout for visualization type "${targetVisType}"`
-                )
-            }
-            if (isDimensionFullyInvalidForVisType(dim, targetVisType)) {
-                discardedDimensionIds.push(dimensionId)
-                continue
-            }
-            const targetAxis: Axis =
-                targetVisType === 'LINE_LIST' && sourceAxis === 'rows'
-                    ? 'columns'
-                    : sourceAxis
-            newLayout[targetAxis].push(dimensionId)
+    /* A line list has no rows axis and accepts every dimension a pivot table
+     * can hold, so the rows merge into the columns and nothing is dropped. */
+    if (targetVisType === 'LINE_LIST') {
+        return {
+            convertedLayout: {
+                columns: [...layout.columns, ...layout.rows],
+                rows: [],
+                filters: [...layout.filters],
+            },
+            invalidDimensionIds: [],
         }
     }
 
-    return { newLayout, discardedDimensionIds }
+    const convertedLayout: Layout = { columns: [], rows: [], filters: [] }
+    const invalidDimensionIds: string[] = []
+
+    for (const id of layout.filters) {
+        const dimension = getDimension(id)
+        if (isDimensionFullyInvalidForVisType(dimension, targetVisType)) {
+            invalidDimensionIds.push(id)
+        } else {
+            convertedLayout.filters.push(id)
+        }
+    }
+
+    for (const id of layout.columns) {
+        const dimension = getDimension(id)
+        if (isDimensionFullyInvalidForVisType(dimension, targetVisType)) {
+            invalidDimensionIds.push(id)
+        } else {
+            switch (dimension.dimensionType) {
+                case 'ORGANISATION_UNIT':
+                    convertedLayout.columns.push(id)
+                    break
+                case 'PERIOD':
+                    convertedLayout.rows.push(id)
+                    break
+                default:
+                    convertedLayout.filters.push(id)
+            }
+        }
+    }
+
+    /* A line list has no rows in the layout, so there is no need to iterate
+     * layout.rows. */
+    return { convertedLayout, invalidDimensionIds }
 }
 
 export const resolveTeiFields = (
@@ -275,12 +272,7 @@ export const resolveTeiFields = (
         return { trackedEntityType: undefined, attributeDimensions }
     }
 
-    const tet = metadataStore.getMetadataItem(tetId)
-    if (!tet) {
-        throw new Error(
-            `Tracked entity type "${tetId}" referenced but not found in the metadata store`
-        )
-    }
+    const tet = metadataStore.getMetadataItemOrThrow(tetId)
     return {
         trackedEntityType: { id: tet.id, name: tet.name },
         attributeDimensions,

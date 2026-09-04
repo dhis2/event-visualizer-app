@@ -112,7 +112,7 @@ const renderInCustomValueMode = async (
         <CustomValueModal onClose={onClose} />,
         options
     )
-    await userEvent.click(screen.getByRole('radio', { name: 'Custom value' }))
+    await userEvent.click(screen.getByRole('radio', { name: /^Custom value/ }))
     return view
 }
 

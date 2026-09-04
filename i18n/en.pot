@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-08-21T08:04:53.944Z\n"
-"PO-Revision-Date: 2026-08-21T08:04:53.944Z\n"
+"POT-Creation-Date: 2026-09-04T06:42:24.862Z\n"
+"PO-Revision-Date: 2026-09-04T06:42:24.862Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -21,6 +21,9 @@ msgid ""
 msgstr ""
 "Some dimensions were not added because they cannot be combined with {{- "
 "layoutTetName}} dimensions: {{list}}."
+
+msgid "Retry"
+msgstr "Retry"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -34,14 +37,14 @@ msgstr "Case sensitive"
 msgid "Delete filter"
 msgstr "Delete filter"
 
-msgid "Only available for repeatable stages"
-msgstr "Only available for repeatable stages"
+msgid "Data"
+msgstr "Data"
 
 msgid "Repeated events"
 msgstr "Repeated events"
 
-msgid "Data"
-msgstr "Data"
+msgid "and"
+msgstr "and"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr "{{valueType}} type dimensions cannot be filtered."
@@ -49,32 +52,35 @@ msgstr "{{valueType}} type dimensions cannot be filtered."
 msgid "This dimension cannot be filtered."
 msgstr "This dimension cannot be filtered."
 
-msgid "Preset options can't be combined with other filters"
-msgstr "Preset options can't be combined with other filters"
+msgid "Filtering"
+msgstr "Filtering"
+
+msgid "Show all groups"
+msgstr "Show all groups"
 
 msgid "Add filter"
 msgstr "Add filter"
 
-msgid "and"
-msgstr "and"
+msgid "{{- legends}} and {{- remainingCount}} more"
+msgstr "{{- legends}} and {{- remainingCount}} more"
 
-msgid "is one of preset options"
-msgstr "is one of preset options"
+msgid "Grouping"
+msgstr "Grouping"
 
-msgid "Choose a legend set"
-msgstr "Choose a legend set"
+msgid "No grouping"
+msgstr "No grouping"
 
-msgid "Loading legend sets"
-msgstr "Loading legend sets"
+msgid "Show each value individually"
+msgstr "Show each value individually"
 
-msgid "No preset option sets for this data item"
-msgstr "No preset option sets for this data item"
+msgid "Available groups"
+msgstr "Available groups"
 
-msgid "Choose legends"
-msgstr "Choose legends"
+msgid "Filter groups"
+msgstr "Filter groups"
 
-msgid "Loading legends"
-msgstr "Loading legends"
+msgid "Selected groups"
+msgstr "Selected groups"
 
 msgid "From stages with repeatable events, show values from:"
 msgstr "From stages with repeatable events, show values from:"
@@ -193,9 +199,6 @@ msgstr "Code"
 msgid "Name"
 msgstr "Name"
 
-msgid "An error occurred"
-msgstr "An error occurred"
-
 msgid "Resize axes panel"
 msgstr "Resize axes panel"
 
@@ -219,6 +222,9 @@ msgstr "Program: {{- programName}}"
 
 msgid "Program stage: {{- stageName}}"
 msgstr "Program stage: {{- stageName}}"
+
+msgid "Grouping: {{- groupingName}}"
+msgstr "Grouping: {{- groupingName}}"
 
 msgid "Levels"
 msgstr "Levels"
@@ -423,6 +429,9 @@ msgstr "{{- names}} will be removed. Are you sure?"
 msgid "Convert"
 msgstr "Convert"
 
+msgid "Coming soon"
+msgstr "Coming soon"
+
 msgid "Individual data view"
 msgstr "Individual data view"
 
@@ -547,6 +556,9 @@ msgstr "Legend"
 msgid "Select from legends"
 msgstr "Select from legends"
 
+msgid "Loading legends"
+msgstr "Loading legends"
+
 msgid "Limit"
 msgstr "Limit"
 
@@ -612,6 +624,12 @@ msgstr "Table subtitle"
 
 msgid "Labels"
 msgstr "Labels"
+
+msgid "Filters are not applied to Event visualizations"
+msgstr "Filters are not applied to Event visualizations"
+
+msgid "Show without filters"
+msgstr "Show without filters"
 
 msgid "Tracked entity tables are not available in this prototype."
 msgstr "Tracked entity tables are not available in this prototype."
@@ -1005,6 +1023,51 @@ msgstr "Registration org. unit"
 
 msgid "Enrollment date"
 msgstr "Enrollment date"
+
+msgid "Restricted access"
+msgstr "Restricted access"
+
+msgid ""
+"You don't have access to the data in this visualization. Contact a system "
+"administrator."
+msgstr ""
+"You don't have access to the data in this visualization. Contact a system "
+"administrator."
+
+msgid "You don't have access to one or more of the chosen organisation units."
+msgstr "You don't have access to one or more of the chosen organisation units."
+
+msgid "You don't have access to event analytics. Contact a system administrator."
+msgstr "You don't have access to event analytics. Contact a system administrator."
+
+msgid "Something went wrong"
+msgstr "Something went wrong"
+
+msgid "There's a problem with at least one selected indicator."
+msgstr "There's a problem with at least one selected indicator."
+
+msgid ""
+"There's a problem with the generated analytics. Contact a system "
+"administrator."
+msgstr ""
+"There's a problem with the generated analytics. Contact a system "
+"administrator."
+
+msgid "There's a syntax problem with the analytics request."
+msgstr "There's a syntax problem with the analytics request."
+
+msgid "No data"
+msgstr "No data"
+
+msgid ""
+"The selected dimensions didn't return any data. There may be no data, or "
+"you may not have access to it."
+msgstr ""
+"The selected dimensions didn't return any data. There may be no data, or "
+"you may not have access to it."
+
+msgid "There was a problem getting the data from the server."
+msgstr "There was a problem getting the data from the server."
 
 msgid "Columns"
 msgstr "Columns"

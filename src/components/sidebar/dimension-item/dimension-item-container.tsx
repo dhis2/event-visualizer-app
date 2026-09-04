@@ -6,7 +6,6 @@ interface DimensionItemContainerProps extends ComponentPropsWithoutRef<'div'> {
     selected?: boolean
     multiSelected?: boolean
     isDragging?: boolean
-    isDragOverlay?: boolean
 }
 
 export const DimensionItemContainer = forwardRef<
@@ -14,15 +13,7 @@ export const DimensionItemContainer = forwardRef<
     DimensionItemContainerProps
 >(
     (
-        {
-            selected,
-            multiSelected,
-            isDragging,
-            isDragOverlay,
-            className,
-            children,
-            ...rest
-        },
+        { selected, multiSelected, isDragging, className, children, ...rest },
         ref
     ) => (
         <div
@@ -33,7 +24,6 @@ export const DimensionItemContainer = forwardRef<
                     [styles.selected]: selected,
                     [styles.multiSelected]: multiSelected,
                     [styles.dragging]: isDragging,
-                    [styles.dragOverlay]: isDragOverlay,
                 },
                 className
             )}

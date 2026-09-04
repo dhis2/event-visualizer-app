@@ -235,6 +235,23 @@ describe('uiSlice', () => {
 
             expect(state).toEqual(initialState)
         })
+
+        it('should keep the panel geometry', () => {
+            const prevState: UiState = {
+                ...initialState,
+                isSidebarVisible: false,
+                layoutPanelHeight: 320,
+                sidebarWidth: 500,
+            }
+
+            const state = reducer(prevState, clearUi())
+
+            expect(state).toEqual({
+                ...initialState,
+                layoutPanelHeight: 320,
+                sidebarWidth: 500,
+            })
+        })
     })
 
     describe('setUiLayoutPanelHeight', () => {

@@ -71,7 +71,6 @@ const createMockLazyQueryResult = (data?: MockData) => {
 
 describe('useInfiniteTransferOptions', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
         vi.useFakeTimers()
     })
 

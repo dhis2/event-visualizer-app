@@ -359,7 +359,7 @@ describe('extractProgramDimensionsMetadata', () => {
         })
     })
 
-    it('should return empty object for TRACKED_ENTITY_INSTANCE outputType', () => {
+    it('should return programs for TRACKED_ENTITY_INSTANCE outputType', () => {
         const visualization = {
             outputType: 'TRACKED_ENTITY_INSTANCE' as const,
             programDimensions: [
@@ -372,7 +372,10 @@ describe('extractProgramDimensionsMetadata', () => {
 
         const result = extractProgramDimensionsMetadata(visualization)
 
-        expect(result).toEqual({})
+        expect(result.program1).toMatchObject({
+            id: 'program1',
+            name: 'Program 1',
+        })
     })
 })
 

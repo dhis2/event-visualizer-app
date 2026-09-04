@@ -324,8 +324,9 @@ export const getLegendSetConditionMetadataIds = (
     }
 
     if (conditionsList.length === 0) {
-        // Return the legend set ID when no specific legends are selected
-        return [conditions.legendSet]
+        /* Grouping without a filter shows every group, so there is nothing to
+         * list. The legend set itself is named separately from the filter. */
+        return []
     } else {
         // Return the legend IDs from the condition
         const legendIds = parseCondition(conditionsList[0])

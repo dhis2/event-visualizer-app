@@ -1,6 +1,8 @@
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
+import { legendSetsApi } from '@api/legend-sets-api'
 import { extractDataSourceIdFromVisualization } from '@modules/data-source'
+import { canDimensionHaveLegendSets } from '@modules/dimension/grouping'
 import {
     buildAxis,
     collectProgramDimensions,
@@ -8,6 +10,7 @@ import {
 } from '@modules/layout'
 import { logger } from '@modules/logger'
 import { getEnabledOptions } from '@modules/options'
+import { setLastUsedVisualizationTypeToLocalStorage } from '@modules/visualization/local-storage'
 import {
     getVisualizationUiConfig,
     isCurrentVisualizationPersisted,
@@ -15,20 +18,28 @@ import {
     toCurrentVis,
 } from '@modules/visualization/state'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import type { AppDispatch, CurrentVisualization, MetadataStore } from '@types'
+import type {
+    AppDispatch,
+    CurrentVisualization,
+    MetadataStore,
+    RootState,
+} from '@types'
 import {
     clearCurrentVis,
     setCurrentVis,
     type CurrentVisState,
 } from './current-vis-slice'
 import { setDataSourceId } from './dimensions-selection-slice'
-import { setIsVisualizationLoading, setLoadError } from './loader-slice'
+import {
+    setIsVisualizationLoading,
+    setVisualizationLoadError,
+} from './loader-slice'
 import { clearSavedVis, setSavedVis } from './saved-vis-slice'
-import type { RootState } from './store'
 import { clearUi, setUiUpdateAnimationShowingFor } from './ui-slice'
 import {
     clearVisUiConfig,
     setVisUiConfig,
+    setVisUiConfigGroupingByDimension,
     type VisUiConfigState,
 } from './vis-ui-config-slice'
 
@@ -76,37 +87,45 @@ export const tLoadSavedVisualization = createAsyncThunk<
             })
         )
         if (data) {
-            const currentVis = toCurrentVis(data)
-            const selectedDataSourceId =
-                extractDataSourceIdFromVisualization(currentVis)
-            const currentOptions = getState().visUiConfig.options
+            try {
+                const currentVis = toCurrentVis(data)
+                const selectedDataSourceId =
+                    extractDataSourceIdFromVisualization(currentVis)
+                const currentOptions = getState().visUiConfig.options
 
-            dispatch(setSavedVis(data))
-            dispatch(setDataSourceId(selectedDataSourceId))
-            dispatch(
-                setVisUiConfig(
-                    getVisualizationUiConfig(currentVis, currentOptions)
+                dispatch(setSavedVis(data))
+                dispatch(setDataSourceId(selectedDataSourceId))
+                dispatch(
+                    setVisUiConfig(
+                        getVisualizationUiConfig(currentVis, currentOptions)
+                    )
                 )
-            )
-            dispatch(setCurrentVis(currentVis))
-            dispatch(setIsVisualizationLoading(false))
+                dispatch(setCurrentVis(currentVis))
+                dispatch(setIsVisualizationLoading(false))
 
-            if (updateStatistics) {
-                // update most viewed statistics
-                extra.engine
-                    .mutate({
-                        resource: 'dataStatistics',
-                        type: 'create',
-                        params: {
-                            eventType: 'EVENT_VISUALIZATION_VIEW',
-                            favorite: id,
-                        },
-                        data: {},
-                    })
-                    .catch((error) => logger.error(error))
+                if (updateStatistics) {
+                    // update most viewed statistics
+                    extra.engine
+                        .mutate({
+                            resource: 'dataStatistics',
+                            type: 'create',
+                            params: {
+                                eventType: 'EVENT_VISUALIZATION_VIEW',
+                                favorite: id,
+                            },
+                            data: {},
+                        })
+                        .catch((error) => logger.error(error))
+                }
+            } catch (processingError) {
+                /* A failure turning the fetched visualization into current-vis
+                 * state is a bug, not a fetch error; parseEngineError tags it
+                 * 'runtime', so it surfaces as fatal. */
+                dispatch(setVisualizationLoadError(processingError))
+                dispatch(setIsVisualizationLoading(false))
             }
         } else if (error) {
-            dispatch(setLoadError(error))
+            dispatch(setVisualizationLoadError(error))
             dispatch(setIsVisualizationLoading(false))
         }
     }
@@ -166,6 +185,11 @@ export const tUpdateCurrentVisFromVisUiConfig =
     ) => {
         const { currentVis, visUiConfig } = getState()
 
+        // Applying the config commits to the vis type; loading one does not.
+        setLastUsedVisualizationTypeToLocalStorage(
+            visUiConfig.visualizationType
+        )
+
         dispatch(
             setCurrentVis(
                 buildCurrentVisFromVisUiConfig({
@@ -179,5 +203,78 @@ export const tUpdateCurrentVisFromVisUiConfig =
             setUiUpdateAnimationShowingFor(
                 isVisualizationEmpty(currentVis) ? null : visUiConfig.outputType
             )
+        )
+    }
+
+/* A line list defaults to no grouping, which is the absence of state, so only
+ * pivot tables need a default applied. Keyed off presence rather than value so
+ * an explicit "No grouping" choice is never overwritten by the default.
+ *
+ * A thunk rather than the listener effect itself because the listener
+ * middleware is created without an extra argument, so only a thunk can reach
+ * the metadata store. */
+export const tSeedDefaultGrouping =
+    (dimensionIds: string[]) =>
+    async (
+        dispatch: AppDispatch,
+        getState: () => RootState,
+        extra: ThunkExtraArg
+    ) => {
+        if (getState().visUiConfig.visualizationType !== 'PIVOT_TABLE') {
+            return
+        }
+
+        const seedable = dimensionIds.filter((dimensionId) => {
+            if (dimensionId in getState().visUiConfig.conditionsByDimension) {
+                return false
+            }
+            const dimension =
+                extra.metadataStore.getDimensionMetadataItem(dimensionId)
+
+            return Boolean(dimension && canDimensionHaveLegendSets(dimension))
+        })
+
+        await Promise.all(
+            seedable.map(async (dimensionId) => {
+                const dimensionType =
+                    extra.metadataStore.getDimensionMetadataItem(
+                        dimensionId
+                    )?.dimensionType
+
+                if (!dimensionType) {
+                    return
+                }
+
+                try {
+                    const legendSets = await dispatch(
+                        legendSetsApi.endpoints.getLegendSetsByDimension.initiate(
+                            { dimensionId, dimensionType }
+                        )
+                    ).unwrap()
+
+                    const defaultLegendSet = legendSets[0]
+
+                    /* Re-checked because the user can pick a grouping while
+                     * the legend sets are still being fetched. */
+                    const isStillUnset = !(
+                        dimensionId in
+                        getState().visUiConfig.conditionsByDimension
+                    )
+
+                    if (defaultLegendSet && isStillUnset) {
+                        dispatch(
+                            setVisUiConfigGroupingByDimension({
+                                dimensionId,
+                                legendSet: defaultLegendSet.id,
+                            })
+                        )
+                    }
+                } catch (error) {
+                    logger.error(
+                        `Could not resolve legend sets for dimension "${dimensionId}"`,
+                        error
+                    )
+                }
+            })
         )
     }

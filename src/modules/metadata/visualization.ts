@@ -81,10 +81,6 @@ export const extractProgramDimensionsMetadata = (
 ): MetadataInputMap => {
     const programDimensionsMetadata: MetadataInputMap = {}
 
-    if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {
-        return programDimensionsMetadata
-    }
-
     // addMetadata will store the stages and TET alongside the program.
     visualization.programDimensions?.forEach((program) => {
         programDimensionsMetadata[program.id] = program

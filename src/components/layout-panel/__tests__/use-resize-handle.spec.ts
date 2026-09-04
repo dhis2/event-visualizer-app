@@ -2,12 +2,11 @@ import { uiSlice, type LayoutPanelHeight } from '@store/ui-slice'
 import { renderHookWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
 import { setupStore } from '@test-utils/setup-store'
 import { act } from '@testing-library/react'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { setLayoutPanelHeightToLocalStorage } from '../local-storage'
 import { useResizeHandle } from '../use-resize-handle'
 
 vi.mock('../local-storage', () => ({
-    getLayoutPanelHeightFromLocalStorage: vi.fn(() => 'AUTO_FIT'),
     setLayoutPanelHeightToLocalStorage: vi.fn(),
 }))
 
@@ -83,10 +82,6 @@ const renderResizeHandle = (
 
     return { ...utils, setContentKey }
 }
-
-afterEach(() => {
-    vi.clearAllMocks()
-})
 
 describe('useResizeHandle', () => {
     it('lifts a stored size that is below the min up to the min', () => {

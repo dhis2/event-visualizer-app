@@ -102,14 +102,17 @@ export const getAdaptedVisualization = (
     }
 }
 
-/* The request as the visualization defines it, excluding sorting, paging,
- * relativePeriodDate and displayProperty (these refetch without a remount). */
+/* The identity of the request's dataset: the visualization plus
+ * relativePeriodDate. Sorting, paging and displayProperty are excluded because
+ * they refetch without a remount. */
 export const getBaseRequestIdentity = (
-    visualization: CurrentVisualization
+    visualization: CurrentVisualization,
+    relativePeriodDate?: string
 ) => ({
     ...getAdaptedVisualization(visualization),
     programIds: (visualization.programDimensions ?? []).map((p) => p.id),
     trackedEntityTypeId: visualization.trackedEntityType?.id,
+    relativePeriodDate: relativePeriodDate ?? null,
 })
 
 const analyticsApiEndpointMap: Record<OutputType, string> = {

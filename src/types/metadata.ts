@@ -68,6 +68,9 @@ export type DimensionMetadataItem = Omit<
     dimensionItemType?: DimensionType // use "our" dimension type
     optionSetId?: string // Add ID reference to optionSet
     legendSetId?: string // Add ID reference to legendSet
+    /* Every legend set assigned to the data item, i.e. the ones a user can
+     * pick from to group values. `legendSetId` is the one actually in use. */
+    legendSetIds?: string[]
     programId?: string // Add ID reference to program
     programStageId?: string // Add ID reference to programStage
     trackedEntityTypeId?: string // Add ID reference to trackedEntityType

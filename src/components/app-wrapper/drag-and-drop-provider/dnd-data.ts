@@ -3,6 +3,7 @@ import type { SortableData } from '@dnd-kit/sortable'
 import type {
     AxisContainerDroppableData,
     AxisSortableData,
+    OverItemEventData,
     SidebarSortableData,
 } from './types'
 
@@ -21,6 +22,11 @@ export const isSidebarSortableData = (
     'dimensionId' in input &&
     'overlayItemProps' in input &&
     'populateMetadata' in input
+
+export const isOverAxis = (
+    overItemData: object | undefined
+): overItemData is OverItemEventData =>
+    overItemData !== undefined && 'axis' in overItemData
 
 export const isAxisContainerData = (
     input: object | undefined

@@ -4,17 +4,6 @@
 
 This is a DHIS2 Event Visualizer application built with React, TypeScript, Vite, Redux Toolkit, and DHIS2 UI components. The application provides event data visualization capabilities within the DHIS2 ecosystem.
 
-### Tech Stack
-
-- **Framework**: React 18 with TypeScript (strict mode)
-- **Build Tool**: Vite with DHIS2 Application Platform (v12.10.2)
-- **State Management**: Redux Toolkit with typed hooks
-- **UI Components**: DHIS2 UI (@dhis2/ui), DND Kit for drag-and-drop
-- **Testing**: Vitest (unit tests) + Cypress (component & E2E tests)
-- **Styling**: CSS modules with TypeScript plugin, styled components
-- **Linting/Formatting**: ESLint (`@dhis2/config-eslint`), Prettier (`@dhis2/config-prettier`), Stylelint
-- **i18n**: DHIS2 i18n utilities for internationalization
-
 ### Project Stage
 
 This is an unreleased app under active development. Some defaults that suit stable codebases are loosened:
@@ -50,30 +39,38 @@ This is a DHIS2 "App Shell App" with a special build structure:
 3. AppShell provides DHIS2-specific contexts and runtime
 4. Generated types provide TypeScript definitions for DHIS2 API
 
-## Project Structure
+### Provider boundary: app vs plugin
 
-```
-src/                   # Source code (primary development location)
-  ├── api/             # API clients and services
-  ├── assets/          # Static assets
-  ├── components/      # React components
-  ├── constants/       # Constants and configuration
-  ├── hooks/           # Custom React hooks (including typed Redux hooks)
-  ├── modules/         # Feature modules
-  ├── store/           # Redux store and slices
-  ├── test-utils/      # Testing utilities
-  ├── types/           # TypeScript type definitions
-  │   └── dhis2-openapi-schemas/  # GENERATED - Do not edit
-  └── ...
-.d2/                   # GENERATED App Shell directory - Do not edit
-  └── shell/           # App Shell wrapped version with DHIS2 contexts
-cypress/               # E2E and component tests
-scripts/               # Build and utility scripts
-i18n/                  # Internationalization files
-types/                 # Additional auto-generated DHIS2 API types
-```
+The app (`src/app.ts`) and the dashboard plugin (`src/dashboard-plugin.tsx`) are
+two entry points with deliberately different provider stacks.
 
-### Where helpers live in `src/modules`
+- The **app** mounts a wide range of providers in the app-wrapper — the Redux
+  store, `AppCachedDataQueryProvider`, the metadata store, and more.
+- The **plugin** mounts only the **plugin-side metadata store provider**
+  (`PluginMetadataProvider`). It must not mount the Redux store
+  (`StoreProvider`) or `AppCachedDataQueryProvider` — those pull the app's
+  cached-data query (`me`, `systemSettings`, org units, org unit levels) into
+  every plugin instance on a dashboard.
+
+**The rule:** `PluginWrapper` and everything below it in the component tree may
+depend only on the metadata store provider plus the providers supplied by the
+DHIS2 app-shell / app-adapter (the data engine and `useDataQuery`, config,
+alerts, etc.). It must not touch the app's Redux store — no `useAppSelector`,
+`useAppDispatch`, or RTK-query hooks (`useRtkQuery`) — and not
+`AppCachedDataQueryProvider`.
+
+Consequences that follow from this:
+
+- Fetch inside the plugin path with app-runtime's `useDataQuery` / `useDataEngine`
+  (provided by the app-adapter), never the RTK-query hooks (which live in the
+  store).
+- Editor-only actions that need the store (e.g. opening the dimension modal on a
+  column-header click) are injected as callbacks by the app, not dispatched from
+  inside a shared component. A shared component in the plugin path takes such a
+  handler as an optional prop; the app canvas provides it, the plugin and the
+  interpretation modal do not.
+
+## Where helpers live in `src/modules`
 
 A helper lives in the domain of what it **produces**, not the domains it reads from (a function
 that reads a visualization but returns dimensions belongs with the dimension helpers). Code not
@@ -84,40 +81,6 @@ file you need (`@modules/<domain>/<file>`). Avoid `index.ts` barrels — Vite's 
 advises against them, since importing one API forces every re-exported module (and its side
 effects) to load. This is a guideline, not an absolute — the occasional helper won't have a clean
 "output" domain.
-
-## Development Workflow
-
-### Running the App
-
-```bash
-pnpm start          # Development server on http://localhost:3000
-pnpm build          # Production build
-pnpm deploy         # Deploy to DHIS2 instance
-```
-
-### Testing
-
-```bash
-pnpm test           # Run unit tests (vitest)
-pnpm test:watch     # Run tests in watch mode
-pnpm cy:open        # Open Cypress E2E GUI
-pnpm cy:run         # Run E2E tests headless
-pnpm cy:comp:open   # Open Cypress component testing
-pnpm cy:comp:run    # Run component tests headless
-```
-
-### Code Quality
-
-```bash
-pnpm lint           # Check for lint errors
-pnpm format         # Fix/format code violations
-```
-
-### Type Generation
-
-```bash
-pnpm generate-types # Regenerate DHIS2 API types from OpenAPI specs
-```
 
 ## Code Conventions
 
@@ -195,6 +158,12 @@ pnpm generate-types # Regenerate DHIS2 API types from OpenAPI specs
 - **Testing Library**: Use `@testing-library/react` for component testing
 - **Coverage**: Write tests for utilities and complex logic
 - **Mocking**: Mock DHIS2 API calls appropriately
+- **Resets**: Don't hand-write a `beforeEach` to undo mocks or stubs. `clearMocks`,
+  `unstubEnvs` and `unstubGlobals` are on in `vitest.config.mts`, so call history and
+  `vi.stubEnv`/`vi.stubGlobal` are already reset before every test. Resets that Vitest has
+  no flag for — clearing `localStorage`, restoring real timers — belong in
+  `vitest.setup.ts` if they apply everywhere, or in the spec if they don't. Clearing
+  _within_ a single test is still explicit.
 
 #### Component Tests (Cypress)
 
@@ -211,103 +180,8 @@ pnpm generate-types # Regenerate DHIS2 API types from OpenAPI specs
 
 #### Testing Hooks with Timing Dependencies (Debounce, setTimeout, etc.)
 
-**When to use fake timers:**
-
-Use fake timers when you need to:
-
-1. **Make assertions at specific points in time** - When testing debounce logic, loading states, or other time-dependent behavior
-2. **Skip waiting for long timeouts** - When tests involve waiting for delays (e.g., API calls, debounce periods) and you want to advance time programmatically
-
-Common scenarios:
-
-- Hook tests with debounce logic (e.g., `useDebounceValue`)
-- Tests with `setTimeout`, `setInterval`, or other timing-based logic
-- Tests that would otherwise use `waitFor()` with long timeouts
-
-**How to use fake timers in hook tests:**
-
-**Key Principle**: **Avoid `waitFor()`** - Testing Library's `waitFor()` uses real timers internally and conflicts with fake timers.
-
-1. **DO NOT use `renderHookWithAppWrapper`** - It uses `waitFor()` internally which conflicts with fake timers
-2. **Choose the right test wrapper based on dependencies**:
-    - **If the hook uses Redux**: Use `renderHookWithReduxStoreProvider` with a real store created via `setupStore()`
-    - **If the hook doesn't use Redux**: Use `renderHook()` directly or create a minimal wrapper without `waitFor()`
-    - **If the hook needs other contexts**: Create a custom wrapper that doesn't use `waitFor()`
-3. **Enable fake timers** in `beforeEach()` and restore in `afterEach()`
-4. **Control time** with `vi.advanceTimersByTimeAsync(ms)` instead of `waitFor()`
-
-**Example with Redux:**
-
-```typescript
-import { renderHookWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
-import { setupStore } from '@test-utils/setup-store'
-
-describe('useMyHook', () => {
-    beforeEach(() => {
-        vi.useFakeTimers()
-    })
-
-    afterEach(() => {
-        vi.useRealTimers()
-    })
-
-    it('debounces the API call', async () => {
-        const store = setupStore(
-            { mySlice: mySliceReducer },
-            { mySlice: { someState: 'value' } }
-        )
-
-        const { result } = renderHookWithReduxStoreProvider(
-            () => useMyHook(),
-            store
-        )
-
-        // Trigger action
-        act(() => {
-            store.dispatch(someAction())
-        })
-
-        // Advance timers to complete debounce + API call
-        await act(() => vi.advanceTimersByTimeAsync(300 + apiDelay))
-
-        // Assert
-        expect(result.current.data).toBeDefined()
-    })
-})
-```
-
-**Example without Redux (unit test):**
-
-```typescript
-import { renderHook } from '@testing-library/react'
-
-describe('useMyUtilityHook', () => {
-    beforeEach(() => {
-        vi.useFakeTimers()
-    })
-
-    afterEach(() => {
-        vi.useRealTimers()
-    })
-
-    it('delays execution', async () => {
-        const { result } = renderHook(() => useMyUtilityHook())
-
-        // Trigger effect
-        act(() => {
-            result.current.triggerDelay()
-        })
-
-        // Advance timers
-        await act(() => vi.advanceTimersByTimeAsync(1000))
-
-        // Assert delayed behavior
-        expect(result.current.isComplete).toBe(true)
-    })
-})
-```
-
-**Reference:** See `use-dimension-list.spec.ts` for a comprehensive example with 41 hook tests using fake timers (runs in 82ms vs 11.26s with real timers). Also see `use-delayed-is-loading-more.spec.ts` for a simpler example testing a custom hook with debounce-like timing behavior.
+Testing Library's `waitFor()` uses real timers internally and conflicts with fake timers, so
+timing-dependent hook tests need a specific setup. See the `testing-with-fake-timers` skill.
 
 ## DHIS2-Specific Considerations
 
@@ -321,83 +195,13 @@ describe('useMyUtilityHook', () => {
 
 ## Understanding the DHIS2 Web API
 
-AI models frequently hallucinate DHIS2 API details — endpoint paths, query parameters, response
-shapes, and filter syntax all evolve between versions. Do not rely on training data for DHIS2 API
-specifics. Instead, consult the actual API of the target instance using the approaches below.
+Never rely on training data for DHIS2 API specifics — endpoint paths, parameters, response
+shapes, and filter syntax all change between versions. Look them up against the target
+instance: see the `dhis2-api-lookup` skill for the three-tier procedure (OpenAPI spec →
+probe the live API → read the `dhis2-core` source).
 
-Read `cypress.env.json` (gitignored) for the DHIS2 server URL and credentials. Use these for all
-API interactions described in this section.
-
-### Tier 1: OpenAPI spec (endpoint structure, parameters, types)
-
-Fetch the scoped OpenAPI spec for the endpoint you need. The DHIS2 API supports path-filtered
-specs so you get only the relevant section:
-
-```bash
-curl -u <user>:<pass> "<server>/api/openapi.yaml?path=/<resource>"
-```
-
-Examples:
-
-- `/api/openapi.yaml?path=/analytics` — analytics endpoints
-- `/api/openapi.yaml?path=/trackedEntities` — tracker endpoints
-- `/api/openapi.yaml?path=/organisationUnits` — org unit endpoints
-
-This gives you endpoint paths, HTTP methods, query parameters, and request/response schemas —
-accurate for the exact server version. Use this as the first step when working with any DHIS2
-API endpoint.
-
-### Tier 2: Probe the live API (verify actual response shapes)
-
-When the OpenAPI spec doesn't fully answer the question — especially for complex endpoints like
-`/api/analytics` where responses vary based on query parameters — make GET requests against the
-dev instance to see actual data:
-
-```bash
-curl -u <user>:<pass> "<server>/api/<resource>?<params>"
-```
-
-**Rules:**
-
-- **GET requests only** — never POST, PUT, PATCH, or DELETE against the instance
-- **Use the dev/test instance** from `cypress.env.json`, never a production server
-- **Limit response size** — use `pageSize=1` or `pageSize=5` and `fields=` filtering to avoid
-  flooding context with large responses
-
-This is useful for understanding actual response shapes, testing filter syntax, verifying which
-fields are returned, and exploring dimension/analytics data structures.
-
-### Tier 3: Read the DHIS2 backend source (controller logic)
-
-When you need to understand _how_ the API works — filter combination logic, validation rules,
-side effects, or behavior not captured in specs — read the Java source code of the DHIS2 backend.
-
-```bash
-npx opensrc dhis2/dhis2-core --modify
-```
-
-This clones the DHIS2 backend source into `./opensrc/repos/github.com/dhis2/dhis2-core/`.
-The directory is gitignored. Controllers are in `dhis-2/dhis-web-api/`, DTOs and models in
-`dhis-2/dhis-api/`. Search for the controller class (e.g. `AnalyticsController`,
-`OrganisationUnitController`).
-
-If the user specifies a DHIS2 version, target that branch: `npx opensrc dhis2/dhis2-core#2.41 --modify`.
-
-Use an Explore subagent to search the cloned source — the codebase is large and reading Java
-inline floods context. The subagent can extract the API contract and return a compact summary.
-
-## Important Configuration Files
-
-- `package.json` - Dependencies and scripts
-- `tsconfig.json` - TypeScript configuration (strict mode enabled)
-- `vite.config.ts` / `vite-extensions.config.mts` - Vite build configuration
-- `cypress.config.ts` - Cypress E2E configuration
-- `cypress.env.json` - Cypress environment (gitignored, see template)
-- `eslint.config.mjs` - ESLint rules (extends `@dhis2/config-eslint`)
-- `.prettierrc.mjs` - Prettier formatting rules (re-exports `@dhis2/config-prettier`)
-- `.stylelintrc.js` - Stylelint CSS/SCSS rules (self-contained)
-- `commitlint.config.mjs` - Commitlint rules (extends `@commitlint/config-conventional`)
-- `d2.config.js` - DHIS2 app configuration
+**GET requests only** against the dev instance from `cypress.env.json` — never POST, PUT,
+PATCH, or DELETE, and never a production server.
 
 ## Plugins and MCP Servers
 
@@ -433,21 +237,6 @@ The project has `lint-staged` configured in `package.json` for pre-commit checks
 - **PRs**: Pull requests should include tests for new functionality
 - **Atomicity**: Keep commits focused and atomic
 - **Testing**: Run tests before committing (`pnpm test`, `pnpm lint`)
-
-## Security Best Practices
-
-- **Secrets**: Never commit secrets, API keys, or credentials (use environment variables)
-- **Input validation**: Validate and sanitize all user input
-- **DHIS2 patterns**: Use DHIS2 authentication and authorization patterns
-- **Dependencies**: Keep dependencies updated to address security vulnerabilities
-
-## Performance Best Practices
-
-- **Code splitting**: Lazy load heavy components with `React.lazy` and dynamic imports
-- **Optimization**: Use `memo`, `useCallback`, `useMemo` when needed to optimize re-renders
-- **Selectors**: Use Redux selectors efficiently
-- **Bundle optimization**: Leverage Vite's bundle splitting via dynamic imports
-- **DHIS2 API**: Optimize DHIS2 API requests (pagination, field filtering, caching)
 
 ## Additional Notes
 
@@ -637,6 +426,25 @@ reference them.
 | `repetitionIndex` | Repetition index extracted from `[n]` suffix                                                   |
 | `optionSetId`     | ID reference to the option set (if applicable)                                                 |
 | `legendSetId`     | ID reference to the legend set (if applicable)                                                 |
+| `legendSetIds`    | IDs of every legend set assigned to the data item, i.e. the grouping options available         |
+
+## Grouping values by legend
+
+A numeric data item that has legend sets assigned can be grouped by legend. The chosen legend set
+is stored as `legendSet` on the dimension's `conditionsByDimension` entry, and reaches the analytics
+API as a `-<legendSetId>` suffix on the dimension (`stageId.dimId-legendSetId`), which
+`@dhis2/analytics` builds from `DimensionRecord.legendSet`. Response values then come back as legend
+IDs, named via `metaData.items`.
+
+- **Availability**: the sidebar's `analytics/*/query/dimensions` endpoint does not return
+  `legendSets`, so they are fetched per data item from `dataElements`/`trackedEntityAttributes`/
+  `programIndicators` (`@api/legend-sets-api`) and cached in the metadata store as `legendSetIds`.
+- **Defaults**: pivot tables default to the first legend set, line lists to no grouping (the absence
+  of state). Seeded by the listener in `@store/seed-default-grouping` when a dimension is added to
+  the layout or its modal is opened, keyed off presence so an explicit choice is never overwritten.
+- **Filtering**: grouping and filtering share the conditions entry, so
+  `setVisUiConfigGroupingByDimension` drops the filter whenever the grouping changes. A grouped
+  dimension filters by legend (`IN:legendId;legendId`) through a transfer instead of by raw value.
 
 ## Testing & Linting Workflow for AI Agents
 

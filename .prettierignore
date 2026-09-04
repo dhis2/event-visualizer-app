@@ -8,6 +8,7 @@ node_modules
 .pnpm-store
 .d2
 .claude
+opensrc
 src/locales/*
 build
 src/types/dhis2-openapi-schemas

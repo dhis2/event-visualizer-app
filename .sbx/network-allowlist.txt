@@ -18,6 +18,14 @@ context7.com
 download.cypress.io
 cdn.cypress.io
 
-# DHIS2 — docs, play/test instances, and API access
+# DHIS2 — docs, play/test instances, and API access. `**` matches any number of labels;
+# a single `*` matches exactly one, so `*.dhis2.org` would cover play.dhis2.org but NOT
+# dev.im.dhis2.org or e2e.im.dhis2.org.
 dhis2.org
-*.dhis2.org
+**.dhis2.org
+
+# Claude Code / Anthropic documentation. The bare claude.com and api.anthropic.com are in
+# the balanced baseline, but the subdomains that actually serve the docs are not, and
+# code.claude.com redirects through www.claude.com.
+**.claude.com
+docs.anthropic.com

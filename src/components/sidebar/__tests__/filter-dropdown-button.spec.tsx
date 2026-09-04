@@ -22,7 +22,6 @@ describe('FilterDropdownButton', () => {
     const mockDispatch = vi.fn()
 
     beforeEach(() => {
-        vi.clearAllMocks()
         mockUseAppDispatch.mockReturnValue(mockDispatch)
         mockUseAppSelector.mockReturnValue(null)
     })

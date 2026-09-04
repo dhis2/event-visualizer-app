@@ -1,6 +1,11 @@
 import { IconButton } from '@components/shared/icon-button'
 import { Layer, Popper, Tooltip, IconMore16 } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector, useConditionsTexts } from '@hooks'
+import {
+    useAppDispatch,
+    useAppSelector,
+    useConditionsTexts,
+    useLegendSetMetadataItem,
+} from '@hooks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import {
     getVisUiConfigItemsByDimension,
@@ -8,9 +13,9 @@ import {
     getVisUiConfigOption,
 } from '@store/vis-ui-config-slice'
 import type { Axis, DimensionType, SavedVisualization, ValueType } from '@types'
-import cx from 'classnames'
 import { useCallback, useMemo, useRef, useState, type FC } from 'react'
 import { ChipBase, type ChipBaseProps } from './chip-base'
+import { ChipContainer, ChipContent } from './chip-container'
 import { ChipMenu } from './chip-menu'
 import { DropInsertMarker } from './drop-insert-marker'
 import { getChipItemsText } from './get-chip-items-text'
@@ -22,7 +27,7 @@ export type LayoutDimension = {
     id: string
     dimensionId: string
     name: string
-    dimensionType?: DimensionType
+    dimensionType: DimensionType
     dimensionItemType?: DimensionType
     optionSet?: string
     programId?: string
@@ -50,6 +55,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
     const items = useAppSelector((state) =>
         getVisUiConfigItemsByDimension(state, dimension.id)
     )
+    const legendSet = useLegendSetMetadataItem(conditions?.legendSet)
     const buttonRef = useRef<HTMLDivElement>(null)
     const [menuIsOpen, setMenuIsOpen] = useState(false)
     const toggleChipMenu = useCallback(() => {
@@ -86,10 +92,11 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
             dimensionName: dimension.name,
             suffix: dimension.suffix,
             itemsText: chipItemsText,
+            isGrouped: Boolean(legendSet),
             isEmpty,
             onClick: openDimensionModal,
         }),
-        [dimension, chipItemsText, isEmpty, openDimensionModal]
+        [dimension, chipItemsText, legendSet, isEmpty, openDimensionModal]
     )
 
     const {
@@ -111,20 +118,19 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
             style={style}
             data-test={`layout-dimension-dnd-${dimension.id}`}
         >
-            <div
-                className={cx(classes.chip, {
-                    [classes.chipEmpty]: isEmpty,
-                    [classes.active]: isDragging,
-                    [classes.showBlank]: !dimension.name,
-                })}
+            <ChipContainer
+                isEmpty={isEmpty}
+                isDragging={isDragging}
+                showBlank={!dimension.name}
                 data-test="layout-dimension-chip"
             >
-                <div className={classes.content}>
+                <ChipContent>
                     <Tooltip
                         content={
                             <TooltipContent
                                 dimension={dimension}
                                 conditionsTexts={conditionsTexts}
+                                groupingName={legendSet?.name}
                                 axisId={axisId}
                             />
                         }
@@ -151,7 +157,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                             </span>
                         )}
                     </Tooltip>
-                </div>
+                </ChipContent>
                 <div ref={buttonRef}>
                     <IconButton
                         onClick={toggleChipMenu}
@@ -172,7 +178,7 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                         </Popper>
                     </Layer>
                 )}
-            </div>
+            </ChipContainer>
             {isOver && !isDragging && (
                 <DropInsertMarker
                     sortable={sortable}

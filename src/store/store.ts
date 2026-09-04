@@ -1,10 +1,14 @@
 import { api } from '@api/api'
+import { getLayoutPanelHeightFromLocalStorage } from '@components/layout-panel/local-storage'
+import { getSidebarWidthFromLocalStorage } from '@components/sidebar/local-storage'
 import { isDebugMode } from '@modules/debug-mode'
 import { getDefaultOptions } from '@modules/options'
+import { getLastUsedVisualizationTypeFromLocalStorage } from '@modules/visualization/local-storage'
 import { configureStore } from '@reduxjs/toolkit'
 import type { AppCachedData, DataEngine, MetadataStore } from '@types'
 import { currentVisSlice } from './current-vis-slice'
 import { dimensionSelectionSlice } from './dimensions-selection-slice'
+import { registerAppListeners } from './listeners'
 import { loaderSlice } from './loader-slice'
 import { createAppCachedDataMiddleware } from './middleware-app-cached-data'
 import { listenerMiddleware } from './middleware-listener'
@@ -12,6 +16,8 @@ import { navigationSlice } from './navigation-slice'
 import { savedVisSlice } from './saved-vis-slice'
 import { uiSlice } from './ui-slice'
 import { visUiConfigSlice } from './vis-ui-config-slice'
+
+registerAppListeners()
 
 /* appCachedDataMiddleware stamps appCachedData onto every action; skip
  * serializing it on each dispatch. meta.arg and meta.baseQueryMeta are RTK
@@ -23,14 +29,30 @@ export const IGNORED_SERIALIZABLE_ACTION_PATHS = [
     'meta.appCachedData',
 ]
 
-export const getPreloadedState = (appCachedData: AppCachedData) => ({
-    visUiConfig: {
-        ...visUiConfigSlice.getInitialState(),
-        options: getDefaultOptions(
-            appCachedData.systemSettings.digitGroupSeparator
-        ),
-    },
-})
+/* Read here rather than in the slices so each store picks up what is stored
+ * now, not what was there when the module was first evaluated. */
+export const getPreloadedState = (appCachedData: AppCachedData) => {
+    const initialUi = uiSlice.getInitialState()
+    const initialVisUiConfig = visUiConfigSlice.getInitialState()
+
+    return {
+        ui: {
+            ...initialUi,
+            layoutPanelHeight: getLayoutPanelHeightFromLocalStorage(),
+            sidebarWidth:
+                getSidebarWidthFromLocalStorage() ?? initialUi.sidebarWidth,
+        },
+        visUiConfig: {
+            ...initialVisUiConfig,
+            visualizationType:
+                getLastUsedVisualizationTypeFromLocalStorage() ??
+                initialVisUiConfig.visualizationType,
+            options: getDefaultOptions(
+                appCachedData.systemSettings.digitGroupSeparator
+            ),
+        },
+    }
+}
 
 export const createStore = (
     engine: DataEngine,

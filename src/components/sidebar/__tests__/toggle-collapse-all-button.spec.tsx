@@ -15,7 +15,6 @@ describe('ToggleCollapseAllButton', () => {
     const mockDispatch = vi.fn()
 
     beforeEach(() => {
-        vi.clearAllMocks()
         mockUseAppDispatch.mockReturnValue(mockDispatch)
         mockUseAppSelector.mockReturnValue(false)
     })

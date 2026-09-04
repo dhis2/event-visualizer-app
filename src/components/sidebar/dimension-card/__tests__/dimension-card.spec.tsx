@@ -29,7 +29,6 @@ describe('DimensionCard', () => {
     const mockDispatch = vi.fn()
 
     beforeEach(() => {
-        vi.clearAllMocks()
         vi.mocked(useAppDispatch).mockReturnValue(mockDispatch)
         vi.mocked(useAppSelector).mockReturnValue(false)
     })

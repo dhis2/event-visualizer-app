@@ -1,17 +1,17 @@
 # Translators:
+# Viktor Varland <viktor@dhis2.org>, 2026
+# Philip Larsen Donnelly, 2026
 # Andres Miguel Rubio, 2026
 # Mai Nguyen <thanhmai.jica@gmail.com>, 2026
-# Viktor Varland <viktor@dhis2.org>, 2026
 # Em Le <em.hispvietnam@gmail.com>, 2026
 # Thuy Nguyen <thuynguyen@hispvietnam.org>, 2026
-# Philip Larsen Donnelly, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Philip Larsen Donnelly, 2026\n"
+"Last-Translator: Thuy Nguyen <thuynguyen@hispvietnam.org>, 2026\n"
 "Language-Team: Vietnamese (https://app.transifex.com/hisp-uio/teams/100509/vi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -33,6 +33,9 @@ msgid ""
 "{{- name}} was not added because it is already used as the custom value."
 msgstr ""
 
+msgid "Retry"
+msgstr "Thử lại"
+
 msgid "Add to {{- axisName}}"
 msgstr ""
 
@@ -45,14 +48,14 @@ msgstr "Phân biệt chữ hoa chữ thường"
 msgid "Delete filter"
 msgstr ""
 
+msgid "Only available for repeatable stages"
+msgstr "Chỉ dành cho các giai đoạn lặp lại"
+
 msgid "Repeated events"
 msgstr "Sự kiện được lặp lại"
 
 msgid "Data"
 msgstr "Dữ liệu"
-
-msgid "Only available for repeatable stages"
-msgstr "Chỉ dành cho các giai đoạn lặp lại"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -203,9 +206,6 @@ msgstr "Mã"
 
 msgid "Name"
 msgstr "Tên"
-
-msgid "An error occurred"
-msgstr ""
 
 msgid "Resize axes panel"
 msgstr ""
@@ -420,6 +420,9 @@ msgid "{{- names}} will be removed. Are you sure?"
 msgstr ""
 
 msgid "Convert"
+msgstr ""
+
+msgid "Coming soon"
 msgstr ""
 
 msgid "Individual data view"
@@ -1001,6 +1004,47 @@ msgstr "Đơn vị đăng ký"
 
 msgid "Enrollment date"
 msgstr "Ngày đăng ký vào chương trình"
+
+msgid "Restricted access"
+msgstr "Giới hạn truy cập"
+
+msgid ""
+"You don't have access to the data in this visualization. Contact a system "
+"administrator."
+msgstr ""
+
+msgid "You don't have access to one or more of the chosen organisation units."
+msgstr "Bạn không có quyền truy cập vào một hoặc nhiều đơn vị được chọn."
+
+msgid ""
+"You don't have access to event analytics. Contact a system administrator."
+msgstr ""
+
+msgid "Something went wrong"
+msgstr "Có gì đó không đúng"
+
+msgid "There's a problem with at least one selected indicator."
+msgstr ""
+
+msgid ""
+"There's a problem with the generated analytics. Contact a system "
+"administrator."
+msgstr ""
+"Có vấn đề với phân tích được tạo. Hãy liên hệ với quản trị viên hệ thống."
+
+msgid "There's a syntax problem with the analytics request."
+msgstr "Có vấn đề về cú pháp với yêu cầu phân tích."
+
+msgid "No data"
+msgstr "Không có dữ liệu"
+
+msgid ""
+"The selected dimensions didn't return any data. There may be no data, or you"
+" may not have access to it."
+msgstr ""
+
+msgid "There was a problem getting the data from the server."
+msgstr "Có vấn đề khi nhận dữ liệu từ máy chủ."
 
 msgid "Columns"
 msgstr "Cột"

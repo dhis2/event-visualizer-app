@@ -81,7 +81,6 @@ const createProgram = (
 
 describe('CardEvent (without registration)', () => {
     beforeEach(() => {
-        vi.clearAllMocks()
         mockUseDimensionList.mockReturnValue(defaultListResult)
         mockUseSelectedDimensionCount.mockReturnValue(0)
     })

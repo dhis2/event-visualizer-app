@@ -46,6 +46,10 @@ describe('VisualizationTypeSelector', () => {
         expect(modal).toBeInTheDocument()
         expect(within(modal).getByText('Line list')).toBeInTheDocument()
         expect(within(modal).getByText('Pivot table')).toBeInTheDocument()
+        expect(within(modal).getByText('Column')).toBeInTheDocument()
+        expect(within(modal).getByText('Bar')).toBeInTheDocument()
+        expect(within(modal).getByText('Line')).toBeInTheDocument()
+        expect(within(modal).getByText('Area')).toBeInTheDocument()
     })
 
     it('changes vis type directly when nothing is discarded', async () => {
@@ -82,9 +86,9 @@ describe('VisualizationTypeSelector', () => {
             'PIVOT_TABLE'
         )
         expect(getVisUiConfigLayout(store.getState())).toEqual({
-            columns: ['numericDe'],
+            columns: [],
             rows: [],
-            filters: [],
+            filters: ['numericDe'],
         })
     })
 
@@ -133,9 +137,9 @@ describe('VisualizationTypeSelector', () => {
             'PIVOT_TABLE'
         )
         expect(getVisUiConfigLayout(store.getState())).toEqual({
-            columns: ['numericDe'],
+            columns: [],
             rows: [],
-            filters: [],
+            filters: ['numericDe'],
         })
     })
 

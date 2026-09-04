@@ -14,8 +14,13 @@ cypress/downloads
 .aider*
 .github/copilot-instructions.md
 .claude/settings.local.json
+# Installed by `playwright-cli install --skills`, not authored here
+.claude/skills/playwright-cli
 cypress/downloads
 .vscode
 .scannerwork
 opensrc
 docs/superpowers
+
+# playwright-cli session artifacts (AI sandboxes)
+.playwright-cli

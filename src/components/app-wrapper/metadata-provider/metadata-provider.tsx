@@ -264,6 +264,10 @@ export type UseMetadataStoreReturnValue = Pick<
     | 'getOrganisationUnitMetadataItem'
     | 'getUserOrgUnitMetadataItem'
     | 'getDimensionMetadataItem'
+    | 'getMetadataItemOrThrow'
+    | 'getProgramMetadataItemOrThrow'
+    | 'getProgramStageMetadataItemOrThrow'
+    | 'getDimensionMetadataItemOrThrow'
     | 'addMetadata'
     | 'setVisualizationMetadata'
 >
@@ -286,6 +290,16 @@ export const useMetadataStore = (): UseMetadataStoreReturnValue => {
             metadataStore.getUserOrgUnitMetadataItem.bind(metadataStore),
         getDimensionMetadataItem:
             metadataStore.getDimensionMetadataItem.bind(metadataStore),
+        getMetadataItemOrThrow:
+            metadataStore.getMetadataItemOrThrow.bind(metadataStore),
+        getProgramMetadataItemOrThrow:
+            metadataStore.getProgramMetadataItemOrThrow.bind(metadataStore),
+        getProgramStageMetadataItemOrThrow:
+            metadataStore.getProgramStageMetadataItemOrThrow.bind(
+                metadataStore
+            ),
+        getDimensionMetadataItemOrThrow:
+            metadataStore.getDimensionMetadataItemOrThrow.bind(metadataStore),
         addMetadata: metadataStore.addMetadata.bind(metadataStore),
         setVisualizationMetadata:
             metadataStore.setVisualizationMetadata.bind(metadataStore),

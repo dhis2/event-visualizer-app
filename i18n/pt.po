@@ -1,25 +1,25 @@
 # Translators:
 # António Fernando Macaringue, 2026
 # Fernando Jorge Bade, 2026
-# Andres Miguel Rubio, 2026
 # Fernando Domingos Inacio <nando.inaciio1996@gmail.com>, 2026
 # Edson Nhancale, 2026
 # Sheila André <sandre@saudigitus.org>, 2026
-# Ge Joao <gsimango@saudigitus.org>, 2026
 # David Júnior <davidjr.mondlane@gmail.com>, 2026
 # David Mondlane, 2026
-# Helton Dias, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
-# Shelsea Chumaio, 2026
 # Gabriela Rodriguez <grodriguezcoronado@gmail.com>, 2026
 # Philip Larsen Donnelly, 2026
+# Helton Dias, 2026
+# Andres Miguel Rubio, 2026
+# Ge Joao <gsimango@saudigitus.org>, 2026
+# Shelsea Chumaio, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-07-03T12:42:31.329Z\n"
+"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Philip Larsen Donnelly, 2026\n"
+"Last-Translator: Shelsea Chumaio, 2026\n"
 "Language-Team: Portuguese (https://app.transifex.com/hisp-uio/teams/100509/pt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -41,6 +41,9 @@ msgid ""
 "{{- name}} was not added because it is already used as the custom value."
 msgstr ""
 
+msgid "Retry"
+msgstr "Repetir"
+
 msgid "Add to {{- axisName}}"
 msgstr ""
 
@@ -53,14 +56,14 @@ msgstr "Sensível às maiúsculas e minúsculas"
 msgid "Delete filter"
 msgstr ""
 
+msgid "Only available for repeatable stages"
+msgstr "Apenas disponível para estágios repetíveis"
+
 msgid "Repeated events"
 msgstr "Eventos repetidos"
 
 msgid "Data"
 msgstr "Dados"
-
-msgid "Only available for repeatable stages"
-msgstr "Apenas disponível para estágios repetíveis"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -212,9 +215,6 @@ msgstr "Código"
 
 msgid "Name"
 msgstr "Nome"
-
-msgid "An error occurred"
-msgstr ""
 
 msgid "Resize axes panel"
 msgstr ""
@@ -429,6 +429,9 @@ msgid "{{- names}} will be removed. Are you sure?"
 msgstr ""
 
 msgid "Convert"
+msgstr ""
+
+msgid "Coming soon"
 msgstr ""
 
 msgid "Individual data view"
@@ -1012,6 +1015,48 @@ msgstr "Unidade organizacional de registo"
 
 msgid "Enrollment date"
 msgstr "Data de inscrição"
+
+msgid "Restricted access"
+msgstr "Acesso restrito"
+
+msgid ""
+"You don't have access to the data in this visualization. Contact a system "
+"administrator."
+msgstr ""
+
+msgid "You don't have access to one or more of the chosen organisation units."
+msgstr ""
+
+msgid ""
+"You don't have access to event analytics. Contact a system administrator."
+msgstr ""
+
+msgid "Something went wrong"
+msgstr "Algo correu mal"
+
+msgid "There's a problem with at least one selected indicator."
+msgstr ""
+
+msgid ""
+"There's a problem with the generated analytics. Contact a system "
+"administrator."
+msgstr ""
+"Há um problema com as análises geradas. Contacte um administrador do "
+"sistema."
+
+msgid "There's a syntax problem with the analytics request."
+msgstr "Há um problema de síntaxe com o pedido de análise."
+
+msgid "No data"
+msgstr "Sem dados"
+
+msgid ""
+"The selected dimensions didn't return any data. There may be no data, or you"
+" may not have access to it."
+msgstr ""
+
+msgid "There was a problem getting the data from the server."
+msgstr "Ocorreu um problema ao obter os dados do servidor."
 
 msgid "Columns"
 msgstr "Colunas"

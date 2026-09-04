@@ -6,19 +6,11 @@ allowBuilds:
   cypress: true
   esbuild: true
   opensrc: true
+  unrs-resolver: true
 minimumReleaseAge: 4320
 minimumReleaseAgeExclude:
   - '@dhis2/*'
   - '@dhis2-ui/*'
-onlyBuiltDependencies:
-  - '@dhis2/cli-helpers-engine'
-  - '@parcel/watcher'
-  - core-js
-  - core-js-pure
-  - cypress
-  - esbuild
-  - opensrc
-  - unrs-resolver
 # These hoists are needed for @dhis2/app-shell since it uses directly some libraries that were hoisted by yarn 1
 # This is a better alternative than pnpm's shamefullyHoist https://pnpm.io/settings#shamefullyhoist until we update the way that @dhis2/app-shell works
 publicHoistPattern:

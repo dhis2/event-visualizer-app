@@ -34,7 +34,6 @@ describe('UnifiedSearchInput', () => {
     }
 
     beforeEach(() => {
-        vi.clearAllMocks()
         vi.useFakeTimers()
 
         // Default: return an initial state with empty search term
