@@ -12,14 +12,14 @@
 # Philip Larsen Donnelly, 2026
 # Yao Selom SAKA (HISP WCA) <ysaka@hispwca.org>, 2026
 # Elise Desailly, 2026
-# Esther Tokouli, 2026
 # Andres Miguel Rubio, 2026
+# Esther Tokouli, 2026
 # Cyrille Kabrane, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
+"POT-Creation-Date: 2026-08-28T12:57:22.711Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Cyrille Kabrane, 2026\n"
 "Language-Team: French (https://app.transifex.com/hisp-uio/teams/100509/fr/)\n"
@@ -58,14 +58,14 @@ msgstr "Respecter les majuscules et les minuscules"
 msgid "Delete filter"
 msgstr ""
 
-msgid "Only available for repeatable stages"
-msgstr "Disponible uniquement pour les étapes répétables"
+msgid "Data"
+msgstr "Données"
 
 msgid "Repeated events"
 msgstr "Événements répétés"
 
-msgid "Data"
-msgstr "Données"
+msgid "and"
+msgstr "et"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -73,32 +73,35 @@ msgstr ""
 msgid "This dimension cannot be filtered."
 msgstr ""
 
-msgid "Preset options can't be combined with other filters"
+msgid "Filtering"
+msgstr ""
+
+msgid "Show all groups"
 msgstr ""
 
 msgid "Add filter"
 msgstr "Ajouter un filtre"
 
-msgid "and"
-msgstr "et"
-
-msgid "is one of preset options"
-msgstr "est l'une des options prédéfinies"
-
-msgid "Choose a legend set"
+msgid "{{- legends}} and {{- remainingCount}} more"
 msgstr ""
 
-msgid "Loading legend sets"
+msgid "Grouping"
 msgstr ""
 
-msgid "No preset option sets for this data item"
-msgstr "Aucun ensemble d'options prédéfinies pour cet élément de données"
-
-msgid "Choose legends"
+msgid "No grouping"
 msgstr ""
 
-msgid "Loading legends"
-msgstr "Chargement des légendes"
+msgid "Show each value individually"
+msgstr ""
+
+msgid "Available groups"
+msgstr ""
+
+msgid "Filter groups"
+msgstr ""
+
+msgid "Selected groups"
+msgstr "Groupes sélectionnés"
 
 msgid "From stages with repeatable events, show values from:"
 msgstr ""
@@ -242,6 +245,9 @@ msgstr "Programme : {{- programName}}"
 
 msgid "Program stage: {{- stageName}}"
 msgstr "Étape du programme : {{- stageName}}"
+
+msgid "Grouping: {{- groupingName}}"
+msgstr ""
 
 msgid "Levels"
 msgstr "Niveaux"
@@ -561,6 +567,9 @@ msgstr "Légende"
 msgid "Select from legends"
 msgstr "Sélectionner parmi les légendes"
 
+msgid "Loading legends"
+msgstr "Chargement des légendes"
+
 msgid "Limit"
 msgstr "Limite"
 
@@ -627,6 +636,12 @@ msgstr "Sous-titre du tableau"
 
 msgid "Labels"
 msgstr "Étiquettes"
+
+msgid "Filters are not applied to Event visualizations"
+msgstr ""
+
+msgid "Show without filters"
+msgstr "Afficher sans filtre"
 
 msgid "Create a {{- visType}} before updating"
 msgstr ""
@@ -1032,13 +1047,15 @@ msgstr ""
 
 msgid "You don't have access to one or more of the chosen organisation units."
 msgstr ""
+"Vous n'avez pas accès à une ou plusieurs des unités d'organisation "
+"sélectionnées."
 
 msgid ""
 "You don't have access to event analytics. Contact a system administrator."
 msgstr ""
 
 msgid "Something went wrong"
-msgstr ""
+msgstr "Une erreur s'est produite "
 
 msgid "There's a problem with at least one selected indicator."
 msgstr ""
@@ -1047,6 +1064,8 @@ msgid ""
 "There's a problem with the generated analytics. Contact a system "
 "administrator."
 msgstr ""
+"Un problème est survenu avec les analyses générées. Contactez un "
+"administrateur système."
 
 msgid "There's a syntax problem with the analytics request."
 msgstr "La requête d'analyse comporte un problème de syntaxe"

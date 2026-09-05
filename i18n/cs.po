@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
+"POT-Creation-Date: 2026-08-28T12:57:22.711Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Jiří Podhorecký <jirka.p@volny.cz>, 2026\n"
 "Language-Team: Czech (https://app.transifex.com/hisp-uio/teams/100509/cs/)\n"
@@ -44,14 +44,14 @@ msgstr "Citlivý na velká písmena"
 msgid "Delete filter"
 msgstr "Odstranit filtr"
 
-msgid "Only available for repeatable stages"
-msgstr "K dispozici pouze pro opakovatelné fáze"
+msgid "Data"
+msgstr "Data"
 
 msgid "Repeated events"
 msgstr "Opakované události"
 
-msgid "Data"
-msgstr "Data"
+msgid "and"
+msgstr "a"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -59,33 +59,35 @@ msgstr ""
 msgid "This dimension cannot be filtered."
 msgstr ""
 
-msgid "Preset options can't be combined with other filters"
+msgid "Filtering"
+msgstr ""
+
+msgid "Show all groups"
 msgstr ""
 
 msgid "Add filter"
 msgstr "Přidat filtr"
 
-msgid "and"
-msgstr "a"
-
-msgid "is one of preset options"
-msgstr "je jednou z přednastavených možností"
-
-msgid "Choose a legend set"
+msgid "{{- legends}} and {{- remainingCount}} more"
 msgstr ""
 
-msgid "Loading legend sets"
+msgid "Grouping"
 msgstr ""
 
-msgid "No preset option sets for this data item"
-msgstr ""
-"Pro tuto datovou položku nejsou nastaveny žádné přednastavené možnosti"
-
-msgid "Choose legends"
+msgid "No grouping"
 msgstr ""
 
-msgid "Loading legends"
-msgstr "Načítání legend"
+msgid "Show each value individually"
+msgstr ""
+
+msgid "Available groups"
+msgstr ""
+
+msgid "Filter groups"
+msgstr ""
+
+msgid "Selected groups"
+msgstr ""
 
 msgid "From stages with repeatable events, show values from:"
 msgstr ""
@@ -227,6 +229,9 @@ msgstr "Program: {{- programName}}"
 
 msgid "Program stage: {{- stageName}}"
 msgstr "Fáze programu: {{- stageName}}"
+
+msgid "Grouping: {{- groupingName}}"
+msgstr ""
 
 msgid "Levels"
 msgstr "Úrovně"
@@ -546,6 +551,9 @@ msgstr "Legenda"
 msgid "Select from legends"
 msgstr "Vybrat si z legend"
 
+msgid "Loading legends"
+msgstr "Načítání legend"
+
 msgid "Limit"
 msgstr "Omezení"
 
@@ -611,6 +619,12 @@ msgstr "Podtitul tabulky"
 
 msgid "Labels"
 msgstr "Štítky"
+
+msgid "Filters are not applied to Event visualizations"
+msgstr ""
+
+msgid "Show without filters"
+msgstr "Zobrazit bez filtrů"
 
 msgid "Create a {{- visType}} before updating"
 msgstr ""
@@ -1021,7 +1035,7 @@ msgid ""
 msgstr ""
 
 msgid "Something went wrong"
-msgstr ""
+msgstr "Něco se pokazilo"
 
 msgid "There's a problem with at least one selected indicator."
 msgstr ""
@@ -1029,7 +1043,7 @@ msgstr ""
 msgid ""
 "There's a problem with the generated analytics. Contact a system "
 "administrator."
-msgstr ""
+msgstr "S vygenerovanou analýzou je problém. Obraťte se na správce systému."
 
 msgid "There's a syntax problem with the analytics request."
 msgstr "V požadavku na analýzu je problém se syntaxí."
