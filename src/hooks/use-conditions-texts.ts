@@ -12,6 +12,8 @@ import {
     getBooleanConditionTexts,
     getOrgUnitConditionMetadataIds,
     getOperatorConditionTexts,
+    getNoValueOptionName,
+    NO_VALUE_OPTION_CODE,
 } from '@modules/conditions'
 import { isOptionSetMetadataItem } from '@modules/metadata/item-guards'
 import type { SavedVisualization } from '@types'
@@ -92,20 +94,19 @@ export const useConditionsTexts = ({
                 getOptionSetIdAndSelectedOptionCodes(dimension, conditionsList)
             const optionSetMetadata = metadataItems[optionSetId]
 
-            if (isOptionSetMetadataItem(optionSetMetadata)) {
-                const selectedOptionCodesLookup = new Set(selectedOptionCodes)
-                return (
-                    optionSetMetadata.options
-                        .filter((option) =>
-                            selectedOptionCodesLookup.has(option.code)
-                        )
-                        // Prefer name
-                        .map((option) => option.name)
-                )
-            } else {
-                // Fallback to ID
-                return selectedOptionCodes
-            }
+            const optionNamesByCode = new Map(
+                isOptionSetMetadataItem(optionSetMetadata)
+                    ? optionSetMetadata.options.map((option) => [
+                          option.code,
+                          option.name,
+                      ])
+                    : []
+            )
+            optionNamesByCode.set(NO_VALUE_OPTION_CODE, getNoValueOptionName())
+
+            return selectedOptionCodes.map(
+                (code) => optionNamesByCode.get(code) ?? code
+            )
         }
         if (shouldUseBooleanConditions(conditions, dimension, conditionsList)) {
             return getBooleanConditionTexts(conditionsList)
