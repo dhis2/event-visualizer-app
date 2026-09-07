@@ -144,6 +144,7 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
         <Transfer
             onChange={({ selected }) => setValues(selected)}
             selected={selectedIds}
+            enableOrderChange
             selectedOptionsLookup={selectedOptionsLookup}
             options={transferOptions}
             loading={isLoading || isFetching}
