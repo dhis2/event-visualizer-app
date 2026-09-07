@@ -139,31 +139,28 @@ export const ConditionsProvider: FC<ConditionsProviderProps> = ({
     const removeCondition = useCallback<
         ConditionsContextValue['removeCondition']
     >(
-        (conditionIndex) =>
-            setConditionsList((prev) => {
-                const updatedConditionsList = prev.filter(
-                    (_, index) => index !== conditionIndex
-                )
+        (conditionIndex) => {
+            const updatedConditionsList = conditionsList.filter(
+                (_, index) => index !== conditionIndex
+            )
 
-                storeConditions(updatedConditionsList)
-
-                return updatedConditionsList
-            }),
-        [storeConditions]
+            setConditionsList(updatedConditionsList)
+            storeConditions(updatedConditionsList)
+        },
+        [conditionsList, storeConditions]
     )
 
     const setCondition = useCallback<ConditionsContextValue['setCondition']>(
-        (conditionIndex, value) =>
-            setConditionsList((prev) => {
-                const updatedConditionsList = prev.map((condition, index) =>
+        (conditionIndex, value) => {
+            const updatedConditionsList = conditionsList.map(
+                (condition, index) =>
                     index === conditionIndex ? value : condition
-                )
+            )
 
-                storeConditions(updatedConditionsList)
-
-                return updatedConditionsList
-            }),
-        [storeConditions]
+            setConditionsList(updatedConditionsList)
+            storeConditions(updatedConditionsList)
+        },
+        [conditionsList, storeConditions]
     )
 
     const contextValue = useMemo<ConditionsContextValue>(
