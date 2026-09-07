@@ -1,12 +1,15 @@
 import { getLastUsedVisualizationTypeFromLocalStorage } from '@modules/visualization/local-storage'
 import { getCurrentVis } from '@store/current-vis-slice'
-import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
+import {
+    tClearVisualization,
+    tUpdateCurrentVisFromVisUiConfig,
+} from '@store/thunks'
 import { initialState as visUiConfigInitialState } from '@store/vis-ui-config-slice'
 import {
     renderHookWithAppWrapper,
     type MockOptions,
 } from '@test-utils/app-wrapper'
-import type { CurrentVisualization, RootState } from '@types'
+import type { AppCachedData, CurrentVisualization, RootState } from '@types'
 import deepmerge from 'deepmerge'
 import { describe, it, expect } from 'vitest'
 
@@ -132,5 +135,50 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
 
         expect(getCurrentVis(store.getState()).value).toBeUndefined()
         expect(store.getState().visUiConfig.customValue).toEqual(customValue)
+    })
+})
+
+/* The separator reaches the reducer through the action meta that
+ * appCachedDataMiddleware stamps, so this needs the real store rather than a
+ * hand-built action. 'SPACE' is the fixture's keyAnalysisDigitGroupSeparator. */
+describe('tClearVisualization', () => {
+    const withSeparator = (
+        digitGroupSeparator: AppCachedData['systemSettings']['digitGroupSeparator']
+    ) => ({
+        partialStore: {
+            preloadedState: {
+                visUiConfig: deepmerge(visUiConfigInitialState, {
+                    layout: { columns: ['s1.de1'] },
+                    options: { digitGroupSeparator },
+                }),
+            } as Partial<RootState>,
+        },
+    })
+
+    it('restores the instance digit group separator', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            withSeparator('COMMA')
+        )
+
+        store.dispatch(tClearVisualization())
+
+        expect(store.getState().visUiConfig.options.digitGroupSeparator).toBe(
+            'SPACE'
+        )
+    })
+
+    it('carries the separator into the rebuilt currentVis', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            withSeparator('COMMA')
+        )
+
+        store.dispatch(tClearVisualization())
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
+
+        expect(getCurrentVis(store.getState()).digitGroupSeparator).toBe(
+            'SPACE'
+        )
     })
 })

@@ -1,3 +1,5 @@
+import { DEFAULT_OPTIONS } from '@constants/options'
+import type { AppCachedData } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     visUiConfigSlice,
@@ -6,6 +8,9 @@ import {
     getVisUiConfigPlainItemIdsByDimension,
     type VisUiConfigState,
 } from '../vis-ui-config-slice'
+
+type SystemDigitGroupSeparator =
+    AppCachedData['systemSettings']['digitGroupSeparator']
 
 const {
     addVisUiConfigLayoutDimension,
@@ -607,6 +612,24 @@ describe('grouping and filtering share one conditions entry', () => {
     })
 })
 
+type ClearAction = ReturnType<typeof clearVisUiConfig>
+
+const withDigitGroupSeparator = (
+    action: ClearAction,
+    digitGroupSeparator: SystemDigitGroupSeparator
+): ClearAction =>
+    ({
+        ...action,
+        meta: { appCachedData: { systemSettings: { digitGroupSeparator } } },
+    }) as ClearAction
+
+const stateWithSeparator = (
+    digitGroupSeparator: SystemDigitGroupSeparator
+): VisUiConfigState => ({
+    ...initialState,
+    options: { ...initialState.options, digitGroupSeparator },
+})
+
 describe('clearVisUiConfig', () => {
     it('resets items and layout to the initial state', () => {
         const state = {
@@ -630,5 +653,56 @@ describe('clearVisUiConfig', () => {
             ...initialState,
             visualizationType: 'PIVOT_TABLE',
         })
+    })
+
+    it('seeds the digit group separator from the system setting in action meta', () => {
+        const result = visUiConfigSlice.reducer(
+            initialState,
+            withDigitGroupSeparator(clearVisUiConfig(), 'SPACE')
+        )
+
+        expect(result.options.digitGroupSeparator).toBe('SPACE')
+    })
+
+    /* The separator a saved visualization carried must not survive into the new
+     * one: the instance setting is the default for every new visualization. */
+    it('replaces the previous separator with the system setting', () => {
+        const result = visUiConfigSlice.reducer(
+            stateWithSeparator('COMMA'),
+            withDigitGroupSeparator(clearVisUiConfig(), 'SPACE')
+        )
+
+        expect(result.options.digitGroupSeparator).toBe('SPACE')
+    })
+
+    it('resets the remaining options while seeding the separator', () => {
+        const state: VisUiConfigState = {
+            ...initialState,
+            options: {
+                ...initialState.options,
+                digitGroupSeparator: 'COMMA',
+                title: 'Kept from the previous visualization',
+                cumulativeValues: true,
+            },
+        }
+
+        const result = visUiConfigSlice.reducer(
+            state,
+            withDigitGroupSeparator(clearVisUiConfig(), 'NONE')
+        )
+
+        expect(result.options).toEqual({
+            ...DEFAULT_OPTIONS,
+            digitGroupSeparator: 'NONE',
+        })
+    })
+
+    it('does not carry the previous separator forward when the action has no cached data', () => {
+        const result = visUiConfigSlice.reducer(
+            stateWithSeparator('COMMA'),
+            clearVisUiConfig()
+        )
+
+        expect(result.options.digitGroupSeparator).toBeUndefined()
     })
 })
