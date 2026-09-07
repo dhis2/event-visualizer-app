@@ -166,6 +166,8 @@ export const FALSE_VALUE: BooleanValue = '0'
 export const NULL_VALUE: BooleanValue = 'NV'
 export const TRUE_VALUE: BooleanValue = '1'
 export const OPERATOR_IN: QueryOperator = 'IN'
+export const NO_VALUE_OPTION_CODE = 'D2__NOVALUE'
+export const getNoValueOptionName = (): string => i18n.t('No value')
 export const OPERATOR_EQUAL: QueryOperator = 'EQ'
 export const OPERATOR_EMPTY = `EQ:${NULL_VALUE}`
 export const OPERATOR_NOT_EMPTY = `NE:${NULL_VALUE}`
