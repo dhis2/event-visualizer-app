@@ -36,7 +36,7 @@
     /* Transparent rather than absent, so the hover border doesn't shift the
      * label or grow the box. */
     border: 1px solid transparent;
-    border-radius: 3px;
+    border-radius: 2px;
     background: none;
     font-size: 13px;
     font-weight: 400;
