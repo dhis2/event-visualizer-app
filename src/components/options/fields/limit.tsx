@@ -4,6 +4,7 @@ import { useOptionsField } from '@hooks'
 import {
     useCallback,
     useMemo,
+    useRef,
     useState,
     type FC,
     type KeyboardEvent,
@@ -20,7 +21,7 @@ export const Limit: FC = () => {
         [sortOrder, topLimit]
     )
 
-    const onChange = useCallback(
+    const toggleLimit = useCallback(
         ({ checked }: { checked: boolean }) => {
             setSortOrder(checked ? -1 : undefined)
             setTopLimit(checked ? 10 : undefined)
@@ -34,7 +35,7 @@ export const Limit: FC = () => {
                 checked={isLimitEnabled}
                 label={i18n.t('Limit')}
                 name="limitEnabled"
-                onChange={onChange}
+                onChange={toggleLimit}
                 dense
             />
             {isLimitEnabled && (
@@ -60,46 +61,59 @@ const SortOrder: FC = () => (
     />
 )
 
+/* Digits only: a number input hands "1e3" over as typed, and `Number` reads
+ * that as 1000. */
 const parseTopLimit = (value: string): number | undefined => {
+    if (!/^\d+$/.test(value)) {
+        return undefined
+    }
+
     const parsed = Number(value)
 
-    return value.trim() !== '' && Number.isInteger(parsed) && parsed >= 1
-        ? parsed
-        : undefined
+    return parsed >= 1 ? parsed : undefined
 }
 
-/* The typed text stays local until the edit ends, so the store only ever holds
- * a usable limit and text that never parses is simply dropped. Both ways of
- * ending an edit run ahead of the submit they trigger: the Update button's
- * mousedown blurs the input before its click, and the Enter keydown is handled
- * before the implicit submission that is its default action. */
+/* Only text that parses reaches the store, so the limit is always usable. An
+ * edit ending on text that does not parse is undone back to the snapshot,
+ * which is why the snapshot only moves on a valid blur. Blur runs before the
+ * submit it triggers, since the Update button's mousedown comes before its
+ * click. Enter never blurs, so it is refused while the text is invalid. */
 const TopLimit: FC = () => {
     const [topLimit, setTopLimit] = useOptionsField('topLimit')
-    const [draft, setDraft] = useState<string>()
+    const [inputValue, setInputValue] = useState<string>(String(topLimit ?? ''))
+    const topLimitSnapshotRef = useRef(topLimit)
+    const parsedInputValue = parseTopLimit(inputValue)
+    const isInvalid = parsedInputValue === undefined
 
-    const parsedDraft = draft === undefined ? undefined : parseTopLimit(draft)
-    const isInvalid = draft !== undefined && parsedDraft === undefined
+    const acceptTypedValue = useCallback(
+        ({ value = '' }: { value?: string }) => {
+            setInputValue(value)
 
-    const commitDraft = useCallback(() => {
-        if (parsedDraft !== undefined) {
-            setTopLimit(parsedDraft)
-        }
-        setDraft(undefined)
-    }, [parsedDraft, setTopLimit])
+            const parsed = parseTopLimit(value)
 
-    const commitOnEnter = useCallback(
-        (_payload: unknown, event: KeyboardEvent<HTMLInputElement>) => {
-            if (event.key !== 'Enter') {
-                return
-            }
-
-            if (isInvalid) {
-                event.preventDefault()
-            } else {
-                commitDraft()
+            if (parsed !== undefined) {
+                setTopLimit(parsed)
             }
         },
-        [isInvalid, commitDraft]
+        [setTopLimit]
+    )
+
+    const createOrResetToSnapshot = useCallback(() => {
+        if (parsedInputValue === undefined) {
+            setInputValue(String(topLimitSnapshotRef.current))
+            setTopLimit(topLimitSnapshotRef.current)
+        } else {
+            topLimitSnapshotRef.current = parsedInputValue
+        }
+    }, [parsedInputValue, setTopLimit])
+
+    const refuseImplicitSubmit = useCallback(
+        (_payload: unknown, event: KeyboardEvent<HTMLInputElement>) => {
+            if (isInvalid && event.key === 'Enter') {
+                event.preventDefault()
+            }
+        },
+        [isInvalid]
     )
 
     return (
@@ -110,18 +124,16 @@ const TopLimit: FC = () => {
                 type="number"
                 min="1"
                 step="1"
-                value={draft ?? String(topLimit ?? '')}
+                value={inputValue}
                 error={isInvalid}
                 validationText={
                     isInvalid
                         ? i18n.t('Enter a whole number of 1 or higher')
                         : undefined
                 }
-                onChange={({ value = '' }: { value?: string }) =>
-                    setDraft(value)
-                }
-                onBlur={commitDraft}
-                onKeyDown={commitOnEnter}
+                onChange={acceptTypedValue}
+                onBlur={createOrResetToSnapshot}
+                onKeyDown={refuseImplicitSubmit}
                 inputWidth="280px"
                 dense
                 dataTest="topLimit-input"

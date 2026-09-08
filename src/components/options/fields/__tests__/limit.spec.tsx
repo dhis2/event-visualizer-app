@@ -42,64 +42,65 @@ const renderLimitInForm = (
         store
     )
 
-const INVALID_VALUES = ['0', '-5', '1.5']
+const replaceTopLimit = async (
+    user: ReturnType<typeof userEvent.setup>,
+    value: string
+) => {
+    await user.clear(getTopLimitInput())
+
+    if (value) {
+        await user.type(getTopLimitInput(), value)
+    }
+}
+
+const REJECTED_VALUES = ['0', '-5', '1.5', '']
 
 describe('Limit', () => {
-    it('stores an accepted top limit as a number once the edit ends', async () => {
+    it('propagates an accepted limit to the store as it is typed', async () => {
         const user = userEvent.setup()
         const store = setupTestStore()
 
         renderWithReduxStoreProvider(<Limit />, store)
 
-        await user.clear(getTopLimitInput())
-        await user.type(getTopLimitInput(), '25')
-        await user.tab()
+        await replaceTopLimit(user, '25')
 
-        expect(getTopLimitInput()).toHaveValue(25)
         expect(getStoredTopLimit(store)).toBe(25)
     })
 
-    it.each(INVALID_VALUES)(
-        'reports %s as invalid and keeps it out of the store',
+    it.each(REJECTED_VALUES)('reports "%s" as invalid', async (value) => {
+        const user = userEvent.setup()
+        const store = setupTestStore()
+
+        renderWithReduxStoreProvider(<Limit />, store)
+
+        await replaceTopLimit(user, value)
+
+        expect(screen.getByText(VALIDATION_TEXT)).toBeInTheDocument()
+    })
+
+    it.each(['0', '-5'])(
+        'keeps the limit %s out of the store',
         async (value) => {
             const user = userEvent.setup()
             const store = setupTestStore()
 
             renderWithReduxStoreProvider(<Limit />, store)
 
-            await user.clear(getTopLimitInput())
-            await user.type(getTopLimitInput(), value)
+            await replaceTopLimit(user, value)
 
-            expect(getTopLimitInput()).toHaveValue(Number(value))
-            expect(screen.getByText(VALIDATION_TEXT)).toBeInTheDocument()
             expect(getStoredTopLimit(store)).toBe(10)
         }
     )
 
-    it('reports an emptied field as invalid and keeps the stored limit', async () => {
-        const user = userEvent.setup()
-        const store = setupTestStore()
-
-        renderWithReduxStoreProvider(<Limit />, store)
-
-        await user.clear(getTopLimitInput())
-
-        expect(screen.getByText(VALIDATION_TEXT)).toBeInTheDocument()
-        expect(getStoredTopLimit(store)).toBe(10)
-    })
-
-    it.each([...INVALID_VALUES, ''])(
-        'restores the stored limit when "%s" is blurred',
+    it.each(REJECTED_VALUES)(
+        'undoes the edit on blur when it ends on "%s"',
         async (value) => {
             const user = userEvent.setup()
             const store = setupTestStore()
 
             renderWithReduxStoreProvider(<Limit />, store)
 
-            await user.clear(getTopLimitInput())
-            if (value) {
-                await user.type(getTopLimitInput(), value)
-            }
+            await replaceTopLimit(user, value)
             await user.tab()
 
             expect(getTopLimitInput()).toHaveValue(10)
@@ -108,7 +109,22 @@ describe('Limit', () => {
         }
     )
 
-    it('submits the restored limit when an invalid value is left by clicking Update', async () => {
+    it('undoes back to the previous settled limit, not the original one', async () => {
+        const user = userEvent.setup()
+        const store = setupTestStore()
+
+        renderWithReduxStoreProvider(<Limit />, store)
+
+        await replaceTopLimit(user, '25')
+        await user.tab()
+        await replaceTopLimit(user, '0')
+        await user.tab()
+
+        expect(getTopLimitInput()).toHaveValue(25)
+        expect(getStoredTopLimit(store)).toBe(25)
+    })
+
+    it('submits the undone limit when an invalid edit is left by clicking Update', async () => {
         const user = userEvent.setup()
         const store = setupTestStore()
         const onSubmit = vi.fn((event: FormEvent<HTMLFormElement>) =>
@@ -117,15 +133,14 @@ describe('Limit', () => {
 
         renderLimitInForm(store, onSubmit)
 
-        await user.clear(getTopLimitInput())
-        await user.type(getTopLimitInput(), '0')
+        await replaceTopLimit(user, '0')
         await user.click(screen.getByRole('button', { name: 'Update' }))
 
         expect(onSubmit).toHaveBeenCalledOnce()
         expect(getStoredTopLimit(store)).toBe(10)
     })
 
-    it('submits the accepted limit when a valid value is left by clicking Update', async () => {
+    it('submits the accepted limit when a valid edit is left by clicking Update', async () => {
         const user = userEvent.setup()
         const store = setupTestStore()
         const onSubmit = vi.fn((event: FormEvent<HTMLFormElement>) =>
@@ -134,15 +149,14 @@ describe('Limit', () => {
 
         renderLimitInForm(store, onSubmit)
 
-        await user.clear(getTopLimitInput())
-        await user.type(getTopLimitInput(), '25')
+        await replaceTopLimit(user, '25')
         await user.click(screen.getByRole('button', { name: 'Update' }))
 
         expect(onSubmit).toHaveBeenCalledOnce()
         expect(getStoredTopLimit(store)).toBe(25)
     })
 
-    it('blocks submitting with Enter while the value is invalid', async () => {
+    it('refuses to submit with Enter while the value is invalid', async () => {
         const user = userEvent.setup()
         const store = setupTestStore()
         const onSubmit = vi.fn((event: FormEvent<HTMLFormElement>) =>
@@ -151,8 +165,8 @@ describe('Limit', () => {
 
         renderLimitInForm(store, onSubmit)
 
-        await user.clear(getTopLimitInput())
-        await user.type(getTopLimitInput(), '0{Enter}')
+        await replaceTopLimit(user, '0')
+        await user.type(getTopLimitInput(), '{Enter}')
 
         expect(onSubmit).not.toHaveBeenCalled()
         expect(getTopLimitInput()).toHaveValue(0)
@@ -168,8 +182,8 @@ describe('Limit', () => {
 
         renderLimitInForm(store, onSubmit)
 
-        await user.clear(getTopLimitInput())
-        await user.type(getTopLimitInput(), '5{Enter}')
+        await replaceTopLimit(user, '5')
+        await user.type(getTopLimitInput(), '{Enter}')
 
         expect(onSubmit).toHaveBeenCalledOnce()
         expect(getStoredTopLimit(store)).toBe(5)
