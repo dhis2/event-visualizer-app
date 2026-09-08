@@ -16,28 +16,24 @@
     font-size: 13px;
     line-height: 15px;
     color: var(--colors-grey900);
+    padding: 2px 0;
 }
 
-/* Chip metrics, so the value's clickable box matches the chips in the axes: a
- * 20px content row inside a 1px border, set in by the chip's 2px margin. */
 .button {
     display: flex;
     align-items: center;
     gap: 4px;
     box-sizing: border-box;
-    min-block-size: 22px;
-    margin: 2px;
     inline-size: fit-content;
-    max-inline-size: calc(100% - 4px);
+    max-inline-size: 100%;
     /* Lets the ellipsis on the value do its work rather than the flex item
      * holding its min-content width. */
     min-inline-size: 0;
-    padding: 1px 4px;
-    /* Transparent rather than absent, so the hover border doesn't shift the
-     * label or grow the box. */
-    border: 1px solid transparent;
-    border-radius: 2px;
-    background: none;
+    min-block-size: 22px;
+    padding: 3px 6px;
+    border: 1px solid var(--colors-grey400);
+    border-radius: 4px;
+    background-color: var(--colors-white);
     font-size: 13px;
     font-weight: 400;
     line-height: 15px;
@@ -47,8 +43,7 @@
 }
 
 .button:hover {
-    background-color: var(--colors-grey100);
-    border-color: var(--colors-grey400);
+    border-color: var(--colors-grey500);
 }
 
 .button:focus {
@@ -90,24 +85,10 @@
     color: var(--colors-grey600);
 }
 
-/* Matches the chip's leading icon. */
 .prefixIcon {
     display: flex;
     flex-shrink: 0;
     color: var(--colors-grey700);
-}
-
-/* Hidden rather than removed, so the content doesn't shift on hover. */
-.editIcon {
-    display: flex;
-    flex-shrink: 0;
-    visibility: hidden;
-    color: var(--colors-grey600);
-}
-
-.button:hover .editIcon,
-.button:focus-visible .editIcon {
-    visibility: visible;
 }
 
 .activeDropTarget {

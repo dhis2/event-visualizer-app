@@ -4,7 +4,6 @@ import { CustomValueModal } from '@components/layout-panel/custom-value-modal'
 import { DimensionTypeIcon } from '@components/shared/dimension-type-icon'
 import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
-import { IconEdit16 } from '@dhis2/ui'
 import { useDndContext, useDroppable } from '@dnd-kit/core'
 import {
     useAppSelector,
@@ -147,9 +146,6 @@ export const ValueAxis: FC = () => {
                         ) : (
                             i18n.t('Count')
                         )}
-                    </span>
-                    <span className={classes.editIcon}>
-                        <IconEdit16 />
                     </span>
                 </button>
             </div>
