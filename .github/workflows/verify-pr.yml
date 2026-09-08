@@ -12,7 +12,7 @@ env:
     GH_TOKEN: ${{secrets.DHIS2_BOT_GITHUB_TOKEN}}
     CI: true
     DEV_URL: 'https://test.e2e.dhis2.org/anly-e2e-dev'
-    API_VERSION: '43'
+    API_VERSION: '44'
     SHOULD_RECORD: ${{ contains(github.event.pull_request.labels.*.name, 'e2e record') }}
 
 concurrency:
