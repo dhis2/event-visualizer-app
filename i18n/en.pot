@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-08T06:57:21.475Z\n"
-"PO-Revision-Date: 2026-09-08T06:57:21.477Z\n"
+"POT-Creation-Date: 2026-09-08T08:05:38.354Z\n"
+"PO-Revision-Date: 2026-09-08T08:05:38.354Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -444,6 +444,9 @@ msgstr "One {{- countedThing}} per row"
 
 msgid "Value"
 msgstr "Value"
+
+msgid "Change value"
+msgstr "Change value"
 
 msgid "No event"
 msgstr "No event"

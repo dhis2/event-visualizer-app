@@ -1,9 +1,9 @@
 import { getActiveDragData } from '@components/app-wrapper/drag-and-drop-provider/dnd-data'
 import type { ValueContainerDroppableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import { CustomValueModal } from '@components/layout-panel/custom-value-modal'
-import { DimensionTypeIcon } from '@components/shared/dimension-type-icon'
 import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
+import { IconEdit16 } from '@dhis2/ui'
 import { useDndContext, useDroppable } from '@dnd-kit/core'
 import {
     useAppSelector,
@@ -12,7 +12,6 @@ import {
     useMetadataStore,
 } from '@hooks'
 import { isDataSourceProgramWithRegistration } from '@modules/data-source'
-import { isDimensionMetadataItem } from '@modules/metadata/item-guards'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import {
@@ -92,14 +91,6 @@ export const ValueAxis: FC = () => {
         )
     }
 
-    /* A custom value loaded from a saved visualization arrives without a
-     * dimension type, and can only be a data element or an attribute. */
-    const customValueDimensionType = isDimensionMetadataItem(
-        customValueMetadata
-    )
-        ? customValueMetadata.dimensionType
-        : 'DATA_ELEMENT'
-
     /* A dropped dimension keeps the item's own aggregation type, which has no
      * name worth showing next to the item. */
     const aggregationText =
@@ -110,36 +101,27 @@ export const ValueAxis: FC = () => {
     return (
         <div
             ref={setNodeRef}
-            className={cx(classes.container, {
+            className={cx(classes.container, classes.clickableContainer, {
                 [classes.activeDropTarget]: isOver && canDropActiveDrag,
                 [classes.blockedDropTarget]: isOver && !canDropActiveDrag,
             })}
             data-test="axis-value"
         >
-            <div className={classes.label}>{i18n.t('Value')}</div>
-            <div className={classes.content}>
-                <button
-                    type="button"
-                    className={classes.button}
-                    onClick={() => setIsModalOpen(true)}
-                    data-test="value-axis-button"
-                >
-                    {customValue && (
-                        <span className={classes.prefixIcon}>
-                            <DimensionTypeIcon
-                                dimensionType={customValueDimensionType}
-                            />
-                        </span>
-                    )}
+            <button
+                type="button"
+                className={classes.cell}
+                onClick={() => setIsModalOpen(true)}
+                data-test="value-axis-button"
+            >
+                <div className={classes.label}>{i18n.t('Value')}</div>
+                <div className={classes.content}>
                     <span className={classes.value}>
                         {customValue ? (
                             <>
-                                <span className={classes.name}>
-                                    {customValueMetadata?.name ?? ''}
-                                </span>
+                                {customValueMetadata?.name ?? ''}
                                 {aggregationText && (
                                     <span className={classes.aggregation}>
-                                        {`· ${aggregationText}`}
+                                        {` · ${aggregationText}`}
                                     </span>
                                 )}
                             </>
@@ -147,8 +129,14 @@ export const ValueAxis: FC = () => {
                             i18n.t('Count')
                         )}
                     </span>
-                </button>
-            </div>
+                    <span
+                        className={classes.hint}
+                        aria-label={i18n.t('Change value')}
+                    >
+                        <IconEdit16 />
+                    </span>
+                </div>
+            </button>
             {isModalOpen && (
                 <CustomValueModal onClose={() => setIsModalOpen(false)} />
             )}

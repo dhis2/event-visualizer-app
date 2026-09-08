@@ -5,90 +5,85 @@
     border-inline-start: 1px solid var(--colors-grey300);
 }
 
-.label {
-    composes: label from '../axis/styles/axis.module.css';
+/* The button carries the cell's padding instead, so its hover state covers the
+ * whole cell rather than an inset box. */
+.clickableContainer {
+    padding: 0;
 }
 
-.content {
-    composes: content from '../axis/styles/axis.module.css';
-    gap: 6px;
-    min-inline-size: 0;
-    font-size: 13px;
-    line-height: 15px;
-    color: var(--colors-grey900);
-    padding: 2px 0;
-}
-
-.button {
+.cell {
     display: flex;
-    align-items: center;
-    gap: 4px;
+    flex-direction: column;
     box-sizing: border-box;
-    inline-size: fit-content;
-    max-inline-size: 100%;
-    /* Lets the ellipsis on the value do its work rather than the flex item
-     * holding its min-content width. */
+    inline-size: 100%;
+    block-size: 100%;
     min-inline-size: 0;
-    min-block-size: 22px;
-    padding: 3px 6px;
-    border: 1px solid var(--colors-grey400);
-    border-radius: 4px;
-    background-color: var(--colors-white);
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 15px;
+    padding: 4px 4px 4px 6px;
+    border: none;
+    background: none;
+    font: inherit;
     text-align: start;
-    color: inherit;
     cursor: pointer;
 }
 
-.button:hover {
-    border-color: var(--colors-grey500);
+.cell:hover .content {
+    background-color: var(--colors-grey100);
 }
 
-.button:focus {
+.cell:focus {
     outline: 3px solid var(--theme-focus);
     outline-offset: -3px;
 }
 
-.button:focus:not(:focus-visible) {
+.cell:focus:not(:focus-visible) {
     outline: none;
 }
 
-.value {
-    display: flex;
-    overflow: hidden;
-    min-inline-size: 0;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.label {
+    composes: label from '../axis/styles/axis.module.css';
 }
 
-/* The name takes the space the aggregation leaves, and the aggregation never
- * takes more than half the cell: a short aggregation stays whole while a long
- * name clips, and a long aggregation clips rather than crowding out the name.
- * Both are single-line with an ellipsis. */
-.name {
-    flex: 1 1 auto;
-    overflow: hidden;
+/* Sits 4px inside the cell on every side, with the start margin and padding
+ * cancelling out so the text still lines up under the label. */
+.content {
+    composes: content from '../axis/styles/axis.module.css';
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 4px;
+    border-radius: 3px;
+    inline-size: auto;
     min-inline-size: 0;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    margin-inline-start: -2px;
+    padding: 4px 4px 2px 4px;
+    font-size: 13px;
+    line-height: 15px;
+    color: var(--colors-grey900);
+}
+
+/* Name and aggregation flow as one run of text, wrapping over as many lines as
+ * they need: the axis can be resized to fit them. */
+.value {
+    min-inline-size: 0;
+    overflow-wrap: break-word;
 }
 
 .aggregation {
-    flex: 0 0 auto;
-    overflow: hidden;
-    max-inline-size: 50%;
-    padding-inline-start: 3px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     color: var(--colors-grey600);
 }
 
-.prefixIcon {
+/* Hidden rather than removed, so showing it doesn't move the value. */
+.hint {
     display: flex;
-    flex-shrink: 0;
-    color: var(--colors-grey700);
+    flex: 0 0 auto;
+    visibility: hidden;
+    margin-inline-start: auto;
+    padding-inline-start: 8px;
+    color: var(--colors-grey800);
+}
+
+.cell:hover .hint,
+.cell:focus-visible .hint {
+    visibility: visible;
 }
 
 .activeDropTarget {

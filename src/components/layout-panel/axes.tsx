@@ -10,7 +10,10 @@ import {
     getUiLayoutPanelExpanded,
     toggleUiLayoutPanelExpanded,
 } from '@store/ui-slice'
-import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
+import {
+    getVisUiConfigCustomValue,
+    getVisUiConfigVisualizationType,
+} from '@store/vis-ui-config-slice'
 import cx from 'classnames'
 import { useEffect, useMemo, type FC } from 'react'
 import { useWindowSize } from 'usehooks-ts'
@@ -73,6 +76,7 @@ export const Axes: FC = () => {
     const isLayoutPanelExpanded = useAppSelector(getUiLayoutPanelExpanded)
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
+    const customValue = useAppSelector(getVisUiConfigCustomValue)
 
     /* Grouped per axis, with suffixes worked out across the whole layout. */
     const { columns, rows, filters } = useLayoutDimensions()
@@ -86,16 +90,20 @@ export const Axes: FC = () => {
         [height]
     )
 
-    /* Signature of the layout's chips per axis. Changes when a dimension is
-     * added, removed, or moved between axes — the cases that change the content
-     * height and so require the panel to re-fit. */
+    /* Signature of the layout's chips per axis, plus the cell value. Changes
+     * when a dimension is added, removed, or moved between axes, or when the
+     * cell value changes — the cases that change the content height and so
+     * require the panel to re-fit. */
     const contentKey = useMemo(() => {
         return [
             toIdsString(columns),
             toIdsString(rows),
             toIdsString(filters),
+            customValue
+                ? `${customValue.id}:${customValue.aggregationType}`
+                : '',
         ].join('|')
-    }, [columns, rows, filters])
+    }, [columns, rows, filters, customValue])
 
     const {
         containerRef,
