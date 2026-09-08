@@ -28,7 +28,7 @@ const getTopLimitInput = () => screen.getByLabelText('Top limit')
 const getStoredTopLimit = (store: ReturnType<typeof setupTestStore>) =>
     store.getState().visUiConfig.options.topLimit
 
-const VALIDATION_TEXT = 'Enter a whole number of 1 or higher'
+const VALIDATION_TEXT = 'Must be a whole number of 1 or more'
 
 const renderLimitInForm = (
     store: ReturnType<typeof setupTestStore>,
