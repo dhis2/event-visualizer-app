@@ -128,7 +128,7 @@ const TopLimit: FC = () => {
                 error={isInvalid}
                 validationText={
                     isInvalid
-                        ? i18n.t('Enter a whole number of 1 or higher')
+                        ? i18n.t('Must be a whole number of 1 or more')
                         : undefined
                 }
                 onChange={acceptTypedValue}
