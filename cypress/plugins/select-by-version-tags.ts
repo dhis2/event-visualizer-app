@@ -5,12 +5,7 @@ import d2config from '../../d2.config.js'
 /* Version tagging is exclusion-based: a test tagged '@skip-44' does not run
  * against a 2.44 backend, and an untagged test runs against every version.
  * Since each test run targets a single backend, the filter is a single
- * negation: '-@skip-<version of the instance under test>'.
- *
- * Note that a positive tag filter would skip all untagged tests, and that
- * multiple negations must be AND-joined ('-@skip-43+-@skip-45'): a
- * space-separated list is an OR, which only excludes tests carrying every one
- * of those tags. */
+ * negation: '-@skip-<version of the instance under test>'. */
 
 const extractMinorVersion = (version: string): number =>
     version.startsWith('2.')
