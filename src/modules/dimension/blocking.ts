@@ -73,7 +73,13 @@ export const getDimensionBlockReason = ({
     layoutTetId,
     dimensionTetId,
 }: DimensionBlockReasonInput): DimensionBlockReason | null => {
-    if (customValueId && dimension.id === customValueId) {
+    /* The custom value is remembered across vis types but only a pivot table
+     * shows it, so it only withholds its dimension from a pivot table layout. */
+    if (
+        visualizationType === 'PIVOT_TABLE' &&
+        customValueId &&
+        dimension.id === customValueId
+    ) {
         return 'customValue'
     }
     if (isDimensionFullyInvalidForVisType(dimension, visualizationType)) {

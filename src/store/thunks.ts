@@ -131,45 +131,16 @@ export const tLoadSavedVisualization = createAsyncThunk<
     }
 )
 
-const shouldPopulateCustomValueFields = (
-    currentVis: CurrentVisState,
-    visUiConfig: VisUiConfigState,
-    withCustomValue?: boolean
-): boolean => {
-    // Only EVENT output can carry a custom value
-    if (visUiConfig.outputType !== 'EVENT') {
-        return false
-    }
-    if (withCustomValue !== undefined) {
-        return withCustomValue // explicit request: add or strip
-    }
-    return Boolean(currentVis.value?.id) // preserve what the current vis shows
-}
+const resolveCustomValueFields = (visUiConfig: VisUiConfigState) => {
+    /* Always include the `value` key: setCurrentVis merges into the previous
+     * currentVis, so omitting it would leave a stale value behind. Only a pivot
+     * table shows aggregated cells, so only it can carry a custom value. */
+    const { customValue, visualizationType } = visUiConfig
 
-const resolveCustomValueFields = (
-    currentVis: CurrentVisState,
-    visUiConfig: VisUiConfigState,
-    withCustomValue?: boolean
-) => {
-    // Always include the `value` key: setCurrentVis merges into the previous
-    // currentVis, so omitting it would leave a stale value behind.
-    if (
-        !shouldPopulateCustomValueFields(
-            currentVis,
-            visUiConfig,
-            withCustomValue
-        )
-    ) {
+    if (visualizationType !== 'PIVOT_TABLE' || !customValue) {
         return { value: undefined, aggregationType: undefined }
     }
 
-    const { customValue } = visUiConfig
-
-    if (!customValue) {
-        throw new Error(
-            'shouldPopulateCustomValueFields is true but visUiConfig.customValue is missing'
-        )
-    }
     return {
         value: { id: customValue.id },
         aggregationType: customValue.aggregationType,
@@ -179,19 +150,15 @@ const resolveCustomValueFields = (
 /* Rebuild a currentVis fresh from visUiConfig so stale currentVis fields can't
  * leak through. Carries over only id and sorting from the previous currentVis.
  * The custom value fields go after the options spread so the value's own
- * aggregation type wins over the options default. `withCustomValue` overrides
- * whether the result carries the custom value: true forces it on, false strips
- * it; omit it to preserve the previous currentVis. */
+ * aggregation type wins over the options default. */
 export const buildCurrentVisFromVisUiConfig = ({
     previousCurrentVis,
     visUiConfig,
     metadataStore,
-    withCustomValue,
 }: {
     previousCurrentVis: CurrentVisState
     visUiConfig: VisUiConfigState
     metadataStore: MetadataStore
-    withCustomValue?: boolean
 }): CurrentVisualization => ({
     id: isCurrentVisualizationPersisted(previousCurrentVis)
         ? previousCurrentVis.id
@@ -207,15 +174,11 @@ export const buildCurrentVisFromVisUiConfig = ({
     programDimensions: collectProgramDimensions(visUiConfig, metadataStore),
     ...getEnabledOptions(visUiConfig.options),
     ...resolveTeiFields(visUiConfig, metadataStore),
-    ...resolveCustomValueFields(
-        previousCurrentVis,
-        visUiConfig,
-        withCustomValue
-    ),
+    ...resolveCustomValueFields(visUiConfig),
 })
 
 export const tUpdateCurrentVisFromVisUiConfig =
-    (withCustomValue?: boolean) =>
+    () =>
     (
         dispatch: AppDispatch,
         getState: () => RootState,
@@ -234,7 +197,6 @@ export const tUpdateCurrentVisFromVisUiConfig =
                     previousCurrentVis: currentVis,
                     visUiConfig,
                     metadataStore: extra.metadataStore,
-                    withCustomValue,
                 })
             )
         )

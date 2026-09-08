@@ -1,19 +1,24 @@
 import { useAppSelector } from '@hooks'
+import { isVisualizationEmpty } from '@modules/visualization/state'
+import { getCurrentVis } from '@store/current-vis-slice'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import cx from 'classnames'
 import { type FC } from 'react'
-import { CustomValueButton } from './action-buttons/custom-value-button'
 import { EnrollmentButton } from './action-buttons/enrollment-button'
 import { EventButton } from './action-buttons/event-button'
 import { TrackedEntityInstanceButton } from './action-buttons/tracked-entity-instance-button'
+import { CellValueButton } from './cell-value-button/cell-value-button'
+import { RowGranularityLabel } from './row-granularity-label/row-granularity-label'
 import classes from './styles/bottom-bar.module.css'
 
 export const BottomBar: FC = () => {
     const dataSourceId = useAppSelector(getDataSourceId)
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
+    const currentVis = useAppSelector(getCurrentVis)
+    const hasVisualizationInCanvas = !isVisualizationEmpty(currentVis)
 
     return (
         <div
@@ -28,13 +33,17 @@ export const BottomBar: FC = () => {
                         <>
                             <EnrollmentButton />
                             <EventButton />
-                            <CustomValueButton />
+                            {hasVisualizationInCanvas && <CellValueButton />}
                         </>
                     ) : (
                         <>
                             <TrackedEntityInstanceButton />
                             <EnrollmentButton />
                             <EventButton />
+                            {hasVisualizationInCanvas &&
+                                visualizationType === 'LINE_LIST' && (
+                                    <RowGranularityLabel />
+                                )}
                         </>
                     )}
                 </div>

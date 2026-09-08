@@ -1,3 +1,4 @@
+import type { TooltipConfig } from '@components/layout-panel/bottom-bar/with-tooltip'
 import i18n from '@dhis2/d2-i18n'
 import { useAppSelector, useLayoutContext, useMetadataStore } from '@hooks'
 import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
@@ -15,13 +16,7 @@ import type { OutputType, Program } from '@types'
 import { useMemo } from 'react'
 import type { ButtonAction } from './base-button'
 
-/* The two table kinds that share the EVENT output type: a plain event table
- * and a custom value table. Used to label the EVENT/custom-value buttons. */
-export type EventOutputTypeVariant = 'EVENT' | 'CUSTOM_VALUE'
-
-type TooltipConfig = { content: string; openDelay?: number } | undefined
-
-const getRegistrationOuTooltipContent = (): TooltipConfig => ({
+const getRegistrationOuTooltipConfig = (): TooltipConfig => ({
     content: i18n.t('Not valid with registration org. unit'),
 })
 
@@ -30,7 +25,7 @@ type CategoryLayoutState = {
     hasCategoryOptionGroupSetInLayout: boolean
 }
 
-const getCategoryTooltipContent = ({
+const getCategoryTooltipConfig = ({
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
 }: CategoryLayoutState): TooltipConfig => {
@@ -50,7 +45,7 @@ const getCategoryTooltipContent = ({
     return undefined
 }
 
-type EventTooltipContentParams = {
+type EventTooltipConfigParams = {
     hasNoProgramInLayout: boolean
     hasMultipleProgramsInLayout: boolean
     hasMultipleProgramStagesInLayout: boolean
@@ -58,13 +53,13 @@ type EventTooltipContentParams = {
     visualizationType: string
 }
 
-const getEventTooltipContent = ({
+const getEventTooltipConfig = ({
     hasNoProgramInLayout,
     hasMultipleProgramsInLayout,
     hasMultipleProgramStagesInLayout,
     isRegistrationOuInLayout,
     visualizationType,
-}: EventTooltipContentParams): TooltipConfig => {
+}: EventTooltipConfigParams): TooltipConfig => {
     if (hasNoProgramInLayout) {
         return { content: i18n.t('Not valid without a program') }
     }
@@ -78,7 +73,7 @@ const getEventTooltipContent = ({
     }
 
     if (isRegistrationOuInLayout) {
-        return getRegistrationOuTooltipContent()
+        return getRegistrationOuTooltipConfig()
     }
 
     if (hasMultipleProgramStagesInLayout) {
@@ -88,7 +83,7 @@ const getEventTooltipContent = ({
     return undefined
 }
 
-type EnrollmentTooltipContentParams = {
+type EnrollmentTooltipConfigParams = {
     programMetadata: Program | undefined
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
@@ -98,7 +93,7 @@ type EnrollmentTooltipContentParams = {
     visualizationType: string
 }
 
-const getEnrollmentTooltipContent = ({
+const getEnrollmentTooltipConfig = ({
     programMetadata,
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
@@ -106,7 +101,7 @@ const getEnrollmentTooltipContent = ({
     hasMultipleProgramsInLayout,
     isRegistrationOuInLayout,
     visualizationType,
-}: EnrollmentTooltipContentParams): TooltipConfig => {
+}: EnrollmentTooltipConfigParams): TooltipConfig => {
     if (hasNoProgramInLayout) {
         return { content: i18n.t('Not valid without a program') }
     }
@@ -124,16 +119,16 @@ const getEnrollmentTooltipContent = ({
     }
 
     if (isRegistrationOuInLayout) {
-        return getRegistrationOuTooltipContent()
+        return getRegistrationOuTooltipConfig()
     }
 
-    return getCategoryTooltipContent({
+    return getCategoryTooltipConfig({
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
     })
 }
 
-type TrackedEntityInstanceTooltipContentParams = {
+type TrackedEntityInstanceTooltipConfigParams = {
     programMetadata: Program | undefined
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
@@ -144,7 +139,7 @@ type TrackedEntityInstanceTooltipContentParams = {
     visualizationType: string
 }
 
-const getTrackedEntityInstanceTooltipContent = ({
+const getTrackedEntityInstanceTooltipConfig = ({
     programMetadata,
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
@@ -153,7 +148,7 @@ const getTrackedEntityInstanceTooltipContent = ({
     hasMultipleTetInLayout,
     hasProgramIndicatorsInLayout,
     visualizationType,
-}: TrackedEntityInstanceTooltipContentParams): TooltipConfig => {
+}: TrackedEntityInstanceTooltipConfigParams): TooltipConfig => {
     if (hasCompletedOnInLayout) {
         return {
             content: i18n.t('Not valid with Completed on'),
@@ -178,16 +173,13 @@ const getTrackedEntityInstanceTooltipContent = ({
         return { content: i18n.t('Not valid with program indicators') }
     }
 
-    return getCategoryTooltipContent({
+    return getCategoryTooltipConfig({
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
     })
 }
 
-export const useActionButton = (
-    buttonType: OutputType,
-    buttonVariant?: EventOutputTypeVariant
-) => {
+export const useActionButton = (buttonType: OutputType) => {
     const currentVis = useAppSelector(getCurrentVis)
     const { tetId, programStageIds, programIds } = useLayoutContext()
     const layout = useAppSelector(getVisUiConfigLayout)
@@ -217,22 +209,11 @@ export const useActionButton = (
         if (isVisualizationEmpty(currentVis)) {
             return 'create'
         } else if (outputType === buttonType) {
-            if (
-                visualizationType === 'PIVOT_TABLE' &&
-                buttonType === 'EVENT' &&
-                buttonVariant !== undefined
-            ) {
-                const hasCustomValue = Boolean(currentVis.value?.id)
-                const activeVariant: EventOutputTypeVariant = hasCustomValue
-                    ? 'CUSTOM_VALUE'
-                    : 'EVENT'
-                return activeVariant === buttonVariant ? 'update' : 'switch'
-            }
             return 'update'
         } else {
             return 'switch'
         }
-    }, [buttonType, buttonVariant, currentVis, outputType, visualizationType])
+    }, [buttonType, currentVis, outputType])
 
     const hasCategoryInLayout: boolean = useMemo(
         () =>
@@ -314,7 +295,7 @@ export const useActionButton = (
 
         switch (buttonType) {
             case 'EVENT':
-                return getEventTooltipContent({
+                return getEventTooltipConfig({
                     hasNoProgramInLayout,
                     hasMultipleProgramsInLayout,
                     hasMultipleProgramStagesInLayout,
@@ -322,7 +303,7 @@ export const useActionButton = (
                     visualizationType,
                 })
             case 'ENROLLMENT':
-                return getEnrollmentTooltipContent({
+                return getEnrollmentTooltipConfig({
                     programMetadata: firstProgramMetadata,
                     hasCategoryInLayout,
                     hasCategoryOptionGroupSetInLayout,
@@ -332,7 +313,7 @@ export const useActionButton = (
                     visualizationType,
                 })
             case 'TRACKED_ENTITY_INSTANCE':
-                return getTrackedEntityInstanceTooltipContent({
+                return getTrackedEntityInstanceTooltipConfig({
                     programMetadata: firstProgramMetadata,
                     hasCategoryInLayout,
                     hasCategoryOptionGroupSetInLayout,

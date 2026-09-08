@@ -7,10 +7,11 @@ import { renderWithAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 import { createDeferredQuery } from '@test-utils/deferred-query'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import type { UserEvent } from '@testing-library/user-event'
 import type { RootState } from '@types'
 import deepmerge from 'deepmerge'
 import { describe, it, expect, vi } from 'vitest'
-import { CustomValueModal } from '../custom-value-modal'
+import { CellValueModal } from '../cell-value-modal'
 
 const ANALYTICS_RESOURCE = 'analytics/enrollments/aggregate/dimensions'
 
@@ -92,6 +93,7 @@ const buildMockOptions = (
     partialStore: {
         preloadedState: deepmerge(initialPreloadedState, {
             visUiConfig: {
+                visualizationType: 'PIVOT_TABLE',
                 layout: {
                     ...visUiConfigInitialState.layout,
                     columns: layoutColumns,
@@ -102,15 +104,72 @@ const buildMockOptions = (
     },
 })
 
-describe('CustomValueModal', () => {
+const selectCustomValueMode = async (user: UserEvent) => {
+    await user.click(screen.getByRole('radio', { name: /Custom value/ }))
+}
+
+describe('CellValueModal', () => {
+    it('starts in Count mode with the item picker hidden', async () => {
+        const onClose = vi.fn()
+        const user = userEvent.setup()
+        const { store } = await renderWithAppWrapper(
+            <CellValueModal onClose={onClose} />,
+            buildMockOptions(['s1.de1'])
+        )
+
+        expect(screen.getByRole('radio', { name: /Count/ })).toBeChecked()
+        expect(
+            screen.queryByPlaceholderText('Search data items')
+        ).not.toBeInTheDocument()
+
+        await user.click(screen.getByRole('button', { name: 'Done' }))
+
+        expect(onClose).toHaveBeenCalledOnce()
+        expect(getVisUiConfigCustomValue(store.getState())).toBeUndefined()
+    })
+
+    it('starts in Custom value mode with the picker expanded when a custom value is stored', async () => {
+        await renderWithAppWrapper(
+            <CellValueModal onClose={() => {}} />,
+            buildMockOptions(['s1.de1'], undefined, {
+                id: 's1.de1',
+                aggregationType: 'SUM',
+            })
+        )
+
+        expect(
+            screen.getByRole('radio', { name: /Custom value/ })
+        ).toBeChecked()
+        await waitFor(() => {
+            expect(screen.getByText('Weight in kg')).toBeInTheDocument()
+        })
+    })
+
+    it('clears the stored custom value when switching back to Count', async () => {
+        const user = userEvent.setup()
+        const { store } = await renderWithAppWrapper(
+            <CellValueModal onClose={() => {}} />,
+            buildMockOptions(['s1.de1'], undefined, {
+                id: 's1.de1',
+                aggregationType: 'SUM',
+            })
+        )
+
+        await user.click(screen.getByRole('radio', { name: /Count/ }))
+
+        expect(getVisUiConfigCustomValue(store.getState())).toBeUndefined()
+    })
+
     it('shows the loading indicator before data items load', async () => {
         const deferred = createDeferredQuery()
         await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
+            <CellValueModal onClose={() => {}} />,
             buildMockOptions(['s1.de1'], {
                 [ANALYTICS_RESOURCE]: deferred.defer(() => dimensionsResponse),
             } as unknown as MockOptions['queryData'])
         )
+
+        await selectCustomValueMode(userEvent.setup())
 
         expect(screen.getByText('Loading data')).toBeInTheDocument()
 
@@ -123,9 +182,11 @@ describe('CustomValueModal', () => {
 
     it('renders the data items after the query resolves', async () => {
         await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
+            <CellValueModal onClose={() => {}} />,
             buildMockOptions(['s1.de1'])
         )
+
+        await selectCustomValueMode(userEvent.setup())
 
         await waitFor(() => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
@@ -133,78 +194,15 @@ describe('CustomValueModal', () => {
         })
     })
 
-    it('shows the stage-filter notice when the layout has a program stage', async () => {
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
-            buildMockOptions(['s1.de1'])
-        )
-
-        await waitFor(() => {
-            expect(
-                screen.getByText(
-                    'Showing data items from "Stage 1", the stage used in the layout'
-                )
-            ).toBeInTheDocument()
-        })
-    })
-
-    it('shows the warning notice when the current custom value is from a different stage', async () => {
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
-            buildMockOptions(['s1.de1'], undefined, {
-                id: 's2.someDe',
-                aggregationType: 'SUM',
-            })
-        )
-
-        await waitFor(() => {
-            expect(
-                screen.getByText(
-                    /Some DE.*different stage than the dimensions in the layout.*Choose another item/
-                )
-            ).toBeInTheDocument()
-        })
-        expect(
-            screen.queryByText(/the stage used in the layout$/)
-        ).not.toBeInTheDocument()
-    })
-
-    it('omits the stage-filter notice when the layout has no program stage', async () => {
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
-            buildMockOptions(['p1.enrollmentDate'])
-        )
-
-        await waitFor(() => {
-            expect(screen.getByText('Weight in kg')).toBeInTheDocument()
-        })
-        expect(
-            screen.queryByText(/Showing data items from/)
-        ).not.toBeInTheDocument()
-    })
-
-    it('renders the stage-scoped empty-state notice when no data items are returned and the layout has a stage', async () => {
-        await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
-            buildMockOptions(['s1.de1'], {
-                [ANALYTICS_RESOURCE]: { dimensions: [] },
-            })
-        )
-
-        await waitFor(() => {
-            expect(
-                screen.getByText('No numeric data items in stage "Stage 1"')
-            ).toBeInTheDocument()
-        })
-    })
-
     it('renders the program-scoped empty-state notice when no data items are returned and the layout has no stage', async () => {
         await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
+            <CellValueModal onClose={() => {}} />,
             buildMockOptions(['p1.enrollmentDate'], {
                 [ANALYTICS_RESOURCE]: { dimensions: [] },
             })
         )
+
+        await selectCustomValueMode(userEvent.setup())
 
         await waitFor(() => {
             expect(
@@ -213,41 +211,43 @@ describe('CustomValueModal', () => {
         })
     })
 
-    it('keeps the Update button disabled until a data item is picked, then applies and closes on click', async () => {
+    it('stores the data item as soon as it is picked, and Done only closes', async () => {
         const onClose = vi.fn()
         const user = userEvent.setup()
         const { store } = await renderWithAppWrapper(
-            <CustomValueModal onClose={onClose} />,
+            <CellValueModal onClose={onClose} />,
             buildMockOptions(['s1.de1'])
         )
+
+        await selectCustomValueMode(user)
 
         await waitFor(() => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
         })
 
-        expect(screen.getByRole('button', { name: 'Update' })).toBeDisabled()
-
         await user.click(screen.getByText('Weight in kg'))
 
-        const updateButton = screen.getByRole('button', { name: 'Update' })
-        expect(updateButton).toBeEnabled()
-
-        await user.click(updateButton)
-
-        expect(onClose).toHaveBeenCalledOnce()
         expect(getVisUiConfigCustomValue(store.getState())).toEqual({
             aggregationType: 'SUM',
             id: 's1.de1',
         })
-        expect(getCurrentVis(store.getState()).value).toEqual({ id: 's1.de1' })
+        /* Applying it to the canvas is the update button's job, exactly as for
+         * a layout change. */
+        expect(getCurrentVis(store.getState()).value).toBeUndefined()
+
+        await user.click(screen.getByRole('button', { name: 'Done' }))
+
+        expect(onClose).toHaveBeenCalledOnce()
     })
 
     it('filters the data item list by the search term', async () => {
         const user = userEvent.setup()
         await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
+            <CellValueModal onClose={() => {}} />,
             buildMockOptions(['s1.de1'])
         )
+
+        await selectCustomValueMode(user)
 
         await waitFor(() => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
@@ -270,11 +270,11 @@ describe('CustomValueModal', () => {
         ).toBeInTheDocument()
     })
 
-    it('falls back to AVERAGE when applying an item whose default aggregation type is NONE', async () => {
+    it('falls back to AVERAGE for an item whose default aggregation type is NONE', async () => {
         const onClose = vi.fn()
         const user = userEvent.setup()
         const { store } = await renderWithAppWrapper(
-            <CustomValueModal onClose={onClose} />,
+            <CellValueModal onClose={onClose} />,
             buildMockOptions(['s1.de1'], {
                 [ANALYTICS_RESOURCE]: {
                     dimensions: [
@@ -289,12 +289,13 @@ describe('CustomValueModal', () => {
             })
         )
 
+        await selectCustomValueMode(user)
+
         await waitFor(() => {
             expect(screen.getByText('Gender score')).toBeInTheDocument()
         })
 
         await user.click(screen.getByText('Gender score'))
-        await user.click(screen.getByRole('button', { name: 'Update' }))
 
         expect(getVisUiConfigCustomValue(store.getState())).toEqual({
             aggregationType: 'AVERAGE',
@@ -305,7 +306,7 @@ describe('CustomValueModal', () => {
     it('disables "Use item default" and selects Average when the item default is NONE', async () => {
         const user = userEvent.setup()
         await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
+            <CellValueModal onClose={() => {}} />,
             buildMockOptions(['s1.de1'], {
                 [ANALYTICS_RESOURCE]: {
                     dimensions: [
@@ -325,6 +326,8 @@ describe('CustomValueModal', () => {
                 },
             })
         )
+
+        await selectCustomValueMode(user)
 
         await waitFor(() => {
             expect(screen.getByText('Gender score')).toBeInTheDocument()
@@ -350,7 +353,7 @@ describe('CustomValueModal', () => {
     it('reverts to "Use item default" when switching from a NONE item back to an aggregatable one', async () => {
         const user = userEvent.setup()
         await renderWithAppWrapper(
-            <CustomValueModal onClose={() => {}} />,
+            <CellValueModal onClose={() => {}} />,
             buildMockOptions(['s1.de1'], {
                 [ANALYTICS_RESOURCE]: {
                     dimensions: [
@@ -370,6 +373,8 @@ describe('CustomValueModal', () => {
                 },
             })
         )
+
+        await selectCustomValueMode(user)
 
         await waitFor(() => {
             expect(screen.getByText('Gender score')).toBeInTheDocument()

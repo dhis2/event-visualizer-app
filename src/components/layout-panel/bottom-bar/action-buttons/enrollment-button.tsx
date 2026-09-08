@@ -1,7 +1,5 @@
-import { useProgramMetadataItem } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import i18n from '@dhis2/d2-i18n'
-import { useAppSelector, useLayoutContext } from '@hooks'
-import { isDataSourceProgramWithRegistration } from '@modules/data-source'
+import { useAppSelector, useOutputTypeLabel } from '@hooks'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import { useMemo, type FC } from 'react'
 import { BaseButtonWithConditionalTooltip } from './base-button'
@@ -10,19 +8,7 @@ import { useActionButton } from './use-action-button'
 export const EnrollmentButton: FC = () => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const { action, tooltipConfig } = useActionButton('ENROLLMENT')
-    const { programIds } = useLayoutContext()
-    const programMetadata = useProgramMetadataItem(programIds[0])
-
-    const enrollmentLabel = useMemo(() => {
-        if (
-            isDataSourceProgramWithRegistration(programMetadata) &&
-            programMetadata.displayEnrollmentLabel
-        ) {
-            return programMetadata.displayEnrollmentLabel
-        }
-
-        return i18n.t('Enrollment')
-    }, [programMetadata])
+    const enrollmentLabel = useOutputTypeLabel('ENROLLMENT')
 
     const buttonLabelLookup = useMemo(
         () => ({
