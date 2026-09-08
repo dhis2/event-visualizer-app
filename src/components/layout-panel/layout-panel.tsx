@@ -5,7 +5,6 @@ import { Axes } from './axes'
 import { BottomBar } from './bottom-bar/bottom-bar'
 import classes from './styles/layout-panel.module.css'
 import { TopBar } from './top-bar/top-bar'
-import { ValueBar } from './value-bar'
 
 export const LayoutPanel: FC = () => {
     const isLayoutPanelVisible = useAppSelector(getUiLayoutPanelVisible)
@@ -14,7 +13,6 @@ export const LayoutPanel: FC = () => {
         <div className={classes.panel}>
             <TopBar />
             <Axes />
-            <ValueBar />
             <BottomBar />
         </div>
     ) : null

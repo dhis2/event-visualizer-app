@@ -10,10 +10,12 @@
 .axisContainer {
     position: relative;
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    /* `minmax(0, …)` on both tracks: the default `min-content` floor lets a long
+     * chip or cell value name widen its column and scroll the panel sideways. */
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
     grid-template-areas:
         'columns filters'
-        'rows filters';
+        'rows value';
     /* Auto rows while the panel height is indefinite (no applied height): each
      * axis takes its own content height, which is what the panel measures to
      * fit. `fr` rows can't size this state — in an indefinite-height grid an
@@ -26,20 +28,24 @@
     overflow-y: auto;
 }
 
-/* With a definite height applied, columns and rows share it equally: each floors
- * at its own content (via the implicit min-content minimum, so nothing clips and
+/* With a definite height applied, the two rows share it equally: each floors at
+ * its own content (via the implicit min-content minimum, so nothing clips and
  * overflow scrolls), and any extra space is mirrored 50/50. At exactly the
  * content height this resolves back to the two content heights. */
 .axisContainer.fixedHeight {
     grid-template-rows: 1fr 1fr;
 }
 
-/* LINE_LIST has a single row, so it never equalizes — one filling track works in
- * both the measuring and applied states. Declared after `.fixedHeight` so it
- * wins the row template when both classes are present. */
+/* LINE_LIST has no rows axis, so its columns axis spans the full height beside
+ * the stacked filters and value cells. The value cell only ever holds one line
+ * of text, so it takes its content height and columns/filters absorb the rest.
+ * Declared after `.fixedHeight` so it wins the row template when both classes
+ * are present. */
 .axisContainer.lineList {
-    grid-template-areas: 'columns filters';
-    grid-template-rows: minmax(min-content, 1fr);
+    grid-template-areas:
+        'columns filters'
+        'columns value';
+    grid-template-rows: minmax(min-content, 1fr) min-content;
 }
 
 .expandButton {

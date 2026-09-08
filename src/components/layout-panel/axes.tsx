@@ -21,6 +21,7 @@ import { ResizeHandle } from './resize-handle'
 import classes from './styles/axes.module.css'
 import { useLayoutDimensions } from './use-layout-dimensions'
 import { useResizeHandle } from './use-resize-handle'
+import { ValueAxis } from './value-axis'
 
 const ExpandLayoutPanelButton: FC = () => {
     const dispatch = useAppDispatch()
@@ -54,8 +55,9 @@ const LoadingSkeletons: FC = () => (
 )
 
 /* Height that keeps a single axis row (label + min content area + padding)
- * fully visible. LINE_LIST stacks one such row (columns/filters); PIVOT_TABLE
- * stacks two (columns over rows), so its min is twice as tall. */
+ * fully visible. Both visualization types stack two such rows: PIVOT_TABLE
+ * columns over rows, LINE_LIST a full-height columns axis beside the stacked
+ * filters and value cells. */
 const AXIS_ROW_MIN_HEIGHT = 58
 
 /* Height below which dragging collapses the panel. Lower than the visType min
@@ -84,14 +86,6 @@ export const Axes: FC = () => {
         [height]
     )
 
-    const minHeight = useMemo(
-        () =>
-            visualizationType === 'LINE_LIST'
-                ? AXIS_ROW_MIN_HEIGHT
-                : AXIS_ROW_MIN_HEIGHT * 2,
-        [visualizationType]
-    )
-
     /* Signature of the layout's chips per axis. Changes when a dimension is
      * added, removed, or moved between axes — the cases that change the content
      * height and so require the panel to re-fit. */
@@ -112,7 +106,7 @@ export const Axes: FC = () => {
         size,
     } = useResizeHandle({
         orientation: 'horizontal',
-        min: minHeight,
+        min: AXIS_ROW_MIN_HEIGHT * 2,
         collapseThreshold: AXES_COLLAPSE_THRESHOLD,
         contentKey,
         max: maxHeight,
@@ -160,6 +154,7 @@ export const Axes: FC = () => {
                             <Axis axisId="rows" dimensions={rows} />
                         )}
                         <Axis axisId="filters" dimensions={filters} />
+                        <ValueAxis />
                     </div>
                     <ResizeHandle
                         isDragging={isDragging}

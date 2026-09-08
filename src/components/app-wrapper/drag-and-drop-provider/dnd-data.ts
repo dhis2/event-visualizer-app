@@ -2,9 +2,10 @@ import type { Active } from '@dnd-kit/core'
 import type { SortableData } from '@dnd-kit/sortable'
 import type {
     AxisContainerDroppableData,
+    AxisDropTargetData,
     AxisSortableData,
-    OverItemEventData,
     SidebarSortableData,
+    ValueContainerDroppableData,
 } from './types'
 
 export const isAxisSortableData = (
@@ -25,7 +26,7 @@ export const isSidebarSortableData = (
 
 export const isOverAxis = (
     overItemData: object | undefined
-): overItemData is OverItemEventData =>
+): overItemData is AxisDropTargetData =>
     overItemData !== undefined && 'axis' in overItemData
 
 export const isAxisContainerData = (
@@ -34,6 +35,13 @@ export const isAxisContainerData = (
     input !== undefined &&
     'isAxisContainer' in input &&
     input.isAxisContainer === true
+
+export const isValueContainerData = (
+    input: object | undefined
+): input is ValueContainerDroppableData =>
+    input !== undefined &&
+    'isValueContainer' in input &&
+    input.isValueContainer === true
 
 export const getActiveDragData = (
     active: Active | null

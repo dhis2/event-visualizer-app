@@ -120,17 +120,6 @@ const seedDefaultItemsIfAbsent = (
     }
 }
 
-/* A dimension can't be both the cell value and a layout dimension. Adding it
- * to the layout wins; the cell value falls back to the default count. */
-const clearCustomValueIfNowInLayout = (
-    state: VisUiConfigState,
-    dimensionIds: string[]
-) => {
-    if (state.customValue && dimensionIds.includes(state.customValue.id)) {
-        state.customValue = undefined
-    }
-}
-
 const resolveSortInsertIndex = ({
     insertIndex,
     insertAfter,
@@ -277,7 +266,6 @@ export const visUiConfigSlice = createSlice({
                 dimensionId
             )
             seedDefaultItemsIfAbsent(state, dimensionId, action)
-            clearCustomValueIfNowInLayout(state, [dimensionId])
         },
         addVisUiConfigLayoutDimensions: (
             state,
@@ -307,7 +295,6 @@ export const visUiConfigSlice = createSlice({
             for (const dimensionId of dimensionIds) {
                 seedDefaultItemsIfAbsent(state, dimensionId, action)
             }
-            clearCustomValueIfNowInLayout(state, dimensionIds)
         },
         moveVisUiConfigLayoutDimension: (
             state,

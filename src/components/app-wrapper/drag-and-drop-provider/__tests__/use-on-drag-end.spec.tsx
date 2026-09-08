@@ -10,6 +10,7 @@ import {
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
+    setVisUiConfigCustomValue,
 } from '@store/vis-ui-config-slice'
 import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import { renderHook } from '@testing-library/react'
@@ -49,6 +50,7 @@ vi.mock('@store/vis-ui-config-slice', () => ({
     addVisUiConfigLayoutDimensions: vi.fn(),
     moveVisUiConfigLayoutDimension: vi.fn(),
     removeVisUiConfigLayoutDimensionFromAxis: vi.fn(),
+    setVisUiConfigCustomValue: vi.fn(),
     getVisUiConfigVisualizationType: vi.fn(),
     getVisUiConfigCustomValue: vi.fn(),
     getVisUiConfigLayoutAllDimensionIds: vi.fn(() => []),
@@ -454,5 +456,85 @@ describe('useOnDragEnd', () => {
                 insertAfter: false,
             })
         )
+    })
+
+    it('sets the dropped sidebar dimension as the custom value', () => {
+        const { result } = renderHook(() => useOnDragEnd())
+        const populateMetadata = vi.fn()
+        const event = {
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 'stage1.numericDe',
+                        overlayItemProps: {},
+                        populateMetadata,
+                        isLayoutBlocked: false,
+                        canBeCustomValue: true,
+                    },
+                },
+            },
+            over: { data: { current: { isValueContainer: true } } },
+        } as unknown as LayoutDragEndEvent
+
+        result.current(event)
+
+        expect(populateMetadata).toHaveBeenCalled()
+        expect(setVisUiConfigCustomValue).toHaveBeenCalledWith({
+            id: 'stage1.numericDe',
+            aggregationType: 'DEFAULT',
+        })
+        expect(mockDispatch).toHaveBeenCalledWith(clearMultiSelection())
+    })
+
+    it('leaves a dropped chip on its axis when it becomes the custom value', () => {
+        const { result } = renderHook(() => useOnDragEnd())
+        const event = {
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 'stage1.numericDe',
+                        axis: 'rows',
+                        sortable: { index: 1 },
+                        overlayItemProps: {},
+                        insertAfter: false,
+                        isLayoutBlocked: false,
+                        canBeCustomValue: true,
+                    },
+                },
+            },
+            over: { data: { current: { isValueContainer: true } } },
+        } as unknown as LayoutDragEndEvent
+
+        result.current(event)
+
+        expect(removeVisUiConfigLayoutDimensionFromAxis).not.toHaveBeenCalled()
+        expect(setVisUiConfigCustomValue).toHaveBeenCalledWith({
+            id: 'stage1.numericDe',
+            aggregationType: 'DEFAULT',
+        })
+    })
+
+    it('keeps a chip in its axis when it cannot be the custom value', () => {
+        const { result } = renderHook(() => useOnDragEnd())
+        const event = {
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 'stage1.textDe',
+                        axis: 'rows',
+                        sortable: { index: 1 },
+                        overlayItemProps: {},
+                        insertAfter: false,
+                        isLayoutBlocked: false,
+                        canBeCustomValue: false,
+                    },
+                },
+            },
+            over: { data: { current: { isValueContainer: true } } },
+        } as unknown as LayoutDragEndEvent
+
+        result.current(event)
+
+        expect(mockDispatch).not.toHaveBeenCalled()
     })
 })

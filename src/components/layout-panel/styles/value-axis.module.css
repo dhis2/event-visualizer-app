@@ -1,0 +1,129 @@
+.container {
+    composes: container from '../axis/styles/axis.module.css';
+    grid-area: value;
+    border-block-start: 1px solid var(--colors-grey300);
+    border-inline-start: 1px solid var(--colors-grey300);
+}
+
+.label {
+    composes: label from '../axis/styles/axis.module.css';
+}
+
+.content {
+    composes: content from '../axis/styles/axis.module.css';
+    gap: 6px;
+    min-inline-size: 0;
+    font-size: 13px;
+    line-height: 15px;
+    color: var(--colors-grey900);
+}
+
+/* Chip metrics, so the value's clickable box matches the chips in the axes: a
+ * 20px content row inside a 1px border, set in by the chip's 2px margin. */
+.button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-sizing: border-box;
+    min-block-size: 22px;
+    margin: 2px;
+    inline-size: fit-content;
+    max-inline-size: calc(100% - 4px);
+    /* Lets the ellipsis on the value do its work rather than the flex item
+     * holding its min-content width. */
+    min-inline-size: 0;
+    padding: 1px 4px;
+    /* Transparent rather than absent, so the hover border doesn't shift the
+     * label or grow the box. */
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: none;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 15px;
+    text-align: start;
+    color: inherit;
+    cursor: pointer;
+}
+
+.button:hover {
+    background-color: var(--colors-grey100);
+    border-color: var(--colors-grey400);
+}
+
+.button:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+
+.button:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.value {
+    display: flex;
+    overflow: hidden;
+    min-inline-size: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* The name takes the space the aggregation leaves, and the aggregation never
+ * takes more than half the cell: a short aggregation stays whole while a long
+ * name clips, and a long aggregation clips rather than crowding out the name.
+ * Both are single-line with an ellipsis. */
+.name {
+    flex: 1 1 auto;
+    overflow: hidden;
+    min-inline-size: 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.aggregation {
+    flex: 0 0 auto;
+    overflow: hidden;
+    max-inline-size: 50%;
+    padding-inline-start: 3px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--colors-grey600);
+}
+
+/* Matches the chip's leading icon. */
+.prefixIcon {
+    display: flex;
+    flex-shrink: 0;
+    color: var(--colors-grey700);
+}
+
+/* Hidden rather than removed, so the content doesn't shift on hover. */
+.editIcon {
+    display: flex;
+    flex-shrink: 0;
+    visibility: hidden;
+    color: var(--colors-grey600);
+}
+
+.button:hover .editIcon,
+.button:focus-visible .editIcon {
+    visibility: visible;
+}
+
+.activeDropTarget {
+    composes: activeDropTarget from '../axis/styles/axis.module.css';
+}
+
+.activeDropTarget .label {
+    color: var(--colors-grey900);
+}
+
+/* A non-numeric dimension cannot be aggregated into a cell value, so the cell
+ * shows the drag is going nowhere rather than inviting the drop. */
+.blockedDropTarget {
+    box-shadow:
+        inset 0 0 0 1px
+            color-mix(in srgb, var(--colors-grey500), transparent 50%),
+        inset 0 0 8px color-mix(in srgb, var(--colors-grey500), transparent 85%);
+    cursor: not-allowed;
+}

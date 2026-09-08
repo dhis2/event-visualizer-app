@@ -13,6 +13,7 @@ import {
     getCrossTetMessage,
     getDimensionLayoutBlockedMessage,
 } from '@modules/dimension/blocking'
+import { canDimensionBeCustomValue } from '@modules/dimension/custom-value'
 import { resolveDimensionTetId } from '@modules/layout'
 import {
     getMultiSelectedDimensionIds,
@@ -112,6 +113,7 @@ export const useDimensionItemDnd = ({
             populateMetadata,
             isLayoutBlocked: resolvedIsLayoutBlocked,
             layoutBlockedMessage: resolvedLayoutBlockedMessage,
+            canBeCustomValue: canDimensionBeCustomValue(dimension),
         }),
         [
             dimension,

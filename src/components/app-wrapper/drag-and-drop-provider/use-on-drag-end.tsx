@@ -22,6 +22,7 @@ import {
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
+    setVisUiConfigCustomValue,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
@@ -31,8 +32,9 @@ import {
     isAxisSortableData,
     isOverAxis,
     isSidebarSortableData,
+    isValueContainerData,
 } from './dnd-data'
-import type { LayoutDragEndEvent, OverItemEventData } from './types'
+import type { AxisDropTargetData, LayoutDragEndEvent } from './types'
 
 type OnDragEndFn = (event: LayoutDragEndEvent) => void
 
@@ -79,7 +81,7 @@ const partitionMultiSelectedDimensions = ({
 }
 
 const getDropTarget = (
-    overItemData: OverItemEventData
+    overItemData: AxisDropTargetData
 ): { targetIndex: number; insertAfter: boolean } =>
     isAxisContainerData(overItemData)
         ? { targetIndex: 0, insertAfter: false }
@@ -106,6 +108,12 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 { list, layoutTetName, nsSeparator: '^^' }
             ),
         SKIPPED_DIMENSIONS_ALERT_OPTIONS
+    )
+    const { show: showValueNotNumericAlert } = useAlert(
+        i18n.t(
+            'Only numeric data items can be used as the cell value, because the value is aggregated.'
+        ),
+        { critical: true }
     )
     const metadataStore = useMetadataStore()
     const store = useAppStore()
@@ -146,6 +154,28 @@ export const useOnDragEnd = (): OnDragEndFn => {
             }
 
             const overItemData = event.over?.data.current
+
+            /* The cell value holds a single dimension rather than a list, so a
+             * drop on it replaces the value instead of inserting a chip. The
+             * same dimension can be both the cell value and a layout
+             * dimension, so a dropped chip stays on its axis. */
+            if (isValueContainerData(overItemData)) {
+                if (!draggedItemData.canBeCustomValue) {
+                    showValueNotNumericAlert()
+                    return
+                }
+                if (isSidebarSortableData(draggedItemData)) {
+                    draggedItemData.populateMetadata()
+                }
+                dispatch(
+                    setVisUiConfigCustomValue({
+                        id: draggedItemData.dimensionId,
+                        aggregationType: 'DEFAULT',
+                    })
+                )
+                dispatch(clearMultiSelection())
+                return
+            }
 
             if (!isOverAxis(overItemData)) {
                 // Remove layout dimension when dropped ouside axes
@@ -246,6 +276,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
             metadataStore,
             store,
             showSkippedDimensionAlerts,
+            showValueNotNumericAlert,
         ]
     )
 }

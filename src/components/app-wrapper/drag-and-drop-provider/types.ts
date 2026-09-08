@@ -9,6 +9,7 @@ export type SidebarSortableData = {
     populateMetadata: () => void
     isLayoutBlocked: boolean
     layoutBlockedMessage?: string
+    canBeCustomValue: boolean
 }
 
 export type AxisSortableData = {
@@ -18,6 +19,7 @@ export type AxisSortableData = {
     insertAfter: boolean
     isLayoutBlocked: boolean
     layoutBlockedMessage?: string
+    canBeCustomValue: boolean
 }
 
 export type AxisContainerDroppableData = {
@@ -25,11 +27,17 @@ export type AxisContainerDroppableData = {
     isAxisContainer: true
 }
 
+export type ValueContainerDroppableData = {
+    isValueContainer: true
+}
+
 export type DraggedItemEventData = (SidebarSortableData | AxisSortableData) &
     SortableData
 
-export type OverItemEventData =
+export type AxisDropTargetData =
     (AxisSortableData & SortableData) | AxisContainerDroppableData
+
+export type OverItemEventData = AxisDropTargetData | ValueContainerDroppableData
 
 export interface LayoutDragEndEvent extends DragEndEvent {
     active: Omit<Active, 'data'> & {
