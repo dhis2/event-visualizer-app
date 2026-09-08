@@ -1055,8 +1055,8 @@ msgstr ""
 msgid "There's a syntax problem with the analytics request."
 msgstr "There's a syntax problem with the analytics request."
 
-msgid "No data"
-msgstr "No data"
+msgid "No data available"
+msgstr "No data available"
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or "
