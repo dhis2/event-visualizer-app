@@ -1,3 +1,5 @@
+import { DEFAULT_OPTIONS } from '@constants/options'
+import type { AppCachedData } from '@types'
 import { describe, it, expect } from 'vitest'
 import {
     visUiConfigSlice,
@@ -6,6 +8,9 @@ import {
     getVisUiConfigPlainItemIdsByDimension,
     type VisUiConfigState,
 } from '../vis-ui-config-slice'
+
+type SystemDigitGroupSeparator =
+    AppCachedData['systemSettings']['digitGroupSeparator']
 
 const {
     addVisUiConfigLayoutDimension,
@@ -28,6 +33,27 @@ const createStateWithLayout = (layout: typeof initialState.layout) => ({
     layout,
 })
 
+const TEST_SYSTEM_SETTINGS = {
+    digitGroupSeparator: 'SPACE',
+    relativePeriod: 'LAST_12_MONTHS',
+} satisfies Partial<AppCachedData['systemSettings']>
+
+/* createAppCachedDataMiddleware stamps appCachedData onto every action before
+ * a reducer sees it, so reducers read it without guarding. Specs invoke
+ * reducers directly and have to stamp it themselves. */
+const withAppCachedData = <TAction extends { type: string }>(
+    action: TAction,
+    systemSettings: Partial<AppCachedData['systemSettings']> = {}
+): TAction =>
+    ({
+        ...action,
+        meta: {
+            appCachedData: {
+                systemSettings: { ...TEST_SYSTEM_SETTINGS, ...systemSettings },
+            },
+        },
+    }) as TAction
+
 describe('addVisUiConfigLayoutDimension', () => {
     it('adds to an empty axis', () => {
         const state = createStateWithLayout({
@@ -35,10 +61,12 @@ describe('addVisUiConfigLayoutDimension', () => {
             filters: [],
             rows: [],
         })
-        const action = addVisUiConfigLayoutDimension({
-            axis: 'columns',
-            dimensionId: 'a1',
-        })
+        const action = withAppCachedData(
+            addVisUiConfigLayoutDimension({
+                axis: 'columns',
+                dimensionId: 'a1',
+            })
+        )
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a1'])
     })
@@ -49,10 +77,12 @@ describe('addVisUiConfigLayoutDimension', () => {
             filters: [],
             rows: [],
         })
-        const action = addVisUiConfigLayoutDimension({
-            axis: 'columns',
-            dimensionId: 'a3',
-        })
+        const action = withAppCachedData(
+            addVisUiConfigLayoutDimension({
+                axis: 'columns',
+                dimensionId: 'a3',
+            })
+        )
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a1', 'a2', 'a3'])
     })
@@ -63,11 +93,13 @@ describe('addVisUiConfigLayoutDimension', () => {
             filters: [],
             rows: [],
         })
-        const action = addVisUiConfigLayoutDimension({
-            axis: 'columns',
-            dimensionId: 'a2',
-            insertIndex: 1,
-        })
+        const action = withAppCachedData(
+            addVisUiConfigLayoutDimension({
+                axis: 'columns',
+                dimensionId: 'a2',
+                insertIndex: 1,
+            })
+        )
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a1', 'a2', 'a3', 'a4'])
     })
@@ -78,12 +110,14 @@ describe('addVisUiConfigLayoutDimension', () => {
             filters: [],
             rows: [],
         })
-        const action = addVisUiConfigLayoutDimension({
-            axis: 'columns',
-            dimensionId: 'a3',
-            insertIndex: 1,
-            insertAfter: true,
-        })
+        const action = withAppCachedData(
+            addVisUiConfigLayoutDimension({
+                axis: 'columns',
+                dimensionId: 'a3',
+                insertIndex: 1,
+                insertAfter: true,
+            })
+        )
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a1', 'a2', 'a3', 'a4'])
     })
@@ -96,10 +130,12 @@ describe('addVisUiConfigLayoutDimensions', () => {
             filters: [],
             rows: [],
         })
-        const action = addVisUiConfigLayoutDimensions({
-            axis: 'columns',
-            dimensionIds: ['a1', 'a2', 'a3'],
-        })
+        const action = withAppCachedData(
+            addVisUiConfigLayoutDimensions({
+                axis: 'columns',
+                dimensionIds: ['a1', 'a2', 'a3'],
+            })
+        )
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a1', 'a2', 'a3'])
     })
@@ -110,10 +146,12 @@ describe('addVisUiConfigLayoutDimensions', () => {
             filters: [],
             rows: [],
         })
-        const action = addVisUiConfigLayoutDimensions({
-            axis: 'columns',
-            dimensionIds: ['a2', 'a3'],
-        })
+        const action = withAppCachedData(
+            addVisUiConfigLayoutDimensions({
+                axis: 'columns',
+                dimensionIds: ['a2', 'a3'],
+            })
+        )
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a1', 'a2', 'a3'])
     })
@@ -124,11 +162,13 @@ describe('addVisUiConfigLayoutDimensions', () => {
             filters: [],
             rows: [],
         })
-        const action = addVisUiConfigLayoutDimensions({
-            axis: 'columns',
-            dimensionIds: ['a2', 'a3'],
-            insertIndex: 1,
-        })
+        const action = withAppCachedData(
+            addVisUiConfigLayoutDimensions({
+                axis: 'columns',
+                dimensionIds: ['a2', 'a3'],
+                insertIndex: 1,
+            })
+        )
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a1', 'a2', 'a3', 'a4'])
     })
@@ -139,12 +179,14 @@ describe('addVisUiConfigLayoutDimensions', () => {
             filters: [],
             rows: [],
         })
-        const action = addVisUiConfigLayoutDimensions({
-            axis: 'columns',
-            dimensionIds: ['a3', 'a4'],
-            insertIndex: 1,
-            insertAfter: true,
-        })
+        const action = withAppCachedData(
+            addVisUiConfigLayoutDimensions({
+                axis: 'columns',
+                dimensionIds: ['a3', 'a4'],
+                insertIndex: 1,
+                insertAfter: true,
+            })
+        )
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a1', 'a2', 'a3', 'a4'])
     })
@@ -155,10 +197,12 @@ describe('addVisUiConfigLayoutDimensions', () => {
             filters: [],
             rows: [],
         })
-        const action = addVisUiConfigLayoutDimensions({
-            axis: 'columns',
-            dimensionIds: ['a2'],
-        })
+        const action = withAppCachedData(
+            addVisUiConfigLayoutDimensions({
+                axis: 'columns',
+                dimensionIds: ['a2'],
+            })
+        )
         const result = visUiConfigSlice.reducer(state, action)
         expect(result.layout.columns).toEqual(['a1', 'a2'])
     })
@@ -494,39 +538,30 @@ describe('getVisUiConfigPlainItemIdsByDimension', () => {
     })
 })
 
-type AddDimensionAction = ReturnType<typeof addVisUiConfigLayoutDimension>
-
-const withRelativePeriod = (
-    action: AddDimensionAction,
-    relativePeriod: string
-): AddDimensionAction =>
-    ({
-        ...action,
-        meta: { appCachedData: { systemSettings: { relativePeriod } } },
-    }) as AddDimensionAction
-
 describe('seeding default items from the relative period in action meta', () => {
     it('seeds a time dimension with the default relative period', () => {
-        const action = withRelativePeriod(
+        const action = withAppCachedData(
             addVisUiConfigLayoutDimension({
                 axis: 'columns',
                 dimensionId: 'stage1.eventDate',
             }),
-            'LAST_12_MONTHS'
+            { relativePeriod: 'THIS_YEAR' }
         )
         const result = visUiConfigSlice.reducer(initialState, action)
         expect(result.itemsByDimension['stage1.eventDate']).toEqual([
-            'LAST_12_MONTHS',
+            'THIS_YEAR',
         ])
     })
 
-    it('does not seed a time dimension when meta carries no relative period', () => {
-        const action = addVisUiConfigLayoutDimension({
-            axis: 'columns',
-            dimensionId: 'stage1.eventDate',
-        })
+    it('leaves a non-time, non-org-unit dimension unseeded', () => {
+        const action = withAppCachedData(
+            addVisUiConfigLayoutDimension({
+                axis: 'columns',
+                dimensionId: 'stage1.de1',
+            })
+        )
         const result = visUiConfigSlice.reducer(initialState, action)
-        expect(result.itemsByDimension).not.toHaveProperty('stage1.eventDate')
+        expect(result.itemsByDimension).not.toHaveProperty('stage1.de1')
     })
 })
 
@@ -607,15 +642,33 @@ describe('grouping and filtering share one conditions entry', () => {
     })
 })
 
+const stateWithSeparator = (
+    digitGroupSeparator: SystemDigitGroupSeparator
+): VisUiConfigState => ({
+    ...initialState,
+    options: { ...initialState.options, digitGroupSeparator },
+})
+
 describe('clearVisUiConfig', () => {
+    const clearedInitialState: VisUiConfigState = {
+        ...initialState,
+        options: {
+            ...DEFAULT_OPTIONS,
+            digitGroupSeparator: TEST_SYSTEM_SETTINGS.digitGroupSeparator,
+        },
+    }
+
     it('resets items and layout to the initial state', () => {
         const state = {
             ...initialState,
             itemsByDimension: { 'stage1.eventDate': ['LAST_12_MONTHS'] },
             layout: { columns: ['stage1.eventDate'], filters: [], rows: [] },
         }
-        const result = visUiConfigSlice.reducer(state, clearVisUiConfig())
-        expect(result).toEqual(initialState)
+        const result = visUiConfigSlice.reducer(
+            state,
+            withAppCachedData(clearVisUiConfig())
+        )
+        expect(result).toEqual(clearedInitialState)
     })
 
     it('keeps the current visualization type', () => {
@@ -624,11 +677,71 @@ describe('clearVisUiConfig', () => {
             visualizationType: 'PIVOT_TABLE' as const,
             layout: { columns: ['stage1.eventDate'], filters: [], rows: [] },
         }
-        const result = visUiConfigSlice.reducer(state, clearVisUiConfig())
+        const result = visUiConfigSlice.reducer(
+            state,
+            withAppCachedData(clearVisUiConfig())
+        )
 
         expect(result).toEqual({
-            ...initialState,
+            ...clearedInitialState,
             visualizationType: 'PIVOT_TABLE',
         })
+    })
+
+    it('seeds the digit group separator from the system setting in action meta', () => {
+        const result = visUiConfigSlice.reducer(
+            initialState,
+            withAppCachedData(clearVisUiConfig(), {
+                digitGroupSeparator: 'SPACE',
+            })
+        )
+
+        expect(result.options.digitGroupSeparator).toBe('SPACE')
+    })
+
+    /* The separator a saved visualization carried must not survive into the new
+     * one: the instance setting is the default for every new visualization. */
+    it('replaces the previous separator with the system setting', () => {
+        const result = visUiConfigSlice.reducer(
+            stateWithSeparator('COMMA'),
+            withAppCachedData(clearVisUiConfig(), {
+                digitGroupSeparator: 'SPACE',
+            })
+        )
+
+        expect(result.options.digitGroupSeparator).toBe('SPACE')
+    })
+
+    it('resets the remaining options while seeding the separator', () => {
+        const state: VisUiConfigState = {
+            ...initialState,
+            options: {
+                ...initialState.options,
+                digitGroupSeparator: 'COMMA',
+                title: 'Kept from the previous visualization',
+                cumulativeValues: true,
+            },
+        }
+
+        const result = visUiConfigSlice.reducer(
+            state,
+            withAppCachedData(clearVisUiConfig(), {
+                digitGroupSeparator: 'NONE',
+            })
+        )
+
+        expect(result.options).toEqual({
+            ...DEFAULT_OPTIONS,
+            digitGroupSeparator: 'NONE',
+        })
+    })
+
+    it('throws when the action never passed through the store middleware', () => {
+        expect(() =>
+            visUiConfigSlice.reducer(
+                stateWithSeparator('COMMA'),
+                clearVisUiConfig()
+            )
+        ).toThrow('carries no appCachedData')
     })
 })
