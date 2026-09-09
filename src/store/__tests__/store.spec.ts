@@ -33,4 +33,15 @@ describe('getPreloadedState', () => {
         expect(ui.layoutPanelHeight).toBe(uiInitialState.layoutPanelHeight)
         expect(ui.sidebarWidth).toBe(uiInitialState.sidebarWidth)
     })
+
+    /* The slice's initial state leaves the separator undefined; the instance
+     * setting is applied here, and again by clearVisUiConfig. */
+    it('seeds the digit group separator from the system settings', () => {
+        const { visUiConfig } = getPreloadedState(appCachedData)
+
+        expect(
+            visUiConfigInitialState.options.digitGroupSeparator
+        ).toBeUndefined()
+        expect(visUiConfig.options.digitGroupSeparator).toBe('SPACE')
+    })
 })

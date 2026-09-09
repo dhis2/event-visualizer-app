@@ -2,6 +2,7 @@ import { AXES } from '@constants/axis'
 import { DEFAULT_OPTIONS } from '@constants/options'
 import { getDefaultItemsForDimension } from '@modules/dimension/default-items'
 import { extractPlainDimensionId } from '@modules/dimension/ids'
+import { getDefaultOptions } from '@modules/options'
 import { createSelector, createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction, UnknownAction } from '@reduxjs/toolkit'
 import type {
@@ -53,8 +54,7 @@ export interface VisUiConfigState {
 
 export const initialState: VisUiConfigState = {
     visualizationType: 'LINE_LIST',
-    /* Options will be overridden by a computed preloaded state that takes
-     * the `digitGroupSeparator` user setting into account */
+    /* DGS is seeded from system settings in both getPreloadedState and clearVisUiConfig */
     options: DEFAULT_OPTIONS,
     outputType: 'EVENT',
     layout: {
@@ -109,10 +109,9 @@ const seedDefaultItemsIfAbsent = (
     if (compoundId in state.itemsByDimension) {
         return
     }
-    const appCachedData = getAppCachedDataFromAction(action)
     const defaults = getDefaultItemsForDimension(
         compoundId,
-        appCachedData?.systemSettings.relativePeriod
+        getAppCachedDataFromAction(action).systemSettings.relativePeriod
     )
     if (defaults) {
         state.itemsByDimension[compoundId] = defaults
@@ -138,9 +137,13 @@ export const visUiConfigSlice = createSlice({
     initialState,
     reducers: {
         // A new visualization keeps the vis type the user last worked with.
-        clearVisUiConfig: (state) => ({
+        clearVisUiConfig: (state, action: UnknownAction) => ({
             ...initialState,
             visualizationType: state.visualizationType,
+            options: getDefaultOptions(
+                getAppCachedDataFromAction(action).systemSettings
+                    .digitGroupSeparator
+            ),
         }),
         setVisUiConfig: (
             state,
