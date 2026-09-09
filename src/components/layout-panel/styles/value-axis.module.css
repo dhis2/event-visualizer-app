@@ -71,19 +71,18 @@
     color: var(--colors-grey600);
 }
 
-/* Hidden rather than removed, so showing it doesn't move the value. */
+/* Follows the value inline, so it stays with the last word when the value
+ * wraps. */
 .hint {
-    display: flex;
-    flex: 0 0 auto;
-    visibility: hidden;
-    margin-inline-start: auto;
-    padding-inline-start: 8px;
-    color: var(--colors-grey800);
+    display: inline-flex;
+    margin-inline-start: 4px;
+    vertical-align: text-bottom;
+    color: var(--colors-grey500);
 }
 
 .cell:hover .hint,
 .cell:focus-visible .hint {
-    visibility: visible;
+    color: var(--colors-grey900);
 }
 
 .activeDropTarget {

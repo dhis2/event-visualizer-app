@@ -78,7 +78,7 @@ export const ValueAxis: FC = () => {
 
         return (
             <div className={classes.container} data-test="axis-value">
-                <div className={classes.label}>{i18n.t('Rows')}</div>
+                <div className={classes.label}>{i18n.t('Value')}</div>
                 <div className={classes.content}>
                     <span className={classes.value}>
                         {i18n.t('One {{- countedThing}} per row', {
@@ -128,12 +128,12 @@ export const ValueAxis: FC = () => {
                         ) : (
                             i18n.t('Count')
                         )}
-                    </span>
-                    <span
-                        className={classes.hint}
-                        aria-label={i18n.t('Change value')}
-                    >
-                        <IconEdit16 />
+                        <span
+                            className={classes.hint}
+                            aria-label={i18n.t('Change value')}
+                        >
+                            <IconEdit16 />
+                        </span>
                     </span>
                 </div>
             </button>

@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-08T08:05:38.354Z\n"
-"PO-Revision-Date: 2026-09-08T08:05:38.354Z\n"
+"POT-Creation-Date: 2026-09-09T11:41:51.330Z\n"
+"PO-Revision-Date: 2026-09-09T11:41:51.330Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -436,14 +436,11 @@ msgstr "enrollment"
 msgid "event"
 msgstr "event"
 
-msgid "Rows"
-msgstr "Rows"
+msgid "Value"
+msgstr "Value"
 
 msgid "One {{- countedThing}} per row"
 msgstr "One {{- countedThing}} per row"
-
-msgid "Value"
-msgstr "Value"
 
 msgid "Change value"
 msgstr "Change value"
@@ -1084,6 +1081,9 @@ msgstr "There was a problem getting the data from the server."
 
 msgid "Columns"
 msgstr "Columns"
+
+msgid "Rows"
+msgstr "Rows"
 
 msgid "User organisation unit"
 msgstr "User organisation unit"
