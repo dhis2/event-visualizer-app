@@ -8,7 +8,7 @@
         "module": "es2015",
         "moduleResolution": "bundler",
         "allowImportingTsExtensions": true,
-        "types": ["cypress", "node"],
+        "types": ["cypress", "node", "@cypress/grep"],
         "noEmit": true
     },
     "include": ["**/*.ts", "types"],

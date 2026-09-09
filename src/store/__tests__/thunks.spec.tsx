@@ -1,7 +1,10 @@
+import { FetchError } from '@dhis2/app-runtime'
 import { getLastUsedVisualizationTypeFromLocalStorage } from '@modules/visualization/local-storage'
 import { getCurrentVis } from '@store/current-vis-slice'
+import { getVisualizationLoadError } from '@store/loader-slice'
 import {
     tClearVisualization,
+    tLoadSavedVisualization,
     tUpdateCurrentVisFromVisUiConfig,
 } from '@store/thunks'
 import { initialState as visUiConfigInitialState } from '@store/vis-ui-config-slice'
@@ -180,5 +183,32 @@ describe('tClearVisualization', () => {
         expect(getCurrentVis(store.getState()).digitGroupSeparator).toBe(
             'SPACE'
         )
+    })
+})
+
+describe('tLoadSavedVisualization', () => {
+    it('keeps a failed fetch as a fetch error instead of a runtime one', async () => {
+        /* PluginWrapper rethrows a 'runtime' load error to the app-shell crash
+         * screen, so a fetch failure tagged that way costs the user the
+         * retryable canvas error. */
+        const { store } = await renderHookWithAppWrapper(() => null, {
+            queryData: {
+                eventVisualizations: () => {
+                    throw new FetchError({
+                        type: 'unknown',
+                        message:
+                            'An unknown error occurred - Server Error (500)',
+                        details: { httpStatusCode: 500 },
+                    })
+                },
+            },
+        } as unknown as MockOptions)
+
+        await store.dispatch(tLoadSavedVisualization({ id: 'TIuOzZ0ID0V' }))
+
+        expect(getVisualizationLoadError(store.getState())).toMatchObject({
+            type: 'unknown',
+            message: 'An unknown error occurred - Server Error (500)',
+        })
     })
 })
