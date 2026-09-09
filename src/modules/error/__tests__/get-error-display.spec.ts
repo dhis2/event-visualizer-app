@@ -10,12 +10,12 @@ const engineError = (partial: Partial<EngineError>): EngineError => ({
 })
 
 describe('getErrorDisplay', () => {
-    it('maps an empty response to a non-retryable "No data" info screen', () => {
+    it('maps an empty response to a non-retryable "No data available" screen', () => {
         const display = getErrorDisplay(new EmptyResponseError())
 
-        expect(display.title).toBe('No data')
+        expect(display.title).toBe('No data available')
         expect(display.retryable).toBe(false)
-        expect(display.severity).toBe('info')
+        expect(display.icon).toBe('emptyBox')
     })
 
     it('maps a known backend error code to its message, non-retryable', () => {
@@ -24,7 +24,7 @@ describe('getErrorDisplay', () => {
         expect(display.title).toBe('Restricted access')
         expect(display.description).toContain('organisation units')
         expect(display.retryable).toBe(false)
-        expect(display.severity).toBe('error')
+        expect(display.icon).toBe('data')
     })
 
     it('picks the first known code from the errorCodes list', () => {
@@ -34,6 +34,23 @@ describe('getErrorDisplay', () => {
 
         expect(display.description).toContain('indicator')
         expect(display.retryable).toBe(false)
+    })
+
+    it('prefers the primary errorCode over the errorCodes list', () => {
+        const display = getErrorDisplay(
+            engineError({ errorCode: 'E7120', errorCodes: ['E7132'] })
+        )
+
+        expect(display.description).toContain('organisation units')
+    })
+
+    it('prefers a known backend code over the access error type', () => {
+        /* The code says more than the generic restricted-access copy. */
+        const display = getErrorDisplay(
+            engineError({ type: 'access', errorCode: 'E7120' })
+        )
+
+        expect(display.description).toContain('organisation units')
     })
 
     it('maps an access error without a code to restricted access', () => {
@@ -48,6 +65,6 @@ describe('getErrorDisplay', () => {
 
         expect(display.title).toBe('Something went wrong')
         expect(display.retryable).toBe(true)
-        expect(display.severity).toBe('error')
+        expect(display.icon).toBe('generic')
     })
 })

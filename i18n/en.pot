@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-02T14:42:01.147Z\n"
-"PO-Revision-Date: 2026-09-02T14:42:01.147Z\n"
+"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
+"PO-Revision-Date: 2026-09-08T09:02:41.411Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -573,6 +573,9 @@ msgstr "High to low"
 msgid "Top limit"
 msgstr "Top limit"
 
+msgid "Must be a whole number of 1 or more"
+msgstr "Must be a whole number of 1 or more"
+
 msgid "Row sub-totals"
 msgstr "Row sub-totals"
 
@@ -1055,8 +1058,8 @@ msgstr ""
 msgid "There's a syntax problem with the analytics request."
 msgstr "There's a syntax problem with the analytics request."
 
-msgid "No data"
-msgstr "No data"
+msgid "No data available"
+msgstr "No data available"
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or "
