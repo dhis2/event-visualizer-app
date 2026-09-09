@@ -209,8 +209,6 @@ const MockAppWrapperCore: FC<{
             <CssVariables colors spacers theme elevations />
             <AppCachedDataQueryProvider>
                 <MockMetadataProvider mockMetadata={metadata}>
-                    {/* Some hooks under test (via useErrorBoundary) require an
-                     * ErrorBoundary ancestor, which the app provides at runtime */}
                     <ErrorBoundary
                         fallbackRender={({ error }) => (
                             <div data-test="mock-app-wrapper-error">
