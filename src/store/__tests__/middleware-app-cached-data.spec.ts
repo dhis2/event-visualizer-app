@@ -46,9 +46,9 @@ describe('createAppCachedDataMiddleware', () => {
 })
 
 describe('getAppCachedDataFromAction', () => {
-    it('returns undefined when meta is absent', () => {
-        expect(
+    it('throws when meta is absent', () => {
+        expect(() =>
             getAppCachedDataFromAction({ type: 'test/action' })
-        ).toBeUndefined()
+        ).toThrow('test/action')
     })
 })

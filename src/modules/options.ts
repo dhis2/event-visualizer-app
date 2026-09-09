@@ -46,7 +46,7 @@ export const getOptionsTabsForVisType = (
 }
 
 export const getDefaultOptions = (
-    digitGroupSeparator?: AppCachedData['systemSettings']['digitGroupSeparator']
+    digitGroupSeparator: AppCachedData['systemSettings']['digitGroupSeparator']
 ): EventVisualizationOptions => ({ ...DEFAULT_OPTIONS, digitGroupSeparator })
 
 export const getDisabledOptions = (options: EventVisualizationOptions) => {

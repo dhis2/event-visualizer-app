@@ -109,10 +109,9 @@ const seedDefaultItemsIfAbsent = (
     if (compoundId in state.itemsByDimension) {
         return
     }
-    const appCachedData = getAppCachedDataFromAction(action)
     const defaults = getDefaultItemsForDimension(
         compoundId,
-        appCachedData?.systemSettings.relativePeriod
+        getAppCachedDataFromAction(action).systemSettings.relativePeriod
     )
     if (defaults) {
         state.itemsByDimension[compoundId] = defaults
@@ -142,7 +141,7 @@ export const visUiConfigSlice = createSlice({
             ...initialState,
             visualizationType: state.visualizationType,
             options: getDefaultOptions(
-                getAppCachedDataFromAction(action)?.systemSettings
+                getAppCachedDataFromAction(action).systemSettings
                     .digitGroupSeparator
             ),
         }),
