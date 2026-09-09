@@ -42,6 +42,7 @@ import {
     type ReactElement,
     type ReactNode,
 } from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
 import { Provider } from 'react-redux'
 import meData from './__fixtures__/me.json'
 import organisationUnitLevelsData from './__fixtures__/organisation-unit-levels.json'
@@ -208,9 +209,19 @@ const MockAppWrapperCore: FC<{
             <CssVariables colors spacers theme elevations />
             <AppCachedDataQueryProvider>
                 <MockMetadataProvider mockMetadata={metadata}>
-                    <MockStoreAndDndProvider partialStore={partialStore}>
-                        {children}
-                    </MockStoreAndDndProvider>
+                    {/* Some hooks under test (via useErrorBoundary) require an
+                     * ErrorBoundary ancestor, which the app provides at runtime */}
+                    <ErrorBoundary
+                        fallbackRender={({ error }) => (
+                            <div data-test="mock-app-wrapper-error">
+                                {String(error)}
+                            </div>
+                        )}
+                    >
+                        <MockStoreAndDndProvider partialStore={partialStore}>
+                            {children}
+                        </MockStoreAndDndProvider>
+                    </ErrorBoundary>
                 </MockMetadataProvider>
             </AppCachedDataQueryProvider>
         </CustomDataProvider>

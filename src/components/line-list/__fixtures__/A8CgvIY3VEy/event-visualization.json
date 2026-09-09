@@ -1,0 +1,377 @@
+{
+    "name": "Inpatient: Cases under 5 years female this year (case) additional columns and legends",
+    "created": "2026-09-09T11:30:55.404",
+    "lastUpdated": "2026-09-09T11:49:17.667",
+    "translations": [],
+    "createdBy": {
+        "id": "xE7jOejl9FI",
+        "code": null,
+        "name": "John Traore",
+        "displayName": "John Traore",
+        "username": "admin"
+    },
+    "lastUpdatedBy": {
+        "id": "xE7jOejl9FI",
+        "code": null,
+        "name": "John Traore",
+        "displayName": "John Traore",
+        "username": "admin"
+    },
+    "sharing": {
+        "owner": "xE7jOejl9FI",
+        "users": {},
+        "userGroups": {},
+        "public": "rw------"
+    },
+    "regressionType": "NONE",
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": ["THIS_YEAR"],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [],
+    "dataElementDimensions": [
+        {
+            "dataElement": {
+                "name": "Weight in kg",
+                "id": "vV9UWAZohSf"
+            },
+            "legendSet": {
+                "name": "Weight in kg",
+                "id": "OrkEzxZEH4X"
+            }
+        },
+        {
+            "dataElement": {
+                "name": "Admission Date",
+                "id": "eMyVanycQSC"
+            }
+        },
+        {
+            "dataElement": {
+                "name": "Age in years",
+                "id": "qrur9Dvnyt5"
+            }
+        },
+        {
+            "dataElement": {
+                "name": "Diagnosis (ICD-10)",
+                "id": "K6uUAvq500H"
+            }
+        },
+        {
+            "dataElement": {
+                "name": "Discharge Date",
+                "id": "msodh3rEMJa"
+            }
+        },
+        {
+            "dataElement": {
+                "name": "Gender",
+                "id": "oZg33kd9taw"
+            }
+        },
+        {
+            "dataElement": {
+                "name": "Mode of Discharge",
+                "id": "fWIAEtYVEGk"
+            }
+        }
+    ],
+    "programIndicatorDimensions": [
+        {
+            "programIndicator": {
+                "name": "BMI",
+                "id": "x7PaHGvgWY2"
+            }
+        },
+        {
+            "programIndicator": {
+                "name": "BMI female under 5 y",
+                "id": "hlPt8H4bUOQ"
+            }
+        },
+        {
+            "programIndicator": {
+                "name": "Inpatient bed days",
+                "id": "b8hd33dWjR6"
+            }
+        },
+        {
+            "programIndicator": {
+                "name": "Inpatient cases under 5 y",
+                "id": "vDdRoZYybP2"
+            }
+        },
+        {
+            "programIndicator": {
+                "name": "Average height of girls at 5 years old",
+                "id": "gWxh7DiRmG7"
+            }
+        },
+        {
+            "programIndicator": {
+                "name": "Average weight of women",
+                "id": "ReQEl5V3z6p"
+            }
+        }
+    ],
+    "subscribers": [],
+    "digitGroupSeparator": "SPACE",
+    "hideEmptyRowItems": "NONE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": false,
+    "type": "LINE_LIST",
+    "favorites": [],
+    "program": {
+        "incidentDateLabel": "Date of Discharge",
+        "programType": "WITHOUT_REGISTRATION",
+        "displayIncidentDate": false,
+        "displayIncidentDateLabel": "Date of Discharge",
+        "id": "eBAyeGv0exc",
+        "programStages": [
+            {
+                "program": {
+                    "id": "eBAyeGv0exc"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Report date",
+                "id": "Zj7UnCAulEk",
+                "repeatable": false,
+                "name": "Inpatient morbidity and mortality"
+            }
+        ],
+        "name": "Inpatient morbidity and mortality"
+    },
+    "programStage": {
+        "program": {
+            "id": "eBAyeGv0exc"
+        },
+        "hideDueDate": false,
+        "displayExecutionDateLabel": "Report date",
+        "id": "Zj7UnCAulEk",
+        "repeatable": false,
+        "name": "Inpatient morbidity and mortality"
+    },
+    "programDimensions": [],
+    "simpleDimensions": [
+        {
+            "parent": "COLUMN",
+            "dimension": "ou",
+            "values": ["ImspTQPwCqd"]
+        }
+    ],
+    "outputType": "EVENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": false,
+    "dataType": "EVENTS",
+    "filters": [],
+    "parentGraphMap": {
+        "ImspTQPwCqd": ""
+    },
+    "columns": [
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "THIS_YEAR"
+                }
+            ],
+            "dimension": "pe"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "legendSet": {
+                "id": "OrkEzxZEH4X",
+                "name": "Weight in kg"
+            },
+            "dimension": "vV9UWAZohSf",
+            "valueType": "INTEGER_POSITIVE"
+        },
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "ImspTQPwCqd"
+                }
+            ],
+            "dimension": "ou"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "dimension": "eMyVanycQSC",
+            "valueType": "DATE"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "filter": "LE:5",
+            "dimension": "qrur9Dvnyt5",
+            "valueType": "INTEGER"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "dimension": "K6uUAvq500H",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "eUZ79clX7y1",
+                "name": "Diagnosis ICD10"
+            }
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "dimension": "msodh3rEMJa",
+            "valueType": "DATE"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "filter": "IN:Female",
+            "dimension": "oZg33kd9taw",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "pC3N9N77UmT",
+                "name": "Gender"
+            }
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "dimension": "fWIAEtYVEGk",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "iDFPKpFTiVw",
+                "name": "Mode of discharge"
+            }
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "dimension": "x7PaHGvgWY2"
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "dimension": "hlPt8H4bUOQ"
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "dimension": "b8hd33dWjR6"
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "dimension": "vDdRoZYybP2"
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "legendSet": {
+                "id": "TBxGTceyzwy",
+                "name": "Height in cm"
+            },
+            "dimension": "gWxh7DiRmG7"
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "dimension": "ReQEl5V3z6p"
+        }
+    ],
+    "rows": [],
+    "displayName": "Inpatient: Cases under 5 years female this year (case) additional columns and legends",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "href": "https://dev.im.dhis2.org/ever-playground/api/eventVisualizations/A8CgvIY3VEy",
+    "subscribed": false,
+    "favorite": false,
+    "metaData": {
+        "ImspTQPwCqd": {
+            "uid": "ImspTQPwCqd",
+            "code": "OU_525",
+            "name": "Sierra Leone"
+        },
+        "eMyVanycQSC": {
+            "uid": "eMyVanycQSC",
+            "code": "DE_3000005",
+            "name": "Admission Date"
+        },
+        "oZg33kd9taw": {
+            "uid": "oZg33kd9taw",
+            "code": "DE_3000004",
+            "name": "Gender"
+        },
+        "fWIAEtYVEGk": {
+            "uid": "fWIAEtYVEGk",
+            "code": "DE_3000009",
+            "name": "Mode of Discharge"
+        },
+        "vV9UWAZohSf": {
+            "uid": "vV9UWAZohSf",
+            "code": "DE_240795",
+            "name": "Weight in kg"
+        },
+        "qrur9Dvnyt5": {
+            "uid": "qrur9Dvnyt5",
+            "code": "DE_3000003",
+            "name": "Age in years"
+        },
+        "K6uUAvq500H": {
+            "uid": "K6uUAvq500H",
+            "code": "DE_3000010",
+            "name": "Diagnosis (ICD-10)"
+        },
+        "msodh3rEMJa": {
+            "uid": "msodh3rEMJa",
+            "code": "DE_3000006",
+            "name": "Discharge Date"
+        }
+    },
+    "displayFormName": "Inpatient: Cases under 5 years female this year (case) additional columns and legends",
+    "id": "A8CgvIY3VEy",
+    "attributeValues": [],
+    "legend": {
+        "showKey": true,
+        "style": "FILL",
+        "set": {
+            "displayName": "Weight in kg",
+            "id": "OrkEzxZEH4X"
+        },
+        "strategy": "BY_DATA_ITEM"
+    },
+    "sorting": [],
+    "repetitions": []
+}

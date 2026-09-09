@@ -1,0 +1,283 @@
+{
+    "name": "Inpatient: Visit overview this year Bombali",
+    "created": "2015-10-20T13:35:24.144",
+    "lastUpdated": "2018-05-18T13:20:36.214",
+    "translations": [],
+    "createdBy": {
+        "id": "GOLswS44mh8",
+        "code": null,
+        "name": "Tom Wakiki",
+        "displayName": "Tom Wakiki",
+        "username": "system"
+    },
+    "lastUpdatedBy": {
+        "id": "GOLswS44mh8",
+        "code": null,
+        "name": "Tom Wakiki",
+        "displayName": "Tom Wakiki",
+        "username": "system"
+    },
+    "sharing": {
+        "owner": "GOLswS44mh8",
+        "users": {},
+        "userGroups": {},
+        "public": "rw------"
+    },
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": ["THIS_YEAR"],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [],
+    "dataElementDimensions": [
+        {
+            "dataElement": {
+                "name": "Gender",
+                "id": "oZg33kd9taw"
+            }
+        },
+        {
+            "dataElement": {
+                "name": "Height in cm",
+                "id": "GieVkTxp4HH"
+            },
+            "legendSet": {
+                "name": "Height in cm",
+                "id": "TBxGTceyzwy"
+            }
+        },
+        {
+            "dataElement": {
+                "name": "Weight in kg",
+                "id": "vV9UWAZohSf"
+            },
+            "legendSet": {
+                "name": "Weight in kg",
+                "id": "OrkEzxZEH4X"
+            }
+        }
+    ],
+    "programIndicatorDimensions": [
+        {
+            "programIndicator": {
+                "name": "Average age of deaths",
+                "id": "tUdBD1JDxpn"
+            }
+        },
+        {
+            "programIndicator": {
+                "name": "Average height of girls at 5 years old",
+                "id": "gWxh7DiRmG7"
+            }
+        },
+        {
+            "programIndicator": {
+                "name": "BMI",
+                "id": "x7PaHGvgWY2"
+            }
+        },
+        {
+            "programIndicator": {
+                "name": "BMI female under 5 y",
+                "id": "hlPt8H4bUOQ"
+            }
+        },
+        {
+            "programIndicator": {
+                "name": "BMI male under 5 y",
+                "id": "Y7hKDSuqEtH"
+            }
+        },
+        {
+            "programIndicator": {
+                "name": "Inpatient bed days average",
+                "id": "HS8QXAJtuKV"
+            }
+        }
+    ],
+    "subscribers": [],
+    "digitGroupSeparator": "SPACE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": true,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": true,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": true,
+    "type": "LINE_LIST",
+    "program": {
+        "incidentDateLabel": "Date of Discharge",
+        "programType": "WITHOUT_REGISTRATION",
+        "displayIncidentDate": false,
+        "displayIncidentDateLabel": "Date of Discharge",
+        "id": "eBAyeGv0exc",
+        "programStages": [
+            {
+                "program": {
+                    "id": "eBAyeGv0exc"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Report date",
+                "id": "Zj7UnCAulEk",
+                "repeatable": false,
+                "name": "Inpatient morbidity and mortality"
+            }
+        ],
+        "name": "Inpatient morbidity and mortality"
+    },
+    "programStage": {
+        "program": {
+            "id": "eBAyeGv0exc"
+        },
+        "hideDueDate": false,
+        "displayExecutionDateLabel": "Report date",
+        "id": "Zj7UnCAulEk",
+        "repeatable": false,
+        "name": "Inpatient morbidity and mortality"
+    },
+    "programDimensions": [],
+    "outputType": "EVENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": true,
+    "dataType": "EVENTS",
+    "filters": [],
+    "parentGraphMap": {
+        "fdc6uOvgoji": "ImspTQPwCqd"
+    },
+    "columns": [
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "THIS_YEAR"
+                }
+            ],
+            "dimension": "pe"
+        },
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "fdc6uOvgoji"
+                }
+            ],
+            "dimension": "ou"
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "dimension": "tUdBD1JDxpn"
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "dimension": "gWxh7DiRmG7"
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "dimension": "x7PaHGvgWY2"
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "dimension": "hlPt8H4bUOQ"
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "dimension": "Y7hKDSuqEtH"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "dimension": "oZg33kd9taw",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "pC3N9N77UmT",
+                "name": "Gender"
+            }
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "legendSet": {
+                "id": "TBxGTceyzwy",
+                "name": "Height in cm"
+            },
+            "dimension": "GieVkTxp4HH",
+            "valueType": "NUMBER"
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "dimension": "HS8QXAJtuKV"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "legendSet": {
+                "id": "OrkEzxZEH4X",
+                "name": "Weight in kg"
+            },
+            "dimension": "vV9UWAZohSf",
+            "valueType": "INTEGER_POSITIVE"
+        }
+    ],
+    "rows": [],
+    "displayName": "Inpatient: Visit overview this year Bombali",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "href": "https://dev.im.dhis2.org/ever-playground/api/eventVisualizations/kb9Uml5FEEz",
+    "subscribed": false,
+    "favorite": false,
+    "metaData": {
+        "GieVkTxp4HH": {
+            "uid": "GieVkTxp4HH",
+            "code": "DE_240794",
+            "name": "Height in cm"
+        },
+        "oZg33kd9taw": {
+            "uid": "oZg33kd9taw",
+            "code": "DE_3000004",
+            "name": "Gender"
+        },
+        "vV9UWAZohSf": {
+            "uid": "vV9UWAZohSf",
+            "code": "DE_240795",
+            "name": "Weight in kg"
+        },
+        "fdc6uOvgoji": {
+            "uid": "fdc6uOvgoji",
+            "code": "OU_193190",
+            "name": "Bombali"
+        }
+    },
+    "displayFormName": "Inpatient: Visit overview this year Bombali",
+    "id": "kb9Uml5FEEz",
+    "attributeValues": [],
+    "sorting": []
+}

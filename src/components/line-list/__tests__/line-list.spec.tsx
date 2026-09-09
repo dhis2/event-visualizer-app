@@ -1,97 +1,156 @@
-import { render, screen, within } from '@testing-library/react'
+import { Analytics } from '@dhis2/analytics'
+import { renderWithAppWrapper } from '@test-utils/app-wrapper'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import type { CurrentVisualization } from '@types'
+import type { ComponentProps } from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import simpleLineList from '../__fixtures__/e2e-enrollment.json'
-import largeLineListWithLegend from '../__fixtures__/inpatient-cases-under-5-years-female-this-year-additional-columns-and-legends.json'
-import noTimeDimension from '../__fixtures__/no-time-dimension.json'
-import { LineList } from '../line-list'
-import type { LineListAnalyticsData } from '../types'
+import {
+    getLineListFixtureQueryData,
+    loadLineListFixture,
+    type LineListFixture,
+} from './line-list-fixture-utils'
+import { VisualizationTestHost } from './visualization-test-host'
 
-// Mock the DHIS2 connection status hook
+const simpleLineList = loadLineListFixture('AFjkDs7acBh')
+const largeLineListWithLegend = loadLineListFixture('A8CgvIY3VEy')
+const noTimeDimension = loadLineListFixture('ylhECvoYdzK')
+
+/* The connection status hook needs to be controllable to test offline
+ * behavior; everything else comes from the real module, which the app
+ * wrapper's providers need. */
 const mockUseDhis2ConnectionStatus = vi.hoisted(() => vi.fn())
-vi.mock('@dhis2/app-runtime', () => ({
+vi.mock('@dhis2/app-runtime', async (importOriginal) => ({
+    ...(await importOriginal<object>()),
     useDhis2ConnectionStatus: mockUseDhis2ConnectionStatus,
 }))
 
-// Helper function to render LineList with default props
-const renderLineList = (
-    analyticsData: LineListAnalyticsData,
-    visualization: CurrentVisualization,
-    additionalProps = {}
-) => {
-    const defaultProps = {
-        analyticsData,
-        visualization,
-        onDataSort: vi.fn(),
-        onPaginate: vi.fn(),
-        isFetching: false,
-        isInDashboard: false,
-        isInModal: false,
-    }
+type QueryData = NonNullable<
+    Parameters<typeof renderWithAppWrapper>[1]
+>['queryData']
+type CustomResource = NonNullable<QueryData>[string]
+type AnalyticsResolver = ReturnType<
+    typeof vi.fn<
+        (type: string, query: { params: Record<string, unknown> }) => unknown
+    >
+>
 
-    return render(<LineList {...defaultProps} {...additionalProps} />)
+type RenderLineListOptions = {
+    eventVisualization?: Record<string, unknown>
+    analytics?: CustomResource | AnalyticsResolver
+    hostProps?: ComponentProps<typeof VisualizationTestHost>
 }
+
+const renderLineList = async (
+    fixture: LineListFixture,
+    { eventVisualization, analytics, hostProps }: RenderLineListOptions = {}
+) => {
+    const visualizationPayload =
+        eventVisualization ??
+        (fixture.eventVisualization as Record<string, unknown>)
+    const view = await renderWithAppWrapper(
+        <VisualizationTestHost {...hostProps} />,
+        {
+            partialStore: {
+                preloadedState: {
+                    navigation: {
+                        visualizationId: visualizationPayload.id as string,
+                        interpretationId: null,
+                    },
+                },
+            },
+            queryData: getLineListFixtureQueryData(fixture, {
+                eventVisualizations: visualizationPayload as CustomResource,
+                ...(analytics
+                    ? { analytics: analytics as CustomResource }
+                    : {}),
+            }),
+        }
+    )
+    await screen.findByTestId('line-list-data-table')
+    return view
+}
+
+const withLegend = (fixture: LineListFixture, legend: object) => {
+    const visualizationPayload = fixture.eventVisualization as Record<
+        string,
+        unknown
+    > & { legend: object }
+    return {
+        ...visualizationPayload,
+        legend: { ...visualizationPayload.legend, ...legend },
+    }
+}
+
+const analyticsWithPager = (fixture: LineListFixture, pager: object) => {
+    const response = fixture.response as { metaData: Record<string, unknown> }
+    return {
+        ...response,
+        metaData: { ...response.metaData, pager },
+    } as unknown as CustomResource
+}
+
+const createAnalyticsSpy = (response: unknown): AnalyticsResolver => {
+    const resolve: (
+        type: string,
+        query: { params: Record<string, unknown> }
+    ) => unknown = () => response
+    return vi.fn(resolve)
+}
+
+const getLastAnalyticsParams = (analyticsSpy: AnalyticsResolver) =>
+    analyticsSpy.mock.calls.at(-1)![1].params
 
 describe('LineList', () => {
     beforeEach(() => {
-        mockUseDhis2ConnectionStatus.mockClear()
         mockUseDhis2ConnectionStatus.mockReturnValue({ isDisconnected: false })
+        /* Analytics.getAnalytics caches a singleton bound to the first data
+         * engine it sees; reset it so each test's mock data provider is used. */
+        ;(
+            Analytics.getAnalytics as unknown as { analytics?: unknown }
+        ).analytics = undefined
     })
+
     describe('Snapshot test', () => {
-        it('renders large table with legend set correctly', () => {
-            const { container } = renderLineList(
-                largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                largeLineListWithLegend.visualization as unknown as CurrentVisualization
-            )
+        it('renders large table with legend set correctly', async () => {
+            const { container } = await renderLineList(largeLineListWithLegend)
             expect(container).toMatchSnapshot()
         })
     })
 
     describe('Sorting', () => {
-        const onDataSort = vi.fn()
-        const onColumnHeaderClick = vi.fn()
-
-        beforeEach(() => {
-            onDataSort.mockClear()
-            onColumnHeaderClick.mockClear()
-        })
-
-        it('calls onDataSort when sort icon is clicked', async () => {
+        it('refetches with the sort parameters when a sort icon is clicked', async () => {
             const user = userEvent.setup()
+            const analyticsSpy = createAnalyticsSpy(simpleLineList.response)
 
-            renderLineList(
-                simpleLineList.responses as unknown as LineListAnalyticsData,
-                simpleLineList.visualization as unknown as CurrentVisualization,
-                { onDataSort, onColumnHeaderClick }
-            )
+            await renderLineList(simpleLineList, { analytics: analyticsSpy })
+            expect(analyticsSpy).toHaveBeenCalledTimes(1)
 
-            // Find the first column header (ouname)
             const sortButton = screen.getByRole('button', {
-                name: /sort by.*organisation unit/i,
+                name: /sort by.*event org\. unit/i,
             })
             await user.click(sortButton)
 
-            expect(onDataSort).toHaveBeenCalledWith({
-                dimension: 'ouname',
-                direction: 'ASC',
+            await waitFor(() => {
+                expect(analyticsSpy).toHaveBeenCalledTimes(2)
             })
+            expect(getLastAnalyticsParams(analyticsSpy).asc).toBe(
+                'jfuXZB3A1ko.ouname'
+            )
         })
 
         it('calls onColumnHeaderClick when column header text is clicked', async () => {
             const user = userEvent.setup()
+            const onColumnHeaderClick = vi.fn()
 
-            renderLineList(
-                simpleLineList.responses as unknown as LineListAnalyticsData,
-                simpleLineList.visualization as unknown as CurrentVisualization,
-                { onDataSort, onColumnHeaderClick }
-            )
+            await renderLineList(simpleLineList, {
+                hostProps: { onColumnHeaderClick },
+            })
 
             // Find the column header text (not the sort button)
-            const headerText = screen.getByText('Organisation unit')
+            const headerText = screen.getByText('Event org. unit')
             await user.click(headerText)
 
-            expect(onColumnHeaderClick).toHaveBeenCalledWith('ou')
+            expect(onColumnHeaderClick).toHaveBeenCalledWith('jfuXZB3A1ko.ou')
         })
 
         /* More in-depth tests reg. sort directions etc are found in
@@ -99,55 +158,42 @@ describe('LineList', () => {
     })
 
     describe('Pagination', () => {
-        const onPaginate = vi.fn()
-
-        beforeEach(() => {
-            onPaginate.mockClear()
-        })
-
-        it('calls onPaginate when page is changed', async () => {
+        it('refetches the next page when page is changed', async () => {
             const user = userEvent.setup()
-
-            // Create data with multiple pages
-            const multiPageData = {
-                ...largeLineListWithLegend.responses,
-                pager: {
+            const analyticsSpy = createAnalyticsSpy(
+                analyticsWithPager(largeLineListWithLegend, {
                     page: 1,
                     pageSize: 100,
                     isLastPage: false,
-                },
-            }
-
-            renderLineList(
-                multiPageData as unknown as LineListAnalyticsData,
-                largeLineListWithLegend.visualization as unknown as CurrentVisualization,
-                { onPaginate }
+                })
             )
+
+            await renderLineList(largeLineListWithLegend, {
+                analytics: analyticsSpy,
+            })
 
             const nextButton = screen.getByRole('button', { name: 'Next' })
             await user.click(nextButton)
 
-            expect(onPaginate).toHaveBeenCalledWith({ page: 2 })
+            await waitFor(() => {
+                expect(analyticsSpy).toHaveBeenCalledTimes(2)
+            })
+            expect(getLastAnalyticsParams(analyticsSpy).page).toBe(2)
         })
 
-        it('calls onPaginate when page size is changed', async () => {
+        it('refetches with the new page size when page size is changed', async () => {
             const user = userEvent.setup()
-
-            // Create data with multiple pages to ensure pagination is active
-            const multiPageData = {
-                ...largeLineListWithLegend.responses,
-                pager: {
+            const analyticsSpy = createAnalyticsSpy(
+                analyticsWithPager(largeLineListWithLegend, {
                     page: 1,
                     pageSize: 100,
                     isLastPage: false,
-                },
-            }
-
-            renderLineList(
-                multiPageData as unknown as LineListAnalyticsData,
-                largeLineListWithLegend.visualization as unknown as CurrentVisualization,
-                { onPaginate }
+                })
             )
+
+            await renderLineList(largeLineListWithLegend, {
+                analytics: analyticsSpy,
+            })
 
             // Find the page size select dropdown
             const pageSizeSelect = screen.getByTestId(
@@ -163,15 +209,17 @@ describe('LineList', () => {
             ).getByText('50')
             await user.click(option50)
 
-            expect(onPaginate).toHaveBeenCalledWith({ page: 1, pageSize: 50 })
+            await waitFor(() => {
+                expect(analyticsSpy).toHaveBeenCalledTimes(2)
+            })
+            expect(getLastAnalyticsParams(analyticsSpy)).toMatchObject({
+                page: 1,
+                pageSize: 50,
+            })
         })
 
         it('displays pagination information correctly', async () => {
-            renderLineList(
-                largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                largeLineListWithLegend.visualization as unknown as CurrentVisualization,
-                { onPaginate }
-            )
+            await renderLineList(largeLineListWithLegend)
 
             // Verify the correct page size is displayed (default 100 from fixture)
             expect(screen.getByText('100')).toBeInTheDocument()
@@ -186,21 +234,14 @@ describe('LineList', () => {
             expect(screen.getByText(/page 1, row 1-100/i)).toBeInTheDocument()
         })
 
-        it('shows correct pagination state for first page', () => {
-            const firstPageData = {
-                ...simpleLineList.responses,
-                pager: {
+        it('shows correct pagination state for first page', async () => {
+            await renderLineList(simpleLineList, {
+                analytics: analyticsWithPager(simpleLineList, {
                     page: 1,
                     pageSize: 100,
                     isLastPage: false,
-                },
-            }
-
-            renderLineList(
-                firstPageData as unknown as LineListAnalyticsData,
-                simpleLineList.visualization as unknown as CurrentVisualization,
-                { onPaginate }
-            )
+                }),
+            })
 
             expect(screen.getByText(/page 1/i)).toBeInTheDocument()
             expect(screen.getByText('100')).toBeInTheDocument()
@@ -212,21 +253,14 @@ describe('LineList', () => {
             expect(nextButton).not.toBeDisabled()
         })
 
-        it('shows correct pagination state for middle page', () => {
-            const middlePageData = {
-                ...largeLineListWithLegend.responses,
-                pager: {
+        it('shows correct pagination state for middle page', async () => {
+            await renderLineList(largeLineListWithLegend, {
+                analytics: analyticsWithPager(largeLineListWithLegend, {
                     page: 2,
                     pageSize: 100,
                     isLastPage: false,
-                },
-            }
-
-            renderLineList(
-                middlePageData as unknown as LineListAnalyticsData,
-                largeLineListWithLegend.visualization as unknown as CurrentVisualization,
-                { onPaginate }
-            )
+                }),
+            })
 
             expect(screen.getByText(/page 2/i)).toBeInTheDocument()
             expect(screen.getByText('100')).toBeInTheDocument()
@@ -239,21 +273,14 @@ describe('LineList', () => {
             expect(nextButton).not.toBeDisabled()
         })
 
-        it('shows correct pagination state for last page', () => {
-            const lastPageData = {
-                ...largeLineListWithLegend.responses,
-                pager: {
+        it('shows correct pagination state for last page', async () => {
+            await renderLineList(largeLineListWithLegend, {
+                analytics: analyticsWithPager(largeLineListWithLegend, {
                     page: 3,
                     pageSize: 100,
                     isLastPage: true,
-                },
-            }
-
-            renderLineList(
-                lastPageData as unknown as LineListAnalyticsData,
-                largeLineListWithLegend.visualization as unknown as CurrentVisualization,
-                { onPaginate }
-            )
+                }),
+            })
 
             expect(screen.getByText(/page 3/i)).toBeInTheDocument()
             expect(screen.getByText('100')).toBeInTheDocument()
@@ -266,21 +293,14 @@ describe('LineList', () => {
             expect(nextButton).toBeDisabled()
         })
 
-        it('shows correct pagination state for single page', () => {
-            const singlePageData = {
-                ...simpleLineList.responses,
-                pager: {
+        it('shows correct pagination state for single page', async () => {
+            await renderLineList(simpleLineList, {
+                analytics: analyticsWithPager(simpleLineList, {
                     page: 1,
                     pageSize: 100,
                     isLastPage: true,
-                },
-            }
-
-            renderLineList(
-                singlePageData as unknown as LineListAnalyticsData,
-                simpleLineList.visualization as unknown as CurrentVisualization,
-                { onPaginate }
-            )
+                }),
+            })
 
             expect(screen.getByText(/page 1/i)).toBeInTheDocument()
             expect(screen.getByText('100')).toBeInTheDocument()
@@ -295,19 +315,8 @@ describe('LineList', () => {
 
     describe('Legend visibility', () => {
         describe('Base case', () => {
-            it('does not show legend when no legend sets are present', () => {
-                const noLegendData = {
-                    ...simpleLineList.responses,
-                    headers: simpleLineList.responses.headers.map((header) => ({
-                        ...header,
-                        legendSet: undefined,
-                    })),
-                }
-
-                renderLineList(
-                    noLegendData as unknown as LineListAnalyticsData,
-                    simpleLineList.visualization as unknown as CurrentVisualization
-                )
+            it('does not show legend when no legend sets are present', async () => {
+                await renderLineList(simpleLineList)
 
                 expect(
                     screen.queryByTestId('visualization-legend-key')
@@ -316,20 +325,12 @@ describe('LineList', () => {
         })
 
         describe('Not in dashboard', () => {
-            it('does not show legend key when showKey is false', () => {
-                const visualization = {
-                    ...largeLineListWithLegend.visualization,
-                    legend: {
-                        ...largeLineListWithLegend.visualization.legend,
+            it('does not show legend key when showKey is false', async () => {
+                await renderLineList(largeLineListWithLegend, {
+                    eventVisualization: withLegend(largeLineListWithLegend, {
                         showKey: false,
-                    },
-                }
-
-                renderLineList(
-                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                    visualization as unknown as CurrentVisualization,
-                    { isInDashboard: false }
-                )
+                    }),
+                })
 
                 expect(
                     screen.queryByTestId('visualization-legend-key')
@@ -340,20 +341,12 @@ describe('LineList', () => {
                 expect(legendToggle).not.toBeInTheDocument()
             })
 
-            it('shows legend key when showKey is true', () => {
-                const visualization = {
-                    ...largeLineListWithLegend.visualization,
-                    legend: {
-                        ...largeLineListWithLegend.visualization.legend,
+            it('shows legend key when showKey is true', async () => {
+                await renderLineList(largeLineListWithLegend, {
+                    eventVisualization: withLegend(largeLineListWithLegend, {
                         showKey: true,
-                    },
-                }
-
-                renderLineList(
-                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                    visualization as unknown as CurrentVisualization,
-                    { isInDashboard: false }
-                )
+                    }),
+                })
 
                 expect(
                     screen.getByTestId('visualization-legend-key')
@@ -366,20 +359,13 @@ describe('LineList', () => {
         })
 
         describe('In dashboard', () => {
-            it('always shows component with toggle for showKey false', () => {
-                const visualization = {
-                    ...largeLineListWithLegend.visualization,
-                    legend: {
-                        ...largeLineListWithLegend.visualization.legend,
+            it('always shows component with toggle for showKey false', async () => {
+                await renderLineList(largeLineListWithLegend, {
+                    eventVisualization: withLegend(largeLineListWithLegend, {
                         showKey: false,
-                    },
-                }
-
-                renderLineList(
-                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                    visualization as unknown as CurrentVisualization,
-                    { isInDashboard: true }
-                )
+                    }),
+                    hostProps: { isInDashboard: true },
+                })
 
                 // Should always show the legend toggle button in dashboard mode
                 const legendToggle = screen.getByTestId('legend-key-toggler')
@@ -391,20 +377,13 @@ describe('LineList', () => {
                 ).not.toBeInTheDocument()
             })
 
-            it('always shows component with toggle for showKey true', () => {
-                const visualization = {
-                    ...largeLineListWithLegend.visualization,
-                    legend: {
-                        ...largeLineListWithLegend.visualization.legend,
+            it('always shows component with toggle for showKey true', async () => {
+                await renderLineList(largeLineListWithLegend, {
+                    eventVisualization: withLegend(largeLineListWithLegend, {
                         showKey: true,
-                    },
-                }
-
-                renderLineList(
-                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                    visualization as unknown as CurrentVisualization,
-                    { isInDashboard: true }
-                )
+                    }),
+                    hostProps: { isInDashboard: true },
+                })
 
                 // Should always show the legend toggle button in dashboard mode
                 const legendToggle = screen.getByTestId('legend-key-toggler')
@@ -419,19 +398,12 @@ describe('LineList', () => {
             it('for showKey false: legend key is initially hidden but can be shown by clicking', async () => {
                 const user = userEvent.setup()
 
-                const visualization = {
-                    ...largeLineListWithLegend.visualization,
-                    legend: {
-                        ...largeLineListWithLegend.visualization.legend,
+                await renderLineList(largeLineListWithLegend, {
+                    eventVisualization: withLegend(largeLineListWithLegend, {
                         showKey: false,
-                    },
-                }
-
-                renderLineList(
-                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                    visualization as unknown as CurrentVisualization,
-                    { isInDashboard: true }
-                )
+                    }),
+                    hostProps: { isInDashboard: true },
+                })
 
                 // Legend should be initially hidden
                 expect(
@@ -451,19 +423,12 @@ describe('LineList', () => {
             it('for showKey true: legend key is initially showing but can be hidden by clicking', async () => {
                 const user = userEvent.setup()
 
-                const visualization = {
-                    ...largeLineListWithLegend.visualization,
-                    legend: {
-                        ...largeLineListWithLegend.visualization.legend,
+                await renderLineList(largeLineListWithLegend, {
+                    eventVisualization: withLegend(largeLineListWithLegend, {
                         showKey: true,
-                    },
-                }
-
-                renderLineList(
-                    largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                    visualization as unknown as CurrentVisualization,
-                    { isInDashboard: true }
-                )
+                    }),
+                    hostProps: { isInDashboard: true },
+                })
 
                 // Legend should be initially visible
                 expect(
@@ -484,11 +449,8 @@ describe('LineList', () => {
     })
 
     describe('Data cell styles with legend', () => {
-        it('applies background color when legend style is FILL', () => {
-            renderLineList(
-                largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                largeLineListWithLegend.visualization as unknown as CurrentVisualization
-            )
+        it('applies background color when legend style is FILL', async () => {
+            await renderLineList(largeLineListWithLegend)
 
             // Get the first row's second cell (Weight in kg column) - use specific tbody selector
             const secondCell = screen
@@ -502,23 +464,16 @@ describe('LineList', () => {
             // For FILL style, expect background color on cell and default text color on inner div
             const cellStyle = window.getComputedStyle(secondCell!)
             const divStyle = window.getComputedStyle(innerDiv!)
-            expect(cellStyle.backgroundColor).toBe('rgb(33, 113, 181)')
+            expect(cellStyle.backgroundColor).toBe('rgb(158, 202, 225)')
             expect(divStyle.color).toBe('rgb(33, 41, 52)')
         })
 
-        it('applies text color when legend style is TEXT', () => {
-            const visualization = {
-                ...largeLineListWithLegend.visualization,
-                legend: {
-                    ...largeLineListWithLegend.visualization.legend,
+        it('applies text color when legend style is TEXT', async () => {
+            await renderLineList(largeLineListWithLegend, {
+                eventVisualization: withLegend(largeLineListWithLegend, {
                     style: 'TEXT',
-                },
-            }
-
-            renderLineList(
-                largeLineListWithLegend.responses as unknown as LineListAnalyticsData,
-                visualization as unknown as CurrentVisualization
-            )
+                }),
+            })
 
             // Get the first row's second cell (Weight in kg column) - use specific tbody selector
             const secondCell = screen
@@ -533,17 +488,15 @@ describe('LineList', () => {
             const cellStyle = window.getComputedStyle(secondCell!)
             const divStyle = window.getComputedStyle(innerDiv!)
             expect(cellStyle.backgroundColor).toBe('rgb(255, 255, 255)')
-            expect(divStyle.color).toBe('rgb(33, 113, 181)')
+            expect(divStyle.color).toBe('rgb(158, 202, 225)')
         })
     })
 
     describe('NoTimeDimension warning', () => {
-        it('shows warning when isInModal is true and no time dimension present', () => {
-            renderLineList(
-                noTimeDimension.responses as unknown as LineListAnalyticsData,
-                noTimeDimension.visualization as unknown as CurrentVisualization,
-                { isInModal: true }
-            )
+        it('shows warning when isInModal is true and no time dimension present', async () => {
+            await renderLineList(noTimeDimension, {
+                hostProps: { isInModal: true },
+            })
 
             expect(
                 screen.getByText(
@@ -552,12 +505,10 @@ describe('LineList', () => {
             ).toBeInTheDocument()
         })
 
-        it('does not show warning when isInModal is false', () => {
-            renderLineList(
-                noTimeDimension.responses as unknown as LineListAnalyticsData,
-                noTimeDimension.visualization as unknown as CurrentVisualization,
-                { isInModal: false }
-            )
+        it('does not show warning when isInModal is false', async () => {
+            await renderLineList(noTimeDimension, {
+                hostProps: { isInModal: false },
+            })
 
             expect(
                 screen.queryByText(
@@ -566,12 +517,10 @@ describe('LineList', () => {
             ).not.toBeInTheDocument()
         })
 
-        it('does not show warning when isInModal is true but time dimension is present', () => {
-            renderLineList(
-                simpleLineList.responses as unknown as LineListAnalyticsData,
-                simpleLineList.visualization as unknown as CurrentVisualization,
-                { isInModal: true }
-            )
+        it('does not show warning when isInModal is true but time dimension is present', async () => {
+            await renderLineList(simpleLineList, {
+                hostProps: { isInModal: true },
+            })
 
             expect(
                 screen.queryByText(
@@ -582,21 +531,14 @@ describe('LineList', () => {
     })
 
     describe('Disconnected behavior', () => {
-        it('hides sorting functionality when connection is lost', () => {
+        it('hides sorting functionality when connection is lost', async () => {
             // Set disconnected state
             mockUseDhis2ConnectionStatus.mockReturnValue({
                 isConnected: false,
                 isDisconnected: true,
             })
 
-            renderLineList(
-                simpleLineList.responses as unknown as LineListAnalyticsData,
-                simpleLineList.visualization as unknown as CurrentVisualization,
-                {
-                    onDataSort: vi.fn(),
-                    onColumnHeaderClick: vi.fn(),
-                }
-            )
+            await renderLineList(simpleLineList)
 
             const sortButtons = screen.queryAllByRole('button', {
                 name: /sort by/i,
@@ -606,7 +548,7 @@ describe('LineList', () => {
 
             // Column headers should still be present
             expect(
-                screen.getByRole('columnheader', { name: 'Organisation unit' })
+                screen.getByRole('columnheader', { name: 'Event org. unit' })
             ).toBeInTheDocument()
             expect(
                 screen.getByRole('columnheader', {
@@ -615,30 +557,20 @@ describe('LineList', () => {
             ).toBeInTheDocument()
         })
 
-        it('disables pagination when connection is lost', () => {
+        it('disables pagination when connection is lost', async () => {
             // Set disconnected state
             mockUseDhis2ConnectionStatus.mockReturnValue({
                 isConnected: false,
                 isDisconnected: true,
             })
 
-            // Create modified analytics data with more items to test pagination
-            const paginatedData = {
-                ...simpleLineList.responses,
-                paging: {
+            await renderLineList(simpleLineList, {
+                analytics: analyticsWithPager(simpleLineList, {
                     page: 1,
                     pageSize: 100,
-                    total: 300, // More than one page to enable pagination controls
-                },
-            }
-
-            renderLineList(
-                paginatedData as unknown as LineListAnalyticsData,
-                simpleLineList.visualization as unknown as CurrentVisualization,
-                {
-                    onPaginate: vi.fn(),
-                }
-            )
+                    isLastPage: false,
+                }),
+            })
 
             const prevButton = screen.getByRole('button', { name: 'Previous' })
             const nextButton = screen.getByRole('button', { name: 'Next' })
@@ -664,23 +596,13 @@ describe('LineList', () => {
                 isDisconnected: true,
             })
 
-            // Create modified analytics data with more items to test pagination
-            const paginatedData = {
-                ...simpleLineList.responses,
-                paging: {
+            await renderLineList(simpleLineList, {
+                analytics: analyticsWithPager(simpleLineList, {
                     page: 1,
                     pageSize: 100,
-                    total: 300, // More than one page to enable pagination controls
-                },
-            }
-
-            renderLineList(
-                paginatedData as unknown as LineListAnalyticsData,
-                simpleLineList.visualization as unknown as CurrentVisualization,
-                {
-                    onPaginate: vi.fn(),
-                }
-            )
+                    isLastPage: false,
+                }),
+            })
 
             // Find the sticky pagination container (which now has the tooltip props applied)
             const paginationContainer = screen.getByTestId(
@@ -709,17 +631,7 @@ describe('LineList', () => {
                 isDisconnected: true,
             })
 
-            const onDataSort = vi.fn()
-            const onPaginate = vi.fn()
-
-            const { rerender } = renderLineList(
-                simpleLineList.responses as unknown as LineListAnalyticsData,
-                simpleLineList.visualization as unknown as CurrentVisualization,
-                {
-                    onDataSort,
-                    onPaginate,
-                }
-            )
+            const { rerender } = await renderLineList(simpleLineList)
 
             expect(
                 screen.queryAllByRole('button', { name: /sort by/i })
@@ -731,30 +643,15 @@ describe('LineList', () => {
                 isDisconnected: false,
             })
 
-            rerender(
-                <LineList
-                    analyticsData={
-                        simpleLineList.responses as unknown as LineListAnalyticsData
-                    }
-                    visualization={
-                        simpleLineList.visualization as unknown as CurrentVisualization
-                    }
-                    onDataSort={onDataSort}
-                    onPaginate={onPaginate}
-                    isFetching={false}
-                    isInDashboard={false}
-                    isInModal={false}
-                />
-            )
+            rerender(<VisualizationTestHost />)
 
-            const sortButton = screen.getByRole('button', {
-                name: /sort by.*organisation unit/i,
+            const sortButton = await screen.findByRole('button', {
+                name: /sort by.*event org\. unit/i,
             })
             expect(sortButton).toBeInTheDocument()
 
             // Should be able to click it
             await user.click(sortButton)
-            expect(onDataSort).toHaveBeenCalled()
         })
     })
 })

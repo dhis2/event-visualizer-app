@@ -1,18 +1,64 @@
-import { CssVariables } from '@dhis2/ui'
-import type { CurrentVisualization } from '@types'
-import type { FC, ReactNode } from 'react'
-import simpleLineList from '../__fixtures__/e2e-enrollment.json'
-import largeLineListWithLegend from '../__fixtures__/inpatient-cases-under-5-years-female-this-year-additional-columns-and-legends.json'
-import inpatientVisit from '../__fixtures__/inpatient-visit-overview-this-year-bombali.json'
-import { LineList } from '../line-list'
-import type { LineListAnalyticsData } from '../types'
+import { Analytics } from '@dhis2/analytics'
+import { MockAppWrapper } from '@test-utils/app-wrapper'
+import {
+    getLineListFixtureQueryData,
+    loadLineListFixture,
+    type LineListFixture,
+} from './line-list-fixture-utils'
+import { VisualizationTestHost } from './visualization-test-host'
 
-const TestContainer: FC<{ children: ReactNode }> = ({ children }) => (
-    <div style={{ width: '100vw', height: '100vh' }}>
-        {children}
-        <CssVariables colors spacers theme />
-    </div>
-)
+const simpleLineList = loadLineListFixture('AFjkDs7acBh')
+const largeLineListWithLegend = loadLineListFixture('A8CgvIY3VEy')
+const inpatientVisit = loadLineListFixture('kb9Uml5FEEz')
+
+type QueryData = ReturnType<typeof getLineListFixtureQueryData>
+
+type MountLineListOptions = {
+    analytics?: QueryData[string]
+}
+
+const mountLineList = (
+    fixture: LineListFixture,
+    { analytics }: MountLineListOptions = {}
+) => {
+    const visualizationPayload = fixture.eventVisualization as { id: string }
+    cy.mount(
+        <div style={{ width: '100vw', height: '100vh' }}>
+            <MockAppWrapper
+                partialStore={{
+                    preloadedState: {
+                        navigation: {
+                            visualizationId: visualizationPayload.id,
+                            interpretationId: null,
+                        },
+                    },
+                }}
+                queryData={getLineListFixtureQueryData(
+                    fixture,
+                    analytics ? { analytics } : {}
+                )}
+            >
+                <VisualizationTestHost />
+            </MockAppWrapper>
+        </div>
+    )
+    // Wait for the load-and-fetch pipeline to render the table
+    cy.getByDataTest('line-list-data-table')
+}
+
+/* Resolves the first analytics request with the fixture response and leaves
+ * every following request pending, so the refetch overlay stays visible. */
+const analyticsWithPendingRefetch = (
+    fixture: LineListFixture
+): QueryData[string] => {
+    let requestCount = 0
+    return (() => {
+        requestCount += 1
+        return requestCount === 1
+            ? fixture.response
+            : new Promise(() => undefined)
+    }) as QueryData[string]
+}
 
 describe(
     'Line List',
@@ -21,22 +67,18 @@ describe(
         viewportHeight: 768,
     },
     () => {
+        beforeEach(() => {
+            /* Analytics.getAnalytics caches a singleton bound to the first
+             * data engine it sees; reset it so each test's mock data provider
+             * is used. */
+            ;(
+                Analytics.getAnalytics as unknown as { analytics?: unknown }
+            ).analytics = undefined
+        })
+
         describe('Scrolling behavior', () => {
             it('small table gets no scrollbars', () => {
-                cy.mount(
-                    <TestContainer>
-                        <LineList
-                            analyticsData={
-                                simpleLineList.responses as unknown as LineListAnalyticsData
-                            }
-                            onDataSort={cy.stub()}
-                            onPaginate={cy.stub()}
-                            visualization={
-                                simpleLineList.visualization as unknown as CurrentVisualization
-                            }
-                        />
-                    </TestContainer>
-                )
+                mountLineList(simpleLineList)
 
                 // Check that the scroll box doesn't have scrollbars
                 cy.getByDataTest('scroll-box-container').should(($el) => {
@@ -46,20 +88,7 @@ describe(
             })
 
             it('tall but not too wide table gets vertical scrollbar', () => {
-                cy.mount(
-                    <TestContainer>
-                        <LineList
-                            analyticsData={
-                                inpatientVisit.responses as unknown as LineListAnalyticsData
-                            }
-                            onDataSort={cy.stub()}
-                            onPaginate={cy.stub()}
-                            visualization={
-                                inpatientVisit.visualization as unknown as CurrentVisualization
-                            }
-                        />
-                    </TestContainer>
-                )
+                mountLineList(inpatientVisit)
 
                 // Check for vertical scrollbar presence
                 cy.getByDataTest('scroll-box-container').should(($el) => {
@@ -73,20 +102,7 @@ describe(
             })
 
             it('large table gets two scrollbars', () => {
-                cy.mount(
-                    <TestContainer>
-                        <LineList
-                            analyticsData={
-                                largeLineListWithLegend.responses as unknown as LineListAnalyticsData
-                            }
-                            onDataSort={cy.stub()}
-                            onPaginate={cy.stub()}
-                            visualization={
-                                largeLineListWithLegend.visualization as unknown as CurrentVisualization
-                            }
-                        />
-                    </TestContainer>
-                )
+                mountLineList(largeLineListWithLegend)
 
                 // Check for both scrollbars
                 cy.getByDataTest('scroll-box-container').should(($el) => {
@@ -99,51 +115,32 @@ describe(
                 })
             })
 
-            it('large table with legend key also has a scrollbar on the legend-key area', () => {
-                cy.mount(
-                    <TestContainer>
-                        <LineList
-                            analyticsData={
-                                largeLineListWithLegend.responses as unknown as LineListAnalyticsData
-                            }
-                            onDataSort={cy.stub()}
-                            onPaginate={cy.stub()}
-                            visualization={
-                                largeLineListWithLegend.visualization as unknown as CurrentVisualization
-                            }
-                        />
-                    </TestContainer>
-                )
+            it(
+                'large table with legend key also has a scrollbar on the legend-key area',
+                /* Short enough that the legend key cannot fit its items */
+                { viewportHeight: 500 },
+                () => {
+                    mountLineList(largeLineListWithLegend)
 
-                // Check that legend key is visible
-                cy.getByDataTest('visualization-legend-key').should(
-                    'be.visible'
-                )
-
-                // Check that legend key area has a scrollbar
-                cy.getByDataTest('visualization-legend-key').should(($el) => {
-                    // Legend key should have scrollbar (scrollHeight > clientHeight)
-                    expect($el[0].scrollHeight).to.be.greaterThan(
-                        $el[0].clientHeight
+                    // Check that legend key is visible
+                    cy.getByDataTest('visualization-legend-key').should(
+                        'be.visible'
                     )
-                })
-            })
+
+                    // Check that legend key area has a scrollbar
+                    cy.getByDataTest('visualization-legend-key').should(
+                        ($el) => {
+                            // Legend key should have scrollbar (scrollHeight > clientHeight)
+                            expect($el[0].scrollHeight).to.be.greaterThan(
+                                $el[0].clientHeight
+                            )
+                        }
+                    )
+                }
+            )
 
             it('table header cells are sticky when scrolling down but scroll when scrolling sideways', () => {
-                cy.mount(
-                    <TestContainer>
-                        <LineList
-                            analyticsData={
-                                largeLineListWithLegend.responses as unknown as LineListAnalyticsData
-                            }
-                            onDataSort={cy.stub()}
-                            onPaginate={cy.stub()}
-                            visualization={
-                                largeLineListWithLegend.visualization as unknown as CurrentVisualization
-                            }
-                        />
-                    </TestContainer>
-                )
+                mountLineList(largeLineListWithLegend)
 
                 // Get the first header cell for reference
                 cy.getByDataTest('data-table-header').first().as('firstHeader')
@@ -162,20 +159,7 @@ describe(
             })
 
             it('table data cells scroll in both directions', () => {
-                cy.mount(
-                    <TestContainer>
-                        <LineList
-                            analyticsData={
-                                largeLineListWithLegend.responses as unknown as LineListAnalyticsData
-                            }
-                            onDataSort={cy.stub()}
-                            onPaginate={cy.stub()}
-                            visualization={
-                                largeLineListWithLegend.visualization as unknown as CurrentVisualization
-                            }
-                        />
-                    </TestContainer>
-                )
+                mountLineList(largeLineListWithLegend)
 
                 // Get the first data cell for reference
                 cy.getByDataTest('line-list-data-table-body')
@@ -200,20 +184,7 @@ describe(
             })
 
             it('pagination is sticky in both directions', () => {
-                cy.mount(
-                    <TestContainer>
-                        <LineList
-                            analyticsData={
-                                largeLineListWithLegend.responses as unknown as LineListAnalyticsData
-                            }
-                            onDataSort={cy.stub()}
-                            onPaginate={cy.stub()}
-                            visualization={
-                                largeLineListWithLegend.visualization as unknown as CurrentVisualization
-                            }
-                        />
-                    </TestContainer>
-                )
+                mountLineList(largeLineListWithLegend)
 
                 // Scroll both vertically and horizontally
                 cy.getByDataTest('scroll-box-container').scrollTo(300, 200, {
@@ -255,6 +226,21 @@ describe(
         })
 
         describe('Fetching overlay', () => {
+            const triggerPendingRefetch = () => {
+                // Trigger a refetch that never resolves by sorting a column
+                cy.getByDataTest('data-table-header')
+                    .first()
+                    .find('button')
+                    .click()
+                cy.getByDataTest('fetch-overlay').should('be.visible')
+                /* Clicking the header may scroll the container; reset so the
+                 * geometry assertions run against the resting position. */
+                cy.getByDataTest('scroll-box-container').scrollTo(0, 0, {
+                    duration: 0,
+                    ensureScrollable: false,
+                })
+            }
+
             const expectOverlayToCoverScrollBox = () => {
                 // Overlay and spinner are visible
                 cy.getByDataTest('fetch-overlay').should('be.visible')
@@ -290,23 +276,14 @@ describe(
                 })
             }
 
-            it('when isFetching is true, the table gets an overlay but the legend key does not', () => {
-                cy.mount(
-                    <TestContainer>
-                        <LineList
-                            isFetching
-                            analyticsData={
-                                largeLineListWithLegend.responses as unknown as LineListAnalyticsData
-                            }
-                            onDataSort={cy.stub()}
-                            onPaginate={cy.stub()}
-                            visualization={
-                                largeLineListWithLegend.visualization as unknown as CurrentVisualization
-                            }
-                        />
-                    </TestContainer>
-                )
+            it('while refetching, the table gets an overlay but the legend key does not', () => {
+                mountLineList(largeLineListWithLegend, {
+                    analytics: analyticsWithPendingRefetch(
+                        largeLineListWithLegend
+                    ),
+                })
 
+                triggerPendingRefetch()
                 expectOverlayToCoverScrollBox()
 
                 // Check that legend key remains accessible (not covered by overlay)
@@ -316,23 +293,12 @@ describe(
                 })
             })
 
-            it('when isFetching is true on a small table, the overlay covers only the scroll container', () => {
-                cy.mount(
-                    <TestContainer>
-                        <LineList
-                            isFetching
-                            analyticsData={
-                                simpleLineList.responses as unknown as LineListAnalyticsData
-                            }
-                            onDataSort={cy.stub()}
-                            onPaginate={cy.stub()}
-                            visualization={
-                                simpleLineList.visualization as unknown as CurrentVisualization
-                            }
-                        />
-                    </TestContainer>
-                )
+            it('while refetching a small table, the overlay covers only the scroll container', () => {
+                mountLineList(simpleLineList, {
+                    analytics: analyticsWithPendingRefetch(simpleLineList),
+                })
 
+                triggerPendingRefetch()
                 expectOverlayToCoverScrollBox()
             })
         })
