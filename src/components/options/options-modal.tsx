@@ -15,7 +15,7 @@ import { getOptionsTabsForVisType } from '@modules/options'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
 import type { OptionsTabKey } from '@types'
-import { useCallback, useMemo, useState, type FC } from 'react'
+import { useCallback, useMemo, useState, type FC, type FormEvent } from 'react'
 import { OptionsTabContent } from './options-tab-content'
 
 const FORM_ID = 'options-modal-form'
@@ -36,10 +36,14 @@ export const OptionsModal: FC<OptionsModalProps> = ({ onClose }) => {
         [visType]
     )
 
-    const updateVisualizationAndClose = useCallback(() => {
-        dispatch(tUpdateCurrentVisFromVisUiConfig())
-        onClose()
-    }, [onClose, dispatch])
+    const updateVisualizationAndClose = useCallback(
+        (event: FormEvent<HTMLFormElement>) => {
+            event.preventDefault()
+            dispatch(tUpdateCurrentVisFromVisUiConfig())
+            onClose()
+        },
+        [onClose, dispatch]
+    )
 
     return (
         <Modal
