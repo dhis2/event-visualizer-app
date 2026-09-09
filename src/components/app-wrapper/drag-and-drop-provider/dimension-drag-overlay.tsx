@@ -39,7 +39,14 @@ const DragOverlayBadge: FC<{
             </span>
         )
     } else if (typeof multiSelectCount === 'number' && multiSelectCount >= 2) {
-        return <span className={classes.countBadge}>{multiSelectCount}</span>
+        return (
+            <span
+                className={classes.countBadge}
+                data-test="chip-multi-select-count"
+            >
+                {multiSelectCount}
+            </span>
+        )
     } else {
         return null
     }
