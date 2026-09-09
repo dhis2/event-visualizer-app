@@ -1,0 +1,203 @@
+{
+    "headers": [
+        {
+            "name": "dBwrot7S420.ouname",
+            "column": "Organisation unit name",
+            "valueType": "TEXT",
+            "type": "java.lang.String",
+            "hidden": false,
+            "meta": true
+        },
+        {
+            "name": "dBwrot7S420.sWoqcoByYmD",
+            "column": "WHOMCH Smoking",
+            "valueType": "BOOLEAN",
+            "type": "java.lang.Boolean",
+            "hidden": false,
+            "meta": true
+        }
+    ],
+    "metaData": {
+        "pager": {
+            "page": 1,
+            "pageSize": 100,
+            "isLastPage": true
+        },
+        "items": {
+            "USER_ORGUNIT": {
+                "organisationUnits": ["ImspTQPwCqd"]
+            },
+            "lxAQ7Zs9VYR": {
+                "uid": "lxAQ7Zs9VYR",
+                "name": "Antenatal care visit"
+            },
+            "dBwrot7S420.sWoqcoByYmD": {
+                "uid": "sWoqcoByYmD",
+                "code": "STA_SMO",
+                "name": "WHOMCH Smoking",
+                "dimensionItemType": "DATA_ELEMENT",
+                "valueType": "BOOLEAN",
+                "aggregationType": "SUM",
+                "totalAggregationType": "SUM"
+            },
+            "sWoqcoByYmD": {
+                "uid": "sWoqcoByYmD",
+                "code": "STA_SMO",
+                "name": "WHOMCH Smoking",
+                "dimensionItemType": "DATA_ELEMENT",
+                "valueType": "BOOLEAN",
+                "aggregationType": "SUM",
+                "totalAggregationType": "SUM"
+            },
+            "2026SunW29": {
+                "uid": "2026SunW29",
+                "code": "2026SunW29",
+                "name": "Week 29 - 2026-07-19 - 2026-07-25",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-07-19T00:00:00.000",
+                "endDate": "2026-07-25T00:00:00.000"
+            },
+            "2026SunW27": {
+                "uid": "2026SunW27",
+                "code": "2026SunW27",
+                "name": "Week 27 - 2026-07-05 - 2026-07-11",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-07-05T00:00:00.000",
+                "endDate": "2026-07-11T00:00:00.000"
+            },
+            "2026SunW28": {
+                "uid": "2026SunW28",
+                "code": "2026SunW28",
+                "name": "Week 28 - 2026-07-12 - 2026-07-18",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-07-12T00:00:00.000",
+                "endDate": "2026-07-18T00:00:00.000"
+            },
+            "2026SunW25": {
+                "uid": "2026SunW25",
+                "code": "2026SunW25",
+                "name": "Week 25 - 2026-06-21 - 2026-06-27",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-06-21T00:00:00.000",
+                "endDate": "2026-06-27T00:00:00.000"
+            },
+            "2026SunW26": {
+                "uid": "2026SunW26",
+                "code": "2026SunW26",
+                "name": "Week 26 - 2026-06-28 - 2026-07-04",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-06-28T00:00:00.000",
+                "endDate": "2026-07-04T00:00:00.000"
+            },
+            "2026SunW34": {
+                "uid": "2026SunW34",
+                "code": "2026SunW34",
+                "name": "Week 34 - 2026-08-23 - 2026-08-29",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-08-23T00:00:00.000",
+                "endDate": "2026-08-29T00:00:00.000"
+            },
+            "2026SunW24": {
+                "uid": "2026SunW24",
+                "code": "2026SunW24",
+                "name": "Week 24 - 2026-06-14 - 2026-06-20",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-06-14T00:00:00.000",
+                "endDate": "2026-06-20T00:00:00.000"
+            },
+            "2026SunW35": {
+                "uid": "2026SunW35",
+                "code": "2026SunW35",
+                "name": "Week 35 - 2026-08-30 - 2026-09-05",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-08-30T00:00:00.000",
+                "endDate": "2026-09-05T00:00:00.000"
+            },
+            "ImspTQPwCqd": {
+                "uid": "ImspTQPwCqd",
+                "code": "OU_525",
+                "name": "Sierra Leone"
+            },
+            "2026SunW32": {
+                "uid": "2026SunW32",
+                "code": "2026SunW32",
+                "name": "Week 32 - 2026-08-09 - 2026-08-15",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-08-09T00:00:00.000",
+                "endDate": "2026-08-15T00:00:00.000"
+            },
+            "2026SunW33": {
+                "uid": "2026SunW33",
+                "code": "2026SunW33",
+                "name": "Week 33 - 2026-08-16 - 2026-08-22",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-08-16T00:00:00.000",
+                "endDate": "2026-08-22T00:00:00.000"
+            },
+            "2026SunW30": {
+                "uid": "2026SunW30",
+                "code": "2026SunW30",
+                "name": "Week 30 - 2026-07-26 - 2026-08-01",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-07-26T00:00:00.000",
+                "endDate": "2026-08-01T00:00:00.000"
+            },
+            "2026SunW31": {
+                "uid": "2026SunW31",
+                "code": "2026SunW31",
+                "name": "Week 31 - 2026-08-02 - 2026-08-08",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-08-02T00:00:00.000",
+                "endDate": "2026-08-08T00:00:00.000"
+            },
+            "pe": {
+                "uid": "pe",
+                "dimensionType": "PERIOD"
+            },
+            "dBwrot7S420": {
+                "uid": "dBwrot7S420",
+                "name": "Antenatal care visit"
+            },
+            "dBwrot7S420.ou": {
+                "name": "Organisation unit"
+            },
+            "LAST_12_WEEKS": {
+                "name": "Last 12 weeks"
+            }
+        },
+        "dimensions": {
+            "dBwrot7S420.sWoqcoByYmD": [],
+            "pe": [],
+            "dBwrot7S420.ou": ["ImspTQPwCqd"]
+        }
+    },
+    "rowContext": {},
+    "width": 2,
+    "rows": [["Ngelehun CHC", ""]],
+    "height": 1,
+    "headerWidth": 2
+}

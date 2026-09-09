@@ -13,16 +13,16 @@
 const FIXTURES_DIR = 'src/components/line-list/__fixtures__'
 
 /* One entry per fixture directory; see the README there. */
-const VISUALIZATION_IDS = [
-    'AFjkDs7acBh',
-    'kb9Uml5FEEz',
-    'A8CgvIY3VEy',
-    'ylhECvoYdzK',
+const SCENARIOS = [
+    { directory: 'e2e-enrollment', id: 'AFjkDs7acBh' },
+    { directory: 'inpatient-visit-overview-bombali', id: 'kb9Uml5FEEz' },
+    { directory: 'inpatient-extra-columns-and-legends', id: 'A8CgvIY3VEy' },
+    { directory: 'no-time-dimension', id: 'ylhECvoYdzK' },
 ]
 
 describe('recapture line-list fixtures', () => {
-    VISUALIZATION_IDS.forEach((id) => {
-        it(`recaptures ${id}`, () => {
+    SCENARIOS.forEach(({ directory, id }) => {
+        it(`recaptures ${directory}`, () => {
             const captured: Record<string, unknown> = {}
 
             cy.intercept('GET', `**/eventVisualizations/${id}?*`, (req) => {
@@ -55,7 +55,7 @@ describe('recapture line-list fixtures', () => {
                 )
                 for (const [fileName, body] of Object.entries(captured)) {
                     cy.writeFile(
-                        `${FIXTURES_DIR}/${id}/${fileName}.json`,
+                        `${FIXTURES_DIR}/${directory}/${fileName}.json`,
                         JSON.stringify(body, null, 4) + '\n'
                     )
                 }

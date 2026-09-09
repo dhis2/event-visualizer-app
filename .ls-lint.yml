@@ -12,9 +12,6 @@ ls:
         .sh: kebab-case
         .json: kebab-case
 
-    'src/components/line-list/__fixtures__':
-        .dir: regex:__fixtures__ | regex:[A-Za-z][A-Za-z0-9]{10}(_[a-z0-9\-]+)?
-
 ignore:
     - src/locales
     - src/types/dhis2-openapi-schemas

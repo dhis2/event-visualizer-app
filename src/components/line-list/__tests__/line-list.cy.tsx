@@ -7,9 +7,11 @@ import {
 } from './line-list-fixture-utils'
 import { VisualizationTestHost } from './visualization-test-host'
 
-const simpleLineList = loadLineListFixture('AFjkDs7acBh')
-const largeLineListWithLegend = loadLineListFixture('A8CgvIY3VEy')
-const inpatientVisit = loadLineListFixture('kb9Uml5FEEz')
+const simpleLineList = loadLineListFixture('e2e-enrollment')
+const largeLineListWithLegend = loadLineListFixture(
+    'inpatient-extra-columns-and-legends'
+)
+const inpatientVisit = loadLineListFixture('inpatient-visit-overview-bombali')
 
 type QueryData = ReturnType<typeof getLineListFixtureQueryData>
 

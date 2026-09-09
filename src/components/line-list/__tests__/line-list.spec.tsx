@@ -11,9 +11,11 @@ import {
 } from './line-list-fixture-utils'
 import { VisualizationTestHost } from './visualization-test-host'
 
-const simpleLineList = loadLineListFixture('AFjkDs7acBh')
-const largeLineListWithLegend = loadLineListFixture('A8CgvIY3VEy')
-const noTimeDimension = loadLineListFixture('ylhECvoYdzK')
+const simpleLineList = loadLineListFixture('e2e-enrollment')
+const largeLineListWithLegend = loadLineListFixture(
+    'inpatient-extra-columns-and-legends'
+)
+const noTimeDimension = loadLineListFixture('no-time-dimension')
 
 /* The connection status hook needs to be controllable to test offline
  * behavior; everything else comes from the real module, which the app
