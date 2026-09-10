@@ -1,6 +1,6 @@
 import type { EngineError } from '@api/parse-engine-error'
 import { CssVariables } from '@dhis2/ui'
-import type { CanvasErrorIcon } from '@modules/error/canvas-error-icon'
+import type { CanvasErrorIcon } from '@modules/error/canvas-error-display'
 import { EmptyResponseError } from '@modules/error/empty-response-error'
 import type { FC, PropsWithChildren } from 'react'
 import { CanvasError } from '../canvas-error'
