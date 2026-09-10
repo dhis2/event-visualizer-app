@@ -38,6 +38,15 @@ const ERROR_SCREENS: ErrorScreen[] = [
         retryable: false,
     },
     {
+        label: 'E1005 — visualization does not exist',
+        error: engineError({ errorCode: 'E1005' }),
+        title: 'Visualization not found',
+        description:
+            'The visualization you are trying to view could not be found, the ID could be incorrect or it could have been deleted.',
+        icon: 'generic',
+        retryable: false,
+    },
+    {
         label: 'E7120 — no access to org units',
         error: engineError({ errorCode: 'E7120' }),
         title: 'Restricted access',
@@ -55,36 +64,12 @@ const ERROR_SCREENS: ErrorScreen[] = [
         retryable: false,
     },
     {
-        label: 'E7123 — no access to data',
+        label: 'E7123 — no readable items in a constrained dimension',
         error: engineError({ errorCode: 'E7123' }),
         title: 'Restricted access',
-        description: NO_ACCESS_TO_DATA,
-        icon: 'data',
-        retryable: false,
-    },
-    {
-        label: 'E7132 — indicator problem',
-        error: engineError({ errorCode: 'E7132' }),
-        title: 'Something went wrong',
-        description: "There's a problem with at least one selected indicator.",
-        icon: 'data',
-        retryable: false,
-    },
-    {
-        label: 'E7144 — generated analytics problem',
-        error: engineError({ errorCode: 'E7144' }),
-        title: 'Something went wrong',
         description:
-            "There's a problem with the generated analytics. Contact a system administrator.",
-        icon: 'generic',
-        retryable: false,
-    },
-    {
-        label: 'E7145 — request syntax problem',
-        error: engineError({ errorCode: 'E7145' }),
-        title: 'Something went wrong',
-        description: "There's a syntax problem with the analytics request.",
-        icon: 'generic',
+            "You don't have access to any items in a dimension your user account is restricted to. Contact a system administrator.",
+        icon: 'data',
         retryable: false,
     },
     {
@@ -94,6 +79,98 @@ const ERROR_SCREENS: ErrorScreen[] = [
         description:
             "You don't have access to event analytics. Contact a system administrator.",
         icon: 'data',
+        retryable: false,
+    },
+    {
+        label: 'E7132 — indicator problem',
+        error: engineError({ errorCode: 'E7132' }),
+        title: 'Invalid indicator',
+        description: "There's a problem with at least one selected indicator.",
+        icon: 'data',
+        retryable: false,
+    },
+    {
+        label: 'E7245 — stage no longer in its program',
+        error: engineError({ errorCode: 'E7245' }),
+        title: 'Program stage not available',
+        description:
+            'A program stage in this visualization is no longer part of its program. It may have been changed or removed.',
+        icon: 'data',
+        retryable: false,
+    },
+    {
+        label: 'E7226 — dimension cannot be resolved',
+        error: engineError({ errorCode: 'E7226' }),
+        title: 'Dimension not available',
+        description:
+            'A dimension in this visualization is no longer valid. It may have been removed from the program.',
+        icon: 'data',
+        retryable: false,
+    },
+    {
+        label: 'E7142 — program not on the tracked entity type',
+        error: engineError({ errorCode: 'E7142' }),
+        title: 'Program not available',
+        description:
+            'A program in this visualization is not available for the selected tracked entity type.',
+        icon: 'data',
+        retryable: false,
+    },
+    {
+        label: 'E7128 — result set over the server maximum',
+        error: engineError({ errorCode: 'E7128' }),
+        title: 'Too much data',
+        description:
+            'This request returns more data than the server allows. Add a filter or choose a shorter period.',
+        icon: 'data',
+        retryable: false,
+    },
+    {
+        label: 'E7209 — top limit over the server maximum',
+        error: engineError({ errorCode: 'E7209' }),
+        title: 'Top limit too high',
+        description:
+            'The top limit in this visualization is higher than the server allows. Lower it in the options.',
+        icon: 'generic',
+        retryable: false,
+    },
+    {
+        label: 'E7131 — query timed out',
+        error: engineError({ errorCode: 'E7131' }),
+        title: 'Request timed out',
+        description:
+            'The request took too long and was stopped. Try again, or reduce the amount of data requested.',
+        icon: 'generic',
+        retryable: true,
+    },
+    {
+        label: 'E7144 — analytics tables missing',
+        error: engineError({ errorCode: 'E7144' }),
+        title: 'Analytics not generated',
+        description:
+            'The analytics tables have not been generated. Contact a system administrator.',
+        icon: 'generic',
+        retryable: false,
+    },
+    {
+        label: 'E7145 — query could not be run',
+        error: engineError({ errorCode: 'E7145' }),
+        title: 'Analytics request failed',
+        description:
+            'The server could not run this request. Contact a system administrator.',
+        icon: 'generic',
+        retryable: false,
+    },
+    {
+        label: 'unrecognised code on a rejected request',
+        error: engineError({
+            type: 'access',
+            errorCode: 'E7250',
+            message: 'Dimension is not a fully qualified: `abc.def`',
+        }),
+        title: 'Analytics request error',
+        description: 'Dimension is not a fully qualified: `abc.def`',
+        icon: 'generic',
         retryable: false,
     },
     {
@@ -146,7 +223,7 @@ describe('<CanvasError />', () => {
     )
 
     it('renders every screen at once for visual comparison', () => {
-        cy.viewport(700, 1600)
+        cy.viewport(700, 2800)
         cy.mount(
             <Harness>
                 {ERROR_SCREENS.map(({ label, error }) => (
