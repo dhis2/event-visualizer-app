@@ -9,12 +9,12 @@ import i18n from '@dhis2/d2-i18n'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { logger } from '@modules/logger'
 import {
-    getSaveableVisualization,
-    getVisualizationState,
     isCurrentVisualizationPersisted,
     isVisualizationEmpty,
     isVisualizationPersistable,
-} from '@modules/visualization/state'
+} from '@modules/visualization/guards'
+import { getSaveableVisualization } from '@modules/visualization/save'
+import { getVisualizationState } from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import { getSavedVis, setSavedVisNameDescription } from '@store/saved-vis-slice'

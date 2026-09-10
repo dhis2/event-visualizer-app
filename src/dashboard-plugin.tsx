@@ -11,10 +11,8 @@ import { DashboardPluginWrapper } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports
 import { useDataQuery } from '@dhis2/app-runtime'
 import { logger } from '@modules/logger'
-import {
-    normalizeApiSavedVisualization,
-    toCurrentVis,
-} from '@modules/visualization/state'
+import { toCurrentVis } from '@modules/visualization/current-vis'
+import { normalizeApiSavedVisualization } from '@modules/visualization/normalize-legacy'
 import type {
     ApiSavedVisualization,
     CurrentUser,

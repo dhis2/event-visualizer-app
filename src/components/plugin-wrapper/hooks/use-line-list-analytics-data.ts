@@ -20,8 +20,8 @@ import { isAbortError } from '@modules/error/is-abort-error'
 import { resolveLayoutContext } from '@modules/layout'
 import { logger } from '@modules/logger'
 import { isValueTypeNumeric } from '@modules/value-type'
+import { isVisualizationWithTimeDimension } from '@modules/visualization/guards'
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
-import { isVisualizationWithTimeDimension } from '@modules/visualization/state'
 import type {
     CurrentUser,
     CurrentVisualization,
