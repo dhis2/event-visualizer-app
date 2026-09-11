@@ -12,15 +12,18 @@ describe('dashboard plugin errors', () => {
     })
 
     it('refetches the visualization when Retry is clicked', () => {
-        /* Count eventVisualizations requests, where a bad id fails: the error
-         * text is already there before the click, so a dead button would pass
-         * an assertion on it. */
-        cy.intercept({ method: 'GET', url: '**/eventVisualizations/**' }).as(
-            'vis'
-        )
+        /* A server failure rather than a missing visualization, since only a
+         * retryable error renders the button. Counting eventVisualizations
+         * requests is what proves the click refetches: the error text is
+         * already there before it, so a dead button would pass an assertion on
+         * the text alone. */
+        cy.intercept(
+            { method: 'GET', url: '**/eventVisualizations/**' },
+            { statusCode: 500, body: { message: 'forced by test' } }
+        ).as('vis')
 
         cy.getByDataTest('plugin-host-visualization-id-input').type(
-            'notARealId1'
+            LINE_LIST_ID
         )
 
         pluginBody().contains('button', 'Retry').should('be.visible')
