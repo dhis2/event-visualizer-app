@@ -5,20 +5,10 @@ import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
 import { IconEdit16 } from '@dhis2/ui'
 import { useDndContext, useDroppable } from '@dnd-kit/core'
-import {
-    useAppSelector,
-    useLayoutContext,
-    useMetadataItem,
-    useMetadataStore,
-} from '@hooks'
-import { isDataSourceProgramWithRegistration } from '@modules/data-source'
+import { useAppSelector, useMetadataItem } from '@hooks'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
-import {
-    getVisUiConfigCustomValue,
-    getVisUiConfigOutputType,
-    getVisUiConfigVisualizationType,
-} from '@store/vis-ui-config-slice'
+import { getVisUiConfigCustomValue } from '@store/vis-ui-config-slice'
 import cx from 'classnames'
 import { useState, type FC } from 'react'
 import classes from './styles/value-axis.module.css'
@@ -30,65 +20,19 @@ const VALUE_DROPPABLE_DATA: ValueContainerDroppableData = {
 export const ValueAxis: FC = () => {
     const dataSourceId = useAppSelector(getDataSourceId)
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
-    const outputType = useAppSelector(getVisUiConfigOutputType)
-    const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
     const customValue = useAppSelector(getVisUiConfigCustomValue)
     const customValueMetadata = useMetadataItem(customValue?.id)
-    const { programIds, tetId } = useLayoutContext()
-    const metadataStore = useMetadataStore()
     const [isModalOpen, setIsModalOpen] = useState(false)
-
-    const isLineList = visualizationType === 'LINE_LIST'
 
     const { active } = useDndContext()
     const { isOver, setNodeRef } = useDroppable({
         id: 'value',
         data: VALUE_DROPPABLE_DATA,
-        disabled: isLineList,
     })
     const canDropActiveDrag = getActiveDragData(active)?.canBeCustomValue
 
     if (!dataSourceId || isVisualizationLoading) {
         return null
-    }
-
-    if (isLineList) {
-        const program = programIds[0]
-            ? metadataStore.getProgramMetadataItem(programIds[0])
-            : undefined
-        const trackedEntityName = tetId
-            ? metadataStore.getMetadataItem(tetId)?.name
-            : undefined
-
-        const countedThing = (() => {
-            switch (outputType) {
-                case 'TRACKED_ENTITY_INSTANCE':
-                    return trackedEntityName ?? i18n.t('tracked entity')
-                case 'ENROLLMENT':
-                    return isDataSourceProgramWithRegistration(program)
-                        ? (program.displayEnrollmentLabel ??
-                              i18n.t('enrollment'))
-                        : i18n.t('enrollment')
-                default:
-                    return isDataSourceProgramWithRegistration(program)
-                        ? (program.displayEventLabel ?? i18n.t('event'))
-                        : i18n.t('event')
-            }
-        })()
-
-        return (
-            <div className={classes.container} data-test="axis-value">
-                <div className={classes.label}>{i18n.t('Value')}</div>
-                <div className={classes.content}>
-                    <span className={classes.value}>
-                        {i18n.t('One {{- countedThing}} per row', {
-                            countedThing,
-                            nsSeparator: '^^',
-                        })}
-                    </span>
-                </div>
-            </div>
-        )
     }
 
     /* A dropped dimension keeps the item's own aggregation type, which has no

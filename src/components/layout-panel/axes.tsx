@@ -58,9 +58,8 @@ const LoadingSkeletons: FC = () => (
 )
 
 /* Height that keeps a single axis row (label + min content area + padding)
- * fully visible. Both visualization types stack two such rows: PIVOT_TABLE
- * columns over rows, LINE_LIST a full-height columns axis beside the stacked
- * filters and value cells. */
+ * fully visible. PIVOT_TABLE stacks two such rows (columns over rows); LINE_LIST
+ * puts a full-height columns axis beside the filters axis. */
 const AXIS_ROW_MIN_HEIGHT = 58
 
 /* Height below which dragging collapses the panel. Lower than the visType min
@@ -162,7 +161,7 @@ export const Axes: FC = () => {
                             <Axis axisId="rows" dimensions={rows} />
                         )}
                         <Axis axisId="filters" dimensions={filters} />
-                        <ValueAxis />
+                        {visualizationType !== 'LINE_LIST' && <ValueAxis />}
                     </div>
                     <ResizeHandle
                         isDragging={isDragging}

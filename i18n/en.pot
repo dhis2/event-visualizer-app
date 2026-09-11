@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-09T11:41:51.330Z\n"
-"PO-Revision-Date: 2026-09-09T11:41:51.330Z\n"
+"POT-Creation-Date: 2026-09-11T11:09:30.052Z\n"
+"PO-Revision-Date: 2026-09-11T11:09:30.052Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -430,17 +430,8 @@ msgstr "Individual data view"
 msgid "Aggregated view"
 msgstr "Aggregated view"
 
-msgid "enrollment"
-msgstr "enrollment"
-
-msgid "event"
-msgstr "event"
-
 msgid "Value"
 msgstr "Value"
-
-msgid "One {{- countedThing}} per row"
-msgstr "One {{- countedThing}} per row"
 
 msgid "Change value"
 msgstr "Change value"

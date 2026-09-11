@@ -36,16 +36,12 @@
     grid-template-rows: 1fr 1fr;
 }
 
-/* LINE_LIST has no rows axis, so its columns axis spans the full height beside
- * the stacked filters and value cells. The value cell only ever holds one line
- * of text, so it takes its content height and columns/filters absorb the rest.
- * Declared after `.fixedHeight` so it wins the row template when both classes
- * are present. */
+/* LINE_LIST has no rows or value axis, so its columns axis sits in a single
+ * full-height row beside the filters axis. Declared after `.fixedHeight` so it
+ * wins the row template when both classes are present. */
 .axisContainer.lineList {
-    grid-template-areas:
-        'columns filters'
-        'columns value';
-    grid-template-rows: minmax(min-content, 1fr) min-content;
+    grid-template-areas: 'columns filters';
+    grid-template-rows: minmax(min-content, 1fr);
 }
 
 .expandButton {
