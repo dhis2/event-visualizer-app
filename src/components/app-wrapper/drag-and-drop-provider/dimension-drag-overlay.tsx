@@ -8,7 +8,7 @@ import {
     DimensionItemContainer,
 } from '@components/sidebar/dimension-item'
 import { IconDelete16 } from '@dhis2/ui'
-import { DragOverlay, useDndContext, useDndMonitor } from '@dnd-kit/core'
+import { DragOverlay, useDndMonitor } from '@dnd-kit/core'
 import { snapCenterToCursor } from '@dnd-kit/modifiers'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import {
@@ -39,7 +39,14 @@ const DragOverlayBadge: FC<{
             </span>
         )
     } else if (typeof multiSelectCount === 'number' && multiSelectCount >= 2) {
-        return <span className={classes.countBadge}>{multiSelectCount}</span>
+        return (
+            <span
+                className={classes.countBadge}
+                data-test="chip-multi-select-count"
+            >
+                {multiSelectCount}
+            </span>
+        )
     } else {
         return null
     }
@@ -65,17 +72,17 @@ const DragOverlayFrame: FC<{
     </div>
 )
 
-const DragOverlayItem: FC<DraggedItemEventData> = (data) => {
-    const { over } = useDndContext()
-    const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
-
+const DragOverlayItem: FC<{
+    data: DraggedItemEventData
+    willRemove: boolean
+    multiSelectCount: number
+}> = ({ data, willRemove, multiSelectCount }) => {
     if (isAxisSortableData(data)) {
-        const willRemove = !isOverAxis(over?.data.current)
         return (
             <DragOverlayFrame willRemove={willRemove}>
                 <ChipContainer
                     isEmpty={data.overlayItemProps.isEmpty}
-                    className={classes.clone}
+                    className={classes.chipClone}
                 >
                     <ChipContent>
                         <ChipBase {...data.overlayItemProps} isDragging />
@@ -84,12 +91,9 @@ const DragOverlayItem: FC<DraggedItemEventData> = (data) => {
             </DragOverlayFrame>
         )
     } else if (isSidebarSortableData(data)) {
-        const multiSelectCount = multiSelectedIds.includes(data.dimensionId)
-            ? multiSelectedIds.length
-            : 0
         return (
             <DragOverlayFrame multiSelectCount={multiSelectCount}>
-                <DimensionItemContainer>
+                <DimensionItemContainer className={classes.itemClone}>
                     <DimensionItem
                         name={data.overlayItemProps.dimensionName}
                         dimensionType={data.overlayItemProps.dimensionType}
@@ -107,6 +111,12 @@ export const DimensionDragOverlay: FC = () => {
     const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
     const [draggedDimensionData, setDraggedDimensionData] =
         useState<DraggedItemEventData | null>(null)
+    const [willRemove, setWillRemove] = useState(false)
+    const multiSelectCount =
+        draggedDimensionData &&
+        multiSelectedIds.includes(draggedDimensionData.dimensionId)
+            ? multiSelectedIds.length
+            : 0
     useDndMonitor({
         onDragStart(event) {
             const data = event.active.data.current as DraggedItemEventData
@@ -119,18 +129,27 @@ export const DimensionDragOverlay: FC = () => {
             }
             setDraggedDimensionData(data)
         },
+        onDragOver(event) {
+            setWillRemove(!isOverAxis(event.over?.data.current))
+        },
         onDragEnd() {
             setDraggedDimensionData(null)
+            setWillRemove(false)
         },
         onDragCancel() {
             setDraggedDimensionData(null)
+            setWillRemove(false)
         },
     })
 
     return (
         <DragOverlay dropAnimation={null} modifiers={[snapCenterToCursor]}>
             {draggedDimensionData ? (
-                <DragOverlayItem {...draggedDimensionData} />
+                <DragOverlayItem
+                    data={draggedDimensionData}
+                    willRemove={willRemove}
+                    multiSelectCount={multiSelectCount}
+                />
             ) : null}
         </DragOverlay>
     )
