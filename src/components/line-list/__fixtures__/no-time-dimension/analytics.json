@@ -24,6 +24,126 @@
             "isLastPage": true
         },
         "items": {
+            "202509": {
+                "uid": "202509",
+                "code": "202509",
+                "name": "September 2025",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2025-09-01T00:00:00.000",
+                "endDate": "2025-09-30T00:00:00.000"
+            },
+            "202510": {
+                "uid": "202510",
+                "code": "202510",
+                "name": "October 2025",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2025-10-01T00:00:00.000",
+                "endDate": "2025-10-31T00:00:00.000"
+            },
+            "202511": {
+                "uid": "202511",
+                "code": "202511",
+                "name": "November 2025",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2025-11-01T00:00:00.000",
+                "endDate": "2025-11-30T00:00:00.000"
+            },
+            "202512": {
+                "uid": "202512",
+                "code": "202512",
+                "name": "December 2025",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2025-12-01T00:00:00.000",
+                "endDate": "2025-12-31T00:00:00.000"
+            },
+            "202601": {
+                "uid": "202601",
+                "code": "202601",
+                "name": "January 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-01-01T00:00:00.000",
+                "endDate": "2026-01-31T00:00:00.000"
+            },
+            "202602": {
+                "uid": "202602",
+                "code": "202602",
+                "name": "February 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-02-01T00:00:00.000",
+                "endDate": "2026-02-28T00:00:00.000"
+            },
+            "202603": {
+                "uid": "202603",
+                "code": "202603",
+                "name": "March 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-03-01T00:00:00.000",
+                "endDate": "2026-03-31T00:00:00.000"
+            },
+            "202604": {
+                "uid": "202604",
+                "code": "202604",
+                "name": "April 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-04-01T00:00:00.000",
+                "endDate": "2026-04-30T00:00:00.000"
+            },
+            "202605": {
+                "uid": "202605",
+                "code": "202605",
+                "name": "May 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-05-01T00:00:00.000",
+                "endDate": "2026-05-31T00:00:00.000"
+            },
+            "202606": {
+                "uid": "202606",
+                "code": "202606",
+                "name": "June 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-06-01T00:00:00.000",
+                "endDate": "2026-06-30T00:00:00.000"
+            },
+            "202607": {
+                "uid": "202607",
+                "code": "202607",
+                "name": "July 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-07-01T00:00:00.000",
+                "endDate": "2026-07-31T00:00:00.000"
+            },
+            "202608": {
+                "uid": "202608",
+                "code": "202608",
+                "name": "August 2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-08-01T00:00:00.000",
+                "endDate": "2026-08-31T00:00:00.000"
+            },
             "USER_ORGUNIT": {
                 "organisationUnits": ["ImspTQPwCqd"]
             },
@@ -49,130 +169,13 @@
                 "aggregationType": "SUM",
                 "totalAggregationType": "SUM"
             },
-            "2026SunW29": {
-                "uid": "2026SunW29",
-                "code": "2026SunW29",
-                "name": "Week 29 - 2026-07-19 - 2026-07-25",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2026-07-19T00:00:00.000",
-                "endDate": "2026-07-25T00:00:00.000"
-            },
-            "2026SunW27": {
-                "uid": "2026SunW27",
-                "code": "2026SunW27",
-                "name": "Week 27 - 2026-07-05 - 2026-07-11",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2026-07-05T00:00:00.000",
-                "endDate": "2026-07-11T00:00:00.000"
-            },
-            "2026SunW28": {
-                "uid": "2026SunW28",
-                "code": "2026SunW28",
-                "name": "Week 28 - 2026-07-12 - 2026-07-18",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2026-07-12T00:00:00.000",
-                "endDate": "2026-07-18T00:00:00.000"
-            },
-            "2026SunW25": {
-                "uid": "2026SunW25",
-                "code": "2026SunW25",
-                "name": "Week 25 - 2026-06-21 - 2026-06-27",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2026-06-21T00:00:00.000",
-                "endDate": "2026-06-27T00:00:00.000"
-            },
-            "2026SunW26": {
-                "uid": "2026SunW26",
-                "code": "2026SunW26",
-                "name": "Week 26 - 2026-06-28 - 2026-07-04",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2026-06-28T00:00:00.000",
-                "endDate": "2026-07-04T00:00:00.000"
-            },
-            "2026SunW34": {
-                "uid": "2026SunW34",
-                "code": "2026SunW34",
-                "name": "Week 34 - 2026-08-23 - 2026-08-29",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2026-08-23T00:00:00.000",
-                "endDate": "2026-08-29T00:00:00.000"
-            },
-            "2026SunW24": {
-                "uid": "2026SunW24",
-                "code": "2026SunW24",
-                "name": "Week 24 - 2026-06-14 - 2026-06-20",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2026-06-14T00:00:00.000",
-                "endDate": "2026-06-20T00:00:00.000"
-            },
-            "2026SunW35": {
-                "uid": "2026SunW35",
-                "code": "2026SunW35",
-                "name": "Week 35 - 2026-08-30 - 2026-09-05",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2026-08-30T00:00:00.000",
-                "endDate": "2026-09-05T00:00:00.000"
+            "LAST_12_MONTHS": {
+                "name": "Last 12 months"
             },
             "ImspTQPwCqd": {
                 "uid": "ImspTQPwCqd",
                 "code": "OU_525",
                 "name": "Sierra Leone"
-            },
-            "2026SunW32": {
-                "uid": "2026SunW32",
-                "code": "2026SunW32",
-                "name": "Week 32 - 2026-08-09 - 2026-08-15",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2026-08-09T00:00:00.000",
-                "endDate": "2026-08-15T00:00:00.000"
-            },
-            "2026SunW33": {
-                "uid": "2026SunW33",
-                "code": "2026SunW33",
-                "name": "Week 33 - 2026-08-16 - 2026-08-22",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2026-08-16T00:00:00.000",
-                "endDate": "2026-08-22T00:00:00.000"
-            },
-            "2026SunW30": {
-                "uid": "2026SunW30",
-                "code": "2026SunW30",
-                "name": "Week 30 - 2026-07-26 - 2026-08-01",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2026-07-26T00:00:00.000",
-                "endDate": "2026-08-01T00:00:00.000"
-            },
-            "2026SunW31": {
-                "uid": "2026SunW31",
-                "code": "2026SunW31",
-                "name": "Week 31 - 2026-08-02 - 2026-08-08",
-                "dimensionItemType": "PERIOD",
-                "valueType": "TEXT",
-                "totalAggregationType": "SUM",
-                "startDate": "2026-08-02T00:00:00.000",
-                "endDate": "2026-08-08T00:00:00.000"
             },
             "pe": {
                 "uid": "pe",
@@ -184,9 +187,6 @@
             },
             "dBwrot7S420.ou": {
                 "name": "Organisation unit"
-            },
-            "LAST_12_WEEKS": {
-                "name": "Last 12 weeks"
             }
         },
         "dimensions": {
@@ -197,7 +197,11 @@
     },
     "rowContext": {},
     "width": 2,
-    "rows": [["Ngelehun CHC", ""]],
-    "height": 1,
+    "rows": [
+        ["Ngelehun CHC", "1"],
+        ["Ngelehun CHC", "0"],
+        ["Ngelehun CHC", "0"]
+    ],
+    "height": 3,
     "headerWidth": 2
 }

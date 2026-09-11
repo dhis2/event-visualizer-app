@@ -1,7 +1,7 @@
 {
-    "name": "E2E: Enrollment NEWNAME",
+    "name": "E2E: Enrollment",
     "created": "2023-01-04T13:17:29.139",
-    "lastUpdated": "2026-02-03T13:47:43.451",
+    "lastUpdated": "2023-04-03T10:24:58.456",
     "translations": [],
     "createdBy": {
         "id": "GOLswS44mh8",
@@ -42,7 +42,6 @@
     "regressionType": "NONE",
     "displayDensity": "NORMAL",
     "fontSize": "NORMAL",
-    "rawPeriods": ["THIS_YEAR", "LAST_5_YEARS"],
     "sortOrder": 0,
     "topLimit": 0,
     "hideEmptyRows": false,
@@ -85,10 +84,6 @@
         },
         "displayEnrollmentDateLabel": "Enrollment date (e2e)",
         "displayIncidentDateLabel": "Incident date (e2e)",
-        "displayEnrollmentLabel": "E2E enrollment",
-        "displayTrackedEntityAttributeLabel": "E2E TEI",
-        "displayProgramStageLabel": "E2E prog.stage",
-        "displayEventLabel": "E2E event",
         "id": "J1QQtmzqhJz",
         "programStages": [
             {
@@ -118,11 +113,6 @@
     },
     "programDimensions": [],
     "simpleDimensions": [
-        {
-            "parent": "COLUMN",
-            "dimension": "ou",
-            "values": ["USER_ORGUNIT"]
-        },
         {
             "parent": "COLUMN",
             "dimension": "enrollmentDate",
@@ -162,7 +152,7 @@
         }
     ],
     "rows": [],
-    "displayName": "E2E: Enrollment NEWNAME",
+    "displayName": "E2E: Enrollment",
     "access": {
         "manage": true,
         "write": true,
@@ -170,11 +160,11 @@
         "update": true,
         "delete": true
     },
-    "href": "https://dev.im.dhis2.org/ever-playground/api/eventVisualizations/AFjkDs7acBh",
+    "href": "https://e2e.im.dhis2.org/analytics-dev/api/eventVisualizations/AFjkDs7acBh",
     "subscribed": false,
     "favorite": false,
     "metaData": {},
-    "displayFormName": "E2E: Enrollment NEWNAME",
+    "displayFormName": "E2E: Enrollment",
     "id": "AFjkDs7acBh",
     "attributeValues": [],
     "sorting": [],

@@ -251,7 +251,7 @@
         "update": true,
         "delete": true
     },
-    "href": "https://dev.im.dhis2.org/ever-playground/api/eventVisualizations/kb9Uml5FEEz",
+    "href": "https://e2e.im.dhis2.org/analytics-dev/api/eventVisualizations/kb9Uml5FEEz",
     "subscribed": false,
     "favorite": false,
     "metaData": {
