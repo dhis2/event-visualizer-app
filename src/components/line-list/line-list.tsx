@@ -1,3 +1,4 @@
+import type { LineListAnalyticsData } from '@components/plugin-wrapper/hooks/use-line-list-analytics-data'
 import { useDhis2ConnectionStatus } from '@dhis2/app-runtime'
 import {
     DataTable,
@@ -28,7 +29,6 @@ import type {
     ColumnHeaderClickFn,
     DataSortFn,
     DataSortPayload,
-    LineListAnalyticsData,
     PaginateFn,
 } from './types'
 import { useTransformedLineListData } from './use-transformed-line-list-data'
