@@ -1,17 +1,17 @@
 # Translators:
+# Andres Miguel Rubio, 2026
 # Transifex Bot <>, 2026
 # Philip Larsen Donnelly, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
-# Andres Miguel Rubio, 2026
-# 晓东 林 <13981924470@126.com>, 2026
 # easylin <lin_xd@126.com>, 2026
+# 晓东 林 <13981924470@126.com>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
+"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: easylin <lin_xd@126.com>, 2026\n"
+"Last-Translator: 晓东 林 <13981924470@126.com>, 2026\n"
 "Language-Team: Chinese (https://app.transifex.com/hisp-uio/teams/100509/zh/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -48,14 +48,14 @@ msgstr "区分大小写"
 msgid "Delete filter"
 msgstr "删除过滤器"
 
-msgid "Only available for repeatable stages"
-msgstr "仅适用于可重复阶段"
+msgid "Data"
+msgstr "数据"
 
 msgid "Repeated events"
 msgstr "重复事件"
 
-msgid "Data"
-msgstr "数据"
+msgid "and"
+msgstr "和"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr "{{valueType}} 无法对类型尺寸进行筛选。"
@@ -63,32 +63,35 @@ msgstr "{{valueType}} 无法对类型尺寸进行筛选。"
 msgid "This dimension cannot be filtered."
 msgstr "此维度无法进行筛选。"
 
-msgid "Preset options can't be combined with other filters"
-msgstr "预设选项不能与其他滤镜结合使用"
+msgid "Filtering"
+msgstr ""
+
+msgid "Show all groups"
+msgstr ""
 
 msgid "Add filter"
 msgstr "添加过滤器"
 
-msgid "and"
-msgstr "和"
+msgid "{{- legends}} and {{- remainingCount}} more"
+msgstr ""
 
-msgid "is one of preset options"
-msgstr "是预设选项之一"
+msgid "Grouping"
+msgstr ""
 
-msgid "Choose a legend set"
-msgstr "选择一组图例"
+msgid "No grouping"
+msgstr ""
 
-msgid "Loading legend sets"
-msgstr "加载图例集"
+msgid "Show each value individually"
+msgstr ""
 
-msgid "No preset option sets for this data item"
-msgstr "此数据项没有预设选项集"
+msgid "Available groups"
+msgstr ""
 
-msgid "Choose legends"
-msgstr "选择图例"
+msgid "Filter groups"
+msgstr ""
 
-msgid "Loading legends"
-msgstr "载入图例"
+msgid "Selected groups"
+msgstr ""
 
 msgid "From stages with repeatable events, show values from:"
 msgstr "对于包含可重复事件的阶段，显示以下数据："
@@ -230,6 +233,9 @@ msgstr "项目：{{- programName}}"
 
 msgid "Program stage: {{- stageName}}"
 msgstr "项目阶段：{{- stageName}}"
+
+msgid "Grouping: {{- groupingName}}"
+msgstr ""
 
 msgid "Levels"
 msgstr "等级"
@@ -423,7 +429,7 @@ msgid "Convert"
 msgstr "转换"
 
 msgid "Coming soon"
-msgstr ""
+msgstr "即将推出"
 
 msgid "Individual data view"
 msgstr "单条数据视图"
@@ -547,6 +553,9 @@ msgstr "图例"
 msgid "Select from legends"
 msgstr "从图例选择"
 
+msgid "Loading legends"
+msgstr "载入图例"
+
 msgid "Limit"
 msgstr "限制"
 
@@ -561,6 +570,9 @@ msgstr "由高到低"
 
 msgid "Top limit"
 msgstr "最高限度"
+
+msgid "Must be a whole number of 1 or more"
+msgstr ""
 
 msgid "Row sub-totals"
 msgstr "行小计"
@@ -612,6 +624,12 @@ msgstr "表子标题"
 
 msgid "Labels"
 msgstr "标签"
+
+msgid "Filters are not applied to Event visualizations"
+msgstr ""
+
+msgid "Show without filters"
+msgstr "显示无过滤器"
 
 msgid "Create a {{- visType}} before updating"
 msgstr "在更新之前创建一个{{- visType}} "
@@ -1009,20 +1027,20 @@ msgstr "禁止访问"
 msgid ""
 "You don't have access to the data in this visualization. Contact a system "
 "administrator."
-msgstr ""
+msgstr "您无权访问此可视化中的数据。请联系系统管理员。"
 
 msgid "You don't have access to one or more of the chosen organisation units."
 msgstr "您无法访问一个或多个选定的组织机构。"
 
 msgid ""
 "You don't have access to event analytics. Contact a system administrator."
-msgstr ""
+msgstr "您无权访问事件分析。请联系系统管理员。"
 
 msgid "Something went wrong"
 msgstr "出问题了"
 
 msgid "There's a problem with at least one selected indicator."
-msgstr ""
+msgstr "至少有一个选定的指标存在问题。"
 
 msgid ""
 "There's a problem with the generated analytics. Contact a system "
@@ -1032,13 +1050,13 @@ msgstr "生成的分析存在问题。联系系统管理员。"
 msgid "There's a syntax problem with the analytics request."
 msgstr "分析请求存在语法问题。"
 
-msgid "No data"
-msgstr "无数据"
+msgid "No data available"
+msgstr "没有值"
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"
 " may not have access to it."
-msgstr ""
+msgstr "所选维度未返回任何数据。这可能是因为没有相关数据，也可能是您无权访问该数据。"
 
 msgid "There was a problem getting the data from the server."
 msgstr "从服务器获取数据有问题"

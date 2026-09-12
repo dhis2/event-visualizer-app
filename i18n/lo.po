@@ -1,17 +1,17 @@
 # Translators:
 # Phouthasinh PHEUAYSITHIPHONE, 2026
+# Andres Miguel Rubio, 2026
 # Thuy Nguyen <thuynguyen@hispvietnam.org>, 2026
-# Em Le <em.hispvietnam@gmail.com>, 2026
-# Saysamone Sibounma, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
 # Philip Larsen Donnelly, 2026
-# Andres Miguel Rubio, 2026
+# Em Le <em.hispvietnam@gmail.com>, 2026
+# Saysamone Sibounma, 2026
 # Namwan Chanthavisouk, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
+"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Namwan Chanthavisouk, 2026\n"
 "Language-Team: Lao (https://app.transifex.com/hisp-uio/teams/100509/lo/)\n"
@@ -50,14 +50,14 @@ msgstr "ກໍລະນີທີ່ລະອຽດອ່ອນ"
 msgid "Delete filter"
 msgstr ""
 
-msgid "Only available for repeatable stages"
-msgstr "ໃຊ້ໄດ້ກັບຂັ້ນທີ່ສາມາດເຮັດຊ້ຳໄດ້ເທົ່ານັ້ນ"
+msgid "Data"
+msgstr "ຂໍ້ມູນ"
 
 msgid "Repeated events"
 msgstr "ເຫດການຊ້ຳໆ"
 
-msgid "Data"
-msgstr "ຂໍ້ມູນ"
+msgid "and"
+msgstr "ແລະ"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -65,32 +65,35 @@ msgstr ""
 msgid "This dimension cannot be filtered."
 msgstr ""
 
-msgid "Preset options can't be combined with other filters"
+msgid "Filtering"
+msgstr ""
+
+msgid "Show all groups"
 msgstr ""
 
 msgid "Add filter"
 msgstr "ເພີ່ມຕົວກອງ"
 
-msgid "and"
-msgstr "ແລະ"
-
-msgid "is one of preset options"
-msgstr "ເປັນ​ຫນຶ່ງ​ໃນ​ຕົວເລືອກ​ທີ່​ຕັ້ງ​ໄວ້​ກ່ອນ​"
-
-msgid "Choose a legend set"
+msgid "{{- legends}} and {{- remainingCount}} more"
 msgstr ""
 
-msgid "Loading legend sets"
+msgid "Grouping"
 msgstr ""
 
-msgid "No preset option sets for this data item"
-msgstr "ບໍ່ມີຕົວເລືອກທີ່ຕັ້ງໄວ້ລ່ວງໜ້າສຳລັບລາຍການຂໍ້ມູນນີ້"
-
-msgid "Choose legends"
+msgid "No grouping"
 msgstr ""
 
-msgid "Loading legends"
-msgstr "ກຳລັງໂຫຼດຄຳອະທິບາຍ"
+msgid "Show each value individually"
+msgstr ""
+
+msgid "Available groups"
+msgstr ""
+
+msgid "Filter groups"
+msgstr ""
+
+msgid "Selected groups"
+msgstr ""
 
 msgid "From stages with repeatable events, show values from:"
 msgstr ""
@@ -233,6 +236,9 @@ msgstr "ໂປຣແກລມ: {{- programName}}"
 
 msgid "Program stage: {{- stageName}}"
 msgstr "ຂັ້ນຕອນໂປແກລມ: {{- stageName}}"
+
+msgid "Grouping: {{- groupingName}}"
+msgstr ""
 
 msgid "Levels"
 msgstr "ຂັ້ນ"
@@ -550,6 +556,9 @@ msgstr "ຫວ່າງຂໍ້ມູນ"
 msgid "Select from legends"
 msgstr "ເລືອກຈາກຄຳອະທິບາຍ"
 
+msgid "Loading legends"
+msgstr "ກຳລັງໂຫຼດຄຳອະທິບາຍ"
+
 msgid "Limit"
 msgstr "ຂອບເຂດ"
 
@@ -564,6 +573,9 @@ msgstr "ສູງຫາຕ່ຳ"
 
 msgid "Top limit"
 msgstr "ຂໍ້​ຈຳ​ກັດ​ສູງ​ສຸດ"
+
+msgid "Must be a whole number of 1 or more"
+msgstr ""
 
 msgid "Row sub-totals"
 msgstr "ແຖວຍ່ອຍທັງໝົດ"
@@ -615,6 +627,12 @@ msgstr "ຫົວຂໍ້ຍ່ອຍຂອງຕາຕະລາງ"
 
 msgid "Labels"
 msgstr "ປ້າຍກຳກັບ"
+
+msgid "Filters are not applied to Event visualizations"
+msgstr ""
+
+msgid "Show without filters"
+msgstr "ສະແດງໂດຍບໍ່ມີຕົວກອງ"
 
 msgid "Create a {{- visType}} before updating"
 msgstr ""
@@ -1016,13 +1034,15 @@ msgstr ""
 
 msgid "You don't have access to one or more of the chosen organisation units."
 msgstr ""
+"ທ່ານບໍ່ໄດ້ຮັບອະນຸຍາດໃຫ້ເຂົ້າເຖິງໜຶ່ງ ຫຼື "
+"ຫຼາຍກວ່າຫົວໜ່ວຍອົງການຈັດຕັ້ງທີ່ເລືອກ."
 
 msgid ""
 "You don't have access to event analytics. Contact a system administrator."
 msgstr ""
 
 msgid "Something went wrong"
-msgstr ""
+msgstr "ມີບາງຢ່າງຜິດພາດ"
 
 msgid "There's a problem with at least one selected indicator."
 msgstr ""
@@ -1030,13 +1050,13 @@ msgstr ""
 msgid ""
 "There's a problem with the generated analytics. Contact a system "
 "administrator."
-msgstr ""
+msgstr "ພົບບັນຫາກັບການວິເຄາະທີ່ສ້າງຂຶ້ນ. ກະລຸນາຕິດຕໍ່ຜູ້ດູແລລະບົບ."
 
 msgid "There's a syntax problem with the analytics request."
 msgstr "ພົບບັນຫາຮູບແບບກັບຄຳຮ້ອງຂໍການວິເຄາະ."
 
-msgid "No data"
-msgstr "ບໍ່ມີຂໍ້ມູນ"
+msgid "No data available"
+msgstr "ບໍ່ພົບຂໍ້ມູນ"
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"

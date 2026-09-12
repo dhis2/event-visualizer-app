@@ -1,6 +1,7 @@
 # Translators:
 # António Fernando Macaringue, 2026
 # Fernando Jorge Bade, 2026
+# Andres Miguel Rubio, 2026
 # Fernando Domingos Inacio <nando.inaciio1996@gmail.com>, 2026
 # Edson Nhancale, 2026
 # Sheila André <sandre@saudigitus.org>, 2026
@@ -10,14 +11,13 @@
 # Gabriela Rodriguez <grodriguezcoronado@gmail.com>, 2026
 # Philip Larsen Donnelly, 2026
 # Helton Dias, 2026
-# Andres Miguel Rubio, 2026
 # Ge Joao <gsimango@saudigitus.org>, 2026
 # Shelsea Chumaio, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
+"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Shelsea Chumaio, 2026\n"
 "Language-Team: Portuguese (https://app.transifex.com/hisp-uio/teams/100509/pt/)\n"
@@ -56,14 +56,14 @@ msgstr "Sensível às maiúsculas e minúsculas"
 msgid "Delete filter"
 msgstr ""
 
-msgid "Only available for repeatable stages"
-msgstr "Apenas disponível para estágios repetíveis"
+msgid "Data"
+msgstr "Dados"
 
 msgid "Repeated events"
 msgstr "Eventos repetidos"
 
-msgid "Data"
-msgstr "Dados"
+msgid "and"
+msgstr "e"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -71,32 +71,35 @@ msgstr ""
 msgid "This dimension cannot be filtered."
 msgstr ""
 
-msgid "Preset options can't be combined with other filters"
+msgid "Filtering"
+msgstr ""
+
+msgid "Show all groups"
 msgstr ""
 
 msgid "Add filter"
 msgstr "Adicionar filtro"
 
-msgid "and"
-msgstr "e"
-
-msgid "is one of preset options"
-msgstr "é uma das opções predefinidas"
-
-msgid "Choose a legend set"
+msgid "{{- legends}} and {{- remainingCount}} more"
 msgstr ""
 
-msgid "Loading legend sets"
+msgid "Grouping"
 msgstr ""
 
-msgid "No preset option sets for this data item"
-msgstr "Nenhum conjunto de opções predefinidas para este item de dados"
-
-msgid "Choose legends"
+msgid "No grouping"
 msgstr ""
 
-msgid "Loading legends"
-msgstr "Carregando legendas"
+msgid "Show each value individually"
+msgstr ""
+
+msgid "Available groups"
+msgstr ""
+
+msgid "Filter groups"
+msgstr ""
+
+msgid "Selected groups"
+msgstr ""
 
 msgid "From stages with repeatable events, show values from:"
 msgstr ""
@@ -239,6 +242,9 @@ msgstr "Programa: {{- programName}}"
 
 msgid "Program stage: {{- stageName}}"
 msgstr "Estágio do programa: {{- stageName}}"
+
+msgid "Grouping: {{- groupingName}}"
+msgstr ""
 
 msgid "Levels"
 msgstr "Níveis"
@@ -558,6 +564,9 @@ msgstr "Legenda"
 msgid "Select from legends"
 msgstr "Seleccionar à partir das legendas"
 
+msgid "Loading legends"
+msgstr "Carregando legendas"
+
 msgid "Limit"
 msgstr "Limite"
 
@@ -572,6 +581,9 @@ msgstr "Descendente"
 
 msgid "Top limit"
 msgstr "Limite superior"
+
+msgid "Must be a whole number of 1 or more"
+msgstr ""
 
 msgid "Row sub-totals"
 msgstr "Subtotais de linha"
@@ -623,6 +635,12 @@ msgstr "Subtítulo da tabela"
 
 msgid "Labels"
 msgstr "Etiquetas"
+
+msgid "Filters are not applied to Event visualizations"
+msgstr ""
+
+msgid "Show without filters"
+msgstr "Mostrar sem filtros"
 
 msgid "Create a {{- visType}} before updating"
 msgstr ""
@@ -1047,8 +1065,8 @@ msgstr ""
 msgid "There's a syntax problem with the analytics request."
 msgstr "Há um problema de síntaxe com o pedido de análise."
 
-msgid "No data"
-msgstr "Sem dados"
+msgid "No data available"
+msgstr "Não existem dados disponíveis"
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"

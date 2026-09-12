@@ -1,14 +1,14 @@
 # Translators:
 # Jan Henrik Øverland, 2026
-# Caroline Hesthagen Holen <caroline@devotta.no>, 2026
 # Andres Miguel Rubio, 2026
+# Caroline Hesthagen Holen <caroline@devotta.no>, 2026
 # Martin <martin@moid.se>, 2026
 # Karoline Tufte Lien <karoline@dhis2.org>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
+"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Karoline Tufte Lien <karoline@dhis2.org>, 2026\n"
 "Language-Team: Norwegian Bokmål (https://app.transifex.com/hisp-uio/teams/100509/nb/)\n"
@@ -47,14 +47,14 @@ msgstr "Versalsensitiv"
 msgid "Delete filter"
 msgstr "Slett filter"
 
-msgid "Only available for repeatable stages"
-msgstr "Kun tilgjengelig for repeterbare faser"
+msgid "Data"
+msgstr "Data"
 
 msgid "Repeated events"
 msgstr "Gjentatte hendelser"
 
-msgid "Data"
-msgstr "Data"
+msgid "and"
+msgstr "og"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -62,32 +62,35 @@ msgstr ""
 msgid "This dimension cannot be filtered."
 msgstr ""
 
-msgid "Preset options can't be combined with other filters"
+msgid "Filtering"
+msgstr ""
+
+msgid "Show all groups"
 msgstr ""
 
 msgid "Add filter"
 msgstr "Legg til filter"
 
-msgid "and"
-msgstr "og"
-
-msgid "is one of preset options"
-msgstr "er et av forvalgte alternativer"
-
-msgid "Choose a legend set"
+msgid "{{- legends}} and {{- remainingCount}} more"
 msgstr ""
 
-msgid "Loading legend sets"
+msgid "Grouping"
 msgstr ""
 
-msgid "No preset option sets for this data item"
-msgstr "Ingen forvalgte alternativsett for dette datapunktet"
-
-msgid "Choose legends"
+msgid "No grouping"
 msgstr ""
 
-msgid "Loading legends"
-msgstr "Laster tegnforklaringer"
+msgid "Show each value individually"
+msgstr ""
+
+msgid "Available groups"
+msgstr ""
+
+msgid "Filter groups"
+msgstr ""
+
+msgid "Selected groups"
+msgstr ""
 
 msgid "From stages with repeatable events, show values from:"
 msgstr ""
@@ -230,6 +233,9 @@ msgstr "Program: {{- programName}}"
 
 msgid "Program stage: {{- stageName}}"
 msgstr "Programfase: {{- stageName}}"
+
+msgid "Grouping: {{- groupingName}}"
+msgstr ""
 
 msgid "Levels"
 msgstr "Nivå"
@@ -549,6 +555,9 @@ msgstr "Tegnforklaring"
 msgid "Select from legends"
 msgstr "Velg fra tegnforklaringer"
 
+msgid "Loading legends"
+msgstr "Laster tegnforklaringer"
+
 msgid "Limit"
 msgstr "Grense"
 
@@ -563,6 +572,9 @@ msgstr "Høy til lav"
 
 msgid "Top limit"
 msgstr "Toppgrense"
+
+msgid "Must be a whole number of 1 or more"
+msgstr ""
 
 msgid "Row sub-totals"
 msgstr "Raddelsummer"
@@ -614,6 +626,12 @@ msgstr "Tabellundertittel"
 
 msgid "Labels"
 msgstr "Etiketter"
+
+msgid "Filters are not applied to Event visualizations"
+msgstr ""
+
+msgid "Show without filters"
+msgstr ""
 
 msgid "Create a {{- visType}} before updating"
 msgstr ""
@@ -1036,8 +1054,8 @@ msgstr ""
 msgid "There's a syntax problem with the analytics request."
 msgstr "Det er et syntaksproblem med analyseforespørselen."
 
-msgid "No data"
-msgstr "Ingen data"
+msgid "No data available"
+msgstr "Ingen data tilgjengelig"
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"
