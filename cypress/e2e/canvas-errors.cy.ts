@@ -1,4 +1,7 @@
 const LINE_LIST_ID = 'TIuOzZ0ID0V'
+/* Well-formed but unused: the backend answers a malformed id with a 405 that
+ * carries no error code, so only a valid UID reaches the not-found path. */
+const NON_EXISTENT_ID = 'asXsjGqmVr8'
 
 const visualizationRequest = `**/eventVisualizations/${LINE_LIST_ID}*`
 /* A program UID, so the sidebar's .../query/dimensions request isn't caught. */
@@ -51,6 +54,16 @@ describe('canvas errors', () => {
         cy.visit(`/#/${LINE_LIST_ID}`)
 
         canvasError().should('contain.text', 'No data available')
+        cy.contains('button', 'Retry').should('not.exist')
+    })
+
+    it('shows the "not found" screen for a visualization that does not exist', () => {
+        ignoreProvokedError('An unknown error occurred')
+
+        cy.visit(`/#/${NON_EXISTENT_ID}`)
+
+        canvasError().should('contain.text', 'Visualization not found')
+        canvasError().should('contain.text', 'could not be found')
         cy.contains('button', 'Retry').should('not.exist')
     })
 
