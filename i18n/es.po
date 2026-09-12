@@ -8,11 +8,11 @@
 # Marta Vila <marta@dhis2.org>, 2026
 # Milagros Rodríguez, 2026
 # Sergio Valenzuela <sergio.valenzuela@ehas.org>, 2026
+# Andres Miguel Rubio, 2026
 # ericbp <ericbarredap@gmail.com>, 2026
 # Prabhjot Singh, 2026
 # Philip Larsen Donnelly, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
-# Andres Miguel Rubio, 2026
 # Pablo Del Médico, 2026
 # Enzo Nicolas Rossi <enzo@dhis2.org>, 2026
 # Janeth Cruz, 2026
@@ -20,7 +20,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-08-28T12:57:22.711Z\n"
+"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Janeth Cruz, 2026\n"
 "Language-Team: Spanish (https://app.transifex.com/hisp-uio/teams/100509/es/)\n"
@@ -586,6 +586,9 @@ msgstr "Mayor a menor"
 msgid "Top limit"
 msgstr "Limite superior"
 
+msgid "Must be a whole number of 1 or more"
+msgstr ""
+
 msgid "Row sub-totals"
 msgstr "Subtotales de fila"
 
@@ -1066,8 +1069,8 @@ msgstr ""
 msgid "There's a syntax problem with the analytics request."
 msgstr "Hay un problema de sintaxis con la solicitud de análisis."
 
-msgid "No data"
-msgstr "No hay datos"
+msgid "No data available"
+msgstr "No hay datos disponibles"
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"

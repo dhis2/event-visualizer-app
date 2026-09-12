@@ -1,17 +1,17 @@
 # Translators:
+# Andres Miguel Rubio, 2026
 # Transifex Bot <>, 2026
 # Philip Larsen Donnelly, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
-# Andres Miguel Rubio, 2026
-# 晓东 林 <13981924470@126.com>, 2026
 # easylin <lin_xd@126.com>, 2026
+# 晓东 林 <13981924470@126.com>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-08-28T12:57:22.711Z\n"
+"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: easylin <lin_xd@126.com>, 2026\n"
+"Last-Translator: 晓东 林 <13981924470@126.com>, 2026\n"
 "Language-Team: Chinese (https://app.transifex.com/hisp-uio/teams/100509/zh/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -571,6 +571,9 @@ msgstr "由高到低"
 msgid "Top limit"
 msgstr "最高限度"
 
+msgid "Must be a whole number of 1 or more"
+msgstr ""
+
 msgid "Row sub-totals"
 msgstr "行小计"
 
@@ -1047,8 +1050,8 @@ msgstr "生成的分析存在问题。联系系统管理员。"
 msgid "There's a syntax problem with the analytics request."
 msgstr "分析请求存在语法问题。"
 
-msgid "No data"
-msgstr "无数据"
+msgid "No data available"
+msgstr "没有值"
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"

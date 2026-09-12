@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-08-28T12:57:22.711Z\n"
+"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Jiří Podhorecký <jirka.p@volny.cz>, 2026\n"
 "Language-Team: Czech (https://app.transifex.com/hisp-uio/teams/100509/cs/)\n"
@@ -569,6 +569,9 @@ msgstr "Od nejvyšší k nejnižší"
 msgid "Top limit"
 msgstr "Horní limit"
 
+msgid "Must be a whole number of 1 or more"
+msgstr ""
+
 msgid "Row sub-totals"
 msgstr "Mezisoučty řádků"
 
@@ -1048,8 +1051,8 @@ msgstr "S vygenerovanou analýzou je problém. Obraťte se na správce systému.
 msgid "There's a syntax problem with the analytics request."
 msgstr "V požadavku na analýzu je problém se syntaxí."
 
-msgid "No data"
-msgstr "Nejsou data"
+msgid "No data available"
+msgstr "Údaje nejsou k dispozici"
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"

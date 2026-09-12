@@ -1,19 +1,19 @@
 # Translators:
 # Phouthasinh PHEUAYSITHIPHONE, 2026
+# Andres Miguel Rubio, 2026
 # Thuy Nguyen <thuynguyen@hispvietnam.org>, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
 # Philip Larsen Donnelly, 2026
-# Andres Miguel Rubio, 2026
-# Namwan Chanthavisouk, 2026
 # Em Le <em.hispvietnam@gmail.com>, 2026
 # Saysamone Sibounma, 2026
+# Namwan Chanthavisouk, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-08-28T12:57:22.711Z\n"
+"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Saysamone Sibounma, 2026\n"
+"Last-Translator: Namwan Chanthavisouk, 2026\n"
 "Language-Team: Lao (https://app.transifex.com/hisp-uio/teams/100509/lo/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -574,6 +574,9 @@ msgstr "ສູງຫາຕ່ຳ"
 msgid "Top limit"
 msgstr "ຂໍ້​ຈຳ​ກັດ​ສູງ​ສຸດ"
 
+msgid "Must be a whole number of 1 or more"
+msgstr ""
+
 msgid "Row sub-totals"
 msgstr "ແຖວຍ່ອຍທັງໝົດ"
 
@@ -1052,8 +1055,8 @@ msgstr "ພົບບັນຫາກັບການວິເຄາະທີ່ສ
 msgid "There's a syntax problem with the analytics request."
 msgstr "ພົບບັນຫາຮູບແບບກັບຄຳຮ້ອງຂໍການວິເຄາະ."
 
-msgid "No data"
-msgstr "ບໍ່ມີຂໍ້ມູນ"
+msgid "No data available"
+msgstr "ບໍ່ພົບຂໍ້ມູນ"
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"
