@@ -38,9 +38,11 @@ export type DimensionRecord = {
     filter?: string
     program?: IdRecord
     programStage?: IdRecord
-    optionSet?: IdRecord
+    /* The API returns the name of an option set and a legend set alongside its
+     * id (see dimensionFields); the app only ever writes the id. */
+    optionSet?: IdRecord & { name?: string }
     valueType?: ValueType
-    legendSet?: IdRecord
+    legendSet?: IdRecord & { name?: string }
     repetition?: {
         indexes: number[]
         dimension?: string
@@ -89,8 +91,14 @@ type SavedVisualizationFieldOverrides = {
     }
     metaData: MetadataInputMap
     type: VisualizationType
-    // name does not need to be propagated to currentVis on update
-    value?: IdRecord & { name?: string }
+    /* The API returns the custom value's name and aggregation type alongside
+     * its id; the app only ever writes the id (the aggregation type it applies
+     * is the top-level one). The name does not need to be propagated to
+     * currentVis on update. */
+    value?: IdRecord & {
+        name?: string
+        aggregationType?: EventVisualizationGenerated['aggregationType']
+    }
 }
 
 /**

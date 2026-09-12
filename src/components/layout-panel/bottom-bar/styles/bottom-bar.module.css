@@ -22,6 +22,20 @@
     animation: fadeIn 0.4s ease-out forwards;
 }
 
+/* Matches the "Edited" suffix in the title bar */
+.unappliedChanges {
+    color: var(--colors-grey600);
+    font-size: 11px;
+    letter-spacing: -0.2px;
+    font-family: monospace;
+    line-height: normal;
+}
+
+.unappliedChanges::before {
+    content: '·';
+    margin-inline-end: 4px;
+}
+
 @keyframes fadeIn {
     0% {
         opacity: 0;

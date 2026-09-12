@@ -485,6 +485,36 @@ describe('normalizeApiSavedVisualization', () => {
             ...(vis.filters ?? []),
         ].map((dim) => dim.dimension)
 
+    it.each(['dy', 'latitude', 'longitude'])(
+        'drops the wire-only %s dimension and marks the vis legacy',
+        (wireOnlyId) => {
+            const result = normalizeApiSavedVisualization(
+                buildApiVis({
+                    rows: [
+                        { dimension: wireOnlyId },
+                        { dimension: 'ou', dimensionType: 'ORGANISATION_UNIT' },
+                    ] as ApiSavedVisualization['rows'],
+                })
+            )
+
+            expect(dimensionsOf(result)).toEqual(['ou'])
+            expect(result.legacy).toBe(true)
+        }
+    )
+
+    it('does not mark a vis legacy when it carries no wire-only dimension', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                rows: [
+                    { dimension: 'ou', dimensionType: 'ORGANISATION_UNIT' },
+                ] as ApiSavedVisualization['rows'],
+            })
+        )
+
+        expect(dimensionsOf(result)).toEqual(['ou'])
+        expect(result.legacy).toBeUndefined()
+    })
+
     it.each([
         ['createdDate', 'created'],
         ['completedDate', 'completed'],
