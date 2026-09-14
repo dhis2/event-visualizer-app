@@ -1,7 +1,44 @@
 import { ANALYTICS_OPTIONS } from '@constants/options'
-import type { CurrentVisualization, DimensionId, OutputType } from '@types'
+import { getAnalyticsRequestDimensionName } from '@modules/analytics-request'
+import { WIRE_ONLY_DIMENSIONS } from '@modules/dimension/ids'
+import type {
+    CurrentVisualization,
+    DimensionArray,
+    DimensionId,
+    OutputType,
+} from '@types'
 
 export type ParameterRecord = Record<DimensionId, unknown>
+
+export const adaptDimensions = (
+    dimensions: DimensionArray,
+    visualization: CurrentVisualization
+): DimensionArray =>
+    dimensions
+        .filter((dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension))
+        .flatMap((dim) => {
+            const repetitionIndexes =
+                dim.programStage?.id && dim.repetition?.indexes.length
+                    ? dim.repetition.indexes
+                    : [undefined]
+
+            return repetitionIndexes.map((repetitionIndex) => ({
+                ...dim,
+                dimension: getAnalyticsRequestDimensionName({
+                    dimensionId: dim.dimension,
+                    legendSetId: dim.legendSet?.id,
+                    programId: dim.program?.id,
+                    programStageId: dim.programStage?.id,
+                    trackedEntityTypeId: visualization.trackedEntityType?.id,
+                    outputType: visualization.outputType,
+                    repetitionIndex,
+                }),
+                legendSet: undefined,
+                program: undefined,
+                programStage: undefined,
+                repetition: undefined,
+            }))
+        })
 
 const analyticsApiEndpointMap: Record<OutputType, string> = {
     ENROLLMENT: 'enrollments',
