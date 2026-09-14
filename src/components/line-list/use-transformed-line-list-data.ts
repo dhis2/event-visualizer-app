@@ -66,6 +66,66 @@ type TransformedLineListHeader = Omit<
     dimensionSuffix?: string
 }
 
+type ResolveLegendSetArgs = {
+    dimensionId: string
+    valueType: ValueType
+    legend: CurrentVisualization['legend']
+    metadataStore: UseMetadataStoreReturnValue
+    legendSets: LineListLegendSet[]
+}
+
+type TransformHeadersArgs = {
+    analyticsData: LineListAnalyticsData
+    visualization: CurrentVisualization
+    metadataStore: UseMetadataStoreReturnValue
+}
+
+type OptionSetMetaDataItem = MetadataInputItem & {
+    options: Array<{ code?: string; uid?: string }>
+}
+
+type FormatCellValueArgs = {
+    rawValue: string
+    header: TransformedLineListHeader
+    visualization: CurrentVisualization
+    metaDataItems: AnalyticsResponseMetadataItems
+    isUndefined: boolean
+}
+
+type TransformLineListDataArgs = {
+    analyticsData: LineListAnalyticsData
+    visualization: CurrentVisualization
+    metadataStore: UseMetadataStoreReturnValue
+}
+
+const NOT_DEFINED_VALUE = 'ND'
+
+const NON_WRAPPING_VALUE_TYPES_LOOKUP = new Set<ValueType>([
+    'NUMBER',
+    'INTEGER',
+    'INTEGER_POSITIVE',
+    'INTEGER_NEGATIVE',
+    'INTEGER_ZERO_OR_POSITIVE',
+    'PERCENTAGE',
+    'UNIT_INTERVAL',
+    'TIME',
+    'DATE',
+    'DATETIME',
+    'PHONE_NUMBER',
+])
+
+const DATE_VALUE_TYPES: ValueType[] = ['DATE', 'DATETIME']
+const TIME_DIMENSION_HEADER_NAMES = new Set([
+    headersMap.eventDate,
+    headersMap.enrollmentDate,
+    headersMap.incidentDate,
+    headersMap.scheduledDate,
+])
+const STATUS_HEADER_NAMES = new Set([
+    headersMap.eventStatus,
+    headersMap.programStatus,
+])
+
 const isStageOffsetInteger = (stageOffset: unknown): stageOffset is number =>
     Number.isInteger(stageOffset)
 
@@ -106,14 +166,6 @@ export const getHeaderDisplayText = (
     return label
 }
 
-type ResolveLegendSetArgs = {
-    dimensionId: string
-    valueType: ValueType
-    legend: CurrentVisualization['legend']
-    metadataStore: UseMetadataStoreReturnValue
-    legendSets: LineListLegendSet[]
-}
-
 const resolveLegendSet = ({
     dimensionId,
     valueType,
@@ -135,12 +187,6 @@ const resolveLegendSet = ({
         return legendSets.find((legendSet) => legendSet.id === item.legendSetId)
     }
     return undefined
-}
-
-type TransformHeadersArgs = {
-    analyticsData: LineListAnalyticsData
-    visualization: CurrentVisualization
-    metadataStore: UseMetadataStoreReturnValue
 }
 
 export const transformHeaders = ({
@@ -190,40 +236,14 @@ export const transformHeaders = ({
     }))
 }
 
-const NOT_DEFINED_VALUE = 'ND'
 const isValueUndefined = (
     rowContext: LineListRowContext | undefined,
     rowIndex: number,
     columnIndex: number
 ) => rowContext?.[rowIndex]?.[columnIndex]?.valueStatus === NOT_DEFINED_VALUE
 
-const NON_WRAPPING_VALUE_TYPES_LOOKUP = new Set<ValueType>([
-    'NUMBER',
-    'INTEGER',
-    'INTEGER_POSITIVE',
-    'INTEGER_NEGATIVE',
-    'INTEGER_ZERO_OR_POSITIVE',
-    'PERCENTAGE',
-    'UNIT_INTERVAL',
-    'TIME',
-    'DATE',
-    'DATETIME',
-    'PHONE_NUMBER',
-])
 const cellValueShouldNotWrap = (header: TransformedLineListHeader) =>
     NON_WRAPPING_VALUE_TYPES_LOOKUP.has(header.valueType) && !header.optionSet
-
-const DATE_VALUE_TYPES: ValueType[] = ['DATE', 'DATETIME']
-const TIME_DIMENSION_HEADER_NAMES = new Set([
-    headersMap.eventDate,
-    headersMap.enrollmentDate,
-    headersMap.incidentDate,
-    headersMap.scheduledDate,
-])
-const STATUS_HEADER_NAMES = new Set([
-    headersMap.eventStatus,
-    headersMap.programStatus,
-])
 
 /* Time dimensions (event/enrollment/incident/scheduledDate) are typed as
  * DATETIME on the backend but should render as plain date (DHIS2-17855).
@@ -240,10 +260,6 @@ const formatDateLikeValue = (
         (header.name === headersMap.lastUpdated ||
             header.valueType === 'DATETIME')
     return moment(value).format(includeTime ? 'yyyy-MM-DD HH:mm' : 'yyyy-MM-DD')
-}
-
-type OptionSetMetaDataItem = MetadataInputItem & {
-    options: Array<{ code?: string; uid?: string }>
 }
 
 const lookupOptionSetOptionMetadata = (
@@ -311,14 +327,6 @@ const resolveCellValue = ({
             return metaDataItems[rawValue]?.name || rawValue
         }
     }
-}
-
-type FormatCellValueArgs = {
-    rawValue: string
-    header: TransformedLineListHeader
-    visualization: CurrentVisualization
-    metaDataItems: AnalyticsResponseMetadataItems
-    isUndefined: boolean
 }
 
 export const formatCellValue = ({
@@ -392,12 +400,6 @@ const extractLegendSets = (
             allLegendSets.findIndex((a) => a.id === e.id) === index &&
             e.legends?.length
     )
-}
-
-type TransformLineListDataArgs = {
-    analyticsData: LineListAnalyticsData
-    visualization: CurrentVisualization
-    metadataStore: UseMetadataStoreReturnValue
 }
 
 export const transformLineListData = ({
