@@ -152,18 +152,18 @@ export const CustomValueModal: FC<CustomValueModalProps> = ({ onClose }) => {
                         dataTest="cell-value-count"
                         onSelect={() => setMode('COUNT')}
                         helpText={i18n.t(
-                            'Each cell shows a count of the events, enrollments or tracked entities the table is built from.'
+                            'Number of events, enrollments, or tracked entities.'
                         )}
                     />
                     <RadioCard
                         selected={mode === 'CUSTOM'}
-                        label={i18n.t('Custom value')}
+                        label={i18n.t('Data item value')}
                         value="CUSTOM"
                         name="cell-value-mode"
                         dataTest="cell-value-custom"
                         onSelect={() => setMode('CUSTOM')}
                         helpText={i18n.t(
-                            "Each cell shows a data item's value instead — for example, a total or average. Used for every output type."
+                            'An aggregated value for a data item.'
                         )}
                     >
                         {!isLoading && !isError && items?.length !== 0 && (

@@ -154,6 +154,11 @@ export const visUiConfigSlice = createSlice({
             action: PayloadAction<VisualizationType>
         ) => {
             state.visualizationType = action.payload
+            /* A custom value has no meaning in a line list (one row per event,
+             * nothing to aggregate), so it must not linger as hidden state. */
+            if (action.payload === 'LINE_LIST') {
+                state.customValue = undefined
+            }
         },
         setVisUiConfigLayout: (
             state,
