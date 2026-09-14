@@ -114,12 +114,3 @@ export const getBaseRequestIdentity = (
     trackedEntityTypeId: visualization.trackedEntityType?.id,
     relativePeriodDate: relativePeriodDate ?? null,
 })
-
-const analyticsApiEndpointMap: Record<OutputType, string> = {
-    ENROLLMENT: 'enrollments',
-    EVENT: 'events',
-    TRACKED_ENTITY_INSTANCE: 'trackedEntities',
-}
-
-export const getAnalyticsEndpoint = (outputType: OutputType): string =>
-    analyticsApiEndpointMap[outputType]
