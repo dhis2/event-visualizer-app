@@ -70,6 +70,32 @@ export type LineListAnalyticsResponse = {
     }
 }
 
+type FetchAnalyticsDataForLLParams = {
+    analyticsEngine: ReturnType<typeof Analytics.getAnalytics>
+    visualization: CurrentVisualization
+    pageSize: number
+    page: number
+    relativePeriodDate: unknown
+    sortField: string | undefined
+    sortDirection: 'ASC' | 'DESC' | undefined
+    displayProperty: CurrentUser['settings']['displayProperty']
+}
+
+type FetchAnalyticsDataParams = {
+    visualization: CurrentVisualization
+    relativePeriodDate?: string
+    displayProperty: CurrentUser['settings']['displayProperty']
+    pageSize?: number
+    page?: number
+    onResponseReceived: () => void
+}
+type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
+type AnalyticsDataState = {
+    isFetching: boolean
+    data: LineListAnalyticsData | null
+}
+type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
+
 const fetchAnalyticsDataForLL = async ({
     analyticsEngine,
     visualization,
@@ -233,33 +259,7 @@ export const toLineListAnalyticsData = ({
     legendSets,
 })
 
-type FetchAnalyticsDataForLLParams = {
-    analyticsEngine: ReturnType<typeof Analytics.getAnalytics>
-    visualization: CurrentVisualization
-    pageSize: number
-    page: number
-    relativePeriodDate: unknown
-    sortField: string | undefined
-    sortDirection: 'ASC' | 'DESC' | undefined
-    displayProperty: CurrentUser['settings']['displayProperty']
-}
-
-type FetchAnalyticsDataParams = {
-    visualization: CurrentVisualization
-    relativePeriodDate?: string
-    displayProperty: CurrentUser['settings']['displayProperty']
-    pageSize?: number
-    page?: number
-    onResponseReceived: () => void
-}
-type FetchAnalyticsDataFn = (params: FetchAnalyticsDataParams) => Promise<void>
-type AnalyticsDataState = {
-    isFetching: boolean
-    data: LineListAnalyticsData | null
-}
-type UseAnalyticsDataResult = [FetchAnalyticsDataFn, AnalyticsDataState]
-
-const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
+export const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
     const dataEngine = useDataEngine()
     const metadataStore = useMetadataStore()
     const [analyticsEngine] = useState(() => Analytics.getAnalytics(dataEngine))
@@ -371,5 +371,3 @@ const useLineListAnalyticsData = (): UseAnalyticsDataResult => {
 
     return [fetchAnalyticsData, state]
 }
-
-export { useLineListAnalyticsData }
