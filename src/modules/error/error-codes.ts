@@ -40,7 +40,7 @@ export const getBackendErrorCodeDisplay = (
                 icon: 'data',
                 title: i18n.t('Restricted access'),
                 description: i18n.t(
-                    "You don't have access to any items in a dimension your user account is restricted to. Contact a system administrator."
+                    "Your account cannot access any items in one or more dimensions. Contact a system administrator."
                 ),
             }
         case 'E7120':
@@ -105,7 +105,7 @@ export const getBackendErrorCodeDisplay = (
                 icon: 'data',
                 title: i18n.t('Too much data'),
                 description: i18n.t(
-                    'This request returns more data than the server allows. Add a filter or choose a shorter period.'
+                    'This request returns more data than the server allows. Reduce the amount of data and try again, for example by choosing fewer items, adding filters, or choosing a shorter period.'
                 ),
             }
         case 'E7209':
