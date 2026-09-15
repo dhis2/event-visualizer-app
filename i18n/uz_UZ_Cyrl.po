@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
+"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Khurshid Ibatov <x.ibatov@dtsj.uz>, 2026\n"
 "Language-Team: Uzbek (Cyrillic) (https://app.transifex.com/hisp-uio/teams/100509/uz@Cyrl/)\n"
@@ -44,14 +44,14 @@ msgstr ""
 msgid "Delete filter"
 msgstr "Фильтрни ўчиринг"
 
-msgid "Only available for repeatable stages"
-msgstr ""
+msgid "Data"
+msgstr "Маълумот"
 
 msgid "Repeated events"
 msgstr ""
 
-msgid "Data"
-msgstr "Маълумот"
+msgid "and"
+msgstr ""
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -59,32 +59,35 @@ msgstr ""
 msgid "This dimension cannot be filtered."
 msgstr ""
 
-msgid "Preset options can't be combined with other filters"
+msgid "Filtering"
+msgstr ""
+
+msgid "Show all groups"
 msgstr ""
 
 msgid "Add filter"
 msgstr "Фильтр киритиш"
 
-msgid "and"
+msgid "{{- legends}} and {{- remainingCount}} more"
 msgstr ""
 
-msgid "is one of preset options"
+msgid "Grouping"
 msgstr ""
 
-msgid "Choose a legend set"
+msgid "No grouping"
 msgstr ""
 
-msgid "Loading legend sets"
+msgid "Show each value individually"
 msgstr ""
 
-msgid "No preset option sets for this data item"
+msgid "Available groups"
 msgstr ""
 
-msgid "Choose legends"
+msgid "Filter groups"
 msgstr ""
 
-msgid "Loading legends"
-msgstr "Таърифлар юкланмоқда"
+msgid "Selected groups"
+msgstr ""
 
 msgid "From stages with repeatable events, show values from:"
 msgstr ""
@@ -225,6 +228,9 @@ msgid "Program: {{- programName}}"
 msgstr ""
 
 msgid "Program stage: {{- stageName}}"
+msgstr ""
+
+msgid "Grouping: {{- groupingName}}"
 msgstr ""
 
 msgid "Levels"
@@ -543,6 +549,9 @@ msgstr "Таъриф"
 msgid "Select from legends"
 msgstr "Таърифлардан сўранг"
 
+msgid "Loading legends"
+msgstr "Таърифлар юкланмоқда"
+
 msgid "Limit"
 msgstr "Чеклов"
 
@@ -557,6 +566,9 @@ msgstr "Юқоридан пастга"
 
 msgid "Top limit"
 msgstr "Юқори чегара"
+
+msgid "Must be a whole number of 1 or more"
+msgstr ""
 
 msgid "Row sub-totals"
 msgstr "Қаторнинг оралиқ йиғиндиси"
@@ -608,6 +620,12 @@ msgstr "Жадвал таглавҳаси"
 
 msgid "Labels"
 msgstr "Ёрлиқ/Белгилар"
+
+msgid "Filters are not applied to Event visualizations"
+msgstr ""
+
+msgid "Show without filters"
+msgstr "Фильтрларсиз кўрсатиш"
 
 msgid "Create a {{- visType}} before updating"
 msgstr ""
@@ -1031,8 +1049,8 @@ msgstr ""
 msgid "There's a syntax problem with the analytics request."
 msgstr "Аналитика сўровида синтаксис муаммо мавжуд."
 
-msgid "No data"
-msgstr "Маълумот йўқ"
+msgid "No data available"
+msgstr "Маълумотлар мавжуд эмас"
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"
