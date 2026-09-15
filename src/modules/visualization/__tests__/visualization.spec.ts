@@ -375,6 +375,38 @@ describe('getVisualizationUiConfig', () => {
             fontSize: 'LARGE',
         })
     })
+
+    /* End of the load path for a visualization saved with a legend set and a
+     * raw-value filter: the grouping is gone from the store, so the dimension
+     * modal shows "No grouping" rather than an empty legend transfer. */
+    it('carries a dropped grouping through to the conditions state', () => {
+        const apiVis = {
+            type: 'LINE_LIST',
+            outputType: 'EVENT',
+            columns: [
+                {
+                    dimension: UID,
+                    dimensionType: 'DATA_ELEMENT',
+                    valueType: 'NUMBER',
+                    programStage: { id: SID },
+                    legendSet: { id: 'OrkEzxZEH4X' },
+                    filter: 'LE:5',
+                },
+            ],
+            rows: [],
+            filters: [],
+            programDimensions: [],
+        } as unknown as ApiSavedVisualization
+
+        const result = getVisualizationUiConfig(
+            normalizeApiSavedVisualization(apiVis)
+        )
+
+        expect(result.conditionsByDimension[`${SID}.${UID}`]).toEqual({
+            condition: 'LE:5',
+            legendSet: undefined,
+        })
+    })
 })
 
 describe('getSaveableVisualization', () => {
@@ -632,6 +664,64 @@ describe('normalizeApiSavedVisualization', () => {
         )
 
         expect(dimensionsOf(result)).toEqual(['ou'])
+    })
+
+    const LSID = 'OrkEzxZEH4X'
+
+    const buildGroupedVis = (dim: Record<string, unknown>) =>
+        buildApiVis({
+            columns: [
+                {
+                    dimension: UID,
+                    dimensionType: 'DATA_ELEMENT',
+                    valueType: 'NUMBER',
+                    programStage: { id: SID },
+                    legendSet: { id: LSID },
+                    ...dim,
+                },
+            ] as ApiSavedVisualization['columns'],
+        })
+
+    it('keeps a legend set that has no filter', () => {
+        const result = normalizeApiSavedVisualization(buildGroupedVis({}))
+
+        expect(result.columns?.[0].legendSet).toEqual({ id: LSID })
+        expect(result.legacy).toBeUndefined()
+    })
+
+    it('keeps a legend set alongside a legend IN filter', () => {
+        const result = normalizeApiSavedVisualization(
+            buildGroupedVis({ filter: 'IN:legend1;legend2' })
+        )
+
+        expect(result.columns?.[0].legendSet).toEqual({ id: LSID })
+    })
+
+    /* Grouping makes analytics return legend IDs, so a saved raw-value filter
+     * could never match. The filter wins; see the Scope note on the function. */
+    it('drops a legend set that conflicts with a raw-value filter', () => {
+        const result = normalizeApiSavedVisualization(
+            buildGroupedVis({ filter: 'LE:5' })
+        )
+
+        expect(result.columns?.[0].legendSet).toBeUndefined()
+        expect(result.columns?.[0].filter).toBe('LE:5')
+    })
+
+    it('does not mark the vis legacy when it drops a legend set', () => {
+        const result = normalizeApiSavedVisualization(
+            buildGroupedVis({ filter: 'LE:5' })
+        )
+
+        expect(result.legacy).toBeUndefined()
+    })
+
+    it('drops a legend set on a non-numeric dimension', () => {
+        const result = normalizeApiSavedVisualization(
+            buildGroupedVis({ valueType: 'TEXT' })
+        )
+
+        expect(result.columns?.[0].legendSet).toBeUndefined()
     })
 })
 
