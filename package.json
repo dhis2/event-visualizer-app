@@ -30,7 +30,7 @@
         "@cypress/grep": "^7.0.0",
         "@cypress/vite-dev-server": "^7.3.4",
         "@dhis2/app-service-data": "^3.17.4",
-        "@dhis2/cli-app-scripts": "^12.11.4",
+        "@dhis2/cli-app-scripts": "^12.11.5",
         "@dhis2/config-eslint": "^0.2.2",
         "@dhis2/config-prettier": "^0.2.2",
         "@dhis2/cypress-commands": "^10.1.2",
