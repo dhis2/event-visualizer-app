@@ -1,8 +1,12 @@
 import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import type { CurrentVisualization, DimensionMetadataItem } from '@types'
 import { describe, it, expect } from 'vitest'
-import { getBaseRequestIdentity as getLineListBaseRequestIdentity } from './query-tools-line-list'
 import {
+    getAdaptedVisualization as getAdaptedLineListVisualization,
+    getBaseRequestIdentity as getLineListBaseRequestIdentity,
+} from './query-tools-line-list'
+import {
+    getAdaptedVisualization as getAdaptedPivotTableVisualization,
     getBaseRequestIdentity as getPivotTableBaseRequestIdentity,
     getLayoutDimensionMetadataNames,
 } from './query-tools-pivot-table'
@@ -251,5 +255,187 @@ describe('getLayoutDimensionMetadataNames', () => {
         } as unknown as CurrentVisualization
 
         expect(getLayoutDimensionMetadataNames(vis, metadataStore)).toEqual({})
+    })
+})
+
+describe('getAdaptedVisualization (line list)', () => {
+    const SID = 'Zj7UnCAulEk'
+    const UID = 'vV9UWAZohSf'
+    const LSID = 'OrkEzxZEH4X'
+
+    const buildVis = (
+        dim: Record<string, unknown>,
+        axis: 'columns' | 'rows' | 'filters' = 'columns'
+    ) =>
+        ({
+            type: 'LINE_LIST',
+            outputType: 'EVENT',
+            columns: [],
+            rows: [],
+            filters: [],
+            programDimensions: [{ id: 'p1' }],
+            [axis]: [{ programStage: { id: SID }, ...dim }],
+        }) as unknown as CurrentVisualization
+
+    const dimensionsOf = (
+        vis: CurrentVisualization,
+        axis: 'columns' | 'rows' | 'filters' = 'columns'
+    ) =>
+        getAdaptedLineListVisualization(vis).adaptedVisualization[axis].map(
+            (dim) => (dim as { dimension: string }).dimension
+        )
+
+    it('sends a grouped column with the legend set suffix', () => {
+        const vis = buildVis({ dimension: UID, legendSet: { id: LSID } })
+
+        expect(dimensionsOf(vis)).toEqual([`${SID}.${UID}-${LSID}`])
+    })
+
+    it('asks for the grouped column header without the suffix', () => {
+        const vis = buildVis({ dimension: UID, legendSet: { id: LSID } })
+
+        expect(getAdaptedLineListVisualization(vis).headers).toEqual([
+            `${SID}.${UID}`,
+        ])
+    })
+
+    it('keeps the suffix when the grouped column also has a legend filter', () => {
+        const vis = buildVis({
+            dimension: UID,
+            legendSet: { id: LSID },
+            filter: 'IN:legend1',
+        })
+
+        expect(dimensionsOf(vis)).toEqual([`${SID}.${UID}-${LSID}`])
+    })
+
+    it('sends the suffix for a grouped dimension on the filters axis', () => {
+        const vis = buildVis(
+            { dimension: UID, legendSet: { id: LSID }, filter: 'IN:legend1' },
+            'filters'
+        )
+
+        expect(dimensionsOf(vis, 'filters')).toEqual([`${SID}.${UID}-${LSID}`])
+    })
+
+    it('omits an ungrouped column that constrains nothing, but still asks for its header', () => {
+        const vis = buildVis({ dimension: UID })
+        const { adaptedVisualization, headers } =
+            getAdaptedLineListVisualization(vis)
+
+        expect(adaptedVisualization.columns).toEqual([])
+        expect(headers).toEqual([`${SID}.${UID}`])
+    })
+
+    it('expands repetition indexes without an undefined stage segment', () => {
+        const vis = buildVis({
+            dimension: UID,
+            items: [{ id: 'item1' }],
+            repetition: { indexes: [1, 0, -1] },
+        })
+
+        expect(dimensionsOf(vis)).toEqual([
+            `${SID}[1].${UID}`,
+            `${SID}[0].${UID}`,
+            `${SID}[-1].${UID}`,
+        ])
+    })
+
+    it('matches the headers it requests for a repeated dimension', () => {
+        const vis = buildVis({
+            dimension: UID,
+            items: [{ id: 'item1' }],
+            repetition: { indexes: [1, 0] },
+        })
+
+        expect(getAdaptedLineListVisualization(vis).headers).toEqual([
+            [`${SID}[1].${UID}`, `${SID}[0].${UID}`],
+        ])
+    })
+
+    /* The library drops items on its own repetition branch, so each expanded
+     * record has to carry them itself. */
+    it('preserves items on every expanded repetition', () => {
+        const vis = buildVis({
+            dimension: UID,
+            items: [{ id: 'item1' }],
+            repetition: { indexes: [1, 0] },
+        })
+        const { columns } =
+            getAdaptedLineListVisualization(vis).adaptedVisualization
+
+        expect(columns).toHaveLength(2)
+        for (const column of columns) {
+            expect(column).toMatchObject({ items: [{ id: 'item1' }] })
+        }
+    })
+
+    it('clears the fields the library would otherwise re-apply', () => {
+        const vis = buildVis({
+            dimension: UID,
+            legendSet: { id: LSID },
+            repetition: { indexes: [1] },
+        })
+        const [column] =
+            getAdaptedLineListVisualization(vis).adaptedVisualization.columns
+
+        expect(column).toMatchObject({
+            program: undefined,
+            programStage: undefined,
+            legendSet: undefined,
+            repetition: undefined,
+        })
+    })
+})
+
+describe('getAdaptedVisualization (pivot table)', () => {
+    const SID = 'Zj7UnCAulEk'
+    const UID = 'vV9UWAZohSf'
+    const LSID = 'OrkEzxZEH4X'
+
+    const groupedDim = {
+        dimension: UID,
+        programStage: { id: SID },
+        legendSet: { id: LSID },
+    }
+
+    it.each(['columns', 'rows', 'filters'] as const)(
+        'sends the legend set suffix on the %s axis',
+        (axis) => {
+            const vis = {
+                type: 'PIVOT_TABLE',
+                outputType: 'EVENT',
+                columns: [],
+                rows: [],
+                filters: [],
+                programDimensions: [{ id: 'p1' }],
+                [axis]: [groupedDim],
+            } as unknown as CurrentVisualization
+
+            expect(
+                getAdaptedPivotTableVisualization(vis).adaptedVisualization[
+                    axis
+                ]
+            ).toEqual([
+                expect.objectContaining({
+                    dimension: `${SID}.${UID}-${LSID}`,
+                }),
+            ])
+        }
+    )
+
+    it('keeps a dimension that constrains nothing, unlike the line list', () => {
+        const vis = {
+            type: 'PIVOT_TABLE',
+            outputType: 'EVENT',
+            columns: [{ dimension: UID, programStage: { id: SID } }],
+            rows: [],
+            filters: [],
+            programDimensions: [{ id: 'p1' }],
+        } as unknown as CurrentVisualization
+
+        expect(
+            getAdaptedPivotTableVisualization(vis).adaptedVisualization.columns
+        ).toEqual([expect.objectContaining({ dimension: `${SID}.${UID}` })])
     })
 })

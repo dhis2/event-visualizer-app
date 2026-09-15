@@ -3,6 +3,7 @@ import { DEFAULT_OPTIONS } from '@constants/options'
 import { layoutGetAllDimensions } from '@dhis2/analytics'
 import { getHeadersMap } from '@modules/analytics-request'
 import { getConditionsFromVisualization } from '@modules/conditions'
+import { dropInvalidGrouping } from '@modules/dimension/grouping'
 import {
     CONTEXTLESS_DIMENSION_TYPES,
     ENROLLMENT_SCOPED_DIMENSION_IDS,
@@ -549,6 +550,13 @@ const normalizeLegacyDimension = (
  *   persisted shape, so the vis cannot be overwritten in place — only "Save
  *   as" is allowed. Overwriting would silently persist in the canonical
  *   format, breaking older apps that still read the legacy shape.
+ * - Drop a dimension's `legendSet` when it cannot apply, ie. the dimension is not
+ *   numeric, or it carries a filter that is not a legend `IN:` filter. Grouping
+ *   makes analytics return legend IDs, so a raw-value filter beside it matches
+ *   nothing; the filter wins because it is always an explicit user choice, while
+ *   a legend set may be a seeded default. Unlike the conversions above this does
+ *   not imply `legacy` — the combination was never a valid persisted shape, so
+ *   there is nothing to upgrade and the vis can still be saved in place.
  *
  * Out of scope (handled downstream — these run on every load, not just legacy
  * visualizations, so they do not imply the `legacy` flag):
@@ -599,14 +607,18 @@ export const normalizeApiSavedVisualization = (
             : []),
     ]
 
-    normalizedVis.columns = columns.map((dim) =>
-        normalizeLegacyDimension(dim, context, normalizedVis)
+    normalizedVis.columns = dropInvalidGrouping(
+        columns.map((dim) =>
+            normalizeLegacyDimension(dim, context, normalizedVis)
+        )
     )
-    normalizedVis.rows = rows.map((dim) =>
-        normalizeLegacyDimension(dim, context, normalizedVis)
+    normalizedVis.rows = dropInvalidGrouping(
+        rows.map((dim) => normalizeLegacyDimension(dim, context, normalizedVis))
     )
-    normalizedVis.filters = rawFilters.map((dim) =>
-        normalizeLegacyDimension(dim, context, normalizedVis)
+    normalizedVis.filters = dropInvalidGrouping(
+        rawFilters.map((dim) =>
+            normalizeLegacyDimension(dim, context, normalizedVis)
+        )
     )
 
     if (
