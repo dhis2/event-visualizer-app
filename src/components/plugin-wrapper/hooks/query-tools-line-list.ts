@@ -35,6 +35,16 @@ const buildHeaderNames = (
     })
 }
 
+/* A dimension reaches `dimension=` only when it constrains the query; one that
+ * simply displays a value is requested through `headers=` alone. A legend set
+ * counts as constraining, because it changes the response from raw values to
+ * legend IDs. */
+const isRequestedAsDimension = (dim: DimensionRecord): boolean =>
+    dim.dimensionType === 'ORGANISATION_UNIT_GROUP_SET' ||
+    Boolean(dim.filter) ||
+    Boolean(dim.items?.length) ||
+    Boolean(dim.legendSet?.id)
+
 export const getAdaptedVisualization = (
     visualization: CurrentVisualization
 ): {
@@ -50,29 +60,24 @@ export const getAdaptedVisualization = (
     const rows = visualization.rows ?? []
     const filters = visualization.filters ?? []
 
-    const adaptedColumns = adaptDimensions(columns, visualization)
-    const adaptedRows = adaptDimensions(rows, visualization)
-    const adaptedFilters = adaptDimensions(filters, visualization)
-
     const headers = [...columns, ...rows]
         .filter((dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension))
         .map((dim) => buildHeaderNames(dim, visualization))
 
-    const filterDimensionParameters = ({
-        dimensionType,
-        filter,
-        items,
-    }: DimensionRecord) =>
-        dimensionType === 'ORGANISATION_UNIT_GROUP_SET' ||
-        filter ||
-        items?.length
-
     return {
         adaptedVisualization: {
-            // only pass dimensions with conditions
-            columns: adaptedColumns.filter(filterDimensionParameters),
-            rows: adaptedRows.filter(filterDimensionParameters),
-            filters: adaptedFilters.filter(filterDimensionParameters),
+            columns: adaptDimensions(
+                columns.filter(isRequestedAsDimension),
+                visualization
+            ),
+            rows: adaptDimensions(
+                rows.filter(isRequestedAsDimension),
+                visualization
+            ),
+            filters: adaptDimensions(
+                filters.filter(isRequestedAsDimension),
+                visualization
+            ),
             outputType: visualization.outputType,
         },
         headers,
