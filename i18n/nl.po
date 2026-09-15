@@ -1,16 +1,16 @@
 # Translators:
+# Andres Miguel Rubio, 2026
 # Philip Larsen Donnelly, 2026
 # Transifex Bot <>, 2026
 # Yury Rogachev <yury@dhis2.org>, 2026
 # Cherise Beek <cherise.beek@gmail.com>, 2026
 # Rica, 2026
-# Andres Miguel Rubio, 2026
 # Charel van den Elsen <zobeadzorg@gmail.com>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
+"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Charel van den Elsen <zobeadzorg@gmail.com>, 2026\n"
 "Language-Team: Dutch (https://app.transifex.com/hisp-uio/teams/100509/nl/)\n"
@@ -49,14 +49,14 @@ msgstr "Hoofdlettergevoelig"
 msgid "Delete filter"
 msgstr "Verwijder filter"
 
-msgid "Only available for repeatable stages"
-msgstr "Alleen beschikbaar voor herhaalbare stadia"
+msgid "Data"
+msgstr "Gegevens"
 
 msgid "Repeated events"
 msgstr "Herhaalde gebeurtenissen"
 
-msgid "Data"
-msgstr "Gegevens"
+msgid "and"
+msgstr "En"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -64,32 +64,35 @@ msgstr ""
 msgid "This dimension cannot be filtered."
 msgstr ""
 
-msgid "Preset options can't be combined with other filters"
+msgid "Filtering"
+msgstr ""
+
+msgid "Show all groups"
 msgstr ""
 
 msgid "Add filter"
 msgstr "Voeg filter toe"
 
-msgid "and"
-msgstr "En"
-
-msgid "is one of preset options"
-msgstr "is een van de vooraf ingestelde opties"
-
-msgid "Choose a legend set"
+msgid "{{- legends}} and {{- remainingCount}} more"
 msgstr ""
 
-msgid "Loading legend sets"
+msgid "Grouping"
 msgstr ""
 
-msgid "No preset option sets for this data item"
-msgstr "Er zijn geen vooraf ingestelde optiereeksen voor dit gegevensitem"
-
-msgid "Choose legends"
+msgid "No grouping"
 msgstr ""
 
-msgid "Loading legends"
-msgstr "Legenda's laden"
+msgid "Show each value individually"
+msgstr ""
+
+msgid "Available groups"
+msgstr ""
+
+msgid "Filter groups"
+msgstr ""
+
+msgid "Selected groups"
+msgstr ""
 
 msgid "From stages with repeatable events, show values from:"
 msgstr ""
@@ -232,6 +235,9 @@ msgstr ""
 
 msgid "Program stage: {{- stageName}}"
 msgstr "Programmafase: {{- stageName}}"
+
+msgid "Grouping: {{- groupingName}}"
+msgstr ""
 
 msgid "Levels"
 msgstr "Niveaus"
@@ -549,6 +555,9 @@ msgstr "Legenda"
 msgid "Select from legends"
 msgstr "Kies uit legenda's"
 
+msgid "Loading legends"
+msgstr "Legenda's laden"
+
 msgid "Limit"
 msgstr ""
 
@@ -562,6 +571,9 @@ msgid "High to low"
 msgstr "Hoog naar laag"
 
 msgid "Top limit"
+msgstr ""
+
+msgid "Must be a whole number of 1 or more"
 msgstr ""
 
 msgid "Row sub-totals"
@@ -614,6 +626,12 @@ msgstr ""
 
 msgid "Labels"
 msgstr "Labels"
+
+msgid "Filters are not applied to Event visualizations"
+msgstr ""
+
+msgid "Show without filters"
+msgstr "Toon zonder filters"
 
 msgid "Create a {{- visType}} before updating"
 msgstr ""
@@ -1034,8 +1052,8 @@ msgstr ""
 msgid "There's a syntax problem with the analytics request."
 msgstr ""
 
-msgid "No data"
-msgstr "Geen gegevens"
+msgid "No data available"
+msgstr "Geen gegevens beschikbaar"
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"
