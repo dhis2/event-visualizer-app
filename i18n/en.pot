@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
-"PO-Revision-Date: 2026-09-08T09:02:41.411Z\n"
+"POT-Creation-Date: 2026-09-10T14:36:29.898Z\n"
+"PO-Revision-Date: 2026-09-10T14:36:29.899Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -1033,27 +1033,110 @@ msgstr ""
 "You don't have access to the data in this visualization. Contact a system "
 "administrator."
 
+msgid "Visualization not found"
+msgstr "Visualization not found"
+
+msgid ""
+"The visualization you are trying to view could not be found, the ID could "
+"be incorrect or it could have been deleted."
+msgstr ""
+"The visualization you are trying to view could not be found, the ID could "
+"be incorrect or it could have been deleted."
+
+msgid ""
+"You don't have access to any items in a dimension your user account is "
+"restricted to. Contact a system administrator."
+msgstr ""
+"You don't have access to any items in a dimension your user account is "
+"restricted to. Contact a system administrator."
+
 msgid "You don't have access to one or more of the chosen organisation units."
 msgstr "You don't have access to one or more of the chosen organisation units."
 
 msgid "You don't have access to event analytics. Contact a system administrator."
 msgstr "You don't have access to event analytics. Contact a system administrator."
 
-msgid "Something went wrong"
-msgstr "Something went wrong"
+msgid "Invalid indicator"
+msgstr "Invalid indicator"
 
 msgid "There's a problem with at least one selected indicator."
 msgstr "There's a problem with at least one selected indicator."
 
+msgid "Program stage not available"
+msgstr "Program stage not available"
+
 msgid ""
-"There's a problem with the generated analytics. Contact a system "
+"A program stage in this visualization is no longer part of its program. It "
+"may have been changed or removed."
+msgstr ""
+"A program stage in this visualization is no longer part of its program. It "
+"may have been changed or removed."
+
+msgid "Dimension not available"
+msgstr "Dimension not available"
+
+msgid ""
+"A dimension in this visualization is no longer valid. It may have been "
+"removed from the program."
+msgstr ""
+"A dimension in this visualization is no longer valid. It may have been "
+"removed from the program."
+
+msgid "Program not available"
+msgstr "Program not available"
+
+msgid ""
+"A program in this visualization is not available for the selected tracked "
+"entity type."
+msgstr ""
+"A program in this visualization is not available for the selected tracked "
+"entity type."
+
+msgid "Too much data"
+msgstr "Too much data"
+
+msgid ""
+"This request returns more data than the server allows. Add a filter or "
+"choose a shorter period."
+msgstr ""
+"This request returns more data than the server allows. Add a filter or "
+"choose a shorter period."
+
+msgid "Top limit too high"
+msgstr "Top limit too high"
+
+msgid ""
+"The top limit in this visualization is higher than the server allows. Lower "
+"it in the options."
+msgstr ""
+"The top limit in this visualization is higher than the server allows. Lower "
+"it in the options."
+
+msgid "Request timed out"
+msgstr "Request timed out"
+
+msgid ""
+"The request took too long and was stopped. Try again, or reduce the amount "
+"of data requested."
+msgstr ""
+"The request took too long and was stopped. Try again, or reduce the amount "
+"of data requested."
+
+msgid "Analytics not generated"
+msgstr "Analytics not generated"
+
+msgid ""
+"The analytics tables have not been generated. Contact a system "
 "administrator."
 msgstr ""
-"There's a problem with the generated analytics. Contact a system "
+"The analytics tables have not been generated. Contact a system "
 "administrator."
 
-msgid "There's a syntax problem with the analytics request."
-msgstr "There's a syntax problem with the analytics request."
+msgid "Analytics request failed"
+msgstr "Analytics request failed"
+
+msgid "The server could not run this request. Contact a system administrator."
+msgstr "The server could not run this request. Contact a system administrator."
 
 msgid "No data available"
 msgstr "No data available"
@@ -1064,6 +1147,12 @@ msgid ""
 msgstr ""
 "The selected dimensions didn't return any data. There may be no data, or "
 "you may not have access to it."
+
+msgid "Analytics request error"
+msgstr "Analytics request error"
+
+msgid "Something went wrong"
+msgstr "Something went wrong"
 
 msgid "There was a problem getting the data from the server."
 msgstr "There was a problem getting the data from the server."
