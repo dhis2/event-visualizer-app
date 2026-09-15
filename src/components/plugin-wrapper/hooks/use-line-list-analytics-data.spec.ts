@@ -1,177 +1,209 @@
+import {
+    getLineListFixtureQueryData,
+    loadLineListFixture,
+} from '@components/line-list/__tests__/line-list-fixture-utils'
+import { Analytics } from '@dhis2/analytics'
+import { transformVisualizationForAnalyticsRequest } from '@modules/analytics-request'
+import { extractMetadataFromVisualization } from '@modules/metadata/visualization'
+import { normalizeApiSavedVisualization } from '@modules/visualization/state'
+import { renderHookWithAppWrapper } from '@test-utils/app-wrapper'
 import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
+import { waitFor } from '@testing-library/react'
 import type {
+    ApiSavedVisualization,
     CurrentVisualization,
     DimensionMetadataItem,
-    MetadataItem,
-    MetadataStore,
-    Program,
+    InitialMetadataItems,
 } from '@types'
-import { describe, it, expect } from 'vitest'
-import { buildHeaders, formatRowValue } from './use-line-list-analytics-data'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import {
+    collectLegendSetIdsToFetch,
+    toLineListAnalyticsData,
+    useLineListAnalyticsData,
+    type LineListAnalyticsDataHeader,
+    type LineListAnalyticsResponse,
+    type LineListLegendSet,
+} from './use-line-list-analytics-data'
 
-const visualization = {
-    outputType: 'EVENT',
-    programDimensions: [{ id: 'p1' }],
-} as unknown as CurrentVisualization
+const simpleLineList = loadLineListFixture('e2e-enrollment')
+const largeLineListWithLegend = loadLineListFixture(
+    'inpatient-extra-columns-and-legends'
+)
 
-const analyticsResponse = {
-    headers: [{ name: 's1.scheduledDate' }, { name: 's2.scheduledDate' }],
-    metaData: {
-        items: {},
-    },
-}
+/* The app-local visualization shape, derived the way the app's load pipeline
+ * does it. */
+const simpleLineListVis = normalizeApiSavedVisualization(
+    simpleLineList.eventVisualization as unknown as ApiSavedVisualization
+)
+const largeLineListWithLegendVis = normalizeApiSavedVisualization(
+    largeLineListWithLegend.eventVisualization as unknown as ApiSavedVisualization
+)
 
-const analyticsResponseTyped = analyticsResponse as unknown as Parameters<
-    typeof buildHeaders
->[0]['analyticsResponse']
-
-const buildMetadataStore = (scheduledDateName: string): MetadataStore => {
-    const dimensionItems: Record<string, Partial<DimensionMetadataItem>> = {
-        's1.scheduledDate': {
-            name: scheduledDateName,
-            programId: 'p1',
-            programStageId: 's1',
-        },
-        's2.scheduledDate': {
-            name: scheduledDateName,
-            programId: 'p1',
-            programStageId: 's2',
-        },
-    }
-    /* Program and stage names come from the store, populated by
-     * setVisualizationMetadata in both the app and the plugin. */
-    const items: Record<string, { id: string; name: string }> = {
-        p1: { id: 'p1', name: 'Antenatal care' },
-        s1: { id: 's1', name: 'Birth' },
-        s2: { id: 's2', name: 'Baby Postnatal' },
-    }
-    return createMetadataStoreStub({
-        dimensions: dimensionItems as Record<string, DimensionMetadataItem>,
-        items: items as Record<string, MetadataItem>,
-        programs: items as unknown as Record<string, Program>,
+describe('useLineListAnalyticsData', () => {
+    beforeEach(() => {
+        /* Analytics.getAnalytics caches a singleton bound to the first data
+         * engine it sees; reset it so each test's mock data provider is used. */
+        ;(
+            Analytics.getAnalytics as unknown as { analytics?: unknown }
+        ).analytics = undefined
     })
-}
 
-describe('buildHeaders', () => {
-    it('keeps the base name in column and exposes the stage suffix separately', () => {
-        const headers = buildHeaders({
-            analyticsResponse: analyticsResponseTyped,
-            visualization,
-            metadataStore: buildMetadataStore('Scheduled date'),
+    it('fetches and assembles the analytics data and legend sets', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useLineListAnalyticsData(),
+            {
+                queryData: getLineListFixtureQueryData(largeLineListWithLegend),
+                /* The hook does not run the load pipeline that seeds the
+                 * metadata store, so seed it here the same way. */
+                metadata: extractMetadataFromVisualization(
+                    largeLineListWithLegendVis
+                ) as InitialMetadataItems,
+            }
+        )
+
+        const [fetchAnalyticsData] = result.current
+        await fetchAnalyticsData({
+            visualization: transformVisualizationForAnalyticsRequest(
+                largeLineListWithLegendVis as CurrentVisualization
+            ),
+            displayProperty: 'name',
+            onResponseReceived: vi.fn(),
+        })
+        await waitFor(() => {
+            expect(result.current[1].data).not.toBeNull()
         })
 
-        expect(headers[0]).toMatchObject({
-            dimensionId: 's1.scheduledDate',
-            column: 'Scheduled date',
-            dimensionSuffix: 'Birth',
-        })
-        expect(headers[1]).toMatchObject({
-            dimensionId: 's2.scheduledDate',
-            column: 'Scheduled date',
-            dimensionSuffix: 'Baby Postnatal',
-        })
+        const data = result.current[1].data!
+        expect(data.rows).toEqual(
+            (largeLineListWithLegend.response as { rows: unknown }).rows
+        )
+        expect(data.headers.map(({ dimensionId }) => dimensionId)).toContain(
+            'Zj7UnCAulEk.vV9UWAZohSf'
+        )
+        expect(data.legendSets.map(({ id }) => id).toSorted()).toEqual([
+            'OrkEzxZEH4X',
+            'TBxGTceyzwy',
+        ])
     })
 })
 
-describe('formatRowValue', () => {
-    type FormatRowValueParams = Parameters<typeof formatRowValue>[0]
-    type FormatRowValueHeader = FormatRowValueParams['header']
-    type FormatRowValueMetaDataItems = FormatRowValueParams['metaDataItems']
+describe('toLineListAnalyticsData', () => {
+    it('appends the canonical dimension ID to each header and flattens the response', () => {
+        const response =
+            simpleLineList.response as unknown as LineListAnalyticsResponse
 
-    const optionSetMetaData = {
-        os1: {
-            options: [
-                { code: 'A', uid: 'optA' },
-                { code: 'B', uid: 'optB' },
-                { code: 'C', uid: 'optC' },
-            ],
-        },
-        optA: { name: 'Apple' },
-        optB: { name: 'Banana' },
-        optC: { name: 'Cherry' },
-    } as unknown as FormatRowValueMetaDataItems
+        const analyticsData = toLineListAnalyticsData({
+            response,
+            visualization: simpleLineListVis as CurrentVisualization,
+        })
 
-    const optionSetHeader = {
-        valueType: 'TEXT',
-        optionSet: 'os1',
-    } as unknown as FormatRowValueHeader
-
-    it('resolves an option set value to its option name', () => {
         expect(
-            formatRowValue({
-                rowValue: 'A',
-                header: optionSetHeader,
-                metaDataItems: optionSetMetaData,
-                isUndefined: false,
-            })
-        ).toBe('Apple')
-    })
-
-    it('resolves each code of a multi-text value and joins the option names', () => {
-        expect(
-            formatRowValue({
-                rowValue: 'A,B,C',
-                header: optionSetHeader,
-                metaDataItems: optionSetMetaData,
-                isUndefined: false,
-            })
-        ).toBe('Apple, Banana, Cherry')
-    })
-
-    /* The analytics API can omit metadata for some option codes (the option's
-     * uid entry or its presence in the option set's options array). The missing
-     * codes must fall back to the raw code instead of breaking the whole value. */
-    it('falls back to the raw code for multi-text codes missing from the metadata', () => {
-        const metaDataItemsMissingOption = {
-            os1: {
-                options: [
-                    { code: 'A', uid: 'optA' },
-                    { code: 'C', uid: 'optC' },
-                ],
+            analyticsData.headers.map(({ name, dimensionId }) => ({
+                name,
+                dimensionId,
+            }))
+        ).toEqual([
+            { name: 'jfuXZB3A1ko.ouname', dimensionId: 'jfuXZB3A1ko.ou' },
+            {
+                name: 'enrollmentdate',
+                dimensionId: 'J1QQtmzqhJz.enrollmentDate',
             },
-            optA: { name: 'Apple' },
-            optC: { name: 'Cherry' },
-        } as unknown as FormatRowValueMetaDataItems
-
-        expect(
-            formatRowValue({
-                rowValue: 'A,B,C',
-                header: optionSetHeader,
-                metaDataItems: metaDataItemsMissingOption,
-                isUndefined: false,
-            })
-        ).toBe('Apple, B, Cherry')
+        ])
+        expect(analyticsData.rows).toBe(response.rows)
+        expect(analyticsData.pager).toBe(response.metaData.pager)
+        expect(analyticsData.metaDataItems).toBe(response.metaData.items)
+        expect(analyticsData.legendSets).toEqual([])
     })
 
-    it('falls back to the raw code when the option uid entry is missing', () => {
-        const metaDataItemsMissingName = {
-            os1: {
-                options: [
-                    { code: 'A', uid: 'optA' },
-                    { code: 'B', uid: 'optB' },
-                ],
-            },
-            optA: { name: 'Apple' },
-        } as unknown as FormatRowValueMetaDataItems
+    it('prefixes data element headers with their stage and attaches the fetched legend sets', () => {
+        const analyticsData = toLineListAnalyticsData({
+            response:
+                largeLineListWithLegend.response as unknown as LineListAnalyticsResponse,
+            visualization: largeLineListWithLegendVis as CurrentVisualization,
+            legendSets:
+                largeLineListWithLegend.legendSets as unknown as LineListLegendSet[],
+        })
 
+        const weightHeader = analyticsData.headers.find(
+            (header) => header.name === 'Zj7UnCAulEk.vV9UWAZohSf'
+        )
+        expect(weightHeader?.dimensionId).toBe('Zj7UnCAulEk.vV9UWAZohSf')
+        expect(analyticsData.legendSets.map(({ id }) => id).toSorted()).toEqual(
+            ['OrkEzxZEH4X', 'TBxGTceyzwy']
+        )
+    })
+})
+
+const headers = [
+    { name: 'ouname', dimensionId: 'ou', valueType: 'TEXT' },
+    { name: 's1.weight', dimensionId: 's1.weight', valueType: 'NUMBER' },
+    { name: 's1.height', dimensionId: 's1.height', valueType: 'NUMBER' },
+] as LineListAnalyticsDataHeader[]
+
+const buildVisualization = (legend: unknown): CurrentVisualization =>
+    ({ outputType: 'EVENT', legend }) as unknown as CurrentVisualization
+
+describe('collectLegendSetIdsToFetch', () => {
+    it('returns the configured set for the FIXED strategy', () => {
         expect(
-            formatRowValue({
-                rowValue: 'A,B',
-                header: optionSetHeader,
-                metaDataItems: metaDataItemsMissingName,
-                isUndefined: false,
-            })
-        ).toBe('Apple, B')
+            collectLegendSetIdsToFetch(
+                headers,
+                buildVisualization({ strategy: 'FIXED', set: { id: 'ls1' } }),
+                createMetadataStoreStub()
+            )
+        ).toEqual(['ls1'])
     })
 
-    it('falls back to every raw code when the option set metadata is absent', () => {
+    it('returns nothing for the FIXED strategy without a configured set', () => {
         expect(
-            formatRowValue({
-                rowValue: 'A,B',
-                header: optionSetHeader,
-                metaDataItems: {},
-                isUndefined: false,
-            })
-        ).toBe('A, B')
+            collectLegendSetIdsToFetch(
+                headers,
+                buildVisualization({ strategy: 'FIXED' }),
+                createMetadataStoreStub()
+            )
+        ).toEqual([])
+    })
+
+    it('returns the per-column sets from the metadata store for the BY_DATA_ITEM strategy', () => {
+        const metadataStore = createMetadataStoreStub({
+            dimensions: {
+                's1.weight': { legendSetId: 'ls1' },
+                's1.height': { legendSetId: 'ls2' },
+            } as unknown as Record<string, DimensionMetadataItem>,
+        })
+
+        expect(
+            collectLegendSetIdsToFetch(
+                headers,
+                buildVisualization({ strategy: 'BY_DATA_ITEM' }),
+                metadataStore
+            )
+        ).toEqual(['ls1', 'ls2'])
+    })
+
+    it('skips columns without a legend set for the BY_DATA_ITEM strategy', () => {
+        const metadataStore = createMetadataStoreStub({
+            dimensions: {
+                's1.weight': { legendSetId: 'ls1' },
+            } as unknown as Record<string, DimensionMetadataItem>,
+        })
+
+        expect(
+            collectLegendSetIdsToFetch(
+                headers,
+                buildVisualization({ strategy: 'BY_DATA_ITEM' }),
+                metadataStore
+            )
+        ).toEqual(['ls1'])
+    })
+
+    it('returns nothing when the visualization has no legend', () => {
+        expect(
+            collectLegendSetIdsToFetch(
+                headers,
+                buildVisualization(undefined),
+                createMetadataStoreStub()
+            )
+        ).toEqual([])
     })
 })

@@ -3,7 +3,7 @@ import { DataTableCell, Tooltip } from '@dhis2/ui'
 import cx from 'classnames'
 import type { FC } from 'react'
 import classes from './styles/body-cell.module.css'
-import type { LineListCellData } from './types'
+import type { LineListCellData } from './use-transformed-line-list-data'
 
 type BodyCellProps = LineListCellData
 

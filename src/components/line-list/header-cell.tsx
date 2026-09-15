@@ -4,7 +4,8 @@ import type { SortDirection } from '@types'
 import cx from 'classnames'
 import { useCallback, useMemo, type FC } from 'react'
 import classes from './styles/header-cell.module.css'
-import type { ColumnHeaderClickFn, DataSortFn, LineListHeader } from './types'
+import type { ColumnHeaderClickFn, DataSortFn } from './types'
+import type { LineListHeader } from './use-transformed-line-list-data'
 
 type HeaderCellProps = LineListHeader & {
     isDisconnected: boolean
