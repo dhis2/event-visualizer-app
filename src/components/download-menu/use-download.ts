@@ -1,7 +1,5 @@
-import {
-    getAdaptedVisualization as getAdaptedVisualizationForLL,
-    getAnalyticsEndpoint,
-} from '@components/plugin-wrapper/hooks/query-tools-line-list'
+import { getAnalyticsEndpoint } from '@components/plugin-wrapper/hooks/query-tools-common'
+import { getAdaptedVisualization as getAdaptedVisualizationForLL } from '@components/plugin-wrapper/hooks/query-tools-line-list'
 import { getAdaptedVisualization as getAdaptedVisualizationForPT } from '@components/plugin-wrapper/hooks/query-tools-pivot-table'
 import { Analytics } from '@dhis2/analytics'
 // eslint-disable-next-line no-restricted-imports

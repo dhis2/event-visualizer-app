@@ -1,0 +1,134 @@
+{
+    "headers": [
+        {
+            "name": "jfuXZB3A1ko.ouname",
+            "column": "Organisation unit name",
+            "valueType": "TEXT",
+            "type": "java.lang.String",
+            "hidden": false,
+            "meta": true
+        },
+        {
+            "name": "enrollmentdate",
+            "column": "Enrollment date (e2e)",
+            "valueType": "DATETIME",
+            "type": "java.time.LocalDateTime",
+            "hidden": false,
+            "meta": true
+        }
+    ],
+    "metaData": {
+        "pager": {
+            "page": 1,
+            "pageSize": 100,
+            "isLastPage": true
+        },
+        "items": {
+            "2021": {
+                "uid": "2021",
+                "code": "2021",
+                "name": "2021",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2021-01-01T00:00:00.000",
+                "endDate": "2021-12-31T00:00:00.000"
+            },
+            "2022": {
+                "uid": "2022",
+                "code": "2022",
+                "name": "2022",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2022-01-01T00:00:00.000",
+                "endDate": "2022-12-31T00:00:00.000"
+            },
+            "2023": {
+                "uid": "2023",
+                "code": "2023",
+                "name": "2023",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2023-01-01T00:00:00.000",
+                "endDate": "2023-12-31T00:00:00.000"
+            },
+            "2024": {
+                "uid": "2024",
+                "code": "2024",
+                "name": "2024",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2024-01-01T00:00:00.000",
+                "endDate": "2024-12-31T00:00:00.000"
+            },
+            "2025": {
+                "uid": "2025",
+                "code": "2025",
+                "name": "2025",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2025-01-01T00:00:00.000",
+                "endDate": "2025-12-31T00:00:00.000"
+            },
+            "2026": {
+                "uid": "2026",
+                "code": "2026",
+                "name": "2026",
+                "dimensionItemType": "PERIOD",
+                "valueType": "TEXT",
+                "totalAggregationType": "SUM",
+                "startDate": "2026-01-01T00:00:00.000",
+                "endDate": "2026-12-31T00:00:00.000"
+            },
+            "jfuXZB3A1ko": {
+                "uid": "jfuXZB3A1ko",
+                "name": "Stage 1 - Repeatable"
+            },
+            "USER_ORGUNIT": {
+                "organisationUnits": ["ImspTQPwCqd"]
+            },
+            "jfuXZB3A1ko.ou": {
+                "name": "Organisation unit"
+            },
+            "THIS_YEAR": {
+                "name": "This year"
+            },
+            "LAST_5_YEARS": {
+                "name": "Last 5 years"
+            },
+            "J1QQtmzqhJz": {
+                "uid": "J1QQtmzqhJz",
+                "name": "E2E program"
+            },
+            "ImspTQPwCqd": {
+                "uid": "ImspTQPwCqd",
+                "code": "OU_525",
+                "name": "Sierra Leone"
+            },
+            "pe": {
+                "uid": "pe",
+                "dimensionType": "PERIOD"
+            },
+            "enrollmentdate": {
+                "name": "Enrollment date (e2e)"
+            }
+        },
+        "dimensions": {
+            "pe": [],
+            "enrollmentdate": ["2026", "2021", "2022", "2023", "2024", "2025"],
+            "jfuXZB3A1ko.ou": ["ImspTQPwCqd"]
+        }
+    },
+    "rowContext": {},
+    "width": 2,
+    "rows": [
+        ["Njandama MCHP", "2025-12-10 00:00:00.0"],
+        ["Baoma Station CHP", "2026-01-18 00:00:00.0"]
+    ],
+    "height": 2,
+    "headerWidth": 2
+}

@@ -22,9 +22,16 @@
 
 /* The floating clone doesn't participate in the axis layout, so drop the
  * inter-chip spacing margin and dim it slightly like the source chip. */
-.clone {
+.chipClone {
     margin: 0;
     opacity: 0.9;
+}
+
+/* A sidebar dimension item only pads its leading edge — in the list the
+ * trailing space comes from the item stretching to the column width, which a
+ * fit-content overlay box doesn't give it. */
+.itemClone {
+    padding-inline-end: var(--spacers-dp4);
 }
 
 .removeBadge {

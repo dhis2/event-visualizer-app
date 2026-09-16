@@ -42,6 +42,7 @@ import {
     type ReactElement,
     type ReactNode,
 } from 'react'
+import { ErrorBoundary, type FallbackProps } from 'react-error-boundary'
 import { Provider } from 'react-redux'
 import meData from './__fixtures__/me.json'
 import organisationUnitLevelsData from './__fixtures__/organisation-unit-levels.json'
@@ -190,6 +191,10 @@ const MockStoreAndDndProvider: FC<{
     )
 }
 
+const ErrorBoundaryFallback = ({ error }: FallbackProps) => (
+    <div data-test="mock-app-wrapper-error">{String(error)}</div>
+)
+
 const defaultAppCachedData = {
     me: meData,
     organisationUnitLevels: organisationUnitLevelsData,
@@ -208,9 +213,11 @@ const MockAppWrapperCore: FC<{
             <CssVariables colors spacers theme elevations />
             <AppCachedDataQueryProvider>
                 <MockMetadataProvider mockMetadata={metadata}>
-                    <MockStoreAndDndProvider partialStore={partialStore}>
-                        {children}
-                    </MockStoreAndDndProvider>
+                    <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+                        <MockStoreAndDndProvider partialStore={partialStore}>
+                            {children}
+                        </MockStoreAndDndProvider>
+                    </ErrorBoundary>
                 </MockMetadataProvider>
             </AppCachedDataQueryProvider>
         </CustomDataProvider>

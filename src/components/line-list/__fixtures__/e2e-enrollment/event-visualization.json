@@ -1,0 +1,172 @@
+{
+    "name": "E2E: Enrollment",
+    "created": "2023-01-04T13:17:29.139",
+    "lastUpdated": "2023-04-03T10:24:58.456",
+    "translations": [],
+    "createdBy": {
+        "id": "GOLswS44mh8",
+        "code": null,
+        "name": "Tom Wakiki",
+        "displayName": "Tom Wakiki",
+        "username": "system"
+    },
+    "lastUpdatedBy": {
+        "id": "GOLswS44mh8",
+        "code": null,
+        "name": "Tom Wakiki",
+        "displayName": "Tom Wakiki",
+        "username": "system"
+    },
+    "sharing": {
+        "owner": "GOLswS44mh8",
+        "users": {
+            "Z7mGnIfGgqL": {
+                "displayName": "Thor Odinsson",
+                "access": "r-------",
+                "id": "Z7mGnIfGgqL"
+            },
+            "tiJZaFA1tXp": {
+                "displayName": "Freya Njordsdottir",
+                "access": "r-------",
+                "id": "tiJZaFA1tXp"
+            },
+            "xE7jOejl9FI": {
+                "displayName": "John Traore",
+                "access": "rw------",
+                "id": "xE7jOejl9FI"
+            }
+        },
+        "userGroups": {},
+        "public": "--------"
+    },
+    "regressionType": "NONE",
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [],
+    "dataElementDimensions": [],
+    "programIndicatorDimensions": [],
+    "subscribers": [],
+    "digitGroupSeparator": "SPACE",
+    "hideEmptyRowItems": "NONE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": false,
+    "type": "LINE_LIST",
+    "favorites": [],
+    "program": {
+        "enrollmentDateLabel": "Enrollment date (e2e)",
+        "incidentDateLabel": "Incident date (e2e)",
+        "programType": "WITH_REGISTRATION",
+        "displayIncidentDate": true,
+        "trackedEntityType": {
+            "id": "nEenWmSyUEp",
+            "name": "Person"
+        },
+        "displayEnrollmentDateLabel": "Enrollment date (e2e)",
+        "displayIncidentDateLabel": "Incident date (e2e)",
+        "id": "J1QQtmzqhJz",
+        "programStages": [
+            {
+                "program": {
+                    "id": "J1QQtmzqhJz"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Event date (e2e)",
+                "displayDueDateLabel": "Scheduled date (e2e)",
+                "id": "jfuXZB3A1ko",
+                "repeatable": true,
+                "name": "Stage 1 - Repeatable"
+            }
+        ],
+        "name": "E2E program"
+    },
+    "programStage": {
+        "program": {
+            "id": "J1QQtmzqhJz"
+        },
+        "hideDueDate": false,
+        "displayExecutionDateLabel": "Event date (e2e)",
+        "displayDueDateLabel": "Scheduled date (e2e)",
+        "id": "jfuXZB3A1ko",
+        "repeatable": true,
+        "name": "Stage 1 - Repeatable"
+    },
+    "programDimensions": [],
+    "simpleDimensions": [
+        {
+            "parent": "COLUMN",
+            "dimension": "enrollmentDate",
+            "values": ["THIS_YEAR", "LAST_5_YEARS"]
+        }
+    ],
+    "outputType": "ENROLLMENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": false,
+    "filters": [],
+    "parentGraphMap": {},
+    "columns": [
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "USER_ORGUNIT"
+                }
+            ],
+            "dimension": "ou"
+        },
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "THIS_YEAR"
+                },
+                {
+                    "id": "LAST_5_YEARS"
+                }
+            ],
+            "dimension": "enrollmentDate"
+        }
+    ],
+    "rows": [],
+    "displayName": "E2E: Enrollment",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "href": "https://e2e.im.dhis2.org/analytics-dev/api/eventVisualizations/AFjkDs7acBh",
+    "subscribed": false,
+    "favorite": false,
+    "metaData": {},
+    "displayFormName": "E2E: Enrollment",
+    "id": "AFjkDs7acBh",
+    "attributeValues": [],
+    "sorting": [],
+    "repetitions": []
+}

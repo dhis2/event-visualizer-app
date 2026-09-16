@@ -1,5 +1,4 @@
 import { LineList } from '@components/line-list'
-import type { LineListAnalyticsData } from '@components/line-list'
 import type {
     ColumnHeaderClickFn,
     DataSortFn,
@@ -126,7 +125,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
 
     return (
         <LineList
-            analyticsData={data as LineListAnalyticsData}
+            analyticsData={data}
             onDataSort={onDataSort}
             onPaginate={onPaginate}
             visualization={eventVisualization}

@@ -10,6 +10,7 @@ const PID = 'pid'
 const SID = 'sid'
 const TET = 'tet'
 const UID = 'a3kGcGDCuk6'
+const LSID = 'OrkEzxZEH4X'
 
 const buildVis = (
     overrides: Partial<CurrentVisualization> = {}
@@ -177,6 +178,84 @@ describe('getAnalyticsRequestDimensionName', () => {
             })
         ).toBe(UID)
     })
+
+    it('appends the legend set suffix to a stage-prefixed dim', () => {
+        expect(
+            getAnalyticsRequestDimensionName({
+                dimensionId: UID,
+                programStageId: SID,
+                legendSetId: LSID,
+                outputType: 'EVENT',
+            })
+        ).toBe(`${SID}.${UID}-${LSID}`)
+    })
+
+    it('appends the legend set suffix to an unprefixed dim', () => {
+        expect(
+            getAnalyticsRequestDimensionName({
+                dimensionId: UID,
+                legendSetId: LSID,
+                outputType: 'EVENT',
+            })
+        ).toBe(`${UID}-${LSID}`)
+    })
+
+    it('appends the legend set suffix after a programId prefix in TE', () => {
+        expect(
+            getAnalyticsRequestDimensionName({
+                dimensionId: UID,
+                programId: PID,
+                legendSetId: LSID,
+                outputType: 'TRACKED_ENTITY_INSTANCE',
+            })
+        ).toBe(`${PID}.${UID}-${LSID}`)
+    })
+
+    it('renders a repetition index on the stage segment', () => {
+        expect(
+            getAnalyticsRequestDimensionName({
+                dimensionId: UID,
+                programStageId: SID,
+                repetitionIndex: 1,
+                outputType: 'EVENT',
+            })
+        ).toBe(`${SID}[1].${UID}`)
+    })
+
+    /* parseUiRepetitions emits 0 and negative indexes for the "most recent"
+     * side, so these must survive a falsy check. */
+    it.each([0, -1])('renders repetition index %i', (repetitionIndex) => {
+        expect(
+            getAnalyticsRequestDimensionName({
+                dimensionId: UID,
+                programStageId: SID,
+                repetitionIndex,
+                outputType: 'EVENT',
+            })
+        ).toBe(`${SID}[${repetitionIndex}].${UID}`)
+    })
+
+    it('ignores a repetition index when there is no stage', () => {
+        expect(
+            getAnalyticsRequestDimensionName({
+                dimensionId: UID,
+                repetitionIndex: 1,
+                outputType: 'EVENT',
+            })
+        ).toBe(UID)
+    })
+
+    it('combines a repetition index and a legend set suffix', () => {
+        expect(
+            getAnalyticsRequestDimensionName({
+                dimensionId: UID,
+                programStageId: SID,
+                repetitionIndex: 1,
+                legendSetId: LSID,
+                outputType: 'EVENT',
+            })
+        ).toBe(`${SID}[1].${UID}-${LSID}`)
+    })
 })
 
 describe('getAnalyticsRequestHeaderName', () => {
@@ -252,5 +331,40 @@ describe('getAnalyticsRequestHeaderName', () => {
                 visualization: buildVis({ showHierarchy: true }),
             })
         ).toBe(`${SID}.ounamehierarchy`)
+    })
+    it('renders a repetition index on the stage segment', () => {
+        expect(
+            getAnalyticsRequestHeaderName({
+                dimensionId: 'eventDate',
+                programStageId: SID,
+                repetitionIndex: 1,
+                visualization: buildVis(),
+            })
+        ).toBe(`${SID}[1].eventdate`)
+    })
+
+    it.each([0, -1])('renders repetition index %i', (repetitionIndex) => {
+        expect(
+            getAnalyticsRequestHeaderName({
+                dimensionId: 'eventDate',
+                programStageId: SID,
+                repetitionIndex,
+                visualization: buildVis(),
+            })
+        ).toBe(`${SID}[${repetitionIndex}].eventdate`)
+    })
+
+    /* The response header the engine echoes back carries no legend set suffix,
+     * so the header name must not accept one. */
+    it('does not accept a legend set', () => {
+        expect(
+            getAnalyticsRequestHeaderName({
+                dimensionId: UID,
+                programStageId: SID,
+                // @ts-expect-error legendSetId belongs to the dimension name only
+                legendSetId: LSID,
+                visualization: buildVis(),
+            })
+        ).toBe(`${SID}.${UID}`)
     })
 })
