@@ -258,6 +258,17 @@ const getOperatorsByValueType = (valueType?: ValueType) => {
     }
 }
 
+export const isLegendGroupingFilter = (
+    condition?: string | string[]
+): boolean => {
+    const conditionsList = parseConditionsStringToArray(condition ?? '')
+
+    return (
+        conditionsList.length === 1 &&
+        conditionsList[0].startsWith(`${OPERATOR_IN}:`)
+    )
+}
+
 const getOperatorsForDimension = (dimension: LayoutDimension) => {
     const valueType =
         dimension.dimensionType === 'PROGRAM_INDICATOR' && !dimension.valueType

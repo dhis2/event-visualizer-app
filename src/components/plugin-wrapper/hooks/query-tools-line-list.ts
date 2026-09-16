@@ -1,35 +1,12 @@
-import {
-    getAnalyticsRequestDimensionName,
-    getAnalyticsRequestHeaderName,
-} from '@modules/analytics-request'
+import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
 import { WIRE_ONLY_DIMENSIONS } from '@modules/dimension/ids'
 import type {
     Axis,
     CurrentVisualization,
-    DimensionArray,
     DimensionRecord,
     OutputType,
 } from '@types'
-import { getRequestOptions } from './query-tools-common'
-
-const adaptDimensions = (
-    dimensions: DimensionArray,
-    visualization: CurrentVisualization
-): DimensionArray =>
-    dimensions
-        .filter((dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension))
-        .map((dim) => ({
-            ...dim,
-            dimension: getAnalyticsRequestDimensionName({
-                dimensionId: dim.dimension,
-                programId: dim.program?.id,
-                programStageId: dim.programStage?.id,
-                trackedEntityTypeId: visualization.trackedEntityType?.id,
-                outputType: visualization.outputType,
-            }),
-            program: undefined,
-            programStage: undefined,
-        }))
+import { adaptDimensions, getRequestOptions } from './query-tools-common'
 
 const buildHeaderNames = (
     dim: DimensionRecord,
@@ -47,7 +24,8 @@ const buildHeaderNames = (
         return dim.repetition.indexes.map((index) =>
             getAnalyticsRequestHeaderName({
                 ...baseArgs,
-                programStageId: `${stageId}[${index}]`,
+                programStageId: stageId,
+                repetitionIndex: index,
             })
         )
     }
@@ -56,6 +34,16 @@ const buildHeaderNames = (
         programStageId: stageId,
     })
 }
+
+/* A dimension reaches `dimension=` only when it constrains the query; one that
+ * simply displays a value is requested through `headers=` alone. A legend set
+ * counts as constraining, because it changes the response from raw values to
+ * legend IDs. */
+const isRequestedAsDimension = (dim: DimensionRecord): boolean =>
+    dim.dimensionType === 'ORGANISATION_UNIT_GROUP_SET' ||
+    Boolean(dim.filter) ||
+    Boolean(dim.items?.length) ||
+    Boolean(dim.legendSet?.id)
 
 export const getAdaptedVisualization = (
     visualization: CurrentVisualization
@@ -72,29 +60,24 @@ export const getAdaptedVisualization = (
     const rows = visualization.rows ?? []
     const filters = visualization.filters ?? []
 
-    const adaptedColumns = adaptDimensions(columns, visualization)
-    const adaptedRows = adaptDimensions(rows, visualization)
-    const adaptedFilters = adaptDimensions(filters, visualization)
-
     const headers = [...columns, ...rows]
         .filter((dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension))
         .map((dim) => buildHeaderNames(dim, visualization))
 
-    const filterDimensionParameters = ({
-        dimensionType,
-        filter,
-        items,
-    }: DimensionRecord) =>
-        dimensionType === 'ORGANISATION_UNIT_GROUP_SET' ||
-        filter ||
-        items?.length
-
     return {
         adaptedVisualization: {
-            // only pass dimensions with conditions
-            columns: adaptedColumns.filter(filterDimensionParameters),
-            rows: adaptedRows.filter(filterDimensionParameters),
-            filters: adaptedFilters.filter(filterDimensionParameters),
+            columns: adaptDimensions(
+                columns.filter(isRequestedAsDimension),
+                visualization
+            ),
+            rows: adaptDimensions(
+                rows.filter(isRequestedAsDimension),
+                visualization
+            ),
+            filters: adaptDimensions(
+                filters.filter(isRequestedAsDimension),
+                visualization
+            ),
             outputType: visualization.outputType,
         },
         headers,
@@ -114,12 +97,3 @@ export const getBaseRequestIdentity = (
     trackedEntityTypeId: visualization.trackedEntityType?.id,
     relativePeriodDate: relativePeriodDate ?? null,
 })
-
-const analyticsApiEndpointMap: Record<OutputType, string> = {
-    ENROLLMENT: 'enrollments',
-    EVENT: 'events',
-    TRACKED_ENTITY_INSTANCE: 'trackedEntities',
-}
-
-export const getAnalyticsEndpoint = (outputType: OutputType): string =>
-    analyticsApiEndpointMap[outputType]
