@@ -16,7 +16,12 @@ export const getAdaptedVisualization = (
     }
     parameters: Record<string, unknown>
 } => {
-    const parameters = getRequestOptions(visualization)
+    /* showHierarchy is set here rather than in ANALYTICS_OPTIONS, which the
+     * line list shares and which must not start sending the parameter. */
+    const parameters = {
+        ...getRequestOptions(visualization),
+        ...(visualization.showHierarchy ? { showHierarchy: true } : {}),
+    }
 
     const columns = visualization.columns ?? []
     const rows = visualization.rows ?? []
@@ -96,6 +101,7 @@ export const getBaseRequestIdentity = (
     programIds: (visualization.programDimensions ?? []).map((p) => p.id),
     trackedEntityTypeId: visualization.trackedEntityType?.id,
     timeField: visualization.timeField,
+    showHierarchy: visualization.showHierarchy,
     sortOrder: visualization.sortOrder,
     topLimit: visualization.topLimit,
     ...getCustomValueRequestParams(visualization),
