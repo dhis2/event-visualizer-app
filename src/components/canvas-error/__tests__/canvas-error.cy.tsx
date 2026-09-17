@@ -68,7 +68,7 @@ const ERROR_SCREENS: ErrorScreen[] = [
         error: engineError({ errorCode: 'E7123' }),
         title: 'Restricted access',
         description:
-            "You don't have access to any items in a dimension your user account is restricted to. Contact a system administrator.",
+            'Your account cannot access any items in one or more dimensions. Contact a system administrator.',
         icon: 'data',
         retryable: false,
     },
@@ -121,7 +121,7 @@ const ERROR_SCREENS: ErrorScreen[] = [
         error: engineError({ errorCode: 'E7128' }),
         title: 'Too much data',
         description:
-            'This request returns more data than the server allows. Add a filter or choose a shorter period.',
+            'This request returns more data than the server allows. Reduce the amount of data and try again, for example by choosing fewer items, adding filters, or choosing a shorter period.',
         icon: 'data',
         retryable: false,
     },
