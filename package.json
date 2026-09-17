@@ -68,7 +68,7 @@
         "vitest-canvas-mock": "^1.2.0"
     },
     "dependencies": {
-        "@dhis2/analytics": "^29.6.0",
+        "@dhis2/analytics": "git+https://github.com/d2-ci/analytics.git#cf32d3839dc262ab764818fc456cd6a2471c93a1",
         "@dhis2/app-runtime": "^3.17.4",
         "@dhis2/ui": "^10.17.0",
         "@dnd-kit/core": "^6.3.1",
