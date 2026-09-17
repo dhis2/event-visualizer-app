@@ -40,7 +40,7 @@ export const getBackendErrorCodeDisplay = (
                 icon: 'data',
                 title: i18n.t('Restricted access'),
                 description: i18n.t(
-                    "Your account cannot access any items in one or more dimensions. Contact a system administrator."
+                    'Your account cannot access any items in one or more dimensions. Contact a system administrator.'
                 ),
             }
         case 'E7120':
