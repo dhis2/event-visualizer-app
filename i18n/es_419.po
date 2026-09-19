@@ -1,12 +1,12 @@
 # Translators:
-# Enzo Nicolas Rossi <enzo@dhis2.org>, 2026
 # Andres Miguel Rubio, 2026
+# Enzo Nicolas Rossi <enzo@dhis2.org>, 2026
 # Jaime Bosque <jaime.bosque@dhis2.org>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-08-20T09:13:16.339Z\n"
+"POT-Creation-Date: 2026-09-17T12:36:05.389Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Jaime Bosque <jaime.bosque@dhis2.org>, 2026\n"
 "Language-Team: Spanish (Latin America) (https://app.transifex.com/hisp-uio/teams/100509/es_419/)\n"
@@ -45,14 +45,14 @@ msgstr "Distingue mayúsculas y minúsculas"
 msgid "Delete filter"
 msgstr ""
 
-msgid "Only available for repeatable stages"
-msgstr ""
+msgid "Data"
+msgstr "Datos"
 
 msgid "Repeated events"
 msgstr ""
 
-msgid "Data"
-msgstr "Datos"
+msgid "and"
+msgstr "y"
 
 msgid "{{valueType}} type dimensions cannot be filtered."
 msgstr ""
@@ -60,31 +60,34 @@ msgstr ""
 msgid "This dimension cannot be filtered."
 msgstr ""
 
-msgid "Preset options can't be combined with other filters"
+msgid "Filtering"
+msgstr ""
+
+msgid "Show all groups"
 msgstr ""
 
 msgid "Add filter"
 msgstr ""
 
-msgid "and"
-msgstr "y"
-
-msgid "is one of preset options"
+msgid "{{- legends}} and {{- remainingCount}} more"
 msgstr ""
 
-msgid "Choose a legend set"
+msgid "Grouping"
 msgstr ""
 
-msgid "Loading legend sets"
+msgid "No grouping"
 msgstr ""
 
-msgid "No preset option sets for this data item"
+msgid "Show each value individually"
 msgstr ""
 
-msgid "Choose legends"
+msgid "Available groups"
 msgstr ""
 
-msgid "Loading legends"
+msgid "Filter groups"
+msgstr ""
+
+msgid "Selected groups"
 msgstr ""
 
 msgid "From stages with repeatable events, show values from:"
@@ -226,6 +229,9 @@ msgid "Program: {{- programName}}"
 msgstr ""
 
 msgid "Program stage: {{- stageName}}"
+msgstr ""
+
+msgid "Grouping: {{- groupingName}}"
 msgstr ""
 
 msgid "Levels"
@@ -544,6 +550,9 @@ msgstr ""
 msgid "Select from legends"
 msgstr ""
 
+msgid "Loading legends"
+msgstr ""
+
 msgid "Limit"
 msgstr ""
 
@@ -557,6 +566,9 @@ msgid "High to low"
 msgstr ""
 
 msgid "Top limit"
+msgstr ""
+
+msgid "Must be a whole number of 1 or more"
 msgstr ""
 
 msgid "Row sub-totals"
@@ -608,6 +620,12 @@ msgid "Table subtitle"
 msgstr ""
 
 msgid "Labels"
+msgstr ""
+
+msgid "Filters are not applied to Event visualizations"
+msgstr ""
+
+msgid "Show without filters"
 msgstr ""
 
 msgid "Create a {{- visType}} before updating"
@@ -1008,6 +1026,19 @@ msgid ""
 "administrator."
 msgstr ""
 
+msgid "Visualization not found"
+msgstr ""
+
+msgid ""
+"The visualization you are trying to view could not be found, the ID could be"
+" incorrect or it could have been deleted."
+msgstr ""
+
+msgid ""
+"Your account cannot access any items in one or more dimensions. Contact a "
+"system administrator."
+msgstr ""
+
 msgid "You don't have access to one or more of the chosen organisation units."
 msgstr ""
 
@@ -1015,27 +1046,88 @@ msgid ""
 "You don't have access to event analytics. Contact a system administrator."
 msgstr ""
 
-msgid "Something went wrong"
-msgstr "Algo ha ido mal"
+msgid "Invalid indicator"
+msgstr ""
 
 msgid "There's a problem with at least one selected indicator."
 msgstr ""
 
+msgid "Program stage not available"
+msgstr ""
+
 msgid ""
-"There's a problem with the generated analytics. Contact a system "
+"A program stage in this visualization is no longer part of its program. It "
+"may have been changed or removed."
+msgstr ""
+
+msgid "Dimension not available"
+msgstr ""
+
+msgid ""
+"A dimension in this visualization is no longer valid. It may have been "
+"removed from the program."
+msgstr ""
+
+msgid "Program not available"
+msgstr ""
+
+msgid ""
+"A program in this visualization is not available for the selected tracked "
+"entity type."
+msgstr ""
+
+msgid "Too much data"
+msgstr ""
+
+msgid ""
+"This request returns more data than the server allows. Reduce the amount of "
+"data and try again, for example by choosing fewer items, adding filters, or "
+"choosing a shorter period."
+msgstr ""
+
+msgid "Top limit too high"
+msgstr ""
+
+msgid ""
+"The top limit in this visualization is higher than the server allows. Lower "
+"it in the options."
+msgstr ""
+
+msgid "Request timed out"
+msgstr ""
+
+msgid ""
+"The request took too long and was stopped. Try again, or reduce the amount "
+"of data requested."
+msgstr ""
+
+msgid "Analytics not generated"
+msgstr ""
+
+msgid ""
+"The analytics tables have not been generated. Contact a system "
 "administrator."
 msgstr ""
 
-msgid "There's a syntax problem with the analytics request."
+msgid "Analytics request failed"
 msgstr ""
 
-msgid "No data"
-msgstr "No hay datos"
+msgid "The server could not run this request. Contact a system administrator."
+msgstr ""
+
+msgid "No data available"
+msgstr ""
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"
 " may not have access to it."
 msgstr ""
+
+msgid "Analytics request error"
+msgstr ""
+
+msgid "Something went wrong"
+msgstr "Algo ha ido mal"
 
 msgid "There was a problem getting the data from the server."
 msgstr ""

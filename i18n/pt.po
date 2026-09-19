@@ -1,6 +1,5 @@
 # Translators:
 # António Fernando Macaringue, 2026
-# Fernando Jorge Bade, 2026
 # Andres Miguel Rubio, 2026
 # Fernando Domingos Inacio <nando.inaciio1996@gmail.com>, 2026
 # Edson Nhancale, 2026
@@ -13,13 +12,14 @@
 # Helton Dias, 2026
 # Ge Joao <gsimango@saudigitus.org>, 2026
 # Shelsea Chumaio, 2026
+# Fernando Jorge Bade, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
+"POT-Creation-Date: 2026-09-17T12:36:05.389Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Shelsea Chumaio, 2026\n"
+"Last-Translator: Fernando Jorge Bade, 2026\n"
 "Language-Team: Portuguese (https://app.transifex.com/hisp-uio/teams/100509/pt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -1042,6 +1042,21 @@ msgid ""
 "administrator."
 msgstr ""
 
+msgid "Visualization not found"
+msgstr "Visualização não encontrada"
+
+msgid ""
+"The visualization you are trying to view could not be found, the ID could be"
+" incorrect or it could have been deleted."
+msgstr ""
+"A visualização que está a tentar visualizar não foi encontrada, o ID pode "
+"estar incorreto ou pode ter sido eliminado."
+
+msgid ""
+"Your account cannot access any items in one or more dimensions. Contact a "
+"system administrator."
+msgstr ""
+
 msgid "You don't have access to one or more of the chosen organisation units."
 msgstr ""
 
@@ -1049,21 +1064,74 @@ msgid ""
 "You don't have access to event analytics. Contact a system administrator."
 msgstr ""
 
-msgid "Something went wrong"
-msgstr "Algo correu mal"
+msgid "Invalid indicator"
+msgstr ""
 
 msgid "There's a problem with at least one selected indicator."
 msgstr ""
 
+msgid "Program stage not available"
+msgstr ""
+
 msgid ""
-"There's a problem with the generated analytics. Contact a system "
+"A program stage in this visualization is no longer part of its program. It "
+"may have been changed or removed."
+msgstr ""
+
+msgid "Dimension not available"
+msgstr ""
+
+msgid ""
+"A dimension in this visualization is no longer valid. It may have been "
+"removed from the program."
+msgstr ""
+
+msgid "Program not available"
+msgstr ""
+
+msgid ""
+"A program in this visualization is not available for the selected tracked "
+"entity type."
+msgstr ""
+
+msgid "Too much data"
+msgstr ""
+
+msgid ""
+"This request returns more data than the server allows. Reduce the amount of "
+"data and try again, for example by choosing fewer items, adding filters, or "
+"choosing a shorter period."
+msgstr ""
+
+msgid "Top limit too high"
+msgstr ""
+
+msgid ""
+"The top limit in this visualization is higher than the server allows. Lower "
+"it in the options."
+msgstr ""
+
+msgid "Request timed out"
+msgstr ""
+
+msgid ""
+"The request took too long and was stopped. Try again, or reduce the amount "
+"of data requested."
+msgstr ""
+
+msgid "Analytics not generated"
+msgstr ""
+
+msgid ""
+"The analytics tables have not been generated. Contact a system "
 "administrator."
 msgstr ""
-"Há um problema com as análises geradas. Contacte um administrador do "
-"sistema."
 
-msgid "There's a syntax problem with the analytics request."
-msgstr "Há um problema de síntaxe com o pedido de análise."
+msgid "Analytics request failed"
+msgstr ""
+
+msgid "The server could not run this request. Contact a system administrator."
+msgstr ""
 
 msgid "No data available"
 msgstr "Não existem dados disponíveis"
@@ -1072,6 +1140,12 @@ msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"
 " may not have access to it."
 msgstr ""
+
+msgid "Analytics request error"
+msgstr ""
+
+msgid "Something went wrong"
+msgstr "Algo correu mal"
 
 msgid "There was a problem getting the data from the server."
 msgstr "Ocorreu um problema ao obter os dados do servidor."
