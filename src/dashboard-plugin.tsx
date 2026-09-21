@@ -28,13 +28,13 @@ import './locales/index.js'
 
 type DashboardPluginProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
-    visualization: SavedVisualization
+    visualizationId: SavedVisualization['id']
     filters?: PluginFilters
 }
 
 const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     logger.debug('DashboardPlugin props', props)
-    logger.debug('vis id', props.visualization.id)
+    logger.debug('vis id', props.visualizationId)
 
     const metadataStore = useMetadataStore()
 
@@ -43,7 +43,7 @@ const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     const { data, error, loading, refetch } = useDataQuery({
         eventVisualization: {
             resource: 'eventVisualizations',
-            id: props.visualization.id, // TODO: this should be just passed as visualizationId
+            id: props.visualizationId,
             params: {
                 fields: getVisualizationQueryFields(
                     // derive displayNameProperty from displayProperty
