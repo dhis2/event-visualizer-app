@@ -17,20 +17,12 @@ import {
 } from '@modules/visualization/state'
 import type {
     ApiSavedVisualization,
-    CurrentUser,
     CurrentVisualization,
+    DashboardPluginProps,
     EmptyVisualization,
-    PluginFilters,
-    SavedVisualization,
 } from '@types'
 import { useEffect, useMemo, type FC } from 'react'
 import './locales/index.js'
-
-type DashboardPluginProps = {
-    displayProperty: CurrentUser['settings']['displayProperty']
-    visualizationId: SavedVisualization['id']
-    filters?: PluginFilters
-}
 
 const DashboardPluginContent: FC<DashboardPluginProps> = (props) => {
     logger.debug('DashboardPlugin props', props)
