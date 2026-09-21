@@ -46,11 +46,9 @@
 }
 
 .button.update {
-    border: 1px solid color-mix(in srgb, var(--colors-blue800), transparent 60%);
-    padding: 0 8px 0 6px;
+    border-color: color-mix(in srgb, var(--colors-blue800), transparent 60%);
     color: var(--colors-blue800);
     background-color: var(--colors-blue100);
-    box-shadow: 0 1px 2px #2129340a;
     font-weight: 500;
 }
 
@@ -58,6 +56,21 @@
     background-color: var(--colors-blue100);
     border-color: var(--colors-blue600);
     color: var(--colors-blue900);
+}
+
+.label {
+    display: inline-flex;
+    flex-direction: column;
+}
+
+.label::after {
+    content: attr(data-label);
+    block-size: 0;
+    overflow: hidden;
+    font-weight: 500;
+    visibility: hidden;
+    pointer-events: none;
+    user-select: none;
 }
 
 .splitButton {

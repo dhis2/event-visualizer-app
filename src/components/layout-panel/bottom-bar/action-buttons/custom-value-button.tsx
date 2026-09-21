@@ -1,3 +1,4 @@
+import { useHasUnappliedChanges } from '@components/layout-panel/bottom-bar/use-has-unapplied-changes'
 import {
     CustomValueModal,
     getStageIdFromDimensionId,
@@ -67,6 +68,7 @@ export const CustomValueButton: FC = () => {
     )
     const [isModalOpen, setIsModalOpen] = useState(false)
     const { isAnimating } = useUpdateAnimation('EVENT')
+    const hasUnappliedChanges = useHasUnappliedChanges()
     const isButtonReady = Boolean(
         customValue?.id && customValue?.aggregationType
     )
@@ -143,14 +145,18 @@ export const CustomValueButton: FC = () => {
                             className={cx(classes.button, {
                                 [classes.disabled]: isUpdateDisabled,
                                 [classes.update]:
-                                    action === 'update' && isButtonReady,
+                                    action === 'update' &&
+                                    isButtonReady &&
+                                    hasUnappliedChanges,
                                 [classes.splitStart]: isButtonReady,
                             })}
                         >
                             {action === 'update' && (
                                 <UpdateSyncIcon isAnimating={isAnimating} />
                             )}
-                            {label}
+                            <span className={classes.label} data-label={label}>
+                                {label}
+                            </span>
                         </button>
                     </WithTooltip>
 
@@ -167,7 +173,8 @@ export const CustomValueButton: FC = () => {
                                         [classes.disabled]: isFullyDisabled,
                                         [classes.update]:
                                             action === 'update' &&
-                                            !hasStageMismatch,
+                                            !hasStageMismatch &&
+                                            hasUnappliedChanges,
                                     }
                                 )}
                             >
