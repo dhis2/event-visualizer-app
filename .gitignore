@@ -17,4 +17,5 @@ cypress/downloads
 .scannerwork
 opensrc
 docs/superpowers
+.superpowers
 .playwright-cli
