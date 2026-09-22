@@ -1,3 +1,4 @@
+import i18n from '@dhis2/d2-i18n'
 import { useAppSelector } from '@hooks'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'
@@ -9,11 +10,13 @@ import { EnrollmentButton } from './action-buttons/enrollment-button'
 import { EventButton } from './action-buttons/event-button'
 import { TrackedEntityInstanceButton } from './action-buttons/tracked-entity-instance-button'
 import classes from './styles/bottom-bar.module.css'
+import { useHasUnappliedChanges } from './use-has-unapplied-changes'
 
 export const BottomBar: FC = () => {
     const dataSourceId = useAppSelector(getDataSourceId)
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
+    const hasUnappliedChanges = useHasUnappliedChanges()
 
     return (
         <div
@@ -36,6 +39,16 @@ export const BottomBar: FC = () => {
                             <EnrollmentButton />
                             <EventButton />
                         </>
+                    )}
+                    {hasUnappliedChanges && (
+                        <span
+                            className={classes.unappliedChanges}
+                            role="status"
+                            aria-live="polite"
+                            data-test="unapplied-changes"
+                        >
+                            {i18n.t('Unapplied changes')}
+                        </span>
                     )}
                 </div>
             )}
