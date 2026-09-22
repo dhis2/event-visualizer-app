@@ -1,9 +1,7 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
-import {
-    areVisualizationsEquivalent,
-    getVisualizationUiConfig,
-} from '@modules/visualization/state'
-import { buildCurrentVisFromVisUiConfig } from '@store/thunks'
+import { buildCurrentVisFromVisUiConfig } from '@modules/visualization/current-vis'
+import { areVisualizationsEquivalent } from '@modules/visualization/state'
+import { getVisualizationUiConfig } from '@modules/visualization/ui-config'
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
 import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import type {

@@ -389,12 +389,12 @@ program-scope (`{dimension: 'ou', program: {id}}`) and TEI registration
 
 **Loading** (API → frontend), in order:
 
-1. `normalizeApiSavedVisualization` (`@modules/visualization/state`) brings the API
+1. `normalizeApiSavedVisualization` (`@modules/visualization/normalize-legacy`) brings the API
    payload to app shape: upgrades legacy dimensions and strips the wire-only dimensions
    (`WIRE_ONLY_DIMENSIONS` in `@modules/dimension/ids`). The `PROGRAM_DATA_ELEMENT` →
    `DATA_ELEMENT` mapping is not its concern — that runs per analytics request, in
    `transformDimensions` (`@modules/dimension/translation`).
-2. `getVisualizationUiConfig` (`@modules/visualization/state`) derives `visUiConfig` — layout
+2. `getVisualizationUiConfig` (`@modules/visualization/ui-config`) derives `visUiConfig` — layout
    arrays, items, conditions and options — from the normalized visualization. It applies two
    dimension translations on the way:
     - `toAppLocalDimensions` (`@modules/dimension/translation`) renames API `ou` with a program but
@@ -413,7 +413,7 @@ program-scope (`{dimension: 'ou', program: {id}}`) and TEI registration
    `toEventVisualizationDimensionId` (`@modules/dimension/translation`) for the POST dimension ID
    and emitting separate `program` and `programStage` objects. See the `enrollmentOu` mapping table
    above for the outputType/visType rules it applies.
-2. `getSaveableVisualization` (`@modules/visualization/state`) drops the non-persisted dimension
+2. `getSaveableVisualization` (`@modules/visualization/save`) drops the non-persisted dimension
    props (`dimensionType`, `valueType`) and formats sorting for the API.
 3. The backend's `mergeAnalyticalObject` hydrates the stage from the database (including its parent
    program via `loadProgramForStage`), then `getQualifiedDimension` rebuilds the persisted string as
