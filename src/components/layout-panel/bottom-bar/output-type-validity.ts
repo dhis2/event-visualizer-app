@@ -143,6 +143,7 @@ type TrackedEntityInstanceTooltipContentParams = {
     hasCompletedOnInLayout: boolean
     hasMultipleProgramsInLayout: boolean
     hasMultipleTetInLayout: boolean
+    hasNoTetInLayout: boolean
     hasProgramIndicatorsInLayout: boolean
     visualizationType: string
 }
@@ -154,6 +155,7 @@ const getTrackedEntityInstanceTooltipContent = ({
     hasCompletedOnInLayout,
     hasMultipleProgramsInLayout,
     hasMultipleTetInLayout,
+    hasNoTetInLayout,
     hasProgramIndicatorsInLayout,
     visualizationType,
 }: TrackedEntityInstanceTooltipContentParams): TooltipConfig => {
@@ -175,6 +177,13 @@ const getTrackedEntityInstanceTooltipContent = ({
 
     if (isDataSourceProgramWithoutRegistration(programMetadata)) {
         return { content: i18n.t('Not valid with event programs') }
+    }
+
+    /* No tracked entity type can be resolved from the layout, so the output
+     * cannot be built. Reported after the event-program case, which is the
+     * more informative reason when it applies. */
+    if (hasNoTetInLayout) {
+        return { content: i18n.t('Not valid without a tracked entity type') }
     }
 
     if (visualizationType === 'LINE_LIST' && hasProgramIndicatorsInLayout) {
@@ -273,6 +282,7 @@ export const getOutputTypeTooltipConfig = ({
                     layoutDimensionIds.includes('completed'),
                 hasMultipleProgramsInLayout,
                 hasMultipleTetInLayout: tetIdsInLayout.size > 1,
+                hasNoTetInLayout: !tetId,
                 hasProgramIndicatorsInLayout:
                     dimensionTypeCount('PROGRAM_INDICATOR') > 0,
                 visualizationType,
