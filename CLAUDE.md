@@ -353,8 +353,8 @@ compound ID from a `DimensionRecord`. It applies these rules in order:
 - **Event org unit**: `ou` with `programStage` → compound `stageId.ou`
 - **Enrollment org unit**: `enrollmentOu` → compound `programId.enrollmentOu`.
   `toAppLocalDimensions` renames API `ou` (with program, no programStage) to `enrollmentOu`
-  at the API → app-local boundary. `toApiDimensionId` does the inverse on save — but only
-  in some outputType/visType combinations (see table below).
+  at the API → app-local boundary. `toEventVisualizationDimensionId` does the inverse on
+  save — but only in some outputType/visType combinations (see table below).
 - **Registration org unit**: `enrollmentOu` with `trackedEntityType` (no program/stage) →
   compound `tetId.enrollmentOu`. The TEI registration OU shares the `enrollmentOu` dimension
   ID with the program-scope enrollment OU; the prefix (programId vs trackedEntityTypeId)
@@ -387,18 +387,37 @@ program-scope (`{dimension: 'ou', program: {id}}`) and TEI registration
 
 ### Save/load translation at the visualization API boundary
 
-**Loading** (API → frontend): `acSetVisualization` reads each dimension's `program` and
-`programStage` from the populated `columns`/`rows`/`filters` objects and calls `getFullDimensionId`
-(or `formatDimensionId` in the line-listing-app). For EVENT/ENROLLMENT this produces
-`stageId.dimensionId` (dropping the programId). For TRACKED_ENTITY it produces
-`programId.stageId.dimensionId` or `programId.dimensionId`.
+**Loading** (API → frontend), in order:
 
-**Saving** (frontend → API): `getAxesFromUi` (or equivalent) decomposes the internal compound ID
-via `getDimensionIdParts` (`extractDimensionIdParts` in the line-listing-app) and sends each
-dimension to the API with a plain `dimension` ID plus separate `program` and `programStage`
-objects. The backend's `mergeAnalyticalObject` hydrates the stage from the database (including its
-parent program via `loadProgramForStage`), then `getQualifiedDimension` rebuilds the persisted
-string as `programId.stageId.dimensionId`.
+1. `normalizeApiSavedVisualization` (`@modules/visualization/state`) brings the API
+   payload to app shape: upgrades legacy dimensions and strips the wire-only dimensions
+   (`WIRE_ONLY_DIMENSIONS` in `@modules/dimension/ids`). The `PROGRAM_DATA_ELEMENT` →
+   `DATA_ELEMENT` mapping is not its concern — that runs per analytics request, in
+   `transformDimensions` (`@modules/dimension/translation`).
+2. `getVisualizationUiConfig` (`@modules/visualization/state`) derives `visUiConfig` — layout
+   arrays, items, conditions and options — from the normalized visualization. It applies two
+   dimension translations on the way:
+    - `toAppLocalDimensions` (`@modules/dimension/translation`) renames API `ou` with a program but
+      no programStage to `enrollmentOu`.
+    - `getCompoundDimensionId` (`@modules/dimension/ids`) builds the canonical app-local compound ID
+      from each `DimensionRecord`, reading its `program` and `programStage`. For EVENT/ENROLLMENT
+      this produces `stageId.dimensionId` (dropping the programId); for TRACKED_ENTITY,
+      `programId.stageId.dimensionId` or `programId.dimensionId`.
+
+    The metadata provider (`@modules/metadata/visualization`) applies the same two translations when
+    it registers a loaded visualization's dimensions.
+
+**Saving** (frontend → API), in order:
+
+1. `buildAxis` (`@modules/layout`) rebuilds each axis from the layout's compound IDs, calling
+   `toEventVisualizationDimensionId` (`@modules/dimension/translation`) for the POST dimension ID
+   and emitting separate `program` and `programStage` objects. See the `enrollmentOu` mapping table
+   above for the outputType/visType rules it applies.
+2. `getSaveableVisualization` (`@modules/visualization/state`) drops the non-persisted dimension
+   props (`dimensionType`, `valueType`) and formats sorting for the API.
+3. The backend's `mergeAnalyticalObject` hydrates the stage from the database (including its parent
+   program via `loadProgramForStage`), then `getQualifiedDimension` rebuilds the persisted string as
+   `programId.stageId.dimensionId`.
 
 ### `programDimensions` field on eventVisualizations
 
