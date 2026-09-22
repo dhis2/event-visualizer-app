@@ -90,25 +90,11 @@ gh auth login
 # extension and connect it to Claude Code.
 # https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn
 # Once connected, Claude can drive your browser to load http://localhost:3000.
-# (This is host-only; the AI sandboxes use playwright-cli instead — no setup needed.)
 
 # 4. Inside Claude Code, install and activate plugins
 /plugin install typescript-lsp@claude-plugins-official
 /reload-plugins
 ```
-
-### AI sandboxes (opt-in)
-
-Two optional, **experimental**, isolated AI workspaces built on [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) (`sbx`) — a hands-on **mount** (your live working tree) and an autonomous **clone**. Fully opt-in: if you do not install `sbx`, nothing here affects you. (Tested on macOS/arm64 + Neovim; see the guide for portability.)
-
-One-time setup needs the `sbx` CLI, a read-only GitHub token, and a dedicated SSH signing key (all covered in the guide). With that done, launch one with:
-
-```bash
-pnpm sbx:mount            # hands-on, edits your live files
-pnpm sbx:clone            # autonomous, isolated clone
-```
-
-See **[docs/claude-sandboxes.md](docs/claude-sandboxes.md)** for installation and setup, mount vs clone, the `node_modules` overlay, Neovim integration, browser automation, and the full workflow.
 
 ### Development Workflow
 

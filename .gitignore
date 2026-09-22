@@ -1,7 +1,5 @@
 # DHIS2 Platform
 node_modules
-# Project-local pnpm store created when installing inside an sbx sandbox
-# (node_modules on the bind mount, global store on another filesystem)
 .pnpm-store
 .d2
 src/locales/*
@@ -14,13 +12,9 @@ cypress/downloads
 .aider*
 .github/copilot-instructions.md
 .claude/settings.local.json
-# Installed by `playwright-cli install --skills`, not authored here
 .claude/skills/playwright-cli
-cypress/downloads
 .vscode
 .scannerwork
 opensrc
 docs/superpowers
-
-# playwright-cli session artifacts (AI sandboxes)
 .playwright-cli
