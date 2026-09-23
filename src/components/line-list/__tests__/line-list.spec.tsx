@@ -656,4 +656,78 @@ describe('LineList', () => {
             await user.click(sortButton)
         })
     })
+
+    describe('title', () => {
+        /* The captured fixtures all carry the top-level program/programStage
+         * the old apps wrote, so the normaliser marks them legacy. Moving that
+         * context onto the dimensions is what a visualization saved by this
+         * app looks like. */
+        const asCanonicalPayload = (fixture: LineListFixture) => {
+            const payload = fixture.eventVisualization as Record<
+                string,
+                unknown
+            > & {
+                program: { id: string }
+                programStage: { id: string }
+                columns: Array<Record<string, unknown>>
+            }
+            const canonical: Record<string, unknown> = { ...payload }
+            delete canonical.program
+            delete canonical.programStage
+            delete canonical.legacy
+
+            return {
+                ...canonical,
+                programDimensions: [payload.program],
+                columns: payload.columns.map((dimension) => ({
+                    ...dimension,
+                    program: payload.program,
+                    ...(dimension.dimension === 'ou'
+                        ? { programStage: payload.programStage }
+                        : {}),
+                })),
+            }
+        }
+
+        it('renders no title for a legacy visualization that has none', async () => {
+            await renderLineList(simpleLineList)
+
+            expect(screen.queryByText('Enrollments')).not.toBeInTheDocument()
+        })
+
+        it('renders a generated title for a non-legacy visualization', async () => {
+            await renderLineList(simpleLineList, {
+                eventVisualization: asCanonicalPayload(simpleLineList),
+            })
+
+            expect(await screen.findByText('Enrollments')).toBeInTheDocument()
+        })
+
+        it('renders the custom title of a legacy visualization that has one', async () => {
+            await renderLineList(simpleLineList, {
+                eventVisualization: {
+                    ...(simpleLineList.eventVisualization as Record<
+                        string,
+                        unknown
+                    >),
+                    title: 'My saved title',
+                },
+            })
+
+            expect(
+                await screen.findByText('My saved title')
+            ).toBeInTheDocument()
+        })
+
+        it('renders no title when the title is hidden', async () => {
+            await renderLineList(simpleLineList, {
+                eventVisualization: {
+                    ...asCanonicalPayload(simpleLineList),
+                    hideTitle: true,
+                },
+            })
+
+            expect(screen.queryByText('Enrollments')).not.toBeInTheDocument()
+        })
+    })
 })
