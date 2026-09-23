@@ -11,6 +11,7 @@ import { setUiActiveDimensionModal } from './ui-slice'
 import {
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
+    setVisUiConfigOption,
     setVisUiConfigVisualizationType,
 } from './vis-ui-config-slice'
 
@@ -46,8 +47,14 @@ export const registerAppListeners = () => {
 
     startAppListening({
         actionCreator: setVisUiConfigVisualizationType,
-        effect: (action) => {
+        effect: (action, { dispatch }) => {
             setLastUsedVisualizationTypeToLocalStorage(action.payload)
+
+            /* The generated title differs per visualization type ("Visit
+             * count" vs "Visit list"), so a custom title written for one type
+             * rarely suits the other. Output type changes keep the title. */
+            dispatch(setVisUiConfigOption({ key: 'title', value: '' }))
+            dispatch(setVisUiConfigOption({ key: 'hideTitle', value: false }))
         },
     })
 
