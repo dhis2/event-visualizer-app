@@ -1,0 +1,73 @@
+.axis {
+    grid-area: value;
+    border-block-start: 1px solid var(--colors-grey300);
+    border-inline-start: 1px solid var(--colors-grey300);
+}
+
+.trigger {
+    display: block;
+    flex: 1;
+    inline-size: 100%;
+    min-block-size: 32px;
+    padding-block: 4px;
+    padding-inline: 4px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background-color: transparent;
+    color: var(--colors-grey700);
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 16px;
+    text-align: start;
+    cursor: pointer;
+}
+
+.trigger:hover:not(:disabled) {
+    border-color: var(--colors-grey400);
+    background-color: var(--colors-grey100);
+    color: var(--colors-grey900);
+}
+
+.trigger:active:not(:disabled) {
+    background-color: var(--colors-grey300);
+}
+
+.trigger:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+
+.trigger:focus:not(:focus-visible) {
+    outline: none;
+}
+
+.trigger:disabled {
+    color: var(--colors-grey500);
+    cursor: not-allowed;
+}
+
+.trigger.hasCellValue {
+    color: var(--colors-grey900);
+    font-weight: 500;
+}
+
+/* Inline rather than a flex sibling so the pencil follows the label directly
+ * and wraps with it, instead of being pushed to the far edge of the axis. */
+.trigger svg {
+    margin-inline-start: var(--spacers-dp4);
+    color: var(--colors-grey500);
+    vertical-align: text-bottom;
+}
+
+/* Long data item names wrap instead of truncating, so the whole name stays
+ * readable in a narrow axis — unlike a chip, which ellipsises on one line. */
+.text {
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.aggregationType {
+    margin-inline-start: var(--spacers-dp4);
+    color: var(--colors-grey600);
+    font-weight: 400;
+}

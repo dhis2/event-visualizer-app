@@ -9,7 +9,6 @@ import { type FC } from 'react'
 import { EnrollmentButton } from './action-buttons/enrollment-button'
 import { EventButton } from './action-buttons/event-button'
 import { TrackedEntityInstanceButton } from './action-buttons/tracked-entity-instance-button'
-import { CellValueButton } from './cell-value-button/cell-value-button'
 import { RowGranularityLabel } from './row-granularity-label/row-granularity-label'
 import classes from './styles/bottom-bar.module.css'
 
@@ -33,7 +32,6 @@ export const BottomBar: FC = () => {
                         <>
                             <EnrollmentButton />
                             <EventButton />
-                            {hasVisualizationInCanvas && <CellValueButton />}
                         </>
                     ) : (
                         <>

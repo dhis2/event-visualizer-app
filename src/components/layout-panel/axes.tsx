@@ -10,12 +10,16 @@ import {
     getUiLayoutPanelExpanded,
     toggleUiLayoutPanelExpanded,
 } from '@store/ui-slice'
-import { getVisUiConfigVisualizationType } from '@store/vis-ui-config-slice'
+import {
+    getVisUiConfigCellValue,
+    getVisUiConfigVisualizationType,
+} from '@store/vis-ui-config-slice'
 import cx from 'classnames'
 import { useEffect, useMemo, type FC } from 'react'
 import { useWindowSize } from 'usehooks-ts'
 import { Axis } from './axis/axis'
 import type { LayoutDimension } from './axis/chip'
+import { CellValueAxis } from './cell-value-axis/cell-value-axis'
 import { LayoutBlockedOverlay } from './layout-blocked-overlay'
 import { ResizeHandle } from './resize-handle'
 import classes from './styles/axes.module.css'
@@ -71,6 +75,7 @@ export const Axes: FC = () => {
     const isLayoutPanelExpanded = useAppSelector(getUiLayoutPanelExpanded)
     const isVisualizationLoading = useAppSelector(getIsVisualizationLoading)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
+    const cellValue = useAppSelector(getVisUiConfigCellValue)
 
     /* Grouped per axis, with suffixes worked out across the whole layout. */
     const { columns, rows, filters } = useLayoutDimensions()
@@ -100,8 +105,9 @@ export const Axes: FC = () => {
             toIdsString(columns),
             toIdsString(rows),
             toIdsString(filters),
+            cellValue?.id ?? '',
         ].join('|')
-    }, [columns, rows, filters])
+    }, [columns, rows, filters, cellValue?.id])
 
     const {
         containerRef,
@@ -160,6 +166,7 @@ export const Axes: FC = () => {
                             <Axis axisId="rows" dimensions={rows} />
                         )}
                         <Axis axisId="filters" dimensions={filters} />
+                        {visualizationType !== 'LINE_LIST' && <CellValueAxis />}
                     </div>
                     <ResizeHandle
                         isDragging={isDragging}

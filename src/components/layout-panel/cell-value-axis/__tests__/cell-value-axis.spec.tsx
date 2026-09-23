@@ -2,9 +2,9 @@ import { initialState as visUiConfigInitialState } from '@store/vis-ui-config-sl
 import { renderWithAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import type { AggregationType, OutputType, RootState } from '@types'
+import type { AggregationType, RootState } from '@types'
 import { describe, it, expect } from 'vitest'
-import { CellValueButton } from '../cell-value-button'
+import { CellValueAxis } from '../cell-value-axis'
 
 const stage1 = {
     id: 's1',
@@ -28,8 +28,6 @@ const metadata = {
         programType: 'WITH_REGISTRATION',
         programStages: [stage1],
         trackedEntityType: { id: 'tet1', name: 'Person' },
-        displayEventLabel: 'Visit',
-        displayEnrollmentLabel: 'Registration',
     },
     p2: {
         id: 'p2',
@@ -56,21 +54,13 @@ const metadata = {
         programId: 'p2',
         programStageId: 's2',
     },
-    'tet1.enrollmentOu': {
-        id: 'tet1.enrollmentOu',
-        name: 'Registration org. unit',
-        dimensionType: 'ORGANISATION_UNIT',
-        trackedEntityTypeId: 'tet1',
-    },
 }
 
 const buildMockOptions = ({
     columns,
-    outputType = 'EVENT',
     cellValue,
 }: {
     columns: string[]
-    outputType?: OutputType
     cellValue?: { id: string; aggregationType: AggregationType }
 }): MockOptions => ({
     metadata,
@@ -79,7 +69,7 @@ const buildMockOptions = ({
             visUiConfig: {
                 ...visUiConfigInitialState,
                 visualizationType: 'PIVOT_TABLE',
-                outputType,
+                outputType: 'EVENT',
                 layout: { ...visUiConfigInitialState.layout, columns },
                 cellValue,
             },
@@ -87,94 +77,83 @@ const buildMockOptions = ({
     },
 })
 
-describe('CellValueButton', () => {
-    it('falls back to the output type count when no cell value is set', async () => {
+const getTrigger = () => screen.getByTestId('axis-content-value')
+
+describe('CellValueAxis', () => {
+    it('is labelled as the value axis', async () => {
         await renderWithAppWrapper(
-            <CellValueButton />,
+            <CellValueAxis />,
             buildMockOptions({ columns: ['s1.de1'] })
         )
 
-        expect(
-            screen.getByRole('button', { name: 'Cells show Visit count' })
-        ).toBeEnabled()
+        expect(screen.getByTestId('axis-value')).toHaveTextContent('Value')
     })
 
-    it('follows the output type in the count label', async () => {
+    it('shows Count when no cell value is set', async () => {
         await renderWithAppWrapper(
-            <CellValueButton />,
-            buildMockOptions({
-                columns: ['s1.de1'],
-                outputType: 'ENROLLMENT',
-            })
+            <CellValueAxis />,
+            buildMockOptions({ columns: ['s1.de1'] })
         )
 
-        expect(
-            screen.getByRole('button', {
-                name: 'Cells show Registration count',
-            })
-        ).toBeInTheDocument()
+        expect(getTrigger()).toHaveTextContent('Count')
     })
 
-    it('names the cell value when one is set', async () => {
+    it('shows the data item name and its aggregation type when a cell value is set', async () => {
         await renderWithAppWrapper(
-            <CellValueButton />,
+            <CellValueAxis />,
             buildMockOptions({
                 columns: ['s1.de1'],
                 cellValue: { id: 's1.de1', aggregationType: 'AVERAGE' },
             })
         )
 
-        expect(
-            screen.getByRole('button', { name: 'Cells show Weight in kg' })
-        ).toBeInTheDocument()
+        await waitFor(() => {
+            expect(getTrigger()).toHaveTextContent('Weight in kg')
+        })
+        expect(getTrigger()).toHaveTextContent('Average')
+        expect(getTrigger()).not.toHaveTextContent('Count')
     })
 
-    it('opens the modal on click', async () => {
+    it('falls back to the raw id when the cell value has no metadata', async () => {
         await renderWithAppWrapper(
-            <CellValueButton />,
+            <CellValueAxis />,
+            buildMockOptions({
+                columns: ['s1.de1'],
+                cellValue: { id: 's9.unknown', aggregationType: 'SUM' },
+            })
+        )
+
+        expect(getTrigger()).toHaveTextContent('s9.unknown')
+        expect(getTrigger()).toHaveTextContent('Sum')
+    })
+
+    it('opens the cell value modal when clicked', async () => {
+        const user = userEvent.setup()
+        await renderWithAppWrapper(
+            <CellValueAxis />,
             buildMockOptions({ columns: ['s1.de1'] })
         )
 
-        await userEvent.click(screen.getByRole('button'))
+        await user.click(getTrigger())
 
-        await waitFor(() => {
-            expect(
-                screen.getByRole('heading', { name: 'Cell value' })
-            ).toBeInTheDocument()
-        })
+        expect(await screen.findByTestId('cell-value-modal')).toBeVisible()
     })
 
-    it('is disabled without a program in the layout', async () => {
+    it('is disabled when the layout has no program', async () => {
         await renderWithAppWrapper(
-            <CellValueButton />,
-            buildMockOptions({ columns: ['tet1.enrollmentOu'] })
+            <CellValueAxis />,
+            buildMockOptions({ columns: [] })
         )
 
-        expect(screen.getByRole('button')).toBeDisabled()
-
-        await userEvent.hover(screen.getByRole('button'))
-
-        await waitFor(() => {
-            expect(
-                screen.getByText('Not valid without a program')
-            ).toBeInTheDocument()
-        })
+        expect(getTrigger()).toBeDisabled()
     })
 
-    it('is disabled with multiple programs in the layout', async () => {
+    it('is disabled when the layout spans multiple programs', async () => {
         await renderWithAppWrapper(
-            <CellValueButton />,
+            <CellValueAxis />,
             buildMockOptions({ columns: ['s1.de1', 's2.de1'] })
         )
 
-        expect(screen.getByRole('button')).toBeDisabled()
-
-        await userEvent.hover(screen.getByRole('button'))
-
-        await waitFor(() => {
-            expect(
-                screen.getByText('Not valid with multiple programs')
-            ).toBeInTheDocument()
-        })
+        expect(getTrigger()).toBeDisabled()
     })
 })
