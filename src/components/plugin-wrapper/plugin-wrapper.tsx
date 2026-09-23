@@ -1,10 +1,12 @@
 import type { EngineError } from '@api/parse-engine-error'
+import { useMetadataStore } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import { CanvasError } from '@components/canvas-error/canvas-error'
 import { CanvasErrorFallback } from '@components/canvas-error/canvas-error-fallback'
 import type { ColumnHeaderClickFn } from '@components/line-list/types'
 import { Center, CircularLoader } from '@dhis2/ui'
 import { assertNever } from '@modules/utils/guards'
 import { isVisualizationEmpty } from '@modules/visualization/state'
+import { getVisualizationTitle } from '@modules/visualization/title'
 import type {
     CurrentUser,
     CurrentVisualization,
@@ -85,6 +87,21 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
         [visualization, relativePeriodDate]
     )
 
+    const metadataStore = useMetadataStore()
+
+    /* The title is resolved here rather than in each plugin because this is
+     * the one component the canvas, the dashboard plugin and the
+     * interpretation modal all render through. `hideTitle` is set alongside
+     * it so the pivot table engine, which gates the title on that flag,
+     * agrees with the line list. */
+    const visualizationWithTitle = useMemo(() => {
+        if (isVisualizationEmpty(visualization)) {
+            return visualization
+        }
+        const title = getVisualizationTitle(visualization, metadataStore)
+        return { ...visualization, title, hideTitle: !title }
+    }, [visualization, metadataStore])
+
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
     const onResponseReceived = useCallback(() => {
@@ -119,7 +136,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
         )
     }
 
-    if (isVisualizationEmpty(visualization)) {
+    if (isVisualizationEmpty(visualizationWithTitle)) {
         return null
     }
 
@@ -142,10 +159,10 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     filters={filters}
                     isLoading={isVisualizationLoading || !hasAnalyticsData}
                 />
-                {visualization.type === 'LINE_LIST' && (
+                {visualizationWithTitle.type === 'LINE_LIST' && (
                     <LineListPlugin
                         displayProperty={displayProperty}
-                        visualization={visualization}
+                        visualization={visualizationWithTitle}
                         relativePeriodDate={relativePeriodDate}
                         isInDashboard={isInDashboard}
                         isInModal={isInModal}
@@ -154,10 +171,10 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                         onResponseReceived={onResponseReceived}
                     />
                 )}
-                {visualization.type === 'PIVOT_TABLE' && (
+                {visualizationWithTitle.type === 'PIVOT_TABLE' && (
                     <PivotTablePlugin
                         displayProperty={displayProperty}
-                        visualization={visualization}
+                        visualization={visualizationWithTitle}
                         relativePeriodDate={relativePeriodDate}
                         isInDashboard={isInDashboard}
                         isInModal={isInModal}
