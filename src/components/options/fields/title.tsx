@@ -3,7 +3,7 @@ import { Field, InputField, Radio } from '@dhis2/ui'
 import { useOptionsField } from '@hooks'
 import { isPopulatedString } from '@modules/utils/guards'
 import { useCallback, useState, type FC } from 'react'
-import classes from './styles/title.module.css'
+import classes from './styles/option.module.css'
 
 type TitleMode = 'AUTO' | 'NONE' | 'CUSTOM'
 
@@ -78,7 +78,7 @@ export const Title: FC<TitleProps> = ({ label }) => {
                 dataTest="title-mode-custom"
             />
             {mode === 'CUSTOM' && (
-                <div className={classes.customInput}>
+                <div className={classes.optionToggleable}>
                     <InputField
                         dense
                         name="title"
