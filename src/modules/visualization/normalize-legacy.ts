@@ -11,6 +11,7 @@ import {
     timeFieldTimeDimensionMap,
 } from '@modules/dimension/time'
 import { toEventVisualizationDimensionId } from '@modules/dimension/translation'
+import { isPopulatedString } from '@modules/utils/guards'
 import type {
     ApiSavedVisualization,
     DimensionId,
@@ -303,6 +304,15 @@ export const normalizeApiSavedVisualization = (
     }
     if (topLimit !== 0) {
         normalizedVis.topLimit = topLimit
+    }
+
+    /* The apps that produced legacy visualizations never generated a title, so
+     * an empty title there means "no title" rather than "auto generated".
+     * `hideTitle` cannot distinguish the two on its own: it is a primitive
+     * boolean in the backend and always comes back as `false`. This app strips
+     * `legacy` on save, so its own output never takes this branch. */
+    if (normalizedVis.legacy) {
+        normalizedVis.hideTitle = !isPopulatedString(normalizedVis.title)
     }
 
     return normalizedVis
