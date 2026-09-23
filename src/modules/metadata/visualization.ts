@@ -72,6 +72,9 @@ export const extractTrackedEntityTypeMetadata = (
               [visualization.trackedEntityType.id]: {
                   id: visualization.trackedEntityType.id,
                   name: visualization.trackedEntityType.name,
+                  displayTrackedEntityTypesLabel:
+                      visualization.trackedEntityType
+                          .displayTrackedEntityTypesLabel,
               },
           }
         : {}
