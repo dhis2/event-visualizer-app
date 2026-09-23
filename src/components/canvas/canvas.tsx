@@ -1,3 +1,4 @@
+import { useHasUnappliedChanges } from '@components/layout-panel/bottom-bar/use-has-unapplied-changes'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
@@ -22,6 +23,7 @@ export const Canvas: FC = () => {
     const visualizationId = useAppSelector(
         (state) => state.navigation.visualizationId
     )
+    const hasUnappliedChanges = useHasUnappliedChanges()
 
     const onRetryLoad = useCallback(() => {
         if (visualizationId !== 'new') {
@@ -62,7 +64,10 @@ export const Canvas: FC = () => {
     }
 
     return (
-        <UnappliedChangesOverlay>
+        <UnappliedChangesOverlay
+            hasUnappliedChanges={hasUnappliedChanges}
+            isVisualizationLoading={isVisualizationLoading}
+        >
             <PluginWrapper
                 isVisualizationLoading={isVisualizationLoading}
                 visualization={currentVis}
