@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-22T09:13:46.110Z\n"
-"PO-Revision-Date: 2026-09-22T09:13:46.112Z\n"
+"POT-Creation-Date: 2026-09-23T14:32:18.188Z\n"
+"PO-Revision-Date: 2026-09-23T14:32:18.188Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -24,6 +24,9 @@ msgstr ""
 
 msgid "{{- name}} was not added because it is already used as the custom value."
 msgstr "{{- name}} was not added because it is already used as the custom value."
+
+msgid "Changes not applied"
+msgstr "Changes not applied"
 
 msgid "Retry"
 msgstr "Retry"
@@ -306,9 +309,6 @@ msgstr "Switch to {{- trackedEntityTypeName}} list"
 
 msgid "Update {{- trackedEntityTypeName}} list"
 msgstr "Update {{- trackedEntityTypeName}} list"
-
-msgid "Unapplied changes"
-msgstr "Unapplied changes"
 
 msgid "Not valid with registration org. unit"
 msgstr "Not valid with registration org. unit"

@@ -1,6 +1,7 @@
 import { useHasUnappliedChanges } from '@components/layout-panel/bottom-bar/use-has-unapplied-changes'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
+import i18n from '@dhis2/d2-i18n'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
 import { isVisualizationEmpty } from '@modules/visualization/state'
 import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
@@ -11,7 +12,9 @@ import {
 import { tLoadSavedVisualization } from '@store/thunks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import type { Sorting } from '@types'
+import cx from 'classnames'
 import { useCallback, type FC } from 'react'
+import classes from './styles/canvas.module.css'
 
 export const Canvas: FC = () => {
     const dispatch = useAppDispatch()
@@ -23,6 +26,8 @@ export const Canvas: FC = () => {
         (state) => state.navigation.visualizationId
     )
     const hasUnappliedChanges = useHasUnappliedChanges()
+
+    const showUnappliedChanges = hasUnappliedChanges && !isVisualizationLoading
 
     const onRetryLoad = useCallback(() => {
         if (visualizationId !== 'new') {
@@ -63,15 +68,11 @@ export const Canvas: FC = () => {
     }
 
     return (
-        <div style={{ position: 'relative', height: '100%' }}>
+        <div className={classes.canvas}>
             <div
-                style={{
-                    opacity: hasUnappliedChanges ? 0.66 : 1,
-
-                    height: '100%',
-                    transition:
-                        'opacity 250ms cubic-bezier(0.4, 0, 0.2, 1), filter 250ms cubic-bezier(0.4, 0, 0.2, 1)',
-                }}
+                className={cx(classes.visualization, {
+                    [classes.stale]: showUnappliedChanges,
+                })}
             >
                 <PluginWrapper
                     isVisualizationLoading={isVisualizationLoading}
@@ -84,33 +85,13 @@ export const Canvas: FC = () => {
                 />
             </div>
             <div
-                style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 4,
-                    right: 4,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'flex-start',
-                    background:
-                        'linear-gradient(180deg, var(--colors-grey300) 0%, var(--colors-grey300) 72%, transparent 100%)',
-                    zIndex: 1,
-                    padding: '1px 8px 8px',
-                    opacity: hasUnappliedChanges ? 0.9 : 0,
-                    pointerEvents: 'none',
-                    transition: 'opacity 250ms cubic-bezier(0.4, 0, 0.2, 1)',
-                }}
+                className={cx(classes.notice, {
+                    [classes.visible]: showUnappliedChanges,
+                })}
+                aria-hidden={!showUnappliedChanges}
+                data-test="unapplied-changes"
             >
-                <span
-                    style={{
-                        fontSize: 12,
-                        color: 'var(--colors-grey700)',
-                        letterSpacing: '0.01em',
-                        lineHeight: '16px',
-                    }}
-                >
-                    Changes not applied
-                </span>
+                {i18n.t('Changes not applied')}
             </div>
         </div>
     )
