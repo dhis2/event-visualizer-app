@@ -1,4 +1,3 @@
-import { useHasUnappliedChanges } from '@components/layout-panel/bottom-bar/use-has-unapplied-changes'
 import { Tooltip } from '@dhis2/ui'
 import { useAppDispatch } from '@hooks'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
@@ -31,7 +30,6 @@ const BaseButton: FC<BaseButtonProps> = ({
 }) => {
     const dispatch = useAppDispatch()
     const { isAnimating } = useUpdateAnimation(type)
-    const hasUnappliedChanges = useHasUnappliedChanges()
 
     const onClick = () => {
         dispatch(setVisUiConfigOutputType(type))
@@ -46,16 +44,14 @@ const BaseButton: FC<BaseButtonProps> = ({
             data-test={dataTest}
             className={cx(classes.button, {
                 [classes.disabled]: disabled,
-                [classes.update]: action === 'update' && hasUnappliedChanges,
+                [classes.update]: action === 'update',
             })}
             {...tooltipProps}
         >
             {action === 'update' && (
                 <UpdateSyncIcon isAnimating={isAnimating} />
             )}
-            <span className={classes.label} data-label={label}>
-                {label}
-            </span>
+            {label}
         </button>
     )
 }
