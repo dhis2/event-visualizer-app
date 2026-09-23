@@ -6,12 +6,8 @@ import {
 import { renderWithAppWrapper } from '@test-utils/app-wrapper'
 import { screen } from '@testing-library/react'
 import type { Layout, RootState } from '@types'
-import { describe, it, expect, vi } from 'vitest'
-import { Canvas } from '../canvas'
-
-vi.mock('@components/plugin-wrapper/plugin-wrapper', () => ({
-    PluginWrapper: () => <div data-test="plugin-wrapper" />,
-}))
+import { describe, it, expect } from 'vitest'
+import { UnappliedChangesOverlay } from '../unapplied-changes-overlay'
 
 const layoutWithDimension = {
     columns: [DIMENSION_ID],
@@ -23,21 +19,29 @@ const layoutWithDimension = {
  * state rather than the absence of the element. */
 const findNotice = () => screen.findByTestId('unapplied-changes')
 
-const renderCanvas = (preloadedState: Partial<RootState>) =>
-    renderWithAppWrapper(<Canvas />, {
-        metadata,
-        partialStore: { preloadedState },
+const renderOverlay = (preloadedState: Partial<RootState>) =>
+    renderWithAppWrapper(
+        <UnappliedChangesOverlay>
+            <div data-test="canvas-content" />
+        </UnappliedChangesOverlay>,
+        { metadata, partialStore: { preloadedState } }
+    )
+
+describe('UnappliedChangesOverlay', () => {
+    it('renders its children', async () => {
+        await renderOverlay({ currentVis: populatedVis })
+
+        expect(await screen.findByTestId('canvas-content')).toBeInTheDocument()
     })
 
-describe('Canvas unapplied changes notice', () => {
-    it('is hidden when the visualization matches the ui config', async () => {
-        await renderCanvas({ currentVis: populatedVis })
+    it('hides the notice when the visualization matches the ui config', async () => {
+        await renderOverlay({ currentVis: populatedVis })
 
         expect(await findNotice()).toHaveAttribute('aria-hidden', 'true')
     })
 
-    it('is shown when there are unapplied changes', async () => {
-        await renderCanvas({
+    it('shows the notice when there are unapplied changes', async () => {
+        await renderOverlay({
             currentVis: populatedVis,
             visUiConfig: { layout: layoutWithDimension },
         } as Partial<RootState>)
@@ -48,8 +52,8 @@ describe('Canvas unapplied changes notice', () => {
         expect(notice).toHaveTextContent('Changes not applied')
     })
 
-    it('is hidden while the visualization is loading', async () => {
-        await renderCanvas({
+    it('hides the notice while the visualization is loading', async () => {
+        await renderOverlay({
             currentVis: populatedVis,
             visUiConfig: { layout: layoutWithDimension },
             loader: { isVisualizationLoading: true },
