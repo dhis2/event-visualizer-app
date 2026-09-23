@@ -13,11 +13,11 @@ import {
 } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector, useLayoutContext } from '@hooks'
 import {
-    clearVisUiConfigCustomValue,
-    getVisUiConfigCustomValue,
+    clearVisUiConfigCellValue,
+    getVisUiConfigCellValue,
 } from '@store/vis-ui-config-slice'
 import { type FC, useCallback, useState } from 'react'
-import { CustomValueItemPicker } from './custom-value-item-picker'
+import { CellValueItemPicker } from './cell-value-item-picker'
 import classes from './styles/cell-value-modal.module.css'
 
 type CellValueModalProps = {
@@ -25,23 +25,23 @@ type CellValueModalProps = {
 }
 
 /* Which card is expanded is the modal's own business: the store only knows
- * whether a custom value is set, which is not yet true while the user is
+ * whether a cell value is set, which is not yet true while the user is
  * picking one. */
-type CellValueMode = 'COUNT' | 'CUSTOM_VALUE'
+type CellValueMode = 'COUNT' | 'DATA_ITEM'
 
 export const CellValueModal: FC<CellValueModalProps> = ({ onClose }) => {
     const dispatch = useAppDispatch()
     const { programIds } = useLayoutContext()
-    const customValue = useAppSelector(getVisUiConfigCustomValue)
+    const cellValue = useAppSelector(getVisUiConfigCellValue)
     const [mode, setMode] = useState<CellValueMode>(
-        customValue ? 'CUSTOM_VALUE' : 'COUNT'
+        cellValue ? 'DATA_ITEM' : 'COUNT'
     )
 
     const onSelectCount = useCallback(() => {
         setMode('COUNT')
-        dispatch(clearVisUiConfigCustomValue())
+        dispatch(clearVisUiConfigCellValue())
     }, [dispatch])
-    const onSelectCustomValue = useCallback(() => setMode('CUSTOM_VALUE'), [])
+    const onSelectDataItem = useCallback(() => setMode('DATA_ITEM'), [])
 
     return (
         <Modal
@@ -67,17 +67,17 @@ export const CellValueModal: FC<CellValueModalProps> = ({ onClose }) => {
                     />
                     <RadioCard
                         name="cell-value-mode"
-                        value="CUSTOM_VALUE"
-                        label={i18n.t('Custom value')}
+                        value="DATA_ITEM"
+                        label={i18n.t('Data item value')}
                         helpText={i18n.t(
                             "Each cell shows a data item's value instead — for example, a total or average. Used for every output type."
                         )}
-                        selected={mode === 'CUSTOM_VALUE'}
-                        onSelect={onSelectCustomValue}
-                        dataTest="cell-value-mode-custom-value"
+                        selected={mode === 'DATA_ITEM'}
+                        onSelect={onSelectDataItem}
+                        dataTest="cell-value-mode-data-item"
                         emphasized
                     >
-                        <CustomValueItemPicker programId={programIds[0]} />
+                        <CellValueItemPicker programId={programIds[0]} />
                     </RadioCard>
                 </RadioCardGroup>
             </ModalContent>

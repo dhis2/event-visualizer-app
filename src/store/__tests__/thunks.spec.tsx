@@ -8,7 +8,7 @@ import {
     tUpdateCurrentVisFromVisUiConfig,
 } from '@store/thunks'
 import {
-    clearVisUiConfigCustomValue,
+    clearVisUiConfigCellValue,
     initialState as visUiConfigInitialState,
     setVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
@@ -43,7 +43,7 @@ const metadata = {
     },
 }
 
-const customValue = { id: 's1.de1', aggregationType: 'AVERAGE' as const }
+const cellValue = { id: 's1.de1', aggregationType: 'AVERAGE' as const }
 
 const buildMockOptions = (
     currentVisOverride: Partial<CurrentVisualization>,
@@ -57,7 +57,7 @@ const buildMockOptions = (
                     outputType,
                     visualizationType: 'PIVOT_TABLE',
                     layout: { columns: ['s1.de1'] },
-                    customValue,
+                    cellValue,
                 }),
             } as Partial<RootState>,
             { currentVis: currentVisOverride } as Partial<RootState>
@@ -65,7 +65,7 @@ const buildMockOptions = (
     },
 })
 
-const customValueVis: Partial<CurrentVisualization> = {
+const cellValueVis: Partial<CurrentVisualization> = {
     type: 'PIVOT_TABLE',
     outputType: 'EVENT',
     columns: [{ dimension: 's1.de1' }],
@@ -93,7 +93,7 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         )
     })
 
-    it('applies the remembered customValue to a pivot table', async () => {
+    it('applies the remembered value to a pivot table', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
             buildMockOptions(eventVis)
@@ -106,10 +106,10 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         expect(currentVis.aggregationType).toBe('AVERAGE')
     })
 
-    it('applies the customValue for any output type', async () => {
+    it('applies the value for any output type', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
-            buildMockOptions(customValueVis, 'ENROLLMENT')
+            buildMockOptions(cellValueVis, 'ENROLLMENT')
         )
 
         store.dispatch(tUpdateCurrentVisFromVisUiConfig())
@@ -119,13 +119,13 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         expect(currentVis.aggregationType).toBe('AVERAGE')
     })
 
-    it('strips the value once the customValue is cleared', async () => {
+    it('strips the value once it is cleared', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
-            buildMockOptions(customValueVis)
+            buildMockOptions(cellValueVis)
         )
 
-        store.dispatch(clearVisUiConfigCustomValue())
+        store.dispatch(clearVisUiConfigCellValue())
         store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
         const currentVis = getCurrentVis(store.getState())
@@ -133,17 +133,17 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         expect(currentVis.aggregationType).toBeUndefined()
     })
 
-    it('leaves the customValue out of a line list, keeping it remembered', async () => {
+    it('leaves the value out of a line list, keeping it remembered', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
-            buildMockOptions(customValueVis)
+            buildMockOptions(cellValueVis)
         )
 
         store.dispatch(setVisUiConfigVisualizationType('LINE_LIST'))
         store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
         expect(getCurrentVis(store.getState()).value).toBeUndefined()
-        expect(store.getState().visUiConfig.customValue).toEqual(customValue)
+        expect(store.getState().visUiConfig.cellValue).toEqual(cellValue)
     })
 })
 

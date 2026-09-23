@@ -371,7 +371,7 @@ export const getVisualizationUiConfig = (
         repetitionsByDimension: getRepetitionsFromVisualisation(vis),
         options: { ...baseOptions, ...extractOptions(vis) },
         ...(vis.value?.id && {
-            customValue: {
+            cellValue: {
                 id: vis.value.id,
                 aggregationType: vis.aggregationType || 'DEFAULT',
             },

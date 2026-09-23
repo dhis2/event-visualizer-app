@@ -116,12 +116,12 @@ describe('getRequestStructure (pivot table)', () => {
         )
     })
 
-    it('includes the custom value only when both value and aggregationType are set', () => {
+    it('includes the cell value only when both value and aggregationType are set', () => {
         const aggregationOnly = {
             ...basePivotTable,
             aggregationType: 'AVERAGE',
         } as unknown as CurrentVisualization
-        const withCustomValue = {
+        const withCellValue = {
             ...basePivotTable,
             value: { id: 'de1' },
             aggregationType: 'AVERAGE',
@@ -130,7 +130,7 @@ describe('getRequestStructure (pivot table)', () => {
         expect(pivotTableKey(aggregationOnly)).toBe(
             pivotTableKey(basePivotTable)
         )
-        expect(pivotTableKey(withCustomValue)).not.toBe(
+        expect(pivotTableKey(withCellValue)).not.toBe(
             pivotTableKey(basePivotTable)
         )
     })

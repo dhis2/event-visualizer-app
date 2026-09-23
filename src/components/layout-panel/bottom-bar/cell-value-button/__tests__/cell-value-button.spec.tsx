@@ -67,11 +67,11 @@ const metadata = {
 const buildMockOptions = ({
     columns,
     outputType = 'EVENT',
-    customValue,
+    cellValue,
 }: {
     columns: string[]
     outputType?: OutputType
-    customValue?: { id: string; aggregationType: AggregationType }
+    cellValue?: { id: string; aggregationType: AggregationType }
 }): MockOptions => ({
     metadata,
     partialStore: {
@@ -81,14 +81,14 @@ const buildMockOptions = ({
                 visualizationType: 'PIVOT_TABLE',
                 outputType,
                 layout: { ...visUiConfigInitialState.layout, columns },
-                customValue,
+                cellValue,
             },
         } as Partial<RootState>,
     },
 })
 
 describe('CellValueButton', () => {
-    it('falls back to the output type count when no custom value is set', async () => {
+    it('falls back to the output type count when no cell value is set', async () => {
         await renderWithAppWrapper(
             <CellValueButton />,
             buildMockOptions({ columns: ['s1.de1'] })
@@ -115,12 +115,12 @@ describe('CellValueButton', () => {
         ).toBeInTheDocument()
     })
 
-    it('names the custom value when one is set', async () => {
+    it('names the cell value when one is set', async () => {
         await renderWithAppWrapper(
             <CellValueButton />,
             buildMockOptions({
                 columns: ['s1.de1'],
-                customValue: { id: 's1.de1', aggregationType: 'AVERAGE' },
+                cellValue: { id: 's1.de1', aggregationType: 'AVERAGE' },
             })
         )
 

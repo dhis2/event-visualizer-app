@@ -22,7 +22,7 @@ import {
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
-    getVisUiConfigCustomValue,
+    getVisUiConfigCellValue,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
@@ -46,7 +46,7 @@ type PartitionMultiSelectedDimensionsArgs = {
     ids: string[]
     metadataStore: ReturnType<typeof useMetadataStore>
     visualizationType: ReturnType<typeof getVisUiConfigVisualizationType>
-    customValueId: string | null
+    cellValueId: string | null
     layoutTetId: string | null
 }
 
@@ -54,14 +54,14 @@ const partitionMultiSelectedDimensions = ({
     ids,
     metadataStore,
     visualizationType,
-    customValueId,
+    cellValueId,
     layoutTetId,
 }: PartitionMultiSelectedDimensionsArgs): {
     validIds: string[]
     skippedByReason: SkippedByReason
 } => {
     const skippedByReason: SkippedByReason = {
-        customValue: [],
+        cellValue: [],
         visType: [],
         crossTet: [],
     }
@@ -70,7 +70,7 @@ const partitionMultiSelectedDimensions = ({
         const reason = getDimensionBlockReason({
             dimension: dim,
             visualizationType,
-            customValueId,
+            cellValueId,
             layoutTetId,
             dimensionTetId: resolveDimensionTetId(dim, metadataStore),
         })
@@ -112,10 +112,10 @@ export const useOnDragEnd = (): OnDragEndFn => {
             ),
         SKIPPED_DIMENSIONS_ALERT_OPTIONS
     )
-    const { show: showCustomValueAlert } = useAlert(
+    const { show: showCellValueAlert } = useAlert(
         ({ name }: { name: string }) =>
             i18n.t(
-                '{{- name}} was not added because it is already used as the custom value.',
+                '{{- name}} was not added because it is already used as the cell value.',
                 { name, nsSeparator: '^^' }
             ),
         SKIPPED_DIMENSIONS_ALERT_OPTIONS
@@ -147,8 +147,8 @@ export const useOnDragEnd = (): OnDragEndFn => {
                         : '',
                 })
             }
-            if (skippedByReason.customValue.length > 0) {
-                showCustomValueAlert({ name: skippedByReason.customValue[0] })
+            if (skippedByReason.cellValue.length > 0) {
+                showCellValueAlert({ name: skippedByReason.cellValue[0] })
             }
         },
         [
@@ -156,7 +156,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
             listFormatter,
             showVisTypeAlert,
             showCrossTetAlert,
-            showCustomValueAlert,
+            showCellValueAlert,
         ]
     )
 
@@ -218,7 +218,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
             if (isMultiSelectDrag) {
                 const storeState = store.getState()
                 const visType = getVisUiConfigVisualizationType(storeState)
-                const customValue = getVisUiConfigCustomValue(storeState)
+                const cellValue = getVisUiConfigCellValue(storeState)
                 const { tetId: layoutTetId } = resolveLayoutContext(
                     getVisUiConfigLayoutAllDimensionIds(storeState),
                     metadataStore
@@ -230,7 +230,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
                         ids: multiSelectedIds,
                         metadataStore,
                         visualizationType: visType,
-                        customValueId: customValue?.id ?? null,
+                        cellValueId: cellValue?.id ?? null,
                         layoutTetId,
                     })
 

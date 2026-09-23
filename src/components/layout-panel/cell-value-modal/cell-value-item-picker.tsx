@@ -12,14 +12,14 @@ import {
 } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector, useMetadataStore } from '@hooks'
 import {
-    getVisUiConfigCustomValue,
-    setVisUiConfigCustomValue,
+    getVisUiConfigCellValue,
+    setVisUiConfigCellValue,
 } from '@store/vis-ui-config-slice'
 import type { AggregationType } from '@types'
 import { useMemo, useState, type FC } from 'react'
-import { CustomValueOption } from './custom-value-option'
-import classes from './styles/custom-value-item-picker.module.css'
-import { useCellValueItems, type CustomValueItem } from './use-cell-value-items'
+import { CellValueOption } from './cell-value-option'
+import classes from './styles/cell-value-item-picker.module.css'
+import { useCellValueItems, type CellValueItem } from './use-cell-value-items'
 
 /* An item whose metadata aggregation type is NONE cannot be aggregated: the
  * analytics API returns 0 for every cell. Many tracked entity attributes (and
@@ -30,7 +30,7 @@ const FALLBACK_AGGREGATION_TYPE_FOR_NONE: AggregationType = 'AVERAGE'
 
 const resolveAggregationType = (
     aggregationType: AggregationType,
-    item: CustomValueItem
+    item: CellValueItem
 ): AggregationType => {
     if (aggregationType !== 'DEFAULT') {
         return aggregationType
@@ -40,15 +40,15 @@ const resolveAggregationType = (
         : item.aggregationType
 }
 
-export const CustomValueItemPicker: FC<{ programId: string }> = ({
+export const CellValueItemPicker: FC<{ programId: string }> = ({
     programId,
 }) => {
     const dispatch = useAppDispatch()
     const metadataStore = useMetadataStore()
-    const customValue = useAppSelector(getVisUiConfigCustomValue)
+    const cellValue = useAppSelector(getVisUiConfigCellValue)
     const [searchTerm, setSearchTerm] = useState('')
     const [aggregationType, setAggregationType] = useState<AggregationType>(
-        customValue?.aggregationType ?? 'DEFAULT'
+        cellValue?.aggregationType ?? 'DEFAULT'
     )
     const { items, isLoading, isError, error } = useCellValueItems(programId)
 
@@ -62,17 +62,17 @@ export const CustomValueItemPicker: FC<{ programId: string }> = ({
         )
     }, [items, searchTerm])
 
-    const selectedItem = items?.find((item) => item.id === customValue?.id)
+    const selectedItem = items?.find((item) => item.id === cellValue?.id)
     const selectedItemDefaultIsNone = selectedItem?.aggregationType === 'NONE'
     const selectedAggregationType =
         aggregationType === 'DEFAULT' && selectedItemDefaultIsNone
             ? FALLBACK_AGGREGATION_TYPE_FOR_NONE
             : aggregationType
 
-    const onItemClick = (item: CustomValueItem) => {
+    const onItemClick = (item: CellValueItem) => {
         metadataStore.addMetadata(item)
         dispatch(
-            setVisUiConfigCustomValue({
+            setVisUiConfigCellValue({
                 id: item.id,
                 aggregationType: resolveAggregationType(aggregationType, item),
             })
@@ -84,7 +84,7 @@ export const CustomValueItemPicker: FC<{ programId: string }> = ({
         setAggregationType(nextAggregationType)
         if (selectedItem) {
             dispatch(
-                setVisUiConfigCustomValue({
+                setVisUiConfigCellValue({
                     id: selectedItem.id,
                     aggregationType: resolveAggregationType(
                         nextAggregationType,
@@ -103,7 +103,7 @@ export const CustomValueItemPicker: FC<{ programId: string }> = ({
                         value={searchTerm}
                         onChange={({ value }) => setSearchTerm(value ?? '')}
                         placeholder={i18n.t('Search data items')}
-                        dataTest="custom-value-item-picker-search-field"
+                        dataTest="cell-value-item-picker-search-field"
                         dense
                         initialFocus
                         type="search"
@@ -145,11 +145,11 @@ export const CustomValueItemPicker: FC<{ programId: string }> = ({
                 {!isLoading &&
                     !isError &&
                     visibleItems?.map((item) => (
-                        <CustomValueOption
+                        <CellValueOption
                             key={item.id}
                             label={item.name}
                             value={item.id}
-                            active={customValue?.id === item.id}
+                            active={cellValue?.id === item.id}
                             stageName={item.stageName}
                             onClick={() => onItemClick(item)}
                         />

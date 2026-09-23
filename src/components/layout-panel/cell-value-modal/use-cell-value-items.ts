@@ -5,14 +5,14 @@ import { useMemo } from 'react'
 
 /* Data element ids are compound `stageId.deUid` qualifiers; tracked entity
  * attributes are program scoped and carry a plain uid with no stage prefix. */
-type CustomValueDimension = {
+type CellValueDimension = {
     id: string
     name: string
     aggregationType: AggregationType
     dimensionType: 'DATA_ELEMENT' | 'PROGRAM_ATTRIBUTE'
 }
 
-export type CustomValueItem = CustomValueDimension & {
+export type CellValueItem = CellValueDimension & {
     stageName?: string
 }
 
@@ -21,7 +21,7 @@ const getStageIdFromDimensionId = (id: string): string | null => {
     return idParts.length === 2 ? idParts[0] : null
 }
 
-const compareByName = (a: CustomValueDimension, b: CustomValueDimension) =>
+const compareByName = (a: CellValueDimension, b: CellValueDimension) =>
     a.name.localeCompare(b.name)
 
 export const useCellValueItems = (programId: string) => {
@@ -31,7 +31,7 @@ export const useCellValueItems = (programId: string) => {
     const metadataStore = useMetadataStore()
 
     const { data, ...queryResult } = useRtkQuery<{
-        dimensions: CustomValueDimension[]
+        dimensions: CellValueDimension[]
     }>({
         resource: 'analytics/enrollments/aggregate/dimensions',
         params: {
@@ -49,7 +49,7 @@ export const useCellValueItems = (programId: string) => {
     const programHasMultipleStages = (program.programStages?.length ?? 0) > 1
     const tetName = program.trackedEntityType?.name
 
-    const items = useMemo<CustomValueItem[] | undefined>(() => {
+    const items = useMemo<CellValueItem[] | undefined>(() => {
         if (!data) {
             return undefined
         }

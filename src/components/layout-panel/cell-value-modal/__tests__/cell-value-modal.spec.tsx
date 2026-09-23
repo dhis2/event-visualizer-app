@@ -1,7 +1,7 @@
 import { getCurrentVis } from '@store/current-vis-slice'
 import {
     initialState as visUiConfigInitialState,
-    getVisUiConfigCustomValue,
+    getVisUiConfigCellValue,
 } from '@store/vis-ui-config-slice'
 import { renderWithAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 import { createDeferredQuery } from '@test-utils/deferred-query'
@@ -86,7 +86,7 @@ const initialPreloadedState: Partial<RootState> = {
 const buildMockOptions = (
     layoutColumns: string[],
     queryDataOverride: MockOptions['queryData'] = defaultQueryData,
-    customValue?: { id: string; aggregationType: 'SUM' | 'AVERAGE' }
+    cellValue?: { id: string; aggregationType: 'SUM' | 'AVERAGE' }
 ) => ({
     metadata,
     queryData: queryDataOverride,
@@ -98,14 +98,14 @@ const buildMockOptions = (
                     ...visUiConfigInitialState.layout,
                     columns: layoutColumns,
                 },
-                customValue,
+                cellValue,
             },
         }),
     },
 })
 
-const selectCustomValueMode = async (user: UserEvent) => {
-    await user.click(screen.getByRole('radio', { name: /Custom value/ }))
+const selectDataItemMode = async (user: UserEvent) => {
+    await user.click(screen.getByRole('radio', { name: /Data item value/ }))
 }
 
 describe('CellValueModal', () => {
@@ -125,10 +125,10 @@ describe('CellValueModal', () => {
         await user.click(screen.getByRole('button', { name: 'Done' }))
 
         expect(onClose).toHaveBeenCalledOnce()
-        expect(getVisUiConfigCustomValue(store.getState())).toBeUndefined()
+        expect(getVisUiConfigCellValue(store.getState())).toBeUndefined()
     })
 
-    it('starts in Custom value mode with the picker expanded when a custom value is stored', async () => {
+    it('starts in Data item value mode with the picker expanded when a cell value is stored', async () => {
         await renderWithAppWrapper(
             <CellValueModal onClose={() => {}} />,
             buildMockOptions(['s1.de1'], undefined, {
@@ -138,14 +138,14 @@ describe('CellValueModal', () => {
         )
 
         expect(
-            screen.getByRole('radio', { name: /Custom value/ })
+            screen.getByRole('radio', { name: /Data item value/ })
         ).toBeChecked()
         await waitFor(() => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
         })
     })
 
-    it('clears the stored custom value when switching back to Count', async () => {
+    it('clears the stored cell value when switching back to Count', async () => {
         const user = userEvent.setup()
         const { store } = await renderWithAppWrapper(
             <CellValueModal onClose={() => {}} />,
@@ -157,7 +157,7 @@ describe('CellValueModal', () => {
 
         await user.click(screen.getByRole('radio', { name: /Count/ }))
 
-        expect(getVisUiConfigCustomValue(store.getState())).toBeUndefined()
+        expect(getVisUiConfigCellValue(store.getState())).toBeUndefined()
     })
 
     it('shows the loading indicator before data items load', async () => {
@@ -169,7 +169,7 @@ describe('CellValueModal', () => {
             } as unknown as MockOptions['queryData'])
         )
 
-        await selectCustomValueMode(userEvent.setup())
+        await selectDataItemMode(userEvent.setup())
 
         expect(screen.getByText('Loading data')).toBeInTheDocument()
 
@@ -186,7 +186,7 @@ describe('CellValueModal', () => {
             buildMockOptions(['s1.de1'])
         )
 
-        await selectCustomValueMode(userEvent.setup())
+        await selectDataItemMode(userEvent.setup())
 
         await waitFor(() => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
@@ -202,7 +202,7 @@ describe('CellValueModal', () => {
             })
         )
 
-        await selectCustomValueMode(userEvent.setup())
+        await selectDataItemMode(userEvent.setup())
 
         await waitFor(() => {
             expect(
@@ -219,7 +219,7 @@ describe('CellValueModal', () => {
             buildMockOptions(['s1.de1'])
         )
 
-        await selectCustomValueMode(user)
+        await selectDataItemMode(user)
 
         await waitFor(() => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
@@ -227,7 +227,7 @@ describe('CellValueModal', () => {
 
         await user.click(screen.getByText('Weight in kg'))
 
-        expect(getVisUiConfigCustomValue(store.getState())).toEqual({
+        expect(getVisUiConfigCellValue(store.getState())).toEqual({
             aggregationType: 'SUM',
             id: 's1.de1',
         })
@@ -247,7 +247,7 @@ describe('CellValueModal', () => {
             buildMockOptions(['s1.de1'])
         )
 
-        await selectCustomValueMode(user)
+        await selectDataItemMode(user)
 
         await waitFor(() => {
             expect(screen.getByText('Weight in kg')).toBeInTheDocument()
@@ -289,7 +289,7 @@ describe('CellValueModal', () => {
             })
         )
 
-        await selectCustomValueMode(user)
+        await selectDataItemMode(user)
 
         await waitFor(() => {
             expect(screen.getByText('Gender score')).toBeInTheDocument()
@@ -297,7 +297,7 @@ describe('CellValueModal', () => {
 
         await user.click(screen.getByText('Gender score'))
 
-        expect(getVisUiConfigCustomValue(store.getState())).toEqual({
+        expect(getVisUiConfigCellValue(store.getState())).toEqual({
             aggregationType: 'AVERAGE',
             id: 'attr1',
         })
@@ -327,7 +327,7 @@ describe('CellValueModal', () => {
             })
         )
 
-        await selectCustomValueMode(user)
+        await selectDataItemMode(user)
 
         await waitFor(() => {
             expect(screen.getByText('Gender score')).toBeInTheDocument()
@@ -374,7 +374,7 @@ describe('CellValueModal', () => {
             })
         )
 
-        await selectCustomValueMode(user)
+        await selectDataItemMode(user)
 
         await waitFor(() => {
             expect(screen.getByText('Gender score')).toBeInTheDocument()

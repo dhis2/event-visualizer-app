@@ -742,7 +742,7 @@ const getMessage = (
 ): string | null =>
     getDimensionLayoutBlockedMessage({
         visualizationType: 'PIVOT_TABLE',
-        customValueId: null,
+        cellValueId: null,
         layoutTetId: null,
         dimensionTetId: null,
         crossTetMessage: '',
@@ -754,24 +754,24 @@ type ReasonArgs = Parameters<typeof getDimensionBlockReason>[0]
 const getReason = (args: Partial<ReasonArgs> & Pick<ReasonArgs, 'dimension'>) =>
     getDimensionBlockReason({
         visualizationType: 'PIVOT_TABLE',
-        customValueId: null,
+        cellValueId: null,
         layoutTetId: null,
         dimensionTetId: null,
         ...args,
     })
 
 describe('getDimensionBlockReason', () => {
-    it('returns customValue when the dim is the custom value', () => {
+    it('returns cellValue when the dim is the cell value', () => {
         expect(
-            getReason({ dimension: makeDim({ id: 'x' }), customValueId: 'x' })
-        ).toBe('customValue')
+            getReason({ dimension: makeDim({ id: 'x' }), cellValueId: 'x' })
+        ).toBe('cellValue')
     })
 
-    it('ignores the custom value in a line list, which never shows one', () => {
+    it('ignores the cell value in a line list, which never shows one', () => {
         expect(
             getReason({
                 dimension: makeDim({ id: 'x' }),
-                customValueId: 'x',
+                cellValueId: 'x',
                 visualizationType: 'LINE_LIST',
             })
         ).toBeNull()
@@ -804,18 +804,18 @@ describe('getDimensionBlockReason', () => {
         ).toBeNull()
     })
 
-    it('prefers customValue, then visType, over crossTet', () => {
+    it('prefers cellValue, then visType, over crossTet', () => {
         expect(
             getReason({
                 dimension: makeDim({
                     id: 'pi',
                     dimensionType: 'PROGRAM_INDICATOR',
                 }),
-                customValueId: 'pi',
+                cellValueId: 'pi',
                 dimensionTetId: 'tetB',
                 layoutTetId: 'tetA',
             })
-        ).toBe('customValue')
+        ).toBe('cellValue')
         expect(
             getReason({
                 dimension: makeDim({ dimensionType: 'PROGRAM_INDICATOR' }),
@@ -826,21 +826,21 @@ describe('getDimensionBlockReason', () => {
     })
 })
 
-describe('getDimensionLayoutBlockedMessage — custom-value rule (Case C)', () => {
-    it('disables the dim whose compound id matches the custom value id', () => {
+describe('getDimensionLayoutBlockedMessage — cell-value rule (Case C)', () => {
+    it('disables the dim whose compound id matches the cell value id', () => {
         expect(
             getMessage({
                 dimension: makeDim({ id: 'stage1.de1' }),
-                customValueId: 'stage1.de1',
+                cellValueId: 'stage1.de1',
             })
-        ).toBe('Already used as custom value.')
+        ).toBe('Already used as cell value.')
     })
 
     it('does not disable a different stage-instance of the same DE', () => {
         expect(
             getMessage({
                 dimension: makeDim({ id: 'stageB.de1' }),
-                customValueId: 'stageA.de1',
+                cellValueId: 'stageA.de1',
             })
         ).toBeNull()
     })
@@ -849,16 +849,16 @@ describe('getDimensionLayoutBlockedMessage — custom-value rule (Case C)', () =
         expect(
             getMessage({
                 dimension: makeDim({ id: 'stage1.de2' }),
-                customValueId: 'stage1.de1',
+                cellValueId: 'stage1.de1',
             })
         ).toBeNull()
     })
 
-    it('does not fire when no custom value is set', () => {
+    it('does not fire when no cell value is set', () => {
         expect(
             getMessage({
                 dimension: makeDim({ id: 'stage1.de1' }),
-                customValueId: null,
+                cellValueId: null,
             })
         ).toBeNull()
     })
@@ -974,7 +974,7 @@ describe('getDimensionLayoutBlockedMessage — cross-TET rule (Case D)', () => {
 describe('getDimensionLayoutBlockedMessage — rule precedence', () => {
     const crossTetMessage = 'cross-tet message'
 
-    it('returns the custom-value message when it could fire alongside cross-TET', () => {
+    it('returns the cell-value message when it could fire alongside cross-TET', () => {
         expect(
             getMessage({
                 dimension: makeDim({
@@ -983,12 +983,12 @@ describe('getDimensionLayoutBlockedMessage — rule precedence', () => {
                     dimensionType: 'ORGANISATION_UNIT',
                     trackedEntityTypeId: 'tetA',
                 }),
-                customValueId: 'tetA.enrollmentOu',
+                cellValueId: 'tetA.enrollmentOu',
                 dimensionTetId: 'tetB',
                 layoutTetId: 'tetA',
                 crossTetMessage,
             })
-        ).toContain('custom value')
+        ).toContain('cell value')
     })
 
     it('returns the vis-type message when it could fire alongside cross-TET', () => {

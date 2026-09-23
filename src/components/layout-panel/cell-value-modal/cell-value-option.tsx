@@ -1,8 +1,8 @@
 import cx from 'classnames'
 import type { FC } from 'react'
-import classes from './styles/custom-value-option.module.css'
+import classes from './styles/cell-value-option.module.css'
 
-type CustomValueOptionProps = {
+type CellValueOptionProps = {
     label: string
     value: string
     active: boolean
@@ -10,7 +10,7 @@ type CustomValueOptionProps = {
     stageName?: string
 }
 
-export const CustomValueOption: FC<CustomValueOptionProps> = ({
+export const CellValueOption: FC<CellValueOptionProps> = ({
     label,
     value,
     active,

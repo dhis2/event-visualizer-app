@@ -44,14 +44,14 @@
     margin-inline-start: var(--spacers-dp4);
 }
 
-.button.hasCustomValue {
+.button.hasCellValue {
     border-color: var(--colors-grey400);
     background-color: var(--colors-grey100);
     color: var(--colors-grey900);
     font-weight: 500;
 }
 
-.button.hasCustomValue:hover:not(:disabled) {
+.button.hasCellValue:hover:not(:disabled) {
     border-color: var(--colors-grey500);
 }
 

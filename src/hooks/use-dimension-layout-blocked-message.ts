@@ -10,7 +10,7 @@ import {
 } from '@modules/dimension/blocking'
 import { resolveDimensionTetId } from '@modules/layout'
 import {
-    getVisUiConfigCustomValue,
+    getVisUiConfigCellValue,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
@@ -19,7 +19,7 @@ export const useDimensionLayoutBlockedMessage = (
     dimension: DimensionMetadataItem | undefined
 ): string | null => {
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
-    const customValue = useAppSelector(getVisUiConfigCustomValue)
+    const cellValue = useAppSelector(getVisUiConfigCellValue)
     const metadataStore = useMetadataStore()
     const { tetId: layoutTetId } = useLayoutContext()
     const mismatch = useCrossTetMismatch()
@@ -29,7 +29,7 @@ export const useDimensionLayoutBlockedMessage = (
     return getDimensionLayoutBlockedMessage({
         dimension,
         visualizationType,
-        customValueId: customValue?.id ?? null,
+        cellValueId: cellValue?.id ?? null,
         layoutTetId,
         dimensionTetId: resolveDimensionTetId(dimension, metadataStore),
         crossTetMessage: mismatch

@@ -985,8 +985,8 @@ describe('useActionButton for Tracked entity instance button', () => {
     })
 })
 
-describe('useActionButton for Event button with a custom value set', () => {
-    it('returns "update" for: PT, EVENT output, custom value active (currentVis has a value)', async () => {
+describe('useActionButton for Event button with a cell value set', () => {
+    it('returns "update" for: PT, EVENT output, cell value active (currentVis has a value)', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('EVENT'),
             createStoreWithPreloadedState({
@@ -1011,7 +1011,7 @@ describe('useActionButton for Event button with a custom value set', () => {
         expect(result.current.action).toEqual('update')
     })
 
-    it('returns "switch" for: PT, ENROLLMENT output, custom value active', async () => {
+    it('returns "switch" for: PT, ENROLLMENT output, cell value active', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('EVENT'),
             createStoreWithPreloadedState({

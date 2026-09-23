@@ -11,7 +11,7 @@ import {
     useOutputTypeLabel,
 } from '@hooks'
 import {
-    getVisUiConfigCustomValue,
+    getVisUiConfigCellValue,
     getVisUiConfigOutputType,
 } from '@store/vis-ui-config-slice'
 import cx from 'classnames'
@@ -21,8 +21,8 @@ import classes from './styles/cell-value-button.module.css'
 export const CellValueButton: FC = () => {
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const outputTypeLabel = useOutputTypeLabel(outputType)
-    const customValue = useAppSelector(getVisUiConfigCustomValue)
-    const customValueMetadata = useMetadataItem(customValue?.id)
+    const cellValue = useAppSelector(getVisUiConfigCellValue)
+    const cellValueMetadata = useMetadataItem(cellValue?.id)
     const { programIds } = useLayoutContext()
     /* The item list in the modal is fetched for a single program, so a layout
      * without exactly one has no unambiguous set of values to choose from. */
@@ -32,10 +32,10 @@ export const CellValueButton: FC = () => {
     const onClick = useCallback(() => setIsModalOpen(true), [])
     const onModalClose = useCallback(() => setIsModalOpen(false), [])
 
-    const customValueName = customValueMetadata?.name
-    const label = customValueName
+    const cellValueName = cellValueMetadata?.name
+    const label = cellValueName
         ? i18n.t('Cells show {{- valueName}}', {
-              valueName: customValueName,
+              valueName: cellValueName,
               nsSeparator: '^^',
           })
         : i18n.t('Cells show {{- outputTypeLabel}} count', {
@@ -52,7 +52,7 @@ export const CellValueButton: FC = () => {
                     disabled={Boolean(tooltipConfig)}
                     data-test="cell-value-button"
                     className={cx(classes.button, {
-                        [classes.hasCustomValue]: Boolean(customValueName),
+                        [classes.hasCellValue]: Boolean(cellValueName),
                     })}
                 >
                     <IconTableRows />

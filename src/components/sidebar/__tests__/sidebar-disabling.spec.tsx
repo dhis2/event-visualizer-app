@@ -389,7 +389,7 @@ describe('useDimensionLayoutBlockedMessage', () => {
         expect(result.current).toBeNull()
     })
 
-    it('returns the custom-value message when the dim matches the configured custom value id', async () => {
+    it('returns the cell-value message when the dim matches the configured cell value id', async () => {
         const dim = makeDim({ id: 'stage1.de1', dimensionId: 'de1' })
         const { result } = await renderHookWithAppWrapper(
             () => useDimensionLayoutBlockedMessage(dim),
@@ -398,7 +398,7 @@ describe('useDimensionLayoutBlockedMessage', () => {
                     visUiConfig: {
                         ...visUiConfigInitialState,
                         visualizationType: 'PIVOT_TABLE',
-                        customValue: {
+                        cellValue: {
                             id: 'stage1.de1',
                             aggregationType: 'SUM',
                         },
@@ -406,7 +406,7 @@ describe('useDimensionLayoutBlockedMessage', () => {
                 },
             })
         )
-        expect(result.current).toMatch(/custom value/)
+        expect(result.current).toMatch(/cell value/)
     })
 
     it('returns the vis-type message for the TET registration OU outside line list', async () => {

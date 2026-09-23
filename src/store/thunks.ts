@@ -141,25 +141,25 @@ export const tLoadSavedVisualization = createAsyncThunk<
     }
 )
 
-const resolveCustomValueFields = (visUiConfig: VisUiConfigState) => {
+const resolveCellValueFields = (visUiConfig: VisUiConfigState) => {
     /* Always include the `value` key: setCurrentVis merges into the previous
      * currentVis, so omitting it would leave a stale value behind. Only a pivot
-     * table shows aggregated cells, so only it can carry a custom value. */
-    const { customValue, visualizationType } = visUiConfig
+     * table shows aggregated cells, so only it can carry a cell value. */
+    const { cellValue, visualizationType } = visUiConfig
 
-    if (visualizationType !== 'PIVOT_TABLE' || !customValue) {
+    if (visualizationType !== 'PIVOT_TABLE' || !cellValue) {
         return { value: undefined, aggregationType: undefined }
     }
 
     return {
-        value: { id: customValue.id },
-        aggregationType: customValue.aggregationType,
+        value: { id: cellValue.id },
+        aggregationType: cellValue.aggregationType,
     }
 }
 
 /* Rebuild a currentVis fresh from visUiConfig so stale currentVis fields can't
  * leak through. Carries over only id and sorting from the previous currentVis.
- * The custom value fields go after the options spread so the value's own
+ * The value fields go after the options spread so the value's own
  * aggregation type wins over the options default. */
 export const buildCurrentVisFromVisUiConfig = ({
     previousCurrentVis,
@@ -184,7 +184,7 @@ export const buildCurrentVisFromVisUiConfig = ({
     programDimensions: collectProgramDimensions(visUiConfig, metadataStore),
     ...getEnabledOptions(visUiConfig.options),
     ...resolveTeiFields(visUiConfig, metadataStore),
-    ...resolveCustomValueFields(visUiConfig),
+    ...resolveCellValueFields(visUiConfig),
 })
 
 export const tUpdateCurrentVisFromVisUiConfig =

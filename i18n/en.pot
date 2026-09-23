@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-17T12:36:05.389Z\n"
-"PO-Revision-Date: 2026-09-17T12:36:05.389Z\n"
+"POT-Creation-Date: 2026-09-23T10:28:52.532Z\n"
+"PO-Revision-Date: 2026-09-23T10:28:52.532Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -22,8 +22,8 @@ msgstr ""
 "Some dimensions were not added because they cannot be combined with {{- "
 "layoutTetName}} dimensions: {{list}}."
 
-msgid "{{- name}} was not added because it is already used as the custom value."
-msgstr "{{- name}} was not added because it is already used as the custom value."
+msgid "{{- name}} was not added because it is already used as the cell value."
+msgstr "{{- name}} was not added because it is already used as the cell value."
 
 msgid "Retry"
 msgstr "Retry"
@@ -325,32 +325,6 @@ msgstr "Cells show {{- outputTypeLabel}} count"
 msgid "One row for each {{- outputTypeLabel}}"
 msgstr "One row for each {{- outputTypeLabel}}"
 
-msgid "Cell value"
-msgstr "Cell value"
-
-msgid "Count"
-msgstr "Count"
-
-msgid ""
-"Each cell shows a count of the events, enrollments or tracked entities the "
-"table is built from."
-msgstr ""
-"Each cell shows a count of the events, enrollments or tracked entities the "
-"table is built from."
-
-msgid "Custom value"
-msgstr "Custom value"
-
-msgid ""
-"Each cell shows a data item's value instead — for example, a total or "
-"average. Used for every output type."
-msgstr ""
-"Each cell shows a data item's value instead — for example, a total or "
-"average. Used for every output type."
-
-msgid "Done"
-msgstr "Done"
-
 msgid "Search data items"
 msgstr "Search data items"
 
@@ -374,6 +348,32 @@ msgstr "No data items match \"{{- searchTerm}}\""
 
 msgid "Aggregation"
 msgstr "Aggregation"
+
+msgid "Cell value"
+msgstr "Cell value"
+
+msgid "Count"
+msgstr "Count"
+
+msgid ""
+"Each cell shows a count of the events, enrollments or tracked entities the "
+"table is built from."
+msgstr ""
+"Each cell shows a count of the events, enrollments or tracked entities the "
+"table is built from."
+
+msgid "Data item value"
+msgstr "Data item value"
+
+msgid ""
+"Each cell shows a data item's value instead — for example, a total or "
+"average. Used for every output type."
+msgstr ""
+"Each cell shows a data item's value instead — for example, a total or "
+"average. Used for every output type."
+
+msgid "Done"
+msgstr "Done"
 
 msgid "Collapse layout"
 msgstr "Collapse layout"
@@ -961,8 +961,8 @@ msgstr ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
 
-msgid "Already used as custom value."
-msgstr "Already used as custom value."
+msgid "Already used as cell value."
+msgstr "Already used as cell value."
 
 msgid "Cannot be used in a {{visType}}."
 msgstr "Cannot be used in a {{visType}}."

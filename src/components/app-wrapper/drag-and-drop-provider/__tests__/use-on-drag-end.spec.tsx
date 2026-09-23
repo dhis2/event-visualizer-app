@@ -50,7 +50,7 @@ vi.mock('@store/vis-ui-config-slice', () => ({
     moveVisUiConfigLayoutDimension: vi.fn(),
     removeVisUiConfigLayoutDimensionFromAxis: vi.fn(),
     getVisUiConfigVisualizationType: vi.fn(),
-    getVisUiConfigCustomValue: vi.fn(),
+    getVisUiConfigCellValue: vi.fn(),
     getVisUiConfigLayoutAllDimensionIds: vi.fn(() => []),
 }))
 
