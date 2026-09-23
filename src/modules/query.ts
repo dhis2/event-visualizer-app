@@ -29,7 +29,9 @@ export const getProgramFields = (
         `${displayNameProp}~rename(name)`,
         'displayEnrollmentDateLabel',
         'displayEnrollmentLabel',
+        'displayEnrollmentsLabel',
         'displayEventLabel',
+        'displayEventsLabel',
         'displayIncidentDate',
         'displayIncidentDateLabel',
         'displayOrgUnitLabel',
@@ -38,7 +40,7 @@ export const getProgramFields = (
         'enrollmentDateLabel',
         'incidentDateLabel',
         `programStages[${programStageFields}]`,
-        `trackedEntityType[id,${displayNameProp}~rename(name)]`,
+        `trackedEntityType[${getTrackedEntityTypeFields(displayNameProp)}]`,
     ].join(',')
 
 /**
@@ -46,7 +48,12 @@ export const getProgramFields = (
  */
 export const getTrackedEntityTypeFields = (
     displayNameProp: CurrentUser['settings']['displayNameProperty']
-): string => ['id', `${displayNameProp}~rename(name)`].join(',')
+): string =>
+    [
+        'id',
+        `${displayNameProp}~rename(name)`,
+        'displayTrackedEntityTypesLabel',
+    ].join(',')
 
 /*
  * Option sets and legend sets have no shortName, so their names always come
