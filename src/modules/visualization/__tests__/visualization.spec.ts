@@ -518,12 +518,12 @@ describe('normalizeApiSavedVisualization', () => {
         ].map((dim) => dim.dimension)
 
     it.each(['dy', 'latitude', 'longitude'])(
-        'drops the wire-only %s dimension and marks the vis legacy',
-        (wireOnlyId) => {
+        'drops the legacy %s dimension and marks the vis legacy',
+        (ignoredDimensionId) => {
             const result = normalizeApiSavedVisualization(
                 buildApiVis({
                     rows: [
-                        { dimension: wireOnlyId },
+                        { dimension: ignoredDimensionId },
                         { dimension: 'ou', dimensionType: 'ORGANISATION_UNIT' },
                     ] as ApiSavedVisualization['rows'],
                 })
@@ -534,7 +534,7 @@ describe('normalizeApiSavedVisualization', () => {
         }
     )
 
-    it('does not mark a vis legacy when it carries no wire-only dimension', () => {
+    it('does not mark a vis legacy when it carries no dropped legacy dimension', () => {
         const result = normalizeApiSavedVisualization(
             buildApiVis({
                 rows: [

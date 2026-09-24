@@ -391,7 +391,7 @@ program-scope (`{dimension: 'ou', program: {id}}`) and TEI registration
 
 1. `normalizeApiSavedVisualization` (`@modules/visualization/state`) brings the API
    payload to app shape: upgrades legacy dimensions, maps `PROGRAM_DATA_ELEMENT` → `DATA_ELEMENT`,
-   and strips the wire-only dimensions (`WIRE_ONLY_DIMENSIONS` in `@modules/dimension/ids`).
+   and strips the dropped legacy dimensions (`DROPPED_LEGACY_DIMENSIONS` in `@modules/dimension/ids`).
 2. `getVisualizationUiConfig` (`@modules/visualization/state`) derives `visUiConfig` — layout
    arrays, items, conditions and options — from the normalized visualization. It applies two
    dimension translations on the way:

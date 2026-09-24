@@ -9,7 +9,7 @@ import {
     ENROLLMENT_SCOPED_DIMENSION_IDS,
     getCompoundDimensionId,
     META_DIMENSION_IDS,
-    WIRE_ONLY_DIMENSIONS,
+    DROPPED_LEGACY_DIMENSIONS,
 } from '@modules/dimension/ids'
 import {
     isTimeDimensionId,
@@ -339,7 +339,7 @@ export const isCurrentVisualizationNew = (
 
 const toAppLocalAxes = (dims: DimensionArray): DimensionArray =>
     toAppLocalDimensions(
-        dims.filter((dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension))
+        dims.filter((dim) => !DROPPED_LEGACY_DIMENSIONS.has(dim.dimension))
     )
 
 const OPTION_KEYS = Object.keys(DEFAULT_OPTIONS) as Array<
@@ -573,7 +573,7 @@ const normalizeLegacyDimension = (
  *   data-element / attribute UID, since that's still a live analytics
  *   parameter
  * - Drop top-level `program` and `programStage`
- * - Drop the wire-only `dy`/`latitude`/`longitude` dimensions
+ * - Drop the legacy `dy`/`latitude`/`longitude` dimensions
  * - Mark output as `legacy: true` whenever any of the above upgraded the
  *   persisted shape, so the vis cannot be overwritten in place — only "Save
  *   as" is allowed. Overwriting would silently persist in the canonical
@@ -636,9 +636,9 @@ export const normalizeApiSavedVisualization = (
 
     /* Dropping a dimension rewrites the persisted shape, so it flips `legacy`
      * the same way the conversions above do. */
-    const dropWireOnlyDimensions = (dims: DimensionRecord[]) => {
+    const dropLegacyDimensions = (dims: DimensionRecord[]) => {
         const kept = dims.filter(
-            (dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension)
+            (dim) => !DROPPED_LEGACY_DIMENSIONS.has(dim.dimension)
         )
         if (kept.length !== dims.length) {
             normalizedVis.legacy = true
@@ -647,17 +647,17 @@ export const normalizeApiSavedVisualization = (
     }
 
     normalizedVis.columns = dropInvalidGrouping(
-        dropWireOnlyDimensions(columns).map((dim) =>
+        dropLegacyDimensions(columns).map((dim) =>
             normalizeLegacyDimension(dim, context, normalizedVis)
         )
     )
     normalizedVis.rows = dropInvalidGrouping(
-        dropWireOnlyDimensions(rows).map((dim) =>
+        dropLegacyDimensions(rows).map((dim) =>
             normalizeLegacyDimension(dim, context, normalizedVis)
         )
     )
     normalizedVis.filters = dropInvalidGrouping(
-        dropWireOnlyDimensions(rawFilters).map((dim) =>
+        dropLegacyDimensions(rawFilters).map((dim) =>
             normalizeLegacyDimension(dim, context, normalizedVis)
         )
     )
