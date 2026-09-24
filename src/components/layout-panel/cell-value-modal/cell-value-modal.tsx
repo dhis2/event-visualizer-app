@@ -10,11 +10,16 @@ import {
     ModalActions,
     ModalContent,
     ModalTitle,
+    NoticeBox,
 } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector, useLayoutContext } from '@hooks'
+import { useAppDispatch, useAppSelector, useMetadataItem } from '@hooks'
+import { isProgramMetadataItem } from '@modules/metadata/item-guards'
+import { getDataSourceId } from '@store/dimensions-selection-slice'
 import {
     clearVisUiConfigCellValue,
     getVisUiConfigCellValue,
+    setVisUiConfigCellValue,
+    type CellValueObject,
 } from '@store/vis-ui-config-slice'
 import { type FC, useCallback, useState } from 'react'
 import { CellValueItemPicker } from './cell-value-item-picker'
@@ -31,21 +36,43 @@ type CellValueMode = 'COUNT' | 'DATA_ITEM'
 
 export const CellValueModal: FC<CellValueModalProps> = ({ onClose }) => {
     const dispatch = useAppDispatch()
-    const { programIds } = useLayoutContext()
-    const cellValue = useAppSelector(getVisUiConfigCellValue)
+    const dataSourceId = useAppSelector(getDataSourceId)
+    const dataSource = useMetadataItem(dataSourceId)
+    const storedCellValue = useAppSelector(getVisUiConfigCellValue)
     const [mode, setMode] = useState<CellValueMode>(
-        cellValue ? 'DATA_ITEM' : 'COUNT'
+        storedCellValue ? 'DATA_ITEM' : 'COUNT'
     )
+    /* The pick is held here rather than in the store until the dialog closes,
+     * so switching to Count and back keeps it while closing on Count discards
+     * it. */
+    const [draftCellValue, setDraftCellValue] = useState<
+        CellValueObject | undefined
+    >(storedCellValue)
 
-    const onSelectCount = useCallback(() => {
-        setMode('COUNT')
-        dispatch(clearVisUiConfigCellValue())
-    }, [dispatch])
+    const onSelectCount = useCallback(() => setMode('COUNT'), [])
     const onSelectDataItem = useCallback(() => setMode('DATA_ITEM'), [])
+
+    const commitAndClose = useCallback(() => {
+        if (mode === 'DATA_ITEM' && draftCellValue) {
+            dispatch(setVisUiConfigCellValue(draftCellValue))
+        } else {
+            dispatch(clearVisUiConfigCellValue())
+        }
+        onClose()
+    }, [dispatch, mode, draftCellValue, onClose])
+
+    /* Data items are offered for the program selected in the sidebar, which is
+     * independent of the layout — a cell value from another program is a valid
+     * pick that the output type buttons then flag. A tracked entity type data
+     * source has no such list. */
+    const dataSourceProgramId =
+        dataSource && isProgramMetadataItem(dataSource)
+            ? dataSource.id
+            : undefined
 
     return (
         <Modal
-            onClose={onClose}
+            onClose={commitAndClose}
             position="top"
             large
             dataTest="cell-value-modal"
@@ -58,7 +85,7 @@ export const CellValueModal: FC<CellValueModalProps> = ({ onClose }) => {
                         value="COUNT"
                         label={i18n.t('Count')}
                         helpText={i18n.t(
-                            'Each cell shows a count of the events, enrollments or tracked entities the table is built from.'
+                            'Number of the events, enrollments or tracked entities.'
                         )}
                         selected={mode === 'COUNT'}
                         onSelect={onSelectCount}
@@ -70,14 +97,29 @@ export const CellValueModal: FC<CellValueModalProps> = ({ onClose }) => {
                         value="DATA_ITEM"
                         label={i18n.t('Data item value')}
                         helpText={i18n.t(
-                            "Each cell shows a data item's value instead — for example, a total or average. Used for every output type."
+                            'An aggregated value for a data item.'
                         )}
                         selected={mode === 'DATA_ITEM'}
                         onSelect={onSelectDataItem}
                         dataTest="cell-value-mode-data-item"
                         emphasized
                     >
-                        <CellValueItemPicker programId={programIds[0]} />
+                        {dataSourceProgramId ? (
+                            <CellValueItemPicker
+                                programId={dataSourceProgramId}
+                                cellValue={draftCellValue}
+                                onChange={setDraftCellValue}
+                            />
+                        ) : (
+                            <NoticeBox
+                                dense
+                                title={i18n.t('No program selected')}
+                            >
+                                {i18n.t(
+                                    'Choose a program in the sidebar to pick a data item.'
+                                )}
+                            </NoticeBox>
+                        )}
                     </RadioCard>
                 </RadioCardGroup>
             </ModalContent>
@@ -85,7 +127,7 @@ export const CellValueModal: FC<CellValueModalProps> = ({ onClose }) => {
                 <ButtonStrip>
                     <Button
                         type="button"
-                        onClick={onClose}
+                        onClick={commitAndClose}
                         dataTest="cell-value-modal-action-done"
                     >
                         {i18n.t('Done')}

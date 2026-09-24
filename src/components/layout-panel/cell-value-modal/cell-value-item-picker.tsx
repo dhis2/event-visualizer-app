@@ -10,11 +10,8 @@ import {
     SingleSelectField,
     SingleSelectOption,
 } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector, useMetadataStore } from '@hooks'
-import {
-    getVisUiConfigCellValue,
-    setVisUiConfigCellValue,
-} from '@store/vis-ui-config-slice'
+import { useMetadataStore } from '@hooks'
+import type { CellValueObject } from '@store/vis-ui-config-slice'
 import type { AggregationType } from '@types'
 import { useMemo, useState, type FC } from 'react'
 import { CellValueOption } from './cell-value-option'
@@ -40,12 +37,18 @@ const resolveAggregationType = (
         : item.aggregationType
 }
 
-export const CellValueItemPicker: FC<{ programId: string }> = ({
+type CellValueItemPickerProps = {
+    programId: string
+    cellValue: CellValueObject | undefined
+    onChange: (cellValue: CellValueObject) => void
+}
+
+export const CellValueItemPicker: FC<CellValueItemPickerProps> = ({
     programId,
+    cellValue,
+    onChange,
 }) => {
-    const dispatch = useAppDispatch()
     const metadataStore = useMetadataStore()
-    const cellValue = useAppSelector(getVisUiConfigCellValue)
     const [searchTerm, setSearchTerm] = useState('')
     const [aggregationType, setAggregationType] = useState<AggregationType>(
         cellValue?.aggregationType ?? 'DEFAULT'
@@ -71,27 +74,23 @@ export const CellValueItemPicker: FC<{ programId: string }> = ({
 
     const onItemClick = (item: CellValueItem) => {
         metadataStore.addMetadata(item)
-        dispatch(
-            setVisUiConfigCellValue({
-                id: item.id,
-                aggregationType: resolveAggregationType(aggregationType, item),
-            })
-        )
+        onChange({
+            id: item.id,
+            aggregationType: resolveAggregationType(aggregationType, item),
+        })
     }
 
     const onAggregationTypeChange = ({ selected }: { selected: string }) => {
         const nextAggregationType = selected as AggregationType
         setAggregationType(nextAggregationType)
         if (selectedItem) {
-            dispatch(
-                setVisUiConfigCellValue({
-                    id: selectedItem.id,
-                    aggregationType: resolveAggregationType(
-                        nextAggregationType,
-                        selectedItem
-                    ),
-                })
-            )
+            onChange({
+                id: selectedItem.id,
+                aggregationType: resolveAggregationType(
+                    nextAggregationType,
+                    selectedItem
+                ),
+            })
         }
     }
 

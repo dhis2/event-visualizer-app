@@ -139,21 +139,12 @@ describe('CellValueAxis', () => {
         expect(await screen.findByTestId('cell-value-modal')).toBeVisible()
     })
 
-    it('is disabled when the layout has no program', async () => {
-        await renderWithAppWrapper(
-            <CellValueAxis />,
-            buildMockOptions({ columns: [] })
-        )
-
-        expect(getTrigger()).toBeDisabled()
-    })
-
-    it('is disabled when the layout spans multiple programs', async () => {
+    it('stays clickable whatever programs the layout holds', async () => {
         await renderWithAppWrapper(
             <CellValueAxis />,
             buildMockOptions({ columns: ['s1.de1', 's2.de1'] })
         )
 
-        expect(getTrigger()).toBeDisabled()
+        expect(getTrigger()).toBeEnabled()
     })
 })

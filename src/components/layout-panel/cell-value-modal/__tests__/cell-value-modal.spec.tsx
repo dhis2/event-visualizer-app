@@ -1,4 +1,5 @@
 import { getCurrentVis } from '@store/current-vis-slice'
+import { initialState as dimensionSelectionInitialState } from '@store/dimensions-selection-slice'
 import {
     initialState as visUiConfigInitialState,
     getVisUiConfigCellValue,
@@ -50,6 +51,10 @@ const metadata = {
         dimensionType: 'DATA_ELEMENT',
         valueType: 'NUMBER',
     },
+    tet1: {
+        id: 'tet1',
+        name: 'Person',
+    },
     'p1.enrollmentDate': {
         id: 'p1.enrollmentDate',
         name: 'Enrollment Date',
@@ -81,6 +86,11 @@ const defaultQueryData: MockOptions['queryData'] = {
 
 const initialPreloadedState: Partial<RootState> = {
     visUiConfig: visUiConfigInitialState,
+    /* The item list is fetched for the sidebar's program, not the layout's. */
+    dimensionSelection: {
+        ...dimensionSelectionInitialState,
+        dataSourceId: 'p1',
+    },
 }
 
 const buildMockOptions = (
@@ -145,7 +155,7 @@ describe('CellValueModal', () => {
         })
     })
 
-    it('clears the stored cell value when switching back to Count', async () => {
+    it('keeps the stored cell value until the dialog is closed on Count', async () => {
         const user = userEvent.setup()
         const { store } = await renderWithAppWrapper(
             <CellValueModal onClose={() => {}} />,
@@ -157,7 +167,38 @@ describe('CellValueModal', () => {
 
         await user.click(screen.getByRole('radio', { name: /Count/ }))
 
+        expect(getVisUiConfigCellValue(store.getState())).toEqual({
+            id: 's1.de1',
+            aggregationType: 'SUM',
+        })
+
+        await user.click(screen.getByRole('button', { name: 'Done' }))
+
         expect(getVisUiConfigCellValue(store.getState())).toBeUndefined()
+    })
+
+    it('keeps the pick when toggling to Count and back', async () => {
+        const user = userEvent.setup()
+        const { store } = await renderWithAppWrapper(
+            <CellValueModal onClose={() => {}} />,
+            buildMockOptions(['s1.de1'])
+        )
+
+        await selectDataItemMode(user)
+        await waitFor(() => {
+            expect(screen.getByText('Weight in kg')).toBeInTheDocument()
+        })
+        await user.click(screen.getByText('Weight in kg'))
+
+        await user.click(screen.getByRole('radio', { name: /Count/ }))
+        await selectDataItemMode(user)
+
+        await user.click(screen.getByRole('button', { name: 'Done' }))
+
+        expect(getVisUiConfigCellValue(store.getState())).toEqual({
+            aggregationType: 'SUM',
+            id: 's1.de1',
+        })
     })
 
     it('shows the loading indicator before data items load', async () => {
@@ -194,7 +235,7 @@ describe('CellValueModal', () => {
         })
     })
 
-    it('renders the program-scoped empty-state notice when no data items are returned and the layout has no stage', async () => {
+    it('renders the program-scoped empty-state notice when no data items are returned', async () => {
         await renderWithAppWrapper(
             <CellValueModal onClose={() => {}} />,
             buildMockOptions(['p1.enrollmentDate'], {
@@ -211,7 +252,7 @@ describe('CellValueModal', () => {
         })
     })
 
-    it('stores the data item as soon as it is picked, and Done only closes', async () => {
+    it('stores the picked data item on Done, not as soon as it is picked', async () => {
         const onClose = vi.fn()
         const user = userEvent.setup()
         const { store } = await renderWithAppWrapper(
@@ -227,6 +268,10 @@ describe('CellValueModal', () => {
 
         await user.click(screen.getByText('Weight in kg'))
 
+        expect(getVisUiConfigCellValue(store.getState())).toBeUndefined()
+
+        await user.click(screen.getByRole('button', { name: 'Done' }))
+
         expect(getVisUiConfigCellValue(store.getState())).toEqual({
             aggregationType: 'SUM',
             id: 's1.de1',
@@ -234,9 +279,6 @@ describe('CellValueModal', () => {
         /* Applying it to the canvas is the update button's job, exactly as for
          * a layout change. */
         expect(getCurrentVis(store.getState()).value).toBeUndefined()
-
-        await user.click(screen.getByRole('button', { name: 'Done' }))
-
         expect(onClose).toHaveBeenCalledOnce()
     })
 
@@ -296,6 +338,7 @@ describe('CellValueModal', () => {
         })
 
         await user.click(screen.getByText('Gender score'))
+        await user.click(screen.getByRole('button', { name: 'Done' }))
 
         expect(getVisUiConfigCellValue(store.getState())).toEqual({
             aggregationType: 'AVERAGE',
@@ -386,5 +429,47 @@ describe('CellValueModal', () => {
         await user.click(screen.getByText('Weight in kg'))
         expect(screen.getByText('Use item default')).toBeInTheDocument()
         expect(screen.queryByText('Average')).not.toBeInTheDocument()
+    })
+
+    it('commits the pick when the dialog is dismissed without pressing Done', async () => {
+        const user = userEvent.setup()
+        const { store } = await renderWithAppWrapper(
+            <CellValueModal onClose={() => {}} />,
+            buildMockOptions(['s1.de1'])
+        )
+
+        await selectDataItemMode(user)
+        await waitFor(() => {
+            expect(screen.getByText('Weight in kg')).toBeInTheDocument()
+        })
+        await user.click(screen.getByText('Weight in kg'))
+
+        await user.keyboard('{Escape}')
+
+        expect(getVisUiConfigCellValue(store.getState())).toEqual({
+            aggregationType: 'SUM',
+            id: 's1.de1',
+        })
+    })
+
+    it('offers no data item list when the data source is a tracked entity type', async () => {
+        const user = userEvent.setup()
+        await renderWithAppWrapper(<CellValueModal onClose={() => {}} />, {
+            metadata,
+            queryData: defaultQueryData,
+            partialStore: {
+                preloadedState: deepmerge(initialPreloadedState, {
+                    dimensionSelection: { dataSourceId: 'tet1' },
+                    visUiConfig: { visualizationType: 'PIVOT_TABLE' },
+                }),
+            },
+        })
+
+        await selectDataItemMode(user)
+
+        expect(screen.getByText('No program selected')).toBeInTheDocument()
+        expect(
+            screen.queryByPlaceholderText('Search data items')
+        ).not.toBeInTheDocument()
     })
 })
