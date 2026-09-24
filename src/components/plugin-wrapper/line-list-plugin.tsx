@@ -22,6 +22,7 @@ type LineListPluginProps = {
     onColumnHeaderClick?: ColumnHeaderClickFn
     onDataSorted?: (sorting: InternalSorting) => void
     onResponseReceived: () => void
+    filterText?: string
 }
 
 export const LineListPlugin: FC<LineListPluginProps> = ({
@@ -33,6 +34,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     onColumnHeaderClick,
     onDataSorted,
     onResponseReceived,
+    filterText,
 }) => {
     const [fetchAnalyticsData, { data, isFetching }] =
         useLineListAnalyticsData()
@@ -125,6 +127,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
 
     return (
         <LineList
+            filterText={filterText}
             analyticsData={data}
             onDataSort={onDataSort}
             onPaginate={onPaginate}
