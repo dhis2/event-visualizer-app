@@ -18,6 +18,9 @@ export default defineConfig({
             ...configDefaults.exclude,
             '**/.d2/**',
             '**/.claude/**',
+            /* Installing a git dependency leaves the extracted package, tests
+             * and all, in the project-local pnpm store. */
+            '**/.pnpm-store/**',
             // Third-party sources fetched for reference by `npx opensrc`
             '**/opensrc/**',
         ],
