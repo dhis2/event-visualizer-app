@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-10-01T13:13:57.484Z\n"
-"PO-Revision-Date: 2026-10-01T13:13:57.484Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:42.687Z\n"
+"PO-Revision-Date: 2026-10-01T13:14:42.687Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -231,12 +231,6 @@ msgstr "Program stage: {{- stageName}}"
 
 msgid "Grouping: {{- groupingName}}"
 msgstr "Grouping: {{- groupingName}}"
-
-msgid "Levels"
-msgstr "Levels"
-
-msgid "Groups"
-msgstr "Groups"
 
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr "Using: {{- itemName}} ({{- aggregationType}})"
@@ -1028,6 +1022,12 @@ msgstr "Enrollment status"
 
 msgid "Registration org. unit"
 msgstr "Registration org. unit"
+
+msgid "Levels"
+msgstr "Levels"
+
+msgid "Groups"
+msgstr "Groups"
 
 msgid "Enrollment date"
 msgstr "Enrollment date"
