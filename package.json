@@ -1,7 +1,7 @@
 {
-    "name": "event-visualizer-app",
-    "version": "0.0.1",
-    "description": "Event visualizer app and plugin",
+    "name": "individual-data-visualizer-app",
+    "version": "101.0.0",
+    "description": "Individual data visualizer app and plugin",
     "license": "BSD-3-Clause",
     "private": true,
     "scripts": {

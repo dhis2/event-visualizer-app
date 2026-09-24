@@ -1,19 +1,16 @@
 import { Plugin as UntypedPlugin } from '@dhis2/app-runtime/experimental'
-import type { PluginFilters } from '@types'
+import type { DashboardPluginProps, PluginFilters } from '@types'
 import { useState, type FC } from 'react'
 
 /* Plugin types only its own layout props and forwards the rest as `any`, so
  * re-type it for the props this host sends. */
-type HostPluginProps = {
+type HostPluginProps = DashboardPluginProps & {
     pluginSource: string
     /* Without a fixed height a PivotTable renders 0×0; a dashboard cell gives one. */
     height: number
-    visualization: { id: string }
-    displayProperty: string
     forDashboard: boolean
     isVisualizationLoaded: boolean
     cacheId: string
-    filters?: PluginFilters
 }
 
 const Plugin: FC<HostPluginProps> = UntypedPlugin
@@ -84,7 +81,7 @@ export const PluginHostApp: FC = () => {
                         key={trimmedVisualizationId}
                         pluginSource="/plugin.html"
                         height={400}
-                        visualization={{ id: trimmedVisualizationId }}
+                        visualizationId={trimmedVisualizationId}
                         displayProperty="name"
                         forDashboard
                         isVisualizationLoaded
