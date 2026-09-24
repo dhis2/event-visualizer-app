@@ -24,7 +24,7 @@ export const getAvailableOutputTypes = (
 
 export type TooltipConfig = { content: string; openDelay?: number } | undefined
 
-const getRegistrationOuTooltipContent = (): TooltipConfig => ({
+const getRegistrationOuTooltipConfig = (): TooltipConfig => ({
     content: i18n.t('Not valid with registration org. unit'),
 })
 
@@ -33,7 +33,7 @@ type CategoryLayoutState = {
     hasCategoryOptionGroupSetInLayout: boolean
 }
 
-const getCategoryTooltipContent = ({
+const getCategoryTooltipConfig = ({
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
 }: CategoryLayoutState): TooltipConfig => {
@@ -53,7 +53,7 @@ const getCategoryTooltipContent = ({
     return undefined
 }
 
-type EventTooltipContentParams = {
+type EventTooltipConfigParams = {
     hasNoProgramInLayout: boolean
     hasMultipleProgramsInLayout: boolean
     hasMultipleProgramStagesInLayout: boolean
@@ -61,13 +61,13 @@ type EventTooltipContentParams = {
     visualizationType: string
 }
 
-const getEventTooltipContent = ({
+const getEventTooltipConfig = ({
     hasNoProgramInLayout,
     hasMultipleProgramsInLayout,
     hasMultipleProgramStagesInLayout,
     isRegistrationOuInLayout,
     visualizationType,
-}: EventTooltipContentParams): TooltipConfig => {
+}: EventTooltipConfigParams): TooltipConfig => {
     if (hasNoProgramInLayout) {
         return { content: i18n.t('Not valid without a program') }
     }
@@ -81,7 +81,7 @@ const getEventTooltipContent = ({
     }
 
     if (isRegistrationOuInLayout) {
-        return getRegistrationOuTooltipContent()
+        return getRegistrationOuTooltipConfig()
     }
 
     if (hasMultipleProgramStagesInLayout) {
@@ -91,7 +91,7 @@ const getEventTooltipContent = ({
     return undefined
 }
 
-type EnrollmentTooltipContentParams = {
+type EnrollmentTooltipConfigParams = {
     programMetadata: Program | undefined
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
@@ -101,7 +101,7 @@ type EnrollmentTooltipContentParams = {
     visualizationType: string
 }
 
-const getEnrollmentTooltipContent = ({
+const getEnrollmentTooltipConfig = ({
     programMetadata,
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
@@ -109,7 +109,7 @@ const getEnrollmentTooltipContent = ({
     hasMultipleProgramsInLayout,
     isRegistrationOuInLayout,
     visualizationType,
-}: EnrollmentTooltipContentParams): TooltipConfig => {
+}: EnrollmentTooltipConfigParams): TooltipConfig => {
     if (hasNoProgramInLayout) {
         return { content: i18n.t('Not valid without a program') }
     }
@@ -127,16 +127,16 @@ const getEnrollmentTooltipContent = ({
     }
 
     if (isRegistrationOuInLayout) {
-        return getRegistrationOuTooltipContent()
+        return getRegistrationOuTooltipConfig()
     }
 
-    return getCategoryTooltipContent({
+    return getCategoryTooltipConfig({
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
     })
 }
 
-type TrackedEntityInstanceTooltipContentParams = {
+type TrackedEntityInstanceTooltipConfigParams = {
     programMetadata: Program | undefined
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
@@ -148,7 +148,7 @@ type TrackedEntityInstanceTooltipContentParams = {
     visualizationType: string
 }
 
-const getTrackedEntityInstanceTooltipContent = ({
+const getTrackedEntityInstanceTooltipConfig = ({
     programMetadata,
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
@@ -158,7 +158,7 @@ const getTrackedEntityInstanceTooltipContent = ({
     hasNoTetInLayout,
     hasProgramIndicatorsInLayout,
     visualizationType,
-}: TrackedEntityInstanceTooltipContentParams): TooltipConfig => {
+}: TrackedEntityInstanceTooltipConfigParams): TooltipConfig => {
     if (hasCompletedOnInLayout) {
         return {
             content: i18n.t('Not valid with Completed on'),
@@ -190,7 +190,7 @@ const getTrackedEntityInstanceTooltipContent = ({
         return { content: i18n.t('Not valid with program indicators') }
     }
 
-    return getCategoryTooltipContent({
+    return getCategoryTooltipConfig({
         hasCategoryInLayout,
         hasCategoryOptionGroupSetInLayout,
     })
@@ -256,7 +256,7 @@ export const getOutputTypeTooltipConfig = ({
 
     switch (outputType) {
         case 'EVENT':
-            return getEventTooltipContent({
+            return getEventTooltipConfig({
                 hasNoProgramInLayout,
                 hasMultipleProgramsInLayout,
                 hasMultipleProgramStagesInLayout: programStageIds.length > 1,
@@ -264,7 +264,7 @@ export const getOutputTypeTooltipConfig = ({
                 visualizationType,
             })
         case 'ENROLLMENT':
-            return getEnrollmentTooltipContent({
+            return getEnrollmentTooltipConfig({
                 programMetadata,
                 hasCategoryInLayout,
                 hasCategoryOptionGroupSetInLayout,
@@ -274,7 +274,7 @@ export const getOutputTypeTooltipConfig = ({
                 visualizationType,
             })
         case 'TRACKED_ENTITY_INSTANCE':
-            return getTrackedEntityInstanceTooltipContent({
+            return getTrackedEntityInstanceTooltipConfig({
                 programMetadata,
                 hasCategoryInLayout,
                 hasCategoryOptionGroupSetInLayout,
