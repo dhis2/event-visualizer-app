@@ -1,19 +1,9 @@
 import type { LayoutDimension } from '@components/layout-panel/axis/chip'
-import { ouIdHelper } from '@dhis2/analytics'
 import { useMetadataItems } from '@hooks'
 import {
-    parseConditionsStringToArray,
-    shouldUseLegendSetConditions,
-    shouldUseOptionSetConditions,
-    shouldUseBooleanConditions,
-    shouldUseOrgUnitConditions,
-    getLegendSetConditionMetadataIds,
-    getOptionSetIdAndSelectedOptionCodes,
-    getBooleanConditionTexts,
-    getOrgUnitConditionMetadataIds,
-    getOperatorConditionTexts,
-} from '@modules/conditions'
-import { isOptionSetMetadataItem } from '@modules/metadata/item-guards'
+    getConditionsMetadataIds,
+    getConditionsTexts,
+} from '@modules/condition-texts'
 import type { SavedVisualization } from '@types'
 import { useMemo } from 'react'
 
@@ -39,90 +29,20 @@ export const useConditionsTexts = ({
     dimension,
     formatValueOptions,
 }: UseConditionsTextsParams): string[] => {
-    const conditionsList = useMemo(
-        () => parseConditionsStringToArray(conditions?.condition ?? ''),
-        [conditions?.condition]
+    const metadataIds = useMemo(
+        () => getConditionsMetadataIds({ conditions, dimension }),
+        [conditions, dimension]
     )
-    const metadataIds = useMemo(() => {
-        if (shouldUseLegendSetConditions(conditions)) {
-            return getLegendSetConditionMetadataIds(conditions, conditionsList)
-        }
-        if (shouldUseOrgUnitConditions(conditions, dimension, conditionsList)) {
-            return getOrgUnitConditionMetadataIds(conditionsList, true)
-        }
-        if (
-            shouldUseOptionSetConditions(conditions, dimension, conditionsList)
-        ) {
-            const { optionSetId } = getOptionSetIdAndSelectedOptionCodes(
-                dimension,
-                conditionsList
-            )
-            return [optionSetId]
-        }
-
-        return []
-    }, [conditionsList, conditions, dimension])
     const metadataItems = useMetadataItems(metadataIds)
-    const names = useMemo(() => {
-        if (shouldUseLegendSetConditions(conditions)) {
-            // Prefer name, fallback to ID
-            return metadataIds.map((id) => metadataItems[id]?.name ?? id)
-        }
-        if (shouldUseOrgUnitConditions(conditions, dimension, conditionsList)) {
-            // Prefer name from original ID, fallback to unprefixed ID name, then ID
-            const idsWithoutUnprefixed = getOrgUnitConditionMetadataIds(
-                conditionsList,
-                false
-            )
-            return idsWithoutUnprefixed.map((id) => {
-                const metadataItem = metadataItems[id]
-                if (metadataItem?.name) {
-                    return metadataItem.name
-                }
-                // Try unprefixed version if original has no name
-                const unprefixedId = ouIdHelper.removePrefix(id)
-                const unprefixedMetadataItem = metadataItems[unprefixedId]
-                return unprefixedMetadataItem?.name ?? id
-            })
-        }
-        if (
-            shouldUseOptionSetConditions(conditions, dimension, conditionsList)
-        ) {
-            const { optionSetId, selectedOptionCodes } =
-                getOptionSetIdAndSelectedOptionCodes(dimension, conditionsList)
-            const optionSetMetadata = metadataItems[optionSetId]
 
-            if (isOptionSetMetadataItem(optionSetMetadata)) {
-                const selectedOptionCodesLookup = new Set(selectedOptionCodes)
-                return (
-                    optionSetMetadata.options
-                        .filter((option) =>
-                            selectedOptionCodesLookup.has(option.code)
-                        )
-                        // Prefer name
-                        .map((option) => option.name)
-                )
-            } else {
-                // Fallback to ID
-                return selectedOptionCodes
-            }
-        }
-        if (shouldUseBooleanConditions(conditions, dimension, conditionsList)) {
-            return getBooleanConditionTexts(conditionsList)
-        }
-        return getOperatorConditionTexts(
-            dimension,
-            conditionsList,
-            formatValueOptions
-        )
-    }, [
-        conditions,
-        dimension,
-        conditionsList,
-        metadataIds,
-        metadataItems,
-        formatValueOptions,
-    ])
-
-    return names
+    return useMemo(
+        () =>
+            getConditionsTexts({
+                conditions,
+                dimension,
+                formatValueOptions,
+                metadataItems,
+            }),
+        [conditions, dimension, formatValueOptions, metadataItems]
+    )
 }

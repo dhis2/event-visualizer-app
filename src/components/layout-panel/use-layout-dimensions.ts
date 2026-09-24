@@ -4,6 +4,7 @@ import {
     useDimensionMetadataItems,
     useMetadataItems,
 } from '@hooks'
+import { toLayoutDimension } from '@modules/dimension/layout-dimension'
 import {
     buildSuffixContext,
     getDimensionSuffix,
@@ -99,28 +100,7 @@ export const useDimensionsWithSuffixes = (
                     throw new Error(`missing metadata for dimension ${id}`)
                 }
 
-                const dimension: LayoutDimension = {
-                    id,
-                    name: metadataItem.name || id,
-                    dimensionId: metadataItem.dimensionId ?? id,
-                    dimensionType: metadataItem.dimensionType,
-                    programStageId: metadataItem.programStageId,
-                    programId: metadataItem.programId,
-                    trackedEntityTypeId: metadataItem.trackedEntityTypeId,
-                    suffix: getDimensionSuffix(metadataItem, context),
-                }
-
-                if (metadataItem.optionSetId) {
-                    dimension.optionSet = metadataItem.optionSetId
-                }
-                if (metadataItem.valueType) {
-                    dimension.valueType = metadataItem.valueType
-                }
-                if (metadataItem.dimensionItemType) {
-                    dimension.dimensionItemType = metadataItem.dimensionItemType
-                }
-
-                acc[id] = dimension
+                acc[id] = toLayoutDimension(id, metadataItem, context)
                 return acc
             },
             {}
