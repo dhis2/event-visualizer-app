@@ -4,7 +4,7 @@ import type {
     LegendSet,
 } from './dhis2-openapi-schemas'
 import type { DimensionType } from './dimension'
-import type { Program, ProgramStage } from '.'
+import type { Program, ProgramStage, TrackedEntityTypeRef } from '.'
 
 /** PHASES
  * 1. Data is provided as a single object, object map, or object array
@@ -129,6 +129,7 @@ export type MetadataItem =
     | UserOrgUnitMetadataItem
     | Program
     | ProgramStage
+    | TrackedEntityTypeRef
 
 export type MetadataMap = Map<string, MetadataItem>
 export type Subscriber = () => void

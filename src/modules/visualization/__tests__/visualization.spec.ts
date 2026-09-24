@@ -629,6 +629,51 @@ describe('normalizeApiSavedVisualization', () => {
         expect(result.legacy).toBe(true)
     })
 
+    it('maps a legacy visualization with no title to a hidden title', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ legacy: true, hideTitle: false })
+        )
+
+        expect(result.hideTitle).toBe(true)
+    })
+
+    it('maps a legacy visualization with a title to a shown title', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ legacy: true, hideTitle: true, title: 'Kept' })
+        )
+
+        expect(result.hideTitle).toBe(false)
+        expect(result.title).toBe('Kept')
+    })
+
+    it('treats a legacy whitespace-only title as no title', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ legacy: true, title: '  ' })
+        )
+
+        expect(result.hideTitle).toBe(true)
+    })
+
+    it('honours the stored hideTitle on a non-legacy visualization', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({ hideTitle: false })
+        )
+
+        expect(result.hideTitle).toBe(false)
+    })
+
+    it('hides the title on a visualization made legacy by an upgrade', () => {
+        const result = normalizeApiSavedVisualization(
+            buildApiVis({
+                hideTitle: false,
+                program: { id: PID },
+            } as Partial<ApiSavedVisualization>)
+        )
+
+        expect(result.legacy).toBe(true)
+        expect(result.hideTitle).toBe(true)
+    })
+
     it('leaves ENROLLMENT enrollment `ou` as `ou`', () => {
         const result = normalizeApiSavedVisualization(
             buildApiVis({

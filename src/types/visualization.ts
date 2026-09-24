@@ -8,7 +8,7 @@ import type {
 import type { DimensionType } from './dimension'
 import type { MetadataInputMap } from './metadata'
 import type { EventVisualizationOptions } from './options'
-import type { Program } from './program'
+import type { Program, TrackedEntityTypeRef } from './program'
 import type { ProgramStage } from './program-stage'
 import type { VisualizationType } from './visualization-type'
 
@@ -69,7 +69,7 @@ type SavedVisualizationFieldOverrides = {
     program: Program
     programStage: ProgramStage
     programDimensions?: ProgramDimensionArray
-    trackedEntityType?: IdNameRecord
+    trackedEntityType?: TrackedEntityTypeRef
 
     // Custom dimension metadata arrays (from getDimensionMetadataFields)
     dataElementDimensions: DataElementDimensionArray

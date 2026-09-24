@@ -38,6 +38,7 @@ type PivotTablePluginProps = {
     isInDashboard: boolean
     isInModal: boolean
     onResponseReceived: () => void
+    filterText?: string
 }
 
 export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
@@ -45,6 +46,7 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
     visualization,
     relativePeriodDate,
     onResponseReceived,
+    filterText,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isInDashboard,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -86,5 +88,11 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
         return null
     }
 
-    return <PivotTable visualization={eventVisualization} data={data} />
+    return (
+        <PivotTable
+            visualization={eventVisualization}
+            data={data}
+            filterText={filterText}
+        />
+    )
 }

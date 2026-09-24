@@ -62,6 +62,7 @@ type LineListProps = {
     isInDashboard?: boolean
     isInModal?: boolean
     onColumnHeaderClick?: ColumnHeaderClickFn
+    filterText?: string
 }
 
 export const LineList: FC<LineListProps> = (props) =>
@@ -82,6 +83,7 @@ const LineListInternal: FC<LineListProps> = ({
     isInDashboard = false,
     isInModal = false,
     onColumnHeaderClick,
+    filterText,
 }) => {
     const { isDisconnected } = useDhis2ConnectionStatus()
     const { headers, rows, pager, legendSets } = useTransformedLineListData(
@@ -162,6 +164,12 @@ const LineListInternal: FC<LineListProps> = ({
                             {visualization.subtitle && (
                                 <HeadingRow
                                     text={visualization.subtitle}
+                                    colSpan={colSpan}
+                                />
+                            )}
+                            {filterText && (
+                                <HeadingRow
+                                    text={filterText}
                                     colSpan={colSpan}
                                 />
                             )}

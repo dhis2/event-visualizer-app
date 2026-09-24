@@ -7,6 +7,8 @@ import { navigationSlice, setNavigationState } from '../navigation-slice'
 import type { NavigationState } from '../navigation-slice'
 import { tClearVisualization, tLoadSavedVisualization } from '../thunks'
 import {
+    setVisUiConfigOption,
+    setVisUiConfigOutputType,
     setVisUiConfigVisualizationType,
     visUiConfigSlice,
 } from '../vis-ui-config-slice'
@@ -82,17 +84,20 @@ describe('navigationSlice listener', () => {
 })
 
 describe('visUiConfig visualization type listener', () => {
+    const createVisUiConfigStore = () =>
+        configureStore({
+            reducer: { visUiConfig: visUiConfigSlice.reducer },
+            middleware: (getDefaultMiddleware) =>
+                getDefaultMiddleware().prepend(listenerMiddleware.middleware),
+        })
+
     beforeEach(() => {
         listenerMiddleware.clearListeners()
         registerAppListeners()
     })
 
     it('stores the chosen visualization type as the last used one', async () => {
-        const store = configureStore({
-            reducer: { visUiConfig: visUiConfigSlice.reducer },
-            middleware: (getDefaultMiddleware) =>
-                getDefaultMiddleware().prepend(listenerMiddleware.middleware),
-        })
+        const store = createVisUiConfigStore()
 
         store.dispatch(setVisUiConfigVisualizationType('PIVOT_TABLE'))
         await Promise.resolve()
@@ -100,5 +105,36 @@ describe('visUiConfig visualization type listener', () => {
         expect(getLastUsedVisualizationTypeFromLocalStorage()).toBe(
             'PIVOT_TABLE'
         )
+    })
+
+    it('resets the title to auto generated when the visualization type changes', async () => {
+        const store = createVisUiConfigStore()
+        store.dispatch(setVisUiConfigOption({ key: 'title', value: 'Mine' }))
+
+        store.dispatch(setVisUiConfigVisualizationType('PIVOT_TABLE'))
+        await Promise.resolve()
+
+        expect(store.getState().visUiConfig.options.title).toBe('')
+        expect(store.getState().visUiConfig.options.hideTitle).toBe(false)
+    })
+
+    it('clears a hidden title when the visualization type changes', async () => {
+        const store = createVisUiConfigStore()
+        store.dispatch(setVisUiConfigOption({ key: 'hideTitle', value: true }))
+
+        store.dispatch(setVisUiConfigVisualizationType('PIVOT_TABLE'))
+        await Promise.resolve()
+
+        expect(store.getState().visUiConfig.options.hideTitle).toBe(false)
+    })
+
+    it('leaves the title alone when the output type changes', async () => {
+        const store = createVisUiConfigStore()
+        store.dispatch(setVisUiConfigOption({ key: 'title', value: 'Mine' }))
+
+        store.dispatch(setVisUiConfigOutputType('ENROLLMENT'))
+        await Promise.resolve()
+
+        expect(store.getState().visUiConfig.options.title).toBe('Mine')
     })
 })
