@@ -5,6 +5,7 @@ import { CanvasErrorFallback } from '@components/canvas-error/canvas-error-fallb
 import type { ColumnHeaderClickFn } from '@components/line-list/types'
 import { Center, CircularLoader } from '@dhis2/ui'
 import { assertNever } from '@modules/utils/guards'
+import { getVisualizationFilterText } from '@modules/visualization/filter-text'
 import { isVisualizationEmpty } from '@modules/visualization/state'
 import { getVisualizationTitle } from '@modules/visualization/title'
 import type {
@@ -46,6 +47,9 @@ const getBaseRequestIdentity = (
 
 type PluginWrapperProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
+    /* Only used to format custom start/end dates in the filter line. The
+     * dashboard plugin has no access to the user's settings and omits it. */
+    locale?: string
     visualization: CurrentVisualization | EmptyVisualization
     filters?: PluginFilters
     isInDashboard?: boolean
@@ -59,6 +63,7 @@ type PluginWrapperProps = {
 
 export const PluginWrapper: FC<PluginWrapperProps> = ({
     displayProperty,
+    locale,
     visualization,
     filters,
     isInDashboard = false,
@@ -101,6 +106,20 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
         const title = getVisualizationTitle(visualization, metadataStore)
         return { ...visualization, title, hideTitle: !title }
     }, [visualization, metadataStore])
+
+    /* Both renderers take the same string: the line list draws its own row,
+     * the pivot table engine renders it in place of its own derivation. */
+    const filterText = useMemo(
+        () =>
+            isVisualizationEmpty(visualization)
+                ? undefined
+                : getVisualizationFilterText({
+                      visualization,
+                      metadataStore,
+                      locale,
+                  }),
+        [visualization, metadataStore, locale]
+    )
 
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
@@ -163,6 +182,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     <LineListPlugin
                         displayProperty={displayProperty}
                         visualization={visualizationWithTitle}
+                        filterText={filterText}
                         relativePeriodDate={relativePeriodDate}
                         isInDashboard={isInDashboard}
                         isInModal={isInModal}
@@ -175,6 +195,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     <PivotTablePlugin
                         displayProperty={displayProperty}
                         visualization={visualizationWithTitle}
+                        filterText={filterText}
                         relativePeriodDate={relativePeriodDate}
                         isInDashboard={isInDashboard}
                         isInModal={isInModal}

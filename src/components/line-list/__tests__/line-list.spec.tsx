@@ -719,6 +719,39 @@ describe('LineList', () => {
             ).toBeInTheDocument()
         })
 
+        it('renders a filter line below the title for a filtered visualization', async () => {
+            const canonical = asCanonicalPayload(simpleLineList)
+            await renderLineList(simpleLineList, {
+                eventVisualization: {
+                    ...canonical,
+                    filters: [
+                        {
+                            dimension: 'programStatus',
+                            dimensionType: 'STATUS',
+                            program: (
+                                simpleLineList.eventVisualization as {
+                                    program: { id: string }
+                                }
+                            ).program,
+                            items: [{ id: 'ACTIVE' }],
+                        },
+                    ],
+                },
+            })
+
+            expect(
+                await screen.findByText(/Enrollment status: Active/)
+            ).toBeInTheDocument()
+        })
+
+        it('renders no filter line when there are no filters', async () => {
+            await renderLineList(simpleLineList, {
+                eventVisualization: asCanonicalPayload(simpleLineList),
+            })
+
+            expect(screen.queryByText(/Enrollment status/)).toBeNull()
+        })
+
         it('renders no title when the title is hidden', async () => {
             await renderLineList(simpleLineList, {
                 eventVisualization: {
