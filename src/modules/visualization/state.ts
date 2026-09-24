@@ -634,10 +634,8 @@ export const normalizeApiSavedVisualization = (
             : []),
     ]
 
-    /* Wire-only dimensions mark where a legacy Event Report put its value
-     * column; the app expresses that with the custom value fields instead, and
-     * carries no layout position for them. Dropping them changes the persisted
-     * shape, so it flips `legacy` like every other upgrade here. */
+    /* Dropping a dimension rewrites the persisted shape, so it flips `legacy`
+     * the same way the conversions above do. */
     const dropWireOnlyDimensions = (dims: DimensionRecord[]) => {
         const kept = dims.filter(
             (dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension)
