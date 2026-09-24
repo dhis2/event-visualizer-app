@@ -1,0 +1,45 @@
+.container {
+    position: relative;
+    block-size: 100%;
+}
+
+.content {
+    block-size: 100%;
+    transition: opacity 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.content.stale {
+    opacity: 0.66;
+}
+
+.notice {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 4px;
+    z-index: 1;
+    padding-block: 1px 8px;
+    padding-inline: 8px;
+    background: linear-gradient(
+        180deg,
+        var(--colors-grey300) 0%,
+        var(--colors-grey300) 72%,
+        transparent 100%
+    );
+    color: var(--colors-grey700);
+    font-size: 12px;
+    line-height: 16px;
+    letter-spacing: 0.01em;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    /* visibility is in the transition so the notice leaves the accessibility
+     * tree once it has faded out rather than the moment it starts to */
+    transition:
+        opacity 250ms cubic-bezier(0.4, 0, 0.2, 1),
+        visibility 250ms;
+}
+
+.notice.visible {
+    visibility: visible;
+    opacity: 0.9;
+}

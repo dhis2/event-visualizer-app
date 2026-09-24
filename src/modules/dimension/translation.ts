@@ -1,7 +1,7 @@
 import {
     CONTEXTLESS_DIMENSION_TYPES,
     META_DIMENSION_IDS,
-    WIRE_ONLY_DIMENSIONS,
+    DROPPED_LEGACY_DIMENSIONS,
 } from '@modules/dimension/ids'
 import type {
     CurrentVisualization,
@@ -15,7 +15,8 @@ export const transformDimensions = (
 ): DimensionArray =>
     dimensions
         .filter(
-            (dimensionObj) => !WIRE_ONLY_DIMENSIONS.has(dimensionObj.dimension)
+            (dimensionObj) =>
+                !DROPPED_LEGACY_DIMENSIONS.has(dimensionObj.dimension)
         )
         .map((dimensionObj) => {
             if (dimensionObj.dimensionType === 'PROGRAM_DATA_ELEMENT') {

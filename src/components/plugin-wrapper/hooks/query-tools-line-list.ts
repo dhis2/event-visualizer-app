@@ -1,5 +1,5 @@
 import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
-import { WIRE_ONLY_DIMENSIONS } from '@modules/dimension/ids'
+import { DROPPED_LEGACY_DIMENSIONS } from '@modules/dimension/ids'
 import type {
     Axis,
     CurrentVisualization,
@@ -61,7 +61,7 @@ export const getAdaptedVisualization = (
     const filters = visualization.filters ?? []
 
     const headers = [...columns, ...rows]
-        .filter((dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension))
+        .filter((dim) => !DROPPED_LEGACY_DIMENSIONS.has(dim.dimension))
         .map((dim) => buildHeaderNames(dim, visualization))
 
     return {

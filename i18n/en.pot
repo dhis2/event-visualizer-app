@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-17T12:36:05.389Z\n"
-"PO-Revision-Date: 2026-09-17T12:36:05.389Z\n"
+"POT-Creation-Date: 2026-09-23T14:32:18.188Z\n"
+"PO-Revision-Date: 2026-09-23T14:32:18.188Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -24,6 +24,9 @@ msgstr ""
 
 msgid "{{- name}} was not added because it is already used as the custom value."
 msgstr "{{- name}} was not added because it is already used as the custom value."
+
+msgid "Changes not applied"
+msgstr "Changes not applied"
 
 msgid "Retry"
 msgstr "Retry"
@@ -336,6 +339,9 @@ msgstr "Not valid with Completed on"
 
 msgid "Not valid with multiple tracked entity types"
 msgstr "Not valid with multiple tracked entity types"
+
+msgid "Not valid without a tracked entity type"
+msgstr "Not valid without a tracked entity type"
 
 msgid "Not valid with program indicators"
 msgstr "Not valid with program indicators"

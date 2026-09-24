@@ -64,9 +64,9 @@ export const resolveId = (id: string): string => {
 export const extractPlainDimensionId = (compoundId?: string | null): string =>
     (compoundId ?? '').split('.').pop()!
 
-/* Dimensions that exist only in the wire format (legacy event chart shape)
- * and have no meaning in the app-local layer. */
-export const WIRE_ONLY_DIMENSIONS: ReadonlySet<string> = new Set([
+/* Carried by visualizations saved in the legacy event chart shape. The app has
+ * no equivalent for any of them, so they are dropped wherever they turn up. */
+export const DROPPED_LEGACY_DIMENSIONS: ReadonlySet<string> = new Set([
     'dy',
     'latitude',
     'longitude',

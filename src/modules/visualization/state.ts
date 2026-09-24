@@ -9,7 +9,7 @@ import {
     ENROLLMENT_SCOPED_DIMENSION_IDS,
     getCompoundDimensionId,
     META_DIMENSION_IDS,
-    WIRE_ONLY_DIMENSIONS,
+    DROPPED_LEGACY_DIMENSIONS,
 } from '@modules/dimension/ids'
 import {
     isTimeDimensionId,
@@ -97,11 +97,10 @@ const CURRENT_VIS_KEYS: ReadonlyArray<keyof CurrentVisualization> = [
 ]
 
 /**
- * Extracts the CurrentVisualization-shaped subset of a SavedVisualization.
- * Used to compare a saved visualization to the current (edited) one —
- * the current vis is already in CurrentVisualization shape, but the saved
- * vis carries extra fields (access, createdBy, …) that we don't care about
- * when determining whether there are unsaved changes.
+ * The CurrentVisualization-shaped subset of a SavedVisualization. The API
+ * returns fields the app never edits (access, createdBy, …); only the editable
+ * subset belongs in current-vis state. Values are copied as they are — a field
+ * the API left out stays out, rather than becoming an explicit undefined.
  */
 export const toCurrentVis = (
     savedVis: SavedVisualization
@@ -115,12 +114,11 @@ export const toCurrentVis = (
     return result as CurrentVisualization
 }
 
-/* Derived from the layout: any real change is already caught by comparing the
- * axes, so comparing these adds nothing. And the two array fields
- * (programDimensions, attributeDimensions) can differ in order between a loaded
- * savedVis and a rebuilt currentVis — the app rebuilds them from the layout,
- * the backend returns its own order — which a direct compare would misread as
- * an edit. */
+/* Rebuilt from the layout's dimensions rather than edited directly, so a real
+ * change to any of them already shows up in the axis comparison. Comparing
+ * them as well would only add false positives: the backend recomputes
+ * programDimensions on every GET, in its own order, and returns more per entry
+ * than the app can rebuild from the metadata store. */
 const DERIVED_LAYOUT_FIELDS: ReadonlySet<string> = new Set([
     'trackedEntityType',
     'attributeDimensions',
@@ -129,59 +127,103 @@ const DERIVED_LAYOUT_FIELDS: ReadonlySet<string> = new Set([
 
 const DIMENSION_AXES = new Set<string>(AXES)
 
-/* A default-valued option and an absent one mean the same thing, so both count
- * as "at default" when comparing. */
+/* An option left out and an option set to its own default mean the same thing. */
 export const isDefaultOptionValue = (key: string, value: unknown): boolean =>
     value === undefined ||
     deepEqual(value, (DEFAULT_OPTIONS as Record<string, unknown>)[key])
 
-/* An axis prepared for comparison: drop the props that aren't persisted
- * (dimensionType, valueType — the API sends PROGRAM_DATA_ELEMENT where the
- * rebuilt vis has DATA_ELEMENT) and treat an empty items array as absent, so
- * unpersisted differences don't read as edits. */
-const comparableAxis = (axis: DimensionArray = []): DimensionArray =>
-    removeDimensionPropertiesBeforeSaving(axis).map((dim) => {
-        if (Array.isArray(dim.items) && dim.items.length === 0) {
-            const withoutItems = { ...dim }
-            delete withoutItems.items
-            return withoutItems
-        }
-        return dim
+/* Not persisted, so they are stripped before saving — and comparing them would
+ * report a false positive anyway: a loaded visualization carries the API's
+ * dimensionType (PROGRAM_DATA_ELEMENT) where one rebuilt from visUiConfig
+ * carries the metadata store's (DATA_ELEMENT). */
+const NON_PERSISTED_DIMENSION_PROPERTIES: ReadonlyArray<keyof DimensionRecord> =
+    ['dimensionType', 'valueType']
+
+const removeNonPersistedDimensionProperties = (
+    axis: DimensionArray
+): DimensionArray =>
+    axis.map((dim) => {
+        const dimension = { ...dim }
+
+        NON_PERSISTED_DIMENSION_PROPERTIES.forEach((property) => {
+            delete dimension[property]
+        })
+
+        return dimension
     })
 
-const areVisualizationsEquivalent = (
-    savedVis: CurrentVisualization,
-    currentVis: CurrentVisualization
-): boolean => {
-    const saved = savedVis as Record<string, unknown>
-    const current = currentVis as Record<string, unknown>
-    // currentVis always carries the full key set, so its keys cover every
-    // field a saved vis could differ on.
-    for (const key of Object.keys(current)) {
-        if (key in DEFAULT_OPTIONS) {
-            const bothAtDefault =
-                isDefaultOptionValue(key, saved[key]) &&
-                isDefaultOptionValue(key, current[key])
-            if (!bothAtDefault && !deepEqual(saved[key], current[key])) {
-                return false
-            }
-        } else if (DIMENSION_AXES.has(key)) {
-            if (
-                !deepEqual(
-                    comparableAxis(saved[key] as DimensionArray),
-                    comparableAxis(current[key] as DimensionArray)
-                )
-            ) {
-                return false
-            }
-        } else if (
-            !DERIVED_LAYOUT_FIELDS.has(key) &&
-            !deepEqual(saved[key], current[key])
-        ) {
-            return false
+/* The API returns more per dimension than the app can rebuild from visUiConfig,
+ * and none of that extra detail is an edit: option sets and legend sets come
+ * back with their display name, and a repetition comes back with the dimension,
+ * axis and program context the backend derives from the dimension owning it.
+ * Reducing both sides to what the app itself can produce leaves only real
+ * edits. */
+const comparableAxis = (axis: DimensionArray = []): DimensionArray =>
+    removeNonPersistedDimensionProperties(axis).map((dim) => {
+        const comparableDim = { ...dim }
+
+        // No items and an empty items array both mean "no selection".
+        if (Array.isArray(comparableDim.items) && !comparableDim.items.length) {
+            delete comparableDim.items
         }
+        if (comparableDim.optionSet) {
+            comparableDim.optionSet = { id: comparableDim.optionSet.id }
+        }
+        if (comparableDim.legendSet) {
+            comparableDim.legendSet = { id: comparableDim.legendSet.id }
+        }
+        if (comparableDim.repetition) {
+            comparableDim.repetition = {
+                indexes: comparableDim.repetition.indexes,
+            }
+        }
+        return comparableDim
+    })
+
+const idOnly = (ref: unknown): unknown =>
+    ref && typeof ref === 'object' && 'id' in ref
+        ? { id: (ref as { id: string }).id }
+        : ref
+
+const isFieldEquivalent = (key: string, a: unknown, b: unknown): boolean => {
+    /* The custom value: the API returns it with a display name and an
+     * aggregation type, where visUiConfig holds nothing but the id. */
+    if (key === 'value') {
+        return deepEqual(idOnly(a), idOnly(b))
     }
-    return true
+
+    if (key in DEFAULT_OPTIONS) {
+        const bothAtDefault =
+            isDefaultOptionValue(key, a) && isDefaultOptionValue(key, b)
+
+        return bothAtDefault || deepEqual(a, b)
+    }
+
+    if (DIMENSION_AXES.has(key)) {
+        return deepEqual(
+            comparableAxis(a as DimensionArray),
+            comparableAxis(b as DimensionArray)
+        )
+    }
+
+    if (DERIVED_LAYOUT_FIELDS.has(key)) {
+        return true
+    }
+
+    return deepEqual(a, b)
+}
+
+/* Only the keys present on `completeVisualization` are compared, so it has to
+ * carry the full CurrentVisualization key set: a key missing there is a key
+ * that goes unchecked. */
+export const areVisualizationsEquivalent = (
+    visualization: CurrentVisualization | EmptyVisualization,
+    completeVisualization: CurrentVisualization
+): boolean => {
+    const a = visualization as Record<string, unknown>
+    const b = completeVisualization as Record<string, unknown>
+
+    return Object.keys(b).every((key) => isFieldEquivalent(key, a[key], b[key]))
 }
 
 export const getVisualizationState = (
@@ -201,21 +243,6 @@ export const getVisualizationState = (
     }
 }
 
-const removeDimensionPropertiesBeforeSaving = (
-    axis: DimensionArray
-): DimensionArray => {
-    return axis.map((dim) => {
-        const dimension = { ...dim }
-        const propsToRemove = ['dimensionType', 'valueType']
-
-        propsToRemove.forEach((prop) => {
-            delete dimension[prop as keyof DimensionRecord]
-        })
-
-        return dimension
-    })
-}
-
 const getDimensionIdFromHeaderName = (
     headerName: string,
     visualization: CurrentVisualization
@@ -229,13 +256,13 @@ export const getSaveableVisualization = (
 ): SavedVisualization => {
     const visualization = { ...vis }
 
-    visualization.columns = removeDimensionPropertiesBeforeSaving(
+    visualization.columns = removeNonPersistedDimensionProperties(
         visualization.columns
     )
-    visualization.filters = removeDimensionPropertiesBeforeSaving(
+    visualization.filters = removeNonPersistedDimensionProperties(
         visualization.filters
     )
-    visualization.rows = removeDimensionPropertiesBeforeSaving(
+    visualization.rows = removeNonPersistedDimensionProperties(
         visualization.rows
     )
 
@@ -312,7 +339,7 @@ export const isCurrentVisualizationNew = (
 
 const toAppLocalAxes = (dims: DimensionArray): DimensionArray =>
     toAppLocalDimensions(
-        dims.filter((dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension))
+        dims.filter((dim) => !DROPPED_LEGACY_DIMENSIONS.has(dim.dimension))
     )
 
 const OPTION_KEYS = Object.keys(DEFAULT_OPTIONS) as Array<
@@ -546,6 +573,7 @@ const normalizeLegacyDimension = (
  *   data-element / attribute UID, since that's still a live analytics
  *   parameter
  * - Drop top-level `program` and `programStage`
+ * - Drop the legacy `dy`/`latitude`/`longitude` dimensions
  * - Mark output as `legacy: true` whenever any of the above upgraded the
  *   persisted shape, so the vis cannot be overwritten in place — only "Save
  *   as" is allowed. Overwriting would silently persist in the canonical
@@ -562,7 +590,6 @@ const normalizeLegacyDimension = (
  * visualizations, so they do not imply the `legacy` flag):
  * - `completedOnly` → `eventStatus=COMPLETED` filter (not legacy-only)
  * - `PROGRAM_DATA_ELEMENT` → `DATA_ELEMENT` (wire → app shape)
- * - `dy`/`latitude`/`longitude` stripping (wire → app shape)
  */
 export const normalizeApiSavedVisualization = (
     apiVis: ApiSavedVisualization
@@ -607,16 +634,30 @@ export const normalizeApiSavedVisualization = (
             : []),
     ]
 
+    /* Dropping a dimension rewrites the persisted shape, so it flips `legacy`
+     * the same way the conversions above do. */
+    const dropLegacyDimensions = (dims: DimensionRecord[]) => {
+        const kept = dims.filter(
+            (dim) => !DROPPED_LEGACY_DIMENSIONS.has(dim.dimension)
+        )
+        if (kept.length !== dims.length) {
+            normalizedVis.legacy = true
+        }
+        return kept
+    }
+
     normalizedVis.columns = dropInvalidGrouping(
-        columns.map((dim) =>
+        dropLegacyDimensions(columns).map((dim) =>
             normalizeLegacyDimension(dim, context, normalizedVis)
         )
     )
     normalizedVis.rows = dropInvalidGrouping(
-        rows.map((dim) => normalizeLegacyDimension(dim, context, normalizedVis))
+        dropLegacyDimensions(rows).map((dim) =>
+            normalizeLegacyDimension(dim, context, normalizedVis)
+        )
     )
     normalizedVis.filters = dropInvalidGrouping(
-        rawFilters.map((dim) =>
+        dropLegacyDimensions(rawFilters).map((dim) =>
             normalizeLegacyDimension(dim, context, normalizedVis)
         )
     )
