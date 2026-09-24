@@ -1036,3 +1036,67 @@ describe('useActionButton for Event button with a cell value set', () => {
         expect(result.current.action).toEqual('switch')
     })
 })
+
+describe('useActionButton with a cell value from another program', () => {
+    const buildOptions = (columns: string[], cellValueId: string | undefined) =>
+        createStoreWithPreloadedState({
+            dimensionSelection: { dataSourceId: metadata.p1.id },
+            visUiConfig: {
+                layout: { columns },
+                visualizationType: 'PIVOT_TABLE',
+                cellValue: cellValueId
+                    ? { id: cellValueId, aggregationType: 'SUM' }
+                    : undefined,
+            },
+        })
+
+    it.each(['EVENT', 'ENROLLMENT', 'TRACKED_ENTITY_INSTANCE'] as const)(
+        'disables the %s button when the cell value is from another program',
+        async (buttonType) => {
+            const { result } = await renderHookWithAppWrapper(
+                () => useActionButton(buttonType),
+                buildOptions(
+                    [metadata['p1.p1s1.d1'].id],
+                    metadata['p2.p2s1.d1'].id
+                )
+            )
+
+            expect(result.current.tooltipConfig).toEqual({
+                content: 'Not valid with multiple programs',
+            })
+        }
+    )
+
+    /* Cell value and layout are non-exclusive: the same dimension in both is
+     * an unusual but valid selection. */
+    it('accepts the same dimension in the layout and as the cell value', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            buildOptions([metadata['p1.p1s1.d1'].id], metadata['p1.p1s1.d1'].id)
+        )
+
+        expect(result.current.tooltipConfig).toBeUndefined()
+    })
+
+    it('flags a cell value from another stage of the same program', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            buildOptions([metadata['p1.p1s1.d1'].id], metadata['p1.p1s2.d1'].id)
+        )
+
+        expect(result.current.tooltipConfig).toEqual({
+            content: 'Not valid with multiple program stages',
+        })
+    })
+
+    it('leaves an empty layout reported as empty, not as multi-program', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            buildOptions([], metadata['p2.p2s1.d1'].id)
+        )
+
+        expect(result.current.tooltipConfig?.content).toEqual(
+            'Nothing selected. Add items to the layout to get started.'
+        )
+    })
+})

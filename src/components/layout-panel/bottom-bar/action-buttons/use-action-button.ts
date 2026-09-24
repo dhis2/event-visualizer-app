@@ -1,6 +1,11 @@
 import type { TooltipConfig } from '@components/layout-panel/bottom-bar/with-tooltip'
 import i18n from '@dhis2/d2-i18n'
-import { useAppSelector, useLayoutContext, useMetadataStore } from '@hooks'
+import {
+    useAppSelector,
+    useCellValueContext,
+    useLayoutContext,
+    useMetadataStore,
+} from '@hooks'
 import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
 import { isDimensionInLayout } from '@modules/layout'
 import { isVisualizationEmpty } from '@modules/visualization/state'
@@ -47,16 +52,16 @@ const getCategoryTooltipConfig = ({
 
 type EventTooltipConfigParams = {
     hasNoProgramInLayout: boolean
-    hasMultipleProgramsInLayout: boolean
-    hasMultipleProgramStagesInLayout: boolean
+    hasMultipleProgramsSelected: boolean
+    hasMultipleProgramStagesSelected: boolean
     isRegistrationOuInLayout: boolean
     visualizationType: string
 }
 
 const getEventTooltipConfig = ({
     hasNoProgramInLayout,
-    hasMultipleProgramsInLayout,
-    hasMultipleProgramStagesInLayout,
+    hasMultipleProgramsSelected,
+    hasMultipleProgramStagesSelected,
     isRegistrationOuInLayout,
     visualizationType,
 }: EventTooltipConfigParams): TooltipConfig => {
@@ -65,7 +70,7 @@ const getEventTooltipConfig = ({
     }
 
     if (
-        hasMultipleProgramsInLayout &&
+        hasMultipleProgramsSelected &&
         (visualizationType === 'LINE_LIST' ||
             visualizationType === 'PIVOT_TABLE')
     ) {
@@ -76,7 +81,7 @@ const getEventTooltipConfig = ({
         return getRegistrationOuTooltipConfig()
     }
 
-    if (hasMultipleProgramStagesInLayout) {
+    if (hasMultipleProgramStagesSelected) {
         return { content: i18n.t('Not valid with multiple program stages') }
     }
 
@@ -87,7 +92,7 @@ type EnrollmentTooltipConfigParams = {
     programMetadata: Program | undefined
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
-    hasMultipleProgramsInLayout: boolean
+    hasMultipleProgramsSelected: boolean
     hasNoProgramInLayout: boolean
     isRegistrationOuInLayout: boolean
     visualizationType: string
@@ -98,7 +103,7 @@ const getEnrollmentTooltipConfig = ({
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
     hasNoProgramInLayout,
-    hasMultipleProgramsInLayout,
+    hasMultipleProgramsSelected,
     isRegistrationOuInLayout,
     visualizationType,
 }: EnrollmentTooltipConfigParams): TooltipConfig => {
@@ -107,7 +112,7 @@ const getEnrollmentTooltipConfig = ({
     }
 
     if (
-        hasMultipleProgramsInLayout &&
+        hasMultipleProgramsSelected &&
         (visualizationType === 'LINE_LIST' ||
             visualizationType === 'PIVOT_TABLE')
     ) {
@@ -133,8 +138,8 @@ type TrackedEntityInstanceTooltipConfigParams = {
     hasCategoryInLayout: boolean
     hasCategoryOptionGroupSetInLayout: boolean
     hasCompletedOnInLayout: boolean
-    hasMultipleProgramsInLayout: boolean
-    hasMultipleTetInLayout: boolean
+    hasMultipleProgramsSelected: boolean
+    hasMultipleTetSelected: boolean
     hasProgramIndicatorsInLayout: boolean
     visualizationType: string
 }
@@ -144,8 +149,8 @@ const getTrackedEntityInstanceTooltipConfig = ({
     hasCategoryInLayout,
     hasCategoryOptionGroupSetInLayout,
     hasCompletedOnInLayout,
-    hasMultipleProgramsInLayout,
-    hasMultipleTetInLayout,
+    hasMultipleProgramsSelected,
+    hasMultipleTetSelected,
     hasProgramIndicatorsInLayout,
     visualizationType,
 }: TrackedEntityInstanceTooltipConfigParams): TooltipConfig => {
@@ -155,13 +160,13 @@ const getTrackedEntityInstanceTooltipConfig = ({
         }
     }
 
-    if (hasMultipleTetInLayout) {
+    if (hasMultipleTetSelected) {
         return {
             content: i18n.t('Not valid with multiple tracked entity types'),
         }
     }
 
-    if (hasMultipleProgramsInLayout && visualizationType === 'PIVOT_TABLE') {
+    if (hasMultipleProgramsSelected && visualizationType === 'PIVOT_TABLE') {
         return { content: i18n.t('Not valid with multiple programs') }
     }
 
@@ -182,6 +187,10 @@ const getTrackedEntityInstanceTooltipConfig = ({
 export const useActionButton = (buttonType: OutputType) => {
     const currentVis = useAppSelector(getCurrentVis)
     const { tetId, programStageIds, programIds } = useLayoutContext()
+    /* The cell value is not a layout dimension, but it carries the same
+     * program/stage/TET context and the output type has to be valid for it
+     * too */
+    const cellValueContext = useCellValueContext()
     const layout = useAppSelector(getVisUiConfigLayout)
     const layoutDimensionIds = useAppSelector(
         getVisUiConfigLayoutAllDimensionIds
@@ -240,9 +249,12 @@ export const useActionButton = (buttonType: OutputType) => {
         [layoutDimensionIds]
     )
 
-    const programCountInLayout = programIds.length
+    const selectedProgramCount = useMemo(
+        () => new Set([...programIds, ...cellValueContext.programIds]).size,
+        [programIds, cellValueContext.programIds]
+    )
 
-    const tetCountInLayout = useMemo(() => {
+    const selectedTetCount = useMemo(() => {
         const tetIds = new Set<string>()
 
         layoutDimensionIds.forEach((dimensionId) => {
@@ -256,14 +268,22 @@ export const useActionButton = (buttonType: OutputType) => {
             }
         })
 
+        if (cellValueContext.tetId) {
+            tetIds.add(cellValueContext.tetId)
+        }
+
         return tetIds.size
-    }, [layoutDimensionIds, metadataStore])
+    }, [layoutDimensionIds, metadataStore, cellValueContext.tetId])
 
-    const hasNoProgramInLayout: boolean = programCountInLayout === 0
-    const hasMultipleProgramsInLayout: boolean = programCountInLayout > 1
-    const hasMultipleTetInLayout: boolean = tetCountInLayout > 1
+    /* Layout-only: a cell value on its own is not a layout, so it must not make
+     * an empty one look valid. */
+    const hasNoProgramInLayout: boolean = programIds.length === 0
+    const hasMultipleProgramsSelected: boolean = selectedProgramCount > 1
+    const hasMultipleTetSelected: boolean = selectedTetCount > 1
 
-    const hasMultipleProgramStagesInLayout: boolean = programStageIds.length > 1
+    const hasMultipleProgramStagesSelected: boolean =
+        new Set([...programStageIds, ...cellValueContext.programStageIds])
+            .size > 1
 
     const hasProgramIndicatorsInLayout: boolean = useMemo(
         () =>
@@ -297,8 +317,8 @@ export const useActionButton = (buttonType: OutputType) => {
             case 'EVENT':
                 return getEventTooltipConfig({
                     hasNoProgramInLayout,
-                    hasMultipleProgramsInLayout,
-                    hasMultipleProgramStagesInLayout,
+                    hasMultipleProgramsSelected,
+                    hasMultipleProgramStagesSelected,
                     isRegistrationOuInLayout,
                     visualizationType,
                 })
@@ -308,7 +328,7 @@ export const useActionButton = (buttonType: OutputType) => {
                     hasCategoryInLayout,
                     hasCategoryOptionGroupSetInLayout,
                     hasNoProgramInLayout,
-                    hasMultipleProgramsInLayout,
+                    hasMultipleProgramsSelected,
                     isRegistrationOuInLayout,
                     visualizationType,
                 })
@@ -318,8 +338,8 @@ export const useActionButton = (buttonType: OutputType) => {
                     hasCategoryInLayout,
                     hasCategoryOptionGroupSetInLayout,
                     hasCompletedOnInLayout,
-                    hasMultipleProgramsInLayout,
-                    hasMultipleTetInLayout,
+                    hasMultipleProgramsSelected,
+                    hasMultipleTetSelected,
                     hasProgramIndicatorsInLayout,
                     visualizationType,
                 })
@@ -331,9 +351,9 @@ export const useActionButton = (buttonType: OutputType) => {
         hasCategoryOptionGroupSetInLayout,
         hasCompletedOnInLayout,
         hasNoProgramInLayout,
-        hasMultipleProgramsInLayout,
-        hasMultipleProgramStagesInLayout,
-        hasMultipleTetInLayout,
+        hasMultipleProgramsSelected,
+        hasMultipleProgramStagesSelected,
+        hasMultipleTetSelected,
         hasProgramIndicatorsInLayout,
         isLayoutEmpty,
         isRegistrationOuInLayout,
