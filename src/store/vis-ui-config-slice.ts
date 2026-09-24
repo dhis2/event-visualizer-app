@@ -156,6 +156,12 @@ export const visUiConfigSlice = createSlice({
             action: PayloadAction<VisualizationType>
         ) => {
             state.visualizationType = action.payload
+            /* A line list has no cell value, and it is reset rather than
+             * remembered: coming back to a pivot table starts from Count.
+             * Done here so no dispatcher can forget it. */
+            if (action.payload === 'LINE_LIST') {
+                delete state.cellValue
+            }
         },
         setVisUiConfigLayout: (
             state,

@@ -20,6 +20,8 @@ const {
     setVisUiConfigConditionsByDimension,
     setVisUiConfigGroupingByDimension,
     clearVisUiConfig,
+    setVisUiConfigVisualizationType,
+    setVisUiConfigOutputType,
 } = visUiConfigSlice.actions
 
 type RootState = { visUiConfig: VisUiConfigState }
@@ -743,5 +745,42 @@ describe('clearVisUiConfig', () => {
                 clearVisUiConfig()
             )
         ).toThrow('carries no appCachedData')
+    })
+})
+
+describe('cell value reset rules', () => {
+    const cellValue = { id: 's1.de1', aggregationType: 'SUM' as const }
+    const pivotWithCellValue: VisUiConfigState = {
+        ...initialState,
+        visualizationType: 'PIVOT_TABLE',
+        cellValue,
+    }
+
+    it('clears the cell value when switching to a line list', () => {
+        const next = visUiConfigSlice.reducer(
+            pivotWithCellValue,
+            setVisUiConfigVisualizationType('LINE_LIST')
+        )
+
+        expect(next.cellValue).toBeUndefined()
+    })
+
+    it('keeps the cell value when the vis type stays a pivot table', () => {
+        const next = visUiConfigSlice.reducer(
+            pivotWithCellValue,
+            setVisUiConfigVisualizationType('PIVOT_TABLE')
+        )
+
+        expect(next.cellValue).toEqual(cellValue)
+    })
+
+    /* The spec keeps the selection across output type changes. */
+    it('keeps the cell value when the output type changes', () => {
+        const next = visUiConfigSlice.reducer(
+            pivotWithCellValue,
+            setVisUiConfigOutputType('ENROLLMENT')
+        )
+
+        expect(next.cellValue).toEqual(cellValue)
     })
 })

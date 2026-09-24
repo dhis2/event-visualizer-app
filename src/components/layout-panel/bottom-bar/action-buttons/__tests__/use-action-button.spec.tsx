@@ -1089,6 +1089,27 @@ describe('useActionButton with a cell value from another program', () => {
         })
     })
 
+    /* A line list shows no cell value and never sends one, so a stale one must
+     * not disable an output type for a reason nothing on screen explains. */
+    it('ignores the cell value in a line list', async () => {
+        const { result } = await renderHookWithAppWrapper(
+            () => useActionButton('EVENT'),
+            createStoreWithPreloadedState({
+                dimensionSelection: { dataSourceId: metadata.p1.id },
+                visUiConfig: {
+                    layout: { columns: [metadata['p1.p1s1.d1'].id] },
+                    visualizationType: 'LINE_LIST',
+                    cellValue: {
+                        id: metadata['p2.p2s1.d1'].id,
+                        aggregationType: 'SUM',
+                    },
+                },
+            })
+        )
+
+        expect(result.current.tooltipConfig).toBeUndefined()
+    })
+
     it('leaves an empty layout reported as empty, not as multi-program', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useActionButton('EVENT'),

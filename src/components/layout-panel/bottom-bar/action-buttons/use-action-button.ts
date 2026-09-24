@@ -7,7 +7,7 @@ import {
     useMetadataStore,
 } from '@hooks'
 import { isDataSourceProgramWithoutRegistration } from '@modules/data-source'
-import { isDimensionInLayout } from '@modules/layout'
+import { isDimensionInLayout, type LayoutContext } from '@modules/layout'
 import { isVisualizationEmpty } from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
 import {
@@ -20,6 +20,12 @@ import {
 import type { OutputType, Program } from '@types'
 import { useMemo } from 'react'
 import type { ButtonAction } from './base-button'
+
+const NO_CELL_VALUE_CONTEXT: LayoutContext = {
+    programIds: [],
+    programStageIds: [],
+    tetId: null,
+}
 
 const getRegistrationOuTooltipConfig = (): TooltipConfig => ({
     content: i18n.t('Not valid with registration org. unit'),
@@ -187,10 +193,7 @@ const getTrackedEntityInstanceTooltipConfig = ({
 export const useActionButton = (buttonType: OutputType) => {
     const currentVis = useAppSelector(getCurrentVis)
     const { tetId, programStageIds, programIds } = useLayoutContext()
-    /* The cell value is not a layout dimension, but it carries the same
-     * program/stage/TET context and the output type has to be valid for it
-     * too */
-    const cellValueContext = useCellValueContext()
+    const storedCellValueContext = useCellValueContext()
     const layout = useAppSelector(getVisUiConfigLayout)
     const layoutDimensionIds = useAppSelector(
         getVisUiConfigLayoutAllDimensionIds
@@ -199,6 +202,17 @@ export const useActionButton = (buttonType: OutputType) => {
     const metadataStore = useMetadataStore()
     const outputType = useAppSelector(getVisUiConfigOutputType)
     const visualizationType = useAppSelector(getVisUiConfigVisualizationType)
+
+    /* The cell value is not a layout dimension, but it carries the same
+     * program/stage/TET context and the output type has to be valid for it too
+     * — a cell value from another program is what the spec's "multiple
+     * programs" rule is there to catch. Only a pivot table has one though: in a
+     * line list it is neither shown nor sent, so it must not make an output
+     * type look invalid for a reason nothing on screen explains. */
+    const cellValueContext =
+        visualizationType === 'PIVOT_TABLE'
+            ? storedCellValueContext
+            : NO_CELL_VALUE_CONTEXT
 
     const firstProgramMetadata = useMemo(
         () =>

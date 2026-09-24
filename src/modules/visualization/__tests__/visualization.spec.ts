@@ -348,6 +348,43 @@ describe('getVisualizationUiConfig', () => {
         }
     )
 
+    /* The result is merged into the existing visUiConfig, so the key has to be
+     * present-but-undefined to clear a previously loaded cell value rather than
+     * leaving it in place. */
+    it('emits cellValue as an own key even when the saved vis has no value', () => {
+        const input = {
+            type: 'PIVOT_TABLE',
+            outputType: 'EVENT',
+            rows: [],
+            columns: [],
+            filters: [],
+        } as unknown as SavedVisualization
+
+        const result = getVisualizationUiConfig(input)
+
+        expect(Object.hasOwn(result, 'cellValue')).toBe(true)
+        expect(result.cellValue).toBeUndefined()
+    })
+
+    it('maps a saved value and aggregation type onto the cell value', () => {
+        const input = {
+            type: 'PIVOT_TABLE',
+            outputType: 'EVENT',
+            rows: [],
+            columns: [],
+            filters: [],
+            value: { id: 's1.de1' },
+            aggregationType: 'AVERAGE',
+        } as unknown as SavedVisualization
+
+        const result = getVisualizationUiConfig(input)
+
+        expect(result.cellValue).toEqual({
+            id: 's1.de1',
+            aggregationType: 'AVERAGE',
+        })
+    })
+
     it('extracts option fields from the saved vis and overrides the base options', () => {
         const input = {
             type: 'LINE_LIST',

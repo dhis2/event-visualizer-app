@@ -133,7 +133,7 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         expect(currentVis.aggregationType).toBeUndefined()
     })
 
-    it('leaves the value out of a line list, keeping it remembered', async () => {
+    it('resets the cell value when switching to a line list', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
             buildMockOptions(cellValueVis)
@@ -143,7 +143,23 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
         expect(getCurrentVis(store.getState()).value).toBeUndefined()
-        expect(store.getState().visUiConfig.cellValue).toEqual(cellValue)
+        expect(store.getState().visUiConfig.cellValue).toBeUndefined()
+    })
+
+    /* Switching back must start from Count rather than restoring the cell
+     * value the line list discarded. */
+    it('does not bring the cell value back on the return to a pivot table', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            buildMockOptions(cellValueVis)
+        )
+
+        store.dispatch(setVisUiConfigVisualizationType('LINE_LIST'))
+        store.dispatch(setVisUiConfigVisualizationType('PIVOT_TABLE'))
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
+
+        expect(store.getState().visUiConfig.cellValue).toBeUndefined()
+        expect(getCurrentVis(store.getState()).value).toBeUndefined()
     })
 })
 
@@ -162,6 +178,19 @@ describe('tClearVisualization', () => {
                 }),
             } as Partial<RootState>,
         },
+    })
+
+    it('clears the cell value', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            buildMockOptions(cellValueVis)
+        )
+
+        expect(store.getState().visUiConfig.cellValue).toEqual(cellValue)
+
+        store.dispatch(tClearVisualization())
+
+        expect(store.getState().visUiConfig.cellValue).toBeUndefined()
     })
 
     it('restores the instance digit group separator', async () => {
