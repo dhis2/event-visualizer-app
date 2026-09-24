@@ -1,31 +1,13 @@
-import { ouIdHelper } from '@dhis2/analytics'
-import i18n from '@dhis2/d2-i18n'
 import { useMetadataItems, useAppSelector } from '@hooks'
-import { extractPlainDimensionId } from '@modules/dimension/ids'
-import { isProgramMetadataItem } from '@modules/metadata/item-guards'
 import {
-    isStartEndDate,
-    useLocalizedStartEndDateFormatter,
-} from '@modules/utils/dates'
+    getItemDisplayNames,
+    getItemMetadataIds,
+} from '@modules/dimension/item-names'
+import { isProgramMetadataItem } from '@modules/metadata/item-guards'
+import { useLocalizedStartEndDateFormatter } from '@modules/utils/dates'
 import { getVisUiConfigItemsByDimension } from '@store/vis-ui-config-slice'
 import { useMemo } from 'react'
 import type { LayoutDimension } from './chip'
-
-// Helper function to format a list of metadata IDs into a labeled string
-const getNameList = (
-    idList: Array<string>,
-    label: string,
-    metadataItems: ReturnType<typeof useMetadataItems>
-) =>
-    idList.reduce((levelString, levelId, index) => {
-        if (index > 0) {
-            levelString += ', '
-        }
-        const levelName = metadataItems[levelId]?.name
-        levelString += levelName ?? levelId
-
-        return levelString
-    }, `${label}: `)
 
 export const useTooltipContentData = (dimension: LayoutDimension) => {
     const itemIds = useAppSelector((state) =>
@@ -36,7 +18,7 @@ export const useTooltipContentData = (dimension: LayoutDimension) => {
 
     // Collect all metadata IDs that will be needed
     const metadataIds = useMemo(() => {
-        const ids = new Set<string>()
+        const ids = new Set<string>(getItemMetadataIds(itemIds))
 
         if (programId) {
             ids.add(programId)
@@ -44,18 +26,6 @@ export const useTooltipContentData = (dimension: LayoutDimension) => {
         if (programStageId) {
             ids.add(programStageId)
         }
-
-        // Add IDs from itemIds processing
-        itemIds.forEach((id) => {
-            if (
-                ouIdHelper.hasLevelPrefix(id) ||
-                ouIdHelper.hasGroupPrefix(id)
-            ) {
-                ids.add(ouIdHelper.removePrefix(id))
-            } else {
-                ids.add(extractPlainDimensionId(id))
-            }
-        })
 
         return Array.from(ids)
     }, [programId, programStageId, itemIds])
@@ -85,38 +55,11 @@ export const useTooltipContentData = (dimension: LayoutDimension) => {
         const programName = programMetadata?.name ?? ''
         const stageName = programStage?.name ?? ''
 
-        // Item display names
-        const levelIds: Array<string> = []
-        const groupIds: Array<string> = []
-        const itemDisplayNames: Array<string> = []
-
-        itemIds.forEach((id) => {
-            if (ouIdHelper.hasLevelPrefix(id)) {
-                levelIds.push(ouIdHelper.removePrefix(id))
-            } else if (ouIdHelper.hasGroupPrefix(id)) {
-                groupIds.push(ouIdHelper.removePrefix(id))
-            } else {
-                const plainId = extractPlainDimensionId(id)
-                itemDisplayNames.push(
-                    isStartEndDate(plainId)
-                        ? formatStartEndDate(plainId)
-                        : (metadataItems[plainId]?.name ?? id)
-                )
-            }
+        const itemDisplayNames = getItemDisplayNames({
+            itemIds,
+            metadataItems,
+            formatStartEndDate,
         })
-
-        // Add level and group names
-        if (levelIds.length > 0) {
-            itemDisplayNames.push(
-                getNameList(levelIds, i18n.t('Levels'), metadataItems)
-            )
-        }
-
-        if (groupIds.length > 0) {
-            itemDisplayNames.push(
-                getNameList(groupIds, i18n.t('Groups'), metadataItems)
-            )
-        }
 
         return {
             programName,
