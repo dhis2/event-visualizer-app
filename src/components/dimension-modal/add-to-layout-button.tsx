@@ -8,11 +8,13 @@ import {
     useDimensionLayoutBlockedMessage,
     useDimensionMetadataItem,
 } from '@hooks'
+import { canDimensionBeCustomValue } from '@modules/dimension/custom-value'
 import { getAxisName } from '@modules/layout.js'
 import { getUiActiveDimensionModal } from '@store/ui-slice.js'
 import {
     addVisUiConfigLayoutDimension,
     getVisUiConfigVisualizationType,
+    setVisUiConfigCustomValue,
 } from '@store/vis-ui-config-slice.js'
 import type { Axis } from '@types'
 import { useCallback, useMemo, type FC } from 'react'
@@ -36,6 +38,9 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
     const layoutBlockedMessage = useDimensionLayoutBlockedMessage(dimension)
 
     const availableAxes = useMemo(() => getAvailableAxes(visType), [visType])
+    const canUseAsValue =
+        visType === 'PIVOT_TABLE' &&
+        Boolean(dimension && canDimensionBeCustomValue(dimension))
 
     const onMenuItemClick = useCallback(
         (axisId: Axis): void => {
@@ -47,6 +52,17 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
         },
         [dispatch, dimensionId, onClick]
     )
+
+    const onUseAsValueClick = useCallback((): void => {
+        dispatch(
+            setVisUiConfigCustomValue({
+                id: dimensionId,
+                aggregationType: 'DEFAULT',
+            })
+        )
+
+        onClick()
+    }, [dispatch, dimensionId, onClick])
 
     const getButtonLabel = useCallback(
         (axisId: Axis): string =>
@@ -91,6 +107,13 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
                             label={getButtonLabel(axisId)}
                         />
                     ))}
+                    {canUseAsValue && (
+                        <MenuItem
+                            dataTest={`${dataTest}-flyout-menu-option-value`}
+                            onClick={onUseAsValueClick}
+                            label={i18n.t('Use as value')}
+                        />
+                    )}
                 </FlyoutMenu>
             }
             onClick={() => onMenuItemClick(availableAxes[0])}

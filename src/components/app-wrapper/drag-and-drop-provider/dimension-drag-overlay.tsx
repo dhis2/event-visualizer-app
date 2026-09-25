@@ -7,7 +7,7 @@ import {
     DimensionItem,
     DimensionItemContainer,
 } from '@components/sidebar/dimension-item'
-import { IconDelete16 } from '@dhis2/ui'
+import { IconAdd16, IconDelete16 } from '@dhis2/ui'
 import { DragOverlay, useDndContext, useDndMonitor } from '@dnd-kit/core'
 import { snapCenterToCursor } from '@dnd-kit/modifiers'
 import { useAppDispatch, useAppSelector } from '@hooks'
@@ -26,10 +26,17 @@ import {
 import classes from './styles/dimension-drag-overlay.module.css'
 import type { DraggedItemEventData } from './types'
 
-const DragOverlayBadge: FC<{
+type DragOverlayBadgeProps = {
     willRemove?: boolean
+    willCopy?: boolean
     multiSelectCount?: number
-}> = ({ willRemove, multiSelectCount }) => {
+}
+
+const DragOverlayBadge: FC<DragOverlayBadgeProps> = ({
+    willRemove,
+    willCopy,
+    multiSelectCount,
+}) => {
     if (willRemove) {
         return (
             <span
@@ -39,6 +46,12 @@ const DragOverlayBadge: FC<{
                 <IconDelete16 color="#ffffff" />
             </span>
         )
+    } else if (willCopy) {
+        return (
+            <span className={classes.copyBadge} data-test="chip-copy-indicator">
+                <IconAdd16 color="#ffffff" />
+            </span>
+        )
     } else if (typeof multiSelectCount === 'number' && multiSelectCount >= 2) {
         return <span className={classes.countBadge}>{multiSelectCount}</span>
     } else {
@@ -46,11 +59,11 @@ const DragOverlayBadge: FC<{
     }
 }
 
-const DragOverlayFrame: FC<{
-    willRemove?: boolean
-    multiSelectCount?: number
-    children: ReactNode
-}> = ({ willRemove, multiSelectCount, children }) => (
+const DragOverlayFrame: FC<
+    DragOverlayBadgeProps & {
+        children: ReactNode
+    }
+> = ({ willRemove, willCopy, multiSelectCount, children }) => (
     <div className={classes.dragOverlay}>
         <div
             className={cx(classes.dragOverlayBox, {
@@ -61,6 +74,7 @@ const DragOverlayFrame: FC<{
         </div>
         <DragOverlayBadge
             willRemove={willRemove}
+            willCopy={willCopy}
             multiSelectCount={multiSelectCount}
         />
     </div>
@@ -72,10 +86,12 @@ const DragOverlayItem: FC<DraggedItemEventData> = (data) => {
 
     if (isAxisSortableData(data)) {
         const overData = over?.data.current
-        const willRemove =
-            !isOverAxis(overData) && !isValueContainerData(overData)
+        const isOverValue = isValueContainerData(overData)
+        const willRemove = !isOverAxis(overData) && !isOverValue
+        /* The value is set from the chip, which also stays on its axis. */
+        const willCopy = isOverValue && data.canBeCustomValue
         return (
-            <DragOverlayFrame willRemove={willRemove}>
+            <DragOverlayFrame willRemove={willRemove} willCopy={willCopy}>
                 <ChipContainer
                     isEmpty={data.overlayItemProps.isEmpty}
                     className={classes.clone}

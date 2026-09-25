@@ -443,7 +443,7 @@ describe('<LayoutPanel />', () => {
         })
     })
 
-    it('renders the PIVOT_TABLE update buttons in the order enrollment, event, custom value', () => {
+    it('renders the PIVOT_TABLE update buttons in the order tracked entity, enrollment, event', () => {
         const layoutPanelMockOptions = createMockOptions({
             dimensionSelection: {
                 ...mockOptions.partialStore?.preloadedState.dimensionSelection,
@@ -466,9 +466,9 @@ describe('<LayoutPanel />', () => {
             .then(($buttons) => {
                 const order = [...$buttons].map((el) => el.dataset.test)
                 expect(order).to.deep.equal([
+                    'update-button-tracked-entity',
                     'update-button-enrollment',
                     'update-button-event',
-                    'update-button-custom-value',
                 ])
             })
     })
