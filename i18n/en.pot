@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-25T08:15:49.205Z\n"
-"PO-Revision-Date: 2026-09-25T08:15:49.205Z\n"
+"POT-Creation-Date: 2026-09-25T09:59:44.108Z\n"
+"PO-Revision-Date: 2026-09-25T09:59:44.108Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -37,9 +37,6 @@ msgstr "Add to {{- axisName}}"
 
 msgid "Add to Value"
 msgstr "Add to Value"
-
-msgid "Use item default ({{- aggregationType}})"
-msgstr "Use item default ({{- aggregationType}})"
 
 msgid "Aggregation"
 msgstr "Aggregation"
@@ -407,6 +404,9 @@ msgstr ""
 
 msgid "Count"
 msgstr "Count"
+
+msgid "Aggregation mode"
+msgstr "Aggregation mode"
 
 msgid "Reset to count"
 msgstr "Reset to count"
@@ -887,6 +887,9 @@ msgstr "Max value (sum in org unit hierarchy)"
 
 msgid "Custom"
 msgstr "Custom"
+
+msgid "Use item default ({{- aggregationType}})"
+msgstr "Use item default ({{- aggregationType}})"
 
 msgid "equal to (=)"
 msgstr "equal to (=)"

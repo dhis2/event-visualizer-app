@@ -1,11 +1,10 @@
-import { aggregationTypeApi } from '@api/aggregation-type-api'
-import {
-    AGGREGATION_TYPES,
-    aggregationTypeDisplayNames,
-} from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
 import { SingleSelectField, SingleSelectOption } from '@dhis2/ui'
-import { useAppDispatch, useAppSelector } from '@hooks'
+import {
+    useAggregationTypeOptions,
+    useAppDispatch,
+    useAppSelector,
+} from '@hooks'
 import {
     getVisUiConfigCustomValue,
     setVisUiConfigCustomValueAggregationType,
@@ -22,11 +21,10 @@ export const AggregationSection: FC<AggregationSectionProps> = ({
 }) => {
     const dispatch = useAppDispatch()
     const customValue = useAppSelector(getVisUiConfigCustomValue)
-    const { data: itemAggregationType } =
-        aggregationTypeApi.useGetItemAggregationTypeQuery({
-            dimensionId: dimension.id,
-            dimensionType: dimension.dimensionType,
-        })
+    const { options, isItemDefaultNone } = useAggregationTypeOptions({
+        dimensionId: dimension.id,
+        dimensionType: dimension.dimensionType,
+    })
 
     const onChange = useCallback(
         ({ selected }: { selected: string }) =>
@@ -37,15 +35,6 @@ export const AggregationSection: FC<AggregationSectionProps> = ({
             ),
         [dispatch]
     )
-
-    const isItemDefaultNone = itemAggregationType === 'NONE'
-    const itemDefaultLabel =
-        itemAggregationType && !isItemDefaultNone
-            ? i18n.t('Use item default ({{- aggregationType}})', {
-                  aggregationType:
-                      aggregationTypeDisplayNames[itemAggregationType],
-              })
-            : aggregationTypeDisplayNames.DEFAULT
 
     return (
         <SingleSelectField
@@ -62,16 +51,12 @@ export const AggregationSection: FC<AggregationSectionProps> = ({
             dense
             dataTest="aggregation-section-select"
         >
-            {AGGREGATION_TYPES.map((value) => (
+            {options.map(({ value, label, disabled }) => (
                 <SingleSelectOption
                     key={value}
                     value={value}
-                    label={
-                        value === 'DEFAULT'
-                            ? itemDefaultLabel
-                            : aggregationTypeDisplayNames[value]
-                    }
-                    disabled={value === 'DEFAULT' && isItemDefaultNone}
+                    label={label}
+                    disabled={disabled}
                 />
             ))}
         </SingleSelectField>

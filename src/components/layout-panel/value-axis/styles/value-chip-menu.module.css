@@ -1,0 +1,6 @@
+/* Keeps unselected options' labels in line with the selected one's, which
+ * carries a 16px checkmark icon. */
+.iconSpacer {
+    display: inline-block;
+    inline-size: 16px;
+}

@@ -35,6 +35,7 @@ export {
  * to work with nested objects in the query definition or the data. */
 export * from './use-rtk-query'
 export * from './use-rtk-lazy-query'
+export * from './use-aggregation-type-options'
 export * from './use-conditions-texts'
 export * from './use-options-field'
 export * from './use-stable-callback'

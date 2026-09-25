@@ -1,3 +1,4 @@
+import { aggregationTypeApi } from '@api/aggregation-type-api'
 import type { ValueChipDraggableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import {
     ChipBase,
@@ -56,11 +57,24 @@ export const ValueChip: FC<ValueChipProps> = ({ customValue, onReset }) => {
         dispatch(setUiActiveDimensionModal(customValue.id))
     }, [dispatch, customValue.id])
 
-    /* "Use item default" names no aggregation worth showing on the chip. */
+    const { data: itemAggregationType } =
+        aggregationTypeApi.useGetItemAggregationTypeQuery({
+            dimensionId: customValue.id,
+            dimensionType: dimension.dimensionType,
+        })
+    /* "Use item default" is shown as the aggregation it resolves to. A NONE
+     * default is never used (see tSetCustomValue), so it isn't shown. */
+    const resolvedAggregationType =
+        customValue.aggregationType === 'DEFAULT'
+            ? itemAggregationType !== 'NONE'
+                ? itemAggregationType
+                : undefined
+            : customValue.aggregationType
+
     const suffix = [
         stageSuffix,
-        customValue.aggregationType !== 'DEFAULT'
-            ? aggregationTypeDisplayNames[customValue.aggregationType]
+        resolvedAggregationType && resolvedAggregationType !== 'DEFAULT'
+            ? aggregationTypeDisplayNames[resolvedAggregationType]
             : undefined,
     ]
         .filter(Boolean)
@@ -148,6 +162,8 @@ export const ValueChip: FC<ValueChipProps> = ({ customValue, onReset }) => {
                     <Layer onBackdropClick={toggleMenu}>
                         <Popper reference={buttonRef} placement="bottom-start">
                             <ValueChipMenu
+                                dimension={dimension}
+                                customValue={customValue}
                                 onReset={onReset}
                                 onClose={toggleMenu}
                             />
