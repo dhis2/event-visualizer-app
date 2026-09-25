@@ -15,12 +15,19 @@ import {
 import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import { renderHook } from '@testing-library/react'
 import type { DimensionMetadataItem } from '@types'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import type { LayoutDragEndEvent } from '../types'
 import { useOnDragEnd } from '../use-on-drag-end'
 
+const mockShowWarning = vi.fn()
+const mockHideWarning = vi.fn()
+
 vi.mock('@dhis2/app-runtime', () => ({
-    useAlert: vi.fn(() => ({ show: vi.fn() })),
+    useAlert: vi.fn((_message: unknown, options?: { warning?: boolean }) =>
+        options?.warning
+            ? { show: mockShowWarning, hide: mockHideWarning }
+            : { show: vi.fn(), hide: vi.fn() }
+    ),
 }))
 
 vi.mock('@components/sidebar/sidebar-disabling', () => ({
@@ -536,5 +543,55 @@ describe('useOnDragEnd', () => {
         result.current(event)
 
         expect(mockDispatch).not.toHaveBeenCalled()
+    })
+
+    describe('refused value drop warning', () => {
+        const nonNumericValueDrop = {
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 'stage1.textDe',
+                        overlayItemProps: {},
+                        populateMetadata: vi.fn(),
+                        isLayoutBlocked: false,
+                        canBeCustomValue: false,
+                    },
+                },
+            },
+            over: { data: { current: { isValueContainer: true } } },
+        } as unknown as LayoutDragEndEvent
+
+        beforeEach(() => {
+            vi.useFakeTimers()
+        })
+
+        afterEach(() => {
+            vi.useRealTimers()
+        })
+
+        it('shows a warning that hides itself after five seconds', () => {
+            const { result } = renderHook(() => useOnDragEnd())
+
+            result.current(nonNumericValueDrop)
+
+            expect(mockShowWarning).toHaveBeenCalledTimes(1)
+            vi.advanceTimersByTime(4999)
+            expect(mockHideWarning).not.toHaveBeenCalled()
+            vi.advanceTimersByTime(1)
+            expect(mockHideWarning).toHaveBeenCalledTimes(1)
+        })
+
+        it('restarts the wait when another drop is refused', () => {
+            const { result } = renderHook(() => useOnDragEnd())
+
+            result.current(nonNumericValueDrop)
+            vi.advanceTimersByTime(3000)
+            result.current(nonNumericValueDrop)
+            vi.advanceTimersByTime(3000)
+
+            expect(mockHideWarning).not.toHaveBeenCalled()
+            vi.advanceTimersByTime(2000)
+            expect(mockHideWarning).toHaveBeenCalledTimes(1)
+        })
     })
 })

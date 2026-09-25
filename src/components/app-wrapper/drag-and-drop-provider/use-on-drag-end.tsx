@@ -26,7 +26,7 @@ import {
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import {
     isAxisContainerData,
     isAxisSortableData,
@@ -40,6 +40,8 @@ type OnDragEndFn = (event: LayoutDragEndEvent) => void
 
 /* Skipped-dimension alerts can be long, so give the user 10 seconds to read. */
 const SKIPPED_DIMENSIONS_ALERT_OPTIONS = { duration: 10000 }
+
+const VALUE_NOT_NUMERIC_WARNING_DURATION = 5000
 
 type SkippedByReason = Record<DimensionBlockReason, string[]>
 
@@ -109,12 +111,23 @@ export const useOnDragEnd = (): OnDragEndFn => {
             ),
         SKIPPED_DIMENSIONS_ALERT_OPTIONS
     )
-    const { show: showValueNotNumericAlert } = useAlert(
-        i18n.t(
-            'Only numeric data items can be used as the cell value, because the value is aggregated.'
-        ),
-        { critical: true }
-    )
+    const { show: showValueNotNumericAlert, hide: hideValueNotNumericAlert } =
+        useAlert(
+            i18n.t('Only numeric data items can be used as the cell value.'),
+            { warning: true }
+        )
+    /* The alert bar never hides a warning by itself, so the hint is taken
+     * down after a while, restarting the wait on every refused drop. */
+    const valueNotNumericHideTimeout = useRef<ReturnType<typeof setTimeout>>()
+    const showValueNotNumericWarning = useCallback(() => {
+        showValueNotNumericAlert()
+        clearTimeout(valueNotNumericHideTimeout.current)
+        valueNotNumericHideTimeout.current = setTimeout(
+            hideValueNotNumericAlert,
+            VALUE_NOT_NUMERIC_WARNING_DURATION
+        )
+    }, [showValueNotNumericAlert, hideValueNotNumericAlert])
+    useEffect(() => () => clearTimeout(valueNotNumericHideTimeout.current), [])
     const metadataStore = useMetadataStore()
     const store = useAppStore()
     const listFormatter = useListFormatter({ type: 'conjunction' })
@@ -161,7 +174,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
              * dimension, so a dropped chip stays on its axis. */
             if (isValueContainerData(overItemData)) {
                 if (!draggedItemData.canBeCustomValue) {
-                    showValueNotNumericAlert()
+                    showValueNotNumericWarning()
                     return
                 }
                 if (isSidebarSortableData(draggedItemData)) {
@@ -276,7 +289,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
             metadataStore,
             store,
             showSkippedDimensionAlerts,
-            showValueNotNumericAlert,
+            showValueNotNumericWarning,
         ]
     )
 }
