@@ -1,8 +1,13 @@
 import { getLastUsedVisualizationTypeFromLocalStorage } from '@modules/visualization/local-storage'
 import { getCurrentVis } from '@store/current-vis-slice'
-import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import {
+    tSetCustomValue,
+    tUpdateCurrentVisFromVisUiConfig,
+} from '@store/thunks'
+import {
+    getVisUiConfigCustomValue,
     initialState as visUiConfigInitialState,
+    setVisUiConfigCustomValueAggregationType,
     type CustomValueObject,
 } from '@store/vis-ui-config-slice'
 import {
@@ -36,6 +41,12 @@ const metadata = {
         dimensionType: 'DATA_ELEMENT',
         valueType: 'NUMBER',
     },
+    's1.de2': {
+        id: 's1.de2',
+        name: 'DE 2',
+        dimensionType: 'DATA_ELEMENT',
+        valueType: 'NUMBER',
+    },
 }
 
 const customValue: CustomValueObject = {
@@ -47,12 +58,17 @@ const buildMockOptions = ({
     currentVisOverride,
     outputType = 'EVENT',
     customValue: configuredCustomValue,
+    conditionsByDimension = {},
+    queryData,
 }: {
     currentVisOverride: Partial<CurrentVisualization>
     outputType?: OutputType
     customValue?: CustomValueObject
+    conditionsByDimension?: RootState['visUiConfig']['conditionsByDimension']
+    queryData?: MockOptions['queryData']
 }): MockOptions => ({
     metadata,
+    queryData,
     partialStore: {
         preloadedState: deepmerge(
             {
@@ -61,6 +77,7 @@ const buildMockOptions = ({
                     visualizationType: 'PIVOT_TABLE',
                     layout: { columns: ['s1.de1'] },
                     customValue: configuredCustomValue,
+                    conditionsByDimension,
                 }),
             } as Partial<RootState>,
             { currentVis: currentVisOverride } as Partial<RootState>
@@ -151,5 +168,92 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
         expect(getCurrentVis(store.getState()).value).toEqual({ id: 's1.de1' })
+    })
+})
+
+describe('the cell value filter', () => {
+    const weightValue: CustomValueObject = {
+        id: 's1.de2',
+        aggregationType: 'SUM',
+    }
+
+    it('is sent as a filter dimension', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            buildMockOptions({
+                currentVisOverride: eventVis,
+                customValue: weightValue,
+                conditionsByDimension: { 's1.de2': { condition: 'GT:5' } },
+            })
+        )
+
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
+
+        expect(getCurrentVis(store.getState()).filters).toEqual([
+            expect.objectContaining({
+                dimension: 'de2',
+                filter: 'GT:5',
+                programStage: { id: 's1' },
+            }),
+        ])
+    })
+
+    it('adds no filter dimension when the cell value is not filtered', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            buildMockOptions({
+                currentVisOverride: eventVis,
+                customValue: weightValue,
+            })
+        )
+
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
+
+        expect(getCurrentVis(store.getState()).filters).toEqual([])
+    })
+})
+
+describe('tSetCustomValue', () => {
+    const renderWithItemAggregationType = (aggregationType: string) =>
+        renderHookWithAppWrapper(
+            () => null,
+            buildMockOptions({
+                currentVisOverride: eventVis,
+                queryData: { dataElements: { aggregationType } },
+            })
+        )
+
+    it('uses the item default when the item has one', async () => {
+        const { store } = await renderWithItemAggregationType('SUM')
+
+        await store.dispatch(tSetCustomValue('s1.de2'))
+
+        expect(getVisUiConfigCustomValue(store.getState())).toEqual({
+            id: 's1.de2',
+            aggregationType: 'DEFAULT',
+        })
+    })
+
+    it('falls back to average when the item default is NONE', async () => {
+        const { store } = await renderWithItemAggregationType('NONE')
+
+        await store.dispatch(tSetCustomValue('s1.de2'))
+
+        expect(getVisUiConfigCustomValue(store.getState())).toEqual({
+            id: 's1.de2',
+            aggregationType: 'AVERAGE',
+        })
+    })
+
+    it('keeps an aggregation chosen while the item was loading', async () => {
+        const { store } = await renderWithItemAggregationType('NONE')
+        const pending = store.dispatch(tSetCustomValue('s1.de2'))
+        store.dispatch(setVisUiConfigCustomValueAggregationType('MAX'))
+
+        await pending
+
+        expect(
+            getVisUiConfigCustomValue(store.getState())?.aggregationType
+        ).toBe('MAX')
     })
 })

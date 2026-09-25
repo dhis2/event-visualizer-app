@@ -446,6 +446,23 @@ IDs, named via `metaData.items`.
   `setVisUiConfigGroupingByDimension` drops the filter whenever the grouping changes. A grouped
   dimension filters by legend (`IN:legendId;legendId`) through a transfer instead of by raw value.
 
+## Cell value (VALUE axis)
+
+A pivot table's cells count events/enrollments/tracked entities by default, or aggregate one numeric
+data element or tracked entity attribute instead. That item is `visUiConfig.customValue`, not part of
+`Layout`, but it behaves like one more axis holding a single chip:
+
+- **One place only**: a dimension is either the cell value or in the layout. Setting the cell value
+  removes it from the axes, adding it to an axis clears the cell value
+  (`moveVisUiConfigCustomValueToAxis` moves it back out).
+- **Aggregation**: `customValue.aggregationType`, chosen in the dimension modal. When the item's own
+  default is `NONE` (fetched by `@api/aggregation-type-api`), `tSetCustomValue` falls back to
+  `AVERAGE`, since `NONE` makes every cell 0.
+- **Filtering**: the filter lives in `conditionsByDimension` like any dimension. It is sent and saved
+  as an extra filter dimension (`buildCurrentVisFromVisUiConfig`), and `getVisualizationUiConfig`
+  folds a filter matching `value.id` back into the cell value on load. A cell value is never grouped
+  by legend.
+
 ## Testing & Linting Workflow for AI Agents
 
 **Golden rule**: during development, lint/test only the files you touched. Before finishing, always run `pnpm test` and `pnpm lint`.

@@ -24,7 +24,7 @@ import { ResizeHandle } from './resize-handle'
 import classes from './styles/axes.module.css'
 import { useLayoutDimensions } from './use-layout-dimensions'
 import { useResizeHandle } from './use-resize-handle'
-import { ValueAxis } from './value-axis'
+import { ValueAxis } from './value-axis/value-axis'
 
 const ExpandLayoutPanelButton: FC = () => {
     const dispatch = useAppDispatch()

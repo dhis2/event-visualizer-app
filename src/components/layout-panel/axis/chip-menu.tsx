@@ -2,7 +2,9 @@ import { AXES } from '@constants/axis'
 import i18n from '@dhis2/d2-i18n'
 import { FlyoutMenu, MenuDivider, MenuItem } from '@dhis2/ui'
 import { useAppDispatch, useAppSelector } from '@hooks'
+import { canDimensionBeCustomValue } from '@modules/dimension/custom-value'
 import { getAxisName } from '@modules/layout'
+import { tSetCustomValue } from '@store/thunks'
 import {
     removeVisUiConfigLayoutDimensionFromAxis,
     getVisUiConfigVisualizationType,
@@ -69,6 +71,14 @@ export const ChipMenu: FC<ChipMenuProps> = ({ axisId, dimension, onClose }) => {
         [visType, axisId]
     )
 
+    const canMoveToValue =
+        visType !== 'LINE_LIST' && canDimensionBeCustomValue(dimension)
+
+    const valueItemHandler = useCallback(() => {
+        dispatch(tSetCustomValue(dimensionId))
+        onClose()
+    }, [dispatch, dimensionId, onClose])
+
     return (
         <FlyoutMenu dense>
             {applicableAxisIds.map((axisId) => (
@@ -87,7 +97,15 @@ export const ChipMenu: FC<ChipMenuProps> = ({ axisId, dimension, onClose }) => {
                     dataTest={`${dataTest}-item-move-${dimensionId}-to-${axisId}`}
                 />
             ))}
-            {applicableAxisIds.length > 0 && (
+            {canMoveToValue && (
+                <MenuItem
+                    key={`${dimensionId}-to-value`}
+                    onClick={valueItemHandler}
+                    label={i18n.t('Move to Value')}
+                    dataTest={`${dataTest}-item-move-${dimensionId}-to-value`}
+                />
+            )}
+            {(applicableAxisIds.length > 0 || canMoveToValue) && (
                 <MenuDivider key="menu-divider" dense />
             )}
             <MenuItem

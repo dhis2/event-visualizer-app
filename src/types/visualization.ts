@@ -90,7 +90,11 @@ type SavedVisualizationFieldOverrides = {
     metaData: MetadataInputMap
     type: VisualizationType
     // name does not need to be propagated to currentVis on update
-    value?: IdRecord & { name?: string }
+    value?: IdRecord & {
+        name?: string
+        valueType?: ValueType
+        dimensionItemType?: string
+    }
 }
 
 /**

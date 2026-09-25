@@ -5,6 +5,7 @@ import type {
     AxisDropTargetData,
     AxisSortableData,
     SidebarSortableData,
+    ValueChipDraggableData,
     ValueContainerDroppableData,
 } from './types'
 
@@ -43,7 +44,15 @@ export const isValueContainerData = (
     'isValueContainer' in input &&
     input.isValueContainer === true
 
+export const isValueChipData = (
+    input: object | undefined
+): input is ValueChipDraggableData =>
+    input !== undefined && 'isValueChip' in input && input.isValueChip === true
+
+type ActiveDragData =
+    SidebarSortableData | AxisSortableData | ValueChipDraggableData
+
 export const getActiveDragData = (
     active: Active | null
-): SidebarSortableData | AxisSortableData | undefined =>
-    active?.data.current as SidebarSortableData | AxisSortableData | undefined
+): ActiveDragData | undefined =>
+    active?.data.current as ActiveDragData | undefined

@@ -17,21 +17,24 @@ import {
     clearMultiSelection,
     getMultiSelectedDimensionIds,
 } from '@store/dimensions-selection-slice'
+import { tSetCustomValue } from '@store/thunks'
 import {
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
-    setVisUiConfigCustomValue,
+    moveVisUiConfigCustomValueToAxis,
+    clearVisUiConfigCustomValue,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigVisualizationType,
 } from '@store/vis-ui-config-slice'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import {
     isAxisContainerData,
     isAxisSortableData,
     isOverAxis,
     isSidebarSortableData,
+    isValueChipData,
     isValueContainerData,
 } from './dnd-data'
 import type { AxisDropTargetData, LayoutDragEndEvent } from './types'
@@ -90,6 +93,22 @@ const getDropTarget = (
               insertAfter: overItemData.insertAfter,
           }
 
+const VALUE_NOT_NUMERIC_ALERT_DURATION = 5000
+
+/* A warning alert bar never hides itself, so it is hidden on a timer. */
+const useAutoHidingWarningAlert = (message: string, duration: number) => {
+    const { show, hide } = useAlert(message, { warning: true })
+    const hideTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
+
+    useEffect(() => () => clearTimeout(hideTimeoutRef.current), [])
+
+    return useCallback(() => {
+        clearTimeout(hideTimeoutRef.current)
+        show()
+        hideTimeoutRef.current = setTimeout(hide, duration)
+    }, [show, hide, duration])
+}
+
 export const useOnDragEnd = (): OnDragEndFn => {
     const dispatch = useAppDispatch()
     const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
@@ -109,11 +128,11 @@ export const useOnDragEnd = (): OnDragEndFn => {
             ),
         SKIPPED_DIMENSIONS_ALERT_OPTIONS
     )
-    const { show: showValueNotNumericAlert } = useAlert(
+    const showValueNotNumericAlert = useAutoHidingWarningAlert(
         i18n.t(
             'Only numeric data items can be used as the cell value, because the value is aggregated.'
         ),
-        { critical: true }
+        VALUE_NOT_NUMERIC_ALERT_DURATION
     )
     const metadataStore = useMetadataStore()
     const store = useAppStore()
@@ -156,10 +175,11 @@ export const useOnDragEnd = (): OnDragEndFn => {
             const overItemData = event.over?.data.current
 
             /* The cell value holds a single dimension rather than a list, so a
-             * drop on it replaces the value instead of inserting a chip. The
-             * same dimension can be both the cell value and a layout
-             * dimension, so a dropped chip stays on its axis. */
+             * drop on it replaces the value instead of inserting a chip. */
             if (isValueContainerData(overItemData)) {
+                if (isValueChipData(draggedItemData)) {
+                    return
+                }
                 if (!draggedItemData.canBeCustomValue) {
                     showValueNotNumericAlert()
                     return
@@ -167,13 +187,25 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 if (isSidebarSortableData(draggedItemData)) {
                     draggedItemData.populateMetadata()
                 }
-                dispatch(
-                    setVisUiConfigCustomValue({
-                        id: draggedItemData.dimensionId,
-                        aggregationType: 'DEFAULT',
-                    })
-                )
+                dispatch(tSetCustomValue(draggedItemData.dimensionId))
                 dispatch(clearMultiSelection())
+                return
+            }
+
+            if (isValueChipData(draggedItemData)) {
+                if (isOverAxis(overItemData)) {
+                    const { targetIndex, insertAfter } =
+                        getDropTarget(overItemData)
+                    dispatch(
+                        moveVisUiConfigCustomValueToAxis({
+                            axis: overItemData.axis,
+                            insertIndex: targetIndex,
+                            insertAfter,
+                        })
+                    )
+                } else {
+                    dispatch(clearVisUiConfigCustomValue())
+                }
                 return
             }
 

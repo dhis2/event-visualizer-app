@@ -6,6 +6,7 @@ import { getConditionsFromVisualization } from '@modules/conditions'
 import {
     CONTEXTLESS_DIMENSION_TYPES,
     ENROLLMENT_SCOPED_DIMENSION_IDS,
+    extractPlainDimensionId,
     getCompoundDimensionId,
     META_DIMENSION_IDS,
     WIRE_ONLY_DIMENSIONS,
@@ -330,6 +331,26 @@ const extractOptions = (
     return extracted as Partial<EventVisualizationOptions>
 }
 
+/* The cell value's own filter is saved as a filter dimension (see
+ * buildCurrentVisFromVisUiConfig). When there is one, its compound id is the
+ * cell value's id, since `value` itself may come back as a plain uid. */
+const resolveCustomValueId = (
+    vis: CurrentVisualization,
+    toDimId: (dim: DimensionArray[number]) => string
+): string | undefined => {
+    const valueId = vis.value?.id
+    if (!valueId) {
+        return undefined
+    }
+    const plainValueId = extractPlainDimensionId(valueId)
+    const valueFilter = (vis.filters ?? []).find(
+        (dim) =>
+            toDimId(dim) === valueId ||
+            extractPlainDimensionId(dim.dimension) === plainValueId
+    )
+    return valueFilter ? toDimId(valueFilter) : valueId
+}
+
 export const getVisualizationUiConfig = (
     raw: CurrentVisualization,
     baseOptions: EventVisualizationOptions = DEFAULT_OPTIONS
@@ -344,13 +365,19 @@ export const getVisualizationUiConfig = (
     const tetId = vis.trackedEntityType?.id
     const toDimId = (dim: DimensionArray[number]) =>
         getCompoundDimensionId(dim, outputType, tetId)
+    const customValueId = resolveCustomValueId(vis, toDimId)
 
     return {
         visualizationType: vis.type,
         outputType,
         layout: {
             columns: (vis.columns ?? []).map(toDimId),
-            filters: (vis.filters ?? []).map(toDimId),
+            /* The cell value's own filter is saved as a filter dimension (see
+             * buildCurrentVisFromVisUiConfig); its conditions are still read
+             * below, but it belongs to the cell value, not the filter axis. */
+            filters: (vis.filters ?? [])
+                .map(toDimId)
+                .filter((id) => id !== customValueId),
             rows: (vis.rows ?? []).map(toDimId),
         },
         itemsByDimension: [
@@ -369,9 +396,9 @@ export const getVisualizationUiConfig = (
         conditionsByDimension: getConditionsFromVisualization(vis, outputType),
         repetitionsByDimension: getRepetitionsFromVisualisation(vis),
         options: { ...baseOptions, ...extractOptions(vis) },
-        customValue: vis.value?.id
+        customValue: customValueId
             ? {
-                  id: vis.value.id,
+                  id: customValueId,
                   aggregationType: vis.aggregationType || 'DEFAULT',
               }
             : undefined,

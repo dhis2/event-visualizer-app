@@ -1,7 +1,9 @@
+import { aggregationTypeApi } from '@api/aggregation-type-api'
 import type { ThunkExtraArg } from '@api/custom-base-query'
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { legendSetsApi } from '@api/legend-sets-api'
 import { extractDataSourceIdFromVisualization } from '@modules/data-source'
+import { FALLBACK_AGGREGATION_TYPE_FOR_NONE } from '@modules/dimension/custom-value'
 import { canDimensionHaveLegendSets } from '@modules/dimension/grouping'
 import {
     buildAxis,
@@ -39,6 +41,8 @@ import { clearUi, setUiUpdateAnimationShowingFor } from './ui-slice'
 import {
     clearVisUiConfig,
     setVisUiConfig,
+    setVisUiConfigCustomValue,
+    setVisUiConfigCustomValueAggregationType,
     setVisUiConfigGroupingByDimension,
     type VisUiConfigState,
 } from './vis-ui-config-slice'
@@ -146,6 +150,17 @@ const resolveCustomValueFields = ({ customValue }: VisUiConfigState) => {
     }
 }
 
+/* The analytics API takes the cell value's own filter as a regular filter
+ * dimension, so it is sent — and saved — as one. Loading folds it back into
+ * the cell value (see getVisualizationUiConfig). */
+const getCustomValueFilterIds = ({
+    customValue,
+    conditionsByDimension,
+}: VisUiConfigState): string[] =>
+    customValue && conditionsByDimension[customValue.id]?.condition
+        ? [customValue.id]
+        : []
+
 /* Rebuild a currentVis fresh from visUiConfig so stale currentVis fields can't
  * leak through. Carries over only id and sorting from the previous currentVis.
  * The custom value fields go after the options spread so the value's own
@@ -169,7 +184,14 @@ export const buildCurrentVisFromVisUiConfig = ({
     outputType: visUiConfig.outputType,
     columns: buildAxis(visUiConfig.layout.columns, visUiConfig, metadataStore),
     rows: buildAxis(visUiConfig.layout.rows, visUiConfig, metadataStore),
-    filters: buildAxis(visUiConfig.layout.filters, visUiConfig, metadataStore),
+    filters: buildAxis(
+        [
+            ...visUiConfig.layout.filters,
+            ...getCustomValueFilterIds(visUiConfig),
+        ],
+        visUiConfig,
+        metadataStore
+    ),
     programDimensions: collectProgramDimensions(visUiConfig, metadataStore),
     ...getEnabledOptions(visUiConfig.options),
     ...resolveTeiFields(visUiConfig, metadataStore),
@@ -213,6 +235,56 @@ export const tUpdateCurrentVisFromVisUiConfig =
  * A thunk rather than the listener effect itself because the listener
  * middleware is created without an extra argument, so only a thunk can reach
  * the metadata store. */
+export const tSetCustomValue =
+    (dimensionId: string) =>
+    async (
+        dispatch: AppDispatch,
+        getState: () => RootState,
+        extra: ThunkExtraArg
+    ) => {
+        dispatch(
+            setVisUiConfigCustomValue({
+                id: dimensionId,
+                aggregationType: 'DEFAULT',
+            })
+        )
+
+        const dimensionType =
+            extra.metadataStore.getDimensionMetadataItem(
+                dimensionId
+            )?.dimensionType
+
+        if (!dimensionType) {
+            return
+        }
+
+        try {
+            const itemAggregationType = await dispatch(
+                aggregationTypeApi.endpoints.getItemAggregationType.initiate({
+                    dimensionId,
+                    dimensionType,
+                })
+            ).unwrap()
+
+            /* Re-checked because the user can change the value or its
+             * aggregation while the item is still being fetched. */
+            const { customValue } = getState().visUiConfig
+            const isStillItemDefault =
+                customValue?.id === dimensionId &&
+                customValue.aggregationType === 'DEFAULT'
+
+            if (itemAggregationType === 'NONE' && isStillItemDefault) {
+                dispatch(
+                    setVisUiConfigCustomValueAggregationType(
+                        FALLBACK_AGGREGATION_TYPE_FOR_NONE
+                    )
+                )
+            }
+        } catch (error) {
+            logger.error(error)
+        }
+    }
+
 export const tSeedDefaultGrouping =
     (dimensionIds: string[]) =>
     async (
@@ -225,7 +297,13 @@ export const tSeedDefaultGrouping =
         }
 
         const seedable = dimensionIds.filter((dimensionId) => {
-            if (dimensionId in getState().visUiConfig.conditionsByDimension) {
+            const { conditionsByDimension, customValue } =
+                getState().visUiConfig
+            /* The cell value is aggregated from raw values, never grouped. */
+            if (
+                dimensionId in conditionsByDimension ||
+                customValue?.id === dimensionId
+            ) {
                 return false
             }
             const dimension =

@@ -1,3 +1,4 @@
+import { useAlert } from '@dhis2/app-runtime'
 import {
     useAppDispatch,
     useAppSelector,
@@ -5,22 +6,29 @@ import {
     useMetadataStore,
 } from '@hooks'
 import { clearMultiSelection } from '@store/dimensions-selection-slice'
+import { tSetCustomValue } from '@store/thunks'
 import {
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
+    clearVisUiConfigCustomValue,
+    moveVisUiConfigCustomValueToAxis,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
-    setVisUiConfigCustomValue,
 } from '@store/vis-ui-config-slice'
 import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import { renderHook } from '@testing-library/react'
 import type { DimensionMetadataItem } from '@types'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import type { LayoutDragEndEvent } from '../types'
 import { useOnDragEnd } from '../use-on-drag-end'
 
+const { mockShowAlert, mockHideAlert } = vi.hoisted(() => ({
+    mockShowAlert: vi.fn(),
+    mockHideAlert: vi.fn(),
+}))
+
 vi.mock('@dhis2/app-runtime', () => ({
-    useAlert: vi.fn(() => ({ show: vi.fn() })),
+    useAlert: vi.fn(() => ({ show: mockShowAlert, hide: mockHideAlert })),
 }))
 
 vi.mock('@components/sidebar/sidebar-disabling', () => ({
@@ -50,10 +58,15 @@ vi.mock('@store/vis-ui-config-slice', () => ({
     addVisUiConfigLayoutDimensions: vi.fn(),
     moveVisUiConfigLayoutDimension: vi.fn(),
     removeVisUiConfigLayoutDimensionFromAxis: vi.fn(),
-    setVisUiConfigCustomValue: vi.fn(),
+    moveVisUiConfigCustomValueToAxis: vi.fn(),
+    clearVisUiConfigCustomValue: vi.fn(),
     getVisUiConfigVisualizationType: vi.fn(),
     getVisUiConfigCustomValue: vi.fn(),
     getVisUiConfigLayoutAllDimensionIds: vi.fn(() => []),
+}))
+
+vi.mock('@store/thunks', () => ({
+    tSetCustomValue: vi.fn(),
 }))
 
 describe('useOnDragEnd', () => {
@@ -479,14 +492,11 @@ describe('useOnDragEnd', () => {
         result.current(event)
 
         expect(populateMetadata).toHaveBeenCalled()
-        expect(setVisUiConfigCustomValue).toHaveBeenCalledWith({
-            id: 'stage1.numericDe',
-            aggregationType: 'DEFAULT',
-        })
+        expect(tSetCustomValue).toHaveBeenCalledWith('stage1.numericDe')
         expect(mockDispatch).toHaveBeenCalledWith(clearMultiSelection())
     })
 
-    it('leaves a dropped chip on its axis when it becomes the custom value', () => {
+    it('sets a dropped chip as the custom value without removing it itself', () => {
         const { result } = renderHook(() => useOnDragEnd())
         const event = {
             active: {
@@ -507,10 +517,88 @@ describe('useOnDragEnd', () => {
 
         result.current(event)
 
+        /* Setting the custom value takes it out of the layout. */
         expect(removeVisUiConfigLayoutDimensionFromAxis).not.toHaveBeenCalled()
-        expect(setVisUiConfigCustomValue).toHaveBeenCalledWith({
-            id: 'stage1.numericDe',
-            aggregationType: 'DEFAULT',
+        expect(tSetCustomValue).toHaveBeenCalledWith('stage1.numericDe')
+    })
+
+    describe('dragging the value chip', () => {
+        const valueChipData = {
+            dimensionId: 'stage1.numericDe',
+            overlayItemProps: {},
+            isValueChip: true,
+            isLayoutBlocked: false,
+            canBeCustomValue: true,
+        }
+
+        it('moves it to the axis it is dropped on', () => {
+            const { result } = renderHook(() => useOnDragEnd())
+            const event = {
+                active: { data: { current: valueChipData } },
+                over: {
+                    data: {
+                        current: {
+                            dimensionId: 'ou',
+                            axis: 'rows',
+                            sortable: { index: 2 },
+                            insertAfter: true,
+                        },
+                    },
+                },
+            } as unknown as LayoutDragEndEvent
+
+            result.current(event)
+
+            expect(moveVisUiConfigCustomValueToAxis).toHaveBeenCalledWith({
+                axis: 'rows',
+                insertIndex: 2,
+                insertAfter: true,
+            })
+        })
+
+        it('moves it to the start of an empty axis', () => {
+            const { result } = renderHook(() => useOnDragEnd())
+            const event = {
+                active: { data: { current: valueChipData } },
+                over: {
+                    data: {
+                        current: { axis: 'filters', isAxisContainer: true },
+                    },
+                },
+            } as unknown as LayoutDragEndEvent
+
+            result.current(event)
+
+            expect(moveVisUiConfigCustomValueToAxis).toHaveBeenCalledWith({
+                axis: 'filters',
+                insertIndex: 0,
+                insertAfter: false,
+            })
+        })
+
+        it('resets to count when dropped outside the layout', () => {
+            const { result } = renderHook(() => useOnDragEnd())
+            const event = {
+                active: { data: { current: valueChipData } },
+                over: null,
+            } as unknown as LayoutDragEndEvent
+
+            result.current(event)
+
+            expect(clearVisUiConfigCustomValue).toHaveBeenCalled()
+            expect(moveVisUiConfigCustomValueToAxis).not.toHaveBeenCalled()
+        })
+
+        it('does nothing when dropped back on the value axis', () => {
+            const { result } = renderHook(() => useOnDragEnd())
+            const event = {
+                active: { data: { current: valueChipData } },
+                over: { data: { current: { isValueContainer: true } } },
+            } as unknown as LayoutDragEndEvent
+
+            result.current(event)
+
+            expect(mockDispatch).not.toHaveBeenCalled()
         })
     })
 
@@ -536,5 +624,63 @@ describe('useOnDragEnd', () => {
         result.current(event)
 
         expect(mockDispatch).not.toHaveBeenCalled()
+    })
+
+    describe('refusing a non-numeric cell value', () => {
+        const NOT_NUMERIC_MESSAGE =
+            'Only numeric data items can be used as the cell value, because the value is aggregated.'
+        const textDimensionEvent = {
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 'stage1.textDe',
+                        overlayItemProps: {},
+                        populateMetadata: vi.fn(),
+                        isLayoutBlocked: false,
+                        canBeCustomValue: false,
+                    },
+                },
+            },
+            over: { data: { current: { isValueContainer: true } } },
+        } as unknown as LayoutDragEndEvent
+
+        beforeEach(() => {
+            vi.useFakeTimers()
+        })
+
+        afterEach(() => {
+            vi.useRealTimers()
+        })
+
+        it('warns with an alert that hides itself after five seconds', () => {
+            const { result } = renderHook(() => useOnDragEnd())
+
+            result.current(textDimensionEvent)
+
+            expect(useAlert).toHaveBeenCalledWith(NOT_NUMERIC_MESSAGE, {
+                warning: true,
+            })
+            expect(mockShowAlert).toHaveBeenCalledTimes(1)
+
+            vi.advanceTimersByTime(4999)
+            expect(mockHideAlert).not.toHaveBeenCalled()
+
+            vi.advanceTimersByTime(1)
+            expect(mockHideAlert).toHaveBeenCalledTimes(1)
+        })
+
+        it('restarts the five seconds when refused again', () => {
+            const { result } = renderHook(() => useOnDragEnd())
+
+            result.current(textDimensionEvent)
+            vi.advanceTimersByTime(3000)
+            result.current(textDimensionEvent)
+            vi.advanceTimersByTime(3000)
+
+            expect(mockHideAlert).not.toHaveBeenCalled()
+
+            vi.advanceTimersByTime(2000)
+            expect(mockHideAlert).toHaveBeenCalledTimes(1)
+        })
     })
 })

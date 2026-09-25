@@ -1,0 +1,4 @@
+.draggableContainer {
+    position: relative;
+    min-inline-size: 0;
+}

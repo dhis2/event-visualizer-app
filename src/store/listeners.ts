@@ -11,6 +11,7 @@ import { setUiActiveDimensionModal } from './ui-slice'
 import {
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
+    moveVisUiConfigCustomValueToAxis,
     setVisUiConfigVisualizationType,
 } from './vis-ui-config-slice'
 
@@ -55,13 +56,19 @@ export const registerAppListeners = () => {
         matcher: isAnyOf(
             addVisUiConfigLayoutDimension,
             addVisUiConfigLayoutDimensions,
+            moveVisUiConfigCustomValueToAxis,
             setUiActiveDimensionModal
         ),
-        effect: (action, { dispatch }) => {
+        effect: (action, { dispatch, getOriginalState }) => {
             if (addVisUiConfigLayoutDimension.match(action)) {
                 dispatch(tSeedDefaultGrouping([action.payload.dimensionId]))
             } else if (addVisUiConfigLayoutDimensions.match(action)) {
                 dispatch(tSeedDefaultGrouping(action.payload.dimensionIds))
+            } else if (moveVisUiConfigCustomValueToAxis.match(action)) {
+                const movedId = getOriginalState().visUiConfig.customValue?.id
+                if (movedId) {
+                    dispatch(tSeedDefaultGrouping([movedId]))
+                }
             } else if (
                 setUiActiveDimensionModal.match(action) &&
                 action.payload !== null

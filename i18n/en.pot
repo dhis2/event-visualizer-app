@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-14T07:55:07.547Z\n"
-"PO-Revision-Date: 2026-09-14T07:55:07.547Z\n"
+"POT-Creation-Date: 2026-09-25T08:15:49.205Z\n"
+"PO-Revision-Date: 2026-09-25T08:15:49.205Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -34,6 +34,18 @@ msgstr "Retry"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
+
+msgid "Add to Value"
+msgstr "Add to Value"
+
+msgid "Use item default ({{- aggregationType}})"
+msgstr "Use item default ({{- aggregationType}})"
+
+msgid "Aggregation"
+msgstr "Aggregation"
+
+msgid "This item has no default aggregation, so one must be chosen."
+msgstr "This item has no default aggregation, so one must be chosen."
 
 msgid "Choose a filter type"
 msgstr "Choose a filter type"
@@ -212,6 +224,9 @@ msgstr "Resize axes panel"
 msgid "Move to {{- axisName}}"
 msgstr "Move to {{- axisName}}"
 
+msgid "Move to Value"
+msgstr "Move to Value"
+
 msgid "Remove"
 msgstr "Remove"
 
@@ -341,54 +356,6 @@ msgstr "Not valid with program indicators"
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr "Nothing selected. Add items to the layout to get started."
 
-msgid "Cell value"
-msgstr "Cell value"
-
-msgid "Count"
-msgstr "Count"
-
-msgid "Number of events, enrollments, or tracked entities."
-msgstr "Number of events, enrollments, or tracked entities."
-
-msgid "Data item value"
-msgstr "Data item value"
-
-msgid "An aggregated value for a data item."
-msgstr "An aggregated value for a data item."
-
-msgid "Search data items"
-msgstr "Search data items"
-
-msgid "Loading data"
-msgstr "Loading data"
-
-msgid "Error loading data"
-msgstr "Error loading data"
-
-msgid "Failed to load data items"
-msgstr "Failed to load data items"
-
-msgid "No numeric data items in this program"
-msgstr "No numeric data items in this program"
-
-msgid "This program does not have any numeric data items available."
-msgstr "This program does not have any numeric data items available."
-
-msgid "No data items match \"{{- searchTerm}}\""
-msgstr "No data items match \"{{- searchTerm}}\""
-
-msgid "Aggregation"
-msgstr "Aggregation"
-
-msgid "Cancel"
-msgstr "Cancel"
-
-msgid "Update"
-msgstr "Update"
-
-msgid "Select a value before updating"
-msgstr "Select a value before updating"
-
 msgid "Collapse layout"
 msgstr "Collapse layout"
 
@@ -410,6 +377,9 @@ msgstr "Convert to {{- visType}}"
 msgid "{{- names}} will be removed. Are you sure?"
 msgstr "{{- names}} will be removed. Are you sure?"
 
+msgid "Cancel"
+msgstr "Cancel"
+
 msgid "Convert"
 msgstr "Convert"
 
@@ -425,8 +395,21 @@ msgstr "Aggregated view"
 msgid "Value"
 msgstr "Value"
 
-msgid "Change value"
-msgstr "Change value"
+msgid "Reset"
+msgstr "Reset"
+
+msgid ""
+"Cells show a count. Drag or add a numeric data item here to change the cell "
+"value."
+msgstr ""
+"Cells show a count. Drag or add a numeric data item here to change the cell "
+"value."
+
+msgid "Count"
+msgstr "Count"
+
+msgid "Reset to count"
+msgstr "Reset to count"
 
 msgid "No event"
 msgstr "No event"
@@ -626,6 +609,9 @@ msgstr "Tracked entity tables are not available in this prototype."
 
 msgid "Create a {{- visType}} before updating"
 msgstr "Create a {{- visType}} before updating"
+
+msgid "Update"
+msgstr "Update"
 
 msgid "Metadata"
 msgstr "Metadata"

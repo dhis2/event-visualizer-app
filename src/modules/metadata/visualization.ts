@@ -101,14 +101,28 @@ export const extractDimensionMetadata = (
     return dimensionMetadata
 }
 
-export const extractValueMetadata = (
-    visualization: SavedVisualization
-): MetadataInputMap =>
-    visualization.value
-        ? {
-              [visualization.value.id]: visualization.value,
-          }
-        : {}
+/* The cell value can only be a data element or a tracked entity attribute.
+ * Data elements carry no dimensionItemType, attributes carry PROGRAM_ATTRIBUTE. */
+export const extractValueMetadata = ({
+    value,
+}: SavedVisualization): MetadataInputMap => {
+    if (!value) {
+        return {}
+    }
+    const { id, name, valueType, dimensionItemType } = value
+
+    return {
+        [id]: {
+            id,
+            name,
+            valueType,
+            dimensionType:
+                dimensionItemType === 'PROGRAM_ATTRIBUTE'
+                    ? 'PROGRAM_ATTRIBUTE'
+                    : 'DATA_ELEMENT',
+        },
+    }
+}
 
 const addPathToOrganisationUnitMetadataItems = (
     metadataInput: MetadataInput,

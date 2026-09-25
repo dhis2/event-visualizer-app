@@ -120,6 +120,25 @@ const seedDefaultItemsIfAbsent = (
     }
 }
 
+/* The cell value and the layout are separate slots a dimension moves between,
+ * like the axes, so a dimension is never in both. */
+const clearCustomValueIfNowInLayout = (
+    state: VisUiConfigState,
+    dimensionIds: string[]
+) => {
+    if (state.customValue && dimensionIds.includes(state.customValue.id)) {
+        state.customValue = undefined
+    }
+}
+
+const removeFromLayout = (state: VisUiConfigState, dimensionId: string) => {
+    for (const axis of AXES) {
+        state.layout[axis] = state.layout[axis].filter(
+            (id) => id !== dimensionId
+        )
+    }
+}
+
 const resolveSortInsertIndex = ({
     insertIndex,
     insertAfter,
@@ -225,7 +244,47 @@ export const visUiConfigSlice = createSlice({
             state,
             action: PayloadAction<CustomValueObject>
         ) => {
+            const { id } = action.payload
+            removeFromLayout(state, id)
+            /* The cell value is aggregated from raw values, so a legend
+             * grouping — and any filter by legend that came with it — can't
+             * apply to it. */
+            if (state.conditionsByDimension[id]?.legendSet) {
+                state.conditionsByDimension[id] = undefined
+            }
             state.customValue = action.payload
+        },
+        setVisUiConfigCustomValueAggregationType: (
+            state,
+            action: PayloadAction<AggregationType>
+        ) => {
+            if (state.customValue) {
+                state.customValue.aggregationType = action.payload
+            }
+        },
+        moveVisUiConfigCustomValueToAxis: (
+            state,
+            action: PayloadAction<{
+                axis: Axis
+                insertIndex?: number
+                insertAfter?: boolean
+            }>
+        ) => {
+            if (!state.customValue) {
+                return
+            }
+            const { axis, insertIndex, insertAfter = false } = action.payload
+            const targetArray = state.layout[axis]
+            targetArray.splice(
+                resolveSortInsertIndex({
+                    insertIndex,
+                    insertAfter,
+                    targetLength: targetArray.length,
+                }),
+                0,
+                state.customValue.id
+            )
+            state.customValue = undefined
         },
         clearVisUiConfigCustomValue: (state) => {
             state.customValue = undefined
@@ -271,6 +330,7 @@ export const visUiConfigSlice = createSlice({
                 dimensionId
             )
             seedDefaultItemsIfAbsent(state, dimensionId, action)
+            clearCustomValueIfNowInLayout(state, [dimensionId])
         },
         addVisUiConfigLayoutDimensions: (
             state,
@@ -300,6 +360,7 @@ export const visUiConfigSlice = createSlice({
             for (const dimensionId of dimensionIds) {
                 seedDefaultItemsIfAbsent(state, dimensionId, action)
             }
+            clearCustomValueIfNowInLayout(state, dimensionIds)
         },
         moveVisUiConfigLayoutDimension: (
             state,
@@ -362,6 +423,10 @@ export const visUiConfigSlice = createSlice({
             action: PayloadAction<{ dimensionId: string }>
         ) => {
             const { dimensionId } = action.payload
+            if (state.customValue?.id === dimensionId) {
+                state.customValue = undefined
+                return
+            }
             for (const axis of AXES) {
                 const index = state.layout[axis].indexOf(dimensionId)
                 if (index !== -1) {
@@ -369,7 +434,9 @@ export const visUiConfigSlice = createSlice({
                     return
                 }
             }
-            throw new Error(`Dimension ${dimensionId} not found in any axis`)
+            throw new Error(
+                `Dimension ${dimensionId} not found in any axis or the cell value`
+            )
         },
     },
     extraReducers: (builder) => {
@@ -393,6 +460,8 @@ export const visUiConfigSlice = createSlice({
          * output type, so an event table and an enrollment table built from the
          * same layout show the same item. */
         getVisUiConfigCustomValue: (state) => state.customValue,
+        getVisUiConfigIsCustomValue: (state, dimensionId: string) =>
+            state.customValue?.id === dimensionId,
         getVisUiConfigRepetitionsByDimension: (state, dimensionId: string) =>
             state.repetitionsByDimension[dimensionId] ||
             DEFAULT_REPETITIONS_OBJECT,
@@ -425,6 +494,8 @@ export const {
     setVisUiConfigConditionsByDimension,
     setVisUiConfigGroupingByDimension,
     setVisUiConfigCustomValue,
+    setVisUiConfigCustomValueAggregationType,
+    moveVisUiConfigCustomValueToAxis,
     clearVisUiConfigCustomValue,
     setVisUiConfigRepetitionsByDimension,
     addVisUiConfigLayoutDimension,
@@ -442,6 +513,7 @@ export const {
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
     getVisUiConfigCustomValue,
+    getVisUiConfigIsCustomValue,
     getVisUiConfigRepetitionsByDimension,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigLayoutIsEmpty,

@@ -19,7 +19,10 @@ import { isDimensionInLayout } from '@modules/layout'
 import { isDimensionMetadataItem } from '@modules/metadata/item-guards'
 import { tUpdateCurrentVisFromVisUiConfig } from '@store/thunks'
 import { getUiActiveDimensionModal } from '@store/ui-slice'
-import { getVisUiConfigLayout } from '@store/vis-ui-config-slice'
+import {
+    getVisUiConfigIsCustomValue,
+    getVisUiConfigLayout,
+} from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
 import { useCallback, type FC } from 'react'
 import { AddToLayoutButton } from './add-to-layout-button'
@@ -67,7 +70,10 @@ export const DimensionModal: FC<DimensionModalProps> = ({ onClose }) => {
     ) as LayoutDimension['id']
     const dimension = useDimensionMetadataItem(dimensionId)
 
-    const isInLayout = isDimensionInLayout(layout, dimensionId)
+    const isCustomValue = useAppSelector((state) =>
+        getVisUiConfigIsCustomValue(state, dimensionId)
+    )
+    const isInLayout = isDimensionInLayout(layout, dimensionId) || isCustomValue
 
     const suffix = useDimensionSuffix(dimensionId)
 

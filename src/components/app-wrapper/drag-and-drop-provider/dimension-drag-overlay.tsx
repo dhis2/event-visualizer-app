@@ -21,6 +21,7 @@ import {
     isAxisSortableData,
     isOverAxis,
     isSidebarSortableData,
+    isValueChipData,
     isValueContainerData,
 } from './dnd-data'
 import classes from './styles/dimension-drag-overlay.module.css'
@@ -70,7 +71,7 @@ const DragOverlayItem: FC<DraggedItemEventData> = (data) => {
     const { over } = useDndContext()
     const multiSelectedIds = useAppSelector(getMultiSelectedDimensionIds)
 
-    if (isAxisSortableData(data)) {
+    if (isAxisSortableData(data) || isValueChipData(data)) {
         const overData = over?.data.current
         const willRemove =
             !isOverAxis(overData) && !isValueContainerData(overData)

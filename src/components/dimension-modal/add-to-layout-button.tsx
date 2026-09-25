@@ -8,7 +8,9 @@ import {
     useDimensionLayoutBlockedMessage,
     useDimensionMetadataItem,
 } from '@hooks'
+import { canDimensionBeCustomValue } from '@modules/dimension/custom-value'
 import { getAxisName } from '@modules/layout.js'
+import { tSetCustomValue } from '@store/thunks'
 import { getUiActiveDimensionModal } from '@store/ui-slice.js'
 import {
     addVisUiConfigLayoutDimension,
@@ -47,6 +49,15 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
         },
         [dispatch, dimensionId, onClick]
     )
+
+    const canAddToValue =
+        visType !== 'LINE_LIST' &&
+        Boolean(dimension && canDimensionBeCustomValue(dimension))
+
+    const onValueMenuItemClick = useCallback(() => {
+        dispatch(tSetCustomValue(dimensionId))
+        onClick()
+    }, [dispatch, dimensionId, onClick])
 
     const getButtonLabel = useCallback(
         (axisId: Axis): string =>
@@ -91,6 +102,13 @@ export const AddToLayoutButton: FC<AddToLayoutButtonProps> = ({
                             label={getButtonLabel(axisId)}
                         />
                     ))}
+                    {canAddToValue && (
+                        <MenuItem
+                            dataTest={`${dataTest}-flyout-menu-option-value`}
+                            onClick={onValueMenuItemClick}
+                            label={i18n.t('Add to Value')}
+                        />
+                    )}
                 </FlyoutMenu>
             }
             onClick={() => onMenuItemClick(availableAxes[0])}

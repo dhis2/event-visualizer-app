@@ -22,6 +22,15 @@ export type AxisSortableData = {
     canBeCustomValue: boolean
 }
 
+export type ValueChipDraggableData = {
+    dimensionId: string
+    overlayItemProps: ChipBaseProps
+    isValueChip: true
+    isLayoutBlocked: false
+    layoutBlockedMessage?: undefined
+    canBeCustomValue: true
+}
+
 export type AxisContainerDroppableData = {
     axis: Axis
     isAxisContainer: true
@@ -31,8 +40,9 @@ export type ValueContainerDroppableData = {
     isValueContainer: true
 }
 
-export type DraggedItemEventData = (SidebarSortableData | AxisSortableData) &
-    SortableData
+export type DraggedItemEventData =
+    | ((SidebarSortableData | AxisSortableData) & SortableData)
+    | ValueChipDraggableData
 
 export type AxisDropTargetData =
     (AxisSortableData & SortableData) | AxisContainerDroppableData

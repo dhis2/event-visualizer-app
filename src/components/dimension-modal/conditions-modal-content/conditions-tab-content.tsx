@@ -1,7 +1,11 @@
 import { useAppSelector } from '@hooks'
-import { getVisUiConfigConditionsByDimension } from '@store/vis-ui-config-slice'
+import {
+    getVisUiConfigConditionsByDimension,
+    getVisUiConfigIsCustomValue,
+} from '@store/vis-ui-config-slice'
 import type { DimensionMetadataItem } from '@types'
 import { type FC } from 'react'
+import { AggregationSection } from './aggregation-section'
 import { ConditionsProvider } from './conditions-provider'
 import { FilteringSection } from './filtering-section'
 import { GroupingSection } from './grouping-section'
@@ -20,10 +24,16 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
         getVisUiConfigConditionsByDimension(state, dimension.id)
     )
 
-    const canBeGrouped = legendSets.length > 0
+    const isCustomValue = useAppSelector((state) =>
+        getVisUiConfigIsCustomValue(state, dimension.id)
+    )
+
+    /* The cell value is aggregated from raw values, so it is never grouped. */
+    const canBeGrouped = !isCustomValue && legendSets.length > 0
 
     return (
         <div className={classes.tabContent}>
+            {isCustomValue && <AggregationSection dimension={dimension} />}
             {canBeGrouped && (
                 <GroupingSection
                     dimensionId={dimension.id}
@@ -36,7 +46,7 @@ export const ConditionsTabContent: FC<ConditionsTabContentProps> = ({
                 key={selectedLegendSetId ?? 'ungrouped'}
                 dimension={dimension}
             >
-                <FilteringSection showHeading={canBeGrouped} />
+                <FilteringSection showHeading={canBeGrouped || isCustomValue} />
             </ConditionsProvider>
         </div>
     )

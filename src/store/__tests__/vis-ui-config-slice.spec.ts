@@ -14,6 +14,10 @@ const {
     removeVisUiConfigLayoutDimensionFromAxis,
     setVisUiConfigConditionsByDimension,
     setVisUiConfigGroupingByDimension,
+    setVisUiConfigCustomValue,
+    setVisUiConfigCustomValueAggregationType,
+    moveVisUiConfigCustomValueToAxis,
+    removeVisUiConfigLayoutDimension,
     clearVisUiConfig,
 } = visUiConfigSlice.actions
 
@@ -629,6 +633,169 @@ describe('clearVisUiConfig', () => {
         expect(result).toEqual({
             ...initialState,
             visualizationType: 'PIVOT_TABLE',
+        })
+    })
+})
+
+describe('the custom value and the layout hold a dimension in one place only', () => {
+    const customValue = {
+        id: 'stage1.weight',
+        aggregationType: 'SUM' as const,
+    }
+
+    it('takes a dimension set as the custom value out of the layout', () => {
+        const state = createStateWithLayout({
+            columns: ['ou'],
+            filters: [],
+            rows: ['stage1.weight', 'pe'],
+        })
+
+        const result = visUiConfigSlice.reducer(
+            state,
+            setVisUiConfigCustomValue(customValue)
+        )
+
+        expect(result.customValue).toEqual(customValue)
+        expect(result.layout).toEqual({
+            columns: ['ou'],
+            filters: [],
+            rows: ['pe'],
+        })
+    })
+
+    it('drops a legend grouping when a dimension becomes the custom value', () => {
+        const state = {
+            ...initialState,
+            conditionsByDimension: {
+                'stage1.weight': { legendSet: 'ls1', condition: 'IN:l1' },
+            },
+        }
+
+        const result = visUiConfigSlice.reducer(
+            state,
+            setVisUiConfigCustomValue(customValue)
+        )
+
+        expect(result.conditionsByDimension['stage1.weight']).toBeUndefined()
+    })
+
+    it('keeps a plain filter when a dimension becomes the custom value', () => {
+        const state = {
+            ...initialState,
+            conditionsByDimension: {
+                'stage1.weight': { condition: 'GT:5' },
+            },
+        }
+
+        const result = visUiConfigSlice.reducer(
+            state,
+            setVisUiConfigCustomValue(customValue)
+        )
+
+        expect(result.conditionsByDimension['stage1.weight']).toEqual({
+            condition: 'GT:5',
+        })
+    })
+
+    it.each([
+        [
+            'addVisUiConfigLayoutDimension',
+            addVisUiConfigLayoutDimension({
+                axis: 'rows',
+                dimensionId: 'stage1.weight',
+            }),
+        ],
+        [
+            'addVisUiConfigLayoutDimensions',
+            addVisUiConfigLayoutDimensions({
+                axis: 'rows',
+                dimensionIds: ['ou', 'stage1.weight'],
+            }),
+        ],
+    ])(
+        'resets to count when %s adds the custom value to the layout',
+        (_, action) => {
+            const state = { ...initialState, customValue }
+
+            const result = visUiConfigSlice.reducer(state, action)
+
+            expect(result.customValue).toBeUndefined()
+            expect(result.layout.rows).toContain('stage1.weight')
+        }
+    )
+
+    it('moves the custom value into an axis at the drop position', () => {
+        const state = {
+            ...createStateWithLayout({
+                columns: ['a1', 'a2'],
+                filters: [],
+                rows: [],
+            }),
+            customValue,
+        }
+
+        const result = visUiConfigSlice.reducer(
+            state,
+            moveVisUiConfigCustomValueToAxis({
+                axis: 'columns',
+                insertIndex: 0,
+                insertAfter: true,
+            })
+        )
+
+        expect(result.customValue).toBeUndefined()
+        expect(result.layout.columns).toEqual(['a1', 'stage1.weight', 'a2'])
+    })
+
+    it('appends the custom value to an axis when no position is given', () => {
+        const state = {
+            ...createStateWithLayout({
+                columns: ['a1'],
+                filters: [],
+                rows: [],
+            }),
+            customValue,
+        }
+
+        const result = visUiConfigSlice.reducer(
+            state,
+            moveVisUiConfigCustomValueToAxis({ axis: 'columns' })
+        )
+
+        expect(result.layout.columns).toEqual(['a1', 'stage1.weight'])
+    })
+
+    it('leaves the layout alone when there is no custom value to move', () => {
+        const result = visUiConfigSlice.reducer(
+            initialState,
+            moveVisUiConfigCustomValueToAxis({ axis: 'columns' })
+        )
+
+        expect(result).toEqual(initialState)
+    })
+
+    it('resets to count when the custom value is removed from the layout', () => {
+        const state = { ...initialState, customValue }
+
+        const result = visUiConfigSlice.reducer(
+            state,
+            removeVisUiConfigLayoutDimension({ dimensionId: 'stage1.weight' })
+        )
+
+        expect(result.customValue).toBeUndefined()
+    })
+
+    it('changes only the aggregation type of the custom value', () => {
+        const state = { ...initialState, customValue }
+
+        const result = visUiConfigSlice.reducer(
+            state,
+            setVisUiConfigCustomValueAggregationType('AVERAGE')
+        )
+
+        expect(result.customValue).toEqual({
+            id: 'stage1.weight',
+            aggregationType: 'AVERAGE',
         })
     })
 })

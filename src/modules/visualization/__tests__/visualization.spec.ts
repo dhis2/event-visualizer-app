@@ -381,6 +381,52 @@ describe('getVisualizationUiConfig', () => {
     })
 })
 
+describe('getVisualizationUiConfig with a filtered cell value', () => {
+    const weightFilter = {
+        dimension: 'weight',
+        programStage: { id: 'stage1' },
+        filter: 'GT:5',
+    }
+    const buildInput = (value: { id: string }) =>
+        ({
+            type: 'PIVOT_TABLE',
+            outputType: 'EVENT',
+            columns: [{ dimension: 'ou', programStage: { id: 'stage1' } }],
+            rows: [],
+            filters: [
+                weightFilter,
+                { dimension: 'pe', programStage: { id: 'stage1' } },
+            ],
+            value,
+            aggregationType: 'SUM',
+        }) as unknown as SavedVisualization
+
+    it.each([
+        ['compound', 'stage1.weight'],
+        ['plain', 'weight'],
+    ])('folds the matching filter into a %s cell value id', (_, valueId) => {
+        const result = getVisualizationUiConfig(buildInput({ id: valueId }))
+
+        expect(result.customValue).toEqual({
+            id: 'stage1.weight',
+            aggregationType: 'SUM',
+        })
+        expect(result.layout.filters).toEqual(['stage1.pe'])
+        expect(result.conditionsByDimension['stage1.weight']).toEqual(
+            expect.objectContaining({ condition: 'GT:5' })
+        )
+    })
+
+    it('leaves the filter axis alone when no filter matches the cell value', () => {
+        const result = getVisualizationUiConfig(
+            buildInput({ id: 'stage1.height' })
+        )
+
+        expect(result.customValue?.id).toBe('stage1.height')
+        expect(result.layout.filters).toEqual(['stage1.weight', 'stage1.pe'])
+    })
+})
+
 describe('getSaveableVisualization', () => {
     it('strips dimensionType and valueType from columns and filters', () => {
         const vis = {

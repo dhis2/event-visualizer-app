@@ -2,7 +2,9 @@ import {
     visUiConfigSlice,
     initialState,
     getVisUiConfigConditionsByDimension,
+    getVisUiConfigCustomValue,
     type ConditionsObject,
+    type CustomValueObject,
 } from '@store/vis-ui-config-slice'
 import { type MockOptions, renderWithAppWrapper } from '@test-utils/app-wrapper'
 import { screen, waitFor, within } from '@testing-library/react'
@@ -365,5 +367,72 @@ describe('ConditionsTabContent — value input focus', () => {
         await renderTabContent({ de1: { condition: 'LIKE:foo' } })
 
         expect(screen.getByDisplayValue('foo')).not.toHaveFocus()
+    })
+})
+
+describe('ConditionsTabContent — cell value', () => {
+    const renderAsCellValue = async (
+        itemAggregationType: string,
+        customValue: CustomValueObject = {
+            id: numericDimension.id,
+            aggregationType: 'DEFAULT',
+        }
+    ) =>
+        await renderWithAppWrapper(
+            <ConditionsTabContent dimension={numericDimension} />,
+            {
+                queryData: {
+                    dataElements: async () => ({
+                        legendSets: [weightLegendSet],
+                        aggregationType: itemAggregationType,
+                    }),
+                },
+                partialStore: {
+                    reducer: { visUiConfig: visUiConfigSlice.reducer },
+                    preloadedState: {
+                        visUiConfig: { ...initialState, customValue },
+                    },
+                },
+            }
+        )
+
+    it('offers an aggregation choice and no grouping', async () => {
+        await renderAsCellValue('SUM')
+
+        expect(
+            await screen.findByText('Use item default (Sum)')
+        ).toBeInTheDocument()
+        expect(
+            screen.queryByRole('group', { name: 'Grouping' })
+        ).not.toBeInTheDocument()
+        expect(
+            screen.getByRole('radio', { name: 'Filter' })
+        ).toBeInTheDocument()
+    })
+
+    it('stores the chosen aggregation on the cell value', async () => {
+        const user = userEvent.setup()
+        const { store } = await renderAsCellValue('SUM')
+
+        await user.click(await screen.findByText('Use item default (Sum)'))
+        await user.click(screen.getByText('Max'))
+
+        expect(getVisUiConfigCustomValue(store.getState())).toEqual({
+            id: numericDimension.id,
+            aggregationType: 'MAX',
+        })
+    })
+
+    it('explains when the item has no default aggregation', async () => {
+        await renderAsCellValue('NONE', {
+            id: numericDimension.id,
+            aggregationType: 'AVERAGE',
+        })
+
+        expect(
+            await screen.findByText(
+                'This item has no default aggregation, so one must be chosen.'
+            )
+        ).toBeInTheDocument()
     })
 })
