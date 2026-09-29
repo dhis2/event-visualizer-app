@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
+"POT-Creation-Date: 2026-09-23T14:32:18.188Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Yury Rogachev <yury@dhis2.org>, 2026\n"
 "Language-Team: Uzbek (Latin) (https://app.transifex.com/hisp-uio/teams/100509/uz@Latn/)\n"
@@ -28,6 +28,9 @@ msgstr ""
 
 msgid ""
 "{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Changes not applied"
 msgstr ""
 
 msgid "Retry"
@@ -340,6 +343,9 @@ msgid "Not valid with Completed on"
 msgstr ""
 
 msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid without a tracked entity type"
 msgstr ""
 
 msgid "Not valid with program indicators"
@@ -1026,6 +1032,21 @@ msgid ""
 "administrator."
 msgstr ""
 
+msgid "Visualization not found"
+msgstr "Vizualizatsiya topilmadi"
+
+msgid ""
+"The visualization you are trying to view could not be found, the ID could be"
+" incorrect or it could have been deleted."
+msgstr ""
+"Siz koʼrmoqchi boʼlgan vizualizatsiya topilmadi, identifikator notoʼgʼri "
+"yoki oʼchirilgan boʼlishi mumkin."
+
+msgid ""
+"Your account cannot access any items in one or more dimensions. Contact a "
+"system administrator."
+msgstr ""
+
 msgid "You don't have access to one or more of the chosen organisation units."
 msgstr ""
 
@@ -1033,18 +1054,73 @@ msgid ""
 "You don't have access to event analytics. Contact a system administrator."
 msgstr ""
 
-msgid "Something went wrong"
-msgstr "Nimadir notoʼgʼri bajarildi"
+msgid "Invalid indicator"
+msgstr ""
 
 msgid "There's a problem with at least one selected indicator."
 msgstr ""
 
+msgid "Program stage not available"
+msgstr ""
+
 msgid ""
-"There's a problem with the generated analytics. Contact a system "
+"A program stage in this visualization is no longer part of its program. It "
+"may have been changed or removed."
+msgstr ""
+
+msgid "Dimension not available"
+msgstr ""
+
+msgid ""
+"A dimension in this visualization is no longer valid. It may have been "
+"removed from the program."
+msgstr ""
+
+msgid "Program not available"
+msgstr ""
+
+msgid ""
+"A program in this visualization is not available for the selected tracked "
+"entity type."
+msgstr ""
+
+msgid "Too much data"
+msgstr ""
+
+msgid ""
+"This request returns more data than the server allows. Reduce the amount of "
+"data and try again, for example by choosing fewer items, adding filters, or "
+"choosing a shorter period."
+msgstr ""
+
+msgid "Top limit too high"
+msgstr ""
+
+msgid ""
+"The top limit in this visualization is higher than the server allows. Lower "
+"it in the options."
+msgstr ""
+
+msgid "Request timed out"
+msgstr ""
+
+msgid ""
+"The request took too long and was stopped. Try again, or reduce the amount "
+"of data requested."
+msgstr ""
+
+msgid "Analytics not generated"
+msgstr ""
+
+msgid ""
+"The analytics tables have not been generated. Contact a system "
 "administrator."
 msgstr ""
 
-msgid "There's a syntax problem with the analytics request."
+msgid "Analytics request failed"
+msgstr ""
+
+msgid "The server could not run this request. Contact a system administrator."
 msgstr ""
 
 msgid "No data available"
@@ -1054,6 +1130,12 @@ msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"
 " may not have access to it."
 msgstr ""
+
+msgid "Analytics request error"
+msgstr ""
+
+msgid "Something went wrong"
+msgstr "Nimadir notoʼgʼri bajarildi"
 
 msgid "There was a problem getting the data from the server."
 msgstr "Serverdan maʼlumotlarni olishda muammo yuz berdi."
