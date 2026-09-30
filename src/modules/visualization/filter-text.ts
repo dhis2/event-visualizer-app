@@ -21,19 +21,8 @@ import type {
     MetadataStore,
 } from '@types'
 
-/* Matches the separator the pivot table engine has always used for its own
- * filter line. */
+// Aligned with the separator the pivot table engine produces
 const FRAGMENT_SEPARATOR = ' - '
-
-const getCompoundId = (
-    dimension: DimensionRecord,
-    visualization: CurrentVisualization
-): string =>
-    getCompoundDimensionId(
-        dimension,
-        visualization.outputType,
-        visualization.trackedEntityType?.id
-    )
 
 /* Suffixes disambiguate a dimension against the rest of the layout, so the
  * context is built from every axis rather than the filters alone. */
@@ -48,7 +37,11 @@ const getSuffixContext = (
         visualization
     )) {
         const item = metadataStore.getDimensionMetadataItem(
-            getCompoundId(dimension, visualization)
+            getCompoundDimensionId(
+                dimension,
+                visualization.outputType,
+                visualization.trackedEntityType?.id
+            )
         )
         if (item?.programId) {
             programIds.add(item.programId)
@@ -139,7 +132,11 @@ export const getVisualizationFilterText = ({
     const fragments: string[] = []
 
     for (const dimension of filters) {
-        const compoundId = getCompoundId(dimension, visualization)
+        const compoundId = getCompoundDimensionId(
+            dimension,
+            visualization.outputType,
+            visualization.trackedEntityType?.id
+        )
         const metadataItem = metadataStore.getDimensionMetadataItem(compoundId)
         if (!metadataItem) {
             continue
