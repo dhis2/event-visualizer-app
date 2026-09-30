@@ -214,7 +214,7 @@ describe('getVisualizationFilterText', () => {
         ).toBe('')
     })
 
-    it('skips a dimension with no metadata rather than showing its id', () => {
+    it('throws for a filter dimension with no metadata', () => {
         const vis = buildVis([
             {
                 dimension: 'unknown',
@@ -224,11 +224,11 @@ describe('getVisualizationFilterText', () => {
             },
         ] as CurrentVisualization['filters'])
 
-        expect(
+        expect(() =>
             getVisualizationFilterText({
                 visualization: vis,
                 metadataStore: buildStore(),
             })
-        ).toBe('')
+        ).toThrow()
     })
 })
