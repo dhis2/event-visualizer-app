@@ -1,24 +1,7 @@
 import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
 import { isPopulatedString } from '@modules/utils/guards'
-import type { CurrentVisualization, MetadataStore, Program } from '@types'
-
-const getFirstProgramId = (
-    visualization: CurrentVisualization
-): string | undefined => {
-    for (const axis of [
-        visualization.columns,
-        visualization.rows,
-        visualization.filters,
-    ]) {
-        for (const dimension of axis ?? []) {
-            if (dimension.program?.id) {
-                return dimension.program.id
-            }
-        }
-    }
-    return undefined
-}
+import type { CurrentVisualization, MetadataStore } from '@types'
 
 const getCountOrListTitle = (
     label: string,
@@ -67,16 +50,6 @@ const getTrackedEntityTitle = (
         : i18n.t('Tracked entities')
 }
 
-const getProgramLabels = (
-    visualization: CurrentVisualization,
-    metadataStore: MetadataStore
-): Program | undefined => {
-    const programId = getFirstProgramId(visualization)
-    return programId
-        ? metadataStore.getProgramMetadataItem(programId)
-        : undefined
-}
-
 export const getAutoTitle = (
     visualization: CurrentVisualization,
     metadataStore: MetadataStore
@@ -90,7 +63,7 @@ export const getAutoTitle = (
         return getTrackedEntityTitle(visualization, metadataStore)
     }
 
-    const program = getProgramLabels(visualization, metadataStore)
+    const program = visualization.programDimensions?.[0]
 
     if (visualization.outputType === 'ENROLLMENT') {
         if (isPopulatedString(program?.displayEnrollmentsLabel)) {

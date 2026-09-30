@@ -8,16 +8,16 @@ const TET_ID = 'tet1'
 
 const buildStore = (items: MetadataInputMap = {}) => {
     const store = new MetadataStore({})
-    store.addMetadata({
-        [PROGRAM_ID]: {
-            id: PROGRAM_ID,
-            name: 'Programme',
-            programType: 'WITHOUT_REGISTRATION',
-        },
-        ...items,
-    })
+    store.addMetadata(items)
     return store
 }
+
+const buildProgram = (labels: Record<string, string> = {}) => ({
+    id: PROGRAM_ID,
+    name: 'Programme',
+    programType: 'WITHOUT_REGISTRATION',
+    ...labels,
+})
 
 const buildVis = (
     overrides: Partial<CurrentVisualization> = {}
@@ -25,9 +25,10 @@ const buildVis = (
     ({
         type: 'LINE_LIST',
         outputType: 'EVENT',
-        columns: [{ dimension: 'ou', program: { id: PROGRAM_ID } }],
+        columns: [],
         rows: [],
         filters: [],
+        programDimensions: [buildProgram()],
         ...overrides,
     }) as CurrentVisualization
 
@@ -61,72 +62,84 @@ describe('getVisualizationTitle', () => {
     })
 
     it('prefers the plural event label for both visualization types', () => {
-        const store = buildStore({
-            [PROGRAM_ID]: {
-                id: PROGRAM_ID,
-                name: 'Programme',
-                programType: 'WITHOUT_REGISTRATION',
+        const store = buildStore()
+        const programDimensions = [
+            buildProgram({
                 displayEventLabel: 'visit',
                 displayEventsLabel: 'Visits',
-            },
-        })
+            }),
+        ] as CurrentVisualization['programDimensions']
 
-        expect(getVisualizationTitle(buildVis(), store)).toBe('Visits')
         expect(
-            getVisualizationTitle(buildVis({ type: 'PIVOT_TABLE' }), store)
+            getVisualizationTitle(buildVis({ programDimensions }), store)
+        ).toBe('Visits')
+        expect(
+            getVisualizationTitle(
+                buildVis({ type: 'PIVOT_TABLE', programDimensions }),
+                store
+            )
         ).toBe('Visits')
     })
 
     it('falls back to the singular event label with per-type wording', () => {
-        const store = buildStore({
-            [PROGRAM_ID]: {
-                id: PROGRAM_ID,
-                name: 'Programme',
-                programType: 'WITHOUT_REGISTRATION',
+        const store = buildStore()
+        const programDimensions = [
+            buildProgram({
                 displayEventLabel: 'Visit',
-            },
-        })
+            }),
+        ] as CurrentVisualization['programDimensions']
 
-        expect(getVisualizationTitle(buildVis(), store)).toBe('Visit list')
         expect(
-            getVisualizationTitle(buildVis({ type: 'PIVOT_TABLE' }), store)
+            getVisualizationTitle(buildVis({ programDimensions }), store)
+        ).toBe('Visit list')
+        expect(
+            getVisualizationTitle(
+                buildVis({ type: 'PIVOT_TABLE', programDimensions }),
+                store
+            )
         ).toBe('Visit count')
     })
 
     it('uses the enrollment labels for enrollment output', () => {
-        const store = buildStore({
-            [PROGRAM_ID]: {
-                id: PROGRAM_ID,
-                name: 'Programme',
-                programType: 'WITH_REGISTRATION',
+        const store = buildStore()
+        const programDimensions = [
+            buildProgram({
                 displayEnrollmentLabel: 'Pregnancy',
-            },
-        })
+            }),
+        ] as CurrentVisualization['programDimensions']
 
         expect(
-            getVisualizationTitle(buildVis({ outputType: 'ENROLLMENT' }), store)
+            getVisualizationTitle(
+                buildVis({ outputType: 'ENROLLMENT', programDimensions }),
+                store
+            )
         ).toBe('Pregnancy list')
         expect(
             getVisualizationTitle(
-                buildVis({ outputType: 'ENROLLMENT', type: 'PIVOT_TABLE' }),
+                buildVis({
+                    outputType: 'ENROLLMENT',
+                    type: 'PIVOT_TABLE',
+                    programDimensions,
+                }),
                 store
             )
         ).toBe('Pregnancy count')
     })
 
     it('prefers the plural enrollment label', () => {
-        const store = buildStore({
-            [PROGRAM_ID]: {
-                id: PROGRAM_ID,
-                name: 'Programme',
-                programType: 'WITH_REGISTRATION',
+        const store = buildStore()
+        const programDimensions = [
+            buildProgram({
                 displayEnrollmentLabel: 'Pregnancy',
                 displayEnrollmentsLabel: 'Pregnancies',
-            },
-        })
+            }),
+        ] as CurrentVisualization['programDimensions']
 
         expect(
-            getVisualizationTitle(buildVis({ outputType: 'ENROLLMENT' }), store)
+            getVisualizationTitle(
+                buildVis({ outputType: 'ENROLLMENT', programDimensions }),
+                store
+            )
         ).toBe('Pregnancies')
     })
 
@@ -225,32 +238,9 @@ describe('getVisualizationTitle', () => {
         expect(getVisualizationTitle(vis, store)).toBe('Events')
     })
 
-    it('falls back to the bare plural for an empty layout', () => {
-        const vis = buildVis({ columns: [], rows: [], filters: [] })
+    it('falls back to the bare plural when there is no program', () => {
+        const vis = buildVis({ programDimensions: [] })
 
         expect(getVisualizationTitle(vis, buildStore())).toBe('Events')
-    })
-
-    it('picks the first program in axis order for multi-program layouts', () => {
-        const store = buildStore({
-            [PROGRAM_ID]: {
-                id: PROGRAM_ID,
-                name: 'First',
-                programType: 'WITH_REGISTRATION',
-                displayEventsLabel: 'Visits',
-            },
-            prg2: {
-                id: 'prg2',
-                name: 'Second',
-                programType: 'WITH_REGISTRATION',
-                displayEventsLabel: 'Doses',
-            },
-        })
-        const vis = buildVis({
-            columns: [{ dimension: 'ou', program: { id: PROGRAM_ID } }],
-            filters: [{ dimension: 'x', program: { id: 'prg2' } }],
-        } as Partial<CurrentVisualization>)
-
-        expect(getVisualizationTitle(vis, store)).toBe('Visits')
     })
 })
