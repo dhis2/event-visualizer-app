@@ -31,20 +31,20 @@ export const Title: FC<TitleProps> = ({ label }) => {
     const [mode, setMode] = useState<TitleMode>(() =>
         getStoredMode(title, hideTitle)
     )
-    const [draft, setDraft] = useState<string>(title ?? '')
+    const [customTitle, setCustomTitle] = useState<string>(title ?? '')
 
-    const applyMode = useCallback(
+    const onModeChange = useCallback(
         (nextMode: TitleMode) => {
             setMode(nextMode)
             setHideTitle(nextMode === 'NONE')
-            setTitle(nextMode === 'CUSTOM' ? draft : '')
+            setTitle(nextMode === 'CUSTOM' ? customTitle : '')
         },
-        [draft, setHideTitle, setTitle]
+        [customTitle, setHideTitle, setTitle]
     )
 
-    const applyDraft = useCallback(
+    const onCustomTitleChange = useCallback(
         (value: string) => {
-            setDraft(value)
+            setCustomTitle(value)
             setTitle(value)
         },
         [setTitle]
@@ -57,7 +57,7 @@ export const Title: FC<TitleProps> = ({ label }) => {
                 name="titleMode"
                 label={i18n.t('Auto generated')}
                 checked={mode === 'AUTO'}
-                onChange={() => applyMode('AUTO')}
+                onChange={() => onModeChange('AUTO')}
                 dataTest="title-mode-auto"
             />
             <Radio
@@ -65,7 +65,7 @@ export const Title: FC<TitleProps> = ({ label }) => {
                 name="titleMode"
                 label={i18n.t('None')}
                 checked={mode === 'NONE'}
-                onChange={() => applyMode('NONE')}
+                onChange={() => onModeChange('NONE')}
                 dataTest="title-mode-none"
             />
             <Radio
@@ -73,7 +73,7 @@ export const Title: FC<TitleProps> = ({ label }) => {
                 name="titleMode"
                 label={i18n.t('Custom')}
                 checked={mode === 'CUSTOM'}
-                onChange={() => applyMode('CUSTOM')}
+                onChange={() => onModeChange('CUSTOM')}
                 dataTest="title-mode-custom"
             />
             {mode === 'CUSTOM' && (
@@ -83,8 +83,10 @@ export const Title: FC<TitleProps> = ({ label }) => {
                         name="title"
                         inputWidth="280px"
                         placeholder={i18n.t('Add a title')}
-                        value={draft}
-                        onChange={({ value }) => applyDraft(value ?? '')}
+                        value={customTitle}
+                        onChange={({ value }) =>
+                            onCustomTitleChange(value ?? '')
+                        }
                         dataTest="title-input"
                     />
                 </div>
