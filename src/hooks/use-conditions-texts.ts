@@ -3,7 +3,7 @@ import { useMetadataItems } from '@hooks'
 import {
     getConditionsMetadataIds,
     getConditionsTexts,
-} from '@modules/condition-texts'
+} from '@modules/conditions'
 import type { SavedVisualization } from '@types'
 import { useMemo } from 'react'
 

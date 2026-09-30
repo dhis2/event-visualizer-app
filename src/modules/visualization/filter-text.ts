@@ -2,7 +2,7 @@ import {
     getConditionsMetadataIds,
     getConditionsTexts,
     type Conditions,
-} from '@modules/condition-texts'
+} from '@modules/conditions'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
 import {
     getItemDisplayNames,
