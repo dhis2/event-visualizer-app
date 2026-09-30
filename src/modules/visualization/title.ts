@@ -80,7 +80,7 @@ const getProgramLabels = (
 export const getAutoTitle = (
     visualization: CurrentVisualization,
     metadataStore: MetadataStore
-): string | undefined => {
+): string => {
     const customValueTitle = getCustomValueTitle(visualization, metadataStore)
     if (customValueTitle) {
         return customValueTitle
