@@ -87,7 +87,7 @@ const getFilterValueTexts = ({
         return getConditionsTexts({
             conditions,
             dimension: layoutDimension,
-            formatValueOptions: { locale, digitGroupSeparator },
+            formatValueOptions: { digitGroupSeparator },
             metadataItems: metadataStore.getMetadataItems(
                 getConditionsMetadataIds({
                     conditions,
@@ -118,9 +118,8 @@ const getFilterValueTexts = ({
  * visualisation types render it from this one function so they cannot drift:
  * the line list draws its own row, the pivot table takes it as `filterText`.
  *
- * `locale` is only used to format custom start/end dates. It is undefined in
- * the dashboard plugin, which has no access to the user's settings, and then
- * falls back to the runtime default.
+ * `locale` is only used to format custom start/end dates, and falls back to
+ * the runtime default when the user's locale has not resolved yet.
  */
 export const getVisualizationFilterText = ({
     visualization,

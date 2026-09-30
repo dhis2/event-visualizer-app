@@ -3,6 +3,7 @@ import { useMetadataStore } from '@components/app-wrapper/metadata-provider/meta
 import { CanvasError } from '@components/canvas-error/canvas-error'
 import { CanvasErrorFallback } from '@components/canvas-error/canvas-error-fallback'
 import type { ColumnHeaderClickFn } from '@components/line-list/types'
+import { useCurrentUserInfo } from '@dhis2/app-runtime'
 import { Center, CircularLoader } from '@dhis2/ui'
 import { assertNever } from '@modules/utils/guards'
 import { getVisualizationFilterText } from '@modules/visualization/filter-text'
@@ -47,9 +48,6 @@ const getBaseRequestIdentity = (
 
 type PluginWrapperProps = {
     displayProperty: CurrentUser['settings']['displayProperty']
-    /* Only used to format custom start/end dates in the filter line. The
-     * dashboard plugin has no access to the user's settings and omits it. */
-    locale?: string
     visualization: CurrentVisualization | EmptyVisualization
     filters?: PluginFilters
     isInDashboard?: boolean
@@ -63,7 +61,6 @@ type PluginWrapperProps = {
 
 export const PluginWrapper: FC<PluginWrapperProps> = ({
     displayProperty,
-    locale,
     visualization,
     filters,
     isInDashboard = false,
@@ -93,6 +90,9 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     )
 
     const metadataStore = useMetadataStore()
+    /* Comes from the app-adapter's /api/me, so it resolves in the plugin
+     * and the interpretation modal too, unlike the app's cached user. */
+    const locale = useCurrentUserInfo()?.settings?.keyUiLocale
 
     /* The title is resolved here rather than in each plugin because this is
      * the one component the canvas, the dashboard plugin and the
