@@ -96,16 +96,20 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
 
     /* The title is resolved here rather than in each plugin because this is
      * the one component the canvas, the dashboard plugin and the
-     * interpretation modal all render through. `hideTitle` is set alongside
-     * it so the pivot table engine, which gates the title on that flag,
-     * agrees with the line list. */
-    const visualizationWithTitle = useMemo(() => {
-        if (isVisualizationEmpty(visualization)) {
-            return visualization
-        }
-        const title = getVisualizationTitle(visualization, metadataStore)
-        return { ...visualization, title, hideTitle: !title }
-    }, [visualization, metadataStore])
+     * interpretation modal all render through. */
+    const visualizationWithTitle = useMemo(
+        () =>
+            isVisualizationEmpty(visualization)
+                ? visualization
+                : {
+                      ...visualization,
+                      title: getVisualizationTitle(
+                          visualization,
+                          metadataStore
+                      ),
+                  },
+        [visualization, metadataStore]
+    )
 
     /* Both renderers take the same string: the line list draws its own row,
      * the pivot table engine renders it in place of its own derivation. */
