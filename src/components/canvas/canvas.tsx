@@ -74,7 +74,6 @@ export const Canvas: FC = () => {
                 visualizationLoadError={visualizationLoadError ?? undefined}
                 onRetryLoad={onRetryLoad}
                 displayProperty={currentUser.settings.displayProperty}
-                locale={currentUser.settings.uiLocale}
                 onColumnHeaderClick={onColumnHeaderClick}
                 onDataSorted={onDataSorted}
             />
