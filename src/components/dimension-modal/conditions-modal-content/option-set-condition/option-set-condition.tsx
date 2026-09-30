@@ -10,10 +10,15 @@ import { TransferSourceEmptyPlaceholder } from '@components/dimension-modal/tran
 import { useInfiniteTransferOptions } from '@components/dimension-modal/transfer/use-infinite-transfer-options'
 import { Transfer, TransferOption } from '@dhis2/ui'
 import { useAddMetadata, useOptionSetMetadataItem } from '@hooks'
-import { OPERATOR_IN } from '@modules/conditions'
+import {
+    NO_VALUE_OPTION_CODE,
+    OPERATOR_IN,
+    getNoValueOptionName,
+} from '@modules/conditions'
 import { logger } from '@modules/logger'
-import { type FC, useMemo } from 'react'
+import { type ComponentProps, type FC, useMemo } from 'react'
 import { type FetchResult, optionsApi } from './options-api'
+import classes from './styles/option-set-condition.module.css'
 
 type OptionSetConditionProps = {
     condition: string
@@ -37,8 +42,29 @@ const toSelectedOptionsLookup = (
     for (const { code, name } of Object.values(optionsByCode)) {
         lookup[code] = { value: code, label: name }
     }
+    lookup[NO_VALUE_OPTION_CODE] = {
+        value: NO_VALUE_OPTION_CODE,
+        label: getNoValueOptionName(),
+    }
     return lookup
 }
+
+const renderOption = ({
+    label,
+    ...props
+}: ComponentProps<typeof TransferOption>) => (
+    <TransferOption
+        {...props}
+        label={
+            props.value === NO_VALUE_OPTION_CODE ? (
+                <span className={classes.noValueOption}>{label}</span>
+            ) : (
+                label
+            )
+        }
+        dataTest="option-set-transfer-option"
+    />
+)
 
 export const OptionSetCondition: FC<OptionSetConditionProps> = ({
     condition,
@@ -90,6 +116,10 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
 
         const optionsMetadata = selected.reduce<FetchResult['items']>(
             (options, selectedId) => {
+                if (selectedId === NO_VALUE_OPTION_CODE) {
+                    return options
+                }
+
                 const option = allOptionsByCode[selectedId]
 
                 if (option) {
@@ -136,7 +166,10 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
     }
 
     const transferOptions = useMemo(
-        () => data.map(({ code, name }) => ({ value: code, label: name })),
+        () => [
+            { value: NO_VALUE_OPTION_CODE, label: getNoValueOptionName() },
+            ...data.map(({ code, name }) => ({ value: code, label: name })),
+        ],
         [data]
     )
 
@@ -170,12 +203,7 @@ export const OptionSetCondition: FC<OptionSetConditionProps> = ({
             selectedWidth={TRANSFER_SELECTED_WIDTH}
             selectedEmptyComponent={<TransferEmptySelection />}
             rightHeader={<TransferRightHeader />}
-            renderOption={(props) => (
-                <TransferOption
-                    {...props}
-                    dataTest={`${dataTest}-transfer-option`}
-                />
-            )}
+            renderOption={renderOption}
             dataTest={`${dataTest}-transfer`}
         />
     )
