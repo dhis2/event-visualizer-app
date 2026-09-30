@@ -41,18 +41,20 @@ const getTrackedEntityTitle = (
     metadataStore: MetadataStore
 ): string => {
     const tetId = visualization.trackedEntityType?.id
-    const tet = tetId ? metadataStore.getMetadataItem(tetId) : undefined
+    if (!tetId) {
+        throw new Error(
+            'A tracked entity visualization has no tracked entity type'
+        )
+    }
+    const tet = metadataStore.getMetadataItemOrThrow(tetId)
     const pluralLabel =
-        tet && 'displayTrackedEntityTypesLabel' in tet
+        'displayTrackedEntityTypesLabel' in tet
             ? tet.displayTrackedEntityTypesLabel
             : undefined
 
-    if (isPopulatedString(pluralLabel)) {
-        return pluralLabel
-    }
-    return isPopulatedString(tet?.name)
-        ? getCountOrListTitle(tet.name, visualization)
-        : i18n.t('Tracked entities')
+    return isPopulatedString(pluralLabel)
+        ? pluralLabel
+        : getCountOrListTitle(tet.name, visualization)
 }
 
 export const getAutoTitle = (

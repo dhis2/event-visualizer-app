@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-10-01T13:14:43.842Z\n"
-"PO-Revision-Date: 2026-10-01T13:14:43.843Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
+"PO-Revision-Date: 2026-10-01T13:14:58.129Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -1308,9 +1308,6 @@ msgstr "{{- label}} count"
 
 msgid "{{- label}} list"
 msgstr "{{- label}} list"
-
-msgid "Tracked entities"
-msgstr "Tracked entities"
 
 msgid "Enrollments"
 msgstr "Enrollments"
