@@ -12,8 +12,8 @@ export const toLayoutDimension = (
 ): LayoutDimension => {
     const dimension: LayoutDimension = {
         id,
-        name: metadataItem.name || id,
-        dimensionId: metadataItem.dimensionId ?? id,
+        name: metadataItem.name,
+        dimensionId: metadataItem.dimensionId,
         dimensionType: metadataItem.dimensionType,
         programStageId: metadataItem.programStageId,
         programId: metadataItem.programId,

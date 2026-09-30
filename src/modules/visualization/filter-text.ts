@@ -36,17 +36,17 @@ const getSuffixContext = (
     for (const dimension of combineAllDimensionsFromVisualization(
         visualization
     )) {
-        const item = metadataStore.getDimensionMetadataItem(
+        const item = metadataStore.getDimensionMetadataItemOrThrow(
             getCompoundDimensionId(
                 dimension,
                 visualization.outputType,
                 visualization.trackedEntityType?.id
             )
         )
-        if (item?.programId) {
+        if (item.programId) {
             programIds.add(item.programId)
         }
-        if (item?.programStageId) {
+        if (item.programStageId) {
             programStageIds.add(item.programStageId)
         }
     }
@@ -137,10 +137,8 @@ export const getVisualizationFilterText = ({
             visualization.outputType,
             visualization.trackedEntityType?.id
         )
-        const metadataItem = metadataStore.getDimensionMetadataItem(compoundId)
-        if (!metadataItem) {
-            continue
-        }
+        const metadataItem =
+            metadataStore.getDimensionMetadataItemOrThrow(compoundId)
 
         const layoutDimension = toLayoutDimension(
             compoundId,
