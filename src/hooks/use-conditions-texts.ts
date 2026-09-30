@@ -3,20 +3,10 @@ import { useMetadataItems } from '@hooks'
 import {
     getConditionsMetadataIds,
     getConditionsTexts,
+    type Conditions,
+    type FormatValueOptions,
 } from '@modules/conditions'
-import type { SavedVisualization } from '@types'
 import { useMemo } from 'react'
-
-type Conditions = {
-    condition?: string | string[]
-    legendSet?: string
-}
-
-type FormatValueOptions = {
-    locale?: string
-    digitGroupSeparator?: SavedVisualization['digitGroupSeparator']
-    baseUrl?: string
-}
 
 type UseConditionsTextsParams = {
     conditions: Conditions
