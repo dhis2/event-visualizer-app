@@ -307,10 +307,7 @@ export const normalizeApiSavedVisualization = (
     }
 
     /* The apps that produced legacy visualizations never generated a title, so
-     * an empty title there means "no title" rather than "auto generated".
-     * `hideTitle` cannot distinguish the two on its own: it is a primitive
-     * boolean in the backend and always comes back as `false`. This app strips
-     * `legacy` on save, so its own output never takes this branch. */
+     * an empty title there means "no title" rather than "auto generated". */
     if (normalizedVis.legacy) {
         normalizedVis.hideTitle = !isPopulatedString(normalizedVis.title)
     }
