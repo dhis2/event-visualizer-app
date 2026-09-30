@@ -152,16 +152,16 @@ describe('getVisualizationFilterText', () => {
                 programId: PROGRAM_ID,
                 programStageId: STAGE_ID,
             },
-            [`${STAGE_ID}.de1`]: {
-                id: `${STAGE_ID}.de1`,
-                dimensionId: 'de1',
-                name: 'Gender',
-                dimensionType: 'DATA_ELEMENT',
+            [`${STAGE_ID}.eventDate`]: {
+                id: `${STAGE_ID}.eventDate`,
+                dimensionId: 'eventDate',
+                name: 'Report date',
+                dimensionType: 'PERIOD',
                 programId: PROGRAM_ID,
                 programStageId: STAGE_ID,
             },
             ImspTQPwCqd: { id: 'ImspTQPwCqd', name: 'Sierra Leone' },
-            Mnp3oXrpAbK: { id: 'Mnp3oXrpAbK', name: 'Female' },
+            THIS_YEAR: { id: 'THIS_YEAR', name: 'This year' },
         })
         const vis = buildVis([
             {
@@ -171,10 +171,10 @@ describe('getVisualizationFilterText', () => {
                 items: [{ id: 'ImspTQPwCqd' }],
             },
             {
-                dimension: 'de1',
+                dimension: 'eventDate',
                 programStage: { id: STAGE_ID },
                 program: { id: PROGRAM_ID },
-                items: [{ id: 'Mnp3oXrpAbK' }],
+                items: [{ id: 'THIS_YEAR' }],
             },
         ] as CurrentVisualization['filters'])
 
@@ -183,7 +183,92 @@ describe('getVisualizationFilterText', () => {
                 visualization: vis,
                 metadataStore: store,
             })
-        ).toBe('Org unit: Sierra Leone - Gender: Female')
+        ).toBe('Org unit: Sierra Leone - Report date: This year')
+    })
+
+    it('names an enrollment org unit filter', () => {
+        const store = buildStore({
+            [`${PROGRAM_ID}.enrollmentOu`]: {
+                id: `${PROGRAM_ID}.enrollmentOu`,
+                dimensionId: 'enrollmentOu',
+                name: 'Enrollment org unit',
+                dimensionType: 'ORGANISATION_UNIT',
+                programId: PROGRAM_ID,
+            },
+            ImspTQPwCqd: { id: 'ImspTQPwCqd', name: 'Sierra Leone' },
+        })
+        const vis = buildVis(
+            [
+                {
+                    dimension: 'ou',
+                    program: { id: PROGRAM_ID },
+                    items: [{ id: 'ImspTQPwCqd' }],
+                },
+            ] as CurrentVisualization['filters'],
+            { outputType: 'ENROLLMENT' }
+        )
+
+        expect(
+            getVisualizationFilterText({
+                visualization: vis,
+                metadataStore: store,
+            })
+        ).toBe('Enrollment org unit: Sierra Leone')
+    })
+
+    it('adds the stage name when the layout spans several stages', () => {
+        const store = buildStore({
+            stg2: {
+                id: 'stg2',
+                name: 'Stage two',
+                repeatable: false,
+                hideDueDate: false,
+                program: { id: PROGRAM_ID },
+            },
+            [`${STAGE_ID}.ou`]: {
+                id: `${STAGE_ID}.ou`,
+                dimensionId: 'ou',
+                name: 'Org unit',
+                dimensionType: 'ORGANISATION_UNIT',
+                programId: PROGRAM_ID,
+                programStageId: STAGE_ID,
+            },
+            'stg2.eventDate': {
+                id: 'stg2.eventDate',
+                dimensionId: 'eventDate',
+                name: 'Report date',
+                dimensionType: 'PERIOD',
+                programId: PROGRAM_ID,
+                programStageId: 'stg2',
+            },
+            ImspTQPwCqd: { id: 'ImspTQPwCqd', name: 'Sierra Leone' },
+        })
+        const vis = buildVis(
+            [
+                {
+                    dimension: 'ou',
+                    programStage: { id: STAGE_ID },
+                    program: { id: PROGRAM_ID },
+                    items: [{ id: 'ImspTQPwCqd' }],
+                },
+            ] as CurrentVisualization['filters'],
+            {
+                columns: [
+                    {
+                        dimension: 'eventDate',
+                        programStage: { id: 'stg2' },
+                        program: { id: PROGRAM_ID },
+                    },
+                ],
+            } as Partial<CurrentVisualization>
+        )
+
+        expect(
+            getVisualizationFilterText({
+                visualization: vis,
+                metadataStore: store,
+            })
+        ).toBe('Org unit · Stage one: Sierra Leone')
     })
 
     it('skips a filter with neither items nor conditions', () => {
