@@ -466,8 +466,6 @@ export const getConditionsFromVisualization = (
     return result
 }
 
-/* Split from getConditionsTexts so a React caller can feed the IDs to a
- * subscribing hook, while a plain caller reads them straight from the store. */
 export const getConditionsMetadataIds = ({
     conditions,
     dimension,
