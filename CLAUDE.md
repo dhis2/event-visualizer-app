@@ -353,8 +353,8 @@ compound ID from a `DimensionRecord`. It applies these rules in order:
 - **Event org unit**: `ou` with `programStage` → compound `stageId.ou`
 - **Enrollment org unit**: `enrollmentOu` → compound `programId.enrollmentOu`.
   `toAppLocalDimensions` renames API `ou` (with program, no programStage) to `enrollmentOu`
-  at the API → app-local boundary. `toApiDimensionId` does the inverse on save — but only
-  in some outputType/visType combinations (see table below).
+  at the API → app-local boundary. `toEventVisualizationDimensionId` does the inverse on
+  save — but only in some outputType/visType combinations (see table below).
 - **Registration org unit**: `enrollmentOu` with `trackedEntityType` (no program/stage) →
   compound `tetId.enrollmentOu`. The TEI registration OU shares the `enrollmentOu` dimension
   ID with the program-scope enrollment OU; the prefix (programId vs trackedEntityTypeId)
