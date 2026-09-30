@@ -16,7 +16,7 @@ export type Conditions = {
     condition?: string | string[]
     legendSet?: string
 }
-type FormatValueOptions = {
+export type FormatValueOptions = {
     locale?: string
     digitGroupSeparator?: SavedVisualization['digitGroupSeparator']
     baseUrl?: string
