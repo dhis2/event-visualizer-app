@@ -11,24 +11,29 @@ const getCountOrListTitle = (
         ? i18n.t('{{- label}} count', { label })
         : i18n.t('{{- label}} list', { label })
 
+type VisualizationWithCustomValue = CurrentVisualization & {
+    value: { id: string }
+    aggregationType: NonNullable<CurrentVisualization['aggregationType']>
+}
+
+const hasCustomValue = (
+    visualization: CurrentVisualization
+): visualization is VisualizationWithCustomValue =>
+    visualization.type === 'PIVOT_TABLE' &&
+    Boolean(visualization.value?.id) &&
+    Boolean(visualization.aggregationType)
+
 const getCustomValueTitle = (
-    visualization: CurrentVisualization,
+    visualization: VisualizationWithCustomValue,
     metadataStore: MetadataStore
-): string | undefined => {
-    if (
-        visualization.type !== 'PIVOT_TABLE' ||
-        !visualization.value?.id ||
-        !visualization.aggregationType
-    ) {
-        return undefined
-    }
-    const itemName = metadataStore.getMetadataItem(visualization.value.id)?.name
+): string => {
+    const itemName = metadataStore.getMetadataItemOrThrow(
+        visualization.value.id
+    ).name
     const aggregationName =
         aggregationTypeDisplayNames[visualization.aggregationType]
 
-    return isPopulatedString(itemName) && isPopulatedString(aggregationName)
-        ? `${itemName} · ${aggregationName}`
-        : undefined
+    return `${itemName} · ${aggregationName}`
 }
 
 const getTrackedEntityTitle = (
@@ -54,9 +59,8 @@ export const getAutoTitle = (
     visualization: CurrentVisualization,
     metadataStore: MetadataStore
 ): string => {
-    const customValueTitle = getCustomValueTitle(visualization, metadataStore)
-    if (customValueTitle) {
-        return customValueTitle
+    if (hasCustomValue(visualization)) {
+        return getCustomValueTitle(visualization, metadataStore)
     }
 
     if (visualization.outputType === 'TRACKED_ENTITY_INSTANCE') {

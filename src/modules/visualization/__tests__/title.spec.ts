@@ -216,14 +216,14 @@ describe('getVisualizationTitle', () => {
         expect(getVisualizationTitle(vis, store)).toBe('Events')
     })
 
-    it('ignores a custom value whose item is unknown to the metadata store', () => {
+    it('throws when the custom value item is unknown to the metadata store', () => {
         const vis = buildVis({
             type: 'PIVOT_TABLE',
             value: { id: 'missing' },
             aggregationType: 'AVERAGE',
         })
 
-        expect(getVisualizationTitle(vis, buildStore())).toBe('Events')
+        expect(() => getVisualizationTitle(vis, buildStore())).toThrow()
     })
 
     it('ignores a custom value on a line list', () => {
