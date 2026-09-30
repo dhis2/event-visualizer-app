@@ -181,15 +181,13 @@ describe('getVisualizationTitle', () => {
         ).toBe('Patient count')
     })
 
-    it('falls back to a generic plural when the tracked entity type is unknown', () => {
+    it('throws when the tracked entity type is unknown to the metadata store', () => {
         const vis = buildVis({
             outputType: 'TRACKED_ENTITY_INSTANCE',
             trackedEntityType: { id: 'missing', name: 'Person' },
         })
 
-        expect(getVisualizationTitle(vis, buildStore())).toBe(
-            'Tracked entities'
-        )
+        expect(() => getVisualizationTitle(vis, buildStore())).toThrow()
     })
 
     it('replaces the output-type title with the custom value on a pivot', () => {
