@@ -1,7 +1,7 @@
 import { useAppSelector, useMetadataStore } from '@hooks'
+import { buildCurrentVisFromVisUiConfig } from '@modules/visualization/current-vis'
 import { areVisualizationsEquivalent } from '@modules/visualization/state'
 import { getCurrentVis } from '@store/current-vis-slice'
-import { buildCurrentVisFromVisUiConfig } from '@store/thunks'
 import { useMemo } from 'react'
 import {
     getAvailableOutputTypes,
