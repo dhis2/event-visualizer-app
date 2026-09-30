@@ -21,10 +21,9 @@ type TitleProps = {
     label: string
 }
 
-/* The mode is derived from `title` and `hideTitle` rather than stored, so a
- * custom title typed and then toggled away from has nowhere persistent to
- * live. Keeping it here means it survives toggling while the modal is open
- * and is discarded when the modal unmounts, which is what the spec asks for. */
+/* Auto is stored as an empty title, so a custom title typed and then toggled
+ * away from can't stay in the options without reading back as Custom. It is
+ * kept in local state instead, and dropped when the field unmounts. */
 export const Title: FC<TitleProps> = ({ label }) => {
     const [title, setTitle] = useOptionsField('title')
     const [hideTitle, setHideTitle] = useOptionsField('hideTitle')
