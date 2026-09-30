@@ -1,115 +1,19 @@
-import {
-    getConditionsMetadataIds,
-    getConditionsTexts,
-    type Conditions,
-} from '@modules/conditions'
-import { getCompoundDimensionId } from '@modules/dimension/ids'
-import {
-    getItemDisplayNames,
-    getItemMetadataIds,
-} from '@modules/dimension/item-names'
 import { toLayoutDimension } from '@modules/dimension/layout-dimension'
+import { getDimensionLabel, getSuffixContext } from '@modules/dimension/suffix'
 import {
-    buildSuffixContext,
-    type SuffixContext,
-} from '@modules/dimension/suffix'
-import { combineAllDimensionsFromVisualization } from '@modules/dimension/translation'
+    getDimensionValueMetadataIds,
+    getDimensionValueTexts,
+} from '@modules/dimension/value-texts'
 import { getStartEndDateFormatter } from '@modules/utils/dates'
-import type {
-    CurrentVisualization,
-    DimensionRecord,
-    MetadataStore,
-} from '@types'
+import { getVisualizationUiConfig } from '@modules/visualization/ui-config'
+import type { CurrentVisualization, MetadataStore } from '@types'
 
 // Aligned with the separator the pivot table engine produces
 const FRAGMENT_SEPARATOR = ' - '
 
-/* Suffixes disambiguate a dimension against the rest of the layout, so the
- * context is built from every axis rather than the filters alone. */
-const getSuffixContext = (
-    visualization: CurrentVisualization,
-    metadataStore: MetadataStore
-): SuffixContext => {
-    const programIds = new Set<string>()
-    const programStageIds = new Set<string>()
-
-    for (const dimension of combineAllDimensionsFromVisualization(
-        visualization
-    )) {
-        const item = metadataStore.getDimensionMetadataItemOrThrow(
-            getCompoundDimensionId(
-                dimension,
-                visualization.outputType,
-                visualization.trackedEntityType?.id
-            )
-        )
-        if (item.programId) {
-            programIds.add(item.programId)
-        }
-        if (item.programStageId) {
-            programStageIds.add(item.programStageId)
-        }
-    }
-
-    return buildSuffixContext({
-        programs: Object.values(
-            metadataStore.getMetadataItems(Array.from(programIds))
-        ),
-        programStages: Object.values(
-            metadataStore.getMetadataItems(Array.from(programStageIds))
-        ),
-    })
-}
-
-const getFilterValueTexts = ({
-    dimension,
-    conditions,
-    layoutDimension,
-    metadataStore,
-    locale,
-    digitGroupSeparator,
-}: {
-    dimension: DimensionRecord
-    conditions: Conditions
-    layoutDimension: ReturnType<typeof toLayoutDimension>
-    metadataStore: MetadataStore
-    locale?: string
-    digitGroupSeparator: CurrentVisualization['digitGroupSeparator']
-}): string[] => {
-    if (conditions.condition || conditions.legendSet) {
-        return getConditionsTexts({
-            conditions,
-            dimension: layoutDimension,
-            formatValueOptions: { digitGroupSeparator },
-            metadataItems: metadataStore.getMetadataItems(
-                getConditionsMetadataIds({
-                    conditions,
-                    dimension: layoutDimension,
-                })
-            ),
-        })
-    }
-
-    const itemIds = (dimension.items ?? [])
-        .map((item) => item.id)
-        .filter((id): id is string => Boolean(id))
-    if (!itemIds.length) {
-        return []
-    }
-
-    return getItemDisplayNames({
-        itemIds,
-        metadataItems: metadataStore.getMetadataItems(
-            getItemMetadataIds(itemIds)
-        ),
-        formatStartEndDate: getStartEndDateFormatter(locale),
-    })
-}
-
 /**
- * The text of the filter line shown beneath the title and subtitle. Both
- * visualisation types render it from this one function so they cannot drift:
- * the line list draws its own row, the pivot table takes it as `filterText`.
+ * The text of the filter line shown beneath the title and subtitle, for both
+ * the line list and the pivot table.
  *
  * `locale` is only used to format custom start/end dates, and falls back to
  * the runtime default when the user's locale has not resolved yet.
@@ -123,50 +27,46 @@ export const getVisualizationFilterText = ({
     metadataStore: MetadataStore
     locale?: string
 }): string => {
-    const filters = visualization.filters ?? []
-    if (!filters.length) {
+    const { layout, itemsByDimension, conditionsByDimension } =
+        getVisualizationUiConfig(visualization)
+    if (!layout.filters.length) {
         return ''
     }
 
-    const suffixContext = getSuffixContext(visualization, metadataStore)
-    const fragments: string[] = []
+    const suffixContext = getSuffixContext(
+        [...layout.columns, ...layout.rows, ...layout.filters],
+        metadataStore
+    )
+    const formatStartEndDate = getStartEndDateFormatter(locale)
 
-    for (const dimension of filters) {
-        const compoundId = getCompoundDimensionId(
-            dimension,
-            visualization.outputType,
-            visualization.trackedEntityType?.id
-        )
-        const metadataItem =
-            metadataStore.getDimensionMetadataItemOrThrow(compoundId)
+    return layout.filters
+        .flatMap((dimensionId) => {
+            const dimension = toLayoutDimension(
+                dimensionId,
+                metadataStore.getDimensionMetadataItemOrThrow(dimensionId),
+                suffixContext
+            )
+            const values = {
+                dimension,
+                itemIds: itemsByDimension[dimensionId] ?? [],
+                conditions: conditionsByDimension[dimensionId] ?? {},
+            }
+            const valueTexts = getDimensionValueTexts({
+                ...values,
+                metadataItems: metadataStore.getMetadataItems(
+                    getDimensionValueMetadataIds(values)
+                ),
+                formatValueOptions: {
+                    digitGroupSeparator: visualization.digitGroupSeparator,
+                },
+                formatStartEndDate,
+            })
 
-        const layoutDimension = toLayoutDimension(
-            compoundId,
-            metadataItem,
-            suffixContext
-        )
-        const valueTexts = getFilterValueTexts({
-            dimension,
-            conditions: {
-                condition: dimension.filter,
-                legendSet: dimension.legendSet?.id,
-            },
-            layoutDimension,
-            metadataStore,
-            locale,
-            digitGroupSeparator: visualization.digitGroupSeparator,
+            return valueTexts.length
+                ? [
+                      `${getDimensionLabel(dimension.name, dimension.suffix)}: ${valueTexts.join(', ')}`,
+                  ]
+                : []
         })
-
-        if (!valueTexts.length) {
-            continue
-        }
-
-        const label = layoutDimension.suffix
-            ? `${layoutDimension.name} · ${layoutDimension.suffix}`
-            : layoutDimension.name
-
-        fragments.push(`${label}: ${valueTexts.join(', ')}`)
-    }
-
-    return fragments.join(FRAGMENT_SEPARATOR)
+        .join(FRAGMENT_SEPARATOR)
 }
