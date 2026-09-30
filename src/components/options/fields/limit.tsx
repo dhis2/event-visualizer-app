@@ -1,10 +1,16 @@
 import i18n from '@dhis2/d2-i18n'
-import { Checkbox } from '@dhis2/ui'
+import { Checkbox, InputField } from '@dhis2/ui'
 import { useOptionsField } from '@hooks'
-import { useCallback, useMemo, type FC } from 'react'
+import {
+    useCallback,
+    useMemo,
+    useRef,
+    useState,
+    type FC,
+    type KeyboardEvent,
+} from 'react'
 import { SelectBaseOption } from './select-base-option'
 import classes from './styles/option.module.css'
-import { TextBaseOption } from './text-base-option'
 
 export const Limit: FC = () => {
     const [sortOrder, setSortOrder] = useOptionsField('sortOrder')
@@ -15,7 +21,7 @@ export const Limit: FC = () => {
         [sortOrder, topLimit]
     )
 
-    const onChange = useCallback(
+    const toggleLimit = useCallback(
         ({ checked }: { checked: boolean }) => {
             setSortOrder(checked ? -1 : undefined)
             setTopLimit(checked ? 10 : undefined)
@@ -29,7 +35,7 @@ export const Limit: FC = () => {
                 checked={isLimitEnabled}
                 label={i18n.t('Limit')}
                 name="limitEnabled"
-                onChange={onChange}
+                onChange={toggleLimit}
                 dense
             />
             {isLimitEnabled && (
@@ -55,11 +61,83 @@ const SortOrder: FC = () => (
     />
 )
 
-const TopLimit = () => (
-    <TextBaseOption
-        label={i18n.t('Top limit')}
-        type="number"
-        min="1"
-        option={{ name: 'topLimit' }}
-    />
-)
+/* Digits only: a number input hands "1e3" over as typed, and `Number` reads
+ * that as 1000. */
+const parseTopLimit = (value: string): number | undefined => {
+    if (!/^\d+$/.test(value)) {
+        return undefined
+    }
+
+    const parsed = Number(value)
+
+    return parsed >= 1 ? parsed : undefined
+}
+
+/* Only text that parses reaches the store, so the limit is always usable. An
+ * edit ending on text that does not parse is undone back to the snapshot,
+ * which is why the snapshot only moves on a valid blur. Blur runs before the
+ * submit it triggers, since the Update button's mousedown comes before its
+ * click. Enter never blurs, so it is refused while the text is invalid. */
+const TopLimit: FC = () => {
+    const [topLimit, setTopLimit] = useOptionsField('topLimit')
+    const [inputValue, setInputValue] = useState<string>(String(topLimit ?? ''))
+    const topLimitSnapshotRef = useRef(topLimit)
+    const parsedInputValue = parseTopLimit(inputValue)
+    const isInvalid = parsedInputValue === undefined
+
+    const acceptTypedValue = useCallback(
+        ({ value = '' }: { value?: string }) => {
+            setInputValue(value)
+
+            const parsed = parseTopLimit(value)
+
+            if (parsed !== undefined) {
+                setTopLimit(parsed)
+            }
+        },
+        [setTopLimit]
+    )
+
+    const createOrResetToSnapshot = useCallback(() => {
+        if (parsedInputValue === undefined) {
+            setInputValue(String(topLimitSnapshotRef.current))
+            setTopLimit(topLimitSnapshotRef.current)
+        } else {
+            topLimitSnapshotRef.current = parsedInputValue
+        }
+    }, [parsedInputValue, setTopLimit])
+
+    const refuseImplicitSubmit = useCallback(
+        (_payload: unknown, event: KeyboardEvent<HTMLInputElement>) => {
+            if (isInvalid && event.key === 'Enter') {
+                event.preventDefault()
+            }
+        },
+        [isInvalid]
+    )
+
+    return (
+        <div>
+            <InputField
+                label={i18n.t('Top limit')}
+                name="topLimit"
+                type="number"
+                min="1"
+                step="1"
+                value={inputValue}
+                error={isInvalid}
+                validationText={
+                    isInvalid
+                        ? i18n.t('Must be a whole number of 1 or more')
+                        : undefined
+                }
+                onChange={acceptTypedValue}
+                onBlur={createOrResetToSnapshot}
+                onKeyDown={refuseImplicitSubmit}
+                inputWidth="280px"
+                dense
+                dataTest="topLimit-input"
+            />
+        </div>
+    )
+}

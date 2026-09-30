@@ -698,12 +698,15 @@ describe('getTrackedEntityTypeFixedDimensions', () => {
 
 describe('getDefaultItemsForDimension', () => {
     it('defaults org unit dimensions to the current user org unit', () => {
-        expect(getDefaultItemsForDimension('stage1.ou')).toEqual([
-            'USER_ORGUNIT',
-        ])
-        expect(getDefaultItemsForDimension('program1.enrollmentOu')).toEqual([
-            'USER_ORGUNIT',
-        ])
+        expect(
+            getDefaultItemsForDimension('stage1.ou', 'LAST_12_MONTHS')
+        ).toEqual(['USER_ORGUNIT'])
+        expect(
+            getDefaultItemsForDimension(
+                'program1.enrollmentOu',
+                'LAST_12_MONTHS'
+            )
+        ).toEqual(['USER_ORGUNIT'])
     })
 
     it('defaults time dimensions to the provided relative period', () => {
@@ -713,10 +716,6 @@ describe('getDefaultItemsForDimension', () => {
         expect(
             getDefaultItemsForDimension('program1.enrollmentDate', 'THIS_YEAR')
         ).toEqual(['THIS_YEAR'])
-    })
-
-    it('returns no default for a time dimension when no relative period is given', () => {
-        expect(getDefaultItemsForDimension('stage1.eventDate')).toBeUndefined()
     })
 
     it('returns no default for non-org-unit, non-time dimensions', () => {

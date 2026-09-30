@@ -90,25 +90,11 @@ gh auth login
 # extension and connect it to Claude Code.
 # https://chromewebstore.google.com/detail/claude/fcoeoabgfenejglbffodgkkbkcdhcgfn
 # Once connected, Claude can drive your browser to load http://localhost:3000.
-# (This is host-only; the AI sandboxes use playwright-cli instead — no setup needed.)
 
 # 4. Inside Claude Code, install and activate plugins
 /plugin install typescript-lsp@claude-plugins-official
 /reload-plugins
 ```
-
-### AI sandboxes (opt-in)
-
-Two optional, **experimental**, isolated AI workspaces built on [Docker Sandboxes](https://docs.docker.com/ai/sandboxes/) (`sbx`) — a hands-on **mount** (your live working tree) and an autonomous **clone**. Fully opt-in: if you do not install `sbx`, nothing here affects you. (Tested on macOS/arm64 + Neovim; see the guide for portability.)
-
-One-time setup needs the `sbx` CLI, a read-only GitHub token, and a dedicated SSH signing key (all covered in the guide). With that done, launch one with:
-
-```bash
-pnpm sbx:mount            # hands-on, edits your live files
-pnpm sbx:clone            # autonomous, isolated clone
-```
-
-See **[docs/claude-sandboxes.md](docs/claude-sandboxes.md)** for installation and setup, mount vs clone, the `node_modules` overlay, Neovim integration, browser automation, and the full workflow.
 
 ### Development Workflow
 
@@ -511,3 +497,28 @@ the real dashboard plugin in an iframe the way a dashboard would.
 Paste a visualization id to render it. The filter toggle sends a dashboard
 filter to the plugin; since the plugin applies none, it only shows the "filters
 not applied" notice.
+
+### Version-specific e2e tests
+
+Most e2e tests should pass against every supported DHIS2 version, so tagging is exclusion-based: an untagged test runs against all versions, and a `@skip-<minor version>` tag names a version the test is **excluded on** — not a version it targets.
+
+```ts
+// runs against every version
+it('shows the landing page', () => {})
+
+// runs against every version except 2.43
+it('shows the new empty state', { tags: ['@skip-43'] }, () => {})
+
+// runs against every version except 2.43 and 2.45
+it('shows the temporary warning', { tags: ['@skip-43', '@skip-45'] }, () => {})
+```
+
+Filtering is done by [@cypress/grep](https://github.com/cypress-io/cypress/tree/develop/npm/grep). The version under test comes from `dhis2InstanceVersion` in `cypress.env.json` (`API_VERSION` on CI), and `cypress/plugins/select-by-version-tags.ts` turns it into the tag filter `-@skip-<version>`, where the leading `-` is grep's "not" operator.
+
+Because each test run targets a single backend, the filter is always one negation.
+
+Three things to be aware of:
+
+- A test for a feature added in a given version should be tagged for the versions **below** it, so it keeps running against every version released later. Tagging the version the feature arrived in would exclude it from exactly the runs that matter.
+- A tag pins a single version, so a test that must stop running above some version needs a tag for each new release. Forgetting one means the test runs where it shouldn't and fails, which is at least visible in the run.
+- Excluded tests are omitted from the results rather than reported as pending, so they do not show up in the run summary at all. A tag on a `describe` applies to the tests inside it, but only at run time: a spec in which every test is excluded is still loaded and then reports zero tests. That is harmless — it counts as a passing spec — but the spec still appears in the run.

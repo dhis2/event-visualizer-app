@@ -1,5 +1,6 @@
 import fs from 'node:fs'
 import { defineConfig } from 'cypress'
+import { selectByVersionTags } from './cypress/plugins/select-by-version-tags'
 import viteConfig from './vite-cypress.config.mjs'
 
 const setupNodeEvents = async (
@@ -50,7 +51,7 @@ const setupNodeEvents = async (
         hideRequestsFromLog: config.env.hideRequestsFromLog,
     }
 
-    return config
+    return selectByVersionTags(config)
 }
 
 module.exports = defineConfig({

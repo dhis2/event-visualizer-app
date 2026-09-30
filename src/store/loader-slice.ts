@@ -1,4 +1,4 @@
-import { type EngineError, parseEngineError } from '@api/parse-engine-error'
+import type { EngineError } from '@api/parse-engine-error'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 
@@ -22,13 +22,11 @@ export const loaderSlice = createSlice({
                 state.visualizationLoadError = null
             }
         },
-        setVisualizationLoadError: {
-            reducer: (state, action: PayloadAction<EngineError>) => {
-                state.visualizationLoadError = action.payload
-            },
-            prepare: (error: unknown) => ({
-                payload: parseEngineError(error),
-            }),
+        setVisualizationLoadError: (
+            state,
+            action: PayloadAction<EngineError>
+        ) => {
+            state.visualizationLoadError = action.payload
         },
         clearVisualizationLoadError: (state) => {
             state.visualizationLoadError = initialState.visualizationLoadError

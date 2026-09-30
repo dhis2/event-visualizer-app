@@ -1,0 +1,126 @@
+[
+    {
+        "legends": [
+            {
+                "startValue": 140,
+                "endValue": 160,
+                "color": "#74c476",
+                "id": "GWuQsWJDGvN",
+                "name": "140 - 160"
+            },
+            {
+                "startValue": 200,
+                "endValue": 290,
+                "color": "#005a32",
+                "id": "eySqrYxteI7",
+                "name": "200+"
+            },
+            {
+                "startValue": 100,
+                "endValue": 120,
+                "color": "#c7e9c0",
+                "id": "CivTksSoCt0",
+                "name": "100 - 120"
+            },
+            {
+                "startValue": 160,
+                "endValue": 180,
+                "color": "#41ab5d",
+                "id": "wgbW2ZQnlIc",
+                "name": "160 - 180"
+            },
+            {
+                "startValue": 180,
+                "endValue": 200,
+                "color": "#238b45",
+                "id": "B1X4JyH4Mdw",
+                "name": "180 - 200"
+            },
+            {
+                "startValue": 0,
+                "endValue": 100,
+                "color": "#edf8e9",
+                "id": "sxFVvKLpE0y",
+                "name": "0 - 100"
+            },
+            {
+                "startValue": 120,
+                "endValue": 140,
+                "color": "#a1d99b",
+                "id": "BHlWGFLIU20",
+                "name": "120 - 140"
+            }
+        ],
+        "id": "TBxGTceyzwy",
+        "name": "Height in cm"
+    },
+    {
+        "legends": [
+            {
+                "startValue": 60,
+                "endValue": 70,
+                "color": "#6baed6",
+                "id": "GDFw7T4aFGz",
+                "name": "60 - 70"
+            },
+            {
+                "startValue": 70,
+                "endValue": 80,
+                "color": "#4292c6",
+                "id": "xVezsaEXU3k",
+                "name": "70 - 80"
+            },
+            {
+                "startValue": 0,
+                "endValue": 20,
+                "color": "#f7fbff",
+                "id": "NxQrJ3icPkE",
+                "name": "0 - 20"
+            },
+            {
+                "startValue": 20,
+                "endValue": 40,
+                "color": "#deebf7",
+                "id": "b9UzeWaSs2u",
+                "name": "20 - 40"
+            },
+            {
+                "startValue": 50,
+                "endValue": 60,
+                "color": "#9ecae1",
+                "id": "Sjp6IB3gthI",
+                "name": "50 - 60"
+            },
+            {
+                "startValue": 40,
+                "endValue": 50,
+                "color": "#c6dbef",
+                "id": "AD5jueZTZSK",
+                "name": "40 - 50"
+            },
+            {
+                "startValue": 90,
+                "endValue": 100,
+                "color": "#08519c",
+                "id": "XKEvGfAkh3R",
+                "name": "90 - 100"
+            },
+            {
+                "startValue": 80,
+                "endValue": 90,
+                "color": "#2171b5",
+                "id": "lnccUWrmqL0",
+                "name": "80 - 90"
+            },
+            {
+                "startValue": 100,
+                "endValue": 200,
+                "color": "#08306b",
+                "id": "f3prvzpfniC",
+                "name": "100+"
+            }
+        ],
+        "id": "OrkEzxZEH4X",
+        "name": "Weight in kg"
+    }
+]

@@ -1,38 +1,12 @@
-import {
-    getAnalyticsRequestDimensionName,
-    getAnalyticsRequestHeaderName,
-} from '@modules/analytics-request'
-import {
-    getCompoundDimensionId,
-    WIRE_ONLY_DIMENSIONS,
-} from '@modules/dimension/ids'
+import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
+import { getCompoundDimensionId } from '@modules/dimension/ids'
 import type {
     Axis,
     CurrentVisualization,
-    DimensionArray,
     MetadataStore,
     OutputType,
 } from '@types'
-import { getRequestOptions } from './query-tools-common'
-
-const adaptDimensions = (
-    dimensions: DimensionArray,
-    visualization: CurrentVisualization
-): DimensionArray =>
-    dimensions
-        .filter((dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension))
-        .map((dim) => ({
-            ...dim,
-            dimension: getAnalyticsRequestDimensionName({
-                dimensionId: dim.dimension,
-                programId: dim.program?.id,
-                programStageId: dim.programStage?.id,
-                trackedEntityTypeId: visualization.trackedEntityType?.id,
-                outputType: visualization.outputType,
-            }),
-            program: undefined,
-            programStage: undefined,
-        }))
+import { adaptDimensions, getRequestOptions } from './query-tools-common'
 
 export const getAdaptedVisualization = (
     visualization: CurrentVisualization
@@ -42,7 +16,12 @@ export const getAdaptedVisualization = (
     }
     parameters: Record<string, unknown>
 } => {
-    const parameters = getRequestOptions(visualization)
+    /* showHierarchy is set here rather than in ANALYTICS_OPTIONS, which the
+     * line list shares and which must not start sending the parameter. */
+    const parameters = {
+        ...getRequestOptions(visualization),
+        ...(visualization.showHierarchy ? { showHierarchy: true } : {}),
+    }
 
     const columns = visualization.columns ?? []
     const rows = visualization.rows ?? []
@@ -122,6 +101,7 @@ export const getBaseRequestIdentity = (
     programIds: (visualization.programDimensions ?? []).map((p) => p.id),
     trackedEntityTypeId: visualization.trackedEntityType?.id,
     timeField: visualization.timeField,
+    showHierarchy: visualization.showHierarchy,
     sortOrder: visualization.sortOrder,
     topLimit: visualization.topLimit,
     ...getCustomValueRequestParams(visualization),

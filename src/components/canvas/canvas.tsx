@@ -1,3 +1,4 @@
+import { useHasUnappliedChanges } from '@components/layout-panel/bottom-bar/use-has-unapplied-changes'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { StartScreen } from '@components/start-screen/start-screen'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
@@ -11,6 +12,7 @@ import { tLoadSavedVisualization } from '@store/thunks'
 import { setUiActiveDimensionModal } from '@store/ui-slice'
 import type { Sorting } from '@types'
 import { useCallback, type FC } from 'react'
+import { UnappliedChangesOverlay } from './unapplied-changes-overlay'
 
 export const Canvas: FC = () => {
     const dispatch = useAppDispatch()
@@ -21,6 +23,7 @@ export const Canvas: FC = () => {
     const visualizationId = useAppSelector(
         (state) => state.navigation.visualizationId
     )
+    const hasUnappliedChanges = useHasUnappliedChanges()
 
     const onRetryLoad = useCallback(() => {
         if (visualizationId !== 'new') {
@@ -61,14 +64,19 @@ export const Canvas: FC = () => {
     }
 
     return (
-        <PluginWrapper
+        <UnappliedChangesOverlay
+            hasUnappliedChanges={hasUnappliedChanges}
             isVisualizationLoading={isVisualizationLoading}
-            visualization={currentVis}
-            visualizationLoadError={visualizationLoadError ?? undefined}
-            onRetryLoad={onRetryLoad}
-            displayProperty={currentUser.settings.displayProperty}
-            onColumnHeaderClick={onColumnHeaderClick}
-            onDataSorted={onDataSorted}
-        />
+        >
+            <PluginWrapper
+                isVisualizationLoading={isVisualizationLoading}
+                visualization={currentVis}
+                visualizationLoadError={visualizationLoadError ?? undefined}
+                onRetryLoad={onRetryLoad}
+                displayProperty={currentUser.settings.displayProperty}
+                onColumnHeaderClick={onColumnHeaderClick}
+                onDataSorted={onDataSorted}
+            />
+        </UnappliedChangesOverlay>
     )
 }

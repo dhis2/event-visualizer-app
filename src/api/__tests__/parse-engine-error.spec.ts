@@ -1,6 +1,6 @@
 import { FetchError } from '@dhis2/app-runtime'
 import { describe, it, expect } from 'vitest'
-import { parseEngineError } from '../parse-engine-error'
+import { isEngineError, parseEngineError } from '../parse-engine-error'
 
 describe('parseEngineError', () => {
     it('parses network FetchError', () => {
@@ -165,5 +165,34 @@ describe('parseEngineError', () => {
         const result = parseEngineError(err)
         expect(result.errorCode).toBeUndefined()
         expect(result.errorCodes).toEqual(['E789', 'E101'])
+    })
+})
+
+describe('isEngineError', () => {
+    it('recognises a parsed engine error', () => {
+        expect(
+            isEngineError(
+                parseEngineError(
+                    new FetchError({ type: 'network', message: 'down' })
+                )
+            )
+        ).toBe(true)
+    })
+
+    it('rejects a raw FetchError, which still needs its details flattened', () => {
+        const raw = new FetchError({
+            type: 'access',
+            message: 'Forbidden',
+            details: { errorCode: 'E7217' },
+        })
+
+        expect(isEngineError(raw)).toBe(false)
+        expect(parseEngineError(raw).errorCode).toBe('E7217')
+    })
+
+    it("rejects RTK's serialized error, which carries no engine error type", () => {
+        expect(
+            isEngineError({ name: 'Error', message: 'boom', code: '500' })
+        ).toBe(false)
     })
 })

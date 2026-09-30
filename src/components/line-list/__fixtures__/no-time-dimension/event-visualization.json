@@ -1,0 +1,156 @@
+{
+    "name": "No time dimension",
+    "created": "2026-09-11T11:55:15.633",
+    "lastUpdated": "2026-09-11T11:55:15.633",
+    "translations": [],
+    "createdBy": {
+        "id": "xE7jOejl9FI",
+        "code": null,
+        "name": "John Traore",
+        "displayName": "John Traore",
+        "username": "admin"
+    },
+    "lastUpdatedBy": {
+        "id": "xE7jOejl9FI",
+        "code": null,
+        "name": "John Traore",
+        "displayName": "John Traore",
+        "username": "admin"
+    },
+    "sharing": {
+        "owner": "xE7jOejl9FI",
+        "users": {},
+        "userGroups": {},
+        "public": "rw------"
+    },
+    "regressionType": "NONE",
+    "rawPeriods": [],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [],
+    "dataElementDimensions": [
+        {
+            "dataElement": {
+                "name": "WHOMCH Smoking",
+                "id": "sWoqcoByYmD"
+            }
+        }
+    ],
+    "programIndicatorDimensions": [],
+    "subscribers": [],
+    "digitGroupSeparator": "SPACE",
+    "hideEmptyRowItems": "NONE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": false,
+    "type": "LINE_LIST",
+    "favorites": [],
+    "program": {
+        "enrollmentDateLabel": "Enrollment Date",
+        "incidentDateLabel": "Incident Date",
+        "programType": "WITHOUT_REGISTRATION",
+        "displayIncidentDate": false,
+        "displayEnrollmentDateLabel": "Enrollment Date",
+        "displayIncidentDateLabel": "Incident Date",
+        "id": "lxAQ7Zs9VYR",
+        "programStages": [
+            {
+                "program": {
+                    "id": "lxAQ7Zs9VYR"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Visit date",
+                "id": "dBwrot7S420",
+                "repeatable": false,
+                "name": "Antenatal care visit"
+            }
+        ],
+        "name": "Antenatal care visit"
+    },
+    "programStage": {
+        "program": {
+            "id": "lxAQ7Zs9VYR"
+        },
+        "hideDueDate": false,
+        "displayExecutionDateLabel": "Visit date",
+        "id": "dBwrot7S420",
+        "repeatable": false,
+        "name": "Antenatal care visit"
+    },
+    "programDimensions": [],
+    "simpleDimensions": [
+        {
+            "parent": "COLUMN",
+            "dimension": "ou",
+            "values": ["USER_ORGUNIT"]
+        }
+    ],
+    "outputType": "EVENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": false,
+    "filters": [],
+    "parentGraphMap": {},
+    "columns": [
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "USER_ORGUNIT"
+                }
+            ],
+            "dimension": "ou"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "dimension": "sWoqcoByYmD",
+            "valueType": "BOOLEAN"
+        }
+    ],
+    "rows": [],
+    "displayName": "No time dimension",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "href": "https://e2e.im.dhis2.org/analytics-dev/api/eventVisualizations/ETJXkMmCGsK",
+    "subscribed": false,
+    "favorite": false,
+    "metaData": {
+        "sWoqcoByYmD": {
+            "uid": "sWoqcoByYmD",
+            "code": "STA_SMO",
+            "name": "WHOMCH Smoking"
+        }
+    },
+    "displayFormName": "No time dimension",
+    "id": "ETJXkMmCGsK",
+    "attributeValues": [],
+    "sorting": [],
+    "repetitions": []
+}

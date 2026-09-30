@@ -125,37 +125,44 @@ type DimensionContext = {
     dimensionId: string
     programId?: string
     programStageId?: string
+    repetitionIndex?: number
     trackedEntityTypeId?: string
 }
 
 /* Canonical dimension → analytics request `?dimension=` wire string. */
 export const getAnalyticsRequestDimensionName = ({
     dimensionId,
+    legendSetId,
     programId,
     programStageId,
+    repetitionIndex,
     trackedEntityTypeId,
     outputType,
-}: DimensionContext & { outputType: OutputType }): string => {
+}: DimensionContext & {
+    outputType: OutputType
+    legendSetId?: string
+}): string => {
+    const isBareOu =
+        dimensionId === 'enrollmentOu' &&
+        !programStageId &&
+        ((trackedEntityTypeId && !programId) || outputType === 'ENROLLMENT')
+
+    const wireName = isBareOu ? 'ou' : toRequestDimensionWireName(dimensionId)
+
+    let prefix: string | undefined
+
     if (programStageId) {
-        return `${programStageId}.${toRequestDimensionWireName(dimensionId)}`
+        prefix =
+            repetitionIndex === undefined
+                ? programStageId
+                : `${programStageId}[${repetitionIndex}]`
+    } else if (programId && outputType === 'TRACKED_ENTITY_INSTANCE') {
+        prefix = programId
     }
 
-    if (trackedEntityTypeId && !programId) {
-        if (dimensionId === 'enrollmentOu') {
-            return 'ou'
-        }
-        return toRequestDimensionWireName(dimensionId)
-    }
-
-    if (programId && outputType === 'TRACKED_ENTITY_INSTANCE') {
-        return `${programId}.${toRequestDimensionWireName(dimensionId)}`
-    }
-
-    if (outputType === 'ENROLLMENT' && dimensionId === 'enrollmentOu') {
-        return 'ou'
-    }
-
-    return toRequestDimensionWireName(dimensionId)
+    return [prefix, legendSetId ? `${wireName}-${legendSetId}` : wireName]
+        .filter(Boolean)
+        .join('.')
 }
 
 /* Canonical dimension → analytics request `?headers=` wire string, which
@@ -165,6 +172,7 @@ export const getAnalyticsRequestHeaderName = ({
     dimensionId,
     programId,
     programStageId,
+    repetitionIndex,
     trackedEntityTypeId,
     visualization,
 }: DimensionContext & {
@@ -175,7 +183,9 @@ export const getAnalyticsRequestHeaderName = ({
     const wireDim = map[dimensionId as DimensionId] ?? dimensionId
 
     if (programStageId) {
-        return `${programStageId}.${wireDim}`
+        return repetitionIndex === undefined
+            ? `${programStageId}.${wireDim}`
+            : `${programStageId}[${repetitionIndex}].${wireDim}`
     }
 
     if (trackedEntityTypeId && !programId) {

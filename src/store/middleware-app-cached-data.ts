@@ -22,5 +22,15 @@ export const createAppCachedDataMiddleware =
 
 export const getAppCachedDataFromAction = (
     action: { meta?: Partial<AppCachedDataMeta> } | UnknownAction
-): AppCachedData | undefined =>
-    (action as { meta?: Partial<AppCachedDataMeta> }).meta?.appCachedData
+): AppCachedData => {
+    const appCachedData = (action as { meta?: Partial<AppCachedDataMeta> }).meta
+        ?.appCachedData
+    if (!appCachedData) {
+        throw new Error(
+            `Action "${String(
+                (action as UnknownAction).type
+            )}" carries no appCachedData: it was not dispatched through a store built by createStore.`
+        )
+    }
+    return appCachedData
+}

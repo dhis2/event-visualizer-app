@@ -1,24 +1,30 @@
 import { pluginBody } from '../../support/dashboard-plugin'
 
+const LINE_LIST_ID = 'TIuOzZ0ID0V'
+
+/* Only what is specific to the plugin: it fetches and retries through
+ * useDataQuery rather than the app's store, and a processing failure lands on
+ * the plugin boundary. The screens themselves live in canvas-errors.cy.ts. */
+
 describe('dashboard plugin errors', () => {
     beforeEach(() => {
         cy.visit('/plugin-host.html')
     })
 
-    it('shows the canvas error with a working retry for an unknown visualization', () => {
-        /* Assert Retry refetches (the request count grows), not just that the
-         * error text is still shown — that's already true before the click, so
-         * a dead button would pass. A bad id fails at the eventVisualizations
-         * fetch, so count those. */
-        cy.intercept({ method: 'GET', url: '**/eventVisualizations/**' }).as(
-            'vis'
-        )
+    it('refetches the visualization when Retry is clicked', () => {
+        /* A server failure rather than a missing visualization, since only a
+         * retryable error renders the button. Counting eventVisualizations
+         * requests is what proves the click refetches: the error text is
+         * already there before it, so a dead button would pass an assertion on
+         * the text alone. */
+        cy.intercept(
+            { method: 'GET', url: '**/eventVisualizations/**' },
+            { statusCode: 500, body: { message: 'forced by test' } }
+        ).as('vis')
 
         cy.getByDataTest('plugin-host-visualization-id-input').type(
-            'notARealId1'
+            LINE_LIST_ID
         )
-
-        pluginBody().contains('Something went wrong').should('be.visible')
 
         pluginBody().contains('button', 'Retry').should('be.visible')
 
@@ -33,18 +39,25 @@ describe('dashboard plugin errors', () => {
             })
     })
 
-    it('shows the canvas error when the analytics request itself fails', () => {
-        /* Valid id, so the failure lands on the analytics request — the other
-         * place the fetch can fail. */
+    it('shows the plugin crash screen when the visualization cannot be processed', () => {
         cy.intercept(
-            { method: 'GET', url: '**/analytics/events/query/**' },
-            { statusCode: 500, body: { message: 'forced by test' } }
+            { method: 'GET', url: `**/eventVisualizations/${LINE_LIST_ID}*` },
+            (req) => {
+                req.continue((res) => {
+                    /* Without the program the layout dimensions have no
+                     * context to resolve against, which throws during render. */
+                    delete res.body.program
+                    res.body.programDimensions = []
+                })
+            }
         )
 
         cy.getByDataTest('plugin-host-visualization-id-input').type(
-            'TIuOzZ0ID0V'
+            LINE_LIST_ID
         )
 
-        pluginBody().contains('Something went wrong').should('be.visible')
+        pluginBody()
+            .contains('There was a problem loading this plugin')
+            .should('be.visible')
     })
 })

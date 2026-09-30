@@ -14,8 +14,11 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
+import { register as registerCypressGrep } from '@cypress/grep'
 import 'cypress-real-events'
 import './commands.ts'
+
+registerCypressGrep()
 
 Cypress.on('uncaught:exception', (err) => {
     // This prevents a benign error:

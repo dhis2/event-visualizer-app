@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-07T12:37:02.020Z\n"
-"PO-Revision-Date: 2026-09-07T12:37:02.020Z\n"
+"POT-Creation-Date: 2026-09-23T14:32:18.188Z\n"
+"PO-Revision-Date: 2026-09-23T14:32:18.188Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -24,6 +24,9 @@ msgstr ""
 
 msgid "{{- name}} was not added because it is already used as the custom value."
 msgstr "{{- name}} was not added because it is already used as the custom value."
+
+msgid "Changes not applied"
+msgstr "Changes not applied"
 
 msgid "Retry"
 msgstr "Retry"
@@ -337,6 +340,9 @@ msgstr "Not valid with Completed on"
 msgid "Not valid with multiple tracked entity types"
 msgstr "Not valid with multiple tracked entity types"
 
+msgid "Not valid without a tracked entity type"
+msgstr "Not valid without a tracked entity type"
+
 msgid "Not valid with program indicators"
 msgstr "Not valid with program indicators"
 
@@ -566,6 +572,9 @@ msgstr "High to low"
 
 msgid "Top limit"
 msgstr "Top limit"
+
+msgid "Must be a whole number of 1 or more"
+msgstr "Must be a whole number of 1 or more"
 
 msgid "Row sub-totals"
 msgstr "Row sub-totals"
@@ -1033,30 +1042,115 @@ msgstr ""
 "You don't have access to the data in this visualization. Contact a system "
 "administrator."
 
+msgid "Visualization not found"
+msgstr "Visualization not found"
+
+msgid ""
+"The visualization you are trying to view could not be found, the ID could "
+"be incorrect or it could have been deleted."
+msgstr ""
+"The visualization you are trying to view could not be found, the ID could "
+"be incorrect or it could have been deleted."
+
+msgid ""
+"Your account cannot access any items in one or more dimensions. Contact a "
+"system administrator."
+msgstr ""
+"Your account cannot access any items in one or more dimensions. Contact a "
+"system administrator."
+
 msgid "You don't have access to one or more of the chosen organisation units."
 msgstr "You don't have access to one or more of the chosen organisation units."
 
 msgid "You don't have access to event analytics. Contact a system administrator."
 msgstr "You don't have access to event analytics. Contact a system administrator."
 
-msgid "Something went wrong"
-msgstr "Something went wrong"
+msgid "Invalid indicator"
+msgstr "Invalid indicator"
 
 msgid "There's a problem with at least one selected indicator."
 msgstr "There's a problem with at least one selected indicator."
 
+msgid "Program stage not available"
+msgstr "Program stage not available"
+
 msgid ""
-"There's a problem with the generated analytics. Contact a system "
+"A program stage in this visualization is no longer part of its program. It "
+"may have been changed or removed."
+msgstr ""
+"A program stage in this visualization is no longer part of its program. It "
+"may have been changed or removed."
+
+msgid "Dimension not available"
+msgstr "Dimension not available"
+
+msgid ""
+"A dimension in this visualization is no longer valid. It may have been "
+"removed from the program."
+msgstr ""
+"A dimension in this visualization is no longer valid. It may have been "
+"removed from the program."
+
+msgid "Program not available"
+msgstr "Program not available"
+
+msgid ""
+"A program in this visualization is not available for the selected tracked "
+"entity type."
+msgstr ""
+"A program in this visualization is not available for the selected tracked "
+"entity type."
+
+msgid "Too much data"
+msgstr "Too much data"
+
+msgid ""
+"This request returns more data than the server allows. Reduce the amount of "
+"data and try again, for example by choosing fewer items, adding filters, or "
+"choosing a shorter period."
+msgstr ""
+"This request returns more data than the server allows. Reduce the amount of "
+"data and try again, for example by choosing fewer items, adding filters, or "
+"choosing a shorter period."
+
+msgid "Top limit too high"
+msgstr "Top limit too high"
+
+msgid ""
+"The top limit in this visualization is higher than the server allows. Lower "
+"it in the options."
+msgstr ""
+"The top limit in this visualization is higher than the server allows. Lower "
+"it in the options."
+
+msgid "Request timed out"
+msgstr "Request timed out"
+
+msgid ""
+"The request took too long and was stopped. Try again, or reduce the amount "
+"of data requested."
+msgstr ""
+"The request took too long and was stopped. Try again, or reduce the amount "
+"of data requested."
+
+msgid "Analytics not generated"
+msgstr "Analytics not generated"
+
+msgid ""
+"The analytics tables have not been generated. Contact a system "
 "administrator."
 msgstr ""
-"There's a problem with the generated analytics. Contact a system "
+"The analytics tables have not been generated. Contact a system "
 "administrator."
 
-msgid "There's a syntax problem with the analytics request."
-msgstr "There's a syntax problem with the analytics request."
+msgid "Analytics request failed"
+msgstr "Analytics request failed"
 
-msgid "No data"
-msgstr "No data"
+msgid "The server could not run this request. Contact a system administrator."
+msgstr "The server could not run this request. Contact a system administrator."
+
+msgid "No data available"
+msgstr "No data available"
 
 msgid ""
 "The selected dimensions didn't return any data. There may be no data, or "
@@ -1064,6 +1158,12 @@ msgid ""
 msgstr ""
 "The selected dimensions didn't return any data. There may be no data, or "
 "you may not have access to it."
+
+msgid "Analytics request error"
+msgstr "Analytics request error"
+
+msgid "Something went wrong"
+msgstr "Something went wrong"
 
 msgid "There was a problem getting the data from the server."
 msgstr "There was a problem getting the data from the server."
