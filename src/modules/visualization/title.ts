@@ -51,7 +51,7 @@ const getCustomValueTitle = (
 const getTrackedEntityTitle = (
     visualization: CurrentVisualization,
     metadataStore: MetadataStore
-): string | undefined => {
+): string => {
     const tetId = visualization.trackedEntityType?.id
     const tet = tetId ? metadataStore.getMetadataItem(tetId) : undefined
     const pluralLabel =
@@ -64,7 +64,7 @@ const getTrackedEntityTitle = (
     }
     return isPopulatedString(tet?.name)
         ? getCountOrListTitle(tet.name, visualization)
-        : undefined
+        : i18n.t('Tracked entities')
 }
 
 const getProgramLabels = (
