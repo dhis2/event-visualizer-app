@@ -90,13 +90,8 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
     )
 
     const metadataStore = useMetadataStore()
-    /* Comes from the app-adapter's /api/me, so it resolves in the plugin
-     * and the interpretation modal too, unlike the app's cached user. */
     const locale = useCurrentUserInfo()?.settings?.keyUiLocale
 
-    /* The title is resolved here rather than in each plugin because this is
-     * the one component the canvas, the dashboard plugin and the
-     * interpretation modal all render through. */
     const visualizationWithTitle = useMemo(
         () =>
             isVisualizationEmpty(visualization)
@@ -111,8 +106,6 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
         [visualization, metadataStore]
     )
 
-    /* Both renderers take the same string: the line list draws its own row,
-     * the pivot table engine renders it in place of its own derivation. */
     const filterText = useMemo(
         () =>
             isVisualizationEmpty(visualization)
