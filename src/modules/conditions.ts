@@ -4,6 +4,7 @@ import i18n from '@dhis2/d2-i18n'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
 import { combineAllDimensionsFromVisualization } from '@modules/dimension/translation'
 import { isOptionSetMetadataItem } from '@modules/metadata/item-guards'
+import { getAttributeTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     CurrentVisualization,
     MetadataItem,
@@ -455,7 +456,7 @@ export const getConditionsFromVisualization = (
         const dimensionId = getCompoundDimensionId(
             item,
             outputType,
-            vis.trackedEntityType?.id
+            getAttributeTetId(vis)
         )
         result[dimensionId] = {
             condition: item.filter,

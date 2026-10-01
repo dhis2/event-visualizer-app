@@ -23,6 +23,7 @@ import {
 } from '@modules/dimension/translation'
 import { getRepetitionsFromVisualisation } from '@modules/repetitions'
 import { isPopulatedString } from '@modules/utils/guards'
+import { getAttributeTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     ApiSavedVisualization,
     CurrentVisualization,
@@ -370,7 +371,7 @@ export const getVisualizationUiConfig = (
         filters: toAppLocalAxes(raw.filters ?? []),
     }
     const outputType = vis.outputType
-    const tetId = vis.trackedEntityType?.id
+    const tetId = getAttributeTetId(vis)
     const toDimId = (dim: DimensionArray[number]) =>
         getCompoundDimensionId(dim, outputType, tetId)
 

@@ -14,6 +14,7 @@ import {
     combineAllDimensionsFromVisualization,
     toAppLocalDimensions,
 } from '@modules/dimension/translation'
+import { getAttributeTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     MetadataInput,
     MetadataInputItem,
@@ -136,7 +137,7 @@ export const supplementDimensionMetadata = (
 ) => {
     const { outputType } = visualization
     const dimensions = combineAllDimensionsFromVisualization(visualization)
-    const tetId = visualization.trackedEntityType?.id
+    const tetId = getAttributeTetId(visualization)
     const teaIdsInAttributeDimensions = new Set(
         (visualization.attributeDimensions ?? [])
             .map((entry) => entry.attribute?.id)
@@ -202,10 +203,9 @@ export const supplementDimensionMetadata = (
                 item.programStageId = dimension.programStage.id
             }
 
-            // Attach trackedEntityTypeId to TEA dimensions that belong to the
-            // vis's TET. Gate on both trackedEntityType (the TEI-scope signal)
-            // and attributeDimensions membership (an EVENT vis may carry TEAs
-            // in attributeDimensions but has no top-level TET).
+            /* Tag the attributes with the tracked entity type that keys them,
+             * as the sidebar does, so its registration card counts them as
+             * selected. */
             if (
                 tetId &&
                 dimension.dimensionType === 'PROGRAM_ATTRIBUTE' &&
@@ -311,7 +311,7 @@ export const extractMetadataFromVisualization = (
         const compoundId = getCompoundDimensionId(
             dimension,
             vis.outputType,
-            vis.trackedEntityType?.id
+            getAttributeTetId(vis)
         )
         if (compoundId !== dimension.dimension && withFixedNames[compoundId]) {
             delete withFixedNames[dimension.dimension]
