@@ -332,21 +332,35 @@ and consumed by both the sidebar cards and the metadata provider.
 Non-fixed dimensions use compound or plain IDs depending on their type:
 
 - **Data elements, categories, COGS** → compound: `stageId.dimensionId`
-- **Program indicators, tracked entity attributes** → **plain** `dimensionId` (no prefix,
-  even though their dimension records carry `program`/`programStage` context)
+- **Program indicators** → **plain** `dimensionId` (no prefix, even though their dimension
+  records carry `program`/`programStage` context)
+- **Tracked entity attributes** → `trackedEntityTypeId.dimensionId` whenever there is a
+  tracked entity type (a tracker program or a tracked entity type data source), whatever the
+  outputType: the same attribute can belong to several tracked entity types, and the sidebar
+  keys attributes this way. Plain `dimensionId` only when there is no tracked entity type
 - **Metadata dims** (`lastUpdated`, `createdBy`, `lastUpdatedBy`, `created`, `completed`)
   → plain `dimensionId`
 
 `getCompoundDimensionId` in `src/modules/dimension/ids.ts` constructs the canonical app-local
 compound ID from a `DimensionRecord`. It applies these rules in order:
 
-1. `PROGRAM_INDICATOR` / `PROGRAM_ATTRIBUTE` → always plain `dimensionId`
+1. `PROGRAM_INDICATOR` → always plain `dimensionId`; `PROGRAM_ATTRIBUTE` →
+   `trackedEntityTypeId.dimensionId` when a tracked entity type is given, otherwise plain
 2. Enrollment-scoped IDs (`enrollmentOu`, `enrollmentDate`, `incidentDate`, `programStatus`)
    → `programId.dimensionId`
 3. Has `programStage` → `stageId.dimensionId` (or `programId.stageId.dimensionId` for TEI)
 4. Has `program` → `programId.dimensionId`
 5. TEI with `trackedEntityTypeId` → `trackedEntityTypeId.dimensionId`
 6. Otherwise → plain `dimensionId`
+
+**The tracked entity type behind the prefix**: callers pass `getAttributeTetId`
+(`@modules/visualization/tracked-entity-type`) as the `trackedEntityTypeId`. It is the
+visualization's own `trackedEntityType` for TRACKED_ENTITY_INSTANCE, and the tracker program's
+tracked entity type (from `programDimensions`) for EVENT/ENROLLMENT. Only TRACKED_ENTITY_INSTANCE
+visualizations carry a `trackedEntityType` field: the backend reads it as marking a
+multi-program visualization whatever the outputType (`EventVisualization.isMultiProgram()`),
+which changes how it rebuilds the `ou` dimension. `resolveTeiFields` (`@modules/layout`)
+therefore sets it only for TRACKED_ENTITY_INSTANCE.
 
 **Org unit scopes**: the app uses distinct dimension IDs for different org unit scopes:
 
