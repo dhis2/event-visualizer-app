@@ -18,7 +18,7 @@ import {
 export const registerAppListeners = () => {
     startAppListening({
         actionCreator: setNavigationState,
-        effect: async (action, { dispatch, getOriginalState }) => {
+        effect: (action, { dispatch, getOriginalState }) => {
             const originalState = getOriginalState()
             const originalVisualizationId =
                 originalState.navigation.visualizationId
