@@ -66,7 +66,7 @@ export const PivotTablePlugin: FC<PivotTablePluginProps> = ({
     // TODO: implement onDataSorted and any other function/callback that cannot rely on the Redux store
 
     useEffect(() => {
-        fetchAnalyticsData({
+        void fetchAnalyticsData({
             visualization:
                 transformVisualizationForAnalyticsRequest(visualization),
             relativePeriodDate,

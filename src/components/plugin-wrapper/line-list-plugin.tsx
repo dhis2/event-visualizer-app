@@ -62,7 +62,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
 
     const onPaginate = useCallback<PaginateFn>(
         ({ page, pageSize }) => {
-            fetchAnalyticsData({
+            void fetchAnalyticsData({
                 visualization:
                     transformVisualizationForAnalyticsRequest(
                         eventVisualization
@@ -103,7 +103,7 @@ export const LineListPlugin: FC<LineListPluginProps> = ({
     )
 
     useEffect(() => {
-        fetchAnalyticsData({
+        void fetchAnalyticsData({
             visualization:
                 transformVisualizationForAnalyticsRequest(eventVisualization),
             relativePeriodDate,
