@@ -22,6 +22,7 @@ import {
     toEventVisualizationDimensionId,
 } from '@modules/dimension/translation'
 import { getRepetitionsFromVisualisation } from '@modules/repetitions'
+import { isPopulatedString } from '@modules/utils/guards'
 import type {
     ApiSavedVisualization,
     CurrentVisualization,
@@ -689,6 +690,14 @@ export const normalizeApiSavedVisualization = (
     }
     if (topLimit !== 0) {
         normalizedVis.topLimit = topLimit
+    }
+
+    /* Legacy visualizations don't set the hide flags reliably, so they are
+     * inferred from the text. The apps that produced them never generated a
+     * title, so an empty title means "no title" rather than "auto generated". */
+    if (normalizedVis.legacy) {
+        normalizedVis.hideTitle = !isPopulatedString(normalizedVis.title)
+        normalizedVis.hideSubtitle = !isPopulatedString(normalizedVis.subtitle)
     }
 
     return normalizedVis

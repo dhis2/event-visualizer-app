@@ -15,10 +15,10 @@ import { headersMap } from '@modules/analytics-request'
 import { formatBooleanValue, isBooleanValue } from '@modules/conditions'
 import { extractPlainDimensionId } from '@modules/dimension/ids'
 import {
-    buildSuffixContext,
+    getDimensionLabel,
     getDimensionSuffix,
+    getSuffixContext,
 } from '@modules/dimension/suffix'
-import { resolveLayoutContext } from '@modules/layout'
 import { getStatusName, isStatus } from '@modules/status'
 import { isValueTypeNumeric } from '@modules/value-type'
 import type {
@@ -141,7 +141,7 @@ export const getHeaderDisplayText = (
         return ''
     }
 
-    const label = dimensionSuffix ? `${column} · ${dimensionSuffix}` : column
+    const label = getDimensionLabel(column, dimensionSuffix)
 
     if (isStageOffsetInteger(stageOffset)) {
         let repetitionSuffix
@@ -205,17 +205,11 @@ export const transformHeaders = ({
     const metadata = { ...analyticsData.metaDataItems, ...storeMetadata }
 
     /* Only the headers with dimension metadata in the store; other headers
-     * (e.g. value columns) have none and resolveLayoutContext would throw. */
-    const { programIds, programStageIds } = resolveLayoutContext(
+     * (e.g. value columns) have none and getSuffixContext would throw. */
+    const suffixContext = getSuffixContext(
         Object.keys(storeMetadata),
         metadataStore
     )
-    const suffixContext = buildSuffixContext({
-        programs: Object.values(metadataStore.getMetadataItems(programIds)),
-        programStages: Object.values(
-            metadataStore.getMetadataItems(programStageIds)
-        ),
-    })
 
     return analyticsData.headers.map((header): TransformedLineListHeader => ({
         ...header,

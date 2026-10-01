@@ -1,7 +1,7 @@
 import type { ProgramType } from './dhis2-openapi-schemas'
 import type { DimensionType } from './dimension'
 import type { MetadataItem } from './metadata'
-import type { Program } from './program'
+import type { Program, TrackedEntityTypeRef } from './program'
 
 export type DataSourceProgramWithRegistration = Omit<
     Program,
@@ -9,10 +9,7 @@ export type DataSourceProgramWithRegistration = Omit<
 > & {
     programType: Extract<ProgramType, 'WITH_REGISTRATION'>
     // Required field for tracker program
-    trackedEntityType: {
-        id: string
-        name: string
-    }
+    trackedEntityType: TrackedEntityTypeRef
 }
 export type DataSourceProgramWithoutRegistration = Omit<
     Program,

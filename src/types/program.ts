@@ -11,7 +11,9 @@ export type Program = Pick<
     | 'displayIncidentDate'
     | 'displayEnrollmentDateLabel'
     | 'displayEnrollmentLabel'
+    | 'displayEnrollmentsLabel'
     | 'displayEventLabel'
+    | 'displayEventsLabel'
     | 'displayIncidentDateLabel'
     | 'displayOrgUnitLabel'
     | 'displayProgramStageLabel'
@@ -23,8 +25,11 @@ export type Program = Pick<
     id: string
     name: string
     programStages?: ProgramStage[]
-    trackedEntityType?: {
-        id: string
-        name: string
-    }
+    trackedEntityType?: TrackedEntityTypeRef
+}
+
+export type TrackedEntityTypeRef = {
+    id: string
+    name: string
+    displayTrackedEntityTypesLabel?: string
 }
