@@ -11,6 +11,7 @@ import {
 } from '@modules/layout'
 import { logger } from '@modules/logger'
 import { getEnabledOptions } from '@modules/options'
+import { isPopulatedString } from '@modules/utils/guards'
 import { setLastUsedVisualizationTypeToLocalStorage } from '@modules/visualization/local-storage'
 import {
     getVisualizationUiConfig,
@@ -216,6 +217,8 @@ export const buildCurrentVisFromVisUiConfig = ({
     filters: buildAxis(visUiConfig.layout.filters, visUiConfig, metadataStore),
     programDimensions: collectProgramDimensions(visUiConfig, metadataStore),
     ...getEnabledOptions(visUiConfig.options),
+    // There is no generated subtitle, so an empty one is a hidden one
+    hideSubtitle: !isPopulatedString(visUiConfig.options.subtitle),
     ...resolveTeiFields(visUiConfig, metadataStore),
     ...resolveCustomValueFields(
         previousCurrentVis,

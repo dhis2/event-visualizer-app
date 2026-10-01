@@ -692,10 +692,12 @@ export const normalizeApiSavedVisualization = (
         normalizedVis.topLimit = topLimit
     }
 
-    /* The apps that produced legacy visualizations never generated a title, so
-     * an empty title there means "no title" rather than "auto generated". */
+    /* Legacy visualizations don't set the hide flags reliably, so they are
+     * inferred from the text. The apps that produced them never generated a
+     * title, so an empty title means "no title" rather than "auto generated". */
     if (normalizedVis.legacy) {
         normalizedVis.hideTitle = !isPopulatedString(normalizedVis.title)
+        normalizedVis.hideSubtitle = !isPopulatedString(normalizedVis.subtitle)
     }
 
     return normalizedVis
