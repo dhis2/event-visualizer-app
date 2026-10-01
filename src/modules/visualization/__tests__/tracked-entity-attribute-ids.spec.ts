@@ -210,6 +210,31 @@ describe('updating a loaded visualization with a tracked entity attribute', () =
             'First name: Exactly: Anna'
         )
     })
+
+    /* The backend reads a tracked entity type on an event visualization as
+     * marking a multi-program (tracked entity) visualization, whatever its
+     * output type. */
+    it.each<OutputType>(['EVENT', 'ENROLLMENT'])(
+        'does not give the %s visualization a tracked entity type',
+        (outputType) => {
+            const apiVis = buildApiVis({
+                outputType,
+                programDimensions: [trackerProgram],
+                columns: [
+                    {
+                        ...stageDataElementColumn,
+                        program: { id: PROGRAM_ID },
+                        programStage: { id: STAGE_ID },
+                    },
+                ],
+                filters: [teaFilter],
+            })
+
+            expect(
+                loadAndUpdate(apiVis).updatedVis.trackedEntityType
+            ).toBeUndefined()
+        }
+    )
 })
 
 describe('applying a visualization built from the sidebar with a tracked entity attribute', () => {
@@ -266,6 +291,7 @@ describe('applying a visualization built from the sidebar with a tracked entity 
                 metadataStore,
             })
 
+            expect(appliedVis.trackedEntityType).toBeUndefined()
             expect(
                 getVisualizationFilterText({
                     visualization: appliedVis,
