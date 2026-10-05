@@ -1,0 +1,458 @@
+{
+    "dataElements": {
+        "A03MvHHogjR": {
+            "dimensions": [
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "A03MvHHogjR.wQLfBvPrXqq",
+                    "optionSet": "f38bstJioPs",
+                    "name": "MCH ARV at birth"
+                },
+                {
+                    "valueType": "NUMBER",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "A03MvHHogjR.a3kGcGDCuk6",
+                    "name": "MCH Apgar Score"
+                },
+                {
+                    "valueType": "LONG_TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "A03MvHHogjR.H6uSAMO5WLD",
+                    "name": "MCH Apgar comment"
+                },
+                {
+                    "valueType": "BOOLEAN",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "A03MvHHogjR.bx6fsa0t90x",
+                    "name": "MCH BCG dose"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "A03MvHHogjR.X8zyunlgUfM",
+                    "optionSet": "x31y45jvIQL",
+                    "name": "MCH Infant Feeding"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "A03MvHHogjR.ebaJjqltK5N",
+                    "optionSet": "kzgQRhOCadd",
+                    "name": "MCH OPV dose"
+                },
+                {
+                    "valueType": "NUMBER",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "A03MvHHogjR.UXz7xuGCEhU",
+                    "name": "MCH Weight (g)"
+                }
+            ],
+            "pager": {
+                "page": 1,
+                "total": 7,
+                "pageSize": 8,
+                "pageCount": 1
+            }
+        },
+        "ZzYYXq4fJie": {
+            "dimensions": [
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZzYYXq4fJie.sj3j9Hwc7so",
+                    "optionSet": "dgsftM0rXu2",
+                    "name": "MCH Child ARVs"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZzYYXq4fJie.pOe0ogW4OWd",
+                    "optionSet": "udkr3ihaeD3",
+                    "name": "MCH DPT dose"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZzYYXq4fJie.hDZbpskhqDd",
+                    "optionSet": "OGmE3wUMEzu",
+                    "name": "MCH HIV Test Type"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZzYYXq4fJie.lNNb3truQoi",
+                    "optionSet": "nH8Y04zS7UV",
+                    "name": "MCH IPT dose"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZzYYXq4fJie.X8zyunlgUfM",
+                    "optionSet": "x31y45jvIQL",
+                    "name": "MCH Infant Feeding"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZzYYXq4fJie.cYGaxwK615G",
+                    "optionSet": "oXR37f2wOb1",
+                    "name": "MCH Infant HIV Test Result"
+                },
+                {
+                    "valueType": "NUMBER",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZzYYXq4fJie.GQY2lXrypjO",
+                    "name": "MCH Infant Weight  (g)"
+                },
+                {
+                    "valueType": "BOOLEAN",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZzYYXq4fJie.FqlgKAG8HOu",
+                    "name": "MCH Measles dose"
+                }
+            ],
+            "pager": {
+                "page": 1,
+                "total": 14,
+                "pageSize": 8,
+                "pageCount": 2
+            }
+        },
+        "EPEcjy3FWmI": {
+            "dimensions": [
+                {
+                    "valueType": "TRUE_ONLY",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "EPEcjy3FWmI.Vk1tzSQxvOR",
+                    "name": "TB lab CD4"
+                },
+                {
+                    "valueType": "TRUE_ONLY",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "EPEcjy3FWmI.fCXKBdc27Bt",
+                    "name": "TB lab Creatinine"
+                },
+                {
+                    "valueType": "TRUE_ONLY",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "EPEcjy3FWmI.fTZFU8cWvb3",
+                    "name": "TB lab Hemoglobin"
+                },
+                {
+                    "valueType": "TRUE_ONLY",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "EPEcjy3FWmI.lJTx9EZ1dk1",
+                    "name": "Tb lab Glucose"
+                }
+            ],
+            "pager": {
+                "page": 1,
+                "total": 4,
+                "pageSize": 8,
+                "pageCount": 1
+            }
+        },
+        "ZkbAXlQUYJG": {
+            "dimensions": [
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZkbAXlQUYJG.HmkXnHJxcD1",
+                    "optionSet": "F9ypN9t9NUy",
+                    "name": "TB Case Definition"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZkbAXlQUYJG.D7m8vpzxHDJ",
+                    "optionSet": "isYOcVDBgJo",
+                    "name": "TB Disease Classification"
+                },
+                {
+                    "valueType": "BOOLEAN",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZkbAXlQUYJG.U5ubm6PPYrM",
+                    "name": "TB HIV testing done"
+                },
+                {
+                    "valueType": "TRUE_ONLY",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZkbAXlQUYJG.vAzDOljIN1o",
+                    "name": "TB Previous use of second-line drugs"
+                },
+                {
+                    "valueType": "TRUE_ONLY",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZkbAXlQUYJG.zJbnrm3kUAk",
+                    "name": "TB Started on ART"
+                },
+                {
+                    "valueType": "TRUE_ONLY",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "ZkbAXlQUYJG.P6hgV2tSIvi",
+                    "name": "TB Started on CPT"
+                }
+            ],
+            "pager": {
+                "page": 1,
+                "total": 6,
+                "pageSize": 8,
+                "pageCount": 1
+            }
+        },
+        "Zj7UnCAulEk": {
+            "dimensions": [
+                {
+                    "valueType": "DATE",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "Zj7UnCAulEk.eMyVanycQSC",
+                    "name": "Admission Date"
+                },
+                {
+                    "valueType": "INTEGER",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "Zj7UnCAulEk.qrur9Dvnyt5",
+                    "name": "Age in years"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "Zj7UnCAulEk.K6uUAvq500H",
+                    "optionSet": "eUZ79clX7y1",
+                    "name": "Diagnosis (ICD-10)"
+                },
+                {
+                    "valueType": "DATE",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "Zj7UnCAulEk.msodh3rEMJa",
+                    "name": "Discharge Date"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "Zj7UnCAulEk.oZg33kd9taw",
+                    "optionSet": "pC3N9N77UmT",
+                    "name": "Gender"
+                },
+                {
+                    "valueType": "NUMBER",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "Zj7UnCAulEk.GieVkTxp4HH",
+                    "name": "Height in cm"
+                },
+                {
+                    "valueType": "COORDINATE",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "Zj7UnCAulEk.F3ogKBuviRA",
+                    "name": "Household location"
+                },
+                {
+                    "valueType": "ORGANISATION_UNIT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "Zj7UnCAulEk.S33cRBsnXPo",
+                    "name": "Inpatient Place of Infection"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "Zj7UnCAulEk.fWIAEtYVEGk",
+                    "optionSet": "iDFPKpFTiVw",
+                    "name": "Mode of Discharge"
+                },
+                {
+                    "valueType": "BOOLEAN",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "Zj7UnCAulEk.SWfdB5lX0fk",
+                    "name": "Pregnant"
+                },
+                {
+                    "valueType": "INTEGER_POSITIVE",
+                    "dimensionType": "DATA_ELEMENT",
+                    "id": "Zj7UnCAulEk.vV9UWAZohSf",
+                    "name": "Weight in kg"
+                }
+            ],
+            "pager": {
+                "page": 1,
+                "total": 11,
+                "pageSize": 50,
+                "pageCount": 1
+            }
+        }
+    },
+    "eventProgramIndicators": {
+        "IpHINAT79UW": {
+            "dimensions": [
+                {
+                    "dimensionType": "PROGRAM_INDICATOR",
+                    "id": "GxdhnY5wmHq",
+                    "name": "Average weight (g)"
+                },
+                {
+                    "dimensionType": "PROGRAM_INDICATOR",
+                    "id": "GxdhnY5wmHq",
+                    "name": "Average weight (g)"
+                }
+            ],
+            "pager": {
+                "page": 1,
+                "total": 20,
+                "pageSize": 2,
+                "pageCount": 10
+            }
+        },
+        "ur1Edk5Oe2n": {
+            "dimensions": [],
+            "pager": {
+                "page": 1,
+                "total": 0,
+                "pageSize": 2,
+                "pageCount": 0
+            }
+        },
+        "eBAyeGv0exc": {
+            "dimensions": [
+                {
+                    "dimensionType": "PROGRAM_INDICATOR",
+                    "id": "tUdBD1JDxpn",
+                    "name": "Average age of deaths"
+                },
+                {
+                    "dimensionType": "PROGRAM_INDICATOR",
+                    "id": "sGna2pquXOO",
+                    "name": "Average age of female discharges"
+                }
+            ],
+            "pager": {
+                "page": 1,
+                "total": 20,
+                "pageSize": 2,
+                "pageCount": 10
+            }
+        }
+    },
+    "enrollmentProgramIndicators": {
+        "IpHINAT79UW": {
+            "dimensions": [
+                {
+                    "dimensionType": "PROGRAM_INDICATOR",
+                    "id": "GxdhnY5wmHq",
+                    "name": "Average weight (g)"
+                },
+                {
+                    "dimensionType": "PROGRAM_INDICATOR",
+                    "id": "p2Zxg0wcPQ3",
+                    "name": "BCG doses"
+                }
+            ],
+            "pager": {
+                "page": 1,
+                "total": 10,
+                "pageSize": 2,
+                "pageCount": 5
+            }
+        },
+        "ur1Edk5Oe2n": {
+            "dimensions": [],
+            "pager": {
+                "page": 1,
+                "total": 0,
+                "pageSize": 2,
+                "pageCount": 0
+            }
+        }
+    },
+    "programAttributes": {
+        "IpHINAT79UW": {
+            "dimensions": [
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "PROGRAM_ATTRIBUTE",
+                    "id": "w75KJ2mc4zz",
+                    "name": "First name"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "PROGRAM_ATTRIBUTE",
+                    "id": "cejWyOfXge6",
+                    "optionSet": "pC3N9N77UmT",
+                    "name": "Gender"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "PROGRAM_ATTRIBUTE",
+                    "id": "zDhUuAYrxNC",
+                    "name": "Last name"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "PROGRAM_ATTRIBUTE",
+                    "id": "lZGmxYbs97q",
+                    "name": "Unique ID"
+                }
+            ],
+            "pager": {
+                "page": 1,
+                "total": 4,
+                "pageSize": 4,
+                "pageCount": 1
+            }
+        },
+        "ur1Edk5Oe2n": {
+            "dimensions": [
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "PROGRAM_ATTRIBUTE",
+                    "id": "VqEFza8wbwA",
+                    "name": "Address"
+                },
+                {
+                    "valueType": "AGE",
+                    "dimensionType": "PROGRAM_ATTRIBUTE",
+                    "id": "spFvx9FndA4",
+                    "name": "Age"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "PROGRAM_ATTRIBUTE",
+                    "id": "H9IlTX2X6SL",
+                    "name": "Blood type"
+                },
+                {
+                    "valueType": "TEXT",
+                    "dimensionType": "PROGRAM_ATTRIBUTE",
+                    "id": "FO4sWYJ64LQ",
+                    "name": "City"
+                }
+            ],
+            "pager": {
+                "page": 1,
+                "total": 24,
+                "pageSize": 4,
+                "pageCount": 6
+            }
+        }
+    },
+    "organisationUnitGroupSets": {
+        "pager": {
+            "page": 1,
+            "total": 64,
+            "pageSize": 2,
+            "nextPage": "https://dev.im.dhis2.org/ever-playground/api/dimensions?page=2&pageSize=2&filter=dimensionType%3Aeq%3AORGANISATION_UNIT_GROUP_SET&paging=true&fields=id%2CdisplayName%7Erename%28name%29%2CdimensionType%2CvalueType%2CoptionSet&order=displayName%3Aasc",
+            "pageCount": 32
+        },
+        "dimensions": [
+            {
+                "dimensionType": "ORGANISATION_UNIT_GROUP_SET",
+                "id": "S3leNRWRV3x",
+                "name": "Agricultural Region"
+            },
+            {
+                "dimensionType": "ORGANISATION_UNIT_GROUP_SET",
+                "id": "pINbp1aHSrA",
+                "name": "Agro-Ecological Zone"
+            }
+        ]
+    }
+}

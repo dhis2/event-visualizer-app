@@ -1,0 +1,188 @@
+{
+    "name": "RT: event LL event program",
+    "regressionType": "LINEAR",
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": ["LAST_WEEK"],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [],
+    "dataElementDimensions": [
+        {
+            "dataElement": {
+                "name": "Diagnosis (ICD-10)",
+                "id": "K6uUAvq500H"
+            }
+        }
+    ],
+    "programIndicatorDimensions": [
+        {
+            "programIndicator": {
+                "name": "Average age of deaths",
+                "id": "tUdBD1JDxpn"
+            }
+        }
+    ],
+    "digitGroupSeparator": "SPACE",
+    "hideEmptyRowItems": "NONE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": false,
+    "type": "LINE_LIST",
+    "programDimensions": [
+        {
+            "incidentDateLabel": "Date of Discharge",
+            "programType": "WITHOUT_REGISTRATION",
+            "displayIncidentDate": false,
+            "displayIncidentDateLabel": "Date of Discharge",
+            "id": "eBAyeGv0exc",
+            "programStages": [
+                {
+                    "program": {
+                        "id": "eBAyeGv0exc"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Report date",
+                    "id": "Zj7UnCAulEk",
+                    "repeatable": false,
+                    "name": "Inpatient morbidity and mortality"
+                }
+            ],
+            "name": "Inpatient morbidity and mortality"
+        }
+    ],
+    "simpleDimensions": [
+        {
+            "parent": "COLUMN",
+            "dimension": "ou",
+            "program": "eBAyeGv0exc",
+            "programStage": "Zj7UnCAulEk",
+            "values": ["USER_ORGUNIT"]
+        },
+        {
+            "parent": "COLUMN",
+            "dimension": "eventDate",
+            "program": "eBAyeGv0exc",
+            "programStage": "Zj7UnCAulEk",
+            "values": ["LAST_WEEK"]
+        },
+        {
+            "parent": "COLUMN",
+            "dimension": "eventStatus",
+            "program": "eBAyeGv0exc",
+            "programStage": "Zj7UnCAulEk",
+            "values": []
+        }
+    ],
+    "outputType": "EVENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": false,
+    "filters": [],
+    "parentGraphMap": {},
+    "columns": [
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "USER_ORGUNIT"
+                }
+            ],
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "dimension": "ou"
+        },
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "LAST_WEEK"
+                }
+            ],
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "dimension": "eventDate"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "dimension": "K6uUAvq500H",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "eUZ79clX7y1",
+                "name": "Diagnosis ICD10"
+            }
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "dimension": "tUdBD1JDxpn"
+        },
+        {
+            "dimensionType": "DATA_X",
+            "items": [],
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "dimension": "eventStatus"
+        }
+    ],
+    "rows": [],
+    "displayName": "RT: event LL event program",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "metaData": {
+        "K6uUAvq500H": {
+            "uid": "K6uUAvq500H",
+            "code": "DE_3000010",
+            "name": "Diagnosis (ICD-10)"
+        }
+    },
+    "displayFormName": "RT: event LL event program",
+    "id": "jJ7al4G97XE",
+    "sorting": [],
+    "repetitions": []
+}

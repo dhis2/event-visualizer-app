@@ -1,0 +1,267 @@
+{
+    "name": "RT: event LL tracker",
+    "regressionType": "LINEAR",
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": ["LAST_WEEK"],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [
+        {
+            "organisationUnitGroupSet": {
+                "name": "Agricultural Region",
+                "id": "S3leNRWRV3x"
+            }
+        }
+    ],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [
+        {
+            "attribute": {
+                "name": "First name",
+                "id": "w75KJ2mc4zz"
+            }
+        }
+    ],
+    "dataElementDimensions": [
+        {
+            "dataElement": {
+                "name": "MCH Weight (g)",
+                "id": "UXz7xuGCEhU"
+            }
+        }
+    ],
+    "programIndicatorDimensions": [
+        {
+            "programIndicator": {
+                "name": "Average weight (g)",
+                "id": "GxdhnY5wmHq"
+            }
+        }
+    ],
+    "digitGroupSeparator": "SPACE",
+    "hideEmptyRowItems": "NONE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": false,
+    "type": "LINE_LIST",
+    "programDimensions": [
+        {
+            "enrollmentDateLabel": "Date of enrollment",
+            "incidentDateLabel": "Date of birth",
+            "programType": "WITH_REGISTRATION",
+            "displayIncidentDate": true,
+            "trackedEntityType": {
+                "id": "nEenWmSyUEp",
+                "name": "Person"
+            },
+            "displayEnrollmentDateLabel": "Date of enrollment",
+            "displayIncidentDateLabel": "Date of birth",
+            "displayEnrollmentLabel": "pregnancy",
+            "displayEventLabel": "Visit",
+            "id": "IpHINAT79UW",
+            "programStages": [
+                {
+                    "program": {
+                        "id": "IpHINAT79UW"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Report date",
+                    "id": "A03MvHHogjR",
+                    "repeatable": false,
+                    "name": "Birth"
+                },
+                {
+                    "program": {
+                        "id": "IpHINAT79UW"
+                    },
+                    "hideDueDate": false,
+                    "id": "ZzYYXq4fJie",
+                    "repeatable": false,
+                    "name": "Baby Postnatal"
+                }
+            ],
+            "name": "Child Programme"
+        }
+    ],
+    "simpleDimensions": [
+        {
+            "parent": "COLUMN",
+            "dimension": "ou",
+            "program": "IpHINAT79UW",
+            "programStage": "A03MvHHogjR",
+            "values": ["USER_ORGUNIT"]
+        },
+        {
+            "parent": "COLUMN",
+            "dimension": "eventDate",
+            "program": "IpHINAT79UW",
+            "programStage": "A03MvHHogjR",
+            "values": ["LAST_WEEK"]
+        },
+        {
+            "parent": "COLUMN",
+            "dimension": "enrollmentDate",
+            "program": "IpHINAT79UW",
+            "values": ["LAST_WEEK"]
+        },
+        {
+            "parent": "COLUMN",
+            "dimension": "programStatus",
+            "program": "IpHINAT79UW",
+            "values": []
+        },
+        {
+            "parent": "COLUMN",
+            "dimension": "lastUpdated",
+            "values": ["LAST_WEEK"]
+        }
+    ],
+    "outputType": "EVENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": false,
+    "filters": [
+        {
+            "dimensionType": "PROGRAM_ATTRIBUTE",
+            "items": [],
+            "filter": "ILIKE:an",
+            "dimension": "w75KJ2mc4zz",
+            "valueType": "TEXT"
+        }
+    ],
+    "parentGraphMap": {},
+    "columns": [
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "USER_ORGUNIT"
+                }
+            ],
+            "programStage": {
+                "id": "A03MvHHogjR"
+            },
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "ou"
+        },
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "LAST_WEEK"
+                }
+            ],
+            "programStage": {
+                "id": "A03MvHHogjR"
+            },
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "eventDate"
+        },
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "LAST_WEEK"
+                }
+            ],
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "enrollmentDate"
+        },
+        {
+            "dimensionType": "DATA_X",
+            "items": [],
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "programStatus"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "programStage": {
+                "id": "A03MvHHogjR"
+            },
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "filter": "GT:2500",
+            "dimension": "UXz7xuGCEhU",
+            "valueType": "NUMBER"
+        },
+        {
+            "dimensionType": "PROGRAM_INDICATOR",
+            "items": [],
+            "dimension": "GxdhnY5wmHq"
+        },
+        {
+            "dimensionType": "ORGANISATION_UNIT_GROUP_SET",
+            "items": [],
+            "dimension": "S3leNRWRV3x"
+        },
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "LAST_WEEK"
+                }
+            ],
+            "dimension": "lastUpdated"
+        }
+    ],
+    "rows": [],
+    "displayName": "RT: event LL tracker",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "metaData": {
+        "S3leNRWRV3x": {
+            "uid": "S3leNRWRV3x",
+            "code": "AGRI_REG",
+            "name": "Agricultural Region"
+        },
+        "w75KJ2mc4zz": {
+            "uid": "w75KJ2mc4zz",
+            "code": "MMD_PER_NAM",
+            "name": "First name"
+        },
+        "UXz7xuGCEhU": {
+            "uid": "UXz7xuGCEhU",
+            "code": "DE_2005736",
+            "name": "MCH Weight (g)"
+        }
+    },
+    "displayFormName": "RT: event LL tracker",
+    "id": "sb84lI1ZBbd",
+    "sorting": [],
+    "repetitions": []
+}

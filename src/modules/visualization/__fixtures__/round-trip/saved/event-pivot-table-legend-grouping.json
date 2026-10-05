@@ -1,0 +1,164 @@
+{
+    "name": "RT: event PT legend grouping",
+    "regressionType": "LINEAR",
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": ["LAST_WEEK"],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [],
+    "dataElementDimensions": [
+        {
+            "dataElement": {
+                "name": "Height in cm",
+                "id": "GieVkTxp4HH"
+            },
+            "legendSet": {
+                "name": "Height in cm",
+                "id": "TBxGTceyzwy"
+            }
+        }
+    ],
+    "programIndicatorDimensions": [],
+    "digitGroupSeparator": "SPACE",
+    "hideEmptyRowItems": "NONE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": false,
+    "type": "PIVOT_TABLE",
+    "programDimensions": [
+        {
+            "incidentDateLabel": "Date of Discharge",
+            "programType": "WITHOUT_REGISTRATION",
+            "displayIncidentDate": false,
+            "displayIncidentDateLabel": "Date of Discharge",
+            "id": "eBAyeGv0exc",
+            "programStages": [
+                {
+                    "program": {
+                        "id": "eBAyeGv0exc"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Report date",
+                    "id": "Zj7UnCAulEk",
+                    "repeatable": false,
+                    "name": "Inpatient morbidity and mortality"
+                }
+            ],
+            "name": "Inpatient morbidity and mortality"
+        }
+    ],
+    "simpleDimensions": [
+        {
+            "parent": "ROW",
+            "dimension": "ou",
+            "program": "eBAyeGv0exc",
+            "programStage": "Zj7UnCAulEk",
+            "values": ["USER_ORGUNIT"]
+        },
+        {
+            "parent": "FILTER",
+            "dimension": "eventDate",
+            "program": "eBAyeGv0exc",
+            "programStage": "Zj7UnCAulEk",
+            "values": ["LAST_WEEK"]
+        }
+    ],
+    "outputType": "EVENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": false,
+    "filters": [
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "LAST_WEEK"
+                }
+            ],
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "dimension": "eventDate"
+        }
+    ],
+    "parentGraphMap": {},
+    "columns": [
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "legendSet": {
+                "id": "TBxGTceyzwy",
+                "name": "Height in cm"
+            },
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "dimension": "GieVkTxp4HH",
+            "valueType": "NUMBER"
+        }
+    ],
+    "rows": [
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "USER_ORGUNIT"
+                }
+            ],
+            "programStage": {
+                "id": "Zj7UnCAulEk"
+            },
+            "program": {
+                "id": "eBAyeGv0exc"
+            },
+            "dimension": "ou"
+        }
+    ],
+    "displayName": "RT: event PT legend grouping",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "metaData": {
+        "GieVkTxp4HH": {
+            "uid": "GieVkTxp4HH",
+            "code": "DE_240794",
+            "name": "Height in cm"
+        }
+    },
+    "displayFormName": "RT: event PT legend grouping",
+    "id": "LvBeW9Mre3v",
+    "sorting": [],
+    "repetitions": []
+}

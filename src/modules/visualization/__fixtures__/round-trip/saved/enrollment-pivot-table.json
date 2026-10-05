@@ -1,0 +1,180 @@
+{
+    "name": "RT: enrollment PT",
+    "regressionType": "LINEAR",
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": ["LAST_WEEK"],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [
+        {
+            "attribute": {
+                "name": "Gender",
+                "id": "cejWyOfXge6"
+            }
+        }
+    ],
+    "dataElementDimensions": [],
+    "programIndicatorDimensions": [],
+    "digitGroupSeparator": "SPACE",
+    "hideEmptyRowItems": "NONE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": false,
+    "type": "PIVOT_TABLE",
+    "programDimensions": [
+        {
+            "enrollmentDateLabel": "Date of enrollment",
+            "incidentDateLabel": "Date of birth",
+            "programType": "WITH_REGISTRATION",
+            "displayIncidentDate": true,
+            "trackedEntityType": {
+                "id": "nEenWmSyUEp",
+                "name": "Person"
+            },
+            "displayEnrollmentDateLabel": "Date of enrollment",
+            "displayIncidentDateLabel": "Date of birth",
+            "displayEnrollmentLabel": "pregnancy",
+            "displayEventLabel": "Visit",
+            "id": "IpHINAT79UW",
+            "programStages": [
+                {
+                    "program": {
+                        "id": "IpHINAT79UW"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Report date",
+                    "id": "A03MvHHogjR",
+                    "repeatable": false,
+                    "name": "Birth"
+                },
+                {
+                    "program": {
+                        "id": "IpHINAT79UW"
+                    },
+                    "hideDueDate": false,
+                    "id": "ZzYYXq4fJie",
+                    "repeatable": false,
+                    "name": "Baby Postnatal"
+                }
+            ],
+            "name": "Child Programme"
+        }
+    ],
+    "simpleDimensions": [
+        {
+            "parent": "ROW",
+            "dimension": "ou",
+            "program": "IpHINAT79UW",
+            "values": ["USER_ORGUNIT"]
+        },
+        {
+            "parent": "FILTER",
+            "dimension": "programStatus",
+            "program": "IpHINAT79UW",
+            "values": ["ACTIVE"]
+        },
+        {
+            "parent": "FILTER",
+            "dimension": "enrollmentDate",
+            "program": "IpHINAT79UW",
+            "values": ["LAST_WEEK"]
+        }
+    ],
+    "outputType": "ENROLLMENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": false,
+    "filters": [
+        {
+            "dimensionType": "DATA_X",
+            "items": [
+                {
+                    "id": "ACTIVE"
+                }
+            ],
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "programStatus"
+        },
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "LAST_WEEK"
+                }
+            ],
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "enrollmentDate"
+        }
+    ],
+    "parentGraphMap": {},
+    "columns": [
+        {
+            "dimensionType": "PROGRAM_ATTRIBUTE",
+            "items": [],
+            "dimension": "cejWyOfXge6",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "pC3N9N77UmT",
+                "name": "Gender"
+            }
+        }
+    ],
+    "rows": [
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "USER_ORGUNIT"
+                }
+            ],
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "ou"
+        }
+    ],
+    "displayName": "RT: enrollment PT",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "metaData": {
+        "cejWyOfXge6": {
+            "uid": "cejWyOfXge6",
+            "name": "Gender"
+        }
+    },
+    "displayFormName": "RT: enrollment PT",
+    "id": "drNP2rGm2Zf",
+    "sorting": [],
+    "repetitions": []
+}
