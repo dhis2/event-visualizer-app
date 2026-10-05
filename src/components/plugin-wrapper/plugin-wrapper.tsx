@@ -4,7 +4,7 @@ import { CanvasErrorFallback } from '@components/canvas-error/canvas-error-fallb
 import type { ColumnHeaderClickFn } from '@components/line-list/types'
 import { Center, CircularLoader } from '@dhis2/ui'
 import { assertNever } from '@modules/utils/guards'
-import { isVisualizationEmpty } from '@modules/visualization/state'
+import { isVisualizationEmpty } from '@modules/visualization/guards'
 import type {
     CurrentUser,
     CurrentVisualization,
