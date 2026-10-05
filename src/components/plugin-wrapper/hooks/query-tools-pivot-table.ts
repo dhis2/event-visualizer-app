@@ -57,11 +57,7 @@ export const getLayoutDimensionMetadataNames = (
 
     return dimensions.reduce<Record<string, string>>((names, dim) => {
         const name = metadataStore.getDimensionMetadataItem(
-            getCompoundDimensionId(
-                dim,
-                visualization.outputType,
-                getAttributeTetId(visualization)
-            )
+            getCompoundDimensionId(dim, getAttributeTetId(visualization))
         )?.name
 
         if (name) {

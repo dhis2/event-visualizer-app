@@ -6,7 +6,6 @@ import { combineAllDimensionsFromVisualization } from '@modules/dimension/transl
 import { getAttributeTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     CurrentVisualization,
-    OutputType,
     SavedVisualization,
     ValueType,
 } from '@types'
@@ -440,8 +439,7 @@ export const getOperatorConditionTexts = (
 }
 
 export const getConditionsFromVisualization = (
-    vis: CurrentVisualization,
-    outputType: OutputType
+    vis: CurrentVisualization
 ): Record<string, { condition?: string; legendSet?: string }> => {
     const result: Record<string, { condition?: string; legendSet?: string }> =
         {}
@@ -451,11 +449,7 @@ export const getConditionsFromVisualization = (
     )
 
     for (const item of items) {
-        const dimensionId = getCompoundDimensionId(
-            item,
-            outputType,
-            getAttributeTetId(vis)
-        )
+        const dimensionId = getCompoundDimensionId(item, getAttributeTetId(vis))
         result[dimensionId] = {
             condition: item.filter,
             legendSet: item.legendSet?.id,

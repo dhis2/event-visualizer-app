@@ -311,8 +311,7 @@ const testCases = {
                     'kailahun',
                 ],
                 'incidentDateId.enrollmentDate': [],
-                'incidentDateId.dateOfFociRegistrationId.focusDateOfClassification':
-                    [],
+                'dateOfFociRegistrationId.focusDateOfClassification': [],
             },
             conditionsByDimension: {
                 'tetA.area': {
@@ -329,7 +328,7 @@ const testCases = {
                     'tetA.area',
                     'incidentDateId.enrollmentOu',
                     'incidentDateId.enrollmentDate',
-                    'incidentDateId.dateOfFociRegistrationId.focusDateOfClassification',
+                    'dateOfFociRegistrationId.focusDateOfClassification',
                 ],
                 rows: [],
                 filters: [],

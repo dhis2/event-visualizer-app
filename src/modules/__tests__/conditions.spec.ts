@@ -548,8 +548,7 @@ describe('getConditionsFromVisualization', () => {
             filters: [],
         }
         const conditions = getConditionsFromVisualization(
-            visualization as unknown as CurrentVisualization,
-            'EVENT'
+            visualization as unknown as CurrentVisualization
         )
         expect(conditions).toEqual({})
     })
@@ -567,8 +566,7 @@ describe('getConditionsFromVisualization', () => {
             ],
         }
         const conditions = getConditionsFromVisualization(
-            visualization as unknown as CurrentVisualization,
-            'EVENT'
+            visualization as unknown as CurrentVisualization
         )
         expect(conditions).toEqual({
             dx1: { condition: 'filter1', legendSet: undefined },
@@ -591,15 +589,14 @@ describe('getConditionsFromVisualization', () => {
             filters: [],
         }
         const conditions = getConditionsFromVisualization(
-            visualization as unknown as CurrentVisualization,
-            'EVENT'
+            visualization as unknown as CurrentVisualization
         )
         expect(conditions).toEqual({
             'ps1.dx1': { condition: 'filter1', legendSet: undefined },
         })
     })
 
-    it('should return conditions with correct id for output type tracked entity', () => {
+    it('keys the conditions of a stage dimension by its stage in a tracked entity visualization', () => {
         const visualization = {
             columns: [
                 {
@@ -613,11 +610,10 @@ describe('getConditionsFromVisualization', () => {
             filters: [],
         }
         const conditions = getConditionsFromVisualization(
-            visualization as unknown as CurrentVisualization,
-            'TRACKED_ENTITY_INSTANCE'
+            visualization as unknown as CurrentVisualization
         )
         expect(conditions).toEqual({
-            'p1.ps1.dx1': { condition: 'filter1', legendSet: undefined },
+            'ps1.dx1': { condition: 'filter1', legendSet: undefined },
         })
     })
 })

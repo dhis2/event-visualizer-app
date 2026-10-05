@@ -47,7 +47,7 @@ export const getVisualizationUiConfig = (
     const outputType = vis.outputType
     const tetId = getAttributeTetId(vis)
     const toDimId = (dim: DimensionArray[number]) =>
-        getCompoundDimensionId(dim, outputType, tetId)
+        getCompoundDimensionId(dim, tetId)
 
     return {
         visualizationType: vis.type,
@@ -70,7 +70,7 @@ export const getVisualizationUiConfig = (
             },
             {} as Record<string, string[]>
         ),
-        conditionsByDimension: getConditionsFromVisualization(vis, outputType),
+        conditionsByDimension: getConditionsFromVisualization(vis),
         repetitionsByDimension: getRepetitionsFromVisualisation(vis),
         options: { ...baseOptions, ...extractOptions(vis) },
         ...(vis.value?.id && {

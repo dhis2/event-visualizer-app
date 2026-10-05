@@ -19,13 +19,8 @@ export const getRepetitionsFromVisualisation = (
         .filter((d) => d.repetition)
         .reduce(
             (obj, d) => {
-                obj[
-                    getCompoundDimensionId(
-                        d,
-                        vis.outputType,
-                        getAttributeTetId(vis)
-                    )
-                ] = parseSavedRepetitions(d.repetition?.indexes)
+                obj[getCompoundDimensionId(d, getAttributeTetId(vis))] =
+                    parseSavedRepetitions(d.repetition?.indexes)
 
                 return obj
             },

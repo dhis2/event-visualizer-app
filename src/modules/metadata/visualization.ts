@@ -132,7 +132,6 @@ export const supplementDimensionMetadata = (
     metadataInput: MetadataInputMap,
     visualization: SavedVisualization
 ) => {
-    const { outputType } = visualization
     const dimensions = combineAllDimensionsFromVisualization(visualization)
     const tetId = getAttributeTetId(visualization)
     const teaIdsInAttributeDimensions = new Set(
@@ -150,11 +149,7 @@ export const supplementDimensionMetadata = (
                 return metadata
             }
 
-            const prefixedId = getCompoundDimensionId(
-                dimension,
-                outputType,
-                tetId
-            )
+            const prefixedId = getCompoundDimensionId(dimension, tetId)
 
             const item = Object.entries(
                 collectedItem
@@ -307,7 +302,6 @@ export const extractMetadataFromVisualization = (
     for (const dimension of dimensions) {
         const compoundId = getCompoundDimensionId(
             dimension,
-            vis.outputType,
             getAttributeTetId(vis)
         )
         if (compoundId !== dimension.dimension && withFixedNames[compoundId]) {
