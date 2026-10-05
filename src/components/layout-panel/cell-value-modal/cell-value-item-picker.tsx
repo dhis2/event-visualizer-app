@@ -11,31 +11,16 @@ import {
     SingleSelectOption,
 } from '@dhis2/ui'
 import { useMetadataStore } from '@hooks'
+import {
+    FALLBACK_AGGREGATION_TYPE,
+    resolveAggregationType,
+} from '@modules/dimension/aggregation-type'
 import type { CellValueObject } from '@store/vis-ui-config-slice'
 import type { AggregationType } from '@types'
 import { useMemo, useState, type FC } from 'react'
 import { CellValueOption } from './cell-value-option'
 import classes from './styles/cell-value-item-picker.module.css'
 import { useCellValueItems, type CellValueItem } from './use-cell-value-items'
-
-/* An item whose metadata aggregation type is NONE cannot be aggregated: the
- * analytics API returns 0 for every cell. Many tracked entity attributes (and
- * some data elements) carry NONE, so "Use item default" is disabled for them
- * and AVERAGE — a neutral numeric choice the user can override — is selected
- * instead. */
-const FALLBACK_AGGREGATION_TYPE_FOR_NONE: AggregationType = 'AVERAGE'
-
-const resolveAggregationType = (
-    aggregationType: AggregationType,
-    item: CellValueItem
-): AggregationType => {
-    if (aggregationType !== 'DEFAULT') {
-        return aggregationType
-    }
-    return item.aggregationType === 'NONE'
-        ? FALLBACK_AGGREGATION_TYPE_FOR_NONE
-        : item.aggregationType
-}
 
 type CellValueItemPickerProps = {
     programId: string
@@ -69,7 +54,7 @@ export const CellValueItemPicker: FC<CellValueItemPickerProps> = ({
     const selectedItemDefaultIsNone = selectedItem?.aggregationType === 'NONE'
     const selectedAggregationType =
         aggregationType === 'DEFAULT' && selectedItemDefaultIsNone
-            ? FALLBACK_AGGREGATION_TYPE_FOR_NONE
+            ? FALLBACK_AGGREGATION_TYPE
             : aggregationType
 
     const onItemClick = (item: CellValueItem) => {
