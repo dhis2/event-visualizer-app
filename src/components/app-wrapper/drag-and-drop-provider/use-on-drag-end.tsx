@@ -8,10 +8,12 @@ import {
     useListFormatter,
     useMetadataStore,
 } from '@hooks'
+import { resolveAggregationType } from '@modules/dimension/aggregation-type'
 import {
     getDimensionBlockReason,
     type DimensionBlockReason,
 } from '@modules/dimension/blocking'
+import { isValidCellValueDimension } from '@modules/dimension/cell-value'
 import { resolveDimensionTetId, resolveLayoutContext } from '@modules/layout'
 import {
     clearMultiSelection,
@@ -24,15 +26,17 @@ import {
     removeVisUiConfigLayoutDimensionFromAxis,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigVisualizationType,
+    setVisUiConfigCellValue,
 } from '@store/vis-ui-config-slice'
 import { useCallback } from 'react'
 import {
     isAxisContainerData,
     isAxisSortableData,
+    isCellValueDroppableData,
     isOverAxis,
     isSidebarSortableData,
 } from './dnd-data'
-import type { LayoutDragEndEvent, OverItemEventData } from './types'
+import type { LayoutDragEndEvent, LayoutDropTargetData } from './types'
 
 type OnDragEndFn = (event: LayoutDragEndEvent) => void
 
@@ -79,7 +83,7 @@ const partitionMultiSelectedDimensions = ({
 }
 
 const getDropTarget = (
-    overItemData: OverItemEventData
+    overItemData: LayoutDropTargetData
 ): { targetIndex: number; insertAfter: boolean } =>
     isAxisContainerData(overItemData)
         ? { targetIndex: 0, insertAfter: false }
@@ -146,6 +150,34 @@ export const useOnDragEnd = (): OnDragEndFn => {
             }
 
             const overItemData = event.over?.data.current
+
+            /* Taking a dimension as the cell value is a clone: it is added to
+             * `cellValue` and left wherever it already was. Handled before the
+             * branch below, which reads "not over an axis" as a removal. */
+            if (isCellValueDroppableData(overItemData)) {
+                if (isSidebarSortableData(draggedItemData)) {
+                    draggedItemData.populateMetadata()
+                }
+
+                const dimension = metadataStore.getDimensionMetadataItem(
+                    draggedItemData.dimensionId
+                )
+
+                if (isValidCellValueDimension(dimension)) {
+                    dispatch(
+                        setVisUiConfigCellValue({
+                            id: draggedItemData.dimensionId,
+                            aggregationType: resolveAggregationType(
+                                'DEFAULT',
+                                dimension ?? {}
+                            ),
+                        })
+                    )
+                }
+
+                dispatch(clearMultiSelection())
+                return
+            }
 
             if (!isOverAxis(overItemData)) {
                 // Remove layout dimension when dropped ouside axes

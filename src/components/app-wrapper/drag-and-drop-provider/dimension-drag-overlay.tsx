@@ -7,7 +7,7 @@ import {
     DimensionItem,
     DimensionItemContainer,
 } from '@components/sidebar/dimension-item'
-import { IconDelete16 } from '@dhis2/ui'
+import { IconAdd16, IconDelete16 } from '@dhis2/ui'
 import { DragOverlay, useDndMonitor } from '@dnd-kit/core'
 import { snapCenterToCursor } from '@dnd-kit/modifiers'
 import { useAppDispatch, useAppSelector } from '@hooks'
@@ -19,6 +19,7 @@ import cx from 'classnames'
 import { useState, type FC, type ReactNode } from 'react'
 import {
     isAxisSortableData,
+    isCellValueDroppableData,
     isOverAxis,
     isSidebarSortableData,
 } from './dnd-data'
@@ -27,12 +28,22 @@ import type { DraggedItemEventData } from './types'
 
 const DragOverlayBadge: FC<{
     willRemove?: boolean
+    willBecomeCellValue?: boolean
     multiSelectCount?: number
-}> = ({ willRemove, multiSelectCount }) => {
-    if (willRemove) {
+}> = ({ willRemove, willBecomeCellValue, multiSelectCount }) => {
+    if (willBecomeCellValue) {
         return (
             <span
-                className={classes.removeBadge}
+                className={cx(classes.badge, classes.addBadge)}
+                data-test="chip-add-indicator"
+            >
+                <IconAdd16 color="#ffffff" />
+            </span>
+        )
+    } else if (willRemove) {
+        return (
+            <span
+                className={cx(classes.badge, classes.removeBadge)}
                 data-test="chip-remove-indicator"
             >
                 <IconDelete16 color="#ffffff" />
@@ -41,7 +52,7 @@ const DragOverlayBadge: FC<{
     } else if (typeof multiSelectCount === 'number' && multiSelectCount >= 2) {
         return (
             <span
-                className={classes.countBadge}
+                className={cx(classes.badge, classes.countBadge)}
                 data-test="chip-multi-select-count"
             >
                 {multiSelectCount}
@@ -54,9 +65,10 @@ const DragOverlayBadge: FC<{
 
 const DragOverlayFrame: FC<{
     willRemove?: boolean
+    willBecomeCellValue?: boolean
     multiSelectCount?: number
     children: ReactNode
-}> = ({ willRemove, multiSelectCount, children }) => (
+}> = ({ willRemove, willBecomeCellValue, multiSelectCount, children }) => (
     <div className={classes.dragOverlay}>
         <div
             className={cx(classes.dragOverlayBox, {
@@ -67,6 +79,7 @@ const DragOverlayFrame: FC<{
         </div>
         <DragOverlayBadge
             willRemove={willRemove}
+            willBecomeCellValue={willBecomeCellValue}
             multiSelectCount={multiSelectCount}
         />
     </div>
@@ -75,11 +88,15 @@ const DragOverlayFrame: FC<{
 const DragOverlayItem: FC<{
     data: DraggedItemEventData
     willRemove: boolean
+    willBecomeCellValue: boolean
     multiSelectCount: number
-}> = ({ data, willRemove, multiSelectCount }) => {
+}> = ({ data, willRemove, willBecomeCellValue, multiSelectCount }) => {
     if (isAxisSortableData(data)) {
         return (
-            <DragOverlayFrame willRemove={willRemove}>
+            <DragOverlayFrame
+                willRemove={willRemove}
+                willBecomeCellValue={willBecomeCellValue}
+            >
                 <ChipContainer
                     isEmpty={data.overlayItemProps.isEmpty}
                     className={classes.chipClone}
@@ -92,7 +109,10 @@ const DragOverlayItem: FC<{
         )
     } else if (isSidebarSortableData(data)) {
         return (
-            <DragOverlayFrame multiSelectCount={multiSelectCount}>
+            <DragOverlayFrame
+                multiSelectCount={multiSelectCount}
+                willBecomeCellValue={willBecomeCellValue}
+            >
                 <DimensionItemContainer className={classes.itemClone}>
                     <DimensionItem
                         name={data.overlayItemProps.dimensionName}
@@ -112,6 +132,7 @@ export const DimensionDragOverlay: FC = () => {
     const [draggedDimensionData, setDraggedDimensionData] =
         useState<DraggedItemEventData | null>(null)
     const [willRemove, setWillRemove] = useState(false)
+    const [willBecomeCellValue, setWillBecomeCellValue] = useState(false)
     const multiSelectCount =
         draggedDimensionData &&
         multiSelectedIds.includes(draggedDimensionData.dimensionId)
@@ -130,15 +151,22 @@ export const DimensionDragOverlay: FC = () => {
             setDraggedDimensionData(data)
         },
         onDragOver(event) {
-            setWillRemove(!isOverAxis(event.over?.data.current))
+            const overData = event.over?.data.current
+            const isOverCellValue = isCellValueDroppableData(overData)
+            setWillBecomeCellValue(isOverCellValue)
+            /* The cell value axis is not a layout axis, but dropping there is a
+             * clone rather than a removal. */
+            setWillRemove(!isOverAxis(overData) && !isOverCellValue)
         },
         onDragEnd() {
             setDraggedDimensionData(null)
             setWillRemove(false)
+            setWillBecomeCellValue(false)
         },
         onDragCancel() {
             setDraggedDimensionData(null)
             setWillRemove(false)
+            setWillBecomeCellValue(false)
         },
     })
 
@@ -148,6 +176,7 @@ export const DimensionDragOverlay: FC = () => {
                 <DragOverlayItem
                     data={draggedDimensionData}
                     willRemove={willRemove}
+                    willBecomeCellValue={willBecomeCellValue}
                     multiSelectCount={multiSelectCount}
                 />
             ) : null}

@@ -1,18 +1,35 @@
+import {
+    CELL_VALUE_DROPPABLE_ID,
+    isCellValueDroppableData,
+} from '@components/app-wrapper/drag-and-drop-provider/dnd-data'
+import type { CellValueDroppableData } from '@components/app-wrapper/drag-and-drop-provider/types'
 import axisClasses from '@components/layout-panel/axis/styles/axis.module.css'
 import { CellValueModal } from '@components/layout-panel/cell-value-modal'
 import { aggregationTypeDisplayNames } from '@constants/aggregation-types'
 import i18n from '@dhis2/d2-i18n'
 import { IconEdit16 } from '@dhis2/ui'
+import { useDndContext, useDroppable } from '@dnd-kit/core'
 import { useAppSelector, useMetadataItem } from '@hooks'
 import { getVisUiConfigCellValue } from '@store/vis-ui-config-slice'
 import cx from 'classnames'
-import { useCallback, useState, type FC } from 'react'
+import { useCallback, useMemo, useState, type FC } from 'react'
 import classes from './styles/cell-value-axis.module.css'
 
 export const CellValueAxis: FC = () => {
     const cellValue = useAppSelector(getVisUiConfigCellValue)
     const cellValueMetadata = useMetadataItem(cellValue?.id)
     const [isModalOpen, setIsModalOpen] = useState(false)
+
+    const droppableData = useMemo<CellValueDroppableData>(
+        () => ({ isCellValueDroppable: true }),
+        []
+    )
+    const { setNodeRef } = useDroppable({
+        id: CELL_VALUE_DROPPABLE_ID,
+        data: droppableData,
+    })
+    const { over } = useDndContext()
+    const isActiveDropTarget = isCellValueDroppableData(over?.data.current)
 
     const onClick = useCallback(() => setIsModalOpen(true), [])
     const onModalClose = useCallback(() => setIsModalOpen(false), [])
@@ -24,7 +41,10 @@ export const CellValueAxis: FC = () => {
     return (
         <>
             <div
-                className={cx(axisClasses.container, classes.axis)}
+                ref={setNodeRef}
+                className={cx(axisClasses.container, classes.axis, {
+                    [axisClasses.activeDropTarget]: isActiveDropTarget,
+                })}
                 data-test="axis-value"
             >
                 <div className={axisClasses.label}>{i18n.t('Value')}</div>

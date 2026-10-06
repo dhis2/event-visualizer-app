@@ -1,4 +1,9 @@
+/* `z-index` lifts the axis above the blocked-drag overlay, which covers the
+ * whole axes container. A dimension that cannot go in the layout may still be
+ * valid as a cell value, so this axis stays visible and droppable while the
+ * layout axes are greyed out. */
 .axis {
+    z-index: 4;
     grid-area: value;
     border-block-start: 1px solid var(--colors-grey300);
     border-inline-start: 1px solid var(--colors-grey300);

@@ -3,9 +3,12 @@ import type { SortableData } from '@dnd-kit/sortable'
 import type {
     AxisContainerDroppableData,
     AxisSortableData,
-    OverItemEventData,
+    CellValueDroppableData,
+    LayoutDropTargetData,
     SidebarSortableData,
 } from './types'
+
+export const CELL_VALUE_DROPPABLE_ID = 'cell-value'
 
 export const isAxisSortableData = (
     input: object
@@ -25,7 +28,7 @@ export const isSidebarSortableData = (
 
 export const isOverAxis = (
     overItemData: object | undefined
-): overItemData is OverItemEventData =>
+): overItemData is LayoutDropTargetData =>
     overItemData !== undefined && 'axis' in overItemData
 
 export const isAxisContainerData = (
@@ -34,6 +37,13 @@ export const isAxisContainerData = (
     input !== undefined &&
     'isAxisContainer' in input &&
     input.isAxisContainer === true
+
+export const isCellValueDroppableData = (
+    input: object | undefined
+): input is CellValueDroppableData =>
+    input !== undefined &&
+    'isCellValueDroppable' in input &&
+    input.isCellValueDroppable === true
 
 export const getActiveDragData = (
     active: Active | null
