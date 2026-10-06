@@ -389,7 +389,9 @@ describe('useDimensionLayoutBlockedMessage', () => {
         expect(result.current).toBeNull()
     })
 
-    it('returns the cell-value message when the dim matches the configured cell value id', async () => {
+    /* Cell value and layout are non-exclusive: the dimension used as the cell
+     * value stays available in the sidebar. */
+    it('does not disable the dim that is also the configured cell value', async () => {
         const dim = makeDim({ id: 'stage1.de1', dimensionId: 'de1' })
         const { result } = await renderHookWithAppWrapper(
             () => useDimensionLayoutBlockedMessage(dim),
@@ -406,7 +408,7 @@ describe('useDimensionLayoutBlockedMessage', () => {
                 },
             })
         )
-        expect(result.current).toMatch(/cell value/)
+        expect(result.current).toBeNull()
     })
 
     it('returns the vis-type message for the TET registration OU outside line list', async () => {

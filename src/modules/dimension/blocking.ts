@@ -53,12 +53,11 @@ export const isDimensionCrossTet = (
 // Layout-blocking: whether — and why — a dimension cannot be placed in the layout
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type DimensionBlockReason = 'cellValue' | 'visType' | 'crossTet'
+export type DimensionBlockReason = 'visType' | 'crossTet'
 
 type DimensionBlockReasonInput = {
     dimension: DimensionMetadataItem
     visualizationType: VisualizationType
-    cellValueId: string | null
     layoutTetId: string | null
     dimensionTetId: string | null
 }
@@ -69,19 +68,9 @@ type DimensionBlockReasonInput = {
 export const getDimensionBlockReason = ({
     dimension,
     visualizationType,
-    cellValueId,
     layoutTetId,
     dimensionTetId,
 }: DimensionBlockReasonInput): DimensionBlockReason | null => {
-    /* the cell value is remembered across vis types but only a pivot table
-     * shows it, so it only withholds its dimension from a pivot table layout. */
-    if (
-        visualizationType === 'PIVOT_TABLE' &&
-        cellValueId &&
-        dimension.id === cellValueId
-    ) {
-        return 'cellValue'
-    }
     if (isDimensionFullyInvalidForVisType(dimension, visualizationType)) {
         return 'visType'
     }
@@ -108,8 +97,6 @@ export const getDimensionLayoutBlockedMessage = (
     input: DimensionDisablingInput
 ): string | null => {
     switch (getDimensionBlockReason(input)) {
-        case 'cellValue':
-            return i18n.t('Already used as cell value.')
         case 'visType':
             return i18n.t('Cannot be used in a {{visType}}.', {
                 visType: visTypeDisplayNames[input.visualizationType],
