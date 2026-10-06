@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  i18next-scanner>i18next: ^23
+
 importers:
 
   .:
@@ -92,7 +95,7 @@ importers:
         version: 3.17.4(@dhis2/app-service-config@3.17.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@dhis2/cli-app-scripts':
         specifier: ^12.11.5
-        version: 12.11.5(@types/babel__core@7.20.5)(@types/node@26.6.3)(less@4.9.1)(lightningcss@1.33.0)(postcss@8.5.28)(react@18.3.1)(sass@1.104.1)(stylus@0.62.0)(supports-color@10.2.2)(terser@5.51.2)(type-fest@4.41.0)(typescript@6.0.3)
+        version: 12.11.5(@types/babel__core@7.20.5)(@types/node@26.6.3)(less@4.9.1)(lightningcss@1.33.0)(postcss@8.5.28)(react@18.3.1)(sass@1.104.1)(stylus@0.62.0)(supports-color@10.2.2)(terser@5.51.2)(type-fest@4.41.0)
       '@dhis2/config-eslint':
         specifier: ^0.4.0
         version: 0.4.0(eslint@9.39.5(jiti@2.6.1)(supports-color@10.2.2))(supports-color@8.1.1)
@@ -4807,13 +4810,8 @@ packages:
   i18next@10.6.0:
     resolution: {integrity: sha512-ycRlN145kQf8EsyDAzMfjqv1ZT1Jwp7P2H/07bP8JLWm+7cSLD4XqlJOvq4mKVS2y2mMIy10lX9ZeYUdQ0qSRw==}
 
-  i18next@26.4.2:
-    resolution: {integrity: sha512-RX+R0VLg13IbvRuJSxnqykUFS9vQZTl8wYpWPCIUDWVrSGjsQywB5Y+pjzrkboxGAuYfJZVH1InFTdgBdxq6ug==}
-    peerDependencies:
-      typescript: ^5 || ^6 || ^7
-    peerDependenciesMeta:
-      typescript:
-        optional: true
+  i18next@23.16.8:
+    resolution: {integrity: sha512-06r/TitrM88Mg5FdUXAKL96dJMzgqLE5dv3ryBAra4KCwD9mJ4ndOTS95ZuymIGoE+2hzfdaMak2X11/es7ZWg==}
 
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
@@ -9887,7 +9885,7 @@ snapshots:
       - '@babel/core'
       - react-native
 
-  '@dhis2/cli-app-scripts@12.11.5(@types/babel__core@7.20.5)(@types/node@26.6.3)(less@4.9.1)(lightningcss@1.33.0)(postcss@8.5.28)(react@18.3.1)(sass@1.104.1)(stylus@0.62.0)(supports-color@10.2.2)(terser@5.51.2)(type-fest@4.41.0)(typescript@6.0.3)':
+  '@dhis2/cli-app-scripts@12.11.5(@types/babel__core@7.20.5)(@types/node@26.6.3)(less@4.9.1)(lightningcss@1.33.0)(postcss@8.5.28)(react@18.3.1)(sass@1.104.1)(stylus@0.62.0)(supports-color@10.2.2)(terser@5.51.2)(type-fest@4.41.0)':
     dependencies:
       '@babel/core': 7.29.7
       '@babel/plugin-syntax-dynamic-import': 7.8.3(@babel/core@7.29.7)
@@ -9924,7 +9922,7 @@ snapshots:
       html-webpack-plugin: 5.6.8(webpack@5.111.1(lightningcss@1.33.0)(postcss@8.5.28))
       http-proxy: 1.18.1
       i18next-conv: 9.2.1
-      i18next-scanner: 3.3.0(typescript@6.0.3)
+      i18next-scanner: 3.3.0
       inquirer: 7.3.3
       lodash: 4.18.1
       mini-css-extract-plugin: 2.10.2(webpack@5.111.1(lightningcss@1.33.0)(postcss@8.5.28))
@@ -9978,7 +9976,6 @@ snapshots:
       - terser
       - ts-node
       - type-fest
-      - typescript
       - uglify-js
       - utf-8-validate
       - webpack-cli
@@ -13685,7 +13682,7 @@ snapshots:
       mkdirp: 0.5.6
       node-gettext: 2.1.0
 
-  i18next-scanner@3.3.0(typescript@6.0.3):
+  i18next-scanner@3.3.0:
     dependencies:
       acorn: 8.18.0
       acorn-dynamic-import: 4.0.0(acorn@8.18.0)
@@ -13700,21 +13697,19 @@ snapshots:
       eol: 0.9.1
       esprima-next: 5.8.4
       gulp-sort: 2.0.0
-      i18next: 26.4.2(typescript@6.0.3)
+      i18next: 23.16.8
       lodash: 4.18.1
       parse5: 6.0.1
       sortobject: 4.17.0
       through2: 4.0.2
       vinyl: 2.2.1
       vinyl-fs: 3.0.3
-    transitivePeerDependencies:
-      - typescript
 
   i18next@10.6.0: {}
 
-  i18next@26.4.2(typescript@6.0.3):
-    optionalDependencies:
-      typescript: 6.0.3
+  i18next@23.16.8:
+    dependencies:
+      '@babel/runtime': 7.29.7
 
   iconv-lite@0.4.24:
     dependencies:

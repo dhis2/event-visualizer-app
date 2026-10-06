@@ -22,3 +22,7 @@ publicHoistPattern:
   - 'post-robot'
   - 'styled-jsx'
   - '@dhis2/pwa'
+# i18next-scanner (used by `d2-app-scripts i18n extract`) depends on `i18next: *` and needs a version that still
+# supports `compatibilityJSON: 'v3'` (removed in v24). Without this, any i18n.t() call with `count` is left out of en.pot.
+overrides:
+  'i18next-scanner>i18next': '^23'

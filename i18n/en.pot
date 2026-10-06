@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-23T14:32:18.188Z\n"
-"PO-Revision-Date: 2026-09-23T14:32:18.188Z\n"
+"POT-Creation-Date: 2026-10-06T14:38:30.010Z\n"
+"PO-Revision-Date: 2026-10-06T14:38:30.023Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -216,6 +216,11 @@ msgstr "Remove"
 
 msgid "all"
 msgstr "all"
+
+msgid "And {{- count}} other..."
+msgid_plural "And {{- count}} other..."
+msgstr[0] "And {{- count}} other..."
+msgstr[1] "And {{- count}} others..."
 
 msgid "None selected"
 msgstr "None selected"
@@ -732,6 +737,11 @@ msgstr "Expand all cards"
 
 msgid "Collapse all cards"
 msgstr "Collapse all cards"
+
+msgid "Enter at least {{- count}} characters to search"
+msgid_plural "Enter at least {{- count}} characters to search"
+msgstr[0] "Enter at least {{- count}} characters to search"
+msgstr[1] "Enter at least {{- count}} characters to search"
 
 msgid "Something went wrong while searching."
 msgstr "Something went wrong while searching."
