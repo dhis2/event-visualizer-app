@@ -1,5 +1,6 @@
 import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
+import { getAttributeTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     Axis,
     CurrentVisualization,
@@ -59,7 +60,7 @@ export const getLayoutDimensionMetadataNames = (
             getCompoundDimensionId(
                 dim,
                 visualization.outputType,
-                trackedEntityTypeId
+                getAttributeTetId(visualization)
             )
         )?.name
 

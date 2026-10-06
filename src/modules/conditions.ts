@@ -3,6 +3,7 @@ import { formatValue, ouIdHelper } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
 import { combineAllDimensionsFromVisualization } from '@modules/dimension/translation'
+import { getAttributeTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     CurrentVisualization,
     OutputType,
@@ -453,7 +454,7 @@ export const getConditionsFromVisualization = (
         const dimensionId = getCompoundDimensionId(
             item,
             outputType,
-            vis.trackedEntityType?.id
+            getAttributeTetId(vis)
         )
         result[dimensionId] = {
             condition: item.filter,
