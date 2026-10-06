@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-10-05T14:09:39.458Z\n"
-"PO-Revision-Date: 2026-10-05T14:09:39.458Z\n"
+"POT-Creation-Date: 2026-10-06T12:06:38.689Z\n"
+"PO-Revision-Date: 2026-10-06T12:06:38.689Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -24,6 +24,12 @@ msgstr ""
 
 msgid "Retry"
 msgstr "Retry"
+
+msgid "Use as value (without filters)"
+msgstr "Use as value (without filters)"
+
+msgid "Use as value"
+msgstr "Use as value"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
