@@ -1,67 +1,51 @@
-import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider/metadata-provider'
-import { render, screen } from '@testing-library/react'
+import organisationUnitsData from '@test-utils/__fixtures__/organisation-units.json'
+import { renderWithAppWrapper } from '@test-utils/app-wrapper'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import type { OrgUnit } from '@types'
 import { useState } from 'react'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { OrgUnitCondition } from '../org-unit-condition'
 
-const pickedItems = [
-    { id: 'CHILD_OU', name: 'Child org unit', path: '/ROOT/CHILD_OU' },
-    { id: 'OU_GROUP-GROUP_ID', name: 'Hospital' },
-    { id: 'LEVEL-LEVEL_ID', name: 'Facility' },
-]
-
-vi.mock('@hooks', async () => ({
-    ...(await vi.importActual('@hooks')),
-    useCurrentUser: () => ({ settings: { displayNameProperty: 'name' } }),
-    useRootOrgUnits: () => [{ id: 'ROOT', name: 'Root', path: '/ROOT' }],
-}))
-
-vi.mock('@dhis2/analytics', async () => ({
-    ...(await vi.importActual('@dhis2/analytics')),
-    OrgUnitDimension: ({
-        selected,
-        onSelect,
-    }: {
-        selected: OrgUnit[]
-        onSelect: (args: { items: OrgUnit[] }) => void
-    }) => (
-        <>
-            <ul>
-                {selected.map((item) => (
-                    <li key={item.id}>{item.id}</li>
-                ))}
-            </ul>
-            <button onClick={() => onSelect({ items: pickedItems })}>
-                pick
-            </button>
-        </>
-    ),
-}))
+const [rootOrgUnit] = organisationUnitsData.organisationUnits
 
 const StatefulOrgUnitCondition = () => {
     const [condition, setCondition] = useState('')
     return <OrgUnitCondition condition={condition} onChange={setCondition} />
 }
 
+const renderOrgUnitCondition = () =>
+    renderWithAppWrapper(<StatefulOrgUnitCondition />, {
+        queryData: {
+            organisationUnits: async (_type, query) =>
+                query.id
+                    ? { ...rootOrgUnit, children: 0 }
+                    : organisationUnitsData,
+            organisationUnitGroups: {
+                organisationUnitGroups: [
+                    {
+                        id: 'GROUP_ID',
+                        name: 'Hospital',
+                        displayName: 'Hospital',
+                    },
+                ],
+            },
+        },
+    })
+
 describe('OrgUnitCondition', () => {
-    it('shows picked org units, groups and levels as selected', async () => {
-        render(
-            <MockMetadataProvider>
-                <StatefulOrgUnitCondition />
-            </MockMetadataProvider>
+    it.each([
+        { select: 'Select a level', option: 'Facility' },
+        { select: 'Select a group', option: 'Hospital' },
+    ])('checks $option when picked from $select', async (pick) => {
+        await renderOrgUnitCondition()
+
+        await userEvent.click(await screen.findByText(pick.select))
+        await userEvent.click(
+            await screen.findByRole('checkbox', { name: pick.option })
         )
 
-        await userEvent.click(screen.getByRole('button', { name: 'pick' }))
-
-        const selectedIds = screen
-            .getAllByRole('listitem')
-            .map((item) => item.textContent)
-        expect(selectedIds).toEqual([
-            'CHILD_OU',
-            'OU_GROUP-GROUP_ID',
-            'LEVEL-LEVEL_ID',
-        ])
+        expect(
+            screen.getByRole('checkbox', { name: pick.option })
+        ).toBeChecked()
     })
 })
