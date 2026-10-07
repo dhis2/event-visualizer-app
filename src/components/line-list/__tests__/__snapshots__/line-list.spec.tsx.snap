@@ -13584,3 +13584,5 @@ exports[`LineList > Snapshot test > renders large table with legend set correctl
   />
 </div>
 `;
+
+exports[`LineList > Sorting > refetches with the sort parameters when a sort icon is clicked 1`] = `<div />`;
