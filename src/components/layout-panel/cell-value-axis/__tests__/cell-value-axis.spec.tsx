@@ -1,4 +1,7 @@
-import { initialState as visUiConfigInitialState } from '@store/vis-ui-config-slice'
+import {
+    getVisUiConfigCellValue,
+    initialState as visUiConfigInitialState,
+} from '@store/vis-ui-config-slice'
 import { renderWithAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -43,6 +46,7 @@ const metadata = {
         name: 'Weight in kg',
         dimensionType: 'DATA_ELEMENT',
         valueType: 'NUMBER',
+        aggregationType: 'SUM',
         programId: 'p1',
         programStageId: 's1',
     },
@@ -127,16 +131,69 @@ describe('CellValueAxis', () => {
         expect(getTrigger()).toHaveTextContent('Sum')
     })
 
-    it('opens the cell value modal when clicked', async () => {
-        const user = userEvent.setup()
+    it('offers no aggregation or reset control when showing Count', async () => {
         await renderWithAppWrapper(
             <CellValueAxis />,
             buildMockOptions({ columns: ['s1.de1'] })
         )
 
-        await user.click(getTrigger())
+        expect(
+            screen.queryByTestId('cell-value-aggregation-trigger')
+        ).not.toBeInTheDocument()
+        expect(screen.queryByTestId('cell-value-reset')).not.toBeInTheDocument()
+    })
 
-        expect(await screen.findByTestId('cell-value-modal')).toBeVisible()
+    it('resets to Count without confirmation', async () => {
+        const user = userEvent.setup()
+        const { store } = await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({
+                columns: ['s1.de1'],
+                cellValue: { id: 's1.de1', aggregationType: 'AVERAGE' },
+            })
+        )
+
+        await user.click(screen.getByTestId('cell-value-reset'))
+
+        expect(getVisUiConfigCellValue(store.getState())).toBeUndefined()
+        expect(getTrigger()).toHaveTextContent('Count')
+    })
+
+    it('changes the aggregation type from the inline menu', async () => {
+        const user = userEvent.setup()
+        const { store } = await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({
+                columns: ['s1.de1'],
+                cellValue: { id: 's1.de1', aggregationType: 'AVERAGE' },
+            })
+        )
+
+        await user.click(screen.getByTestId('cell-value-aggregation-trigger'))
+        await user.click(screen.getByRole('menuitem', { name: 'Max' }))
+
+        expect(getVisUiConfigCellValue(store.getState())).toEqual({
+            id: 's1.de1',
+            aggregationType: 'MAX',
+        })
+    })
+
+    /* `DEFAULT` is resolved before storing, so the menu shows real names. */
+    it('does not offer "Use item default" in the aggregation menu', async () => {
+        const user = userEvent.setup()
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({
+                columns: ['s1.de1'],
+                cellValue: { id: 's1.de1', aggregationType: 'AVERAGE' },
+            })
+        )
+
+        await user.click(screen.getByTestId('cell-value-aggregation-trigger'))
+
+        expect(
+            screen.queryByRole('menuitem', { name: 'Use item default' })
+        ).not.toBeInTheDocument()
     })
 
     it('stays clickable whatever programs the layout holds', async () => {
@@ -146,5 +203,142 @@ describe('CellValueAxis', () => {
         )
 
         expect(getTrigger()).toBeEnabled()
+    })
+
+    /* The cell value carries program/stage context like any other dimension, so
+     * it is suffixed by the same rules as the chips. */
+    it('suffixes the name once the cell value widens the scope', async () => {
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({
+                columns: ['s1.de1'],
+                cellValue: { id: 's2.de1', aggregationType: 'SUM' },
+            })
+        )
+
+        expect(screen.getByTestId('cell-value-suffix')).toHaveTextContent(
+            'Stage 2'
+        )
+    })
+
+    it('shows no suffix when everything is in one program', async () => {
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({
+                columns: ['s1.de1'],
+                cellValue: { id: 's1.de1', aggregationType: 'SUM' },
+            })
+        )
+
+        expect(
+            screen.queryByTestId('cell-value-suffix')
+        ).not.toBeInTheDocument()
+    })
+
+    it('explains on hover what Count means and how to change it', async () => {
+        const user = userEvent.setup()
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({ columns: ['s1.de1'] })
+        )
+
+        await user.hover(screen.getByTestId('cell-value-label'))
+
+        expect(
+            await screen.findByText(
+                'Cells show a count. Drag a numeric data item here to show its value.'
+            )
+        ).toBeInTheDocument()
+    })
+
+    it('does not explain Count once a data item is set', async () => {
+        const user = userEvent.setup()
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({
+                columns: ['s1.de1'],
+                cellValue: { id: 's1.de1', aggregationType: 'SUM' },
+            })
+        )
+
+        await user.hover(screen.getByTestId('cell-value-label'))
+
+        expect(screen.queryByText(/Cells show a count/)).not.toBeInTheDocument()
+    })
+
+    it('separates the name from the aggregation type with a middle dot', async () => {
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({
+                columns: ['s1.de1'],
+                cellValue: { id: 's1.de1', aggregationType: 'AVERAGE' },
+            })
+        )
+
+        /* The gap around the dot is the flex gap, not whitespace. */
+        expect(getTrigger()).toHaveTextContent('Weight in kg·Average')
+    })
+
+    /* Both items in the layout, one of them also the cell value: two stages are
+     * in scope, so the value gets a stage suffix like the chips do. */
+    it('suffixes the value when both stages are already in the layout', async () => {
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({
+                columns: ['s1.de1', 's2.de1'],
+                cellValue: { id: 's1.de1', aggregationType: 'SUM' },
+            })
+        )
+
+        expect(screen.getByTestId('cell-value-suffix')).toHaveTextContent(
+            'Stage 1'
+        )
+    })
+
+    /* If the stored id is the plain uid rather than the compound stageId.deUid,
+     * the dimension carries no stage and falls back to the program rule. */
+    it('shows no stage when the cell value id is not stage-qualified', async () => {
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({
+                columns: ['s1.de1', 's2.de1'],
+                cellValue: { id: 'de1', aggregationType: 'SUM' },
+            })
+        )
+
+        expect(
+            screen.queryByTestId('cell-value-suffix')
+        ).not.toBeInTheDocument()
+    })
+
+    /* s1.de1's own aggregation type is SUM, so that entry says so. */
+    it('names the data item default in the aggregation menu', async () => {
+        const user = userEvent.setup()
+        const { store } = await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({
+                columns: ['s1.de1'],
+                cellValue: { id: 's1.de1', aggregationType: 'AVERAGE' },
+            })
+        )
+
+        await user.click(screen.getByTestId('cell-value-aggregation-trigger'))
+
+        expect(
+            screen.queryByRole('menuitem', { name: 'Sum' })
+        ).not.toBeInTheDocument()
+        expect(
+            screen.getByRole('menuitem', { name: 'Average' })
+        ).toBeInTheDocument()
+
+        /* Choosing it stores the concrete type, not a DEFAULT sentinel. */
+        await user.click(
+            screen.getByRole('menuitem', { name: 'Use item default (Sum)' })
+        )
+
+        expect(getVisUiConfigCellValue(store.getState())).toEqual({
+            id: 's1.de1',
+            aggregationType: 'SUM',
+        })
     })
 })

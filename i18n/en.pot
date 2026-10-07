@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-10-06T12:06:38.689Z\n"
-"PO-Revision-Date: 2026-10-06T12:06:38.689Z\n"
+"POT-Creation-Date: 2026-10-07T14:15:35.218Z\n"
+"PO-Revision-Date: 2026-10-07T14:15:35.218Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -322,8 +322,17 @@ msgstr "Nothing selected. Add items to the layout to get started."
 msgid "One row for each {{- outputTypeLabel}}"
 msgstr "One row for each {{- outputTypeLabel}}"
 
+msgid "Use item default ({{- aggregationType}})"
+msgstr "Use item default ({{- aggregationType}})"
+
 msgid "Value"
 msgstr "Value"
+
+msgid "Reset to count"
+msgstr "Reset to count"
+
+msgid "Cells show a count. Drag a numeric data item here to show its value."
+msgstr "Cells show a count. Drag a numeric data item here to show its value."
 
 msgid "Count"
 msgstr "Count"
