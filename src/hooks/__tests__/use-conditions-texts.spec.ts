@@ -73,7 +73,7 @@ describe('useConditionsTexts metadata updates', () => {
         expect(result.current.texts).toEqual(['Legend Alpha', 'Legend Beta'])
     })
 
-    it('updates option set condition texts once the option set metadata becomes available', () => {
+    it('names option set condition texts as their metadata arrives, falling back to the code', () => {
         const optionSetId = 'OS_123'
         const selectedOptionCodes = ['A', 'B']
 
@@ -100,7 +100,7 @@ describe('useConditionsTexts metadata updates', () => {
             })
         })
 
-        expect(result.current.texts).toEqual(['Alpha'])
+        expect(result.current.texts).toEqual(['Alpha', 'B'])
 
         act(() => {
             result.current.addMetadata({
@@ -234,5 +234,37 @@ describe('useConditionsTexts metadata updates', () => {
         })
 
         expect(result.current.texts).toEqual(['Alpha', 'Beta'])
+    })
+
+    it('keeps the selected order and names the no-value option without metadata', () => {
+        const optionSetId = 'OS_ORDER'
+
+        const { result } = renderHook(
+            () => {
+                const texts = useConditionsTexts({
+                    conditions: { condition: 'IN:B;D2__NOVALUE;A' },
+                    dimension: { ...baseDimension, optionSet: optionSetId },
+                    formatValueOptions: {},
+                })
+                const addMetadata = useAddMetadata()
+                return { texts, addMetadata }
+            },
+            { wrapper: DefaultWrapper }
+        )
+
+        expect(result.current.texts).toEqual(['B', 'No value', 'A'])
+
+        act(() => {
+            result.current.addMetadata({
+                id: optionSetId,
+                name: 'Status',
+                options: [
+                    { code: 'A', name: 'Alpha' },
+                    { code: 'B', name: 'Beta' },
+                ],
+            })
+        })
+
+        expect(result.current.texts).toEqual(['Beta', 'No value', 'Alpha'])
     })
 })

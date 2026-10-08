@@ -168,6 +168,8 @@ export const FALSE_VALUE: BooleanValue = '0'
 export const NULL_VALUE: BooleanValue = 'NV'
 export const TRUE_VALUE: BooleanValue = '1'
 export const OPERATOR_IN: QueryOperator = 'IN'
+export const NO_VALUE_OPTION_CODE = 'D2__NOVALUE'
+export const getNoValueOptionName = (): string => i18n.t('No value')
 export const OPERATOR_EQUAL: QueryOperator = 'EQ'
 export const OPERATOR_EMPTY = `EQ:${NULL_VALUE}`
 export const OPERATOR_NOT_EMPTY = `NE:${NULL_VALUE}`
@@ -529,13 +531,19 @@ export const getConditionsTexts = ({
             getOptionSetIdAndSelectedOptionCodes(dimension, conditionsList)
         const optionSetMetadata = metadataItems[optionSetId]
 
-        if (!isOptionSetMetadataItem(optionSetMetadata)) {
-            return selectedOptionCodes
-        }
-        const selectedOptionCodesLookup = new Set(selectedOptionCodes)
-        return optionSetMetadata.options
-            .filter((option) => selectedOptionCodesLookup.has(option.code))
-            .map((option) => option.name)
+        const optionNamesByCode = new Map(
+            isOptionSetMetadataItem(optionSetMetadata)
+                ? optionSetMetadata.options.map((option) => [
+                      option.code,
+                      option.name,
+                  ])
+                : []
+        )
+        optionNamesByCode.set(NO_VALUE_OPTION_CODE, getNoValueOptionName())
+
+        return selectedOptionCodes.map(
+            (code) => optionNamesByCode.get(code) ?? code
+        )
     }
 
     if (shouldUseBooleanConditions(conditions, dimension, conditionsList)) {

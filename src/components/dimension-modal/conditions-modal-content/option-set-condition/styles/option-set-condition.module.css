@@ -1,0 +1,7 @@
+.noValueOption {
+    color: var(--colors-grey700);
+}
+
+.noValueOption.highlighted {
+    color: inherit;
+}

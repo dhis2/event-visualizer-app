@@ -968,6 +968,9 @@ msgstr "No"
 msgid "Not answered"
 msgstr "Not answered"
 
+msgid "No value"
+msgstr "No value"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
