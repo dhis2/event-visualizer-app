@@ -435,7 +435,7 @@ In addition to being available via hooks, you can also access the metadata store
 
 ### App Cached Data
 
-The outermost component of the `AppWrapper` is the `AppCachedDataQueryProvider`. This fetches data considered static for the app's lifecycle. This data is guaranteed to be available before the app loads and can be accessed via the `useAppCachedDataQuery` hook. You can also directly access individual cached data properties using these hooks:
+The outermost component of the `AppWrapper` is the `AppCachedDataQueryProvider`. This fetches data considered static for the app's lifecycle: system settings, root org units and org unit levels. The current user is not fetched here; it is taken from the `/api/me` response the app-shell already loads, via `useCurrentUserInfo` from `@dhis2/app-runtime`. This data is guaranteed to be available before the app loads and can be accessed via the `useAppCachedDataQuery` hook. You can also directly access individual cached data properties using these hooks:
 
 - `useCurrentUser`
 - `useSystemSettings`

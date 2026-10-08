@@ -2,14 +2,16 @@ import { DEFAULT_OPTIONS } from '@constants/options'
 import { MetadataStore } from '@modules/metadata/store'
 import { getDefaultOptions } from '@modules/options'
 import {
-    getSaveableVisualization,
-    getVisualizationState,
-    getVisualizationUiConfig,
-    isDefaultOptionValue,
-    normalizeApiSavedVisualization,
+    buildCurrentVisFromVisUiConfig,
     toCurrentVis,
+} from '@modules/visualization/current-vis'
+import { normalizeApiSavedVisualization } from '@modules/visualization/normalize-legacy'
+import { getSaveableVisualization } from '@modules/visualization/save'
+import {
+    getVisualizationState,
+    isDefaultOptionValue,
 } from '@modules/visualization/state'
-import { buildCurrentVisFromVisUiConfig } from '@store/thunks'
+import { getVisualizationUiConfig } from '@modules/visualization/ui-config'
 import type {
     ApiSavedVisualization,
     CurrentVisualization,

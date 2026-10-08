@@ -2,7 +2,7 @@ import { useLoadVisualizationOnMount } from '@components/app/use-load-visualizat
 import type { ColumnHeaderClickFn } from '@components/line-list/types'
 import { PluginWrapper } from '@components/plugin-wrapper/plugin-wrapper'
 import { useAppDispatch, useAppSelector, useCurrentUser } from '@hooks'
-import { isVisualizationEmpty } from '@modules/visualization/state'
+import { isVisualizationEmpty } from '@modules/visualization/guards'
 import { getCurrentVis, setCurrentVis } from '@store/current-vis-slice'
 import {
     getIsVisualizationLoading,
