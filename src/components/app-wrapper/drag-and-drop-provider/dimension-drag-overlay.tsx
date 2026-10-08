@@ -153,7 +153,11 @@ export const DimensionDragOverlay: FC = () => {
         onDragOver(event) {
             const overData = event.over?.data.current
             const isOverCellValue = isCellValueDroppableData(overData)
-            setWillBecomeCellValue(isOverCellValue)
+            const dragged = event.active.data.current as
+                DraggedItemEventData | undefined
+            setWillBecomeCellValue(
+                isOverCellValue && Boolean(dragged?.canBeCellValue)
+            )
             /* The cell value axis is not a layout axis, but dropping there is a
              * clone rather than a removal. */
             setWillRemove(!isOverAxis(overData) && !isOverCellValue)

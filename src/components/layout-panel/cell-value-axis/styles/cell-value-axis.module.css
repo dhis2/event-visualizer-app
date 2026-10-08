@@ -1,12 +1,16 @@
-/* `z-index` lifts the axis above the blocked-drag overlay, which covers the
- * whole axes container. A dimension that cannot go in the layout may still be
- * valid as a cell value, so this axis stays visible and droppable while the
- * layout axes are greyed out. */
 .axis {
-    z-index: 4;
+    position: relative;
     grid-area: value;
     border-block-start: 1px solid var(--colors-grey300);
     border-inline-start: 1px solid var(--colors-grey300);
+}
+
+/* The blocked-drag overlay covers the whole axes container. A dimension barred
+ * from the layout may still be valid as a cell value, so the axis rises above
+ * the overlay to stay visible and droppable. When it cannot take the drag
+ * either, it stays under the overlay and is greyed out with the other axes. */
+.aboveLayoutBlockedOverlay {
+    z-index: 4;
 }
 
 .content {

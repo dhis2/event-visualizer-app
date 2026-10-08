@@ -9,6 +9,10 @@ export type SidebarSortableData = {
     populateMetadata: () => void
     isLayoutBlocked: boolean
     layoutBlockedMessage?: string
+    /* Whether the cell value axis would accept this. Carried on the drag rather
+     * than looked up, because a sidebar dimension's metadata only reaches the
+     * store when it is dropped. */
+    canBeCellValue: boolean
 }
 
 export type AxisSortableData = {
@@ -18,6 +22,7 @@ export type AxisSortableData = {
     insertAfter: boolean
     isLayoutBlocked: boolean
     layoutBlockedMessage?: string
+    canBeCellValue: boolean
 }
 
 export type AxisContainerDroppableData = {

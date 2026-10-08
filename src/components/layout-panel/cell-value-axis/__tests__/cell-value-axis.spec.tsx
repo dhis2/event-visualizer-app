@@ -1,3 +1,4 @@
+import { useDndContext } from '@dnd-kit/core'
 import {
     getVisUiConfigCellValue,
     initialState as visUiConfigInitialState,
@@ -6,8 +7,17 @@ import { renderWithAppWrapper, type MockOptions } from '@test-utils/app-wrapper'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { AggregationType, RootState } from '@types'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { CellValueAxis } from '../cell-value-axis'
+
+vi.mock('@dnd-kit/core', async () => {
+    const actual = await vi.importActual('@dnd-kit/core')
+    return {
+        ...actual,
+        useDroppable: vi.fn(() => ({ setNodeRef: vi.fn() })),
+        useDndContext: vi.fn(() => ({ active: null, over: null })),
+    }
+})
 
 const stage1 = {
     id: 's1',
@@ -340,5 +350,78 @@ describe('CellValueAxis', () => {
             id: 's1.de1',
             aggregationType: 'SUM',
         })
+    })
+})
+
+/* The axis rejects an invalid dimension on drop, so it must not invite one in
+ * the first place. */
+describe('CellValueAxis drop affordance', () => {
+    const dragOverAxis = (canBeCellValue: boolean) => {
+        vi.mocked(useDndContext).mockReturnValue({
+            active: { data: { current: { canBeCellValue } } },
+            over: { data: { current: { isCellValueDroppable: true } } },
+        } as unknown as ReturnType<typeof useDndContext>)
+    }
+
+    const dragWithoutHovering = (canBeCellValue: boolean) => {
+        vi.mocked(useDndContext).mockReturnValue({
+            active: { data: { current: { canBeCellValue } } },
+            over: null,
+        } as unknown as ReturnType<typeof useDndContext>)
+    }
+
+    const axisClassName = () => screen.getByTestId('axis-value').className
+
+    const blockedOverlay = () => screen.queryByTestId('layout-blocked-overlay')
+
+    it('highlights for a dimension it would accept', async () => {
+        dragOverAxis(true)
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({ columns: ['s1.de1'] })
+        )
+
+        expect(axisClassName()).toContain('activeDropTarget')
+    })
+
+    it('does not highlight for a dimension it would reject', async () => {
+        dragOverAxis(false)
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({ columns: ['s1.de1'] })
+        )
+
+        expect(axisClassName()).not.toContain('activeDropTarget')
+    })
+
+    /* The overlay answers "would this drop work?", so it appears as soon as an
+     * invalid dimension is picked up — not only once it reaches the axis. */
+    it('covers itself while a dimension it would reject is being dragged', async () => {
+        dragWithoutHovering(false)
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({ columns: ['s1.de1'] })
+        )
+
+        expect(blockedOverlay()).toBeInTheDocument()
+    })
+
+    it('does not cover itself for a dimension it would accept', async () => {
+        dragWithoutHovering(true)
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({ columns: ['s1.de1'] })
+        )
+
+        expect(blockedOverlay()).not.toBeInTheDocument()
+    })
+
+    it('does not cover itself when nothing is being dragged', async () => {
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({ columns: ['s1.de1'] })
+        )
+
+        expect(blockedOverlay()).not.toBeInTheDocument()
     })
 })

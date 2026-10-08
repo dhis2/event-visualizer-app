@@ -1,3 +1,4 @@
+import { useAlert } from '@dhis2/app-runtime'
 import {
     useAppDispatch,
     useAppSelector,
@@ -479,8 +480,14 @@ describe('useOnDragEnd — dropping on the cell value axis', () => {
     const cellValueDropTarget = {
         data: { current: { isCellValueDroppable: true } },
     }
+    const showAlert = vi.fn()
+    const hideAlert = vi.fn()
 
     beforeEach(() => {
+        vi.mocked(useAlert).mockReturnValue({
+            show: showAlert,
+            hide: hideAlert,
+        })
         vi.mocked(useAppDispatch).mockReturnValue(mockDispatch)
         vi.mocked(useAppSelector).mockReturnValue([])
         vi.mocked(useMetadataStore).mockReturnValue(
@@ -516,6 +523,7 @@ describe('useOnDragEnd — dropping on the cell value axis', () => {
             id: 's1.de1',
             aggregationType: 'SUM',
         })
+        expect(showAlert).not.toHaveBeenCalled()
     })
 
     it('rejects a non-numeric dimension', () => {
@@ -535,6 +543,38 @@ describe('useOnDragEnd — dropping on the cell value axis', () => {
         } as unknown as LayoutDragEndEvent)
 
         expect(setVisUiConfigCellValue).not.toHaveBeenCalled()
+        expect(showAlert).toHaveBeenCalled()
+    })
+
+    /* The alert is a warning, and `AlertBar` only auto-hides non-warnings, so
+     * the hook has to dismiss it itself. */
+    it('dismisses the rejection alert after five seconds', () => {
+        vi.useFakeTimers()
+
+        try {
+            const { result } = renderHook(() => useOnDragEnd())
+
+            result.current({
+                active: {
+                    data: {
+                        current: {
+                            dimensionId: 's1.de2',
+                            overlayItemProps: {},
+                            populateMetadata: vi.fn(),
+                        },
+                    },
+                },
+                over: cellValueDropTarget,
+            } as unknown as LayoutDragEndEvent)
+
+            expect(hideAlert).not.toHaveBeenCalled()
+
+            vi.advanceTimersByTime(5000)
+
+            expect(hideAlert).toHaveBeenCalled()
+        } finally {
+            vi.useRealTimers()
+        }
     })
 
     /* The drop is a clone: without the guard this path falls through to the
