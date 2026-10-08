@@ -1,3 +1,4 @@
+import { setSidebarWidthToLocalStorage } from '@components/sidebar/local-storage'
 import { setLastUsedVisualizationTypeToLocalStorage } from '@modules/visualization/local-storage'
 import { isAnyOf } from '@reduxjs/toolkit'
 import { startAppListening } from './middleware-listener'
@@ -7,7 +8,11 @@ import {
     tLoadSavedVisualization,
     tSeedDefaultGrouping,
 } from './thunks'
-import { setUiActiveDimensionModal } from './ui-slice'
+import {
+    resetUiSidebarWidth,
+    setUiActiveDimensionModal,
+    setUiSidebarWidth,
+} from './ui-slice'
 import {
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
@@ -48,6 +53,13 @@ export const registerAppListeners = () => {
         actionCreator: setVisUiConfigVisualizationType,
         effect: (action) => {
             setLastUsedVisualizationTypeToLocalStorage(action.payload)
+        },
+    })
+
+    startAppListening({
+        matcher: isAnyOf(setUiSidebarWidth, resetUiSidebarWidth),
+        effect: (_, { getState }) => {
+            setSidebarWidthToLocalStorage(getState().ui.sidebarWidth)
         },
     })
 

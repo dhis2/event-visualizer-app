@@ -1,6 +1,12 @@
+import { getSidebarWidthFromLocalStorage } from '@components/sidebar/local-storage'
 import { getLastUsedVisualizationTypeFromLocalStorage } from '@modules/visualization/local-storage'
 import { configureStore } from '@reduxjs/toolkit'
 import { registerAppListeners } from '@store/listeners'
+import {
+    resetUiSidebarWidth,
+    setUiSidebarWidth,
+    uiSlice,
+} from '@store/ui-slice'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { listenerMiddleware } from '../middleware-listener'
 import { navigationSlice, setNavigationState } from '../navigation-slice'
@@ -99,6 +105,41 @@ describe('visUiConfig visualization type listener', () => {
 
         expect(getLastUsedVisualizationTypeFromLocalStorage()).toBe(
             'PIVOT_TABLE'
+        )
+    })
+})
+
+describe('ui sidebar width listener', () => {
+    beforeEach(() => {
+        listenerMiddleware.clearListeners()
+        registerAppListeners()
+    })
+
+    const createUiStore = () =>
+        configureStore({
+            reducer: { ui: uiSlice.reducer },
+            middleware: (getDefaultMiddleware) =>
+                getDefaultMiddleware().prepend(listenerMiddleware.middleware),
+        })
+
+    it('stores the picked sidebar width', async () => {
+        const store = createUiStore()
+
+        store.dispatch(setUiSidebarWidth(600))
+        await Promise.resolve()
+
+        expect(getSidebarWidthFromLocalStorage()).toBe(600)
+    })
+
+    it('stores the default sidebar width after a reset', async () => {
+        const store = createUiStore()
+
+        store.dispatch(setUiSidebarWidth(600))
+        store.dispatch(resetUiSidebarWidth())
+        await Promise.resolve()
+
+        expect(getSidebarWidthFromLocalStorage()).toBe(
+            uiSlice.getInitialState().sidebarWidth
         )
     })
 })

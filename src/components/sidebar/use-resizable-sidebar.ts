@@ -1,95 +1,86 @@
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { getUiSidebarWidth, setUiSidebarWidth } from '@store/ui-slice'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useDebounceCallback } from 'usehooks-ts'
+import { useCallback, useRef, useState } from 'react'
+import { useWindowSize } from 'usehooks-ts'
 import {
-    SIDEBAR_DEBOUNCE_DELAY,
     SIDEBAR_DEFAULT_WIDTH,
     SIDEBAR_MAX_OFFSET,
     SIDEBAR_MIN_WIDTH,
 } from './constants'
-import { setSidebarWidthToLocalStorage } from './local-storage'
 
-const computeMaxWidth = () => window.innerWidth - SIDEBAR_MAX_OFFSET
-
-const clampWidth = (width: number) =>
-    Math.max(SIDEBAR_MIN_WIDTH, Math.min(width, computeMaxWidth()))
+const clampWidth = (width: number, windowWidth: number) =>
+    Math.max(
+        SIDEBAR_MIN_WIDTH,
+        Math.min(width, windowWidth - SIDEBAR_MAX_OFFSET)
+    )
 
 export const useResizableSidebar = () => {
-    /* Dragging is tracked locally so a pointer move does not dispatch on
-     * every frame; the store catches up on a debounce. */
+    /* The store holds the width the user picked; the rendered width is
+     * clamped to the window. A drag stays local until pointer up and is only
+     * saved if it changed the width. */
     const storeWidth = useAppSelector(getUiSidebarWidth)
-    const [width, setWidth] = useState(() => clampWidth(storeWidth))
-    const [isDragging, setIsDragging] = useState(false)
+    const [dragWidth, setDragWidth] = useState<number | null>(null)
+    const { width: windowWidth } = useWindowSize({ debounceDelay: 150 })
+    const restingWidth = clampWidth(storeWidth, windowWidth)
+    const width = clampWidth(dragWidth ?? storeWidth, windowWidth)
     const dispatch = useAppDispatch()
-    const containerRef = useRef<HTMLDivElement>(null)
     const startEdgePosRef = useRef(0)
 
-    const onSync = useCallback(
-        (value: number) => {
-            setSidebarWidthToLocalStorage(value)
-            dispatch(setUiSidebarWidth(value))
+    const onPointerDown = useCallback(
+        (event: React.PointerEvent) => {
+            event.preventDefault()
+            startEdgePosRef.current = event.clientX - restingWidth
+            event.currentTarget.setPointerCapture(event.pointerId)
+            setDragWidth(restingWidth)
         },
-        [dispatch]
+        [restingWidth]
     )
-    const syncToStore = useDebounceCallback(onSync, SIDEBAR_DEBOUNCE_DELAY)
 
-    // Re-clamp on window resize (handles monitor switches, window resizing)
-    const onWindowResize = useDebounceCallback(() => {
-        setWidth((prev) => clampWidth(prev))
-    }, 150)
+    const onPointerMove = useCallback(
+        (event: React.PointerEvent) => {
+            if (!event.currentTarget.hasPointerCapture(event.pointerId)) {
+                return
+            }
+            setDragWidth(
+                clampWidth(event.clientX - startEdgePosRef.current, windowWidth)
+            )
+        },
+        [windowWidth]
+    )
 
-    const onPointerDown = useCallback((event: React.PointerEvent) => {
-        event.preventDefault()
-        const containerWidth =
-            containerRef.current?.getBoundingClientRect().width ?? 0
-        startEdgePosRef.current = event.clientX - containerWidth
-        event.currentTarget.setPointerCapture(event.pointerId)
-        setIsDragging(true)
-    }, [])
+    const onPointerUp = useCallback(
+        (event: React.PointerEvent) => {
+            if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                event.currentTarget.releasePointerCapture(event.pointerId)
+                const droppedWidth = clampWidth(
+                    event.clientX - startEdgePosRef.current,
+                    windowWidth
+                )
+                if (droppedWidth !== restingWidth) {
+                    dispatch(setUiSidebarWidth(droppedWidth))
+                }
+            }
+            setDragWidth(null)
+        },
+        [dispatch, restingWidth, windowWidth]
+    )
 
-    const onPointerMove = useCallback((event: React.PointerEvent) => {
-        if (!event.currentTarget.hasPointerCapture(event.pointerId)) {
-            return
-        }
-        setWidth(clampWidth(event.clientX - startEdgePosRef.current))
-    }, [])
-
-    const onPointerUp = useCallback((event: React.PointerEvent) => {
-        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-            event.currentTarget.releasePointerCapture(event.pointerId)
-        }
-        setIsDragging(false)
+    const onLostPointerCapture = useCallback(() => {
+        setDragWidth(null)
     }, [])
 
     const onDoubleClick = useCallback(() => {
-        setWidth(clampWidth(SIDEBAR_DEFAULT_WIDTH))
-    }, [])
-
-    useEffect(() => {
-        syncToStore(width)
-    }, [width, syncToStore])
-
-    // Respond to reset via View menu
-    useEffect(() => {
-        if (storeWidth === SIDEBAR_DEFAULT_WIDTH) {
-            setWidth(SIDEBAR_DEFAULT_WIDTH)
-        }
-    }, [storeWidth])
-
-    useEffect(() => {
-        window.addEventListener('resize', onWindowResize)
-        return () => window.removeEventListener('resize', onWindowResize)
-    }, [onWindowResize])
+        dispatch(setUiSidebarWidth(SIDEBAR_DEFAULT_WIDTH))
+    }, [dispatch])
 
     return {
-        containerRef,
-        isDragging,
+        isDragging: dragWidth !== null,
         width,
         eventHandlers: {
             onPointerDown,
             onPointerMove,
             onPointerUp,
+            onLostPointerCapture,
             onDoubleClick,
         },
     }
