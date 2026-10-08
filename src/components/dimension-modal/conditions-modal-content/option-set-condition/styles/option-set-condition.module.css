@@ -2,6 +2,6 @@
     color: var(--colors-grey700);
 }
 
-:global(.highlighted) > .noValueOption {
+.noValueOption.highlighted {
     color: inherit;
 }

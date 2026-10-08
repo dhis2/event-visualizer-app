@@ -16,6 +16,7 @@ import {
     getNoValueOptionName,
 } from '@modules/conditions'
 import { logger } from '@modules/logger'
+import cx from 'classnames'
 import { type ComponentProps, type FC, useMemo } from 'react'
 import { type FetchResult, optionsApi } from './options-api'
 import classes from './styles/option-set-condition.module.css'
@@ -57,7 +58,13 @@ const renderOption = ({
         {...props}
         label={
             props.value === NO_VALUE_OPTION_CODE ? (
-                <span className={classes.noValueOption}>{label}</span>
+                <span
+                    className={cx(classes.noValueOption, {
+                        [classes.highlighted]: props.highlighted,
+                    })}
+                >
+                    {label}
+                </span>
             ) : (
                 label
             )
