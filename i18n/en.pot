@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-10-07T14:15:35.218Z\n"
-"PO-Revision-Date: 2026-10-07T14:15:35.218Z\n"
+"POT-Creation-Date: 2026-10-07T14:49:24.246Z\n"
+"PO-Revision-Date: 2026-10-07T14:49:24.263Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -336,51 +336,6 @@ msgstr "Cells show a count. Drag a numeric data item here to show its value."
 
 msgid "Count"
 msgstr "Count"
-
-msgid "Search data items"
-msgstr "Search data items"
-
-msgid "Loading data"
-msgstr "Loading data"
-
-msgid "Error loading data"
-msgstr "Error loading data"
-
-msgid "Failed to load data items"
-msgstr "Failed to load data items"
-
-msgid "No numeric data items in this program"
-msgstr "No numeric data items in this program"
-
-msgid "This program does not have any numeric data items available."
-msgstr "This program does not have any numeric data items available."
-
-msgid "No data items match \"{{- searchTerm}}\""
-msgstr "No data items match \"{{- searchTerm}}\""
-
-msgid "Aggregation"
-msgstr "Aggregation"
-
-msgid "Cell value"
-msgstr "Cell value"
-
-msgid "Number of the events, enrollments or tracked entities."
-msgstr "Number of the events, enrollments or tracked entities."
-
-msgid "Data item value"
-msgstr "Data item value"
-
-msgid "An aggregated value for a data item."
-msgstr "An aggregated value for a data item."
-
-msgid "No program selected"
-msgstr "No program selected"
-
-msgid "Choose a program in the sidebar to pick a data item."
-msgstr "Choose a program in the sidebar to pick a data item."
-
-msgid "Done"
-msgstr "Done"
 
 msgid "Collapse layout"
 msgstr "Collapse layout"
