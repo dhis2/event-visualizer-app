@@ -3,7 +3,7 @@ import { formatValue, ouIdHelper } from '@dhis2/analytics'
 import i18n from '@dhis2/d2-i18n'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
 import { combineAllDimensionsFromVisualization } from '@modules/dimension/translation'
-import { getAttributeTetId } from '@modules/visualization/tracked-entity-type'
+import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     CurrentVisualization,
     SavedVisualization,
@@ -449,7 +449,7 @@ export const getConditionsFromVisualization = (
     )
 
     for (const item of items) {
-        const dimensionId = getCompoundDimensionId(item, getAttributeTetId(vis))
+        const dimensionId = getCompoundDimensionId(item, getTetId(vis))
         result[dimensionId] = {
             condition: item.filter,
             legendSet: item.legendSet?.id,

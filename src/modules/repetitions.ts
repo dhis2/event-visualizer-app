@@ -1,7 +1,7 @@
 import { layoutGetAllDimensions } from '@dhis2/analytics'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
 import { isObject } from '@modules/utils/guards'
-import { getAttributeTetId } from '@modules/visualization/tracked-entity-type'
+import { getTetId } from '@modules/visualization/tracked-entity-type'
 import {
     DEFAULT_REPETITIONS_OBJECT,
     type RepetitionsObject,
@@ -19,7 +19,7 @@ export const getRepetitionsFromVisualisation = (
         .filter((d) => d.repetition)
         .reduce(
             (obj, d) => {
-                obj[getCompoundDimensionId(d, getAttributeTetId(vis))] =
+                obj[getCompoundDimensionId(d, getTetId(vis))] =
                     parseSavedRepetitions(d.repetition?.indexes)
 
                 return obj

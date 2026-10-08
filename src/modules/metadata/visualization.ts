@@ -14,7 +14,7 @@ import {
     combineAllDimensionsFromVisualization,
     toAppLocalDimensions,
 } from '@modules/dimension/translation'
-import { getAttributeTetId } from '@modules/visualization/tracked-entity-type'
+import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     MetadataInput,
     MetadataInputItem,
@@ -133,7 +133,7 @@ export const supplementDimensionMetadata = (
     visualization: SavedVisualization
 ) => {
     const dimensions = combineAllDimensionsFromVisualization(visualization)
-    const tetId = getAttributeTetId(visualization)
+    const tetId = getTetId(visualization)
     const teaIdsInAttributeDimensions = new Set(
         (visualization.attributeDimensions ?? [])
             .map((entry) => entry.attribute?.id)
@@ -300,10 +300,7 @@ export const extractMetadataFromVisualization = (
     // so the plain duplicates are no longer needed.
     const dimensions = combineAllDimensionsFromVisualization(vis)
     for (const dimension of dimensions) {
-        const compoundId = getCompoundDimensionId(
-            dimension,
-            getAttributeTetId(vis)
-        )
+        const compoundId = getCompoundDimensionId(dimension, getTetId(vis))
         if (compoundId !== dimension.dimension && withFixedNames[compoundId]) {
             delete withFixedNames[dimension.dimension]
         }

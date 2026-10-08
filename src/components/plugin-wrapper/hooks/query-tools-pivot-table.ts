@@ -1,6 +1,6 @@
 import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
-import { getAttributeTetId } from '@modules/visualization/tracked-entity-type'
+import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     Axis,
     CurrentVisualization,
@@ -57,7 +57,7 @@ export const getLayoutDimensionMetadataNames = (
 
     return dimensions.reduce<Record<string, string>>((names, dim) => {
         const name = metadataStore.getDimensionMetadataItem(
-            getCompoundDimensionId(dim, getAttributeTetId(visualization))
+            getCompoundDimensionId(dim, getTetId(visualization))
         )?.name
 
         if (name) {

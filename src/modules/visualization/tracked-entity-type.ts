@@ -4,7 +4,7 @@ import type { CurrentVisualization } from '@types'
  * attributes. Only a tracked entity visualization carries one itself: the
  * backend reads a tracked entity type on any other as marking a multi-program
  * visualization. EVENT and ENROLLMENT take it from their tracker program. */
-export const getAttributeTetId = (
+export const getTetId = (
     visualization: Pick<
         CurrentVisualization,
         'trackedEntityType' | 'programDimensions'

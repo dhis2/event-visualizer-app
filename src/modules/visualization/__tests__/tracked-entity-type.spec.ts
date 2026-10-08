@@ -1,4 +1,4 @@
-import { getAttributeTetId } from '@modules/visualization/tracked-entity-type'
+import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type { CurrentVisualization, Program } from '@types'
 import { describe, expect, it } from 'vitest'
 
@@ -8,10 +8,10 @@ const trackerProgram = {
 } as Program
 const eventProgram = { id: 'eventProgram1' } as Program
 
-describe('getAttributeTetId', () => {
+describe('getTetId', () => {
     it("uses a tracked entity visualization's own tracked entity type", () => {
         expect(
-            getAttributeTetId({
+            getTetId({
                 trackedEntityType: { id: 'household1', name: 'Household' },
                 programDimensions: [trackerProgram],
             } as CurrentVisualization)
@@ -20,7 +20,7 @@ describe('getAttributeTetId', () => {
 
     it('uses the tracker program of a visualization without one', () => {
         expect(
-            getAttributeTetId({
+            getTetId({
                 programDimensions: [trackerProgram],
             } as CurrentVisualization)
         ).toBe('person1')
@@ -28,7 +28,7 @@ describe('getAttributeTetId', () => {
 
     it('has none for an event program', () => {
         expect(
-            getAttributeTetId({
+            getTetId({
                 programDimensions: [eventProgram],
             } as CurrentVisualization)
         ).toBeUndefined()
