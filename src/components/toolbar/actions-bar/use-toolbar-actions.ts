@@ -8,8 +8,10 @@ import { useAlert } from '@dhis2/app-runtime'
 import i18n from '@dhis2/d2-i18n'
 import { useAppDispatch, useAppSelector } from '@hooks'
 import { logger } from '@modules/logger'
+import { toCurrentVis } from '@modules/visualization/current-vis'
 import {
     isCurrentVisualizationPersisted,
+    isSavedVisualization,
     isVisualizationEmpty,
     isVisualizationPersistable,
 } from '@modules/visualization/guards'
@@ -19,14 +21,23 @@ import { getCurrentVis } from '@store/current-vis-slice'
 import { setNavigationState } from '@store/navigation-slice'
 import { getSavedVis, setSavedVisNameDescription } from '@store/saved-vis-slice'
 import { tLoadSavedVisualization } from '@store/thunks'
-import type { SavedVisualization } from '@types'
-import { useCallback, useMemo } from 'react'
+import type { CurrentVisualization, SavedVisualization } from '@types'
+import { useCallback, useMemo, useState } from 'react'
+
+type NameAndDescription = { name?: string; description?: string }
+
+type PendingLegacyRename = NameAndDescription & {
+    visualization: SavedVisualization
+}
 
 export const useToolbarActions = () => {
     const dispatch = useAppDispatch()
 
     const currentVis = useAppSelector(getCurrentVis)
     const savedVis = useAppSelector(getSavedVis)
+
+    const [pendingLegacyRename, setPendingLegacyRename] =
+        useState<PendingLegacyRename | null>(null)
 
     const { show: showAlert } = useAlert(
         ({ message }) => message,
@@ -136,15 +147,42 @@ export const useToolbarActions = () => {
     // Existing visualization
     // the visualization is updated with only name and/or description from the rename dialog
     const onRename = useCallback(
-        async ({
-            name,
-            description,
-        }: {
-            name?: string
-            description?: string
-        }) => {
-            const { data, error } = await dispatch(
+        async ({ name, description }: NameAndDescription) => {
+            if (!isSavedVisualization(savedVis)) {
+                throw new Error('onRename called without a saved visualization')
+            }
+
+            const showRenameFailed = () =>
+                showAlert({
+                    message: i18n.t('Rename failed'),
+                    options: {
+                        critical: true,
+                    },
+                })
+
+            // Get a fresh copy of the visualization, so nothing but name/description is changed
+            const { data: visualization } = await dispatch(
+                eventVisualizationsApi.endpoints.getVisualizationForUpdate.initiate(
+                    savedVis.id,
+                    { subscribe: false, forceRefetch: true }
+                )
+            )
+
+            if (!visualization) {
+                showRenameFailed()
+                return
+            }
+
+            /* Updating a legacy visualization clears its legacy flag on the
+             * backend, after which older apps can no longer save it. */
+            if (visualization.legacy) {
+                setPendingLegacyRename({ visualization, name, description })
+                return
+            }
+
+            const { data } = await dispatch(
                 eventVisualizationsApi.endpoints.renameVisualization.initiate({
+                    visualization,
                     name,
                     description,
                 })
@@ -160,16 +198,11 @@ export const useToolbarActions = () => {
                         duration: 2000,
                     },
                 })
-            } else if (error) {
-                showAlert({
-                    message: i18n.t('Rename failed'),
-                    options: {
-                        critical: true,
-                    },
-                })
+            } else {
+                showRenameFailed()
             }
         },
-        [dispatch, showAlert]
+        [dispatch, savedVis, showAlert]
     )
 
     // Existing visualization
@@ -206,20 +239,17 @@ export const useToolbarActions = () => {
         }
     }, [dispatch, currentVis, savedVis, onError])
 
-    // New visualization
-    // it can be a copy of an existing one, but a new id is returned
-    const onSaveAs = useCallback(
-        async (nameAndDescription: { name: string; description: string }) => {
-            if (isVisualizationEmpty(currentVis)) {
-                throw new Error('onSaveAs called with an empty visualization')
-            }
-
+    const createCopy = useCallback(
+        async (
+            visualization: CurrentVisualization,
+            nameAndDescription: NameAndDescription
+        ) => {
             const { data, error } = await dispatch(
                 eventVisualizationsApi.endpoints.createVisualization.initiate(
                     preparePayloadForSaveAs({
                         visualization: {
                             ...getSaveableVisualization(
-                                currentVis as SavedVisualization
+                                visualization as SavedVisualization
                             ),
                             // XXX: this ideally should be done in preparePayloadForSaveAs
                             subscribers: [],
@@ -236,12 +266,45 @@ export const useToolbarActions = () => {
                 onError(error as EngineError)
             }
         },
-        [dispatch, currentVis, onError]
+        [dispatch, onError]
     )
+
+    // New visualization
+    // it can be a copy of an existing one, but a new id is returned
+    const onSaveAs = useCallback(
+        async (nameAndDescription: { name: string; description: string }) => {
+            if (isVisualizationEmpty(currentVis)) {
+                throw new Error('onSaveAs called with an empty visualization')
+            }
+
+            await createCopy(currentVis, nameAndDescription)
+        },
+        [currentVis, createCopy]
+    )
+
+    const onCancelLegacyRename = useCallback(
+        () => setPendingLegacyRename(null),
+        []
+    )
+
+    // Copies the saved state, not the editor state: a rename leaves the layout alone
+    const onConfirmLegacyRename = useCallback(async () => {
+        if (!pendingLegacyRename) {
+            return
+        }
+
+        const { visualization, ...nameAndDescription } = pendingLegacyRename
+
+        setPendingLegacyRename(null)
+        await createCopy(toCurrentVis(visualization), nameAndDescription)
+    }, [pendingLegacyRename, createCopy])
 
     return {
         isSaveEnabled,
         isSaveAsEnabled,
+        pendingLegacyRename,
+        onCancelLegacyRename,
+        onConfirmLegacyRename,
         onDelete,
         onError,
         onOpen,

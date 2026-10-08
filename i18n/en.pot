@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-09-23T14:32:18.188Z\n"
-"PO-Revision-Date: 2026-09-23T14:32:18.188Z\n"
+"POT-Creation-Date: 2026-10-08T13:31:24.725Z\n"
+"PO-Revision-Date: 2026-10-08T13:31:24.725Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -781,6 +781,22 @@ msgstr "Get link…"
 msgid "Delete"
 msgstr "Delete"
 
+msgid "Save as a new visualization?"
+msgstr "Save as a new visualization?"
+
+msgid ""
+"This visualization was made in an older app. Renaming it here would stop "
+"that app from editing it."
+msgstr ""
+"This visualization was made in an older app. Renaming it here would stop "
+"that app from editing it."
+
+msgid "Save a copy named \"{{- name}}\" instead?"
+msgstr "Save a copy named \"{{- name}}\" instead?"
+
+msgid "Save as new"
+msgstr "Save as new"
+
 msgid "Open"
 msgstr "Open"
 
@@ -800,11 +816,11 @@ msgstr ""
 msgid "You don't have sufficient permissions."
 msgstr "You don't have sufficient permissions."
 
-msgid "Rename successful"
-msgstr "Rename successful"
-
 msgid "Rename failed"
 msgstr "Rename failed"
+
+msgid "Rename successful"
+msgstr "Rename successful"
 
 msgid "Hide layout"
 msgstr "Hide layout"
