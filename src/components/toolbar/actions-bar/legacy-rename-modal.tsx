@@ -10,13 +10,11 @@ import {
 import type { FC } from 'react'
 
 type LegacyRenameModalProps = {
-    name: string
     onSaveAsNew: () => void
     onCancel: () => void
 }
 
 export const LegacyRenameModal: FC<LegacyRenameModalProps> = ({
-    name,
     onSaveAsNew,
     onCancel,
 }) => (
@@ -28,7 +26,7 @@ export const LegacyRenameModal: FC<LegacyRenameModalProps> = ({
                     'This visualization was made in an older app. Renaming it here would stop that app from editing it.'
                 )}
             </p>
-            <p>{i18n.t('Save a copy named "{{- name}}" instead?', { name })}</p>
+            <p>{i18n.t('Save a copy with the new name instead?')}</p>
         </ModalContent>
         <ModalActions>
             <ButtonStrip>

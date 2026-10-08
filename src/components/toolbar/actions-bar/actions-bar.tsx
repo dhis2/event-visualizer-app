@@ -80,11 +80,6 @@ const ActionsBarDialog: FC<ActionsBarDialogProps> = ({
     if (pendingLegacyRename) {
         return (
             <LegacyRenameModal
-                name={
-                    pendingLegacyRename.name ||
-                    pendingLegacyRename.visualization.name ||
-                    ''
-                }
                 onCancel={onCancelLegacyRename}
                 onSaveAsNew={onConfirmLegacyRename}
             />
