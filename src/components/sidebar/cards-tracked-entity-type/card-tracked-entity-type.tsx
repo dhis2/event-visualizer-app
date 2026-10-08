@@ -55,7 +55,7 @@ const transformItem = (
     }
 }
 
-const transformTrackedEntityTypeAttributes = (
+export const transformTrackedEntityTypeAttributes = (
     data: unknown,
     trackedEntityTypeId: string
 ): ReturnType<Transformer> => {

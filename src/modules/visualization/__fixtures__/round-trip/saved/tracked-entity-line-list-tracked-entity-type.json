@@ -1,0 +1,163 @@
+{
+    "name": "RT: TEI LL tracked entity type",
+    "regressionType": "LINEAR",
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": [],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [
+        {
+            "organisationUnitGroupSet": {
+                "name": "Agricultural Region",
+                "id": "S3leNRWRV3x"
+            }
+        }
+    ],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [
+        {
+            "attribute": {
+                "name": "First name",
+                "id": "w75KJ2mc4zz"
+            }
+        },
+        {
+            "attribute": {
+                "name": "Unique ID",
+                "id": "lZGmxYbs97q"
+            }
+        },
+        {
+            "attribute": {
+                "name": "Last name",
+                "id": "zDhUuAYrxNC"
+            }
+        }
+    ],
+    "dataElementDimensions": [],
+    "programIndicatorDimensions": [],
+    "digitGroupSeparator": "SPACE",
+    "hideEmptyRowItems": "NONE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": false,
+    "type": "LINE_LIST",
+    "trackedEntityType": {
+        "id": "nEenWmSyUEp",
+        "name": "Person"
+    },
+    "programDimensions": [],
+    "simpleDimensions": [
+        {
+            "parent": "COLUMN",
+            "dimension": "ou",
+            "values": ["USER_ORGUNIT"]
+        },
+        {
+            "parent": "COLUMN",
+            "dimension": "created",
+            "values": []
+        }
+    ],
+    "outputType": "TRACKED_ENTITY_INSTANCE",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": false,
+    "filters": [
+        {
+            "dimensionType": "PROGRAM_ATTRIBUTE",
+            "items": [],
+            "dimension": "zDhUuAYrxNC",
+            "valueType": "TEXT"
+        }
+    ],
+    "parentGraphMap": {},
+    "columns": [
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "USER_ORGUNIT"
+                }
+            ],
+            "dimension": "ou"
+        },
+        {
+            "dimensionType": "PROGRAM_ATTRIBUTE",
+            "items": [],
+            "dimension": "w75KJ2mc4zz",
+            "valueType": "TEXT"
+        },
+        {
+            "dimensionType": "PROGRAM_ATTRIBUTE",
+            "items": [],
+            "dimension": "lZGmxYbs97q",
+            "valueType": "TEXT"
+        },
+        {
+            "dimensionType": "PERIOD",
+            "items": [],
+            "dimension": "created"
+        },
+        {
+            "dimensionType": "ORGANISATION_UNIT_GROUP_SET",
+            "items": [],
+            "dimension": "S3leNRWRV3x"
+        }
+    ],
+    "rows": [],
+    "displayName": "RT: TEI LL tracked entity type",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "metaData": {
+        "lZGmxYbs97q": {
+            "uid": "lZGmxYbs97q",
+            "code": "MMD_PER_ID",
+            "name": "Unique ID"
+        },
+        "zDhUuAYrxNC": {
+            "uid": "zDhUuAYrxNC",
+            "code": "SURNAME",
+            "name": "Last name"
+        },
+        "S3leNRWRV3x": {
+            "uid": "S3leNRWRV3x",
+            "code": "AGRI_REG",
+            "name": "Agricultural Region"
+        },
+        "w75KJ2mc4zz": {
+            "uid": "w75KJ2mc4zz",
+            "code": "MMD_PER_NAM",
+            "name": "First name"
+        }
+    },
+    "displayFormName": "RT: TEI LL tracked entity type",
+    "id": "ARJSeGoZ1TK",
+    "sorting": [],
+    "repetitions": []
+}

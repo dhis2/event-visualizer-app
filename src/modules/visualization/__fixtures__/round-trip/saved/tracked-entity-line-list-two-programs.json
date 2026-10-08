@@ -1,0 +1,289 @@
+{
+    "name": "RT: TEI LL two programs",
+    "regressionType": "LINEAR",
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": ["LAST_WEEK"],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [
+        {
+            "attribute": {
+                "name": "First name",
+                "id": "w75KJ2mc4zz"
+            }
+        }
+    ],
+    "dataElementDimensions": [
+        {
+            "dataElement": {
+                "name": "MCH Weight (g)",
+                "id": "UXz7xuGCEhU"
+            }
+        }
+    ],
+    "programIndicatorDimensions": [],
+    "digitGroupSeparator": "SPACE",
+    "hideEmptyRowItems": "NONE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": false,
+    "type": "LINE_LIST",
+    "trackedEntityType": {
+        "id": "nEenWmSyUEp",
+        "name": "Person"
+    },
+    "programDimensions": [
+        {
+            "enrollmentDateLabel": "Start of treatment date",
+            "incidentDateLabel": "Start of treatment date",
+            "programType": "WITH_REGISTRATION",
+            "displayIncidentDate": false,
+            "trackedEntityType": {
+                "id": "nEenWmSyUEp",
+                "name": "Person"
+            },
+            "displayEnrollmentDateLabel": "Start of treatment date",
+            "displayIncidentDateLabel": "Start of treatment date",
+            "id": "ur1Edk5Oe2n",
+            "programStages": [
+                {
+                    "program": {
+                        "id": "ur1Edk5Oe2n"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Report date",
+                    "id": "EPEcjy3FWmI",
+                    "repeatable": true,
+                    "name": "Lab monitoring"
+                },
+                {
+                    "program": {
+                        "id": "ur1Edk5Oe2n"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "TB visit date",
+                    "id": "ZkbAXlQUYJG",
+                    "repeatable": false,
+                    "name": "TB visit"
+                },
+                {
+                    "program": {
+                        "id": "ur1Edk5Oe2n"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Report date",
+                    "id": "jdRD35YwbRH",
+                    "repeatable": true,
+                    "name": "Sputum smear microscopy test"
+                }
+            ],
+            "name": "TB program"
+        },
+        {
+            "enrollmentDateLabel": "Date of enrollment",
+            "incidentDateLabel": "Date of birth",
+            "programType": "WITH_REGISTRATION",
+            "displayIncidentDate": true,
+            "trackedEntityType": {
+                "id": "nEenWmSyUEp",
+                "name": "Person"
+            },
+            "displayEnrollmentDateLabel": "Date of enrollment",
+            "displayIncidentDateLabel": "Date of birth",
+            "displayEnrollmentLabel": "pregnancy",
+            "displayEventLabel": "Visit",
+            "id": "IpHINAT79UW",
+            "programStages": [
+                {
+                    "program": {
+                        "id": "IpHINAT79UW"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Report date",
+                    "id": "A03MvHHogjR",
+                    "repeatable": false,
+                    "name": "Birth"
+                },
+                {
+                    "program": {
+                        "id": "IpHINAT79UW"
+                    },
+                    "hideDueDate": false,
+                    "id": "ZzYYXq4fJie",
+                    "repeatable": false,
+                    "name": "Baby Postnatal"
+                }
+            ],
+            "name": "Child Programme"
+        }
+    ],
+    "simpleDimensions": [
+        {
+            "parent": "COLUMN",
+            "dimension": "ou",
+            "values": ["USER_ORGUNIT"]
+        },
+        {
+            "parent": "COLUMN",
+            "dimension": "ou",
+            "program": "ur1Edk5Oe2n",
+            "programStage": "EPEcjy3FWmI",
+            "values": ["USER_ORGUNIT"]
+        },
+        {
+            "parent": "COLUMN",
+            "dimension": "enrollmentDate",
+            "program": "ur1Edk5Oe2n",
+            "values": ["LAST_WEEK"]
+        },
+        {
+            "parent": "COLUMN",
+            "dimension": "enrollmentOu",
+            "program": "IpHINAT79UW",
+            "values": ["USER_ORGUNIT"]
+        },
+        {
+            "parent": "COLUMN",
+            "dimension": "eventDate",
+            "program": "IpHINAT79UW",
+            "programStage": "A03MvHHogjR",
+            "values": ["LAST_WEEK"]
+        }
+    ],
+    "outputType": "TRACKED_ENTITY_INSTANCE",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": false,
+    "filters": [],
+    "parentGraphMap": {},
+    "columns": [
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "USER_ORGUNIT"
+                }
+            ],
+            "dimension": "ou"
+        },
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "USER_ORGUNIT"
+                }
+            ],
+            "programStage": {
+                "id": "EPEcjy3FWmI"
+            },
+            "program": {
+                "id": "ur1Edk5Oe2n"
+            },
+            "dimension": "ou"
+        },
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "LAST_WEEK"
+                }
+            ],
+            "program": {
+                "id": "ur1Edk5Oe2n"
+            },
+            "dimension": "enrollmentDate"
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "programStage": {
+                "id": "A03MvHHogjR"
+            },
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "UXz7xuGCEhU",
+            "valueType": "NUMBER"
+        },
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "USER_ORGUNIT"
+                }
+            ],
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "enrollmentOu"
+        },
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "LAST_WEEK"
+                }
+            ],
+            "programStage": {
+                "id": "A03MvHHogjR"
+            },
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "eventDate"
+        },
+        {
+            "dimensionType": "PROGRAM_ATTRIBUTE",
+            "items": [],
+            "dimension": "w75KJ2mc4zz",
+            "valueType": "TEXT"
+        }
+    ],
+    "rows": [],
+    "displayName": "RT: TEI LL two programs",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "metaData": {
+        "w75KJ2mc4zz": {
+            "uid": "w75KJ2mc4zz",
+            "code": "MMD_PER_NAM",
+            "name": "First name"
+        },
+        "UXz7xuGCEhU": {
+            "uid": "UXz7xuGCEhU",
+            "code": "DE_2005736",
+            "name": "MCH Weight (g)"
+        }
+    },
+    "displayFormName": "RT: TEI LL two programs",
+    "id": "aKwsdSZAxrN",
+    "sorting": [],
+    "repetitions": []
+}

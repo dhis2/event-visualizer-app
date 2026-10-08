@@ -1,0 +1,105 @@
+{
+    "IpHINAT79UW": {
+        "enrollmentDateLabel": "Date of enrollment",
+        "incidentDateLabel": "Date of birth",
+        "programType": "WITH_REGISTRATION",
+        "displayIncidentDate": true,
+        "trackedEntityType": {
+            "id": "nEenWmSyUEp",
+            "name": "Person"
+        },
+        "displayEnrollmentDateLabel": "Date of enrollment",
+        "displayIncidentDateLabel": "Date of birth",
+        "displayEnrollmentLabel": "pregnancy",
+        "displayEventLabel": "Visit",
+        "id": "IpHINAT79UW",
+        "programStages": [
+            {
+                "program": {
+                    "id": "IpHINAT79UW"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Report date",
+                "id": "A03MvHHogjR",
+                "repeatable": false,
+                "name": "Birth"
+            },
+            {
+                "program": {
+                    "id": "IpHINAT79UW"
+                },
+                "hideDueDate": false,
+                "id": "ZzYYXq4fJie",
+                "repeatable": false,
+                "name": "Baby Postnatal"
+            }
+        ],
+        "name": "Child Programme"
+    },
+    "ur1Edk5Oe2n": {
+        "enrollmentDateLabel": "Start of treatment date",
+        "incidentDateLabel": "Start of treatment date",
+        "programType": "WITH_REGISTRATION",
+        "displayIncidentDate": false,
+        "trackedEntityType": {
+            "id": "nEenWmSyUEp",
+            "name": "Person"
+        },
+        "displayEnrollmentDateLabel": "Start of treatment date",
+        "displayIncidentDateLabel": "Start of treatment date",
+        "id": "ur1Edk5Oe2n",
+        "programStages": [
+            {
+                "program": {
+                    "id": "ur1Edk5Oe2n"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Report date",
+                "id": "EPEcjy3FWmI",
+                "repeatable": true,
+                "name": "Lab monitoring"
+            },
+            {
+                "program": {
+                    "id": "ur1Edk5Oe2n"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "TB visit date",
+                "id": "ZkbAXlQUYJG",
+                "repeatable": false,
+                "name": "TB visit"
+            },
+            {
+                "program": {
+                    "id": "ur1Edk5Oe2n"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Report date",
+                "id": "jdRD35YwbRH",
+                "repeatable": true,
+                "name": "Sputum smear microscopy test"
+            }
+        ],
+        "name": "TB program"
+    },
+    "eBAyeGv0exc": {
+        "incidentDateLabel": "Date of Discharge",
+        "programType": "WITHOUT_REGISTRATION",
+        "displayIncidentDate": false,
+        "displayIncidentDateLabel": "Date of Discharge",
+        "id": "eBAyeGv0exc",
+        "programStages": [
+            {
+                "program": {
+                    "id": "eBAyeGv0exc"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Report date",
+                "id": "Zj7UnCAulEk",
+                "repeatable": false,
+                "name": "Inpatient morbidity and mortality"
+            }
+        ],
+        "name": "Inpatient morbidity and mortality"
+    }
+}

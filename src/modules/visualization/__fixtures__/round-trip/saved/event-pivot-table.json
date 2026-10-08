@@ -1,0 +1,198 @@
+{
+    "name": "RT: event PT",
+    "regressionType": "LINEAR",
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": ["LAST_WEEK"],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [
+        {
+            "attribute": {
+                "name": "Gender",
+                "id": "cejWyOfXge6"
+            }
+        }
+    ],
+    "dataElementDimensions": [
+        {
+            "dataElement": {
+                "name": "MCH ARV at birth",
+                "id": "wQLfBvPrXqq"
+            }
+        }
+    ],
+    "programIndicatorDimensions": [],
+    "digitGroupSeparator": "SPACE",
+    "hideEmptyRowItems": "NONE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": false,
+    "rowTotals": false,
+    "rowSubTotals": false,
+    "colSubTotals": false,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": false,
+    "type": "PIVOT_TABLE",
+    "programDimensions": [
+        {
+            "enrollmentDateLabel": "Date of enrollment",
+            "incidentDateLabel": "Date of birth",
+            "programType": "WITH_REGISTRATION",
+            "displayIncidentDate": true,
+            "trackedEntityType": {
+                "id": "nEenWmSyUEp",
+                "name": "Person"
+            },
+            "displayEnrollmentDateLabel": "Date of enrollment",
+            "displayIncidentDateLabel": "Date of birth",
+            "displayEnrollmentLabel": "pregnancy",
+            "displayEventLabel": "Visit",
+            "id": "IpHINAT79UW",
+            "programStages": [
+                {
+                    "program": {
+                        "id": "IpHINAT79UW"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Report date",
+                    "id": "A03MvHHogjR",
+                    "repeatable": false,
+                    "name": "Birth"
+                },
+                {
+                    "program": {
+                        "id": "IpHINAT79UW"
+                    },
+                    "hideDueDate": false,
+                    "id": "ZzYYXq4fJie",
+                    "repeatable": false,
+                    "name": "Baby Postnatal"
+                }
+            ],
+            "name": "Child Programme"
+        }
+    ],
+    "simpleDimensions": [
+        {
+            "parent": "ROW",
+            "dimension": "ou",
+            "program": "IpHINAT79UW",
+            "programStage": "A03MvHHogjR",
+            "values": ["USER_ORGUNIT"]
+        },
+        {
+            "parent": "FILTER",
+            "dimension": "eventDate",
+            "program": "IpHINAT79UW",
+            "programStage": "A03MvHHogjR",
+            "values": ["LAST_WEEK"]
+        }
+    ],
+    "outputType": "EVENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": false,
+    "filters": [
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "LAST_WEEK"
+                }
+            ],
+            "programStage": {
+                "id": "A03MvHHogjR"
+            },
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "eventDate"
+        }
+    ],
+    "parentGraphMap": {},
+    "columns": [
+        {
+            "dimensionType": "PROGRAM_ATTRIBUTE",
+            "items": [],
+            "dimension": "cejWyOfXge6",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "pC3N9N77UmT",
+                "name": "Gender"
+            }
+        },
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "programStage": {
+                "id": "A03MvHHogjR"
+            },
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "wQLfBvPrXqq",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "f38bstJioPs",
+                "name": "MNCH Baby ARVs"
+            }
+        }
+    ],
+    "rows": [
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "USER_ORGUNIT"
+                }
+            ],
+            "programStage": {
+                "id": "A03MvHHogjR"
+            },
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "ou"
+        }
+    ],
+    "displayName": "RT: event PT",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "metaData": {
+        "wQLfBvPrXqq": {
+            "uid": "wQLfBvPrXqq",
+            "code": "DE_2008294",
+            "name": "MCH ARV at birth"
+        },
+        "cejWyOfXge6": {
+            "uid": "cejWyOfXge6",
+            "name": "Gender"
+        }
+    },
+    "displayFormName": "RT: event PT",
+    "id": "dAP6qEByOtP",
+    "sorting": [],
+    "repetitions": []
+}
