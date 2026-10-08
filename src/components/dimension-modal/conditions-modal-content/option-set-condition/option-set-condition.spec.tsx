@@ -103,7 +103,7 @@ describe('OptionSetCondition', () => {
             createOptionsResolver()
         )
 
-        await waitFor(() => expect(leftOptionNames()).toHaveLength(4))
+        await waitFor(() => expect(leftOptionNames()).toHaveLength(5))
 
         selectOption('Absconded')
         await waitFor(() => expect(onChange).toHaveBeenCalled())
@@ -112,7 +112,9 @@ describe('OptionSetCondition', () => {
         search('ch')
         await new Promise((resolve) => setTimeout(resolve, 700))
 
-        await waitFor(() => expect(leftOptionNames()).toEqual(['Discharged']))
+        await waitFor(() =>
+            expect(leftOptionNames()).toEqual(['No value', 'Discharged'])
+        )
     })
 
     it('keeps a previously-selected option when adding another from a filtered list', async () => {
@@ -137,7 +139,9 @@ describe('OptionSetCondition', () => {
 
         search('disch')
         await new Promise((resolve) => setTimeout(resolve, 700))
-        await waitFor(() => expect(leftOptionNames()).toEqual(['Discharged']))
+        await waitFor(() =>
+            expect(leftOptionNames()).toEqual(['No value', 'Discharged'])
+        )
 
         selectOption('Discharged')
         await waitFor(() => expect(onChange).toHaveBeenCalledWith('IN:ABS;DIS'))
@@ -147,5 +151,32 @@ describe('OptionSetCondition', () => {
          * A `waitFor` would mask the bug — a late unfiltered re-fetch repopulates
          * the source list and the Transfer would re-derive the missing label. */
         expect(rightOptionNames()).toEqual(['Absconded', 'Discharged'])
+    })
+
+    it('lists the no-value option first, even when a search matches nothing', async () => {
+        await renderCondition(createOptionsResolver())
+
+        await waitFor(() => expect(leftOptionNames()[0]).toBe('No value'))
+
+        search('zzz')
+        await new Promise((resolve) => setTimeout(resolve, 700))
+
+        await waitFor(() => expect(leftOptionNames()).toEqual(['No value']))
+    })
+
+    it('stores the no-value option by its code and labels it in the selection', async () => {
+        const { onChange, rerenderWithLatestCondition } = await renderCondition(
+            createOptionsResolver()
+        )
+
+        await waitFor(() => expect(leftOptionNames()).toHaveLength(5))
+
+        selectOption('No value')
+        await waitFor(() =>
+            expect(onChange).toHaveBeenCalledWith('IN:D2__NOVALUE')
+        )
+        rerenderWithLatestCondition()
+
+        expect(rightOptionNames()).toEqual(['No value'])
     })
 })
