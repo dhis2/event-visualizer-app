@@ -36,6 +36,7 @@ export {
 export * from './use-rtk-query'
 export * from './use-rtk-lazy-query'
 export * from './use-conditions-texts'
+export * from './use-dimension-value-texts'
 export * from './use-options-field'
 export * from './use-stable-callback'
 export * from './use-cell-value-context'

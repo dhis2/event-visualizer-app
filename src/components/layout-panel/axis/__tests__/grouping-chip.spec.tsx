@@ -49,10 +49,13 @@ describe('TooltipContent grouping', () => {
         await renderWithAppWrapper(
             <TooltipContent
                 dimension={dimension}
-                conditionsTexts={['0 - 10', '10 - 20']}
+                itemIds={[]}
+                conditions={{ legendSet: 'LEGEND_SET', condition: 'IN:L1;L2' }}
+                digitGroupSeparator="SPACE"
                 groupingName="Age 10y interval"
                 axisId="columns"
-            />
+            />,
+            { metadata: { L1: '0 - 10', L2: '10 - 20' } }
         )
 
         expect(
@@ -66,7 +69,9 @@ describe('TooltipContent grouping', () => {
         await renderWithAppWrapper(
             <TooltipContent
                 dimension={dimension}
-                conditionsTexts={[]}
+                itemIds={[]}
+                conditions={{ legendSet: 'LEGEND_SET' }}
+                digitGroupSeparator="SPACE"
                 groupingName="Age 10y interval"
                 axisId="columns"
             />
@@ -84,7 +89,9 @@ describe('TooltipContent grouping', () => {
         await renderWithAppWrapper(
             <TooltipContent
                 dimension={dimension}
-                conditionsTexts={[]}
+                itemIds={[]}
+                conditions={{}}
+                digitGroupSeparator="SPACE"
                 axisId="columns"
             />
         )

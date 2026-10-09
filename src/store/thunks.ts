@@ -4,32 +4,17 @@ import { legendSetsApi } from '@api/legend-sets-api'
 import { isEngineError, parseEngineError } from '@api/parse-engine-error'
 import { extractDataSourceIdFromVisualization } from '@modules/data-source'
 import { canDimensionHaveLegendSets } from '@modules/dimension/grouping'
-import {
-    buildAxis,
-    collectProgramDimensions,
-    resolveTeiFields,
-} from '@modules/layout'
 import { logger } from '@modules/logger'
-import { getEnabledOptions } from '@modules/options'
-import { setLastUsedVisualizationTypeToLocalStorage } from '@modules/visualization/local-storage'
 import {
-    getVisualizationUiConfig,
-    isCurrentVisualizationPersisted,
-    isVisualizationEmpty,
+    buildCurrentVisFromVisUiConfig,
     toCurrentVis,
-} from '@modules/visualization/state'
+} from '@modules/visualization/current-vis'
+import { isVisualizationEmpty } from '@modules/visualization/guards'
+import { setLastUsedVisualizationTypeToLocalStorage } from '@modules/visualization/local-storage'
+import { getVisualizationUiConfig } from '@modules/visualization/ui-config'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import type {
-    AppDispatch,
-    CurrentVisualization,
-    MetadataStore,
-    RootState,
-} from '@types'
-import {
-    clearCurrentVis,
-    setCurrentVis,
-    type CurrentVisState,
-} from './current-vis-slice'
+import type { AppDispatch, RootState } from '@types'
+import { clearCurrentVis, setCurrentVis } from './current-vis-slice'
 import { setDataSourceId } from './dimensions-selection-slice'
 import {
     setIsVisualizationLoading,
@@ -41,7 +26,6 @@ import {
     clearVisUiConfig,
     setVisUiConfig,
     setVisUiConfigGroupingByDimension,
-    type VisUiConfigState,
 } from './vis-ui-config-slice'
 
 type AppAsyncThunkConfig = {
@@ -140,52 +124,6 @@ export const tLoadSavedVisualization = createAsyncThunk<
         }
     }
 )
-
-const resolveCellValueFields = (visUiConfig: VisUiConfigState) => {
-    /* Always include the `value` key: setCurrentVis merges into the previous
-     * currentVis, so omitting it would leave a stale value behind. Only a pivot
-     * table shows aggregated cells, so only it can carry a cell value. */
-    const { cellValue, visualizationType } = visUiConfig
-
-    if (visualizationType !== 'PIVOT_TABLE' || !cellValue) {
-        return { value: undefined, aggregationType: undefined }
-    }
-
-    return {
-        value: { id: cellValue.id },
-        aggregationType: cellValue.aggregationType,
-    }
-}
-
-/* Rebuild a currentVis fresh from visUiConfig so stale currentVis fields can't
- * leak through. Carries over only id and sorting from the previous currentVis.
- * The value fields go after the options spread so the value's own
- * aggregation type wins over the options default. */
-export const buildCurrentVisFromVisUiConfig = ({
-    previousCurrentVis,
-    visUiConfig,
-    metadataStore,
-}: {
-    previousCurrentVis: CurrentVisState
-    visUiConfig: VisUiConfigState
-    metadataStore: MetadataStore
-}): CurrentVisualization => ({
-    id: isCurrentVisualizationPersisted(previousCurrentVis)
-        ? previousCurrentVis.id
-        : undefined,
-    sorting: isVisualizationEmpty(previousCurrentVis)
-        ? undefined
-        : previousCurrentVis.sorting,
-    type: visUiConfig.visualizationType,
-    outputType: visUiConfig.outputType,
-    columns: buildAxis(visUiConfig.layout.columns, visUiConfig, metadataStore),
-    rows: buildAxis(visUiConfig.layout.rows, visUiConfig, metadataStore),
-    filters: buildAxis(visUiConfig.layout.filters, visUiConfig, metadataStore),
-    programDimensions: collectProgramDimensions(visUiConfig, metadataStore),
-    ...getEnabledOptions(visUiConfig.options),
-    ...resolveTeiFields(visUiConfig, metadataStore),
-    ...resolveCellValueFields(visUiConfig),
-})
 
 export const tUpdateCurrentVisFromVisUiConfig =
     () =>

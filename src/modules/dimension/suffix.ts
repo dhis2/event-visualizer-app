@@ -1,4 +1,5 @@
-import type { DimensionMetadataItem, MetadataItem } from '@types'
+import { resolveLayoutContext } from '@modules/layout'
+import type { DimensionMetadataItem, MetadataItem, MetadataStore } from '@types'
 
 export type SuffixContext = {
     programCount: number
@@ -87,3 +88,24 @@ export const getDimensionSuffix = (
     }
     return undefined
 }
+
+/* Pure counterpart of the layout panel's suffix hook, for callers that read the
+ * metadata store directly. Throws if a dimension has no metadata. */
+export const getSuffixContext = (
+    dimensionIds: string[],
+    metadataStore: MetadataStore
+): SuffixContext => {
+    const { programIds, programStageIds } = resolveLayoutContext(
+        dimensionIds,
+        metadataStore
+    )
+    return buildSuffixContext({
+        programs: Object.values(metadataStore.getMetadataItems(programIds)),
+        programStages: Object.values(
+            metadataStore.getMetadataItems(programStageIds)
+        ),
+    })
+}
+
+export const getDimensionLabel = (name: string, suffix?: string): string =>
+    suffix ? `${name} · ${suffix}` : name

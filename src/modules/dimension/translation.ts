@@ -1,11 +1,12 @@
 import {
     CONTEXTLESS_DIMENSION_TYPES,
     META_DIMENSION_IDS,
-    WIRE_ONLY_DIMENSIONS,
+    DROPPED_LEGACY_DIMENSIONS,
 } from '@modules/dimension/ids'
 import type {
     CurrentVisualization,
     DimensionArray,
+    DimensionRecord,
     OutputType,
     VisualizationType,
 } from '@types'
@@ -15,7 +16,8 @@ export const transformDimensions = (
 ): DimensionArray =>
     dimensions
         .filter(
-            (dimensionObj) => !WIRE_ONLY_DIMENSIONS.has(dimensionObj.dimension)
+            (dimensionObj) =>
+                !DROPPED_LEGACY_DIMENSIONS.has(dimensionObj.dimension)
         )
         .map((dimensionObj) => {
             if (dimensionObj.dimensionType === 'PROGRAM_DATA_ELEMENT') {
@@ -26,6 +28,26 @@ export const transformDimensions = (
             }
             return dimensionObj
         })
+
+/* Not persisted, so they are stripped before saving — and comparing them would
+ * report a false positive anyway: a loaded visualization carries the API's
+ * dimensionType (PROGRAM_DATA_ELEMENT) where one rebuilt from visUiConfig
+ * carries the metadata store's (DATA_ELEMENT). */
+const NON_PERSISTED_DIMENSION_PROPERTIES: ReadonlyArray<keyof DimensionRecord> =
+    ['dimensionType', 'valueType']
+
+export const removeNonPersistedDimensionProperties = (
+    axis: DimensionArray
+): DimensionArray =>
+    axis.map((dim) => {
+        const dimension = { ...dim }
+
+        NON_PERSISTED_DIMENSION_PROPERTIES.forEach((property) => {
+            delete dimension[property]
+        })
+
+        return dimension
+    })
 
 export const combineAllDimensionsFromVisualization = (
     visualization: CurrentVisualization

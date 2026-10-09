@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-10-08T10:37:01.430Z\n"
-"PO-Revision-Date: 2026-10-08T10:37:01.431Z\n"
+"POT-Creation-Date: 2026-10-09T13:32:22.221Z\n"
+"PO-Revision-Date: 2026-10-09T13:32:22.222Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -24,6 +24,9 @@ msgstr ""
 
 msgid "Only numeric data items can be used as the cell value."
 msgstr "Only numeric data items can be used as the cell value."
+
+msgid "Changes not applied"
+msgstr "Changes not applied"
 
 msgid "Retry"
 msgstr "Retry"
@@ -235,12 +238,6 @@ msgstr "Program stage: {{- stageName}}"
 msgid "Grouping: {{- groupingName}}"
 msgstr "Grouping: {{- groupingName}}"
 
-msgid "Levels"
-msgstr "Levels"
-
-msgid "Groups"
-msgstr "Groups"
-
 msgid "Create {{- enrollmentLabel}} list"
 msgstr "Create {{- enrollmentLabel}} list"
 
@@ -315,6 +312,9 @@ msgstr "Not valid with Completed on"
 
 msgid "Not valid with multiple tracked entity types"
 msgstr "Not valid with multiple tracked entity types"
+
+msgid "Not valid without a tracked entity type"
+msgstr "Not valid without a tracked entity type"
 
 msgid "Not valid with program indicators"
 msgstr "Not valid with program indicators"
@@ -532,6 +532,12 @@ msgstr "Skip rounding"
 
 msgid "Add a subtitle"
 msgstr "Add a subtitle"
+
+msgid "Auto generated"
+msgstr "Auto generated"
+
+msgid "Custom"
+msgstr "Custom"
 
 msgid "Add a title"
 msgstr "Add a title"
@@ -853,9 +859,6 @@ msgstr "Min value (sum in org unit hierarchy)"
 msgid "Max value (sum in org unit hierarchy)"
 msgstr "Max value (sum in org unit hierarchy)"
 
-msgid "Custom"
-msgstr "Custom"
-
 msgid "Enrollment"
 msgstr "Enrollment"
 
@@ -919,6 +922,9 @@ msgstr "No"
 msgid "Not answered"
 msgstr "Not answered"
 
+msgid "No value"
+msgstr "No value"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -970,6 +976,12 @@ msgstr "Enrollment status"
 
 msgid "Registration org. unit"
 msgstr "Registration org. unit"
+
+msgid "Levels"
+msgstr "Levels"
+
+msgid "Groups"
+msgstr "Groups"
 
 msgid "Enrollment date"
 msgstr "Enrollment date"
@@ -1244,6 +1256,18 @@ msgstr "Completed"
 
 msgid "Scheduled"
 msgstr "Scheduled"
+
+msgid "{{- label}} count"
+msgstr "{{- label}} count"
+
+msgid "{{- label}} list"
+msgstr "{{- label}} list"
+
+msgid "Enrollments"
+msgstr "Enrollments"
+
+msgid "Events"
+msgstr "Events"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

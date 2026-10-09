@@ -1,5 +1,5 @@
 import { useAppSelector } from '@hooks'
-import { isVisualizationEmpty } from '@modules/visualization/state'
+import { isVisualizationEmpty } from '@modules/visualization/guards'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getDataSourceId } from '@store/dimensions-selection-slice'
 import { getIsVisualizationLoading } from '@store/loader-slice'

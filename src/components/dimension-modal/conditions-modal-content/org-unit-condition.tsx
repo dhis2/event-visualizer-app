@@ -82,6 +82,8 @@ export const OrgUnitCondition: FC<OrgUnitConditionProps> = ({
                             ouMetadata.path = item.path
                         }
 
+                        acc.metadata[ouUid] = ouMetadata
+
                         // XXX: check if this processing of path is needed for metadata
                         //    if (item.path) {
                         //        const path = removeLastPathSegment(item.path)

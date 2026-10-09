@@ -1,14 +1,14 @@
 # Translators:
-# Jan Henrik Øverland, 2026
 # Andres Miguel Rubio, 2026
 # Caroline Hesthagen Holen <caroline@devotta.no>, 2026
 # Martin <martin@moid.se>, 2026
+# Jan Henrik Øverland, 2026
 # Karoline Tufte Lien <karoline@dhis2.org>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-08T09:02:41.411Z\n"
+"POT-Creation-Date: 2026-09-17T12:36:05.389Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Karoline Tufte Lien <karoline@dhis2.org>, 2026\n"
 "Language-Team: Norwegian Bokmål (https://app.transifex.com/hisp-uio/teams/100509/nb/)\n"
@@ -1031,6 +1031,21 @@ msgid ""
 "administrator."
 msgstr ""
 
+msgid "Visualization not found"
+msgstr "Fant ikke visualisering"
+
+msgid ""
+"The visualization you are trying to view could not be found, the ID could be"
+" incorrect or it could have been deleted."
+msgstr ""
+"Visualiseringen du prøver å vise ble ikke funnet. ID-en kan være feil eller "
+"den kan ha blitt slettet."
+
+msgid ""
+"Your account cannot access any items in one or more dimensions. Contact a "
+"system administrator."
+msgstr ""
+
 msgid "You don't have access to one or more of the chosen organisation units."
 msgstr ""
 
@@ -1038,21 +1053,74 @@ msgid ""
 "You don't have access to event analytics. Contact a system administrator."
 msgstr ""
 
-msgid "Something went wrong"
-msgstr "Noe gikk galt"
+msgid "Invalid indicator"
+msgstr ""
 
 msgid "There's a problem with at least one selected indicator."
 msgstr ""
 
+msgid "Program stage not available"
+msgstr ""
+
 msgid ""
-"There's a problem with the generated analytics. Contact a system "
+"A program stage in this visualization is no longer part of its program. It "
+"may have been changed or removed."
+msgstr ""
+
+msgid "Dimension not available"
+msgstr ""
+
+msgid ""
+"A dimension in this visualization is no longer valid. It may have been "
+"removed from the program."
+msgstr ""
+
+msgid "Program not available"
+msgstr ""
+
+msgid ""
+"A program in this visualization is not available for the selected tracked "
+"entity type."
+msgstr ""
+
+msgid "Too much data"
+msgstr ""
+
+msgid ""
+"This request returns more data than the server allows. Reduce the amount of "
+"data and try again, for example by choosing fewer items, adding filters, or "
+"choosing a shorter period."
+msgstr ""
+
+msgid "Top limit too high"
+msgstr ""
+
+msgid ""
+"The top limit in this visualization is higher than the server allows. Lower "
+"it in the options."
+msgstr ""
+
+msgid "Request timed out"
+msgstr ""
+
+msgid ""
+"The request took too long and was stopped. Try again, or reduce the amount "
+"of data requested."
+msgstr ""
+
+msgid "Analytics not generated"
+msgstr ""
+
+msgid ""
+"The analytics tables have not been generated. Contact a system "
 "administrator."
 msgstr ""
-"Det er et problem med den genererte analysen. Kontakt en "
-"systemadministrator."
 
-msgid "There's a syntax problem with the analytics request."
-msgstr "Det er et syntaksproblem med analyseforespørselen."
+msgid "Analytics request failed"
+msgstr ""
+
+msgid "The server could not run this request. Contact a system administrator."
+msgstr ""
 
 msgid "No data available"
 msgstr "Ingen data tilgjengelig"
@@ -1061,6 +1129,12 @@ msgid ""
 "The selected dimensions didn't return any data. There may be no data, or you"
 " may not have access to it."
 msgstr ""
+
+msgid "Analytics request error"
+msgstr ""
+
+msgid "Something went wrong"
+msgstr "Noe gikk galt"
 
 msgid "There was a problem getting the data from the server."
 msgstr "Det oppstod et problem med å hente dataene fra serveren."

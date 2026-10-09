@@ -307,5 +307,6 @@
         "F_EVENT_VISUALIZATION_PUBLIC_ADD",
         "F_PREDICTOR_RUN"
     ],
-    "name": "John Traore"
+    "displayName": "John Traore",
+    "organisationUnits": [{ "id": "ImspTQPwCqd" }]
 }
