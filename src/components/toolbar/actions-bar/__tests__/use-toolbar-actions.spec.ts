@@ -1,6 +1,7 @@
 import { eventVisualizationsApi } from '@api/event-visualizations-api'
 import { toCurrentVis } from '@modules/visualization/current-vis'
 import { currentVisSlice } from '@store/current-vis-slice'
+import { navigationSlice } from '@store/navigation-slice'
 import { savedVisSlice } from '@store/saved-vis-slice'
 import { renderHookWithReduxStoreProvider } from '@test-utils/render-with-redux-store-provider'
 import { setupStore } from '@test-utils/setup-store'
@@ -95,6 +96,7 @@ const renderToolbarActions = ({
         {
             [currentVisSlice.name]: currentVisSlice.reducer,
             [savedVisSlice.name]: savedVisSlice.reducer,
+            [navigationSlice.name]: navigationSlice.reducer,
         },
         {
             [currentVisSlice.name]: currentVis,
@@ -338,6 +340,176 @@ describe('useToolbarActions', () => {
 
             const payload = initiateSpy.mock.calls[0][0] as SavedVisualization
             expect(payload.description).toBe('A helpful description')
+        })
+    })
+
+    describe('onRename', () => {
+        afterEach(() => {
+            vi.restoreAllMocks()
+        })
+
+        const resolveWith = <T>(result: T) =>
+            (() => Promise.resolve(result)) as unknown as never
+
+        const spyOnFetch = (result: { data?: SavedVisualization }) =>
+            vi
+                .spyOn(
+                    eventVisualizationsApi.endpoints.getVisualizationForUpdate,
+                    'initiate'
+                )
+                .mockReturnValue(resolveWith(result))
+
+        const spyOnRename = () =>
+            vi
+                .spyOn(
+                    eventVisualizationsApi.endpoints.renameVisualization,
+                    'initiate'
+                )
+                .mockReturnValue(
+                    resolveWith({
+                        data: { name: 'New name', displayName: 'New name' },
+                    })
+                )
+
+        const spyOnCreate = () =>
+            vi
+                .spyOn(
+                    eventVisualizationsApi.endpoints.createVisualization,
+                    'initiate'
+                )
+                .mockReturnValue(resolveWith({ data: 'new-vis' }))
+
+        const renderWithSavedVis = (savedVis: SavedVisualization) =>
+            renderToolbarActions({
+                currentVis: toCurrentVis(savedVis),
+                savedVis,
+            })
+
+        it('renames a non-legacy visualization', async () => {
+            const savedVis = makeSavedVis({ name: 'Old name' })
+            spyOnFetch({ data: savedVis })
+            const renameSpy = spyOnRename()
+
+            const { result, store } = renderWithSavedVis(savedVis)
+
+            await act(async () => {
+                await result.current.onRename({ name: 'New name' })
+            })
+
+            expect(renameSpy).toHaveBeenCalledWith({
+                visualization: savedVis,
+                name: 'New name',
+                description: undefined,
+            })
+            expect(store.getState().savedVis).toHaveProperty('name', 'New name')
+            expect(result.current.pendingLegacyRename).toBeNull()
+        })
+
+        it('offers a save as new instead of renaming a legacy visualization', async () => {
+            const savedVis = makeSavedVis({ name: 'Old name', legacy: true })
+            spyOnFetch({ data: savedVis })
+            const renameSpy = spyOnRename()
+
+            const { result, store } = renderWithSavedVis(savedVis)
+
+            await act(async () => {
+                await result.current.onRename({ name: 'New name' })
+            })
+
+            expect(renameSpy).not.toHaveBeenCalled()
+            expect(store.getState().savedVis).toHaveProperty('name', 'Old name')
+            expect(result.current.pendingLegacyRename).toMatchObject({
+                name: 'New name',
+            })
+        })
+
+        it('checks the freshly fetched visualization for the legacy flag', async () => {
+            const savedVis = makeSavedVis()
+            spyOnFetch({ data: { ...savedVis, legacy: true } })
+            const renameSpy = spyOnRename()
+
+            const { result } = renderWithSavedVis(savedVis)
+
+            await act(async () => {
+                await result.current.onRename({ name: 'New name' })
+            })
+
+            expect(renameSpy).not.toHaveBeenCalled()
+            expect(result.current.pendingLegacyRename).not.toBeNull()
+        })
+
+        it('does not rename when the fetch fails', async () => {
+            const savedVis = makeSavedVis()
+            spyOnFetch({})
+            const renameSpy = spyOnRename()
+
+            const { result } = renderWithSavedVis(savedVis)
+
+            await act(async () => {
+                await result.current.onRename({ name: 'New name' })
+            })
+
+            expect(renameSpy).not.toHaveBeenCalled()
+            expect(result.current.pendingLegacyRename).toBeNull()
+        })
+
+        it('saves a confirmed legacy rename as a new visualization', async () => {
+            const legacyVis = makeSavedVis({
+                name: 'Old name',
+                description: 'Old description',
+                legacy: true,
+                columns: [{ dimension: 'stage-1.eventDate', items: [] }],
+            } as Partial<SavedVisualization>)
+            spyOnFetch({ data: legacyVis })
+            const createSpy = spyOnCreate()
+
+            const { result, store } = renderToolbarActions({
+                // unsaved edits in the editor must not end up in the copy
+                currentVis: { ...toCurrentVis(legacyVis), columns: [] },
+                savedVis: legacyVis,
+            })
+
+            await act(async () => {
+                await result.current.onRename({
+                    name: 'New name',
+                    description: 'New description',
+                })
+            })
+            await act(async () => {
+                await result.current.onConfirmLegacyRename()
+            })
+
+            const payload = createSpy.mock.calls[0][0] as SavedVisualization
+            expect(payload).toMatchObject({
+                name: 'New name',
+                description: 'New description',
+                columns: [{ dimension: 'stage-1.eventDate', items: [] }],
+            })
+            expect(payload).not.toHaveProperty('id')
+            expect(payload).not.toHaveProperty('legacy')
+            expect(store.getState().navigation).toHaveProperty(
+                'visualizationId',
+                'new-vis'
+            )
+            expect(result.current.pendingLegacyRename).toBeNull()
+        })
+
+        it('saves nothing when a legacy rename is cancelled', async () => {
+            const legacyVis = makeSavedVis({ legacy: true })
+            spyOnFetch({ data: legacyVis })
+            const createSpy = spyOnCreate()
+
+            const { result } = renderWithSavedVis(legacyVis)
+
+            await act(async () => {
+                await result.current.onRename({ name: 'New name' })
+            })
+            act(() => {
+                result.current.onCancelLegacyRename()
+            })
+
+            expect(createSpy).not.toHaveBeenCalled()
+            expect(result.current.pendingLegacyRename).toBeNull()
         })
     })
 })
