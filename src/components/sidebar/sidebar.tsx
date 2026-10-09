@@ -32,12 +32,10 @@ export const Sidebar: FC = () => {
         setIsScrolled(target.scrollTop > 0)
     }
 
-    const { containerRef, isDragging, width, eventHandlers } =
-        useResizableSidebar()
+    const { isDragging, width, eventHandlers } = useResizableSidebar()
 
     return (
         <div
-            ref={containerRef}
             className={cx(classes.container, {
                 [classes.hidden]: !isSidebarVisible,
             })}
