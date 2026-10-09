@@ -5,6 +5,7 @@ import {
     resolveTeiFields,
 } from '@modules/layout'
 import { getEnabledOptions } from '@modules/options'
+import { isPopulatedString } from '@modules/utils/guards'
 import type { CurrentVisState } from '@store/current-vis-slice'
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
 import type {
@@ -132,6 +133,8 @@ export const buildCurrentVisFromVisUiConfig = ({
     filters: buildAxis(visUiConfig.layout.filters, visUiConfig, metadataStore),
     programDimensions: collectProgramDimensions(visUiConfig, metadataStore),
     ...getEnabledOptions(visUiConfig.options),
+    // There is no generated subtitle, so an empty one is a hidden one
+    hideSubtitle: !isPopulatedString(visUiConfig.options.subtitle),
     ...resolveTeiFields(visUiConfig, metadataStore),
     ...resolveCustomValueFields(
         previousCurrentVis,

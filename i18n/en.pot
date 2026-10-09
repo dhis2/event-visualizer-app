@@ -232,12 +232,6 @@ msgstr "Program stage: {{- stageName}}"
 msgid "Grouping: {{- groupingName}}"
 msgstr "Grouping: {{- groupingName}}"
 
-msgid "Levels"
-msgstr "Levels"
-
-msgid "Groups"
-msgstr "Groups"
-
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr "Using: {{- itemName}} ({{- aggregationType}})"
 
@@ -594,6 +588,12 @@ msgstr "Skip rounding"
 msgid "Add a subtitle"
 msgstr "Add a subtitle"
 
+msgid "Auto generated"
+msgstr "Auto generated"
+
+msgid "Custom"
+msgstr "Custom"
+
 msgid "Add a title"
 msgstr "Add a title"
 
@@ -927,9 +927,6 @@ msgstr "Min value (sum in org unit hierarchy)"
 msgid "Max value (sum in org unit hierarchy)"
 msgstr "Max value (sum in org unit hierarchy)"
 
-msgid "Custom"
-msgstr "Custom"
-
 msgid "equal to (=)"
 msgstr "equal to (=)"
 
@@ -1044,6 +1041,12 @@ msgstr "Enrollment status"
 
 msgid "Registration org. unit"
 msgstr "Registration org. unit"
+
+msgid "Levels"
+msgstr "Levels"
+
+msgid "Groups"
+msgstr "Groups"
 
 msgid "Enrollment date"
 msgstr "Enrollment date"
@@ -1318,6 +1321,18 @@ msgstr "Completed"
 
 msgid "Scheduled"
 msgstr "Scheduled"
+
+msgid "{{- label}} count"
+msgstr "{{- label}} count"
+
+msgid "{{- label}} list"
+msgstr "{{- label}} list"
+
+msgid "Enrollments"
+msgstr "Enrollments"
+
+msgid "Events"
+msgstr "Events"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
