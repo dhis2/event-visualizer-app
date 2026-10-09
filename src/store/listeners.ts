@@ -11,13 +11,14 @@ import { setUiActiveDimensionModal } from './ui-slice'
 import {
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
+    setVisUiConfigOption,
     setVisUiConfigVisualizationType,
 } from './vis-ui-config-slice'
 
 export const registerAppListeners = () => {
     startAppListening({
         actionCreator: setNavigationState,
-        effect: async (action, { dispatch, getOriginalState }) => {
+        effect: (action, { dispatch, getOriginalState }) => {
             const originalState = getOriginalState()
             const originalVisualizationId =
                 originalState.navigation.visualizationId
@@ -46,8 +47,12 @@ export const registerAppListeners = () => {
 
     startAppListening({
         actionCreator: setVisUiConfigVisualizationType,
-        effect: (action) => {
+        effect: (action, { dispatch }) => {
             setLastUsedVisualizationTypeToLocalStorage(action.payload)
+
+            // Changing visualization type resets the title configuration to Auto generated
+            dispatch(setVisUiConfigOption({ key: 'title', value: '' }))
+            dispatch(setVisUiConfigOption({ key: 'hideTitle', value: false }))
         },
     })
 
