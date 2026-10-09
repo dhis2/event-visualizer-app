@@ -521,7 +521,7 @@ describe('useOnDragEnd — dropping on the cell value axis', () => {
         expect(populateMetadata).toHaveBeenCalled()
         expect(setVisUiConfigCellValue).toHaveBeenCalledWith({
             id: 's1.de1',
-            aggregationType: 'SUM',
+            aggregationType: 'DEFAULT',
         })
         expect(showAlert).not.toHaveBeenCalled()
     })
@@ -601,7 +601,7 @@ describe('useOnDragEnd — dropping on the cell value axis', () => {
         expect(moveVisUiConfigLayoutDimension).not.toHaveBeenCalled()
         expect(setVisUiConfigCellValue).toHaveBeenCalledWith({
             id: 's1.de1',
-            aggregationType: 'SUM',
+            aggregationType: 'DEFAULT',
         })
     })
 })

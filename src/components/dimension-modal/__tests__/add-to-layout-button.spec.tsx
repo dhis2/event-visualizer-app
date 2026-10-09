@@ -126,7 +126,7 @@ describe('AddToLayoutButton — Use as value', () => {
 
         expect(getVisUiConfigCellValue(store.getState())).toEqual({
             id: 's1.de1',
-            aggregationType: 'SUM',
+            aggregationType: 'DEFAULT',
         })
         expect(onClick).toHaveBeenCalled()
     })
@@ -151,7 +151,7 @@ describe('AddToLayoutButton — Use as value', () => {
         ).toBeUndefined()
         expect(getVisUiConfigCellValue(store.getState())).toEqual({
             id: 's1.de1',
-            aggregationType: 'SUM',
+            aggregationType: 'DEFAULT',
         })
     })
 

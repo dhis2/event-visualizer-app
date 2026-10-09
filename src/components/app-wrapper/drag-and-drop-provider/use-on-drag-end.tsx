@@ -8,7 +8,6 @@ import {
     useListFormatter,
     useMetadataStore,
 } from '@hooks'
-import { resolveAggregationType } from '@modules/dimension/aggregation-type'
 import {
     getDimensionBlockReason,
     type DimensionBlockReason,
@@ -187,10 +186,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
                     dispatch(
                         setVisUiConfigCellValue({
                             id: draggedItemData.dimensionId,
-                            aggregationType: resolveAggregationType(
-                                'DEFAULT',
-                                dimension ?? {}
-                            ),
+                            aggregationType: 'DEFAULT',
                         })
                     )
                 } else {

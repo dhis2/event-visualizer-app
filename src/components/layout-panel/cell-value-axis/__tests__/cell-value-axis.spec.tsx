@@ -321,8 +321,9 @@ describe('CellValueAxis', () => {
         ).not.toBeInTheDocument()
     })
 
-    /* s1.de1's own aggregation type is SUM, so that entry says so. */
-    it('names the data item default in the aggregation menu', async () => {
+    /* s1.de1's own aggregation type is SUM, so the menu leads with a shortcut
+     * naming it, and still lists Sum plainly below. */
+    it('leads the aggregation menu with the data item default', async () => {
         const user = userEvent.setup()
         const { store } = await renderWithAppWrapper(
             <CellValueAxis />,
@@ -334,22 +335,66 @@ describe('CellValueAxis', () => {
 
         await user.click(screen.getByTestId('cell-value-aggregation-trigger'))
 
-        expect(
-            screen.queryByRole('menuitem', { name: 'Sum' })
-        ).not.toBeInTheDocument()
-        expect(
-            screen.getByRole('menuitem', { name: 'Average' })
-        ).toBeInTheDocument()
+        const items = screen
+            .getAllByRole('menuitem')
+            .map((item) => item.textContent)
 
-        /* Choosing it stores the concrete type, not a DEFAULT sentinel. */
+        expect(items[0]).toBe('Use item default (Sum)')
+        expect(items).toContain('Sum')
+        expect(items).toContain('Average')
+
+        /* Stored as the sentinel, so the shortcut stays distinguishable from an
+         * explicit Sum. */
         await user.click(
             screen.getByRole('menuitem', { name: 'Use item default (Sum)' })
         )
 
         expect(getVisUiConfigCellValue(store.getState())).toEqual({
             id: 's1.de1',
+            aggregationType: 'DEFAULT',
+        })
+    })
+
+    /* The whole point of keeping the sentinel: picking the item's own type by
+     * name is not the same choice as leaving it on the item default. */
+    it('marks the shortcut and the plain entry separately', async () => {
+        const user = userEvent.setup()
+        const { store } = await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({
+                columns: ['s1.de1'],
+                cellValue: { id: 's1.de1', aggregationType: 'DEFAULT' },
+            })
+        )
+
+        /* DEFAULT resolves to the item's SUM for display. */
+        expect(
+            screen.getByTestId('cell-value-aggregation-trigger')
+        ).toHaveTextContent('Sum')
+
+        await user.click(screen.getByTestId('cell-value-aggregation-trigger'))
+
+        /* MenuItem puts the active class on the wrapping li, not the anchor
+         * that carries the menuitem role. */
+        const activeItem = () =>
+            screen
+                .getAllByRole('menuitem')
+                .find((item) =>
+                    item.closest('li')?.className.includes('active')
+                )?.textContent
+
+        expect(activeItem()).toBe('Use item default (Sum)')
+
+        await user.click(screen.getByRole('menuitem', { name: 'Sum' }))
+
+        expect(getVisUiConfigCellValue(store.getState())).toEqual({
+            id: 's1.de1',
             aggregationType: 'SUM',
         })
+
+        await user.click(screen.getByTestId('cell-value-aggregation-trigger'))
+
+        expect(activeItem()).toBe('Sum')
     })
 })
 

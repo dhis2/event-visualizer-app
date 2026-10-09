@@ -158,7 +158,7 @@ describe('ChipMenu — Use as value', () => {
 
         expect(getVisUiConfigCellValue(store.getState())).toEqual({
             id: 's1.de1',
-            aggregationType: 'SUM',
+            aggregationType: 'DEFAULT',
         })
         expect(store.getState().visUiConfig.layout.columns).toEqual([
             's1.de1',
@@ -185,7 +185,7 @@ describe('ChipMenu — Use as value', () => {
 
         expect(getVisUiConfigCellValue(store.getState())).toEqual({
             id: 's1.de1',
-            aggregationType: 'SUM',
+            aggregationType: 'DEFAULT',
         })
     })
 })
