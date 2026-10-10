@@ -7,7 +7,11 @@ import {
     tLoadSavedVisualization,
     tUpdateCurrentVisFromVisUiConfig,
 } from '@store/thunks'
-import { initialState as visUiConfigInitialState } from '@store/vis-ui-config-slice'
+import {
+    clearVisUiConfigCellValue,
+    initialState as visUiConfigInitialState,
+    setVisUiConfigVisualizationType,
+} from '@store/vis-ui-config-slice'
 import {
     renderHookWithAppWrapper,
     type MockOptions,
@@ -39,7 +43,7 @@ const metadata = {
     },
 }
 
-const customValue = { id: 's1.de1', aggregationType: 'AVERAGE' as const }
+const cellValue = { id: 's1.de1', aggregationType: 'AVERAGE' as const }
 
 const buildMockOptions = (
     currentVisOverride: Partial<CurrentVisualization>,
@@ -53,7 +57,7 @@ const buildMockOptions = (
                     outputType,
                     visualizationType: 'PIVOT_TABLE',
                     layout: { columns: ['s1.de1'] },
-                    customValue,
+                    cellValue,
                 }),
             } as Partial<RootState>,
             { currentVis: currentVisOverride } as Partial<RootState>
@@ -61,7 +65,7 @@ const buildMockOptions = (
     },
 })
 
-const customValueVis: Partial<CurrentVisualization> = {
+const cellValueVis: Partial<CurrentVisualization> = {
     type: 'PIVOT_TABLE',
     outputType: 'EVENT',
     columns: [{ dimension: 's1.de1' }],
@@ -89,55 +93,73 @@ describe('tUpdateCurrentVisFromVisUiConfig', () => {
         )
     })
 
-    it('clears the value when rebuilding in EVENT mode, keeping customValue remembered', async () => {
-        const { store } = await renderHookWithAppWrapper(
-            () => null,
-            buildMockOptions(customValueVis)
-        )
-
-        store.dispatch(tUpdateCurrentVisFromVisUiConfig(false))
-
-        expect(getCurrentVis(store.getState()).value).toBeUndefined()
-        // The remembered selection survives the switch to the event table
-        expect(store.getState().visUiConfig.customValue).toEqual(customValue)
-    })
-
-    it('restores the value from the remembered customValue when rebuilding in CUSTOM_VALUE mode', async () => {
+    it('applies the remembered value to a pivot table', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
             buildMockOptions(eventVis)
         )
 
-        store.dispatch(tUpdateCurrentVisFromVisUiConfig(true))
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
         const currentVis = getCurrentVis(store.getState())
         expect(currentVis.value).toEqual({ id: 's1.de1' })
         expect(currentVis.aggregationType).toBe('AVERAGE')
     })
 
-    it('preserves the current mode when withCustomValue is not passed', async () => {
+    it('applies the value for any output type', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
-            buildMockOptions(customValueVis)
+            buildMockOptions(cellValueVis, 'ENROLLMENT')
         )
 
         store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
-        expect(getCurrentVis(store.getState()).value).toEqual({ id: 's1.de1' })
+        const currentVis = getCurrentVis(store.getState())
+        expect(currentVis.value).toEqual({ id: 's1.de1' })
+        expect(currentVis.aggregationType).toBe('AVERAGE')
     })
 
-    it('drops the value for a non-EVENT output type even when withCustomValue is true', async () => {
+    it('strips the value once it is cleared', async () => {
         const { store } = await renderHookWithAppWrapper(
             () => null,
-            buildMockOptions(customValueVis, 'ENROLLMENT')
+            buildMockOptions(cellValueVis)
         )
 
-        // Even explicitly asking for a custom value must not add one when
-        // the output type is not EVENT.
-        store.dispatch(tUpdateCurrentVisFromVisUiConfig(true))
+        store.dispatch(clearVisUiConfigCellValue())
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
+
+        const currentVis = getCurrentVis(store.getState())
+        expect(currentVis.value).toBeUndefined()
+        expect(currentVis.aggregationType).toBeUndefined()
+    })
+
+    it('resets the cell value when switching to a line list', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            buildMockOptions(cellValueVis)
+        )
+
+        store.dispatch(setVisUiConfigVisualizationType('LINE_LIST'))
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
 
         expect(getCurrentVis(store.getState()).value).toBeUndefined()
-        expect(store.getState().visUiConfig.customValue).toEqual(customValue)
+        expect(store.getState().visUiConfig.cellValue).toBeUndefined()
+    })
+
+    /* Switching back must start from Count rather than restoring the cell
+     * value the line list discarded. */
+    it('does not bring the cell value back on the return to a pivot table', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            buildMockOptions(cellValueVis)
+        )
+
+        store.dispatch(setVisUiConfigVisualizationType('LINE_LIST'))
+        store.dispatch(setVisUiConfigVisualizationType('PIVOT_TABLE'))
+        store.dispatch(tUpdateCurrentVisFromVisUiConfig())
+
+        expect(store.getState().visUiConfig.cellValue).toBeUndefined()
+        expect(getCurrentVis(store.getState()).value).toBeUndefined()
     })
 })
 
@@ -156,6 +178,19 @@ describe('tClearVisualization', () => {
                 }),
             } as Partial<RootState>,
         },
+    })
+
+    it('clears the cell value', async () => {
+        const { store } = await renderHookWithAppWrapper(
+            () => null,
+            buildMockOptions(cellValueVis)
+        )
+
+        expect(store.getState().visUiConfig.cellValue).toEqual(cellValue)
+
+        store.dispatch(tClearVisualization())
+
+        expect(store.getState().visUiConfig.cellValue).toBeUndefined()
     })
 
     it('restores the instance digit group separator', async () => {

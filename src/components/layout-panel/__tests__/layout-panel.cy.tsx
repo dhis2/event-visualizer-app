@@ -443,8 +443,14 @@ describe('<LayoutPanel />', () => {
         })
     })
 
-    it('renders the PIVOT_TABLE update buttons in the order enrollment, event, custom value', () => {
+    it('renders the PIVOT_TABLE update buttons in the order enrollment, event, alongside the value axis', () => {
         const layoutPanelMockOptions = createMockOptions({
+            /* The cell value button only shows for an existing visualization,
+             * so the current vis must not be empty. */
+            currentVis: {
+                type: 'PIVOT_TABLE',
+                outputType: 'EVENT',
+            },
             dimensionSelection: {
                 ...mockOptions.partialStore?.preloadedState.dimensionSelection,
                 dataSourceId: 'test-id',
@@ -468,8 +474,31 @@ describe('<LayoutPanel />', () => {
                 expect(order).to.deep.equal([
                     'update-button-enrollment',
                     'update-button-event',
-                    'update-button-custom-value',
                 ])
             })
+
+        cy.getByDataTest('axis-value').should('be.visible')
+    })
+
+    it('does not render the value axis in LINE_LIST', () => {
+        const layoutPanelMockOptions = createMockOptions({
+            dimensionSelection: {
+                ...mockOptions.partialStore?.preloadedState.dimensionSelection,
+                dataSourceId: 'test-id',
+            },
+            visUiConfig: {
+                ...mockOptions.partialStore?.preloadedState.visUiConfig,
+                visualizationType: 'LINE_LIST',
+            },
+        })
+
+        cy.mount(
+            <MockAppWrapper {...layoutPanelMockOptions}>
+                <LayoutPanel />
+            </MockAppWrapper>
+        )
+
+        cy.getByDataTest('axis-columns').should('be.visible')
+        cy.getByDataTest('axis-value').should('not.exist')
     })
 })

@@ -9,6 +9,10 @@ export type SidebarSortableData = {
     populateMetadata: () => void
     isLayoutBlocked: boolean
     layoutBlockedMessage?: string
+    /* Whether the cell value axis would accept this. Carried on the drag rather
+     * than looked up, because a sidebar dimension's metadata only reaches the
+     * store when it is dropped. */
+    canBeCellValue: boolean
 }
 
 export type AxisSortableData = {
@@ -18,6 +22,7 @@ export type AxisSortableData = {
     insertAfter: boolean
     isLayoutBlocked: boolean
     layoutBlockedMessage?: string
+    canBeCellValue: boolean
 }
 
 export type AxisContainerDroppableData = {
@@ -25,11 +30,21 @@ export type AxisContainerDroppableData = {
     isAxisContainer: true
 }
 
+/* The cell value axis is a drop target but not a layout axis, so this must not
+ * carry an `axis` key — `isOverAxis` discriminates structurally on one. */
+export type CellValueDroppableData = {
+    isCellValueDroppable: true
+}
+
 export type DraggedItemEventData = (SidebarSortableData | AxisSortableData) &
     SortableData
 
-export type OverItemEventData =
+/* The drop targets that belong to the layout proper — everything `isOverAxis`
+ * accepts, and everything the move/insert logic can act on. */
+export type LayoutDropTargetData =
     (AxisSortableData & SortableData) | AxisContainerDroppableData
+
+export type OverItemEventData = LayoutDropTargetData | CellValueDroppableData
 
 export interface LayoutDragEndEvent extends DragEndEvent {
     active: Omit<Active, 'data'> & {

@@ -1,3 +1,4 @@
+import { useAlert } from '@dhis2/app-runtime'
 import {
     useAppDispatch,
     useAppSelector,
@@ -10,6 +11,7 @@ import {
     addVisUiConfigLayoutDimensions,
     moveVisUiConfigLayoutDimension,
     removeVisUiConfigLayoutDimensionFromAxis,
+    setVisUiConfigCellValue,
 } from '@store/vis-ui-config-slice'
 import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import { renderHook } from '@testing-library/react'
@@ -49,8 +51,8 @@ vi.mock('@store/vis-ui-config-slice', () => ({
     addVisUiConfigLayoutDimensions: vi.fn(),
     moveVisUiConfigLayoutDimension: vi.fn(),
     removeVisUiConfigLayoutDimensionFromAxis: vi.fn(),
+    setVisUiConfigCellValue: vi.fn(),
     getVisUiConfigVisualizationType: vi.fn(),
-    getVisUiConfigCustomValue: vi.fn(),
     getVisUiConfigLayoutAllDimensionIds: vi.fn(() => []),
 }))
 
@@ -454,5 +456,152 @@ describe('useOnDragEnd', () => {
                 insertAfter: false,
             })
         )
+    })
+})
+
+describe('useOnDragEnd — dropping on the cell value axis', () => {
+    const mockDispatch = vi.fn()
+    const numericDimension = {
+        id: 's1.de1',
+        dimensionId: 'de1',
+        name: 'Weight in kg',
+        dimensionType: 'DATA_ELEMENT',
+        valueType: 'NUMBER',
+        aggregationType: 'SUM',
+    } as unknown as DimensionMetadataItem
+    const textDimension = {
+        id: 's1.de2',
+        dimensionId: 'de2',
+        name: 'Comment',
+        dimensionType: 'DATA_ELEMENT',
+        valueType: 'TEXT',
+    } as unknown as DimensionMetadataItem
+
+    const cellValueDropTarget = {
+        data: { current: { isCellValueDroppable: true } },
+    }
+    const showAlert = vi.fn()
+    const hideAlert = vi.fn()
+
+    beforeEach(() => {
+        vi.mocked(useAlert).mockReturnValue({
+            show: showAlert,
+            hide: hideAlert,
+        })
+        vi.mocked(useAppDispatch).mockReturnValue(mockDispatch)
+        vi.mocked(useAppSelector).mockReturnValue([])
+        vi.mocked(useMetadataStore).mockReturnValue(
+            createMetadataStoreStub({
+                dimensions: {
+                    's1.de1': numericDimension,
+                    's1.de2': textDimension,
+                },
+            })
+        )
+        mockDispatch.mockClear()
+    })
+
+    it('sets the cell value for a numeric dimension dragged from the sidebar', () => {
+        const { result } = renderHook(() => useOnDragEnd())
+        const populateMetadata = vi.fn()
+
+        result.current({
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 's1.de1',
+                        overlayItemProps: {},
+                        populateMetadata,
+                    },
+                },
+            },
+            over: cellValueDropTarget,
+        } as unknown as LayoutDragEndEvent)
+
+        expect(populateMetadata).toHaveBeenCalled()
+        expect(setVisUiConfigCellValue).toHaveBeenCalledWith({
+            id: 's1.de1',
+            aggregationType: 'DEFAULT',
+        })
+        expect(showAlert).not.toHaveBeenCalled()
+    })
+
+    it('rejects a non-numeric dimension', () => {
+        const { result } = renderHook(() => useOnDragEnd())
+
+        result.current({
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 's1.de2',
+                        overlayItemProps: {},
+                        populateMetadata: vi.fn(),
+                    },
+                },
+            },
+            over: cellValueDropTarget,
+        } as unknown as LayoutDragEndEvent)
+
+        expect(setVisUiConfigCellValue).not.toHaveBeenCalled()
+        expect(showAlert).toHaveBeenCalled()
+    })
+
+    /* The alert is a warning, and `AlertBar` only auto-hides non-warnings, so
+     * the hook has to dismiss it itself. */
+    it('dismisses the rejection alert after five seconds', () => {
+        vi.useFakeTimers()
+
+        try {
+            const { result } = renderHook(() => useOnDragEnd())
+
+            result.current({
+                active: {
+                    data: {
+                        current: {
+                            dimensionId: 's1.de2',
+                            overlayItemProps: {},
+                            populateMetadata: vi.fn(),
+                        },
+                    },
+                },
+                over: cellValueDropTarget,
+            } as unknown as LayoutDragEndEvent)
+
+            expect(hideAlert).not.toHaveBeenCalled()
+
+            vi.advanceTimersByTime(5000)
+
+            expect(hideAlert).toHaveBeenCalled()
+        } finally {
+            vi.useRealTimers()
+        }
+    })
+
+    /* The drop is a clone: without the guard this path falls through to the
+     * "dropped outside the axes" branch, which removes the chip. */
+    it('leaves a chip in its axis when it is dropped on the cell value axis', () => {
+        const { result } = renderHook(() => useOnDragEnd())
+
+        result.current({
+            active: {
+                data: {
+                    current: {
+                        dimensionId: 's1.de1',
+                        axis: 'columns',
+                        overlayItemProps: {},
+                        insertAfter: false,
+                        sortable: { index: 0 },
+                    },
+                },
+            },
+            over: cellValueDropTarget,
+        } as unknown as LayoutDragEndEvent)
+
+        expect(removeVisUiConfigLayoutDimensionFromAxis).not.toHaveBeenCalled()
+        expect(moveVisUiConfigLayoutDimension).not.toHaveBeenCalled()
+        expect(setVisUiConfigCellValue).toHaveBeenCalledWith({
+            id: 's1.de1',
+            aggregationType: 'DEFAULT',
+        })
     })
 })

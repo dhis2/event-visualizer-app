@@ -126,7 +126,7 @@ export const tLoadSavedVisualization = createAsyncThunk<
 )
 
 export const tUpdateCurrentVisFromVisUiConfig =
-    (withCustomValue?: boolean) =>
+    () =>
     (
         dispatch: AppDispatch,
         getState: () => RootState,
@@ -145,7 +145,6 @@ export const tUpdateCurrentVisFromVisUiConfig =
                     previousCurrentVis: currentVis,
                     visUiConfig,
                     metadataStore: extra.metadataStore,
-                    withCustomValue,
                 })
             )
         )

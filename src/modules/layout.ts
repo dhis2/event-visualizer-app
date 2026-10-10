@@ -178,6 +178,29 @@ export const resolveLayoutContext = (
     }
 }
 
+/* The same context for the cell value, which sits outside the layout. Unlike
+ * the layout's ids, the cell value's metadata is not guaranteed to be in the
+ * store — it can name a dimension of a program the user has since navigated
+ * away from — so a miss yields an empty context rather than throwing. */
+export const resolveCellValueContext = (
+    cellValueId: string | undefined,
+    metadataStore: MetadataStore
+): LayoutContext => {
+    const dim = cellValueId
+        ? metadataStore.getDimensionMetadataItem(cellValueId)
+        : undefined
+
+    if (!dim) {
+        return { programIds: [], programStageIds: [], tetId: null }
+    }
+
+    return {
+        programIds: dim.programId ? [dim.programId] : [],
+        programStageIds: dim.programStageId ? [dim.programStageId] : [],
+        tetId: resolveDimensionTetId(dim, metadataStore),
+    }
+}
+
 type LayoutConversionResult = {
     convertedLayout: Layout
     invalidDimensionIds: string[]

@@ -72,7 +72,7 @@ export const createDimensionBaseQuery = ({
     resource,
     params: {
         pageSize: 10,
-        fields: `id,${nameProp}~rename(name),dimensionType,valueType,optionSet`,
+        fields: `id,${nameProp}~rename(name),dimensionType,valueType,optionSet,aggregationType`,
         filter: `dimensionType:eq:${dimensionType}`,
         order: `${nameProp}:asc`,
         paging: true,

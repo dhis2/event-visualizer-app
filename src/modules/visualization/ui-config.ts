@@ -72,11 +72,14 @@ export const getVisualizationUiConfig = (
         conditionsByDimension: getConditionsFromVisualization(vis, outputType),
         repetitionsByDimension: getRepetitionsFromVisualisation(vis),
         options: { ...baseOptions, ...extractOptions(vis) },
-        ...(vis.value?.id && {
-            customValue: {
-                id: vis.value.id,
-                aggregationType: vis.aggregationType || 'DEFAULT',
-            },
-        }),
+        /* Always emit the key, even when absent: the result is merged into the
+         * existing visUiConfig, so omitting it would carry the previously
+         * loaded visualization's cell value into this one. */
+        cellValue: vis.value?.id
+            ? {
+                  id: vis.value.id,
+                  aggregationType: vis.aggregationType || 'DEFAULT',
+              }
+            : undefined,
     }
 }

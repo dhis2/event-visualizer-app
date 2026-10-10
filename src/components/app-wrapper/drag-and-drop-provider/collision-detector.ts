@@ -4,7 +4,11 @@ import type {
     CollisionDetection,
     DroppableContainer,
 } from '@dnd-kit/core'
-import { getActiveDragData, isAxisContainerData } from './dnd-data'
+import {
+    getActiveDragData,
+    isAxisContainerData,
+    isCellValueDroppableData,
+} from './dnd-data'
 import type { AxisContainerDroppableData } from './types'
 
 /**
@@ -143,16 +147,18 @@ export const collisionDetector: CollisionDetection = ({
 }) => {
     const collisions: Collision[] = []
 
-    /*
-     * A layout-blocked drag — a sidebar dimension that cannot go in the
-     * current layout — has no valid drop target anywhere. */
-    if (getActiveDragData(active)?.isLayoutBlocked) {
-        return collisions
-    }
-
     if (!pointerCoordinates) {
         return collisions
     }
+
+    /* A layout-blocked drag — a sidebar dimension that cannot go in the current
+     * layout — has no valid target among the layout axes. The cell value axis
+     * judges a dimension on its own terms, so it stays reachable. */
+    const candidateContainers = getActiveDragData(active)?.isLayoutBlocked
+        ? droppableContainers.filter((container) =>
+              isCellValueDroppableData(container.data.current)
+          )
+        : droppableContainers
 
     // Build a small rect centered on the pointer so collision detection
     // stays aligned with the cursor-snapped DragOverlay.
@@ -171,7 +177,7 @@ export const collisionDetector: CollisionDetection = ({
     let maxAxisIntersectionRatio = 0
     let maxItemIntersectionRatio = 0
 
-    for (const droppableContainer of droppableContainers) {
+    for (const droppableContainer of candidateContainers) {
         const intersectionRatio = getIntersectionRatio(
             droppableContainer.rect.current,
             draggedItemRect
@@ -209,7 +215,7 @@ export const collisionDetector: CollisionDetection = ({
         const lineEndMatch = computeLineEndMatch({
             draggedItemRect,
             axis: axisData.axis,
-            droppableContainers,
+            droppableContainers: candidateContainers,
         })
         if (lineEndMatch) {
             collisions.push(lineEndMatch)

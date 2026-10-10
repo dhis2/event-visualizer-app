@@ -21,7 +21,7 @@ export type ConditionsObject = {
     legendSet?: string
 }
 
-export type CustomValueObject = {
+export type CellValueObject = {
     id: string
     aggregationType: AggregationType
 }
@@ -47,7 +47,7 @@ export interface VisUiConfigState {
     layout: Layout
     itemsByDimension: Record<string, string[]>
     conditionsByDimension: Record<string, ConditionsObject | undefined>
-    customValue?: CustomValueObject
+    cellValue?: CellValueObject
     repetitionsByDimension: Record<string, RepetitionsObject | undefined>
     options: EventVisualizationOptions
 }
@@ -156,6 +156,12 @@ export const visUiConfigSlice = createSlice({
             action: PayloadAction<VisualizationType>
         ) => {
             state.visualizationType = action.payload
+            /* A line list has no cell value, and it is reset rather than
+             * remembered: coming back to a pivot table starts from Count.
+             * Done here so no dispatcher can forget it. */
+            if (action.payload === 'LINE_LIST') {
+                delete state.cellValue
+            }
         },
         setVisUiConfigLayout: (
             state,
@@ -218,11 +224,14 @@ export const visUiConfigSlice = createSlice({
                 [dimensionId]: legendSet ? { legendSet } : undefined,
             }
         },
-        setVisUiConfigCustomValue: (
+        setVisUiConfigCellValue: (
             state,
-            action: PayloadAction<CustomValueObject>
+            action: PayloadAction<CellValueObject>
         ) => {
-            state.customValue = action.payload
+            state.cellValue = action.payload
+        },
+        clearVisUiConfigCellValue: (state) => {
+            delete state.cellValue
         },
         setVisUiConfigRepetitionsByDimension: (
             state,
@@ -383,7 +392,7 @@ export const visUiConfigSlice = createSlice({
             state.itemsByDimension[dimensionId] || EMPTY_STRING_ARRAY,
         getVisUiConfigConditionsByDimension: (state, dimensionId: string) =>
             state.conditionsByDimension[dimensionId] || EMPTY_CONDITIONS_OBJECT,
-        getVisUiConfigCustomValue: (state) => state.customValue,
+        getVisUiConfigCellValue: (state) => state.cellValue,
         getVisUiConfigRepetitionsByDimension: (state, dimensionId: string) =>
             state.repetitionsByDimension[dimensionId] ||
             DEFAULT_REPETITIONS_OBJECT,
@@ -415,7 +424,8 @@ export const {
     setVisUiConfigItemsByDimension,
     setVisUiConfigConditionsByDimension,
     setVisUiConfigGroupingByDimension,
-    setVisUiConfigCustomValue,
+    setVisUiConfigCellValue,
+    clearVisUiConfigCellValue,
     setVisUiConfigRepetitionsByDimension,
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
@@ -431,7 +441,7 @@ export const {
     getVisUiConfigOutputType,
     getVisUiConfigItemsByDimension,
     getVisUiConfigConditionsByDimension,
-    getVisUiConfigCustomValue,
+    getVisUiConfigCellValue,
     getVisUiConfigRepetitionsByDimension,
     getVisUiConfigLayoutAllDimensionIds,
     getVisUiConfigLayoutIsEmpty,

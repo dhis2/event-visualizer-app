@@ -56,6 +56,7 @@ const axisChipData = {
     axis: 'columns',
     insertAfter: false,
     isLayoutBlocked: false,
+    canBeCellValue: true,
     sortable: { containerId: 'columns', index: 0, items: [] },
     overlayItemProps,
 } as unknown as DraggedItemEventData
@@ -66,6 +67,7 @@ const sidebarItemData = (
     ({
         dimensionId,
         isLayoutBlocked: false,
+        canBeCellValue: true,
         populateMetadata: () => undefined,
         overlayItemProps,
     }) as unknown as DraggedItemEventData
@@ -77,9 +79,15 @@ const dragStart = (data: DraggedItemEventData) =>
         } as unknown as DragStartEvent)
     )
 
-const dragOver = (overData: object | null) =>
+/* dnd-kit always supplies `active` on drag-over; the overlay reads it to tell
+ * whether the drop would be accepted. */
+const dragOver = (
+    overData: object | null,
+    draggedData: DraggedItemEventData = axisChipData
+) =>
     act(() =>
         dndListeners?.onDragOver?.({
+            active: { data: { current: draggedData } },
             over: overData ? { data: { current: overData } } : null,
         } as unknown as DragOverEvent)
     )
@@ -90,6 +98,8 @@ const dragEnd = () =>
 const anAxisDropTarget = { axis: 'rows', isAxisContainer: true }
 
 const queryRemoveIndicator = () => screen.queryByTestId('chip-remove-indicator')
+const queryAddIndicator = () => screen.queryByTestId('chip-add-indicator')
+const aCellValueDropTarget = { isCellValueDroppable: true }
 
 describe('DimensionDragOverlay', () => {
     it('renders nothing until a drag starts', () => {
@@ -171,5 +181,31 @@ describe('DimensionDragOverlay', () => {
         expect(
             screen.queryByTestId('chip-multi-select-count')
         ).not.toBeInTheDocument()
+    })
+
+    it('offers to add a numeric dimension to the cell value axis', () => {
+        renderWithReduxStoreProvider(<DimensionDragOverlay />, setupTestStore())
+
+        dragStart(axisChipData)
+        dragOver(aCellValueDropTarget)
+
+        expect(queryAddIndicator()).toBeInTheDocument()
+        /* Dropping there is a clone, so it must not read as a removal. */
+        expect(queryRemoveIndicator()).not.toBeInTheDocument()
+    })
+
+    it('does not offer a dimension the cell value axis would reject', () => {
+        const nonNumeric = {
+            ...axisChipData,
+            canBeCellValue: false,
+        } as DraggedItemEventData
+
+        renderWithReduxStoreProvider(<DimensionDragOverlay />, setupTestStore())
+
+        dragStart(nonNumeric)
+        dragOver(aCellValueDropTarget, nonNumeric)
+
+        expect(queryAddIndicator()).not.toBeInTheDocument()
+        expect(queryRemoveIndicator()).not.toBeInTheDocument()
     })
 })

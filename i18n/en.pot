@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
-"PO-Revision-Date: 2026-10-01T13:14:58.129Z\n"
+"POT-Creation-Date: 2026-10-09T13:32:22.221Z\n"
+"PO-Revision-Date: 2026-10-09T13:32:22.222Z\n"
 
 msgid ""
 "Some dimensions were not added because they cannot be used in a "
@@ -22,14 +22,20 @@ msgstr ""
 "Some dimensions were not added because they cannot be combined with {{- "
 "layoutTetName}} dimensions: {{list}}."
 
-msgid "{{- name}} was not added because it is already used as the custom value."
-msgstr "{{- name}} was not added because it is already used as the custom value."
+msgid "Only numeric data items can be used as the cell value."
+msgstr "Only numeric data items can be used as the cell value."
 
 msgid "Changes not applied"
 msgstr "Changes not applied"
 
 msgid "Retry"
 msgstr "Retry"
+
+msgid "Use as value (without filters)"
+msgstr "Use as value (without filters)"
+
+msgid "Use as value"
+msgstr "Use as value"
 
 msgid "Add to {{- axisName}}"
 msgstr "Add to {{- axisName}}"
@@ -232,27 +238,6 @@ msgstr "Program stage: {{- stageName}}"
 msgid "Grouping: {{- groupingName}}"
 msgstr "Grouping: {{- groupingName}}"
 
-msgid "Using: {{- itemName}} ({{- aggregationType}})"
-msgstr "Using: {{- itemName}} ({{- aggregationType}})"
-
-msgid "Custom value is from a different stage than dimensions in the layout"
-msgstr "Custom value is from a different stage than dimensions in the layout"
-
-msgid "Update custom value"
-msgstr "Update custom value"
-
-msgid "Create custom value table"
-msgstr "Create custom value table"
-
-msgid "Switch to custom value table"
-msgstr "Switch to custom value table"
-
-msgid "Update custom value table"
-msgstr "Update custom value table"
-
-msgid "Enrollment"
-msgstr "Enrollment"
-
 msgid "Create {{- enrollmentLabel}} list"
 msgstr "Create {{- enrollmentLabel}} list"
 
@@ -271,9 +256,6 @@ msgstr "Update {{- enrollmentLabel}} list"
 msgid "Update {{- enrollmentLabel}} table"
 msgstr "Update {{- enrollmentLabel}} table"
 
-msgid "Event"
-msgstr "Event"
-
 msgid "Create {{- eventLabel}} list"
 msgstr "Create {{- eventLabel}} list"
 
@@ -291,9 +273,6 @@ msgstr "Update {{- eventLabel}} list"
 
 msgid "Update {{- eventLabel}} table"
 msgstr "Update {{- eventLabel}} table"
-
-msgid "tracked entity"
-msgstr "tracked entity"
 
 msgid "Create {{- trackedEntityTypeName}} list"
 msgstr "Create {{- trackedEntityTypeName}} list"
@@ -343,60 +322,23 @@ msgstr "Not valid with program indicators"
 msgid "Nothing selected. Add items to the layout to get started."
 msgstr "Nothing selected. Add items to the layout to get started."
 
-msgid "Configure custom value"
-msgstr "Configure custom value"
+msgid "One row for each {{- outputTypeLabel}}"
+msgstr "One row for each {{- outputTypeLabel}}"
 
-msgid "Choose the numeric data item to show in table cells."
-msgstr "Choose the numeric data item to show in table cells."
+msgid "Use item default ({{- aggregationType}})"
+msgstr "Use item default ({{- aggregationType}})"
 
-msgid "Search data items"
-msgstr "Search data items"
+msgid "Value"
+msgstr "Value"
 
-msgid "Loading data"
-msgstr "Loading data"
+msgid "Reset to count"
+msgstr "Reset to count"
 
-msgid "Error loading data"
-msgstr "Error loading data"
+msgid "Cells show a count. Drag a numeric data item here to show its value."
+msgstr "Cells show a count. Drag a numeric data item here to show its value."
 
-msgid "Failed to load data items"
-msgstr "Failed to load data items"
-
-msgid "No numeric data items in stage \"{{- stageName}}\""
-msgstr "No numeric data items in stage \"{{- stageName}}\""
-
-msgid "No numeric data items in this program"
-msgstr "No numeric data items in this program"
-
-msgid "This stage does not have any numeric data items available."
-msgstr "This stage does not have any numeric data items available."
-
-msgid "This program does not have any numeric data items available."
-msgstr "This program does not have any numeric data items available."
-
-msgid "No data items match \"{{- searchTerm}}\""
-msgstr "No data items match \"{{- searchTerm}}\""
-
-msgid "Aggregation"
-msgstr "Aggregation"
-
-msgid "Cancel"
-msgstr "Cancel"
-
-msgid "Update"
-msgstr "Update"
-
-msgid "Select a value before updating"
-msgstr "Select a value before updating"
-
-msgid ""
-"\"{{- itemName}}\" is from a different stage than the dimensions in the "
-"layout. Choose another item."
-msgstr ""
-"\"{{- itemName}}\" is from a different stage than the dimensions in the "
-"layout. Choose another item."
-
-msgid "Showing data items from \"{{- stageName}}\", the stage used in the layout"
-msgstr "Showing data items from \"{{- stageName}}\", the stage used in the layout"
+msgid "Count"
+msgstr "Count"
 
 msgid "Collapse layout"
 msgstr "Collapse layout"
@@ -418,6 +360,9 @@ msgstr "Convert to {{- visType}}"
 
 msgid "{{- names}} will be removed. Are you sure?"
 msgstr "{{- names}} will be removed. Are you sure?"
+
+msgid "Cancel"
+msgstr "Cancel"
 
 msgid "Convert"
 msgstr "Convert"
@@ -636,6 +581,9 @@ msgstr "Show without filters"
 msgid "Create a {{- visType}} before updating"
 msgstr "Create a {{- visType}} before updating"
 
+msgid "Update"
+msgstr "Update"
+
 msgid "Metadata"
 msgstr "Metadata"
 
@@ -653,6 +601,9 @@ msgstr "Program indicators"
 
 msgid "{{- name}} registration"
 msgstr "{{- name}} registration"
+
+msgid "Event"
+msgstr "Event"
 
 msgid "Choose a data source"
 msgstr "Choose a data source"
@@ -890,9 +841,6 @@ msgstr "First value (average in org unit hierarchy)"
 msgid "First value in period (first value in org unit hierarchy)"
 msgstr "First value in period (first value in org unit hierarchy)"
 
-msgid "Count"
-msgstr "Count"
-
 msgid "Standard deviation"
 msgstr "Standard deviation"
 
@@ -910,6 +858,12 @@ msgstr "Min value (sum in org unit hierarchy)"
 
 msgid "Max value (sum in org unit hierarchy)"
 msgstr "Max value (sum in org unit hierarchy)"
+
+msgid "Enrollment"
+msgstr "Enrollment"
+
+msgid "tracked entity"
+msgstr "tracked entity"
 
 msgid "equal to (=)"
 msgstr "equal to (=)"
@@ -977,9 +931,6 @@ msgid ""
 msgstr ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
-
-msgid "Already used as custom value."
-msgstr "Already used as custom value."
 
 msgid "Cannot be used in a {{visType}}."
 msgstr "Cannot be used in a {{visType}}."

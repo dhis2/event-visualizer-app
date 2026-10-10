@@ -13,7 +13,7 @@ import { getAnalyticsEndpoint } from './query-tools-common'
 import {
     getAdaptedVisualization,
     getBaseRequestIdentity,
-    getCustomValueRequestParams,
+    getCellValueRequestParams,
     getLayoutDimensionMetadataNames,
 } from './query-tools-pivot-table'
 import { useInFlightDedup } from './use-in-flight-dedup'
@@ -62,12 +62,11 @@ export const fetchAnalyticsDataForPT = async ({
         req = req.withLimit(visualization.topLimit)
     }
 
-    // add custom value and aggregationType
-    const customValueParams = getCustomValueRequestParams(visualization)
-    if (customValueParams) {
+    const cellValueParams = getCellValueRequestParams(visualization)
+    if (cellValueParams) {
         req = req
-            .withValue(customValueParams.value)
-            .withAggregationType(customValueParams.aggregationType)
+            .withValue(cellValueParams.value)
+            .withAggregationType(cellValueParams.aggregationType)
     }
 
     if (relativePeriodDate) {

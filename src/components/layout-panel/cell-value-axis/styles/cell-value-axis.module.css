@@ -1,0 +1,73 @@
+.axis {
+    position: relative;
+    grid-area: value;
+    border-block-start: 1px solid var(--colors-grey300);
+    border-inline-start: 1px solid var(--colors-grey300);
+}
+
+/* The blocked-drag overlay covers the whole axes container. A dimension barred
+ * from the layout may still be valid as a cell value, so the axis rises above
+ * the overlay to stay visible and droppable. When it cannot take the drag
+ * either, it stays under the overlay and is greyed out with the other axes. */
+.aboveLayoutBlockedOverlay {
+    z-index: 4;
+}
+
+.content {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacers-dp4);
+    min-block-size: 32px;
+    /* No inline padding: the content starts at the container's padding edge, so
+     * the label below "VALUE" lines up with it exactly as chips do. */
+    padding-block: 4px;
+    color: var(--colors-grey700);
+    font-size: 13px;
+    line-height: 16px;
+}
+
+/* Long data item names wrap instead of truncating, so the whole name stays
+ * readable in a narrow axis — unlike a chip, which ellipsises on one line. */
+.text {
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.name {
+    color: var(--colors-grey900);
+}
+
+.suffix {
+    margin-inline-start: var(--spacers-dp4);
+    color: var(--colors-grey600);
+}
+
+.separator {
+    color: var(--colors-grey600);
+}
+
+.reset {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    border: none;
+    border-radius: 3px;
+    background-color: transparent;
+    color: var(--colors-grey600);
+    cursor: pointer;
+}
+
+.reset:hover {
+    background-color: var(--colors-grey200);
+}
+
+.reset:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+
+.reset:focus:not(:focus-visible) {
+    outline: none;
+}

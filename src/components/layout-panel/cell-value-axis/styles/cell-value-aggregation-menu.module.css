@@ -1,0 +1,30 @@
+/* Reads as part of the label rather than a control: a dotted underline hints it
+ * can be changed, and hovering firms it up. */
+.trigger {
+    padding-block: 2px;
+    padding-inline: 4px;
+    border: none;
+    border-radius: 3px;
+    background-color: transparent;
+    color: var(--colors-grey600);
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 400;
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    cursor: pointer;
+}
+
+.trigger:hover {
+    background-color: var(--colors-grey200);
+    text-decoration-style: solid;
+}
+
+.trigger:focus {
+    outline: 3px solid var(--theme-focus);
+    outline-offset: -3px;
+}
+
+.trigger:focus:not(:focus-visible) {
+    outline: none;
+}

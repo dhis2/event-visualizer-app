@@ -1,4 +1,5 @@
 import { DEFAULT_OPTIONS } from '@constants/options'
+import { resolveAggregationType } from '@modules/dimension/aggregation-type'
 import {
     buildAxis,
     collectProgramDimensions,
@@ -58,67 +59,43 @@ export const toCurrentVis = (
     return result as CurrentVisualization
 }
 
-const shouldPopulateCustomValueFields = (
-    currentVis: CurrentVisState,
+const resolveCellValueFields = (
     visUiConfig: VisUiConfigState,
-    withCustomValue?: boolean
-): boolean => {
-    // Only EVENT output can carry a custom value
-    if (visUiConfig.outputType !== 'EVENT') {
-        return false
-    }
-    if (withCustomValue !== undefined) {
-        return withCustomValue // explicit request: add or strip
-    }
-    return Boolean(currentVis.value?.id) // preserve what the current vis shows
-}
-
-const resolveCustomValueFields = (
-    currentVis: CurrentVisState,
-    visUiConfig: VisUiConfigState,
-    withCustomValue?: boolean
+    metadataStore: MetadataStore
 ) => {
-    // Always include the `value` key: setCurrentVis merges into the previous
-    // currentVis, so omitting it would leave a stale value behind.
-    if (
-        !shouldPopulateCustomValueFields(
-            currentVis,
-            visUiConfig,
-            withCustomValue
-        )
-    ) {
+    /* Always include the `value` key: setCurrentVis merges into the previous
+     * currentVis, so omitting it would leave a stale value behind. Only a pivot
+     * table shows aggregated cells, so only it can carry a cell value. */
+    const { cellValue, visualizationType } = visUiConfig
+
+    if (visualizationType !== 'PIVOT_TABLE' || !cellValue) {
         return { value: undefined, aggregationType: undefined }
     }
 
-    const { customValue } = visUiConfig
-
-    if (!customValue) {
-        throw new Error(
-            'shouldPopulateCustomValueFields is true but visUiConfig.customValue is missing'
-        )
-    }
+    /* `DEFAULT` lives in visUiConfig so the menu can distinguish an untouched
+     * cell value from an explicit choice. The analytics request needs a real
+     * type, so it is resolved here, at the boundary. */
     return {
-        value: { id: customValue.id },
-        aggregationType: customValue.aggregationType,
+        value: { id: cellValue.id },
+        aggregationType: resolveAggregationType(
+            cellValue.aggregationType,
+            metadataStore.getDimensionMetadataItem(cellValue.id) ?? {}
+        ),
     }
 }
 
 /* Rebuild a currentVis fresh from visUiConfig so stale currentVis fields can't
  * leak through. Carries over only id and sorting from the previous currentVis.
- * The custom value fields go after the options spread so the value's own
- * aggregation type wins over the options default. `withCustomValue` overrides
- * whether the result carries the custom value: true forces it on, false strips
- * it; omit it to preserve the previous currentVis. */
+ * The value fields go after the options spread so the value's own aggregation
+ * type wins over the options default. */
 export const buildCurrentVisFromVisUiConfig = ({
     previousCurrentVis,
     visUiConfig,
     metadataStore,
-    withCustomValue,
 }: {
     previousCurrentVis: CurrentVisState
     visUiConfig: VisUiConfigState
     metadataStore: MetadataStore
-    withCustomValue?: boolean
 }): CurrentVisualization => ({
     id: isCurrentVisualizationPersisted(previousCurrentVis)
         ? previousCurrentVis.id
@@ -136,9 +113,5 @@ export const buildCurrentVisFromVisUiConfig = ({
     // There is no generated subtitle, so an empty one is a hidden one
     hideSubtitle: !isPopulatedString(visUiConfig.options.subtitle),
     ...resolveTeiFields(visUiConfig, metadataStore),
-    ...resolveCustomValueFields(
-        previousCurrentVis,
-        visUiConfig,
-        withCustomValue
-    ),
+    ...resolveCellValueFields(visUiConfig, metadataStore),
 })

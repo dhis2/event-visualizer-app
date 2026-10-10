@@ -91,7 +91,7 @@ type SavedVisualizationFieldOverrides = {
     }
     metaData: MetadataInputMap
     type: VisualizationType
-    /* The API returns the custom value's name and aggregation type alongside
+    /* The API returns the cell value's name and aggregation type alongside
      * its id; the app only ever writes the id (the aggregation type it applies
      * is the top-level one). The name does not need to be propagated to
      * currentVis on update. */
