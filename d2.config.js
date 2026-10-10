@@ -1,10 +1,10 @@
 /** @type {import('@dhis2/cli-app-scripts').D2Config} */
 const config = {
     type: 'app',
-    name: 'event-visualizer',
+    name: 'individual-data-visualizer',
     // id: TBD,
-    title: 'Event Visualizer',
-    coreApp: true,
+    title: 'Individual Data Visualizer',
+    coreApp: false,
     minDHIS2Version: '2.43',
     direction: 'auto',
     pwa: {

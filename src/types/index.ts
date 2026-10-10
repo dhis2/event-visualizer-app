@@ -53,6 +53,7 @@ export type AppCachedData = TransformedAppCachedData
 export type CurrentUser = TransformedAppCachedData['currentUser']
 
 export type * from './axis'
+export type * from './dashboard-plugin'
 export type * from './data-source'
 export type * from './dimension'
 export type * from './layout'
