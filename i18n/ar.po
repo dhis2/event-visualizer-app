@@ -4,15 +4,15 @@
 # Mozafar Haider, 2026
 # Nadiia <semchuk@aph.org.ua>, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
-# Philip Larsen Donnelly, 2026
 # Hamza <7amza.it@gmail.com>, 2026
+# Philip Larsen Donnelly, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-23T14:32:18.188Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Hamza <7amza.it@gmail.com>, 2026\n"
+"Last-Translator: Philip Larsen Donnelly, 2026\n"
 "Language-Team: Arabic (https://app.transifex.com/hisp-uio/teams/100509/ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -240,12 +240,6 @@ msgstr ""
 
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
-
-msgid "Levels"
-msgstr "المستويات"
-
-msgid "Groups"
-msgstr "المجموعات"
 
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr ""
@@ -599,6 +593,12 @@ msgstr "تخطي التقريب"
 msgid "Add a subtitle"
 msgstr "إضافة عنوان فرعي"
 
+msgid "Auto generated"
+msgstr "توليد تلقائي"
+
+msgid "Custom"
+msgstr "مخصص"
+
 msgid "Add a title"
 msgstr "إضافة عنوان"
 
@@ -912,9 +912,6 @@ msgstr ""
 msgid "Max value (sum in org unit hierarchy)"
 msgstr ""
 
-msgid "Custom"
-msgstr "مخصص"
-
 msgid "equal to (=)"
 msgstr ""
 
@@ -972,6 +969,9 @@ msgstr "لا"
 msgid "Not answered"
 msgstr ""
 
+msgid "No value"
+msgstr "لا توجد قيمة"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -1024,6 +1024,12 @@ msgstr "حالة التسجيل"
 
 msgid "Registration org. unit"
 msgstr ""
+
+msgid "Levels"
+msgstr "المستويات"
+
+msgid "Groups"
+msgstr "المجموعات"
 
 msgid "Enrollment date"
 msgstr "تاريخ التسجيل"
@@ -1278,6 +1284,18 @@ msgstr "مكتمل"
 
 msgid "Scheduled"
 msgstr "تمت جدولته"
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr "التسجيلات"
+
+msgid "Events"
+msgstr "الأحداث"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
