@@ -6,20 +6,20 @@
 # Sheila André <sandre@saudigitus.org>, 2026
 # David Júnior <davidjr.mondlane@gmail.com>, 2026
 # David Mondlane, 2026
+# Helton Dias, 2026
+# Shelsea Chumaio, 2026
+# Fernando Jorge Bade, 2026
+# Ge Joao <gsimango@saudigitus.org>, 2026
 # Viktor Varland <viktor@dhis2.org>, 2026
 # Gabriela Rodriguez <grodriguezcoronado@gmail.com>, 2026
 # Philip Larsen Donnelly, 2026
-# Helton Dias, 2026
-# Ge Joao <gsimango@saudigitus.org>, 2026
-# Shelsea Chumaio, 2026
-# Fernando Jorge Bade, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-17T12:36:05.389Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
-"Last-Translator: Fernando Jorge Bade, 2026\n"
+"Last-Translator: Philip Larsen Donnelly, 2026\n"
 "Language-Team: Portuguese (https://app.transifex.com/hisp-uio/teams/100509/pt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -39,6 +39,9 @@ msgstr ""
 
 msgid ""
 "{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Changes not applied"
 msgstr ""
 
 msgid "Retry"
@@ -246,12 +249,6 @@ msgstr "Estágio do programa: {{- stageName}}"
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
 
-msgid "Levels"
-msgstr "Níveis"
-
-msgid "Groups"
-msgstr "Grupos"
-
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr ""
 
@@ -352,6 +349,9 @@ msgid "Not valid with Completed on"
 msgstr ""
 
 msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid without a tracked entity type"
 msgstr ""
 
 msgid "Not valid with program indicators"
@@ -602,6 +602,12 @@ msgstr "Não arrendondar"
 
 msgid "Add a subtitle"
 msgstr "Adicionar subtítulo"
+
+msgid "Auto generated"
+msgstr "Gerado automaticamente"
+
+msgid "Custom"
+msgstr "Customizar "
 
 msgid "Add a title"
 msgstr "Adicionar um título"
@@ -918,9 +924,6 @@ msgstr ""
 msgid "Max value (sum in org unit hierarchy)"
 msgstr ""
 
-msgid "Custom"
-msgstr "Customizar "
-
 msgid "equal to (=)"
 msgstr "igual à (=)"
 
@@ -978,6 +981,9 @@ msgstr "Não"
 msgid "Not answered"
 msgstr "Não respondido"
 
+msgid "No value"
+msgstr "Sem Valor"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -1030,6 +1036,12 @@ msgstr "Estado da inscrição"
 
 msgid "Registration org. unit"
 msgstr "Unidade organizacional de registo"
+
+msgid "Levels"
+msgstr "Níveis"
+
+msgid "Groups"
+msgstr "Grupos"
 
 msgid "Enrollment date"
 msgstr "Data de inscrição"
@@ -1284,6 +1296,18 @@ msgstr "Concluído"
 
 msgid "Scheduled"
 msgstr "Agendado"
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr "Inscrições"
+
+msgid "Events"
+msgstr "Eventos"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

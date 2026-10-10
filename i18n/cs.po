@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-17T12:36:05.389Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Jiří Podhorecký <jirka.p@volny.cz>, 2026\n"
 "Language-Team: Czech (https://app.transifex.com/hisp-uio/teams/100509/cs/)\n"
@@ -27,6 +27,9 @@ msgstr ""
 
 msgid ""
 "{{- name}} was not added because it is already used as the custom value."
+msgstr ""
+
+msgid "Changes not applied"
 msgstr ""
 
 msgid "Retry"
@@ -233,12 +236,6 @@ msgstr "Fáze programu: {{- stageName}}"
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
 
-msgid "Levels"
-msgstr "Úrovně"
-
-msgid "Groups"
-msgstr "Skupiny"
-
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr ""
 
@@ -339,6 +336,9 @@ msgid "Not valid with Completed on"
 msgstr ""
 
 msgid "Not valid with multiple tracked entity types"
+msgstr ""
+
+msgid "Not valid without a tracked entity type"
 msgstr ""
 
 msgid "Not valid with program indicators"
@@ -589,6 +589,12 @@ msgstr "Přeskočit zaokrouhlování"
 
 msgid "Add a subtitle"
 msgstr "Přidat podtitul"
+
+msgid "Auto generated"
+msgstr "Automaticky generováno"
+
+msgid "Custom"
+msgstr "Vlastní"
 
 msgid "Add a title"
 msgstr "Přidat název"
@@ -906,9 +912,6 @@ msgstr "Minimální hodnota (součet v hierarchii organizačních jednotek)"
 msgid "Max value (sum in org unit hierarchy)"
 msgstr "Maximální hodnota (součet v hierarchii organizačních jednotek)"
 
-msgid "Custom"
-msgstr "Vlastní"
-
 msgid "equal to (=)"
 msgstr "rovno (=)"
 
@@ -966,6 +969,9 @@ msgstr "Ne"
 msgid "Not answered"
 msgstr "Nezodpovězeno"
 
+msgid "No value"
+msgstr "Žádná hodnota"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -1019,6 +1025,12 @@ msgstr "Stav zápisu"
 msgid "Registration org. unit"
 msgstr "Registrace organizační jednotky"
 
+msgid "Levels"
+msgstr "Úrovně"
+
+msgid "Groups"
+msgstr "Skupiny"
+
 msgid "Enrollment date"
 msgstr "Datum zápisu"
 
@@ -1031,12 +1043,14 @@ msgid ""
 msgstr ""
 
 msgid "Visualization not found"
-msgstr ""
+msgstr "Vizualizace nenalezena"
 
 msgid ""
 "The visualization you are trying to view could not be found, the ID could be"
 " incorrect or it could have been deleted."
 msgstr ""
+"Vizualizaci, kterou se pokoušíte zobrazit, nelze najít, ID může být "
+"nesprávné nebo může být odstraněno."
 
 msgid ""
 "Your account cannot access any items in one or more dimensions. Contact a "
@@ -1270,6 +1284,18 @@ msgstr "Dokončeno"
 
 msgid "Scheduled"
 msgstr "Naplánováno"
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr "Zápisy"
+
+msgid "Events"
+msgstr "Události"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "

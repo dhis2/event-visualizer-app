@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2026-09-23T14:32:18.188Z\n"
+"POT-Creation-Date: 2026-10-01T13:14:58.128Z\n"
 "PO-Revision-Date: 2026-07-23 07:34+0000\n"
 "Last-Translator: Khurshid Ibatov <x.ibatov@dtsj.uz>, 2026\n"
 "Language-Team: Uzbek (Cyrillic) (https://app.transifex.com/hisp-uio/teams/100509/uz@Cyrl/)\n"
@@ -235,12 +235,6 @@ msgstr ""
 
 msgid "Grouping: {{- groupingName}}"
 msgstr ""
-
-msgid "Levels"
-msgstr "Босқичлар/Қаватлар"
-
-msgid "Groups"
-msgstr "Гуруҳлар"
 
 msgid "Using: {{- itemName}} ({{- aggregationType}})"
 msgstr ""
@@ -594,6 +588,12 @@ msgstr "Соддалаштириш ўтказиб юборилсин"
 msgid "Add a subtitle"
 msgstr "Таглавҳа қўшинг"
 
+msgid "Auto generated"
+msgstr "Автоматик равишда яратилган"
+
+msgid "Custom"
+msgstr "Одатий"
+
 msgid "Add a title"
 msgstr "Сарлавҳа қўшиш"
 
@@ -908,9 +908,6 @@ msgstr "Минимал қиймат (ташкилий бўлим иерархи�
 msgid "Max value (sum in org unit hierarchy)"
 msgstr "Максимал қиймат (ташкилий бўлим иерархияси йиғиндиси)"
 
-msgid "Custom"
-msgstr "Одатий"
-
 msgid "equal to (=)"
 msgstr ""
 
@@ -968,6 +965,9 @@ msgstr "Йўқ"
 msgid "Not answered"
 msgstr ""
 
+msgid "No value"
+msgstr "Қиймат йўқ"
+
 msgid ""
 "{{- dataSourceTetName}} dimensions cannot be combined with {{- "
 "layoutTetName}} dimensions already in the layout."
@@ -1020,6 +1020,12 @@ msgstr "Рўйхатга олиш ҳолати"
 
 msgid "Registration org. unit"
 msgstr ""
+
+msgid "Levels"
+msgstr "Босқичлар/Қаватлар"
+
+msgid "Groups"
+msgstr "Гуруҳлар"
 
 msgid "Enrollment date"
 msgstr "Қайд этилган сана"
@@ -1274,6 +1280,18 @@ msgstr "Тўлдирилди"
 
 msgid "Scheduled"
 msgstr "Режа бўйича"
+
+msgid "{{- label}} count"
+msgstr ""
+
+msgid "{{- label}} list"
+msgstr ""
+
+msgid "Enrollments"
+msgstr "Рўйхатдан ўтиш"
+
+msgid "Events"
+msgstr "Ҳодиса/Тадбирлар"
 
 msgid ""
 "Track or compare changes over time. Recommend period as category. (adjust "
