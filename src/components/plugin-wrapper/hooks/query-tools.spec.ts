@@ -135,6 +135,15 @@ describe('getRequestStructure (pivot table)', () => {
         )
     })
 
+    it('changes when showHierarchy is toggled', () => {
+        const next = {
+            ...basePivotTable,
+            showHierarchy: true,
+        } as unknown as CurrentVisualization
+
+        expect(pivotTableKey(next)).not.toBe(pivotTableKey(basePivotTable))
+    })
+
     it('does not change when only a client-side option changes', () => {
         const next = {
             ...basePivotTable,
@@ -423,6 +432,28 @@ describe('getAdaptedVisualization (pivot table)', () => {
             ])
         }
     )
+
+    it('sends showHierarchy only when the option is on', () => {
+        expect(
+            getAdaptedPivotTableVisualization(basePivotTable).parameters
+                .showHierarchy
+        ).toBeUndefined()
+        expect(
+            getAdaptedPivotTableVisualization({
+                ...basePivotTable,
+                showHierarchy: true,
+            } as unknown as CurrentVisualization).parameters.showHierarchy
+        ).toBe(true)
+    })
+
+    it('never sends showHierarchy from the line-list adapter', () => {
+        expect(
+            getAdaptedLineListVisualization({
+                ...baseLineList,
+                showHierarchy: true,
+            } as unknown as CurrentVisualization).parameters.showHierarchy
+        ).toBeUndefined()
+    })
 
     it('keeps a dimension that constrains nothing, unlike the line list', () => {
         const vis = {

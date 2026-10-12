@@ -7,6 +7,10 @@ import { DndContextProvider } from '@components/app-wrapper/drag-and-drop-provid
 import { MockMetadataProvider } from '@components/app-wrapper/metadata-provider/metadata-provider'
 // eslint-disable-next-line no-restricted-imports
 import { CustomDataProvider, useDataEngine } from '@dhis2/app-runtime'
+import {
+    UserProvider,
+    type CurrentUser as CurrentUserInfo,
+} from '@dhis2/app-service-user'
 import { CssVariables } from '@dhis2/ui'
 import { useMetadataStore } from '@hooks'
 import { configureStore } from '@reduxjs/toolkit'
@@ -63,6 +67,11 @@ export type MockOptions = {
      * and its associated hooks.
      */
     queryData?: QueryData
+    /**
+     * Current user info that will be merged with the default `/api/me` fixture.
+     * In the app this comes from the app-shell via `useCurrentUserInfo`.
+     */
+    userInfo?: Partial<CurrentUserInfo>
     /**
      * Mock metadata entries that will be merged with the initial metadata store.
      * Typically not required as middleware/hooks that fetch visualization or
@@ -195,8 +204,9 @@ const ErrorBoundaryFallback = ({ error }: FallbackProps) => (
     <div data-test="mock-app-wrapper-error">{String(error)}</div>
 )
 
+const defaultUserInfo: CurrentUserInfo = meData
+
 const defaultAppCachedData = {
-    me: meData,
     organisationUnitLevels: organisationUnitLevelsData,
     organisationUnits: organisationUnitsData,
     systemSettings: systemSettingsData,
@@ -205,21 +215,28 @@ const defaultAppCachedData = {
 const MockAppWrapperCore: FC<{
     children: ReactNode | ((store: PartialOrDefaultStore) => ReactNode)
     queryData?: QueryData
+    userInfo?: MockOptions['userInfo']
     metadata?: InitialMetadataItems
     partialStore?: MockOptions['partialStore']
-}> = ({ children, queryData, metadata, partialStore }) => {
+}> = ({ children, queryData, userInfo, metadata, partialStore }) => {
     return (
         <CustomDataProvider data={{ ...defaultAppCachedData, ...queryData }}>
-            <CssVariables colors spacers theme elevations />
-            <AppCachedDataQueryProvider>
-                <MockMetadataProvider mockMetadata={metadata}>
-                    <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
-                        <MockStoreAndDndProvider partialStore={partialStore}>
-                            {children}
-                        </MockStoreAndDndProvider>
-                    </ErrorBoundary>
-                </MockMetadataProvider>
-            </AppCachedDataQueryProvider>
+            <UserProvider userInfo={{ ...defaultUserInfo, ...userInfo }}>
+                <CssVariables colors spacers theme elevations />
+                <AppCachedDataQueryProvider>
+                    <MockMetadataProvider mockMetadata={metadata}>
+                        <ErrorBoundary
+                            FallbackComponent={ErrorBoundaryFallback}
+                        >
+                            <MockStoreAndDndProvider
+                                partialStore={partialStore}
+                            >
+                                {children}
+                            </MockStoreAndDndProvider>
+                        </ErrorBoundary>
+                    </MockMetadataProvider>
+                </AppCachedDataQueryProvider>
+            </UserProvider>
         </CustomDataProvider>
     )
 }
@@ -255,12 +272,14 @@ const waitForStore = async (getStore: () => PartialOrDefaultStore | null) => {
 export const MockAppWrapper = ({
     children,
     queryData,
+    userInfo,
     metadata,
     partialStore,
 }: MockOptions & { children: ReactNode }) => {
     return (
         <MockAppWrapperCore
             queryData={queryData}
+            userInfo={userInfo}
             metadata={metadata}
             partialStore={partialStore}
         >

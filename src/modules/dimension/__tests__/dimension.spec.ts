@@ -480,30 +480,24 @@ describe('toEventVisualizationDimensionId', () => {
 describe('getCompoundDimensionId', () => {
     it('returns plain ID for PROGRAM_INDICATOR regardless of context', () => {
         expect(
-            getCompoundDimensionId(
-                {
-                    dimension: 'bcgDoses',
-                    dimensionType: 'PROGRAM_INDICATOR',
-                    items: [],
-                    program: { id: 'prog1' },
-                    programStage: { id: 'stage1' },
-                },
-                'EVENT'
-            )
+            getCompoundDimensionId({
+                dimension: 'bcgDoses',
+                dimensionType: 'PROGRAM_INDICATOR',
+                items: [],
+                program: { id: 'prog1' },
+                programStage: { id: 'stage1' },
+            })
         ).toBe('bcgDoses')
     })
 
     it('falls back to plain ID for PROGRAM_ATTRIBUTE when no trackedEntityTypeId is provided', () => {
         expect(
-            getCompoundDimensionId(
-                {
-                    dimension: 'firstName',
-                    dimensionType: 'PROGRAM_ATTRIBUTE',
-                    items: [],
-                    program: { id: 'prog1' },
-                },
-                'ENROLLMENT'
-            )
+            getCompoundDimensionId({
+                dimension: 'firstName',
+                dimensionType: 'PROGRAM_ATTRIBUTE',
+                items: [],
+                program: { id: 'prog1' },
+            })
         ).toBe('firstName')
     })
 
@@ -515,7 +509,6 @@ describe('getCompoundDimensionId', () => {
                     dimensionType: 'PROGRAM_ATTRIBUTE',
                     items: [],
                 },
-                'TRACKED_ENTITY_INSTANCE',
                 'tetA'
             )
         ).toBe('tetA.firstName')
@@ -533,7 +526,6 @@ describe('getCompoundDimensionId', () => {
                     items: [],
                     program: { id: 'prog1' },
                 },
-                'TRACKED_ENTITY_INSTANCE',
                 'tetA'
             )
         ).toBe('tetA.firstName')
@@ -548,84 +540,44 @@ describe('getCompoundDimensionId', () => {
         ]
         for (const dimId of enrollmentDims) {
             expect(
-                getCompoundDimensionId(
-                    {
-                        dimension: dimId,
-                        items: [],
-                        program: { id: 'prog1' },
-                    },
-                    'ENROLLMENT'
-                )
+                getCompoundDimensionId({
+                    dimension: dimId,
+                    items: [],
+                    program: { id: 'prog1' },
+                })
             ).toBe(`prog1.${dimId}`)
         }
     })
 
     it('prefixes enrollment-scoped dimensions with programId even when programStage is present', () => {
         expect(
-            getCompoundDimensionId(
-                {
-                    dimension: 'enrollmentDate',
-                    items: [],
-                    program: { id: 'prog1' },
-                    programStage: { id: 'stage1' },
-                },
-                'ENROLLMENT'
-            )
+            getCompoundDimensionId({
+                dimension: 'enrollmentDate',
+                items: [],
+                program: { id: 'prog1' },
+                programStage: { id: 'stage1' },
+            })
         ).toBe('prog1.enrollmentDate')
     })
 
-    it('uses stageId.dimensionId for EVENT with programStage', () => {
+    it('uses stageId.dimensionId for a stage dimension whatever the output type', () => {
         expect(
-            getCompoundDimensionId(
-                {
-                    dimension: 'weight',
-                    items: [],
-                    program: { id: 'prog1' },
-                    programStage: { id: 'stage1' },
-                },
-                'EVENT'
-            )
+            getCompoundDimensionId({
+                dimension: 'weight',
+                items: [],
+                program: { id: 'prog1' },
+                programStage: { id: 'stage1' },
+            })
         ).toBe('stage1.weight')
-    })
-
-    it('uses stageId.dimensionId for ENROLLMENT with programStage', () => {
-        expect(
-            getCompoundDimensionId(
-                {
-                    dimension: 'weight',
-                    items: [],
-                    program: { id: 'prog1' },
-                    programStage: { id: 'stage1' },
-                },
-                'ENROLLMENT'
-            )
-        ).toBe('stage1.weight')
-    })
-
-    it('uses programId.stageId.dimensionId for TRACKED_ENTITY_INSTANCE with programStage', () => {
-        expect(
-            getCompoundDimensionId(
-                {
-                    dimension: 'weight',
-                    items: [],
-                    program: { id: 'prog1' },
-                    programStage: { id: 'stage1' },
-                },
-                'TRACKED_ENTITY_INSTANCE'
-            )
-        ).toBe('prog1.stage1.weight')
     })
 
     it('uses programId.dimensionId when only program is present (no stage)', () => {
         expect(
-            getCompoundDimensionId(
-                {
-                    dimension: 'someField',
-                    items: [],
-                    program: { id: 'prog1' },
-                },
-                'EVENT'
-            )
+            getCompoundDimensionId({
+                dimension: 'someField',
+                items: [],
+                program: { id: 'prog1' },
+            })
         ).toBe('prog1.someField')
     })
 
@@ -633,7 +585,6 @@ describe('getCompoundDimensionId', () => {
         expect(
             getCompoundDimensionId(
                 { dimension: 'enrollmentOu', items: [] },
-                'TRACKED_ENTITY_INSTANCE',
                 'tet1'
             )
         ).toBe('tet1.enrollmentOu')
@@ -643,7 +594,6 @@ describe('getCompoundDimensionId', () => {
         expect(
             getCompoundDimensionId(
                 { dimension: 'lastUpdated', items: [] },
-                'TRACKED_ENTITY_INSTANCE',
                 'tet1'
             )
         ).toBe('lastUpdated')
@@ -659,14 +609,11 @@ describe('getCompoundDimensionId', () => {
         // Contextless dimensions have program/programStage stripped at the
         // boundary; the helper then naturally falls through to plain ID.
         expect(
-            getCompoundDimensionId(
-                {
-                    dimension: 'area',
-                    dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
-                    items: [],
-                },
-                'EVENT'
-            )
+            getCompoundDimensionId({
+                dimension: 'area',
+                dimensionType: 'ORGANISATION_UNIT_GROUP_SET',
+                items: [],
+            })
         ).toBe('area')
     })
 })

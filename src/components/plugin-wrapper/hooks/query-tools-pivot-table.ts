@@ -1,5 +1,6 @@
 import { getAnalyticsRequestHeaderName } from '@modules/analytics-request'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
+import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     Axis,
     CurrentVisualization,
@@ -16,7 +17,12 @@ export const getAdaptedVisualization = (
     }
     parameters: Record<string, unknown>
 } => {
-    const parameters = getRequestOptions(visualization)
+    /* showHierarchy is set here rather than in ANALYTICS_OPTIONS, which the
+     * line list shares and which must not start sending the parameter. */
+    const parameters = {
+        ...getRequestOptions(visualization),
+        ...(visualization.showHierarchy ? { showHierarchy: true } : {}),
+    }
 
     const columns = visualization.columns ?? []
     const rows = visualization.rows ?? []
@@ -51,11 +57,7 @@ export const getLayoutDimensionMetadataNames = (
 
     return dimensions.reduce<Record<string, string>>((names, dim) => {
         const name = metadataStore.getDimensionMetadataItem(
-            getCompoundDimensionId(
-                dim,
-                visualization.outputType,
-                trackedEntityTypeId
-            )
+            getCompoundDimensionId(dim, getTetId(visualization))
         )?.name
 
         if (name) {
@@ -96,6 +98,7 @@ export const getBaseRequestIdentity = (
     programIds: (visualization.programDimensions ?? []).map((p) => p.id),
     trackedEntityTypeId: visualization.trackedEntityType?.id,
     timeField: visualization.timeField,
+    showHierarchy: visualization.showHierarchy,
     sortOrder: visualization.sortOrder,
     topLimit: visualization.topLimit,
     ...getCustomValueRequestParams(visualization),

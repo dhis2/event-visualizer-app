@@ -261,15 +261,18 @@ export const resolveTeiFields = (
               }))
             : undefined
 
+    /* The backend reads a tracked entity type as marking a multi-program
+     * visualization, whatever the output type. */
+    if (outputType !== 'TRACKED_ENTITY_INSTANCE') {
+        return { trackedEntityType: undefined, attributeDimensions }
+    }
+
     const { tetId } = resolveLayoutContext(dimensionIds, metadataStore)
 
     if (!tetId) {
-        if (outputType === 'TRACKED_ENTITY_INSTANCE') {
-            throw new Error(
-                'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the layout has no dimension carrying TET context'
-            )
-        }
-        return { trackedEntityType: undefined, attributeDimensions }
+        throw new Error(
+            'Cannot resolve trackedEntityType for outputType=TRACKED_ENTITY_INSTANCE: the layout has no dimension carrying TET context'
+        )
     }
 
     const tet = metadataStore.getMetadataItemOrThrow(tetId)

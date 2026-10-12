@@ -20,3 +20,17 @@ export const getUiDimensionType = (
             return dimensionType
     }
 }
+
+const ITEM_BASED_DIMENSION_TYPES: ReadonlySet<DimensionType> = new Set([
+    'CATEGORY',
+    'CATEGORY_OPTION_GROUP_SET',
+    'ORGANISATION_UNIT_GROUP_SET',
+    'STATUS',
+    'PERIOD',
+    'ORGANISATION_UNIT',
+])
+
+/* Item-based dimensions are narrowed by selecting items; the rest by value
+ * conditions. */
+export const isItemBasedDimensionType = (dimensionType: DimensionType) =>
+    ITEM_BASED_DIMENSION_TYPES.has(dimensionType)

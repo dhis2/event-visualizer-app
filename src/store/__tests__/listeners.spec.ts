@@ -1,12 +1,20 @@
+import { getSidebarWidthFromLocalStorage } from '@components/sidebar/local-storage'
 import { getLastUsedVisualizationTypeFromLocalStorage } from '@modules/visualization/local-storage'
 import { configureStore } from '@reduxjs/toolkit'
 import { registerAppListeners } from '@store/listeners'
+import {
+    resetUiSidebarWidth,
+    setUiSidebarWidth,
+    uiSlice,
+} from '@store/ui-slice'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { listenerMiddleware } from '../middleware-listener'
 import { navigationSlice, setNavigationState } from '../navigation-slice'
 import type { NavigationState } from '../navigation-slice'
 import { tClearVisualization, tLoadSavedVisualization } from '../thunks'
 import {
+    setVisUiConfigOption,
+    setVisUiConfigOutputType,
     setVisUiConfigVisualizationType,
     visUiConfigSlice,
 } from '../vis-ui-config-slice'
@@ -82,23 +90,92 @@ describe('navigationSlice listener', () => {
 })
 
 describe('visUiConfig visualization type listener', () => {
+    const createVisUiConfigStore = () =>
+        configureStore({
+            reducer: { visUiConfig: visUiConfigSlice.reducer },
+            middleware: (getDefaultMiddleware) =>
+                getDefaultMiddleware().prepend(listenerMiddleware.middleware),
+        })
+
     beforeEach(() => {
         listenerMiddleware.clearListeners()
         registerAppListeners()
     })
 
     it('stores the chosen visualization type as the last used one', async () => {
-        const store = configureStore({
-            reducer: { visUiConfig: visUiConfigSlice.reducer },
-            middleware: (getDefaultMiddleware) =>
-                getDefaultMiddleware().prepend(listenerMiddleware.middleware),
-        })
+        const store = createVisUiConfigStore()
 
         store.dispatch(setVisUiConfigVisualizationType('PIVOT_TABLE'))
         await Promise.resolve()
 
         expect(getLastUsedVisualizationTypeFromLocalStorage()).toBe(
             'PIVOT_TABLE'
+        )
+    })
+
+    it('resets the title to auto generated when the visualization type changes', async () => {
+        const store = createVisUiConfigStore()
+        store.dispatch(setVisUiConfigOption({ key: 'title', value: 'Mine' }))
+
+        store.dispatch(setVisUiConfigVisualizationType('PIVOT_TABLE'))
+        await Promise.resolve()
+
+        expect(store.getState().visUiConfig.options.title).toBe('')
+        expect(store.getState().visUiConfig.options.hideTitle).toBe(false)
+    })
+
+    it('clears a hidden title when the visualization type changes', async () => {
+        const store = createVisUiConfigStore()
+        store.dispatch(setVisUiConfigOption({ key: 'hideTitle', value: true }))
+
+        store.dispatch(setVisUiConfigVisualizationType('PIVOT_TABLE'))
+        await Promise.resolve()
+
+        expect(store.getState().visUiConfig.options.hideTitle).toBe(false)
+    })
+
+    it('leaves the title alone when the output type changes', async () => {
+        const store = createVisUiConfigStore()
+        store.dispatch(setVisUiConfigOption({ key: 'title', value: 'Mine' }))
+
+        store.dispatch(setVisUiConfigOutputType('ENROLLMENT'))
+        await Promise.resolve()
+
+        expect(store.getState().visUiConfig.options.title).toBe('Mine')
+    })
+})
+
+describe('ui sidebar width listener', () => {
+    beforeEach(() => {
+        listenerMiddleware.clearListeners()
+        registerAppListeners()
+    })
+
+    const createUiStore = () =>
+        configureStore({
+            reducer: { ui: uiSlice.reducer },
+            middleware: (getDefaultMiddleware) =>
+                getDefaultMiddleware().prepend(listenerMiddleware.middleware),
+        })
+
+    it('stores the picked sidebar width', async () => {
+        const store = createUiStore()
+
+        store.dispatch(setUiSidebarWidth(600))
+        await Promise.resolve()
+
+        expect(getSidebarWidthFromLocalStorage()).toBe(600)
+    })
+
+    it('stores the default sidebar width after a reset', async () => {
+        const store = createUiStore()
+
+        store.dispatch(setUiSidebarWidth(600))
+        store.dispatch(resetUiSidebarWidth())
+        await Promise.resolve()
+
+        expect(getSidebarWidthFromLocalStorage()).toBe(
+            uiSlice.getInitialState().sidebarWidth
         )
     })
 })

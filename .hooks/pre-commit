@@ -1,10 +1,8 @@
 #!/bin/sh
 
-# The sandbox clone sets RUN_PRE_COMMIT_HOOK=0 (see scripts/sbx.sh): it verifies
-# lint/types/tests itself and runs i18n extract as a final step, so this hook is
-# redundant there. commit-msg still runs so the clone's messages are linted against
-# the project config; pre-push never fires (the clone never pushes). Humans skip a
-# hook with `git commit --no-verify`.
+# Escape hatch for automated environments that already run lint, types, tests and
+# i18n extract themselves; commit-msg and pre-push still run. `git commit --no-verify`
+# is not a substitute — it also skips commit-msg, leaving the message unlinted.
 if [ "$RUN_PRE_COMMIT_HOOK" = "0" ]; then
     exit 0
 fi

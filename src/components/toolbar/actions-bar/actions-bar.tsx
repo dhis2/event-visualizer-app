@@ -15,13 +15,14 @@ import { useAppSelector, useCurrentUser } from '@hooks'
 import {
     isCurrentVisualizationPersisted,
     isVisualizationPersistable,
-} from '@modules/visualization/state'
+} from '@modules/visualization/guards'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import type { SavedVisualization } from '@types'
 import { useMemo, useState, type FC } from 'react'
 import { DownloadMenu } from './download-menu'
 import { FileMenu } from './file-menu'
+import { LegacyRenameModal } from './legacy-rename-modal'
 import { NewButton } from './new-button'
 import { OpenButton } from './open-button'
 import { SaveButton } from './save-button'
@@ -65,7 +66,25 @@ const ActionsBarDialog: FC<ActionsBarDialogProps> = ({
         [currentVis]
     )
 
-    const { onDelete, onError, onRename, onSaveAs } = useToolbarActions()
+    const {
+        pendingLegacyRename,
+        onCancelLegacyRename,
+        onConfirmLegacyRename,
+        onDelete,
+        onError,
+        onRename,
+        onSaveAs,
+    } = useToolbarActions()
+
+    // RenameDialog closes itself on submit, so the legacy offer shows after it
+    if (pendingLegacyRename) {
+        return (
+            <LegacyRenameModal
+                onCancel={onCancelLegacyRename}
+                onSaveAsNew={onConfirmLegacyRename}
+            />
+        )
+    }
 
     const onDeleteConfirm = () => {
         // The dialog must be closed before calling the callback

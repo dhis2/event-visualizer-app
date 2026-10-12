@@ -1,10 +1,14 @@
 import type { EngineError } from '@api/parse-engine-error'
+import { useMetadataStore } from '@components/app-wrapper/metadata-provider/metadata-provider'
 import { CanvasError } from '@components/canvas-error/canvas-error'
 import { CanvasErrorFallback } from '@components/canvas-error/canvas-error-fallback'
 import type { ColumnHeaderClickFn } from '@components/line-list/types'
+import { useCurrentUserInfo } from '@dhis2/app-runtime'
 import { Center, CircularLoader } from '@dhis2/ui'
 import { assertNever } from '@modules/utils/guards'
-import { isVisualizationEmpty } from '@modules/visualization/state'
+import { getVisualizationFilterText } from '@modules/visualization/filter-text'
+import { isVisualizationEmpty } from '@modules/visualization/guards'
+import { getVisualizationTitle } from '@modules/visualization/title'
 import type {
     CurrentUser,
     CurrentVisualization,
@@ -85,6 +89,35 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
         [visualization, relativePeriodDate]
     )
 
+    const metadataStore = useMetadataStore()
+    const locale = useCurrentUserInfo()?.settings?.keyUiLocale
+
+    const visualizationWithTitle = useMemo(
+        () =>
+            isVisualizationEmpty(visualization)
+                ? visualization
+                : {
+                      ...visualization,
+                      title: getVisualizationTitle(
+                          visualization,
+                          metadataStore
+                      ),
+                  },
+        [visualization, metadataStore]
+    )
+
+    const filterText = useMemo(
+        () =>
+            isVisualizationEmpty(visualization)
+                ? undefined
+                : getVisualizationFilterText({
+                      visualization,
+                      metadataStore,
+                      locale,
+                  }),
+        [visualization, metadataStore, locale]
+    )
+
     const [hasAnalyticsData, setHasAnalyticsData] = useState(false)
 
     const onResponseReceived = useCallback(() => {
@@ -119,7 +152,7 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
         )
     }
 
-    if (isVisualizationEmpty(visualization)) {
+    if (isVisualizationEmpty(visualizationWithTitle)) {
         return null
     }
 
@@ -142,10 +175,11 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                     filters={filters}
                     isLoading={isVisualizationLoading || !hasAnalyticsData}
                 />
-                {visualization.type === 'LINE_LIST' && (
+                {visualizationWithTitle.type === 'LINE_LIST' && (
                     <LineListPlugin
                         displayProperty={displayProperty}
-                        visualization={visualization}
+                        visualization={visualizationWithTitle}
+                        filterText={filterText}
                         relativePeriodDate={relativePeriodDate}
                         isInDashboard={isInDashboard}
                         isInModal={isInModal}
@@ -154,10 +188,11 @@ export const PluginWrapper: FC<PluginWrapperProps> = ({
                         onResponseReceived={onResponseReceived}
                     />
                 )}
-                {visualization.type === 'PIVOT_TABLE' && (
+                {visualizationWithTitle.type === 'PIVOT_TABLE' && (
                     <PivotTablePlugin
                         displayProperty={displayProperty}
-                        visualization={visualization}
+                        visualization={visualizationWithTitle}
+                        filterText={filterText}
                         relativePeriodDate={relativePeriodDate}
                         isInDashboard={isInDashboard}
                         isInModal={isInModal}

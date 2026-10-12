@@ -20,7 +20,7 @@ import { useAppSelector } from '@hooks'
 import {
     isCurrentVisualizationPersisted,
     isSavedVisualization,
-} from '@modules/visualization/state'
+} from '@modules/visualization/guards'
 import { getCurrentVis } from '@store/current-vis-slice'
 import { getSavedVis } from '@store/saved-vis-slice'
 import { useMemo, type FC } from 'react'

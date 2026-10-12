@@ -51,6 +51,9 @@ describe('useDataSourceOptions', () => {
     beforeEach(() => {
         // Reset to default
         mockUseCurrentUser.mockReturnValue({
+            id: 'testUserId',
+            username: 'test-user',
+            authorities: [],
             name: 'Test User',
             settings: {
                 displayNameProperty: 'displayName' as const,
@@ -298,6 +301,9 @@ describe('useDataSourceOptions', () => {
 
     it('should use displayNameProperty from user settings', () => {
         mockUseCurrentUser.mockReturnValue({
+            id: 'testUserId',
+            username: 'test-user',
+            authorities: [],
             name: 'Test User',
             settings: {
                 displayNameProperty: 'displayShortName' as const,

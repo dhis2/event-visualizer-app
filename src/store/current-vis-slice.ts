@@ -1,4 +1,4 @@
-import { isCurrentVisualizationPersisted } from '@modules/visualization/state'
+import { isCurrentVisualizationPersisted } from '@modules/visualization/guards'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 import type { CurrentVisualization, EmptyVisualization } from '@types'

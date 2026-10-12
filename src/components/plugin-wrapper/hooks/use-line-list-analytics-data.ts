@@ -10,8 +10,8 @@ import { analyticsHeaderToCanonicalDimensionId } from '@modules/analytics-reques
 import { EmptyResponseError } from '@modules/error/empty-response-error'
 import { isAbortError } from '@modules/error/is-abort-error'
 import { logger } from '@modules/logger'
+import { isVisualizationWithTimeDimension } from '@modules/visualization/guards'
 import { getSingleProgramFromVisualization } from '@modules/visualization/program'
-import { isVisualizationWithTimeDimension } from '@modules/visualization/state'
 import type {
     CurrentUser,
     CurrentVisualization,

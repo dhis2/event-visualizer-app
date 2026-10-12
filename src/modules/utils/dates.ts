@@ -15,25 +15,31 @@ export const isStartEndDate = (id: string): boolean =>
 
 type UseLocalizedStartEndDateFormatterResult = (startEndDate: string) => string
 
+/* `locale` undefined resolves to the runtime default, which is what the
+ * dashboard plugin gets: it has no access to the user's settings. */
+export const getStartEndDateFormatter = (
+    locale?: string
+): UseLocalizedStartEndDateFormatterResult => {
+    const formatter = new Intl.DateTimeFormat(locale, { dateStyle: 'long' })
+
+    return (startEndDate) =>
+        getStartEndDate(startEndDate)
+            .map((dateStr: string) => formatter.format(new Date(dateStr)))
+            .join(' - ')
+}
+
 export const useLocalizedStartEndDateFormatter =
     (): UseLocalizedStartEndDateFormatterResult => {
         const currentUser = useCurrentUser()
+        const uiLocale = currentUser.settings.uiLocale
 
         const formatter = useMemo(
-            () =>
-                new Intl.DateTimeFormat(currentUser.settings.uiLocale, {
-                    dateStyle: 'long',
-                }),
-            [currentUser]
+            () => getStartEndDateFormatter(uiLocale),
+            [uiLocale]
         )
 
         return useCallback(
-            (startEndDate) =>
-                getStartEndDate(startEndDate)
-                    .map((dateStr: string) =>
-                        formatter.format(new Date(dateStr))
-                    )
-                    .join(' - '),
+            (startEndDate) => formatter(startEndDate),
             [formatter]
         )
     }

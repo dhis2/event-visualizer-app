@@ -1,6 +1,6 @@
 import { ANALYTICS_OPTIONS } from '@constants/options'
 import { getAnalyticsRequestDimensionName } from '@modules/analytics-request'
-import { WIRE_ONLY_DIMENSIONS } from '@modules/dimension/ids'
+import { DROPPED_LEGACY_DIMENSIONS } from '@modules/dimension/ids'
 import type {
     CurrentVisualization,
     DimensionArray,
@@ -15,7 +15,7 @@ export const adaptDimensions = (
     visualization: CurrentVisualization
 ): DimensionArray =>
     dimensions
-        .filter((dim) => !WIRE_ONLY_DIMENSIONS.has(dim.dimension))
+        .filter((dim) => !DROPPED_LEGACY_DIMENSIONS.has(dim.dimension))
         .flatMap((dim) => {
             const repetitionIndexes =
                 dim.programStage?.id && dim.repetition?.indexes.length

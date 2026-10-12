@@ -1,0 +1,217 @@
+{
+    "name": "ES test custom value",
+    "displayDensity": "NORMAL",
+    "fontSize": "NORMAL",
+    "rawPeriods": ["LAST_12_MONTHS"],
+    "sortOrder": 0,
+    "topLimit": 0,
+    "hideEmptyRows": false,
+    "showHierarchy": false,
+    "completedOnly": false,
+    "skipRounding": false,
+    "dataDimensionItems": [],
+    "dataElementGroupSetDimensions": [],
+    "organisationUnitGroupSetDimensions": [],
+    "categoryDimensions": [],
+    "categoryOptionGroupSetDimensions": [],
+    "attributeDimensions": [],
+    "dataElementDimensions": [
+        {
+            "dataElement": {
+                "name": "MCH ARV at birth",
+                "id": "wQLfBvPrXqq"
+            }
+        }
+    ],
+    "programIndicatorDimensions": [],
+    "aggregationType": "AVERAGE",
+    "digitGroupSeparator": "SPACE",
+    "hideLegend": false,
+    "noSpaceBetweenColumns": false,
+    "cumulativeValues": false,
+    "percentStackedValues": false,
+    "showData": false,
+    "colTotals": true,
+    "rowTotals": true,
+    "rowSubTotals": true,
+    "colSubTotals": true,
+    "hideTitle": false,
+    "hideSubtitle": false,
+    "showDimensionLabels": true,
+    "type": "PIVOT_TABLE",
+    "program": {
+        "enrollmentDateLabel": "Date of enrollment",
+        "incidentDateLabel": "Date of birth",
+        "programType": "WITH_REGISTRATION",
+        "displayIncidentDate": true,
+        "trackedEntityType": {
+            "id": "nEenWmSyUEp",
+            "name": "Person"
+        },
+        "displayEnrollmentDateLabel": "Date of enrollment",
+        "displayIncidentDateLabel": "Date of birth",
+        "displayEnrollmentLabel": "pregnancy",
+        "displayEventLabel": "Visit",
+        "id": "IpHINAT79UW",
+        "programStages": [
+            {
+                "program": {
+                    "id": "IpHINAT79UW"
+                },
+                "hideDueDate": false,
+                "displayExecutionDateLabel": "Report date",
+                "id": "A03MvHHogjR",
+                "repeatable": false,
+                "name": "Birth"
+            },
+            {
+                "program": {
+                    "id": "IpHINAT79UW"
+                },
+                "hideDueDate": false,
+                "id": "ZzYYXq4fJie",
+                "repeatable": false,
+                "name": "Baby Postnatal"
+            }
+        ],
+        "name": "Child Programme"
+    },
+    "programStage": {
+        "program": {
+            "id": "IpHINAT79UW"
+        },
+        "hideDueDate": false,
+        "displayExecutionDateLabel": "Report date",
+        "id": "A03MvHHogjR",
+        "repeatable": false,
+        "name": "Birth"
+    },
+    "dataElementValueDimension": {
+        "id": "UXz7xuGCEhU"
+    },
+    "programDimensions": [
+        {
+            "enrollmentDateLabel": "Date of enrollment",
+            "incidentDateLabel": "Date of birth",
+            "programType": "WITH_REGISTRATION",
+            "displayIncidentDate": true,
+            "trackedEntityType": {
+                "id": "nEenWmSyUEp",
+                "name": "Person"
+            },
+            "displayEnrollmentDateLabel": "Date of enrollment",
+            "displayIncidentDateLabel": "Date of birth",
+            "displayEnrollmentLabel": "pregnancy",
+            "displayEventLabel": "Visit",
+            "id": "IpHINAT79UW",
+            "programStages": [
+                {
+                    "program": {
+                        "id": "IpHINAT79UW"
+                    },
+                    "hideDueDate": false,
+                    "displayExecutionDateLabel": "Report date",
+                    "id": "A03MvHHogjR",
+                    "repeatable": false,
+                    "name": "Birth"
+                },
+                {
+                    "program": {
+                        "id": "IpHINAT79UW"
+                    },
+                    "hideDueDate": false,
+                    "id": "ZzYYXq4fJie",
+                    "repeatable": false,
+                    "name": "Baby Postnatal"
+                }
+            ],
+            "name": "Child Programme"
+        }
+    ],
+    "simpleDimensions": [
+        {
+            "parent": "FILTER",
+            "dimension": "ou",
+            "values": ["ImspTQPwCqd"]
+        }
+    ],
+    "outputType": "EVENT",
+    "collapseDataDimensions": false,
+    "hideNaData": false,
+    "hideEmptyColumns": false,
+    "fixColumnHeaders": false,
+    "fixRowHeaders": false,
+    "legacy": true,
+    "dataType": "AGGREGATED_VALUES",
+    "value": {
+        "aggregationType": "AVERAGE",
+        "id": "UXz7xuGCEhU",
+        "name": "MCH Weight (g)"
+    },
+    "filters": [
+        {
+            "dimensionType": "ORGANISATION_UNIT",
+            "items": [
+                {
+                    "id": "ImspTQPwCqd"
+                }
+            ],
+            "dimension": "ou"
+        }
+    ],
+    "parentGraphMap": {
+        "ImspTQPwCqd": ""
+    },
+    "columns": [
+        {
+            "dimensionType": "PERIOD",
+            "items": [
+                {
+                    "id": "LAST_12_MONTHS"
+                }
+            ],
+            "dimension": "pe"
+        }
+    ],
+    "rows": [
+        {
+            "dimensionType": "PROGRAM_DATA_ELEMENT",
+            "items": [],
+            "programStage": {
+                "id": "A03MvHHogjR"
+            },
+            "program": {
+                "id": "IpHINAT79UW"
+            },
+            "dimension": "wQLfBvPrXqq",
+            "valueType": "TEXT",
+            "optionSet": {
+                "id": "f38bstJioPs",
+                "name": "MNCH Baby ARVs"
+            }
+        }
+    ],
+    "displayName": "ES test custom value",
+    "access": {
+        "manage": true,
+        "write": true,
+        "read": true,
+        "update": true,
+        "delete": true
+    },
+    "metaData": {
+        "ImspTQPwCqd": {
+            "uid": "ImspTQPwCqd",
+            "code": "OU_525",
+            "name": "Sierra Leone"
+        },
+        "wQLfBvPrXqq": {
+            "uid": "wQLfBvPrXqq",
+            "code": "DE_2008294",
+            "name": "MCH ARV at birth"
+        }
+    },
+    "displayFormName": "ES test custom value",
+    "id": "COcTr50AFCq",
+    "sorting": []
+}

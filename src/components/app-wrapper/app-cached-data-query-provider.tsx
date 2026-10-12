@@ -1,8 +1,8 @@
 import { CachedDataQueryProvider, useCachedDataQuery } from '@dhis2/analytics'
+import { useCurrentUserInfo } from '@dhis2/app-runtime'
 import type { Query } from '@dhis2/app-service-data'
 import { freeze } from '@reduxjs/toolkit'
 import type {
-    MeDto,
     OrganisationUnit,
     OrganisationUnitLevel,
     PickWithFieldFilters,
@@ -10,22 +10,9 @@ import type {
 } from '@types'
 import type { FC, ReactNode } from 'react'
 
-const currentUserFields = [
-    'id',
-    'username',
-    'displayName~rename(name)',
-    'settings',
-    'authorities',
-] as const
 const rootOrgUnitsFields = ['id', 'displayName', 'name', 'path'] as const
 const orgUnitLevelsFields = ['id', 'level', 'displayName', 'name'] as const
 const query: Query = {
-    currentUser: {
-        resource: 'me',
-        params: {
-            fields: currentUserFields.join(','),
-        },
-    },
     systemSettings: {
         resource: 'systemSettings',
     },
@@ -45,10 +32,14 @@ const query: Query = {
         },
     },
 }
-type CurrentUserData = Omit<
-    PickWithFieldFilters<MeDto, typeof currentUserFields>,
-    'settings'
-> & { settings?: Record<string, string | undefined> }
+type CurrentUserInfo = NonNullable<ReturnType<typeof useCurrentUserInfo>>
+type CurrentUserData = Pick<
+    CurrentUserInfo,
+    'id' | 'username' | 'authorities'
+> & {
+    name: string
+    settings?: Record<string, string | undefined>
+}
 type RootOrgUnitsData = Array<
     PickWithFieldFilters<Required<OrganisationUnit>, typeof rootOrgUnitsFields>
 >
@@ -59,8 +50,7 @@ type OrgUnitLevelsData = Array<
     >
 >
 
-type AppCachedData = {
-    currentUser: CurrentUserData
+type AppCachedQueryData = {
     systemSettings: SystemSettings
     rootOrgUnits: {
         organisationUnits: RootOrgUnitsData
@@ -92,12 +82,24 @@ export type TransformedAppCachedData = {
     orgUnitLevels: OrgUnitLevelsData
 }
 
-const providerDataTransformation = ({
-    currentUser,
-    systemSettings,
-    rootOrgUnits,
-    orgUnitLevels,
-}: AppCachedData): TransformedAppCachedData => {
+const toCurrentUserData = ({
+    id,
+    username,
+    displayName,
+    authorities,
+    settings,
+}: CurrentUserInfo): CurrentUserData => ({
+    id,
+    username,
+    name: displayName,
+    authorities,
+    settings,
+})
+
+const providerDataTransformation = (
+    { systemSettings, rootOrgUnits, orgUnitLevels }: AppCachedQueryData,
+    currentUser: CurrentUserData
+): TransformedAppCachedData => {
     const displayNameProperty: DisplayNameProperty =
         currentUser.settings?.keyAnalysisDisplayProperty === 'name'
             ? 'displayName'
@@ -135,16 +137,30 @@ const providerDataTransformation = ({
     })
 }
 
+/* The app-shell fetches `/api/me` before rendering the app and exposes it
+ * through `useCurrentUserInfo`, so the current user is not part of the query. */
 export const AppCachedDataQueryProvider: FC<{ children: ReactNode }> = ({
     children,
-}) => (
-    <CachedDataQueryProvider<AppCachedData, TransformedAppCachedData>
-        query={query}
-        dataTransformation={providerDataTransformation}
-    >
-        {children}
-    </CachedDataQueryProvider>
-)
+}) => {
+    const currentUserInfo = useCurrentUserInfo()
+
+    if (!currentUserInfo) {
+        throw new Error('Current user info is not available')
+    }
+
+    const currentUser = toCurrentUserData(currentUserInfo)
+
+    return (
+        <CachedDataQueryProvider<AppCachedQueryData, TransformedAppCachedData>
+            query={query}
+            dataTransformation={(queryData) =>
+                providerDataTransformation(queryData, currentUser)
+            }
+        >
+            {children}
+        </CachedDataQueryProvider>
+    )
+}
 
 export const useAppCachedDataQuery = (): TransformedAppCachedData =>
     useCachedDataQuery<TransformedAppCachedData>()

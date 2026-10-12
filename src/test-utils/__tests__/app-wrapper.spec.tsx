@@ -74,12 +74,13 @@ describe('renderHookWithAppWrapper', () => {
         expect(result.current.userOrgUnit?.name).toBe('User organisation unit')
     })
 
-    it('should merge custom queryData with default app cached data', async () => {
+    it('should merge custom userInfo with the default current user', async () => {
         const { result } = await renderHookWithAppWrapper(
             () => useCurrentUser(),
             {
-                queryData: {
-                    me: { username: 'custom-test-user', name: 'Custom User' },
+                userInfo: {
+                    username: 'custom-test-user',
+                    displayName: 'Custom User',
                 },
             }
         )
