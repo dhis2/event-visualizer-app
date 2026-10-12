@@ -294,6 +294,20 @@ describe('getAnalyticsRequestHeaderName', () => {
         ).toBe('ouname')
     })
 
+    it('emits `ounamehierarchy` for the TE registration `ou` when showHierarchy is on', () => {
+        expect(
+            getAnalyticsRequestHeaderName({
+                dimensionId: 'ou',
+                trackedEntityTypeId: TET,
+                visualization: buildVis({
+                    outputType: 'TRACKED_ENTITY_INSTANCE',
+                    trackedEntityType: { id: TET, name: 'Person' },
+                    showHierarchy: true,
+                }),
+            })
+        ).toBe('ounamehierarchy')
+    })
+
     it('prefixes programId for enrollment-scoped dims in TE', () => {
         expect(
             getAnalyticsRequestHeaderName({
