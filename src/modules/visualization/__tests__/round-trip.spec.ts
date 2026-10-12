@@ -99,7 +99,7 @@ const savedCases: RoundTripCase[] = [
         fixture: eventPivotTableRegistrationOu,
         expectedLayout: {
             columns: [
-                sidebarIds.registration('enrollmentOu'),
+                sidebarIds.registration('ou'),
                 sidebarIds.enrollment(CHILD_PROGRAMME, 'programStatus'),
             ],
             rows: [],
@@ -125,7 +125,7 @@ const savedCases: RoundTripCase[] = [
         fixture: trackedEntityLineListOneProgram,
         expectedLayout: {
             columns: [
-                sidebarIds.registration('enrollmentOu'),
+                sidebarIds.registration('ou'),
                 sidebarIds.dataElement(LAB_MONITORING, 'Vk1tzSQxvOR'),
                 sidebarIds.enrollment(TB_PROGRAM, 'enrollmentDate'),
                 sidebarIds.stage(TB_PROGRAM, LAB_MONITORING, 'ou'),
@@ -139,7 +139,7 @@ const savedCases: RoundTripCase[] = [
         fixture: trackedEntityLineListTwoPrograms,
         expectedLayout: {
             columns: [
-                sidebarIds.registration('enrollmentOu'),
+                sidebarIds.registration('ou'),
                 sidebarIds.stage(TB_PROGRAM, LAB_MONITORING, 'ou'),
                 sidebarIds.enrollment(TB_PROGRAM, 'enrollmentDate'),
                 sidebarIds.dataElement(BIRTH, 'UXz7xuGCEhU'),
@@ -156,7 +156,7 @@ const savedCases: RoundTripCase[] = [
         fixture: trackedEntityLineListTrackedEntityType,
         expectedLayout: {
             columns: [
-                sidebarIds.registration('enrollmentOu'),
+                sidebarIds.registration('ou'),
                 sidebarIds.trackedEntityTypeAttribute('w75KJ2mc4zz'),
                 sidebarIds.trackedEntityTypeAttribute('lZGmxYbs97q'),
                 sidebarIds.metadata('created'),

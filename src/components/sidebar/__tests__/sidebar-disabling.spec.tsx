@@ -45,9 +45,9 @@ const eventProgramMetadata = {
 
 const differentTetDimMetadata: InitialMetadataItems = {
     tetB: { id: 'tetB', name: 'Household' },
-    'tetB.enrollmentOu': {
-        id: 'tetB.enrollmentOu',
-        dimensionId: 'enrollmentOu',
+    'tetB.ou': {
+        id: 'tetB.ou',
+        dimensionId: 'ou',
         name: 'Registration org. unit',
         dimensionType: 'ORGANISATION_UNIT',
         trackedEntityTypeId: 'tetB',
@@ -121,7 +121,7 @@ describe('useCrossTetMismatch', () => {
                     },
                     visUiConfig: {
                         ...visUiConfigInitialState,
-                        layout: layoutWith('tetB.enrollmentOu'),
+                        layout: layoutWith('tetB.ou'),
                     },
                 },
             })
@@ -171,7 +171,7 @@ describe('useCrossTetMismatch', () => {
                     },
                     visUiConfig: {
                         ...visUiConfigInitialState,
-                        layout: layoutWith('tetB.enrollmentOu'),
+                        layout: layoutWith('tetB.ou'),
                     },
                 },
             })
@@ -203,7 +203,7 @@ describe('useIsCardCrossTetBlocked', () => {
                     },
                     visUiConfig: {
                         ...visUiConfigInitialState,
-                        layout: layoutWith('tetB.enrollmentOu'),
+                        layout: layoutWith('tetB.ou'),
                     },
                 },
             })
@@ -233,7 +233,7 @@ describe('useIsCardCrossTetBlocked', () => {
                     },
                     visUiConfig: {
                         ...visUiConfigInitialState,
-                        layout: layoutWith('tetB.enrollmentOu'),
+                        layout: layoutWith('tetB.ou'),
                     },
                 },
             })
@@ -293,7 +293,7 @@ describe('useSyncAutoCollapse', () => {
                     },
                     visUiConfig: {
                         ...visUiConfigInitialState,
-                        layout: layoutWith('tetB.enrollmentOu'),
+                        layout: layoutWith('tetB.ou'),
                     },
                 },
             })
@@ -413,8 +413,8 @@ describe('useDimensionLayoutBlockedMessage', () => {
 
     it('returns null for the TET registration OU in a pivot table', async () => {
         const dim = makeDim({
-            id: 'tetA.enrollmentOu',
-            dimensionId: 'enrollmentOu',
+            id: 'tetA.ou',
+            dimensionId: 'ou',
             dimensionType: 'ORGANISATION_UNIT',
             trackedEntityTypeId: 'tetA',
         })
@@ -453,7 +453,7 @@ describe('useDimensionLayoutBlockedMessage', () => {
                     visUiConfig: {
                         ...visUiConfigInitialState,
                         visualizationType: 'LINE_LIST',
-                        layout: layoutWith('tetB.enrollmentOu'),
+                        layout: layoutWith('tetB.ou'),
                     },
                 },
             })

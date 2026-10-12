@@ -259,7 +259,7 @@ describe('toAppLocalDimensions', () => {
         expect(result[0].dimension).toBe('ou')
     })
 
-    it('renames ou to enrollmentOu when dimension has no program/stage (TEI registration ou)', () => {
+    it('keeps ou when dimension has no program/stage (TEI registration ou)', () => {
         const dims: DimensionArray = [
             {
                 dimension: 'ou',
@@ -267,10 +267,10 @@ describe('toAppLocalDimensions', () => {
             },
         ]
         const result = toAppLocalDimensions(dims)
-        expect(result[0].dimension).toBe('enrollmentOu')
+        expect(result[0].dimension).toBe('ou')
     })
 
-    it('renames registrationOu to enrollmentOu without its program qualifier', () => {
+    it('renames registrationOu to ou without its program qualifier', () => {
         const dims: DimensionArray = [
             {
                 dimension: 'registrationOu',
@@ -279,7 +279,7 @@ describe('toAppLocalDimensions', () => {
             },
         ]
         expect(toAppLocalDimensions(dims)).toEqual([
-            { dimension: 'enrollmentOu', items: [{ id: 'USER_ORGUNIT' }] },
+            { dimension: 'ou', items: [{ id: 'USER_ORGUNIT' }] },
         ])
     })
 
@@ -450,11 +450,13 @@ describe('toEventVisualizationDimensionId', () => {
                 })
             ).toBe('ou')
         })
+    })
 
-        it('rewrites to ou for TEI registration scope (no programId) + LINE_LIST', () => {
+    describe('registration ou (no programId)', () => {
+        it('keeps ou for TEI output + LINE_LIST', () => {
             expect(
                 toEventVisualizationDimensionId({
-                    dimensionId: 'enrollmentOu',
+                    dimensionId: 'ou',
                     outputType: 'TRACKED_ENTITY_INSTANCE',
                     visualizationType: 'LINE_LIST',
                 })
@@ -462,11 +464,11 @@ describe('toEventVisualizationDimensionId', () => {
         })
 
         it.each(['EVENT', 'ENROLLMENT'] as const)(
-            'rewrites to registrationOu for registration scope (no programId) + %s + PIVOT_TABLE',
+            'rewrites to registrationOu for %s + PIVOT_TABLE',
             (outputType) => {
                 expect(
                     toEventVisualizationDimensionId({
-                        dimensionId: 'enrollmentOu',
+                        dimensionId: 'ou',
                         outputType,
                         visualizationType: 'PIVOT_TABLE',
                     })
@@ -609,11 +611,8 @@ describe('getCompoundDimensionId', () => {
 
     it('uses trackedEntityTypeId prefix for the TEI registration org unit', () => {
         expect(
-            getCompoundDimensionId(
-                { dimension: 'enrollmentOu', items: [] },
-                'tet1'
-            )
-        ).toBe('tet1.enrollmentOu')
+            getCompoundDimensionId({ dimension: 'ou', items: [] }, 'tet1')
+        ).toBe('tet1.ou')
     })
 
     it('does not prefix non-registration dimensions with trackedEntityTypeId', () => {
@@ -652,8 +651,8 @@ describe('getTrackedEntityTypeFixedDimensions', () => {
 
         expect(fixedDimensions).toEqual([
             expect.objectContaining({
-                id: 'tet1.enrollmentOu',
-                dimensionId: 'enrollmentOu',
+                id: 'tet1.ou',
+                dimensionId: 'ou',
                 dimensionType: 'ORGANISATION_UNIT',
                 trackedEntityTypeId: 'tet1',
             }),
@@ -665,7 +664,7 @@ describe('getTrackedEntityTypeFixedDimensions', () => {
             id: 'custom-tet',
         })
 
-        expect(fixedDimensions[0].id).toBe('custom-tet.enrollmentOu')
+        expect(fixedDimensions[0].id).toBe('custom-tet.ou')
     })
 })
 
@@ -781,8 +780,8 @@ describe('getDimensionLayoutBlockedMessage — registration OU', () => {
         expect(
             getMessage({
                 dimension: makeDim({
-                    id: 'tetA.enrollmentOu',
-                    dimensionId: 'enrollmentOu',
+                    id: 'tetA.ou',
+                    dimensionId: 'ou',
                     dimensionType: 'ORGANISATION_UNIT',
                     trackedEntityTypeId: 'tetA',
                 }),
@@ -933,7 +932,7 @@ describe('isDimensionFullyInvalidForVisType', () => {
         expect(
             isDimensionFullyInvalidForVisType(
                 makeDim({
-                    dimensionId: 'enrollmentOu',
+                    dimensionId: 'ou',
                     trackedEntityTypeId: 'tetId',
                 }),
                 'LINE_LIST'
@@ -954,7 +953,7 @@ describe('isDimensionFullyInvalidForVisType', () => {
         expect(
             isDimensionFullyInvalidForVisType(
                 makeDim({
-                    dimensionId: 'enrollmentOu',
+                    dimensionId: 'ou',
                     dimensionType: 'ORGANISATION_UNIT',
                     trackedEntityTypeId: 'tetId',
                 }),

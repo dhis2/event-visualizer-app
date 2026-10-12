@@ -47,13 +47,13 @@ describe('analyticsHeaderToCanonicalDimensionId', () => {
         ).toBe(`${SID}.${UID}`)
     })
 
-    it('rewrites bare `ou` to `tetId.enrollmentOu` in TE', () => {
+    it('rewrites bare `ou` to `tetId.ou` in TE', () => {
         const vis = buildVis({
             outputType: 'TRACKED_ENTITY_INSTANCE',
             trackedEntityType: { id: TET, name: 'Person' },
         })
         expect(analyticsHeaderToCanonicalDimensionId('ouname', vis)).toBe(
-            `${TET}.enrollmentOu`
+            `${TET}.ou`
         )
     })
 
@@ -167,10 +167,10 @@ describe('getAnalyticsRequestDimensionName', () => {
         ).toBe(`${SID}.${UID}`)
     })
 
-    it('rewrites TE registration `enrollmentOu` to bare `ou`', () => {
+    it('keeps the TE registration `ou` bare', () => {
         expect(
             getAnalyticsRequestDimensionName({
-                dimensionId: 'enrollmentOu',
+                dimensionId: 'ou',
                 trackedEntityTypeId: TET,
                 outputType: 'TRACKED_ENTITY_INSTANCE',
             })
@@ -212,7 +212,7 @@ describe('getAnalyticsRequestDimensionName', () => {
         (outputType) => {
             expect(
                 getAnalyticsRequestDimensionName({
-                    dimensionId: 'enrollmentOu',
+                    dimensionId: 'ou',
                     outputType,
                 })
             ).toBe('REGISTRATION_OU')
@@ -328,10 +328,10 @@ describe('getAnalyticsRequestHeaderName', () => {
         ).toBe(`${SID}.eventdate`)
     })
 
-    it('rewrites TE registration `enrollmentOu` to bare `ouname`', () => {
+    it('emits `ouname` for the TE registration `ou`', () => {
         expect(
             getAnalyticsRequestHeaderName({
-                dimensionId: 'enrollmentOu',
+                dimensionId: 'ou',
                 trackedEntityTypeId: TET,
                 visualization: buildVis({
                     outputType: 'TRACKED_ENTITY_INSTANCE',
@@ -368,7 +368,7 @@ describe('getAnalyticsRequestHeaderName', () => {
         (outputType) => {
             expect(
                 getAnalyticsRequestHeaderName({
-                    dimensionId: 'enrollmentOu',
+                    dimensionId: 'ou',
                     visualization: buildVis({
                         type: 'PIVOT_TABLE',
                         outputType,

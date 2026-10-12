@@ -111,8 +111,8 @@ const metadata = {
         programId: 'p3',
         trackedEntityTypeId: 'tei2',
     },
-    'tei1.enrollmentOu': {
-        id: 'tei1.enrollmentOu',
+    'tei1.ou': {
+        id: 'tei1.ou',
         name: 'Registration org. unit',
         dimensionType: 'ORGANISATION_UNIT',
         valueType: 'ORGANISATION_UNIT',
@@ -323,7 +323,7 @@ describe('useActionButton for Event button', () => {
                     layout: {
                         columns: [
                             metadata['p2.p2s1.d1'].id,
-                            metadata['tei1.enrollmentOu'].id,
+                            metadata['tei1.ou'].id,
                         ],
                     },
                     visualizationType: 'PIVOT_TABLE',
@@ -348,7 +348,7 @@ describe('useActionButton for Event button', () => {
                     layout: {
                         columns: [
                             metadata['p2.p2s1.d1'].id,
-                            metadata['tei1.enrollmentOu'].id,
+                            metadata['tei1.ou'].id,
                         ],
                     },
                     visualizationType: 'LINE_LIST',
@@ -532,7 +532,7 @@ describe('useActionButton for Enrollment button', () => {
                     layout: {
                         columns: [
                             metadata['p2.p2s1.d1'].id,
-                            metadata['tei1.enrollmentOu'].id,
+                            metadata['tei1.ou'].id,
                         ],
                     },
                     visualizationType: 'PIVOT_TABLE',
@@ -557,7 +557,7 @@ describe('useActionButton for Enrollment button', () => {
                     layout: {
                         columns: [
                             metadata['p2.p2s1.d1'].id,
-                            metadata['tei1.enrollmentOu'].id,
+                            metadata['tei1.ou'].id,
                         ],
                     },
                     visualizationType: 'LINE_LIST',
@@ -893,7 +893,7 @@ describe('useActionButton for Tracked entity instance button', () => {
                 visUiConfig: {
                     layout: {
                         columns: [
-                            metadata['tei1.enrollmentOu'].id,
+                            metadata['tei1.ou'].id,
                             metadata['p2.p2s1.d1'].id,
                             metadata['p3.p3s1.d1'].id,
                         ],

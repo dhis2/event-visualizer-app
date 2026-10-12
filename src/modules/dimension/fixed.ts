@@ -177,8 +177,8 @@ export const getTrackedEntityTypeFixedDimensions = (trackedEntityType: {
     id: string
 }): DimensionMetadataItem[] => [
     {
-        id: `${trackedEntityType.id}.enrollmentOu`,
-        dimensionId: 'enrollmentOu',
+        id: `${trackedEntityType.id}.ou`,
+        dimensionId: 'ou',
         dimensionType: 'ORGANISATION_UNIT',
         name: i18n.t('Registration org. unit'),
         trackedEntityTypeId: trackedEntityType.id,

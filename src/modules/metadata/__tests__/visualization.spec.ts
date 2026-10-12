@@ -468,12 +468,10 @@ describe('extractMetadataFromVisualization', () => {
             } as unknown as SavedVisualization
 
             expect(
-                extractMetadataFromVisualization(visualization)[
-                    'tet.enrollmentOu'
-                ]
+                extractMetadataFromVisualization(visualization)['tet.ou']
             ).toMatchObject({
-                id: 'tet.enrollmentOu',
-                dimensionId: 'enrollmentOu',
+                id: 'tet.ou',
+                dimensionId: 'ou',
                 name: 'Registration org. unit',
                 trackedEntityTypeId: 'tet',
             })

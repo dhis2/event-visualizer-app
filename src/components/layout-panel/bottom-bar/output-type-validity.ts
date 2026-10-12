@@ -278,7 +278,7 @@ export const getOutputTypeTooltipConfig = ({
      * output. */
     const isRegistrationOuInLineList =
         visualizationType === 'LINE_LIST' && tetId
-            ? isDimensionInLayout(layout, `${tetId}.enrollmentOu`)
+            ? isDimensionInLayout(layout, `${tetId}.ou`)
             : false
 
     switch (outputType) {
