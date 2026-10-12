@@ -63,7 +63,7 @@ describe('getMainDimensions', () => {
 
     it('returns main dimensions for TRACKED_ENTITY_INSTANCE outputType', () => {
         const result = getMainDimensions('TRACKED_ENTITY_INSTANCE')
-        expect(result).toHaveProperty('ou')
+        expect(result).not.toHaveProperty('ou')
         expect(result).toHaveProperty('created')
         expect(result.created?.dimensionType).toBe('PERIOD')
         expect(result).toHaveProperty('lastUpdated')
