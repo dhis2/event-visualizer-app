@@ -1,3 +1,4 @@
+import { setSidebarWidthToLocalStorage } from '@components/sidebar/local-storage'
 import { setLastUsedVisualizationTypeToLocalStorage } from '@modules/visualization/local-storage'
 import { isAnyOf } from '@reduxjs/toolkit'
 import { startAppListening } from './middleware-listener'
@@ -7,7 +8,11 @@ import {
     tLoadSavedVisualization,
     tSeedDefaultGrouping,
 } from './thunks'
-import { setUiActiveDimensionModal } from './ui-slice'
+import {
+    resetUiSidebarWidth,
+    setUiActiveDimensionModal,
+    setUiSidebarWidth,
+} from './ui-slice'
 import {
     addVisUiConfigLayoutDimension,
     addVisUiConfigLayoutDimensions,
@@ -53,6 +58,13 @@ export const registerAppListeners = () => {
             // Changing visualization type resets the title configuration to Auto generated
             dispatch(setVisUiConfigOption({ key: 'title', value: '' }))
             dispatch(setVisUiConfigOption({ key: 'hideTitle', value: false }))
+        },
+    })
+
+    startAppListening({
+        matcher: isAnyOf(setUiSidebarWidth, resetUiSidebarWidth),
+        effect: (_, { getState }) => {
+            setSidebarWidthToLocalStorage(getState().ui.sidebarWidth)
         },
     })
 

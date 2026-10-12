@@ -7,13 +7,11 @@ import { SIDEBAR_DEFAULT_WIDTH, SIDEBAR_MIN_WIDTH } from '../constants'
 import { useResizableSidebar } from '../use-resizable-sidebar'
 
 const ResizableTestHarness: React.FC = () => {
-    const { containerRef, isDragging, width, eventHandlers } =
-        useResizableSidebar()
+    const { isDragging, width, eventHandlers } = useResizableSidebar()
 
     return (
         <div style={{ display: 'flex', blockSize: '100vh' }}>
             <div
-                ref={containerRef}
                 data-test="sidebar"
                 style={{
                     position: 'relative',
