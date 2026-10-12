@@ -207,6 +207,18 @@ describe('getAnalyticsRequestDimensionName', () => {
         ).toBe('ou')
     })
 
+    it.each(['EVENT', 'ENROLLMENT'] as const)(
+        'emits `REGISTRATION_OU` for the registration org unit in %s',
+        (outputType) => {
+            expect(
+                getAnalyticsRequestDimensionName({
+                    dimensionId: 'enrollmentOu',
+                    outputType,
+                })
+            ).toBe('REGISTRATION_OU')
+        }
+    )
+
     it('emits bare SCREAMING_SNAKE for enrollment-scoped dims in EVENT', () => {
         expect(
             getAnalyticsRequestDimensionName({
@@ -350,6 +362,21 @@ describe('getAnalyticsRequestHeaderName', () => {
             })
         ).toBe('ouname')
     })
+
+    it.each(['EVENT', 'ENROLLMENT'] as const)(
+        'emits `registrationou` for the registration org unit in a %s pivot table',
+        (outputType) => {
+            expect(
+                getAnalyticsRequestHeaderName({
+                    dimensionId: 'enrollmentOu',
+                    visualization: buildVis({
+                        type: 'PIVOT_TABLE',
+                        outputType,
+                    }),
+                })
+            ).toBe('registrationou')
+        }
+    )
 
     it('emits bare lowercase for enrollment-scoped dims in EVENT', () => {
         expect(

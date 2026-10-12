@@ -6,6 +6,7 @@ import {
     extractProgramDimensionsMetadata,
     extractDimensionMetadata,
     extractValueMetadata,
+    extractMetadataFromVisualization,
 } from '../visualization'
 
 describe('supplementDimensionMetadata', () => {
@@ -435,4 +436,47 @@ describe('extractValueMetadata', () => {
     it('returns nothing when the visualization has no cell value', () => {
         expect(extractValueMetadata({} as SavedVisualization)).toEqual({})
     })
+})
+
+describe('extractMetadataFromVisualization', () => {
+    it.each(['EVENT', 'ENROLLMENT'] as const)(
+        'registers the registration org unit of a %s pivot table under its tracked entity type',
+        (outputType) => {
+            const visualization = {
+                type: 'PIVOT_TABLE',
+                outputType,
+                columns: [
+                    {
+                        dimension: 'registrationOu',
+                        dimensionType: 'ORGANISATION_UNIT',
+                        items: [{ id: 'USER_ORGUNIT' }],
+                        program: { id: 'prog' },
+                    },
+                ],
+                rows: [],
+                filters: [],
+                metaData: {},
+                programDimensions: [
+                    {
+                        id: 'prog',
+                        name: 'Program',
+                        programType: 'WITH_REGISTRATION',
+                        trackedEntityType: { id: 'tet', name: 'Person' },
+                        programStages: [],
+                    },
+                ],
+            } as unknown as SavedVisualization
+
+            expect(
+                extractMetadataFromVisualization(visualization)[
+                    'tet.enrollmentOu'
+                ]
+            ).toMatchObject({
+                id: 'tet.enrollmentOu',
+                dimensionId: 'enrollmentOu',
+                name: 'Registration org. unit',
+                trackedEntityTypeId: 'tet',
+            })
+        }
+    )
 })

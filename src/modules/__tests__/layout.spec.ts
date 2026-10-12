@@ -328,6 +328,51 @@ describe('buildAxis', () => {
         }
     )
 
+    it.each(['EVENT', 'ENROLLMENT'] as const)(
+        'qualifies the registration org unit with the layout program in a %s pivot table',
+        (outputType) => {
+            const store = makeStore({
+                dims: {
+                    'tet.enrollmentOu': makeDim({
+                        id: 'tet.enrollmentOu',
+                        dimensionId: 'enrollmentOu',
+                        dimensionType: 'ORGANISATION_UNIT',
+                        trackedEntityTypeId: 'tet',
+                    }),
+                    'prog.enrollmentDate': makeDim({
+                        id: 'prog.enrollmentDate',
+                        dimensionId: 'enrollmentDate',
+                        dimensionType: 'PERIOD',
+                        programId: 'prog',
+                    }),
+                },
+            })
+            const visUiConfig = {
+                visualizationType: 'PIVOT_TABLE',
+                outputType,
+                layout: {
+                    columns: ['tet.enrollmentOu'],
+                    rows: ['prog.enrollmentDate'],
+                    filters: [],
+                },
+                itemsByDimension: { 'tet.enrollmentOu': ['USER_ORGUNIT'] },
+                conditionsByDimension: {},
+                repetitionsByDimension: {},
+            } as unknown as VisUiConfigState
+
+            expect(
+                buildAxis(visUiConfig.layout.columns, visUiConfig, store)
+            ).toEqual([
+                {
+                    dimension: 'registrationOu',
+                    dimensionType: 'ORGANISATION_UNIT',
+                    items: [{ id: 'USER_ORGUNIT' }],
+                    program: { id: 'prog' },
+                },
+            ])
+        }
+    )
+
     it('throws when metadata lookup returns undefined for a dimension', () => {
         const input = {
             layout: { columns: ['unknown.dim'], rows: [], filters: [] },
@@ -998,7 +1043,7 @@ describe('convertLayoutForVisType', () => {
             expect(result.convertedLayout.filters).toEqual(['numericDe'])
         })
 
-        it('discards the TET registration OU in columns', () => {
+        it('keeps the TET registration OU, routing it to columns', () => {
             const result = convertLayoutForVisType({
                 layout: {
                     columns: ['tetId.enrollmentOu', 'numericDe'],
@@ -1009,6 +1054,7 @@ describe('convertLayoutForVisType', () => {
                 getDimension: makeGetDimension({
                     'tetId.enrollmentOu': makeDim({
                         dimensionId: 'enrollmentOu',
+                        dimensionType: 'ORGANISATION_UNIT',
                         trackedEntityTypeId: 'tetId',
                     }),
                     numericDe: makeDim({
@@ -1018,7 +1064,10 @@ describe('convertLayoutForVisType', () => {
                     }),
                 }),
             })
-            expect(result.invalidDimensionIds).toEqual(['tetId.enrollmentOu'])
+            expect(result.invalidDimensionIds).toEqual([])
+            expect(result.convertedLayout.columns).toEqual([
+                'tetId.enrollmentOu',
+            ])
             expect(result.convertedLayout.filters).toEqual(['numericDe'])
         })
 

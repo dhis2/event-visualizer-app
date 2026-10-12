@@ -270,6 +270,19 @@ describe('toAppLocalDimensions', () => {
         expect(result[0].dimension).toBe('enrollmentOu')
     })
 
+    it('renames registrationOu to enrollmentOu without its program qualifier', () => {
+        const dims: DimensionArray = [
+            {
+                dimension: 'registrationOu',
+                items: [{ id: 'USER_ORGUNIT' }],
+                program: { id: 'prog1' },
+            },
+        ]
+        expect(toAppLocalDimensions(dims)).toEqual([
+            { dimension: 'enrollmentOu', items: [{ id: 'USER_ORGUNIT' }] },
+        ])
+    })
+
     it('does not modify non-ou dimensions', () => {
         const dims: DimensionArray = [
             {
@@ -447,6 +460,19 @@ describe('toEventVisualizationDimensionId', () => {
                 })
             ).toBe('ou')
         })
+
+        it.each(['EVENT', 'ENROLLMENT'] as const)(
+            'rewrites to registrationOu for registration scope (no programId) + %s + PIVOT_TABLE',
+            (outputType) => {
+                expect(
+                    toEventVisualizationDimensionId({
+                        dimensionId: 'enrollmentOu',
+                        outputType,
+                        visualizationType: 'PIVOT_TABLE',
+                    })
+                ).toBe('registrationOu')
+            }
+        )
     })
 
     it('passes through other dimension IDs unchanged', () => {
@@ -750,58 +776,16 @@ describe('getDimensionBlockReason', () => {
     })
 })
 
-describe('getDimensionLayoutBlockedMessage — registration OU rule (Case B)', () => {
-    const registrationOuDim = makeDim({
-        id: 'tetA.enrollmentOu',
-        dimensionId: 'enrollmentOu',
-        dimensionType: 'ORGANISATION_UNIT',
-        trackedEntityTypeId: 'tetA',
-    })
-
-    it('blocks the TET registration OU item when vis is PIVOT_TABLE', () => {
+describe('getDimensionLayoutBlockedMessage — registration OU', () => {
+    it('does not block the TET registration OU in a pivot table', () => {
         expect(
             getMessage({
-                dimension: registrationOuDim,
-                visualizationType: 'PIVOT_TABLE',
-            })
-        ).toBe('Cannot be used in a Pivot table.')
-    })
-
-    it('does not disable the TET registration OU item when vis is LINE_LIST', () => {
-        expect(
-            getMessage({
-                dimension: registrationOuDim,
-                visualizationType: 'LINE_LIST',
-            })
-        ).toBeNull()
-    })
-
-    it('does not fire for program-scope enrollment OU (no trackedEntityTypeId)', () => {
-        const programEnrollmentOu = makeDim({
-            id: 'progA.enrollmentOu',
-            dimensionId: 'enrollmentOu',
-            dimensionType: 'ORGANISATION_UNIT',
-            programId: 'progA',
-        })
-        expect(
-            getMessage({
-                dimension: programEnrollmentOu,
-                visualizationType: 'PIVOT_TABLE',
-            })
-        ).toBeNull()
-    })
-
-    it('does not fire for stage event OU (dimensionId is "ou", not "enrollmentOu")', () => {
-        const stageOu = makeDim({
-            id: 'stage1.ou',
-            dimensionId: 'ou',
-            dimensionType: 'ORGANISATION_UNIT',
-            programId: 'progA',
-            programStageId: 'stage1',
-        })
-        expect(
-            getMessage({
-                dimension: stageOu,
+                dimension: makeDim({
+                    id: 'tetA.enrollmentOu',
+                    dimensionId: 'enrollmentOu',
+                    dimensionType: 'ORGANISATION_UNIT',
+                    trackedEntityTypeId: 'tetA',
+                }),
                 visualizationType: 'PIVOT_TABLE',
             })
         ).toBeNull()
@@ -966,22 +950,14 @@ describe('isDimensionFullyInvalidForVisType', () => {
         ).toBe(true)
     })
 
-    it('marks TET registration OU invalid for PIVOT_TABLE', () => {
+    it('marks TET registration OU valid for PIVOT_TABLE', () => {
         expect(
             isDimensionFullyInvalidForVisType(
                 makeDim({
                     dimensionId: 'enrollmentOu',
+                    dimensionType: 'ORGANISATION_UNIT',
                     trackedEntityTypeId: 'tetId',
                 }),
-                'PIVOT_TABLE'
-            )
-        ).toBe(true)
-    })
-
-    it('marks program-scope enrollmentOu (no TET) valid for PIVOT_TABLE', () => {
-        expect(
-            isDimensionFullyInvalidForVisType(
-                makeDim({ dimensionId: 'enrollmentOu' }),
                 'PIVOT_TABLE'
             )
         ).toBe(false)

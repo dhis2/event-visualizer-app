@@ -411,7 +411,7 @@ describe('useDimensionLayoutBlockedMessage', () => {
         expect(result.current).toBeNull()
     })
 
-    it('returns the vis-type message for the TET registration OU outside line list', async () => {
+    it('returns null for the TET registration OU in a pivot table', async () => {
         const dim = makeDim({
             id: 'tetA.enrollmentOu',
             dimensionId: 'enrollmentOu',
@@ -429,7 +429,7 @@ describe('useDimensionLayoutBlockedMessage', () => {
                 },
             })
         )
-        expect(result.current).toMatch(/Cannot be used in a Pivot table/)
+        expect(result.current).toBeNull()
     })
 
     it('returns the cross-TET message when the dim TET differs from the layout TET', async () => {
