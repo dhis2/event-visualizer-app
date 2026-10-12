@@ -291,23 +291,23 @@ only hit on save/load. The translation cost is paid once at the API boundary (se
 
 ### Compound ID forms (frontend canonical)
 
-| Form                            | Example                      | When used                                                                             |
-| ------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------- |
-| `stageId.dimensionId`           | `Zj7UnCAulEk.ou`             | EVENT/ENROLLMENT — this is the **canonical** form                                     |
-| `programId.dimensionId`         | `eBAyeGv0exc.ou`             | TRACKED_ENTITY — enrollment-level dimensions (e.g. enrollment date, org unit, status) |
-| `programId.stageId.dimensionId` | `eBAyeGv0exc.Zj7UnCAulEk.ou` | TRACKED_ENTITY — stage-level dimensions; collapsed to canonical on ingest             |
+| Form                            | Example                      | When used                                                                  |
+| ------------------------------- | ---------------------------- | -------------------------------------------------------------------------- |
+| `stageId.dimensionId`           | `Zj7UnCAulEk.ou`             | Stage dimensions, whatever the outputType — this is the **canonical** form |
+| `programId.dimensionId`         | `eBAyeGv0exc.ou`             | Enrollment-level dimensions (e.g. enrollment date, org unit, status)       |
+| `programId.stageId.dimensionId` | `eBAyeGv0exc.Zj7UnCAulEk.ou` | API form only; collapsed to `stageId.dimensionId` on ingest                |
 
 A repetition index `[n]` may be appended to the stage segment: `ps1[0].ou`.
 
-The interpretation of a 2-segment ID depends on `outputType`:
-
-- **EVENT/ENROLLMENT**: `part1.part2` → `stageId.dimensionId` (no programId)
-- **TRACKED_ENTITY**: `part1.part2` → `programId.dimensionId` (no stageId)
+The first segment of a 2-segment ID is a stage, a program or a tracked entity type. The metadata
+store tells them apart by looking the segment up, not by the outputType. Stage ids are unique, so a
+stage dimension needs no program prefix, also in a tracked entity visualization that spans several
+programs.
 
 3-segment keys (`programId.stageId.dimensionId`) are collapsed to `stageId.dimensionId` on ingest
-for EVENT/ENROLLMENT via pure string manipulation (drop the first segment). For TRACKED_ENTITY,
-the programId is preserved. `programId.dimensionId` keys in TRACKED_ENTITY context are stored
-as-is because they are semantically tied to the program (enrollment scope), not to any stage.
+via pure string manipulation (drop the first segment), whatever the outputType. `programId.dimensionId`
+keys are stored as-is because they are semantically tied to the program (enrollment scope), not to
+any stage.
 
 ### Fixed dimensions
 
@@ -332,21 +332,35 @@ and consumed by both the sidebar cards and the metadata provider.
 Non-fixed dimensions use compound or plain IDs depending on their type:
 
 - **Data elements, categories, COGS** → compound: `stageId.dimensionId`
-- **Program indicators, tracked entity attributes** → **plain** `dimensionId` (no prefix,
-  even though their dimension records carry `program`/`programStage` context)
+- **Program indicators** → **plain** `dimensionId` (no prefix, even though their dimension
+  records carry `program`/`programStage` context)
+- **Tracked entity attributes** → `trackedEntityTypeId.dimensionId` whenever there is a
+  tracked entity type (a tracker program or a tracked entity type data source), whatever the
+  outputType: the same attribute can belong to several tracked entity types, and the sidebar
+  keys attributes this way. Plain `dimensionId` only when there is no tracked entity type
 - **Metadata dims** (`lastUpdated`, `createdBy`, `lastUpdatedBy`, `created`, `completed`)
   → plain `dimensionId`
 
 `getCompoundDimensionId` in `src/modules/dimension/ids.ts` constructs the canonical app-local
 compound ID from a `DimensionRecord`. It applies these rules in order:
 
-1. `PROGRAM_INDICATOR` / `PROGRAM_ATTRIBUTE` → always plain `dimensionId`
+1. `PROGRAM_INDICATOR` → always plain `dimensionId`; `PROGRAM_ATTRIBUTE` →
+   `trackedEntityTypeId.dimensionId` when a tracked entity type is given, otherwise plain
 2. Enrollment-scoped IDs (`enrollmentOu`, `enrollmentDate`, `incidentDate`, `programStatus`)
    → `programId.dimensionId`
-3. Has `programStage` → `stageId.dimensionId` (or `programId.stageId.dimensionId` for TEI)
+3. Has `programStage` → `stageId.dimensionId`
 4. Has `program` → `programId.dimensionId`
 5. TEI with `trackedEntityTypeId` → `trackedEntityTypeId.dimensionId`
 6. Otherwise → plain `dimensionId`
+
+**The tracked entity type behind the prefix**: callers pass `getAttributeTetId`
+(`@modules/visualization/tracked-entity-type`) as the `trackedEntityTypeId`. It is the
+visualization's own `trackedEntityType` for TRACKED_ENTITY_INSTANCE, and the tracker program's
+tracked entity type (from `programDimensions`) for EVENT/ENROLLMENT. Only TRACKED_ENTITY_INSTANCE
+visualizations carry a `trackedEntityType` field: the backend reads it as marking a
+multi-program visualization whatever the outputType (`EventVisualization.isMultiProgram()`),
+which changes how it rebuilds the `ou` dimension. `resolveTeiFields` (`@modules/layout`)
+therefore sets it only for TRACKED_ENTITY_INSTANCE.
 
 **Org unit scopes**: the app uses distinct dimension IDs for different org unit scopes:
 
@@ -400,9 +414,9 @@ program-scope (`{dimension: 'ou', program: {id}}`) and TEI registration
     - `toAppLocalDimensions` (`@modules/dimension/translation`) renames API `ou` with a program but
       no programStage to `enrollmentOu`.
     - `getCompoundDimensionId` (`@modules/dimension/ids`) builds the canonical app-local compound ID
-      from each `DimensionRecord`, reading its `program` and `programStage`. For EVENT/ENROLLMENT
-      this produces `stageId.dimensionId` (dropping the programId); for TRACKED_ENTITY,
-      `programId.stageId.dimensionId` or `programId.dimensionId`.
+      from each `DimensionRecord`, reading its `program` and `programStage`. A stage dimension
+      becomes `stageId.dimensionId` (dropping the programId) whatever the outputType; an
+      enrollment-level one `programId.dimensionId`.
 
     The metadata provider (`@modules/metadata/visualization`) applies the same two translations when
     it registers a loaded visualization's dimensions.

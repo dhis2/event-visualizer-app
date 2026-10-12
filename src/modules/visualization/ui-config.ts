@@ -6,6 +6,7 @@ import {
 } from '@modules/dimension/ids'
 import { toAppLocalDimensions } from '@modules/dimension/translation'
 import { getRepetitionsFromVisualisation } from '@modules/repetitions'
+import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     CurrentVisualization,
     DimensionArray,
@@ -44,9 +45,9 @@ export const getVisualizationUiConfig = (
         filters: toAppLocalAxes(raw.filters ?? []),
     }
     const outputType = vis.outputType
-    const tetId = vis.trackedEntityType?.id
+    const tetId = getTetId(vis)
     const toDimId = (dim: DimensionArray[number]) =>
-        getCompoundDimensionId(dim, outputType, tetId)
+        getCompoundDimensionId(dim, tetId)
 
     return {
         visualizationType: vis.type,
@@ -69,7 +70,7 @@ export const getVisualizationUiConfig = (
             },
             {} as Record<string, string[]>
         ),
-        conditionsByDimension: getConditionsFromVisualization(vis, outputType),
+        conditionsByDimension: getConditionsFromVisualization(vis),
         repetitionsByDimension: getRepetitionsFromVisualisation(vis),
         options: { ...baseOptions, ...extractOptions(vis) },
         ...(vis.value?.id && {
