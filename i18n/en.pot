@@ -732,6 +732,22 @@ msgstr "Get link…"
 msgid "Delete"
 msgstr "Delete"
 
+msgid "Save as a new visualization?"
+msgstr "Save as a new visualization?"
+
+msgid ""
+"This visualization was made in an older app. Renaming it here would stop "
+"that app from editing it."
+msgstr ""
+"This visualization was made in an older app. Renaming it here would stop "
+"that app from editing it."
+
+msgid "Save a copy with the new name instead?"
+msgstr "Save a copy with the new name instead?"
+
+msgid "Save as new"
+msgstr "Save as new"
+
 msgid "Open"
 msgstr "Open"
 
@@ -751,11 +767,11 @@ msgstr ""
 msgid "You don't have sufficient permissions."
 msgstr "You don't have sufficient permissions."
 
-msgid "Rename successful"
-msgstr "Rename successful"
-
 msgid "Rename failed"
 msgstr "Rename failed"
+
+msgid "Rename successful"
+msgstr "Rename successful"
 
 msgid "Hide layout"
 msgstr "Hide layout"
