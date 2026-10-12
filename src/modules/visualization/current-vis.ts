@@ -72,15 +72,21 @@ const resolveCellValueFields = (
         return { value: undefined, aggregationType: undefined }
     }
 
+    /* The untyped getter, read defensively: a saved visualization registers its
+     * value straight from the payload, which carries no dimensionType, so the
+     * item is in the store but not as a dimension. */
+    const item = metadataStore.getMetadataItem(cellValue.id)
+    const itemAggregationType =
+        item && 'aggregationType' in item ? item.aggregationType : undefined
+
     /* `DEFAULT` lives in visUiConfig so the menu can distinguish an untouched
      * cell value from an explicit choice. The analytics request needs a real
      * type, so it is resolved here, at the boundary. */
     return {
         value: { id: cellValue.id },
-        aggregationType: resolveAggregationType(
-            cellValue.aggregationType,
-            metadataStore.getDimensionMetadataItem(cellValue.id) ?? {}
-        ),
+        aggregationType: resolveAggregationType(cellValue.aggregationType, {
+            aggregationType: itemAggregationType,
+        }),
     }
 }
 
