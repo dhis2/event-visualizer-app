@@ -9,6 +9,7 @@ import enrollmentPivotTable from '@modules/visualization/__fixtures__/round-trip
 import eventLineListEventProgram from '@modules/visualization/__fixtures__/round-trip/saved/event-line-list-event-program.json'
 import eventLineListTrackerProgram from '@modules/visualization/__fixtures__/round-trip/saved/event-line-list-tracker-program.json'
 import eventPivotTableLegendGrouping from '@modules/visualization/__fixtures__/round-trip/saved/event-pivot-table-legend-grouping.json'
+import eventPivotTableRegistrationOu from '@modules/visualization/__fixtures__/round-trip/saved/event-pivot-table-registration-ou.json'
 import eventPivotTable from '@modules/visualization/__fixtures__/round-trip/saved/event-pivot-table.json'
 import trackedEntityLineListOneProgram from '@modules/visualization/__fixtures__/round-trip/saved/tracked-entity-line-list-one-program.json'
 import trackedEntityLineListTrackedEntityType from '@modules/visualization/__fixtures__/round-trip/saved/tracked-entity-line-list-tracked-entity-type.json'
@@ -91,6 +92,18 @@ const savedCases: RoundTripCase[] = [
             ],
             rows: [sidebarIds.stage(CHILD_PROGRAMME, BIRTH, 'ou')],
             filters: [sidebarIds.stage(CHILD_PROGRAMME, BIRTH, 'eventDate')],
+        },
+    },
+    {
+        name: 'an event pivot table with the registration org unit',
+        fixture: eventPivotTableRegistrationOu,
+        expectedLayout: {
+            columns: [
+                sidebarIds.registration('enrollmentOu'),
+                sidebarIds.enrollment(CHILD_PROGRAMME, 'programStatus'),
+            ],
+            rows: [],
+            filters: [],
         },
     },
     {
