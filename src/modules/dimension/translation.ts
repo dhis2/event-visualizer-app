@@ -69,13 +69,12 @@ export const combineAllDimensionsFromVisualization = (
 /**
  * Forward: API → app-local dimension IDs on a DimensionArray.
  *
- * The eventVisualizations API uses bare `ou` for both enrollment-scope and
- * TEI-registration-scope org units; these are distinguished only by the
- * presence/absence of a `program` qualifier on the dim record. Stage event OU
- * (with `programStage`) is a different concept and stays as `ou`. EVENT and
- * ENROLLMENT visualizations store the registration org unit as
- * `registrationOu` with a program qualifier, which is dropped so it reads
- * like the TEI one.
+ * The eventVisualizations API uses bare `ou` for three org units, told apart
+ * by their qualifiers: with a `programStage` it is the event OU, with only a
+ * `program` the enrollment OU (app-local `enrollmentOu`), and with neither
+ * the TEI registration OU. EVENT and ENROLLMENT visualizations store the
+ * registration OU as `registrationOu` with a program qualifier, which is
+ * dropped so it reads like the TEI one.
  */
 export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
     dims.map((dim) => {
@@ -89,11 +88,11 @@ export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
             delete stripped.programStage
             return stripped
         }
-        if (dim.dimension === 'ou' && !dim.programStage) {
+        if (dim.dimension === 'ou' && dim.program && !dim.programStage) {
             return { ...dim, dimension: 'enrollmentOu' }
         }
         if (dim.dimension === 'registrationOu') {
-            const registrationOu = { ...dim, dimension: 'enrollmentOu' }
+            const registrationOu = { ...dim, dimension: 'ou' }
             delete registrationOu.program
             return registrationOu
         }
@@ -103,12 +102,11 @@ export const toAppLocalDimensions = (dims: DimensionArray): DimensionArray =>
 /**
  * Inverse: app-local dim → eventVisualizations POST `dimension` ID.
  *
- * `enrollmentOu` is the app-local ID for both program-scope enrollment OU
- * and TEI-registration-scope OU. The registration OU (no program qualifier)
- * is bare `ou` for TRACKED_ENTITY_INSTANCE and `registrationOu` otherwise.
- * The POST endpoint accepts a program-scope `enrollmentOu` verbatim only in
- * EVENT/TEI `LINE_LIST` mode; otherwise it must be sent as bare `ou`. See the
- * "Org unit scopes" table in CLAUDE.md for the authoritative mapping.
+ * The registration OU is an `ou` without a program qualifier: bare `ou` for
+ * TRACKED_ENTITY_INSTANCE and `registrationOu` otherwise. The POST endpoint
+ * accepts the enrollment OU as `enrollmentOu` only in EVENT/TEI `LINE_LIST`
+ * mode; otherwise it must be sent as bare `ou`. See the "Org unit scopes"
+ * table in CLAUDE.md for the authoritative mapping.
  */
 export const toEventVisualizationDimensionId = ({
     dimensionId,
@@ -121,13 +119,13 @@ export const toEventVisualizationDimensionId = ({
     outputType: OutputType
     visualizationType: VisualizationType
 }): string => {
-    if (dimensionId !== 'enrollmentOu') {
-        return dimensionId
-    }
-    if (!programId) {
+    if (dimensionId === 'ou' && !programId) {
         return outputType === 'TRACKED_ENTITY_INSTANCE'
             ? 'ou'
             : 'registrationOu'
+    }
+    if (dimensionId !== 'enrollmentOu') {
+        return dimensionId
     }
     const shouldRewriteToOu =
         outputType === 'ENROLLMENT' || visualizationType === 'PIVOT_TABLE'

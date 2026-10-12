@@ -83,7 +83,7 @@ export const analyticsHeaderToCanonicalDimensionId = (
     if (outputType === 'TRACKED_ENTITY_INSTANCE') {
         const tetId = visualization.trackedEntityType?.id
         if (tetId && appLocalDim === 'ou') {
-            return `${tetId}.enrollmentOu`
+            return `${tetId}.ou`
         }
         return appLocalDim
     }
@@ -129,14 +129,13 @@ type DimensionContext = {
     trackedEntityTypeId?: string
 }
 
-/* The registration org unit shares `enrollmentOu` with the enrollment org
- * unit, but carries neither a program nor a stage. */
+/* The registration org unit is the `ou` without a program or stage. */
 const isRegistrationOu = ({
     dimensionId,
     programId,
     programStageId,
 }: DimensionContext): boolean =>
-    dimensionId === 'enrollmentOu' && !programId && !programStageId
+    dimensionId === 'ou' && !programId && !programStageId
 
 const getRequestDimensionWireName = (
     context: DimensionContext,
@@ -224,7 +223,7 @@ export const getAnalyticsRequestHeaderName = ({
     }
 
     if (trackedEntityTypeId && !programId) {
-        if (dimensionId === 'enrollmentOu') {
+        if (dimensionId === 'ou') {
             return 'ouname'
         }
         return wireDim

@@ -189,8 +189,8 @@ describe('useDimensionsWithSuffixes', () => {
                     id: 'tet1',
                     name: 'TET 1',
                 },
-                'tet1.enrollmentOu': {
-                    id: 'tet1.enrollmentOu',
+                'tet1.ou': {
+                    id: 'tet1.ou',
                     name: 'Registration org. unit',
                     dimensionType: 'ORGANISATION_UNIT',
                 },
@@ -198,7 +198,7 @@ describe('useDimensionsWithSuffixes', () => {
             const { result } = await renderHookWithAppWrapper(
                 () =>
                     useDimensionsWithSuffixes([
-                        'tet1.enrollmentOu',
+                        'tet1.ou',
                         'p1.enrollmentDate',
                         'p2.enrollmentDate',
                     ]),

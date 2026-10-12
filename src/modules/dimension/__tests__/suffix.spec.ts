@@ -323,7 +323,7 @@ describe('getDimensionSuffix', () => {
             expect(
                 getDimensionSuffix(
                     dim({
-                        id: 'tet1.enrollmentOu',
+                        id: 'tet1.ou',
                         dimensionType: 'ORGANISATION_UNIT',
                         trackedEntityTypeId: 'tet1',
                     }),

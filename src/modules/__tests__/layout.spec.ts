@@ -61,7 +61,7 @@ const testCases = {
             },
         },
         metadata: {
-            ou: makeDim({ dimensionId: 'ou' }),
+            ou: makeDim({ dimensionId: 'ou', programId: 'child' }),
             bcgDoses: makeDim({ dimensionId: 'bcgDoses' }),
             lastName: makeDim({ dimensionId: 'lastName' }),
             enrollmentDate: makeDim({ dimensionId: 'enrollmentDate' }),
@@ -85,6 +85,7 @@ const testCases = {
                             id: 'USER_ORGUNIT',
                         },
                     ],
+                    program: { id: 'child' },
                 },
                 {
                     dimension: 'bcgDoses',
@@ -155,7 +156,11 @@ const testCases = {
             },
         },
         metadata: {
-            ou: makeDim({ dimensionId: 'ou' }),
+            ou: makeDim({
+                dimensionId: 'ou',
+                programId: 'child',
+                programStageId: 'birth',
+            }),
             enrollmentDate: makeDim({ dimensionId: 'enrollmentDate' }),
             firstName: makeDim({ dimensionId: 'firstName' }),
             bcgDoses: makeDim({ dimensionId: 'bcgDoses' }),
@@ -171,6 +176,8 @@ const testCases = {
                             id: 'USER_ORGUNIT',
                         },
                     ],
+                    program: { id: 'child' },
+                    programStage: { id: 'birth' },
                 },
                 {
                     dimension: 'enrollmentDate',
@@ -331,9 +338,9 @@ describe('buildAxis', () => {
         (outputType) => {
             const store = makeStore({
                 dims: {
-                    'tet.enrollmentOu': makeDim({
-                        id: 'tet.enrollmentOu',
-                        dimensionId: 'enrollmentOu',
+                    'tet.ou': makeDim({
+                        id: 'tet.ou',
+                        dimensionId: 'ou',
                         dimensionType: 'ORGANISATION_UNIT',
                         trackedEntityTypeId: 'tet',
                     }),
@@ -349,11 +356,11 @@ describe('buildAxis', () => {
                 visualizationType: 'PIVOT_TABLE',
                 outputType,
                 layout: {
-                    columns: ['tet.enrollmentOu'],
+                    columns: ['tet.ou'],
                     rows: ['prog.enrollmentDate'],
                     filters: [],
                 },
-                itemsByDimension: { 'tet.enrollmentOu': ['USER_ORGUNIT'] },
+                itemsByDimension: { 'tet.ou': ['USER_ORGUNIT'] },
                 conditionsByDimension: {},
                 repetitionsByDimension: {},
             } as unknown as VisUiConfigState
@@ -433,8 +440,8 @@ describe('resolveTeiFields', () => {
     } as unknown as Program
 
     const tetOuDim: DimensionMetadataItem = {
-        id: 'tetA.enrollmentOu',
-        dimensionId: 'enrollmentOu',
+        id: 'tetA.ou',
+        dimensionId: 'ou',
         name: 'Registration org. unit',
         dimensionType: 'ORGANISATION_UNIT',
         trackedEntityTypeId: 'tetA',
@@ -486,13 +493,13 @@ describe('resolveTeiFields', () => {
 
     it('TEI vis with TET registration ou → TET resolved from ouDim.trackedEntityTypeId', () => {
         const state = baseState('TRACKED_ENTITY_INSTANCE', [
-            'tetA.enrollmentOu',
+            'tetA.ou',
             'tetA.tea1',
             'tetA.tea2',
         ])
         const store = makeStore({
             dims: {
-                'tetA.enrollmentOu': tetOuDim,
+                'tetA.ou': tetOuDim,
                 'tetA.tea1': tea1Dim,
                 'tetA.tea2': tea2Dim,
             },
@@ -628,11 +635,9 @@ describe('resolveTeiFields', () => {
     })
 
     it('resolved tetId missing from metadata store → throws', () => {
-        const state = baseState('TRACKED_ENTITY_INSTANCE', [
-            'tetA.enrollmentOu',
-        ])
+        const state = baseState('TRACKED_ENTITY_INSTANCE', ['tetA.ou'])
         const store = makeStore({
-            dims: { 'tetA.enrollmentOu': tetOuDim },
+            dims: { 'tetA.ou': tetOuDim },
         })
 
         expect(() => resolveTeiFields(state, store)).toThrow(
@@ -662,8 +667,8 @@ describe('resolveLayoutContext', () => {
     const eventProgram = { id: 'progB' } as unknown as Program
 
     const tetOuDim = {
-        id: 'tetA.enrollmentOu',
-        dimensionId: 'enrollmentOu',
+        id: 'tetA.ou',
+        dimensionId: 'ou',
         dimensionType: 'ORGANISATION_UNIT',
         trackedEntityTypeId: 'tetA',
     } as DimensionMetadataItem
@@ -732,12 +737,10 @@ describe('resolveLayoutContext', () => {
 
     it('returns tetId directly when an ou dim carries it', () => {
         const store = makeStore({
-            dims: { 'tetA.enrollmentOu': tetOuDim },
+            dims: { 'tetA.ou': tetOuDim },
         })
 
-        expect(resolveLayoutContext(['tetA.enrollmentOu'], store).tetId).toBe(
-            'tetA'
-        )
+        expect(resolveLayoutContext(['tetA.ou'], store).tetId).toBe('tetA')
     })
 
     it('walks programId → program.trackedEntityType for enrollment ou', () => {
@@ -858,8 +861,8 @@ describe('resolveDimensionTetId', () => {
 
     it('returns trackedEntityTypeId directly when the dim carries it', () => {
         const dim = makeDim({
-            id: 'tetA.enrollmentOu',
-            dimensionId: 'enrollmentOu',
+            id: 'tetA.ou',
+            dimensionId: 'ou',
             trackedEntityTypeId: 'tetA',
         })
         expect(resolveDimensionTetId(dim, makeStore({}))).toBe('tetA')
@@ -1044,14 +1047,14 @@ describe('convertLayoutForVisType', () => {
         it('keeps the TET registration OU, routing it to columns', () => {
             const result = convertLayoutForVisType({
                 layout: {
-                    columns: ['tetId.enrollmentOu', 'numericDe'],
+                    columns: ['tetId.ou', 'numericDe'],
                     rows: [],
                     filters: [],
                 },
                 targetVisType: 'PIVOT_TABLE',
                 getDimension: makeGetDimension({
-                    'tetId.enrollmentOu': makeDim({
-                        dimensionId: 'enrollmentOu',
+                    'tetId.ou': makeDim({
+                        dimensionId: 'ou',
                         dimensionType: 'ORGANISATION_UNIT',
                         trackedEntityTypeId: 'tetId',
                     }),
@@ -1063,9 +1066,7 @@ describe('convertLayoutForVisType', () => {
                 }),
             })
             expect(result.invalidDimensionIds).toEqual([])
-            expect(result.convertedLayout.columns).toEqual([
-                'tetId.enrollmentOu',
-            ])
+            expect(result.convertedLayout.columns).toEqual(['tetId.ou'])
             expect(result.convertedLayout.filters).toEqual(['numericDe'])
         })
 

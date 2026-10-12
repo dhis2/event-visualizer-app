@@ -75,10 +75,7 @@ export const CardTrackedEntityType: FC<CardTrackedEntityTypeProps> = ({
     })
     const isSelectedMatchFn: UseSelectedDimensionCountMatchFn = useCallback(
         (selectedDimension) => {
-            if (
-                selectedDimension.id ===
-                `${program.trackedEntityType.id}.enrollmentOu`
-            ) {
+            if (selectedDimension.id === `${program.trackedEntityType.id}.ou`) {
                 return true
             }
             return (

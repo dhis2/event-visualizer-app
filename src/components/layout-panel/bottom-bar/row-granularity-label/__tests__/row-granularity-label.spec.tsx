@@ -44,8 +44,8 @@ const metadata = {
         programId: 'p2',
         programStageId: 's2',
     },
-    'tet1.enrollmentOu': {
-        id: 'tet1.enrollmentOu',
+    'tet1.ou': {
+        id: 'tet1.ou',
         name: 'Registration org. unit',
         dimensionType: 'ORGANISATION_UNIT',
         trackedEntityTypeId: 'tet1',
@@ -77,7 +77,7 @@ describe('RowGranularityLabel', () => {
     it('names the tracked entity type for TRACKED_ENTITY_INSTANCE output', async () => {
         await renderWithAppWrapper(
             <RowGranularityLabel />,
-            buildMockOptions('TRACKED_ENTITY_INSTANCE', ['tet1.enrollmentOu'])
+            buildMockOptions('TRACKED_ENTITY_INSTANCE', ['tet1.ou'])
         )
 
         expect(screen.getByText('One row for each Person')).toBeInTheDocument()
@@ -132,7 +132,7 @@ describe('RowGranularityLabel', () => {
     it('explains why for an event list without a program', async () => {
         await renderWithAppWrapper(
             <RowGranularityLabel />,
-            buildMockOptions('EVENT', ['tet1.enrollmentOu'])
+            buildMockOptions('EVENT', ['tet1.ou'])
         )
 
         await userEvent.hover(screen.getByText('One row for each Event'))
