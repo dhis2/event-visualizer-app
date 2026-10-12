@@ -367,6 +367,36 @@ describe('getVisualizationUiConfig', () => {
         expect(result.cellValue).toBeUndefined()
     })
 
+    it.each(['EVENT', 'ENROLLMENT'] as const)(
+        'keys a saved registrationOu of a %s pivot table under its tracked entity type',
+        (outputType) => {
+            const input = {
+                type: 'PIVOT_TABLE',
+                outputType,
+                columns: [
+                    {
+                        dimension: 'registrationOu',
+                        dimensionType: 'ORGANISATION_UNIT',
+                        items: [{ id: 'USER_ORGUNIT' }],
+                        program: { id: 'prog' },
+                    },
+                ],
+                rows: [],
+                filters: [],
+                programDimensions: [
+                    { id: 'prog', trackedEntityType: { id: 'tet' } },
+                ],
+            } as unknown as SavedVisualization
+
+            const result = getVisualizationUiConfig(input)
+
+            expect(result.layout.columns).toEqual(['tet.enrollmentOu'])
+            expect(result.itemsByDimension['tet.enrollmentOu']).toEqual([
+                'USER_ORGUNIT',
+            ])
+        }
+    )
+
     it('maps a saved value and aggregation type onto the cell value', () => {
         const input = {
             type: 'PIVOT_TABLE',

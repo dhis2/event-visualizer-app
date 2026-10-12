@@ -129,6 +129,35 @@ type DimensionContext = {
     trackedEntityTypeId?: string
 }
 
+/* The registration org unit shares `enrollmentOu` with the enrollment org
+ * unit, but carries neither a program nor a stage. */
+const isRegistrationOu = ({
+    dimensionId,
+    programId,
+    programStageId,
+}: DimensionContext): boolean =>
+    dimensionId === 'enrollmentOu' && !programId && !programStageId
+
+const getRequestDimensionWireName = (
+    context: DimensionContext,
+    outputType: OutputType
+): string => {
+    const { dimensionId, programStageId } = context
+    if (isRegistrationOu(context)) {
+        return outputType === 'TRACKED_ENTITY_INSTANCE'
+            ? 'ou'
+            : 'REGISTRATION_OU'
+    }
+    if (
+        dimensionId === 'enrollmentOu' &&
+        !programStageId &&
+        outputType === 'ENROLLMENT'
+    ) {
+        return 'ou'
+    }
+    return toRequestDimensionWireName(dimensionId)
+}
+
 /* Canonical dimension → analytics request `?dimension=` wire string. */
 export const getAnalyticsRequestDimensionName = ({
     dimensionId,
@@ -136,18 +165,15 @@ export const getAnalyticsRequestDimensionName = ({
     programId,
     programStageId,
     repetitionIndex,
-    trackedEntityTypeId,
     outputType,
 }: DimensionContext & {
     outputType: OutputType
     legendSetId?: string
 }): string => {
-    const isBareOu =
-        dimensionId === 'enrollmentOu' &&
-        !programStageId &&
-        ((trackedEntityTypeId && !programId) || outputType === 'ENROLLMENT')
-
-    const wireName = isBareOu ? 'ou' : toRequestDimensionWireName(dimensionId)
+    const wireName = getRequestDimensionWireName(
+        { dimensionId, programId, programStageId },
+        outputType
+    )
 
     let prefix: string | undefined
 
@@ -186,6 +212,15 @@ export const getAnalyticsRequestHeaderName = ({
         return repetitionIndex === undefined
             ? `${programStageId}.${wireDim}`
             : `${programStageId}[${repetitionIndex}].${wireDim}`
+    }
+
+    if (
+        outputType !== 'TRACKED_ENTITY_INSTANCE' &&
+        isRegistrationOu({ dimensionId, programId, programStageId })
+    ) {
+        return visualization.type === 'PIVOT_TABLE'
+            ? 'registrationou'
+            : 'registrationouname'
     }
 
     if (trackedEntityTypeId && !programId) {

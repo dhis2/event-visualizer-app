@@ -21,25 +21,11 @@ export const isDimensionTypeFullyInvalidForVisType = (
 }
 
 export const isDimensionFullyInvalidForVisType = (
-    dim: Partial<
-        Pick<
-            DimensionMetadataItem,
-            'dimensionType' | 'dimensionId' | 'trackedEntityTypeId'
-        >
-    >,
+    dim: Partial<Pick<DimensionMetadataItem, 'dimensionType'>>,
     visType: VisualizationType
-): boolean => {
-    if (visType === 'LINE_LIST') {
-        return false
-    }
-    if (
-        dim.dimensionType &&
-        isDimensionTypeFullyInvalidForVisType(dim.dimensionType, visType)
-    ) {
-        return true
-    }
-    return dim.dimensionId === 'enrollmentOu' && !!dim.trackedEntityTypeId
-}
+): boolean =>
+    !!dim.dimensionType &&
+    isDimensionTypeFullyInvalidForVisType(dim.dimensionType, visType)
 
 export const isDimensionCrossTet = (
     dimensionTetId: string | null,

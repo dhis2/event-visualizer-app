@@ -370,34 +370,41 @@ therefore sets it only for TRACKED_ENTITY_INSTANCE.
   at the API → app-local boundary. `toEventVisualizationDimensionId` does the inverse on
   save — but only in some outputType/visType combinations (see table below).
 - **Registration org unit**: `enrollmentOu` with `trackedEntityType` (no program/stage) →
-  compound `tetId.enrollmentOu`. The TEI registration OU shares the `enrollmentOu` dimension
-  ID with the program-scope enrollment OU; the prefix (programId vs trackedEntityTypeId)
-  distinguishes them.
+  compound `tetId.enrollmentOu`, whatever the outputType. The TEI registration OU shares the
+  `enrollmentOu` dimension ID with the program-scope enrollment OU; the prefix (programId vs
+  trackedEntityTypeId) distinguishes them. The backend has its own name for it in EVENT and
+  ENROLLMENT: `registrationOu` (with a program qualifier) in eventVisualizations,
+  `REGISTRATION_OU` in the analytics request and `registrationou` as the response header. A
+  line list only offers it with TRACKED_ENTITY_INSTANCE output, where it is bare `ou`.
 
 **`enrollmentOu` POST translation by outputType/visType/scope**: the eventVisualizations
 POST endpoint accepts `enrollmentOu` verbatim only when the dim carries a program qualifier
-AND the visualization is in EVENT/TEI LINE_LIST mode. Other combinations — including the
-TEI registration OU, which has no program qualifier — must be sent as bare `ou`.
-`toEventVisualizationDimensionId` applies this mapping on save:
+AND the visualization is in EVENT/TEI LINE_LIST mode. Other program-scope combinations must be
+sent as bare `ou`. The registration OU (no program qualifier) is bare `ou` for
+TRACKED_ENTITY_INSTANCE and `registrationOu` otherwise; `buildAxis` qualifies `registrationOu`
+with the layout's program. `toEventVisualizationDimensionId` applies this mapping on save:
 
-| outputType                | visType       | dim has `programId`? | POST dimension | Rewrite `enrollmentOu` → `ou`? |
-| ------------------------- | ------------- | -------------------- | -------------- | ------------------------------ |
-| `EVENT`                   | `LINE_LIST`   | yes                  | `enrollmentOu` | no                             |
-| `ENROLLMENT`              | `LINE_LIST`   | yes                  | `ou`           | yes                            |
-| `TRACKED_ENTITY_INSTANCE` | `LINE_LIST`   | yes (program-scope)  | `enrollmentOu` | no                             |
-| `TRACKED_ENTITY_INSTANCE` | `LINE_LIST`   | no (registration)    | `ou`           | yes                            |
-| `EVENT`                   | `PIVOT_TABLE` | yes                  | `ou`           | yes                            |
-| `ENROLLMENT`              | `PIVOT_TABLE` | yes                  | `ou`           | yes                            |
+| outputType                | visType       | dim has `programId`? | POST dimension   | Rewrite `enrollmentOu` → `ou`? |
+| ------------------------- | ------------- | -------------------- | ---------------- | ------------------------------ |
+| `EVENT`                   | `LINE_LIST`   | yes                  | `enrollmentOu`   | no                             |
+| `ENROLLMENT`              | `LINE_LIST`   | yes                  | `ou`             | yes                            |
+| `TRACKED_ENTITY_INSTANCE` | `LINE_LIST`   | yes (program-scope)  | `enrollmentOu`   | no                             |
+| `TRACKED_ENTITY_INSTANCE` | `LINE_LIST`   | no (registration)    | `ou`             | yes                            |
+| `EVENT`                   | `PIVOT_TABLE` | yes                  | `ou`             | yes                            |
+| `ENROLLMENT`              | `PIVOT_TABLE` | yes                  | `ou`             | yes                            |
+| `EVENT`                   | `PIVOT_TABLE` | no (registration)    | `registrationOu` | n/a                            |
+| `ENROLLMENT`              | `PIVOT_TABLE` | no (registration)    | `registrationOu` | n/a                            |
 
-Rule: rewrite to `ou` when the dim has no `programId` (i.e. TEI registration scope)
-OR `outputType === 'ENROLLMENT'` OR `visType === 'PIVOT_TABLE'`. Keep as `enrollmentOu`
-only for program-scope dims in `EVENT`/`TRACKED_ENTITY_INSTANCE` `LINE_LIST`.
+Rule for program-scope dims: rewrite to `ou` when `outputType === 'ENROLLMENT'` OR
+`visType === 'PIVOT_TABLE'`. Keep as `enrollmentOu` only in `EVENT`/`TRACKED_ENTITY_INSTANCE`
+`LINE_LIST`.
 
 The reverse (load) direction is shape-based — `toAppLocalDimensions` rewrites
 `dim.dimension === 'ou' && !dim.programStage` to `enrollmentOu`. This catches both
 program-scope (`{dimension: 'ou', program: {id}}`) and TEI registration
 (`{dimension: 'ou'}`, no program/stage) and leaves stage event OU
-(`{dimension: 'ou', programStage: {id}}`) untouched.
+(`{dimension: 'ou', programStage: {id}}`) untouched. It also rewrites `registrationOu` to
+`enrollmentOu` and drops its program qualifier, so it reads like the TEI registration OU.
 
 ### Save/load translation at the visualization API boundary
 
@@ -412,7 +419,7 @@ program-scope (`{dimension: 'ou', program: {id}}`) and TEI registration
    arrays, items, conditions and options — from the normalized visualization. It applies two
    dimension translations on the way:
     - `toAppLocalDimensions` (`@modules/dimension/translation`) renames API `ou` with a program but
-      no programStage to `enrollmentOu`.
+      no programStage, and `registrationOu`, to `enrollmentOu`.
     - `getCompoundDimensionId` (`@modules/dimension/ids`) builds the canonical app-local compound ID
       from each `DimensionRecord`, reading its `program` and `programStage`. A stage dimension
       becomes `stageId.dimensionId` (dropping the programId) whatever the outputType; an
