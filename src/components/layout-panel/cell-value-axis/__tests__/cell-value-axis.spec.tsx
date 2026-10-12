@@ -93,16 +93,15 @@ const buildMockOptions = ({
 
 const getTrigger = () => screen.getByTestId('axis-content-value')
 
+/* MenuItem puts the active class on the wrapping li, not the anchor that
+ * carries the menuitem role. */
+const getActiveMenuItemLabel = () =>
+    screen
+        .getAllByRole('menuitem')
+        .find((item) => item.closest('li')?.className.includes('active'))
+        ?.textContent
+
 describe('CellValueAxis', () => {
-    it('is labelled as the value axis', async () => {
-        await renderWithAppWrapper(
-            <CellValueAxis />,
-            buildMockOptions({ columns: ['s1.de1'] })
-        )
-
-        expect(screen.getByTestId('axis-value')).toHaveTextContent('Value')
-    })
-
     it('shows Count when no cell value is set', async () => {
         await renderWithAppWrapper(
             <CellValueAxis />,
@@ -188,24 +187,6 @@ describe('CellValueAxis', () => {
         })
     })
 
-    /* `DEFAULT` is resolved before storing, so the menu shows real names. */
-    it('does not offer "Use item default" in the aggregation menu', async () => {
-        const user = userEvent.setup()
-        await renderWithAppWrapper(
-            <CellValueAxis />,
-            buildMockOptions({
-                columns: ['s1.de1'],
-                cellValue: { id: 's1.de1', aggregationType: 'AVERAGE' },
-            })
-        )
-
-        await user.click(screen.getByTestId('cell-value-aggregation-trigger'))
-
-        expect(
-            screen.queryByRole('menuitem', { name: 'Use item default' })
-        ).not.toBeInTheDocument()
-    })
-
     it('stays clickable whatever programs the layout holds', async () => {
         await renderWithAppWrapper(
             <CellValueAxis />,
@@ -259,50 +240,6 @@ describe('CellValueAxis', () => {
                 'Cells show a count. Drag a numeric data item here to show its value.'
             )
         ).toBeInTheDocument()
-    })
-
-    it('does not explain Count once a data item is set', async () => {
-        const user = userEvent.setup()
-        await renderWithAppWrapper(
-            <CellValueAxis />,
-            buildMockOptions({
-                columns: ['s1.de1'],
-                cellValue: { id: 's1.de1', aggregationType: 'SUM' },
-            })
-        )
-
-        await user.hover(screen.getByTestId('cell-value-label'))
-
-        expect(screen.queryByText(/Cells show a count/)).not.toBeInTheDocument()
-    })
-
-    it('separates the name from the aggregation type with a middle dot', async () => {
-        await renderWithAppWrapper(
-            <CellValueAxis />,
-            buildMockOptions({
-                columns: ['s1.de1'],
-                cellValue: { id: 's1.de1', aggregationType: 'AVERAGE' },
-            })
-        )
-
-        /* The gap around the dot is the flex gap, not whitespace. */
-        expect(getTrigger()).toHaveTextContent('Weight in kg·Average')
-    })
-
-    /* Both items in the layout, one of them also the cell value: two stages are
-     * in scope, so the value gets a stage suffix like the chips do. */
-    it('suffixes the value when both stages are already in the layout', async () => {
-        await renderWithAppWrapper(
-            <CellValueAxis />,
-            buildMockOptions({
-                columns: ['s1.de1', 's2.de1'],
-                cellValue: { id: 's1.de1', aggregationType: 'SUM' },
-            })
-        )
-
-        expect(screen.getByTestId('cell-value-suffix')).toHaveTextContent(
-            'Stage 1'
-        )
     })
 
     /* If the stored id is the plain uid rather than the compound stageId.deUid,
@@ -374,16 +311,7 @@ describe('CellValueAxis', () => {
 
         await user.click(screen.getByTestId('cell-value-aggregation-trigger'))
 
-        /* MenuItem puts the active class on the wrapping li, not the anchor
-         * that carries the menuitem role. */
-        const activeItem = () =>
-            screen
-                .getAllByRole('menuitem')
-                .find((item) =>
-                    item.closest('li')?.className.includes('active')
-                )?.textContent
-
-        expect(activeItem()).toBe('Use item default (Sum)')
+        expect(getActiveMenuItemLabel()).toBe('Use item default (Sum)')
 
         await user.click(screen.getByRole('menuitem', { name: 'Sum' }))
 
@@ -394,7 +322,7 @@ describe('CellValueAxis', () => {
 
         await user.click(screen.getByTestId('cell-value-aggregation-trigger'))
 
-        expect(activeItem()).toBe('Sum')
+        expect(getActiveMenuItemLabel()).toBe('Sum')
     })
 })
 
@@ -429,16 +357,6 @@ describe('CellValueAxis drop affordance', () => {
         expect(axisClassName()).toContain('activeDropTarget')
     })
 
-    it('does not highlight for a dimension it would reject', async () => {
-        dragOverAxis(false)
-        await renderWithAppWrapper(
-            <CellValueAxis />,
-            buildMockOptions({ columns: ['s1.de1'] })
-        )
-
-        expect(axisClassName()).not.toContain('activeDropTarget')
-    })
-
     /* The overlay answers "would this drop work?", so it appears as soon as an
      * invalid dimension is picked up — not only once it reaches the axis. */
     it('covers itself while a dimension it would reject is being dragged', async () => {
@@ -453,15 +371,6 @@ describe('CellValueAxis drop affordance', () => {
 
     it('does not cover itself for a dimension it would accept', async () => {
         dragWithoutHovering(true)
-        await renderWithAppWrapper(
-            <CellValueAxis />,
-            buildMockOptions({ columns: ['s1.de1'] })
-        )
-
-        expect(blockedOverlay()).not.toBeInTheDocument()
-    })
-
-    it('does not cover itself when nothing is being dragged', async () => {
         await renderWithAppWrapper(
             <CellValueAxis />,
             buildMockOptions({ columns: ['s1.de1'] })

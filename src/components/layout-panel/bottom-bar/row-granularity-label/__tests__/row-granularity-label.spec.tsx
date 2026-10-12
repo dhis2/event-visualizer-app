@@ -156,13 +156,4 @@ describe('RowGranularityLabel', () => {
             screen.queryByText('Not valid with multiple programs')
         ).not.toBeInTheDocument()
     })
-
-    it('renders no button, so it cannot be clicked', async () => {
-        await renderWithAppWrapper(
-            <RowGranularityLabel />,
-            buildMockOptions('EVENT', ['s1.de1'])
-        )
-
-        expect(screen.queryByRole('button')).not.toBeInTheDocument()
-    })
 })

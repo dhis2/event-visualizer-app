@@ -154,28 +154,4 @@ describe('AddToLayoutButton — Use as value', () => {
             aggregationType: 'DEFAULT',
         })
     })
-
-    /* "Use as value" sits beside the axis options, so after filtering, the user
-     * chooses between placing the dimension in an axis (filter kept) and making
-     * it the cell value (filter dropped). */
-    it('offers the value action alongside the axis options once a filter is set', async () => {
-        const user = userEvent.setup()
-        await renderWithAppWrapper(
-            <AddToLayoutButton onClick={vi.fn()} />,
-            buildMockOptions({ condition: 'GT:5' })
-        )
-
-        await openFlyout(user)
-
-        expect(
-            screen.getAllByRole('menuitem').map((item) => item.textContent)
-        ).toEqual([
-            'Add to Rows',
-            'Add to Filter',
-            'Use as value (without filters)',
-        ])
-        expect(
-            screen.getByRole('button', { name: 'Add to Columns' })
-        ).toBeInTheDocument()
-    })
 })

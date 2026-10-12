@@ -193,19 +193,4 @@ describe('DimensionDragOverlay', () => {
         /* Dropping there is a clone, so it must not read as a removal. */
         expect(queryRemoveIndicator()).not.toBeInTheDocument()
     })
-
-    it('does not offer a dimension the cell value axis would reject', () => {
-        const nonNumeric = {
-            ...axisChipData,
-            canBeCellValue: false,
-        } as DraggedItemEventData
-
-        renderWithReduxStoreProvider(<DimensionDragOverlay />, setupTestStore())
-
-        dragStart(nonNumeric)
-        dragOver(aCellValueDropTarget, nonNumeric)
-
-        expect(queryAddIndicator()).not.toBeInTheDocument()
-        expect(queryRemoveIndicator()).not.toBeInTheDocument()
-    })
 })

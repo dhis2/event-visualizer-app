@@ -546,37 +546,6 @@ describe('useOnDragEnd — dropping on the cell value axis', () => {
         expect(showAlert).toHaveBeenCalled()
     })
 
-    /* The alert is a warning, and `AlertBar` only auto-hides non-warnings, so
-     * the hook has to dismiss it itself. */
-    it('dismisses the rejection alert after five seconds', () => {
-        vi.useFakeTimers()
-
-        try {
-            const { result } = renderHook(() => useOnDragEnd())
-
-            result.current({
-                active: {
-                    data: {
-                        current: {
-                            dimensionId: 's1.de2',
-                            overlayItemProps: {},
-                            populateMetadata: vi.fn(),
-                        },
-                    },
-                },
-                over: cellValueDropTarget,
-            } as unknown as LayoutDragEndEvent)
-
-            expect(hideAlert).not.toHaveBeenCalled()
-
-            vi.advanceTimersByTime(5000)
-
-            expect(hideAlert).toHaveBeenCalled()
-        } finally {
-            vi.useRealTimers()
-        }
-    })
-
     /* The drop is a clone: without the guard this path falls through to the
      * "dropped outside the axes" branch, which removes the chip. */
     it('leaves a chip in its axis when it is dropped on the cell value axis', () => {

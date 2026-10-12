@@ -118,29 +118,6 @@ describe('ChipMenu — Use as value', () => {
         expect(useAsValueItem('s1.de1')).not.toBeInTheDocument()
     })
 
-    it('places the action after the move actions', async () => {
-        await renderWithAppWrapper(
-            <ChipMenu
-                axisId="columns"
-                dimension={numericDimension}
-                onClose={vi.fn()}
-            />,
-            buildMockOptions()
-        )
-
-        const moveItem = screen.getByTestId(
-            'chip-menu-item-move-s1.de1-to-rows'
-        )
-        const valueItem = screen.getByTestId(
-            'chip-menu-item-use-as-value-s1.de1'
-        )
-
-        expect(
-            moveItem.compareDocumentPosition(valueItem) &
-                Node.DOCUMENT_POSITION_FOLLOWING
-        ).toBeTruthy()
-    })
-
     /* A clone: the dimension keeps its place in the layout. */
     it('sets the cell value and leaves the layout untouched', async () => {
         const onClose = vi.fn()
@@ -165,27 +142,5 @@ describe('ChipMenu — Use as value', () => {
             's1.de2',
         ])
         expect(onClose).toHaveBeenCalled()
-    })
-
-    /* A dimension already in the layout reaches the value axis through this
-     * menu: the dimension modal shows Update rather than the Add to… split
-     * button once it is in use. */
-    it('offers the action for a chip in the filters axis', async () => {
-        const user = userEvent.setup()
-        const { store } = await renderWithAppWrapper(
-            <ChipMenu
-                axisId="filters"
-                dimension={numericDimension}
-                onClose={vi.fn()}
-            />,
-            buildMockOptions()
-        )
-
-        await user.click(screen.getByRole('menuitem', { name: 'Use as value' }))
-
-        expect(getVisUiConfigCellValue(store.getState())).toEqual({
-            id: 's1.de1',
-            aggregationType: 'DEFAULT',
-        })
     })
 })

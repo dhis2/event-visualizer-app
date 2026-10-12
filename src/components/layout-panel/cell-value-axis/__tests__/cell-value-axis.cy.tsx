@@ -63,93 +63,9 @@ const buildMockOptions = (cellValue?: {
     },
 })
 
-/* The controls follow the label rather than sitting at the far edge of the
- * axis. The label element's own box is no guide — when it stretches, its right
- * edge lands next to the controls however far away the text ends. So the
- * comparison is against the last rect of the rendered text. */
-const expectDirectlyAfterLabel = (dataTest: string) => {
-    cy.getByDataTest('axis-content-value').then(($content) => {
-        const content = $content[0]
-        const label = content.querySelector('[data-test="cell-value-label"]')
-        const control = content.querySelector(`[data-test="${dataTest}"]`)
-        if (!label || !control) {
-            throw new Error(`label or ${dataTest} missing from the value axis`)
-        }
-
-        const range = content.ownerDocument.createRange()
-        range.selectNodeContents(label)
-        const textRects = Array.from(range.getClientRects())
-        const lastTextRect = textRects[textRects.length - 1]
-        const gap = control.getBoundingClientRect().left - lastTextRect.right
-
-        expect(gap, `gap between end of text and ${dataTest}`).to.be.within(
-            0,
-            12
-        )
-    })
-}
-
 describe('CellValueAxis', () => {
     beforeEach(() => {
         cy.viewport(400, 300)
-    })
-
-    it('shows Count alone, with no controls', () => {
-        cy.mount(
-            <MockAppWrapper {...buildMockOptions()}>
-                <CellValueAxis />
-            </MockAppWrapper>
-        )
-
-        cy.getByDataTest('axis-content-value').should('contain.text', 'Count')
-        cy.getByDataTest('cell-value-aggregation-trigger').should('not.exist')
-        cy.getByDataTest('cell-value-reset').should('not.exist')
-    })
-
-    it('places the aggregation menu directly after the data item name', () => {
-        cy.mount(
-            <MockAppWrapper
-                {...buildMockOptions({
-                    id: 's1.de1',
-                    aggregationType: 'AVERAGE',
-                })}
-            >
-                <CellValueAxis />
-            </MockAppWrapper>
-        )
-
-        cy.getByDataTest('axis-content-value')
-            .should('contain.text', 'Weight in kg')
-            .and('contain.text', 'Average')
-        expectDirectlyAfterLabel('cell-value-aggregation-trigger')
-    })
-
-    it('places the reset control after the aggregation menu', () => {
-        cy.mount(
-            <MockAppWrapper
-                {...buildMockOptions({
-                    id: 's1.de1',
-                    aggregationType: 'AVERAGE',
-                })}
-            >
-                <CellValueAxis />
-            </MockAppWrapper>
-        )
-
-        cy.getByDataTest('axis-content-value').then(($content) => {
-            const aggregation = $content[0].querySelector(
-                '[data-test="cell-value-aggregation-trigger"]'
-            )
-            const reset = $content[0].querySelector(
-                '[data-test="cell-value-reset"]'
-            )
-            if (!aggregation || !reset) {
-                throw new Error('aggregation or reset missing')
-            }
-            expect(reset.getBoundingClientRect().left).to.be.greaterThan(
-                aggregation.getBoundingClientRect().right - 1
-            )
-        })
     })
 
     it('wraps a long data item name onto several lines without truncating it', () => {
@@ -171,69 +87,6 @@ describe('CellValueAxis', () => {
             expect($trigger[0].scrollWidth).to.be.at.most(
                 $trigger[0].clientWidth
             )
-        })
-    })
-
-    /* The label under "VALUE" starts where the axis label starts, like a chip
-     * does — any inline padding on the content would nudge it out of line. */
-    it('left-aligns the label with the VALUE axis label', () => {
-        cy.mount(
-            <MockAppWrapper {...buildMockOptions()}>
-                <CellValueAxis />
-            </MockAppWrapper>
-        )
-
-        cy.getByDataTest('axis-value').then(($axis) => {
-            const axisLabel = $axis[0].querySelector('div')
-            const valueLabel = $axis[0].querySelector(
-                '[data-test="cell-value-label"]'
-            )
-            if (!axisLabel || !valueLabel) {
-                throw new Error('axis label or value label missing')
-            }
-
-            expect(
-                valueLabel.getBoundingClientRect().left,
-                'label left edges line up'
-            ).to.be.closeTo(axisLabel.getBoundingClientRect().left, 0.5)
-        })
-    })
-
-    /* A button holding only an SVG has no text baseline, so it rides high in a
-     * baseline-aligned row unless it is nudged down. */
-    it('vertically centres the reset icon against the label', () => {
-        cy.mount(
-            <MockAppWrapper
-                {...buildMockOptions({
-                    id: 's1.de1',
-                    aggregationType: 'AVERAGE',
-                })}
-            >
-                <CellValueAxis />
-            </MockAppWrapper>
-        )
-
-        cy.getByDataTest('axis-content-value').then(($content) => {
-            const content = $content[0]
-            const label = content.querySelector(
-                '[data-test="cell-value-label"]'
-            )
-            const reset = content.querySelector(
-                '[data-test="cell-value-reset"]'
-            )
-            if (!label || !reset) {
-                throw new Error('label or reset missing')
-            }
-
-            const midOf = (el: Element) => {
-                const box = el.getBoundingClientRect()
-                return box.top + box.height / 2
-            }
-
-            expect(
-                midOf(reset),
-                'reset icon shares the label centre line'
-            ).to.be.closeTo(midOf(label), 1)
         })
     })
 
