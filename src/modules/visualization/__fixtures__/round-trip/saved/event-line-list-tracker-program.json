@@ -58,7 +58,7 @@
     "rowSubTotals": false,
     "colSubTotals": false,
     "hideTitle": false,
-    "hideSubtitle": false,
+    "hideSubtitle": true,
     "showDimensionLabels": false,
     "type": "LINE_LIST",
     "programDimensions": [

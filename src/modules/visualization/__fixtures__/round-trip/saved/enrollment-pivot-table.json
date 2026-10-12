@@ -37,7 +37,7 @@
     "rowSubTotals": false,
     "colSubTotals": false,
     "hideTitle": false,
-    "hideSubtitle": false,
+    "hideSubtitle": true,
     "showDimensionLabels": false,
     "type": "PIVOT_TABLE",
     "programDimensions": [
