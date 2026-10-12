@@ -216,7 +216,6 @@ export const getAnalyticsRequestHeaderName = ({
     programId,
     programStageId,
     repetitionIndex,
-    trackedEntityTypeId,
     visualization,
 }: DimensionContext & {
     visualization: CurrentVisualization
@@ -238,13 +237,6 @@ export const getAnalyticsRequestHeaderName = ({
         return visualization.type === 'PIVOT_TABLE'
             ? 'registrationou'
             : 'registrationouname'
-    }
-
-    if (trackedEntityTypeId && !programId) {
-        if (dimensionId === 'ou') {
-            return 'ouname'
-        }
-        return wireDim
     }
 
     if (programId && outputType === 'TRACKED_ENTITY_INSTANCE') {
