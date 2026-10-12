@@ -39,6 +39,7 @@ const baseCurrentVis = {
     columns: [],
     rows: [],
     filters: [],
+    hideSubtitle: true,
 } as unknown as CurrentVisualization
 
 /* Compose the two functions exactly as useHasUnappliedChanges does, so these

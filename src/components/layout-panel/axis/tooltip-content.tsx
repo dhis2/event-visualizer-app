@@ -1,20 +1,13 @@
 import i18n from '@dhis2/d2-i18n'
-import type { DimensionType } from '@types'
+import { useDimensionValueTexts } from '@hooks'
+import type { Conditions } from '@modules/conditions'
+import type { DimensionType, SavedVisualization } from '@types'
 import { type FC } from 'react'
 import type { LayoutDimension } from './chip'
 import styles from './styles/tooltip.module.css'
 import { useTooltipContentData } from './use-tooltip-content-data'
 
 const MAX_LIST_LENGTH = 5
-
-const ITEM_BASED_DIMENSION_TYPES: ReadonlySet<DimensionType> = new Set([
-    'CATEGORY',
-    'CATEGORY_OPTION_GROUP_SET',
-    'ORGANISATION_UNIT_GROUP_SET',
-    'STATUS',
-    'PERIOD',
-    'ORGANISATION_UNIT',
-])
 
 const NO_FALLBACK_DIMENSION_TYPES: ReadonlySet<DimensionType> = new Set([
     'PERIOD',
@@ -23,7 +16,9 @@ const NO_FALLBACK_DIMENSION_TYPES: ReadonlySet<DimensionType> = new Set([
 
 type TooltipContentProps = {
     dimension: LayoutDimension
-    conditionsTexts: string[]
+    itemIds: string[]
+    conditions: Conditions
+    digitGroupSeparator: SavedVisualization['digitGroupSeparator']
     groupingName?: string
     axisId: string
 }
@@ -60,17 +55,21 @@ const ItemsList: FC<ItemsListProps> = ({ itemDisplayNames, dimensionId }) => {
 
 export const TooltipContent: FC<TooltipContentProps> = ({
     dimension,
-    conditionsTexts,
+    itemIds,
+    conditions,
+    digitGroupSeparator,
     groupingName,
     axisId,
 }) => {
-    const { programName, stageName, itemDisplayNames } =
-        useTooltipContentData(dimension)
+    const { programName, stageName } = useTooltipContentData(dimension)
+    const itemsList = useDimensionValueTexts({
+        dimension,
+        itemIds,
+        conditions,
+        formatValueOptions: { digitGroupSeparator },
+    })
 
     const dimensionType = dimension.dimensionType
-    const isItemBased =
-        !!dimensionType && ITEM_BASED_DIMENSION_TYPES.has(dimensionType)
-    const itemsList = isItemBased ? itemDisplayNames : conditionsTexts
     const showStage = dimensionType === 'DATA_ELEMENT'
     const emptyShowsNoneSelected =
         axisId === 'filters' ||

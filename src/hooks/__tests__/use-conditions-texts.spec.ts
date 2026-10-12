@@ -4,7 +4,7 @@ import { useAddMetadata } from '@hooks'
 import { act, renderHook } from '@testing-library/react'
 import { createElement } from 'react'
 import type { ReactNode } from 'react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { useConditionsTexts } from '../use-conditions-texts'
 
 const mockRootOrgUnits = [
@@ -21,46 +21,6 @@ vi.mock('@hooks', async () => ({
     useRootOrgUnits: () => mockRootOrgUnits,
 }))
 
-const {
-    mockParseConditionsStringToArray,
-    mockShouldUseLegendSetConditions,
-    mockShouldUseOrgUnitConditions,
-    mockShouldUseOptionSetConditions,
-    mockShouldUseBooleanConditions,
-    mockGetLegendSetConditionMetadataIds,
-    mockGetOptionSetIdAndSelectedOptionCodes,
-    mockGetBooleanConditionTexts,
-    mockGetOrgUnitConditionMetadataIds,
-    mockGetOperatorConditionTexts,
-} = vi.hoisted(() => ({
-    mockParseConditionsStringToArray: vi.fn(),
-    mockShouldUseLegendSetConditions: vi.fn(),
-    mockShouldUseOrgUnitConditions: vi.fn(),
-    mockShouldUseOptionSetConditions: vi.fn(),
-    mockShouldUseBooleanConditions: vi.fn(),
-    mockGetLegendSetConditionMetadataIds: vi.fn(),
-    mockGetOptionSetIdAndSelectedOptionCodes: vi.fn(),
-    mockGetBooleanConditionTexts: vi.fn(),
-    mockGetOrgUnitConditionMetadataIds: vi.fn(),
-    mockGetOperatorConditionTexts: vi.fn(),
-}))
-
-vi.mock('@modules/conditions', () => ({
-    parseConditionsStringToArray: mockParseConditionsStringToArray,
-    shouldUseLegendSetConditions: mockShouldUseLegendSetConditions,
-    shouldUseOrgUnitConditions: mockShouldUseOrgUnitConditions,
-    shouldUseOptionSetConditions: mockShouldUseOptionSetConditions,
-    shouldUseBooleanConditions: mockShouldUseBooleanConditions,
-    getLegendSetConditionMetadataIds: mockGetLegendSetConditionMetadataIds,
-    getOptionSetIdAndSelectedOptionCodes:
-        mockGetOptionSetIdAndSelectedOptionCodes,
-    getBooleanConditionTexts: mockGetBooleanConditionTexts,
-    getOrgUnitConditionMetadataIds: mockGetOrgUnitConditionMetadataIds,
-    getOperatorConditionTexts: mockGetOperatorConditionTexts,
-    NO_VALUE_OPTION_CODE: 'D2__NOVALUE',
-    getNoValueOptionName: () => 'No value',
-}))
-
 type WrapperProps = { children: ReactNode }
 const DefaultWrapper = ({ children }: WrapperProps) =>
     createElement(MockMetadataProvider, undefined, children)
@@ -72,44 +32,17 @@ const baseDimension: LayoutDimension = {
     name: 'Test dimension',
 }
 
-const setupDefaultMocks = () => {
-    mockParseConditionsStringToArray.mockImplementation((value) => {
-        if (Array.isArray(value)) {
-            return value
-        }
-        if (typeof value === 'string' && value.length > 0) {
-            return value.split(',')
-        }
-        return []
-    })
-    mockShouldUseLegendSetConditions.mockReturnValue(false)
-    mockShouldUseOrgUnitConditions.mockReturnValue(false)
-    mockShouldUseOptionSetConditions.mockReturnValue(false)
-    mockShouldUseBooleanConditions.mockReturnValue(false)
-    mockGetLegendSetConditionMetadataIds.mockReturnValue([])
-    mockGetOptionSetIdAndSelectedOptionCodes.mockReturnValue({
-        optionSetId: '',
-        selectedOptionCodes: [],
-    })
-    mockGetBooleanConditionTexts.mockReturnValue([])
-    mockGetOrgUnitConditionMetadataIds.mockReturnValue([])
-    mockGetOperatorConditionTexts.mockReturnValue([])
-}
-
-beforeEach(() => {
-    setupDefaultMocks()
-})
-
 describe('useConditionsTexts metadata updates', () => {
     it('replaces legend set ids with metadata names as they arrive', () => {
-        mockShouldUseLegendSetConditions.mockReturnValue(true)
         const legendIds = ['LEGEND_A', 'LEGEND_B']
-        mockGetLegendSetConditionMetadataIds.mockReturnValue(legendIds)
 
         const { result } = renderHook(
             () => {
                 const texts = useConditionsTexts({
-                    conditions: { condition: 'gt:10' },
+                    conditions: {
+                        condition: 'IN:LEGEND_A;LEGEND_B',
+                        legendSet: 'LEGEND_SET',
+                    },
                     dimension: baseDimension,
                     formatValueOptions: {},
                 })
@@ -141,18 +74,13 @@ describe('useConditionsTexts metadata updates', () => {
     })
 
     it('names option set condition texts as their metadata arrives, falling back to the code', () => {
-        mockShouldUseOptionSetConditions.mockReturnValue(true)
         const optionSetId = 'OS_123'
         const selectedOptionCodes = ['A', 'B']
-        mockGetOptionSetIdAndSelectedOptionCodes.mockReturnValue({
-            optionSetId,
-            selectedOptionCodes,
-        })
 
         const { result } = renderHook(
             () => {
                 const texts = useConditionsTexts({
-                    conditions: { condition: 'in:A;B' },
+                    conditions: { condition: 'IN:A;B' },
                     dimension: { ...baseDimension, optionSet: optionSetId },
                     formatValueOptions: {},
                 })
@@ -189,20 +117,12 @@ describe('useConditionsTexts metadata updates', () => {
     })
 
     it('prefers progressively richer organisation unit metadata as it arrives', () => {
-        mockShouldUseOrgUnitConditions.mockReturnValue(true)
         const prefixedOrgUnitIds = ['LEVEL-OU_A', 'LEVEL-OU_B']
-        const unprefixedOrgUnitIds = ['OU_A', 'OU_B']
-        mockGetOrgUnitConditionMetadataIds.mockImplementation(
-            (_, includeUnprefixed = false) =>
-                includeUnprefixed
-                    ? [...prefixedOrgUnitIds, ...unprefixedOrgUnitIds]
-                    : prefixedOrgUnitIds
-        )
 
         const { result } = renderHook(
             () => {
                 const texts = useConditionsTexts({
-                    conditions: { condition: 'in:LEVEL-OU_A;LEVEL-OU_B' },
+                    conditions: { condition: 'IN:LEVEL-OU_A;LEVEL-OU_B' },
                     dimension: {
                         ...baseDimension,
                         valueType: 'ORGANISATION_UNIT',
@@ -248,19 +168,12 @@ describe('useConditionsTexts metadata updates', () => {
     })
 
     it('mixes available org unit metadata on a per-id basis', () => {
-        mockShouldUseOrgUnitConditions.mockReturnValue(true)
         const prefixedOrgUnitIds = ['LEVEL-OU_A', 'LEVEL-OU_B']
-        mockGetOrgUnitConditionMetadataIds.mockImplementation(
-            (_, includeUnprefixed = false) =>
-                includeUnprefixed
-                    ? [...prefixedOrgUnitIds, 'OU_B']
-                    : prefixedOrgUnitIds
-        )
 
         const { result } = renderHook(
             () => {
                 const texts = useConditionsTexts({
-                    conditions: { condition: 'in:LEVEL-OU_A;LEVEL-OU_B' },
+                    conditions: { condition: 'IN:LEVEL-OU_A;LEVEL-OU_B' },
                     dimension: {
                         ...baseDimension,
                         valueType: 'ORGANISATION_UNIT',
@@ -290,18 +203,13 @@ describe('useConditionsTexts metadata updates', () => {
     })
 
     it('only returns option texts for selected option codes', () => {
-        mockShouldUseOptionSetConditions.mockReturnValue(true)
         const optionSetId = 'OS_EXTRA'
         const selectedOptionCodes = ['A', 'B']
-        mockGetOptionSetIdAndSelectedOptionCodes.mockReturnValue({
-            optionSetId,
-            selectedOptionCodes,
-        })
 
         const { result } = renderHook(
             () => {
                 const texts = useConditionsTexts({
-                    conditions: { condition: 'in:A;B' },
+                    conditions: { condition: 'IN:A;B' },
                     dimension: { ...baseDimension, optionSet: optionSetId },
                     formatValueOptions: {},
                 })
@@ -329,17 +237,12 @@ describe('useConditionsTexts metadata updates', () => {
     })
 
     it('keeps the selected order and names the no-value option without metadata', () => {
-        mockShouldUseOptionSetConditions.mockReturnValue(true)
         const optionSetId = 'OS_ORDER'
-        mockGetOptionSetIdAndSelectedOptionCodes.mockReturnValue({
-            optionSetId,
-            selectedOptionCodes: ['B', 'D2__NOVALUE', 'A'],
-        })
 
         const { result } = renderHook(
             () => {
                 const texts = useConditionsTexts({
-                    conditions: { condition: 'in:B;D2__NOVALUE;A' },
+                    conditions: { condition: 'IN:B;D2__NOVALUE;A' },
                     dimension: { ...baseDimension, optionSet: optionSetId },
                     formatValueOptions: {},
                 })

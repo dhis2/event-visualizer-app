@@ -17,12 +17,17 @@ import type {
     CurrentUser,
     SavedVisualization,
     MutationResult,
-    RootState,
     VisualizationNameDescription,
     CurrentVisualization,
     DataEngine,
     MetadataInputMap,
 } from '@types'
+
+type RenameVisualizationArgs = {
+    visualization: SavedVisualization
+    name?: string
+    description?: string
+}
 
 export const getVisualizationQueryFields = (
     displayNameProp: CurrentUser['settings']['displayNameProperty']
@@ -265,23 +270,39 @@ export const eventVisualizationsApi = api.injectEndpoints({
             },
         }),
 
-        renameVisualization: builder.mutation<
-            VisualizationNameDescription,
-            VisualizationNameDescription
-        >({
-            async queryFn(args, apiArg: BaseQueryApiWithExtraArg) {
+        /* A fresh copy without the metadata store side effects of
+         * getVisualization, for updates that must not change anything else. */
+        getVisualizationForUpdate: builder.query<SavedVisualization, string>({
+            async queryFn(id, apiArg: BaseQueryApiWithExtraArg) {
                 const { appCachedData, engine } = apiArg.extra
-                const state = apiArg.getState() as RootState
 
                 try {
-                    // Get a fresh copy of the visualization, so nothing but name/description is changed
-                    // This is needed because a partial update (PATCH) is not supported on the api
-                    const visualization = await fetchEventVisualization(
-                        engine,
-                        state.savedVis.id,
-                        appCachedData.currentUser.settings.displayNameProperty
-                    )
+                    return {
+                        data: await fetchEventVisualization(
+                            engine,
+                            id,
+                            appCachedData.currentUser.settings
+                                .displayNameProperty
+                        ),
+                    }
+                } catch (error) {
+                    return { error: parseEngineError(error) }
+                }
+            },
+        }),
 
+        // The whole visualization is sent, because a partial update (PATCH) is not supported on the api
+        renameVisualization: builder.mutation<
+            VisualizationNameDescription,
+            RenameVisualizationArgs
+        >({
+            async queryFn(
+                { visualization, ...args },
+                apiArg: BaseQueryApiWithExtraArg
+            ) {
+                const { engine } = apiArg.extra
+
+                try {
                     const updateVisualizationResult = (await engine.mutate({
                         resource: 'eventVisualizations',
                         type: 'update',

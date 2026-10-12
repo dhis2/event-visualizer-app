@@ -129,7 +129,9 @@ export const Chip: FC<ChipProps> = ({ dimension, axisId }) => {
                         content={
                             <TooltipContent
                                 dimension={dimension}
-                                conditionsTexts={conditionsTexts}
+                                itemIds={items}
+                                conditions={conditions}
+                                digitGroupSeparator={digitGroupSeparator}
                                 groupingName={legendSet?.name}
                                 axisId={axisId}
                             />
