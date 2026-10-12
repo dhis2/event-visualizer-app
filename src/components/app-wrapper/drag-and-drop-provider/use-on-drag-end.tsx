@@ -27,6 +27,7 @@ import {
     getVisUiConfigVisualizationType,
     setVisUiConfigCellValue,
 } from '@store/vis-ui-config-slice'
+import type { Axis } from '@types'
 import { useCallback, useEffect, useRef } from 'react'
 import {
     isAxisContainerData,
@@ -35,7 +36,12 @@ import {
     isOverAxis,
     isSidebarSortableData,
 } from './dnd-data'
-import type { LayoutDragEndEvent, LayoutDropTargetData } from './types'
+import type {
+    DraggedItemEventData,
+    LayoutDragEndEvent,
+    LayoutDropTargetData,
+    SidebarSortableData,
+} from './types'
 
 type OnDragEndFn = (event: LayoutDragEndEvent) => void
 
@@ -85,9 +91,9 @@ const partitionMultiSelectedDimensions = ({
     return { validIds, skippedByReason }
 }
 
-const getDropTarget = (
-    overItemData: LayoutDropTargetData
-): { targetIndex: number; insertAfter: boolean } =>
+type DropTarget = { targetIndex: number; insertAfter: boolean }
+
+const getDropTarget = (overItemData: LayoutDropTargetData): DropTarget =>
     isAxisContainerData(overItemData)
         ? { targetIndex: 0, insertAfter: false }
         : {
@@ -161,6 +167,94 @@ export const useOnDragEnd = (): OnDragEndFn => {
         [metadataStore, listFormatter, showVisTypeAlert, showCrossTetAlert]
     )
 
+    /* Taking a dimension as the cell value is a clone: it is added to
+     * `cellValue` and left wherever it already was. */
+    const handleCellValueDrop = useCallback(
+        (draggedItemData: DraggedItemEventData) => {
+            if (isSidebarSortableData(draggedItemData)) {
+                draggedItemData.populateMetadata()
+            }
+
+            const dimension = metadataStore.getDimensionMetadataItem(
+                draggedItemData.dimensionId
+            )
+
+            if (isValidCellValueDimension(dimension)) {
+                dispatch(
+                    setVisUiConfigCellValue({
+                        id: draggedItemData.dimensionId,
+                        aggregationType: 'DEFAULT',
+                    })
+                )
+            } else {
+                showInvalidCellValueAlert()
+            }
+        },
+        [dispatch, metadataStore, showInvalidCellValueAlert]
+    )
+
+    const handleSidebarDrop = useCallback(
+        (
+            draggedItemData: SidebarSortableData,
+            axis: Axis,
+            { targetIndex, insertAfter }: DropTarget
+        ) => {
+            const isMultiSelectDrag =
+                multiSelectedIds.length >= 1 &&
+                multiSelectedIds.includes(draggedItemData.dimensionId)
+
+            if (!isMultiSelectDrag) {
+                // Single add from sidebar
+                draggedItemData.populateMetadata()
+                dispatch(
+                    addVisUiConfigLayoutDimension({
+                        axis,
+                        dimensionId: draggedItemData.dimensionId,
+                        insertIndex: targetIndex,
+                        insertAfter,
+                    })
+                )
+                return
+            }
+
+            const storeState = store.getState()
+            const visType = getVisUiConfigVisualizationType(storeState)
+            const { tetId: layoutTetId } = resolveLayoutContext(
+                getVisUiConfigLayoutAllDimensionIds(storeState),
+                metadataStore
+            )
+
+            // Batch add from sidebar (metadata already populated eagerly)
+            const { validIds, skippedByReason } =
+                partitionMultiSelectedDimensions({
+                    ids: multiSelectedIds,
+                    metadataStore,
+                    visualizationType: visType,
+                    layoutTetId,
+                })
+
+            if (validIds.length > 0) {
+                dispatch(
+                    addVisUiConfigLayoutDimensions({
+                        axis,
+                        dimensionIds: validIds,
+                        insertIndex: targetIndex,
+                        insertAfter,
+                    })
+                )
+            }
+
+            showSkippedDimensionAlerts(skippedByReason, visType, layoutTetId)
+        },
+        [
+            dispatch,
+            multiSelectedIds,
+            metadataStore,
+            store,
+            showSkippedDimensionAlerts,
+        ]
+    )
+
     return useCallback(
         (event: LayoutDragEndEvent) => {
             const draggedItemData = event.active.data.current
@@ -170,29 +264,10 @@ export const useOnDragEnd = (): OnDragEndFn => {
 
             const overItemData = event.over?.data.current
 
-            /* Taking a dimension as the cell value is a clone: it is added to
-             * `cellValue` and left wherever it already was. Handled before the
-             * branch below, which reads "not over an axis" as a removal. */
+            /* Handled before the branch below, which reads "not over an axis"
+             * as a removal. */
             if (isCellValueDroppableData(overItemData)) {
-                if (isSidebarSortableData(draggedItemData)) {
-                    draggedItemData.populateMetadata()
-                }
-
-                const dimension = metadataStore.getDimensionMetadataItem(
-                    draggedItemData.dimensionId
-                )
-
-                if (isValidCellValueDimension(dimension)) {
-                    dispatch(
-                        setVisUiConfigCellValue({
-                            id: draggedItemData.dimensionId,
-                            aggregationType: 'DEFAULT',
-                        })
-                    )
-                } else {
-                    showInvalidCellValueAlert()
-                }
-
+                handleCellValueDrop(draggedItemData)
                 dispatch(clearMultiSelection())
                 return
             }
@@ -211,7 +286,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 return
             }
 
-            const { targetIndex, insertAfter } = getDropTarget(overItemData)
+            const dropTarget = getDropTarget(overItemData)
 
             if (isAxisSortableData(draggedItemData)) {
                 const isDropInPlace =
@@ -228,8 +303,7 @@ export const useOnDragEnd = (): OnDragEndFn => {
                         sourceAxis: draggedItemData.axis,
                         targetAxis: overItemData.axis,
                         sourceIndex: draggedItemData.sortable.index,
-                        targetIndex,
-                        insertAfter,
+                        ...dropTarget,
                     })
                 )
                 return
@@ -239,64 +313,9 @@ export const useOnDragEnd = (): OnDragEndFn => {
                 throw new Error('Dropped an unexpected item')
             }
 
-            const isMultiSelectDrag =
-                multiSelectedIds.length >= 1 &&
-                multiSelectedIds.includes(draggedItemData.dimensionId)
-
-            if (isMultiSelectDrag) {
-                const storeState = store.getState()
-                const visType = getVisUiConfigVisualizationType(storeState)
-                const { tetId: layoutTetId } = resolveLayoutContext(
-                    getVisUiConfigLayoutAllDimensionIds(storeState),
-                    metadataStore
-                )
-
-                // Batch add from sidebar (metadata already populated eagerly)
-                const { validIds, skippedByReason } =
-                    partitionMultiSelectedDimensions({
-                        ids: multiSelectedIds,
-                        metadataStore,
-                        visualizationType: visType,
-                        layoutTetId,
-                    })
-
-                if (validIds.length > 0) {
-                    dispatch(
-                        addVisUiConfigLayoutDimensions({
-                            axis: overItemData.axis,
-                            dimensionIds: validIds,
-                            insertIndex: targetIndex,
-                            insertAfter,
-                        })
-                    )
-                }
-
-                showSkippedDimensionAlerts(
-                    skippedByReason,
-                    visType,
-                    layoutTetId
-                )
-            } else {
-                // Single add from sidebar
-                draggedItemData.populateMetadata()
-                dispatch(
-                    addVisUiConfigLayoutDimension({
-                        axis: overItemData.axis,
-                        dimensionId: draggedItemData.dimensionId,
-                        insertIndex: targetIndex,
-                        insertAfter,
-                    })
-                )
-            }
+            handleSidebarDrop(draggedItemData, overItemData.axis, dropTarget)
             dispatch(clearMultiSelection())
         },
-        [
-            dispatch,
-            multiSelectedIds,
-            metadataStore,
-            store,
-            showSkippedDimensionAlerts,
-            showInvalidCellValueAlert,
-        ]
+        [dispatch, handleCellValueDrop, handleSidebarDrop]
     )
 }
