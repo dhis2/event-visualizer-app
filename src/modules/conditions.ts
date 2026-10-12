@@ -4,10 +4,10 @@ import i18n from '@dhis2/d2-i18n'
 import { getCompoundDimensionId } from '@modules/dimension/ids'
 import { combineAllDimensionsFromVisualization } from '@modules/dimension/translation'
 import { isOptionSetMetadataItem } from '@modules/metadata/item-guards'
+import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type {
     CurrentVisualization,
     MetadataItem,
-    OutputType,
     SavedVisualization,
     ValueType,
 } from '@types'
@@ -443,8 +443,7 @@ export const getOperatorConditionTexts = (
 }
 
 export const getConditionsFromVisualization = (
-    vis: CurrentVisualization,
-    outputType: OutputType
+    vis: CurrentVisualization
 ): Record<string, { condition?: string; legendSet?: string }> => {
     const result: Record<string, { condition?: string; legendSet?: string }> =
         {}
@@ -454,11 +453,7 @@ export const getConditionsFromVisualization = (
     )
 
     for (const item of items) {
-        const dimensionId = getCompoundDimensionId(
-            item,
-            outputType,
-            vis.trackedEntityType?.id
-        )
+        const dimensionId = getCompoundDimensionId(item, getTetId(vis))
         result[dimensionId] = {
             condition: item.filter,
             legendSet: item.legendSet?.id,

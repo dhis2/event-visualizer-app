@@ -1,6 +1,6 @@
 import { getFixedMetaDimensions } from '@modules/dimension/fixed'
 import { isPopulatedString } from '@modules/utils/guards'
-import type { DimensionRecord, OutputType } from '@types'
+import type { DimensionRecord } from '@types'
 
 // Pattern to match repetition index like [0], [1], [-1] etc.
 export const REPETITION_INDEX_PATTERN = /\[(-?\d+)\]/
@@ -111,10 +111,11 @@ const TEI_REGISTRATION_DIMENSION_IDS: ReadonlySet<string> = new Set([
  * Constructs the canonical compound dimension ID from a DimensionRecord.
  *
  * We do NOT use `formatDimension` / `dimensionGetId` from `@dhis2/analytics`
- * because those helpers assume the old visualization shape where `programId`
- * was only included for TRACKED_ENTITY_INSTANCE. In the canonical app-local
- * format, enrollment-scoped dimensions (program but no programStage) always
- * carry a programId prefix, regardless of outputType.
+ * because those helpers include `programId` only for TRACKED_ENTITY_INSTANCE.
+ * In the canonical app-local format the output type plays no part: stage
+ * dimensions are `stageId.dimensionId` (stage ids are unique, so the program
+ * adds nothing), and enrollment-scoped dimensions (program but no
+ * programStage) always carry a programId prefix.
  *
  * Program indicators always use plain IDs — they're owned by a single program
  * so their UIDs are unique. Tracked entity attributes use a `tetId.attrId`
@@ -123,7 +124,6 @@ const TEI_REGISTRATION_DIMENSION_IDS: ReadonlySet<string> = new Set([
  */
 export const getCompoundDimensionId = (
     dim: DimensionRecord,
-    outputType?: OutputType,
     trackedEntityTypeId?: string
 ): string => {
     if (dim.dimensionType === 'PROGRAM_INDICATOR') {
@@ -138,9 +138,6 @@ export const getCompoundDimensionId = (
         return `${dim.program.id}.${dim.dimension}`
     }
     if (dim.programStage?.id) {
-        if (outputType === 'TRACKED_ENTITY_INSTANCE' && dim.program?.id) {
-            return `${dim.program.id}.${dim.programStage.id}.${dim.dimension}`
-        }
         return `${dim.programStage.id}.${dim.dimension}`
     }
     if (dim.program?.id) {
