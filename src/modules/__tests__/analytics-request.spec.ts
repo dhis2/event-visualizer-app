@@ -171,7 +171,6 @@ describe('getAnalyticsRequestDimensionName', () => {
         expect(
             getAnalyticsRequestDimensionName({
                 dimensionId: 'ou',
-                trackedEntityTypeId: TET,
                 outputType: 'TRACKED_ENTITY_INSTANCE',
             })
         ).toBe('ou')
@@ -181,7 +180,6 @@ describe('getAnalyticsRequestDimensionName', () => {
         expect(
             getAnalyticsRequestDimensionName({
                 dimensionId: 'created',
-                trackedEntityTypeId: TET,
                 outputType: 'TRACKED_ENTITY_INSTANCE',
             })
         ).toBe('CREATED')
@@ -332,7 +330,6 @@ describe('getAnalyticsRequestHeaderName', () => {
         expect(
             getAnalyticsRequestHeaderName({
                 dimensionId: 'ou',
-                trackedEntityTypeId: TET,
                 visualization: buildVis({
                     outputType: 'TRACKED_ENTITY_INSTANCE',
                     trackedEntityType: { id: TET, name: 'Person' },
@@ -345,7 +342,6 @@ describe('getAnalyticsRequestHeaderName', () => {
         expect(
             getAnalyticsRequestHeaderName({
                 dimensionId: 'ou',
-                trackedEntityTypeId: TET,
                 visualization: buildVis({
                     outputType: 'TRACKED_ENTITY_INSTANCE',
                     trackedEntityType: { id: TET, name: 'Person' },

@@ -15,7 +15,6 @@ const buildHeaderNames = (
     const baseArgs = {
         dimensionId: dim.dimension,
         programId: dim.program?.id,
-        trackedEntityTypeId: visualization.trackedEntityType?.id,
         visualization,
     }
     const stageId = dim.programStage?.id

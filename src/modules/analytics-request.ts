@@ -144,7 +144,6 @@ type DimensionContext = {
     programId?: string
     programStageId?: string
     repetitionIndex?: number
-    trackedEntityTypeId?: string
 }
 
 /* The registration org unit is the `ou` without a program or stage. */
