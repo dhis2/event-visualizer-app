@@ -68,6 +68,13 @@ const metadata = {
         programId: 'p2',
         programStageId: 's2',
     },
+    /* A loaded visualization registers its value straight from the saved
+     * payload, so the item carries no dimensionType and is not a dimension. */
+    loadedValue: {
+        id: 'loadedValue',
+        name: 'MCH Weight (g)',
+        aggregationType: 'AVERAGE',
+    },
 }
 
 const buildMockOptions = ({
@@ -125,6 +132,19 @@ describe('CellValueAxis', () => {
         })
         expect(getTrigger()).toHaveTextContent('Average')
         expect(getTrigger()).not.toHaveTextContent('Count')
+    })
+
+    it('shows a cell value whose metadata is not a dimension', async () => {
+        await renderWithAppWrapper(
+            <CellValueAxis />,
+            buildMockOptions({
+                columns: ['s1.de1'],
+                cellValue: { id: 'loadedValue', aggregationType: 'DEFAULT' },
+            })
+        )
+
+        expect(getTrigger()).toHaveTextContent('MCH Weight (g)')
+        expect(getTrigger()).toHaveTextContent('Average')
     })
 
     it('falls back to the raw id when the cell value has no metadata', async () => {

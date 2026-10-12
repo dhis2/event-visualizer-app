@@ -11,11 +11,7 @@ import { useDimensionSuffix } from '@components/layout-panel/use-layout-dimensio
 import i18n from '@dhis2/d2-i18n'
 import { IconUndo16 } from '@dhis2/ui'
 import { useDndContext, useDroppable } from '@dnd-kit/core'
-import {
-    useAppDispatch,
-    useAppSelector,
-    useDimensionMetadataItem,
-} from '@hooks'
+import { useAppDispatch, useAppSelector, useMetadataItem } from '@hooks'
 import {
     clearVisUiConfigCellValue,
     getVisUiConfigCellValue,
@@ -30,7 +26,15 @@ import classes from './styles/cell-value-axis.module.css'
 export const CellValueAxis: FC = () => {
     const dispatch = useAppDispatch()
     const cellValue = useAppSelector(getVisUiConfigCellValue)
-    const cellValueMetadata = useDimensionMetadataItem(cellValue?.id)
+    /* The untyped item: a loaded visualization registers its value straight
+     * from the saved payload, which carries no dimensionType, so the dimension
+     * getter would reject an item that is really there. Only the name and the
+     * aggregation type are needed, and both survive that registration. */
+    const cellValueMetadata = useMetadataItem(cellValue?.id)
+    const itemAggregationType =
+        cellValueMetadata && 'aggregationType' in cellValueMetadata
+            ? cellValueMetadata.aggregationType
+            : undefined
     const suffix = useDimensionSuffix(cellValue?.id ?? '')
 
     const droppableData = useMemo<CellValueDroppableData>(
@@ -109,9 +113,7 @@ export const CellValueAxis: FC = () => {
                         </span>
                         <CellValueAggregationMenu
                             aggregationType={cellValue.aggregationType}
-                            itemAggregationType={
-                                cellValueMetadata?.aggregationType
-                            }
+                            itemAggregationType={itemAggregationType}
                             onChange={onAggregationTypeChange}
                         />
                         <WithTooltip
