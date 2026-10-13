@@ -151,12 +151,18 @@ export const collisionDetector: CollisionDetection = ({
         return collisions
     }
 
-    /* A layout-blocked drag — a sidebar dimension that cannot go in the current
-     * layout — has no valid target among the layout axes. The cell value axis
-     * judges a dimension on its own terms, so it stays reachable. */
-    const candidateContainers = getActiveDragData(active)?.isLayoutBlocked
-        ? droppableContainers.filter((container) =>
-              isCellValueDroppableData(container.data.current)
+    const activeDragData = getActiveDragData(active)
+    /* A layout-blocked drag — a dimension that cannot go in the current layout —
+     * has no valid target among the layout axes. The cell value axis judges a
+     * dimension on numeric-ness alone, so it stays reachable for one it would
+     * accept. For one it would not, the drag has nowhere left to go: offering
+     * the axis anyway would let the drop be rejected with an alert, under an
+     * overlay that says the whole layout is closed. */
+    const candidateContainers = activeDragData?.isLayoutBlocked
+        ? droppableContainers.filter(
+              (container) =>
+                  activeDragData.canBeCellValue &&
+                  isCellValueDroppableData(container.data.current)
           )
         : droppableContainers
 

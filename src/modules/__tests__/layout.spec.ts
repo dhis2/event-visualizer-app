@@ -1,3 +1,4 @@
+import { MetadataStore as MetadataStoreClass } from '@modules/metadata/store'
 import type { VisUiConfigState } from '@store/vis-ui-config-slice'
 import { createMetadataStoreStub } from '@test-utils/metadata-store-stub'
 import type {
@@ -12,6 +13,7 @@ import {
     buildAxis,
     collectProgramDimensions,
     convertLayoutForVisType,
+    resolveCellValueContext,
     resolveDimensionTetId,
     resolveLayoutContext,
     resolveTeiFields,
@@ -1293,5 +1295,27 @@ describe('convertLayoutForVisType', () => {
             'numericDe',
             'textDe',
         ])
+    })
+})
+
+describe('resolveCellValueContext', () => {
+    /* A loaded visualization registers its value straight from the saved
+     * payload, which carries no dimensionType, so the real store does not see
+     * it as a dimension. The stub cannot show that, hence the real store. */
+    it('contributes no context for a cell value that is not a dimension', () => {
+        const store = new MetadataStoreClass({})
+        store.addMetadata({
+            loadedValue: {
+                id: 'loadedValue',
+                name: 'MCH Weight (g)',
+                aggregationType: 'AVERAGE',
+            },
+        })
+
+        expect(resolveCellValueContext('loadedValue', store)).toEqual({
+            programIds: [],
+            programStageIds: [],
+            tetId: null,
+        })
     })
 })

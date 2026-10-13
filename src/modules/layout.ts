@@ -1,6 +1,7 @@
 import i18n from '@dhis2/d2-i18n'
 import { isDimensionFullyInvalidForVisType } from '@modules/dimension/blocking'
 import { toEventVisualizationDimensionId } from '@modules/dimension/translation'
+import { isDimensionMetadataItem } from '@modules/metadata/item-guards'
 import { parseUiRepetitions } from '@modules/repetitions'
 import {
     selectLayoutAllDimensionIds,
@@ -186,9 +187,14 @@ export const resolveCellValueContext = (
     cellValueId: string | undefined,
     metadataStore: MetadataStore
 ): LayoutContext => {
-    const dim = cellValueId
-        ? metadataStore.getDimensionMetadataItem(cellValueId)
+    /* The untyped getter, guarded: a loaded visualization registers its value
+     * straight from the saved payload, which carries no dimensionType. Such an
+     * item names the cell value but says nothing about its program, stage or
+     * tracked entity type, so it contributes no context. */
+    const item = cellValueId
+        ? metadataStore.getMetadataItem(cellValueId)
         : undefined
+    const dim = isDimensionMetadataItem(item) ? item : undefined
 
     if (!dim) {
         return { programIds: [], programStageIds: [], tetId: null }
