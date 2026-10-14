@@ -67,6 +67,53 @@ describe('analyticsHeaderToCanonicalDimensionId', () => {
         )
     })
 
+    it('prefixes a tracked entity attribute with the tetId in TE', () => {
+        const vis = buildVis({
+            outputType: 'TRACKED_ENTITY_INSTANCE',
+            trackedEntityType: { id: TET, name: 'Person' },
+            columns: [{ dimension: UID, dimensionType: 'PROGRAM_ATTRIBUTE' }],
+        })
+        expect(analyticsHeaderToCanonicalDimensionId(UID, vis)).toBe(
+            `${TET}.${UID}`
+        )
+    })
+
+    it('returns plain for a program indicator in TE', () => {
+        const vis = buildVis({
+            outputType: 'TRACKED_ENTITY_INSTANCE',
+            trackedEntityType: { id: TET, name: 'Person' },
+            columns: [{ dimension: UID, dimensionType: 'PROGRAM_INDICATOR' }],
+        })
+        expect(analyticsHeaderToCanonicalDimensionId(UID, vis)).toBe(UID)
+    })
+
+    it("prefixes a tracked entity attribute with the tracker program's tetId outside TE", () => {
+        const vis = buildVis({
+            outputType: 'ENROLLMENT',
+            programDimensions: [
+                {
+                    id: PID,
+                    name: 'Child Programme',
+                    programType: 'WITH_REGISTRATION',
+                    programStages: [],
+                    trackedEntityType: { id: TET, name: 'Person' },
+                },
+            ],
+            columns: [{ dimension: UID, dimensionType: 'PROGRAM_ATTRIBUTE' }],
+        })
+        expect(analyticsHeaderToCanonicalDimensionId(UID, vis)).toBe(
+            `${TET}.${UID}`
+        )
+    })
+
+    it('returns plain for a tracked entity attribute with no tracked entity type', () => {
+        const vis = buildVis({
+            outputType: 'ENROLLMENT',
+            columns: [{ dimension: UID, dimensionType: 'PROGRAM_ATTRIBUTE' }],
+        })
+        expect(analyticsHeaderToCanonicalDimensionId(UID, vis)).toBe(UID)
+    })
+
     it('injects programId for bare `ou` in ENR', () => {
         expect(
             analyticsHeaderToCanonicalDimensionId(

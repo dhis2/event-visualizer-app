@@ -667,7 +667,7 @@ describe('collision-detector', () => {
 
         /* The cell value axis judges a dimension on numeric-ness alone, so a
          * drag that cannot go in the layout can still land there. */
-        it('still offers the cell value axis to a layout-blocked drag', () => {
+        it('still offers the cell value axis to a layout-blocked drag it would accept', () => {
             const axisContainer = createMockAxisContainer(
                 'rows',
                 createMockRect({ top: 0, left: 0, width: 400, height: 100 })
@@ -690,7 +690,9 @@ describe('collision-detector', () => {
 
             const active = {
                 id: 'dragged',
-                data: { current: { isLayoutBlocked: true } },
+                data: {
+                    current: { isLayoutBlocked: true, canBeCellValue: true },
+                },
             } as any
 
             const collisions = collisionDetector({
@@ -701,6 +703,45 @@ describe('collision-detector', () => {
 
             expect(collisions).toHaveLength(1)
             expect(collisions[0].id).toBe('cell-value')
+        })
+
+        /* Otherwise the drag has nowhere to go, and a drop would be rejected
+         * with an alert while the layout reads as closed. */
+        it('offers nothing to a layout-blocked drag the cell value axis would reject', () => {
+            const axisContainer = createMockAxisContainer(
+                'rows',
+                createMockRect({ top: 0, left: 0, width: 400, height: 100 })
+            )
+            const cellValueDroppable: DroppableContainer = {
+                id: 'cell-value',
+                key: 'cell-value',
+                rect: {
+                    current: createMockRect({
+                        top: 0,
+                        left: 0,
+                        width: 400,
+                        height: 100,
+                    }),
+                },
+                data: { current: { isCellValueDroppable: true } },
+                node: { current: null },
+                disabled: false,
+            } as unknown as DroppableContainer
+
+            const active = {
+                id: 'dragged',
+                data: {
+                    current: { isLayoutBlocked: true, canBeCellValue: false },
+                },
+            } as any
+
+            const collisions = collisionDetector({
+                active,
+                pointerCoordinates: { x: 50, y: 20 },
+                droppableContainers: [axisContainer, cellValueDroppable],
+            } as any)
+
+            expect(collisions).toHaveLength(0)
         })
     })
 })

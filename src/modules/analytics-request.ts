@@ -6,6 +6,7 @@ import {
     toAppLocalDimensions,
     transformDimensions,
 } from '@modules/dimension/translation'
+import { getTetId } from '@modules/visualization/tracked-entity-type'
 import type { CurrentVisualization, DimensionId, OutputType } from '@types'
 
 export const headersMap: Record<DimensionId, string> = {
@@ -57,6 +58,18 @@ const reversedHeadersMap: Record<string, string> = {
     ounamehierarchy: 'ou',
 }
 
+/* The analytics API returns tracked entity attribute headers unprefixed, so
+ * the layout is the only place that tells them apart from program indicators. */
+const isTrackedEntityAttribute = (
+    dimensionId: string,
+    { columns = [], rows = [], filters = [] }: CurrentVisualization
+): boolean =>
+    [...columns, ...rows, ...filters].some(
+        (dim) =>
+            dim.dimension === dimensionId &&
+            dim.dimensionType === 'PROGRAM_ATTRIBUTE'
+    )
+
 /* Wire response header → canonical app-local dimension ID (store key). */
 export const analyticsHeaderToCanonicalDimensionId = (
     headerName: string,
@@ -80,8 +93,13 @@ export const analyticsHeaderToCanonicalDimensionId = (
         return `${prefix}.${appLocalDim}`
     }
 
+    const tetId = getTetId(visualization)
+
+    if (tetId && isTrackedEntityAttribute(appLocalDim, visualization)) {
+        return `${tetId}.${appLocalDim}`
+    }
+
     if (outputType === 'TRACKED_ENTITY_INSTANCE') {
-        const tetId = visualization.trackedEntityType?.id
         if (tetId && appLocalDim === 'ou') {
             return `${tetId}.ou`
         }
