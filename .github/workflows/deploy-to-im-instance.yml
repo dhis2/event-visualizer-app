@@ -1,4 +1,4 @@
-name: 'deploy to AWX EVER instance'
+name: 'deploy to IM idv-playground instance'
 
 on:
     schedule:
@@ -15,7 +15,7 @@ env:
     CI: true
 
 jobs:
-    deploy-to-awx-ever-instance:
+    deploy-to-im-idv-playground-instance:
         if: |
             ${{ !github.event.push.repository.fork }} &&
             ${{ github.ref == 'refs/heads/master' ||  startsWith(github.ref, 'refs/tags/') }}
@@ -36,5 +36,5 @@ jobs:
             - name: Build
               run: pnpm d2-app-scripts build
 
-            - name: Deploy build to AWX EVER instance
-              run: pnpm d2-app-scripts deploy https://test.e2e.dhis2.org/anly-ever --username=admin --password=district
+            - name: Deploy build to IM idv-playground instance
+              run: pnpm d2-app-scripts deploy https://dev.im.dhis2.org/idv-playground --username=admin --password=district
